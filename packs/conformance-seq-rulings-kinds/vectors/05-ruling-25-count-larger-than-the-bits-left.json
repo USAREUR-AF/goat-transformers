@@ -1,0 +1,7 @@
+{
+  "name": "ruling-25-count-larger-than-the-bits-left",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "01000305",
+  "expect_error": "malformed-wire"
+}

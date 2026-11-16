@@ -1,7 +1,11 @@
 // Unit checks for the parts the vectors exercise only partly: number formatting,
 // civil-date arithmetic, pack grammar errors, residue and parsing tolerance.
+#include <chrono>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "goat_transformers/engine.hpp"
@@ -714,10 +718,22 @@ int main() {
                   "an undeclared context key after a good decode");
             check(begins(error_text([&] {
                       gt::Engine e2;
-                      e2.load_model("module x\nversion 0.1.0\nsource s\nkey a string -\nderive x.a copy uid\n");
+                      e2.load_model("module x\nversion 0.1.0\ndistribution public\nsource s\nkey a string -\nderive x.a copy uid\n");
                   }),
                          "bad-directive"),
-                  "a derive naming a core key with core not loaded, before missing-distribution");
+                  "a derive naming a core key with core not loaded");
+            check(begins(error_text([&] {
+                      gt::Engine e2;
+                      e2.load_model("module x\nversion 0.1.0\nsource s\nkey a string -\nderive x.a copy uid\n");
+                  }),
+                         "missing-distribution"),
+                  "a derive key check runs after missing-distribution (0.8 rulings 29 and 32)");
+            check(begins(error_text([&] {
+                      gt::Engine e2;
+                      e2.load_model("module x\nversion 0.1.0\nsource s\nkey a string -\nderive x.a nosuchfn x.a\n");
+                  }),
+                         "bad-directive"),
+                  "a derive line refused on its own text is raised as the file is read (0.8 ruling 32)");
         } catch (const std::exception& ex) {
             check(false, std::string("0.7 behaviour threw: ") + ex.what());
         }
@@ -788,7 +804,10 @@ int main() {
             made2.fields["q.y"] = gt::Value::of_int(100);
             eq(r.encode("s2", made2), "0172020001", "an item kind by 'requires'; the 'also' key written when the field key is absent");
             made2.lists["q.items"][0].kind = {"s2", "nope"};
-            check(begins(error_text([&] { r.encode("s2", made2); }), "no-kind"), "an item naming a kind its group does not have");
+            eq(r.encode("s2", made2), "0172020001", "an item naming a kind its group does not have selects by 'requires' (ruling 26)");
+            made2.lists["q.items"][0].kind = {"s2", "a"};
+            eq(r.encode("s2", made2), "017100020001", "an item naming a kind its group has is written as that kind");
+            made2.lists["q.items"][0].kind = {};
             check(begins(error_text([&] { r.decode("s2", "01 53"); }), "no-kind"), "an item that matches no kind");
             check(begins(error_text([&] { r.decode("s2", "00 00 00"); }), "malformed-wire"), "a stated length below 'plus'");
             check(begins(error_text([&] { r.decode("s2", "00 03 03 07 00"); }), "malformed-wire"),
@@ -848,6 +867,85 @@ int main() {
                          "bad-directive"),
                   "'layout sequential' on a wire other than bits");
 
+            // 0.8 rulings 16 to 30
+            // 16: the earliest key the entity holds; with none, the default of the earliest key that has one
+            r.add_pack(gt::parse_pack(seq + "format s5\nfield q.n 8 uint\nalso q.x\nalso q.y\ndefault q.x 4\ndefault q.y 9\n"));
+            gt::Entity m5;
+            eq(r.encode("s5", m5), "04", "no key held: the default of the earliest key that has one");
+            m5.fields["q.y"] = gt::Value::of_int(7);
+            eq(r.encode("s5", m5), "07", "a held key is written, not the default of an earlier key");
+            m5.fields["q.n"] = gt::Value::of_int(2);
+            eq(r.encode("s5", m5), "02", "the earliest held key is written");
+            // 20: align stops at the end of the input or extent; pad and const do not
+            r.add_pack(gt::parse_pack(seq + "format s6\nfield q.n 4 uint\nalign 16\n"));
+            check(r.decode("s6", "50").fields.at("q.n").i == 5, "align stops at the end of the input");
+            eq(r.convert("s6", "s6", "50"), "5000", "align is written in full");
+            r.add_pack(gt::parse_pack(seq + "format s7\nlength 8\n  field q.x 4 uint\n  align 64\nend\nfield q.y 8 uint\n"));
+            gt::Entity e7 = r.decode("s7", "01 50 07");
+            check(e7.fields.at("q.x").i == 5 && e7.fields.at("q.y").i == 7, "align stops at the end of its extent");
+            eq(r.encode("s7", e7), "075000000000000007", "align in an extent is written in full, from the message start");
+            r.add_pack(gt::parse_pack(seq + "format s8\nfield q.n 8 uint\npad 8\n"));
+            r.add_pack(gt::parse_pack(seq + "format s9\nfield q.n 8 uint\nconst 8 1\n"));
+            check(begins(error_text([&] { r.decode("s8", "05"); }), "malformed-wire"), "a pad past the end of the input");
+            check(begins(error_text([&] { r.decode("s9", "05"); }), "malformed-wire"), "a const past the end of the input");
+            // 21: an indicator bit at the end of an extent reads as 0
+            r.add_pack(gt::parse_pack(seq + "format s10\nlength 8 bits\n  group q.items more\n    field q.x 7 uint\n  end\nend\n"));
+            gt::Entity e10 = r.decode("s10", "08 89");
+            check(e10.lists.at("q.items").size() == 2 && e10.lists.at("q.items")[0].fields.at("q.x").i == 9 &&
+                      e10.lists.at("q.items")[1].fields.empty(),
+                  "a 'more' bit at the end of the extent reads 0: one last item, of lines that read as absent");
+            check(r.decode("s10", "00").lists.count("q.items") == 0, "a group that starts at the end of its extent is an absent list");
+            // 34: a `while` or `fx` group at the end of its extent is an absent list, as a `more` group is
+            r.add_pack(gt::parse_pack(seq + "format s12\nlength 8 bits\n  group q.items while\n    field q.x 7 uint\n  end\nend\n"
+                                            "length 8 bits\n  group q.subs fx\n    field q.y 7 uint\n  end\nend\n"));
+            gt::Entity e12 = r.decode("s12", "00 00");
+            check(e12.lists.empty(), "a 'while' and an 'fx' group whose first indicator lies at the end of the extent");
+            // 33: when both groups of a list are on the wire, decode keeps the later group's items
+            r.add_pack(gt::parse_pack(seq + "format s13\nopt\n  group q.items count 8\n    field q.x 8 uint\n  end\nend\n"
+                                            "opt\n  group q.items count 8\n    field q.x 8 uint\n  end\nend\n"));
+            gt::Entity e13 = r.decode("s13", "80 80 c0 80 40 80");
+            check(e13.lists.at("q.items").size() == 2 && e13.lists.at("q.items")[1].fields.at("q.x").i == 2,
+                  "two groups of one list on the wire: the later group's items are kept");
+            // 23: a list in two groups of one scope
+            const std::string g = "group q.items count 8\n  field q.x 8 uint\nend\n";
+            check(load_error("layout sequential\nopt\n" + g + "end\nopt\n" + g + "end\n").empty(),
+                  "a list in two groups in different 'opt' blocks loads");
+            check(load_error("layout sequential\npresence p 2\nif p.1 !p.2\n" + g + "end\nif p.2\n" + g + "end\n").empty(),
+                  "a list in two groups in different 'if' blocks loads");
+            check(begins(load_error("layout sequential\n" + g + g), "bad-directive"), "a list in two groups outside any block");
+            check(begins(load_error("layout sequential\npresence p 2\nif p.1\n" + g + "if p.2\n" + g + "end\nend\n"), "bad-directive"),
+                  "a list in two groups, the block of one enclosing the block of the other (ruling 33)");
+            check(load_error("layout sequential\nopt\nopt\n" + g + "end\nopt\n" + g + "end\nend\n").empty(),
+                  "a list in two groups in sibling blocks of one outer block loads");
+            check(begins(load_error("layout sequential\nopt\n" + g + g + "end\n"), "bad-directive"), "a list in two groups of one block");
+            check(begins(load_error("layout sequential\n" + g + "opt\n" + g + "end\n"), "bad-directive"),
+                  "a list in two groups, one of them outside any block");
+            check(begins(load_error("layout sequential\nlength 8\n" + g + "end\nlength 8\n" + g + "end\n"), "bad-directive"),
+                  "a list in two groups in two 'length' blocks");
+            check(begins(load_error("layout sequential\n" + g + "kind a\nwhen 8 1\n" + g), "bad-directive"),
+                  "a list in the common lines and in a kind");
+            check(load_error("layout sequential\nkind a\nwhen 8 1\n" + g + "kind b\nwhen 8 2\n" + g).empty(),
+                  "a list in two kinds loads");
+            // 24: header and table directives inside any block
+            for (const char* line : {"format z2", "version 2", "distribution public", "source s", "uses q", "wire bits",
+                                     "layout sequential", "bit_order msb", "map t 1 2", "typemap a b"}) {
+                for (const char* block : {"opt", "chain", "length 8", "group q.items count 8"})
+                    check(begins(load_error("layout sequential\n" + std::string(block) + "\n  " + line + "\nend\n"), "bad-directive"),
+                          std::string("'") + line + "' inside '" + block + "'");
+                check(begins(load_error("layout sequential\npresence p 1\nif p.1\n  " + std::string(line) + "\nend\n"), "bad-directive"),
+                      std::string("'") + line + "' inside an 'if'");
+            }
+            // 26: an item carried to a group that lacks its kind selects by `requires`
+            r.add_pack(gt::parse_pack(seq + "format s11\npresence p 2\npad 6\n"
+                                            "if p.1 !p.2\n  group q.items count 8\n    kind small\n    when 8 1\n"
+                                            "    requires q.x\n    field q.x 8 uint\n    kind tiny\n    when 8 0\n  end\nend\n"
+                                            "if p.2\n  group q.items count 8\n    kind wide\n    when 8 2\n"
+                                            "    requires q.x\n    field q.x 16 uint\n    kind none\n    when 8 0\n  end\nend\n"));
+            gt::Entity e11 = r.decode("s11", "80 01 01 05");
+            check(e11.lists.at("q.items")[0].kind == std::make_pair(std::string("s11"), std::string("small")),
+                  "Item.kind holds the format with the kind name");
+            eq(r.encode("s11", e11), "c001020005", "an item whose kind the written group lacks selects by 'requires'");
+
             // 0.7 rulings 11 to 21, pinned
             auto load_error7 = [&](const std::string& body) {
                 return error_text([&] {
@@ -895,6 +993,42 @@ int main() {
             check(begins(model_error("derive o.i not o.i o.i\n", true, false), "bad-directive"), "'not' of two arguments");
             check(begins(model_error("derive o.i text_of o.i\n", true, false), "bad-directive"), "text_of on an int target");
 
+            // 0.8 ruling 29: the order of a module's checks
+            auto module_error = [&](const std::string& text, bool limit_public, bool twice) {
+                return error_text([&] {
+                    gt::Engine e6;
+                    e6.load_model(core8);
+                    std::string q = mod8;
+                    q.replace(q.find("public"), 6, "controlled");
+                    if (!limit_public) e6.load_model(q);
+                    if (twice) e6.load_model("module o\nversion 0.1.0\ndistribution public\nsource s\nkey i int -\n");
+                    if (limit_public) e6.set_max_distribution(gt::Distribution::Public);
+                    e6.load_model("module o\nversion 0.1.0\n" + text + "key i int -\nderive o.i copy o.nokey\n");
+                });
+            };
+            check(begins(module_error("uses nosuch\n", true, false), "missing-distribution"), "a module's missing-distribution comes first");
+            check(begins(module_error("distribution controlled\nuses nosuch\n", true, false), "missing-source"),
+                  "missing-source before distribution-refused");
+            check(begins(module_error("distribution controlled\nsource s\nuses nosuch\n", true, false), "distribution-refused"),
+                  "distribution-refused before unknown-module");
+            check(begins(module_error("distribution public\nsource s\nuses nosuch\n", false, false), "unknown-module"),
+                  "unknown-module before the derive checks");
+            check(begins(module_error("distribution public\nsource s\nuses q\n", false, false), "distribution-violation"),
+                  "distribution-violation before the derive checks");
+            check(begins(module_error("distribution public\nsource s\n", false, true), "bad-directive"),
+                  "the derive checks before duplicate-module");
+            check(begins(error_text([&] { gt::parse_model("module o\nversion 0.1.0\nkey i int -\nderive o.i nosuchfn o.i\n"); }),
+                         "bad-directive"),
+                  "parse_model: an unknown derive function before missing-distribution (0.6 ruling 9)");
+            check(begins(error_text([&] { gt::parse_model("module o\nversion 0.1.0\nkey i int -\nderive o.i copy o.nokey\n"); }),
+                         "missing-distribution"),
+                  "parse_model: missing-distribution before an undeclared derive key");
+            check(begins(error_text([&] {
+                      gt::parse_model("module o\nversion 0.1.0\ndistribution public\nsource s\nkey i int -\nderive o.i copy o.nokey\n");
+                  }),
+                         "bad-directive"),
+                  "parse_model: an undeclared derive key of the module itself");
+
             gt::Engine d;
             d.load_model(core8);
             d.load_model(mod8);
@@ -918,9 +1052,87 @@ int main() {
             check(de2.fields.count("o.i") == 0 && de2.fields.at("o.a").i == 1 && de2.fields.at("o.no").i == 0 &&
                       de2.fields.count("o.f") == 0,
                   "parse_int of text that is not an integer leaves the target absent; any with one argument present");
+            // 0.8 ruling 28: parse_int accepts an optional '-' and then digits,
+            // leading zeros included, within 64 bits
+            const std::int64_t kMax = 9223372036854775807;
+            const std::pair<const char*, std::int64_t> ints[] = {
+                {"0", 0}, {"007", 7}, {"-007", -7}, {"-0", 0}, {"9223372036854775807", kMax},
+                {"-9223372036854775808", -kMax - 1}, {"0009223372036854775807", kMax}};
+            for (const auto& c : ints) {
+                gt::Entity pe;
+                pe.fields["uid"] = gt::Value::of_string(c.first);
+                d.complete(pe);
+                check(pe.fields.count("o.i") == 1 && pe.fields.at("o.i").i == c.second, std::string("parse_int of \"") + c.first + "\"");
+            }
+            for (const char* text : {"", "-", "+5", " 5", "5 ", "1e3", "--5", "5-", "1.0", "0x10", "9223372036854775808",
+                                     "-9223372036854775809", "99999999999999999999999"}) {
+                gt::Entity pe;
+                pe.fields["uid"] = gt::Value::of_string(text);
+                d.complete(pe);
+                check(pe.fields.count("o.i") == 0, std::string("parse_int of \"") + text + "\" leaves the target absent");
+            }
         } catch (const std::exception& ex) {
             check(false, std::string("0.8 behaviour threw: ") + ex.what());
         }
+    }
+
+    // Engine::load_packs: only the packs named, with the modules they need.
+    {
+        namespace fs = std::filesystem;
+        const fs::path dir = fs::temp_directory_path() /
+                             ("goat-transformers-unit-" +
+                              std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+        try {
+            auto put = [&](const fs::path& rel, const std::string& text) {
+                fs::create_directories((dir / rel).parent_path());
+                std::ofstream out(dir / rel, std::ios::binary);
+                out << text;
+            };
+            const std::string mh = "version 0.1.0\ndistribution public\nsource s\n";
+            put("model/core.def", "module core\n" + mh + "key uid string -\n");
+            put("model/base.def", "module base\n" + mh + "key n int -\n");
+            // The file name is not the module name: a module is found by its `module` line.
+            put("model/zz-file.def", "module top\n" + mh + "uses base\nkey m int -\nderive top.m copy base.n\n");
+            put("model/side.def", "module side\nversion 0.1.0\ndistribution controlled\nsource s\nkey k int -\n");
+            put("packs/a/pack.def", HDR "format fmt-a\nversion 1\nwire json\nfield uid id string\n");
+            put("packs/b/pack.def", HDR "format fmt-b\nversion 1\nuses top\nwire json\nfield uid id string\nfield top.m m int\n");
+            put("packs/c/pack.def", "distribution controlled\nsource s\nformat fmt-c\nversion 1\nuses side\nwire json\nfield side.k k int\n");
+            const std::string packs = (dir / "packs").string();
+
+            gt::Engine all = gt::Engine::load(packs);
+            check(all.formats() == std::vector<std::string>({"fmt-a", "fmt-b", "fmt-c"}) && all.modules().size() == 4,
+                  "load: every pack and every module");
+            gt::Engine one = gt::Engine::load_packs(packs, {"b"});
+            check(one.formats() == std::vector<std::string>({"fmt-b"}), "load_packs: only the pack named");
+            check(one.modules() == std::vector<std::string>({"base", "core", "top"}),
+                  "load_packs: core, the modules the pack uses and the modules those use");
+            eq(one.convert("fmt-b", "fmt-b", "{\"id\":\"u\",\"m\":3}"), "{\"id\":\"u\",\"m\":3}", "load_packs: the pack converts");
+            gt::Engine two = gt::Engine::load_packs(packs, {"b", "a", "b"});
+            check(two.formats() == std::vector<std::string>({"fmt-a", "fmt-b"}), "load_packs: several packs, a name given twice loaded once");
+            check(gt::Engine::load_packs(packs, {"a"}).modules() == std::vector<std::string>({"core"}),
+                  "load_packs: a pack that uses no module needs core only");
+            check(gt::Engine::load_packs(packs, {}).formats().empty(), "load_packs: no name, no pack");
+            // A controlled module no named pack needs is not loaded, so a public limit does not refuse it.
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { gt::Engine::load(packs, "", gt::Distribution::Public); }, "load: a controlled module under a public limit");
+            check(gt::Engine::load_packs(packs, {"a", "b"}, "", gt::Distribution::Public).formats().size() == 2,
+                  "load_packs: a module no named pack needs is not loaded");
+            expect_error(gt::ErrorKind::DistributionRefused,
+                         [&] { gt::Engine::load_packs(packs, {"c"}, "", gt::Distribution::Public); },
+                         "load_packs: the checks of a named pack still apply");
+            expect_error(gt::ErrorKind::Io, [&] { gt::Engine::load_packs(packs, {"nosuch"}); }, "load_packs: a name that is not a pack");
+            expect_error(gt::ErrorKind::Io, [&] { gt::Engine::load_packs(packs, {"../packs/a"}); }, "load_packs: a name is not a path");
+            expect_error(gt::ErrorKind::Io, [&] { gt::Engine::load_packs(packs, {""}); }, "load_packs: an empty name");
+            expect_error(gt::ErrorKind::Io, [&] { gt::Engine::load_packs(packs, {"a"}, (dir / "nomodels").string()); },
+                         "load_packs: a named models directory that does not exist");
+            fs::remove(dir / "model" / "base.def");
+            expect_error(gt::ErrorKind::UnknownModule, [&] { gt::Engine::load_packs(packs, {"b"}); },
+                         "load_packs: a needed module that no file defines");
+        } catch (const std::exception& ex) {
+            check(false, std::string("load_packs threw: ") + ex.what());
+        }
+        std::error_code ec;
+        fs::remove_all(dir, ec);
     }
 
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";

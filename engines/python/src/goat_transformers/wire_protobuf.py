@@ -130,10 +130,11 @@ class Message:
                     same.append((wt, raw))
         return occ
 
-    def sub(self, num, locator=None, strict=True):
+    def sub(self, num, locator=None):
         """-> the submessage in the last occurrence of field `num`, or None
-        when the field does not occur. A field that is not a submessage is a
-        decode error when `strict`, otherwise it does not occur."""
+        when the field does not occur. A field that is not a submessage is
+        `malformed-wire` (ruling 13 of 0.7, ruling 30 of 0.8); `when_holds`
+        turns that into "does not hold" for a `when` path (ruling 31)."""
         subs = self._subs
         if subs is None:
             subs = self._subs = {}
@@ -145,35 +146,28 @@ class Message:
             return None
         wt, raw = same[-1]
         if wt != LEN:
-            if not strict:
-                return None
             raise MalformedWire(
                 "path segment %d of %s is not a submessage (wire type %d)" % (num, locator, wt),
                 format=self.fmt, locator=locator,
             )
-        try:
-            sub = subs[num] = Message(self.fmt, parse_message(raw, self.fmt, locator=locator))
-        except MalformedWire:
-            if not strict:
-                return None  # not a submessage: a `when` under it does not hold
-            raise
+        sub = subs[num] = Message(self.fmt, parse_message(raw, self.fmt, locator=locator))
         return sub
 
-    def descend(self, path, n, locator=None, strict=True):
+    def descend(self, path, n, locator=None):
         """-> the submessage reached by the first `n` numbers of `path` (the
         last occurrence of each), or None when it does not occur."""
         msg = self
         for k in range(n):
-            msg = msg.sub(path[k], locator, strict)
+            msg = msg.sub(path[k], locator)
             if msg is None:
                 return None
         return msg
 
-    def lookup(self, path, locator=None, strict=True):
+    def lookup(self, path, locator=None):
         """-> (wire_type, raw) of the field at `path` (the last occurrence of
         each number), or None when it does not occur."""
         n = len(path) - 1
-        msg = self.descend(path, n, locator, strict) if n else self
+        msg = self.descend(path, n, locator) if n else self
         if msg is None:
             return None
         same = msg.occurrences().get(path[n])
@@ -197,8 +191,12 @@ def parse(pack, data):
 
 def when_holds(pack, msg, when):
     """`present`: the field at the path occurs on the wire. An integer: the
-    field is a varint equal to it."""
-    leaf = msg.lookup(when.loc, locator=when.locator, strict=False)
+    field is a varint equal to it. A `when` path whose prefix is not a
+    submessage does not hold; it is not an error (ruling 31 of 0.8)."""
+    try:
+        leaf = msg.lookup(when.loc, locator=when.locator)
+    except MalformedWire:
+        return False
     if leaf is None:
         return False
     if when.present:

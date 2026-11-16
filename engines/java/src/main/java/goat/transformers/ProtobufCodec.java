@@ -116,7 +116,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         try {
             v = find(top, (int[]) when.loc);
         } catch (NotSubmessage ex) {
-            return false;
+            return false;   // a when path whose prefix is not a submessage does not hold (ruling 31 of 0.8)
         }
         if (v == null) return false;
         if (when.present) return true;

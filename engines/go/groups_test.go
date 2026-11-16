@@ -280,10 +280,15 @@ func TestRulingsOf06(t *testing.T) {
 	if _, ok := ent.Get("m"); ok {
 		t.Error("an integer offset that overflows must leave the target absent")
 	}
-	// Ruling 9: a derive check comes before missing-distribution.
-	err := New().LoadModel([]byte("module core\nversion 0.1.0\nsource s\nkey a string -\nderive a copy zz\n"), "core.def")
+	// Ruling 9: a derive line the file alone refuses comes before
+	// missing-distribution; the checks of its keys come after (0.8 ruling 29).
+	err := New().LoadModel([]byte("module core\nversion 0.1.0\nsource s\nkey a string -\nderive a nosuchfn a\n"), "core.def")
 	if !IsKind(err, ErrBadDirective) {
-		t.Errorf("derive check before missing-distribution: got %v", err)
+		t.Errorf("derive line error before missing-distribution: got %v", err)
+	}
+	err = New().LoadModel([]byte("module core\nversion 0.1.0\nsource s\nkey a string -\nderive a copy zz\n"), "core.def")
+	if !IsKind(err, ErrMissingDistribution) {
+		t.Errorf("missing-distribution before the derive key checks: got %v", err)
 	}
 	// Ruling 4: a line whose transform succeeds and whose table has no entry
 	// for a value of another type fails the decode, whatever a later line of

@@ -121,13 +121,15 @@ func ParseModuleFile(path string) (*Module, error) {
 // and types of its `derive` lines are checked when the module is loaded into
 // an engine.
 func ParseModule(text []byte, source string) (*Module, error) {
-	return parseModule(text, source, nil)
+	return parseModule(text, source)
 }
 
-// parseModule parses model module text. check, when not nil, runs after the
-// file is read and before the missing-distribution check (0.6 ruling 9: the
-// place of the `derive` checks).
-func parseModule(text []byte, source string, check func(*Module) error) (*Module, error) {
+// parseModule parses model module text. A `derive` line the file alone
+// refuses (its function, parameter or argument count) is a line error,
+// reported as the file is read and so before missing-distribution (0.6
+// ruling 9, load vector 131). The checks of its keys and types against the
+// loaded modules come later, in the order of 0.8 ruling 29.
+func parseModule(text []byte, source string) (*Module, error) {
 	m := &Module{Source: source, byName: map[string]*ModuleKey{}, lists: map[string]*ModuleList{}}
 	perr := func(kind ErrorKind, line int, format string, a ...any) error {
 		return &Error{Kind: kind, Module: m.Name, Source: source, Line: line, Detail: fmt.Sprintf(format, a...)}
@@ -261,11 +263,6 @@ func parseModule(text []byte, source string, check func(*Module) error) (*Module
 	for i := range m.Lists {
 		m.lists[m.Lists[i].Name] = &m.Lists[i]
 	}
-	if check != nil {
-		if err := check(m); err != nil {
-			return nil, err
-		}
-	}
 	if m.Distribution == "" {
 		return nil, perr(ErrMissingDistribution, 0, "module has no distribution line")
 	}
@@ -276,6 +273,30 @@ func parseModule(text []byte, source string, check func(*Module) error) (*Module
 		return nil, perr(ErrBadDirective, 0, "missing module directive")
 	}
 	return m, nil
+}
+
+// moduleHeader reads the `module` line and the `uses` lines of a module file
+// without checking anything else. A file that does not read gives "".
+func moduleHeader(path string) (name string, uses []string) {
+	text, err := os.ReadFile(path)
+	if err != nil {
+		return "", nil
+	}
+	for _, ln := range strings.Split(string(text), "\n") {
+		toks, err := tokenize(ln)
+		if err != nil || len(toks) != 2 {
+			continue
+		}
+		switch toks[0] {
+		case "module":
+			if name == "" {
+				name = toks[1]
+			}
+		case "uses":
+			uses = append(uses, toks[1])
+		}
+	}
+	return name, uses
 }
 
 // moduleFiles lists every *.def under dir in loading order: core.def first
@@ -301,24 +322,7 @@ func moduleFiles(dir string) ([]string, error) {
 	uses := make([][]string, len(matches))
 	fileOf := map[string]int{}
 	for i, f := range matches {
-		text, err := os.ReadFile(f)
-		if err != nil {
-			continue
-		}
-		for _, ln := range strings.Split(string(text), "\n") {
-			toks, err := tokenize(ln)
-			if err != nil || len(toks) != 2 {
-				continue
-			}
-			switch toks[0] {
-			case "module":
-				if names[i] == "" {
-					names[i] = toks[1]
-				}
-			case "uses":
-				uses[i] = append(uses[i], toks[1])
-			}
-		}
+		names[i], uses[i] = moduleHeader(f)
 		if names[i] != "" {
 			if _, dup := fileOf[names[i]]; !dup {
 				fileOf[names[i]] = i

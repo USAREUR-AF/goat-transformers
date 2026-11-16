@@ -1,0 +1,10 @@
+{
+  "name": "ruling-22-block-that-held-only-its-const-is-not-written-back",
+  "from": "conformance-seq-rulings-b",
+  "to": "conformance-seq-rulings-b",
+  "input": "01c00202d50300",
+  "expect": "014002028300",
+  "model": {
+    "probe.c1": "6"
+  }
+}

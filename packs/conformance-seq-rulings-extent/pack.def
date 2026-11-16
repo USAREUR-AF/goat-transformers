@@ -1,0 +1,109 @@
+# Conformance probe pack for rulings 20 and 21 of spec 0.8: what a line reads
+# at the end of a `length` extent, and skips at the end of the input. Most
+# significant bit first. Public. One kind per case, told apart by byte 1.
+#
+#   byte 0      n
+#   byte 1      the kind
+#   1 while     length in bits: x, then nums, a 1 bit before each item
+#   2 fx        length in bits: x, then nums, a bit after each item
+#   3 more      length in bits: x, then nums, a bit before each item that says
+#               whether another follows it
+#   4 chain     length in bits: c1, an extension bit, c2, an extension bit
+#   5 presence  length in bits: x, presence p (2 bits), y when p.1, presence
+#               f (fx octets), z when f.1
+#   6 skips     length in bits: x, a constant byte, a pad byte, an optional w,
+#               a nested length with qty; after the block, y
+#   7 align     x in 4 bits, then zero bits to a multiple of 16
+#   8 inalign   length in bytes: x in 4 bits, then zero bits to a multiple of
+#               64 from the message start; after the block, y
+#   9 const     x, then a constant byte
+#   10 pad      x, then a pad byte
+format     conformance-seq-rulings-extent
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+kind    while
+when    8  1
+length 8 bits
+  field  probe.x  8  uint
+  group  probe.nums while
+    field  probe.val  7  uint
+  end
+end
+kind    fx
+when    8  2
+length 8 bits
+  field  probe.x  8  uint
+  group  probe.nums fx
+    field  probe.val  7  uint
+  end
+end
+kind    more
+when    8  3
+length 8 bits
+  field  probe.x  8  uint
+  group  probe.nums more
+    field  probe.val  7  uint
+  end
+end
+kind    chain
+when    8  4
+length 8 bits
+  chain
+    field  probe.c1  7  uint
+    fx
+    field  probe.c2  7  uint
+    fx
+  end
+end
+kind    presence
+when    8  5
+length 8 bits
+  field  probe.x  8  uint
+  presence p 2
+  if p.1
+    field  probe.y  8  uint
+  end
+  presence f fx
+  if f.1
+    field  probe.z  8  uint
+  end
+end
+kind    skips
+when    8  6
+length 8 bits
+  field  probe.x  8  uint
+  const 8 1
+  pad 8
+  opt
+    field  probe.w  7  uint
+  end
+  length 8
+    field  probe.qty  8  uint
+  end
+end
+field   probe.y  8  uint
+kind    align
+when    8  7
+field   probe.x  4  uint
+align 16
+kind    inalign
+when    8  8
+length 8
+  field  probe.x  4  uint
+  align 64
+end
+field   probe.y  8  uint
+kind    const
+when    8  9
+field   probe.x  8  uint
+const 8 1
+kind    pad
+when    8  10
+field   probe.x  8  uint
+pad 8

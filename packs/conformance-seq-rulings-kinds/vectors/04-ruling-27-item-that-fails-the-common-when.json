@@ -1,0 +1,7 @@
+{
+  "name": "ruling-27-item-that-fails-the-common-when",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "010002018107",
+  "expect_error": "no-kind"
+}

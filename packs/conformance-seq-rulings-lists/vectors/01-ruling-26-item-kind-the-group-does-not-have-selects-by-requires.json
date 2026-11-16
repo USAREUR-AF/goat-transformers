@@ -1,0 +1,12 @@
+{
+  "name": "ruling-26-item-kind-the-group-does-not-have-selects-by-requires",
+  "from": "conformance-seq-rulings-lists",
+  "to": "conformance-seq-rulings-lists",
+  "input": "0180010105",
+  "expect": "01c001020005",
+  "model": {
+    "probe.recs.#": "1",
+    "probe.recs[0].@kind": "small",
+    "probe.recs[0].probe.x": "5"
+  }
+}

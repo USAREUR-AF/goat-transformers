@@ -105,7 +105,9 @@ line({sfield, Keys, Len, Tr, LenT, Swap, Trim}, Ext, #d{pos = Pos} = D) ->
     end;
 line({sconst, Len, _}, Ext, D) -> skip(Len, Ext, D);
 line({pad, Len}, Ext, D) -> skip(Len, Ext, D);
-line({align, N}, Ext, #d{pos = Pos} = D) -> skip((N - Pos rem N) rem N, Ext, D);
+%% `align` stops at the end of the input or extent without error
+line({align, N}, Ext, #d{pos = Pos} = D) ->
+    D#d{pos = max(Pos, min(Pos + (N - Pos rem N) rem N, limit(Ext, D)))};
 line({swhen, Len, Val}, Ext, #d{pos = Pos, pack = Pack} = D) ->
     case whens([{swhen, Len, Val}], Pos, Ext, D) of
         false -> gt_engine:conv_error('no-kind', Pack, "a common when does not hold", []);
@@ -294,8 +296,10 @@ more(More, Body, Ext, D, Acc) ->
     case More of
         0 -> {lists:reverse([Item | Acc]), D1};
         1 ->
+            %% an indicator bit at the end of a `length` extent reads as 0:
+            %% the item it stands before is the last
             case bit(Ext, D1) of
-                absent -> {lists:reverse([Item | Acc]), D1};
+                absent -> more(0, Body, Ext, D1, [Item | Acc]);
                 {B, D2} -> more(B, Body, Ext, D2, [Item | Acc])
             end
     end.
@@ -550,7 +554,13 @@ scan1({chain, First, Parts, _}, Src, Id, Pack, Acc) ->
 scan1({sgroup, List, _, Body}, #{lists := Lists}, Id, Pack, Acc) ->
     lists:foldl(
       fun(Item, A) ->
-              {Lines, ISrc} = item_scope(Item, Body, Pack),
-              scan(Lines, ISrc, Id, Pack, A)
+              %% an item that selects no kind of this group fails when the
+              %% group is written, and the group may stand in a block that
+              %% is not
+              try item_scope(Item, Body, Pack) of
+                  {Lines, ISrc} -> scan(Lines, ISrc, Id, Pack, A)
+              catch
+                  error:{convert_error, 'no-kind', _} -> A
+              end
       end, Acc, maps:get(List, Lists, []));
 scan1(_, _Src, _Id, _Pack, Acc) -> Acc.

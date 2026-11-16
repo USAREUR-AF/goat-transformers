@@ -1,0 +1,59 @@
+# Conformance probe pack for rulings 16, 19 and 22 of spec 0.8, most
+# significant bit first. Public. No kinds.
+#
+#   byte 0      n
+#   byte 1      presence p.1 to p.3, then 5 unused bits
+#   byte 2      w, and on the same bits val through the table `t`, and qty
+#   1 bit       whether x follows; x in 8 bits
+#   8 bits      y
+#   p.1         z in 8 bits unless p.2 is 1, then the constant 170
+#   p.2         c1 in 8 bits
+#   p.3         a length in bytes, then: the constant 1 in 7 bits, an
+#               extension bit, one bit that says whether c2 follows, c2 in 7 bits
+#
+# val and qty have a default and w has none: when the entity holds none of
+# the three, the byte is the default of val (ruling 16). The default of y is
+# written inside the `opt` block and is the message's (ruling 19).
+format     conformance-seq-rulings-b
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+presence p 3
+pad 5
+field   probe.w  8  uint
+also    probe.val  via t
+also    probe.qty
+default probe.val  200
+default probe.qty  9
+opt
+  field  probe.x  8  uint
+  default probe.y  5
+end
+field   probe.y  8  uint
+if p.1
+  if !p.2
+    field  probe.z  8  uint
+  end
+  const 8 170
+end
+if p.2
+  field  probe.c1  8  uint
+end
+if p.3
+  length 8
+    chain
+      const 7 1
+      fx
+      opt
+        field  probe.c2  7  uint
+      end
+    end
+  end
+end
+map     t  1  100
+map     t  2  200

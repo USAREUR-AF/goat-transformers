@@ -1,0 +1,12 @@
+{
+  "name": "ruling-23-second-group-of-the-list-roundtrip",
+  "from": "conformance-seq-rulings-lists",
+  "to": "conformance-seq-rulings-lists",
+  "input": "01c001020005",
+  "expect": "01c001020005",
+  "model": {
+    "probe.recs.#": "1",
+    "probe.recs[0].@kind": "wide",
+    "probe.recs[0].probe.x": "5"
+  }
+}

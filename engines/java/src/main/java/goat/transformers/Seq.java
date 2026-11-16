@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,8 +127,9 @@ final class Seq {
             Kind kind;
             Map<String, Node> kindNames;
             boolean kindLineSeen;
-            final Set<String> lists = new HashSet<>();
-            Set<String> kindLists;
+            /** The groups of each list in this scope: for each, its enclosing {@code if} and {@code opt} blocks, innermost first. */
+            final Map<String, List<List<Frame>>> lists = new HashMap<>();
+            Map<String, List<List<Frame>>> kindLists;
             /** The field line directly before the line being read, in this block. */
             Node lastField;
             boolean lastWasFx;
@@ -229,7 +229,11 @@ final class Seq {
             Node before = f.lastField;
             f.lastField = null;
             f.lastWasFx = kw.equals("fx");
-            if (f.isBody() && f.kind != null && !kw.equals("when") && !kw.equals("kind")) f.kindLineSeen = true;
+            // requires and default lines do not count as lines of the kind: a when may follow them (ruling 18 of 0.8)
+            if (f.isBody() && f.kind != null && !kw.equals("when") && !kw.equals("kind") && !kw.equals("requires")
+                    && !kw.equals("default")) {
+                f.kindLineSeen = true;
+            }
             switch (kw) {
                 case "field": {
                     if (args.size() < 3) {
@@ -435,10 +439,23 @@ final class Seq {
                     } else {
                         throw bad(format, mode, where + ": " + form);
                     }
-                    // Within one scope (common plus one kind, or one group body) a list is mapped by at most one group.
+                    // Within one scope (common plus one kind, or one group body) two groups map one list only when
+                    // they sit in if or opt blocks neither of which encloses the other (rulings 23 and 33 of 0.8).
                     Frame b = bodyFrame();
-                    Set<String> lists = b.kindLists != null ? b.kindLists : b.lists;
-                    if (!lists.add(n.list)) throw bad(format, mode, where + ": list " + n.list + " is mapped by two groups of one scope");
+                    List<Frame> blocks = new ArrayList<>();
+                    for (Frame x : stack) {
+                        if (x.isBody()) break;
+                        if (x.type == 'I' || x.type == 'O') blocks.add(x);
+                    }
+                    Map<String, List<List<Frame>>> lists = b.kindLists != null ? b.kindLists : b.lists;
+                    List<List<Frame>> others = lists.computeIfAbsent(n.list, k -> new ArrayList<>());
+                    for (List<Frame> o : others) {
+                        if (blocks.isEmpty() || o.isEmpty() || o.contains(blocks.get(0)) || blocks.contains(o.get(0))) {
+                            throw bad(format, mode, where + ": list " + n.list
+                                    + " is mapped by two groups of one scope that are not in different if or opt blocks");
+                        }
+                    }
+                    others.add(blocks);
                     n.items = new Body();
                     f.lines.add(n);
                     typed.add(new Pack.Group(n.list, mode, new Pack.Scope(new ArrayList<>(), new LinkedHashMap<>()), 0, null, -1, ln));
@@ -459,7 +476,10 @@ final class Seq {
                     f.kind = k;
                     f.lines = k.lines;
                     f.kindNames = new HashMap<>();
-                    f.kindLists = new HashSet<>(f.lists);
+                    f.kindLists = new HashMap<>();
+                    for (Map.Entry<String, List<List<Frame>>> l : f.lists.entrySet()) {
+                        f.kindLists.put(l.getKey(), new ArrayList<>(l.getValue()));
+                    }
                     f.kindLineSeen = false;
                     break;
                 }

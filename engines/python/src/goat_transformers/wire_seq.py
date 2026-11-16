@@ -5,7 +5,10 @@ written, in file order from a cursor.
 Decode keeps two kinds of end. The end of the input, or the length a
 `length ... whole` line states, is hard: reading past it is `malformed-wire`.
 The end of a `length` block is soft: a line that starts at or after it reads
-as absent, a line that straddles it is `malformed-wire` (ruling 7 of 0.8).
+as absent, a line that straddles it is `malformed-wire` (ruling 7 of 0.8). An
+indicator bit and a presence field there read as 0, the continuation octet of
+an `fx` presence there is `malformed-wire` (ruling 21), and `align` stops at
+either end without error (ruling 20).
 
 Encode computes a presence bit before it writes it: the bit is 1 when some
 `if` block naming it without `!` has content (a present key, a key with a
@@ -80,9 +83,10 @@ class _Reader:
             elif t == T_CONST or t == T_PAD:
                 self.take(nd.length, "a '%s' of %d bit(s)" % ("const" if t == T_CONST else "pad", nd.length))
             elif t == T_ALIGN:
-                n = (-self.pos) % nd.length
-                if n:
-                    self.take(n, "the bits up to a multiple of %d" % nd.length)
+                # ruling 20 of 0.8: `align` stops at the end of the input or extent without error
+                end = min(self.pos + (-self.pos) % nd.length, self.limit(), self.hard)
+                if end > self.pos:
+                    self.pos = end
             elif t == T_WHEN:  # a common `when`
                 if not self.when_holds(nd):
                     raise NoKind("a common 'when' does not hold (%d bits, %d)" % (nd.length, nd.value),
@@ -181,6 +185,8 @@ class _Reader:
             while True:
                 start = self.take(8, "a presence octet of %s" % nd.name)
                 if start is None:
+                    if octet:  # ruling 21 of 0.8: a continuation octet at the end of the extent
+                        raise self.short("a continuation octet of presence %s" % nd.name)
                     break
                 for k in range(7):
                     if msg.uint(start + k, 1):
@@ -270,12 +276,12 @@ class _Reader:
         elif mode == "more":
             while True:
                 start = self.take(1, "the bit before an item of group %s" % nd.list)
-                if start is None:
-                    if not items:
-                        return
-                    break
+                if start is None and not items:
+                    return  # the group starts at the end of the extent: an absent list (ruling 7)
+                # ruling 21 of 0.8: an indicator at the end of the extent reads
+                # as 0, so the item it stands before is the last one
                 items.append(self.item(nd, sc, len(items)))
-                if not msg.uint(start, 1):
+                if start is None or not msg.uint(start, 1):
                     break
         else:  # fx
             if self.soft and self.pos >= self.soft[-1]:
@@ -346,17 +352,20 @@ class _Ctx:
         self.defaults = defaults
 
 
-def select_kind(pack, body, kind_ref, fields, lists):
+def select_kind(pack, body, kind_ref, fields, lists, item=False):
     """The kind a message or an item is written as: the one it recorded when
     it was decoded from this format, else the first whose `requires` keys and
-    lists it has. None for a body with no kinds."""
+    lists it has. None for a body with no kinds. An item whose recorded kind
+    names this format and a kind its group does not have selects by `requires`
+    (ruling 26 of 0.8)."""
     if not body.kinds:
         return None
     if kind_ref is not None and kind_ref[0] == pack.name:
         kind = body.kind(kind_ref[1])
-        if kind is None:
-            raise NoKind("the format has no kind %r here" % (kind_ref[1],), format=pack.name)
-        return kind
+        if kind is not None:
+            return kind
+        if not item:
+            raise NoKind("the format has no kind %r" % (kind_ref[1],), format=pack.name)
     for kind in body.kinds:
         for key in kind.requires_keys:
             if key not in fields:
@@ -392,7 +401,7 @@ class _Writer:
         got = self.blocks.get(id(item))
         if got is None or got[2] is not nd:
             body = nd.scope
-            kind = select_kind(self.pack, body, getattr(item, "kind", None), item.fields, item.lists)
+            kind = select_kind(self.pack, body, getattr(item, "kind", None), item.fields, item.lists, item=True)
             ctx = _Ctx(item.fields, item.lists, body.defaults_for(kind))
             got = self.blocks[id(item)] = (ctx, kind.block if kind is not None else body.common, nd, item)
         return got[0], got[1]

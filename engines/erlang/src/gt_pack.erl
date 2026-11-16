@@ -1168,7 +1168,61 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
         false -> ok
     end,
     {Common1, Kinds1, St} = seq_res_scope(Common, Kinds, #{}, {0, #{}}),
+    seq_check_lists(Common1, Kinds1),
     P#{common := Common1, kinds := Kinds1, presence_named => element(2, St)}.
+
+%% ---- a list in two groups (rulings 23 and 33 of 0.8) ----
+%% Within one scope (the common lines with one kind's, of the message or of
+%% a group body) two groups may map one list only when each sits in an `if`
+%% or `opt` block and neither block encloses the other. The block of a group
+%% is the nearest `if` or `opt` around it inside the scope, held here as the
+%% path of such blocks down to it; `length` and `chain` are not such blocks.
+%% A block encloses itself.
+seq_check_lists(Common, Kinds) ->
+    Scopes = case Kinds of
+                 [] -> [Common];
+                 _ -> [Common ++ maps:get(lines, K) || K <- Kinds]
+             end,
+    lists:foreach(
+      fun(Lines) ->
+              lists:foldl(
+                fun({List, Block}, Seen) ->
+                        Before = maps:get(List, Seen, []),
+                        case Before =/= [] andalso
+                            lists:any(fun(B) ->
+                                              lists:prefix(B, Block) orelse
+                                                  lists:prefix(Block, B)
+                                      end, Before) of
+                            true ->
+                                load_error('bad-directive',
+                                           "list ~s is mapped by two groups of one scope whose if or opt blocks are not apart",
+                                           [List]);
+                            false -> Seen#{List => [Block | Before]}
+                        end
+                end, #{}, seq_groups(Lines, []))
+      end, Scopes),
+    lists:foreach(
+      fun({sgroup, _, _, #{lines := Ls, kinds := Ks}}) -> seq_check_lists(Ls, Ks) end,
+      lists:append([seq_group_lines(Ls)
+                    || Ls <- [Common | [maps:get(lines, K) || K <- Kinds]]])).
+
+%% The groups of a scope, each with the block it sits in -> [{List, Block}].
+seq_groups(Lines, Block) ->
+    lists:append(
+      [case L of
+           {sgroup, List, _, _} -> [{List, Block}];
+           {ifb, _, Body} -> seq_groups(Body, Block ++ [make_ref()]);
+           {opt, Body} -> seq_groups(Body, Block ++ [make_ref()]);
+           _ -> seq_groups(lists:append(seq_bodies(L)), Block)
+       end || L <- Lines, is_tuple(L)]).
+
+%% The `group` lines of a scope, at any depth of its blocks.
+seq_group_lines(Lines) ->
+    lists:append(
+      [case L of
+           {sgroup, _, _, _} -> [L];
+           _ -> seq_group_lines(lists:append(seq_bodies(L)))
+       end || L <- Lines, is_tuple(L)]).
 
 %% Common lines, then each kind from where the common lines ended.
 seq_res_scope(Common, Kinds, Env, St0) ->

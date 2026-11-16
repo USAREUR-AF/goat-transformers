@@ -175,6 +175,19 @@ loaded) and `distribution-violation` (a public module that uses a controlled
 one). A kind name may repeat across group bodies; within one body it is
 `duplicate-kind`. A `uses` line is part of a module text in `models`.
 
+The vectors that pin rulings 16 to 30 of Version 0.8 add: `bad-directive` (a
+list mapped by two groups of one sequential scope that are not in different
+`if` or `opt` blocks; a header or table directive inside an `if`, `opt`,
+`chain`, `length` or `group` block, of either layout; a presence name declared
+in two parts of one chain, or named after the chain that declares it; a
+`derive` target of a used module; a field on the `xml` wire that addresses the
+element of a group's own path) and, for a module, the order of its checks:
+`missing-distribution`, `missing-source`, `distribution-refused`,
+`unknown-module`, `distribution-violation`, the `derive` checks,
+`duplicate-module`. A `when` may follow the `requires` and `default` lines of
+its kind, and a field at exactly a group's path loads on `json`, `geojson` and
+`protobuf`.
+
 The engine starts empty for each load vector. It loads the modules in order and
 then the pack, stopping at the first failure. With `expect_error` present the
 vector passes when that first failure is of the named kind; without it the

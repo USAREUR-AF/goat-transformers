@@ -211,10 +211,11 @@ bool parse_distribution(const std::string& s, Distribution& out) {
 
 namespace {
 // Model module grammar (engine-spec.md v0.4): same line rules as pack.def.
-// With `require_core`, a `derive` line naming a key of `core` is checked against
-// `core` (null: not loaded); without it such a line is left for Engine::add_model.
-Module parse_model_impl(const std::string& text, const std::string& origin, const detail::ModuleLookup& loaded,
-                        bool require_core) {
+// A `derive` line is checked as a line here, while the file is read (its
+// function, parameter and argument count: 0.6 ruling 9); its keys and types
+// are checked after the other checks of the module (0.8 ruling 29), by
+// detail::check_derives.
+Module parse_model_impl(const std::string& text, const std::string& origin) {
     Module m;
     m.origin = origin;
     bool have_module = false, have_version = false, have_distribution = false;
@@ -305,10 +306,6 @@ Module parse_model_impl(const std::string& text, const std::string& origin, cons
         }
     }
 
-    // `derive` lines need the whole file (a key may be declared after the line),
-    // and are checked before `missing-distribution` (0.6 ruling 9).
-    detail::check_derives(m, loaded, require_core);
-
     if (!have_distribution) throw Error(ErrorKind::MissingDistribution, "", "", origin + ": module has no 'distribution'");
     if (m.sources.empty()) throw Error(ErrorKind::MissingSource, "", "", origin + ": module has no 'source'");
     if (!have_module || m.name.empty()) throw Error(ErrorKind::InvalidModel, "", "", origin + ": missing 'module'");
@@ -318,12 +315,16 @@ Module parse_model_impl(const std::string& text, const std::string& origin, cons
 }
 }  // namespace
 
+// With no engine there are no loaded modules: a `derive` line that names a key
+// of `core` or of a used module is left for Engine::add_model.
 Module parse_model(const std::string& text, const std::string& origin) {
-    return parse_model_impl(text, origin, nullptr, false);
+    Module m = parse_model_impl(text, origin);
+    detail::check_derives(m, nullptr, false);
+    return m;
 }
 
-Module detail::parse_model_with(const std::string& text, const std::string& origin, const ModuleLookup& loaded) {
-    return parse_model_impl(text, origin, loaded, true);
+Module detail::parse_model_unchecked(const std::string& text, const std::string& origin) {
+    return parse_model_impl(text, origin);
 }
 
 namespace {

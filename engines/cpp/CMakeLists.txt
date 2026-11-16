@@ -49,3 +49,4 @@ target_compile_options(goat_transformers_unit PRIVATE ${GT_WARNINGS})
 add_test(NAME unit COMMAND goat_transformers_unit)
 
 add_test(NAME cli_list_formats COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR})
+add_test(NAME cli_packs_only COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR} --packs-only cot-xml,geojson)

@@ -96,7 +96,9 @@ struct Item {
     // message's kind (v0.5), for an item of a list the item's kind (v0.8,
     // `Item.kind`). Both empty when no kind was selected or the kind was cleared.
     // Encode selects by it only when the format is the one being written, so an
-    // item carried to another format chooses its kind by `requires`.
+    // item carried to another format chooses its kind by `requires`; so does an
+    // item of a list whose group, in the format being written, has no kind of
+    // that name (0.8 ruling 26).
     std::pair<std::string, std::string> kind;
 };
 
@@ -383,12 +385,29 @@ public:
     // `<packs_dir>/<name>/pack.def`. An empty models_dir means `<packs_dir>/../model`.
     static Engine load(const std::string& packs_dir, const std::string& models_dir = "",
                        Distribution max_distribution = Distribution::Controlled);
+    // Load only the packs named, each `<packs_dir>/<name>/pack.def`, in the
+    // order given, and before them the modules they need: `core`, the modules
+    // their `uses` lines name and the modules those use. A module is found by
+    // the name its `module` line states, among `<models_dir>/*.def`: every file
+    // there is read, so one that does not parse fails the load, and only the
+    // needed modules are checked against the engine and loaded. A name that is
+    // not a pack directory of `packs_dir` fails with Io; a name given twice is
+    // loaded once.
+    static Engine load_packs(const std::string& packs_dir, const std::vector<std::string>& names,
+                             const std::string& models_dir = "",
+                             Distribution max_distribution = Distribution::Controlled);
 
     // The distribution limit, Controlled by default. It applies to later loads.
     void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
     Distribution max_distribution() const noexcept { return max_distribution_; }
 
     // Load one model module. Modules are loaded before the packs that use them.
+    // A module is checked in this order (0.8 ruling 29): missing-distribution,
+    // missing-source, distribution-refused, unknown-module,
+    // distribution-violation, the keys and types of its `derive` lines,
+    // duplicate-module. A `derive` line that is wrong as a line (its function,
+    // parameter or argument count) fails while the text is read, before them
+    // (0.6 ruling 9).
     void load_model(const std::string& text, const std::string& origin = "model.def");
     void add_model(Module module);
     bool has_module(const std::string& name) const;

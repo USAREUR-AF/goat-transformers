@@ -1,0 +1,8 @@
+{
+  "name": "ruling-28-space-before-the-digits",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"s1\":\" 5\"}",
+  "context": {},
+  "expect": "{\"s1\":\" 5\"}"
+}

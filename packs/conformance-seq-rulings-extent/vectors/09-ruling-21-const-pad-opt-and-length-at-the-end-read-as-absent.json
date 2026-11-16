@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-const-pad-opt-and-length-at-the-end-read-as-absent",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-json",
+  "input": "0106080507",
+  "expect": "{\"n\":1,\"x\":5,\"y\":7}"
+}
