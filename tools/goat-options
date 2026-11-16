@@ -41,6 +41,7 @@ LIBRARY = "goat-transformers"
 STATUSES = ["proven", "available", "forthcoming", "unknown"]
 CLAIMS = {"emits", "accepts", "speaks", "converts"}
 SINGLE = {"record", "system", "name", "kind", "by", "date"}
+ATTRS = {"status", "evidence", "version", "transport", "note", "via"}
 PATH_ORDER_NOTE = (
     "Paths are listed by number of conversions, then by format and converter name, "
     "so the output is stable. The order is not a preference. Each path's status is "
@@ -159,6 +160,9 @@ def read_record(path, store, rel, problems):
                                         (status, ", ".join(STATUSES))))
             if status == "proven" and not attrs.get("evidence"):
                 problems.append(Problem("warning", where, "status proven with no evidence"))
+            for a in attrs:
+                if a not in ATTRS and a != "_words":
+                    problems.append(Problem("info", where, "attribute `%s` is not one this tool reads; kept" % a))
             rec["claims"].append(claim)
         else:
             problems.append(Problem("info", where, "keyword `%s` is not one this tool reads; kept" % kw))
@@ -278,6 +282,30 @@ class Library:
             self._cap[(a, b)] = self.engine.capability(a, b)
         return self._cap[(a, b)]
 
+    def needs(self, a, b):
+        """None when some kind of `b` has every key its `requires` line names
+        among the keys `a` maps (or the model derives from them). Otherwise,
+        for each kind of `b`, the required keys `a` does not supply: the
+        library refuses to write `b` unless the caller sets them (`--set`)."""
+        pack = self.engine.pack(b)
+        if not pack.kinds:
+            return None
+        have = set(self.engine.model_keys(a))
+        for _ in range(8):
+            added = {d.target for d in self.engine.derives() if d.target not in have and
+                     (any if d.partial else all)(x in have for x in d.args)}
+            if not added:
+                break
+            have |= added
+        out = []
+        for k in pack.kinds:
+            missing = [x for x in k.requires_keys if x not in have] + \
+                      [x for x in k.requires_lists if x + "[]" not in have]
+            if not missing:
+                return None
+            out.append({"kind": k.name, "missing": missing})
+        return out
+
 
 # --------------------------------------------------------------------------
 # Paths
@@ -358,7 +386,8 @@ def library_step(lib, index, a, b):
     claims = index.converters.get((a, b), {}).get(LIBRARY, [])
     return {"from": a, "to": b, "via": LIBRARY, "library": True,
             "status": strongest([c["status"] for c in claims]) if claims else "available",
-            "claims": claims, "grade": cap["grade"], "carried": cap["carried"], "lost": cap["dropped"]}
+            "claims": claims, "grade": cap["grade"], "carried": cap["carried"], "lost": cap["dropped"],
+            "needs": lib.needs(a, b)}
 
 
 def record_steps(index, a, b):
@@ -368,7 +397,7 @@ def record_steps(index, a, b):
             continue
         out.append({"from": a, "to": b, "via": via, "library": False,
                     "status": strongest([c["status"] for c in claims]), "claims": claims,
-                    "grade": None, "carried": None, "lost": None})
+                    "grade": None, "carried": None, "lost": None, "needs": None})
     return out
 
 
@@ -455,7 +484,8 @@ def make_path(index, s_desc, d_desc, f0, from_view, from_unstated, steps, f_last
     out_steps = []
     for s in steps:
         step = {"from": disp(s["from"]), "to": disp(s["to"]), "via": s["via"], "status": s["status"],
-                "claims": s["claims"], "grade": s["grade"], "carried": s["carried"], "lost": s["lost"]}
+                "claims": s["claims"], "grade": s["grade"], "carried": s["carried"], "lost": s["lost"],
+                "needs": s["needs"]}
         if site is not None:
             step["on_hand"] = on_hand(site, s["via"])
         statuses.append(s["status"])
@@ -478,7 +508,9 @@ def make_path(index, s_desc, d_desc, f0, from_view, from_unstated, steps, f_last
         "carried": carried,
         "lost": lost,
     }
-    if len(transports) == 2 and all(transports) and transports[0] != transports[1]:
+    # Only a direct path: a converter between the ends reads and writes on
+    # transports its `converts` claim does not state.
+    if not out_steps and len(transports) == 2 and all(transports) and transports[0] != transports[1]:
         path["transports_differ"] = transports
     return path
 
@@ -650,16 +682,41 @@ def keys_text(p):
     return "%d carried, %d lost" % (size(p["carried"]), size(p["lost"]))
 
 
+def claimed_by(p):
+    """Who made the source's and the consumer's claim, with the version
+    each claim is for: two owners' claims about one system give two rows."""
+    def one(end):
+        c = end.get("claim")
+        if c is None:
+            return "-"
+        return " ".join(x for x in (c["source"].get("by") or "?", c.get("version")) if x)
+    return "%s / %s" % (one(p["from"]), one(p["to"]))
+
+
+def marks(p):
+    out = []
+    if "direction" in p["from"] or "direction" in p["to"]:
+        out.append("direction unstated")
+    if "transports_differ" in p:
+        out.append("transports differ: %s" % "/".join(p["transports_differ"]))
+    for s in p["steps"]:
+        if s.get("needs"):
+            n = s["needs"]
+            out.append("%s needs %s" % (s["to"], " ".join(n[0]["missing"]) if len(n) == 1 else
+                                         "keys for each of its %d kinds" % len(n)))
+    return ", ".join(out)
+
+
 def table_paths(paths, title, out):
     out.write("%s\n" % title)
     if not paths:
         out.write("  no path found\n")
         return
-    rows = [("conv", "status", "route", "keys", "on hand")]
+    rows = [("conv", "status", "route", "keys", "on hand", "claims by", "marks")]
     for p in paths:
         hand = "" if "on_hand" not in p["from"] and not any("on_hand" in s for s in p["steps"]) else \
             ("yes" if all_on_hand(p) else "no")
-        rows.append((str(p["conversions"]), p["status"], route(p), keys_text(p), hand))
+        rows.append((str(p["conversions"]), p["status"], route(p), keys_text(p), hand, claimed_by(p), marks(p)))
     widths = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
     for r in rows:
         out.write("  " + "  ".join(c.ljust(w) for c, w in zip(r, widths)).rstrip() + "\n")
@@ -691,7 +748,9 @@ def print_table(cmd, result, out):
         for k, v in result["pairs_by_strongest_path"].items():
             out.write("pairs, strongest path %-12s %d\n" % (k, v))
     if result.get("problems") and cmd != "check":
-        out.write("\n%d problem(s); run `check` to list them\n" % len(result["problems"]))
+        levels = [p["level"] for p in result["problems"]]
+        out.write("\n%d error(s), %d warning(s), %d note(s) from reading the files; run `check` to list them\n"
+                  % (levels.count("error"), levels.count("warning"), levels.count("info")))
     if cmd == "check":
         for p in result["problems"]:
             out.write("%-7s %s: %s\n" % (p["level"], p["where"], p["text"]))

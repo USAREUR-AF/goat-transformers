@@ -124,12 +124,18 @@ tools/goat-options paths --store examples/stores/sketch \
 
 ```
 example/rf-1 -> example/c2-app
-  conv  status     route                                                                                                       keys        on hand
-  2     proven     example rf-1 json --[example/node-translator]--> canonical-track-v2 --[example/node-translator]--> cot-xml  not stated
-  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[goat-transformers]--> cot-xml        not stated
-  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[example/node-translator]--> sapient  not stated
-  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[goat-transformers]--> sapient        not stated
+  conv  status     route                                                                                                       keys        on hand  claims by                      marks
+  2     proven     example rf-1 json --[example/node-translator]--> canonical-track-v2 --[example/node-translator]--> cot-xml  not stated           example-org 1.4 / example-org
+  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[goat-transformers]--> cot-xml        not stated           example-org 1.4 / example-org
+  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[example/node-translator]--> sapient  not stated           example-org 1.4 / example-org
+  2     available  example rf-1 json --[example/node-translator]--> canonical-track-v2 --[goat-transformers]--> sapient        not stated           example-org 1.4 / example-org
 ```
+
+`claims by` gives the author and version of the source's claim and of the
+consumer's claim: when two owners describe one system, the table has a row
+for each owner's claim, and this column tells the rows apart. `marks` lists
+`direction unstated`, `transports differ: <a>/<b>` (a direct path only) and
+`<format> needs <keys>` (below).
 
 The same query without `--table` prints JSON. One path, shortened:
 
@@ -144,9 +150,9 @@ The same query without `--table` prints JSON. One path, shortened:
                     "source": {"store": "examples/stores/sketch", "file": "rf-1.rec", "by": "example-org", "line": 9}}},
  "steps": [
   {"from": "example rf-1 json", "to": "canonical-track-v2", "via": "example/node-translator",
-   "status": "proven", "claims": ["..."], "grade": null, "carried": null, "lost": null},
+   "status": "proven", "claims": ["..."], "grade": null, "carried": null, "lost": null, "needs": null},
   {"from": "canonical-track-v2", "to": "cot-xml", "via": "example/node-translator",
-   "status": "proven", "claims": ["..."], "grade": null, "carried": null, "lost": null}
+   "status": "proven", "claims": ["..."], "grade": null, "carried": null, "lost": null, "needs": null}
  ],
  "to": {"system": "example/c2-app", "format": "cot-xml", "claim": {"...": "..."}},
  "carried": null,
@@ -156,8 +162,21 @@ The same query without `--table` prints JSON. One path, shortened:
 
 A library step carries the report itself, for example
 `{"via": "goat-transformers", "status": "available", "grade": "partial",
-"carried": ["uid", "type", "time_ms", ...], "lost": ["..."]}`. `--keys count`
-replaces each key list with its length.
+"carried": ["uid", "type", "time_ms", ...], "lost": ["..."], "needs": null}`.
+`--keys count` replaces each key list with its length.
+
+`needs` says whether the library can write the target from the keys the
+source maps. A pack's kinds name the keys they require (`requires` in
+`pack.def`); the library refuses to write a message when no kind of the target
+has all of them. `needs` is `null` when some kind of the target has every key
+it requires among the source's keys, or among the keys the model derives from
+them, and when the target has no kinds. Otherwise it lists, for each kind of
+the target, the required keys the source does not supply, for example
+`[{"kind": "Track", "missing": ["uid", "track.source_id", "track.generation",
+"time_ms"]}]` from `asterix-cat062` to `canonical-track-v2`. A caller can
+supply such keys (`--set` in the engines' command lines), so the step is still
+listed. Like the capability report, `needs` is per format: one message may lack
+a key its format maps.
 
 Other commands:
 
@@ -166,7 +185,7 @@ Other commands:
 | `goat-options systems --store DIR` | the merged records, each claim with its provenance and whether a pack exists for its format |
 | `goat-options site --store DIR FILE.site` | every path for every `feed` line of a site file, each part marked on hand or not |
 | `goat-options summary --store DIR` | counts only: systems, producers, consumers, formats, and producer and consumer pairs by the most established status any of their paths has |
-| `goat-options check --store DIR [--strict]` | everything the reader could not use or had to read as `unknown`; `--strict` exits 1 on a warning |
+| `goat-options check --store DIR [--strict]` | everything the reader could not use or had to read as `unknown`, and every keyword and attribute it kept without reading (as `info`); `--strict` exits 1 on a warning |
 
 All commands take `--packs` and `--models` (default: this repository's), so the
 query runs against an assembled overlay tree and sees the overlay's packs.
@@ -264,7 +283,7 @@ be revised once records of real systems are written by more than one owner.
 | System identifiers | `owner/name`, chosen by the writer; no `same-as` between two identifiers for one system | two owners recording the same system under different identifiers |
 | Direction | `speaks` when the source does not say whether a system publishes or subscribes; such paths are marked as resting on an unstated direction | sources that record direction, so `speaks` becomes `emits` and `accepts` |
 | Evidence | free text in `evidence=` | owners agreeing what counts as proof: a test report, an exercise log, a captured message |
-| Transport | one word in `transport=`; a path whose two ends name different transports is listed and marked `transports_differ` | owners needing more than one word: a topic, a port, a bearer |
+| Transport | one word in `transport=`; a direct path whose two ends name different transports is listed and marked `transports_differ`; a path with a conversion is not marked, because a `converts` claim names no transport | owners needing more than one word: a topic, a port, a bearer |
 | What a system's own conversion carries | not stated | records that list carried fields for a `converts` claim |
 | Path length | two conversions by default (`--max-conversions`) | stores where longer chains are real options |
 | Exchange of stores | by copying directories | owners deciding who may share which records with whom |
@@ -275,7 +294,8 @@ be revised once records of real systems are written by more than one owner.
 `python3 -I -m unittest discover -s tools/tests`: the tokenizer, records kept
 when unknown, merging without loss and independent of order, direct,
 one-conversion and two-conversion paths on the sketch, the library step equal
-to `Engine.capability`, no two library steps in a row, site on-hand marking,
+to `Engine.capability`, `needs` against the engine's own refusal,
+`transports_differ` on direct paths only, the table's `claims by` and `marks`, no two library steps in a row, site on-hand marking,
 the sketch's summary counts, and a check that no output of the tool contains a
 ranking word (`recommend`, `best`, `prefer`, `should`, `optimal`, `score`,
 `rank`).
