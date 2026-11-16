@@ -20,7 +20,7 @@ on this page lists.
 | Integrated Sensor Architecture (ISA) | `protobuf`, `xml` | Built: packs `isa` and `isa-message` (IPL 3.7), `isa-ipl1` (IPL 1.6), `isa-xml` (IPL 4.7) | |
 | Canonical Track v2 (open-billie) | `json` | Built: pack `canonical-track-v2` | USAREUR-AF/open-billie |
 | NATO Vector Graphics (NVG) 1.5 | `xml` | Built: pack `nvg`, point only. Other geometry types are not built | |
-| ASTERIX (categories 048, 062, 034, 021, 010) | `bits`, sequential | Category 062 built for one record with the items a track encoder writes; other items and categories not built | jASTERIX, asterix4py, goasterix |
+| ASTERIX | `bits`, sequential | 27 categories built from machine-readable definitions (001, 002, 004, 007 to 011, 015 to 021, 023, 025, 032, 034, 048, 062 to 065, 150, 205, 240, 247), one record per block; several records per block and item lists selected by a value are not built | asterix-specs, jASTERIX, asterix4py |
 | STANAG 4607 GMTI | `bits` | Not built | pentlandedge/s4607 |
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |

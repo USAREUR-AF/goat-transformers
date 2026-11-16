@@ -11,9 +11,11 @@ format  cot-xml
 version 0.2.0
 distribution public
 source  "Cursor on Target event schema (MITRE, public release); field use cross-checked against pytak"
+uses    track
 wire    xml
 root    event
 const   @version  2.0
+field   track.scoped_id  @uid                 string
 field   uid       @uid                        string
 field   type      @type                       string
 field   time_ms   @time                       iso8601_ms
