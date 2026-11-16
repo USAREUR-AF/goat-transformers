@@ -16,9 +16,13 @@ export { GoatTransformers };
 /** The path of the WebAssembly module in this package. */
 export const wasmPath = fileURLToPath(new URL("./dist/goat_transformers.wasm", import.meta.url));
 
-/** An empty engine on the WebAssembly module in this package. */
-export async function load() {
-  return GoatTransformers.load(readFileSync(wasmPath));
+/**
+ * An empty engine on the WebAssembly module in this package. `options` are
+ * those of GoatTransformers.load: `{ maxDistribution: "public" }` makes an
+ * engine that refuses everything marked `distribution controlled`.
+ */
+export async function load(options) {
+  return GoatTransformers.load(readFileSync(wasmPath), options);
 }
 
 // The `module` name and the `uses` names of a module or pack text.
@@ -42,7 +46,9 @@ function head(text) {
  * library, or a bundle written by `tools/goat-pkg bundle`.
  *
  * `engine` is an engine to load into; it must not already hold one of the
- * modules. Without it a new engine is made. Returns the engine.
+ * modules. Without it a new engine is made. Returns the engine. To load a
+ * tree under a distribution limit, pass an engine made with that limit:
+ * `loadTree(root, packs, await load({ maxDistribution: "public" }))`.
  */
 export async function loadTree(root, packs, engine) {
   const texts = [];
