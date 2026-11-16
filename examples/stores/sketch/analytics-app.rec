@@ -1,0 +1,9 @@
+record   1
+system   example/analytics-app
+name     "Example analytics application (fictional)"
+kind     application
+by       example-org
+date     2026-11-16
+
+accepts  canonical-track-v2  transport=zenoh  status=available
+emits    geojson             transport=zenoh  status=available

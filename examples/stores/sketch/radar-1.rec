@@ -1,0 +1,12 @@
+# A system record (docs/system-records.md). Every system in this store is
+# fictional; the formats are real and public, and have packs in packs/.
+record   1
+system   example/radar-1
+name     "Example radar 1 (fictional)"
+kind     sensor
+by       example-org
+date     2026-11-16
+note     "A short-range radar on a sensor node. Publishes plots and tracks only."
+
+emits    asterix-cat048  transport=zenoh  version=1.x  status=proven     evidence="example: fictional trial log 01"
+emits    asterix-cat062  transport=zenoh  version=2.0  status=forthcoming note="announced by its maker for version 2.0"

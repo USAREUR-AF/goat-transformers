@@ -289,5 +289,30 @@ class TestModel(unittest.TestCase):
             e.set_max_distribution("secret")
 
 
+class Capability(unittest.TestCase):
+    """spec/engine-spec.md, Capability: carried and dropped keys of an ordered
+    pair, in the source's order, and the grade."""
+
+    def setUp(self):
+        self.e = Engine.from_dir(PACKS, packs_only=["cot-xml", "geojson", "cot-protobuf"])
+
+    def test_pair(self):
+        c = self.e.capability("cot-xml", "geojson")
+        a, b = self.e.model_keys("cot-xml"), set(self.e.model_keys("geojson"))
+        self.assertEqual(c["carried"], [k for k in a if k in b])
+        self.assertEqual(c["dropped"], [k for k in a if k not in b])
+        self.assertEqual(c["grade"], "partial" if c["dropped"] else "full")
+
+    def test_matrix_is_every_ordered_pair(self):
+        m = self.e.capability_matrix()
+        self.assertEqual(len(m), 6)
+        self.assertEqual({(c["from"], c["to"]) for c in m},
+                         {(a, b) for a in self.e.formats() for b in self.e.formats() if a != b})
+
+    def test_unknown_format(self):
+        with self.assertRaises(UnknownFormat):
+            self.e.capability("cot-xml", "nope")
+
+
 if __name__ == "__main__":
     unittest.main()
