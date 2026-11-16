@@ -3,95 +3,75 @@
 [![conformance](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml/badge.svg)](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-goat-transformers converts messages between formats: Cursor on Target, GeoJSON,
-SAPIENT, MAVLink, NMEA 2000, ADS-B and others. A format is described by data
-files, not by code. Each of seven languages has one engine that reads those
-files, so a format added as data works in every language.
+goat-transformers converts a message in any supported format to any other
+supported format, and each format is a data file that seven independently
+written engines read and must agree on, byte for byte.
 
-> [!NOTE]
-> goat-transformers is pre-1.0: the pack language and the engine interfaces can
-> still change.
+**18 formats · 2,377 message kinds · 2,947 conversion vectors · 7 engines**, counted
+by [`tools/repo-stats`](tools/repo-stats).
 
-## Quick start
-
-Build the Rust command-line tool and convert a Cursor on Target event to
-GeoJSON. This needs a Rust toolchain and nothing else.
-
-```bash
-git clone https://github.com/USAREUR-AF/goat-transformers
-cd goat-transformers/engines/rust
-cargo build --release
-echo '<event version="2.0" uid="J-01334" type="a-f-G-U-C" time="2021-02-27T20:00:00.000Z" how="m-g"><point lat="30.0090027" lon="-85.9578182" hae="-42.6" ce="45.3" le="99.5"/><detail><contact callsign="GATOR"/></detail></event>' \
-  | ./target/release/goat-xf convert --from cot-xml --to geojson
+```console
+$ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to cot-xml
+<event version="2.0" type="a-u-X"><point lat="45.539309" lon="-122.966389" hae="110" ce="9999999" le="9999999"/></event>
+$ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to nmea2000
+01f80142bf241b6ed1b4b6
 ```
 
-Output:
+The input is the 25-byte Location message a drone broadcasts under ASTM F3411
+Remote ID, as hex text. The first output is a Cursor on Target (CoT) event, the
+XML that tactical map software reads (`9999999` is CoT's value for "not
+known"). The second is NMEA 2000 parameter group 129025, the position message
+of a ship's instrument network. No engine contains a decoder or an encoder for
+Remote ID, CoT or NMEA 2000: each of the three is a pack.
 
-```json
-{"type":"Feature","geometry":{"type":"Point","coordinates":[-85.9578182,30.0090027,-42.6]},"properties":{"type":"a-f-G-U-C","time_ms":1614456000000,"how":"m-g","ce":45.3,"le":99.5,"callsign":"GATOR"},"id":"J-01334"}
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/hub-dark.svg">
+  <img src="docs/figures/hub-light.svg" width="760" alt="Fourteen public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B and ASTERIX, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay, which connect to the same shared model.">
+</picture>
 
-`goat-xf list-formats` prints the formats that are loaded. `goat-xf matrix
---detail` prints, for every pair of formats, which values carry from one to the
-other and which the target cannot represent. The tool reads packs from
-`../../packs` unless `--packs <dir>` names another directory.
+## The idea in five sentences
 
-## How it works
+1. A format is a data file, called a **pack**: one line for each field says
+   where the value sits in the message and which key of the model it fills.
+2. There is one **shared model**: a set of typed keys in fixed units (degrees,
+   meters, meters per second, milliseconds since 1970).
+3. A conversion decodes the source message to the model and encodes the model
+   to the target, so any format converts to any other and N formats need N
+   packs, not N×N converters.
+4. Seven **engines** (Rust, Go, Python, Java, C++, Erlang, Zig) each read the
+   same packs; each is written from the specification and the test messages,
+   never from another engine's source, and all seven must produce the same output for
+   every test message.
+5. Packs written from public sources are in this repository; a pack for a
+   format whose specification is not public is kept in a private **overlay**
+   that the same engines read.
 
-Every format maps its fields to the keys of one shared model
-([spec/shared-model.md](spec/shared-model.md)). A conversion from format A to
-format B decodes A to the model and encodes the model to B, so N formats need N
-descriptions and not N×N converters. A field that the model has no key for is
-kept in a per-format residue block and written back when the message returns to
-its own format.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/journey-dark.svg">
+  <img src="docs/figures/journey-light.svg" width="760" alt="Three values of a 25-byte Remote ID Location message, latitude, longitude and height, are read by three field lines of the remote-id pack into the model keys lat, lon and hae, then written by three field lines of the cot-xml pack as attributes of the point element of a Cursor on Target event.">
+</picture>
 
-A format is a **pack**: a directory with a `pack.def` file (the format name, the
-wire type, the sources, and one `field` line for each mapped value), notes, and
-conformance vectors. The grammar is [spec/engine-spec.md](spec/engine-spec.md).
-The design is [docs/design.md](docs/design.md).
+## What the repository holds
 
-## Engines
+Counted from the tree by `python3 -I tools/repo-stats`.
 
-Each engine is written from the specification and the vectors, and not from
-another engine's source, so a defect in one engine shows as a difference from
-the others. Every engine uses only the standard library of its language.
-
-| Language | Directory | Run the conformance suite |
-|---|---|---|
-| Rust (reference) | `engines/rust` | `cargo test --release` |
-| Go | `engines/go` | `go test ./...` |
-| Python | `engines/python` | `PYTHONPATH=src python3 -m unittest discover -s tests` |
-| Java | `engines/java` | `./build.sh` |
-| C++ | `engines/cpp` | `cmake -S . -B build && cmake --build build && ctest --test-dir build` |
-| Erlang | `engines/erlang` | `./build.sh && ./run_tests` |
-| Zig (0.13.0) | `engines/zig` | `zig build test -- ../../packs` |
-
-All seven engines pass every vector.
-
-Every engine is fully conformant; use whichever fits. The project explores in
-any language and settles performance-critical, safety-critical and
-run-everywhere code in Rust (`docs/languages.md`).
-
-## Wire types
-
-A wire type is an engine's codec for a family of encodings. A pack names one.
-
-| Wire | For |
-|---|---|
-| `xml` | attributes and element text by path |
-| `geojson` | GeoJSON Feature |
-| `json` | members by path in any JSON object |
-| `protobuf` | protobuf messages, fields by number |
-| `bits` | binary formats with fixed-size words and bit-range fields, in either bit order |
-
-## Packs
-
-A format with a message catalog has one message kind for each message type.
+| | Count |
+|---|---:|
+| Formats | 18 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 2,377 |
+| Typed keys in the shared model, in 16 modules | 33,553 |
+| Lists in the shared model (parts of a message that repeat) | 8,628 |
+| Conversion vectors (an input message and the exact expected output) | 2,947 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 261 |
+| Synthetic formats that exercise each rule of the specification | 42 |
+| Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits` | 5 |
+| Engines, each using only its language's standard library | 7 |
+| WebAssembly module of the Rust engine, small build, no imports | 336,678 bytes |
 
 | Pack | Format | Wire | Message kinds |
-|---|---|---|---|
+|---|---|---|---:|
 | `cot-xml` | Cursor on Target event XML | `xml` | 1 |
-| `cot-protobuf` | TAK protocol version 1 `TakMessage`, the protobuf form of a Cursor on Target event | `protobuf` | 2 |
+| `cot-protobuf` | TAK protocol version 1, the protobuf form of a Cursor on Target event | `protobuf` | 2 |
 | `geojson` | GeoJSON Feature (IETF RFC 7946) | `geojson` | 1 |
 | `nvg` | NATO Vector Graphics 1.5, point | `xml` | 1 |
 | `canonical-track-v2` | Canonical Track v2 of [open-billie](https://github.com/USAREUR-AF/open-billie) | `json` | 1 |
@@ -106,40 +86,198 @@ A format with a message catalog has one message kind for each message type.
 | `nmea2000` | NMEA 2000 parameter groups, from the CANboat database | `bits` | 473 |
 | `mavlink2` | MAVLink 2, common message set | `bits` | 235 |
 | `adsb` | ADS-B on Mode S extended squitter (downlink format 17) | `bits` | 29 |
-| `asterix-cat062` | ASTERIX Category 062 system track (one record, the items a track encoder writes) | 1 |
-| `remote-id` | ASTM F3411 Remote ID (OpenDroneID) messages | `bits` | 8 |
-| `demo-*`, `conformance*` (26 packs) | synthetic formats that exercise each wire type and each rule of the specification | all | |
+| `asterix-cat062` | ASTERIX Category 062 system track | `bits` | 1 |
+| `remote-id` | ASTM F3411 Remote ID (OpenDroneID) | `bits` | 8 |
 
 Each pack's `pack.md` states what the pack maps and what it leaves unmapped.
-Each pack's `source` lines and `PROVENANCE.md` name the public document it was
-written from; [NOTICE](NOTICE) lists them. `tools/gen/` holds the generators
-that write a pack from a machine-readable definition (`proto2pack.py`,
-`xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`).
+[docs/coverage-roadmap.md](docs/coverage-roadmap.md) lists the public formats
+that have no pack and what each one needs.
 
-## Conformance
+## Conversions, and what carries
 
-A conversion vector is a JSON file with `from`, `to`, `input` and `expect`
-([spec/vector-format.md](spec/vector-format.md)). A load vector is a set of
-model modules and one pack that must load, or must fail with a named error.
-Every engine runs every vector and must reproduce `expect` byte for byte. The
-suite is the definition of correct behavior.
+Two formats convert to each other exactly the keys that both map. The engine
+reports this for every pair of loaded formats (`goat-xf matrix --detail`): which
+keys carry, and which the target has no field for. Every row below was run with
+the command-line tool on a message from the pack's own vectors.
 
-This repository holds 2,947 conversion vectors in 60 packs and 261 load vectors.
-`.github/workflows/conformance.yml` runs all of them on all seven engines on
-every change.
+| From | To | What carries |
+|---|---|---|
+| Remote ID Location, 25 bytes | CoT event XML | `lat`, `lon`, `hae` |
+| MAVLink 2 `GLOBAL_POSITION_INT`, the position message of a drone autopilot | NMEA 2000 parameter group 129025: `01f801d04d6b0830b294f7` | `lat`, `lon` |
+| NATO Vector Graphics point, XML | GeoJSON Feature | all 4 keys the source maps |
+| CoT event XML | CoT protobuf (TAK protocol version 1) | all 13 keys the source maps |
+| Canonical Track v2, JSON | ASTERIX Category 062, 31 bytes: `3e001f9b0d10…0050` | position, height, velocity east and north, 4 status flags. The caller supplies the two site codes. The bytes equal the ones the hand-written encoder of open-billie writes for the same track |
+| Canonical Track v2, JSON | CoT event XML | identity, type, time, position, and course and speed, which the model computes from the velocity vector |
 
-## Formats whose specification is not public
+The last row is a rule of the model, not of either pack: `model/track.def`
+derives `course` and `speed_ms` from `track.vel_east_ms` and
+`track.vel_north_ms`, so every format that carries a velocity vector converts to
+every format that carries course and speed.
 
-This repository holds only packs written from public sources. A pack for a
-format whose specification is not public is kept in a private **overlay**
-repository. An overlay pins this repository by commit, adds its own `model/` and
-`packs/`, and assembles the two into one tree; the engines run that tree
-unchanged. Every pack and model module is marked `distribution public` or
-`distribution controlled`, and an engine started with `--max-distribution
-public` loads nothing that is marked `controlled`.
+A value that only the caller knows is supplied with the call:
 
-[docs/boundary.md](docs/boundary.md) states the rules and the checks.
-[goat-transformers-overlay-example](https://github.com/USAREUR-AF/goat-transformers-overlay-example) is a worked overlay with fictional content.
+```console
+$ goat-xf convert --from canonical-track-v2 --to asterix-cat062 --set cat062.sac=1 --set cat062.sic=7 < track.json
+3e001f9b0d1001075460100000000000000000ffce00110137810101000050
+```
+
+## Add a format without writing code
+
+This is the complete pack for a NATO Vector Graphics point,
+[`packs/nvg/pack.def`](packs/nvg/pack.def):
+
+```
+format   nvg                                # the name used with --from and --to
+version  0.1.0
+distribution public                         # public, or controlled (overlay only)
+source  "NATO Vector Graphics 1.5 XSD (NATO ACT, public)"   # the document it was written from
+wire     xml                                # the codec: xml, json, geojson, protobuf or bits
+root     nvg                                # the root element
+field   lon       point/@x        float     # model key, place in the message, transform
+field   lat       point/@y        float
+field   callsign  point/@label    string
+field   type      point/@symbol   string
+```
+
+and this is the message it describes:
+
+```xml
+<nvg><point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/></nvg>
+```
+
+With that file in `packs/nvg/`, all seven engines convert NVG points to and
+from every other loaded format:
+
+```console
+$ echo '<nvg><point x="11.2" y="48.137" label="ALPHA" symbol="app6a:SFGPUCI----D"/></nvg>' | goat-xf convert --from nvg --to geojson
+{"type":"Feature","geometry":{"type":"Point","coordinates":[11.2,48.137]},"properties":{"type":"app6a:SFGPUCI----D","callsign":"ALPHA"}}
+```
+
+The pack language also states binary layouts by bit range, scale factors,
+several message kinds chosen by values in the message, constants, defaults,
+value tables, repeating groups, and fields whose presence or length the message
+itself states ([spec/engine-spec.md](spec/engine-spec.md)). A pack for a large
+message catalog is generated from the catalog's own machine-readable definition
+(a protobuf file, an XML schema, the CANboat database, the MAVLink message
+definitions) by the generators in [`tools/gen/`](tools/gen).
+
+## Why open
+
+- **One definition per format.** A gap or an error in a pack is corrected in
+  one file, and every user of that format, in every language, has the
+  correction at the next update.
+- **The owner of a format can keep its pack.** A pack is a text file that
+  mirrors the format's specification, so the organization that writes the
+  specification (a vendor, a standards body, a program office) can maintain the
+  pack directly by pull request. The people who know the format keep it
+  correct, and the users of the format do not each re-implement it.
+- **Nothing about a format is inside a product.** The field positions, units
+  and rules are readable text with a named source. The engines are Apache-2.0
+  and use only standard libraries.
+- **A new format reaches everything at once.** One pack makes a format
+  convertible to and from every format already present, in all seven
+  languages, in the browser and in a static binary.
+
+## Who checks it
+
+| Check | What it does |
+|---|---|
+| Seven independent engines | Each engine is written from [`spec/`](spec) and the vectors, never from another engine's source, so a defect in one engine shows as a difference from the other six |
+| Conversion vectors | Every engine runs every vector and must reproduce the expected output byte for byte. Expected bytes are derived independently of the engines: from the format's specification, its reference implementation, or a generator that computes them itself |
+| Load vectors | A pack that breaks a rule must be refused by every engine with the same named error |
+| CI | [`.github/workflows/conformance.yml`](.github/workflows/conformance.yml) builds each engine and runs every vector on it, on every change; a change merges when every check passes |
+| Boundary gate | `python3 -I tools/boundary-gate` reads every file and refuses a pack with no public marking or no named source, and file types that could hold a restricted document ([docs/boundary.md](docs/boundary.md)) |
+
+## Use it
+
+Try the command-line tool. This needs a Rust toolchain and nothing else.
+
+```bash
+git clone https://github.com/USAREUR-AF/goat-transformers
+cd goat-transformers/engines/rust
+cargo build --release
+echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
+  | ./target/release/goat-xf convert --from remote-id --to cot-xml
+./target/release/goat-xf list-formats
+```
+
+Embed an engine in your own language. Each is a library with no dependency
+beyond the standard library; `engines/<language>` holds it and
+[CONTRIBUTING.md](CONTRIBUTING.md) lists the build and test command of each.
+
+| Your code is in | Use |
+|---|---|
+| Rust, Go, Python, Java, C++, Erlang, Zig | the native engine in `engines/rust`, `go`, `python`, `java`, `cpp`, `erlang`, `zig` |
+| JavaScript or TypeScript, in Node or a browser | the WebAssembly module and its wrapper in [`bindings/wasm`](bindings/README.md) |
+| C, or any language that can call C (C#, Swift, and others) | the C library in [`bindings/c`](bindings/README.md) |
+
+In Python, for example:
+
+```python
+from goat_transformers import Engine          # PYTHONPATH=engines/python/src
+
+engine = Engine.from_dir("packs", "model")    # the packs directory, the model directory
+engine.convert("remote-id", "cot-xml", "122624160b42bf241b6ed1b4b69808ac0870086b53150e0200")
+```
+
+<!-- MAINTAINER: when docs/using.md is merged, add here: "[docs/using.md](docs/using.md) states how to install and call the library from each language." -->
+
+goat-transformers is pre-1.0: the pack language and the engine interfaces can
+still change.
+
+## Make exactly what you need
+
+A pack loads on its own, so a deployment carries only the formats it uses. The
+full set includes three message catalogs of 6 to 8 MB each; an engine that
+loads two small packs starts in a fraction of the time.
+
+```bash
+mkdir few && cp -r packs/remote-id packs/cot-xml few/
+goat-xf convert --from remote-id --to cot-xml --packs few --models model < message.hex
+```
+
+<!-- MAINTAINER: when the `--packs-only <name>,<name>` option is merged, replace the two lines above with it. -->
+
+`tools/goat-pkg plan` takes the formats, the language, the runtime, the
+operating system and the processor architecture, and prints the smallest
+package: the engine, only the named packs, the wire types they use, the build
+command, and what carries between the named formats. Part of its output:
+
+```console
+$ tools/goat-pkg plan --formats remote-id,cot-xml --language rust --runtime wasm
+engine:      engines/rust
+packs:       remote-id, cot-xml   (only these)
+wires used:  bits, xml   (a minimal engine build can exclude the rest)
+build:       cargo build --release --lib --target wasm32-unknown-unknown
+```
+
+The Rust and Go engines build to one static binary with no shared library, and
+to WebAssembly; the Java engine is a jar
+([docs/package-configurator.md](docs/package-configurator.md)).
+
+## Private formats
+
+A pack for a format whose specification is not public is kept in a private
+overlay repository, which names the commit of this repository it builds with
+and adds its own packs; the engines read both unchanged, and such a format
+converts to and from every public format through the shared model. Every pack
+is marked `distribution public` or `distribution controlled`, and an engine
+started with `--max-distribution public` loads nothing marked `controlled`.
+
+[goat-transformers-overlay-example](https://github.com/USAREUR-AF/goat-transformers-overlay-example)
+is a worked overlay with fictional content, [docs/boundary.md](docs/boundary.md)
+states the rules and the checks, and
+[docs/coverage-roadmap.md](docs/coverage-roadmap.md#formats-whose-specification-is-not-public)
+states how such formats are covered.
+
+## Working with an AI assistant
+
+[AGENTS.md](AGENTS.md) gives an assistant the layout, the rules and the
+commands of this repository. [`.claude/skills/`](.claude/skills) holds
+step-by-step procedures (add a format, generate packs from a schema, convert a
+message, build a minimal package, write an overlay, review a pack, extend the
+pack language) and [`.claude/agents/`](.claude/agents) holds the roles the
+project uses when several assistants work at once.
 
 ## Layout
 
@@ -148,20 +286,17 @@ spec/        the engine specification, the shared model, the vector format
 model/       the shared model's modules, one file each
 packs/       one directory per format: pack.def, pack.md, vectors/
 engines/     one directory per language
-bindings/    the Rust engine as a C library and as a WebAssembly module, for other hosts
-tools/       goat-pkg       plan the smallest package for a set of constraints
-             boundary-gate  refuse content in this repository that is not public
-             gen/           pack generators
-docs/        design, language guidance, architecture decision records, format coverage, the package planner
+bindings/    the Rust engine as a C library and as a WebAssembly module
+tools/       goat-pkg, boundary-gate, repo-stats, and the pack generators in gen/
+docs/        design, language guidance, decision records, format coverage, the package planner
 ```
 
-## Contributing
+## Contributing, security, license
 
 [CONTRIBUTING.md](CONTRIBUTING.md) states how to run the conformance suite and
-how to add a pack, a wire type or an engine. Report a vulnerability through
+how to add a pack, a wire type or an engine. The design is
+[docs/design.md](docs/design.md). Report a vulnerability through
 [SECURITY.md](SECURITY.md).
-
-## License
 
 Apache License 2.0 ([LICENSE](LICENSE)). Portions written by U.S. Federal
 government employees within the scope of their employment are not subject to

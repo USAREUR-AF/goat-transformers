@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<title id="t">Every format maps to one shared model</title>
+<desc id="d">Fourteen public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B and ASTERIX, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay; they connect to the same shared model.</desc>
+<style>
+  .ink{fill:#e6edf3} .quiet{fill:#9198a1} .pub{fill:#4493f8} .ovl{fill:#d29922}
+  .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  .m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .box{fill:#4493f8;fill-opacity:.14;stroke:#4493f8;stroke-width:1.5}
+  .hub{fill:#4493f8;fill-opacity:.28;stroke:#4493f8;stroke-width:2}
+  .obox{fill:#d29922;fill-opacity:.14;stroke:#d29922;stroke-width:1.5;stroke-dasharray:6 4}
+  .ring{fill:none;stroke:#4493f8;stroke-width:1.5}
+  .oring{fill:none;stroke:#d29922;stroke-width:1.5;stroke-dasharray:8 6}
+  .ln{stroke:#4493f8;stroke-width:1.5;fill:none}
+  .oln{stroke:#d29922;stroke-width:1.5;fill:none;stroke-dasharray:6 4}
+  .nbox{fill:#9198a1;fill-opacity:.14;stroke:#6e7681;stroke-width:1.5}
+  .ar{stroke:#9198a1;stroke-width:1.5;fill:none}
+  .ah{fill:#9198a1}
+</style>
+<rect x="20" y="20" width="960" height="520" rx="18" class="oring"/>
+<text x="40" y="48" class="t ovl" font-size="14" text-anchor="start" font-weight="600">Private overlay: packs for formats whose specification is not public, kept in your own repository</text>
+<rect x="150" y="70" width="700" height="410" rx="14" class="ring"/>
+<text x="177" y="98" class="t pub" font-size="14" text-anchor="start" font-weight="600">This repository: packs written from public sources</text>
+<path d="M236.0 148 L420 225" class="ln"/>
+<path d="M368.0 148 L460 225" class="ln"/>
+<path d="M500.0 148 L500 225" class="ln"/>
+<path d="M632.0 148 L540 225" class="ln"/>
+<path d="M764.0 148 L580 225" class="ln"/>
+<path d="M236.0 396 L420 335" class="ln"/>
+<path d="M368.0 396 L460 335" class="ln"/>
+<path d="M500.0 396 L500 335" class="ln"/>
+<path d="M632.0 396 L540 335" class="ln"/>
+<path d="M764.0 396 L580 335" class="ln"/>
+<path d="M295 238.0 L385 250" class="ln"/>
+<path d="M295 322.0 L385 310" class="ln"/>
+<path d="M705 238.0 L615 250" class="ln"/>
+<path d="M705 322.0 L615 310" class="ln"/>
+<path d="M138 280 L385 280" class="oln"/>
+<path d="M862 280 L615 280" class="oln"/>
+<rect x="385" y="225" width="230" height="110" rx="12" class="hub"/>
+<text x="500" y="263" class="t ink" font-size="19" text-anchor="middle" font-weight="700">shared model</text>
+<text x="500" y="287" class="t quiet" font-size="14" text-anchor="middle">typed keys in fixed units</text>
+<text x="500" y="307" class="m quiet" font-size="12" text-anchor="middle">lat  lon  hae  time_ms  ...</text>
+<rect x="177" y="116" width="118" height="32" rx="8" class="box"/><text x="236.0" y="137" class="t ink" font-size="14" text-anchor="middle">CoT XML</text>
+<rect x="309" y="116" width="118" height="32" rx="8" class="box"/><text x="368.0" y="137" class="t ink" font-size="14" text-anchor="middle">CoT protobuf</text>
+<rect x="441" y="116" width="118" height="32" rx="8" class="box"/><text x="500.0" y="137" class="t ink" font-size="14" text-anchor="middle">GeoJSON</text>
+<rect x="573" y="116" width="118" height="32" rx="8" class="box"/><text x="632.0" y="137" class="t ink" font-size="14" text-anchor="middle">NVG</text>
+<rect x="705" y="116" width="118" height="32" rx="8" class="box"/><text x="764.0" y="137" class="t ink" font-size="14" text-anchor="middle">SAPIENT</text>
+<rect x="177" y="396" width="118" height="32" rx="8" class="box"/><text x="236.0" y="417" class="t ink" font-size="14" text-anchor="middle">MAVLink 2</text>
+<rect x="309" y="396" width="118" height="32" rx="8" class="box"/><text x="368.0" y="417" class="t ink" font-size="14" text-anchor="middle">NMEA 2000</text>
+<rect x="441" y="396" width="118" height="32" rx="8" class="box"/><text x="500.0" y="417" class="t ink" font-size="14" text-anchor="middle">ADS-B</text>
+<rect x="573" y="396" width="118" height="32" rx="8" class="box"/><text x="632.0" y="417" class="t ink" font-size="14" text-anchor="middle">ASTERIX 062</text>
+<rect x="705" y="396" width="118" height="32" rx="8" class="box"/><text x="764.0" y="417" class="t ink" font-size="14" text-anchor="middle">Remote ID</text>
+<rect x="177" y="222" width="118" height="32" rx="8" class="box"/><text x="236.0" y="243" class="t ink" font-size="14" text-anchor="middle">ISA</text>
+<rect x="177" y="306" width="118" height="32" rx="8" class="box"/><text x="236.0" y="327" class="t ink" font-size="14" text-anchor="middle">UCI</text>
+<rect x="705" y="222" width="118" height="32" rx="8" class="box"/><text x="764.0" y="243" class="t ink" font-size="14" text-anchor="middle">A-GRA</text>
+<rect x="705" y="306" width="118" height="32" rx="8" class="box"/><text x="764.0" y="327" class="t ink" font-size="14" text-anchor="middle">Track JSON</text>
+<rect x="30" y="264" width="108" height="32" rx="8" class="obox"/><text x="84" y="285" class="t ink" font-size="14" text-anchor="middle">your format</text>
+<rect x="862" y="264" width="108" height="32" rx="8" class="obox"/><text x="916" y="285" class="t ink" font-size="14" text-anchor="middle">your format</text>
+<text x="500" y="458" class="t ink" font-size="14" text-anchor="middle">One pack per format. Any format converts to any other through the model.</text>
+<text x="500" y="516" class="t quiet" font-size="14" text-anchor="middle">The same engines read both rings. An engine limited to public loads nothing from the overlay.</text>
+</svg>

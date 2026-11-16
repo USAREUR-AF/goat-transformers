@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img" aria-labelledby="t d">
+<title id="t">One message from Remote ID bytes to Cursor on Target XML</title>
+<desc id="d">Three values of a 25-byte Remote ID Location message, latitude, longitude and height, are read by three field lines of the remote-id pack into the model keys lat, lon and hae, then written by three field lines of the cot-xml pack as attributes of the point element of a Cursor on Target event.</desc>
+<style>
+  .ink{fill:#e6edf3} .quiet{fill:#9198a1} .pub{fill:#4493f8} .ovl{fill:#d29922}
+  .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  .m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .box{fill:#4493f8;fill-opacity:.14;stroke:#4493f8;stroke-width:1.5}
+  .hub{fill:#4493f8;fill-opacity:.28;stroke:#4493f8;stroke-width:2}
+  .obox{fill:#d29922;fill-opacity:.14;stroke:#d29922;stroke-width:1.5;stroke-dasharray:6 4}
+  .ring{fill:none;stroke:#4493f8;stroke-width:1.5}
+  .oring{fill:none;stroke:#d29922;stroke-width:1.5;stroke-dasharray:8 6}
+  .ln{stroke:#4493f8;stroke-width:1.5;fill:none}
+  .oln{stroke:#d29922;stroke-width:1.5;fill:none;stroke-dasharray:6 4}
+  .nbox{fill:#9198a1;fill-opacity:.14;stroke:#6e7681;stroke-width:1.5}
+  .ar{stroke:#9198a1;stroke-width:1.5;fill:none}
+  .ah{fill:#9198a1}
+</style>
+<text x="20" y="34" class="t ink" font-size="14" text-anchor="start" font-weight="600">1  Bytes in: a Remote ID Location message, 25 bytes (three of its fields shown)</text>
+<rect x="20" y="46" width="290" height="58" rx="8" class="nbox"/>
+<text x="165.0" y="71" class="m ink" font-size="15" text-anchor="middle" font-weight="600">42 bf 24 1b</text>
+<text x="165.0" y="91" class="t quiet" font-size="13" text-anchor="middle">bytes 5 to 8</text>
+<path d="M165.0 106 L165.0 123" class="ar"/>
+<path d="M160.0 122 L170.0 122 L165.0 130 Z" class="ah"/>
+<rect x="335" y="46" width="290" height="58" rx="8" class="nbox"/>
+<text x="480.0" y="71" class="m ink" font-size="15" text-anchor="middle" font-weight="600">6e d1 b4 b6</text>
+<text x="480.0" y="91" class="t quiet" font-size="13" text-anchor="middle">bytes 9 to 12</text>
+<path d="M480.0 106 L480.0 123" class="ar"/>
+<path d="M475.0 122 L485.0 122 L480.0 130 Z" class="ah"/>
+<rect x="650" y="46" width="290" height="58" rx="8" class="nbox"/>
+<text x="795.0" y="71" class="m ink" font-size="15" text-anchor="middle" font-weight="600">ac 08</text>
+<text x="795.0" y="91" class="t quiet" font-size="13" text-anchor="middle">bytes 15 and 16</text>
+<path d="M795.0 106 L795.0 123" class="ar"/>
+<path d="M790.0 122 L800.0 122 L795.0 130 Z" class="ah"/>
+<text x="20" y="148" class="t ink" font-size="14" text-anchor="start" font-weight="600">2  The remote-id pack: one line per field (bit offset : length, then the scale)</text>
+<rect x="20" y="160" width="290" height="58" rx="8" class="box"/>
+<text x="165.0" y="185" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field lat 0:40:32</text>
+<text x="165.0" y="205" class="m quiet" font-size="13" text-anchor="middle">sscale:1/10000000</text>
+<path d="M165.0 220 L165.0 237" class="ar"/>
+<path d="M160.0 236 L170.0 236 L165.0 244 Z" class="ah"/>
+<rect x="335" y="160" width="290" height="58" rx="8" class="box"/>
+<text x="480.0" y="185" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field lon 0:72:32</text>
+<text x="480.0" y="205" class="m quiet" font-size="13" text-anchor="middle">sscale:1/10000000</text>
+<path d="M480.0 220 L480.0 237" class="ar"/>
+<path d="M475.0 236 L485.0 236 L480.0 244 Z" class="ah"/>
+<rect x="650" y="160" width="290" height="58" rx="8" class="box"/>
+<text x="795.0" y="185" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field hae 0:120:16</text>
+<text x="795.0" y="205" class="m quiet" font-size="13" text-anchor="middle">uscale:1/2:-1000</text>
+<path d="M795.0 220 L795.0 237" class="ar"/>
+<path d="M790.0 236 L800.0 236 L795.0 244 Z" class="ah"/>
+<text x="20" y="262" class="t ink" font-size="14" text-anchor="start" font-weight="600">3  The shared model: typed keys in fixed units</text>
+<rect x="20" y="274" width="290" height="58" rx="8" class="hub"/>
+<text x="165.0" y="299" class="m ink" font-size="15" text-anchor="middle" font-weight="600">lat = 45.539309</text>
+<text x="165.0" y="319" class="t quiet" font-size="13" text-anchor="middle">degrees, WGS 84</text>
+<path d="M165.0 334 L165.0 351" class="ar"/>
+<path d="M160.0 350 L170.0 350 L165.0 358 Z" class="ah"/>
+<rect x="335" y="274" width="290" height="58" rx="8" class="hub"/>
+<text x="480.0" y="299" class="m ink" font-size="15" text-anchor="middle" font-weight="600">lon = -122.966389</text>
+<text x="480.0" y="319" class="t quiet" font-size="13" text-anchor="middle">degrees, WGS 84</text>
+<path d="M480.0 334 L480.0 351" class="ar"/>
+<path d="M475.0 350 L485.0 350 L480.0 358 Z" class="ah"/>
+<rect x="650" y="274" width="290" height="58" rx="8" class="hub"/>
+<text x="795.0" y="299" class="m ink" font-size="15" text-anchor="middle" font-weight="600">hae = 110</text>
+<text x="795.0" y="319" class="t quiet" font-size="13" text-anchor="middle">meters above the ellipsoid</text>
+<path d="M795.0 334 L795.0 351" class="ar"/>
+<path d="M790.0 350 L800.0 350 L795.0 358 Z" class="ah"/>
+<text x="20" y="376" class="t ink" font-size="14" text-anchor="start" font-weight="600">4  The cot-xml pack: one line per field (a path into the XML document)</text>
+<rect x="20" y="388" width="290" height="58" rx="8" class="box"/>
+<text x="165.0" y="413" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field lat point/@lat</text>
+<text x="165.0" y="433" class="m quiet" font-size="13" text-anchor="middle">float</text>
+<path d="M165.0 448 L165.0 465" class="ar"/>
+<path d="M160.0 464 L170.0 464 L165.0 472 Z" class="ah"/>
+<rect x="335" y="388" width="290" height="58" rx="8" class="box"/>
+<text x="480.0" y="413" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field lon point/@lon</text>
+<text x="480.0" y="433" class="m quiet" font-size="13" text-anchor="middle">float</text>
+<path d="M480.0 448 L480.0 465" class="ar"/>
+<path d="M475.0 464 L485.0 464 L480.0 472 Z" class="ah"/>
+<rect x="650" y="388" width="290" height="58" rx="8" class="box"/>
+<text x="795.0" y="413" class="m ink" font-size="15" text-anchor="middle" font-weight="600">field hae point/@hae</text>
+<text x="795.0" y="433" class="m quiet" font-size="13" text-anchor="middle">float</text>
+<path d="M795.0 448 L795.0 465" class="ar"/>
+<path d="M790.0 464 L800.0 464 L795.0 472 Z" class="ah"/>
+<text x="20" y="490" class="t ink" font-size="14" text-anchor="start" font-weight="600">5  Text out: a Cursor on Target event</text>
+<rect x="20" y="502" width="290" height="58" rx="8" class="nbox"/>
+<text x="165.0" y="527" class="m ink" font-size="15" text-anchor="middle" font-weight="600">lat="45.539309"</text>
+<text x="165.0" y="547" class="t quiet" font-size="13" text-anchor="middle">attribute of &lt;point&gt;</text>
+<rect x="335" y="502" width="290" height="58" rx="8" class="nbox"/>
+<text x="480.0" y="527" class="m ink" font-size="15" text-anchor="middle" font-weight="600">lon="-122.966389"</text>
+<text x="480.0" y="547" class="t quiet" font-size="13" text-anchor="middle">attribute of &lt;point&gt;</text>
+<rect x="650" y="502" width="290" height="58" rx="8" class="nbox"/>
+<text x="795.0" y="527" class="m ink" font-size="15" text-anchor="middle" font-weight="600">hae="110"</text>
+<text x="795.0" y="547" class="t quiet" font-size="13" text-anchor="middle">attribute of &lt;point&gt;</text>
+<text x="480" y="586" class="t quiet" font-size="14" text-anchor="middle">No code is specific to either format: both packs are data files, and each of the seven engines reads them.</text>
+</svg>

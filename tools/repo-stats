@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""repo-stats: count what this repository holds.
+
+Prints the numbers that README.md quotes, counted from the tree: formats,
+message kinds, model keys, conversion vectors, load vectors, wire types and
+engines, and the size of the WebAssembly module when one has been built.
+
+Usage:
+  python3 -I tools/repo-stats             the totals
+  python3 -I tools/repo-stats --formats   one Markdown table row per format
+  python3 -I tools/repo-stats --json      the totals as JSON
+
+How each number is counted:
+  format             a directory under packs/ that holds a pack.def
+  synthetic format   a format whose name starts with `conformance` or `demo-`;
+                     these exercise the rules of the specification
+  message kind       a `kind` line at the start of a line of a pack.def; a pack
+                     with no `kind` line describes one message layout and
+                     counts as one
+  model key, list    a `key` or `list` line of a model/<module>.def
+  conversion vector  a .json file under packs/<format>/vectors/
+  load vector        a .json file under packs/conformance/load-vectors/
+  wire type          a distinct value of the `wire` line of a pack.def
+  engine             a directory under engines/
+
+It reads files and runs nothing. Standard library only.
+"""
+import json
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(HERE)
+
+WASM_BUILDS = [
+    ("small", "bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm"),
+    ("release", "bindings/wasm/target/wasm32-unknown-unknown/release/goat_transformers_wasm.wasm"),
+]
+
+
+def is_synthetic(name):
+    return name.startswith("conformance") or name.startswith("demo-")
+
+
+def read_pack(path):
+    """-> (format, wire, kinds, first source) from one pack.def."""
+    fmt, wire, kinds, source = None, None, 0, ""
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            tok = line.split()
+            if not tok or line[0] in " \t#":
+                continue
+            if tok[0] == "format" and len(tok) > 1:
+                fmt = tok[1]
+            elif tok[0] == "wire" and len(tok) > 1:
+                wire = tok[1]
+            elif tok[0] == "kind":
+                kinds += 1
+            elif tok[0] == "source" and not source:
+                source = line.split(None, 1)[1].strip().strip('"')
+    return fmt, wire, max(kinds, 1), source
+
+
+def count_json(directory):
+    if not os.path.isdir(directory):
+        return 0
+    return sum(1 for n in os.listdir(directory) if n.endswith(".json"))
+
+
+def collect():
+    packs_dir = os.path.join(REPO, "packs")
+    formats = []
+    for name in sorted(os.listdir(packs_dir)):
+        pdef = os.path.join(packs_dir, name, "pack.def")
+        if not os.path.isfile(pdef):
+            continue
+        fmt, wire, kinds, source = read_pack(pdef)
+        formats.append({
+            "pack": name,
+            "format": fmt or name,
+            "wire": wire or "",
+            "kinds": kinds,
+            "vectors": count_json(os.path.join(packs_dir, name, "vectors")),
+            "synthetic": is_synthetic(name),
+            "source": source,
+        })
+
+    modules, keys, lists = 0, 0, 0
+    model_dir = os.path.join(REPO, "model")
+    for name in sorted(os.listdir(model_dir)):
+        if not name.endswith(".def"):
+            continue
+        modules += 1
+        with open(os.path.join(model_dir, name), encoding="utf-8") as fh:
+            for line in fh:
+                tok = line.split()
+                if not tok:
+                    continue
+                if tok[0] == "key":
+                    keys += 1
+                elif tok[0] == "list":
+                    lists += 1
+
+    engines_dir = os.path.join(REPO, "engines")
+    engines = sorted(n for n in os.listdir(engines_dir)
+                     if os.path.isdir(os.path.join(engines_dir, n)))
+
+    real = [f for f in formats if not f["synthetic"]]
+    synthetic = [f for f in formats if f["synthetic"]]
+    totals = {
+        "formats": len(real),
+        "synthetic_formats": len(synthetic),
+        "packs": len(formats),
+        "message_kinds": sum(f["kinds"] for f in real),
+        "model_modules": modules,
+        "model_keys": keys,
+        "model_lists": lists,
+        "conversion_vectors": sum(f["vectors"] for f in formats),
+        "load_vectors": count_json(os.path.join(packs_dir, "conformance", "load-vectors")),
+        "wire_types": sorted({f["wire"] for f in formats if f["wire"]}),
+        "engines": engines,
+    }
+    for label, rel in WASM_BUILDS:
+        path = os.path.join(REPO, rel)
+        if os.path.isfile(path):
+            totals["wasm_%s_bytes" % label] = os.path.getsize(path)
+    return formats, totals
+
+
+def main(argv):
+    formats, t = collect()
+    if "--json" in argv:
+        print(json.dumps(t, indent=2))
+        return 0
+    if "--formats" in argv:
+        print("| Pack | Wire | Message kinds | Vectors | Written from |")
+        print("|---|---|---:|---:|---|")
+        for f in formats:
+            if f["synthetic"]:
+                continue
+            print("| `%s` | `%s` | %s | %s | %s |" % (
+                f["pack"], f["wire"], format(f["kinds"], ","), format(f["vectors"], ","), f["source"]))
+        return 0
+    rows = [
+        ("formats", format(t["formats"], ",")),
+        ("synthetic formats", format(t["synthetic_formats"], ",")),
+        ("packs (both)", format(t["packs"], ",")),
+        ("message kinds", format(t["message_kinds"], ",")),
+        ("model modules", format(t["model_modules"], ",")),
+        ("model keys", format(t["model_keys"], ",")),
+        ("model lists", format(t["model_lists"], ",")),
+        ("conversion vectors", format(t["conversion_vectors"], ",")),
+        ("load vectors", format(t["load_vectors"], ",")),
+        ("wire types", "%d (%s)" % (len(t["wire_types"]), ", ".join(t["wire_types"]))),
+        ("engines", "%d (%s)" % (len(t["engines"]), ", ".join(t["engines"]))),
+    ]
+    for label, _rel in WASM_BUILDS:
+        key = "wasm_%s_bytes" % label
+        if key in t:
+            rows.append(("wasm module, %s build" % label, "%s bytes" % format(t[key], ",")))
+    if not any(k.startswith("wasm_") for k in t):
+        rows.append(("wasm module", "not built (bindings/README.md states how)"))
+    width = max(len(r[0]) for r in rows)
+    for label, value in rows:
+        print("%-*s  %s" % (width, label, value))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
