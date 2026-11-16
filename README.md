@@ -258,6 +258,14 @@ The Rust and Go engines build to one static binary with no shared library, and
 to WebAssembly; the Java engine is a jar
 ([docs/package-configurator.md](docs/package-configurator.md)).
 
+## Which options exist between two systems
+
+[`tools/goat-options`](tools/goat-options) reads plain-text records of systems
+(what each one emits and accepts) and lists every conversion path from a
+producing system to a consuming one, with the evidence for each path. It lists
+options and does not rank them. The record format and a worked example are in
+[docs/system-records.md](docs/system-records.md).
+
 ## Private formats
 
 A pack for a format whose specification is not public is kept in a private
@@ -290,7 +298,8 @@ model/       the shared model's modules, one file each
 packs/       one directory per format: pack.def, pack.md, vectors/
 engines/     one directory per language
 bindings/    the Rust engine as a C library and as a WebAssembly module
-tools/       goat-pkg, boundary-gate, repo-stats, and the pack generators in gen/
+examples/    fictional system records and a site file for tools/goat-options
+tools/       goat-pkg, goat-options, boundary-gate, repo-stats, and the pack generators in gen/
 docs/        design, language guidance, decision records, format coverage, the package planner
 ```
 

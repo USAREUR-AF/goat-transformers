@@ -1,0 +1,8 @@
+record   1
+system   example/acoustic-1
+name     "Example acoustic sensor 1 (fictional)"
+kind     sensor
+by       example-org
+date     2026-11-16
+
+emits    sapient  transport=zenoh  version=3.2  status=available
