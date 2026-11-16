@@ -1,0 +1,20 @@
+{
+  "name": "sample-plot",
+  "from": "asterix-cat048",
+  "to": "asterix-cat048",
+  "input": "30000c9801020a0020000fff",
+  "expect": "30000c9801020a0020000fff",
+  "model": {
+    "@kind": "record",
+    "cat048.i010_sac": "1",
+    "cat048.i010_sic": "2",
+    "cat048.i040_rho": "10",
+    "cat048.i040_theta": "45",
+    "cat048.i070_v": "0",
+    "cat048.i070_g": "0",
+    "cat048.i070_l": "0",
+    "cat048.i070_mode3a": "4095"
+  },
+  "source": "github.com/zoranbosnjak/asterix-libs (BSD-3-Clause), libs/python/README.md, commit 24be3c4593a24001d10e04338b46f6d85df6660f",
+  "reference": "the plot of the README's first example: rho 10 NM, theta 45 degrees, Mode 3/A code 7777 (octal)"
+}

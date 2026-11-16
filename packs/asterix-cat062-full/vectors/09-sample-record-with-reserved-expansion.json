@@ -1,0 +1,14 @@
+{
+  "name": "sample-record-with-reserved-expansion",
+  "from": "asterix-cat062-full",
+  "to": "asterix-cat062-full",
+  "input": "3e001b8101010104010211c8010000000000020000010000028000",
+  "expect": "3e0006800102",
+  "model": {
+    "@kind": "record",
+    "cat062full.i010_sac": "1",
+    "cat062full.i010_sic": "2"
+  },
+  "source": "github.com/zoranbosnjak/asterix-libs (BSD-3-Clause), libs/python/README.md, commit 24be3c4593a24001d10e04338b46f6d85df6660f",
+  "reference": "the block of the README's reserved expansion example (written there with edition 1.20): SAC 1, SIC 2 and an RE item of 17 octets. The RE item is read over and not written"
+}

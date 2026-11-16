@@ -1,0 +1,16 @@
+{
+  "name": "sample-sector-crossing-0-degrees",
+  "from": "asterix-cat034",
+  "to": "asterix-cat034",
+  "input": "220008d001020200",
+  "expect": "220008d001020200",
+  "model": {
+    "@kind": "record",
+    "cat034.i010_sac": "1",
+    "cat034.i010_sic": "2",
+    "cat034.i000": "2",
+    "cat034.i020": "0"
+  },
+  "source": "github.com/zoranbosnjak/asterix-libs (BSD-3-Clause), libs/python/README.md, commit 24be3c4593a24001d10e04338b46f6d85df6660f",
+  "reference": "the sector crossing message at azimuth 0 degrees of the README's first example"
+}

@@ -9,6 +9,7 @@ distribution  public
 source        "USAREUR-AF/open-billie schemas/canonical-track-v2.schema.json (Apache-2.0)"
 key  source_id      string  -    "stable identifier of the sensor or source namespace"
 key  generation     string  -    "identifier of this lifetime of a source track id"
+key  scoped_id      string  -    "identifier of the track as the sending host scopes it: unique across senders, sources and track lifetimes"
 key  vel_east_ms    float   m/s  "velocity toward east"
 key  vel_north_ms   float   m/s  "velocity toward north"
 key  vel_up_ms      float   m/s  "velocity upward"

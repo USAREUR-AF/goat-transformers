@@ -1,0 +1,14 @@
+{
+  "name": "sample-first-record-of-a-block-of-four",
+  "from": "asterix-cat062-full",
+  "to": "asterix-cat062-full",
+  "input": "3e0017011010000101101000010110104ccd0110108320",
+  "expect": "3e00080110100001",
+  "model": {
+    "@kind": "record",
+    "cat062full.i380_ias_im": "0",
+    "cat062full.i380_ias_ias": "1"
+  },
+  "source": "github.com/zoranbosnjak/asterix-libs (BSD-3-Clause), libs/python/README.md, commit 24be3c4593a24001d10e04338b46f6d85df6660f",
+  "reference": "the block of the README's dependent content example (written there with edition 1.20): four records, the first with I062/380 subfield IAS holding IM 0 and the raw value 1. The pack reads the first record and writes it alone"
+}
