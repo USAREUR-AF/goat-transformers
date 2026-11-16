@@ -120,10 +120,12 @@ func TestSequentialRoundTripAndPresence(t *testing.T) {
 	if want := "0140" + "0410" + "00" + "01" + "20"; err != nil || string(out) != want {
 		t.Errorf("encode = %s, %v; want %s", out, err, want)
 	}
-	// An item naming a kind the group does not have.
+	// An item naming a kind the group does not have selects by `requires`
+	// (0.8 ruling 26); a message naming a kind the format does not have is
+	// no-kind.
 	it.Kind = EntityKind{Format: "sq", Name: "other"}
-	if _, err := eng.Encode("sq", e); !IsKind(err, ErrNoKind) {
-		t.Errorf("an item naming an unknown kind: got %v, want no-kind", err)
+	if got, err := eng.Encode("sq", e); err != nil || string(got) != string(out) {
+		t.Errorf("an item naming an unknown kind: got %s, %v; want %s", got, err, out)
 	}
 }
 
@@ -302,5 +304,78 @@ func TestRulings11To21Of07(t *testing.T) {
 	out, err = eng.Convert("gj", "gp", []byte(`{"id":"u","nums":[null]}`))
 	if want := "0a0175"; err != nil || string(out) != want {
 		t.Errorf("packed list of no values = %s, %v; want %s", out, err, want)
+	}
+}
+
+func TestRulings31To34Of08(t *testing.T) {
+	eng := seqEngine(t)
+	load := func(def string) {
+		t.Helper()
+		if err := eng.LoadPack([]byte(def), "pack"); err != nil {
+			t.Fatalf("LoadPack: %v", err)
+		}
+	}
+	pbHead := "version 0.8.0\ndistribution public\nsource s\nuses g\nwire protobuf\n"
+
+	// Ruling 31: a `when` path whose prefix is not a submessage does not hold;
+	// a `field` or `group` path there is malformed-wire.
+	load("format wp\n" + pbHead + "field uid 1 pstring\nkind a\nwhen 2.1 1\nkind b\nwhen 3 1\n")
+	load("format wq\n" + pbHead + "field uid 1 pstring\nkind a\nwhen 2.1 present\n")
+	load("format wf\n" + pbHead + "field uid 1 pstring\nfield g.n 2.1 pvarint\n")
+	load("format wg\n" + pbHead + "field uid 1 pstring\ngroup g.items 2.1\n  field g.n 1 pvarint\nend\n")
+	// Field 1 is "u", field 2 is the varint 5, field 3 is the varint 1.
+	ent, err := eng.Decode("wp", []byte("0a0175"+"1005"+"1801"))
+	if err != nil || ent.Kind != (EntityKind{"wp", "b"}) {
+		t.Errorf("when under a varint, a later kind holds: %+v, %v; want kind b", ent, err)
+	}
+	for _, c := range []struct {
+		name, format string
+		want         ErrorKind
+	}{
+		{"when with an integer", "wp", ErrNoKind},
+		{"when present", "wq", ErrNoKind},
+		{"field path", "wf", ErrMalformedWire},
+		{"group path", "wg", ErrMalformedWire},
+	} {
+		if _, err := eng.Decode(c.format, []byte("0a0175"+"1005")); !IsKind(err, c.want) {
+			t.Errorf("prefix that is not a submessage, %s: got %v, want %s", c.name, err, c.want)
+		}
+	}
+
+	// Ruling 33: two groups of one list are refused when one group's block
+	// encloses the other's; decode keeps the later group's items.
+	grp := "group g.items count 8\nfield g.n 8 uint\nend\n"
+	nested := "format sn\n" + seqHead + "presence p 2\npad 6\nif p.1\n" + grp + "if p.2\n" + grp + "end\nend\n"
+	if err := eng.LoadPack([]byte(nested), "pack"); !IsKind(err, ErrBadDirective) {
+		t.Errorf("a list in a block and in a block nested in it: got %v, want %s", err, ErrBadDirective)
+	}
+	load("format st\n" + seqHead + "presence p 2\npad 6\nif p.1\n" + grp + "end\nif p.2\n" + grp + "end\n")
+	ent, err = eng.Decode("st", []byte("c0"+"0107"+"0109"))
+	if err != nil {
+		t.Fatalf("both groups on the wire: %v", err)
+	}
+	if items, ok := ent.List("g.items"); !ok || len(items) != 1 || items[0].Fields["g.n"].I != 9 {
+		t.Errorf("both groups on the wire: items = %+v, %v; want the later group's one item 9", items, ok)
+	}
+
+	// Ruling 34: a group whose first indicator lies at the end of the extent
+	// gives an absent list; a later indicator there reads as 0.
+	for _, mode := range []string{"while", "more"} {
+		f := "s" + mode[:1]
+		load("format " + f + "\n" + seqHead + "length 8 bytes\nfield g.n 8 uint\ngroup g.items " + mode + "\nfield g.n 7 uint\nend\nend\n")
+		ent, err = eng.Decode(f, []byte("01"+"05"))
+		if err != nil {
+			t.Fatalf("%s, first indicator at the end: %v", mode, err)
+		}
+		if items, ok := ent.List("g.items"); ok {
+			t.Errorf("%s, first indicator at the end: items = %+v; want an absent list", mode, items)
+		}
+	}
+	ent, err = eng.Decode("sw", []byte("02"+"05"+"83"))
+	if err != nil {
+		t.Fatalf("while, second indicator at the end: %v", err)
+	}
+	if items, ok := ent.List("g.items"); !ok || len(items) != 1 || items[0].Fields["g.n"].I != 3 {
+		t.Errorf("while, second indicator at the end: items = %+v, %v; want one item 3", items, ok)
 	}
 }

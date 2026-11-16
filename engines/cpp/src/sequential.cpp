@@ -64,6 +64,65 @@ void each_node(Lines& lines, Fn&& fn) {
     }
 }
 
+// A list in two groups of one scope (0.8 rulings 23 and 33). A scope is the
+// common lines of a body with the lines of one of its kinds; a group's items
+// are a scope of their own. Two groups of one list are allowed only when each
+// sits in an `if` or `opt` block and neither group's block, the innermost
+// one, encloses the other's; a block encloses itself. When both are on the
+// wire, decode keeps the later group's items.
+struct ListUse {
+    const SeqNode* group;
+    std::vector<const SeqNode*> blocks;  // the `if` and `opt` blocks of the scope that hold the group, outermost first
+};
+
+void check_lists_once(const Pack& p, const SeqBody& body, const std::string& source);
+
+void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vector<const SeqNode*>& blocks,
+                    const std::string& source, std::vector<ListUse>& out) {
+    for (const auto& n : lines) {
+        if (n.type == Type::Group) {
+            out.push_back({&n, blocks});
+            check_lists_once(p, n.inner, source);  // the items are a scope of their own
+        } else if (n.type == Type::If || n.type == Type::Opt) {
+            blocks.push_back(&n);
+            collect_groups(p, n.inner.lines, blocks, source, out);
+            blocks.pop_back();
+        } else {
+            collect_groups(p, n.inner.lines, blocks, source, out);
+        }
+    }
+}
+
+void check_lists_once(const Pack& p, const SeqBody& body, const std::string& source) {
+    std::vector<const SeqNode*> blocks;
+    std::vector<ListUse> common;
+    collect_groups(p, body.lines, blocks, source, common);
+    // Does the innermost block of `a` enclose the innermost block of `b`?
+    auto encloses = [](const ListUse& a, const ListUse& b) {
+        return std::find(b.blocks.begin(), b.blocks.end(), a.blocks.back()) != b.blocks.end();
+    };
+    auto check = [&](const std::vector<ListUse>& uses) {
+        for (std::size_t b = 1; b < uses.size(); ++b)
+            for (std::size_t a = 0; a < b; ++a) {
+                if (uses[a].group->list != uses[b].group->list) continue;
+                if (!uses[a].blocks.empty() && !uses[b].blocks.empty() && !encloses(uses[a], uses[b]) &&
+                    !encloses(uses[b], uses[a]))
+                    continue;
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            source + ":" + std::to_string(uses[b].group->line) + ": the list '" + uses[b].group->list +
+                                "' is mapped by two groups of one scope (the other at line " +
+                                std::to_string(uses[a].group->line) +
+                                ") that are not in 'if' or 'opt' blocks neither of which encloses the other");
+            }
+    };
+    if (body.kinds.empty()) check(common);
+    for (const auto& k : body.kinds) {
+        std::vector<ListUse> uses = common;
+        collect_groups(p, k.lines, blocks, source, uses);
+        check(uses);
+    }
+}
+
 }  // namespace
 
 bool is_sequential_pack(const std::string& text) {
@@ -173,11 +232,6 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (!parse_u32(s, n) || n < 1 || n > 64) throw bad(what + " is 1 to 64 bits, not '" + s + "'");
             return n;
         };
-        auto in_group = [&]() {
-            for (const auto& f : stack)
-                if (f.type == Type::Group) return true;
-            return false;
-        };
         auto add = [&](SeqNode n) -> SeqNode& {
             n.line = lineno;
             std::vector<SeqNode>& lines = lines_of(stack.back());
@@ -199,11 +253,12 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         SeqNode* const prev_field = also_target;
         also_target = nullptr;
 
-        // What describes the pack, not a part of the message, is written
-        // outside groups (0.7 rulings 9 and 18).
-        if (in_group() && (kw == "format" || kw == "version" || kw == "distribution" || kw == "source" || kw == "uses" ||
-                           kw == "wire" || kw == "layout" || kw == "bit_order"))
-            throw bad("'" + kw + "' is not allowed inside a group");
+        // Header and table directives describe the pack, not a part of the
+        // message: inside any block they are bad-directive (0.8 ruling 24).
+        if (stack.size() > 1 &&
+            (kw == "format" || kw == "version" || kw == "distribution" || kw == "source" || kw == "uses" ||
+             kw == "wire" || kw == "layout" || kw == "bit_order" || kw == "map" || kw == "typemap"))
+            throw bad("'" + kw + "' is not allowed inside " + stack.back().what);
 
         if (kw == "format") {
             arity(1);
@@ -249,7 +304,6 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             else if (t[1] == "msb") p.bit_order = BitOrder::Msb;
             else throw bad("bit_order '" + t[1] + "' is not lsb or msb");
         } else if (kw == "map") {
-            if (in_group()) throw bad("'map' is not allowed inside a group");  // 0.7 ruling 9
             arity(3);
             auto it = table_index.find(t[1]);
             if (it == table_index.end()) {
@@ -259,7 +313,6 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             }
             p.tables[static_cast<std::size_t>(it->second)].entries.emplace_back(t[2], t[3]);
         } else if (kw == "typemap") {
-            if (in_group()) throw bad("'typemap' is not allowed inside a group");
             arity(2);
             if (!natives.insert(t[1]).second)
                 throw Error(ErrorKind::InvalidPack, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
@@ -522,6 +575,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     check_common_when(stack[0]);
     if (have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "", source + ": 'layout sequential' applies to wire bits only");
+    check_lists_once(p, p.seq, source);
     // `via` names a table of the pack; a `map` line may follow the field.
     auto resolve = [&](FieldLine& f) {
         if (f.via.empty()) return;
@@ -692,8 +746,9 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             std::vector<Item>& items = out.lists[n.list];
             items.clear();
             for (;;) {
-                if (!in.need(1, "the bit before an item")) return;
-                const bool more = in.take(1) == 1;
+                // An indicator bit at or after the end of the extent reads as
+                // 0: the item it precedes is the last (0.8 ruling 21).
+                const bool more = in.need(1, "the bit before an item") && in.take(1) == 1;
                 item(items);
                 if (!more) return;
             }
@@ -747,8 +802,11 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             if (in.need(n.len, "a pad")) in.cur += n.len;
             return;
         case Type::Align: {
-            const std::uint64_t to = (in.cur + n.len - 1) / n.len * n.len;
-            if (in.need(to - in.cur, "an align")) in.cur = to;
+            // It stops at the end of the input or of the extent without
+            // error (0.8 ruling 20).
+            const std::uint64_t end = in.ext != kNoExtent ? std::min(in.ext, in.have) : in.have;
+            const std::uint64_t to = std::min((in.cur + n.len - 1) / n.len * n.len, end);
+            if (to > in.cur) in.cur = to;
             return;
         }
         case Type::When:
@@ -932,14 +990,19 @@ struct Scope {
     }
 };
 
-// Encode: the kind the item names for this format, else the first kind whose
-// `requires` keys are all present. Null for a body with no kinds; throws no-kind.
+// Encode: the kind the item names, when it names this format and a kind the
+// body has, else the first kind whose `requires` keys are all present. Null for a body with no kinds; throws no-kind.
 const SeqKind* select_kind(const Pack& p, const SeqBody& body, const Item& item) {
     if (body.kinds.empty()) return nullptr;
     if (item.kind.first == p.format) {
         for (const auto& k : body.kinds)
             if (k.name == item.kind.second) return &k;
-        throw Error(ErrorKind::NoKind, p.format, "", "the kind '" + item.kind.second + "' is not one of the body's kinds");
+        // The message names a kind the format does not have. An item is
+        // selected by its kind only when the group has it; otherwise by
+        // `requires` (0.8 ruling 26).
+        if (&body == &p.seq)
+            throw Error(ErrorKind::NoKind, p.format, "",
+                        "the kind '" + item.kind.second + "' is not one of the format's kinds");
     }
     for (const auto& k : body.kinds) {
         bool all = true;
@@ -1025,7 +1088,14 @@ void compute_presence(const Pack& p, int id, const std::vector<SeqNode>& lines, 
             auto it = s.item.lists.find(n.list);
             if (it == s.item.lists.end()) continue;
             for (const Item& item : it->second) {
-                const Scope inner(p, item, n.inner, select_kind(p, n.inner, item));
+                // A group that is not written may hold kinds none of which
+                // the item selects: only its common lines are looked at then.
+                const SeqKind* kind = nullptr;
+                try {
+                    kind = select_kind(p, n.inner, item);
+                } catch (const Error&) {
+                }
+                const Scope inner(p, item, n.inner, kind);
                 compute_presence(p, id, n.inner.lines, 0, inner, bits);
                 if (inner.kind) compute_presence(p, id, inner.kind->lines, 0, inner, bits);
             }
@@ -1048,13 +1118,19 @@ void compute_presence(const Pack& p, int id, const std::vector<SeqNode>& lines, 
 
 void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     const Pack& p = out.p;
-    // The value of the earliest bound key that is present (0.5 ruling 16), a
-    // key with a default counting as present. No key: zero bits.
+    // The value of the earliest bound key the item holds; when it holds none,
+    // the default of the earliest key that has one (0.8 ruling 16). No key and
+    // no default: zero bits.
     Value mv;
     const FieldLine* f = nullptr;
-    if (s.src.value(n.field, mv)) f = &n.field;
-    for (std::size_t k = 0; !f && k < n.also.size(); ++k)
-        if (s.src.value(n.also[k], mv)) f = &n.also[k];
+    for (const bool held : {true, false}) {
+        for (std::size_t k = 0; !f && k <= n.also.size(); ++k) {
+            const FieldLine& line = k == 0 ? n.field : n.also[k - 1];
+            if (held && !s.item.fields.count(line.key)) continue;
+            if (s.src.value(line, mv)) f = &line;
+        }
+        if (f) break;
+    }
     if (!f) {
         out.zeros(n.len);
         return;

@@ -1,0 +1,8 @@
+{
+  "name": "ruling-28-minus-zero",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"s1\":\"-0\"}",
+  "context": {},
+  "expect": "{\"s1\":\"-0\",\"parsed\":0}"
+}

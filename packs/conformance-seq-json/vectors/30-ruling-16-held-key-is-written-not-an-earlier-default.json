@@ -1,0 +1,7 @@
+{
+  "name": "ruling-16-held-key-is-written-not-an-earlier-default",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"qty\":7}",
+  "expect": "0100070280"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ruling-23-empty-list-in-the-first-group",
+  "from": "conformance-seq-rulings-lists",
+  "to": "conformance-seq-rulings-lists",
+  "input": "018000",
+  "expect": "0100",
+  "model": {
+    "probe.recs.#": "0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-18-when-after-requires-and-default",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "{\"n\":1,\"x\":5}",
+  "expect": "0100010503"
+}

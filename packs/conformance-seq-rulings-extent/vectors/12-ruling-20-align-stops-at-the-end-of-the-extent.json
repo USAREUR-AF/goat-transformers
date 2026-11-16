@@ -1,0 +1,7 @@
+{
+  "name": "ruling-20-align-stops-at-the-end-of-the-extent",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-json",
+  "input": "0108015007",
+  "expect": "{\"n\":1,\"x\":5,\"y\":7}"
+}

@@ -1245,3 +1245,64 @@ Derive functions added:
 
 `any` is the one function whose target is set when only some arguments are
 present.
+
+### Stated, not yet pinned by a vector
+
+Seven engines written independently from the 0.8 sections chose differently on
+the points below, or noted that no vector decides them.
+
+16. **`also` and defaults.** Encode writes the value of the earliest of the
+    field's keys that the entity holds; when it holds none, the default of the
+    earliest key that has one.
+17. **Which `if` blocks name a presence bit** (ruling 1): every `if` in the
+    pack that can see the name, in any kind, with or without `!`.
+18. **`when` placement.** `requires` and `default` lines do not count as lines
+    of the kind: a `when` may follow them.
+19. **A `default` inside a block** belongs to the enclosing message kind or
+    group body.
+20. **Skips.** `pad` and `const` past the end of the input are
+    `malformed-wire`. `align` stops at the end of the input or extent without
+    error.
+21. **At the end of a `length` extent.** An indicator bit of a `while`, `more`
+    or `fx` group, an `fx` line of a chain, and a presence field that start at
+    or after the end read as 0; a continuation octet of an `fx` presence there
+    is `malformed-wire`. `const`, `pad`, `opt` and a nested `length` there read
+    as absent.
+22. **Content for a presence, `opt` or `fx` bit** is a present key or non-empty
+    list at any depth of nested `if`, `opt`, `chain` and `length` blocks,
+    without evaluating the nested conditions. A `const` is not content.
+23. **A list in two groups of one sequential scope** is allowed when the two
+    groups sit in different `if` or `opt` blocks, and `bad-directive` otherwise.
+24. **Header and table directives** (`format`, `version`, `distribution`,
+    `source`, `uses`, `wire`, `layout`, `bit_order`, `map`, `typemap`) inside
+    any block are `bad-directive`.
+25. **A count** (ruling 14) is compared with the bits left, not with count
+    times item size.
+26. **`Item.kind`** holds the format with the kind name. Encode selects by it
+    only when it names the format being written and a kind the group has;
+    otherwise by `requires`.
+27. **A `when` before the first `kind` of a group body** is a common `when` of
+    every item; an item that fails it is `no-kind`.
+28. **`parse_int`** accepts an optional `-` and then digits, leading zeros
+    included, within 64 bits; anything else leaves the target absent.
+29. **Module checks.** For a module: `missing-distribution`, `missing-source`,
+    `distribution-refused`, `unknown-module`, `distribution-violation`, the
+    `derive` checks, `duplicate-module`. A `derive` target is a key of `core`
+    or of the module itself. A chain is one block for presence names.
+30. **Ruling 13 of 0.7** applies to every protobuf path: a prefix that is not a
+    submessage is `malformed-wire`, inside or outside a group. **Ruling 21 of
+    0.7**: a field at exactly the group's own path is refused on `xml` and
+    allowed on `json`, `geojson` and `protobuf`.
+31. **Ruling 30 and `when`.** A `when` path whose prefix is not a submessage
+    does not hold; it is not an error. Ruling 13 of 0.7 is about `field` and
+    `group` paths.
+32. **Ruling 9 of 0.6 and ruling 29 together.** A `derive` line refused on its
+    own text (function name, parameter, number of arguments) is a line error,
+    raised as the file is read. The checks that need keys (declared, typed,
+    used module loaded) run in the place ruling 29 gives.
+33. **Ruling 23, further.** Two groups of one list are allowed only when
+    neither group's block encloses the other's. When both are on the wire,
+    decode keeps the later group's items.
+34. **Rulings 7 and 21 together.** A group whose first indicator bit lies at or
+    after the end of the extent gives an absent list. Ruling 21 applies to the
+    indicators after the first.

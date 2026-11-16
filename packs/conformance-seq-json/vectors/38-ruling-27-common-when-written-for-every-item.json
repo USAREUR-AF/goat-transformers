@@ -1,0 +1,7 @@
+{
+  "name": "ruling-27-common-when-written-for-every-item",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "{\"n\":1,\"recs\":[{\"y\":7},{}]}",
+  "expect": "01000202910790"
+}

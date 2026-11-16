@@ -21,12 +21,13 @@ _CODECS = {
 _Num = wire_geojson.Num
 
 
-def _model_order(models_dir):
+def _model_order(models_dir, only=None):
     """The module files of a directory in loading order: `core.def` first,
     whatever its name sorts as (0.6 ruling 9), then the others in byte order
     of file name, each after the modules its `uses` lines name (0.8). A cycle
     is `bad-directive`. A used module no file declares is left to the load,
-    which reports `unknown-module`."""
+    which reports `unknown-module`. With `only`, a set of module names: the
+    files of those modules and of the modules they use, and no other."""
     names = sorted(
         (n for n in os.listdir(models_dir) if n.endswith(".def") and os.path.isfile(os.path.join(models_dir, n))),
         key=lambda n: (n != CORE + ".def", os.fsencode(n)),
@@ -55,8 +56,14 @@ def _model_order(models_dir):
         state[n] = 2
         order.append(os.path.join(models_dir, n))
 
-    for n in names:
-        place(n)
+    if only is None:
+        for n in names:
+            place(n)
+    else:
+        wanted = {by_module[m] for m in only if m in by_module}
+        for n in names:
+            if n in wanted:
+                place(n)
     return order
 
 
@@ -97,7 +104,7 @@ class Engine:
 
     def load_model(self, text, *, source="model.def"):
         """Parse one model module text and load it."""
-        module = parse_model_text(text, source=source, models=self.models)
+        module = parse_model_text(text, source=source, models=self.models, max_distribution=self.max_distribution)
         self.add_model(module)
         return module
 
@@ -239,20 +246,43 @@ class Engine:
         self.packs[pack.name] = pack
 
     @classmethod
-    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled"):
+    def from_dir(cls, packs_dir, models_dir=None, max_distribution="controlled", packs_only=None):
         """Load every `<models_dir>/*.def` in byte order of file name, then every
         `<packs_dir>/<format>/pack.def`. `models_dir` defaults to the `model`
-        directory beside `packs_dir`."""
+        directory beside `packs_dir`.
+
+        With `packs_only`, the names of pack directories under `packs_dir`:
+        load those packs only, and of the modules only `core`, the modules the
+        packs name in `uses` lines and the modules those use. A name with no
+        `<packs_dir>/<name>/pack.def` is `unknown-format`."""
         if models_dir is None:
             models_dir = os.path.join(packs_dir, os.pardir, "model")
         eng = cls(max_distribution=max_distribution)
+        if packs_only is None:
+            only = None
+            packs = [
+                load_pack(d) for d in (os.path.join(packs_dir, name) for name in sorted(os.listdir(packs_dir)))
+                if os.path.isfile(os.path.join(d, "pack.def"))
+            ]
+        else:
+            if isinstance(packs_only, str):
+                packs_only = [packs_only]
+            packs = []
+            for name in sorted(set(packs_only)):
+                d = os.path.join(packs_dir, name)
+                if not name or name in (os.curdir, os.pardir) or os.path.basename(name) != name or (
+                    not os.path.isfile(os.path.join(d, "pack.def"))
+                ):
+                    raise UnknownFormat("no pack named %r in the packs directory" % name, format=name)
+                packs.append(load_pack(d))
+            only = {CORE}
+            for pack in packs:
+                only.update(pack.uses)
         if os.path.isdir(models_dir):
-            for path in _model_order(models_dir):
-                eng.add_model(load_model_file(path, models=eng.models))
-        for name in sorted(os.listdir(packs_dir)):
-            d = os.path.join(packs_dir, name)
-            if os.path.isfile(os.path.join(d, "pack.def")):
-                eng.add(load_pack(d))
+            for path in _model_order(models_dir, only):
+                eng.add_model(load_model_file(path, models=eng.models, max_distribution=max_distribution))
+        for pack in packs:
+            eng.add(pack)
         return eng
 
     def formats(self):

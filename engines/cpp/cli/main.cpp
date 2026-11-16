@@ -1,8 +1,10 @@
 // goat-xf: command-line front end to the C++ engine.
 //   goat-xf convert --from X --to Y --packs DIR [--set KEY=VALUE ...]   (stdin -> stdout)
 //   goat-xf list-formats --packs DIR
-// Both take --models DIR (default <packs>/../model) and
-// --max-distribution public|controlled (default controlled).
+// Both take --models DIR (default <packs>/../model),
+// --max-distribution public|controlled (default controlled) and
+// --packs-only A,B: load only the packs named, with the modules they need,
+// and not every pack of the directory.
 // --set supplies a model key the message lacks (engine-spec.md 0.6, Caller-supplied
 // keys); it is repeatable, and the value is read as the key's declared type.
 #include <cstdio>
@@ -10,6 +12,7 @@
 #include <iterator>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "goat_transformers/engine.hpp"
 
@@ -20,6 +23,7 @@ int usage() {
                  "       goat-xf list-formats --packs <dir>\n"
                  "options: --models <dir>                         default <packs>/../model\n"
                  "         --max-distribution public|controlled   default controlled\n"
+                 "         --packs-only <name>[,<name>...]        load only these packs, with the modules they need\n"
                  "         --set <key>=<value>                    convert: a model key the caller supplies; repeatable\n";
     return 2;
 }
@@ -48,7 +52,8 @@ int main(int argc, char** argv) {
             have_context = true;
             continue;
         }
-        if (a != "--from" && a != "--to" && a != "--packs" && a != "--models" && a != "--max-distribution") {
+        if (a != "--from" && a != "--to" && a != "--packs" && a != "--models" && a != "--max-distribution" &&
+            a != "--packs-only") {
             std::cerr << "goat-xf: unknown option " << a << "\n";
             return usage();
         }
@@ -71,7 +76,25 @@ int main(int argc, char** argv) {
     }
 
     try {
-        auto eng = goat_transformers::Engine::load(opt["--packs"], opt["--models"], limit);
+        goat_transformers::Engine eng;
+        if (opt.count("--packs-only")) {
+            // Names separated by commas; an empty name is a mistake, not a pack.
+            std::vector<std::string> names;
+            const std::string& list = opt["--packs-only"];
+            for (std::size_t at = 0;;) {
+                const std::size_t comma = list.find(',', at);
+                names.push_back(list.substr(at, comma == std::string::npos ? std::string::npos : comma - at));
+                if (names.back().empty()) {
+                    std::cerr << "goat-xf: --packs-only needs <name>[,<name>...], got '" << list << "'\n";
+                    return usage();
+                }
+                if (comma == std::string::npos) break;
+                at = comma + 1;
+            }
+            eng = goat_transformers::Engine::load_packs(opt["--packs"], names, opt["--models"], limit);
+        } else {
+            eng = goat_transformers::Engine::load(opt["--packs"], opt["--models"], limit);
+        }
         if (cmd == "list-formats") {
             for (const auto& f : eng.formats()) std::cout << f << "\n";
             return 0;

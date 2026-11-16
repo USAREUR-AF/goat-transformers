@@ -1,0 +1,7 @@
+{
+  "name": "ruling-22-content-at-any-depth-of-length-chain-and-opt",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"c2\":3}",
+  "expect": "012002028101c180"
+}

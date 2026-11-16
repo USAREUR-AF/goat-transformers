@@ -1,0 +1,12 @@
+{
+  "name": "ruling-17-bit-named-only-in-another-kind",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "0180010503",
+  "expect": "0100010503",
+  "model": {
+    "@kind": "a",
+    "probe.x": "5",
+    "probe.z": "3"
+  }
+}

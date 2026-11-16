@@ -23,6 +23,7 @@ final class UnitTests {
         groups(packs);
         rulingsOfGroups();
         sequential(packs);
+        rulingsOfSequential();
         modelAdditions();
     }
 
@@ -35,6 +36,142 @@ final class UnitTests {
         e.loadModel(PROBE);
         for (String p : packs) e.loadPack(p, "t");
         return e;
+    }
+
+    /** Rulings 16 to 34 of Version 0.8. */
+    static void rulingsOfSequential() {
+        String head = "format s\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
+        // 16: the earliest key the entity holds; when it holds none, the default of the earliest key that has one.
+        Engine e = probeEngine(head + "field probe.x 8 uint\nalso probe.y\nalso probe.z\ndefault probe.x 1\ndefault probe.y 2\n");
+        Entity en = new Entity();
+        eq("also: default of the earliest key that has one", "01", e.encode("s", en));
+        en.put("probe.z", 7L);
+        eq("also: a held key is written, not an earlier default", "07", e.encode("s", en));
+        en.put("probe.y", 6L);
+        eq("also: the earliest held key", "06", e.encode("s", en));
+        // 18: a when may follow the requires and default lines of its kind, and no other line.
+        check("when after requires and default", Pack.parse(head + "kind a\nrequires probe.x\ndefault probe.y 1\nwhen 8 1\n", "t") != null, "");
+        errorKind("when after a default and a field", "bad-directive",
+                () -> Pack.parse(head + "kind a\ndefault probe.x 1\nfield probe.x 8 uint\nwhen 8 1\n", "t"));
+        // 23: one list in two groups of a scope only when they sit in different if or opt blocks.
+        String g = "group probe.recs count 8\nend\n";
+        check("list in an if and an opt block", Pack.parse(head + "presence p 1\nif p.1\n" + g + "end\nopt\n" + g + "end\n", "t") != null, "");
+        check("list in two kinds", Pack.parse(head + "kind a\nwhen 8 1\n" + g + "kind b\n" + g, "t") != null, "");
+        check("list in two blocks under a length", Pack.parse(head + "opt\nlength 8\n" + g + "end\nend\nopt\n" + g + "end\n", "t") != null, "");
+        errorKind("list in two groups of one opt", "bad-directive", () -> Pack.parse(head + "opt\n" + g + g + "end\n", "t"));
+        errorKind("list in an opt and in a block of that opt", "bad-directive",
+                () -> Pack.parse(head + "opt\n" + g + "opt\n" + g + "end\nend\n", "t"));
+        errorKind("list in two length blocks", "bad-directive",
+                () -> Pack.parse(head + "length 8\n" + g + "end\nlength 8\n" + g + "end\n", "t"));
+        errorKind("list in two parts of a chain", "bad-directive", () -> Pack.parse(head + "chain\n" + g + "fx\n" + g + "end\n", "t"));
+        errorKind("list in the common lines and in a kind", "bad-directive",
+                () -> Pack.parse(head + "opt\n" + g + "end\nkind a\n" + g, "t"));
+        // 24: a header or table directive inside a block.
+        errorKind("map inside an opt", "bad-directive", () -> Pack.parse(head + "opt\nmap t 1 2\nend\n", "t"));
+        errorKind("uses inside a chain", "bad-directive", () -> Pack.parse(head + "chain\nuses probe\nend\n", "t"));
+        // 20, 21: skips and indicator bits at the end of the input and of a length extent.
+        Engine x = probeEngine(head + "field probe.x 4 uint\nalign 16\n",
+                head.replace("format s", "format w") + "length 8 bits\n group probe.recs while\n  field probe.y 7 uint\n end\nend\n",
+                head.replace("format s", "format m") + "length 8 bits\n field probe.x 8 uint\n group probe.recs more\n  field probe.y 7 uint\n end\nend\n",
+                head.replace("format s", "format n") + "field probe.x 8 uint\ngroup probe.recs while\n field probe.y 7 uint\nend\n",
+                head.replace("format s", "format c") + "field probe.x 8 uint\nconst 8 1\n",
+                head.replace("format s", "format k") + "group probe.recs count 8\n kind a\n when 8 1\n requires probe.x\n field probe.x 8 uint\n kind b\n when 8 0\nend\n",
+                head.replace("format s", "format j") + "group probe.recs count 8\n kind c\n when 8 2\n requires probe.x\n field probe.x 8 uint\n kind d\n when 8 3\nend\n");
+        eq("align stops at the end of the input", 5L, x.decode("s", "50").get("probe.x"));
+        eq("while indicator at the end of the extent reads 0", 1, x.decode("w", "0889").list("probe.recs").size());
+        check("a group that starts at the end of the extent is an absent list", x.decode("w", "00").list("probe.recs") == null, "");
+        eq("more indicator at the end of the extent reads 0", 2, x.decode("m", "100589").list("probe.recs").size());
+        errorKind("while indicator past the end of the input", "malformed-wire", () -> x.decode("n", "0589"));
+        errorKind("const past the end of the input", "malformed-wire", () -> x.decode("c", "05"));
+        // 26: an item whose kind the group does not have selects by requires.
+        eq("item kind of another group selects by requires", "020205" + "03", x.convert("k", "j", "020105" + "00"));
+        Entity item = new Entity();
+        item.setKind("k", "nope");
+        Entity holder = new Entity();
+        holder.putList("probe.recs", java.util.List.of(item));
+        eq("item naming a kind the group does not have", "0100", x.encode("k", holder));
+        // 29: the order of the checks of a module.
+        String other = "module other\nversion 0.1.0\nuses nosuch\nkey o int -\nderive other.o copy other.nokey\n";
+        Engine pub = new Engine();
+        pub.setMaxDistribution(Distribution.PUBLIC);
+        errorKind("module: missing-distribution first", "missing-distribution", () -> pub.loadModel(other));
+        errorKind("module: missing-source next", "missing-source", () -> pub.loadModel(other + "distribution controlled\n"));
+        errorKind("module: distribution-refused next", "distribution-refused", () -> pub.loadModel(other + "distribution controlled\nsource t\n"));
+        errorKind("module: unknown-module next", "unknown-module", () -> pub.loadModel(other + "distribution public\nsource t\n"));
+        errorKind("module: the derive checks before duplicate-module", "bad-directive", () -> {
+            Engine d = probeEngine();
+            d.loadModel(PROBE.replace("list subs\n", "list subs\nderive probe.x copy probe.nokey\n"));
+        });
+        // 31: a protobuf when path whose prefix is not a submessage does not hold; it is not an error.
+        Engine pb = probeEngine("format q\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire protobuf\n"
+                + "kind a\nwhen 3.1 present\nfield probe.x 2 pvarint\n"
+                + "kind c\nwhen 3.1 7\nfield probe.y 2 pvarint\n"
+                + "kind b\nwhen 1 present\nfield probe.label 1 pstring\n");
+        Entity q = pb.decode("q", "0a01411805");   // field 1 "A", field 3 the varint 5
+        check("when path through a field that is not a submessage does not hold", "b".equals(q.kindName()) && "A".equals(q.get("probe.label")), q.toString());
+        errorKind("when paths that do not hold are no-kind, not malformed-wire", "no-kind", () -> pb.decode("q", "1805"));
+        eq("when path through a submessage holds", "a", pb.decode("q", "1a020807").kindName());
+        // 32: a derive line refused on its own text is a line error, raised as the file is read.
+        errorKind("derive line refused on its text, before missing-distribution", "bad-directive",
+                () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o nosuch other.o\n"));
+        errorKind("derive line refused on its text, before a later line error", "bad-directive",
+                () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o copy\nnosuchdirective\n"));
+        errorKind("derive keys are checked after missing-distribution", "missing-distribution",
+                () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o copy other.nokey\n"));
+        // 33: two groups of one list, neither block enclosing the other; decode keeps the later group's items.
+        check("list in sibling blocks of one outer block", Pack.parse(head + "opt\nopt\n" + g + "end\nopt\n" + g + "end\nend\n", "t") != null, "");
+        errorKind("list in an if and in an if inside it", "bad-directive",
+                () -> Pack.parse(head + "presence p 2\nif p.1\n" + g + "if p.2\n" + g + "end\nend\n", "t"));
+        String body = " field probe.y 8 uint\nend\n";
+        Engine two = probeEngine(head + "opt\ngroup probe.recs count 7\n" + body + "end\nopt\ngroup probe.recs count 7\n" + body + "end\n");
+        // opt 1, count 1, item 5; opt 1, count 2, items 6 and 7
+        eq("both groups on the wire: the later group's items", "[{probe.y=6}, {probe.y=7}]",
+                two.decode("s", "81058206" + "07").list("probe.recs").stream().map(i -> i.fields().toString()).collect(java.util.stream.Collectors.toList()).toString());
+        // 34: a group whose first indicator lies at the end of the extent is an absent list.
+        Entity m = x.decode("m", "08aa");
+        check("more group whose first indicator is at the end of the extent", m.list("probe.recs") == null && Long.valueOf(0xaa).equals(m.get("probe.x")), m.toString());
+    }
+
+    /** Loading only named packs of a directory, with the modules they need: the API and the command line. */
+    static void packsOnly(java.nio.file.Path packsDir) {
+        Engine e = Engine.loadOnly(packsDir, java.util.List.of("cot-xml", "geojson", "cot-xml"));
+        java.util.List<String> formats = new java.util.ArrayList<>();
+        for (Pack p : e.packs()) formats.add(p.format);
+        eq("packs-only: the packs named", "[cot-xml, geojson]", formats.toString());
+        java.util.List<String> modules = new java.util.ArrayList<>();
+        for (ModelModule m : e.modules()) modules.add(m.name);
+        eq("packs-only: only the modules they need", "[core]", modules.toString());
+        Engine all = Engine.load(packsDir);
+        for (Pack p : all.packs()) {
+            Engine one = Engine.loadOnly(packsDir, java.util.List.of(p.format));
+            java.util.Set<String> want = new java.util.TreeSet<>();
+            want.add(ModelModule.CORE);
+            java.util.ArrayDeque<String> todo = new java.util.ArrayDeque<>(p.uses);
+            while (!todo.isEmpty()) {
+                String u = todo.pop();
+                if (!want.add(u)) continue;
+                for (ModelModule m : all.modules()) if (m.name.equals(u)) todo.addAll(m.uses);
+            }
+            java.util.Set<String> got = new java.util.TreeSet<>();
+            for (ModelModule m : one.modules()) got.add(m.name);
+            check("packs-only " + p.format, one.packs().size() == 1 && got.equals(want), "modules " + got + ", want " + want);
+        }
+        errorKind("packs-only: a name that is no pack", "unknown-format", () -> Engine.loadOnly(packsDir, java.util.List.of("no-such-pack")));
+        errorKind("packs-only: a name that is a path", "unknown-format", () -> Engine.loadOnly(packsDir, java.util.List.of("../packs/geojson")));
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream(), err = new java.io.ByteArrayOutputStream();
+        try {
+            int code = Cli.run(new String[]{"list-formats", "--packs", packsDir.toString(), "--packs-only", "geojson,cot-xml"},
+                    new java.io.PrintStream(out, true, "UTF-8"), new java.io.PrintStream(err, true, "UTF-8"));
+            String[] lines = out.toString("UTF-8").trim().split("\\R");
+            check("cli --packs-only", code == 0 && lines.length == 2 && lines[0].startsWith("cot-xml ") && lines[1].startsWith("geojson "),
+                    "exit " + code + ": " + out.toString("UTF-8") + err.toString("UTF-8"));
+            eq("cli --packs-only with an unknown name", 1, Cli.run(new String[]{"list-formats", "--packs", packsDir.toString(),
+                    "--packs-only", "no-such-pack"}, new java.io.PrintStream(out, true, "UTF-8"), new java.io.PrintStream(err, true, "UTF-8")));
+            eq("cli --packs-only with an empty name", 2, Cli.run(new String[]{"list-formats", "--packs", packsDir.toString(),
+                    "--packs-only", "geojson,"}, new java.io.PrintStream(out, true, "UTF-8"), new java.io.PrintStream(err, true, "UTF-8")));
+        } catch (java.io.IOException ex) {
+            check("cli --packs-only", false, ex.toString());
+        }
     }
 
     /** Rulings 11 to 21 of Version 0.7, which the vectors now pin. */
@@ -98,7 +235,7 @@ final class UnitTests {
         errorKind("list mapped by two groups of one scope", "bad-directive",
                 () -> Pack.parse(head + "group probe.recs fx\nend\nopt\ngroup probe.recs while\nend\nend\n", "t"));
         errorKind("when in a body with no kind", "bad-directive", () -> Pack.parse(head + "when 8 1\n", "t"));
-        errorKind("when after another line of its kind", "bad-directive", () -> Pack.parse(head + "kind a\nrequires probe.x\nwhen 8 1\n", "t"));
+        errorKind("when after another line of its kind", "bad-directive", () -> Pack.parse(head + "kind a\nfield probe.x 8 uint\nwhen 8 1\n", "t"));
         errorKind("when value that does not fit", "bad-directive", () -> Pack.parse(head + "kind a\nwhen 4 16\n", "t"));
         errorKind("kind twice in one body", "duplicate-kind", () -> Pack.parse(head + "group probe.recs fx\nkind a\nkind a\nend\n", "t"));
         errorKind("also after a pad", "bad-directive", () -> Pack.parse(head + "field probe.x 8 uint\npad 1\nalso probe.y\n", "t"));

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-16-roundtrip-every-key-filled",
+  "from": "conformance-seq-rulings-b",
+  "to": "conformance-seq-rulings-b",
+  "input": "0100020280",
+  "expect": "0100020280",
+  "model": {
+    "probe.w": "2",
+    "probe.val": "200",
+    "probe.qty": "2",
+    "probe.y": "5"
+  }
+}

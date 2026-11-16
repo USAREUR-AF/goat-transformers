@@ -124,7 +124,7 @@ model modules and one pack that must load, or must fail with a named error.
 Every engine runs every vector and must reproduce `expect` byte for byte. The
 suite is the definition of correct behavior.
 
-This repository holds 2,947 conversion vectors in 60 packs and 261 load vectors.
+This repository holds 3,002 conversion vectors in 64 packs and 314 load vectors.
 `.github/workflows/conformance.yml` runs all of them on all seven engines on
 every change.
 

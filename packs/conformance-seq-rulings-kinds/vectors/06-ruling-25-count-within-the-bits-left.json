@@ -1,0 +1,11 @@
+{
+  "name": "ruling-25-count-within-the-bits-left",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "01000305ff",
+  "expect": "01000305",
+  "model": {
+    "@kind": "c",
+    "probe.nums.#": "5"
+  }
+}

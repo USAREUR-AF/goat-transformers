@@ -5,7 +5,7 @@
 //! message definition is compiled in. This is the reference implementation that
 //! the other language engines are checked against via the shared vectors.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 
 // ---------------------------------------------------------------------------
@@ -636,6 +636,15 @@ impl Module {
     /// line may name the keys of `core`, and as arguments the keys of the
     /// modules its own `uses` lines name (engine-spec v0.8).
     pub fn parse_with(text: &str, loaded: &BTreeMap<String, Module>) -> Result<Module, Error> {
+        Module::parse_within(text, loaded, Distribution::Controlled)
+    }
+
+    /// `parse_with` for an engine whose distribution limit is `max`. The
+    /// checks run in the order of ruling 29 of 0.8: line errors as the text
+    /// is read, then `missing-distribution`, `missing-source`,
+    /// `distribution-refused`, `unknown-module`, `distribution-violation`,
+    /// the `derive` checks. `duplicate-module` is the engine's, and last.
+    fn parse_within(text: &str, loaded: &BTreeMap<String, Module>, max: Distribution) -> Result<Module, Error> {
         let core = loaded.get("core");
         let mut uses: Vec<String> = Vec::new();
         let mut derives: Vec<DeriveDef> = Vec::new();
@@ -645,6 +654,8 @@ impl Module {
         let mut sources = Vec::new();
         let mut keys: Vec<KeyDef> = Vec::new();
         let mut lists: Vec<(String, String)> = Vec::new();
+        // the names declared so far, keys and lists together
+        let mut declared: HashSet<String> = HashSet::new();
         for (lineno, raw) in text.lines().enumerate() {
             let toks = tokenize(raw)?;
             if toks.is_empty() {
@@ -660,7 +671,7 @@ impl Module {
                         return bad(ln, format!("list name `{}` may not contain `.`", toks[1]));
                     }
                     // a list shares the key namespace of its module
-                    if keys.iter().any(|k| k.name == toks[1]) || lists.iter().any(|(n, _)| n == &toks[1]) {
+                    if !declared.insert(toks[1].clone()) {
                         return err(format!("duplicate-key: line {}: `{}` declared twice", ln, toks[1]));
                     }
                     lists.push((toks[1].clone(), toks.get(2).cloned().unwrap_or_default()));
@@ -695,7 +706,7 @@ impl Module {
                     if toks[1].contains('.') {
                         return err(format!("bad-directive: line {}: key name `{}` may not contain `.`", ln, toks[1]));
                     }
-                    if keys.iter().any(|k| k.name == toks[1]) || lists.iter().any(|(n, _)| n == &toks[1]) {
+                    if !declared.insert(toks[1].clone()) {
                         return err(format!("duplicate-key: line {}: key `{}` declared twice", ln, toks[1]));
                     }
                     keys.push(KeyDef {
@@ -717,24 +728,46 @@ impl Module {
             }
         }
         let name = name.ok_or(Error { msg: "bad-directive: model module missing `module`".into() })?;
+        let distribution = distribution.ok_or(Error {
+            msg: format!("missing-distribution: model module `{}` has no `distribution`", name),
+        })?;
+        if sources.is_empty() {
+            return err(format!("missing-source: model module `{}` has no `source`", name));
+        }
+        if distribution > max {
+            return err(format!(
+                "distribution-refused: model module `{}` is {}, this engine loads {} only",
+                name,
+                distribution.name(),
+                max.name()
+            ));
+        }
         // a used module must be loaded: its keys are needed to check the `derive` lines
         if let Some(u) = uses.iter().find(|u| **u != name && !loaded.contains_key(*u)) {
             return err(format!("unknown-module: model module `{}` uses model module `{}`, which is not loaded", name, u));
         }
+        // a public module uses only public modules
+        if distribution == Distribution::Public {
+            if let Some(u) = uses.iter().find(|u| loaded.get(*u).map_or(false, |m| m.distribution != Distribution::Public)) {
+                return err(format!("distribution-violation: public model module `{}` uses controlled model module `{}`", name, u));
+            }
+        }
         // `derive` lines: keys of `core` or of this module, as arguments also
         // keys of a used module, and types that fit the function
+        let own: HashMap<&str, KeyType> = keys.iter().map(|k| (k.name.as_str(), k.ty)).collect();
+        let key_of = |m: &Module, k: &str| m.keys.iter().find(|d| d.name == k).map(|d| d.ty);
         for d in &derives {
             let type_of = |key: &str, argument: bool| -> Result<KeyType, Error> {
                 let found = match key.split_once('.') {
-                    None if name == "core" => keys.iter().find(|k| k.name == key),
-                    None => core.and_then(|c| c.keys.iter().find(|k| k.name == key)),
-                    Some((m, k)) if m == name && m != "core" => keys.iter().find(|d| d.name == k),
+                    None if name == "core" => own.get(key).copied(),
+                    None => core.and_then(|c| key_of(c, key)),
+                    Some((m, k)) if m == name && m != "core" => own.get(k).copied(),
                     Some((m, k)) if argument && m != "core" && uses.iter().any(|u| u == m) => {
-                        loaded.get(m).and_then(|u| u.keys.iter().find(|d| d.name == k))
+                        loaded.get(m).and_then(|u| key_of(u, k))
                     }
                     Some(_) => None,
                 };
-                found.map(|k| k.ty).ok_or(Error {
+                found.ok_or(Error {
                     msg: format!("bad-directive: line {}: derive names `{}`, not a declared key of `core` or `{}`", d.line, key, name),
                 })
             };
@@ -742,18 +775,6 @@ impl Module {
             let args = d.args.iter().map(|a| type_of(a, true)).collect::<Result<Vec<_>, _>>()?;
             if !d.func.fits(target, &args) {
                 return bad(d.line, format!("the arguments or types of `derive {}` do not fit its function", d.target));
-            }
-        }
-        let distribution = distribution.ok_or(Error {
-            msg: format!("missing-distribution: model module `{}` has no `distribution`", name),
-        })?;
-        if sources.is_empty() {
-            return err(format!("missing-source: model module `{}` has no `source`", name));
-        }
-        // a public module uses only public modules
-        if distribution == Distribution::Public {
-            if let Some(u) = uses.iter().find(|u| loaded.get(*u).map_or(false, |m| m.distribution != Distribution::Public)) {
-                return err(format!("distribution-violation: public model module `{}` uses controlled model module `{}`", name, u));
             }
         }
         Ok(Module { name, version: version.unwrap_or_else(|| "0".into()), distribution, sources, keys, lists, derives, uses })
@@ -982,7 +1003,8 @@ fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
 impl Pack {
     pub fn parse(text: &str) -> Result<Pack, Error> {
         // `layout sequential` (engine-spec v0.8) changes how every line is read
-        let sequential = text.lines().any(|l| match tokenize(l) {
+        // (only a line that holds both words can be that line: the rest are not tokenized twice)
+        let sequential = text.lines().filter(|l| l.contains("layout") && l.contains("sequential")).any(|l| match tokenize(l) {
             Ok(t) => t.len() == 2 && t[0] == "layout" && t[1] == "sequential",
             Err(_) => false,
         });
@@ -1008,6 +1030,8 @@ impl Pack {
         // `group` blocks not yet closed by `end`, innermost last
         let mut open: Vec<GroupDef> = Vec::new();
         let mut maps: Vec<(String, Vec<(String, String)>)> = Vec::new();
+        // table name -> its place in `maps`
+        let mut map_index: HashMap<String, usize> = HashMap::new();
         // `root` lines inside a kind, to check against the wire once it is known
         let mut kind_root_line: Option<usize> = None;
         let mut to_cot = BTreeMap::new();
@@ -1019,6 +1043,11 @@ impl Pack {
             }
             let ln = lineno + 1;
             match toks[0].as_str() {
+                // ruling 18 of 0.7: only these five directives inside a group
+                // (ruling 24 of 0.8: the header directives among the rest)
+                d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "end") => {
+                    return bad(ln, format!("`{}` is not allowed inside a group", d));
+                }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
                 "version" => version = Some(req_arg(&toks, 1, ln)?),
                 "wire" => {
@@ -1030,10 +1059,6 @@ impl Pack {
                         "json" => Wire::Json,
                         o => return err(format!("line {}: unknown wire `{}`", ln, o)),
                     })
-                }
-                // ruling 18 of 0.7: only these five directives inside a group
-                d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "end") => {
-                    return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
                 "group" => {
                     if toks.len() < 3 {
@@ -1140,9 +1165,12 @@ impl Pack {
                         return bad(ln, "map needs <table> <native> <model>");
                     }
                     let entry = (toks[2].clone(), toks[3].clone());
-                    match maps.iter_mut().find(|(name, _)| name == &toks[1]) {
-                        Some((_, entries)) => entries.push(entry),
-                        None => maps.push((toks[1].clone(), vec![entry])),
+                    match map_index.get(&toks[1]) {
+                        Some(i) => maps[*i].1.push(entry),
+                        None => {
+                            map_index.insert(toks[1].clone(), maps.len());
+                            maps.push((toks[1].clone(), vec![entry]));
+                        }
                     }
                 }
                 "uses" => {
@@ -1317,7 +1345,7 @@ impl Pack {
         // wire-dependent checks of the lines, now the wire is known
         let via_ok = |f: &FieldDef| -> Result<(), Error> {
             match &f.via {
-                Some(t) if !maps.iter().any(|(name, _)| name == t) => {
+                Some(t) if !map_index.contains_key(t) => {
                     bad(f.line, format!("`via {}` names a table with no `map` line", t))
                 }
                 _ => Ok(()),
@@ -1366,12 +1394,12 @@ impl Pack {
         }
         first?;
         {
-            let lines = |fs: &'_ [FieldDef], ws: &'_ [WhenDef], cs: &'_ [WhenDef]| -> Vec<(usize, String)> {
+            fn lines<'a>(fs: &'a [FieldDef], ws: &'a [WhenDef], cs: &'a [WhenDef]) -> Vec<(usize, &'a str)> {
                 fs.iter()
-                    .map(|f| (f.line, f.locator.clone()))
-                    .chain(ws.iter().chain(cs.iter()).map(|w| (w.line, w.locator.clone())))
+                    .map(|f| (f.line, f.locator.as_str()))
+                    .chain(ws.iter().chain(cs.iter()).map(|w| (w.line, w.locator.as_str())))
                     .collect()
-            };
+            }
             let common = lines(&fields, &whens, &consts);
             let common_fields = lines(&fields, &[], &[]);
             if kinds.is_empty() {
@@ -1920,36 +1948,51 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
 fn check_scope(
     wire: Wire,
     word_bytes: usize,
-    lines: &[(usize, String)],
-    fields: &[(usize, String)],
+    lines: &[(usize, &str)],
+    fields: &[(usize, &str)],
     groups: &[&GroupDef],
 ) -> Result<(), Error> {
-    for (i, g) in groups.iter().enumerate() {
-        if groups[..i].iter().any(|o| o.list == g.list) {
+    if groups.is_empty() {
+        return Ok(());
+    }
+    let mut lists: HashSet<&str> = HashSet::with_capacity(groups.len());
+    for g in groups {
+        if !lists.insert(g.list.as_str()) {
             return bad(g.line, format!("list `{}` is mapped by two groups of one scope", g.list));
         }
     }
-    // ruling 21 of 0.7: a `field` whose locator passes through a group's path
-    let through = |field: &str, group: &str| -> bool {
-        let (sep, path) = match wire {
-            // the element a locator addresses: the names before `@name` or `#text`
-            Wire::Xml => match field.rsplit_once('/') {
-                Some((path, _)) => ('/', path),
-                None => return false,
-            },
-            Wire::Json | Wire::GeoJson | Wire::Protobuf => match field.rsplit_once('.') {
-                Some((path, _)) => ('.', path),
-                None => return false,
-            },
-            Wire::Bits => return false,
-        };
-        let f: Vec<&str> = path.split(sep).collect();
-        let g: Vec<&str> = group.split(sep).collect();
-        f.len() >= g.len() && f[..g.len()] == g[..]
+    // ruling 21 of 0.7: a `field` whose locator passes through a group's path:
+    // the names of the group's path are the first names of the path the
+    // locator addresses (xml: the names before `@name` or `#text`; json,
+    // geojson, protobuf: the names before the last). Two paths have the same
+    // names when their texts are equal, so each leading part of the field's
+    // path is looked up among the group paths.
+    let sep = match wire {
+        Wire::Xml => Some('/'),
+        Wire::Json | Wire::GeoJson | Wire::Protobuf => Some('.'),
+        Wire::Bits => None,
     };
-    for (line, loc) in fields {
-        if let Some(g) = groups.iter().find(|g| through(loc, &g.locator)) {
-            return bad(*line, format!("`{}` passes through the path of group `{}`", loc, g.list));
+    if let Some(sep) = sep {
+        // group path -> the first group of the scope with that path
+        let mut by_path: HashMap<&str, usize> = HashMap::with_capacity(groups.len());
+        for (i, g) in groups.iter().enumerate() {
+            by_path.entry(g.locator.as_str()).or_insert(i);
+        }
+        for (line, loc) in fields {
+            let path = match loc.rsplit_once(sep) {
+                Some((path, _)) => path,
+                None => continue,
+            };
+            // the first group, in line order, that the locator passes through
+            let first = path
+                .match_indices(sep)
+                .map(|(i, _)| &path[..i])
+                .chain(std::iter::once(path))
+                .filter_map(|lead| by_path.get(lead))
+                .min();
+            if let Some(i) = first {
+                return bad(*line, format!("`{}` passes through the path of group `{}`", loc, groups[*i].list));
+            }
         }
     }
     if wire != Wire::Bits {
@@ -2057,6 +2100,10 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
 pub struct Engine {
     packs: BTreeMap<String, Pack>,
     modules: BTreeMap<String, Module>,
+    /// module name -> key name -> the key's place in `Module::keys`
+    key_index: HashMap<String, HashMap<String, usize>>,
+    /// module name -> the names of its lists
+    list_index: HashMap<String, HashSet<String>>,
     /// the most restricted distribution this engine instance may load
     max_distribution: Distribution,
 }
@@ -2066,6 +2113,8 @@ impl Default for Engine {
         Engine {
             packs: BTreeMap::new(),
             modules: BTreeMap::new(),
+            key_index: HashMap::new(),
+            list_index: HashMap::new(),
             max_distribution: Distribution::Controlled,
         }
     }
@@ -2085,18 +2134,12 @@ impl Engine {
     /// Load one model module (the text of a `model/<module>.def`). Modules are
     /// loaded before the packs that use them.
     pub fn load_model(&mut self, text: &str) -> Result<(), Error> {
-        let m = Module::parse_with(text, &self.modules)?;
-        if m.distribution > self.max_distribution {
-            return err(format!(
-                "distribution-refused: model module `{}` is {}, this engine loads {} only",
-                m.name,
-                m.distribution.name(),
-                self.max_distribution.name()
-            ));
-        }
+        let m = Module::parse_within(text, &self.modules, self.max_distribution)?;
         if self.modules.contains_key(&m.name) {
             return err(format!("duplicate-module: model module `{}` is already loaded", m.name));
         }
+        self.key_index.insert(m.name.clone(), m.keys.iter().enumerate().map(|(i, k)| (k.name.clone(), i)).collect());
+        self.list_index.insert(m.name.clone(), m.lists.iter().map(|(n, _)| n.clone()).collect());
         self.modules.insert(m.name.clone(), m);
         Ok(())
     }
@@ -2158,8 +2201,8 @@ impl Engine {
             }
         }
         for (_, key, _) in &keys {
-            let (m, k) = split_key(key);
-            if !self.modules[m].keys.iter().any(|d| d.name == k) && !self.is_list(key) {
+            let (m, _) = split_key(key);
+            if self.key_def(key).is_none() && !self.is_list(key) {
                 return err(format!(
                     "undeclared-key: pack `{}` maps `{}`, which model module `{}` does not declare",
                     p.format, key, m
@@ -2175,6 +2218,8 @@ impl Engine {
             .chain(p.group_lists().into_iter().map(|(line, list)| (line, None, Some(list))))
             .collect();
         lines.sort_by_key(|l| l.0);
+        // the type of each table's model side, worked out once per table
+        let mut table_types: HashMap<&str, KeyType> = HashMap::new();
         for (_, f, g) in lines {
             if let Some(list) = g {
                 if !self.is_list(list) {
@@ -2196,12 +2241,16 @@ impl Engine {
             }
             let def_ty = self.key_def(&f.model_key).expect("declared").ty;
             let (yields, how) = match &f.via {
-                Some(t) => (p.table_model_type(t), format!("table `{}`, whose model side is", t)),
-                None => (f.transform.value_type(), "a transform that yields".to_string()),
+                Some(t) => (*table_types.entry(t.as_str()).or_insert_with(|| p.table_model_type(t)), "table"),
+                None => (f.transform.value_type(), "transform"),
             };
             // an all-integer table on a `float` key is read as float (ruling 4 of 0.6)
             let int_table_on_float = f.via.is_some() && yields == KeyType::Int && def_ty == KeyType::Float;
             if yields != def_ty && !int_table_on_float {
+                let how = match (how, &f.via) {
+                    ("table", Some(t)) => format!("table `{}`, whose model side is", t),
+                    _ => "a transform that yields".to_string(),
+                };
                 return err(format!(
                     "key-type-mismatch: pack `{}` maps `{}` ({}) through {} {}",
                     p.format,
@@ -2236,27 +2285,21 @@ impl Engine {
     /// The declaration of a model key written as in a pack (`lat`, `track.class`).
     fn key_def(&self, key: &str) -> Option<&KeyDef> {
         let (m, k) = split_key(key);
-        self.modules.get(m).and_then(|module| module.keys.iter().find(|d| d.name == k))
+        let i = *self.key_index.get(m)?.get(k)?;
+        self.modules.get(m).and_then(|module| module.keys.get(i))
     }
 
     /// Is this name, written as in a pack, a declared list?
     fn is_list(&self, name: &str) -> bool {
         let (m, k) = split_key(name);
-        self.modules.get(m).map_or(false, |module| module.lists.iter().any(|(n, _)| n == k))
+        self.list_index.get(m).map_or(false, |lists| lists.contains(k))
     }
 
     pub fn load(&mut self, mut pack: Pack) -> Result<(), Error> {
         self.check_pack(&pack)?;
         // record each key's declared type, and read each default as it
-        let types: BTreeMap<String, KeyType> = pack
-            .every_field()
-            .into_iter()
-            .map(|f| &f.model_key)
-            .chain(pack.every_default().into_iter().map(|d| &d.model_key))
-            .filter_map(|key| self.key_def(key).map(|d| (key.clone(), d.ty)))
-            .collect();
-        let set_field = |f: &mut FieldDef| f.key_type = types.get(&f.model_key).copied();
-        let set_default = |d: &mut DefaultDef| d.value = types.get(&d.model_key).and_then(|ty| read_as(*ty, &d.text));
+        let set_field = |f: &mut FieldDef| f.key_type = self.key_def(&f.model_key).map(|d| d.ty);
+        let set_default = |d: &mut DefaultDef| d.value = self.key_def(&d.model_key).and_then(|k| read_as(k.ty, &d.text));
         pack.fields.iter_mut().chain(pack.kinds.iter_mut().flat_map(|k| k.fields.iter_mut())).for_each(set_field);
         pack.defaults.iter_mut().chain(pack.kinds.iter_mut().flat_map(|k| k.defaults.iter_mut())).for_each(set_default);
         pack.every_group_mut(&mut |g| {
@@ -2333,6 +2376,27 @@ impl Engine {
                     std::fs::read_to_string(&def).map_err(|e| Error { msg: format!("cannot read {}: {}", def.display(), e) })?;
                 self.load_def(&text).map_err(|e| Error { msg: format!("{} (in {})", e.msg, def.display()) })?;
             }
+        }
+        Ok(())
+    }
+    /// Load only the named packs of a pack directory: `<dir>/<name>/pack.def`
+    /// for each name, in byte order of `<name>` as `load_pack_dir` does. A
+    /// name given twice is loaded once. A name with no `pack.def` is an
+    /// error, and nothing is loaded after it. The model modules the packs
+    /// use are loaded first, as for any pack.
+    pub fn load_pack_dir_only(&mut self, dir: &std::path::Path, names: &[&str]) -> Result<(), Error> {
+        let mut names: Vec<&str> = names.to_vec();
+        names.sort();
+        names.dedup();
+        for name in names {
+            // a name is one directory of `dir`, never a path
+            if name.is_empty() || name == "." || name == ".." || name.contains('/') || name.contains('\\') {
+                return err(format!("`{}` is not a pack name", name));
+            }
+            let def = dir.join(name).join("pack.def");
+            let text = std::fs::read_to_string(&def)
+                .map_err(|e| Error { msg: format!("no pack `{}`: cannot read {}: {}", name, def.display(), e) })?;
+            self.load_def(&text).map_err(|e| Error { msg: format!("{} (in {})", e.msg, def.display()) })?;
         }
         Ok(())
     }

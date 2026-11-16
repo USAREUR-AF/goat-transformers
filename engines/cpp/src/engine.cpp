@@ -37,6 +37,60 @@ std::string read_text(const fs::path& p) {
     ss << in.rdbuf();
     return ss.str();
 }
+
+// The `*.def` files of a model directory in byte order of file name, with
+// `core.def` first, whatever its name sorts as: a `derive` line of another
+// module may name a key of `core` (0.6 ruling 9).
+std::vector<std::string> model_files(const fs::path& mdir) {
+    std::error_code ec;
+    std::vector<std::string> names;
+    for (const auto& ent : fs::directory_iterator(mdir, ec))
+        if (ent.is_regular_file() && ent.path().extension() == ".def") names.push_back(ent.path().filename().string());
+    if (ec) throw Error(ErrorKind::Io, "", "", "cannot list " + mdir.string() + ": " + ec.message());
+    std::sort(names.begin(), names.end());
+    auto core = std::find(names.begin(), names.end(), "core.def");
+    if (core != names.end()) std::rotate(names.begin(), core, core + 1);
+    return names;
+}
+
+// Load parsed modules in the order given, each after the modules it uses
+// (0.8); a cycle is bad-directive. A used module that no file defines is left
+// to the load, which fails with unknown-module. With `wanted`, only the
+// modules it names and the modules those use are loaded.
+void load_modules(Engine& eng, std::vector<Module>& parsed, const std::vector<std::string>* wanted) {
+    std::unordered_map<std::string, std::size_t> by_name;
+    for (std::size_t i = 0; i < parsed.size(); ++i) by_name.emplace(parsed[i].name, i);  // the first file of a name
+    std::vector<int> state(parsed.size(), 0);  // 0 not loaded, 1 loading the modules it uses, 2 loaded
+    struct Loader {
+        Engine& eng;
+        std::vector<Module>& parsed;
+        std::unordered_map<std::string, std::size_t>& by_name;
+        std::vector<int>& state;
+        void operator()(std::size_t i) {
+            if (state[i] == 2) return;
+            if (state[i] == 1)
+                throw Error(ErrorKind::BadDirective, "", "",
+                            "the 'uses' lines of the modules form a cycle through '" + parsed[i].name + "' (" +
+                                parsed[i].origin + ")");
+            state[i] = 1;
+            const std::vector<std::string> uses = parsed[i].uses;
+            for (const auto& u : uses) {
+                auto it = by_name.find(u);
+                if (it != by_name.end()) (*this)(it->second);
+            }
+            state[i] = 2;
+            eng.add_model(std::move(parsed[i]));
+        }
+    } loader{eng, parsed, by_name, state};
+    if (!wanted) {
+        for (std::size_t i = 0; i < parsed.size(); ++i) loader(i);
+        return;
+    }
+    for (const auto& w : *wanted) {
+        auto it = by_name.find(w);
+        if (it != by_name.end()) loader(it->second);
+    }
+}
 }  // namespace
 
 Engine Engine::load(const std::string& packs_dir, const std::string& models_dir, Distribution max_distribution) {
@@ -50,46 +104,12 @@ Engine Engine::load(const std::string& packs_dir, const std::string& models_dir,
     // exist; the default one may be absent, and then no pack can load (unknown-module).
     const fs::path mdir = models_dir.empty() ? fs::path(packs_dir) / ".." / "model" : fs::path(models_dir);
     if (fs::is_directory(mdir, ec)) {
-        std::vector<std::string> names;
-        for (const auto& ent : fs::directory_iterator(mdir, ec))
-            if (ent.is_regular_file() && ent.path().extension() == ".def") names.push_back(ent.path().filename().string());
-        if (ec) throw Error(ErrorKind::Io, "", "", "cannot list " + mdir.string() + ": " + ec.message());
-        std::sort(names.begin(), names.end());
-        // `core.def` first, whatever its name sorts as: a `derive` line of another
-        // module may name a key of `core` (0.6 ruling 9).
-        auto core = std::find(names.begin(), names.end(), "core.def");
-        if (core != names.end()) std::rotate(names.begin(), core, core + 1);
-        // Then each module after the modules it uses (0.8); a cycle is
-        // bad-directive. A used module that no file defines is left to the
-        // load, which fails with unknown-module.
+        const std::vector<std::string> names = model_files(mdir);
         std::vector<Module> parsed;
         parsed.reserve(names.size());
-        for (const auto& n : names) parsed.push_back(parse_model(read_text(mdir / n), (mdir / n).string()));
-        std::unordered_map<std::string, std::size_t> by_name;
-        for (std::size_t i = 0; i < parsed.size(); ++i) by_name.emplace(parsed[i].name, i);  // the first file of a name
-        std::vector<int> state(parsed.size(), 0);  // 0 not loaded, 1 loading the modules it uses, 2 loaded
-        struct Loader {
-            Engine& eng;
-            std::vector<Module>& parsed;
-            std::unordered_map<std::string, std::size_t>& by_name;
-            std::vector<int>& state;
-            void operator()(std::size_t i) {
-                if (state[i] == 2) return;
-                if (state[i] == 1)
-                    throw Error(ErrorKind::BadDirective, "", "",
-                                "the 'uses' lines of the modules form a cycle through '" + parsed[i].name + "' (" +
-                                    parsed[i].origin + ")");
-                state[i] = 1;
-                const std::vector<std::string> uses = parsed[i].uses;
-                for (const auto& u : uses) {
-                    auto it = by_name.find(u);
-                    if (it != by_name.end()) (*this)(it->second);
-                }
-                state[i] = 2;
-                eng.add_model(std::move(parsed[i]));
-            }
-        } loader{eng, parsed, by_name, state};
-        for (std::size_t i = 0; i < parsed.size(); ++i) loader(i);
+        for (const auto& n : names)
+            parsed.push_back(detail::parse_model_unchecked(read_text(mdir / n), (mdir / n).string()));
+        load_modules(eng, parsed, nullptr);
     } else if (!models_dir.empty()) {
         throw Error(ErrorKind::Io, "", "", "models directory not found: " + models_dir);
     }
@@ -105,23 +125,63 @@ Engine Engine::load(const std::string& packs_dir, const std::string& models_dir,
     return eng;
 }
 
-void Engine::load_model(const std::string& text, const std::string& origin) {
-    add_model(detail::parse_model_with(text, origin, [this](const std::string& name) -> const Module* {
-        auto it = modules_.find(name);
-        return it == modules_.end() ? nullptr : &it->second;
-    }));
+Engine Engine::load_packs(const std::string& packs_dir, const std::vector<std::string>& names,
+                          const std::string& models_dir, Distribution max_distribution) {
+    Engine eng;
+    eng.set_max_distribution(max_distribution);
+    std::error_code ec;
+    if (!fs::is_directory(packs_dir, ec))
+        throw Error(ErrorKind::Io, "", "", "packs directory not found: " + packs_dir);
+
+    // The named packs, each once, in the order given. A name is a directory of
+    // `packs_dir`, not a path.
+    std::vector<Pack> packs;
+    std::vector<std::string> seen;
+    for (const auto& n : names) {
+        if (std::find(seen.begin(), seen.end(), n) != seen.end()) continue;
+        seen.push_back(n);
+        const fs::path def = fs::path(packs_dir) / n / "pack.def";
+        if (n.empty() || n == "." || n == ".." || n.find('/') != std::string::npos ||
+            n.find('\\') != std::string::npos || !fs::is_regular_file(def, ec))
+            throw Error(ErrorKind::Io, "", "", "no pack '" + n + "' in " + packs_dir);
+        packs.push_back(parse_pack(read_text(def), def.string()));
+    }
+
+    // The modules they need: `core`, every module a pack uses, and every
+    // module one of those uses. Module files are found by the name their
+    // `module` line states, so every file of the directory is parsed; only the
+    // needed ones are checked against the engine and loaded. A needed module
+    // that no file defines is left to the load, which fails with
+    // unknown-module.
+    const fs::path mdir = models_dir.empty() ? fs::path(packs_dir) / ".." / "model" : fs::path(models_dir);
+    if (fs::is_directory(mdir, ec)) {
+        std::vector<std::string> files = model_files(mdir);
+        std::vector<Module> parsed;
+        parsed.reserve(files.size());
+        for (const auto& n : files)
+            parsed.push_back(detail::parse_model_unchecked(read_text(mdir / n), (mdir / n).string()));
+        std::vector<std::string> wanted{"core"};
+        for (const auto& p : packs)
+            for (const auto& u : p.uses)
+                if (std::find(wanted.begin(), wanted.end(), u) == wanted.end()) wanted.push_back(u);
+        load_modules(eng, parsed, &wanted);
+    } else if (!models_dir.empty()) {
+        throw Error(ErrorKind::Io, "", "", "models directory not found: " + models_dir);
+    }
+    for (auto& p : packs) eng.add_pack(std::move(p));
+    return eng;
 }
 
+void Engine::load_model(const std::string& text, const std::string& origin) {
+    add_model(detail::parse_model_unchecked(text, origin));
+}
+
+// The checks of a module after its parse, in the order of 0.8 ruling 29.
 void Engine::add_model(Module module) {
-    const detail::ModuleLookup loaded = [this](const std::string& name) -> const Module* {
+    const auto loaded = [this](const std::string& name) -> const Module* {
         auto it = modules_.find(name);
         return it == modules_.end() ? nullptr : &it->second;
     };
-    // `derive` lines: the target is a declared key of `core` or of the module,
-    // every argument one of `core`, of the module or of a module it uses, and
-    // the types fit the function (bad-directive). A line that names a key of a
-    // used module that is not loaded is left: the load fails below.
-    if (!module.derives.empty()) detail::check_derives(module, loaded, true);
     if (module.distribution == Distribution::Controlled && max_distribution_ == Distribution::Public)
         throw Error(ErrorKind::DistributionRefused, "", "",
                     "module '" + module.name + "' is controlled and the engine limit is public (" + module.origin + ")");
@@ -135,6 +195,10 @@ void Engine::add_model(Module module) {
             if (loaded(u)->distribution != Distribution::Public)
                 throw Error(ErrorKind::DistributionViolation, "", "",
                             "public module '" + module.name + "' uses controlled module '" + u + "' (" + module.origin + ")");
+    // `derive` lines: the target is a declared key of `core` or of the module,
+    // every argument one of `core`, of the module or of a module it uses, and
+    // the types fit the function (bad-directive).
+    if (!module.derives.empty()) detail::check_derives(module, loaded, true);
     if (modules_.count(module.name))
         throw Error(ErrorKind::DuplicateModule, "", "",
                     "module '" + module.name + "' is already loaded (" + module.origin + ")");

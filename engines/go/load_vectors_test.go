@@ -122,3 +122,66 @@ func TestDirectoryLoaderAndLimit(t *testing.T) {
 		t.Error("an unknown distribution limit must be refused")
 	}
 }
+
+// TestLoadPacksOnly loads named packs of the repository with only the
+// modules they need.
+func TestLoadPacksOnly(t *testing.T) {
+	models := DefaultModelsDir(packsDir)
+	eng, err := LoadPacksOnly(models, packsDir, DistControlled, []string{"cot-xml", "geojson", "cot-xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := len(eng.Formats()); got != 2 {
+		t.Errorf("%d packs loaded, want 2", got)
+	}
+	// Exactly core, what the two packs use, and what those modules use.
+	want := map[string]bool{CoreModule: true}
+	for _, p := range eng.Formats() {
+		for _, u := range p.Uses {
+			want[u] = true
+		}
+	}
+	for grew := true; grew; {
+		grew = false
+		for _, m := range eng.Modules() {
+			if !want[m.Name] {
+				continue
+			}
+			for _, u := range m.Uses {
+				if !want[u] {
+					want[u], grew = true, true
+				}
+			}
+		}
+	}
+	if got := len(eng.Modules()); got != len(want) {
+		t.Errorf("%d modules loaded, want %d", got, len(want))
+	}
+	for _, m := range eng.Modules() {
+		if !want[m.Name] {
+			t.Errorf("module %s loaded and no named pack needs it", m.Name)
+		}
+	}
+	all, err := Load(packsDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(eng.Modules()) >= len(all.Modules()) {
+		t.Errorf("the named load holds %d modules, the full load %d", len(eng.Modules()), len(all.Modules()))
+	}
+	in := []byte(`<event uid="J-1" type="a-f-G-U-C" time="2021-02-27T20:00:00.000Z" how="m-g"><point lat="30.5" lon="-85.5" hae="1" ce="2" le="3"/></event>`)
+	a, errA := eng.Convert("cot-xml", "geojson", in)
+	b, errB := all.Convert("cot-xml", "geojson", in)
+	if errA != nil || errB != nil || string(a) != string(b) {
+		t.Errorf("named load converts to %s (%v), full load to %s (%v)", a, errA, b, errB)
+	}
+	if _, err := LoadPacksOnly(models, packsDir, DistControlled, []string{"no-such-pack"}); !IsKind(err, ErrUnknownFormat) {
+		t.Errorf("an unknown pack name: got %v, want unknown-format", err)
+	}
+	if _, err := LoadPacksOnly(models, packsDir, DistControlled, nil); !IsKind(err, ErrUnknownFormat) {
+		t.Errorf("no pack named: got %v, want unknown-format", err)
+	}
+	if _, err := LoadPacksOnly(models, packsDir, DistControlled, []string{"../packs/geojson"}); !IsKind(err, ErrUnknownFormat) {
+		t.Errorf("a path for a pack name: got %v, want unknown-format", err)
+	}
+}

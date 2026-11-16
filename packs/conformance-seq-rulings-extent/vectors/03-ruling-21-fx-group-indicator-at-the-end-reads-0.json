@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-fx-group-indicator-at-the-end-reads-0",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-json",
+  "input": "01020f0513",
+  "expect": "{\"n\":1,\"x\":5,\"nums\":[9]}"
+}

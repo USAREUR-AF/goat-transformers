@@ -1,0 +1,7 @@
+{
+  "name": "ruling-19-default-inside-a-block-is-the-message-s",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"x\":3}",
+  "expect": "010002818280"
+}
