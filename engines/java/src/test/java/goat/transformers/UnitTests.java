@@ -140,7 +140,7 @@ final class UnitTests {
         eq("packs-only: the packs named", "[cot-xml, geojson]", formats.toString());
         java.util.List<String> modules = new java.util.ArrayList<>();
         for (ModelModule m : e.modules()) modules.add(m.name);
-        eq("packs-only: only the modules they need", "[core]", modules.toString());
+        eq("packs-only: only the modules they need", "[core, track]", modules.toString());
         Engine all = Engine.load(packsDir);
         for (Pack p : all.packs()) {
             Engine one = Engine.loadOnly(packsDir, java.util.List.of(p.format));
