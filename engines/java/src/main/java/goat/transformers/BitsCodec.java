@@ -105,8 +105,13 @@ final class BitsCodec extends Codec<byte[]> {
                         throw layout(format, l, source, "the count locator reaches the start of its group");
                     }
                 } else if (l instanceof Pack.Group) {
+                    Pack.Group g = (Pack.Group) l;
                     if (((Loc) l.loc).start >= start) {
                         throw layout(format, l, source, "a group at or beyond the start of a group counted by a locator");
+                    }
+                    // a fixed-count group that starts before it and whose items reach its start (ruling 16 of 0.7)
+                    if (g.countLocator == null && ((Loc) l.loc).start + g.countFixed * g.itemBits > start) {
+                        throw layout(format, l, source, "the items of a fixed-count group reach the start of a group counted by a locator");
                     }
                 } else if (((Loc) l.loc).end() > start) {
                     throw layout(format, l, source, "bits at or beyond the start of a group counted by a locator");
@@ -319,11 +324,13 @@ final class BitsCodec extends Codec<byte[]> {
                 throw encodeFailure(f, ex);
             }
         }
-        // when and const values are written over any field
-        for (Pack.Line l : lines) {
-            if (!(l instanceof Pack.When)) continue;
-            Loc loc = (Loc) l.loc;
-            writeBits(buf.b, base + loc.start, loc.len, ((Pack.When) l).number);
+        // const values are written over any field, then when values (ruling 15 of 0.7)
+        for (int pass = 0; pass < 2; pass++) {
+            for (Pack.Line l : lines) {
+                if (!(l instanceof Pack.When) || ((Pack.When) l).isConst != (pass == 0)) continue;
+                Loc loc = (Loc) l.loc;
+                writeBits(buf.b, base + loc.start, loc.len, ((Pack.When) l).number);
+            }
         }
         // groups: the items back to back; a count locator holds their number, written over any field there
         long far = 0;
@@ -352,7 +359,12 @@ final class BitsCodec extends Codec<byte[]> {
         return far;
     }
 
-    private long readBits(byte[] msg, long start, int len) {
+    private long readBits(byte[] msg, long start, int len) { return readBits(msg, start, len, msb); }
+
+    private void writeBits(byte[] msg, long start, int len, long value) { writeBits(msg, start, len, value, msb); }
+
+    /** The {@code len} bits from bit {@code start} of the message, in the bit order {@code msb} names. */
+    static long readBits(byte[] msg, long start, int len, boolean msb) {
         long v = 0;
         for (int k = 0; k < len; k++) {
             long j = start + k;
@@ -366,7 +378,7 @@ final class BitsCodec extends Codec<byte[]> {
         return v;
     }
 
-    private void writeBits(byte[] msg, long start, int len, long value) {
+    static void writeBits(byte[] msg, long start, int len, long value, boolean msb) {
         for (int k = 0; k < len; k++) {
             long j = start + k;
             int idx = (int) (j >>> 3);
@@ -383,4 +395,6 @@ final class BitsCodec extends Codec<byte[]> {
             msg[idx] = (byte) (set ? (by | bitMask) : (by & ~bitMask));
         }
     }
+
+    static void reverseBytes(byte[] b) { reverse(b); }
 }

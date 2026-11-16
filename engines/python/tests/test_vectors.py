@@ -58,6 +58,11 @@ def _resolve(scope, key):
     if key.endswith(".#"):
         items = scope.lists.get(key[:-2])
         return ("count", None if items is None else len(items))
+    if key == "@kind":  # 0.8: the kind an item recorded when it was decoded; not a model key
+        kind = getattr(scope, "kind", None)
+        if kind is None:
+            return ("missing", "the item recorded no kind")
+        return ("value", kind[1])
     if key not in scope.fields:
         return ("missing", "model key %r absent" % key)
     return ("value", scope.fields[key])
@@ -68,7 +73,8 @@ def _check_model(engine, rel, vec, data):
     `"@complete": true` the checks run on the completed entity: the decode, then
     the absent keys filled from `context`, then the derivations (whether or not
     `from == to`), and floats compare within 1e-9 relative. `"<list>.#"` and
-    `"<list>[<i>].<key>"` check a list of the decoded entity."""
+    `"<list>[<i>].<key>"` check a list of the decoded entity, and
+    `"<list>[<i>].@kind"` the kind an item selected (0.8)."""
     out = []
     ent = engine.decode(vec["from"], data)
     complete = vec["model"].get("@complete") is True

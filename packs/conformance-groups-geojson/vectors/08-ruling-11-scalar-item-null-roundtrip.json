@@ -1,0 +1,11 @@
+{
+  "name": "ruling-11-scalar-item-null-roundtrip",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u\",\"names\":[\"p\",null]}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u\",\"names\":[\"p\",null]}",
+  "model": {
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "p"
+  }
+}

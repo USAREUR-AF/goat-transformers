@@ -1,0 +1,7 @@
+{
+  "name": "block-shorter-than-len",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001f9b0d1001075460100000000000000000ffce001101378101010000",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-groups-several-items-in-every-list",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-groups",
+  "input": "{\"n\":1,\"items\":[{\"qty\":5,\"subs\":[{\"val\":9},{\"val\":10}]},{\"qty\":6}],\"nums\":[1,2,3],\"recs\":[{\"x\":1},{\"x\":2}]}",
+  "expect": "0131238b13148c00808102"
+}

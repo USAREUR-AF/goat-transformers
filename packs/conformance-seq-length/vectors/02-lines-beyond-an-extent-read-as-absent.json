@@ -1,0 +1,12 @@
+{
+  "name": "lines-beyond-an-extent-read-as-absent",
+  "from": "conformance-seq-length",
+  "to": "conformance-seq-length",
+  "input": "0102110ea000",
+  "expect": "0103110012a0020040",
+  "model": {
+    "probe.x": "17",
+    "probe.z": "21",
+    "probe.nums.#": "absent"
+  }
+}

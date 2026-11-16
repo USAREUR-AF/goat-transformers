@@ -1,0 +1,13 @@
+{
+  "name": "every-function",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"t\":\"2025-10-29T12:00:00.123Z\",\"x\":0,\"z\":2,\"s1\":\"311\",\"n\":-42}",
+  "context": {},
+  "expect": "{\"t\":\"2025-10-29T12:00:00.123Z\",\"x\":0,\"z\":2,\"s1\":\"311\",\"n\":-42,\"ds\":43200.123,\"any\":1,\"notx\":1,\"parsed\":311,\"text\":\"-42\"}",
+  "model": {
+    "@complete": true,
+    "probe.ds": "43200.123",
+    "probe.any1": "1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-length-every-block",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-length",
+  "input": "{\"n\":1,\"qty\":6,\"x\":17,\"y\":10,\"z\":21,\"w\":9,\"nums\":[7,8]}",
+  "expect": "010311a022b90402070846"
+}

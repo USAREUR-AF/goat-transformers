@@ -9,7 +9,7 @@ built. It gives no dates.
 |---|---|
 | Engines | Seven: Rust (reference), Go, Python, Java, C++, Erlang, Zig. Each uses only its language's standard library and passes every vector |
 | Wire types | Five: `xml`, `geojson`, `json`, `protobuf`, `bits` (either bit order; scaled, floating-point and text fields) |
-| Conformance vectors | 2,801 conversion vectors in 43 packs and 145 load vectors; every engine reproduces every one |
+| Conformance vectors | 2,947 conversion vectors in 60 packs and 261 load vectors; every engine reproduces every one |
 | Shared model | Modules `core` and `track`, and one module of raw wire values for each catalog format. Every mapped key is declared and type-checked at load (`spec/shared-model.md`) |
 | Packs | The table in `README.md`; coverage by format in `docs/coverage-roadmap.md` |
 | Pack generators | `tools/gen/proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`: a pack, its module and its round-trip vectors from a machine-readable definition |
@@ -31,7 +31,7 @@ vectors, and the same change in the other six engines.
 | `bits` in either bit order, fields past their word, scaled, floating-point and text fields | the binary layouts that public message catalogs use | Built (spec 0.5) |
 | Mapping rules: constants, defaults, value tables, derived keys, caller-supplied keys; per-field byte swap, trim, optional trailing fields; an XML root per kind | what an encoder does in addition to copying a value | Built (spec 0.6) |
 | Groups | a part of a message that repeats, mapped to a list in the model: repeated XML elements, JSON arrays, repeated protobuf fields, counted binary items; nested | Built (spec 0.7) |
-| Items decoded by kind; presence-indicated binary items | a list whose items differ in layout by a discriminator; items present only when a presence bit says so (ASTERIX) | Designed |
+| Sequential binary layouts | fields placed by what came before: presence bits, parts that repeat while an indicator is set, extensible items, blocks that state their own length, list items decoded by kind | Built, seven engines (spec 0.8) |
 | Layered wires and framing | one pack's payload is another pack's whole message; declared lengths, trimmed payloads, checksums | Designed |
 | Absent-value sentinels | a wire value that means "unknown" decodes to an absent key | Designed |
 | Further value functions | character sets, sign-and-magnitude numbers, scales that yield integers, a scale on a text wire, an instant split into seconds and nanoseconds, frame conversions (ECEF, radians, mean sea level) | Designed |

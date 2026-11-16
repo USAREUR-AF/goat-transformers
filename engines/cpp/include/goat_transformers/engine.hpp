@@ -86,19 +86,22 @@ struct ResidueEntry {
 };
 
 // What an item of a list holds (v0.7): model keys, and lists of its own. An
-// item has no residue and no kind.
+// item has no residue.
 struct Item {
     std::map<std::string, Value> fields;
     // List name -> its items, in order. A list that is present and empty is
     // distinct from an absent list.
     std::map<std::string, std::vector<Item>> lists;
+    // The kind decode selected, as (format, kind name): for an entity the
+    // message's kind (v0.5), for an item of a list the item's kind (v0.8,
+    // `Item.kind`). Both empty when no kind was selected or the kind was cleared.
+    // Encode selects by it only when the format is the one being written, so an
+    // item carried to another format chooses its kind by `requires`.
+    std::pair<std::string, std::string> kind;
 };
 
 struct Entity : Item {
     std::vector<ResidueEntry> residue;  // decode order
-    // v0.5: the kind decode selected, as (format, kind name). Both empty when the
-    // format has no kinds or the kind was cleared.
-    std::pair<std::string, std::string> kind;
 };
 
 // ---------------------------------------------------------------- model modules (v0.4)
@@ -118,7 +121,9 @@ struct ModelKey {
 };
 
 // The fixed set of functions a `derive` line may name (v0.6, Derived keys).
-enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset, Join };
+enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset, Join,
+                      DaySeconds, Any, Not, ParseInt, TextOf  // v0.8
+};
 
 // `derive <model-key> <function> <argument-key> [<argument-key>...]` (v0.6).
 struct DeriveLine {
@@ -151,6 +156,7 @@ struct Module {
     std::string version;
     Distribution distribution = Distribution::Controlled;
     std::vector<std::string> sources;  // `source` lines, file order
+    std::vector<std::string> uses;     // `uses` lines, file order, each module once (v0.8)
     std::vector<ModelKey> keys;        // file order
     std::vector<ModelList> lists;      // `list` lines, file order (v0.7)
     std::vector<DeriveLine> derives;   // `derive` lines, file order (v0.6)
@@ -261,6 +267,69 @@ struct GroupLine {
     std::vector<GroupLine> groups;   // nested
 };
 
+// ---- sequential layouts (v0.8): a `bits` pack with `layout sequential` is a
+// tree of lines read in order from a cursor.
+
+struct SeqNode;
+
+// A kind of the message or of a group's items. Its `when` lines are the first
+// of `lines`.
+struct SeqKind {
+    std::string name;
+    std::vector<std::string> requires_keys;
+    std::vector<DefaultLine> defaults;
+    std::vector<SeqNode> lines;
+    std::size_t line = 0;
+};
+
+// The lines of the message, of a block, or of one item of a group. `defaults`
+// and `kinds` are used by the message and by a group only: a `default` inside
+// an `if`, `opt`, `chain` or `length` block belongs to the message or item
+// that holds the block.
+struct SeqBody {
+    std::vector<SeqNode> lines;         // the common lines
+    std::vector<DefaultLine> defaults;  // the common `default` lines
+    std::vector<SeqKind> kinds;
+};
+
+// One condition of an `if` line: `<name>.<i>` or `!<name>.<i>`.
+struct SeqCond {
+    int presence = -1;       // index in Pack::seq_presences
+    std::uint32_t bit = 0;   // from 1, in reading order
+    bool negated = false;
+};
+
+// A `presence` line of a sequential pack.
+struct SeqPresence {
+    std::string name;
+    bool fx = false;
+    std::uint32_t bits = 0;        // `presence <name> <n>`; 0 with `fx`
+    std::uint32_t max_named = 0;   // the highest bit an `if` names
+    std::vector<bool> named;       // named[i - 1]: some `if` names bit i, with or without `!`
+    std::size_t line = 0;
+};
+
+struct SeqNode {
+    enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group };
+    enum class Repeat { Count, While, More, Fx };
+    Type type = Type::Pad;
+    std::size_t line = 0;              // line number in pack.def
+    // field: the bit length; const, when: the bit length of the value; pad:
+    // the bits skipped; align: <n>; length: the bits of the length field;
+    // group with `count`: the bits of the count.
+    std::uint32_t len = 0;
+    std::uint64_t number = 0;          // const, when: the value
+    FieldLine field;                   // field: the key, transform and options; the locator is the length as written
+    std::vector<FieldLine> also;       // `also` lines: more keys on the same bits, in line order
+    int presence = -1;                 // presence: index in Pack::seq_presences
+    std::vector<SeqCond> conds;        // if
+    std::string list;                  // group: the list's name, as written
+    Repeat repeat = Repeat::Count;     // group
+    bool unit_bits = false;            // length: the block is counted in bits, not bytes
+    std::int64_t plus = 0;             // length: `plus <n>`
+    SeqBody inner;                     // if, opt, chain, length: the block; group: one item
+};
+
 struct Kind {
     std::string name;
     std::string root;                     // xml only: this kind's root element; empty = the pack's
@@ -295,6 +364,12 @@ struct Pack {
     // root, in pack order (a kind with no `root` is listed under the pack's).
     // Engine::add_pack builds it, so kind selection does not scan every kind.
     std::unordered_map<std::string, std::vector<std::size_t>> kinds_by_root;
+    // v0.8, `layout sequential` (bits only): the message as lines read from a
+    // cursor. `fields`, `whens`, `consts`, `groups`, `kinds` and `defaults`
+    // above are then empty.
+    bool sequential = false;
+    SeqBody seq;
+    std::vector<SeqPresence> seq_presences;
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.

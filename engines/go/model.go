@@ -54,11 +54,13 @@ type EntityKind struct {
 }
 
 // Item is one item of a list (spec/engine-spec.md, "Version 0.7: groups"): it
-// holds model keys and lists exactly as an entity does, without residue and
-// without a kind.
+// holds model keys and lists exactly as an entity does, without residue.
 type Item struct {
 	Fields map[string]Value
 	Lists  map[string][]*Item
+	// Kind is the kind the item selected when a sequential pack decoded it
+	// by kind (spec 0.8, "Items by kind"); the zero value means no kind.
+	Kind EntityKind
 }
 
 // NewItem returns an empty item.

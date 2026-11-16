@@ -1,0 +1,13 @@
+{
+  "name": "to-asterix-cat062-position-velocity-and-negative-altitude",
+  "from": "canonical-track-v2",
+  "to": "asterix-cat062",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"4095\",\"sourceId\":\"sensor-a\",\"trackGeneration\":\"generation-1\",\"testData\":false,\"headerSimulated\":false,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2026-03-01T23:59:59.250Z\",\"position\":{\"latitudeDeg\":56.9496,\"longitudeDeg\":24.1052,\"altitudeM\":-100.0},\"velocity\":{\"eastMps\":250.75,\"northMps\":-3.5},\"classification\":\"uas\",\"confidence\":0.87,\"positionUncertainty\":{\"sigmaEastM\":3.2,\"sigmaNorthM\":2.8,\"sigmaUpM\":6.1}}",
+  "context": {
+    "cat062.sac": "1",
+    "cat062.sic": "7"
+  },
+  "expect": "3e001f9b0d100107a8bfa000a1fd6f004490df03ebfff20fff81010100ffcc",
+  "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
+  "reference": "byte for byte the block the open-billie encoder writes for this track"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-msb-text-longer-than-its-field",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-msb",
+  "input": "{\"n\":5,\"label\":\"abc\"}",
+  "expect_error": "transform-encode"
+}

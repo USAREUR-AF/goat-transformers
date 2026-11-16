@@ -20,6 +20,7 @@ add_library(goat_transformers STATIC
   src/jsonwire.cpp
   src/pack.cpp
   src/protobuf.cpp
+  src/sequential.cpp
   src/transforms.cpp
   src/util.cpp
   src/xml.cpp)

@@ -1,0 +1,7 @@
+{
+  "name": "input-shorter-than-the-stated-length",
+  "from": "conformance-seq-whole",
+  "to": "conformance-seq-whole",
+  "input": "01041185",
+  "expect_error": "malformed-wire"
+}

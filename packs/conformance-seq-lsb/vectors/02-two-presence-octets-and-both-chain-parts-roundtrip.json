@@ -1,0 +1,13 @@
+{
+  "name": "two-presence-octets-and-both-chain-parts-roundtrip",
+  "from": "conformance-seq-lsb",
+  "to": "conformance-seq-lsb",
+  "input": "02a000000080025585060000",
+  "expect": "02a000000080025585060000",
+  "model": {
+    "probe.w": "85",
+    "probe.c1": "5",
+    "probe.c2": "6",
+    "probe.nums.#": "0"
+  }
+}

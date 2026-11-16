@@ -1,0 +1,7 @@
+{
+  "name": "extent-beyond-the-input",
+  "from": "conformance-seq-length",
+  "to": "conformance-seq-length",
+  "input": "010911a0",
+  "expect_error": "malformed-wire"
+}

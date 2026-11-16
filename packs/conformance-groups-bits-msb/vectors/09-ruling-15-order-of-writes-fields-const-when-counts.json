@@ -1,0 +1,11 @@
+{
+  "name": "ruling-15-order-of-writes-fields-const-when-counts",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-rulings-bits",
+  "input": "163c076162096364",
+  "expect": "a607000900",
+  "model": {
+    "probe.n": "5",
+    "probe.items.#": "2"
+  }
+}

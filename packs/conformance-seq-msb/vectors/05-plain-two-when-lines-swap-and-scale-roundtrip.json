@@ -1,0 +1,14 @@
+{
+  "name": "plain-two-when-lines-swap-and-scale-roundtrip",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "01a002073412ffa0",
+  "expect": "01a002073412ffa0",
+  "model": {
+    "@kind": "plain",
+    "probe.n": "1",
+    "probe.qty": "0",
+    "probe.val": "4660",
+    "probe.ratio": "-1.5"
+  }
+}

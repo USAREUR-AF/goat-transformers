@@ -1,0 +1,10 @@
+{
+  "name": "ruling-09-input-beyond-the-last-line-is-ignored",
+  "from": "conformance-seq-chain",
+  "to": "conformance-seq-chain",
+  "input": "010a0702ffff",
+  "expect": "010a0702",
+  "model": {
+    "probe.qty": "1"
+  }
+}

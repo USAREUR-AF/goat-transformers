@@ -212,6 +212,12 @@ check_model(Engine, From, Input, Context, {object, Pairs0}) ->
 %%   "<list>[<i>].<key>"  <key> read the same way inside item <i> of the list
 %%   "<list>.#"           the number of items, or "absent"
 %%   "<key>"              a model key
+lookup(<<"@kind">>, Scope) ->
+    %% the kind an item recorded when it was decoded
+    case maps:get(kind, Scope, undefined) of
+        {_Format, Kind} -> {ok, Kind};
+        _ -> missing
+    end;
 lookup(Key, #{model := Model, lists := Lists}) ->
     case binary:match(Key, <<"[">>) of
         {Pos, 1} ->

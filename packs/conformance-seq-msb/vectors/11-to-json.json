@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-json",
+  "input": "05a201cefeb7b586",
+  "expect": "{\"n\":5,\"qty\":2,\"val\":6,\"x\":14,\"y\":-2,\"label\":\"ok\"}"
+}

@@ -1,0 +1,59 @@
+# Conformance probe pack for sequential layouts (spec 0.8), least significant
+# bit first. Public. No kinds. Bit i of the message is bit `i mod 8` of byte
+# `i div 8`; a field's first bit is its least significant.
+#
+#   byte 0      n
+#   byte 1      low nibble qty, high nibble the constant 10
+#   bytes 2-3   val, a little-endian 16-bit integer
+#   byte 4      bits 0-2: presence p.1, p.2, p.3 (p.1 is bit 0);
+#               p.1: x in the next 5 bits
+#   p.3         y, 8 bits, signed
+#   zero bits to the next whole byte
+#   presence f  octets of 7 presence bits (f.1 is bit 0) with the extension
+#               bit in bit 7
+#   f.2  z      f.9  w        one byte each
+#   chain       c1 in 7 bits and the extension bit (bit 7); c2 in 7 bits and
+#               an extension bit written 0
+#   nums        a 4-bit count (low nibble), then one 4-bit val per item; zero
+#               bits to the next whole byte
+#   then        one bit that says whether a one-character label follows
+format     conformance-seq-lsb
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  lsb
+field   probe.n    8  uint
+field   probe.qty  4  uint
+const   4  10
+field   probe.val  16  uint
+presence p 3
+if p.1
+  field  probe.x  5  uint
+end
+if p.3
+  field  probe.y  8  twos
+end
+align 8
+presence f fx
+if f.2
+  field  probe.z  8  uint
+end
+if f.9
+  field  probe.w  8  uint
+end
+chain
+  field  probe.c1  7  uint
+  fx
+  field  probe.c2  7  uint
+  fx
+end
+group   probe.nums count 4
+  field  probe.val  4  uint
+end
+align 8
+opt
+  field  probe.label  8  ascii
+end

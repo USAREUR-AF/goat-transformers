@@ -1,0 +1,7 @@
+{
+  "name": "ruling-13-to-json",
+  "from": "conformance-seq-rulings",
+  "to": "conformance-seq-json",
+  "input": "01800789010a01",
+  "expect": "{\"n\":1,\"qty\":9,\"val\":100,\"x\":7,\"w\":1,\"c1\":0,\"c2\":5}"
+}

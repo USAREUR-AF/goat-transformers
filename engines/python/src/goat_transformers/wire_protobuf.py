@@ -355,9 +355,12 @@ def _tree(pack, enc, kind_lines=()):
         else:
             leaves = [child.values.get(scalar[0]) for child in children]
             if scalar[1].transform.wire_type != LEN:
-                node = (LEN, b"".join(
-                    _encode_varint(leaf[1]) if leaf[0] == VARINT else leaf[1] for leaf in leaves if leaf is not None
-                ))
+                # In a packed field an item with no value is left out, and a
+                # list whose items all lack the value writes nothing (ruling 11 of 0.7).
+                leaves = [leaf for leaf in leaves if leaf is not None]
+                if not leaves:
+                    continue
+                node = (LEN, b"".join(_encode_varint(leaf[1]) if leaf[0] == VARINT else leaf[1] for leaf in leaves))
             else:
                 node = _Rep(leaf if leaf is not None else (LEN, b"") for leaf in leaves)
         _set(tree, g.loc, node, overwrite=False)

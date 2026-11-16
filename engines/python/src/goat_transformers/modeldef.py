@@ -3,7 +3,9 @@
 import math
 from dataclasses import dataclass, field as dc_field
 
-from .errors import BadDirective, DuplicateKey, InvalidModel, MissingDistribution, MissingSource, UnknownDirective
+from .errors import (
+    BadDirective, DuplicateKey, InvalidModel, MissingDistribution, MissingSource, UnknownDirective, UnknownModule,
+)
 from .packdef import CORE, DISTRIBUTIONS, split_key, tokenize
 from .transforms import parse_factor, read_typed
 
@@ -30,6 +32,7 @@ class Derive:
     args: tuple
     fn: object = None
     lineno: int = 0
+    partial: bool = False  # `any` (0.8): `fn` is given the arguments that are present, at least one
 
 
 @dataclass
@@ -42,6 +45,7 @@ class Module:
     path: str = None
     derives: list = dc_field(default_factory=list)  # Derive, in file order
     lists: dict = dc_field(default_factory=dict)  # list name -> meaning (0.7); shares the key namespace
+    uses: list = dc_field(default_factory=list)  # modules named in `uses` lines (0.8)
 
 
 _DEG = math.pi / 180.0  # degrees to radians, with pi as the double nearest to it
@@ -66,6 +70,32 @@ def _bearing(east, north):
     return d
 
 
+def _parse_int(text):
+    try:
+        return read_typed(text, "int")
+    except (ValueError, OverflowError):
+        return None  # the text holds no decimal integer: the target stays absent
+
+
+_NO_PARAM = ("copy", "hypot", "bearing", "east_of", "north_of", "neg", "day_seconds", "any", "not", "parse_int",
+             "text_of")
+# 0.8: function -> (argument count or None for one or more, argument type, result type)
+_TYPED = {
+    "day_seconds": (1, "int", "float"),
+    "any": (None, "int", "int"),
+    "not": (1, "int", "int"),
+    "parse_int": (1, "string", "int"),
+    "text_of": (1, "int", "string"),
+}
+_TYPED_FN = {
+    "day_seconds": lambda a: (int(a) % 86400000) / 1000.0,  # seconds since UTC midnight of the instant
+    "any": lambda *present: 1 if any(v != 0 for v in present) else 0,
+    "not": lambda a: 1 if a == 0 else 0,
+    "parse_int": _parse_int,
+    "text_of": lambda a: str(int(a)),
+}
+
+
 def _build_derive(function, target_type, arg_types):
     """-> the function of one `derive` line, checked against the types of its
     target and arguments. Raises ValueError when the function name, the
@@ -79,8 +109,15 @@ def _build_derive(function, target_type, arg_types):
         if target_type != "float" or any(t != "float" for t in arg_types):
             raise ValueError("%s needs a float target and float arguments" % name)
 
-    if name in ("copy", "hypot", "bearing", "east_of", "north_of", "neg") and colon:
+    if name in _NO_PARAM and colon:
         raise ValueError("%s takes no parameter" % name)
+    if name in _TYPED:  # the functions added in 0.8
+        count, arg_type, result_type = _TYPED[name]
+        if (n != count) if count is not None else (n < 1):
+            raise ValueError("%s takes %s argument(s), got %d" % (name, count if count is not None else "1 or more", n))
+        if target_type != result_type or any(t != arg_type for t in arg_types):
+            raise ValueError("%s needs %s argument(s) and a %s target" % (name, arg_type, result_type))
+        return _TYPED_FN[name]
     if name == "copy":
         if n != 1:
             raise ValueError("copy takes 1 argument(s), got %d" % n)
@@ -133,44 +170,71 @@ def _build_derive(function, target_type, arg_types):
     raise ValueError("unknown function %r" % function)
 
 
-def _check_derives(module, lines, core, source):
-    """Resolve every `derive` line against the keys of `core` and of the module
-    itself. Any misfit is `bad-directive`."""
-    def key_type(key, where):
+def _check_derives(module, lines, models, source):
+    """Resolve every `derive` line. An argument is a key of the module itself,
+    of `core` or of a module named in a `uses` line (0.8); the target is a key
+    of the module itself or of `core`. Any misfit is `bad-directive`."""
+    def key_type(key, where, target):
         m, k = split_key(key)
         if m == module.name:
-            decl = module.keys.get(k)
-        elif m == CORE and core is not None:
-            decl = core.keys.get(k)
+            owner = module
+        elif m == CORE or (not target and m in module.uses):
+            owner = models.get(m)
         else:
-            decl = None
-            if m != CORE:
-                raise BadDirective(
-                    "derive key %s is of module %s; a derive line names keys of core or of module %s, at %s"
-                    % (key, m, module.name, where)
-                )
-        if decl is None:
+            raise BadDirective(
+                "derive %s %s is of module %s; a derive line takes its target from core or module %s, and its "
+                "arguments also from the modules it names in 'uses' lines, at %s"
+                % ("target" if target else "argument", key, m, module.name, where)
+            )
+        decl = owner.keys.get(k) if owner is not None else None
+        if decl is None:  # a list is not a scalar key (ruling 18 of 0.7)
             raise BadDirective("derive names undeclared key %s at %s" % (key, where))
         return decl.type
 
     for lineno, args in lines:
         where = "%s:%d" % (source, lineno)
         target, function, arg_keys = args[0], args[1], tuple(args[2:])
-        target_type = key_type(target, where)
-        arg_types = [key_type(k, where) for k in arg_keys]
+        target_type = key_type(target, where, True)
+        arg_types = [key_type(k, where, False) for k in arg_keys]
         try:
             fn = _build_derive(function, target_type, arg_types)
         except ValueError as e:
             raise BadDirective("derive %s %s at %s: %s" % (target, function, where, e))
-        module.derives.append(Derive(target, function, arg_keys, fn, lineno))
+        module.derives.append(Derive(target, function, arg_keys, fn, lineno, partial=function == "any"))
 
 
-def parse_model_text(text, *, source="model.def", core=None):
+def scan_uses(text):
+    """-> (module name or None, the modules its `uses` lines name), read
+    without checking the file: what the directory loader needs to order the
+    modules (0.8)."""
+    name = None
+    uses = []
+    for raw in text.splitlines():
+        line = raw.lstrip()
+        if line.startswith("uses") or line.startswith("module"):
+            try:
+                toks = tokenize(raw, error=InvalidModel)
+            except InvalidModel:
+                continue
+            if len(toks) == 2 and toks[0] == "uses" and toks[1] not in uses:
+                uses.append(toks[1])
+            elif len(toks) == 2 and toks[0] == "module" and name is None:
+                name = toks[1]
+    return name, uses
+
+
+def parse_model_text(text, *, source="model.def", core=None, models=None):
     """Parse one module. Line errors are raised as the file is read,
-    `duplicate-key` among them; then the `derive` lines are checked (they need
-    the whole file); then `missing-distribution` and `missing-source`. `core`
-    is the loaded `core` module, whose keys a `derive` line of another module
-    may name."""
+    `duplicate-key` among them; then a `uses` line naming a module that is not
+    loaded is `unknown-module` (when `models`, the loaded modules by name, is
+    given); then the `derive` lines are checked (they need the whole file);
+    then `missing-distribution` and `missing-source`. `core` is the loaded
+    `core` module, for a caller that has no other module."""
+    check_uses = models is not None
+    models = dict(models) if models else {}
+    if core is not None:
+        models.setdefault(CORE, core)
+    uses = []
     seen = {}
     sources = []
     keys = {}
@@ -213,6 +277,11 @@ def parse_model_text(text, *, source="model.def", core=None):
             if lname in keys or lname in lists:  # a list shares the key namespace of its module
                 raise DuplicateKey("name %r appears twice in the module, at %s" % (lname, where))
             lists[lname] = args[1] if len(args) == 2 else None
+        elif kw == "uses":
+            if len(args) != 1:
+                raise InvalidModel("directive 'uses' takes 1 argument(s), got %d at %s" % (len(args), where))
+            if args[0] not in uses:
+                uses.append(args[0])
         elif kw == "derive":
             if len(args) < 2:
                 raise InvalidModel("directive 'derive' takes 2 or more argument(s), got %d at %s" % (len(args), where))
@@ -222,8 +291,12 @@ def parse_model_text(text, *, source="model.def", core=None):
 
     name = seen.get("module")
     module = Module(name=name, version=seen.get("version"), distribution=seen.get("distribution"), sources=sources,
-                    keys=keys, lists=lists)
-    _check_derives(module, derives, core, source)
+                    keys=keys, lists=lists, uses=uses)
+    if check_uses:
+        for m in uses:
+            if m not in models and m != name:
+                raise UnknownModule("module %r uses module %s, which is not loaded (%s)" % (name, m, source))
+    _check_derives(module, derives, models, source)
     if module.distribution is None:
         raise MissingDistribution("module %r has no 'distribution' line in %s" % (name, source))
     if not sources:
@@ -241,9 +314,9 @@ def parse_model_text(text, *, source="model.def", core=None):
     return module
 
 
-def load_model_file(path, core=None):
+def load_model_file(path, core=None, models=None):
     with open(path, "r", encoding="utf-8") as fh:
         text = fh.read()
-    module = parse_model_text(text, source=path, core=core)
+    module = parse_model_text(text, source=path, core=core, models=models)
     module.path = path
     return module

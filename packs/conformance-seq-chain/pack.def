@@ -1,0 +1,38 @@
+# Conformance probe pack for `chain` (spec 0.8), most significant bit first.
+# Public. No kinds.
+#
+#   byte 0      n
+#   chain 1     octet 1: x in 7 bits, then the extension bit
+#               octet 2: y in 3 bits, 4 unused bits, then the extension bit
+#               octet 3: the constant 85 in 7 bits, then the extension bit
+#               octet 4: z in 7 bits, then an extension bit written 0 (the
+#                        chain ends with an `fx` line)
+#   byte        val
+#   chain 2     octet 1: qty in 7 bits, then the extension bit
+#               octet 2: w in 8 bits (the last part has no `fx` line)
+format     conformance-seq-chain
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+chain
+  field  probe.x  7  uint
+  fx
+  field  probe.y  3  uint
+  pad 4
+  fx
+  const  7  85
+  fx
+  field  probe.z  7  uint
+  fx
+end
+field   probe.val  8  uint
+chain
+  field  probe.qty  7  uint
+  fx
+  field  probe.w  8  uint
+end

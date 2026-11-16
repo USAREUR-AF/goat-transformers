@@ -71,7 +71,7 @@ names one.
 | `bits` | fixed-size binary words, fields are bit ranges | Built, seven engines |
 | `protobuf` | fields by number, dot-path into submessages | Built, seven engines |
 | `json` | members by path in any JSON object | Built, seven engines |
-| `bits` with field-presence indicators | items present only when a presence bit says so | Designed |
+| `bits`, sequential layout | fields placed by what came before: presence bits, repeats, extensible items, stated lengths | Built, seven engines |
 | text grammar | delimited or positional text records | Designed |
 | type-length-value | records of key, length, value | Designed |
 | six-bit armor | ASCII-armored bit payloads | Designed |
@@ -89,7 +89,7 @@ floating-point and text binary fields (spec 0.5); constants, defaults, value
 tables, derived keys, values the caller supplies, per-field byte swap, optional
 trailing fields and an XML root per kind (spec 0.6); groups, which map a
 repeating part of a message to a list in the model (spec 0.7). Designed: items
-decoded by kind, presence-indicated items, layered wires and framing, absent-value sentinels, further value
+layered wires and framing, absent-value sentinels, further value
 functions, conditional output, XML namespaces.
 
 ### What an encoder does around the copy of a value
@@ -133,8 +133,7 @@ through it.
 
 A conversion vector is `{from, to, input, expect}`; a load vector is a set of
 modules and one pack that must load or must fail with a named error
-(`spec/vector-format.md`). Every engine runs every vector. Built: 2,801 conversion
-vectors across 43 packs and 145 load vectors, all passing on all seven engines.
+(`spec/vector-format.md`). Every engine runs every vector. Built: 2,947 conversion vectors across 60 packs and 261 load vectors, all passing on all seven engines.
 
 ## Separation of pack authors and engine authors
 

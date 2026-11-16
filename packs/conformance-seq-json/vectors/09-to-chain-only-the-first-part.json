@@ -1,0 +1,7 @@
+{
+  "name": "to-chain-only-the-first-part",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-chain",
+  "input": "{\"n\":1,\"x\":5}",
+  "expect": "010a0000"
+}

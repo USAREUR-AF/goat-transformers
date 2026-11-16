@@ -106,6 +106,7 @@ A format with a message catalog has one message kind for each message type.
 | `nmea2000` | NMEA 2000 parameter groups, from the CANboat database | `bits` | 473 |
 | `mavlink2` | MAVLink 2, common message set | `bits` | 235 |
 | `adsb` | ADS-B on Mode S extended squitter (downlink format 17) | `bits` | 29 |
+| `asterix-cat062` | ASTERIX Category 062 system track (one record, the items a track encoder writes) | 1 |
 | `remote-id` | ASTM F3411 Remote ID (OpenDroneID) messages | `bits` | 8 |
 | `demo-*`, `conformance*` (26 packs) | synthetic formats that exercise each wire type and each rule of the specification | all | |
 
@@ -123,7 +124,7 @@ model modules and one pack that must load, or must fail with a named error.
 Every engine runs every vector and must reproduce `expect` byte for byte. The
 suite is the definition of correct behavior.
 
-This repository holds 2,801 conversion vectors in 43 packs and 145 load vectors.
+This repository holds 2,947 conversion vectors in 60 packs and 261 load vectors.
 `.github/workflows/conformance.yml` runs all of them on all seven engines on
 every change.
 

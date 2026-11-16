@@ -43,21 +43,12 @@ public final class TestRunner {
         // The directory loader, one pack at a time: a pack that does not load is a failure, and the vectors of the
         // other packs still run.
         Engine engine = new Engine();
-        List<Path> models = new ArrayList<>();
-        try (Stream<Path> s = Files.list(Engine.defaultModelsDir(packsDir))) {
-            s.filter(p -> p.getFileName().toString().endsWith(".def") && Files.isRegularFile(p)).forEach(models::add);
-        }
-        models.sort((a, b) -> java.util.Arrays.compareUnsigned(
-                a.getFileName().toString().getBytes(StandardCharsets.UTF_8),
-                b.getFileName().toString().getBytes(StandardCharsets.UTF_8)));
-        for (int i = 1; i < models.size(); i++) {
-            if (models.get(i).getFileName().toString().equals("core.def")) models.add(0, models.remove(i));
-        }
-        for (Path def : models) {
+        // core.def first, then byte order of file name, each module after the modules it uses.
+        for (String[] m : Engine.modelsInLoadOrder(Engine.defaultModelsDir(packsDir))) {
             try {
-                engine.loadModel(Files.readString(def, StandardCharsets.UTF_8), def.toString());
+                engine.loadModel(m[1], m[0]);
             } catch (GtException ex) {
-                fail("model " + def.getFileName(), "does not load: " + ex.getMessage());
+                fail("model " + Paths.get(m[0]).getFileName(), "does not load: " + ex.getMessage());
             }
         }
         try (Stream<Path> s = Files.list(packsDir)) {
@@ -273,6 +264,10 @@ public final class TestRunner {
             if (want.equals("absent")) return items == null ? null : "want absent, got " + items.size() + " items";
             if (items == null) return "absent, want " + want + " items";
             return want.equals(Integer.toString(items.size())) ? null : "want " + want + " items, got " + items.size();
+        }
+        if (key.equals("@kind")) {
+            // the kind an item recorded when it was decoded; it fails for an item that recorded none
+            return e.kindName() != null && want.equals(e.kindName()) ? null : "want kind " + want + " got " + e.kindName();
         }
         return modelMismatch(want, e.get(key), relative);
     }

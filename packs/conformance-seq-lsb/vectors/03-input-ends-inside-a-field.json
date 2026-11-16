@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-inside-a-field",
+  "from": "conformance-seq-lsb",
+  "to": "conformance-seq-lsb",
+  "input": "01a234",
+  "expect_error": "malformed-wire"
+}

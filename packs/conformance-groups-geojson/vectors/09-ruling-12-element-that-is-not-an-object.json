@@ -1,0 +1,11 @@
+{
+  "name": "ruling-12-element-that-is-not-an-object",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[7,{\"name\":\"a\"}]},\"id\":\"u\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[{},{\"name\":\"a\"}]},\"id\":\"u\"}",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.label": "a"
+  }
+}

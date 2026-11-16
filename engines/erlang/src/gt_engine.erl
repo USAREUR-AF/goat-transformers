@@ -1,6 +1,7 @@
 %% gt_engine: decode(format, bytes) -> entity, encode(format, entity) -> bytes,
 %% complete(entity), convert. Clean-room from spec/ and packs/ only
-%% (engine-spec Versions 0.1 - 0.7).
+%% (engine-spec Versions 0.1 - 0.8; a sequential
+%% bits pack is read and written by gt_seq).
 %%
 %% Entity = #{model => #{Key :: binary() => binary() | integer() | float()},
 %%            lists => #{ListName :: binary() => [Item]},
@@ -31,6 +32,9 @@
          load_dir/3, model_files/1, packs/1, modules/1, model_keys/1, pack/2]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
+%% for gt_seq (sequential layouts)
+-export([conv_error/4, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
+         via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2]).
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
@@ -66,6 +70,20 @@ load_model(#{modules := Modules} = Engine, Text) ->
     case maps:is_key(Name, Modules) of
         true -> gt_pack:load_error('duplicate-module', "module ~s is already loaded", [Name]);
         false -> ok
+    end,
+    case maps:get(distribution, M) of
+        public ->
+            lists:foreach(
+              fun(U) ->
+                      case maps:get(distribution, maps:get(U, Modules)) of
+                          public -> ok;
+                          controlled ->
+                              gt_pack:load_error('distribution-violation',
+                                                 "public module ~s uses controlled module ~s",
+                                                 [Name, U])
+                      end
+              end, maps:get(uses, M));
+        controlled -> ok
     end,
     Modules1 = Modules#{Name => M},
     %% the derivations: the loaded modules in byte order of name, each
@@ -175,7 +193,11 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     Kinds = [K#{defaults := maps:merge(CommonDefaults, TypeDefaults(maps:get(defaults, K))),
                 lines := type_groups(maps:get(lines, K), TypeDefaults)}
              || K <- maps:get(kinds, P)],
+    %% the typemap by either side; of two entries with one value the first is used
+    Typemap = maps:get(typemap, P),
     P1 = gt_pack:index(P#{defaults := CommonDefaults, kinds := Kinds, key_types => KeyTypes,
+                          typemap_dec => maps:from_list(lists:reverse(Typemap)),
+                          typemap_enc => maps:from_list([{C, N} || {N, C} <- lists:reverse(Typemap)]),
                           common := type_groups(maps:get(common, P), TypeDefaults)}),
     Engine#{packs := maps:put(Name, P1, Packs)}.
 
@@ -185,6 +207,20 @@ type_groups(Lines, TypeDefaults) ->
          {group, List, Loc, Spec, #{lines := Ls, defaults := Ds}, LocT} ->
              {group, List, Loc, Spec,
               #{lines => type_groups(Ls, TypeDefaults), defaults => TypeDefaults(Ds)}, LocT};
+         %% sequential: a kind of a group body has the body's defaults and its own
+         {sgroup, List, Mode, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
+             Common = TypeDefaults(Ds),
+             {sgroup, List, Mode,
+              #{lines => type_groups(Ls, TypeDefaults), defaults => Common,
+                kinds => [K#{lines := type_groups(maps:get(lines, K), TypeDefaults),
+                             defaults := maps:merge(Common, TypeDefaults(maps:get(defaults, K)))}
+                          || K <- Ks]}};
+         {ifb, Conds, Body} -> {ifb, Conds, type_groups(Body, TypeDefaults)};
+         {opt, Body} -> {opt, type_groups(Body, TypeDefaults)};
+         {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, TypeDefaults)};
+         {chain, First, Parts, EndsFx} ->
+             {chain, type_groups(First, TypeDefaults),
+              [type_groups(Part, TypeDefaults) || Part <- Parts], EndsFx};
          _ -> L
      end || L <- Lines].
 
@@ -228,13 +264,45 @@ load_dir(Engine, PacksDir, ModelsDir) ->
       end, E1, lists:sort(Entries)).
 
 %% The module files of a directory: `core.def` first, whatever its name
-%% sorts as, then the others in byte order of file name.
+%% sorts as, then the others in byte order of file name, each after the
+%% modules its `uses` lines name. A cycle is bad-directive.
 model_files(ModelsDir) ->
     case file:list_dir(ModelsDir) of
         {ok, Files} ->
             Defs = [F || F <- lists:sort(Files), lists:suffix(".def", F)],
-            [F || F <- Defs, F =:= "core.def"] ++ [F || F <- Defs, F =/= "core.def"];
+            Ordered = [F || F <- Defs, F =:= "core.def"] ++ [F || F <- Defs, F =/= "core.def"],
+            Heads = [{F, module_head(filename:join(ModelsDir, F))} || F <- Ordered],
+            ByName = maps:from_list([{Name, F} || {F, {Name, _}} <- Heads]),
+            Uses = maps:from_list([{F, [maps:get(U, ByName) || U <- Us, maps:is_key(U, ByName)]}
+                                   || {F, {_, Us}} <- Heads]),
+            {Out, _} = lists:foldl(fun(F, Acc) -> place_module(F, Uses, [], Acc) end,
+                                   {[], #{}}, Ordered),
+            lists:reverse(Out);
         {error, _} -> []
+    end.
+
+%% The module name and the `uses` names of a module file.
+module_head(Path) ->
+    {ok, Bin} = file:read_file(Path),
+    Toks = [gt_pack:tokens(L) || L <- binary:split(Bin, <<"\n">>, [global])],
+    {case [N || [<<"module">>, N] <- Toks] of
+         [N | _] -> N;
+         [] -> undefined
+     end,
+     [U || [<<"uses">>, U] <- Toks]}.
+
+place_module(F, Uses, Path, {Out, Done} = Acc) ->
+    case maps:is_key(F, Done) of
+        true -> Acc;
+        false ->
+            case lists:member(F, Path) of
+                true -> gt_pack:load_error('bad-directive',
+                                           "the modules of ~s use one another in a cycle", [F]);
+                false -> ok
+            end,
+            {Out1, Done1} = lists:foldl(fun(U, A) -> place_module(U, Uses, [F | Path], A) end,
+                                        {Out, Done}, maps:get(F, Uses)),
+            {[F | Out1], Done1#{F => true}}
     end.
 
 %% ===================================================================
@@ -395,6 +463,7 @@ first_kind([K | Rest], Pred) ->
 decode(Engine, Format, Bytes) -> decode(pack(Engine, Format), Bytes).
 
 decode(Pack, Bytes) when is_list(Bytes) -> decode(Pack, iolist_to_binary(Bytes));
+decode(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
 decode(#{wire := Wire} = Pack, Bytes) ->
     try
         Ctx = open(Wire, Pack, Bytes),
@@ -489,13 +558,32 @@ decode_group(Wire, Json, Loc, _Spec, Body, Pack, C)
 %% protobuf: each occurrence of the last field number, in wire order. A body
 %% of `.` lines reads scalars, and a numeric transform accepts the packed
 %% form; another body reads each occurrence as a submessage.
-decode_group(protobuf, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C) ->
+decode_group(Wire, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C)
+  when Wire =:= protobuf; Wire =:= pbitem ->
     N = lists:last(Path),
     {Container, C1} = pb_sub(Msg, lists:droplast(Path), [], C),
-    Occs = case Container of
-               {ok, {_Map, Fields}} -> [{WT, V} || {Num, WT, V} <- Fields, Num =:= N];
-               _ -> []
-           end,
+    %% a path prefix that is not a submessage is malformed-wire (ruling 13 of 0.7)
+    case Container of
+        absent -> pb_prefix_check(lists:droplast(Path), C1);
+        _ -> ok
+    end,
+    %% the occurrences of every field number of the container, indexed once
+    %% however many groups read from it
+    {Occs, C2} = case Container of
+                     {ok, {_Map, Fields}} ->
+                         Key = {occurrences, lists:droplast(Path)},
+                         Index = case maps:find(Key, C1) of
+                                     {ok, I} -> I;
+                                     error ->
+                                         lists:foldr(
+                                           fun({Num, WT, V}, M) ->
+                                                   maps:update_with(Num, fun(L) -> [{WT, V} | L] end,
+                                                                    [{WT, V}], M)
+                                           end, #{}, Fields)
+                                 end,
+                         {maps:get(N, Index, []), C1#{Key => Index}};
+                     _ -> {[], C1}
+                 end,
     Ctxs = case pb_scalar_body(Lines) of
                {true, Tr} ->
                    [{scalar, S} || Occ <- Occs, S <- pb_unpack(Tr, Occ)];
@@ -508,8 +596,8 @@ decode_group(protobuf, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C) ->
                     end || Occ <- Occs]
            end,
     case Ctxs of
-        [] -> {absent, C1, 0};
-        _ -> {{ok, [decode_item(protobuf, X, Body, Pack) || X <- Ctxs]}, C1, 0}
+        [] -> {absent, C2, 0};
+        _ -> {{ok, [decode_item(pbitem, X, Body, Pack) || X <- Ctxs]}, C2, 0}
     end;
 %% bits: `count` consecutive items from the group's start; an item is
 %% `item <bits>` long, or longer when a nested group counted by a locator
@@ -697,7 +785,31 @@ raw(bits, {Msg, Base}, {Off, Len}, {_, Swap, _, _}, C) ->
 raw(protobuf, {scalar, Found}, [], _Opts, C) -> {{ok, Found}, C};
 raw(protobuf, {scalar, _}, _Path, _Opts, C) -> {absent, C};
 raw(protobuf, _Msg, [], _Opts, C) -> {absent, C};
-raw(protobuf, Msg, Path, _Opts, C) -> pb_get(Msg, Path, C).
+raw(protobuf, Msg, Path, _Opts, C) -> pb_get(Msg, Path, C);
+%% inside an item a path prefix that is not a submessage is malformed-wire
+%% (ruling 13 of 0.7)
+raw(pbitem, {scalar, _} = Item, Path, Opts, C) -> raw(protobuf, Item, Path, Opts, C);
+raw(pbitem, _Msg, [], _Opts, C) -> {absent, C};
+raw(pbitem, Msg, Path, _Opts, C) ->
+    case pb_get(Msg, Path, C) of
+        {absent, C1} = Absent ->
+            pb_prefix_check(lists:droplast(Path), C1),
+            Absent;
+        Found -> Found
+    end.
+
+%% After a path was not found: was a field on the way on the wire and not
+%% a submessage? pb_sub/4 marked it in the cache.
+pb_prefix_check(Prefix, C) -> pb_prefix_check(Prefix, [], C).
+
+pb_prefix_check([], _Rev, _C) -> ok;
+pb_prefix_check([N | Rest], Rev, C) ->
+    Rev1 = [N | Rev],
+    case maps:find(Rev1, C) of
+        {ok, not_a_message} ->
+            erlang:error({protobuf_malformed, {path_prefix_not_a_submessage, lists:reverse(Rev1)}});
+        _ -> pb_prefix_check(Rest, Rev1, C)
+    end.
 
 %% The field at a path of field numbers; when a number repeats, the last
 %% occurrence wins. Cache: #{ReversedPrefix => Message | none}.
@@ -717,13 +829,15 @@ pb_sub({Map, _}, [N | Rest], Rev, C) ->
     Rev1 = [N | Rev],
     case maps:find(Rev1, C) of
         {ok, none} -> {absent, C};
+        {ok, not_a_message} -> {absent, C};
         {ok, Sub} -> pb_sub(Sub, Rest, Rev1, C);
         error ->
             case maps:find(N, Map) of
                 {ok, {2, Bin}} ->
                     Sub = gt_protobuf:parse_msg(Bin),
                     pb_sub(Sub, Rest, Rev1, C#{Rev1 => Sub});
-                _ -> {absent, C#{Rev1 => none}}
+                {ok, _} -> {absent, C#{Rev1 => not_a_message}};
+                error -> {absent, C#{Rev1 => none}}
             end
     end.
 
@@ -742,7 +856,8 @@ field_decode(bits, Tr, U, {_Off, Len}, {_, _, Trim, _}, Pack) ->
         true -> strip_trailing(V, $\s);
         false -> V
     end;
-field_decode(protobuf, Tr, {WT, V}, _Loc, _Opts, _Pack) -> pb_decode(Tr, WT, V).
+field_decode(Wire, Tr, {WT, V}, _Loc, _Opts, _Pack) when Wire =:= protobuf; Wire =:= pbitem ->
+    pb_decode(Tr, WT, V).
 
 %% ---- residue: what no selected `field`, `const`, `group` or valued `when` maps ----
 residue(xml, Tree, Lines, _Bytes) ->
@@ -821,6 +936,9 @@ path_text(Path) -> iolist_to_binary(lists:join(<<".">>, Path)).
 %% ===================================================================
 encode(Engine, Format, Entity) -> encode(pack(Engine, Format), Entity).
 
+encode(#{wire := bits, layout := sequential} = Pack, Entity) ->
+    {Lines, Defaults, _Root} = select_encode(Pack, Entity),
+    gt_seq:encode(Pack, Lines, Defaults, Entity);
 encode(#{wire := Wire} = Pack, Entity) ->
     {Lines, Defaults, Root} = select_encode(Pack, Entity),
     Residue = case maps:get(src, Entity, undefined) =:= maps:get(name, Pack) of
@@ -945,7 +1063,12 @@ json_item(Item, #{lines := Ls} = Body, Pack) ->
     Ops = json_plan(Ls, item_source(Item, Body), Pack),
     case [V || {[], {value, V}} <- Ops] of
         [V | _] -> V;
-        [] -> jt_write(json_tree([Op || {Loc, _} = Op <- Ops, Loc =/= []]))
+        [] ->
+            %% a scalar (`.`) item with no value is `null` (ruling 11 of 0.7)
+            case lists:any(fun({field, _, [], _, _, _}) -> true; (_) -> false end, Ls) of
+                true -> "null";
+                false -> jt_write(json_tree([Op || {Loc, _} = Op <- Ops, Loc =/= []]))
+            end
     end.
 
 %% ---- bits: what the lines of a scope write, from the scope's first bit ----
@@ -1032,7 +1155,13 @@ pb_tree(Pack, Lines, {Value, Lists}) ->
                    end;
               ({group, List, Path, _, Body, _}, T) ->
                    case maps:find(List, Lists) of
-                       {ok, [_ | _] = Items} -> pb_put(T, Path, pb_group(Pack, Body, Items), keep);
+                       {ok, [_ | _] = Items} ->
+                           %% a packed list whose items all lack the value
+                           %% writes nothing (ruling 11 of 0.7)
+                           case pb_group(Pack, Body, Items) of
+                               {leaf, 2, <<>>} -> T;
+                               Leaf -> pb_put(T, Path, Leaf, keep)
+                           end;
                        _ -> T
                    end;
               (_, T) -> T
@@ -1195,18 +1324,12 @@ type_of(V) when is_float(V) -> float.
 
 %% typemap: the pack-wide table between native type codes and CoT tokens,
 %% applied to the `type` key on every wire.
-typemap_decode(<<"type">>, V, #{typemap := Map}) when is_binary(V) ->
-    case lists:keyfind(V, 1, Map) of
-        {_, Cot} -> Cot;
-        false -> V
-    end;
+typemap_decode(<<"type">>, V, #{typemap_dec := Map}) when is_binary(V) ->
+    maps:get(V, Map, V);
 typemap_decode(_, V, _) -> V.
 
-typemap_encode(<<"type">>, V, #{typemap := Map}) when is_binary(V) ->
-    case lists:keyfind(V, 2, Map) of
-        {Native, _} -> Native;
-        false -> V
-    end;
+typemap_encode(<<"type">>, V, #{typemap_enc := Map}) when is_binary(V) ->
+    maps:get(V, Map, V);
 typemap_encode(_, V, _) -> V.
 
 %% ===================================================================

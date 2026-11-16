@@ -1,0 +1,7 @@
+{
+  "name": "to-asterix-cat062-without-context",
+  "from": "canonical-track-v2",
+  "to": "asterix-cat062",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"311\",\"sourceId\":\"sensor-a\",\"trackGeneration\":\"generation-1\",\"testData\":false,\"headerSimulated\":false,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2025-10-29T12:00:00.123Z\",\"position\":{\"latitudeDeg\":0.0,\"longitudeDeg\":0.0,\"altitudeM\":152.4},\"velocity\":{\"eastMps\":-12.5,\"northMps\":4.25,\"upMps\":1.5},\"classification\":\"uas\",\"confidence\":0.87,\"positionUncertainty\":{\"sigmaEastM\":3.2,\"sigmaNorthM\":2.8,\"sigmaUpM\":6.1}}",
+  "expect_error": "no-kind"
+}

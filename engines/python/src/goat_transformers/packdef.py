@@ -18,14 +18,18 @@ BIT_ORDERS = ("lsb", "msb")
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
 _ARITY = {
-    "format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "typemap": 2,
+    "format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "typemap": 2, "layout": 1,
     "distribution": 1, "source": 1, "uses": 1,
     "kind": 1, "when": 2, "bit_order": 1,
     "const": 2, "default": 2, "map": 3, "end": 0,
     # `field` takes three or more, `requires` one or more, `group` two or more
     "field": None, "requires": None, "group": None,
 }
-_SINGLE = ("format", "version", "wire", "word_bytes", "distribution", "bit_order")
+_SINGLE = ("format", "version", "wire", "word_bytes", "distribution", "bit_order", "layout")
+LAYOUTS = ("fixed", "sequential")
+# Lines of a sequential pack (0.8): each is `bad-directive` in a fixed-layout pack.
+_SEQ_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
+_GROUP_LINES = ("field", "const", "default", "group", "end")
 FIELD_OPTIONS = ("via", "swap", "trim", "optional")
 
 
@@ -222,6 +226,8 @@ class Pack:
     sources: list = dc_field(default_factory=list)
     uses: list = dc_field(default_factory=list)  # modules named in `uses` lines; core is always used
     defaults: list = dc_field(default_factory=list)  # common Default lines
+    layout: str = "fixed"  # bits: "sequential" from 0.8
+    seq: object = None     # a sequential pack: the seqdef.Body of the message
     tables: dict = dc_field(default_factory=dict)    # value tables: name -> [(native, model)] in line order
     _plans: dict = dc_field(default_factory=dict, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
@@ -279,6 +285,10 @@ class Pack:
             if name not in seen:
                 seen.add(name)
                 out.append(name)
+
+        if self.seq is not None:
+            self.seq.model_keys(add)
+            return out
 
         def walk(lines, prefix):
             for ln in lines:
@@ -506,6 +516,11 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, in_
                 "transform %r is not valid on a bits wire" % tname,
                 format=name, locator=locator,
             )
+        if locator.isascii() and locator.isdigit():
+            raise BadDirective(
+                "a field with a bit length for a locator is a line of a sequential pack, at %s" % where,
+                format=name, locator=locator,
+            )
         try:
             loc = parse_bits_locator(locator)
         except ValueError as e:
@@ -594,6 +609,8 @@ def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_g
     def bad(msg):
         return BadDirective("%s at %s" % (msg, where), format=name, locator=locator)
 
+    if wire == "bits" and locator in ("count", "while", "more", "fx"):
+        raise bad("a group with %r is a line of a sequential pack" % locator)
     opts = {}
     i = 0
     while i < len(options):
@@ -760,6 +777,8 @@ def _check_bits_groups(word_bytes, common, kinds, deferred, source, name):
                     counted.append(ln)
                     if start(ln.count_loc) + ln.count_loc[2] > s:
                         bad(ln, "the count locator reaches the group's start")
+                    if item_bits is not None and start(ln.count_loc) + ln.count_loc[2] > item_bits:
+                        bad(ln, "the count locator of a nested group reaches beyond 'item %d'" % item_bits)
                 elif item_bits is not None and s + ln.count_n * ln.item_bits > item_bits:
                     bad(ln, "a nested group with a fixed count reaches beyond 'item %d'" % item_bits)
             elif item_bits is not None and start(ln.loc) + ln.loc[2] > item_bits:
@@ -797,19 +816,99 @@ def _check_bits_groups(word_bytes, common, kinds, deferred, source, name):
             scope(common + k.lines, None)
 
 
-def _find_wire(text):
+def _find_wire(text, directive="wire"):
     """The value of the first `wire` line, so that `field` and `when` lines are
     checked as the file is read wherever the `wire` line stands."""
     for raw in text.splitlines():
-        if "wire" not in raw:
+        if directive not in raw:
             continue
         try:
             toks = tokenize(raw)
         except InvalidPack:
             continue
-        if len(toks) == 2 and toks[0] == "wire":
+        if len(toks) == 2 and toks[0] == directive:
             return toks[1]
     return None
+
+
+def _check_group_paths(wire, common, kinds, deferred, source, name):
+    """Ruling 21 of 0.7: a `field` whose locator passes through the path of a
+    `group` of the same scope (common plus one kind, or one group body) is
+    `bad-directive`."""
+    xml = wire == "xml"
+
+    def prefixes(f):
+        """The paths a group must not have for field `f`: every proper prefix of
+        its member or field-number path; on xml every prefix of its element path."""
+        loc = f.loc
+        if xml:
+            path = loc[0]
+            return [path[:n] for n in range(1, len(path) + 1)]
+        if not loc or loc[0] in ("prop", "top", "coord"):
+            return ()
+        return [loc[:n] for n in range(1, len(loc))]
+
+    def report(f, g):
+        deferred.append((f.lineno, BadDirective(
+            "the field's locator passes through the path of group %s, at %s:%d" % (g.list, source, f.lineno),
+            format=name, locator=f.locator,
+        )))
+
+    def check(fields, groups):
+        paths = {tuple(g.loc): g for g in groups if isinstance(g.loc, tuple)}
+        for f in fields:
+            for pre in prefixes(f):
+                g = paths.get(tuple(pre))
+                if g is not None:
+                    report(f, g)
+                    break
+
+    def split(lines):
+        return [ln for ln in lines if ln.is_field], [ln for ln in lines if ln.is_group]
+
+    def bodies(groups):
+        for g in groups:
+            fields, inner = split(g.lines)
+            if inner:
+                check(fields, inner)
+                bodies(inner)
+
+    cf, cg = split(common)
+    check(cf, cg)
+    bodies(cg)
+    common_pre = None
+    for k in kinds:
+        kf, kg = split(k.lines)
+        if cg:
+            check(kf, cg)
+        if kg:
+            check(kf, kg)
+            if common_pre is None:  # every forbidden path of the common fields, once
+                common_pre = {}
+                for f in cf:
+                    for pre in prefixes(f):
+                        common_pre.setdefault(tuple(pre), f)
+            for g in kg:
+                f = common_pre.get(tuple(g.loc)) if isinstance(g.loc, tuple) else None
+                if f is not None:
+                    report(f, g)
+            bodies(kg)
+
+
+def _check_scalar_body(g, fmt, where):
+    """Ruling 13 of 0.7: a `protobuf` group body is scalar only when every
+    line is `.`; a body mixing `.` with paths is `bad-directive`."""
+    scalar = False
+    other = False
+    for ln in g.lines:
+        if ln.is_field and ln.locator == ".":
+            scalar = True
+        else:
+            other = True
+    if scalar and other:
+        raise BadDirective(
+            "the body of group %s mixes '.' with paths, at %s" % (g.list, where), format=fmt, locator=g.locator
+        )
 
 
 def parse_pack_text(text, *, source="pack.def"):
@@ -821,6 +920,9 @@ def parse_pack_text(text, *, source="pack.def"):
     first in line order; then `missing-distribution`, `missing-source`."""
     wire = _find_wire(text)
     wire_ok = wire in WIRES
+    if wire == "bits" and _find_wire(text, "layout") == "sequential":
+        from .seqdef import parse_seq_pack_text
+        return parse_seq_pack_text(text, source=source)
     seen = {}
     typemap = []
     sources = []
@@ -851,7 +953,9 @@ def parse_pack_text(text, *, source="pack.def"):
             continue
         if stack:
             if line == "end":
-                stack.pop()
+                g = stack.pop()
+                if wire == "protobuf":
+                    _check_scalar_body(g, seen.get("format"), "%s:%d" % (source, lineno))
                 continue
             f = field_memo[1].get(line)
             if f is not None:
@@ -877,10 +981,15 @@ def parse_pack_text(text, *, source="pack.def"):
         kw, args = toks[0], toks[1:]
         fmt = seen.get("format")
         where = "%s:%d" % (source, lineno)
+        if kw in _SEQ_ONLY:
+            raise BadDirective(
+                "%r is a line of a sequential pack ('layout sequential' on the bits wire), at %s" % (kw, where),
+                format=fmt,
+            )
         if kw not in _ARITY:
             raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
-        if stack and kw in ("when", "requires", "root", "kind", "map", "typemap"):
-            # 0.7: not allowed inside a group; tables are pack-wide (ruling 9 of 0.7)
+        if stack and kw not in _GROUP_LINES:
+            # 0.7: only `field`, `const`, `default`, `group` and `end` inside a group (rulings 9 and 18)
             raise BadDirective("%r inside a group, at %s" % (kw, where), format=fmt)
         if kw == "requires":
             if not args:
@@ -907,6 +1016,16 @@ def parse_pack_text(text, *, source="pack.def"):
                 seen[kw] = args[0]
                 if kw == "wire" and not wire_ok:
                     raise InvalidPack("unknown wire %r (known: %s)" % (wire, ", ".join(WIRES)), format=fmt)
+                if kw == "layout":
+                    if args[0] not in LAYOUTS:
+                        raise BadDirective(
+                            "layout must be one of %s, got %r at %s" % (", ".join(LAYOUTS), args[0], where),
+                            format=fmt, locator="layout",
+                        )
+                    if wire_ok and wire != "bits":  # ruling 14 of 0.8
+                        raise _Deferred(
+                            BadDirective("'layout' is bits only, at %s" % where, format=fmt, locator="layout")
+                        )
                 if kw == "bit_order":
                     if args[0] not in BIT_ORDERS:
                         raise BadDirective(
@@ -954,7 +1073,9 @@ def parse_pack_text(text, *, source="pack.def"):
             elif kw == "end":
                 if not stack:
                     raise BadDirective("'end' with no open group, at %s" % where, format=fmt)
-                stack.pop()
+                g = stack.pop()
+                if wire == "protobuf":
+                    _check_scalar_body(g, fmt, where)
             elif kw == "field":
                 key, locator, tname = args[:3]
                 if not wire_ok:
@@ -1005,6 +1126,8 @@ def parse_pack_text(text, *, source="pack.def"):
         )))
     if wire == "bits":
         _check_bits_groups(seen.get("word_bytes"), common, kinds, deferred, source, name)
+    elif group_refs and wire in ("xml", "json", "protobuf", "geojson"):
+        _check_group_paths(wire, common, kinds, deferred, source, name)
     if first_when is not None and not kinds:
         deferred.append((first_when[0], BadDirective(
             "'when' in a pack with no 'kind' line, at %s:%d" % (source, first_when[0]),

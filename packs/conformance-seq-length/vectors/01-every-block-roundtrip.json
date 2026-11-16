@@ -1,0 +1,16 @@
+{
+  "name": "every-block-roundtrip",
+  "from": "conformance-seq-length",
+  "to": "conformance-seq-length",
+  "input": "010311a022b90402070846",
+  "expect": "010311a022b90402070846",
+  "model": {
+    "probe.x": "17",
+    "probe.y": "10",
+    "probe.z": "21",
+    "probe.w": "9",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "8",
+    "probe.qty": "6"
+  }
+}

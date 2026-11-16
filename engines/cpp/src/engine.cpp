@@ -9,6 +9,7 @@
 
 #include "codecs.hpp"
 #include "derive.hpp"
+#include "sequential.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
 
@@ -58,7 +59,37 @@ Engine Engine::load(const std::string& packs_dir, const std::string& models_dir,
         // module may name a key of `core` (0.6 ruling 9).
         auto core = std::find(names.begin(), names.end(), "core.def");
         if (core != names.end()) std::rotate(names.begin(), core, core + 1);
-        for (const auto& n : names) eng.load_model(read_text(mdir / n), (mdir / n).string());
+        // Then each module after the modules it uses (0.8); a cycle is
+        // bad-directive. A used module that no file defines is left to the
+        // load, which fails with unknown-module.
+        std::vector<Module> parsed;
+        parsed.reserve(names.size());
+        for (const auto& n : names) parsed.push_back(parse_model(read_text(mdir / n), (mdir / n).string()));
+        std::unordered_map<std::string, std::size_t> by_name;
+        for (std::size_t i = 0; i < parsed.size(); ++i) by_name.emplace(parsed[i].name, i);  // the first file of a name
+        std::vector<int> state(parsed.size(), 0);  // 0 not loaded, 1 loading the modules it uses, 2 loaded
+        struct Loader {
+            Engine& eng;
+            std::vector<Module>& parsed;
+            std::unordered_map<std::string, std::size_t>& by_name;
+            std::vector<int>& state;
+            void operator()(std::size_t i) {
+                if (state[i] == 2) return;
+                if (state[i] == 1)
+                    throw Error(ErrorKind::BadDirective, "", "",
+                                "the 'uses' lines of the modules form a cycle through '" + parsed[i].name + "' (" +
+                                    parsed[i].origin + ")");
+                state[i] = 1;
+                const std::vector<std::string> uses = parsed[i].uses;
+                for (const auto& u : uses) {
+                    auto it = by_name.find(u);
+                    if (it != by_name.end()) (*this)(it->second);
+                }
+                state[i] = 2;
+                eng.add_model(std::move(parsed[i]));
+            }
+        } loader{eng, parsed, by_name, state};
+        for (std::size_t i = 0; i < parsed.size(); ++i) loader(i);
     } else if (!models_dir.empty()) {
         throw Error(ErrorKind::Io, "", "", "models directory not found: " + models_dir);
     }
@@ -75,20 +106,35 @@ Engine Engine::load(const std::string& packs_dir, const std::string& models_dir,
 }
 
 void Engine::load_model(const std::string& text, const std::string& origin) {
-    auto core = modules_.find("core");
-    add_model(detail::parse_model_with_core(text, origin, core == modules_.end() ? nullptr : &core->second));
+    add_model(detail::parse_model_with(text, origin, [this](const std::string& name) -> const Module* {
+        auto it = modules_.find(name);
+        return it == modules_.end() ? nullptr : &it->second;
+    }));
 }
 
 void Engine::add_model(Module module) {
-    // `derive` lines: every key is a declared key of `core` or of the module, and
-    // the types fit the function (bad-directive).
-    if (!module.derives.empty()) {
-        auto core = modules_.find("core");
-        detail::check_derives(module, module.name == "core" || core == modules_.end() ? nullptr : &core->second, true);
-    }
+    const detail::ModuleLookup loaded = [this](const std::string& name) -> const Module* {
+        auto it = modules_.find(name);
+        return it == modules_.end() ? nullptr : &it->second;
+    };
+    // `derive` lines: the target is a declared key of `core` or of the module,
+    // every argument one of `core`, of the module or of a module it uses, and
+    // the types fit the function (bad-directive). A line that names a key of a
+    // used module that is not loaded is left: the load fails below.
+    if (!module.derives.empty()) detail::check_derives(module, loaded, true);
     if (module.distribution == Distribution::Controlled && max_distribution_ == Distribution::Public)
         throw Error(ErrorKind::DistributionRefused, "", "",
                     "module '" + module.name + "' is controlled and the engine limit is public (" + module.origin + ")");
+    // v0.8: every used module is loaded, and a public module uses only public modules.
+    for (const auto& u : module.uses)
+        if (!loaded(u))
+            throw Error(ErrorKind::UnknownModule, "", "",
+                        "module '" + module.name + "' uses module '" + u + "', which is not loaded (" + module.origin + ")");
+    if (module.distribution == Distribution::Public)
+        for (const auto& u : module.uses)
+            if (loaded(u)->distribution != Distribution::Public)
+                throw Error(ErrorKind::DistributionViolation, "", "",
+                            "public module '" + module.name + "' uses controlled module '" + u + "' (" + module.origin + ")");
     if (modules_.count(module.name))
         throw Error(ErrorKind::DuplicateModule, "", "",
                     "module '" + module.name + "' is already loaded (" + module.origin + ")");
@@ -182,6 +228,18 @@ void Engine::add_pack(Pack pack) {
     }
     collect.defaults(pack.defaults);
     for (const auto& k : pack.kinds) collect.defaults(k.defaults);
+    // A sequential pack (0.8): every `field` and `also`, every group's list and
+    // every `requires` key in file order, then every `default`.
+    if (pack.sequential) {
+        std::vector<Mapped> defaults;
+        detail::SeqVisitor v;
+        v.field = [&](FieldLine& f) { mapped.push_back({&f.key, &f.locator, &f, What::Field}); };
+        v.group = [&](SeqNode& g) { mapped.push_back({&g.list, &no_locator, nullptr, What::Group}); };
+        v.requires_key = [&](std::string& r) { mapped.push_back({&r, &no_locator, nullptr, What::Requires}); };
+        v.default_line = [&](DefaultLine& d) { defaults.push_back({&d.key, &no_locator, nullptr, What::Default}); };
+        detail::seq_visit(pack.seq, v);
+        mapped.insert(mapped.end(), defaults.begin(), defaults.end());
+    }
 
     // The module of each name, resolved once.
     std::vector<const Module*> owner(mapped.size(), nullptr);
@@ -276,6 +334,20 @@ void Engine::add_pack(Pack pack) {
     settle_fields(pack.fields);
     settle_defaults(pack.defaults);
     settle_groups(pack.groups);
+    if (pack.sequential) {
+        std::vector<DefaultLine> one(1);
+        detail::SeqVisitor v;
+        v.field = [&](FieldLine& f) {
+            split_model_key(f.key, mod, name);
+            f.key_type = modules_.at(mod).find(name)->type;
+        };
+        v.default_line = [&](DefaultLine& d) {
+            one[0] = d;
+            settle_defaults(one);
+            d = one[0];
+        };
+        detail::seq_visit(pack.seq, v);
+    }
     pack.kinds_by_root.clear();
     for (std::size_t k = 0; k < pack.kinds.size(); ++k) {
         settle_fields(pack.kinds[k].fields);
@@ -307,6 +379,7 @@ std::vector<std::string> Engine::formats() const {
 
 Entity Engine::decode(const std::string& format, const std::string& bytes) const {
     const Pack& p = pack(format);
+    if (p.sequential) return detail::decode_seq(p, bytes);
     switch (p.wire) {
         case Wire::Xml: return detail::decode_xml(p, bytes);
         case Wire::GeoJson: return detail::decode_geojson(p, bytes);
@@ -319,6 +392,7 @@ Entity Engine::decode(const std::string& format, const std::string& bytes) const
 
 std::string Engine::encode(const std::string& format, const Entity& entity) const {
     const Pack& p = pack(format);
+    if (p.sequential) return detail::encode_seq(p, entity);
     switch (p.wire) {
         case Wire::Xml: return detail::encode_xml(p, entity);
         case Wire::GeoJson: return detail::encode_geojson(p, entity);
@@ -371,6 +445,9 @@ Engine::Context Engine::context_from_text(const std::map<std::string, std::strin
     Context out;
     for (const auto& kv : text) {
         const ModelKey* k = find_key(kv.first);
+        // A list where a scalar key is expected (0.7 ruling 18).
+        if (!k && is_list(kv.first))
+            throw Error(ErrorKind::KeyTypeMismatch, "", "", "context key '" + kv.first + "' is a list, not a key");
         if (!k) throw Error(ErrorKind::UndeclaredKey, "", "", "no loaded module declares context key '" + kv.first + "'");
         try {
             out[kv.first] = detail::read_as(kv.second, k->type);
@@ -386,6 +463,8 @@ Engine::Context Engine::context_from_text(const std::map<std::string, std::strin
 void Engine::apply_context(Entity& entity, const Context& context) const {
     for (const auto& kv : context) {
         const ModelKey* k = find_key(kv.first);
+        if (!k && is_list(kv.first))
+            throw Error(ErrorKind::KeyTypeMismatch, "", "", "context key '" + kv.first + "' is a list, not a key");
         if (!k) throw Error(ErrorKind::UndeclaredKey, "", "", "no loaded module declares context key '" + kv.first + "'");
         const bool fits = (k->type == KeyType::String && kv.second.kind == Value::Kind::String) ||
                           (k->type == KeyType::Float && kv.second.kind == Value::Kind::Float) ||
@@ -436,6 +515,10 @@ std::vector<std::string> Engine::model_keys(const std::string& format) const {
             }
         }
     } walk{out, seen};
+    if (p.sequential) {
+        detail::seq_model_keys(p.seq, "", [&](const std::string& key) { walk.add(key); });
+        return out;
+    }
     walk.lines(detail::active_lines(p, nullptr), "");
     const Pack none;  // the lines of each kind alone, in line order
     for (const auto& k : p.kinds) walk.lines(detail::active_lines(none, &k), "");

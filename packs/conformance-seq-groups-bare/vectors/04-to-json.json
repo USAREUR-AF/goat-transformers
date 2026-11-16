@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-groups-bare",
+  "to": "conformance-seq-json",
+  "input": "0305068102",
+  "expect": "{\"nums\":[1,2,3],\"recs\":[{\"x\":1},{\"x\":2}]}"
+}

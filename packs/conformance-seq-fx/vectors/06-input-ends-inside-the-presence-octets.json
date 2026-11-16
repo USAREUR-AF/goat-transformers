@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-inside-the-presence-octets",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-fx",
+  "input": "0181",
+  "expect_error": "malformed-wire"
+}

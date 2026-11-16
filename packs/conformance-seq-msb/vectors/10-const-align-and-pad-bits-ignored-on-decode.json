@@ -1,0 +1,10 @@
+{
+  "name": "const-align-and-pad-bits-ignored-on-decode",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "0552010f79",
+  "expect": "05a2010009",
+  "model": {
+    "probe.val": "9"
+  }
+}

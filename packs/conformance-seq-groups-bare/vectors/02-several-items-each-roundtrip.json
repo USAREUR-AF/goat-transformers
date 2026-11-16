@@ -1,0 +1,13 @@
+{
+  "name": "several-items-each-roundtrip",
+  "from": "conformance-seq-groups-bare",
+  "to": "conformance-seq-groups-bare",
+  "input": "0305068102",
+  "expect": "0305068102",
+  "model": {
+    "probe.nums.#": "3",
+    "probe.nums[2].probe.val": "3",
+    "probe.recs.#": "2",
+    "probe.recs[1].probe.x": "2"
+  }
+}

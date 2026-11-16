@@ -1,0 +1,14 @@
+{
+  "name": "ruling-11-scalar-item-null-roundtrip",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u\",\"names\":[\"a\",null,\"b\"],\"data\":{\"nums\":[1,null]}}",
+  "expect": "{\"id\":\"u\",\"title\":\"NONE\",\"data\":{\"nums\":[1,null]},\"names\":[\"a\",null,\"b\"]}",
+  "model": {
+    "probe.names.#": "3",
+    "probe.names[0].probe.tag": "a",
+    "probe.names[2].probe.tag": "b",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "1"
+  }
+}

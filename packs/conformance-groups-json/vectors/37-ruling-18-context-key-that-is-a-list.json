@@ -1,0 +1,10 @@
+{
+  "name": "ruling-18-context-key-that-is-a-list",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u\"}",
+  "context": {
+    "probe.items": "x"
+  },
+  "expect_error": "key-type-mismatch"
+}

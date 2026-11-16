@@ -106,9 +106,10 @@ bool model_matches(const Value& got, const std::string& want, bool relative) {
 // One `model` check that is not "@kind" or "@complete": a model key, or a list
 // check (vector-format.md, Lists in `model`): "<list>.#" is the number of items
 // or "absent", and "<list>[<i>].<key>" a value of item <i>, with further steps
-// for nested lists. Returns an empty string on a pass.
-std::string check_model_key(const goat_transformers::Item& entity, const std::string& key, const std::string& want,
-                            bool relative) {
+// for nested lists; "<list>[<i>].@kind" is the kind item <i> recorded (0.8).
+// Returns an empty string on a pass.
+std::string check_model_key(const goat_transformers::Item& entity, const std::string& format, const std::string& key,
+                            const std::string& want, bool relative) {
     const goat_transformers::Item* cur = &entity;
     std::string rest = key;
     for (;;) {
@@ -136,6 +137,15 @@ std::string check_model_key(const goat_transformers::Item& entity, const std::st
         std::int64_t n = -1;
         if (!detail::parse_int(want, n) || n < 0 || static_cast<std::size_t>(n) != list->second.size())
             return "model." + key + " = " + std::to_string(list->second.size()) + ", expected " + want;
+        return "";
+    }
+    if (rest == "@kind") {
+        // Not a model key: the kind the item recorded when it was decoded (0.8).
+        // It fails for an item that recorded no kind.
+        if (cur->kind.second.empty()) return "model." + key + ": the item recorded no kind, expected " + want;
+        if (cur->kind.first != format || cur->kind.second != want)
+            return "model." + key + " = (" + cur->kind.first + ", " + cur->kind.second + "), expected (" + format +
+                   ", " + want + ")";
         return "";
     }
     auto it = cur->fields.find(rest);
@@ -299,7 +309,8 @@ int main() {
                     if (key.find('[') != std::string::npos ||
                         (key.size() > 2 && key.compare(key.size() - 2, 2, ".#") == 0))
                         ++list_checks;
-                    const std::string err = check_model_key(e, key, wtext, complete);
+                    if (key.size() > 7 && key.compare(key.size() - 7, 7, "].@kind") == 0) ++kind_checks;
+                    const std::string err = check_model_key(e, from->text, key, wtext, complete);
                     if (!err.empty()) errs.push_back(err);
                 }
             }

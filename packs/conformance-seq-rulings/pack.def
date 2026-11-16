@@ -1,0 +1,49 @@
+# Conformance probe pack for rulings 2, 3 and 13 of spec 0.8, most significant
+# bit first. Public. No kinds.
+#
+#   byte 0      n
+#   byte 1      presence p.1 and p.2, then 6 unused bits
+#   p.1  x      p.2  y        one byte each
+#   then        one bit that says whether qty follows, qty in 7 bits
+#   chain       c1 in 7 bits and the extension bit; c2 in 7 bits and the
+#               extension bit; z in 7 bits and an extension bit written 0
+#   byte        w, and on the same bits val through the table `t`
+#
+# x, qty and c2 have a default. A key with a default counts as present
+# (ruling 2), so encode always sets p.1, always writes qty and always writes
+# the chain to its second part.
+format     conformance-seq-rulings
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+presence p 2
+pad 6
+if p.1
+  field  probe.x  8  uint
+end
+if p.2
+  field  probe.y  8  uint
+end
+default probe.x  7
+opt
+  field  probe.qty  7  uint
+end
+default probe.qty  9
+chain
+  field  probe.c1  7  uint
+  fx
+  field  probe.c2  7  uint
+  fx
+  field  probe.z  7  uint
+  fx
+end
+default probe.c2  5
+field   probe.w  8  uint
+also    probe.val  via t
+map     t  1  100
+map     t  2  200

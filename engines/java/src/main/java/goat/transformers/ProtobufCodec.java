@@ -157,8 +157,8 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             try {
                 val = find(top, path);
             } catch (NotSubmessage ex) {
-                fails.add(f, ex.getMessage(), e);
-                continue;
+                // a path prefix that is not a submessage (ruling 13 of 0.7)
+                throw malformed(f.key + " at " + f.locator + ": " + ex.getMessage());
             }
             if (val == null) continue;                              // a field absent from the wire is not an error
             decodeValue(f, val.wt, val.num, val.bytes, e, fails);
@@ -369,6 +369,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             List<Entity> items = e.list(g.list);
             if (items == null || items.isEmpty()) continue;
             Node n = encodeItems(g, items);
+            if (n == null) continue;                               // a packed list whose items all lack the value
             int[] path = (int[]) g.loc;
             TreeMap<Integer, Node> cur = parent(root, path, g);
             cur.putIfAbsent(path[path.length - 1], n);
@@ -410,6 +411,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 Object v = valueToEncode(body.itself, item, g.body);
                 if (v != null) writeBytes(packed, encodeValue(body.itself, v));
             }
+            if (packed.size() == 0) return null;
             out.wt = 2;
             out.payload = packed.toByteArray();
             return out;

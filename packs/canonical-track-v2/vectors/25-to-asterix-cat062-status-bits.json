@@ -1,0 +1,13 @@
+{
+  "name": "to-asterix-cat062-status-bits",
+  "from": "canonical-track-v2",
+  "to": "asterix-cat062",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"311\",\"sourceId\":\"sensor-a\",\"trackGeneration\":\"generation-1\",\"testData\":false,\"headerSimulated\":false,\"simulated\":true,\"confirmed\":false,\"coasting\":true,\"finalUpdate\":true,\"observedAt\":\"2025-10-29T12:00:00.123Z\",\"position\":{\"latitudeDeg\":0.0,\"longitudeDeg\":0.0,\"altitudeM\":152.4},\"velocity\":{\"eastMps\":-12.5,\"northMps\":4.25,\"upMps\":1.5},\"classification\":\"uas\",\"confidence\":0.87,\"positionUncertainty\":{\"sigmaEastM\":3.2,\"sigmaNorthM\":2.8,\"sigmaUpM\":6.1}}",
+  "context": {
+    "cat062.sac": "1",
+    "cat062.sic": "7"
+  },
+  "expect": "3e001f9b0d1001075460100000000000000000ffce0011013783c101800050",
+  "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
+  "reference": "byte for byte the block the open-billie encoder writes for this track"
+}

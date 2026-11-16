@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip",
+  "from": "conformance-seq-whole",
+  "to": "conformance-seq-whole",
+  "input": "01031185",
+  "expect": "01031185",
+  "model": {
+    "probe.n": "1",
+    "probe.x": "17",
+    "probe.y": "5"
+  }
+}

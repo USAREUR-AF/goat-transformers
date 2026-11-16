@@ -385,7 +385,8 @@ func jsonFieldRaw(p *Pack, f *Field, v Value, geo bool) (string, error) {
 }
 
 // encodeJSONItems writes the array of a group: one element per item, each by
-// the group body's lines. An item with nothing written is `{}`.
+// the group body's lines. An item with nothing written is `{}`, or `null`
+// when the body reads the item itself as a scalar.
 func encodeJSONItems(p *Pack, g *Group, items []*Item, geo bool) (string, error) {
 	var b strings.Builder
 	b.WriteByte('[')
@@ -398,7 +399,12 @@ func encodeJSONItems(p *Pack, g *Group, items []*Item, geo bool) (string, error)
 			return "", err
 		}
 		if !node.write(&b) {
-			b.WriteString("{}")
+			// A scalar (`.`) item with no value is `null` (0.7 ruling 11).
+			if len(g.dots) > 0 {
+				b.WriteString("null")
+			} else {
+				b.WriteString("{}")
+			}
 		}
 	}
 	b.WriteByte(']')

@@ -24,7 +24,8 @@ E0 = gt_engine:new(),                               % limit: controlled
 E1 = gt_engine:set_max_distribution(E0, public),    % optional
 E2 = gt_engine:load_model(E1, ModuleText),          % modules first
 E3 = gt_engine:load_pack(E2, PackText),
-E  = gt_engine:load_dir(gt_engine:new(), "packs"),  % model/*.def, then packs
+E  = gt_engine:load_dir(gt_engine:new(), "packs"),  % model/*.def (core first, each
+                                                    % module after those it uses), then packs
 ```
 
 A refused load raises `error:{load_error, Kind, Message}`; `Kind` is the
@@ -32,7 +33,7 @@ specification's error kind as an atom (`'undeclared-key'`, `'duplicate-kind'`,
 `'bad-directive'`, `'key-type-mismatch'`) and `Message` begins with the kind
 and a colon.
 
-## Conversion (engine-spec Version 0.7)
+## Conversion (engine-spec Version 0.8)
 
 ```
 Out    = gt_engine:convert(E, <<"cot-xml">>, <<"geojson">>, Bytes),
@@ -68,6 +69,15 @@ protobuf repeated fields with packed scalars, bits items counted by a locator
 or a fixed number. Model integers are 64-bit
 two's complement; a model float is always finite.
 
+A `bits` pack with `layout sequential` (Version 0.8) is read and written at a
+cursor: `field`, `const`, `pad`, `align` and `when` by bit length; `also`
+keys on a field; `presence <name> <n> | fx` with `if` blocks and `!` bits;
+`opt`; groups `count`, `while`, `more` and `fx`; `chain` with `fx` lines;
+`length` blocks and `length ... whole`; items by kind. An item of a group
+whose body holds kinds also has `kind => {FormatName, KindName}`. A model
+module may hold `uses` lines, and `derive` has the functions `day_seconds`,
+`any`, `not`, `parse_int` and `text_of`.
+
 ## Layout
 
 - `src/gt_pack.erl`  — `pack.def` parser (grammar, comment rule, named errors).
@@ -79,6 +89,7 @@ two's complement; a model float is always finite.
 - `src/gt_json.erl`  — JSON reader (member order preserved) and canonical writer.
 - `src/gt_bits.erl`  — hex text and bit-range access, both bit orders.
 - `src/gt_protobuf.erl` — protobuf wire reader and canonical writer.
+- `src/gt_seq.erl`   — decode and encode of a `layout sequential` pack.
 - `src/gt_engine.erl`— engine instance and load checks, kind selection, decode /
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.

@@ -1,0 +1,42 @@
+# Conformance probe pack for items by kind (spec 0.8), most significant bit
+# first. Public. The message has no kinds; each item of recs selects one.
+#
+#   byte 0      n
+#   byte 1      the number of recs
+#   each rec    [x : 4][kind code : 4], then by kind
+#     point  1    y in 8 bits
+#     alt    3    y in 16 bits
+#     text   2    an 8-bit length in bytes, then a two-character label
+#     empty  0    nothing
+#
+# `point` and `alt` require the same key: an item decoded as `alt` is written
+# as `alt` again because it records its kind; an item from another format
+# with y is written as `point`, the first kind whose `requires` it satisfies.
+format     conformance-seq-kinds
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+group   probe.recs count 8
+  field  probe.x  4  uint
+  kind   point
+  when   4  1
+  requires probe.y
+  field  probe.y  8  uint
+  kind   alt
+  when   4  3
+  requires probe.y
+  field  probe.y  16  uint
+  kind   text
+  when   4  2
+  requires probe.label
+  length 8
+    field  probe.label  16  ascii
+  end
+  kind   empty
+  when   4  0
+end

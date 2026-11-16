@@ -123,6 +123,9 @@ func decodeBits(d *decodeState, b []byte) error {
 	if err != nil {
 		return err
 	}
+	if p.seq {
+		return decodeSeq(d, data)
+	}
 	bits := len(data) * 8
 	// A when any of whose bits lies beyond the input does not hold.
 	lay, err := d.choose(func(w *When) bool {
@@ -236,6 +239,44 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 	return end, nil
 }
 
+// putBitsField writes the value of one field at message bit at, through the
+// field's transform and its `swap` option.
+func putBitsField(p *Pack, f *Field, v Value, data []byte, at int) error {
+	if f.btf.ascii {
+		s, err := encString(v)
+		if err != nil {
+			return encodeErr(p, f, err)
+		}
+		n := f.loc.blen / 8
+		if len(s) > n {
+			return encodeErr(p, f, fmt.Errorf("text is %d byte(s), the field holds %d", len(s), n))
+		}
+		b := make([]byte, n)
+		for k := 0; k < len(s); k++ {
+			if s[k] < 0x20 || s[k] > 0x7e {
+				return encodeErr(p, f, fmt.Errorf("byte 0x%02x is not printable ASCII", s[k]))
+			}
+			b[k] = s[k]
+		}
+		if f.Swap {
+			reverseBytes(b)
+		}
+		for k, c := range b {
+			putBits(data, at+8*k, 8, uint64(c), p.msb)
+		}
+		return nil
+	}
+	raw, err := f.btf.encode(v, f.loc.blen)
+	if err != nil {
+		return encodeErr(p, f, err)
+	}
+	if f.Swap {
+		raw = swapBytes(raw, f.loc.blen/8)
+	}
+	putBits(data, at, f.loc.blen, raw, p.msb)
+	return nil
+}
+
 // bitBuf is the message an encode writes: it grows as the items of counted
 // groups are written. New bits are zero.
 type bitBuf struct{ data []byte }
@@ -318,42 +359,19 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 		if !ok {
 			continue
 		}
-		at := base + f.loc.bit
-		if f.btf.ascii {
-			s, err := encString(v)
-			if err != nil {
-				return 0, encodeErr(p, f, err)
-			}
-			n := f.loc.blen / 8
-			if len(s) > n {
-				return 0, encodeErr(p, f, fmt.Errorf("text is %d byte(s), the field holds %d", len(s), n))
-			}
-			b := make([]byte, n)
-			for k := 0; k < len(s); k++ {
-				if s[k] < 0x20 || s[k] > 0x7e {
-					return 0, encodeErr(p, f, fmt.Errorf("byte 0x%02x is not printable ASCII", s[k]))
-				}
-				b[k] = s[k]
-			}
-			if f.Swap {
-				reverseBytes(b)
-			}
-			for k, c := range b {
-				putBits(data, at+8*k, 8, uint64(c), p.msb)
-			}
-			continue
+		if err := putBitsField(p, f, v, data, base+f.loc.bit); err != nil {
+			return 0, err
 		}
-		raw, err := f.btf.encode(v, f.loc.blen)
-		if err != nil {
-			return 0, encodeErr(p, f, err)
+	}
+	// Over the same bits the order of writes is fields, then const, then
+	// when, then counts (0.7 ruling 15).
+	for _, ln := range lay.lines {
+		if w := ln.w; w != nil && w.Const {
+			putBits(data, base+w.loc.bit, w.loc.blen, w.num, p.msb)
 		}
-		if f.Swap {
-			raw = swapBytes(raw, f.loc.blen/8)
-		}
-		putBits(data, at, f.loc.blen, raw, p.msb)
 	}
 	for _, ln := range lay.lines {
-		if w := ln.w; w != nil {
+		if w := ln.w; w != nil && !w.Const {
 			putBits(data, base+w.loc.bit, w.loc.blen, w.num, p.msb)
 		}
 	}

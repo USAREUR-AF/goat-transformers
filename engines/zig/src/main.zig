@@ -13,7 +13,9 @@
 // `swap` / `trim` / `optional`, a `root` per kind, `derive` lines in model
 // modules, caller-supplied keys) are checked at load by `Engine`. Groups (spec
 // Version 0.7): `list` lines in model modules, `group … end` blocks on every
-// wire, lists in the entity. Stdlib only.
+// wire, lists in the entity. Sequential binary layouts (spec Version 0.8):
+// `layout sequential` on the bits wire, `uses` lines and five more derive
+// functions in model modules. Stdlib only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
 // (`error.@"no-kind"`); `Engine.last_error` holds `<kind>: <detail>`.
@@ -337,6 +339,9 @@ const Pack = struct {
     distribution: ?Dist = null,
     sources: std.ArrayList([]const u8),
     uses: std.ArrayList([]const u8),
+    // Version 0.8: `layout` as written, and the lines of a sequential pack
+    layout_set: bool = false,
+    seq: ?*SBody = null,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -423,6 +428,14 @@ const Module = struct {
     // `list` lines; a list shares the key namespace of its module
     lists: std.StringHashMap(void),
     derives: std.ArrayList(Derive),
+    // `uses <module>` lines (Version 0.8): the modules whose keys a `derive`
+    // line of this module may take as arguments
+    uses: std.ArrayList([]const u8),
+
+    fn usesModule(self: *const Module, name: []const u8) bool {
+        for (self.uses.items) |u| if (std.mem.eql(u8, u, name)) return true;
+        return false;
+    }
 
     fn key(self: *const Module, name: []const u8) ?ModKey {
         if (self.index.get(name)) |i| return self.keys.items[i];
@@ -446,7 +459,7 @@ const Factor = struct {
     }
 };
 
-const DFn = enum { copy, hypot, bearing, east_of, north_of, neg, scale, offset, join };
+const DFn = enum { copy, hypot, bearing, east_of, north_of, neg, scale, offset, join, day_seconds, any, not, parse_int, text_of };
 
 // One `derive <model-key> <function> <argument-key>…` line of a module.
 const Derive = struct {
@@ -662,26 +675,29 @@ fn parseTransform(s: []const u8) !Transform {
 
 // The declared type of a key a `derive` line names: a key of `core` or of the
 // module itself, else null.
-fn deriveKeyType(m: *const Module, core: ?*const Module, text: []const u8) ?KeyType {
+fn deriveKeyType(m: *const Module, mods: *const ModuleMap, text: []const u8, is_arg: bool) ?KeyType {
     const ref = splitKey(text);
     if (std.mem.eql(u8, ref.module, m.name)) {
         return if (m.key(ref.name)) |k| k.ty else null;
     }
-    if (std.mem.eql(u8, ref.module, "core")) {
-        const c = core orelse return null;
+    // a key of `core`, or, for an argument, of a module this one uses
+    if (std.mem.eql(u8, ref.module, "core") or (is_arg and m.usesModule(ref.module))) {
+        const c = mods.get(ref.module) orelse return null;
         return if (c.key(ref.name)) |k| k.ty else null;
     }
     return null;
 }
 
+const ModuleMap = std.StringHashMap(*Module);
+
 // Check one `derive` line and resolve its function. null: the function name,
 // the argument count, a key or a type does not fit.
-fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, core: ?*const Module, toks: []const []const u8) ?Derive {
+fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const ModuleMap, toks: []const []const u8) ?Derive {
     if (toks.len < 4) return null;
     var d = Derive{ .target = toks[1], .f = .copy, .args = toks[3..] };
-    const tt = deriveKeyType(m, core, d.target) orelse return null;
+    const tt = deriveKeyType(m, mods, d.target, false) orelse return null;
     const at = alloc.alloc(KeyType, d.args.len) catch return null;
-    for (d.args, 0..) |a, i| at[i] = deriveKeyType(m, core, a) orelse return null;
+    for (d.args, 0..) |a, i| at[i] = deriveKeyType(m, mods, a, true) orelse return null;
     const fname = toks[2];
     const colon = std.mem.indexOfScalar(u8, fname, ':');
     const head = if (colon) |c| fname[0..c] else fname;
@@ -729,6 +745,22 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, core: ?*const Modul
         for (at) |ty| if (ty != .string) return null;
         d.f = .join;
         d.sep = param orelse return null;
+    } else if (eq(u8, head, "day_seconds") and param == null) {
+        if (d.args.len != 1 or at[0] != .int or tt != .float) return null;
+        d.f = .day_seconds;
+    } else if (eq(u8, head, "any") and param == null) {
+        if (d.args.len < 1 or tt != .int) return null;
+        for (at) |ty| if (ty != .int) return null;
+        d.f = .any;
+    } else if (eq(u8, head, "not") and param == null) {
+        if (d.args.len != 1 or at[0] != .int or tt != .int) return null;
+        d.f = .not;
+    } else if (eq(u8, head, "parse_int") and param == null) {
+        if (d.args.len != 1 or at[0] != .string or tt != .int) return null;
+        d.f = .parse_int;
+    } else if (eq(u8, head, "text_of") and param == null) {
+        if (d.args.len != 1 or at[0] != .int or tt != .string) return null;
+        d.f = .text_of;
     } else return null;
     return d;
 }
@@ -737,7 +769,7 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, core: ?*const Modul
 // `missing-source`, `duplicate-key` or `bad-directive` (and the grammar
 // errors) at parse. `core` is the loaded `core` module, for the keys a
 // `derive` line of another module names.
-fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, core: ?*const Module, diag: *Diag) anyerror!*Module {
+fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const ModuleMap, diag: *Diag) anyerror!*Module {
     const m = try alloc.create(Module);
     m.* = .{
         .name = "",
@@ -747,6 +779,7 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, core: ?*const Mod
         .index = std.StringHashMap(usize).init(alloc),
         .lists = std.StringHashMap(void).init(alloc),
         .derives = std.ArrayList(Derive).init(alloc),
+        .uses = std.ArrayList([]const u8).init(alloc),
     };
     var derive_lines = std.ArrayList([]const []const u8).init(alloc);
     var lines = std.mem.splitScalar(u8, def_text, '\n');
@@ -797,6 +830,9 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, core: ?*const Mod
             try m.lists.put(name, {});
         } else if (std.mem.eql(u8, kw, "derive")) {
             try derive_lines.append(try alloc.dupe([]const u8, toks));
+        } else if (std.mem.eql(u8, kw, "uses")) {
+            if (toks.len != 2) return E.MalformedDirective;
+            try m.uses.append(toks[1]);
         } else {
             return bad(diag, alloc, E.UnknownDirective, "unknown directive {s}", .{kw});
         }
@@ -805,7 +841,14 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, core: ?*const Mod
     // `derive` lines are checked once the whole file is read: a line may name
     // a key the file declares further down.
     for (derive_lines.items) |toks| {
-        const d = resolveDerive(alloc, m, core, toks) orelse
+        // an argument of a used module that is not loaded: `unknown-module`
+        if (toks.len >= 4) for (toks[3..]) |a| {
+            const ref = splitKey(a);
+            if (!std.mem.eql(u8, ref.module, m.name) and m.usesModule(ref.module) and !mods.contains(ref.module)) {
+                return bad(diag, alloc, E.@"unknown-module", "module {s} is not loaded", .{ref.module});
+            }
+        };
+        const d = resolveDerive(alloc, m, mods, toks) orelse
             return bad(diag, alloc, E.@"bad-directive", "derive {s}: the function, argument count, keys or types do not fit", .{if (toks.len > 1) toks[1] else ""});
         try m.derives.append(d);
     }
@@ -821,6 +864,9 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (std.mem.eql(u8, ln.locator, ".") and (p.wire == .json or p.wire == .geojson or p.wire == .protobuf)) {
         if (!in_group) return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator `.` outside a group", .{ln.lineno});
         ln.dot = true;
+    }
+    if (ln.dot and ln.tag == .constant) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: const on the item itself (`.`)", .{ln.lineno});
     }
     if (ln.isField() and wireCategory(p.wire) != kindCategory(ln.transform.kind)) {
         return bad(diag, alloc, E.WrongTransformKind, "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
@@ -852,6 +898,9 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             const w = parseUnsigned(ws);
             const ps_v = parseUnsigned(ps);
             const l = parseUnsigned(ls);
+            if (allDigits(ln.locator)) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a bit length; a fixed-layout pack takes <word>:<pos>:<len>", .{ ln.lineno, ln.locator });
+            }
             if (w == null or ps_v == null or l == null or it.next() != null) {
                 return bad(diag, alloc, E.MalformedBitsLocator, "line {d}: bits locator {s} is not <word>:<pos>:<len>", .{ ln.lineno, ln.locator });
             }
@@ -1023,13 +1072,59 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
         },
     }
     try finalizeLines(alloc, p, g.lines, true, diag);
+    if (p.wire == .protobuf) {
+        // a body is scalar only when every line is `.`
+        var has_dot = false;
+        var has_path = false;
+        for (g.lines) |*ln| {
+            if (ln.tag != .group and ln.dot) has_dot = true else has_path = true;
+        }
+        if (has_dot and has_path) {
+            return bad(diag, alloc, bd, "line {d}: the body of group {s} mixes `.` with paths", .{ g.lineno, g.list });
+        }
+    }
+}
+
+// Does a `field` locator pass through the path of a group of its scope?
+fn passesThrough(p: *const Pack, f: *const Line, g: *const Group, in_item: bool) bool {
+    switch (p.wire) {
+        .xml => {
+            // the element path of the field: its locator less the final
+            // `@name` or `#text`
+            var it = std.mem.splitScalar(u8, f.locator, '/');
+            var gi: usize = 0;
+            const gn = g.xpath.len + 1;
+            while (it.next()) |seg| {
+                if (seg.len > 0 and (seg[0] == '@' or seg[0] == '#')) return false;
+                const want = if (gi < g.xpath.len) g.xpath[gi] else g.xname;
+                if (!std.mem.eql(u8, seg, want)) return false;
+                gi += 1;
+                if (gi == gn) return true;
+            }
+            return false;
+        },
+        .json, .geojson => {
+            if (p.wire == .geojson and !in_item) {
+                return f.locator.len > g.locator.len and std.mem.startsWith(u8, f.locator, g.locator) and f.locator[g.locator.len] == '.';
+            }
+            if (f.dot or f.segs.len <= g.segs.len) return false;
+            for (g.segs, 0..) |seg, i| if (!std.mem.eql(u8, seg, f.segs[i])) return false;
+            return true;
+        },
+        .protobuf => {
+            if (f.dot or f.ppath.len <= g.ppath.len) return false;
+            for (g.ppath, 0..) |n, i| if (n != f.ppath[i]) return false;
+            return true;
+        },
+        .bits => return false,
+    }
 }
 
 // Checks over one scope: the lines `a` then `b` (common plus one kind, or one
 // group body). A list is mapped by at most one group. On `bits`: a group
 // counted by a locator is the last thing in its scope, and inside an item
 // nothing of fixed size reaches beyond `item <bits>`.
-fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []const Line, item_bits: ?usize, diag: *Diag) anyerror!void {
+fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []const Line, item_bits: ?usize, item_scope: bool, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
     const both = [2][]const Line{ a, b };
     var seen = std.StringHashMap(void).init(alloc);
@@ -1040,6 +1135,15 @@ fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []co
         const gop = try seen.getOrPut(ln.key);
         if (gop.found_existing) return bad(diag, alloc, bd, "line {d}: the list {s} is mapped by two groups of one scope", .{ ln.lineno, ln.key });
         if (ln.grp.?.count_fixed == null) n_var += 1;
+    };
+    // a `field` whose locator passes through a group's path
+    for (both) |glines| for (glines) |*gl| {
+        if (gl.tag != .group) continue;
+        for (both) |lines| for (lines) |*ln| {
+            if (ln.tag == .field and passesThrough(p, ln, gl.grp.?, item_scope)) {
+                return bad(diag, alloc, bd, "line {d}: the locator {s} passes through the path of the group on line {d}", .{ ln.lineno, ln.locator, gl.lineno });
+            }
+        };
     };
     if (p.wire != .bits) return;
     if (n_var > 0) {
@@ -1056,6 +1160,13 @@ fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []co
                     if (g2 != g and g2.gstart >= g.gstart) {
                         return bad(diag, alloc, bd, "line {d}: a group at or beyond the start of the group counted by a locator on line {d}", .{ ln.lineno, g.lineno });
                     }
+                    // a fixed-count group that starts before it and whose
+                    // items reach its start
+                    if (g2.count_fixed) |n2| {
+                        if (g2.gstart + n2 * g2.item_bits > g.gstart) {
+                            return bad(diag, alloc, bd, "line {d}: the items of a fixed-count group reach the start of the group counted by a locator on line {d}", .{ ln.lineno, g.lineno });
+                        }
+                    }
                 } else if (ln.bstart + ln.blen > g.gstart) {
                     return bad(diag, alloc, bd, "line {d}: bits at or beyond the start of the group counted by a locator on line {d}", .{ ln.lineno, g.lineno });
                 }
@@ -1066,7 +1177,13 @@ fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []co
         for (both) |lines| for (lines) |*ln| {
             if (ln.tag == .group) {
                 const g = ln.grp.?;
-                const n = g.count_fixed orelse continue;
+                const n = g.count_fixed orelse {
+                    // a nested group's count locator is bounded by `item <bits>`
+                    if (g.cstart + g.clen > ib) {
+                        return bad(diag, alloc, bd, "line {d}: the count locator of a nested group reaches beyond item {d}", .{ ln.lineno, ib });
+                    }
+                    continue;
+                };
                 if (g.gstart + n * g.item_bits > ib) {
                     return bad(diag, alloc, bd, "line {d}: a nested group with a fixed count reaches beyond item {d}", .{ ln.lineno, ib });
                 }
@@ -1081,7 +1198,7 @@ fn checkGroupBodies(alloc: std.mem.Allocator, p: *const Pack, lines: []const Lin
     for (lines) |*ln| {
         if (ln.tag != .group) continue;
         const g = ln.grp.?;
-        try checkScope(alloc, p, g.lines, &.{}, if (p.wire == .bits) g.item_bits else null, diag);
+        try checkScope(alloc, p, g.lines, &.{}, if (p.wire == .bits) g.item_bits else null, true, diag);
         try checkGroupBodies(alloc, p, g.lines, diag);
     }
 }
@@ -1114,7 +1231,7 @@ fn mkName(alloc: std.mem.Allocator, grp: ?*const Group, key: []const u8, is_list
     return buf.toOwnedSlice();
 }
 
-fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
+fn newPack(alloc: std.mem.Allocator) !*Pack {
     const p = try alloc.create(Pack);
     p.* = .{
         .format = "",
@@ -1131,6 +1248,27 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
         .sources = std.ArrayList([]const u8).init(alloc),
         .uses = std.ArrayList([]const u8).init(alloc),
     };
+    return p;
+}
+
+// The type of each table's `<model>` side.
+fn setTableTypes(p: *Pack) void {
+    var tit = p.tables.valueIterator();
+    while (tit.next()) |tp| {
+        var all_int = true;
+        var all_num = true;
+        for (tp.*.entries.items) |en| {
+            if (std.meta.isError(parseDecimalInt(en.model))) all_int = false;
+            if (std.meta.isError(parseDecimal(en.model))) all_num = false;
+        }
+        tp.*.model_ty = if (all_int) .int else if (all_num) .float else .string;
+    }
+}
+
+fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
+    // `layout sequential` on the bits wire: lines read in order from a cursor
+    if (try isSequentialPack(alloc, def_text)) return parseSeqPack(alloc, def_text, diag);
+    const p = try newPack(alloc);
     var any_when = false;
     var kind_root = false;
     // The open groups, innermost last. The body lines of every open group
@@ -1155,7 +1293,8 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
             }
         }.f;
         const in_group = gstack.items.len > 0;
-        if (in_group and (is(kw, "when") or is(kw, "requires") or is(kw, "root") or is(kw, "kind") or is(kw, "map") or is(kw, "typemap"))) {
+        // inside a group: `field`, `const`, `default`, `group` and `end` only
+        if (in_group and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "group") or is(kw, "end"))) {
             return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} inside a group", .{ lineno, kw });
         }
         if (is(kw, "group")) {
@@ -1231,6 +1370,14 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
                 p.msb = false;
             } else return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order {s} is not lsb or msb", .{ lineno, toks[1] });
             p.bit_order_set = true;
+        } else if (is(kw, "layout")) {
+            // layout <fixed | sequential>, bits wire only; default fixed
+            if (toks.len != 2 or !(is(toks[1], "fixed") or is(toks[1], "sequential"))) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: layout takes `fixed` or `sequential`", .{lineno});
+            }
+            p.layout_set = true;
+        } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "if") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
         } else if (is(kw, "typemap")) {
             if (toks.len != 3) return bad(diag, alloc, E.MalformedDirective, "line {d}: typemap takes two arguments", .{lineno});
             try p.tm_nat2cot.put(toks[1], toks[2]);
@@ -1326,6 +1473,9 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.bit_order_set and p.wire != .bits) {
         return bad(diag, alloc, E.@"bad-directive", "bit_order on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
     }
+    if (p.layout_set and p.wire != .bits) {
+        return bad(diag, alloc, E.@"bad-directive", "layout on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
+    }
     if (any_when and p.kinds.items.len == 0) {
         return bad(diag, alloc, E.@"bad-directive", "a `when` line in a pack with no `kind` line", .{});
     }
@@ -1335,22 +1485,12 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.wire == .bits and p.word_bytes == 0) {
         return bad(diag, alloc, E.MalformedDirective, "a bits pack needs word_bytes", .{});
     }
-    // the type of each table's `<model>` side
-    var tit = p.tables.valueIterator();
-    while (tit.next()) |tp| {
-        var all_int = true;
-        var all_num = true;
-        for (tp.*.entries.items) |en| {
-            if (std.meta.isError(parseDecimalInt(en.model))) all_int = false;
-            if (std.meta.isError(parseDecimal(en.model))) all_num = false;
-        }
-        tp.*.model_ty = if (all_int) .int else if (all_num) .float else .string;
-    }
+    setTableTypes(p);
     try finalizeLines(alloc, p, p.common.items, false, diag);
     for (p.kinds.items) |*k| try finalizeLines(alloc, p, k.lines.items, false, diag);
     // the group checks, scope by scope
-    if (p.kinds.items.len == 0) try checkScope(alloc, p, p.common.items, &.{}, null, diag);
-    for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, null, diag);
+    if (p.kinds.items.len == 0) try checkScope(alloc, p, p.common.items, &.{}, null, false, diag);
+    for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, null, false, diag);
     try checkGroupBodies(alloc, p, p.common.items, diag);
     for (p.kinds.items) |*k| try checkGroupBodies(alloc, p, k.lines.items, diag);
 
@@ -1432,7 +1572,7 @@ const Engine = struct {
     // message. A caller that runs many conversions points it at an arena it
     // resets; by default it is `alloc`.
     scratch: std.mem.Allocator,
-    modules: std.StringHashMap(*Module),
+    modules: ModuleMap,
     // the loaded modules in byte order of name (the order derivations run in)
     module_order: std.ArrayList(*Module),
     packs: std.ArrayList(*Pack),
@@ -1464,7 +1604,7 @@ const Engine = struct {
     // load_model(text): load one model module.
     fn loadModel(self: *Engine, def_text: []const u8) !*Module {
         var mdiag = Diag{};
-        const m = parseModule(self.alloc, def_text, self.modules.get("core"), &mdiag) catch |err| {
+        const m = parseModule(self.alloc, def_text, &self.modules, &mdiag) catch |err| {
             self.fail(err, "model module: {s}", .{mdiag.msg});
             return err;
         };
@@ -1472,6 +1612,26 @@ const Engine = struct {
             const err = E.@"distribution-refused";
             self.fail(err, "module {s} is controlled; this engine's limit is public", .{m.name});
             return err;
+        }
+        // Version 0.8: every used module is loaded, and a public module uses
+        // only public modules
+        for (m.uses.items) |u| {
+            if (std.mem.eql(u8, u, m.name)) continue;
+            if (!self.modules.contains(u)) {
+                const err = E.@"unknown-module";
+                self.fail(err, "module {s}: module {s} is not loaded", .{ m.name, u });
+                return err;
+            }
+        }
+        if (m.distribution.? == .public) {
+            for (m.uses.items) |u| {
+                if (std.mem.eql(u8, u, m.name)) continue;
+                if (self.modules.get(u).?.distribution.? != .public) {
+                    const err = E.@"distribution-violation";
+                    self.fail(err, "public module {s} uses controlled module {s}", .{ m.name, u });
+                    return err;
+                }
+            }
         }
         if (self.modules.contains(m.name)) {
             const err = E.@"duplicate-module";
@@ -1589,6 +1749,7 @@ const Engine = struct {
             for (k.defaults.items) |*d| try self.readDefault(p, d);
         }
         for (p.common_defaults.items) |*d| try self.readDefault(p, d);
+        if (p.seq) |b| try self.resolveSeqBody(p, b);
         try finishPack(self.alloc, p);
         try self.packs.append(p);
         if (!self.pack_index.contains(p.format)) try self.pack_index.put(p.format, p);
@@ -1618,15 +1779,52 @@ const Engine = struct {
             names.items[0] = name;
             break;
         }
-        for (names.items) |name| {
+        // each module after the modules it uses (Version 0.8); a cycle is
+        // `bad-directive`
+        const n = names.items.len;
+        const texts = try self.alloc.alloc([]const u8, n);
+        const mod_names = try self.alloc.alloc([]const u8, n);
+        const mod_uses = try self.alloc.alloc([]const []const u8, n);
+        var tokbuf = std.ArrayList([]const u8).init(self.alloc);
+        for (names.items, 0..) |name, i| {
             const path = try std.fmt.allocPrint(self.alloc, "{s}/{s}", .{ models_dir, name });
-            const text = try std.fs.cwd().readFileAlloc(self.alloc, path, max_file);
-            _ = self.loadModel(text) catch |err| {
-                self.last_error = try std.fmt.allocPrint(self.alloc, "{s} ({s})", .{ self.last_error, path });
-                return err;
-            };
+            texts[i] = try std.fs.cwd().readFileAlloc(self.alloc, path, max_file);
+            mod_names[i] = "";
+            var uses = std.ArrayList([]const u8).init(self.alloc);
+            var lines = std.mem.splitScalar(u8, texts[i], '\n');
+            while (lines.next()) |line| {
+                try tokenizeInto(&tokbuf, line);
+                if (tokbuf.items.len < 2) continue;
+                if (std.mem.eql(u8, tokbuf.items[0], "module")) mod_names[i] = tokbuf.items[1];
+                if (std.mem.eql(u8, tokbuf.items[0], "uses")) try uses.append(tokbuf.items[1]);
+            }
+            mod_uses[i] = uses.items;
         }
-        return names.items.len;
+        // 0: not visited, 1: being loaded, 2: loaded
+        const state = try self.alloc.alloc(u8, n);
+        @memset(state, 0);
+        for (0..n) |i| try self.loadModelOrdered(models_dir, names.items, texts, mod_names, mod_uses, state, i);
+        return n;
+    }
+
+    fn loadModelOrdered(self: *Engine, models_dir: []const u8, names: []const []const u8, texts: []const []const u8, mod_names: []const []const u8, mod_uses: []const []const []const u8, state: []u8, i: usize) anyerror!void {
+        if (state[i] == 2) return;
+        if (state[i] == 1) {
+            const err = E.@"bad-directive";
+            self.fail(err, "model module {s}: its `uses` lines form a cycle ({s}/{s})", .{ mod_names[i], models_dir, names[i] });
+            return err;
+        }
+        state[i] = 1;
+        for (mod_uses[i]) |u| {
+            for (mod_names, 0..) |mn, j| {
+                if (j != i and std.mem.eql(u8, mn, u)) try self.loadModelOrdered(models_dir, names, texts, mod_names, mod_uses, state, j);
+            }
+        }
+        _ = self.loadModel(texts[i]) catch |err| {
+            self.last_error = try std.fmt.allocPrint(self.alloc, "{s} ({s}/{s})", .{ self.last_error, models_dir, names[i] });
+            return err;
+        };
+        state[i] = 2;
     }
 
     // The declared type of a model key, null when no loaded module declares it.
@@ -1656,6 +1854,35 @@ const Engine = struct {
                 },
                 else => {},
             }
+        }
+    }
+
+    // A sequential pack: each field's key types, each body's defaults.
+    fn resolveSeqBody(self: *Engine, p: *const Pack, b: *SBody) anyerror!void {
+        try self.resolveSeqDefaults(p, b.defaults.items, &b.dmap);
+        try self.resolveSeqNodes(p, b.common);
+        for (b.kinds) |*k| {
+            try self.resolveSeqDefaults(p, k.defaults.items, &k.dmap);
+            try self.resolveSeqNodes(p, k.lines);
+        }
+    }
+
+    fn resolveSeqDefaults(self: *Engine, p: *const Pack, ds: []Default, map: *DMap) anyerror!void {
+        for (ds) |*d| {
+            try self.readDefault(p, d);
+            const gop = try map.getOrPut(self.alloc, d.key);
+            if (!gop.found_existing) gop.value_ptr.* = d.value;
+        }
+    }
+
+    fn resolveSeqNodes(self: *Engine, p: *const Pack, list: []SNode) anyerror!void {
+        for (list) |*n| {
+            if (n.tag == .field) {
+                n.ln.kty = self.keyType(n.ln.key).?;
+                for (n.also.items) |*a| a.kty = self.keyType(a.key).?;
+            }
+            try self.resolveSeqNodes(p, n.body);
+            if (n.gbody) |b| try self.resolveSeqBody(p, b);
         }
     }
 
@@ -1764,11 +1991,43 @@ const rad_to_deg: f64 = 180.0 / std.math.pi;
 // One `derive` line against an entity. true: the target was set.
 fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
     if (e.fields.contains(d.target)) return false;
+    if (d.f == .any) {
+        // set when only some arguments are present: 1 when any present
+        // argument is not 0
+        var present = false;
+        var nonzero = false;
+        for (d.args) |a| {
+            const v = e.get(a) orelse continue;
+            if (v != .int) return false;
+            present = true;
+            if (v.int != 0) nonzero = true;
+        }
+        if (!present) return false;
+        try e.fields.put(d.target, MV{ .int = if (nonzero) 1 else 0 });
+        return true;
+    }
     for (d.args) |a| if (!e.fields.contains(a)) return false;
     const a0 = e.get(d.args[0]).?;
     var out: MV = undefined;
     switch (d.f) {
         .copy => out = a0,
+        .any => unreachable,
+        .day_seconds => {
+            if (a0 != .int) return false;
+            out = MV{ .float = @as(f64, @floatFromInt(@mod(a0.int, 86400000))) / 1000.0 };
+        },
+        .not => {
+            if (a0 != .int) return false;
+            out = MV{ .int = if (a0.int == 0) 1 else 0 };
+        },
+        .parse_int => {
+            if (a0 != .str) return false;
+            out = MV{ .int = parseDecimalInt(a0.str) catch return false };
+        },
+        .text_of => {
+            if (a0 != .int) return false;
+            out = MV{ .str = try intToStr(alloc, a0.int) };
+        },
         .join => {
             var buf = std.ArrayList(u8).init(alloc);
             for (d.args, 0..) |a, i| {
@@ -3323,6 +3582,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
 }
 
 fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
+    if (p.seq != null) return seqDecode(alloc, p, bytes, diag);
     const doc = try parseDoc(alloc, p, bytes, diag);
 
     // kind selection
@@ -3760,12 +4020,16 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
                 if (tk != .pstring) {
                     // a numeric `.` field: the packed form
                     var payload = std.ArrayList(u8).init(alloc);
+                    var nvals: usize = 0;
                     for (items) |*it| {
                         const mv = (fieldValue(p, body, it, dl) catch |err|
                             return bad(diag, alloc, err, "field {s} in group {s}", .{ dl.key, g.list })) orelse continue;
                         encodeProtoPayload(&payload, tk, mv) catch |err|
                             return bad(diag, alloc, err, "field {s} in group {s}", .{ dl.key, g.list });
+                        nvals += 1;
                     }
+                    // a list whose items all lack the value writes nothing
+                    if (nvals == 0) continue;
                     try writeTag(&fb, number, 2);
                     try writeVarint(&fb, @as(u64, payload.items.len));
                     try fb.appendSlice(payload.items);
@@ -3900,6 +4164,7 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
 }
 
 fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    if (p.seq != null) return seqEncode(alloc, p, e, diag);
     const kind_idx = try selectKindEncode(alloc, p, e, diag);
     const sc = p.scope(kind_idx);
     const lines = sc.lines;
@@ -4012,6 +4277,1150 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             return hexEncode(alloc, buf.items);
         },
     }
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.8: sequential binary layouts (`layout sequential` on the bits
+// wire). A locator is a bit length; lines are read, and written, in file
+// order from a cursor.
+// ---------------------------------------------------------------------------
+
+// One `presence <name> <n>|fx` line.
+const SPres = struct {
+    name: []const u8,
+    n: usize, // the number of presence bits; 0: `fx`
+    // named[i - 1]: some `if` block names bit i, with or without `!`
+    named: std.ArrayListUnmanaged(bool) = .{},
+};
+
+// One `<name>.<i>` or `!<name>.<i>` of an `if` line; `bit` counts from 1.
+const SCond = struct { pres: *SPres, bit: usize, neg: bool };
+
+// One `also <key> [via <table>]` line: another key on the bits of a field.
+const SAlso = struct {
+    key: []const u8,
+    via_name: []const u8 = "",
+    via: ?*const Table = null,
+    kty: KeyType = .string,
+    lineno: usize = 0,
+};
+
+const SMode = enum { count, while_, more, fx };
+const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole };
+const DMap = std.StringHashMapUnmanaged(MV);
+
+// One line of a sequential pack; a block holds its lines in `body`.
+const SNode = struct {
+    tag: STag,
+    lineno: usize = 0,
+    ln: Line = .{ .locator = "" }, // field: key, transform, options, bit length
+    also: std.ArrayListUnmanaged(SAlso) = .{},
+    // const, when, pad: the bit length; align: the multiple; group: the bit
+    // length of the count; length, whole: the bit length of the length field
+    len: usize = 0,
+    value: u64 = 0, // const, when
+    pres: ?*SPres = null, // presence
+    conds: []const SCond = &.{}, // if
+    body: []SNode = &.{}, // if, opt, chain, length
+    list: []const u8 = "", // group
+    mode: SMode = .count,
+    gbody: ?*SBody = null,
+    in_bits: bool = false, // length: counted in bits
+    plus: i64 = 0, // length, whole
+};
+
+const SKind = struct {
+    name: []const u8,
+    whens: []SNode = &.{},
+    lines: []SNode = &.{},
+    requires: std.ArrayListUnmanaged([]const u8) = .{},
+    defaults: std.ArrayListUnmanaged(Default) = .{},
+    dmap: DMap = .{},
+};
+
+// The lines of a message, or of one item of a group: the common lines, then
+// the kinds.
+const SBody = struct {
+    common: []SNode = &.{},
+    kinds: []SKind = &.{},
+    defaults: std.ArrayListUnmanaged(Default) = .{},
+    dmap: DMap = .{},
+};
+
+// Is the bit length one the transform allows?
+fn bitsLenOk(k: TKind, blen: usize) bool {
+    return switch (k) {
+        .f32_ => blen == 32,
+        .f64_ => blen == 64,
+        .ascii => blen >= 8 and blen <= 2040 and blen % 8 == 0,
+        else => blen >= 1 and blen <= 64,
+    };
+}
+
+fn fitsBits(v: u64, len: usize) bool {
+    return len >= 64 or (v >> @as(u6, @intCast(len))) == 0;
+}
+
+// Does the file hold `wire bits` and `layout sequential`?
+fn isSequentialPack(alloc: std.mem.Allocator, def_text: []const u8) !bool {
+    var bits = false;
+    var seq = false;
+    var tokbuf = std.ArrayList([]const u8).init(alloc);
+    defer tokbuf.deinit();
+    var lines = std.mem.splitScalar(u8, def_text, '\n');
+    while (lines.next()) |line| {
+        try tokenizeInto(&tokbuf, line);
+        const t = tokbuf.items;
+        if (t.len != 2) continue;
+        if (std.mem.eql(u8, t[0], "wire") and std.mem.eql(u8, t[1], "bits")) bits = true;
+        if (std.mem.eql(u8, t[0], "layout") and std.mem.eql(u8, t[1], "sequential")) seq = true;
+    }
+    return bits and seq;
+}
+
+const SFrameTag = enum { body, if_, opt, chain, length };
+
+// An open block while a sequential pack is read. The message is the first
+// frame; a group body is a `body` frame with `is_group`.
+const SFrame = struct {
+    tag: SFrameTag,
+    node: SNode, // the block's own line
+    nodes: std.ArrayListUnmanaged(SNode) = .{},
+    names_base: usize = 0,
+    last_field: bool = false,
+    // body frames
+    is_group: bool = false,
+    sbody: ?*SBody = null,
+    kinds: std.ArrayListUnmanaged(SKind) = .{},
+    whens: std.ArrayListUnmanaged(SNode) = .{},
+    in_whens: bool = false,
+    common_when: bool = false,
+    kind_names_base: usize = 0,
+    grp: ?*Group = null,
+};
+
+const SName = struct { name: []const u8, pres: *SPres, depth: usize };
+
+const SParser = struct {
+    alloc: std.mem.Allocator,
+    p: *Pack,
+    diag: *Diag,
+    frames: std.ArrayListUnmanaged(SFrame) = .{},
+    names: std.ArrayListUnmanaged(SName) = .{},
+    lineno: usize = 0,
+
+    const bd = E.@"bad-directive";
+
+    fn top(self: *SParser) *SFrame {
+        return &self.frames.items[self.frames.items.len - 1];
+    }
+
+    // The nearest enclosing message or group body.
+    fn bodyFrame(self: *SParser) *SFrame {
+        var i = self.frames.items.len;
+        while (i > 0) {
+            i -= 1;
+            if (self.frames.items[i].tag == .body) return &self.frames.items[i];
+        }
+        unreachable;
+    }
+
+    fn inGroup(self: *SParser) bool {
+        for (self.frames.items) |f| if (f.is_group) return true;
+        return false;
+    }
+
+    fn err(self: *SParser, e: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
+        const detail = std.fmt.allocPrint(self.alloc, fmt, args) catch "";
+        return bad(self.diag, self.alloc, e, "line {d}: {s}", .{ self.lineno, detail });
+    }
+
+    // A wire line joins the open block; it ends the `when` lines of its kind.
+    fn add(self: *SParser, n: SNode) !void {
+        const f = self.top();
+        try f.nodes.append(self.alloc, n);
+        f.last_field = n.tag == .field;
+        if (f.tag == .body) f.in_whens = false;
+    }
+
+    fn open(self: *SParser, tag: SFrameTag, n: SNode) !void {
+        if (self.top().tag == .body) self.top().in_whens = false;
+        self.top().last_field = false;
+        try self.frames.append(self.alloc, .{ .tag = tag, .node = n, .names_base = self.names.items.len });
+    }
+
+    // The lines read so far in a body become its common lines, or the lines
+    // of its last kind.
+    fn closeKind(self: *SParser, f: *SFrame) !void {
+        if (f.kinds.items.len == 0) {
+            f.sbody.?.common = try f.nodes.toOwnedSlice(self.alloc);
+        } else {
+            const k = &f.kinds.items[f.kinds.items.len - 1];
+            k.whens = try f.whens.toOwnedSlice(self.alloc);
+            k.lines = try f.nodes.toOwnedSlice(self.alloc);
+        }
+    }
+
+    fn closeBody(self: *SParser, f: *SFrame) !void {
+        try self.closeKind(f);
+        f.sbody.?.kinds = try f.kinds.toOwnedSlice(self.alloc);
+        if (f.common_when and f.sbody.?.kinds.len == 0) {
+            return bad(self.diag, self.alloc, bd, "a `when` line in a body with no `kind` line", .{});
+        }
+    }
+
+    fn bitLen(self: *SParser, text: []const u8, what: []const u8, max: usize) !usize {
+        const v = parseUnsigned(text) orelse
+            return self.err(bd, "{s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ what, text });
+        if (v < 1 or v > max) return self.err(bd, "{s}: the bit length {d} is not 1..{d}", .{ what, v, max });
+        return @intCast(v);
+    }
+
+    fn line(self: *SParser, toks: []const []const u8) anyerror!void {
+        const alloc = self.alloc;
+        const p = self.p;
+        const kw = toks[0];
+        const is = struct {
+            fn f(a: []const u8, b: []const u8) bool {
+                return std.mem.eql(u8, a, b);
+            }
+        }.f;
+        if (is(kw, "format")) {
+            if (toks.len != 2) return self.err(E.MalformedDirective, "format takes one argument", .{});
+            p.format = toks[1];
+        } else if (is(kw, "version")) {
+            if (toks.len != 2) return self.err(E.MalformedDirective, "version takes one argument", .{});
+            p.version = toks[1];
+        } else if (is(kw, "wire")) {
+            if (toks.len != 2 or !is(toks[1], "bits")) return self.err(bd, "a sequential pack is on the bits wire", .{});
+        } else if (is(kw, "layout")) {
+            if (toks.len != 2 or !is(toks[1], "sequential")) return self.err(bd, "layout is given twice, as sequential and as something else", .{});
+        } else if (is(kw, "distribution")) {
+            if (toks.len != 2) return self.err(E.MalformedDirective, "distribution takes one argument", .{});
+            p.distribution = parseDist(toks[1]) catch |e| return self.err(e, "distribution {s} is not public or controlled", .{toks[1]});
+        } else if (is(kw, "source")) {
+            if (toks.len != 2) return self.err(E.MalformedDirective, "source takes one argument", .{});
+            try p.sources.append(toks[1]);
+        } else if (is(kw, "uses")) {
+            if (toks.len != 2) return self.err(E.MalformedDirective, "uses takes one argument", .{});
+            try p.uses.append(toks[1]);
+        } else if (is(kw, "bit_order")) {
+            if (toks.len != 2) return self.err(bd, "bit_order takes one argument", .{});
+            if (is(toks[1], "msb")) {
+                p.msb = true;
+            } else if (is(toks[1], "lsb")) {
+                p.msb = false;
+            } else return self.err(bd, "bit_order {s} is not lsb or msb", .{toks[1]});
+        } else if (is(kw, "word_bytes") or is(kw, "root")) {
+            return self.err(bd, "{s} is not used in a sequential pack", .{kw});
+        } else if (is(kw, "typemap")) {
+            if (self.inGroup()) return self.err(bd, "typemap inside a group", .{});
+            if (toks.len != 3) return self.err(E.MalformedDirective, "typemap takes two arguments", .{});
+            try p.tm_nat2cot.put(toks[1], toks[2]);
+            try p.tm_cot2nat.put(toks[2], toks[1]);
+        } else if (is(kw, "map")) {
+            if (self.inGroup()) return self.err(bd, "map inside a group", .{});
+            if (toks.len != 4) return self.err(bd, "map takes a table, a native value and a model value", .{});
+            const gop = try p.tables.getOrPut(toks[1]);
+            if (!gop.found_existing) {
+                const t = try alloc.create(Table);
+                t.* = .{ .name = toks[1], .entries = std.ArrayList(TableEntry).init(alloc) };
+                gop.value_ptr.* = t;
+            }
+            try gop.value_ptr.*.entries.append(.{ .native = toks[2], .model = toks[3] });
+        } else if (is(kw, "kind")) {
+            if (toks.len != 2) return self.err(bd, "kind takes one argument", .{});
+            if (self.top().tag != .body) return self.err(bd, "kind inside a block", .{});
+            const f = self.top();
+            for (f.kinds.items) |k| {
+                if (is(k.name, toks[1])) return self.err(E.@"duplicate-kind", "kind {s} is declared twice in one body", .{toks[1]});
+            }
+            try self.closeKind(f);
+            if (f.kinds.items.len == 0) {
+                f.kind_names_base = self.names.items.len;
+            } else {
+                // the presence names of the kind before are no longer visible
+                self.names.shrinkRetainingCapacity(f.kind_names_base);
+            }
+            try f.kinds.append(alloc, .{ .name = toks[1] });
+            f.in_whens = true;
+            f.last_field = false;
+        } else if (is(kw, "requires")) {
+            const f = self.top();
+            if (f.tag != .body or f.kinds.items.len == 0) return self.err(bd, "requires outside a kind", .{});
+            if (toks.len < 2) return self.err(bd, "requires takes at least one key", .{});
+            const k = &f.kinds.items[f.kinds.items.len - 1];
+            for (toks[1..]) |key| {
+                try k.requires.append(alloc, key);
+                try p.key_uses.append(.{ .key = key, .tkind = null, .use = .requires });
+            }
+            f.last_field = false;
+        } else if (is(kw, "default")) {
+            if (toks.len != 3) return self.err(bd, "default takes a key and a value", .{});
+            const f = self.bodyFrame();
+            const d = Default{ .key = toks[1], .text = toks[2] };
+            if (f.kinds.items.len == 0) {
+                try f.sbody.?.defaults.append(alloc, d);
+            } else {
+                try f.kinds.items[f.kinds.items.len - 1].defaults.append(alloc, d);
+            }
+            try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .default });
+            self.top().last_field = false;
+        } else if (is(kw, "when") or is(kw, "const")) {
+            const is_when = is(kw, "when");
+            if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
+            const len = try self.bitLen(toks[1], kw, 64);
+            const v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
+            if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
+            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v };
+            if (!is_when) return self.add(n);
+            const f = self.top();
+            if (f.tag != .body) return self.err(bd, "when inside a block", .{});
+            if (f.kinds.items.len == 0) {
+                // before the first kind: a common `when`
+                f.common_when = true;
+                return self.add(n);
+            }
+            if (!f.in_whens) return self.err(bd, "when after another line of its kind", .{});
+            try f.whens.append(alloc, n);
+        } else if (is(kw, "field")) {
+            if (toks.len < 4) return self.err(E.MalformedDirective, "field takes a key, a bit length and a transform", .{});
+            const t = parseTransform(toks[3]) catch |e| return self.err(e, "unknown transform {s}", .{toks[3]});
+            if (!allDigits(toks[2])) return self.err(bd, "field {s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ toks[1], toks[2] });
+            if (kindCategory(t.kind) != .bits) return self.err(E.WrongTransformKind, "transform of {s} does not belong to wire bits", .{toks[1]});
+            const blen: usize = @intCast(@min(parseUnsigned(toks[2]) orelse 0, 1 << 20));
+            if (!bitsLenOk(t.kind, blen)) return self.err(bd, "bit length {d} is not allowed for the transform of {s}", .{ blen, toks[1] });
+            var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = self.lineno, .blen = blen };
+            var oi: usize = 4;
+            while (oi < toks.len) : (oi += 1) {
+                const o = toks[oi];
+                var again = false;
+                if (is(o, "via")) {
+                    oi += 1;
+                    if (oi >= toks.len or toks[oi].len == 0) return self.err(bd, "via takes a table name", .{});
+                    again = ln.via_name.len > 0;
+                    ln.via_name = toks[oi];
+                } else if (is(o, "swap")) {
+                    again = ln.swap;
+                    ln.swap = true;
+                } else if (is(o, "trim")) {
+                    again = ln.trim;
+                    ln.trim = true;
+                } else if (is(o, "optional")) {
+                    return self.err(bd, "the field option optional is not for a sequential pack", .{});
+                } else return self.err(bd, "unknown field option {s}", .{o});
+                if (again) return self.err(bd, "field option {s} is repeated", .{o});
+            }
+            if (ln.trim and t.kind != .ascii) return self.err(bd, "trim is for the ascii transform", .{});
+            if (ln.swap and blen % 8 != 0) return self.err(bd, "swap needs a bit length that is a multiple of 8, not {d}", .{blen});
+            try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
+            try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln });
+        } else if (is(kw, "also")) {
+            // also <key> [via <table>], directly after a `field` line
+            const f = self.top();
+            if (!f.last_field) return self.err(bd, "also is not directly after a field line", .{});
+            if (toks.len != 2 and !(toks.len == 4 and is(toks[2], "via") and toks[3].len > 0)) return self.err(bd, "also takes a key and an optional `via <table>`", .{});
+            const fld = &f.nodes.items[f.nodes.items.len - 1];
+            const via_name: []const u8 = if (toks.len == 4) toks[3] else "";
+            try fld.also.append(alloc, .{ .key = toks[1], .via_name = via_name, .lineno = self.lineno });
+            try p.key_uses.append(.{ .key = toks[1], .tkind = fld.ln.transform.kind, .via = via_name, .grp = self.bodyFrame().grp });
+        } else if (is(kw, "pad")) {
+            if (toks.len != 2) return self.err(bd, "pad takes a bit length", .{});
+            try self.add(.{ .tag = .pad, .lineno = self.lineno, .len = try self.bitLen(toks[1], kw, 1 << 30) });
+        } else if (is(kw, "align")) {
+            if (toks.len != 2) return self.err(bd, "align takes a number of bits", .{});
+            try self.add(.{ .tag = .align_, .lineno = self.lineno, .len = try self.bitLen(toks[1], kw, 1 << 30) });
+        } else if (is(kw, "presence")) {
+            if (toks.len != 3) return self.err(bd, "presence takes a name and a number of bits or `fx`", .{});
+            const name = toks[1];
+            if (name.len == 0 or name[0] == '!' or std.mem.indexOfScalar(u8, name, '.') != null) return self.err(bd, "presence name {s}", .{name});
+            const depth = self.frames.items.len;
+            for (self.names.items) |nm| {
+                if (nm.depth == depth and is(nm.name, name)) return self.err(bd, "presence {s} is declared twice in one block", .{name});
+            }
+            const pr = try alloc.create(SPres);
+            pr.* = .{ .name = name, .n = if (is(toks[2], "fx")) 0 else try self.bitLen(toks[2], kw, 64) };
+            try self.names.append(alloc, .{ .name = name, .pres = pr, .depth = depth });
+            try self.add(.{ .tag = .presence, .lineno = self.lineno, .pres = pr });
+        } else if (is(kw, "if")) {
+            if (toks.len < 2) return self.err(bd, "if takes at least one presence bit", .{});
+            const conds = try alloc.alloc(SCond, toks.len - 1);
+            for (toks[1..], 0..) |tk, ci| {
+                const neg = tk.len > 0 and tk[0] == '!';
+                const ref = if (neg) tk[1..] else tk;
+                const dot = std.mem.lastIndexOfScalar(u8, ref, '.') orelse return self.err(bd, "if {s}: not `<name>.<i>`", .{tk});
+                const idx = parseUnsigned(ref[dot + 1 ..]) orelse return self.err(bd, "if {s}: not `<name>.<i>`", .{tk});
+                var found: ?*SPres = null;
+                var ni = self.names.items.len;
+                while (ni > 0) {
+                    ni -= 1;
+                    if (is(self.names.items[ni].name, ref[0..dot])) {
+                        found = self.names.items[ni].pres;
+                        break;
+                    }
+                }
+                const pr = found orelse return self.err(bd, "if {s}: no presence of that name is visible here", .{tk});
+                if (idx < 1 or idx > 4096 or (pr.n > 0 and idx > pr.n)) return self.err(bd, "if {s}: the bit is beyond the size of the presence", .{tk});
+                const bit: usize = @intCast(idx);
+                while (pr.named.items.len < bit) try pr.named.append(alloc, false);
+                pr.named.items[bit - 1] = true;
+                conds[ci] = .{ .pres = pr, .bit = bit, .neg = neg };
+            }
+            try self.open(.if_, .{ .tag = .if_, .lineno = self.lineno, .conds = conds });
+        } else if (is(kw, "opt")) {
+            if (toks.len != 1) return self.err(bd, "opt takes no argument", .{});
+            try self.open(.opt, .{ .tag = .opt, .lineno = self.lineno });
+        } else if (is(kw, "chain")) {
+            if (toks.len != 1) return self.err(bd, "chain takes no argument", .{});
+            try self.open(.chain, .{ .tag = .chain, .lineno = self.lineno });
+        } else if (is(kw, "fx")) {
+            if (toks.len != 1 or self.top().tag != .chain) return self.err(bd, "an fx line outside a chain", .{});
+            try self.add(.{ .tag = .fx, .lineno = self.lineno });
+        } else if (is(kw, "length")) {
+            // length <len> [bytes|bits] [plus <n>] [whole]
+            if (toks.len < 2) return self.err(bd, "length takes a bit length", .{});
+            var n = SNode{ .tag = .length, .lineno = self.lineno, .len = try self.bitLen(toks[1], kw, 64) };
+            var unit = false;
+            var plus = false;
+            var whole = false;
+            var oi: usize = 2;
+            while (oi < toks.len) : (oi += 1) {
+                const o = toks[oi];
+                if (is(o, "bytes") or is(o, "bits")) {
+                    if (unit) return self.err(bd, "length: the unit is given twice", .{});
+                    unit = true;
+                    n.in_bits = is(o, "bits");
+                } else if (is(o, "plus")) {
+                    oi += 1;
+                    if (plus or oi >= toks.len) return self.err(bd, "length: plus takes one number, once", .{});
+                    plus = true;
+                    n.plus = parseDecimalInt(toks[oi]) catch return self.err(bd, "length: plus {s} is not an integer", .{toks[oi]});
+                    if (n.plus > 1 << 40 or n.plus < -(1 << 40)) return self.err(bd, "length: plus {s} is too large", .{toks[oi]});
+                } else if (is(o, "whole")) {
+                    if (whole) return self.err(bd, "length: whole is given twice", .{});
+                    whole = true;
+                } else return self.err(bd, "length: unknown word {s}", .{o});
+            }
+            if (whole) {
+                if (n.in_bits) return self.err(bd, "length: `bits` with `whole`", .{});
+                n.tag = .whole;
+                return self.add(n);
+            }
+            try self.open(.length, n);
+        } else if (is(kw, "group")) {
+            // group <list> count <len> | while | more | fx
+            var n = SNode{ .tag = .group, .lineno = self.lineno };
+            if (toks.len == 4 and is(toks[2], "count")) {
+                n.mode = .count;
+                n.len = try self.bitLen(toks[3], "group count", 64);
+            } else if (toks.len == 3 and is(toks[2], "while")) {
+                n.mode = .while_;
+            } else if (toks.len == 3 and is(toks[2], "more")) {
+                n.mode = .more;
+            } else if (toks.len == 3 and is(toks[2], "fx")) {
+                n.mode = .fx;
+            } else return self.err(bd, "a group of a sequential pack is `group <list> count <len>`, `while`, `more` or `fx`", .{});
+            n.list = toks[1];
+            const parent = self.bodyFrame().grp;
+            const g = try alloc.create(Group);
+            g.* = .{ .list = toks[1], .locator = "", .lineno = self.lineno, .parent = parent, .defaults = std.ArrayList(Default).init(alloc) };
+            try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .group, .grp = parent });
+            const sb = try alloc.create(SBody);
+            sb.* = .{};
+            try self.open(.body, n);
+            const f = self.top();
+            f.is_group = true;
+            f.sbody = sb;
+            f.grp = g;
+        } else if (is(kw, "end")) {
+            if (toks.len != 1) return self.err(bd, "end takes no argument", .{});
+            if (self.frames.items.len < 2) return self.err(bd, "end with no open block", .{});
+            var f = self.frames.pop();
+            self.names.shrinkRetainingCapacity(f.names_base);
+            var n = f.node;
+            if (f.tag == .body) {
+                try self.closeBody(&f);
+                n.gbody = f.sbody;
+            } else {
+                n.body = try f.nodes.toOwnedSlice(alloc);
+            }
+            try self.add(n);
+        } else {
+            return self.err(E.UnknownDirective, "unknown directive {s}", .{kw});
+        }
+    }
+};
+
+// `via` names resolve once the whole file is read: a `map` line may follow
+// the line that names its table.
+fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    for (nodes) |*n| {
+        if (n.tag == .field) {
+            if (n.ln.via_name.len > 0) {
+                n.ln.via = p.tables.get(n.ln.via_name) orelse
+                    return bad(diag, alloc, bd, "line {d}: via {s} names a table with no map line", .{ n.lineno, n.ln.via_name });
+            }
+            for (n.also.items) |*a| {
+                if (a.via_name.len == 0) continue;
+                a.via = p.tables.get(a.via_name) orelse
+                    return bad(diag, alloc, bd, "line {d}: via {s} names a table with no map line", .{ a.lineno, a.via_name });
+            }
+        }
+        try seqResolveVia(alloc, p, n.body, diag);
+        if (n.gbody) |b| {
+            try seqResolveVia(alloc, p, b.common, diag);
+            for (b.kinds) |*k| try seqResolveVia(alloc, p, k.lines, diag);
+        }
+    }
+}
+
+fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
+    const p = try newPack(alloc);
+    p.wire = .bits;
+    const root = try alloc.create(SBody);
+    root.* = .{};
+    var sp = SParser{ .alloc = alloc, .p = p, .diag = diag };
+    try sp.frames.append(alloc, .{ .tag = .body, .node = .{ .tag = .group }, .sbody = root });
+    var lines = std.mem.splitScalar(u8, def_text, '\n');
+    var tokbuf = std.ArrayList([]const u8).init(alloc);
+    while (lines.next()) |line| {
+        sp.lineno += 1;
+        try tokenizeInto(&tokbuf, line);
+        if (tokbuf.items.len == 0) continue;
+        try sp.line(tokbuf.items);
+    }
+    if (sp.frames.items.len > 1) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: a block with no `end`", .{sp.top().node.lineno});
+    }
+    try sp.closeBody(&sp.frames.items[0]);
+    setTableTypes(p);
+    try seqResolveVia(alloc, p, root.common, diag);
+    for (root.kinds) |*k| try seqResolveVia(alloc, p, k.lines, diag);
+    p.seq = root;
+    if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
+    if (p.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "the pack has no source line", .{});
+    return p;
+}
+
+// The presence bits read, or computed, so far: innermost first.
+const PEnv = struct { pres: *const SPres, bits: []const bool, parent: ?*const PEnv };
+
+fn penvBit(env: ?*const PEnv, pres: *const SPres, bit: usize) bool {
+    var e = env;
+    while (e) |x| : (e = x.parent) {
+        if (x.pres == pres) return bit <= x.bits.len and x.bits[bit - 1];
+    }
+    return false;
+}
+
+// An `if` block is read, and written, only when every bit it names is 1, and
+// every bit it names with `!` is 0.
+fn condsHold(env: ?*const PEnv, conds: []const SCond) bool {
+    for (conds) |c| if (penvBit(env, c.pres, c.bit) == c.neg) return false;
+    return true;
+}
+
+// The `default` values in scope: a kind's, then the common ones of its body.
+const DS = struct {
+    a: ?*const DMap = null,
+    b: ?*const DMap = null,
+
+    fn get(self: DS, key: []const u8) ?MV {
+        if (self.a) |m| {
+            if (m.get(key)) |v| return v;
+        }
+        if (self.b) |m| return m.get(key);
+        return null;
+    }
+};
+
+// The entity or item being decoded, and the keys a line failed on.
+const SEnt = struct {
+    e: *Entity,
+    failed: std.ArrayListUnmanaged([]const u8) = .{},
+};
+
+const SDec = struct {
+    alloc: std.mem.Allocator,
+    p: *const Pack,
+    buf: []const u8,
+    diag: *Diag,
+    pos: usize = 0,
+    // the end of the input, or of the message a `length … whole` states:
+    // reading beyond it is `malformed-wire`
+    hard_end: usize,
+    // inside a `length` block: the end of its extent
+    soft_end: usize,
+    in_extent: bool = false,
+
+    const mw = E.@"malformed-wire";
+    const Avail = enum { ok, absent };
+
+    fn limit(self: *const SDec) usize {
+        return if (self.in_extent) self.soft_end else self.hard_end;
+    }
+
+    // May a line read `len` bits at the cursor? Inside a `length` extent a
+    // line that starts at or after its end reads as absent, and one that
+    // straddles it is `malformed-wire`, as is reading past the input.
+    fn avail(self: *SDec, len: usize, what: []const u8) !Avail {
+        if (self.in_extent) {
+            if (self.pos >= self.soft_end) return .absent;
+            if (self.pos + len > self.soft_end) {
+                return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end of the length extent at bit {d}", .{ what, len, self.pos, self.soft_end });
+            }
+            return .ok;
+        }
+        if (self.pos + len > self.hard_end) {
+            return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end of the message at bit {d}", .{ what, len, self.pos, self.hard_end });
+        }
+        return .ok;
+    }
+
+    // Like `avail`, where the line before said these bits follow.
+    fn need(self: *SDec, len: usize, what: []const u8) !void {
+        if (self.pos + len > self.limit()) {
+            return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end at bit {d}", .{ what, len, self.pos, self.limit() });
+        }
+    }
+
+    fn take(self: *SDec, len: usize) u64 {
+        const v = getBits(self.buf, self.p.msb, self.pos, len);
+        self.pos += len;
+        return v;
+    }
+
+    fn setKey(self: *SDec, se: *SEnt, key: []const u8, via: ?*const Table, via_name: []const u8, kty: KeyType, raw: MV) !void {
+        if (se.e.fields.contains(key)) return; // the earliest line of a key wins
+        var mv = raw;
+        if (via) |t| {
+            mv = tableDecode(t, mv, kty) catch
+                return bad(self.diag, self.alloc, E.@"transform-decode", "field {s}: the table {s} has no entry for the value", .{ key, via_name });
+        }
+        if (mv == .str and std.mem.eql(u8, key, "type")) {
+            if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
+        }
+        try se.e.fields.put(key, mv);
+    }
+
+    fn nodes(self: *SDec, list: []const SNode, se: *SEnt, env: *?*const PEnv) anyerror!void {
+        for (list) |*n| try self.node(n, se, env);
+    }
+
+    fn block(self: *SDec, list: []const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
+        var inner = env;
+        try self.nodes(list, se, &inner);
+    }
+
+    fn node(self: *SDec, n: *const SNode, se: *SEnt, env: *?*const PEnv) anyerror!void {
+        const alloc = self.alloc;
+        switch (n.tag) {
+            .field => {
+                const ln = &n.ln;
+                if (try self.avail(ln.blen, ln.key) == .absent) return;
+                const at = self.pos;
+                self.pos += ln.blen;
+                const raw = bitsDecodeField(alloc, self.p, self.buf, at, ln) catch |err| switch (err) {
+                    error.OutOfMemory => return err,
+                    else => {
+                        // forgiven when another line of the key succeeds
+                        try se.failed.append(alloc, ln.key);
+                        for (n.also.items) |a| try se.failed.append(alloc, a.key);
+                        return;
+                    },
+                };
+                try self.setKey(se, ln.key, ln.via, ln.via_name, ln.kty, raw);
+                for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, raw);
+            },
+            .constant, .pad => {
+                if (try self.avail(n.len, if (n.tag == .pad) "pad" else "const") == .absent) return;
+                self.pos += n.len;
+            },
+            .align_ => {
+                const r = self.pos % n.len;
+                if (r != 0) self.pos += n.len - r;
+            },
+            .when => {
+                // a common `when`: it must hold for any message of the format
+                if (self.pos + n.len > self.limit() or self.take(n.len) != n.value) {
+                    return bad(self.diag, alloc, E.@"no-kind", "the common `when {d} {d}` does not hold", .{ n.len, n.value });
+                }
+            },
+            .presence => {
+                const pr = n.pres.?;
+                var bits = std.ArrayList(bool).init(alloc);
+                if (pr.n > 0) {
+                    if (try self.avail(pr.n, pr.name) == .ok) {
+                        for (0..pr.n) |_| try bits.append(self.take(1) == 1);
+                    }
+                } else if (try self.avail(8, pr.name) == .ok) {
+                    // octets of 7 presence bits, each followed by an extension bit
+                    while (true) {
+                        for (0..7) |_| try bits.append(self.take(1) == 1);
+                        if (self.take(1) == 0) break;
+                        try self.need(8, pr.name);
+                    }
+                }
+                // a bit that is 1 and that no `if` block names: the message
+                // holds a part the pack does not describe
+                for (bits.items, 0..) |b, i| {
+                    if (b and (i >= pr.named.items.len or !pr.named.items[i])) {
+                        return bad(self.diag, alloc, mw, "presence bit {s}.{d} is 1 and no `if` block names it", .{ pr.name, i + 1 });
+                    }
+                }
+                const pe = try alloc.create(PEnv);
+                pe.* = .{ .pres = pr, .bits = bits.items, .parent = env.* };
+                env.* = pe;
+            },
+            .if_ => {
+                if (condsHold(env.*, n.conds)) try self.block(n.body, se, env.*);
+            },
+            .opt => {
+                if (try self.avail(1, "opt") == .absent) return;
+                if (self.take(1) == 1) try self.block(n.body, se, env.*);
+            },
+            .chain => {
+                var inner = env.*;
+                for (n.body, 0..) |*c, j| {
+                    if (c.tag != .fx) {
+                        try self.node(c, se, &inner);
+                        continue;
+                    }
+                    if (try self.avail(1, "fx") == .absent) break;
+                    if (self.take(1) == 0) break; // a 0 bit ends the chain
+                    if (j + 1 == n.body.len) {
+                        return bad(self.diag, alloc, mw, "the last fx bit of a chain is 1", .{});
+                    }
+                }
+            },
+            .length => {
+                if (try self.avail(n.len, "length") == .absent) return;
+                const stated: i128 = self.take(n.len);
+                const count = stated - n.plus;
+                if (count < 0) return bad(self.diag, alloc, mw, "the stated length {d} is below its `plus {d}`", .{ stated, n.plus });
+                const nbits = if (n.in_bits) count else count * 8;
+                if (nbits > @as(i128, self.limit() - self.pos)) {
+                    return bad(self.diag, alloc, mw, "a length extent of {d} bits at bit {d} runs past the end at bit {d}", .{ nbits, self.pos, self.limit() });
+                }
+                const end = self.pos + @as(usize, @intCast(nbits));
+                const save_end = self.soft_end;
+                const save_in = self.in_extent;
+                self.soft_end = end;
+                self.in_extent = true;
+                try self.block(n.body, se, env.*);
+                // content of the extent no line read is skipped
+                self.pos = end;
+                self.soft_end = save_end;
+                self.in_extent = save_in;
+            },
+            .whole => {
+                if (try self.avail(n.len, "length") == .absent) return;
+                const stated: i128 = self.take(n.len);
+                const total = (stated - n.plus) * 8;
+                if (total < @as(i128, self.pos)) return bad(self.diag, alloc, mw, "the stated length of the message is shorter than what was already read", .{});
+                if (total > @as(i128, self.hard_end)) return bad(self.diag, alloc, mw, "the stated length of the message is {d} bits, the input holds {d}", .{ total, self.hard_end });
+                self.hard_end = @intCast(total);
+                if (!self.in_extent) self.soft_end = self.hard_end;
+            },
+            .group => try self.group(n, se, env.*),
+            .fx => unreachable, // an `fx` line is a line of a chain
+        }
+    }
+
+    fn group(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
+        var items = std.ArrayList(Entity).init(self.alloc);
+        switch (n.mode) {
+            .count => {
+                if (try self.avail(n.len, n.list) == .absent) return;
+                const cnt = self.take(n.len);
+                // a count larger than the bits left, before any item is read
+                if (cnt > self.limit() - self.pos) {
+                    return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.limit() - self.pos });
+                }
+                for (0..@as(usize, @intCast(cnt))) |_| try self.item(n, &items, env);
+            },
+            .while_ => {
+                if (try self.avail(1, n.list) == .absent) return;
+                while (true) {
+                    try self.need(1, n.list);
+                    if (self.take(1) == 0) break;
+                    try self.item(n, &items, env);
+                }
+            },
+            .more => {
+                if (try self.avail(1, n.list) == .absent) return;
+                while (true) {
+                    try self.need(1, n.list);
+                    const more = self.take(1);
+                    try self.item(n, &items, env);
+                    if (more == 0) break;
+                }
+            },
+            .fx => {
+                if (self.in_extent and self.pos >= self.soft_end) return;
+                while (true) {
+                    try self.item(n, &items, env);
+                    try self.need(1, n.list);
+                    if (self.take(1) == 0) break;
+                }
+            },
+        }
+        if (!se.e.lists.contains(n.list)) try se.e.lists.put(n.list, items.items);
+    }
+
+    fn item(self: *SDec, n: *const SNode, items: *std.ArrayList(Entity), env: ?*const PEnv) anyerror!void {
+        var it = Entity.init(self.alloc);
+        var sit = SEnt{ .e = &it };
+        try self.body(n.gbody.?, &sit, env);
+        try items.append(it);
+    }
+
+    // A message, or one item: the common lines; then the first kind whose
+    // `when` lines, read where the common lines ended, all hold; then its
+    // lines.
+    fn body(self: *SDec, b: *const SBody, se: *SEnt, env_in: ?*const PEnv) anyerror!void {
+        var env = env_in;
+        try self.nodes(b.common, se, &env);
+        if (b.kinds.len > 0) {
+            var sel: ?*const SKind = null;
+            for (b.kinds) |*k| {
+                const save = self.pos;
+                var ok = true;
+                for (k.whens) |*w| {
+                    // a `when` any of whose bits lies beyond the input does not hold
+                    if (self.pos + w.len > self.limit() or self.take(w.len) != w.value) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok) {
+                    sel = k;
+                    break;
+                }
+                self.pos = save;
+            }
+            const k = sel orelse return bad(self.diag, self.alloc, E.@"no-kind", "no kind's `when` lines all hold at bit {d}", .{self.pos});
+            se.e.kind_fmt = self.p.format;
+            se.e.kind_name = k.name;
+            try self.nodes(k.lines, se, &env);
+        }
+        for (se.failed.items) |key| {
+            if (!se.e.fields.contains(key)) return bad(self.diag, self.alloc, E.@"transform-decode", "failed fields: {s}", .{key});
+        }
+    }
+};
+
+fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
+    const buf = hexDecode(alloc, bytes) catch |err| return bad(diag, alloc, err, "the input is not hex of even length", .{});
+    var d = SDec{ .alloc = alloc, .p = p, .buf = buf, .diag = diag, .hard_end = buf.len * 8, .soft_end = buf.len * 8 };
+    var e = Entity.init(alloc);
+    var se = SEnt{ .e = &e };
+    try d.body(p.seq.?, &se, null);
+    return e;
+}
+
+const SWhole = struct { at: usize, len: usize, plus: i64 };
+
+// The encoder lays out a scope in two passes: the presence bits and `fx` bits
+// are computed from the entity (`scan`, `hasContent`) before they are written.
+const SEnc = struct {
+    alloc: std.mem.Allocator,
+    p: *const Pack,
+    diag: *Diag,
+    out: std.ArrayList(u8), // zero beyond the cursor
+    pos: usize = 0,
+    wholes: std.ArrayListUnmanaged(SWhole) = .{},
+
+    const te = E.@"transform-encode";
+
+    fn ensure(self: *SEnc, nbits: usize) !void {
+        const nb = (nbits + 7) / 8;
+        if (nb > self.out.items.len) try self.out.appendNTimes(0, nb - self.out.items.len);
+    }
+
+    fn put(self: *SEnc, len: usize, value: u64) !void {
+        try self.ensure(self.pos + len);
+        setBits(self.out.items, self.p.msb, self.pos, len, value);
+        self.pos += len;
+    }
+
+    fn zeros(self: *SEnc, len: usize) !void {
+        try self.ensure(self.pos + len);
+        self.pos += len;
+    }
+
+    // Encode selects the kind the entity or item recorded for this format,
+    // else the first kind whose every `requires` key is present.
+    fn selectKind(self: *SEnc, b: *const SBody, ent: *const Entity) anyerror!?*const SKind {
+        if (b.kinds.len == 0) return null;
+        if (ent.kind_fmt) |kf| {
+            if (std.mem.eql(u8, kf, self.p.format)) {
+                for (b.kinds) |*k| if (std.mem.eql(u8, k.name, ent.kind_name)) return k;
+                return bad(self.diag, self.alloc, E.@"no-kind", "the entity records kind {s}, which the body does not have", .{ent.kind_name});
+            }
+        }
+        for (b.kinds) |*k| {
+            var all = true;
+            for (k.requires.items) |key| {
+                if (!ent.has(key)) {
+                    all = false;
+                    break;
+                }
+            }
+            if (all) return k;
+        }
+        return bad(self.diag, self.alloc, E.@"no-kind", "the entity has the `requires` keys of no kind", .{});
+    }
+
+    // The value a field writes: that of the earliest of its keys that is
+    // present, a key with a `default` in scope counting as present.
+    fn fieldValue(self: *SEnc, n: *const SNode, ent: *const Entity, ds: DS) !?MV {
+        const ln = &n.ln;
+        const wire_ty = yields(ln.transform.kind);
+        var i: usize = 0;
+        while (i <= n.also.items.len) : (i += 1) {
+            const key = if (i == 0) ln.key else n.also.items[i - 1].key;
+            const via = if (i == 0) ln.via else n.also.items[i - 1].via;
+            var mv = ent.get(key) orelse ds.get(key) orelse continue;
+            if (mv == .str and std.mem.eql(u8, key, "type")) {
+                if (self.p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
+            }
+            if (via) |t| {
+                mv = tableEncode(t, mv, wire_ty) catch |err|
+                    return bad(self.diag, self.alloc, err, "field {s}: the table has no entry for the value", .{key});
+            }
+            return mv;
+        }
+        return null;
+    }
+
+    fn keyPresent(n: *const SNode, ent: *const Entity, ds: DS) bool {
+        if (ent.fields.contains(n.ln.key) or ds.get(n.ln.key) != null) return true;
+        for (n.also.items) |a| if (ent.fields.contains(a.key) or ds.get(a.key) != null) return true;
+        return false;
+    }
+
+    // Would the lines write a present key, a non-empty list, or a nested
+    // presence that is not all zero?
+    fn hasContent(self: *SEnc, list: []const SNode, ent: *const Entity, ds: DS) anyerror!bool {
+        for (list) |*n| {
+            switch (n.tag) {
+                .field => if (keyPresent(n, ent, ds)) return true,
+                .group => {
+                    if (ent.lists.get(n.list)) |items| {
+                        if (items.len > 0) return true;
+                    }
+                },
+                .if_, .opt, .chain, .length => if (try self.hasContent(n.body, ent, ds)) return true,
+                else => {},
+            }
+        }
+        return false;
+    }
+
+    fn setBit(self: *SEnc, bits: *std.ArrayList(bool), bit: usize) !void {
+        _ = self;
+        while (bits.items.len < bit) try bits.append(false);
+        bits.items[bit - 1] = true;
+    }
+
+    // The bits of `pres` the lines set: every bit an `if` block names without
+    // `!`, when the block has content. A group is searched item by item, so
+    // any item with the content sets a bit of a presence outside the group.
+    fn scan(self: *SEnc, pres: *const SPres, list: []const SNode, ent: *const Entity, ds: DS, bits: *std.ArrayList(bool)) anyerror!void {
+        for (list) |*n| {
+            switch (n.tag) {
+                .if_ => {
+                    var names = false;
+                    for (n.conds) |c| {
+                        if (c.pres == pres and !c.neg) names = true;
+                    }
+                    if (names and try self.hasContent(n.body, ent, ds)) {
+                        for (n.conds) |c| {
+                            if (c.pres == pres and !c.neg) try self.setBit(bits, c.bit);
+                        }
+                    }
+                    try self.scan(pres, n.body, ent, ds, bits);
+                },
+                .opt, .chain, .length => try self.scan(pres, n.body, ent, ds, bits),
+                .group => {
+                    const items = ent.lists.get(n.list) orelse continue;
+                    const b = n.gbody.?;
+                    for (items) |*it| {
+                        const k = try self.selectKind(b, it);
+                        const ids = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
+                        try self.scan(pres, b.common, it, ids, bits);
+                        if (k) |kk| try self.scan(pres, kk.lines, it, ids, bits);
+                    }
+                },
+                else => {},
+            }
+        }
+    }
+
+    fn body(self: *SEnc, b: *const SBody, ent: *const Entity, env_in: ?*const PEnv) anyerror!void {
+        const k = try self.selectKind(b, ent);
+        const ds = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
+        var env = env_in;
+        const tail: []const SNode = if (k) |kk| kk.lines else &.{};
+        try self.nodes(b.common, tail, ent, ds, &env);
+        if (k) |kk| {
+            for (kk.whens) |*w| try self.put(w.len, w.value);
+            try self.nodes(kk.lines, &.{}, ent, ds, &env);
+        }
+    }
+
+    // `tail`: the lines that follow `list` in the same block (the selected
+    // kind's lines, while the common lines are written).
+    fn nodes(self: *SEnc, list: []const SNode, tail: []const SNode, ent: *const Entity, ds: DS, env: *?*const PEnv) anyerror!void {
+        for (list, 0..) |*n, i| try self.node(n, list[i + 1 ..], tail, ent, ds, env);
+    }
+
+    fn block(self: *SEnc, list: []const SNode, ent: *const Entity, ds: DS, env: ?*const PEnv) anyerror!void {
+        var inner = env;
+        try self.nodes(list, &.{}, ent, ds, &inner);
+    }
+
+    fn node(self: *SEnc, n: *const SNode, rest: []const SNode, tail: []const SNode, ent: *const Entity, ds: DS, env: *?*const PEnv) anyerror!void {
+        const alloc = self.alloc;
+        switch (n.tag) {
+            .field => {
+                const ln = &n.ln;
+                try self.ensure(self.pos + ln.blen);
+                // an absent key writes zero bits
+                if (try self.fieldValue(n, ent, ds)) |mv| {
+                    bitsWriteField(alloc, self.p, self.out.items, self.pos, ln, mv) catch |err|
+                        return bad(self.diag, alloc, err, "field {s}: the value does not encode in {d} bits", .{ ln.key, ln.blen });
+                }
+                self.pos += ln.blen;
+            },
+            .constant, .when => try self.put(n.len, n.value),
+            .pad => try self.zeros(n.len),
+            .align_ => {
+                const r = self.pos % n.len;
+                if (r != 0) try self.zeros(n.len - r);
+            },
+            .presence => {
+                const pr = n.pres.?;
+                var bits = std.ArrayList(bool).init(alloc);
+                try self.scan(pr, rest, ent, ds, &bits);
+                try self.scan(pr, tail, ent, ds, &bits);
+                if (pr.n > 0) {
+                    while (bits.items.len < pr.n) try bits.append(false);
+                    for (bits.items[0..pr.n]) |b| try self.put(1, @intFromBool(b));
+                } else {
+                    // trailing octets that are all zero are not written, and
+                    // at least one octet is
+                    var last: usize = 0;
+                    for (bits.items, 0..) |b, i| {
+                        if (b) last = i + 1;
+                    }
+                    const noct = @max(1, (last + 6) / 7);
+                    while (bits.items.len < noct * 7) try bits.append(false);
+                    for (0..noct) |o| {
+                        for (bits.items[o * 7 .. o * 7 + 7]) |b| try self.put(1, @intFromBool(b));
+                        try self.put(1, @intFromBool(o + 1 < noct));
+                    }
+                }
+                const pe = try alloc.create(PEnv);
+                pe.* = .{ .pres = pr, .bits = bits.items, .parent = env.* };
+                env.* = pe;
+            },
+            .if_ => {
+                if (condsHold(env.*, n.conds)) try self.block(n.body, ent, ds, env.*);
+            },
+            .opt => {
+                const has = try self.hasContent(n.body, ent, ds);
+                try self.put(1, @intFromBool(has));
+                if (has) try self.block(n.body, ent, ds, env.*);
+            },
+            .chain => {
+                var inner = env.*;
+                for (n.body, 0..) |*c, j| {
+                    if (c.tag != .fx) {
+                        try self.node(c, n.body[j + 1 ..], &.{}, ent, ds, &inner);
+                        continue;
+                    }
+                    // 1 when any line after it in the chain would write a
+                    // present key; the bit of a last `fx` line is 0
+                    const more = try self.hasContent(n.body[j + 1 ..], ent, ds);
+                    try self.put(1, @intFromBool(more));
+                    if (!more) break;
+                }
+            },
+            .length => {
+                // the block, then the length
+                const lpos = self.pos;
+                try self.zeros(n.len);
+                const start = self.pos;
+                try self.block(n.body, ent, ds, env.*);
+                if (!n.in_bits) {
+                    const r = (self.pos - start) % 8;
+                    if (r != 0) try self.zeros(8 - r);
+                }
+                const size = self.pos - start;
+                const stated: i128 = @as(i128, if (n.in_bits) size else size / 8) + n.plus;
+                if (stated < 0 or stated > std.math.maxInt(u64) or !fitsBits(@intCast(stated), n.len)) {
+                    return bad(self.diag, alloc, te, "the length {d} does not fit its {d} bits", .{ stated, n.len });
+                }
+                setBits(self.out.items, self.p.msb, lpos, n.len, @intCast(stated));
+            },
+            .whole => {
+                try self.wholes.append(alloc, .{ .at = self.pos, .len = n.len, .plus = n.plus });
+                try self.zeros(n.len);
+            },
+            .group => {
+                const items: []const Entity = ent.lists.get(n.list) orelse &.{};
+                const b = n.gbody.?;
+                switch (n.mode) {
+                    .count => {
+                        if (!fitsBits(items.len, n.len)) {
+                            return bad(self.diag, alloc, te, "group {s}: {d} items do not fit the {d} bits of the count", .{ n.list, items.len, n.len });
+                        }
+                        try self.put(n.len, items.len);
+                        for (items) |*it| try self.body(b, it, env.*);
+                    },
+                    .while_ => {
+                        for (items) |*it| {
+                            try self.put(1, 1);
+                            try self.body(b, it, env.*);
+                        }
+                        try self.put(1, 0);
+                    },
+                    .more, .fx => {
+                        // a list has at least one item on the wire
+                        if (items.len == 0) {
+                            return bad(self.diag, alloc, te, "group {s}: the list is absent or empty, and the wire holds at least one item", .{n.list});
+                        }
+                        for (items, 0..) |*it, i| {
+                            const more = @intFromBool(i + 1 < items.len);
+                            if (n.mode == .more) try self.put(1, more);
+                            try self.body(b, it, env.*);
+                            if (n.mode == .fx) try self.put(1, more);
+                        }
+                    },
+                }
+            },
+            .fx => unreachable, // an `fx` line is a line of a chain
+        }
+    }
+};
+
+fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc) };
+    try enc.body(p.seq.?, e, null);
+    // a message is a whole number of bytes; `length … whole` holds that
+    // number plus n
+    const nbytes = enc.out.items.len;
+    for (enc.wholes.items) |w| {
+        const stated: i128 = @as(i128, nbytes) + w.plus;
+        if (stated < 0 or stated > std.math.maxInt(u64) or !fitsBits(@intCast(stated), w.len)) {
+            return bad(diag, alloc, E.@"transform-encode", "the message length {d} does not fit its {d} bits", .{ stated, w.len });
+        }
+        setBits(enc.out.items, p.msb, w.at, w.len, @intCast(stated));
+    }
+    return hexEncode(alloc, enc.out.items);
 }
 
 // ---------------------------------------------------------------------------
@@ -4191,6 +5600,14 @@ fn checkModelKey(alloc: std.mem.Allocator, ent: *const Entity, key: []const u8, 
             return try std.fmt.allocPrint(alloc, "model key {s}: expected {d} items, the list is absent", .{ key, want });
         if (items.len != want) {
             return try std.fmt.allocPrint(alloc, "model key {s}: expected {d} items, got {d}", .{ key, want, items.len });
+        }
+        return null;
+    }
+    if (std.mem.eql(u8, rest, "@kind")) {
+        // the kind an item recorded when it was decoded
+        if (cur.kind_fmt == null) return try std.fmt.allocPrint(alloc, "model key {s}: expected {s}, the item records no kind", .{ key, clip(exp) });
+        if (!std.mem.eql(u8, cur.kind_name, exp)) {
+            return try std.fmt.allocPrint(alloc, "model key {s}: expected {s}, got {s}", .{ key, clip(exp), clip(cur.kind_name) });
         }
         return null;
     }

@@ -1,0 +1,7 @@
+{
+  "name": "to-lsb-presence-chain-group-and-opt",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-lsb",
+  "input": "{\"n\":1,\"qty\":2,\"val\":4660,\"x\":9,\"y\":-2,\"z\":68,\"c1\":5,\"label\":\"A\",\"nums\":[3]}",
+  "expect": "01a234124dfe024405318300"
+}

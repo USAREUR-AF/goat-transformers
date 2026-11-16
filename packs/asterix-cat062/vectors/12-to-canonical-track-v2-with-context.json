@@ -1,0 +1,13 @@
+{
+  "name": "to-canonical-track-v2-with-context",
+  "from": "asterix-cat062",
+  "to": "canonical-track-v2",
+  "input": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "context": {
+    "uid": "311",
+    "track.source_id": "sensor-a",
+    "track.generation": "generation-1",
+    "time_ms": "1761739200123"
+  },
+  "expect": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"311\",\"sourceId\":\"sensor-a\",\"trackGeneration\":\"generation-1\",\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2025-10-29T12:00:00.123Z\",\"position\":{\"latitudeDeg\":0,\"longitudeDeg\":0,\"altitudeM\":152.4},\"velocity\":{\"eastMps\":-12.5,\"northMps\":4.25}}"
+}

@@ -23,7 +23,7 @@ abstract class Codec<W> {
     /** Encode the entity through the lines of the selected kind. */
     abstract String encodeKind(Entity e, Pack.Kind kind);
 
-    final Entity decode(String text) {
+    Entity decode(String text) {
         W wire = parse(text);
         Pack.Kind kind = selectForDecode(wire);
         Entity e = decodeKind(wire, kind);
@@ -31,7 +31,7 @@ abstract class Codec<W> {
         return e;
     }
 
-    final String encode(Entity e) {
+    String encode(Entity e) {
         return encodeKind(e, selectForEncode(e));
     }
 

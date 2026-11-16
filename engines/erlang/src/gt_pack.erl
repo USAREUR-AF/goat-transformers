@@ -1,7 +1,7 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.7).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.8).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
-%% Pack = #{name, version, wire, root, word_bytes, bit_order, typemap,
+%% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
 %%          tables => #{Table => #{dec, enc, type}},
 %%          distribution, sources, uses, has_kinds,
 %%          common => [Line], defaults => [{Key, ValueText}],
@@ -50,21 +50,34 @@ parse(Text) when is_list(Text) -> parse(unicode:characters_to_binary(Text));
 parse(Bin) ->
     Lines = [T || L <- binary:split(Bin, <<"\n">>, [global]),
                   T <- [tokens(L)], T =/= []],
+    Layout = case first_arg(<<"layout">>, Lines) of
+                 <<"sequential">> -> sequential;
+                 _ -> fixed
+             end,
     Base = #{name => undefined, version => undefined,
              wire => first_arg(<<"wire">>, Lines),
              root => undefined,
              word_bytes => first_arg(<<"word_bytes">>, Lines),
+             layout => Layout,
              bit_order => lsb,
-             has_kinds => lists:any(fun([<<"kind">> | _]) -> true; (_) -> false end, Lines),
+             %% in a sequential pack a `kind` line may belong to a group
+             %% body; the flag is set when a kind of the message opens
+             has_kinds => Layout =/= sequential andalso
+                 lists:any(fun([<<"kind">> | _]) -> true; (_) -> false end, Lines),
              typemap => [], tables => #{}, table_names => [],
              distribution => undefined, sources => [], uses => [],
              common => [], defaults => [], kinds => [], kind_names => #{},
-             cur => common, late => [], gstack => []},
+             cur => common, late => [], gstack => [], sstack => []},
     P0 = lists:foldl(fun line/2, Base, Lines),
     case maps:get(gstack, P0) of
         [] -> ok;
         [#{list := Open} | _] ->
             load_error('bad-directive', "group ~s has no end line", [Open])
+    end,
+    case maps:get(sstack, P0) of
+        [] -> ok;
+        [#{type := Type} | _] ->
+            load_error('bad-directive', "a ~s block has no end line", [Type])
     end,
     P1 = close_kind(P0),
     Tables = finish_tables(P1),
@@ -78,12 +91,14 @@ parse(Bin) ->
                                       "via names table ~s, which has no map line", [Table])
               end
       end, lists:reverse(maps:get(late, P1))),
-    check_scopes(P1#{common := lists:reverse(maps:get(common, P1)),
-                     kinds := lists:reverse(maps:get(kinds, P1))}),
-    P = maps:without([cur, late, kind_names, table_names, gstack],
-                     P1#{common := lists:reverse(maps:get(common, P1)),
-                         defaults := lists:reverse(maps:get(defaults, P1)),
-                         kinds := lists:reverse(maps:get(kinds, P1)),
+    P2 = P1#{common := lists:reverse(maps:get(common, P1)),
+             kinds := lists:reverse(maps:get(kinds, P1))},
+    P3 = case Layout of
+             sequential -> seq_resolve(P2);
+             fixed -> check_scopes(P2), P2
+         end,
+    P = maps:without([cur, late, kind_names, table_names, gstack, sstack],
+                     P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
                          uses := lists:reverse(maps:get(uses, P1)),
@@ -118,6 +133,7 @@ first_arg(Dir, Lines) ->
     case [A || [D, A] <- Lines, D =:= Dir] of
         [] -> undefined;
         [A | _] when Dir =:= <<"wire">> -> wire_atom(A);
+        [A | _] when Dir =:= <<"layout">> -> A;
         [A | _] when Dir =:= <<"word_bytes">> -> word_bytes(A)
     end.
 
@@ -183,8 +199,26 @@ named_scope(Lines, Defaults) ->
            {field, K, _, Tr, _, Opts} -> [{K, {field, Tr, element(1, Opts)}}];
            {group, List, _, _, #{lines := Ls, defaults := Ds}, _} ->
                [{List, list} | named_scope(Ls, Ds)];
-           _ -> []
+           {sfield, Keys, _, Tr, _, _, _} -> [{K, {field, Tr, Via}} || {K, Via} <- Keys];
+           {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
+               [{List, list} | named_scope(Ls, Ds)] ++
+                   lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
+                                 || K <- Ks]) ++
+                   [{R, requires} || K <- Ks, R <- maps:get(requires, K)];
+           _ ->
+               case seq_bodies(L) of
+                   [] -> [];
+                   Bodies -> named_scope(lists:append(Bodies), [])
+               end
        end || L <- Lines]) ++ [{K, default} || {K, _} <- Defaults].
+
+%% The bodies of a sequential block line that belong to the scope the line
+%% stands in (`if`, `opt`, `length`, `chain`).
+seq_bodies({ifb, _, Body}) -> [Body];
+seq_bodies({opt, Body}) -> [Body];
+seq_bodies({len, _, _, _, Body}) -> [Body];
+seq_bodies({chain, First, Rest, _}) -> [First | Rest];
+seq_bodies(_) -> [].
 
 %% Union of mapped keys over common and all kinds, in first appearance order.
 %% A list is named `<list>[]` and an item key `<list>[].<key>`, nested lists
@@ -206,7 +240,12 @@ key_names(Lines, Prefix) ->
            {group, List, _, _, #{lines := Ls}, _} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls, <<Name/binary, ".">>)];
-           _ -> []
+           {sfield, Keys, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
+           {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
+               Name = <<Prefix/binary, List/binary, "[]">>,
+               [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
+                                 <<Name/binary, ".">>)];
+           _ -> key_names(lists:append(seq_bodies(L)), Prefix)
        end || L <- Lines]).
 
 %% Lookup indexes over the kinds: by name, and (xml) by root element name in
@@ -226,12 +265,24 @@ index(#{kinds := Kinds, root := PackRoot} = P) ->
 %% ===================================================================
 %% One line. Inside a group `when`, `requires`, `root`, `kind`, `map` and
 %% `typemap` are not allowed.
+line(Tokens, #{layout := sequential, wire := bits} = P) -> seq_line(Tokens, P);
 line([Dir | _] = Tokens, #{gstack := Stack} = P) ->
-    Refused = [<<"when">>, <<"requires">>, <<"root">>, <<"kind">>, <<"map">>, <<"typemap">>],
-    case Stack =/= [] andalso lists:member(Dir, Refused) of
+    %% inside a group only these are lines of the body (ruling 18 of 0.7);
+    %% a name that is no directive at all stays unknown-directive
+    Allowed = [<<"field">>, <<"const">>, <<"default">>, <<"group">>, <<"end">>],
+    case Stack =/= [] andalso not lists:member(Dir, Allowed)
+        andalso lists:member(Dir, known_directives()) of
         true -> load_error('bad-directive', "~s is not allowed inside a group", [Dir]);
         false -> apply_line(Tokens, P)
     end.
+
+known_directives() ->
+    [<<"format">>, <<"version">>, <<"wire">>, <<"root">>, <<"word_bytes">>,
+     <<"bit_order">>, <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>,
+     <<"kind">>, <<"requires">>, <<"when">>, <<"field">>, <<"const">>,
+     <<"default">>, <<"map">>, <<"group">>, <<"end">>,
+     <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
+     <<"chain">>, <<"fx">>, <<"length">>, <<"also">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -248,6 +299,13 @@ apply_line([<<"root">>, R], #{cur := Cur} = P) ->
             end
     end;
 apply_line([<<"word_bytes">>, N], P) -> _ = word_bytes(N), P;    % read by first_arg
+apply_line([<<"layout">>, L], #{wire := Wire} = P) ->
+    case {Wire, L} of
+        {bits, <<"sequential">>} -> P;                            % read by first_arg
+        {bits, <<"fixed">>} -> P;
+        {bits, _} -> load_error('bad-directive', "layout ~s is neither fixed nor sequential", [L]);
+        _ -> load_error('bad-directive', "layout is valid only on a bits wire", [])
+    end;
 apply_line([<<"bit_order">>, O], #{wire := Wire} = P0) ->
     P = case Wire of
             bits -> P0;
@@ -295,6 +353,10 @@ apply_line([<<"when">>, LocS, ValS], #{has_kinds := HasKinds} = P0) ->
 apply_line([<<"const">>, LocS, ValS], P0) ->
     Wire = need_wire(P0),
     Loc = parse_loc(Wire, LocS, P0),
+    case Loc of
+        [] -> load_error('bad-directive', "const . names the item itself", []);
+        _ -> ok
+    end,
     {Val, P1} = fixed_value(const, Wire, Loc, LocS, ValS, P0),
     add_line({const, Loc, Val, LocS}, P1);
 apply_line([<<"default">>, Key, Val], #{gstack := [#{defaults := D} = G | Rest]} = P) ->
@@ -336,11 +398,9 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
     P1 = lists:foldl(fun late/2, P0, Checks),
     add_line({field, Key, Loc, Tr, LocS, Opts}, P1);
 apply_line([Dir | Args], _P) ->
-    Known = [<<"format">>, <<"version">>, <<"wire">>, <<"root">>, <<"word_bytes">>,
-             <<"bit_order">>, <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>,
-             <<"kind">>, <<"requires">>, <<"when">>, <<"field">>, <<"const">>,
-             <<"default">>, <<"map">>, <<"group">>, <<"end">>],
-    case lists:member(Dir, Known) of
+    %% the lines of a sequential pack are here too: in a fixed-layout pack,
+    %% or on another wire, they are bad-directive
+    case lists:member(Dir, known_directives()) of
         true -> load_error('bad-directive', "~s takes a different number of arguments than ~p",
                            [Dir, length(Args)]);
         false -> load_error('unknown-directive', "~s", [Dir])
@@ -563,32 +623,70 @@ group_spec(Wire, [Tok | _], LocS, _P) ->
 %% Within one scope (common plus one kind, or one group body) a list is
 %% mapped by at most one group. On bits: a group counted by a locator is the
 %% last thing in its scope, and a field of an item stays within its item.
-check_scopes(#{common := Common, kinds := Kinds}) ->
+check_scopes(#{common := Common, kinds := Kinds, wire := Wire}) ->
     case Kinds of
-        [] -> check_scope(Common, none);
+        [] -> check_scope(Common, none, Wire);
         _ ->
             lists:foreach(
               fun(#{lines := Ls}) ->
                       case has_group(Common) orelse has_group(Ls) of
-                          true -> check_scope(Common ++ Ls, none);
+                          true -> check_scope(Common ++ Ls, none, Wire);
                           false -> ok
                       end
               end, Kinds)
     end,
-    lists:foreach(fun check_bodies/1, [Common | [maps:get(lines, K) || K <- Kinds]]).
+    lists:foreach(fun(Ls) -> check_bodies(Ls, Wire) end,
+                  [Common | [maps:get(lines, K) || K <- Kinds]]).
 
 has_group(Lines) -> lists:any(fun(L) -> element(1, L) =:= group end, Lines).
 
-check_bodies(Lines) ->
+check_bodies(Lines, Wire) ->
     lists:foreach(
-      fun({group, _, _, Spec, #{lines := Ls}, _}) ->
-              check_scope(Ls, case Spec of none -> none; {Bits, _} -> Bits end),
-              check_bodies(Ls);
+      fun({group, List, _, Spec, #{lines := Ls}, _}) ->
+              check_scope(Ls, case Spec of none -> none; {Bits, _} -> Bits end, Wire),
+              %% protobuf: a body is scalar only when every line is `.`
+              %% (ruling 13 of 0.7)
+              Dot = fun({field, _, [], _, _, _}) -> true; (_) -> false end,
+              case Wire =:= protobuf andalso lists:any(Dot, Ls)
+                  andalso not lists:all(Dot, Ls) of
+                  true -> load_error('bad-directive',
+                                     "the body of group ~s mixes `.` with other lines", [List]);
+                  false -> ok
+              end,
+              check_bodies(Ls, Wire);
          (_) -> ok
       end, Lines).
 
-check_scope(Lines, ItemBits) ->
+%% The paths a group must not have for a field at this locator.
+through_prefixes(xml, {FPath, _}) -> prefixes(FPath) ++ [FPath];
+through_prefixes(bits, _) -> [];
+through_prefixes(_Wire, FPath) when is_list(FPath), FPath =/= [] -> prefixes(FPath);
+through_prefixes(_, _) -> [].
+
+%% The proper prefixes of a path that are not empty.
+prefixes([]) -> [];
+prefixes(Path) -> prefixes(lists:droplast(Path), []).
+
+prefixes([], Acc) -> Acc;
+prefixes(Path, Acc) -> prefixes(lists:droplast(Path), [Path | Acc]).
+
+check_scope(Lines, ItemBits, Wire) ->
     Groups = [G || G <- Lines, element(1, G) =:= group],
+    %% a field's locator does not pass through a group's path (ruling 21 of
+    %% 0.7): on xml the field's element path, on json and protobuf a proper
+    %% prefix of its path, is no group's path
+    GroupPaths = maps:from_list([{element(3, G), true} || G <- Groups]),
+    lists:foreach(
+      fun({field, Key, FLoc, _, LocT, _}) when Groups =/= [] ->
+              case lists:any(fun(Pre) -> maps:is_key(Pre, GroupPaths) end,
+                             through_prefixes(Wire, FLoc)) of
+                  true -> load_error('bad-directive',
+                                     "field ~s at ~s passes through the path of a group",
+                                     [Key, LocT]);
+                  false -> ok
+              end;
+         (_) -> ok
+      end, Lines),
     Lists = [element(2, G) || G <- Groups],
     case length(lists:usort(Lists)) =:= length(Lists) of
         true -> ok;
@@ -618,6 +716,11 @@ check_scope(Lines, ItemBits) ->
                         load_error('bad-directive',
                                    "group ~s starts at or beyond group ~s, which is counted by a locator",
                                    [Other, List]);
+                   ({J, {group, Other, Start2, {Bits2, {fixed, N2}}, _, _}})
+                      when J =/= I, Start2 + Bits2 * N2 > Start ->
+                        load_error('bad-directive',
+                                   "the items of group ~s reach group ~s, which is counted by a locator",
+                                   [Other, List]);
                    (_) -> ok
                 end, Numbered);
          (_) -> ok
@@ -630,6 +733,9 @@ check_scope(Lines, ItemBits) ->
             lists:foreach(
               fun({group, List, Start, {Bits, {fixed, N}}, _, _}) when Start + Bits * N > ItemBits ->
                       load_error('bad-directive', "group ~s reaches beyond the bits of its item", [List]);
+                 ({group, List, _, {_, {loc, {CO, CL}}}, _, _}) when CO + CL > ItemBits ->
+                      load_error('bad-directive',
+                                 "the count locator of group ~s reaches beyond the bits of its item", [List]);
                  ({group, _, _, _, _, _}) -> ok;
                  (L) ->
                       case element(line_loc_pos(L), L) of
@@ -787,9 +893,339 @@ scan_quoted(Bin, N) ->
         _ -> scan_quoted(Bin, N + 1)
     end.
 
-scan_bare(Bin, N) ->
-    case Bin of
-        <<_:N/binary, C, _/binary>> when C =:= $\s; C =:= $\t; C =:= $\r -> N;
-        <<_:N/binary>> -> N;
-        _ -> scan_bare(Bin, N + 1)            % '#' mid-token is literal
+%% Length of a bare token: up to the next whitespace ('#' mid-token is literal).
+scan_bare(Bin, 0) ->
+    case binary:match(Bin, [<<" ">>, <<"\t">>, <<"\r">>]) of
+        {Pos, _} -> Pos;
+        nomatch -> byte_size(Bin)
     end.
+
+%% ===================================================================
+%% sequential layouts (engine-spec Version 0.8)
+%% ===================================================================
+%% In a `layout sequential` pack a locator is a bit length and the lines are
+%% read in file order from a cursor. Lines:
+%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim}
+%%        the first key is the `field` line's, the others those of the `also`
+%%        lines after it
+%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value}
+%%   {presence, Id, Size :: pos_integer() | fx}
+%%   {ifb, [{Id, Bit, Negated}], Body} | {opt, Body}
+%%   {chain, FirstPart, [Part], EndsWithFx}   each later part follows an fx bit
+%%   {len, Len, bytes | bits, Plus, Body} | {lenwhole, Len, Plus}
+%%   {sgroup, List, {count, Len} | while | more | fx,
+%%            #{lines, defaults, kinds => [Kind]}}
+%% The `when` lines of a kind are the first lines of its `lines`.
+%% While the file is read a presence is {presence, Name, Size} and an `if`
+%% names {Name, Bit, Negated}; seq_resolve/1 gives every presence line an id,
+%% binds each `if` name to the presence visible where it stands, and records
+%% the bits some `if` names in `presence_named`.
+seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
+    PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
+                 <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
+                 <<"root">>, <<"word_bytes">>],
+    case lists:member(Dir, PackLevel) of
+        true when Stack =/= [] ->
+            load_error('bad-directive', "~s is not allowed inside a block", [Dir]);
+        true when Dir =:= <<"word_bytes">> ->
+            load_error('bad-directive', "word_bytes is not used in a sequential pack", []);
+        true -> apply_line(Tokens, P);
+        false -> seq_apply(Tokens, P)
+    end.
+
+seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
+    Tr = parse_transform(bits, TrS),
+    Len = seq_len(LenS, 1, infinity),
+    {Via, Swap, Trim, Optional} = parse_opts(OptToks, {none, false, false, false}),
+    case Optional of
+        true -> load_error('bad-directive', "optional is not a field option of a sequential pack", []);
+        false -> ok
+    end,
+    Checks =
+        [{bad, "~s does not allow the bit length ~s", [TrS, LenS]}
+         || not len_ok(bits, Tr, {0, Len})] ++
+        [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
+         || Swap, Len rem 8 =/= 0] ++
+        [{bad, "trim on a field of ~s bits: valid only with ascii", [LenS]}
+         || Trim, Tr =/= ascii] ++
+        [{via, Via} || Via =/= none],
+    P1 = lists:foldl(fun late/2, P0, Checks),
+    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim}, P1);
+seq_apply([<<"also">>, Key | Rest], P0) ->
+    Via = case Rest of
+              [] -> none;
+              [<<"via">>, T] -> T;
+              _ -> load_error('bad-directive', "also ~s is not `also <key> [via <table>]`", [Key])
+          end,
+    P = case Via of
+            none -> P0;
+            _ -> late({via, Via}, P0)
+        end,
+    case seq_lines(P) of
+        [{sfield, Keys, Len, Tr, LenS, Swap, Trim} | Before] ->
+            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim} | Before], P);
+        _ -> load_error('bad-directive', "also ~s does not follow a field line", [Key])
+    end;
+seq_apply([<<"const">>, LenS, ValS], P) ->
+    Len = seq_len(LenS, 1, 64),
+    seq_add({sconst, Len, seq_value(ValS, Len)}, P);
+seq_apply([<<"pad">>, LenS], P) -> seq_add({pad, seq_len(LenS, 0, infinity)}, P);
+seq_apply([<<"align">>, NS], P) -> seq_add({align, seq_len(NS, 1, infinity)}, P);
+seq_apply([<<"when">>, LenS, ValS], #{sstack := Stack} = P) ->
+    Len = seq_len(LenS, 1, 64),
+    %% a `when` stands among the common lines, or first in its kind
+    First = fun(Ls) -> lists:all(fun(L) -> element(1, L) =:= swhen end, Ls) end,
+    Ok = case Stack of
+             [] -> maps:get(cur, P) =:= common orelse First(seq_lines(P));
+             [#{type := group, cur := none} | _] -> true;
+             [#{type := group} | _] -> First(seq_lines(P));
+             _ -> false
+         end,
+    case Ok of
+        true -> seq_add({swhen, Len, seq_value(ValS, Len)}, P);
+        false -> load_error('bad-directive',
+                            "when ~s ~s stands after another line of its kind or inside a block",
+                            [LenS, ValS])
+    end;
+seq_apply([<<"presence">>, Name, SizeS], P) ->
+    Size = case SizeS of
+               <<"fx">> -> fx;
+               _ -> seq_len(SizeS, 1, 64)
+           end,
+    seq_add({presence, Name, Size}, P);
+seq_apply([<<"if">> | Conds], P) when Conds =/= [] ->
+    seq_push(#{type => 'if', hdr => [seq_cond(C) || C <- Conds]}, P);
+seq_apply([<<"opt">>], P) -> seq_push(#{type => opt, hdr => none}, P);
+seq_apply([<<"chain">>], P) -> seq_push(#{type => chain, hdr => none}, P);
+seq_apply([<<"fx">>], #{sstack := Stack} = P) ->
+    case Stack of
+        [#{type := chain} | _] -> seq_add(fx, P);
+        _ -> load_error('bad-directive', "fx is a line of a chain", [])
+    end;
+seq_apply([<<"length">>, LenS | Rest], P) ->
+    Len = seq_len(LenS, 1, 64),
+    {Unit, Plus, Whole} = seq_length_opts(Rest, {undefined, undefined, false}),
+    case {Whole, Unit} of
+        {true, bits} -> load_error('bad-directive', "length ... bits whole", []);
+        {true, _} -> seq_add({lenwhole, Len, default(Plus, 0)}, P);
+        {false, _} -> seq_push(#{type => length,
+                                 hdr => {Len, default(Unit, bytes), default(Plus, 0)}}, P)
+    end;
+seq_apply([<<"group">>, List | ModeToks], P) ->
+    Mode = case ModeToks of
+               [<<"count">>, LenS] -> {count, seq_len(LenS, 1, 64)};
+               [<<"while">>] -> while;
+               [<<"more">>] -> more;
+               [<<"fx">>] -> fx;
+               _ -> load_error('bad-directive',
+                               "group ~s is not `count <len>`, `while`, `more` or `fx`", [List])
+           end,
+    seq_push(#{type => group, hdr => {List, Mode}}, P);
+seq_apply([<<"end">>], #{sstack := Stack} = P) ->
+    case Stack of
+        [] -> load_error('bad-directive', "end with no open block", []);
+        [Frame | Rest] -> seq_add(seq_close(Frame), P#{sstack := Rest})
+    end;
+seq_apply([<<"kind">>, Name] = Tokens, #{sstack := Stack} = P) ->
+    case Stack of
+        [] -> (apply_line(Tokens, P))#{has_kinds := true};
+        [#{type := group, kind_names := Names} = F0 | Rest] ->
+            case maps:is_key(Name, Names) of
+                true -> load_error('duplicate-kind', "kind ~s is declared twice in a group", [Name]);
+                false -> ok
+            end,
+            F = seq_close_kind(F0),
+            P#{sstack := [F#{cur := #{name => Name, requires => [], lines => [], defaults => []},
+                             kind_names := Names#{Name => true}} | Rest]};
+        _ -> load_error('bad-directive', "kind ~s inside a block", [Name])
+    end;
+seq_apply([<<"requires">> | Keys] = Tokens, #{sstack := Stack} = P) when Keys =/= [] ->
+    case Stack of
+        [] -> apply_line(Tokens, P);
+        [#{type := group, cur := #{requires := R} = K} = F | Rest] ->
+            P#{sstack := [F#{cur := K#{requires := R ++ Keys}} | Rest]};
+        _ -> load_error('bad-directive', "requires outside a kind", [])
+    end;
+seq_apply([<<"default">>, Key, Val] = Tokens, #{sstack := Stack} = P) ->
+    %% a default belongs to the scope its block stands in: the nearest group
+    %% body (its open kind), else the message
+    {Inner, Outer} = lists:splitwith(fun(#{type := T}) -> T =/= group end, Stack),
+    case Outer of
+        [] -> apply_line(Tokens, P);
+        [#{cur := none, defaults := D} = F | Rest] ->
+            P#{sstack := Inner ++ [F#{defaults := [{Key, Val} | D]} | Rest]};
+        [#{cur := #{defaults := D} = K} = F | Rest] ->
+            P#{sstack := Inner ++ [F#{cur := K#{defaults := [{Key, Val} | D]}} | Rest]}
+    end;
+seq_apply([Dir | Args], _P) ->
+    case lists:member(Dir, known_directives()) of
+        true -> load_error('bad-directive', "~s takes a different number of arguments than ~p",
+                           [Dir, length(Args)]);
+        false -> load_error('unknown-directive', "~s", [Dir])
+    end.
+
+default(undefined, D) -> D;
+default(V, _) -> V.
+
+%% A bit length or count: an unsigned integer within Min .. Max. A positional
+%% locator is not one.
+seq_len(S, Min, Max) ->
+    case uint(S) of
+        N when is_integer(N), N >= Min, Max =:= infinity orelse N =< Max -> N;
+        _ -> load_error('bad-directive', "~s is not a bit length a sequential pack allows", [S])
+    end.
+
+seq_value(ValS, Len) ->
+    case uint(ValS) of
+        V when is_integer(V), V < (1 bsl Len) -> V;
+        V when is_integer(V) ->
+            load_error('bad-directive', "value ~s does not fit ~p bits", [ValS, Len]);
+        error -> load_error('bad-directive', "value ~s is not an unsigned integer", [ValS])
+    end.
+
+%% `[!]<name>.<i>`
+seq_cond(Tok) ->
+    {Neg, Rest} = case Tok of
+                      <<"!", R/binary>> -> {true, R};
+                      _ -> {false, Tok}
+                  end,
+    case binary:split(Rest, <<".">>, [global]) of
+        [Name, BitS] when Name =/= <<>> ->
+            case uint(BitS) of
+                Bit when is_integer(Bit), Bit >= 1 -> {Name, Bit, Neg};
+                _ -> load_error('bad-directive', "if ~s names no presence bit", [Tok])
+            end;
+        _ -> load_error('bad-directive', "if ~s is not <name>.<i>", [Tok])
+    end.
+
+%% `[bytes|bits] [plus <n>] [whole]`, in any order, each at most once.
+seq_length_opts([], Acc) -> Acc;
+seq_length_opts([<<"bytes">> | R], {undefined, P, W}) -> seq_length_opts(R, {bytes, P, W});
+seq_length_opts([<<"bits">> | R], {undefined, P, W}) -> seq_length_opts(R, {bits, P, W});
+seq_length_opts([<<"whole">> | R], {U, P, false}) -> seq_length_opts(R, {U, P, true});
+seq_length_opts([<<"plus">>, NS | R], {U, undefined, W}) ->
+    N = try binary_to_integer(NS)
+        catch _:_ -> load_error('bad-directive', "length plus ~s is not an integer", [NS])
+        end,
+    seq_length_opts(R, {U, N, W});
+seq_length_opts([Tok | _], _) ->
+    load_error('bad-directive', "length: ~s is not expected here", [Tok]).
+
+seq_push(Frame, #{sstack := Stack} = P) ->
+    P#{sstack := [Frame#{lines => [], defaults => [], kinds => [], cur => none,
+                         kind_names => #{}} | Stack]}.
+
+%% The lines read so far, latest first, of the body a line now goes to.
+seq_lines(#{sstack := [#{type := group, cur := #{lines := Ls}} | _]}) -> Ls;
+seq_lines(#{sstack := [#{lines := Ls} | _]}) -> Ls;
+seq_lines(#{cur := common, common := C}) -> C;
+seq_lines(#{cur := #{lines := Ls}}) -> Ls.
+
+seq_set_lines(Ls, #{sstack := [#{type := group, cur := #{} = K} = F | Rest]} = P) ->
+    P#{sstack := [F#{cur := K#{lines := Ls}} | Rest]};
+seq_set_lines(Ls, #{sstack := [F | Rest]} = P) -> P#{sstack := [F#{lines := Ls} | Rest]};
+seq_set_lines(Ls, #{cur := common} = P) -> P#{common := Ls};
+seq_set_lines(Ls, #{cur := Cur} = P) -> P#{cur := Cur#{lines := Ls}}.
+
+seq_add(Line, P) -> seq_set_lines([Line | seq_lines(P)], P).
+
+seq_close_kind(#{cur := none} = F) -> F;
+seq_close_kind(#{cur := #{lines := Ls, defaults := Ds} = K, kinds := Ks} = F) ->
+    F#{cur := none,
+       kinds := [K#{lines := lists:reverse(Ls), defaults := lists:reverse(Ds)} | Ks]}.
+
+%% The line a closed block makes.
+seq_close(#{type := 'if', hdr := Conds, lines := Ls}) -> {ifb, Conds, lists:reverse(Ls)};
+seq_close(#{type := opt, lines := Ls}) -> {opt, lists:reverse(Ls)};
+seq_close(#{type := length, hdr := {Len, Unit, Plus}, lines := Ls}) ->
+    {len, Len, Unit, Plus, lists:reverse(Ls)};
+seq_close(#{type := chain, lines := Ls}) ->
+    EndsFx = case Ls of [fx | _] -> true; _ -> false end,
+    [First | Rest] = seq_parts(lists:reverse(Ls), [], []),
+    %% the part after a closing fx line is empty and is not a part
+    {chain, First, case EndsFx of true -> lists:droplast(Rest); false -> Rest end, EndsFx};
+seq_close(#{type := group, hdr := {List, Mode}} = F0) ->
+    #{lines := Ls, defaults := Ds, kinds := Ks} = seq_close_kind(F0),
+    Common = lists:reverse(Ls),
+    case Ks =:= [] andalso lists:any(fun(L) -> element(1, L) =:= swhen end, Common) of
+        true -> load_error('bad-directive', "when in the body of group ~s, which has no kind", [List]);
+        false -> ok
+    end,
+    {sgroup, List, Mode,
+     #{lines => Common, defaults => lists:reverse(Ds), kinds => lists:reverse(Ks)}}.
+
+seq_parts([], Cur, Acc) -> lists:reverse([lists:reverse(Cur) | Acc]);
+seq_parts([fx | Rest], Cur, Acc) -> seq_parts(Rest, [], [lists:reverse(Cur) | Acc]);
+seq_parts([L | Rest], Cur, Acc) -> seq_parts(Rest, [L | Cur], Acc).
+
+%% ---- presence names ----
+%% A name is visible from its `presence` line to the end of the enclosing
+%% block; a nested block may declare it again. The common lines and the lines
+%% of a kind are one block.
+seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
+    case not HasKinds andalso lists:any(fun(L) -> element(1, L) =:= swhen end, Common) of
+        true -> load_error('bad-directive', "when in a pack with no kind line", []);
+        false -> ok
+    end,
+    {Common1, Kinds1, St} = seq_res_scope(Common, Kinds, #{}, {0, #{}}),
+    P#{common := Common1, kinds := Kinds1, presence_named => element(2, St)}.
+
+%% Common lines, then each kind from where the common lines ended.
+seq_res_scope(Common, Kinds, Env, St0) ->
+    {Common1, Env1, Decl1, St1} = seq_res(Common, Env, #{}, St0, []),
+    {Kinds1, St2} =
+        lists:mapfoldl(
+          fun(#{lines := Ls} = K, St) ->
+                  {Ls1, _, _, StK} = seq_res(Ls, Env1, Decl1, St, []),
+                  {K#{lines := Ls1}, StK}
+          end, St1, Kinds),
+    {Common1, Kinds1, St2}.
+
+%% seq_res(Lines, Visible, DeclaredInThisBlock, {NextId, Named}, Acc)
+seq_res([], Env, Decl, St, Acc) -> {lists:reverse(Acc), Env, Decl, St};
+seq_res([{presence, Name, Size} | Rest], Env, Decl, {Next, Named}, Acc) ->
+    case maps:is_key(Name, Decl) of
+        true -> load_error('bad-directive', "presence ~s is declared twice in one block", [Name]);
+        false -> ok
+    end,
+    seq_res(Rest, Env#{Name => {Next, Size}}, Decl#{Name => true},
+            {Next + 1, Named#{Next => []}}, [{presence, Next, Size} | Acc]);
+seq_res([{ifb, Conds, Body} | Rest], Env, Decl, {Next, Named0}, Acc) ->
+    {Conds1, Named1} =
+        lists:mapfoldl(
+          fun({Name, Bit, Neg}, Named) ->
+                  case maps:find(Name, Env) of
+                      error ->
+                          load_error('bad-directive', "if names presence ~s, which is not visible here", [Name]);
+                      {ok, {_, Size}} when is_integer(Size), Bit > Size ->
+                          load_error('bad-directive', "if names bit ~p of presence ~s, which has ~p bits",
+                                     [Bit, Name, Size]);
+                      {ok, {Id, _}} ->
+                          {{Id, Bit, Neg}, maps:update_with(Id, fun(Bs) -> ordsets:add_element(Bit, Bs) end, Named)}
+                  end
+          end, Named0, Conds),
+    {Body1, St1} = seq_res_block(Body, Env, {Next, Named1}),
+    seq_res(Rest, Env, Decl, St1, [{ifb, Conds1, Body1} | Acc]);
+seq_res([{opt, Body} | Rest], Env, Decl, St, Acc) ->
+    {Body1, St1} = seq_res_block(Body, Env, St),
+    seq_res(Rest, Env, Decl, St1, [{opt, Body1} | Acc]);
+seq_res([{len, Len, Unit, Plus, Body} | Rest], Env, Decl, St, Acc) ->
+    {Body1, St1} = seq_res_block(Body, Env, St),
+    seq_res(Rest, Env, Decl, St1, [{len, Len, Unit, Plus, Body1} | Acc]);
+seq_res([{chain, First, Parts, EndsFx} | Rest], Env, Decl, St, Acc) ->
+    %% the parts of a chain are one block
+    {[First1 | Parts1], {_, _, St1}} =
+        lists:mapfoldl(
+          fun(Part, {E, D, S}) ->
+                  {Part1, E1, D1, S1} = seq_res(Part, E, D, S, []),
+                  {Part1, {E1, D1, S1}}
+          end, {Env, #{}, St}, [First | Parts]),
+    seq_res(Rest, Env, Decl, St1, [{chain, First1, Parts1, EndsFx} | Acc]);
+seq_res([{sgroup, List, Mode, #{lines := Ls, kinds := Ks} = Body} | Rest], Env, Decl, St, Acc) ->
+    {Ls1, Ks1, St1} = seq_res_scope(Ls, Ks, Env, St),
+    seq_res(Rest, Env, Decl, St1, [{sgroup, List, Mode, Body#{lines := Ls1, kinds := Ks1}} | Acc]);
+seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc]).
+
+seq_res_block(Body, Env, St) ->
+    {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),
+    {Body1, St1}.

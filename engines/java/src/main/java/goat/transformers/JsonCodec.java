@@ -336,10 +336,16 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 arr.add(itself);
             } else {
                 prune(obj);
-                arr.add(obj);
+                // a scalar (`.`) item with no value is written null (ruling 11 of 0.7)
+                arr.add(obj.isEmpty() && hasItself(g.body) ? Json.NULL : obj);
             }
         }
         return arr;
+    }
+
+    private static boolean hasItself(Pack.Scope body) {
+        for (Pack.Line l : body.lines) if (((String[]) l.loc).length == 0) return true;
+        return false;
     }
 
     /** Remove every nested object that has no members. */

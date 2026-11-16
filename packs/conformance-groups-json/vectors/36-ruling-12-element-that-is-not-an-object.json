@@ -1,0 +1,12 @@
+{
+  "name": "ruling-12-element-that-is-not-an-object",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u\",\"items\":[5,\"x\",[1],{\"name\":\"a\"}]}",
+  "expect": "{\"id\":\"u\",\"title\":\"NONE\",\"items\":[{\"n\":1,\"kind\":\"item\"},{\"n\":1,\"kind\":\"item\"},{\"n\":1,\"kind\":\"item\"},{\"name\":\"a\",\"n\":1,\"kind\":\"item\"}]}",
+  "model": {
+    "probe.items.#": "4",
+    "probe.items[3].probe.label": "a",
+    "probe.items[0].probe.subs.#": "absent"
+  }
+}

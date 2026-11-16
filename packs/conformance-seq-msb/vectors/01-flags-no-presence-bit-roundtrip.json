@@ -1,0 +1,13 @@
+{
+  "name": "flags-no-presence-bit-roundtrip",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a2010009",
+  "expect": "05a2010009",
+  "model": {
+    "@kind": "flags",
+    "probe.n": "5",
+    "probe.qty": "2",
+    "probe.val": "9"
+  }
+}

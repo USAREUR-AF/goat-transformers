@@ -1,0 +1,10 @@
+{
+  "name": "input-beyond-the-stated-length-is-ignored",
+  "from": "conformance-seq-whole",
+  "to": "conformance-seq-whole",
+  "input": "01031185ffff",
+  "expect": "01031185",
+  "model": {
+    "probe.y": "5"
+  }
+}

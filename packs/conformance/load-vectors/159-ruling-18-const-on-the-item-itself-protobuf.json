@@ -1,0 +1,9 @@
+{
+  "name": "159-ruling-18-const-on-the-item-itself-protobuf",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\nkey tag string -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.7.0\ndistribution public\nsource \"probe\"\nuses probe\nwire protobuf\nfield uid 1 pstring\ngroup probe.items 2\n  field probe.label . pstring\n  const . 1\nend\n",
+  "expect_error": "bad-directive"
+}

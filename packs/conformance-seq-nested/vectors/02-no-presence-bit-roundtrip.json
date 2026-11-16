@@ -1,0 +1,11 @@
+{
+  "name": "no-presence-bit-roundtrip",
+  "from": "conformance-seq-nested",
+  "to": "conformance-seq-nested",
+  "input": "010000",
+  "expect": "010000",
+  "model": {
+    "probe.items.#": "0",
+    "probe.nums.#": "absent"
+  }
+}

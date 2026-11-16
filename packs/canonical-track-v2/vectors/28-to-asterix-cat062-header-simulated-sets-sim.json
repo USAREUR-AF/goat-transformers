@@ -1,0 +1,18 @@
+{
+  "name": "to-asterix-cat062-header-simulated-sets-sim",
+  "from": "canonical-track-v2",
+  "to": "asterix-cat062",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"311\",\"sourceId\":\"sensor-a\",\"trackGeneration\":\"generation-1\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2025-10-29T12:00:00.123Z\",\"position\":{\"latitudeDeg\":-33.9461,\"longitudeDeg\":-151.1772,\"altitudeM\":152.4},\"classification\":\"uas\",\"confidence\":0.87,\"positionUncertainty\":{\"sigmaEastM\":3.2,\"sigmaNorthM\":2.8,\"sigmaUpM\":6.1}}",
+  "context": {
+    "cat062.sac": "1",
+    "cat062.sic": "7"
+  },
+  "expect": "3e001b990d100107546010ff9f7134fe51fc1f0137818101000050",
+  "model": {
+    "@complete": true,
+    "cat062.sim": "1",
+    "track.simulated": "0"
+  },
+  "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
+  "reference": "byte for byte the block the open-billie encoder writes for this track"
+}

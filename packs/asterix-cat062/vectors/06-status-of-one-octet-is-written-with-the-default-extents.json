@@ -1,0 +1,12 @@
+{
+  "name": "status-of-one-octet-is-written-with-the-default-extents",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e0015990c01075460100000000000000000013780",
+  "expect": "3e0018990c01075460100000000000000000013781010100",
+  "model": {
+    "cat062.mon": "1",
+    "cat062.cnf": "0",
+    "track.confirmed": "1"
+  }
+}

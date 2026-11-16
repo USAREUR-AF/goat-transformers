@@ -1,0 +1,8 @@
+{
+  "name": "any-with-no-argument-present",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"n\":5}",
+  "context": {},
+  "expect": "{\"n\":5,\"text\":\"5\"}"
+}

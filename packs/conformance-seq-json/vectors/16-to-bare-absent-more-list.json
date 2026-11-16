@@ -1,0 +1,7 @@
+{
+  "name": "to-bare-absent-more-list",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-groups-bare",
+  "input": "{\"nums\":[1]}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-19-to-protobuf-code-of-each-pack",
+  "from": "conformance-groups-rulings-json",
+  "to": "conformance-groups-rulings-protobuf",
+  "input": "{\"id\":\"u\",\"items\":[{\"t\":\"J\",\"name\":\"aa\"},{\"t\":\"K\"}]}",
+  "expect": "0a017512070a026161220154120322014b"
+}
