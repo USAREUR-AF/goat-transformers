@@ -15,22 +15,17 @@ written.
 """
 
 from .errors import MalformedWire
+from .wire_bits import _hex_to_bytes
 
 VARINT, FIXED64, LEN, FIXED32 = 0, 1, 2, 5
+MAX_FIELD_NUMBER = (1 << 29) - 1  # ruling 38 of 0.8
 
 
-def _hex_to_bytes(data, fmt):
-    cleaned = "".join(data.split())  # whitespace ignored
-    if len(cleaned) % 2 != 0:
-        raise MalformedWire("hex input has an odd number of digits", format=fmt)
-    try:
-        return bytes.fromhex(cleaned)
-    except ValueError as e:
-        raise MalformedWire("input is not hexadecimal: %s" % e, format=fmt)
 
 
 def _read_varint(buf, i, fmt):
-    """-> (value, next_index). A varint is at most ten bytes (64 bits)."""
+    """-> (value, next_index). A varint is at most ten bytes and holds 64
+    bits: a tenth byte greater than 1 is `malformed-wire` (ruling 40 of 0.8)."""
     result = 0
     shift = 0
     for _ in range(10):
@@ -40,7 +35,9 @@ def _read_varint(buf, i, fmt):
         i += 1
         result |= (b & 0x7F) << shift
         if not (b & 0x80):
-            return result & 0xFFFFFFFFFFFFFFFF, i  # a varint is a 64-bit value
+            if shift == 63 and b > 1:
+                raise MalformedWire("varint holds more than 64 bits", format=fmt)
+            return result, i
         shift += 7
     raise MalformedWire("varint longer than ten bytes", format=fmt)
 
@@ -75,8 +72,8 @@ def parse_message(buf, fmt, locator=None):
         tag, i = _read_varint(buf, i, fmt)
         field_num = tag >> 3
         wt = tag & 7
-        if field_num == 0:
-            raise MalformedWire("field number 0 is invalid", format=fmt, locator=locator)
+        if field_num == 0 or field_num > MAX_FIELD_NUMBER:
+            raise MalformedWire("field number %d is invalid" % field_num, format=fmt, locator=locator)
         if wt == VARINT:
             val, i = _read_varint(buf, i, fmt)
             out.append((field_num, wt, val))

@@ -1,0 +1,7 @@
+{
+  "name": "well-formed-message",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275311005",
+  "expect": "0a0275311005"
+}

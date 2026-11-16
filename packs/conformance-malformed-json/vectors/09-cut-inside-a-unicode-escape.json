@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-unicode-escape",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\\u00",
+  "expect_error": "malformed-wire"
+}

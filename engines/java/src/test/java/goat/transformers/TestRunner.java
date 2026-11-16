@@ -115,6 +115,7 @@ public final class TestRunner {
         int before = failures;
         UnitTests.run(engine);
         UnitTests.packsOnly(packsDir);
+        UnitTests.malformedSweep(engine, files);
         System.out.println("unit checks: " + (unitChecks - (failures - before)) + "/" + unitChecks + " passed");
         if (vectors == 0) {
             fail("conversion vectors", "none found under " + packsDir);

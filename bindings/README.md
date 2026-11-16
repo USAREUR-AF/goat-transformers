@@ -132,7 +132,7 @@ GT_PACKS=cot-xml,geojson,canonical-track-v2 node --test bindings/wasm/test/vecto
 
 The test loads every `model/*.def` and every pack, runs every conversion
 vector of the loaded packs through the module and compares with `expect` or
-`expect_error`. With all 91 packs loaded: 3187 vectors, 3187 passed, on both
+`expect_error`. With all 96 packs loaded: 3291 vectors, 3291 passed, on both
 builds (`python3 -I tools/repo-stats` prints the current counts of packs and
 vectors, and the size of a built module). The test prints the load time and
 the run time. `GT_PACKS` chooses packs; a vector whose target format is not

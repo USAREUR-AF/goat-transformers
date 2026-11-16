@@ -1,0 +1,7 @@
+{
+  "name": "varint-of-eleven-bytes",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753110ffffffffffffffffffff01",
+  "expect_error": "malformed-wire"
+}

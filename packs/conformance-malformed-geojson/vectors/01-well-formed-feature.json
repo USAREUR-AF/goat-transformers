@@ -1,0 +1,7 @@
+{
+  "name": "well-formed-feature",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"name\":\"A\"},\"id\":\"u1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"name\":\"A\"},\"id\":\"u1\"}"
+}

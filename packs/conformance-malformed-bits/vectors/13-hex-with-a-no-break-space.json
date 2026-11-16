@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-no-break-space",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01000000 02000000",
+  "expect_error": "malformed-wire"
+}

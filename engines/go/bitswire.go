@@ -210,6 +210,11 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				count = getBits(data, base+c.bit, c.blen, p.msb)
 			}
 			pos := base + g.start
+			// A count larger than the bits left is refused before any item
+			// is read (0.8 ruling 14).
+			if count > 0 && (pos > bits || count > uint64(bits-pos)) {
+				return 0, bad(fmt.Sprintf("holds no %d item(s) from bit %d", count, pos))
+			}
 			items := []*Item{}
 			for i := uint64(0); i < count; i++ {
 				if pos+g.itemBits > bits {

@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-number",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\",\"pos\":{\"lat\":1.",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "doctype-inside-the-root",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><!DOCTYPE event></event>",
+  "expect_error": "malformed-wire"
+}

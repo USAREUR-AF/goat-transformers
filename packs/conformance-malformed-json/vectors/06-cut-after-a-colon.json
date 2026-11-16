@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-a-colon",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":",
+  "expect_error": "malformed-wire"
+}

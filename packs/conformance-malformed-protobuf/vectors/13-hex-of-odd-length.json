@@ -1,0 +1,7 @@
+{
+  "name": "hex-of-odd-length",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a027531100",
+  "expect_error": "malformed-wire"
+}

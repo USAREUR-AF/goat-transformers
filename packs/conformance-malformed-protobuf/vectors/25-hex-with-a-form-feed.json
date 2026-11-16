@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-form-feed",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a027531\f1005",
+  "expect_error": "malformed-wire"
+}

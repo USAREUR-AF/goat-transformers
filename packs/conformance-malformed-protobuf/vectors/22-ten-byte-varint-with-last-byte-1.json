@@ -1,0 +1,7 @@
+{
+  "name": "ten-byte-varint-with-last-byte-1",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753110ffffffffffffffffff01",
+  "expect": "0a02753110ffffffffffffffffff01"
+}

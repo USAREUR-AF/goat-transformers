@@ -1,0 +1,7 @@
+{
+  "name": "well-formed-message",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "0100000002000000",
+  "expect": "0100000002000000"
+}

@@ -13,7 +13,9 @@ const Value* Value::find(const std::string& key) const {
 
 namespace {
 
-constexpr int kMaxDepth = 256;
+// Arrays and objects nested deeper than this are malformed (0.8 ruling 35):
+// the outermost array or object is level 1, and exactly 64 levels parse.
+constexpr int kMaxDepth = 64;
 
 class Parser {
 public:
@@ -48,12 +50,14 @@ private:
         }
     }
 
+    // `depth` is the number of arrays and objects that enclose the value.
     Value value(int depth) {
-        if (depth > kMaxDepth) fail("nesting too deep");
         ws();
         if (i_ >= s_.size()) fail("unexpected end of input");
         Value v;
         char c = s_[i_];
+        if ((c == '{' || c == '[') && depth + 1 > kMaxDepth)
+            fail("nesting deeper than " + std::to_string(kMaxDepth) + " levels");
         if (c == '{') {
             v.kind = Value::Kind::Object;
             ++i_;

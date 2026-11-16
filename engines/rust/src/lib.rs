@@ -2947,54 +2947,107 @@ pub mod xml {
     }
 
     // --- minimal parser ---
+
+    /// The deepest nesting of elements a document may have; the root element
+    /// is level 1. A document nested deeper is `malformed-wire`, so the
+    /// parser's recursion is bounded whatever the input.
+    pub const MAX_DEPTH: usize = 64;
+
+    /// Parse one document: an optional prolog, one root element, then only
+    /// whitespace, comments and processing instructions. Every failure is
+    /// `malformed-wire`; no input makes the parser read out of bounds.
     pub fn parse(input: &str) -> Result<Node, Error> {
         let mut p = XmlParser { b: input.as_bytes(), i: 0 };
-        p.skip_prolog();
-        p.parse_element()
+        let root = p.document().map_err(|e| Error { msg: format!("malformed-wire: xml: {}", e.msg) })?;
+        Ok(root)
     }
     struct XmlParser<'a> {
         b: &'a [u8],
+        /// the cursor; never beyond `b.len()`
         i: usize,
     }
     impl<'a> XmlParser<'a> {
+        fn document(&mut self) -> Result<Node, Error> {
+            self.skip_misc()?;
+            let root = self.parse_element(1)?;
+            self.skip_misc()?;
+            if self.i < self.b.len() {
+                return err(format!("content after the root element at byte {}", self.i));
+            }
+            Ok(root)
+        }
         fn ws(&mut self) {
-            while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
+            // XML whitespace: space, tab, line feed, carriage return
+            while self.i < self.b.len() && matches!(self.b[self.i], b' ' | b'\t' | b'\n' | b'\r') {
                 self.i += 1;
             }
         }
-        fn skip_prolog(&mut self) {
+        fn peek(&self) -> Option<u8> {
+            self.b.get(self.i).copied()
+        }
+        fn starts_with(&self, s: &str) -> bool {
+            self.b.get(self.i..).map_or(false, |rest| rest.starts_with(s.as_bytes()))
+        }
+        /// Move past the next `end`, from the cursor. The input ending first
+        /// is an error naming `what`.
+        fn skip_past(&mut self, end: &str, what: &str) -> Result<(), Error> {
+            let rest = self.b.get(self.i..).unwrap_or(&[]);
+            match rest.windows(end.len()).position(|w| w == end.as_bytes()) {
+                Some(at) => {
+                    self.i += at + end.len();
+                    Ok(())
+                }
+                None => err(format!("unexpected end in {}", what)),
+            }
+        }
+        /// A comment or a processing instruction at the cursor, skipped.
+        fn skip_comment_or_pi(&mut self) -> Result<bool, Error> {
+            if self.starts_with("<?") {
+                self.skip_past("?>", "a processing instruction")?;
+            } else if self.starts_with("<!--") {
+                self.skip_past("-->", "a comment")?;
+            } else {
+                return Ok(false);
+            }
+            Ok(true)
+        }
+        /// Whitespace, comments and processing instructions.
+        fn skip_misc(&mut self) -> Result<(), Error> {
             loop {
                 self.ws();
-                if self.starts_with("<?") {
-                    while self.i < self.b.len() && !self.starts_with("?>") {
-                        self.i += 1;
-                    }
-                    self.i += 2;
-                } else if self.starts_with("<!") {
-                    while self.i < self.b.len() && self.b[self.i] != b'>' {
-                        self.i += 1;
-                    }
-                    self.i += 1;
-                } else {
-                    break;
+                if !self.skip_comment_or_pi()? {
+                    return Ok(());
                 }
             }
         }
-        fn starts_with(&self, s: &str) -> bool {
-            self.b[self.i..].starts_with(s.as_bytes())
-        }
-        fn parse_element(&mut self) -> Result<Node, Error> {
-            self.ws();
-            if self.i >= self.b.len() || self.b[self.i] != b'<' {
-                return err("expected '<'");
+        fn parse_element(&mut self, depth: usize) -> Result<Node, Error> {
+            // no entity is declared, expanded or fetched: a document type
+            // declaration is refused wherever it stands
+            if self.starts_with("<!DOCTYPE") {
+                return err("a document type declaration is not accepted");
+            }
+            if self.peek() != Some(b'<') {
+                return err(match self.peek() {
+                    None => "unexpected end: expected '<'".to_string(),
+                    Some(_) => format!("expected '<' at byte {}", self.i),
+                });
+            }
+            if depth > MAX_DEPTH {
+                return err(format!("elements nested deeper than {} levels", MAX_DEPTH));
             }
             self.i += 1;
             let name = self.read_name();
+            if name.is_empty() {
+                return err(match self.peek() {
+                    None => "unexpected end after '<'".to_string(),
+                    Some(_) => format!("expected an element name at byte {}", self.i),
+                });
+            }
             let mut node = Node { name, ..Default::default() };
             loop {
                 self.ws();
                 if self.i >= self.b.len() {
-                    return err("unexpected end in tag");
+                    return err(format!("unexpected end in tag <{}>", node.name));
                 }
                 if self.starts_with("/>") {
                     self.i += 2;
@@ -3007,24 +3060,29 @@ pub mod xml {
                 // attribute
                 let an = self.read_name();
                 if an.is_empty() {
-                    return err("bad attribute name");
+                    return err(format!("bad attribute name at byte {}", self.i));
                 }
                 self.ws();
-                if self.i >= self.b.len() || self.b[self.i] != b'=' {
-                    return err("expected '=' in attribute");
+                match self.peek() {
+                    Some(b'=') => self.i += 1,
+                    None => return err(format!("unexpected end after attribute name `{}`", an)),
+                    Some(_) => return err(format!("expected '=' after attribute name `{}`", an)),
                 }
-                self.i += 1;
                 self.ws();
-                let q = self.b[self.i];
-                if q != b'"' && q != b'\'' {
-                    return err("expected quote");
-                }
+                let q = match self.peek() {
+                    Some(q) if q == b'"' || q == b'\'' => q,
+                    None => return err(format!("unexpected end after '=' of attribute `{}`", an)),
+                    Some(_) => return err(format!("expected a quote after '=' of attribute `{}`", an)),
+                };
                 self.i += 1;
                 let start = self.i;
                 while self.i < self.b.len() && self.b[self.i] != q {
                     self.i += 1;
                 }
-                let val = unescape(&String::from_utf8_lossy(&self.b[start..self.i]));
+                if self.i >= self.b.len() {
+                    return err(format!("unexpected end in the value of attribute `{}`", an));
+                }
+                let val = unescape(&String::from_utf8_lossy(&self.b[start..self.i]))?;
                 self.i += 1;
                 node.attrs.push((an, val));
             }
@@ -3033,17 +3091,23 @@ pub mod xml {
             loop {
                 if self.starts_with("</") {
                     self.i += 2;
-                    let _ = self.read_name();
-                    self.ws();
-                    if self.i < self.b.len() && self.b[self.i] == b'>' {
-                        self.i += 1;
+                    let close = self.read_name();
+                    if close != node.name {
+                        return err(format!("closing tag </{}> does not match <{}>", close, node.name));
                     }
+                    self.ws();
+                    if self.peek() != Some(b'>') {
+                        return err(format!("closing tag </{}> has no '>'", close));
+                    }
+                    self.i += 1;
                     break;
-                } else if self.i < self.b.len() && self.b[self.i] == b'<' {
-                    let child = self.parse_element()?;
+                } else if self.skip_comment_or_pi()? {
+                    continue;
+                } else if self.peek() == Some(b'<') {
+                    let child = self.parse_element(depth + 1)?;
                     node.children.push(child);
                 } else if self.i >= self.b.len() {
-                    return err("unexpected end in content");
+                    return err(format!("unexpected end in the content of <{}>: no closing tag", node.name));
                 } else {
                     let start = self.i;
                     while self.i < self.b.len() && self.b[self.i] != b'<' {
@@ -3052,18 +3116,19 @@ pub mod xml {
                     text.push_str(&String::from_utf8_lossy(&self.b[start..self.i]));
                 }
             }
-            let t = unescape(text.trim());
+            let t = unescape(text.trim())?;
             if !t.is_empty() {
                 node.text = Some(t);
             }
             Ok(node)
         }
+        /// The name at the cursor; empty when no name starts there.
         fn read_name(&mut self) -> String {
-            self.ws();
             let start = self.i;
             while self.i < self.b.len() {
-                let c = self.b[self.i] as char;
-                if c.is_ascii_alphanumeric() || c == '_' || c == '-' || c == ':' || c == '.' {
+                let c = self.b[self.i];
+                // bytes of a multi-byte character belong to the name
+                if c.is_ascii_alphanumeric() || matches!(c, b'_' | b'-' | b':' | b'.') || c >= 0x80 {
                     self.i += 1;
                 } else {
                     break;
@@ -3072,12 +3137,51 @@ pub mod xml {
             String::from_utf8_lossy(&self.b[start..self.i]).to_string()
         }
     }
-    fn unescape(s: &str) -> String {
-        s.replace("&quot;", "\"")
-            .replace("&lt;", "<")
-            .replace("&gt;", ">")
-            .replace("&apos;", "'")
-            .replace("&amp;", "&")
+    /// Replace the five predefined entities and numeric character
+    /// references. A numeric reference takes decimal or hexadecimal digits
+    /// only and must name a character XML 1.0 allows; any other is an error.
+    /// Text after `&` that is none of these is kept as it is.
+    fn unescape(s: &str) -> Result<String, Error> {
+        if !s.contains('&') {
+            return Ok(s.to_string());
+        }
+        let mut out = String::with_capacity(s.len());
+        let mut rest = s;
+        while let Some(at) = rest.find('&') {
+            out.push_str(&rest[..at]);
+            rest = &rest[at..];
+            let named = [("&quot;", '"'), ("&lt;", '<'), ("&gt;", '>'), ("&apos;", '\''), ("&amp;", '&')];
+            if let Some((name, ch)) = named.iter().find(|(name, _)| rest.starts_with(name)) {
+                out.push(*ch);
+                rest = &rest[name.len()..];
+            } else if rest.starts_with("&#") {
+                let bad = |what: &str| Error { msg: format!("character reference {}", what) };
+                let end = rest.find(';').ok_or_else(|| bad("has no `;`"))?;
+                let body = &rest[2..end];
+                let (digits, radix) = match body.strip_prefix('x') {
+                    Some(hex) => (hex, 16),
+                    None => (body, 10),
+                };
+                // digits only: `from_str_radix` alone would take a sign
+                let all_digits = !digits.is_empty() && digits.bytes().all(|c| if radix == 16 { c.is_ascii_hexdigit() } else { c.is_ascii_digit() });
+                if !all_digits {
+                    return Err(bad(&format!("`{}` is not decimal or hexadecimal digits", &rest[..=end])));
+                }
+                // more digits than fit is a number beyond every character
+                let cp = u32::from_str_radix(digits, radix).unwrap_or(u32::MAX);
+                let allowed = matches!(cp, 0x9 | 0xA | 0xD | 0x20..=0xD7FF | 0xE000..=0xFFFD | 0x10000..=0x10FFFF);
+                match char::from_u32(cp).filter(|_| allowed) {
+                    Some(ch) => out.push(ch),
+                    None => return Err(bad(&format!("`{}` names no character XML 1.0 allows", &rest[..=end]))),
+                }
+                rest = &rest[end + 1..];
+            } else {
+                out.push('&');
+                rest = &rest[1..];
+            }
+        }
+        out.push_str(rest);
+        Ok(out)
     }
 }
 
@@ -3111,21 +3215,23 @@ pub mod json {
         }
     }
 
+    /// The deepest nesting of arrays and objects a document may have; the
+    /// outermost array or object is level 1. A document nested deeper fails
+    /// to parse (`malformed-wire` on the `json` and `geojson` wires), so the
+    /// parser's recursion is bounded whatever the input.
+    pub const MAX_DEPTH: usize = 64;
+
+    /// Parse one JSON document: one value, then only whitespace.
     pub fn parse(input: &str) -> Result<Json, Error> {
-        let mut p = JsonParser { b: input.as_bytes(), i: 0, raws: None };
-        p.ws();
-        let v = p.value()?;
-        p.ws();
-        Ok(v)
+        let mut p = JsonParser { b: input.as_bytes(), i: 0, raws: None, depth: 0 };
+        p.document()
     }
 
     /// Parse, and also return the text of every number as written, in
     /// document order.
     pub fn parse_raw(input: &str) -> Result<(Json, Vec<String>), Error> {
-        let mut p = JsonParser { b: input.as_bytes(), i: 0, raws: Some(Vec::new()) };
-        p.ws();
-        let v = p.value()?;
-        p.ws();
+        let mut p = JsonParser { b: input.as_bytes(), i: 0, raws: Some(Vec::new()), depth: 0 };
+        let v = p.document()?;
         Ok((v, p.raws.unwrap_or_default()))
     }
 
@@ -3164,10 +3270,32 @@ pub mod json {
         b: &'a [u8],
         i: usize,
         raws: Option<Vec<String>>,
+        /// how many arrays and objects are open
+        depth: usize,
     }
     impl<'a> JsonParser<'a> {
+        fn document(&mut self) -> Result<Json, Error> {
+            let v = self.value()?;
+            self.ws();
+            if self.i < self.b.len() {
+                return err(format!("json: content after the value at byte {}", self.i));
+            }
+            Ok(v)
+        }
+        /// One more array or object is open: refused beyond `MAX_DEPTH`.
+        fn open(&mut self) -> Result<(), Error> {
+            self.depth += 1;
+            if self.depth > MAX_DEPTH {
+                return err(format!("json: nesting deeper than {} levels", MAX_DEPTH));
+            }
+            Ok(())
+        }
+        fn rest(&self) -> &'a [u8] {
+            self.b.get(self.i..).unwrap_or(&[])
+        }
         fn ws(&mut self) {
-            while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
+            // JSON whitespace (RFC 8259): space, tab, line feed, carriage return
+            while self.i < self.b.len() && matches!(self.b[self.i], b' ' | b'\t' | b'\n' | b'\r') {
                 self.i += 1;
             }
         }
@@ -3189,7 +3317,7 @@ pub mod json {
             }
         }
         fn expect(&mut self, s: &str) -> Result<(), Error> {
-            if self.b[self.i..].starts_with(s.as_bytes()) {
+            if self.rest().starts_with(s.as_bytes()) {
                 self.i += s.len();
                 Ok(())
             } else {
@@ -3197,7 +3325,7 @@ pub mod json {
             }
         }
         fn boolean(&mut self) -> Result<Json, Error> {
-            if self.b[self.i..].starts_with(b"true") {
+            if self.rest().starts_with(b"true") {
                 self.i += 4;
                 Ok(Json::Bool(true))
             } else {
@@ -3206,11 +3334,13 @@ pub mod json {
             }
         }
         fn object(&mut self) -> Result<Json, Error> {
+            self.open()?;
             self.i += 1; // {
             let mut m = Vec::new();
             self.ws();
             if self.i < self.b.len() && self.b[self.i] == b'}' {
                 self.i += 1;
+                self.depth -= 1;
                 return Ok(Json::Obj(m));
             }
             loop {
@@ -3235,14 +3365,17 @@ pub mod json {
                     _ => return err("json: expected ',' or '}'"),
                 }
             }
+            self.depth -= 1;
             Ok(Json::Obj(m))
         }
         fn array(&mut self) -> Result<Json, Error> {
+            self.open()?;
             self.i += 1; // [
             let mut a = Vec::new();
             self.ws();
             if self.i < self.b.len() && self.b[self.i] == b']' {
                 self.i += 1;
+                self.depth -= 1;
                 return Ok(Json::Arr(a));
             }
             loop {
@@ -3260,11 +3393,16 @@ pub mod json {
                     _ => return err("json: expected ',' or ']'"),
                 }
             }
+            self.depth -= 1;
             Ok(Json::Arr(a))
         }
         fn hex4(&mut self) -> Result<u32, Error> {
             let bad = || Error { msg: "json: bad \\u".into() };
-            let hex = self.b.get(self.i..self.i + 4).ok_or_else(bad)?;
+            let hex = self.rest().get(..4).ok_or_else(bad)?;
+            // four hex digits: `from_str_radix` alone would take a sign
+            if !hex.iter().all(|c| c.is_ascii_hexdigit()) {
+                return Err(bad());
+            }
             let hex = std::str::from_utf8(hex).map_err(|_| bad())?;
             let cp = u32::from_str_radix(hex, 16).map_err(|_| bad())?;
             self.i += 4;
@@ -3295,6 +3433,7 @@ pub mod json {
                         let e = self.b[self.i];
                         self.i += 1;
                         match e {
+                            b'"' | b'\\' | b'/' => s.push(e),
                             b'n' => s.push(b'\n'),
                             b't' => s.push(b'\t'),
                             b'r' => s.push(b'\r'),
@@ -3302,44 +3441,70 @@ pub mod json {
                             b'f' => s.push(0x0c),
                             b'u' => {
                                 let mut cp = self.hex4()?;
-                                // a surrogate pair is one character
-                                if (0xD800..0xDC00).contains(&cp) && self.b[self.i..].starts_with(b"\\u") {
-                                    let save = self.i;
+                                let lone = || Error { msg: "json: a \\u escape is half of a surrogate pair without its other half".into() };
+                                // a surrogate pair is one character; half of one is refused
+                                if (0xD800..0xDC00).contains(&cp) {
+                                    if !self.rest().starts_with(b"\\u") {
+                                        return Err(lone());
+                                    }
                                     self.i += 2;
                                     let lo = self.hex4()?;
-                                    if (0xDC00..0xE000).contains(&lo) {
-                                        cp = 0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
-                                    } else {
-                                        self.i = save;
+                                    if !(0xDC00..0xE000).contains(&lo) {
+                                        return Err(lone());
                                     }
+                                    cp = 0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
                                 }
-                                push(&mut s, char::from_u32(cp).unwrap_or('\u{FFFD}'));
+                                push(&mut s, char::from_u32(cp).ok_or_else(lone)?);
                             }
-                            _ => s.push(e),
+                            _ => return err(format!("json: bad escape at byte {}", self.i - 1)),
                         }
                     }
+                    c if c < 0x20 => return err(format!("json: control character in a string at byte {}", self.i - 1)),
                     _ => s.push(c),
                 }
             }
             err("json: unterminated string")
         }
+        /// `-`? then `0` or digits with no leading zero, then an optional
+        /// fraction and an optional exponent, each with at least one digit.
         fn number(&mut self) -> Result<Json, Error> {
             let start = self.i;
             let mut is_float = false;
+            let bad = |at: usize| Error { msg: format!("json: bad value at byte {}", at) };
+            let digits = |p: &mut Self| {
+                let from = p.i;
+                while p.i < p.b.len() && p.b[p.i].is_ascii_digit() {
+                    p.i += 1;
+                }
+                p.i - from
+            };
             if self.b.get(self.i) == Some(&b'-') {
                 self.i += 1;
             }
-            while self.i < self.b.len() {
-                match self.b[self.i] {
-                    b'0'..=b'9' => self.i += 1,
-                    b'.' | b'e' | b'E' | b'+' | b'-' => {
-                        is_float = true;
-                        self.i += 1;
-                    }
-                    _ => break,
+            let int_start = self.i;
+            let n = digits(self);
+            if n == 0 || (n > 1 && self.b[int_start] == b'0') {
+                return Err(bad(start));
+            }
+            if self.b.get(self.i) == Some(&b'.') {
+                is_float = true;
+                self.i += 1;
+                if digits(self) == 0 {
+                    return Err(bad(start));
                 }
             }
-            let tok = std::str::from_utf8(&self.b[start..self.i]).unwrap();
+            if matches!(self.b.get(self.i), Some(b'e') | Some(b'E')) {
+                is_float = true;
+                self.i += 1;
+                if matches!(self.b.get(self.i), Some(b'+') | Some(b'-')) {
+                    self.i += 1;
+                }
+                if digits(self) == 0 {
+                    return Err(bad(start));
+                }
+            }
+            // ASCII digits, signs, `.` and `e` only
+            let tok = std::str::from_utf8(&self.b[start..self.i]).map_err(|_| bad(start))?;
             if let Some(raws) = &mut self.raws {
                 raws.push(tok.to_string());
             }
@@ -3491,7 +3656,7 @@ pub mod geojson {
 
     // locator forms: "id", "geometry.lon|lat|alt", "properties.<name>"
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
-        let (root, raws) = json::parse_raw(bytes)?;
+        let (root, raws) = json::parse_raw(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
         let sel = p.select_decode(None, |w| json_when_holds(when_member(&root, &w.locator), w))?;
         let coords = root
             .get("geometry")
@@ -3540,6 +3705,8 @@ pub mod geojson {
             }
             // (member name, locator, value)
             let mut kept: Vec<(&str, String, Option<String>)> = Vec::new();
+            // where each name is in `kept`, so many members cost n log n, not n * n
+            let mut kept_at: BTreeMap<&str, usize> = BTreeMap::new();
             for (k, v) in props.into_iter().flatten() {
                 let mut at = idx;
                 idx += json::count_numbers(v);
@@ -3555,9 +3722,12 @@ pub mod geojson {
                     }
                     other => (scalar, Some(json_scalar_string(other))),
                 };
-                match kept.iter_mut().find(|(name, _, _)| name == k) {
-                    Some(entry) => *entry = (k, locator, value),
-                    None => kept.push((k, locator, value)),
+                match kept_at.get(k.as_str()) {
+                    Some(at) => kept[*at] = (k, locator, value),
+                    None => {
+                        kept_at.insert(k, kept.len());
+                        kept.push((k, locator, value));
+                    }
                 }
             }
             for (_, locator, value) in kept {
@@ -3709,7 +3879,7 @@ pub mod jsonwire {
         match (t, j) {
             (Transform::StringT, Json::Str(s)) => Ok(Value::Str(s.clone())),
             (Transform::Float, Json::Int(n)) => Ok(Value::F64(*n as f64)),
-            (Transform::Float, Json::Num(x)) => Ok(Value::F64(*x)),
+            (Transform::Float, Json::Num(x)) => finite(*x),
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
             (Transform::Int, Json::Num(x)) if x.fract() == 0.0 && x.abs() < 9.0e18 => Ok(Value::I64(*x as i64)),
             (Transform::Iso8601Ms, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
@@ -3794,8 +3964,10 @@ pub mod jsonwire {
         fn twice(j: &Json) -> Option<&str> {
             match j {
                 Json::Obj(m) => {
-                    for (i, (k, v)) in m.iter().enumerate() {
-                        if m[..i].iter().any(|(other, _)| other == k) {
+                    // a set, so an object of many members costs n log n, not n * n
+                    let mut seen: std::collections::BTreeSet<&str> = std::collections::BTreeSet::new();
+                    for (k, v) in m.iter() {
+                        if !seen.insert(k.as_str()) {
                             return Some(k);
                         }
                         if let Some(name) = twice(v) {
@@ -3936,7 +4108,9 @@ pub mod jsonwire {
             let names: Vec<&str> = path.split('.').collect();
             // a nested object takes the position of the first line that addresses into it
             let parent = parent_of(&mut top, &names)
-                .ok_or(Error { msg: format!("format `{}`: path `{}` runs through a scalar member", p.format, path) })?;
+                .ok_or(Error {
+                    msg: format!("transform-encode: format `{}`: path `{}` runs through a scalar member", p.format, path),
+                })?;
             if let Some(v) = value {
                 let leaf = names[names.len() - 1];
                 // a field keeps the value an earlier line wrote; a `when` replaces it
@@ -4023,8 +4197,9 @@ pub mod bits {
     /// bit least significant. msb: bit i is bit `7 - (i mod 8)`, first bit most
     /// significant.
     pub(crate) fn get_bits(msg: &[u8], start: u64, len: u32, msb: bool) -> Option<u64> {
-        if start + len as u64 > msg.len() as u64 * 8 {
-            return None;
+        match start.checked_add(len as u64) {
+            Some(end) if end <= msg.len() as u64 * 8 => {}
+            _ => return None,
         }
         let mut v: u64 = 0;
         for k in 0..len as u64 {
@@ -4214,7 +4389,7 @@ pub mod bits {
     }
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
-        let raw = from_hex(hex.trim()).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
+        let raw = from_hex(hex)?;
         if let Some(body) = &p.seq {
             return super::seq::decode(p, body, &raw);
         }
@@ -4350,15 +4525,37 @@ pub mod bits {
         Ok(to_hex(&msg))
     }
 
+    /// Hex text to bytes: whitespace ignored, an even number of hex digits.
+    /// Anything else is `malformed-wire`.
     pub fn from_hex(s: &str) -> Result<Vec<u8>, Error> {
-        let s: String = s.chars().filter(|c| !c.is_whitespace()).collect();
-        if s.len() % 2 != 0 || !s.is_ascii() {
-            return err("hex input has odd length");
+        let nibble = |c: u8| match c {
+            b'0'..=b'9' => Some(c - b'0'),
+            b'a'..=b'f' => Some(c - b'a' + 10),
+            b'A'..=b'F' => Some(c - b'A' + 10),
+            _ => None,
+        };
+        let mut out = Vec::with_capacity(s.len() / 2);
+        // the high digit of the byte being read
+        let mut high: Option<u8> = None;
+        for (at, c) in s.bytes().enumerate() {
+            // whitespace in hex text: space, tab, line feed, carriage return only
+            if matches!(c, b' ' | b'\t' | b'\n' | b'\r') {
+                continue;
+            }
+            // every character a hex digit: `from_str_radix` would take a sign
+            let n = match nibble(c) {
+                Some(n) => n,
+                None => return err(format!("malformed-wire: hex input holds a character that is not a hex digit (byte {})", at)),
+            };
+            match high.take() {
+                Some(h) => out.push(h << 4 | n),
+                None => high = Some(n),
+            }
         }
-        (0..s.len())
-            .step_by(2)
-            .map(|i| u8::from_str_radix(&s[i..i + 2], 16).map_err(|_| Error { msg: "bad hex".into() }))
-            .collect()
+        if high.is_some() {
+            return err("malformed-wire: hex input has an odd number of digits");
+        }
+        Ok(out)
     }
 
     pub fn to_hex(b: &[u8]) -> String {
@@ -4421,22 +4618,29 @@ pub mod protobuf {
             }
         }
     }
+    /// The largest protobuf field number; the smallest is 1.
+    const MAX_FIELD: u64 = (1 << 29) - 1;
+
     fn get_varint(b: &[u8], i: &mut usize) -> Result<u64, Error> {
         let mut v: u64 = 0;
         let mut shift = 0;
         loop {
             if *i >= b.len() {
-                return err("protobuf: truncated varint");
+                return err("malformed-wire: protobuf: truncated varint");
             }
             let byte = b[*i];
             *i += 1;
+            // the tenth byte holds bit 63 only
+            if shift == 63 && byte > 1 {
+                return err("malformed-wire: protobuf: a ten-byte varint holds bits above bit 63");
+            }
             v |= ((byte & 0x7f) as u64) << shift;
             if byte & 0x80 == 0 {
                 return Ok(v);
             }
             shift += 7;
             if shift >= 64 {
-                return err("protobuf: varint too long");
+                return err("malformed-wire: protobuf: varint longer than ten bytes");
             }
         }
     }
@@ -4447,13 +4651,19 @@ pub mod protobuf {
         let mut i = 0;
         while i < b.len() {
             let tag = get_varint(b, &mut i)?;
+            // a field number is at most 2^29 - 1; a larger one must not wrap onto a mapped field
+            if tag >> 3 == 0 || tag >> 3 > MAX_FIELD {
+                return err(format!("malformed-wire: protobuf: field number {} is out of range", tag >> 3));
+            }
             let field = (tag >> 3) as u32;
             let wt = (tag & 7) as u8;
+            // `i <= b.len()` here, so `left` cannot underflow
+            let left = b.len() - i;
             let v = match wt {
                 0 => WireVal::Varint(get_varint(b, &mut i)?),
                 1 => {
-                    if i + 8 > b.len() {
-                        return err("protobuf: truncated fixed64");
+                    if left < 8 {
+                        return err("malformed-wire: protobuf: truncated fixed64");
                     }
                     let mut a = [0u8; 8];
                     a.copy_from_slice(&b[i..i + 8]);
@@ -4461,24 +4671,30 @@ pub mod protobuf {
                     WireVal::Fixed64(u64::from_le_bytes(a))
                 }
                 2 => {
-                    let len = get_varint(b, &mut i)? as usize;
-                    if i + len > b.len() {
-                        return err("protobuf: truncated length-delimited");
+                    // compared as u64 against the bytes left: no addition to overflow
+                    let len = get_varint(b, &mut i)?;
+                    if len > (b.len() - i) as u64 {
+                        return err(format!(
+                            "malformed-wire: protobuf: a length-delimited field states {} bytes, {} are left",
+                            len,
+                            b.len() - i
+                        ));
                     }
+                    let len = len as usize;
                     let s = b[i..i + len].to_vec();
                     i += len;
                     WireVal::LenDelim(s)
                 }
                 5 => {
-                    if i + 4 > b.len() {
-                        return err("protobuf: truncated fixed32");
+                    if left < 4 {
+                        return err("malformed-wire: protobuf: truncated fixed32");
                     }
                     let mut a = [0u8; 4];
                     a.copy_from_slice(&b[i..i + 4]);
                     i += 4;
                     WireVal::Fixed32(u32::from_le_bytes(a))
                 }
-                other => return err(format!("protobuf: wire type {} unsupported", other)),
+                other => return err(format!("malformed-wire: protobuf: wire type {} unsupported", other)),
             };
             out.push((field, v));
         }
@@ -4492,17 +4708,45 @@ pub mod protobuf {
             .collect()
     }
 
-    /// resolve a dot-path to the leaf field value (last occurrence wins per field).
-    fn resolve(b: &[u8], path: &[u32]) -> Result<Option<WireVal>, Error> {
-        let fields = parse_msg(b)?;
-        let want = path[0];
-        let last = fields.iter().rev().find(|(f, _)| *f == want).map(|(_, v)| v);
-        match (last, path.len()) {
-            (None, _) => Ok(None),
-            (Some(v), 1) => Ok(Some(v.clone())),
-            (Some(WireVal::LenDelim(sub)), _) => resolve(sub, &path[1..]),
-            // ruling 13 of 0.7
-            (Some(_), _) => err(format!("malformed-wire: protobuf: path field {} is not a submessage", want)),
+    /// One message and the submessages the pack's paths walk into, each
+    /// parsed once: the cost of a decode is the size of the input, not the
+    /// size of the input times the number of lines in the pack.
+    struct Parsed {
+        root: Vec<(u32, WireVal)>,
+        /// the submessage at each path walked so far (last occurrence of each step)
+        subs: BTreeMap<Vec<u32>, Vec<(u32, WireVal)>>,
+    }
+    impl Parsed {
+        fn new(b: &[u8]) -> Result<Parsed, Error> {
+            Ok(Parsed { root: parse_msg(b)?, subs: BTreeMap::new() })
+        }
+        /// The fields of the submessage at `prefix` (the message itself for
+        /// an empty prefix); None when a step does not occur. A step that is
+        /// not a submessage is `malformed-wire` (ruling 13 of 0.7).
+        fn fields_at(&mut self, prefix: &[u32]) -> Result<Option<&[(u32, WireVal)]>, Error> {
+            for k in 0..prefix.len() {
+                if self.subs.contains_key(&prefix[..=k]) {
+                    continue;
+                }
+                let holder = if k == 0 { &self.root } else { &self.subs[&prefix[..k]] };
+                let parsed = match holder.iter().rev().find(|(f, _)| *f == prefix[k]).map(|(_, v)| v) {
+                    None => return Ok(None),
+                    Some(WireVal::LenDelim(sub)) => parse_msg(sub)?,
+                    Some(_) => {
+                        return err(format!("malformed-wire: protobuf: path field {} is not a submessage", prefix[k]))
+                    }
+                };
+                self.subs.insert(prefix[..=k].to_vec(), parsed);
+            }
+            Ok(Some(if prefix.is_empty() { &self.root } else { &self.subs[prefix] }))
+        }
+        /// The leaf field value at a dot-path (last occurrence wins per field).
+        fn resolve(&mut self, path: &[u32]) -> Result<Option<WireVal>, Error> {
+            let (last, before) = match path.split_last() {
+                Some(split) => split,
+                None => return Ok(None),
+            };
+            Ok(self.fields_at(before)?.and_then(|fields| fields.iter().rev().find(|(f, _)| f == last).map(|(_, v)| v.clone())))
         }
     }
 
@@ -4538,8 +4782,7 @@ pub mod protobuf {
             _ => {
                 let mut i = 0;
                 while i < b.len() {
-                    let v = get_varint(b, &mut i)
-                        .map_err(|e| Error { msg: format!("malformed-wire: {} in a packed field", e.msg) })?;
+                    let v = get_varint(b, &mut i).map_err(|e| Error { msg: format!("{} in a packed field", e.msg) })?;
                     out.push(WireVal::Varint(v));
                 }
             }
@@ -4549,10 +4792,10 @@ pub mod protobuf {
 
     /// Decode the fields and groups of one scope: the message, or one item
     /// read as a submessage.
-    fn decode_scope(p: &Pack, sel: &Sel, b: &[u8], d: &mut Decoded) -> Result<(), Error> {
+    fn decode_scope(p: &Pack, sel: &Sel, msg: &mut Parsed, d: &mut Decoded) -> Result<(), Error> {
         for f in sel.fields.iter().filter(|f| f.locator != ".") {
             let path = parse_path(&f.locator)?;
-            if let Some(wv) = resolve(b, &path)? {
+            if let Some(wv) = msg.resolve(&path)? {
                 d.put(p, f, f.transform.decode_pb(&wv));
             }
         }
@@ -4560,32 +4803,21 @@ pub mod protobuf {
             let path = parse_path(&g.locator)?;
             let (last, before) = path.split_last().ok_or(Error { msg: "empty protobuf path".into() })?;
             // the message that holds the items: the last occurrence of each step
-            let mut holder: Vec<u8> = b.to_vec();
-            let mut found = true;
-            for step in before {
-                match resolve(&holder, &[*step])? {
-                    Some(WireVal::LenDelim(sub)) => holder = sub,
-                    Some(_) => return err(format!("malformed-wire: protobuf: path field {} is not a submessage", step)),
-                    None => {
-                        found = false;
-                        break;
-                    }
-                }
-            }
-            if !found {
-                continue;
-            }
+            let holder = match msg.fields_at(before)? {
+                Some(fields) => fields,
+                None => continue,
+            };
             let body = g.body();
             // a `.` line with a numeric transform: an occurrence may be packed
             let packed = g.scalar().map(|f| &f.transform).filter(|t| numeric(t));
             let mut occurrences: Vec<WireVal> = Vec::new();
-            for (field, v) in parse_msg(&holder)? {
-                if field != *last {
+            for (field, v) in holder {
+                if field != last {
                     continue;
                 }
-                match (&v, packed) {
+                match (v, packed) {
                     (WireVal::LenDelim(bytes), Some(t)) => occurrences.extend(unpack(t, bytes)?),
-                    _ => occurrences.push(v),
+                    _ => occurrences.push(v.clone()),
                 }
             }
             // the list is present when at least one item occurs
@@ -4601,7 +4833,7 @@ pub mod protobuf {
                     di.put(p, f, f.transform.decode_pb(v));
                 }
                 match v {
-                    WireVal::LenDelim(sub) if into => decode_scope(p, &body, sub, &mut di)?,
+                    WireVal::LenDelim(sub) if into => decode_scope(p, &body, &mut Parsed::new(sub)?, &mut di)?,
                     _ if into && g.scalar().is_none() => {
                         return err(format!(
                             "malformed-wire: format `{}`: an item of list `{}` is not a submessage",
@@ -4618,19 +4850,19 @@ pub mod protobuf {
     }
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
-        let raw = super::bits::from_hex(hex.trim())?;
-        if !p.kinds.is_empty() {
-            parse_msg(&raw)?; // a malformed message is an error, not a kind mismatch
-        }
+        let raw = super::bits::from_hex(hex)?;
+        // a malformed message is an error, not a kind mismatch, and is one
+        // whether or not a line of the pack reads it
+        let msg = std::cell::RefCell::new(Parsed::new(&raw)?);
         let sel = p.select_decode(None, |w| {
-            let found = parse_path(&w.locator).and_then(|path| resolve(&raw, &path));
+            let found = parse_path(&w.locator).and_then(|path| msg.borrow_mut().resolve(&path));
             match found {
                 Ok(Some(v)) => w.present || v == WireVal::Varint(w.num),
                 _ => false,
             }
         })?;
         let mut d = Decoded::new();
-        decode_scope(p, &sel, &raw, &mut d)?;
+        decode_scope(p, &sel, &mut msg.into_inner(), &mut d)?;
         d.finish(p, &sel)
     }
 
@@ -4652,7 +4884,7 @@ pub mod protobuf {
         let child = tree.entry(path[0]).or_insert_with(|| Node::Msg(BTreeMap::new()));
         match child {
             Node::Msg(m) => insert_node(m, &path[1..], node),
-            _ => err(format!("protobuf: field {} is both a leaf and a submessage", path[0])),
+            _ => err(format!("transform-encode: protobuf: field {} is both a leaf and a submessage", path[0])),
         }
     }
     fn write_node(field: u32, node: &Node, out: &mut Vec<u8>) {

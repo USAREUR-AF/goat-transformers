@@ -8,7 +8,9 @@ namespace goat_transformers::xml {
 
 namespace {
 
-constexpr int kMaxDepth = 256;
+// Elements nested deeper than this are malformed (0.8 ruling 35): the root
+// element is level 1, and exactly 64 levels parse.
+constexpr int kMaxDepth = 64;
 
 bool is_ws(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
 
@@ -20,7 +22,8 @@ public:
         if (s_.compare(0, 3, "\xEF\xBB\xBF") == 0) i_ = 3;  // UTF-8 BOM
         skip_misc();
         if (i_ >= s_.size() || s_[i_] != '<') fail("no root element");
-        Node root = element(0);
+        Node root = element(1);
+        // Only whitespace, comments and processing instructions follow the root.
         skip_misc();
         if (i_ != s_.size()) fail("content after the root element");
         return root;
@@ -42,24 +45,21 @@ private:
         if (e == std::string::npos) fail(std::string("unterminated ") + what);
         i_ = e + std::strlen(term);
     }
-    void skip_doctype() {
-        int bracket = 0;
-        while (i_ < s_.size()) {
-            char c = s_[i_++];
-            if (c == '[') ++bracket;
-            else if (c == ']') --bracket;
-            else if (c == '>' && bracket <= 0) return;
-        }
-        fail("unterminated DOCTYPE");
-    }
+    // Whitespace, comments and processing instructions. A document type
+    // declaration is refused wherever it stands (0.8 ruling 40): `element`
+    // fails on any other `<!`.
     void skip_misc() {
         for (;;) {
             skip_ws();
             if (starts("<?")) skip_past("?>", "processing instruction");
             else if (starts("<!--")) skip_past("-->", "comment");
-            else if (starts("<!DOCTYPE")) skip_doctype();
             else return;
         }
+    }
+    // The characters XML 1.0 allows (production 2, Char).
+    static bool xml_char(std::uint32_t cp) {
+        return cp == 0x9 || cp == 0xA || cp == 0xD || (cp >= 0x20 && cp <= 0xD7FF) || (cp >= 0xE000 && cp <= 0xFFFD) ||
+               (cp >= 0x10000 && cp <= 0x10FFFF);
     }
     std::string name() {
         std::size_t st = i_;
@@ -85,7 +85,7 @@ private:
             else if (ent == "quot") out += '"';
             else if (ent == "apos") out += '\'';
             else if (ent.size() > 1 && ent[0] == '#') {
-                bool hex = ent[1] == 'x' || ent[1] == 'X';
+                bool hex = ent[1] == 'x';  // XML 1.0: a lower-case x only
                 std::size_t p = hex ? 2 : 1;
                 if (p >= ent.size()) fail("empty character reference");
                 std::uint32_t cp = 0;
@@ -99,7 +99,7 @@ private:
                     cp = cp * (hex ? 16u : 10u) + dv;
                     if (cp > 0x10FFFF) fail("character reference out of range");
                 }
-                if (cp == 0 || (cp >= 0xD800 && cp <= 0xDFFF)) fail("invalid character reference");
+                if (!xml_char(cp)) fail("character reference to a character XML 1.0 does not allow");
                 detail::append_utf8(out, cp);
             } else {
                 fail("unknown entity &" + ent + ";");
@@ -109,9 +109,13 @@ private:
         return out;
     }
 
+    // `depth` is the level of the element: 1 for the root.
     Node element(int depth) {
-        if (depth > kMaxDepth) fail("nesting too deep");
+        if (depth > kMaxDepth) fail("nesting deeper than " + std::to_string(kMaxDepth) + " levels");
         ++i_;  // '<'
+        // `<!DOCTYPE`, another declaration, or a stray `<?` or `<!`: not an element.
+        if (i_ < s_.size() && (s_[i_] == '!' || s_[i_] == '?'))
+            fail(starts("!DOCTYPE") ? "a document type declaration is not accepted" : "expected an element name");
         Node n;
         n.name = name();
         for (;;) {

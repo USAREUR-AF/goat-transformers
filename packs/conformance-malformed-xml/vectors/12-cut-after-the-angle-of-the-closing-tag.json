@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-the-angle-of-the-closing-tag",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><contact callsign=\"A\"/><",
+  "expect_error": "malformed-wire"
+}

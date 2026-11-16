@@ -11,15 +11,25 @@
 -export([hex_to_bytes/1, bytes_to_hex/1, open/2, bit_size/1, read/3,
          new/2, write/4, overwrite/4, to_bytes/1]).
 
-%% hex (whitespace ignored, even length) -> binary
-hex_to_bytes(Bin) when is_binary(Bin) ->
-    Digits = << <<C>> || <<C>> <= Bin, C =/= $\s, C =/= $\t, C =/= $\r, C =/= $\n >>,
-    0 = byte_size(Digits) rem 2,
-    << <<((hexval(H) bsl 4) bor hexval(L))>> || <<H, L>> <= Digits >>.
+-define(WS(C), (C =:= $\s orelse C =:= $\t orelse C =:= $\r orelse C =:= $\n)).
+
+%% hex (whitespace ignored, even length) -> binary. An odd number of digits,
+%% or a character that is neither a hex digit nor whitespace (a sign
+%% included), raises error:{hex_malformed, Why} (ruling 36 of 0.8).
+hex_to_bytes(Bin) when is_binary(Bin) -> hex(Bin, []).
+
+hex(<<>>, Acc) -> list_to_binary(lists:reverse(Acc));
+hex(<<C, R/binary>>, Acc) when ?WS(C) -> hex(R, Acc);
+hex(<<H, R/binary>>, Acc) -> hex_low(R, hexval(H), Acc).
+
+hex_low(<<C, R/binary>>, Hi, Acc) when ?WS(C) -> hex_low(R, Hi, Acc);
+hex_low(<<L, R/binary>>, Hi, Acc) -> hex(R, [(Hi bsl 4) bor hexval(L) | Acc]);
+hex_low(<<>>, _Hi, _Acc) -> erlang:error({hex_malformed, odd_number_of_digits}).
 
 hexval(C) when C >= $0, C =< $9 -> C - $0;
 hexval(C) when C >= $a, C =< $f -> C - $a + 10;
-hexval(C) when C >= $A, C =< $F -> C - $A + 10.
+hexval(C) when C >= $A, C =< $F -> C - $A + 10;
+hexval(C) -> erlang:error({hex_malformed, {not_a_hex_digit, C}}).
 
 %% binary -> lowercase hex, no separators
 bytes_to_hex(Bin) ->
@@ -30,23 +40,25 @@ hexdig(N) -> $a + N - 10.
 
 %% ---- reading ----
 
-%% A message opened for reading: {Order, BitSize, Integer}.
-open(Bin, lsb) ->
-    Size = erlang:bit_size(Bin),
-    <<I:Size/little>> = Bin,
-    {lsb, Size, I};
-open(Bin, msb) ->
-    Size = erlang:bit_size(Bin),
-    <<I:Size/big>> = Bin,
-    {msb, Size, I}.
+%% A message opened for reading: {Order, BitSize, Bytes}. A read takes the
+%% bytes its range covers, so its cost does not grow with the message.
+open(Bin, Order) when Order =:= lsb; Order =:= msb ->
+    {Order, erlang:bit_size(Bin), Bin}.
 
 bit_size({_, Size, _}) -> Size.
 
 %% The Len bits from Off as an unsigned integer, or `beyond` when the range
-%% runs past the end of the message.
-read({_, Size, _}, Off, Len) when Off + Len > Size -> beyond;
-read({lsb, _, I}, Off, Len) -> (I bsr Off) band mask(Len);
-read({msb, Size, I}, Off, Len) -> (I bsr (Size - Off - Len)) band mask(Len).
+%% runs past the end of the message. Off and Len come from the pack and the
+%% cursor, and are checked against the size before any bit is taken.
+read({_, Size, _}, Off, Len) when Off < 0; Len < 0; Off + Len > Size -> beyond;
+read({msb, _, Bin}, Off, Len) ->
+    <<_:Off/bits, V:Len, _/bits>> = Bin,
+    V;
+read({lsb, _, Bin}, Off, Len) ->
+    First = Off div 8,
+    Bits = ((Off + Len + 7) div 8 - First) * 8,
+    <<_:First/binary, I:Bits/little, _/binary>> = Bin,
+    (I bsr (Off rem 8)) band mask(Len).
 
 %% ---- writing ----
 

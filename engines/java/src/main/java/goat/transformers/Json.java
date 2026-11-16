@@ -53,6 +53,7 @@ public final class Json {
     private static final class Reader {
         final String s;
         int pos;
+        int depth;
         boolean allowDuplicates;
         Reader(String s) {
             this.s = s;
@@ -97,7 +98,30 @@ public final class Json {
             pos += w.length();
         }
 
+        /** An array or an object opens: the outermost is level 1 and a level beyond the limit is malformed. */
+        void open() {
+            if (++depth > MAX_DEPTH) throw new ParseException("nested deeper than " + MAX_DEPTH + " levels", pos);
+        }
+
         Map<String, Object> object() {
+            open();
+            try {
+                return members();
+            } finally {
+                depth--;
+            }
+        }
+
+        List<Object> array() {
+            open();
+            try {
+                return elements();
+            } finally {
+                depth--;
+            }
+        }
+
+        Map<String, Object> members() {
             expect('{');
             LinkedHashMap<String, Object> m = new LinkedHashMap<>();
             ws();
@@ -121,7 +145,7 @@ public final class Json {
             }
         }
 
-        List<Object> array() {
+        List<Object> elements() {
             expect('[');
             ArrayList<Object> a = new ArrayList<>();
             ws();
@@ -159,12 +183,30 @@ public final class Json {
                     case 't': b.append('\t'); break;
                     case 'u':
                         if (pos + 4 > s.length()) throw new ParseException("short \\u escape", pos);
-                        try {
-                            b.append((char) Integer.parseInt(s.substring(pos, pos + 4), 16));
-                        } catch (NumberFormatException ex) {
-                            throw new ParseException("bad \\u escape", pos);
+                        int cp = 0;
+                        for (int i = 0; i < 4; i++) {
+                            int d = hexDigit(s.charAt(pos + i));
+                            if (d < 0) throw new ParseException("bad \\u escape", pos);
+                            cp = (cp << 4) | d;
                         }
                         pos += 4;
+                        b.append((char) cp);
+                        // half of a surrogate pair needs its other half, as the next escape (ruling 40 of 0.8)
+                        if (Character.isLowSurrogate((char) cp)) throw new ParseException("low surrogate escape with no high surrogate before it", pos - 6);
+                        if (Character.isHighSurrogate((char) cp)) {
+                            int lo = 0;
+                            boolean ok = pos + 6 <= s.length() && s.charAt(pos) == '\\' && s.charAt(pos + 1) == 'u';
+                            for (int i = 2; ok && i < 6; i++) {
+                                int d = hexDigit(s.charAt(pos + i));
+                                if (d < 0) ok = false;
+                                lo = (lo << 4) | d;
+                            }
+                            if (!ok || !Character.isLowSurrogate((char) lo)) {
+                                throw new ParseException("high surrogate escape with no low surrogate after it", pos - 6);
+                            }
+                            b.append((char) lo);
+                            pos += 6;
+                        }
                         break;
                     default:
                         throw new ParseException("bad escape \\" + e, pos - 1);
@@ -194,6 +236,17 @@ public final class Json {
             while (pos < s.length() && s.charAt(pos) >= '0' && s.charAt(pos) <= '9') pos++;
             if (pos == start) throw new ParseException("expected digit", pos);
         }
+    }
+
+    /** The nesting limit of a message (engine-spec 0.8, ruling 35): arrays and objects, the outermost is level 1. */
+    static final int MAX_DEPTH = 64;
+
+    /** The value of an ASCII hex digit, or -1. A sign and a digit of another script are not hex digits. */
+    static int hexDigit(char c) {
+        if (c >= '0' && c <= '9') return c - '0';
+        if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+        if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+        return -1;
     }
 
     private static final java.util.regex.Pattern INTEGER = java.util.regex.Pattern.compile("-?(?:0|[1-9]\\d*)");

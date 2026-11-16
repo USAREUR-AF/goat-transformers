@@ -1,0 +1,7 @@
+{
+  "name": "length-beyond-the-submessage",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753122030a0541",
+  "expect_error": "malformed-wire"
+}

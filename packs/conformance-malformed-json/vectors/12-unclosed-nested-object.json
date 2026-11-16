@@ -1,0 +1,7 @@
+{
+  "name": "unclosed-nested-object",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\",\"pos\":{\"lat\":1.5}",
+  "expect_error": "malformed-wire"
+}

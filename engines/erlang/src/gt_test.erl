@@ -10,9 +10,11 @@
 %%     (decode, context, derivations), floats within 1e-9 relative;
 %%   - every load vector under PacksDir/conformance/load-vectors/*.json.
 %%   - the named loader: one pack loaded alone with the modules it needs.
+%%   - malformed inputs: every vector input cut short and with single bytes
+%%     replaced converts or fails with a named conversion error.
 %% Every failure is printed as "FAIL <pack>/<vector>: <why>"; then the counts
-%% "vectors: N/M passed" and "load vectors: N/M passed". Exits non-zero on
-%% any failure.
+%% "vectors: N/M passed", "load vectors: N/M passed" and "malformed inputs:
+%% N/M passed". Exits non-zero on any failure.
 -module(gt_test).
 -export([main/1, run/1, run/2]).
 
@@ -32,13 +34,18 @@ run(PacksDir) ->
 
 run(PacksDir, ModelsDir) ->
     T0 = erlang:monotonic_time(millisecond),
-    {Pass, Fail} = run_conversion(PacksDir, ModelsDir),
+    Engine = load_packs(PacksDir, ModelsDir),
+    {Pass, Fail} = run_conversion(Engine, PacksDir),
     {LPass, LFail} = run_load_vectors(PacksDir),
     NFail = run_named_load(PacksDir, ModelsDir),
+    {MPass0, MFail0} = run_malformed(Engine, PacksDir),
+    {RPass, RFail} = run_ruling_cases(Engine),
+    {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
     io:format("load vectors: ~p/~p passed~n", [LPass, LPass + LFail]),
+    io:format("malformed inputs: ~p/~p passed~n", [MPass, MPass + MFail]),
     io:format("elapsed: ~.1f s~n", [(erlang:monotonic_time(millisecond) - T0) / 1000]),
-    case Fail + LFail + NFail of
+    case Fail + LFail + NFail + MFail of
         0 -> halt(0);
         N ->
             io:format("FAILED: ~p vector(s)~n", [N]),
@@ -48,8 +55,7 @@ run(PacksDir, ModelsDir) ->
 %% ===================================================================
 %% conversion vectors
 %% ===================================================================
-run_conversion(PacksDir, ModelsDir) ->
-    Engine = load_packs(PacksDir, ModelsDir),
+run_conversion(Engine, PacksDir) ->
     lists:foldl(
       fun({PackDir, File}, {P, F}) ->
               case run_vector_file(Engine, File) of
@@ -366,6 +372,215 @@ self_contained(PacksDir, Pack) ->
               catch _:_ -> false
               end
       end, vector_files(PacksDir)).
+
+%% ===================================================================
+%% malformed inputs (spec/engine-spec.md, Malformed input)
+%% ===================================================================
+%% The input of the first ?PER_PACK conversion vectors of each pack, and of
+%% every vector of the packs `conformance-malformed-*`, is cut short at prefixes and has
+%% single bytes replaced, and each result is converted as the vector
+%% converts. A case passes when convert returns bytes or fails with a
+%% conversion error of a named kind whose message begins with the kind and
+%% a colon; any other exception, and a failure the engine could not
+%% classify, fails it. The cases are a fixed function of the vectors:
+%%   prefixes   every length below the input's when it has at most 16
+%%              bytes, else 8 lengths spread evenly from 0;
+%%   bytes      at most 8 positions spread evenly, each set to the next
+%%              entry of ?MUTANTS that differs from the byte there.
+%% Only the first failing case of a vector is printed.
+%% -> {Passed, Failed} in cases.
+-define(MUTANTS, "\"\\<>{}[],:&/='0189afz+-.e \0\377\n").
+-define(PER_PACK, 5).
+-define(KINDS, ['no-kind', 'missing-root', 'malformed-wire', 'transform-decode',
+                'transform-encode', 'undeclared-key', 'key-type-mismatch']).
+
+run_malformed(Engine, PacksDir) ->
+    {P, F, _, _} =
+        lists:foldl(
+          fun({Pack, File}, {P0, F0, Index, Seen}) ->
+                  Nth = maps:get(Pack, Seen, 0),
+                  {P1, F1} = case Nth < ?PER_PACK orelse lists:prefix("conformance-malformed-", Pack) of
+                                 true -> malformed_vector(Engine, Pack, File, Index);
+                                 false -> {0, 0}
+                             end,
+                  {P0 + P1, F0 + F1, Index + 1, Seen#{Pack => Nth + 1}}
+          end, {0, 0, 0, #{}}, vector_files(PacksDir)),
+    {P, F}.
+
+malformed_vector(Engine, Pack, File, Index) ->
+    try
+        {ok, Bin} = file:read_file(File),
+        Obj = gt_json:parse(Bin),
+        {ok, From} = gt_json:get(Obj, <<"from">>),
+        {ok, To} = gt_json:get(Obj, <<"to">>),
+        {ok, Input} = gt_json:get(Obj, <<"input">>),
+        true = is_binary(Input),
+        Packs = gt_engine:packs(Engine),
+        true = maps:is_key(From, Packs) andalso maps:is_key(To, Packs),
+        Context = case gt_json:get(Obj, <<"context">>) of
+                      {ok, {object, Pairs}} -> Pairs;
+                      _ -> none
+                  end,
+        {Obj, From, To, Input, Context}
+    of
+        {Obj1, From1, To1, Input1, Context1} ->
+            Name = case gt_json:get(Obj1, <<"name">>) of
+                       {ok, N} -> N;
+                       absent -> filename:basename(File)
+                   end,
+            Bad = [{What, Why}
+                   || {What, Mutant} <- malformed_cases(Input1, Index),
+                      {error, Why} <- [malformed_case(Engine, From1, To1, Mutant, Context1)]],
+            Cases = length(malformed_cases(Input1, Index)),
+            case Bad of
+                [] -> {Cases, 0};
+                [{What, Why} | _] ->
+                    io:format("FAIL ~s/~s: malformed input (~0p): ~0P~n",
+                              [Pack, Name, What, Why, 12]),
+                    {Cases - length(Bad), length(Bad)}
+            end
+    catch _:_ ->
+        {0, 0}                       % a vector the conversion run reports
+    end.
+
+%% Cases of rulings 36 to 40 of 0.8 that the cut and replaced inputs do not
+%% reach, on the packs `conformance-malformed-*` (each skipped when its pack
+%% is not loaded): `refused` fails with `malformed-wire`, `read` converts.
+ruling_cases() ->
+    J = <<"conformance-malformed-json">>,
+    P = <<"conformance-malformed-protobuf">>,
+    B = <<"conformance-malformed-bits">>,
+    X = <<"conformance-malformed-xml">>,
+    G = <<"conformance-groups-protobuf">>,
+    [{J, refused, <<"{\"id\":\"u1\",\"n\":01}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":-01}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":+1}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":.5}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":1.}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":1.e2}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":1e}">>},
+     {J, refused, <<"{\"id\":\"u1\",\"n\":-}">>},
+     {J, refused, <<"{\"id\":\"u\\q1\"}">>},
+     {J, refused, <<"{\"id\":\"u\t1\"}">>},
+     {J, refused, <<"{\"id\":\"u", 0, "1\"}">>},
+     {J, refused, <<"{\"id\":\"\\u+041\"}">>},
+     {J, refused, <<"{\"id\":\"u1\",}">>},
+     {J, read, <<"{\"id\":\"u\\t1\",\"n\":-0.5e+2,\"m\":0}">>},
+     {P, refused, <<"0b">>},                              % wire type 3
+     {P, refused, <<"0c">>},                              % wire type 4
+     {P, refused, <<"0e">>},                              % wire type 6
+     {P, refused, <<"808080801000">>},                    % field number 2^29
+     {P, read, <<"f8ffffff0f00">>},                       % field number 2^29-1
+     {P, read, <<"10ffffffffffffffffff01">>},             % a varint of ten bytes
+     {P, refused, <<"22020a05">>},                        % a length past its submessage
+     {P, refused, <<"-a0275311005">>},
+     {B, refused, <<"-100000002000000">>},
+     {B, refused, <<"+0100000002000000">>},
+     {B, refused, <<"0x0100000002000000">>},
+     {X, refused, <<" \n">>},
+     {X, refused, <<"<?xml version=\"1.0\"?>">>},
+     {X, refused, <<"<!-- no element -->">>},
+     {X, refused, <<"<event uid=\"u1\"/><!DOCTYPE x>">>},
+     %% ruling 40
+     {B, refused, <<"01000000\v02000000">>},              % vertical tab
+     {B, refused, <<"01000000\f02000000">>},              % form feed
+     {B, refused, <<"01000000", 16#C2, 16#A0, "02000000">>},   % no-break space
+     {B, read, <<" 01\t000000\r\n02000000\n">>},
+     {P, refused, <<"0000">>},                            % field number 0
+     {P, refused, <<"0f">>},                              % wire type 7
+     {P, refused, <<"10ffffffffffffffffff02">>},          % tenth byte above 1
+     {P, refused, <<"10ffffffffffffffffff7f">>},
+     {P, refused, <<"ffffffffffffffffff0200">>},          % the same in a tag
+     {P, read, <<"1080808080808080808001">>},             % bit 63 alone
+     {G, read, <<"0a01751a040a020105">>},                 % a packed field
+     {G, refused, <<"0a01751a040a020180">>},              % its last varint cut
+     {G, refused, <<"0a01751a0d0a0bffffffffffffffffffff01">>},   % eleven bytes, packed
+     {J, refused, <<"{\"id\":\"\\ud83d\"}">>},
+     {J, refused, <<"{\"id\":\"\\ude00\"}">>},
+     {J, refused, <<"{\"id\":\"\\ud83dx\"}">>},
+     {J, refused, <<"{\"id\":\"\\ud83d\\u0041\"}">>},
+     {J, refused, <<"{\"id\":\"\\ude00\\ud83d\"}">>},
+     {J, read, <<"{\"id\":\"\\ud83d\\ude00\"}">>},
+     {<<"conformance-malformed-geojson">>, refused,
+      <<"{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"name\":\"\\ud83d\"},\"id\":\"u1\"}">>},
+     {X, refused, <<"<!DOCTYPE event><event uid=\"u1\"/>">>},
+     {X, refused, <<"<?xml version=\"1.0\"?><!DOCTYPE event [<!ENTITY e \"x\">]><event uid=\"&e;\"/>">>},
+     {X, refused, <<"<event uid=\"u1\"><!DOCTYPE event></event>">>},
+     {X, refused, <<"<event uid=\"u1\"><!ENTITY e \"x\"></event>">>},
+     {X, refused, <<"<event uid=\"&e;\"/>">>},
+     {X, refused, <<"<event uid=\"&#+65;\"/>">>},
+     {X, refused, <<"<event uid=\"&#-65;\"/>">>},
+     {X, refused, <<"<event uid=\"&#x+41;\"/>">>},
+     {X, refused, <<"<event uid=\"&#;\"/>">>},
+     {X, refused, <<"<event uid=\"&#x;\"/>">>},
+     {X, refused, <<"<event uid=\"&#X41;\"/>">>},
+     {X, refused, <<"<event uid=\"&#0;\"/>">>},
+     {X, refused, <<"<event uid=\"&#8;\"/>">>},
+     {X, refused, <<"<event uid=\"&#xD800;\"/>">>},
+     {X, refused, <<"<event uid=\"&#xFFFE;\"/>">>},
+     {X, refused, <<"<event uid=\"&#x110000;\"/>">>},
+     {X, read, <<"<event uid=\"&#65;&#x42;&#9;&#x10FFFF;&amp;&lt;&gt;&quot;&apos;\"/>">>}].
+
+run_ruling_cases(Engine) ->
+    Packs = gt_engine:packs(Engine),
+    lists:foldl(
+      fun({Format, Want, Input}, {P, F}) ->
+              Got = try gt_engine:convert(Engine, Format, Format, Input) of
+                        Out when is_binary(Out) -> read
+                    catch
+                        error:{convert_error, 'malformed-wire', "malformed-wire:" ++ _} -> refused;
+                        Class:Reason -> {Class, Reason}
+                    end,
+              case Got of
+                  Want -> {P + 1, F};
+                  _ ->
+                      io:format("FAIL ~s: malformed input ~0p: expected ~s, got ~0P~n",
+                                [Format, Input, Want, Got, 12]),
+                      {P, F + 1}
+              end
+      end, {0, 0}, [C || {Format, _, _} = C <- ruling_cases(), maps:is_key(Format, Packs)]).
+
+%% -> [{{cut, Length} | {byte, Position, Value}, Input}]
+malformed_cases(Input, Index) ->
+    Size = byte_size(Input),
+    Cuts = case Size =< 16 of
+               true -> lists:seq(0, Size - 1);
+               false -> spread(Size, 8)
+           end,
+    Mutants = ?MUTANTS,
+    NM = length(Mutants),
+    [{{cut, L}, binary:part(Input, 0, L)} || L <- Cuts] ++
+        [begin
+             <<Before:Pos/binary, Old, After/binary>> = Input,
+             New = mutant(Old, Mutants, (Pos + Index) rem NM, NM),
+             {{byte, Pos, New}, <<Before/binary, New, After/binary>>}
+         end || Pos <- spread(Size, 8)].
+
+%% At most N offsets below Size, spread evenly from 0, each once.
+spread(Size, N) -> lists:usort([(I * Size) div N || I <- lists:seq(0, N - 1), Size > 0]).
+
+mutant(Old, Mutants, I, NM) ->
+    case lists:nth(I + 1, Mutants) of
+        Old -> lists:nth(((I + 1) rem NM) + 1, Mutants);
+        New -> New
+    end.
+
+malformed_case(Engine, From, To, Input, Context) ->
+    try gt_engine:convert(Engine, From, To, Input, Context) of
+        Out when is_binary(Out) -> ok;
+        Other -> {error, {returned, Other}}
+    catch
+        error:{convert_error, Kind, Msg} ->
+            Named = lists:member(Kind, ?KINDS)
+                andalso is_list(Msg)
+                andalso lists:prefix(atom_to_list(Kind) ++ ":", Msg)
+                andalso string:find(Msg, "[unclassified:") =:= nomatch,
+            case Named of
+                true -> ok;
+                false -> {error, {error_without_a_named_kind, Kind, Msg}}
+            end;
+        Class:Reason -> {error, {exception, Class, Reason}}
+    end.
 
 %% ===================================================================
 %% failure text

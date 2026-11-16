@@ -41,10 +41,51 @@ def _const(name):
     raise ValueError("%s is not valid JSON" % name)
 
 
+MAX_DEPTH = 64  # ruling 35 of 0.8: arrays and objects, the outermost is level 1
+
+# A whole string, a quote that opens no whole string, or one bracket outside a
+# string.
+_STRING_OR_BRACKET = re.compile(r'"[^"\\]*(?:\\.[^"\\]*)*"|"|[\[\]{}]', re.S)
+_SURROGATE_ESCAPE = re.compile(r"\\u[dD][89a-fA-F]")
+# One escape: a surrogate pair, a `u` escape, or any other escaped character.
+_ESCAPE = re.compile(r"\\(?:u[dD][89abAB][0-9a-fA-F]{2}\\u[dD][c-fC-F][0-9a-fA-F]{2}|u([0-9a-fA-F]{4})|.)", re.S)
+
+
+def _check_depth(data, fmt):
+    """Refuse an input nested deeper than MAX_DEPTH before it is parsed, in one
+    pass that uses no stack."""
+    if data.count("[") + data.count("{") <= MAX_DEPTH:
+        return
+    depth = 0
+    for m in _STRING_OR_BRACKET.finditer(data):
+        c = data[m.start()]
+        if c == "[" or c == "{":
+            depth += 1
+            if depth > MAX_DEPTH:
+                raise MalformedWire("nested deeper than %d levels" % MAX_DEPTH, format=fmt)
+        elif c == '"':
+            if m.end() - m.start() == 1:
+                raise MalformedWire("not JSON: unterminated string at offset %d" % m.start(), format=fmt)
+        elif depth:
+            depth -= 1
+
+
+def _check_surrogates(data, fmt):
+    """An escape of a surrogate that is not half of a pair names no character,
+    and no UTF-8 output can hold it: `malformed-wire`."""
+    for m in _ESCAPE.finditer(data):
+        code = m.group(1)
+        if code is not None and 0xD800 <= int(code, 16) <= 0xDFFF:
+            raise MalformedWire("not JSON: unpaired surrogate escape u%s" % code, format=fmt)
+
+
 def parse_json(data, fmt, duplicates=False):
     """`duplicates`: accept a member name given twice in one object (the last
     value stands). The `json` wire refuses it (0.5 ruling 22); `geojson` keeps
     its 0.1 behaviour and accepts it (0.5 ruling 28)."""
+    _check_depth(data, fmt)
+    if _SURROGATE_ESCAPE.search(data) is not None:
+        _check_surrogates(data, fmt)
     try:
         return json.loads(
             data, parse_float=Num, parse_int=Num, parse_constant=_const,
@@ -52,6 +93,8 @@ def parse_json(data, fmt, duplicates=False):
         )
     except ValueError as e:
         raise MalformedWire("not JSON: %s" % e, format=fmt)
+    except RecursionError:  # not reached: the nesting is checked above
+        raise MalformedWire("not JSON: nested too deeply", format=fmt)
 
 
 def dump(v):
