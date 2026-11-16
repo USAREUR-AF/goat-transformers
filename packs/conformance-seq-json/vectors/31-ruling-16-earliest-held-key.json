@@ -1,0 +1,7 @@
+{
+  "name": "ruling-16-earliest-held-key",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"val\":100,\"qty\":7}",
+  "expect": "0100010280"
+}

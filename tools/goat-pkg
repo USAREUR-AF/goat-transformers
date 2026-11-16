@@ -290,16 +290,20 @@ Ship the `.def` files with the package (setuptools: `package-data` with
 `"model/*.def"` and `"packs/*/pack.def"`).
 """
 
+import os
 from importlib import resources
 
-from goat_transformers import load_tree
+from goat_transformers import Engine
 
 PACKS = [{names}]
 
 
-def engine(**options):
+def engine(max_distribution="controlled"):
     """An engine holding the packs of this bundle."""
-    return load_tree(resources.files(__name__), PACKS, **options)
+    with resources.as_file(resources.files(__name__)) as root:
+        return Engine.from_dir(
+            os.path.join(root, "packs"), os.path.join(root, "model"), max_distribution, packs_only=PACKS
+        )
 '''
 
 

@@ -187,6 +187,16 @@ public final class ModelModule {
      * modules its own module {@code uses}.
      */
     public static ModelModule parse(String text, String source, Map<String, ModelModule> loaded) {
+        return parse(text, source, loaded, null);
+    }
+
+    /**
+     * Parse module text as an engine with the distribution limit {@code limit} loads it (null: no engine). The
+     * checks run in the order of ruling 29 of 0.8: {@code missing-distribution}, {@code missing-source},
+     * {@code distribution-refused}, {@code unknown-module}, {@code distribution-violation}, then the {@code derive}
+     * checks; the engine reports {@code duplicate-module} after them.
+     */
+    static ModelModule parse(String text, String source, Map<String, ModelModule> loaded, Distribution limit) {
         List<String> uses = new ArrayList<>();
         List<String[]> deriveLines = new ArrayList<>();
         String name = null, version = null;
@@ -273,6 +283,9 @@ public final class ModelModule {
                     String[] d = new String[args.size() + 1];
                     d[0] = where;
                     for (int a = 0; a < args.size(); a++) d[a + 1] = args.get(a);
+                    // A line refused on its own text is a line error, raised as the file is read; its keys and
+                    // their types are checked in the place ruling 29 gives (ruling 32 of 0.8).
+                    derive(d, name, keys, uses, loaded, true);
                     deriveLines.add(d);
                     break;
                 }
@@ -280,9 +293,6 @@ public final class ModelModule {
                     throw new GtException(GtException.Code.UNKNOWN_DIRECTIVE, name, null, where + ": unknown directive \"" + kw + "\"");
             }
         }
-        // A derive line may name a key declared below it, so the lines are checked once the file is read.
-        List<Derive> derives = new ArrayList<>();
-        for (String[] d : deriveLines) derives.add(derive(d, name, keys, uses, loaded));
         if (distribution == null) {
             throw new GtException(GtException.Code.MISSING_DISTRIBUTION, name, null, source + ": module has no distribution line");
         }
@@ -292,6 +302,31 @@ public final class ModelModule {
         if (duplicateKey != null) throw duplicateKey;
         if (name == null) throw bad(null, source + ": no module directive");
         if (version == null) throw bad(name, source + ": no version directive");
+        if (limit != null) {
+            if (!distribution.within(limit)) {
+                throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, null, null, source + ": module " + name + " is "
+                        + distribution.token() + ", above this engine's limit " + limit.token());
+            }
+            // A module is loaded after the modules it uses, and a public module uses only public modules (0.8).
+            for (String u : uses) {
+                if (!loaded.containsKey(u)) {
+                    throw new GtException(GtException.Code.UNKNOWN_MODULE, null, null, source + ": module " + name
+                            + " uses module " + u + ", which is not loaded");
+                }
+            }
+            if (distribution == Distribution.PUBLIC) {
+                for (String u : uses) {
+                    if (loaded.get(u).distribution != Distribution.PUBLIC) {
+                        throw new GtException(GtException.Code.DISTRIBUTION_VIOLATION, null, null, source + ": public module "
+                                + name + " uses " + loaded.get(u).distribution.token() + " module " + u);
+                    }
+                }
+            }
+        }
+        // A derive line may name a key declared below it, so its keys are checked once the file is read; these are
+        // the last checks of a module but duplicate-module.
+        List<Derive> derives = new ArrayList<>();
+        for (String[] d : deriveLines) derives.add(derive(d, name, keys, uses, loaded, false));
         return new ModelModule(name, version, distribution, sources, keys, derives, lists, uses);
     }
 
@@ -340,9 +375,13 @@ public final class ModelModule {
         return Double.parseDouble(s);
     }
 
-    /** Check one derive line ({@code d[0]} is its place in the file, the rest its arguments) and build it. */
+    /**
+     * Check one derive line ({@code d[0]} is its place in the file, the rest its arguments) and build it. With
+     * {@code shapeOnly} only the line itself is checked (its function, parameter and argument count) and null is
+     * returned: the checks that need no key, which run as the file is read (ruling 32 of 0.8).
+     */
     private static Derive derive(String[] d, String module, Map<String, String> keys, List<String> uses,
-                                 Map<String, ModelModule> loaded) {
+                                 Map<String, ModelModule> loaded, boolean shapeOnly) {
         String where = d[0];
         if (d.length < 4) throw badDerive(module, where, "takes a target key, a function and at least one argument key");
         String target = d[1], function = d[2];
@@ -377,6 +416,7 @@ public final class ModelModule {
         if (argc >= 0 && args.size() != argc) {
             throw badDerive(module, where, head + " takes " + argc + " argument key(s), got " + args.size());
         }
+        if (shapeOnly) return null;
         String type = deriveKeyType(target, module, keys, uses, loaded, true, where);
         List<String> argTypes = new ArrayList<>();
         for (String a : args) argTypes.add(deriveKeyType(a, module, keys, uses, loaded, false, where));

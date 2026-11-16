@@ -73,6 +73,106 @@ public final class Engine {
         return e;
     }
 
+    /** As {@link #loadOnly(Path, Path, Distribution, Collection)}, with the {@code model} directory beside {@code packsDir} and the default limit. */
+    public static Engine loadOnly(Path packsDir, Collection<String> names) {
+        return loadOnly(packsDir, defaultModelsDir(packsDir), Distribution.CONTROLLED, names);
+    }
+
+    /**
+     * Load only the named packs of {@code packsDir}, with the model modules they need: {@code core}, the modules
+     * their {@code uses} lines name, and the modules those use in turn. A name is the pack's directory name, or
+     * the format of a pack in the directory. A name that is neither is {@code unknown-format}; a module no file
+     * of {@code modelsDir} declares is left to the pack's load, which reports {@code unknown-module}.
+     */
+    public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names) {
+        Map<String, Path> byFormat = null;
+        List<String[]> packs = new ArrayList<>();   // {path, text}, in the order named, each once
+        List<String> seen = new ArrayList<>();
+        java.util.LinkedHashSet<String> needed = new java.util.LinkedHashSet<>();
+        needed.add(ModelModule.CORE);
+        for (String name : names) {
+            Path def = name.isEmpty() || name.indexOf('/') >= 0 || name.indexOf('\\') >= 0 || name.startsWith(".")
+                    ? null : packsDir.resolve(name).resolve("pack.def");
+            if (def == null || !Files.isRegularFile(def)) {
+                if (byFormat == null) byFormat = packFormats(packsDir);
+                def = byFormat.get(name);
+            }
+            if (def == null) {
+                throw new GtException(GtException.Code.UNKNOWN_FORMAT, name, null, "no pack named " + name + " in " + packsDir);
+            }
+            if (seen.contains(def.toString())) continue;
+            seen.add(def.toString());
+            String text = read(def);
+            packs.add(new String[]{def.toString(), text});
+            needed.addAll(headValues(text, def.toString(), "uses"));
+        }
+        Engine e = new Engine();
+        e.setMaxDistribution(limit);
+        if (Files.isDirectory(modelsDir)) {
+            List<String[]> models = modelsInLoadOrder(modelsDir);
+            Map<String, List<String>> usesOf = new HashMap<>();
+            List<String> moduleOf = new ArrayList<>();
+            for (String[] m : models) {
+                List<String> head = ModelModule.nameAndUses(m[1], m[0]);
+                moduleOf.add(head.get(0));
+                if (head.get(0) != null) usesOf.putIfAbsent(head.get(0), head.subList(1, head.size()));
+            }
+            List<String> queue = new ArrayList<>(needed);
+            for (int i = 0; i < queue.size(); i++) {
+                for (String u : usesOf.getOrDefault(queue.get(i), Collections.emptyList())) {
+                    if (needed.add(u)) queue.add(u);
+                }
+            }
+            for (int i = 0; i < models.size(); i++) {
+                if (moduleOf.get(i) != null && needed.contains(moduleOf.get(i))) e.loadModel(models.get(i)[1], models.get(i)[0]);
+            }
+        }
+        for (String[] p : packs) e.loadPack(p[1], p[0]);
+        return e;
+    }
+
+    private static String read(Path file) {
+        try {
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            throw new UncheckedIOException("cannot read " + file, ex);
+        }
+    }
+
+    /** The single arguments of the {@code kw} lines of a pack text, read without checking anything else. */
+    private static List<String> headValues(String text, String source, String kw) {
+        List<String> out = new ArrayList<>();
+        String[] lines = text.split("\r?\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            List<String> tok;
+            try {
+                tok = Pack.tokenize(lines[i], source + ":" + (i + 1));
+            } catch (GtException ex) {
+                continue;   // reported with its line when the pack is loaded
+            }
+            if (tok.size() == 2 && tok.get(0).equals(kw)) out.add(tok.get(1));
+        }
+        return out;
+    }
+
+    /** The {@code pack.def} of each format under {@code packsDir}; the first in byte order of path wins a repeated format. */
+    private static Map<String, Path> packFormats(Path packsDir) {
+        Map<String, Path> out = new HashMap<>();
+        List<Path> dirs = new ArrayList<>();
+        try (Stream<Path> s = Files.list(packsDir)) {
+            s.sorted().forEach(dirs::add);
+        } catch (IOException ex) {
+            throw new UncheckedIOException("cannot list packs in " + packsDir, ex);
+        }
+        for (Path d : dirs) {
+            Path def = d.resolve("pack.def");
+            if (!Files.isRegularFile(def)) continue;
+            List<String> f = headValues(read(def), def.toString(), "format");
+            if (!f.isEmpty()) out.putIfAbsent(f.get(0), def);
+        }
+        return out;
+    }
+
     /**
      * The module files of {@code modelsDir} as {@code {path, text}}, in the order a directory loader loads them:
      * {@code core.def} first, then byte order of file name, each module after the modules its {@code uses} lines
@@ -136,26 +236,7 @@ public final class Engine {
 
     /** Load one model module from its text. {@code source} names the file for error messages. */
     public ModelModule loadModel(String text, String source) {
-        ModelModule m = ModelModule.parse(text, source, byName);
-        if (!m.distribution.within(maxDistribution)) {
-            throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, null, null, source + ": module " + m.name + " is "
-                    + m.distribution.token() + ", above this engine's limit " + maxDistribution.token());
-        }
-        // A module is loaded after the modules it uses, and a public module uses only public modules (0.8).
-        for (String u : m.uses) {
-            if (!byName.containsKey(u)) {
-                throw new GtException(GtException.Code.UNKNOWN_MODULE, null, null, source + ": module " + m.name
-                        + " uses module " + u + ", which is not loaded");
-            }
-        }
-        if (m.distribution == Distribution.PUBLIC) {
-            for (String u : m.uses) {
-                if (byName.get(u).distribution != Distribution.PUBLIC) {
-                    throw new GtException(GtException.Code.DISTRIBUTION_VIOLATION, null, null, source + ": public module "
-                            + m.name + " uses " + byName.get(u).distribution.token() + " module " + u);
-                }
-            }
-        }
+        ModelModule m = ModelModule.parse(text, source, byName, maxDistribution);
         if (modules.containsKey(m.name)) {
             throw new GtException(GtException.Code.DUPLICATE_MODULE, null, null, source + ": module " + m.name + " loaded twice");
         }

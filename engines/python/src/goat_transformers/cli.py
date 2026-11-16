@@ -1,5 +1,6 @@
 """Command line: `convert` (stdin -> stdout, `--set <key>=<value>` for
-caller-supplied keys) and `list-formats`."""
+caller-supplied keys) and `list-formats`. `--packs-only a,b` loads the named
+packs only, with the model modules they need."""
 
 import argparse
 import os
@@ -30,13 +31,22 @@ def main(argv=None):
     for p in (c, lf):
         p.add_argument("--models", default=None, help="model module directory (default: <packs>/../model)")
         p.add_argument(
+            "--packs-only", dest="packs_only", default=None, metavar="NAME[,NAME...]",
+            help="load only these packs of the packs directory, and only the model modules they need",
+        )
+        p.add_argument(
             "--max-distribution", dest="max_distribution", choices=DISTRIBUTIONS, default="controlled",
             help="refuse modules and packs above this distribution (default: controlled)",
         )
 
     args = ap.parse_args(argv)
     try:
-        eng = Engine.from_dir(args.packs, args.models, args.max_distribution)
+        only = None
+        if args.packs_only is not None:
+            only = [n.strip() for n in args.packs_only.split(",") if n.strip()]
+            if not only:
+                ap.error("--packs-only takes one or more pack names separated by commas")
+        eng = Engine.from_dir(args.packs, args.models, args.max_distribution, packs_only=only)
         if args.cmd == "list-formats":
             for name in eng.formats():
                 p = eng.packs[name]

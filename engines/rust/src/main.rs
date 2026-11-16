@@ -9,15 +9,22 @@
 //! packs directory). `--max-distribution public` refuses controlled modules and
 //! packs. `--set` supplies a model key the input does not carry (engine-spec
 //! v0.6, caller-supplied keys); it is repeatable.
+//!
+//! `--packs-only <name>[,<name>...]` loads only the named packs of the packs
+//! directory (a name is the directory of a pack, which is its format name)
+//! and leaves the rest unread: a conversion needs its two packs, and loading
+//! them takes a fraction of the time of loading every pack. Every command
+//! then sees only those formats. A library caller does the same with
+//! `Engine::load_pack_dir_only`, or with `Engine::load_def` per pack text.
 
-use goat_transformers::{Distribution, Engine, Grade, Pack};
+use goat_transformers::{Distribution, Engine, Grade};
 use std::io::Read;
 use std::path::Path;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        eprintln!("usage: goat-xf <convert|list-formats> [opts]");
+        eprintln!("usage: goat-xf <convert|list-formats|matrix> [--packs <dir>] [--packs-only <name>[,<name>...]] [opts]");
         std::process::exit(2);
     }
     let packs_dir = opt(&args, "--packs").unwrap_or_else(|| "../../packs".to_string());
@@ -38,13 +45,29 @@ fn main() {
         eprintln!("error loading model modules from {}: {}", models_dir, e);
         std::process::exit(1);
     }
-    if let Err(e) = engine.load_pack_dir(Path::new(&packs_dir)) {
+    let loaded = match opt(&args, "--packs-only") {
+        Some(list) => {
+            let names: Vec<&str> = list.split(',').map(|n| n.trim()).filter(|n| !n.is_empty()).collect();
+            if names.is_empty() {
+                eprintln!("--packs-only needs <name>[,<name>...]");
+                std::process::exit(2);
+            }
+            engine.load_pack_dir_only(Path::new(&packs_dir), &names)
+        }
+        None if args.iter().any(|a| a == "--packs-only") => {
+            eprintln!("--packs-only needs <name>[,<name>...]");
+            std::process::exit(2);
+        }
+        None => engine.load_pack_dir(Path::new(&packs_dir)),
+    };
+    if let Err(e) = loaded {
         eprintln!("error loading packs from {}: {}", packs_dir, e);
         std::process::exit(1);
     }
     match args[1].as_str() {
         "list-formats" => {
-            for f in list_pack_formats(&packs_dir) {
+            // the packs are loaded: their formats, sorted
+            for f in engine.formats() {
                 println!("{}", f);
             }
         }
@@ -150,22 +173,4 @@ fn print_matrix(engine: &Engine, detail: bool) {
             );
         }
     }
-}
-
-fn list_pack_formats(dir: &str) -> Vec<String> {
-    let mut v = Vec::new();
-    if let Ok(entries) = std::fs::read_dir(dir) {
-        for e in entries.flatten() {
-            let def = e.path().join("pack.def");
-            if def.exists() {
-                if let Ok(t) = std::fs::read_to_string(&def) {
-                    if let Ok(p) = Pack::parse(&t) {
-                        v.push(p.format);
-                    }
-                }
-            }
-        }
-    }
-    v.sort();
-    v
 }

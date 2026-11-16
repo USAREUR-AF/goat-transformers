@@ -11,7 +11,8 @@ goat-transformers = { git = "https://github.com/USAREUR-AF/goat-transformers", t
 
 ```rust
 let mut engine = goat_transformers::Engine::new();
-engine.load_tree(std::path::Path::new("vendor/goat"), &["cot-xml", "geojson"])?;
+engine.load_model_dir(std::path::Path::new("vendor/goat/model"))?;
+engine.load_pack_dir_only(std::path::Path::new("vendor/goat/packs"), &["cot-xml", "geojson"])?;
 let geojson = engine.convert("cot-xml", "geojson", cot_event)?;
 ```
 

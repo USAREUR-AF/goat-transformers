@@ -1,0 +1,7 @@
+{
+  "name": "ruling-30-path-prefix-outside-a-group-is-not-a-submessage",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a01752005",
+  "expect_error": "malformed-wire"
+}

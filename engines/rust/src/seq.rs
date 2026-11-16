@@ -726,6 +726,63 @@ impl<'a> Parser<'a> {
     }
 }
 
+/// Ruling 23 of 0.8: a list is mapped by two groups of one scope (the common
+/// lines with one kind's, of a message or of a group body) only when the two
+/// groups sit in different `if` or `opt` blocks: each in a block that does
+/// not hold the other.
+fn check_lists(body: &SeqBody) -> Result<(), Error> {
+    /// (list, line, the `if` and `opt` blocks around the group, outermost first)
+    type Found<'a> = Vec<(&'a str, usize, Vec<usize>)>;
+    fn walk<'a>(lines: &'a [SeqLine], blocks: &mut Vec<usize>, next: &mut usize, out: &mut Found<'a>) -> Result<(), Error> {
+        for l in lines {
+            match l {
+                SeqLine::If { body, .. } | SeqLine::Opt { body } => {
+                    *next += 1;
+                    blocks.push(*next);
+                    walk(body, blocks, next, out)?;
+                    blocks.pop();
+                }
+                SeqLine::Length { body, .. } => walk(body, blocks, next, out)?,
+                SeqLine::Chain { parts, .. } => {
+                    for part in parts {
+                        walk(part, blocks, next, out)?;
+                    }
+                }
+                SeqLine::Group(g) => {
+                    out.push((&g.list, g.line, blocks.clone()));
+                    check_lists(&g.body)?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+    fn check(groups: &Found) -> Result<(), Error> {
+        for (i, (list, line, blocks)) in groups.iter().enumerate() {
+            for (other, _, others) in &groups[..i] {
+                let n = blocks.len().min(others.len());
+                // one group lies in every block the other lies in
+                if other == list && blocks[..n] == others[..n] {
+                    return bad(*line, format!("list `{}` is mapped by two groups of one scope that are not in different `if` or `opt` blocks", list));
+                }
+            }
+        }
+        Ok(())
+    }
+    let mut next = 0usize;
+    let mut common: Found = Vec::new();
+    walk(&body.common, &mut Vec::new(), &mut next, &mut common)?;
+    check(&common)?;
+    for k in &body.kinds {
+        let mut scope = common.clone();
+        walk(&k.lines, &mut Vec::new(), &mut next, &mut scope)?;
+        if scope.len() > common.len() {
+            check(&scope)?;
+        }
+    }
+    Ok(())
+}
+
 /// Parse a `layout sequential` pack.
 pub fn parse(text: &str) -> Result<Pack, Error> {
     let mut lines: Vec<(usize, Vec<String>)> = Vec::new();
@@ -772,6 +829,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         b.kinds.iter_mut().for_each(|k| fill(&mut k.lines, named));
     }
     fill_body(&mut body, &p.named);
+    check_lists(&body)?;
     match p.wire.as_deref() {
         Some("bits") => {}
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
@@ -852,6 +910,15 @@ impl<'a> Reader<'a> {
         let set = self.presence.get(&c.id).and_then(|b| b.get(c.bit as usize - 1)).copied().unwrap_or(false);
         set != c.neg
     }
+    /// The indicator bit of a `while`, `more` or `fx` group, or an `fx` bit
+    /// of a chain. At or after the end of a `length` extent it reads as 0
+    /// (ruling 21 of 0.8); past the end of the input it is `malformed-wire`.
+    fn indicator(&mut self, what: &str) -> Result<u64, Error> {
+        if self.depth > 0 && self.pos >= self.end {
+            return Ok(0);
+        }
+        self.read(1, what)
+    }
 }
 
 /// The kind of a body the wire selects, after its common lines: the first
@@ -907,9 +974,9 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 r.pos += len;
             }
             SeqLine::Align { n } => {
+                // stops at the end of the input or extent without error (ruling 20 of 0.8)
                 let skip = (n - r.pos % n) % n;
-                r.need(skip, "an `align`")?;
-                r.pos += skip;
+                r.pos = (r.pos + skip).min(r.end.max(r.pos));
             }
             SeqLine::When { len, value } => {
                 if r.pos + *len as u64 > r.end || r.read(*len, "a `when`")? != *value {
@@ -954,14 +1021,14 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::Chain { parts, ends_fx } => {
                 let mut whole = true;
                 for (i, part) in parts.iter().enumerate() {
-                    if i > 0 && r.read(1, "an `fx` bit")? == 0 {
+                    if i > 0 && r.indicator("an `fx` bit")? == 0 {
                         whole = false;
                         break;
                     }
                     decode_lines(part, r, d)?;
                 }
                 // ruling 3 of 0.8: the chain ends with an `fx` line and its bit is 1
-                if whole && *ends_fx && r.read(1, "an `fx` bit")? == 1 {
+                if whole && *ends_fx && r.indicator("an `fx` bit")? == 1 {
                     return Err(r.short("the last `fx` bit of a chain is 1: the item extends past what the pack describes"));
                 }
             }
@@ -1015,12 +1082,12 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                         }
                     }
                     Rep::While => {
-                        while r.read(1, "the bit before an item")? == 1 {
+                        while r.indicator("the bit before an item")? == 1 {
                             item(r, &mut items)?;
                         }
                     }
                     Rep::More => loop {
-                        let more = r.read(1, "the bit before an item")?;
+                        let more = r.indicator("the bit before an item")?;
                         item(r, &mut items)?;
                         if more == 0 {
                             break;
@@ -1028,7 +1095,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     },
                     Rep::Fx => loop {
                         item(r, &mut items)?;
-                        if r.read(1, "the bit after an item")? == 0 {
+                        if r.indicator("the bit after an item")? == 0 {
                             break;
                         }
                     },
@@ -1059,16 +1126,20 @@ pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8]) -> Result<Entity, Error> {
 
 /// The kind an entity, or an item, is written as: its own kind when it names
 /// this format, else the first kind whose `requires` keys are all present.
-fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity) -> Result<Option<&'a SeqKind>, Error> {
+/// An item (`item`) whose kind names this format and a kind its group does
+/// not have is selected by `requires` too (ruling 26 of 0.8); for a message
+/// that is `no-kind` (ruling 24 of 0.5).
+fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<Option<&'a SeqKind>, Error> {
     if body.kinds.is_empty() {
         return Ok(None);
     }
     if let Some((fmt, name)) = &ent.kind {
         if fmt == &p.format {
-            return match body.kinds.iter().find(|k| &k.name == name) {
-                Some(k) => Ok(Some(k)),
-                None => err(format!("no-kind: format `{}` has no kind `{}` here", p.format, name)),
-            };
+            match body.kinds.iter().find(|k| &k.name == name) {
+                Some(k) => return Ok(Some(k)),
+                None if item => {}
+                None => return err(format!("no-kind: format `{}` has no kind `{}`", p.format, name)),
+            }
         }
     }
     let has = |key: &String| ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty());
@@ -1089,11 +1160,13 @@ impl<'a> Defaults<'a> {
     fn of(body: &'a SeqBody, kind: Option<&'a SeqKind>) -> Defaults<'a> {
         Defaults { kind: kind.map_or(&[], |k| k.defaults.as_slice()), common: &body.defaults }
     }
+    /// The `default` of a key, if it has one.
+    fn default(&self, key: &str) -> Option<&'a Value> {
+        self.kind.iter().chain(self.common.iter()).find(|d| d.model_key == key).and_then(|d| d.value.as_ref())
+    }
     /// The value encode uses for a key: the entity's, else the `default`.
     fn value(&self, ent: &'a Entity, key: &str) -> Option<&'a Value> {
-        ent.fields
-            .get(key)
-            .or_else(|| self.kind.iter().chain(self.common.iter()).find(|d| d.model_key == key).and_then(|d| d.value.as_ref()))
+        ent.fields.get(key).or_else(|| self.default(key))
     }
 }
 
@@ -1130,7 +1203,7 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, id: 
             SeqLine::Chain { parts, .. } => parts.iter().for_each(|part| presence_bits(p, part, ent, defs, id, bits)),
             SeqLine::Group(g) => {
                 for item in ent.lists.get(&g.list).into_iter().flatten() {
-                    let kind = select(p, &g.body, item).ok().flatten();
+                    let kind = select(p, &g.body, item, true).ok().flatten();
                     let item_defs = Defaults::of(&g.body, kind);
                     presence_bits(p, &g.body.common, item, item_defs, id, bits);
                     if let Some(k) = kind {
@@ -1175,8 +1248,8 @@ impl<'a> Writer<'a> {
     }
 }
 
-fn encode_body(body: &SeqBody, ent: &Entity, w: &mut Writer) -> Result<(), Error> {
-    let kind = select(w.p, body, ent)?;
+fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Result<(), Error> {
+    let kind = select(w.p, body, ent, item)?;
     let defs = Defaults::of(body, kind);
     let kind_lines: &[SeqLine] = kind.map_or(&[], |k| k.lines.as_slice());
     // a presence among the common lines is visible in the kind's lines
@@ -1197,8 +1270,13 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
     for (i, line) in lines.iter().enumerate() {
         match line {
             SeqLine::Field { f, len, also } => {
-                // the earliest of the field's keys that is present (ruling 13 of 0.8)
-                let value = std::iter::once(f).chain(also.iter()).find_map(|k| defs.value(ent, &k.model_key).map(|v| (k, v)));
+                // the earliest of the field's keys that the entity holds; when
+                // it holds none, the default of the earliest key that has one
+                // (rulings 13 and 16 of 0.8)
+                let keys = || std::iter::once(f).chain(also.iter());
+                let value = keys()
+                    .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
+                    .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
                 let at = w.pos;
                 // an absent key writes zero bits
                 w.zeros(*len as u64);
@@ -1293,13 +1371,13 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                         }
                         w.put(*len, n as u64);
                         for item in items {
-                            encode_body(&g.body, item, w)?;
+                            encode_body(&g.body, item, true, w)?;
                         }
                     }
                     Rep::While => {
                         for item in items {
                             w.put(1, 1);
-                            encode_body(&g.body, item, w)?;
+                            encode_body(&g.body, item, true, w)?;
                         }
                         w.put(1, 0);
                     }
@@ -1312,7 +1390,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                             if g.rep == Rep::More {
                                 w.put(1, more);
                             }
-                            encode_body(&g.body, item, w)?;
+                            encode_body(&g.body, item, true, w)?;
                             if g.rep == Rep::Fx {
                                 w.put(1, more);
                             }
@@ -1327,7 +1405,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
 
 pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> {
     let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new() };
-    encode_body(body, ent, &mut w)?;
+    encode_body(body, ent, false, &mut w)?;
     // a message is a whole number of bytes; the last bits are zero
     let bytes = w.buf.len() as i128;
     for (at, len, plus) in std::mem::take(&mut w.wholes) {

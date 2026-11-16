@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-more-indicator-at-the-end-reads-0",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-json",
+  "input": "0103100589ff",
+  "expect": "{\"n\":1,\"x\":5,\"nums\":[9,null]}"
+}

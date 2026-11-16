@@ -29,7 +29,8 @@
 %% 'undeclared-key', 'key-type-mismatch'.
 -module(gt_engine).
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
-         load_dir/3, model_files/1, packs/1, modules/1, model_keys/1, pack/2]).
+         load_dir/3, load_packs/3, load_packs/4, model_files/1, packs/1, modules/1,
+         model_keys/1, pack/2]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
 %% for gt_seq (sequential layouts)
@@ -62,16 +63,16 @@ pack(#{packs := Packs}, Name) ->
 %% appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`.
 model_keys(Pack) -> gt_pack:model_keys(Pack).
 
-%% Load one model module text -> Engine.
+%% Load one model module text -> Engine. The checks run in this order
+%% (ruling 29 of 0.8): missing-distribution, missing-source,
+%% distribution-refused, unknown-module, distribution-violation, the `derive`
+%% checks, duplicate-module.
 load_model(#{modules := Modules} = Engine, Text) ->
-    M = gt_model:parse(Text, Modules),
-    Name = maps:get(name, M),
-    within_limit(Engine, "module", Name, M),
-    case maps:is_key(Name, Modules) of
-        true -> gt_pack:load_error('duplicate-module', "module ~s is already loaded", [Name]);
-        false -> ok
-    end,
-    case maps:get(distribution, M) of
+    M0 = gt_model:parse(Text),
+    Name = maps:get(name, M0),
+    within_limit(Engine, "module", Name, M0),
+    gt_model:check_uses(M0, Modules),
+    case maps:get(distribution, M0) of
         public ->
             lists:foreach(
               fun(U) ->
@@ -82,8 +83,13 @@ load_model(#{modules := Modules} = Engine, Text) ->
                                                  "public module ~s uses controlled module ~s",
                                                  [Name, U])
                       end
-              end, maps:get(uses, M));
+              end, maps:get(uses, M0));
         controlled -> ok
+    end,
+    M = gt_model:check_derives(M0, Modules),
+    case maps:is_key(Name, Modules) of
+        true -> gt_pack:load_error('duplicate-module', "module ~s is already loaded", [Name]);
+        false -> ok
     end,
     Modules1 = Modules#{Name => M},
     %% the derivations: the loaded modules in byte order of name, each
@@ -262,6 +268,63 @@ load_dir(Engine, PacksDir, ModelsDir) ->
                   false -> E
               end
       end, E1, lists:sort(Entries)).
+
+%% Named loader: only the packs named, each from PacksDir/<name>/pack.def,
+%% with the modules they need: `core`, the modules of their `uses` lines and
+%% the modules those use, each loaded once and after the modules it uses. A
+%% module the engine already holds is not loaded again. Names are pack
+%% directory names (binaries or strings), loaded in the order given. The
+%% model directory defaults to the one beside PacksDir. A name with no
+%% pack.def is `unknown-format`; a module with no file in ModelsDir is
+%% `unknown-module`.
+load_packs(Engine, PacksDir, Names) ->
+    load_packs(Engine, PacksDir, Names, filename:join([PacksDir, "..", "model"])).
+
+load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir) ->
+    Texts = [begin
+                 Def = filename:join([PacksDir, N, "pack.def"]),
+                 case file:read_file(Def) of
+                     {ok, Bin} -> Bin;
+                     {error, _} ->
+                         gt_pack:load_error('unknown-format',
+                                            "no pack.def for ~s in the packs directory", [N])
+                 end
+             end || N <- Names],
+    Wanted = [<<"core">> | [U || T <- Texts, U <- uses_lines(T)]],
+    Files = model_files(ModelsDir),
+    Heads = [{F, module_head(filename:join(ModelsDir, F))} || F <- Files],
+    ByName = maps:from_list([{Name, Us} || {_, {Name, Us}} <- Heads]),
+    Needed = needed_modules(Wanted, ByName, Loaded, #{}),
+    %% model_files/1 already puts every module after those it uses
+    E1 = lists:foldl(
+           fun({F, {Name, _}}, E) ->
+                   case maps:is_key(Name, Needed) of
+                       true ->
+                           {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
+                           load_model(E, Bin);
+                       false -> E
+                   end
+           end, Engine, Heads),
+    lists:foldl(fun(T, E) -> load_pack(E, T) end, E1, Texts).
+
+uses_lines(Text) ->
+    [U || L <- binary:split(Text, <<"\n">>, [global]),
+          [<<"uses">>, U] <- [gt_pack:tokens(L)]].
+
+%% The modules to load for a set of names: those names and what they use,
+%% less what the engine holds.
+needed_modules([], _ByName, _Loaded, Acc) -> Acc;
+needed_modules([N | Rest], ByName, Loaded, Acc) ->
+    case maps:is_key(N, Acc) orelse maps:is_key(N, Loaded) of
+        true -> needed_modules(Rest, ByName, Loaded, Acc);
+        false ->
+            case maps:find(N, ByName) of
+                {ok, Us} -> needed_modules(Us ++ Rest, ByName, Loaded, Acc#{N => true});
+                error ->
+                    gt_pack:load_error('unknown-module',
+                                       "module ~s has no file in the model directory", [N])
+            end
+    end.
 
 %% The module files of a directory: `core.def` first, whatever its name
 %% sorts as, then the others in byte order of file name, each after the
@@ -785,18 +848,19 @@ raw(bits, {Msg, Base}, {Off, Len}, {_, Swap, _, _}, C) ->
 raw(protobuf, {scalar, Found}, [], _Opts, C) -> {{ok, Found}, C};
 raw(protobuf, {scalar, _}, _Path, _Opts, C) -> {absent, C};
 raw(protobuf, _Msg, [], _Opts, C) -> {absent, C};
-raw(protobuf, Msg, Path, _Opts, C) -> pb_get(Msg, Path, C);
-%% inside an item a path prefix that is not a submessage is malformed-wire
-%% (ruling 13 of 0.7)
-raw(pbitem, {scalar, _} = Item, Path, Opts, C) -> raw(protobuf, Item, Path, Opts, C);
-raw(pbitem, _Msg, [], _Opts, C) -> {absent, C};
-raw(pbitem, Msg, Path, _Opts, C) ->
+%% a path prefix that is on the wire and is not a submessage is
+%% malformed-wire, inside or outside a group (ruling 13 of 0.7, ruling 30 of
+%% 0.8)
+raw(protobuf, Msg, Path, _Opts, C) ->
     case pb_get(Msg, Path, C) of
         {absent, C1} = Absent ->
             pb_prefix_check(lists:droplast(Path), C1),
             Absent;
         Found -> Found
-    end.
+    end;
+raw(pbitem, {scalar, _} = Item, Path, Opts, C) -> raw(protobuf, Item, Path, Opts, C);
+raw(pbitem, _Msg, [], _Opts, C) -> {absent, C};
+raw(pbitem, Msg, Path, Opts, C) -> raw(protobuf, Msg, Path, Opts, C).
 
 %% After a path was not found: was a field on the way on the wire and not
 %% a submessage? pb_sub/4 marked it in the cache.

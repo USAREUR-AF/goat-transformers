@@ -228,8 +228,9 @@ fn model_keys_and_capability_list_lists() {
 }
 
 /// Engine-spec 0.8, items by kind: an item records the kind it selected, and
-/// encode selects by it. A kind the group does not have is `no-kind`; a kind
-/// of another format is ignored and the item selects by `requires`.
+/// encode selects by it. A kind of another format, and a kind of this format
+/// that the group does not have, are ignored and the item selects by
+/// `requires` (ruling 26 of 0.8).
 #[test]
 fn item_kind_is_recorded_and_selects_on_encode() {
     let e = engine();
@@ -249,10 +250,41 @@ fn item_kind_is_recorded_and_selects_on_encode() {
     // a kind of another format is ignored
     ent.lists.get_mut("probe.recs").unwrap()[0].kind = Some(("geojson".to_string(), "alt".to_string()));
     assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), "0102512270");
-    // a kind this group does not have
+    // a kind of this format that the group does not have: by `requires` too
     ent.lists.get_mut("probe.recs").unwrap()[0].kind = k("nosuchkind");
-    let err = e.encode("conformance-seq-kinds", &ent).unwrap_err();
-    assert!(err.msg.starts_with("no-kind:"), "{}", err.msg);
+    assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), "0102512270");
+    // no kind recorded and the required keys of no kind but `empty`, which requires none
+    let recs = ent.lists.get_mut("probe.recs").unwrap();
+    recs[0].kind = k("nosuchkind");
+    recs[0].fields.remove("probe.y");
+    assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), "01025070");
+}
+
+/// `Engine::load_pack_dir_only` loads the named packs and no other; a name
+/// with no pack is an error.
+#[test]
+fn load_pack_dir_only_loads_the_named_packs() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let mut e = Engine::new();
+    e.load_model_dir(&root.join("model")).unwrap();
+    e.load_pack_dir_only(&root.join("packs"), &["geojson", "cot-xml", "geojson"]).unwrap();
+    assert_eq!(e.formats(), vec!["cot-xml".to_string(), "geojson".to_string()]);
+    assert!(e.load_pack_dir_only(&root.join("packs"), &["no-such-pack"]).is_err());
+    assert!(e.load_pack_dir_only(&root.join("packs"), &["../packs/geojson"]).is_err());
+}
+
+/// Ruling 29 of 0.8, the order of checks for a module, on the API:
+/// `distribution-refused` comes before `unknown-module`, and `Module::parse`
+/// alone, which has no engine and so no limit, reports `unknown-module`.
+#[test]
+fn module_checks_run_in_the_order_of_ruling_29() {
+    let text = "module m\nversion 1\ndistribution controlled\nsource \"s\"\nuses nosuch\nkey k int -\n";
+    let mut e = Engine::new();
+    e.set_max_distribution(goat_transformers::Distribution::Public);
+    let err = e.load_model(text).unwrap_err();
+    assert!(err.msg.starts_with("distribution-refused:"), "{}", err.msg);
+    let err = goat_transformers::Module::parse(text).unwrap_err();
+    assert!(err.msg.starts_with("unknown-module:"), "{}", err.msg);
 }
 
 /// `model_keys` and `capability` of a sequential pack: keys inside `if`,

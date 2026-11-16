@@ -1,0 +1,7 @@
+{
+  "name": "ruling-22-a-const-is-not-content",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"c1\":6}",
+  "expect": "014002028300"
+}

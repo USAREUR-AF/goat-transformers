@@ -84,7 +84,7 @@ class SeqKind:
         self.requires_lists = ()
         self.defaults = []       # Default lines
         self.presences = {}
-        self.lists = set()
+        self.lists = {}          # list -> the `if`/`opt` blocks each of its groups sits in
         self.when_lines = ()
         self.block = None        # common + whens + nodes, set when the body is closed
 
@@ -98,7 +98,7 @@ class Body:
         self.defaults = []       # Default lines before the first kind
         self.cur = None          # the kind being read
         self.presences = {}
-        self.lists = set()
+        self.lists = {}          # as SeqKind.lists, for the groups before the first kind
         self.first_when = None   # lineno of the first common `when`
         self._index = {}
         self._defaults = {}
@@ -513,10 +513,23 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             if mode not in GROUP_MODES or len(args) != (3 if mode == "count" else 2):
                 raise bad("a sequential 'group' line is: group <list> count <len> | while | more | fx", lineno, mode)
             length = bit_len(args[2], "a group 'count'", lineno) if mode == "count" else None
+            # Ruling 23 of 0.8: a list in two groups of one scope is allowed
+            # when the two groups sit in different `if` or `opt` blocks. A
+            # group in no such block, two groups in one block, and a group in
+            # a block that encloses the other's are refused.
+            blocks = []
+            for fr in reversed(stack):
+                if fr.what == "group":
+                    break
+                if fr.what == "if" or fr.what == "opt":
+                    blocks.append(fr.node)
             lists = body.cur.lists if body.cur is not None else body.lists
-            if name in body.lists or name in lists:
-                raise bad("list %s is mapped by two groups of one scope" % name, lineno, mode)
-            lists.add(name)
+            for table in ((body.lists, lists) if lists is not body.lists else (lists,)):
+                for other in table.get(name, ()):
+                    if not blocks or not other or blocks[0] in other or other[0] in blocks:
+                        raise bad("list %s is mapped by two groups of one scope that are not in different "
+                                  "'if' or 'opt' blocks" % name, lineno, mode)
+            lists.setdefault(name, []).append(blocks)
             nd = GroupNode(T_GROUP, lineno, list=name, mode=mode, length=length, scope=Body(), locator=mode)
             target(body).append(nd)
             key_refs.append((name, nd))

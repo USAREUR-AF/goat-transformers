@@ -52,8 +52,8 @@ jobs:
           python -m pip install --disable-pip-version-check ./engines/python
           python3 -I tools/goat-pkg bundle --formats cot-xml,geojson --out "$RUNNER_TEMP/goat"
           cd "$RUNNER_TEMP"
-          python -c 'from goat_transformers import load_tree; print(load_tree("goat", ["cot-xml", "geojson"]).formats())' | grep -q "cot-xml"
-          goat-xf-py list-formats --packs goat/packs | grep -q geojson
+          python -c 'from goat_transformers import Engine; print(Engine.from_dir("goat/packs", packs_only=["cot-xml", "geojson"]).formats())' | grep -q "cot-xml"
+          goat-xf-py list-formats --packs goat/packs --packs-only geojson | grep -q geojson
   java:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -85,10 +85,8 @@ jobs:
           rebar3-version: "3.24"
       - run: ./build.sh && ./run_tests
         working-directory: engines/erlang
-      - name: The tree loader, and the engine as a rebar3 application
-        run: |
-          erl -noshell -pa ebin -eval 'E = gt_tree:load("../..", ["cot-xml", "geojson"]), 2 = maps:size(gt_engine:packs(E)), 1 = maps:size(gt_engine:modules(E)), halt().'
-          rebar3 compile
+      - name: The engine as a rebar3 application
+        run: rebar3 compile
         working-directory: engines/erlang
   zig:
     runs-on: ubuntu-latest
@@ -100,8 +98,8 @@ jobs:
           version: 0.13.0
       - run: zig build test -- ../../packs
         working-directory: engines/zig
-      - name: The module's tree loader
-        run: zig build tree-test
+      - name: The module another program imports
+        run: zig build module-test
         working-directory: engines/zig
   bindings:
     runs-on: ubuntu-latest

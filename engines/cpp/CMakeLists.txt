@@ -38,7 +38,6 @@ add_library(goat_transformers STATIC
   src/protobuf.cpp
   src/sequential.cpp
   src/transforms.cpp
-  src/tree.cpp
   src/util.cpp
   src/xml.cpp)
 add_library(goat_transformers::goat_transformers ALIAS goat_transformers)
@@ -94,12 +93,8 @@ if(GT_BUILD_TESTS)
   target_compile_options(goat_transformers_unit PRIVATE ${GT_WARNINGS})
   add_test(NAME unit COMMAND goat_transformers_unit)
 
-  add_executable(goat_transformers_tree tests/tree_test.cpp)
-  target_link_libraries(goat_transformers_tree PRIVATE goat_transformers)
-  target_compile_options(goat_transformers_tree PRIVATE ${GT_WARNINGS})
-  add_test(NAME tree COMMAND goat_transformers_tree ${GT_PACKS_DIR}/..)
-
   if(GT_BUILD_CLI)
     add_test(NAME cli_list_formats COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR})
+    add_test(NAME cli_packs_only COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR} --packs-only cot-xml,geojson)
   endif()
 endif()

@@ -32,12 +32,12 @@ pub fn build(b: *std.Build) void {
     const test_step = b.step("test", "Run the conformance harness over all packs");
     test_step.dependOn(&run_cmd.step);
 
-    // `zig build tree-test`: the checks of the module's tree loader.
-    const tree_tests = b.addTest(.{
+    // `zig build module-test`: the module another program imports loads packs and converts.
+    const module_tests = b.addTest(.{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
     });
-    const tree_step = b.step("tree-test", "Run the checks of the module's tree loader");
-    tree_step.dependOn(&b.addRunArtifact(tree_tests).step);
+    const module_step = b.step("module-test", "Run the check of the module another program imports");
+    module_step.dependOn(&b.addRunArtifact(module_tests).step);
 }

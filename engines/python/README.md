@@ -9,9 +9,9 @@ pip install "git+https://github.com/USAREUR-AF/goat-transformers@v0.8.0#subdirec
 ```
 
 ```python
-from goat_transformers import load_tree
+from goat_transformers import Engine
 
-engine = load_tree("vendor/goat", ["cot-xml", "geojson"])
+engine = Engine.from_dir("vendor/goat/packs", packs_only=["cot-xml", "geojson"])
 geojson = engine.convert("cot-xml", "geojson", cot_event)   # bytes in, bytes out
 ```
 

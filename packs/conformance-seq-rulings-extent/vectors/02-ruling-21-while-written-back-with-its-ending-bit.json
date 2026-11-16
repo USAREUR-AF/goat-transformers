@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-while-written-back-with-its-ending-bit",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-rulings-extent",
+  "input": "0101100589ff",
+  "expect": "010111058900"
+}

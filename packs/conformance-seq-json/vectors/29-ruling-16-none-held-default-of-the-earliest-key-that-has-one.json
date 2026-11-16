@@ -1,0 +1,7 @@
+{
+  "name": "ruling-16-none-held-default-of-the-earliest-key-that-has-one",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1}",
+  "expect": "0100020280"
+}

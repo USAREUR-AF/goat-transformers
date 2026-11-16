@@ -14,6 +14,8 @@ An independent, clean-room implementation of the gt engine, written from
 `FAIL <pack>/<vector>: <why>`, then prints
 `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`), and exits non-zero on any failure.
+It also loads one pack alone through `gt_engine:load_packs/4` and runs that
+pack's vectors on the engine it gives (`named load: ...`).
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
 
@@ -22,10 +24,6 @@ directory defaults to the one beside `<packs>`.
 `rebar.config` and `src/goat_transformers.app.src` make the engine the rebar3
 application `goat_transformers`; `docs/using.md` has the dependency line. The
 build and the tests above do not use rebar3.
-
-```
-E = gt_tree:load("vendor/goat", ["cot-xml", "geojson"]),   % the named packs and the modules they use
-```
 
 ## Engine instance
 
@@ -36,12 +34,26 @@ E2 = gt_engine:load_model(E1, ModuleText),          % modules first
 E3 = gt_engine:load_pack(E2, PackText),
 E  = gt_engine:load_dir(gt_engine:new(), "packs"),  % model/*.def (core first, each
                                                     % module after those it uses), then packs
+E  = gt_engine:load_packs(gt_engine:new(), "packs", % only the packs named, and only the
+                          [<<"cot-xml">>, <<"geojson">>]),   % modules they need
 ```
+
+`load_packs(Engine, PacksDir, Names)` reads `PacksDir/<name>/pack.def` for each
+name (a binary or a string), in the order given, and loads before them `core`,
+the modules of their `uses` lines and the modules those use, each once and
+after the modules it uses. A module the engine already holds is not loaded
+again, so the call can be repeated to add packs. `load_packs/4` and
+`load_dir/3` take the model directory as a last argument; it defaults to
+`PacksDir/../model`. A name with no `pack.def` raises a load error of kind
+`'unknown-format'`, a module with no file `'unknown-module'`.
 
 A refused load raises `error:{load_error, Kind, Message}`; `Kind` is the
 specification's error kind as an atom (`'undeclared-key'`, `'duplicate-kind'`,
 `'bad-directive'`, `'key-type-mismatch'`) and `Message` begins with the kind
-and a colon.
+and a colon. A module is checked in the order of ruling 29 of 0.8:
+`missing-distribution`, `missing-source`, `distribution-refused`,
+`unknown-module`, `distribution-violation`, the `derive` checks,
+`duplicate-module`.
 
 ## Conversion (engine-spec Version 0.8)
 
@@ -86,7 +98,8 @@ keys on a field; `presence <name> <n> | fx` with `if` blocks and `!` bits;
 `length` blocks and `length ... whole`; items by kind. An item of a group
 whose body holds kinds also has `kind => {FormatName, KindName}`. A model
 module may hold `uses` lines, and `derive` has the functions `day_seconds`,
-`any`, `not`, `parse_int` and `text_of`.
+`any`, `not`, `parse_int` and `text_of`. Rulings 16 to 34 of 0.8 are
+implemented as the specification states them.
 
 ## Layout
 

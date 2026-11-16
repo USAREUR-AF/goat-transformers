@@ -35,8 +35,8 @@ tools/goat-pkg bundle --formats cot-xml,sapient --out vendor/goat
 tools/goat-pkg bundle --formats cot-xml,sapient --out vendor/goat --embed rust
 ```
 
-Every engine loads that directory with one call that takes the directory and
-the pack names. `--embed rust|go|python` adds a source file that compiles the
+Every engine loads the directory's packs by name with the model modules they
+need, and every command-line tool does with `--packs-only`. `--embed rust|go|python` adds a source file that compiles the
 packs into the program. `tools/goat-pkg archive --out <file>.tar.gz
 [--vectors]` writes every module and pack as one archive, the same bytes for
 the same tree. [using.md](using.md) shows each from the consuming side.

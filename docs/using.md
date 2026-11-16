@@ -42,18 +42,19 @@ python3 -I goat-transformers/tools/goat-pkg bundle --formats cot-xml,geojson --o
 ```
 bundle: vendor/goat
   packs:   cot-xml, geojson
-  modules: core
-  files:   5 (19753 bytes) and manifest.json
+  modules: core, track
+  files:   7 (23990 bytes) and manifest.json
 ```
 
 The directory holds `model/`, `packs/`, `LICENSE`, `NOTICE` and `manifest.json`.
 The manifest records the library version, the commit the files were copied
 from, and the SHA-256 of each file. `tools/goat-pkg formats` lists the formats.
 
-Each engine has one call that takes this directory and a list of pack names. It
-loads `core`, the modules those packs use, the modules those modules use, and
-the named packs. It reads nothing else, so the same call works on a full
-checkout of this repository. The sections below call this directory a tree.
+Each engine has one call that takes the `packs` directory and a list of pack
+names, and loads those packs with the model modules they need. It finds the
+modules in the `model` directory beside `packs`, so the same call works on a
+full checkout of this repository, where it loads only what the named packs
+use. Each command-line tool has the same as `--packs-only <name>[,<name>...]`.
 
 With `--embed rust`, `--embed go` or `--embed python` the bundle also holds a
 source file that compiles the packs into your program, so the program reads no
@@ -93,11 +94,15 @@ use std::path::Path;
 
 fn main() -> Result<(), goat_transformers::Error> {
     let mut engine = Engine::new();
-    engine.load_tree(Path::new("vendor/goat"), &["cot-xml", "geojson"])?;
+    engine.load_model_dir(Path::new("vendor/goat/model"))?;
+    engine.load_pack_dir_only(Path::new("vendor/goat/packs"), &["cot-xml", "geojson"])?;
     println!("{}", engine.convert("cot-xml", "geojson", cot)?);
     Ok(())
 }
 ```
+
+`load_model_dir` loads every module of the directory, which in a bundle is the
+modules the packs need. `load_pack_dir_only` loads the named packs.
 
 Packs compiled into the binary: bundle with `--embed rust`, which writes
 `vendor/goat/goat_packs.rs`, and use it as a module.
@@ -111,16 +116,18 @@ let engine = goat_packs::engine()?;   // reads no file
 
 The file is a list of `engine.load_model(include_str!("model/core.def"))?` and
 `engine.load_def(include_str!("packs/cot-xml/pack.def"))?` lines in loading
-order; `engines/rust/tests/tree.rs` runs the same pattern by hand.
+order; `engines/rust/tests/embed.rs` runs the same pattern by hand.
 
 The command-line tool:
 
 ```
 cargo install --git https://github.com/USAREUR-AF/goat-transformers --tag v0.8.0 goat-transformers
-goat-xf convert --from cot-xml --to geojson --packs vendor/goat/packs < event.xml
+goat-xf convert --from cot-xml --to geojson --packs vendor/goat/packs --packs-only cot-xml,geojson < event.xml
 ```
 
-Each release also carries `goat-xf` built for Linux (x86_64 and aarch64,
+`--packs-only` matters when `--packs` names a directory that holds more packs
+than the conversion needs, such as a checkout: the tool then reads two pack
+files, not all of them. Each release also carries `goat-xf` built for Linux (x86_64 and aarch64,
 statically linked) and macOS (arm64 and x86_64).
 
 ## Go
@@ -143,8 +150,8 @@ import (
 )
 
 func main() {
-	engine := goatxf.New()
-	if err := engine.LoadTree("vendor/goat", []string{"cot-xml", "geojson"}); err != nil {
+	engine, err := goatxf.LoadPacksOnly("vendor/goat/model", "vendor/goat/packs", goatxf.DistControlled, []string{"cot-xml", "geojson"})
+	if err != nil {
 		log.Fatal(err)
 	}
 	geojson, err := engine.Convert("cot-xml", "geojson", []byte(cot))
@@ -155,8 +162,8 @@ func main() {
 }
 ```
 
-Packs compiled into the binary: `LoadFS` takes any `fs.FS`, an `embed.FS`
-included. Bundling with `--embed go --out goatpacks` writes the package for
+Packs compiled into the binary: `Engine.LoadFS` is the same loader for an
+`fs.FS`, an `embed.FS` included. Bundling with `--embed go --out goatpacks` writes the package for
 you (`--package` names it):
 
 ```go
@@ -165,8 +172,10 @@ import "example.com/yourmodule/goatpacks"
 engine, err := goatpacks.Engine()   // reads no file
 ```
 
-The generated file holds `//go:embed model packs`, the embedded tree and that
-function.
+The generated file holds `//go:embed model packs`, the embedded files and that
+function. The command-line tool is `go install
+github.com/USAREUR-AF/goat-transformers/engines/go/cmd/goat-xf@v0.8.0`, with
+`--packs` and `--packs-only` as above.
 
 ## Python
 
@@ -178,16 +187,16 @@ Python 3.9 or later; no dependencies. Each release also carries the wheel and
 the sdist.
 
 ```python
-from goat_transformers import load_tree
+from goat_transformers import Engine
 
-engine = load_tree("vendor/goat", ["cot-xml", "geojson"])
+engine = Engine.from_dir("vendor/goat/packs", packs_only=["cot-xml", "geojson"])
 print(engine.convert("cot-xml", "geojson", cot).decode())   # bytes in, bytes out
 ```
 
 Packs as package data: bundle with `--embed python` into a directory inside
 your package, for example `myapp/goatpacks`. The bundle then is a package with
-one function, and it loads through `importlib.resources`, so it works from a
-wheel:
+one function, and it finds its files through `importlib.resources`, so it
+works from a wheel:
 
 ```python
 from myapp import goatpacks
@@ -205,7 +214,7 @@ List the data files in your `pyproject.toml` so the wheel carries them:
 The package installs the command-line tool `goat-xf-py`:
 
 ```
-goat-xf-py convert --from cot-xml --to geojson --packs vendor/goat/packs < event.xml
+goat-xf-py convert --from cot-xml --to geojson --packs vendor/goat/packs --packs-only cot-xml,geojson < event.xml
 ```
 
 ## Java
@@ -228,13 +237,12 @@ mvn install:install-file -Dfile=goat-transformers-0.8.0.jar -DgroupId=goat.trans
 
 ```java
 import goat.transformers.Engine;
-import goat.transformers.Tree;
 import java.nio.file.Path;
 import java.util.List;
 
 public class Convert {
     public static void main(String[] args) {
-        Engine engine = Tree.load(Path.of("vendor/goat"), List.of("cot-xml", "geojson"));
+        Engine engine = Engine.loadOnly(Path.of("vendor/goat/packs"), List.of("cot-xml", "geojson"));
         System.out.println(engine.convert("cot-xml", "geojson", cot));
     }
 }
@@ -246,8 +254,8 @@ java -cp lib/goat-transformers-0.8.0.jar:. Convert
 ```
 
 The jar also runs the command-line tool: `java -jar goat-transformers-0.8.0.jar
-list-formats --packs vendor/goat/packs` prints `cot-xml 0.2.0 xml` and
-`geojson 0.1.0 geojson`.
+list-formats --packs vendor/goat/packs --packs-only cot-xml,geojson` prints one
+line for each of the two formats.
 
 ## C++
 
@@ -276,17 +284,17 @@ target_link_libraries(convert PRIVATE goat_transformers::goat_transformers)
 ```
 
 ```cpp
-#include <goat_transformers/tree.hpp>
+#include <goat_transformers/engine.hpp>
 #include <iostream>
 
 int main() {
-    goat_transformers::Engine engine;
-    goat_transformers::load_tree(engine, "vendor/goat", {"cot-xml", "geojson"});
+    auto engine = goat_transformers::Engine::load_packs("vendor/goat/packs", {"cot-xml", "geojson"});
     std::cout << engine.convert("cot-xml", "geojson", cot) << "\n";
 }
 ```
 
 Without CMake: `c++ -std=c++17 -I<prefix>/include convert.cpp <prefix>/lib/libgoat_transformers.a`.
+The installed `goat-xf` takes `--packs` and `--packs-only` as the Rust tool does.
 
 ## Erlang
 
@@ -301,11 +309,12 @@ The application is `goat_transformers` (OTP standard library only). Without
 rebar3, `engines/erlang/build.sh` compiles the modules to `ebin/` with `erlc`.
 
 ```erlang
-Engine = gt_tree:load("vendor/goat", ["cot-xml", "geojson"]),
+Engine = gt_engine:load_packs(gt_engine:new(), "vendor/goat/packs", ["cot-xml", "geojson"]),
 io:format("~s~n", [gt_engine:convert(Engine, <<"cot-xml">>, <<"geojson">>, Cot)]).
 ```
 
-`Cot` is a binary. `gt_tree:load/3` loads into an engine you already have.
+`Cot` is a binary. The first argument is the engine to load into, so a second
+call adds packs; a module the engine already holds is not loaded again.
 
 ## Zig
 
@@ -332,7 +341,7 @@ pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     var engine = gt.Engine.init(arena.allocator());
-    try gt.loadTree(&engine, "vendor/goat", &.{ "cot-xml", "geojson" });
+    _ = try engine.loadPacksOnly("vendor/goat/packs", "vendor/goat/model", &.{ "cot-xml", "geojson" });
     const geojson = try engine.convert("cot-xml", "geojson", cot, null);
     try std.io.getStdOut().writer().print("{s}\n", .{geojson});
 }
@@ -351,7 +360,7 @@ npm install https://github.com/USAREUR-AF/goat-transformers/releases/download/v0
 ```
 
 The package is `@usareur-af/goat-transformers`: an ES module with TypeScript
-types, the WebAssembly module (337 kB, no imports) beside it, and no
+types, the WebAssembly module (346 kB, no imports) beside it, and no
 dependencies. In Node 18 or later:
 
 ```js
@@ -362,7 +371,8 @@ console.log(gt.convert("cot-xml", "geojson", cot));
 ```
 
 In a browser there is no directory to read, so the host fetches the texts and
-loads them in order: the model modules, then the packs. The bundle's
+loads them in order: the model modules, then the packs (`loadTree` does this
+for a directory in Node). The bundle's
 `manifest.json` lists both in loading order, as `modules` (the file of a module
 is `model/<module>.def`) and `packs`.
 
@@ -371,6 +381,7 @@ import { GoatTransformers } from "@usareur-af/goat-transformers";
 
 const gt = await GoatTransformers.load(wasmBytes);   // the file "@usareur-af/goat-transformers/goat_transformers.wasm"
 gt.loadModel(coreDefText);
+gt.loadModel(trackDefText);        // cot-xml uses the module `track`
 gt.loadPack(cotXmlPackText);
 gt.loadPack(geojsonPackText);
 ```
@@ -401,6 +412,7 @@ and passes them in loading order.
 gt_engine *e = gt_engine_new();
 gt_buf out = {0};
 gt_load_model(e, core_def, core_def_len, &out);      /* vendor/goat/model/core.def */
+gt_load_model(e, track_def, track_def_len, &out);    /* vendor/goat/model/track.def: cot-xml uses track */
 gt_load_pack(e, cot_def, cot_def_len, &out);         /* vendor/goat/packs/cot-xml/pack.def */
 gt_load_pack(e, geo_def, geo_def_len, &out);         /* vendor/goat/packs/geojson/pack.def */
 int32_t rc = gt_convert(e, (const uint8_t *)"cot-xml", 7, (const uint8_t *)"geojson", 7,
@@ -451,7 +463,7 @@ carry from one format to another and which the target has no field for. It is
 computed from the packs, not from a message.
 
 ```
-goat-xf matrix --detail --packs vendor/goat/packs
+goat-xf matrix --detail --packs vendor/goat/packs --packs-only cot-xml,geojson
 ```
 
 ```
@@ -462,7 +474,7 @@ geojson      F      -
 F = all mapped fields carry   P = some carry, some dropped   . = no shared fields   - = same format
 
 Per-pair detail (carried | dropped and why):
-         cot-xml -> geojson        PARTIAL  carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]  dropped: stale_ms (target `geojson` has no field for them)
+         cot-xml -> geojson        PARTIAL  carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]  dropped: track.scoped_id, stale_ms (target `geojson` has no field for them)
          geojson -> cot-xml        FULL     carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]
 ```
 

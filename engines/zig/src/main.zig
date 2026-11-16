@@ -428,6 +428,8 @@ const Module = struct {
     // `list` lines; a list shares the key namespace of its module
     lists: std.StringHashMap(void),
     derives: std.ArrayList(Derive),
+    // the `derive` lines as written, until `checkDerives` resolves them
+    derive_lines: std.ArrayList([]const []const u8),
     // `uses <module>` lines (Version 0.8): the modules whose keys a `derive`
     // line of this module may take as arguments
     uses: std.ArrayList([]const u8),
@@ -614,6 +616,14 @@ fn parseDecimalInt(s: []const u8) !i64 {
     return std.fmt.parseInt(i64, s, 10) catch E.@"transform-decode";
 }
 
+// The text of `parse_int` (ruling 28 of 0.8): an optional `-`, then digits,
+// leading zeros included, within 64 bits. Anything else is null.
+fn parseIntText(s: []const u8) ?i64 {
+    const digits = if (s.len > 0 and s[0] == '-') s[1..] else s;
+    if (!allDigits(digits)) return null;
+    return std.fmt.parseInt(i64, s, 10) catch null;
+}
+
 fn parseUnsigned(s: []const u8) ?u64 {
     if (!allDigits(s)) return null;
     return std.fmt.parseInt(u64, s, 10) catch null;
@@ -765,11 +775,52 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const Module
     return d;
 }
 
-// Parse one model module file. Fails with `missing-distribution`,
-// `missing-source`, `duplicate-key` or `bad-directive` (and the grammar
-// errors) at parse. `core` is the loaded `core` module, for the keys a
-// `derive` line of another module names.
-fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const ModuleMap, diag: *Diag) anyerror!*Module {
+// The part of a `derive` check that needs no key (ruling 32 of 0.8): the line
+// has a target, a function and an argument; the function is one the
+// specification names, with a parameter exactly when it takes one and one it
+// can read; the argument count fits it.
+fn deriveShapeOk(toks: []const []const u8) bool {
+    if (toks.len < 4) return false;
+    const fname = toks[2];
+    const colon = std.mem.indexOfScalar(u8, fname, ':');
+    const head = if (colon) |c| fname[0..c] else fname;
+    const nargs = toks.len - 3;
+    const Shape = struct { name: []const u8, param: bool, min: usize, max: usize };
+    const many = std.math.maxInt(usize);
+    const shapes = [_]Shape{
+        .{ .name = "copy", .param = false, .min = 1, .max = 1 },
+        .{ .name = "hypot", .param = false, .min = 2, .max = 2 },
+        .{ .name = "bearing", .param = false, .min = 2, .max = 2 },
+        .{ .name = "east_of", .param = false, .min = 2, .max = 2 },
+        .{ .name = "north_of", .param = false, .min = 2, .max = 2 },
+        .{ .name = "neg", .param = false, .min = 1, .max = 1 },
+        .{ .name = "scale", .param = true, .min = 1, .max = 1 },
+        .{ .name = "offset", .param = true, .min = 1, .max = 1 },
+        .{ .name = "join", .param = true, .min = 1, .max = many },
+        .{ .name = "day_seconds", .param = false, .min = 1, .max = 1 },
+        .{ .name = "any", .param = false, .min = 1, .max = many },
+        .{ .name = "not", .param = false, .min = 1, .max = 1 },
+        .{ .name = "parse_int", .param = false, .min = 1, .max = 1 },
+        .{ .name = "text_of", .param = false, .min = 1, .max = 1 },
+    };
+    for (shapes) |sh| {
+        if (!std.mem.eql(u8, sh.name, head)) continue;
+        if (sh.param != (colon != null) or nargs < sh.min or nargs > sh.max) return false;
+        // a parameter no key type could accept
+        const param = if (colon) |c| fname[c + 1 ..] else "";
+        if (std.mem.eql(u8, head, "scale")) return parseFactor(param) != null;
+        if (std.mem.eql(u8, head, "offset")) return !std.meta.isError(parseDecimal(param));
+        return true;
+    }
+    return false;
+}
+
+// Parse one model module file. Fails with the line errors as the file is
+// read (`duplicate-key`, the grammar errors, and `bad-directive` for a
+// `derive` line refused on its own text), then `missing-distribution`, then
+// `missing-source`. The keys and types of its `derive` lines are checked by
+// `checkDerives` (ruling 29 of 0.8).
+fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Module {
     const m = try alloc.create(Module);
     m.* = .{
         .name = "",
@@ -779,9 +830,9 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const Modu
         .index = std.StringHashMap(usize).init(alloc),
         .lists = std.StringHashMap(void).init(alloc),
         .derives = std.ArrayList(Derive).init(alloc),
+        .derive_lines = std.ArrayList([]const []const u8).init(alloc),
         .uses = std.ArrayList([]const u8).init(alloc),
     };
-    var derive_lines = std.ArrayList([]const []const u8).init(alloc);
     var lines = std.mem.splitScalar(u8, def_text, '\n');
     var tokbuf = std.ArrayList([]const u8).init(alloc);
     while (lines.next()) |line| {
@@ -829,7 +880,11 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const Modu
             if (m.index.contains(name) or m.lists.contains(name)) return bad(diag, alloc, E.@"duplicate-key", "list {s}: the name appears twice", .{name});
             try m.lists.put(name, {});
         } else if (std.mem.eql(u8, kw, "derive")) {
-            try derive_lines.append(try alloc.dupe([]const u8, toks));
+            // refused on its own text: a line error (ruling 32 of 0.8)
+            if (!deriveShapeOk(toks)) {
+                return bad(diag, alloc, E.@"bad-directive", "derive {s}: the function, its parameter or its argument count does not fit", .{if (toks.len > 1) toks[1] else ""});
+            }
+            try m.derive_lines.append(try alloc.dupe([]const u8, toks));
         } else if (std.mem.eql(u8, kw, "uses")) {
             if (toks.len != 2) return E.MalformedDirective;
             try m.uses.append(toks[1]);
@@ -838,9 +893,16 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const Modu
         }
     }
     if (m.name.len == 0) return E.MalformedModule;
-    // `derive` lines are checked once the whole file is read: a line may name
-    // a key the file declares further down.
-    for (derive_lines.items) |toks| {
+    if (m.distribution == null) return E.@"missing-distribution";
+    if (m.sources.items.len == 0) return E.@"missing-source";
+    return m;
+}
+
+// The `derive` checks of a module on keys and types, run once the whole file
+// is read (a line may name a key the file declares further down) and after
+// the module's distribution and `uses` checks (ruling 29 of 0.8).
+fn checkDerives(alloc: std.mem.Allocator, m: *Module, mods: *const ModuleMap, diag: *Diag) anyerror!void {
+    for (m.derive_lines.items) |toks| {
         // an argument of a used module that is not loaded: `unknown-module`
         if (toks.len >= 4) for (toks[3..]) |a| {
             const ref = splitKey(a);
@@ -849,12 +911,9 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, mods: *const Modu
             }
         };
         const d = resolveDerive(alloc, m, mods, toks) orelse
-            return bad(diag, alloc, E.@"bad-directive", "derive {s}: the function, argument count, keys or types do not fit", .{if (toks.len > 1) toks[1] else ""});
+            return bad(diag, alloc, E.@"bad-directive", "derive {s}: the keys or types do not fit the function", .{if (toks.len > 1) toks[1] else ""});
         try m.derives.append(d);
     }
-    if (m.distribution == null) return E.@"missing-distribution";
-    if (m.sources.items.len == 0) return E.@"missing-source";
-    return m;
 }
 
 // Resolve one line against the pack's wire: parse its locator, check its
@@ -1566,6 +1625,20 @@ fn finishPack(alloc: std.mem.Allocator, p: *Pack) !void {
     }
 }
 
+// The module files of a model directory, as `Engine.scanModelDir` read them.
+const ModelFiles = struct {
+    dir: []const u8,
+    names: []const []const u8,
+    texts: [][]const u8,
+    mod_names: [][]const u8,
+    mod_uses: [][]const []const u8,
+    state: []u8,
+};
+
+// What a directory load loaded: the number of modules, and the directory
+// names of the packs.
+const Loaded = struct { modules: usize, packs: []const []const u8 };
+
 pub const Engine = struct {
     alloc: std.mem.Allocator,
     // Where decode, encode and convert allocate their results and the failure
@@ -1604,7 +1677,7 @@ pub const Engine = struct {
     // load_model(text): load one model module.
     pub fn loadModel(self: *Engine, def_text: []const u8) !*Module {
         var mdiag = Diag{};
-        const m = parseModule(self.alloc, def_text, &self.modules, &mdiag) catch |err| {
+        const m = parseModule(self.alloc, def_text, &mdiag) catch |err| {
             self.fail(err, "model module: {s}", .{mdiag.msg});
             return err;
         };
@@ -1633,6 +1706,11 @@ pub const Engine = struct {
                 }
             }
         }
+        // the `derive` checks, then `duplicate-module`
+        checkDerives(self.alloc, m, &self.modules, &mdiag) catch |err| {
+            self.fail(err, "model module: {s}", .{mdiag.msg});
+            return err;
+        };
         if (self.modules.contains(m.name)) {
             const err = E.@"duplicate-module";
             self.fail(err, "module {s} is already loaded", .{m.name});
@@ -1756,10 +1834,13 @@ pub const Engine = struct {
         return p;
     }
 
-    // Load every `*.def` in `models_dir`, in byte order of file name.
-    pub fn loadModelDir(self: *Engine, models_dir: []const u8) !usize {
+    // Read every `*.def` in `models_dir`: the file names in byte order with
+    // `core.def` first, whatever its name sorts as (ruling 9 of 0.6: a
+    // `derive` line of another module may name a key of `core`), each file's
+    // text, module name and `uses` lines. null: there is no such directory.
+    fn scanModelDir(self: *Engine, models_dir: []const u8) !?ModelFiles {
         var dir = std.fs.cwd().openDir(models_dir, .{ .iterate = true }) catch |err| switch (err) {
-            error.FileNotFound => return 0, // no model directory: no modules
+            error.FileNotFound => return null,
             else => return err,
         };
         defer dir.close();
@@ -1771,60 +1852,118 @@ pub const Engine = struct {
             try names.append(try self.alloc.dupe(u8, entry.name));
         }
         std.mem.sort([]const u8, names.items, {}, strLess);
-        // `core.def` first, whatever its name sorts as (ruling 9 of 0.6): a
-        // `derive` line of another module may name a key of `core`
         for (names.items, 0..) |name, i| {
             if (!std.mem.eql(u8, name, "core.def")) continue;
             std.mem.copyBackwards([]const u8, names.items[1 .. i + 1], names.items[0..i]);
             names.items[0] = name;
             break;
         }
-        // each module after the modules it uses (Version 0.8); a cycle is
-        // `bad-directive`
         const n = names.items.len;
-        const texts = try self.alloc.alloc([]const u8, n);
-        const mod_names = try self.alloc.alloc([]const u8, n);
-        const mod_uses = try self.alloc.alloc([]const []const u8, n);
+        const mf = ModelFiles{
+            .dir = models_dir,
+            .names = names.items,
+            .texts = try self.alloc.alloc([]const u8, n),
+            .mod_names = try self.alloc.alloc([]const u8, n),
+            .mod_uses = try self.alloc.alloc([]const []const u8, n),
+            .state = try self.alloc.alloc(u8, n),
+        };
+        @memset(mf.state, 0);
         var tokbuf = std.ArrayList([]const u8).init(self.alloc);
         for (names.items, 0..) |name, i| {
             const path = try std.fmt.allocPrint(self.alloc, "{s}/{s}", .{ models_dir, name });
-            texts[i] = try std.fs.cwd().readFileAlloc(self.alloc, path, max_file);
-            mod_names[i] = "";
+            mf.texts[i] = try std.fs.cwd().readFileAlloc(self.alloc, path, max_file);
+            mf.mod_names[i] = "";
             var uses = std.ArrayList([]const u8).init(self.alloc);
-            var lines = std.mem.splitScalar(u8, texts[i], '\n');
+            var lines = std.mem.splitScalar(u8, mf.texts[i], '\n');
             while (lines.next()) |line| {
                 try tokenizeInto(&tokbuf, line);
                 if (tokbuf.items.len < 2) continue;
-                if (std.mem.eql(u8, tokbuf.items[0], "module")) mod_names[i] = tokbuf.items[1];
+                if (std.mem.eql(u8, tokbuf.items[0], "module")) mf.mod_names[i] = tokbuf.items[1];
                 if (std.mem.eql(u8, tokbuf.items[0], "uses")) try uses.append(tokbuf.items[1]);
             }
-            mod_uses[i] = uses.items;
+            mf.mod_uses[i] = uses.items;
         }
-        // 0: not visited, 1: being loaded, 2: loaded
-        const state = try self.alloc.alloc(u8, n);
-        @memset(state, 0);
-        for (0..n) |i| try self.loadModelOrdered(models_dir, names.items, texts, mod_names, mod_uses, state, i);
-        return n;
+        return mf;
     }
 
-    fn loadModelOrdered(self: *Engine, models_dir: []const u8, names: []const []const u8, texts: []const []const u8, mod_names: []const []const u8, mod_uses: []const []const []const u8, state: []u8, i: usize) anyerror!void {
-        if (state[i] == 2) return;
-        if (state[i] == 1) {
+    // Load every `*.def` in `models_dir`: `core.def` first, then byte order
+    // of file name, each module after the modules it uses (Version 0.8); a
+    // cycle is `bad-directive`. Returns the number of modules loaded.
+    pub fn loadModelDir(self: *Engine, models_dir: []const u8) !usize {
+        const mf = (try self.scanModelDir(models_dir)) orelse return 0; // no model directory: no modules
+        for (0..mf.names.len) |i| try self.loadModelOrdered(mf, i);
+        return mf.names.len;
+    }
+
+    fn loadModelOrdered(self: *Engine, mf: ModelFiles, i: usize) anyerror!void {
+        // 0: not visited, 1: being loaded, 2: loaded
+        if (mf.state[i] == 2) return;
+        if (mf.state[i] == 1) {
             const err = E.@"bad-directive";
-            self.fail(err, "model module {s}: its `uses` lines form a cycle ({s}/{s})", .{ mod_names[i], models_dir, names[i] });
+            self.fail(err, "model module {s}: its `uses` lines form a cycle ({s}/{s})", .{ mf.mod_names[i], mf.dir, mf.names[i] });
             return err;
         }
-        state[i] = 1;
-        for (mod_uses[i]) |u| {
-            for (mod_names, 0..) |mn, j| {
-                if (j != i and std.mem.eql(u8, mn, u)) try self.loadModelOrdered(models_dir, names, texts, mod_names, mod_uses, state, j);
+        mf.state[i] = 1;
+        for (mf.mod_uses[i]) |u| {
+            for (mf.mod_names, 0..) |mn, j| {
+                if (j != i and std.mem.eql(u8, mn, u)) try self.loadModelOrdered(mf, j);
             }
         }
-        _ = self.loadModel(texts[i]) catch |err| {
-            self.last_error = try std.fmt.allocPrint(self.alloc, "{s} ({s}/{s})", .{ self.last_error, models_dir, names[i] });
+        _ = self.loadModel(mf.texts[i]) catch |err| {
+            self.last_error = try std.fmt.allocPrint(self.alloc, "{s} ({s}/{s})", .{ self.last_error, mf.dir, mf.names[i] });
             return err;
         };
-        state[i] = 2;
+        mf.state[i] = 2;
+    }
+
+    // Load only the named packs of `packs_dir` (directory names), in byte
+    // order of name, and before them the modules they need from
+    // `models_dir`: `core`, the modules their `uses` lines name, and the
+    // modules those use. A name given twice is loaded once; a name with no
+    // `pack.def` is `error.FileNotFound`. A module a pack names that the
+    // model directory lacks is left to the pack's own `unknown-module`.
+    pub fn loadPacksOnly(self: *Engine, packs_dir: []const u8, models_dir: []const u8, pack_names: []const []const u8) !Loaded {
+        const alloc = self.alloc;
+        var names = std.ArrayList([]const u8).init(alloc);
+        for (pack_names) |name| {
+            var seen = false;
+            for (names.items) |have| {
+                if (std.mem.eql(u8, have, name)) seen = true;
+            }
+            if (!seen) try names.append(name);
+        }
+        std.mem.sort([]const u8, names.items, {}, strLess);
+        const mf_opt = try self.scanModelDir(models_dir);
+        if (mf_opt) |mf| {
+            for (mf.mod_names, 0..) |mn, j| {
+                if (std.mem.eql(u8, mn, "core")) try self.loadModelOrdered(mf, j);
+            }
+        }
+        const texts = try alloc.alloc([]const u8, names.items.len);
+        var tokbuf = std.ArrayList([]const u8).init(alloc);
+        for (names.items, 0..) |name, i| {
+            const def_path = try std.fmt.allocPrint(alloc, "{s}/{s}/pack.def", .{ packs_dir, name });
+            texts[i] = std.fs.cwd().readFileAlloc(alloc, def_path, max_file) catch |err| {
+                self.fail(err, "pack {s}: cannot read {s}", .{ name, def_path });
+                return err;
+            };
+            const mf = mf_opt orelse continue;
+            var lines = std.mem.splitScalar(u8, texts[i], '\n');
+            while (lines.next()) |line| {
+                try tokenizeInto(&tokbuf, line);
+                if (tokbuf.items.len != 2 or !std.mem.eql(u8, tokbuf.items[0], "uses")) continue;
+                for (mf.mod_names, 0..) |mn, j| {
+                    if (std.mem.eql(u8, mn, tokbuf.items[1])) try self.loadModelOrdered(mf, j);
+                }
+            }
+        }
+        for (names.items, 0..) |name, i| {
+            _ = self.loadPack(texts[i]) catch |err| {
+                self.last_error = try std.fmt.allocPrint(alloc, "{s} ({s}/{s}/pack.def)", .{ self.last_error, packs_dir, name });
+                return err;
+            };
+        }
+        return .{ .modules = self.modules.count(), .packs = names.items };
     }
 
     // The declared type of a model key, null when no loaded module declares it.
@@ -2022,7 +2161,7 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
         },
         .parse_int => {
             if (a0 != .str) return false;
-            out = MV{ .int = parseDecimalInt(a0.str) catch return false };
+            out = MV{ .int = parseIntText(a0.str) orelse return false };
         },
         .text_of => {
             if (a0 != .int) return false;
@@ -4425,11 +4564,6 @@ const SParser = struct {
         unreachable;
     }
 
-    fn inGroup(self: *SParser) bool {
-        for (self.frames.items) |f| if (f.is_group) return true;
-        return false;
-    }
-
     fn err(self: *SParser, e: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
         const detail = std.fmt.allocPrint(self.alloc, fmt, args) catch "";
         return bad(self.diag, self.alloc, e, "line {d}: {s}", .{ self.lineno, detail });
@@ -4485,6 +4619,13 @@ const SParser = struct {
                 return std.mem.eql(u8, a, b);
             }
         }.f;
+        // header and table directives belong to the pack, not to a block
+        // (ruling 24 of 0.8)
+        if (self.frames.items.len > 1) {
+            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "map", "typemap" }) |h| {
+                if (is(kw, h)) return self.err(bd, "{s} inside a block", .{kw});
+            }
+        }
         if (is(kw, "format")) {
             if (toks.len != 2) return self.err(E.MalformedDirective, "format takes one argument", .{});
             p.format = toks[1];
@@ -4514,12 +4655,10 @@ const SParser = struct {
         } else if (is(kw, "word_bytes") or is(kw, "root")) {
             return self.err(bd, "{s} is not used in a sequential pack", .{kw});
         } else if (is(kw, "typemap")) {
-            if (self.inGroup()) return self.err(bd, "typemap inside a group", .{});
             if (toks.len != 3) return self.err(E.MalformedDirective, "typemap takes two arguments", .{});
             try p.tm_nat2cot.put(toks[1], toks[2]);
             try p.tm_cot2nat.put(toks[2], toks[1]);
         } else if (is(kw, "map")) {
-            if (self.inGroup()) return self.err(bd, "map inside a group", .{});
             if (toks.len != 4) return self.err(bd, "map takes a table, a native value and a model value", .{});
             const gop = try p.tables.getOrPut(toks[1]);
             if (!gop.found_existing) {
@@ -4775,6 +4914,59 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
     }
 }
 
+// One group of a sequential scope, with the `if` and `opt` blocks of the scope
+// it sits in, outermost first.
+const SGroupAt = struct { node: *const SNode, blocks: []const *const SNode };
+
+fn seqCollectGroups(alloc: std.mem.Allocator, nodes: []const SNode, blocks: *std.ArrayListUnmanaged(*const SNode), out: *std.ArrayListUnmanaged(SGroupAt)) anyerror!void {
+    for (nodes) |*n| {
+        switch (n.tag) {
+            .group => try out.append(alloc, .{ .node = n, .blocks = try alloc.dupe(*const SNode, blocks.items) }),
+            .if_, .opt => {
+                try blocks.append(alloc, n);
+                try seqCollectGroups(alloc, n.body, blocks, out);
+                _ = blocks.pop();
+            },
+            .chain, .length => try seqCollectGroups(alloc, n.body, blocks, out),
+            else => {},
+        }
+    }
+}
+
+fn seqBlockHolds(blocks: []const *const SNode, b: *const SNode) bool {
+    for (blocks) |x| if (x == b) return true;
+    return false;
+}
+
+// Ruling 23 of 0.8: a list is mapped by two groups of one scope (the common
+// lines plus one kind, or one group body likewise) only when the two groups
+// sit in different `if` or `opt` blocks: each has such a block around it, and
+// neither group's block encloses the other's (ruling 33).
+fn seqCheckLists(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerror!void {
+    var blocks = std.ArrayListUnmanaged(*const SNode){};
+    var common = std.ArrayListUnmanaged(SGroupAt){};
+    try seqCollectGroups(alloc, b.common, &blocks, &common);
+    var ki: usize = 0;
+    while (ki == 0 or ki < b.kinds.len) : (ki += 1) {
+        var all = std.ArrayListUnmanaged(SGroupAt){};
+        try all.appendSlice(alloc, common.items);
+        if (ki < b.kinds.len) try seqCollectGroups(alloc, b.kinds[ki].lines, &blocks, &all);
+        for (all.items, 0..) |g, i| {
+            for (all.items[0..i]) |f| {
+                if (!std.mem.eql(u8, f.node.list, g.node.list)) continue;
+                const apart = f.blocks.len > 0 and g.blocks.len > 0 and
+                    !seqBlockHolds(g.blocks, f.blocks[f.blocks.len - 1]) and
+                    !seqBlockHolds(f.blocks, g.blocks[g.blocks.len - 1]);
+                if (!apart) {
+                    return bad(diag, alloc, E.@"bad-directive", "line {d}: the list {s} is mapped by a second group of its scope (line {d}), and the two do not sit in different `if` or `opt` blocks", .{ g.node.lineno, g.node.list, f.node.lineno });
+                }
+            }
+        }
+        // each group body is a scope of its own
+        for (all.items[if (ki == 0) 0 else common.items.len..]) |g| try seqCheckLists(alloc, g.node.gbody.?, diag);
+    }
+}
+
 fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
     const p = try newPack(alloc);
     p.wire = .bits;
@@ -4797,6 +4989,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     setTableTypes(p);
     try seqResolveVia(alloc, p, root.common, diag);
     for (root.kinds) |*k| try seqResolveVia(alloc, p, k.lines, diag);
+    try seqCheckLists(alloc, root, diag);
     p.seq = root;
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
     if (p.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "the pack has no source line", .{});
@@ -4885,6 +5078,15 @@ const SDec = struct {
         }
     }
 
+    // An indicator bit of a `while`, `more` or `fx` group: at or after the end
+    // of a `length` extent it reads as 0 (ruling 21 of 0.8); past the end of
+    // the input it is `malformed-wire`.
+    fn indicator(self: *SDec, what: []const u8) !u64 {
+        if (self.in_extent and self.pos >= self.soft_end) return 0;
+        try self.need(1, what);
+        return self.take(1);
+    }
+
     fn take(self: *SDec, len: usize) u64 {
         const v = getBits(self.buf, self.p.msb, self.pos, len);
         self.pos += len;
@@ -4938,8 +5140,9 @@ const SDec = struct {
                 self.pos += n.len;
             },
             .align_ => {
+                // stops at the end of the input or extent without error
                 const r = self.pos % n.len;
-                if (r != 0) self.pos += n.len - r;
+                if (r != 0) self.pos = @max(self.pos, @min(self.pos + (n.len - r), self.limit()));
             },
             .when => {
                 // a common `when`: it must hold for any message of the format
@@ -5043,16 +5246,14 @@ const SDec = struct {
             .while_ => {
                 if (try self.avail(1, n.list) == .absent) return;
                 while (true) {
-                    try self.need(1, n.list);
-                    if (self.take(1) == 0) break;
+                    if (try self.indicator(n.list) == 0) break;
                     try self.item(n, &items, env);
                 }
             },
             .more => {
                 if (try self.avail(1, n.list) == .absent) return;
                 while (true) {
-                    try self.need(1, n.list);
-                    const more = self.take(1);
+                    const more = try self.indicator(n.list);
                     try self.item(n, &items, env);
                     if (more == 0) break;
                 }
@@ -5061,12 +5262,13 @@ const SDec = struct {
                 if (self.in_extent and self.pos >= self.soft_end) return;
                 while (true) {
                     try self.item(n, &items, env);
-                    try self.need(1, n.list);
-                    if (self.take(1) == 0) break;
+                    if (try self.indicator(n.list) == 0) break;
                 }
             },
         }
-        if (!se.e.lists.contains(n.list)) try se.e.lists.put(n.list, items.items);
+        // two groups of one list both on the wire: the later group's items
+        // are kept (ruling 33 of 0.8)
+        try se.e.lists.put(n.list, items.items);
     }
 
     fn item(self: *SDec, n: *const SNode, items: *std.ArrayList(Entity), env: ?*const PEnv) anyerror!void {
@@ -5152,12 +5354,15 @@ const SEnc = struct {
 
     // Encode selects the kind the entity or item recorded for this format,
     // else the first kind whose every `requires` key is present.
-    fn selectKind(self: *SEnc, b: *const SBody, ent: *const Entity) anyerror!?*const SKind {
+    // An item's recorded kind selects only when it names this format and a
+    // kind the group has; otherwise the item selects by `requires` (ruling
+    // 26 of 0.8).
+    fn selectKind(self: *SEnc, b: *const SBody, ent: *const Entity, is_item: bool) anyerror!?*const SKind {
         if (b.kinds.len == 0) return null;
         if (ent.kind_fmt) |kf| {
             if (std.mem.eql(u8, kf, self.p.format)) {
                 for (b.kinds) |*k| if (std.mem.eql(u8, k.name, ent.kind_name)) return k;
-                return bad(self.diag, self.alloc, E.@"no-kind", "the entity records kind {s}, which the body does not have", .{ent.kind_name});
+                if (!is_item) return bad(self.diag, self.alloc, E.@"no-kind", "the entity records kind {s}, which the body does not have", .{ent.kind_name});
             }
         }
         for (b.kinds) |*k| {
@@ -5173,16 +5378,19 @@ const SEnc = struct {
         return bad(self.diag, self.alloc, E.@"no-kind", "the entity has the `requires` keys of no kind", .{});
     }
 
-    // The value a field writes: that of the earliest of its keys that is
-    // present, a key with a `default` in scope counting as present.
+    // The value a field writes: that of the earliest of its keys that the
+    // entity holds; when it holds none, the default of the earliest key that
+    // has one (ruling 16 of 0.8).
     fn fieldValue(self: *SEnc, n: *const SNode, ent: *const Entity, ds: DS) !?MV {
         const ln = &n.ln;
         const wire_ty = yields(ln.transform.kind);
+        const nkeys = n.also.items.len + 1;
         var i: usize = 0;
-        while (i <= n.also.items.len) : (i += 1) {
-            const key = if (i == 0) ln.key else n.also.items[i - 1].key;
-            const via = if (i == 0) ln.via else n.also.items[i - 1].via;
-            var mv = ent.get(key) orelse ds.get(key) orelse continue;
+        while (i < 2 * nkeys) : (i += 1) {
+            const j = i % nkeys;
+            const key = if (j == 0) ln.key else n.also.items[j - 1].key;
+            const via = if (j == 0) ln.via else n.also.items[j - 1].via;
+            var mv = (if (i < nkeys) ent.get(key) else ds.get(key)) orelse continue;
             if (mv == .str and std.mem.eql(u8, key, "type")) {
                 if (self.p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
             }
@@ -5248,7 +5456,12 @@ const SEnc = struct {
                     const items = ent.lists.get(n.list) orelse continue;
                     const b = n.gbody.?;
                     for (items) |*it| {
-                        const k = try self.selectKind(b, it);
+                        // a block that is not written may hold an item no
+                        // kind takes: its common lines are searched
+                        const k = self.selectKind(b, it, true) catch |err| switch (err) {
+                            E.@"no-kind" => null,
+                            else => return err,
+                        };
                         const ids = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
                         try self.scan(pres, b.common, it, ids, bits);
                         if (k) |kk| try self.scan(pres, kk.lines, it, ids, bits);
@@ -5259,8 +5472,8 @@ const SEnc = struct {
         }
     }
 
-    fn body(self: *SEnc, b: *const SBody, ent: *const Entity, env_in: ?*const PEnv) anyerror!void {
-        const k = try self.selectKind(b, ent);
+    fn body(self: *SEnc, b: *const SBody, ent: *const Entity, env_in: ?*const PEnv, is_item: bool) anyerror!void {
+        const k = try self.selectKind(b, ent, is_item);
         const ds = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
         var env = env_in;
         const tail: []const SNode = if (k) |kk| kk.lines else &.{};
@@ -5379,12 +5592,12 @@ const SEnc = struct {
                             return bad(self.diag, alloc, te, "group {s}: {d} items do not fit the {d} bits of the count", .{ n.list, items.len, n.len });
                         }
                         try self.put(n.len, items.len);
-                        for (items) |*it| try self.body(b, it, env.*);
+                        for (items) |*it| try self.body(b, it, env.*, true);
                     },
                     .while_ => {
                         for (items) |*it| {
                             try self.put(1, 1);
-                            try self.body(b, it, env.*);
+                            try self.body(b, it, env.*, true);
                         }
                         try self.put(1, 0);
                     },
@@ -5396,7 +5609,7 @@ const SEnc = struct {
                         for (items, 0..) |*it, i| {
                             const more = @intFromBool(i + 1 < items.len);
                             if (n.mode == .more) try self.put(1, more);
-                            try self.body(b, it, env.*);
+                            try self.body(b, it, env.*, true);
                             if (n.mode == .fx) try self.put(1, more);
                         }
                     },
@@ -5409,7 +5622,7 @@ const SEnc = struct {
 
 fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
     var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc) };
-    try enc.body(p.seq.?, e, null);
+    try enc.body(p.seq.?, e, null, false);
     // a message is a whole number of bytes; `length … whole` holds that
     // number plus n
     const nbytes = enc.out.items.len;
@@ -5476,6 +5689,18 @@ fn getStr(obj: std.json.ObjectMap, key: []const u8) ?[]const u8 {
 // Does the message begin with the error kind and a colon?
 fn beginsWithKind(msg: []const u8, kind: []const u8) bool {
     return std.mem.startsWith(u8, msg, kind) and msg.len > kind.len and msg[kind.len] == ':';
+}
+
+// Are the `from` and `to` formats of a vector both loaded? A vector that does
+// not parse counts as loaded, so that `runVector` reports it.
+fn vectorFormatsLoaded(eng: *Engine, text: []const u8) bool {
+    const parsed = std.json.parseFromSliceLeaky(JValue, eng.scratch, text, .{}) catch return true;
+    if (parsed != .object) return true;
+    for ([_][]const u8{ "from", "to" }) |k| {
+        const fmt = getStr(parsed.object, k) orelse return true;
+        if (eng.findPack(fmt) == null) return false;
+    }
+    return true;
 }
 
 // Run one conversion vector. Returns null on pass, else why it failed.
@@ -5714,13 +5939,14 @@ pub fn main() !void {
     var bw = std.io.bufferedWriter(std.io.getStdOut().writer());
     const stdout = bw.writer();
 
-    // usage: gt-engine-zig [<packs-dir>] [--models <dir>]
+    // usage: gt-engine-zig [<packs-dir>] [--models <dir>] [--packs-only <a>,<b>…]
     //        [--max-distribution public|controlled] [--model-keys <format>]
     //        [--convert <from> <to> [--set <key>=<value>]…]
     const args = try std.process.argsAlloc(alloc);
     var packs_dir: []const u8 = "../../packs";
     var models_opt: ?[]const u8 = null;
     var keys_opt: ?[]const u8 = null;
+    var only_opt: ?[]const u8 = null;
     var conv_from: ?[]const u8 = null;
     var conv_to: []const u8 = "";
     var sets = std.ArrayList(KV).init(alloc);
@@ -5729,7 +5955,7 @@ pub fn main() !void {
     while (ai < args.len) : (ai += 1) {
         const a = args[ai];
         const eq = std.mem.eql;
-        if (eq(u8, a, "--models") or eq(u8, a, "--max-distribution") or eq(u8, a, "--packs") or eq(u8, a, "--model-keys") or eq(u8, a, "--set") or eq(u8, a, "--convert")) {
+        if (eq(u8, a, "--models") or eq(u8, a, "--max-distribution") or eq(u8, a, "--packs") or eq(u8, a, "--packs-only") or eq(u8, a, "--model-keys") or eq(u8, a, "--set") or eq(u8, a, "--convert")) {
             ai += 1;
             if (ai >= args.len or (eq(u8, a, "--convert") and ai + 1 >= args.len)) {
                 try stdout.print("error: {s} needs a value\n", .{a});
@@ -5740,6 +5966,8 @@ pub fn main() !void {
                 models_opt = args[ai];
             } else if (eq(u8, a, "--packs")) {
                 packs_dir = args[ai];
+            } else if (eq(u8, a, "--packs-only")) {
+                only_opt = args[ai];
             } else if (eq(u8, a, "--model-keys")) {
                 keys_opt = args[ai];
             } else if (eq(u8, a, "--convert")) {
@@ -5771,18 +5999,39 @@ pub fn main() !void {
     // the model directory sits beside the packs directory
     const models_dir: []const u8 = models_opt orelse try std.fmt.allocPrint(alloc, "{s}/../model", .{packs_dir});
 
-    const n_modules = eng.loadModelDir(models_dir) catch |err| {
-        if (eng.last_error.len == 0) eng.fail(err, "model directory {s}", .{models_dir});
-        try stdout.print("load error: {s}\n", .{eng.last_error});
-        try bw.flush();
-        std.process.exit(1);
-    };
-    const pack_dirs = loadAllPacks(&eng, packs_dir) catch |err| {
-        if (eng.last_error.len == 0) eng.fail(err, "packs directory {s}", .{packs_dir});
-        try stdout.print("load error: {s}\n", .{eng.last_error});
-        try bw.flush();
-        std.process.exit(1);
-    };
+    // --packs-only <a>,<b>…: those packs and the modules they need; else
+    // every module and every pack
+    var n_modules: usize = 0;
+    var pack_dirs: []const []const u8 = &.{};
+    if (only_opt) |only| {
+        var wanted = std.ArrayList([]const u8).init(alloc);
+        var parts = std.mem.splitScalar(u8, only, ',');
+        while (parts.next()) |part| {
+            const name = std.mem.trim(u8, part, " ");
+            if (name.len > 0) try wanted.append(name);
+        }
+        const loaded = eng.loadPacksOnly(packs_dir, models_dir, wanted.items) catch |err| {
+            if (eng.last_error.len == 0) eng.fail(err, "packs directory {s}", .{packs_dir});
+            try stdout.print("load error: {s}\n", .{eng.last_error});
+            try bw.flush();
+            std.process.exit(1);
+        };
+        n_modules = loaded.modules;
+        pack_dirs = loaded.packs;
+    } else {
+        n_modules = eng.loadModelDir(models_dir) catch |err| {
+            if (eng.last_error.len == 0) eng.fail(err, "model directory {s}", .{models_dir});
+            try stdout.print("load error: {s}\n", .{eng.last_error});
+            try bw.flush();
+            std.process.exit(1);
+        };
+        pack_dirs = loadAllPacks(&eng, packs_dir) catch |err| {
+            if (eng.last_error.len == 0) eng.fail(err, "packs directory {s}", .{packs_dir});
+            try stdout.print("load error: {s}\n", .{eng.last_error});
+            try bw.flush();
+            std.process.exit(1);
+        };
+    }
     // --convert <from> <to>: the message on standard input, converted, on
     // standard output; --set supplies the context.
     if (conv_from) |from| {
@@ -5815,11 +6064,11 @@ pub fn main() !void {
     // conversion vectors: <packs>/<pack>/vectors/*.json
     var total: usize = 0;
     var passed: usize = 0;
+    var skipped: usize = 0;
     for (pack_dirs) |dir| {
         const vdir_path = try std.fmt.allocPrint(alloc, "{s}/{s}/vectors", .{ packs_dir, dir });
         const vnames = (try sortedNames(alloc, vdir_path, .file, ".json")) orelse continue;
         for (vnames) |vn| {
-            total += 1;
             // one arena per vector, so the run's memory stays bounded
             var varena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
             defer varena.deinit();
@@ -5827,6 +6076,13 @@ pub fn main() !void {
             defer eng.scratch = alloc;
             const vpath = try std.fmt.allocPrint(eng.scratch, "{s}/{s}", .{ vdir_path, vn });
             const vtext = try std.fs.cwd().readFileAlloc(eng.scratch, vpath, max_file);
+            // with --packs-only, a vector that names a pack left out is
+            // not run, and is counted
+            if (only_opt != null and !vectorFormatsLoaded(&eng, vtext)) {
+                skipped += 1;
+                continue;
+            }
+            total += 1;
             if (try runVector(&eng, vtext)) |detail| {
                 try failures.append(try std.fmt.allocPrint(alloc, "{s}/{s}: {s}", .{ dir, vn, detail }));
             } else {
@@ -5838,8 +6094,13 @@ pub fn main() !void {
     // load vectors: <packs>/conformance/load-vectors/*.json
     var ltotal: usize = 0;
     var lpassed: usize = 0;
+    // (with --packs-only, when `conformance` is one of the named packs)
     const ldir_path = try std.fmt.allocPrint(alloc, "{s}/conformance/load-vectors", .{packs_dir});
-    if (try sortedNames(alloc, ldir_path, .file, ".json")) |lnames| {
+    var run_load = only_opt == null;
+    for (pack_dirs) |dir| {
+        if (std.mem.eql(u8, dir, "conformance")) run_load = true;
+    }
+    if (!run_load) {} else if (try sortedNames(alloc, ldir_path, .file, ".json")) |lnames| {
         for (lnames) |ln| {
             ltotal += 1;
             var larena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
@@ -5860,6 +6121,7 @@ pub fn main() !void {
     }
     try stdout.print("vectors: {d}/{d} passed\n", .{ passed, total });
     try stdout.print("load vectors: {d}/{d} passed\n", .{ lpassed, ltotal });
+    if (skipped > 0) try stdout.print("skipped: {d} vectors that name a pack not loaded\n", .{skipped});
     try bw.flush();
     if (passed != total or lpassed != ltotal) std.process.exit(1);
 }
