@@ -1,0 +1,17 @@
+# A site file (docs/system-records.md): what is on hand at one site and what
+# the site intends to feed. Fictional. A real site file stays at its site.
+record   1
+site     example-forward-site
+by       example-org
+date     2026-11-16
+
+have     example/radar-1
+have     example/rf-1
+have     example/camera-1
+have     example/edge-display
+have     example/c2-app
+have     example/node-translator
+have     goat-transformers
+
+feed     example/edge-display
+feed     example/c2-app        from=example/rf-1

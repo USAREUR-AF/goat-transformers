@@ -16,6 +16,7 @@ built. It gives no dates.
 | Capability matrix | `Engine::capability` and `goat-xf matrix [--detail]`: for every pair of formats, which keys carry and which the target cannot represent |
 | Public and controlled boundary | `distribution` and `source` on every module and pack, enforced by the engines; `tools/boundary-gate` on this repository (`docs/boundary.md`) |
 | Package planner | `tools/goat-pkg`: constraints in, the smallest package out (`docs/package-configurator.md`) |
+| System records and the options query | `.rec` records of what a system emits, accepts and converts; `tools/goat-options` lists every path between two systems with its status and evidence, from the records and the capability report (`docs/system-records.md`) |
 | CI | `.github/workflows/conformance.yml` builds each engine, runs every vector on it and runs the boundary gate, on every change |
 
 ## Pack-language additions

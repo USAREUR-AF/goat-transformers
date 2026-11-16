@@ -142,6 +142,18 @@ pack data and vectors, in a private overlay. A person who writes an engine reads
 only the specification, the public modules and the vectors. Engine source
 therefore contains nothing taken from a specification that is not public.
 
+## Systems and the options between them
+
+The packs describe formats; a system record (`.rec`) describes a system: the
+formats it emits, accepts or converts, each with a status (`proven`,
+`available`, `forthcoming`, `unknown`) and its evidence. `tools/goat-options`
+merges records from several store directories and lists every path from a
+producing system to a consuming one, direct or through up to two conversions,
+with what carries taken from the capability report. It lists options and does
+not rank them. Built: the record format, the site file and the query, with
+fictional records in `examples/` (`docs/system-records.md`). Records of real
+systems are kept in private stores (`docs/private-store.md`).
+
 ## Packaging
 
 `tools/goat-pkg plan` takes constraints (formats, language, runtime, linkage,

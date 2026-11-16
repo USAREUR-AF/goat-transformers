@@ -1,0 +1,10 @@
+record   1
+system   example/edge-display
+name     "Example edge display (fictional)"
+kind     "edge consumer"
+by       example-org
+date     2026-11-16
+note     "Only subscribes."
+
+accepts  cot-protobuf  transport=zenoh  status=proven  evidence="example: fictional exercise report 03"
+accepts  geojson       transport=zenoh  status=available
