@@ -299,6 +299,26 @@ class Engine:
         appearance order; a list as `<list>[]`, an item key as `<list>[].<key>`."""
         return self.pack(fmt).model_keys()
 
+    # --- capability --------------------------------------------------------
+
+    def capability(self, from_fmt, to_fmt):
+        """How much of `from_fmt` a conversion to `to_fmt` carries
+        (spec/engine-spec.md, Capability): `carried` are the keys of
+        `model_keys(from_fmt)` that `to_fmt` also maps, `dropped` the rest,
+        both in the source's order; the grade is `full` when nothing is
+        dropped, `none` when nothing carries, else `partial`."""
+        theirs = set(self.model_keys(to_fmt))
+        mine = self.model_keys(from_fmt)
+        carried = [k for k in mine if k in theirs]
+        dropped = [k for k in mine if k not in theirs]
+        grade = "none" if not carried else ("full" if not dropped else "partial")
+        return {"from": from_fmt, "to": to_fmt, "carried": carried, "dropped": dropped, "grade": grade}
+
+    def capability_matrix(self):
+        """`capability` for every ordered pair of distinct loaded formats."""
+        fmts = self.formats()
+        return [self.capability(a, b) for a in fmts for b in fmts if a != b]
+
     # --- decode ------------------------------------------------------------
 
     def _select_decode_kind(self, pack, codec, msg):

@@ -35,7 +35,7 @@ from .errors import (
 from .modeldef import Derive, Key, Module, load_model_file, parse_model_text
 from .packdef import Pack, load_pack, parse_pack_text
 
-__version__ = "0.1.0"
+__version__ = "0.8.0"
 
 __all__ = [
     "Engine", "Entity", "Item", "Pack", "load_pack", "parse_pack_text", "GTError", "InvalidPack",

@@ -1,0 +1,10 @@
+record   1
+system   example/c2-app
+name     "Example command application (fictional)"
+kind     application
+by       example-org
+date     2026-11-16
+
+accepts  cot-xml  transport=zenoh  status=proven     evidence="example: fictional exercise report 03"
+accepts  sapient  transport=zenoh  status=available
+emits    cot-xml  transport=zenoh  status=proven     evidence="example: fictional exercise report 03"

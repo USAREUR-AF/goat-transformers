@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Checker, packer and vector generator for the remote-id and adsb packs.
 
+Status: this script reads engine-spec 0.5. The remote-id pack and model/rid.def
+now use lines of 0.6 and 0.7 (`default`, `group`, `list`, for the Message Pack
+kind), so they and their vectors are maintained by hand, and the script stops
+with a message that names those lines. packs/adsb and its vectors are as the
+script last wrote them. What follows describes the script on a tree it can
+read.
+
 Standard library only. Written from spec/engine-spec.md (versions 0.1.1, 0.2,
 0.4, 0.5) of goat-transformers, not from any engine.
 
@@ -1046,11 +1053,41 @@ def replay(packs, pack_name, directory):
     return count
 
 
+# Directives of engine-spec 0.6 and 0.7 that load_model and load_pack do not read.
+PAST_0_5 = ("default", "const", "map", "group", "list", "derive")
+
+
+def lines_past_0_5():
+    """-> ["<file>: <directive>", ...] for the files this script loads from this tree."""
+    found = []
+    for rel in ("model/rid.def", "model/adsb.def", "packs/remote-id/pack.def"):
+        seen = []
+        with open(os.path.join(ROOT, *rel.split("/"))) as fh:
+            for t in directives(fh.read()):
+                if t[0] in PAST_0_5 and t[0] not in seen:
+                    seen.append(t[0])
+        if seen:
+            found.append("%s: %s" % (rel, ", ".join("`%s`" % d for d in seen)))
+    return found
+
+
 def main(argv):
     ref = DEFAULT_REF
     if "--ref" in argv:
         ref = argv[argv.index("--ref") + 1]
     check_only = "--check" in argv
+
+    newer = lines_past_0_5()
+    if newer:
+        sys.stderr.write(
+            "adsb-remoteid-gen: this script reads engine-spec 0.5 and cannot run on this tree.\n"
+            "  Lines it does not read: %s.\n"
+            "  packs/remote-id, model/rid.def and their vectors are maintained by hand\n"
+            "  (the Message Pack kind uses `default`, `group` and a `list`, engine-spec 0.6 and 0.7).\n"
+            "  packs/adsb and its vectors are as this script last wrote them.\n"
+            "  To run it again, extend load_model and load_pack here to engine-spec 0.7.\n"
+            % "; ".join(newer))
+        return 2
 
     adsb_def = os.path.join(ROOT, "packs", "adsb", "pack.def")
     if not check_only:

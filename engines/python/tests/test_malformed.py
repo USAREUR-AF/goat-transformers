@@ -4,7 +4,7 @@ to 39; spec/vector-format.md, "Malformed input").
 `TestDamagedVectors` takes the input of every conversion vector of every
 loaded pack, cuts it at prefixes and changes single characters (fixed seed),
 and converts each damaged input. A conversion may succeed or fail; a failure
-must be the engine's own error type with a message that begins with a named
+must be the engine's own exception class with a message that begins with a named
 kind and a colon, and a result must be text that encodes as UTF-8.
 
 The other classes state the rulings directly, including the cases no vector

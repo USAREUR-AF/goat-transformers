@@ -1,0 +1,9 @@
+record   1
+system   example/camera-1
+name     "Example camera 1 (fictional)"
+kind     sensor
+by       example-org
+date     2026-11-16
+
+emits    isa      transport=zenoh  version=5.0  status=available
+emits    cot-xml  transport=zenoh  version=6.0  status=forthcoming  note="announced for the next release"

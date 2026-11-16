@@ -1,9 +1,18 @@
 [package]
 name = "goat-transformers"
-version = "0.1.0"
+version = "0.8.0"
 edition = "2021"
-description = "Reference engine for data-driven any-to-any tactical message transformation. std-only."
+description = "Convert messages between formats that are described by data files (packs): Cursor on Target, GeoJSON, SAPIENT, MAVLink, NMEA 2000, ADS-B and others. Reference engine, standard library only."
 license = "Apache-2.0"
+repository = "https://github.com/USAREUR-AF/goat-transformers"
+homepage = "https://github.com/USAREUR-AF/goat-transformers"
+documentation = "https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/using.md"
+readme = "README.md"
+keywords = ["cot", "geojson", "sapient", "mavlink", "transform"]
+categories = ["encoding", "parser-implementations"]
+# The packaged crate is the engine source and nothing else. Packs and model
+# modules are data: vendor the ones you need with `tools/goat-pkg bundle`.
+include = ["src/**", "Cargo.toml", "README.md"]
 
 [[bin]]
 name = "goat-xf"

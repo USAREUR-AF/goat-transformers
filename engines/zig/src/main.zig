@@ -26,7 +26,7 @@ const std = @import("std");
 // Model
 // ---------------------------------------------------------------------------
 
-const MV = union(enum) {
+pub const MV = union(enum) {
     str: []const u8,
     int: i64,
     float: f64,
@@ -57,10 +57,10 @@ fn SmallMap(comptime V: type) type {
             }
             return null;
         }
-        fn contains(self: *const Self, key: []const u8) bool {
+        pub fn contains(self: *const Self, key: []const u8) bool {
             return self.find(key) != null;
         }
-        fn get(self: *const Self, key: []const u8) ?V {
+        pub fn get(self: *const Self, key: []const u8) ?V {
             return if (self.find(key)) |en| en.value else null;
         }
         fn put(self: *Self, alloc: std.mem.Allocator, key: []const u8, value: V) !void {
@@ -85,7 +85,7 @@ fn SmallMap(comptime V: type) type {
 
 // An entity, and an item of a list: an item holds model keys and lists exactly
 // as an entity does, without residue and without a kind.
-const Entity = struct {
+pub const Entity = struct {
     alloc: std.mem.Allocator,
     fields: SmallMap(MV) = .{},
     // list name -> items; a present, empty list is an entry of length 0
@@ -95,13 +95,13 @@ const Entity = struct {
     kind_fmt: ?[]const u8 = null,
     kind_name: []const u8 = "",
 
-    fn init(alloc: std.mem.Allocator) Entity {
+    pub fn init(alloc: std.mem.Allocator) Entity {
         return .{ .alloc = alloc };
     }
-    fn put(self: *Entity, key: []const u8, value: MV) !void {
+    pub fn put(self: *Entity, key: []const u8, value: MV) !void {
         try self.fields.put(self.alloc, key, value);
     }
-    fn putList(self: *Entity, name: []const u8, items: []Entity) !void {
+    pub fn putList(self: *Entity, name: []const u8, items: []Entity) !void {
         try self.lists.put(self.alloc, name, items);
     }
     fn addResidue(self: *Entity, r: Residue) !void {
@@ -451,7 +451,7 @@ fn modelKeys(alloc: std.mem.Allocator, p: *const Pack) ![]const []const u8 {
 // ---------------------------------------------------------------------------
 
 // `public` is below `controlled`.
-const Dist = enum { public, controlled };
+pub const Dist = enum { public, controlled };
 
 fn parseDist(s: []const u8) !Dist {
     if (std.mem.eql(u8, s, "public")) return .public;
@@ -1614,7 +1614,7 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
 // ---------------------------------------------------------------------------
 
 // One caller-supplied key: `convert(from, to, bytes, context)`, CLI `--set`.
-const KV = struct { key: []const u8, value: []const u8 };
+pub const KV = struct { key: []const u8, value: []const u8 };
 
 // One scope from its lines and its `default` lines; `d1` takes precedence
 // over `d2` (a kind's default over the common one).
@@ -1689,7 +1689,7 @@ const ModelFiles = struct {
 // names of the packs.
 const Loaded = struct { modules: usize, packs: []const []const u8 };
 
-const Engine = struct {
+pub const Engine = struct {
     alloc: std.mem.Allocator,
     // Where decode, encode and convert allocate their results and the failure
     // message. A caller that runs many conversions points it at an arena it
@@ -1704,7 +1704,7 @@ const Engine = struct {
     // Message of the last failure: "<kind>: <detail>".
     last_error: []const u8 = "",
 
-    fn init(alloc: std.mem.Allocator) Engine {
+    pub fn init(alloc: std.mem.Allocator) Engine {
         return .{
             .alloc = alloc,
             .scratch = alloc,
@@ -1715,7 +1715,7 @@ const Engine = struct {
         };
     }
 
-    fn setMaxDistribution(self: *Engine, d: Dist) void {
+    pub fn setMaxDistribution(self: *Engine, d: Dist) void {
         self.max_distribution = d;
     }
 
@@ -1725,7 +1725,7 @@ const Engine = struct {
     }
 
     // load_model(text): load one model module.
-    fn loadModel(self: *Engine, def_text: []const u8) !*Module {
+    pub fn loadModel(self: *Engine, def_text: []const u8) !*Module {
         var mdiag = Diag{};
         const m = parseModule(self.alloc, def_text, &mdiag) catch |err| {
             self.fail(err, "model module: {s}", .{mdiag.msg});
@@ -1780,7 +1780,7 @@ const Engine = struct {
 
     // load(pack): parse a pack.def and check it against the modules loaded so
     // far, in the spec's order.
-    fn loadPack(self: *Engine, def_text: []const u8) !*Pack {
+    pub fn loadPack(self: *Engine, def_text: []const u8) !*Pack {
         var diag = Diag{};
         const p = parsePack(self.alloc, def_text, &diag) catch |err| {
             self.fail(err, "pack.def: {s}", .{diag.msg});
@@ -1939,7 +1939,7 @@ const Engine = struct {
     // Load every `*.def` in `models_dir`: `core.def` first, then byte order
     // of file name, each module after the modules it uses (Version 0.8); a
     // cycle is `bad-directive`. Returns the number of modules loaded.
-    fn loadModelDir(self: *Engine, models_dir: []const u8) !usize {
+    pub fn loadModelDir(self: *Engine, models_dir: []const u8) !usize {
         const mf = (try self.scanModelDir(models_dir)) orelse return 0; // no model directory: no modules
         for (0..mf.names.len) |i| try self.loadModelOrdered(mf, i);
         return mf.names.len;
@@ -1972,7 +1972,7 @@ const Engine = struct {
     // modules those use. A name given twice is loaded once; a name with no
     // `pack.def` is `error.FileNotFound`. A module a pack names that the
     // model directory lacks is left to the pack's own `unknown-module`.
-    fn loadPacksOnly(self: *Engine, packs_dir: []const u8, models_dir: []const u8, pack_names: []const []const u8) !Loaded {
+    pub fn loadPacksOnly(self: *Engine, packs_dir: []const u8, models_dir: []const u8, pack_names: []const []const u8) !Loaded {
         const alloc = self.alloc;
         var names = std.ArrayList([]const u8).init(alloc);
         for (pack_names) |name| {
@@ -2084,7 +2084,7 @@ const Engine = struct {
         };
     }
 
-    fn findPack(self: *const Engine, fmt: []const u8) ?*Pack {
+    pub fn findPack(self: *const Engine, fmt: []const u8) ?*Pack {
         return self.pack_index.get(fmt);
     }
 
@@ -2096,7 +2096,7 @@ const Engine = struct {
     }
 
     // decode(format, bytes) -> Entity
-    fn decode(self: *Engine, fmt: []const u8, bytes: []const u8) !Entity {
+    pub fn decode(self: *Engine, fmt: []const u8, bytes: []const u8) !Entity {
         const p = try self.pack(fmt);
         var diag = Diag{};
         return decodePack(self.scratch, p, bytes, &diag) catch |err| {
@@ -2106,7 +2106,7 @@ const Engine = struct {
     }
 
     // encode(format, Entity) -> bytes
-    fn encode(self: *Engine, fmt: []const u8, e: *const Entity) ![]u8 {
+    pub fn encode(self: *Engine, fmt: []const u8, e: *const Entity) ![]u8 {
         const p = try self.pack(fmt);
         var diag = Diag{};
         return encodePack(self.scratch, p, e, &diag) catch |err| {
@@ -2118,7 +2118,7 @@ const Engine = struct {
     // Set each context key the entity lacks. A key no loaded module declares
     // is `undeclared-key`; a value that is not of the key's type is
     // `key-type-mismatch`.
-    fn fillContext(self: *Engine, e: *Entity, context: []const KV) !void {
+    pub fn fillContext(self: *Engine, e: *Entity, context: []const KV) !void {
         for (context) |kv| {
             const ty = self.keyType(kv.key) orelse {
                 if (self.isList(kv.key)) {
@@ -2144,7 +2144,7 @@ const Engine = struct {
     // order of name, each module's `derive` lines in order; a line whose
     // target is absent and whose arguments are all present sets the target.
     // The pass repeats until a pass sets nothing, at most 8 times.
-    fn complete(self: *Engine, e: *Entity) !void {
+    pub fn complete(self: *Engine, e: *Entity) !void {
         var pass: usize = 0;
         while (pass < 8) : (pass += 1) {
             var set_any = false;
@@ -2160,7 +2160,7 @@ const Engine = struct {
     // convert(from, to, bytes, context): decode; clear Entity.kind unless
     // from == to; fill absent keys from the context; derive; encode. With
     // from == to and no context the entity goes to the encoder as decoded.
-    fn convert(self: *Engine, from: []const u8, to: []const u8, bytes: []const u8, context: ?[]const KV) ![]u8 {
+    pub fn convert(self: *Engine, from: []const u8, to: []const u8, bytes: []const u8, context: ?[]const KV) ![]u8 {
         const same = std.mem.eql(u8, from, to);
         var e = try self.decode(from, bytes);
         if (!same) e.clearKind();

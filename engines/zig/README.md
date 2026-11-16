@@ -25,7 +25,7 @@ Prints `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`), after one `FAIL <pack>/<vector file>: <why>`
 line per failing vector; non-zero exit on any failure. Stdlib only.
 
-## Malformed input (spec Version 0.8, rulings 35 to 39)
+## Malformed input (spec Version 0.8, rulings 35 to 40)
 
 An input that is not a well-formed message of its wire fails with
 `malformed-wire` before any line of the pack is read.
@@ -71,6 +71,17 @@ holds (keys are kept in one array per item, not a hash table, and key names
 are not copied); a list read without a known count is gathered in chunks and
 moved once into an array of exactly its length. `--convert <from> <to> --peak`
 prints on standard error the most bytes the decode held.
+
+## As a module
+
+`src/root.zig` is the module `goat_transformers` for another program: `Engine`,
+`Entity`, `Value`, `KV` and `Distribution`; `Engine.loadPacksOnly` loads the
+named packs of a directory and the model modules they use. `zig build
+module-test` loads two packs through the module and converts a message. The package manifest that `zig fetch`
+reads is `build.zig.zon` at the repository root; `docs/using.md` has the
+dependency line. `Entity.fields` and `Entity.lists` are arrays in insertion
+order with `get(name)` and `contains(name)`; `Entity.put` and
+`Entity.putList` set a key and a list.
 
 ## Model modules and distribution (spec Version 0.4)
 

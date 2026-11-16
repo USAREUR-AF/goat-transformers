@@ -9,7 +9,10 @@ not carry an engine of its own:
 | `wasm/` | `goat_transformers_wasm.wasm` with `goat_transformers.mjs` and its types | Node, browsers, TypeScript hosts |
 
 Both are thin: hand-written glue over the engine's public API, no dependency
-beyond the Rust standard library, no npm package. The engine source is not
+beyond the Rust standard library. `c/install.sh <prefix>` installs the C
+library with its header and a pkg-config file; `wasm/` is also the npm package
+`@usareur-af/goat-transformers`, built by `wasm/build.sh` and `npm pack`
+([docs/using.md](../docs/using.md)). The engine source is not
 changed. Both are a way to ship the engine; neither is a voice in the vector
 cross-check, which always runs the independent native engines
 (`spec/interop-and-sharing.md`).
@@ -34,7 +37,9 @@ the engine's named error, the kind then a colon then the text
 `bad-argument` and `panic`.
 
 Not offered: `decode`, `encode`, `model_keys`, `capability`, the distribution
-limit, and the directory loaders.
+limit, and the directory loaders. The npm package's Node entry (`wasm/node.mjs`)
+adds `loadTree(root, packs)`, which reads the named packs and the modules they
+use from a directory.
 
 ## C library
 
@@ -56,8 +61,8 @@ The build leaves, under `bindings/c/target/release/`:
 
 | File | Size (macOS arm64) |
 |---|---|
-| `libgoat_transformers_c.dylib` (`.so` on Linux) | 866,624 bytes |
-| `libgoat_transformers_c.a` | 18,678,816 bytes |
+| `libgoat_transformers_c.dylib` (`.so` on Linux) | 1,004,128 bytes |
+| `libgoat_transformers_c.a` | 18,999,032 bytes |
 
 Use:
 
@@ -111,8 +116,8 @@ cargo build --profile small --target wasm32-unknown-unknown
 
 | Build | File under `bindings/wasm/target/wasm32-unknown-unknown/` | Size | gzip -9 |
 |---|---|---|---|
-| `--release` | `release/goat_transformers_wasm.wasm` | 481,005 bytes | 165,746 bytes |
-| `--profile small` (`opt-level = "z"`, `lto`, `strip`, one codegen unit, `panic = "abort"`) | `small/goat_transformers_wasm.wasm` | 285,854 bytes | 117,362 bytes |
+| `--release` | `release/goat_transformers_wasm.wasm` | 589,760 bytes | 200,531 bytes |
+| `--profile small` (`opt-level = "z"`, `lto`, `strip`, one codegen unit, `panic = "abort"`) | `small/goat_transformers_wasm.wasm` | 346,027 bytes | 139,601 bytes |
 
 The module has no imports. The `.wasm` is a build product and is not kept in
 the repository.
@@ -127,11 +132,10 @@ GT_PACKS=cot-xml,geojson,canonical-track-v2 node --test bindings/wasm/test/vecto
 
 The test loads every `model/*.def` and every pack, runs every conversion
 vector of the loaded packs through the module and compares with `expect` or
-`expect_error`. With all 43 packs loaded: 2801 vectors, 2801 passed, on both
-builds. Loading all 43 packs took 13 seconds in Node on an idle machine (the three
-largest pack files are 6 to 8 MB each; the same loads take about 7 seconds
-through the C library); the three packs of the last command load in under a
-second. `GT_PACKS` chooses packs; a vector whose target format is not
+`expect_error`. With all 96 packs loaded: 3291 vectors, 3291 passed, on both
+builds (`python3 -I tools/repo-stats` prints the current counts of packs and
+vectors, and the size of a built module). The test prints the load time and
+the run time. `GT_PACKS` chooses packs; a vector whose target format is not
 among them is counted as skipped. The `model` checks of a vector are not run,
 because the module has no decode call. Load vectors are not run.
 

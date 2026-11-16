@@ -1,0 +1,758 @@
+#!/usr/bin/env python3
+"""goat-options: list the ways data can get from a system that produces it to a
+system that needs it, with the evidence for each. It never picks one.
+
+It reads two kinds of plain-text file (docs/system-records.md):
+
+  *.rec   a system record: one system, the formats it emits, accepts or
+          converts, and the status and evidence of each claim
+  *.site  a site file: the systems on hand at one site and the consumers it
+          intends to feed
+
+and the packs of this library, through the Python engine's capability report
+(`Engine.capability`), for what carries and what is lost in a conversion the
+library makes. Records from several store directories are merged by system
+identifier; every claim keeps the store and file it came from.
+
+Run with -I. Standard library only.
+
+Usage:
+  tools/goat-options paths   --store DIR [--store DIR ...] --from X --to Y
+  tools/goat-options site    --store DIR ... FILE.site
+  tools/goat-options systems --store DIR ...
+  tools/goat-options summary --store DIR ...
+  tools/goat-options check   --store DIR ... [--strict]
+
+X and Y are system identifiers from the records, or format names. Output is
+JSON; --table prints a plain table instead.
+"""
+import argparse
+import json
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(HERE)
+
+RECORD_VERSION = "1"
+LIBRARY = "goat-transformers"
+# Most established first. Order is used only to state the weakest step of one
+# path and the strongest evidence for one pair; paths are never compared.
+STATUSES = ["proven", "available", "forthcoming", "unknown"]
+CLAIMS = {"emits", "accepts", "speaks", "converts"}
+SINGLE = {"record", "system", "name", "kind", "by", "date"}
+PATH_ORDER_NOTE = (
+    "Paths are listed by number of conversions, then by format and converter name, "
+    "so the output is stable. The order is not a preference. Each path's status is "
+    "the least established status among its own steps."
+)
+
+
+# --------------------------------------------------------------------------
+# Reading files
+# --------------------------------------------------------------------------
+
+def tokens(line):
+    """The pack.def tokenizer (spec/engine-spec.md): whitespace separates
+    tokens, double quotes group, `#` at the start of a token begins a comment."""
+    out, cur, inq, started = [], "", False, False
+    for c in line:
+        if inq:
+            if c == '"':
+                inq = False
+            else:
+                cur += c
+        elif c == '"':
+            inq, started = True, True
+        elif c in " \t\r\n":
+            if started:
+                out.append(cur)
+                cur, started = "", False
+        elif c == "#" and not started:
+            break
+        else:
+            cur += c
+            started = True
+    if inq:
+        raise ValueError("unbalanced double quote")
+    if started:
+        out.append(cur)
+    return out
+
+
+def split_attrs(toks):
+    """Positional words, then `name=value` attributes, in the order written.
+    A token is an attribute when the text before its first `=` is a name:
+    a letter, then letters, digits, `-` or `_`."""
+    words, attrs = [], {}
+    for t in toks:
+        name, eq, value = t.partition("=")
+        if eq and name[:1].isalpha() and all(c.isalnum() or c in "-_" for c in name):
+            attrs[name] = value
+        else:
+            words.append(t)
+    return words, attrs
+
+
+def norm(fmt):
+    """Format names match case-insensitively, with runs of spaces collapsed."""
+    return " ".join(fmt.split()).lower()
+
+
+class Problem:
+    def __init__(self, level, where, text):
+        self.level, self.where, self.text = level, where, text
+
+    def as_dict(self):
+        return {"level": self.level, "where": self.where, "text": self.text}
+
+
+def parse_lines(path, rel):
+    """Yield (line number, tokens) for each line that holds anything."""
+    with open(path, encoding="utf-8") as fh:
+        for n, raw in enumerate(fh, 1):
+            try:
+                toks = tokens(raw)
+            except ValueError as e:
+                yield n, None, "%s:%d: %s" % (rel, n, e)
+                continue
+            if toks:
+                yield n, toks, None
+
+
+def read_record(path, store, rel, problems):
+    """One .rec file -> a record dict. Unknown keywords and attributes are
+    kept; nothing is refused except a line that cannot be read."""
+    rec = {"system": None, "fields": {}, "notes": [], "claims": [], "extra": [],
+           "store": store, "file": rel}
+    for n, toks, err in parse_lines(path, rel):
+        where = "%s:%d" % (rel, n)
+        if err:
+            problems.append(Problem("error", where, "line not read: " + err.split(": ", 2)[-1]))
+            continue
+        kw, rest = toks[0], toks[1:]
+        if kw in SINGLE:
+            if not rest:
+                problems.append(Problem("warning", where, "`%s` has no value" % kw))
+                continue
+            value = " ".join(rest)
+            if kw == "system":
+                rec["system"] = value
+            else:
+                rec["fields"][kw] = value
+        elif kw == "note":
+            rec["notes"].append(" ".join(rest))
+        elif kw in CLAIMS:
+            words, attrs = split_attrs(rest)
+            need = 2 if kw == "converts" else 1
+            if len(words) < need:
+                problems.append(Problem("warning", where, "`%s` needs %d format name%s; kept, not used" %
+                                        (kw, need, "s" if need > 1 else "")))
+                rec["extra"].append({"line": n, "tokens": toks})
+                continue
+            claim = {"kind": kw, "formats": words[:need], "attrs": attrs, "line": n}
+            if len(words) > need:
+                claim["attrs"]["_words"] = " ".join(words[need:])
+            status = attrs.get("status", "unknown")
+            if status not in STATUSES:
+                problems.append(Problem("warning", where, "status `%s` is not one of %s; read as unknown" %
+                                        (status, ", ".join(STATUSES))))
+            if status == "proven" and not attrs.get("evidence"):
+                problems.append(Problem("warning", where, "status proven with no evidence"))
+            rec["claims"].append(claim)
+        else:
+            problems.append(Problem("info", where, "keyword `%s` is not one this tool reads; kept" % kw))
+            rec["extra"].append({"line": n, "tokens": toks})
+    if rec["fields"].get("record", RECORD_VERSION) != RECORD_VERSION:
+        problems.append(Problem("info", rel, "record version %s; this tool reads version %s" %
+                                (rec["fields"]["record"], RECORD_VERSION)))
+    if not rec["system"]:
+        problems.append(Problem("warning", rel, "no `system` line; record not used"))
+        return None
+    return rec
+
+
+def read_site(path, problems):
+    site = {"site": None, "fields": {}, "notes": [], "have": {}, "feed": [], "extra": [], "file": path}
+    for n, toks, err in parse_lines(path, os.path.basename(path)):
+        where = "%s:%d" % (os.path.basename(path), n)
+        if err:
+            problems.append(Problem("error", where, "line not read"))
+            continue
+        kw, rest = toks[0], toks[1:]
+        words, attrs = split_attrs(rest)
+        if kw == "site" and words:
+            site["site"] = " ".join(words)
+        elif kw == "have" and words:
+            site["have"][words[0]] = attrs
+        elif kw == "feed" and words:
+            site["feed"].append({"consumer": words[0], "from": attrs.get("from"), "attrs": attrs, "line": n})
+        elif kw == "note":
+            site["notes"].append(" ".join(rest))
+        elif kw in ("record", "by", "date", "name"):
+            site["fields"][kw] = " ".join(rest)
+        else:
+            problems.append(Problem("info", where, "keyword `%s` is not one this tool reads; kept" % kw))
+            site["extra"].append({"line": n, "tokens": toks})
+    return site
+
+
+def load_stores(dirs, problems):
+    """Every *.rec under each store directory, merged by system identifier."""
+    systems = {}
+    for d in dirs:
+        if not os.path.isdir(d):
+            problems.append(Problem("error", d, "store directory not found"))
+            continue
+        for root, subdirs, names in os.walk(d):
+            subdirs[:] = sorted(x for x in subdirs if not x.startswith("."))
+            for name in sorted(names):
+                if not name.endswith(".rec"):
+                    continue
+                path = os.path.join(root, name)
+                rel = os.path.relpath(path, d)
+                rec = read_record(path, d, rel, problems)
+                if rec is None:
+                    continue
+                systems.setdefault(rec["system"], []).append(rec)
+    return {sid: merge(sid, recs) for sid, recs in sorted(systems.items())}
+
+
+def merge(sid, recs):
+    """A merged system: every value each record gives, and every claim, each
+    with where it came from. Nothing written by one owner replaces another's."""
+    out = {"system": sid, "names": [], "kinds": [], "records": [], "notes": [], "claims": []}
+    for r in recs:
+        prov = {"store": r["store"], "file": r["file"], "by": r["fields"].get("by"),
+                "date": r["fields"].get("date")}
+        out["records"].append(dict(prov, extra=r["extra"]))
+        for key, dest in (("name", "names"), ("kind", "kinds")):
+            v = r["fields"].get(key)
+            if v and v not in out[dest]:
+                out[dest].append(v)
+        out["notes"].extend(r["notes"])
+        for c in r["claims"]:
+            out["claims"].append(dict(c, source=dict(prov, line=c["line"])))
+    return out
+
+
+# --------------------------------------------------------------------------
+# The library: packs and the capability report
+# --------------------------------------------------------------------------
+
+class Library:
+    """The packs a query may convert through, read by the Python engine."""
+
+    def __init__(self, packs_dir, models_dir, max_distribution, wanted):
+        self.packs_dir = os.path.relpath(packs_dir)
+        on_disk = set()
+        if os.path.isdir(packs_dir):
+            on_disk = {n for n in os.listdir(packs_dir) if os.path.isfile(os.path.join(packs_dir, n, "pack.def"))}
+        self.on_disk = on_disk
+        names = sorted({w for w in wanted if w in on_disk})
+        self.engine = None
+        self.formats = set()
+        self.refused = []
+        if names:
+            sys.path.insert(0, os.path.join(REPO, "engines", "python", "src"))
+            from goat_transformers import Engine, GTError
+            loaded = []
+            for name in names:
+                # one pack at a time, so a pack refused by --max-distribution
+                # or broken does not hide the others
+                try:
+                    Engine.from_dir(packs_dir, models_dir, max_distribution, packs_only=[name])
+                    loaded.append(name)
+                except GTError as e:
+                    self.refused.append({"format": name, "reason": str(e)})
+            if loaded:
+                self.engine = Engine.from_dir(packs_dir, models_dir, max_distribution, packs_only=loaded)
+                self.formats = set(self.engine.formats())
+        self._cap = {}
+
+    def has(self, fmt):
+        return fmt in self.formats
+
+    def capability(self, a, b):
+        if (a, b) not in self._cap:
+            self._cap[(a, b)] = self.engine.capability(a, b)
+        return self._cap[(a, b)]
+
+
+# --------------------------------------------------------------------------
+# Paths
+# --------------------------------------------------------------------------
+
+def rank(status):
+    return STATUSES.index(status) if status in STATUSES else len(STATUSES) - 1
+
+
+def strongest(statuses):
+    """The most established of several claims about one thing (each claim is
+    evidence on its own); `unknown` when there is none."""
+    known = [s if s in STATUSES else "unknown" for s in statuses]
+    return min(known, key=rank) if known else "unknown"
+
+
+def weakest(statuses):
+    known = [s if s in STATUSES else "unknown" for s in statuses]
+    return max(known, key=rank) if known else "unknown"
+
+
+def claim_view(c, system):
+    a = {k: v for k, v in c["attrs"].items()}
+    out = {"system": system, "claim": c["kind"], "status": a.pop("status", "unknown")}
+    for k in ("version", "transport", "evidence"):
+        if k in a:
+            out[k] = a.pop(k)
+    if a:
+        out["other"] = a
+    out["source"] = c["source"]
+    return out
+
+
+class Index:
+    """What every merged system emits, accepts and converts, by format."""
+
+    def __init__(self, systems):
+        self.systems = systems
+        self.emits = {}     # system -> [(format, claim)]
+        self.accepts = {}
+        self.converters = {}  # (from_norm, to_norm) -> {converter id: [claim views]}
+        self.display = {}   # normalized format -> the name as first written
+        for sid, s in systems.items():
+            for c in s["claims"]:
+                fs = [self._name(f) for f in c["formats"]]
+                view = claim_view(c, sid)
+                if c["kind"] in ("emits", "speaks"):
+                    self.emits.setdefault(sid, []).append((fs[0], view, c["kind"] == "speaks"))
+                if c["kind"] in ("accepts", "speaks"):
+                    self.accepts.setdefault(sid, []).append((fs[0], view, c["kind"] == "speaks"))
+                if c["kind"] == "converts":
+                    via = c["attrs"].get("via", sid)
+                    self.converters.setdefault((fs[0], fs[1]), {}).setdefault(via, []).append(view)
+
+    def _name(self, f):
+        n = norm(f)
+        self.display.setdefault(n, f if f == n else n)
+        return n
+
+    def formats(self):
+        return set(self.display)
+
+
+def endpoint(index, ref, side):
+    """A system identifier or a format name -> (description, [(format, claim view or None, unstated)])."""
+    if ref in index.systems:
+        table = index.emits if side == "from" else index.accepts
+        return {"system": ref}, table.get(ref, [])
+    return {"format": ref}, [(norm(ref), None, False)]
+
+
+def library_step(lib, index, a, b):
+    if a == b or not (lib.has(a) and lib.has(b)):
+        return None
+    cap = lib.capability(a, b)
+    if cap["grade"] == "none":
+        return None
+    claims = index.converters.get((a, b), {}).get(LIBRARY, [])
+    return {"from": a, "to": b, "via": LIBRARY, "library": True,
+            "status": strongest([c["status"] for c in claims]) if claims else "available",
+            "claims": claims, "grade": cap["grade"], "carried": cap["carried"], "lost": cap["dropped"]}
+
+
+def record_steps(index, a, b):
+    out = []
+    for via, claims in sorted(index.converters.get((a, b), {}).items()):
+        if via == LIBRARY:
+            continue
+        out.append({"from": a, "to": b, "via": via, "library": False,
+                    "status": strongest([c["status"] for c in claims]), "claims": claims,
+                    "grade": None, "carried": None, "lost": None})
+    return out
+
+
+def steps_from(lib, index, a, targets):
+    """Every one-conversion step out of format `a`: a library conversion to
+    each format of interest, and every `converts` claim from `a`."""
+    out = []
+    for b in sorted(targets):
+        s = library_step(lib, index, a, b)
+        if s:
+            out.append(s)
+    for (fa, fb) in sorted(index.converters):
+        if fa == a:
+            out.extend(record_steps(index, fa, fb))
+    return out
+
+
+def find_paths(lib, index, src, dst, max_conv, site=None, exclude_same=None):
+    """Every path from the formats `src` emits to the formats `dst` accepts,
+    with at most `max_conv` conversions. Two library conversions in a row are
+    not a path of their own: the library converts any format to any other in
+    one step, through its model, so the pair is already listed as one step."""
+    s_desc, s_out = src
+    d_desc, d_in = dst
+    accepted = {}
+    for f, view, unstated in d_in:
+        accepted.setdefault(f, []).append((view, unstated))
+    interesting = index.formats() | set(accepted) | {f for f, _, _ in s_out}
+    paths = []
+    seen = set()
+    for f0, from_view, from_unstated in s_out:
+        # depth-first over steps, formats never repeat within one path
+        stack = [(f0, [])]
+        while stack:
+            f, steps = stack.pop()
+            if f in accepted:
+                for to_view, to_unstated in accepted[f]:
+                    key = (f0, id(from_view), tuple((s["from"], s["to"], s["via"]) for s in steps), f, id(to_view))
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    paths.append(make_path(index, s_desc, d_desc, f0, from_view, from_unstated,
+                                           steps, f, to_view, to_unstated, site))
+            if len(steps) >= max_conv:
+                continue
+            used = {f0} | {s["to"] for s in steps}
+            for s in steps_from(lib, index, f, interesting):
+                if s["to"] in used:
+                    continue
+                if s["library"] and steps and steps[-1]["library"]:
+                    continue
+                stack.append((s["to"], steps + [s]))
+    paths.sort(key=lambda p: (p["conversions"], p["formats"], [s["via"] for s in p["steps"]],
+                              p["from"].get("claim", {}).get("source", {}).get("store", ""),
+                              p["to"].get("claim", {}).get("source", {}).get("store", "")))
+    return paths
+
+
+def on_hand(site, sid):
+    if site is None:
+        return None
+    return sid in site["have"]
+
+
+def make_path(index, s_desc, d_desc, f0, from_view, from_unstated, steps, f_last, to_view, to_unstated, site):
+    disp = lambda f: index.display.get(f, f)
+    statuses = []
+    frm = dict(s_desc, format=disp(f0))
+    if from_view is not None:
+        frm["claim"] = from_view
+        statuses.append(from_view["status"])
+        if from_unstated:
+            frm["direction"] = "unstated"
+        if site is not None:
+            frm["on_hand"] = on_hand(site, from_view["system"])
+    to = dict(d_desc, format=disp(f_last))
+    if to_view is not None:
+        to["claim"] = to_view
+        statuses.append(to_view["status"])
+        if to_unstated:
+            to["direction"] = "unstated"
+        if site is not None:
+            to["on_hand"] = on_hand(site, to_view["system"])
+    out_steps = []
+    for s in steps:
+        step = {"from": disp(s["from"]), "to": disp(s["to"]), "via": s["via"], "status": s["status"],
+                "claims": s["claims"], "grade": s["grade"], "carried": s["carried"], "lost": s["lost"]}
+        if site is not None:
+            step["on_hand"] = on_hand(site, s["via"])
+        statuses.append(s["status"])
+        out_steps.append(step)
+    carried = lost = None
+    if out_steps and all(s["carried"] is not None for s in out_steps):
+        carried = out_steps[0]["carried"]
+        for s in out_steps[1:]:
+            carried = [k for k in carried if k in s["carried"]]
+        first = out_steps[0]
+        lost = [k for k in first["carried"] + first["lost"] if k not in carried]
+    transports = [v.get("transport") for v in (from_view, to_view) if v is not None]
+    path = {
+        "conversions": len(out_steps),
+        "formats": [disp(f0)] + [s["to"] for s in out_steps],
+        "status": weakest(statuses) if statuses else "available",
+        "from": frm,
+        "steps": out_steps,
+        "to": to,
+        "carried": carried,
+        "lost": lost,
+    }
+    if len(transports) == 2 and all(transports) and transports[0] != transports[1]:
+        path["transports_differ"] = transports
+    return path
+
+
+# --------------------------------------------------------------------------
+# Commands
+# --------------------------------------------------------------------------
+
+def setup(args, extra_formats=()):
+    problems = []
+    systems = load_stores(args.store, problems)
+    index = Index(systems)
+    wanted = index.formats() | {norm(f) for f in extra_formats}
+    models = args.models or os.path.join(args.packs, os.pardir, "model")
+    lib = Library(args.packs, models, args.max_distribution, wanted)
+    for r in lib.refused:
+        problems.append(Problem("warning", "packs/%s" % r["format"], "pack not loaded: %s" % r["reason"]))
+    return systems, index, lib, problems
+
+
+def query_block(args, lib, extra=None):
+    q = {"stores": args.store, "packs": lib.packs_dir, "max_distribution": args.max_distribution,
+         "library_formats": sorted(lib.formats)}
+    if extra:
+        q.update(extra)
+    return q
+
+
+def cmd_paths(args):
+    systems, index, lib, problems = setup(args, [args.src, args.dst])
+    src = endpoint(index, args.src, "from")
+    dst = endpoint(index, args.dst, "to")
+    site = read_site(args.site, problems) if args.site else None
+    for ref, (desc, ends) in ((args.src, src), (args.dst, dst)):
+        if "system" in desc and not ends:
+            problems.append(Problem("info", ref, "the records give this system no format on this side"))
+    paths = find_paths(lib, index, src, dst, args.max_conversions, site)
+    return {
+        "query": query_block(args, lib, {"from": src[0], "to": dst[0], "max_conversions": args.max_conversions,
+                                         "site": site["site"] if site else None}),
+        "paths": paths,
+        "counts": counts(paths),
+        "note": PATH_ORDER_NOTE,
+        "problems": [p.as_dict() for p in problems],
+    }
+
+
+def counts(paths):
+    by = {s: 0 for s in STATUSES}
+    for p in paths:
+        by[p["status"]] += 1
+    return {"paths": len(paths), "by_status": by}
+
+
+def producers(index):
+    return sorted(index.emits)
+
+
+def consumers(index):
+    return sorted(index.accepts)
+
+
+def cmd_site(args):
+    problems = []
+    site = read_site(args.site_file, problems)
+    systems, index, lib, more = setup(args)
+    problems.extend(more)
+    for sid in sorted(site["have"]):
+        if sid != LIBRARY and sid not in systems:
+            problems.append(Problem("warning", sid, "on hand at the site and in no record"))
+    intents = []
+    for want in site["feed"]:
+        sources = [want["from"]] if want["from"] else sorted(s for s in site["have"] if s in index.emits
+                                                              and s != want["consumer"])
+        for s in sources:
+            paths = find_paths(lib, index, endpoint(index, s, "from"), endpoint(index, want["consumer"], "to"),
+                               args.max_conversions, site)
+            intents.append({"consumer": want["consumer"], "source": s, "line": want["line"],
+                            "paths": paths, "counts": counts(paths),
+                            "paths_on_hand": sum(1 for p in paths if all_on_hand(p))})
+    return {
+        "query": query_block(args, lib, {"site": site["site"], "site_file": args.site_file,
+                                         "max_conversions": args.max_conversions}),
+        "site": {"site": site["site"], "have": site["have"], "feed": site["feed"], "notes": site["notes"]},
+        "intents": intents,
+        "note": PATH_ORDER_NOTE + " A path is on hand when its source, its consumer and every converter it "
+                "uses are listed as `have` in the site file.",
+        "problems": [p.as_dict() for p in problems],
+    }
+
+
+def all_on_hand(p):
+    parts = [p["from"].get("on_hand", True), p["to"].get("on_hand", True)] + [s.get("on_hand") for s in p["steps"]]
+    return all(x is not False for x in parts)
+
+
+def cmd_systems(args):
+    systems, index, lib, problems = setup(args)
+    out = []
+    for sid, s in systems.items():
+        claims = []
+        for c in s["claims"]:
+            v = claim_view(c, sid)
+            v["formats"] = c["formats"]
+            v["packs"] = [lib.has(norm(f)) for f in c["formats"]]
+            claims.append(v)
+        out.append({"system": sid, "names": s["names"], "kinds": s["kinds"], "records": s["records"],
+                    "notes": s["notes"], "claims": claims})
+    return {"query": query_block(args, lib), "systems": out, "problems": [p.as_dict() for p in problems]}
+
+
+def cmd_summary(args):
+    """Counts only: systems, and for every producer and consumer pair the most
+    established status any of its paths has."""
+    systems, index, lib, problems = setup(args)
+    pairs = {s: 0 for s in STATUSES}
+    pairs["none"] = 0
+    unstated = 0
+    for a in producers(index):
+        for b in consumers(index):
+            if a == b:
+                continue
+            paths = find_paths(lib, index, endpoint(index, a, "from"), endpoint(index, b, "to"), args.max_conversions)
+            if not paths:
+                pairs["none"] += 1
+                continue
+            pairs[strongest([p["status"] for p in paths])] += 1
+            if all("direction" in p["from"] or "direction" in p["to"] for p in paths):
+                unstated += 1
+    fmts = index.formats()
+    return {
+        "query": query_block(args, lib, {"max_conversions": args.max_conversions}),
+        "systems": len(systems),
+        "producers": len(producers(index)),
+        "consumers": len(consumers(index)),
+        "formats_named": len(fmts),
+        "formats_with_pack": len([f for f in fmts if lib.has(f)]),
+        "pairs": sum(pairs.values()),
+        "pairs_by_strongest_path": pairs,
+        "pairs_whose_every_path_rests_on_an_unstated_direction": unstated,
+        "problems": [p.as_dict() for p in problems],
+    }
+
+
+def cmd_check(args):
+    systems, index, lib, problems = setup(args)
+    for f in sorted(index.formats()):
+        if not lib.has(f):
+            problems.append(Problem("info", f, "no pack in %s; matched by name only" % lib.packs_dir))
+    return {"systems": len(systems), "problems": [p.as_dict() for p in problems]}
+
+
+# --------------------------------------------------------------------------
+# Table output, for people
+# --------------------------------------------------------------------------
+
+def route(p):
+    parts = [p["formats"][0]]
+    for s in p["steps"]:
+        parts.append("--[%s]-->" % s["via"])
+        parts.append(s["to"])
+    return " ".join(parts)
+
+
+def keys_text(p):
+    if p["carried"] is None:
+        return "not stated" if p["steps"] else "unchanged"
+    size = lambda v: v if isinstance(v, int) else len(v)
+    return "%d carried, %d lost" % (size(p["carried"]), size(p["lost"]))
+
+
+def table_paths(paths, title, out):
+    out.write("%s\n" % title)
+    if not paths:
+        out.write("  no path found\n")
+        return
+    rows = [("conv", "status", "route", "keys", "on hand")]
+    for p in paths:
+        hand = "" if "on_hand" not in p["from"] and not any("on_hand" in s for s in p["steps"]) else \
+            ("yes" if all_on_hand(p) else "no")
+        rows.append((str(p["conversions"]), p["status"], route(p), keys_text(p), hand))
+    widths = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
+    for r in rows:
+        out.write("  " + "  ".join(c.ljust(w) for c, w in zip(r, widths)).rstrip() + "\n")
+
+
+def print_table(cmd, result, out):
+    if cmd == "paths":
+        q = result["query"]
+        table_paths(result["paths"], "%s -> %s" % (q["from"].get("system") or q["from"].get("format"),
+                                                  q["to"].get("system") or q["to"].get("format")), out)
+        out.write("\n%s\n" % result["note"])
+    elif cmd == "site":
+        for it in result["intents"]:
+            table_paths(it["paths"], "feed %s from %s" % (it["consumer"], it["source"]), out)
+            out.write("\n")
+        out.write("%s\n" % result["note"])
+    elif cmd == "systems":
+        rows = [("system", "kind", "claim", "format", "status", "pack")]
+        for s in result["systems"]:
+            for c in s["claims"]:
+                rows.append((s["system"], ", ".join(s["kinds"]), c["claim"], " -> ".join(c["formats"]),
+                             c["status"], "/".join("yes" if x else "no" for x in c["packs"])))
+        widths = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
+        for r in rows:
+            out.write("  ".join(c.ljust(w) for c, w in zip(r, widths)).rstrip() + "\n")
+    elif cmd == "summary":
+        for k in ("systems", "producers", "consumers", "formats_named", "formats_with_pack", "pairs"):
+            out.write("%-20s %d\n" % (k, result[k]))
+        for k, v in result["pairs_by_strongest_path"].items():
+            out.write("pairs, strongest path %-12s %d\n" % (k, v))
+    if result.get("problems") and cmd != "check":
+        out.write("\n%d problem(s); run `check` to list them\n" % len(result["problems"]))
+    if cmd == "check":
+        for p in result["problems"]:
+            out.write("%-7s %s: %s\n" % (p["level"], p["where"], p["text"]))
+
+
+def count_keys(node):
+    """Replace every `carried` and `lost` key list with its length."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if k in ("carried", "lost") and isinstance(v, list):
+                node[k] = len(v)
+            else:
+                count_keys(v)
+    elif isinstance(node, list):
+        for v in node:
+            count_keys(v)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="goat-options", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--store", action="append", required=True, metavar="DIR",
+                        help="a directory of *.rec files; repeatable, merged by system identifier")
+    common.add_argument("--packs", default=os.path.join(REPO, "packs"), help="packs directory (default: this repository's)")
+    common.add_argument("--models", default=None, help="model directory (default: <packs>/../model)")
+    common.add_argument("--max-distribution", default="controlled", choices=["public", "controlled"])
+    common.add_argument("--max-conversions", type=int, default=2, help="longest path, in conversions (default 2)")
+    common.add_argument("--table", action="store_true", help="a plain table instead of JSON")
+    common.add_argument("--keys", choices=["list", "count"], default="list",
+                        help="in JSON, list the keys carried and lost (default), or give their number")
+    p = sub.add_parser("paths", parents=[common], help="every path from a producer to a consumer")
+    p.add_argument("--from", dest="src", required=True, help="system identifier or format name")
+    p.add_argument("--to", dest="dst", required=True, help="system identifier or format name")
+    p.add_argument("--site", default=None, help="a .site file: mark what is on hand")
+    s = sub.add_parser("site", parents=[common], help="every path for every `feed` line of a site file")
+    s.add_argument("site_file")
+    sub.add_parser("systems", parents=[common], help="the merged records")
+    sub.add_parser("summary", parents=[common], help="counts of systems and of pairs by their strongest path")
+    c = sub.add_parser("check", parents=[common], help="list what the reader could not use or had to guess")
+    c.add_argument("--strict", action="store_true", help="exit 1 on any warning or error")
+    args = ap.parse_args(argv)
+    if args.max_conversions < 0:
+        ap.error("--max-conversions is 0 or more")
+    result = {"paths": cmd_paths, "site": cmd_site, "systems": cmd_systems,
+              "summary": cmd_summary, "check": cmd_check}[args.cmd](args)
+    if args.keys == "count":
+        count_keys(result)
+    if args.table:
+        print_table(args.cmd, result, sys.stdout)
+    else:
+        json.dump(result, sys.stdout, indent=1, sort_keys=False)
+        sys.stdout.write("\n")
+    levels = {p["level"] for p in result.get("problems", [])}
+    if "error" in levels:
+        return 1
+    if args.cmd == "check" and args.strict and "warning" in levels:
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

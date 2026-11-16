@@ -9,13 +9,14 @@ built. It gives no dates.
 |---|---|
 | Engines | Seven: Rust (reference), Go, Python, Java, C++, Erlang, Zig. Each uses only its language's standard library and passes every vector |
 | Wire types | Five: `xml`, `geojson`, `json`, `protobuf`, `bits` (either bit order; scaled, floating-point and text fields) |
-| Conformance vectors | 3,187 conversion vectors in 91 packs and 314 load vectors; every engine reproduces every one |
+| Conformance vectors | 3,291 conversion vectors in 96 packs and 314 load vectors; every engine reproduces every one |
 | Shared model | Modules `core` and `track`, and one module of raw wire values for each catalog format. Every mapped key is declared and type-checked at load (`spec/shared-model.md`) |
 | Packs | The table in `README.md`; coverage by format in `docs/coverage-roadmap.md` |
 | Pack generators | `tools/gen/proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`: a pack, its module and its round-trip vectors from a machine-readable definition |
 | Capability matrix | `Engine::capability` and `goat-xf matrix [--detail]`: for every pair of formats, which keys carry and which the target cannot represent |
 | Public and controlled boundary | `distribution` and `source` on every module and pack, enforced by the engines; `tools/boundary-gate` on this repository (`docs/boundary.md`) |
 | Package planner | `tools/goat-pkg`: constraints in, the smallest package out (`docs/package-configurator.md`) |
+| System records and the options query | `.rec` records of what a system emits, accepts and converts; `tools/goat-options` lists every path between two systems with its status and evidence, from the records and the capability report (`docs/system-records.md`) |
 | CI | `.github/workflows/conformance.yml` builds each engine, runs every vector on it and runs the boundary gate, on every change |
 
 ## Pack-language additions

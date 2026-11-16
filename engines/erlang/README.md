@@ -30,6 +30,12 @@ vectors, so two runs make the same ones.
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
 
+## As a dependency
+
+`rebar.config` and `src/goat_transformers.app.src` make the engine the rebar3
+application `goat_transformers`; `docs/using.md` has the dependency line. The
+build and the tests above do not use rebar3.
+
 ## Engine instance
 
 ```

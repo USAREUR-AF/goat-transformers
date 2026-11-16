@@ -27,6 +27,31 @@ cmake --build build -j
 The tests read the packs of this repository (`packs/`, and the model modules
 in `model/` beside it). `-DGT_PACKS_DIR=<dir>` names another packs directory.
 
+## Use the library from another project
+
+The target is `goat_transformers::goat_transformers` in each case.
+
+| Way | How |
+|---|---|
+| A source directory | `add_subdirectory(<path to engines/cpp>)` |
+| `FetchContent` | `FetchContent_Declare(... SOURCE_SUBDIR engines/cpp)` |
+| An installed package | `cmake --install build --prefix <prefix>`, then `find_package(goat_transformers 0.8 CONFIG REQUIRED)` with `<prefix>` in `CMAKE_PREFIX_PATH` |
+
+```cmake
+target_link_libraries(my_program PRIVATE goat_transformers::goat_transformers)
+```
+
+The install holds the static library, the headers under `include/`, the
+package files under `lib/cmake/goat_transformers` and `goat-xf`. A package
+of one minor version is accepted by a request for that minor version only.
+
+| Option | Default | Effect |
+|---|---|---|
+| `GT_BUILD_TESTS` | `ON` as the top-level project, `OFF` inside another project | the three test programs and the ctest entries |
+| `GT_BUILD_CLI` | the same | the `goat-xf` tool |
+| `GT_INSTALL` | the same | the install and package rules |
+| `GT_SANITIZE` | `OFF` | the sanitizer build, below |
+
 ## Test
 
 ```sh

@@ -1,0 +1,14 @@
+.{
+    .name = "goat_transformers",
+    .version = "0.8.0",
+    .minimum_zig_version = "0.13.0",
+    .dependencies = .{},
+    // The package is the Zig engine and nothing else. Packs and model modules
+    // are data: vendor the ones you need with tools/goat-pkg bundle.
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "LICENSE",
+        "engines/zig/src",
+    },
+}
