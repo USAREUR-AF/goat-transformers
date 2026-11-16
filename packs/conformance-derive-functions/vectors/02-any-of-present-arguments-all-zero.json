@@ -1,0 +1,8 @@
+{
+  "name": "any-of-present-arguments-all-zero",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"y\":0}",
+  "context": {},
+  "expect": "{\"y\":0,\"any\":0}"
+}

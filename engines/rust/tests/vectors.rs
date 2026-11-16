@@ -7,7 +7,8 @@
 //! after the context is filled in and the derivations are applied. Every
 //! failing vector is reported before the test fails. A model key `"<list>.#"`
 //! is the number of items of a list (`"absent"`: the list is absent) and
-//! `"<list>[<i>].<key>"` a value of one item, nested lists likewise.
+//! `"<list>[<i>].<key>"` a value of one item, nested lists likewise;
+//! `"<list>[<i>].@kind"` is the kind an item selected (engine-spec 0.8).
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Distribution, Engine, Entity, Value};
@@ -33,6 +34,8 @@ enum Got<'a> {
     Value(&'a Value),
     /// the number of items of a list; None: the list is absent
     Count(Option<usize>),
+    /// `@kind` after `[<i>].`: the kind an item selected
+    Kind(Option<&'a str>),
 }
 
 /// Resolve a `model` key: a model key, `<list>.#`, or `<list>[<i>].<rest>`.
@@ -45,6 +48,9 @@ fn model_lookup<'a>(ent: &'a Entity, key: &str) -> Result<Got<'a>, String> {
         let items = ent.lists.get(list).ok_or(format!("list `{}` absent after decode", list))?;
         let item = items.get(index).ok_or(format!("list `{}` has {} items, no item {}", list, items.len(), index))?;
         return model_lookup(item, rest).map_err(|e| format!("{}[{}]: {}", list, index, e));
+    }
+    if key == "@kind" {
+        return Ok(Got::Kind(ent.kind.as_ref().map(|(_, name)| name.as_str())));
     }
     if let Some(list) = key.strip_suffix(".#") {
         return Ok(Got::Count(ent.lists.get(list).map(|l| l.len())));
@@ -130,6 +136,12 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
             }
             let got_field = match model_lookup(&ent, k)? {
                 Got::Value(v) => v,
+                Got::Kind(name) => {
+                    if name != Some(want.as_str()) {
+                        return Err(format!("`{}` = {:?} want `{}`", k, name, want));
+                    }
+                    continue;
+                }
                 Got::Count(n) => {
                     let got = n.map(|n| n.to_string()).unwrap_or_else(|| "absent".to_string());
                     if got != want {

@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-kinds",
+  "to": "conformance-seq-json",
+  "input": "010451226301026202686970",
+  "expect": "{\"n\":1,\"recs\":[{\"x\":5,\"y\":34},{\"x\":6,\"y\":258},{\"x\":6,\"label\":\"hi\"},{\"x\":7}]}"
+}

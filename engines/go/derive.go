@@ -35,6 +35,8 @@ type Derive struct {
 var deriveArity = map[string]int{
 	"copy": 1, "hypot": 2, "bearing": 2, "east_of": 2, "north_of": 2,
 	"neg": 1, "scale": 1, "offset": 1, "join": -1,
+	// spec 0.8, "Model additions".
+	"day_seconds": 1, "any": -1, "not": 1, "parse_int": 1, "text_of": 1,
 }
 
 // parseDerive reads the function of a `derive` line and checks what the line
@@ -43,7 +45,7 @@ func parseDerive(d *Derive) error {
 	name, param, hasParam := strings.Cut(d.Function, ":")
 	arity, known := deriveArity[name]
 	if !known {
-		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>)", d.Function)
+		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>, day_seconds, any, not, parse_int, text_of)", d.Function)
 	}
 	d.name, d.param = name, param
 	switch name {
@@ -101,16 +103,25 @@ func (e *Engine) checkDerives(m *Module) error {
 		bad := func(format string, a ...any) error {
 			return &Error{Kind: ErrBadDirective, Module: m.Name, Source: m.Source, Line: d.Line, Detail: "derive " + d.Target + ": " + fmt.Sprintf(format, a...)}
 		}
-		typeOf := func(key string) (Kind, error) {
+		// The target is a key of core or of the module itself; an argument may
+		// also be a key of a module the module uses (spec 0.8).
+		typeOf := func(key string, isTarget bool) (Kind, error) {
 			mod, name := splitModelKey(key)
 			var owner *Module
-			switch mod {
-			case m.Name:
+			switch {
+			case mod == m.Name:
 				owner = m
-			case CoreModule:
+			case mod == CoreModule:
 				owner = e.modules[CoreModule]
+			case !isTarget && usesModule(m, mod):
+				owner = e.modules[mod]
+				if owner == nil {
+					return 0, &Error{Kind: ErrUnknownModule, Module: mod, Source: m.Source, Line: d.Line, Detail: fmt.Sprintf("module %s uses module %s, which is not loaded", m.Name, mod)}
+				}
+			case isTarget:
+				return 0, bad("target %s is not a key of core or of module %s", key, m.Name)
 			default:
-				return 0, bad("key %s is not a key of core or of module %s", key, m.Name)
+				return 0, bad("key %s is not a key of core, of module %s or of a module it uses", key, m.Name)
 			}
 			if owner == nil {
 				return 0, bad("key %s: module %s is not loaded", key, mod)
@@ -121,13 +132,13 @@ func (e *Engine) checkDerives(m *Module) error {
 			}
 			return k.Type, nil
 		}
-		target, err := typeOf(d.Target)
+		target, err := typeOf(d.Target, true)
 		if err != nil {
 			return err
 		}
 		args := make([]Kind, len(d.Args))
 		for j, a := range d.Args {
-			if args[j], err = typeOf(a); err != nil {
+			if args[j], err = typeOf(a, false); err != nil {
 				return err
 			}
 		}
@@ -163,6 +174,22 @@ func (e *Engine) checkDerives(m *Module) error {
 			if !all(KindString) {
 				return bad("join needs a string target and string arguments")
 			}
+		case "day_seconds":
+			if target != KindFloat || args[0] != KindInt {
+				return bad("day_seconds needs a float target and an int argument")
+			}
+		case "any", "not":
+			if !all(KindInt) {
+				return bad("%s needs an int target and int arguments", d.name)
+			}
+		case "parse_int":
+			if target != KindInt || args[0] != KindString {
+				return bad("parse_int needs an int target and a string argument")
+			}
+		case "text_of":
+			if target != KindString || args[0] != KindInt {
+				return bad("text_of needs a string target and an int argument")
+			}
 		default:
 			if !all(KindFloat) {
 				return bad("%s needs a float target and float arguments", d.name)
@@ -170,6 +197,32 @@ func (e *Engine) checkDerives(m *Module) error {
 		}
 	}
 	return nil
+}
+
+// usesModule reports whether a module names another in a `uses` line.
+func usesModule(m *Module, name string) bool {
+	for _, u := range m.Uses {
+		if u == name {
+			return true
+		}
+	}
+	return false
+}
+
+// isDecimalInt reports whether s is an optional `-` and decimal digits.
+func isDecimalInt(s string) bool {
+	if strings.HasPrefix(s, "-") {
+		s = s[1:]
+	}
+	if s == "" {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 // degToRad is π/180 with π as the double nearest to it, and radToDeg is 180/π
@@ -201,6 +254,38 @@ func (d *Derive) apply(args []Value) (Value, bool) {
 			return Value{}, false
 		}
 		return args[0], true
+	case "day_seconds":
+		// Seconds since UTC midnight of an instant in epoch milliseconds.
+		const dayMs = 86400000
+		ms := args[0].I % dayMs
+		if ms < 0 {
+			ms += dayMs
+		}
+		return Value{Kind: KindFloat, F: float64(ms) / 1000}, true
+	case "any":
+		// The arguments handed in are the present ones.
+		for _, a := range args {
+			if a.I != 0 {
+				return Value{Kind: KindInt, I: 1}, true
+			}
+		}
+		return Value{Kind: KindInt, I: 0}, true
+	case "not":
+		if args[0].I == 0 {
+			return Value{Kind: KindInt, I: 1}, true
+		}
+		return Value{Kind: KindInt, I: 0}, true
+	case "parse_int":
+		if !isDecimalInt(args[0].S) {
+			return Value{}, false
+		}
+		i, err := strconv.ParseInt(args[0].S, 10, 64)
+		if err != nil {
+			return Value{}, false
+		}
+		return Value{Kind: KindInt, I: i}, true
+	case "text_of":
+		return Value{Kind: KindString, S: strconv.FormatInt(args[0].I, 10)}, true
 	case "join":
 		parts := make([]string, len(args))
 		for i, a := range args {
@@ -297,9 +382,17 @@ func (e *Engine) Complete(ent *Entity) {
 			for _, a := range d.Args {
 				v, ok := ent.Fields[a]
 				if !ok {
+					// `any` is the one function that needs only some of its
+					// arguments (spec 0.8).
+					if d.name == "any" {
+						continue
+					}
 					continue next
 				}
 				args = append(args, v)
+			}
+			if len(args) == 0 {
+				continue
 			}
 			if v, ok := d.apply(args); ok {
 				ent.Fields[d.Target] = v

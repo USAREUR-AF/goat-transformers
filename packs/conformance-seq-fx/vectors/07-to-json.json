@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-json",
+  "input": "030101805522",
+  "expect": "{\"n\":3,\"val\":34,\"w\":85}"
+}

@@ -1,0 +1,56 @@
+# Conformance probe pack for sequential layouts (spec 0.8), most significant
+# bit first. Public. Fields, `const`, `pad`, `align` and `default` at a cursor;
+# two kinds chosen by sequential `when` lines; `presence <name> <n>` with `if`
+# blocks, one naming two bits and one naming a bit with `!`; `opt`.
+#
+#   byte 0      n
+#   byte 1      [the constant 10 : 4][qty : 4]
+#   kind plain  02 07, val as a little-endian 16-bit integer (`swap`), ratio
+#               as 12 bits of quarter units, then zero bits to the whole byte
+#   kind flags  01, four presence bits p.1 to p.4, then
+#                 p.1          x, 4 bits
+#                 p.2          y, 8 bits, signed
+#                 p.3 and p.4  z, 8 bits
+#                 p.3, not p.4 w, 8 bits
+#               zero bits to the next whole byte, one bit that says whether a
+#               two-character label follows, the label, 3 unused bits, val in
+#               4 bits, then zero bits to the whole byte
+format     conformance-seq-msb
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n    8  uint
+const   4  10
+field   probe.qty  4  uint
+default probe.qty  3
+kind    plain
+when    8  2
+when    8  7
+requires probe.ratio
+field   probe.val    16  uint  swap
+field   probe.ratio  12  sscale:1/4
+kind    flags
+when    8  1
+presence p 4
+if p.1
+  field  probe.x  4  uint
+end
+if p.2
+  field  probe.y  8  twos
+end
+if p.3 p.4
+  field  probe.z  8  uint
+end
+if p.3 !p.4
+  field  probe.w  8  uint
+end
+align 8
+opt
+  field  probe.label  16  ascii
+end
+pad 3
+field   probe.val  4  uint

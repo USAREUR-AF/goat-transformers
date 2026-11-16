@@ -420,7 +420,8 @@ std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, co
             default: write_fixed(payload, scalar, 4); break;
         }
     }
-    if (packed) write_delimited(out, num, payload);
+    // A list whose items all lack the value writes nothing (0.7 ruling 11).
+    if (packed && !payload.empty()) write_delimited(out, num, payload);
     return out;
 }
 
@@ -435,6 +436,9 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         const std::vector<Item>* items = src.list(g);
         if (!items || items->empty()) continue;
         parse_protobuf_locator(g.locator, loc);  // validated at pack load
+        // A packed list with no value to write does not create its container either.
+        std::string raw = group_bytes(p, g, loc.path.back(), *items);
+        if (raw.empty()) continue;
         Node* n = &root;
         bool blocked = false;
         for (std::size_t k = 0; k < loc.path.size() && !blocked; ++k) {
@@ -443,7 +447,7 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         }
         if (blocked || n->is_leaf || n->is_raw || !n->children.empty()) continue;
         n->is_raw = true;
-        n->raw = group_bytes(p, g, loc.path.back(), *items);
+        n->raw = std::move(raw);
     }
     for (const auto& line : lines) {
         if (!line.field) continue;

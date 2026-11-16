@@ -1,0 +1,7 @@
+{
+  "name": "to-nested-presence-chain-and-length",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-nested",
+  "input": "{\"n\":1,\"items\":[{\"qty\":5,\"val\":33,\"x\":3,\"y\":4},{\"val\":34}],\"nums\":[9]}",
+  "expect": "01c002c50708210440028900"
+}

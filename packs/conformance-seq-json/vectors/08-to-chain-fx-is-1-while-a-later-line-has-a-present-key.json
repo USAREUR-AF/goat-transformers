@@ -1,0 +1,7 @@
+{
+  "name": "to-chain-fx-is-1-while-a-later-line-has-a-present-key",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-chain",
+  "input": "{\"n\":1,\"z\":3,\"w\":153}",
+  "expect": "010101ab06000199"
+}

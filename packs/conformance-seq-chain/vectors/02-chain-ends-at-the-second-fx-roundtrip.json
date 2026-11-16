@@ -1,0 +1,11 @@
+{
+  "name": "chain-ends-at-the-second-fx-roundtrip",
+  "from": "conformance-seq-chain",
+  "to": "conformance-seq-chain",
+  "input": "010bc00702",
+  "expect": "010bc00702",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "flags-two-presence-bits-and-opt-roundtrip",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a201cefeb7b586",
+  "expect": "05a201cefeb7b586",
+  "model": {
+    "@kind": "flags",
+    "probe.x": "14",
+    "probe.y": "-2",
+    "probe.label": "ok",
+    "probe.val": "6"
+  }
+}

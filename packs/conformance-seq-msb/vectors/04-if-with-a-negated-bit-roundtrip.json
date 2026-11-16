@@ -1,0 +1,11 @@
+{
+  "name": "if-with-a-negated-bit-roundtrip",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a201255009",
+  "expect": "05a201255009",
+  "model": {
+    "probe.w": "85",
+    "probe.val": "9"
+  }
+}

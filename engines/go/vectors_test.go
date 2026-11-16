@@ -113,6 +113,13 @@ func checkModelKey(rec *Item, k, want string, relative bool) string {
 		}
 		return ""
 	}
+	// "<list>[<i>].@kind" is the kind an item recorded (spec 0.8).
+	if k == kindKey {
+		if rec.Kind.Name != want {
+			return fmt.Sprintf("the item recorded kind %q, want %q", rec.Kind.Name, want)
+		}
+		return ""
+	}
 	val, present := rec.Fields[k]
 	if !present {
 		return fmt.Sprintf("absent, want %q", want)

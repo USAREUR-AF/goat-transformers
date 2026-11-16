@@ -1,0 +1,15 @@
+{
+  "name": "open-billie-southern-and-western-position-roundtrip",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001b990d100107546010ff9f7134fe51fc1f0137818101000050",
+  "expect": "3e001b990d100107546010ff9f7134fe51fc1f0137818101000050",
+  "model": {
+    "lat": "-33.946101665496826",
+    "lon": "-151.17720186710358",
+    "track.simulated": "1",
+    "hae": "152.4"
+  },
+  "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
+  "reference": "encode_for_kid on sample() at -33.9461 -151.1772 with no velocity and headerSimulated true"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-msb-negated-block-not-written-when-its-bit-is-1",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-msb",
+  "input": "{\"n\":5,\"z\":68,\"w\":85}",
+  "expect": "05a301344000"
+}

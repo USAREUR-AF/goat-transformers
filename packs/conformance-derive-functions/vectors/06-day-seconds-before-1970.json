@@ -1,0 +1,8 @@
+{
+  "name": "day-seconds-before-1970",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"t\":\"1969-12-31T23:59:59.999Z\"}",
+  "context": {},
+  "expect": "{\"t\":\"1969-12-31T23:59:59.999Z\",\"ds\":86399.999}"
+}

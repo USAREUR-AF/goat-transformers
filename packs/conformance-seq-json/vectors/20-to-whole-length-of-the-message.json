@@ -1,0 +1,7 @@
+{
+  "name": "to-whole-length-of-the-message",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-whole",
+  "input": "{\"n\":1,\"x\":17,\"y\":5}",
+  "expect": "01031185"
+}

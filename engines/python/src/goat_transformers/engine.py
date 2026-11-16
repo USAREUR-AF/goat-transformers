@@ -1,17 +1,17 @@
 """decode / encode / convert over loaded packs (spec/engine-spec.md)."""
 
 import os
-from dataclasses import dataclass, field as dc_field
 
-from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_xml
+from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_xml
 from .errors import (
-    DistributionRefused, DistributionViolation, DuplicateModule, InvalidPack, KeyTypeMismatch, MalformedWire,
+    BadDirective, DistributionRefused, DistributionViolation, DuplicateModule, InvalidPack, KeyTypeMismatch, MalformedWire,
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
     UnknownModule,
 )
-from .modeldef import load_model_file, parse_model_text
+from .modeldef import load_model_file, parse_model_text, scan_uses
 from .packdef import CORE, DISTRIBUTIONS, load_pack, parse_pack_text, split_key
-from .transforms import canonical_text, read_typed, table_side_type
+from .entity import Entity, Item, _build_via, _via_decode, _via_encode
+from .transforms import read_typed, table_side_type
 
 DERIVE_PASSES = 8  # spec 0.6: the pass repeats until it sets nothing, at most 8 times
 
@@ -21,91 +21,43 @@ _CODECS = {
 _Num = wire_geojson.Num
 
 
-def _canon(text, type_name):
-    """Canonical text of a table entry read as `type_name`, or None when it
-    cannot be read as that type (it then matches no value)."""
-    try:
-        return canonical_text(read_typed(text, type_name), type_name)
-    except (ValueError, OverflowError):
-        return None
+def _model_order(models_dir):
+    """The module files of a directory in loading order: `core.def` first,
+    whatever its name sorts as (0.6 ruling 9), then the others in byte order
+    of file name, each after the modules its `uses` lines name (0.8). A cycle
+    is `bad-directive`. A used module no file declares is left to the load,
+    which reports `unknown-module`."""
+    names = sorted(
+        (n for n in os.listdir(models_dir) if n.endswith(".def") and os.path.isfile(os.path.join(models_dir, n))),
+        key=lambda n: (n != CORE + ".def", os.fsencode(n)),
+    )
+    uses = {}
+    by_module = {}
+    for n in names:
+        with open(os.path.join(models_dir, n), "r", encoding="utf-8") as fh:
+            module, used = scan_uses(fh.read())
+        uses[n] = used
+        if module is not None:
+            by_module.setdefault(module, n)
+    order = []
+    state = {}  # file name -> 1 while its used modules are being placed, 2 when placed
 
+    def place(n):
+        if state.get(n) == 2:
+            return
+        if state.get(n) == 1:
+            raise BadDirective("the 'uses' lines of the model modules form a cycle (at %s)" % n)
+        state[n] = 1
+        for m in uses[n]:
+            dep = by_module.get(m)
+            if dep is not None and dep != n:
+                place(dep)
+        state[n] = 2
+        order.append(os.path.join(models_dir, n))
 
-def _build_via(f, table):
-    """The two lookups of a `via` field: canonical native text -> model value,
-    and canonical model text -> native text. The first entry for a value wins."""
-    nt, kt = f.transform.yields, f.key_type
-    f.via_dec, f.via_enc = {}, {}
-    for native, model in table:
-        n = _canon(native, nt)
-        if n is not None and n not in f.via_dec:
-            try:
-                f.via_dec[n] = read_typed(model, kt)
-            except (ValueError, OverflowError):
-                pass
-        m = _canon(model, kt)
-        if m is not None and m not in f.via_enc:
-            f.via_enc[m] = native
-
-
-def _via_decode(f, value):
-    """After the transform on decode: what the transform yields -> what the key holds."""
-    nt = f.transform.yields
-    text = canonical_text(value, nt)
-    if text in f.via_dec:
-        return f.via_dec[text]
-    if nt == f.key_type:
-        return value  # no entry and both sides one type: passes through
-    raise ValueError("%s has no entry in table %s" % (text, f.via))
-
-
-def _via_encode(f, value):
-    """Before the transform on encode: what the key holds -> what the transform takes."""
-    nt, kt = f.transform.yields, f.key_type
-    try:
-        text = canonical_text(value, kt)
-    except (TypeError, ValueError, OverflowError):
-        raise ValueError("%r is not a %s value" % (value, kt))
-    native = f.via_enc.get(text)
-    if native is None:
-        if nt == kt:
-            return value
-        raise ValueError("%s has no entry in table %s" % (text, f.via))
-    return read_typed(native, nt)
-
-
-@dataclass
-class Item:
-    """One item of a list (0.7): model keys and lists exactly as an entity
-    holds them, without residue and without a kind."""
-
-    fields: dict = dc_field(default_factory=dict)
-    lists: dict = dc_field(default_factory=dict)
-
-    def __getitem__(self, key):
-        return self.fields[key]
-
-    def get(self, key, default=None):
-        return self.fields.get(key, default)
-
-
-@dataclass
-class Entity:
-    """Shared model: named fields plus residue. `residue` maps a format name to an
-    ordered {locator: original string value}; it never crosses formats. `kind`
-    is the pair `(format, kind name)` a decode selected, or None. `lists` maps
-    a list name to its items, in order (0.7); a list that is present and empty
-    is distinct from an absent one."""
-
-    fields: dict = dc_field(default_factory=dict)
-    residue: dict = dc_field(default_factory=dict)
-    kind: tuple = None
-    lists: dict = dc_field(default_factory=dict)
-
-    def __getitem__(self, key):
-        return self.fields[key]
-
-    def get(self, key, default=None):
-        return self.fields.get(key, default)
+    for n in names:
+        place(n)
+    return order
 
 
 class _Enc:
@@ -145,7 +97,7 @@ class Engine:
 
     def load_model(self, text, *, source="model.def"):
         """Parse one model module text and load it."""
-        module = parse_model_text(text, source=source, core=self.models.get(CORE))
+        module = parse_model_text(text, source=source, models=self.models)
         self.add_model(module)
         return module
 
@@ -155,6 +107,15 @@ class Engine:
                 "module %s is %s; this engine's limit is %s"
                 % (module.name, module.distribution, self.max_distribution)
             )
+        for m in module.uses:
+            if m not in self.models and m != module.name:
+                raise UnknownModule("module %s uses module %s, which is not loaded" % (module.name, m))
+        if module.distribution == "public":  # a public module uses only public modules (0.8)
+            for m in module.uses:
+                if m != module.name and self.models[m].distribution != "public":
+                    raise DistributionViolation(
+                        "public module %s uses %s module %s" % (module.name, self.models[m].distribution, m)
+                    )
         if module.name in self.models:
             raise DuplicateModule(
                 "module %s loaded twice (%s, %s)" % (module.name, self.models[module.name].path, module.path)
@@ -259,7 +220,13 @@ class Engine:
                 raise KeyTypeMismatch(
                     "default for key %s is not a %s value: %r" % (key, want, d.text), format=fmt
                 )
-        for kind in pack.kinds:  # `requires <list>` holds when the list has at least one item
+        kinds = pack.kinds
+        if pack.seq is not None:  # a sequential pack: the kinds of the message and of every group body
+            kinds = []
+            for body in pack.seq.bodies():
+                body._defaults.clear()
+                kinds.extend(body.kinds)
+        for kind in kinds:  # `requires <list>` holds when the list has at least one item
             if kind.requires:
                 names = [(key, split_key(key)) for key in kind.requires]
                 kind.requires_lists = tuple(key for key, (m, k) in names if k in self.models[m].lists)
@@ -280,12 +247,8 @@ class Engine:
             models_dir = os.path.join(packs_dir, os.pardir, "model")
         eng = cls(max_distribution=max_distribution)
         if os.path.isdir(models_dir):
-            # `core.def` first, whatever its name sorts as (0.6 ruling 9).
-            names = sorted(os.listdir(models_dir), key=lambda n: (n != CORE + ".def", os.fsencode(n)))
-            for name in names:
-                path = os.path.join(models_dir, name)
-                if name.endswith(".def") and os.path.isfile(path):
-                    eng.add_model(load_model_file(path, core=eng.models.get(CORE)))
+            for path in _model_order(models_dir):
+                eng.add_model(load_model_file(path, models=eng.models))
         for name in sorted(os.listdir(packs_dir)):
             d = os.path.join(packs_dir, name)
             if os.path.isfile(os.path.join(d, "pack.def")):
@@ -356,6 +319,8 @@ class Engine:
                 data = bytes(data).decode("utf-8")
             except UnicodeDecodeError as e:
                 raise MalformedWire("input is not UTF-8: %s" % e, format=fmt)
+        if pack.seq is not None:
+            return wire_seq.decode(pack, data)
         wire = pack.wire
         codec = _CODECS[wire]
         if wire == "geojson":
@@ -496,6 +461,9 @@ class Engine:
         for key, value in (context or {}).items():
             want = self._key_type(key)
             if want is None:
+                m, k = split_key(key)
+                if m in self.models and k in self.models[m].lists:  # ruling 18 of 0.7
+                    raise KeyTypeMismatch("context key %s is a list, not a scalar key" % key)
                 raise UndeclaredKey("context key %s is declared by no loaded module" % key)
             ok = True
             if isinstance(value, str):
@@ -543,7 +511,13 @@ class Engine:
                 if d.target in fields:
                     continue
                 try:
-                    value = d.fn(*[fields[a] for a in d.args])
+                    if d.partial:  # `any`: set when only some arguments are present, not when none is
+                        present = [fields[a] for a in d.args if a in fields]
+                        if not present:
+                            continue
+                        value = d.fn(*present)
+                    else:
+                        value = d.fn(*[fields[a] for a in d.args])
                 except KeyError:
                     continue
                 except (ValueError, OverflowError, TypeError):
@@ -581,6 +555,8 @@ class Engine:
 
     def encode(self, fmt, entity):
         pack = self.pack(fmt)
+        if pack.seq is not None:
+            return wire_seq.encode(pack, entity).encode("utf-8")
         wire = pack.wire
         codec = _CODECS[wire]
         kind = self._select_encode_kind(pack, entity) if pack.kinds else None

@@ -1,8 +1,8 @@
 %% gt_model: parse a model module file (model/<module>.def) into a module map.
-%% Clean-room implementation from spec/engine-spec.md (Versions 0.4, 0.6, 0.7) only.
+%% Clean-room implementation from spec/engine-spec.md (Versions 0.4, 0.6, 0.7, 0.8) only.
 %%
 %% Module = #{name => Bin, version => Bin, distribution => public | controlled,
-%%            sources => [Bin], keys => [{NameBin, Type, Unit, Meaning}],
+%%            sources => [Bin], uses => [ModuleNameBin], keys => [{NameBin, Type, Unit, Meaning}],
 %%            types => #{NameBin => Type | list},   % keys and lists, one namespace
 %%            derives => [{TargetKey, Function, [ArgumentKey]}]}
 %% Type = string | float | int. Derive keys are entity keys, written as in a
@@ -17,11 +17,22 @@ parse(Text) -> parse(Text, #{}).
 parse(Text, Modules) when is_list(Text) -> parse(unicode:characters_to_binary(Text), Modules);
 parse(Bin, Modules) ->
     Base = #{name => undefined, version => undefined, distribution => undefined,
-             sources => [], keys => [], types => #{}, derives => []},
+             sources => [], uses => [], keys => [], types => #{}, derives => []},
     M0 = lists:foldl(fun(Line, Acc) -> apply_line(gt_pack:tokens(Line), Acc) end,
                      Base, binary:split(Bin, <<"\n">>, [global])),
     M1 = M0#{sources := lists:reverse(maps:get(sources, M0)),
+             uses := lists:reverse(maps:get(uses, M0)),
              keys := lists:reverse(maps:get(keys, M0))},
+    %% every module a `uses` line names is loaded
+    lists:foreach(
+      fun(U) ->
+              case maps:is_key(U, Modules) of
+                  true -> ok;
+                  false -> gt_pack:load_error('unknown-module',
+                                              "module ~s uses module ~s, which is not loaded",
+                                              [name_str(M1), U])
+              end
+      end, maps:get(uses, M1)),
     %% derive lines are checked once every key line has been read
     Derives = [check_derive(D, M1, Modules) || D <- lists:reverse(maps:get(derives, M0))],
     M = M1#{derives := Derives},
@@ -40,6 +51,7 @@ apply_line([<<"module">>, N], M)  -> M#{name => N};
 apply_line([<<"version">>, V], M) -> M#{version => V};
 apply_line([<<"distribution">>, D], M) -> M#{distribution => gt_pack:distribution_atom(D)};
 apply_line([<<"source">>, S], M)  -> M#{sources := [S | maps:get(sources, M)]};
+apply_line([<<"uses">>, U], M)    -> M#{uses := [U | maps:get(uses, M)]};
 apply_line([<<"key">>, Name, Type, Unit], M) -> add_key(Name, Type, Unit, <<>>, M);
 apply_line([<<"key">>, Name, Type, Unit, Meaning], M) -> add_key(Name, Type, Unit, Meaning, M);
 apply_line([<<"list">>, Name], M) -> add_list(Name, M);
@@ -53,7 +65,7 @@ apply_line([<<"derive">>, Target, Fun | Args], #{derives := Ds} = M) when Args =
     M#{derives := [{Target, F, Args} | Ds]};
 apply_line([Dir | _], _M) ->
     case lists:member(Dir, [<<"module">>, <<"version">>, <<"distribution">>, <<"source">>,
-                            <<"key">>, <<"list">>, <<"derive">>]) of
+                            <<"uses">>, <<"key">>, <<"list">>, <<"derive">>]) of
         true -> gt_pack:load_error('bad-directive', "~s has the wrong number of arguments", [Dir]);
         false -> gt_pack:load_error('unknown-directive', "~s", [Dir])
     end.
@@ -91,7 +103,7 @@ name_str(#{name := N}) -> N.
 %% The target and the arguments are keys of `core` or of the module itself;
 %% their types must fit the function.
 check_derive({Target, Fun, Args}, M, Modules) ->
-    TT = derive_key_type(Target, M, Modules),
+    TT = derive_key_type(Target, M#{uses := []}, Modules),
     ATs = [derive_key_type(A, M, Modules) || A <- Args],
     case gt_derive:check_types(Fun, TT, ATs) of
         {ok, Fun1} -> {Target, Fun1, Args};
@@ -105,17 +117,21 @@ derive_key_type(Key, #{name := Own} = M, Modules) ->
                       [Md, N] -> {Md, N}
                   end,
     Found = if Mod =:= Own -> key_type(M, Name);
-               Mod =:= <<"core">> ->
-                    case maps:find(<<"core">>, Modules) of
-                        {ok, Core} -> key_type(Core, Name);
-                        error -> error
-                    end;
-               true -> error
+               true ->
+                    %% `core`, or for an argument a module of a `uses` line
+                    case Mod =:= <<"core">> orelse lists:member(Mod, maps:get(uses, M)) of
+                        true ->
+                            case maps:find(Mod, Modules) of
+                                {ok, Other} -> key_type(Other, Name);
+                                error -> error
+                            end;
+                        false -> error
+                    end
             end,
     case Found of
         {ok, Type} when Type =/= list -> Type;
         _ ->                                    % undeclared, or a list
             gt_pack:load_error('bad-directive',
-                               "derive names ~s, which is not a declared key of core or of module ~s",
+                               "derive names ~s, which is not a declared key of core, of module ~s or (an argument) of a module it uses",
                                [Key, name_str(M)])
     end.

@@ -1,6 +1,7 @@
 // Derived keys (engine-spec.md, Version 0.6, Derived keys).
 #include "derive.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
@@ -56,6 +57,11 @@ DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& wh
     else if (name == "scale") { d.fn = DeriveFn::Scale; takes_param = true; }
     else if (name == "offset") { d.fn = DeriveFn::Offset; takes_param = true; }
     else if (name == "join") { d.fn = DeriveFn::Join; takes_param = true; min_args = 1; max_args = static_cast<std::size_t>(-1); }
+    else if (name == "day_seconds") d.fn = DeriveFn::DaySeconds;
+    else if (name == "any") { d.fn = DeriveFn::Any; max_args = static_cast<std::size_t>(-1); }
+    else if (name == "not") d.fn = DeriveFn::Not;
+    else if (name == "parse_int") d.fn = DeriveFn::ParseInt;
+    else if (name == "text_of") d.fn = DeriveFn::TextOf;
     else bad(where, "derive function '" + d.function + "' is not in the function table");
 
     if (takes_param != have_param)
@@ -86,8 +92,10 @@ namespace {
 enum class Lookup { Found, Undeclared, Deferred };
 
 // The declared type of a key written as in a pack: bare for `core`,
-// `<module>.<key>` otherwise. Only keys of `core` and of `m` are allowed.
-Lookup key_type_of(const Module& m, const Module* core, bool require_core, const std::string& key, KeyType& out) {
+// `<module>.<key>` otherwise. A target is a key of `core` or of `m`; an
+// argument may also be a key of a module `m` uses (0.8).
+Lookup key_type_of(const Module& m, const ModuleLookup& loaded, bool require_core, bool target,
+                   const std::string& key, KeyType& out) {
     std::string mod = "core", name = key;
     const std::size_t dot = key.find('.');
     if (dot != std::string::npos) {
@@ -97,10 +105,14 @@ Lookup key_type_of(const Module& m, const Module* core, bool require_core, const
     const Module* owner = nullptr;
     if (mod == m.name) owner = &m;
     else if (mod == "core") {
-        if (!core) return require_core ? Lookup::Undeclared : Lookup::Deferred;
-        owner = core;
+        owner = loaded ? loaded("core") : nullptr;
+        if (!owner) return require_core ? Lookup::Undeclared : Lookup::Deferred;
+    } else if (!target && std::find(m.uses.begin(), m.uses.end(), mod) != m.uses.end()) {
+        // A used module that is not loaded: the load fails with unknown-module.
+        owner = loaded ? loaded(mod) : nullptr;
+        if (!owner) return Lookup::Deferred;
     } else {
-        return Lookup::Undeclared;  // a key of another module
+        return Lookup::Undeclared;  // a key of a module that is not used, or a target of another module
     }
     const ModelKey* k = owner->find(name);
     if (!k) return Lookup::Undeclared;
@@ -110,22 +122,23 @@ Lookup key_type_of(const Module& m, const Module* core, bool require_core, const
 
 }  // namespace
 
-void check_derives(Module& m, const Module* core, bool require_core) {
+void check_derives(Module& m, const ModuleLookup& loaded, bool require_core) {
     for (auto& d : m.derives) {
         const std::string where = m.origin + ":" + std::to_string(d.line);
         bool deferred = false;
         KeyType target = KeyType::String;
         std::vector<KeyType> args(d.args.size(), KeyType::String);
-        auto resolve = [&](const std::string& key, KeyType& out) {
-            switch (key_type_of(m, core, require_core, key, out)) {
+        auto resolve = [&](const std::string& key, KeyType& out, bool is_target) {
+            switch (key_type_of(m, loaded, require_core, is_target, key, out)) {
                 case Lookup::Found: break;
                 case Lookup::Deferred: deferred = true; break;
                 case Lookup::Undeclared:
-                    bad(where, "derive key '" + key + "' is not a declared key of 'core' or of module '" + m.name + "'");
+                    bad(where, "derive key '" + key + "' is not a declared key of 'core', of module '" + m.name +
+                                   "'" + (is_target ? "" : " or of a module it uses"));
             }
         };
-        resolve(d.target, target);
-        for (std::size_t k = 0; k < d.args.size(); ++k) resolve(d.args[k], args[k]);
+        resolve(d.target, target, true);
+        for (std::size_t k = 0; k < d.args.size(); ++k) resolve(d.args[k], args[k], false);
         if (deferred) continue;
 
         auto all = [&](KeyType want) {
@@ -142,6 +155,11 @@ void check_derives(Module& m, const Module* core, bool require_core) {
                 d.int_arith = all(KeyType::Int) && d.offset_is_int;
                 fits = d.int_arith || all(KeyType::Float);
                 break;
+            case DeriveFn::DaySeconds: fits = target == KeyType::Float && args[0] == KeyType::Int; break;
+            case DeriveFn::Any:
+            case DeriveFn::Not: fits = all(KeyType::Int); break;
+            case DeriveFn::ParseInt: fits = target == KeyType::Int && args[0] == KeyType::String; break;
+            case DeriveFn::TextOf: fits = target == KeyType::String && args[0] == KeyType::Int; break;
             default: fits = all(KeyType::Float); break;
         }
         if (!fits) bad(where, "the key types do not fit derive function '" + d.function + "'");
@@ -150,6 +168,21 @@ void check_derives(Module& m, const Module* core, bool require_core) {
 
 bool apply_derive(const DeriveLine& d, Entity& e) {
     if (e.fields.count(d.target)) return false;
+    if (d.fn == DeriveFn::Any) {
+        // The one function whose target is set when only some arguments are
+        // present: 1 when any present argument is not 0, else 0.
+        bool present = false, any = false;
+        for (const auto& key : d.args) {
+            auto it = e.fields.find(key);
+            if (it == e.fields.end()) continue;
+            if (it->second.kind != Value::Kind::Int) return false;
+            present = true;
+            if (it->second.i != 0) any = true;
+        }
+        if (!present) return false;
+        e.fields[d.target] = Value::of_int(any ? 1 : 0);
+        return true;
+    }
     std::vector<const Value*> a;
     a.reserve(d.args.size());
     for (const auto& key : d.args) {
@@ -203,6 +236,33 @@ bool apply_derive(const DeriveLine& d, Entity& e) {
                 r = model_double(*a[0]) * std::cos(model_double(*a[1]) * (kPi / 180.0));
                 break;
             case DeriveFn::Neg: r = -model_double(*a[0]); break;
+            case DeriveFn::DaySeconds: {
+                // Seconds since UTC midnight of the instant, also before 1970.
+                if (a[0]->kind != Value::Kind::Int) return false;
+                const std::int64_t day = 86400000;
+                const std::int64_t ms = ((a[0]->i % day) + day) % day;
+                r = static_cast<double>(ms) / 1000.0;
+                break;
+            }
+            case DeriveFn::Not:
+                if (a[0]->kind != Value::Kind::Int) return false;
+                e.fields[d.target] = Value::of_int(a[0]->i == 0 ? 1 : 0);
+                return true;
+            case DeriveFn::ParseInt: {
+                // The decimal integer the text holds: an optional '-' and digits,
+                // nothing else. Text that is not one leaves the target absent.
+                if (a[0]->kind != Value::Kind::String) return false;
+                const std::string& s = a[0]->s;
+                std::int64_t n = 0;
+                if (s.empty() || s[0] == '+' || !is_integer_text(s) || !parse_int(s, n)) return false;
+                e.fields[d.target] = Value::of_int(n);
+                return true;
+            }
+            case DeriveFn::TextOf:
+                if (a[0]->kind != Value::Kind::Int) return false;
+                e.fields[d.target] = Value::of_string(std::to_string(a[0]->i));
+                return true;
+            case DeriveFn::Any: return false;  // handled above
             case DeriveFn::Scale: {
                 const double x = model_double(*a[0]);
                 r = d.fraction ? x * d.num / d.den : x * d.factor;

@@ -1,0 +1,19 @@
+{
+  "name": "items-of-every-kind-roundtrip",
+  "from": "conformance-seq-kinds",
+  "to": "conformance-seq-kinds",
+  "input": "010451226301026202686970",
+  "expect": "010451226301026202686970",
+  "model": {
+    "probe.recs.#": "4",
+    "probe.recs[0].@kind": "point",
+    "probe.recs[0].probe.x": "5",
+    "probe.recs[0].probe.y": "34",
+    "probe.recs[1].@kind": "alt",
+    "probe.recs[1].probe.y": "258",
+    "probe.recs[2].@kind": "text",
+    "probe.recs[2].probe.label": "hi",
+    "probe.recs[3].@kind": "empty",
+    "probe.recs[3].probe.x": "7"
+  }
+}

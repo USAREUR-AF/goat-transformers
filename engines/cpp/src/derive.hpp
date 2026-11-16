@@ -2,6 +2,7 @@
 // module and the fixed function table they may name.
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -9,10 +10,13 @@
 
 namespace goat_transformers::detail {
 
-// Parse a model module with `core` as loaded (null when it is not loaded): a
-// `derive` line that names a key of `core` is checked against it before
-// `missing-distribution` (0.6 ruling 9).
-Module parse_model_with_core(const std::string& text, const std::string& origin, const Module* core);
+// The module of a name among the modules loaded so far; null when it is not loaded.
+using ModuleLookup = std::function<const Module*(const std::string&)>;
+
+// Parse a model module against the modules loaded so far: a `derive` line that
+// names a key of `core`, or of a module the module uses, is checked against it
+// before `missing-distribution` (0.6 ruling 9).
+Module parse_model_with(const std::string& text, const std::string& origin, const ModuleLookup& loaded);
 
 // Parse one `derive` line from its tokens (`derive` itself included). Checks the
 // function name, its parameter and the argument count. Throws bad-directive;
@@ -20,11 +24,13 @@ Module parse_model_with_core(const std::string& text, const std::string& origin,
 DeriveLine parse_derive(const std::vector<std::string>& tokens, const std::string& where);
 
 // Check the keys and types of every `derive` line of `m` (bad-directive), and
-// settle integer arithmetic for `offset`. A key is one of `core` or of `m`.
-// With `core` null and `m` not the core module, a line that names a core key
-// cannot be settled and is left for the call that has `core`, unless
-// `require_core` is set, when the key is undeclared.
-void check_derives(Module& m, const Module* core, bool require_core);
+// settle integer arithmetic for `offset`. A target is a key of `core` or of
+// `m`; an argument may also be a key of a module `m` uses (0.8). A line that
+// names a key of `core` while `core` is not loaded cannot be settled and is
+// left for a later call, unless `require_core` is set, when the key is
+// undeclared. A line that names a key of a used module that is not loaded is
+// always left: that load fails with unknown-module.
+void check_derives(Module& m, const ModuleLookup& loaded, bool require_core);
 
 // Apply one line: when the target is absent and every argument is present, set
 // the target. Returns true when it set the target. A result that is not finite

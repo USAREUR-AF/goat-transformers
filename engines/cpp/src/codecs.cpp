@@ -987,6 +987,8 @@ BitRange bit_range(const Pack& p, const std::string& locator) {
     return r;
 }
 
+}  // namespace
+
 // lsb: bit i is bit (i mod 8) of byte (i div 8), a value's low bit first.
 // msb: bit i is bit 7 - (i mod 8) of byte (i div 8), a value's high bit first.
 std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, bool msb) {
@@ -1018,6 +1020,8 @@ std::uint64_t swap_bytes(std::uint64_t raw, std::uint32_t len) {
     for (std::uint32_t k = 0; k < len / 8; ++k) out = (out << 8) | ((raw >> (8 * k)) & 0xFFu);
     return out;
 }
+
+namespace {
 
 // The furthest bit one scope's own lines reach, counted from the scope's first
 // bit: every `field`, `when` and `const`, and the count locator of every group.

@@ -1,0 +1,14 @@
+{
+  "name": "one-item-roundtrip",
+  "from": "conformance-groups-rulings-bits",
+  "to": "conformance-groups-rulings-bits",
+  "input": "a50709",
+  "expect": "a50709",
+  "model": {
+    "@kind": "k",
+    "probe.n": "165",
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.val": "9"
+  }
+}

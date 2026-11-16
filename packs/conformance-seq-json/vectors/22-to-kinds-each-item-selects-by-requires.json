@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-each-item-selects-by-requires",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-kinds",
+  "input": "{\"n\":1,\"recs\":[{\"x\":5,\"y\":34},{\"x\":6,\"label\":\"hi\"},{\"x\":7}]}",
+  "expect": "010351226202686970"
+}

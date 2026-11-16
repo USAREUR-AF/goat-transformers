@@ -1,0 +1,9 @@
+{
+  "name": "169-ruling-21-xml-field-below-a-group-path",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\nkey tag string -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.7.0\ndistribution public\nsource \"probe\"\nuses probe\nwire xml\nroot msg\nfield uid @id string\ngroup probe.items body/item\n  field probe.label @name string\nend\nfield probe.tag body/item/note/#text string\n",
+  "expect_error": "bad-directive"
+}

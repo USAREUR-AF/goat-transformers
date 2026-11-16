@@ -20,7 +20,7 @@ on this page lists.
 | Integrated Sensor Architecture (ISA) | `protobuf`, `xml` | Built: packs `isa` and `isa-message` (IPL 3.7), `isa-ipl1` (IPL 1.6), `isa-xml` (IPL 4.7) | |
 | Canonical Track v2 (open-billie) | `json` | Built: pack `canonical-track-v2` | USAREUR-AF/open-billie |
 | NATO Vector Graphics (NVG) 1.5 | `xml` | Built: pack `nvg`, point only. Other geometry types are not built | |
-| ASTERIX (categories 048, 062, 034, 021, 010) | `bits` | Not built. Needs presence-indicated items | jASTERIX, asterix4py, goasterix |
+| ASTERIX (categories 048, 062, 034, 021, 010) | `bits`, sequential | Category 062 built for one record with the items a track encoder writes; other items and categories not built | jASTERIX, asterix4py, goasterix |
 | STANAG 4607 GMTI | `bits` | Not built | pentlandedge/s4607 |
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |
@@ -59,7 +59,7 @@ and from every public format through the public model modules.
 
 | Feature | Status | Needed by |
 |---|---|---|
-| Presence-indicated items in `bits` (a presence field states which items follow) | Designed | ASTERIX |
+| Sequential layouts in `bits` (presence fields, repeats, extensible items, stated lengths) | Built | ASTERIX |
 | Text-grammar wire (delimited or positional text records) | Designed | NMEA 0183 |
 | Type-length-value wire | Designed | KLV / MISB ST 0601, NITF |
 | Six-bit armor wire (ASCII-armored bit payloads) | Designed | AIS / AIVDM |

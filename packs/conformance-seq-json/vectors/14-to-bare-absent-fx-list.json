@@ -1,0 +1,7 @@
+{
+  "name": "to-bare-absent-fx-list",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-groups-bare",
+  "input": "{\"recs\":[{\"x\":1}]}",
+  "expect_error": "transform-encode"
+}

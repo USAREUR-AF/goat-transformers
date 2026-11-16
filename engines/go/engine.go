@@ -62,6 +62,17 @@ func (e *Engine) AddModule(m *Module) error {
 	if prev, dup := e.modules[m.Name]; dup {
 		return &Error{Kind: ErrDuplicateModule, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s already loaded from %s", m.Name, prev.Source)}
 	}
+	// A module is loaded after the modules it uses, and a public module uses
+	// only public modules (spec 0.8, "Model additions").
+	for _, name := range m.Uses {
+		u, ok := e.modules[name]
+		if !ok {
+			return &Error{Kind: ErrUnknownModule, Module: name, Source: m.Source, Detail: fmt.Sprintf("module %s uses module %s, which is not loaded", m.Name, name)}
+		}
+		if m.Distribution == DistPublic && u.Distribution != DistPublic {
+			return &Error{Kind: ErrDistributionViolation, Module: name, Source: m.Source, Detail: fmt.Sprintf("public module %s uses %s module %s", m.Name, u.Distribution, name)}
+		}
+	}
 	if err := e.checkDerives(m); err != nil {
 		return err
 	}
@@ -190,7 +201,8 @@ func Load(dir string) (*Engine, error) {
 }
 
 // LoadDirs builds an engine with the given distribution limit: every
-// modelsDir/*.def in byte order of file name, then every packsDir/*/pack.def.
+// modelsDir/*.def (core first, then each module after the modules it uses),
+// then every packsDir/*/pack.def.
 func LoadDirs(modelsDir, packsDir, maxDistribution string) (*Engine, error) {
 	e := New()
 	if err := e.SetMaxDistribution(maxDistribution); err != nil {
@@ -312,6 +324,9 @@ func (e *Engine) Encode(format string, ent *Entity) ([]byte, error) {
 	p, err := e.Pack(format)
 	if err != nil {
 		return nil, err
+	}
+	if p.seq {
+		return encodeSeq(p, ent)
 	}
 	lay, err := chooseEncode(p, ent)
 	if err != nil {

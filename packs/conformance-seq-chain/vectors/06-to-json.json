@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-chain",
+  "to": "conformance-seq-json",
+  "input": "010bc1ab06070399",
+  "expect": "{\"n\":1,\"qty\":1,\"val\":7,\"x\":5,\"y\":6,\"z\":3,\"w\":153}"
+}

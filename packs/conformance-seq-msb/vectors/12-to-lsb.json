@@ -1,0 +1,7 @@
+{
+  "name": "to-lsb",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-lsb",
+  "input": "05a2010009",
+  "expect": "05a209000000000000"
+}

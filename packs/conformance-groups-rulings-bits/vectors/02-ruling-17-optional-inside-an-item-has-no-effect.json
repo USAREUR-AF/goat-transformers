@@ -1,0 +1,7 @@
+{
+  "name": "ruling-17-optional-inside-an-item-has-no-effect",
+  "from": "conformance-groups-rulings-bits",
+  "to": "conformance-groups-rulings-bits",
+  "input": "a507",
+  "expect_error": "malformed-wire"
+}

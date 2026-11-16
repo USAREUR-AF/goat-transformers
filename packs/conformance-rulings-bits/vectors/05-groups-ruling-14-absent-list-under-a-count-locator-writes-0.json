@@ -1,0 +1,10 @@
+{
+  "name": "groups-ruling-14-absent-list-under-a-count-locator-writes-0",
+  "from": "conformance-rulings-bits",
+  "to": "conformance-groups-bits-var",
+  "input": "05000000",
+  "expect": "00",
+  "model": {
+    "probe.n": "5"
+  }
+}

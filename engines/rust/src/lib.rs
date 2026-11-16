@@ -481,6 +481,8 @@ pub struct Module {
     pub lists: Vec<(String, String)>,
     /// `derive` lines, in file order (engine-spec v0.6)
     pub derives: Vec<DeriveDef>,
+    /// `uses` lines: the modules whose keys a `derive` line may take as arguments (engine-spec v0.8)
+    pub uses: Vec<String>,
 }
 
 /// The function of a `derive` line.
@@ -496,6 +498,13 @@ pub enum DeriveFn {
     /// the number as written, for a float and for an int target
     Offset(f64, Option<i64>),
     Join(String),
+    /// seconds since UTC midnight of an instant in epoch ms (engine-spec v0.8)
+    DaySeconds,
+    /// 1 when any present argument is not 0
+    Any,
+    Not,
+    ParseInt,
+    TextOf,
 }
 
 /// One `derive` line: the target key follows from the argument keys.
@@ -528,6 +537,11 @@ impl DeriveFn {
             "east_of" => DeriveFn::EastOf,
             "north_of" => DeriveFn::NorthOf,
             "neg" => DeriveFn::Neg,
+            "day_seconds" => DeriveFn::DaySeconds,
+            "any" => DeriveFn::Any,
+            "not" => DeriveFn::Not,
+            "parse_int" => DeriveFn::ParseInt,
+            "text_of" => DeriveFn::TextOf,
             _ => return None,
         })
     }
@@ -543,6 +557,11 @@ impl DeriveFn {
                 floats(1) || (args.len() == 1 && target == KeyType::Int && args[0] == KeyType::Int && int.is_some())
             }
             DeriveFn::Join(_) => !args.is_empty() && target == KeyType::Str && args.iter().all(|t| *t == KeyType::Str),
+            DeriveFn::DaySeconds => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Float,
+            DeriveFn::Any => !args.is_empty() && target == KeyType::Int && args.iter().all(|t| *t == KeyType::Int),
+            DeriveFn::Not => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Int,
+            DeriveFn::ParseInt => args.len() == 1 && args[0] == KeyType::Str && target == KeyType::Int,
+            DeriveFn::TextOf => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Str,
         }
     }
 
@@ -557,6 +576,21 @@ impl DeriveFn {
                 let parts: Vec<String> = a.iter().map(|v| v.as_display()).collect();
                 return Some(Value::Str(parts.join(sep)));
             }
+            DeriveFn::DaySeconds => match a[0] {
+                Value::I64(ms) => return Some(Value::F64(ms.rem_euclid(86_400_000) as f64 / 1000.0)),
+                _ => return None,
+            },
+            // `a` holds the arguments that are present
+            DeriveFn::Any => return Some(Value::I64(a.iter().any(|v| !matches!(v, Value::I64(0))) as i64)),
+            DeriveFn::Not => return Some(Value::I64(matches!(a[0], Value::I64(0)) as i64)),
+            DeriveFn::ParseInt => match a[0] {
+                // an optional `-`, then decimal digits
+                Value::Str(t) if t.strip_prefix('-').unwrap_or(t).bytes().all(|b| b.is_ascii_digit()) => {
+                    return t.parse::<i64>().ok().map(Value::I64)
+                }
+                _ => return None,
+            },
+            DeriveFn::TextOf => return Some(Value::Str(a[0].as_display())),
             DeriveFn::Offset(_, Some(n)) if matches!(a[0], Value::I64(_)) => match a[0] {
                 Value::I64(k) => return k.checked_add(*n).map(Value::I64),
                 _ => return None,
@@ -595,12 +629,15 @@ impl DeriveFn {
 
 impl Module {
     pub fn parse(text: &str) -> Result<Module, Error> {
-        Module::parse_with(text, None)
+        Module::parse_with(text, &BTreeMap::new())
     }
 
-    /// Parse a module. `core` is the loaded `core` module, whose keys a
-    /// `derive` line of another module may name.
-    pub fn parse_with(text: &str, core: Option<&Module>) -> Result<Module, Error> {
+    /// Parse a module. `loaded` holds the modules loaded so far: a `derive`
+    /// line may name the keys of `core`, and as arguments the keys of the
+    /// modules its own `uses` lines name (engine-spec v0.8).
+    pub fn parse_with(text: &str, loaded: &BTreeMap<String, Module>) -> Result<Module, Error> {
+        let core = loaded.get("core");
+        let mut uses: Vec<String> = Vec::new();
         let mut derives: Vec<DeriveDef> = Vec::new();
         let mut name = None;
         let mut version = None;
@@ -629,6 +666,14 @@ impl Module {
                     lists.push((toks[1].clone(), toks.get(2).cloned().unwrap_or_default()));
                 }
                 "module" => name = Some(req_arg(&toks, 1, ln)?),
+                "uses" => {
+                    if toks.len() != 2 {
+                        return bad(ln, "uses needs <module>");
+                    }
+                    if !uses.contains(&toks[1]) {
+                        uses.push(toks[1].clone());
+                    }
+                }
                 "version" => version = Some(req_arg(&toks, 1, ln)?),
                 "distribution" => {
                     let v = req_arg(&toks, 1, ln)?;
@@ -672,21 +717,29 @@ impl Module {
             }
         }
         let name = name.ok_or(Error { msg: "bad-directive: model module missing `module`".into() })?;
-        // `derive` lines: keys of `core` or of this module, and types that fit the function
+        // a used module must be loaded: its keys are needed to check the `derive` lines
+        if let Some(u) = uses.iter().find(|u| **u != name && !loaded.contains_key(*u)) {
+            return err(format!("unknown-module: model module `{}` uses model module `{}`, which is not loaded", name, u));
+        }
+        // `derive` lines: keys of `core` or of this module, as arguments also
+        // keys of a used module, and types that fit the function
         for d in &derives {
-            let type_of = |key: &str| -> Result<KeyType, Error> {
+            let type_of = |key: &str, argument: bool| -> Result<KeyType, Error> {
                 let found = match key.split_once('.') {
                     None if name == "core" => keys.iter().find(|k| k.name == key),
                     None => core.and_then(|c| c.keys.iter().find(|k| k.name == key)),
                     Some((m, k)) if m == name && m != "core" => keys.iter().find(|d| d.name == k),
+                    Some((m, k)) if argument && m != "core" && uses.iter().any(|u| u == m) => {
+                        loaded.get(m).and_then(|u| u.keys.iter().find(|d| d.name == k))
+                    }
                     Some(_) => None,
                 };
                 found.map(|k| k.ty).ok_or(Error {
                     msg: format!("bad-directive: line {}: derive names `{}`, not a declared key of `core` or `{}`", d.line, key, name),
                 })
             };
-            let target = type_of(&d.target)?;
-            let args = d.args.iter().map(|a| type_of(a)).collect::<Result<Vec<_>, _>>()?;
+            let target = type_of(&d.target, false)?;
+            let args = d.args.iter().map(|a| type_of(a, true)).collect::<Result<Vec<_>, _>>()?;
             if !d.func.fits(target, &args) {
                 return bad(d.line, format!("the arguments or types of `derive {}` do not fit its function", d.target));
             }
@@ -697,7 +750,13 @@ impl Module {
         if sources.is_empty() {
             return err(format!("missing-source: model module `{}` has no `source`", name));
         }
-        Ok(Module { name, version: version.unwrap_or_else(|| "0".into()), distribution, sources, keys, lists, derives })
+        // a public module uses only public modules
+        if distribution == Distribution::Public {
+            if let Some(u) = uses.iter().find(|u| loaded.get(*u).map_or(false, |m| m.distribution != Distribution::Public)) {
+                return err(format!("distribution-violation: public model module `{}` uses controlled model module `{}`", name, u));
+            }
+        }
+        Ok(Module { name, version: version.unwrap_or_else(|| "0".into()), distribution, sources, keys, lists, derives, uses })
     }
 }
 
@@ -910,6 +969,10 @@ pub struct Pack {
     pub maps: Vec<(String, Vec<(String, String)>)>,
     pub typemap_to_cot: BTreeMap<String, String>,
     pub typemap_from_cot: BTreeMap<String, String>,
+    /// bits only, `layout sequential` (engine-spec v0.8): the lines of the
+    /// message, read in order from a cursor. `fields`, `kinds` and `groups`
+    /// are then empty.
+    pub seq: Option<seq::SeqBody>,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -918,6 +981,15 @@ fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
 
 impl Pack {
     pub fn parse(text: &str) -> Result<Pack, Error> {
+        // `layout sequential` (engine-spec v0.8) changes how every line is read
+        let sequential = text.lines().any(|l| match tokenize(l) {
+            Ok(t) => t.len() == 2 && t[0] == "layout" && t[1] == "sequential",
+            Err(_) => false,
+        });
+        if sequential {
+            return seq::parse(text);
+        }
+        let mut layout_line: Option<usize> = None;
         let mut format = None;
         let mut version = None;
         let mut wire = None;
@@ -959,8 +1031,9 @@ impl Pack {
                         o => return err(format!("line {}: unknown wire `{}`", ln, o)),
                     })
                 }
-                "root" | "kind" | "when" | "requires" | "map" | "typemap" if !open.is_empty() => {
-                    return bad(ln, format!("`{}` is not allowed inside a group", toks[0]));
+                // ruling 18 of 0.7: only these five directives inside a group
+                d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "end") => {
+                    return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
                 "group" => {
                     if toks.len() < 3 {
@@ -1197,6 +1270,16 @@ impl Pack {
                     to_cot.insert(toks[1].clone(), toks[2].clone());
                     from_cot.insert(toks[2].clone(), toks[1].clone());
                 }
+                "layout" => {
+                    if toks.len() != 2 || toks[1] != "fixed" {
+                        return bad(ln, "layout is `fixed` or `sequential`");
+                    }
+                    layout_line = Some(ln);
+                }
+                // engine-spec v0.8: a sequential line in a fixed-layout pack
+                "pad" | "align" | "presence" | "if" | "opt" | "chain" | "fx" | "length" | "also" => {
+                    return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
+                }
                 other => return err(format!("line {}: unknown directive `{}`", ln, other)),
             }
         }
@@ -1219,6 +1302,11 @@ impl Pack {
         if let Some((_, ln)) = bit_order {
             if wire != Wire::Bits {
                 return bad(ln, "`bit_order` is valid only on a bits wire");
+            }
+        }
+        if let Some(ln) = layout_line {
+            if wire != Wire::Bits {
+                return bad(ln, "`layout` is valid only on a bits wire");
             }
         }
         if kinds.is_empty() {
@@ -1285,21 +1373,30 @@ impl Pack {
                     .collect()
             };
             let common = lines(&fields, &whens, &consts);
+            let common_fields = lines(&fields, &[], &[]);
             if kinds.is_empty() {
-                check_scope(wire, word_bytes, &common, &groups.iter().collect::<Vec<_>>())?;
+                check_scope(wire, word_bytes, &common, &common_fields, &groups.iter().collect::<Vec<_>>())?;
             }
             for k in &kinds {
                 let mut ls = common.clone();
                 ls.extend(lines(&k.fields, &k.whens, &k.consts));
+                let mut fs = common_fields.clone();
+                fs.extend(lines(&k.fields, &[], &[]));
                 let gs: Vec<&GroupDef> = groups.iter().chain(k.groups.iter()).collect();
-                check_scope(wire, word_bytes, &ls, &gs)?;
+                check_scope(wire, word_bytes, &ls, &fs, &gs)?;
             }
             let mut every: Vec<&GroupDef> = Vec::new();
             for g in groups.iter().chain(kinds.iter().flat_map(|k| k.groups.iter())) {
                 g.walk(&mut every);
             }
             for g in every {
-                check_scope(wire, word_bytes, &lines(&g.fields, &[], &g.consts), &g.groups.iter().collect::<Vec<_>>())?;
+                check_scope(
+                    wire,
+                    word_bytes,
+                    &lines(&g.fields, &[], &g.consts),
+                    &lines(&g.fields, &[], &[]),
+                    &g.groups.iter().collect::<Vec<_>>(),
+                )?;
             }
         }
         let format = format.ok_or(Error { msg: "pack missing `format`".into() })?;
@@ -1328,6 +1425,7 @@ impl Pack {
             maps,
             typemap_to_cot: to_cot,
             typemap_from_cot: from_cot,
+            seq: None,
         })
     }
 
@@ -1510,6 +1608,36 @@ impl Pack {
         for k in &self.kinds {
             scope("", &k.fields, &k.groups, &mut out);
         }
+        if let Some(body) = &self.seq {
+            body.model_keys("", &mut out);
+        }
+        out
+    }
+
+    /// Every `group` line of the pack: (line, list name).
+    fn group_lists(&self) -> Vec<(usize, &str)> {
+        let mut out: Vec<(usize, &str)> = self.every_group().into_iter().map(|g| (g.line, g.list.as_str())).collect();
+        if let Some(body) = &self.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::Group(line, list) = v {
+                    out.push((line, list));
+                }
+            });
+        }
+        out
+    }
+
+    /// Every `requires` key of the pack: (line, key).
+    fn every_requires(&self) -> Vec<(usize, &str)> {
+        let mut out: Vec<(usize, &str)> =
+            self.kinds.iter().flat_map(|k| k.requires.iter().map(|(key, line)| (*line, key.as_str()))).collect();
+        if let Some(body) = &self.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::Requires(line, key) = v {
+                    out.push((line, key));
+                }
+            });
+        }
         out
     }
 
@@ -1526,6 +1654,13 @@ impl Pack {
     fn every_field(&self) -> Vec<&FieldDef> {
         let mut out: Vec<&FieldDef> = self.fields.iter().chain(self.kinds.iter().flat_map(|k| k.fields.iter())).collect();
         out.extend(self.every_group().into_iter().flat_map(|g| g.fields.iter()));
+        if let Some(body) = &self.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::Field(f) = v {
+                    out.push(f);
+                }
+            });
+        }
         out
     }
 
@@ -1534,6 +1669,13 @@ impl Pack {
         let mut out: Vec<&DefaultDef> =
             self.defaults.iter().chain(self.kinds.iter().flat_map(|k| k.defaults.iter())).collect();
         out.extend(self.every_group().into_iter().flat_map(|g| g.defaults.iter()));
+        if let Some(body) = &self.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::Default(d) = v {
+                    out.push(d);
+                }
+            });
+        }
         out
     }
 
@@ -1708,6 +1850,14 @@ fn check_item_bounds(word_bytes: usize, g: &GroupDef) -> Result<(), Error> {
         }
     }
     for n in &g.groups {
+        // a nested group's count locator is bounded as a field is (ruling 15 of 0.7)
+        if let Some(Count::Locator(l)) = &n.count {
+            if let Ok((w, p, len)) = bits::parse_locator(l) {
+                if w as u64 * wb + p as u64 + len as u64 > room {
+                    return bad(n.line, format!("the count `{}` reaches beyond the {} bits of an item of `{}`", l, room, g.list));
+                }
+            }
+        }
         if let (Some(Count::Fixed(count)), Ok((w, p))) = (&n.count, bits::parse_group_locator(&n.locator)) {
             let end = count.saturating_mul(n.item_bits.unwrap_or(0)).saturating_add(w as u64 * wb + p as u64);
             if end > room {
@@ -1735,7 +1885,14 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
         Wire::GeoJson => {
             names('.') && !g.locator.starts_with("geometry.") && (!g.locator.contains('.') || g.locator.starts_with("properties."))
         }
-        Wire::Protobuf => protobuf::parse_path(&g.locator).is_ok(),
+        Wire::Protobuf => {
+            // ruling 13 of 0.7: a body mixing `.` with paths
+            if g.scalar().is_some() && (g.fields.iter().any(|f| f.locator != ".") || !g.consts.is_empty() || !g.groups.is_empty())
+            {
+                return bad(g.line, format!("the body of group `{}` mixes `.` with paths", g.list));
+            }
+            protobuf::parse_path(&g.locator).is_ok()
+        }
         Wire::Bits => {
             if g.item_bits.is_none() {
                 return bad(g.line, "a group on a bits wire needs `item <bits>`");
@@ -1760,10 +1917,39 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
 /// Load checks of one scope (common plus one kind, or one group body): a list
 /// is mapped by at most one `group`; on `bits`, a group whose count is a
 /// locator is the last thing in its scope.
-fn check_scope(wire: Wire, word_bytes: usize, lines: &[(usize, String)], groups: &[&GroupDef]) -> Result<(), Error> {
+fn check_scope(
+    wire: Wire,
+    word_bytes: usize,
+    lines: &[(usize, String)],
+    fields: &[(usize, String)],
+    groups: &[&GroupDef],
+) -> Result<(), Error> {
     for (i, g) in groups.iter().enumerate() {
         if groups[..i].iter().any(|o| o.list == g.list) {
             return bad(g.line, format!("list `{}` is mapped by two groups of one scope", g.list));
+        }
+    }
+    // ruling 21 of 0.7: a `field` whose locator passes through a group's path
+    let through = |field: &str, group: &str| -> bool {
+        let (sep, path) = match wire {
+            // the element a locator addresses: the names before `@name` or `#text`
+            Wire::Xml => match field.rsplit_once('/') {
+                Some((path, _)) => ('/', path),
+                None => return false,
+            },
+            Wire::Json | Wire::GeoJson | Wire::Protobuf => match field.rsplit_once('.') {
+                Some((path, _)) => ('.', path),
+                None => return false,
+            },
+            Wire::Bits => return false,
+        };
+        let f: Vec<&str> = path.split(sep).collect();
+        let g: Vec<&str> = group.split(sep).collect();
+        f.len() >= g.len() && f[..g.len()] == g[..]
+    };
+    for (line, loc) in fields {
+        if let Some(g) = groups.iter().find(|g| through(loc, &g.locator)) {
+            return bad(*line, format!("`{}` passes through the path of group `{}`", loc, g.list));
         }
     }
     if wire != Wire::Bits {
@@ -1791,8 +1977,15 @@ fn check_scope(wire: Wire, word_bytes: usize, lines: &[(usize, String)], groups:
                 continue;
             }
             let (ow, op) = bits::parse_group_locator(&o.locator)?;
-            if ow as u64 * wb + op as u64 >= start {
+            let ostart = ow as u64 * wb + op as u64;
+            if ostart >= start {
                 return bad(o.line, format!("group `{}` starts at or beyond the counted group `{}`", o.list, g.list));
+            }
+            // a fixed-count group that starts before it and whose items reach its start (ruling 16 of 0.7)
+            if let Some(Count::Fixed(n)) = &o.count {
+                if n.saturating_mul(o.item_bits.unwrap_or(0)).saturating_add(ostart) > start {
+                    return bad(o.line, format!("the items of group `{}` reach the counted group `{}`", o.list, g.list));
+                }
             }
         }
     }
@@ -1892,7 +2085,7 @@ impl Engine {
     /// Load one model module (the text of a `model/<module>.def`). Modules are
     /// loaded before the packs that use them.
     pub fn load_model(&mut self, text: &str) -> Result<(), Error> {
-        let m = Module::parse_with(text, self.modules.get("core"))?;
+        let m = Module::parse_with(text, &self.modules)?;
         if m.distribution > self.max_distribution {
             return err(format!(
                 "distribution-refused: model module `{}` is {}, this engine loads {} only",
@@ -1943,17 +2136,15 @@ impl Engine {
         for f in p.every_field() {
             keys.push((f.line, &f.model_key, Some(&f.transform)));
         }
-        for k in &p.kinds {
-            for (key, line) in &k.requires {
-                keys.push((*line, key, None));
-            }
+        for (line, key) in p.every_requires() {
+            keys.push((line, key, None));
         }
         for d in p.every_default() {
             keys.push((d.line, &d.model_key, None));
         }
         // a `group` line names a list, which is declared like a key
-        for g in p.every_group() {
-            keys.push((g.line, &g.list, None));
+        for (line, list) in p.group_lists() {
+            keys.push((line, list, None));
         }
         keys.sort_by_key(|k| k.0);
         // each check runs over every line before the next starts
@@ -1977,19 +2168,19 @@ impl Engine {
         }
         // the type check: a field's transform, or the model side of its table
         // a `group` naming a scalar key, or a `field` naming a list (engine-spec v0.7)
-        let mut lines: Vec<(usize, Option<&FieldDef>, Option<&GroupDef>)> = p
+        let mut lines: Vec<(usize, Option<&FieldDef>, Option<&str>)> = p
             .every_field()
             .into_iter()
             .map(|f| (f.line, Some(f), None))
-            .chain(p.every_group().into_iter().map(|g| (g.line, None, Some(g))))
+            .chain(p.group_lists().into_iter().map(|(line, list)| (line, None, Some(list))))
             .collect();
         lines.sort_by_key(|l| l.0);
         for (_, f, g) in lines {
-            if let Some(g) = g {
-                if !self.is_list(&g.list) {
+            if let Some(list) = g {
+                if !self.is_list(list) {
                     return err(format!(
                         "key-type-mismatch: pack `{}`: `group {}` names a key, not a list",
-                        p.format, g.list
+                        p.format, list
                     ));
                 }
             }
@@ -2072,6 +2263,9 @@ impl Engine {
             g.fields.iter_mut().for_each(set_field);
             g.defaults.iter_mut().for_each(set_default);
         });
+        if let Some(body) = &mut pack.seq {
+            body.visit_mut(&mut |f| set_field(f), &mut |d| set_default(d));
+        }
         self.packs.insert(pack.format.clone(), pack);
         Ok(())
     }
@@ -2093,8 +2287,31 @@ impl Engine {
             let core = |p: &std::path::PathBuf| p.file_name().and_then(|s| s.to_str()) != Some("core.def");
             (core(a), a.file_name()).cmp(&(core(b), b.file_name()))
         });
+        // each module after the modules it uses (engine-spec v0.8): of the
+        // files not yet loaded, the first in that order whose used modules
+        // are all loaded or are in no file of the directory
+        let mut pending: Vec<(std::path::PathBuf, String, String, Vec<String>)> = Vec::new();
         for f in files {
             let text = std::fs::read_to_string(&f).map_err(|e| Error { msg: format!("cannot read {}: {}", f.display(), e) })?;
+            let (mut name, mut uses) = (String::new(), Vec::new());
+            for line in text.lines() {
+                match tokenize(line) {
+                    Ok(t) if t.len() == 2 && t[0] == "module" => name = t[1].clone(),
+                    Ok(t) if t.len() == 2 && t[0] == "uses" => uses.push(t[1].clone()),
+                    _ => {}
+                }
+            }
+            pending.push((f, text, name, uses));
+        }
+        while !pending.is_empty() {
+            let names: Vec<String> = pending.iter().map(|p| p.2.clone()).collect();
+            let ready = pending.iter().position(|(_, _, name, uses)| uses.iter().all(|u| u == name || !names.contains(u)));
+            let (f, text, _, _) = match ready {
+                Some(i) => pending.remove(i),
+                None => {
+                    return err(format!("bad-directive: the `uses` lines of model modules {} form a cycle", names.join(", ")));
+                }
+            };
             self.load_model(&text).map_err(|e| Error { msg: format!("{} (in {})", e.msg, f.display()) })?;
         }
         Ok(())
@@ -2200,9 +2417,7 @@ impl Engine {
     /// A context key must be declared by a loaded module and hold its declared type.
     fn check_context(&self, context: &[(String, Value)]) -> Result<(), Error> {
         for (key, v) in context {
-            let def = self.key_def(key).ok_or(Error {
-                msg: format!("undeclared-key: context key `{}` is declared by no loaded module", key),
-            })?;
+            let def = self.context_key(key)?;
             if v.key_type() != def.ty {
                 return err(format!("key-type-mismatch: context key `{}` is a {}", key, def.ty.name()));
             }
@@ -2210,14 +2425,23 @@ impl Engine {
         Ok(())
     }
 
+    /// The declaration of a context key. A list where a scalar key is expected
+    /// is `key-type-mismatch` (ruling 18 of 0.7).
+    fn context_key(&self, key: &str) -> Result<&KeyDef, Error> {
+        if self.is_list(key) {
+            return err(format!("key-type-mismatch: context key `{}` is a list, not a key", key));
+        }
+        self.key_def(key).ok_or(Error {
+            msg: format!("undeclared-key: context key `{}` is declared by no loaded module", key),
+        })
+    }
+
     /// Context given as text (the CLI's `--set`, a vector's `context`): each
     /// value is read as its key's declared type.
     pub fn context_from_text(&self, pairs: &[(String, String)]) -> Result<Vec<(String, Value)>, Error> {
         let mut out = Vec::new();
         for (key, text) in pairs {
-            let def = self.key_def(key).ok_or(Error {
-                msg: format!("undeclared-key: context key `{}` is declared by no loaded module", key),
-            })?;
+            let def = self.context_key(key)?;
             let v = read_as(def.ty, text).ok_or(Error {
                 msg: format!("key-type-mismatch: context key `{}` is a {}, got `{}`", key, def.ty.name(), text),
             })?;
@@ -2247,7 +2471,12 @@ impl Engine {
                     if ent.fields.contains_key(&d.target) {
                         continue;
                     }
-                    let args: Option<Vec<&Value>> = d.args.iter().map(|a| ent.fields.get(a)).collect();
+                    // `any` is set when only some of its arguments are present
+                    let args: Option<Vec<&Value>> = if d.func == DeriveFn::Any {
+                        Some(d.args.iter().filter_map(|a| ent.fields.get(a)).collect::<Vec<_>>()).filter(|v| !v.is_empty())
+                    } else {
+                        d.args.iter().map(|a| ent.fields.get(a)).collect()
+                    };
                     let v = match args {
                         // the argument values hold the declared types, or the line is skipped
                         Some(args) => {
@@ -3594,7 +3823,12 @@ pub mod jsonwire {
                     // an item with no members written is `{}`
                     let mut members = build(p, &body, item, enc)?;
                     prune(&mut members);
-                    Json::Obj(members)
+                    // a scalar (`.`) item with no value is `null` (ruling 11 of 0.7)
+                    if members.is_empty() && g.scalar().is_some() {
+                        Json::Null
+                    } else {
+                        Json::Obj(members)
+                    }
                 }
             });
         }
@@ -3724,7 +3958,7 @@ pub mod bits {
     /// runs past the input. lsb: bit i is bit `i mod 8` of byte `i div 8`, first
     /// bit least significant. msb: bit i is bit `7 - (i mod 8)`, first bit most
     /// significant.
-    fn get_bits(msg: &[u8], start: u64, len: u32, msb: bool) -> Option<u64> {
+    pub(crate) fn get_bits(msg: &[u8], start: u64, len: u32, msb: bool) -> Option<u64> {
         if start + len as u64 > msg.len() as u64 * 8 {
             return None;
         }
@@ -3743,7 +3977,7 @@ pub mod bits {
         Some(v)
     }
 
-    fn set_bits(msg: &mut [u8], start: u64, len: u32, raw: u64, msb: bool) {
+    pub(crate) fn set_bits(msg: &mut [u8], start: u64, len: u32, raw: u64, msb: bool) {
         for k in 0..len as u64 {
             let bit = start + k;
             let idx = (bit / 8) as usize;
@@ -3788,6 +4022,68 @@ pub mod bits {
         raw.swap_bytes() >> (64 - len)
     }
 
+    /// The value of a field whose `len` bits start at message bit `start`,
+    /// through its transform. The caller has checked the bits are in the input.
+    pub(crate) fn read_field(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
+        if f.transform == Transform::Ascii {
+            // bytes first to last, each byte's bits in the pack's bit order
+            let mut bytes: Vec<u8> =
+                (0..len as u64 / 8).map(|k| get_bits(raw, start + k * 8, 8, p.msb).unwrap_or(0) as u8).collect();
+            if f.swap {
+                bytes.reverse();
+            }
+            while bytes.last() == Some(&0) {
+                bytes.pop();
+            }
+            while f.trim && bytes.last() == Some(&0x20) {
+                bytes.pop();
+            }
+            match bytes.iter().find(|b| !(0x20..=0x7e).contains(*b)) {
+                Some(b) => err(format!("byte 0x{:02x} is not printable ASCII", b)),
+                None => Ok(Value::Str(bytes.iter().map(|b| *b as char).collect())),
+            }
+        } else {
+            let mut rawv = get_bits(raw, start, len, p.msb).unwrap_or(0);
+            if f.swap {
+                rawv = swap_bytes(rawv, len);
+            }
+            f.transform.decode_bits(rawv, len)
+        }
+    }
+
+    /// Write the wire value `v` of a field into its `len` bits at message bit `start`.
+    pub(crate) fn write_field(p: &Pack, f: &FieldDef, v: &Value, start: u64, len: u32, msg: &mut [u8]) -> Result<(), Error> {
+        if f.transform == Transform::Ascii {
+            let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
+            let text = match v {
+                Value::Str(s) => s.as_bytes(),
+                other => return Err(fail(format!("ascii encodes text, got {:?}", other))),
+            };
+            let room = (len / 8) as usize;
+            if text.len() > room {
+                return Err(fail(format!("text is {} bytes, the field holds {}", text.len(), room)));
+            }
+            // ruling 19 of 0.5
+            if let Some(b) = text.iter().find(|b| !(0x20..=0x7e).contains(*b)) {
+                return Err(fail(format!("byte 0x{:02x} is not printable ASCII", b)));
+            }
+            let mut bytes: Vec<u8> = (0..room).map(|k| text.get(k).copied().unwrap_or(0)).collect();
+            if f.swap {
+                bytes.reverse();
+            }
+            for (k, b) in bytes.iter().enumerate() {
+                set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.msb);
+            }
+        } else {
+            let mut rawv = f.transform.encode_bits(v, len).map_err(|e| transform_encode_err(p, f, e))?;
+            if f.swap {
+                rawv = swap_bytes(rawv, len);
+            }
+            set_bits(msg, start, len, rawv, p.msb);
+        }
+        Ok(())
+    }
+
     fn short(p: &Pack, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", p.format, what.as_ref()) }
     }
@@ -3812,32 +4108,7 @@ pub mod bits {
             if !f.optional {
                 *reach = (*reach).max(start + len as u64);
             }
-            let v = if f.transform == Transform::Ascii {
-                // bytes first to last, each byte's bits in the pack's bit order
-                let mut bytes: Vec<u8> = (0..len as u64 / 8)
-                    .map(|k| get_bits(raw, start + k * 8, 8, p.msb).unwrap_or(0) as u8)
-                    .collect();
-                if f.swap {
-                    bytes.reverse();
-                }
-                while bytes.last() == Some(&0) {
-                    bytes.pop();
-                }
-                while f.trim && bytes.last() == Some(&0x20) {
-                    bytes.pop();
-                }
-                match bytes.iter().find(|b| !(0x20..=0x7e).contains(*b)) {
-                    Some(b) => err(format!("byte 0x{:02x} is not printable ASCII", b)),
-                    None => Ok(Value::Str(bytes.iter().map(|b| *b as char).collect())),
-                }
-            } else {
-                let mut rawv = get_bits(raw, start, len, p.msb).unwrap_or(0);
-                if f.swap {
-                    rawv = swap_bytes(rawv, len);
-                }
-                f.transform.decode_bits(rawv, len)
-            };
-            d.put(p, f, v);
+            d.put(p, f, read_field(p, f, raw, start, len));
         }
         // a group is always present, with `count` items
         for g in &sel.groups {
@@ -3880,6 +4151,9 @@ pub mod bits {
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
         let raw = from_hex(hex.trim()).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
+        if let Some(body) = &p.seq {
+            return super::seq::decode(p, body, &raw);
+        }
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, &w.locator) {
             Ok((start, len)) => get_bits(&raw, start, len, p.msb) == Some(w.num),
@@ -3944,36 +4218,10 @@ pub mod bits {
             };
             let (off, len) = span(p, &f.locator)?;
             let start = base + off;
-            if f.transform == Transform::Ascii {
-                let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
-                let text = match &v {
-                    Value::Str(s) => s.as_bytes(),
-                    other => return Err(fail(format!("ascii encodes text, got {:?}", other))),
-                };
-                let room = (len / 8) as usize;
-                if text.len() > room {
-                    return Err(fail(format!("text is {} bytes, the field holds {}", text.len(), room)));
-                }
-                // ruling 19 of 0.5
-                if let Some(b) = text.iter().find(|b| !(0x20..=0x7e).contains(*b)) {
-                    return Err(fail(format!("byte 0x{:02x} is not printable ASCII", b)));
-                }
-                let mut bytes: Vec<u8> = (0..room).map(|k| text.get(k).copied().unwrap_or(0)).collect();
-                if f.swap {
-                    bytes.reverse();
-                }
-                for (k, b) in bytes.iter().enumerate() {
-                    set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.msb);
-                }
-            } else {
-                let mut rawv = f.transform.encode_bits(&v, len).map_err(|e| transform_encode_err(p, f, e))?;
-                if f.swap {
-                    rawv = swap_bytes(rawv, len);
-                }
-                set_bits(msg, start, len, rawv, p.msb);
-            }
+            write_field(p, f, &v, start, len, msg)?;
         }
-        // the items of each list the entity has, back to back, and their count
+        // the items of each list the entity has, back to back
+        let mut counts: Vec<(&String, u64, &GroupDef)> = Vec::new();
         for g in &sel.groups {
             let fail = |m: String| Error { msg: format!("transform-encode: format `{}`: list `{}`: {}", p.format, g.list, m) };
             let items = match (ent.lists.get(&g.list), &g.count) {
@@ -3982,7 +4230,12 @@ pub mod bits {
                 (None, Some(Count::Fixed(want))) => {
                     return Err(fail(format!("the list is absent, the group holds exactly {} items", want)));
                 }
-                (None, _) => continue,
+                // an absent list under a count locator writes a count of 0 (ruling 14 of 0.7)
+                (None, Some(Count::Locator(l))) => {
+                    counts.push((l, 0, g));
+                    continue;
+                }
+                (None, None) => continue,
             };
             let n = items.len() as u64;
             let (off, _) = group_span(p, g)?;
@@ -3996,25 +4249,34 @@ pub mod bits {
                 Some(Count::Fixed(want)) if *want != n => {
                     return Err(fail(format!("{} items, the group holds exactly {}", n, want)));
                 }
-                Some(Count::Locator(l)) => {
-                    let (coff, len) = span(p, l)?;
-                    if len < 64 && n >> len != 0 {
-                        return Err(fail(format!("{} items do not fit the {}-bit count", n, len)));
-                    }
-                    set_bits(msg, base + coff, len, n, p.msb);
-                }
+                Some(Count::Locator(l)) => counts.push((l, n, g)),
                 _ => {}
             }
         }
-        // `when` and `const` values over any field
-        for w in sel.fixed() {
+        // over the same bits: fields, then `const`, then `when`, then counts (ruling 15 of 0.7)
+        for w in sel.consts.iter().chain(sel.whens.iter().filter(|w| !w.present)) {
             let (off, len) = span(p, &w.locator)?;
             set_bits(msg, base + off, len, w.num, p.msb);
+        }
+        for (l, n, g) in counts {
+            let (coff, len) = span(p, l)?;
+            if len < 64 && n >> len != 0 {
+                return Err(Error {
+                    msg: format!(
+                        "transform-encode: format `{}`: list `{}`: {} items do not fit the {}-bit count",
+                        p.format, g.list, n, len
+                    ),
+                });
+            }
+            set_bits(msg, base + coff, len, n, p.msb);
         }
         Ok(())
     }
 
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+        if let Some(body) = &p.seq {
+            return super::seq::encode(p, body, ent).map(|b| to_hex(&b));
+        }
         let sel = p.select_encode(ent)?;
         // whole words up to the furthest bit: the lines in force, extended by the items
         let word_bits = p.word_bytes as u64 * 8;
@@ -4043,6 +4305,8 @@ pub mod bits {
         s
     }
 }
+
+pub mod seq;
 
 // ---------------------------------------------------------------------------
 // protobuf codec: fields by number, dot-path for nested messages. I/O as hex.
@@ -4173,7 +4437,8 @@ pub mod protobuf {
             (None, _) => Ok(None),
             (Some(v), 1) => Ok(Some(v.clone())),
             (Some(WireVal::LenDelim(sub)), _) => resolve(sub, &path[1..]),
-            (Some(_), _) => err(format!("protobuf: path field {} is not a submessage", want)),
+            // ruling 13 of 0.7
+            (Some(_), _) => err(format!("malformed-wire: protobuf: path field {} is not a submessage", want)),
         }
     }
 
@@ -4236,7 +4501,7 @@ pub mod protobuf {
             for step in before {
                 match resolve(&holder, &[*step])? {
                     Some(WireVal::LenDelim(sub)) => holder = sub,
-                    Some(_) => return err(format!("protobuf: path field {} is not a submessage", step)),
+                    Some(_) => return err(format!("malformed-wire: protobuf: path field {} is not a submessage", step)),
                     None => {
                         found = false;
                         break;
@@ -4394,7 +4659,14 @@ pub mod protobuf {
             }
             // a `.` line with a numeric transform: the packed form
             let node = match g.scalar() {
-                Some(f) if numeric(&f.transform) => Node::Leaf(WireVal::LenDelim(packed)),
+                // an item with no value is left out; a list whose items all
+                // lack the value writes nothing (ruling 11 of 0.7)
+                Some(f) if numeric(&f.transform) => {
+                    if packed.is_empty() {
+                        continue;
+                    }
+                    Node::Leaf(WireVal::LenDelim(packed))
+                }
                 _ => Node::Many(nodes),
             };
             insert_node(&mut tree, &parse_path(&g.locator)?, node)?;

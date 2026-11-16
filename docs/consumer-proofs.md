@@ -34,9 +34,9 @@ What still differs, and what would close it:
 | SAPIENT `object_info` | 16 | groups |
 | CoT time text without a zero fraction; an always-present empty `detail` | 2 | agreement on the canonical form |
 
-ASTERIX CAT062, the translator's third target, has no pack. Its encoder uses a
-three-octet presence field, seven fixed items and one extended item; a pack
-needs presence-indicated items.
+ASTERIX CAT062, the translator's third target: the `asterix-cat062` pack
+reproduces the hand-written encoder byte for byte on six test tracks, with the
+two site codes supplied by the caller as context.
 
 ## first-bite: decoding its dictionaries
 

@@ -1,0 +1,7 @@
+{
+  "name": "to-fx-two-octets",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-fx",
+  "input": "{\"n\":2,\"val\":34,\"x\":17,\"y\":51,\"z\":68}",
+  "expect": "02838011334422"
+}

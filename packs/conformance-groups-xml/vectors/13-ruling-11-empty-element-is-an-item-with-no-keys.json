@@ -1,0 +1,11 @@
+{
+  "name": "ruling-11-empty-element-is-an-item-with-no-keys",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u\"><name>a</name><name/></msg>",
+  "expect": "<msg id=\"u\"><name>a</name><name/></msg>",
+  "model": {
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "a"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "no-kind-holds",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a20300",
+  "expect_error": "no-kind"
+}

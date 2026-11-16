@@ -1,0 +1,8 @@
+{
+  "name": "207-seq-kinds-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\nkey x int -\nkey y int -\nkey a float -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.8.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.qty 8 uint\nkind a\nwhen 8 1\nrequires probe.x\nfield probe.x 8 uint\nkind b\nwhen 4 2\nwhen 4 3\n"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-whole-opt-not-written",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-whole",
+  "input": "{\"n\":1,\"x\":17}",
+  "expect": "01031100"
+}

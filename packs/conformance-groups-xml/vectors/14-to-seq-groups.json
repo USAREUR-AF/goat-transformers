@@ -1,0 +1,7 @@
+{
+  "name": "to-seq-groups",
+  "from": "conformance-groups-xml",
+  "to": "conformance-seq-groups",
+  "input": "<msg id=\"u\"><body><item><qty>5</qty><sub v=\"9\"/></item></body><nums><n>4</n></nums></msg>",
+  "expect": "00148b120000"
+}

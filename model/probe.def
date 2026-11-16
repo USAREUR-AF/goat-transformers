@@ -1,7 +1,8 @@
 # The probe module: synthetic keys for the conformance vectors of derived keys
-# (engine-spec 0.6) and of groups (engine-spec 0.7). No format of the real
-# world maps them; the packs `conformance-derive`, `conformance-rulings-*` and
-# `conformance-groups-*` do. One `derive` line per function that `track` does
+# (engine-spec 0.6), of groups (engine-spec 0.7) and of sequential layouts
+# (engine-spec 0.8). No format of the real world maps them; the packs
+# `conformance-derive`, `conformance-rulings-*`, `conformance-groups-*` and
+# `conformance-seq-*` do. One `derive` line per function that `track` does
 # not use, a pair of lines that needs two passes, and a chain that needs nine.
 module        probe
 version       0.1.0
@@ -44,7 +45,26 @@ list names    "scalar items: each holds tag"
 list ratios   "scalar items: each holds ratio"
 list deltas   "scalar items: each holds val (signed)"
 list gains    "scalar items: each holds ratio (single precision)"
+# Keys and a list of the sequential probe packs (engine-spec 0.8).
+key  x        int     -  "an integer of a sequential probe pack"
+key  y        int     -  "an integer of a sequential probe pack"
+key  z        int     -  "an integer of a sequential probe pack"
+key  w        int     -  "an integer of a sequential probe pack"
+key  c1       int     -  "an integer in the first part of a chain"
+key  c2       int     -  "an integer in the second part of a chain"
+list recs     "items that hold x, y and label; in conformance-seq-kinds each item selects a kind"
+# Targets of the derive functions added in engine-spec 0.8.
+key  ds       float   s  "derived: seconds since UTC midnight of time_ms"
+key  any1     int     -  "derived: 1 when any of x, y, z that is present is not 0"
+key  notx     int     -  "derived: 1 when x is 0, else 0"
+key  parsed   int     -  "derived: the decimal integer s1 holds"
+key  text     string  -  "derived: n as decimal text"
 derive  probe.j1       join:-       probe.s1
+derive  probe.ds       day_seconds  time_ms
+derive  probe.any1     any          probe.x  probe.y  probe.z
+derive  probe.notx     not          probe.x
+derive  probe.parsed   parse_int    probe.s1
+derive  probe.text     text_of      probe.n
 derive  probe.neg_a    neg          probe.a
 derive  probe.scaled   scale:2.5    probe.a
 derive  probe.third    scale:1/3    probe.a

@@ -1,0 +1,11 @@
+{
+  "name": "trailing-zero-octet-not-written",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-fx",
+  "input": "0181001122",
+  "expect": "01801122",
+  "model": {
+    "probe.x": "17",
+    "probe.val": "34"
+  }
+}

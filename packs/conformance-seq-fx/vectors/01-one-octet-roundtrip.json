@@ -1,0 +1,12 @@
+{
+  "name": "one-octet-roundtrip",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-fx",
+  "input": "01801122",
+  "expect": "01801122",
+  "model": {
+    "probe.n": "1",
+    "probe.x": "17",
+    "probe.val": "34"
+  }
+}

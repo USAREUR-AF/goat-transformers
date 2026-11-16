@@ -1,0 +1,7 @@
+{
+  "name": "count-beyond-the-input",
+  "from": "conformance-seq-groups",
+  "to": "conformance-seq-groups",
+  "input": "0130",
+  "expect_error": "malformed-wire"
+}

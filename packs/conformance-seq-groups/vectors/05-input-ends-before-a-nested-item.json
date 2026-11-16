@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-before-a-nested-item",
+  "from": "conformance-seq-groups",
+  "to": "conformance-seq-groups",
+  "input": "01008b",
+  "expect_error": "malformed-wire"
+}

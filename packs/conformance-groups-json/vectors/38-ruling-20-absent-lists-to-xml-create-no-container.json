@@ -1,0 +1,7 @@
+{
+  "name": "ruling-20-absent-lists-to-xml-create-no-container",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-xml",
+  "input": "{\"id\":\"u1\",\"cs\":\"C\"}",
+  "expect": "<msg id=\"u1\"><head cs=\"C\"/></msg>"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "no-item-in-any-list-roundtrip",
+  "from": "conformance-seq-groups",
+  "to": "conformance-seq-groups",
+  "input": "01000000",
+  "expect": "01000000",
+  "model": {
+    "probe.nums.#": "0",
+    "probe.items.#": "0",
+    "probe.recs.#": "absent"
+  }
+}

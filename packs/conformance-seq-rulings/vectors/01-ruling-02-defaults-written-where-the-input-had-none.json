@@ -1,0 +1,11 @@
+{
+  "name": "ruling-02-defaults-written-where-the-input-had-none",
+  "from": "conformance-seq-rulings",
+  "to": "conformance-seq-rulings",
+  "input": "0100000000",
+  "expect": "01800789010a00",
+  "model": {
+    "probe.c1": "0",
+    "probe.w": "0"
+  }
+}

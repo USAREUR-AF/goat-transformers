@@ -1,0 +1,7 @@
+{
+  "name": "to-nested-outer-presence-set-by-one-item",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-nested",
+  "input": "{\"n\":1,\"items\":[{\"qty\":5},{\"val\":34}]}",
+  "expect": "01800285000440"
+}

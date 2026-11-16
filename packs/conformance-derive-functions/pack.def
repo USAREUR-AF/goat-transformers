@@ -1,0 +1,21 @@
+# Conformance probe pack for the derive functions added in spec 0.8:
+# `day_seconds`, `any`, `not`, `parse_int` and `text_of`. Public. No kinds.
+# The first six members are inputs; the last five are the keys the `derive`
+# lines of model/probe.def set from them.
+format  conformance-derive-functions
+version 0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   time_ms       t       iso8601_ms
+field   probe.x       x       int
+field   probe.y       y       int
+field   probe.z       z       int
+field   probe.s1      s1      string
+field   probe.n       n       int
+field   probe.ds      ds      float
+field   probe.any1    any     int
+field   probe.notx    notx    int
+field   probe.parsed  parsed  int
+field   probe.text    text    string

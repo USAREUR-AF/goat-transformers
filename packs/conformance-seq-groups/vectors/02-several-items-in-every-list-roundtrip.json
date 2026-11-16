@@ -1,0 +1,21 @@
+{
+  "name": "several-items-in-every-list-roundtrip",
+  "from": "conformance-seq-groups",
+  "to": "conformance-seq-groups",
+  "input": "0131238b13148c00808102",
+  "expect": "0131238b13148c00808102",
+  "model": {
+    "probe.n": "1",
+    "probe.nums.#": "3",
+    "probe.nums[2].probe.val": "3",
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "5",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[1].probe.val": "10",
+    "probe.items[1].probe.qty": "6",
+    "probe.items[1].probe.subs.#": "absent",
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[1].probe.x": "2"
+  }
+}

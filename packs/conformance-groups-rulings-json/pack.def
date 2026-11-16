@@ -1,0 +1,16 @@
+# Conformance probe pack for ruling 19 of spec 0.7 on the `json` wire: the
+# pack-wide typemap applies to the key `type` inside items. Public. No kinds.
+# The native code here is `J`; the protobuf probe pack writes `T` for the same
+# model value, so a conversion between the two rewrites the code in each item.
+format  conformance-groups-rulings-json
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid  id  string
+group   probe.items  items
+  field  type         t     string
+  field  probe.label  name  string
+end
+typemap J a-f-G

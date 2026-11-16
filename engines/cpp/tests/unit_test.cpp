@@ -618,8 +618,8 @@ int main() {
             made.lists["g.items"].emplace_back();
             made.lists["g.items"][1].fields["g.name"] = gt::Value::of_string("b");
             made.lists["g.nums"].emplace_back();
-            eq(r.encode("gj", made), "{\"items\":[{\"n\":1,\"k\":\"item\"},{\"name\":\"b\",\"n\":1,\"k\":\"item\"}],\"a\":{\"nums\":[{}]}}",
-               "an entity built by hand; a scalar item with no value is {}");
+            eq(r.encode("gj", made), "{\"items\":[{\"n\":1,\"k\":\"item\"},{\"name\":\"b\",\"n\":1,\"k\":\"item\"}],\"a\":{\"nums\":[null]}}",
+               "an entity built by hand; a scalar item with no value is null (0.7 ruling 11)");
             check(begins(error_text([&] { r.decode("gj", "{\"items\":5}"); }), "malformed-wire"), "a list member that is not an array");
             check(begins(error_text([&] { r.decode("gj", "{\"items\":[{\"subs\":[[1]]}]}"); }), "transform-decode"),
                   "'.' on an item that is an array");
@@ -720,6 +720,206 @@ int main() {
                   "a derive naming a core key with core not loaded, before missing-distribution");
         } catch (const std::exception& ex) {
             check(false, std::string("0.7 behaviour threw: ") + ex.what());
+        }
+    }
+
+    {
+        // Version 0.8: sequential layouts, `uses` in a module, the derive functions added.
+        try {
+            const char* core8 = "module core\nversion 0.1.0\ndistribution public\nsource s\nkey uid string -\nkey time_ms int ms\n";
+            const char* mod8 =
+                "module q\nversion 0.1.0\ndistribution public\nsource s\n"
+                "key n int -\nkey x int -\nkey y int -\nkey z int -\nkey t string -\nkey f float -\n"
+                "list items\nlist subs\n";
+            gt::Engine r;
+            r.load_model(core8);
+            r.load_model(mod8);
+            const std::string seq = HDR "uses q\nwire bits\nlayout sequential\nbit_order msb\n";
+            r.add_pack(gt::parse_pack(seq + "format s1\nfield q.n 8 uint\npresence p 3\npad 5\n"
+                                            "if p.1\n  field q.x 8 uint\nend\n"
+                                            "if p.2 !p.3\n  field q.y 8 uint\nend\n"
+                                            "opt\n  field q.z 7 uint\nend\n"
+                                            "default q.n 9\n"));
+            gt::Pack sp = r.pack("s1");
+            check(sp.sequential && sp.fields.empty() && sp.seq.lines.size() == 6 && sp.seq_presences.size() == 1 &&
+                      sp.seq_presences[0].max_named == 3,
+                  "a sequential pack is a tree of lines");
+            gt::Entity e = r.decode("s1", "01 80 11 85");
+            check(e.fields.at("q.n").i == 1 && e.fields.at("q.x").i == 17 && e.fields.count("q.y") == 0 &&
+                      e.fields.at("q.z").i == 5,
+                  "presence, if and opt at a cursor");
+            eq(r.encode("s1", e), "01801185", "sequential round trip");
+            gt::Entity made;
+            made.fields["q.y"] = gt::Value::of_int(2);
+            eq(r.encode("s1", made), "09400200", "a default, a presence bit computed from the entity, an opt not written");
+            check(r.decode("s1", "01 20 00").fields.size() == 1, "a bit named only with '!' is named: p.3 alone decodes");
+            r.add_pack(gt::parse_pack(seq + "format s4\npresence p 2\nif p.1\n  field q.x 6 uint\nend\n"));
+            check(r.decode("s4", "85").fields.at("q.x").i == 5, "a presence of two bits, one named");
+            check(begins(error_text([&] { r.decode("s4", "40"); }), "malformed-wire"),
+                  "a presence bit that is 1 and that no 'if' names");
+            eq(r.encode("s1", r.decode("s1", "01 20 00 00")), "010000", "a bit named only with '!' is written 0");
+            check(begins(error_text([&] { r.decode("s1", "01 80"); }), "malformed-wire"), "the input ends before a field");
+            eq(r.convert("s1", "s1", "01 00 00 ff ff"), "010000", "input beyond the last line is ignored");
+            check(r.model_keys("s1") == std::vector<std::string>({"q.n", "q.x", "q.y", "q.z"}), "model_keys of a sequential pack");
+
+            // groups, items by kind, a length block, a chain and `also`
+            r.add_pack(gt::parse_pack(seq + "format s2\nmap t 1 100\n"
+                                            "group q.items count 8\n"
+                                            "  field q.x 4 uint\n"
+                                            "  kind a\n  when 4 1\n  requires q.y\n  field q.y 8 uint\n"
+                                            "  kind b\n  when 4 2\n"
+                                            "end\n"
+                                            "length 8 plus 1\n"
+                                            "  chain\n    field q.n 7 uint\n    fx\n    field q.z 7 uint\n    fx\n  end\n"
+                                            "end\n"
+                                            "field q.x 8 uint\nalso q.y via t\n"));
+            gt::Entity e2 = r.decode("s2", "02 51 22 62 03 03 06 01");
+            const auto& items = e2.lists.at("q.items");
+            check(items.size() == 2 && items[0].kind.first == "s2" && items[0].kind.second == "a" &&
+                      items[0].fields.at("q.y").i == 34 && items[1].kind.second == "b" && items[1].fields.at("q.x").i == 6,
+                  "each item selects a kind and records it");
+            check(e2.fields.at("q.n").i == 1 && e2.fields.at("q.z").i == 3 && e2.fields.at("q.x").i == 1 &&
+                      e2.fields.at("q.y").i == 100,
+                  "a length block, a chain, and 'also' filling a second key through its table");
+            eq(r.encode("s2", e2), "0251226203030601", "a round trip with item kinds, a length block and a chain");
+            gt::Entity made2;
+            made2.lists["q.items"].emplace_back();
+            made2.lists["q.items"][0].fields["q.x"] = gt::Value::of_int(7);
+            made2.fields["q.y"] = gt::Value::of_int(100);
+            eq(r.encode("s2", made2), "0172020001", "an item kind by 'requires'; the 'also' key written when the field key is absent");
+            made2.lists["q.items"][0].kind = {"s2", "nope"};
+            check(begins(error_text([&] { r.encode("s2", made2); }), "no-kind"), "an item naming a kind its group does not have");
+            check(begins(error_text([&] { r.decode("s2", "01 53"); }), "no-kind"), "an item that matches no kind");
+            check(begins(error_text([&] { r.decode("s2", "00 00 00"); }), "malformed-wire"), "a stated length below 'plus'");
+            check(begins(error_text([&] { r.decode("s2", "00 03 03 07 00"); }), "malformed-wire"),
+                  "a chain that ends with an fx line whose bit is 1");
+            check(r.model_keys("s2") ==
+                      std::vector<std::string>({"q.items[]", "q.items[].q.x", "q.items[].q.y", "q.n", "q.z", "q.x", "q.y"}),
+                  "model_keys of a sequential pack with a group");
+
+            // `length ... whole`, `while`, `more` and `fx` groups
+            r.add_pack(gt::parse_pack(seq + "format s3\nlength 8 whole\ngroup q.items while\n  field q.x 7 uint\nend\n"
+                                            "align 8\ngroup q.subs fx\n  field q.y 7 uint\nend\n"));
+            gt::Entity e3 = r.decode("s3", "04 85 00 0a ff");
+            check(e3.lists.at("q.items").size() == 1 && e3.lists.at("q.items")[0].fields.at("q.x").i == 5 &&
+                      e3.lists.at("q.subs").size() == 1,
+                  "'length ... whole' ends the message; input beyond it is ignored");
+            eq(r.encode("s3", e3), "0485000a", "the length of the whole message is written last");
+            check(begins(error_text([&] { r.decode("s3", "05 85 00 0a"); }), "malformed-wire"), "input shorter than the stated length");
+            e3.lists.erase("q.subs");
+            check(begins(error_text([&] { r.encode("s3", e3); }), "transform-encode"), "an absent list under 'fx' outside a block");
+
+            // load errors
+            auto load_error = [&](const std::string& body) {
+                return error_text([&] {
+                    gt::Engine e4;
+                    e4.load_model(core8);
+                    e4.load_model(mod8);
+                    e4.add_pack(gt::parse_pack(HDR "format z\nuses q\nwire bits\n" + body));
+                });
+            };
+            check(load_error("layout sequential\nfield q.n 8 uint\n").empty(), "a sequential pack loads");
+            check(load_error("word_bytes 1\nlayout fixed\nfield q.n 0:0:8 uint\n").empty(), "'layout fixed' loads");
+            check(begins(load_error("layout sequential\nword_bytes 1\n"), "bad-directive"), "word_bytes in a sequential pack");
+            check(begins(load_error("layout sequential\nfield q.n 0:0:8 uint\n"), "bad-directive"), "a positional locator in a sequential pack");
+            check(begins(load_error("layout sequential\nfield q.n 8 uint optional\n"), "bad-directive"), "'optional' in a sequential pack");
+            check(begins(load_error("layout sequential\nopt\n  field q.n 8 uint\n"), "bad-directive"), "an 'opt' with no end");
+            check(begins(load_error("layout sequential\npresence p 2\nif p.3\nend\n"), "bad-directive"), "an 'if' naming a bit beyond its presence");
+            check(begins(load_error("layout sequential\nopt\n  presence p 2\nend\nif p.1\nend\n"), "bad-directive"),
+                  "an 'if' after the block that holds its presence");
+            check(begins(load_error("layout sequential\npresence p 2\npresence p 2\n"), "bad-directive"), "a presence declared twice in one block");
+            check(begins(load_error("layout sequential\nwhen 8 1\n"), "bad-directive"), "a 'when' in a body with no kind");
+            check(begins(load_error("layout sequential\nkind a\nfield q.n 8 uint\nwhen 8 1\n"), "bad-directive"),
+                  "a 'when' after another line of its kind");
+            check(begins(load_error("layout sequential\nconst 4 16\n"), "bad-directive"), "a const that does not fit its bits");
+            check(begins(load_error("layout sequential\nlength 8 bits whole\n"), "bad-directive"), "'length ... bits whole'");
+            check(begins(load_error("layout sequential\nconst 8 1\nalso q.x\n"), "bad-directive"), "'also' after a const");
+            check(begins(load_error("layout sequential\nfield q.n 8 uint\nalso q.t\n"), "key-type-mismatch"), "'also' naming a key of another type");
+            check(begins(load_error("layout sequential\ngroup q.items count 8\n  kind a\n  kind a\nend\n"), "duplicate-kind"),
+                  "a kind name twice in one group body");
+            check(begins(load_error("layout sequential\ngroup q.n fx\nend\n"), "key-type-mismatch"), "a sequential group naming a scalar key");
+            check(begins(load_error("word_bytes 1\nfield q.n 0:0:8 uint\npad 8\n"), "bad-directive"), "'pad' in a fixed-layout pack");
+            check(begins(load_error("word_bytes 1\nfield q.n 8 uint\n"), "bad-directive"), "a bit length for a locator in a fixed-layout pack");
+            check(begins(error_text([&] {
+                      gt::Engine e4;
+                      e4.load_model(core8);
+                      e4.add_pack(gt::parse_pack(HDR "format z\nwire json\nlayout sequential\n"));
+                  }),
+                         "bad-directive"),
+                  "'layout sequential' on a wire other than bits");
+
+            // 0.7 rulings 11 to 21, pinned
+            auto load_error7 = [&](const std::string& body) {
+                return error_text([&] {
+                    gt::Engine e4;
+                    e4.load_model(core8);
+                    e4.load_model(mod8);
+                    e4.add_pack(gt::parse_pack(HDR "format z\nuses q\n" + body));
+                });
+            };
+            check(begins(load_error7("wire protobuf\ngroup q.items 2\n  field q.t . pstring\n  field q.t 1 pstring\nend\n"), "bad-directive"),
+                  "a protobuf group body mixing '.' with a path");
+            check(begins(load_error7("wire json\ngroup q.items items\n  field q.t name string\nend\nfield q.t items.first string\n"),
+                         "bad-directive"),
+                  "a field whose locator passes through a group's path");
+            check(load_error7("wire json\ngroup q.items data.items\n  field q.t name string\nend\nfield q.t data.count string\n").empty(),
+                  "a field beside a group's path loads");
+            check(begins(load_error7("wire json\ngroup q.items items\n  field q.t name string\n  uses q\nend\n"), "bad-directive"),
+                  "'uses' inside a group");
+            check(begins(load_error7("wire bits\nword_bytes 1\ngroup q.subs 0:8 item 8 count 2\nend\n"
+                                     "group q.items 0:16 item 8 count 0:0:8\nend\n"),
+                         "bad-directive"),
+                  "a fixed-count group whose items reach a group counted by a locator");
+            check(begins(error_text([&] { r.convert_text("s1", "s1", "01 00 00", {{"q.items", "x"}}); }), "key-type-mismatch"),
+                  "a context key that is a list");
+
+            // `uses` in a module, and the derive functions of 0.8
+            auto model_error = [&](const std::string& other, bool with_q, bool q_controlled) {
+                return error_text([&] {
+                    gt::Engine e5;
+                    e5.load_model(core8);
+                    if (with_q) {
+                        std::string q = mod8;
+                        if (q_controlled) q.replace(q.find("public"), 6, "controlled");
+                        e5.load_model(q);
+                    }
+                    e5.load_model("module o\nversion 0.1.0\ndistribution public\nsource s\nkey i int -\nkey s string -\nkey f float -\n" + other);
+                });
+            };
+            check(model_error("uses q\nderive o.i copy q.n\n", true, false).empty(), "a derive argument of a used module loads");
+            check(begins(model_error("derive o.i copy q.n\n", true, false), "bad-directive"), "a derive argument of a module not used");
+            check(begins(model_error("uses q\nderive q.n copy o.i\n", true, false), "bad-directive"), "a derive target of a used module");
+            check(begins(model_error("uses q\n", false, false), "unknown-module"), "a module that uses a module not loaded");
+            check(begins(model_error("uses q\n", true, true), "distribution-violation"), "a public module that uses a controlled one");
+            check(begins(model_error("derive o.i day_seconds time_ms\n", true, false), "bad-directive"), "day_seconds on an int target");
+            check(begins(model_error("derive o.i not o.i o.i\n", true, false), "bad-directive"), "'not' of two arguments");
+            check(begins(model_error("derive o.i text_of o.i\n", true, false), "bad-directive"), "text_of on an int target");
+
+            gt::Engine d;
+            d.load_model(core8);
+            d.load_model(mod8);
+            d.load_model("module o\nversion 0.1.0\ndistribution public\nsource s\nuses q\n"
+                         "key i int -\nkey s string -\nkey f float -\nkey a int -\nkey no int -\n"
+                         "derive o.f day_seconds time_ms\nderive o.a any q.x q.y\nderive o.no not q.x\n"
+                         "derive o.i parse_int uid\nderive o.s text_of q.n\n");
+            gt::Entity de;
+            de.fields["time_ms"] = gt::Value::of_int(-1);
+            de.fields["q.y"] = gt::Value::of_int(0);
+            de.fields["uid"] = gt::Value::of_string("-12");
+            de.fields["q.n"] = gt::Value::of_int(-7);
+            d.complete(de);
+            check(de.fields.at("o.f").f == 86399.999 && de.fields.at("o.a").i == 0 && de.fields.count("o.no") == 0 &&
+                      de.fields.at("o.i").i == -12 && de.fields.at("o.s").s == "-7",
+                  "day_seconds before 1970, any of the present arguments, parse_int and text_of");
+            gt::Entity de2;
+            de2.fields["uid"] = gt::Value::of_string("track-12");
+            de2.fields["q.x"] = gt::Value::of_int(3);
+            d.complete(de2);
+            check(de2.fields.count("o.i") == 0 && de2.fields.at("o.a").i == 1 && de2.fields.at("o.no").i == 0 &&
+                      de2.fields.count("o.f") == 0,
+                  "parse_int of text that is not an integer leaves the target absent; any with one argument present");
+        } catch (const std::exception& ex) {
+            check(false, std::string("0.8 behaviour threw: ") + ex.what());
         }
     }
 

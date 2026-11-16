@@ -1,0 +1,11 @@
+{
+  "name": "three-octets-roundtrip",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-fx",
+  "input": "030101805522",
+  "expect": "030101805522",
+  "model": {
+    "probe.w": "85",
+    "probe.val": "34"
+  }
+}

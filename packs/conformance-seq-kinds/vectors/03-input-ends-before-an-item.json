@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-before-an-item",
+  "from": "conformance-seq-kinds",
+  "to": "conformance-seq-kinds",
+  "input": "01025122",
+  "expect_error": "malformed-wire"
+}

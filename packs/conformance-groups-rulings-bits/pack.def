@@ -1,0 +1,27 @@
+# Conformance probe pack for rulings 15 and 17 of spec 0.7 on the `bits` wire,
+# least significant bit first, one byte per word. Public. One kind.
+#
+#   byte 0      probe.n, the constant 170 (0xAA), the kind's `when` (low
+#               nibble 5) and the count of items (bits 0-1), all on the same
+#               bits. Encode writes them in the order fields, `const`, `when`,
+#               counts (ruling 15), so byte 0 is 0xA4 plus the count.
+#   then        one 2-byte item per count: qty, then val. `optional` on val
+#               has no effect inside an item (ruling 17): input that ends
+#               inside an item is `malformed-wire`.
+#
+# On decode the `when` fixes the low nibble at 5, so the count read is 1.
+format     conformance-groups-rulings-bits
+version    0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.n  0:0:8  uint
+const   0:0:8  170
+kind    k
+when    0:0:4  5
+group   probe.items  0:8  item 16  count 0:0:2
+  field  probe.qty  0:0:8  uint
+  field  probe.val  0:8:8  uint  optional
+end

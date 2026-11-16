@@ -1,0 +1,22 @@
+# Conformance probe pack for the rulings of spec 0.7 that the pack
+# `conformance-groups-protobuf` does not reach. Public. No kinds.
+#
+#   field 1   uid
+#   field 2   one occurrence per item; an item is a submessage:
+#     field 1     label
+#     field 3.1   tag, inside a submessage of the item (ruling 13: a path
+#                 prefix that is not a submessage is `malformed-wire`)
+#     field 4     type; the pack-wide typemap applies inside items (ruling 19)
+format  conformance-groups-rulings-protobuf
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    protobuf
+field   uid  1  pstring
+group   probe.items  2
+  field  probe.label  1    pstring
+  field  probe.tag    3.1  pstring
+  field  type         4    pstring
+end
+typemap T a-f-G

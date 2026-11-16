@@ -1,0 +1,8 @@
+{
+  "name": "parse-int-negative",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"s1\":\"-5\"}",
+  "context": {},
+  "expect": "{\"s1\":\"-5\",\"parsed\":-5}"
+}

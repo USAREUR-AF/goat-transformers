@@ -1,0 +1,13 @@
+{
+  "name": "ruling-19-typemap-inside-items-roundtrip",
+  "from": "conformance-groups-rulings-protobuf",
+  "to": "conformance-groups-rulings-protobuf",
+  "input": "0a0175120c0a0261611a030a0178220154120322015a",
+  "expect": "0a0175120c0a0261611a030a0178220154120322015a",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].type": "a-f-G",
+    "probe.items[0].probe.tag": "x",
+    "probe.items[1].type": "Z"
+  }
+}

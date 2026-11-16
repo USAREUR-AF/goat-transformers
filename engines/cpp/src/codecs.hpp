@@ -182,6 +182,12 @@ std::string bytes_to_hex(const std::string& data);
 std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const json::Value& arr, bool geo);
 std::string json_encode_items(const Pack& p, const GroupLine& g, const std::vector<Item>& items, bool geo);
 
+// bits: `len` bits (1 to 64) from bit `start` of `data`, in the pack's bit
+// order, and back; `swap_bytes` reverses the bytes of a `len`-bit value.
+std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, bool msb);
+void write_bits(std::string& data, std::uint64_t start, std::uint32_t len, std::uint64_t raw, bool msb);
+std::uint64_t swap_bytes(std::uint64_t raw, std::uint32_t len);
+
 Entity decode_xml(const Pack& p, const std::string& bytes);
 std::string encode_xml(const Pack& p, const Entity& e);
 Entity decode_geojson(const Pack& p, const std::string& bytes);

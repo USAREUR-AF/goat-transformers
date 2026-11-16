@@ -1,0 +1,7 @@
+{
+  "name": "item-the-pack-does-not-map",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e0007a0010705",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "item-matches-no-kind",
+  "from": "conformance-seq-kinds",
+  "to": "conformance-seq-kinds",
+  "input": "010154",
+  "expect_error": "no-kind"
+}

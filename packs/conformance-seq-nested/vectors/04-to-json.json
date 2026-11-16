@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-nested",
+  "to": "conformance-seq-json",
+  "input": "01c002c50708210440028900",
+  "expect": "{\"n\":1,\"items\":[{\"qty\":5,\"val\":33,\"x\":3,\"y\":4},{\"val\":34}],\"nums\":[9]}"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-13-earliest-present-key-is-written",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings",
+  "input": "{\"n\":1,\"val\":200,\"w\":3}",
+  "expect": "01800789010a03"
+}

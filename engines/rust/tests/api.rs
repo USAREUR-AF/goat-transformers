@@ -2,7 +2,8 @@
 //! `encode` an entity whose kind is foreign to the pack: ruling 24 of 0.5, and
 //! the 0.6 steps on their own (`fill`, `complete`), the rulings of 0.6 that are
 //! about the API or about the last bits of a float (rulings 1 and 9), and the
-//! 0.7 list API (`Entity.lists`, `model_keys`, `capability`).
+//! 0.7 list API (`Entity.lists`, `model_keys`, `capability`), and the 0.8 item
+//! kind (`Item.kind`).
 
 use goat_transformers::{Engine, Entity, Grade, Value};
 use std::path::Path;
@@ -21,6 +22,9 @@ fn engine() -> Engine {
         "conformance-groups-bits",
         "conformance-groups-bits-msb",
         "conformance-groups-kinds",
+        "conformance-seq-kinds",
+        "conformance-seq-json",
+        "conformance-seq-nested",
     ] {
         e.load_def(&std::fs::read_to_string(root.join("packs").join(pack).join("pack.def")).unwrap()).unwrap();
     }
@@ -221,4 +225,95 @@ fn model_keys_and_capability_list_lists() {
     assert_eq!(c.grade, Grade::Partial);
     assert!(c.dropped.contains(&"probe.items[].probe.subs[].probe.tag".to_string()));
     assert!(c.dropped.contains(&"probe.names[]".to_string()));
+}
+
+/// Engine-spec 0.8, items by kind: an item records the kind it selected, and
+/// encode selects by it. A kind the group does not have is `no-kind`; a kind
+/// of another format is ignored and the item selects by `requires`.
+#[test]
+fn item_kind_is_recorded_and_selects_on_encode() {
+    let e = engine();
+    // n 1, two recs: (x 5, alt, y 258) (x 7, empty)
+    let input = "010253010270";
+    let mut ent = e.decode("conformance-seq-kinds", input).unwrap();
+    assert_eq!(ent.kind, None, "the message has no kinds");
+    let kinds: Vec<Option<(String, String)>> = ent.lists["probe.recs"].iter().map(|i| i.kind.clone()).collect();
+    let k = |name: &str| Some(("conformance-seq-kinds".to_string(), name.to_string()));
+    assert_eq!(kinds, vec![k("alt"), k("empty")]);
+    assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), input);
+    // no kind recorded: `point` is the first kind whose `requires` (probe.y) the item satisfies
+    let recs = ent.lists.get_mut("probe.recs").unwrap();
+    recs[0].kind = None;
+    recs[0].fields.insert("probe.y".to_string(), Value::I64(34));
+    assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), "0102512270");
+    // a kind of another format is ignored
+    ent.lists.get_mut("probe.recs").unwrap()[0].kind = Some(("geojson".to_string(), "alt".to_string()));
+    assert_eq!(e.encode("conformance-seq-kinds", &ent).unwrap(), "0102512270");
+    // a kind this group does not have
+    ent.lists.get_mut("probe.recs").unwrap()[0].kind = k("nosuchkind");
+    let err = e.encode("conformance-seq-kinds", &ent).unwrap_err();
+    assert!(err.msg.starts_with("no-kind:"), "{}", err.msg);
+}
+
+/// `model_keys` and `capability` of a sequential pack: keys inside `if`,
+/// `chain` and `length` blocks, lists and item keys, in first appearance order.
+#[test]
+fn model_keys_of_a_sequential_pack() {
+    let e = engine();
+    assert_eq!(
+        e.model_keys("conformance-seq-nested"),
+        vec![
+            "probe.n",
+            "probe.items[]",
+            "probe.items[].probe.qty",
+            "probe.items[].probe.x",
+            "probe.items[].probe.y",
+            "probe.items[].probe.val",
+            "probe.nums[]",
+            "probe.nums[].probe.val",
+        ]
+    );
+    assert_eq!(
+        e.model_keys("conformance-seq-kinds"),
+        vec!["probe.n", "probe.recs[]", "probe.recs[].probe.x", "probe.recs[].probe.y", "probe.recs[].probe.label"]
+    );
+    let c = e.capability("conformance-seq-kinds", "conformance-seq-json");
+    assert_eq!(c.grade, Grade::Full);
+}
+
+/// Engine-spec 0.8, model additions: the directory loader loads each module
+/// after the modules it uses. `aaa` uses `mmm`, which uses `zzz`; in file-name
+/// order `aaa` would be first and fail with `unknown-module`. A cycle of
+/// `uses` lines is `bad-directive`. A load vector lists its modules in order
+/// and cannot express a directory.
+#[test]
+fn directory_loader_loads_a_module_after_the_modules_it_uses() {
+    let dir = std::env::temp_dir().join(format!("goat-xf-uses-order-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    let head = "version 0.1.0\ndistribution public\nsource \"probe\"\n";
+    let module = |name: &str, uses: &str, from: &str| {
+        format!("module {n}\n{h}uses {u}\nkey v int -\nderive {n}.v copy {f}.v\n", n = name, h = head, u = uses, f = from)
+    };
+    std::fs::write(dir.join("core.def"), format!("module core\n{}key uid string -\n", head)).unwrap();
+    std::fs::write(dir.join("aaa.def"), module("aaa", "mmm", "mmm")).unwrap();
+    std::fs::write(dir.join("mmm.def"), module("mmm", "zzz", "zzz")).unwrap();
+    std::fs::write(dir.join("zzz.def"), format!("module zzz\n{}key v int -\n", head)).unwrap();
+    let mut e = Engine::new();
+    let loaded = e.load_model_dir(&dir);
+    let mut alone = Engine::new();
+    let first = alone.load_model(&std::fs::read_to_string(dir.join("aaa.def")).unwrap());
+    // the derivations cross the modules: zzz.v sets mmm.v, which sets aaa.v
+    let mut ent = Entity::default();
+    ent.fields.insert("zzz.v".to_string(), Value::I64(4));
+    e.complete(&mut ent);
+    // a cycle: zzz now uses aaa
+    std::fs::write(dir.join("zzz.def"), module("zzz", "aaa", "aaa")).unwrap();
+    let cycle = Engine::new().load_model_dir(&dir);
+    let _ = std::fs::remove_dir_all(&dir);
+    loaded.unwrap();
+    assert_eq!(e.modules(), vec!["aaa", "core", "mmm", "zzz"]);
+    assert!(first.unwrap_err().msg.starts_with("unknown-module:"));
+    assert_eq!(ent.fields.get("aaa.v"), Some(&Value::I64(4)));
+    assert!(cycle.unwrap_err().msg.starts_with("bad-directive:"));
 }

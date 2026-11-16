@@ -1,0 +1,40 @@
+# Conformance probe pack for `length` blocks (spec 0.8), most significant bit
+# first. Public. No kinds.
+#
+#   byte 0      n
+#   block 1     an 8-bit length in bytes that counts its own byte (`plus 1`):
+#               x in 8 bits, y in 4 bits; encode pads the block to 2 bytes
+#   block 2     a 6-bit length in bits, minus 2 (`plus -2`): z in 5 bits, one
+#               bit that says whether w follows, w in 4 bits
+#   zero bits to the next whole byte
+#   block 3     an 8-bit length in bytes: nums (an 8-bit count, one byte per
+#               item), then a nested block with a 4-bit length in bits that
+#               holds qty in 4 bits
+format     conformance-seq-length
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+length 8 plus 1
+  field  probe.x  8  uint
+  field  probe.y  4  uint
+end
+length 6 bits plus -2
+  field  probe.z  5  uint
+  opt
+    field  probe.w  4  uint
+  end
+end
+align 8
+length 8 bytes
+  group  probe.nums count 8
+    field  probe.val  8  uint
+  end
+  length 4 bits
+    field  probe.qty  4  uint
+  end
+end

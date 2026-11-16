@@ -153,6 +153,11 @@ func (d *decodeState) pbScope(lay *layout, msg map[int][]pbVal, occ *pbVal) erro
 			if !f.dot {
 				var derr error
 				pv, derr = resolvePBPath(p.Format, msg, f.loc.pbPath)
+				// Inside an item a path prefix that is not a submessage is
+				// malformed-wire (0.7 ruling 13).
+				if _, notSub := derr.(*pbNotSubmsg); notSub && occ != nil {
+					return &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: "field " + f.Key + ": " + derr.Error()}
+				}
 				if derr != nil {
 					d.fail(f, derr.Error())
 					continue
@@ -278,6 +283,14 @@ func unpackPB(wire int, b []byte) ([]pbVal, error) {
 	return out, nil
 }
 
+// pbNotSubmsg reports a path that descends into a field that is not a
+// length-delimited submessage.
+type pbNotSubmsg struct{ field, wire int }
+
+func (e *pbNotSubmsg) Error() string {
+	return fmt.Sprintf("path descends into field %d but it is wire type %d, not a submessage", e.field, e.wire)
+}
+
 // resolvePBPath walks a dot-path into nested submessages and returns the leaf
 // occurrence, nil when any element along the path is absent. An error means
 // a non-leaf element existed but was not a length-delimited submessage, or a
@@ -293,7 +306,7 @@ func resolvePBPath(format string, top map[int][]pbVal, path []int) (*pbVal, erro
 			return pv, nil
 		}
 		if pv.wire != pbLenDelim {
-			return nil, fmt.Errorf("path descends into field %d but it is wire type %d, not a submessage", fn, pv.wire)
+			return nil, &pbNotSubmsg{field: fn, wire: pv.wire}
 		}
 		sub, err := pv.submsg(format)
 		if err != nil {
@@ -483,6 +496,9 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 			if err != nil {
 				return err
 			}
+			if len(occs) == 0 {
+				continue
+			}
 			tree.repeat(g.loc.pbPath, occs)
 		}
 	}
@@ -535,6 +551,11 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 			if ok {
 				payload = appendPBScalar(payload, pv)
 			}
+		}
+		// An item with no value is left out, and a list whose items all lack
+		// the value writes nothing (0.7 ruling 11).
+		if len(payload) == 0 {
+			return nil, nil
 		}
 		return []pbVal{{wire: pbLenDelim, b: payload}}, nil
 	}

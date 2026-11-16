@@ -1,0 +1,7 @@
+{
+  "name": "category-is-not-62",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "30001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "expect_error": "no-kind"
+}

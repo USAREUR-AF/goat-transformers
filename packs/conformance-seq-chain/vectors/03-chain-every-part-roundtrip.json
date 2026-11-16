@@ -1,0 +1,14 @@
+{
+  "name": "chain-every-part-roundtrip",
+  "from": "conformance-seq-chain",
+  "to": "conformance-seq-chain",
+  "input": "010bc1ab06070399",
+  "expect": "010bc1ab06070399",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "6",
+    "probe.z": "3",
+    "probe.qty": "1",
+    "probe.w": "153"
+  }
+}

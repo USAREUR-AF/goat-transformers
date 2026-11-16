@@ -1,0 +1,7 @@
+{
+  "name": "to-msb-kind-by-requires",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-msb",
+  "input": "{\"n\":1,\"qty\":0,\"val\":4660,\"ratio\":-1.5}",
+  "expect": "01a002073412ffa0"
+}

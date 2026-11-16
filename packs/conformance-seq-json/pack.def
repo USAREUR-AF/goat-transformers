@@ -1,0 +1,38 @@
+# Conformance probe pack: the `json` mirror of the sequential probe packs
+# (spec 0.8). Public. No kinds. It maps every key and list those packs map,
+# each at a member of its own name, so a vector can hand a sequential pack any
+# entity and read back what one decodes.
+format  conformance-seq-json
+version 0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.n      n      int
+field   probe.qty    qty    int
+field   probe.val    val    int
+field   probe.x      x      int
+field   probe.y      y      int
+field   probe.z      z      int
+field   probe.w      w      int
+field   probe.c1     c1     int
+field   probe.c2     c2     int
+field   probe.label  label  string
+field   probe.ratio  ratio  float
+group   probe.items  items
+  field  probe.qty  qty  int
+  field  probe.val  val  int
+  field  probe.x    x    int
+  field  probe.y    y    int
+  group  probe.subs  subs
+    field  probe.val  val  int
+  end
+end
+group   probe.nums  nums
+  field  probe.val  .  int
+end
+group   probe.recs  recs
+  field  probe.x      x      int
+  field  probe.y      y      int
+  field  probe.label  label  string
+end

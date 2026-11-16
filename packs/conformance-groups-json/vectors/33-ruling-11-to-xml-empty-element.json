@@ -1,0 +1,7 @@
+{
+  "name": "ruling-11-to-xml-empty-element",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-xml",
+  "input": "{\"id\":\"u\",\"names\":[\"a\",null]}",
+  "expect": "<msg id=\"u\"><name>a</name><name/></msg>"
+}

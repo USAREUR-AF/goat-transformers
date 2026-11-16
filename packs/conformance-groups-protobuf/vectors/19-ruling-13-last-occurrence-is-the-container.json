@@ -1,0 +1,11 @@
+{
+  "name": "ruling-13-last-occurrence-is-the-container",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a01751a040a0201021a030a0107",
+  "expect": "0a01751a030a0107",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "7"
+  }
+}

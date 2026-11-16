@@ -1,0 +1,7 @@
+{
+  "name": "ruling-03-last-fx-of-a-chain-is-1",
+  "from": "conformance-seq-rulings",
+  "to": "conformance-seq-rulings",
+  "input": "01800789010b0300",
+  "expect_error": "malformed-wire"
+}

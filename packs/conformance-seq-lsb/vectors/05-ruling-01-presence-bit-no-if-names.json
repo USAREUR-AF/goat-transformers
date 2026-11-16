@@ -1,0 +1,7 @@
+{
+  "name": "ruling-01-presence-bit-no-if-names",
+  "from": "conformance-seq-lsb",
+  "to": "conformance-seq-lsb",
+  "input": "01a23412020000000000",
+  "expect_error": "malformed-wire"
+}

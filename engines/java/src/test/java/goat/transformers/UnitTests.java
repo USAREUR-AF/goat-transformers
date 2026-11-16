@@ -21,6 +21,198 @@ final class UnitTests {
         kinds(packs);
         rules(packs);
         groups(packs);
+        rulingsOfGroups();
+        sequential(packs);
+        modelAdditions();
+    }
+
+    private static final String PROBE = "module probe\nversion 0.1.0\ndistribution public\nsource t\n"
+            + "key label string -\nkey x int -\nkey y int -\nkey z int -\nkey s string -\nkey f float -\nlist recs\nlist subs\n";
+
+    private static Engine probeEngine(String... packs) {
+        Engine e = new Engine();
+        e.loadModel(CORE);
+        e.loadModel(PROBE);
+        for (String p : packs) e.loadPack(p, "t");
+        return e;
+    }
+
+    /** Rulings 11 to 21 of Version 0.7, which the vectors now pin. */
+    static void rulingsOfGroups() {
+        String json = "format j\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire json\n";
+        String pb = "format p\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire protobuf\n";
+        String bits = "format b\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nword_bytes 1\n";
+        // 11: a scalar item with no value is null on json; a packed list of no values writes nothing on protobuf.
+        Engine e = probeEngine(json + "group probe.recs recs\n field probe.x . int\nend\ngroup probe.subs subs\n field probe.x x int\nend\n",
+                pb + "field probe.label 1 pstring\ngroup probe.recs 2.1\n field probe.x . pvarint\nend\nfield probe.s 3.1 pstring\n");
+        eq("scalar item with no value is null", "{\"recs\":[1,null],\"subs\":[{}]}", e.convert("j", "j", "{\"recs\":[1,null],\"subs\":[{}]}"));
+        eq("packed list of no values writes nothing", "", e.convert("j", "p", "{\"recs\":[null]}"));
+        eq("packed list leaves out the item with no value", "12030a0105", e.convert("j", "p", "{\"recs\":[null,5]}"));
+        // 13: a path prefix that is not a submessage is malformed-wire, for a field outside a group too.
+        errorKind("path prefix that is not a submessage", "malformed-wire", () -> e.decode("p", "1805"));
+        errorKind("protobuf body mixing . with a path", "bad-directive",
+                () -> Pack.parse(pb + "group probe.recs 2\n field probe.x . pvarint\n field probe.y 1 pvarint\nend\n", "t"));
+        // 15: a when value is written over a const on the same bits, whichever line comes first.
+        Engine b = probeEngine(bits + "kind a\nwhen 0:0:8 1\nconst 0:0:8 2\n");
+        eq("const then when", "01", b.encode("b", new Entity()));
+        // 16: a fixed-count group whose items reach a later group counted by a locator.
+        errorKind("fixed-count group reaching a counted group", "bad-directive", () -> Pack.parse(bits
+                + "group probe.subs 0:8 item 8 count 2\n field probe.x 0:0:8 uint\nend\n"
+                + "group probe.recs 0:16 item 8 count 0:0:8\n field probe.x 0:0:8 uint\nend\n", "t"));
+        check("fixed-count group ending at a counted group loads", Pack.parse(bits
+                + "group probe.subs 0:8 item 8 count 1\n field probe.x 0:0:8 uint\nend\n"
+                + "group probe.recs 0:16 item 8 count 0:0:8\n field probe.x 0:0:8 uint\nend\n", "t") != null, "");
+        // 21: a field through a group's path; the group's own locator and its container are not through it.
+        String grp = "group probe.recs a.items\n field probe.x x int\nend\n";
+        errorKind("field through a group path", "bad-directive", () -> Pack.parse(json + grp + "field probe.y a.items.n int\n", "t"));
+        check("field beside a group path loads", Pack.parse(json + grp + "field probe.y a.n int\nconst a.items.k 1\n", "t") != null, "");
+        String xml = "format x\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire xml\nroot r\n";
+        errorKind("xml field on a group's element", "bad-directive",
+                () -> Pack.parse(xml + "group probe.recs b/i\n field probe.x @x int\nend\nfield probe.y b/i/@n int\n", "t"));
+        check("xml field on the container loads", Pack.parse(xml + "group probe.recs b/i\n field probe.x @x int\nend\nfield probe.y b/@n int\n", "t") != null, "");
+    }
+
+    /** Version 0.8: sequential binary layouts. */
+    static void sequential(Engine packs) {
+        String head = "format s\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
+        // Load checks.
+        errorKind("word_bytes in a sequential pack", "bad-directive", () -> Pack.parse(head + "word_bytes 1\n", "t"));
+        errorKind("unknown layout", "bad-directive", () -> Pack.parse(head.replace("sequential", "serial"), "t"));
+        errorKind("layout on another wire", "bad-directive", () -> Pack.parse(head.replace("wire bits", "wire json"), "t"));
+        check("layout after the lines it decides", Pack.parse(head.replace("layout sequential\n", "") + "field probe.x 8 uint\nopt\nend\nlayout sequential\n", "t").seq != null, "");
+        errorKind("bit length in a fixed pack", "bad-directive", () -> Pack.parse(head.replace("layout sequential", "word_bytes 1") + "field probe.x 8 uint\n", "t"));
+        errorKind("pad in a fixed pack", "bad-directive", () -> Pack.parse(head.replace("layout sequential", "word_bytes 1") + "pad 8\n", "t"));
+        errorKind("position in a sequential pack", "bad-directive", () -> Pack.parse(head + "field probe.x 0:0:8 uint\n", "t"));
+        errorKind("optional in a sequential pack", "bad-directive", () -> Pack.parse(head + "field probe.x 8 uint optional\n", "t"));
+        errorKind("block without end", "bad-directive", () -> Pack.parse(head + "chain\nfield probe.x 7 uint\nfx\n", "t"));
+        errorKind("end without block", "bad-directive", () -> Pack.parse(head + "end\n", "t"));
+        errorKind("fx outside a chain", "bad-directive", () -> Pack.parse(head + "opt\nfx\nend\n", "t"));
+        errorKind("kind inside a block", "bad-directive", () -> Pack.parse(head + "opt\nkind a\nend\n", "t"));
+        errorKind("map inside a block", "bad-directive", () -> Pack.parse(head + "opt\nmap t 1 2\nend\n", "t"));
+        errorKind("presence bit 0", "bad-directive", () -> Pack.parse(head + "presence p 2\nif p.0\nend\n", "t"));
+        errorKind("presence bit beyond its size", "bad-directive", () -> Pack.parse(head + "presence p 2\nif !p.3\nend\n", "t"));
+        errorKind("presence of 65 bits", "bad-directive", () -> Pack.parse(head + "presence p 65\n", "t"));
+        errorKind("presence declared twice", "bad-directive", () -> Pack.parse(head + "presence p 2\nkind a\npresence p 2\n", "t"));
+        check("presence hidden in a nested block", Pack.parse(head + "presence p 2\nopt\npresence p 4\nif p.4\nend\nend\nif p.2\nend\n", "t").seqPresences == 2, "");
+        errorKind("group with no repeat form", "bad-directive", () -> Pack.parse(head + "group probe.recs count\nend\n", "t"));
+        errorKind("list mapped by two groups of one scope", "bad-directive",
+                () -> Pack.parse(head + "group probe.recs fx\nend\nopt\ngroup probe.recs while\nend\nend\n", "t"));
+        errorKind("when in a body with no kind", "bad-directive", () -> Pack.parse(head + "when 8 1\n", "t"));
+        errorKind("when after another line of its kind", "bad-directive", () -> Pack.parse(head + "kind a\nrequires probe.x\nwhen 8 1\n", "t"));
+        errorKind("when value that does not fit", "bad-directive", () -> Pack.parse(head + "kind a\nwhen 4 16\n", "t"));
+        errorKind("kind twice in one body", "duplicate-kind", () -> Pack.parse(head + "group probe.recs fx\nkind a\nkind a\nend\n", "t"));
+        errorKind("also after a pad", "bad-directive", () -> Pack.parse(head + "field probe.x 8 uint\npad 1\nalso probe.y\n", "t"));
+        errorKind("also via an unknown table", "bad-directive", () -> Pack.parse(head + "field probe.x 8 uint\nalso probe.y via t\n", "t"));
+        errorKind("length bits whole", "bad-directive", () -> Pack.parse(head + "length 8 bits whole\n", "t"));
+        errorKind("length plus with no number", "bad-directive", () -> Pack.parse(head + "length 8 plus\nend\n", "t"));
+        check("length options in any order", Pack.parse(head + "length 8 whole plus -1\nlength 8 plus 2 bytes\nend\n", "t") != null, "");
+        errorKind("f32 of 16 bits", "bad-directive", () -> Pack.parse(head + "field probe.f 16 f32\n", "t"));
+        Engine load = probeEngine();
+        errorKind("also key of another type", "key-type-mismatch", () -> load.loadPack(head + "field probe.x 8 uint\nalso probe.label\n", "t"));
+        errorKind("sequential group naming a key", "key-type-mismatch", () -> load.loadPack(head + "group probe.x fx\nend\n", "t"));
+        errorKind("default for an undeclared key in a block", "undeclared-key", () -> load.loadPack(head + "opt\ndefault probe.nope 1\nend\n", "t"));
+        Pack keys = Pack.parse(head + "field probe.x 8 uint\nalso probe.y\nopt\ngroup probe.recs fx\nkind a\nchain\nfield probe.z 7 uint\nfx\nend\nend\nend\n", "t");
+        eq("model keys of a sequential pack", "[probe.x, probe.y, probe.recs[], probe.recs[].probe.z]", keys.modelKeys().toString());
+
+        // A common when, kinds at the cursor, and a message-length field.
+        Engine e = probeEngine(head.replace("format s", "format k") + "field probe.x 8 uint\nwhen 8 9\nlength 8 whole\n"
+                + "kind a\nwhen 4 1\nrequires probe.y\nfield probe.y 4 uint\nkind b\nrequires probe.z\nfield probe.z 8 uint\n",
+                head.replace("format s", "format l") + "length 8\n field probe.x 8 uint\n align 16\n opt\n  field probe.y 7 uint\n end\n"
+                + " group probe.recs while\n  field probe.z 7 uint\n end\nend\nfield probe.z 8 uint\n",
+                head.replace("format s", "format f") + "presence f fx\nif f.8\n field probe.x 8 uint\nend\ngroup probe.recs count 8\n if f.1\n  field probe.y 8 uint\n end\nend\n");
+        Entity a = e.decode("k", "05090417");
+        eq("sequential kind", "a", a.kindName());
+        eq("field after the when lines", 7L, a.get("probe.y"));
+        eq("kind kept and whole length written", "05090417", e.encode("k", a));
+        Entity b = new Entity();
+        b.put("probe.x", 5L);
+        b.put("probe.z", 2L);
+        eq("first kind whose requires holds", "05090402", e.encode("k", b));
+        errorKind("no kind whose requires holds", "no-kind", () -> e.encode("k", new Entity()));
+        errorKind("common when that does not hold", "no-kind", () -> e.decode("k", "05080417"));
+        errorKind("common when beyond the input", "no-kind", () -> e.decode("k", "05"));
+        Entity z = e.decode("k", "05090400ff");
+        eq("kind with no when holds", "b", z.kindName());
+        errorKind("stated length beyond the input", "malformed-wire", () -> e.decode("k", "05090517"));
+        // Length extents: a line at the end of the extent is absent, align stops at it, a straddling line is malformed.
+        Entity l = e.decode("l", "01aa07");
+        eq("line inside the extent", 0xaaL, l.get("probe.x"));
+        check("lines at the end of the extent are absent", l.get("probe.y") == null && l.list("probe.recs") == null, l.toString());
+        eq("line after the extent", 7L, l.get("probe.z"));
+        eq("encode writes every line of the extent", "02aa0007", e.encode("l", l));
+        errorKind("item line that straddles the end of the extent", "malformed-wire", () -> e.decode("l", "03aa42c007"));
+        eq("extent with items", "{probe.z=5}", e.decode("l", "03aa428007").list("probe.recs").get(0).fields().toString());
+        errorKind("extent beyond the input", "malformed-wire", () -> e.decode("l", "09aa"));
+        // An fx presence named inside the items of a group: any item with the content sets the bit.
+        Entity f = e.decode("f", "8002030400");   // the last byte lies beyond the last line and is ignored
+        eq("items read under a message presence", "[3, 4]", f.list("probe.recs").stream().map(i -> i.get("probe.y")).collect(java.util.stream.Collectors.toList()).toString());
+        f.list("probe.recs").get(0).fields().clear();
+        eq("one item sets the bit, every item writes the block", "80020004", e.encode("f", f));
+        f.list("probe.recs").get(1).fields().clear();
+        f.put("probe.x", 1L);
+        eq("second presence octet, blocks of a 0 bit not written", "01800102", e.encode("f", f));
+        errorKind("presence bit no if names", "malformed-wire", () -> e.decode("f", "4000"));
+        errorKind("count larger than the bits left", "malformed-wire", () -> e.decode("f", "0011"));
+    }
+
+    /** Version 0.8: uses lines in model modules, load order of a directory, and the derive functions added. */
+    static void modelAdditions() {
+        String other = "module other\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nkey o int -\nkey t string -\nkey d float -\n";
+        Engine e = probeEngine();
+        ModelModule m = e.loadModel(other + "derive other.o any probe.x probe.y\nderive other.t text_of probe.z\n"
+                + "derive other.d day_seconds time_ms\nkey p int -\nkey q int -\nderive other.p parse_int probe.s\nderive other.q not probe.x\n", "t");
+        eq("module uses", "[probe]", m.uses.toString());
+        Entity en = new Entity();
+        en.put("probe.y", 0L);
+        en.put("probe.z", -7L);
+        en.put("time_ms", -1L);
+        en.put("probe.s", "007");
+        e.complete(en);
+        eq("any of the present arguments", 0L, en.get("other.o"));
+        eq("text_of", "-7", en.get("other.t"));
+        eq("day_seconds before 1970", 86399.999, en.get("other.d"));
+        eq("parse_int", 7L, en.get("other.p"));
+        check("not needs its argument", en.get("other.q") == null, String.valueOf(en.get("other.q")));
+        for (String text : new String[]{"+5", " 5", "5.0", "1e3", "", "99999999999999999999"}) {
+            Entity t = new Entity();
+            t.put("probe.s", text);
+            t.put("probe.x", 3L);
+            e.complete(t);
+            check("parse_int of \"" + text + "\" is absent", t.get("other.p") == null, String.valueOf(t.get("other.p")));
+            eq("any and not of a non-zero value", "1 0", t.get("other.o") + " " + t.get("other.q"));
+        }
+        errorKind("derive argument of a module not used", "bad-directive",
+                () -> probeEngine().loadModel(other.replace("uses probe\n", "") + "derive other.o copy probe.x\n", "t"));
+        errorKind("derive target of a used module", "bad-directive", () -> probeEngine().loadModel(other + "derive probe.x copy other.o\n", "t"));
+        errorKind("uses a module not loaded", "unknown-module", () -> new Engine().loadModel(other, "t"));
+        errorKind("any of no argument", "bad-directive", () -> probeEngine().loadModel(other + "derive other.o any\n", "t"));
+        errorKind("parse_int to a string", "bad-directive", () -> probeEngine().loadModel(other + "derive other.t parse_int probe.s\n", "t"));
+        Engine ctl = new Engine();
+        ctl.loadModel(CORE);
+        ctl.loadModel(PROBE.replace("distribution public", "distribution controlled"));
+        errorKind("public module uses a controlled one", "distribution-violation", () -> ctl.loadModel(other, "t"));
+
+        // The directory loader: core first, then byte order of file name, each module after the modules it uses.
+        try {
+            java.nio.file.Path dir = java.nio.file.Files.createTempDirectory("gt-models");
+            try {
+                java.nio.file.Files.writeString(dir.resolve("core.def"), CORE);
+                java.nio.file.Files.writeString(dir.resolve("a.def"), other);
+                java.nio.file.Files.writeString(dir.resolve("b.def"), PROBE);
+                StringBuilder order = new StringBuilder();
+                for (String[] f : Engine.modelsInLoadOrder(dir)) order.append(java.nio.file.Paths.get(f[0]).getFileName()).append(' ');
+                eq("a module is loaded after the modules it uses", "core.def b.def a.def ", order.toString());
+                java.nio.file.Files.writeString(dir.resolve("b.def"), PROBE + "uses other\n");
+                errorKind("cycle of uses lines", "bad-directive", () -> Engine.modelsInLoadOrder(dir));
+            } finally {
+                try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.list(dir)) {
+                    for (java.nio.file.Path f : (Iterable<java.nio.file.Path>) files::iterator) java.nio.file.Files.delete(f);
+                }
+                java.nio.file.Files.delete(dir);
+            }
+        } catch (java.io.IOException ex) {
+            check("model directory", false, ex.toString());
+        }
     }
 
     /** Version 0.7: lists in the model, group blocks on every wire, and the rulings of 0.6 the vectors now pin. */

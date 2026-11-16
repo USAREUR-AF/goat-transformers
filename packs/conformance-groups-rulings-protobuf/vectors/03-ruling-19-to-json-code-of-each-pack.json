@@ -1,0 +1,7 @@
+{
+  "name": "ruling-19-to-json-code-of-each-pack",
+  "from": "conformance-groups-rulings-protobuf",
+  "to": "conformance-groups-rulings-json",
+  "input": "0a0175120c0a0261611a030a0178220154120322015a",
+  "expect": "{\"id\":\"u\",\"items\":[{\"t\":\"J\",\"name\":\"aa\"},{\"t\":\"Z\"}]}"
+}

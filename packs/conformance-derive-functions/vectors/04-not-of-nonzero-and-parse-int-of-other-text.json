@@ -1,0 +1,8 @@
+{
+  "name": "not-of-nonzero-and-parse-int-of-other-text",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"x\":5,\"s1\":\"track-311\"}",
+  "context": {},
+  "expect": "{\"x\":5,\"s1\":\"track-311\",\"any\":1,\"notx\":0}"
+}

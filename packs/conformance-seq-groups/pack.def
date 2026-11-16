@@ -1,0 +1,45 @@
+# Conformance probe pack for the group forms of spec 0.8, most significant
+# bit first. Public. No kinds.
+#
+#   byte 0      n
+#   nums        a 4-bit count, then one 4-bit val per item; zero bits to the
+#               next whole byte
+#   items       `while`: before each item one bit, 1 = an item follows, 0 =
+#               the list ends. An item is qty in 6 bits, then one bit that
+#               says whether subs follow. subs is `fx`: each sub is val in 7
+#               bits and one bit, 1 = another sub follows.
+#               Zero bits to the next whole byte after the ending 0 bit.
+#   recs        one bit that says whether recs follow, then 7 unused bits;
+#               recs is `more`: before each item one bit, 1 = another item
+#               follows this one; an item is x in 7 bits.
+#
+# subs and recs have at least one item on the wire, so each sits in an `opt`
+# block that is not written when its list is absent or empty.
+format     conformance-seq-groups
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+group   probe.nums count 4
+  field  probe.val  4  uint
+end
+align 8
+group   probe.items while
+  field  probe.qty  6  uint
+  opt
+    group  probe.subs fx
+      field  probe.val  7  uint
+    end
+  end
+end
+align 8
+opt
+  pad 7
+  group  probe.recs more
+    field  probe.x  7  uint
+  end
+end

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-11-to-protobuf-packed-list-of-no-values-writes-nothing",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-protobuf",
+  "input": "{\"id\":\"u\",\"data\":{\"nums\":[null,null]},\"ratios\":[null]}",
+  "expect": "0a0175"
+}

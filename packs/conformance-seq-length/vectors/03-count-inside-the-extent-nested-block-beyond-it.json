@@ -1,0 +1,10 @@
+{
+  "name": "count-inside-the-extent-nested-block-beyond-it",
+  "from": "conformance-seq-length",
+  "to": "conformance-seq-length",
+  "input": "0102110ea00100",
+  "expect": "0103110012a0020040",
+  "model": {
+    "probe.nums.#": "0"
+  }
+}

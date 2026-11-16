@@ -1,0 +1,10 @@
+{
+  "name": "status-extents-four-to-six-read-and-not-written",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001b990c01075460100000000000000000013781010101010100",
+  "expect": "3e0018990c01075460100000000000000000013781010100",
+  "model": {
+    "track.coasting": "0"
+  }
+}

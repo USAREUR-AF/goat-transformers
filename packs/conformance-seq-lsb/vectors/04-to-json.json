@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-seq-lsb",
+  "to": "conformance-seq-json",
+  "input": "02a000000080025585060000",
+  "expect": "{\"n\":2,\"qty\":0,\"val\":0,\"w\":85,\"c1\":5,\"c2\":6,\"nums\":[]}"
+}

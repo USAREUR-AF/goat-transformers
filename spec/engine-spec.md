@@ -1018,3 +1018,230 @@ points below, or noted that no vector decides them.
     elements on the way to the group's path.
 21. **A `field` whose locator passes through a `group`'s path** in the same
     scope is `bad-directive`.
+
+---
+
+# Version 0.8: sequential binary layouts
+
+Status: Written. In many binary formats the place of a field depends on what
+came before it: an item is present only when a presence bit says so, a part
+repeats while an indicator bit is set, a block states its own length. A `bits`
+pack with `layout sequential` describes such a message as lines read in order
+from a cursor.
+
+```
+wire    bits
+layout  sequential          # default: fixed (Version 0.2 addressing)
+```
+
+`word_bytes` is not used (`bad-directive` if given); `bit_order` applies as in
+0.5. A message is a whole number of bytes: after the last line, decode ignores
+the remaining bits of the last byte and encode writes them as zero.
+
+## Lines
+
+Inside a sequential pack a locator is a bit length, not a position. Lines are
+read, and written, in file order: the common lines, then the selected kind's.
+
+| Line | Decode | Encode |
+|---|---|---|
+| `field <key> <len> <transform> [options]` | read `len` bits at the cursor through the transform | write the value; an absent key writes zero bits, or the `default` |
+| `const <len> <value>` | read `len` bits and ignore them | write the unsigned value |
+| `pad <len>` | skip `len` bits | write zero bits |
+| `align <n>` | skip to the next multiple of `n` bits from the message start | zero bits to that multiple |
+| `when <len> <value>` | read `len` bits; the kind holds when they equal the value | write the value |
+
+`when` lines of a kind are its first lines, and every kind's `when` lines are
+read from the cursor position where the common lines ended; the first kind
+whose `when` lines all hold is selected, and decoding continues after them. A
+kind with no `when` always holds. Field options `via`, `swap` and `trim` apply;
+`optional` is `bad-directive`.
+
+## Presence
+
+```
+presence <name> <n>            # n presence bits, read as one field
+presence <name> fx             # octets of 7 presence bits, each followed by an extension bit
+if <name>.<i> [<name>.<j>…]
+  …
+end
+```
+
+`presence` reads the bits at the cursor and numbers them from 1 in reading
+order. With `fx`, an octet is 7 presence bits then one bit that is 1 when
+another octet follows; the bits of octets not on the wire are 0. An `if` block
+is read only when every bit it names is 1; a name is visible from its
+`presence` line to the end of the enclosing block. `if !<name>.<i>` requires
+the bit to be 0.
+
+On encode a presence bit is 1 when some `if` block naming it (without `!`)
+would write a present key, a non-empty list, or a nested presence that is not
+all zero; blocks whose bits are 1 are written. With `fx`, trailing octets that
+are all zero are not written, and at least one octet is. Because presence is
+computed before it is written, the encoder lays out a scope in two passes.
+
+A one-bit indicator before a single part is the same thing written shortly:
+
+```
+opt                            # one presence bit, then the block when it is 1
+  …
+end
+```
+
+## Repeats
+
+```
+group <list> count <len>       # a count of `len` bits at the cursor, then that many items
+  …
+end
+group <list> while             # each item is preceded by one bit: 1 = an item follows, 0 = the list ends
+  …
+end
+group <list> more              # each item is preceded by one bit: 1 = another item follows this one
+  …
+end
+group <list> fx                # each item ends with one bit: 1 = another item follows
+  …
+end
+```
+
+Group bodies are sequential lines and may hold presence, `opt`, `if` and
+nested groups. With `while`, a list of no items is one 0 bit. With `more` and
+`fx` a list has at least one item on the wire; an absent or empty list is
+`transform-encode` unless the group sits in an `if` or `opt` block, which is
+then not written. Rulings of 0.7 on lists apply otherwise.
+
+## Chains
+
+```
+chain
+  field … 
+  fx                           # one bit: 1 = the lines after it, up to the next `fx` or `end`, follow
+  field …
+  fx
+  …
+end
+```
+
+An extensible item: on decode, at each `fx` line a 0 bit ends the chain. On
+encode an `fx` bit is 1 when any line after it in the chain would write a
+present key. A chain's last part needs no `fx` line; when the chain ends with
+an `fx` line, that bit is written 0.
+
+## Lengths
+
+```
+length <len> [bytes|bits] [plus <n>]
+  …
+end
+```
+
+A length field of `len` bits at the cursor, counting the block that follows in
+bytes (default) or bits, plus `n` (for a length that counts itself or a header;
+`n` may be negative). Decode reads the block within that extent: lines beyond
+it read as absent, and content of the extent no line reads is skipped. Encode
+writes the block, then the length. A block counted in bytes is padded with zero
+bits to a whole byte.
+
+`length … whole` instead of a block: the field holds the length of the whole
+message in bytes plus `n`; decode ignores input beyond it, and input shorter
+than it is `malformed-wire`.
+
+## Items by kind
+
+```
+group <list> … 
+  kind <name>
+  when <len> <value>
+  …
+  kind <name>
+  …
+end
+```
+
+In a sequential pack a group body may hold kinds: lines before the first `kind`
+are common to every item, then each item selects a kind by its `when` lines as
+a message does. The item records its kind (`Item.kind`), and encode selects by
+it, or by `requires` lines, as for a message. This is how a list of
+differently laid out records is read.
+
+## Errors
+
+Reading past the end of the input, or past a `length` extent where a line
+requires bits, is `malformed-wire`. An unbalanced `if`, `opt`, `chain`,
+`length` or `group`, an `if` naming an unknown presence or a bit beyond its
+size, a positional (`<word>:<pos>:<len>`) locator in a sequential pack, and a
+sequential line in a fixed-layout pack are `bad-directive`.
+
+## Vector additions
+
+`"<list>[<i>].@kind"` in a vector's `model` is the kind an item must select.
+
+## Rulings for 0.8
+
+1. **A presence bit that is 1 and that no `if` block names** is
+   `malformed-wire`: the message holds a part the pack does not describe.
+2. **Defaults and presence.** A key with a `default` in scope counts as present
+   when presence bits and `fx` bits are computed.
+3. **A chain that ends with an `fx` line** whose bit is 1 on the wire is
+   `malformed-wire`.
+4. **`!` bits.** A presence bit is computed only from the blocks that name it
+   without `!`. A bit named only with `!` is written 0. A block naming `p.3 !p.4`
+   sets p.3 when its content is present; when p.4 is then also 1 the block is
+   not written.
+5. **A present, empty list** under `count` or `while` inside an `if` or `opt`
+   block does not set the bit, and decodes back as absent.
+6. **`more` or `fx` with an absent or empty list** in a block that is written
+   for another reason is `transform-encode`.
+7. **`length` extents.** A line that starts at or after the end of the extent
+   reads as absent (a group gives an absent list); a line that straddles the
+   end is `malformed-wire`. Encode writes every line.
+8. **`length <len>` then, in any order and each at most once, `bytes` or
+   `bits`, `plus <n>` and `whole`.** `bits` with `whole` is `bad-directive`. A
+   stated whole length shorter than what was already read is `malformed-wire`,
+   and a whole length is the end of the input, not an extent: a line beyond it
+   is `malformed-wire`.
+9. **Input beyond the last line**, whole bytes included, is ignored.
+10. **`when` placement.** A `when` before the first `kind` is a common `when`
+    of 0.5. A `when` after another line of its kind, or inside a block, is
+    `bad-directive`.
+11. **Kind names** are unique within one body: the message's kinds, or one
+    group's item kinds.
+12. **Presence names.** Declaring a name twice in one block is `bad-directive`;
+    a nested block may declare the name again and hides the outer one to its
+    end. A message presence may be named inside a group item: any item with the
+    content sets the bit.
+13. **More keys on one field.** An `also <key> [via <table>]` line directly
+    after a `field` line, or after another `also` of that field, binds another key to the same bits through the same
+    transform. Decode fills both; encode writes the value of the earliest of
+    them that is present (ruling 16 of 0.5). `also` anywhere else is
+    `bad-directive`.
+14. **Limits.** Presence, `const`, `when`, count and length fields are 1 to 64
+    bits. `layout` on a wire other than `bits` is `bad-directive`. A count
+    larger than the bits left is `malformed-wire` before any item is read.
+15. **Ruling 21 of 0.7** applies to `field` lines only.
+
+## Model additions in 0.8
+
+```
+uses  <module>              # a line of a model module, repeatable
+```
+
+A module may name other modules; its `derive` lines may then use their keys as
+arguments. The directory loader loads `core.def` first and then each module
+after the modules it uses; a cycle is `bad-directive`. `load_model` of a module
+whose used module is not loaded is `unknown-module`. A public module uses only
+public modules (`distribution-violation`).
+
+Derive functions added:
+
+| Function | Arguments | Result |
+|---|---|---|
+| `day_seconds` | a (`int`, epoch ms) | seconds since UTC midnight of that instant, as a float |
+| `any` | a b … (`int`) | 1 when any present argument is not 0, else 0; needs at least one argument present, not all |
+| `not` | a (`int`) | 1 when a is 0, else 0 |
+| `parse_int` | a (`string`) | the decimal integer the text holds; absent when it is not one |
+| `text_of` | a (`int`) | the integer as decimal text |
+
+`any` is the one function whose target is set when only some arguments are
+present.

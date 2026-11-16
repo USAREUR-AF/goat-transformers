@@ -1,0 +1,7 @@
+{
+  "name": "line-beyond-the-stated-length",
+  "from": "conformance-seq-whole",
+  "to": "conformance-seq-whole",
+  "input": "01021185",
+  "expect_error": "malformed-wire"
+}

@@ -227,6 +227,8 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
     if (has_scalar) return scalar;
     std::string out;
     out_write(out, root);
+    // A scalar (`.`) item with no value is written `null` (0.7 ruling 11).
+    if (g.scalar && out == "{}") return "null";
     return out;
 }
 

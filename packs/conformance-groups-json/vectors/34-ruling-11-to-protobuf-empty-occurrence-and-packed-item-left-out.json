@@ -1,0 +1,7 @@
+{
+  "name": "ruling-11-to-protobuf-empty-occurrence-and-packed-item-left-out",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-protobuf",
+  "input": "{\"id\":\"u\",\"data\":{\"nums\":[3,null,5]},\"names\":[\"a\",null]}",
+  "expect": "0a01751a040a0203052201612200"
+}

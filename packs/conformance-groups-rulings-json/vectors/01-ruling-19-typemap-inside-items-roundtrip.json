@@ -1,0 +1,11 @@
+{
+  "name": "ruling-19-typemap-inside-items-roundtrip",
+  "from": "conformance-groups-rulings-json",
+  "to": "conformance-groups-rulings-json",
+  "input": "{\"id\":\"u\",\"items\":[{\"t\":\"J\",\"name\":\"aa\"},{\"t\":\"K\"}]}",
+  "expect": "{\"id\":\"u\",\"items\":[{\"t\":\"J\",\"name\":\"aa\"},{\"t\":\"K\"}]}",
+  "model": {
+    "probe.items[0].type": "a-f-G",
+    "probe.items[1].type": "K"
+  }
+}

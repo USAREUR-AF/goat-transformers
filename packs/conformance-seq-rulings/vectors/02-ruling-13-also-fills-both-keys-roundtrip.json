@@ -1,0 +1,14 @@
+{
+  "name": "ruling-13-also-fills-both-keys-roundtrip",
+  "from": "conformance-seq-rulings",
+  "to": "conformance-seq-rulings",
+  "input": "01800789010a01",
+  "expect": "01800789010a01",
+  "model": {
+    "probe.w": "1",
+    "probe.val": "100",
+    "probe.x": "7",
+    "probe.qty": "9",
+    "probe.c2": "5"
+  }
+}

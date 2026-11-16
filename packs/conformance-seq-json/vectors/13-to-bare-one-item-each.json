@@ -1,0 +1,7 @@
+{
+  "name": "to-bare-one-item-each",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-groups-bare",
+  "input": "{\"nums\":[5],\"recs\":[{\"x\":3}]}",
+  "expect": "0a03"
+}

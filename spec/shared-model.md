@@ -18,7 +18,8 @@ share, the more of a message carries between them.
 |---|---|---|
 | `core` | identity, type, time, position, error, name, course and speed of one reported thing | `model/core.def` |
 | `track` | sensor-track facts: source, velocity vector, class, confidence, uncertainty, status flags, and the list of identifiers | `model/track.def` |
-| `probe` | synthetic keys and lists for the conformance vectors of derived keys and of groups; no real format maps them | `model/probe.def` |
+| `cat062` | values of ASTERIX Category 062 as the category holds them: SAC, SIC, time of day, track number, the status bits MON, CNF, SIM, TSE and CST. Uses `track`: it derives the time of day from `time_ms`, the track number from `uid`, and SIM from the three flags of `track` that say the data is not live | `model/cat062.def` |
+| `probe` | synthetic keys and lists for the conformance vectors of derived keys, of groups and of sequential layouts; no real format maps them | `model/probe.def` |
 
 A format with a message catalog of its own usually also has its own module of
 raw wire values (for example `n2k` for NMEA 2000), so every field decodes and
@@ -56,7 +57,10 @@ module declares it with a `list` line, and a pack maps it with a `group` block
   its module's key names: a module cannot have a key and a list of one name.
 - Its value is an ordered sequence of items. An item holds model keys, and may
   hold lists of its own. Any declared key may appear in an item; the keys an
-  item holds are the ones the `group` maps. An item has no residue and no kind.
+  item holds are the ones the `group` maps. An item has no residue. An item
+  has a kind only where the `group` body of a sequential binary pack holds
+  kinds (`spec/engine-spec.md`, Version 0.8): the item then records the kind
+  it selected, as an entity does, and that pack writes it as the same kind.
 - A list that is present and empty is distinct from an absent list. JSON
   writes the first as `[]`; XML and protobuf cannot tell the two apart and
   read a message with no item as an absent list.

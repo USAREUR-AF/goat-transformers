@@ -1,0 +1,19 @@
+{
+  "name": "presence-chain-group-and-opt-roundtrip",
+  "from": "conformance-seq-lsb",
+  "to": "conformance-seq-lsb",
+  "input": "01a234124dfe024405318300",
+  "expect": "01a234124dfe024405318300",
+  "model": {
+    "probe.n": "1",
+    "probe.qty": "2",
+    "probe.val": "4660",
+    "probe.x": "9",
+    "probe.y": "-2",
+    "probe.z": "68",
+    "probe.c1": "5",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "3",
+    "probe.label": "A"
+  }
+}

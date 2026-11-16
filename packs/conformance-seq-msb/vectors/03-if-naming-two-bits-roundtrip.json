@@ -1,0 +1,11 @@
+{
+  "name": "if-naming-two-bits-roundtrip",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a201344009",
+  "expect": "05a201344009",
+  "model": {
+    "probe.z": "68",
+    "probe.val": "9"
+  }
+}

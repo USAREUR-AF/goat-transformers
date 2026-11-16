@@ -65,8 +65,9 @@ type Field struct {
 	Optional  bool
 
 	loc     locator
-	group   *Group // the innermost group the line is in, nil outside a group
-	dot     bool   // the locator is `.`: the item itself, as a scalar
+	group   *Group   // the innermost group the line is in, nil outside a group
+	dot     bool     // the locator is `.`: the item itself, as a scalar
+	also    []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
 	tf      *transform
 	btf     *bitsTransform
 	pbf     *pbTransform
@@ -145,6 +146,9 @@ type Group struct {
 	itemBits  int      // bits: the size of an item
 	countLoc  *locator // bits: where the scope holds the number of items; nil when the count is fixed
 	countN    int      // bits: the fixed count
+	seqMode   int      // sequential layouts: how the items are delimited (seqCount, seqWhile, seqMore, seqFx)
+	countBits int      // sequential layouts: the length of the count field of a `count` group
+	sbody     *seqBody // sequential layouts: the lines of one item
 	dots      []*Field // the `.` fields of the body, in line order
 	packed    bool     // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
 	needsMsg  bool     // protobuf: the body has a line that reads into the item as a submessage
@@ -227,6 +231,8 @@ type Pack struct {
 	keyRefs        []keyRef         // field, requires, default and group names in file order
 	modelKeys      []string
 	msb            bool
+	seq            bool     // bits: `layout sequential` (spec 0.8)
+	sbody          *seqBody // sequential layouts: the lines of a message
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -246,6 +252,11 @@ func (p *Pack) ModelKeys() []string {
 			seen[k] = true
 			out = append(out, k)
 		}
+	}
+	if p.seq {
+		p.sbody.modelKeys(add, "")
+		p.modelKeys = out
+		return out
 	}
 	var walk func(lines []line, prefix string)
 	walk = func(lines []line, prefix string) {
@@ -360,7 +371,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	seen := map[string]int{}
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
-		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0}
+		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
+		"layout": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
+	// A pack is sequential when it has a `layout sequential` line, wherever
+	// the line stands.
+	p.seq = hasSequentialLayout(text)
+	sp := &seqParser{p: p, perr: perr}
+	sp.init()
 	// addLine puts a line in the innermost open group, else in the kind being
 	// read, else among the common lines.
 	addLine := func(ln line) {
@@ -402,6 +419,19 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		if w >= 0 && len(args) != w {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
+		}
+		if p.seq {
+			if seqStructural[kw] {
+				if err := sp.line(kw, args, n); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			if sp.inGroup() {
+				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a group", kw)
+			}
+		} else if seqOnly[kw] {
+			return nil, perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)
 		}
 		if len(open) > 0 {
 			// Inside a group only these lines are allowed: `when`, `requires`,
@@ -456,7 +486,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 			seen[kw] = n
 			p.Root = args[0]
-		case "format", "version", "wire", "word_bytes", "bit_order", "distribution":
+		case "format", "version", "wire", "word_bytes", "bit_order", "distribution", "layout":
 			if prev, dup := seen[kw]; dup {
 				return nil, perr(ErrBadDirective, n, "", "%s repeated (first on line %d)", kw, prev)
 			}
@@ -473,6 +503,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits or protobuf)", args[0])
 				}
 				p.Wire = args[0]
+			case "layout":
+				if args[0] != "sequential" && args[0] != "fixed" {
+					return nil, perr(ErrBadDirective, n, "", "layout must be fixed or sequential, got %q", args[0])
+				}
 			case "word_bytes":
 				wb, err := strconv.Atoi(args[0])
 				if err != nil || wb <= 0 {
@@ -563,6 +597,21 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if g := inner(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "group %s has no end", g.List)
 	}
+	if p.seq {
+		if err := sp.finish(); err != nil {
+			return nil, err
+		}
+		// `layout` on a wire other than bits, and `word_bytes` in a
+		// sequential pack (0.8 ruling 14).
+		if p.Wire != "" && p.Wire != WireBits {
+			return nil, perr(ErrBadDirective, seen["layout"], "", "layout sequential is valid only on wire bits")
+		}
+		if p.WordBytes != 0 {
+			return nil, perr(ErrBadDirective, seen["word_bytes"], "", "word_bytes is not used in a pack with layout sequential")
+		}
+	} else if _, has := seen["layout"]; has && p.Wire != "" && p.Wire != WireBits {
+		return nil, perr(ErrBadDirective, seen["layout"], "", "layout is valid only on wire bits")
+	}
 	for _, t := range p.tables {
 		allInt, allNum := true, true
 		for _, e := range t.entries {
@@ -645,7 +694,20 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 			var loc locator
 			var err error
-			if f.Locator == "." && dotWire {
+			if p.seq {
+				// A sequential locator is a bit length; a positional locator
+				// is bad-directive.
+				if strings.Contains(f.Locator, ":") {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "a locator in a sequential pack is a bit length, not <word>:<pos>:<len>")
+				}
+				n, aerr := strconv.Atoi(f.Locator)
+				if aerr != nil || n < 1 || n > maxBitsLen {
+					err = fmt.Errorf("a sequential locator is a bit length 1..%d, got %q", maxBitsLen, f.Locator)
+				}
+				loc = locator{raw: f.Locator, kind: locBits, blen: n}
+			} else if p.Wire == WireBits && isDigits(f.Locator) {
+				return nil, perr(ErrBadDirective, f.Line, f.Locator, "a bit length for a locator is valid only in a pack with `layout sequential`")
+			} else if f.Locator == "." && dotWire {
 				if f.group == nil {
 					return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator `.` names an item and is valid only inside a group")
 				}
@@ -675,6 +737,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if err := checkFieldOptions(p.Wire, f); err != nil {
 				return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
 			}
+			if p.seq && f.Optional {
+				return nil, perr(ErrBadDirective, f.Line, f.Locator, "field option `optional` is not valid in a sequential pack")
+			}
 			if f.Via != "" {
 				f.table = p.tables[f.Via]
 				if f.table == nil {
@@ -685,6 +750,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		for _, w := range whens {
 			// `const <locator> present` is refused; `=present` writes the text
 			// (0.6 ruling 3).
+			// `const .` is refused: the item itself is not a place a constant is
+			// written (0.7 ruling 18).
+			if w.Const && w.Locator == "." {
+				return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot name the item itself")
+			}
 			if w.Const && w.Value == "present" {
 				return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot be `present`; write `=present` for the text")
 			}
@@ -711,6 +781,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 			}
 			g.packed = p.Wire == WireProtobuf && len(g.dots) > 0 && g.dots[0].pbf != nil && g.dots[0].pbf.wire != pbLenDelim
+			// A protobuf group body is scalar only when every line is `.`
+			// (0.7 ruling 13).
+			if p.Wire == WireProtobuf && len(g.dots) > 0 && g.needsMsg {
+				return nil, perr(ErrBadDirective, g.Line, g.Locator, "the body of group %s mixes `.` with other lines", g.List)
+			}
+		}
+		if f, g := p.fieldThroughGroup(); f != nil {
+			return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator passes through the path of the group on line %d of the same scope", g.Line)
 		}
 		if p.Wire == WireBits {
 			if ln, loc, err := p.checkBitsGroups(); err != nil {
@@ -747,7 +825,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if p.Wire != WireXML && p.Root != "" {
 		return nil, perr(ErrBadDirective, seen["root"], "", "root is xml only")
 	}
-	if p.Wire == WireBits && p.WordBytes == 0 {
+	if p.Wire == WireBits && p.WordBytes == 0 && !p.seq {
 		return nil, perr(ErrBadDirective, 0, "", "wire bits requires a word_bytes directive")
 	}
 	if p.Wire != WireBits && p.WordBytes != 0 {
@@ -770,6 +848,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	for _, g := range p.Groups {
 		g.body = p.newLayout(nil, g.lines, g.defaults)
+	}
+	if p.seq {
+		sp.bind()
+		return p, nil
 	}
 	if p.HasKinds() {
 		if p.Wire == WireXML {
@@ -824,6 +906,114 @@ func (p *Pack) listMappedTwice() (dup, first *Group) {
 		}
 	}
 	return nil, nil
+}
+
+// fieldThroughGroup returns a `field` line whose locator passes through the
+// path of a group of the same scope, and that group (0.7 ruling 21; `field`
+// lines only, 0.8 ruling 15). A scope is the common lines plus one kind, or
+// one group body.
+func (p *Pack) fieldThroughGroup() (*Field, *Group) {
+	hasPrefix := func(path, prefix []string) bool {
+		if len(prefix) > len(path) {
+			return false
+		}
+		for i := range prefix {
+			if path[i] != prefix[i] {
+				return false
+			}
+		}
+		return true
+	}
+	through := func(f *Field, g *Group) bool {
+		if f.dot || f.loc.kind == 0 {
+			return false
+		}
+		switch {
+		case f.loc.kind == locJSON && g.loc.kind == locJSON:
+			return len(f.loc.path) > len(g.loc.path) && hasPrefix(f.loc.path, g.loc.path)
+		case (f.loc.kind == locAttr || f.loc.kind == locText) && g.loc.kind == locElem:
+			return hasPrefix(f.loc.path, g.loc.path)
+		case f.loc.kind == locProto && g.loc.kind == locProto:
+			if len(f.loc.pbPath) <= len(g.loc.pbPath) {
+				return false
+			}
+			for i, n := range g.loc.pbPath {
+				if f.loc.pbPath[i] != n {
+					return false
+				}
+			}
+			return true
+		}
+		return false
+	}
+	// first is the first step of a path: a group can lie on the path of a
+	// field only when the two start alike.
+	first := func(l *locator) string {
+		switch {
+		case l.kind == locProto && len(l.pbPath) > 0:
+			return strconv.Itoa(l.pbPath[0])
+		case len(l.path) > 0:
+			return l.path[0]
+		}
+		return ""
+	}
+	scan := func(lines ...[]line) (*Field, *Group) {
+		var groups map[string][]*Group
+		for _, ls := range lines {
+			for _, ln := range ls {
+				if ln.g != nil {
+					if groups == nil {
+						groups = map[string][]*Group{}
+					}
+					k := first(&ln.g.loc)
+					groups[k] = append(groups[k], ln.g)
+				}
+			}
+		}
+		if groups == nil {
+			return nil, nil
+		}
+		for _, ls := range lines {
+			for _, ln := range ls {
+				if ln.f == nil {
+					continue
+				}
+				for _, g := range groups[first(&ln.f.loc)] {
+					if through(ln.f, g) {
+						return ln.f, g
+					}
+				}
+			}
+		}
+		return nil, nil
+	}
+	if f, g := scan(p.common); f != nil {
+		return f, g
+	}
+	for _, k := range p.Kinds {
+		if f, g := scan(p.common, k.lines); f != nil {
+			return f, g
+		}
+	}
+	for _, grp := range p.Groups {
+		if f, g := scan(grp.lines); f != nil {
+			return f, g
+		}
+	}
+	return nil, nil
+}
+
+// isDigits reports whether s is one or more decimal digits.
+func isDigits(s string) bool {
+	if s == "" {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 // resolveGroup reads the locator of a `group` line, and on the bits wire its
@@ -932,13 +1122,9 @@ func (p *Pack) checkBitsGroups() (int, string, error) {
 			case ln.w != nil:
 				// The bound of an item is stated for its fields and its nested
 				// groups with a fixed count (0.7 ruling 4).
+				// A const of an item is bounded by `item <bits>` as a field is
+				// (0.7 ruling 15).
 				end, at, what, loc = ln.w.loc.bit+ln.w.loc.blen, ln.w.Line, "when or const", ln.w.Locator
-				for _, c := range counted {
-					if end > c.start {
-						return at, loc, fmt.Errorf("the %s lies at or beyond the start of the group counted by a locator on line %d, which is the last thing in its scope", what, c.Line)
-					}
-				}
-				continue
 			default:
 				g := ln.g
 				at, what, loc = g.Line, "group", g.Locator
@@ -949,6 +1135,20 @@ func (p *Pack) checkBitsGroups() (int, string, error) {
 				}
 				if g.countLoc == nil && itemBits > 0 && g.start+g.countN*g.itemBits > itemBits {
 					return at, loc, fmt.Errorf("the nested group with a fixed count reaches beyond the %d bits of an item", itemBits)
+				}
+				// The count locator of a nested group is bounded by the item
+				// too (0.7 ruling 15).
+				if c := g.countLoc; c != nil && itemBits > 0 && c.bit+c.blen > itemBits {
+					return at, loc, fmt.Errorf("the count locator of the nested group reaches beyond the %d bits of an item", itemBits)
+				}
+				// A fixed-count group that starts before a group counted by a
+				// locator may not reach its start (0.7 ruling 16).
+				if g.countLoc == nil {
+					for _, c := range counted {
+						if g.start < c.start && g.start+g.countN*g.itemBits > c.start {
+							return at, loc, fmt.Errorf("the items of the fixed-count group reach the start of the group counted by a locator on line %d", c.Line)
+						}
+					}
 				}
 				continue
 			}

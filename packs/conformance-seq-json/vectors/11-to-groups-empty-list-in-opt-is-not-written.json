@@ -1,0 +1,7 @@
+{
+  "name": "to-groups-empty-list-in-opt-is-not-written",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-groups",
+  "input": "{\"n\":1,\"items\":[{\"qty\":5,\"subs\":[]}],\"recs\":[]}",
+  "expect": "01008a0000"
+}

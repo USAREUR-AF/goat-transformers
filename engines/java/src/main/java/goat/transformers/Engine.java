@@ -53,26 +53,7 @@ public final class Engine {
     public static Engine load(Path packsDir, Path modelsDir, Distribution limit) {
         Engine e = new Engine();
         e.setMaxDistribution(limit);
-        List<Path> models = new ArrayList<>();
-        try (Stream<Path> s = Files.list(modelsDir)) {
-            s.filter(p -> p.getFileName().toString().endsWith(".def") && Files.isRegularFile(p)).forEach(models::add);
-        } catch (IOException ex) {
-            throw new UncheckedIOException("cannot list model modules in " + modelsDir, ex);
-        }
-        models.sort((a, b) -> Arrays.compareUnsigned(
-                a.getFileName().toString().getBytes(StandardCharsets.UTF_8),
-                b.getFileName().toString().getBytes(StandardCharsets.UTF_8)));
-        // core.def is loaded first whatever its name sorts as (ruling 9 of 0.6): other modules derive from its keys.
-        for (int i = 1; i < models.size(); i++) {
-            if (models.get(i).getFileName().toString().equals("core.def")) models.add(0, models.remove(i));
-        }
-        for (Path def : models) {
-            try {
-                e.loadModel(Files.readString(def, StandardCharsets.UTF_8), def.toString());
-            } catch (IOException ex) {
-                throw new UncheckedIOException("cannot read " + def, ex);
-            }
-        }
+        for (String[] m : modelsInLoadOrder(modelsDir)) e.loadModel(m[1], m[0]);
         List<Path> defs = new ArrayList<>();
         try (Stream<Path> s = Files.list(packsDir)) {
             s.sorted().forEach(d -> {
@@ -92,16 +73,88 @@ public final class Engine {
         return e;
     }
 
+    /**
+     * The module files of {@code modelsDir} as {@code {path, text}}, in the order a directory loader loads them:
+     * {@code core.def} first, then byte order of file name, each module after the modules its {@code uses} lines
+     * name. A cycle of {@code uses} lines is {@code bad-directive}.
+     */
+    public static List<String[]> modelsInLoadOrder(Path modelsDir) {
+        List<Path> files = new ArrayList<>();
+        try (Stream<Path> s = Files.list(modelsDir)) {
+            s.filter(p -> p.getFileName().toString().endsWith(".def") && Files.isRegularFile(p)).forEach(files::add);
+        } catch (IOException ex) {
+            throw new UncheckedIOException("cannot list model modules in " + modelsDir, ex);
+        }
+        files.sort((a, b) -> Arrays.compareUnsigned(
+                a.getFileName().toString().getBytes(StandardCharsets.UTF_8),
+                b.getFileName().toString().getBytes(StandardCharsets.UTF_8)));
+        // core.def is loaded first whatever its name sorts as (ruling 9 of 0.6): other modules derive from its keys.
+        for (int i = 1; i < files.size(); i++) {
+            if (files.get(i).getFileName().toString().equals("core.def")) files.add(0, files.remove(i));
+        }
+        List<String[]> texts = new ArrayList<>();
+        List<List<String>> heads = new ArrayList<>();
+        Map<String, Integer> byModule = new HashMap<>();
+        for (Path def : files) {
+            String text;
+            try {
+                text = Files.readString(def, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                throw new UncheckedIOException("cannot read " + def, ex);
+            }
+            List<String> head = ModelModule.nameAndUses(text, def.toString());
+            if (head.get(0) != null) byModule.putIfAbsent(head.get(0), texts.size());
+            texts.add(new String[]{def.toString(), text});
+            heads.add(head);
+        }
+        List<String[]> out = new ArrayList<>();
+        int[] state = new int[texts.size()];   // 0 not visited, 1 being placed, 2 placed
+        for (int i = 0; i < texts.size(); i++) placeModel(i, texts, heads, byModule, state, out);
+        return out;
+    }
+
+    private static void placeModel(int i, List<String[]> texts, List<List<String>> heads, Map<String, Integer> byModule,
+                                   int[] state, List<String[]> out) {
+        if (state[i] == 2) return;
+        if (state[i] == 1) {
+            throw new GtException(GtException.Code.BAD_DIRECTIVE, heads.get(i).get(0), null,
+                    texts.get(i)[0] + ": the uses lines of the model modules form a cycle through module " + heads.get(i).get(0));
+        }
+        state[i] = 1;
+        List<String> head = heads.get(i);
+        for (int u = 1; u < head.size(); u++) {
+            Integer j = byModule.get(head.get(u));
+            // a module no file declares is left to load_model, which reports unknown-module
+            if (j != null) placeModel(j, texts, heads, byModule, state, out);
+        }
+        state[i] = 2;
+        out.add(texts.get(i));
+    }
+
     /** Load one model module from its text. */
     public ModelModule loadModel(String text) { return loadModel(text, "<model>"); }
 
     /** Load one model module from its text. {@code source} names the file for error messages. */
     public ModelModule loadModel(String text, String source) {
-        ModelModule core = modules.get(ModelModule.CORE);
-        ModelModule m = ModelModule.parse(text, source, core == null ? null : core.keys);
+        ModelModule m = ModelModule.parse(text, source, byName);
         if (!m.distribution.within(maxDistribution)) {
             throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, null, null, source + ": module " + m.name + " is "
                     + m.distribution.token() + ", above this engine's limit " + maxDistribution.token());
+        }
+        // A module is loaded after the modules it uses, and a public module uses only public modules (0.8).
+        for (String u : m.uses) {
+            if (!byName.containsKey(u)) {
+                throw new GtException(GtException.Code.UNKNOWN_MODULE, null, null, source + ": module " + m.name
+                        + " uses module " + u + ", which is not loaded");
+            }
+        }
+        if (m.distribution == Distribution.PUBLIC) {
+            for (String u : m.uses) {
+                if (byName.get(u).distribution != Distribution.PUBLIC) {
+                    throw new GtException(GtException.Code.DISTRIBUTION_VIOLATION, null, null, source + ": public module "
+                            + m.name + " uses " + byName.get(u).distribution.token() + " module " + u);
+                }
+            }
         }
         if (modules.containsKey(m.name)) {
             throw new GtException(GtException.Code.DUPLICATE_MODULE, null, null, source + ": module " + m.name + " loaded twice");
@@ -258,11 +311,19 @@ public final class Engine {
                     if (e.get(d.target) != null) continue;
                     Object[] args = new Object[d.args.size()];
                     boolean all = true;
-                    for (int i = 0; i < args.length && all; i++) {
-                        args[i] = e.get(d.args.get(i));
-                        if (args[i] == null) all = false;
+                    int present = 0;
+                    for (int i = 0; i < args.length; i++) {
+                        Object a = e.get(d.args.get(i));
+                        if (a == null) all = false;
+                        else args[present++] = a;
                     }
-                    if (!all) continue;
+                    if (d.fn == ModelModule.Derive.Fn.ANY) {
+                        // the one function whose target is set when only some arguments are present
+                        if (present == 0) continue;
+                        args = Arrays.copyOf(args, present);
+                    } else if (!all) {
+                        continue;
+                    }
                     Object v;
                     try {
                         v = d.apply(args);
@@ -289,7 +350,7 @@ public final class Engine {
         switch (p.wire) {
             case XML: codec = new XmlCodec(p); break;
             case GEOJSON: codec = new GeoJsonCodec(p); break;
-            case BITS: codec = new BitsCodec(p); break;
+            case BITS: codec = p.seq != null ? new SeqCodec(p) : new BitsCodec(p); break;
             case PROTOBUF: codec = new ProtobufCodec(p); break;
             case JSON: codec = new JsonCodec(p); break;
             default: throw new GtException(GtException.Code.BAD_PACK, p.format, null, "no codec for wire " + p.wire);

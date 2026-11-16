@@ -1,0 +1,21 @@
+# Conformance probe pack for `group <list> fx` and `group <list> more` outside
+# any `if` or `opt` block (spec 0.8), most significant bit first. Public. No
+# kinds. Each list has at least one item on the wire; an absent or empty list
+# is `transform-encode`.
+#
+#   nums        each item: val in 7 bits, then one bit, 1 = another follows
+#   recs        each item: one bit, 1 = another follows this one, then x in 7 bits
+format     conformance-seq-groups-bare
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.nums fx
+  field  probe.val  7  uint
+end
+group   probe.recs more
+  field  probe.x  7  uint
+end

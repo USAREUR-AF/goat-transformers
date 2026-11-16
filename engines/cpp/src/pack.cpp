@@ -7,6 +7,7 @@
 
 #include "codecs.hpp"
 #include "derive.hpp"
+#include "sequential.hpp"
 #include "goat_transformers/engine.hpp"
 #include "transforms.hpp"
 
@@ -135,6 +136,15 @@ const char* wire_name(Wire w) {
 
 namespace {
 
+bool tokenize(const std::string& line, std::vector<std::string>& out, std::string& err);
+}  // namespace
+
+bool detail::tokenize_line(const std::string& line, std::vector<std::string>& out, std::string& err) {
+    return tokenize(line, out, err);
+}
+
+namespace {
+
 // Split one line into tokens: whitespace separated, double quotes group, a '#'
 // at the start of a token starts a comment. A quoted value runs to the next double
 // quote: there is no escape, and '#' inside it is literal (0.5 rulings 6 and 17).
@@ -203,7 +213,8 @@ namespace {
 // Model module grammar (engine-spec.md v0.4): same line rules as pack.def.
 // With `require_core`, a `derive` line naming a key of `core` is checked against
 // `core` (null: not loaded); without it such a line is left for Engine::add_model.
-Module parse_model_impl(const std::string& text, const std::string& origin, const Module* core, bool require_core) {
+Module parse_model_impl(const std::string& text, const std::string& origin, const detail::ModuleLookup& loaded,
+                        bool require_core) {
     Module m;
     m.origin = origin;
     bool have_module = false, have_version = false, have_distribution = false;
@@ -249,6 +260,10 @@ Module parse_model_impl(const std::string& text, const std::string& origin, cons
         } else if (kw == "source") {
             arity(1);
             m.sources.push_back(t[1]);
+        } else if (kw == "uses") {
+            // v0.8: a module may name other modules; a repeated line is accepted.
+            arity(1);
+            if (std::find(m.uses.begin(), m.uses.end(), t[1]) == m.uses.end()) m.uses.push_back(t[1]);
         } else if (kw == "key") {
             if (t.size() != 4 && t.size() != 5)
                 throw Error(ErrorKind::InvalidModel, "", "",
@@ -292,7 +307,7 @@ Module parse_model_impl(const std::string& text, const std::string& origin, cons
 
     // `derive` lines need the whole file (a key may be declared after the line),
     // and are checked before `missing-distribution` (0.6 ruling 9).
-    detail::check_derives(m, m.name == "core" ? nullptr : core, require_core);
+    detail::check_derives(m, loaded, require_core);
 
     if (!have_distribution) throw Error(ErrorKind::MissingDistribution, "", "", origin + ": module has no 'distribution'");
     if (m.sources.empty()) throw Error(ErrorKind::MissingSource, "", "", origin + ": module has no 'source'");
@@ -307,8 +322,8 @@ Module parse_model(const std::string& text, const std::string& origin) {
     return parse_model_impl(text, origin, nullptr, false);
 }
 
-Module detail::parse_model_with_core(const std::string& text, const std::string& origin, const Module* core) {
-    return parse_model_impl(text, origin, core, true);
+Module detail::parse_model_with(const std::string& text, const std::string& origin, const ModuleLookup& loaded) {
+    return parse_model_impl(text, origin, loaded, true);
 }
 
 namespace {
@@ -438,6 +453,15 @@ void settle_group(const Pack& p, GroupLine& g) {
     g.scalar = false;
     for (const auto& f : g.fields)
         if (f.locator == ".") g.scalar = true;
+    // A protobuf group body is scalar only when every line is `.` (0.7 ruling 13).
+    if (p.wire == Wire::Protobuf && g.scalar) {
+        bool mixed = !g.consts.empty() || !g.groups.empty();
+        for (const auto& f : g.fields)
+            if (f.locator != ".") mixed = true;
+        if (mixed)
+            throw Error(ErrorKind::BadDirective, p.format, g.locator,
+                        where + ": the body of the group '" + g.list + "' mixes '.' with paths");
+    }
     if (p.wire != Wire::Bits) {
         if (g.has_count)
             throw Error(ErrorKind::BadDirective, p.format, g.locator,
@@ -513,9 +537,13 @@ void check_against_counted(const Pack& p, const Scope& scope, const std::vector<
     if (whens)
         for (const auto& w : *whens)
             if (bits_end(p, w.locator) > g.bits_start) bad_beyond(p, "the when", w.locator, w.line, g);
-    for (const auto& o : scope.groups)
-        if (&o != &g && o.bits_start != kNoBit && o.bits_start >= g.bits_start)
-            bad_beyond(p, "the group '" + o.list + "'", o.locator, o.line, g);
+    for (const auto& o : scope.groups) {
+        if (&o == &g || o.bits_start == kNoBit) continue;
+        if (o.bits_start >= g.bits_start) bad_beyond(p, "the group '" + o.list + "'", o.locator, o.line, g);
+        // A fixed-count group that starts before it and whose items reach its start (0.7 ruling 16).
+        if (o.count_fixed && o.count_n > (g.bits_start - o.bits_start) / o.item_bits)
+            bad_beyond(p, "an item of the group '" + o.list + "'", o.locator, o.line, g);
+    }
 }
 
 template <class Scope>
@@ -565,6 +593,11 @@ void check_bits_group(const Pack& p, const GroupLine& g) {
                         p.source + ":" + std::to_string(c.line) + ": the const reaches beyond 'item " +
                             std::to_string(g.item_bits) + "'");
     for (const auto& n : g.groups) {
+        // A nested group's count locator is bounded by `item <bits>` as a field is (0.7 ruling 15).
+        if (!n.count_fixed && n.count_start + n.count_len > g.item_bits)
+            throw Error(ErrorKind::BadDirective, p.format, n.locator,
+                        p.source + ":" + std::to_string(n.line) + ": the count locator " + n.count_locator +
+                            " of the group '" + n.list + "' reaches beyond 'item " + std::to_string(g.item_bits) + "'");
         if (!n.count_fixed || n.bits_start == kNoBit) continue;
         const std::uint64_t room = g.item_bits > n.bits_start ? (g.item_bits - n.bits_start) / n.item_bits : 0;
         if (n.bits_start > g.item_bits || n.count_n > room)
@@ -610,6 +643,53 @@ void check_lists_once(const Pack& p, const std::vector<GroupLine>& groups, const
         check_lists_once(p, g.groups, nullptr, nullptr);
     }
     if (names_out) *names_out = std::move(names);
+}
+
+// ---- a `field` whose locator passes through a `group`'s path (0.7 ruling 21)
+
+// Does the field locator address something at or under an item of the group?
+bool passes_through(Wire wire, const std::string& field, const std::string& group) {
+    char sep;
+    switch (wire) {
+        case Wire::Xml: sep = '/'; break;
+        case Wire::Json:
+        case Wire::Protobuf: sep = '.'; break;
+        default: return false;
+    }
+    return field.size() > group.size() && field[group.size()] == sep && field.compare(0, group.size(), group) == 0;
+}
+
+void check_through(const Pack& p, Wire wire, const std::vector<FieldLine>& fields, const std::vector<GroupLine>& groups) {
+    if (groups.empty()) return;
+    for (const auto& f : fields)
+        for (const auto& g : groups)
+            if (passes_through(wire, f.locator, g.locator))
+                throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                            p.source + ":" + std::to_string(f.line) + ": the field's locator passes through the path '" +
+                                g.locator + "' of the group '" + g.list + "'");
+}
+
+// The body of every group: its own fields against its own groups. Inside a
+// group a geojson pack uses the json locators.
+void check_through_groups(const Pack& p, const std::vector<GroupLine>& groups) {
+    const Wire inner = p.wire == Wire::GeoJson ? Wire::Json : p.wire;
+    for (const auto& g : groups) {
+        check_through(p, inner, g.fields, g.groups);
+        check_through_groups(p, g.groups);
+    }
+}
+
+// A scope is the common lines plus one kind, or one group body. Applies to
+// `field` lines only (0.8 ruling 15).
+void check_fields_through_groups(const Pack& p) {
+    check_through(p, p.wire, p.fields, p.groups);
+    check_through_groups(p, p.groups);
+    for (const auto& k : p.kinds) {
+        check_through(p, p.wire, k.fields, p.groups);
+        check_through(p, p.wire, k.fields, k.groups);
+        check_through(p, p.wire, p.fields, k.groups);
+        check_through_groups(p, k.groups);
+    }
 }
 
 // ---- locators and transforms against the wire (invalid_pack, invalid_locator)
@@ -686,8 +766,11 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
 }  // namespace
 
 Pack parse_pack(const std::string& text, const std::string& source) {
+    // v0.8: a pack with `layout sequential` is lines read from a cursor.
+    if (detail::is_sequential_pack(text)) return detail::parse_seq_pack(text, source);
     Pack p;
     p.source = source;
+    std::size_t layout_line = 0;
     bool have_format = false, have_version = false, have_wire = false, have_root = false,
          have_word_bytes = false, have_distribution = false, have_bit_order = false;
     std::set<std::string> kind_names, natives;
@@ -741,6 +824,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                             where + ": '" + kw + "' is not allowed inside a group");
         };
 
+        // Inside a group only `field`, `const`, `default`, `group` and `end` are
+        // allowed (0.7 ruling 18).
+        if (!open.empty() && kw != "field" && kw != "const" && kw != "default" && kw != "group" && kw != "end")
+            not_in_group();
+
         if (kw == "format") {
             arity(1);
             once(have_format);
@@ -789,6 +877,16 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             once(have_word_bytes);
             if (!parse_u32(t[1], p.word_bytes) || p.word_bytes == 0)
                 throw Error(ErrorKind::InvalidPack, p.format, "", where + ": word_bytes must be a positive integer");
+        } else if (kw == "layout") {
+            // v0.8: `layout fixed` is the default, the addressing of Version 0.2.
+            arity(1);
+            if (t[1] != "fixed")
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": layout '" + t[1] + "' is not fixed or sequential");
+            if (layout_line == 0) layout_line = lineno;
+        } else if (kw == "pad" || kw == "align" || kw == "presence" || kw == "if" || kw == "opt" || kw == "chain" ||
+                   kw == "fx" || kw == "length" || kw == "also") {
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        where + ": '" + kw + "' is a line of a sequential layout, and the pack's layout is fixed");
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -923,6 +1021,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     if (have_bit_order && have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(bit_order_line) + ": 'bit_order' applies to wire bits only");
+    if (layout_line != 0 && have_wire && p.wire != Wire::Bits)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(layout_line) + ": 'layout' applies to wire bits only");
     if (p.kinds.empty() && !p.whens.empty())
         throw Error(ErrorKind::BadDirective, p.format, p.whens.front().locator,
                     source + ":" + std::to_string(p.whens.front().line) + ": 'when' in a pack with no 'kind' line");
@@ -942,6 +1043,12 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 if (!in_group && f.locator == "." && scalar_item_wire(p.wire))
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 source + ":" + std::to_string(f.line) + ": the locator '.' outside a group");
+                // A bit length for a locator is a line of a sequential layout (0.8).
+                if (p.wire == Wire::Bits && !f.locator.empty() &&
+                    f.locator.find_first_not_of("0123456789") == std::string::npos)
+                    throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                source + ":" + std::to_string(f.line) +
+                                    ": a field with a bit length for a locator is a line of a sequential layout");
                 if (p.wire == Wire::Bits && detail::transform_is_bits(f.transform)) check_bits_field_len(p, f);
                 check_field_options(p, table_index, f);
             }
@@ -958,6 +1065,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         each_group(p, [&](GroupLine& g) { settle_group(p, g); });
         for (auto& k : p.kinds) each_group(k, [&](GroupLine& g) { settle_group(p, g); });
         if (p.wire == Wire::Bits) check_bits_groups(p);
+        check_fields_through_groups(p);
     }
 
     if (!have_distribution)

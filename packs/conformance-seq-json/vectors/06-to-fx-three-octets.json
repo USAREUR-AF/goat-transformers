@@ -1,0 +1,7 @@
+{
+  "name": "to-fx-three-octets",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-fx",
+  "input": "{\"n\":3,\"w\":85}",
+  "expect": "030101805500"
+}

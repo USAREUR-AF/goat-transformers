@@ -1,0 +1,12 @@
+{
+  "name": "one-item-in-every-list-roundtrip",
+  "from": "conformance-seq-groups",
+  "to": "conformance-seq-groups",
+  "input": "011782008005",
+  "expect": "011782008005",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.items.#": "1",
+    "probe.recs.#": "1"
+  }
+}

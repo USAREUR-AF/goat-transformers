@@ -3,6 +3,7 @@
 %% A `derive` line of a model module states that a target key follows from
 %% argument keys through one function of a fixed set.
 %% Function = copy | hypot | bearing | east_of | north_of | neg
+%%          | day_seconds | any | 'not' | parse_int | text_of   (Version 0.8)
 %%          | {scale, Factor} | {offset, Text | Number} | {join, Sep}
 -module(gt_derive).
 -export([parse_function/2, check_types/3, apply_all/2]).
@@ -24,6 +25,11 @@ function(<<"bearing">>) -> {bearing, 2};
 function(<<"east_of">>) -> {east_of, 2};
 function(<<"north_of">>) -> {north_of, 2};
 function(<<"neg">>) -> {neg, 1};
+function(<<"day_seconds">>) -> {day_seconds, 1};
+function(<<"any">>) -> {any, any};
+function(<<"not">>) -> {'not', 1};
+function(<<"parse_int">>) -> {parse_int, 1};
+function(<<"text_of">>) -> {text_of, 1};
 function(<<"scale:", F/binary>>) -> {{scale, gt_pack:factor(F)}, 1};
 function(<<"offset:", N/binary>>) -> _ = gt_pack:number(N), {{offset, N}, 1};
 function(<<"join:", Sep/binary>>) -> {{join, Sep}, any}.
@@ -31,6 +37,15 @@ function(<<"join:", Sep/binary>>) -> {{join, Sep}, any}.
 %% Do the declared types fit the function? -> {ok, Function} | {error, Why}.
 %% `offset` is resolved to integer or float addition here.
 check_types(copy, T, [T]) -> {ok, copy};
+check_types(day_seconds, float, [int]) -> {ok, day_seconds};
+check_types(any, int, Args) ->
+    case lists:all(fun(A) -> A =:= int end, Args) of
+        true -> {ok, any};
+        false -> {error, "any takes int arguments"}
+    end;
+check_types('not', int, [int]) -> {ok, 'not'};
+check_types(parse_int, int, [string]) -> {ok, parse_int};
+check_types(text_of, string, [int]) -> {ok, text_of};
 check_types({offset, Text}, int, [int]) ->
     try binary_to_integer(Text) of N -> {ok, {offset, N}}
     catch _:_ -> {error, "an offset on an int key is a decimal integer"}
@@ -42,7 +57,8 @@ check_types({join, _} = F, string, Args) ->
         false -> {error, "join takes string arguments"}
     end;
 check_types(F, float, Args) when F =:= hypot; F =:= bearing; F =:= east_of;
-                                 F =:= north_of; F =:= neg; element(1, F) =:= scale ->
+                                 F =:= north_of; F =:= neg;
+                                 is_tuple(F) andalso element(1, F) =:= scale ->
     case lists:all(fun(A) -> A =:= float end, Args) of
         true -> {ok, F};
         false -> {error, "the function takes float arguments"}
@@ -65,7 +81,7 @@ one({Target, Fun, Args}, Model) ->
     case maps:is_key(Target, Model) of
         true -> Model;
         false ->
-            case args(Args, Model, []) of
+            case fun_args(Fun, Args, Model) of
                 absent -> Model;
                 Vals ->
                     %% a result that is not finite leaves the target absent
@@ -76,6 +92,15 @@ one({Target, Fun, Args}, Model) ->
                     end
             end
     end.
+
+%% `any` is the one function whose target is set when only some arguments
+%% are present: it needs at least one.
+fun_args(any, Args, Model) ->
+    case [V || K <- Args, {ok, V} <- [maps:find(K, Model)]] of
+        [] -> absent;
+        Vals -> Vals
+    end;
+fun_args(_Fun, Args, Model) -> args(Args, Model, []).
 
 args([], _Model, Acc) -> lists:reverse(Acc);
 args([K | Rest], Model, Acc) ->
@@ -98,6 +123,30 @@ eval(bearing, [East, North]) ->
 eval(east_of, [Speed, Course]) -> Speed * math:sin(Course * rad_per_deg());
 eval(north_of, [Speed, Course]) -> Speed * math:cos(Course * rad_per_deg());
 eval(neg, [A]) -> -A;
+%% seconds since UTC midnight of an instant in epoch ms
+eval(day_seconds, [Ms]) -> (((Ms rem 86400000) + 86400000) rem 86400000) / 1000;
+eval(any, Vals) ->
+    case lists:any(fun(V) -> V =/= 0 end, Vals) of
+        true -> 1;
+        false -> 0
+    end;
+eval('not', [0]) -> 1;
+eval('not', [_]) -> 0;
+eval(parse_int, [Text]) ->
+    Digits = case Text of
+                 <<$-, R/binary>> -> R;
+                 _ -> Text
+             end,
+    case Digits =/= <<>> andalso lists:all(fun(C) -> C >= $0 andalso C =< $9 end,
+                                           binary_to_list(Digits)) of
+        true ->
+            case binary_to_integer(Text) of
+                N when N >= -(1 bsl 63), N < (1 bsl 63) -> N;
+                _ -> absent
+            end;
+        false -> absent
+    end;
+eval(text_of, [N]) -> integer_to_binary(N);
 eval({scale, {dec, F}}, [A]) -> A * F;
 eval({scale, {frac, Num, Den}}, [A]) -> A * Num / Den;
 eval({offset, N}, [A]) when is_integer(N), is_integer(A) ->

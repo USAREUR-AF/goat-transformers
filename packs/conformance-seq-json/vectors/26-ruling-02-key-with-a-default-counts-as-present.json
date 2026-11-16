@@ -1,0 +1,7 @@
+{
+  "name": "ruling-02-key-with-a-default-counts-as-present",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings",
+  "input": "{\"n\":1}",
+  "expect": "01800789010a00"
+}

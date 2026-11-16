@@ -1,0 +1,7 @@
+{
+  "name": "line-runs-past-its-extent",
+  "from": "conformance-seq-length",
+  "to": "conformance-seq-length",
+  "input": "010311a006a0",
+  "expect_error": "malformed-wire"
+}

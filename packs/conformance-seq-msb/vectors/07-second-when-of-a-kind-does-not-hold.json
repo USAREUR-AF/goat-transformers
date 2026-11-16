@@ -1,0 +1,7 @@
+{
+  "name": "second-when-of-a-kind-does-not-hold",
+  "from": "conformance-seq-msb",
+  "to": "conformance-seq-msb",
+  "input": "05a202083412ffa0",
+  "expect_error": "no-kind"
+}

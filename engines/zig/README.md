@@ -8,7 +8,9 @@ of spec Version 0.6 (`const`, `default`, value tables with `map` / `via`, the
 field options `swap` / `trim` / `optional`, an xml `root` per kind, `derive`
 lines in model modules, caller-supplied keys), maps the repeating parts of a
 message to lists (`list` lines in model modules and `group … end` blocks, spec
-Version 0.7), and converts between formats via the shared model.
+Version 0.7), reads and writes sequential binary layouts (`layout sequential`
+on the `bits` wire, spec Version 0.8), and converts between formats via the
+shared model.
 
 ## Build and run the conformance harness
 
@@ -24,7 +26,8 @@ line per failing vector; non-zero exit on any failure. Stdlib only.
 
 ## Model modules and distribution (spec Version 0.4)
 
-The harness loads `model/*.def` (byte order of file name) and then the packs.
+The harness loads `model/*.def` (`core.def` first, then byte order of file
+name, each module after the modules its `uses` lines name) and then the packs.
 `Engine.loadModel(text)` loads one module; `Engine.loadPack(text)` checks a pack
 against the modules loaded so far. `Engine.decode(format, bytes)`,
 `Engine.encode(format, entity)` and `Engine.convert(from, to, bytes, context)`
@@ -32,8 +35,9 @@ work on the loaded packs; `context` is null or the caller-supplied keys.
 `Engine.complete(entity)` applies the derivations on their own and
 `Engine.fillContext(entity, context)` sets the context keys the entity lacks.
 `Entity.kind_fmt` / `Entity.kind_name` are the recorded kind. `Entity.lists`
-maps a list name to its items; an item is an `Entity` with no residue and no
-kind, and may hold lists of its own. Results and the
+maps a list name to its items; an item is an `Entity` with no residue, and may
+hold lists of its own. An item of a sequential group whose body has kinds
+records its kind in the same two fields (`Item.kind`). Results and the
 failure message are allocated from `Engine.scratch` (by default the engine's
 allocator; the harness points it at one arena per vector). A
 failure the specification names is a Zig error whose name is the spec's kind
@@ -80,6 +84,21 @@ further `[<j>].` steps for nested lists.
   padded to whole words. An item holding a nested group counted by a locator
   ends where that group ends when it runs past `item <bits>`.
 
+## Sequential layouts (spec Version 0.8)
+
+A pack that holds `wire bits` and `layout sequential` is read by its own
+parser into a tree of lines: `field`, `also`, `const`, `pad`, `align`, `when`,
+`presence` with `if` blocks, `opt`, `chain` with `fx` lines, `length` blocks,
+`length … whole`, and `group` with `count`, `while`, `more` or `fx`, whose body
+may hold kinds. Decode walks the tree with a cursor; inside a `length` extent
+a line that starts at or after its end reads as absent. Encode computes each
+presence, `opt` and `fx` bit from the entity before writing it, writes a
+`length` after its block, and a `length … whole` after the message. The vector
+harness checks `"<list>[<i>].@kind"`.
+
+Model modules take `uses` lines and the derive functions `day_seconds`, `any`,
+`not`, `parse_int` and `text_of`.
+
 ## Readings where the specification leaves a choice
 
 - `bits`: a `const` counts toward the length a decode needs, as a `field` does.
@@ -109,3 +128,26 @@ further `[<j>].` steps for nested lists.
     locator is `bad-directive`.
   - `geojson` residue: an array or object comes back with no insignificant
     whitespace and with each number as it was written.
+- Sequential layouts, where no vector decides:
+  - The `length` options `bytes` or `bits`, `plus <n>` and `whole` are taken
+    in any order.
+  - A block has content when a line in it, at any depth of `if`, `opt`,
+    `chain` and `length` blocks, would write a present key or a non-empty
+    list. A `const` is not content.
+  - Inside a `length` extent that has ended: `const`, `pad`, `opt`, a
+    presence and a nested `length` read as absent (a presence as all zero);
+    a common `when` does not hold.
+  - `pad` and `const` past the end of the input are `malformed-wire`; `align`
+    past it is not, until a later line reads.
+  - A `default` inside an `if`, `opt`, `chain` or `length` block belongs to
+    the enclosing message, kind or group body.
+  - `map` and `typemap` are refused inside a group, and accepted inside the
+    other blocks.
+  - An item's recorded kind selects on encode only when it was recorded for
+    the format being written.
+  - `parse_int` takes an optional sign (`+` or `-`) and decimal digits; a
+    value outside 64 bits leaves the target absent.
+  - A module whose `uses` names a module that is not loaded is
+    `unknown-module` after `missing-distribution`, `missing-source` and
+    `distribution-refused`; a `derive` argument of such a module is
+    `unknown-module` where the derive lines are checked.

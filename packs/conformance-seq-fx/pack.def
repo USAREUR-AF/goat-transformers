@@ -1,0 +1,36 @@
+# Conformance probe pack for `presence <name> fx` (spec 0.8), most significant
+# bit first. Public. No kinds.
+#
+#   byte 0      n
+#   then        presence octets: 7 presence bits and one bit that is 1 when
+#               another octet follows. Bits are numbered from 1: octet 1 holds
+#               f.1 to f.7, octet 2 f.8 to f.14, octet 3 f.15 to f.21.
+#   f.1   x     f.7   y     f.8   z     f.15  w        one byte each
+#   not f.2     val, one byte: read when f.2 is 0
+#
+# No block names f.2 without `!`, so encode always writes f.2 as 0.
+format     conformance-seq-fx
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+presence f fx
+if f.1
+  field  probe.x  8  uint
+end
+if f.7
+  field  probe.y  8  uint
+end
+if f.8
+  field  probe.z  8  uint
+end
+if f.15
+  field  probe.w  8  uint
+end
+if !f.2
+  field  probe.val  8  uint
+end

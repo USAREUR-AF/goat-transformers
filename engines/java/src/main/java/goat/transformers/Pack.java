@@ -299,6 +299,10 @@ public final class Pack {
     public final Map<String, List<String[]>> tables;
     /** xml: true when at least one kind has its own {@code root} line. */
     public final boolean kindRoots;
+    /** bits wire with {@code layout sequential}: the lines of the message; null for every other pack. */
+    final Seq.Body seq;
+    /** {@code layout sequential}: the number of {@code presence} lines, each with its own slot of decode and encode state. */
+    final int seqPresences;
     /** native code to CoT type token, in file order (first wins). */
     public final Map<String, String> nativeToCot;
     /** CoT type token to native code (first line wins). */
@@ -308,7 +312,10 @@ public final class Pack {
                  Wire wire, String root, int wordBytes, boolean msbFirst, boolean hasKinds, List<When> commonWhens,
                  List<Kind> kinds, List<Field> fields, List<Line> typed, List<Scope> bodies, List<String[]> keyRefs,
                  Map<String, List<String[]>> tables,
-                 boolean kindRoots, Map<String, String> nativeToCot, Map<String, String> cotToNative) {
+                 boolean kindRoots, Map<String, String> nativeToCot, Map<String, String> cotToNative,
+                 Seq.Body seq, int seqPresences) {
+        this.seq = seq;
+        this.seqPresences = seqPresences;
         this.typed = typed;
         this.bodies = bodies;
         this.tables = tables;
@@ -374,6 +381,10 @@ public final class Pack {
      */
     public List<String> modelKeys() {
         LinkedHashSet<String> out = new LinkedHashSet<>();
+        if (seq != null) {
+            Seq.modelKeys(seq, "", out);
+            return new ArrayList<>(out);
+        }
         Set<Line> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         for (Kind k : kinds) {
             for (Line l : k.lines) if (seen.add(l)) modelKeys(l, "", out);   // common lines are shared by the kinds
@@ -401,7 +412,7 @@ public final class Pack {
 
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
-            "word_bytes", "bit_order", "root", "map", "kind", "requires", "when", "typemap");
+            "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap");
 
     /** What {@link #resolve} needs to know about the pack, and what it collects. */
     private static final class Ctx {
@@ -435,6 +446,24 @@ public final class Pack {
         LinkedHashMap<String, String> c2n = new LinkedHashMap<>();
         LinkedHashMap<String, List<String[]>> tables = new LinkedHashMap<>();
         String[] lines = text.split("\r?\n", -1);
+        // `layout` may stand anywhere in the file and decides how every line is read, so it is looked for first.
+        boolean sequential = false;
+        for (String l : lines) {
+            String t = l.trim();
+            if (!t.startsWith("layout")) continue;
+            List<String> tok;
+            try {
+                tok = tokenize(l, source);
+            } catch (GtException ex) {
+                break;   // reported with its line number when the file is read
+            }
+            if (tok.size() == 2 && tok.get(0).equals("layout")) {
+                sequential = tok.get(1).equals("sequential");
+                break;
+            }
+        }
+        Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs) : null;
+        String layout = null;
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
             String where = source + ":" + ln;
@@ -442,6 +471,20 @@ public final class Pack {
             if (tok.isEmpty()) continue;
             String kw = tok.get(0);
             List<String> args = tok.subList(1, tok.size());
+            if (seq != null) {
+                if (Seq.LINES.contains(kw)) {
+                    seq.line(kw, args, ln, where, format);
+                    continue;
+                }
+                if (seq.inBlock() && NOT_IN_GROUP.contains(kw)) {
+                    throw badDirective(format, null, where + ": " + kw + " is not allowed inside a block");
+                }
+                if (kw.equals("word_bytes")) {
+                    throw badDirective(format, null, where + ": word_bytes is not used in a sequential pack");
+                }
+            } else if (Seq.SEQUENTIAL_ONLY.contains(kw)) {
+                throw badDirective(format, null, where + ": " + kw + " is a line of a pack with layout sequential");
+            }
             if (!open.isEmpty() && NOT_IN_GROUP.contains(kw)) {
                 throw badDirective(format, null, where + ": " + kw + " is not allowed inside a group");
             }
@@ -497,6 +540,14 @@ public final class Pack {
                     } catch (NumberFormatException ex) {
                         throw bad(format, null, where + ": word_bytes must be a positive integer, got \"" + args.get(0) + "\"");
                     }
+                    break;
+                case "layout":
+                    arity(kw, args, 1, where, format);
+                    if (layout != null) throw dup(kw, where, format);
+                    if (!args.get(0).equals("fixed") && !args.get(0).equals("sequential")) {
+                        throw badDirective(format, null, where + ": layout must be fixed or sequential, got \"" + args.get(0) + "\"");
+                    }
+                    layout = args.get(0);
                     break;
                 case "bit_order":
                     arity(kw, args, 1, where, format);
@@ -589,8 +640,17 @@ public final class Pack {
             LineSpec g = open.peek();
             throw badDirective(format, g.locator, source + ":" + g.line + ": group " + g.key + " has no end");
         }
-        boolean hasKinds = !kindSpecs.isEmpty();
         // Checks that need the whole file run here, before missing-distribution (ruling 25 of 0.5).
+        Seq.Body seqRoot = null;
+        if (seq != null) {
+            if (wire != null && wire != Wire.BITS) {
+                throw badDirective(format, null, source + ": layout sequential is for the bits wire only");
+            }
+            seqRoot = seq.finish(tables, format);
+        } else if (layout != null && wire != null && wire != Wire.BITS) {
+            throw badDirective(format, null, source + ": layout is for the bits wire only");
+        }
+        boolean hasKinds = seqRoot != null ? seqRoot.hasKinds : !kindSpecs.isEmpty();
         if (!hasKinds) {
             for (LineSpec s : common.lines) {
                 if (s.key == null && !s.isConst) {
@@ -619,7 +679,11 @@ public final class Pack {
         List<Line> commonLines = new ArrayList<>();
         List<When> commonWhens = new ArrayList<>();
         List<Kind> kinds = new ArrayList<>();
-        if (wire != null) {
+        if (seq != null) {
+            ctx.fields.addAll(seq.fields);
+            ctx.typed.addAll(seq.typed);
+            ctx.bodies.addAll(seq.scopes);
+        } else if (wire != null) {
             Set<String> commonLists = new HashSet<>();
             for (LineSpec s : common.lines) {
                 Line l = resolve(s, ctx, false);
@@ -628,6 +692,7 @@ public final class Pack {
                 if (l instanceof Group) oneGroupPerList(commonLists, (Group) l, ctx);
             }
             if (!hasKinds) {
+                notThroughAGroup(commonLines, ctx);
                 kinds.add(new Kind(null, new ArrayList<>(), commonLines, new ArrayList<>(), root, common.defaults));
             }
             for (KindSpec ks : kindSpecs) {
@@ -644,6 +709,7 @@ public final class Pack {
                         oneGroupPerList(lists, (Group) l, ctx);
                     }
                 }
+                notThroughAGroup(all, ctx);
                 LinkedHashMap<String, String> defaults = new LinkedHashMap<>(common.defaults);
                 defaults.putAll(ks.defaults);
                 kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
@@ -670,7 +736,7 @@ public final class Pack {
             }
         }
         if (wire != Wire.XML && root != null) throw bad(format, null, source + ": root is xml only");
-        if (wire == Wire.BITS && wordBytes == null) throw bad(format, null, source + ": wire bits needs a word_bytes directive");
+        if (wire == Wire.BITS && wordBytes == null && seq == null) throw bad(format, null, source + ": wire bits needs a word_bytes directive");
         if (wire != Wire.BITS && wordBytes != null) throw bad(format, null, source + ": word_bytes is bits only");
         boolean mapsType = false;
         for (String[] r : keyRefs) if (r[1] != null && r[0].equals("type")) mapsType = true;
@@ -680,7 +746,37 @@ public final class Pack {
         ctx.fields.sort((a, b) -> Integer.compare(a.line, b.line));
         ctx.typed.sort((a, b) -> Integer.compare(a.line, b.line));
         return new Pack(format, version, distribution, sources, uses, wire, root, wb, "msb".equals(bitOrder), hasKinds,
-                commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n);
+                commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
+                seqRoot, seq == null ? 0 : seq.presences);
+    }
+
+    /**
+     * A {@code field} whose locator passes through the path of a {@code group} of the same scope is
+     * {@code bad-directive} (ruling 21 of 0.7; {@code field} lines only, ruling 15 of 0.8).
+     */
+    private static void notThroughAGroup(List<Line> lines, Ctx ctx) {
+        if (ctx.wire == Wire.BITS) return;
+        Map<String, Group> paths = null;
+        for (Line g : lines) {
+            if (!(g instanceof Group)) continue;
+            if (paths == null) paths = new java.util.HashMap<>();
+            paths.putIfAbsent(g.locator, (Group) g);
+        }
+        if (paths == null) return;
+        char sep = ctx.wire == Wire.XML ? '/' : '.';
+        for (Line l : lines) {
+            if (!(l instanceof Field) || l.locator.equals(".")) continue;
+            // Every proper prefix of the locator that ends before a separator. On xml the last part is @name or
+            // #text on the element the parts before it reach, so a field on an item element itself is among them.
+            String loc = l.locator;
+            for (int i = loc.indexOf(sep); i >= 0; i = loc.indexOf(sep, i + 1)) {
+                Group g = paths.get(loc.substring(0, i));
+                if (g != null) {
+                    throw badDirective(ctx.format, l.locator, ctx.source + ":" + l.line + ": the locator of field "
+                            + ((Field) l).key + " passes through the path of group " + g.list + " (" + g.locator + ")");
+                }
+            }
+        }
     }
 
     /** Within one scope a list is mapped by at most one group. */
@@ -753,6 +849,18 @@ public final class Pack {
                 oneGroupPerList(lists, (Group) l, ctx);
             }
         }
+        notThroughAGroup(lines, ctx);
+        if (ctx.wire == Wire.PROTOBUF) {
+            // a protobuf body is scalar only when every line is `.` (ruling 13 of 0.7)
+            boolean itself = false, other = false;
+            for (Line l : lines) {
+                if (l.locator.equals(".") && l instanceof Field) itself = true;
+                else other = true;
+            }
+            if (itself && other) {
+                throw badDirective(format, s.locator, where + ": a protobuf group body mixes . with other lines");
+            }
+        }
         Scope body = new Scope(lines, s.body.defaults);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
         if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsCodec.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
@@ -816,6 +924,9 @@ public final class Pack {
                         ? "transform \"" + s.arg + "\" is not valid on wire bits"
                         : "unknown transform \"" + s.arg + "\"";
                 throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": " + w);
+            }
+            if (s.locator.matches("\\d+")) {
+                throw badDirective(format, s.locator, where + ": a bit length for a locator is for a pack with layout sequential");
             }
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);

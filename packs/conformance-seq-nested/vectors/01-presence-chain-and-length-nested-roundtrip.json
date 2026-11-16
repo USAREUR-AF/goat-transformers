@@ -1,0 +1,17 @@
+{
+  "name": "presence-chain-and-length-nested-roundtrip",
+  "from": "conformance-seq-nested",
+  "to": "conformance-seq-nested",
+  "input": "01c002c50708210440028900",
+  "expect": "01c002c50708210440028900",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "5",
+    "probe.items[0].probe.x": "3",
+    "probe.items[0].probe.y": "4",
+    "probe.items[0].probe.val": "33",
+    "probe.items[1].probe.val": "34",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "9"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "open-billie-status-bits-roundtrip",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001f9b0d1001075460100000000000000000ffce0011013783c101800050",
+  "expect": "3e001f9b0d1001075460100000000000000000ffce0011013783c101800050",
+  "model": {
+    "cat062.mon": "1",
+    "cat062.cnf": "1",
+    "cat062.sim": "1",
+    "cat062.tse": "1",
+    "cat062.cst": "1",
+    "track.confirmed": "0",
+    "track.simulated": "1",
+    "track.final_update": "1",
+    "track.coasting": "1"
+  },
+  "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
+  "reference": "the block of the test maps_simulation_confirmation_coasting_and_final_update_status_bits"
+}

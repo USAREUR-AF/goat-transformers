@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-inside-a-chain",
+  "from": "conformance-seq-chain",
+  "to": "conformance-seq-chain",
+  "input": "010b",
+  "expect_error": "malformed-wire"
+}

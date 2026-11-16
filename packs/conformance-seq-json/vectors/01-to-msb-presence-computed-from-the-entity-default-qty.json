@@ -1,0 +1,7 @@
+{
+  "name": "to-msb-presence-computed-from-the-entity-default-qty",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-msb",
+  "input": "{\"n\":5,\"val\":6,\"x\":14,\"y\":-2,\"label\":\"ok\"}",
+  "expect": "05a301cefeb7b586"
+}

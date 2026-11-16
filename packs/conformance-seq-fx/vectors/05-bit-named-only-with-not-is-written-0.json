@@ -1,0 +1,10 @@
+{
+  "name": "bit-named-only-with-not-is-written-0",
+  "from": "conformance-seq-fx",
+  "to": "conformance-seq-fx",
+  "input": "01c011",
+  "expect": "01801100",
+  "model": {
+    "probe.x": "17"
+  }
+}

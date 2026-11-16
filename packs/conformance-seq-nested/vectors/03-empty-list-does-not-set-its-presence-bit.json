@@ -1,0 +1,10 @@
+{
+  "name": "empty-list-does-not-set-its-presence-bit",
+  "from": "conformance-seq-nested",
+  "to": "conformance-seq-nested",
+  "input": "0140000100",
+  "expect": "010000",
+  "model": {
+    "probe.nums.#": "0"
+  }
+}
