@@ -1,0 +1,7 @@
+{
+  "name": "packed-field",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753132020102",
+  "expect": "0a02753132020102"
+}

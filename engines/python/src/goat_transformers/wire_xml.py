@@ -21,6 +21,14 @@ from .packdef import parse_xml_locator
 _NAME_STOP = set(" \t\r\n/>=<\"'")
 _CHARREF = re.compile(r"&(#x[0-9a-fA-F]+|#[0-9]+|[A-Za-z][A-Za-z0-9]*);")
 _PREDEF = {"lt": "<", "gt": ">", "amp": "&", "quot": '"', "apos": "'"}
+MAX_DEPTH = 64  # ruling 35 of 0.8: elements, the root element is level 1
+
+
+def _is_char(n):
+    """Whether `n` is a character an XML document may hold (XML 1.0, Char)."""
+    return (
+        0x20 <= n <= 0xD7FF or n in (0x9, 0xA, 0xD) or 0xE000 <= n <= 0xFFFD or 0x10000 <= n <= 0x10FFFF
+    )
 
 
 _NAME = r'''[^ \t\r\n/>=<"']+'''
@@ -89,8 +97,11 @@ class _Reader:
             elif self.startswith("<!--"):
                 self.i += 4
                 self.skip_until("-->")
-            elif self.startswith("<!DOCTYPE") or self.startswith("<!doctype"):
-                self.fail("DOCTYPE is not supported")
+            elif self.startswith("<!"):
+                # a document type declaration is refused, so no entity is ever
+                # declared, expanded or fetched; CDATA and any other
+                # declaration have no place outside the root element
+                self.fail("a markup declaration outside the root element is not supported")
             else:
                 return
 
@@ -111,10 +122,13 @@ class _Reader:
 
         def rep(m):
             ref = m.group(1)
-            if ref.startswith("#x"):
-                return chr(int(ref[2:], 16))
             if ref.startswith("#"):
-                return chr(int(ref[1:]))
+                # at most eight digits are read, so the number stays small
+                digits = ref[2:] if ref.startswith("#x") else ref[1:]
+                n = int(digits, 16 if ref.startswith("#x") else 10) if len(digits.lstrip("0")) <= 8 else -1
+                if not _is_char(n):
+                    self.fail("character reference &%s; names no XML character" % ref[:16])
+                return chr(n)
             if ref in _PREDEF:
                 return _PREDEF[ref]
             self.fail("unknown entity &%s;" % ref)
@@ -130,20 +144,25 @@ class _Reader:
         self.skip_misc()
         if not self.startswith("<"):
             self.fail("expected the root element")
-        root = self.element()
+        root = self.element(1)
         self.skip_misc()
         if self.i != len(self.s):
             self.fail("content after the root element")
         return root
 
-    def element(self):
+    def element(self, level):
+        """Read the element that starts at `self.i`. The recursion is as deep
+        as the nesting, which `level` keeps to MAX_DEPTH."""
         s = self.s
+        if level > MAX_DEPTH:
+            self.fail("elements nested deeper than %d levels" % MAX_DEPTH)
         m = _START.match(s, self.i)
-        if m is None:
+        if m is None or m.group(1)[0] in "!?&":
             self.i += 1
             self.fail("expected a name")
         el = _El(m.group(1))
         i = m.end()
+        seen_names = None
         while True:
             m = _ATTR.match(s, i)
             if m is None:
@@ -153,9 +172,15 @@ class _Reader:
             raw = dq if dq is not None else sq
             if "<" in raw:
                 self.fail("'<' in attribute %r" % aname)
-            for seen, _ in el.attrs:
-                if seen == aname:
-                    self.fail("duplicate attribute %r" % aname)
+            if len(el.attrs) < 8:
+                dup = any(seen == aname for seen, _ in el.attrs)
+            else:
+                if seen_names is None:
+                    seen_names = {seen for seen, _ in el.attrs}
+                dup = aname in seen_names
+                seen_names.add(aname)
+            if dup:
+                self.fail("duplicate attribute %r" % aname[:40])
             el.attrs.append((aname, self.unescape(raw) if "&" in raw else raw))
             i = m.end()
         m = _START_END.match(s, i)
@@ -199,7 +224,7 @@ class _Reader:
                 self.i = j + 2
                 self.skip_until("?>")
             else:
-                el.children.append(self.element())
+                el.children.append(self.element(level + 1))
             i = self.i
 
 

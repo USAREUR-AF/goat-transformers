@@ -13,9 +13,20 @@ An independent, clean-room implementation of the gt engine, written from
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
 `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
-(`packs/conformance/load-vectors/`), and exits non-zero on any failure.
+(`packs/conformance/load-vectors/`), then `malformed inputs: N/N passed`, and
+exits non-zero on any failure.
 It also loads one pack alone through `gt_engine:load_packs/4` and runs that
 pack's vectors on the engine it gives (`named load: ...`).
+The malformed-input check takes the input of the first five conversion vectors
+of each pack and of every vector of the packs `conformance-malformed-*`, cuts
+it short at prefixes (every length when the input has at most 16 bytes, else 8
+lengths spread evenly) and replaces single bytes (at most 8 positions spread
+evenly, each with the next byte of a fixed table), and converts each result as
+the vector converts. It then runs fixed cases of rulings 36 to 40 on the
+`conformance-malformed-*` packs and `conformance-groups-protobuf`. A case passes when `convert` returns bytes or raises
+`error:{convert_error, Kind, Message}` with a named `Kind` and a `Message`
+beginning with the kind and a colon. The cases are a fixed function of the
+vectors, so two runs make the same ones.
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
 
@@ -78,7 +89,28 @@ raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key) and
 `Message` beginning with the kind and a colon. Wires: `xml` (a root per kind),
 `geojson`, `json`, `bits` (`bit_order lsb | msb`, fields past their word,
-`swap`, `trim`, `optional`), `protobuf`. Pack rules: `const`, `default`, `map`
+`swap`, `trim`, `optional`), `protobuf`.
+
+Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
+input makes `decode` or `convert` raise anything but `convert_error`. The
+readers raise their own tagged errors (`{xml_malformed, Why}`,
+`{json_malformed, Why}`, `{hex_malformed, Why}`, `{protobuf_malformed, Why}`)
+and `decode` reports each as `'malformed-wire'`. xml elements and json or
+geojson arrays and objects nest at most 64 deep. The json reader follows the
+RFC 8259 grammar for numbers, escapes and control characters. Hex text holds
+hex digits and whitespace (space, tab, CR, LF) only, an even number of digits.
+A protobuf message is checked whole: varints of at most ten bytes with a
+tenth byte of 0 or 1, in a packed field too, lengths and fixed-width values
+inside their message, wire types 0, 1, 2 and 5 only, field numbers 1 to
+2^29-1. An xml input with a document type declaration anywhere is refused;
+the only entities are the five predefined ones and numeric character
+references of decimal or hexadecimal digits that name a character XML 1.0
+allows. A json `\u` escape that is half of a surrogate pair is refused. A failure no reader or writer names is still a
+`convert_error` (`'malformed-wire'` from `decode`, `'transform-encode'` after
+it) whose message holds `[unclassified:`; the conformance runner fails a case
+that produces one. No atom is made from input.
+
+Pack rules: `const`, `default`, `map`
 tables with `via`, one key at several locators, and `group` blocks (common, in
 a kind, nested) on every wire: xml sibling elements, json and geojson arrays,
 protobuf repeated fields with packed scalars, bits items counted by a locator
@@ -110,4 +142,4 @@ implemented as the specification states them.
 - `src/gt_engine.erl`— engine instance and load checks, kind selection, decode /
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.
-- `src/gt_test.erl`  — conformance runner.
+- `src/gt_test.erl`  — conformance runner and the malformed-input check.

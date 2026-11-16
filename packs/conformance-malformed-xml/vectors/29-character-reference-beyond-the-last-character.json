@@ -1,0 +1,7 @@
+{
+  "name": "character-reference-beyond-the-last-character",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"&#x110000;\"/>",
+  "expect_error": "malformed-wire"
+}

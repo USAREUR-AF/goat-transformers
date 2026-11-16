@@ -1,0 +1,7 @@
+{
+  "name": "child-closed-by-its-parent-tag",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><contact callsign=\"A\"></event>",
+  "expect_error": "malformed-wire"
+}

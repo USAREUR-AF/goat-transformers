@@ -1,0 +1,7 @@
+{
+  "name": "well-formed-document",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><contact callsign=\"A\"/></event>",
+  "expect": "<event uid=\"u1\"><contact callsign=\"A\"/></event>"
+}

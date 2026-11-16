@@ -349,6 +349,11 @@ class Engine:
                 data = bytes(data).decode("utf-8")
             except UnicodeDecodeError as e:
                 raise MalformedWire("input is not UTF-8: %s" % e, format=fmt)
+        elif not data.isascii():
+            try:
+                data.encode("utf-8")
+            except UnicodeEncodeError:  # a str holding a lone surrogate
+                raise MalformedWire("input is not UTF-8 text: it holds a lone surrogate", format=fmt)
         if pack.seq is not None:
             return wire_seq.decode(pack, data)
         wire = pack.wire

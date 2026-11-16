@@ -1,0 +1,7 @@
+{
+  "name": "length-missing",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a",
+  "expect_error": "malformed-wire"
+}

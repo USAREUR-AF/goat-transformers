@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-string",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u",
+  "expect_error": "malformed-wire"
+}

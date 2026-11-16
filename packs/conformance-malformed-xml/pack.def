@@ -1,0 +1,12 @@
+# Conformance probe pack for malformed input on the `xml` wire
+# (spec/vector-format.md, "Malformed input"). Public. No kinds. The vectors
+# cut a document at each point of a tag, leave tags unbalanced, and nest
+# elements to the depth limit and one level beyond it.
+format  conformance-malformed-xml
+version 0.1.0
+distribution public
+source  "goat-transformers spec/engine-spec.md and spec/vector-format.md (synthetic probe format, no external standard)"
+wire    xml
+root    event
+field   uid       @uid               string
+field   callsign  contact/@callsign  string

@@ -23,17 +23,27 @@ it ends (ruling 4 of 0.7). A scope is read through a `View`: the message and
 the bit the scope starts at.
 """
 
+import re
+
 from .errors import MalformedWire, TransformEncodeFailure
 
 
+_HEX_WS = {ord(c): None for c in " \t\r\n"}
+_NOT_HEX = re.compile("[^0-9a-fA-F]")
+
+
 def _hex_to_bytes(data, fmt):
-    cleaned = "".join(data.split())  # whitespace ignored
+    """Hex text -> bytes (ruling 36 of 0.8). Space, tab, carriage return and
+    line feed are ignored wherever they stand; any other character that is not
+    one of `0-9a-fA-F` (a sign, a digit of another script, any other white
+    space) and an odd number of digits are `malformed-wire`."""
+    cleaned = data.translate(_HEX_WS)
+    bad = _NOT_HEX.search(cleaned)
+    if bad is not None:
+        raise MalformedWire("input is not hexadecimal: character %r" % bad.group(), format=fmt)
     if len(cleaned) % 2 != 0:
         raise MalformedWire("hex input has an odd number of digits", format=fmt)
-    try:
-        return bytes.fromhex(cleaned)
-    except ValueError as e:
-        raise MalformedWire("input is not hexadecimal: %s" % e, format=fmt)
+    return bytes.fromhex(cleaned)
 
 
 def _start(pack, loc):

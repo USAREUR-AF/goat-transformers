@@ -235,8 +235,9 @@ std::uint64_t low_mask(std::uint32_t len) {
 // Sign-extend the `len`-bit two's-complement value in `raw` to a signed integer.
 std::int64_t sign_extend(std::uint64_t raw, std::uint32_t len) {
     raw &= low_mask(len);
-    if (len < 64 && (raw & (std::uint64_t{1} << (len - 1))))
-        return static_cast<std::int64_t>(raw) - (std::int64_t{1} << len);
+    // The sign bits are set in the unsigned value: no signed arithmetic, which
+    // overflows for a negative 63-bit value.
+    if (len < 64 && (raw & (std::uint64_t{1} << (len - 1)))) raw |= ~low_mask(len);
     return static_cast<std::int64_t>(raw);
 }
 
@@ -341,7 +342,9 @@ std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_
         case Transform::Linscale: {
             double x = model_double(v);
             double scaled = x / f.scale_range * f.scale_maxpos;
-            if (!std::isfinite(scaled)) throw std::invalid_argument("linscale value out of range");
+            // llround of a value outside 64 bits is not defined.
+            if (!std::isfinite(scaled) || scaled < -9223372036854775808.0 || scaled >= 9223372036854775808.0)
+                throw std::invalid_argument("linscale value out of range");
             std::int64_t r = static_cast<std::int64_t>(std::llround(scaled));
             return static_cast<std::uint64_t>(r) & mask;
         }

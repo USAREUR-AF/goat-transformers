@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-vertical-tab",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01000000\u000b02000000",
+  "expect_error": "malformed-wire"
+}

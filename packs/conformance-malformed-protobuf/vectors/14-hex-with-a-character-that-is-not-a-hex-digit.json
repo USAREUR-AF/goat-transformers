@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-character-that-is-not-a-hex-digit",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275311g05",
+  "expect_error": "malformed-wire"
+}

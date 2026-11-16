@@ -4,9 +4,15 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 )
+
+// maxNesting is the deepest nesting a message may have: elements on xml (the
+// root is level 1), arrays and objects on json and geojson (the outermost is
+// level 1). A deeper message is malformed-wire (0.8 ruling 35).
+const maxNesting = 64
 
 type xattr struct{ name, value string }
 
@@ -26,10 +32,83 @@ func qname(n xml.Name) string {
 
 func isBlank(b []byte) bool { return len(bytes.TrimSpace(b)) == 0 }
 
+// xmlSurrogateRef returns the first numeric character reference of b that
+// names a surrogate code point (U+D800 to U+DFFF), "" when there is none.
+// The decoder refuses every other character XML 1.0 does not allow, and
+// would read this one as U+FFFD. Comments, processing instructions and CDATA
+// sections hold no references and are skipped.
+func xmlSurrogateRef(b []byte) string {
+	skip := func(i int, open, end string) (int, bool) {
+		if !bytes.HasPrefix(b[i:], []byte(open)) {
+			return i, false
+		}
+		j := bytes.Index(b[i+len(open):], []byte(end))
+		if j < 0 {
+			return len(b), true
+		}
+		return i + len(open) + j + len(end), true
+	}
+	for i := 0; i < len(b); {
+		if b[i] == '<' {
+			if j, ok := skip(i, "<!--", "-->"); ok {
+				i = j
+				continue
+			}
+			if j, ok := skip(i, "<![CDATA[", "]]>"); ok {
+				i = j
+				continue
+			}
+			if j, ok := skip(i, "<?", "?>"); ok {
+				i = j
+				continue
+			}
+		}
+		if b[i] != '&' || !bytes.HasPrefix(b[i:], []byte("&#")) {
+			i++
+			continue
+		}
+		// At most the digits of U+10FFFF with leading zeros matter; a longer
+		// run is read until its `;` or a byte that is not a digit.
+		j, base := i+2, 10
+		if j < len(b) && b[j] == 'x' {
+			j, base = j+1, 16
+		}
+		var n uint64
+		k := j
+		for ; k < len(b); k++ {
+			c, d := b[k], uint64(99)
+			switch {
+			case c >= '0' && c <= '9':
+				d = uint64(c - '0')
+			case base == 16 && c >= 'a' && c <= 'f':
+				d = uint64(c-'a') + 10
+			case base == 16 && c >= 'A' && c <= 'F':
+				d = uint64(c-'A') + 10
+			}
+			if d == 99 {
+				break
+			}
+			if n = n*uint64(base) + d; n > 0x10ffff {
+				n = 0x110000
+			}
+		}
+		if k > j && k < len(b) && b[k] == ';' && n >= 0xd800 && n <= 0xdfff {
+			return string(b[i : k+1])
+		}
+		i = k
+	}
+	return ""
+}
+
 // parseXML reads one document. It tolerates a prolog, comments and
 // whitespace outside the root, and checks that end tags match.
 func parseXML(format string, b []byte) (*xnode, error) {
 	bad := func(detail string) error { return &Error{Kind: ErrMalformedWire, Format: format, Detail: detail} }
+	if ref := xmlSurrogateRef(b); ref != "" {
+		return nil, bad("character reference " + ref + " names no character XML 1.0 allows")
+	}
+	// Strict: the five predefined entities and numeric character references
+	// only; a reference to any other entity is an error.
 	dec := xml.NewDecoder(bytes.NewReader(b))
 	dec.Strict = true
 	var root *xnode
@@ -44,6 +123,9 @@ func parseXML(format string, b []byte) (*xnode, error) {
 		}
 		switch t := tok.(type) {
 		case xml.StartElement:
+			if len(stack) >= maxNesting {
+				return nil, bad(fmt.Sprintf("elements are nested deeper than %d levels", maxNesting))
+			}
 			n := &xnode{name: qname(t.Name)}
 			for _, a := range t.Attr {
 				n.attrs = append(n.attrs, xattr{qname(a.Name), a.Value})
@@ -71,10 +153,18 @@ func parseXML(format string, b []byte) (*xnode, error) {
 				continue
 			}
 			stack[len(stack)-1].text.Write(t)
+		case xml.Directive:
+			// A document type declaration anywhere is refused, so no entity
+			// is ever declared (0.8 ruling 40).
+			return nil, bad("the input holds a document type or markup declaration")
 		}
 	}
 	if len(stack) != 0 {
 		return nil, bad("unclosed element <" + stack[len(stack)-1].name + ">")
+	}
+	// An input with no element is not a document (0.8 ruling 37).
+	if root == nil {
+		return nil, bad("the input holds no element")
 	}
 	return root, nil
 }
@@ -113,9 +203,6 @@ func decodeXML(d *decodeState, b []byte) error {
 	root, err := parseXML(p.Format, b)
 	if err != nil {
 		return err
-	}
-	if root == nil {
-		return &Error{Kind: ErrMissingRoot, Format: p.Format, Detail: "no root element"}
 	}
 	if !p.HasKinds() && root.name != p.Root {
 		return &Error{Kind: ErrMissingRoot, Format: p.Format, Detail: "root element is <" + root.name + ">, want <" + p.Root + ">"}

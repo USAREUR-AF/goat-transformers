@@ -39,6 +39,9 @@
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
+%% Marks the message of a failure that no reader or writer names.
+-define(UNCLASSIFIED, "[unclassified:").
+
 %% ===================================================================
 %% engine instance: model modules, packs, distribution limit (0.4)
 %% ===================================================================
@@ -400,11 +403,20 @@ convert(Engine, From, To, Bytes, Context) ->
                   true -> Entity;
                   false -> Entity#{kind := undefined}
               end,
-    Entity2 = case Same andalso Context =:= none of
-                  true -> Entity1;
-                  false -> complete(Engine, Entity1, Context)
-              end,
-    encode(ToPack, Entity2).
+    %% What a decoded message cannot be written as is a named error too: a
+    %% failure no encoder names is `transform-encode`, marked ?UNCLASSIFIED.
+    try
+        Entity2 = case Same andalso Context =:= none of
+                      true -> Entity1;
+                      false -> complete(Engine, Entity1, Context)
+                  end,
+        encode(ToPack, Entity2)
+    catch
+        error:{convert_error, _, _} = Named:Stack -> erlang:raise(error, Named, Stack);
+        Class:Reason ->
+            conv_error('transform-encode', ToPack, "the entity cannot be written ~s ~0P]",
+                       [?UNCLASSIFIED, {Class, Reason}, 8])
+    end.
 
 %% The step between decode and encode on its own: absent keys filled from
 %% the context, then the derivations.
@@ -525,27 +537,44 @@ first_kind([K | Rest], Pred) ->
 %% ===================================================================
 decode(Engine, Format, Bytes) -> decode(pack(Engine, Format), Bytes).
 
+%% No input makes a decode fail with anything but a conversion error
+%% (Malformed input, 0.8): what a reader raises for an input that is not a
+%% well-formed message of its wire is `malformed-wire`. A failure no reader
+%% names is `malformed-wire` too, its message marked ?UNCLASSIFIED: the
+%% conformance runner counts such a message as a defect of the engine.
 decode(Pack, Bytes) when is_list(Bytes) -> decode(Pack, iolist_to_binary(Bytes));
-decode(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
-decode(#{wire := Wire} = Pack, Bytes) ->
-    try
-        Ctx = open(Wire, Pack, Bytes),
-        {Kind, Lines} = select_decode(Pack, Wire, Ctx),
-        fit(Wire, Pack, Ctx, static_end(Wire, Lines)),
-        {Model, Lists, End} = decode_scope(Wire, Ctx, Lines, Pack),
-        fit(Wire, Pack, Ctx, End),             % the items extend the message
-        #{model => Model,
-          lists => Lists,
-          residue => residue(Wire, Ctx, Lines, Bytes),
-          src => maps:get(name, Pack),
-          kind => case Kind of
-                      undefined -> undefined;
-                      _ -> {maps:get(name, Pack), Kind}
-                  end}
+decode(Pack, Bytes) when is_binary(Bytes) ->
+    try decode_wire(Pack, Bytes)
     catch
+        error:{convert_error, _, _} = Named:Stack -> erlang:raise(error, Named, Stack);
         error:{protobuf_malformed, Why} ->
-            conv_error('malformed-wire', Pack, "protobuf: ~p", [Why])
+            conv_error('malformed-wire', Pack, "protobuf: ~0p", [Why]);
+        error:{json_malformed, Why} ->
+            conv_error('malformed-wire', Pack, "the input is not json: ~0p", [Why]);
+        error:{xml_malformed, Why} ->
+            conv_error('malformed-wire', Pack, "the input is not well-formed xml: ~0p", [Why]);
+        error:{hex_malformed, Why} ->
+            conv_error('malformed-wire', Pack, "the input is not hex text of even length: ~0p", [Why]);
+        Class:Reason ->
+            conv_error('malformed-wire', Pack, "the input cannot be read ~s ~0P]",
+                       [?UNCLASSIFIED, {Class, Reason}, 8])
     end.
+
+decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
+decode_wire(#{wire := Wire} = Pack, Bytes) ->
+    Ctx = open(Wire, Pack, Bytes),
+    {Kind, Lines} = select_decode(Pack, Wire, Ctx),
+    fit(Wire, Pack, Ctx, static_end(Wire, Lines)),
+    {Model, Lists, End} = decode_scope(Wire, Ctx, Lines, Pack),
+    fit(Wire, Pack, Ctx, End),             % the items extend the message
+    #{model => Model,
+      lists => Lists,
+      residue => residue(Wire, Ctx, Lines, Bytes),
+      src => maps:get(name, Pack),
+      kind => case Kind of
+                  undefined -> undefined;
+                  _ -> {maps:get(name, Pack), Kind}
+              end}.
 
 %% The lines of one scope (the message, or one item of a group) read from
 %% its place on the wire -> {Model, Lists, End}. End is, on bits, the
@@ -720,9 +749,7 @@ pb_unpack(_Tr, Occ) -> [Occ].
 
 %% ---- open the wire ----
 open(xml, Pack, Bytes) ->
-    Tree = try gt_xml:parse(Bytes)
-           catch _:_ -> conv_error('malformed-wire', Pack, "the input is not well-formed xml", [])
-           end,
+    Tree = gt_xml:parse(Bytes),
     case Pack of
         #{has_kinds := false, root := Root} ->
             case gt_xml:name(Tree) of
@@ -734,9 +761,7 @@ open(xml, Pack, Bytes) ->
         _ -> Tree
     end;
 open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
-    Json = try gt_json:parse(Bytes)
-           catch _:_ -> conv_error('malformed-wire', Pack, "the input is not json", [])
-           end,
+    Json = gt_json:parse(Bytes),
     case Json of
         {object, _} -> ok;
         _ -> conv_error('malformed-wire', Pack, "the input is not a json object", [])
@@ -751,9 +776,11 @@ open(bits, Pack, Bytes) ->
 open(protobuf, Pack, Bytes) ->
     gt_protobuf:parse_msg(unhex(Pack, Bytes)).
 
+%% The bytes of hex text (ruling 36 of 0.8).
 unhex(Pack, Bytes) ->
     try gt_bits:hex_to_bytes(Bytes)
-    catch _:_ -> conv_error('malformed-wire', Pack, "the input is not hex text of even length", [])
+    catch error:{hex_malformed, Why} ->
+        conv_error('malformed-wire', Pack, "the input is not hex text of even length: ~0p", [Why])
     end.
 
 %% ---- does a `when` hold? the value is compared with the raw wire value ----

@@ -1,0 +1,7 @@
+{
+  "name": "varint-value-cut-after-a-continuation-byte",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275311080",
+  "expect_error": "malformed-wire"
+}

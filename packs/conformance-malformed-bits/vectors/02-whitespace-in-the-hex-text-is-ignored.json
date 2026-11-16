@@ -1,0 +1,7 @@
+{
+  "name": "whitespace-in-the-hex-text-is-ignored",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01000000 02000000\n",
+  "expect": "0100000002000000"
+}

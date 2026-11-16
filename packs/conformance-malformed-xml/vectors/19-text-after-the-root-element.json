@@ -1,0 +1,7 @@
+{
+  "name": "text-after-the-root-element",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"/>x",
+  "expect_error": "malformed-wire"
+}

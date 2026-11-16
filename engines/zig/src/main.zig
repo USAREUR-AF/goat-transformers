@@ -39,23 +39,73 @@ const Residue = struct {
     value: []const u8,
 };
 
+// A map from a name to a value, kept as one array in insertion order. An
+// entity holds a handful of keys and a message may hold a list item per
+// input bit, so an item costs what its keys take and no more: a hash map's
+// smallest table is several hundred bytes. Names are not copied.
+fn SmallMap(comptime V: type) type {
+    return struct {
+        const Self = @This();
+        const Entry = struct { key: []const u8, value: V };
+        ptr: [*]Entry = undefined,
+        len: u32 = 0,
+        cap: u32 = 0,
+
+        fn find(self: *const Self, key: []const u8) ?*Entry {
+            for (self.ptr[0..self.len]) |*en| {
+                if (std.mem.eql(u8, en.key, key)) return en;
+            }
+            return null;
+        }
+        fn contains(self: *const Self, key: []const u8) bool {
+            return self.find(key) != null;
+        }
+        fn get(self: *const Self, key: []const u8) ?V {
+            return if (self.find(key)) |en| en.value else null;
+        }
+        fn put(self: *Self, alloc: std.mem.Allocator, key: []const u8, value: V) !void {
+            if (self.find(key)) |en| {
+                en.value = value;
+                return;
+            }
+            if (self.len == self.cap) {
+                // 1, 2, 4, …: the old array is given back to the allocator
+                const grown = if (self.cap == 0)
+                    try alloc.alloc(Entry, 1)
+                else
+                    try alloc.realloc(self.ptr[0..self.cap], @as(usize, self.cap) * 2);
+                self.ptr = grown.ptr;
+                self.cap = @intCast(grown.len);
+            }
+            self.ptr[self.len] = .{ .key = key, .value = value };
+            self.len += 1;
+        }
+    };
+}
+
 // An entity, and an item of a list: an item holds model keys and lists exactly
 // as an entity does, without residue and without a kind.
 const Entity = struct {
-    fields: std.StringHashMap(MV),
+    alloc: std.mem.Allocator,
+    fields: SmallMap(MV) = .{},
     // list name -> items; a present, empty list is an entry of length 0
-    lists: std.StringHashMap([]Entity),
-    residue: std.ArrayList(Residue),
+    lists: SmallMap([]Entity) = .{},
+    residue: std.ArrayListUnmanaged(Residue) = .{},
     // Entity.kind is the pair (format, kind name); null when no kind is recorded.
     kind_fmt: ?[]const u8 = null,
     kind_name: []const u8 = "",
 
     fn init(alloc: std.mem.Allocator) Entity {
-        return .{
-            .fields = std.StringHashMap(MV).init(alloc),
-            .lists = std.StringHashMap([]Entity).init(alloc),
-            .residue = std.ArrayList(Residue).init(alloc),
-        };
+        return .{ .alloc = alloc };
+    }
+    fn put(self: *Entity, key: []const u8, value: MV) !void {
+        try self.fields.put(self.alloc, key, value);
+    }
+    fn putList(self: *Entity, name: []const u8, items: []Entity) !void {
+        try self.lists.put(self.alloc, name, items);
+    }
+    fn addResidue(self: *Entity, r: Residue) !void {
+        try self.residue.append(self.alloc, r);
     }
     // `requires <key>`: the key is present, or the list is present with at
     // least one item.
@@ -2086,7 +2136,7 @@ const Engine = struct {
                 self.fail(err, "context key {s} is {s}; the value {s} is not", .{ kv.key, @tagName(ty), kv.value });
                 return err;
             };
-            if (!e.fields.contains(kv.key)) try e.fields.put(kv.key, mv);
+            if (!e.fields.contains(kv.key)) try e.put(kv.key, mv);
         }
     }
 
@@ -2142,7 +2192,7 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
             if (v.int != 0) nonzero = true;
         }
         if (!present) return false;
-        try e.fields.put(d.target, MV{ .int = if (nonzero) 1 else 0 });
+        try e.put(d.target, MV{ .int = if (nonzero) 1 else 0 });
         return true;
     }
     for (d.args) |a| if (!e.fields.contains(a)) return false;
@@ -2210,7 +2260,7 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
     }
     // a result that is not finite leaves the target absent
     if (out == .float and !std.math.isFinite(out.float)) return false;
-    try e.fields.put(d.target, out);
+    try e.put(d.target, out);
     return true;
 }
 
@@ -2364,38 +2414,60 @@ fn xmlNewNode(alloc: std.mem.Allocator, name: []const u8) !*XmlNode {
     return node;
 }
 
-// Replace the five predefined entities and numeric character references.
+// Is the code point a character XML 1.0 allows?
+fn xmlCharOk(c: u21) bool {
+    return c == 0x9 or c == 0xa or c == 0xd or (c >= 0x20 and c <= 0xd7ff) or (c >= 0xe000 and c <= 0xfffd) or (c >= 0x10000 and c <= 0x10ffff);
+}
+
+// Replace the five predefined entities and numeric character references. A
+// numeric reference is `&#` decimal digits `;` or `&#x` hexadecimal digits
+// `;` and names a character XML 1.0 allows; any other text after `&#` is
+// malformed (ruling 40 of 0.8). No other entity is expanded: its text stays.
 fn xmlUnescape(alloc: std.mem.Allocator, s: []const u8) ![]const u8 {
     if (std.mem.indexOfScalar(u8, s, '&') == null) return s;
+    const mw = E.@"malformed-wire";
     var out = std.ArrayList(u8).init(alloc);
     var i: usize = 0;
     while (i < s.len) {
         if (s[i] == '&') {
+            if (s.len - i >= 2 and s[i + 1] == '#') {
+                const semi = std.mem.indexOfScalarPos(u8, s, i, ';') orelse return mw;
+                var digits = s[i + 2 .. semi];
+                var base: u8 = 10;
+                if (digits.len > 0 and digits[0] == 'x') {
+                    digits = digits[1..];
+                    base = 16;
+                }
+                if (digits.len == 0) return mw;
+                var cp: u32 = 0;
+                for (digits) |c| {
+                    const d = std.fmt.charToDigit(c, base) catch return mw;
+                    cp = cp * base + d;
+                    if (cp > 0x10ffff) return mw;
+                }
+                if (!xmlCharOk(@intCast(cp))) return mw;
+                var ubuf: [4]u8 = undefined;
+                const n = std.unicode.utf8Encode(@intCast(cp), &ubuf) catch return mw;
+                try out.appendSlice(ubuf[0..n]);
+                i = semi + 1;
+                continue;
+            }
             if (std.mem.indexOfScalarPos(u8, s, i, ';')) |semi| {
                 const ent = s[i + 1 .. semi];
-                var done = true;
-                if (std.mem.eql(u8, ent, "amp")) {
-                    try out.append('&');
-                } else if (std.mem.eql(u8, ent, "lt")) {
-                    try out.append('<');
-                } else if (std.mem.eql(u8, ent, "gt")) {
-                    try out.append('>');
-                } else if (std.mem.eql(u8, ent, "quot")) {
-                    try out.append('"');
-                } else if (std.mem.eql(u8, ent, "apos")) {
-                    try out.append('\'');
-                } else if (ent.len > 1 and ent[0] == '#') {
-                    const cp: ?u21 = if (ent[1] == 'x' or ent[1] == 'X')
-                        std.fmt.parseInt(u21, ent[2..], 16) catch null
-                    else
-                        std.fmt.parseInt(u21, ent[1..], 10) catch null;
-                    var ubuf: [4]u8 = undefined;
-                    const n: ?u3 = if (cp) |c| (std.unicode.utf8Encode(c, &ubuf) catch null) else null;
-                    if (n) |len| {
-                        try out.appendSlice(ubuf[0..len]);
-                    } else done = false;
-                } else done = false;
-                if (done) {
+                const ch: ?u8 = if (std.mem.eql(u8, ent, "amp"))
+                    '&'
+                else if (std.mem.eql(u8, ent, "lt"))
+                    '<'
+                else if (std.mem.eql(u8, ent, "gt"))
+                    '>'
+                else if (std.mem.eql(u8, ent, "quot"))
+                    '"'
+                else if (std.mem.eql(u8, ent, "apos"))
+                    '\''
+                else
+                    null;
+                if (ch) |c| {
+                    try out.append(c);
                     i = semi + 1;
                     continue;
                 }
@@ -2407,63 +2479,76 @@ fn xmlUnescape(alloc: std.mem.Allocator, s: []const u8) ![]const u8 {
     return out.toOwnedSlice();
 }
 
+// The deepest nesting a message may have on `xml` (elements, the root is
+// level 1) and on `json` and `geojson` (arrays and objects, the outermost is
+// level 1): ruling 35 of 0.8.
+const max_nesting: usize = 64;
+
 const XmlParser = struct {
     s: []const u8,
     i: usize = 0,
     alloc: std.mem.Allocator,
 
+    const mw = E.@"malformed-wire";
+
     fn ws(self: *XmlParser) void {
         while (self.i < self.s.len and (self.s[self.i] == ' ' or self.s[self.i] == '\t' or self.s[self.i] == '\n' or self.s[self.i] == '\r')) self.i += 1;
     }
     fn starts(self: *XmlParser, pat: []const u8) bool {
-        return self.i + pat.len <= self.s.len and std.mem.eql(u8, self.s[self.i .. self.i + pat.len], pat);
+        return self.s.len - self.i >= pat.len and std.mem.eql(u8, self.s[self.i .. self.i + pat.len], pat);
     }
-    fn skipMisc(self: *XmlParser) void {
+    // Skip a construct that opens with `open_len` bytes at the cursor and
+    // ends with `close`; the input ending inside it is malformed.
+    fn skipPast(self: *XmlParser, open_len: usize, close: []const u8) !void {
+        const at = std.mem.indexOfPos(u8, self.s, self.i + open_len, close) orelse return mw;
+        self.i = at + close.len;
+    }
+    // Whitespace, comments and processing instructions. A document type
+    // declaration is not skipped: it is malformed wherever it stands
+    // (ruling 40 of 0.8).
+    fn skipMisc(self: *XmlParser) !void {
         while (true) {
             self.ws();
             if (self.starts("<?")) {
-                while (self.i < self.s.len and !self.starts("?>")) self.i += 1;
-                if (self.starts("?>")) self.i += 2;
+                try self.skipPast(2, "?>");
             } else if (self.starts("<!--")) {
-                while (self.i < self.s.len and !self.starts("-->")) self.i += 1;
-                if (self.starts("-->")) self.i += 3;
-            } else if (self.starts("<!")) {
-                while (self.i < self.s.len and self.s[self.i] != '>') self.i += 1;
-                if (self.i < self.s.len) self.i += 1;
+                try self.skipPast(4, "-->");
             } else break;
         }
     }
-    fn readName(self: *XmlParser) []const u8 {
+    fn readName(self: *XmlParser) ![]const u8 {
         const start = self.i;
         while (self.i < self.s.len) {
             const c = self.s[self.i];
             if (c == ' ' or c == '\t' or c == '\n' or c == '\r' or c == '=' or c == '>' or c == '/') break;
+            if (c == '<' or c == '"' or c == '\'' or c == '&') return mw;
             self.i += 1;
         }
+        if (self.i == start) return mw;
         return self.s[start..self.i];
     }
-    fn parseElement(self: *XmlParser) anyerror!*XmlNode {
-        if (self.i >= self.s.len or self.s[self.i] != '<') return E.@"malformed-wire";
+    // `depth`: the level of the element at the cursor, the root being 1.
+    fn parseElement(self: *XmlParser, depth: usize) anyerror!*XmlNode {
+        if (depth > max_nesting) return mw;
+        if (self.i >= self.s.len or self.s[self.i] != '<') return mw;
         self.i += 1;
-        const node = try xmlNewNode(self.alloc, self.readName());
-        if (node.name.len == 0) return E.@"malformed-wire";
+        const node = try xmlNewNode(self.alloc, try self.readName());
         // attributes
         while (true) {
             self.ws();
-            if (self.i >= self.s.len) return E.@"malformed-wire";
+            if (self.i >= self.s.len) return mw;
             if (self.s[self.i] == '>' or self.s[self.i] == '/') break;
-            const an = self.readName();
-            if (an.len == 0) return E.@"malformed-wire";
+            const an = try self.readName();
             self.ws();
-            if (self.i >= self.s.len or self.s[self.i] != '=') return E.@"malformed-wire";
+            if (self.i >= self.s.len or self.s[self.i] != '=') return mw;
             self.i += 1;
             self.ws();
-            if (self.i >= self.s.len or (self.s[self.i] != '"' and self.s[self.i] != '\'')) return E.@"malformed-wire";
+            if (self.i >= self.s.len or (self.s[self.i] != '"' and self.s[self.i] != '\'')) return mw;
             const q = self.s[self.i];
             self.i += 1;
             const vstart = self.i;
             while (self.i < self.s.len and self.s[self.i] != q) self.i += 1;
-            if (self.i >= self.s.len) return E.@"malformed-wire";
+            if (self.i >= self.s.len) return mw;
             const val = try xmlUnescape(self.alloc, self.s[vstart..self.i]);
             self.i += 1; // closing quote
             try node.attrs.append(.{ .name = an, .value = val });
@@ -2471,7 +2556,7 @@ const XmlParser = struct {
         if (self.s[self.i] == '/') {
             // self-closing "/>"
             self.i += 1;
-            if (self.i >= self.s.len or self.s[self.i] != '>') return E.@"malformed-wire";
+            if (self.i >= self.s.len or self.s[self.i] != '>') return mw;
             self.i += 1;
             return node;
         }
@@ -2481,33 +2566,53 @@ const XmlParser = struct {
         var closed = false;
         while (self.i < self.s.len) {
             if (self.starts("</")) {
+                // the closing tag names the open element
                 self.i += 2;
-                _ = self.readName();
+                const cn = try self.readName();
+                if (!std.mem.eql(u8, cn, node.name)) return mw;
                 self.ws();
-                if (self.i < self.s.len and self.s[self.i] == '>') self.i += 1;
+                if (self.i >= self.s.len or self.s[self.i] != '>') return mw;
+                self.i += 1;
                 closed = true;
                 break;
             } else if (self.starts("<!--")) {
-                while (self.i < self.s.len and !self.starts("-->")) self.i += 1;
-                if (self.starts("-->")) self.i += 3;
+                try self.skipPast(4, "-->");
+            } else if (self.starts("<?")) {
+                try self.skipPast(2, "?>");
+            } else if (self.starts("<![CDATA[")) {
+                // character data as written: kept escaped until the text is
+                // unescaped as a whole
+                const from = self.i + 9;
+                try self.skipPast(9, "]]>");
+                for (self.s[from .. self.i - 3]) |c| {
+                    if (c == '&') try textbuf.appendSlice("&amp;") else try textbuf.append(c);
+                }
+            } else if (self.starts("<!")) {
+                return mw;
             } else if (self.s[self.i] == '<') {
-                const c = try self.parseElement();
+                const c = try self.parseElement(depth + 1);
                 try node.children.append(c);
             } else {
                 try textbuf.append(self.s[self.i]);
                 self.i += 1;
             }
         }
-        if (!closed) return E.@"malformed-wire";
+        if (!closed) return mw;
         node.text = try xmlUnescape(self.alloc, try textbuf.toOwnedSlice());
         return node;
     }
 };
 
+// One well-formed document: the root element, and after it only whitespace,
+// comments and processing instructions. An input with no element is
+// malformed (ruling 37 of 0.8).
 fn parseXml(alloc: std.mem.Allocator, s: []const u8) !*XmlNode {
     var p = XmlParser{ .s = s, .alloc = alloc };
-    p.skipMisc();
-    return p.parseElement();
+    try p.skipMisc();
+    const root = try p.parseElement(1);
+    try p.skipMisc();
+    if (p.i != s.len) return E.@"malformed-wire";
+    return root;
 }
 
 // The node a locator's path reaches, and the locator's last segment.
@@ -2588,9 +2693,163 @@ fn parseJsonAsWritten(alloc: std.mem.Allocator, bytes: []const u8) anyerror!JVal
     return v;
 }
 
+// Is the input one JSON value (RFC 8259) followed only by whitespace, nested
+// no deeper than `max_nesting` arrays and objects? Checked before the input
+// is parsed, with no recursion: numbers, escapes and string characters as the
+// grammar has them (rulings 35 and 39 of 0.8).
+fn jsonValidate(s: []const u8) EngineError!void {
+    const mw = E.@"malformed-wire";
+    const St = enum { value, value_or_end, key, key_or_end, colon, after_value };
+    var open: [max_nesting]u8 = undefined; // '{' or '[' per open level
+    var depth: usize = 0;
+    var st: St = .value;
+    var i: usize = 0;
+    while (true) {
+        while (i < s.len and (s[i] == ' ' or s[i] == '\t' or s[i] == '\n' or s[i] == '\r')) i += 1;
+        if (st == .after_value and depth == 0) {
+            if (i != s.len) return mw; // a second value, or anything else
+            return;
+        }
+        if (i >= s.len) return mw;
+        const c = s[i];
+        switch (st) {
+            .value, .value_or_end => {
+                if (st == .value_or_end and c == ']') {
+                    i += 1;
+                    depth -= 1;
+                    st = .after_value;
+                    continue;
+                }
+                switch (c) {
+                    '{', '[' => {
+                        if (depth == max_nesting) return mw;
+                        open[depth] = c;
+                        depth += 1;
+                        i += 1;
+                        st = if (c == '{') .key_or_end else .value_or_end;
+                    },
+                    '"' => {
+                        i = try jsonSkipString(s, i);
+                        st = .after_value;
+                    },
+                    '-', '0'...'9' => {
+                        i = try jsonSkipNumber(s, i);
+                        st = .after_value;
+                    },
+                    't', 'f', 'n' => {
+                        const lit: []const u8 = if (c == 't') "true" else if (c == 'f') "false" else "null";
+                        if (!std.mem.startsWith(u8, s[i..], lit)) return mw;
+                        i += lit.len;
+                        st = .after_value;
+                    },
+                    else => return mw,
+                }
+            },
+            .key, .key_or_end => {
+                if (st == .key_or_end and c == '}') {
+                    i += 1;
+                    depth -= 1;
+                    st = .after_value;
+                    continue;
+                }
+                if (c != '"') return mw;
+                i = try jsonSkipString(s, i);
+                st = .colon;
+            },
+            .colon => {
+                if (c != ':') return mw;
+                i += 1;
+                st = .value;
+            },
+            .after_value => {
+                const in_obj = open[depth - 1] == '{';
+                if (c == ',') {
+                    i += 1;
+                    st = if (in_obj) .key else .value;
+                } else if ((c == '}' and in_obj) or (c == ']' and !in_obj)) {
+                    i += 1;
+                    depth -= 1;
+                } else return mw;
+            },
+        }
+    }
+}
+
+// One string, from its opening quote; the result is the index after its
+// closing quote.
+fn jsonSkipString(s: []const u8, start: usize) EngineError!usize {
+    const mw = E.@"malformed-wire";
+    var i = start + 1;
+    while (i < s.len) {
+        const c = s[i];
+        if (c == '"') return i + 1;
+        if (c < 0x20) return mw; // a raw control character
+        if (c != '\\') {
+            i += 1;
+            continue;
+        }
+        if (s.len - i < 2) return mw;
+        switch (s[i + 1]) {
+            '"', '\\', '/', 'b', 'f', 'n', 'r', 't' => i += 2,
+            'u' => {
+                const hi = try jsonHex4(s, i);
+                i += 6;
+                // half of a surrogate pair without its other half
+                if (hi >= 0xdc00 and hi <= 0xdfff) return mw;
+                if (hi >= 0xd800 and hi <= 0xdbff) {
+                    const lo = try jsonHex4(s, i);
+                    if (lo < 0xdc00 or lo > 0xdfff) return mw;
+                    i += 6;
+                }
+            },
+            else => return mw, // an unknown escape
+        }
+    }
+    return mw;
+}
+
+// The value of the `\\uXXXX` escape at `i`.
+fn jsonHex4(s: []const u8, i: usize) EngineError!u16 {
+    const mw = E.@"malformed-wire";
+    if (s.len - i < 6 or s[i] != '\\' or s[i + 1] != 'u') return mw;
+    var v: u16 = 0;
+    for (s[i + 2 .. i + 6]) |h| {
+        const d = std.fmt.charToDigit(h, 16) catch return mw;
+        v = v * 16 + d;
+    }
+    return v;
+}
+
+// One number: [-] (0 | 1-9 digits) [. digits] [e|E [+|-] digits].
+fn jsonSkipNumber(s: []const u8, start: usize) EngineError!usize {
+    const mw = E.@"malformed-wire";
+    var i = start;
+    if (i < s.len and s[i] == '-') i += 1;
+    if (i >= s.len or !isDigit(s[i])) return mw;
+    if (s[i] == '0') {
+        i += 1;
+        if (i < s.len and isDigit(s[i])) return mw; // a leading zero
+    } else {
+        while (i < s.len and isDigit(s[i])) i += 1;
+    }
+    if (i < s.len and s[i] == '.') {
+        i += 1;
+        if (i >= s.len or !isDigit(s[i])) return mw;
+        while (i < s.len and isDigit(s[i])) i += 1;
+    }
+    if (i < s.len and (s[i] == 'e' or s[i] == 'E')) {
+        i += 1;
+        if (i < s.len and (s[i] == '+' or s[i] == '-')) i += 1;
+        if (i >= s.len or !isDigit(s[i])) return mw;
+        while (i < s.len and isDigit(s[i])) i += 1;
+    }
+    return i;
+}
+
 // `as_written`: numbers are kept as their text (`.number_string`), for the
 // geojson wire, whose residue gives a number back as it was written.
 fn parseJsonObject(alloc: std.mem.Allocator, bytes: []const u8, as_written: bool) !std.json.ObjectMap {
+    try jsonValidate(bytes);
     const parsed = if (as_written)
         parseJsonAsWritten(alloc, bytes)
     else
@@ -3105,7 +3364,8 @@ fn readVarint(buf: []const u8, i: *usize) !u64 {
         if (i.* >= buf.len) return E.@"malformed-wire";
         const b = buf[i.*];
         i.* += 1;
-        if (shift >= 64) return E.@"malformed-wire";
+        // at most ten bytes, and the tenth holds bit 63 only (ruling 40 of 0.8)
+        if (shift >= 64 or (shift == 63 and b > 1)) return E.@"malformed-wire";
         result |= @as(u64, b & 0x7f) << @intCast(shift);
         if (b & 0x80 == 0) break;
         shift += 7;
@@ -3523,7 +3783,7 @@ fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, ob
             .array, .null => {}, // not carried
             else => {
                 if (lineMaps(lines, path)) continue;
-                try e.residue.append(.{ .fmt = p.format, .locator = path, .value = try jsonCanonText(alloc, en.value_ptr.*, false) });
+                try e.addResidue(.{ .fmt = p.format, .locator = path, .value = try jsonCanonText(alloc, en.value_ptr.*, false) });
             },
         }
     }
@@ -3573,7 +3833,7 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
         if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
             if (p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
         }
-        try e.fields.put(ln.key, mv);
+        try e.put(ln.key, mv);
         // a failed line is forgiven when another line of its key succeeds
         if (failed.count() > 0) _ = failed.orderedRemove(ln.key);
     }
@@ -3591,8 +3851,47 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
     return end;
 }
 
+// The items of a list whose number is not known before they are read. They
+// are gathered in chunks that are never copied while the list grows, then
+// moved once into one array of exactly their number.
+const ItemList = struct {
+    alloc: std.mem.Allocator,
+    chunks: std.ArrayListUnmanaged([]Entity) = .{},
+    used: usize = 0, // of the last chunk
+    total: usize = 0,
+
+    const max_chunk: usize = 4096;
+
+    fn append(self: *ItemList, it: Entity) !void {
+        if (self.chunks.items.len == 0 or self.used == self.chunks.items[self.chunks.items.len - 1].len) {
+            const n = @min(@max(self.total, 1), max_chunk);
+            try self.chunks.append(self.alloc, try self.alloc.alloc(Entity, n));
+            self.used = 0;
+        }
+        self.chunks.items[self.chunks.items.len - 1][self.used] = it;
+        self.used += 1;
+        self.total += 1;
+    }
+
+    fn finish(self: *ItemList) ![]Entity {
+        defer self.chunks.deinit(self.alloc);
+        if (self.total == 0) return &[0]Entity{};
+        const cs = self.chunks.items;
+        if (cs.len == 1 and self.used == cs[0].len) return cs[0];
+        const out = try self.alloc.alloc(Entity, self.total);
+        var at: usize = 0;
+        for (cs, 0..) |c, i| {
+            const n = if (i + 1 == cs.len) self.used else c.len;
+            @memcpy(out[at .. at + n], c[0..n]);
+            at += n;
+            self.alloc.free(c);
+        }
+        return out;
+    }
+};
+
 // One protobuf occurrence as an item.
-fn pbItem(alloc: std.mem.Allocator, p: *const Pack, body: *const Scope, cache: *PbCache, items: *std.ArrayList(Entity), self: PbEntry, sub: []const PbEntry, diag: *Diag) anyerror!void {
+fn pbItem(alloc: std.mem.Allocator, p: *const Pack, body: *const Scope, cache: *PbCache, items: *ItemList, self: PbEntry, sub: []const PbEntry, diag: *Diag) anyerror!void {
     var it = Entity.init(alloc);
     _ = try decodeScope(alloc, p, body, .{ .protobuf = .{ .entries = sub, .cache = cache, .self = self } }, &it, diag);
     try items.append(it);
@@ -3622,7 +3921,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 _ = try decodeScope(alloc, p, body, .{ .xml = c }, &items[i], diag);
                 i += 1;
             }
-            try e.lists.put(g.list, items);
+            try e.putList(g.list, items);
             return 0;
         },
         .geojson, .json => {
@@ -3639,7 +3938,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 items[i] = Entity.init(alloc);
                 _ = try decodeScope(alloc, p, body, .{ .json = .{ .v = el, .geo = p.wire == .geojson } }, &items[i], diag);
             }
-            try e.lists.put(g.list, items);
+            try e.putList(g.list, items);
             return 0;
         },
         .protobuf => |pd| {
@@ -3649,7 +3948,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             };
             const entries = found orelse return 0;
             const number = g.ppath[g.ppath.len - 1];
-            var items = std.ArrayList(Entity).init(alloc);
+            var items = ItemList{ .alloc = alloc };
             // a body of `.` lines only reads each occurrence as a scalar
             const scalar = !body.needs_sub and body.dot != null;
             const tk: TKind = if (body.dot) |dl| dl.transform.kind else .pstring;
@@ -3692,8 +3991,8 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 }
                 try pbItem(alloc, p, body, pd.cache, &items, en, sub, diag);
             }
-            if (items.items.len == 0) return 0; // no item occurs: the list is absent
-            try e.lists.put(g.list, items.items);
+            if (items.total == 0) return 0; // no item occurs: the list is absent
+            try e.putList(g.list, try items.finish());
             return 0;
         },
         .bits => |bd| {
@@ -3714,7 +4013,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 // <bits>`; the next item then starts where it ends
                 pos = @max(pos + need, iend);
             }
-            try e.lists.put(g.list, items);
+            try e.putList(g.list, items);
             return if (count == 0) 0 else pos;
         },
     }
@@ -3796,7 +4095,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 }
                 if (!mapped) {
                     const loc = try std.fmt.allocPrint(alloc, "@{s}", .{a.name});
-                    try e.residue.append(.{ .fmt = p.format, .locator = loc, .value = a.value });
+                    try e.addResidue(.{ .fmt = p.format, .locator = loc, .value = a.value });
                 }
             }
         },
@@ -3816,7 +4115,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                         .array, .object => try jsonCanonText(alloc, en.value_ptr.*, true),
                         else => try jsonStr(alloc, (try geoText(alloc, en.value_ptr.*)) orelse ""),
                     };
-                    try e.residue.append(.{ .fmt = p.format, .locator = loc, .value = val });
+                    try e.addResidue(.{ .fmt = p.format, .locator = loc, .value = val });
                 }
             }
         },
@@ -5051,7 +5350,17 @@ const SDec = struct {
     const Avail = enum { ok, absent };
 
     fn limit(self: *const SDec) usize {
-        return if (self.in_extent) self.soft_end else self.hard_end;
+        return if (self.in_extent) @min(self.soft_end, self.hard_end) else self.hard_end;
+    }
+
+    // The bits between the cursor and the limit; 0 when the cursor is at or
+    // past it.
+    fn left(self: *const SDec) usize {
+        return self.limit() -| self.pos;
+    }
+
+    fn fits(self: *const SDec, len: usize) bool {
+        return len <= self.left();
     }
 
     // May a line read `len` bits at the cursor? Inside a `length` extent a
@@ -5060,12 +5369,12 @@ const SDec = struct {
     fn avail(self: *SDec, len: usize, what: []const u8) !Avail {
         if (self.in_extent) {
             if (self.pos >= self.soft_end) return .absent;
-            if (self.pos + len > self.soft_end) {
+            if (!self.fits(len)) {
                 return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end of the length extent at bit {d}", .{ what, len, self.pos, self.soft_end });
             }
             return .ok;
         }
-        if (self.pos + len > self.hard_end) {
+        if (!self.fits(len)) {
             return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end of the message at bit {d}", .{ what, len, self.pos, self.hard_end });
         }
         return .ok;
@@ -5073,7 +5382,7 @@ const SDec = struct {
 
     // Like `avail`, where the line before said these bits follow.
     fn need(self: *SDec, len: usize, what: []const u8) !void {
-        if (self.pos + len > self.limit()) {
+        if (!self.fits(len)) {
             return bad(self.diag, self.alloc, mw, "{s}: {d} bits at bit {d} run past the end at bit {d}", .{ what, len, self.pos, self.limit() });
         }
     }
@@ -5103,7 +5412,7 @@ const SDec = struct {
         if (mv == .str and std.mem.eql(u8, key, "type")) {
             if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
         }
-        try se.e.fields.put(key, mv);
+        try se.e.put(key, mv);
     }
 
     fn nodes(self: *SDec, list: []const SNode, se: *SEnt, env: *?*const PEnv) anyerror!void {
@@ -5142,11 +5451,11 @@ const SDec = struct {
             .align_ => {
                 // stops at the end of the input or extent without error
                 const r = self.pos % n.len;
-                if (r != 0) self.pos = @max(self.pos, @min(self.pos + (n.len - r), self.limit()));
+                if (r != 0) self.pos += @min(n.len - r, self.left());
             },
             .when => {
                 // a common `when`: it must hold for any message of the format
-                if (self.pos + n.len > self.limit() or self.take(n.len) != n.value) {
+                if (!self.fits(n.len) or self.take(n.len) != n.value) {
                     return bad(self.diag, alloc, E.@"no-kind", "the common `when {d} {d}` does not hold", .{ n.len, n.value });
                 }
             },
@@ -5203,7 +5512,7 @@ const SDec = struct {
                 const count = stated - n.plus;
                 if (count < 0) return bad(self.diag, alloc, mw, "the stated length {d} is below its `plus {d}`", .{ stated, n.plus });
                 const nbits = if (n.in_bits) count else count * 8;
-                if (nbits > @as(i128, self.limit() - self.pos)) {
+                if (nbits > @as(i128, self.left())) {
                     return bad(self.diag, alloc, mw, "a length extent of {d} bits at bit {d} runs past the end at bit {d}", .{ nbits, self.pos, self.limit() });
                 }
                 const end = self.pos + @as(usize, @intCast(nbits));
@@ -5232,14 +5541,14 @@ const SDec = struct {
     }
 
     fn group(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
-        var items = std.ArrayList(Entity).init(self.alloc);
+        var items = ItemList{ .alloc = self.alloc };
         switch (n.mode) {
             .count => {
                 if (try self.avail(n.len, n.list) == .absent) return;
                 const cnt = self.take(n.len);
                 // a count larger than the bits left, before any item is read
-                if (cnt > self.limit() - self.pos) {
-                    return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.limit() - self.pos });
+                if (cnt > self.left()) {
+                    return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
                 }
                 for (0..@as(usize, @intCast(cnt))) |_| try self.item(n, &items, env);
             },
@@ -5268,10 +5577,10 @@ const SDec = struct {
         }
         // two groups of one list both on the wire: the later group's items
         // are kept (ruling 33 of 0.8)
-        try se.e.lists.put(n.list, items.items);
+        try se.e.putList(n.list, try items.finish());
     }
 
-    fn item(self: *SDec, n: *const SNode, items: *std.ArrayList(Entity), env: ?*const PEnv) anyerror!void {
+    fn item(self: *SDec, n: *const SNode, items: *ItemList, env: ?*const PEnv) anyerror!void {
         var it = Entity.init(self.alloc);
         var sit = SEnt{ .e = &it };
         try self.body(n.gbody.?, &sit, env);
@@ -5291,7 +5600,7 @@ const SDec = struct {
                 var ok = true;
                 for (k.whens) |*w| {
                     // a `when` any of whose bits lies beyond the input does not hold
-                    if (self.pos + w.len > self.limit() or self.take(w.len) != w.value) {
+                    if (!self.fits(w.len) or self.take(w.len) != w.value) {
                         ok = false;
                         break;
                     }
@@ -5931,6 +6240,208 @@ fn runLoadVector(alloc: std.mem.Allocator, text: []const u8) !?[]const u8 {
     return null;
 }
 
+// ---------------------------------------------------------------------------
+// Memory accounting
+// ---------------------------------------------------------------------------
+
+// An allocator that counts the bytes its child holds and refuses to go past
+// `cap`: what one `convert` may use is then a test result, not a kill by the
+// operating system.
+const CapAlloc = struct {
+    child: std.mem.Allocator,
+    cap: usize,
+    live: usize = 0,
+    peak: usize = 0,
+
+    fn allocator(self: *CapAlloc) std.mem.Allocator {
+        return .{ .ptr = self, .vtable = &.{ .alloc = alloc, .resize = resize, .free = free } };
+    }
+    fn grow(self: *CapAlloc, n: usize) bool {
+        if (n > self.cap -| self.live) return false;
+        self.live += n;
+        self.peak = @max(self.peak, self.live);
+        return true;
+    }
+    fn alloc(ctx: *anyopaque, len: usize, ptr_align: u8, ra: usize) ?[*]u8 {
+        const self: *CapAlloc = @ptrCast(@alignCast(ctx));
+        if (!self.grow(len)) return null;
+        const got = self.child.rawAlloc(len, ptr_align, ra);
+        if (got == null) self.live -= len;
+        return got;
+    }
+    fn resize(ctx: *anyopaque, buf: []u8, buf_align: u8, new_len: usize, ra: usize) bool {
+        const self: *CapAlloc = @ptrCast(@alignCast(ctx));
+        if (new_len > buf.len and new_len - buf.len > self.cap -| self.live) return false;
+        if (!self.child.rawResize(buf, buf_align, new_len, ra)) return false;
+        self.live = self.live - buf.len + new_len;
+        self.peak = @max(self.peak, self.live);
+        return true;
+    }
+    fn free(ctx: *anyopaque, buf: []u8, buf_align: u8, ra: usize) void {
+        const self: *CapAlloc = @ptrCast(@alignCast(ctx));
+        self.live -= buf.len;
+        self.child.rawFree(buf, buf_align, ra);
+    }
+};
+
+// ---------------------------------------------------------------------------
+// Malformed-input run (`--fuzz`)
+// ---------------------------------------------------------------------------
+
+// The kinds a `convert` with no context may fail with.
+const named_kinds = [_][]const u8{ "malformed-wire", "transform-decode", "transform-encode", "no-kind", "missing-root" };
+
+const fuzz_steps: usize = 96;
+// What one `convert` of the run may hold; more fails the run.
+const fuzz_mem_cap: usize = 256 << 20;
+const fuzz_bytes = "0f8<>\"'{}[],:\\/-+. &=\x00\x80\xff";
+
+const Fuzz = struct {
+    eng: *Engine,
+    counted: *CapAlloc,
+    arena: std.heap.ArenaAllocator,
+    seen: std.StringHashMap(void),
+    peak: usize = 0,
+    peak_what: []const u8 = "",
+    inputs: usize = 0,
+    failures: std.ArrayList([]const u8),
+
+    // One input through `convert`: it returns a message, or fails with a
+    // named kind and a message that begins with it. A panic ends the run.
+    fn one(self: *Fuzz, from: []const u8, to: []const u8, input: []const u8, what: []const u8, n: usize) !void {
+        _ = self.arena.reset(.free_all);
+        self.counted.peak = 0;
+        self.eng.scratch = self.arena.allocator();
+        defer self.eng.scratch = self.eng.alloc;
+        self.inputs += 1;
+        const res = self.eng.convert(from, to, input, null);
+        if (self.counted.peak > self.peak) {
+            self.peak = self.counted.peak;
+            self.peak_what = try std.fmt.allocPrint(self.eng.alloc, "{s}, {s} {d}, {d} input bytes", .{ from, what, n, input.len });
+        }
+        if (res) |_| {} else |err| {
+            const name = @errorName(err);
+            var ok = false;
+            if (err == error.OutOfMemory) {
+                try self.failures.append(try std.fmt.allocPrint(self.eng.alloc, "{s} -> {s}, {s} {d}: {d} input bytes need more than {d} bytes of memory", .{ from, to, what, n, input.len, fuzz_mem_cap }));
+                return;
+            }
+            for (named_kinds) |k| {
+                if (std.mem.eql(u8, name, k) and beginsWithKind(self.eng.last_error, k)) ok = true;
+            }
+            if (!ok and self.failures.items.len < 200) {
+                try self.failures.append(try std.fmt.allocPrint(self.eng.alloc, "{s} -> {s}, {s} {d}: {s} is not a named kind", .{ from, to, what, n, name }));
+            }
+        }
+    }
+
+    // Every vector input cut at prefixes and with single bytes replaced: all
+    // of them when the input is short, else `fuzz_steps` evenly spaced.
+    fn vector(self: *Fuzz, text: []const u8) !void {
+        const alloc = self.eng.alloc;
+        const parsed = std.json.parseFromSliceLeaky(JValue, alloc, text, .{}) catch return;
+        if (parsed != .object) return;
+        const from = getStr(parsed.object, "from") orelse return;
+        const to = getStr(parsed.object, "to") orelse return;
+        const input = getStr(parsed.object, "input") orelse return;
+        if (self.eng.findPack(from) == null or self.eng.findPack(to) == null) return;
+        const len = input.len;
+        const steps = @min(len, fuzz_steps);
+        for (0..steps) |k| try self.one(from, to, input[0 .. k * len / steps], "prefix", k * len / steps);
+        const buf = try alloc.dupe(u8, input);
+        for (0..steps) |k| {
+            const at = k * len / steps;
+            const keep = buf[at];
+            buf[at] = keep ^ 0x01;
+            try self.one(from, to, buf, "bit flipped at byte", at);
+            for (0..3) |j| {
+                buf[at] = fuzz_bytes[(at * 7 + j * 11 + len) % fuzz_bytes.len];
+                try self.one(from, to, buf, "byte replaced at", at);
+            }
+            buf[at] = keep;
+        }
+        if (!self.seen.contains(from)) {
+            try self.seen.put(from, {});
+            try self.deep(from, to);
+        }
+    }
+
+    // Once per format: text nested 200000 levels deep, and hex of one unit
+    // repeated to 700000 digits, which a sequential pack reads as some
+    // hundred thousand list items.
+    fn deep(self: *Fuzz, from: []const u8, to: []const u8) !void {
+        const alloc = self.eng.alloc;
+        const units = [_][]const u8{ "<a>", "<a b=\"c\">", "[", "{\"a\":", "{\"properties\":{\"a\":[", "ff", "82", "0a", "0b", "0aff", "22ffffffffffffffffff01" };
+        for (units, 0..) |u, n| {
+            const reps: usize = if (n < 5) 200000 else 700000 / u.len;
+            const big = try alloc.alloc(u8, u.len * reps);
+            defer alloc.free(big);
+            for (0..reps) |r| @memcpy(big[r * u.len ..][0..u.len], u);
+            try self.one(from, to, big, "repeated unit", n);
+        }
+    }
+};
+
+// What a list item may cost: 200000 one-byte items of the pack
+// `conformance-seq-groups` (an indicator bit, six bits of `probe.qty`, an
+// `opt` bit of 0) must decode within `list_mem_cap` bytes.
+const list_items: usize = 200000;
+const list_mem_cap: usize = 128 << 20;
+
+// null: the pack is not loaded. Else the most bytes the decode held.
+fn listMemory(eng: *Engine) !?usize {
+    const fmt = "conformance-seq-groups";
+    if (eng.findPack(fmt) == null) return null;
+    const input = try eng.alloc.alloc(u8, 4 + 2 * list_items + 4);
+    defer eng.alloc.free(input);
+    @memset(input, '0');
+    for (0..list_items) |i| input[4 + 2 * i] = '8';
+    for (0..list_items) |i| input[5 + 2 * i] = '2';
+    var counted = CapAlloc{ .child = std.heap.page_allocator, .cap = list_mem_cap };
+    var arena = std.heap.ArenaAllocator.init(counted.allocator());
+    defer arena.deinit();
+    eng.scratch = arena.allocator();
+    defer eng.scratch = eng.alloc;
+    const e = try eng.decode(fmt, input);
+    const items = e.lists.get("probe.items") orelse return error.Unexpected;
+    if (items.len != list_items) return error.Unexpected;
+    return counted.peak;
+}
+
+fn runFuzz(eng: *Engine, packs_dir: []const u8, pack_dirs: []const []const u8, stdout: anytype) !bool {
+    const alloc = eng.alloc;
+    var counted = CapAlloc{ .child = std.heap.page_allocator, .cap = fuzz_mem_cap };
+    var fz = Fuzz{
+        .eng = eng,
+        .counted = &counted,
+        .arena = std.heap.ArenaAllocator.init(counted.allocator()),
+        .seen = std.StringHashMap(void).init(alloc),
+        .failures = std.ArrayList([]const u8).init(alloc),
+    };
+    defer fz.arena.deinit();
+    for (pack_dirs) |dir| {
+        const vdir_path = try std.fmt.allocPrint(alloc, "{s}/{s}/vectors", .{ packs_dir, dir });
+        const vnames = (try sortedNames(alloc, vdir_path, .file, ".json")) orelse continue;
+        for (vnames) |vn| {
+            const vpath = try std.fmt.allocPrint(alloc, "{s}/{s}", .{ vdir_path, vn });
+            const before = fz.failures.items.len;
+            try fz.vector(try std.fs.cwd().readFileAlloc(alloc, vpath, max_file));
+            for (fz.failures.items[before..]) |*f| f.* = try std.fmt.allocPrint(alloc, "{s}/{s}: {s}", .{ dir, vn, f.* });
+        }
+    }
+    for (fz.failures.items) |f| try stdout.print("FAIL {s}\n", .{f});
+    try stdout.print("malformed inputs: {d} run, {d} failed\n", .{ fz.inputs, fz.failures.items.len });
+    try stdout.print("most memory for one input: {d} bytes ({s}); the limit is {d}\n", .{ fz.peak, fz.peak_what, fuzz_mem_cap });
+    var list_ok = true;
+    if (listMemory(eng)) |got| {
+        if (got) |peak| try stdout.print("list memory: {d} bytes for {d} items, {d} per item; the limit is {d}\n", .{ peak, list_items, peak / list_items, list_mem_cap });
+    } else |err| {
+        list_ok = false;
+        try stdout.print("FAIL list memory: {d} items of conformance-seq-groups do not decode within {d} bytes ({s})\n", .{ list_items, list_mem_cap, @errorName(err) });
+    }
+    return fz.failures.items.len == 0 and list_ok;
+}
+
 pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
@@ -5941,7 +6452,7 @@ pub fn main() !void {
 
     // usage: gt-engine-zig [<packs-dir>] [--models <dir>] [--packs-only <a>,<b>…]
     //        [--max-distribution public|controlled] [--model-keys <format>]
-    //        [--convert <from> <to> [--set <key>=<value>]…]
+    //        [--convert <from> <to> [--set <key>=<value>]…] [--fuzz]
     const args = try std.process.argsAlloc(alloc);
     var packs_dir: []const u8 = "../../packs";
     var models_opt: ?[]const u8 = null;
@@ -5949,6 +6460,8 @@ pub fn main() !void {
     var only_opt: ?[]const u8 = null;
     var conv_from: ?[]const u8 = null;
     var conv_to: []const u8 = "";
+    var fuzz = false;
+    var peak = false;
     var sets = std.ArrayList(KV).init(alloc);
     var eng = Engine.init(alloc);
     var ai: usize = 1;
@@ -5988,6 +6501,10 @@ pub fn main() !void {
                     std.process.exit(2);
                 });
             }
+        } else if (eq(u8, a, "--fuzz")) {
+            fuzz = true;
+        } else if (eq(u8, a, "--peak")) {
+            peak = true;
         } else if (std.mem.startsWith(u8, a, "--")) {
             try stdout.print("error: unknown option {s}\n", .{a});
             try bw.flush();
@@ -6037,6 +6554,17 @@ pub fn main() !void {
     if (conv_from) |from| {
         const input = try std.io.getStdIn().readToEndAlloc(alloc, max_file);
         const msg = std.mem.trim(u8, input, " \t\r\n");
+        if (peak) {
+            // --peak: the bytes the decode alone holds at its highest, on
+            // standard error
+            var counted = CapAlloc{ .child = std.heap.page_allocator, .cap = std.math.maxInt(usize) };
+            var parena = std.heap.ArenaAllocator.init(counted.allocator());
+            defer parena.deinit();
+            eng.scratch = parena.allocator();
+            _ = eng.decode(from, msg) catch {};
+            eng.scratch = alloc;
+            std.io.getStdErr().writer().print("peak: {d} bytes for a decode of {d} input bytes\n", .{ counted.peak, msg.len }) catch {};
+        }
         const out = eng.convert(from, conv_to, msg, if (sets.items.len > 0) sets.items else null) catch |err| {
             if (err == error.OutOfMemory) return err;
             std.io.getStdErr().writer().print("error: {s}\n", .{eng.last_error}) catch {};
@@ -6056,6 +6584,14 @@ pub fn main() !void {
         };
         for (try modelKeys(alloc, p)) |k| try stdout.print("{s}\n", .{k});
         try bw.flush();
+        return;
+    }
+
+    // --fuzz: every vector input cut short and with single bytes replaced
+    if (fuzz) {
+        const ok = try runFuzz(&eng, packs_dir, pack_dirs, stdout);
+        try bw.flush();
+        if (!ok) std.process.exit(1);
         return;
     }
 

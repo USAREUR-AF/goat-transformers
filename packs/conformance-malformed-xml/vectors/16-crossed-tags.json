@@ -1,0 +1,7 @@
+{
+  "name": "crossed-tags",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><a><b></a></b></event>",
+  "expect_error": "malformed-wire"
+}

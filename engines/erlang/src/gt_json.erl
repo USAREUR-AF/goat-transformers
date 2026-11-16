@@ -8,6 +8,9 @@
 -export([parse/1, parse_raw/1, get/2, escape/1, encode/1, number_text/1, is_number_text/1,
          has_duplicate_member/1]).
 
+%% Arrays and objects nest at most this deep; the outermost is level 1.
+-define(MAX_DEPTH, 64).
+
 parse(Cs) when is_list(Cs) -> parse(list_to_binary(Cs));
 parse(Bin) when is_binary(Bin) -> parse(Bin, num).
 
@@ -15,12 +18,17 @@ parse(Bin) when is_binary(Bin) -> parse(Bin, num).
 %% encode/1 writes it back as that text.
 parse_raw(Bin) when is_binary(Bin) -> parse(Bin, raw).
 
+%% The reader is total: any input that is not one JSON value (RFC 8259)
+%% followed only by whitespace raises error:{json_malformed, Why}, and so
+%% does nesting deeper than ?MAX_DEPTH arrays and objects (ruling 35 of 0.8).
 parse(Bin, Mode) ->
-    {V, Rest} = value(ws(Bin), Mode),
+    {V, Rest} = value(ws(Bin), Mode, 0),
     case ws(Rest) of
         <<>> -> V;
-        _ -> erlang:error({json_trailing, Rest})
+        _ -> bad(trailing_content)
     end.
+
+bad(Why) -> erlang:error({json_malformed, Why}).
 
 %% member lookup on an object
 get({object, Members}, Key) when is_binary(Key) ->
@@ -31,64 +39,97 @@ get({object, Members}, Key) when is_binary(Key) ->
 get({object, _} = O, Key) when is_list(Key) -> get(O, list_to_binary(Key));
 get(_, _) -> absent.
 
-value(<<"{", R/binary>>, Mode) -> object(ws(R), [], Mode);
-value(<<"[", R/binary>>, Mode) -> array(ws(R), [], Mode);
-value(<<"\"", R/binary>>, _) -> string_lit(R, []);
-value(<<"true", R/binary>>, _) -> {true, R};
-value(<<"false", R/binary>>, _) -> {false, R};
-value(<<"null", R/binary>>, _) -> {null, R};
-value(Bin, num) -> number_lit(Bin);
-value(Bin, raw) ->
+value(<<"{", R/binary>>, Mode, Depth) -> object(ws(R), [], Mode, deeper(Depth));
+value(<<"[", R/binary>>, Mode, Depth) -> array(ws(R), [], Mode, deeper(Depth));
+value(<<"\"", R/binary>>, _, _) -> string_lit(R, 0, []);
+value(<<"true", R/binary>>, _, _) -> {true, R};
+value(<<"false", R/binary>>, _, _) -> {false, R};
+value(<<"null", R/binary>>, _, _) -> {null, R};
+value(Bin, num, _) -> number_lit(Bin);
+value(Bin, raw, _) ->
     {_, Rest} = number_lit(Bin),
     Len = byte_size(Bin) - byte_size(Rest),
     {{num, binary:part(Bin, 0, Len)}, Rest}.
 
-object(<<"}", R/binary>>, [], _) -> {{object, []}, R};
-object(<<"\"", R/binary>>, Acc, Mode) ->
-    {Key, R1} = string_lit(R, []),
-    <<":", R2/binary>> = ws(R1),
-    {Val, R3} = value(ws(R2), Mode),
+%% The outermost array or object is level 1.
+deeper(Depth) when Depth < ?MAX_DEPTH -> Depth + 1;
+deeper(_) -> bad(nesting_too_deep).
+
+object(<<"}", R/binary>>, [], _, _) -> {{object, []}, R};
+object(<<"\"", R/binary>>, Acc, Mode, Depth) ->
+    {Key, R1} = string_lit(R, 0, []),
+    R2 = case ws(R1) of
+             <<":", After/binary>> -> After;
+             _ -> bad(expected_colon)
+         end,
+    {Val, R3} = value(ws(R2), Mode, Depth),
     case ws(R3) of
-        <<",", R4/binary>> -> object(ws(R4), [{Key, Val} | Acc], Mode);
-        <<"}", R4/binary>> -> {{object, lists:reverse([{Key, Val} | Acc])}, R4}
-    end.
+        <<",", R4/binary>> ->
+            case ws(R4) of
+                <<"\"", _/binary>> = R5 -> object(R5, [{Key, Val} | Acc], Mode, Depth);
+                _ -> bad(expected_member_name)
+            end;
+        <<"}", R4/binary>> -> {{object, lists:reverse([{Key, Val} | Acc])}, R4};
+        _ -> bad(expected_comma_or_brace)
+    end;
+object(_, _, _, _) -> bad(expected_member_name).
 
-array(<<"]", R/binary>>, [], _) -> {{array, []}, R};
-array(Bin, Acc, Mode) ->
-    {Val, R1} = value(Bin, Mode),
+array(<<"]", R/binary>>, [], _, _) -> {{array, []}, R};
+array(Bin, Acc, Mode, Depth) ->
+    {Val, R1} = value(Bin, Mode, Depth),
     case ws(R1) of
-        <<",", R2/binary>> -> array(ws(R2), [Val | Acc], Mode);
-        <<"]", R2/binary>> -> {{array, lists:reverse([Val | Acc])}, R2}
+        <<",", R2/binary>> -> array(ws(R2), [Val | Acc], Mode, Depth);
+        <<"]", R2/binary>> -> {{array, lists:reverse([Val | Acc])}, R2};
+        _ -> bad(expected_comma_or_bracket)
     end.
 
-%% Runs of plain characters are taken as one sub-binary.
-string_lit(Bin, Acc) ->
-    {Pos, 1} = binary:match(Bin, [<<"\"">>, <<"\\">>]),
-    <<Run:Pos/binary, C, R/binary>> = Bin,
-    Acc1 = case Pos of
-               0 -> Acc;
-               _ -> [Run | Acc]
-           end,
-    case {C, R} of
-        {$", _} -> {iolist_to_binary(lists:reverse(Acc1)), R};
-        {$\\, <<"u", R1/binary>>} ->
-            {Cp, R2} = unicode_escape(R1),
-            string_lit(R2, [<<Cp/utf8>> | Acc1]);
-        {$\\, <<E, R1/binary>>} -> string_lit(R1, [unescape(E) | Acc1])
+%% The content of a string after its opening quote -> {Binary, Rest}. N
+%% counts the plain bytes read so far, taken as one sub-binary. A raw
+%% control character (below U+0020) is refused (ruling 39 of 0.8).
+string_lit(Bin, N, Acc) ->
+    case Bin of
+        <<Run:N/binary, $", R/binary>> ->
+            {iolist_to_binary(lists:reverse(run(Run, Acc))), R};
+        <<Run:N/binary, $\\, $u, R/binary>> ->
+            {Cp, R1} = unicode_escape(R),
+            string_lit(R1, 0, [<<Cp/utf8>> | run(Run, Acc)]);
+        <<Run:N/binary, $\\, E, R/binary>> ->
+            string_lit(R, 0, [unescape(E) | run(Run, Acc)]);
+        <<_:N/binary, C, _/binary>> when C < 16#20 -> bad(control_character_in_string);
+        <<_:N/binary, $\\>> -> bad(unterminated_escape);
+        <<_:N/binary, _, _/binary>> -> string_lit(Bin, N + 1, Acc);
+        _ -> bad(unterminated_string)
     end.
 
-unicode_escape(<<H:4/binary, R/binary>>) ->
-    U = binary_to_integer(H, 16),
+run(<<>>, Acc) -> Acc;
+run(Run, Acc) -> [Run | Acc].
+
+%% The four hex digits after `\u`, and the low half when they are a high
+%% surrogate -> {CodePoint, Rest}. A lone surrogate is refused.
+unicode_escape(Bin) ->
+    {U, R} = hex4(Bin),
     if U >= 16#D800, U =< 16#DBFF ->
-           <<"\\u", L:4/binary, R1/binary>> = R,
-           Lo = binary_to_integer(L, 16),
-           true = (Lo >= 16#DC00) andalso (Lo =< 16#DFFF),
-           {16#10000 + ((U - 16#D800) bsl 10) + (Lo - 16#DC00), R1};
-       U >= 16#DC00, U =< 16#DFFF ->
-           erlang:error({json_lone_surrogate, H});
-       true ->
-           {U, R}
+           case R of
+               <<"\\u", R1/binary>> ->
+                   case hex4(R1) of
+                       {Lo, R2} when Lo >= 16#DC00, Lo =< 16#DFFF ->
+                           {16#10000 + ((U - 16#D800) bsl 10) + (Lo - 16#DC00), R2};
+                       _ -> bad(lone_surrogate)
+                   end;
+               _ -> bad(lone_surrogate)
+           end;
+       U >= 16#DC00, U =< 16#DFFF -> bad(lone_surrogate);
+       true -> {U, R}
     end.
+
+hex4(<<A, B, C, D, R/binary>>) ->
+    {(hexval(A) bsl 12) bor (hexval(B) bsl 8) bor (hexval(C) bsl 4) bor hexval(D), R};
+hex4(_) -> bad(unterminated_unicode_escape).
+
+hexval(C) when C >= $0, C =< $9 -> C - $0;
+hexval(C) when C >= $a, C =< $f -> C - $a + 10;
+hexval(C) when C >= $A, C =< $F -> C - $A + 10;
+hexval(_) -> bad(unicode_escape_digit).
 
 unescape($n) -> $\n;
 unescape($t) -> $\t;
@@ -97,19 +138,56 @@ unescape($b) -> $\b;
 unescape($f) -> $\f;
 unescape($/) -> $/;
 unescape($") -> $";
-unescape($\\) -> $\\.
+unescape($\\) -> $\\;
+unescape(_) -> bad(unknown_escape).
 
+%% A number as RFC 8259 writes it: [-] (0 | 1-9 digits) [. digits]
+%% [(e|E) [+|-] digits] -> {integer() | float(), Rest}. A leading zero, a
+%% leading `+`, a bare `.` and a point or exponent with no digit are refused
+%% (ruling 39 of 0.8), and so is a number no double holds.
 number_lit(Bin) ->
-    case re:run(Bin, "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][-+]?[0-9]+)?",
-                [{capture, [0, 2, 3], index}]) of
-        {match, [{0, Len}, Frac, Exp]} when Len > 0 ->
-            <<Text:Len/binary, Rest/binary>> = Bin,
-            N = case {Frac, Exp} of
-                    {{-1, _}, {-1, _}} -> binary_to_integer(Text);
-                    _ -> gt_num:dec_to_float(Text)
-                end,
-            {N, Rest};
-        _ -> erlang:error({json_value, Bin})
+    N0 = case Bin of
+             <<$-, _/binary>> -> 1;
+             _ -> 0
+         end,
+    N1 = case Bin of
+             <<_:N0/binary, $0, D, _/binary>> when D >= $0, D =< $9 -> bad(leading_zero);
+             <<_:N0/binary, $0, _/binary>> -> N0 + 1;
+             <<_:N0/binary, D, _/binary>> when D >= $1, D =< $9 -> digits(Bin, N0 + 1);
+             _ -> bad(not_a_value)
+         end,
+    N2 = case Bin of
+             <<_:N1/binary, $., D1, _/binary>> when D1 >= $0, D1 =< $9 -> digits(Bin, N1 + 2);
+             <<_:N1/binary, $., _/binary>> -> bad(fraction_without_digit);
+             _ -> N1
+         end,
+    N3 = case Bin of
+             <<_:N2/binary, E, _/binary>> when E =:= $e; E =:= $E ->
+                 S = case Bin of
+                         <<_:N2/binary, _, Sign, _/binary>> when Sign =:= $+; Sign =:= $- -> N2 + 2;
+                         _ -> N2 + 1
+                     end,
+                 case Bin of
+                     <<_:S/binary, D2, _/binary>> when D2 >= $0, D2 =< $9 -> digits(Bin, S + 1);
+                     _ -> bad(exponent_without_digit)
+                 end;
+             _ -> N2
+         end,
+    <<Text:N3/binary, Rest/binary>> = Bin,
+    N = case N3 =:= N1 of
+            true -> binary_to_integer(Text);
+            false ->
+                try gt_num:dec_to_float(Text)
+                catch error:{float_decode, _} -> bad(number_out_of_range)
+                end
+        end,
+    {N, Rest}.
+
+%% The offset of the first byte at or after N that is not a decimal digit.
+digits(Bin, N) ->
+    case Bin of
+        <<_:N/binary, D, _/binary>> when D >= $0, D =< $9 -> digits(Bin, N + 1);
+        _ -> N
     end.
 
 ws(<<C, R/binary>>) when C =:= $\s; C =:= $\t; C =:= $\r; C =:= $\n -> ws(R);

@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-the-opening-angle",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<",
+  "expect_error": "malformed-wire"
+}

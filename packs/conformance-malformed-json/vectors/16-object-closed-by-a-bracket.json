@@ -1,0 +1,7 @@
+{
+  "name": "object-closed-by-a-bracket",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\"]",
+  "expect_error": "malformed-wire"
+}

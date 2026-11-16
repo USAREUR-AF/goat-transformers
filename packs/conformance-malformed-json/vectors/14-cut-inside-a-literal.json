@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-literal",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\",\"flag\":tru",
+  "expect_error": "malformed-wire"
+}

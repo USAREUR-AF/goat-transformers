@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/** Minimal XML reader (elements, attributes, text, entities, CDATA; skips prolog, PIs, comments, DOCTYPE) and canonical writer. */
+/** Minimal XML reader (elements, attributes, text, entities, CDATA; skips prolog, PIs, comments; refuses DOCTYPE) and canonical writer. */
 public final class Xml {
     private Xml() {}
 
@@ -49,6 +49,7 @@ public final class Xml {
     private static final class P {
         final String s;
         int pos;
+        int depth;
 
         P(String s) {
             this.s = s;
@@ -73,20 +74,9 @@ public final class Xml {
                 ws();
                 if (at("<?")) skipPast("?>", "processing instruction");
                 else if (at("<!--")) skipPast("-->", "comment");
-                else if (at("<!DOCTYPE")) doctype();
+                else if (at("<!")) throw new ParseException("a document type declaration or other markup declaration", pos);
                 else return;
             }
-        }
-
-        void doctype() {
-            int depth = 0;
-            while (pos < s.length()) {
-                char c = s.charAt(pos++);
-                if (c == '[') depth++;
-                else if (c == ']') depth--;
-                else if (c == '>' && depth <= 0) return;
-            }
-            throw new ParseException("unterminated DOCTYPE", pos);
         }
 
         String name() {
@@ -100,8 +90,22 @@ public final class Xml {
             return s.substring(start, pos);
         }
 
+        /** One element: the root is level 1 and an element beyond the limit is malformed. */
         Element element() {
+            if (++depth > MAX_DEPTH) throw new ParseException("elements nested deeper than " + MAX_DEPTH + " levels", pos);
+            try {
+                return content();
+            } finally {
+                depth--;
+            }
+        }
+
+        Element content() {
             pos++; // '<'
+            // comments, CDATA and processing instructions were taken before: this is a declaration, never an element
+            if (pos < s.length() && (s.charAt(pos) == '!' || s.charAt(pos) == '?')) {
+                throw new ParseException("a document type declaration or other markup declaration", pos - 1);
+            }
             Element e = new Element(name());
             while (true) {
                 ws();
@@ -176,20 +180,39 @@ public final class Xml {
                     case "quot": b.append('"'); break;
                     case "apos": b.append('\''); break;
                     default:
-                        try {
-                            int cp;
-                            if (ent.startsWith("#x")) cp = Integer.parseInt(ent.substring(2), 16);
-                            else if (ent.startsWith("#")) cp = Integer.parseInt(ent.substring(1));
-                            else throw new ParseException("unknown entity &" + ent + ";", at + i);
-                            b.appendCodePoint(cp);
-                        } catch (IllegalArgumentException ex) {
-                            throw new ParseException("bad character reference &" + ent + ";", at + i);
-                        }
+                        if (!ent.startsWith("#")) throw new ParseException("unknown entity &" + ent + ";", at + i);
+                        int cp = charRef(ent);
+                        if (cp < 0) throw new ParseException("bad character reference &" + ent + ";", at + i);
+                        b.appendCodePoint(cp);
                 }
                 i = semi + 1;
             }
             return b.toString();
         }
+    }
+
+    /** The nesting limit of a document (engine-spec 0.8, ruling 35): elements, the root is level 1. */
+    static final int MAX_DEPTH = 64;
+
+    /**
+     * The code point of a character reference {@code #<digits>} or {@code #x<hex digits>}, or -1 when it is not one:
+     * no digits, a sign, a digit of another script, or a number that is not a character XML 1.0 allows.
+     */
+    static int charRef(String ent) {
+        boolean hex = ent.startsWith("#x");
+        int from = hex ? 2 : 1;
+        if (ent.length() == from) return -1;
+        int cp = 0;
+        for (int i = from; i < ent.length(); i++) {
+            int d = Json.hexDigit(ent.charAt(i));
+            if (d < 0 || (!hex && d > 9)) return -1;
+            cp = cp * (hex ? 16 : 10) + d;
+            if (cp > Character.MAX_CODE_POINT) return -1;
+        }
+        // the Char production of XML 1.0
+        boolean allowed = cp == 0x9 || cp == 0xA || cp == 0xD || (cp >= 0x20 && cp <= 0xD7FF)
+                || (cp >= 0xE000 && cp <= 0xFFFD) || cp >= 0x10000;
+        return allowed ? cp : -1;
     }
 
     static boolean isWs(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }

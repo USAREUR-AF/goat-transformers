@@ -893,7 +893,8 @@ impl<'a> Reader<'a> {
         Error { msg: format!("malformed-wire: format `{}`: {}", self.p.format, what.as_ref()) }
     }
     fn need(&self, len: u64, what: &str) -> Result<(), Error> {
-        if self.pos + len > self.end {
+        // `pos` may stand past `end` after a `length` block; nothing overflows
+        if self.end.saturating_sub(self.pos) < len {
             let place = if self.depth > 0 { "the `length` extent" } else { "the input" };
             return Err(self.short(format!("{} ends before {} at bit {}", place, what, self.pos)));
         }
@@ -933,7 +934,7 @@ fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
         let mut at = start;
         let holds = k.whens.iter().all(|(len, value)| {
             // a `when` any of whose bits lies beyond the input does not hold
-            let ok = at + *len as u64 <= r.end && get_bits(r.raw, at, *len, r.p.msb) == Some(*value);
+            let ok = r.end.saturating_sub(at) >= *len as u64 && get_bits(r.raw, at, *len, r.p.msb) == Some(*value);
             at += *len as u64;
             ok
         });
@@ -979,7 +980,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 r.pos = (r.pos + skip).min(r.end.max(r.pos));
             }
             SeqLine::When { len, value } => {
-                if r.pos + *len as u64 > r.end || r.read(*len, "a `when`")? != *value {
+                if r.end.saturating_sub(r.pos) < *len as u64 || r.read(*len, "a `when`")? != *value {
                     return err(format!("no-kind: format `{}`: common `when {} {}` does not hold", r.p.format, len, value));
                 }
             }
@@ -1074,7 +1075,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 match &g.rep {
                     Rep::Count(len) => {
                         let n = r.read(*len, "the count of a group")?;
-                        if n > r.end - r.pos {
+                        if n > r.end.saturating_sub(r.pos) {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
                         for _ in 0..n {

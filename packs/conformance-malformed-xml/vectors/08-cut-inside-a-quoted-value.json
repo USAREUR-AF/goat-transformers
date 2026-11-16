@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-quoted-value",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1",
+  "expect_error": "malformed-wire"
+}

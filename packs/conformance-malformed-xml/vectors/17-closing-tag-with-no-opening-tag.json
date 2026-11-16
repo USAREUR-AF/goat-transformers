@@ -1,0 +1,7 @@
+{
+  "name": "closing-tag-with-no-opening-tag",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "</event>",
+  "expect_error": "malformed-wire"
+}

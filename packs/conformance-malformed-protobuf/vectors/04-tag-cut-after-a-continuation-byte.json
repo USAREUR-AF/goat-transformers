@@ -1,0 +1,7 @@
+{
+  "name": "tag-cut-after-a-continuation-byte",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753180",
+  "expect_error": "malformed-wire"
+}

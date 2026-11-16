@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-string",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"name\":\"A",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,11 @@
+# Conformance probe pack for malformed input on the `bits` wire
+# (spec/vector-format.md, "Malformed input"). Public. No kinds. Two words of
+# four bytes, least-significant-bit-first, so the message is eight bytes.
+format     conformance-malformed-bits
+version    0.1.0
+distribution public
+source  "goat-transformers spec/engine-spec.md and spec/vector-format.md (synthetic probe format, no external standard)"
+wire       bits
+word_bytes 4
+field  time_ms   0:0:32  uint
+field  stale_ms  1:0:32  uint

@@ -48,6 +48,32 @@ is the pack that owns the input. Fields:
 A `from == to` vector checks that decode then encode returns the canonical form
 of the input, which proves residue carries unmapped fields.
 
+## Malformed input
+
+Status: Written. An engine reads messages from untrusted senders. An input
+that is not a well-formed message of its wire makes `convert` and `decode`
+fail with `malformed-wire`, whatever the lines of the pack map. No input makes
+an engine crash, read outside the input, or use stack or memory without bound.
+The packs `conformance-malformed-*` pin the cases below (`spec/engine-spec.md`,
+"Malformed input (0.8)", rulings 35 to 40); each vector there has
+`"expect_error": "malformed-wire"`, except the well-formed messages that mark
+the edge of a rule: the message each pack starts with, nesting exactly at the
+depth limit, hex text with the four whitespace characters, a ten-byte varint
+whose last byte is 1, a packed list, a surrogate pair, and a decimal and a
+hexadecimal character reference.
+
+| Wire | `malformed-wire` when |
+|---|---|
+| `xml` | the input is not one well-formed document: it is empty; it ends inside a tag, an attribute name, an attribute value, the content of an element or the XML declaration; a closing tag does not name the open element; an attribute value has no quotes; anything other than whitespace, comments and processing instructions follows the root element |
+| `xml` | a document type declaration stands anywhere in the input: before the root element, after it or inside it. No engine declares, expands or fetches an entity other than the five predefined ones and numeric character references |
+| `xml` | a numeric character reference holds anything but decimal digits, or `x` and hexadecimal digits (a sign is refused: `&#+65;`), or names a character XML 1.0 does not allow (`&#0;`, `&#x110000;`). `&#65;` and `&#x41;` are the character `A` |
+| `json`, `geojson` | the input is not one JSON value (RFC 8259) followed only by whitespace: it ends inside a string, an escape, a number, a literal, an array or an object, or after a colon or a comma; a second value follows the first; a number has a leading zero, a leading `+` or a bare `.`; a string holds an unknown escape or a raw control character |
+| `json`, `geojson` | a `\u` escape is half of a surrogate pair without its other half: a high surrogate not followed by a low surrogate escape, or a low surrogate with no high surrogate before it. A pair is one character |
+| `xml`, `json`, `geojson` | the nesting is deeper than 64 levels. On `xml` a level is an element and the root element is level 1. On `json` and `geojson` a level is an array or an object and the outermost one is level 1. A message of exactly 64 levels converts |
+| `protobuf` | a varint ends before its last byte, is longer than ten bytes, or is ten bytes with a last byte greater than 1 (bits above bit 63); a length-delimited field states more bytes than are left in its message; a fixed64 or fixed32 field is cut short; a varint inside a packed field is cut short; the field number is 0 or above 2^29-1; the wire type is 3, 4, 6 or 7. This holds for a field no line maps, in a pack with or without kinds, and inside a submessage a path of the pack walks into, where it is `malformed-wire` and not a field failure |
+| `bits`, `protobuf` | the hex text has an odd number of digits, or holds a character that is neither a hex digit nor whitespace. Whitespace is space, tab, line feed and carriage return only: a form feed, a vertical tab, U+00A0 and a sign are refused |
+| `bits` | the input is shorter than the message (`spec/engine-spec.md`, Version 0.5) |
+
 ## Lists in `model`
 
 Status: Written. Version 0.7. A `model` key may name a list of the decoded

@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-the-coordinates",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,",
+  "expect_error": "malformed-wire"
+}

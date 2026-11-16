@@ -1,0 +1,11 @@
+# Conformance probe pack for malformed input on the `geojson` wire
+# (spec/vector-format.md, "Malformed input"). Public. No kinds.
+format  conformance-malformed-geojson
+version 0.1.0
+distribution public
+source  "goat-transformers spec/engine-spec.md and spec/vector-format.md (synthetic probe format, no external standard)"
+wire    geojson
+field   uid       id               string
+field   lat       geometry.lat     float
+field   lon       geometry.lon     float
+field   callsign  properties.name  string

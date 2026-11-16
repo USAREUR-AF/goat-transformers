@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-space-tab-line-feed-carriage-return",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01 00\t00\n00\r\n02000000",
+  "expect": "0100000002000000"
+}

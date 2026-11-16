@@ -77,7 +77,7 @@ std::uint64_t read_varint(const Pack& p, const std::string& d, std::size_t& i) {
 }
 
 std::uint64_t read_fixed(const Pack& p, const std::string& d, std::size_t& i, int n) {
-    if (i + static_cast<std::size_t>(n) > d.size())
+    if (static_cast<std::size_t>(n) > d.size() - i)  // i <= d.size() always
         throw Error(ErrorKind::MalformedWire, p.format, "", "fixed-width field runs past the end of the message");
     std::uint64_t v = 0;
     for (int k = 0; k < n; ++k)
@@ -91,17 +91,23 @@ std::vector<WireField> parse_message(const Pack& p, const std::string& d) {
     while (i < d.size()) {
         const std::uint64_t tag = read_varint(p, d, i);
         WireField f;
-        f.num = static_cast<std::uint32_t>(tag >> 3);
+        // A field number is 1 to 2^29-1 (0.8 ruling 38); checked on the whole
+        // tag, before it is narrowed.
+        const std::uint64_t num = tag >> 3;
+        if (num == 0) throw Error(ErrorKind::MalformedWire, p.format, "", "field number 0 is not valid");
+        if (num > 536870911ull)
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        "field number " + std::to_string(num) + " is above 2^29-1");
+        f.num = static_cast<std::uint32_t>(num);
         f.wt = static_cast<int>(tag & 7);
-        if (f.num == 0)
-            throw Error(ErrorKind::MalformedWire, p.format, "", "field number 0 is not valid");
         switch (f.wt) {
             case 0: f.scalar = read_varint(p, d, i); break;
             case 1: f.scalar = read_fixed(p, d, i, 8); break;
             case 5: f.scalar = read_fixed(p, d, i, 4); break;
             case 2: {
                 const std::uint64_t n = read_varint(p, d, i);
-                if (i + n > d.size())
+                // Compared against the bytes left, so a length near 2^64 cannot wrap.
+                if (n > static_cast<std::uint64_t>(d.size() - i))
                     throw Error(ErrorKind::MalformedWire, p.format, "",
                                 "length-delimited field runs past the end of the message");
                 f.bytes.assign(d, i, static_cast<std::size_t>(n));

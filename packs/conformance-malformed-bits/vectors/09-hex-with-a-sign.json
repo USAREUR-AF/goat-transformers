@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-sign",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "010000000200+100",
+  "expect_error": "malformed-wire"
+}

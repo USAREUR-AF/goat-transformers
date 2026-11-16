@@ -1,6 +1,7 @@
 // Unit checks for the parts the vectors exercise only partly: number formatting,
 // civil-date arithmetic, pack grammar errors, residue and parsing tolerance.
 #include <chrono>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -1133,6 +1134,115 @@ int main() {
         }
         std::error_code ec;
         fs::remove_all(dir, ec);
+    }
+
+    // ---- 0.8 malformed input: ruling 40, and the sign of a 63- and 64-bit `twos` field
+    try {
+        gt::Engine m;
+        m.load_model(kCoreModel, "core");
+        m.load_model("module m40\nversion 0.1.0\ndistribution public\nsource \"unit test\"\n"
+                     "key n int -\nkey t int -\nlist nums\n",
+                     "m40");
+        m.add_pack(gt::parse_pack(kXmlPack, "t-xml"));
+        m.add_pack(gt::parse_pack(HDR "format r40-json\nversion 1\nwire json\nfield uid id string\n", "r40-json"));
+        m.add_pack(gt::parse_pack(HDR "format r40-pb\nversion 1\nuses m40\nwire protobuf\nfield uid 1 pstring\n"
+                                      "group m40.nums 3\n  field m40.n . pvarint\nend\n",
+                                  "r40-pb"));
+        m.add_pack(gt::parse_pack(HDR "format r40-bits\nversion 1\nuses m40\nwire bits\nword_bytes 8\n"
+                                      "field m40.n 0:0:63 twos\nfield m40.t 1:0:64 twos\n",
+                                  "r40-bits"));
+        const auto malformed = [&](const char* format, const std::string& input, const std::string& what) {
+            expect_error(gt::ErrorKind::MalformedWire, [&] { m.convert(format, format, input); }, what);
+        };
+        const auto converts = [&](const char* format, const std::string& input, const std::string& want,
+                                  const std::string& what) {
+            try {
+                eq(m.convert(format, format, input), want, what);
+            } catch (const std::exception& ex) {
+                check(false, what + ": " + ex.what());
+            }
+        };
+        const std::string nines(18, 'f');  // nine bytes 0xff
+
+        // Hex text: space, tab, line feed and carriage return only.
+        converts("r40-pb", " 0a\t01\n75\r", "0a0175", "hex: space, tab, LF and CR are skipped");
+        malformed("r40-pb", "0a\v0175", "hex: a vertical tab");
+        malformed("r40-pb", "0a\f0175", "hex: a form feed");
+        malformed("r40-pb", std::string("0a\xC2\xA0") + "0175", "hex: a no-break space");
+        malformed("r40-bits", "ffffffffffffff7f\vffffffffffffffff", "hex on bits: a vertical tab");
+
+        // Protobuf: field number 0, wire types 3, 4, 6 and 7, a field number above 2^29-1.
+        malformed("r40-pb", "0001", "protobuf: field number 0");
+        malformed("r40-pb", "0b", "protobuf: wire type 3");
+        malformed("r40-pb", "0c", "protobuf: wire type 4");
+        malformed("r40-pb", "0e00", "protobuf: wire type 6");
+        malformed("r40-pb", "0f00", "protobuf: wire type 7");
+        malformed("r40-pb", "808080801000", "protobuf: field number 2^29");
+        converts("r40-pb", "f8ffffff0f00", "", "protobuf: field number 2^29-1 in a field no line maps");
+        // A ten-byte varint whose last byte is above 1.
+        converts("r40-pb", "10" + nines + "01", "", "protobuf: a ten-byte varint with last byte 1");
+        malformed("r40-pb", "10" + nines + "02", "protobuf: a ten-byte varint with last byte 2");
+        malformed("r40-pb", "10" + nines + "7f", "protobuf: a ten-byte varint with last byte 0x7f");
+        malformed("r40-pb", "10" + nines + "8100", "protobuf: a varint of eleven bytes");
+        malformed("r40-pb", nines + "0200", "protobuf: a ten-byte tag with last byte 2");
+        // A length that would wrap the cursor.
+        malformed("r40-pb", "0a" + nines + "01", "protobuf: a length of 2^64-1");
+        // A truncated varint inside a packed field.
+        converts("r40-pb", "1a03018101", "1a03018101", "protobuf: a packed field of two varints");
+        malformed("r40-pb", "1a0180", "protobuf: a packed field that ends inside a varint");
+        malformed("r40-pb", "1a03010281", "protobuf: a packed field whose last varint is cut");
+        malformed("r40-pb", "1a0b01" + nines + "02", "protobuf: a packed ten-byte varint with last byte 2");
+
+        // JSON: half of a surrogate pair without its other half.
+        converts("r40-json", "{\"id\":\"\\ud83d\\ude00\"}", "{\"id\":\"\xF0\x9F\x98\x80\"}", "json: a surrogate pair");
+        malformed("r40-json", "{\"id\":\"\\ud83d\"}", "json: a high surrogate alone");
+        malformed("r40-json", "{\"id\":\"\\ude00\"}", "json: a low surrogate alone");
+        malformed("r40-json", "{\"id\":\"\\ud83dx\"}", "json: a high surrogate before a character");
+        malformed("r40-json", "{\"id\":\"\\ud83d\\u0041\"}", "json: a high surrogate before another escape");
+        malformed("r40-json", "{\"id\":\"\\ud83d\\ud83d\"}", "json: two high surrogates");
+        malformed("r40-json", "{\"\\ud83d\":1,\"id\":\"u\"}", "json: a high surrogate alone in a member name");
+
+        // XML: a document type declaration anywhere.
+        converts("t-xml", "<?xml version=\"1.0\"?><!-- c --><event uid=\"u\"/>", "<event uid=\"u\"/>",
+                 "xml: a declaration and a comment before the root");
+        malformed("t-xml", "<!DOCTYPE event><event uid=\"u\"/>", "xml: a DOCTYPE before the root");
+        malformed("t-xml", "<?xml version=\"1.0\"?>\n<!DOCTYPE event SYSTEM \"e.dtd\">\n<event uid=\"u\"/>",
+                  "xml: a DOCTYPE with a system identifier");
+        malformed("t-xml", "<!DOCTYPE event [<!ENTITY a \"b\">]><event uid=\"&a;\"/>", "xml: a DOCTYPE that declares an entity");
+        malformed("t-xml", "<event uid=\"u\"/><!DOCTYPE event>", "xml: a DOCTYPE after the root");
+        malformed("t-xml", "<event uid=\"u\"><!DOCTYPE event></event>", "xml: a DOCTYPE inside the root");
+        malformed("t-xml", "<event uid=\"u\"><!ENTITY a \"b\"></event>", "xml: an entity declaration inside the root");
+        malformed("t-xml", "<event uid=\"&a;\"/>", "xml: an entity that is not predefined");
+        // Numeric character references: digits only, and a character XML 1.0 allows.
+        converts("t-xml", "<event uid=\"&#65;&#x42;&#x9;&#x10FFFF;&lt;\"/>", "<event uid=\"AB&#9;\xF4\x8F\xBF\xBF&lt;\"/>",
+                 "xml: decimal and hexadecimal character references");
+        for (const char* ref : {"&#+65;", "&#-65;", "&#x+41;", "&#x-41;", "&# 65;", "&#;", "&#x;", "&#X41;", "&#xg;", "&#6x5;",
+                                "&#0;", "&#1;", "&#8;", "&#11;", "&#x1F;", "&#xD800;", "&#xDFFF;", "&#xFFFE;", "&#xFFFF;",
+                                "&#x110000;", "&#99999999999999999999;", "&#65"})
+            malformed("t-xml", std::string("<event uid=\"") + ref + "\"/>", std::string("xml: the character reference ") + ref);
+        malformed("t-xml", "<event uid=\"u\"><detail><remarks>&#x0;</remarks></detail></event>",
+                  "xml: a character reference to U+0000 in text");
+
+        // `twos` in 63 and in 64 bits: the sign is extended without signed overflow.
+        const auto twos = [&](const std::string& input, std::int64_t n, std::int64_t t, const std::string& what) {
+            try {
+                const gt::Entity e = m.decode("r40-bits", input);
+                const auto ni = e.fields.find("m40.n"), ti = e.fields.find("m40.t");
+                check(ni != e.fields.end() && ti != e.fields.end() && ni->second.kind == gt::Value::Kind::Int &&
+                          ti->second.kind == gt::Value::Kind::Int && ni->second.i == n && ti->second.i == t,
+                      what);
+                eq(m.convert("r40-bits", "r40-bits", input), input, what + ", written back");
+            } catch (const std::exception& ex) {
+                check(false, what + ": " + ex.what());
+            }
+        };
+        twos("ffffffffffffff7fffffffffffffffff", -1, -1, "twos: -1 in 63 and in 64 bits");
+        twos("00000000000000400000000000000080", -4611686018427387904LL, INT64_MIN, "twos: the least 63-bit and 64-bit values");
+        twos("01000000000000400100000000000080", -4611686018427387903LL, INT64_MIN + 1, "twos: one above the least values");
+        twos("ffffffffffffff3fffffffffffffff7f", 4611686018427387903LL, INT64_MAX, "twos: the greatest 63-bit and 64-bit values");
+        twos("00000000000000000000000000000000", 0, 0, "twos: zero");
+    } catch (const std::exception& ex) {
+        check(false, std::string("ruling 40 checks threw: ") + ex.what());
     }
 
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";

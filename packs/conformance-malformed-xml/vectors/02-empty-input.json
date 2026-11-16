@@ -1,0 +1,7 @@
+{
+  "name": "empty-input",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "",
+  "expect_error": "malformed-wire"
+}

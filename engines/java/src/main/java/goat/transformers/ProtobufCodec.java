@@ -23,6 +23,9 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
 
     private static final int[] ITSELF = new int[0];
 
+    /** The highest protobuf field number, 2^29-1. */
+    private static final long MAX_FIELD = 536870911L;
+
     /** What a group body needs of each occurrence: a scalar ({@code .} fields only) or a submessage. */
     private static final class Body {
         /** True when the body has a line that addresses into the occurrence, so it must be a submessage. */
@@ -152,7 +155,8 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             }
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
-            if (e.get(f.key) != null) continue;                     // an earlier line already gave the key its value
+            // Every path is walked, also that of a line whose key already has its value: the submessages on the way
+            // are checked whatever the lines before it gave (ruling 38 of 0.8).
             Val val;
             try {
                 val = find(top, path);
@@ -160,6 +164,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 // a path prefix that is not a submessage (ruling 13 of 0.7)
                 throw malformed(f.key + " at " + f.locator + ": " + ex.getMessage());
             }
+            if (e.get(f.key) != null) continue;                     // an earlier line already gave the key its value
             if (val == null) continue;                              // a field absent from the wire is not an error
             decodeValue(f, val.wt, val.num, val.bytes, e, fails);
         }
@@ -240,9 +245,11 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         int[] pos = { start };
         while (pos[0] < end) {
             long tag = readVarint(b, pos, end);
-            int field = (int) (tag >>> 3);
+            long number = tag >>> 3;
             int wt = (int) (tag & 7);
-            if (field == 0) throw malformed("protobuf field number 0 is invalid");
+            if (number == 0) throw malformed("protobuf field number 0 is invalid");
+            if (number > MAX_FIELD) throw malformed("protobuf field number " + Long.toUnsignedString(number) + " is above " + MAX_FIELD);
+            int field = (int) number;
             Val v;
             switch (wt) {
                 case 0:
@@ -253,7 +260,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                     break;
                 case 2: {
                     long len = readVarint(b, pos, end);
-                    if (len < 0 || pos[0] + len > end) {
+                    if (len < 0 || len > end - pos[0]) {      // unsigned: a length of 2^63 or more reads negative
                         throw malformed("protobuf length-delimited field runs past the message");
                     }
                     int from = pos[0];
@@ -282,6 +289,8 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             if (pos[0] >= end) throw malformed("protobuf varint runs past the message");
             if (shift >= 64) throw malformed("protobuf varint is longer than ten bytes");
             int by = b[pos[0]++] & 0xff;
+            // the tenth byte holds bit 63 alone: more is a value beyond 64 bits (ruling 40 of 0.8)
+            if (shift == 63 && by > 1) throw malformed("protobuf varint is longer than ten bytes or holds more than 64 bits");
             v |= (long) (by & 0x7f) << shift;
             if ((by & 0x80) == 0) break;
             shift += 7;
@@ -290,7 +299,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
     }
 
     private long readFixed(byte[] b, int[] pos, int end, int n) {
-        if (pos[0] + n > end) throw malformed("protobuf fixed" + (n * 8) + " runs past the message");
+        if (n > end - pos[0]) throw malformed("protobuf fixed" + (n * 8) + " runs past the message");
         long v = 0;
         for (int i = 0; i < n; i++) v |= (long) (b[pos[0]++] & 0xff) << (8 * i);
         return v;
