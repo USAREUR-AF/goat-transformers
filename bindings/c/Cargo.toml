@@ -1,9 +1,11 @@
 [package]
 name = "goat-transformers-c"
-version = "0.1.0"
+version = "0.8.0"
 edition = "2021"
 description = "C ABI of the goat-transformers reference engine. std-only."
 license = "Apache-2.0"
+repository = "https://github.com/USAREUR-AF/goat-transformers"
+publish = false
 
 [lib]
 name = "goat_transformers_c"

@@ -36,6 +36,28 @@ Output:
 other and which the target cannot represent. The tool reads packs from
 `../../packs` unless `--packs <dir>` names another directory.
 
+## Use it in your program
+
+[docs/using.md](docs/using.md) has, for each language, the dependency line, a
+program that loads two packs and converts a message, and how to copy only the
+packs you need into your project. The short form:
+
+| Language | Dependency |
+|---|---|
+| Rust | `goat-transformers = { git = "https://github.com/USAREUR-AF/goat-transformers", tag = "v0.8.0" }` |
+| Go | `go get github.com/USAREUR-AF/goat-transformers/engines/go@v0.8.0` |
+| Python | `pip install "git+https://github.com/USAREUR-AF/goat-transformers@v0.8.0#subdirectory=engines/python"` |
+| Java | `goat-transformers-0.8.0.jar` from the release |
+| C++ | CMake `FetchContent` with `SOURCE_SUBDIR engines/cpp`, or `find_package(goat_transformers)` |
+| Erlang | rebar3 `{git_subdir, "https://github.com/USAREUR-AF/goat-transformers", {tag, "v0.8.0"}, "engines/erlang"}` |
+| Zig | `zig fetch --save git+https://github.com/USAREUR-AF/goat-transformers#v0.8.0` |
+| JavaScript, TypeScript | the npm tarball `@usareur-af/goat-transformers` from the release |
+| C | the C library archive from the release, found with `pkg-config goat_transformers` |
+
+The library version is the specification version; packs carry their own
+versions. Releases are on GitHub only: nothing is published to crates.io, PyPI,
+the npm registry or Maven Central.
+
 ## How it works
 
 Every format maps its fields to the keys of one shared model
@@ -149,10 +171,10 @@ model/       the shared model's modules, one file each
 packs/       one directory per format: pack.def, pack.md, vectors/
 engines/     one directory per language
 bindings/    the Rust engine as a C library and as a WebAssembly module, for other hosts
-tools/       goat-pkg       plan the smallest package for a set of constraints
+tools/       goat-pkg       plan the smallest package for a set of constraints; bundle the packs it needs
              boundary-gate  refuse content in this repository that is not public
              gen/           pack generators
-docs/        design, language guidance, architecture decision records, format coverage, the package planner
+docs/        using the library from each language, design, language guidance, architecture decision records, format coverage, the package planner
 ```
 
 ## Contributing

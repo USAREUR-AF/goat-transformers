@@ -24,6 +24,15 @@ Prints `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`), after one `FAIL <pack>/<vector file>: <why>`
 line per failing vector; non-zero exit on any failure. Stdlib only.
 
+## As a module
+
+`src/root.zig` is the module `goat_transformers` for another program: `Engine`,
+`Entity`, `Value`, `KV`, `Distribution` and `loadTree(engine, root, packs)`,
+which loads the named packs of a directory and the model modules they use.
+`zig build tree-test` runs its checks. The package manifest that `zig fetch`
+reads is `build.zig.zon` at the repository root; `docs/using.md` has the
+dependency line.
+
 ## Model modules and distribution (spec Version 0.4)
 
 The harness loads `model/*.def` (`core.def` first, then byte order of file

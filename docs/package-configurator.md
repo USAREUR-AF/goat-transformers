@@ -23,6 +23,24 @@ wires used (`protobuf`, `xml` — a minimal build can exclude the rest), the bui
 command (`cargo build --release --target x86_64-unknown-linux-musl`), and the
 convertibility among the requested formats with the reason for anything dropped.
 
+## Writing the packs of a package
+
+`plan` names the packs; `bundle` writes them. It copies the `pack.def` of each
+named format and the model modules those packs use (and the modules those
+modules use) to a directory, with `LICENSE`, `NOTICE` and a `manifest.json`
+that records the library version, the commit, and the SHA-256 of each file.
+
+```
+tools/goat-pkg bundle --formats cot-xml,sapient --out vendor/goat
+tools/goat-pkg bundle --formats cot-xml,sapient --out vendor/goat --embed rust
+```
+
+Every engine loads that directory with one call that takes the directory and
+the pack names. `--embed rust|go|python` adds a source file that compiles the
+packs into the program. `tools/goat-pkg archive --out <file>.tar.gz
+[--vectors]` writes every module and pack as one archive, the same bytes for
+the same tree. [using.md](using.md) shows each from the consuming side.
+
 ## Why it is computable here
 
 - **Atomic packs.** A format is a directory of data files, loaded on its own. A

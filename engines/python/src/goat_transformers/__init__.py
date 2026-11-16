@@ -34,11 +34,12 @@ from .errors import (
 )
 from .modeldef import Derive, Key, Module, load_model_file, parse_model_text
 from .packdef import Pack, load_pack, parse_pack_text
+from .tree import load_tree
 
-__version__ = "0.1.0"
+__version__ = "0.8.0"
 
 __all__ = [
-    "Engine", "Entity", "Item", "Pack", "load_pack", "parse_pack_text", "GTError", "InvalidPack",
+    "Engine", "Entity", "Item", "Pack", "load_pack", "load_tree", "parse_pack_text", "GTError", "InvalidPack",
     "MalformedWire", "MissingRoot", "TransformDecodeFailure", "TransformEncodeFailure",
     "UnknownDirective", "UnknownFormat", "UnknownTransform",
     "Key", "Module", "Derive", "load_model_file", "parse_model_text", "InvalidModel",

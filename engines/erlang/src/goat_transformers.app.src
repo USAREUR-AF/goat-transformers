@@ -1,0 +1,8 @@
+{application, goat_transformers,
+ [{description, "Convert messages between formats that are described by data files (packs). Erlang engine, OTP standard library only."},
+  {vsn, "0.8.0"},
+  {modules, []},
+  {registered, []},
+  {applications, [kernel, stdlib]},
+  {licenses, ["Apache-2.0"]},
+  {links, [{"GitHub", "https://github.com/USAREUR-AF/goat-transformers"}]}]}.

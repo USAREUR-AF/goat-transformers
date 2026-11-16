@@ -4307,6 +4307,7 @@ pub mod bits {
 }
 
 pub mod seq;
+mod tree;
 
 // ---------------------------------------------------------------------------
 // protobuf codec: fields by number, dot-path for nested messages. I/O as hex.
