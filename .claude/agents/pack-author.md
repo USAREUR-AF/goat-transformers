@@ -30,8 +30,8 @@ and `AGENTS.md` throughout.
    that evidence in `pack.md`. Everything else is a raw key of the format's
    own module, or left to residue.
 3. Load it with a few packs and read the capability report:
-   `goat-xf list-formats --packs <dir> --models model`, then
-   `goat-xf matrix --detail --packs <dir> --models model` (filter the output).
+   `goat-xf list-formats --packs packs --packs-only <format>,geojson,cot-xml`,
+   then `goat-xf matrix --detail` with the same options (filter the output).
    Fix every load error; each is named.
 4. List the vectors that are needed (round trip per kind, conversions each
    way, edge values, error cases) with their inputs and where each input comes

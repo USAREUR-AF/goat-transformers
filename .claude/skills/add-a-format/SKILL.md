@@ -81,9 +81,9 @@ height reference (ellipsoid or mean sea level), the unit, the time base.
 
 ```bash
 cd engines/rust && cargo build --release && cd ../..
-mkdir -p /tmp/few && cp -r packs/<format> packs/geojson packs/cot-xml /tmp/few/
-engines/rust/target/release/goat-xf list-formats --packs /tmp/few --models model
-engines/rust/target/release/goat-xf matrix --detail --packs /tmp/few --models model
+P="--packs packs --packs-only <format>,geojson,cot-xml"
+engines/rust/target/release/goat-xf list-formats $P
+engines/rust/target/release/goat-xf matrix --detail $P
 ```
 
 A load failure names its cause: `undeclared-key` (the key is in no module the
@@ -108,7 +108,7 @@ proves nothing. Only after `expect` is written, run the engine and compare:
 
 ```bash
 python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['input'])" packs/<format>/vectors/01-x.json \
-  | engines/rust/target/release/goat-xf convert --from <format> --to geojson --packs /tmp/few --models model
+  | engines/rust/target/release/goat-xf convert --from <format> --to geojson $P
 ```
 
 A difference means the pack, the vector or the engine is wrong. Find which

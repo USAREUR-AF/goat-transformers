@@ -104,18 +104,18 @@ Run from the repository root unless a directory is named.
 | WebAssembly module | `cd bindings/wasm && cargo build --release --target wasm32-unknown-unknown` (`--profile small` for the smallest) |
 | WebAssembly, vectors | `node --test bindings/wasm/test/vectors.test.mjs` (`GT_PACKS=a,b` chooses packs, `GT_WASM=<file>` chooses the build) |
 
-Each engine test command loads every pack and runs every vector, which takes
-from seconds to minutes. For a quick check of one pack, load only that pack:
+Each engine test command loads every pack and runs every vector. For a quick
+check of one pack, load only the packs you name with `--packs-only`:
 
 ```bash
-mkdir -p /tmp/few && cp -r packs/geojson packs/cot-xml /tmp/few/
-engines/rust/target/release/goat-xf list-formats --packs /tmp/few --models model
-engines/rust/target/release/goat-xf matrix --detail --packs /tmp/few --models model
+engines/rust/target/release/goat-xf list-formats --packs packs --packs-only geojson,cot-xml
+engines/rust/target/release/goat-xf matrix --detail --packs packs --packs-only geojson,cot-xml
 ```
 
 `goat-xf` reads packs from `../../packs` relative to the current directory
 unless `--packs <dir>` is given, and model modules from `<packs>/../model`
-unless `--models <dir>` is given.
+unless `--models <dir>` is given. `--packs-only <name>[,<name>…]` loads only the
+named packs of that directory; every engine's command-line tool has it.
 
 ## How to add a pack
 

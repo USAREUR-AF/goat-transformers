@@ -39,9 +39,8 @@ pass the specification section and the failing vector names only.
 
 - The master rule: when the task is in `engines/<language>/`, do not read any
   other `engines/` directory, including through search tools.
-- Loading every pack takes a while because three catalog packs are 6 to 8 MB
-  each. For a quick check, copy the packs you need to a temporary directory
-  and pass `--packs <dir> --models model` (AGENTS.md, Commands).
+- For a quick check, load only the packs you need:
+  `goat-xf … --packs packs --packs-only a,b` (AGENTS.md, Commands).
 - Do not paste the output of `goat-xf matrix --detail` or `tools/goat-pkg plan`
   into the conversation for a catalog format: a single line can be tens of
   thousands of characters. Filter it for the pair you need.

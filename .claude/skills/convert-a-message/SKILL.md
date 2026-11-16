@@ -17,17 +17,15 @@ A binary format (`bits`, `protobuf` wire) is hex text on both sides.
 
 ## 2. Load only the packs you need
 
-Loading every pack is slow because three catalog packs are 6 to 8 MB each.
-Copy the packs of the conversion to a directory and name it:
+A conversion needs its two packs. `--packs-only` names the packs to load from
+the packs directory; every command then sees only those formats.
 
 ```bash
-mkdir -p /tmp/few && cp -r packs/remote-id packs/cot-xml packs/nmea2000 /tmp/few/
-P="--packs /tmp/few --models model"
+P="--packs packs --packs-only remote-id,cot-xml,nmea2000"
 $X list-formats $P
 ```
 
-Run `$X` with no arguments: if its usage line lists `--packs-only`, that option
-does the same without a copy (`--packs-only remote-id,cot-xml`).
+Without `--packs-only` the tool loads every pack of the directory.
 
 ## 3. Convert
 
@@ -51,7 +49,8 @@ a model key with `--set`, repeatable:
 
 ```bash
 $X convert --from canonical-track-v2 --to asterix-cat062 \
-   --set cat062.sac=1 --set cat062.sic=7 --packs <dir> --models model < track.json
+   --set cat062.sac=1 --set cat062.sic=7 \
+   --packs packs --packs-only canonical-track-v2,asterix-cat062 < track.json
 ```
 
 A context value never replaces a value the input carries. The key must be
@@ -81,7 +80,7 @@ Every failure starts with a name and a colon.
 
 | Error | Meaning | What to do |
 |---|---|---|
-| `no pack loaded for format` | the name is not among the loaded packs | `list-formats`; copy that pack into the directory |
+| `no pack loaded for format` | the name is not among the loaded packs | `list-formats`; add the name to `--packs-only` |
 | `no-kind` on decode | no message kind's `when` values match the input | the input is another message type, another version, or has framing the pack leaves out; read "message convention" in `pack.md` |
 | `no-kind` on encode: "the entity has the required keys of no kind" | the target needs keys the source did not provide | read the `requires` lines of the target's `pack.def`; supply the missing keys with `--set`, or accept that this pair does not convert |
 | `malformed-wire` | the input is not valid for the wire: bad hex, truncated, not XML or JSON | check the bytes; remove transport framing |
@@ -104,7 +103,7 @@ Python, standard library only:
 # PYTHONPATH=engines/python/src
 from goat_transformers import Engine
 
-engine = Engine.from_dir("/tmp/few", "model")          # packs directory, model directory
+engine = Engine.from_dir("packs", "model", packs_only=["remote-id", "cot-xml"])
 out = engine.convert("remote-id", "cot-xml", "122624160b42bf241b6ed1b4b69808ac0870086b53150e0200")
 entity = engine.decode("remote-id", "122624160b42bf241b6ed1b4b69808ac0870086b53150e0200")
 ```

@@ -14,8 +14,7 @@ Set up a quick load of the pack under review:
 
 ```bash
 cd engines/rust && cargo build --release && cd ../..
-mkdir -p /tmp/few && cp -r packs/<format> packs/geojson packs/cot-xml /tmp/few/
-P="--packs /tmp/few --models model"; X=engines/rust/target/release/goat-xf
+P="--packs packs --packs-only <format>,geojson,cot-xml"; X=engines/rust/target/release/goat-xf
 $X list-formats $P
 ```
 

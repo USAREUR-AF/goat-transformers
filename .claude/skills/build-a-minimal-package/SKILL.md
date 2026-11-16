@@ -48,9 +48,10 @@ goat-xf list-formats --packs dist/packs --models dist/model
 ```
 
 `grep '^uses' packs/<format>/pack.def` lists the modules a pack needs. A
-module may itself name another with `uses`. When `goat-xf` run with no
-arguments lists `--packs-only` in its usage, `--packs-only a,b` selects packs
-from a full directory without a copy.
+module may itself name another with `uses`. During development,
+`--packs packs --packs-only a,b` selects packs from the full directory without
+a copy; a library caller has the same choice (Rust `Engine::load_pack_dir_only`,
+Python `Engine.from_dir(..., packs_only=[...])`).
 
 An engine that must never load a controlled format is started with
 `--max-distribution public` (library: the distribution limit of the engine).

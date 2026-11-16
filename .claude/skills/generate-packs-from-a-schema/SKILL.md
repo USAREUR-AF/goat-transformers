@@ -1,6 +1,6 @@
 ---
 name: generate-packs-from-a-schema
-description: Generate a goat-transformers pack, its model module and its round-trip vectors from a machine-readable definition with the generators in tools/gen. Use when a format has protobuf files, an XML Schema (XSD), a CANboat-style JSON database or MAVLink XML message definitions, when asked to regenerate an existing generated pack (sapient, isa, cot-protobuf, uci, a-gra, isa-xml, nmea2000, mavlink2), or when a message catalog is too large to write by hand.
+description: Generate a goat-transformers pack, its model module and its round-trip vectors from a machine-readable definition with the generators in tools/gen. Use when a format has protobuf files, an XML Schema (XSD), a CANboat-style JSON database, ASTERIX category definitions or MAVLink XML message definitions, when asked to regenerate an existing generated pack (sapient, isa, cot-protobuf, uci, a-gra, isa-xml, nmea2000, mavlink2, the asterix-cat packs), or when a message catalog is too large to write by hand.
 ---
 
 # Generate packs from a schema
@@ -25,6 +25,7 @@ SHA-256 and license for `PROVENANCE.md`.
 | protobuf (`.proto`, proto2 or proto3) | `tools/gen/proto2pack.py` | `tools/gen/proto2pack-run.sh` (six packs) |
 | XML Schema (`.xsd`) | `tools/gen/xsd2pack.py` | `tools/gen/xsd2pack-run.sh` (three packs) |
 | CANboat `canboat.json` | `tools/gen/canboat2pack.py` | `--out <dir> --commit <sha> --fetch`; reads `<dir>/sources/canboat.json` |
+| ASTERIX category definitions (the JSON of `zoranbosnjak/asterix-specs`) | `tools/gen/asterix2pack.py` | `--out <dir> --commit <sha> --fetch --cats 048,062` or `all`; reads `<dir>/sources/asterix-specs/` |
 | MAVLink message XML | `tools/gen/mavlink2pack.py` | `--root <dir> --core-def model/core.def`; reads `<dir>/sources/{common,standard,minimal}.xml` |
 
 Every generator is Python standard library only. Run each with `python3 -I`
@@ -81,8 +82,7 @@ declarations, types) and stops on a problem. Then load the result in an
 engine, with only a few packs:
 
 ```bash
-mkdir -p /tmp/few && cp -r packs/<format> packs/geojson packs/cot-xml /tmp/few/
-engines/rust/target/release/goat-xf list-formats --packs /tmp/few --models model
+engines/rust/target/release/goat-xf list-formats --packs packs --packs-only <format>,geojson,cot-xml
 ```
 
 Round-trip vectors that a generator writes are computed by the generator's own

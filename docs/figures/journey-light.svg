@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="100%" role="img" aria-labelledby="t d">
 <title id="t">One message from Remote ID bytes to Cursor on Target XML</title>
 <desc id="d">Three values of a 25-byte Remote ID Location message, latitude, longitude and height, are read by three field lines of the remote-id pack into the model keys lat, lon and hae, then written by three field lines of the cot-xml pack as attributes of the point element of a Cursor on Target event.</desc>
 <style>

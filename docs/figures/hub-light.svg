@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="100%" role="img" aria-labelledby="t d">
 <title id="t">Every format maps to one shared model</title>
-<desc id="d">Fourteen public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B and ASTERIX, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay; they connect to the same shared model.</desc>
+<desc id="d">Public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B, Remote ID and 27 ASTERIX categories, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay; they connect to the same shared model.</desc>
 <style>
   .ink{fill:#1f2328} .quiet{fill:#59636e} .pub{fill:#0969da} .ovl{fill:#9a6700}
   .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
@@ -25,11 +25,11 @@
 <path d="M500.0 148 L500 225" class="ln"/>
 <path d="M632.0 148 L540 225" class="ln"/>
 <path d="M764.0 148 L580 225" class="ln"/>
-<path d="M236.0 396 L420 335" class="ln"/>
-<path d="M368.0 396 L460 335" class="ln"/>
-<path d="M500.0 396 L500 335" class="ln"/>
-<path d="M632.0 396 L540 335" class="ln"/>
-<path d="M764.0 396 L580 335" class="ln"/>
+<path d="M233.0 396 L420 335" class="ln"/>
+<path d="M355.0 396 L460 335" class="ln"/>
+<path d="M463.0 396 L500 335" class="ln"/>
+<path d="M608.0 396 L540 335" class="ln"/>
+<path d="M767.0 396 L580 335" class="ln"/>
 <path d="M295 238.0 L385 250" class="ln"/>
 <path d="M295 322.0 L385 310" class="ln"/>
 <path d="M705 238.0 L615 250" class="ln"/>
@@ -45,11 +45,11 @@
 <rect x="441" y="116" width="118" height="32" rx="8" class="box"/><text x="500.0" y="137" class="t ink" font-size="14" text-anchor="middle">GeoJSON</text>
 <rect x="573" y="116" width="118" height="32" rx="8" class="box"/><text x="632.0" y="137" class="t ink" font-size="14" text-anchor="middle">NVG</text>
 <rect x="705" y="116" width="118" height="32" rx="8" class="box"/><text x="764.0" y="137" class="t ink" font-size="14" text-anchor="middle">SAPIENT</text>
-<rect x="177" y="396" width="118" height="32" rx="8" class="box"/><text x="236.0" y="417" class="t ink" font-size="14" text-anchor="middle">MAVLink 2</text>
-<rect x="309" y="396" width="118" height="32" rx="8" class="box"/><text x="368.0" y="417" class="t ink" font-size="14" text-anchor="middle">NMEA 2000</text>
-<rect x="441" y="396" width="118" height="32" rx="8" class="box"/><text x="500.0" y="417" class="t ink" font-size="14" text-anchor="middle">ADS-B</text>
-<rect x="573" y="396" width="118" height="32" rx="8" class="box"/><text x="632.0" y="417" class="t ink" font-size="14" text-anchor="middle">ASTERIX 062</text>
-<rect x="705" y="396" width="118" height="32" rx="8" class="box"/><text x="764.0" y="417" class="t ink" font-size="14" text-anchor="middle">Remote ID</text>
+<rect x="181.0" y="396" width="104" height="32" rx="8" class="box"/><text x="233.0" y="417" class="t ink" font-size="14" text-anchor="middle">MAVLink 2</text>
+<rect x="299.0" y="396" width="112" height="32" rx="8" class="box"/><text x="355.0" y="417" class="t ink" font-size="14" text-anchor="middle">NMEA 2000</text>
+<rect x="425.0" y="396" width="76" height="32" rx="8" class="box"/><text x="463.0" y="417" class="t ink" font-size="14" text-anchor="middle">ADS-B</text>
+<rect x="515.0" y="396" width="186" height="32" rx="8" class="box"/><text x="608.0" y="417" class="t ink" font-size="14" text-anchor="middle">ASTERIX (27 categories)</text>
+<rect x="715.0" y="396" width="104" height="32" rx="8" class="box"/><text x="767.0" y="417" class="t ink" font-size="14" text-anchor="middle">Remote ID</text>
 <rect x="177" y="222" width="118" height="32" rx="8" class="box"/><text x="236.0" y="243" class="t ink" font-size="14" text-anchor="middle">ISA</text>
 <rect x="177" y="306" width="118" height="32" rx="8" class="box"/><text x="236.0" y="327" class="t ink" font-size="14" text-anchor="middle">UCI</text>
 <rect x="705" y="222" width="118" height="32" rx="8" class="box"/><text x="764.0" y="243" class="t ink" font-size="14" text-anchor="middle">A-GRA</text>
