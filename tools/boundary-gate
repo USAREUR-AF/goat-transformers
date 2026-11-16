@@ -41,7 +41,7 @@ import sys
 ALLOWED_EXT = {
     "md", "def", "json", "txt", "rs", "toml", "lock", "go", "mod", "sum", "py",
     "java", "cpp", "hpp", "h", "c", "cc", "erl", "hrl", "zig", "zon", "sh",
-    "yml", "yaml", "mjs", "ts", "gitignore", "gitattributes", "cmake", "cfg", "ini", "src",
+    "yml", "yaml", "mjs", "ts", "ref", "gitignore", "gitattributes", "cmake", "cfg", "ini", "src",
 }
 ALLOWED_BARE = {
     "LICENSE", "NOTICE", "README", "Makefile", "CMakeLists.txt", "goat-pkg",
