@@ -213,7 +213,7 @@ merge.
 
 | Store | Holds | Where |
 |---|---|---|
-| `examples/stores/sketch` | fictional systems reproducing a community sketch: four sensors, an edge consumer, two applications and a translator on one Zenoh mesh | this repository |
+| `examples/stores/sketch` | fictional systems on a small example mesh: four sensors, an edge consumer, two applications and a translator on one Zenoh mesh | this repository |
 | a private store | records of real systems | a private repository, never this one ([private-store.md](private-store.md)) |
 
 This repository holds the record format, the query and fictional examples
@@ -252,6 +252,23 @@ line linking two identifiers that turn out to name one system.
 | Version ranges | `version` is text, reported as written |
 | Aliases between format names | two owners who write the same format differently do not match; the `check` listing shows names with no pack, which is where such a pair appears |
 | Coverage per message kind | the capability report is per format; a claim covers the whole format |
+
+## Expected to change
+
+This is a first version of something new. These parts are the most likely to
+be revised once records of real systems are written by more than one owner.
+
+| Part | Today | What would change it |
+|---|---|---|
+| Format names | matched by exact name (case and spacing ignored); no aliases | two owners writing one format two ways; an alias list, or a rule to use pack names where a pack exists |
+| System identifiers | `owner/name`, chosen by the writer; no `same-as` between two identifiers for one system | two owners recording the same system under different identifiers |
+| Direction | `speaks` when the source does not say whether a system publishes or subscribes; such paths are marked as resting on an unstated direction | sources that record direction, so `speaks` becomes `emits` and `accepts` |
+| Evidence | free text in `evidence=` | owners agreeing what counts as proof: a test report, an exercise log, a captured message |
+| Transport | one word in `transport=`; a path whose two ends name different transports is listed and marked `transports_differ` | owners needing more than one word: a topic, a port, a bearer |
+| What a system's own conversion carries | not stated | records that list carried fields for a `converts` claim |
+| Path length | two conversions by default (`--max-conversions`) | stores where longer chains are real options |
+| Exchange of stores | by copying directories | owners deciding who may share which records with whom |
+| Capability report | Rust and Python engines | the other engines gaining it; the query uses Python's |
 
 ## Tests
 
