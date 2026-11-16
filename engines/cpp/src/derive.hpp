@@ -13,10 +13,14 @@ namespace goat_transformers::detail {
 // The module of a name among the modules loaded so far; null when it is not loaded.
 using ModuleLookup = std::function<const Module*(const std::string&)>;
 
-// Parse a model module against the modules loaded so far: a `derive` line that
-// names a key of `core`, or of a module the module uses, is checked against it
-// before `missing-distribution` (0.6 ruling 9).
-Module parse_model_with(const std::string& text, const std::string& origin, const ModuleLookup& loaded);
+// Parse a model module and leave the keys and types of its `derive` lines
+// unchecked. The checks of a module run in this order (0.8 ruling 29):
+// `missing-distribution`, `missing-source`, `distribution-refused`,
+// `unknown-module`, `distribution-violation`, the `derive` checks,
+// `duplicate-module`. The parse makes the first two, and before them checks
+// each `derive` line as a line (`parse_derive`; 0.6 ruling 9). Engine::add_model
+// makes the rest, `check_derives` among them.
+Module parse_model_unchecked(const std::string& text, const std::string& origin);
 
 // Parse one `derive` line from its tokens (`derive` itself included). Checks the
 // function name, its parameter and the argument count. Throws bad-directive;

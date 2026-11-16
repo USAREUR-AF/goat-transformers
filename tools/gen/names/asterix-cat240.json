@@ -1,0 +1,23 @@
+{
+ "000": "i000",
+ "010/SAC": "i010_sac",
+ "010/SIC": "i010_sic",
+ "020": "i020",
+ "030/#": "i030_val",
+ "030[]": "i030",
+ "040/CELLDUR": "i040_celldur",
+ "040/ENDAZ": "i040_endaz",
+ "040/STARTAZ": "i040_startaz",
+ "040/STARTRG": "i040_startrg",
+ "041/CELLDUR": "i041_celldur",
+ "041/ENDAZ": "i041_endaz",
+ "041/STARTAZ": "i041_startaz",
+ "041/STARTRG": "i041_startrg",
+ "048/C": "i048_c",
+ "048/RES": "i048_res",
+ "049/NBCELLS": "i049_nbcells",
+ "049/NBVB": "i049_nbvb",
+ "050/#": "i050_val",
+ "050[]": "i050",
+ "140": "i140"
+}

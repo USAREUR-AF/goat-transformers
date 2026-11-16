@@ -1,0 +1,14 @@
+{
+  "name": "ruling-27-common-when-of-every-item-roundtrip",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "01000202910790",
+  "expect": "01000202910790",
+  "model": {
+    "@kind": "b",
+    "probe.recs.#": "2",
+    "probe.recs[0].@kind": "point",
+    "probe.recs[0].probe.y": "7",
+    "probe.recs[1].@kind": "empty"
+  }
+}

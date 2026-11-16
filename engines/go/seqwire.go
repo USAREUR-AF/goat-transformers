@@ -169,10 +169,37 @@ type seqFrame struct {
 	nodes     *[]*seqNode
 	pres      map[string]*seqPresenceDef // the names declared in this block
 	kpres     map[string]*seqPresenceDef // message and group frames: the names declared in the kind being read
-	lists     map[string]int             // message and group frames: the lists the common lines map
-	klists    map[string]int             // the lists the kind being read maps
+	lists     map[string][]seqListAt     // message and group frames: the groups of the common lines, by list
+	klists    map[string][]seqListAt     // the groups of the kind being read, by list
 	last      *Field                     // the field line directly before, for `also`
 	group     *Group
+}
+
+// seqListAt is one group of a scope: its line and the `if` and `opt` blocks
+// of the scope it sits in, innermost first.
+type seqListAt struct {
+	line   int
+	blocks []*seqNode
+}
+
+// apart reports whether two groups of one list may share a scope: each sits
+// in an `if` or `opt` block, and neither block holds the other group (0.8
+// ruling 23).
+func (a seqListAt) apart(b seqListAt) bool {
+	if len(a.blocks) == 0 || len(b.blocks) == 0 {
+		return false
+	}
+	for _, x := range b.blocks {
+		if x == a.blocks[0] {
+			return false
+		}
+	}
+	for _, x := range a.blocks {
+		if x == b.blocks[0] {
+			return false
+		}
+	}
+	return true
 }
 
 // seqParser reads the structural lines of a sequential pack.
@@ -187,7 +214,7 @@ func (sp *seqParser) init() {
 	body := &seqBody{}
 	sp.p.sbody = body
 	sp.bodies = append(sp.bodies, body)
-	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, lists: map[string]int{}}}
+	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, lists: map[string][]seqListAt{}}}
 }
 
 func (sp *seqParser) top() *seqFrame { return sp.stack[len(sp.stack)-1] }
@@ -363,7 +390,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		k := &seqKind{name: args[0], line: n}
 		top.body.kinds = append(top.body.kinds, k)
 		top.kind, top.nodes = k, &k.nodes
-		top.kpres, top.klists = map[string]*seqPresenceDef{}, map[string]int{}
+		top.kpres, top.klists = map[string]*seqPresenceDef{}, map[string][]seqListAt{}
 		if top.op == seqMsg {
 			p.Kinds = append(p.Kinds, &KindDef{Name: k.name, Line: n})
 		}
@@ -524,25 +551,30 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		default:
 			return sp.bad(n, g.Locator, "a sequential group is `group <list> count <len>`, `while`, `more` or `fx`")
 		}
-		// Within one scope a list is mapped by at most one group.
+		// Within one scope a list is mapped by one group, or by groups that
+		// sit in different `if` or `opt` blocks (0.8 ruling 23).
 		sc := sp.scope()
-		prev, dup := sc.lists[g.List]
-		if !dup && sc.kind != nil {
-			prev, dup = sc.klists[g.List]
+		here := seqListAt{line: n}
+		for i := len(sp.stack) - 1; i >= 0 && sp.stack[i] != sc; i-- {
+			if fr := sp.stack[i]; fr.op == seqIf || fr.op == seqOpt {
+				here.blocks = append(here.blocks, fr.node)
+			}
 		}
-		if dup {
-			return sp.bad(n, g.Locator, "list %s is already mapped by the group on line %d of the same scope", g.List, prev)
+		for _, prev := range append(append([]seqListAt(nil), sc.lists[g.List]...), sc.klists[g.List]...) {
+			if !here.apart(prev) {
+				return sp.bad(n, g.Locator, "list %s is already mapped by the group on line %d of the same scope, and the two are not in different if or opt blocks", g.List, prev.line)
+			}
 		}
 		if sc.kind != nil {
-			sc.klists[g.List] = n
+			sc.klists[g.List] = append(sc.klists[g.List], here)
 		} else {
-			sc.lists[g.List] = n
+			sc.lists[g.List] = append(sc.lists[g.List], here)
 		}
 		g.sbody = &seqBody{}
 		sp.bodies = append(sp.bodies, g.sbody)
 		p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
 		add(&seqNode{op: seqGroup, g: g})
-		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string]int{}})
+		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string][]seqListAt{}})
 	case "end":
 		if err := count(0); err != nil {
 			return err
@@ -833,12 +865,17 @@ func (r *seqReader) stated(at int, n *seqNode) (int64, error) {
 func (r *seqReader) presence(pr *seqPresenceDef) error {
 	bits := []bool{false}
 	if pr.fx {
-		for {
+		for first := true; ; first = false {
 			at, ok, err := r.take(8, "presence "+pr.name)
 			if err != nil {
 				return err
 			}
 			if !ok {
+				// At the end of a length extent the presence reads as 0; a
+				// continuation octet there is malformed-wire (0.8 ruling 21).
+				if !first {
+					return r.malformed("presence %s: a continuation octet is stated at bit %d, the end of its length extent", pr.name, r.pos)
+				}
 				break
 			}
 			for k := 0; k < 7; k++ {
@@ -1029,7 +1066,12 @@ func seqSelect(p *Pack, b *seqBody, kind EntityKind, rec *Item, what string) ([]
 				return k.all, k.defs, nil
 			}
 		}
-		return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("%s names kind %q, which the format does not have there", what, kind.Name)}
+		// A message that names a kind the format does not have is no-kind
+		// (0.5 ruling 24). An item that names a kind its group does not have
+		// selects by `requires` (0.8 ruling 26).
+		if b == p.sbody {
+			return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("%s names kind %q, which the format does not have", what, kind.Name)}
+		}
 	}
 next:
 	for _, k := range b.kinds {

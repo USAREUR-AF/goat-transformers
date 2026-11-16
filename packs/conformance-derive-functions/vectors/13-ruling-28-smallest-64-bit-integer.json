@@ -1,0 +1,8 @@
+{
+  "name": "ruling-28-smallest-64-bit-integer",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"s1\":\"-9223372036854775808\"}",
+  "context": {},
+  "expect": "{\"s1\":\"-9223372036854775808\",\"parsed\":-9223372036854775808}"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ruling-12-message-presence-named-inside-an-item-roundtrip",
+  "from": "conformance-seq-rulings-kinds",
+  "to": "conformance-seq-rulings-kinds",
+  "input": "018003020708",
+  "expect": "018003020708",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "8"
+  }
+}

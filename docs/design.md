@@ -133,7 +133,7 @@ through it.
 
 A conversion vector is `{from, to, input, expect}`; a load vector is a set of
 modules and one pack that must load or must fail with a named error
-(`spec/vector-format.md`). Every engine runs every vector. Built: 2,947 conversion vectors across 60 packs and 261 load vectors, all passing on all seven engines.
+(`spec/vector-format.md`). Every engine runs every vector. Built: 3,187 conversion vectors across 91 packs and 314 load vectors, all passing on all seven engines.
 
 ## Separation of pack authors and engine authors
 

@@ -5,6 +5,10 @@
 //	goat-xf convert --from geojson --to cot-xml --set stale_ms=1614456030000 --set how=m-g < in > out
 //	goat-xf list-formats --packs ../../packs
 //
+//	goat-xf convert --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson < in > out
+//
+// --packs-only a,b loads only the named packs of --packs (a name is a
+// directory there) and the modules they need, instead of every pack.
 // Model modules load from --models (default <packs>/../model) before the
 // packs. --max-distribution public refuses every controlled module and pack.
 // --set <key>=<value>, repeatable, supplies a model key the source message
@@ -43,7 +47,8 @@ func usage(w io.Writer) {
 	fmt.Fprintln(w, "usage:")
 	fmt.Fprintln(w, "  goat-xf convert --from FORMAT --to FORMAT --packs DIR [--set KEY=VALUE ...]   (stdin -> stdout)")
 	fmt.Fprintln(w, "  goat-xf list-formats --packs DIR")
-	fmt.Fprintln(w, "both take: --models DIR (default <packs>/../model), --max-distribution public|controlled (default controlled)")
+	fmt.Fprintln(w, "both take: --models DIR (default <packs>/../model), --max-distribution public|controlled (default controlled),")
+	fmt.Fprintln(w, "           --packs-only A,B (load only the named packs of --packs and the modules they need)")
 }
 
 func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
@@ -57,10 +62,20 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	packs := fs.String("packs", "packs", "directory holding <format>/pack.def")
 	models := fs.String("models", "", "directory holding <module>.def (default <packs>/../model)")
 	maxDist := fs.String("max-distribution", goatxf.DistControlled, "refuse modules and packs above this marking: public or controlled")
+	only := fs.String("packs-only", "", "load only these packs of --packs, a comma-separated list of directory names, with the modules they need")
 	load := func() (*goatxf.Engine, error) {
 		dir := *models
 		if dir == "" {
 			dir = goatxf.DefaultModelsDir(*packs)
+		}
+		if *only != "" {
+			var names []string
+			for _, name := range strings.Split(*only, ",") {
+				if name = strings.TrimSpace(name); name != "" {
+					names = append(names, name)
+				}
+			}
+			return goatxf.LoadPacksOnly(dir, *packs, *maxDist, names)
 		}
 		return goatxf.LoadDirs(dir, *packs, *maxDist)
 	}

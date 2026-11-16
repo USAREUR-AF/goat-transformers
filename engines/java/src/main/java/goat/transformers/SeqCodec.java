@@ -72,6 +72,16 @@ final class SeqCodec extends Codec<byte[]> {
             if (pos + len > limit()) throw malformed((soft >= 0 ? "the length extent" : "the input") + " ends before " + what);
         }
 
+        /**
+         * The indicator bit of a {@code while}, {@code more} or {@code fx} group: at or after the end of a
+         * {@code length} extent it reads as 0 (ruling 21 of 0.8); past the end of the input it is malformed.
+         */
+        long indicator(String what) {
+            if (soft >= 0 && pos >= soft) return 0;
+            need(1, what);
+            return take(1);
+        }
+
         long take(int len) {
             long v = BitsCodec.readBits(msg, pos, len, msb);
             pos += len;
@@ -165,7 +175,7 @@ final class SeqCodec extends Codec<byte[]> {
                     break;
                 case ALIGN: {
                     long to = (r.pos + n.len - 1) / n.len * n.len;
-                    r.pos = r.soft >= 0 ? Math.min(to, r.soft) : to;
+                    r.pos = Math.max(r.pos, Math.min(to, r.limit()));   // stops at the end of the input or extent (ruling 20)
                     break;
                 }
                 case PRESENCE:
@@ -275,16 +285,14 @@ final class SeqCodec extends Codec<byte[]> {
             case WHILE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
                 while (true) {
-                    r.need(1, "the bit before an item of " + g.list);
-                    if (r.take(1) == 0) break;
+                    if (r.indicator("the bit before an item of " + g.list) == 0) break;
                     items.add(decodeItem(g, r));
                 }
                 break;
             case MORE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
                 while (true) {
-                    r.need(1, "the bit before an item of " + g.list);
-                    long more = r.take(1);
+                    long more = r.indicator("the bit before an item of " + g.list);
                     items.add(decodeItem(g, r));
                     if (more == 0) break;
                 }
@@ -293,8 +301,7 @@ final class SeqCodec extends Codec<byte[]> {
                 if (r.soft >= 0 && r.pos >= r.soft) return;
                 while (true) {
                     items.add(decodeItem(g, r));
-                    r.need(1, "the bit after an item of " + g.list);
-                    if (r.take(1) == 0) break;
+                    if (r.indicator("the bit after an item of " + g.list) == 0) break;
                 }
         }
         e.putList(g.list, items);
@@ -361,16 +368,19 @@ final class SeqCodec extends Codec<byte[]> {
         return toHex(Arrays.copyOf(w.b, bytes));
     }
 
-    /** By the kind the entity or item recorded for this format, else the first kind whose {@code requires} it has. */
+    /**
+     * By the kind the entity or item recorded for this format, else the first kind whose {@code requires} it has.
+     * An item that names a kind its group does not have selects by {@code requires} (ruling 26 of 0.8).
+     */
     private Seq.Kind selectForEncode(Seq.Body body, Entity e, String what) {
         if (!body.hasKinds) return body.kinds.get(0);
         if (pack.format.equals(e.kindFormat())) {
             Seq.Kind k = e.kindName() == null ? null : body.kind(e.kindName());
-            if (k == null) {
+            if (k != null) return k;
+            if (body == root) {
                 throw new GtException(GtException.Code.NO_KIND, pack.format, null,
                         what + " names kind " + e.kindName() + ", which is not a kind here");
             }
-            return k;
         }
         for (Seq.Kind k : body.kinds) {
             boolean all = true;
@@ -555,11 +565,22 @@ final class SeqCodec extends Codec<byte[]> {
         }
     }
 
-    /** The value of the earliest key of the line that is present (the entity's, else its default); zero bits when none is. */
+    /**
+     * The value of the earliest key of the line that the entity holds; when it holds none, the default of the
+     * earliest key that has one (ruling 16 of 0.8); zero bits when there is neither.
+     */
     private void encodeField(Seq.Node n, Writer w, Entity e, Pack.Scope scope) {
-        for (Pack.Field f : n.keys) {
-            Object v = valueToEncode(f, e, scope);
-            if (v == null) continue;
+        Pack.Field f = null;
+        for (Pack.Field k : n.keys) {
+            if (e.get(k.key) != null) { f = k; break; }
+        }
+        if (f == null) {
+            for (Pack.Field k : n.keys) {
+                if (scope.defaultValues.containsKey(k.key)) { f = k; break; }
+            }
+        }
+        Object v = f == null ? null : valueToEncode(f, e, scope);
+        if (v != null) {
             try {
                 if (f.bits.isAscii()) {
                     byte[] bytes = f.bits.encodeAscii(v, n.len / 8);

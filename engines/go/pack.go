@@ -427,8 +427,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 				continue
 			}
-			if sp.inGroup() {
-				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a group", kw)
+			// Header and table directives stand outside every block (0.8
+			// ruling 24).
+			if len(sp.stack) > 1 {
+				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a block (opened on line %d)", kw, sp.top().line)
 			}
 		} else if seqOnly[kw] {
 			return nil, perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)

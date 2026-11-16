@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-continuation-octet-of-an-fx-presence-at-the-end",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-rulings-extent",
+  "input": "01051205007fff",
+  "expect_error": "malformed-wire"
+}

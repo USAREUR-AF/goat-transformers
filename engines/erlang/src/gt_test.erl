@@ -9,6 +9,7 @@
 %%     With "@complete": true the keys are checked on the completed entity
 %%     (decode, context, derivations), floats within 1e-9 relative;
 %%   - every load vector under PacksDir/conformance/load-vectors/*.json.
+%%   - the named loader: one pack loaded alone with the modules it needs.
 %% Every failure is printed as "FAIL <pack>/<vector>: <why>"; then the counts
 %% "vectors: N/M passed" and "load vectors: N/M passed". Exits non-zero on
 %% any failure.
@@ -33,10 +34,11 @@ run(PacksDir, ModelsDir) ->
     T0 = erlang:monotonic_time(millisecond),
     {Pass, Fail} = run_conversion(PacksDir, ModelsDir),
     {LPass, LFail} = run_load_vectors(PacksDir),
+    NFail = run_named_load(PacksDir, ModelsDir),
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
     io:format("load vectors: ~p/~p passed~n", [LPass, LPass + LFail]),
     io:format("elapsed: ~.1f s~n", [(erlang:monotonic_time(millisecond) - T0) / 1000]),
-    case Fail + LFail of
+    case Fail + LFail + NFail of
         0 -> halt(0);
         N ->
             io:format("FAILED: ~p vector(s)~n", [N]),
@@ -318,6 +320,52 @@ run_load_vector(Path) ->
     catch Class:Reason ->
         {error, {exception, Class, Reason}}
     end.
+
+%% ===================================================================
+%% the named loader (gt_engine:load_packs/4)
+%% ===================================================================
+%% The pack directory with the smallest pack.def among those whose vectors
+%% all stay inside the pack is loaded alone, with the modules it needs: the
+%% engine then holds that one pack, and the pack's vectors pass on it.
+%% -> the number of failures (0 or 1).
+run_named_load(PacksDir, ModelsDir) ->
+    Candidates =
+        lists:sort(
+          [{filelib:file_size(filename:join([PacksDir, Pack, "pack.def"])), Pack}
+           || Pack <- lists:usort([P || {P, _} <- vector_files(PacksDir)]),
+              filelib:is_regular(filename:join([PacksDir, Pack, "pack.def"])),
+              self_contained(PacksDir, Pack)]),
+    case Candidates of
+        [] -> 0;
+        [{_, Pack} | _] ->
+            try
+                E = gt_engine:load_packs(gt_engine:new(), PacksDir, [Pack], ModelsDir),
+                1 = maps:size(gt_engine:packs(E)),
+                [] = [{Name, Why} || {P, File} <- vector_files(PacksDir), P =:= Pack,
+                                     {error, Name, Why} <- [run_vector_file(E, File)]],
+                io:format("named load: pack ~s alone, ~p module(s)~n",
+                          [Pack, maps:size(gt_engine:modules(E))]),
+                0
+            catch C:R ->
+                io:format("FAIL named load of ~s: ~ts~n", [Pack, why({exception, C, R})]),
+                1
+            end
+    end.
+
+%% Does every vector of the pack convert from and to the pack itself?
+self_contained(PacksDir, Pack) ->
+    Name = list_to_binary(Pack),
+    lists:all(
+      fun({P, _}) when P =/= Pack -> true;
+         ({_, File}) ->
+              try
+                  {ok, Bin} = file:read_file(File),
+                  Obj = gt_json:parse(Bin),
+                  gt_json:get(Obj, <<"from">>) =:= {ok, Name}
+                      andalso gt_json:get(Obj, <<"to">>) =:= {ok, Name}
+              catch _:_ -> false
+              end
+      end, vector_files(PacksDir)).
 
 %% ===================================================================
 %% failure text

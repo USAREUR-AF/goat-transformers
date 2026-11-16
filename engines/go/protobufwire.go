@@ -127,6 +127,8 @@ func decodeProtobuf(d *decodeState, b []byte) error {
 	}
 	// `present`: the field at the path occurs on the wire. An integer: the
 	// field is a varint equal to it.
+	// A `when` path whose prefix is not a submessage does not hold; it is not
+	// an error (0.8 ruling 31).
 	lay, err := d.choose(func(w *When) bool {
 		pv, err := resolvePBPath(p.Format, top, w.loc.pbPath)
 		if err != nil || pv == nil {
@@ -153,9 +155,9 @@ func (d *decodeState) pbScope(lay *layout, msg map[int][]pbVal, occ *pbVal) erro
 			if !f.dot {
 				var derr error
 				pv, derr = resolvePBPath(p.Format, msg, f.loc.pbPath)
-				// Inside an item a path prefix that is not a submessage is
-				// malformed-wire (0.7 ruling 13).
-				if _, notSub := derr.(*pbNotSubmsg); notSub && occ != nil {
+				// A path prefix that is not a submessage is malformed-wire,
+				// inside or outside a group (0.7 ruling 13, 0.8 ruling 30).
+				if _, notSub := derr.(*pbNotSubmsg); notSub {
 					return &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: "field " + f.Key + ": " + derr.Error()}
 				}
 				if derr != nil {

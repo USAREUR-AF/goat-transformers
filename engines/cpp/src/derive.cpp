@@ -249,12 +249,24 @@ bool apply_derive(const DeriveLine& d, Entity& e) {
                 e.fields[d.target] = Value::of_int(a[0]->i == 0 ? 1 : 0);
                 return true;
             case DeriveFn::ParseInt: {
-                // The decimal integer the text holds: an optional '-' and digits,
-                // nothing else. Text that is not one leaves the target absent.
+                // An optional '-' and then digits, leading zeros included, within
+                // 64 bits; anything else leaves the target absent (0.8 ruling 28).
                 if (a[0]->kind != Value::Kind::String) return false;
                 const std::string& s = a[0]->s;
-                std::int64_t n = 0;
-                if (s.empty() || s[0] == '+' || !is_integer_text(s) || !parse_int(s, n)) return false;
+                const bool neg = !s.empty() && s[0] == '-';
+                if (s.size() == (neg ? 1u : 0u)) return false;
+                // The magnitude, at most 2^63 for a negative and 2^63 - 1 otherwise.
+                const std::uint64_t limit = std::uint64_t{1} << 63;
+                std::uint64_t mag = 0;
+                for (std::size_t k = neg ? 1 : 0; k < s.size(); ++k) {
+                    if (s[k] < '0' || s[k] > '9') return false;
+                    const std::uint64_t digit = static_cast<std::uint64_t>(s[k] - '0');
+                    if (mag > (limit - digit) / 10) return false;
+                    mag = mag * 10 + digit;
+                }
+                if (!neg && mag == limit) return false;
+                const std::int64_t n = neg ? (mag == limit ? INT64_MIN : -static_cast<std::int64_t>(mag))
+                                           : static_cast<std::int64_t>(mag);
                 e.fields[d.target] = Value::of_int(n);
                 return true;
             }

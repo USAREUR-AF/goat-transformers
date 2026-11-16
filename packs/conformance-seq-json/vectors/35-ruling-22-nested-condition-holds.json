@@ -1,0 +1,7 @@
+{
+  "name": "ruling-22-nested-condition-holds",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-b",
+  "input": "{\"n\":1,\"z\":4}",
+  "expect": "01800202825500"
+}

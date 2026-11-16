@@ -1,0 +1,45 @@
+# Conformance probe pack for rulings 23 and 26 of spec 0.8, most significant
+# bit first. Public. No message kinds.
+#
+#   byte 0      n
+#   byte 1      presence p.1 and p.2, then 6 unused bits
+#   p.1, and p.2 is 0:  a count in 8 bits and that many recs; an item is a
+#               kind byte, 1 small (x in 8 bits) or 0 tiny
+#   p.2         a count in 8 bits and that many recs; an item is a kind byte,
+#               2 wide (x in 16 bits) or 0 none
+#
+# The list recs is mapped by two groups that sit in different `if` blocks
+# (ruling 23). Encode sets both bits for a list with items, so it writes the
+# second form only; an item that was decoded as `small` or `tiny` then names
+# a kind the second group does not have, and selects by `requires` (ruling 26).
+format     conformance-seq-rulings-lists
+version    0.8.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.n  8  uint
+presence p 2
+pad 6
+if p.1 !p.2
+  group  probe.recs count 8
+    kind   small
+    when   8  1
+    requires probe.x
+    field  probe.x  8  uint
+    kind   tiny
+    when   8  0
+  end
+end
+if p.2
+  group  probe.recs count 8
+    kind   wide
+    when   8  2
+    requires probe.x
+    field  probe.x  16  uint
+    kind   none
+    when   8  0
+  end
+end

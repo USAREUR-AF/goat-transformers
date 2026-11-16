@@ -45,36 +45,38 @@ func (e *Engine) refused(dist string) bool {
 // LoadModel parses one model module and loads it. source names the text in
 // errors.
 func (e *Engine) LoadModel(text []byte, source string) error {
-	// The `derive` checks run after the file is read and before the
-	// missing-distribution check (0.6 ruling 9).
-	m, err := parseModule(text, source, e.checkDerives)
+	m, err := parseModule(text, source)
 	if err != nil {
 		return err
 	}
 	return e.AddModule(m)
 }
 
-// AddModule loads a parsed model module.
+// AddModule loads a parsed model module. The checks run in the order of 0.8
+// ruling 29: after the file's own missing-distribution and missing-source,
+// distribution-refused, unknown-module, distribution-violation, the `derive`
+// checks, duplicate-module.
 func (e *Engine) AddModule(m *Module) error {
 	if e.refused(m.Distribution) {
 		return &Error{Kind: ErrDistributionRefused, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s is %s and the engine limit is %s", m.Name, m.Distribution, e.maxDist)}
 	}
-	if prev, dup := e.modules[m.Name]; dup {
-		return &Error{Kind: ErrDuplicateModule, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s already loaded from %s", m.Name, prev.Source)}
-	}
 	// A module is loaded after the modules it uses, and a public module uses
 	// only public modules (spec 0.8, "Model additions").
 	for _, name := range m.Uses {
-		u, ok := e.modules[name]
-		if !ok {
+		if _, ok := e.modules[name]; !ok {
 			return &Error{Kind: ErrUnknownModule, Module: name, Source: m.Source, Detail: fmt.Sprintf("module %s uses module %s, which is not loaded", m.Name, name)}
 		}
-		if m.Distribution == DistPublic && u.Distribution != DistPublic {
+	}
+	for _, name := range m.Uses {
+		if u := e.modules[name]; m.Distribution == DistPublic && u.Distribution != DistPublic {
 			return &Error{Kind: ErrDistributionViolation, Module: name, Source: m.Source, Detail: fmt.Sprintf("public module %s uses %s module %s", m.Name, u.Distribution, name)}
 		}
 	}
 	if err := e.checkDerives(m); err != nil {
 		return err
+	}
+	if prev, dup := e.modules[m.Name]; dup {
+		return &Error{Kind: ErrDuplicateModule, Module: m.Name, Source: m.Source, Detail: fmt.Sprintf("module %s already loaded from %s", m.Name, prev.Source)}
 	}
 	e.modules[m.Name] = m
 	e.derives = nil
@@ -224,6 +226,91 @@ func LoadDirs(modelsDir, packsDir, maxDistribution string) (*Engine, error) {
 	packs, err := LoadPacks(packsDir)
 	if err != nil {
 		return nil, err
+	}
+	for _, p := range packs {
+		if err := e.AddPack(p); err != nil {
+			return nil, err
+		}
+	}
+	return e, nil
+}
+
+// LoadPacksOnly builds an engine that holds only the named packs of packsDir
+// and the modules they need: `core`, the modules the packs name in `uses`
+// lines, and the modules those use in turn. A name is a directory of
+// packsDir, which by convention is the format name. The modules load in the
+// order LoadDirs loads them, then the packs in the order given; a name given
+// twice is loaded once. A name with no <name>/pack.def is unknown-format. A
+// needed module that no file of modelsDir declares is left to the load of the
+// pack or module that uses it, which reports unknown-module.
+func LoadPacksOnly(modelsDir, packsDir, maxDistribution string, names []string) (*Engine, error) {
+	e := New()
+	if err := e.SetMaxDistribution(maxDistribution); err != nil {
+		return nil, err
+	}
+	if len(names) == 0 {
+		return nil, &Error{Kind: ErrUnknownFormat, Source: packsDir, Detail: "no pack named"}
+	}
+	var packs []*Pack
+	seen := map[string]bool{}
+	for _, name := range names {
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
+		path := filepath.Join(packsDir, name, "pack.def")
+		if name == "" || name != filepath.Base(name) || name == "." || name == ".." {
+			return nil, &Error{Kind: ErrUnknownFormat, Format: name, Source: packsDir, Detail: "a pack is named by its directory under the packs directory"}
+		}
+		if _, err := os.Stat(path); err != nil {
+			return nil, &Error{Kind: ErrUnknownFormat, Format: name, Source: packsDir, Detail: "no " + name + "/pack.def in the packs directory"}
+		}
+		p, err := ParsePackFile(path)
+		if err != nil {
+			return nil, err
+		}
+		packs = append(packs, p)
+	}
+	files, err := moduleFiles(modelsDir)
+	if err != nil {
+		return nil, err
+	}
+	usesOf := map[string][]string{}
+	for _, f := range files {
+		if name, uses := moduleHeader(f); name != "" {
+			if _, dup := usesOf[name]; !dup {
+				usesOf[name] = uses
+			}
+		}
+	}
+	needed := map[string]bool{}
+	var need func(name string)
+	need = func(name string) {
+		if needed[name] {
+			return
+		}
+		needed[name] = true
+		for _, u := range usesOf[name] {
+			need(u)
+		}
+	}
+	need(CoreModule)
+	for _, p := range packs {
+		for _, u := range p.Uses {
+			need(u)
+		}
+	}
+	for _, f := range files {
+		if name, _ := moduleHeader(f); !needed[name] {
+			continue
+		}
+		text, err := os.ReadFile(f)
+		if err != nil {
+			return nil, &Error{Kind: ErrBadDirective, Source: f, Detail: err.Error()}
+		}
+		if err := e.LoadModel(text, f); err != nil {
+			return nil, err
+		}
 	}
 	for _, p := range packs {
 		if err := e.AddPack(p); err != nil {

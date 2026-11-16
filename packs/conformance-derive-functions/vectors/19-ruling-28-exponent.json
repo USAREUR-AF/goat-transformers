@@ -1,0 +1,8 @@
+{
+  "name": "ruling-28-exponent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"s1\":\"1e3\"}",
+  "context": {},
+  "expect": "{\"s1\":\"1e3\"}"
+}

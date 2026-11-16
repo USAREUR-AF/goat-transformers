@@ -1,0 +1,7 @@
+{
+  "name": "ruling-21-last-fx-of-a-chain-at-the-end-reads-0",
+  "from": "conformance-seq-rulings-extent",
+  "to": "conformance-seq-json",
+  "input": "01040f0b0d",
+  "expect": "{\"n\":1,\"c1\":5,\"c2\":6}"
+}

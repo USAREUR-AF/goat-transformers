@@ -1,0 +1,7 @@
+{
+  "name": "ruling-23-list-in-two-groups-written-once",
+  "from": "conformance-seq-json",
+  "to": "conformance-seq-rulings-lists",
+  "input": "{\"n\":1,\"recs\":[{\"x\":5}]}",
+  "expect": "01c001020005"
+}

@@ -4,7 +4,8 @@ import math
 from dataclasses import dataclass, field as dc_field
 
 from .errors import (
-    BadDirective, DuplicateKey, InvalidModel, MissingDistribution, MissingSource, UnknownDirective, UnknownModule,
+    BadDirective, DistributionRefused, DistributionViolation, DuplicateKey, DuplicateModule, InvalidModel,
+    MissingDistribution, MissingSource, UnknownDirective, UnknownModule,
 )
 from .packdef import CORE, DISTRIBUTIONS, split_key, tokenize
 from .transforms import parse_factor, read_typed
@@ -71,10 +72,15 @@ def _bearing(east, north):
 
 
 def _parse_int(text):
-    try:
-        return read_typed(text, "int")
-    except (ValueError, OverflowError):
-        return None  # the text holds no decimal integer: the target stays absent
+    """Ruling 28 of 0.8: an optional `-` and then digits, leading zeros
+    included, within 64 bits; anything else leaves the target absent."""
+    digits = text[1:] if text.startswith("-") else text
+    if not digits or not digits.isascii() or not digits.isdigit():
+        return None
+    if len(digits.lstrip("0")) > 19:
+        return None
+    value = int(text)
+    return value if _INT64[0] <= value <= _INT64[1] else None
 
 
 _NO_PARAM = ("copy", "hypot", "bearing", "east_of", "north_of", "neg", "day_seconds", "any", "not", "parse_int",
@@ -94,6 +100,35 @@ _TYPED_FN = {
     "parse_int": _parse_int,
     "text_of": lambda a: str(int(a)),
 }
+
+
+# function -> argument count, None for one or more
+_ARG_COUNT = {"copy": 1, "hypot": 2, "bearing": 2, "east_of": 2, "north_of": 2, "neg": 1, "day_seconds": 1,
+              "any": None, "not": 1, "parse_int": 1, "text_of": 1, "scale": 1, "offset": 1, "join": None}
+
+
+def _check_derive_text(function, n):
+    """Ruling 32 of 0.8: what a `derive` line shows on its own text, the
+    function name, its parameter and the number of arguments. Raises
+    ValueError."""
+    name, colon, param = function.partition(":")
+    if name not in _ARG_COUNT:
+        raise ValueError("unknown function %r" % function)
+    if name in _NO_PARAM:
+        if colon:
+            raise ValueError("%s takes no parameter" % name)
+    elif not colon:
+        raise ValueError("%s needs a parameter" % name)
+    elif name == "scale":
+        parse_factor(param)
+    elif name == "offset":
+        try:
+            read_typed(param, "int")
+        except ValueError:
+            read_typed(param, "float")
+    count = _ARG_COUNT[name]
+    if (n != count) if count is not None else (n < 1):
+        raise ValueError("%s takes %s argument(s), got %d" % (name, count if count is not None else "1 or more", n))
 
 
 def _build_derive(function, target_type, arg_types):
@@ -223,14 +258,17 @@ def scan_uses(text):
     return name, uses
 
 
-def parse_model_text(text, *, source="model.def", core=None, models=None):
+def parse_model_text(text, *, source="model.def", core=None, models=None, max_distribution=None):
     """Parse one module. Line errors are raised as the file is read,
-    `duplicate-key` among them; then a `uses` line naming a module that is not
-    loaded is `unknown-module` (when `models`, the loaded modules by name, is
-    given); then the `derive` lines are checked (they need the whole file);
-    then `missing-distribution` and `missing-source`. `core` is the loaded
+    `duplicate-key` among them and a `derive` line refused on its own text
+    (ruling 32 of 0.8). Then, in the order of ruling 29 of 0.8:
+    `missing-distribution`, `missing-source`, `distribution-refused` (when
+    `max_distribution`, the engine's limit, is given), `unknown-module` and
+    `distribution-violation` (when `models`, the loaded modules by name, is
+    given), the `derive` checks that need keys, `duplicate-module`. `core` is the loaded
     `core` module, for a caller that has no other module."""
     check_uses = models is not None
+    loaded = models if models is not None else {}
     models = dict(models) if models else {}
     if core is not None:
         models.setdefault(CORE, core)
@@ -285,6 +323,10 @@ def parse_model_text(text, *, source="model.def", core=None, models=None):
         elif kw == "derive":
             if len(args) < 2:
                 raise InvalidModel("directive 'derive' takes 2 or more argument(s), got %d at %s" % (len(args), where))
+            try:  # ruling 32 of 0.8: refused on its own text, a line error
+                _check_derive_text(args[1], len(args) - 2)
+            except ValueError as e:
+                raise BadDirective("derive %s %s at %s: %s" % (args[0], args[1], where, e))
             derives.append((lineno, args))
         else:
             raise UnknownDirective("unknown directive %r at %s" % (kw, where))
@@ -292,11 +334,6 @@ def parse_model_text(text, *, source="model.def", core=None, models=None):
     name = seen.get("module")
     module = Module(name=name, version=seen.get("version"), distribution=seen.get("distribution"), sources=sources,
                     keys=keys, lists=lists, uses=uses)
-    if check_uses:
-        for m in uses:
-            if m not in models and m != name:
-                raise UnknownModule("module %r uses module %s, which is not loaded (%s)" % (name, m, source))
-    _check_derives(module, derives, models, source)
     if module.distribution is None:
         raise MissingDistribution("module %r has no 'distribution' line in %s" % (name, source))
     if not sources:
@@ -311,12 +348,31 @@ def parse_model_text(text, *, source="model.def", core=None, models=None):
         raise InvalidModel(
             "unknown distribution %r (known: %s) in module %s" % (module.distribution, ", ".join(DISTRIBUTIONS), name)
         )
+    if max_distribution is not None and (
+        DISTRIBUTIONS.index(module.distribution) > DISTRIBUTIONS.index(max_distribution)
+    ):
+        raise DistributionRefused(
+            "module %s is %s; this engine's limit is %s" % (name, module.distribution, max_distribution)
+        )
+    if check_uses:
+        for m in uses:
+            if m not in models and m != name:
+                raise UnknownModule("module %r uses module %s, which is not loaded (%s)" % (name, m, source))
+        if module.distribution == "public":  # a public module uses only public modules
+            for m in uses:
+                if m != name and models[m].distribution != "public":
+                    raise DistributionViolation(
+                        "public module %s uses %s module %s" % (name, models[m].distribution, m)
+                    )
+    _check_derives(module, derives, models, source)
+    if name in loaded:
+        raise DuplicateModule("module %s loaded twice (%s, %s)" % (name, loaded[name].path, source))
     return module
 
 
-def load_model_file(path, core=None, models=None):
+def load_model_file(path, core=None, models=None, max_distribution=None):
     with open(path, "r", encoding="utf-8") as fh:
         text = fh.read()
-    module = parse_model_text(text, source=path, core=core, models=models)
+    module = parse_model_text(text, source=path, core=core, models=models, max_distribution=max_distribution)
     module.path = path
     return module

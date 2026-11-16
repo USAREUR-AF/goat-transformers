@@ -1,0 +1,16 @@
+{
+  "name": "sample-first-record-of-a-block-of-two",
+  "from": "asterix-cat048",
+  "to": "asterix-cat048",
+  "input": "3000119001020000000090010200000000",
+  "expect": "30000a90010200000000",
+  "model": {
+    "@kind": "record",
+    "cat048.i010_sac": "1",
+    "cat048.i010_sic": "2",
+    "cat048.i040_rho": "0",
+    "cat048.i040_theta": "0"
+  },
+  "source": "github.com/zoranbosnjak/asterix-libs (BSD-3-Clause), libs/python/README.md, commit 24be3c4593a24001d10e04338b46f6d85df6660f",
+  "reference": "the first data block of the README's SAC/SIC rewriting example (written there with edition 1.31): two records, each SAC 1, SIC 2 and item 040 zero. The pack reads the first record and writes it alone"
+}

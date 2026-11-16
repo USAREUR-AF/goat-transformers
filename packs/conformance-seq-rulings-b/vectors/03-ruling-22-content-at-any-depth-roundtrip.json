@@ -1,0 +1,10 @@
+{
+  "name": "ruling-22-content-at-any-depth-roundtrip",
+  "from": "conformance-seq-rulings-b",
+  "to": "conformance-seq-rulings-b",
+  "input": "012002028101c180",
+  "expect": "012002028101c180",
+  "model": {
+    "probe.c2": "3"
+  }
+}
