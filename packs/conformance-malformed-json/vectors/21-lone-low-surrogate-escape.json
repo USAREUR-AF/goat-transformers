@@ -1,0 +1,7 @@
+{
+  "name": "lone-low-surrogate-escape",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"\\ude00\"}",
+  "expect_error": "malformed-wire"
+}

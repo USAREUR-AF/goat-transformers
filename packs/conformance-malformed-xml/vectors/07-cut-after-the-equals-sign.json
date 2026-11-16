@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-the-equals-sign",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=",
+  "expect_error": "malformed-wire"
+}

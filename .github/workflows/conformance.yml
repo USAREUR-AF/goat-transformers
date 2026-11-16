@@ -109,26 +109,39 @@ jobs:
         working-directory: engines/zig
   bindings:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: C ABI, shared and static, against the C test
+      - name: Both crates, formatted and free of clippy warnings
+        run: |
+          for crate in bindings/c bindings/wasm; do
+            (cd "$crate" && cargo fmt --check && cargo clippy --release --all-targets -- -D warnings)
+          done
+      # test.sh needs no flag here: it finds LeakSanitizer in the compiler and
+      # sets ASAN_OPTIONS=detect_leaks=1 for its AddressSanitizer runs itself.
+      - name: C ABI, shared and static, under the sanitizers, every vector
         run: ./test.sh
         working-directory: bindings/c
       - name: WebAssembly module
         run: |
           rustup target add wasm32-unknown-unknown
+          cargo clippy --release --target wasm32-unknown-unknown -- -D warnings
+          cargo test --release
           cargo build --release --target wasm32-unknown-unknown
           cargo build --profile small --target wasm32-unknown-unknown
           ls -l target/wasm32-unknown-unknown/release/goat_transformers_wasm.wasm \
                 target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm
         working-directory: bindings/wasm
-      - name: Every conversion vector through the module, release build
-        run: node --test bindings/wasm/test/vectors.test.mjs
-      - name: Every conversion vector through the module, small build
-        run: node --test bindings/wasm/test/vectors.test.mjs
+      - name: Every conversion vector and the wrapper tests, release build
+        run: node --test bindings/wasm/test/*.test.mjs
+      - name: Every conversion vector and the wrapper tests, small build
+        run: node --test bindings/wasm/test/*.test.mjs
         env:
           GT_WASM: bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm
+      - name: TypeScript declarations, compiled against a consumer
+        run: >
+          npx --yes -p typescript@5.9.3 tsc --noEmit --strict --target es2022
+          --module nodenext --skipLibCheck false bindings/wasm/test/consumer.ts
       - name: C library installed under a prefix, found by pkg-config
         run: |
           DESTDIR="$RUNNER_TEMP/stage" bindings/c/install.sh /usr/local

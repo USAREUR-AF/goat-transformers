@@ -1,0 +1,7 @@
+{
+  "name": "fixed32-cut-short",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275312d0000",
+  "expect_error": "malformed-wire"
+}

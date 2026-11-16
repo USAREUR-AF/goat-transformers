@@ -1,0 +1,7 @@
+{
+  "name": "character-reference-to-nul",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"&#0;\"/>",
+  "expect_error": "malformed-wire"
+}

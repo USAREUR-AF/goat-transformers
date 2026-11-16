@@ -1,0 +1,7 @@
+{
+  "name": "unclosed-array",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\",\"list\":[1,2",
+  "expect_error": "malformed-wire"
+}

@@ -60,8 +60,8 @@ The build leaves, under `bindings/c/target/release/`:
 
 | File | Size (macOS arm64) |
 |---|---|
-| `libgoat_transformers_c.dylib` (`.so` on Linux) | 1,022,736 bytes |
-| `libgoat_transformers_c.a` | 19,018,240 bytes |
+| `libgoat_transformers_c.dylib` (`.so` on Linux) | 1,023,184 bytes |
+| `libgoat_transformers_c.a` | 19,062,080 bytes |
 
 Use:
 
@@ -118,7 +118,7 @@ Rules, stated in full at the top of the header:
 | `cargo test --release` | the shared glue (argument and context reading, the limit) and what C cannot reach: a panic becomes `GT_ERR_PANIC` with its message, and a panic while the engine is being changed stops the engine |
 | `test/header.c` compiled as C99 and as C++17 with `-Wall -Wextra -Wpedantic -Werror` | the header stands alone in both languages; the type and const-ness of every function; the layout of `gt_buf`; the values of the status and limit constants |
 | `nm` on the shared library against the header | the library exports exactly the 8 functions the header declares |
-| `test/api.c` | the contract of the header, by statement: a NULL engine in every call; a NULL pointer with a length and with length 0, for every text argument; text that is not UTF-8 or is cut inside a character; a NUL inside a format name, a message and a model text; buffer ownership (a zeroed buffer, the same buffer freed twice, `out == NULL`, a buffer used after its engine is freed, an error text as an owned buffer); error kinds; context text (`=` in a value, an empty value, UTF-8, an empty key); the same module loaded twice (`duplicate-module`) and the same pack loaded twice (replaced, listed once); the distribution limit (a controlled pack and a controlled module refused with `distribution-refused` under `public`, loaded under the default and under `controlled`, a value that is no limit, a limit set after a load). After each group of refusals the engine must still convert. The controlled texts are synthetic and exist only in the test |
+| `test/api.c` | the contract of the header, by statement: a NULL engine in every call; a NULL pointer with a length and with length 0, for every text argument; text that is not UTF-8 or is cut inside a character; a NUL inside a format name, a message and a model text; buffer ownership (a zeroed buffer, the same buffer freed twice, `out == NULL`, a buffer used after its engine is freed, an error text as an owned buffer); error kinds; malformed input (a message cut off inside a tag or an attribute, and cot-xml and geojson nested 65 and 30,000 levels deep, give `GT_ERR_ENGINE` with `malformed-wire`, never `GT_ERR_PANIC`; 64 levels convert); context text (`=` in a value, an empty value, UTF-8, an empty key); the same module loaded twice (`duplicate-module`) and the same pack loaded twice (replaced, listed once); the distribution limit (a controlled pack and a controlled module refused with `distribution-refused` under `public`, loaded under the default and under `controlled`, a value that is no limit, a limit set after a load). After each group of refusals the engine must still convert. The controlled texts are synthetic and exist only in the test |
 | `test/threads.c` | 8 threads, each 1,000 `gt_convert` calls over 6 conversions (4 that succeed, 2 that fail) on one engine, while a ninth thread calls `gt_formats` 2,000 times; all released together; every result equal to the one a single thread got first |
 | `test/vectors.c` | every model module and every pack loaded, then every conversion vector under `packs/*/vectors/` through `gt_convert`, compared with `expect` or with the kind in `expect_error`. The `model` checks and the load vectors are not run: the library has no decode call |
 
@@ -127,8 +127,8 @@ against the static library, under AddressSanitizer with
 UndefinedBehaviorSanitizer, and under a leak check. `test/threads.c` also runs
 under ThreadSanitizer. `GT_SANITIZE=0` runs only the first two.
 
-Measured on macOS arm64 (Apple clang 21): `api` 137 checks, `threads` 22
-checks, `vectors` 3187 of 3187 vectors with 91 packs and 43 model modules; all
+Measured on macOS arm64 (Apple clang 21): `api` 158 checks, `threads` 22
+checks, `vectors` 3291 of 3291 vectors with 96 packs and 43 model modules; all
 pass in every configuration; 0 leaks.
 
 What the sanitizer runs do and do not cover:
@@ -158,8 +158,8 @@ cargo build --profile small --target wasm32-unknown-unknown
 
 | Build | File under `bindings/wasm/target/wasm32-unknown-unknown/` | Size | gzip -9 |
 |---|---|---|---|
-| `--release` | `release/goat_transformers_wasm.wasm` | 595,994 bytes | 202,403 bytes |
-| `--profile small` (`opt-level = "z"`, `lto`, `strip`, one codegen unit, `panic = "abort"`) | `small/goat_transformers_wasm.wasm` | 348,530 bytes | 140,568 bytes |
+| `--release` | `release/goat_transformers_wasm.wasm` | 614,821 bytes | 207,783 bytes |
+| `--profile small` (`opt-level = "z"`, `lto`, `strip`, one codegen unit, `panic = "abort"`) | `small/goat_transformers_wasm.wasm` | 361,911 bytes | 145,141 bytes |
 
 Measured with rustc 1.97.1. The module has no imports. The `.wasm` is a build
 product and is not kept in the repository.
@@ -175,7 +175,7 @@ cd bindings/wasm && cargo test --release
 
 `test/vectors.test.mjs` loads every `model/*.def` and every pack, runs every
 conversion vector of the loaded packs through the module and compares with
-`expect` or `expect_error`. With all 91 packs loaded: 3187 vectors, 3187
+`expect` or `expect_error`. With all 96 packs loaded: 3291 vectors, 3291
 passed, on both builds (`python3 -I tools/repo-stats` prints the current counts
 of packs and vectors, and the size of a built module). The test prints the load
 time and the run time. `GT_PACKS` chooses packs; a vector whose target format
@@ -183,7 +183,7 @@ is not among them is counted as skipped. The `model` checks of a vector are not
 run, because the module has no decode call. Load vectors are not run.
 
 `test/wrapper.test.mjs` tests `goat_transformers.mjs`, `node.mjs` and the raw
-interface, 19 tests, all passing on both builds:
+interface, 20 tests, all passing on both builds:
 
 | Subject | What is checked |
 |---|---|
@@ -192,6 +192,7 @@ interface, 19 tests, all passing on both builds:
 | refused arguments | 10 values that are neither a string nor bytes, in each of the 5 text positions; contexts, keys and values the context text cannot carry: each a `TypeError` that begins `bad-argument:` |
 | memory | a message over 1 MiB (the memory grows under the call; the output equals the input character for character); 10,000 conversions (successes, a context, engine errors) with `memoryBytes` unchanged after the first 400; 10,000 refused arguments and 10,000 refusals by the module with `memoryBytes` unchanged; a view made before the memory grows is detached |
 | life of an engine | every call after `dispose` fails with `bad-argument: this engine was disposed`; a second `dispose` does nothing; two engines side by side share no modules, packs or memory |
+| malformed input | a cot-xml message cut off inside a tag or an attribute, and cot-xml and geojson messages nested 65 and 30,000 levels deep, fail with `malformed-wire`; 64 levels convert; the engine converts afterwards |
 | trap | an export that throws as a trap does: the call fails with `panic: the engine trapped: ...`, every later call with `panic: this engine stopped ...`, and the instance is not called again |
 | distribution limit | under `maxDistribution: "public"` a controlled pack and a controlled module are refused with `distribution-refused` and public ones load and convert; the default and `"controlled"` load both; a value that is no limit is a `TypeError`; `loadTree` into a limited engine refuses a controlled pack of a tree written to a temporary directory |
 | raw interface | a handle of 0 gives an error result in every call; the module imports nothing and exports exactly the documented names |
@@ -202,7 +203,7 @@ under `@ts-expect-error` the uses the wrapper refuses, so a declaration that
 is wrong or resolves to `any` does not compile:
 
 ```
-npx -p typescript tsc --noEmit --strict --target es2022 --module nodenext --skipLibCheck false bindings/wasm/test/consumer.ts
+npx -p typescript@5.9.3 tsc --noEmit --strict --target es2022 --module nodenext --skipLibCheck false bindings/wasm/test/consumer.ts
 ```
 
 Measured with TypeScript 5.9.3: no errors, with `--module nodenext` and with

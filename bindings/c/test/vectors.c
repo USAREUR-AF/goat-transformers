@@ -356,8 +356,9 @@ static void load_model_file(model_loader *m, const char *file) {
     char *model_text = read_file(m->root, rel, &len);
     names used = uses_of(model_text);
     for (size_t i = 0; i < used.count; i++) {
-        char *used_file = must_alloc(strlen(used.items[i]) + 5);
-        sprintf(used_file, "%s.def", used.items[i]);
+        size_t size = strlen(used.items[i]) + sizeof ".def";
+        char *used_file = must_alloc(size);
+        snprintf(used_file, size, "%s.def", used.items[i]);
         load_model_file(m, used_file);
         free(used_file);
     }

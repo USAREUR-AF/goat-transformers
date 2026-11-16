@@ -1,0 +1,7 @@
+{
+  "name": "doctype-that-declares-an-entity",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<!DOCTYPE event [<!ENTITY a \"b\">]><event uid=\"&a;\"/>",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-a-form-feed",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01000000\f02000000",
+  "expect_error": "malformed-wire"
+}

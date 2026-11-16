@@ -215,7 +215,7 @@ abstract class Codec<W> {
             if (c >= '0' && c <= '9') d = c - '0';
             else if (c >= 'a' && c <= 'f') d = c - 'a' + 10;
             else if (c >= 'A' && c <= 'F') d = c - 'A' + 10;
-            else if (Character.isWhitespace(c)) continue;
+            else if (c == ' ' || c == '\t' || c == '\n' || c == '\r') continue;   // ruling 40 of 0.8: these four only
             else throw malformed("hex has a non-hex digit");
             if (hi < 0) {
                 hi = d;

@@ -1,0 +1,7 @@
+{
+  "name": "surrogate-pair-escape",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"\\ud83d\\ude00\"}",
+  "expect": "{\"id\":\"😀\"}"
+}

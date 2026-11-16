@@ -1,0 +1,19 @@
+# Conformance probe pack for malformed input on the `protobuf` wire
+# (spec/vector-format.md, "Malformed input"). Public. No kinds. One field of
+# each wire type and one inside a submessage, so the vectors cut a varint, a
+# fixed64, a fixed32, a length-delimited field and a submessage. One packed
+# list of varints (field 6), so a vector cuts a varint inside a packed field.
+format   conformance-malformed-protobuf
+version  0.1.0
+distribution public
+source  "goat-transformers spec/engine-spec.md and spec/vector-format.md (synthetic probe format, no external standard)"
+uses     probe
+wire     protobuf
+field    uid       1    pstring
+field    time_ms   2    pvarint
+field    lat       3    pdouble
+field    callsign  4.1  pstring
+field    ce        5    pfloat
+group    probe.nums  6
+  field  probe.val  .  pvarint
+end

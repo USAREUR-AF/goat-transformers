@@ -1,0 +1,7 @@
+{
+  "name": "hexadecimal-character-reference",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"&#x41;\"/>",
+  "expect": "<event uid=\"A\"/>"
+}

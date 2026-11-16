@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-the-tag-name",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event",
+  "expect_error": "malformed-wire"
+}

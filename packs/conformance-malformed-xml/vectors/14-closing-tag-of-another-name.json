@@ -1,0 +1,7 @@
+{
+  "name": "closing-tag-of-another-name",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><contact callsign=\"A\"/></evnt>",
+  "expect_error": "malformed-wire"
+}

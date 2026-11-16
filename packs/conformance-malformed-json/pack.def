@@ -1,0 +1,12 @@
+# Conformance probe pack for malformed input on the `json` wire
+# (spec/vector-format.md, "Malformed input"). Public. No kinds. The vectors
+# cut a message inside each construct and nest objects to the depth limit and
+# one level beyond it.
+format  conformance-malformed-json
+version 0.1.0
+distribution public
+source  "goat-transformers spec/engine-spec.md and spec/vector-format.md (synthetic probe format, no external standard)"
+wire    json
+field   uid       id       string
+field   lat       pos.lat  float
+field   callsign  label    string

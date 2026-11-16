@@ -251,7 +251,7 @@ static void test_error_kinds(const char *root) {
     gt_engine *e = repository_engine(root);
     gt_buf out = {0};
 
-    expect(convert(e, "cot-xml", "geojson", "<event", NULL, &out), &out, GT_ERR_ENGINE, "", "a truncated message");
+    expect(convert(e, "cot-xml", "geojson", "<event", NULL, &out), &out, GT_ERR_ENGINE, "malformed-wire:", "a truncated message");
     expect(convert(e, "no-such-format", "geojson", "x", NULL, &out), &out, GT_ERR_ENGINE, "", "a source format that is not loaded");
     expect(convert(e, "cot-xml", "no-such-format", EVENT, NULL, &out), &out, GT_ERR_ENGINE, "", "a target format that is not loaded");
     expect(convert(e, "cot-xml", "cot-xml", EVENT, "no.such_key=1\n", &out), &out, GT_ERR_ENGINE, "undeclared-key:", "a context key no module declares");
@@ -265,6 +265,81 @@ static void test_error_kinds(const char *root) {
     check(rc == GT_OK && buf_is(&out, "canonical-track-v2\ncot-xml\ngeojson\n"), "refused loads leave the formats as they were");
     gt_buf_free(&out);
     check_still_converts(e, "every kind of error");
+    gt_engine_free(e);
+}
+
+/* Append `count` copies of `piece` at `to`; returns the place after them. */
+static char *append(char *to, const char *piece, int count) {
+    size_t len = strlen(piece);
+    for (int i = 0; i < count; i++, to += len) memcpy(to, piece, len);
+    *to = 0;
+    return to;
+}
+
+/*
+ * A message nested `levels` deep: `open` holds the two outer levels, then
+ * come levels - 2 of `down` closed by as many `up`, then `close`. Allocated.
+ */
+static char *nested(const char *open, const char *down, const char *up, const char *close, int levels) {
+    int inner = levels - 2;
+    char *text = must_alloc(strlen(open) + (size_t)inner * (strlen(down) + strlen(up)) + strlen(close) + 1);
+    append(append(append(append(text, open, 1), down, inner), up, inner), close, 1);
+    return text;
+}
+
+/* A cot-xml event: the root element is level 1 and its <detail> level 2. */
+static char *nested_xml(int levels) {
+    return nested("<event uid=\"a\" type=\"a-f-G\"><detail>", "<n>", "</n>", "</detail></event>", levels);
+}
+
+/* A GeoJSON feature: the outermost object is level 1 and `properties` level 2. */
+static char *nested_json(int levels) {
+    return nested("{\"type\":\"Feature\",\"id\":\"a\",\"geometry\":null,\"properties\":{\"x\":", "[", "]", "}}", levels);
+}
+
+/*
+ * A message that is not well formed is the engine's `malformed-wire`, never
+ * a panic and never the end of the process (spec/engine-spec.md, Malformed
+ * input, ruling 35: 64 levels of nesting convert, 65 do not). The engine
+ * owns the rule and the conformance-malformed packs pin it; this test shows
+ * what a host of the library sees: GT_ERR_ENGINE, not GT_ERR_PANIC, and an
+ * engine that goes on converting.
+ */
+static void test_malformed_input(const char *root) {
+    gt_engine *e = repository_engine(root);
+    gt_buf out = {0};
+
+    /* an attribute cut off after its `=`, and other ways to stop early */
+    const char *cut[] = {"<event uid=", "<event uid=\"", "<event uid", "<event ", "<", "<event uid=\"a\"><point"};
+    for (size_t i = 0; i < sizeof cut / sizeof cut[0]; i++) {
+        expect(convert(e, "cot-xml", "geojson", cut[i], NULL, &out), &out, GT_ERR_ENGINE, "malformed-wire:", cut[i]);
+    }
+    check_still_converts(e, "truncated messages");
+
+    struct {
+        const char *format;
+        char *(*message)(int levels);
+    } wires[] = {{"cot-xml", nested_xml}, {"geojson", nested_json}};
+    for (size_t w = 0; w < sizeof wires / sizeof wires[0]; w++) {
+        const char *format = wires[w].format;
+
+        char *at_limit = wires[w].message(64);
+        int32_t rc = convert(e, format, format, at_limit, NULL, &out);
+        check(rc == GT_OK, "%s nested 64 levels converts (status %d: %.80s)", format, (int)rc, buf_text(&out));
+        gt_buf_free(&out);
+        free(at_limit);
+
+        int too_deep[] = {65, 30000};
+        for (size_t d = 0; d < sizeof too_deep / sizeof too_deep[0]; d++) {
+            char *message = wires[w].message(too_deep[d]);
+            rc = convert(e, format, format, message, NULL, &out);
+            check(rc == GT_ERR_ENGINE && buf_starts_with(&out, "malformed-wire:"),
+                  "%s nested %d levels is malformed-wire (status %d: %.80s)", format, too_deep[d], (int)rc, buf_text(&out));
+            gt_buf_free(&out);
+            free(message);
+        }
+        check_still_converts(e, "messages nested too deep");
+    }
     gt_engine_free(e);
 }
 
@@ -404,6 +479,7 @@ int main(int argc, char **argv) {
     test_text_that_is_not_utf8(root);
     test_embedded_nul(root);
     test_error_kinds(root);
+    test_malformed_input(root);
     test_context_text(root);
     test_loading_twice();
     test_distribution_limit();

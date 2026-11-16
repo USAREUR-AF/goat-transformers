@@ -360,7 +360,7 @@ npm install https://github.com/USAREUR-AF/goat-transformers/releases/download/v0
 ```
 
 The package is `@usareur-af/goat-transformers`: an ES module with TypeScript
-types, the WebAssembly module (346 kB, no imports) beside it, and no
+types, the WebAssembly module (362 kB, no imports) beside it, and no
 dependencies. In Node 18 or later:
 
 ```js

@@ -25,6 +25,198 @@ final class UnitTests {
         sequential(packs);
         rulingsOfSequential();
         modelAdditions();
+        malformedInput(packs);
+    }
+
+    /** Version 0.8, rulings 35 to 39: the cases of malformed input no shared vector pins. */
+    static void malformedInput(Engine packs) {
+        String mw = "malformed-wire";
+        String j = "conformance-malformed-json", x = "conformance-malformed-xml", p = "conformance-malformed-protobuf",
+                b = "conformance-malformed-bits";
+        // ruling 35: the limit holds for arrays and for a mix of arrays and objects, and far beyond it
+        errorKind("json 65 arrays", mw, () -> packs.decode(j, "{\"a\":" + "[".repeat(64) + "]".repeat(64) + "}"));
+        check("json 64 levels of arrays and objects", packs.decode(j, "{\"id\":\"u\",\"a\":" + "[".repeat(63) + "]".repeat(63) + "}") != null, "");
+        errorKind("json nesting of 200000 levels", mw, () -> packs.decode(j, "[".repeat(200000)));
+        errorKind("json nesting of 200000 objects", mw, () -> packs.decode(j, "{\"a\":".repeat(200000)));
+        errorKind("xml nesting of 200000 levels", mw, () -> packs.decode(x, "<event>" + "<a>".repeat(200000)));
+        // siblings do not add levels
+        check("xml siblings at level 2", packs.decode(x, "<event uid=\"u\">" + "<a/>".repeat(1000) + "</event>") != null, "");
+        // ruling 36
+        for (String hex : new String[]{"+a", "-1", "0x01", "0a0275311005 +", "0a02753110\u00a005", "0a02753110\u200505", "\u0661\u0662"}) {
+            errorKind("protobuf hex \"" + hex + "\"", mw, () -> packs.decode(p, hex));
+            errorKind("bits hex \"" + hex + "\"", mw, () -> packs.decode(b, hex));
+        }
+        // ruling 40: whitespace in hex text is space, tab, line feed and carriage return only
+        for (String hex : new String[]{"0a02\f75311005", "0a02\01375311005", "0a02\03475311005", "0a02\u008575311005", "0a02\u202875311005", "0a02\u300075311005"}) {
+            errorKind("protobuf hex with another space", mw, () -> packs.decode(p, hex));
+            errorKind("bits hex with another space", mw, () -> packs.decode(b, hex));
+        }
+        eq("hex whitespace", "u1", packs.decode(p, " 0a\t02 75\r\n31 10 05\n").get("uid"));
+        // ruling 37
+        errorKind("xml of whitespace and a comment", mw, () -> packs.decode(x, " <!-- c --> "));
+        errorKind("xml of a declaration alone", mw, () -> packs.decode(x, "<?xml version=\"1.0\"?>"));
+        errorKind("xml root of another name", "missing-root", () -> packs.decode(x, "<other/>"));
+        errorKind("xml character reference with a sign", mw, () -> packs.decode(x, "<event uid=\"&#x+41;\"/>"));
+        errorKind("xml character reference beyond the code points", mw, () -> packs.decode(x, "<event uid=\"&#x110000;\"/>"));
+        errorKind("xml character reference with no digits", mw, () -> packs.decode(x, "<event uid=\"&#;\"/>"));
+        // ruling 40: a numeric character reference names a character XML 1.0 allows
+        for (String ref : new String[]{"&#0;", "&#x0;", "&#8;", "&#xB;", "&#x1F;", "&#xD800;", "&#xDFFF;", "&#xFFFE;", "&#xFFFF;", "&#-65;", "&#+65;",
+                "&#x;", "&#X41;", "&#65", "&#6 5;", "&#\u0666\u0665;", "&#99999999999999999999;", "&nbsp;"}) {
+            errorKind("xml reference " + ref, mw, () -> packs.decode(x, "<event uid=\"" + ref + "\"/>"));
+            errorKind("xml reference " + ref + " in text", mw, () -> packs.decode(x, "<event>" + ref + "</event>"));
+        }
+        eq("xml references that are allowed", "\t\n\r A\ud7ff\ue000\ufffd\ud800\udc00\udbff\udfff&<>\"'",
+                packs.decode(x, "<event uid=\"&#9;&#xA;&#13;&#x20;&#65;&#xD7FF;&#xE000;&#xFFFD;&#x10000;&#x10FFFF;&amp;&lt;&gt;&quot;&apos;\"/>").get("uid"));
+        // ruling 40: a document type declaration anywhere
+        for (String doc : new String[]{"<!DOCTYPE event><event/>", "<!DOCTYPE event [<!ENTITY a \"b\">]><event uid=\"&a;\"/>",
+                "<?xml version=\"1.0\"?>\n<!DOCTYPE event SYSTEM \"http://127.0.0.1/x.dtd\"><event/>", "<event/><!DOCTYPE event>",
+                "<event><!DOCTYPE event></event>", "<event><!DOCTYPE event/></event>", "<!doctype event><event/>", "<!ENTITY a \"b\"><event/>",
+                "<event><!ELEMENT a ANY></event>", "<!DOCTYPE", "<event><?pi?><!DOCTYPE x></event>"}) {
+            errorKind("xml " + doc, mw, () -> packs.decode(x, doc));
+        }
+        check("xml DOCTYPE as text of a comment and of CDATA", packs.decode(x, "<!-- <!DOCTYPE a> --><event uid=\"u\"><![CDATA[<!DOCTYPE a>]]></event>") != null, "");
+        // ruling 38
+        String[][] pb = {
+            {"wire type 3", "0b"}, {"wire type 4", "0c"}, {"wire type 6", "0e"}, {"wire type 7", "0f"},
+            {"field number 2^29", "8080808010" + "00"},
+            {"field number of 61 bits", "f8ffffffffffffffff01" + "00"},
+            {"length of 2^63-1", "0a" + "ffffffffffffffff7f"},
+            {"length of 2^31", "0a" + "8080808008"},
+            {"length one beyond the input", "0a0375"},
+            {"varint of ten bytes cut", "10" + "ffffffffffffffffff"},
+            {"varint of eleven bytes", "10" + "ffffffffffffffffffff01"},
+            {"tag of eleven bytes", "80808080808080808080" + "00"},
+            {"wire type 3 in a field no line maps", "0a027531" + "4b"},
+            {"wire type 6 in a field no line maps", "0a027531" + "4e00"}, {"wire type 7 in a field no line maps", "0a027531" + "4f00"},
+            {"field number 0", "0000"}, {"field number 0 of wire type 2", "0200"}, {"field number 0 in a submessage", "0a027531" + "2202" + "0000"},
+            {"ten-byte varint with last byte 2", "10" + "ffffffffffffffffff02"},
+            {"ten-byte varint with last byte 0x7f", "10" + "8080808080808080807f"},
+            {"ten-byte tag with last byte 2", "80808080808080808002" + "00"},
+            {"ten-byte length with last byte 3", "0a" + "80808080808080808003"},
+            {"ten-byte varint with last byte 2 in a field no line maps", "48" + "ffffffffffffffffff02"},
+            {"submessage with a length beyond it", "0a027531" + "2202" + "0a05"}, {"submessage with a cut varint", "0a027531" + "2202" + "1080"},
+            {"submessage with wire type 4", "0a027531" + "2201" + "0c"},
+            {"fixed64 in a submessage cut by its end", "22050900000000"},
+            {"path prefix that is not a submessage", "0a027531" + "2005"},
+        };
+        for (String[] c : pb) errorKind("protobuf " + c[0], mw, () -> packs.decode(p, c[1]));
+        eq("protobuf ten-byte varint with last byte 1", -1L, packs.decode(p, "10" + "ffffffffffffffffff01").get("time_ms"));
+        eq("protobuf ten-byte varint of zero with last byte 0", 0L, packs.decode(p, "10" + "80808080808080808000").get("time_ms"));
+        // ruling 40: a truncated varint inside a packed field, and a ten-byte one beyond 64 bits
+        Engine packed = probeEngine("format k\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire protobuf\n"
+                + "group probe.recs 3\n field probe.x . pvarint\nend\n");
+        eq("protobuf packed varints", 3, packed.decode("k", "1a04" + "01" + "8101" + "02").list("probe.recs").size());
+        errorKind("protobuf packed field with a cut varint", mw, () -> packed.decode("k", "1a03" + "01" + "8181"));
+        errorKind("protobuf packed field of one continuation byte", mw, () -> packed.decode("k", "1a01" + "80"));
+        errorKind("protobuf packed ten-byte varint with last byte 2", mw, () -> packed.decode("k", "1a0a" + "ffffffffffffffffff02"));
+        eq("protobuf field number 2^29-1 in a field no line maps", "u1", packs.decode(p, "0a027531" + "f8ffffff0f" + "00").get("uid"));
+        // a submessage is checked also when an earlier line gave the key its value
+        Engine two = probeEngine("format w\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire protobuf\n"
+                + "field probe.label 1 pstring\nfield probe.label 4.1 pstring\n");
+        errorKind("protobuf submessage of a later line of a key", mw, () -> two.decode("w", "0a0141" + "2202" + "0a05"));
+        // ruling 39
+        for (String v : new String[]{"01", "-01", "+1", ".5", "-.5", "1.", "1.e2", "1e", "1e+", "-", "0x10", "1_0", "Infinity", "NaN",
+                "\"\\x\"", "\"\\'\"", "\"\\U0041\"", "\"\\u+041\"", "\"\\u-041\"", "\"\\u00g1\"", "\"\\u\u0661\u0661\u0661\u0661\"",
+                "\"a\tb\"", "\"a\nb\"", "\"a\u0000b\"", "\"a\u001fb\"", "'a'", "tru", "True", "nul"}) {
+            errorKind("json value " + v, mw, () -> packs.decode(j, "{\"id\":\"u\",\"n\":" + v + "}"));
+            errorKind("geojson value " + v, mw, () -> packs.decode("conformance-malformed-geojson",
+                    "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":" + v + "}}"));
+        }
+        for (String v : new String[]{"0", "-0", "0.5", "-0.5e-3", "1E+2", "10", "\"\\u00e9\\ud83d\\ude00\\/\\b\\f\\n\\r\\t\\\\\\\"\"", "\"\u007f\""}) {
+            check("json value " + v + " is read", packs.decode(j, "{\"id\":\"u\",\"n\":" + v + "}") != null, "");
+        }
+        // ruling 40: half of a surrogate pair without its other half
+        for (String v : new String[]{"\"\\ud83d\"", "\"\\ude00\"", "\"\\ude00\\ud83d\"", "\"\\ud83dx\"", "\"\\ud83d\\n\"", "\"\\ud83d\\u0041\"",
+                "\"\\ud83d\\ud83d\\ude00\"", "\"\\ud83d\\ude00\\ude00\"", "\"\\uD800\"", "\"\\uDFFF\"", "\"\\ud83d\\u\"", "\"\\ud83d\\ude0\"", "\"\\ud83d \\ude00\""}) {
+            errorKind("json value " + v, mw, () -> packs.decode(j, "{\"id\":\"u\",\"n\":" + v + "}"));
+            errorKind("json member name " + v, mw, () -> packs.decode(j, "{\"id\":\"u\"," + v + ":1}"));
+            errorKind("geojson value " + v, mw, () -> packs.decode("conformance-malformed-geojson",
+                    "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":" + v + "}}"));
+        }
+        eq("json surrogate pair of escapes", "\ud83d\ude00\ud800\udc00\udbff\udfff\ud7ff\ue000",
+                packs.decode(j, "{\"id\":\"\\ud83d\\uDE00\\uD800\\udc00\\udbff\\udfff\\ud7ff\\ue000\"}").get("uid"));
+        for (String doc : new String[]{"{\"id\":\"u\",}", "{,}", "[1,]", "{\"id\" \"u\"}", "{id:1}", "{\"id\":\"u\"}//", "\u00a0{}", "{}\u00a0", "{}\f"}) {
+            errorKind("json document " + doc, mw, () -> packs.decode(j, doc));
+        }
+    }
+
+    /**
+     * Version 0.8, "Malformed input": the input of every conversion vector, cut at prefixes and with single bytes
+     * changed, is decoded and converted by its own formats, and one changed copy is decoded by every loaded pack.
+     * Whatever is thrown is the engine's error with a named kind before a colon. The seed is fixed.
+     */
+    @SuppressWarnings("unchecked")
+    static void malformedSweep(Engine engine, java.util.List<java.nio.file.Path> vectorFiles) {
+        java.util.SplittableRandom rnd = new java.util.SplittableRandom(0x60a7_0008L);
+        java.util.Set<String> kinds = new java.util.HashSet<>();
+        for (GtException.Code c : GtException.Code.values()) kinds.add(c.kind());
+        java.util.List<String> formats = new java.util.ArrayList<>();
+        for (Pack p : engine.packs()) formats.add(p.format);
+        long[] n = new long[2];            // inputs fed, errors seen
+        java.util.List<String> bad = new java.util.ArrayList<>();
+        java.util.function.BiConsumer<String, Runnable> feed = (what, r) -> {
+            n[0]++;
+            try {
+                r.run();
+            } catch (GtException ex) {
+                n[1]++;
+                String m = ex.getMessage();
+                int colon = m.indexOf(':');
+                if (colon < 1 || !kinds.contains(m.substring(0, colon)) || !m.startsWith(ex.kind() + ": ")) {
+                    if (bad.size() < 8) bad.add(what + ": no named kind in \"" + m + "\"");
+                }
+            } catch (Throwable t) {
+                if (bad.size() < 8) bad.add(what + ": " + t);
+            }
+        };
+        for (java.nio.file.Path f : vectorFiles) {
+            Object doc;
+            try {
+                doc = Json.parse(java.nio.file.Files.readString(f, java.nio.charset.StandardCharsets.UTF_8));
+            } catch (java.io.IOException | RuntimeException ex) {
+                continue;                  // reported by the vector run
+            }
+            if (!(doc instanceof java.util.Map)) continue;
+            java.util.Map<String, Object> v = (java.util.Map<String, Object>) doc;
+            if (!(v.get("from") instanceof String) || !(v.get("to") instanceof String) || !(v.get("input") instanceof String)) continue;
+            String from = (String) v.get("from"), to = (String) v.get("to");
+            byte[] in = ((String) v.get("input")).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            boolean hex = true;
+            for (byte c : in) hex &= Json.hexDigit((char) c) >= 0 || c == ' ' || c == '\n';
+            java.util.List<byte[]> cases = new java.util.ArrayList<>();
+            // prefixes: every one of a short input, 24 spread over a long one
+            int step = Math.max(1, in.length / 24);
+            for (int len = 0; len < in.length; len += step) cases.add(java.util.Arrays.copyOf(in, len));
+            if (in.length > 0) cases.add(java.util.Arrays.copyOf(in, in.length - 1));
+            // single bytes changed: to any byte, to a byte of the input's own alphabet, and one bit flipped
+            for (int k = 0; k < 24 && in.length > 0; k++) {
+                byte[] m = in.clone();
+                int at = rnd.nextInt(m.length);
+                switch (k % 3) {
+                    case 0: m[at] = (byte) rnd.nextInt(256); break;
+                    case 1: m[at] = hex ? (byte) "0123456789abcdef".charAt(rnd.nextInt(16)) : in[rnd.nextInt(in.length)]; break;
+                    default: m[at] ^= (byte) (1 << rnd.nextInt(7));
+                }
+                cases.add(m);
+            }
+            String label = f.getParent().getParent().getFileName() + "/" + f.getFileName();
+            for (byte[] c : cases) {
+                String text = new String(c, java.nio.charset.StandardCharsets.UTF_8);
+                String what = label + " " + from + " <- \"" + (text.length() > 120 ? text.substring(0, 120) + "..." : text) + "\"";
+                feed.accept("decode " + what, () -> engine.decode(from, c));
+                feed.accept("convert " + what, () -> engine.convert(from, to, text));
+            }
+            if (!cases.isEmpty()) {
+                byte[] c = cases.get(cases.size() - 1);
+                for (String fmt : formats) {
+                    if (!fmt.equals(from)) feed.accept("decode " + label + " by " + fmt, () -> engine.decode(fmt, c));
+                }
+            }
+        }
+        check("malformed input sweep fed inputs", n[0] > 0 && n[1] > 0, n[0] + " inputs, " + n[1] + " errors");
+        check("malformed input sweep: only the engine's error, with a named kind", bad.isEmpty(), String.join("\n  ", bad));
+        System.out.println("malformed input sweep: " + n[0] + " inputs over " + vectorFiles.size() + " vectors and "
+                + formats.size() + " packs, " + n[1] + " named errors, " + bad.size() + " defects");
     }
 
     private static final String PROBE = "module probe\nversion 0.1.0\ndistribution public\nsource t\n"

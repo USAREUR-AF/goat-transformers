@@ -1,0 +1,7 @@
+{
+  "name": "field-number-0",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275310005",
+  "expect_error": "malformed-wire"
+}

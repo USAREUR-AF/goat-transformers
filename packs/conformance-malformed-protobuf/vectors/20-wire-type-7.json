@@ -1,0 +1,7 @@
+{
+  "name": "wire-type-7",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275313f00",
+  "expect_error": "malformed-wire"
+}

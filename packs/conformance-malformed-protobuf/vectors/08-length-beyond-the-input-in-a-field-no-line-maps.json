@@ -1,0 +1,7 @@
+{
+  "name": "length-beyond-the-input-in-a-field-no-line-maps",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275314a0561",
+  "expect_error": "malformed-wire"
+}

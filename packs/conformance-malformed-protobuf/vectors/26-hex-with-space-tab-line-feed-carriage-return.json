@@ -1,0 +1,7 @@
+{
+  "name": "hex-with-space-tab-line-feed-carriage-return",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a 02\t75\n31\r\n1005",
+  "expect": "0a0275311005"
+}

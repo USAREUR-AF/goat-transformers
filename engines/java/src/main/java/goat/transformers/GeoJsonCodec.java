@@ -241,7 +241,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             if (ci >= 0) {
                 if (coord[ci] != null) continue;
                 if (f.transform == Transform.FLOAT || f.transform == Transform.INT) coord[ci] = jv;
-                else coord[ci] = new Json.Num(Transform.formatDouble(Transform.asDouble(s)));
+                else {
+                    try {
+                        coord[ci] = new Json.Num(Transform.formatDouble(Transform.asDouble(s)));
+                    } catch (IllegalArgumentException ex) {
+                        throw encodeFailure(f, ex);
+                    }
+                }
             } else if (l.locator.startsWith("properties.")) {
                 props.putIfAbsent(l.locator.substring("properties.".length()), jv);
             } else {

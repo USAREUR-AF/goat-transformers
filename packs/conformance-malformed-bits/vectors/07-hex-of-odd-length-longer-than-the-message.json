@@ -1,0 +1,7 @@
+{
+  "name": "hex-of-odd-length-longer-than-the-message",
+  "from": "conformance-malformed-bits",
+  "to": "conformance-malformed-bits",
+  "input": "01000000020000000",
+  "expect_error": "malformed-wire"
+}

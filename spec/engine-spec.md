@@ -1306,3 +1306,47 @@ the points below, or noted that no vector decides them.
 34. **Rulings 7 and 21 together.** A group whose first indicator bit lies at or
     after the end of the extent gives an absent list. Ruling 21 applies to the
     indicators after the first.
+
+## Malformed input (0.8)
+
+An engine reads messages from untrusted senders. No input makes an engine
+crash, read outside the input, or use stack or memory without bound. An input
+that is not a well-formed message of its wire fails with `malformed-wire`,
+whatever the pack maps. `spec/vector-format.md` lists the cases per wire and
+the packs `conformance-malformed-*` pin them.
+
+35. **Nesting limit.** On `xml` (elements, root is level 1) and on `json` and
+    `geojson` (arrays and objects, outermost is level 1) a message nested
+    deeper than 64 levels is `malformed-wire`. Exactly 64 levels converts.
+36. **Hex text.** Hex input with an odd number of digits, or any character
+    that is not a hex digit or whitespace (a sign included), is
+    `malformed-wire` on `bits` and `protobuf`.
+37. **Empty XML input.** An input with no element is `malformed-wire`.
+    `missing-root` is for a well-formed document whose root has another name.
+38. **Protobuf syntax.** A truncated varint, a varint longer than 10 bytes, a
+    length or fixed-width value that runs past the input or past its enclosing
+    submessage, wire types 3 and 4, and a field number above 2^29-1 are
+    `malformed-wire`. The whole message is checked, whether or not the pack
+    maps the field or has kinds. Bytes of a submessage a path walks into that
+    do not parse are `malformed-wire`, not a field failure.
+39. **JSON grammar.** Numbers, escapes and string characters follow RFC 8259:
+    a leading zero, a leading `+`, a bare `.`, an unknown escape or a raw
+    control character in a string is `malformed-wire`.
+40. **Details of rulings 36 to 39, pinned by `conformance-malformed-*`.**
+    - Whitespace in hex text is space, tab, line feed and carriage return
+      only. Any other character that is not a hex digit is `malformed-wire`.
+    - Protobuf field number 0 and wire types 3, 4, 6 and 7 are
+      `malformed-wire`.
+    - A ten-byte varint whose last byte is greater than 1 (bits above bit 63)
+      is `malformed-wire`.
+    - A truncated varint inside a packed field is `malformed-wire`.
+    - A `\u` escape that is half of a surrogate pair without its other half
+      is `malformed-wire` on `json` and `geojson`.
+    - A document type declaration anywhere in an `xml` input is
+      `malformed-wire`. No engine declares, expands or fetches an entity
+      other than the five predefined ones and numeric character references.
+    - A numeric character reference takes decimal or hexadecimal digits only
+      (no sign) and must name a character XML 1.0 allows.
+
+    Not ruled: invalid UTF-8 inside a text input. A vector input is JSON
+    text and cannot carry it.

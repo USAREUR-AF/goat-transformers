@@ -1,0 +1,7 @@
+{
+  "name": "wire-type-4",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a0275313c",
+  "expect_error": "malformed-wire"
+}

@@ -17,6 +17,10 @@ func readVarint(b []byte) (uint64, int, error) {
 		if shift >= 64 {
 			return 0, 0, fmt.Errorf("varint is longer than 10 bytes")
 		}
+		// The tenth byte holds bit 63 only (0.8 ruling 40).
+		if shift == 63 && c > 1 {
+			return 0, 0, fmt.Errorf("ten-byte varint holds bits above bit 63")
+		}
 		v |= uint64(c&0x7f) << shift
 		if c&0x80 == 0 {
 			return v, i + 1, nil
@@ -35,6 +39,9 @@ func putVarint(dst []byte, v uint64) []byte {
 	return append(dst, byte(v))
 }
 
+// pbMaxField is the largest field number a tag may hold, 2^29-1 (0.8 ruling 38).
+const pbMaxField = 1<<29 - 1
+
 // parsePBMessage parses one protobuf message into field number -> occurrences,
 // in wire order. The caller takes the last occurrence when a number repeats.
 func parsePBMessage(format string, data []byte) (map[int][]pbVal, error) {
@@ -49,11 +56,11 @@ func parsePBMessage(format string, data []byte) (map[int][]pbVal, error) {
 			return nil, bad("reading a field tag: " + err.Error())
 		}
 		i += n
-		field := int(tag >> 3)
 		wt := int(tag & 7)
-		if field < 1 {
-			return nil, bad(fmt.Sprintf("field number %d is not valid (must be >= 1)", field))
+		if tag>>3 < 1 || tag>>3 > pbMaxField {
+			return nil, bad(fmt.Sprintf("field number %d is not valid (1 to %d)", tag>>3, uint64(pbMaxField)))
 		}
+		field := int(tag >> 3)
 		pv := pbVal{wire: wt}
 		switch wt {
 		case pbVarint:
@@ -160,9 +167,10 @@ func (d *decodeState) pbScope(lay *layout, msg map[int][]pbVal, occ *pbVal) erro
 				if _, notSub := derr.(*pbNotSubmsg); notSub {
 					return &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: "field " + f.Key + ": " + derr.Error()}
 				}
+				// Bytes of a submessage the path walks into that do not parse
+				// are malformed-wire, not a field failure (0.8 ruling 38).
 				if derr != nil {
-					d.fail(f, derr.Error())
-					continue
+					return derr
 				}
 			}
 			if pv == nil {

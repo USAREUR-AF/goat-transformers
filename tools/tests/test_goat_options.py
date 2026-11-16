@@ -84,7 +84,8 @@ class Records(unittest.TestCase):
         s = systems["t/one"]
         self.assertEqual(s["records"][0]["extra"][0]["tokens"], ["frobnicate", "1", "2"])
         self.assertEqual(s["claims"][0]["attrs"]["colour"], "blue")
-        self.assertEqual([p.level for p in probs], ["info"])
+        self.assertEqual([(p.level, p.where) for p in probs], [("info", "one.rec:2"), ("info", "one.rec:3")])
+        self.assertIn("attribute `colour`", probs[1].text)
 
     def test_no_system_line_is_skipped_with_a_warning(self):
         with TempStore({"x.rec": "emits cot-xml\n"}) as d:
@@ -170,6 +171,48 @@ class Paths(unittest.TestCase):
         _, r = run_json("paths", "--store", SKETCH, "--from", "example/c2-app", "--to", "example/edge-display",
                         "--keys", "count")
         self.assertTrue(all(isinstance(p["carried"], int) for p in r["paths"]))
+
+
+class Needs(unittest.TestCase):
+    """A library step lists the required keys the source does not map: the
+    library refuses the conversion unless the caller supplies them."""
+
+    STORE = {"a.rec": "system t/radar\nemits asterix-cat062 transport=udp\n",
+             "b.rec": "system t/app\naccepts canonical-track-v2 transport=zenoh\naccepts cot-xml transport=udp\n"}
+
+    def test_needs_names_the_missing_required_keys(self):
+        with TempStore(self.STORE) as d:
+            _, r = run_json("paths", "--store", d, "--from", "t/radar", "--to", "t/app")
+        steps = {p["formats"][-1]: p["steps"][0] for p in r["paths"]}
+        self.assertEqual(steps["canonical-track-v2"]["needs"],
+                         [{"kind": "Track", "missing": ["uid", "track.source_id", "track.generation", "time_ms"]}])
+        self.assertIsNone(steps["cot-xml"]["needs"])  # cot-xml has no kind, so nothing is required
+
+    def test_needs_agrees_with_the_engine(self):
+        eng = Engine.from_dir(os.path.join(REPO, "packs"), packs_only=["asterix-cat062", "canonical-track-v2"])
+        with open(os.path.join(REPO, "packs", "asterix-cat062", "vectors", "01-open-billie-sample-roundtrip.json")) as f:
+            data = json.load(f)["input"].encode()
+        with self.assertRaises(Exception):
+            eng.convert("asterix-cat062", "canonical-track-v2", data)
+        given = {"uid": "t-1", "track.source_id": "s", "track.generation": "g", "time_ms": "1000"}
+        self.assertIn(b"trackId", eng.convert("asterix-cat062", "canonical-track-v2", data, given))
+
+    def test_transports_differ_on_a_direct_path_only(self):
+        store = {"a.rec": "system t/a\nemits cot-xml transport=udp\n",
+                 "b.rec": "system t/b\naccepts cot-xml transport=zenoh\naccepts geojson transport=zenoh\n"}
+        with TempStore(store) as d:
+            _, r = run_json("paths", "--store", d, "--from", "t/a", "--to", "t/b")
+        marked = {tuple(p["formats"]): p.get("transports_differ") for p in r["paths"]}
+        self.assertEqual(marked[("cot-xml",)], ["udp", "zenoh"])
+        self.assertIsNone(marked[("cot-xml", "geojson")])
+
+    def test_table_shows_who_claimed_and_the_marks(self):
+        store = dict(self.STORE, **{"c.rec": "system t/radar\nby other-owner\nemits asterix-cat062 version=2\n"})
+        with TempStore(store) as d:
+            _, text = run("paths", "--store", d, "--from", "t/radar", "--to", "t/app", "--table")
+        self.assertIn("claims by", text)
+        self.assertIn("other-owner 2 / ?", text)
+        self.assertIn("canonical-track-v2 needs uid track.source_id track.generation time_ms", text)
 
 
 class Site(unittest.TestCase):

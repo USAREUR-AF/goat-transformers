@@ -235,7 +235,7 @@ present(Id, Bits, #d{named = Named, env = Env} = D) ->
     end.
 
 holds(Conds, Env) ->
-    lists:all(fun({Id, Bit, Neg}) -> lists:member(Bit, maps:get(Id, Env)) =/= Neg end, Conds).
+    lists:all(fun({Id, Bit, Neg}) -> lists:member(Bit, maps:get(Id, Env, [])) =/= Neg end, Conds).
 
 %% The parts of a chain after the first: each follows an fx bit, and a 0 bit
 %% ends the chain. The bit of a closing fx line must be 0.

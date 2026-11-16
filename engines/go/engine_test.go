@@ -221,7 +221,7 @@ func TestWireErrors(t *testing.T) {
 	}{
 		{"x", `<event uid="a">`, ErrMalformedWire},
 		{"x", `<other/>`, ErrMissingRoot},
-		{"x", ``, ErrMissingRoot},
+		{"x", ``, ErrMalformedWire}, // an input with no element (0.8 ruling 37)
 		{"x", `<event/><event/>`, ErrMalformedWire},
 		{"g", `{"type":"Feature"} x`, ErrMalformedWire},
 		{"g", `{"type":"FeatureCollection"}`, ErrMalformedWire},

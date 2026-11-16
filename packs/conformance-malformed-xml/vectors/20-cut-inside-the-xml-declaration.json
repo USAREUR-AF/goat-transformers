@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-the-xml-declaration",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<?xml version=\"1.0\"",
+  "expect_error": "malformed-wire"
+}

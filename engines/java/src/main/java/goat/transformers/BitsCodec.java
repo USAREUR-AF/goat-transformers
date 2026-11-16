@@ -279,7 +279,9 @@ final class BitsCodec extends Codec<byte[]> {
         void ensure(long bits) {
             long bytes = (bits + 7) >>> 3;
             if (bytes <= b.length) return;
-            if (bytes > Integer.MAX_VALUE - 16) throw new IllegalStateException("bits message is too long");
+            if (bytes > Integer.MAX_VALUE - 16) {
+                throw new GtException(GtException.Code.TRANSFORM_ENCODE, null, null, "the message is too long: " + bytes + " bytes");
+            }
             b = java.util.Arrays.copyOf(b, (int) Math.max(bytes, b.length * 2L));
         }
     }

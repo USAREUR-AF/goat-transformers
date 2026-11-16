@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-a-colon",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":",
+  "expect_error": "malformed-wire"
+}

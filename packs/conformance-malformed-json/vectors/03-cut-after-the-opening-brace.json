@@ -1,0 +1,7 @@
+{
+  "name": "cut-after-the-opening-brace",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{",
+  "expect_error": "malformed-wire"
+}

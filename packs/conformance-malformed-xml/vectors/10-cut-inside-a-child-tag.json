@@ -1,0 +1,7 @@
+{
+  "name": "cut-inside-a-child-tag",
+  "from": "conformance-malformed-xml",
+  "to": "conformance-malformed-xml",
+  "input": "<event uid=\"u1\"><contact callsign=",
+  "expect_error": "malformed-wire"
+}

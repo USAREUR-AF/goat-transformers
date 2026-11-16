@@ -1,0 +1,7 @@
+{
+  "name": "well-formed-message",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\",\"pos\":{\"lat\":1.5},\"label\":\"A\"}",
+  "expect": "{\"id\":\"u1\",\"pos\":{\"lat\":1.5},\"label\":\"A\"}"
+}

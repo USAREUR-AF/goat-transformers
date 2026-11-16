@@ -1,0 +1,7 @@
+{
+  "name": "varint-value-missing",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0a02753110",
+  "expect_error": "malformed-wire"
+}

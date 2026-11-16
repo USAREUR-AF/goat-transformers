@@ -16,13 +16,61 @@ shared model.
 
 ```
 zig build run          # loads ../../packs, runs every vector
-zig build test         # same (the harness is the test)
+zig build test         # the same, then the malformed-input run below
+zig build fuzz         # the malformed-input run alone
 zig build-exe src/main.zig && ./main ../../packs
 ```
 
 Prints `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
 (`packs/conformance/load-vectors/`), after one `FAIL <pack>/<vector file>: <why>`
 line per failing vector; non-zero exit on any failure. Stdlib only.
+
+## Malformed input (spec Version 0.8, rulings 35 to 40)
+
+An input that is not a well-formed message of its wire fails with
+`malformed-wire` before any line of the pack is read.
+
+- `xml`: one document. The input may not end inside a tag, an attribute, the
+  content of an element, a comment, a processing instruction or a declaration;
+  a closing tag names the open element; an attribute value is quoted; after
+  the root element only whitespace, comments and processing instructions
+  follow. An input with no element is `malformed-wire`, as is a document type
+  declaration anywhere. A numeric character reference is decimal or
+  hexadecimal digits and names a character XML 1.0 allows.
+- `json`, `geojson`: the input is checked against the RFC 8259 grammar by a
+  validator that does not recurse, then parsed. A `\u` escape that is half of
+  a surrogate pair needs its other half.
+- `xml`, `json`, `geojson`: at most 64 levels of nesting.
+- `bits`, `protobuf`: hex digits and whitespace (space, tab, line feed,
+  carriage return) only, an even number of digits.
+- `protobuf`: the whole top-level message is parsed before any line is read;
+  a submessage a `field` or `group` path walks into is parsed when it is
+  reached. Field number 0, a field number above 2^29-1 and wire types 3, 4, 6
+  and 7 are refused; a varint is at most ten bytes and its tenth byte at most
+  1, in a packed field too.
+- `bits`, sequential: every read is checked against the end of the input, of
+  the stated whole length and of the enclosing `length` extent, with
+  arithmetic that cannot wrap.
+
+`gt-engine-zig [<packs-dir>] --fuzz` (`zig build fuzz`, always a
+`ReleaseSafe` build) runs each vector's input through `convert` cut at
+prefixes and with single bytes replaced (every position of an input up to 96
+bytes, 96 evenly spaced positions of a longer one), and once per format text
+nested 200000 levels deep and hex of one unit repeated to 700000 digits. Each
+must return a message or fail with a named kind; a panic, an error that is
+not a named kind, or a `convert` that needs more than 256 MB fails the run
+(the run counts what each `convert` allocates and refuses the allocation that
+would pass the limit). It prints `malformed inputs: N run, 0 failed` and the
+most memory one input took. Last, 200000 one-byte list items of
+`conformance-seq-groups` must decode within 128 MB; the run prints the bytes
+per item.
+
+Memory per input: a decode holds the input, its parsed form, and one entity
+per list item. An item is 112 bytes plus 40 bytes per key and per list it
+holds (keys are kept in one array per item, not a hash table, and key names
+are not copied); a list read without a known count is gathered in chunks and
+moved once into an array of exactly its length. `--convert <from> <to> --peak`
+prints on standard error the most bytes the decode held.
 
 ## As a module
 
@@ -31,7 +79,9 @@ line per failing vector; non-zero exit on any failure. Stdlib only.
 named packs of a directory and the model modules they use. `zig build
 module-test` loads two packs through the module and converts a message. The package manifest that `zig fetch`
 reads is `build.zig.zon` at the repository root; `docs/using.md` has the
-dependency line.
+dependency line. `Entity.fields` and `Entity.lists` are arrays in insertion
+order with `get(name)` and `contains(name)`; `Entity.put` and
+`Entity.putList` set a key and a list.
 
 ## Model modules and distribution (spec Version 0.4)
 
@@ -63,7 +113,7 @@ holds the message `<kind>: <detail>`.
 ```
 gt-engine-zig [<packs-dir>] [--models <dir>] [--packs-only <a>,<b>...]
               [--max-distribution public|controlled] [--model-keys <format>]
-              [--convert <from> <to> [--set <key>=<value>]...]
+              [--convert <from> <to> [--set <key>=<value>]... [--peak]] [--fuzz]
 ```
 
 `--models` defaults to `<packs-dir>/../model`; `--max-distribution` defaults to
@@ -167,6 +217,15 @@ end of the extent gives an absent list.
     locator is `bad-directive`.
   - `geojson` residue: an array or object comes back with no insignificant
     whitespace and with each number as it was written.
+- Malformed input, where no vector decides:
+  - A protobuf `when` whose path meets a length-delimited field whose bytes
+    do not parse as a message does not hold (ruling 31 of 0.8); on a `field`
+    or `group` path the same bytes are `malformed-wire` (ruling 38).
+  - `xml`: a `<![CDATA[…]]>` section is text; a name may not hold `<`, `&`
+    or a quote; a `&` that starts neither a predefined entity nor a numeric
+    character reference stays as text; `&#X…;` with a capital `X` is
+    `malformed-wire`.
+  - A JSON input that is not UTF-8 is `malformed-wire`.
 - Sequential layouts, where no vector decides:
   - For rulings 23 and 33 of 0.8 a group's block is the nearest `if` or
     `opt` block around it within its scope; `chain` and `length` blocks do

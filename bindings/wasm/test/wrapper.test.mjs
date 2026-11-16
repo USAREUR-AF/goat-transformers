@@ -146,6 +146,39 @@ test("engine errors keep the engine's text and leave the engine usable", async (
   gt.dispose();
 });
 
+// A cot-xml event nested `levels` deep: the root element is level 1, its
+// <detail> level 2, and each <n> inside one level more.
+const nestedXml = (levels) =>
+  `<event uid="a" type="a-f-G"><detail>${"<n>".repeat(levels - 2)}${"</n>".repeat(levels - 2)}</detail></event>`;
+// A GeoJSON feature nested `levels` deep: the outermost object is level 1,
+// its `properties` level 2, and each array inside one level more.
+const nestedJson = (levels) =>
+  `{"type":"Feature","id":"a","geometry":null,"properties":{"x":${"[".repeat(levels - 2)}${"]".repeat(levels - 2)}}}`;
+
+// The engine owns the rule (spec/engine-spec.md, Malformed input, ruling 35:
+// 64 levels of nesting convert, 65 do not) and the conformance-malformed
+// packs pin it. This test shows what a host of the module sees: an Error
+// with the engine's kind, no trap, and an engine that goes on converting.
+test("a message that is not well formed is malformed-wire, not a trap", async () => {
+  const gt = await loadEngine(PACKS);
+  const malformed = /^Error: malformed-wire:/;
+
+  // an attribute cut off after its "=", and other ways to stop early
+  for (const cut of ["<event uid=", '<event uid="', "<event uid", "<event ", "<", '<event uid="a"><point']) {
+    assert.throws(() => gt.convert("cot-xml", "geojson", cut), malformed, cut);
+  }
+  assert.equal(gt.convert("cot-xml", "cot-xml", EVENT), EVENT_CANONICAL);
+
+  for (const [format, nested] of [["cot-xml", nestedXml], ["geojson", nestedJson]]) {
+    assert.equal(typeof gt.convert(format, format, nested(64)), "string", `${format} nested 64 levels converts`);
+    for (const levels of [65, 30000]) {
+      assert.throws(() => gt.convert(format, format, nested(levels)), malformed, `${format} nested ${levels} levels`);
+    }
+    assert.equal(gt.convert("cot-xml", "cot-xml", EVENT), EVENT_CANONICAL, "the engine converts afterwards");
+  }
+  gt.dispose();
+});
+
 test("a 1 MiB message: the memory grows under the call and the views are taken again", async () => {
   const gt = await loadEngine(["cot-xml", "geojson"]);
   // characters of 1, 2, 3 and 4 UTF-8 bytes, so that a length in characters is never a length in bytes
@@ -178,7 +211,7 @@ test("10,000 conversions leave the memory the size it was after a warm-up of 400
   const round = () => {
     assert.equal(gt.convert(cot.from, cot.to, cot.input), cot.expect);
     assert.equal(gt.convert(track.from, track.to, track.input, track.context), track.expect);
-    assert.throws(() => gt.convert("cot-xml", "geojson", "<event"), /^Error: unexpected end/);
+    assert.throws(() => gt.convert("cot-xml", "geojson", "<event"), /^Error: malformed-wire:/);
     assert.throws(() => gt.convert("cot-xml", "cot-xml", EVENT, { "no.such_key": "1" }), /undeclared-key/);
   };
   for (let i = 0; i < 100; i++) round();

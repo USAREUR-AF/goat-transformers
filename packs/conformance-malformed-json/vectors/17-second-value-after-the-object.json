@@ -1,0 +1,7 @@
+{
+  "name": "second-value-after-the-object",
+  "from": "conformance-malformed-json",
+  "to": "conformance-malformed-json",
+  "input": "{\"id\":\"u1\"}{\"id\":\"u2\"}",
+  "expect_error": "malformed-wire"
+}

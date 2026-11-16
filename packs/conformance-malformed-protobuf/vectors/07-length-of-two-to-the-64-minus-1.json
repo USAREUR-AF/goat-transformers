@@ -1,0 +1,7 @@
+{
+  "name": "length-of-two-to-the-64-minus-1",
+  "from": "conformance-malformed-protobuf",
+  "to": "conformance-malformed-protobuf",
+  "input": "0affffffffffffffffff017531",
+  "expect_error": "malformed-wire"
+}

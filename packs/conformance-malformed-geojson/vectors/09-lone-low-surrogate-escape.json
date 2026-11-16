@@ -1,0 +1,7 @@
+{
+  "name": "lone-low-surrogate-escape",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"\\ude00\"}",
+  "expect_error": "malformed-wire"
+}

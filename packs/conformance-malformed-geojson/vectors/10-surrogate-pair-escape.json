@@ -1,0 +1,7 @@
+{
+  "name": "surrogate-pair-escape",
+  "from": "conformance-malformed-geojson",
+  "to": "conformance-malformed-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"\\ud83d\\ude00\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"😀\"}"
+}
