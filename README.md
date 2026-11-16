@@ -127,6 +127,51 @@ $ goat-xf convert --from canonical-track-v2 --to asterix-cat062 --set cat062.sac
 3e001f9b0d1001075460100000000000000000ffce00110137810101000050
 ```
 
+## From formats to systems: which options exist
+
+> [!IMPORTANT]
+> **Work in progress.** The first version is Built: the record format, the
+> query and a fictional example are in this repository. The record format is
+> expected to change as records of real systems are written by more than one
+> owner ([what is expected to change](docs/system-records.md#expected-to-change)).
+
+Everything above answers a question about formats. People who plan coverage ask
+about systems: this radar, that display, the translator on the sensor node. A
+**system record** is a short text file that says what one system emits, accepts
+or converts, and how well established each claim is. `tools/goat-options` joins
+the records with the packs and lists every way data can get from a producing
+system to a consuming one.
+
+```console
+$ python3 -I tools/goat-options paths --store examples/stores/sketch --from example/radar-1 --to example/edge-display --table
+example/radar-1 -> example/edge-display
+  conv  status       route                                                 keys
+  1     available    asterix-cat048 --[goat-transformers]--> cot-protobuf  1 carried, 143 lost
+  1     available    asterix-cat048 --[goat-transformers]--> geojson       1 carried, 143 lost
+  1     forthcoming  asterix-cat062 --[goat-transformers]--> cot-protobuf  3 carried, 15 lost
+  1     forthcoming  asterix-cat062 --[goat-transformers]--> geojson       3 carried, 15 lost
+```
+
+A fictional radar reaches a fictional display four ways. Two are available
+today and carry one key. Two wait for an output format the radar's maker has
+announced for its next version, and carry three.
+
+- **It lists options and does not choose.** Each path shows its own status
+  (`proven`, `available`, `forthcoming`, `unknown`) and the evidence behind it.
+  Paths are not ranked, and no path is named as preferred.
+- **It is machine-readable first.** The output is JSON; `--table` prints it for
+  a person. How to display the answer is left to whoever reads it.
+- **Each owner keeps its own records.** A store is a directory of text files.
+  The query reads several stores at once and shows which owner said what.
+  Records of real systems belong in private stores
+  ([docs/private-store.md](docs/private-store.md)); this repository holds
+  fictional examples only.
+- **A site file says what is on hand.** The same query then answers for one
+  place: which of these paths can be used here with the systems present.
+
+The design, the record format and a worked example are in
+[docs/system-records.md](docs/system-records.md).
+
 ## Add a format without writing code
 
 This is the complete pack for a NATO Vector Graphics point,
@@ -257,14 +302,6 @@ build:       cargo build --release --lib --target wasm32-unknown-unknown
 The Rust and Go engines build to one static binary with no shared library, and
 to WebAssembly; the Java engine is a jar
 ([docs/package-configurator.md](docs/package-configurator.md)).
-
-## Which options exist between two systems
-
-[`tools/goat-options`](tools/goat-options) reads plain-text records of systems
-(what each one emits and accepts) and lists every conversion path from a
-producing system to a consuming one, with the evidence for each path. It lists
-options and does not rank them. The record format and a worked example are in
-[docs/system-records.md](docs/system-records.md).
 
 ## Private formats
 
