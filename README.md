@@ -66,7 +66,7 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 | Synthetic formats that exercise each rule of the specification | 51 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits` | 5 |
 | Engines, each using only its language's standard library | 7 |
-| WebAssembly module of the Rust engine, small build, no imports | 346,027 bytes |
+| WebAssembly module of the Rust engine, small build, no imports | 361,911 bytes |
 
 | Pack | Format | Wire | Message kinds |
 |---|---|---|---:|

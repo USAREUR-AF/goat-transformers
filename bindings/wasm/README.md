@@ -31,6 +31,12 @@ gt.loadModel(coreDefText);                           // core first, then the oth
 gt.loadPack(packDefText);
 ```
 
+An engine that must load only what is marked `distribution public`:
+
+```js
+const gt = await GoatTransformers.load(wasmBytes, { maxDistribution: "public" });
+```
+
 The package holds the engine. The packs are data: `tools/goat-pkg bundle` in
 the repository writes the ones you name, and the model modules they use, to a
 directory you vendor. `docs/using.md` in the repository shows the whole path.

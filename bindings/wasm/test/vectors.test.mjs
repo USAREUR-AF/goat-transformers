@@ -3,7 +3,7 @@
 // `expect_error` (spec/vector-format.md). `model` checks are not run: the
 // module's interface has no decode.
 //
-//   node --test bindings/wasm/test/
+//   node --test bindings/wasm/test/vectors.test.mjs
 //
 // GT_WASM   path of the .wasm (default: the release build under target/)
 // GT_PACKS  comma-separated pack directory names (default: every pack)
@@ -11,40 +11,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { GoatTransformers } from "../goat_transformers.mjs";
-
-const here = dirname(fileURLToPath(import.meta.url));
-const root = resolve(here, "../../..");
-const wasmPath = resolve(
-  process.env.GT_WASM ?? join(here, "../target/wasm32-unknown-unknown/release/goat_transformers_wasm.wasm"),
-);
-const wasm = readFileSync(wasmPath);
-
-// byte order of name, as the engine's directory loaders use
-const byBytes = (a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b));
-
-// core.def first, then byte order, each module after the modules its `uses`
-// lines name (spec/engine-spec.md, Model additions in 0.8).
-function modelFiles() {
-  const names = readdirSync(join(root, "model")).filter((n) => n.endsWith(".def")).sort(byBytes);
-  const order = ["core.def", ...names.filter((n) => n !== "core.def")];
-  const uses = new Map();
-  for (const f of order) {
-    const text = readFileSync(join(root, "model", f), "utf8");
-    uses.set(f, [...text.matchAll(/^\s*uses\s+(\S+)/gm)].map((m) => `${m[1]}.def`));
-  }
-  const done = [];
-  const visit = (f, path) => {
-    if (done.includes(f) || !uses.has(f)) return;
-    if (path.includes(f)) throw new Error(`model modules use each other in a cycle: ${f}`);
-    for (const dep of uses.get(f)) visit(dep, [...path, f]);
-    done.push(f);
-  };
-  for (const f of order) visit(f, []);
-  return done;
-}
+import { join } from "node:path";
+import { byBytes, loadEngine, root, wasm } from "./support.mjs";
 
 function packNames() {
   const all = readdirSync(join(root, "packs"))
@@ -54,13 +22,6 @@ function packNames() {
   const chosen = process.env.GT_PACKS.split(",").map((s) => s.trim()).filter(Boolean);
   for (const n of chosen) assert.ok(all.includes(n), `GT_PACKS names no pack directory: ${n}`);
   return chosen;
-}
-
-async function loadEngine(packs) {
-  const gt = await GoatTransformers.load(wasm);
-  for (const f of modelFiles()) gt.loadModel(readFileSync(join(root, "model", f), "utf8"));
-  for (const p of packs) gt.loadPack(readFileSync(join(root, "packs", p, "pack.def")));
-  return gt;
 }
 
 // One conversion vector. Returns null when it passes, else what went wrong.
@@ -115,38 +76,4 @@ test("every conversion vector of the loaded packs", async () => {
   assert.deepEqual(failures, []);
   assert.ok(passed > 0, "no vector ran");
   if (!process.env.GT_PACKS) assert.equal(skipped, 0, "with every pack loaded no vector is skipped");
-});
-
-test("the class API", async () => {
-  const gt = await loadEngine(["cot-xml", "geojson", "canonical-track-v2"]);
-  assert.deepEqual(gt.formats(), ["canonical-track-v2", "cot-xml", "geojson"]);
-
-  const cot = JSON.parse(readFileSync(join(root, "packs/cot-xml/vectors/01-track-to-geojson.json"), "utf8"));
-  assert.equal(gt.convert("cot-xml", "geojson", cot.input), cot.expect);
-  // input as bytes, context as a Map
-  const trk = JSON.parse(
-    readFileSync(join(root, "packs/canonical-track-v2/vectors/09-to-cot-xml-context-stale-and-how.json"), "utf8"),
-  );
-  const bytes = new TextEncoder().encode(trk.input);
-  assert.equal(gt.convert(trk.from, trk.to, bytes, new Map(Object.entries(trk.context))), trk.expect);
-  // a number is written with String()
-  assert.equal(gt.convert(trk.from, trk.to, trk.input, { stale_ms: 1614456180250, how: "m-p" }), trk.expect);
-
-  // errors carry the engine's kind, and the engine stays usable
-  assert.throws(() => gt.convert("cot-xml", "cot-xml", cot.input, { "no.such_key": "1" }), /^Error: undeclared-key:/);
-  assert.throws(() => gt.convert("cot-xml", "geojson", cot.input, { stale_ms: "soon" }), /^Error: key-type-mismatch:/);
-  assert.throws(() => gt.convert("no-such-format", "geojson", "x"), Error);
-  assert.throws(() => gt.loadPack("format x\n"), Error);
-  assert.throws(() => gt.convert("cot-xml", "geojson", cot.input, { "a=b": "1" }), TypeError);
-  assert.throws(() => gt.convert("cot-xml", "geojson", 7), TypeError);
-  assert.throws(() => gt.convert("cot-xml", "geojson", new Uint8Array([0xff, 0xfe])), /^Error: bad-argument:/);
-  assert.equal(gt.convert("cot-xml", "geojson", cot.input), cot.expect);
-
-  // two engines do not share state
-  const other = await GoatTransformers.load(wasm);
-  assert.deepEqual(other.formats(), []);
-  other.dispose();
-
-  gt.dispose();
-  assert.throws(() => gt.formats(), /disposed/);
 });

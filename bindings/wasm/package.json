@@ -38,6 +38,7 @@
   },
   "scripts": {
     "build": "./build.sh",
+    "test": "node --test test/*.test.mjs",
     "prepack": "test -f dist/goat_transformers.wasm"
   }
 }
