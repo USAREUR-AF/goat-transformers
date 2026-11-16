@@ -1,0 +1,19 @@
+record   1
+system   example/node-translator
+name     "Example sensor-node translator (fictional)"
+kind     translator
+by       example-org
+date     2026-11-16
+note     "Subscribes to some schemas and publishes others, on the same mesh."
+
+accepts  "example rf-1 json"  transport=udp    status=proven     evidence="example: fictional bench capture 07"
+accepts  canonical-track-v2   transport=zenoh  status=available
+emits    canonical-track-v2   transport=zenoh  status=available
+emits    cot-xml              transport=zenoh  status=proven     evidence="example: fictional exercise report 03"
+emits    sapient              transport=zenoh  status=available
+emits    asterix-cat062       transport=zenoh  status=available
+
+converts "example rf-1 json"  canonical-track-v2  status=proven     evidence="example: fictional bench capture 07"
+converts canonical-track-v2   cot-xml             status=proven     evidence="example: fictional exercise report 03"
+converts canonical-track-v2   sapient             status=available
+converts canonical-track-v2   asterix-cat062      status=available

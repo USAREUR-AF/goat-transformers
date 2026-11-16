@@ -150,7 +150,9 @@ model/       the shared model's modules, one file each
 packs/       one directory per format: pack.def, pack.md, vectors/
 engines/     one directory per language
 bindings/    the Rust engine as a C library and as a WebAssembly module, for other hosts
+examples/    fictional system records and a site file for tools/goat-options
 tools/       goat-pkg       plan the smallest package for a set of constraints
+             goat-options   list the paths from a producing system to a consuming one, with evidence
              boundary-gate  refuse content in this repository that is not public
              gen/           pack generators
 docs/        design, language guidance, architecture decision records, format coverage, the package planner

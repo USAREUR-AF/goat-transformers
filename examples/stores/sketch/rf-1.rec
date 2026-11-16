@@ -1,0 +1,9 @@
+record   1
+system   example/rf-1
+name     "Example RF detector 1 (fictional)"
+kind     "sensor behind a sensor node"
+by       example-org
+date     2026-11-16
+note     "Its own JSON on the wire; no pack exists for it. The node's decoder turns it into Canonical Track v2."
+
+emits    "example rf-1 json"  transport=udp  version=1.4  status=proven  evidence="example: fictional bench capture 07"
