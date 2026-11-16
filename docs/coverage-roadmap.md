@@ -55,6 +55,23 @@ repository and is not in this one ([boundary.md](boundary.md)). The engines in
 this repository run an overlay's packs unchanged, and such a format converts to
 and from every public format through the public model modules.
 
+Overlays are maintained for these families. The table gives each family's
+public designation only; no layout of any of them is in this repository.
+
+| Family | Public designation | Wire |
+|---|---|---|
+| J-series tactical data link messages | MIL-STD-6016, STANAG 5516 | `bits` |
+| Joint range extension, application protocol C | MIL-STD-3011, STANAG 5616 | `bits` |
+| Situation awareness data link | | `bits` |
+| Interface definitions of individual sensor and command systems | each under its owner's terms | `protobuf`, `json` |
+
+An overlay is shared only with a party that is itself entitled to hold the
+specification it was written from, under that specification's distribution
+terms and the law that applies to it. To ask about one, open an issue in this
+repository titled "overlay access" that names the family and your organization
+and gives no technical detail. The maintainers answer through an official
+channel, not in the issue.
+
 ## Engine features that formats above need
 
 | Feature | Status | Needed by |
