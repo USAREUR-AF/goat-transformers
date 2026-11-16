@@ -1,0 +1,16 @@
+{
+  "name": "pgn129028-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04f8016fba1765d63eb065",
+  "expect": "04f8016fba1765d63eb065",
+  "model": {
+    "@kind": "pgn129028",
+    "n2k.sid": "111",
+    "n2k.time_delta": "0.93",
+    "n2k.gnss_quality": "7",
+    "n2k.pgn129028_direction": "1",
+    "n2k.cog": "5.4885",
+    "n2k.altitude_delta": "6664.254"
+  }
+}

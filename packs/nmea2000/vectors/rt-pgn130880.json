@@ -1,0 +1,14 @@
+{
+  "name": "pgn130880-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "40ff0187804cd6b7ac7b73a8",
+  "expect": "40ff0187804cd6b7ac7b73a8",
+  "model": {
+    "@kind": "pgn130880",
+    "n2k.c": "76",
+    "n2k.apparent_windchill_temperature": "470.62",
+    "n2k.true_windchill_temperature": "316.6",
+    "n2k.dewpoint": "431.23"
+  }
+}

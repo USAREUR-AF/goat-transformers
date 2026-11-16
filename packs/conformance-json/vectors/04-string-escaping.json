@@ -1,0 +1,11 @@
+{
+  "name": "string-escaping",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j4\",\"label\":\"a\\\"b\\\\c\\/d\\n\\t\\r\\b\\f\\u0001é😀é\",\"note\":\"q\\\"\\u0007 z\"}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j4\",\"label\":\"a\\\"b\\\\c/d\\n\\t\\r\\b\\f\\u0001é😀é\",\"note\":\"q\\\"\\u0007 z\"}",
+  "model": {
+    "@kind": "basic",
+    "callsign": "a\"b\\c/d\n\t\r\b\f\u0001é😀é"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "velocity-and-course-both-present-are-kept",
+  "from": "demo-track-json",
+  "to": "geojson",
+  "input": "{\"id\":\"d1\",\"lat\":1.5,\"lon\":2.5,\"course\":10,\"speed\":1,\"track\":{\"vel_east_ms\":3,\"vel_north_ms\":4}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"course\":10,\"speed_ms\":1},\"id\":\"d1\"}"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ruling-05-earlier-line-fails-later-succeeds",
+  "from": "conformance-rulings-json",
+  "to": "conformance-derive",
+  "input": "{\"k\":2,\"id\":\"a\",\"conf\":5,\"conf2\":0.5,\"s1\":\"x\"}",
+  "expect": "{\"id\":\"a\",\"s1\":\"x\"}",
+  "model": {
+    "track.confidence": "0.5"
+  }
+}

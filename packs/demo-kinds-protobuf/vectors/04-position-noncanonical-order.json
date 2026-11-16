@@ -1,0 +1,10 @@
+{
+  "name": "position-noncanonical-order",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "521b11cdcccccccc7c55c009fca9f1d24d023e40190000000000205e4010809ccea8fe2e0a074a2d3031333334",
+  "expect": "0a074a2d303133333410809ccea8fe2e521b09fca9f1d24d023e4011cdcccccccc7c55c0190000000000205e40",
+  "model": {
+    "@kind": "position"
+  }
+}

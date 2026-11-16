@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-xml-default-in-attribute",
+  "from": "demo-track-json",
+  "to": "conformance-rules-xml",
+  "input": "{\"id\":\"d2\",\"how\":\"m-g\"}",
+  "expect": "<note id=\"d2\" v=\"1\" mode=\"fixed\" name=\"NONE\"/>"
+}

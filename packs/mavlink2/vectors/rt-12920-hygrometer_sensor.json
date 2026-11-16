@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-hygrometer_sensor",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd050000eaab7c783200e46b2bf302",
+  "expect": "fd050000eaab7c783200e46b2bf302",
+  "model": {
+    "@kind": "hygrometer_sensor"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-08-packed-doubles-of-nine-bytes",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a01752a09000000000000e03f00",
+  "expect_error": "malformed-wire"
+}

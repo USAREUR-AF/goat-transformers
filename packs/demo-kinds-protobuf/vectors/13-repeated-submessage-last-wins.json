@@ -1,0 +1,12 @@
+{
+  "name": "repeated-submessage-last-wins",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410809ccea8fe2e521b09fca9f1d24d023e4011cdcccccccc7c55c0190000000000205e405212090000000000002540110000000000403440",
+  "expect": "0a074a2d303133333410809ccea8fe2e5212090000000000002540110000000000403440",
+  "model": {
+    "@kind": "position",
+    "lat": "10.5",
+    "lon": "20.25"
+  }
+}

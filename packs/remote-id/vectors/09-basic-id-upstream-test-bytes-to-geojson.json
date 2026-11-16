@@ -1,0 +1,13 @@
+{
+  "name": "basic-id-upstream-test-bytes-to-geojson",
+  "from": "remote-id",
+  "to": "geojson",
+  "input": "02145553532d456e7465727072697365000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"USS-Enterprise\"}",
+  "model": {
+    "@kind": "basic-id",
+    "uid": "USS-Enterprise"
+  },
+  "source": "specification",
+  "reference": "opendroneid-core-c test/unit_odid_wifi_beacon.cpp, expectedBuffer, Open Drone ID message #1 (Basic ID): 0x02, 0x14, 'USS-Enterprise', NUL padding"
+}

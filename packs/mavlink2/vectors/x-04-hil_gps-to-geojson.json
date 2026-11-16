@@ -1,0 +1,15 @@
+{
+  "name": "hil_gps-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd2700000a2ac871000040420f000000000000000000002eb69400000000000000000000000000000000000003070000001b0b",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-180,0]},\"properties\":{}}",
+  "model": {
+    "@kind": "hil_gps",
+    "lat": "0",
+    "lon": "-180",
+    "mavlink.seq": "10",
+    "mavlink.sysid": "42",
+    "mavlink.compid": "200"
+  }
+}

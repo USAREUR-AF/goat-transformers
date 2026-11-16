@@ -1,0 +1,23 @@
+{
+  "name": "to-json",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-json",
+  "input": "<msg id=\"u1\"><body><item name=\"aa\" r=\"0.5\" k=\"i\"><qty>2</qty><sub v=\"1\">x</sub><sub v=\"2\">y</sub></item><item name=\"bb\" r=\"1.25\" k=\"i\"><qty>3</qty></item></body></msg>",
+  "expect": "{\"id\":\"u1\",\"title\":\"NONE\",\"items\":[{\"name\":\"aa\",\"n\":2,\"r\":{\"value\":0.5},\"kind\":\"item\",\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3,\"r\":{\"value\":1.25},\"kind\":\"item\"}]}",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[0].probe.ratio": "0.5",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[0].probe.val": "1",
+    "probe.items[0].probe.subs[1].probe.val": "2",
+    "probe.items[1].probe.label": "bb",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.ratio": "1.25",
+    "probe.items[0].probe.subs[0].probe.tag": "x",
+    "probe.items[0].probe.subs[1].probe.tag": "y",
+    "probe.items[1].probe.subs.#": "absent"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "pgn130842_maretron_windlass_operating_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1aff01898056b5969969",
+  "expect": "1aff01898056b5969969",
+  "model": {
+    "@kind": "pgn130842_maretron_windlass_operating_status",
+    "n2k.pgn130842_windlass_operating_events": "22",
+    "n2k.windlass_instance": "5",
+    "n2k.pgn130842_windlass_direction_control": "13",
+    "n2k.pgn130842_speed_control": "90",
+    "n2k.power_enable": "2",
+    "n2k.mechanical_enable": "1",
+    "n2k.anchor_docking_control": "2",
+    "n2k.deck_and_anchor_wash": "1",
+    "n2k.anchor_light": "2",
+    "n2k.auxiliary_acontrol": "1",
+    "n2k.auxiliary_bcontrol": "2",
+    "n2k.auxiliary_ccontrol": "2",
+    "n2k.auxiliary_dcontrol": "1"
+  }
+}

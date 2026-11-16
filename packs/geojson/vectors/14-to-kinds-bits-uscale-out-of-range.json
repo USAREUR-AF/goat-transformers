@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-bits-uscale-out-of-range",
+  "from": "geojson",
+  "to": "demo-kinds-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.5,30.25,40000]},\"properties\":{\"time_ms\":1000}}",
+  "expect_error": "transform-encode"
+}

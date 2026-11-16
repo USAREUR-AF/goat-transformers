@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_response_setting-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e58010170404013e00a9",
+  "expect": "00ef01e58010170404013e00a9",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_response_setting",
+    "n2k.response_setting": "-87"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "pgn130822_maretron_alert_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff0189806bedb9929cc72e326800000000888155",
+  "expect": "06ff0189806bedb9929cc72e326800000000888155",
+  "model": {
+    "@kind": "pgn130822_maretron_alert_control",
+    "n2k.alert_type": "11",
+    "n2k.alert_category": "6",
+    "n2k.alert_system": "237",
+    "n2k.alert_sub_system": "185",
+    "n2k.alert_id": "40082",
+    "n2k.data_source_network_id_name": "1748119239",
+    "n2k.data_source_instance": "136",
+    "n2k.data_source_index_source": "129",
+    "n2k.alert_occurrence_number": "85"
+  }
+}

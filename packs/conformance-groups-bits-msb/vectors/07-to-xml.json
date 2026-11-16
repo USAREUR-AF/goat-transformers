@@ -1,0 +1,7 @@
+{
+  "name": "to-xml",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-xml",
+  "input": "153c07616200",
+  "expect": "<msg><body><item name=\"ab\" k=\"i\"><qty>7</qty></item></body><nums><n>3</n><n>12</n></nums></msg>"
+}

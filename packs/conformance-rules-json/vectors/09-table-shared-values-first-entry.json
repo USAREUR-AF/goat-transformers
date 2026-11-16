@@ -1,0 +1,11 @@
+{
+  "name": "table-shared-values-first-entry",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a9\",\"rev\":6,\"pos\":{\"alt\":0},\"cls\":3,\"status\":\"no\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a9\",\"rev\":6,\"pos\":{\"alt\":0},\"cls\":1,\"status\":\"no\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "track.class": "uas",
+    "track.confirmed": "0"
+  }
+}

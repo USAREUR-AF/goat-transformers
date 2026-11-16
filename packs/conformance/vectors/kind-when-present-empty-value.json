@@ -1,0 +1,11 @@
+{
+  "name": "kind-when-present-empty-value",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k4\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"\"/></item>",
+  "expect": "<item id=\"k4\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"\"/></item>",
+  "model": {
+    "@kind": "named",
+    "callsign": ""
+  }
+}

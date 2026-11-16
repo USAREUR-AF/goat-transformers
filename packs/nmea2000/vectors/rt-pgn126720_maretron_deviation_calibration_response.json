@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_maretron_deviation_calibration_response-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef018980a4bf010050b1",
+  "expect": "00ef018980a4bf010050b1",
+  "model": {
+    "@kind": "pgn126720_maretron_deviation_calibration_response",
+    "n2k.pgn126720_product_code": "49060",
+    "n2k.pgn126720_status": "177"
+  }
+}

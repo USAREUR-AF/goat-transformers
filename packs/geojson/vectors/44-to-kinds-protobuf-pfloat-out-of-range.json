@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-protobuf-pfloat-out-of-range",
+  "from": "geojson",
+  "to": "demo-kinds-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"course\":90,\"speed_ms\":-1e39},\"id\":\"g\"}",
+  "expect_error": "transform-encode"
+}

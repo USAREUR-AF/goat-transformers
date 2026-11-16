@@ -1,0 +1,7 @@
+{
+  "name": "to-protobuf",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-protobuf",
+  "input": "753100000202616102a22103626205a000",
+  "expect": "0a02753112190a026161100219000000000000e03f20092a0210022a02100412110a026262100319000000000000f43f2009"
+}

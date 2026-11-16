@@ -1,0 +1,16 @@
+{
+  "name": "pgn61184_furuno_remote_pointer_report-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef003f87031402f65b09",
+  "expect": "00ef003f87031402f65b09",
+  "model": {
+    "@kind": "pgn61184_furuno_remote_pointer_report",
+    "n2k.dx": "20",
+    "n2k.dy": "2",
+    "n2k.wheel": "-10",
+    "n2k.a": "91",
+    "n2k.button": "1",
+    "n2k.keypad_mode": "1"
+  }
+}

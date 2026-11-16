@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_fusion_tuner_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3810500a97d2339a751",
+  "expect": "00ef01a3810500a97d2339a751",
+  "model": {
+    "@kind": "pgn126720_fusion_tuner_command",
+    "n2k.tuner_source": "169",
+    "n2k.pgn126720_fusion_tuner_command_command": "125",
+    "n2k.pgn126720_frequency": "1369913635"
+  }
+}

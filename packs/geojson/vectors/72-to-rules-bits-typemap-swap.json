@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-bits-typemap-swap",
+  "from": "geojson",
+  "to": "conformance-rules-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"a-f-G\",\"time_ms\":4660,\"ce\":2.5,\"callsign\":\"AB\"}}",
+  "expect": "5a3412000000000046524e4441420000000000002040"
+}

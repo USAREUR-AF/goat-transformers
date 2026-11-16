@@ -1,0 +1,17 @@
+{
+  "name": "pgn127750-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06f301ecd72565",
+  "expect": "06f301ecd72565",
+  "model": {
+    "@kind": "pgn127750",
+    "n2k.sid": "236",
+    "n2k.connection_number": "215",
+    "n2k.pgn127750_operating_state": "37",
+    "n2k.temperature_state": "1",
+    "n2k.overload_state": "1",
+    "n2k.low_dc_voltage_state": "2",
+    "n2k.ripple_state": "1"
+  }
+}

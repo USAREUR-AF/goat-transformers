@@ -1,0 +1,10 @@
+{
+  "name": "present-arm-with-no-fields-roundtrip",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410809ccea8fe2e5200",
+  "expect": "0a074a2d303133333410809ccea8fe2e5200",
+  "model": {
+    "@kind": "position"
+  }
+}

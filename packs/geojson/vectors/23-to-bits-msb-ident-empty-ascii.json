@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-msb-ident-empty-ascii",
+  "from": "geojson",
+  "to": "demo-bits-msb",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027]},\"properties\":{\"ce\":12.5,\"callsign\":\"\",\"course\":90}}",
+  "expect": "2328400000000000000041480000403e024e003e1361c0557d4ce4b520df0000"
+}

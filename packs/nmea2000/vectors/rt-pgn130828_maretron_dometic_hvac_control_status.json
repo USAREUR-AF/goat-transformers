@@ -1,0 +1,19 @@
+{
+  "name": "pgn130828_maretron_dometic_hvac_control_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0cff018980165d017231aab0050d73221e",
+  "expect": "0cff018980165d017231aab0050d73221e",
+  "model": {
+    "@kind": "pgn130828_maretron_dometic_hvac_control_status",
+    "n2k.can_id": "1912691990",
+    "n2k.configuration_mode": "49",
+    "n2k.pgn130828_status": "170",
+    "n2k.fan_mode_speed": "176",
+    "n2k.setpoint_temperature": "5",
+    "n2k.ambient_temperature": "13",
+    "n2k.outdoor_temperature": "115",
+    "n2k.fault_status": "34",
+    "n2k.additional_sensor_temperature": "30"
+  }
+}

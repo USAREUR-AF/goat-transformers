@@ -1,0 +1,14 @@
+{
+  "name": "pgn130822_navico_udb_database_object_ping-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff0113812200b0be50",
+  "expect": "06ff0113812200b0be50",
+  "model": {
+    "@kind": "pgn130822_navico_udb_database_object_ping",
+    "n2k.marker": "34",
+    "n2k.address": "176",
+    "n2k.section": "190",
+    "n2k.pgn130822_item": "80"
+  }
+}

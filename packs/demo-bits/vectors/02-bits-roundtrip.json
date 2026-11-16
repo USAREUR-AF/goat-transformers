@@ -1,0 +1,7 @@
+{
+  "name": "bits-roundtrip-identity",
+  "from": "demo-bits",
+  "to": "demo-bits",
+  "input": "2244a6e03811090000",
+  "expect": "2244a6e03811090000"
+}

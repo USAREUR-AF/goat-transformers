@@ -1,0 +1,11 @@
+{
+  "name": "table-same-type-passes-through",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a8\",\"rev\":6,\"cls\":2,\"how\":\"h-e\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a8\",\"rev\":6,\"pos\":{\"alt\":-1},\"cls\":2,\"how\":\"h-e\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "how": "h-e",
+    "track.class": "bird"
+  }
+}

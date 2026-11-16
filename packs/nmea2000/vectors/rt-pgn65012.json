@@ -1,0 +1,13 @@
+{
+  "name": "pgn65012-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "f4fd00a3d0bb01355201",
+  "expect": "f4fd00a3d0bb01355201",
+  "model": {
+    "@kind": "pgn65012",
+    "n2k.pgn65012_reactive_power": "-1970914141",
+    "n2k.pgn65012_power_factor": "0.28448486328125",
+    "n2k.power_factor_lagging": "1"
+  }
+}

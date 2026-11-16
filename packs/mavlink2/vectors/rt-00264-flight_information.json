@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-flight_information",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd200000960f4a080100c4ef2058000000809b43a52b000000007297297f0000008049ebad52203f3226",
+  "expect": "fd200000960f4a080100c4ef2058000000809b43a52b000000007297297f0000008049ebad52203f3226",
+  "model": {
+    "@kind": "flight_information"
+  }
+}

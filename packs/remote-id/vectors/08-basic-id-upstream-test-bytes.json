@@ -1,0 +1,17 @@
+{
+  "name": "basic-id-upstream-test-bytes",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "02145553532d456e7465727072697365000000000000000000",
+  "expect": "02145553532d456e7465727072697365000000000000000000",
+  "model": {
+    "@kind": "basic-id",
+    "rid.msg_type": "0",
+    "uid": "USS-Enterprise",
+    "rid.id_type": "1",
+    "rid.ua_type": "4",
+    "rid.proto_version": "2"
+  },
+  "source": "specification",
+  "reference": "opendroneid-core-c test/unit_odid_wifi_beacon.cpp, expectedBuffer, Open Drone ID message #1 (Basic ID): 0x02, 0x14, 'USS-Enterprise', NUL padding"
+}

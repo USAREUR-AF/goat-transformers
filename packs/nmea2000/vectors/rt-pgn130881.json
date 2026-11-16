@@ -1,0 +1,14 @@
+{
+  "name": "pgn130881-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "41ff018780c1979fdd1c4d0c",
+  "expect": "41ff018780c1979fdd1c4d0c",
+  "model": {
+    "@kind": "pgn130881",
+    "n2k.c": "193",
+    "n2k.plate_temperature": "408.55",
+    "n2k.air_temperature": "73.89",
+    "n2k.dewpoint": "31.49"
+  }
+}

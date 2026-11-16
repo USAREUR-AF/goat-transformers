@@ -1,0 +1,13 @@
+{
+  "name": "present-and-empty-list",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u2\",\"title\":\"T\",\"items\":[],\"data\":{\"nums\":[]}}",
+  "expect": "{\"id\":\"u2\",\"title\":\"T\",\"items\":[],\"data\":{\"nums\":[]}}",
+  "model": {
+    "probe.items.#": "0",
+    "probe.nums.#": "0",
+    "probe.names.#": "absent",
+    "probe.ratios.#": "absent"
+  }
+}

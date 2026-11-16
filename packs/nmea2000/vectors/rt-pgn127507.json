@@ -1,0 +1,17 @@
+{
+  "name": "pgn127507-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "13f201948aa909e126",
+  "expect": "13f201948aa909e126",
+  "model": {
+    "@kind": "pgn127507",
+    "n2k.pgn127507_instance": "148",
+    "n2k.battery_instance": "138",
+    "n2k.pgn127507_operating_state": "9",
+    "n2k.charge_mode": "10",
+    "n2k.pgn127507_enabled": "1",
+    "n2k.equalization_pending": "2",
+    "n2k.equalization_time_remaining": "597180"
+  }
+}

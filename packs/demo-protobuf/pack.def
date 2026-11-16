@@ -1,0 +1,13 @@
+# Synthetic protobuf format. Public, proves the `protobuf` wire.
+# Fields by number; dot-path for a nested submessage (field 4, inner field 1).
+# No real schema — made up to exercise pstring/pdouble/pvarint and nesting.
+format   demo-protobuf
+version  0.3.0
+distribution public
+source  "synthetic format, no external standard"
+wire     protobuf
+field  uid       1      pstring
+field  lat       2      pdouble
+field  lon       3      pdouble
+field  time_ms   5      pvarint
+field  callsign  4.1    pstring

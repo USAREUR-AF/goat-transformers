@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_mode_state-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e58010170404050a0053",
+  "expect": "00ef01e58010170404050a0053",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_mode_state",
+    "n2k.mode_state": "83"
+  }
+}

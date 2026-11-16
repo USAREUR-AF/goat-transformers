@@ -1,0 +1,379 @@
+// goat-transformers C++ engine: public API.
+// Implemented from spec/engine-spec.md, spec/shared-model.md and the pack vectors.
+#pragma once
+
+#include <cstdint>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+namespace goat_transformers {
+
+// ---------------------------------------------------------------- errors
+
+enum class ErrorKind {
+    UnknownDirective,   // pack.def line with a keyword the grammar does not define
+    UnknownTransform,   // field line names a transform this engine does not implement
+    UnknownWire,        // wire directive names a codec this engine does not implement
+    InvalidPack,        // pack.def is structurally wrong (missing/duplicate directive, bad arity)
+    InvalidLocator,     // a locator that is not valid for the pack's wire
+    UnknownFormat,      // decode/encode/convert asked for a format no loaded pack defines
+    MalformedWire,      // input bytes are not well-formed for the wire
+    MissingRoot,        // xml document root element is not the pack's root
+    TransformDecode,    // a wire value could not be decoded by its field's transform
+    TransformEncode,    // a model value could not be encoded by its field's transform
+    Io,                 // a pack directory or file could not be read
+    InvalidModel,       // a model module file is structurally wrong
+    // v0.4 load checks. The kind name is the spec's token and starts the message.
+    MissingDistribution,    // a module or pack has no `distribution` line
+    MissingSource,          // a module or pack has no `source` line
+    DistributionRefused,    // a module or pack is above the engine's distribution limit
+    UnknownModule,          // `core` or a module in a `uses` line is not loaded
+    DistributionViolation,  // a public pack uses a controlled module
+    ModuleNotUsed,          // a mapped key's module is neither `core` nor in a `uses` line
+    UndeclaredKey,          // a mapped key is not declared by its module
+    KeyTypeMismatch,        // a field's transform does not yield the key's declared type
+    DuplicateModule,        // a module name is loaded twice
+    DuplicateKey,           // a key name appears twice in its module
+    // v0.5
+    NoKind,                 // no kind of the format matches the message or the entity
+    DuplicateKind,          // a kind name is declared twice in its pack
+    DuplicateField,         // withdrawn in 0.6 and never raised: a model key may be mapped by several lines
+    BadDirective,           // a directive that is not allowed where or how it is written
+};
+
+const char* error_kind_name(ErrorKind kind);
+
+class Error : public std::runtime_error {
+public:
+    Error(ErrorKind kind, std::string format, std::string locator, const std::string& detail);
+    ErrorKind kind() const noexcept { return kind_; }
+    const std::string& format() const noexcept { return format_; }
+    const std::string& locator() const noexcept { return locator_; }
+    const std::string& detail() const noexcept { return detail_; }
+
+private:
+    ErrorKind kind_;
+    std::string format_;
+    std::string locator_;
+    std::string detail_;
+};
+
+// ---------------------------------------------------------------- shared model
+
+struct Value {
+    enum class Kind { String, Float, Int };
+    Kind kind = Kind::String;
+    std::string s;
+    double f = 0.0;
+    std::int64_t i = 0;
+
+    static Value of_string(std::string v);
+    static Value of_float(double v);
+    static Value of_int(std::int64_t v);
+};
+
+struct ResidueEntry {
+    std::string format;   // the pack whose wire the locator belongs to
+    std::string locator;  // that format's locator string
+    std::string value;    // original wire value (xml, geojson: the text; json: canonical JSON text)
+    // geojson: the member was an array or an object, and `value` is its JSON
+    // text, written back as it was and not as a string (0.6 ruling 13).
+    bool structured = false;
+};
+
+// What an item of a list holds (v0.7): model keys, and lists of its own. An
+// item has no residue and no kind.
+struct Item {
+    std::map<std::string, Value> fields;
+    // List name -> its items, in order. A list that is present and empty is
+    // distinct from an absent list.
+    std::map<std::string, std::vector<Item>> lists;
+};
+
+struct Entity : Item {
+    std::vector<ResidueEntry> residue;  // decode order
+    // v0.5: the kind decode selected, as (format, kind name). Both empty when the
+    // format has no kinds or the kind was cleared.
+    std::pair<std::string, std::string> kind;
+};
+
+// ---------------------------------------------------------------- model modules (v0.4)
+
+// How far a module or pack may be distributed. Public is below Controlled.
+enum class Distribution { Public, Controlled };
+enum class KeyType { String, Float, Int };
+
+const char* distribution_name(Distribution d);
+const char* key_type_name(KeyType t);
+
+struct ModelKey {
+    std::string name;     // no '.'
+    KeyType type = KeyType::String;
+    std::string unit;     // "-" when the key has none
+    std::string meaning;  // optional
+};
+
+// The fixed set of functions a `derive` line may name (v0.6, Derived keys).
+enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset, Join };
+
+// `derive <model-key> <function> <argument-key> [<argument-key>...]` (v0.6).
+struct DeriveLine {
+    std::string target;             // as written: bare for `core`, `<module>.<key>` otherwise
+    std::string function;           // as written, with its parameter (`scale:1/3`)
+    DeriveFn fn = DeriveFn::Copy;
+    std::vector<std::string> args;  // argument keys, as written
+    // scale: a decimal factor, or the fraction num/den (ruling 1 of 0.5).
+    bool fraction = false;
+    double factor = 1.0;
+    double num = 1.0;
+    double den = 1.0;
+    // offset: <n> as a double, and as an integer when it is written as one.
+    double offset = 0.0;
+    bool offset_is_int = false;
+    std::int64_t int_offset = 0;
+    bool int_arith = false;         // offset on an `int` target and argument: integer addition
+    std::string sep;                // join
+    std::size_t line = 0;           // line number in the module file
+};
+
+// `list <name> ["meaning"]` (v0.7): a list shares the key namespace of its module.
+struct ModelList {
+    std::string name;     // no '.'
+    std::string meaning;  // optional
+};
+
+struct Module {
+    std::string name;
+    std::string version;
+    Distribution distribution = Distribution::Controlled;
+    std::vector<std::string> sources;  // `source` lines, file order
+    std::vector<ModelKey> keys;        // file order
+    std::vector<ModelList> lists;      // `list` lines, file order (v0.7)
+    std::vector<DeriveLine> derives;   // `derive` lines, file order (v0.6)
+    std::string origin;                // where it was loaded from
+    // Key name -> position in `keys`. parse_model fills it; a module built by
+    // hand may leave it empty, and `find` then searches `keys`.
+    std::unordered_map<std::string, std::size_t> index;
+    std::unordered_map<std::string, std::size_t> list_index;  // the same, for `lists`
+
+    const ModelKey* find(const std::string& key) const;
+    const ModelList* find_list(const std::string& list) const;
+};
+
+// Parse the text of a model module file. `origin` names the file in error messages.
+Module parse_model(const std::string& text, const std::string& origin = "model.def");
+
+// ---------------------------------------------------------------- packs
+
+// Text-wire transforms (xml, geojson) and bits-wire transforms are disjoint:
+// a pack binds a field through a transform valid only on its wire's kind.
+enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
+                       Pstring, Pvarint, Psint, Pdouble, Pfloat,
+                       Bool,                             // v0.5, json wire only
+                       Uscale, Sscale, F32, F64, Ascii   // v0.5, bits wire
+};
+enum class Wire { Xml, GeoJson, Bits, Protobuf, Json };
+enum class BitOrder { Lsb, Msb };
+
+const char* transform_name(Transform t);
+KeyType transform_yields(Transform t);  // the model type a transform produces
+const char* wire_name(Wire w);
+
+struct FieldLine {
+    std::string key;      // shared-model key
+    std::string locator;  // place on the wire (text locator, or bits <word>:<pos>:<len>)
+    Transform transform = Transform::String;
+    double scale_maxpos = 0.0;  // linscale only: <maxpos>
+    double scale_range = 0.0;   // linscale only: <range>
+    // uscale / sscale (v0.5): factor is a decimal, or the fraction num/den.
+    bool scale_fraction = false;
+    double scale_factor = 1.0;
+    double scale_num = 1.0;
+    double scale_den = 1.0;
+    double scale_offset = 0.0;
+    std::size_t line = 0;       // line number in pack.def
+    // v0.6 field options.
+    std::string via;            // `via <table>`: the value table's name; empty when none
+    int table = -1;             // index of that table in Pack::tables (parse_pack resolves it)
+    bool swap = false;          // bits: the field's bytes are taken in reverse order
+    bool trim = false;          // bits + ascii: decode also removes trailing spaces
+    bool optional = false;      // bits: absent when any of its bits lies beyond the input
+    // The key's declared type. Engine::add_pack fills it from the loaded modules.
+    KeyType key_type = KeyType::String;
+};
+
+// `when <locator> <value>` (v0.5), and `const <locator> <value>` (v0.6), which is
+// written as a `when` value is and is never checked on decode.
+struct WhenLine {
+    std::string locator;
+    std::string value;            // as written in the pack
+    bool present = false;         // the value is the word `present` (text and protobuf wires)
+    bool forced_string = false;   // text wires: the value was written with a leading `=`
+    std::string text;             // text wires: the value with a leading `=` stripped
+    std::uint64_t number = 0;     // bits wire, and protobuf when not `present`
+    std::size_t line = 0;         // line number in pack.def
+};
+
+// `default <model-key> <value>` (v0.6): the value encode uses for every `field`
+// of the key in scope when the entity has none.
+struct DefaultLine {
+    std::string key;
+    std::string text;   // as written in the pack
+    Value value;        // `text` read as the key's declared type; Engine::add_pack fills it
+    std::size_t line = 0;
+};
+
+// The `map <table> <native> <model>` lines of one table, in pack order (v0.6).
+struct MapTable {
+    std::string name;
+    std::vector<std::pair<std::string, std::string>> entries;  // native -> model
+};
+
+// `group <list> <locator> [item <bits>] [count <count-locator> | count <n>]` and
+// the lines up to its `end` (v0.7). Every locator in the body is read relative
+// to one item.
+struct GroupLine {
+    std::string list;      // the list's name, as written (`probe.items`)
+    std::string locator;   // where the items are; bits: `<word>:<pos>` of the first item
+    std::size_t line = 0;  // line number in pack.def
+    // As written; parse_pack checks them against the wire.
+    bool has_item = false;
+    std::string item_text;
+    bool has_count = false;
+    std::string count_text;
+    // bits only, settled by parse_pack.
+    std::uint32_t item_bits = 0;     // `item <bits>`
+    bool count_fixed = false;        // `count <n>`
+    std::uint64_t count_n = 0;
+    std::string count_locator;       // `count <word>:<pos>:<len>`, of the enclosing scope
+    std::uint64_t count_start = 0;   // that locator as a bit offset in the enclosing scope
+    std::uint32_t count_len = 0;
+    std::uint64_t bits_start = 0;    // the first item's bit offset in the enclosing scope
+    // True when a `field` of the body has the locator `.`: an item is a scalar.
+    bool scalar = false;
+    std::vector<FieldLine> fields;
+    std::vector<WhenLine> consts;
+    std::vector<DefaultLine> defaults;
+    std::vector<GroupLine> groups;   // nested
+};
+
+struct Kind {
+    std::string name;
+    std::string root;                     // xml only: this kind's root element; empty = the pack's
+    std::vector<FieldLine> fields;        // line order
+    std::vector<WhenLine> whens;          // line order
+    std::vector<WhenLine> consts;         // `const` lines, line order
+    std::vector<DefaultLine> defaults;    // `default` lines, line order
+    std::vector<GroupLine> groups;        // `group` blocks, line order (v0.7)
+    std::vector<std::string> requires_keys;  // every `requires` key or list of the kind
+};
+
+struct Pack {
+    std::string format;
+    std::string version;
+    Wire wire = Wire::Xml;
+    std::string root;                                         // xml only; may be empty when every kind has its own
+    std::uint32_t word_bytes = 0;                            // bits only: bytes per word
+    BitOrder bit_order = BitOrder::Lsb;                       // bits only
+    std::vector<FieldLine> fields;                            // common lines (every line when the pack has no kinds)
+    std::vector<WhenLine> whens;                              // common `when` lines
+    std::vector<WhenLine> consts;                             // common `const` lines
+    std::vector<DefaultLine> defaults;                        // common `default` lines
+    std::vector<GroupLine> groups;                            // common `group` blocks (v0.7)
+    std::vector<MapTable> tables;                             // value tables, first appearance order
+    std::vector<Kind> kinds;                                  // pack order; empty when the pack has no `kind` line
+    std::vector<std::pair<std::string, std::string>> typemap; // native code -> CoT type
+    Distribution distribution = Distribution::Controlled;     // `distribution` line (required)
+    std::vector<std::string> sources;                         // `source` lines (at least one)
+    std::vector<std::string> uses;                            // `uses` lines; `core` is always used
+    std::string source;                                       // where it was loaded from
+    // xml: root element name -> the kinds decode considers for a document with that
+    // root, in pack order (a kind with no `root` is listed under the pack's).
+    // Engine::add_pack builds it, so kind selection does not scan every kind.
+    std::unordered_map<std::string, std::vector<std::size_t>> kinds_by_root;
+};
+
+// Parse the text of a pack.def. `source` names the file in error messages.
+Pack parse_pack(const std::string& text, const std::string& source = "pack.def");
+
+// ---------------------------------------------------------------- engine
+
+class Engine {
+public:
+    // Load every `<models_dir>/*.def` in byte order of file name, then every
+    // `<packs_dir>/<name>/pack.def`. An empty models_dir means `<packs_dir>/../model`.
+    static Engine load(const std::string& packs_dir, const std::string& models_dir = "",
+                       Distribution max_distribution = Distribution::Controlled);
+
+    // The distribution limit, Controlled by default. It applies to later loads.
+    void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
+    Distribution max_distribution() const noexcept { return max_distribution_; }
+
+    // Load one model module. Modules are loaded before the packs that use them.
+    void load_model(const std::string& text, const std::string& origin = "model.def");
+    void add_model(Module module);
+    bool has_module(const std::string& name) const;
+    std::vector<std::string> modules() const;  // sorted
+
+    // Check the pack against the loaded modules (engine-spec.md v0.4, Loading), then add it.
+    void add_pack(Pack pack);
+    bool has_format(const std::string& format) const;
+    const Pack& pack(const std::string& format) const;
+    std::vector<std::string> formats() const;  // sorted
+    // Union of the model keys over the common lines and every kind, first appearance
+    // order. A list is `<list>[]` and an item key `<list>[].<key>`, nested lists likewise.
+    std::vector<std::string> model_keys(const std::string& format) const;
+
+    Entity decode(const std::string& format, const std::string& bytes) const;
+    std::string encode(const std::string& format, const Entity& entity) const;
+    // decode; clear Entity.kind unless from == to; when from != to, the derivations;
+    // encode. A same-format conversion with no context derives nothing, so it stays
+    // byte-exact.
+    std::string convert(const std::string& from, const std::string& to,
+                        const std::string& bytes) const;
+
+    // ---- v0.6: caller-supplied keys and derived keys
+
+    // Model keys and values the caller supplies to `convert`.
+    using Context = std::map<std::string, Value>;
+    // decode; clear Entity.kind unless from == to; fill the keys the entity lacks
+    // from `context`; the derivations; encode. Passing a context, even an empty one,
+    // runs the derivations on a same-format conversion too.
+    std::string convert(const std::string& from, const std::string& to, const std::string& bytes,
+                        const Context& context) const;
+    // The same with the context in string form (a vector's `context`, the CLI's
+    // `--set`). The context is read and checked after the decode, so input that
+    // does not decode fails with the decode's error whatever the context holds
+    // (0.6 ruling 10).
+    std::string convert_text(const std::string& from, const std::string& to, const std::string& bytes,
+                             const std::map<std::string, std::string>& context) const;
+    // A context given in string form:
+    // each value is read as its key's declared type. Throws undeclared-key for a key
+    // no loaded module declares and key-type-mismatch for a value that cannot be read.
+    Context context_from_text(const std::map<std::string, std::string>& text) const;
+    // Check every context key (undeclared-key, key-type-mismatch), then set each
+    // one the entity lacks.
+    void apply_context(Entity& entity, const Context& context) const;
+    // Apply the `derive` lines of the loaded modules: modules in byte order of
+    // name, each module's lines in order, repeated until a pass sets nothing, at
+    // most 8 passes. A present target is kept.
+    void complete(Entity& entity) const;
+    // The declaration of a model key as a pack writes it (`lat`, `track.class`);
+    // null when no loaded module declares it.
+    const ModelKey* find_key(const std::string& key) const;
+    // True when a loaded module declares `list` (written as in a pack) as a list.
+    bool is_list(const std::string& list) const;
+
+private:
+    std::map<std::string, Pack> packs_;
+    std::map<std::string, Module> modules_;  // ordered by name, bytewise: the order derivations run in
+    std::string convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
+                             const Context* context, const std::map<std::string, std::string>* text) const;
+    Distribution max_distribution_ = Distribution::Controlled;
+};
+
+}  // namespace goat_transformers

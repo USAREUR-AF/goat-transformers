@@ -1,0 +1,10 @@
+{
+  "name": "trim-spaces-only-field-is-empty",
+  "from": "conformance-rules-bits",
+  "to": "conformance-rules-bits",
+  "input": "5a341240ee2d120146524e4420202020202000002040",
+  "expect": "5a341240ee2d120146524e4400000000000000002040",
+  "model": {
+    "callsign": ""
+  }
+}

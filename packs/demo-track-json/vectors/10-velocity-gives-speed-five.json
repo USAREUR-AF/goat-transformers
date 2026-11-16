@@ -1,0 +1,17 @@
+{
+  "name": "velocity-gives-speed-five",
+  "from": "demo-track-json",
+  "to": "demo-bits-msb",
+  "input": "{\"id\":\"d1\",\"track\":{\"vel_east_ms\":3,\"vel_north_ms\":4}}",
+  "context": {
+    "how": "m-g"
+  },
+  "expect": "0e670000",
+  "model": {
+    "@complete": true,
+    "speed_ms": "5",
+    "course": "36.86989764584402",
+    "track.vel_east_ms": "3",
+    "track.vel_north_ms": "4"
+  }
+}

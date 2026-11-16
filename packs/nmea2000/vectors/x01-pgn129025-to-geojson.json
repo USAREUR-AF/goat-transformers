@@ -1,0 +1,12 @@
+{
+  "name": "x01-pgn129025-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "01f80140dd4a1f40a5ae02",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "pgn129025",
+    "lat": "52.5",
+    "lon": "4.5"
+  }
+}

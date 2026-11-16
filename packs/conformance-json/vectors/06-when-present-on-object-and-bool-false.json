@@ -1,0 +1,11 @@
+{
+  "name": "when-present-on-object-and-bool-false",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j6\",\"meta\":{\"flags\":{\"sim\":false}}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j6\",\"meta\":{\"flags\":{\"sim\":false}}}",
+  "model": {
+    "@kind": "flagged",
+    "track.simulated": "0"
+  }
+}

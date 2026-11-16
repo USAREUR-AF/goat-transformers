@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_system_capabilities-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3813d80e44d85c500000000",
+  "expect": "04ff01a3813d80e44d85c500000000",
+  "model": {
+    "@kind": "pgn130820_fusion_system_capabilities",
+    "n2k.pgn130820_capabilities": "3313847780"
+  }
+}

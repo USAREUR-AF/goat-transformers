@@ -1,0 +1,13 @@
+{
+  "name": "pgn61184_simnet_keep_alive-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef00418708ada499433b",
+  "expect": "00ef00418708ada499433b",
+  "model": {
+    "@kind": "pgn61184_simnet_keep_alive",
+    "n2k.pgn61184_command": "11528",
+    "n2k.reply": "1",
+    "n2k.pgn61184_value": "994285988"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "pgn128776-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08f701f1d91a2ea6fa08",
+  "expect": "08f701f1d91a2ea6fa08",
+  "model": {
+    "@kind": "pgn128776",
+    "n2k.sid": "241",
+    "n2k.windlass_id": "217",
+    "n2k.pgn128776_windlass_direction_control": "2",
+    "n2k.anchor_docking_control": "2",
+    "n2k.speed_control_type": "1",
+    "n2k.pgn128776_speed_control": "46",
+    "n2k.power_enable": "2",
+    "n2k.mechanical_lock": "1",
+    "n2k.deck_and_anchor_wash": "2",
+    "n2k.anchor_light": "2",
+    "n2k.command_timeout": "1.25",
+    "n2k.windlass_control_events": "8"
+  }
+}

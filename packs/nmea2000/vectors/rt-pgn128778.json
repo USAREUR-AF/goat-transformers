@@ -1,0 +1,16 @@
+{
+  "name": "pgn128778-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0af701ae37ed2df34093",
+  "expect": "0af701ae37ed2df34093",
+  "model": {
+    "@kind": "pgn128778",
+    "n2k.sid": "174",
+    "n2k.windlass_id": "55",
+    "n2k.windlass_monitoring_events": "237",
+    "n2k.controller_voltage": "9",
+    "n2k.pgn128778_motor_current": "243",
+    "n2k.total_motor_time": "2261760"
+  }
+}

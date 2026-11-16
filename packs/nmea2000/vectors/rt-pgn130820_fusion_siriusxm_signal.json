@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_siriusxm_signal-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a38129803f5f",
+  "expect": "04ff01a38129803f5f",
+  "model": {
+    "@kind": "pgn130820_fusion_siriusxm_signal",
+    "n2k.source_id": "63",
+    "n2k.signal": "95"
+  }
+}

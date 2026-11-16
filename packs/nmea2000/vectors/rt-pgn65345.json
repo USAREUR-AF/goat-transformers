@@ -1,0 +1,12 @@
+{
+  "name": "pgn65345-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "41ff003b8754d7a636",
+  "expect": "41ff003b8754d7a636",
+  "model": {
+    "@kind": "pgn65345",
+    "n2k.wind_datum": "5.5124",
+    "n2k.rolling_average_wind_angle": "1.399"
+  }
+}

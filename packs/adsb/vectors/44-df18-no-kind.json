@@ -1,0 +1,9 @@
+{
+  "name": "df18-no-kind",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "90406b902015a678d4d220aa4bda",
+  "expect_error": "no-kind",
+  "source": "specification",
+  "reference": "published message 90406B902015A678D4D220AA4BDA (DF18): pyModeS tests/test_adsb.py at commit 4bf0832, https://github.com/junzis/pyModeS"
+}

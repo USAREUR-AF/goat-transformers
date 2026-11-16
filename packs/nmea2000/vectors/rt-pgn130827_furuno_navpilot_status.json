@@ -1,0 +1,16 @@
+{
+  "name": "pgn130827_furuno_navpilot_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bff013f8701381c0968a8ed86d65377",
+  "expect": "0bff013f8701381c0968a8ed86d65377",
+  "model": {
+    "@kind": "pgn130827_furuno_navpilot_status",
+    "n2k.rudder_angle": "0.7224",
+    "n2k.a": "26633",
+    "n2k.b": "168",
+    "n2k.commanded_course": "3.4541",
+    "n2k.c": "214",
+    "n2k.d": "30547"
+  }
+}

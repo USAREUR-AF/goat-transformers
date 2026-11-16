@@ -1,0 +1,14 @@
+{
+  "name": "pgn65309-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1dff001381a8b3df00d4a2",
+  "expect": "1dff001381a8b3df00d4a2",
+  "model": {
+    "@kind": "pgn65309",
+    "n2k.pgn65309_status": "168",
+    "n2k.pgn65309_battery_status": "179",
+    "n2k.battery_charge_status": "223",
+    "n2k.a": "-23852"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn65280_navico_device_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0013812ddf25fd7c00",
+  "expect": "00ff0013812ddf25fd7c00",
+  "model": {
+    "@kind": "pgn65280_navico_device_status",
+    "n2k.report_type": "45",
+    "n2k.data": "2096965087"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "pgn130820_fusion_media-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3810480a5fb2e4b5c818fa86e6c8b45529828f21dc91e",
+  "expect": "04ff01a3810480a5fb2e4b5c818fa86e6c8b45529828f21dc91e",
+  "model": {
+    "@kind": "pgn130820_fusion_media",
+    "n2k.source_id": "165",
+    "n2k.pgn130820_flags": "12027",
+    "n2k.pgn130820_track": "2407619659",
+    "n2k.track_count": "2339139240",
+    "n2k.pgn130820_length": "681071.173",
+    "n2k.position_in_track": "516496.882"
+  }
+}

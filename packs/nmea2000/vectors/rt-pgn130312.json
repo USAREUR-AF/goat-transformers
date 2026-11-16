@@ -1,0 +1,15 @@
+{
+  "name": "pgn130312-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08fd01e5d6ced88006bb",
+  "expect": "08fd01e5d6ced88006bb",
+  "model": {
+    "@kind": "pgn130312",
+    "n2k.sid": "229",
+    "n2k.pgn130312_instance": "214",
+    "n2k.pgn130312_source": "206",
+    "n2k.pgn130312_actual_temperature": "329.84",
+    "n2k.pgn130312_set_temperature": "478.78"
+  }
+}

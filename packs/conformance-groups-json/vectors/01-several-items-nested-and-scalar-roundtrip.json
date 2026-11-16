@@ -1,0 +1,32 @@
+{
+  "name": "several-items-nested-and-scalar-roundtrip",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u1\",\"title\":\"T\",\"items\":[{\"name\":\"aa\",\"n\":2,\"r\":{\"value\":0.5},\"kind\":\"item\",\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3,\"r\":{\"value\":1.25},\"kind\":\"item\"}],\"cs\":\"C\",\"data\":{\"nums\":[3,1,2]},\"names\":[\"p\",\"q\"],\"ratios\":[0.5,2]}",
+  "expect": "{\"id\":\"u1\",\"title\":\"T\",\"items\":[{\"name\":\"aa\",\"n\":2,\"r\":{\"value\":0.5},\"kind\":\"item\",\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3,\"r\":{\"value\":1.25},\"kind\":\"item\"}],\"cs\":\"C\",\"data\":{\"nums\":[3,1,2]},\"names\":[\"p\",\"q\"],\"ratios\":[0.5,2]}",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[0].probe.ratio": "0.5",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[0].probe.val": "1",
+    "probe.items[0].probe.subs[1].probe.val": "2",
+    "probe.items[1].probe.label": "bb",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.ratio": "1.25",
+    "probe.items[0].probe.subs[0].probe.tag": "x",
+    "probe.items[0].probe.subs[1].probe.tag": "y",
+    "probe.items[1].probe.subs.#": "absent",
+    "probe.label": "T",
+    "callsign": "C",
+    "probe.nums.#": "3",
+    "probe.nums[0].probe.val": "3",
+    "probe.nums[2].probe.val": "2",
+    "probe.names.#": "2",
+    "probe.names[1].probe.tag": "q",
+    "probe.ratios.#": "2",
+    "probe.ratios[1].probe.ratio": "2"
+  }
+}

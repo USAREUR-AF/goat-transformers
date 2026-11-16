@@ -1,0 +1,11 @@
+{
+  "name": "pgn65300_bep_marine_proprietary_pgn65300-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff002781e3e45ee30000",
+  "expect": "14ff002781e3e45ee30000",
+  "model": {
+    "@kind": "pgn65300_bep_marine_proprietary_pgn65300",
+    "n2k.data": "3814647011"
+  }
+}

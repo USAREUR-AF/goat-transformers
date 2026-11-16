@@ -1,0 +1,42 @@
+# Synthetic bits format in most-significant-bit-first order. Public, no real
+# standard. 4-byte words. `0:0:16` is the first two bytes as a big-endian
+# integer; the 3-bit kind code follows it.
+format     demo-bits-msb
+version    0.5.0
+distribution public
+source     "synthetic format, no external standard"
+wire       bits
+word_bytes 4
+bit_order  msb
+field  course  0:0:16  uscale:1/100
+
+kind     ident                    # 8 words
+when     0:16:3  2
+requires callsign
+field    callsign  1:0:48   ascii
+field    ce        2:16:32  f32
+field    lat       3:16:64  f64
+field    lon       5:16:64  f64
+
+kind     overlap                  # 2 words; lines that cover the same bits
+when     0:16:3  3
+requires ce
+field    hae  1:0:16  uscale:1
+field    ce   1:8:16  uscale:1               # shares bits 8 to 15 of word 1 with hae
+when     1:20:4  10                          # the low 4 bits of ce
+
+kind     fix                      # 3 words
+when     0:16:3  5
+requires lat lon
+field    lat      0:19:21  sscale:1/10000    # odd offset, runs 8 bits into word 1
+field    lon      1:8:22   sscale:1/10000
+field    hae      1:30:18  uscale:0.25:-500  # runs 16 bits into word 2
+field    time_ms  2:16:16  twos
+
+kind     raw                      # 3 words
+when     0:16:3  1
+requires time_ms
+field    time_ms  1:0:64  uint               # all 64 bits: the top bit set reads as a negative integer
+
+kind     idle                     # 1 word; the default on encode
+when     0:16:3  0

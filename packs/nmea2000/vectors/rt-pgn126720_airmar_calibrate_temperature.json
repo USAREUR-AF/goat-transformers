@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_airmar_calibrate_temperature-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187802a019d10",
+  "expect": "00ef0187802a019d10",
+  "model": {
+    "@kind": "pgn126720_airmar_calibrate_temperature",
+    "n2k.temperature_instance": "1",
+    "n2k.temperature_offset": "4.253"
+  }
+}

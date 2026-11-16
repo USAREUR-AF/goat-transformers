@@ -1,0 +1,14 @@
+{
+  "name": "pgn130306-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02fd0166fb4c99ba06",
+  "expect": "02fd0166fb4c99ba06",
+  "model": {
+    "@kind": "pgn130306",
+    "n2k.sid": "102",
+    "n2k.wind_speed": "197.07",
+    "n2k.wind_angle": "4.7769",
+    "n2k.pgn130306_reference": "6"
+  }
+}

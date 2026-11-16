@@ -1,0 +1,17 @@
+{
+  "name": "auth-page0-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "22100128003fab010000000000000000000000000000000000",
+  "expect": "22100128003fab010000000000000000000000000000000000",
+  "model": {
+    "@kind": "auth-page0",
+    "rid.msg_type": "2",
+    "rid.auth_type": "1",
+    "rid.auth_last_page_index": "1",
+    "rid.auth_length": "40",
+    "rid.auth_timestamp": "28000000"
+  },
+  "source": "constructed",
+  "reference": "header values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py; authentication data bytes zero"
+}

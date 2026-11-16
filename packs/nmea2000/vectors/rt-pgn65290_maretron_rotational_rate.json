@@ -1,0 +1,13 @@
+{
+  "name": "pgn65290_maretron_rotational_rate-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0aff00898044b94b14",
+  "expect": "0aff00898044b94b14",
+  "model": {
+    "@kind": "pgn65290_maretron_rotational_rate",
+    "n2k.sid": "68",
+    "n2k.data_instance": "185",
+    "n2k.rotational_rate": "1298.75"
+  }
+}

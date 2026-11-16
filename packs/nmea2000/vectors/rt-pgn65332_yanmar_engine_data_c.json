@@ -1,0 +1,11 @@
+{
+  "name": "pgn65332_yanmar_engine_data_c-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "34ff00ac809ebedded0000",
+  "expect": "34ff00ac809ebedded0000",
+  "model": {
+    "@kind": "pgn65332_yanmar_engine_data_c",
+    "n2k.data": "3990732446"
+  }
+}

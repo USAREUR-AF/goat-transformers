@@ -1,0 +1,15 @@
+{
+  "name": "pgn126993-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11f001a28b9c25",
+  "expect": "11f001a28b9c25",
+  "model": {
+    "@kind": "pgn126993",
+    "n2k.data_transmit_offset": "35.746",
+    "n2k.sequence_counter": "156",
+    "n2k.controller1_state": "1",
+    "n2k.controller2_state": "1",
+    "n2k.equipment_status": "2"
+  }
+}

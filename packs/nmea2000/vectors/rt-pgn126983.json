@@ -1,0 +1,30 @@
+{
+  "name": "pgn126983-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07f001936f7914f07194ecd6000000002487a33f1d8880f600000000dab856",
+  "expect": "07f001936f7914f07194ecd6000000002487a33f1d8880f600000000dab856",
+  "model": {
+    "@kind": "pgn126983",
+    "n2k.alert_type": "3",
+    "n2k.alert_category": "9",
+    "n2k.alert_system": "111",
+    "n2k.alert_sub_system": "121",
+    "n2k.alert_id": "61460",
+    "n2k.data_source_network_id_name": "3605828721",
+    "n2k.data_source_instance": "36",
+    "n2k.data_source_index_source": "135",
+    "n2k.alert_occurrence_number": "163",
+    "n2k.temporary_silence_status": "1",
+    "n2k.acknowledge_status": "1",
+    "n2k.escalation_status": "1",
+    "n2k.temporary_silence_support": "1",
+    "n2k.acknowledge_support": "1",
+    "n2k.escalation_support": "1",
+    "n2k.acknowledge_source_network_id_name": "4135618589",
+    "n2k.trigger_condition": "10",
+    "n2k.threshold_status": "13",
+    "n2k.alert_priority": "184",
+    "n2k.alert_state": "86"
+  }
+}

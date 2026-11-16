@@ -1,0 +1,18 @@
+{
+  "name": "pgn127500-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0cf201689781a05c0ce6d4",
+  "expect": "0cf201689781a05c0ce6d4",
+  "model": {
+    "@kind": "pgn127500",
+    "n2k.sequence_id": "104",
+    "n2k.connection_id": "151",
+    "n2k.pgn127500_state": "129",
+    "n2k.pgn127500_status": "160",
+    "n2k.operational_status_control": "92",
+    "n2k.pwm_duty_cycle": "12",
+    "n2k.timeon": "230",
+    "n2k.timeoff": "212"
+  }
+}

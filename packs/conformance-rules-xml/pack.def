@@ -1,0 +1,33 @@
+# Conformance probe pack for the mapping rules of spec 0.6 on the `xml` wire.
+# Public. Every kind has its own `root`, so the pack has none. Exercises a root
+# per kind, `const` and `default` in common and in a kind, a `when` and a
+# `field` on one locator (ruling 26 of 0.5) and `when ... present` on a scalar
+# no field maps (ruling 27 of 0.5).
+format  conformance-rules-xml
+version 0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    xml
+field   uid       @id          string
+const   @v        1
+default callsign  NONE
+kind     track
+root     trk
+requires lat lon
+field    lat       pos/@lat     float
+field    lon       pos/@lon     float
+field    callsign  name/#text   string
+const    pos/@datum  WGS84
+kind     tagged                 # `mode` holds the `when` value, at the place of the `field` line
+root     note
+requires how
+field    how       @mode        string
+field    callsign  @name        string
+when     @mode     fixed
+kind     marked                 # `mark` is not mapped by the `when`: it is residue
+root     note
+requires ce
+when     @mark     present
+field    ce        @ce          float
+kind     plain
+root     item

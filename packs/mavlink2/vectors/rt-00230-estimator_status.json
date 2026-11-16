@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-estimator_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2a00007ae728e6000006e9b96f00000080000060c00000e0bf000000000000e03f000060400000a0c0000050c00000c0bf95db",
+  "expect": "fd2a00007ae728e6000006e9b96f00000080000060c00000e0bf000000000000e03f000060400000a0c0000050c00000c0bf95db",
+  "model": {
+    "@kind": "estimator_status"
+  }
+}

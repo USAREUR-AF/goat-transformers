@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-vicon_position_estimate",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd7400004a6969680000642a4b650000008000008040000090c0000030c0000080bf0000403f00002040",
+  "expect": "fd7400004a6969680000642a4b650000008000008040000090c0000030c0000080bf0000403f00002040",
+  "model": {
+    "@kind": "vicon_position_estimate"
+  }
+}

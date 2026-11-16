@@ -1,0 +1,21 @@
+{
+  "name": "gen-geojson-to-cot-protobuf",
+  "from": "geojson",
+  "to": "cot-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[23,21.25,24.75]},\"properties\":{\"type\":\"type-3\",\"time_ms\":396,\"how\":\"how-11\",\"ce\":26.5,\"le\":28.25,\"callsign\":\"callsign-19\",\"course\":12.75,\"speed_ms\":11},\"id\":\"uid-7\"}",
+  "expect": "126f0a06747970652d332a057569642d37308c03388c034a06686f772d3131510000000000403540590000000000003740610000000000c03840690000000000803a40710000000000403c407a23120d120b63616c6c7369676e2d31393a12090000000000002640110000000000802940",
+  "model": {
+    "uid": "uid-7",
+    "type": "type-3",
+    "time_ms": "396",
+    "how": "how-11",
+    "lat": "21.25",
+    "lon": "23",
+    "hae": "24.75",
+    "ce": "26.5",
+    "le": "28.25",
+    "callsign": "callsign-19",
+    "course": "12.75",
+    "speed_ms": "11"
+  }
+}

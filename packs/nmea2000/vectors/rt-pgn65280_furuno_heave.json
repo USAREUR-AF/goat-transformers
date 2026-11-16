@@ -1,0 +1,11 @@
+{
+  "name": "pgn65280_furuno_heave-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff003f87030168f2",
+  "expect": "00ff003f87030168f2",
+  "model": {
+    "@kind": "pgn65280_furuno_heave",
+    "n2k.pgn65280_heave": "-228065.021"
+  }
+}

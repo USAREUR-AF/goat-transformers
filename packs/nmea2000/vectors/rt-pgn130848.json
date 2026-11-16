@@ -1,0 +1,16 @@
+{
+  "name": "pgn130848-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "20ff013b878d4e324b333842323442354454455354564e324b4132f5f0d55840916d",
+  "expect": "20ff013b878d4e324b333842323442354454455354564e324b4132f5f0d55840916d",
+  "model": {
+    "@kind": "pgn130848",
+    "n2k.sid": "141",
+    "n2k.waypoint_name": "N2K38B24B5DTESTV",
+    "n2k.waypoint_sequence": "N2KA",
+    "n2k.bearing_to_waypoint_true": "6.277",
+    "n2k.bearing_to_waypoint_magnetic": "5.4768",
+    "n2k.distance_to_waypoint": "18382357.36"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "table-varint-with-no-entry",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a0270391809",
+  "expect_error": "transform-decode"
+}

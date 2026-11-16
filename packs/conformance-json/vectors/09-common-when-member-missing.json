@@ -1,0 +1,7 @@
+{
+  "name": "common-when-member-missing",
+  "from": "conformance-json",
+  "to": "geojson",
+  "input": "{\"id\":\"j9\",\"pos\":{\"lat\":1.5,\"lon\":2.5}}",
+  "expect_error": "no-kind"
+}

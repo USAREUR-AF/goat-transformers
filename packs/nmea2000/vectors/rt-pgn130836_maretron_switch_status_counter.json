@@ -1,0 +1,18 @@
+{
+  "name": "pgn130836_maretron_switch_status_counter-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff0189806f7559a33f307706933d5537b10591d0e9b4624b02",
+  "expect": "14ff0189806f7559a33f307706933d5537b10591d0e9b4624b02",
+  "model": {
+    "@kind": "pgn130836_maretron_switch_status_counter",
+    "n2k.pgn130836_instance": "111",
+    "n2k.indicator_number": "117",
+    "n2k.start_date": "41817",
+    "n2k.start_time": "10847.4431",
+    "n2k.off_counter": "928333203",
+    "n2k.on_counter": "3499165105",
+    "n2k.error_counter": "1264760041",
+    "n2k.switch_status": "2"
+  }
+}

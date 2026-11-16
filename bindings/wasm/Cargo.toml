@@ -1,0 +1,23 @@
+[package]
+name = "goat-transformers-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "WebAssembly module of the goat-transformers reference engine. std-only, no imports."
+license = "Apache-2.0"
+
+[lib]
+name = "goat_transformers_wasm"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+goat-transformers = { path = "../../engines/rust" }
+
+# `cargo build --profile small`: the smallest module.
+[profile.small]
+inherits = "release"
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

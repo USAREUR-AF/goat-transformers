@@ -1,0 +1,15 @@
+{
+  "name": "pgn130825_maretron_data_instance_channel_correlation-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09ff018980e14700be9ad3da",
+  "expect": "09ff018980e14700be9ad3da",
+  "model": {
+    "@kind": "pgn130825_maretron_data_instance_channel_correlation",
+    "n2k.pgn": "18401",
+    "n2k.hardware_channel": "190",
+    "n2k.pgn130825_instance": "154",
+    "n2k.data_source": "211",
+    "n2k.data_indicator": "218"
+  }
+}

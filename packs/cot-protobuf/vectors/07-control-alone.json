@@ -1,0 +1,12 @@
+{
+  "name": "control-alone",
+  "from": "cot-protobuf",
+  "to": "cot-protobuf",
+  "input": "0a0408011001",
+  "expect": "0a0408011001",
+  "model": {
+    "@kind": "tak_control",
+    "takproto.tak_control_min_proto_version": "1",
+    "takproto.tak_control_max_proto_version": "1"
+  }
+}

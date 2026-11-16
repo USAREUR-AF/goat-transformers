@@ -1,0 +1,12 @@
+{
+  "name": "pgn128000-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00f40177aed0",
+  "expect": "00f40177aed0",
+  "model": {
+    "@kind": "pgn128000",
+    "n2k.sid": "119",
+    "n2k.leeway_angle": "-1.2114"
+  }
+}

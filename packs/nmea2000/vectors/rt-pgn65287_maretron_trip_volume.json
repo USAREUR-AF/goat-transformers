@@ -1,0 +1,14 @@
+{
+  "name": "pgn65287_maretron_trip_volume-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07ff0089804a7c0be58bc0",
+  "expect": "07ff0089804a7c0be58bc0",
+  "model": {
+    "@kind": "pgn65287_maretron_trip_volume",
+    "n2k.sid": "74",
+    "n2k.volume_instance": "124",
+    "n2k.fluid_type": "11",
+    "n2k.trip_volume": "12618.725"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "gen-error-roundtrip",
+  "from": "sapient",
+  "to": "sapient",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d3362221a0f6572726f725f6d6573736167652d351a0f6572726f725f6d6573736167652d366a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d3362221a0f6572726f725f6d6573736167652d351a0f6572726f725f6d6573736167652d366a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "model": {
+    "@kind": "error",
+    "sapient.timestamp_seconds": "100",
+    "sapient.timestamp_nanos": "137",
+    "sapient.node_id": "node_id-2",
+    "sapient.destination_id": "destination_id-3",
+    "sapient.additional_information": "additional_information-4",
+    "sapient.error_error_message.#": "2",
+    "sapient.error_error_message[0].sapient.error_error_message_item": "error_message-5",
+    "sapient.error_error_message[1].sapient.error_error_message_item": "error_message-6"
+  }
+}

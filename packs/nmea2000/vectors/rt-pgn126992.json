@@ -1,0 +1,14 @@
+{
+  "name": "pgn126992-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "10f0010402d266beeaf417",
+  "expect": "10f0010402d266beeaf417",
+  "model": {
+    "@kind": "pgn126992",
+    "n2k.sid": "4",
+    "n2k.pgn126992_source": "2",
+    "n2k.date": "26322",
+    "n2k.time": "40192.6846"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "empty-lists-to-protobuf-write-nothing",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-protobuf",
+  "input": "{\"id\":\"u1\",\"items\":[],\"names\":[],\"data\":{\"nums\":[]},\"ratios\":[]}",
+  "expect": "0a027531"
+}

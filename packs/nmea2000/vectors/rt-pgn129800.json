@@ -1,0 +1,15 @@
+{
+  "name": "pgn129800-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08fb019bb2f93b2c3047010208",
+  "expect": "08fb019bb2f93b2c3047010208",
+  "model": {
+    "@kind": "pgn129800",
+    "n2k.pgn129800_message_id": "27",
+    "n2k.repeat_indicator": "2",
+    "n2k.source_id": "742128050",
+    "n2k.ais_transceiver_information": "24",
+    "n2k.destination_id": "134349127"
+  }
+}

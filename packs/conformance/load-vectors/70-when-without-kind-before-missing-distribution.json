@@ -1,0 +1,8 @@
+{
+  "name": "70-when-without-kind-before-missing-distribution",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.6.0\nsource \"probe\"\nwire xml\nroot item\nfield uid @id string\nwhen @mode a\n",
+  "expect_error": "bad-directive"
+}

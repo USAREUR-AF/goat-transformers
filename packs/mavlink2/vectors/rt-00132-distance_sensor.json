@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-distance_sensor",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd27000066858584000088c663595f1a366e0dc2e4bb9269000020c0000040bf0000803f0000a03f0000c03f0000e03fc5",
+  "expect": "fd27000066858584000088c663595f1a366e0dc2e4bb9269000020c0000040bf0000803f0000a03f0000c03f0000e03fc5",
+  "model": {
+    "@kind": "distance_sensor"
+  }
+}

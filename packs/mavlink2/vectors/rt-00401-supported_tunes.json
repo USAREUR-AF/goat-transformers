@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-supported_tunes",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd060000d598149101002bc7742202d9",
+  "expect": "fd060000d598149101002bc7742202d9",
+  "model": {
+    "@kind": "supported_tunes"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "duplicate-member-name",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"a\",\"id\":\"b\"}",
+  "expect_error": "malformed-wire"
+}

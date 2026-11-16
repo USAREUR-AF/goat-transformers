@@ -1,0 +1,17 @@
+{
+  "name": "pgn130832_maretron_vessel_operating_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "10ff018980cdd1428607",
+  "expect": "10ff018980cdd1428607",
+  "model": {
+    "@kind": "pgn130832_maretron_vessel_operating_mode",
+    "n2k.alert_system": "205",
+    "n2k.alert_sub_system": "209",
+    "n2k.alert_system_instance": "66",
+    "n2k.operating_mode": "134",
+    "n2k.generating_global_alerts": "1",
+    "n2k.user_changed": "1",
+    "n2k.in_independent_mode": "1"
+  }
+}

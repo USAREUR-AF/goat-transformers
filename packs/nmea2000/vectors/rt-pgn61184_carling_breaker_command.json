@@ -1,0 +1,15 @@
+{
+  "name": "pgn61184_carling_breaker_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef00b0800205a760f90b",
+  "expect": "00ef00b0800205a760f90b",
+  "model": {
+    "@kind": "pgn61184_carling_breaker_command",
+    "n2k.breaker_mapping1": "5",
+    "n2k.breaker_mapping2": "167",
+    "n2k.breaker_mapping3": "3",
+    "n2k.breaker_command": "249",
+    "n2k.dim_value": "11"
+  }
+}

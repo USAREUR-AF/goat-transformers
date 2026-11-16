@@ -1,0 +1,7 @@
+{
+  "name": "raw-uint-64-to-geojson",
+  "from": "demo-bits-msb",
+  "to": "geojson",
+  "input": "00002000fffffffffffffffe",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":-2,\"course\":0}}"
+}

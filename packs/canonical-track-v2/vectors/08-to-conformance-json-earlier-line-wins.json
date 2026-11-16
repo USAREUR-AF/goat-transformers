@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-earlier-line-wins",
+  "from": "canonical-track-v2",
+  "to": "conformance-json",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"velocity\":{\"eastMps\":-12.5,\"northMps\":40.25,\"upMps\":0.5},\"classification\":\"uas\",\"confidence\":0.875,\"positionUncertainty\":{\"sigmaEastM\":15,\"sigmaNorthM\":12.5,\"sigmaUpM\":30}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"trk-0042\",\"pos\":{\"lat\":30.0090027,\"lon\":-85.9578182},\"meta\":{\"level\":\"alias\",\"src\":\"radar-north\"}}"
+}

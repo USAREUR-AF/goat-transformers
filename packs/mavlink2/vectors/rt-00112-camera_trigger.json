@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-camera_trigger",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0c0000527171700000dc0d092b00000080b3618d7e",
+  "expect": "fd0c0000527171700000dc0d092b00000080b3618d7e",
+  "model": {
+    "@kind": "camera_trigger"
+  }
+}

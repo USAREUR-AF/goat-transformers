@@ -1,0 +1,10 @@
+{
+  "name": "ruling-05-earlier-line-succeeds-later-fails",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"ce\":3,\"ce2\":\"bad\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"slot\":\"h-c\",\"ce\":3,\"ce2\":3,\"marker\":\"present\",\"k\":2}",
+  "model": {
+    "ce": "3"
+  }
+}

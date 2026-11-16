@@ -1,0 +1,7 @@
+{
+  "name": "unmapped-attr-residue",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"x3\" kind=\"friend\" extra=\"keep\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"x3\" kind=\"friend\" extra=\"keep\"><pos lat=\"1.5\" lon=\"2.5\"/></item>"
+}

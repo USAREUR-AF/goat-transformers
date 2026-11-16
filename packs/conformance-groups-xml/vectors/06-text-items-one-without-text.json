@@ -1,0 +1,11 @@
+{
+  "name": "text-items-one-without-text",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u6\"><name/><name>b</name></msg>",
+  "expect": "<msg id=\"u6\"><name/><name>b</name></msg>",
+  "model": {
+    "probe.names.#": "2",
+    "probe.names[1].probe.tag": "b"
+  }
+}

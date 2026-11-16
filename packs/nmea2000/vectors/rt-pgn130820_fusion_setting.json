@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_setting-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a38114804311c8513f330ab1",
+  "expect": "04ff01a38114804311c8513f330ab1",
+  "model": {
+    "@kind": "pgn130820_fusion_setting",
+    "n2k.pgn130820_id": "1372066115",
+    "n2k.pgn130820_fusion_setting_value": "2970235711"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_menu_lock_id-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a381128059b2fc8833",
+  "expect": "04ff01a381128059b2fc8833",
+  "model": {
+    "@kind": "pgn130820_fusion_menu_lock_id",
+    "n2k.request_token": "2298262105",
+    "n2k.lock_id": "51"
+  }
+}

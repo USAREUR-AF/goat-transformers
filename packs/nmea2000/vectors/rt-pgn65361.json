@@ -1,0 +1,12 @@
+{
+  "name": "pgn65361-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "51ff003b87d4a7",
+  "expect": "51ff003b87d4a7",
+  "model": {
+    "@kind": "pgn65361",
+    "n2k.pgn65361_alarm_id": "212",
+    "n2k.alarm_group": "167"
+  }
+}

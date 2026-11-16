@@ -1,0 +1,16 @@
+{
+  "name": "canonical-roundtrip",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a1\",\"rev\":6,\"kind\":\"F\",\"pos\":{\"lat\":1.5,\"latitude\":1.5,\"lon\":2.5,\"alt\":10},\"cls\":1,\"how\":\"M\",\"status\":\"yes\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a1\",\"rev\":6,\"kind\":\"F\",\"pos\":{\"lat\":1.5,\"latitude\":1.5,\"lon\":2.5,\"alt\":10},\"cls\":1,\"how\":\"M\",\"status\":\"yes\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "uid": "a1",
+    "type": "a-f-G",
+    "lat": "1.5",
+    "hae": "10",
+    "track.class": "uas",
+    "how": "m-g",
+    "track.confirmed": "1"
+  }
+}

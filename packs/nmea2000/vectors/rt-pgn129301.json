@@ -1,0 +1,14 @@
+{
+  "name": "pgn129301-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "15f90136c1dc2151076a3df1ff",
+  "expect": "15f90136c1dc2151076a3df1ff",
+  "model": {
+    "@kind": "pgn129301",
+    "n2k.sid": "54",
+    "n2k.time_to_mark": "1361173.697",
+    "n2k.mark_type": "7",
+    "n2k.mark_id": "4293999978"
+  }
+}

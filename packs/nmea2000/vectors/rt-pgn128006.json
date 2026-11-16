@@ -1,0 +1,19 @@
+{
+  "name": "pgn128006-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06f4019b1c616b812deff0",
+  "expect": "06f4019b1c616b812deff0",
+  "model": {
+    "@kind": "pgn128006",
+    "n2k.sid": "155",
+    "n2k.identifier": "28",
+    "n2k.direction_control": "1",
+    "n2k.power_enabled": "2",
+    "n2k.retract_control": "1",
+    "n2k.pgn128006_speed_control": "107",
+    "n2k.control_events": "129",
+    "n2k.command_timeout": "0.225",
+    "n2k.azimuth_control": "6.1679"
+  }
+}

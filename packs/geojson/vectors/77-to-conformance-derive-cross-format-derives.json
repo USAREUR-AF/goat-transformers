@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-derive-cross-format-derives",
+  "from": "geojson",
+  "to": "conformance-derive",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"g7\"}",
+  "expect": "{\"id\":\"g7\"}"
+}

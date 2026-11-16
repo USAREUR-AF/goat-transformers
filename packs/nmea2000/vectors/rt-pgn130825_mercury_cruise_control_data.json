@@ -1,0 +1,14 @@
+{
+  "name": "pgn130825_mercury_cruise_control_data-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09ff019080040a00b593e008f8",
+  "expect": "09ff019080040a00b593e008f8",
+  "model": {
+    "@kind": "pgn130825_mercury_cruise_control_data",
+    "n2k.pgn130825_engine_instance": "10",
+    "n2k.cruise_state": "181",
+    "n2k.cruise_rpm_setpoint": "57491",
+    "n2k.cruise_speed_setpoint": "634.96"
+  }
+}

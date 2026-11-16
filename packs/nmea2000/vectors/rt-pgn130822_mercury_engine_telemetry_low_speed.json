@@ -1,0 +1,16 @@
+{
+  "name": "pgn130822_mercury_engine_telemetry_low_speed-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff019080ee24a42c8c4762",
+  "expect": "06ff019080ee24a42c8c4762",
+  "model": {
+    "@kind": "pgn130822_mercury_engine_telemetry_low_speed",
+    "n2k.pgn130822_engine_instance": "238",
+    "n2k.malfunction_indicator": "36",
+    "n2k.intake_air_temperature": "164",
+    "n2k.exhaust_gas_temperature": "35884",
+    "n2k.gpl": "71",
+    "n2k.engine_state": "98"
+  }
+}

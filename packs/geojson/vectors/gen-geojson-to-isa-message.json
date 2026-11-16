@@ -1,0 +1,14 @@
+{
+  "name": "gen-geojson-to-isa-message",
+  "from": "geojson",
+  "to": "isa-message",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.75,10,13.5]},\"properties\":{\"course\":15.5,\"speed_ms\":22.5}}",
+  "expect": "1a37ca011b090000000000002440110000000000802740190000000000002b40ea01160a09090000000000002f401a09090000000000803640",
+  "model": {
+    "lat": "10",
+    "lon": "11.75",
+    "hae": "13.5",
+    "course": "15.5",
+    "speed_ms": "22.5"
+  }
+}

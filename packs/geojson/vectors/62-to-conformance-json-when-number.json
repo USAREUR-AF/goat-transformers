@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-when-number",
+  "from": "geojson",
+  "to": "conformance-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"time_ms\":1614456000000},\"id\":\"g9\"}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"g9\",\"pos\":{\"lat\":1.5,\"lon\":2.5},\"meta\":{\"rev\":2,\"t\":1614456000000}}"
+}

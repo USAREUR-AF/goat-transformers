@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_airmar_temperature_filter_iir-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187802c015ecbee54",
+  "expect": "00ef0187802c015ecbee54",
+  "model": {
+    "@kind": "pgn126720_airmar_temperature_filter_iir",
+    "n2k.sample_interval": "520.62",
+    "n2k.filter_duration": "217.42"
+  }
+}

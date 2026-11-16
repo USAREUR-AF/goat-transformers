@@ -1,0 +1,13 @@
+{
+  "name": "pgn65409-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "81ff0087808c619a0e7b",
+  "expect": "81ff0087808c619a0e7b",
+  "model": {
+    "@kind": "pgn65409",
+    "n2k.sid": "140",
+    "n2k.duration_of_interval": "39.521",
+    "n2k.number_of_pulses_received": "31502"
+  }
+}

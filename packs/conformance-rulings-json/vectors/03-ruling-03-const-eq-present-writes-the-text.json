@@ -1,0 +1,7 @@
+{
+  "name": "ruling-03-const-eq-present-writes-the-text",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"marker\":\"other\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"slot\":\"h-c\",\"marker\":\"present\",\"k\":2}"
+}

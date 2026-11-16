@@ -1,0 +1,8 @@
+{
+  "name": "gen-geojson-to-isa-ipl1",
+  "from": "geojson",
+  "to": "isa-ipl1",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "expect_error": "no-kind",
+  "model": {}
+}

@@ -1,0 +1,19 @@
+{
+  "name": "pgn129302-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "16f901aa0945cbfce3ec58bc2131bc7d2efbae09",
+  "expect": "16f901aa0945cbfce3ec58bc2131bc7d2efbae09",
+  "model": {
+    "@kind": "pgn129302",
+    "n2k.sid": "170",
+    "n2k.bearing_reference": "1",
+    "n2k.calculation_type": "2",
+    "n2k.bearing_origin_to_destination": "5.2037",
+    "n2k.distance": "14919198.68",
+    "n2k.origin_mark_type": "12",
+    "n2k.destination_mark_type": "11",
+    "n2k.origin_mark_id": "2109485345",
+    "n2k.destination_mark_id": "162462510"
+  }
+}

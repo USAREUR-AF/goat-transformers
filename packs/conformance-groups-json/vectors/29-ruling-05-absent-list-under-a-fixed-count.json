@@ -1,0 +1,7 @@
+{
+  "name": "ruling-05-absent-list-under-a-fixed-count",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits-msb",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"ab\",\"n\":7}]}",
+  "expect_error": "transform-encode"
+}

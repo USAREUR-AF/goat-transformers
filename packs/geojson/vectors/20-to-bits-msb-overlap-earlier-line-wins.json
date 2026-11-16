@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-msb-overlap-earlier-line-wins",
+  "from": "geojson",
+  "to": "demo-bits-msb",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2,4660]},\"properties\":{\"ce\":43981}}",
+  "expect": "000060001234ca00"
+}

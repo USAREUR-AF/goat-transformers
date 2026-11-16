@@ -1,0 +1,29 @@
+{
+  "name": "pgn130825_bep_marine_proprietary_pgn130825-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09ff012781ddfcf2ebc4418fedf56a6c164c8d9819bc53ca4783b99ba354",
+  "expect": "09ff012781ddfcf2ebc4418fedf56a6c164c8d9819bc53ca4783b99ba354",
+  "model": {
+    "@kind": "pgn130825_bep_marine_proprietary_pgn130825",
+    "n2k.module_id": "221",
+    "n2k.page": "252",
+    "n2k.unknown_header_byte": "242",
+    "n2k.output_current_raw0": "1259",
+    "n2k.output_level_raw0": "56",
+    "n2k.output_current_raw1": "1597",
+    "n2k.output_level_raw1": "758",
+    "n2k.output_current_raw2": "1711",
+    "n2k.output_level_raw2": "1240",
+    "n2k.output_current_raw3": "773",
+    "n2k.output_level_raw3": "1130",
+    "n2k.output_current_raw4": "408",
+    "n2k.output_level_raw4": "1923",
+    "n2k.output_current_raw5": "334",
+    "n2k.output_level_raw5": "997",
+    "n2k.output_current_raw6": "52",
+    "n2k.output_level_raw6": "1907",
+    "n2k.output_current_raw7": "230",
+    "n2k.output_level_raw7": "677"
+  }
+}

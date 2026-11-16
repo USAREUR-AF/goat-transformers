@@ -1,0 +1,15 @@
+{
+  "name": "pgn65280_sleipner_thruster_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff00328191b0cc82b3ff",
+  "expect": "00ff00328191b0cc82b3ff",
+  "model": {
+    "@kind": "pgn65280_sleipner_thruster_command",
+    "n2k.thruster_instance": "1",
+    "n2k.pgn65280_direction": "1",
+    "n2k.device_action": "2",
+    "n2k.pgn65280_thrust": "17.6",
+    "n2k.reserved10": "1072488627"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "count-zero-list-present-and-empty",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-bits",
+  "input": "7532000000",
+  "expect": "7532000000",
+  "model": {
+    "uid": "u2",
+    "probe.items.#": "0"
+  }
+}

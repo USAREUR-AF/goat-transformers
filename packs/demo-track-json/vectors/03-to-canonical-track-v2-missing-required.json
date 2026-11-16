@@ -1,0 +1,7 @@
+{
+  "name": "to-canonical-track-v2-missing-required",
+  "from": "demo-track-json",
+  "to": "canonical-track-v2",
+  "input": "{\"id\":\"trk-0042\",\"time\":\"2021-02-27T20:00:00.250Z\",\"lat\":30.0090027,\"lon\":-85.9578182,\"track\":{\"source_id\":\"radar-north\"}}",
+  "expect_error": "no-kind"
+}

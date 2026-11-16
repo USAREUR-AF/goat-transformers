@@ -1,0 +1,11 @@
+{
+  "name": "raw-uint-64-top-bit",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "00002000fffffffffffffffe",
+  "expect": "00002000fffffffffffffffe",
+  "model": {
+    "@kind": "raw",
+    "time_ms": "-2"
+  }
+}

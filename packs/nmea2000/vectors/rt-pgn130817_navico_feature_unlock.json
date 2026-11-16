@@ -1,0 +1,13 @@
+{
+  "name": "pgn130817_navico_feature_unlock-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01ff01138157493aa673",
+  "expect": "01ff01138157493aa673",
+  "model": {
+    "@kind": "pgn130817_navico_feature_unlock",
+    "n2k.feature_id": "18775",
+    "n2k.record_count": "58",
+    "n2k.data": "29606"
+  }
+}

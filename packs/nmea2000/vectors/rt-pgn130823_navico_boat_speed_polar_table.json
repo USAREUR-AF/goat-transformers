@@ -1,0 +1,11 @@
+{
+  "name": "pgn130823_navico_boat_speed_polar_table-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07ff01138100000f1b",
+  "expect": "07ff01138100000f1b",
+  "model": {
+    "@kind": "pgn130823_navico_boat_speed_polar_table",
+    "n2k.part": "27"
+  }
+}

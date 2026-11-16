@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-manual_setpoint",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1600003a52525100006b3cc93c000000000000e03f000060400000a0c09e75",
+  "expect": "fd1600003a52525100006b3cc93c000000000000e03f000060400000a0c09e75",
+  "model": {
+    "@kind": "manual_setpoint"
+  }
+}

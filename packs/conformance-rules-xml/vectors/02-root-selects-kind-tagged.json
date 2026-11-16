@@ -1,0 +1,12 @@
+{
+  "name": "root-selects-kind-tagged",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<note id=\"n1\" mode=\"fixed\" name=\"X\"/>",
+  "expect": "<note id=\"n1\" v=\"1\" mode=\"fixed\" name=\"X\"/>",
+  "model": {
+    "@kind": "tagged",
+    "how": "fixed",
+    "callsign": "X"
+  }
+}

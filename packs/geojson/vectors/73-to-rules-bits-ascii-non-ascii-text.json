@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-bits-ascii-non-ascii-text",
+  "from": "geojson",
+  "to": "conformance-rules-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"a-é\"}}",
+  "expect_error": "transform-encode"
+}

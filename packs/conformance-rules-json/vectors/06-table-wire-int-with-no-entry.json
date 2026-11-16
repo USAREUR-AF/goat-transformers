@@ -1,0 +1,7 @@
+{
+  "name": "table-wire-int-with-no-entry",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"id\":\"a6\",\"cls\":9}",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-bytes-long",
+  "from": "geojson",
+  "to": "demo-bits-bytes",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.7512]},\"properties\":{\"time_ms\":1000,\"callsign\":\"SYD\"}}",
+  "expect": "470200000003e8ebe1f9c05a219fa853594400"
+}

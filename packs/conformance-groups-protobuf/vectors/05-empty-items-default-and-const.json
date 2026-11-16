@@ -1,0 +1,12 @@
+{
+  "name": "empty-items-default-and-const",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a027535120012022a00",
+  "expect": "0a0275351204100120091206100120092a00",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.subs.#": "1",
+    "probe.items[0].probe.subs.#": "absent"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ruling-02-common-default-in-a-kind-without-its-own",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"slot\":\"h-c\",\"marker\":\"present\",\"k\":2}",
+  "model": {
+    "@kind": "plain"
+  }
+}

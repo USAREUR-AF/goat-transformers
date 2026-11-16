@@ -1,0 +1,113 @@
+# Every engine runs every conversion vector and every load vector, and the
+# boundary gate reads the whole tree, on every change.
+name: conformance
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: conformance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  boundary-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: python3 -I tools/boundary-gate
+  rust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: cargo test
+        working-directory: engines/rust
+  go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: engines/go/go.mod
+          cache: false
+      - run: go test -v ./...
+        working-directory: engines/go
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: PYTHONPATH=src python -m unittest discover -s tests
+        working-directory: engines/python
+  java:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: ./build.sh
+        working-directory: engines/java
+  cpp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: |
+          cmake -S engines/cpp -B "$RUNNER_TEMP/cpp"
+          cmake --build "$RUNNER_TEMP/cpp"
+          ctest --test-dir "$RUNNER_TEMP/cpp" --output-on-failure
+  erlang:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
+        with:
+          otp-version: "27"
+      - run: ./build.sh && ./run_tests
+        working-directory: engines/erlang
+  zig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2
+        with:
+          version: 0.13.0
+      - run: zig build test -- ../../packs
+        working-directory: engines/zig
+  bindings:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: C ABI, shared and static, against the C test
+        run: ./test.sh
+        working-directory: bindings/c
+      - name: WebAssembly module
+        run: |
+          rustup target add wasm32-unknown-unknown
+          cargo build --release --target wasm32-unknown-unknown
+          cargo build --profile small --target wasm32-unknown-unknown
+          ls -l target/wasm32-unknown-unknown/release/goat_transformers_wasm.wasm \
+                target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm
+        working-directory: bindings/wasm
+      - name: Every conversion vector through the module, release build
+        run: node --test bindings/wasm/test/vectors.test.mjs
+      - name: Every conversion vector through the module, small build
+        run: node --test bindings/wasm/test/vectors.test.mjs
+        env:
+          GT_WASM: bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm
+      - name: Example host
+        run: |
+          node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync("packs/canonical-track-v2/vectors/02-to-cot-xml.json","utf8")).input)' \
+            | node bindings/wasm/example/translate.mjs | grep -q 'stale="2021-02-27T20:03:00.250Z"'

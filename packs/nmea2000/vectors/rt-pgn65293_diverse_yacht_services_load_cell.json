@@ -1,0 +1,12 @@
+{
+  "name": "pgn65293_diverse_yacht_services_load_cell-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0dff00818236001ddf8ddd",
+  "expect": "0dff00818236001ddf8ddd",
+  "model": {
+    "@kind": "pgn65293_diverse_yacht_services_load_cell",
+    "n2k.pgn65293_instance": "54",
+    "n2k.load_cell": "3717062429"
+  }
+}

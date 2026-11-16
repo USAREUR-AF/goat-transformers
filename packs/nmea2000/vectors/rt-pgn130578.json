@@ -1,0 +1,16 @@
+{
+  "name": "pgn130578-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "12fe01cfa8b601c1dd96a3efdb6639",
+  "expect": "12fe01cfa8b601c1dd96a3efdb6639",
+  "model": {
+    "@kind": "pgn130578",
+    "n2k.longitudinal_speed_water_referenced": "-22.321",
+    "n2k.transverse_speed_water_referenced": "0.438",
+    "n2k.longitudinal_speed_ground_referenced": "-8.767",
+    "n2k.transverse_speed_ground_referenced": "-23.658",
+    "n2k.stern_speed_water_referenced": "-9.233",
+    "n2k.stern_speed_ground_referenced": "14.694"
+  }
+}

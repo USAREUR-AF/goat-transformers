@@ -1,0 +1,149 @@
+# Shared model
+
+Status: Written. Version 0.4.
+
+Every format decodes to this model and encodes from it. A conversion from format
+A to format B is "decode A to the model, encode the model to B". The model is the
+only thing the formats agree on.
+
+## Modules
+
+The model is a set of modules. A module is a named list of typed keys in one
+file, `model/<module>.def` (grammar: `spec/engine-spec.md`, Version 0.4). A pack
+names the modules it uses and maps wire fields to their keys. Two formats that
+map the same key convert that value to each other; the more modules two formats
+share, the more of a message carries between them.
+
+| Module | Holds | Defined in |
+|---|---|---|
+| `core` | identity, type, time, position, error, name, course and speed of one reported thing | `model/core.def` |
+| `track` | sensor-track facts: source, velocity vector, class, confidence, uncertainty, status flags, and the list of identifiers | `model/track.def` |
+| `probe` | synthetic keys and lists for the conformance vectors of derived keys and of groups; no real format maps them | `model/probe.def` |
+
+A format with a message catalog of its own usually also has its own module of
+raw wire values (for example `n2k` for NMEA 2000), so every field decodes and
+round-trips even where it has no key in `core` or `track` yet.
+
+A key of `core` is written bare in a pack (`lat`). A key of any other module is
+written `<module>.<key>` (`track.confidence`).
+
+The model grows by adding modules and by adding keys to a module. A key is never
+renamed and never changes type. A concept that only some formats carry goes in
+its own module, so a format that does not carry it never mentions it.
+
+## Types and units
+
+A key has one of three types: `string`, `float`, `int`. A flag is an `int`:
+1 when the source states it, 0 when the source denies it, absent when the source
+says nothing.
+
+Units are fixed by the module: degrees, metres, metres per second, epoch
+milliseconds. Each pack converts its format's units to these on decode and back
+on encode. No consumer of the model does unit math.
+
+Every pack must produce a key's declared type. A format whose wire holds the
+value as a different type uses a transform that yields the declared type. The
+engine checks this when the pack loads and refuses a mismatch
+(`key-type-mismatch`), so two loaded packs can never disagree on a key's type.
+
+## Lists
+
+Status: Written. Version 0.7. A part of a message that repeats is a list: a
+module declares it with a `list` line, and a pack maps it with a `group` block
+(`spec/engine-spec.md`, Version 0.7).
+
+- A list is named like a key (`track.identifiers`; bare for `core`) and shares
+  its module's key names: a module cannot have a key and a list of one name.
+- Its value is an ordered sequence of items. An item holds model keys, and may
+  hold lists of its own. Any declared key may appear in an item; the keys an
+  item holds are the ones the `group` maps. An item has no residue and no kind.
+- A list that is present and empty is distinct from an absent list. JSON
+  writes the first as `[]`; XML and protobuf cannot tell the two apart and
+  read a message with no item as an absent list.
+- Two formats that map the same list convert it to each other, item by item,
+  each item carrying the keys both groups map.
+- Derived keys and caller-supplied keys are keys of the entity itself. They do
+  not reach into items.
+
+The `model_keys` of a format name a list `<list>[]` and an item key
+`<list>[].<key>` (`track.identifiers[]`, `track.identifiers[].track.id_value`).
+
+## Distribution: public and controlled
+
+Every module and every pack carries a `distribution` line, `public` or
+`controlled`, and at least one `source` line naming the document it was written
+from.
+
+- A `public` pack may use only `public` modules.
+- A `controlled` pack may use `public` and `controlled` modules.
+
+A format written from a controlled standard therefore converts to and from every
+public format through the public modules it maps, and to and from other
+controlled formats through the controlled modules as well. The public modules
+contain no key that exists only in a controlled standard, because such a key is
+declared in a controlled module, and a controlled module is kept in a private
+overlay repository, never in this one.
+
+An engine set to `--max-distribution public` refuses every controlled module and
+pack, so a deployment entitled only to public formats cannot load anything else.
+
+## The `core` module
+
+| Key | Type | Unit | Meaning |
+|---|---|---|---|
+| `uid` | string | | stable identifier of the entity |
+| `type` | string | | CoT-style type token (`a-f-G-U-C-I`), the shared type vocabulary |
+| `time_ms` | int | epoch milliseconds UTC | time the report is valid |
+| `lat` | float | degrees, WGS84 | latitude |
+| `lon` | float | degrees, WGS84 | longitude |
+| `hae` | float | metres | height above WGS84 ellipsoid |
+| `ce` | float | metres | circular (horizontal) error |
+| `le` | float | metres | linear (vertical) error |
+| `callsign` | string | | human-readable name |
+| `course` | float | degrees true | direction of travel |
+| `speed_ms` | float | metres per second | ground speed |
+| `how` | string | | provenance token (`m-g`, `h-e`, ...) |
+| `stale_ms` | int | epoch milliseconds UTC | time after which the report is no longer valid |
+
+## The `track` module
+
+The keys match the Canonical Track v2 contract of `USAREUR-AF/open-billie`
+(`schemas/canonical-track-v2.schema.json`) field for field: `source_id`,
+`generation`, `vel_east_ms`, `vel_north_ms`, `vel_up_ms`, `class`,
+`confidence`, `sigma_east_m`, `sigma_north_m`, `sigma_up_m`, and the flags
+`confirmed`, `coasting`, `simulated`, `header_simulated`, `test_data`,
+`final_update`. Types, units
+and meanings are in `model/track.def`.
+
+The contract's `identifiers` array is the list `track.identifiers`. Each item
+holds two keys:
+
+| Key | Type | Meaning |
+|---|---|---|
+| `track.id_scheme` | string | the scheme the identifier belongs to (for example `icao24`) |
+| `track.id_value` | string | the identifier in that scheme |
+
+## Residue
+
+A field a format carries that no loaded module has a key for is stored under
+`residue`, keyed by that format's locator string, with the original wire value.
+On encode back to the same format, residue is written back out, so decode then
+encode to the same format returns an equal message. Residue does not cross
+formats: encoding to a different format ignores another format's residue.
+
+## Type vocabulary
+
+The `type` key uses the CoT type grammar (`a-.-.-.` affiliation-dimension) as
+the shared vocabulary, because it is public and hierarchical. Each non-CoT
+format's pack carries a table mapping its own type codes to and from CoT type
+tokens. A code with no mapping passes through: it keeps its native value in
+`type` and is written back unchanged through the same locator
+(`spec/engine-spec.md`, Type mapping). Residue is not involved.
+
+## Why a model and not a format's own
+
+No fielded format is a neutral go-between: each carries assumptions the others
+do not share. The model takes what a report means, in fixed units, so that
+adding the Nth format needs one pack, not N−1 pair rules. A pair that must lose
+nothing and cannot get there through the modules uses a direct pair rule
+(`docs/adr/0002`).

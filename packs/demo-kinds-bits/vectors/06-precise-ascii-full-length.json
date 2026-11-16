@@ -1,0 +1,11 @@
+{
+  "name": "precise-ascii-full-length",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "4d0000000300000041424344454647480000000000e040c0865ad3bce3e662400000803e00000000",
+  "expect": "4d0000000300000041424344454647480000000000e040c0865ad3bce3e662400000803e00000000",
+  "model": {
+    "@kind": "precise",
+    "callsign": "ABCDEFGH"
+  }
+}

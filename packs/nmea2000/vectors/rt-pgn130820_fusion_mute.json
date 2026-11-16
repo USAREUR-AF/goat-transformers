@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_mute-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811780bd",
+  "expect": "04ff01a3811780bd",
+  "model": {
+    "@kind": "pgn130820_fusion_mute",
+    "n2k.pgn130820_mute": "189"
+  }
+}

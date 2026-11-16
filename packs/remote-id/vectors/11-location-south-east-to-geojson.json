@@ -1,0 +1,15 @@
+{
+  "name": "location-south-east-to-geojson",
+  "from": "remote-id",
+  "to": "geojson",
+  "input": "12215a0afb5cddd1eb879f215a4a08450821086b539f8c0200",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2152967,-33.8567844,58.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "location",
+    "lat": "-33.8567844",
+    "lon": "151.2152967",
+    "hae": "58.5"
+  },
+  "source": "constructed",
+  "reference": "constructed: negative latitude, half-meter altitude, speed multiplier set, negative vertical speed"
+}

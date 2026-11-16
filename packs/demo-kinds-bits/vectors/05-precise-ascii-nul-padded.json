@@ -1,0 +1,14 @@
+{
+  "name": "precise-ascii-nul-padded",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "4d000000030000004741544f5200000061133e004e023e40df20b5e44c7d55c00000484100000000",
+  "expect": "4d000000030000004741544f5200000061133e004e023e40df20b5e44c7d55c00000484100000000",
+  "model": {
+    "@kind": "precise",
+    "callsign": "GATOR",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "ce": "12.5"
+  }
+}

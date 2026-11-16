@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mission_item_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd260000344a4a490000000010c0000000bf0000a03f00004040e1c089c562148ec5000000c0d4a3abf782593007deb5",
+  "expect": "fd260000344a4a490000000010c0000000bf0000a03f00004040e1c089c562148ec5000000c0d4a3abf782593007deb5",
+  "model": {
+    "@kind": "mission_item_int"
+  }
+}

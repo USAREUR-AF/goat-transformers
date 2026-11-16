@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_airmar_attitude_offset-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01878020c7b221466a93",
+  "expect": "00ef01878020c7b221466a93",
+  "model": {
+    "@kind": "pgn126720_airmar_attitude_offset",
+    "n2k.azimuth_offset": "-1.9769",
+    "n2k.pgn126720_pitch_offset": "1.7953",
+    "n2k.pgn126720_roll_offset": "-2.7798"
+  }
+}

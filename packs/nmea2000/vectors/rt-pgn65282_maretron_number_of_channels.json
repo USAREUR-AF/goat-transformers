@@ -1,0 +1,12 @@
+{
+  "name": "pgn65282_maretron_number_of_channels-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02ff008980048f0383",
+  "expect": "02ff008980048f0383",
+  "model": {
+    "@kind": "pgn65282_maretron_number_of_channels",
+    "n2k.pgn": "233220",
+    "n2k.number_of_channels": "131"
+  }
+}

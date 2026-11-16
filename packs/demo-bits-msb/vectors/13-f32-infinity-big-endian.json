@@ -1,0 +1,7 @@
+{
+  "name": "f32-infinity-big-endian",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "23284000414c464100007f800000403e400000000000c0556000000000000000",
+  "expect_error": "transform-decode"
+}

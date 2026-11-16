@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-kind-literal",
+  "from": "geojson",
+  "to": "conformance",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"type\":\"a-f-G\",\"ce\":9.5},\"id\":\"g3\"}",
+  "expect": "<item id=\"g3\" kind=\"friend\" ce=\"9.5\" mode=\"present\"><pos lat=\"1.5\" lon=\"2.5\"/></item>"
+}

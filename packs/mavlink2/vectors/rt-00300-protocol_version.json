@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-protocol_version",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd160000af336e2c0100606f37c30e17e59647f8a95a0bbcbc6d1ecf8031e293",
+  "expect": "fd160000af336e2c0100606f37c30e17e59647f8a95a0bbcbc6d1ecf8031e293",
+  "model": {
+    "@kind": "protocol_version"
+  }
+}

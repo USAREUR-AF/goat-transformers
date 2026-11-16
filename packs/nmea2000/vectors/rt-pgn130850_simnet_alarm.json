@@ -1,0 +1,16 @@
+{
+  "name": "pgn130850_simnet_alarm-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff014187da001bff87003d7c92e0",
+  "expect": "22ff014187da001bff87003d7c92e0",
+  "model": {
+    "@kind": "pgn130850_simnet_alarm",
+    "n2k.address": "218",
+    "n2k.network_group": "27",
+    "n2k.pgn130850_command": "135",
+    "n2k.pgn130850_alarm_id": "31805",
+    "n2k.f": "146",
+    "n2k.g": "224"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ruling-14-optional-field-in-a-required-word-is-read",
+  "from": "conformance-rulings-bits",
+  "to": "conformance-rulings-bits",
+  "input": "07000933",
+  "expect": "070009330000",
+  "model": {
+    "probe.n": "7",
+    "probe.qty": "51"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "table-wire-int-with-no-entry",
+  "from": "conformance-rules-bits",
+  "to": "conformance-rules-bits",
+  "input": "5a341240ee2d120946524e4441204220200000002040",
+  "expect_error": "transform-decode"
+}

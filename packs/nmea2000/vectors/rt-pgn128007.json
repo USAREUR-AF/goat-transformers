@@ -1,0 +1,15 @@
+{
+  "name": "pgn128007-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07f4010105bd411c0cabea",
+  "expect": "07f4010105bd411c0cabea",
+  "model": {
+    "@kind": "pgn128007",
+    "n2k.identifier": "1",
+    "n2k.pgn128007_motor_type": "5",
+    "n2k.power_rating": "16829",
+    "n2k.maximum_temperature_rating": "31",
+    "n2k.maximum_rotational_speed": "15018.75"
+  }
+}

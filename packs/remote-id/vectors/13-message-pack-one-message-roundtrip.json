@@ -1,0 +1,21 @@
+{
+  "name": "message-pack-one-message-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "f2190102145553532d456e7465727072697365000000000000000000",
+  "expect": "f2190102145553532d456e7465727072697365000000000000000000",
+  "model": {
+    "@kind": "message-pack",
+    "rid.msg_type": "15",
+    "rid.proto_version": "2",
+    "rid.pack_msg_size": "25",
+    "rid.messages.#": "1",
+    "rid.messages[0].rid.msg_type": "0",
+    "rid.messages[0].rid.proto_version": "2",
+    "rid.messages[0].rid.body_1_8": "8389719216811627796",
+    "rid.messages[0].rid.body_9_16": "28555869376508517",
+    "rid.messages[0].rid.body_17_24": "0"
+  },
+  "source": "constructed",
+  "reference": "Message Pack header (type 0xF, version 2, message size 25, one message) followed by the Basic ID message of unit_odid_wifi_beacon.cpp"
+}

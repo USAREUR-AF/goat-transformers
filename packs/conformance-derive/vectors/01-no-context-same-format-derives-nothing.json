@@ -1,0 +1,7 @@
+{
+  "name": "no-context-same-format-derives-nothing",
+  "from": "conformance-derive",
+  "to": "conformance-derive",
+  "input": "{\"id\":\"u1\",\"a\":3,\"n\":42,\"s1\":\"x\",\"k0\":7}",
+  "expect": "{\"id\":\"u1\",\"a\":3,\"n\":42,\"s1\":\"x\",\"k0\":7}"
+}

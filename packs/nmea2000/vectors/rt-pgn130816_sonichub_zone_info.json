@@ -1,0 +1,12 @@
+{
+  "name": "pgn130816_sonichub_zone_info-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff011381000523cd",
+  "expect": "00ff011381000523cd",
+  "model": {
+    "@kind": "pgn130816_sonichub_zone_info",
+    "n2k.pgn130816_control": "35",
+    "n2k.pgn130816_zone": "205"
+  }
+}

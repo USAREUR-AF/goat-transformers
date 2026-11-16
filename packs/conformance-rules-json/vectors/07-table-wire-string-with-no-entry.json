@@ -1,0 +1,7 @@
+{
+  "name": "table-wire-string-with-no-entry",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"id\":\"a7\",\"status\":\"maybe\"}",
+  "expect_error": "transform-decode"
+}

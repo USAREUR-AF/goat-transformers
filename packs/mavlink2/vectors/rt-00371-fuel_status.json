@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-fuel_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1a0000c67ab57301000000803f0000304000009040000080c0000010c05c55827e330a",
+  "expect": "fd1a0000c67ab57301000000803f0000304000009040000080c0000010c05c55827e330a",
+  "model": {
+    "@kind": "fuel_status"
+  }
+}

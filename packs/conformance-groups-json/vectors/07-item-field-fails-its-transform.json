@@ -1,0 +1,7 @@
+{
+  "name": "item-field-fails-its-transform",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u7\",\"items\":[{\"n\":1},{\"n\":\"two\"}]}",
+  "expect_error": "transform-decode"
+}

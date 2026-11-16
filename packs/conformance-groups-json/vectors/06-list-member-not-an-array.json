@@ -1,0 +1,7 @@
+{
+  "name": "list-member-not-an-array",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u6\",\"items\":{\"name\":\"x\"}}",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-xml",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-xml",
+  "input": "753100000202616102a22103626205a000",
+  "expect": "<msg id=\"u1\"><body><item name=\"aa\" r=\"0.5\" k=\"i\"><qty>2</qty><sub v=\"1\"/><sub v=\"2\"/></item><item name=\"bb\" r=\"1.25\" k=\"i\"><qty>3</qty></item></body></msg>"
+}

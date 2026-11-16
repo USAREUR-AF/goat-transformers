@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-protobuf-typemap-default-const",
+  "from": "geojson",
+  "to": "conformance-rules-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"type\":\"a-f-G\",\"speed_ms\":2.5},\"id\":\"g1\"}",
+  "expect": "0a026731120446524e441802220b09000000000000f83f180129000000000000f83f35000020403803"
+}

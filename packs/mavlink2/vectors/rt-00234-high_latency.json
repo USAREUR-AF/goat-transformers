@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-high_latency",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2800007eeb2cea0000c2da9812a75889d128ac8dd1a97f2ad3f57d2c7aadcd2e2151cd28ffb2ad845bb609e0b7ba3b3c13",
+  "expect": "fd2800007eeb2cea0000c2da9812a75889d128ac8dd1a97f2ad3f57d2c7aadcd2e2151cd28ffb2ad845bb609e0b7ba3b3c13",
+  "model": {
+    "@kind": "high_latency"
+  }
+}

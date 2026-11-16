@@ -1,0 +1,7 @@
+{
+  "name": "f32-nan",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "8813000003000000414c4641000000000000000000403e4000000000006055c00000c07f00000000",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-radio_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0900004f6e6e6d00008fd8662c3d14ebc299",
+  "expect": "fd0900004f6e6e6d00008fd8662c3d14ebc299",
+  "model": {
+    "@kind": "radio_status"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-xml-root-const-default",
+  "from": "geojson",
+  "to": "conformance-rules-xml",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{},\"id\":\"g1\"}",
+  "expect": "<trk id=\"g1\" v=\"1\"><pos lat=\"1.5\" lon=\"2.5\" datum=\"WGS84\"/><name>NONE</name></trk>"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "pgn128008-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08f40124761790198ccd92",
+  "expect": "08f40124761790198ccd92",
+  "model": {
+    "@kind": "pgn128008",
+    "n2k.sid": "36",
+    "n2k.identifier": "118",
+    "n2k.motor_events": "23",
+    "n2k.pgn128008_current": "144",
+    "n2k.pgn128008_temperature": "358.65",
+    "n2k.operating_time": "2254860"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "pgn129550-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0efa01f7e7daa568b835",
+  "expect": "0efa01f7e7daa568b835",
+  "model": {
+    "@kind": "pgn129550",
+    "n2k.pgn129550_channel": "247",
+    "n2k.pgn129550_frequency": "17556999430",
+    "n2k.serial_interface_bit_rate": "24",
+    "n2k.serial_interface_detection_mode": "5",
+    "n2k.differential_source": "5",
+    "n2k.differential_operation_mode": "3"
+  }
+}

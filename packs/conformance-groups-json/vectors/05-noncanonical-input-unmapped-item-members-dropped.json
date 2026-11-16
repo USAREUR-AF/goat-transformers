@@ -1,0 +1,12 @@
+{
+  "name": "noncanonical-input-unmapped-item-members-dropped",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{ \"z\": 1, \"items\": [ {\"subs\": [{\"v\": 5, \"t\": \"a\", \"w\": 0}], \"extra\": 1, \"r\": {\"unit\": \"x\", \"value\": 0.25}, \"n\": 4, \"name\": \"nm\"} ],\n  \"other\": [1, 2], \"id\": \"u5\", \"title\": \"T\" }",
+  "expect": "{\"id\":\"u5\",\"title\":\"T\",\"items\":[{\"name\":\"nm\",\"n\":4,\"r\":{\"value\":0.25},\"kind\":\"item\",\"subs\":[{\"t\":\"a\",\"v\":5}]}],\"z\":1}",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.ratio": "0.25",
+    "probe.items[0].probe.subs[0].probe.val": "5"
+  }
+}

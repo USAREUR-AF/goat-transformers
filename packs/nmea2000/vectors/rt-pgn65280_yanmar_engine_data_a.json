@@ -1,0 +1,16 @@
+{
+  "name": "pgn65280_yanmar_engine_data_a-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff00ac804b24427343f9",
+  "expect": "00ff00ac804b24427343f9",
+  "model": {
+    "@kind": "pgn65280_yanmar_engine_data_a",
+    "n2k.unknown_selector": "11",
+    "n2k.pgn65280_engine_instance": "2",
+    "n2k.throttle_position": "54.8",
+    "n2k.transmission_gear": "1",
+    "n2k.engine_speed": "17267",
+    "n2k.unknown_data": "249"
+  }
+}

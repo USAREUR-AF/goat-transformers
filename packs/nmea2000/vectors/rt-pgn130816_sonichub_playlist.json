@@ -1,0 +1,17 @@
+{
+  "name": "pgn130816_sonichub_playlist-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff011381000d5f6f1b0eaf9bdbf7e52fb06a513f15f0aee677",
+  "expect": "00ff011381000d5f6f1b0eaf9bdbf7e52fb06a513f15f0aee677",
+  "model": {
+    "@kind": "pgn130816_sonichub_playlist",
+    "n2k.pgn130816_control": "95",
+    "n2k.pgn130816_sonichub_playlist_item": "111",
+    "n2k.a": "27",
+    "n2k.current_track": "3684413198",
+    "n2k.tracks": "2955929079",
+    "n2k.pgn130816_length": "356471.146",
+    "n2k.position_in_track": "2011606.768"
+  }
+}

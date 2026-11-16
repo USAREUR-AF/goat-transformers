@@ -1,0 +1,16 @@
+{
+  "name": "pgn65371-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "5bff003b87da19770969",
+  "expect": "5bff003b87da19770969",
+  "model": {
+    "@kind": "pgn65371",
+    "n2k.proprietary_id": "218",
+    "n2k.first_key": "25",
+    "n2k.second_key": "119",
+    "n2k.first_key_state": "1",
+    "n2k.second_key_state": "2",
+    "n2k.encoder_position": "105"
+  }
+}

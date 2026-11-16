@@ -1,0 +1,12 @@
+{
+  "name": "string-items-one-occurrence-each",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a027536220170220022027171",
+  "expect": "0a027536220170220022027171",
+  "model": {
+    "probe.names.#": "3",
+    "probe.names[1].probe.tag": "",
+    "probe.names[2].probe.tag": "qq"
+  }
+}

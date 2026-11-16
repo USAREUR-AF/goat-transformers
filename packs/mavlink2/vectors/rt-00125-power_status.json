@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-power_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0600005f7e7e7d00007f9f56f32d47",
+  "expect": "fd0600005f7e7e7d00007f9f56f32d47",
+  "model": {
+    "@kind": "power_status"
+  }
+}

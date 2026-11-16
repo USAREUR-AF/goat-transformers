@@ -1,0 +1,17 @@
+{
+  "name": "motion-roundtrip",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "8813000072682d01b1cb745ed33cf6731f00771000000000",
+  "expect": "8813000072682d01b1cb745ed33cf6731f00771000000000",
+  "model": {
+    "@kind": "motion",
+    "time_ms": "5000",
+    "course": "270.55",
+    "speed_ms": "42.15",
+    "track.vel_east_ms": "-12.5",
+    "track.vel_north_ms": "40.25",
+    "lat": "13.245468526538433",
+    "lon": "82.12196005117654"
+  }
+}

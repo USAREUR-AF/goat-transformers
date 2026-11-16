@@ -1,0 +1,17 @@
+{
+  "name": "pgn130833_furuno_ship_parameters_and_antenna_position-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11ff013f87378185aaa25ce473a4c9f86a71",
+  "expect": "11ff013f87378185aaa25ce473a4c9f86a71",
+  "model": {
+    "@kind": "pgn130833_furuno_ship_parameters_and_antenna_position",
+    "n2k.equipment_identification": "55",
+    "n2k.antenna_position_x": "-313.59",
+    "n2k.antenna_position_y": "4164.2",
+    "n2k.antenna_position_z": "5846",
+    "n2k.ship_swidth": "4209.9",
+    "n2k.ship_slength": "6368.9",
+    "n2k.ship_sheight": "2903.4"
+  }
+}

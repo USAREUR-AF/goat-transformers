@@ -1,0 +1,15 @@
+{
+  "name": "pgn130579-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "13fe01851204",
+  "expect": "13fe01851204",
+  "model": {
+    "@kind": "pgn130579",
+    "n2k.pgn130579_power": "1",
+    "n2k.default_settings": "1",
+    "n2k.tuner_regions": "8",
+    "n2k.max_favorites": "18",
+    "n2k.video_protocols": "4"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pgn130816_sonichub_init2-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0113810001d0497a2bc5",
+  "expect": "00ff0113810001d0497a2bc5",
+  "model": {
+    "@kind": "pgn130816_sonichub_init2",
+    "n2k.pgn130816_control": "208",
+    "n2k.a": "31305",
+    "n2k.b": "50475"
+  }
+}

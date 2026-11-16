@@ -1,0 +1,15 @@
+{
+  "name": "pgn128768-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00f70105a86128",
+  "expect": "00f70105a86128",
+  "model": {
+    "@kind": "pgn128768",
+    "n2k.sid": "5",
+    "n2k.elevator_car_id": "168",
+    "n2k.elevator_car_usage": "97",
+    "n2k.motor_acceleration_deceleration_profile_selection": "8",
+    "n2k.motor_rotational_control_status": "2"
+  }
+}

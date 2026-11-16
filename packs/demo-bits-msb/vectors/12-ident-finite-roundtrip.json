@@ -1,0 +1,15 @@
+{
+  "name": "ident-finite-roundtrip",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "23284000414c4641000040200000403e400000000000c0556000000000000000",
+  "expect": "23284000414c4641000040200000403e400000000000c0556000000000000000",
+  "model": {
+    "@kind": "ident",
+    "course": "90",
+    "ce": "2.5",
+    "lat": "30.25",
+    "lon": "-85.5",
+    "callsign": "ALFA"
+  }
+}

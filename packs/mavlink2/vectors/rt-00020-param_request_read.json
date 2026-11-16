@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-param_request_read",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd140000091515140000e087cfa64d363200000000000000000000000000",
+  "expect": "fd140000091515140000e087cfa64d363200000000000000000000000000",
+  "model": {
+    "@kind": "param_request_read"
+  }
+}

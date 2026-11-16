@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gps_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd6500000e1a1a19000023",
+  "expect": "fd6500000e1a1a19000023",
+  "model": {
+    "@kind": "gps_status"
+  }
+}

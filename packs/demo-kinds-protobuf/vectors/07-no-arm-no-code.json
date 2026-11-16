@@ -1,0 +1,7 @@
+{
+  "name": "no-arm-no-code",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410809ccea8fe2e",
+  "expect_error": "no-kind"
+}

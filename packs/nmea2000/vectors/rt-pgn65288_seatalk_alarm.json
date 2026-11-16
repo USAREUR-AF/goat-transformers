@@ -1,0 +1,15 @@
+{
+  "name": "pgn65288_seatalk_alarm-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08ff003b8739e924fcdb04",
+  "expect": "08ff003b8739e924fcdb04",
+  "model": {
+    "@kind": "pgn65288_seatalk_alarm",
+    "n2k.sid": "57",
+    "n2k.alarm_status": "233",
+    "n2k.pgn65288_alarm_id": "36",
+    "n2k.alarm_group": "252",
+    "n2k.alarm_priority": "1243"
+  }
+}

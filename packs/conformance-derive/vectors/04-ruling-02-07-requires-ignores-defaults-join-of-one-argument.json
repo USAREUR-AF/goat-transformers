@@ -1,0 +1,7 @@
+{
+  "name": "ruling-02-07-requires-ignores-defaults-join-of-one-argument",
+  "from": "conformance-derive",
+  "to": "conformance-rulings-json",
+  "input": "{\"id\":\"u1\",\"s1\":\"x\"}",
+  "expect": "{\"id\":\"u1\",\"name\":\"COMMON\",\"s1\":\"x\",\"slot\":\"h-c\",\"j1\":\"x\",\"marker\":\"present\",\"k\":2}"
+}

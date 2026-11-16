@@ -1,0 +1,10 @@
+{
+  "name": "null-member-is-absent-list",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u3\",\"title\":\"T\",\"items\":null}",
+  "expect": "{\"id\":\"u3\",\"title\":\"T\"}",
+  "model": {
+    "probe.items.#": "absent"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "kind-when-text-to-geojson",
+  "from": "conformance",
+  "to": "geojson",
+  "input": "<item id=\"k1\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\" alt=\"120\"/><class>air</class></item>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5,120]},\"properties\":{\"type\":\"a-f-G\"},\"id\":\"k1\"}",
+  "model": {
+    "@kind": "air"
+  }
+}

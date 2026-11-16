@@ -1,0 +1,13 @@
+{
+  "name": "pgn65324-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "2cff00418715802e50e566",
+  "expect": "2cff00418715802e50e566",
+  "model": {
+    "@kind": "pgn65324",
+    "n2k.sub_type": "21",
+    "n2k.pgn65324_channel": "128",
+    "n2k.pgn65324_value": "1726304302"
+  }
+}

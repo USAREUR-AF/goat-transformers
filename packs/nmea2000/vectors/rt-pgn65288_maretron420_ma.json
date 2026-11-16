@@ -1,0 +1,13 @@
+{
+  "name": "pgn65288_maretron420_ma-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08ff008980da98977a",
+  "expect": "08ff008980da98977a",
+  "model": {
+    "@kind": "pgn65288_maretron420_ma",
+    "n2k.sid": "218",
+    "n2k.data_instance": "152",
+    "n2k.420_ma_data": "31383"
+  }
+}

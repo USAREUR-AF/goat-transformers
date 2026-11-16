@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-count-does-not-fit",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits-msb",
+  "input": "{\"items\":[{\"name\":\"aa\",\"n\":1},{\"name\":\"bb\",\"n\":2},{\"name\":\"cc\",\"n\":3},{\"name\":\"dd\",\"n\":4}],\"data\":{\"nums\":[1,2]}}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_marine_scan_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3810e806c89",
+  "expect": "04ff01a3810e806c89",
+  "model": {
+    "@kind": "pgn130820_fusion_marine_scan_mode",
+    "n2k.source_id": "108",
+    "n2k.scan": "137"
+  }
+}

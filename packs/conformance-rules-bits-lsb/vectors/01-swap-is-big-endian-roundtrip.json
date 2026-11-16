@@ -1,0 +1,14 @@
+{
+  "name": "swap-is-big-endian-roundtrip",
+  "from": "conformance-rules-bits-lsb",
+  "to": "conformance-rules-bits-lsb",
+  "input": "12343930edd211c04020000044434241",
+  "expect": "12343930edd211c04020000044434241",
+  "model": {
+    "time_ms": "4660",
+    "course": "123.45",
+    "lat": "-30.5",
+    "ce": "2.5",
+    "callsign": "ABCD"
+  }
+}

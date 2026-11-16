@@ -1,0 +1,21 @@
+# Conformance probe pack for kinds on the `geojson` wire (spec 0.5). Public.
+# Exercises `when` on a top-level member and on `properties` members, the line
+# order of the output, and the JSON type a `when` value is written with.
+format  conformance-geojson
+version 0.5.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    geojson
+when    profile             probe
+field   uid       id                  string
+when    properties.schema   probe
+field   callsign  properties.name     string
+field   lat       geometry.lat        float
+field   lon       geometry.lon        float
+kind     v2
+requires ce
+when     properties.rev     2         # written as the number 2
+when     properties.live    true      # written as the boolean true
+field    ce       properties.ce       float
+kind     v1
+when     properties.rev     =1        # matches 1 or "1"; written as the string "1"

@@ -1,0 +1,13 @@
+{
+  "name": "pgn61184_seatalk_wireless_keypad_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef003b87caf1d0",
+  "expect": "00ef003b87caf1d0",
+  "model": {
+    "@kind": "pgn61184_seatalk_wireless_keypad_control",
+    "n2k.pid": "202",
+    "n2k.variant": "241",
+    "n2k.beep_control": "208"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ruling-04-table-entry-found",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"conf\":\"high\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"slot\":\"h-c\",\"conf\":\"high\",\"conf2\":0.9,\"marker\":\"present\",\"k\":2}",
+  "model": {
+    "track.confidence": "0.9"
+  }
+}

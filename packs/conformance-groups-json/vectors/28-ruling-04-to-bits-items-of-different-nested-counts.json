@@ -1,0 +1,7 @@
+{
+  "name": "ruling-04-to-bits-items-of-different-nested-counts",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits-var",
+  "input": "{\"items\":[{\"n\":7,\"subs\":[{\"v\":1},{\"v\":2},{\"v\":3}]},{\"n\":9},{\"n\":4,\"subs\":[{\"v\":5}]}]}",
+  "expect": "030703010203090000040105"
+}

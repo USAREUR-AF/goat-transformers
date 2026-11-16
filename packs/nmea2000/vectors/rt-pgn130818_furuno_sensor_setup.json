@@ -1,0 +1,22 @@
+{
+  "name": "pgn130818_furuno_sensor_setup-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02ff013f879489536b44b9ef13c14bdfa080e7777812ac154b7212898ec500",
+  "expect": "02ff013f879489536b44b9ef13c14bdfa080e7777812ac154b7212898ec500",
+  "model": {
+    "@kind": "pgn130818_furuno_sensor_setup",
+    "n2k.rotation_smoothing": "3522",
+    "n2k.heading_offset": "2747.5",
+    "n2k.pgn130818_pitch_offset": "-1810.8",
+    "n2k.pgn130818_roll_offset": "510.3",
+    "n2k.f8": "193",
+    "n2k.f9": "75",
+    "n2k.sog_and_cog_smoothing": "-411000.609",
+    "n2k.3_axis_speed_smoothing": "-1408075.657",
+    "n2k.fc": "19221",
+    "n2k.3_axis_offset": "1.51104",
+    "n2k.air_pressure_offset": "-290470",
+    "n2k.air_temperature_offset": "19.7"
+  }
+}

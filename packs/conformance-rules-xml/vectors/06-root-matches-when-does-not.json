@@ -1,0 +1,7 @@
+{
+  "name": "root-matches-when-does-not",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<note id=\"n3\" mode=\"loose\"/>",
+  "expect_error": "no-kind"
+}

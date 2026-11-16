@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-raw_pressure",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd100000111d1d1c00007039bf4e00000080a9202a74abc72c1b",
+  "expect": "fd100000111d1d1c00007039bf4e00000080a9202a74abc72c1b",
+  "model": {
+    "@kind": "raw_pressure"
+  }
+}

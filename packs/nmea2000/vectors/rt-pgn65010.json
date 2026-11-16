@@ -1,0 +1,12 @@
+{
+  "name": "pgn65010-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "f2fd00d6c4e603ae95c867",
+  "expect": "f2fd00d6c4e603ae95c867",
+  "model": {
+    "@kind": "pgn65010",
+    "n2k.pgn65010_real_power": "-1934544682",
+    "n2k.apparent_power": "-258801234"
+  }
+}

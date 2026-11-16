@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip",
+  "from": "demo-track-json",
+  "to": "demo-track-json",
+  "input": "{\"id\":\"trk-0042\",\"type\":\"a-u-A\",\"time\":\"2021-02-27T20:00:00.250Z\",\"how\":\"m-r\",\"lat\":30.0090027,\"lon\":-85.9578182,\"alt\":1250.5,\"ce\":15,\"le\":30,\"name\":\"GATOR\",\"course\":342.5,\"speed\":42,\"track\":{\"source_id\":\"radar-north\",\"generation\":\"gen-7\",\"vel_east_ms\":-12.5,\"vel_north_ms\":40.25,\"vel_up_ms\":0.5,\"class\":\"uas\",\"confidence\":0.875,\"sigma_east_m\":15,\"sigma_north_m\":12.5,\"sigma_up_m\":30,\"confirmed\":true,\"coasting\":false,\"simulated\":false,\"header_simulated\":true,\"test_data\":false,\"final_update\":false}}",
+  "expect": "{\"id\":\"trk-0042\",\"type\":\"a-u-A\",\"time\":\"2021-02-27T20:00:00.250Z\",\"how\":\"m-r\",\"lat\":30.0090027,\"lon\":-85.9578182,\"alt\":1250.5,\"ce\":15,\"le\":30,\"name\":\"GATOR\",\"course\":342.5,\"speed\":42,\"track\":{\"source_id\":\"radar-north\",\"generation\":\"gen-7\",\"vel_east_ms\":-12.5,\"vel_north_ms\":40.25,\"vel_up_ms\":0.5,\"class\":\"uas\",\"confidence\":0.875,\"sigma_east_m\":15,\"sigma_north_m\":12.5,\"sigma_up_m\":30,\"confirmed\":true,\"coasting\":false,\"simulated\":false,\"header_simulated\":true,\"test_data\":false,\"final_update\":false}}",
+  "model": {
+    "uid": "trk-0042",
+    "time_ms": "1614456000250",
+    "track.header_simulated": "1"
+  }
+}

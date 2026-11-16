@@ -1,0 +1,13 @@
+{
+  "name": "pgn65001-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "e9fd009b70ffb07e96",
+  "expect": "e9fd009b70ffb07e96",
+  "model": {
+    "@kind": "pgn65001",
+    "n2k.line_line_ac_rms_voltage": "28827",
+    "n2k.line_neutral_ac_rms_voltage": "45311",
+    "n2k.ac_frequency": "300.984375"
+  }
+}

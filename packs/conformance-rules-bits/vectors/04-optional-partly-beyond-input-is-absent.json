@@ -1,0 +1,7 @@
+{
+  "name": "optional-partly-beyond-input-is-absent",
+  "from": "conformance-rules-bits",
+  "to": "geojson",
+  "input": "5a341240ee2d120146524e44412042",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"a-f-G\",\"time_ms\":4660}}"
+}

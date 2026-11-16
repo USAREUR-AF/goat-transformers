@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_seatalk1_pilot_hull_type-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b876c16af2a36bac06f00000000",
+  "expect": "00ef013b876c16af2a36bac06f00000000",
+  "model": {
+    "@kind": "pgn126720_seatalk1_pilot_hull_type",
+    "n2k.unknown": "175",
+    "n2k.hull_type": "42",
+    "n2k.pgn126720_seatalk1_pilot_hull_type_unknown2": "1874901558"
+  }
+}

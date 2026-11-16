@@ -1,0 +1,7 @@
+{
+  "name": "ruling-10-no-context-same-format-derives-nothing",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"s1\":\"x\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"s1\":\"x\",\"slot\":\"h-c\",\"marker\":\"present\",\"k\":2}"
+}

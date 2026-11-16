@@ -1,0 +1,13 @@
+{
+  "name": "pgn65303_lowrance_vessel_setup_engine_and_tank_configuration-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "17ff008c80db5512",
+  "expect": "17ff008c80db5512",
+  "model": {
+    "@kind": "pgn65303_lowrance_vessel_setup_engine_and_tank_configuration",
+    "n2k.number_of_engines": "11",
+    "n2k.number_of_fuel_tanks": "13",
+    "n2k.total_fuel_capacity": "469.3"
+  }
+}

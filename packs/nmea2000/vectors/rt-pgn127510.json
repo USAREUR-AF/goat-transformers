@@ -1,0 +1,20 @@
+{
+  "name": "pgn127510-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "16f201430c0197b5534c2a",
+  "expect": "16f201430c0197b5534c2a",
+  "model": {
+    "@kind": "pgn127510",
+    "n2k.pgn127510_instance": "67",
+    "n2k.battery_instance": "12",
+    "n2k.charger_enable_disable": "1",
+    "n2k.charge_current_limit": "151",
+    "n2k.charging_algorithm": "5",
+    "n2k.charger_mode": "11",
+    "n2k.estimated_temperature": "3",
+    "n2k.equalize_one_time_enable_disable": "1",
+    "n2k.over_charge_enable_disable": "1",
+    "n2k.equalize_time": "649680"
+  }
+}

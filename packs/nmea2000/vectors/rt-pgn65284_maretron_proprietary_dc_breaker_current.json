@@ -1,0 +1,13 @@
+{
+  "name": "pgn65284_maretron_proprietary_dc_breaker_current-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff008980cfa900fb",
+  "expect": "04ff008980cfa900fb",
+  "model": {
+    "@kind": "pgn65284_maretron_proprietary_dc_breaker_current",
+    "n2k.bank_instance": "207",
+    "n2k.indicator_number": "169",
+    "n2k.breaker_current": "-128"
+  }
+}

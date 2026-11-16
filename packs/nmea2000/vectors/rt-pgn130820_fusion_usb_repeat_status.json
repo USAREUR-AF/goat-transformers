@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_usb_repeat_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a38114800900000018e2de02",
+  "expect": "04ff01a38114800900000018e2de02",
+  "model": {
+    "@kind": "pgn130820_fusion_usb_repeat_status",
+    "n2k.pgn130820_fusion_usb_repeat_status_status": "48161304"
+  }
+}

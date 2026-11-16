@@ -1,0 +1,16 @@
+{
+  "name": "pgn130850_simnet_event_command_timer-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff01418719001917f41d01db78ed",
+  "expect": "22ff01418719001917f41d01db78ed",
+  "model": {
+    "@kind": "pgn130850_simnet_event_command_timer",
+    "n2k.address": "25",
+    "n2k.network_group": "25",
+    "n2k.pgn130850_simnet_event_command_timer_event": "7668",
+    "n2k.parameter1": "1",
+    "n2k.parameter2": "30939",
+    "n2k.parameter3": "237"
+  }
+}

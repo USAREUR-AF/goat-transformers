@@ -1,0 +1,13 @@
+{
+  "name": "pgn65312-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "20ff001381cff89a",
+  "expect": "20ff001381cff89a",
+  "model": {
+    "@kind": "pgn65312",
+    "n2k.unknown": "207",
+    "n2k.pgn65312_signal_strength": "248",
+    "n2k.a": "-102"
+  }
+}

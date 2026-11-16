@@ -1,0 +1,11 @@
+{
+  "name": "x03-pgn129026-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "02f80107005c3dfa00",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"speed_ms\":2.5}}",
+  "model": {
+    "@kind": "pgn129026",
+    "speed_ms": "2.5"
+  }
+}

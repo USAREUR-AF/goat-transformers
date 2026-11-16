@@ -1,0 +1,15 @@
+{
+  "name": "pgn128780-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0cf701e2fa0382219a",
+  "expect": "0cf701e2fa0382219a",
+  "model": {
+    "@kind": "pgn128780",
+    "n2k.actuator_identifier": "226",
+    "n2k.commanded_device_position": "250",
+    "n2k.device_position": "3",
+    "n2k.maximum_device_travel": "8578",
+    "n2k.direction_of_travel": "154"
+  }
+}

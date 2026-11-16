@@ -1,0 +1,11 @@
+{
+  "name": "idle-16-bit-big-endian",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "69af0000",
+  "expect": "69af0000",
+  "model": {
+    "@kind": "idle",
+    "course": "270.55"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_day_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e580de05050500000000ee",
+  "expect": "00ef01e580de05050500000000ee",
+  "model": {
+    "@kind": "pgn126720_garmin_day_mode",
+    "n2k.backlight": "238"
+  }
+}

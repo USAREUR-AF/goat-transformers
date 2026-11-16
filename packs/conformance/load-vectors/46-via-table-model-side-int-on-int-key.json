@@ -1,0 +1,7 @@
+{
+  "name": "46-via-table-model-side-int-on-int-key",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.6.0\ndistribution public\nsource \"probe\"\nwire json\nfield time_ms state string via t\nmap t on 1\nmap t off 0\n"
+}

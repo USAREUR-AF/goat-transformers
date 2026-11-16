@@ -1,0 +1,11 @@
+{
+  "name": "long-to-geojson-fraction-scale",
+  "from": "demo-bits-bytes",
+  "to": "geojson",
+  "input": "470200000003e8ebe1f9c05a219fa853594400",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.7512]},\"properties\":{\"time_ms\":1000,\"callsign\":\"SYD\"}}",
+  "model": {
+    "@kind": "long",
+    "lon": "151.2153"
+  }
+}

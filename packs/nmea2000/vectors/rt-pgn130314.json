@@ -1,0 +1,14 @@
+{
+  "name": "pgn130314-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0afd014d1baf049ddb4d",
+  "expect": "0afd014d1baf049ddb4d",
+  "model": {
+    "@kind": "pgn130314",
+    "n2k.sid": "77",
+    "n2k.pgn130314_instance": "27",
+    "n2k.pgn130314_source": "175",
+    "n2k.pressure": "130623821.2"
+  }
+}

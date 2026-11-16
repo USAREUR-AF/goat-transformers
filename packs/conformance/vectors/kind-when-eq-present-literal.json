@@ -1,0 +1,11 @@
+{
+  "name": "kind-when-eq-present-literal",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k6\" kind=\"friend\" ce=\"9.5\" mode=\"present\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"k6\" kind=\"friend\" ce=\"9.5\" mode=\"present\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "model": {
+    "@kind": "literal",
+    "ce": "9.5"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-07-items-json-null-rule-geojson-value-types",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[{\"name\":null,\"n\":\"4\"},{\"name\":7,\"n\":2.0}]},\"id\":\"u7\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[{\"n\":4},{\"name\":\"7\",\"n\":2}]},\"id\":\"u7\"}",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "4",
+    "probe.items[1].probe.label": "7",
+    "probe.items[1].probe.qty": "2"
+  }
+}

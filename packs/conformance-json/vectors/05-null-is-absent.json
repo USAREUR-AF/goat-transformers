@@ -1,0 +1,10 @@
+{
+  "name": "null-is-absent",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j5\",\"label\":null,\"pos\":{\"lat\":1.5,\"lon\":2.5,\"alt\":null},\"meta\":{\"flags\":null,\"level\":null},\"other\":null}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j5\",\"pos\":{\"lat\":1.5,\"lon\":2.5}}",
+  "model": {
+    "@kind": "basic"
+  }
+}

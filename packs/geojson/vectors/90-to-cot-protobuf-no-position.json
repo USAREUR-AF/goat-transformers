@@ -1,0 +1,11 @@
+{
+  "name": "to-cot-protobuf-no-position",
+  "from": "geojson",
+  "to": "cot-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"a-f-G-U-C\",\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+  "expect_error": "no-kind",
+  "model": {
+    "uid": "J-01334",
+    "callsign": "GATOR"
+  }
+}

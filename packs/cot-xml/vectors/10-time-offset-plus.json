@@ -1,0 +1,10 @@
+{
+  "name": "time-offset-plus",
+  "from": "cot-xml",
+  "to": "geojson",
+  "input": "<event uid=\"J-4\" time=\"2026-03-04T14:30:00.250+02:30\"><point lat=\"1\" lon=\"2\"/></event>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"time_ms\":1772625600250},\"id\":\"J-4\"}",
+  "model": {
+    "time_ms": "1772625600250"
+  }
+}

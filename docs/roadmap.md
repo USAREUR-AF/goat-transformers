@@ -1,0 +1,101 @@
+# Roadmap
+
+Status: Written. This page states what is built and what is designed and not
+built. It gives no dates.
+
+## Built
+
+| Part | State |
+|---|---|
+| Engines | Seven: Rust (reference), Go, Python, Java, C++, Erlang, Zig. Each uses only its language's standard library and passes every vector |
+| Wire types | Five: `xml`, `geojson`, `json`, `protobuf`, `bits` (either bit order; scaled, floating-point and text fields) |
+| Conformance vectors | 2,801 conversion vectors in 43 packs and 145 load vectors; every engine reproduces every one |
+| Shared model | Modules `core` and `track`, and one module of raw wire values for each catalog format. Every mapped key is declared and type-checked at load (`spec/shared-model.md`) |
+| Packs | The table in `README.md`; coverage by format in `docs/coverage-roadmap.md` |
+| Pack generators | `tools/gen/proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`: a pack, its module and its round-trip vectors from a machine-readable definition |
+| Capability matrix | `Engine::capability` and `goat-xf matrix [--detail]`: for every pair of formats, which keys carry and which the target cannot represent |
+| Public and controlled boundary | `distribution` and `source` on every module and pack, enforced by the engines; `tools/boundary-gate` on this repository (`docs/boundary.md`) |
+| Package planner | `tools/goat-pkg`: constraints in, the smallest package out (`docs/package-configurator.md`) |
+| CI | `.github/workflows/conformance.yml` builds each engine, runs every vector on it and runs the boundary gate, on every change |
+
+## Pack-language additions
+
+A pack can state only what the pack language has a rule for. Each addition is a
+section of `spec/engine-spec.md`, an implementation in the reference engine,
+vectors, and the same change in the other six engines.
+
+| Addition | Allows | State |
+|---|---|---|
+| Message kinds | several message layouts in one format, chosen by values on the wire | Built (spec 0.5) |
+| `json` wire | members by path in any JSON object | Built (spec 0.5) |
+| `bits` in either bit order, fields past their word, scaled, floating-point and text fields | the binary layouts that public message catalogs use | Built (spec 0.5) |
+| Mapping rules: constants, defaults, value tables, derived keys, caller-supplied keys; per-field byte swap, trim, optional trailing fields; an XML root per kind | what an encoder does in addition to copying a value | Built (spec 0.6) |
+| Groups | a part of a message that repeats, mapped to a list in the model: repeated XML elements, JSON arrays, repeated protobuf fields, counted binary items; nested | Built (spec 0.7) |
+| Items decoded by kind; presence-indicated binary items | a list whose items differ in layout by a discriminator; items present only when a presence bit says so (ASTERIX) | Designed |
+| Layered wires and framing | one pack's payload is another pack's whole message; declared lengths, trimmed payloads, checksums | Designed |
+| Absent-value sentinels | a wire value that means "unknown" decodes to an absent key | Designed |
+| Further value functions | character sets, sign-and-magnitude numbers, scales that yield integers, a scale on a text wire, an instant split into seconds and nanoseconds, frame conversions (ECEF, radians, mean sea level) | Designed |
+| Encode selection by value | choosing the target message kind from the value of a key, not only from which keys are present | Designed |
+| Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Designed |
+| XML namespaces and prefixes | documents whose elements carry a prefix | Designed |
+
+The Designed rows come from generating packs for whole public catalogs
+(MAVLink, NMEA 2000, Mode S, Remote ID) and from the comparisons in
+`docs/consumer-proofs.md`. Each row names something those sources carry that a
+pack cannot yet state. Each pack's `pack.md` lists what it leaves unmapped.
+
+## Wire types
+
+A wire type is a section of the specification, an implementation in each of the
+seven engines, and vectors.
+
+| Wire type | Shape | Needed by | State |
+|---|---|---|---|
+| Text grammar | delimited or positional text records | NMEA 0183 | Designed |
+| Type-length-value | records of key, length and value | KLV / MISB ST 0601, NITF | Designed |
+| Six-bit armor | ASCII-armored bit payloads | AIS / AIVDM | Designed |
+| ASN.1 UPER | packed-encoding ASN.1 | SAE J2735 (V2X) message sets | Designed |
+
+## Packs
+
+`docs/coverage-roadmap.md` lists the public formats that have no pack and what
+each needs. Formats in other domains that the same method fits, none of which
+has a pack:
+
+| Domain | Formats |
+|---|---|
+| Aviation | AIXM, FIXM, ACARS |
+| Maritime | VDES, IHO S-100 and S-101 |
+| Space | CCSDS telemetry, telecommand and Navigation Data Messages; XTCE |
+| Internet of things | MQTT Sparkplug B, the Matter data model, LwM2M, Zigbee Cluster Library |
+| Vehicles and robots | ROS 2 messages, SAE J1939 |
+
+`CONTRIBUTING.md` states how to add a pack.
+
+## Engines and packaging
+
+| Item | State |
+|---|---|
+| Fully static binaries from the Rust and Go engines | Measured |
+| WebAssembly builds of the Rust and Go engines | Measured |
+| A C-ABI library and a WebAssembly module of the Rust engine, in `bindings/`, for hosts in languages with no native engine | Built |
+| Per-wire feature gates in each engine, so that a package for `xml` formats only does not compile the binary codecs | Designed |
+| The capability matrix as a checked CI artifact | Designed |
+| Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
+| An HTTP front end over the package planner | Designed |
+| A README for each engine | Erlang and Zig are written; the other five are not |
+
+## Use by other projects
+
+`docs/consumer-proofs.md` reports comparisons of the library's output with the
+conversion code of two public projects, on those projects' own test inputs:
+
+| Project | Comparison | Fields equal |
+|---|---|---|
+| open-billie | Canonical Track v2 to CoT, 33 inputs | 514 of 594 |
+| open-billie | Canonical Track v2 to SAPIENT, 33 inputs | 416 of 717 |
+| first-bite | decode of its four public dictionaries, 42 fixture messages | 406 of 462 |
+
+`docs/consumer-proofs.md` lists what still differs and which Designed row above
+would remove each difference. No project runs the library in place of its own
+conversion code yet (`docs/design.md`, Consumers).

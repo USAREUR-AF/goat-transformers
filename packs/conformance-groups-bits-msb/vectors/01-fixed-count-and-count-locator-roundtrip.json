@@ -1,0 +1,16 @@
+{
+  "name": "fixed-count-and-count-locator-roundtrip",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-msb",
+  "input": "153c07616200",
+  "expect": "153c07616200",
+  "model": {
+    "probe.n": "5",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "3",
+    "probe.nums[1].probe.val": "12",
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.label": "ab"
+  }
+}

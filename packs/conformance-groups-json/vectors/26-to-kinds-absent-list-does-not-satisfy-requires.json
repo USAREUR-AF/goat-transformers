@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-absent-list-does-not-satisfy-requires",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-kinds",
+  "input": "{\"id\":\"u1\",\"names\":[]}",
+  "expect": "{\"id\":\"u1\",\"names\":[],\"shape\":\"bare\"}"
+}

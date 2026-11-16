@@ -1,0 +1,41 @@
+# Conformance probe pack for the rulings of spec 0.6 ("Rulings for 0.6, stated
+# and not yet pinned by a vector") on the `json` wire. Public. Each line names
+# the ruling it pins.
+format  conformance-rulings-json
+version 0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    track
+uses    probe
+wire    json
+field   uid               id      string
+field   callsign          name    string            # ruling 2: a common field of a key with a common and a kind default
+default callsign          COMMON
+field   probe.s1          s1      string
+field   how               slot    string            # ruling 2: `how` has a default, so it counts as present at `slot`
+field   probe.s1          slot    string
+default how               h-c
+field   type              t       string  via tcode # ruling 6: the table, then the typemap
+field   lat               lat     float   via tens  # ruling 4: an all-integer table on a float key
+field   track.class       cls     int     via class # ruling 4: the entry `01` matches the integer 1
+field   track.confidence  conf    string  via word  # ruling 4: no entry and another type fails; `conf2` is not tried
+field   track.confidence  conf2   float
+field   ce                ce      float             # ruling 5: the earlier line succeeds, the later fails
+field   ce                ce2     float
+field   probe.j1          j1      string            # ruling 7: derived by a `join` of one argument
+const   marker            =present                  # ruling 3: the text `present`
+typemap F  a-f-G
+map     tcode  1     F
+map     tens   1     10
+map     tens   2     20
+map     class  01    uas
+map     class  2     bird
+map     word   high  0.9
+map     word   low   0.1
+kind     named                                      # ruling 2: `requires` looks at the entity only
+when     k  1
+requires callsign
+default  callsign  KIND
+field    callsign  alias  string
+kind     plain
+when     k  2

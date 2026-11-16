@@ -1,0 +1,19 @@
+{
+  "name": "pgn130817_furuno_sv_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01ff013f87618f5e21d8a16d79a942ab3c0fad890fb6b500f0bf1b",
+  "expect": "01ff013f87618f5e21d8a16d79a942ab3c0fad890fb6b500f0bf1b",
+  "model": {
+    "@kind": "pgn130817_furuno_sv_control",
+    "n2k.f4": "97",
+    "n2k.f5": "143",
+    "n2k.sbas_mode": "94",
+    "n2k.sbas_satellite": "33",
+    "n2k.f8": "41432",
+    "n2k.gps_disable": "1118402925",
+    "n2k.glonass_disable": "2903456939",
+    "n2k.galileo_disable": "3048607625",
+    "n2k.qzss_disable": "1818608"
+  }
+}

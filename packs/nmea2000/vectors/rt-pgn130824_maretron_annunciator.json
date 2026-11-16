@@ -1,0 +1,15 @@
+{
+  "name": "pgn130824_maretron_annunciator-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08ff01898061b95750760ec5",
+  "expect": "08ff01898061b95750760ec5",
+  "model": {
+    "@kind": "pgn130824_maretron_annunciator",
+    "n2k.annunciator_instance": "97",
+    "n2k.annunciator_state": "185",
+    "n2k.pattern": "20567",
+    "n2k.field7": "118",
+    "n2k.alert_id": "50446"
+  }
+}

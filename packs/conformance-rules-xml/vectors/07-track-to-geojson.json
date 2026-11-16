@@ -1,0 +1,7 @@
+{
+  "name": "track-to-geojson",
+  "from": "conformance-rules-xml",
+  "to": "geojson",
+  "input": "<trk id=\"t1\" v=\"1\"><pos lat=\"1.5\" lon=\"2.5\" datum=\"WGS84\"/><name>ALFA</name></trk>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"callsign\":\"ALFA\"},\"id\":\"t1\"}"
+}

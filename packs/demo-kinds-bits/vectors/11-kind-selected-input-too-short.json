@@ -1,0 +1,7 @@
+{
+  "name": "kind-selected-input-too-short",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "8813000003000000414c464100000000",
+  "expect_error": "malformed-wire"
+}

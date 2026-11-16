@@ -1,0 +1,7 @@
+{
+  "name": "typemap-unmapped-passthrough",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"x2\" kind=\"neutral\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"x2\" kind=\"neutral\"><pos lat=\"1.5\" lon=\"2.5\"/></item>"
+}

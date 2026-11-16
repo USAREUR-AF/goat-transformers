@@ -1,0 +1,15 @@
+{
+  "name": "self-id-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "320044726f6e65735255533a205265616c2045737461746500",
+  "expect": "320044726f6e65735255533a205265616c2045737461746500",
+  "model": {
+    "@kind": "self-id",
+    "rid.msg_type": "3",
+    "rid.desc_type": "0",
+    "rid.description": "DronesRUS: Real Estate"
+  },
+  "source": "constructed",
+  "reference": "values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py"
+}

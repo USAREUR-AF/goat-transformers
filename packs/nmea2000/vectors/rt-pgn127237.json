@@ -1,0 +1,27 @@
+{
+  "name": "pgn127237-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05f101559120302c8f7a1286cba8d721e5dd7f0b069d2b4e",
+  "expect": "05f101559120302c8f7a1286cba8d721e5dd7f0b069d2b4e",
+  "model": {
+    "@kind": "pgn127237",
+    "n2k.rudder_limit_exceeded": "1",
+    "n2k.off_heading_limit_exceeded": "1",
+    "n2k.off_track_limit_exceeded": "1",
+    "n2k.override": "1",
+    "n2k.steering_mode": "1",
+    "n2k.turn_mode": "2",
+    "n2k.heading_reference": "2",
+    "n2k.commanded_rudder_direction": "1",
+    "n2k.commanded_rudder_angle": "1.1312",
+    "n2k.heading_to_steer_course": "3.1375",
+    "n2k.pgn127237_track": "3.4322",
+    "n2k.rudder_limit": "4.3211",
+    "n2k.off_heading_limit": "0.8663",
+    "n2k.radius_of_turn_order": "-8731",
+    "n2k.pgn127237_rate_of_turn_order": "0.09196875",
+    "n2k.off_track_limit": "-25338",
+    "n2k.vessel_heading": "2.0011"
+  }
+}

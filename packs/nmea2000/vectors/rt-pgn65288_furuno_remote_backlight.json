@@ -1,0 +1,14 @@
+{
+  "name": "pgn65288_furuno_remote_backlight-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08ff003f8777da3b",
+  "expect": "08ff003f8777da3b",
+  "model": {
+    "@kind": "pgn65288_furuno_remote_backlight",
+    "n2k.a": "119",
+    "n2k.b": "10",
+    "n2k.preset": "13",
+    "n2k.brightness": "59"
+  }
+}

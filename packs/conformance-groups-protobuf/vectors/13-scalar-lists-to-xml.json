@@ -1,0 +1,7 @@
+{
+  "name": "scalar-lists-to-xml",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-xml",
+  "input": "0a0275311a050a03038e0222017022027171",
+  "expect": "<msg id=\"u1\"><name>p</name><name>qq</name><nums><n>3</n><n>270</n></nums></msg>"
+}

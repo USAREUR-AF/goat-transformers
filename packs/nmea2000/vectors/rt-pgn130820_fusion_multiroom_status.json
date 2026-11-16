@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_multiroom_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a381398090",
+  "expect": "04ff01a381398090",
+  "model": {
+    "@kind": "pgn130820_fusion_multiroom_status",
+    "n2k.available": "144"
+  }
+}

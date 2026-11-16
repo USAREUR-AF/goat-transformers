@@ -1,0 +1,48 @@
+# Conformance probe pack for the `json` wire (spec 0.5). Public. Exercises
+# member order, nested residue, string escaping, `null`, `bool` and `when` on a
+# string, a number, a boolean and `present`, and two lines on one locator.
+format  conformance-json
+version 0.5.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    track
+wire    json
+when    schema           probe
+field   uid              id                    string
+field   lat              pos.lat               float
+field   callsign         label                 string
+field   lon              pos.lon               float
+kind     alias                    # two lines on one locator: decode fills both, encode writes the earliest present
+requires track.generation
+when     meta.level        alias
+field    track.source_id   meta.src            string
+field    track.generation  meta.src            string
+kind     detailed
+requires hae
+when     meta.level      detail
+field    hae             pos.alt               float
+field    track.confirmed meta.flags.confirmed  bool
+field    time_ms         meta.seen             iso8601_ms
+kind     counted
+requires time_ms
+when     meta.rev        2
+field    time_ms         meta.t                int
+kind     flagged
+requires track.simulated
+when     meta.flags      present
+field    track.simulated meta.flags.sim        bool
+kind     strict                   # typed `when` values: a boolean, and `=` forcing a string
+requires track.final_update
+when     meta.strict     true
+when     meta.code       =2
+field    track.final_update  meta.final        bool
+kind     marked                   # `present` on a scalar does not map it: the scalar is residue (ruling 27)
+requires track.coasting
+when     meta.mark       present
+field    track.coasting  meta.coast            bool
+kind     pinned                   # a `when` and a `field` on one locator: the `when` value, at the field's place (ruling 26)
+requires track.test_data
+field    how             meta.pin              string
+field    track.test_data meta.td               bool
+when     meta.pin        fixed
+kind     basic

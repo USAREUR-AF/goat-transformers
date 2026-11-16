@@ -1,0 +1,14 @@
+# NVG (NATO Vector Graphics) point, XML. Public NATO standard (NVG 1.5, ACT).
+# Maps a point's coordinates, label and symbol code to the shared model. In NVG
+# x is longitude and y is latitude. Other NVG geometry (polyline, polygon,
+# circle, ...) and further attributes come from the NVG 1.5 XSD; not yet mapped.
+format   nvg
+version  0.1.0
+distribution public
+source  "NATO Vector Graphics 1.5 XSD (NATO ACT, public)"
+wire     xml
+root     nvg
+field   lon       point/@x        float
+field   lat       point/@y        float
+field   callsign  point/@label    string
+field   type      point/@symbol   string

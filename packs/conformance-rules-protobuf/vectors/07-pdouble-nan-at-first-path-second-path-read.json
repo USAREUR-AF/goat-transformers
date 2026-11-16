@@ -1,0 +1,10 @@
+{
+  "name": "pdouble-nan-at-first-path-second-path-read",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027036220909000000000000f87f290000000000000040",
+  "expect": "0a0270361802220b09000000000000004018012900000000000000403803",
+  "model": {
+    "lat": "2"
+  }
+}

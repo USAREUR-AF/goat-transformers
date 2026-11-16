@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_line_level_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811f80f63b",
+  "expect": "04ff01a3811f80f63b",
+  "model": {
+    "@kind": "pgn130820_fusion_line_level_control",
+    "n2k.pgn130820_zone": "246",
+    "n2k.pgn130820_control": "59"
+  }
+}

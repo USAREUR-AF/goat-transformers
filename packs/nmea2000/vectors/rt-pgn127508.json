@@ -1,0 +1,15 @@
+{
+  "name": "pgn127508-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14f201afeb52eb23d85741",
+  "expect": "14f201afeb52eb23d85741",
+  "model": {
+    "@kind": "pgn127508",
+    "n2k.pgn127508_instance": "175",
+    "n2k.voltage": "212.27",
+    "n2k.pgn127508_current": "919.5",
+    "n2k.pgn127508_temperature": "224.88",
+    "n2k.sid": "65"
+  }
+}

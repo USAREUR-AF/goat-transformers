@@ -1,0 +1,13 @@
+{
+  "name": "pgn130820_fusion_speed_volume_current_speed-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3815f80ac214fb4",
+  "expect": "04ff01a3815f80ac214fb4",
+  "model": {
+    "@kind": "pgn130820_fusion_speed_volume_current_speed",
+    "n2k.source_id": "172",
+    "n2k.pgn130820_speed": "20257",
+    "n2k.pgn130820_fusion_speed_volume_current_speed_enabled": "180"
+  }
+}

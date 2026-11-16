@@ -1,0 +1,19 @@
+{
+  "name": "target-state-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc01beb8cf807269bdcddaf62",
+  "expect": "8dabc01beb8cf807269bdcddaf62",
+  "model": {
+    "@kind": "target-state",
+    "adsb.df": "17",
+    "adsb.tc": "29",
+    "adsb.icao": "11255835",
+    "adsb.sel_alt_raw": "207",
+    "adsb.baro_setting_raw": "256",
+    "adsb.sel_heading_raw": "147",
+    "adsb.parity": "14528354"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

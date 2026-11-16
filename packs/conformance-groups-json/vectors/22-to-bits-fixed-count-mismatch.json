@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-fixed-count-mismatch",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits-msb",
+  "input": "{\"data\":{\"nums\":[1,2,3]}}",
+  "expect_error": "transform-encode"
+}

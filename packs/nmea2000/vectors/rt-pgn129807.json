@@ -1,0 +1,22 @@
+{
+  "name": "pgn129807-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0ffb0162d982350218e197699c65a860e4ae04e0969af1df2e09a1000000c9",
+  "expect": "0ffb0162d982350218e197699c65a860e4ae04e0969af1df2e09a1000000c9",
+  "model": {
+    "@kind": "pgn129807",
+    "n2k.pgn129807_message_id": "34",
+    "n2k.repeat_indicator": "1",
+    "n2k.source_id": "37061337",
+    "n2k.tx_rx_mode": "6",
+    "n2k.north_east_longitude_corner1": "-167.0801439",
+    "n2k.north_east_latitude_corner1": "-46.3427483",
+    "n2k.south_west_longitude_corner2": "-176.3703634",
+    "n2k.south_west_latitude_corner2": "78.6428314",
+    "n2k.pgn129807_station_type": "9",
+    "n2k.ship_and_cargo_filter": "161",
+    "n2k.reporting_interval": "9",
+    "n2k.quiet_time": "720"
+  }
+}

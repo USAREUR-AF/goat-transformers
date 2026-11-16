@@ -1,0 +1,7 @@
+{
+  "name": "ruling-04-input-ends-before-the-second-item",
+  "from": "conformance-groups-bits-var",
+  "to": "conformance-groups-bits-var",
+  "input": "020703010203",
+  "expect_error": "malformed-wire"
+}

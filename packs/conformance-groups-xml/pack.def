@@ -1,0 +1,34 @@
+# Conformance probe pack for groups (spec 0.7) on the `xml` wire. Public. No
+# kinds. Items under a path (`body/item`) with attributes, a child element's
+# text, a `const`, a `default` and a nested list whose items carry `#text`;
+# a list of text items that are children of the root; and a list of text items
+# under a path. The elements `head` and `tail` sit before and after `body`.
+# An item's own text is written "#text" in quotes: a bare `#` at the start of a
+# token starts a comment (ruling 1 of 0.1.1, ruling 17 of 0.5).
+format  conformance-groups-xml
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid       @id        string
+field   callsign  head/@cs   string
+group   probe.items  body/item
+  field   probe.label  @name      string
+  field   probe.qty    qty/#text  int
+  field   probe.ratio  @r         float
+  const   @k  i
+  default probe.qty  1
+  group   probe.subs  sub
+    field  probe.tag  "#text"  string
+    field  probe.val  @v     int
+  end
+end
+field   how       tail/@how  string
+group   probe.names  name
+  field  probe.tag  "#text"  string
+end
+group   probe.nums  nums/n
+  field  probe.val  "#text"  int
+end

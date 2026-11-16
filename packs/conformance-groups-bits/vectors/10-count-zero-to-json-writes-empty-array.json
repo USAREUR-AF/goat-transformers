@@ -1,0 +1,7 @@
+{
+  "name": "count-zero-to-json-writes-empty-array",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-json",
+  "input": "7532000000",
+  "expect": "{\"id\":\"u2\",\"title\":\"NONE\",\"items\":[]}"
+}

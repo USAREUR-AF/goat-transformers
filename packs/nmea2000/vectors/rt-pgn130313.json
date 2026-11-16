@@ -1,0 +1,15 @@
+{
+  "name": "pgn130313-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09fd014184d81ec5fd27",
+  "expect": "09fd014184d81ec5fd27",
+  "model": {
+    "@kind": "pgn130313",
+    "n2k.sid": "65",
+    "n2k.pgn130313_instance": "132",
+    "n2k.pgn130313_source": "216",
+    "n2k.actual_humidity": "-60.296",
+    "n2k.set_humidity": "40.948"
+  }
+}

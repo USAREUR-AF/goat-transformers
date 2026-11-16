@@ -1,0 +1,17 @@
+{
+  "name": "sibling-order-and-position-among-other-elements",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u2\"><name>p</name><tail how=\"h-e\"/><x/><name>q</name><body><note/><item name=\"a1\"><qty>1</qty></item><other/><item name=\"a2\"><sub>s</sub><qty>5</qty><sub v=\"7\"/></item></body><body><item name=\"zz\"/></body><head cs=\"C\"/><name>r</name></msg>",
+  "expect": "<msg id=\"u2\"><head cs=\"C\"/><body><item name=\"a1\" k=\"i\"><qty>1</qty></item><item name=\"a2\" k=\"i\"><qty>5</qty><sub>s</sub><sub v=\"7\"/></item></body><tail how=\"h-e\"/><name>p</name><name>q</name><name>r</name></msg>",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "a1",
+    "probe.items[1].probe.qty": "5",
+    "probe.items[1].probe.subs.#": "2",
+    "probe.items[1].probe.subs[0].probe.tag": "s",
+    "probe.items[1].probe.subs[1].probe.val": "7",
+    "probe.names.#": "3",
+    "probe.names[2].probe.tag": "r"
+  }
+}

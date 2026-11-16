@@ -1,0 +1,11 @@
+{
+  "name": "null-member-is-absent-list",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":null},\"id\":\"u3\",\"names\":null}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u3\"}",
+  "model": {
+    "probe.items.#": "absent",
+    "probe.names.#": "absent"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "global_position_int-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd1c000007010121000040e201004c52401c44f41705a4720700d43000009600b5ff0a002823de2d",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "global_position_int",
+    "lat": "47.397742",
+    "lon": "8.545594",
+    "mavlink.seq": "7",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

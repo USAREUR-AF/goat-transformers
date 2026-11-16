@@ -1,0 +1,16 @@
+{
+  "name": "pgn130311-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07fd0119a3924c0d96988b",
+  "expect": "07fd0119a3924c0d96988b",
+  "model": {
+    "@kind": "pgn130311",
+    "n2k.sid": "25",
+    "n2k.temperature_source": "35",
+    "n2k.humidity_source": "2",
+    "n2k.pgn130311_temperature": "196.02",
+    "n2k.humidity": "-108.492",
+    "n2k.atmospheric_pressure": "3573600"
+  }
+}

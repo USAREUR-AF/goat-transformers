@@ -1,0 +1,11 @@
+{
+  "name": "pgn130825_mercury_command_response-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09ff019080cd",
+  "expect": "09ff019080cd",
+  "model": {
+    "@kind": "pgn130825_mercury_command_response",
+    "n2k.pgn130825_opcode": "205"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "message-pack-count-beyond-input",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "f2190202223132333435363738393031323334353637383930000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "Message Pack header with the count 2 followed by one message"
+}

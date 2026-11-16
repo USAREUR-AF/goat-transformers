@@ -1,0 +1,20 @@
+{
+  "name": "operational-status-surface-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc01df9901c11f7582e3b0a9e",
+  "expect": "8dabc01df9901c11f7582e3b0a9e",
+  "model": {
+    "@kind": "operational-status-surface",
+    "adsb.df": "17",
+    "adsb.tc": "31",
+    "adsb.icao": "11255837",
+    "adsb.surface_capability_class": "2305",
+    "adsb.length_width": "12",
+    "adsb.operational_mode": "4599",
+    "adsb.version": "2",
+    "adsb.parity": "3869342"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

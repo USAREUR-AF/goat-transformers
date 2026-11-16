@@ -1,0 +1,12 @@
+{
+  "name": "same-format-keeps-kind-with-empty-list",
+  "from": "conformance-groups-kinds",
+  "to": "conformance-groups-kinds",
+  "input": "{\"id\":\"k1\",\"names\":[\"p\"],\"shape\":\"listed\",\"items\":[]}",
+  "expect": "{\"id\":\"k1\",\"names\":[\"p\"],\"shape\":\"listed\",\"items\":[]}",
+  "model": {
+    "@kind": "listed",
+    "probe.items.#": "0",
+    "probe.names.#": "1"
+  }
+}

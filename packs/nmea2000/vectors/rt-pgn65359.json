@@ -1,0 +1,13 @@
+{
+  "name": "pgn65359-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "4fff003b87d3b6d0c6b5",
+  "expect": "4fff003b87d3b6d0c6b5",
+  "model": {
+    "@kind": "pgn65359",
+    "n2k.sid": "211",
+    "n2k.heading_true": "5.343",
+    "n2k.heading_magnetic": "4.6534"
+  }
+}

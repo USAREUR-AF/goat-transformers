@@ -1,0 +1,7 @@
+{
+  "name": "nvg-roundtrip",
+  "from": "nvg",
+  "to": "nvg",
+  "input": "<nvg><point x=\"11.2\" y=\"48.137\" label=\"ALPHA\" symbol=\"app6a:SFGPUCI----D\"/></nvg>",
+  "expect": "<nvg><point x=\"11.2\" y=\"48.137\" label=\"ALPHA\" symbol=\"app6a:SFGPUCI----D\"/></nvg>"
+}

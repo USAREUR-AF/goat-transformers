@@ -1,0 +1,10 @@
+{
+  "name": "ruling-10-context-key-the-entity-has-is-still-checked",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"ce\":3}",
+  "context": {
+    "ce": "wide"
+  },
+  "expect_error": "key-type-mismatch"
+}

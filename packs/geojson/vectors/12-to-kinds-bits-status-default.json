@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-bits-status-default",
+  "from": "geojson",
+  "to": "demo-kinds-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":290}}",
+  "expect": "2201000000000000"
+}

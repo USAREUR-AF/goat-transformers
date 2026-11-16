@@ -1,0 +1,11 @@
+{
+  "name": "ruling-02-kind-default-used-for-common-and-kind-fields",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":1,\"id\":\"a\",\"s1\":\"x\"}",
+  "expect": "{\"id\":\"a\",\"name\":\"KIND\",\"s1\":\"x\",\"slot\":\"h-c\",\"marker\":\"present\",\"k\":1,\"alias\":\"KIND\"}",
+  "model": {
+    "@kind": "named",
+    "probe.s1": "x"
+  }
+}

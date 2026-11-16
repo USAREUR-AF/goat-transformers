@@ -1,0 +1,24 @@
+# Synthetic byte-oriented bits format. Public, no real standard. The message has
+# no natural word size, so `word_bytes 1` and every locator is `0:<bit offset>:<len>`.
+# Most-significant-bit-first, so a byte-aligned integer is big-endian.
+format     demo-bits-bytes
+version    0.5.0
+distribution public
+source     "synthetic format, no external standard"
+uses       track
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:8  71                  # byte 0: 0x47
+field  time_ms  0:24:32  uint     # bytes 3 to 6
+
+kind     long                     # 19 bytes
+when     0:8:8  2                 # byte 1: kind code
+requires lat lon
+field    lat       0:56:32   sscale:1/10000000
+field    lon       0:88:32   sscale:1/10000000
+field    callsign  0:120:32  ascii
+
+kind     short                    # 7 bytes; the default on encode
+when     0:8:8  1
+field    track.test_data  0:16:8  uint

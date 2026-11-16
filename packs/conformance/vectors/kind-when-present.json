@@ -1,0 +1,11 @@
+{
+  "name": "kind-when-present",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k3\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"VIPER\"/></item>",
+  "expect": "<item id=\"k3\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"VIPER\"/></item>",
+  "model": {
+    "@kind": "named",
+    "callsign": "VIPER"
+  }
+}

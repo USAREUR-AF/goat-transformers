@@ -1,0 +1,12 @@
+{
+  "name": "kind-when-text",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k1\" kind=\"friend\"><class>air</class><pos lat=\"1.5\" lon=\"2.5\" alt=\"120\"/></item>",
+  "expect": "<item id=\"k1\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\" alt=\"120\"/><class>air</class></item>",
+  "model": {
+    "@kind": "air",
+    "hae": "120",
+    "type": "a-f-G"
+  }
+}

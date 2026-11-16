@@ -1,0 +1,14 @@
+{
+  "name": "pgn127745-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f301db8edcc18e00f113",
+  "expect": "01f301db8edcc18e00f113",
+  "model": {
+    "@kind": "pgn127745",
+    "n2k.sid": "219",
+    "n2k.connection_number": "142",
+    "n2k.pgn127745_ac_rms_current": "4962.8",
+    "n2k.pgn127745_power": "334561422"
+  }
+}

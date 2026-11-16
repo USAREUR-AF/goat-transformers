@@ -1,0 +1,7 @@
+{
+  "name": "to-protobuf",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-protobuf",
+  "input": "<msg id=\"u1\"><body><item name=\"aa\" r=\"0.5\" k=\"i\"><qty>2</qty><sub v=\"1\">x</sub><sub v=\"2\">y</sub></item><item name=\"bb\" r=\"1.25\" k=\"i\"><qty>3</qty></item></body></msg>",
+  "expect": "0a027531121f0a026161100219000000000000e03f20092a050a017810022a050a0179100412110a026262100319000000000000f43f2009"
+}

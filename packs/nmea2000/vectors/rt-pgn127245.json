@@ -1,0 +1,14 @@
+{
+  "name": "pgn127245-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0df10110012c8cac94",
+  "expect": "0df10110012c8cac94",
+  "model": {
+    "@kind": "pgn127245",
+    "n2k.pgn127245_instance": "16",
+    "n2k.direction_order": "1",
+    "n2k.angle_order": "-2.9652",
+    "n2k.pgn127245_position": "-2.7476"
+  }
+}

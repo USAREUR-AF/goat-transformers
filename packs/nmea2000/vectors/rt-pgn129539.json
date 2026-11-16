@@ -1,0 +1,16 @@
+{
+  "name": "pgn129539-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03fa01211df586e74a449f",
+  "expect": "03fa01211df586e74a449f",
+  "model": {
+    "@kind": "pgn129539",
+    "n2k.sid": "33",
+    "n2k.desired_mode": "5",
+    "n2k.actual_mode": "3",
+    "n2k.hdop": "-309.87",
+    "n2k.vdop": "191.75",
+    "n2k.tdop": "-247.64"
+  }
+}

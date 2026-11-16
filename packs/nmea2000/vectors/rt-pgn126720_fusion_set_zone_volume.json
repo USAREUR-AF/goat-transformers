@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_fusion_set_zone_volume-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a38118005017",
+  "expect": "00ef01a38118005017",
+  "model": {
+    "@kind": "pgn126720_fusion_set_zone_volume",
+    "n2k.pgn126720_zone": "80",
+    "n2k.pgn126720_volume": "23"
+  }
+}

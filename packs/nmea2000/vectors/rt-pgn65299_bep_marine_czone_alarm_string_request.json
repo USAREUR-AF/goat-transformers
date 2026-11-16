@@ -1,0 +1,13 @@
+{
+  "name": "pgn65299_bep_marine_czone_alarm_string_request-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "13ff002781895e983b0daf",
+  "expect": "13ff002781895e983b0daf",
+  "model": {
+    "@kind": "pgn65299_bep_marine_czone_alarm_string_request",
+    "n2k.device_id": "137",
+    "n2k.pgn65299_channel": "39006",
+    "n2k.padding": "11472187"
+  }
+}

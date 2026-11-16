@@ -1,0 +1,15 @@
+{
+  "name": "pgn127493-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05f2014c0273b1729e0a",
+  "expect": "05f2014c0273b1729e0a",
+  "model": {
+    "@kind": "pgn127493",
+    "n2k.pgn127493_instance": "76",
+    "n2k.transmission_gear": "2",
+    "n2k.oil_pressure": "4542700",
+    "n2k.oil_temperature": "4056.2",
+    "n2k.pgn127493_discrete_status1": "10"
+  }
+}

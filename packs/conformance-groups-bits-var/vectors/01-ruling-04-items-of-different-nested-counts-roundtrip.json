@@ -1,0 +1,20 @@
+{
+  "name": "ruling-04-items-of-different-nested-counts-roundtrip",
+  "from": "conformance-groups-bits-var",
+  "to": "conformance-groups-bits-var",
+  "input": "030703010203090000040105",
+  "expect": "030703010203090000040105",
+  "model": {
+    "probe.n": "3",
+    "probe.items.#": "3",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.subs.#": "3",
+    "probe.items[0].probe.subs[0].probe.val": "1",
+    "probe.items[0].probe.subs[2].probe.val": "3",
+    "probe.items[1].probe.qty": "9",
+    "probe.items[1].probe.subs.#": "0",
+    "probe.items[2].probe.qty": "4",
+    "probe.items[2].probe.subs.#": "1",
+    "probe.items[2].probe.subs[0].probe.val": "5"
+  }
+}

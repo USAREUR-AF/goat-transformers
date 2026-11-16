@@ -1,0 +1,11 @@
+{
+  "name": "present-and-empty-and-absent",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[]},\"id\":\"u2\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[]},\"id\":\"u2\"}",
+  "model": {
+    "probe.items.#": "0",
+    "probe.names.#": "absent"
+  }
+}

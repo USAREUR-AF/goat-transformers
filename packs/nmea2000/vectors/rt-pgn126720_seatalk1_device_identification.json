@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_seatalk1_device_identification-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b87f081900070",
+  "expect": "00ef013b87f081900070",
+  "model": {
+    "@kind": "pgn126720_seatalk1_device_identification",
+    "n2k.pgn126720_seatalk1_device_identification_device": "112"
+  }
+}

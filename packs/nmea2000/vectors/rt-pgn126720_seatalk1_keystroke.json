@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_seatalk1_keystroke-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b87f081868eb70a",
+  "expect": "00ef013b87f081868eb70a",
+  "model": {
+    "@kind": "pgn126720_seatalk1_keystroke",
+    "n2k.pgn126720_seatalk1_keystroke_device": "142",
+    "n2k.pgn126720_key": "183",
+    "n2k.keyinverted": "10"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-set_position_target_global_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3500003f575756000096ea5f08f3d675c6742a7ac60000a03f0000404000009840000070c0000000c0000080be0000c03f000050400000a040aad881582f",
+  "expect": "fd3500003f575756000096ea5f08f3d675c6742a7ac60000a03f0000404000009840000070c0000000c0000080be0000c03f000050400000a040aad881582f",
+  "model": {
+    "@kind": "set_position_target_global_int"
+  }
+}

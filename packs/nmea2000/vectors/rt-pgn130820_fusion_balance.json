@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_balance-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a381188032b8",
+  "expect": "04ff01a381188032b8",
+  "model": {
+    "@kind": "pgn130820_fusion_balance",
+    "n2k.pgn130820_zone": "50",
+    "n2k.pgn130820_fusion_balance_value": "-72"
+  }
+}

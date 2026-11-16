@@ -1,0 +1,7 @@
+{
+  "name": "ruling-04-to-json",
+  "from": "conformance-groups-bits-var",
+  "to": "conformance-groups-json",
+  "input": "030703010203090000040105",
+  "expect": "{\"title\":\"NONE\",\"items\":[{\"n\":7,\"kind\":\"item\",\"subs\":[{\"v\":1},{\"v\":2},{\"v\":3}]},{\"n\":9,\"kind\":\"item\",\"subs\":[]},{\"n\":4,\"kind\":\"item\",\"subs\":[{\"v\":5}]}]}"
+}

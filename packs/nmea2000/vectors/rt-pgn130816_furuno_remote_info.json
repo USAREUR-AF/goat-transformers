@@ -1,0 +1,12 @@
+{
+  "name": "pgn130816_furuno_remote_info-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff013f87f000dc22",
+  "expect": "00ff013f87f000dc22",
+  "model": {
+    "@kind": "pgn130816_furuno_remote_info",
+    "n2k.a": "220",
+    "n2k.b": "34"
+  }
+}

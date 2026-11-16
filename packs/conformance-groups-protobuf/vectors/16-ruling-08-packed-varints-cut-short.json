@@ -1,0 +1,7 @@
+{
+  "name": "ruling-08-packed-varints-cut-short",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a017532020280",
+  "expect_error": "malformed-wire"
+}

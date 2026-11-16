@@ -1,0 +1,11 @@
+{
+  "name": "group-of-another-kind-is-not-read",
+  "from": "conformance-groups-kinds",
+  "to": "conformance-groups-kinds",
+  "input": "{\"id\":\"k3\",\"shape\":\"bare\",\"items\":[{\"name\":\"aa\"}]}",
+  "expect": "{\"id\":\"k3\",\"shape\":\"bare\"}",
+  "model": {
+    "@kind": "bare",
+    "probe.items.#": "absent"
+  }
+}

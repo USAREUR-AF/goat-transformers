@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_seatalk_pilot_auto_turn-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b876c2642c3813742",
+  "expect": "00ef013b876c2642c3813742",
+  "model": {
+    "@kind": "pgn126720_seatalk_pilot_auto_turn",
+    "n2k.unknown": "66",
+    "n2k.pgn126720_enabled": "195",
+    "n2k.pgn126720_seatalk_pilot_auto_turn_unknown2": "129",
+    "n2k.unknown3": "16951"
+  }
+}

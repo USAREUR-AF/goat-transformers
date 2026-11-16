@@ -1,0 +1,14 @@
+{
+  "name": "pgn127257-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19f10109973e43e5d325",
+  "expect": "19f10109973e43e5d325",
+  "model": {
+    "@kind": "pgn127257",
+    "n2k.sid": "9",
+    "n2k.yaw": "1.6023",
+    "n2k.pitch": "-0.6845",
+    "n2k.roll": "0.9683"
+  }
+}

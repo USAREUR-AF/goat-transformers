@@ -1,0 +1,10 @@
+{
+  "name": "when-number-canonicalised",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j13\",\"meta\":{\"rev\":2.0,\"t\":5}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j13\",\"meta\":{\"rev\":2,\"t\":5}}",
+  "model": {
+    "@kind": "counted"
+  }
+}

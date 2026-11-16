@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-relay_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd080000ca7fba780100546083282bb40208",
+  "expect": "fd080000ca7fba780100546083282bb40208",
+  "model": {
+    "@kind": "relay_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "position-to-geojson",
+  "from": "demo-kinds-bits",
+  "to": "geojson",
+  "input": "e8030000a1aaaa0200ee858913000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.83069359247051,29.999996423720887,250]},\"properties\":{\"time_ms\":1000}}",
+  "model": {
+    "@kind": "position"
+  }
+}

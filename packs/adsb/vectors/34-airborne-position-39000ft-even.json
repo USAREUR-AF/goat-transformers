@@ -1,0 +1,19 @@
+{
+  "name": "airborne-position-39000ft-even",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8d40058b58c901375147efd09357",
+  "expect": "8d40058b58c901375147efd09357",
+  "model": {
+    "@kind": "airborne-position-baro-tc11",
+    "adsb.df": "17",
+    "adsb.tc": "11",
+    "adsb.icao": "4195723",
+    "adsb.alt_baro_raw": "3216",
+    "adsb.cpr_odd": "0",
+    "adsb.cpr_lat": "39848",
+    "adsb.cpr_lon": "83951"
+  },
+  "source": "specification",
+  "reference": "published message 8D40058B58C901375147EFD09357: pyModeS tests/test_bds05.py at commit 4bf0832, https://github.com/junzis/pyModeS"
+}

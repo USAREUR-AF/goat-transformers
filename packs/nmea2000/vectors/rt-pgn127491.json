@@ -1,0 +1,20 @@
+{
+  "name": "pgn127491-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f201c9388025f01a36aed7c0a85f49a345",
+  "expect": "03f201c9388025f01a36aed7c0a85f49a345",
+  "model": {
+    "@kind": "pgn127491",
+    "n2k.energy_storage_identifier": "201",
+    "n2k.state_of_charge": "56",
+    "n2k.time_remaining": "576000",
+    "n2k.highest_cell_temperature": "68.96",
+    "n2k.lowest_cell_temperature": "445.98",
+    "n2k.average_cell_temperature": "493.67",
+    "n2k.max_discharge_current": "2448.8",
+    "n2k.max_charge_current": "-2373.5",
+    "n2k.cooling_system_status": "5",
+    "n2k.heating_system_status": "4"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "context-fills-absent-key-same-format",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a11\",\"rev\":6,\"pos\":{\"alt\":0},\"cls\":2,\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "context": {
+    "how": "m-g",
+    "track.class": "uas"
+  },
+  "expect": "{\"schema\":\"rules\",\"id\":\"a11\",\"rev\":6,\"pos\":{\"alt\":0},\"cls\":2,\"how\":\"M\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "@complete": true,
+    "how": "m-g",
+    "track.class": "bird"
+  }
+}

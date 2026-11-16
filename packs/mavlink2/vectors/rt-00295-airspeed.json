@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-airspeed",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0c0000ac2e69270100000070c0000000c06ddcba91",
+  "expect": "fd0c0000ac2e69270100000070c0000000c06ddcba91",
+  "model": {
+    "@kind": "airspeed"
+  }
+}

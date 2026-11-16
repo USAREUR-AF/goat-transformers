@@ -1,0 +1,20 @@
+{
+  "name": "pgn130817_sleipner_thruster_status_ppc820-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01ff0132811919f0a976a8a707612186bac90b94",
+  "expect": "01ff0132811919f0a976a8a707612186bac90b94",
+  "model": {
+    "@kind": "pgn130817_sleipner_thruster_status_ppc820",
+    "n2k.a": "25",
+    "n2k.pgn130817_status": "43504",
+    "n2k.pgn130817_motor_temperature": "118",
+    "n2k.power_temperature": "168",
+    "n2k.b": "167",
+    "n2k.motor_voltage": "248.39",
+    "n2k.c": "34337",
+    "n2k.pgn130817_motor_current": "5164.2",
+    "n2k.output_thrust": "11",
+    "n2k.d": "148"
+  }
+}

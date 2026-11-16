@@ -1,0 +1,14 @@
+{
+  "name": "pgn60416_iso_transport_protocol_connection_management_request_to_send-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ec001088c0716a577900",
+  "expect": "00ec001088c0716a577900",
+  "model": {
+    "@kind": "pgn60416_iso_transport_protocol_connection_management_request_to_send",
+    "n2k.message_size": "49288",
+    "n2k.packets": "113",
+    "n2k.packets_reply": "106",
+    "n2k.pgn": "31063"
+  }
+}

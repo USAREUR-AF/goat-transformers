@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_fusion_menu_action_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3810900e80f0e76266714",
+  "expect": "00ef01a3810900e80f0e76266714",
+  "model": {
+    "@kind": "pgn126720_fusion_menu_action_command",
+    "n2k.source_id": "232",
+    "n2k.item_index": "645271055",
+    "n2k.pgn126720_action": "103",
+    "n2k.lock_id": "20"
+  }
+}

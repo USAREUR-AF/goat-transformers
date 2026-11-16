@@ -1,0 +1,13 @@
+{
+  "name": "pgn61184_seatalk_wireless_keypad_light_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef003b870126cdad",
+  "expect": "00ef003b870126cdad",
+  "model": {
+    "@kind": "pgn61184_seatalk_wireless_keypad_light_control",
+    "n2k.variant": "38",
+    "n2k.wireless_setting": "205",
+    "n2k.wired_setting": "173"
+  }
+}

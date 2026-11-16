@@ -1,0 +1,7 @@
+{
+  "name": "long-fraction-scale-roundtrip",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "470200000003e8ebe1f9c05a219fa853594400",
+  "expect": "470200000003e8ebe1f9c05a219fa853594400"
+}

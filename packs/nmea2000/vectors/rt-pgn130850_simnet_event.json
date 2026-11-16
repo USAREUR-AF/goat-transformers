@@ -1,0 +1,14 @@
+{
+  "name": "pgn130850_simnet_event-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff01418731001905c2",
+  "expect": "22ff01418731001905c2",
+  "model": {
+    "@kind": "pgn130850_simnet_event",
+    "n2k.address": "49",
+    "n2k.network_group": "25",
+    "n2k.command_type": "5",
+    "n2k.pgn130850_simnet_event_event": "194"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pgn130842_simnet_ais_class_bstatic_data_msg24_part_a-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1aff01418740c9332df7c42a4e324b3444393337443242544553545600000000",
+  "expect": "1aff01418740c9332df7c42a4e324b3444393337443242544553545600000000",
+  "model": {
+    "@kind": "pgn130842_simnet_ais_class_bstatic_data_msg24_part_a",
+    "n2k.repeat_indicator": "1",
+    "n2k.d": "201",
+    "n2k.e": "51",
+    "n2k.user_id": "717551405",
+    "n2k.name": "N2K4D937D2BTESTV"
+  }
+}

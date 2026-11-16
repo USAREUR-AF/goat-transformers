@@ -1,0 +1,14 @@
+{
+  "name": "pgn128001-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f4012f41e06fc3c683",
+  "expect": "01f4012f41e06fc3c683",
+  "model": {
+    "@kind": "pgn128001",
+    "n2k.sid": "47",
+    "n2k.longitudinal_acceleration": "-8127",
+    "n2k.transverse_acceleration": "-15505",
+    "n2k.vertical_acceleration": "-31802"
+  }
+}

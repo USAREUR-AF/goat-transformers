@@ -1,0 +1,18 @@
+{
+  "name": "pgn127511-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "17f201894c7cadcc3f3be6",
+  "expect": "17f201894c7cadcc3f3be6",
+  "model": {
+    "@kind": "pgn127511",
+    "n2k.pgn127511_instance": "137",
+    "n2k.ac_instance": "76",
+    "n2k.dc_instance": "124",
+    "n2k.inverter_enable_disable": "1",
+    "n2k.inverter_mode": "11",
+    "n2k.load_sense_enable_disable": "2",
+    "n2k.load_sense_power_threshold": "16332",
+    "n2k.load_sense_interval": "589.39"
+  }
+}

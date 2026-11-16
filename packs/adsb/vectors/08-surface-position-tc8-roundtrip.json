@@ -1,0 +1,21 @@
+{
+  "name": "surface-position-tc8-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc00846fd3c14520b9b4e3583",
+  "expect": "8dabc00846fd3c14520b9b4e3583",
+  "model": {
+    "@kind": "surface-position-tc8",
+    "adsb.df": "17",
+    "adsb.tc": "8",
+    "adsb.icao": "11255816",
+    "adsb.movement_raw": "111",
+    "adsb.track_raw": "83",
+    "adsb.cpr_odd": "1",
+    "adsb.cpr_lat": "2601",
+    "adsb.cpr_lon": "2971",
+    "adsb.parity": "5125507"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

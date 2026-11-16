@@ -1,0 +1,11 @@
+{
+  "name": "pgn65305_simnet_device_mode_request-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19ff004187e50b",
+  "expect": "19ff004187e50b",
+  "model": {
+    "@kind": "pgn65305_simnet_device_mode_request",
+    "n2k.pgn65305_model": "229"
+  }
+}

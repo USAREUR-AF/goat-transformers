@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-sapient-v1",
+  "from": "geojson",
+  "to": "sapient-v1",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[28.25,30,31.75]},\"properties\":{}}",
+  "expect": "3a21321f090000000000403c40110000000000003e40190000000000c03f4038014001",
+  "model": {
+    "lat": "30",
+    "lon": "28.25",
+    "hae": "31.75"
+  }
+}

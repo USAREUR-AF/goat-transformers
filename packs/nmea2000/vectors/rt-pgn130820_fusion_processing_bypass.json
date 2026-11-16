@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_processing_bypass-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3814080b3",
+  "expect": "04ff01a3814080b3",
+  "model": {
+    "@kind": "pgn130820_fusion_processing_bypass",
+    "n2k.bypass": "179"
+  }
+}

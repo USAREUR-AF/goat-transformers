@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# pre-push: refuse a push of this repository unless the boundary gate passes
+# with the private needle list (docs/boundary.md). Fails closed: if the needle
+# list cannot be built, the push is refused.
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+main="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+# GOAT_XF_OVERLAY is the path of the private overlay checkout. The default is a
+# directory named goat-transformers-overlay beside this repository.
+overlay="${GOAT_XF_OVERLAY:-$(dirname "$main")/goat-transformers-overlay}"
+gen="$overlay/tools/needles.py"
+if [ ! -f "$gen" ]; then
+  echo "pre-push: needle generator not found at $gen (set GOAT_XF_OVERLAY); push refused" >&2
+  exit 1
+fi
+tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT
+if ! python3 -I "$gen" > "$tmp"; then
+  echo "pre-push: could not build the needle list; push refused" >&2
+  exit 1
+fi
+python3 -I "$root/tools/boundary-gate" --root "$root" --needles "$tmp" --require-needles

@@ -1,0 +1,19 @@
+{
+  "name": "pgn130939-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "7bff011e836a4038639b4b0597c0",
+  "expect": "7bff011e836a4038639b4b0597c0",
+  "model": {
+    "@kind": "pgn130939",
+    "n2k.zone_index": "106",
+    "n2k.red": "64",
+    "n2k.green": "56",
+    "n2k.blue": "99",
+    "n2k.cold_white": "155",
+    "n2k.warm_white": "75",
+    "n2k.intensity": "5",
+    "n2k.on_off": "151",
+    "n2k.pgn130939_status": "192"
+  }
+}

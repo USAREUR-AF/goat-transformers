@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-cellular_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd350000bc55904e01001e76f5c9cc1da37a5128ffd6148116ad68056a4d34380000000000005b0000e03f09b816380000a0c0000050c00000c0bf0000803e",
+  "expect": "fd350000bc55904e01001e76f5c9cc1da37a5128ffd6148116ad68056a4d34380000000000005b0000e03f09b816380000a0c0000050c00000c0bf0000803e",
+  "model": {
+    "@kind": "cellular_status"
+  }
+}

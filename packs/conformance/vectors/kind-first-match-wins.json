@@ -1,0 +1,10 @@
+{
+  "name": "kind-first-match-wins",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k5\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"VIPER\"/><class>air</class></item>",
+  "expect": "<item id=\"k5\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\"/><class>air</class></item>",
+  "model": {
+    "@kind": "air"
+  }
+}

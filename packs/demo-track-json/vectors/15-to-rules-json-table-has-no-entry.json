@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-json-table-has-no-entry",
+  "from": "demo-track-json",
+  "to": "conformance-rules-json",
+  "input": "{\"id\":\"t3\",\"track\":{\"class\":\"vehicle\"}}",
+  "expect_error": "transform-encode"
+}

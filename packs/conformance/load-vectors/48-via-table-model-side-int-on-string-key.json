@@ -1,0 +1,8 @@
+{
+  "name": "48-via-table-model-side-int-on-string-key",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.6.0\ndistribution public\nsource \"probe\"\nwire json\nfield callsign cls int via t\nmap t 1 100\n",
+  "expect_error": "key-type-mismatch"
+}

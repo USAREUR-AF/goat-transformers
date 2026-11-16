@@ -1,0 +1,10 @@
+{
+  "name": "ruling-13-residue-numbers-arrays-objects-null-duplicates",
+  "from": "conformance-geojson",
+  "to": "conformance-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"schema\":\"probe\",\"rev\":\"1\",\"n\":1.50,\"e\":1e3,\"dup\":1,\"arr\":[1.0,{\"a\":null},\"s\"],\"obj\":{\"x\":2.50},\"nul\":null,\"dup\":\"last\"},\"profile\":\"probe\",\"id\":\"g\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"schema\":\"probe\",\"rev\":\"1\",\"n\":\"1.50\",\"e\":\"1e3\",\"dup\":\"last\",\"arr\":[1.0,{\"a\":null},\"s\"],\"obj\":{\"x\":2.50}},\"profile\":\"probe\",\"id\":\"g\"}",
+  "model": {
+    "@kind": "v1"
+  }
+}

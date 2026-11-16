@@ -1,0 +1,8 @@
+{
+  "name": "56-trim-without-ascii",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.6.0\ndistribution public\nsource \"probe\"\nwire bits\nword_bytes 1\nfield time_ms 0:0:16 uint trim\n",
+  "expect_error": "bad-directive"
+}

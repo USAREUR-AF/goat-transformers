@@ -1,0 +1,19 @@
+{
+  "name": "airborne-position-odd",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8d40621d58c386435cc412692ad6",
+  "expect": "8d40621d58c386435cc412692ad6",
+  "model": {
+    "@kind": "airborne-position-baro-tc11",
+    "adsb.df": "17",
+    "adsb.tc": "11",
+    "adsb.icao": "4219421",
+    "adsb.alt_baro_raw": "3128",
+    "adsb.cpr_odd": "1",
+    "adsb.cpr_lat": "74158",
+    "adsb.cpr_lon": "50194"
+  },
+  "source": "specification",
+  "reference": "published message 8D40621D58C386435CC412692AD6: The 1090 Megahertz Riddle, 2nd ed., https://mode-s.org/1090mhz/, ADS-B chapter 3 (Airborne position)"
+}

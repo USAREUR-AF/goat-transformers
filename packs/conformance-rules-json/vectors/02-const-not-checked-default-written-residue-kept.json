@@ -1,0 +1,10 @@
+{
+  "name": "const-not-checked-default-written-residue-kept",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"other\",\"rev\":5,\"id\":\"a2\",\"pos\":{\"latitude\":3.25,\"lon\":4},\"extra\":\"keep\",\"meta\":{\"live\":false,\"note\":\"n\"}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a2\",\"rev\":6,\"pos\":{\"lat\":3.25,\"latitude\":3.25,\"lon\":4,\"alt\":-1},\"cls\":2,\"meta\":{\"live\":true,\"tag\":\"7\",\"note\":\"n\"},\"extra\":\"keep\"}",
+  "model": {
+    "lat": "3.25"
+  }
+}

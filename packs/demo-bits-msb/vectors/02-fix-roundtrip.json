@@ -1,0 +1,15 @@
+{
+  "name": "fix-roundtrip",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "69afbad9985c4a740a28fb2e",
+  "expect": "69afbad9985c4a740a28fb2e",
+  "model": {
+    "@kind": "fix",
+    "course": "270.55",
+    "lat": "-33.7512",
+    "lon": "151.2093",
+    "hae": "150",
+    "time_ms": "-1234"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn130576-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "10fe01429b",
+  "expect": "10fe01429b",
+  "model": {
+    "@kind": "pgn130576",
+    "n2k.port_trim_tab": "66",
+    "n2k.starboard_trim_tab": "-101"
+  }
+}

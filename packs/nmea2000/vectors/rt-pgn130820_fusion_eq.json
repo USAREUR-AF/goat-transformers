@@ -1,0 +1,14 @@
+{
+  "name": "pgn130820_fusion_eq-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811b80919adede",
+  "expect": "04ff01a3811b80919adede",
+  "model": {
+    "@kind": "pgn130820_fusion_eq",
+    "n2k.pgn130820_zone": "145",
+    "n2k.bass": "-102",
+    "n2k.mid": "-34",
+    "n2k.treble": "-34"
+  }
+}

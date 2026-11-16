@@ -1,0 +1,7 @@
+{
+  "name": "to-sapient-required-only",
+  "from": "canonical-track-v2",
+  "to": "sapient",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0043\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-1\",\"observedAt\":\"2026-01-01T00:00:00Z\",\"position\":{\"latitudeDeg\":45,\"longitudeDeg\":-73}}",
+  "expect": "3a1832160900000000004052c011000000000080464038014001"
+}

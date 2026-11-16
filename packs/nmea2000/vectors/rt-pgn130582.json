@@ -1,0 +1,15 @@
+{
+  "name": "pgn130582-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "16fe011ddd059d",
+  "expect": "16fe011ddd059d",
+  "model": {
+    "@kind": "pgn130582",
+    "n2k.zone_id": "29",
+    "n2k.pgn130582_volume": "221",
+    "n2k.volume_change": "1",
+    "n2k.pgn130582_mute": "1",
+    "n2k.pgn130582_channel": "157"
+  }
+}

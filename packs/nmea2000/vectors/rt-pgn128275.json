@@ -1,0 +1,14 @@
+{
+  "name": "pgn128275-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "13f501a9c4af2de70303f15bfd692e4dd2",
+  "expect": "13f501a9c4af2de70303f15bfd692e4dd2",
+  "model": {
+    "@kind": "pgn128275",
+    "n2k.date": "50345",
+    "n2k.time": "6548.2159",
+    "n2k.log": "4250661123",
+    "n2k.trip_log": "3528273513"
+  }
+}

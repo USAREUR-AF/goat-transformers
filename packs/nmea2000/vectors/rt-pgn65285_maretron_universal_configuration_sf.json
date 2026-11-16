@@ -1,0 +1,11 @@
+{
+  "name": "pgn65285_maretron_universal_configuration_sf-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05ff0089801f4db2140000",
+  "expect": "05ff0089801f4db2140000",
+  "model": {
+    "@kind": "pgn65285_maretron_universal_configuration_sf",
+    "n2k.data": "347229471"
+  }
+}

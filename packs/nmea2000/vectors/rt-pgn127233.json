@@ -1,0 +1,24 @@
+{
+  "name": "pgn127233-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f101c2941c9dd705aee16d2301aadafe3e3d17bffc60dca7cbc29f024fe3994f94fb891a02",
+  "expect": "01f101c2941c9dd705aee16d2301aadafe3e3d17bffc60dca7cbc29f024fe3994f94fb891a02",
+  "model": {
+    "@kind": "pgn127233",
+    "n2k.sid": "194",
+    "n2k.mob_emitter_id": "3617397908",
+    "n2k.man_overboard_status": "5",
+    "n2k.activation_time": "59440.3758",
+    "n2k.position_source": "1",
+    "n2k.position_date": "55978",
+    "n2k.position_time": "38988.979",
+    "lat": "-59.7623617",
+    "lon": "-161.4623833",
+    "n2k.cog_reference": "2",
+    "n2k.cog": "5.8191",
+    "speed_ms": "203.77",
+    "n2k.mmsi_of_vessel_of_origin": "445250452",
+    "n2k.mob_emitter_battery_low_status": "2"
+  }
+}

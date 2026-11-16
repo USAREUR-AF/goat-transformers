@@ -1,0 +1,12 @@
+{
+  "name": "pgn65305_simnet_sailing_processor_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19ff0041876c17a481ae9d",
+  "expect": "19ff0041876c17a481ae9d",
+  "model": {
+    "@kind": "pgn65305_simnet_sailing_processor_status",
+    "n2k.pgn65305_model": "108",
+    "n2k.data": "2645459364"
+  }
+}

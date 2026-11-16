@@ -1,0 +1,38 @@
+# Conformance probe pack for groups (spec 0.7) on the `protobuf` wire. Public.
+# No kinds. Submessage items with a `const`, a `default` and a nested list;
+# repeated scalars with each numeric transform (written packed) and with
+# `pstring` (one occurrence per item); one list inside a submessage (`3.1`).
+format  conformance-groups-protobuf
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    protobuf
+field   uid  1  pstring
+group   probe.items  2
+  field   probe.label  1  pstring
+  field   probe.qty    2  pvarint
+  field   probe.ratio  3  pdouble
+  const   4  9
+  default probe.qty  1
+  group   probe.subs  5
+    field  probe.tag  1  pstring
+    field  probe.val  2  psint
+  end
+end
+group   probe.nums  3.1
+  field  probe.val  .  pvarint
+end
+group   probe.names  4
+  field  probe.tag  .  pstring
+end
+group   probe.ratios  5
+  field  probe.ratio  .  pdouble
+end
+group   probe.deltas  6
+  field  probe.val  .  psint
+end
+group   probe.gains  7
+  field  probe.ratio  .  pfloat
+end
+field   callsign  8  pstring

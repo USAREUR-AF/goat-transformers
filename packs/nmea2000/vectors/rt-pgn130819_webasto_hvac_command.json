@@ -1,0 +1,18 @@
+{
+  "name": "pgn130819_webasto_hvac_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03ff011c82d81001923716bc",
+  "expect": "03ff011c82d81001923716bc",
+  "model": {
+    "@kind": "pgn130819_webasto_hvac_command",
+    "n2k.can_address": "216",
+    "n2k.blower_speed": "16",
+    "n2k.unit_on_off": "1",
+    "n2k.pgn130819_set_temperature": "142.26",
+    "n2k.eco_mode": "2",
+    "n2k.functional_mode": "1",
+    "n2k.compressor": "1",
+    "n2k.mask": "188"
+  }
+}

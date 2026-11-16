@@ -1,0 +1,14 @@
+{
+  "name": "pgn130850_simnet_command_ap_tack-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff014187b400470a11fc96",
+  "expect": "22ff014187b400470a11fc96",
+  "model": {
+    "@kind": "pgn130850_simnet_command_ap_tack",
+    "n2k.address": "180",
+    "n2k.network_group": "71",
+    "n2k.unknown_a": "252",
+    "n2k.unknown_b": "150"
+  }
+}

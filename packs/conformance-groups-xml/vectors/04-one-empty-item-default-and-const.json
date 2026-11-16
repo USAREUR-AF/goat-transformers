@@ -1,0 +1,10 @@
+{
+  "name": "one-empty-item-default-and-const",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u4\"><body><item/></body></msg>",
+  "expect": "<msg id=\"u4\"><body><item k=\"i\"><qty>1</qty></item></body></msg>",
+  "model": {
+    "probe.items.#": "1"
+  }
+}

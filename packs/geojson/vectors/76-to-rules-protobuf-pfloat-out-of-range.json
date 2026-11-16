@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-protobuf-pfloat-out-of-range",
+  "from": "geojson",
+  "to": "conformance-rules-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"speed_ms\":1e39},\"id\":\"g2\"}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-radio_rc_channels",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd490000daab27a4010068c317283f1716edc4",
+  "expect": "fd490000daab27a4010068c317283f1716edc4",
+  "model": {
+    "@kind": "radio_rc_channels"
+  }
+}

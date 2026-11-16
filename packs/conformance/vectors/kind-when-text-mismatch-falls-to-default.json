@@ -1,0 +1,10 @@
+{
+  "name": "kind-when-text-mismatch-falls-to-default",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k2\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\" alt=\"120\"/><class>sea</class></item>",
+  "expect": "<item id=\"k2\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "model": {
+    "@kind": "plain"
+  }
+}

@@ -1,0 +1,28 @@
+# Synthetic protobuf envelope with message kinds. Public, no real schema.
+# Fields 1 and 2 are common. Fields 10 and 11 are the arms of a oneof: the kind
+# is the arm present on the wire. Field 3 is a varint message code; code 1 is a
+# status message.
+format   demo-kinds-protobuf
+version  0.5.0
+distribution public
+source   "synthetic format, no external standard"
+wire     protobuf
+field  uid      1  pstring
+field  time_ms  2  pvarint
+
+kind     position
+when     10  present
+requires lat lon
+field    lat  10.1  pdouble
+field    lon  10.2  pdouble
+field    hae  10.3  pdouble
+
+kind     motion
+when     11  present
+requires course speed_ms
+field    course    11.1  pdouble
+field    speed_ms  11.2  pfloat
+
+kind     status                   # the default on encode
+when     3  1
+field    callsign  4  pstring

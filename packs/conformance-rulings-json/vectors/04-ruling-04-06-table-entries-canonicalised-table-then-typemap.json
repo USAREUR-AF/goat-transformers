@@ -1,0 +1,12 @@
+{
+  "name": "ruling-04-06-table-entries-canonicalised-table-then-typemap",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"t\":\"1\",\"lat\":2,\"cls\":1}",
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"slot\":\"h-c\",\"t\":\"1\",\"lat\":2,\"cls\":1,\"marker\":\"present\",\"k\":2}",
+  "model": {
+    "type": "a-f-G",
+    "lat": "20",
+    "track.class": "uas"
+  }
+}

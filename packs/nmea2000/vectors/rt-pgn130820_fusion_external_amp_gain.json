@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_external_amp_gain-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3815c805389",
+  "expect": "04ff01a3815c805389",
+  "model": {
+    "@kind": "pgn130820_fusion_external_amp_gain",
+    "n2k.pgn130820_zone": "83",
+    "n2k.gain": "-119"
+  }
+}

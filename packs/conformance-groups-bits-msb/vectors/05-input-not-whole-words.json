@@ -1,0 +1,7 @@
+{
+  "name": "input-not-whole-words",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-msb",
+  "input": "153c076162",
+  "expect_error": "malformed-wire"
+}

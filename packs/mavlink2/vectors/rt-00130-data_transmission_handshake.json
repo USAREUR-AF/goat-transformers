@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-data_transmission_handshake",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0d0000648383820000aa4df40781a158f52f4906ddb4",
+  "expect": "fd0d0000648383820000aa4df40781a158f52f4906ddb4",
+  "model": {
+    "@kind": "data_transmission_handshake"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_airmar_calibrate_depth-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01878028916a",
+  "expect": "00ef01878028916a",
+  "model": {
+    "@kind": "pgn126720_airmar_calibrate_depth",
+    "n2k.speed_of_sound_mode": "2728.1"
+  }
+}

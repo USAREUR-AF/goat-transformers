@@ -1,0 +1,15 @@
+{
+  "name": "pgn127250-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "12f101a952a13687265e02",
+  "expect": "12f101a952a13687265e02",
+  "model": {
+    "@kind": "pgn127250",
+    "n2k.sid": "169",
+    "n2k.heading": "4.1298",
+    "n2k.deviation": "-3.0922",
+    "n2k.variation": "2.4102",
+    "n2k.pgn127250_reference": "2"
+  }
+}

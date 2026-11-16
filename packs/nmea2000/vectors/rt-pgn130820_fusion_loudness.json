@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_loudness-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3813f80cee0",
+  "expect": "04ff01a3813f80cee0",
+  "model": {
+    "@kind": "pgn130820_fusion_loudness",
+    "n2k.pgn130820_zone": "206",
+    "n2k.pgn130820_fusion_loudness_enabled": "224"
+  }
+}

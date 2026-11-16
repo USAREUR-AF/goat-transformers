@@ -1,0 +1,15 @@
+{
+  "name": "pgn129044-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14f8014e324b357709050534a9513368867b404e324b38",
+  "expect": "14f8014e324b357709050534a9513368867b404e324b38",
+  "model": {
+    "@kind": "pgn129044",
+    "n2k.local_datum": "N2K5",
+    "n2k.delta_latitude": "8.4216183",
+    "n2k.delta_longitude": "86.0989748",
+    "n2k.delta_altitude": "10818371.6",
+    "n2k.reference_datum": "N2K8"
+  }
+}

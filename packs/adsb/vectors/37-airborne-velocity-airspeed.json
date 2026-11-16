@@ -1,0 +1,20 @@
+{
+  "name": "airborne-velocity-airspeed",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8da05f219b06b6af189400cbc33f",
+  "expect": "8da05f219b06b6af189400cbc33f",
+  "model": {
+    "@kind": "airborne-velocity-air-st3",
+    "adsb.df": "17",
+    "adsb.tc": "19",
+    "adsb.icao": "10510113",
+    "adsb.heading_valid": "1",
+    "adsb.heading_raw": "694",
+    "adsb.airspeed_true": "1",
+    "adsb.airspeed_raw": "376",
+    "adsb.vr_raw": "37"
+  },
+  "source": "specification",
+  "reference": "published message 8DA05F219B06B6AF189400CBC33F: The 1090 Megahertz Riddle, 2nd ed., https://mode-s.org/1090mhz/, ADS-B chapter 5 (Airborne velocity), message B; pyModeS tests/test_bds09.py at commit 4bf0832, https://github.com/junzis/pyModeS"
+}

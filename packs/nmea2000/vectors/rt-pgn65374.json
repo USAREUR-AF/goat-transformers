@@ -1,0 +1,13 @@
+{
+  "name": "pgn65374-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "5eff003b87574e30",
+  "expect": "5eff003b87574e30",
+  "model": {
+    "@kind": "pgn65374",
+    "n2k.proprietary_id": "87",
+    "n2k.variant": "78",
+    "n2k.pgn65374_status": "48"
+  }
+}

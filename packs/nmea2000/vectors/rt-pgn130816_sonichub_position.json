@@ -1,0 +1,12 @@
+{
+  "name": "pgn130816_sonichub_position-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0113810030945b74ec5d",
+  "expect": "00ff0113810030945b74ec5d",
+  "model": {
+    "@kind": "pgn130816_sonichub_position",
+    "n2k.pgn130816_control": "148",
+    "n2k.pgn130816_position": "1575777.371"
+  }
+}

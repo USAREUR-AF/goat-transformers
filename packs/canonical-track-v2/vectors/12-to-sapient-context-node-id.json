@@ -1,0 +1,10 @@
+{
+  "name": "to-sapient-context-node-id",
+  "from": "canonical-track-v2",
+  "to": "sapient",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"velocity\":{\"eastMps\":-40.25,\"northMps\":0,\"upMps\":0.5},\"classification\":\"uas\",\"confidence\":0.875,\"positionUncertainty\":{\"sigmaEastM\":9,\"sigmaNorthM\":12,\"sigmaUpM\":30}}",
+  "context": {
+    "sapient.node_id": "00000000-0000-4000-8000-000000000001"
+  },
+  "expect": "122430303030303030302d303030302d343030302d383030302d3030303030303030303030313a54322809df20b5e44c7d55c01161133e004e023e401900000000008a9340310000000000003e40380140013d0000603f5a050a035541569a011b0900000000002044c011000000000000000019000000000000e03f"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "wrong-first-byte",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "480101603aa4c0",
+  "expect_error": "no-kind"
+}

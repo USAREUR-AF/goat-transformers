@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-safety_set_allowed_area",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1b000029373736000000008840000088c0000020c0000040bf0000803f00003040c0976e",
+  "expect": "fd1b000029373736000000008840000088c0000020c0000040bf0000803f00003040c0976e",
+  "model": {
+    "@kind": "safety_set_allowed_area"
+  }
+}

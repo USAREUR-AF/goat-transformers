@@ -1,0 +1,19 @@
+{
+  "name": "operational-status-airborne-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc01cf808b70d0d7f7edf2488",
+  "expect": "8dabc01cf808b70d0d7f7edf2488",
+  "model": {
+    "@kind": "operational-status-airborne",
+    "adsb.df": "17",
+    "adsb.tc": "31",
+    "adsb.icao": "11255836",
+    "adsb.capability_class": "2231",
+    "adsb.operational_mode": "3341",
+    "adsb.version": "3",
+    "adsb.parity": "14623880"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

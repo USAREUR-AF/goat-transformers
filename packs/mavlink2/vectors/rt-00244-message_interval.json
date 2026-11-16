@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-message_interval",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd06000083f536f40000c09b44d2ef8a",
+  "expect": "fd06000083f536f40000c09b44d2ef8a",
+  "model": {
+    "@kind": "message_interval"
+  }
+}

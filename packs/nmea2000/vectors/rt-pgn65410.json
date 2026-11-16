@@ -1,0 +1,13 @@
+{
+  "name": "pgn65410-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "82ff008780904f7f7111",
+  "expect": "82ff008780904f7f7111",
+  "model": {
+    "@kind": "pgn65410",
+    "n2k.sid": "144",
+    "n2k.internal_device_temperature": "325.91",
+    "n2k.supply_voltage": "44.65"
+  }
+}

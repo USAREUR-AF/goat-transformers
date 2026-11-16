@@ -1,0 +1,7 @@
+{
+  "name": "pfloat-nan",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027038350000c07f",
+  "expect_error": "transform-decode"
+}

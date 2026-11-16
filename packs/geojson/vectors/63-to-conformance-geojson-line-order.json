@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-geojson-line-order",
+  "from": "geojson",
+  "to": "conformance-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"ce\":9.5,\"callsign\":\"GATOR\"},\"id\":\"g10\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"schema\":\"probe\",\"name\":\"GATOR\",\"rev\":2,\"live\":true,\"ce\":9.5},\"profile\":\"probe\",\"id\":\"g10\"}"
+}

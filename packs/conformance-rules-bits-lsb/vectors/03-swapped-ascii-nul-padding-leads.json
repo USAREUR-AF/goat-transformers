@@ -1,0 +1,10 @@
+{
+  "name": "swapped-ascii-nul-padding-leads",
+  "from": "conformance-rules-bits-lsb",
+  "to": "conformance-rules-bits-lsb",
+  "input": "12343930edd211c04020000000004241",
+  "expect": "12343930edd211c04020000000004241",
+  "model": {
+    "callsign": "AB"
+  }
+}

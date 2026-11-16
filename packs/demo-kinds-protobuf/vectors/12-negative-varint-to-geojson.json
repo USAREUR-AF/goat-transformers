@@ -1,0 +1,7 @@
+{
+  "name": "negative-varint-to-geojson",
+  "from": "demo-kinds-protobuf",
+  "to": "geojson",
+  "input": "0a074a2d303133333410feffffffffffffffff011801",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":-2},\"id\":\"J-01334\"}"
+}

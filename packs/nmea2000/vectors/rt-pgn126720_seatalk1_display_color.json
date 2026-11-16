@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_seatalk1_display_color-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b878c0c57d401936a",
+  "expect": "00ef013b878c0c57d401936a",
+  "model": {
+    "@kind": "pgn126720_seatalk1_display_color",
+    "n2k.group": "87",
+    "n2k.unknown1": "212",
+    "n2k.pgn126720_seatalk1_display_color_color": "147",
+    "n2k.pgn126720_seatalk1_display_color_unknown2": "106"
+  }
+}

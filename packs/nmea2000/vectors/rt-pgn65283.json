@@ -1,0 +1,24 @@
+{
+  "name": "pgn65283-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03ff00278195aa7a568716",
+  "expect": "03ff00278195aa7a568716",
+  "model": {
+    "@kind": "pgn65283",
+    "n2k.dipswitch": "149",
+    "n2k.channel0_mode": "2",
+    "n2k.channel1_mode": "2",
+    "n2k.channel2_mode": "2",
+    "n2k.channel3_mode": "2",
+    "n2k.channel4_mode": "2",
+    "n2k.channel5_mode": "2",
+    "n2k.channel0_value": "7",
+    "n2k.channel1_value": "6",
+    "n2k.channel2_value": "5",
+    "n2k.channel3_value": "7",
+    "n2k.channel4_value": "8",
+    "n2k.channel5_value": "6",
+    "n2k.flag": "1"
+  }
+}

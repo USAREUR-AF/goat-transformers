@@ -1,0 +1,7 @@
+{
+  "name": "empty-list-to-bits-writes-count-zero",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits",
+  "input": "{\"id\":\"u1\",\"items\":[]}",
+  "expect": "7531000000"
+}

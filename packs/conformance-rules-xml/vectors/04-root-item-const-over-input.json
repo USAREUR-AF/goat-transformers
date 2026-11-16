@@ -1,0 +1,10 @@
+{
+  "name": "root-item-const-over-input",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<item id=\"p1\" v=\"9\"/>",
+  "expect": "<item id=\"p1\" v=\"1\"/>",
+  "model": {
+    "@kind": "plain"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "item-field-fails-its-transform",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a027537120210011203120178",
+  "expect_error": "transform-decode"
+}

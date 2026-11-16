@@ -1,0 +1,10 @@
+{
+  "name": "every-function-two-passes-and-eight-pass-limit",
+  "from": "conformance-derive",
+  "to": "conformance-derive",
+  "input": "{\"id\":\"u1\",\"a\":3,\"n\":42,\"s1\":\"x\",\"k0\":7}",
+  "context": {
+    "probe.s2": "z"
+  },
+  "expect": "{\"id\":\"u1\",\"a\":3,\"neg_a\":-3,\"scaled\":7.5,\"third\":1,\"shifted\":2.5,\"n\":42,\"n_next\":1042,\"n_copy\":42,\"s1\":\"x\",\"s2\":\"z\",\"joined\":\"u1/x/z\",\"chain\":3,\"late\":-3,\"k0\":7,\"k1\":7,\"k2\":7,\"k3\":7,\"k4\":7,\"k5\":7,\"k6\":7,\"k7\":7,\"k8\":7}"
+}

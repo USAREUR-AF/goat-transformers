@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-timesync",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1200005170706f0000f37b50c8ffffffff74cf54c8ffffffff1bf2",
+  "expect": "fd1200005170706f0000f37b50c8ffffffff74cf54c8ffffffff1bf2",
+  "model": {
+    "@kind": "timesync"
+  }
+}

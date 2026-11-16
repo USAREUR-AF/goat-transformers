@@ -1,0 +1,11 @@
+{
+  "name": "pgn61184_furuno_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef003f87002f",
+  "expect": "00ef003f87002f",
+  "model": {
+    "@kind": "pgn61184_furuno_command",
+    "n2k.pgn61184_command": "47"
+  }
+}

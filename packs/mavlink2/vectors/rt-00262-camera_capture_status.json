@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-camera_capture_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd170000940d48060100e676b1060000c0bf941eba2d000000404219a86cb7d3c7",
+  "expect": "fd170000940d48060100e676b1060000c0bf941eba2d000000404219a86cb7d3c7",
+  "model": {
+    "@kind": "camera_capture_status"
+  }
+}

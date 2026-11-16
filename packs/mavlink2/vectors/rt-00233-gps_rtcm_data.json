@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gps_rtcm_data",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdb600007dea2be90000532a",
+  "expect": "fdb600007dea2be90000532a",
+  "model": {
+    "@kind": "gps_rtcm_data"
+  }
+}

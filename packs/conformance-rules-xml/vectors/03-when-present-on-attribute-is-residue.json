@@ -1,0 +1,11 @@
+{
+  "name": "when-present-on-attribute-is-residue",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<note mark=\"x\" id=\"n2\" ce=\"5\"/>",
+  "expect": "<note id=\"n2\" v=\"1\" ce=\"5\" mark=\"x\"/>",
+  "model": {
+    "@kind": "marked",
+    "ce": "5"
+  }
+}

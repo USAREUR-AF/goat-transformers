@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-encapsulated_data",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdff0000658484830000190a",
+  "expect": "fdff0000658484830000190a",
+  "model": {
+    "@kind": "encapsulated_data"
+  }
+}

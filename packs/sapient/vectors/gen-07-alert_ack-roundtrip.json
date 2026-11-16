@@ -1,0 +1,20 @@
+{
+  "name": "gen-alert_ack-roundtrip",
+  "from": "sapient",
+  "to": "sapient",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d335a220a0a616c6572745f69642d352208726561736f6e2d372208726561736f6e2d3828016a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d335a220a0a616c6572745f69642d352208726561736f6e2d372208726561736f6e2d3828016a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "model": {
+    "@kind": "alert_ack",
+    "sapient.timestamp_seconds": "100",
+    "sapient.timestamp_nanos": "137",
+    "sapient.node_id": "node_id-2",
+    "sapient.destination_id": "destination_id-3",
+    "sapient.additional_information": "additional_information-4",
+    "sapient.alert_ack_alert_id": "alert_id-5",
+    "sapient.alert_ack_alert_ack_status": "1",
+    "sapient.alert_ack_reason.#": "2",
+    "sapient.alert_ack_reason[0].sapient.alert_ack_reason_item": "reason-7",
+    "sapient.alert_ack_reason[1].sapient.alert_ack_reason_item": "reason-8"
+  }
+}

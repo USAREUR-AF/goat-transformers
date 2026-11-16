@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-actuator_output_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd8c0000c97eb9770100e5a3cb7f00000000bcf74f53",
+  "expect": "fd8c0000c97eb9770100e5a3cb7f00000000bcf74f53",
+  "model": {
+    "@kind": "actuator_output_status"
+  }
+}

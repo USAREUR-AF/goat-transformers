@@ -1,0 +1,7 @@
+{
+  "name": "41-default-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.6.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\nfield lat @lat float\ndefault lat 9999999\ndefault callsign NONE\n"
+}

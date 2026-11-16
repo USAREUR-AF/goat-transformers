@@ -1,0 +1,7 @@
+{
+  "name": "typemap-on-json-to-geojson",
+  "from": "conformance-rules-json",
+  "to": "geojson",
+  "input": "{\"schema\":\"rules\",\"id\":\"a1\",\"rev\":6,\"kind\":\"F\",\"pos\":{\"lat\":1.5,\"latitude\":1.5,\"lon\":2.5,\"alt\":10},\"cls\":1,\"how\":\"M\",\"status\":\"yes\",\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5,10]},\"properties\":{\"type\":\"a-f-G\",\"how\":\"m-g\"},\"id\":\"a1\"}"
+}

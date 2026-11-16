@@ -1,0 +1,7 @@
+{
+  "name": "list-member-not-an-array",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":\"x\"},\"id\":\"u4\"}",
+  "expect_error": "malformed-wire"
+}

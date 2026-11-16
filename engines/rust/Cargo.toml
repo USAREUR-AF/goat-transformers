@@ -1,0 +1,14 @@
+[package]
+name = "goat-transformers"
+version = "0.1.0"
+edition = "2021"
+description = "Reference engine for data-driven any-to-any tactical message transformation. std-only."
+license = "Apache-2.0"
+
+[[bin]]
+name = "goat-xf"
+path = "src/main.rs"
+
+[lib]
+name = "goat_transformers"
+path = "src/lib.rs"

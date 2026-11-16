@@ -1,0 +1,14 @@
+# Conformance probe pack for `swap` on the `bits` wire in least-significant-
+# bit-first order (spec 0.6). Public. No kinds. 4-byte words. A swapped field in
+# an `lsb` pack is big-endian.
+format     conformance-rules-bits-lsb
+version    0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire       bits
+word_bytes 4
+field  time_ms   0:0:16   uint  swap                 # bytes 0 to 1, big-endian
+field  course    0:16:16  uscale:1/100               # bytes 2 to 3, little-endian (no swap)
+field  lat       1:0:32   sscale:1/10000000  swap    # bytes 4 to 7, big-endian
+field  ce        2:0:32   f32  swap                  # bytes 8 to 11, big-endian single
+field  callsign  3:0:32   ascii  swap                # bytes 12 to 15, last character first

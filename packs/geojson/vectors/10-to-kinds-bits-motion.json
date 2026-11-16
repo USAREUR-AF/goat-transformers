@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-bits-motion",
+  "from": "geojson",
+  "to": "demo-kinds-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.5,30.25]},\"properties\":{\"time_ms\":5000,\"course\":270.55,\"speed_ms\":42.15},\"id\":\"g1\"}",
+  "expect": "88130000025bb0026766865fd312df510000771000000000"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-att_pos_mocap",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd7800006c8b8b8a00002231b24d000000800000803f0000a03f0000c03f0000e03f0000304000009040000080c0",
+  "expect": "fd7800006c8b8b8a00002231b24d000000800000803f0000a03f0000c03f0000e03f0000304000009040000080c0",
+  "model": {
+    "@kind": "att_pos_mocap"
+  }
+}

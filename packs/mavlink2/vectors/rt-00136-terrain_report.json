@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-terrain_report",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1600006a898988000050b7d207b0482df8000020c0000040bfa007775b4eaf",
+  "expect": "fd1600006a898988000050b7d207b0482df8000020c0000040bfa007775b4eaf",
+  "model": {
+    "@kind": "terrain_report"
+  }
+}

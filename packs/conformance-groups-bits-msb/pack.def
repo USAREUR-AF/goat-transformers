@@ -1,0 +1,24 @@
+# Conformance probe pack for groups (spec 0.7) on the `bits` wire, most
+# significant bit first, two bytes per word. Public. No kinds.
+#
+#   byte 0      [n : 6][number of items : 2]
+#   byte 1      two 4-bit nums, a group with the fixed count 2
+#   then        one 3-byte item per count: qty, then a two-character label
+#
+# The message is padded with zero bits to whole 16-bit words.
+format     conformance-groups-bits-msb
+version    0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 2
+bit_order  msb
+field   probe.n  0:0:6  uint
+group   probe.nums  0:8  item 4  count 2
+  field  probe.val  0:0:4  uint
+end
+group   probe.items  1:0  item 24  count 0:6:2
+  field  probe.qty    0:0:8   uint
+  field  probe.label  0:8:16  ascii
+end

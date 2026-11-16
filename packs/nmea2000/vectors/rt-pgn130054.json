@@ -1,0 +1,15 @@
+{
+  "name": "pgn130054-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06fc01a7b743a64ed19b9343c2af3498070c",
+  "expect": "06fc01a7b743a64ed19b9343c2af3498070c",
+  "model": {
+    "@kind": "pgn130054",
+    "n2k.group_repetition_interval_gri": "-1.505511513",
+    "n2k.station_identifier": "N",
+    "n2k.station_snr": "-256.47",
+    "n2k.station_ecd": "-1.346223213",
+    "n2k.station_asf": "0.201824308"
+  }
+}

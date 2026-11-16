@@ -1,0 +1,13 @@
+{
+  "name": "pgn65379-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "63ff003b87f2c07ea0ea",
+  "expect": "63ff003b87f2c07ea0ea",
+  "model": {
+    "@kind": "pgn65379",
+    "n2k.pgn65379_pilot_mode": "49394",
+    "n2k.sub_mode": "41086",
+    "n2k.pgn65379_pilot_mode_data": "234"
+  }
+}

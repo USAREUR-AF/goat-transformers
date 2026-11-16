@@ -1,0 +1,25 @@
+{
+  "name": "pgn129798-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06fb0165b0b9cf32114264a96e546a341bb87e982e4d1fe67d49dd106001",
+  "expect": "06fb0165b0b9cf32114264a96e546a341bb87e982e4d1fe67d49dd106001",
+  "model": {
+    "@kind": "pgn129798",
+    "n2k.pgn129798_message_id": "37",
+    "n2k.repeat_indicator": "1",
+    "n2k.user_id": "852474288",
+    "lon": "-145.3047279",
+    "lat": "87.9383662",
+    "n2k.position_accuracy": "1",
+    "n2k.raim": "1",
+    "n2k.time_stamp": "6",
+    "n2k.cog": "3.244",
+    "speed_ms": "1192.8",
+    "n2k.communication_state": "401229",
+    "n2k.ais_transceiver_information": "28",
+    "n2k.altitude": "2829377.25",
+    "n2k.reserved_for_regional_applications": "96",
+    "n2k.dte": "1"
+  }
+}

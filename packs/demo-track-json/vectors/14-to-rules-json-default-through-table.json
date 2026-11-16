@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-json-default-through-table",
+  "from": "demo-track-json",
+  "to": "conformance-rules-json",
+  "input": "{\"id\":\"t2\",\"type\":\"a-n-X\",\"how\":\"h-e\",\"alt\":120,\"track\":{\"confirmed\":false}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"t2\",\"rev\":6,\"kind\":\"a-n-X\",\"pos\":{\"alt\":120},\"cls\":2,\"how\":\"h-e\",\"status\":\"no\",\"meta\":{\"live\":true,\"tag\":\"7\"}}"
+}

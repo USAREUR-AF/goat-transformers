@@ -1,0 +1,11 @@
+{
+  "name": "ident-ascii-empty",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "2328400000000000000041480000403e024e003e1361c0557d4ce4b520df0000",
+  "expect": "2328400000000000000041480000403e024e003e1361c0557d4ce4b520df0000",
+  "model": {
+    "@kind": "ident",
+    "callsign": ""
+  }
+}

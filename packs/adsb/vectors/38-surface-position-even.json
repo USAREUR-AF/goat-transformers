@@ -1,0 +1,22 @@
+{
+  "name": "surface-position-even",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8c4841753aab238733c8cd4020b1",
+  "expect": "8c4841753aab238733c8cd4020b1",
+  "model": {
+    "@kind": "surface-position-tc7",
+    "adsb.df": "17",
+    "adsb.tc": "7",
+    "adsb.icao": "4735349",
+    "adsb.ca": "4",
+    "adsb.movement_raw": "42",
+    "adsb.track_valid": "1",
+    "adsb.track_raw": "50",
+    "adsb.cpr_odd": "0",
+    "adsb.cpr_lat": "115609",
+    "adsb.cpr_lon": "116941"
+  },
+  "source": "specification",
+  "reference": "published message 8C4841753AAB238733C8CD4020B1: The 1090 Megahertz Riddle, 2nd ed., https://mode-s.org/1090mhz/, ADS-B chapter 4 (Surface position)"
+}

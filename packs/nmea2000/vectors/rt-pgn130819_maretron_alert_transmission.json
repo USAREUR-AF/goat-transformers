@@ -1,0 +1,19 @@
+{
+  "name": "pgn130819_maretron_alert_transmission-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03ff018980b22ce5706fd137046b00000000faf606",
+  "expect": "03ff018980b22ce5706fd137046b00000000faf606",
+  "model": {
+    "@kind": "pgn130819_maretron_alert_transmission",
+    "n2k.alert_type": "2",
+    "n2k.alert_category": "11",
+    "n2k.alert_system": "44",
+    "n2k.alert_sub_system": "229",
+    "n2k.alert_id": "28528",
+    "n2k.data_source_network_id_name": "1795438545",
+    "n2k.data_source_instance": "250",
+    "n2k.data_source_index_source": "246",
+    "n2k.alert_occurrence_number": "6"
+  }
+}

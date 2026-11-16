@@ -1,0 +1,7 @@
+{
+  "name": "nested-item-field-fails-its-transform",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u8\",\"items\":[{\"subs\":[{\"v\":1.5}]}]}",
+  "expect_error": "transform-decode"
+}

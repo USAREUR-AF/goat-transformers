@@ -1,0 +1,10 @@
+{
+  "name": "forced-string-when",
+  "from": "conformance-geojson",
+  "to": "conformance-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"schema\":\"probe\",\"rev\":1},\"profile\":\"probe\",\"id\":\"c2\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"schema\":\"probe\",\"rev\":\"1\"},\"profile\":\"probe\",\"id\":\"c2\"}",
+  "model": {
+    "@kind": "v1"
+  }
+}

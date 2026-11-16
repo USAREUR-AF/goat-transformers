@@ -1,0 +1,7 @@
+{
+  "name": "pfloat-infinity",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a01755a0e090000000000805640150000807f",
+  "expect_error": "transform-decode"
+}

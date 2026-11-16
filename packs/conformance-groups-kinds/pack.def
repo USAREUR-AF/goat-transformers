@@ -1,0 +1,21 @@
+# Conformance probe pack for groups and kinds (spec 0.7) on the `json` wire.
+# Public. A common group, a group inside a kind, and `requires <list>`: encode
+# picks `listed` only when the entity has the list with at least one item.
+format  conformance-groups-kinds
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid  id  string
+group   probe.names  names
+  field  probe.tag  .  string
+end
+kind     listed
+when     shape  listed
+requires probe.items
+group    probe.items  items
+  field  probe.label  name  string
+end
+kind     bare
+when     shape  bare

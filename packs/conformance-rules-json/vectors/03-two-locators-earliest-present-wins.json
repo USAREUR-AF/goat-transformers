@@ -1,0 +1,10 @@
+{
+  "name": "two-locators-earliest-present-wins",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a3\",\"rev\":6,\"pos\":{\"latitude\":2,\"lat\":1},\"cls\":2,\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a3\",\"rev\":6,\"pos\":{\"lat\":1,\"latitude\":1,\"alt\":-1},\"cls\":2,\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "lat": "1"
+  }
+}

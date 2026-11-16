@@ -1,0 +1,13 @@
+{
+  "name": "pgn60416_iso_transport_protocol_connection_management_end_of_message-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ec001375d44500bfb801",
+  "expect": "00ec001375d44500bfb801",
+  "model": {
+    "@kind": "pgn60416_iso_transport_protocol_connection_management_end_of_message",
+    "n2k.total_message_size": "54389",
+    "n2k.total_number_of_frames_received": "69",
+    "n2k.pgn": "112831"
+  }
+}

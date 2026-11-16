@@ -1,0 +1,22 @@
+# Conformance probe pack for the mapping rules of spec 0.6 on the `protobuf`
+# wire. Public. No kinds. Exercises `typemap` on the protobuf wire (ruling 18 of
+# 0.5), a value table from a varint to a model string, `default`, `const`, and
+# one key at two paths.
+format   conformance-rules-protobuf
+version  0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses     track
+wire     protobuf
+field    uid          1    pstring
+field    type         2    pstring               # through the pack-wide typemap
+field    track.class  3    pvarint  via class
+field    lat          4.1  pdouble
+field    lat          5    pdouble               # the same key at a second path
+field    speed_ms     6    pfloat
+const    4.3  1
+const    7    3
+default  track.class  bird                       # written as 2
+typemap  FRND a-f-G
+map      class  1  uas
+map      class  2  bird

@@ -1,0 +1,12 @@
+{
+  "name": "pgn130816_bep_marine_czone_zcf_bus_distribution-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff012781ea0505",
+  "expect": "00ff012781ea0505",
+  "model": {
+    "@kind": "pgn130816_bep_marine_czone_zcf_bus_distribution",
+    "n2k.chunk_index": "1514",
+    "n2k.flag": "5"
+  }
+}

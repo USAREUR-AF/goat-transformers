@@ -1,0 +1,14 @@
+{
+  "name": "pgn130826_mercury_bam_digital_data_proxy-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0aff0190803a1302b3",
+  "expect": "0aff0190803a1302b3",
+  "model": {
+    "@kind": "pgn130826_mercury_bam_digital_data_proxy",
+    "n2k.pgn130826_type": "58",
+    "n2k.pgn130826_instance": "19",
+    "n2k.pgn130826_field4": "2",
+    "n2k.flag": "179"
+  }
+}

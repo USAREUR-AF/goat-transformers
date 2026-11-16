@@ -1,0 +1,23 @@
+{
+  "name": "pgn129556-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14fa01d20d44bcc0e60d3d9ebb2a04e67273fd55a8aa1afa0aebf61e27",
+  "expect": "14fa01d20d44bcc0e60d3d9ebb2a04e67273fd55a8aa1afa0aebf61e27",
+  "model": {
+    "@kind": "pgn129556",
+    "n2k.prn": "210",
+    "n2k.na": "17421",
+    "n2k.cna": "1",
+    "n2k.hna": "23",
+    "n2k.epsilon_na": "59072",
+    "n2k.deltatna_dot": "13",
+    "n2k.omega_na": "40509",
+    "n2k.delta_tna": "273083",
+    "n2k.tna": "7566054",
+    "n2k.lambda_na": "11032061",
+    "n2k.delta_ina": "16390826",
+    "n2k.tau_ca": "251063050",
+    "n2k.tau_na": "625"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ruling-04-table-miss-of-another-type-fails-later-line-not-tried",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"conf\":\"medium\",\"conf2\":0.5}",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "ruling-10-empty-context-counts-as-given",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"s1\":\"x\"}",
+  "context": {},
+  "expect": "{\"id\":\"a\",\"name\":\"COMMON\",\"s1\":\"x\",\"slot\":\"h-c\",\"j1\":\"x\",\"marker\":\"present\",\"k\":2}"
+}

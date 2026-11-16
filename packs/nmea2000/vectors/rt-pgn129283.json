@@ -1,0 +1,14 @@
+{
+  "name": "pgn129283-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f901a14bf417f093",
+  "expect": "03f901a14bf417f093",
+  "model": {
+    "@kind": "pgn129283",
+    "n2k.sid": "161",
+    "n2k.xte_mode": "11",
+    "n2k.navigation_terminated": "1",
+    "n2k.xte": "-18129817.72"
+  }
+}

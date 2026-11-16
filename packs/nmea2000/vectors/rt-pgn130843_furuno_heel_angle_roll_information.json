@@ -1,0 +1,14 @@
+{
+  "name": "pgn130843_furuno_heel_angle_roll_information-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1bff013f87fa22713bc2c12337",
+  "expect": "1bff013f87fa22713bc2c12337",
+  "model": {
+    "@kind": "pgn130843_furuno_heel_angle_roll_information",
+    "n2k.heel": "0.8954",
+    "n2k.pgn130843_field4": "1.5217",
+    "n2k.field6": "-1.5934",
+    "n2k.field8": "1.4115"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-xml-plain-root",
+  "from": "geojson",
+  "to": "conformance-rules-xml",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"Q\"},\"id\":\"g2\"}",
+  "expect": "<item id=\"g2\" v=\"1\"/>"
+}

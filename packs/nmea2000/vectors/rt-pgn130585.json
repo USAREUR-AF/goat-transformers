@@ -1,0 +1,15 @@
+{
+  "name": "pgn130585-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19fe0106a2737b810e0000",
+  "expect": "19fe0106a2737b810e0000",
+  "model": {
+    "@kind": "pgn130585",
+    "n2k.source_number": "6",
+    "n2k.pgn130585_status": "2",
+    "n2k.forget_device": "2",
+    "n2k.discovering": "2",
+    "n2k.bluetooth_address": "243366771"
+  }
+}

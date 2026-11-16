@@ -1,0 +1,7 @@
+{
+  "name": "ruling-08-packed-singles-of-three-bytes",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a01753a03000000",
+  "expect_error": "malformed-wire"
+}

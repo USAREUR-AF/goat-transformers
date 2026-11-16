@@ -1,0 +1,18 @@
+{
+  "name": "pgn129547-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bfa013eb0f59e60feb76a7194b630d641d5",
+  "expect": "0bfa013eb0f59e60feb76a7194b630d641d5",
+  "model": {
+    "@kind": "pgn129547",
+    "n2k.sid": "62",
+    "n2k.rms_std_dev_of_range_inputs": "628.96",
+    "n2k.std_dev_of_major_error_ellipse": "247.34",
+    "n2k.std_dev_of_minor_error_ellipse": "471.02",
+    "n2k.orientation_of_error_ellipse": "2.9034",
+    "n2k.std_dev_lat_error": "467.4",
+    "n2k.std_dev_lon_error": "548.32",
+    "n2k.std_dev_alt_error": "545.93"
+  }
+}

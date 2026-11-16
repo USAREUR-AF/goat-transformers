@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_seatalk1_pilot_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b87f081845d1f4b4e0e8e",
+  "expect": "00ef013b87f081845d1f4b4e0e8e",
+  "model": {
+    "@kind": "pgn126720_seatalk1_pilot_mode",
+    "n2k.unknown1": "4923229",
+    "n2k.pgn126720_pilot_mode": "78",
+    "n2k.sub_mode": "14",
+    "n2k.pgn126720_pilot_mode_data": "-114"
+  }
+}

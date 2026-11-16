@@ -1,0 +1,11 @@
+{
+  "name": "pgn65292_maretron_automation_function_master-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0cff008980963f08830000",
+  "expect": "0cff008980963f08830000",
+  "model": {
+    "@kind": "pgn65292_maretron_automation_function_master",
+    "n2k.data": "2198355862"
+  }
+}

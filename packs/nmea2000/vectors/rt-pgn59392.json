@@ -1,0 +1,13 @@
+{
+  "name": "pgn59392-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00e800de64000000007003",
+  "expect": "00e800de64000000007003",
+  "model": {
+    "@kind": "pgn59392",
+    "n2k.pgn59392_control": "222",
+    "n2k.group_function": "100",
+    "n2k.pgn": "225280"
+  }
+}

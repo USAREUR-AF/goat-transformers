@@ -1,0 +1,10 @@
+{
+  "name": "precise-to-geojson",
+  "from": "demo-kinds-bits",
+  "to": "geojson",
+  "input": "4d000000030000004741544f5200000061133e004e023e40df20b5e44c7d55c00000484100000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027]},\"properties\":{\"time_ms\":77,\"ce\":12.5,\"callsign\":\"GATOR\"}}",
+  "model": {
+    "@kind": "precise"
+  }
+}

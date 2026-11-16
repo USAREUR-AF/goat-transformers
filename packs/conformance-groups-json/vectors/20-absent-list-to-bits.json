@@ -1,0 +1,7 @@
+{
+  "name": "absent-list-to-bits",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits",
+  "input": "{\"id\":\"u1\"}",
+  "expect": "7531000000"
+}

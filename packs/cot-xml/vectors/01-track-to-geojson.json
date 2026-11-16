@@ -1,0 +1,8 @@
+{
+  "name": "track-to-geojson",
+  "from": "cot-xml",
+  "to": "geojson",
+  "input": "<?xml version=\"1.0\"?><event version=\"2.0\" uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"ce\":45.3,\"le\":99.5,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+  "model": { "uid": "J-01334", "lat": "30.0090027", "lon": "-85.9578182", "time_ms": "1614456000000", "callsign": "GATOR" }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn129027-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f801e0d8ed146ef85c9f",
+  "expect": "03f801e0d8ed146ef85c9f",
+  "model": {
+    "@kind": "pgn129027",
+    "n2k.sid": "224",
+    "n2k.time_delta": "1.08",
+    "n2k.latitude_delta": "0.020039769444444445",
+    "n2k.longitude_delta": "-0.017592200000000002"
+  }
+}

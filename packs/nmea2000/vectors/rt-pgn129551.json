@@ -1,0 +1,23 @@
+{
+  "name": "pgn129551-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0ffa01358ea7cc33b26a3027052b29ed923771a96b7560",
+  "expect": "0ffa01358ea7cc33b26a3027052b29ed923771a96b7560",
+  "model": {
+    "@kind": "pgn129551",
+    "n2k.sid": "53",
+    "n2k.pgn129551_channel": "142",
+    "n2k.pgn129551_signal_strength": "-13052281.21",
+    "n2k.signal_snr": "123.94",
+    "n2k.pgn129551_frequency": "6906852230",
+    "n2k.pgn129551_station_type": "13",
+    "n2k.reference_station_id": "2350",
+    "n2k.differential_signal_bit_rate": "23",
+    "n2k.differential_signal_detection_mode": "1",
+    "n2k.used_as_correction_source": "1",
+    "n2k.differential_source": "7",
+    "n2k.time_since_last_sat_differential_sync": "275.61",
+    "n2k.satellite_service_id_no": "24693"
+  }
+}

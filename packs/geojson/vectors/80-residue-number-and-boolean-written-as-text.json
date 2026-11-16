@@ -1,0 +1,7 @@
+{
+  "name": "residue-number-and-boolean-written-as-text",
+  "from": "geojson",
+  "to": "geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"extra\":5,\"flag\":true},\"id\":\"r1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"extra\":\"5\",\"flag\":\"true\"},\"id\":\"r1\"}"
+}

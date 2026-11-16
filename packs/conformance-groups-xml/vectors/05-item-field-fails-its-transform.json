@@ -1,0 +1,7 @@
+{
+  "name": "item-field-fails-its-transform",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u5\"><body><item><qty>1</qty></item><item><qty>x</qty></item></body></msg>",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn130820_fusion_volumes-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811d80ac32c469",
+  "expect": "04ff01a3811d80ac32c469",
+  "model": {
+    "@kind": "pgn130820_fusion_volumes",
+    "n2k.pgn130820_fusion_volumes_zone1": "172",
+    "n2k.pgn130820_fusion_volumes_zone2": "50",
+    "n2k.pgn130820_fusion_volumes_zone3": "196",
+    "n2k.pgn130820_fusion_volumes_zone4": "105"
+  }
+}

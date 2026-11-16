@@ -1,0 +1,12 @@
+{
+  "name": "ruling-03-const-not-checked-and-written",
+  "from": "conformance-rulings-bits",
+  "to": "conformance-rulings-bits",
+  "input": "070000330500",
+  "expect": "070009330500",
+  "model": {
+    "probe.n": "7",
+    "probe.qty": "51",
+    "probe.val": "5"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-command_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd230000364c4c4b00000000404000009840000070c0000000c03312b0c5b465b4c500005040b21c8960370ee5",
+  "expect": "fd230000364c4c4b00000000404000009840000070c0000000c03312b0c5b465b4c500005040b21c8960370ee5",
+  "model": {
+    "@kind": "command_int"
+  }
+}

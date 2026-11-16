@@ -1,0 +1,11 @@
+{
+  "name": "pgn65282_bep_marine_czone_alarm_event-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02ff0027810062",
+  "expect": "02ff0027810062",
+  "model": {
+    "@kind": "pgn65282_bep_marine_czone_alarm_event",
+    "n2k.dipswitch": "98"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "pgn126720_airmar_calibrate_compass-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01878021950d0dcebcf0efefb16068fb9b27c18e1faaf1757f",
+  "expect": "00ef01878021950d0dcebcf0efefb16068fb9b27c18e1faaf1757f",
+  "model": {
+    "@kind": "pgn126720_airmar_calibrate_compass",
+    "n2k.calibrate_function": "149",
+    "n2k.calibration_status": "13",
+    "n2k.verify_score": "13",
+    "n2k.x_axis_gain_value": "-172.02",
+    "n2k.y_axis_gain_value": "-41.12",
+    "n2k.z_axis_gain_value": "-199.85",
+    "n2k.x_axis_linear_offset": "267.2",
+    "n2k.y_axis_linear_offset": "-256.05",
+    "n2k.z_axis_linear_offset": "-160.89",
+    "n2k.x_axis_angular_offset": "807.8",
+    "n2k.pitch_and_roll_damping": "-183.5",
+    "n2k.compass_rate_gyro_damping": "1631.45"
+  }
+}

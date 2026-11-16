@@ -1,0 +1,12 @@
+{
+  "name": "pgn65305_simnet_pilot_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19ff004187dd0a5082",
+  "expect": "19ff004187dd0a5082",
+  "model": {
+    "@kind": "pgn65305_simnet_pilot_mode",
+    "n2k.pgn65305_model": "221",
+    "n2k.pgn65305_mode": "33360"
+  }
+}

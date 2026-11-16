@@ -1,0 +1,24 @@
+{
+  "name": "pgn129810-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "12fb01549339f108ed4e324b323731434e324b37424445f28f3238958da92157e146078008a1",
+  "expect": "12fb01549339f108ed4e324b323731434e324b37424445f28f3238958da92157e146078008a1",
+  "model": {
+    "@kind": "pgn129810",
+    "n2k.pgn129810_message_id": "20",
+    "n2k.repeat_indicator": "1",
+    "n2k.user_id": "150026643",
+    "n2k.type_of_ship": "237",
+    "n2k.vendor_id": "N2K271C",
+    "n2k.callsign": "N2K7BDE",
+    "n2k.pgn129810_length": "3685",
+    "n2k.beam": "1438.6",
+    "n2k.position_reference_from_starboard": "3624.5",
+    "n2k.position_reference_from_bow": "861.7",
+    "n2k.mothership_user_id": "122085719",
+    "n2k.gnss_type": "8",
+    "n2k.ais_transceiver_information": "8",
+    "n2k.sequence_id": "161"
+  }
+}

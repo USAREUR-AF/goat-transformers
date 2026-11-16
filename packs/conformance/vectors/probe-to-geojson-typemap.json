@@ -1,0 +1,7 @@
+{
+  "name": "probe-to-geojson-typemap",
+  "from": "conformance",
+  "to": "geojson",
+  "input": "<item id=\"x4\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"type\":\"a-h-G\"},\"id\":\"x4\"}"
+}

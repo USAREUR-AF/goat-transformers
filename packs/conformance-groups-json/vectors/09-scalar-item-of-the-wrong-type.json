@@ -1,0 +1,7 @@
+{
+  "name": "scalar-item-of-the-wrong-type",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u9\",\"names\":[\"a\",5]}",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "pgn65403-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "7bff001e835f760b832a62",
+  "expect": "7bff001e835f760b832a62",
+  "model": {
+    "@kind": "pgn65403",
+    "n2k.zone_index": "95",
+    "n2k.red": "118",
+    "n2k.green": "11",
+    "n2k.blue": "131",
+    "n2k.cold_white": "42",
+    "n2k.warm_white": "98"
+  }
+}

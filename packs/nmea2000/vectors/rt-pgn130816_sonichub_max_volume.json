@@ -1,0 +1,13 @@
+{
+  "name": "pgn130816_sonichub_max_volume-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0113810017292db4",
+  "expect": "00ff0113810017292db4",
+  "model": {
+    "@kind": "pgn130816_sonichub_max_volume",
+    "n2k.pgn130816_control": "41",
+    "n2k.pgn130816_zone": "45",
+    "n2k.pgn130816_level": "180"
+  }
+}

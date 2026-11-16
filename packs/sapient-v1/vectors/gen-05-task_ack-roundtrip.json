@@ -1,0 +1,19 @@
+{
+  "name": "gen-task_ack-roundtrip",
+  "from": "sapient-v1",
+  "to": "sapient-v1",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d334a280a097461736b5f69642d3410011a08726561736f6e2d36220f0a06747970652d37120575726c2d38",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d334a280a097461736b5f69642d3410011a08726561736f6e2d36220f0a06747970652d37120575726c2d38",
+  "model": {
+    "@kind": "task_ack",
+    "sapient1.timestamp_seconds": "100",
+    "sapient1.timestamp_nanos": "137",
+    "sapient1.node_id": "node_id-2",
+    "sapient1.destination_id": "destination_id-3",
+    "sapient1.task_ack_task_id": "task_id-4",
+    "sapient1.task_ack_task_status": "1",
+    "sapient1.task_ack_reason": "reason-6",
+    "sapient1.associated_file_type": "type-7",
+    "sapient1.associated_file_url": "url-8"
+  }
+}

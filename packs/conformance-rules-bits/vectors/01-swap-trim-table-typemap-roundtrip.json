@@ -1,0 +1,15 @@
+{
+  "name": "swap-trim-table-typemap-roundtrip",
+  "from": "conformance-rules-bits",
+  "to": "conformance-rules-bits",
+  "input": "5a341240ee2d120146524e4441204220200000002040",
+  "expect": "5a341240ee2d120146524e4441204200000000002040",
+  "model": {
+    "time_ms": "4660",
+    "lat": "30.5",
+    "track.class": "uas",
+    "type": "a-f-G",
+    "callsign": "A B",
+    "ce": "2.5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_airmar_nmea2000_options-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187802e01",
+  "expect": "00ef0187802e01",
+  "model": {
+    "@kind": "pgn126720_airmar_nmea2000_options",
+    "n2k.transmission_interval": "1"
+  }
+}

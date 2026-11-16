@@ -1,0 +1,19 @@
+{
+  "name": "pgn65293_lowrance_gps_configuration-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0dff008c80c79927441a47",
+  "expect": "0dff008c80c79927441a47",
+  "model": {
+    "@kind": "pgn65293_lowrance_gps_configuration",
+    "n2k.a": "199",
+    "n2k.b": "153",
+    "n2k.c": "7",
+    "n2k.d": "2",
+    "n2k.e": "68",
+    "n2k.f": "10",
+    "n2k.g": "1",
+    "n2k.h": "7",
+    "n2k.i": "4"
+  }
+}

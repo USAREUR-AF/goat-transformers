@@ -1,0 +1,15 @@
+{
+  "name": "event-to-geojson",
+  "from": "cot-protobuf",
+  "to": "geojson",
+  "input": "125f0a09612d662d472d552d432a074a2d303133333430809ccea8fe2e38809ccea8fe2e4a036d2d675161133e004e023e4059df20b5e44c7d55c061cdcccccccc4c45c0696666666666a64640710000000000e058407a09120712054741544f52",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"ce\":45.3,\"le\":99.5,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+  "model": {
+    "@kind": "cot_event",
+    "uid": "J-01334",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "time_ms": "1614456000000",
+    "callsign": "GATOR"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_fusion_set_equalizer-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a38116005b5d64c6",
+  "expect": "00ef01a38116005b5d64c6",
+  "model": {
+    "@kind": "pgn126720_fusion_set_equalizer",
+    "n2k.pgn126720_zone": "91",
+    "n2k.bass": "93",
+    "n2k.mid": "100",
+    "n2k.treble": "-58"
+  }
+}

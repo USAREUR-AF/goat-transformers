@@ -1,0 +1,7 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-rules-bits-lsb",
+  "to": "geojson",
+  "input": "12343930edd211c04020000044434241",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":4660,\"ce\":2.5,\"callsign\":\"ABCD\",\"course\":123.45}}"
+}

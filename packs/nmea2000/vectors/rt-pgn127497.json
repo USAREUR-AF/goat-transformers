@@ -1,0 +1,15 @@
+{
+  "name": "pgn127497-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09f20176c3f5b606a87abbc3",
+  "expect": "09f20176c3f5b606a87abbc3",
+  "model": {
+    "@kind": "pgn127497",
+    "n2k.pgn127497_instance": "118",
+    "n2k.trip_fuel_used": "62915",
+    "n2k.fuel_rate_average": "171.8",
+    "n2k.fuel_rate_economy": "3140",
+    "n2k.instantaneous_fuel_economy": "-1542.9"
+  }
+}

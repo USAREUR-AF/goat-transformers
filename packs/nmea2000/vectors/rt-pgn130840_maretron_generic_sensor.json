@@ -1,0 +1,13 @@
+{
+  "name": "pgn130840_maretron_generic_sensor-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "18ff0189803e8f19816ce0fa",
+  "expect": "18ff0189803e8f19816ce0fa",
+  "model": {
+    "@kind": "pgn130840_maretron_generic_sensor",
+    "n2k.data_instance": "62",
+    "n2k.data_format": "6543",
+    "n2k.pgn130840_value": "4209011841"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_airmar_true_wind_options-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187802201",
+  "expect": "00ef0187802201",
+  "model": {
+    "@kind": "pgn126720_airmar_true_wind_options",
+    "n2k.cog_substitution_for_hdg": "1"
+  }
+}

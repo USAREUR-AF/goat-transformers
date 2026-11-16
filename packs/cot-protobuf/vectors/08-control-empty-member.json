@@ -1,0 +1,10 @@
+{
+  "name": "control-empty-member",
+  "from": "cot-protobuf",
+  "to": "cot-protobuf",
+  "input": "0a00",
+  "expect": "0a00",
+  "model": {
+    "@kind": "tak_control"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn130818_simnet_reprogram_data-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02ff0141874548677b",
+  "expect": "02ff0141874548677b",
+  "model": {
+    "@kind": "pgn130818_simnet_reprogram_data",
+    "n2k.version": "18501",
+    "n2k.sequence": "31591"
+  }
+}

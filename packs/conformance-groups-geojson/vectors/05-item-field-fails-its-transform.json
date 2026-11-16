@@ -1,0 +1,7 @@
+{
+  "name": "item-field-fails-its-transform",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[{\"n\":\"x\"}]},\"id\":\"u5\"}",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn65290_bep_marine_czone_module_announce-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0aff002781899f61988cc7",
+  "expect": "0aff002781899f61988cc7",
+  "model": {
+    "@kind": "pgn65290_bep_marine_czone_module_announce",
+    "n2k.unique": "106377",
+    "n2k.field_b": "51590",
+    "n2k.field_c": "2",
+    "n2k.dipswitch": "199"
+  }
+}

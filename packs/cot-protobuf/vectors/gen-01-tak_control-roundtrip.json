@@ -1,0 +1,13 @@
+{
+  "name": "gen-tak_control-roundtrip",
+  "from": "cot-protobuf",
+  "to": "cot-protobuf",
+  "input": "0a1408641089011a0d636f6e746163745f7569642d32",
+  "expect": "0a1408641089011a0d636f6e746163745f7569642d32",
+  "model": {
+    "@kind": "tak_control",
+    "takproto.tak_control_min_proto_version": "100",
+    "takproto.tak_control_max_proto_version": "137",
+    "takproto.tak_control_contact_uid": "contact_uid-2"
+  }
+}

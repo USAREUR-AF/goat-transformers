@@ -1,0 +1,17 @@
+{
+  "name": "pgn127490-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02f20156040ca730991538599d827a",
+  "expect": "02f20156040ca730991538599d827a",
+  "model": {
+    "@kind": "pgn127490",
+    "n2k.inverter_motor_identifier": "86",
+    "n2k.operating_mode": "4",
+    "n2k.pgn127490_motor_temperature": "427.64",
+    "n2k.inverter_temperature": "392.16",
+    "n2k.coolant_temperature": "143.57",
+    "n2k.gear_temperature": "402.81",
+    "n2k.shaft_torque": "31362"
+  }
+}

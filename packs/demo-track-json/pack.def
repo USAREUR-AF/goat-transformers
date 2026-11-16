@@ -1,0 +1,41 @@
+# Synthetic flat JSON track. Public, no real standard. It maps every key of the
+# `core` and `track` modules, so it converts to and from any format without
+# dropping a key that format holds.
+format  demo-track-json
+version 0.5.0
+distribution public
+source  "synthetic format, no external standard"
+uses    track
+wire    json
+field   uid       id        string
+field   type      type      string
+field   time_ms   time      iso8601_ms
+field   how       how       string
+field   lat       lat       float
+field   lon       lon       float
+field   hae       alt       float
+field   ce        ce        float
+field   le        le        float
+field   callsign  name      string
+field   course    course    float
+field   speed_ms  speed     float
+field   track.source_id         track.source_id         string
+field   track.generation        track.generation        string
+field   track.vel_east_ms       track.vel_east_ms       float
+field   track.vel_north_ms      track.vel_north_ms      float
+field   track.vel_up_ms         track.vel_up_ms         float
+field   track.class             track.class             string
+field   track.confidence        track.confidence        float
+field   track.sigma_east_m      track.sigma_east_m      float
+field   track.sigma_north_m     track.sigma_north_m     float
+field   track.sigma_up_m        track.sigma_up_m        float
+field   track.confirmed         track.confirmed         bool
+field   track.coasting          track.coasting          bool
+field   track.simulated         track.simulated         bool
+field   track.header_simulated  track.header_simulated  bool
+field   track.test_data         track.test_data         bool
+field   track.final_update      track.final_update      bool
+group   track.identifiers       track.identifiers
+  field  track.id_scheme  scheme  string
+  field  track.id_value   value   string
+end

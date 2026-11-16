@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-generator_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2a0000c87cb7750100072b5c2e00000000000010c0000000bf0000a03f00004040000098401122762370610adcbfc97288f3db",
+  "expect": "fd2a0000c87cb7750100072b5c2e00000000000010c0000000bf0000a03f00004040000098401122762370610adcbfc97288f3db",
+  "model": {
+    "@kind": "generator_status"
+  }
+}

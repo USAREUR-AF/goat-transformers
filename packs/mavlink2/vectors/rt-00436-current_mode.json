@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-current_mode",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd090000dcbb37b40100588a93332fde170706",
+  "expect": "fd090000dcbb37b40100588a93332fde170706",
+  "model": {
+    "@kind": "current_mode"
+  }
+}

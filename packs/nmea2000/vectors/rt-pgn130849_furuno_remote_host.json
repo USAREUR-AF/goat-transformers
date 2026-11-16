@@ -1,0 +1,11 @@
+{
+  "name": "pgn130849_furuno_remote_host-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "21ff013f87ced7c54e00000000",
+  "expect": "21ff013f87ced7c54e00000000",
+  "model": {
+    "@kind": "pgn130849_furuno_remote_host",
+    "n2k.pgn130849_host": "1321588686"
+  }
+}

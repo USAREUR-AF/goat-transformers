@@ -1,0 +1,18 @@
+{
+  "name": "pgn127506-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "12f2018e36aa99942f583c00b624",
+  "expect": "12f2018e36aa99942f583c00b624",
+  "model": {
+    "@kind": "pgn127506",
+    "n2k.sid": "142",
+    "n2k.pgn127506_instance": "54",
+    "n2k.dc_type": "170",
+    "n2k.state_of_charge": "153",
+    "n2k.pgn127506_state_of_health": "148",
+    "n2k.time_remaining": "1354500",
+    "n2k.ripple_voltage": "0.06",
+    "n2k.remaining_capacity": "9398"
+  }
+}

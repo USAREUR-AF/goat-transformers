@@ -1,0 +1,14 @@
+{
+  "name": "pgn127488-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00f20131349a066f9a",
+  "expect": "00f20131349a066f9a",
+  "model": {
+    "@kind": "pgn127488",
+    "n2k.pgn127488_instance": "49",
+    "n2k.pgn127488_speed": "9869",
+    "n2k.boost_pressure": "2842200",
+    "n2k.tilt_trim": "-102"
+  }
+}

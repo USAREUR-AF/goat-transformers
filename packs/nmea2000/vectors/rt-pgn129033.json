@@ -1,0 +1,13 @@
+{
+  "name": "pgn129033-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09f8016133ff7fae1dacf5",
+  "expect": "09f8016133ff7fae1dacf5",
+  "model": {
+    "@kind": "pgn129033",
+    "n2k.date": "13153",
+    "n2k.time": "49797.5295",
+    "n2k.local_offset": "-158640"
+  }
+}

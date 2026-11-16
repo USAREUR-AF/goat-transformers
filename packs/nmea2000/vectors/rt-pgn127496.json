@@ -1,0 +1,14 @@
+{
+  "name": "pgn127496-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "08f20159ebb03c94812e54374b542f106c",
+  "expect": "08f20159ebb03c94812e54374b542f106c",
+  "model": {
+    "@kind": "pgn127496",
+    "n2k.time_to_empty": "1018227.545",
+    "n2k.distance_to_empty": "14123339.72",
+    "n2k.estimated_fuel_remaining": "19255",
+    "n2k.trip_run_time": "1813000.02"
+  }
+}

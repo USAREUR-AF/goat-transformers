@@ -1,0 +1,12 @@
+{
+  "name": "ruling-04-next-item-starts-where-the-nested-group-ends",
+  "from": "conformance-groups-bits-var",
+  "to": "conformance-groups-bits-var",
+  "input": "0207020a0b09020c0d",
+  "expect": "0207020a0b09020c0d",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.qty": "9",
+    "probe.items[1].probe.subs[1].probe.val": "13"
+  }
+}

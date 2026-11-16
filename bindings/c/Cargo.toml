@@ -1,0 +1,14 @@
+[package]
+name = "goat-transformers-c"
+version = "0.1.0"
+edition = "2021"
+description = "C ABI of the goat-transformers reference engine. std-only."
+license = "Apache-2.0"
+
+[lib]
+name = "goat_transformers_c"
+path = "src/lib.rs"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+goat-transformers = { path = "../../engines/rust" }

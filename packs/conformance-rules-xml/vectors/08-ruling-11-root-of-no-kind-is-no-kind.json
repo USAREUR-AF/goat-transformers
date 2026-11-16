@@ -1,0 +1,7 @@
+{
+  "name": "ruling-11-root-of-no-kind-is-no-kind",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<event id=\"p1\"/>",
+  "expect_error": "no-kind"
+}

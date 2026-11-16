@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-servo_output_raw",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd250000192525240000e81c7d14bf7096c46d18446c1bc0f213c967a0bb774e6325b7fc0ad35eaab28106585a2fae",
+  "expect": "fd250000192525240000e81c7d14bf7096c46d18446c1bc0f213c967a0bb774e6325b7fc0ad35eaab28106585a2fae",
+  "model": {
+    "@kind": "servo_output_raw"
+  }
+}

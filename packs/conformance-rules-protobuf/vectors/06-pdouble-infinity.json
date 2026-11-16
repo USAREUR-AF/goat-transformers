@@ -1,0 +1,7 @@
+{
+  "name": "pdouble-infinity",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027035220909000000000000f07f",
+  "expect_error": "transform-decode"
+}

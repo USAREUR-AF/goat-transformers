@@ -1,0 +1,32 @@
+{
+  "name": "pgn130567-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07fe01a3996a1a14e8797bd26f4e27450591dce9daa48d77b1c3e0",
+  "expect": "07fe01a3996a1a14e8797bd26f4e27450591dce9daa48d77b1c3e0",
+  "model": {
+    "@kind": "pgn130567",
+    "n2k.watermaker_operating_state": "35",
+    "n2k.production_start_stop": "2",
+    "n2k.rinse_start_stop": "1",
+    "n2k.low_pressure_pump_status": "2",
+    "n2k.high_pressure_pump_status": "1",
+    "n2k.emergency_stop": "2",
+    "n2k.product_solenoid_valve_status": "2",
+    "n2k.flush_mode_status": "2",
+    "n2k.salinity_status": "2",
+    "n2k.sensor_status": "1",
+    "n2k.oil_change_indicator_status": "2",
+    "n2k.pgn130567_filter_status": "2",
+    "n2k.pgn130567_system_status": "1",
+    "n2k.salinity": "59412",
+    "n2k.product_water_temperature": "316.09",
+    "n2k.pre_filter_pressure": "2862600",
+    "n2k.post_filter_pressure": "1006200",
+    "n2k.feed_pressure": "1349000",
+    "n2k.system_high_pressure": "56465000",
+    "n2k.product_water_flow": "-949.5",
+    "n2k.brine_water_flow": "-2927.6",
+    "n2k.run_time": "3770921335"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn128267-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bf501fbd315fe2ce38b27",
+  "expect": "0bf501fbd315fe2ce38b27",
+  "model": {
+    "@kind": "pgn128267",
+    "n2k.sid": "251",
+    "n2k.depth": "7548492.35",
+    "n2k.offset": "-29.725",
+    "n2k.range": "390"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-canonical-track-v2-missing-required",
+  "from": "cot-xml",
+  "to": "canonical-track-v2",
+  "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect_error": "no-kind"
+}

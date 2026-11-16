@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-camera_thermal_range",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1e0000a01c57150100678175690000004000007040000098c0000040c00000a0bf0000003f481f",
+  "expect": "fd1e0000a01c57150100678175690000004000007040000098c0000040c00000a0bf0000003f481f",
+  "model": {
+    "@kind": "camera_thermal_range"
+  }
+}

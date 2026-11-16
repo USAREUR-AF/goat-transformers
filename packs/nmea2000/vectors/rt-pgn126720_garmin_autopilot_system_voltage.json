@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_system_voltage-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e58010170404029e00b76b",
+  "expect": "00ef01e58010170404029e00b76b",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_system_voltage",
+    "n2k.system_voltage": "275.75"
+  }
+}

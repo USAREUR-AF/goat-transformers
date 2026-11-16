@@ -1,0 +1,7 @@
+{
+  "name": "const-not-checked-on-decode",
+  "from": "conformance-rules-bits",
+  "to": "conformance-rules-bits",
+  "input": "00341240ee2d120146524e4441420000000000002040",
+  "expect": "5a341240ee2d120146524e4441420000000000002040"
+}

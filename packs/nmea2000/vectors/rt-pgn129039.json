@@ -1,0 +1,31 @@
+{
+  "name": "pgn129039-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0ff8018cdbb46122ea531ad759fe55dea72bc1d3692cf29d217a00fc0125",
+  "expect": "0ff8018cdbb46122ea531ad759fe55dea72bc1d3692cf29d217a00fc0125",
+  "model": {
+    "@kind": "pgn129039",
+    "n2k.pgn129039_message_id": "12",
+    "n2k.repeat_indicator": "2",
+    "n2k.user_id": "576828635",
+    "lon": "-68.6140438",
+    "lat": "-56.4789671",
+    "n2k.position_accuracy": "1",
+    "n2k.raim": "1",
+    "n2k.time_stamp": "41",
+    "n2k.cog": "4.9451",
+    "speed_ms": "270.91",
+    "n2k.communication_state": "389676",
+    "n2k.ais_transceiver_information": "19",
+    "n2k.heading": "3.1265",
+    "n2k.unit_type": "1",
+    "n2k.integrated_display": "1",
+    "n2k.dsc": "1",
+    "n2k.band": "1",
+    "n2k.can_handle_msg22": "1",
+    "n2k.ais_mode": "1",
+    "n2k.ais_communication_state": "1",
+    "n2k.sequence_id": "37"
+  }
+}

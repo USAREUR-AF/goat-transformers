@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-request_data_stream",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd060000304343420000ea31c1986f46",
+  "expect": "fd060000304343420000ea31c1986f46",
+  "model": {
+    "@kind": "request_data_stream"
+  }
+}

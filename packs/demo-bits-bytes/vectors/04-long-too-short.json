@@ -1,0 +1,7 @@
+{
+  "name": "long-too-short",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "470200603aa4c011e302abcc",
+  "expect_error": "malformed-wire"
+}

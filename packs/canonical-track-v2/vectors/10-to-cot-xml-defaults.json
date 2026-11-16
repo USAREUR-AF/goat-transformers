@@ -1,0 +1,7 @@
+{
+  "name": "to-cot-xml-defaults",
+  "from": "canonical-track-v2",
+  "to": "cot-xml",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0043\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-1\",\"observedAt\":\"2026-01-01T00:00:00Z\",\"position\":{\"latitudeDeg\":45,\"longitudeDeg\":-73}}",
+  "expect": "<event version=\"2.0\" uid=\"trk-0043\" type=\"a-u-X\" time=\"2026-01-01T00:00:00.000Z\" start=\"2026-01-01T00:00:00.000Z\"><point lat=\"45\" lon=\"-73\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>"
+}

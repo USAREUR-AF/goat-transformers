@@ -1,0 +1,7 @@
+{
+  "name": "float-intvalued-and-negzero",
+  "from": "conformance",
+  "to": "geojson",
+  "input": "<item id=\"f1\" kind=\"friend\"><pos lat=\"30.0\" lon=\"-0.0\"/></item>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,30]},\"properties\":{\"type\":\"a-f-G\"},\"id\":\"f1\"}"
+}

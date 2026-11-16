@@ -1,0 +1,14 @@
+{
+  "name": "pgn129291-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bf901ca02492842ae",
+  "expect": "0bf901ca02492842ae",
+  "model": {
+    "@kind": "pgn129291",
+    "n2k.sid": "202",
+    "n2k.set_reference": "2",
+    "n2k.set": "1.0313",
+    "n2k.drift": "446.1"
+  }
+}

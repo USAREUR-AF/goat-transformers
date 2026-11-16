@@ -1,0 +1,27 @@
+{
+  "name": "pgn130569-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09fe0186c20be0cd3149a10df50a7b9a0c685b85af646bc31c9dc5f0f5",
+  "expect": "09fe0186c20be0cd3149a10df50a7b9a0c685b85af646bc31c9dc5f0f5",
+  "model": {
+    "@kind": "pgn130569",
+    "n2k.pgn130569_zone": "134",
+    "n2k.pgn130569_source": "194",
+    "n2k.number": "11",
+    "n2k.pgn130569_id": "1228000736",
+    "n2k.play_status": "161",
+    "n2k.elapsed_track_time": "62733",
+    "n2k.track_time": "31498",
+    "n2k.repeat_status": "10",
+    "n2k.shuffle_status": "9",
+    "n2k.save_favorite_number": "12",
+    "n2k.play_favorite_number": "23400",
+    "n2k.thumbs_up_down": "133",
+    "n2k.pgn130569_signal_strength": "175",
+    "n2k.radio_frequency": "4825690600",
+    "n2k.hd_frequency_multicast": "157",
+    "n2k.delete_favorite_number": "197",
+    "n2k.total_number_of_tracks": "62960"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "pgn130842_simnet_ais_class_bstatic_data_msg24_part_b-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1aff01418741c24ccc887f170a4e324b304344394e324b35303142ce937297ffa55b029238e526",
+  "expect": "1aff01418741c24ccc887f170a4e324b304344394e324b35303142ce937297ffa55b029238e526",
+  "model": {
+    "@kind": "pgn130842_simnet_ais_class_bstatic_data_msg24_part_b",
+    "n2k.repeat_indicator": "1",
+    "n2k.d": "194",
+    "n2k.e": "76",
+    "n2k.user_id": "394234060",
+    "n2k.type_of_ship": "10",
+    "n2k.vendor_id": "N2K0CD9",
+    "n2k.callsign": "N2K501B",
+    "n2k.pgn130842_length": "3783.8",
+    "n2k.beam": "3877",
+    "n2k.position_reference_from_starboard": "4249.5",
+    "n2k.position_reference_from_bow": "60.3",
+    "n2k.mothership_user_id": "652556434"
+  }
+}

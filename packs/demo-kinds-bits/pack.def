@@ -1,0 +1,42 @@
+# Synthetic bits format with message kinds. Public, no real standard.
+# 8-byte words, least-significant-bit-first. Every message starts with a 32-bit
+# time and a 4-bit kind code; the rest of the layout, and the number of words,
+# depends on the kind.
+format     demo-kinds-bits
+version    0.5.0
+distribution public
+source     "synthetic format, no external standard"
+uses       track
+wire       bits
+word_bytes 8
+field  time_ms  0:0:32  uint
+
+kind     precise                  # 5 words
+when     0:32:4  3
+requires callsign lat lon
+field    callsign  1:0:64   ascii
+field    lat       2:0:64   f64
+field    lon       3:0:64   f64
+field    ce        4:0:32   f32
+
+kind     motion                   # 3 words
+when     0:32:4  2
+requires course speed_ms
+field    lat                 0:36:24  linscale:8388607:90
+field    lon                 1:0:25   linscale:16777215:180
+field    course              1:25:16  uscale:1/100
+field    track.vel_east_ms   1:41:16  sscale:1/100
+field    track.vel_north_ms  1:57:16  sscale:1/100      # runs 9 bits into word 2
+field    speed_ms            2:16:16  uscale:1/100
+
+kind     position                 # 2 words
+when     0:32:4  1
+requires lat lon
+field    lat  0:36:24  linscale:8388607:90
+field    lon  1:0:25   linscale:16777215:180
+field    hae  1:25:16  uscale:0.5:-1000
+
+kind     status                   # 1 word; the default on encode
+when     0:32:4  0
+field    track.confirmed  0:36:1  uint
+field    track.coasting   0:37:1  uint

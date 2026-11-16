@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-event",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e45",
+  "expect": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e45",
+  "model": {
+    "@kind": "event"
+  }
+}

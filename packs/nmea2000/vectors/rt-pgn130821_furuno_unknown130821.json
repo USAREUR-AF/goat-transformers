@@ -1,0 +1,20 @@
+{
+  "name": "pgn130821_furuno_unknown130821-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05ff013f873d1bf1c7ca186e4cb3b9",
+  "expect": "05ff013f873d1bf1c7ca186e4cb3b9",
+  "model": {
+    "@kind": "pgn130821_furuno_unknown130821",
+    "n2k.sid": "61",
+    "n2k.a": "27",
+    "n2k.b": "241",
+    "n2k.c": "199",
+    "n2k.d": "202",
+    "n2k.e": "24",
+    "n2k.f": "110",
+    "n2k.g": "76",
+    "n2k.h": "179",
+    "n2k.i": "185"
+  }
+}

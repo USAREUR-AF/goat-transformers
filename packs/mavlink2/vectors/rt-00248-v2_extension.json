@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-v2_extension",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdfe000087f93af80000d428ab8259",
+  "expect": "fdfe000087f93af80000d428ab8259",
+  "model": {
+    "@kind": "v2_extension"
+  }
+}

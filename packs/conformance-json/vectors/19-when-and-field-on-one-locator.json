@@ -1,0 +1,12 @@
+{
+  "name": "when-and-field-on-one-locator",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"p1\",\"meta\":{\"td\":false,\"pin\":\"fixed\"}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"p1\",\"meta\":{\"pin\":\"fixed\",\"td\":false}}",
+  "model": {
+    "@kind": "pinned",
+    "how": "fixed",
+    "track.test_data": "0"
+  }
+}

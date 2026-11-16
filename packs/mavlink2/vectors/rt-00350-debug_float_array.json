@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-debug_float_array",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdfc0000c265a05e01000e3dda0500000080e5904d330000000000000000",
+  "expect": "fdfc0000c265a05e01000e3dda0500000080e5904d330000000000000000",
+  "model": {
+    "@kind": "debug_float_array"
+  }
+}

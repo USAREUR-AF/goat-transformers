@@ -1,0 +1,12 @@
+{
+  "name": "pgn60416_iso_transport_protocol_connection_management_abort-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ec00ff98000000e39100",
+  "expect": "00ec00ff98000000e39100",
+  "model": {
+    "@kind": "pgn60416_iso_transport_protocol_connection_management_abort",
+    "n2k.reason": "152",
+    "n2k.pgn": "37347"
+  }
+}

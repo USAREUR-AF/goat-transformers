@@ -1,0 +1,7 @@
+{
+  "name": "input-ends-before-the-counted-items",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-msb",
+  "input": "153c0761",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "second-path-alone-fills-key",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027032290000000000001d40",
+  "expect": "0a0270321802220b090000000000001d401801290000000000001d403803",
+  "model": {
+    "lat": "7.25"
+  }
+}

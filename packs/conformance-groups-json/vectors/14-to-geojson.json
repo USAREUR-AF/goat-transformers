@@ -1,0 +1,7 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-geojson",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"aa\",\"n\":2,\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3}],\"names\":[\"p\"]}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"items\":[{\"name\":\"aa\",\"n\":2,\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3}]},\"id\":\"u1\",\"names\":[\"p\"]}"
+}

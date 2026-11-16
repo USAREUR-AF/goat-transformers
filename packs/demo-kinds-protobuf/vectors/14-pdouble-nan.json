@@ -1,0 +1,7 @@
+{
+  "name": "pdouble-nan",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a0175521209000000000000f87f11000000000000f03f",
+  "expect_error": "transform-decode"
+}

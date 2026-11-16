@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-logging_ack",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0400009a134e0c010080e1572e",
+  "expect": "fd0400009a134e0c010080e1572e",
+  "model": {
+    "@kind": "logging_ack"
+  }
+}

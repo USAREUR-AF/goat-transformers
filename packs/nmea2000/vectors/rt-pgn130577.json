@@ -1,0 +1,19 @@
+{
+  "name": "pgn130577-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11fe01182c72c5bfbe6941a431ecdb79cf",
+  "expect": "11fe01182c72c5bfbe6941a431ecdb79cf",
+  "model": {
+    "@kind": "pgn130577",
+    "n2k.data_mode": "8",
+    "n2k.cog_reference": "1",
+    "n2k.sid": "44",
+    "n2k.cog": "5.0546",
+    "speed_ms": "488.31",
+    "n2k.heading": "1.6745",
+    "n2k.speed_through_water": "127.08",
+    "n2k.set": "5.63",
+    "n2k.drift": "531.13"
+  }
+}

@@ -1,0 +1,16 @@
+## Position assumption
+
+`lon`, `lat` and `hae` are bound to `Location.x`, `y`, `z` of `DetectionReport.location` (paths 7.6.1 to 7.6.3). The schema calls x, y, z 'normally' longitude, latitude, altitude: the meaning is set by `Location.coordinate_system` (7.6.7), where 1 is latitude/longitude in decimal degrees and metres, 2 is radians and 5 is UTM, and by `Location.datum` (7.6.8), where 1 is the WGS84 ellipsoid and 2 the geoid. The binding holds only when 7.6.7 is 1, and `hae` is ellipsoid height only when 7.6.8 is 1. Kind `detection_report` therefore has `const 7.6.7 1` and `const 7.6.8 1`: every detection report this pack encodes states the units and datum its `lon`, `lat` and `hae` are in. A constant is written over any field, so a detection report that arrives with another coordinate system or datum leaves with 1 and 1 while its x, y, z are unchanged; decode still fills `sapient.location_coordinate_system` and `sapient.location_datum` with what the message said, for a consumer to check before it trusts the position. No other `Location` in the schema (Alert, StatusReport.node_location, the predicted location) is bound to core keys; in kind `alert` the same fields are the raw keys `sapient.location_x`, `location_y`, `location_z`.
+
+## Bound to `track` keys
+
+- `Location.z_error` (7.6.6) is `track.sigma_up_m`: with coordinate system 1 the z error is in metres. `x_error` and `y_error` (7.6.4, 7.6.5) are in degrees there and stay raw.
+- `DetectionReport.detection_confidence` (7.7) is `track.confidence`: the schema comment gives the range 0-1.
+- `ENUVelocity.east_rate`, `north_rate`, `up_rate` (7.19.1 to 7.19.3) are `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms`. The message carries no unit: the unit (metres per second or kilometres per hour) is declared in the node's Registration. The binding holds for a node that registered metres per second.
+- `DetectionReportClassification.type` (7.11.1) is `track.class` through the table `sapient-class`. `classification` is a repeated field: one occurrence is carried, the last on decode. The wire names are those the open-billie translator writes (`runtime/rust/translator/src/sapient.rs`, `sapient_class`): `UNKNOWN`, `AIRCRAFT_FIXEDWING`, `AIRCRAFT_ROTARYWING`, `UAV`, `BALLOON`, `BIRD`, `VEHICLE`, `CLUTTER`. `unknown` and `other` both encode as `UNKNOWN`, and `UNKNOWN` decodes as `unknown`. The schema leaves the type a free string, so a name the table does not hold passes through unchanged in both directions.
+
+## Left raw on purpose
+
+- `DetectionReport.object_id` (7.2): a ULID in the schema (`is_ulid`), allocated by the reporting node for the object. It is not `uid`: an identifier from another format is not a ULID, so nothing is bound to the path and it stays the raw key `sapient.detection_report_object_id`. The same holds for `report_id` (7.1).
+- `google.protobuf.Timestamp` (message timestamp 1, predicted time 7.9.3, task start and end 8.4 and 8.5): two integers, seconds and nanos. No transform joins two wire fields into `time_ms`.
+- `DetectionReport.range_bearing` (7.5): position relative to the sensor; the shared model has no key for it.

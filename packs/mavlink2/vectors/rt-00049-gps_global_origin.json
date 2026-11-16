@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gps_global_origin",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd14000026323231000005a3acc386f6b0c3074ab5c310aa5e2000000080",
+  "expect": "fd14000026323231000005a3acc386f6b0c3074ab5c310aa5e2000000080",
+  "model": {
+    "@kind": "gps_global_origin"
+  }
+}

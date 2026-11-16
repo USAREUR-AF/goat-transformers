@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-optical_flow_rad",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2c00004c6b6b6a000042a3ba360000008019f73e0a0000403f0000204000008840000088c0000020c023ee587f0000803f2f20a87f",
+  "expect": "fd2c00004c6b6b6a000042a3ba360000008019f73e0a0000403f0000204000008840000088c0000020c023ee587f0000803f2f20a87f",
+  "model": {
+    "@kind": "optical_flow_rad"
+  }
+}

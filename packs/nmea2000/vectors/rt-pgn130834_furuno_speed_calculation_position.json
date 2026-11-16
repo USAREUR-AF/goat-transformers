@@ -1,0 +1,13 @@
+{
+  "name": "pgn130834_furuno_speed_calculation_position-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "12ff013f879000006702a154",
+  "expect": "12ff013f879000006702a154",
+  "model": {
+    "@kind": "pgn130834_furuno_speed_calculation_position",
+    "n2k.point_index": "144",
+    "n2k.position_y": "61.5",
+    "n2k.position_z": "2166.5"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "pgn60928-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ee002b0492e48e238edc",
+  "expect": "00ee002b0492e48e238edc",
+  "model": {
+    "@kind": "pgn60928",
+    "n2k.unique_number": "1180715",
+    "n2k.manufacturer_code": "1828",
+    "n2k.device_instance_lower": "6",
+    "n2k.device_instance_upper": "17",
+    "n2k.device_function": "35",
+    "n2k.device_class": "71",
+    "n2k.system_instance": "12",
+    "n2k.industry_group": "5",
+    "n2k.arbitrary_address_capable": "1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "kind-when-line-order",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"o1\" kind=\"friend\" le=\"3.5\" rank=\"first\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"o1\" kind=\"friend\" rank=\"first\" le=\"3.5\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "model": {
+    "@kind": "ordered",
+    "le": "3.5"
+  }
+}

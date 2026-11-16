@@ -1,0 +1,10 @@
+{
+  "name": "ruling-10-undeclared-context-key",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\"}",
+  "context": {
+    "nosuch.key": "1"
+  },
+  "expect_error": "undeclared-key"
+}

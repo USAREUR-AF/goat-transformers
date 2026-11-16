@@ -1,0 +1,13 @@
+{
+  "name": "x05-pgn129038-ais-class-a-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "0ef801012037950e40a5ae0240dd4a1f0000008a0200000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.5]},\"properties\":{\"speed_ms\":6.5}}",
+  "model": {
+    "@kind": "pgn129038",
+    "lat": "52.5",
+    "lon": "4.5",
+    "speed_ms": "6.5"
+  }
+}

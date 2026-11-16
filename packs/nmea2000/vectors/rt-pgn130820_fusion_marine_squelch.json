@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_marine_squelch-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3810d807d91",
+  "expect": "04ff01a3810d807d91",
+  "model": {
+    "@kind": "pgn130820_fusion_marine_squelch",
+    "n2k.source_id": "125",
+    "n2k.squelch": "145"
+  }
+}

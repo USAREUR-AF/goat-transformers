@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-log_request_end",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0200005c7b7b7a00003209",
+  "expect": "fd0200005c7b7b7a00003209",
+  "model": {
+    "@kind": "log_request_end"
+  }
+}

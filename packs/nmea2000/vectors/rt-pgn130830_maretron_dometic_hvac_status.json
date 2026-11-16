@@ -1,0 +1,17 @@
+{
+  "name": "pgn130830_maretron_dometic_hvac_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0eff0189806bfd471eaa2f46f12fd7",
+  "expect": "0eff0189806bfd471eaa2f46f12fd7",
+  "model": {
+    "@kind": "pgn130830_maretron_dometic_hvac_status",
+    "n2k.additional_sensor_temperature": "107",
+    "n2k.can_id": "2854111229",
+    "n2k.pgn130830_state": "47",
+    "n2k.hardware_status": "70",
+    "n2k.faults": "241",
+    "n2k.line_voltage": "47",
+    "n2k.compressor_current": "215"
+  }
+}

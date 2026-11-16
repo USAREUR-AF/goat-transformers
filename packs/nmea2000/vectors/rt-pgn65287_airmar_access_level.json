@@ -1,0 +1,13 @@
+{
+  "name": "pgn65287_airmar_access_level-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07ff0087802802f28f717a",
+  "expect": "07ff0087802802f28f717a",
+  "model": {
+    "@kind": "pgn65287_airmar_access_level",
+    "n2k.format_code": "40",
+    "n2k.access_level": "2",
+    "n2k.access_seed_key": "2054262770"
+  }
+}

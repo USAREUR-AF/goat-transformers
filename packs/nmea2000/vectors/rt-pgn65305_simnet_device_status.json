@@ -1,0 +1,12 @@
+{
+  "name": "pgn65305_simnet_device_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19ff0041874c0243",
+  "expect": "19ff0041874c0243",
+  "model": {
+    "@kind": "pgn65305_simnet_device_status",
+    "n2k.pgn65305_model": "76",
+    "n2k.pgn65305_status": "67"
+  }
+}

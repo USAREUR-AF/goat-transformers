@@ -1,0 +1,7 @@
+{
+  "name": "two-locators-both-fail",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a5\",\"pos\":{\"lat\":\"north\",\"latitude\":\"south\"}}",
+  "expect_error": "transform-decode"
+}

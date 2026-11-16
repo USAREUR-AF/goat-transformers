@@ -1,0 +1,12 @@
+{
+  "name": "count-zero-one-word",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-msb",
+  "input": "143c",
+  "expect": "143c",
+  "model": {
+    "probe.n": "5",
+    "probe.items.#": "0",
+    "probe.nums.#": "2"
+  }
+}

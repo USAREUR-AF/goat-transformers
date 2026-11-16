@@ -1,0 +1,15 @@
+{
+  "name": "pgn130820_fusion_capabilities-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811e80dbf35170b7b6a0262c1c",
+  "expect": "04ff01a3811e80dbf35170b7b6a0262c1c",
+  "model": {
+    "@kind": "pgn130820_fusion_capabilities",
+    "n2k.pgn130820_fusion_capabilities_zone1": "62427",
+    "n2k.pgn130820_fusion_capabilities_zone2": "28753",
+    "n2k.pgn130820_fusion_capabilities_zone3": "46775",
+    "n2k.pgn130820_fusion_capabilities_zone4": "9888",
+    "n2k.global": "7212"
+  }
+}

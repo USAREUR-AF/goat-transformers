@@ -1,0 +1,29 @@
+# Conformance probe pack for items of variable size on the `bits` wire (spec
+# 0.7, rulings 2 and 4 of 0.7). Public. No kinds. One byte per word, least
+# significant bit first.
+#
+#   byte 0      number of items; also mapped as probe.n
+#   then        one item per count:
+#     byte 0      qty
+#     byte 1      number of subs
+#     byte 2...   one byte per sub
+#
+# `item 24`: an item with no sub or one sub is three bytes. The nested group is
+# counted by a locator, is the last thing in its item and may run past the 24
+# bits: an item with three subs is five bytes, and the next item starts where
+# it ends. The count of items has no `field` of its own and is written over
+# probe.n, which is mapped on the same bits.
+format     conformance-groups-bits-var
+version    0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.n  0:0:8  uint
+group   probe.items  0:8  item 24  count 0:0:8
+  field   probe.qty  0:0:8  uint
+  group   probe.subs  0:16  item 8  count 0:8:8
+    field  probe.val  0:0:8  uint
+  end
+end

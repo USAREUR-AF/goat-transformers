@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-scaled_pressure",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd100000121e1e1d0000dff57677000050c00000c0bf54f0d543",
+  "expect": "fd100000121e1e1d0000dff57677000050c00000c0bf54f0d543",
+  "model": {
+    "@kind": "scaled_pressure"
+  }
+}

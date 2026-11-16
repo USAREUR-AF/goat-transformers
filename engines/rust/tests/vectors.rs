@@ -1,0 +1,255 @@
+//! Conformance: load every pack under packs/ and run every vector.
+//! A vector is one JSON object (spec/vector-format.md). The reference engine
+//! must reproduce `expect` from `convert(from, to, input)` (or fail with the
+//! error kind in `expect_error`) and, if `model` is present, match each decoded
+//! field and the selected kind (`"@kind"`). `context` is passed to `convert`;
+//! with `"@complete": true` in `model` the checks run on the decoded entity
+//! after the context is filled in and the derivations are applied. Every
+//! failing vector is reported before the test fails. A model key `"<list>.#"`
+//! is the number of items of a list (`"absent"`: the list is absent) and
+//! `"<list>[<i>].<key>"` a value of one item, nested lists likewise.
+
+use goat_transformers::json::Json;
+use goat_transformers::{json, Distribution, Engine, Entity, Value};
+use std::path::{Path, PathBuf};
+
+fn repo_packs_dir() -> PathBuf {
+    // tests run with CWD = engines/rust
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../packs")
+        .canonicalize()
+        .expect("packs dir")
+}
+
+fn load_engine() -> Engine {
+    let mut e = Engine::new();
+    e.load_model_dir(&repo_packs_dir().join("../model")).unwrap_or_else(|err| panic!("model: {}", err));
+    e.load_pack_dir(&repo_packs_dir()).unwrap_or_else(|err| panic!("pack: {}", err));
+    e
+}
+
+/// What a `model` key of a vector names in a decoded entity.
+enum Got<'a> {
+    Value(&'a Value),
+    /// the number of items of a list; None: the list is absent
+    Count(Option<usize>),
+}
+
+/// Resolve a `model` key: a model key, `<list>.#`, or `<list>[<i>].<rest>`.
+fn model_lookup<'a>(ent: &'a Entity, key: &str) -> Result<Got<'a>, String> {
+    if let Some(open) = key.find('[') {
+        let close = key[open..].find(']').map(|c| open + c).ok_or(format!("`{}`: no `]`", key))?;
+        let index: usize = key[open + 1..close].parse().map_err(|_| format!("`{}`: bad item index", key))?;
+        let rest = key[close + 1..].strip_prefix('.').ok_or(format!("`{}`: `].` expected", key))?;
+        let list = &key[..open];
+        let items = ent.lists.get(list).ok_or(format!("list `{}` absent after decode", list))?;
+        let item = items.get(index).ok_or(format!("list `{}` has {} items, no item {}", list, items.len(), index))?;
+        return model_lookup(item, rest).map_err(|e| format!("{}[{}]: {}", list, index, e));
+    }
+    if let Some(list) = key.strip_suffix(".#") {
+        return Ok(Got::Count(ent.lists.get(list).map(|l| l.len())));
+    }
+    ent.fields.get(key).map(Got::Value).ok_or(format!("model key `{}` absent after decode", key))
+}
+
+fn jstr<'a>(o: &'a Json, k: &str) -> Option<&'a str> {
+    match o.get(k) {
+        Some(Json::Str(s)) => Some(s.as_str()),
+        _ => None,
+    }
+}
+
+/// Run one conversion vector. Err holds what went wrong.
+fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
+    let from = jstr(v, "from").ok_or("no `from`")?;
+    let to = jstr(v, "to").ok_or("no `to`")?;
+    let input = jstr(v, "input").ok_or("no `input`")?;
+
+    // `context`: caller-supplied keys, values in string form
+    let mut pairs: Vec<(String, String)> = Vec::new();
+    match v.get("context") {
+        None => {}
+        Some(Json::Obj(members)) => {
+            for (k, cv) in members {
+                match cv {
+                    Json::Str(s) => pairs.push((k.clone(), s.clone())),
+                    _ => return Err(format!("context value of `{}` must be a string", k)),
+                }
+            }
+        }
+        Some(_) => return Err("`context` must be an object".into()),
+    }
+    // a `context` member, even an empty one, is a context given (ruling 10 of 0.6)
+    let given = if v.get("context").is_some() { Some(pairs.as_slice()) } else { None };
+    let convert = || engine.convert_text(from, to, input, given);
+
+    // `expect_error` in place of `expect`: convert must fail with that named error
+    if let Some(kind) = jstr(v, "expect_error") {
+        return match convert() {
+            Ok(out) => Err(format!("should fail with {}, produced {}", kind, out)),
+            Err(e) if e.msg.starts_with(&format!("{}:", kind)) => Ok(()),
+            Err(e) => Err(format!("want error kind `{}`, got `{}`", kind, e.msg)),
+        };
+    }
+    let expect = jstr(v, "expect").ok_or("no `expect`")?;
+    let got = convert().map_err(|e| format!("convert failed: {}", e))?;
+    if got != expect {
+        return Err(format!("({} -> {}) output mismatch\n      got  {}\n      want {}", from, to, got, expect));
+    }
+
+    // optional model checks
+    if let Some(Json::Obj(model)) = v.get("model") {
+        let mut ent = engine.decode(from, input).map_err(|e| format!("decode failed: {}", e))?;
+        // "@complete": true: the entity as `convert` hands it to the encoder
+        let complete = match model.iter().find(|(k, _)| k == "@complete") {
+            None | Some((_, Json::Bool(false))) => false,
+            Some((_, Json::Bool(true))) => true,
+            Some(_) => return Err("`@complete` must be true or false".into()),
+        };
+        if complete {
+            let context = engine.context_from_text(&pairs).map_err(|e| format!("context: {}", e))?;
+            engine.fill(&mut ent, &context).map_err(|e| format!("context: {}", e))?;
+            engine.complete(&mut ent);
+        }
+        for (k, mv) in model {
+            if k == "@complete" {
+                continue;
+            }
+            let want = match mv {
+                Json::Str(s) => s.clone(),
+                Json::Int(n) => n.to_string(),
+                Json::Num(x) => goat_transformers::fmt_f64(*x),
+                _ => return Err(format!("model value of `{}` must be scalar", k)),
+            };
+            // "@kind": the kind name decode must select
+            if k == "@kind" {
+                if ent.kind != Some((from.to_string(), want.clone())) {
+                    return Err(format!("selected kind {:?}, want `{}`", ent.kind, want));
+                }
+                continue;
+            }
+            let got_field = match model_lookup(&ent, k)? {
+                Got::Value(v) => v,
+                Got::Count(n) => {
+                    let got = n.map(|n| n.to_string()).unwrap_or_else(|| "absent".to_string());
+                    if got != want {
+                        return Err(format!("`{}` = {} want {}", k, got, want));
+                    }
+                    continue;
+                }
+            };
+            // float-tolerant compare
+            if let (Value::F64(a), Ok(b)) = (got_field, want.parse::<f64>()) {
+                // decoded: within 1e-9; completed: within 1e-9 relative
+                let tolerance = if complete { 1e-9 * a.abs().max(b.abs()) } else { 1e-9 };
+                if *a != b && (a - b).abs() >= tolerance {
+                    return Err(format!("field `{}` = {} want {}", k, a, b));
+                }
+            } else if got_field.as_display() != want {
+                return Err(format!("field `{}` = `{}` want `{}`", k, got_field.as_display(), want));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Print every failure, then fail once with the count and the names.
+fn report(what: &str, total: usize, failures: &[(String, String)]) {
+    use std::io::Write;
+    assert!(total > 0, "no {} were run", what);
+    // written to stderr directly, so the counts show on a passing run too
+    let mut out = std::io::stderr();
+    let _ = writeln!(out, "ran {} {}, {} failed", total, what, failures.len());
+    for (name, why) in failures {
+        let _ = writeln!(out, "  FAIL `{}`: {}", name, why);
+    }
+    if !failures.is_empty() {
+        let names: Vec<&str> = failures.iter().map(|(n, _)| n.as_str()).collect();
+        panic!("{} of {} {} failed: {}", failures.len(), total, what, names.join(", "));
+    }
+}
+
+#[test]
+fn run_all_vectors() {
+    let engine = load_engine();
+    let packs = repo_packs_dir();
+    let mut total = 0;
+    let mut failures: Vec<(String, String)> = Vec::new();
+    let mut dirs: Vec<_> = std::fs::read_dir(&packs).unwrap().flatten().map(|e| e.path()).collect();
+    dirs.sort();
+    for dir in dirs {
+        let vdir = dir.join("vectors");
+        if !vdir.exists() {
+            continue;
+        }
+        let mut files: Vec<_> = std::fs::read_dir(&vdir).unwrap().flatten().map(|e| e.path()).collect();
+        files.sort();
+        for vf in files {
+            if vf.extension().and_then(|s| s.to_str()) != Some("json") {
+                continue;
+            }
+            total += 1;
+            let label = |name: &str| format!("{}/{}", dir.file_name().unwrap().to_string_lossy(), name);
+            let text = std::fs::read_to_string(&vf).unwrap();
+            let v = match json::parse(&text) {
+                Ok(v) => v,
+                Err(e) => {
+                    failures.push((label(&vf.file_name().unwrap().to_string_lossy()), format!("not JSON: {}", e)));
+                    continue;
+                }
+            };
+            let name = label(jstr(&v, "name").unwrap_or("?"));
+            if let Err(why) = check_vector(&engine, &v) {
+                failures.push((name, why));
+            }
+        }
+    }
+    report("conversion vectors", total, &failures);
+}
+
+/// Load vectors (spec/vector-format.md, "Load vectors"): a set of model modules
+/// and one pack either load, or fail with the named error kind.
+#[test]
+fn run_load_vectors() {
+    let dir = repo_packs_dir().join("conformance/load-vectors");
+    let mut files: Vec<_> = std::fs::read_dir(&dir).unwrap().flatten().map(|e| e.path()).collect();
+    files.sort();
+    let mut total = 0;
+    let mut failures: Vec<(String, String)> = Vec::new();
+    for vf in files {
+        if vf.extension().and_then(|s| s.to_str()) != Some("json") {
+            continue;
+        }
+        total += 1;
+        let v = json::parse(&std::fs::read_to_string(&vf).unwrap()).unwrap();
+        let name = jstr(&v, "name").unwrap_or("?").to_string();
+        let mut e = Engine::new();
+        if let Some(d) = jstr(&v, "max_distribution") {
+            e.set_max_distribution(Distribution::parse(d).expect("max_distribution"));
+        }
+        let mut result: Result<(), goat_transformers::Error> = Ok(());
+        if let Some(Json::Arr(models)) = v.get("models") {
+            for m in models {
+                if let Json::Str(text) = m {
+                    if result.is_ok() {
+                        result = e.load_model(text);
+                    }
+                }
+            }
+        }
+        if result.is_ok() {
+            result = e.load_def(jstr(&v, "pack").expect("pack"));
+        }
+        let why = match (jstr(&v, "expect_error"), result) {
+            (None, Ok(())) => None,
+            (None, Err(err)) => Some(format!("should load, failed: {}", err)),
+            (Some(kind), Ok(())) => Some(format!("should fail with {}, loaded", kind)),
+            (Some(kind), Err(err)) if err.msg.starts_with(&format!("{}:", kind)) => None,
+            (Some(kind), Err(err)) => Some(format!("want error kind `{}`, got `{}`", kind, err.msg)),
+        };
+        if let Some(why) = why {
+            failures.push((name, why));
+        }
+    }
+    report("load vectors", total, &failures);
+}

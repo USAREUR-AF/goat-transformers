@@ -1,0 +1,12 @@
+{
+  "name": "sapient-roundtrip",
+  "from": "sapient",
+  "to": "sapient",
+  "input": "3a39121a303141525a334e44454b54535634525246465136394735464156321b09cdcccccccc7c55c011fca9f1d24d023e40190000000000002940",
+  "expect": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014001",
+  "model": {
+    "@kind": "detection_report",
+    "sapient.detection_report_object_id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
+    "lat": "30.009"
+  }
+}

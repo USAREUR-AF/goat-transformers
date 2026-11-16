@@ -1,0 +1,16 @@
+{
+  "name": "pgn130827_lowrance_unknown-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bff018c80a7390b1ec05c52a9",
+  "expect": "0bff018c80a7390b1ec05c52a9",
+  "model": {
+    "@kind": "pgn130827_lowrance_unknown",
+    "n2k.a": "167",
+    "n2k.b": "57",
+    "n2k.c": "11",
+    "n2k.d": "30",
+    "n2k.e": "23744",
+    "n2k.f": "43346"
+  }
+}

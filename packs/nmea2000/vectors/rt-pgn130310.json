@@ -1,0 +1,14 @@
+{
+  "name": "pgn130310-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06fd0155c3d22f1dcad8",
+  "expect": "06fd0155c3d22f1dcad8",
+  "model": {
+    "@kind": "pgn130310",
+    "n2k.sid": "85",
+    "n2k.water_temperature": "539.55",
+    "n2k.outside_ambient_air_temperature": "74.71",
+    "n2k.atmospheric_pressure": "5549800"
+  }
+}

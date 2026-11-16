@@ -1,0 +1,11 @@
+{
+  "name": "when-boolean-and-forced-string",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j15\",\"meta\":{\"final\":false,\"code\":2,\"strict\":true}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j15\",\"meta\":{\"strict\":true,\"code\":\"2\",\"final\":false}}",
+  "model": {
+    "@kind": "strict",
+    "track.final_update": "0"
+  }
+}

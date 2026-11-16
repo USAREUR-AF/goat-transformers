@@ -1,0 +1,15 @@
+{
+  "name": "pgn127509-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "15f2019149111d",
+  "expect": "15f2019149111d",
+  "model": {
+    "@kind": "pgn127509",
+    "n2k.pgn127509_instance": "145",
+    "n2k.ac_instance": "73",
+    "n2k.dc_instance": "17",
+    "n2k.pgn127509_operating_state": "13",
+    "n2k.inverter_enable": "1"
+  }
+}

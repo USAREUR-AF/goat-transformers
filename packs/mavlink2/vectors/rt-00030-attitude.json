@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-attitude",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1c0000131f1f1e00004eb22e2000009040000080c0000010c0000000bf0000a03f00004040",
+  "expect": "fd1c0000131f1f1e00004eb22e2000009040000080c0000010c0000000bf0000a03f00004040",
+  "model": {
+    "@kind": "attitude"
+  }
+}

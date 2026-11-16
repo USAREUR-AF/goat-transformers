@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_seatalk1_display_brightness-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef013b878c0c149f00f427",
+  "expect": "00ef013b878c0c149f00f427",
+  "model": {
+    "@kind": "pgn126720_seatalk1_display_brightness",
+    "n2k.group": "20",
+    "n2k.shared": "159",
+    "n2k.brightness": "244",
+    "n2k.pgn126720_seatalk1_display_brightness_unknown2": "39"
+  }
+}

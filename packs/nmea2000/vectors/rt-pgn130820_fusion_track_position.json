@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_track_position-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a381098002a33780",
+  "expect": "04ff01a381098002a33780",
+  "model": {
+    "@kind": "pgn130820_fusion_track_position",
+    "n2k.source_id": "2",
+    "n2k.progress": "8402.851"
+  }
+}

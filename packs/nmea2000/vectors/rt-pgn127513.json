@@ -1,0 +1,19 @@
+{
+  "name": "pgn127513-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "19f201b21289b8fd43019a",
+  "expect": "19f201b21289b8fd43019a",
+  "model": {
+    "@kind": "pgn127513",
+    "n2k.pgn127513_instance": "178",
+    "n2k.battery_type": "2",
+    "n2k.supports_equalization": "1",
+    "n2k.nominal_voltage": "9",
+    "n2k.chemistry": "8",
+    "n2k.pgn127513_capacity": "64952",
+    "n2k.temperature_coefficient": "67",
+    "n2k.peukert_exponent": "1.002",
+    "n2k.charge_efficiency_factor": "-102"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_airmar_reset_eeprom-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187808206",
+  "expect": "00ef0187808206",
+  "model": {
+    "@kind": "pgn126720_airmar_reset_eeprom",
+    "n2k.options": "6"
+  }
+}

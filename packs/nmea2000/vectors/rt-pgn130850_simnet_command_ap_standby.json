@@ -1,0 +1,12 @@
+{
+  "name": "pgn130850_simnet_command_ap_standby-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff0141870e00bc0a06",
+  "expect": "22ff0141870e00bc0a06",
+  "model": {
+    "@kind": "pgn130850_simnet_command_ap_standby",
+    "n2k.address": "14",
+    "n2k.network_group": "188"
+  }
+}

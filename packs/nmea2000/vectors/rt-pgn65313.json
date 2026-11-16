@@ -1,0 +1,12 @@
+{
+  "name": "pgn65313-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "21ff0013810f1b",
+  "expect": "21ff0013810f1b",
+  "model": {
+    "@kind": "pgn65313",
+    "n2k.pgn65313_instance": "15",
+    "n2k.depth_quality": "0.27"
+  }
+}

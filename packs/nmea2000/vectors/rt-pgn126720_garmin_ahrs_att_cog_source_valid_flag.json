@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_ahrs_att_cog_source_valid_flag-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e5806c070202430022f29d0d",
+  "expect": "00ef01e5806c070202430022f29d0d",
+  "model": {
+    "@kind": "pgn126720_garmin_ahrs_att_cog_source_valid_flag",
+    "n2k.cog_source_flags": "228454946"
+  }
+}

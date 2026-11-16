@@ -1,0 +1,7 @@
+{
+  "name": "protobuf-roundtrip",
+  "from": "demo-protobuf",
+  "to": "demo-protobuf",
+  "input": "0a074a2d303133333411fca9f1d24d023e4019cdcccccccc7c55c022070a054741544f5228809ccea8fe2e",
+  "expect": "0a074a2d303133333411fca9f1d24d023e4019cdcccccccc7c55c022070a054741544f5228809ccea8fe2e"
+}

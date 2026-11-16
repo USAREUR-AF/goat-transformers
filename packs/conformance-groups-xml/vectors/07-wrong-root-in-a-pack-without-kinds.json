@@ -1,0 +1,7 @@
+{
+  "name": "wrong-root-in-a-pack-without-kinds",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<mesg id=\"u7\"/>",
+  "expect_error": "missing-root"
+}

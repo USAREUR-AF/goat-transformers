@@ -1,0 +1,24 @@
+{
+  "name": "pgn127495-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07f201040bc5a3802189d58dd13ae4d89dfc98cc200502c9",
+  "expect": "07f201040bc5a3802189d58dd13ae4d89dfc98cc200502c9",
+  "model": {
+    "@kind": "pgn127495",
+    "n2k.energy_storage_identifier": "4",
+    "n2k.pgn127495_motor_type": "11",
+    "n2k.storage_chemistry_conversion": "197",
+    "n2k.maximum_temperature_derating": "329.31",
+    "n2k.maximum_temperature_shut_off": "351.05",
+    "n2k.minimum_temperature_derating": "363.09",
+    "n2k.minimum_temperature_shut_off": "150.57",
+    "n2k.usable_battery_energy": "4238203108",
+    "n2k.pgn127495_state_of_health": "152",
+    "n2k.battery_cycle_counter": "8396",
+    "n2k.battery_full_status": "1",
+    "n2k.battery_empty_status": "1",
+    "n2k.maximum_charge_soc": "2",
+    "n2k.minimum_charge_soc": "201"
+  }
+}

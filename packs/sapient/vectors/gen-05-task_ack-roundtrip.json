@@ -1,0 +1,22 @@
+{
+  "name": "gen-task_ack-roundtrip",
+  "from": "sapient",
+  "to": "sapient",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d334a330a097461736b5f69642d351001220f0a06747970652d37120575726c2d382a08726561736f6e2d392a09726561736f6e2d31306a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d334a330a097461736b5f69642d351001220f0a06747970652d37120575726c2d382a08726561736f6e2d392a09726561736f6e2d31306a186164646974696f6e616c5f696e666f726d6174696f6e2d34",
+  "model": {
+    "@kind": "task_ack",
+    "sapient.timestamp_seconds": "100",
+    "sapient.timestamp_nanos": "137",
+    "sapient.node_id": "node_id-2",
+    "sapient.destination_id": "destination_id-3",
+    "sapient.additional_information": "additional_information-4",
+    "sapient.task_ack_task_id": "task_id-5",
+    "sapient.task_ack_task_status": "1",
+    "sapient.associated_file_type": "type-7",
+    "sapient.associated_file_url": "url-8",
+    "sapient.task_ack_reason.#": "2",
+    "sapient.task_ack_reason[0].sapient.task_ack_reason_item": "reason-9",
+    "sapient.task_ack_reason[1].sapient.task_ack_reason_item": "reason-10"
+  }
+}

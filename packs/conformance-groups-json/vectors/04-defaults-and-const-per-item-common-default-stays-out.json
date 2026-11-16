@@ -1,0 +1,13 @@
+{
+  "name": "defaults-and-const-per-item-common-default-stays-out",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u4\",\"items\":[{},{\"name\":\"x\",\"kind\":\"other\",\"subs\":[{}]},null]}",
+  "expect": "{\"id\":\"u4\",\"title\":\"NONE\",\"items\":[{\"n\":1,\"kind\":\"item\"},{\"name\":\"x\",\"n\":1,\"kind\":\"item\",\"subs\":[{}]},{\"n\":1,\"kind\":\"item\"}]}",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[1].probe.label": "x",
+    "probe.items[1].probe.subs.#": "1",
+    "probe.items[0].probe.subs.#": "absent"
+  }
+}

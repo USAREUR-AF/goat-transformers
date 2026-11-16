@@ -1,0 +1,14 @@
+{
+  "name": "required-only-noncanonical-identifiers-carried",
+  "from": "canonical-track-v2",
+  "to": "canonical-track-v2",
+  "input": "{\n  \"position\": {\"longitudeDeg\": 21.5, \"latitudeDeg\": 56.25},\n  \"observedAt\": \"2026-03-01T12:30:45Z\",\n  \"identifiers\": [{\"scheme\": \"icao24\", \"value\": \"4b1805\"}],\n  \"trackGeneration\": \"1\",\n  \"sourceId\": \"s1\",\n  \"trackId\": \"t1\",\n  \"kind\": \"Track\",\n  \"apiVersion\": \"billie.dev/track-v2\"\n}",
+  "expect": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"t1\",\"sourceId\":\"s1\",\"trackGeneration\":\"1\",\"observedAt\":\"2026-03-01T12:30:45.000Z\",\"position\":{\"latitudeDeg\":56.25,\"longitudeDeg\":21.5},\"identifiers\":[{\"scheme\":\"icao24\",\"value\":\"4b1805\"}]}",
+  "model": {
+    "@kind": "Track",
+    "time_ms": "1772368245000",
+    "track.identifiers.#": "1",
+    "track.identifiers[0].track.id_scheme": "icao24",
+    "track.identifiers[0].track.id_value": "4b1805"
+  }
+}

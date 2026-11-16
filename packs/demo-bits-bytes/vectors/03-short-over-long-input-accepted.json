@@ -1,0 +1,10 @@
+{
+  "name": "short-over-long-input-accepted",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "470101603aa4c0deadbeef",
+  "expect": "470101603aa4c0",
+  "model": {
+    "@kind": "short"
+  }
+}

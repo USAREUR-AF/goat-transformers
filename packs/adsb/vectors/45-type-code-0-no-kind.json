@@ -1,0 +1,9 @@
+{
+  "name": "type-code-0-no-kind",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8d406b900015a678d4d220da6d9c",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "8D406B902015A678D4D220AA4BDA with the type code set to 0 and parity recomputed"
+}

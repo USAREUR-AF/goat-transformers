@@ -1,0 +1,14 @@
+{
+  "name": "pgn127252-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14f101914a5fe4200a",
+  "expect": "14f101914a5fe4200a",
+  "model": {
+    "@kind": "pgn127252",
+    "n2k.sid": "145",
+    "n2k.pgn127252_heave": "243.94",
+    "n2k.delay": "84.2",
+    "n2k.delay_source": "10"
+  }
+}

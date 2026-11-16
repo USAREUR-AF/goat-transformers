@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-msb-fix",
+  "from": "geojson",
+  "to": "demo-bits-msb",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2093,-33.7512,150]},\"properties\":{\"time_ms\":-1234,\"course\":270.55}}",
+  "expect": "69afbad9985c4a740a28fb2e"
+}

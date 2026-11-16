@@ -1,0 +1,7 @@
+{
+  "name": "typemap-on-protobuf-to-geojson",
+  "from": "conformance-rules-protobuf",
+  "to": "geojson",
+  "input": "0a027031120446524e441801220b09000000000000f83f180129000000000000f83f35000020403803",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"a-f-G\",\"speed_ms\":2.5},\"id\":\"p1\"}"
+}

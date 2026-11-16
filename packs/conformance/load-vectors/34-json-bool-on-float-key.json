@@ -1,0 +1,8 @@
+{
+  "name": "34-json-bool-on-float-key",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.5.0\ndistribution public\nsource \"probe\"\nwire json\nfield lat flags.t bool\n",
+  "expect_error": "key-type-mismatch"
+}

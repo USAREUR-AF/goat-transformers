@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-vibration",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd20000080f233f10000cb019f2f00000000000080be0000c03f000050402751b07dfea43451d5f8b824",
+  "expect": "fd20000080f233f10000cb019f2f00000000000080be0000c03f000050402751b07dfea43451d5f8b824",
+  "model": {
+    "@kind": "vibration"
+  }
+}

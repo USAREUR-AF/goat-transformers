@@ -1,0 +1,11 @@
+{
+  "name": "pgn65314_yamaha_gear_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff00c68000000002",
+  "expect": "22ff00c68000000002",
+  "model": {
+    "@kind": "pgn65314_yamaha_gear_status",
+    "n2k.neutral": "1"
+  }
+}

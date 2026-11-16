@@ -1,0 +1,20 @@
+{
+  "name": "pgn130061-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0dfc019cb2c4d7e9c6220000000030ff0398843dc344",
+  "expect": "0dfc019cb2c4d7e9c6220000000030ff0398843dc344",
+  "model": {
+    "@kind": "pgn130061",
+    "n2k.data_source_channel_id": "156",
+    "n2k.source_selection_status": "2",
+    "n2k.name_selection_criteria_mask": "3147",
+    "n2k.source_name": "583461335",
+    "n2k.pgn": "261936",
+    "n2k.data_source_instance_field_number": "152",
+    "n2k.data_source_instance_value": "132",
+    "n2k.secondary_enumeration_field_number": "61",
+    "n2k.secondary_enumeration_field_value": "195",
+    "n2k.parameter_field_number": "68"
+  }
+}

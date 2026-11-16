@@ -1,0 +1,23 @@
+{
+  "name": "pgn130913-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "61ff01a8801e2b02c188989726278b605fc346dd9e8c7ff7f61a1679bb5b",
+  "expect": "61ff01a8801e2b02c188989726278b605fc346dd9e8c7ff7f61a1679bb5b",
+  "model": {
+    "@kind": "pgn130913",
+    "n2k.ac_source_instance": "30",
+    "n2k.number_of_lines": "43",
+    "n2k.line": "2",
+    "n2k.breaker_size": "35009",
+    "n2k.ac_lost_level": "38808",
+    "n2k.ac_uv_level": "100.22",
+    "n2k.ac_uv_warning_level": "24715",
+    "n2k.ac_uv_delay": "50015",
+    "n2k.ac_ov_level": "566.46",
+    "n2k.ac_ov_warning_level": "35998",
+    "n2k.ac_ov_delay": "63359",
+    "n2k.ac_uf_level": "6902",
+    "n2k.ac_of_level": "1539012886"
+  }
+}

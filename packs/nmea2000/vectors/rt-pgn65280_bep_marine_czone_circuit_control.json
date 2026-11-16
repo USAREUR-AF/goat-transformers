@@ -1,0 +1,20 @@
+{
+  "name": "pgn65280_bep_marine_czone_circuit_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff002781ffa091d0bc1b",
+  "expect": "00ff002781ffa091d0bc1b",
+  "model": {
+    "@kind": "pgn65280_bep_marine_czone_circuit_control",
+    "n2k.circuit_id": "41215",
+    "n2k.field_b": "53393",
+    "n2k.level_or_value": "12",
+    "n2k.unknown_a": "1",
+    "n2k.command_active": "1",
+    "n2k.unknown_b": "2",
+    "n2k.unknown_c": "1",
+    "n2k.unknown_d": "1",
+    "n2k.unknown_e": "1",
+    "n2k.unknown_f": "1"
+  }
+}

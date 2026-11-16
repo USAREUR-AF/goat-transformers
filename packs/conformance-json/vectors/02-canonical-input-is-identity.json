@@ -1,0 +1,7 @@
+{
+  "name": "canonical-input-is-identity",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j1\",\"pos\":{\"lat\":30.25,\"lon\":-85.5,\"alt\":120,\"src\":\"gps\"},\"label\":\"GATOR\",\"meta\":{\"level\":\"detail\",\"flags\":{\"confirmed\":true,\"note\":\"n\",\"deep\":{\"x\":2.5}},\"seen\":\"2021-02-27T20:00:00.000Z\",\"extra\":\"m\"},\"zeta\":1,\"aux\":{\"k\":\"v\"},\"alpha\":false}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j1\",\"pos\":{\"lat\":30.25,\"lon\":-85.5,\"alt\":120,\"src\":\"gps\"},\"label\":\"GATOR\",\"meta\":{\"level\":\"detail\",\"flags\":{\"confirmed\":true,\"note\":\"n\",\"deep\":{\"x\":2.5}},\"seen\":\"2021-02-27T20:00:00.000Z\",\"extra\":\"m\"},\"zeta\":1,\"aux\":{\"k\":\"v\"},\"alpha\":false}"
+}

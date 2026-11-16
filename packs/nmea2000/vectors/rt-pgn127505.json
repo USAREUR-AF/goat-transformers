@@ -1,0 +1,14 @@
+{
+  "name": "pgn127505-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11f201c72a94207a9106",
+  "expect": "11f201c72a94207a9106",
+  "model": {
+    "@kind": "pgn127505",
+    "n2k.pgn127505_instance": "7",
+    "n2k.pgn127505_type": "12",
+    "n2k.pgn127505_level": "-110.424",
+    "n2k.pgn127505_capacity": "11019728"
+  }
+}

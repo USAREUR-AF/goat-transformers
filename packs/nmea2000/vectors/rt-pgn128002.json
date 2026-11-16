@@ -1,0 +1,16 @@
+{
+  "name": "pgn128002-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02f4014e09b40d41f577a7",
+  "expect": "02f4014e09b40d41f577a7",
+  "model": {
+    "@kind": "pgn128002",
+    "n2k.inverter_motor_controller": "78",
+    "n2k.active_motor_mode": "1",
+    "n2k.brake_mode": "2",
+    "n2k.rotational_shaft_speed": "877",
+    "n2k.motor_dc_voltage": "6278.5",
+    "n2k.motor_dc_current": "-2266.5"
+  }
+}

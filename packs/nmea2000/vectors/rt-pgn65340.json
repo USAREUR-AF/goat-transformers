@@ -1,0 +1,15 @@
+{
+  "name": "pgn65340-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "3cff0041873d6adc6d0030",
+  "expect": "3cff0041873d6adc6d0030",
+  "model": {
+    "@kind": "pgn65340",
+    "n2k.mode_class": "61",
+    "n2k.pgn65340_mode": "106",
+    "n2k.c": "220",
+    "n2k.d": "109",
+    "n2k.pgn65340_flags": "48"
+  }
+}

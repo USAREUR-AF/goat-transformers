@@ -1,0 +1,13 @@
+{
+  "name": "message-pack-no-message-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "f21900",
+  "expect": "f21900",
+  "model": {
+    "@kind": "message-pack",
+    "rid.messages.#": "0"
+  },
+  "source": "constructed",
+  "reference": "Message Pack header with the count 0"
+}

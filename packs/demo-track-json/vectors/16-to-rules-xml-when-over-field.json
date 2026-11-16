@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-xml-when-over-field",
+  "from": "demo-track-json",
+  "to": "conformance-rules-xml",
+  "input": "{\"id\":\"d1\",\"how\":\"m-g\",\"name\":\"X\"}",
+  "expect": "<note id=\"d1\" v=\"1\" mode=\"fixed\" name=\"X\"/>"
+}

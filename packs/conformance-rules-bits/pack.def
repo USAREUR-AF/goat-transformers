@@ -1,0 +1,24 @@
+# Conformance probe pack for the field options of spec 0.6 on the `bits` wire,
+# most-significant-bit-first. Public. No kinds. One byte per word, so a locator
+# is `0:<bit offset>:<len>`. Exercises `swap` (16 and 32 bits: little-endian
+# fields in an `msb` pack), `trim`, `optional`, `const`, a value table from a
+# wire integer to a model string, and `typemap` on the bits wire (ruling 18 of
+# 0.5). Decode needs 12 bytes; encode writes 22.
+format     conformance-rules-bits
+version    0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       track
+wire       bits
+word_bytes 1
+bit_order  msb
+const  0:0:8  90                                        # byte 0: 0x5a
+field  time_ms      0:8:16    uint  swap                # bytes 1 to 2, little-endian
+field  lat          0:24:32   sscale:1/10000000  swap   # bytes 3 to 6, little-endian
+field  track.class  0:56:8    uint  via class           # byte 7
+field  type         0:64:32   ascii                     # bytes 8 to 11, through the typemap
+field  callsign     0:96:48   ascii  trim  optional     # bytes 12 to 17
+field  ce           0:144:32  f32  optional  swap       # bytes 18 to 21, little-endian single
+typemap FRND a-f-G
+map    class  1  uas
+map    class  2  bird

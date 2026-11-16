@@ -1,0 +1,13 @@
+{
+  "name": "pgn65291-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bff008980a9f0647e",
+  "expect": "0bff008980a9f0647e",
+  "model": {
+    "@kind": "pgn65291",
+    "n2k.sid": "169",
+    "n2k.data_instance": "240",
+    "n2k.resistance": "323.56"
+  }
+}

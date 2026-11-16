@@ -1,0 +1,20 @@
+{
+  "name": "pgn129045-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "15f8015938614acf08663d75596fa400405943006042c300c035c300004343efe702f700c0fbc24e324b42",
+  "expect": "15f8015938614acf08663d75596fa400405943006042c300c035c300004343efe702f700c0fbc24e324b42",
+  "model": {
+    "@kind": "pgn129045",
+    "n2k.delta_x": "12478854.01",
+    "n2k.delta_y": "10300971.03",
+    "n2k.delta_z": "-15362064.75",
+    "n2k.rotation_in_x": "217.25",
+    "n2k.rotation_in_y": "-194.375",
+    "n2k.rotation_in_z": "-181.75",
+    "n2k.scale": "195",
+    "n2k.ellipsoid_semi_major_axis": "-1508044.97",
+    "n2k.ellipsoid_flattening_inverse": "-125.875",
+    "n2k.datum_name": "N2KB"
+  }
+}

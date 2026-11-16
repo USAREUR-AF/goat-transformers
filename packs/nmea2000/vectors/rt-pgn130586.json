@@ -1,0 +1,23 @@
+{
+  "name": "pgn130586-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1afe016b7d4527b19d25902b4dfe938575f5",
+  "expect": "1afe016b7d4527b19d25902b4dfe938575f5",
+  "model": {
+    "@kind": "pgn130586",
+    "n2k.zone_id": "107",
+    "n2k.volume_limit": "125",
+    "n2k.fade": "69",
+    "n2k.balance": "39",
+    "n2k.sub_volume": "177",
+    "n2k.eq_treble": "-99",
+    "n2k.eq_mid_range": "37",
+    "n2k.eq_bass": "-112",
+    "n2k.preset_type": "43",
+    "n2k.audio_filter": "77",
+    "n2k.high_pass_filter_frequency": "37886",
+    "n2k.low_pass_filter_frequency": "30085",
+    "n2k.pgn130586_channel": "245"
+  }
+}

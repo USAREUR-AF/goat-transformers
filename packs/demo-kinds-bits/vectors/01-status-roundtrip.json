@@ -1,0 +1,13 @@
+{
+  "name": "status-roundtrip",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "2201000010000000",
+  "expect": "2201000010000000",
+  "model": {
+    "@kind": "status",
+    "time_ms": "290",
+    "track.confirmed": "1",
+    "track.coasting": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn65285_airmar_boot_state_acknowledgment-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05ff00878004",
+  "expect": "05ff00878004",
+  "model": {
+    "@kind": "pgn65285_airmar_boot_state_acknowledgment",
+    "n2k.boot_state": "4"
+  }
+}

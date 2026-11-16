@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-extended_sys_state",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd02000084f637f50000875e",
+  "expect": "fd02000084f637f50000875e",
+  "model": {
+    "@kind": "extended_sys_state"
+  }
+}

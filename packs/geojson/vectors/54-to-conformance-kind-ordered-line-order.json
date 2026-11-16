@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-kind-ordered-line-order",
+  "from": "geojson",
+  "to": "conformance",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"type\":\"a-f-G\",\"le\":3.5},\"id\":\"g8\"}",
+  "expect": "<item id=\"g8\" kind=\"friend\" rank=\"first\" le=\"3.5\"><pos lat=\"1.5\" lon=\"2.5\"/></item>"
+}

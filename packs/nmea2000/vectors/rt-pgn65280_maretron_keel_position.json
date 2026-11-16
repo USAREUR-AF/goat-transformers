@@ -1,0 +1,11 @@
+{
+  "name": "pgn65280_maretron_keel_position-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0089807e378d590000",
+  "expect": "00ff0089807e378d590000",
+  "model": {
+    "@kind": "pgn65280_maretron_keel_position",
+    "n2k.data": "1502427006"
+  }
+}

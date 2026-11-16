@@ -1,0 +1,15 @@
+{
+  "name": "pgn127747-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f3018787627d0abbb69d",
+  "expect": "03f3018787627d0abbb69d",
+  "model": {
+    "@kind": "pgn127747",
+    "n2k.sid": "135",
+    "n2k.connection_number": "135",
+    "n2k.ac_voltage_line_to_neutral": "3209.8",
+    "n2k.ac_voltage_line_to_line": "4788.2",
+    "n2k.pgn127747_frequency": "4037.4"
+  }
+}

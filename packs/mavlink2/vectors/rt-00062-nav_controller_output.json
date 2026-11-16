@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-nav_controller_output",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1a00002c3f3f3e000000009840000070c0000000c0000080be0000c03f1fd5a0280f8b",
+  "expect": "fd1a00002c3f3f3e000000009840000070c0000000c0000080be0000c03f1fd5a0280f8b",
+  "model": {
+    "@kind": "nav_controller_output"
+  }
+}

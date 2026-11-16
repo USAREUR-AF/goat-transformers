@@ -1,0 +1,17 @@
+{
+  "name": "message-pack-two-messages-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "f2190202223132333435363738393031323334353637383930000000122624160b42bf241b6ed1b4b69808ac0870086b53150e0200",
+  "expect": "f2190202223132333435363738393031323334353637383930000000122624160b42bf241b6ed1b4b69808ac0870086b53150e0200",
+  "model": {
+    "@kind": "message-pack",
+    "rid.messages.#": "2",
+    "rid.messages[0].rid.msg_type": "0",
+    "rid.messages[1].rid.msg_type": "1",
+    "rid.messages[1].rid.proto_version": "2",
+    "rid.messages[1].rid.body_1_8": "1955898428560385062"
+  },
+  "source": "constructed",
+  "reference": "Message Pack header followed by the Basic ID message of vector 01 and the Location message of vector 02"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "scalar-lists-to-json",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-json",
+  "input": "0a0275311a0808030a020102080429000000000000e03f2900000000000000c0300130043d0000c03f3a080000803e000000c1",
+  "expect": "{\"id\":\"u1\",\"title\":\"NONE\",\"data\":{\"nums\":[3,1,2,4]},\"ratios\":[0.5,-2]}"
+}

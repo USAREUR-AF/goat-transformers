@@ -1,0 +1,13 @@
+{
+  "name": "pgn60416_iso_transport_protocol_connection_management_clear_to_send-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ec0011aa230000b09603",
+  "expect": "00ec0011aa230000b09603",
+  "model": {
+    "@kind": "pgn60416_iso_transport_protocol_connection_management_clear_to_send",
+    "n2k.max_packets": "170",
+    "n2k.next_sid": "35",
+    "n2k.pgn": "235184"
+  }
+}

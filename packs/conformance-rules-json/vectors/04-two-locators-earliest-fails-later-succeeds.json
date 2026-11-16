@@ -1,0 +1,10 @@
+{
+  "name": "two-locators-earliest-fails-later-succeeds",
+  "from": "conformance-rules-json",
+  "to": "conformance-rules-json",
+  "input": "{\"schema\":\"rules\",\"id\":\"a4\",\"pos\":{\"lat\":\"north\",\"latitude\":2}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"a4\",\"rev\":6,\"pos\":{\"lat\":2,\"latitude\":2,\"alt\":-1},\"cls\":2,\"meta\":{\"live\":true,\"tag\":\"7\"}}",
+  "model": {
+    "lat": "2"
+  }
+}

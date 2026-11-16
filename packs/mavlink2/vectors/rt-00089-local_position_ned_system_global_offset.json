@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-local_position_ned_system_global_offset",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1c0000415a5a590000e31f87020000003f0000104000008040000090c0000030c0000080bf",
+  "expect": "fd1c0000415a5a590000e31f87020000003f0000104000008040000090c0000030c0000080bf",
+  "model": {
+    "@kind": "local_position_ned_system_global_offset"
+  }
+}

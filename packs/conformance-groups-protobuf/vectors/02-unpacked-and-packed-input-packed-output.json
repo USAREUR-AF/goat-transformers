@@ -1,0 +1,22 @@
+{
+  "name": "unpacked-and-packed-input-packed-output",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a0275311a0808030a020102080429000000000000e03f2900000000000000c0300130043d0000c03f3a080000803e000000c1",
+  "expect": "0a0275311a060a04030102042a10000000000000e03f00000000000000c0320201043a0c0000c03f0000803e000000c1",
+  "model": {
+    "probe.nums.#": "4",
+    "probe.nums[0].probe.val": "3",
+    "probe.nums[1].probe.val": "1",
+    "probe.nums[2].probe.val": "2",
+    "probe.nums[3].probe.val": "4",
+    "probe.ratios.#": "2",
+    "probe.ratios[1].probe.ratio": "-2",
+    "probe.deltas.#": "2",
+    "probe.deltas[0].probe.val": "-1",
+    "probe.deltas[1].probe.val": "2",
+    "probe.gains.#": "3",
+    "probe.gains[0].probe.ratio": "1.5",
+    "probe.gains[2].probe.ratio": "-8"
+  }
+}

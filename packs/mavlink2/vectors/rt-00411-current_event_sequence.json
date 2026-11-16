@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-current_event_sequence",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd030000d7a21e9b0100812358",
+  "expect": "fd030000d7a21e9b0100812358",
+  "model": {
+    "@kind": "current_event_sequence"
+  }
+}

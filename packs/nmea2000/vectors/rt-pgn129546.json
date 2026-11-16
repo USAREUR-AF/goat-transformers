@@ -1,0 +1,14 @@
+{
+  "name": "pgn129546-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0afa016c4bff45a9c1",
+  "expect": "0afa016c4bff45a9c1",
+  "model": {
+    "@kind": "pgn129546",
+    "n2k.radial_position_error_maximum_threshold": "193.08",
+    "n2k.probability_of_false_alarm": "-1",
+    "n2k.pgn129546_probability_of_missed_detection": "69",
+    "n2k.pseudorange_residual_filtering_time_constant": "49577"
+  }
+}

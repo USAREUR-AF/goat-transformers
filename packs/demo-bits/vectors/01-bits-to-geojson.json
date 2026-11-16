@@ -1,0 +1,7 @@
+{
+  "name": "bits-to-geojson",
+  "from": "demo-bits",
+  "to": "geojson",
+  "input": "2244a6e03811090000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[54.99801397228908,35.247092482655034]},\"properties\":{\"time_ms\":290}}"
+}

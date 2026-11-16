@@ -1,0 +1,19 @@
+{
+  "name": "pgn130822_navico_udb_database_source_report-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff011381050106f6ed7efc1b7ccac68343",
+  "expect": "06ff011381050106f6ed7efc1b7ccac68343",
+  "model": {
+    "@kind": "pgn130822_navico_udb_database_source_report",
+    "n2k.marker": "5",
+    "n2k.address": "6",
+    "n2k.source_setting_id": "246",
+    "n2k.pgn130822_item": "237",
+    "n2k.object_value": "64638",
+    "n2k.pgn130822_instance": "11",
+    "n2k.source_selection_master": "1",
+    "n2k.sub": "13027964",
+    "n2k.token": "17283"
+  }
+}

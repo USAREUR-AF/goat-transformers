@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-esc_info",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2e0000aa29642201000a13ca7a00000080e1664e4e92e0856c435abd0af4d3f428b8ba8f0e4088f101a27b22b8595690f4c7923d14ebc2",
+  "expect": "fd2e0000aa29642201000a13ca7a00000080e1664e4e92e0856c435abd0af4d3f428b8ba8f0e4088f101a27b22b8595690f4c7923d14ebc2",
+  "model": {
+    "@kind": "esc_info"
+  }
+}

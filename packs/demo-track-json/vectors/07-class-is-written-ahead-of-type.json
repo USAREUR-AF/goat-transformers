@@ -1,0 +1,7 @@
+{
+  "name": "class-is-written-ahead-of-type",
+  "from": "demo-track-json",
+  "to": "canonical-track-v2",
+  "input": "{\"id\":\"d1\",\"type\":\"a-u-A-M-H\",\"time\":\"2021-02-27T20:00:00.250Z\",\"lat\":1.5,\"lon\":2.5,\"track\":{\"source_id\":\"radar-north\",\"generation\":\"gen-7\",\"class\":\"bird\"}}",
+  "expect": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"d1\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":1.5,\"longitudeDeg\":2.5},\"classification\":\"bird\"}"
+}

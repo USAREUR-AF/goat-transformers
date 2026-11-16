@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-log_erase",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0200005b7a7a790000c39a",
+  "expect": "fd0200005b7a7a790000c39a",
+  "model": {
+    "@kind": "log_erase"
+  }
+}

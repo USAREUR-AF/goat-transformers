@@ -1,0 +1,18 @@
+{
+  "name": "pgn130842_furuno_six_degrees_of_freedom_movement-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1aff013f870726c0dbc177c9422b47ce35963a661c993e2a044a73b8dbbbcad7",
+  "expect": "1aff013f870726c0dbc177c9422b47ce35963a661c993e2a044a73b8dbbbcad7",
+  "model": {
+    "@kind": "pgn130842_furuno_six_degrees_of_freedom_movement",
+    "n2k.a": "-608164345",
+    "n2k.b": "1120499649",
+    "n2k.c": "902711083",
+    "n2k.d": "-106",
+    "n2k.roll_rate": "-30127.735143316437",
+    "n2k.pitch_rate": "21673.27074617186",
+    "n2k.yaw_rate": "-19953.097954430785",
+    "n2k.i": "-10294"
+  }
+}

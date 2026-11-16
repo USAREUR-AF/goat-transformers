@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-when-over-field",
+  "from": "demo-track-json",
+  "to": "conformance-json",
+  "input": "{\"id\":\"p2\",\"how\":\"m-g\",\"track\":{\"test_data\":true}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"p2\",\"meta\":{\"pin\":\"fixed\",\"td\":true}}"
+}

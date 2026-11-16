@@ -1,0 +1,11 @@
+{
+  "name": "pgn65304_suzuki_engine_data_e-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "18ff004a8221201b2d0000",
+  "expect": "18ff004a8221201b2d0000",
+  "model": {
+    "@kind": "pgn65304_suzuki_engine_data_e",
+    "n2k.data": "756752417"
+  }
+}

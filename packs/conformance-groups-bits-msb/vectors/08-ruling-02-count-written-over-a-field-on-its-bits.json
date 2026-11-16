@@ -1,0 +1,10 @@
+{
+  "name": "ruling-02-count-written-over-a-field-on-its-bits",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-var",
+  "input": "153c07616200",
+  "expect": "01070000",
+  "model": {
+    "probe.n": "5"
+  }
+}

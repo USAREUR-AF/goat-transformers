@@ -1,0 +1,10 @@
+{
+  "name": "identifiers-empty-array-is-kept",
+  "from": "canonical-track-v2",
+  "to": "canonical-track-v2",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"t1\",\"sourceId\":\"s1\",\"trackGeneration\":\"1\",\"observedAt\":\"2026-03-01T12:30:45.000Z\",\"position\":{\"latitudeDeg\":56.25,\"longitudeDeg\":21.5},\"identifiers\":[]}",
+  "expect": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"t1\",\"sourceId\":\"s1\",\"trackGeneration\":\"1\",\"observedAt\":\"2026-03-01T12:30:45.000Z\",\"position\":{\"latitudeDeg\":56.25,\"longitudeDeg\":21.5},\"identifiers\":[]}",
+  "model": {
+    "track.identifiers.#": "0"
+  }
+}

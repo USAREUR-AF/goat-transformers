@@ -1,0 +1,7 @@
+{
+  "name": "22-duplicate-field-common-and-kind",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.5.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\nfield uid @id string\nkind a\nfield lat @lat float\nkind b\nfield uid @uid string\n"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "16-duplicate-module",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n",
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.4.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\nfield uid @id string\n",
+  "expect_error": "duplicate-module"
+}

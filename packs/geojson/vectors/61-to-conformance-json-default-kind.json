@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-default-kind",
+  "from": "geojson",
+  "to": "conformance-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"callsign\":\"GATOR\"},\"id\":\"g6\"}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"g6\",\"pos\":{\"lat\":1.5,\"lon\":2.5},\"label\":\"GATOR\"}"
+}

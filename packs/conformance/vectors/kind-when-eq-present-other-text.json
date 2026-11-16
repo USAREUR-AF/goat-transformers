@@ -1,0 +1,10 @@
+{
+  "name": "kind-when-eq-present-other-text",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"k7\" kind=\"friend\" ce=\"9.50\" mode=\"absent\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"k7\" kind=\"friend\" ce=\"9.50\" mode=\"absent\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "model": {
+    "@kind": "plain"
+  }
+}

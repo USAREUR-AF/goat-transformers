@@ -1,0 +1,21 @@
+{
+  "name": "pgn130900-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "54ff01a880e8f73a756d3b7ff1245e88a7859a1be03fe1",
+  "expect": "54ff01a880e8f73a756d3b7ff1245e88a7859a1be03fe1",
+  "model": {
+    "@kind": "pgn130900",
+    "n2k.ac_instance": "232",
+    "n2k.number_of_lines": "247",
+    "n2k.line": "2",
+    "n2k.acceptability": "2",
+    "n2k.waveform": "3",
+    "n2k.voltage": "280.21",
+    "n2k.pgn130900_current": "3257.1",
+    "n2k.pgn130900_frequency": "9457",
+    "n2k.pgn130900_real_power": "-2052618146",
+    "n2k.pgn130900_reactive_power": "1071651738",
+    "n2k.pgn130900_power_factor": "-31"
+  }
+}

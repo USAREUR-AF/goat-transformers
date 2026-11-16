@@ -1,0 +1,16 @@
+{
+  "name": "pgn65295-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0fff00278195049c7d36",
+  "expect": "0fff00278195049c7d36",
+  "model": {
+    "@kind": "pgn65295",
+    "n2k.device_id": "149",
+    "n2k.pgn65295_channel": "4",
+    "n2k.pgn65295_alarm_type": "32156",
+    "n2k.severity_code": "6",
+    "n2k.state_flag": "1",
+    "n2k.ack_flag": "1"
+  }
+}

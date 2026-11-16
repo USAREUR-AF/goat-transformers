@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_low_pass_filter-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a38119808a21",
+  "expect": "04ff01a38119808a21",
+  "model": {
+    "@kind": "pgn130820_fusion_low_pass_filter",
+    "n2k.pgn130820_zone": "138",
+    "n2k.filter": "33"
+  }
+}

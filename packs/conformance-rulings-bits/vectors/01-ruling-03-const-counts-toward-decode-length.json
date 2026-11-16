@@ -1,0 +1,7 @@
+{
+  "name": "ruling-03-const-counts-toward-decode-length",
+  "from": "conformance-rulings-bits",
+  "to": "conformance-rulings-bits",
+  "input": "0700",
+  "expect_error": "malformed-wire"
+}

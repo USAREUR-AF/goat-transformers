@@ -1,0 +1,11 @@
+{
+  "name": "pgn130846_furuno_motion_sensor_status_extended-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1eff013f873c",
+  "expect": "1eff013f873c",
+  "model": {
+    "@kind": "pgn130846_furuno_motion_sensor_status_extended",
+    "n2k.pgn130846_status": "60"
+  }
+}

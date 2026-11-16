@@ -1,0 +1,14 @@
+{
+  "name": "long-roundtrip",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "470200603aa4c011e302abccc3e0ba474f4154",
+  "expect": "470200603aa4c011e302abccc3e0ba474f4154",
+  "model": {
+    "@kind": "long",
+    "time_ms": "1614456000",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "callsign": "GOAT"
+  }
+}

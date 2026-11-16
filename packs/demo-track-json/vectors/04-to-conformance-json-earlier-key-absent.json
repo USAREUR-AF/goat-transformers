@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-earlier-key-absent",
+  "from": "demo-track-json",
+  "to": "conformance-json",
+  "input": "{\"id\":\"t4\",\"track\":{\"generation\":\"gen-7\"}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"t4\",\"meta\":{\"level\":\"alias\",\"src\":\"gen-7\"}}"
+}

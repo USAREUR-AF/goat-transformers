@@ -1,0 +1,20 @@
+{
+  "name": "pgn129538-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02fa01e16361f27aae5266645fb82e99651302",
+  "expect": "02fa01e16361f27aae5266645fb82e99651302",
+  "model": {
+    "@kind": "pgn129538",
+    "n2k.sv_elevation_mask": "2.5569",
+    "n2k.pdop_mask": "-34.87",
+    "n2k.pdop_switch": "-208.7",
+    "n2k.snr_mask": "261.94",
+    "n2k.gnss_mode_desired": "4",
+    "n2k.dgnss_mode_desired": "4",
+    "n2k.position_velocity_filter": "1",
+    "n2k.max_correction_age": "471.99",
+    "n2k.antenna_altitude_for2d_mode": "3254254.54",
+    "n2k.use_antenna_altitude_for2d_mode": "2"
+  }
+}

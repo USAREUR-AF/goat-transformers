@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-raw_rpm",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd050000bf5a95530100000080bf20",
+  "expect": "fd050000bf5a95530100000080bf20",
+  "model": {
+    "@kind": "raw_rpm"
+  }
+}

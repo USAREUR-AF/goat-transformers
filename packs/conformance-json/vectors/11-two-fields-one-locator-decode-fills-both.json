@@ -1,0 +1,12 @@
+{
+  "name": "two-fields-one-locator-decode-fills-both",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j11\",\"meta\":{\"level\":\"alias\",\"src\":\"s-9\"}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j11\",\"meta\":{\"level\":\"alias\",\"src\":\"s-9\"}}",
+  "model": {
+    "@kind": "alias",
+    "track.source_id": "s-9",
+    "track.generation": "s-9"
+  }
+}

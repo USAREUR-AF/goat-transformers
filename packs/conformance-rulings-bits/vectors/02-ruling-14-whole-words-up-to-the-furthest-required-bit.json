@@ -1,0 +1,7 @@
+{
+  "name": "ruling-14-whole-words-up-to-the-furthest-required-bit",
+  "from": "conformance-rulings-bits",
+  "to": "conformance-rulings-bits",
+  "input": "070009",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "sapient-to-geojson",
+  "from": "sapient",
+  "to": "geojson",
+  "input": "3a21321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.95,30.009,12.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "detection_report",
+    "lat": "30.009",
+    "lon": "-85.95",
+    "hae": "12.5",
+    "sapient.location_coordinate_system": "1",
+    "sapient.location_datum": "1"
+  }
+}

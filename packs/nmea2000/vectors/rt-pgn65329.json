@@ -1,0 +1,11 @@
+{
+  "name": "pgn65329-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "31ff00c68078574e320000",
+  "expect": "31ff00c68078574e320000",
+  "model": {
+    "@kind": "pgn65329",
+    "n2k.data": "843995000"
+  }
+}

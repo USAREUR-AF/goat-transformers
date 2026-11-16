@@ -1,0 +1,26 @@
+{
+  "name": "pgn129806-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0efb018fedc9411f0e50edc61ad89f448145f6aadff0ee8fe74a10212ef3ce",
+  "expect": "0efb018fedc9411f0e50edc61ad89f448145f6aadff0ee8fe74a10212ef3ce",
+  "model": {
+    "@kind": "pgn129806",
+    "n2k.pgn129806_message_id": "15",
+    "n2k.repeat_indicator": "2",
+    "n2k.source_id": "524405229",
+    "n2k.ais_transceiver_information": "7",
+    "n2k.channel_a": "60752",
+    "n2k.channel_b": "6854",
+    "n2k.pgn129806_power": "1",
+    "n2k.tx_rx_mode": "13",
+    "n2k.north_east_longitude_corner1": "116.6099615",
+    "n2k.north_east_latitude_corner1": "-25.3777162",
+    "n2k.south_west_longitude_corner2": "125.6689646",
+    "n2k.south_west_latitude_corner2": "-21.5080688",
+    "n2k.addressed_or_broadcast_message_indicator": "1",
+    "n2k.channel_abandwidth": "1",
+    "n2k.channel_bbandwidth": "1",
+    "n2k.transitional_zone_size": "6"
+  }
+}

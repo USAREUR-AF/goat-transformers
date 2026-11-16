@@ -1,0 +1,7 @@
+{
+  "name": "pdouble-nan",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a02703429000000000000f87f",
+  "expect_error": "transform-decode"
+}

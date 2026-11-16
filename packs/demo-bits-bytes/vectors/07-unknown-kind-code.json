@@ -1,0 +1,7 @@
+{
+  "name": "unknown-kind-code",
+  "from": "demo-bits-bytes",
+  "to": "demo-bits-bytes",
+  "input": "470901603aa4c0",
+  "expect_error": "no-kind"
+}

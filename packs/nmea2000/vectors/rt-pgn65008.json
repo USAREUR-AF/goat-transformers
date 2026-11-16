@@ -1,0 +1,14 @@
+{
+  "name": "pgn65008-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "f0fd0007bc60cb0296cb7c",
+  "expect": "f0fd0007bc60cb0296cb7c",
+  "model": {
+    "@kind": "pgn65008",
+    "n2k.line_line_ac_rms_voltage": "48135",
+    "n2k.line_neutral_ac_rms_voltage": "52064",
+    "n2k.ac_frequency": "300.015625",
+    "n2k.pgn65008_ac_rms_current": "31947"
+  }
+}

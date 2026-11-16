@@ -1,0 +1,21 @@
+{
+  "name": "pgn130912-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "60ff01a880cacb67e1dc52c72b57bddaded394e65bf881490a70b8",
+  "expect": "60ff01a880cacb67e1dc52c72b57bddaded394e65bf881490a70b8",
+  "model": {
+    "@kind": "pgn130912",
+    "n2k.charge_instance": "202",
+    "n2k.battery_instance": "203",
+    "n2k.bulk_voltage": "577.03",
+    "n2k.bulk_time": "21212",
+    "n2k.absorption_voltage": "112.07",
+    "n2k.absorption_time": "48471",
+    "n2k.float_voltage": "570.5",
+    "n2k.float_time": "38099",
+    "n2k.equalization_voltage": "235.26",
+    "n2k.generic_charge_voltage": "332.72",
+    "n2k.generic_charge_current": "3094350409"
+  }
+}

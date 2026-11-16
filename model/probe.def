@@ -1,0 +1,66 @@
+# The probe module: synthetic keys for the conformance vectors of derived keys
+# (engine-spec 0.6) and of groups (engine-spec 0.7). No format of the real
+# world maps them; the packs `conformance-derive`, `conformance-rulings-*` and
+# `conformance-groups-*` do. One `derive` line per function that `track` does
+# not use, a pair of lines that needs two passes, and a chain that needs nine.
+module        probe
+version       0.1.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic keys for conformance vectors, no external standard)"
+key  a        float   -  "an input number"
+key  neg_a    float   -  "derived: -a"
+key  scaled   float   -  "derived: a * 2.5"
+key  third    float   -  "derived: a * 1 / 3"
+key  shifted  float   -  "derived: a - 0.5"
+key  n        int     -  "an input integer"
+key  n_next   int     -  "derived: n + 1000, integer addition"
+key  n_copy   int     -  "derived: n"
+key  s1       string  -  "an input text"
+key  s2       string  -  "an input text"
+key  joined   string  -  "derived: uid, s1 and s2 joined by /"
+key  chain    float   -  "derived from `late`, which a later line derives: set in the second pass"
+key  late     float   -  "derived: -a"
+key  k0       int     -  "start of a chain of copies"
+key  k1       int     -  "derived: k0"
+key  k2       int     -  "derived: k1"
+key  k3       int     -  "derived: k2"
+key  k4       int     -  "derived: k3"
+key  k5       int     -  "derived: k4"
+key  k6       int     -  "derived: k5"
+key  k7       int     -  "derived: k6"
+key  k8       int     -  "derived: k7"
+key  k9       int     -  "derived: k8; the ninth pass would set it, and there are eight"
+key  j1       string  -  "derived: s1 joined with nothing else (a `join` of one argument)"
+# Lists (engine-spec 0.7) and the keys their items hold.
+key  label    string  -  "an item text"
+key  qty      int     -  "an item integer"
+key  ratio    float   -  "an item number"
+key  tag      string  -  "a text of a nested item or of a scalar item"
+key  val      int     -  "an integer of a nested item or of a scalar item"
+list items    "items that hold label, qty, ratio and the nested list subs"
+list subs     "nested in an item of items: items that hold tag and val"
+list nums     "scalar items: each holds val"
+list names    "scalar items: each holds tag"
+list ratios   "scalar items: each holds ratio"
+list deltas   "scalar items: each holds val (signed)"
+list gains    "scalar items: each holds ratio (single precision)"
+derive  probe.j1       join:-       probe.s1
+derive  probe.neg_a    neg          probe.a
+derive  probe.scaled   scale:2.5    probe.a
+derive  probe.third    scale:1/3    probe.a
+derive  probe.shifted  offset:-0.5  probe.a
+derive  probe.n_next   offset:1000  probe.n
+derive  probe.n_copy   copy         probe.n
+derive  probe.joined   join:/       uid  probe.s1  probe.s2
+derive  probe.chain    neg          probe.late
+derive  probe.late     neg          probe.a
+# each line needs the key the line below it sets: one more key per pass
+derive  probe.k9  copy  probe.k8
+derive  probe.k8  copy  probe.k7
+derive  probe.k7  copy  probe.k6
+derive  probe.k6  copy  probe.k5
+derive  probe.k5  copy  probe.k4
+derive  probe.k4  copy  probe.k3
+derive  probe.k3  copy  probe.k2
+derive  probe.k2  copy  probe.k1
+derive  probe.k1  copy  probe.k0

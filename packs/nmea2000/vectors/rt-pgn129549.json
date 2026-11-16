@@ -1,0 +1,20 @@
+{
+  "name": "pgn129549-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0dfa01c14646f0c50cd3ada20fda84b60fc86d",
+  "expect": "0dfa01c14646f0c50cd3ada20fda84b60fc86d",
+  "model": {
+    "@kind": "pgn129549",
+    "n2k.sid": "193",
+    "n2k.reference_station_id": "1606",
+    "n2k.reference_station_type": "4",
+    "n2k.time_of_corrections": "5067.2",
+    "n2k.station_health": "12",
+    "n2k.satellite_id": "211",
+    "n2k.prc": "-63650.9523",
+    "n2k.rrc": "-1.8812",
+    "n2k.udre": "512.15",
+    "n2k.iod": "109"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pgn130842_simnet_ais_silent_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1aff014187445507",
+  "expect": "1aff014187445507",
+  "model": {
+    "@kind": "pgn130842_simnet_ais_silent_mode",
+    "n2k.operation": "1",
+    "n2k.d": "85",
+    "n2k.e": "7"
+  }
+}

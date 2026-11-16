@@ -1,0 +1,23 @@
+{
+  "name": "pgn129803-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bfb01a0aeec3b34125d8b0a29b40c9d40966f00e5ee38072cd5a50058",
+  "expect": "0bfb01a0aeec3b34125d8b0a29b40c9d40966f00e5ee38072cd5a50058",
+  "model": {
+    "@kind": "pgn129803",
+    "n2k.pgn129803_message_id": "32",
+    "n2k.repeat_indicator": "2",
+    "n2k.source_id": "876342446",
+    "n2k.ais_transceiver_information": "9",
+    "n2k.destination_id1": "688556893",
+    "n2k.message_id11": "45",
+    "n2k.slot_offset11": "40204",
+    "n2k.message_id12": "16",
+    "n2k.slot_offset12": "28566",
+    "n2k.destination_id2": "121171685",
+    "n2k.message_id21": "11",
+    "n2k.slot_offset21": "42453",
+    "n2k.sid": "88"
+  }
+}

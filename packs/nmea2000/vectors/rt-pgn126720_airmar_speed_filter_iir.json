@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_airmar_speed_filter_iir-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef0187802b0166b24685",
+  "expect": "00ef0187802b0166b24685",
+  "model": {
+    "@kind": "pgn126720_airmar_speed_filter_iir",
+    "n2k.sample_interval": "456.7",
+    "n2k.filter_duration": "341.18"
+  }
+}

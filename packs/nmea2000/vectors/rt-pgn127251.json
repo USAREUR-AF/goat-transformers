@@ -1,0 +1,12 @@
+{
+  "name": "pgn127251-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "13f101e55e902989",
+  "expect": "13f101e55e902989",
+  "model": {
+    "@kind": "pgn127251",
+    "n2k.sid": "229",
+    "n2k.rate": "-62.3051490625"
+  }
+}

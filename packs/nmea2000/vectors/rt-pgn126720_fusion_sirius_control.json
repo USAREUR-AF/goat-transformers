@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_fusion_sirius_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3811e00f80bbf57",
+  "expect": "00ef01a3811e00f80bbf57",
+  "model": {
+    "@kind": "pgn126720_fusion_sirius_control",
+    "n2k.source_id": "248",
+    "n2k.pgn126720_fusion_sirius_control_command": "11",
+    "n2k.data": "22463"
+  }
+}

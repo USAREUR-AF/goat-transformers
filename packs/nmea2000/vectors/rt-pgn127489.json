@@ -1,0 +1,23 @@
+{
+  "name": "pgn127489-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f2018febc8fe636728261a1c63a77179795271f46a0060c3fc258a46",
+  "expect": "01f2018febc8fe636728261a1c63a77179795271f46a0060c3fc258a46",
+  "model": {
+    "@kind": "pgn127489",
+    "n2k.pgn127489_instance": "143",
+    "n2k.oil_pressure": "5143500",
+    "n2k.oil_temperature": "2559.8",
+    "n2k.pgn127489_temperature": "103.43",
+    "n2k.alternator_potential": "66.94",
+    "n2k.fuel_rate": "2537.2",
+    "n2k.total_engine_hours": "2038002087",
+    "n2k.coolant_pressure": "2901000",
+    "n2k.fuel_pressure": "27380000",
+    "n2k.pgn127489_discrete_status1": "50016",
+    "n2k.discrete_status2": "9724",
+    "n2k.engine_load": "-118",
+    "n2k.engine_torque": "70"
+  }
+}

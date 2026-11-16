@@ -1,0 +1,7 @@
+{
+  "name": "to-groups-json",
+  "from": "conformance-groups-kinds",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"k4\",\"names\":[\"p\"],\"shape\":\"listed\",\"items\":[{\"name\":\"aa\"}]}",
+  "expect": "{\"id\":\"k4\",\"title\":\"NONE\",\"items\":[{\"name\":\"aa\",\"n\":1,\"kind\":\"item\"}],\"names\":[\"p\"]}"
+}

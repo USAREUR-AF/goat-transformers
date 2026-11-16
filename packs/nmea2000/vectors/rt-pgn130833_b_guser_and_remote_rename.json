@@ -1,0 +1,15 @@
+{
+  "name": "pgn130833_b_guser_and_remote_rename-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11ff017d812f7900134e324b38444535394e324b45463736373532345445535456",
+  "expect": "11ff017d812f7900134e324b38444535394e324b45463736373532345445535456",
+  "model": {
+    "@kind": "pgn130833_b_guser_and_remote_rename",
+    "n2k.pgn130833_data_type": "2351",
+    "n2k.pgn130833_length": "7",
+    "n2k.decimals": "19",
+    "n2k.short_name": "N2K8DE59",
+    "n2k.long_name": "N2KEF767524TESTV"
+  }
+}

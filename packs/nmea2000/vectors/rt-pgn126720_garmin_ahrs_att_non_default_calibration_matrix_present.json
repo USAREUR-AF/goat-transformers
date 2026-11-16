@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_ahrs_att_non_default_calibration_matrix_present-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e5806c070202280055",
+  "expect": "00ef01e5806c070202280055",
+  "model": {
+    "@kind": "pgn126720_garmin_ahrs_att_non_default_calibration_matrix_present",
+    "n2k.calibration_matrix_present": "85"
+  }
+}

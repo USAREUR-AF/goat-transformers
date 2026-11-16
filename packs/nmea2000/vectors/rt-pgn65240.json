@@ -1,0 +1,19 @@
+{
+  "name": "pgn65240-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "d8fe00f6f847cb1106161787",
+  "expect": "d8fe00f6f847cb1106161787",
+  "model": {
+    "@kind": "pgn65240",
+    "n2k.unique_number": "522486",
+    "n2k.manufacturer_code": "1626",
+    "n2k.device_instance_lower": "1",
+    "n2k.device_instance_upper": "2",
+    "n2k.device_function": "6",
+    "n2k.device_class": "11",
+    "n2k.system_instance": "7",
+    "n2k.industry_code": "1",
+    "n2k.new_source_address": "135"
+  }
+}

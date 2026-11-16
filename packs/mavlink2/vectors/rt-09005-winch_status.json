@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-winch_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd220000e0061d2d2300cfe9b5210000000000008840000088c0000020c0000040bf0000803fd9e0cf16e8e3",
+  "expect": "fd220000e0061d2d2300cfe9b5210000000000008840000088c0000020c0000040bf0000803fd9e0cf16e8e3",
+  "model": {
+    "@kind": "winch_status"
+  }
+}

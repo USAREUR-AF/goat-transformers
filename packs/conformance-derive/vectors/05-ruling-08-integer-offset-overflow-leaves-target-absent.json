@@ -1,0 +1,8 @@
+{
+  "name": "ruling-08-integer-offset-overflow-leaves-target-absent",
+  "from": "conformance-derive",
+  "to": "conformance-derive",
+  "input": "{\"id\":\"u1\",\"n\":9223372036854775000}",
+  "context": {},
+  "expect": "{\"id\":\"u1\",\"n\":9223372036854775000,\"n_copy\":9223372036854775000}"
+}

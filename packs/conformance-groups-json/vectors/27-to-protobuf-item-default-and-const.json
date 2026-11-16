@@ -1,0 +1,7 @@
+{
+  "name": "to-protobuf-item-default-and-const",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-protobuf",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"aa\",\"n\":5},{\"name\":\"bb\"}]}",
+  "expect": "0a02753112080a0261611005200912080a02626210012009"
+}

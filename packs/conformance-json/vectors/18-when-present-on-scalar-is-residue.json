@@ -1,0 +1,11 @@
+{
+  "name": "when-present-on-scalar-is-residue",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"m1\",\"meta\":{\"mark\":\"x\",\"coast\":true}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"m1\",\"meta\":{\"coast\":true,\"mark\":\"x\"}}",
+  "model": {
+    "@kind": "marked",
+    "track.coasting": "1"
+  }
+}

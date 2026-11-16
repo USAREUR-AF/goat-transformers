@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-figure_eight_execution_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd210000c470ab690100d355bf4500000000000040c00000a0bf0000003f017f17db82d21bdb000090c0b4",
+  "expect": "fd210000c470ab690100d355bf4500000000000040c00000a0bf0000003f017f17db82d21bdb000090c0b4",
+  "model": {
+    "@kind": "figure_eight_execution_status"
+  }
+}

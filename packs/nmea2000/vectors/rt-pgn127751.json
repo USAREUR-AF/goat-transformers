@@ -1,0 +1,14 @@
+{
+  "name": "pgn127751-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07f301e4d8b006bbecd3",
+  "expect": "07f301e4d8b006bbecd3",
+  "model": {
+    "@kind": "pgn127751",
+    "n2k.sid": "228",
+    "n2k.connection_number": "216",
+    "n2k.dc_voltage": "171.2",
+    "n2k.dc_current": "-28885.17"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-available_modes_monitor",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd010000ddbc38b50100c7",
+  "expect": "fd010000ddbc38b50100c7",
+  "model": {
+    "@kind": "available_modes_monitor"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_rate_of_turn_order-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e58010170404007300008053c3",
+  "expect": "00ef01e58010170404007300008053c3",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_rate_of_turn_order",
+    "n2k.pgn126720_rate_of_turn_order": "-211.5"
+  }
+}

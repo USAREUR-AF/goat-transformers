@@ -1,0 +1,15 @@
+{
+  "name": "items-in-properties-and-top-level-scalars-roundtrip",
+  "from": "conformance-groups-geojson",
+  "to": "conformance-groups-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"items\":[{\"name\":\"aa\",\"n\":2,\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3}]},\"id\":\"u1\",\"names\":[\"p\",\"q\"]}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"items\":[{\"name\":\"aa\",\"n\":2,\"subs\":[{\"t\":\"x\",\"v\":1},{\"t\":\"y\",\"v\":2}]},{\"name\":\"bb\",\"n\":3}]},\"id\":\"u1\",\"names\":[\"p\",\"q\"]}",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "2",
+    "probe.items[0].probe.subs[1].probe.tag": "y",
+    "probe.items[1].probe.qty": "3",
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "p"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "overlap-read-independently",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "0000600012345a00",
+  "expect": "0000600012345a00",
+  "model": {
+    "@kind": "overlap",
+    "hae": "4660",
+    "ce": "13402"
+  }
+}

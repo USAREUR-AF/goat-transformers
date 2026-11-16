@@ -1,0 +1,14 @@
+{
+  "name": "pgn130820_fusion_volume_limits-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3811c80d56decd9",
+  "expect": "04ff01a3811c80d56decd9",
+  "model": {
+    "@kind": "pgn130820_fusion_volume_limits",
+    "n2k.zone1_volume_limit": "213",
+    "n2k.zone2_volume_limit": "109",
+    "n2k.zone3_volume_limit": "236",
+    "n2k.zone4_volume_limit": "217"
+  }
+}

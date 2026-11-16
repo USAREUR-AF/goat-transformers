@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-setup_signing",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2a00008e07420001004c0c63120000008023fa",
+  "expect": "fd2a00008e07420001004c0c63120000008023fa",
+  "model": {
+    "@kind": "setup_signing"
+  }
+}

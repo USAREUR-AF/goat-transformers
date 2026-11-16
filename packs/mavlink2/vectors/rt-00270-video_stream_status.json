@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-video_stream_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1600009c15500e0100000030c035aef31f0c02e355baa991fd68513f16ed4c",
+  "expect": "fd1600009c15500e0100000030c035aef31f0c02e355baa991fd68513f16ed4c",
+  "model": {
+    "@kind": "video_stream_status"
+  }
+}

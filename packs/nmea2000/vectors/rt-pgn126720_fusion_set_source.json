@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_fusion_set_source-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3810200f1",
+  "expect": "00ef01a3810200f1",
+  "model": {
+    "@kind": "pgn126720_fusion_set_source",
+    "n2k.source_id": "241"
+  }
+}

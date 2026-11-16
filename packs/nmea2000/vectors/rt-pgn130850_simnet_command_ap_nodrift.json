@@ -1,0 +1,12 @@
+{
+  "name": "pgn130850_simnet_command_ap_nodrift-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff0141879000ac0a0c",
+  "expect": "22ff0141879000ac0a0c",
+  "model": {
+    "@kind": "pgn130850_simnet_command_ap_nodrift",
+    "n2k.address": "144",
+    "n2k.network_group": "172"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_power_state-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3812080d7",
+  "expect": "04ff01a3812080d7",
+  "model": {
+    "@kind": "pgn130820_fusion_power_state",
+    "n2k.pgn130820_fusion_power_state_state": "215"
+  }
+}

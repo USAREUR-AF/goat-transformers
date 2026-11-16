@@ -1,0 +1,16 @@
+{
+  "name": "pgn129799-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07fb01eff15a3cac3bef544e324b3143442ba009bb9f",
+  "expect": "07fb01eff15a3cac3bef544e324b3143442ba009bb9f",
+  "model": {
+    "@kind": "pgn129799",
+    "n2k.rx_frequency": "10125931350",
+    "n2k.tx_frequency": "14249645240",
+    "n2k.radio_channel": "N2K1CD",
+    "n2k.tx_power": "41003",
+    "n2k.pgn129799_mode": "9",
+    "n2k.channel_bandwidth": "40891"
+  }
+}

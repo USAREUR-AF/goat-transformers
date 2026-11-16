@@ -1,0 +1,30 @@
+{
+  "name": "pgn129794-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02fb01b1e296c5394bf8729b4e324b424136324e324b39464139464635335445535456000000006def118b5f902e6533893f9f6e640d66304e324b414636303145393754455354560000000059139d",
+  "expect": "02fb01b1e296c5394bf8729b4e324b424136324e324b39464139464635335445535456000000006def118b5f902e6533893f9f6e640d66304e324b414636303145393754455354560000000059139d",
+  "model": {
+    "@kind": "pgn129794",
+    "n2k.pgn129794_message_id": "49",
+    "n2k.repeat_indicator": "2",
+    "n2k.user_id": "969250530",
+    "n2k.imo_number": "2608003147",
+    "n2k.callsign": "N2KBA62",
+    "n2k.name": "N2K9FA9FF53TESTV",
+    "n2k.type_of_ship": "109",
+    "n2k.pgn129794_length": "459.1",
+    "n2k.beam": "2445.9",
+    "n2k.position_reference_from_starboard": "1192",
+    "n2k.position_reference_from_bow": "1315.7",
+    "n2k.eta_date": "16265",
+    "n2k.eta_time": "22468.5727",
+    "n2k.draft": "123.9",
+    "n2k.destination": "N2KAF601E97TESTV",
+    "n2k.ais_version_indicator": "1",
+    "n2k.gnss_type": "6",
+    "n2k.dte": "1",
+    "n2k.ais_transceiver_information": "19",
+    "n2k.sequence_id": "157"
+  }
+}

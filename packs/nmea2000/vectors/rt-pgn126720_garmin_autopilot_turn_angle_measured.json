@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_turn_angle_measured-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e5801017040402a100be55",
+  "expect": "00ef01e5801017040402a100be55",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_turn_angle_measured",
+    "n2k.turn_angle_measured": "2.104429893380614"
+  }
+}

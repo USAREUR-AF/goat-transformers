@@ -1,0 +1,11 @@
+{
+  "name": "negative-varint-ten-bytes",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410feffffffffffffffff011801",
+  "expect": "0a074a2d303133333410feffffffffffffffff011801",
+  "model": {
+    "@kind": "status",
+    "time_ms": "-2"
+  }
+}

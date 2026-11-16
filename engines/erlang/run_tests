@@ -1,0 +1,28 @@
+#!/usr/bin/env escript
+%%! -noshell
+%% Conformance runner. Builds if needed, loads the model modules and every pack
+%% under ../../packs, and reports "vectors: N/N passed" and
+%% "load vectors: N/N passed".
+%% Usage: run_tests [PacksDir [ModelsDir]]; ModelsDir defaults to PacksDir/../model.
+main(Args) ->
+    Dir = filename:dirname(escript:script_name()),
+    Ebin = filename:join(Dir, "ebin"),
+    ensure_built(Dir, Ebin),
+    code:add_pathz(Ebin),
+    case Args of
+        [P, M | _] -> gt_test:run(P, M);
+        [P] -> gt_test:run(P);
+        [] -> gt_test:run(filename:join([Dir, "..", "..", "packs"]))
+    end.
+
+ensure_built(Dir, Ebin) ->
+    case filelib:wildcard(filename:join(Ebin, "*.beam")) of
+        [] ->
+            Srcs = filelib:wildcard(filename:join([Dir, "src", "*.erl"])),
+            ok = filelib:ensure_dir(filename:join(Ebin, "x")),
+            lists:foreach(
+              fun(S) ->
+                      {ok, _} = compile:file(S, [{outdir, Ebin}, return_errors])
+              end, Srcs);
+        _ -> ok
+    end.

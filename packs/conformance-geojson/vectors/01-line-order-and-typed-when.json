@@ -1,0 +1,12 @@
+{
+  "name": "line-order-and-typed-when",
+  "from": "conformance-geojson",
+  "to": "conformance-geojson",
+  "input": "{\"type\":\"Feature\",\"id\":\"c1\",\"profile\":\"probe\",\"properties\":{\"ce\":9.5,\"live\":true,\"rev\":2,\"name\":\"GATOR\",\"schema\":\"probe\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"schema\":\"probe\",\"name\":\"GATOR\",\"rev\":2,\"live\":true,\"ce\":9.5},\"profile\":\"probe\",\"id\":\"c1\"}",
+  "model": {
+    "@kind": "v2",
+    "callsign": "GATOR",
+    "ce": "9.5"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pgn130820_furuno_unknown130820-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff013f87bf8d23a22c",
+  "expect": "04ff013f87bf8d23a22c",
+  "model": {
+    "@kind": "pgn130820_furuno_unknown130820",
+    "n2k.a": "191",
+    "n2k.b": "141",
+    "n2k.c": "35",
+    "n2k.d": "162",
+    "n2k.e": "44"
+  }
+}

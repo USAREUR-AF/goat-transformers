@@ -1,0 +1,15 @@
+{
+  "name": "pgn130822_navico_udb_database_short_report5-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff0113815e05550b98434e4210",
+  "expect": "06ff0113815e05550b98434e4210",
+  "model": {
+    "@kind": "pgn130822_navico_udb_database_short_report5",
+    "n2k.marker": "94",
+    "n2k.address": "85",
+    "n2k.section": "11",
+    "n2k.pgn130822_item": "152",
+    "n2k.data": "272780867"
+  }
+}

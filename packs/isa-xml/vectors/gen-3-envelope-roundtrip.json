@@ -1,0 +1,16 @@
+{
+  "name": "gen-envelope-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Envelope><Header From=\"s0\"><To>s3</To><To>s4</To><Time Value=\"1.5\" Error=\"0.25\"/><Extras Name=\"s5\"/><Extras Name=\"s6\"/></Header></Envelope>",
+  "expect": "<Envelope><Header From=\"s0\"><To>s3</To><To>s4</To><Time Value=\"1.5\" Error=\"0.25\"/><Extras Name=\"s5\"/><Extras Name=\"s6\"/></Header></Envelope>",
+  "model": {
+    "@kind": "envelope",
+    "isaxml.header_from": "s0",
+    "isaxml.header_to.#": "2",
+    "isaxml.header_to[1].isaxml.item_string": "s4",
+    "isaxml.header_time_value": "1.5",
+    "isaxml.header_extras.#": "2",
+    "isaxml.header_extras[1].isaxml.name": "s6"
+  }
+}

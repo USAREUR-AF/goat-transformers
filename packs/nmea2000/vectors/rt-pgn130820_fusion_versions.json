@@ -1,0 +1,15 @@
+{
+  "name": "pgn130820_fusion_versions-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3810180b812218c475621",
+  "expect": "04ff01a3810180b812218c475621",
+  "model": {
+    "@kind": "pgn130820_fusion_versions",
+    "n2k.hw_version_major": "4792",
+    "n2k.hw_version_minor": "35873",
+    "n2k.sw_version_major": "71",
+    "n2k.sw_version_minor": "86",
+    "n2k.build_number": "33"
+  }
+}

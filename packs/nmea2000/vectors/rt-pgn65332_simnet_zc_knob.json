@@ -1,0 +1,14 @@
+{
+  "name": "pgn65332_simnet_zc_knob-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "34ff00418794856d1153cc",
+  "expect": "34ff00418794856d1153cc",
+  "model": {
+    "@kind": "pgn65332_simnet_zc_knob",
+    "n2k.address": "148",
+    "n2k.parameter": "4461",
+    "n2k.ticks": "83",
+    "n2k.unknown": "204"
+  }
+}

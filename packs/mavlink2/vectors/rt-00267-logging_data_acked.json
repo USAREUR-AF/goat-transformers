@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-logging_data_acked",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdff000099124d0b01001125e8bf966d",
+  "expect": "fdff000099124d0b01001125e8bf966d",
+  "model": {
+    "@kind": "logging_data_acked"
+  }
+}

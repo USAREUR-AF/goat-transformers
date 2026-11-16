@@ -1,0 +1,11 @@
+{
+  "name": "pgn65284_honda_engine_alerts-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff000181971d1d3f0000",
+  "expect": "04ff000181971d1d3f0000",
+  "model": {
+    "@kind": "pgn65284_honda_engine_alerts",
+    "n2k.data": "1058872727"
+  }
+}

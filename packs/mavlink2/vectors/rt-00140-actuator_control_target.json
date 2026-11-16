@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-actuator_control_target",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2900006e8d8d8c000000aa211f00000080000080c0000070c0000060c0000050c0000040c0000030c0000020c0000010c0ae",
+  "expect": "fd2900006e8d8d8c000000aa211f00000080000080c0000070c0000060c0000050c0000040c0000030c0000020c0000010c0ae",
+  "model": {
+    "@kind": "actuator_control_target"
+  }
+}

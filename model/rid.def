@@ -1,0 +1,64 @@
+# The rid module: facts of an ASTM F3411 / OpenDroneID broadcast Remote ID
+# message that the core module has no key for. A key ending `_raw` holds the
+# wire integer unchanged; pack.md of the remote-id pack states how to read it.
+# Enumeration keys hold the wire code; the code tables are in opendroneid.h.
+module        rid
+version       0.1.0
+distribution  public
+source        "opendroneid-core-c libopendroneid/opendroneid.h and opendroneid.c (Apache-2.0), https://github.com/opendroneid/opendroneid-core-c, protocol version 2 (ASTM F3411-22a, ASD-STAN prEN 4709-002)"
+key  proto_version           int     -     "protocol version, low nibble of byte 0 (0 = F3411-19, 1 = prEN 4709-002 P1, 2 = F3411-22a)"
+key  msg_type                int     -     "message type, high nibble of byte 0 (0 Basic ID, 1 Location, 2 Authentication, 3 Self-ID, 4 System, 5 Operator ID)"
+key  reserved                int     -     "trailing reserved bytes of the message, zero in every defined protocol version"
+# Basic ID
+key  ua_type                 int     -     "aircraft type code, ODID_uatype (0 none, 1 aeroplane, 2 helicopter or multirotor, ... 15 other)"
+key  id_type                 int     -     "UAS ID type code, ODID_idtype (0 none, 1 serial number, 2 CAA registration, 3 UTM UUID, 4 specific session ID)"
+# Location / Vector
+key  status                  int     -     "operational status code, ODID_status (0 undeclared, 1 ground, 2 airborne, 3 emergency, 4 remote ID system failure)"
+key  height_type             int     -     "flag: 0 = height is above take-off, 1 = height is above ground"
+key  ew_direction            int     -     "flag: 1 = add 180 degrees to direction_raw"
+key  speed_mult              int     -     "flag: 0 = speed is speed_h_raw x 0.25 m/s, 1 = speed is speed_h_raw x 0.75 + 63.75 m/s"
+key  direction_raw           int     deg   "track direction, whole degrees true, 0-179; add 180 when ew_direction is 1; 181 with ew_direction 1 (361) = unknown"
+key  speed_h_raw             int     -     "horizontal ground speed, wire integer; scale chosen by speed_mult; 255 with speed_mult 0 is 63.75 m/s, 255 with speed_mult 1 (255 m/s) = unknown"
+key  speed_v                 float   m/s   "vertical speed, wire integer x 0.5; 63 = unknown"
+key  alt_baro                float   m     "pressure altitude (source: reference 29.92 inHg, 1013.24 mb); -1000 = unknown"
+key  height                  float   m     "height above take-off or above ground, per height_type; -1000 = unknown"
+key  horiz_acc               int     -     "horizontal accuracy code, ODID_Horizontal_accuracy (0 unknown ... 12 better than 1 m)"
+key  vert_acc                int     -     "vertical accuracy code of the geodetic altitude, ODID_Vertical_accuracy (0 unknown ... 6 better than 1 m)"
+key  baro_acc                int     -     "vertical accuracy code of the pressure altitude, ODID_Vertical_accuracy"
+key  speed_acc               int     -     "speed accuracy code, ODID_Speed_accuracy (0 unknown ... 4 better than 0.3 m/s)"
+key  timestamp_ds            int     0.1s  "time of the position, tenths of a second after the full UTC hour; 65535 = unknown"
+key  ts_acc                  int     0.1s  "timestamp accuracy, tenths of a second, 1-15; 0 = unknown"
+# Authentication
+key  auth_type               int     -     "authentication type code, ODID_authtype"
+key  auth_data_page          int     -     "page number of an authentication page other than page 0, 1-15"
+key  auth_last_page_index    int     -     "page 0 only: index of the last page"
+key  auth_length             int     bytes "page 0 only: total length of the authentication data over all pages"
+key  auth_timestamp          int     s     "page 0 only: seconds since 2019-01-01T00:00:00Z"
+key  auth_data_last          int     -     "last byte (byte 24) of the page's authentication data"
+# Self-ID
+key  desc_type               int     -     "description type code, ODID_desctype (0 text, 1 emergency, 2 extended status)"
+key  description             string  -     "Self-ID free text, up to 23 characters"
+# System
+key  operator_location_type  int     -     "operator location type code (0 take-off, 1 live GNSS, 2 fixed)"
+key  classification_type     int     -     "classification region code (0 undeclared, 1 European Union)"
+key  operator_lat            float   deg   "operator latitude, WGS84; 0 with operator_lon 0 = unknown"
+key  operator_lon            float   deg   "operator longitude, WGS84"
+key  area_count              int     -     "number of aircraft in the area or swarm"
+key  area_radius             float   m     "radius of the area, wire integer x 10"
+key  area_ceiling            float   m     "area ceiling (the source states meters, no datum); -1000 = unknown"
+key  area_floor              float   m     "area floor (the source states meters, no datum); -1000 = unknown"
+key  category_eu             int     -     "EU category code (0 undeclared, 1 open, 2 specific, 3 certified); meaningful when classification_type is 1"
+key  class_eu                int     -     "EU class code (0 undeclared, 1 class 0 ... 7 class 6); meaningful when classification_type is 1"
+key  operator_hae            float   m     "operator height above the WGS84 ellipsoid; -1000 = unknown"
+key  system_timestamp        int     s     "System message time, seconds since 2019-01-01T00:00:00Z"
+# Operator ID
+key  operator_id_type        int     -     "operator ID type code (0 = operator ID)"
+key  operator_id             string  -     "operator ID, up to 20 characters"
+# Message Pack (engine-spec 0.7, lists): the messages a pack holds, each kept
+# as its 25 bytes. An item holds proto_version and msg_type (byte 0) and the
+# three body keys (bytes 1-24).
+key  pack_msg_size           int     bytes "Message Pack: size of one message, always 25"
+list messages                        "Message Pack: the messages of the pack, in order"
+key  body_1_8                int     -     "item of messages: bytes 1-8 of the message as one little-endian 64-bit integer"
+key  body_9_16               int     -     "item of messages: bytes 9-16 of the message as one little-endian 64-bit integer"
+key  body_17_24              int     -     "item of messages: bytes 17-24 of the message as one little-endian 64-bit integer"

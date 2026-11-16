@@ -1,0 +1,10 @@
+{
+  "name": "ruling-10-decode-error-comes-before-context-check",
+  "from": "conformance-rulings-json",
+  "to": "conformance-rulings-json",
+  "input": "{\"k\":2,\"id\":\"a\",\"ce\":\"bad\"}",
+  "context": {
+    "nosuch.key": "1"
+  },
+  "expect_error": "transform-decode"
+}

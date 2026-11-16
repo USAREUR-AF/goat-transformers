@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-hil_rc_inputs_raw",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd210000445d5d5c00003055ae7c0000008007a9defcb5508ca463f83a4c11a0e8f3bf47969b6def44431b",
+  "expect": "fd210000445d5d5c00003055ae7c0000008007a9defcb5508ca463f83a4c11a0e8f3bf47969b6def44431b",
+  "model": {
+    "@kind": "hil_rc_inputs_raw"
+  }
+}

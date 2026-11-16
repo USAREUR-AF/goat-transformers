@@ -1,0 +1,13 @@
+{
+  "name": "noncanonical-input-items-in-wire-order",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "120610070a02613142014312040a0261320a027538",
+  "expect": "0a02753812080a0261311007200912080a02613210012009420143",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "a1",
+    "probe.items[1].probe.label": "a2",
+    "callsign": "C"
+  }
+}

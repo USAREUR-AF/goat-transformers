@@ -1,0 +1,20 @@
+{
+  "name": "pgn130820_fusion_zone_capabilities_extended-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3816180ec1343558c4d000022f9ed2718cb00008be94af4440000000dddf2c4411d000016dada7eb0960000",
+  "expect": "04ff01a3816180ec1343558c4d000022f9ed2718cb00008be94af4440000000dddf2c4411d000016dada7eb0960000",
+  "model": {
+    "@kind": "pgn130820_fusion_zone_capabilities_extended",
+    "n2k.zone1_capabilities": "5100",
+    "n2k.zone1_extra": "1301042499",
+    "n2k.zone2_capabilities": "63778",
+    "n2k.zone2_extra": "3407357933",
+    "n2k.zone3_capabilities": "59787",
+    "n2k.zone3_extra": "4518986",
+    "n2k.zone4_capabilities": "56589",
+    "n2k.zone4_extra": "490849522",
+    "n2k.global_capabilities": "55830",
+    "n2k.global_extra": "2528149210"
+  }
+}

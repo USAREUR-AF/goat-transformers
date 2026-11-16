@@ -1,0 +1,16 @@
+{
+  "name": "pgn65286_chetco_dimmer-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff009981708ee466cfc0",
+  "expect": "06ff009981708ee466cfc0",
+  "model": {
+    "@kind": "pgn65286_chetco_dimmer",
+    "n2k.pgn65286_instance": "112",
+    "n2k.dimmer1": "142",
+    "n2k.dimmer2": "228",
+    "n2k.dimmer3": "102",
+    "n2k.dimmer4": "207",
+    "n2k.pgn65286_control": "192"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-param_request_list",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0200000a1616150000673e",
+  "expect": "fd0200000a1616150000673e",
+  "model": {
+    "@kind": "param_request_list"
+  }
+}

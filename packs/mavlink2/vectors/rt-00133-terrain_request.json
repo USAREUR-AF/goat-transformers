@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-terrain_request",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd120000678686850000f7821b0200000000e07e9907208166f87c7e",
+  "expect": "fd120000678686850000f7821b0200000000e07e9907208166f87c7e",
+  "model": {
+    "@kind": "terrain_request"
+  }
+}

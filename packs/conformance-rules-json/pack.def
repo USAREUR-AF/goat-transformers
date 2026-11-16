@@ -1,0 +1,34 @@
+# Conformance probe pack for the mapping rules of spec 0.6 on the `json` wire.
+# Public. No kinds. Exercises `const` (string, number, boolean, forced string),
+# `default`, value tables with `via` (wire int to model string, wire string to
+# model int, and same-type pass-through), one key at two locators, and `typemap`
+# on a wire other than xml and geojson (ruling 18 of 0.5).
+format  conformance-rules-json
+version 0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    track
+wire    json
+const   schema           rules
+field   uid              id            string
+const   rev              6                        # written as the number 6
+field   type             kind          string     # through the pack-wide typemap
+field   lat              pos.lat       float
+field   lat              pos.latitude  float      # the same key at a second locator
+field   lon              pos.lon       float
+field   hae              pos.alt       float
+field   track.class      cls           int     via class    # wire integer, model string
+field   how              how           string  via how      # both sides string: a value with no entry passes through
+field   track.confirmed  status        string  via status   # wire string, model int
+const   meta.live        true                     # written as the boolean true
+const   meta.tag         =7                       # written as the string "7"
+default hae              -1
+default track.class      bird                     # the default goes through the table: written as 2
+typemap F  a-f-G
+map     class   1    uas
+map     class   2    bird
+map     class   3    uas                          # shares its model value with the first entry: encode writes 1
+map     class   1    balloon                      # shares its wire value with the first entry: decode reads uas
+map     how     M    m-g
+map     status  yes  1
+map     status  no   0

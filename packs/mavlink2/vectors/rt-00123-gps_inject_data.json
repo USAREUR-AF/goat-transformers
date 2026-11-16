@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gps_inject_data",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd7100005d7c7c7b0000a1784f",
+  "expect": "fd7100005d7c7c7b0000a1784f",
+  "model": {
+    "@kind": "gps_inject_data"
+  }
+}

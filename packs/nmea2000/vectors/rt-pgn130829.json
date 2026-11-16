@@ -1,0 +1,14 @@
+{
+  "name": "pgn130829-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0dff019080d0c96a",
+  "expect": "0dff019080d0c96a",
+  "model": {
+    "@kind": "pgn130829",
+    "n2k.field_a": "13",
+    "n2k.sub_helm": "9",
+    "n2k.helm": "12",
+    "n2k.pgn130829_capabilities": "106"
+  }
+}

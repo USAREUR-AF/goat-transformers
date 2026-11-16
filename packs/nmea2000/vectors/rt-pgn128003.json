@@ -1,0 +1,16 @@
+{
+  "name": "pgn128003-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f4010115958e79ed",
+  "expect": "03f4010115958e79ed",
+  "model": {
+    "@kind": "pgn128003",
+    "n2k.energy_storage_identifier": "1",
+    "n2k.pgn128003_battery_status": "1",
+    "n2k.isolation_status": "1",
+    "n2k.battery_error": "1",
+    "n2k.battery_voltage": "3650.1",
+    "n2k.battery_current": "-474.3"
+  }
+}

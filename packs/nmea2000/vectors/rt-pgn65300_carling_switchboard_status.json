@@ -1,0 +1,12 @@
+{
+  "name": "pgn65300_carling_switchboard_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff00b080269175f07d00",
+  "expect": "14ff00b080269175f07d00",
+  "model": {
+    "@kind": "pgn65300_carling_switchboard_status",
+    "n2k.message_type": "38",
+    "n2k.data": "2112910737"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "identification-ezy85mh",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8d406b902015a678d4d220aa4bda",
+  "expect": "8d406b902015a678d4d220aa4bda",
+  "model": {
+    "@kind": "identification-tc4",
+    "adsb.df": "17",
+    "adsb.tc": "4",
+    "adsb.icao": "4221840",
+    "adsb.category": "0",
+    "adsb.cs_c1": "5",
+    "adsb.cs_c7": "8",
+    "adsb.cs_c8": "32"
+  },
+  "source": "specification",
+  "reference": "published message 8D406B902015A678D4D220AA4BDA: pyModeS tests/test_bds08.py at commit 4bf0832, https://github.com/junzis/pyModeS"
+}

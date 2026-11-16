@@ -1,0 +1,1274 @@
+package goatxf
+
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"unicode/utf8"
+)
+
+// Wire names the codec a pack uses.
+const (
+	WireXML      = "xml"
+	WireGeoJSON  = "geojson"
+	WireBits     = "bits"
+	WireProtobuf = "protobuf"
+	WireJSON     = "json"
+)
+
+type locKind int
+
+const (
+	locAttr  locKind = iota + 1 // xml @name, path/@name
+	locText                     // xml path/#text
+	locElem                     // xml path (residue only: an empty element)
+	locCoord                    // geojson geometry.lon|lat|alt
+	locProp                     // geojson properties.<name>
+	locTop                      // geojson <name>
+	locBits                     // bits word:pos:len
+	locProto                    // protobuf dot-path of field numbers
+	locJSON                     // json dot-path of member names
+)
+
+// maxBitsLen is the longest bits field: an `ascii` field of 255 bytes.
+const maxBitsLen = 2040
+
+type locator struct {
+	raw    string
+	kind   locKind
+	path   []string // xml element path under the root; json member path
+	name   string   // attribute, property or top-level member name
+	idx    int      // coordinate index for locCoord
+	word   int      // bits word index
+	pos    int      // bits start position, counted from the start of the word
+	blen   int      // bits field length
+	bit    int      // bits: absolute start bit in the message
+	pbPath []int    // protobuf field-number path
+}
+
+// Field is one `field` line: a model key bound to a wire locator through a
+// transform, with the options of spec 0.6 (`via <table>`, `swap`, `trim`,
+// `optional`).
+type Field struct {
+	Key       string
+	Locator   string
+	Transform string
+	Line      int
+	Via       string // value table name, "" when the line has no `via`
+	Swap      bool
+	Trim      bool
+	Optional  bool
+
+	loc     locator
+	group   *Group // the innermost group the line is in, nil outside a group
+	dot     bool   // the locator is `.`: the item itself, as a scalar
+	tf      *transform
+	btf     *bitsTransform
+	pbf     *pbTransform
+	jbool   bool // json `bool`
+	yields  Kind // the type the transform yields
+	keyType Kind // the key's declared type; set when the pack is loaded
+	table   *valueTable
+	viaDec  map[string]string // canonical native text -> model text
+	viaEnc  map[string]string // canonical model text -> native text
+}
+
+// When is one `when` line (the kind applies when the wire holds Value at
+// Locator) or one `const` line (Value is written at Locator on encode and not
+// checked on decode).
+type When struct {
+	Locator string
+	Value   string
+	Line    int
+	Const   bool
+	loc     locator
+	group   *Group // the innermost group the line is in, nil outside a group
+	present bool   // the value is the word `present`
+	text    string // text wires: the value, a leading `=` stripped
+	forced  bool   // text wires: the value was written with a leading `=`
+	num     uint64 // bits and protobuf: the unsigned integer
+}
+
+// Default is one `default` line: the value an encode uses for a key the
+// entity lacks.
+type Default struct {
+	Key   string
+	Value string
+	Line  int
+	val   Value // Value read as the key's declared type; set when the pack is loaded
+}
+
+// mapEntry is one `map` line of a value table.
+type mapEntry struct {
+	native, model string
+	line          int
+}
+
+// valueTable is the `map` lines of one table name, in file order.
+type valueTable struct {
+	name      string
+	entries   []mapEntry
+	modelType Kind // int when every model value is an integer, else float when every one is a number, else string
+}
+
+// line is one `field`, `when` or `const` line, or one `group` block, in file
+// order.
+type line struct {
+	f *Field
+	w *When
+	g *Group
+}
+
+// Group is one `group` block (spec/engine-spec.md, "Version 0.7: groups"): a
+// part of the message that repeats, mapped to a list of the model. Its lines
+// are read relative to one item.
+type Group struct {
+	List    string
+	Locator string
+	Line    int
+
+	parent    *Group // the group this one is nested in, nil at the top
+	lines     []line
+	defaults  []*Default
+	body      *layout // the lines of one item, indexed
+	loc       locator // xml: the element path, the last name being an item; json: the member path; geojson: the member; protobuf: the field-number path
+	hasItem   bool    // the line has `item <bits>`
+	hasCount  bool    // the line has `count …`
+	itemText  string
+	countText string
+	start     int      // bits: the first bit of the first item, counted from the first bit of the scope
+	itemBits  int      // bits: the size of an item
+	countLoc  *locator // bits: where the scope holds the number of items; nil when the count is fixed
+	countN    int      // bits: the fixed count
+	dots      []*Field // the `.` fields of the body, in line order
+	packed    bool     // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
+	needsMsg  bool     // protobuf: the body has a line that reads into the item as a submessage
+}
+
+// KindDef is one `kind` of a pack: its `when`, `requires`, `field`, `const`
+// and `default` lines, and on the xml wire its own root element.
+type KindDef struct {
+	Name     string
+	Line     int
+	Requires []string
+	Root     string // xml: the kind's root element, "" to use the pack's
+	rootLine int
+	lines    []line
+	whens    []*When // the kind's `when` lines, in line order
+	defaults []*Default
+}
+
+// layout is one scope: what one message of a pack holds (the common lines
+// then the lines of one kind, in line order; a pack with no kind has one), or
+// what one item of a group holds.
+type layout struct {
+	kind     *KindDef // nil in a pack with no kind, and in a group body
+	lines    []line
+	fieldsAt map[string][]*Field // locator -> the field lines bound to it
+	whenAt   map[string]bool     // locators a `when` or `const` line maps
+	forced   map[string]*When    // text wires: locator -> the when or const whose value is written there
+	defaults map[string]*Default // model key -> the default in scope
+	groups   []*Group            // the scope's group blocks, in line order
+	groupAt  map[string]*Group   // locator -> the group mapped there
+	root     string              // xml: the root element of this layout
+	maxBit   int                 // bits: the furthest bit a line with a fixed place reaches, from the scope's first bit
+	needBit  int                 // bits: the same, over the lines that are not optional
+	bytes    int                 // bits: the length an encode writes before any counted items, in bytes
+	decBytes int                 // bits: the shortest input a decode accepts, in bytes
+}
+
+// maps reports whether a field, a const or a when line of the layout maps loc.
+func (l *layout) maps(loc string) bool {
+	return len(l.fieldsAt[loc]) > 0 || l.whenAt[loc]
+}
+
+// keyRef is one model key a pack names, on a `field`, `requires` or `default`
+// line.
+type keyRef struct {
+	key     string
+	locator string
+	line    int
+	field   *Field   // nil unless a `field` line
+	def     *Default // nil unless a `default` line
+	group   *Group   // nil unless a `group` line
+	req     bool     // a `requires` key: a key or a list
+}
+
+// Pack is one parsed pack.def.
+type Pack struct {
+	Format    string
+	Version   string
+	Wire      string
+	WordBytes int
+	BitOrder  string // bits: lsb or msb
+	Root      string
+	Fields    []*Field   // every `field` line, in file order, those inside groups included
+	Groups    []*Group   // every `group` block, in file order, nested ones included
+	Kinds     []*KindDef // in file order; empty when the pack has no kind
+	Source    string     // the file it was read from, for errors
+
+	Distribution string   // public or controlled
+	Sources      []string // `source` lines: the documents the pack was written from
+	Uses         []string // `uses` lines, in order; core is always used
+
+	nativeToCot    map[string]string
+	cotToNative    map[string]string
+	tables         map[string]*valueTable
+	common         []line
+	commonWhens    []*When
+	commonDefaults []*Default
+	layouts        []*layout        // one per kind, or one when the pack has no kind
+	kindsByRoot    map[string][]int // xml: root element name -> the kinds with that root, in pack order
+	keyRefs        []keyRef         // field, requires, default and group names in file order
+	modelKeys      []string
+	msb            bool
+}
+
+// HasKinds reports whether the pack declares message kinds.
+func (p *Pack) HasKinds() bool { return len(p.Kinds) > 0 }
+
+// ModelKeys is the union of the model keys the pack maps, over the common
+// lines and every kind, in first appearance order. A list is named
+// `<list>[]` and a key of its items `<list>[].<key>`, nested lists likewise.
+func (p *Pack) ModelKeys() []string {
+	if p.modelKeys != nil {
+		return p.modelKeys
+	}
+	seen := map[string]bool{}
+	out := []string{}
+	add := func(k string) {
+		if !seen[k] {
+			seen[k] = true
+			out = append(out, k)
+		}
+	}
+	var walk func(lines []line, prefix string)
+	walk = func(lines []line, prefix string) {
+		for _, ln := range lines {
+			switch {
+			case ln.f != nil:
+				add(prefix + ln.f.Key)
+			case ln.g != nil:
+				add(prefix + ln.g.List + "[]")
+				walk(ln.g.lines, prefix+ln.g.List+"[].")
+			}
+		}
+	}
+	walk(p.common, "")
+	for _, k := range p.Kinds {
+		walk(k.lines, "")
+	}
+	p.modelKeys = out
+	return out
+}
+
+// TypeMapped reports whether the pack carries a typemap.
+func (p *Pack) TypeMapped() bool { return len(p.nativeToCot) > 0 }
+
+// ParsePackFile reads and parses one pack.def.
+func ParsePackFile(path string) (*Pack, error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return nil, &Error{Kind: ErrBadDirective, Source: path, Detail: err.Error()}
+	}
+	return ParsePack(b, path)
+}
+
+// parseFieldOptions reads what follows the transform on a `field` line:
+// `via <table>`, `swap`, `trim`, `optional`, in any order, each at most once.
+func parseFieldOptions(f *Field, opts []string) error {
+	seen := map[string]bool{}
+	for i := 0; i < len(opts); i++ {
+		o := opts[i]
+		if seen[o] {
+			return fmt.Errorf("field option %q repeated", o)
+		}
+		seen[o] = true
+		switch o {
+		case "via":
+			i++
+			if i >= len(opts) || opts[i] == "" {
+				return fmt.Errorf("`via` needs a table name")
+			}
+			f.Via = opts[i]
+		case "swap":
+			f.Swap = true
+		case "trim":
+			f.Trim = true
+		case "optional":
+			f.Optional = true
+		default:
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional)", o)
+		}
+	}
+	return nil
+}
+
+// checkFieldOptions refuses an option on a wire or a transform it does not
+// apply to.
+func checkFieldOptions(wire string, f *Field) error {
+	if wire != WireBits {
+		for _, o := range []struct {
+			set  bool
+			name string
+		}{{f.Swap, "swap"}, {f.Trim, "trim"}, {f.Optional, "optional"}} {
+			if o.set {
+				return fmt.Errorf("field option `%s` is valid only on wire bits", o.name)
+			}
+		}
+		return nil
+	}
+	if f.Swap && f.loc.blen%8 != 0 {
+		return fmt.Errorf("`swap` needs a length that is a multiple of 8 bits, got %d", f.loc.blen)
+	}
+	if f.Trim && f.Transform != "ascii" {
+		return fmt.Errorf("`trim` is valid only with the ascii transform, not %s", f.Transform)
+	}
+	return nil
+}
+
+// isIntText reports whether s is a decimal integer that fits 64 bits.
+func isIntText(s string) bool {
+	_, err := strconv.ParseInt(s, 10, 64)
+	return err == nil
+}
+
+// ParsePack parses pack.def text. source names it in errors.
+func ParsePack(text []byte, source string) (*Pack, error) {
+	p := &Pack{Source: source, nativeToCot: map[string]string{}, cotToNative: map[string]string{}, tables: map[string]*valueTable{}}
+	perr := func(kind ErrorKind, line int, loc, format string, a ...any) error {
+		return &Error{Kind: kind, Format: p.Format, Locator: loc, Source: source, Line: line, Detail: fmt.Sprintf(format, a...)}
+	}
+	if !utf8.Valid(text) {
+		return nil, perr(ErrBadDirective, 0, "", "pack.def is not valid UTF-8")
+	}
+	type tmLine struct {
+		native, cot string
+		line        int
+	}
+	var tms []tmLine
+	var whens []*When // when and const lines, in file order
+	var firstWhen *When
+	var cur *KindDef
+	var open []*Group // the group blocks not yet closed, outermost first
+	kindNames := map[string]int{}
+	seen := map[string]int{}
+	// The argument count of each directive; a negative count is a minimum.
+	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
+		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0}
+	// addLine puts a line in the innermost open group, else in the kind being
+	// read, else among the common lines.
+	addLine := func(ln line) {
+		switch {
+		case len(open) > 0:
+			g := open[len(open)-1]
+			g.lines = append(g.lines, ln)
+		case cur != nil:
+			cur.lines = append(cur.lines, ln)
+		default:
+			p.common = append(p.common, ln)
+		}
+	}
+	inner := func() *Group {
+		if len(open) == 0 {
+			return nil
+		}
+		return open[len(open)-1]
+	}
+	sc := bufio.NewScanner(bytes.NewReader(text))
+	sc.Buffer(make([]byte, 0, 64*1024), 1<<20)
+	n := 0
+	for sc.Scan() {
+		n++
+		toks, err := tokenize(sc.Text())
+		if err != nil {
+			return nil, perr(ErrBadDirective, n, "", "%v", err)
+		}
+		if len(toks) == 0 {
+			continue
+		}
+		kw, args := toks[0], toks[1:]
+		w, known := want[kw]
+		if !known {
+			return nil, perr(ErrUnknownDirective, n, "", "unknown directive %q", kw)
+		}
+		if w < 0 && len(args) < -w {
+			return nil, perr(ErrBadDirective, n, "", "%s takes at least %d argument(s), got %d", kw, -w, len(args))
+		}
+		if w >= 0 && len(args) != w {
+			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
+		}
+		if len(open) > 0 {
+			// Inside a group only these lines are allowed: `when`, `requires`,
+			// `root` and `kind` are not, and tables are pack-wide and written
+			// outside groups (0.7 ruling 9).
+			switch kw {
+			case "field", "const", "default", "group", "end":
+			default:
+				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a group (group %s, line %d)", kw, inner().List, inner().Line)
+			}
+		}
+		switch kw {
+		case "group":
+			// group <list> <locator> [item <bits>] [count <count-locator> | count <n>]
+			g := &Group{List: args[0], Locator: args[1], Line: n, parent: inner()}
+			for i := 2; i < len(args); i += 2 {
+				if i+1 >= len(args) {
+					return nil, perr(ErrBadDirective, n, g.Locator, "group: `%s` needs a value", args[i])
+				}
+				switch {
+				case args[i] == "item" && !g.hasItem:
+					g.hasItem, g.itemText = true, args[i+1]
+				case args[i] == "count" && !g.hasCount:
+					g.hasCount, g.countText = true, args[i+1]
+				default:
+					return nil, perr(ErrBadDirective, n, g.Locator, "group: unknown or repeated word %q (item <bits>, count <count-locator | n>)", args[i])
+				}
+			}
+			p.Groups = append(p.Groups, g)
+			p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
+			addLine(line{g: g})
+			open = append(open, g)
+		case "end":
+			if len(open) == 0 {
+				return nil, perr(ErrBadDirective, n, "", "end with no open group")
+			}
+			open = open[:len(open)-1]
+		case "root":
+			// Inside a kind, `root` is that kind's root element (xml).
+			if cur != nil {
+				if cur.Root != "" {
+					return nil, perr(ErrBadDirective, n, "", "root repeated in kind %s (first on line %d)", cur.Name, cur.rootLine)
+				}
+				if args[0] == "" {
+					return nil, perr(ErrBadDirective, n, "", "root needs an element name")
+				}
+				cur.Root, cur.rootLine = args[0], n
+				continue
+			}
+			if prev, dup := seen[kw]; dup {
+				return nil, perr(ErrBadDirective, n, "", "%s repeated (first on line %d)", kw, prev)
+			}
+			seen[kw] = n
+			p.Root = args[0]
+		case "format", "version", "wire", "word_bytes", "bit_order", "distribution":
+			if prev, dup := seen[kw]; dup {
+				return nil, perr(ErrBadDirective, n, "", "%s repeated (first on line %d)", kw, prev)
+			}
+			seen[kw] = n
+			switch kw {
+			case "format":
+				p.Format = args[0]
+			case "version":
+				p.Version = args[0]
+			case "wire":
+				switch args[0] {
+				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON:
+				default:
+					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits or protobuf)", args[0])
+				}
+				p.Wire = args[0]
+			case "word_bytes":
+				wb, err := strconv.Atoi(args[0])
+				if err != nil || wb <= 0 {
+					return nil, perr(ErrBadDirective, n, "", "word_bytes must be a positive integer, got %q", args[0])
+				}
+				p.WordBytes = wb
+			case "bit_order":
+				if args[0] != "lsb" && args[0] != "msb" {
+					return nil, perr(ErrBadDirective, n, "", "bit_order must be lsb or msb, got %q", args[0])
+				}
+				p.BitOrder = args[0]
+			case "distribution":
+				if !validDistribution(args[0]) {
+					return nil, perr(ErrBadDirective, n, "", "distribution must be public or controlled, got %q", args[0])
+				}
+				p.Distribution = args[0]
+			}
+		case "source":
+			p.Sources = append(p.Sources, args[0])
+		case "uses":
+			if args[0] == "" || strings.Contains(args[0], ".") {
+				return nil, perr(ErrBadDirective, n, "", "module name %q must be non-empty and contain no '.'", args[0])
+			}
+			p.Uses = append(p.Uses, args[0])
+		case "kind":
+			if prev, dup := kindNames[args[0]]; dup {
+				return nil, perr(ErrDuplicateKind, n, "", "kind %q already declared on line %d", args[0], prev)
+			}
+			kindNames[args[0]] = n
+			cur = &KindDef{Name: args[0], Line: n}
+			p.Kinds = append(p.Kinds, cur)
+		case "requires":
+			if cur == nil {
+				return nil, perr(ErrBadDirective, n, "", "requires before the first kind line")
+			}
+			for _, k := range args {
+				cur.Requires = append(cur.Requires, k)
+				p.keyRefs = append(p.keyRefs, keyRef{key: k, line: n, req: true})
+			}
+		case "field":
+			f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n, group: inner()}
+			if err := parseFieldOptions(f, args[3:]); err != nil {
+				return nil, perr(ErrBadDirective, n, f.Locator, "%v", err)
+			}
+			p.Fields = append(p.Fields, f)
+			p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
+			addLine(line{f: f})
+		case "when", "const":
+			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner()}
+			whens = append(whens, w)
+			if !w.Const && firstWhen == nil {
+				firstWhen = w
+			}
+			addLine(line{w: w})
+			if !w.Const {
+				if cur == nil {
+					p.commonWhens = append(p.commonWhens, w)
+				} else {
+					cur.whens = append(cur.whens, w)
+				}
+			}
+		case "default":
+			d := &Default{Key: args[0], Value: args[1], Line: n}
+			p.keyRefs = append(p.keyRefs, keyRef{key: d.Key, line: n, def: d})
+			switch {
+			case len(open) > 0:
+				g := inner()
+				g.defaults = append(g.defaults, d)
+			case cur == nil:
+				p.commonDefaults = append(p.commonDefaults, d)
+			default:
+				cur.defaults = append(cur.defaults, d)
+			}
+		case "map":
+			t := p.tables[args[0]]
+			if t == nil {
+				t = &valueTable{name: args[0]}
+				p.tables[args[0]] = t
+			}
+			t.entries = append(t.entries, mapEntry{native: args[1], model: args[2], line: n})
+		case "typemap":
+			tms = append(tms, tmLine{args[0], args[1], n})
+		}
+	}
+	if err := sc.Err(); err != nil {
+		return nil, perr(ErrBadDirective, n, "", "%v", err)
+	}
+	if g := inner(); g != nil {
+		return nil, perr(ErrBadDirective, g.Line, g.Locator, "group %s has no end", g.List)
+	}
+	for _, t := range p.tables {
+		allInt, allNum := true, true
+		for _, e := range t.entries {
+			if !isIntText(e.model) {
+				allInt = false
+			}
+			if _, err := parseFloat(e.model); err != nil {
+				allNum = false
+			}
+		}
+		switch {
+		case allInt:
+			t.modelType = KindInt
+		case allNum:
+			t.modelType = KindFloat
+		default:
+			t.modelType = KindString
+		}
+	}
+
+	// The checks that need the whole file run before missing-distribution
+	// (0.5 ruling 25): a `when` with no `kind`, `bit_order` on another wire, a
+	// length a transform does not allow, a `when` value that does not fit, and
+	// the bad-directive causes of 0.6 (an option on a wire or transform it
+	// does not apply to, `via` naming a table with no `map` line, a kind's
+	// `root` on a wire other than xml). A failure of another kind found on the
+	// way (a bad locator, an unknown transform) is reported in its 0.4 place,
+	// after the missing-distribution and missing-source checks.
+	var deferred error
+	note := func(err error) error {
+		if e, ok := err.(*Error); ok && e.Kind != ErrBadDirective {
+			if deferred == nil {
+				deferred = err
+			}
+			return nil
+		}
+		return err
+	}
+	if firstWhen != nil && !p.HasKinds() {
+		return nil, perr(ErrBadDirective, firstWhen.Line, firstWhen.Locator, "a when line needs a pack with a kind line")
+	}
+	if p.Wire != "" && p.Wire != WireBits && p.BitOrder != "" {
+		return nil, perr(ErrBadDirective, seen["bit_order"], "", "bit_order is valid only on wire bits")
+	}
+	if p.Wire == WireBits && p.BitOrder == "" {
+		p.BitOrder = "lsb"
+	}
+	p.msb = p.BitOrder == "msb"
+	hasType := false
+	if g, prev := p.listMappedTwice(); g != nil {
+		return nil, perr(ErrBadDirective, g.Line, g.Locator, "list %s is already mapped by the group on line %d of the same scope", g.List, prev.Line)
+	}
+	if p.Wire != "" {
+		if p.Wire != WireXML {
+			for _, k := range p.Kinds {
+				if k.Root != "" {
+					return nil, perr(ErrBadDirective, k.rootLine, "", "root in a kind is xml only")
+				}
+			}
+		}
+		for _, g := range p.Groups {
+			if kind, err := p.resolveGroup(g); err != nil {
+				if err := note(perr(kind, g.Line, g.Locator, "%v", err)); err != nil {
+					return nil, err
+				}
+			}
+		}
+		// Inside a group of a geojson pack the locators are those of the json
+		// wire; `.` is the item itself, on json, geojson and protobuf.
+		innerWire := func(g *Group) string {
+			if g != nil && p.Wire == WireGeoJSON {
+				return WireJSON
+			}
+			return p.Wire
+		}
+		dotWire := p.Wire == WireJSON || p.Wire == WireGeoJSON || p.Wire == WireProtobuf
+		for _, f := range p.Fields {
+			if f.Key == "type" {
+				hasType = true
+			}
+			var loc locator
+			var err error
+			if f.Locator == "." && dotWire {
+				if f.group == nil {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator `.` names an item and is valid only inside a group")
+				}
+				f.dot = true
+				loc = locator{raw: ".", kind: locJSON}
+				if p.Wire == WireProtobuf {
+					loc.kind = locProto
+				}
+			} else {
+				loc, err = parseLocator(innerWire(f.group), f.Locator, false)
+			}
+			if err != nil {
+				if err := note(perr(ErrBadLocator, f.Line, f.Locator, "%v", err)); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			loc.bit = loc.word*p.WordBytes*8 + loc.pos
+			f.loc = loc
+			if kind, err := resolveFieldTransform(p.Wire, f); err != nil {
+				if err := note(perr(kind, f.Line, f.Locator, "%v", err)); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			f.yields, _ = transformYields(f.Transform)
+			if err := checkFieldOptions(p.Wire, f); err != nil {
+				return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
+			}
+			if f.Via != "" {
+				f.table = p.tables[f.Via]
+				if f.table == nil {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "`via %s` names a table with no map line", f.Via)
+				}
+			}
+		}
+		for _, w := range whens {
+			// `const <locator> present` is refused; `=present` writes the text
+			// (0.6 ruling 3).
+			if w.Const && w.Value == "present" {
+				return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot be `present`; write `=present` for the text")
+			}
+			loc, err := parseLocator(innerWire(w.group), w.Locator, false)
+			if err != nil {
+				if err := note(perr(ErrBadLocator, w.Line, w.Locator, "%v", err)); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			loc.bit = loc.word*p.WordBytes*8 + loc.pos
+			w.loc = loc
+			if err := resolveWhen(innerWire(w.group), w); err != nil {
+				return nil, perr(ErrBadDirective, w.Line, w.Locator, "%v", err)
+			}
+		}
+		for _, g := range p.Groups {
+			for _, ln := range g.lines {
+				switch {
+				case ln.f != nil && ln.f.dot:
+					g.dots = append(g.dots, ln.f)
+				default:
+					g.needsMsg = true
+				}
+			}
+			g.packed = p.Wire == WireProtobuf && len(g.dots) > 0 && g.dots[0].pbf != nil && g.dots[0].pbf.wire != pbLenDelim
+		}
+		if p.Wire == WireBits {
+			if ln, loc, err := p.checkBitsGroups(); err != nil {
+				return nil, perr(ErrBadDirective, ln, loc, "%v", err)
+			}
+		}
+	}
+
+	if p.Distribution == "" {
+		return nil, perr(ErrMissingDistribution, 0, "", "pack has no distribution line")
+	}
+	if len(p.Sources) == 0 {
+		return nil, perr(ErrMissingSource, 0, "", "pack has no source line")
+	}
+	if p.Format == "" {
+		return nil, perr(ErrBadDirective, 0, "", "missing format directive")
+	}
+	if p.Wire == "" {
+		return nil, perr(ErrBadDirective, 0, "", "missing wire directive")
+	}
+	if p.Wire == WireXML {
+		// A pack whose every kind has a root needs no pack-level root.
+		if p.Root == "" && !p.HasKinds() {
+			return nil, perr(ErrMissingRoot, 0, "", "wire xml requires a root directive")
+		}
+		if p.Root == "" {
+			for _, k := range p.Kinds {
+				if k.Root == "" {
+					return nil, perr(ErrMissingRoot, k.Line, "", "wire xml requires a root directive: kind %s has none and the pack has none", k.Name)
+				}
+			}
+		}
+	}
+	if p.Wire != WireXML && p.Root != "" {
+		return nil, perr(ErrBadDirective, seen["root"], "", "root is xml only")
+	}
+	if p.Wire == WireBits && p.WordBytes == 0 {
+		return nil, perr(ErrBadDirective, 0, "", "wire bits requires a word_bytes directive")
+	}
+	if p.Wire != WireBits && p.WordBytes != 0 {
+		return nil, perr(ErrBadDirective, seen["word_bytes"], "", "word_bytes is valid only on wire bits")
+	}
+	if deferred != nil {
+		return nil, deferred
+	}
+	if len(tms) > 0 && !hasType {
+		return nil, perr(ErrBadDirective, tms[0].line, "", "typemap needs a field bound to model key type")
+	}
+	for _, t := range tms {
+		if prev, dup := p.nativeToCot[t.native]; dup {
+			return nil, perr(ErrBadDirective, t.line, "", "native code %q already mapped to %q", t.native, prev)
+		}
+		p.nativeToCot[t.native] = t.cot
+		if _, dup := p.cotToNative[t.cot]; !dup {
+			p.cotToNative[t.cot] = t.native
+		}
+	}
+	for _, g := range p.Groups {
+		g.body = p.newLayout(nil, g.lines, g.defaults)
+	}
+	if p.HasKinds() {
+		if p.Wire == WireXML {
+			p.kindsByRoot = map[string][]int{}
+		}
+		for i, k := range p.Kinds {
+			lines := append(append([]line(nil), p.common...), k.lines...)
+			lay := p.newLayout(k, lines, p.commonDefaults, k.defaults)
+			p.layouts = append(p.layouts, lay)
+			if p.Wire == WireXML {
+				p.kindsByRoot[lay.root] = append(p.kindsByRoot[lay.root], i)
+			}
+		}
+	} else {
+		p.layouts = []*layout{p.newLayout(nil, p.common, p.commonDefaults)}
+	}
+	return p, nil
+}
+
+// listMappedTwice returns a group whose list an earlier group of the same
+// scope already maps, and that earlier group. A scope is the common lines
+// plus one kind, or one group body.
+func (p *Pack) listMappedTwice() (dup, first *Group) {
+	scan := func(lines []line, seen map[string]*Group, also map[string]*Group) (*Group, *Group) {
+		for _, ln := range lines {
+			g := ln.g
+			if g == nil {
+				continue
+			}
+			if prev := seen[g.List]; prev != nil {
+				return g, prev
+			}
+			if prev := also[g.List]; prev != nil {
+				return g, prev
+			}
+			seen[g.List] = g
+		}
+		return nil, nil
+	}
+	common := map[string]*Group{}
+	if g, prev := scan(p.common, common, nil); g != nil {
+		return g, prev
+	}
+	for _, k := range p.Kinds {
+		if g, prev := scan(k.lines, map[string]*Group{}, common); g != nil {
+			return g, prev
+		}
+	}
+	for _, grp := range p.Groups {
+		if g, prev := scan(grp.lines, map[string]*Group{}, nil); g != nil {
+			return g, prev
+		}
+	}
+	return nil, nil
+}
+
+// resolveGroup reads the locator of a `group` line, and on the bits wire its
+// `item <bits>` and `count`, for the pack's wire (spec 0.7, "Group locators
+// and item-relative locators, by wire").
+func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
+	if p.Wire != WireBits {
+		if g.hasCount {
+			return ErrBadDirective, fmt.Errorf("group: `count` is valid only on wire bits")
+		}
+		if g.hasItem {
+			return ErrBadDirective, fmt.Errorf("group: `item` is valid only on wire bits")
+		}
+	}
+	switch p.Wire {
+	case WireXML:
+		names := strings.Split(g.Locator, "/")
+		for _, e := range names {
+			if e == "" || strings.ContainsAny(e, "@#") {
+				return ErrBadLocator, fmt.Errorf("an xml group locator is a path of element names, got %q", g.Locator)
+			}
+		}
+		g.loc = locator{raw: g.Locator, kind: locElem, path: names}
+	case WireGeoJSON, WireJSON:
+		wire := p.Wire
+		if g.parent != nil {
+			wire = WireJSON
+		}
+		loc, err := parseLocator(wire, g.Locator, false)
+		if err != nil {
+			return ErrBadLocator, err
+		}
+		if loc.kind == locCoord {
+			return ErrBadLocator, fmt.Errorf("a geojson group locator is a properties member or a top-level member")
+		}
+		g.loc = loc
+	case WireProtobuf:
+		loc, err := parseLocator(WireProtobuf, g.Locator, false)
+		if err != nil {
+			return ErrBadLocator, err
+		}
+		g.loc = loc
+	case WireBits:
+		if !g.hasItem || !g.hasCount {
+			return ErrBadDirective, fmt.Errorf("a bits group is `group <list> <word>:<pos> item <bits> count <count-locator | n>`: `item` and `count` are required")
+		}
+		parts := strings.Split(g.Locator, ":")
+		if len(parts) != 2 {
+			return ErrBadLocator, fmt.Errorf("a bits group locator is word:pos, got %q", g.Locator)
+		}
+		word, e1 := strconv.Atoi(parts[0])
+		pos, e2 := strconv.Atoi(parts[1])
+		if e1 != nil || e2 != nil || word < 0 || pos < 0 {
+			return ErrBadLocator, fmt.Errorf("a bits group locator is two non-negative integers word:pos, got %q", g.Locator)
+		}
+		g.start = word*p.WordBytes*8 + pos
+		g.loc = locator{raw: g.Locator, kind: locBits, word: word, pos: pos, bit: g.start}
+		bits, err := strconv.Atoi(g.itemText)
+		if err != nil || bits < 1 {
+			return ErrBadDirective, fmt.Errorf("group: `item` takes a number of bits >= 1, got %q", g.itemText)
+		}
+		g.itemBits = bits
+		if strings.Contains(g.countText, ":") {
+			loc, err := parseLocator(WireBits, g.countText, false)
+			if err != nil {
+				return ErrBadLocator, fmt.Errorf("group count locator: %v", err)
+			}
+			if loc.blen > 64 {
+				return ErrBadDirective, fmt.Errorf("a group count locator covers at most 64 bits, got %d", loc.blen)
+			}
+			loc.bit = loc.word*p.WordBytes*8 + loc.pos
+			g.countLoc = &loc
+		} else {
+			n, err := strconv.Atoi(g.countText)
+			if err != nil || n < 0 {
+				return ErrBadDirective, fmt.Errorf("group: `count` takes a count locator word:pos:len or a number >= 0, got %q", g.countText)
+			}
+			g.countN = n
+		}
+	}
+	return "", nil
+}
+
+// checkBitsGroups checks the places of the groups of a bits pack against the
+// other lines of their scope (spec 0.7, and rulings 2 to 4 of 0.7). It
+// returns the line and locator at fault.
+func (p *Pack) checkBitsGroups() (int, string, error) {
+	// check runs over one scope; itemBits is the size of an item when the
+	// scope is a group body, 0 for a message.
+	check := func(lines []line, itemBits int) (int, string, error) {
+		var counted []*Group // the groups counted by a locator
+		for _, ln := range lines {
+			if g := ln.g; g != nil && g.countLoc != nil {
+				if g.countLoc.bit+g.countLoc.blen > g.start {
+					return g.Line, g.Locator, fmt.Errorf("the count locator %s reaches the start of its group", g.countText)
+				}
+				counted = append(counted, g)
+			}
+		}
+		for _, ln := range lines {
+			var end, at int
+			var what, loc string
+			switch {
+			case ln.f != nil:
+				end, at, what, loc = ln.f.loc.bit+ln.f.loc.blen, ln.f.Line, "field", ln.f.Locator
+			case ln.w != nil:
+				// The bound of an item is stated for its fields and its nested
+				// groups with a fixed count (0.7 ruling 4).
+				end, at, what, loc = ln.w.loc.bit+ln.w.loc.blen, ln.w.Line, "when or const", ln.w.Locator
+				for _, c := range counted {
+					if end > c.start {
+						return at, loc, fmt.Errorf("the %s lies at or beyond the start of the group counted by a locator on line %d, which is the last thing in its scope", what, c.Line)
+					}
+				}
+				continue
+			default:
+				g := ln.g
+				at, what, loc = g.Line, "group", g.Locator
+				for _, c := range counted {
+					if c != g && g.start >= c.start {
+						return at, loc, fmt.Errorf("the group starts at or beyond the start of the group counted by a locator on line %d, which is the last thing in its scope", c.Line)
+					}
+				}
+				if g.countLoc == nil && itemBits > 0 && g.start+g.countN*g.itemBits > itemBits {
+					return at, loc, fmt.Errorf("the nested group with a fixed count reaches beyond the %d bits of an item", itemBits)
+				}
+				continue
+			}
+			if itemBits > 0 && end > itemBits {
+				return at, loc, fmt.Errorf("the %s reaches beyond the %d bits of an item", what, itemBits)
+			}
+			for _, c := range counted {
+				if end > c.start {
+					return at, loc, fmt.Errorf("the %s lies at or beyond the start of the group counted by a locator on line %d, which is the last thing in its scope", what, c.Line)
+				}
+			}
+		}
+		return 0, "", nil
+	}
+	if p.HasKinds() {
+		for _, k := range p.Kinds {
+			lines := append(append([]line(nil), p.common...), k.lines...)
+			if ln, loc, err := check(lines, 0); err != nil {
+				return ln, loc, err
+			}
+		}
+	} else if ln, loc, err := check(p.common, 0); err != nil {
+		return ln, loc, err
+	}
+	for _, g := range p.Groups {
+		if ln, loc, err := check(g.lines, g.itemBits); err != nil {
+			return ln, loc, err
+		}
+	}
+	return 0, "", nil
+}
+
+// newLayout indexes the lines of one scope: a message layout (the common
+// defaults, then the kind's) or a group body (the group's defaults).
+func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layout {
+	l := &layout{kind: k, lines: lines, fieldsAt: map[string][]*Field{}, whenAt: map[string]bool{}, root: p.Root}
+	textWire := p.Wire == WireXML || p.Wire == WireGeoJSON || p.Wire == WireJSON
+	maxBit, needBit := 0, 0
+	for _, ln := range lines {
+		var loc locator
+		optional := false
+		if g := ln.g; g != nil {
+			l.groups = append(l.groups, g)
+			if l.groupAt == nil {
+				l.groupAt = map[string]*Group{}
+			}
+			l.groupAt[g.Locator] = g
+			// A group with a fixed count has a fixed place; of a group counted
+			// by a locator only the count has one.
+			end := g.start + g.countN*g.itemBits
+			if g.countLoc != nil {
+				end = g.countLoc.bit + g.countLoc.blen
+			}
+			if end > maxBit {
+				maxBit = end
+			}
+			if end > needBit {
+				needBit = end
+			}
+			continue
+		}
+		if ln.f != nil {
+			l.fieldsAt[ln.f.Locator] = append(l.fieldsAt[ln.f.Locator], ln.f)
+			loc, optional = ln.f.loc, ln.f.Optional
+		} else {
+			w := ln.w
+			loc = w.loc
+			// `when <locator> present` on a text wire does not map the member
+			// (0.5 ruling 27); a const, and a when with a value, do.
+			if !textWire || !w.present {
+				l.whenAt[w.Locator] = true
+			}
+			if textWire && !w.present {
+				if l.forced == nil {
+					l.forced = map[string]*When{}
+				}
+				l.forced[w.Locator] = w
+			}
+		}
+		end := loc.bit + loc.blen
+		if end > maxBit {
+			maxBit = end
+		}
+		if !optional && end > needBit {
+			needBit = end
+		}
+	}
+	l.maxBit, l.needBit = maxBit, needBit
+	if p.Wire == WireBits && p.WordBytes > 0 {
+		l.bytes = p.wholeWords(maxBit)
+		l.decBytes = p.wholeWords(needBit)
+	}
+	// A default in a kind takes precedence over a common default of the key;
+	// a group body has its own defaults only.
+	for _, ds := range defaults {
+		for _, d := range ds {
+			if l.defaults == nil {
+				l.defaults = map[string]*Default{}
+			}
+			l.defaults[d.Key] = d
+		}
+	}
+	if k != nil && k.Root != "" {
+		l.root = k.Root
+	}
+	return l
+}
+
+// wholeWords is the length in bytes of the whole words that hold bits bits.
+func (p *Pack) wholeWords(bits int) int {
+	wordBits := p.WordBytes * 8
+	return (bits + wordBits - 1) / wordBits * p.WordBytes
+}
+
+// resolveWhen reads the value of a `when` line for the pack's wire
+// (spec/engine-spec.md, "`when` values, by wire").
+func resolveWhen(wire string, w *When) error {
+	switch wire {
+	case WireBits:
+		if w.loc.blen > 64 {
+			return fmt.Errorf("a when covers at most 64 bits, got %d", w.loc.blen)
+		}
+		v, err := strconv.ParseUint(w.Value, 10, 64)
+		if err != nil {
+			return fmt.Errorf("a bits when value is an unsigned decimal integer, got %q", w.Value)
+		}
+		if w.loc.blen < 64 && v>>uint(w.loc.blen) != 0 {
+			return fmt.Errorf("when value %d does not fit in %d bit(s)", v, w.loc.blen)
+		}
+		w.num = v
+	case WireProtobuf:
+		if w.Value == "present" {
+			w.present = true
+			return nil
+		}
+		v, err := strconv.ParseUint(w.Value, 10, 64)
+		if err != nil {
+			return fmt.Errorf("a protobuf when value is `present` or an unsigned decimal integer, got %q", w.Value)
+		}
+		w.num = v
+	default:
+		if wire == WireGeoJSON && w.loc.kind == locCoord {
+			return fmt.Errorf("a when names a member, not a coordinate")
+		}
+		switch {
+		case w.Value == "present":
+			w.present = true
+		case strings.HasPrefix(w.Value, "="):
+			w.text, w.forced = w.Value[1:], true
+		default:
+			w.text = w.Value
+		}
+	}
+	return nil
+}
+
+// tokenize splits a directive line. `#` at the start of a token begins a
+// comment, so locators such as `path/#text` survive. Double quotes wrap a
+// token holding whitespace; there is no escape, so a quoted value cannot hold a
+// double quote, and `#` inside the quotes is literal.
+func tokenize(line string) ([]string, error) {
+	var toks []string
+	i := 0
+	isSpace := func(c byte) bool { return c == ' ' || c == '\t' || c == '\r' }
+	for i < len(line) {
+		c := line[i]
+		switch {
+		case isSpace(c):
+			i++
+		case c == '#':
+			return toks, nil
+		case c == '"':
+			i++
+			var b strings.Builder
+			closed := false
+			for i < len(line) {
+				c = line[i]
+				if c == '"' {
+					i++
+					closed = true
+					break
+				}
+				b.WriteByte(c)
+				i++
+			}
+			if !closed {
+				return nil, fmt.Errorf("unterminated quote")
+			}
+			toks = append(toks, b.String())
+		default:
+			j := i
+			for j < len(line) && !isSpace(line[j]) {
+				j++
+			}
+			toks = append(toks, line[i:j])
+			i = j
+		}
+	}
+	return toks, nil
+}
+
+func parseLocator(wire, s string, residue bool) (locator, error) {
+	l := locator{raw: s}
+	if s == "" {
+		return l, fmt.Errorf("empty locator")
+	}
+	switch wire {
+	case WireXML:
+		segs := strings.Split(s, "/")
+		last := segs[len(segs)-1]
+		elems := segs[:len(segs)-1]
+		switch {
+		case strings.HasPrefix(last, "@"):
+			l.kind, l.name = locAttr, last[1:]
+			if l.name == "" {
+				return l, fmt.Errorf("attribute name missing")
+			}
+		case last == "#text":
+			l.kind = locText
+		default:
+			if !residue {
+				return l, fmt.Errorf("xml field locator must end in @attr or #text")
+			}
+			l.kind = locElem
+			elems = segs
+		}
+		for _, e := range elems {
+			if e == "" || strings.ContainsAny(e, "@#") {
+				return l, fmt.Errorf("bad element name %q", e)
+			}
+		}
+		l.path = elems
+	case WireGeoJSON:
+		switch {
+		case strings.HasPrefix(s, "geometry."):
+			switch s[len("geometry."):] {
+			case "lon":
+				l.idx = 0
+			case "lat":
+				l.idx = 1
+			case "alt":
+				l.idx = 2
+			default:
+				return l, fmt.Errorf("geometry locator must be geometry.lon, geometry.lat or geometry.alt")
+			}
+			l.kind = locCoord
+		case strings.HasPrefix(s, "properties."):
+			l.kind, l.name = locProp, s[len("properties."):]
+			if l.name == "" {
+				return l, fmt.Errorf("property name missing")
+			}
+		default:
+			if strings.Contains(s, ".") {
+				return l, fmt.Errorf("unknown geojson locator")
+			}
+			if s == "type" || s == "geometry" || s == "properties" {
+				return l, fmt.Errorf("%q is a reserved Feature member", s)
+			}
+			l.kind, l.name = locTop, s
+		}
+	case WireBits:
+		parts := strings.Split(s, ":")
+		if len(parts) != 3 {
+			return l, fmt.Errorf("bits locator must be word:pos:len")
+		}
+		word, e1 := strconv.Atoi(parts[0])
+		pos, e2 := strconv.Atoi(parts[1])
+		ln, e3 := strconv.Atoi(parts[2])
+		if e1 != nil || e2 != nil || e3 != nil {
+			return l, fmt.Errorf("bits locator fields must be integers (word:pos:len)")
+		}
+		if word < 0 || pos < 0 {
+			return l, fmt.Errorf("bits word and pos must be non-negative")
+		}
+		if ln < 1 || ln > maxBitsLen {
+			return l, fmt.Errorf("bits len must be 1..%d, got %d", maxBitsLen, ln)
+		}
+		l.kind, l.word, l.pos, l.blen = locBits, word, pos, ln
+	case WireProtobuf:
+		parts := strings.Split(s, ".")
+		nums := make([]int, 0, len(parts))
+		for _, part := range parts {
+			fn, err := strconv.Atoi(part)
+			if err != nil || fn < 1 {
+				return l, fmt.Errorf("protobuf locator must be dot-separated field numbers >= 1, got %q", s)
+			}
+			nums = append(nums, fn)
+		}
+		l.kind, l.pbPath = locProto, nums
+	case WireJSON:
+		segs := strings.Split(s, ".")
+		for _, seg := range segs {
+			if seg == "" {
+				return l, fmt.Errorf("json locator must be member names separated by '.', got %q", s)
+			}
+		}
+		l.kind, l.path = locJSON, segs
+	default:
+		return l, fmt.Errorf("unknown wire %q", wire)
+	}
+	return l, nil
+}
+
+// LoadPacks parses every packs/<dir>/pack.def under dir.
+func LoadPacks(dir string) ([]*Pack, error) {
+	matches, err := filepath.Glob(filepath.Join(dir, "*", "pack.def"))
+	if err != nil {
+		return nil, err
+	}
+	sort.Strings(matches)
+	if len(matches) == 0 {
+		return nil, &Error{Kind: ErrUnknownFormat, Source: dir, Detail: "no */pack.def found"}
+	}
+	var packs []*Pack
+	for _, m := range matches {
+		p, err := ParsePackFile(m)
+		if err != nil {
+			return nil, err
+		}
+		packs = append(packs, p)
+	}
+	return packs, nil
+}

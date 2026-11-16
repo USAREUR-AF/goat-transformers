@@ -1,0 +1,20 @@
+{
+  "name": "pgn130827_sleipner_thruster_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0bff013281ad2ac55a8deff94b0290c8",
+  "expect": "0bff013281ad2ac55a8deff94b0290c8",
+  "model": {
+    "@kind": "pgn130827_sleipner_thruster_status",
+    "n2k.controller_type": "173",
+    "n2k.thruster_id": "10",
+    "n2k.pgn130827_state": "2",
+    "n2k.unique_number": "9263813",
+    "n2k.a": "239",
+    "n2k.b": "249",
+    "n2k.c": "75",
+    "n2k.d": "2",
+    "n2k.pgn130827_thrust": "-112",
+    "n2k.e": "200"
+  }
+}

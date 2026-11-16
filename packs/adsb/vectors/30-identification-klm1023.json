@@ -1,0 +1,26 @@
+{
+  "name": "identification-klm1023",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8d4840d6202cc371c32ce0576098",
+  "expect": "8d4840d6202cc371c32ce0576098",
+  "model": {
+    "@kind": "identification-tc4",
+    "adsb.df": "17",
+    "adsb.tc": "4",
+    "adsb.icao": "4735190",
+    "adsb.ca": "5",
+    "adsb.category": "0",
+    "adsb.cs_c1": "11",
+    "adsb.cs_c2": "12",
+    "adsb.cs_c3": "13",
+    "adsb.cs_c4": "49",
+    "adsb.cs_c5": "48",
+    "adsb.cs_c6": "50",
+    "adsb.cs_c7": "51",
+    "adsb.cs_c8": "32",
+    "adsb.parity": "5726360"
+  },
+  "source": "specification",
+  "reference": "published message 8D4840D6202CC371C32CE0576098: The 1090 Megahertz Riddle, 2nd ed., https://mode-s.org/1090mhz/, ADS-B chapter 2 (Aircraft identification)"
+}

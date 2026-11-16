@@ -1,0 +1,24 @@
+{
+  "name": "pgn126986-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0af001c3a673ad9d864eda8800000000c50af20a252a93",
+  "expect": "0af001c3a673ad9d864eda8800000000c50af20a252a93",
+  "model": {
+    "@kind": "pgn126986",
+    "n2k.alert_type": "3",
+    "n2k.alert_category": "12",
+    "n2k.alert_system": "166",
+    "n2k.alert_sub_system": "115",
+    "n2k.alert_id": "40365",
+    "n2k.data_source_network_id_name": "2296008326",
+    "n2k.data_source_instance": "197",
+    "n2k.data_source_index_source": "10",
+    "n2k.alert_occurrence_number": "242",
+    "n2k.alert_control": "2",
+    "n2k.user_defined_alert_assignment": "2",
+    "n2k.reactivation_period": "37",
+    "n2k.temporary_silence_period": "42",
+    "n2k.escalation_period": "147"
+  }
+}

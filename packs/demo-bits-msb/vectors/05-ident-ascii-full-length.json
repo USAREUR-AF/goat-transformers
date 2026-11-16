@@ -1,0 +1,11 @@
+{
+  "name": "ident-ascii-full-length",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "232840004741544f52313e800000c040e000000000004062e6e3bcd35a860000",
+  "expect": "232840004741544f52313e800000c040e000000000004062e6e3bcd35a860000",
+  "model": {
+    "@kind": "ident",
+    "callsign": "GATOR1"
+  }
+}

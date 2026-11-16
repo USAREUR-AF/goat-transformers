@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_engine_rpm_a-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e5801017040405f00083dc",
+  "expect": "00ef01e5801017040405f00083dc",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_engine_rpm_a",
+    "n2k.engine_speed": "56451"
+  }
+}

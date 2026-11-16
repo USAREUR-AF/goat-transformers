@@ -1,0 +1,10 @@
+{
+  "name": "two-paths-earliest-wins",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a0270331801220909000000000000f83f290000000000002240",
+  "expect": "0a0270331801220b09000000000000f83f180129000000000000f83f3803",
+  "model": {
+    "lat": "1.5"
+  }
+}

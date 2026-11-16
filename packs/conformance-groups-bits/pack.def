@@ -1,0 +1,32 @@
+# Conformance probe pack for groups (spec 0.7) on the `bits` wire, least
+# significant bit first. Public. No kinds. One byte per word.
+#
+#   bytes 0-3   uid, NUL-padded text
+#   byte  4     number of items
+#   then        one 6-byte item per count:
+#     byte 0      qty
+#     bytes 1-2   label, text
+#     byte 3      ratio x 4
+#     byte 4      low nibble: number of subs; high nibble: the constant 10
+#     byte 5      two 4-bit subs, the first in the low nibble
+#
+# The nested group is counted by a locator inside the item and has room for
+# two items.
+format     conformance-groups-bits
+version    0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   uid  0:0:32  ascii
+group   probe.items  0:40  item 48  count 0:32:8
+  field   probe.qty    0:0:8    uint
+  field   probe.label  0:8:16   ascii
+  field   probe.ratio  0:24:8   uscale:1/4
+  const   0:36:4  10
+  default probe.qty  1
+  group   probe.subs  0:40  item 4  count 0:32:4
+    field  probe.val  0:0:4  uint
+  end
+end

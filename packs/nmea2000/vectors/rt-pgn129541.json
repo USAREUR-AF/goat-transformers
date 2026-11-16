@@ -1,0 +1,23 @@
+{
+  "name": "pgn129541-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05fa015971e0e6ded032907e59f84df923adc169293e7122462d6ada04",
+  "expect": "05fa015971e0e6ded032907e59f84df923adc169293e7122462d6ada04",
+  "model": {
+    "@kind": "pgn129541",
+    "n2k.prn": "89",
+    "n2k.gps_week_number": "57457",
+    "n2k.sv_health_bits": "230",
+    "n2k.eccentricity": "0.025496482849121094",
+    "n2k.almanac_reference_time": "204800",
+    "n2k.inclination_angle": "0.061798095703125",
+    "n2k.rate_of_right_ascension": "-0.000000007126800483092666",
+    "n2k.root_of_semi_major_axis": "1151.16259765625",
+    "n2k.argument_of_perigee": "0.8262230157852173",
+    "n2k.longitude_of_ascension_node": "0.8847094774246216",
+    "n2k.mean_anomaly": "0.3537027835845947",
+    "n2k.clock_parameter1": "0.0005893707275390625",
+    "n2k.clock_parameter2": "0.0000000005638867150992155"
+  }
+}

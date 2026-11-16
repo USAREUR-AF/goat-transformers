@@ -1,0 +1,14 @@
+{
+  "name": "pgn130560-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00fe01b7021c41dc85ba",
+  "expect": "00fe01b7021c41dc85ba",
+  "model": {
+    "@kind": "pgn130560",
+    "n2k.sid": "183",
+    "n2k.measurement_status": "2",
+    "n2k.measurement_id": "28",
+    "n2k.payload_mass": "3129334849"
+  }
+}

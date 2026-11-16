@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-named_value_float",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1200008a023dfb0000215ecc46000098c04d333800000000000000",
+  "expect": "fd1200008a023dfb0000215ecc46000098c04d333800000000000000",
+  "model": {
+    "@kind": "named_value_float"
+  }
+}

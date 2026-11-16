@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_fusion_set_mute-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3811100e9",
+  "expect": "00ef01a3811100e9",
+  "model": {
+    "@kind": "pgn126720_fusion_set_mute",
+    "n2k.pgn126720_fusion_set_mute_command": "233"
+  }
+}

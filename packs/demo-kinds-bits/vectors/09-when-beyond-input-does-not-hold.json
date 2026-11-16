@@ -1,0 +1,7 @@
+{
+  "name": "when-beyond-input-does-not-hold",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "88130000",
+  "expect_error": "no-kind"
+}

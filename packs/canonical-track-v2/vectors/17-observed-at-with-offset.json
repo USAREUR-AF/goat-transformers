@@ -1,0 +1,10 @@
+{
+  "name": "observed-at-with-offset",
+  "from": "canonical-track-v2",
+  "to": "geojson",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2026-03-04T14:30:00.250+02:30\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"confidence\":0.875}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,1250.5]},\"properties\":{\"time_ms\":1772625600250},\"id\":\"trk-0042\"}",
+  "model": {
+    "time_ms": "1772625600250"
+  }
+}

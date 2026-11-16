@@ -1,0 +1,10 @@
+{
+  "name": "derived-target-present-is-kept",
+  "from": "conformance-derive",
+  "to": "conformance-derive",
+  "input": "{\"id\":\"u2\",\"a\":3,\"neg_a\":100,\"late\":5,\"s1\":\"x\"}",
+  "context": {
+    "callsign": "c"
+  },
+  "expect": "{\"id\":\"u2\",\"a\":3,\"neg_a\":100,\"scaled\":7.5,\"third\":1,\"shifted\":2.5,\"s1\":\"x\",\"chain\":-5,\"late\":5}"
+}

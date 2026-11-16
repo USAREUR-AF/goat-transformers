@@ -1,0 +1,132 @@
+# ASTM F3411 / OpenDroneID broadcast Remote ID: the 25-byte messages. Public.
+# Written from the packed structs and encode/decode functions of
+# opendroneid-core-c. pack.md states what is mapped and what is not.
+#
+# Addressing: word_bytes 1, so a locator is 0:<bit offset>:<len> and the bit
+# offset of byte n is 8n. bit_order lsb: the structs declare their bit-fields
+# least significant bit first and their multi-byte integers little-endian, so
+# with lsb the low nibble of byte n is 0:<8n>:4, the high nibble 0:<8n+4>:4,
+# and a little-endian int32 at byte n is the one field 0:<8n>:32.
+format        remote-id
+version       0.1.0
+distribution  public
+source        "opendroneid-core-c libopendroneid/opendroneid.h and opendroneid.c (Apache-2.0), https://github.com/opendroneid/opendroneid-core-c, upstream commit 849c03a, protocol version 2"
+source        "ASTM F3411-22a Standard Specification for Remote ID and Tracking, message contents as implemented by opendroneid-core-c"
+uses          rid
+wire          bits
+word_bytes    1
+bit_order     lsb
+
+# Byte 0, every message: [message type : 4 high][protocol version : 4 low].
+# The message type is a field here and a `when` in each kind, over the same
+# bits: the `when` selects the kind, the field puts the value in the model.
+# On encode the kind's `when` value is written last and so decides the type.
+field  rid.proto_version           0:0:4      uint
+field  rid.msg_type                0:4:4      uint
+
+# Type 0, Basic ID. Bytes 2-21 UAS ID, bytes 22-24 reserved.
+kind      basic-id
+when      0:4:4  0
+requires  uid rid.id_type rid.ua_type
+field  rid.ua_type                 0:8:4      uint
+field  rid.id_type                 0:12:4     uint
+field  uid                         0:16:160   ascii
+field  rid.reserved                0:176:24   uint
+
+# Type 1, Location / Vector.
+# Byte 1: [status : 4][reserved : 1][height type : 1][E/W direction : 1][speed multiplier : 1].
+kind      location
+when      0:4:4  1
+requires  lat lon rid.status rid.direction_raw rid.speed_h_raw rid.timestamp_ds
+field  rid.speed_mult              0:8:1      uint
+field  rid.ew_direction            0:9:1      uint
+field  rid.height_type             0:10:1     uint
+field  rid.status                  0:12:4     uint
+field  rid.direction_raw           0:16:8     uint
+field  rid.speed_h_raw             0:24:8     uint
+field  rid.speed_v                 0:32:8     sscale:1/2
+field  lat                         0:40:32    sscale:1/10000000
+field  lon                         0:72:32    sscale:1/10000000
+field  rid.alt_baro                0:104:16   uscale:1/2:-1000
+field  hae                         0:120:16   uscale:1/2:-1000
+field  rid.height                  0:136:16   uscale:1/2:-1000
+field  rid.horiz_acc               0:152:4    uint
+field  rid.vert_acc                0:156:4    uint
+field  rid.speed_acc               0:160:4    uint
+field  rid.baro_acc                0:164:4    uint
+field  rid.timestamp_ds            0:168:16   uint
+field  rid.ts_acc                  0:184:4    uint
+field  rid.reserved                0:192:8    uint
+
+# Type 2, Authentication, page 0: header in bytes 1-7, data in bytes 8-24.
+# Listed before auth-page so that page 0 selects this kind.
+kind      auth-page0
+when      0:4:4  2
+when      0:8:4  0
+requires  rid.auth_type rid.auth_last_page_index rid.auth_length rid.auth_timestamp
+field  rid.auth_type               0:12:4     uint
+field  rid.auth_last_page_index    0:16:8     uint
+field  rid.auth_length             0:24:8     uint
+field  rid.auth_timestamp          0:32:32    uint
+field  rid.auth_data_last          0:192:8    uint
+
+# Type 2, Authentication, pages 1-15: header in byte 1, data in bytes 2-24.
+kind      auth-page
+when      0:4:4  2
+requires  rid.auth_type rid.auth_data_page
+field  rid.auth_data_page          0:8:4      uint
+field  rid.auth_type               0:12:4     uint
+field  rid.auth_data_last          0:192:8    uint
+
+# Type 3, Self-ID. Bytes 2-24 text.
+kind      self-id
+when      0:4:4  3
+requires  rid.desc_type rid.description
+field  rid.desc_type               0:8:8      uint
+field  rid.description             0:16:184   ascii
+
+# Type 4, System.
+# Byte 1: [reserved : 3][classification type : 3][operator location type : 2].
+# Byte 17: [EU category : 4][EU class : 4].
+kind      system
+when      0:4:4  4
+requires  rid.operator_lat rid.operator_lon rid.operator_location_type rid.classification_type rid.area_count rid.system_timestamp
+field  rid.operator_location_type  0:8:2      uint
+field  rid.classification_type     0:10:3     uint
+field  rid.operator_lat            0:16:32    sscale:1/10000000
+field  rid.operator_lon            0:48:32    sscale:1/10000000
+field  rid.area_count              0:80:16    uint
+field  rid.area_radius             0:96:8     uscale:10
+field  rid.area_ceiling            0:104:16   uscale:1/2:-1000
+field  rid.area_floor              0:120:16   uscale:1/2:-1000
+field  rid.class_eu                0:136:4    uint
+field  rid.category_eu             0:140:4    uint
+field  rid.operator_hae            0:144:16   uscale:1/2:-1000
+field  rid.system_timestamp        0:160:32   uint
+field  rid.reserved                0:192:8    uint
+
+# Type 5, Operator ID. Bytes 2-21 operator ID, bytes 22-24 reserved.
+kind      operator-id
+when      0:4:4  5
+requires  rid.operator_id_type rid.operator_id
+field  rid.operator_id_type        0:8:8      uint
+field  rid.operator_id             0:16:160   ascii
+field  rid.reserved                0:176:24   uint
+
+# Type 0xF, Message Pack. Byte 1: size of one message (25). Byte 2: number of
+# messages. Then that many 25-byte messages. Each message is one item of the
+# list rid.messages, kept as its 25 bytes: the two nibbles of byte 0, and
+# bytes 1-24 as three little-endian 64-bit integers. An item is not decoded by
+# its own message type (pack.md).
+kind      message-pack
+when      0:4:4  15
+requires  rid.messages
+field  rid.pack_msg_size           0:8:8      uint
+default rid.pack_msg_size          25
+group  rid.messages  0:24  item 200  count 0:16:8
+  field  rid.proto_version         0:0:4      uint
+  field  rid.msg_type              0:4:4      uint
+  field  rid.body_1_8              0:8:64     uint
+  field  rid.body_9_16             0:72:64    uint
+  field  rid.body_17_24            0:136:64   uint
+end

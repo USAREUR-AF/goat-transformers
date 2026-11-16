@@ -1,0 +1,17 @@
+{
+  "name": "gen-alert_ack-roundtrip",
+  "from": "sapient-v1",
+  "to": "sapient-v1",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d335a180a0a616c6572745f69642d3410011a08726561736f6e2d36",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d335a180a0a616c6572745f69642d3410011a08726561736f6e2d36",
+  "model": {
+    "@kind": "alert_ack",
+    "sapient1.timestamp_seconds": "100",
+    "sapient1.timestamp_nanos": "137",
+    "sapient1.node_id": "node_id-2",
+    "sapient1.destination_id": "destination_id-3",
+    "sapient1.alert_ack_alert_id": "alert_id-4",
+    "sapient1.alert_ack_alert_status": "1",
+    "sapient1.alert_ack_reason": "reason-6"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-kind-named",
+  "from": "geojson",
+  "to": "conformance",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"type\":\"a-h-G\",\"callsign\":\"VIPER\"},\"id\":\"g2\"}",
+  "expect": "<item id=\"g2\" kind=\"hostile\"><pos lat=\"1.5\" lon=\"2.5\"/><name value=\"VIPER\"/></item>"
+}

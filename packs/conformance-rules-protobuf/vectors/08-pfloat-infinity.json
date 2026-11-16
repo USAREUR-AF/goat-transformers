@@ -1,0 +1,7 @@
+{
+  "name": "pfloat-infinity",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027037350000807f",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,35 @@
+# Conformance probe pack. Public. Exercises typemap and residue rulings.
+format  conformance
+version 0.1.1
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    xml
+root    item
+field   uid    @id          string
+field   type   @kind        string
+field   lat    pos/@lat     float
+field   lon    pos/@lon     float
+typemap friend a-f-G
+typemap hostile a-h-G
+
+# Kinds (spec 0.5). `when` on element text, on attribute presence, and the
+# `=present` escape for the literal text `present`. `plain` has no `when` and no
+# `requires`: a message that matches no other kind is `plain`, and so is an
+# entity that has the required keys of no other kind.
+kind     air
+requires hae
+field    hae       pos/@alt      float
+when     class/#text  air
+kind     named
+requires callsign
+field    callsign  name/@value   string
+when     name/@value  present
+kind     literal
+requires ce
+field    ce        @ce           float
+when     @mode     =present
+kind     ordered                 # a `when` line ahead of a `field` line: output is in line order
+requires le
+when     @rank     first
+field    le        @le           float
+kind     plain

@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_fusion_media_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a38103000b42",
+  "expect": "00ef01a38103000b42",
+  "model": {
+    "@kind": "pgn126720_fusion_media_control",
+    "n2k.source_id": "11",
+    "n2k.pgn126720_fusion_media_control_command": "66"
+  }
+}

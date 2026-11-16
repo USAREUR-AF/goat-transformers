@@ -1,0 +1,21 @@
+{
+  "name": "derived-keys-general-values",
+  "from": "canonical-track-v2",
+  "to": "canonical-track-v2",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"velocity\":{\"eastMps\":-12.5,\"northMps\":40.25,\"upMps\":0.5},\"classification\":\"uas\",\"confidence\":0.875,\"positionUncertainty\":{\"sigmaEastM\":15,\"sigmaNorthM\":12.5,\"sigmaUpM\":30}}",
+  "context": {
+    "how": "m-g"
+  },
+  "expect": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"velocity\":{\"eastMps\":-12.5,\"northMps\":40.25,\"upMps\":0.5},\"classification\":\"uas\",\"confidence\":0.875,\"positionUncertainty\":{\"sigmaEastM\":15,\"sigmaNorthM\":12.5,\"sigmaUpM\":30}}",
+  "model": {
+    "@complete": true,
+    "how": "m-g",
+    "type": "a-u-A-M-F-Q",
+    "course": "342.74734783317876",
+    "speed_ms": "42.14632249674935",
+    "ce": "19.525624189766635",
+    "le": "30",
+    "track.vel_east_ms": "-12.5",
+    "track.vel_north_ms": "40.25"
+  }
+}

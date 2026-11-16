@@ -1,0 +1,12 @@
+{
+  "name": "pgn65018-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "fafd00d27b22dc59a3e003",
+  "expect": "fafd00d27b22dc59a3e003",
+  "model": {
+    "@kind": "pgn65018",
+    "n2k.total_energy_export": "3693247442",
+    "n2k.total_energy_import": "65053529"
+  }
+}

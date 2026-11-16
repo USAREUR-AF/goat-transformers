@@ -1,0 +1,19 @@
+{
+  "name": "airborne-velocity-air-st3-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc0159bfffdd47a7095c24b75",
+  "expect": "8dabc0159bfffdd47a7095c24b75",
+  "model": {
+    "@kind": "airborne-velocity-air-st3",
+    "adsb.df": "17",
+    "adsb.tc": "19",
+    "adsb.icao": "11255829",
+    "adsb.heading_raw": "1021",
+    "adsb.airspeed_raw": "675",
+    "adsb.vr_raw": "156",
+    "adsb.parity": "12733301"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

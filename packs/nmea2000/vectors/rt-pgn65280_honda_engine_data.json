@@ -1,0 +1,11 @@
+{
+  "name": "pgn65280_honda_engine_data-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff00018160fac3570000",
+  "expect": "00ff00018160fac3570000",
+  "model": {
+    "@kind": "pgn65280_honda_engine_data",
+    "n2k.data": "1472461408"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "pgn130836_simnet_fluid_level_sensor_configuration-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff014187458dc8c5fd83d7113a63970c",
+  "expect": "14ff014187458dc8c5fd83d7113a63970c",
+  "model": {
+    "@kind": "pgn130836_simnet_fluid_level_sensor_configuration",
+    "n2k.c": "69",
+    "n2k.pgn130836_device": "141",
+    "n2k.pgn130836_instance": "200",
+    "n2k.f": "5",
+    "n2k.tank_type": "12",
+    "n2k.pgn130836_capacity": "29933670.1",
+    "n2k.g": "58",
+    "n2k.h": "-26781",
+    "n2k.i": "12"
+  }
+}

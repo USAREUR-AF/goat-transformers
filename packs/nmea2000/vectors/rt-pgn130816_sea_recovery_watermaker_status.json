@@ -1,0 +1,23 @@
+{
+  "name": "pgn130816_sea_recovery_watermaker_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff011d81f2688a39d91eff6a62776506",
+  "expect": "00ff011d81f2688a39d91eff6a62776506",
+  "model": {
+    "@kind": "pgn130816_sea_recovery_watermaker_status",
+    "n2k.pgn130816_message_id": "242",
+    "n2k.watermaker_instance": "8",
+    "n2k.operation_state": "6",
+    "n2k.prefilter_pressure": "14730",
+    "n2k.postfilter_pressure": "7897",
+    "n2k.operation_pressure": "27391",
+    "n2k.product_flow": "30562",
+    "n2k.prefilter_pressure_status": "1",
+    "n2k.postfilter_pressure_status": "1",
+    "n2k.operation_pressure_status": "2",
+    "n2k.product_salinity_status": "1",
+    "n2k.pgn130816_filter_status": "2",
+    "n2k.pgn130816_system_status": "1"
+  }
+}

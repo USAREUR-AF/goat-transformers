@@ -1,0 +1,19 @@
+{
+  "name": "pgn128777-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09f7014d7029f9a6b1e12a",
+  "expect": "09f7014d7029f9a6b1e12a",
+  "model": {
+    "@kind": "pgn128777",
+    "n2k.sid": "77",
+    "n2k.windlass_id": "112",
+    "n2k.pgn128777_windlass_direction_control": "1",
+    "n2k.windlass_motion_status": "2",
+    "n2k.rode_type_status": "2",
+    "n2k.rode_counter_value": "4274.5",
+    "n2k.windlass_line_speed": "577.77",
+    "n2k.anchor_docking_status": "2",
+    "n2k.pgn128777_windlass_operating_events": "10"
+  }
+}

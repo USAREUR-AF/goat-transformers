@@ -1,0 +1,7 @@
+{
+  "name": "duplicate-member-name-nested",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"a\",\"pos\":{\"lat\":1,\"lat\":1}}",
+  "expect_error": "malformed-wire"
+}

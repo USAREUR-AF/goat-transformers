@@ -1,0 +1,14 @@
+{
+  "name": "pgn127258-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1af101ea04b6fd3df3",
+  "expect": "1af101ea04b6fd3df3",
+  "model": {
+    "@kind": "pgn127258",
+    "n2k.sid": "234",
+    "n2k.pgn127258_source": "4",
+    "n2k.age_of_service": "64950",
+    "n2k.variation": "-0.3267"
+  }
+}

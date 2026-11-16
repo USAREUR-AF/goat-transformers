@@ -1,0 +1,11 @@
+{
+  "name": "number-forms",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"schema\":\"probe\",\"id\":\"j10\",\"pos\":{\"lat\":30.0,\"lon\":-0.0,\"alt\":1.5e2},\"meta\":{\"level\":\"detail\"}}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j10\",\"pos\":{\"lat\":30,\"lon\":0,\"alt\":150},\"meta\":{\"level\":\"detail\"}}",
+  "model": {
+    "@kind": "detailed",
+    "hae": "150"
+  }
+}

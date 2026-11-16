@@ -1,0 +1,11 @@
+{
+  "name": "pgn65280_mercury_engine_data-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ff0090806da770390000",
+  "expect": "00ff0090806da770390000",
+  "model": {
+    "@kind": "pgn65280_mercury_engine_data",
+    "n2k.data": "963684205"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-memory_vect",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd24000088fa3bf9000043e51af1",
+  "expect": "fd24000088fa3bf9000043e51af1",
+  "model": {
+    "@kind": "memory_vect"
+  }
+}

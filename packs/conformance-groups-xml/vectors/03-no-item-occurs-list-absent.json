@@ -1,0 +1,11 @@
+{
+  "name": "no-item-occurs-list-absent",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u3\"><body/></msg>",
+  "expect": "<msg id=\"u3\"/>",
+  "model": {
+    "probe.items.#": "absent",
+    "probe.names.#": "absent"
+  }
+}

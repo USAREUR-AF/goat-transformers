@@ -1,0 +1,19 @@
+{
+  "name": "pgn130910-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "5eff01a8809a7a5b7aa13200308f6b7e5d4a33a07747",
+  "expect": "5eff01a8809a7a5b7aa13200308f6b7e5d4a33a07747",
+  "model": {
+    "@kind": "pgn130910",
+    "n2k.dc_source_instance": "154",
+    "n2k.dc_uv_shutdown_level": "234.18",
+    "n2k.dc_uv_warning_level": "413.38",
+    "n2k.dc_uv_shutdown_delay": "0.5",
+    "n2k.dc_uv_recover_level": "366.56",
+    "n2k.dc_ov_shutdown_level": "323.63",
+    "n2k.dc_ov_warning_level": "190.37",
+    "n2k.dc_ov_shutdown_delay": "410.11",
+    "n2k.dc_ov_recover_level": "182.95"
+  }
+}

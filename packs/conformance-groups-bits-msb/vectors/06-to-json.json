@@ -1,0 +1,7 @@
+{
+  "name": "to-json",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-json",
+  "input": "153c07616200",
+  "expect": "{\"title\":\"NONE\",\"items\":[{\"name\":\"ab\",\"n\":7,\"kind\":\"item\"}],\"data\":{\"nums\":[3,12]}}"
+}

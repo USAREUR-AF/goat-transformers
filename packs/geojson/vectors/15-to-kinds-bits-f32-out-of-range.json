@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-bits-f32-out-of-range",
+  "from": "geojson",
+  "to": "demo-kinds-bits",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.5,30.25]},\"properties\":{\"ce\":1e39,\"callsign\":\"ALFA\"}}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pgn65285_lowrance_temperature-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "05ff008c8057fc5c",
+  "expect": "05ff008c8057fc5c",
+  "model": {
+    "@kind": "pgn65285_lowrance_temperature",
+    "n2k.temperature_source": "87",
+    "n2k.pgn65285_actual_temperature": "238.04"
+  }
+}

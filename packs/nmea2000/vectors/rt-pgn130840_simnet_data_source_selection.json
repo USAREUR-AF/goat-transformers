@@ -1,0 +1,15 @@
+{
+  "name": "pgn130840_simnet_data_source_selection-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "18ff014187006b89010018b07ba6d800000000",
+  "expect": "18ff014187006b89010018b07ba6d800000000",
+  "model": {
+    "@kind": "pgn130840_simnet_data_source_selection",
+    "n2k.pgn130840_data_type": "107",
+    "n2k.source_class": "137",
+    "n2k.source_address": "1",
+    "n2k.change_counter": "24",
+    "n2k.pgn130840_source": "3634789296"
+  }
+}

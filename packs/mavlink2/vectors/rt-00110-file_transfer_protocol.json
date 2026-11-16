@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-file_transfer_protocol",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fdfe0000506f6f6e0000fed5ac",
+  "expect": "fdfe0000506f6f6e0000fed5ac",
+  "model": {
+    "@kind": "file_transfer_protocol"
+  }
+}

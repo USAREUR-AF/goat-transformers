@@ -1,0 +1,15 @@
+{
+  "name": "pgn128769-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f7019d333bb60a",
+  "expect": "01f7019d333bb60a",
+  "model": {
+    "@kind": "pgn128769",
+    "n2k.sid": "157",
+    "n2k.elevator_call_button_id": "51",
+    "n2k.deck_button_id": "59",
+    "n2k.elevator_car_usage": "182",
+    "n2k.elevator_car_button_selection": "10"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "status-varint-roundtrip",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410809ccea8fe2e180122054741544f52",
+  "expect": "0a074a2d303133333410809ccea8fe2e180122054741544f52",
+  "model": {
+    "@kind": "status",
+    "callsign": "GATOR"
+  }
+}

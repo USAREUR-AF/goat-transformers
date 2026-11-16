@@ -1,0 +1,7 @@
+{
+  "name": "non-optional-field-beyond-input",
+  "from": "conformance-rules-bits",
+  "to": "conformance-rules-bits",
+  "input": "5a341240ee2d120146524e",
+  "expect_error": "malformed-wire"
+}

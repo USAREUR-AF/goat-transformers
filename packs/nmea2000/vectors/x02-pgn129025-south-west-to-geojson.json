@@ -1,0 +1,12 @@
+{
+  "name": "x02-pgn129025-south-west-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "01f801a028e2ebe014d9a5",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-151.25,-33.75]},\"properties\":{}}",
+  "model": {
+    "@kind": "pgn129025",
+    "lat": "-33.75",
+    "lon": "-151.25"
+  }
+}

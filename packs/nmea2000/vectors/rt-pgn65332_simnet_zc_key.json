@@ -1,0 +1,14 @@
+{
+  "name": "pgn65332_simnet_zc_key-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "34ff004187bd84e362602e",
+  "expect": "34ff004187bd84e362602e",
+  "model": {
+    "@kind": "pgn65332_simnet_zc_key",
+    "n2k.address": "189",
+    "n2k.parameter": "25315",
+    "n2k.key_event": "96",
+    "n2k.pgn65332_key": "46"
+  }
+}

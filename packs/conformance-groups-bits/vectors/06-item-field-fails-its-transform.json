@@ -1,0 +1,7 @@
+{
+  "name": "item-field-fails-its-transform",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-bits",
+  "input": "753600000107016204a000",
+  "expect_error": "transform-decode"
+}

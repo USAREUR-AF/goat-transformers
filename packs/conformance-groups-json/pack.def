@@ -1,0 +1,35 @@
+# Conformance probe pack for groups (spec 0.7) on the `json` wire. Public. No
+# kinds. A list of object items with a nested object, a `const`, a `default`
+# and a nested list; three lists of scalar items (`.`), one of them inside a
+# nested object; and a common `default` for a key that items also hold, which
+# does not reach into items.
+format  conformance-groups-json
+version 0.7.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid          id        string
+field   probe.label  title     string
+default probe.label  NONE                  # common: written at `title`, never inside an item
+group   probe.items  items
+  field   probe.label  name     string
+  field   probe.qty    n        int
+  field   probe.ratio  r.value  float
+  const   kind         item
+  default probe.qty    1                   # per item
+  group   probe.subs   subs
+    field  probe.tag  t  string
+    field  probe.val  v  int
+  end
+end
+field   callsign     cs        string
+group   probe.nums   data.nums
+  field  probe.val  .  int
+end
+group   probe.names  names
+  field  probe.tag  .  string
+end
+group   probe.ratios ratios
+  field  probe.ratio  .  float
+end

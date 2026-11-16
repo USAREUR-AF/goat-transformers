@@ -1,0 +1,11 @@
+{
+  "name": "group-in-a-kind-roundtrip",
+  "from": "conformance-groups-kinds",
+  "to": "conformance-groups-kinds",
+  "input": "{\"id\":\"k2\",\"shape\":\"listed\",\"items\":[{\"name\":\"aa\"}]}",
+  "expect": "{\"id\":\"k2\",\"shape\":\"listed\",\"items\":[{\"name\":\"aa\"}]}",
+  "model": {
+    "@kind": "listed",
+    "probe.items[0].probe.label": "aa"
+  }
+}

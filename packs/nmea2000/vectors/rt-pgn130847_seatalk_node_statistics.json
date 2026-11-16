@@ -1,0 +1,15 @@
+{
+  "name": "pgn130847_seatalk_node_statistics-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1fff013b8712118c170c429bd7",
+  "expect": "1fff013b8712118c170c429bd7",
+  "model": {
+    "@kind": "pgn130847_seatalk_node_statistics",
+    "n2k.pgn130847_product_code": "4370",
+    "n2k.year": "140",
+    "n2k.month": "23",
+    "n2k.device_number": "16908",
+    "n2k.node_voltage": "551.95"
+  }
+}

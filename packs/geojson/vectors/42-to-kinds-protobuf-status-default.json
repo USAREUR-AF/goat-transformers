@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-protobuf-status-default",
+  "from": "geojson",
+  "to": "demo-kinds-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1614456000000,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+  "expect": "0a074a2d303133333410809ccea8fe2e180122054741544f52"
+}

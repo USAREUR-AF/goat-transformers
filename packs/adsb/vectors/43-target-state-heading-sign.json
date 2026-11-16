@@ -1,0 +1,17 @@
+{
+  "name": "target-state-heading-sign",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8da05629ea21485ebf3f8cadaeeb",
+  "expect": "8da05629ea21485ebf3f8cadaeeb",
+  "model": {
+    "@kind": "target-state",
+    "adsb.df": "17",
+    "adsb.tc": "29",
+    "adsb.icao": "10507817",
+    "adsb.sel_heading_sign": "1",
+    "adsb.sel_heading_raw": "95"
+  },
+  "source": "specification",
+  "reference": "published message 8DA05629EA21485EBF3F8CADAEEB: pyModeS tests/test_bds62.py at commit 4bf0832, https://github.com/junzis/pyModeS; one bit differs from the message above and the source leaves the parity unchanged, so the parity field is not the frame's remainder"
+}

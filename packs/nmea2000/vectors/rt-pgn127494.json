@@ -1,0 +1,22 @@
+{
+  "name": "pgn127494-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06f201f301c238431e840b49eebc38868e20528adf35ca34078a00e6219cfe",
+  "expect": "06f201f301c238431e840b49eebc38868e20528adf35ca34078a00e6219cfe",
+  "model": {
+    "@kind": "pgn127494",
+    "n2k.inverter_motor_identifier": "243",
+    "n2k.pgn127494_motor_type": "1",
+    "n2k.motor_voltage_rating": "1453",
+    "n2k.maximum_continuous_motor_power": "193207875",
+    "n2k.maximum_boost_motor_power": "951905865",
+    "n2k.maximum_motor_temperature_rating": "364.86",
+    "n2k.rated_motor_speed": "5256",
+    "n2k.maximum_controller_temperature_rating": "572.26",
+    "n2k.motor_shaft_torque_rating": "51765",
+    "n2k.motor_dc_voltage_derating_threshold": "184.4",
+    "n2k.motor_dc_voltage_cut_off_threshold": "13.8",
+    "n2k.drive_motor_hours": "4271645158"
+  }
+}

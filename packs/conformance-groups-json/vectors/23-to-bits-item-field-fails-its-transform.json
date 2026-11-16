@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-item-field-fails-its-transform",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"aa\",\"r\":{\"value\":100}}]}",
+  "expect_error": "transform-encode"
+}

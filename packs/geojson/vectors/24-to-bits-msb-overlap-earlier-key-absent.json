@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-msb-overlap-earlier-key-absent",
+  "from": "geojson",
+  "to": "demo-bits-msb",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2]},\"properties\":{\"ce\":43981}}",
+  "expect": "0000600000abca00"
+}

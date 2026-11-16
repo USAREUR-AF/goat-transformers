@@ -1,0 +1,14 @@
+{
+  "name": "gen-geojson-to-isa",
+  "from": "geojson",
+  "to": "isa",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.2,48.137,340]},\"properties\":{\"course\":275.5,\"speed_ms\":64}}",
+  "expect": "ca011b09a8c64b3789114840116666666666662640190000000000407540ea01160a090900000000003871401a09090000000000005040",
+  "model": {
+    "lat": "48.137",
+    "lon": "11.2",
+    "hae": "340",
+    "course": "275.5",
+    "speed_ms": "64"
+  }
+}

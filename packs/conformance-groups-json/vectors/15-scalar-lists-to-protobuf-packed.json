@@ -1,0 +1,7 @@
+{
+  "name": "scalar-lists-to-protobuf-packed",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-protobuf",
+  "input": "{\"id\":\"u1\",\"data\":{\"nums\":[3,270,0]},\"names\":[\"p\",\"qq\"],\"ratios\":[0.5,-2]}",
+  "expect": "0a0275311a060a04038e0200220170220271712a10000000000000e03f00000000000000c0"
+}

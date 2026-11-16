@@ -1,0 +1,24 @@
+{
+  "name": "system-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "4204a6bf241bd2d1b4b62300073209230824f907003fab0100",
+  "expect": "4204a6bf241bd2d1b4b62300073209230824f907003fab0100",
+  "model": {
+    "@kind": "system",
+    "rid.msg_type": "4",
+    "rid.operator_lat": "45.539319",
+    "rid.operator_lon": "-122.966379",
+    "rid.operator_hae": "20.5",
+    "rid.area_count": "35",
+    "rid.area_radius": "70",
+    "rid.area_ceiling": "177",
+    "rid.area_floor": "41.5",
+    "rid.classification_type": "1",
+    "rid.category_eu": "2",
+    "rid.class_eu": "4",
+    "rid.system_timestamp": "28000000"
+  },
+  "source": "constructed",
+  "reference": "values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "scalar-lists-to-json",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-json",
+  "input": "<msg id=\"u1\"><nums><n>3</n><n>270</n></nums><name>p</name><name>qq</name></msg>",
+  "expect": "{\"id\":\"u1\",\"title\":\"NONE\",\"data\":{\"nums\":[3,270]},\"names\":[\"p\",\"qq\"]}"
+}

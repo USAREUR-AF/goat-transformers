@@ -1,0 +1,25 @@
+{
+  "name": "pgn129284-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04f901f12b535004a693ee761295063a6da424eff0130bf0d0ab9b973416d0554d2f650a9a",
+  "expect": "04f901f12b535004a693ee761295063a6da424eff0130bf0d0ab9b973416d0554d2f650a9a",
+  "model": {
+    "@kind": "pgn129284",
+    "n2k.sid": "241",
+    "n2k.distance_to_waypoint": "723730.35",
+    "n2k.course_bearing_reference": "2",
+    "n2k.perpendicular_crossed": "1",
+    "n2k.arrival_circle_entered": "2",
+    "n2k.calculation_type": "2",
+    "n2k.eta_time": "30978.4211",
+    "n2k.eta_date": "1685",
+    "n2k.bearing_origin_to_destination_waypoint": "2.7962",
+    "n2k.bearing_position_to_destination_waypoint": "0.938",
+    "n2k.origin_waypoint_number": "185856239",
+    "n2k.destination_waypoint_number": "2611728624",
+    "n2k.destination_latitude": "-80.3851113",
+    "n2k.destination_longitude": "169.7598805",
+    "n2k.waypoint_closing_velocity": "-261.02"
+  }
+}

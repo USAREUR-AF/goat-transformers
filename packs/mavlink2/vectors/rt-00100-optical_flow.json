@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-optical_flow",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd220000466565640000a8386c420000008000007040000098c0000040c0b48a35deb289000090c0000030c0",
+  "expect": "fd220000466565640000a8386c420000008000007040000098c0000040c0b48a35deb289000090c0000030c0",
+  "model": {
+    "@kind": "optical_flow"
+  }
+}

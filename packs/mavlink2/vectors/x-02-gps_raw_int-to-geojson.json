@@ -1,0 +1,15 @@
+{
+  "name": "gps_raw_int-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd34000008010118000000401e18240a0600c0dcd1eba89f215a90e200007800b40000000000030b00000000000000000000000000000000000000000000289f",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{}}",
+  "model": {
+    "@kind": "gps_raw_int",
+    "lat": "-33.8568",
+    "lon": "151.2153",
+    "mavlink.seq": "8",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

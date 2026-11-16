@@ -1,0 +1,7 @@
+{
+  "name": "to-rules-json-tables-typemap-default-const",
+  "from": "demo-track-json",
+  "to": "conformance-rules-json",
+  "input": "{\"id\":\"t1\",\"type\":\"a-f-G\",\"how\":\"m-g\",\"lat\":1.5,\"lon\":2.5,\"track\":{\"class\":\"balloon\",\"confirmed\":true}}",
+  "expect": "{\"schema\":\"rules\",\"id\":\"t1\",\"rev\":6,\"kind\":\"F\",\"pos\":{\"lat\":1.5,\"latitude\":1.5,\"lon\":2.5,\"alt\":-1},\"cls\":1,\"how\":\"M\",\"status\":\"yes\",\"meta\":{\"live\":true,\"tag\":\"7\"}}"
+}

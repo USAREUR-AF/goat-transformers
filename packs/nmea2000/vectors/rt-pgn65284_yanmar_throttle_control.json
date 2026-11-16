@@ -1,0 +1,16 @@
+{
+  "name": "pgn65284_yanmar_throttle_control-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff00ac805105f4002dbd",
+  "expect": "04ff00ac805105f4002dbd",
+  "model": {
+    "@kind": "pgn65284_yanmar_throttle_control",
+    "n2k.unknown_selector": "17",
+    "n2k.pgn65284_engine_instance": "2",
+    "n2k.transmission_gear": "1",
+    "n2k.unknown_control_flag": "1",
+    "n2k.throttle_position": "24.4",
+    "n2k.unknown_data": "48429"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "comment-hash-text-locator",
+  "from": "cot-xml",
+  "to": "geojson",
+  "input": "<event uid=\"c1\" type=\"a-f-G\" time=\"2020-01-01T00:00:00.000Z\" how=\"m-g\"><point lat=\"0\" lon=\"0\"/></event>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]},\"properties\":{\"type\":\"a-f-G\",\"time_ms\":1577836800000,\"how\":\"m-g\"},\"id\":\"c1\"}"
+}

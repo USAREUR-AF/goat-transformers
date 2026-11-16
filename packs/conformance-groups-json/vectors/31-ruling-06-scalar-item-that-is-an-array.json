@@ -1,0 +1,7 @@
+{
+  "name": "ruling-06-scalar-item-that-is-an-array",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-json",
+  "input": "{\"id\":\"u\",\"data\":{\"nums\":[1,[2]]}}",
+  "expect_error": "transform-decode"
+}

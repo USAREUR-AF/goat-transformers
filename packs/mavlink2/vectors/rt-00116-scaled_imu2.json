@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-scaled_imu2",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd18000056757574000098ffe74dc11a426ec3c14415c56846bcc70f4863c9b64a0a",
+  "expect": "fd18000056757574000098ffe74dc11a426ec3c14415c56846bcc70f4863c9b64a0a",
+  "model": {
+    "@kind": "scaled_imu2"
+  }
+}

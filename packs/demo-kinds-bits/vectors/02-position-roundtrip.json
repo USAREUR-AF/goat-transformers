@@ -1,0 +1,14 @@
+{
+  "name": "position-roundtrip",
+  "from": "demo-kinds-bits",
+  "to": "demo-kinds-bits",
+  "input": "e8030000a1aaaa0200ee858913000000",
+  "expect": "e8030000a1aaaa0200ee858913000000",
+  "model": {
+    "@kind": "position",
+    "time_ms": "1000",
+    "lat": "29.999996423720887",
+    "lon": "-85.83069359247051",
+    "hae": "250"
+  }
+}

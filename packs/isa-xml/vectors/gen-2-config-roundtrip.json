@@ -1,0 +1,23 @@
+{
+  "name": "gen-config-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Types Name=\"s7\" Description=\"s8\"><Fields Name=\"s9\" Description=\"s10\" Optional=\"false\"><Type><CustomTypeName>s12</CustomTypeName></Type></Fields></Types><Types Name=\"s13\" Description=\"s14\"><Fields Name=\"s15\" Description=\"s16\" Optional=\"false\"><Type><CustomTypeName>s18</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s19\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s22\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s25\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s28\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s31\" Ready=\"true\"/><CommandStates Name=\"s33\" Ready=\"true\"/><Extras Name=\"s35\"/><Extras Name=\"s36\"/></Config>",
+  "expect": "<Config Source=\"s0\" Identifier=\"2\" Priority=\"3\"><Time Value=\"2.5\" Error=\"0.125\"/><Stale Value=\"3.5\" Error=\"0.75\"/><Ccd><Types Name=\"s7\" Description=\"s8\"><Fields Name=\"s9\" Description=\"s10\" Optional=\"false\"><Type><CustomTypeName>s12</CustomTypeName></Type></Fields></Types><Types Name=\"s13\" Description=\"s14\"><Fields Name=\"s15\" Description=\"s16\" Optional=\"false\"><Type><CustomTypeName>s18</CustomTypeName></Type></Fields></Types></Ccd><PropertyStates Name=\"s19\" Ready=\"true\" Reporting=\"false\"/><PropertyStates Name=\"s22\" Ready=\"false\" Reporting=\"true\"/><ObservableStates Name=\"s25\" Ready=\"true\" Reporting=\"false\"/><ObservableStates Name=\"s28\" Ready=\"false\" Reporting=\"true\"/><CommandStates Name=\"s31\" Ready=\"true\"/><CommandStates Name=\"s33\" Ready=\"true\"/><Extras Name=\"s35\"/><Extras Name=\"s36\"/></Config>",
+  "model": {
+    "@kind": "config",
+    "isaxml.source": "s0",
+    "isaxml.identifier": "2",
+    "isaxml.ccd_types[0].isaxml.fields.#": "1",
+    "isaxml.ccd_types.#": "2",
+    "isaxml.ccd_types[1].isaxml.name": "s13",
+    "isaxml.property_states.#": "2",
+    "isaxml.property_states[1].isaxml.name": "s22",
+    "isaxml.observable_states.#": "2",
+    "isaxml.observable_states[1].isaxml.name": "s28",
+    "isaxml.command_states.#": "2",
+    "isaxml.command_states[1].isaxml.name": "s33",
+    "isaxml.extras.#": "2",
+    "isaxml.extras[1].isaxml.name": "s36"
+  }
+}

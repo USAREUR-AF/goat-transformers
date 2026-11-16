@@ -1,0 +1,14 @@
+{
+  "name": "pgn65286_maretron_fluid_flow_rate-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "06ff00898014cf0aaef2f0",
+  "expect": "06ff00898014cf0aaef2f0",
+  "model": {
+    "@kind": "pgn65286_maretron_fluid_flow_rate",
+    "n2k.sid": "20",
+    "n2k.flow_rate_instance": "207",
+    "n2k.fluid_type": "10",
+    "n2k.fluid_flow_rate": "-98.645"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "pgn126720_carling_dc_configuration_command-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01b080017806c04547151d486321",
+  "expect": "00ef01b080017806c04547151d486321",
+  "model": {
+    "@kind": "pgn126720_carling_dc_configuration_command",
+    "n2k.message_type": "1",
+    "n2k.breaker_mapping1": "120",
+    "n2k.breaker_mapping2": "6",
+    "n2k.breaker_mapping3": "6",
+    "n2k.inrush_delay": "5",
+    "n2k.trip_delay": "4",
+    "n2k.configuration_flags": "71",
+    "n2k.current_rating": "21",
+    "n2k.factory_max_rating": "29",
+    "n2k.schedule_bload_shed_priority": "8",
+    "n2k.schedule_aload_shed_priority": "4",
+    "n2k.dim_value": "99",
+    "n2k.breaker_group": "1",
+    "n2k.flash_map_index": "2"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "pgn130851_simnet_ap_command_reply_change_course-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "23ff0141876600c90a1a005bbed4",
+  "expect": "23ff0141876600c90a1a005bbed4",
+  "model": {
+    "@kind": "pgn130851_simnet_ap_command_reply_change_course",
+    "n2k.address": "102",
+    "n2k.network_group": "201",
+    "n2k.pgn130851_direction": "91",
+    "n2k.angle": "5.4462"
+  }
+}

@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""goat-pkg: plan the minimum goat-transformers package for a set of constraints.
+
+A caller brings their constraints — the message standards they need, the
+language, the runtime, the OS and chip architecture, and static vs dynamic
+linkage — and this computes the smallest package that meets them: which engine,
+which packs (only the formats asked for), which wire codecs those packs use, the
+build target and command, and whether the requested formats actually
+inter-convert.
+
+Run with -I (the repo ships it executable). It reads only data files; it never
+imports anything from the packs it inspects.
+
+Usage:
+  tools/goat-pkg plan --formats cot-xml,sapient --language rust \
+      --runtime native --linkage static --os linux --arch x86_64
+  tools/goat-pkg formats        # list available formats and the wire each uses
+"""
+import argparse
+import json
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(HERE)
+PACKS = os.path.join(REPO, "packs")
+
+LANGUAGES = ["rust", "go", "python", "java", "cpp", "erlang", "zig"]
+
+# Which (language, runtime) pairs are supported, and how each builds for a given
+# linkage. {arch},{os},{goarch} are filled from the constraints. "any" linkage
+# means linkage does not apply to that runtime.
+BUILD = {
+    ("rust", "native"): {
+        "static": "cargo build --release --target {arch}-unknown-{os}-musl",
+        "dynamic": "cargo build --release --target {arch}-unknown-{os}-gnu",
+    },
+    ("rust", "wasm"): {"any": "cargo build --release --lib --target wasm32-unknown-unknown"},
+    ("rust", "js"): {"any": "cargo build --release --lib --target wasm32-unknown-unknown  # wrap with a thin JS/WASM loader"},
+    ("go", "native"): {
+        "static": "CGO_ENABLED=0 GOOS={os} GOARCH={goarch} go build ./cmd/goat-xf",
+        "dynamic": "GOOS={os} GOARCH={goarch} go build ./cmd/goat-xf",
+    },
+    ("go", "wasm"): {"any": "GOOS=wasip1 GOARCH=wasm go build ./cmd/goat-xf"},
+    ("java", "jvm"): {"any": "./build.sh   # a portable jar; the JVM abstracts OS and arch"},
+    ("cpp", "native"): {
+        "static": "cmake -DCMAKE_EXE_LINKER_FLAGS=-static -S engines/cpp -B build && cmake --build build",
+        "dynamic": "cmake -S engines/cpp -B build && cmake --build build",
+    },
+    ("cpp", "wasm"): {"any": "emcmake cmake -S engines/cpp -B build-wasm && cmake --build build-wasm"},
+    ("python", "native"): {"any": "no build step; ship the package and a Python 3 runtime"},
+    ("erlang", "native"): {"any": "./build.sh   # runs on the BEAM VM"},
+    ("zig", "native"): {
+        "static": "zig build -Dtarget={arch}-{os}-musl -Doptimize=ReleaseSmall",
+        "dynamic": "zig build -Dtarget={arch}-{os}-gnu -Doptimize=ReleaseSmall",
+    },
+    ("zig", "wasm"): {"any": "zig build -Dtarget=wasm32-wasi -Doptimize=ReleaseSmall"},
+}
+
+GOARCH = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64", "amd64": "amd64"}
+
+
+def load_formats():
+    """Scan packs/ -> {format: {wire, fields:[model keys]}} from each pack.def."""
+    out = {}
+    if not os.path.isdir(PACKS):
+        return out
+    for name in sorted(os.listdir(PACKS)):
+        pdef = os.path.join(PACKS, name, "pack.def")
+        if not os.path.isfile(pdef):
+            continue
+        fmt, wire, fields = None, None, []
+        with open(pdef, encoding="utf-8") as fh:
+            for raw in fh:
+                line = raw.split("#", 1)[0].strip()
+                if not line:
+                    continue
+                tok = line.split()
+                if tok[0] == "format" and len(tok) > 1:
+                    fmt = tok[1]
+                elif tok[0] == "wire" and len(tok) > 1:
+                    wire = tok[1]
+                elif tok[0] == "field" and len(tok) > 1:
+                    fields.append(tok[1])
+        if fmt:
+            out[fmt] = {"wire": wire, "fields": fields, "dir": name}
+    return out
+
+
+def capability(a_fields, b_fields):
+    """What carries A->B and what B cannot represent, from the field sets."""
+    carried = [k for k in a_fields if k in b_fields]
+    dropped = [k for k in a_fields if k not in b_fields]
+    grade = "full" if carried and not dropped else ("partial" if carried else "none")
+    return {"carried": carried, "dropped": dropped, "grade": grade}
+
+
+def cmd_formats(_args):
+    fmts = load_formats()
+    if not fmts:
+        print("no packs found under", PACKS)
+        return 1
+    width = max(len(f) for f in fmts)
+    for f, info in fmts.items():
+        print(f"{f:<{width}}  wire={info['wire']:<9} fields={', '.join(info['fields'])}")
+    return 0
+
+
+def cmd_plan(args):
+    fmts = load_formats()
+    want = [f.strip() for f in args.formats.split(",") if f.strip()]
+    missing = [f for f in want if f not in fmts]
+    if missing:
+        print("error: formats not available:", ", ".join(missing), file=sys.stderr)
+        print("available:", ", ".join(sorted(fmts)), file=sys.stderr)
+        return 1
+
+    wires = sorted({fmts[f]["wire"] for f in want})
+    key = (args.language, args.runtime)
+    if key not in BUILD:
+        print(f"error: {args.language} has no {args.runtime} runtime target yet", file=sys.stderr)
+        print("supported:", ", ".join(f"{l}/{r}" for (l, r) in sorted(BUILD)), file=sys.stderr)
+        return 1
+    builds = BUILD[key]
+    linkage = "any" if "any" in builds else args.linkage
+    if linkage not in builds:
+        print(f"error: {args.language}/{args.runtime} supports linkage {sorted(builds)}", file=sys.stderr)
+        return 1
+    goarch = GOARCH.get(args.arch, args.arch)
+    build_cmd = builds[linkage].format(arch=args.arch, os=args.os, goarch=goarch)
+
+    # inter-convertibility among the requested formats (the "why not" per pair)
+    pairs = []
+    for a in want:
+        for b in want:
+            if a != b:
+                cap = capability(fmts[a]["fields"], fmts[b]["fields"])
+                pairs.append({"from": a, "to": b, **cap})
+
+    manifest = {
+        "constraints": {
+            "formats": want,
+            "language": args.language,
+            "runtime": args.runtime,
+            "linkage": linkage,
+            "os": args.os,
+            "arch": args.arch,
+        },
+        "package": {
+            "engine": f"engines/{args.language}",
+            "packs": [f"packs/{fmts[f]['dir']}" for f in want],
+            "wires_used": wires,
+            "build_command": build_cmd,
+        },
+        "convertibility": pairs,
+    }
+
+    if args.json:
+        print(json.dumps(manifest, indent=2))
+        return 0
+
+    print(f"# Minimum package for: {', '.join(want)}")
+    print(f"#   {args.language} / {args.runtime} / linkage={linkage} / {args.os} / {args.arch}\n")
+    print(f"engine:      engines/{args.language}")
+    print(f"packs:       {', '.join(fmts[f]['dir'] for f in want)}   (only these)")
+    print(f"wires used:  {', '.join(wires)}   (a minimal engine build can exclude the rest)")
+    print(f"build:       {build_cmd}\n")
+    print("convertibility among the requested formats:")
+    for p in pairs:
+        why = "" if not p["dropped"] else f"  (drops {', '.join(p['dropped'])}: {p['to']} has no field for them)"
+        print(f"  {p['from']:>12} -> {p['to']:<12} {p['grade'].upper():7} carries [{', '.join(p['carried'])}]{why}")
+    return 0
+
+
+def main():
+    ap = argparse.ArgumentParser(prog="goat-pkg", description=__doc__)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("formats", help="list available formats and their wire")
+    p = sub.add_parser("plan", help="plan the minimum package for a set of constraints")
+    p.add_argument("--formats", required=True, help="comma-separated message formats needed")
+    p.add_argument("--language", default="rust", choices=LANGUAGES)
+    p.add_argument("--runtime", default="native", help="native | wasm | js | jvm")
+    p.add_argument("--linkage", default="static", choices=["static", "dynamic"])
+    p.add_argument("--os", default="linux")
+    p.add_argument("--arch", default="x86_64")
+    p.add_argument("--json", action="store_true", help="emit the manifest as JSON")
+    args = ap.parse_args()
+    if args.cmd == "formats":
+        return cmd_formats(args)
+    if args.cmd == "plan":
+        return cmd_plan(args)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

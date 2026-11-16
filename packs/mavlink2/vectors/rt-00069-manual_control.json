@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-manual_control",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1e00003246464500003950baa33bf7bc4a93b66a415e1841ecc23f4393c4e6453ac68d47e1c834",
+  "expect": "fd1e00003246464500003950baa33bf7bc4a93b66a415e1841ecc23f4393c4e6453ac68d47e1c834",
+  "model": {
+    "@kind": "manual_control"
+  }
+}

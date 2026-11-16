@@ -1,0 +1,10 @@
+{
+  "name": "input-longer-than-the-counted-items",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-bits",
+  "input": "753500000107616204a000ffff",
+  "expect": "753500000107616204a000",
+  "model": {
+    "probe.items.#": "1"
+  }
+}

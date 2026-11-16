@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-open_drone_id_authentication",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd350000e3996a663200865fa9765d340000000000000000000000000000000000000000e2b99067",
+  "expect": "fd350000e3996a663200865fa9765d340000000000000000000000000000000000000000e2b99067",
+  "model": {
+    "@kind": "open_drone_id_authentication"
+  }
+}

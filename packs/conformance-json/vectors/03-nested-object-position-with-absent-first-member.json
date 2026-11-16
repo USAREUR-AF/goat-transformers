@@ -1,0 +1,10 @@
+{
+  "name": "nested-object-position-with-absent-first-member",
+  "from": "conformance-json",
+  "to": "conformance-json",
+  "input": "{\"label\":\"X\",\"pos\":{\"lon\":5},\"id\":\"j3\",\"schema\":\"probe\"}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"j3\",\"pos\":{\"lon\":5},\"label\":\"X\"}",
+  "model": {
+    "@kind": "basic"
+  }
+}

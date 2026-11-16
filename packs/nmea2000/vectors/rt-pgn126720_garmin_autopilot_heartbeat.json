@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_autopilot_heartbeat-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e580101704041503dfe96203",
+  "expect": "00ef01e580101704041503dfe96203",
+  "model": {
+    "@kind": "pgn126720_garmin_autopilot_heartbeat",
+    "n2k.heartbeat_data": "56814047"
+  }
+}

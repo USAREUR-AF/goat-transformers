@@ -1,0 +1,15 @@
+{
+  "name": "pgn130823_maretron_proprietary_temperature_high_range-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "07ff0189809cd7c7f587ebe4",
+  "expect": "07ff0189809cd7c7f587ebe4",
+  "model": {
+    "@kind": "pgn130823_maretron_proprietary_temperature_high_range",
+    "n2k.sid": "156",
+    "n2k.pgn130823_instance": "215",
+    "n2k.pgn130823_source": "199",
+    "n2k.pgn130823_actual_temperature": "3480.5",
+    "n2k.pgn130823_set_temperature": "5860.3"
+  }
+}

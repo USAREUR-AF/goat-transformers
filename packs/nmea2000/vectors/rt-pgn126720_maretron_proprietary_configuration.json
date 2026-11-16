@@ -1,0 +1,13 @@
+{
+  "name": "pgn126720_maretron_proprietary_configuration-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef018980df6b0d2781",
+  "expect": "00ef018980df6b0d2781",
+  "model": {
+    "@kind": "pgn126720_maretron_proprietary_configuration",
+    "n2k.pgn126720_product_code": "27615",
+    "n2k.software_code": "9997",
+    "n2k.pgn126720_opcode": "129"
+  }
+}

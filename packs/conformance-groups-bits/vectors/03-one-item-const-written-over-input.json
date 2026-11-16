@@ -1,0 +1,15 @@
+{
+  "name": "one-item-const-written-over-input",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-bits",
+  "input": "7533000001076162040109",
+  "expect": "753300000107616204a109",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[0].probe.label": "ab",
+    "probe.items[0].probe.ratio": "1",
+    "probe.items[0].probe.subs.#": "1",
+    "probe.items[0].probe.subs[0].probe.val": "9"
+  }
+}

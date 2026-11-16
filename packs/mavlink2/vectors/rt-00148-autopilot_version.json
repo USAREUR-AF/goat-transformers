@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-autopilot_version",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd4e0000759595940000788ddf64000000804fe16338000000002635e80bfd886c5fd4dcf032ab307506828459d830e19243f4a5560707b8691acb7c2ddede8f40f1a25304b5",
+  "expect": "fd4e0000759595940000788ddf64000000804fe16338000000002635e80bfd886c5fd4dcf032ab307506828459d830e19243f4a5560707b8691acb7c2ddede8f40f1a25304b5",
+  "model": {
+    "@kind": "autopilot_version"
+  }
+}

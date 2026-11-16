@@ -1,0 +1,15 @@
+{
+  "name": "pgn65304_sleipner_device_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "18ff0032816fa94008329f",
+  "expect": "18ff0032816fa94008329f",
+  "model": {
+    "@kind": "pgn65304_sleipner_device_status",
+    "n2k.device_type": "111",
+    "n2k.device_index": "9",
+    "n2k.a": "10",
+    "n2k.unique_number": "3278912",
+    "n2k.b": "159"
+  }
+}

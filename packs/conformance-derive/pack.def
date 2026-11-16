@@ -1,0 +1,33 @@
+# Conformance probe pack for derived keys (spec 0.6). Public. A flat JSON object
+# with one member per key of the `probe` module, so a vector shows which keys a
+# conversion derived and which it left absent.
+format  conformance-derive
+version 0.6.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid            id       string
+field   probe.a        a        float
+field   probe.neg_a    neg_a    float
+field   probe.scaled   scaled   float
+field   probe.third    third    float
+field   probe.shifted  shifted  float
+field   probe.n        n        int
+field   probe.n_next   n_next   int
+field   probe.n_copy   n_copy   int
+field   probe.s1       s1       string
+field   probe.s2       s2       string
+field   probe.joined   joined   string
+field   probe.chain    chain    float
+field   probe.late     late     float
+field   probe.k0       k0       int
+field   probe.k1       k1       int
+field   probe.k2       k2       int
+field   probe.k3       k3       int
+field   probe.k4       k4       int
+field   probe.k5       k5       int
+field   probe.k6       k6       int
+field   probe.k7       k7       int
+field   probe.k8       k8       int
+field   probe.k9       k9       int

@@ -1,0 +1,21 @@
+{
+  "name": "two-items-nested-roundtrip",
+  "from": "conformance-groups-bits",
+  "to": "conformance-groups-bits",
+  "input": "753100000202616102a22103626205a000",
+  "expect": "753100000202616102a22103626205a000",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[0].probe.ratio": "0.5",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[0].probe.val": "1",
+    "probe.items[0].probe.subs[1].probe.val": "2",
+    "probe.items[1].probe.label": "bb",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.ratio": "1.25",
+    "probe.items[1].probe.subs.#": "0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-open_drone_id_system_update",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd120000e9aa7b7732003bc3da06bc16df06000000bf6ade69254118",
+  "expect": "fd120000e9aa7b7732003bc3da06bc16df06000000bf6ade69254118",
+  "model": {
+    "@kind": "open_drone_id_system_update"
+  }
+}

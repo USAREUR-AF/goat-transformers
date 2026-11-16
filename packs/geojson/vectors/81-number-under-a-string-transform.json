@@ -1,0 +1,11 @@
+{
+  "name": "number-under-a-string-transform",
+  "from": "geojson",
+  "to": "geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"callsign\":7},\"id\":12}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1]},\"properties\":{\"callsign\":\"7\"},\"id\":\"12\"}",
+  "model": {
+    "uid": "12",
+    "callsign": "7"
+  }
+}

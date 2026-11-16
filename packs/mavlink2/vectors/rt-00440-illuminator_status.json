@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-illuminator_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd230000debf3bb80100147c7256ebcff629000080c0000010c0000000bf0000a03f0000404000009840cca37a",
+  "expect": "fd230000debf3bb80100147c7256ebcff629000080c0000010c0000000bf0000a03f0000404000009840cca37a",
+  "model": {
+    "@kind": "illuminator_status"
+  }
+}

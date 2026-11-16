@@ -1,0 +1,11 @@
+{
+  "name": "when-number-canonical-text-to-geojson",
+  "from": "conformance-json",
+  "to": "geojson",
+  "input": "{\"schema\":\"probe\",\"id\":\"j7\",\"pos\":{\"lat\":1.5,\"lon\":2.5},\"meta\":{\"rev\":2.0,\"t\":1614456000000}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"time_ms\":1614456000000},\"id\":\"j7\"}",
+  "model": {
+    "@kind": "counted",
+    "time_ms": "1614456000000"
+  }
+}

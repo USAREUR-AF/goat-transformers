@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-can_frame",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd100000cd8905820100aabcb03f81582f06dd8e3ff0a15203b4",
+  "expect": "fd100000cd8905820100aabcb03f81582f06dd8e3ff0a15203b4",
+  "model": {
+    "@kind": "can_frame"
+  }
+}

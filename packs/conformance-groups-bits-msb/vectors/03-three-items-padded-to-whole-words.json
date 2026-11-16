@@ -1,0 +1,11 @@
+{
+  "name": "three-items-padded-to-whole-words",
+  "from": "conformance-groups-bits-msb",
+  "to": "conformance-groups-bits-msb",
+  "input": "173c01616102626203636300",
+  "expect": "173c01616102626203636300",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[2].probe.label": "cc"
+  }
+}

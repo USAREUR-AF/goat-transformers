@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-list-with-items-selects-listed",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-kinds",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"aa\"},{\"name\":\"bb\"}],\"names\":[\"p\"]}",
+  "expect": "{\"id\":\"u1\",\"names\":[\"p\"],\"shape\":\"listed\",\"items\":[{\"name\":\"aa\"},{\"name\":\"bb\"}]}"
+}

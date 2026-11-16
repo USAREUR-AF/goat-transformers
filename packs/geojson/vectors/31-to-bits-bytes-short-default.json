@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-bytes-short-default",
+  "from": "geojson",
+  "to": "demo-bits-bytes",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1614456000}}",
+  "expect": "470100603aa4c0"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "root-selects-kind-track",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<trk id=\"t1\" v=\"1\"><pos lat=\"1.5\" lon=\"2.5\" datum=\"WGS84\"/><name>ALFA</name></trk>",
+  "expect": "<trk id=\"t1\" v=\"1\"><pos lat=\"1.5\" lon=\"2.5\" datum=\"WGS84\"/><name>ALFA</name></trk>",
+  "model": {
+    "@kind": "track",
+    "uid": "t1",
+    "lat": "1.5",
+    "callsign": "ALFA"
+  }
+}

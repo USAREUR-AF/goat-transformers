@@ -1,0 +1,12 @@
+{
+  "name": "pgn130820_fusion_aux_gain-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a38113806997",
+  "expect": "04ff01a38113806997",
+  "model": {
+    "@kind": "pgn130820_fusion_aux_gain",
+    "n2k.source_id": "105",
+    "n2k.gain": "-105"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "operator-id-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "52003938373635343332313030313233343536373839000000",
+  "expect": "52003938373635343332313030313233343536373839000000",
+  "model": {
+    "@kind": "operator-id",
+    "rid.msg_type": "5",
+    "rid.operator_id_type": "0",
+    "rid.operator_id": "98765432100123456789"
+  },
+  "source": "constructed",
+  "reference": "values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py"
+}

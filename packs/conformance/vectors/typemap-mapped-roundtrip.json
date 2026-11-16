@@ -1,0 +1,7 @@
+{
+  "name": "typemap-mapped-roundtrip",
+  "from": "conformance",
+  "to": "conformance",
+  "input": "<item id=\"x1\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\"/></item>",
+  "expect": "<item id=\"x1\" kind=\"friend\"><pos lat=\"1.5\" lon=\"2.5\"/></item>"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-tunnel",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd850000cc88048101003b0012e9c0",
+  "expect": "fd850000cc88048101003b0012e9c0",
+  "model": {
+    "@kind": "tunnel"
+  }
+}

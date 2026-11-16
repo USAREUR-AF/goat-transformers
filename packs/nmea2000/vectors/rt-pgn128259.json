@@ -1,0 +1,15 @@
+{
+  "name": "pgn128259-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "03f501e210961c553801",
+  "expect": "03f501e210961c553801",
+  "model": {
+    "@kind": "pgn128259",
+    "n2k.sid": "226",
+    "n2k.speed_water_referenced": "384.16",
+    "n2k.speed_ground_referenced": "217.88",
+    "n2k.speed_water_referenced_type": "56",
+    "n2k.speed_direction": "1"
+  }
+}

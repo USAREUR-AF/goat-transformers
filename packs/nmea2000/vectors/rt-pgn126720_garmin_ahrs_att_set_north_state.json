@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_ahrs_att_set_north_state-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e5806c070202340003",
+  "expect": "00ef01e5806c070202340003",
+  "model": {
+    "@kind": "pgn126720_garmin_ahrs_att_set_north_state",
+    "n2k.set_north_state": "3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_garmin_color_mode-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01e580de05050500000d00f7",
+  "expect": "00ef01e580de05050500000d00f7",
+  "model": {
+    "@kind": "pgn126720_garmin_color_mode",
+    "n2k.pgn126720_garmin_color_mode_color": "247"
+  }
+}

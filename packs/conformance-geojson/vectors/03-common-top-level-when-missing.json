@@ -1,0 +1,7 @@
+{
+  "name": "common-top-level-when-missing",
+  "from": "conformance-geojson",
+  "to": "conformance-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"schema\":\"probe\",\"rev\":1},\"id\":\"c3\"}",
+  "expect_error": "no-kind"
+}

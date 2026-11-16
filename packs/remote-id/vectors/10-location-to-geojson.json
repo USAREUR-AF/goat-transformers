@@ -1,0 +1,15 @@
+{
+  "name": "location-to-geojson",
+  "from": "remote-id",
+  "to": "geojson",
+  "input": "122624160b42bf241b6ed1b4b69808ac0870086b53150e0200",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.966389,45.539309,110]},\"properties\":{}}",
+  "model": {
+    "@kind": "location",
+    "lat": "45.539309",
+    "lon": "-122.966389",
+    "hae": "110"
+  },
+  "source": "constructed",
+  "reference": "values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py"
+}

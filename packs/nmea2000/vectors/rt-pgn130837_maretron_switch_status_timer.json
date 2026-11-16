@@ -1,0 +1,18 @@
+{
+  "name": "pgn130837_maretron_switch_status_timer-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "15ff018980d41ac3d771848e28e4e203f3c91bc1217acc593401",
+  "expect": "15ff018980d41ac3d771848e28e4e203f3c91bc1217acc593401",
+  "model": {
+    "@kind": "pgn130837_maretron_switch_status_timer",
+    "n2k.pgn130837_instance": "212",
+    "n2k.indicator_number": "26",
+    "n2k.start_date": "55235",
+    "n2k.start_time": "68042.8657",
+    "n2k.accumulated_off_period": "4077118180",
+    "n2k.accumulated_on_period": "566303689",
+    "n2k.accumulated_error_period": "878300282",
+    "n2k.switch_status": "1"
+  }
+}

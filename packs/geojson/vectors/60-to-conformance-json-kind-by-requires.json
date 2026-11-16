@@ -1,0 +1,7 @@
+{
+  "name": "to-conformance-json-kind-by-requires",
+  "from": "geojson",
+  "to": "conformance-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5,120]},\"properties\":{\"time_ms\":1614456000000,\"callsign\":\"GATOR\"},\"id\":\"g5\"}",
+  "expect": "{\"schema\":\"probe\",\"id\":\"g5\",\"pos\":{\"lat\":1.5,\"lon\":2.5,\"alt\":120},\"label\":\"GATOR\",\"meta\":{\"level\":\"detail\",\"seen\":\"2021-02-27T20:00:00.000Z\"}}"
+}

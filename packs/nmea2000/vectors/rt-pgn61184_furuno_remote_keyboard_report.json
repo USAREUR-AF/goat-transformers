@@ -1,0 +1,15 @@
+{
+  "name": "pgn61184_furuno_remote_keyboard_report-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef003f8702851b2938f6",
+  "expect": "00ef003f8702851b2938f6",
+  "model": {
+    "@kind": "pgn61184_furuno_remote_keyboard_report",
+    "n2k.key1": "133",
+    "n2k.key2": "27",
+    "n2k.key3": "41",
+    "n2k.key4": "56",
+    "n2k.key5": "246"
+  }
+}

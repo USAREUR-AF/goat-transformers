@@ -1,0 +1,29 @@
+{
+  "name": "several-items-nested-and-text-roundtrip",
+  "from": "conformance-groups-xml",
+  "to": "conformance-groups-xml",
+  "input": "<msg id=\"u1\"><head cs=\"C\"/><body><item name=\"aa\" r=\"0.5\" k=\"i\"><qty>2</qty><sub v=\"1\">x</sub><sub v=\"2\">y</sub></item><item name=\"bb\" r=\"1.25\" k=\"i\"><qty>3</qty></item></body><tail how=\"m-g\"/><name>p</name><name>q</name><nums><n>3</n><n>1</n></nums></msg>",
+  "expect": "<msg id=\"u1\"><head cs=\"C\"/><body><item name=\"aa\" r=\"0.5\" k=\"i\"><qty>2</qty><sub v=\"1\">x</sub><sub v=\"2\">y</sub></item><item name=\"bb\" r=\"1.25\" k=\"i\"><qty>3</qty></item></body><tail how=\"m-g\"/><name>p</name><name>q</name><nums><n>3</n><n>1</n></nums></msg>",
+  "model": {
+    "uid": "u1",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[0].probe.ratio": "0.5",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[0].probe.val": "1",
+    "probe.items[0].probe.subs[1].probe.val": "2",
+    "probe.items[1].probe.label": "bb",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.ratio": "1.25",
+    "probe.items[0].probe.subs[0].probe.tag": "x",
+    "probe.items[0].probe.subs[1].probe.tag": "y",
+    "probe.items[1].probe.subs.#": "absent",
+    "callsign": "C",
+    "how": "m-g",
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "p",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "1"
+  }
+}

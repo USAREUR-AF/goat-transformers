@@ -1,0 +1,12 @@
+{
+  "name": "pgn126720_fusion_request_menu_count-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3810a00a5db",
+  "expect": "00ef01a3810a00a5db",
+  "model": {
+    "@kind": "pgn126720_fusion_request_menu_count",
+    "n2k.source_id": "165",
+    "n2k.lock_id": "219"
+  }
+}

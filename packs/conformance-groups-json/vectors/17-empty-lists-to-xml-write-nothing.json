@@ -1,0 +1,7 @@
+{
+  "name": "empty-lists-to-xml-write-nothing",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-xml",
+  "input": "{\"id\":\"u1\",\"items\":[],\"names\":[],\"data\":{\"nums\":[]}}",
+  "expect": "<msg id=\"u1\"/>"
+}

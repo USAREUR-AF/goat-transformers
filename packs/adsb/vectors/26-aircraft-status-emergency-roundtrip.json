@@ -1,0 +1,18 @@
+{
+  "name": "aircraft-status-emergency-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc01ae16c2f00000000c17fbc",
+  "expect": "8dabc01ae16c2f00000000c17fbc",
+  "model": {
+    "@kind": "aircraft-status-emergency",
+    "adsb.df": "17",
+    "adsb.tc": "28",
+    "adsb.icao": "11255834",
+    "adsb.emergency_state": "3",
+    "adsb.squawk_raw": "3119",
+    "adsb.parity": "12681148"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

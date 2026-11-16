@@ -1,0 +1,12 @@
+{
+  "name": "pgn130850_simnet_command_ap_heading-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "22ff014187ea001d0a09",
+  "expect": "22ff014187ea001d0a09",
+  "model": {
+    "@kind": "pgn130850_simnet_command_ap_heading",
+    "n2k.address": "234",
+    "n2k.network_group": "29"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pgn130820_fusion_multiroom-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff01a3813880e6f1f709f4",
+  "expect": "04ff01a3813880e6f1f709f4",
+  "model": {
+    "@kind": "pgn130820_fusion_multiroom",
+    "n2k.pgn130820_fusion_multiroom_enabled": "230",
+    "n2k.ip_address1": "241",
+    "n2k.ip_address2": "247",
+    "n2k.ip_address3": "9",
+    "n2k.ip_address4": "244"
+  }
+}

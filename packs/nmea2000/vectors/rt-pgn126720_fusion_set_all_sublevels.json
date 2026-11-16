@@ -1,0 +1,14 @@
+{
+  "name": "pgn126720_fusion_set_all_sublevels-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3811500914f9dac",
+  "expect": "00ef01a3811500914f9dac",
+  "model": {
+    "@kind": "pgn126720_fusion_set_all_sublevels",
+    "n2k.pgn126720_zone1": "145",
+    "n2k.pgn126720_zone2": "79",
+    "n2k.pgn126720_zone3": "157",
+    "n2k.pgn126720_zone4": "172"
+  }
+}

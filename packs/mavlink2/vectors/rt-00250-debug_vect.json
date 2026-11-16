@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-debug_vect",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1e000089013cfa0000b2a1141e00000080000010c0000000bf0000a03f4d323100000000000000",
+  "expect": "fd1e000089013cfa0000b2a1141e00000080000010c0000000bf0000a03f4d323100000000000000",
+  "model": {
+    "@kind": "debug_vect"
+  }
+}

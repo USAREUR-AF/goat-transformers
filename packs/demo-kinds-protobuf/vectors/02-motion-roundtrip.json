@@ -1,0 +1,12 @@
+{
+  "name": "motion-roundtrip",
+  "from": "demo-kinds-protobuf",
+  "to": "demo-kinds-protobuf",
+  "input": "0a074a2d303133333410809ccea8fe2e5a0e090000000000e870401500004841",
+  "expect": "0a074a2d303133333410809ccea8fe2e5a0e090000000000e870401500004841",
+  "model": {
+    "@kind": "motion",
+    "course": "270.5",
+    "speed_ms": "12.5"
+  }
+}

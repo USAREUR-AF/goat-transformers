@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_fusion_set_power-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "00ef01a3811c0054",
+  "expect": "00ef01a3811c0054",
+  "model": {
+    "@kind": "pgn126720_fusion_set_power",
+    "n2k.pgn126720_power": "84"
+  }
+}

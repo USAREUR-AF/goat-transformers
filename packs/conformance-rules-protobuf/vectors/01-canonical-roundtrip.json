@@ -1,0 +1,14 @@
+{
+  "name": "canonical-roundtrip",
+  "from": "conformance-rules-protobuf",
+  "to": "conformance-rules-protobuf",
+  "input": "0a027031120446524e441801220b09000000000000f83f180129000000000000f83f35000020403803",
+  "expect": "0a027031120446524e441801220b09000000000000f83f180129000000000000f83f35000020403803",
+  "model": {
+    "uid": "p1",
+    "type": "a-f-G",
+    "track.class": "uas",
+    "lat": "1.5",
+    "speed_ms": "2.5"
+  }
+}

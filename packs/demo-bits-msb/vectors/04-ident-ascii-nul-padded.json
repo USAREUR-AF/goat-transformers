@@ -1,0 +1,15 @@
+{
+  "name": "ident-ascii-nul-padded",
+  "from": "demo-bits-msb",
+  "to": "demo-bits-msb",
+  "input": "23284000474f4154000041480000403e024e003e1361c0557d4ce4b520df0000",
+  "expect": "23284000474f4154000041480000403e024e003e1361c0557d4ce4b520df0000",
+  "model": {
+    "@kind": "ident",
+    "callsign": "GOAT",
+    "ce": "12.5",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "course": "90"
+  }
+}

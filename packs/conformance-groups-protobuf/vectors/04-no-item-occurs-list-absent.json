@@ -1,0 +1,12 @@
+{
+  "name": "no-item-occurs-list-absent",
+  "from": "conformance-groups-protobuf",
+  "to": "conformance-groups-protobuf",
+  "input": "0a0275342a00",
+  "expect": "0a027534",
+  "model": {
+    "probe.items.#": "absent",
+    "probe.ratios.#": "absent",
+    "probe.nums.#": "absent"
+  }
+}

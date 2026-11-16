@@ -1,0 +1,7 @@
+{
+  "name": "root-of-no-kind",
+  "from": "conformance-rules-xml",
+  "to": "conformance-rules-xml",
+  "input": "<other id=\"p1\"/>",
+  "expect_error": "no-kind"
+}

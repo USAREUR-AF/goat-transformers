@@ -1,0 +1,31 @@
+{
+  "name": "pgn129040-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "10f8017038d0e636e42068e2131ee62567d535b6f60000e684084092b2d788bec1d3a44e324b36463241443539435445535456000000008304",
+  "expect": "10f8017038d0e636e42068e2131ee62567d535b6f60000e684084092b2d788bec1d3a44e324b36463241443539435445535456000000008304",
+  "model": {
+    "@kind": "pgn129040",
+    "n2k.pgn129040_message_id": "48",
+    "n2k.repeat_indicator": "1",
+    "n2k.user_id": "921096248",
+    "lon": "-49.6492316",
+    "lat": "63.5837971",
+    "n2k.position_accuracy": "1",
+    "n2k.raim": "1",
+    "n2k.time_stamp": "25",
+    "n2k.cog": "1.3781",
+    "speed_ms": "631.58",
+    "n2k.type_of_ship": "230",
+    "n2k.true_heading": "0.218",
+    "n2k.gnss_type": "4",
+    "n2k.pgn129040_length": "4571.4",
+    "n2k.beam": "3503.1",
+    "n2k.position_reference_from_starboard": "4959.8",
+    "n2k.position_reference_from_bow": "4219.5",
+    "n2k.name": "N2K6F2AD59CTESTV",
+    "n2k.dte": "1",
+    "n2k.ais_mode": "1",
+    "n2k.ais_transceiver_information": "18"
+  }
+}

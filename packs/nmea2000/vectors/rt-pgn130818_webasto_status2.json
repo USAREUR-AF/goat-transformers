@@ -1,0 +1,16 @@
+{
+  "name": "pgn130818_webasto_status2-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02ff011c822411302fc28b7d0605f76971",
+  "expect": "02ff011c822411302fc28b7d0605f76971",
+  "model": {
+    "@kind": "pgn130818_webasto_status2",
+    "n2k.can_address": "36",
+    "n2k.device_id": "17",
+    "n2k.system_error": "2344759088",
+    "n2k.pgn130818_system_status": "4144301693",
+    "n2k.fresh_air_blower_speed": "105",
+    "n2k.v_series_output": "113"
+  }
+}

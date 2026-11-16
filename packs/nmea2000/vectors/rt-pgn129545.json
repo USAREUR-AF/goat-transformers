@@ -1,0 +1,19 @@
+{
+  "name": "pgn129545-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "09fa01ae01585cf991ae2cb15b7e41b94f06",
+  "expect": "09fa01ae01585cf991ae2cb15b7e41b94f06",
+  "model": {
+    "@kind": "pgn129545",
+    "n2k.sid": "174",
+    "n2k.integrity_flag": "1",
+    "n2k.latitude_expected_error": "236.4",
+    "n2k.longitude_expected_error": "-281.67",
+    "n2k.altitude_expected_error": "114.38",
+    "n2k.sv_id_of_most_likely_failed_sat": "177",
+    "n2k.pgn129545_probability_of_missed_detection": "323.47",
+    "n2k.estimate_of_pseudorange_bias": "-181.11",
+    "n2k.std_deviation_of_bias": "16.15"
+  }
+}

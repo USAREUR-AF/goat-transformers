@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-msb-fixed-count-and-count-locator",
+  "from": "conformance-groups-json",
+  "to": "conformance-groups-bits-msb",
+  "input": "{\"id\":\"u1\",\"items\":[{\"name\":\"ab\",\"n\":7}],\"data\":{\"nums\":[3,12]}}",
+  "expect": "013c07616200"
+}

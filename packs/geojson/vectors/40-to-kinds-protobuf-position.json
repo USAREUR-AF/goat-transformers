@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-protobuf-position",
+  "from": "geojson",
+  "to": "demo-kinds-protobuf",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.95,30.009,120.5]},\"properties\":{\"time_ms\":1614456000000,\"course\":270.5,\"speed_ms\":12.5},\"id\":\"J-01334\"}",
+  "expect": "0a074a2d303133333410809ccea8fe2e521b09fca9f1d24d023e4011cdcccccccc7c55c0190000000000205e40"
+}

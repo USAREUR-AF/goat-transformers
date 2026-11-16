@@ -1,0 +1,14 @@
+{
+  "name": "gen-response-roundtrip",
+  "from": "isa-xml",
+  "to": "isa-xml",
+  "input": "<Response Source=\"s0\" Identifier=\"2\" Priority=\"3\" Reference=\"4\" Type=\"RC_INSUFFICIENT_TIME\" Error=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><Values Name=\"s10\"/><Values Name=\"s11\"/></Response>",
+  "expect": "<Response Source=\"s0\" Identifier=\"2\" Priority=\"3\" Reference=\"4\" Type=\"RC_INSUFFICIENT_TIME\" Error=\"s5\"><Time Value=\"0.75\" Error=\"0.5\"/><Stale Value=\"1.5\" Error=\"0.25\"/><Values Name=\"s10\"/><Values Name=\"s11\"/></Response>",
+  "model": {
+    "@kind": "response",
+    "isaxml.source": "s0",
+    "isaxml.identifier": "2",
+    "isaxml.values.#": "2",
+    "isaxml.values[1].isaxml.name": "s11"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mission_set_current",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0400001e2a2a29000013cbeac1",
+  "expect": "fd0400001e2a2a29000013cbeac1",
+  "model": {
+    "@kind": "mission_set_current"
+  }
+}

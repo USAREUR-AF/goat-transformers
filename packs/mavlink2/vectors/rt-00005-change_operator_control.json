@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-change_operator_control",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1c0000040606050000774e254d383200000000000000000000000000000000000000000000",
+  "expect": "fd1c0000040606050000774e254d383200000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "change_operator_control"
+  }
+}

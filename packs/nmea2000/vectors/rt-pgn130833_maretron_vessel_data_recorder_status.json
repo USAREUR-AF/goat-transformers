@@ -1,0 +1,13 @@
+{
+  "name": "pgn130833_maretron_vessel_data_recorder_status-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "11ff018980038efa747600000000256f9c2000000000",
+  "expect": "11ff018980038efa747600000000256f9c2000000000",
+  "model": {
+    "@kind": "pgn130833_maretron_vessel_data_recorder_status",
+    "n2k.vdr_recording_status": "3",
+    "n2k.memory_capacity": "1987377806",
+    "n2k.memory_used": "547122981"
+  }
+}

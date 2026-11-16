@@ -1,0 +1,16 @@
+{
+  "name": "gen-registration_ack-roundtrip",
+  "from": "sapient-v1",
+  "to": "sapient-v1",
+  "input": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d332a190801121561636b5f726573706f6e73655f726561736f6e2d35",
+  "expect": "0a05086410890112096e6f64655f69642d321a1064657374696e6174696f6e5f69642d332a190801121561636b5f726573706f6e73655f726561736f6e2d35",
+  "model": {
+    "@kind": "registration_ack",
+    "sapient1.timestamp_seconds": "100",
+    "sapient1.timestamp_nanos": "137",
+    "sapient1.node_id": "node_id-2",
+    "sapient1.destination_id": "destination_id-3",
+    "sapient1.registration_ack_acceptance": "1",
+    "sapient1.registration_ack_ack_response_reason": "ack_response_reason-5"
+  }
+}

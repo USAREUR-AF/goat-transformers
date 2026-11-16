@@ -1,0 +1,21 @@
+{
+  "name": "pgn130820_maretron_alert_response-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "04ff0189801cd3e6453d061510500000000003bb9b57e4cad80000000001",
+  "expect": "04ff0189801cd3e6453d061510500000000003bb9b57e4cad80000000001",
+  "model": {
+    "@kind": "pgn130820_maretron_alert_response",
+    "n2k.alert_type": "12",
+    "n2k.alert_category": "1",
+    "n2k.alert_system": "211",
+    "n2k.alert_sub_system": "230",
+    "n2k.alert_id": "15685",
+    "n2k.data_source_network_id_name": "1343231238",
+    "n2k.data_source_instance": "3",
+    "n2k.data_source_index_source": "187",
+    "n2k.alert_occurrence_number": "155",
+    "n2k.acknowledge_source_network_id_name": "3637175383",
+    "n2k.response_command": "1"
+  }
+}

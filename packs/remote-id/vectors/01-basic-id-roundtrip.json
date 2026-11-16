@@ -1,0 +1,17 @@
+{
+  "name": "basic-id-roundtrip",
+  "from": "remote-id",
+  "to": "remote-id",
+  "input": "02223132333435363738393031323334353637383930000000",
+  "expect": "02223132333435363738393031323334353637383930000000",
+  "model": {
+    "@kind": "basic-id",
+    "rid.msg_type": "0",
+    "uid": "12345678901234567890",
+    "rid.id_type": "2",
+    "rid.ua_type": "2",
+    "rid.proto_version": "2"
+  },
+  "source": "constructed",
+  "reference": "values from opendroneid-core-c test/test_inout.c, quantized as libopendroneid/opendroneid.c encodes them; bytes computed by tools/gen/gen.py"
+}
