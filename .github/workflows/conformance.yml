@@ -17,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I tools/boundary-gate
+      - name: Every package carries one version
+        run: python3 -I tools/release-version.py
   tools:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -51,6 +53,13 @@ jobs:
           python-version: "3.12"
       - run: PYTHONPATH=src python -m unittest discover -s tests
         working-directory: engines/python
+      - name: The installed package loads a bundle of two packs
+        run: |
+          python -m pip install --disable-pip-version-check ./engines/python
+          python3 -I tools/goat-pkg bundle --formats cot-xml,geojson --out "$RUNNER_TEMP/goat"
+          cd "$RUNNER_TEMP"
+          python -c 'from goat_transformers import Engine; print(Engine.from_dir("goat/packs", packs_only=["cot-xml", "geojson"]).formats())' | grep -q "cot-xml"
+          goat-xf-py list-formats --packs goat/packs --packs-only geojson | grep -q geojson
   java:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -79,7 +88,11 @@ jobs:
       - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: "27"
+          rebar3-version: "3.24"
       - run: ./build.sh && ./run_tests
+        working-directory: engines/erlang
+      - name: The engine as a rebar3 application
+        run: rebar3 compile
         working-directory: engines/erlang
   zig:
     runs-on: ubuntu-latest
@@ -90,6 +103,9 @@ jobs:
         with:
           version: 0.13.0
       - run: zig build test -- ../../packs
+        working-directory: engines/zig
+      - name: The module another program imports
+        run: zig build module-test
         working-directory: engines/zig
   bindings:
     runs-on: ubuntu-latest
@@ -113,6 +129,20 @@ jobs:
         run: node --test bindings/wasm/test/vectors.test.mjs
         env:
           GT_WASM: bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm
+      - name: C library installed under a prefix, found by pkg-config
+        run: |
+          DESTDIR="$RUNNER_TEMP/stage" bindings/c/install.sh /usr/local
+          PKG_CONFIG_PATH="$RUNNER_TEMP/stage/usr/local/lib/pkgconfig" pkg-config --modversion goat_transformers
+      - name: npm package, packed, installed into a new project and run
+        run: |
+          bindings/wasm/build.sh
+          (cd bindings/wasm && npm pack --pack-destination "$RUNNER_TEMP")
+          mkdir "$RUNNER_TEMP/consumer"
+          python3 -I tools/goat-pkg bundle --formats cot-xml,geojson --out "$RUNNER_TEMP/consumer/goat"
+          cd "$RUNNER_TEMP/consumer"
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund "$RUNNER_TEMP"/usareur-af-goat-transformers-*.tgz
+          node --input-type=module -e 'import { loadTree } from "@usareur-af/goat-transformers/node"; const gt = await loadTree("goat", ["cot-xml", "geojson"]); if (gt.formats().join() !== "cot-xml,geojson") process.exit(1);'
       - name: Example host
         run: |
           node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync("packs/canonical-track-v2/vectors/02-to-cot-xml.json","utf8")).input)' \

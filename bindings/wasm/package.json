@@ -1,0 +1,43 @@
+{
+  "name": "@usareur-af/goat-transformers",
+  "version": "0.8.0",
+  "description": "Convert messages between formats that are described by data files (packs): Cursor on Target, GeoJSON, SAPIENT, MAVLink, NMEA 2000, ADS-B and others. The Rust reference engine as a WebAssembly module with no imports and no dependencies.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/USAREUR-AF/goat-transformers.git",
+    "directory": "bindings/wasm"
+  },
+  "homepage": "https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/using.md",
+  "type": "module",
+  "main": "./goat_transformers.mjs",
+  "types": "./goat_transformers.d.ts",
+  "exports": {
+    ".": {
+      "types": "./goat_transformers.d.ts",
+      "default": "./goat_transformers.mjs"
+    },
+    "./node": {
+      "types": "./node.d.ts",
+      "default": "./node.mjs"
+    },
+    "./goat_transformers.wasm": "./dist/goat_transformers.wasm",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "goat_transformers.mjs",
+    "goat_transformers.d.ts",
+    "node.mjs",
+    "node.d.ts",
+    "dist/goat_transformers.wasm",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "./build.sh",
+    "prepack": "test -f dist/goat_transformers.wasm"
+  }
+}

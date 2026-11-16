@@ -4,6 +4,15 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // The engine as a module for another program:
+    //   const gt = b.dependency("goat_transformers", .{ .target = target, .optimize = optimize });
+    //   exe.root_module.addImport("goat_transformers", gt.module("goat_transformers"));
+    _ = b.addModule("goat_transformers", .{
+        .root_source_file = b.path("src/root.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
     const exe = b.addExecutable(.{
         .name = "gt-engine-zig",
         .root_source_file = b.path("src/main.zig"),
@@ -22,4 +31,13 @@ pub fn build(b: *std.Build) void {
     // `zig build test` also runs the conformance harness (it IS the test).
     const test_step = b.step("test", "Run the conformance harness over all packs");
     test_step.dependOn(&run_cmd.step);
+
+    // `zig build module-test`: the module another program imports loads packs and converts.
+    const module_tests = b.addTest(.{
+        .root_source_file = b.path("src/root.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    const module_step = b.step("module-test", "Run the check of the module another program imports");
+    module_step.dependOn(&b.addRunArtifact(module_tests).step);
 }

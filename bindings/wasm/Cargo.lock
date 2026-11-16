@@ -4,11 +4,11 @@ version = 4
 
 [[package]]
 name = "goat-transformers"
-version = "0.1.0"
+version = "0.8.0"
 
 [[package]]
 name = "goat-transformers-wasm"
-version = "0.1.0"
+version = "0.8.0"
 dependencies = [
  "goat-transformers",
 ]

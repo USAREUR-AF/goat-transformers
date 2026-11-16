@@ -1,9 +1,11 @@
 [package]
 name = "goat-transformers-wasm"
-version = "0.1.0"
+version = "0.8.0"
 edition = "2021"
 description = "WebAssembly module of the goat-transformers reference engine. std-only, no imports."
 license = "Apache-2.0"
+repository = "https://github.com/USAREUR-AF/goat-transformers"
+publish = false
 
 [lib]
 name = "goat_transformers_wasm"

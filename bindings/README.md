@@ -9,7 +9,10 @@ not carry an engine of its own:
 | `wasm/` | `goat_transformers_wasm.wasm` with `goat_transformers.mjs` and its types | Node, browsers, TypeScript hosts |
 
 Both are thin: hand-written glue over the engine's public API, no dependency
-beyond the Rust standard library, no npm package. The engine source is not
+beyond the Rust standard library. `c/install.sh <prefix>` installs the C
+library with its header and a pkg-config file; `wasm/` is also the npm package
+`@usareur-af/goat-transformers`, built by `wasm/build.sh` and `npm pack`
+([docs/using.md](../docs/using.md)). The engine source is not
 changed. Both are a way to ship the engine; neither is a voice in the vector
 cross-check, which always runs the independent native engines
 (`spec/interop-and-sharing.md`).
@@ -34,7 +37,9 @@ the engine's named error, the kind then a colon then the text
 `bad-argument` and `panic`.
 
 Not offered: `decode`, `encode`, `model_keys`, `capability`, the distribution
-limit, and the directory loaders.
+limit, and the directory loaders. The npm package's Node entry (`wasm/node.mjs`)
+adds `loadTree(root, packs)`, which reads the named packs and the modules they
+use from a directory.
 
 ## C library
 

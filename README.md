@@ -271,7 +271,7 @@ engine = Engine.from_dir("packs", "model")    # the packs directory, the model d
 engine.convert("remote-id", "cot-xml", "122624160b42bf241b6ed1b4b69808ac0870086b53150e0200")
 ```
 
-<!-- MAINTAINER: when docs/using.md is merged, add here: "[docs/using.md](docs/using.md) states how to install and call the library from each language." -->
+[docs/using.md](docs/using.md) states how to install and call the library from each language.
 
 goat-transformers is pre-1.0: the pack language and the engine interfaces can
 still change.
