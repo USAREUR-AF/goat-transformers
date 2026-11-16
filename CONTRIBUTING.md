@@ -32,6 +32,21 @@ Every CI check is a command you can run locally before you push. `.github/workfl
 | Erlang (`engines/erlang`) | `cd engines/erlang && ./build.sh && ./run_tests` |
 | Zig (`engines/zig`, Zig 0.13.0) | `cd engines/zig && zig build test -- ../../packs` |
 
+## The counts in the README
+
+`README.md` quotes counts of formats, message kinds, model keys, vectors and engines, and the size of the WebAssembly module. They are counted from the tree, never typed from memory. After a change that adds or removes a pack, a vector, a model key or an engine, run
+
+```
+python3 -I tools/repo-stats             # the totals
+python3 -I tools/repo-stats --formats   # one table row per format
+```
+
+and make the table under "What the repository holds" in `README.md` equal its output. The WebAssembly size is printed only when the module has been built (`cd bindings/wasm && cargo build --profile small --target wasm32-unknown-unknown`). The figures under `docs/figures/` are hand-written SVG, one file for a light page and one for a dark page; they carry no counts.
+
+## Working with an AI assistant
+
+[AGENTS.md](AGENTS.md) holds the rules and commands for an assistant, `.claude/skills/` the step-by-step procedures, and `.claude/agents/` the roles. The rules there are the rules on this page; when they differ, this page and the specification are right and the assistant file is to be corrected.
+
 ## The conformance suite
 
 A conversion vector is a JSON file `{name, from, to, input, expect}` under `packs/<format>/vectors/`. A load vector under `packs/conformance/load-vectors/` is a set of model modules and one pack that must load, or must fail with a named error. The format is `spec/vector-format.md`. Every engine runs every vector and must reproduce `expect` byte for byte. A change is correct when all seven engines pass; the engine test commands in the table above are the suite.

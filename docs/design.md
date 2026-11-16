@@ -31,8 +31,8 @@ keys they both map, so the more modules two formats share, the more of a message
 carries. A field no module has a key for is kept in a per-format `residue` block
 and written back when the message returns to its own format.
 
-Built: modules `core` (13 keys) and `track` (18 keys and one list, matching the
-Canonical Track v2 contract of `USAREUR-AF/open-billie`), and one module of raw
+Built: modules `core` (13 keys) and `track` (19 keys and one list: the
+Canonical Track v2 contract of `USAREUR-AF/open-billie`, and `scoped_id`), and one module of raw
 wire values for each catalog format; load-time checks that every
 mapped key is declared and correctly typed, in all seven engines.
 
@@ -126,14 +126,14 @@ Build targets. Measured: Rust and Go fully static binaries; Rust and Go to
 WebAssembly; Java on the JVM. Built: a C-ABI library (shared and static) and a WebAssembly module of the Rust
 engine with a dependency-free JavaScript wrapper, in `bindings/`, for hosts in
 languages with no native engine (TypeScript, C#, Swift). The module has no
-imports and is 286 KB in its small build; every conversion vector passes
-through it.
+imports and is 346,027 bytes in its small build (`python3 -I tools/repo-stats`
+prints the size of a built module); every conversion vector passes through it.
 
 ## Conformance
 
 A conversion vector is `{from, to, input, expect}`; a load vector is a set of
 modules and one pack that must load or must fail with a named error
-(`spec/vector-format.md`). Every engine runs every vector. Built: 3,187 conversion vectors across 91 packs and 314 load vectors, all passing on all seven engines.
+(`spec/vector-format.md`). Every engine runs every vector. Built: 3,187 conversion vectors across 91 packs and 314 load vectors (`python3 -I tools/repo-stats` prints the current counts), all passing on all seven engines.
 
 ## Separation of pack authors and engine authors
 
