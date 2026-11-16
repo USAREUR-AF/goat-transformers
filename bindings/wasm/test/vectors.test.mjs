@@ -25,9 +25,25 @@ const wasm = readFileSync(wasmPath);
 // byte order of name, as the engine's directory loaders use
 const byBytes = (a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b));
 
+// core.def first, then byte order, each module after the modules its `uses`
+// lines name (spec/engine-spec.md, Model additions in 0.8).
 function modelFiles() {
   const names = readdirSync(join(root, "model")).filter((n) => n.endsWith(".def")).sort(byBytes);
-  return ["core.def", ...names.filter((n) => n !== "core.def")];
+  const order = ["core.def", ...names.filter((n) => n !== "core.def")];
+  const uses = new Map();
+  for (const f of order) {
+    const text = readFileSync(join(root, "model", f), "utf8");
+    uses.set(f, [...text.matchAll(/^\s*uses\s+(\S+)/gm)].map((m) => `${m[1]}.def`));
+  }
+  const done = [];
+  const visit = (f, path) => {
+    if (done.includes(f) || !uses.has(f)) return;
+    if (path.includes(f)) throw new Error(`model modules use each other in a cycle: ${f}`);
+    for (const dep of uses.get(f)) visit(dep, [...path, f]);
+    done.push(f);
+  };
+  for (const f of order) visit(f, []);
+  return done;
 }
 
 function packNames() {
