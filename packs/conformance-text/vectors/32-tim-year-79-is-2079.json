@@ -8,5 +8,5 @@
     "time_ms": "3471292799999"
   },
   "source": "constructed",
-  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy: yy 79 is 2079; 2079-12-31 is day 40177, 40177*86400000 + 86399999 = 3471292799999. Derived without an engine by a standalone reference program."
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy: yy 79 is 2079; 2079-12-31 is day 40176, 40176*86400000 + 86399999 = 3471292799999. Derived without an engine by a standalone reference program."
 }

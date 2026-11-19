@@ -544,11 +544,14 @@ func (t *textTf) encode(v Value) (string, string, error) {
 			days--
 			msod += 86400000
 		}
-		// 1980-01-01 is day 3652, 2079-12-31 day 40177.
-		if days < 3652 || days > 40177 {
+		// The year is checked from the date itself, so it never wraps.
+		if days < -1e8 || days > 1e8 {
 			return "", "", fmt.Errorf("value %d is outside the years 1980 to 2079", ms)
 		}
 		tm := time.Unix(days*86400, 0).UTC()
+		if y := tm.Year(); y < 1980 || y > 2079 {
+			return "", "", fmt.Errorf("value %d is in the year %d, outside 1980 to 2079", ms, y)
+		}
 		frac := (msod % 1000) / pow10i[3-t.f]
 		a := hmsText(msod/1000, frac, t.f)
 		b := padDigits(int64(tm.Day()), 2) + padDigits(int64(tm.Month()), 2) + padDigits(int64(tm.Year()%100), 2)
