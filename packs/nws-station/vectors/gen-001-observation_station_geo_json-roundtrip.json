@@ -1,0 +1,17 @@
+{
+ "name": "gen-observation_station_geo_json-roundtrip",
+ "from": "nws-station",
+ "to": "nws-station",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"geometry\":\"s7491\",\"@id\":\"https://example.org/890\",\"@type\":\"wx:ObservationStation\",\"stationIdentifier\":\"s65268\",\"name\":\"s87208\",\"timeZone\":\"s94955\",\"provider\":\"s12292\",\"subProvider\":\"s34739\",\"forecast\":\"https://example.org/220\",\"county\":\"https://example.org/309\",\"fireWeatherZone\":\"https://example.org/69\"},\"id\":\"https://example.org/285\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"geometry\":\"s7491\",\"@id\":\"https://example.org/890\",\"@type\":\"wx:ObservationStation\",\"stationIdentifier\":\"s65268\",\"name\":\"s87208\",\"timeZone\":\"s94955\",\"provider\":\"s12292\",\"subProvider\":\"s34739\",\"forecast\":\"https://example.org/220\",\"county\":\"https://example.org/309\",\"fireWeatherZone\":\"https://example.org/69\"},\"id\":\"https://example.org/285\"}",
+ "model": {
+  "uid": "https://example.org/285",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "callsign": "s87208",
+  "nwsstation.id": "https://example.org/285",
+  "nwsstation.properties_geometry": "s7491",
+  "nwsstation.properties_id": "https://example.org/890",
+  "nwsstation.properties_type": "wx:ObservationStation"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|properties.cwsu|string": "properties_cwsu",
+  "|properties.end|string": "properties_end",
+  "|properties.id|string": "properties_id",
+  "|properties.issueTime|string": "properties_issue_time",
+  "|properties.observedProperty|string": "properties_observed_property",
+  "|properties.sequence|int": "properties_sequence",
+  "|properties.start|string": "properties_start",
+  "|properties.text|string": "properties_text",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.bbox": "geometry_bbox"
+ }
+}

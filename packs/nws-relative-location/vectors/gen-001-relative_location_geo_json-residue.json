@@ -1,0 +1,7 @@
+{
+ "name": "gen-relative_location_geo_json-residue",
+ "from": "nws-relative-location",
+ "to": "nws-relative-location",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"city\":\"s70871\",\"state\":\"s9191\",\"distance\":{\"r\":\"1\"},\"bearing\":{\"r\":\"1\"}},\"id\":\"https://example.org/645\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"city\":\"s70871\",\"state\":\"s9191\",\"distance\":{\"r\":\"1\"},\"bearing\":{\"r\":\"1\"}},\"id\":\"https://example.org/645\"}"
+}

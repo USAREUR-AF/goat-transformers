@@ -1,0 +1,7 @@
+{
+ "name": "gen-sigmet_geo_json-residue",
+ "from": "nws-sigmet",
+ "to": "nws-sigmet",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"https://example.org/968\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-3.25,42.375]},\"properties\":{\"id\":\"https://example.org/614\",\"issueTime\":\"2024-12-21T03:38:42.168Z\",\"fir\":\"s64084\",\"atsu\":\"s40580\",\"sequence\":\"s53151\",\"phenomenon\":\"https://example.org/548\",\"start\":\"2025-01-13T16:24:36.152Z\",\"end\":\"2025-10-19T00:17:35.561Z\"}}",
+ "expect": "{\"id\":\"https://example.org/968\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-3.25,42.375]},\"properties\":{\"id\":\"https://example.org/614\",\"issueTime\":\"2024-12-21T03:38:42.168Z\",\"fir\":\"s64084\",\"atsu\":\"s40580\",\"sequence\":\"s53151\",\"phenomenon\":\"https://example.org/548\",\"start\":\"2025-01-13T16:24:36.152Z\",\"end\":\"2025-10-19T00:17:35.561Z\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.average_speed_kph|int": "properties_average_speed_kph",
+  "|properties.collection_interval_end_date|string": "properties_collection_interval_end_date",
+  "|properties.collection_interval_start_date|string": "properties_collection_interval_start_date",
+  "|properties.dynamic_message_function|string": "properties_dynamic_message_function",
+  "|properties.dynamic_message_text|string": "properties_dynamic_message_text",
+  "|properties.function|string": "properties_function",
+  "|properties.image_timestamp|string": "properties_image_timestamp",
+  "|properties.image_url|string": "properties_image_url",
+  "|properties.message_multi_string|string": "properties_message_multi_string",
+  "|properties.occupancy_percent|int": "properties_occupancy_percent",
+  "|properties.pattern|string": "properties_pattern",
+  "|properties.static_sign_text|string": "properties_static_sign_text",
+  "|properties.volume_vph|int": "properties_volume_vph"
+ },
+ "lists": {}
+}

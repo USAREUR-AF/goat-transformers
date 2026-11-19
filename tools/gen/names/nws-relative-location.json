@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.city|string": "properties_city",
+  "|properties.state|string": "properties_state"
+ },
+ "lists": {}
+}

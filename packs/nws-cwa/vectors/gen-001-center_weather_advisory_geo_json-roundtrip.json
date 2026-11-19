@@ -1,0 +1,17 @@
+{
+ "name": "gen-center_weather_advisory_geo_json-roundtrip",
+ "from": "nws-cwa",
+ "to": "nws-cwa",
+ "input": "{\"id\":\"https://example.org/243\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"id\":\"s66476\",\"issueTime\":\"2026-08-09T00:41:20.380Z\",\"cwsu\":\"ZBW\",\"sequence\":91433,\"start\":\"2026-12-01T05:16:12.964Z\",\"end\":\"2024-03-30T23:31:51.213Z\",\"observedProperty\":\"s75319\",\"text\":\"s11764\"}}",
+ "expect": "{\"id\":\"https://example.org/243\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"id\":\"s66476\",\"issueTime\":\"2026-08-09T00:41:20.380Z\",\"cwsu\":\"ZBW\",\"sequence\":91433,\"start\":\"2026-12-01T05:16:12.964Z\",\"end\":\"2024-03-30T23:31:51.213Z\",\"observedProperty\":\"s75319\",\"text\":\"s11764\"}}",
+ "model": {
+  "uid": "https://example.org/243",
+  "nwscwa.id": "https://example.org/243",
+  "nwscwa.type": "Feature",
+  "nwscwa.geometry_type": "LineString",
+  "nwscwa.geometry_bbox.#": "2",
+  "nwscwa.properties_id": "s66476",
+  "nwscwa.properties_issue_time": "2026-08-09T00:41:20.380Z",
+  "nwscwa.properties_cwsu": "ZBW"
+ }
+}

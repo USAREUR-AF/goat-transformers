@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.@id|string": "properties_id",
+  "|properties.@type|string": "properties_type",
+  "|properties.county|string": "properties_county",
+  "|properties.fireWeatherZone|string": "properties_fire_weather_zone",
+  "|properties.forecast|string": "properties_forecast",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.name|string": "properties_name",
+  "|properties.provider|string": "properties_provider",
+  "|properties.stationIdentifier|string": "properties_station_identifier",
+  "|properties.subProvider|string": "properties_sub_provider",
+  "|properties.timeZone|string": "properties_time_zone"
+ },
+ "lists": {}
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-gridpoint_geo_json-roundtrip",
+ "from": "nws-gridpoint",
+ "to": "nws-gridpoint",
+ "input": "{\"id\":\"https://example.org/559\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-0.5,7.0625]},\"properties\":{\"geometry\":\"s72655\",\"@id\":\"https://example.org/566\",\"@type\":\"wx:Gridpoint\",\"updateTime\":\"2024-07-07T04:42:35.700Z\",\"validTimes\":\"s44982\",\"elevation\":{\"value\":-0.5,\"maxValue\":42.375,\"minValue\":42.375,\"unitCode\":\"s60702\",\"qualityControl\":\"S\"},\"forecastOffice\":\"https://example.org/457\",\"gridId\":\"s67149\",\"gridX\":62238,\"gridY\":36010,\"weather\":{\"values\":[{\"validTime\":\"s86280\",\"value\":[{\"coverage\":\"chance\",\"weather\":\"frost\",\"intensity\":\"very_light\",\"visibility\":{\"value\":1.5,\"maxValue\":42.375,\"minValue\":101.125,\"unitCode\":\"s19854\",\"qualityControl\":\"B\"},\"attributes\":[\"damaging_wind\"]}]},{\"validTime\":\"s3919\",\"value\":[{\"coverage\":\"isolated\",\"weather\":\"fog\",\"intensity\":\"very_light\",\"visibility\":{\"value\":1.5,\"maxValue\":-0.5,\"minValue\":0.75,\"unitCode\":\"s2342\",\"qualityControl\":\"C\"},\"attributes\":[\"tornadoes\"]}]}]},\"hazards\":{\"values\":[{\"validTime\":\"s23647\",\"value\":[{\"phenomenon\":\"s57873\",\"significance\":\"s31274\",\"event_number\":70591}]},{\"validTime\":\"s17810\",\"value\":[{\"phenomenon\":\"s37624\",\"significance\":\"s78393\",\"event_number\":50794}]}]}}}",
+ "expect": "{\"id\":\"https://example.org/559\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-0.5,7.0625]},\"properties\":{\"geometry\":\"s72655\",\"@id\":\"https://example.org/566\",\"@type\":\"wx:Gridpoint\",\"updateTime\":\"2024-07-07T04:42:35.700Z\",\"validTimes\":\"s44982\",\"elevation\":{\"value\":-0.5,\"maxValue\":42.375,\"minValue\":42.375,\"unitCode\":\"s60702\",\"qualityControl\":\"S\"},\"forecastOffice\":\"https://example.org/457\",\"gridId\":\"s67149\",\"gridX\":62238,\"gridY\":36010,\"weather\":{\"values\":[{\"validTime\":\"s86280\",\"value\":[{\"coverage\":\"chance\",\"weather\":\"frost\",\"intensity\":\"very_light\",\"visibility\":{\"value\":1.5,\"maxValue\":42.375,\"minValue\":101.125,\"unitCode\":\"s19854\",\"qualityControl\":\"B\"},\"attributes\":[\"damaging_wind\"]}]},{\"validTime\":\"s3919\",\"value\":[{\"coverage\":\"isolated\",\"weather\":\"fog\",\"intensity\":\"very_light\",\"visibility\":{\"value\":1.5,\"maxValue\":-0.5,\"minValue\":0.75,\"unitCode\":\"s2342\",\"qualityControl\":\"C\"},\"attributes\":[\"tornadoes\"]}]}]},\"hazards\":{\"values\":[{\"validTime\":\"s23647\",\"value\":[{\"phenomenon\":\"s57873\",\"significance\":\"s31274\",\"event_number\":70591}]},{\"validTime\":\"s17810\",\"value\":[{\"phenomenon\":\"s37624\",\"significance\":\"s78393\",\"event_number\":50794}]}]}}}",
+ "model": {
+  "uid": "https://example.org/559",
+  "nwsgrid.id": "https://example.org/559",
+  "nwsgrid.type": "Feature",
+  "nwsgrid.geometry_type": "MultiLineString",
+  "nwsgrid.geometry_bbox.#": "2",
+  "nwsgrid.properties_geometry": "s72655",
+  "nwsgrid.properties_id": "https://example.org/566",
+  "nwsgrid.properties_type": "wx:Gridpoint"
+ }
+}

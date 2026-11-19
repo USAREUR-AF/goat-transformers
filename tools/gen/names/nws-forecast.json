@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "properties_periods|detailedForecast|string": "properties_periods_detailed_forecast",
+  "properties_periods|endTime|string": "properties_periods_end_time",
+  "properties_periods|icon|string": "properties_periods_icon",
+  "properties_periods|isDaytime|int": "properties_periods_is_daytime",
+  "properties_periods|name|string": "properties_periods_name",
+  "properties_periods|number|int": "properties_periods_number",
+  "properties_periods|probabilityOfPrecipitation.maxValue|float": "properties_periods_probability_of_precipitation_max_value",
+  "properties_periods|probabilityOfPrecipitation.minValue|float": "properties_periods_probability_of_precipitation_min_value",
+  "properties_periods|probabilityOfPrecipitation.qualityControl|string": "properties_periods_probability_of_precipitation_quality_control",
+  "properties_periods|probabilityOfPrecipitation.unitCode|string": "properties_periods_probability_of_precipitation_unit_code",
+  "properties_periods|probabilityOfPrecipitation.value|float": "properties_periods_probability_of_precipitation_value",
+  "properties_periods|shortForecast|string": "properties_periods_short_forecast",
+  "properties_periods|startTime|string": "properties_periods_start_time",
+  "properties_periods|temperatureTrend|string": "properties_periods_temperature_trend",
+  "properties_periods|temperatureUnit|string": "properties_periods_temperature_unit",
+  "properties_periods|windDirection|string": "properties_periods_wind_direction",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|properties.elevation.maxValue|float": "properties_elevation_max_value",
+  "|properties.elevation.minValue|float": "properties_elevation_min_value",
+  "|properties.elevation.qualityControl|string": "properties_elevation_quality_control",
+  "|properties.elevation.unitCode|string": "properties_elevation_unit_code",
+  "|properties.elevation.value|float": "properties_elevation_value",
+  "|properties.forecastGenerator|string": "properties_forecast_generator",
+  "|properties.generatedAt|string": "properties_generated_at",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.units|string": "properties_units",
+  "|properties.updateTime|string": "properties_update_time",
+  "|properties.validTimes|string": "properties_valid_times",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.bbox": "geometry_bbox",
+  "|properties.periods": "properties_periods"
+ }
+}

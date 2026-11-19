@@ -1,0 +1,17 @@
+{
+ "name": "gen-observation_geo_json-roundtrip",
+ "from": "nws-observation",
+ "to": "nws-observation",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"geometry\":\"s46698\",\"@id\":\"https://example.org/668\",\"@type\":\"wx:ObservationStation\",\"station\":\"https://example.org/839\",\"stationId\":\"s87147\",\"stationName\":\"s72295\",\"timestamp\":\"2026-06-21T22:22:02.044Z\",\"rawMessage\":\"s64649\",\"textDescription\":\"s82399\",\"icon\":\"https://example.org/975\"},\"id\":\"https://example.org/373\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"geometry\":\"s46698\",\"@id\":\"https://example.org/668\",\"@type\":\"wx:ObservationStation\",\"station\":\"https://example.org/839\",\"stationId\":\"s87147\",\"stationName\":\"s72295\",\"timestamp\":\"2026-06-21T22:22:02.044Z\",\"rawMessage\":\"s64649\",\"textDescription\":\"s82399\",\"icon\":\"https://example.org/975\"},\"id\":\"https://example.org/373\"}",
+ "model": {
+  "uid": "https://example.org/373",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1782080522044",
+  "nwsobs.id": "https://example.org/373",
+  "nwsobs.properties_geometry": "s46698",
+  "nwsobs.properties_id": "https://example.org/668",
+  "nwsobs.properties_type": "wx:ObservationStation"
+ }
+}

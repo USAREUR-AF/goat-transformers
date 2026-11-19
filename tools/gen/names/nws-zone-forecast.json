@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "properties_periods|detailedForecast|string": "properties_periods_detailed_forecast",
+  "properties_periods|name|string": "properties_periods_name",
+  "properties_periods|number|int": "properties_periods_number",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.updated|string": "properties_updated",
+  "|properties.zone|string": "properties_zone",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.bbox": "geometry_bbox",
+  "|properties.periods": "properties_periods"
+ }
+}

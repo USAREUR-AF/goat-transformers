@@ -1,0 +1,14 @@
+{
+ "name": "gen-relative_location_geo_json-roundtrip",
+ "from": "nws-relative-location",
+ "to": "nws-relative-location",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"city\":\"s70871\",\"state\":\"s9191\"},\"id\":\"https://example.org/645\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"city\":\"s70871\",\"state\":\"s9191\"},\"id\":\"https://example.org/645\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "nwsrel.id": "https://example.org/645",
+  "nwsrel.properties_city": "s70871",
+  "nwsrel.properties_state": "s9191"
+ }
+}

@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "properties_cwa|.|string": "properties_cwa_value",
+  "properties_forecast_offices|.|string": "properties_forecast_offices_value",
+  "properties_observation_stations|.|string": "properties_observation_stations_value",
+  "properties_time_zone|.|string": "properties_time_zone_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|properties.@id|string": "properties_id",
+  "|properties.@type|string": "properties_type",
+  "|properties.awipsLocationIdentifier|string": "properties_awips_location_identifier",
+  "|properties.effectiveDate|string": "properties_effective_date",
+  "|properties.expirationDate|string": "properties_expiration_date",
+  "|properties.forecastOffice|string": "properties_forecast_office",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.gridIdentifier|string": "properties_grid_identifier",
+  "|properties.id|string": "properties_id_2",
+  "|properties.name|string": "properties_name",
+  "|properties.radarStation|string": "properties_radar_station",
+  "|properties.state|string": "properties_state",
+  "|properties.type|string": "properties_type_2",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.bbox": "geometry_bbox",
+  "|properties.cwa": "properties_cwa",
+  "|properties.forecastOffices": "properties_forecast_offices",
+  "|properties.observationStations": "properties_observation_stations",
+  "|properties.timeZone": "properties_time_zone"
+ }
+}
