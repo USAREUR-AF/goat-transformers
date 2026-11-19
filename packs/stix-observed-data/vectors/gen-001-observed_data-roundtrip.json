@@ -1,0 +1,17 @@
+{
+ "name": "gen-observed_data-roundtrip",
+ "from": "stix-observed-data",
+ "to": "stix-observed-data",
+ "input": "{\"type\":\"observed-data\",\"spec_version\":\"2.1\",\"id\":\"s34007\",\"created_by_ref\":\"s31707\",\"labels\":[\"s23909\",\"s31472\"],\"created\":\"s63143\",\"modified\":\"2024-08-12T08:04:43.069Z\",\"revoked\":true,\"confidence\":86,\"lang\":\"s47385\",\"external_references\":[{\"description\":\"s13542\",\"url\":\"https://example.org/514\",\"source_name\":\"s16790\",\"external_id\":\"s5142\"},{\"description\":\"s86347\",\"url\":\"https://example.org/571\",\"source_name\":\"s58895\",\"external_id\":\"s37652\"}],\"object_marking_refs\":[\"s40707\",\"s14629\"],\"granular_markings\":[{\"selectors\":[\"s67489\"],\"lang\":\"s66286\",\"marking_ref\":\"s82090\"},{\"selectors\":[\"s21519\"],\"lang\":\"s60533\",\"marking_ref\":\"s23306\"}],\"first_observed\":\"s53002\",\"last_observed\":\"s59503\",\"number_observed\":196025287,\"object_refs\":[\"s63961\",\"s66620\"]}",
+ "expect": "{\"type\":\"observed-data\",\"spec_version\":\"2.1\",\"id\":\"s34007\",\"created_by_ref\":\"s31707\",\"labels\":[\"s23909\",\"s31472\"],\"created\":\"s63143\",\"modified\":\"2024-08-12T08:04:43.069Z\",\"revoked\":true,\"confidence\":86,\"lang\":\"s47385\",\"external_references\":[{\"description\":\"s13542\",\"url\":\"https://example.org/514\",\"source_name\":\"s16790\",\"external_id\":\"s5142\"},{\"description\":\"s86347\",\"url\":\"https://example.org/571\",\"source_name\":\"s58895\",\"external_id\":\"s37652\"}],\"object_marking_refs\":[\"s40707\",\"s14629\"],\"granular_markings\":[{\"selectors\":[\"s67489\"],\"lang\":\"s66286\",\"marking_ref\":\"s82090\"},{\"selectors\":[\"s21519\"],\"lang\":\"s60533\",\"marking_ref\":\"s23306\"}],\"first_observed\":\"s53002\",\"last_observed\":\"s59503\",\"number_observed\":196025287,\"object_refs\":[\"s63961\",\"s66620\"]}",
+ "model": {
+  "@kind": "observed_data",
+  "uid": "s34007",
+  "time_ms": "1723449883069",
+  "stixobserveddata.type": "observed-data",
+  "stixobserveddata.spec_version": "2.1",
+  "stixobserveddata.id": "s34007",
+  "stixobserveddata.created_by_ref": "s31707",
+  "stixobserveddata.labels.#": "2"
+ }
+}

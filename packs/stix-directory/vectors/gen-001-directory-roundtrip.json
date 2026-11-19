@@ -1,0 +1,17 @@
+{
+ "name": "gen-directory-roundtrip",
+ "from": "stix-directory",
+ "to": "stix-directory",
+ "input": "{\"type\":\"directory\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s39238\",\"s50986\"],\"granular_markings\":[{\"selectors\":[\"s45203\"],\"lang\":\"s1867\",\"marking_ref\":\"s92779\"},{\"selectors\":[\"s44554\"],\"lang\":\"s76156\",\"marking_ref\":\"s57592\"}],\"defanged\":true,\"id\":\"s10459\",\"path\":\"s39533\",\"path_enc\":\"s21975\",\"ctime\":\"s95706\",\"mtime\":\"s31741\",\"atime\":\"s75533\",\"contains_refs\":[\"s64666\",\"s86908\"]}",
+ "expect": "{\"type\":\"directory\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s39238\",\"s50986\"],\"granular_markings\":[{\"selectors\":[\"s45203\"],\"lang\":\"s1867\",\"marking_ref\":\"s92779\"},{\"selectors\":[\"s44554\"],\"lang\":\"s76156\",\"marking_ref\":\"s57592\"}],\"defanged\":true,\"id\":\"s10459\",\"path\":\"s39533\",\"path_enc\":\"s21975\",\"ctime\":\"s95706\",\"mtime\":\"s31741\",\"atime\":\"s75533\",\"contains_refs\":[\"s64666\",\"s86908\"]}",
+ "model": {
+  "@kind": "directory",
+  "uid": "s10459",
+  "stixdirectory.type": "directory",
+  "stixdirectory.spec_version": "2.0",
+  "stixdirectory.object_marking_refs.#": "2",
+  "stixdirectory.granular_markings.#": "2",
+  "stixdirectory.defanged": "1",
+  "stixdirectory.id": "s10459"
+ }
+}

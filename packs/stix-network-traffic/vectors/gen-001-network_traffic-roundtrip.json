@@ -1,0 +1,17 @@
+{
+ "name": "gen-network_traffic-roundtrip",
+ "from": "stix-network-traffic",
+ "to": "stix-network-traffic",
+ "input": "{\"type\":\"network-traffic\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s75012\",\"s68807\"],\"granular_markings\":[{\"selectors\":[\"s3057\"],\"lang\":\"s64508\",\"marking_ref\":\"s39713\"},{\"selectors\":[\"s81163\"],\"lang\":\"s48886\",\"marking_ref\":\"s49704\"}],\"defanged\":true,\"id\":\"s10265\",\"start\":\"s1056\",\"end\":\"s43908\",\"src_ref\":\"s35272\",\"dst_ref\":\"s79020\",\"src_port\":42585,\"dst_port\":9839,\"protocols\":[\"s66456\",\"s80648\"],\"src_byte_count\":66176,\"dst_byte_count\":39812,\"src_packets\":8155,\"dst_packets\":79215,\"src_payload_ref\":\"s70339\",\"dst_payload_ref\":\"s34736\",\"encapsulates_refs\":[\"s25952\",\"s57127\"],\"encapsulated_by_ref\":\"s34209\",\"is_active\":false}",
+ "expect": "{\"type\":\"network-traffic\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s75012\",\"s68807\"],\"granular_markings\":[{\"selectors\":[\"s3057\"],\"lang\":\"s64508\",\"marking_ref\":\"s39713\"},{\"selectors\":[\"s81163\"],\"lang\":\"s48886\",\"marking_ref\":\"s49704\"}],\"defanged\":true,\"id\":\"s10265\",\"start\":\"s1056\",\"end\":\"s43908\",\"src_ref\":\"s35272\",\"dst_ref\":\"s79020\",\"src_port\":42585,\"dst_port\":9839,\"protocols\":[\"s66456\",\"s80648\"],\"src_byte_count\":66176,\"dst_byte_count\":39812,\"src_packets\":8155,\"dst_packets\":79215,\"src_payload_ref\":\"s70339\",\"dst_payload_ref\":\"s34736\",\"encapsulates_refs\":[\"s25952\",\"s57127\"],\"encapsulated_by_ref\":\"s34209\",\"is_active\":false}",
+ "model": {
+  "@kind": "network_traffic",
+  "uid": "s10265",
+  "stixnetworktraffic.type": "network-traffic",
+  "stixnetworktraffic.spec_version": "2.0",
+  "stixnetworktraffic.object_marking_refs.#": "2",
+  "stixnetworktraffic.granular_markings.#": "2",
+  "stixnetworktraffic.defanged": "1",
+  "stixnetworktraffic.id": "s10265"
+ }
+}

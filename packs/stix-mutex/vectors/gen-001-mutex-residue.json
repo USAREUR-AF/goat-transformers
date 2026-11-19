@@ -1,0 +1,7 @@
+{
+ "name": "gen-mutex-residue",
+ "from": "stix-mutex",
+ "to": "stix-mutex",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"mutex\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s43992\",\"s44877\"],\"granular_markings\":[{\"selectors\":[\"s40529\"],\"lang\":\"s36892\",\"marking_ref\":\"s50209\"},{\"selectors\":[\"s91426\"],\"lang\":\"s92697\",\"marking_ref\":\"s35230\"}],\"defanged\":true,\"id\":\"s68390\",\"name\":\"s40595\"}",
+ "expect": "{\"type\":\"mutex\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s43992\",\"s44877\"],\"granular_markings\":[{\"selectors\":[\"s40529\"],\"lang\":\"s36892\",\"marking_ref\":\"s50209\"},{\"selectors\":[\"s91426\"],\"lang\":\"s92697\",\"marking_ref\":\"s35230\"}],\"defanged\":true,\"id\":\"s68390\",\"name\":\"s40595\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

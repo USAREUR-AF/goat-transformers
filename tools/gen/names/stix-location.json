@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "external_references|description|string": "external_references_description",
+  "external_references|external_id|string": "external_references_external_id",
+  "external_references|source_name|string": "external_references_source_name",
+  "external_references|url|string": "external_references_url",
+  "granular_markings_selectors|.|string": "granular_markings_selectors_value",
+  "granular_markings|lang|string": "granular_markings_lang",
+  "granular_markings|marking_ref|string": "granular_markings_marking_ref",
+  "labels|.|string": "labels_value",
+  "object_marking_refs|.|string": "object_marking_refs_value",
+  "|administrative_area|string": "administrative_area",
+  "|city|string": "city",
+  "|confidence|int": "confidence",
+  "|country|string": "country",
+  "|created_by_ref|string": "created_by_ref",
+  "|created|string": "created",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|lang|string": "lang",
+  "|latitude|float": "latitude",
+  "|longitude|float": "longitude",
+  "|modified|string": "modified",
+  "|name|string": "name",
+  "|postal_code|string": "postal_code",
+  "|precision|float": "precision",
+  "|region|string": "region",
+  "|revoked|int": "revoked",
+  "|spec_version|string": "spec_version",
+  "|street_address|string": "street_address",
+  "|type|string": "type"
+ },
+ "lists": {
+  "granular_markings|selectors": "granular_markings_selectors",
+  "|external_references": "external_references",
+  "|granular_markings": "granular_markings",
+  "|labels": "labels",
+  "|object_marking_refs": "object_marking_refs"
+ }
+}

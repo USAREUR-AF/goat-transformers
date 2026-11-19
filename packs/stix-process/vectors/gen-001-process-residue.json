@@ -1,0 +1,7 @@
+{
+ "name": "gen-process-residue",
+ "from": "stix-process",
+ "to": "stix-process",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"process\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s8961\",\"s97295\"],\"granular_markings\":[{\"selectors\":[\"s6483\"],\"lang\":\"s44021\",\"marking_ref\":\"s14878\"},{\"selectors\":[\"s81028\"],\"lang\":\"s86207\",\"marking_ref\":\"s23710\"}],\"defanged\":false,\"id\":\"s77247\",\"is_hidden\":false,\"pid\":23431,\"created_time\":\"s46437\",\"cwd\":\"s71314\",\"command_line\":\"s54531\",\"opened_connection_refs\":[\"s65927\",\"s99122\"],\"creator_user_ref\":\"s13787\",\"image_ref\":\"s50105\",\"parent_ref\":\"s87217\",\"child_refs\":[\"s51018\",\"s45163\"]}",
+ "expect": "{\"type\":\"process\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s8961\",\"s97295\"],\"granular_markings\":[{\"selectors\":[\"s6483\"],\"lang\":\"s44021\",\"marking_ref\":\"s14878\"},{\"selectors\":[\"s81028\"],\"lang\":\"s86207\",\"marking_ref\":\"s23710\"}],\"defanged\":false,\"id\":\"s77247\",\"is_hidden\":false,\"pid\":23431,\"created_time\":\"s46437\",\"cwd\":\"s71314\",\"command_line\":\"s54531\",\"opened_connection_refs\":[\"s65927\",\"s99122\"],\"creator_user_ref\":\"s13787\",\"image_ref\":\"s50105\",\"parent_ref\":\"s87217\",\"child_refs\":[\"s51018\",\"s45163\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

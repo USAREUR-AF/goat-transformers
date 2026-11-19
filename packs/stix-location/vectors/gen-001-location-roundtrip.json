@@ -1,0 +1,17 @@
+{
+ "name": "gen-location-roundtrip",
+ "from": "stix-location",
+ "to": "stix-location",
+ "input": "{\"type\":\"location\",\"spec_version\":\"2.0\",\"id\":\"s79016\",\"created_by_ref\":\"s96053\",\"labels\":[\"s76329\",\"s24732\"],\"created\":\"s69290\",\"modified\":\"2024-04-03T18:34:11.881Z\",\"revoked\":true,\"confidence\":24,\"lang\":\"s8691\",\"external_references\":[{\"description\":\"s33797\",\"url\":\"https://example.org/45\",\"source_name\":\"s48336\",\"external_id\":\"s91930\"},{\"description\":\"s18412\",\"url\":\"https://example.org/900\",\"source_name\":\"s5552\",\"external_id\":\"s66837\"}],\"object_marking_refs\":[\"s13364\",\"s2679\"],\"granular_markings\":[{\"selectors\":[\"s87728\"],\"lang\":\"s3814\",\"marking_ref\":\"s47512\"},{\"selectors\":[\"s11482\"],\"lang\":\"s18038\",\"marking_ref\":\"s90803\"}],\"description\":\"s55568\",\"name\":\"s72220\",\"latitude\":38.8977,\"longitude\":-77.0365,\"precision\":1.5,\"region\":\"s82223\",\"country\":\"s57909\",\"administrative_area\":\"s58389\",\"city\":\"s14146\",\"street_address\":\"s57633\",\"postal_code\":\"s91381\"}",
+ "expect": "{\"type\":\"location\",\"spec_version\":\"2.0\",\"id\":\"s79016\",\"created_by_ref\":\"s96053\",\"labels\":[\"s76329\",\"s24732\"],\"created\":\"s69290\",\"modified\":\"2024-04-03T18:34:11.881Z\",\"revoked\":true,\"confidence\":24,\"lang\":\"s8691\",\"external_references\":[{\"description\":\"s33797\",\"url\":\"https://example.org/45\",\"source_name\":\"s48336\",\"external_id\":\"s91930\"},{\"description\":\"s18412\",\"url\":\"https://example.org/900\",\"source_name\":\"s5552\",\"external_id\":\"s66837\"}],\"object_marking_refs\":[\"s13364\",\"s2679\"],\"granular_markings\":[{\"selectors\":[\"s87728\"],\"lang\":\"s3814\",\"marking_ref\":\"s47512\"},{\"selectors\":[\"s11482\"],\"lang\":\"s18038\",\"marking_ref\":\"s90803\"}],\"description\":\"s55568\",\"name\":\"s72220\",\"latitude\":38.8977,\"longitude\":-77.0365,\"precision\":1.5,\"region\":\"s82223\",\"country\":\"s57909\",\"administrative_area\":\"s58389\",\"city\":\"s14146\",\"street_address\":\"s57633\",\"postal_code\":\"s91381\"}",
+ "model": {
+  "@kind": "location",
+  "uid": "s79016",
+  "time_ms": "1712169251881",
+  "lat": "38.8977",
+  "lon": "-77.0365",
+  "stixlocation.type": "location",
+  "stixlocation.spec_version": "2.0",
+  "stixlocation.id": "s79016"
+ }
+}

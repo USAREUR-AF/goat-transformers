@@ -1,0 +1,17 @@
+{
+ "name": "gen-email_message-roundtrip",
+ "from": "stix-email-message",
+ "to": "stix-email-message",
+ "input": "{\"type\":\"email-message\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s529\",\"s10309\"],\"granular_markings\":[{\"selectors\":[\"s71270\"],\"lang\":\"s3173\",\"marking_ref\":\"s93298\"},{\"selectors\":[\"s81056\"],\"lang\":\"s86557\",\"marking_ref\":\"s70439\"}],\"defanged\":false,\"id\":\"s49192\",\"date\":\"s18378\",\"content_type\":\"s31125\",\"from_ref\":\"s68959\",\"sender_ref\":\"s38655\",\"to_refs\":[\"s4587\",\"s34462\"],\"cc_refs\":[\"s88645\",\"s3913\"],\"bcc_refs\":[\"s49754\",\"s38677\"],\"message_id\":\"s22969\",\"subject\":\"s3161\",\"received_lines\":[\"s7505\",\"s5085\"],\"raw_email_ref\":\"s68352\",\"is_multipart\":true,\"body\":\"s93820\",\"body_multipart\":[{\"body\":\"s38806\",\"body_raw_ref\":\"s47125\",\"content_type\":\"s19463\",\"content_disposition\":\"s71671\"},{\"body\":\"s416\",\"body_raw_ref\":\"s1703\",\"content_type\":\"s77834\",\"content_disposition\":\"s36782\"}]}",
+ "expect": "{\"type\":\"email-message\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s529\",\"s10309\"],\"granular_markings\":[{\"selectors\":[\"s71270\"],\"lang\":\"s3173\",\"marking_ref\":\"s93298\"},{\"selectors\":[\"s81056\"],\"lang\":\"s86557\",\"marking_ref\":\"s70439\"}],\"defanged\":false,\"id\":\"s49192\",\"date\":\"s18378\",\"content_type\":\"s31125\",\"from_ref\":\"s68959\",\"sender_ref\":\"s38655\",\"to_refs\":[\"s4587\",\"s34462\"],\"cc_refs\":[\"s88645\",\"s3913\"],\"bcc_refs\":[\"s49754\",\"s38677\"],\"message_id\":\"s22969\",\"subject\":\"s3161\",\"received_lines\":[\"s7505\",\"s5085\"],\"raw_email_ref\":\"s68352\",\"is_multipart\":true,\"body\":\"s93820\",\"body_multipart\":[{\"body\":\"s38806\",\"body_raw_ref\":\"s47125\",\"content_type\":\"s19463\",\"content_disposition\":\"s71671\"},{\"body\":\"s416\",\"body_raw_ref\":\"s1703\",\"content_type\":\"s77834\",\"content_disposition\":\"s36782\"}]}",
+ "model": {
+  "@kind": "email_message",
+  "uid": "s49192",
+  "stixemailmessage.type": "email-message",
+  "stixemailmessage.spec_version": "2.1",
+  "stixemailmessage.object_marking_refs.#": "2",
+  "stixemailmessage.granular_markings.#": "2",
+  "stixemailmessage.defanged": "0",
+  "stixemailmessage.id": "s49192"
+ }
+}

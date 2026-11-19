@@ -1,0 +1,7 @@
+{
+ "name": "gen-artifact-residue",
+ "from": "stix-artifact",
+ "to": "stix-artifact",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"artifact\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s42057\",\"s86844\"],\"granular_markings\":[{\"selectors\":[\"s57324\"],\"lang\":\"s8528\",\"marking_ref\":\"s53837\"},{\"selectors\":[\"s60935\"],\"lang\":\"s47932\",\"marking_ref\":\"s63545\"}],\"defanged\":true,\"id\":\"s80221\",\"mime_type\":\"s9296\",\"payload_bin\":\"s38916\",\"url\":\"https://example.org/522\",\"encryption_algorithm\":\"ChaCha20-Poly1305\",\"decryption_key\":\"s57744\"}",
+ "expect": "{\"type\":\"artifact\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s42057\",\"s86844\"],\"granular_markings\":[{\"selectors\":[\"s57324\"],\"lang\":\"s8528\",\"marking_ref\":\"s53837\"},{\"selectors\":[\"s60935\"],\"lang\":\"s47932\",\"marking_ref\":\"s63545\"}],\"defanged\":true,\"id\":\"s80221\",\"mime_type\":\"s9296\",\"payload_bin\":\"s38916\",\"url\":\"https://example.org/522\",\"encryption_algorithm\":\"ChaCha20-Poly1305\",\"decryption_key\":\"s57744\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

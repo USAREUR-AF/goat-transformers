@@ -1,0 +1,17 @@
+{
+ "name": "gen-user_account-roundtrip",
+ "from": "stix-user-account",
+ "to": "stix-user-account",
+ "input": "{\"type\":\"user-account\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s56435\",\"s66170\"],\"granular_markings\":[{\"selectors\":[\"s11575\"],\"lang\":\"s49081\",\"marking_ref\":\"s12866\"},{\"selectors\":[\"s3034\"],\"lang\":\"s378\",\"marking_ref\":\"s91211\"}],\"defanged\":false,\"id\":\"s31150\",\"user_id\":\"s12400\",\"credential\":\"s84153\",\"account_login\":\"s45321\",\"account_type\":\"s32527\",\"display_name\":\"s98978\",\"is_service_account\":false,\"is_privileged\":false,\"can_escalate_privs\":false,\"is_disabled\":false,\"account_created\":\"s2384\",\"account_expires\":\"s66706\",\"credential_last_changed\":\"s26224\",\"account_first_login\":\"s54111\",\"account_last_login\":\"s50531\"}",
+ "expect": "{\"type\":\"user-account\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s56435\",\"s66170\"],\"granular_markings\":[{\"selectors\":[\"s11575\"],\"lang\":\"s49081\",\"marking_ref\":\"s12866\"},{\"selectors\":[\"s3034\"],\"lang\":\"s378\",\"marking_ref\":\"s91211\"}],\"defanged\":false,\"id\":\"s31150\",\"user_id\":\"s12400\",\"credential\":\"s84153\",\"account_login\":\"s45321\",\"account_type\":\"s32527\",\"display_name\":\"s98978\",\"is_service_account\":false,\"is_privileged\":false,\"can_escalate_privs\":false,\"is_disabled\":false,\"account_created\":\"s2384\",\"account_expires\":\"s66706\",\"credential_last_changed\":\"s26224\",\"account_first_login\":\"s54111\",\"account_last_login\":\"s50531\"}",
+ "model": {
+  "@kind": "user_account",
+  "uid": "s31150",
+  "stixuseraccount.type": "user-account",
+  "stixuseraccount.spec_version": "2.1",
+  "stixuseraccount.object_marking_refs.#": "2",
+  "stixuseraccount.granular_markings.#": "2",
+  "stixuseraccount.defanged": "0",
+  "stixuseraccount.id": "s31150"
+ }
+}

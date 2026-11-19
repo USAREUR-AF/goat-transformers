@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "encapsulates_refs|.|string": "encapsulates_refs_value",
+  "granular_markings_selectors|.|string": "granular_markings_selectors_value",
+  "granular_markings|lang|string": "granular_markings_lang",
+  "granular_markings|marking_ref|string": "granular_markings_marking_ref",
+  "object_marking_refs|.|string": "object_marking_refs_value",
+  "protocols|.|string": "protocols_value",
+  "|defanged|int": "defanged",
+  "|dst_byte_count|int": "dst_byte_count",
+  "|dst_packets|int": "dst_packets",
+  "|dst_payload_ref|string": "dst_payload_ref",
+  "|dst_port|int": "dst_port",
+  "|dst_ref|string": "dst_ref",
+  "|encapsulated_by_ref|string": "encapsulated_by_ref",
+  "|end|string": "end",
+  "|id|string": "id",
+  "|is_active|int": "is_active",
+  "|spec_version|string": "spec_version",
+  "|src_byte_count|int": "src_byte_count",
+  "|src_packets|int": "src_packets",
+  "|src_payload_ref|string": "src_payload_ref",
+  "|src_port|int": "src_port",
+  "|src_ref|string": "src_ref",
+  "|start|string": "start",
+  "|type|string": "type"
+ },
+ "lists": {
+  "granular_markings|selectors": "granular_markings_selectors",
+  "|encapsulates_refs": "encapsulates_refs",
+  "|granular_markings": "granular_markings",
+  "|object_marking_refs": "object_marking_refs",
+  "|protocols": "protocols"
+ }
+}

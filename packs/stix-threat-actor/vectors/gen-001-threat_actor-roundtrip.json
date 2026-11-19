@@ -1,0 +1,17 @@
+{
+ "name": "gen-threat_actor-roundtrip",
+ "from": "stix-threat-actor",
+ "to": "stix-threat-actor",
+ "input": "{\"type\":\"threat-actor\",\"spec_version\":\"2.0\",\"id\":\"s99032\",\"created_by_ref\":\"s17955\",\"labels\":[\"s55451\",\"s57635\"],\"created\":\"s15848\",\"modified\":\"2025-04-08T12:24:02.018Z\",\"revoked\":true,\"confidence\":98,\"lang\":\"s68906\",\"external_references\":[{\"description\":\"s91895\",\"url\":\"https://example.org/26\",\"source_name\":\"s60625\",\"external_id\":\"s68088\"},{\"description\":\"s49511\",\"url\":\"https://example.org/287\",\"source_name\":\"s67491\",\"external_id\":\"s75918\"}],\"object_marking_refs\":[\"s8958\",\"s3346\"],\"granular_markings\":[{\"selectors\":[\"s43520\"],\"lang\":\"s39213\",\"marking_ref\":\"s48613\"},{\"selectors\":[\"s25912\"],\"lang\":\"s66509\",\"marking_ref\":\"s50425\"}],\"threat_actor_types\":[\"s68791\",\"s43115\"],\"name\":\"s19617\",\"description\":\"s99450\",\"aliases\":[\"s79424\",\"s85125\"],\"roles\":[\"s24666\",\"s55557\"],\"goals\":[\"s46052\",\"s41645\"],\"first_seen\":\"s72921\",\"last_seen\":\"s28740\",\"sophistication\":\"s97950\",\"resource_level\":\"s79655\",\"primary_motivation\":\"s96435\",\"secondary_motivations\":[\"s36585\",\"s66492\"],\"personal_motivations\":[\"s20248\",\"s59147\"]}",
+ "expect": "{\"type\":\"threat-actor\",\"spec_version\":\"2.0\",\"id\":\"s99032\",\"created_by_ref\":\"s17955\",\"labels\":[\"s55451\",\"s57635\"],\"created\":\"s15848\",\"modified\":\"2025-04-08T12:24:02.018Z\",\"revoked\":true,\"confidence\":98,\"lang\":\"s68906\",\"external_references\":[{\"description\":\"s91895\",\"url\":\"https://example.org/26\",\"source_name\":\"s60625\",\"external_id\":\"s68088\"},{\"description\":\"s49511\",\"url\":\"https://example.org/287\",\"source_name\":\"s67491\",\"external_id\":\"s75918\"}],\"object_marking_refs\":[\"s8958\",\"s3346\"],\"granular_markings\":[{\"selectors\":[\"s43520\"],\"lang\":\"s39213\",\"marking_ref\":\"s48613\"},{\"selectors\":[\"s25912\"],\"lang\":\"s66509\",\"marking_ref\":\"s50425\"}],\"threat_actor_types\":[\"s68791\",\"s43115\"],\"name\":\"s19617\",\"description\":\"s99450\",\"aliases\":[\"s79424\",\"s85125\"],\"roles\":[\"s24666\",\"s55557\"],\"goals\":[\"s46052\",\"s41645\"],\"first_seen\":\"s72921\",\"last_seen\":\"s28740\",\"sophistication\":\"s97950\",\"resource_level\":\"s79655\",\"primary_motivation\":\"s96435\",\"secondary_motivations\":[\"s36585\",\"s66492\"],\"personal_motivations\":[\"s20248\",\"s59147\"]}",
+ "model": {
+  "@kind": "threat_actor",
+  "uid": "s99032",
+  "time_ms": "1744115042018",
+  "stixthreatactor.type": "threat-actor",
+  "stixthreatactor.spec_version": "2.0",
+  "stixthreatactor.id": "s99032",
+  "stixthreatactor.created_by_ref": "s17955",
+  "stixthreatactor.labels.#": "2"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-incident-roundtrip",
+ "from": "stix-incident",
+ "to": "stix-incident",
+ "input": "{\"type\":\"incident\",\"spec_version\":\"2.0\",\"id\":\"s97062\",\"created_by_ref\":\"s73164\",\"labels\":[\"s62869\",\"s44409\"],\"created\":\"s58769\",\"modified\":\"2025-11-19T16:01:02.972Z\",\"revoked\":false,\"confidence\":85,\"lang\":\"s59010\",\"external_references\":[{\"description\":\"s83771\",\"url\":\"https://example.org/401\",\"source_name\":\"s20549\",\"external_id\":\"s20497\"},{\"description\":\"s9636\",\"url\":\"https://example.org/828\",\"source_name\":\"s74995\",\"external_id\":\"s70188\"}],\"object_marking_refs\":[\"s16710\",\"s81597\"],\"granular_markings\":[{\"selectors\":[\"s2967\"],\"lang\":\"s27887\",\"marking_ref\":\"s950\"},{\"selectors\":[\"s40791\"],\"lang\":\"s93748\",\"marking_ref\":\"s77323\"}],\"name\":\"s97279\",\"description\":\"s15078\"}",
+ "expect": "{\"type\":\"incident\",\"spec_version\":\"2.0\",\"id\":\"s97062\",\"created_by_ref\":\"s73164\",\"labels\":[\"s62869\",\"s44409\"],\"created\":\"s58769\",\"modified\":\"2025-11-19T16:01:02.972Z\",\"revoked\":false,\"confidence\":85,\"lang\":\"s59010\",\"external_references\":[{\"description\":\"s83771\",\"url\":\"https://example.org/401\",\"source_name\":\"s20549\",\"external_id\":\"s20497\"},{\"description\":\"s9636\",\"url\":\"https://example.org/828\",\"source_name\":\"s74995\",\"external_id\":\"s70188\"}],\"object_marking_refs\":[\"s16710\",\"s81597\"],\"granular_markings\":[{\"selectors\":[\"s2967\"],\"lang\":\"s27887\",\"marking_ref\":\"s950\"},{\"selectors\":[\"s40791\"],\"lang\":\"s93748\",\"marking_ref\":\"s77323\"}],\"name\":\"s97279\",\"description\":\"s15078\"}",
+ "model": {
+  "@kind": "incident",
+  "uid": "s97062",
+  "time_ms": "1763568062972",
+  "stixincident.type": "incident",
+  "stixincident.spec_version": "2.0",
+  "stixincident.id": "s97062",
+  "stixincident.created_by_ref": "s73164",
+  "stixincident.labels.#": "2"
+ }
+}
