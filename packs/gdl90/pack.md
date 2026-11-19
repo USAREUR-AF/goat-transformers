@@ -105,7 +105,7 @@ vertical rate. `traffic` is the kind an entity from another format encodes as
 
 ## Vectors
 
-18 vectors under `vectors/`, written by `tools/gen/gdl90-vectors.py`
+18 vectors (16 under `vectors/`, the two from `geojson` under `packs/geojson/vectors/to-gdl90-*`), written by `tools/gen/gdl90-vectors.py`
 (standard library only, imports no engine) from its own layout tables:
 round trips of every kind (two heartbeats, traffic, ownship, two geometric
 altitudes, ForeFlight ID, two AHRS), the uplink with its payload dropped,
