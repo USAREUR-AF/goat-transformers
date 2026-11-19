@@ -204,7 +204,9 @@ class _Parser:
                     raise YamlError("line %d: unexpected indentation" % (self.i + 1))
                 break
             t = _strip_comment(nxt[1])
-            m = re.match(r"^((?:'[^']*'|\"[^\"]*\"|[^:])+?)\s*:(?:\s+(.*))?$", t)
+            # A plain key character excludes quotes, so each character has one
+            # reading and the match cannot backtrack exponentially.
+            m = re.match(r"^((?:'[^']*'|\"[^\"]*\"|[^:'\"])+?)\s*:(?:\s+(.*))?$", t)
             if not m:
                 raise YamlError("line %d: not a key: %r" % (self.i + 1, t))
             key, val = scalar(m.group(1)), (m.group(2) or "").strip()
