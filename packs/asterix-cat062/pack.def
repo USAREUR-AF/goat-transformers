@@ -43,6 +43,7 @@ when    8  62                                # CAT
 requires cat062.sac cat062.sic cat062.time_of_day_s cat062.track_number track.confirmed
 default cat062.mon          1
 default cat062.mrh          0
+default cat062.src          0
 default track.simulated     0
 default track.final_update  0
 default track.coasting      0
@@ -71,7 +72,7 @@ if fspec.13                                  # FRN 13, I062/080 Track Status
     field  cat062.mon  1  uint                  # MON
     pad    1                                    # SPI
     field  cat062.mrh  1  uint                  # MRH: 1 = geometric height more reliable
-    pad    3                                    # SRC
+    field  cat062.src  3  uint                  # SRC: source of the I062/130 altitude, 0 none, 1 GNSS
     field  cat062.cnf  1  uint                  # CNF: 0 = confirmed, 1 = tentative
     also   track.confirmed  via cnf
     fx
