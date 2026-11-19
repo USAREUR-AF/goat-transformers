@@ -68,7 +68,7 @@ has a pack:
 | Aviation | AIXM, FIXM, ACARS |
 | Maritime | VDES, IHO S-100 and S-101 |
 | Space | CCSDS telemetry, telecommand and Navigation Data Messages; XTCE |
-| Internet of things | the Matter data model, LwM2M, Zigbee Cluster Library |
+| Internet of things | MQTT Sparkplug B, the Matter data model, LwM2M, Zigbee Cluster Library |
 | Vehicles and robots | ROS 2 messages, SAE J1939 |
 
 `CONTRIBUTING.md` states how to add a pack.

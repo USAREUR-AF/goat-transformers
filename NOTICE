@@ -77,23 +77,6 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
-Pack sparkplug-b; module sparkplug
-  Sparkplug B payload definition sparkplug_b.proto, from
-  https://github.com/eclipse-tahu/tahu. Copyright (c) 2015, 2018 Cirrus Link
-  Solutions and others; Eclipse Public License 2.0. Field numbers, names and
-  types only.
-
-Packs gtfs-realtime, gtfs-realtime-entity; module gtfsrt
-  GTFS Realtime protocol definition gtfs-realtime.proto, from
-  https://github.com/google/transit. Copyright 2015 The GTFS Specifications
-  Authors; Apache License, Version 2.0. Field numbers, names and types only.
-
-Pack meshtastic; module meshtastic
-  Meshtastic protobuf definitions, from https://github.com/meshtastic/protobufs.
-  The repository's LICENSE is the GNU General Public License, Version 3; the
-  .proto files carry no license or copyright header. Field numbers, names and
-  types only.
-
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c
