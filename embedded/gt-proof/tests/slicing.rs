@@ -2,8 +2,8 @@
 //! the formats below: when the vector's message is of the compiled kind the
 //! output is the vector's `expect`; when it is of another kind the device
 //! refuses it with `no-kind` and never reads it as the compiled kind. A kind
-//! the compiler refuses as `unsupported-feature` (one that uses absent-value
-//! sentinels) is left out and counted.
+//! the compiler refuses as `unsupported-feature` (a pack line the device
+//! profile does not implement) is left out and counted.
 
 use gt_core::{Error, Plan};
 use gt_proof::*;

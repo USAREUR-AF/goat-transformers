@@ -42,7 +42,7 @@ pub(crate) const NONE16: u16 = 0xFFFF;
 pub(crate) const NONE32: u32 = 0xFFFF_FFFF;
 
 /// The version of the blob layout this engine reads.
-pub const FORMAT_VERSION: u16 = 1;
+pub const FORMAT_VERSION: u16 = 2;
 
 /// One entry of the operation table.
 #[derive(Clone, Copy)]
@@ -50,6 +50,8 @@ pub(crate) struct Op {
     pub op: u8,
     pub xf: u8,
     pub flags: u8,
+    /// FIELD: the number of its sentinels (`absent`, engine-spec 0.9)
+    pub nabsent: u8,
     pub key: u16,
     pub len: u16,
     pub a: u32,
@@ -228,6 +230,7 @@ impl<'a> Plan<'a> {
             op: b[0],
             xf: b[1],
             flags: b[2],
+            nabsent: b[3],
             key: u16::from_le_bytes([b[4], b[5]]),
             len: u16::from_le_bytes([b[6], b[7]]),
             a: u32::from_le_bytes([b[8], b[9], b[10], b[11]]),

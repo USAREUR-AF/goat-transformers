@@ -27,18 +27,37 @@ struct Tally {
     pass: usize,
 }
 
+/// The item scope a `<list>[<i>].` path names, and the rest of the path.
+fn walk<'k>(s: &Session, plan: &Plan, key: &'k str) -> Result<(gt_core::Scope, &'k str), String> {
+    let mut scope = ROOT;
+    let mut rest = key;
+    while let Some(open) = rest.find('[') {
+        let close = rest.find(']').ok_or("no `]`")?;
+        let list = plan.find_key(&rest[..open]).ok_or(format!("`{}`: list not in the plan", key))?;
+        let index: u16 = rest[open + 1..close].parse().map_err(|_| "bad index")?;
+        scope = s.list_item(scope, list, index).ok_or(format!("`{}`: no such item", key))?;
+        rest = &rest[close + 2..];
+    }
+    Ok((scope, rest))
+}
+
 fn check_model(s: &Session, plan: &Plan, v: &Vector) -> Result<(), String> {
+    // `"@absent"`: the key, the item's key or the list is not held; a name the
+    // plan has no id for cannot be held
+    for key in &v.absent {
+        let (scope, rest) = walk(s, plan, key)?;
+        if let Some(k) = plan.find_key(rest) {
+            if let Some(got) = s.get(scope, k) {
+                return Err(format!("`@absent` `{}` = {}", key, text_of(s, got)));
+            }
+            if let Some(n) = s.list(scope, k) {
+                return Err(format!("`@absent` list `{}` has {} items", key, n));
+            }
+        }
+    }
     for (key, want) in &v.model {
         // walk `<list>[<i>].` steps
-        let mut scope = ROOT;
-        let mut rest = key.as_str();
-        while let Some(open) = rest.find('[') {
-            let close = rest.find(']').ok_or("no `]`")?;
-            let list = plan.find_key(&rest[..open]).ok_or(format!("`{}`: list not in the plan", key))?;
-            let index: u16 = rest[open + 1..close].parse().map_err(|_| "bad index")?;
-            scope = s.list_item(scope, list, index).ok_or(format!("`{}`: no such item", key))?;
-            rest = &rest[close + 2..];
-        }
+        let (scope, rest) = walk(s, plan, key)?;
         if rest == "@kind" {
             if s.kind_name(scope) != Some(want.as_str()) {
                 return Err(format!("`{}`: kind {:?}, want {}", key, s.kind_name(scope), want));

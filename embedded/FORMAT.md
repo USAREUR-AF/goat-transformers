@@ -1,6 +1,6 @@
 # Compiled pack format (`.gtp`)
 
-Status: Written and Built. Format version 1. Written by `tools/gen/packc.py`,
+Status: Written and Built. Format version 2. Written by `tools/gen/packc.py`,
 read by `embedded/gt-core`.
 
 A `.gtp` blob holds one plan: a source format, a target format, or both,
@@ -20,7 +20,7 @@ address, in flash or in RAM, with no relocation and no alignment requirement.
 ```
 offset  size  field
 0       4     magic "GTP1"
-4       2     format version (1)
+4       2     format version (2)
 6       2     flags: bit 0 = the blob holds names (sections 12 and 13)
 8       4     total length in bytes
 12      2     number of sections
@@ -39,7 +39,14 @@ One directory entry:
 ```
 
 A reader skips a section id it does not know. A reader refuses a known
-section whose entry size is not the one listed below.
+section whose entry size is not the one listed below, and a blob whose format
+version is not its own: a version 1 reader would read the sentinels of a
+version 2 blob as values.
+
+Version 2 adds the sentinels of the `absent` field option (engine-spec 0.9)
+to the FIELD operation: byte 3, reserved and 0 in version 1, is the number of
+sentinels, and the sentinels follow the field's scale in the pool. Nothing
+else changed.
 
 | Id | Section | Entry | Holds |
 |---|---|---|---|
@@ -96,7 +103,7 @@ so a reader steps over a whole block with one addition.
 0   1  op
 1   1  xf: transform, repeat form, count form or value type, by op
 2   1  flags, by op
-3   1  reserved
+3   1  FIELD: the number of sentinels (0 to 255); other ops: reserved, 0
 4   2  key: a key id, a list id, a presence id or a kind number, by op
 6   2  len: a bit length or a count, by op
 8   4  a: a bit offset (fixed layout), or the number of nested operations
@@ -111,7 +118,7 @@ so a reader steps over a whole block with one addition.
 | 3 | WHEN | `len` bits equal pool[`b`]; fixed layout: at bit `a` |
 | 4 | REQ | a `requires` key in `key`; flags bit 0 = a list |
 | 5 | DEFAULT | key `key` defaults to pool[`b`], of type `xf` |
-| 6 | FIELD | key `key`, `len` bits, transform `xf`, scale at pool[`b`], table `c`; fixed layout: at bit `a`; flags 1 `swap`, 2 `trim`, 4 `optional` |
+| 6 | FIELD | key `key`, `len` bits, transform `xf`, scale at pool[`b`], table `c`; fixed layout: at bit `a`; flags 1 `swap`, 2 `trim`, 4 `optional`; byte 3 sentinels (below) |
 | 7 | ALSO | another key on the bits of the FIELD before it, table `c` |
 | 8 | CONST | write pool[`b`] in `len` bits; fixed layout: at bit `a` |
 | 9 | PAD | `a` bits |
@@ -145,6 +152,33 @@ away from zero. A scale written in the pack as a plain decimal factor has
 denominator 0 and is applied as `v * num + offset` and `(x - offset) / num`.
 `linscale:<maxpos>:<range>` stores `maxpos` and `range` in the first two
 words. These are rulings 1 of engine-spec 0.5 and the 0.2 text, unchanged.
+
+### Sentinels
+
+The `absent` option of a field (engine-spec 0.9) is compiled into its FIELD
+operation. Byte 3 holds the number of sentinels `n`. They are `n` pool words,
+in the order the pack writes them, starting at pool[`b` + 3] for `linscale`,
+`uscale` and `sscale` (after the three words of the scale) and at pool[`b`]
+for every other transform. Each word is the raw unsigned integer below
+2^`len` that the pack names.
+
+- Decode: the field's `len` bits are read as `uint` reads them, then `swap`
+  is applied. When the integer equals one of the sentinels the line gives no
+  value: neither its key nor the keys of its ALSO operations are set, the
+  transform and the table are not run, and the line does not fail (an
+  `ascii` field of NUL bytes matches `absent 0`; ruling 2 of 0.9). A fixed
+  layout field beyond the input under `optional` is absent before any
+  sentinel is compared (ruling 3).
+- Encode: when the key, and in a sequential layout every key of its ALSO
+  operations, has no value and no DEFAULT, the first sentinel is written:
+  its low `len` bits, then `swap`. In a sequential layout it takes the place
+  of the zero bits an absent key writes. In a fixed layout every sentinel of
+  a scope is written before any field with a value, later lines first, so a
+  line with a value wins over a sentinel on the same bits whatever their
+  order, and of two sentinels the earlier line's stays (ruling 16).
+- A sentinel is never content: it does not set a presence bit, an `opt` bit,
+  an `fx` bit or a repeat indicator, and a block that would hold only
+  sentinels is not written (ruling 4).
 
 ### Value tables
 
@@ -192,7 +226,9 @@ The plan is decided when the blob is compiled:
   derivation, is not in the blob. In a sequential layout it is a PAD of the
   same length, because the bits still have to be stepped over.
 - A target field whose key the source, the context and the derivations can
-  never supply is not in the blob, or is a PAD.
+  never supply is not in the blob, or is a PAD. A field with sentinels stays
+  in the blob, on its first key, with no table and the key's "uses its value"
+  flag clear: it always writes its first sentinel.
 - A list the target does not map is read and dropped (GROUP flag bit 0): its
   items take no room in the value store.
 - A derivation is in the blob only when its target is read by the target
@@ -256,6 +292,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `chain` / `fx`, `length ... bytes | bits | plus`, `length ... whole` | Built |
 | context keys | Built; the keys are named when the plan is compiled |
 | `derive`: the functions in the table above | Built |
+| `absent` (0.9): fixed and sequential layout, with `swap`, `optional`, `also`, in kinds and groups | Built, up to 255 sentinels per field |
 
 ## What the compiler refuses
 
@@ -272,9 +309,9 @@ feature refuses a plan that uses it (`bad-plan`).
 | `too-many-wholes`, `whole-in-group` | more than 4 `length ... whole` lines, or one inside a group |
 | `nesting-too-deep` | blocks and groups nested more than 12 deep |
 | `length-plus-range` | a `plus` outside 32 bits |
-| `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds |
+| `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement: the `absent` field option (absent-value sentinels, spec 0.9) |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. No line of a `bits` pack that the reference engine loads is refused this way today; the reason stays for a later addition to the language |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a
