@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_information-residue",
+ "from": "gofs-system-information",
+ "to": "gofs-system-information",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.0\",\"data\":{\"language\":\"s23196\",\"timezone\":\"s98341\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"subscribe_url\":\"s16001\",\"start_date\":\"s28784\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\"}}",
+ "expect": "{\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.0\",\"data\":{\"language\":\"s23196\",\"timezone\":\"s98341\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"subscribe_url\":\"s16001\",\"start_date\":\"s28784\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

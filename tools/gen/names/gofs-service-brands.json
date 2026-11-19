@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "data_service_brands|brand_color|string": "data_service_brands_brand_color",
+  "data_service_brands|brand_id|string": "data_service_brands_brand_id",
+  "data_service_brands|brand_name|string": "data_service_brands_brand_name",
+  "data_service_brands|brand_text_color|string": "data_service_brands_brand_text_color",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.service_brands": "data_service_brands"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-zones-residue",
+ "from": "gofs-zones",
+ "to": "gofs-zones",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1792234541,\"ttl\":10507,\"version\":\"1.0\",\"data\":{\"zones\":{\"type\":\"FeatureCollection\",\"features\":[{\"zone_id\":\"s50853\",\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"bbox\":[1.5],\"geometries\":[{\"type\":\"MultiLineString\",\"bbox\":[42.375]}]},\"bbox\":[-3.25]},{\"zone_id\":\"s60519\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiPolygon\",\"bbox\":[0.75],\"geometries\":[{\"type\":\"LineString\",\"bbox\":[0.75]}]},\"bbox\":[-3.25]}],\"bbox\":[42.375,1.5]}}}",
+ "expect": "{\"last_updated\":1792234541,\"ttl\":10507,\"version\":\"1.0\",\"data\":{\"zones\":{\"type\":\"FeatureCollection\",\"features\":[{\"zone_id\":\"s50853\",\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"bbox\":[1.5],\"geometries\":[{\"type\":\"MultiLineString\",\"bbox\":[42.375]}]},\"bbox\":[-3.25]},{\"zone_id\":\"s60519\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiPolygon\",\"bbox\":[0.75],\"geometries\":[{\"type\":\"LineString\",\"bbox\":[0.75]}]},\"bbox\":[-3.25]}],\"bbox\":[42.375,1.5]}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

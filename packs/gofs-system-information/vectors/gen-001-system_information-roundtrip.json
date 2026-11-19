@@ -1,0 +1,17 @@
+{
+ "name": "gen-system_information-roundtrip",
+ "from": "gofs-system-information",
+ "to": "gofs-system-information",
+ "input": "{\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.0\",\"data\":{\"language\":\"s23196\",\"timezone\":\"s98341\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"subscribe_url\":\"s16001\",\"start_date\":\"s28784\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\"}}",
+ "expect": "{\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.0\",\"data\":{\"language\":\"s23196\",\"timezone\":\"s98341\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"subscribe_url\":\"s16001\",\"start_date\":\"s28784\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\"}}",
+ "model": {
+  "time_ms": "1756334944000",
+  "gofssysteminformation.last_updated": "1756334944",
+  "gofssysteminformation.ttl": "30673",
+  "gofssysteminformation.version": "1.0",
+  "gofssysteminformation.data_language": "s23196",
+  "gofssysteminformation.data_timezone": "s98341",
+  "gofssysteminformation.data_name": "s40667",
+  "gofssysteminformation.data_short_name": "s62031"
+ }
+}

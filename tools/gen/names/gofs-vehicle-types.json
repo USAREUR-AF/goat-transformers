@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "data_vehicle_types|max_capacity|string": "data_vehicle_types_max_capacity",
+  "data_vehicle_types|vehicle_type_id|string": "data_vehicle_types_vehicle_type_id",
+  "data_vehicle_types|wheelchair_boarding|string": "data_vehicle_types_wheelchair_boarding",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.vehicle_types": "data_vehicle_types"
+ }
+}

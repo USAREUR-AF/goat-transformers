@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "data_booking_rules_from_zone_ids|.|string": "data_booking_rules_from_zone_ids_value",
+  "data_booking_rules_to_zone_ids|.|string": "data_booking_rules_to_zone_ids_value",
+  "data_booking_rules|booking_type|float": "data_booking_rules_booking_type",
+  "data_booking_rules|booking_url|string": "data_booking_rules_booking_url",
+  "data_booking_rules|drop_off_message|string": "data_booking_rules_drop_off_message",
+  "data_booking_rules|info_url|string": "data_booking_rules_info_url",
+  "data_booking_rules|message|string": "data_booking_rules_message",
+  "data_booking_rules|phone_number|string": "data_booking_rules_phone_number",
+  "data_booking_rules|pickup_message|string": "data_booking_rules_pickup_message",
+  "data_booking_rules|prior_notice_calendar_id|string": "data_booking_rules_prior_notice_calendar_id",
+  "data_booking_rules|prior_notice_duration_max|float": "data_booking_rules_prior_notice_duration_max",
+  "data_booking_rules|prior_notice_duration_min|float": "data_booking_rules_prior_notice_duration_min",
+  "data_booking_rules|prior_notice_last_day|float": "data_booking_rules_prior_notice_last_day",
+  "data_booking_rules|prior_notice_last_time|string": "data_booking_rules_prior_notice_last_time",
+  "data_booking_rules|prior_notice_start_day|float": "data_booking_rules_prior_notice_start_day",
+  "data_booking_rules|prior_notice_start_time|string": "data_booking_rules_prior_notice_start_time",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_booking_rules|from_zone_ids": "data_booking_rules_from_zone_ids",
+  "data_booking_rules|to_zone_ids": "data_booking_rules_to_zone_ids",
+  "|data.booking_rules": "data_booking_rules"
+ }
+}

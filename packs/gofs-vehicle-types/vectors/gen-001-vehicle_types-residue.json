@@ -1,0 +1,7 @@
+{
+ "name": "gen-vehicle_types-residue",
+ "from": "gofs-vehicle-types",
+ "to": "gofs-vehicle-types",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1750729481,\"ttl\":38650,\"version\":\"1.0\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"max_capacity\":\"s18878\",\"wheelchair_boarding\":\"s79221\"},{\"vehicle_type_id\":\"s84173\",\"max_capacity\":\"s96738\",\"wheelchair_boarding\":\"s30885\"}]}}",
+ "expect": "{\"last_updated\":1750729481,\"ttl\":38650,\"version\":\"1.0\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"max_capacity\":\"s18878\",\"wheelchair_boarding\":\"s79221\"},{\"vehicle_type_id\":\"s84173\",\"max_capacity\":\"s96738\",\"wheelchair_boarding\":\"s30885\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

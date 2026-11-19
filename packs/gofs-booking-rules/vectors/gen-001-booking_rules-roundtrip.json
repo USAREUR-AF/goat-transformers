@@ -1,0 +1,14 @@
+{
+ "name": "gen-booking_rules-roundtrip",
+ "from": "gofs-booking-rules",
+ "to": "gofs-booking-rules",
+ "input": "{\"last_updated\":1799184546,\"ttl\":9838,\"version\":\"1.0\",\"data\":{\"booking_rules\":[{\"from_zone_ids\":[\"s70481\"],\"to_zone_ids\":[\"s52383\"],\"booking_type\":-3.25,\"prior_notice_duration_min\":42.375,\"prior_notice_duration_max\":12.5,\"prior_notice_start_day\":0.75,\"prior_notice_last_day\":12.5,\"prior_notice_start_time\":\"s16621\",\"prior_notice_last_time\":\"s91171\",\"prior_notice_calendar_id\":\"s38115\",\"message\":\"s96060\",\"pickup_message\":\"s89197\",\"drop_off_message\":\"s3609\",\"phone_number\":\"s53065\",\"info_url\":\"s8507\",\"booking_url\":\"s36788\"},{\"from_zone_ids\":[\"s43521\"],\"to_zone_ids\":[\"s50847\"],\"booking_type\":7.0625,\"prior_notice_duration_min\":0.75,\"prior_notice_duration_max\":7.0625,\"prior_notice_start_day\":7.0625,\"prior_notice_last_day\":1.5,\"prior_notice_start_time\":\"s99851\",\"prior_notice_last_time\":\"s60976\",\"prior_notice_calendar_id\":\"s30994\",\"message\":\"s45160\",\"pickup_message\":\"s18665\",\"drop_off_message\":\"s72283\",\"phone_number\":\"s29784\",\"info_url\":\"s29070\",\"booking_url\":\"s68304\"}]}}",
+ "expect": "{\"last_updated\":1799184546,\"ttl\":9838,\"version\":\"1.0\",\"data\":{\"booking_rules\":[{\"from_zone_ids\":[\"s70481\"],\"to_zone_ids\":[\"s52383\"],\"booking_type\":-3.25,\"prior_notice_duration_min\":42.375,\"prior_notice_duration_max\":12.5,\"prior_notice_start_day\":0.75,\"prior_notice_last_day\":12.5,\"prior_notice_start_time\":\"s16621\",\"prior_notice_last_time\":\"s91171\",\"prior_notice_calendar_id\":\"s38115\",\"message\":\"s96060\",\"pickup_message\":\"s89197\",\"drop_off_message\":\"s3609\",\"phone_number\":\"s53065\",\"info_url\":\"s8507\",\"booking_url\":\"s36788\"},{\"from_zone_ids\":[\"s43521\"],\"to_zone_ids\":[\"s50847\"],\"booking_type\":7.0625,\"prior_notice_duration_min\":0.75,\"prior_notice_duration_max\":7.0625,\"prior_notice_start_day\":7.0625,\"prior_notice_last_day\":1.5,\"prior_notice_start_time\":\"s99851\",\"prior_notice_last_time\":\"s60976\",\"prior_notice_calendar_id\":\"s30994\",\"message\":\"s45160\",\"pickup_message\":\"s18665\",\"drop_off_message\":\"s72283\",\"phone_number\":\"s29784\",\"info_url\":\"s29070\",\"booking_url\":\"s68304\"}]}}",
+ "model": {
+  "time_ms": "1799184546000",
+  "gofsbookingrules.last_updated": "1799184546",
+  "gofsbookingrules.ttl": "9838",
+  "gofsbookingrules.version": "1.0",
+  "gofsbookingrules.data_booking_rules.#": "2"
+ }
+}
