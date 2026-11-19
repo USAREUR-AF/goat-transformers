@@ -20,7 +20,7 @@ on this page lists.
 | Integrated Sensor Architecture (ISA) | `protobuf`, `xml` | Built: packs `isa` and `isa-message` (IPL 3.7), `isa-ipl1` (IPL 1.6), `isa-xml` (IPL 4.7) | |
 | Canonical Track v2 (open-billie) | `json` | Built: pack `canonical-track-v2` | USAREUR-AF/open-billie |
 | NATO Vector Graphics (NVG) 1.5 | `xml` | Built: pack `nvg`, point only. Other geometry types are not built | |
-| ASTERIX | `bits`, sequential | 27 categories built from machine-readable definitions (001, 002, 004, 007 to 011, 015 to 021, 023, 025, 032, 034, 048, 062 to 065, 150, 205, 240, 247), one record per block; several records per block and item lists selected by a value are not built | asterix-specs, jASTERIX, asterix4py |
+| ASTERIX | `bits`, sequential | 27 categories built from machine-readable definitions, newest edition each (001, 002, 004, 007 to 011, 015 to 021, 023, 025, 032, 034, 048, 062 to 065, 150, 205, 240, 247), plus CAT021 editions 0.23 and 0.26 (packs `asterix-cat021-ed023`, `asterix-cat021-ed026`); one record per block. Not built: several records per block (needs a group that repeats to the end of the block, and one entity per record); item lists selected by a value (CAT001, CAT007) | asterix-specs, jASTERIX, asterix4py |
 | STANAG 4607 GMTI | `bits` | Not built | pentlandedge/s4607 |
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |

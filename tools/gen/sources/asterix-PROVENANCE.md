@@ -7,7 +7,7 @@
 | commit of the published JSON (branch `gh-pages`): | `64e9ffba964b92a1af3157bc6bdf7852a63bf700` |
 | commit of the sources the JSON was built from (branch `master`, stated by `gitrev.txt` at the commit above) | `5cf64b635424891b9f7e5d8fc51f6531e5790f89` |
 | licence | BSD 3-Clause, copyright (c) 2019 KZPS: the file `LICENSE` at the root of the `master` commit, verbatim below |
-| edition taken | for each category the newest edition `manifest.json` lists |
+| edition taken | for each category the newest edition `manifest.json` lists; also category 021 edition 0.23, 0.26 |
 
 ## Files
 
@@ -33,6 +33,8 @@ Every file is downloaded from `https://raw.githubusercontent.com/zoranbosnjak/as
 | `cat019-1.3.json` | `specs/cat019/cats/cat1.3/definition.json` | `64e9ffba964b` | 78528 | `d38c43565835a15f3159a9f54d1111fe6b85bb30f29c4648aa0d877f83ea80c4` |
 | `cat020-1.11.json` | `specs/cat020/cats/cat1.11/definition.json` | `64e9ffba964b` | 276445 | `6f9876aa5169652869392ddc837145c641e518d0c0da8db0fd066f3e5540b465` |
 | `cat021-2.7.json` | `specs/cat021/cats/cat2.7/definition.json` | `64e9ffba964b` | 498571 | `ce5b83627c01682a3974b3c23d1fab9b404a1f603607ff374aaa0dec95c06197` |
+| `cat021-0.23.json` | `specs/cat021/cats/cat0.23/definition.json` | `64e9ffba964b` | 216018 | `cd18cc2e91b98afa52d5aceb06ae406c338a417a106f86bf251daf1fa523dcf1` |
+| `cat021-0.26.json` | `specs/cat021/cats/cat0.26/definition.json` | `64e9ffba964b` | 226274 | `439e25991cda2c560b9bd76110f0753e178b22c71742e6dc1283bdbc97e40db4` |
 | `cat023-1.3.json` | `specs/cat023/cats/cat1.3/definition.json` | `64e9ffba964b` | 66874 | `6280f7a208d1112923c0b93537410f41d90c9638afb11530df046ef79dd7fb1d` |
 | `cat025-1.6.json` | `specs/cat025/cats/cat1.6/definition.json` | `64e9ffba964b` | 242367 | `c670bb71ed0f0d881bc260788aaff2cf6d2a15686ca534060a9a687d50c3ba4b` |
 | `cat032-1.2.json` | `specs/cat032/cats/cat1.2/definition.json` | `64e9ffba964b` | 136809 | `a5533047994623160fce141166a35825a55d9e791ff7a1b9f0e8d0812fc2d842` |
