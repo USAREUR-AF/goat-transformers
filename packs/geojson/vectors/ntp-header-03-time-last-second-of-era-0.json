@@ -1,0 +1,8 @@
+{
+  "name": "time-last-second-of-era-0",
+  "from": "geojson",
+  "to": "ntp-header",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":2085978495000}}",
+  "expect": "00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffff00000000",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a GeoJSON Feature with time_ms 2085978495000 only: 2036-02-07 06:28:15 UTC, the last whole second of era 0, gives seconds 0xFFFFFFFF; transmit seconds 4294967295, every other octet zero (kind secondary)"
+}

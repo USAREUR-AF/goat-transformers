@@ -1,0 +1,8 @@
+{
+  "name": "time-before-1900-is-transform-encode",
+  "from": "geojson",
+  "to": "ntp-header",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":-2208988801000}}",
+  "expect_error": "transform-encode",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a GeoJSON Feature with time_ms -2208988801000: one second before 1900-01-01 needs seconds -1, which is not unsigned"
+}

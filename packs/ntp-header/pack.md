@@ -3,7 +3,7 @@
 The basic header of an NTP packet, the first 48 octets, from the first octet to
 the end of the transmit timestamp, as IETF RFC 5905 section 7.3 lays it out.
 Public. Written by hand from the RFC; the layout is stated in this repository's
-words. I/O is hex text. Needs engine version 0.5.
+words. I/O is hex text. Needs engine version 0.15 (`uiscale`).
 
 Uses the modules `core` and `inet` (`model/inet.def`).
 
@@ -27,7 +27,7 @@ not written (vector 05).
 | 16-23 | reference timestamp | `inet.ntp_ref_ts_sec`, `inet.ntp_ref_ts_frac` | `uint`, `uint` |
 | 24-31 | origin timestamp | `inet.ntp_org_ts_sec`, `inet.ntp_org_ts_frac` | `uint`, `uint` |
 | 32-39 | receive timestamp | `inet.ntp_rec_ts_sec`, `inet.ntp_rec_ts_frac` | `uint`, `uint` |
-| 40-47 | transmit timestamp | `inet.ntp_xmt_ts_sec`, `inet.ntp_xmt_ts_frac` | `uint`, `uint` |
+| 40-47 | transmit timestamp | `inet.ntp_xmt_ts_sec`, `inet.ntp_xmt_ts_frac`; octets 40-43 also `time_ms` | `uint`, `uint`; `uiscale:1000:-2208988800000` (Shared keys) |
 
 `word_bytes 1`, `bit_order msb`; the fields are big-endian. 1/65536 is exact in
 binary, so a short-format value comes back bit for bit.
@@ -52,14 +52,39 @@ A client request with stratum 0 and a zero reference ID decodes as kind
 
 ## Shared keys
 
-None. No field is bound to `core` or `track`.
+`time_ms`, from the whole seconds of the transmit timestamp (octets 40-43), with
+`uiscale:1000:-2208988800000` (engine-spec 0.15): the seconds times 1000, less
+the 2 208 988 800 000 ms between 1900-01-01 and 1970-01-01. The integer scale is
+exact (no double), so the result is the transmit time in milliseconds since
+1970 UTC, truncated to the whole second. Evidence: RFC 5905 section 7.3 gives
+the transmit timestamp as the time at which the packet left its sender, and
+section 6 counts NTP seconds from 1900-01-01 00:00 UTC. The line for `time_ms`
+comes before the raw `inet.ntp_xmt_ts_sec`, which stays.
 
-The timestamps are not bound to `time_ms`. An NTP timestamp is 32 bits of whole
-seconds since 1900-01-01 00:00 UTC (modulo 2^32: the era is not on the wire) and
-32 bits of fraction. No `bits` transform reads 32.32 fixed-point seconds since
-1900 into integer milliseconds since 1970: `uscale` yields a float, and
-`time_ms` is an integer. The two halves are raw integer keys, so a round trip
-keeps every bit. A transform for it would allow the binding, given an era rule.
+Sub-second part. The fraction (octets 44-47) stays the raw key
+`inet.ntp_xmt_ts_frac` and is not added: decode gives `time_ms` a multiple of
+1000. On a same-format round trip both raw keys are written back, so no bit is
+lost. From another format, encode writes `round((time_ms + 2208988800000) /
+1000)`, rounding half away from zero, so a time with 500 ms or more goes to the
+next second, and the fraction field is written 0 unless the entity carries
+`inet.ntp_xmt_ts_frac`.
+
+Era. The seconds are modulo 2^32 and the era is not on the wire. The binding
+reads era 0, 1900-01-01 to 2036-02-07 06:28:15 UTC; a timestamp of era 1
+decodes to a time in era 0, and a `time_ms` after the end of era 0 does not fit
+32 bits and is `transform-encode`, as is a time before 1900.
+
+Zero. RFC 5905 section 6 gives an all-zero timestamp the meaning of a time not
+known. The binding has no sentinel for it, so seconds 0 decode to
+`time_ms` -2208988800000 (1900-01-01), as in the kiss code
+vector. An `absent 0` (0.9) on the `time_ms` line was not used: 0.9 does not
+say whether the sentinel an absent key writes takes precedence over a present
+raw key on an overlapping later line (ruling 5 of 0.5 speaks of two present
+fields). Candidate for the specification.
+
+The other three timestamps stay raw: they are not the time of this packet
+(reference: when the clock was last set; origin and receive: times of the
+request).
 
 ## Not mapped, and why
 
@@ -73,4 +98,8 @@ keeps every bit. A transform for it would allow the binding, given an era rule.
 a stratum 1 reply, a stratum 2 reply with edge values (leap indicator 3, poll
 -128, precision 127, the largest root delay, the last second of era 0), a kiss
 code reply, a reply with key identifier and digest, a kiss code with a control
-octet (`transform-decode`) and 47 octets (`malformed-wire`).
+octet (`transform-decode`), 47 octets (`malformed-wire`), and the server reply
+to GeoJSON carrying `time_ms`. From GeoJSON (in `packs/geojson/vectors`,
+`ntp-header-*.json`): 500 ms past a second rounds up, 499 ms rounds down, the
+last second of era 0, the NTP epoch, and `transform-encode` one second after
+era 0 and one second before 1900.
