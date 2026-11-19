@@ -31,8 +31,6 @@ on this page lists.
 |---|---|---|
 | Universal Command and Control Interface (UCI) 2.6 | `xml` | Built: pack `uci`, 725 message kinds, generated from the published XML schema |
 | Autonomy Government Reference Architecture (A-GRA) 6.0a | `xml` | Built: pack `a-gra`, 860 message kinds, generated from the published XML schema |
-| UCI 2.5 (the OMS 2.5 message set) | `xml` | Built: pack `uci-2.5`, 722 message kinds, generated from the published XML schema. Open Mission Systems 2.5 names UCI Schema Rev E as its message schema |
-| Agile Mission Suite GRA 14.0 | | No wire schema of its own: its messages are OMS messages, which are UCI |
 | MIM / JC3IEDM | `xml` | Not built |
 
 ## Aviation, maritime and unmanned systems
