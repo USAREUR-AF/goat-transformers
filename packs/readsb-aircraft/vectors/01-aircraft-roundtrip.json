@@ -1,0 +1,19 @@
+{
+  "name": "aircraft-roundtrip",
+  "from": "readsb-aircraft",
+  "to": "readsb-aircraft",
+  "input": "{\"now\":1714566600.5,\"hex\":\"3c6586\",\"type\":\"adsb_icao\",\"flight\":\"DLH4AB  \",\"alt_baro\":37000,\"alt_geom\":37950,\"gs\":450.0,\"ias\":270,\"tas\":462,\"mach\":0.788,\"track\":92.25,\"track_rate\":-0.03,\"roll\":-0.5,\"mag_heading\":89.65,\"true_heading\":92.1,\"baro_rate\":-64,\"geom_rate\":0,\"squawk\":\"1000\",\"emergency\":\"none\",\"category\":\"A3\",\"nav_qnh\":1013.6,\"nav_altitude_mcp\":36992,\"nav_heading\":90.0,\"lat\":50.12345,\"lon\":8.54321,\"nic\":8,\"rc\":186,\"seen_pos\":0.2,\"version\":2,\"nic_baro\":1,\"nac_p\":9,\"nac_v\":1,\"sil\":3,\"sil_type\":\"perhour\",\"gva\":2,\"sda\":2,\"alert\":0,\"spi\":0,\"mlat\":[],\"tisb\":[],\"nav_modes\":[\"autopilot\",\"vnav\"],\"messages\":5123,\"seen\":0.1,\"rssi\":-12.4,\"wd\":271,\"ws\":45,\"oat\":-55,\"tat\":-26,\"lastPosition\":{\"lat\":50.1,\"lon\":8.5,\"nic\":8,\"rc\":186,\"seen_pos\":61.5}}",
+  "expect": "{\"now\":1714566600.5,\"hex\":\"3c6586\",\"type\":\"adsb_icao\",\"flight\":\"DLH4AB  \",\"alt_geom\":37950,\"gs\":450,\"ias\":270,\"tas\":462,\"mach\":0.788,\"track\":92.25,\"track_rate\":-0.03,\"roll\":-0.5,\"mag_heading\":89.65,\"true_heading\":92.1,\"baro_rate\":-64,\"geom_rate\":0,\"squawk\":\"1000\",\"emergency\":\"none\",\"category\":\"A3\",\"nav_qnh\":1013.6,\"nav_altitude_mcp\":36992,\"nav_heading\":90,\"lat\":50.12345,\"lon\":8.54321,\"nic\":8,\"rc\":186,\"seen_pos\":0.2,\"version\":2,\"nic_baro\":1,\"nac_p\":9,\"nac_v\":1,\"sil\":3,\"sil_type\":\"perhour\",\"gva\":2,\"sda\":2,\"messages\":5123,\"seen\":0.1,\"rssi\":-12.4,\"alt_baro\":37000,\"alert\":0,\"spi\":0,\"wd\":271,\"ws\":45,\"oat\":-55,\"tat\":-26,\"lastPosition\":{\"lat\":50.1,\"lon\":8.5,\"nic\":8,\"rc\":186,\"seen_pos\":61.5}}",
+  "model": {
+    "uid": "3c6586",
+    "callsign": "DLH4AB  ",
+    "lat": "50.12345",
+    "lon": "8.54321",
+    "course": "92.25",
+    "readsb.alt_geom": "37950",
+    "readsb.gs": "450",
+    "readsb.now": "1714566600.5"
+  },
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; every documented member the pack maps; alt_baro, alert, spi, wd, ws, oat, tat and the scalars of lastPosition are residue and come back after the mapped members; the arrays mlat, tisb and nav_modes are not carried; 450.0 is written 450, 90.0 is written 90; the trailing spaces of flight are kept"
+}

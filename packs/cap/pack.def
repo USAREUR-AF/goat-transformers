@@ -1,0 +1,88 @@
+# OASIS Common Alerting Protocol (CAP) 1.2 alert message, XML. Public OASIS
+# Standard. One message is one <alert> document in the CAP 1.2 default
+# namespace. Lines follow the element order of the CAP 1.2 schema, and every
+# element of alert, info, resource and area is mapped, so a round trip is exact.
+# pack.md states the evidence for each shared-model key and what is not mapped.
+format  cap
+version 0.1.0
+distribution public
+source  "OASIS Common Alerting Protocol Version 1.2, OASIS Standard, 01 July 2010, http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.pdf; schema http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.xsd"
+uses    cap
+wire    xml
+root    alert
+when    @xmlns  urn:oasis:names:tc:emergency:cap:1.2
+
+kind    alert
+requires cap.identifier cap.sender cap.sent cap.status cap.msg_type cap.scope
+field   cap.identifier   identifier/#text   string
+field   cap.sender       sender/#text       string
+# The text as written comes first: CAP forbids the Z designator that
+# iso8601_ms writes, so encode keeps the sender's form (pack.md).
+field   cap.sent         sent/#text         string
+field   time_ms          sent/#text         iso8601_ms
+field   cap.status       status/#text       string
+field   cap.msg_type     msgType/#text      string
+field   cap.source       source/#text       string
+field   cap.scope        scope/#text        string
+field   cap.restriction  restriction/#text  string
+field   cap.addresses    addresses/#text    string
+group   cap.codes  code
+  field  cap.code  "#text"  string
+end
+field   cap.note         note/#text         string
+field   cap.references   references/#text   string
+field   cap.incidents    incidents/#text    string
+group   cap.infos  info
+  field  cap.language  language/#text  string
+  group  cap.categories  category
+    field  cap.category  "#text"  string
+  end
+  field  cap.event  event/#text  string
+  group  cap.response_types  responseType
+    field  cap.response_type  "#text"  string
+  end
+  field  cap.urgency    urgency/#text    string
+  field  cap.severity   severity/#text   string
+  field  cap.certainty  certainty/#text  string
+  field  cap.audience   audience/#text   string
+  group  cap.event_codes  eventCode
+    field  cap.value_name  valueName/#text  string
+    field  cap.value       value/#text      string
+  end
+  field  cap.effective    effective/#text    string
+  field  cap.onset        onset/#text        string
+  field  cap.expires      expires/#text      string
+  field  cap.sender_name  senderName/#text   string
+  field  cap.headline     headline/#text     string
+  field  cap.description  description/#text  string
+  field  cap.instruction  instruction/#text  string
+  field  cap.web          web/#text          string
+  field  cap.contact      contact/#text      string
+  group  cap.parameters  parameter
+    field  cap.value_name  valueName/#text  string
+    field  cap.value       value/#text      string
+  end
+  group  cap.resources  resource
+    field  cap.resource_desc  resourceDesc/#text  string
+    field  cap.mime_type      mimeType/#text      string
+    field  cap.size           size/#text          int
+    field  cap.uri            uri/#text           string
+    field  cap.deref_uri      derefUri/#text      string
+    field  cap.digest         digest/#text        string
+  end
+  group  cap.areas  area
+    field  cap.area_desc  areaDesc/#text  string
+    group  cap.polygons  polygon
+      field  cap.polygon  "#text"  string
+    end
+    group  cap.circles  circle
+      field  cap.circle  "#text"  string
+    end
+    group  cap.geocodes  geocode
+      field  cap.value_name  valueName/#text  string
+      field  cap.value       value/#text      string
+    end
+    field  cap.altitude  altitude/#text  float
+    field  cap.ceiling   ceiling/#text   float
+  end
+end

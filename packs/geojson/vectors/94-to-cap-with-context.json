@@ -1,0 +1,17 @@
+{
+  "name": "to-cap-with-context",
+  "from": "geojson",
+  "to": "cap",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.4]},\"properties\":{\"time_ms\":1714563900000,\"callsign\":\"X\"}}",
+  "expect": "<alert xmlns=\"urn:oasis:names:tc:emergency:cap:1.2\"><identifier>A9</identifier><sender>sender.example.org</sender><sent>2024-05-01T11:45:00-00:00</sent><status>Test</status><msgType>Alert</msgType><scope>Public</scope></alert>",
+  "context": {
+    "cap.identifier": "A9",
+    "cap.sender": "sender.example.org",
+    "cap.sent": "2024-05-01T11:45:00-00:00",
+    "cap.status": "Test",
+    "cap.msg_type": "Alert",
+    "cap.scope": "Public"
+  },
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "OASIS CAP 1.2 (CAP-v1.2-os) 3.2.1-3.2.4, 3.3.2; CAP-v1.2.xsd; packs/cap/pack.def; the caller supplies the required elements; sent is written from cap.sent, the earlier line, so the CAP form with -00:00 is kept and time_ms is not written as Z"
+}

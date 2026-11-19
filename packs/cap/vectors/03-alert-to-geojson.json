@@ -1,0 +1,12 @@
+{
+  "name": "alert-to-geojson",
+  "from": "cap",
+  "to": "geojson",
+  "input": "<alert xmlns=\"urn:oasis:names:tc:emergency:cap:1.2\"><identifier>A2</identifier><sender>sender.example.org</sender><sent>2024-05-01T14:30:00+02:00</sent><status>Actual</status><msgType>Cancel</msgType><scope>Public</scope></alert>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1714566600000}}",
+  "model": {
+    "time_ms": "1714566600000"
+  },
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "OASIS CAP 1.2 (CAP-v1.2-os) 3.2.1-3.2.4, 3.3.2; CAP-v1.2.xsd; sent carries as time_ms, the offset converted to UTC; the area geometry is text and does not carry, so geometry is null"
+}

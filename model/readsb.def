@@ -1,0 +1,50 @@
+# The readsb module: the members of a readsb / dump1090-fa aircraft object
+# (aircraft.json and the --net-json-port output) in the units the format
+# documents. The derive lines convert the two members whose unit the shared
+# model fixes differently: feet to metres and knots to metres per second, both
+# exact ratios. packs/readsb-aircraft/pack.md states the evidence.
+module        readsb
+version       0.1.0
+distribution  public
+source        "readsb README-json.md, https://github.com/wiedehopf/readsb (GPL-3.0-or-later); dump1090-fa README-json.md, https://github.com/flightaware/dump1090 (GPL-2.0-or-later)"
+# Document (aircraft.json) and per object
+key   now               float  s       "time the file or object was written, seconds since the Unix epoch"
+key   messages          int    -       "Mode S messages: processed since start (file) or received from this aircraft (object)"
+list  aircraft                         "aircraft objects of aircraft.json, in order"
+# Aircraft
+key   type              string -       "source of the current data: adsb_icao, adsb_icao_nt, adsr_icao, tisb_icao, adsc, mlat, other, mode_s, adsb_other, adsr_other, tisb_other, tisb_trackfile"
+key   alt_geom          float  ft      "geometric (GNSS or INS) altitude, feet, above the WGS 84 ellipsoid"
+key   gs                float  kt      "ground speed, knots"
+key   ias               float  kt      "indicated air speed, knots"
+key   tas               float  kt      "true air speed, knots"
+key   mach              float  -       "Mach number"
+key   track_rate        float  deg/s   "rate of change of track"
+key   roll              float  deg     "roll angle, negative to the left"
+key   mag_heading       float  deg     "heading from magnetic north, clockwise"
+key   true_heading      float  deg     "heading from true north, clockwise"
+key   baro_rate         float  ft/min  "rate of change of barometric altitude"
+key   geom_rate         float  ft/min  "rate of change of geometric altitude"
+key   squawk            string -       "Mode A code, four octal digits"
+key   emergency         string -       "emergency or priority status: none, general, lifeguard, minfuel, nordo, unlawful, downed, reserved"
+key   category          string -       "emitter category, A0 to D7"
+key   nav_qnh           float  hPa     "QNH: the pressure setting the aircraft reports"
+key   nav_altitude_mcp  float  -       "selected altitude on the mode control panel; the document states no unit"
+key   nav_altitude_fms  float  -       "selected altitude from the flight management system; the document states no unit"
+key   nav_heading       float  -       "selected heading; the document states no unit and that true or magnetic is not defined"
+key   nic               int    -       "navigation integrity category"
+key   rc                float  m       "radius of containment"
+key   seen_pos          float  s       "seconds before now that the position was last updated"
+key   version           int    -       "ADS-B version number"
+key   nic_baro          int    -       "navigation integrity category for barometric altitude"
+key   nac_p             int    -       "navigation accuracy category for position"
+key   nac_v             int    -       "navigation accuracy category for velocity"
+key   sil               int    -       "source integrity level"
+key   sil_type          string -       "how sil is read: unknown, perhour, persample"
+key   gva               int    -       "geometric vertical accuracy"
+key   sda               int    -       "system design assurance"
+key   seen              float  s       "seconds before now that a message was last received"
+key   rssi              float  dBFS    "recent average signal power"
+derive  hae               scale:3048/10000  readsb.alt_geom
+derive  speed_ms          scale:1852/3600   readsb.gs
+derive  readsb.alt_geom   scale:10000/3048  hae
+derive  readsb.gs         scale:3600/1852   speed_ms
