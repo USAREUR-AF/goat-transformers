@@ -1,0 +1,16 @@
+{
+  "name": "solicit-options-round-trip",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0001000e000100012f1e2d3c0011223344550003000c0000000a00000e10000015180006000400170018000800020000000e0000",
+  "expect": "0001000e000100012f1e2d3c0011223344550003000c0000000a00000e10000015180006000400170018000800020000000e0000",
+  "model": {
+    "dhcpv6.opt1_clientid": "000100012f1e2d3c001122334455",
+    "dhcpv6.opt3_ia_na": "0000000a00000e1000001518",
+    "dhcpv6.opt6_oro": "00170018",
+    "dhcpv6.opt8_elapsed_time": "0",
+    "dhcpv6.opt14_rapid_commit": ""
+  },
+  "source": "constructed",
+  "reference": "RFC 9915 section 21 (option format and the sizes of the integer options); client identifier, IA_NA (its 12 fixed octets as hex), option request for codes 23 and 24, elapsed time 0, rapid commit (empty: the empty string under hex); written by tools/gen/ietf-options-vectors.py"
+}

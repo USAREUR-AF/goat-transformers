@@ -1,0 +1,14 @@
+{
+  "name": "options-written-in-code-order",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0008000200640001000e000100012f1e2d3c001122334455000600020017",
+  "expect": "0001000e000100012f1e2d3c001122334455000600020017000800020064",
+  "model": {
+    "dhcpv6.opt8_elapsed_time": "100",
+    "dhcpv6.opt1_clientid": "000100012f1e2d3c001122334455",
+    "dhcpv6.opt6_oro": "0017"
+  },
+  "source": "constructed",
+  "reference": "RFC 9915 section 21 (option format and the sizes of the integer options); the input's order is not kept: encode writes the mapped options in the order of the pack's lines, ascending code; elapsed time 100 (one second); written by tools/gen/ietf-options-vectors.py"
+}

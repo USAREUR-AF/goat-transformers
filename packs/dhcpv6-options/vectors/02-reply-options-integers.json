@@ -1,0 +1,17 @@
+{
+  "name": "reply-options-integers",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0001000e000100012f1e2d3c0011223344550002000e0001000127a1b2c3aabbccddeeff00070001ff0017001020010db800000000000000000000005300200004000151800052000400000e10",
+  "expect": "0001000e000100012f1e2d3c0011223344550002000e0001000127a1b2c3aabbccddeeff00070001ff0017001020010db800000000000000000000005300200004000151800052000400000e10",
+  "model": {
+    "dhcpv6.opt1_clientid": "000100012f1e2d3c001122334455",
+    "dhcpv6.opt2_serverid": "0001000127a1b2c3aabbccddeeff",
+    "dhcpv6.opt7_preference": "255",
+    "dhcpv6.opt23_dns_servers": "20010db8000000000000000000000053",
+    "dhcpv6.opt32_information_refresh_time": "86400",
+    "dhcpv6.opt82_sol_max_rt": "3600"
+  },
+  "source": "constructed",
+  "reference": "RFC 9915 section 21 (option format and the sizes of the integer options); preference 255 (1 octet), information refresh time 86400 s and SOL_MAX_RT 3600 s (4 octets each), one DNS server address as hex; written by tools/gen/ietf-options-vectors.py"
+}
