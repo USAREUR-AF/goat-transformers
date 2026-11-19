@@ -24,6 +24,7 @@ on this page lists.
 | STANAG 4607 GMTI | `bits` | Not built | pentlandedge/s4607 |
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |
+| Common Alerting Protocol (CAP) 1.2 | `xml` | Built: pack `cap`, every element; area polygons and circles carried as text; `time_ms` from `sent` | |
 
 ## Command and control message catalogs
 
@@ -38,6 +39,7 @@ on this page lists.
 | Format | Wire type | Status | Open-source codecs to compare with |
 |---|---|---|---|
 | ADS-B on Mode S extended squitter | `bits` | Built: pack `adsb`, 29 message kinds of downlink format 17, raw field values. Position needs two paired messages and is outside the pack | pyModeS, dump1090, readsb |
+| readsb / dump1090-fa aircraft JSON | `json` | Built: packs `readsb-aircraft` (one aircraft object; position, height and ground speed derived, course, callsign, ICAO address) and `readsb-aircraft-json` (the whole `aircraft.json` file, as a list; carries nothing to other formats) | readsb, dump1090-fa |
 | NMEA 2000 parameter groups | `bits` | Built: pack `nmea2000`, 473 of the 647 definitions in the CANboat database. `packs/nmea2000/pack.md` lists what the others need | CANboat |
 | MAVLink 2, common message set | `bits` | Built: pack `mavlink2`, 235 message kinds at full payload length. Trimmed payloads and the checksum need framing | pymavlink |
 | ASTM F3411 Remote ID | `bits` | Built: pack `remote-id`, 8 message kinds including the Message Pack | opendroneid-core-c |

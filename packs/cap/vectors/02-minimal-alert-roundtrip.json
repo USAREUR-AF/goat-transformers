@@ -1,0 +1,13 @@
+{
+  "name": "minimal-alert-roundtrip",
+  "from": "cap",
+  "to": "cap",
+  "input": "<alert xmlns=\"urn:oasis:names:tc:emergency:cap:1.2\"><identifier>A2</identifier><sender>sender.example.org</sender><sent>2024-05-01T14:30:00+02:00</sent><status>Actual</status><msgType>Cancel</msgType><scope>Public</scope></alert>",
+  "expect": "<alert xmlns=\"urn:oasis:names:tc:emergency:cap:1.2\"><identifier>A2</identifier><sender>sender.example.org</sender><sent>2024-05-01T14:30:00+02:00</sent><status>Actual</status><msgType>Cancel</msgType><scope>Public</scope></alert>",
+  "model": {
+    "cap.infos.#": "absent",
+    "time_ms": "1714566600000"
+  },
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "OASIS CAP 1.2 (CAP-v1.2-os) 3.2.1-3.2.4, 3.3.2; CAP-v1.2.xsd; only the six required elements of alert; no info"
+}

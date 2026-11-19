@@ -1,0 +1,13 @@
+{
+  "name": "ground-and-non-icao",
+  "from": "readsb-aircraft",
+  "to": "readsb-aircraft",
+  "input": "{\"now\":1714566601,\"hex\":\"~1a2b3c\",\"type\":\"tisb_other\",\"alt_baro\":\"ground\",\"gs\":12.5,\"lat\":50.0,\"lon\":8.5}",
+  "expect": "{\"now\":1714566601,\"hex\":\"~1a2b3c\",\"type\":\"tisb_other\",\"gs\":12.5,\"lat\":50,\"lon\":8.5,\"alt_baro\":\"ground\"}",
+  "model": {
+    "uid": "~1a2b3c",
+    "lat": "50"
+  },
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; alt_baro is the text ground here, so no line maps it and residue keeps it; a non-ICAO address keeps its ~; now 1714566601 is written as an integer value"
+}

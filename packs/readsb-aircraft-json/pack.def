@@ -1,0 +1,54 @@
+# readsb / dump1090-fa aircraft.json, JSON. One message is one aircraft.json
+# document: now, messages and the aircraft array, read as the list
+# readsb.aircraft with one item per aircraft object. Public format
+# documentation (README-json.md of readsb and dump1090-fa). Items carry no
+# residue: members of an aircraft object no line maps are dropped (pack.md).
+format  readsb-aircraft-json
+version 0.1.0
+distribution public
+source  "readsb README-json.md, https://github.com/wiedehopf/readsb commit 88877b96dff8f82cf75a7759f67dccabc85edcfb (GPL-3.0-or-later)"
+source  "dump1090-fa README-json.md, https://github.com/flightaware/dump1090 commit 465e06330372ab0586a6a5063c66b60a8750f2b6 (GPL-2.0-or-later)"
+uses    readsb
+wire    json
+field   readsb.now       now       float
+field   readsb.messages  messages  int
+group   readsb.aircraft  aircraft
+  field   uid                     hex               string
+  field   readsb.type             type              string
+  field   callsign                flight            string
+  field   readsb.alt_geom         alt_geom          float
+  field   readsb.gs               gs                float
+  field   readsb.ias              ias               float
+  field   readsb.tas              tas               float
+  field   readsb.mach             mach              float
+  field   course                  track             float
+  field   readsb.track_rate       track_rate        float
+  field   readsb.roll             roll              float
+  field   readsb.mag_heading      mag_heading       float
+  field   readsb.true_heading     true_heading      float
+  field   readsb.baro_rate        baro_rate         float
+  field   readsb.geom_rate        geom_rate         float
+  field   readsb.squawk           squawk            string
+  field   readsb.emergency        emergency         string
+  field   readsb.category         category          string
+  field   readsb.nav_qnh          nav_qnh           float
+  field   readsb.nav_altitude_mcp nav_altitude_mcp  float
+  field   readsb.nav_altitude_fms nav_altitude_fms  float
+  field   readsb.nav_heading      nav_heading       float
+  field   lat                     lat               float
+  field   lon                     lon               float
+  field   readsb.nic              nic               int
+  field   readsb.rc               rc                float
+  field   readsb.seen_pos         seen_pos          float
+  field   readsb.version          version           int
+  field   readsb.nic_baro         nic_baro          int
+  field   readsb.nac_p            nac_p             int
+  field   readsb.nac_v            nac_v             int
+  field   readsb.sil              sil               int
+  field   readsb.sil_type         sil_type          string
+  field   readsb.gva              gva               int
+  field   readsb.sda              sda               int
+  field   readsb.messages         messages          int
+  field   readsb.seen             seen              float
+  field   readsb.rssi             rssi              float
+end

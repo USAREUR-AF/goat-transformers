@@ -1,0 +1,9 @@
+{
+  "name": "to-cap-without-required-elements-is-no-kind",
+  "from": "geojson",
+  "to": "cap",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.4]},\"properties\":{\"time_ms\":1714563900000,\"callsign\":\"X\"}}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
+  "reference": "OASIS CAP 1.2 (CAP-v1.2-os) 3.2.1-3.2.4, 3.3.2; CAP-v1.2.xsd; packs/cap/pack.def; the alert kind requires identifier, sender, sent, status, msgType and scope, which no geojson line yields"
+}
