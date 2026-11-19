@@ -95,7 +95,8 @@ def edition_tag(ed):
 # generator needs to load its packs and to work out the cross-format vectors. --lib checks these
 # tables against a checkout, and so does the test that reads the repository.
 CORE_KEYS = OrderedDict([
-    ("uid", "string"), ("type", "string"), ("time_ms", "int"), ("lat", "float"),
+    ("uid", "string"), ("type", "string"), ("time_ms", "int"),
+    ("time_error_ms", "float"), ("time_state", "string"), ("lat", "float"),
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
     ("callsign", "string"), ("course", "float"), ("speed_ms", "float"), ("how", "string"),
     ("stale_ms", "int"), ("time_text", "string"), ("stale_text", "string"),
