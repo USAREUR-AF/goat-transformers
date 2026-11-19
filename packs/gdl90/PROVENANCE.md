@@ -47,3 +47,11 @@ Files and functions read:
 
 Stratux's comments name the ICD's page numbers; those references were not
 followed.
+
+The "no value" codes of version 0.2 (`absent`) are those the same functions
+name: `makeOwnshipReport` (altitude 0xFFF, vertical velocity 0x800),
+`makeTrafficReportMsg` (altitude 0xFFF), `makeOwnshipGeometricAltitudeReport`
+(figure of merit 0x7FFF), `makeFFIDMessage` (serial all 0xFF) and
+`makeFFAHRSMessage` (0x7FFF and 0xFFFF). Read again on 2026-11-19 at the same
+commit.
+

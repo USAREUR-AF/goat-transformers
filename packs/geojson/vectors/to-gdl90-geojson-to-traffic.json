@@ -5,5 +5,5 @@
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90,45]},\"properties\":{\"callsign\":\"N9\"}}",
   "expect": "1400000000200000c00000fff00000080000004e3900000000000000",
   "source": "constructed",
-  "reference": "Stratux commit 36b5045, makeTrafficReportMsg; bytes computed by tools/gen/gdl90-vectors.py. 45 and -90 degrees are 2097152 and -4194304 counts; altitude 0xFFF (invalid) and vertical velocity 0x800 (no information) from the pack's defaults; every other field zero."
+  "reference": "Stratux commit 36b5045, makeTrafficReportMsg; bytes computed by tools/gen/gdl90-vectors.py. 45 and -90 degrees are 2097152 and -4194304 counts; the entity has no altitude or vertical velocity, so the first sentinel of each is written: 0xFFF and 0x800 (engine-spec 0.9, Encode); every other field zero."
 }

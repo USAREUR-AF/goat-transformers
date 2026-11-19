@@ -1,0 +1,13 @@
+{
+  "name": "traffic-real-values-are-not-replaced-by-context",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000",
+  "expect": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000",
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeTrafficReportMsg; bytes computed by tools/gen/gdl90-vectors.py. The altitude and vertical velocity hold values, not sentinels; context only fills keys the decode left absent",
+  "context": {
+    "gdl90.alt_raw": "60",
+    "gdl90.vvel_raw": "-3"
+  }
+}

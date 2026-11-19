@@ -1,0 +1,18 @@
+{
+  "name": "airborne-velocity-ground-st1-sentinels-decode-absent",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabcdef9950008cb0007f1bdaae",
+  "expect": "8dabcdef9950008cb000001bdaae",
+  "model": {
+    "@kind": "airborne-velocity-ground-st1",
+    "adsb.df": "17",
+    "adsb.tc": "19",
+    "adsb.icao": "11259375",
+    "adsb.ns_raw": "101",
+    "adsb.ns_sign": "1",
+    "adsb.nac_v": "2"
+  },
+  "source": "constructed",
+  "reference": "pyModeS decoder/bds/bds09.py: an east-west and a vertical-rate magnitude of 0 and a GNSS-baro difference of 127 are not available; the 127 is written back as 0, the first sentinel; keys left absent: adsb.ew_raw, adsb.galt_diff_raw, adsb.vr_raw; parity computed by tools/gen/adsb-vectors.py for the input, carried as it is"
+}

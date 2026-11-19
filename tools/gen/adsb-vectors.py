@@ -223,6 +223,18 @@ PUBLISHED_18 = [
 
 # ---------------------------------------------------------------- messages from the tables
 
+# The raw values pyModeS reads as "not available" (decoder/bds/bds06.py movement 0
+# and above 124; bds09.py velocity, vertical rate and airspeed magnitude 0, the
+# GNSS-baro difference 0 and 127; bds62.py selected altitude and barometric
+# setting 0; bds30.py threat range and bearing 0). The packs name them with
+# `absent` (engine-spec 0.9): decode gives no key, encode of a missing key writes
+# the first of them.
+SENTINELS = {"adsb.ew_raw": (0,), "adsb.ns_raw": (0,), "adsb.vr_raw": (0,), "adsb.airspeed_raw": (0,),
+             "adsb.galt_diff_raw": (0, 127), "adsb.movement_raw": (0, 125, 126, 127),
+             "adsb.sel_alt_raw": (0,), "adsb.baro_setting_raw": (0,),
+             "adsb.threat_range_raw": (0,), "adsb.threat_bearing_raw": (0,)}
+
+
 def kind_lines(df, row):
     """(common fields, kind fields, whens) of a kind row, as (key, offset, length) and
     (offset, length, value): ME bit n (numbered from 1) is message offset 31 + n."""
@@ -237,7 +249,7 @@ def encode(df, row, values):
     common, kind, whens = kind_lines(df, row)
     acc = 0
     for key, off, n in common + kind:
-        v = values.get(key, 0)
+        v = values.get(key, SENTINELS.get(key, (0,))[0])
         assert 0 <= v < (1 << n), (key, v)
         acc = (acc & ~(((1 << n) - 1) << (112 - off - n))) | (v << (112 - off - n))
     for off, n, v in [(0, 5, df)] + whens:          # the when values are written over the fields
@@ -254,7 +266,8 @@ def decode(df, rows, hexmsg):
     for row in rows:
         common, kind, whens = kind_lines(df, row)
         if all(get(off, n) == v for off, n, v in whens):
-            return row[0], {key: get(off, n) for key, off, n in common + kind}
+            got = {key: get(off, n) for key, off, n in common + kind}
+            return row[0], {k: v for k, v in got.items() if v not in SENTINELS.get(k, ())}
     return None, None
 
 
@@ -288,6 +301,7 @@ def roundtrip_vectors(pack_name, df, frame, kind_rows, first_n):
         values["adsb.parity"] = crc24(int(encode(df, row, values), 16) >> 24)
         hexmsg = encode(df, row, values)
         got, entity = decode(df, [r for r in kind_rows], hexmsg)
+        assert not any(values.get(k) in v for k, v in SENTINELS.items()), name
         assert got == name and entity == values, name
         pins = ["adsb.df", "adsb.tc"] + ["adsb." + k for k in requires.split()] + ["adsb.parity"]
         out.append({"name": name + "-roundtrip", "from": pack_name, "to": pack_name, "input": hexmsg,
@@ -325,11 +339,40 @@ def acas_tti3_vector(pack_name, df_first_byte):
                          "decoder/bds/bds30.py; parity computed by " + SCRIPT}
 
 
+def sentinel_vector(pack_name, df, frame, row, values, model_keys, ref):
+    """A message whose fields hold sentinels: decode gives no key for them, and the
+    re-encoded message holds the first sentinel of each (engine-spec 0.9 ruling 7)."""
+    values = dict(frame, **values)
+    values["adsb.parity"] = 0
+    values["adsb.parity"] = crc24(int(encode(df, row, values), 16) >> 24)
+    hexmsg = encode(df, row, values)
+    kind, entity = decode(df, ADSB_KINDS if df == 17 else ADSB18_KINDS, hexmsg)
+    assert kind == row[0]
+    again = dict(entity)
+    expect = encode(df, row, again)
+    missing = sorted(k for k in values if k not in entity)
+    assert missing and all(k in SENTINELS for k in missing), missing
+    return {"name": row[0] + "-sentinels-decode-absent", "from": pack_name, "to": pack_name, "input": hexmsg,
+            "expect": expect, "model": pinned(kind, entity, ["adsb.df", "adsb.tc"] + model_keys),
+            "source": "constructed",
+            "reference": ref + "; keys left absent: %s; parity computed by %s for the input, carried as it is"
+                         % (", ".join(missing), SCRIPT)}
+
+
 def adsb_added():
-    """Vectors 46-49 of adsb: they follow the 45 of the first edition."""
+    """Vectors 46-50 of adsb: they follow the 45 of the first edition."""
     out = roundtrip_vectors("adsb", 17, {"adsb.df": 17, "adsb.ca": 5}, ADSB_KINDS[ADSB_KINDS_V1:], ADSB_KINDS_V1)
     out.append(acas_tti3_vector("adsb", 0x8D))
     assert decode(17, ADSB_KINDS, out[-1]["input"])[0] is None
+    row = next(r for r in ADSB_KINDS if r[0] == "airborne-velocity-ground-st1")
+    out.append(sentinel_vector(
+        "adsb", 17, {"adsb.df": 17, "adsb.ca": 5, "adsb.icao": 0xABCDEF}, row,
+        {"adsb.tc": 19, "adsb.intent_change": 0, "adsb.ifr": 1, "adsb.nac_v": 2, "adsb.ew_sign": 0,
+         "adsb.ew_raw": 0, "adsb.ns_sign": 1, "adsb.ns_raw": 101, "adsb.vr_source": 1, "adsb.vr_sign": 0,
+         "adsb.vr_raw": 0, "adsb.reserved": 0, "adsb.galt_diff_sign": 0, "adsb.galt_diff_raw": 127},
+        ["adsb.icao", "adsb.ns_raw", "adsb.ns_sign", "adsb.nac_v"],
+        "pyModeS decoder/bds/bds09.py: an east-west and a vertical-rate magnitude of 0 and a GNSS-baro "
+        "difference of 127 are not available; the 127 is written back as 0, the first sentinel"))
     return out
 
 
@@ -348,6 +391,14 @@ def adsb18():
                 "reference": "90406B902015A678D4D220AA4BDA with the type code set to 0 and parity recomputed; "
                              "pyModeS decoder/adsb.py has no layout for type code 0"})
     out.append(acas_tti3_vector("adsb-df18", 0x90))
+    row = next(r for r in ADSB18_KINDS if r[0] == "surface-position-tc7")
+    out.append(sentinel_vector(
+        "adsb-df18", 18, {"adsb.df": 18, "adsb.cf": 0, "adsb.icao": 0x3A23FF}, row,
+        {"adsb.tc": 7, "adsb.movement_raw": 126, "adsb.track_valid": 1, "adsb.track_raw": 64,
+         "adsb.time_flag": 0, "adsb.cpr_odd": 1, "adsb.cpr_lat": 12345, "adsb.cpr_lon": 54321},
+        ["adsb.icao", "adsb.track_raw", "adsb.cpr_lat", "adsb.cpr_lon"],
+        "pyModeS decoder/bds/bds06.py: a movement code above 124 is not available; 126 decodes to no "
+        "key and is written back as 0, the first sentinel"))
     for v in out:
         if "expect_error" in v:
             assert decode(18, ADSB18_KINDS, v["input"])[0] is None, v["name"]

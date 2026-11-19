@@ -5,13 +5,8 @@
   "input": "65017fff7fffffffffffffff",
   "expect": "65017fff7fffffffffffffff",
   "model": {
-    "@kind": "foreflight-ahrs",
-    "gdl90.ahrs_roll_tenths": "32767",
-    "gdl90.ahrs_pitch_tenths": "32767",
-    "gdl90.ahrs_heading_raw": "65535",
-    "gdl90.ahrs_ias_raw": "65535",
-    "gdl90.ahrs_tas_raw": "65535"
+    "@kind": "foreflight-ahrs"
   },
   "source": "constructed",
-  "reference": "Stratux commit 36b5045, makeFFAHRSMessage; bytes computed by tools/gen/gdl90-vectors.py. Every value at its invalid marker (0x7FFF, 0xFFFF): carried as the raw integer."
+  "reference": "Stratux commit 36b5045, makeFFAHRSMessage; bytes computed by tools/gen/gdl90-vectors.py. Every value at its invalid marker (0x7FFF, 0xFFFF): no key is set, and each marker is written back."
 }

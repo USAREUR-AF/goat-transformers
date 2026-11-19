@@ -1,0 +1,13 @@
+{
+  "name": "ownship-sentinels-decode-absent-context-fills-them",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "0a01f00000ed297934bf15fff98afa0800ff01537472617475780000",
+  "expect": "0a01f00000ed297934bf1503c98afa0ffdff01537472617475780000",
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeOwnshipReport; bytes computed by tools/gen/gdl90-vectors.py. The altitude 0xFFF and the vertical velocity 0x800 decode to no key, so the context values (altitude code 60 = 500 ft, vertical velocity -3 = -192 ft/min) fill them and are written (engine-spec 0.9 ruling 6)",
+  "context": {
+    "gdl90.alt_raw": "60",
+    "gdl90.vvel_raw": "-3"
+  }
+}

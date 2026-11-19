@@ -1,0 +1,18 @@
+{
+  "name": "surface-position-tc7-sentinels-decode-absent",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "903a23ff3fec046072d431e451fb",
+  "expect": "903a23ff380c046072d431e451fb",
+  "model": {
+    "@kind": "surface-position-tc7",
+    "adsb.df": "18",
+    "adsb.tc": "7",
+    "adsb.icao": "3810303",
+    "adsb.track_raw": "64",
+    "adsb.cpr_lat": "12345",
+    "adsb.cpr_lon": "54321"
+  },
+  "source": "constructed",
+  "reference": "pyModeS decoder/bds/bds06.py: a movement code above 124 is not available; 126 decodes to no key and is written back as 0, the first sentinel; keys left absent: adsb.movement_raw; parity computed by tools/gen/adsb-vectors.py for the input, carried as it is"
+}

@@ -16,13 +16,22 @@ with NUL, or a constant integer. Every expected hex string is pack()'s result.
 Each reference also gives the framed form (flag, escapes, CRC) for reading a
 capture; the pack itself does not hold the framing.
 
-Usage: python3 -I tools/gen/gdl90-vectors.py --out <goat-transformers checkout>
-Every *.json in packs/gdl90/vectors is rewritten.
+Version 0.2 of the pack names the values Stratux states mean "no value" with
+the field option `absent` (engine-spec 0.9). This program holds its own table of
+them (SENTINELS below): a field holding one decodes to no key, and an entity
+without the key writes the sentinel.
+
+Usage: python3 -I tools/gen/gdl90-vectors.py [--out DIR] [--check]
+Writes packs/gdl90/vectors/*.json and, for a vector whose input is another
+format, packs/<that format>/vectors/to-gdl90-<name>.json. With --check nothing is
+written and the exit status is 1 when a committed file differs.
 """
-import argparse
-import glob
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio  # noqa: E402
 
 LATLON = 180.0 / 8388608.0       # degrees per count of a 24-bit position (makeLatLng)
 
@@ -139,11 +148,40 @@ def vec(name, frm, to, inp, expect=None, error=None, model=None, ref=""):
     return v
 
 
+# The "no value" codes Stratux states, as the raw unsigned value of the field:
+# gen_gdl90.go makeOwnshipReport (altitude 0xFFF "invalid altitude", vertical
+# velocity 0x800 "no information available"), traffic.go makeTrafficReportMsg
+# (altitude 0xFFF "Invalid or unavailable"), makeOwnshipGeometricAltitudeReport
+# (figure of merit 0x7FFF "Not available"), makeFFIDMessage (serial all 0xFF,
+# "invalid"), gps.go makeFFAHRSMessage ("Values if invalid": 0x7FFF, 0xFFFF).
+SENTINELS = {"gdl90.alt_raw": 0xFFF, "gdl90.vvel_raw": 0x800, "gdl90.geo_fom_raw": 0x7FFF,
+             "gdl90.ff_serial": (1 << 64) - 1, "gdl90.ahrs_roll_tenths": 0x7FFF,
+             "gdl90.ahrs_pitch_tenths": 0x7FFF, "gdl90.ahrs_heading_raw": 0xFFFF,
+             "gdl90.ahrs_ias_raw": 0xFFFF, "gdl90.ahrs_tas_raw": 0xFFFF}
+# keys a second line reads from the same bits, scaled (the raw key, the function)
+SCALED = {"gdl90.pressure_alt_ft": ("gdl90.alt_raw", lambda v: v * 25 - 1000),
+          "gdl90.vvel_fpm": ("gdl90.vvel_raw", lambda v: v * 64),
+          "gdl90.ahrs_roll_deg": ("gdl90.ahrs_roll_tenths", lambda v: v * 1 / 10),
+          "gdl90.ahrs_pitch_deg": ("gdl90.ahrs_pitch_tenths", lambda v: v * 1 / 10)}
+
+
+def is_sentinel(key, value, n):
+    return key in SENTINELS and (value & ((1 << n) - 1)) == SENTINELS[key]
+
+
 def mdl(kind, values, layout):
+    """The keys decode gives: a field holding its sentinel gives none."""
     m = {"@kind": kind}
-    for key, _f, _n, t in layout:
+    widths = {}
+    for key, _f, n, t in layout:
+        widths[key] = n
         if key in values and not key.startswith("@") and key != "id":
+            if t != "a" and is_sentinel(key, values[key], n):
+                continue
             m[key] = values[key] if t == "a" else str(values[key])
+    for key, (raw, fn) in SCALED.items():
+        if raw in values and raw in widths and not is_sentinel(raw, values[raw], widths[raw]):
+            m[key] = plain(fn(values[raw]))
     return m
 
 
@@ -212,8 +250,8 @@ def build():
     out.append({"name": "geojson-to-traffic", "from": "geojson", "to": "gdl90", "input": g_in,
                 "expect": pack(TRAFFIC, fromg), "source": "constructed",
                 "reference": REF % "makeTrafficReportMsg" + ". 45 and -90 degrees are 2097152 and -4194304 "
-                             "counts; altitude 0xFFF (invalid) and vertical velocity 0x800 (no information) "
-                             "from the pack's defaults; every other field zero."})
+                             "counts; the entity has no altitude or vertical velocity, so the first sentinel of "
+                             "each is written: 0xFFF and 0x800 (engine-spec 0.9, Encode); every other field zero."})
     out.append({"name": "geojson-longitude-180-out-of-range", "from": "geojson", "to": "gdl90",
                 "input": '{"type":"Feature","geometry":{"type":"Point","coordinates":[180,0]},"properties":{}}',
                 "expect_error": "transform-encode", "source": "constructed",
@@ -231,7 +269,8 @@ def build():
     mo.update({"lat": plain(-1234567 * 180 / 8388608), "lon": plain(3456789 * 180 / 8388608)})
     out.append(vec("ownship-roundtrip", "gdl90", "gdl90", o, o, model=mo,
                    ref=REF % "makeOwnshipReport" + ". Self-assigned address F00000 (address type 1), "
-                       "pressure altitude invalid 0xFFF, vertical velocity 0x800 (no information), NIC 8, "
+                       "pressure altitude invalid 0xFFF and vertical velocity 0x800 (no information): no "
+                       "altitude or vertical velocity key, the sentinels written back; NIC 8, "
                        "track byte 255, callsign Stratux. Framed: " + framed(o)))
     # ownship geometric altitude: 5 ft per count, signed
     ga = {"@geo": -100, "gdl90.geo_fom_raw": 10}
@@ -244,21 +283,21 @@ def build():
     ga2 = {"@geo": 32767, "gdl90.geo_fom_raw": 0x7FFF}
     gh2 = pack(GEOALT, ga2)
     out.append(vec("ownship-geometric-altitude-largest", "gdl90", "gdl90", gh2, gh2,
-                   model={"@kind": "ownship-geometric-altitude", "gdl90.geo_alt_ft": "163835",
-                          "gdl90.geo_fom_raw": "32767"},
+                   model={"@kind": "ownship-geometric-altitude", "gdl90.geo_alt_ft": "163835"},
                    ref=REF % "makeOwnshipGeometricAltitudeReport" + ". The largest altitude count and the "
-                       "figure of merit 0x7FFF, which Stratux names not available."))
+                       "figure of merit 0x7FFF, which Stratux names not available: no figure-of-merit key, "
+                       "and the sentinel is written back."))
     # ForeFlight ID
     fid = {"gdl90.ff_version": 1, "gdl90.ff_serial": -1, "gdl90.ff_short_name": "Stratux",
            "gdl90.ff_long_name": "v1.6r1-eu032", "gdl90.ff_reserved": 0, "gdl90.ff_capabilities": 1}
     fv = dict(fid, **{"gdl90.ff_serial": (1 << 64) - 1})
     f = pack(FF_ID, fv)
     out.append(vec("foreflight-id-roundtrip", "gdl90", "gdl90", f, f,
-                   model={"@kind": "foreflight-id", "gdl90.ff_version": "1", "gdl90.ff_serial": "-1",
+                   model={"@kind": "foreflight-id", "gdl90.ff_version": "1",
                           "gdl90.ff_short_name": "Stratux", "gdl90.ff_long_name": "v1.6r1-eu032",
                           "gdl90.ff_capabilities": "1"},
-                   ref=REF % "makeFFIDMessage" + ". Serial all 0xFF (invalid; a 64-bit field with the top "
-                       "bit set reads as -1, engine-spec 0.5 ruling 2), short name Stratux, a long name, "
+                   ref=REF % "makeFFIDMessage" + ". Serial all 0xFF, which Stratux names invalid: no serial "
+                       "key (absent 2^64-1), and the sentinel is written back; short name Stratux, a long name, "
                        "capability bit 0 (geometric altitude is MSL). Framed: " + framed(f)))
     # ForeFlight AHRS
     ah = {"gdl90.ahrs_roll_tenths": -153, "gdl90.ahrs_pitch_tenths": 42, "gdl90.ahrs_heading_raw": 65535,
@@ -266,13 +305,14 @@ def build():
     a = pack(FF_AHRS, ah)
     out.append(vec("foreflight-ahrs-roundtrip", "gdl90", "gdl90", a, a, model=mdl("foreflight-ahrs", ah, FF_AHRS),
                    ref=REF % "makeFFAHRSMessage" + ". Roll -15.3 and pitch 4.2 degrees in tenths, heading "
-                       "and airspeeds 0xFFFF as Stratux always sends them. Framed: " + framed(a)))
+                       "and airspeeds 0xFFFF as Stratux always sends them (no keys); roll and pitch also in "
+                       "degrees. Framed: " + framed(a)))
     ah2 = dict(ah, **{"gdl90.ahrs_roll_tenths": 32767, "gdl90.ahrs_pitch_tenths": 32767})
     a2 = pack(FF_AHRS, ah2)
     out.append(vec("foreflight-ahrs-invalid", "gdl90", "gdl90", a2, a2,
                    model=mdl("foreflight-ahrs", ah2, FF_AHRS),
                    ref=REF % "makeFFAHRSMessage" + ". Every value at its invalid marker (0x7FFF, 0xFFFF): "
-                       "carried as the raw integer."))
+                       "no key is set, and each marker is written back."))
     # errors
     out.append(vec("unknown-message-id-is-no-kind", "gdl90", "gdl90", "1e" + "00" * 27, error="no-kind",
                    ref="ID 0x1E (a pass-through basic report in Stratux, MSGTYPE_BASIC_REPORT) has no kind here"))
@@ -282,36 +322,69 @@ def build():
                    ref="27 bytes of a 28-byte traffic report"))
     out.append(vec("heartbeat-cut-short", "gdl90", "gdl90", h[:12], error="malformed-wire",
                    ref="6 bytes of a 7-byte heartbeat"))
+    # added with version 0.2 of the pack, after the first edition's vectors so those keep their numbers
+    # sentinels (engine-spec 0.9): decode leaves the key absent, so context may supply it
+    # (ruling 6); without the key encode writes the sentinel
+    own_ctx = dict(own, **{"gdl90.alt_raw": 60, "gdl90.vvel_raw": -3})
+    v = vec("ownship-sentinels-decode-absent-context-fills-them", "gdl90", "gdl90", o, pack(OWNSHIP, own_ctx),
+            ref=REF % "makeOwnshipReport" + ". The altitude 0xFFF and the vertical velocity 0x800 decode to no "
+                "key, so the context values (altitude code 60 = 500 ft, vertical velocity -3 = -192 ft/min) "
+                "fill them and are written (engine-spec 0.9 ruling 6)")
+    v["context"] = {"gdl90.alt_raw": "60", "gdl90.vvel_raw": "-3"}
+    out.append(v)
+    v = vec("traffic-real-values-are-not-replaced-by-context", "gdl90", "gdl90", t, t,
+            ref=REF % "makeTrafficReportMsg" + ". The altitude and vertical velocity hold values, not sentinels; "
+                "context only fills keys the decode left absent")
+    v["context"] = {"gdl90.alt_raw": "60", "gdl90.vvel_raw": "-3"}
+    out.append(v)
+    g_alt = '{"type":"Feature","geometry":{"type":"Point","coordinates":[-90,45]},"properties":{}}'
+    v = {"name": "geojson-to-traffic-pressure-altitude-from-context", "from": "geojson", "to": "gdl90",
+         "input": g_alt, "context": {"gdl90.pressure_alt_ft": "4500"},
+         "expect": pack(TRAFFIC, {"@lat": 2097152, "@lon": -4194304, "gdl90.alt_raw": 220,
+                                  "gdl90.vvel_raw": -2048}),
+         "source": "constructed",
+         "reference": REF % "makeTrafficReportMsg" + ". 4500 ft in gdl90.pressure_alt_ft encodes as "
+                      "(4500 + 1000) / 25 = 220 through the second line on the altitude bits; the vertical "
+                      "velocity is absent and writes its sentinel 0x800"}
+    out.append(v)
+    ah3 = {"gdl90.ahrs_roll_tenths": 32767, "gdl90.ahrs_pitch_tenths": -450, "gdl90.ahrs_heading_raw": 65535,
+           "gdl90.ahrs_ias_raw": 65535, "gdl90.ahrs_tas_raw": 65535}
+    a3 = pack(FF_AHRS, ah3)
+    v = vec("foreflight-ahrs-roll-sentinel-context-fills-degrees", "gdl90", "gdl90", a3,
+            pack(FF_AHRS, dict(ah3, **{"gdl90.ahrs_roll_tenths": 125})),
+            model=mdl("foreflight-ahrs", ah3, FF_AHRS),
+            ref=REF % "makeFFAHRSMessage" + ". Roll 0x7FFF (invalid) decodes to no roll key, in tenths or in "
+                "degrees; the context gives 12.5 degrees, written as 125 tenths through the degrees line")
+    v["context"] = {"gdl90.ahrs_roll_deg": "12.5"}
+    out.append(v)
     return out
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", required=True)
-    a = ap.parse_args()
-    vdir = os.path.join(a.out, "packs", "gdl90", "vectors")
-    os.makedirs(vdir, exist_ok=True)
-    for old in glob.glob(os.path.join(vdir, "*.json")):
-        os.remove(old)
+def build_files(out):
     vecs = build()
     assert len({v["name"] for v in vecs}) == len(vecs)
     # A vector lives in the pack that owns its input (spec/vector-format.md):
     # the ones from another format go to that pack as to-gdl90-<name>.json.
-    for d in glob.glob(os.path.join(a.out, "packs", "*", "vectors")):
-        for old in glob.glob(os.path.join(d, "to-gdl90-*.json")):
-            os.remove(old)
+    keep = {}
     for i, v in enumerate(vecs, 1):
         if v["from"] == "gdl90":
-            path = os.path.join(vdir, "%02d-%s.json" % (i, v["name"]))
+            rel = "packs/gdl90/vectors/%02d-%s.json" % (i, v["name"])
         else:
-            odir = os.path.join(a.out, "packs", v["from"], "vectors")
-            os.makedirs(odir, exist_ok=True)
-            path = os.path.join(odir, "to-gdl90-%s.json" % v["name"])
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump(v, fh, indent=2, ensure_ascii=False)
-            fh.write("\n")
-    print("gdl90: %d vectors" % len(vecs))
+            rel = "packs/%s/vectors/to-gdl90-%s.json" % (v["from"], v["name"])
+        out.write(rel, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
+        d, name = rel.rsplit("/", 1)
+        keep.setdefault(d, set()).add(name)
+    for d in ["packs/gdl90/vectors"] + sorted({k for k in keep if k != "packs/gdl90/vectors"}):
+        for old in out.listdir(d):
+            ours = d == "packs/gdl90/vectors" or old.startswith("to-gdl90-")
+            if ours and old not in keep.get(d, set()):
+                out.remove(d + "/" + old)
+    return {"gdl90": len(vecs)}
+
+
+def main(argv=None):
+    return genio.vector_main("gdl90-vectors.py", __doc__, build_files, argv)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

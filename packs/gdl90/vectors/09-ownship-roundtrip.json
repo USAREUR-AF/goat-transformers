@@ -9,14 +9,12 @@
     "gdl90.alert_status": "0",
     "gdl90.address_type": "1",
     "gdl90.address": "15728640",
-    "gdl90.alt_raw": "4095",
     "gdl90.airborne": "1",
     "gdl90.extrapolated": "0",
     "gdl90.track_type": "1",
     "gdl90.nic": "8",
     "gdl90.nacp": "10",
     "gdl90.speed_kt": "4000",
-    "gdl90.vvel_raw": "-2048",
     "gdl90.track_raw": "255",
     "gdl90.emitter_category": "1",
     "callsign": "Stratux",
@@ -26,5 +24,5 @@
     "lon": "74.174644947052"
   },
   "source": "constructed",
-  "reference": "Stratux commit 36b5045, makeOwnshipReport; bytes computed by tools/gen/gdl90-vectors.py. Self-assigned address F00000 (address type 1), pressure altitude invalid 0xFFF, vertical velocity 0x800 (no information), NIC 8, track byte 255, callsign Stratux. Framed: 7e0a01f00000ed297934bf15fff98afa0800ff0153747261747578000069ea7e"
+  "reference": "Stratux commit 36b5045, makeOwnshipReport; bytes computed by tools/gen/gdl90-vectors.py. Self-assigned address F00000 (address type 1), pressure altitude invalid 0xFFF and vertical velocity 0x800 (no information): no altitude or vertical velocity key, the sentinels written back; NIC 8, track byte 255, callsign Stratux. Framed: 7e0a01f00000ed297934bf15fff98afa0800ff0153747261747578000069ea7e"
 }

@@ -1,0 +1,17 @@
+{
+  "name": "foreflight-ahrs-roll-sentinel-context-fills-degrees",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "65017ffffe3effffffffffff",
+  "expect": "6501007dfe3effffffffffff",
+  "model": {
+    "@kind": "foreflight-ahrs",
+    "gdl90.ahrs_pitch_tenths": "-450",
+    "gdl90.ahrs_pitch_deg": "-45"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeFFAHRSMessage; bytes computed by tools/gen/gdl90-vectors.py. Roll 0x7FFF (invalid) decodes to no roll key, in tenths or in degrees; the context gives 12.5 degrees, written as 125 tenths through the degrees line",
+  "context": {
+    "gdl90.ahrs_roll_deg": "12.5"
+  }
+}
