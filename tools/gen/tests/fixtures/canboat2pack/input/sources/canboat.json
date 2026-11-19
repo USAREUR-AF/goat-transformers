@@ -88,6 +88,24 @@
       {"Order": 2, "Id": "altitude", "Name": "Altitude", "Description": "Height above the WGS84 ellipsoid", "BitLength": 32, "BitOffset": 16, "Resolution": 0.01, "Signed": true, "Unit": "m", "RangeMin": -21474836.46, "RangeMax": 21474836.44, "FieldType": "NUMBER", "PhysicalQuantity": "DISTANCE"},
       {"Order": 3, "Id": "userId", "Name": "User ID", "BitLength": 16, "BitOffset": 48, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"}
      ]},
+    {"PGN": 65309, "Id": "labCalibrationPairs", "Description": "Lab: calibration pairs", "Complete": true, "MinLength": 3,
+     "RepeatingFieldSet1Size": 2, "RepeatingFieldSet1StartField": 5, "RepeatingFieldSet1CountField": 4,
+     "Fields": [
+      {"Order": 1, "Id": "manufacturerCode", "Name": "Manufacturer Code", "BitLength": 11, "BitOffset": 0, "Match": 999, "Signed": false, "FieldType": "LOOKUP", "LookupEnumeration": "MANUFACTURER_CODE"},
+      {"Order": 2, "Id": "reserved", "Name": "Reserved", "BitLength": 2, "BitOffset": 11, "FieldType": "RESERVED"},
+      {"Order": 3, "Id": "industryCode", "Name": "Industry Code", "BitLength": 3, "BitOffset": 13, "Match": 4, "Signed": false, "FieldType": "LOOKUP", "LookupEnumeration": "INDUSTRY_CODE"},
+      {"Order": 4, "Id": "pairs", "Name": "Pairs", "BitLength": 8, "BitOffset": 16, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 5, "Id": "inputFrequency", "Name": "Input Frequency", "BitLength": 16, "BitOffset": 24, "Resolution": 0.1, "Signed": false, "Unit": "Hz", "FieldType": "NUMBER"},
+      {"Order": 6, "Id": "outputSpeed", "Name": "Output Speed", "BitLength": 16, "BitOffset": 40, "Resolution": 0.01, "Signed": false, "Unit": "m/s", "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 65310, "Id": "labRouteLimits", "Description": "Lab: route limits", "Complete": true, "MinLength": 4,
+     "RepeatingFieldSet1Size": 1, "RepeatingFieldSet1StartField": 4, "RepeatingFieldSet1CountField": 2,
+     "Fields": [
+      {"Order": 1, "Id": "startIndex", "Name": "Start Index", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "limits", "Name": "Limits", "BitLength": 8, "BitOffset": 8, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 3, "Id": "routeId", "Name": "Route Id", "BitLength": 16, "BitOffset": 16, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 4, "Id": "limit", "Name": "Limit", "BitLength": 16, "BitOffset": 32, "Resolution": 1, "Signed": false, "Unit": "m", "FieldType": "NUMBER"}
+     ]},
     {"PGN": 129025, "Id": "positionRapidUpdate", "Description": "Position, Rapid Update", "Complete": true, "Length": 8,
      "Fields": [
       {"Order": 1, "Id": "latitude", "Name": "Latitude", "BitLength": 32, "BitOffset": 0, "Resolution": 1e-07, "Signed": true, "Unit": "deg", "RangeMin": -90, "RangeMax": 90, "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LATITUDE"},
@@ -101,6 +119,18 @@
       {"Order": 4, "Id": "cog", "Name": "COG", "BitLength": 16, "BitOffset": 16, "Resolution": 0.0001, "Signed": false, "Unit": "rad", "RangeMin": 0, "RangeMax": 6.2831852, "FieldType": "NUMBER", "PhysicalQuantity": "ANGLE"},
       {"Order": 5, "Id": "sog", "Name": "SOG", "BitLength": 16, "BitOffset": 32, "Resolution": 0.01, "Signed": false, "Unit": "m/s", "RangeMin": 0, "RangeMax": 655.32, "FieldType": "NUMBER", "PhysicalQuantity": "SPEED"},
       {"Order": 6, "Id": "reserved6", "Name": "Reserved", "BitLength": 16, "BitOffset": 48, "FieldType": "RESERVED"}
+     ]},
+    {"PGN": 129029, "Id": "gnssPositionData", "Description": "GNSS Position Data", "Complete": true, "MinLength": 26,
+     "RepeatingFieldSet1Size": 3, "RepeatingFieldSet1StartField": 6, "RepeatingFieldSet1CountField": 5,
+     "Fields": [
+      {"Order": 1, "Id": "sid", "Name": "SID", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "latitude", "Name": "Latitude", "BitLength": 64, "BitOffset": 8, "Resolution": 1e-16, "Signed": true, "Unit": "deg", "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LATITUDE"},
+      {"Order": 3, "Id": "longitude", "Name": "Longitude", "BitLength": 64, "BitOffset": 72, "Resolution": 1e-16, "Signed": true, "Unit": "deg", "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LONGITUDE"},
+      {"Order": 4, "Id": "altitude", "Name": "Altitude", "BitLength": 64, "BitOffset": 136, "Resolution": 1e-06, "Signed": true, "Unit": "m", "Description": "Altitude referenced to WGS-84", "FieldType": "NUMBER"},
+      {"Order": 5, "Id": "referenceStations", "Name": "Reference Stations", "BitLength": 8, "BitOffset": 200, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 6, "Id": "referenceStationType", "Name": "Reference Station Type", "BitLength": 4, "BitOffset": 208, "Signed": false, "FieldType": "LOOKUP", "LookupEnumeration": "GNS"},
+      {"Order": 7, "Id": "referenceStationId", "Name": "Reference Station ID", "BitLength": 12, "BitOffset": 212, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 8, "Id": "ageOfDgnssCorrections", "Name": "Age of DGNSS Corrections", "BitLength": 16, "BitOffset": 224, "Resolution": 0.01, "Signed": false, "Unit": "s", "FieldType": "DURATION"}
      ]},
     {"PGN": 129038, "Id": "aisClassAPositionReport", "Description": "AIS Class A Position Report", "Complete": true, "Length": 16,
      "Fields": [

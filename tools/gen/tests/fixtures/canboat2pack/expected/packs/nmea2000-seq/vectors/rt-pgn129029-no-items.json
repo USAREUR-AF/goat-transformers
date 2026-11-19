@@ -1,0 +1,15 @@
+{
+  "name": "pgn129029-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05f801e799387452000000008769c159000000008a4ca6a8ffffffff00",
+  "expect": "05f801e799387452000000008769c159000000008a4ca6a8ffffffff00",
+  "model": {
+    "@kind": "pgn129029",
+    "n2k.sid": "231",
+    "lat": "0.0000001383348377",
+    "lon": "0.0000001505847687",
+    "n2k.altitude": "-1465.496438",
+    "n2k.pgn129029_reference_stations.#": "0"
+  }
+}

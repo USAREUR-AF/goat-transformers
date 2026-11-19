@@ -18,6 +18,6 @@ GT="$2"
 GEN="$(cd "$(dirname "$0")" && pwd)"
 SHA=d82b7fbc64cd1ed97ccbc6926ff44bf29e0dbe37
 
-python3 -I "$GEN/canboat2pack.py" --out "$ROOT" --commit "$SHA" --core-def "$GT/model/core.def"
+python3 -I "$GEN/canboat2pack.py" --out "$ROOT" --commit "$SHA" --fetch --core-def "$GT/model/core.def"
 echo "3f5dc2c725ebcd7bb953ace431f9a7c057481762d72a509e27e91d3008d6d2bb  $ROOT/sources/canboat.json" | sha256sum -c -
 echo "ec0704d2efcacadb11d846ed2c353c57625756647a2dd735094682a3f7bf7721  $ROOT/sources/LICENSE" | sha256sum -c -
