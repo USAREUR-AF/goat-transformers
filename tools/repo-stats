@@ -23,8 +23,14 @@ How each number is counted:
   wire type          a distinct value of the `wire` line of a pack.def
   engine             a directory under engines/
 
-It reads files and runs nothing. Standard library only.
+What it guarantees: every number is counted from the files of the tree each
+time it runs; nothing is cached and nothing is typed in. It reads files and
+runs nothing. Standard library only.
+
+tools/tests/test_repo_stats.py compares README.md with this output, so a count
+in README.md that no longer matches the tree fails the tests.
 """
+import argparse
 import json
 import os
 import sys
@@ -39,11 +45,14 @@ WASM_BUILDS = [
 
 
 def is_synthetic(name):
+    """A pack that exercises the specification and stands for no real format."""
     return name.startswith("conformance") or name.startswith("demo-")
 
 
 def read_pack(path):
-    """-> (format, wire, kinds, first source) from one pack.def."""
+    """-> (format, wire, kinds, first source) from one pack.def. Only a line
+    that starts in the first column is read; a pack with no `kind` line is one
+    message layout and counts as one kind."""
     fmt, wire, kinds, source = None, None, 0, ""
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -56,21 +65,29 @@ def read_pack(path):
                 wire = tok[1]
             elif tok[0] == "kind":
                 kinds += 1
-            elif tok[0] == "source" and not source:
+            elif tok[0] == "source" and not source and len(tok) > 1:
                 source = line.split(None, 1)[1].strip().strip('"')
     return fmt, wire, max(kinds, 1), source
 
 
 def count_json(directory):
+    """The number of .json files directly in `directory`; 0 when it is absent."""
     if not os.path.isdir(directory):
         return 0
     return sum(1 for n in os.listdir(directory) if n.endswith(".json"))
 
 
-def collect():
-    packs_dir = os.path.join(REPO, "packs")
+def subdirectories(directory):
+    """The names of the directories directly in `directory`, sorted."""
+    if not os.path.isdir(directory):
+        return []
+    return sorted(n for n in os.listdir(directory) if os.path.isdir(os.path.join(directory, n)))
+
+
+def read_formats(packs_dir):
+    """One row for each directory of `packs_dir` that holds a pack.def."""
     formats = []
-    for name in sorted(os.listdir(packs_dir)):
+    for name in subdirectories(packs_dir):
         pdef = os.path.join(packs_dir, name, "pack.def")
         if not os.path.isfile(pdef):
             continue
@@ -84,32 +101,36 @@ def collect():
             "synthetic": is_synthetic(name),
             "source": source,
         })
+    return formats
 
+
+def count_model(model_dir):
+    """-> (modules, keys, lists): the .def files of `model_dir` and their
+    `key` and `list` lines."""
     modules, keys, lists = 0, 0, 0
-    model_dir = os.path.join(REPO, "model")
-    for name in sorted(os.listdir(model_dir)):
+    for name in sorted(os.listdir(model_dir)) if os.path.isdir(model_dir) else []:
         if not name.endswith(".def"):
             continue
         modules += 1
         with open(os.path.join(model_dir, name), encoding="utf-8") as fh:
             for line in fh:
                 tok = line.split()
-                if not tok:
-                    continue
-                if tok[0] == "key":
+                if tok and tok[0] == "key":
                     keys += 1
-                elif tok[0] == "list":
+                elif tok and tok[0] == "list":
                     lists += 1
+    return modules, keys, lists
 
-    engines_dir = os.path.join(REPO, "engines")
-    engines = sorted(n for n in os.listdir(engines_dir)
-                     if os.path.isdir(os.path.join(engines_dir, n)))
 
+def collect(root=REPO):
+    """Count the tree at `root`. -> (one row per pack, the totals)"""
+    packs_dir = os.path.join(root, "packs")
+    formats = read_formats(packs_dir)
+    modules, keys, lists = count_model(os.path.join(root, "model"))
     real = [f for f in formats if not f["synthetic"]]
-    synthetic = [f for f in formats if f["synthetic"]]
     totals = {
         "formats": len(real),
-        "synthetic_formats": len(synthetic),
+        "synthetic_formats": len(formats) - len(real),
         "packs": len(formats),
         "message_kinds": sum(f["kinds"] for f in real),
         "model_modules": modules,
@@ -118,29 +139,26 @@ def collect():
         "conversion_vectors": sum(f["vectors"] for f in formats),
         "load_vectors": count_json(os.path.join(packs_dir, "conformance", "load-vectors")),
         "wire_types": sorted({f["wire"] for f in formats if f["wire"]}),
-        "engines": engines,
+        "engines": subdirectories(os.path.join(root, "engines")),
     }
     for label, rel in WASM_BUILDS:
-        path = os.path.join(REPO, rel)
+        path = os.path.join(root, *rel.split("/"))
         if os.path.isfile(path):
             totals["wasm_%s_bytes" % label] = os.path.getsize(path)
     return formats, totals
 
 
-def main(argv):
-    formats, t = collect()
-    if "--json" in argv:
-        print(json.dumps(t, indent=2))
-        return 0
-    if "--formats" in argv:
-        print("| Pack | Wire | Message kinds | Vectors | Written from |")
-        print("|---|---|---:|---:|---|")
-        for f in formats:
-            if f["synthetic"]:
-                continue
+def print_format_rows(formats):
+    """One Markdown table row for each format that is not synthetic."""
+    print("| Pack | Wire | Message kinds | Vectors | Written from |")
+    print("|---|---|---:|---:|---|")
+    for f in formats:
+        if not f["synthetic"]:
             print("| `%s` | `%s` | %s | %s | %s |" % (
                 f["pack"], f["wire"], format(f["kinds"], ","), format(f["vectors"], ","), f["source"]))
-        return 0
+
+
+def print_totals(t):
     rows = [
         ("formats", format(t["formats"], ",")),
         ("synthetic formats", format(t["synthetic_formats"], ",")),
@@ -154,17 +172,37 @@ def main(argv):
         ("wire types", "%d (%s)" % (len(t["wire_types"]), ", ".join(t["wire_types"]))),
         ("engines", "%d (%s)" % (len(t["engines"]), ", ".join(t["engines"]))),
     ]
-    for label, _rel in WASM_BUILDS:
-        key = "wasm_%s_bytes" % label
-        if key in t:
-            rows.append(("wasm module, %s build" % label, "%s bytes" % format(t[key], ",")))
-    if not any(k.startswith("wasm_") for k in t):
+    built = [(label, "wasm_%s_bytes" % label) for label, _ in WASM_BUILDS if "wasm_%s_bytes" % label in t]
+    for label, key in built:
+        rows.append(("wasm module, %s build" % label, "%s bytes" % format(t[key], ",")))
+    if not built:
         rows.append(("wasm module", "not built (bindings/README.md states how)"))
-    width = max(len(r[0]) for r in rows)
+    width = max(len(label) for label, _ in rows)
     for label, value in rows:
         print("%-*s  %s" % (width, label, value))
+
+
+def main(argv=None, root=REPO):
+    """Print the counts of the tree at `root` (the tree this tool is in).
+    -> the exit status"""
+    ap = argparse.ArgumentParser(
+        prog="repo-stats",
+        description="Count what this repository holds: the numbers README.md quotes, counted from the tree.",
+    )
+    ap.add_argument("--formats", action="store_true",
+                    help="print one Markdown table row per format that is not synthetic, instead of the totals")
+    ap.add_argument("--json", action="store_true",
+                    help="print the totals as JSON; with --formats too, this is what is printed")
+    args = ap.parse_args(argv)
+    formats, totals = collect(root)
+    if args.json:
+        print(json.dumps(totals, indent=2))
+    elif args.formats:
+        print_format_rows(formats)
+    else:
+        print_totals(totals)
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main())

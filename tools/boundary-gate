@@ -4,39 +4,72 @@
 This repository holds the engines, the specification, the public model modules
 and the packs written from public standards. Packs and model modules written
 from distribution-controlled or vendor documents live in a private overlay
-repository (docs/boundary.md). This gate checks the tracked tree and exits
-non-zero on any finding. A file it cannot read is a finding.
+repository (docs/boundary.md). This gate reads every file git would commit and
+exits 1 on any finding. A file it cannot read is a finding, and so is a tree
+with no files.
 
 Checks:
   marking     every model/*.def and packs/*/pack.def says `distribution public`
-              and has at least one `source` line
+              exactly once and has at least one `source` line
   closure     every `uses` names a module in model/, and every mapped key is
               declared by its module
-  filetype    every tracked file has an allowed extension (no documents,
-              spreadsheets, archives or binaries)
-  phrase      no tracked text carries a handling marking of a restricted
-              document (distribution statements B to F, export-control and
-              proprietary banners)
-  hygiene     no tracked text carries a local absolute path under a home
-              directory, the name of a private organization, or an email
-              address
-  needle      with --needles FILE: no tracked text contains any line of FILE
-              (case-insensitive, whole words). The private overlay generates FILE from its
-              own field names; it is never committed here.
+  filetype    every file has an allowed extension (no documents, spreadsheets,
+              archives or binaries), has a UTF-8 name, is UTF-8 text with no
+              NUL byte, and an .svg holds no script, no embedded data and no
+              reference outside the file
+  phrase      no text and no file path carries a handling marking of a
+              restricted document (distribution statements B to F,
+              export-control and proprietary banners)
+  hygiene     no text carries a local absolute path under a home directory,
+              the name of a private organization, or an email address
+  needle      with --needles FILE: no text and no file path contains a line of
+              FILE. The private overlay generates FILE from its own field
+              names; it is never committed here.
+
+How text is matched (phrase and needle):
+  - Case is ignored, Unicode is compared in one normal form (NFKC, case
+    folded), and JSON `\\uXXXX` escapes are read as the characters they name.
+  - A needle is a sequence of words: runs of letters and digits. A needle of
+    several words matches the same words in the same order when what stands
+    between two of them is spaces and tabs with at most one line break, the
+    next line perhaps beginning with the comment or quote mark of a wrapped
+    line (`#`, `//`, `*`, `>`, `;`, `%`, `|`); or exactly what stands between
+    those two words in the needle itself. So `track number` matches `track
+    number` and the two words on either side of a line break, and does not
+    match `track_number` or `track-number`; a needle written `track_number`
+    matches `track_number`.
+  - A needle matches whole words only. An identifier is also read as its
+    parts, so the needle `track` matches inside `trackNumber`, `TrackNumber`
+    and `track_number`, and never inside `tracking`.
+  - In scripts written without spaces between words, each character is a word,
+    so a needle matches anywhere in a run of them.
+  - The words of a marking may be separated by spaces, hyphens, underscores
+    and line breaks, and by the comment or quote mark that starts a wrapped
+    line.
+
+The needle file holds one needle per line; blank lines are ignored. A needle
+shorter than 4 characters, or with no letter or digit, is a finding that names
+its line number. No output ever holds the text of a needle: a finding names
+the needle's line number in FILE and its length.
+
+A line may carry `boundary-allow: <reason>` to exempt it from the phrase and
+hygiene checks only. A marking that spans lines is exempt only when every line
+it touches carries the tag. Nothing exempts a needle.
 
 Usage:
   tools/boundary-gate [--root DIR] [--needles FILE] [--require-needles]
 
---require-needles makes a missing --needles a failure. The pre-push hook uses
-it, so a push from a clone that cannot build the needle list is refused.
-A line may carry `boundary-allow: <reason>` to exempt it from the phrase and
-hygiene checks only; nothing exempts a needle.
+Exit status: 0 no finding, 1 one or more findings, 2 a wrong command line.
 """
 import argparse
+import bisect
+import collections
+import functools
 import os
 import re
 import subprocess
 import sys
+import unicodedata
 
 ALLOWED_EXT = {
     "md", "def", "json", "txt", "rs", "toml", "lock", "go", "mod", "sum", "py",
@@ -53,71 +86,130 @@ ALLOWED_BARE = {
     "boundary-gate", "repo-stats", "run_tests", "pre-push", "CODEOWNERS", "CODE_OF_CONDUCT",
     "CONTRIBUTING", "SECURITY", "INTENT",
 }
+# Directories the walk skips when the tree is not a git checkout.
+BUILD_DIRS = {".git", "target", "zig-out", ".zig-cache", "zig-cache", "__pycache__", "build", "_build", "ebin"}
 
-# Built by concatenation so this file does not match its own patterns.
-_D = "distribution" + r"\s+" + "statement"
-PHRASES = [
-    (_D + r"\s*:?\s*[b-f]\b", "restricted distribution statement"),
-    (r"\bc" + r"ui\b", "controlled-unclassified banner"),
-    (r"\bit" + r"ar\b", "arms-regulation marking"),
-    ("export" + r"[\s-]+" + "controlled", "export-control marking"),
-    ("arms export" + r"\s+" + "control act", "export-control warning"),
-    (r"\bno" + r"forn\b", "release marking"),
-    (r"\bfo" + r"uo\b", "handling marking"),
-    ("proprietary" + r"\s+" + "information", "proprietary banner"),
-    ("company" + r"\s+" + "confidential", "proprietary banner"),
-]
-PHRASES = [(re.compile(p, re.I), why) for p, why in PHRASES]
 ALLOW_TAG = "boundary-allow:"
+MIN_NEEDLE_CHARS = 4
 
-# Also built by concatenation, for the same reason.
-HYGIENE = [
-    ("/" + r"Users/", "local absolute path"),
-    ("/" + r"home/[a-z0-9_][a-z0-9_.-]*/", "local absolute path"),
-    ("desert" + "goat", "private organization name"),
-    # Anchored on the at-sign with a look-behind, so a long line is read once.
-    (r"(?<=[a-z0-9._%+-])" + "@" + r"[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b", "email address"),
+Finding = collections.namedtuple("Finding", "check path line message")
+
+
+# --------------------------------------------------------------------------
+# The patterns. Each is built by concatenation so this file does not match
+# its own patterns. Every pattern is matched against case-folded text.
+# --------------------------------------------------------------------------
+
+# Between the words of a marking: spaces, line breaks, hyphens, underscores,
+# and the mark that starts a wrapped line of a comment or a quotation.
+_GAP = r"[\s_-]+(?:(?:#+|//+|\*+|>+|;+|%+|\|+)[\s_-]*)?"
+
+
+def _words(*words):
+    return _GAP.join(words)
+
+
+def _word(first, rest):
+    """A marking of one word, as a word of prose: inside an identifier
+    (`x_<word>_y`) it is a name that a public schema may use, and is not
+    matched. Written first-letter-first so the search skips to that letter."""
+    return first + r"(?<!\w" + first + ")" + rest + r"\b"
+
+
+# (a string every match contains, the pattern, what it is)
+PHRASES = [
+    ("statement", _words("distribution", "statement") + r"[\s_:-]*[b-f]\b", "restricted distribution statement"),
+    ("c" + "ui", _word("c", "ui"), "controlled-unclassified banner"),
+    ("it" + "ar", _word("i", "tar"), "arms-regulation marking"),
+    ("controlled", _words("export", "controlled"), "export-control marking"),
+    ("control", _words("arms", "export", "control", "act"), "export-control warning"),
+    ("no" + "forn", _word("n", "oforn"), "release marking"),
+    ("fo" + "uo", _word("f", "ouo"), "handling marking"),
+    ("proprietary", _words("proprietary", "information"), "proprietary banner"),
+    ("confidential", _words("company", "confidential"), "proprietary banner"),
 ]
-HYGIENE = [(re.compile(p, re.I), why) for p, why in HYGIENE]
+PHRASES = [(hint, re.compile(p), why) for hint, p, why in PHRASES]
+
+HYGIENE = [
+    ("/" + "users/", "/" + "users/", "local absolute path"),
+    ("/" + "home/", "/" + r"home/[a-z0-9_][a-z0-9_.-]*/", "local absolute path"),
+    ("desert" + "goat", "desert" + "goat", "private organization name"),
+    # The at-sign first, then a look back at the character before it, so the
+    # search skips from one at-sign to the next.
+    ("@", "@" + r"(?<=[a-z0-9._%+-]@)[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b", "email address"),
+]
+HYGIENE = [(hint, re.compile(p), why) for hint, p, why in HYGIENE]
+
+# What an .svg may not hold. A reference is checked separately: it must point
+# inside the file.
+SVG_REFUSED = [
+    (re.compile(r"<\s*script"), "a script element"),
+    (re.compile(r"<\s*foreignobject"), "a foreignObject element"),
+    (re.compile(r"\son[a-z]+\s*=\s*[\"']"), "an event handler attribute"),
+    (re.compile(r"@import"), "a style sheet import"),
+    (re.compile(r"<\?xml-stylesheet"), "a style sheet reference"),
+    (re.compile(r"<!entity"), "an entity declaration"),
+    (re.compile(r"data:\s*[a-z]+/[a-z0-9.+-]+\s*[;,]"), "a data: URI"),
+]
+_SVG_REFERENCE = re.compile(r"""(?:href|src)\s*=\s*(?:"([^"]*)"|'([^']*)')|url\(\s*["']?([^)"']*)""")
 
 
-def tracked(root):
+# --------------------------------------------------------------------------
+# Which files
+# --------------------------------------------------------------------------
+
+def _git_paths(root, *options):
+    out = subprocess.run(
+        ["git", "-C", root, "ls-files", "-z", *options], check=True, capture_output=True,
+    ).stdout
+    return {p for p in out.decode("utf-8", "surrogateescape").split("\0") if p}
+
+
+def discover(root):
+    """The files git would commit from `root`: tracked files and untracked
+    files that are not ignored, less the files deleted from the working tree.
+    Where `root` is not a git checkout (or git is absent), every file under it
+    outside the build directories. Paths are relative, `/`-separated, sorted."""
     try:
-        out = subprocess.run(
-            ["git", "-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
-            check=True, capture_output=True,
-        ).stdout
-        # A tracked file that is deleted in the working tree and not yet staged
-        # is not part of the tree that will be committed.
-        gone = subprocess.run(
-            ["git", "-C", root, "ls-files", "-z", "--deleted"],
-            check=True, capture_output=True,
-        ).stdout
-        gone = set(gone.decode().split("\0"))
-        return sorted(p for p in out.decode().split("\0") if p and p not in gone)
-    except Exception:
-        files = []
-        for d, dirs, names in os.walk(root):
-            dirs[:] = [x for x in dirs if x not in (".git", "target", "zig-out", ".zig-cache", "zig-cache", "__pycache__", "build", "_build", "ebin")]
-            for n in names:
-                files.append(os.path.relpath(os.path.join(d, n), root))
-        return sorted(files)
+        listed = _git_paths(root, "--cached", "--others", "--exclude-standard")
+        return sorted(listed - _git_paths(root, "--deleted"))
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    files = []
+    for folder, dirs, names in os.walk(root):
+        dirs[:] = [d for d in dirs if d not in BUILD_DIRS]
+        for name in names:
+            files.append(os.path.relpath(os.path.join(folder, name), root).replace(os.sep, "/"))
+    return sorted(files)
+
+
+# --------------------------------------------------------------------------
+# marking and closure
+# --------------------------------------------------------------------------
+
+_UNQUOTED_TOKEN = re.compile(r"[^ \t\r\n]+")
 
 
 def tokens(line):
-    """pack.def / model .def tokenizer: # comment at token start, double quotes."""
-    out, cur, inq, started = [], "", False, False
-    i = 0
-    while i < len(line):
-        c = line[i]
-        if inq:
+    """The pack.def and model .def tokenizer (spec/engine-spec.md): whitespace
+    separates tokens, double quotes group, `#` at the start of a token begins
+    a comment."""
+    if '"' not in line:
+        out = _UNQUOTED_TOKEN.findall(line)
+        for i, token in enumerate(out):
+            if token[0] == "#":
+                return out[:i]
+        return out
+    out, cur, quoted, started = [], "", False, False
+    for c in line:
+        if quoted:
             if c == '"':
-                inq = False
+                quoted = False
             else:
                 cur += c
         elif c == '"':
-            inq, started = True, True
-        elif c in " \t":
+            quoted, started = True, True
+        elif c in " \t\r\n":
             if started:
                 out.append(cur)
                 cur, started = "", False
@@ -126,171 +218,514 @@ def tokens(line):
         else:
             cur += c
             started = True
-        i += 1
     if started:
         out.append(cur)
     return out
 
 
-WORD = re.compile(r"[a-z0-9]+")
-
-
-def index_needles(needles):
-    """Group needles by their first word, so a line is checked word by word."""
-    idx = {}
-    for nd in needles:
-        m = WORD.search(nd)
-        if m:
-            idx.setdefault(m.group(0), []).append((m.start(), nd))
-    return idx
-
-
-def needle_in(line, idx):
-    """The first needle that occurs in `line` not glued to a letter or digit."""
-    for m in WORD.finditer(line):
-        for lead, nd in idx.get(m.group(0), ()):
-            i = m.start() - lead
-            if i < 0 or not line.startswith(nd, i):
-                continue
-            j = i + len(nd)
-            if (i == 0 or not line[i - 1].isalnum()) and (j == len(line) or not line[j].isalnum()):
-                return nd
-    return None
-
-
 def directives(path):
+    """-> [(line number, tokens)] for each line of a .def file that holds any."""
     rows = []
-    with open(path, encoding="utf-8") as f:
-        for n, line in enumerate(f, 1):
-            t = tokens(line.rstrip("\n"))
-            if t:
-                rows.append((n, t))
+    with open(path, encoding="utf-8") as fh:
+        for number, line in enumerate(fh, 1):
+            toks = tokens(line)
+            if toks:
+                rows.append((number, toks))
     return rows
 
 
-def main():
-    ap = argparse.ArgumentParser(description="refuse non-public content in this repository")
-    ap.add_argument("--root", default=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    ap.add_argument("--needles")
-    ap.add_argument("--require-needles", action="store_true")
-    a = ap.parse_args()
-    root = os.path.abspath(a.root)
+def _values(rows, keyword):
+    """The first argument of every `keyword` line that has one."""
+    return [toks[1] for _, toks in rows if toks[0] == keyword and len(toks) > 1]
+
+
+def _read_directives(root, path, findings):
+    try:
+        return directives(os.path.join(root, path))
+    except (OSError, UnicodeDecodeError) as e:
+        findings.append(Finding("marking", path, 0, "unreadable: %s" % type(e).__name__))
+        return None
+
+
+def check_modules(root, files):
+    """The marking check on model/*.def. -> ({module name: its keys}, findings)"""
+    modules, findings = {}, []
+    for path in files:
+        if os.path.dirname(path) != "model" or not path.endswith(".def"):
+            continue
+        rows = _read_directives(root, path, findings)
+        if rows is None:
+            continue
+        names = _values(rows, "module")
+        if not names:
+            findings.append(Finding("marking", path, 0, "model module has no `module` line"))
+            continue
+        name = names[0]
+        distribution = _values(rows, "distribution")
+        if distribution != ["public"]:
+            findings.append(Finding(
+                "marking", path, 0, "model module `%s` must say `distribution public` exactly once (has %s)"
+                % (name, distribution or "none")))
+        if not _values(rows, "source"):
+            findings.append(Finding("marking", path, 0, "model module `%s` has no `source` line" % name))
+        modules[name] = set(_values(rows, "key"))
+    return modules, findings
+
+
+def check_packs(root, files, modules):
+    """The marking and closure checks on packs/<format>/pack.def. -> findings"""
     findings = []
+    for path in files:
+        parts = path.split("/")
+        if len(parts) != 3 or parts[0] != "packs" or parts[2] != "pack.def":
+            continue
+        rows = _read_directives(root, path, findings)
+        if rows is None:
+            continue
+        distribution = _values(rows, "distribution")
+        if distribution != ["public"]:
+            findings.append(Finding(
+                "marking", path, 0, "pack must say `distribution public` exactly once (has %s)"
+                % (distribution or "none")))
+        if not _values(rows, "source"):
+            findings.append(Finding("marking", path, 0, "pack has no `source` line"))
+        used = {"core"} | set(_values(rows, "uses"))
+        for module in sorted(used - set(modules)):
+            findings.append(Finding("closure", path, 0, "uses model module `%s`, which is not in model/" % module))
+        for number, toks in rows:
+            if toks[0] != "field" or len(toks) < 2:
+                continue
+            module, key = toks[1].split(".", 1) if "." in toks[1] else ("core", toks[1])
+            if module not in used:
+                findings.append(Finding("closure", path, number, "maps `%s` without `uses %s`" % (toks[1], module)))
+            elif module in modules and key not in modules[module]:
+                findings.append(Finding(
+                    "closure", path, number, "maps `%s`, which model module `%s` does not declare" % (toks[1], module)))
+    return findings
 
-    def find(check, path, line, msg):
-        findings.append((check, path, line, msg))
 
-    files = tracked(root)
+# --------------------------------------------------------------------------
+# filetype
+# --------------------------------------------------------------------------
+
+def extension(path):
+    """The lower-case extension of a path; a dot file with no other dot
+    (`.gitignore`) has its name as its extension; "" when there is none."""
+    base = os.path.basename(path)
+    if base.startswith(".") and "." not in base[1:]:
+        return base[1:].lower()
+    return base.rsplit(".", 1)[1].lower() if "." in base.lstrip(".") else ""
+
+
+def check_filetype(path):
+    """-> findings: the file's name is not on the allowlist."""
+    ext = extension(path)
+    if os.path.basename(path) in ALLOWED_BARE or ext in ALLOWED_EXT:
+        return []
+    if ext in FIXTURE_EXT and path.startswith(FIXTURE_DIR):
+        return []
+    return [Finding("filetype", path, 0, "file type not on the allowlist (%s)" % (ext or "no extension"))]
+
+
+def check_svg(path, view):
+    """-> findings: an .svg that can run code, embed data or reach outside
+    itself. `view` is the case-folded text of the file."""
+    held = set()  # (line, what)
+    for pattern, what in SVG_REFUSED:
+        for m in pattern.finditer(view):
+            held.add((view.line_of(m.start()), what))
+    for m in _SVG_REFERENCE.finditer(view):
+        target = next(g for g in m.groups() if g is not None).strip()
+        if not target.startswith("#"):
+            what = "a data: URI" if target.startswith("data:") else "a reference outside the file"
+            held.add((view.line_of(m.start()), what))
+    return [Finding("filetype", path, line, "svg holds %s" % what) for line, what in sorted(held)]
+
+
+# --------------------------------------------------------------------------
+# Text as it is matched
+# --------------------------------------------------------------------------
+
+_JSON_ESCAPE = re.compile(r"\\u(d[89ab][0-9a-f]{2})\\u(d[c-f][0-9a-f]{2})|\\u([0-9a-f]{4})", re.I)
+
+
+def _decode_json_escape(m):
+    if m.group(3) is None:  # a surrogate pair: one character outside the basic plane
+        high, low = int(m.group(1), 16), int(m.group(2), 16)
+        return chr(0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00))
+    code = int(m.group(3), 16)
+    if code < 0x20 or 0xD800 <= code <= 0xDFFF:
+        return " "  # a control character or half a pair: a separator, and never a new line
+    return chr(code)
+
+
+def plain(text):
+    """`text` with JSON `\\uXXXX` escapes read as their characters and Unicode
+    in one form (NFKC). Case and line breaks are kept."""
+    if "\\u" in text or "\\U" in text:
+        text = _JSON_ESCAPE.sub(_decode_json_escape, text)
+    return text if text.isascii() else unicodedata.normalize("NFKC", text)
+
+
+def fold(text):
+    """Plain text with case folded, so that two spellings of one text are equal."""
+    if text.isascii():
+        return text.lower()
+    return unicodedata.normalize("NFKC", text.casefold())
+
+
+class View(str):
+    """Plain text, case folded, that can name the line of a position in it."""
+
+    _starts = None
+
+    def line_of(self, position):
+        """The 1-based number of the line that holds `position`."""
+        if self._starts is None:
+            self._starts = [m.end() for m in re.finditer("\n", self)]
+        return bisect.bisect_right(self._starts, position) + 1
+
+
+# --- words -----------------------------------------------------------------
+# A word is a run of letters and digits. An identifier is read twice: whole
+# (`trackNumber`), and as its parts (`track`, `Number`). A part ends before a
+# capital that follows a small letter or a digit, and before the last capital
+# of a run that a small letter follows (`XMLParser` is `XML`, `Parser`).
+
+_ASCII_WHOLE = re.compile(r"[A-Za-z0-9]+")
+_ASCII_PARTS = re.compile(r"[A-Z]?[a-z0-9]+|[A-Z]+(?![a-z])[a-z0-9]*")
+
+# Scripts written without spaces between words: each character is a word.
+_UNSPACED = (
+    "฀-໿က-႟ក-៿぀-ヿㇰ-ㇿ"
+    "㐀-䶿一-鿿가-힯豈-﫿\U00020000-\U0003134f"
+)
+
+
+@functools.lru_cache(maxsize=None)
+def _unicode_tokenizers():
+    """`_ASCII_WHOLE` and `_ASCII_PARTS` for every script."""
+    letters = [chr(c) for c in range(0x80, 0x20000)]
+    upper = "A-Z" + "".join(c for c in letters if c.isupper())
+    lower = "a-z" + "".join(c for c in letters if c.islower())
+    small = "(?:(?![%s%s])[^\\W_])" % (upper, _UNSPACED)  # a letter or digit that is not a capital
+    whole = "[%s]|(?:(?![%s])[^\\W_])+" % (_UNSPACED, _UNSPACED)
+    parts = "[%s]|[%s]?%s+|[%s]+(?![%s])%s*" % (_UNSPACED, upper, small, upper, lower, small)
+    return re.compile(whole), re.compile(parts)
+
+
+def tokenizers(text):
+    """-> (whole, parts): the two compiled patterns that find the words of `text`."""
+    return (_ASCII_WHOLE, _ASCII_PARTS) if text.isascii() else _unicode_tokenizers()
+
+
+def fold_words(words):
+    """Each word case folded, in one pass."""
+    words = list(words)
+    return fold("\n".join(words)).split("\n") if words else []
+
+
+# --------------------------------------------------------------------------
+# needle
+# --------------------------------------------------------------------------
+
+class Needles:
+    """The needle list, indexed for matching. A needle is kept as its words;
+    nothing here can print one."""
+
+    def __init__(self):
+        self.single = {}    # word -> needle line, for needles of one word
+        self.phrases = {}   # longest word -> [(words, set of words, needle line)], for the others
+        self.length = {}    # needle line -> characters in the needle
+        self._seen = set()
+        # The keys of the two indexes as sets: a set meets a set in the time
+        # of the smaller, and a file has far fewer distinct words than the list.
+        self._single_words = set()
+        self._phrase_keys = set()
+
+    def __len__(self):
+        return len(self.length)
+
+    def add(self, number, needle):
+        """Index the needle on line `number`. -> why it cannot be used, or None"""
+        if len(needle) < MIN_NEEDLE_CHARS:
+            return "needle is shorter than %d characters" % MIN_NEEDLE_CHARS
+        text = plain(needle)
+        gaps = {}  # form -> {(the text between word i and word i + 1, ...)}
+        for tokenizer in tokenizers(text):
+            found = list(tokenizer.finditer(text))
+            form = tuple(fold_words(m.group(0) for m in found))
+            gaps.setdefault(form, set()).add(
+                tuple(text[found[i].end():found[i + 1].start()] for i in range(len(found) - 1)))
+        forms = set(gaps)
+        if () in forms:
+            return "needle holds no letter or digit"
+        if forms <= self._seen:
+            return None  # the same needle as an earlier line
+        self.length[number] = len(needle)
+        for form in forms - self._seen:
+            self._seen.add(form)
+            if len(form) == 1:
+                self.single[form[0]] = number
+                self._single_words.add(form[0])
+            else:
+                # Filed under its longest word, the one fewest files hold.
+                key = max(form, key=len)
+                self.phrases.setdefault(key, []).append((list(form), frozenset(form), number, gaps[form]))
+                self._phrase_keys.add(key)
+        return None
+
+    def _candidates(self, text):
+        """The needles that may occur in `text`, judged from the set of its
+        words alone. -> (words that are needles, {first word: needles of
+        several words whose every word is present})"""
+        whole, parts = tokenizers(text)
+        distinct = set(whole.findall(text))
+        present = set(fold_words(distinct))
+        present.update(fold_words(parts.findall("\n".join(distinct))))
+        phrases = {}
+        for key in present & self._phrase_keys:
+            for candidate in self.phrases[key]:
+                if candidate[1] <= present:
+                    phrases.setdefault(candidate[0][0], []).append(candidate)
+        return present & self._single_words, phrases
+
+    def lines_matched(self, text):
+        """-> {line of `text`: the needle lines that match on it}. `text` is
+        plain text. A needle of several words is reported on the line of its
+        first word."""
+        single, phrases = self._candidates(text)
+        matched = {}
+        if not single and not phrases:
+            return matched
+        lines = text.split("\n")
+        for tokenizer in tokenizers(text):
+            words, line_of_word, spans = [], [], []
+            offset = 0
+            for number, line in enumerate(lines, 1):
+                for m in tokenizer.finditer(line):
+                    words.append(m.group(0))
+                    line_of_word.append(number)
+                    spans.append((offset + m.start(), offset + m.end()))
+                offset += len(line) + 1
+            words = fold_words(words)
+            for i, word in enumerate(words):
+                if word in single:
+                    matched.setdefault(line_of_word[i], set()).add(self.single[word])
+                for form, _, number, needle_gaps in phrases.get(word, ()):
+                    if words[i:i + len(form)] == form and _gaps_join(text, spans, i, len(form), needle_gaps):
+                        matched.setdefault(line_of_word[i], set()).add(number)
+        return matched
+
+
+# What may stand between two words of a needle in the text: spaces and tabs,
+# at most one line break, and after it the comment or quote mark that starts
+# a wrapped line. `_`, `-`, `.` and the like join words only where the needle
+# itself has them in that place.
+_NEEDLE_GAP = re.compile(r"[ \t]*(?:\r?\n[ \t]*(?:(?:#+|//+|\*+|>+|;+|%+|\|+)[ \t]*)?)?")
+
+
+def _gaps_join(text, spans, i, n, needle_gaps):
+    """True when every gap between the `n` words of `text` from word `i` on is
+    one `_NEEDLE_GAP` allows, or is the needle's own separator at that place."""
+    for j in range(n - 1):
+        gap = text[spans[i + j][1]:spans[i + j + 1][0]]
+        if gap and _NEEDLE_GAP.fullmatch(gap):
+            continue
+        if any(own[j] == gap for own in needle_gaps):
+            continue
+        return False
+    return True
+
+
+def load_needles(path):
+    """Read the needle file. -> (Needles, findings). An unreadable file, a
+    needle that cannot be used and a file with no needle are findings."""
+    needles, findings = Needles(), []
+    try:
+        with open(path, encoding="utf-8") as fh:
+            lines = fh.read().split("\n")
+    except (OSError, UnicodeDecodeError) as e:
+        return needles, [Finding("needle", path, 0, "cannot read needle file: %s" % type(e).__name__)]
+    for number, line in enumerate(lines, 1):
+        needle = line.strip()
+        if needle:
+            problem = needles.add(number, needle)
+            if problem:
+                findings.append(Finding("needle", path, number, problem))
+    if not needles and not findings:
+        findings.append(Finding("needle", path, 0, "needle file is empty: refusing to pass"))
+    return needles, findings
+
+
+def check_needles(path, text, needles, in_text=True):
+    """-> findings: one for each line of plain `text` that holds a needle."""
+    matched = needles.lines_matched(text)
+    findings = []
+    for line in sorted(matched):
+        first = min(matched[line])
+        more = len(matched[line]) - 1
+        findings.append(Finding(
+            "needle", path, line if in_text else 0,
+            "%s matches the needle on line %d of the needle file (%d characters)%s" % (
+                "text" if in_text else "file path", first, needles.length[first],
+                "; %d more needles match here" % more if more else "")))
+    return findings
+
+
+# --------------------------------------------------------------------------
+# phrase and hygiene
+# --------------------------------------------------------------------------
+
+def _pattern_hits(view, patterns):
+    """-> {(first line, last line, what)} for every match of `patterns`."""
+    hits = set()
+    for hint, pattern, what in patterns:
+        if hint in view:
+            for m in pattern.finditer(view):
+                hits.add((view.line_of(m.start()), view.line_of(max(m.start(), m.end() - 1)), what))
+    return hits
+
+
+def check_phrases(path, view, exempt=frozenset(), in_text=True):
+    """-> findings: a handling marking, its words on one line or wrapped over
+    several. `exempt` holds the numbers of the lines that carry the allow tag."""
+    return [
+        Finding("phrase", path, first if in_text else 0, what)
+        for first, last, what in sorted(_pattern_hits(view, PHRASES))
+        if not all(line in exempt for line in range(first, last + 1))
+    ]
+
+
+def check_hygiene(path, view, exempt=frozenset()):
+    """-> findings: a local path, a private organization name, an email address."""
+    return [
+        Finding("hygiene", path, first, what)
+        for first, _, what in sorted(_pattern_hits(view, HYGIENE))
+        if first not in exempt
+    ]
+
+
+# --------------------------------------------------------------------------
+# One file
+# --------------------------------------------------------------------------
+
+def read_text(full):
+    """-> (text, None), or (None, why the file is not text)."""
+    try:
+        with open(full, "rb") as fh:
+            text = fh.read().decode("utf-8")
+    except (OSError, UnicodeDecodeError) as e:
+        return None, "not readable as UTF-8 text: %s" % type(e).__name__
+    if "\0" in text:
+        return None, "binary content"
+    return text, None
+
+
+def is_utf8(path):
+    """False for a file name whose bytes are not UTF-8 (git and the file
+    system hand such a name over with surrogate escapes)."""
+    try:
+        path.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
+
+
+def check_path(path, needles):
+    """The phrase and needle checks on the name of a file. -> findings"""
+    text = plain(path)
+    findings = check_phrases(path, View(fold(text)), in_text=False)
+    if needles:
+        findings += check_needles(path, text, needles, in_text=False)
+    return findings
+
+
+def check_content(root, path, needles):
+    """The checks on what a file holds. -> findings"""
+    text, problem = read_text(os.path.join(root, path))
+    if problem:
+        return [Finding("filetype", path, 0, problem)]
+    exempt = frozenset()
+    if ALLOW_TAG in text:
+        exempt = frozenset(n for n, line in enumerate(text.split("\n"), 1) if ALLOW_TAG in line)
+    text = plain(text)
+    view = View(fold(text))
+    findings = check_phrases(path, view, exempt) + check_hygiene(path, view, exempt)
+    if extension(path) == "svg":
+        findings += check_svg(path, view)
+    if needles:
+        findings += check_needles(path, text, needles)
+    return findings
+
+
+# --------------------------------------------------------------------------
+# The gate
+# --------------------------------------------------------------------------
+
+def run(root, needle_file=None, require_needles=False):
+    """Every check on the tree at `root`. -> (findings, files, modules, needles)"""
+    files = discover(root)
+    findings = []
     if not files:
-        find("filetype", ".", 0, "no files found: refusing to pass an empty tree")
-
-    # --- marking and closure -------------------------------------------------
-    modules = {}
-    for p in files:
-        if os.path.dirname(p) == "model" and p.endswith(".def"):
-            try:
-                rows = directives(os.path.join(root, p))
-            except Exception as e:
-                find("marking", p, 0, "unreadable: %s" % e)
-                continue
-            name = next((t[1] for _, t in rows if t[0] == "module" and len(t) > 1), None)
-            dist = [t[1] for _, t in rows if t[0] == "distribution" and len(t) > 1]
-            srcs = [t for _, t in rows if t[0] == "source" and len(t) > 1]
-            if name is None:
-                find("marking", p, 0, "model module has no `module` line")
-                continue
-            if dist != ["public"]:
-                find("marking", p, 0, "model module `%s` must say `distribution public` exactly once (has %s)" % (name, dist or "none"))
-            if not srcs:
-                find("marking", p, 0, "model module `%s` has no `source` line" % name)
-            modules[name] = {t[1] for _, t in rows if t[0] == "key" and len(t) > 1}
-    for p in files:
-        parts = p.split("/")
-        if len(parts) == 3 and parts[0] == "packs" and parts[2] == "pack.def":
-            try:
-                rows = directives(os.path.join(root, p))
-            except Exception as e:
-                find("marking", p, 0, "unreadable: %s" % e)
-                continue
-            dist = [t[1] for _, t in rows if t[0] == "distribution" and len(t) > 1]
-            if dist != ["public"]:
-                find("marking", p, 0, "pack must say `distribution public` exactly once (has %s)" % (dist or "none"))
-            if not any(t[0] == "source" and len(t) > 1 for _, t in rows):
-                find("marking", p, 0, "pack has no `source` line")
-            used = {"core"} | {t[1] for _, t in rows if t[0] == "uses" and len(t) > 1}
-            for m in sorted(used):
-                if m not in modules:
-                    find("closure", p, 0, "uses model module `%s`, which is not in model/" % m)
-            for n, t in rows:
-                if t[0] == "field" and len(t) > 1:
-                    mod, key = t[1].split(".", 1) if "." in t[1] else ("core", t[1])
-                    if mod not in used:
-                        find("closure", p, n, "maps `%s` without `uses %s`" % (t[1], mod))
-                    elif mod in modules and key not in modules[mod]:
-                        find("closure", p, n, "maps `%s`, which model module `%s` does not declare" % (t[1], mod))
-
-    # --- file types ----------------------------------------------------------
-    for p in files:
-        base = os.path.basename(p)
-        ext = base.rsplit(".", 1)[1].lower() if "." in base.lstrip(".") else ""
-        if base.startswith(".") and "." not in base[1:]:
-            ext = base[1:]
-        if base in ALLOWED_BARE or ext in ALLOWED_EXT:
+        findings.append(Finding("filetype", ".", 0, "no files found: refusing to pass an empty tree"))
+    modules, module_findings = check_modules(root, files)
+    findings += module_findings
+    findings += check_packs(root, files, modules)
+    for path in files:
+        findings += check_filetype(path)
+    needles = Needles()
+    if needle_file:
+        needles, needle_findings = load_needles(needle_file)
+        findings += needle_findings
+    elif require_needles:
+        findings.append(Finding("needle", "-", 0, "--require-needles set and no --needles given"))
+    for path in files:
+        if not is_utf8(path):
+            findings.append(Finding("filetype", path, 0, "file name is not UTF-8"))
             continue
-        if ext in FIXTURE_EXT and p.startswith(FIXTURE_DIR):
-            continue
-        find("filetype", p, 0, "file type not on the allowlist (%s)" % (ext or "no extension"))
+        findings += check_path(path, needles)
+        findings += check_content(root, path, needles)
+    return findings, files, modules, needles
 
-    # --- phrases and needles -------------------------------------------------
-    needles = []
-    if a.needles:
-        try:
-            with open(a.needles, encoding="utf-8") as f:
-                needles = sorted({l.strip().lower() for l in f if len(l.strip()) >= 4})
-        except Exception as e:
-            find("needle", a.needles, 0, "cannot read needle file: %s" % e)
-        if not needles and not any(c == "needle" for c, *_ in findings):
-            find("needle", a.needles, 0, "needle file is empty: refusing to pass")
-    elif a.require_needles:
-        find("needle", "-", 0, "--require-needles set and no --needles given")
 
-    needle_index = index_needles(needles)
-    for p in files:
-        full = os.path.join(root, p)
-        try:
-            with open(full, "rb") as f:
-                raw = f.read()
-            text = raw.decode("utf-8")
-        except Exception as e:
-            find("filetype", p, 0, "not readable as UTF-8 text: %s" % type(e).__name__)
-            continue
-        if "\0" in text:
-            find("filetype", p, 0, "binary content")
-            continue
-        lower_lines = text.lower().split("\n")
-        for n, line in enumerate(text.split("\n"), 1):
-            if ALLOW_TAG not in line:
-                for rx, why in PHRASES:
-                    if rx.search(line):
-                        find("phrase", p, n, why)
-                for rx, why in HYGIENE:
-                    if rx.search(line):
-                        find("hygiene", p, n, why)
-        if needles:
-            for n, line in enumerate(lower_lines, 1):
-                hit = needle_in(line, needle_index)
-                if hit:
-                    find("needle", p, n, "matches a private needle (%d chars, starts `%s…`)" % (len(hit), hit[:3]))
-
-    for check, path, line, msg in findings:
-        loc = "%s:%d" % (path, line) if line else path
-        print("boundary-gate: %-8s %s: %s" % (check, loc, msg))
+def report(findings, files, modules, needles, out=None):
+    """Print one line for each finding and the verdict. -> the exit status"""
+    out = out or sys.stdout
+    for f in findings:
+        path = f.path.encode("utf-8", "backslashreplace").decode("utf-8")
+        where = "%s:%d" % (path, f.line) if f.line else path
+        print("boundary-gate: %-8s %s: %s" % (f.check, where, f.message), file=out)
     if findings:
-        print("boundary-gate: FAIL, %d finding(s) in %d files" % (len(findings), len(files)))
+        print("boundary-gate: FAIL, %d finding(s) in %d files" % (len(findings), len(files)), file=out)
         return 1
-    print("boundary-gate: ok, %d files, %d modules, needles: %s" % (
-        len(files), len(modules), ("%d" % len(needles)) if needles else "not supplied (structural checks only)"))
+    supplied = "%d" % len(needles) if needles else "not supplied (structural checks only)"
+    print("boundary-gate: ok, %d files, %d modules, needles: %s" % (len(files), len(modules), supplied), file=out)
     return 0
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        prog="boundary-gate",
+        description="Refuse content that is not public: exit 1 and name each finding, or print "
+                    "`boundary-gate: ok` and exit 0.",
+        epilog="docs/boundary.md states the checks. A line with `boundary-allow: <reason>` is exempt "
+               "from the phrase and hygiene checks; nothing exempts a needle.",
+    )
+    ap.add_argument(
+        "--root", default=os.path.dirname(os.path.dirname(os.path.abspath(__file__))), metavar="DIR",
+        help="the tree to check (default: the repository this tool is in). In a git checkout the files "
+             "git would commit are read; elsewhere every file outside the build directories")
+    ap.add_argument(
+        "--needles", metavar="FILE",
+        help="a file of private terms, one per line, that must not occur in any text or file path. "
+             "An empty file, or a needle shorter than %d characters or with no letter or digit, fails "
+             "the gate. No needle is ever printed" % MIN_NEEDLE_CHARS)
+    ap.add_argument(
+        "--require-needles", action="store_true",
+        help="fail when --needles is not given (the pre-push hook passes this)")
+    args = ap.parse_args(argv)
+    return report(*run(os.path.abspath(args.root), args.needles, args.require_needles))
 
 
 if __name__ == "__main__":
