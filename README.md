@@ -9,7 +9,7 @@ written engines read and must agree on, byte for byte. Below, the 25 bytes a
 drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
 
-**1,237 formats · 10,548 message kinds · 12,910 conversion vectors · 7 engines**, counted
+**1,958 formats · 11,884 message kinds · 14,789 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -57,14 +57,14 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 1,237 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 10,548 |
-| Typed keys in the shared model, in 603 modules | 138,090 |
-| Lists in the shared model (parts of a message that repeat) | 17,325 |
-| Conversion vectors (an input message and the exact expected output) | 12,910 |
-| Load vectors (a pack that must load, or must be refused with a named error) | 505 |
-| Synthetic formats that exercise each rule of the specification | 100 |
-| Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text` | 6 |
+| Formats | 1,958 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 11,884 |
+| Typed keys in the shared model, in 977 modules | 182,386 |
+| Lists in the shared model (parts of a message that repeat) | 21,335 |
+| Conversion vectors (an input message and the exact expected output) | 14,789 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 605 |
+| Synthetic formats that exercise each rule of the specification | 108 |
+| Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text`, `tlv` | 7 |
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
 
