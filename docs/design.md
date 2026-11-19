@@ -133,7 +133,7 @@ prints the size of a built module); every conversion vector passes through it.
 
 A conversion vector is `{from, to, input, expect}`; a load vector is a set of
 modules and one pack that must load or must fail with a named error
-(`spec/vector-format.md`). Every engine runs every vector. Built: 3,291 conversion vectors across 91 packs and 314 load vectors (`python3 -I tools/repo-stats` prints the current counts), all passing on all seven engines.
+(`spec/vector-format.md`). Every engine runs every vector. Built: 3,297 conversion vectors across 96 packs and 314 load vectors (`python3 -I tools/repo-stats` prints the current counts), all passing on all seven engines.
 
 ## Separation of pack authors and engine authors
 
