@@ -198,17 +198,28 @@ def build_vectors():
 
 def build(out):
     written = {}
+    elsewhere = {}      # pack dir -> names of the to-gtfs-* files this run writes there
     for pack, vecs in build_vectors().items():
         vdir = "packs/%s/vectors" % pack
         names = set()
         for i, v in enumerate(vecs, 1):
-            rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
-            names.add(rel.split("/")[-1])
+            if v["from"] == pack:
+                rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
+                names.add(rel.split("/")[-1])
+            else:
+                # a vector lives in the pack that owns its input (spec/vector-format.md)
+                odir = "packs/%s/vectors" % v["from"]
+                rel = "%s/to-%s-%s.json" % (odir, pack, v["name"])
+                elsewhere.setdefault(odir, set()).add(rel.split("/")[-1])
             out.write(rel, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
         for old in out.listdir(vdir):
-            if old not in names:
+            if old not in names and not old.startswith("to-"):
                 out.remove(vdir + "/" + old)
         written[pack] = len(vecs)
+    for odir, names in elsewhere.items():
+        for old in out.listdir(odir):
+            if old.startswith("to-gtfs-") and old not in names:
+                out.remove(odir + "/" + old)
     return written
 
 
