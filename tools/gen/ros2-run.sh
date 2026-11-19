@@ -39,6 +39,10 @@ fetch() {   # <directory> <url> <ref> <commit>
     git -c advice.detachedHead=false clone -q --depth 1 -b "$3" "$2" "$SRC/$1"
   fi
   got="$(git -C "$SRC/$1" rev-parse HEAD)"
+  if [ "$got" != "$4" ]; then     # a branch has moved on since the pin: fetch the commit itself
+    git -C "$SRC/$1" fetch -q --depth 1 origin "$4" && git -C "$SRC/$1" -c advice.detachedHead=false checkout -q "$4"
+    got="$(git -C "$SRC/$1" rev-parse HEAD)"
+  fi
   if [ "$got" != "$4" ]; then
     echo "ros2-run: $1 is at $got, want $4" >&2
     exit 1
@@ -482,6 +486,17 @@ done
 ARGS+=(--map mavros_msgs/HomePosition:geo.latitude=lat --map mavros_msgs/HomePosition:geo.longitude=lon
        --map mavros_msgs/HomePosition:geo.altitude=hae --cross mavros_msgs/HomePosition
        --evidence-file mavros_msgs=mavros:mavros/src/plugins/home_position.cpp)
+# mavros_msgs/GPSRAW and GPSINPUT: WGS 84 latitude and longitude in degrees times 10^7, and
+# for GPSRAW the height above the ellipsoid in millimetres, through the json `scale`
+# transform (engine-spec 0.15). Their own fix_type is required as well, so a position from
+# another format still becomes a HomePosition.
+for m in GPSRAW GPSINPUT; do
+  ARGS+=(--map "mavros_msgs/$m:lat=lat@scale:1/10000000" --map "mavros_msgs/$m:lon=lon@scale:1/10000000"
+         --cross "mavros_msgs/$m")
+done
+ARGS+=(--map "mavros_msgs/GPSRAW:alt_ellipsoid=hae@scale:1/1000"
+       --requires mavros_msgs/GPSRAW=lat,lon,gpsraw_fix_type
+       --requires mavros_msgs/GPSINPUT=lat,lon,gpsinput_fix_type)
 
 python3 -I "$GEN/ros2msg2pack.py" --src "$SRC" --out "$ROOT" \
   --ref common_interfaces=5.3.8 --commit common_interfaces=a941f14bb318d8d904505ed935ccbb97f24a70a4 \
@@ -1551,6 +1566,17 @@ B3+=(
 # ublox_msgs: the padding fields of the u-blox layouts (named reserved, an optional underscore and a number)
 # hold no value and are not mapped.
 B3+=(--skip-field-re 'ublox_msgs=^reserved_?[0-9]*$')
+# ublox_msgs: latitude and longitude in degrees times 10^7 and the height above the
+# ellipsoid in millimetres, through the json `scale` transform (engine-spec 0.15); the
+# evidence and the datum caveat are in notes/ros2-ublox-msgs.md. NavPVT is the kind a
+# position from another format becomes: the others also require their own i_tow.
+for m in NavPVT NavPVT7 NavPOSLLH HnrPVT; do
+  B3+=(--map "ublox_msgs/$m:lat=lat@scale:1/10000000" --map "ublox_msgs/$m:lon=lon@scale:1/10000000"
+       --map "ublox_msgs/$m:height=hae@scale:1/1000" --cross "ublox_msgs/$m")
+done
+B3+=(--requires ublox_msgs/NavPVT7=lat,lon,nav_pvt7_i_tow
+     --requires ublox_msgs/NavPOSLLH=lat,lon,nav_posllh_i_tow
+     --requires ublox_msgs/HnrPVT=lat,lon,hnr_pvt_i_tow)
 # px4_msgs: six kinds state a WGS 84 position (evidence in notes/ros2-px4-msgs.md).
 P=px4_msgs
 B3+=(--map $P/SensorGnss:latitude=lat --map $P/SensorGnss:longitude=lon --map $P/SensorGnss:altitude_ellipsoid=hae --cross $P/SensorGnss

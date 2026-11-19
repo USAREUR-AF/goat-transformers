@@ -1,0 +1,14 @@
+{
+  "name": "x-gpsraw-to-geojson",
+  "from": "ros2-mavros-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"mavros_msgs/msg/GPSRAW\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fix_type\":99,\"lat\":470625000,\"lon\":85312500,\"alt\":283528,\"eph\":29119,\"epv\":4086,\"vel\":44589,\"cog\":19556,\"satellites_visible\":27,\"alt_ellipsoid\":431500,\"h_acc\":2148050697,\"v_acc\":2148091200,\"vel_acc\":2148131703,\"hdg_acc\":688558,\"yaw\":40933,\"dgps_numch\":156,\"dgps_age\":2148293715}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "gpsraw",
+    "lat": "47.0625",
+    "lon": "8.53125",
+    "hae": "431.5"
+  }
+}

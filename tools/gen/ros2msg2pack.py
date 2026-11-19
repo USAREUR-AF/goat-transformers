@@ -344,7 +344,8 @@ class Walker:
             d2 = desc + "." + f.name
             if f.array is None:
                 if f.pkg_ref is None:
-                    out.append(self.scalar(kind, f, ".".join(l2), k2, p2, d2, f.rostype))
+                    r = self.scalar(kind, f, ".".join(l2), k2, p2, d2, f.rostype)
+                    out.extend(r if isinstance(r, list) else [r])
                 else:
                     out.extend(self.walk(kind, self.cat.get(f.pkg_ref, f.base), l2, k2, p2, d2))
                 continue
@@ -379,6 +380,13 @@ class Walker:
         kt, tr = PRIMITIVES[f.base]
         shared = self.maps.get((kind.name, pathid))
         if shared:
+            scaled = SCALED.get((kind.pkg, kind.name, pathid))
+            if scaled:
+                # the shared key first, then the raw integer at the same place (ruling 16
+                # of 0.5), so the raw key of an earlier version stays
+                return [FLine(shared, loc, scaled, "float", desc, pathid, rostype),
+                        FLine(self.key(kind, kpath, pathid), loc, tr, kt,
+                              "%s (%s)" % (desc, rostype), pathid, rostype)]
             return FLine(shared, loc, tr, kt, desc, pathid, rostype)
         return FLine(self.key(kind, kpath, pathid), loc, tr, kt,
                      "%s (%s)" % (desc, rostype), pathid, rostype)
@@ -647,6 +655,8 @@ def envelope(kind, topic, msgobj, extra):
 
 
 def model_value(v, transform):
+    if transform.startswith("scale:"):
+        return fmt_float(scale_decode(v, transform))
     if transform == "bool":
         return "1" if v else "0"
     if transform == "float":
@@ -848,7 +858,8 @@ def read_pack(text, where, modules):
                     fail("%s: key-type-mismatch (field on list %s)" % (where, ln[1]))
                 if name not in m["keys"]:
                     fail("%s: undeclared-key %s" % (where, ln[1]))
-                if ln[3] not in YIELDS or YIELDS[ln[3]] != m["keys"][name]:
+                yields = "float" if ln[3].startswith("scale:") else YIELDS.get(ln[3])
+                if yields is None or yields != m["keys"][name]:
                     fail("%s: key-type-mismatch %s %s" % (where, ln[1], ln[3]))
             elif ln[0] == "group":
                 m, name = resolve(ln[1])
@@ -976,6 +987,10 @@ def decode_value(v, tr, where):
         if not isinstance(v, bool):
             raise Fail("transform-decode", where)
         return 1 if v else 0
+    if tr.startswith("scale:"):
+        if not is_num(v):
+            raise Fail("transform-decode", where)
+        return scale_decode(v, tr)
     fail("transform %s not in this codec" % tr)
 
 
@@ -1099,6 +1114,8 @@ def encode_value(v, tr):
         return float(v)
     if tr == "int":
         return int(v)
+    if tr.startswith("scale:"):
+        return scale_encode(v, tr)
     return v
 
 
@@ -1321,6 +1338,9 @@ def roundtrip_vectors(fmt, module, kinds, cat):
     for k in kinds:
         s = Sampler(cat)
         obj = s.message(k.msg, 0)
+        for ln in k.lines:
+            if isinstance(ln, FLine) and ln.transform.startswith("scale:"):
+                set_path(obj, ln.loc, exact_wire(lookup({"msg": obj}, ln.loc), ln.transform))
         inp = dump(envelope(k, "/gen/%s" % k.name, obj, [("id", "gen-%s" % k.name)]))
         exp = dump(envelope(k, "/gen/%s" % k.name, carried(k.msg, obj, cat),
                             [("id", "gen-%s" % k.name)]))
@@ -1482,6 +1502,17 @@ def set_path(obj, loc, value):
     cur[parts[-1]] = value
 
 
+def wire_of(line, value, as_int=False):
+    """What a field holds on the wire for model value `value`: the value itself, or
+    for a scaled field the encoded number, which for the cross points is exact."""
+    if not line.transform.startswith("scale:"):
+        return value
+    w = scale_encode(value, line.transform)
+    if w != int(w) or scale_decode(int(w), line.transform) != value:
+        fail("%s: cross point %r is not exact under %s" % (line.loc, value, line.transform))
+    return int(w) if as_int else w
+
+
 def generic_cross(fmt, module, kinds, cat, names):
     """Vectors for kinds bound to core lat/lon (and hae): to geojson from a full sample
     message, and from geojson into the kind the pack's requires select."""
@@ -1496,7 +1527,7 @@ def generic_cross(fmt, module, kinds, cat, names):
             fail("--cross %s: binds %s; only lat, lon, hae are handled" % (name, [x.key for x in bound]))
         obj = Sampler(cat).message(k.msg, 0)
         for x in bound:
-            set_path(obj, x.loc, CROSS_POINT[x.key])
+            set_path(obj, x.loc, wire_of(x, CROSS_POINT[x.key], as_int=True))
         inp = dump(envelope(k, "/geo", obj, []))
         coords = [CROSS_POINT["lon"], CROSS_POINT["lat"]] + (
             [CROSS_POINT["hae"]] if any(x.key == "hae" for x in bound) else [])
@@ -1517,7 +1548,7 @@ def generic_cross(fmt, module, kinds, cat, names):
         msgobj = collections.OrderedDict()
         for x in sel.lines:
             if isinstance(x, FLine) and x.key in CROSS_POINT:
-                set_path(msgobj, x.loc, CROSS_POINT[x.key])
+                set_path(msgobj, x.loc, wire_of(x, CROSS_POINT[x.key]))
         exp = dump(envelope(sel, None, msgobj, []))
         gout.append(("gen-geojson-to-%s-%s.json" % (fmt, sel.name.replace("_", "-")), vec_obj(
             "gen-geojson-to-%s-%s" % (fmt, sel.name), "geojson", fmt,
@@ -1742,17 +1773,65 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
 def parse_maps(items):
     maps = {}
     for it in items or []:
-        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)(?:@(scale:[0-9./:-]+))?$", it)
         if not m:
-            fail("--map %r: want <package>/<Msg>:<field path>=<key>" % it)
+            fail("--map %r: want <package>/<Msg>:<field path>=<key>[@scale:<factor>]" % it)
         maps.setdefault(m.group(1), {})[(m.group(2), m.group(3))] = m.group(4)
+        if m.group(5):
+            scale_parts(m.group(5))             # refuse a factor that does not parse
+            SCALED[(m.group(1), m.group(2), m.group(3))] = m.group(5)
     return maps
+
+
+SCALED = {}     # (package, message, field path) -> `scale:` transform of a bound field (engine-spec 0.15)
+
+
+def scale_parts(tr):
+    """(num, den, offset) of `scale:<factor>[:<offset>]`: a factor `<num>/<den>` or a
+    decimal, read as ruling 1 of 0.5 reads it, and a decimal offset."""
+    parts = tr.split(":")[1:]
+    if not 1 <= len(parts) <= 2:
+        fail("%s: want scale:<factor>[:<offset>]" % tr)
+    f = parts[0]
+    if "/" in f:
+        num, den = f.split("/")
+        if not (re.fullmatch(r"-?\d+", num) and re.fullmatch(r"\d+", den)) or int(den) == 0:
+            fail("%s: bad factor" % tr)
+        num, den = float(int(num)), float(int(den))
+    else:
+        if not re.fullmatch(r"-?\d+(\.\d+)?", f):
+            fail("%s: bad factor" % tr)
+        num, den = float(f), 1.0
+    off = float(parts[1]) if len(parts) == 2 else 0.0
+    return num, den, off
+
+
+def scale_decode(v, tr):
+    """The model value of wire number `v`: v x factor + offset, in doubles, in that order."""
+    num, den, off = scale_parts(tr)
+    return float(v) * num / den + off
+
+
+def scale_encode(x, tr):
+    """The wire number of model value `x`: (x - offset) / factor, in doubles."""
+    num, den, off = scale_parts(tr)
+    return (float(x) - off) * den / num
+
+
+def exact_wire(w, tr):
+    """The integer nearest `w`, going up, that a decode and encode bring back to itself,
+    so a round-trip vector is byte-exact."""
+    for d in range(0, 2000):
+        for c in (w + d, w - d):
+            if scale_encode(scale_decode(c, tr), tr) == float(c):
+                return c
+    fail("%s: no integer near %d survives a round trip" % (tr, w))
 
 
 def parse_requires(items):
     req = {}
     for it in items or []:
-        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+)=([a-z_.,]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+)=([a-z0-9_.,]+)$", it)
         if not m:
             fail("--requires %r: want <package>/<Msg>=<key>[,<key>]" % it)
         req[(m.group(1), m.group(2))] = m.group(3).split(",")

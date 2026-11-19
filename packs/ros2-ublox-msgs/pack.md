@@ -48,19 +48,42 @@ that carries the optional `type` member in the full notation of section 4.1:
 | Item | Count |
 |---|---|
 | Message kinds (.msg files) | 84 |
-| `field` lines (the common `topic` included) | 672 |
+| `field` lines (the common `topic` included) | 684 |
 | `group` blocks | 30 |
 | Keys and lists of module `ros2ublox` | 702 |
-| Shared-model keys bound | 0 |
+| Shared-model keys bound | 12 |
 | Fields not mapped | 74 |
 
 ## Shared-model keys
 
-None. No field of this package is stated in a geodetic frame, in UTC, or with
-another meaning a `core` or `track` key has: poses, points, velocities and
-covariances are in the frame `header.frame_id` names, and `header.stamp` is ROS
-time, which may be simulation time. Every field is a raw key of module
-`ros2ublox`.
+The positions of four `ublox_msgs` navigation solutions are bound to `core` keys with
+the `scale` transform of engine-spec 0.15. The evidence is the comment text of the
+.msg files at the commit in `PROVENANCE.md`, quoted in part:
+
+| Kind | Wire fields | Model keys | Evidence |
+|---|---|---|---|
+| `nav_posllh` | `lat`, `lon` (int32); `height` (int32) | `lat`, `lon` with `scale:1/10000000`; `hae` with `scale:1/1000` | NavPOSLLH.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", the height in mm, stated as relative to the ellipsoid; the file header: the message gives the geodetic position "in the currently selected Ellipsoid. The default is the WGS84 Ellipsoid, but can be changed with the message CFG-DAT" |
+| `nav_pvt`, `nav_pvt7` | `lat`, `lon`; `height` | as `nav_posllh` | NavPVT.msg, NavPVT7.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", the height in mm, stated as relative to the ellipsoid; these files name no datum, and the binding takes the receiver's selected ellipsoid as NavPOSLLH.msg states it |
+| `hnr_pvt` | `lat`, `lon`; `height` | as `nav_posllh` | HnrPVT.msg: the same three field comments; no datum named, as for `nav_pvt` |
+
+The bindings hold for a receiver left at its default datum, WGS 84. A receiver set to
+another datum with CFG-DAT reports positions that `lat`, `lon` and `hae` do not hold.
+Messages that carry that setting are in this pack (`cfg_dat`); a reader that cannot
+rule out a change should not use the bound keys.
+
+`h_msl` (height above mean sea level) is not `hae` and stays a raw key. The
+high-precision components of NAV-HPPOSLLH are not in this version of the package.
+
+Kind `nav_pvt` requires `lat lon`; `hnr_pvt`, `nav_posllh` and `nav_pvt7` also require
+their own `i_tow`, so an entity from another format with a position is encoded as
+`nav_pvt`.
+
+A value decoded through `scale` is the nearest double to the integer times 1e-7 (or
+1e-3); an encoder writes the quotient as a JSON number, which for a value that is not
+exact can carry a fraction.
+
+The padding fields of the u-blox layouts are not mapped (`--skip-field-re` in
+`tools/gen/ros2-run.sh`).
 
 ## Kinds
 
@@ -102,7 +125,7 @@ time, which may be simulation time. Every field is a raw key of module
 | `esf_status` | `ublox_msgs/msg/EsfSTATUS` | 8 | 1 | 6 |
 | `esf_status_sens` | `ublox_msgs/msg/EsfSTATUSSens` | 4 | 0 | 0 |
 | `esf_status_sens_2` | `ublox_msgs/msg/EsfSTATUS_Sens` | 4 | 0 | 0 |
-| `hnr_pvt` | `ublox_msgs/msg/HnrPVT` | 23 | 0 | 17 |
+| `hnr_pvt` | `ublox_msgs/msg/HnrPVT` | 26 | 0 | 17 |
 | `inf` | `ublox_msgs/msg/Inf` | 1 | 0 | 1 |
 | `mga_gal` | `ublox_msgs/msg/MgaGAL` | 30 | 0 | 2 |
 | `mon_gnss` | `ublox_msgs/msg/MonGNSS` | 5 | 0 | 6 |
@@ -117,9 +140,9 @@ time, which may be simulation time. Every field is a raw key of module
 | `nav_dgpssv` | `ublox_msgs/msg/NavDGPSSV` | 5 | 0 | 2 |
 | `nav_dop` | `ublox_msgs/msg/NavDOP` | 8 | 0 | 2 |
 | `nav_posecef` | `ublox_msgs/msg/NavPOSECEF` | 5 | 0 | 2 |
-| `nav_posllh` | `ublox_msgs/msg/NavPOSLLH` | 7 | 0 | 2 |
-| `nav_pvt` | `ublox_msgs/msg/NavPVT` | 31 | 0 | 29 |
-| `nav_pvt7` | `ublox_msgs/msg/NavPVT7` | 28 | 0 | 29 |
+| `nav_posllh` | `ublox_msgs/msg/NavPOSLLH` | 10 | 0 | 2 |
+| `nav_pvt` | `ublox_msgs/msg/NavPVT` | 34 | 0 | 29 |
+| `nav_pvt7` | `ublox_msgs/msg/NavPVT7` | 31 | 0 | 29 |
 | `nav_relposned` | `ublox_msgs/msg/NavRELPOSNED` | 13 | 0 | 12 |
 | `nav_relposned9` | `ublox_msgs/msg/NavRELPOSNED9` | 18 | 0 | 14 |
 | `nav_sat` | `ublox_msgs/msg/NavSAT` | 10 | 1 | 2 |
@@ -173,6 +196,7 @@ of array items included.
 message present, two items in each unbounded array outside a group and one
 inside, the stated number in a fixed or bounded one, and an `id` member as
 residue. `gen-edge-*` and `gen-err-*` are edge and error cases, each naming the
-rule it rests on in `source`; `gen-x-*` convert to geojson. 84 vector files.
+rule it rests on in `source`; `gen-x-*` convert to geojson. 88 vector files.
+`packs/geojson/vectors/gen-geojson-to-ros2-ublox-msgs-*.json` convert from geojson.
 Expected text is written by the generator from the .msg field order and checked
 by its own json-wire codec; no engine produced it.

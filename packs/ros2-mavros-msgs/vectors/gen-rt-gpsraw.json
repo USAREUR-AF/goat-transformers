@@ -11,7 +11,7 @@
     "ros2mavros.gpsraw_header_stamp_nanosec": "2147564661",
     "ros2mavros.gpsraw_header_frame_id": "s3",
     "ros2mavros.gpsraw_fix_type": "99",
-    "ros2mavros.gpsraw_lat": "202522",
+    "lat": "0.0202522",
     "ros2mavros.topic": "/gen/gpsraw"
   }
 }
