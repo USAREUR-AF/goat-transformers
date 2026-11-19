@@ -1,0 +1,15 @@
+{
+  "name": "add-sub-int-add-beyond-the-largest",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"i0\":9223372036854775807,\"i1\":1}",
+  "context": {},
+  "expect": "{\"i0\":9223372036854775807,\"i1\":1,\"idiff\":9223372036854775806}",
+  "model": {
+    "@complete": true,
+    "probe.idiff": "9223372036854775806",
+    "@absent": [
+      "probe.isum"
+    ]
+  }
+}

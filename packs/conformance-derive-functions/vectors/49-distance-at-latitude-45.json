@@ -1,0 +1,17 @@
+{
+  "name": "distance-at-latitude-45",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"dist\":1000,\"lat\":45,\"arc\":0.01}",
+  "context": {},
+  "expect": "{\"dist\":1000,\"lat\":45,\"arc\":0.01}",
+  "model": {
+    "@complete": true,
+    "probe.dist_dlat": "0.00899832634074692",
+    "probe.dist_dlon": "0.012682817246983887",
+    "probe.arc_mlat": "1111.3177741417562",
+    "probe.arc_mlon": "788.4683509397812",
+    "probe.back_mlat": "1000",
+    "probe.back_mlon": "1000.0000000000001"
+  }
+}

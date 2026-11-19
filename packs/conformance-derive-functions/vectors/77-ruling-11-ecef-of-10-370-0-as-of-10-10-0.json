@@ -1,0 +1,17 @@
+{
+  "name": "ruling-11-ecef-of-10-370-0-as-of-10-10-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":10,\"glon\":370,\"ghae\":0}",
+  "context": {},
+  "expect": "{\"glat\":10,\"glon\":370,\"ghae\":0}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "6186437.066030218",
+    "probe.g_y": "1090835.7691960402",
+    "probe.g_z": "1100248.5477353614",
+    "probe.g_rlat": "10",
+    "probe.g_rlon": "9.999999999999975",
+    "probe.g_rhae": "0"
+  }
+}

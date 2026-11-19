@@ -44,7 +44,8 @@ is the pack that owns the input. Fields:
    as `convert` hands it to the encoder: `decode(from, input)`, then the absent
    keys filled from `context`, then the derivations applied (`complete`). This
    is done whether or not `from == to`. Float values then compare within 1e-9
-   relative: `|got - want| < 1e-9 * max(|got|, |want|)`, or equal. `"@complete"`
+   relative: `|got - want| < 1e-9 * max(|got|, |want|)`, or within `1e-7`
+   absolute (Version 0.16), or equal. `"@complete"`
    is not a model key. A vector states a derived float this way and keeps it
    out of `expect`, unless the value derives exactly.
 

@@ -1,0 +1,17 @@
+{
+  "name": "distance-at-latitude-equator",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"dist\":1000,\"lat\":0,\"arc\":0.01}",
+  "context": {},
+  "expect": "{\"dist\":1000,\"lat\":0,\"arc\":0.01}",
+  "model": {
+    "@complete": true,
+    "probe.dist_dlat": "0.009043694770503822",
+    "probe.dist_dlon": "0.008983152841195215",
+    "probe.arc_mlat": "1105.7427582159435",
+    "probe.arc_mlon": "1113.1949079327358",
+    "probe.back_mlat": "1000.0000000000001",
+    "probe.back_mlon": "1000.0000000000001"
+  }
+}

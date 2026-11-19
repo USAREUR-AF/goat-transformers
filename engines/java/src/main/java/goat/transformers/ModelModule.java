@@ -27,7 +27,14 @@ public final class ModelModule {
 
     /** One {@code derive} line: the target key follows from the argument keys through a function of the fixed set. */
     public static final class Derive {
-        enum Fn { COPY, HYPOT, BEARING, EAST_OF, NORTH_OF, NEG, SCALE, OFFSET, JOIN, DAY_SECONDS, ANY, NOT, PARSE_INT, TEXT_OF, PRESENT }
+        enum Fn {
+            COPY, HYPOT, BEARING, EAST_OF, NORTH_OF, NEG, SCALE, OFFSET, JOIN, DAY_SECONDS, ANY, NOT, PARSE_INT, TEXT_OF,
+            // engine-spec 0.12
+            PRESENT,
+            // engine-spec 0.16
+            SEC_OF, NSEC_OF, MS_OF, DEG, RAD, ADD, SUB, DEG_LAT_OF, DEG_LON_OF, M_LAT_OF, M_LON_OF,
+            ECEF_X, ECEF_Y, ECEF_Z, LAT_OF_ECEF, LON_OF_ECEF, HAE_OF_ECEF
+        }
 
         /** Target and argument keys as a pack writes them: bare for {@code core}, {@code <module>.<key>} otherwise. */
         public final String target;
@@ -50,6 +57,43 @@ public final class ModelModule {
             this.function = function;
             this.fn = fn;
             this.type = type;
+        }
+
+        /** WGS 84 and Heikkinen's closed form, in the order engine-spec 0.16 states it. */
+        static final class Wgs84 {
+            static final double A = 6378137.0;
+            static final double F = 1.0 / 298.257223563;
+            static final double E2 = F * (2.0 - F);
+            static final double B = A * (1.0 - F);
+
+            private static boolean bad(double d) { return !Double.isFinite(d); }
+
+            /** {φ in radians, h}, or null when an intermediate is not finite or {@code G ≤ 0} (rulings 1, 2). */
+            static double[] geodetic(double x, double y, double z) {
+                double a2 = A * A, b2 = B * B, e4 = E2 * E2;
+                double p = Math.sqrt(x * x + y * y);
+                double f = 54.0 * b2 * z * z;
+                double g = p * p + (1.0 - E2) * z * z - E2 * (a2 - b2);
+                if (bad(p) || bad(f) || bad(g) || g <= 0) return null;
+                double c = e4 * f * p * p / (g * g * g);
+                double s = Math.cbrt(1.0 + c + Math.sqrt(c * c + 2.0 * c));
+                double k = s + 1.0 + 1.0 / s;
+                double pp = f / (3.0 * k * k * g * g);
+                double q = Math.sqrt(1.0 + 2.0 * e4 * pp);
+                if (bad(c) || bad(s) || bad(k) || bad(pp) || bad(q)) return null;
+                double inner = a2 / 2.0 * (1.0 + 1.0 / q) - pp * (1.0 - E2) * z * z / (q * (1.0 + q)) - pp * p * p / 2.0;
+                if (bad(inner)) return null;
+                if (inner < 0) inner = 0;   // ruling 9 of 0.16
+                double r0 = -pp * E2 * p / (1.0 + q) + Math.sqrt(inner);
+                double d = p - E2 * r0;
+                double u = Math.sqrt(d * d + z * z);
+                double v = Math.sqrt(d * d + (1.0 - E2) * z * z);
+                double z0 = b2 * z / (A * v);
+                double h = u * (1.0 - b2 / (A * v));
+                double phi = Math.atan2(z + (a2 - b2) / b2 * z0, p);
+                if (bad(r0) || bad(u) || bad(v) || bad(z0) || bad(h) || bad(phi)) return null;
+                return new double[] {phi, h};
+            }
         }
 
         private static final double DEG = Math.PI / 180.0;
@@ -130,6 +174,87 @@ public final class ModelModule {
                 case SCALE:
                     r = fraction ? Transform.asDouble(v[0]) * num / den : Transform.asDouble(v[0]) * factor;
                     break;
+                case SEC_OF:
+                    return Math.floorDiv(Transform.asLong(v[0]), 1000L);
+                case NSEC_OF:
+                    return Math.floorMod(Transform.asLong(v[0]), 1000L) * 1_000_000L;
+                case MS_OF: {
+                    // exact: only the final result is range-checked (ruling 3 of 0.16)
+                    java.math.BigInteger ms = java.math.BigInteger.valueOf(Transform.asLong(v[0]))
+                            .multiply(java.math.BigInteger.valueOf(1000L))
+                            .add(java.math.BigInteger.valueOf(Math.floorDiv(Transform.asLong(v[1]), 1_000_000L)));
+                    return ms.bitLength() < 64 ? (Object) ms.longValue() : null;
+                }
+                case ADD:
+                case SUB:
+                    if (type.equals("int")) {
+                        try {
+                            long a = Transform.asLong(v[0]), b = Transform.asLong(v[1]);
+                            return fn == Fn.ADD ? Math.addExact(a, b) : Math.subtractExact(a, b);
+                        } catch (ArithmeticException ex) {
+                            return null;
+                        }
+                    }
+                    r = fn == Fn.ADD ? Transform.asDouble(v[0]) + Transform.asDouble(v[1])
+                                     : Transform.asDouble(v[0]) - Transform.asDouble(v[1]);
+                    break;
+                case DEG:
+                    r = Transform.asDouble(v[0]) * RAD;
+                    break;
+                case RAD:
+                    r = Transform.asDouble(v[0]) * DEG;
+                    break;
+                case DEG_LAT_OF:
+                case DEG_LON_OF:
+                case M_LAT_OF:
+                case M_LON_OF: {
+                    double x = Transform.asDouble(v[0]), lat = Transform.asDouble(v[1]);
+                    if (!(lat >= -90.0 && lat <= 90.0)) return null;   // ruling 6 of 0.16
+                    double phi = lat * DEG, sin = Math.sin(phi), w = 1.0 - Wgs84.E2 * sin * sin;
+                    switch (fn) {
+                        case DEG_LAT_OF:
+                            r = (x / (Wgs84.A * (1.0 - Wgs84.E2) / Math.pow(w, 1.5))) * RAD;
+                            break;
+                        case DEG_LON_OF: {
+                            double cos = Math.abs(Math.cos(phi));
+                            if (cos <= 1e-12) return null;
+                            r = (x / (Wgs84.A / Math.sqrt(w) * cos)) * RAD;
+                            break;
+                        }
+                        case M_LAT_OF:
+                            r = x * DEG * (Wgs84.A * (1.0 - Wgs84.E2) / Math.pow(w, 1.5));
+                            break;
+                        default:
+                            r = x * DEG * (Wgs84.A / Math.sqrt(w)) * Math.abs(Math.cos(phi));
+                    }
+                    break;
+                }
+                case ECEF_X:
+                case ECEF_Y:
+                case ECEF_Z: {
+                    double lat = Transform.asDouble(v[0]), lon = Transform.asDouble(v[1]), hae = Transform.asDouble(v[2]);
+                    if (!(lat >= -90.0 && lat <= 90.0)) return null;   // ruling 6; longitude unchecked (ruling 11)
+                    double phi = lat * DEG, lam = lon * DEG, sin = Math.sin(phi);
+                    double n = Wgs84.A / Math.sqrt(1.0 - Wgs84.E2 * sin * sin);
+                    if (fn == Fn.ECEF_X) r = (n + hae) * Math.cos(phi) * Math.cos(lam);
+                    else if (fn == Fn.ECEF_Y) r = (n + hae) * Math.cos(phi) * Math.sin(lam);
+                    else r = (n * (1.0 - Wgs84.E2) + hae) * sin;
+                    break;
+                }
+                case LON_OF_ECEF: {
+                    double x = Transform.asDouble(v[0]), y = Transform.asDouble(v[1]);
+                    if (x == 0 && y == 0) return null;
+                    r = Math.atan2(y, x) * RAD;
+                    if (r == -180.0) r = 180.0;   // ruling 5 of 0.16
+                    break;
+                }
+                case LAT_OF_ECEF:
+                case HAE_OF_ECEF: {
+                    double[] g = Wgs84.geodetic(Transform.asDouble(v[0]), Transform.asDouble(v[1]), Transform.asDouble(v[2]));
+                    if (g == null) return null;
+                    r = fn == Fn.LAT_OF_ECEF ? g[0] * RAD : g[1];
+                    break;
+                }
                 default:
                     throw new IllegalStateException(fn.name());
             }
@@ -412,6 +537,23 @@ public final class ModelModule {
             case "parse_int": fn = Derive.Fn.PARSE_INT; argc = 1; break;
             case "text_of": fn = Derive.Fn.TEXT_OF; argc = 1; break;
             case "present": fn = Derive.Fn.PRESENT; argc = 1; break;
+            case "sec_of": fn = Derive.Fn.SEC_OF; argc = 1; break;
+            case "nsec_of": fn = Derive.Fn.NSEC_OF; argc = 1; break;
+            case "ms_of": fn = Derive.Fn.MS_OF; argc = 2; break;
+            case "deg": fn = Derive.Fn.DEG; argc = 1; break;
+            case "rad": fn = Derive.Fn.RAD; argc = 1; break;
+            case "add": fn = Derive.Fn.ADD; argc = 2; break;
+            case "sub": fn = Derive.Fn.SUB; argc = 2; break;
+            case "deg_lat_of": fn = Derive.Fn.DEG_LAT_OF; argc = 2; break;
+            case "deg_lon_of": fn = Derive.Fn.DEG_LON_OF; argc = 2; break;
+            case "m_lat_of": fn = Derive.Fn.M_LAT_OF; argc = 2; break;
+            case "m_lon_of": fn = Derive.Fn.M_LON_OF; argc = 2; break;
+            case "ecef_x": fn = Derive.Fn.ECEF_X; argc = 3; break;
+            case "ecef_y": fn = Derive.Fn.ECEF_Y; argc = 3; break;
+            case "ecef_z": fn = Derive.Fn.ECEF_Z; argc = 3; break;
+            case "lat_of_ecef": fn = Derive.Fn.LAT_OF_ECEF; argc = 3; break;
+            case "lon_of_ecef": fn = Derive.Fn.LON_OF_ECEF; argc = 3; break;
+            case "hae_of_ecef": fn = Derive.Fn.HAE_OF_ECEF; argc = 3; break;
             default: throw badDerive(module, where, "unknown function \"" + function + "\"");
         }
         boolean takesParam = fn == Derive.Fn.SCALE || fn == Derive.Fn.OFFSET || fn == Derive.Fn.JOIN;
@@ -451,6 +593,16 @@ public final class ModelModule {
                 break;
             case COPY:
                 need = type;
+                break;
+            case SEC_OF:
+            case NSEC_OF:
+            case MS_OF:
+                need = "int";
+                break;
+            case ADD:
+            case SUB:
+                // all int or all float, no promotion (ruling 4 of 0.16)
+                need = type.equals("int") ? "int" : "float";
                 break;
             case JOIN:
                 need = "string";

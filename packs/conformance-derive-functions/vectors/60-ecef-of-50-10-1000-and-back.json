@@ -1,0 +1,17 @@
+{
+  "name": "ecef-of-50-10-1000-and-back",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":50,\"glon\":10,\"ghae\":1000}",
+  "context": {},
+  "expect": "{\"glat\":50,\"glon\":10,\"ghae\":1000}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "4046089.4275624473",
+    "probe.g_y": "713434.7324385277",
+    "probe.g_z": "4863555.082149551",
+    "probe.g_rlat": "50",
+    "probe.g_rlon": "10.000000000000002",
+    "probe.g_rhae": "999.9999999990374"
+  }
+}

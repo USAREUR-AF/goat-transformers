@@ -1,0 +1,13 @@
+{
+  "name": "add-sub-float-exact",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"f0\":1.5,\"f1\":-0.25}",
+  "context": {},
+  "expect": "{\"f0\":1.5,\"f1\":-0.25}",
+  "model": {
+    "@complete": true,
+    "probe.fsum": "1.25",
+    "probe.fdiff": "1.75"
+  }
+}

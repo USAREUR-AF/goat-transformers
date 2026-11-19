@@ -1,0 +1,17 @@
+{
+  "name": "distance-at-latitude-minus-60",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"dist\":1000,\"lat\":-60,\"arc\":0.01}",
+  "context": {},
+  "expect": "{\"dist\":1000,\"lat\":-60,\"arc\":0.01}",
+  "model": {
+    "@complete": true,
+    "probe.dist_dlat": "0.008975670662708168",
+    "probe.dist_dlon": "0.017921146448389637",
+    "probe.arc_mlat": "1114.1228745777944",
+    "probe.arc_mlon": "558.0000157243614",
+    "probe.back_mlat": "1000",
+    "probe.back_mlon": "1000"
+  }
+}

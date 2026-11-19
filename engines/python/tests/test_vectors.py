@@ -139,7 +139,7 @@ def _check_model(engine, rel, vec, data):
     """-> list of failure texts for the vector's `model` object. With
     `"@complete": true` the checks run on the completed entity: the decode, then
     the absent keys filled from `context`, then the derivations (whether or not
-    `from == to`), and floats compare within 1e-9 relative. `"<list>.#"` and
+    `from == to`), and floats compare within 1e-9 relative or 1e-7 absolute. `"<list>.#"` and
     `"<list>[<i>].<key>"` check a list of the decoded entity, and
     `"<list>[<i>].@kind"` the kind an item selected (0.8)."""
     out = []
@@ -191,7 +191,8 @@ def _check_model(engine, rel, vec, data):
                 )
             continue
         if isinstance(have, float) and isinstance(want, float) and complete:
-            ok = have == want or abs(have - want) < 1e-9 * max(abs(have), abs(want))
+            # 1e-9 relative, or 1e-7 absolute (vector-format step 3, Version 0.16)
+            ok = have == want or abs(have - want) < 1e-9 * max(abs(have), abs(want)) or abs(have - want) < 1e-7
         elif isinstance(have, float) and isinstance(want, float):
             ok = abs(have - want) <= 1e-9
         else:

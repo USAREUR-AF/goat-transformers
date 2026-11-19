@@ -1,0 +1,12 @@
+{
+  "name": "ms-of-ns-smallest-64-bit",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"usec\":0,\"unsec\":-9223372036854775808}",
+  "context": {},
+  "expect": "{\"usec\":0,\"unsec\":-9223372036854775808,\"ums\":-9223372036855}",
+  "model": {
+    "@complete": true,
+    "probe.u_ms": "-9223372036855"
+  }
+}

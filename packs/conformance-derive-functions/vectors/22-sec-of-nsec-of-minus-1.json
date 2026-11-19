@@ -1,0 +1,13 @@
+{
+  "name": "sec-of-nsec-of-minus-1",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tms\":-1}",
+  "context": {},
+  "expect": "{\"tms\":-1,\"tsec\":-1,\"tnsec\":999000000}",
+  "model": {
+    "@complete": true,
+    "probe.t_sec": "-1",
+    "probe.t_nsec": "999000000"
+  }
+}

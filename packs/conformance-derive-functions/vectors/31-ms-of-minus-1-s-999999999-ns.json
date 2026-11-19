@@ -1,0 +1,12 @@
+{
+  "name": "ms-of-minus-1-s-999999999-ns",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"usec\":-1,\"unsec\":999999999}",
+  "context": {},
+  "expect": "{\"usec\":-1,\"unsec\":999999999,\"ums\":-1}",
+  "model": {
+    "@complete": true,
+    "probe.u_ms": "-1"
+  }
+}

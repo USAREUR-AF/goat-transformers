@@ -1,0 +1,17 @@
+{
+  "name": "distance-at-latitude-89.9999999999",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"dist\":1000,\"lat\":89.9999999999,\"arc\":0.01}",
+  "context": {},
+  "expect": "{\"dist\":1000,\"lat\":89.9999999999,\"arc\":0.01}",
+  "model": {
+    "@complete": true,
+    "probe.dist_dlat": "0.0089530340305462",
+    "probe.dist_dlon": "5129703069.516136",
+    "probe.arc_mlat": "1116.939795591275",
+    "probe.arc_mlon": "0.0000000019494305741449593",
+    "probe.back_mlat": "1000",
+    "probe.back_mlon": "1000.0000000000002"
+  }
+}

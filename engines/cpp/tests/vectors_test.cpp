@@ -95,7 +95,8 @@ struct InvalidVector : std::runtime_error {
 };
 
 // Floats compare within 1e-9; on a completed entity ("@complete") within 1e-9
-// relative: |got - want| < 1e-9 * max(|got|, |want|), or equal.
+// relative: |got - want| < 1e-9 * max(|got|, |want|), or within 1e-7 absolute
+// (Version 0.16), or equal.
 bool model_matches(const Value& got, const std::string& want, bool relative) {
     switch (got.kind) {
         case Value::Kind::String: return got.s == want;
@@ -107,7 +108,8 @@ bool model_matches(const Value& got, const std::string& want, bool relative) {
             double w;
             if (!detail::parse_number_text(want, w)) return false;
             if (!relative) return std::fabs(w - got.f) <= 1e-9;
-            return w == got.f || std::fabs(got.f - w) < 1e-9 * std::max(std::fabs(got.f), std::fabs(w));
+            return w == got.f || std::fabs(got.f - w) < 1e-9 * std::max(std::fabs(got.f), std::fabs(w)) ||
+                   std::fabs(got.f - w) < 1e-7;
         }
     }
     return false;

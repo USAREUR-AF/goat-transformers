@@ -1,0 +1,16 @@
+{
+  "name": "ruling-02-geodetic-of-1000-0-1000-longitude-only",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":1000,\"ey\":0,\"ez\":1000}",
+  "context": {},
+  "expect": "{\"ex\":1000,\"ey\":0,\"ez\":1000}",
+  "model": {
+    "@complete": true,
+    "probe.e_lon": "0",
+    "@absent": [
+      "probe.e_lat",
+      "probe.e_hae"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "add-sub-int-sub-of-the-smallest-beyond-the-largest",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"i0\":0,\"i1\":-9223372036854775808}",
+  "context": {},
+  "expect": "{\"i0\":0,\"i1\":-9223372036854775808,\"isum\":-9223372036854775808}",
+  "model": {
+    "@complete": true,
+    "probe.isum": "-9223372036854775808",
+    "@absent": [
+      "probe.idiff"
+    ]
+  }
+}

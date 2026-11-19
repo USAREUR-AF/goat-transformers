@@ -1,9 +1,12 @@
 # Conformance probe pack for the derive functions added in spec 0.8:
-# `day_seconds`, `any`, `not`, `parse_int` and `text_of`. Public. No kinds.
-# The first six members are inputs; the last five are the keys the `derive`
-# lines of model/probe.def set from them.
+# `day_seconds`, `any`, `not`, `parse_int` and `text_of`, and in spec 0.16:
+# time, distance and frames. Public. No kinds.
+# The first six members are inputs; the next five are the keys the `derive`
+# lines of model/probe.def set from them. From `tms` on, the members of 0.16:
+# the inputs, and the integer targets. The float targets of 0.16 are not
+# members: a vector states them in `model` with "@complete": true.
 format  conformance-derive-functions
-version 0.8.0
+version 0.16.0
 distribution public
 source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
 uses    probe
@@ -19,3 +22,26 @@ field   probe.any1    any     int
 field   probe.notx    notx    int
 field   probe.parsed  parsed  int
 field   probe.text    text    string
+field   probe.t_ms    tms     int
+field   probe.u_sec   usec    int
+field   probe.u_nsec  unsec   int
+field   probe.i0      i0      int
+field   probe.i1      i1      int
+field   probe.ang_r   r       float
+field   probe.ang_d   d       float
+field   probe.f0      f0      float
+field   probe.f1      f1      float
+field   probe.dist    dist    float
+field   probe.at_lat  lat     float
+field   probe.arc     arc     float
+field   probe.g_lat   glat    float
+field   probe.g_lon   glon    float
+field   probe.g_hae   ghae    float
+field   probe.e_x     ex      float
+field   probe.e_y     ey      float
+field   probe.e_z     ez      float
+field   probe.t_sec   tsec    int
+field   probe.t_nsec  tnsec   int
+field   probe.u_ms    ums     int
+field   probe.isum    isum    int
+field   probe.idiff   idiff   int

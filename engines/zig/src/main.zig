@@ -676,7 +676,70 @@ const Factor = struct {
     }
 };
 
-const DFn = enum { copy, hypot, bearing, east_of, north_of, neg, scale, offset, join, day_seconds, any, not, parse_int, text_of, present };
+const DFn = enum {
+    copy,
+    hypot,
+    bearing,
+    east_of,
+    north_of,
+    neg,
+    scale,
+    offset,
+    join,
+    day_seconds,
+    any,
+    not,
+    parse_int,
+    text_of,
+    present, // Version 0.12
+    // Version 0.16
+    sec_of,
+    nsec_of,
+    ms_of,
+    deg,
+    rad,
+    add,
+    sub,
+    deg_lat_of,
+    deg_lon_of,
+    m_lat_of,
+    m_lon_of,
+    ecef_x,
+    ecef_y,
+    ecef_z,
+    lat_of_ecef,
+    lon_of_ecef,
+    hae_of_ecef,
+};
+
+// The derive functions of Version 0.16 that take no parameter: the name, the
+// argument count, and whether the arguments and the target are `int` (null:
+// `add` / `sub`, all `int` or all `float`, ruling 4 of 0.16).
+const Fn16 = struct { name: []const u8, f: DFn, nargs: usize, int_args: ?bool, int_target: bool };
+const fns16 = [_]Fn16{
+    .{ .name = "sec_of", .f = .sec_of, .nargs = 1, .int_args = true, .int_target = true },
+    .{ .name = "nsec_of", .f = .nsec_of, .nargs = 1, .int_args = true, .int_target = true },
+    .{ .name = "ms_of", .f = .ms_of, .nargs = 2, .int_args = true, .int_target = true },
+    .{ .name = "deg", .f = .deg, .nargs = 1, .int_args = false, .int_target = false },
+    .{ .name = "rad", .f = .rad, .nargs = 1, .int_args = false, .int_target = false },
+    .{ .name = "add", .f = .add, .nargs = 2, .int_args = null, .int_target = false },
+    .{ .name = "sub", .f = .sub, .nargs = 2, .int_args = null, .int_target = false },
+    .{ .name = "deg_lat_of", .f = .deg_lat_of, .nargs = 2, .int_args = false, .int_target = false },
+    .{ .name = "deg_lon_of", .f = .deg_lon_of, .nargs = 2, .int_args = false, .int_target = false },
+    .{ .name = "m_lat_of", .f = .m_lat_of, .nargs = 2, .int_args = false, .int_target = false },
+    .{ .name = "m_lon_of", .f = .m_lon_of, .nargs = 2, .int_args = false, .int_target = false },
+    .{ .name = "ecef_x", .f = .ecef_x, .nargs = 3, .int_args = false, .int_target = false },
+    .{ .name = "ecef_y", .f = .ecef_y, .nargs = 3, .int_args = false, .int_target = false },
+    .{ .name = "ecef_z", .f = .ecef_z, .nargs = 3, .int_args = false, .int_target = false },
+    .{ .name = "lat_of_ecef", .f = .lat_of_ecef, .nargs = 3, .int_args = false, .int_target = false },
+    .{ .name = "lon_of_ecef", .f = .lon_of_ecef, .nargs = 3, .int_args = false, .int_target = false },
+    .{ .name = "hae_of_ecef", .f = .hae_of_ecef, .nargs = 3, .int_args = false, .int_target = false },
+};
+
+fn find16(head: []const u8) ?Fn16 {
+    for (fns16) |f| if (std.mem.eql(u8, f.name, head)) return f;
+    return null;
+}
 
 // One `derive <model-key> <function> <argument-key>…` line of a module.
 const Derive = struct {
@@ -1118,6 +1181,22 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const Module
         break :blk true;
     };
     const eq = std.mem.eql;
+    if (find16(head)) |fn16| {
+        if (param != null or d.args.len != fn16.nargs) return null;
+        if (fn16.int_args) |ints| {
+            const want: KeyType = if (ints) .int else .float;
+            const want_t: KeyType = if (fn16.int_target) .int else .float;
+            if (tt != want_t) return null;
+            for (at) |ty| if (ty != want) return null;
+        } else {
+            // add / sub: the target and both arguments all `int` or all `float`
+            if (tt != .int and tt != .float) return null;
+            for (at) |ty| if (ty != tt) return null;
+            d.int_mode = tt == .int;
+        }
+        d.f = fn16.f;
+        return d;
+    }
     if (eq(u8, head, "copy") and param == null) {
         if (d.args.len != 1 or at[0] != tt) return null;
         d.f = .copy;
@@ -1208,6 +1287,7 @@ fn deriveShapeOk(toks: []const []const u8) bool {
         .{ .name = "text_of", .param = false, .min = 1, .max = 1 },
         .{ .name = "present", .param = false, .min = 1, .max = 1 },
     };
+    if (find16(head)) |fn16| return colon == null and nargs == fn16.nargs;
     for (shapes) |sh| {
         if (!std.mem.eql(u8, sh.name, head)) continue;
         if (sh.param != (colon != null) or nargs < sh.min or nargs > sh.max) return false;
@@ -3138,6 +3218,14 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
     for (d.args) |a| if (!e.fields.contains(a)) return false;
     const a0 = e.get(d.args[0]).?;
     var out: MV = undefined;
+    if (@intFromEnum(d.f) >= @intFromEnum(DFn.sec_of)) {
+        var av: [3]MV = undefined;
+        for (d.args, 0..) |a, i| av[i] = e.get(a).?;
+        out = derive16(d.f, av[0..d.args.len]) orelse return false;
+        if (out == .float and !std.math.isFinite(out.float)) return false;
+        try e.put(d.target, out);
+        return true;
+    }
     switch (d.f) {
         .copy => out = a0,
         .any => unreachable,
@@ -3204,6 +3292,152 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
     if (out == .float and !std.math.isFinite(out.float)) return false;
     try e.put(d.target, out);
     return true;
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.16: derive functions for time, distance and frames
+// ---------------------------------------------------------------------------
+
+const wgs_a: f64 = 6378137.0;
+const wgs_f: f64 = 1.0 / 298.257223563;
+const wgs_e2: f64 = wgs_f * (2.0 - wgs_f);
+const wgs_b: f64 = wgs_a * (1.0 - wgs_f);
+
+// An integer result in the signed 64-bit range, else absent.
+fn int64Of(v: i128) ?MV {
+    if (v < std.math.minInt(i64) or v > std.math.maxInt(i64)) return null;
+    return MV{ .int = @intCast(v) };
+}
+
+// A square root that leaves the target absent on a negative argument
+// (ruling 1 of 0.16).
+fn sqrtOk(x: f64) ?f64 {
+    if (!(x >= 0)) return null;
+    return @sqrt(x);
+}
+
+// A latitude in degrees as φ; absent outside [-90, 90] (ruling 6 of 0.16).
+fn phiOf(lat: f64) ?f64 {
+    if (!(lat >= -90 and lat <= 90)) return null;
+    return lat * deg_to_rad;
+}
+
+// 1 − e² sin² φ
+fn wgsW(phi: f64) f64 {
+    const s = @sin(phi);
+    return 1.0 - wgs_e2 * s * s;
+}
+
+fn primeN(phi: f64) ?f64 {
+    const r = sqrtOk(wgsW(phi)) orelse return null;
+    return wgs_a / r;
+}
+
+fn meridM(phi: f64) f64 {
+    return wgs_a * (1.0 - wgs_e2) / std.math.pow(f64, wgsW(phi), 1.5);
+}
+
+const Geodetic = struct { phi: f64, h: f64 };
+
+// Heikkinen's closed form, in the order the specification gives it. null:
+// `G ≤ 0` (ruling 2), or an intermediate that is not finite or a square root
+// of a negative number (ruling 1); the square root inside `r0` takes a
+// negative argument as 0 (ruling 9).
+fn heikkinen(x: f64, y: f64, z: f64) ?Geodetic {
+    const a = wgs_a;
+    const b = wgs_b;
+    const e2 = wgs_e2;
+    const e4 = e2 * e2;
+    const a2 = a * a;
+    const b2 = b * b;
+    const p = sqrtOk(x * x + y * y) orelse return null;
+    const F = 54.0 * b2 * z * z;
+    const G = p * p + (1.0 - e2) * z * z - e2 * (a2 - b2);
+    if (!(G > 0)) return null;
+    const c = e4 * F * p * p / (G * G * G);
+    const s = std.math.cbrt(1.0 + c + (sqrtOk(c * c + 2.0 * c) orelse return null));
+    const k = s + 1.0 + 1.0 / s;
+    const P = F / (3.0 * k * k * G * G);
+    const Q = sqrtOk(1.0 + 2.0 * e4 * P) orelse return null;
+    var inner = a2 / 2.0 * (1.0 + 1.0 / Q) - P * (1.0 - e2) * z * z / (Q * (1.0 + Q)) - P * p * p / 2.0;
+    if (inner < 0) inner = 0;
+    const r0 = -P * e2 * p / (1.0 + Q) + (sqrtOk(inner) orelse return null);
+    const pr = p - e2 * r0;
+    const U = sqrtOk(pr * pr + z * z) orelse return null;
+    const V = sqrtOk(pr * pr + (1.0 - e2) * z * z) orelse return null;
+    const z0 = b2 * z / (a * V);
+    const h = U * (1.0 - b2 / (a * V));
+    const phi = std.math.atan2(z + (a2 - b2) / b2 * z0, p);
+    if (!std.math.isFinite(h) or !std.math.isFinite(phi)) return null;
+    return .{ .phi = phi, .h = h };
+}
+
+// One derive function of Version 0.16 on present arguments of the types the
+// load checked. null: the target stays absent; never an error (ruling 1).
+fn derive16(f: DFn, av: []const MV) ?MV {
+    switch (f) {
+        .sec_of, .nsec_of, .ms_of => {
+            for (av) |v| if (v != .int) return null;
+            const m: i128 = av[0].int;
+            return switch (f) {
+                .sec_of => int64Of(@divFloor(m, 1000)),
+                .nsec_of => int64Of((m - 1000 * @divFloor(m, 1000)) * 1000000),
+                else => int64Of(m * 1000 + @divFloor(@as(i128, av[1].int), 1000000)),
+            };
+        },
+        .add, .sub => {
+            if (av[0] == .int and av[1] == .int) {
+                const x0: i128 = av[0].int;
+                const x1: i128 = av[1].int;
+                return int64Of(if (f == .add) x0 + x1 else x0 - x1);
+            }
+            if (av[0] != .float or av[1] != .float) return null;
+            return MV{ .float = if (f == .add) av[0].float + av[1].float else av[0].float - av[1].float };
+        },
+        else => {},
+    }
+    var x: [3]f64 = undefined;
+    for (av, 0..) |v, i| {
+        if (v != .float) return null;
+        x[i] = v.float;
+    }
+    const r: f64 = switch (f) {
+        .deg => x[0] * rad_to_deg,
+        .rad => x[0] * deg_to_rad,
+        .deg_lat_of => (x[0] / meridM(phiOf(x[1]) orelse return null)) * rad_to_deg,
+        .deg_lon_of => blk: {
+            const phi = phiOf(x[1]) orelse return null;
+            const cp = @abs(@cos(phi));
+            if (!(cp > 1e-12)) return null;
+            break :blk (x[0] / ((primeN(phi) orelse return null) * cp)) * rad_to_deg;
+        },
+        .m_lat_of => x[0] * deg_to_rad * meridM(phiOf(x[1]) orelse return null),
+        .m_lon_of => blk: {
+            const phi = phiOf(x[1]) orelse return null;
+            break :blk x[0] * deg_to_rad * (primeN(phi) orelse return null) * @abs(@cos(phi));
+        },
+        .ecef_x, .ecef_y, .ecef_z => blk: {
+            const phi = phiOf(x[0]) orelse return null;
+            const lam = x[1] * deg_to_rad;
+            const n = primeN(phi) orelse return null;
+            break :blk switch (f) {
+                .ecef_x => (n + x[2]) * @cos(phi) * @cos(lam),
+                .ecef_y => (n + x[2]) * @cos(phi) * @sin(lam),
+                else => (n * (1.0 - wgs_e2) + x[2]) * @sin(phi),
+            };
+        },
+        .lon_of_ecef => blk: {
+            if (x[0] == 0 and x[1] == 0) return null;
+            var lon = std.math.atan2(x[1], x[0]) * rad_to_deg;
+            if (lon == -180) lon = 180; // ruling 5
+            break :blk lon;
+        },
+        .lat_of_ecef => (heikkinen(x[0], x[1], x[2]) orelse return null).phi * rad_to_deg,
+        .hae_of_ecef => (heikkinen(x[0], x[1], x[2]) orelse return null).h,
+        else => return null,
+    };
+    if (!std.math.isFinite(r)) return null;
+    return MV{ .float = r };
 }
 
 const max_file: usize = 64 << 20;
@@ -9444,8 +9678,8 @@ fn mvText(alloc: std.mem.Allocator, mv: MV) ![]const u8 {
     };
 }
 
-// `relative`: a float of a completed entity compares within 1e-9 relative;
-// otherwise within 1e-9.
+// `relative`: a float of a completed entity compares within 1e-9 relative or
+// 1e-7 absolute; otherwise within 1e-9.
 fn modelMatch(actual: MV, expected: []const u8, relative: bool) bool {
     switch (actual) {
         .str => |s| return std.mem.eql(u8, s, expected),
@@ -9456,7 +9690,9 @@ fn modelMatch(actual: MV, expected: []const u8, relative: bool) bool {
         .float => |f| {
             const e = parseDecimal(expected) catch return false;
             if (f == e) return true;
-            if (relative) return @abs(f - e) < 1e-9 * @max(@abs(f), @abs(e));
+            // of a completed entity: within 1e-9 relative, or within 1e-7
+            // absolute (vector-format step 3, Version 0.16)
+            if (relative) return @abs(f - e) < 1e-9 * @max(@abs(f), @abs(e)) or @abs(f - e) < 1e-7;
             return @abs(f - e) <= 1e-9;
         },
     }

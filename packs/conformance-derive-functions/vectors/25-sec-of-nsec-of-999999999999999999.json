@@ -1,0 +1,13 @@
+{
+  "name": "sec-of-nsec-of-999999999999999999",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tms\":999999999999999999}",
+  "context": {},
+  "expect": "{\"tms\":999999999999999999,\"tsec\":999999999999999,\"tnsec\":999000000}",
+  "model": {
+    "@complete": true,
+    "probe.t_sec": "999999999999999",
+    "probe.t_nsec": "999000000"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "geodetic-of-0-minus-6378137-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":0,\"ey\":-6378137,\"ez\":0}",
+  "context": {},
+  "expect": "{\"ex\":0,\"ey\":-6378137,\"ez\":0}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "0",
+    "probe.e_lon": "-90",
+    "probe.e_hae": "0"
+  }
+}

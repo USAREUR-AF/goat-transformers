@@ -1,0 +1,19 @@
+{
+  "name": "ruling-06-latitude-minus-90.5-distance-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"dist\":1000,\"lat\":-90.5,\"arc\":0.01}",
+  "context": {},
+  "expect": "{\"dist\":1000,\"lat\":-90.5,\"arc\":0.01}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.dist_dlat",
+      "probe.dist_dlon",
+      "probe.arc_mlat",
+      "probe.arc_mlon",
+      "probe.back_mlat",
+      "probe.back_mlon"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ruling-09-ecef-of-90-0-100-and-back",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":90,\"glon\":0,\"ghae\":100}",
+  "context": {},
+  "expect": "{\"glat\":90,\"glon\":0,\"ghae\":100}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "0.0000000003918682157154429",
+    "probe.g_y": "0",
+    "probe.g_z": "6356852.314245179",
+    "probe.g_rlat": "90",
+    "probe.g_rlon": "0",
+    "probe.g_rhae": "100.00000000060967"
+  }
+}

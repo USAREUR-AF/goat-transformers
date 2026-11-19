@@ -39,6 +39,11 @@ var deriveArity = map[string]int{
 	"day_seconds": 1, "any": -1, "not": 1, "parse_int": 1, "text_of": 1,
 	// spec 0.12.
 	"present": 1,
+	// spec 0.16, "Functions".
+	"sec_of": 1, "nsec_of": 1, "ms_of": 2, "deg": 1, "rad": 1, "add": 2, "sub": 2,
+	"deg_lat_of": 2, "deg_lon_of": 2, "m_lat_of": 2, "m_lon_of": 2,
+	"ecef_x": 3, "ecef_y": 3, "ecef_z": 3,
+	"lat_of_ecef": 3, "lon_of_ecef": 3, "hae_of_ecef": 3,
 }
 
 // parseDerive reads the function of a `derive` line and checks what the line
@@ -47,7 +52,7 @@ func parseDerive(d *Derive) error {
 	name, param, hasParam := strings.Cut(d.Function, ":")
 	arity, known := deriveArity[name]
 	if !known {
-		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>, day_seconds, any, not, parse_int, text_of, present)", d.Function)
+		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>, day_seconds, any, not, parse_int, text_of, present, sec_of, nsec_of, ms_of, deg, rad, add, sub, deg_lat_of, deg_lon_of, m_lat_of, m_lon_of, ecef_x, ecef_y, ecef_z, lat_of_ecef, lon_of_ecef, hae_of_ecef)", d.Function)
 	}
 	d.name, d.param = name, param
 	switch name {
@@ -201,6 +206,20 @@ func (e *Engine) checkDerives(m *Module) error {
 			if target != KindInt {
 				return bad("present needs an int target")
 			}
+		case "sec_of", "nsec_of", "ms_of":
+			// spec 0.16 ruling 4: the types the table states, no promotion.
+			if !all(KindInt) {
+				return bad("%s needs an int target and int arguments", d.name)
+			}
+		case "add", "sub":
+			// spec 0.16 ruling 4: all int or all float.
+			switch {
+			case all(KindInt):
+				d.isInt = true
+			case all(KindFloat):
+			default:
+				return bad("%s needs a target and arguments that are all int or all float", d.name)
+			}
 		default:
 			if !all(KindFloat) {
 				return bad("%s needs a float target and float arguments", d.name)
@@ -347,6 +366,22 @@ func (d *Derive) apply(args []Value) (Value, bool) {
 			r = fl(0) * d.num / d.den
 		} else {
 			r = fl(0) * d.factor
+		}
+	case "sec_of", "nsec_of", "ms_of":
+		return deriveTime(d.name, args)
+	case "add", "sub":
+		if d.isInt {
+			return deriveIntSum(d.name, args[0].I, args[1].I)
+		}
+		if d.name == "add" {
+			r = fl(0) + fl(1)
+		} else {
+			r = fl(0) - fl(1)
+		}
+	default:
+		var ok bool
+		if r, ok = deriveGeo(d.name, argOr(args, 0, fl), argOr(args, 1, fl), argOr(args, 2, fl)); !ok {
+			return Value{}, false
 		}
 	}
 	if math.IsNaN(r) || math.IsInf(r, 0) {

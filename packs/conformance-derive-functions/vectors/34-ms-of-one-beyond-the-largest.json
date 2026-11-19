@@ -1,0 +1,14 @@
+{
+  "name": "ms-of-one-beyond-the-largest",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"usec\":9223372036854775,\"unsec\":808000000}",
+  "context": {},
+  "expect": "{\"usec\":9223372036854775,\"unsec\":808000000}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.u_ms"
+    ]
+  }
+}

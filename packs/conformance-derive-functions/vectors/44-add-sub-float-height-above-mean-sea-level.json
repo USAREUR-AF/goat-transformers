@@ -1,0 +1,13 @@
+{
+  "name": "add-sub-float-height-above-mean-sea-level",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"f0\":100.5,\"f1\":47.25}",
+  "context": {},
+  "expect": "{\"f0\":100.5,\"f1\":47.25}",
+  "model": {
+    "@complete": true,
+    "probe.fsum": "147.75",
+    "probe.fdiff": "53.25"
+  }
+}
