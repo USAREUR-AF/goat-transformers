@@ -77,6 +77,12 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Pack uci-2.5; module uci25
+  Universal Command and Control Interface (UCI) Schema 2.5 (OAC-STD-002 Rev E,
+  schema 002.5.0; the OMS 2.5 message set), U.S. Air Force,
+  https://github.com/open-arsenal/uci tag v2.5. Distribution Statement A:
+  approved for public release, distribution is unlimited.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c
