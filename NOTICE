@@ -77,16 +77,6 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
-Packs mavlink2-ardupilotmega, mavlink2-asluav, mavlink2-avssuas,
-mavlink2-csairlink, mavlink2-cubepilot, mavlink2-development, mavlink2-icarous,
-mavlink2-loweheiser, mavlink2-marsh, mavlink2-paparazzi, mavlink2-stemstudios,
-mavlink2-storm32, mavlink2-uavionix; modules mavlink<dialect>
-  MAVLink dialect message definitions (message_definitions/v1.0/<dialect>.xml).
-  https://github.com/mavlink/mavlink
-  The same repository and license statement as pack mavlink2. The dialect
-  files carry no license header. Message names and ids, field names, types,
-  array lengths, units and enumeration values only; no description text.
-
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c
