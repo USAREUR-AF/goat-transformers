@@ -1,0 +1,14 @@
+{
+  "name": "open-entity-gateway-uas-access-from-context-to-cot-xml",
+  "from": "canonical-track-v2",
+  "to": "cot-xml",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0007\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"3\",\"observedAt\":\"2025-06-15T15:06:43.250Z\",\"position\":{\"latitudeDeg\":64.8378,\"longitudeDeg\":-147.7164,\"altitudeM\":412.0},\"velocity\":{\"eastMps\":13.0,\"northMps\":0.0,\"upMps\":0.0},\"classification\":\"uas\",\"confidence\":0.82,\"simulated\":true,\"testData\":true,\"identifiers\":[]}",
+  "context": {
+    "stale_ms": "1750000123250",
+    "how": "m-g",
+    "access": "Undefined"
+  },
+  "expect": "<event version=\"2.0\" uid=\"T-0007\" type=\"a-u-A-M-F-Q\" time=\"2025-06-15T15:06:43.250Z\" start=\"2025-06-15T15:06:43.250Z\" stale=\"2025-06-15T15:08:43.250Z\" how=\"m-g\" access=\"Undefined\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"412\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"90\" speed=\"13\"/></detail></event>",
+  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "reference": "as vector 33, with access Undefined as context, as the gateway's CoT destination sets it by default; access is written after how, in field-line order"
+}

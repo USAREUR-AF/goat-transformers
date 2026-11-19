@@ -1,0 +1,16 @@
+{
+  "name": "not-known-point-values-to-geojson-are-absent",
+  "from": "cot-xml",
+  "to": "geojson",
+  "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"9999999\" ce=\"9999999.0\" le=\"9999999\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+  "model": {
+    "uid": "J-01334",
+    "@absent": [
+      "hae",
+      "ce",
+      "le"
+    ]
+  },
+  "reference": "the CoT schema's 9999999 for hae, ce and le means not known (absent 9999999,9999999.0, spec 0.9); geojson writes coordinates [lon, lat] and no ce, le when the keys are absent"
+}

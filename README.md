@@ -75,6 +75,7 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 | `geojson` | GeoJSON Feature (IETF RFC 7946) | `geojson` | 1 |
 | `nvg` | NATO Vector Graphics 1.5, point | `xml` | 1 |
 | `canonical-track-v2` | Canonical Track v2 of [open-billie](https://github.com/USAREUR-AF/open-billie) | `json` | 1 |
+| `geo-track-v1` | GeoTrackV1, the display track of [goatstuff](https://github.com/USAREUR-AF/goatstuff)'s map | `json` | 1 |
 | `sapient` | SAPIENT, BSI Flex 335 v2.0 | `protobuf` | 9 |
 | `sapient-v1` | SAPIENT, BSI Flex 335 v1.0 | `protobuf` | 9 |
 | `isa` | Integrated Sensor Architecture, IPL 3.7 `Event` | `protobuf` | 1 |

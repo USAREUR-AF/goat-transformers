@@ -1,0 +1,16 @@
+{
+  "name": "access-roundtrip",
+  "from": "cot-xml",
+  "to": "cot-xml",
+  "input": "<event version=\"2.0\" uid=\"KX7\" type=\"a-f-G\" time=\"2025-06-15T15:06:43Z\" start=\"2025-06-15T15:06:43Z\" stale=\"2025-06-15T15:16:43Z\" how=\"m-g\" access=\"Undefined\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"136.5\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"KX7\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"KX7\" type=\"a-f-G\" time=\"2025-06-15T15:06:43.000Z\" start=\"2025-06-15T15:06:43.000Z\" stale=\"2025-06-15T15:16:43.000Z\" how=\"m-g\" access=\"Undefined\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"136.5\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"KX7\"/></detail></event>",
+  "model": {
+    "access": "Undefined",
+    "@absent": [
+      "ce",
+      "le"
+    ]
+  },
+  "source": "USAREUR-AF/open-entity-gateway docs/adapters/cot.md, its example event (Apache-2.0)",
+  "reference": "access is a mapped attribute, written after how; times in milliseconds; ce and le 9999999 decode absent and are written as the default"
+}

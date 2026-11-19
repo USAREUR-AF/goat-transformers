@@ -62,6 +62,10 @@ Pack canonical-track-v2; module track
   Canonical Track v2 schema, https://github.com/USAREUR-AF/open-billie
   Apache License, Version 2.0.
 
+Pack geo-track-v1; module geotrack
+  GeoTrackV1 schema, https://github.com/USAREUR-AF/goatstuff
+  Apache License, Version 2.0.
+
 Packs nmea2000, nmea2000-seq; module n2k
   CANboat database (docs/canboat.json), version 9.2.0.
   https://github.com/canboat/canboat
