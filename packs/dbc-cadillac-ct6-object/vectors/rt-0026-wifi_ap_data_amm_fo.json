@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-wifi_ap_data_amm_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "890400000200000000a8000000000000",
+  "expect": "890400000200000000a8000000000000",
+  "model": {
+    "@kind": "wifi_ap_data_amm_fo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-obd_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "910300000800000026fdd4ab7d820050",
+  "expect": "910300000800000026fdd4ab7d820050",
+  "model": {
+    "@kind": "obd_01"
+  }
+}

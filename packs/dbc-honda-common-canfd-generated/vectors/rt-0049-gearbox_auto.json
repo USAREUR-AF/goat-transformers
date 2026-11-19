@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-gearbox_auto",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "a301000008000000c75e010808000656",
+  "expect": "a301000008000000c75e010808000656",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

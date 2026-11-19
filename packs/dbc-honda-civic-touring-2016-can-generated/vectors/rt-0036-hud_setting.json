@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-touring-2016-can-generated-roundtrip-hud_setting",
+  "from": "dbc-honda-civic-touring-2016-can-generated",
+  "to": "dbc-honda-civic-touring-2016-can-generated",
+  "input": "ed010000050000002000000000000000",
+  "expect": "ed010000050000002000000000000000",
+  "model": {
+    "@kind": "hud_setting"
+  }
+}

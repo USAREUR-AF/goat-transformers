@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-steering_sensors",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "5601000006000000a8f2fcc900070000",
+  "expect": "5601000006000000a8f2fcc900070000",
+  "model": {
+    "@kind": "steering_sensors"
+  }
+}

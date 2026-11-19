@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-ccp_data_transmission_object_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "f2070000080000008000000028cb26dc",
+  "expect": "f2070000080000008000000028cb26dc",
+  "model": {
+    "@kind": "ccp_data_transmission_object_ls"
+  }
+}

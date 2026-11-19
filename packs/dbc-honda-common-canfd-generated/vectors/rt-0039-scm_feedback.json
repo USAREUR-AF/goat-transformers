@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-scm_feedback",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "26030000080000000000022800000032",
+  "expect": "26030000080000000000022800000032",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

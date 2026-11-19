@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-cruise_state",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "0f030000030000000000000000000000",
+  "expect": "0f030000030000000000000000000000",
+  "model": {
+    "@kind": "cruise_state"
+  }
+}

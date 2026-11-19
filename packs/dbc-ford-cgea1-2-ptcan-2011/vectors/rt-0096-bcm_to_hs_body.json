@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-bcm_to_hs_body",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "c3030000080000003cfa15006c6c04b7",
+  "expect": "c3030000080000003cfa15006c6c04b7",
+  "model": {
+    "@kind": "bcm_to_hs_body"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-gearbox_auto",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "a301000008000000164d102407000405",
+  "expect": "a301000008000000164d102407000405",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

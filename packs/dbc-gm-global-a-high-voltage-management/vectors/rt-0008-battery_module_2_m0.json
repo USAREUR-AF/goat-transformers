@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-high-voltage-management-roundtrip-battery_module_2_m0",
+  "from": "dbc-gm-global-a-high-voltage-management",
+  "to": "dbc-gm-global-a-high-voltage-management",
+  "input": "0202000008000000093e10ecc4d00000",
+  "expect": "0202000008000000093e10ecc4d00000",
+  "model": {
+    "@kind": "battery_module_2_m0"
+  }
+}

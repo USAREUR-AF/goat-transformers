@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-clmtctrlseat_setcmdlegacy2",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "22010000080000004300000000000000",
+  "expect": "22010000080000004300000000000000",
+  "model": {
+    "@kind": "clmtctrlseat_setcmdlegacy2"
+  }
+}

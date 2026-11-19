@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-personality_ccm_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "e503000008000000e706932f00000000",
+  "expect": "e503000008000000e706932f00000000",
+  "model": {
+    "@kind": "personality_ccm_data"
+  }
+}

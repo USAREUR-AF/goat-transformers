@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-veh_characteristic_set_2",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "d003000008000000f4031b0040000000",
+  "expect": "d003000008000000f4031b0040000000",
+  "model": {
+    "@kind": "veh_characteristic_set_2"
+  }
+}

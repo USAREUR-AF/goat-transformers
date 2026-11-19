@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-wheel_speeds",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "3a01000008000000d42b88b3d8018501",
+  "expect": "3a01000008000000d42b88b3d8018501",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-passive_entry_reply_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c02880080000004eb6b353223b072a",
+  "expect": "00c02880080000004eb6b353223b072a",
+  "model": {
+    "@kind": "passive_entry_reply_ls"
+  }
+}

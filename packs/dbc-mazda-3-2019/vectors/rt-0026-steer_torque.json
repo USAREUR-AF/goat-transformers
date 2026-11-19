@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-steer_torque",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "1000000008000000ecade041db1af82d",
+  "expect": "1000000008000000ecade041db1af82d",
+  "model": {
+    "@kind": "steer_torque"
+  }
+}

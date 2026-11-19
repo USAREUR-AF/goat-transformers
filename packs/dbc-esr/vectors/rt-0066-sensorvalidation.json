@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-sensorvalidation",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "d0050000080000000b7cb928e2246790",
+  "expect": "d0050000080000000b7cb928e2246790",
+  "model": {
+    "@kind": "sensorvalidation"
+  }
+}

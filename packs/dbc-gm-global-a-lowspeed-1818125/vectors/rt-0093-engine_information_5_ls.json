@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-engine_information_5_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00402d800400000095673e5100000000",
+  "expect": "00402d800400000095673e5100000000",
+  "model": {
+    "@kind": "engine_information_5_ls"
+  }
+}

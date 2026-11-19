@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-ac_state",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "d2020000080000007d04000260000000",
+  "expect": "d2020000080000007d04000260000000",
+  "model": {
+    "@kind": "ac_state"
+  }
+}

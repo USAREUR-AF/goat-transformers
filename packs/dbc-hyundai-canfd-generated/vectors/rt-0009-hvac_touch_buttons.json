@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-hvac_touch_buttons",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "7f040000080000000010400400010100",
+  "expect": "7f040000080000000010400400010100",
+  "model": {
+    "@kind": "hvac_touch_buttons"
+  }
+}

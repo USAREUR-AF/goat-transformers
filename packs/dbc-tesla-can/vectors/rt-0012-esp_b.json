@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-esp_b",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "5501000008000000bc936a41608c0e39",
+  "expect": "5501000008000000bc936a41608c0e39",
+  "model": {
+    "@kind": "esp_b"
+  }
+}

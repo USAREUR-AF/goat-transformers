@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-accel_test",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "e00100000800000032c2273400010000",
+  "expect": "e00100000800000032c2273400010000",
+  "model": {
+    "@kind": "accel_test"
+  }
+}

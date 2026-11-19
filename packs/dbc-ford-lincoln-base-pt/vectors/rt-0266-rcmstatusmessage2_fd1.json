@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-rcmstatusmessage2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4c00000008000000b0d1807800000000",
+  "expect": "4c00000008000000b0d1807800000000",
+  "model": {
+    "@kind": "rcmstatusmessage2_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-ccp_data_transmission_object_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "f207000008000000800000000fa0eb6e",
+  "expect": "f207000008000000800000000fa0eb6e",
+  "model": {
+    "@kind": "ccp_data_transmission_object_fo"
+  }
+}

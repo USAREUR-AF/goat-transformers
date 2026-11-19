@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-traction_button",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "30030000080000000000000000001000",
+  "expect": "30030000080000000000000000001000",
+  "model": {
+    "@kind": "traction_button"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-bsg_last",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "70050000040000009aa8395500000000",
+  "expect": "70050000040000009aa8395500000000",
+  "model": {
+    "@kind": "bsg_last"
+  }
+}

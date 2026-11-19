@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-wischer_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "3805000002000000aa9a000000000000",
+  "expect": "3805000002000000aa9a000000000000",
+  "model": {
+    "@kind": "wischer_1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-desired_torq_brksys_stat",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "0c040000080000000000000000800000",
+  "expect": "0c040000080000000000000000800000",
+  "model": {
+    "@kind": "desired_torq_brksys_stat"
+  }
+}

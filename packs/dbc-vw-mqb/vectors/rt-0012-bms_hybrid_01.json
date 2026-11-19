@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-bms_hybrid_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "5c060000080000000040ee4a21f8cfa6",
+  "expect": "5c060000080000000040ee4a21f8cfa6",
+  "model": {
+    "@kind": "bms_hybrid_01"
+  }
+}

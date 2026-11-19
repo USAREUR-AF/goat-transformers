@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-parsedphysgwmtosobdmc_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d844a09b08000000cf8b081000000000",
+  "expect": "d844a09b08000000cf8b081000000000",
+  "model": {
+    "@kind": "parsedphysgwmtosobdmc_fd1"
+  }
+}

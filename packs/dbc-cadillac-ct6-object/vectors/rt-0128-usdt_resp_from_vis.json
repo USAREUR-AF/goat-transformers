@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-usdt_resp_from_vis",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "41060000080000008000000040ce7ae8",
+  "expect": "41060000080000008000000040ce7ae8",
+  "model": {
+    "@kind": "usdt_resp_from_vis"
+  }
+}

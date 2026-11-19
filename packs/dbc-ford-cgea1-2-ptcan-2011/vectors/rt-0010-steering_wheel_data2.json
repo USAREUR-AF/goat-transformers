@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-steering_wheel_data2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "8100000008000000aa02000000000000",
+  "expect": "8100000008000000aa02000000000000",
+  "model": {
+    "@kind": "steering_wheel_data2"
+  }
+}

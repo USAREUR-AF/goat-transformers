@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-driver_seat_information",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "01010000080000006c00000000000000",
+  "expect": "01010000080000006c00000000000000",
+  "model": {
+    "@kind": "driver_seat_information"
+  }
+}

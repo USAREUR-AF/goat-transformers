@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-throttle",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "4000000008000000aa812f81ddb48b92",
+  "expect": "4000000008000000aa812f81ddb48b92",
+  "model": {
+    "@kind": "throttle"
+  }
+}

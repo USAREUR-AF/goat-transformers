@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-vehiclespeed1",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "4801000008000000000000003e4899f6",
+  "expect": "4801000008000000000000003e4899f6",
+  "model": {
+    "@kind": "vehiclespeed1"
+  }
+}

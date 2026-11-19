@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-tpms11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "9305000006000000a113d1a87f560000",
+  "expect": "9305000006000000a113d1a87f560000",
+  "model": {
+    "@kind": "tpms11"
+  }
+}

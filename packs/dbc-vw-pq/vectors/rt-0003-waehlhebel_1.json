@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-waehlhebel_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "48040000040000007de0098200000000",
+  "expect": "48040000040000007de0098200000000",
+  "model": {
+    "@kind": "waehlhebel_1"
+  }
+}

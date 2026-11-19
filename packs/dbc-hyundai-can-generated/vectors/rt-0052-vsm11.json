@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-vsm11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "640100000400000089f20bbc00000000",
+  "expect": "640100000400000089f20bbc00000000",
+  "model": {
+    "@kind": "vsm11"
+  }
+}

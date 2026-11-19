@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-blinkers",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "130400000800000000b4100000000048",
+  "expect": "130400000800000000b4100000000048",
+  "model": {
+    "@kind": "blinkers"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-sobdmc_rapiddata_resp3_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8e0600000800000080000000659e9e54",
+  "expect": "8e0600000800000080000000659e9e54",
+  "model": {
+    "@kind": "sobdmc_rapiddata_resp3_fd1"
+  }
+}

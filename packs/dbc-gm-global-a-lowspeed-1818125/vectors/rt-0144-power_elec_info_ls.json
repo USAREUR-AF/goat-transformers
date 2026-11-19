@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-power_elec_info_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "004063800700000003c90020c1b7a000",
+  "expect": "004063800700000003c90020c1b7a000",
+  "model": {
+    "@kind": "power_elec_info_ls"
+  }
+}

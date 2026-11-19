@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vehicleconfig",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "000400000700000043c6c80000000000",
+  "expect": "000400000700000043c6c80000000000",
+  "model": {
+    "@kind": "vehicleconfig"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-ems20",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "00020000060000006d32440000000000",
+  "expect": "00020000060000006d32440000000000",
+  "model": {
+    "@kind": "ems20"
+  }
+}

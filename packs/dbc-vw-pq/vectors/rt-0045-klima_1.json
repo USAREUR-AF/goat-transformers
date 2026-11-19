@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-klima_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "e005000008000000aa052e5780a91176",
+  "expect": "e005000008000000aa052e5780a91176",
+  "model": {
+    "@kind": "klima_1"
+  }
+}

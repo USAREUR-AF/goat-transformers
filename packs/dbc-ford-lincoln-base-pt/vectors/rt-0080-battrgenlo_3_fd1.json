@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-battrgenlo_3_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "6303000008000000a965a57d80244d00",
+  "expect": "6303000008000000a965a57d80244d00",
+  "model": {
+    "@kind": "battrgenlo_3_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-ascmaccspeedstatus",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "0803000007000000080f7d20006dc400",
+  "expect": "0803000007000000080f7d20006dc400",
+  "model": {
+    "@kind": "ascmaccspeedstatus"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-energy_related_126",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "26010000080000000f320ab706e0905b",
+  "expect": "26010000080000000f320ab706e0905b",
+  "model": {
+    "@kind": "energy_related_126"
+  }
+}

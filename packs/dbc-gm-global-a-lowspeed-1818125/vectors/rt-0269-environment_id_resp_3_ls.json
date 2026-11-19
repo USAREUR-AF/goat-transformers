@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-environment_id_resp_3_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00803080030000008f36010000000000",
+  "expect": "00803080030000008f36010000000000",
+  "model": {
+    "@kind": "environment_id_resp_3_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-gra_neu",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "8a03000004000000dd5519a900000000",
+  "expect": "8a03000004000000dd5519a900000000",
+  "model": {
+    "@kind": "gra_neu"
+  }
+}

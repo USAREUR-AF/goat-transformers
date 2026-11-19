@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-esp_b",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "55010000080000004e77a0c94ea1173a",
+  "expect": "55010000080000004e77a0c94ea1173a",
+  "model": {
+    "@kind": "esp_b"
+  }
+}

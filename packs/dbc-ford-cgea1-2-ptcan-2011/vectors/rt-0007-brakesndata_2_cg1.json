@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-brakesndata_2_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "7400000008000000c3c3e0aa337e8000",
+  "expect": "7400000008000000c3c3e0aa337e8000",
+  "model": {
+    "@kind": "brakesndata_2_cg1"
+  }
+}

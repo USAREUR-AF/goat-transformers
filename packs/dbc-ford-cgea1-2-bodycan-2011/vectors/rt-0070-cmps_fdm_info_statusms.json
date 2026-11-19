@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-cmps_fdm_info_statusms",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "c703000008000000446d40002c000000",
+  "expect": "c703000008000000446d40002c000000",
+  "model": {
+    "@kind": "cmps_fdm_info_statusms"
+  }
+}

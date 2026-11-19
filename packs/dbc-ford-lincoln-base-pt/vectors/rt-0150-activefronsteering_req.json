@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-activefronsteering_req",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "880000000800000031cebe5000000000",
+  "expect": "880000000800000031cebe5000000000",
+  "model": {
+    "@kind": "activefronsteering_req"
+  }
+}

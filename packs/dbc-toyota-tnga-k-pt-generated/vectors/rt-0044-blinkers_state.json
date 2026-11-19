@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-blinkers_state",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "14060000080000000000003800000000",
+  "expect": "14060000080000000000003800000000",
+  "model": {
+    "@kind": "blinkers_state"
+  }
+}

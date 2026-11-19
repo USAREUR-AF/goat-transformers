@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-camera_messages",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "5e030000080000003c6d441b00002227",
+  "expect": "5e030000080000003c6d441b00002227",
+  "model": {
+    "@kind": "camera_messages"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-lta_related",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "710300000800000000786a4f08000028",
+  "expect": "710300000800000000786a4f08000028",
+  "model": {
+    "@kind": "lta_related"
+  }
+}

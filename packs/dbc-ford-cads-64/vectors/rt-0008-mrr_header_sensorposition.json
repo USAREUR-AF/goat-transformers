@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-mrr_header_sensorposition",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "75010000080000000100332adf538000",
+  "expect": "75010000080000000100332adf538000",
+  "model": {
+    "@kind": "mrr_header_sensorposition"
+  }
+}

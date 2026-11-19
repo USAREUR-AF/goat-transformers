@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-lkas_heartbit",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "d902000005000000000000f1d2000000",
+  "expect": "d902000005000000000000f1d2000000",
+  "model": {
+    "@kind": "lkas_heartbit"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-global_pats_control_info2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "4200000008000000e0001d963e880000",
+  "expect": "4200000008000000e0001d963e880000",
+  "model": {
+    "@kind": "global_pats_control_info2"
+  }
+}

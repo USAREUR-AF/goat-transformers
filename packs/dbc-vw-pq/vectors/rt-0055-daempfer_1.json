@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-daempfer_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "9805000002000000a98f000000000000",
+  "expect": "9805000002000000a98f000000000000",
+  "model": {
+    "@kind": "daempfer_1"
+  }
+}

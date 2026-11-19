@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gwm-haval-h6-phev-2024-roundtrip-steer_and_ap_stalk",
+  "from": "dbc-gwm-haval-h6-phev-2024",
+  "to": "dbc-gwm-haval-h6-phev-2024",
+  "input": "a100000008000000b93f20273ea0080f",
+  "expect": "a100000008000000b93f20273ea0080f",
+  "model": {
+    "@kind": "steer_and_ap_stalk"
+  }
+}

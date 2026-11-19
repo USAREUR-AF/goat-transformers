@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-steer_angle_sensor",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "250000000800000005f50000cda30000",
+  "expect": "250000000800000005f50000cda30000",
+  "model": {
+    "@kind": "steer_angle_sensor"
+  }
+}

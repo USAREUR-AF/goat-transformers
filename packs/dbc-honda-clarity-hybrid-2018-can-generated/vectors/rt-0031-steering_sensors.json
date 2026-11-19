@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-steering_sensors",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "4a01000008000000d3be27950576f10f",
+  "expect": "4a01000008000000d3be27950576f10f",
+  "model": {
+    "@kind": "steering_sensors"
+  }
+}

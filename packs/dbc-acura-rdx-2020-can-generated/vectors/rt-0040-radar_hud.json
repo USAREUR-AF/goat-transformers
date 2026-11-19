@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-radar_hud",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "9f03000008000000748e3c61381fe614",
+  "expect": "9f03000008000000748e3c61381fe614",
+  "model": {
+    "@kind": "radar_hud"
+  }
+}

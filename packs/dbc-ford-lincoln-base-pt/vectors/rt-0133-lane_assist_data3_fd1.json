@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-lane_assist_data3_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "cc0300000800000080c6fad51dfe0000",
+  "expect": "cc0300000800000080c6fad51dfe0000",
+  "model": {
+    "@kind": "lane_assist_data3_fd1"
+  }
+}

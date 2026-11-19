@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hongqi-hs5-roundtrip-maybe_abs",
+  "from": "dbc-hongqi-hs5",
+  "to": "dbc-hongqi-hs5",
+  "input": "94000000080000003c13c8ea000000f0",
+  "expect": "94000000080000003c13c8ea000000f0",
+  "model": {
+    "@kind": "maybe_abs"
+  }
+}

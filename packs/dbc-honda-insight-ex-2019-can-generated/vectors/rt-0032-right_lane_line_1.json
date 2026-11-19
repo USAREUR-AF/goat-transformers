@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-right_lane_line_1",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "43020000080000000eb2d140b37a0010",
+  "expect": "43020000080000000eb2d140b37a0010",
+  "model": {
+    "@kind": "right_lane_line_1"
+  }
+}

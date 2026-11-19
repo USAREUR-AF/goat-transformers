@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-nm_ipm",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "47040000080000002d03000000000000",
+  "expect": "47040000080000002d03000000000000",
+  "model": {
+    "@kind": "nm_ipm"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-kombi_3_m1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "2005000008000000905ad44668984015",
+  "expect": "2005000008000000905ad44668984015",
+  "model": {
+    "@kind": "kombi_3_m1"
+  }
+}

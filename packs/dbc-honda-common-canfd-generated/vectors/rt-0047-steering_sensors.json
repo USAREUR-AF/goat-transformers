@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-steering_sensors",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "4a010000080000006ecec2a50512010f",
+  "expect": "4a010000080000006ecec2a50512010f",
+  "model": {
+    "@kind": "steering_sensors"
+  }
+}

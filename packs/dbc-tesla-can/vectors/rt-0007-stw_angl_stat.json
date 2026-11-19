@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-stw_angl_stat",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "0300000008000000000000000100b0e2",
+  "expect": "0300000008000000000000000100b0e2",
+  "model": {
+    "@kind": "stw_angl_stat"
+  }
+}

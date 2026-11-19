@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2018-can-generated-roundtrip-hybrid_brake_error",
+  "from": "dbc-acura-rdx-2018-can-generated",
+  "to": "dbc-acura-rdx-2018-can-generated",
+  "input": "84010000080000000000000004000010",
+  "expect": "84010000080000000000000004000010",
+  "model": {
+    "@kind": "hybrid_brake_error"
+  }
+}

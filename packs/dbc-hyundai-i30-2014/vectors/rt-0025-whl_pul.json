@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-whl_pul",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "b1040000080000004118efc6b10000f9",
+  "expect": "b1040000080000004118efc6b10000f9",
+  "model": {
+    "@kind": "whl_pul"
+  }
+}

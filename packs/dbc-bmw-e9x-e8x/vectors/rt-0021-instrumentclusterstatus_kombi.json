@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-instrumentclusterstatus_kombi",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "b4010000080000000000000000020000",
+  "expect": "b4010000080000000000000000020000",
+  "model": {
+    "@kind": "instrumentclusterstatus_kombi"
+  }
+}

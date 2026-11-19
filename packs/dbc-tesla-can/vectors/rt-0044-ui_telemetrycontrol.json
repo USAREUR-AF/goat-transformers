@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_telemetrycontrol",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "2804000008000000aa02031a11e81fb6",
+  "expect": "2804000008000000aa02031a11e81fb6",
+  "model": {
+    "@kind": "ui_telemetrycontrol"
+  }
+}

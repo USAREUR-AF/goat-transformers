@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-bools",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "8a03000008000000a500000000000000",
+  "expect": "8a03000008000000a500000000000000",
+  "model": {
+    "@kind": "bools"
+  }
+}

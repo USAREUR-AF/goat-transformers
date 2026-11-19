@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-new_msg_33",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "1e020000080000000000000000000f06",
+  "expect": "1e020000080000000000000000000f06",
+  "model": {
+    "@kind": "new_msg_33"
+  }
+}

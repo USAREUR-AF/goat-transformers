@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-brake_info",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "0a0200000800000000020e6052bc0000",
+  "expect": "0a0200000800000000020e6052bc0000",
+  "model": {
+    "@kind": "brake_info"
+  }
+}

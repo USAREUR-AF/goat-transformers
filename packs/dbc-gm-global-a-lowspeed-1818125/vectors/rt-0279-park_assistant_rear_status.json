@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-park_assistant_rear_status",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00803a800400000030205e3c00000000",
+  "expect": "00803a800400000030205e3c00000000",
+  "model": {
+    "@kind": "park_assistant_rear_status"
+  }
+}

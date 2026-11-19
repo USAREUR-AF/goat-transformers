@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-total_dist",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "110600000800000000000000000055bb",
+  "expect": "110600000800000000000000000055bb",
+  "model": {
+    "@kind": "total_dist"
+  }
+}

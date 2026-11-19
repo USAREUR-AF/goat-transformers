@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-x4wd11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "280400000800000006c89f764d155746",
+  "expect": "280400000800000006c89f764d155746",
+  "model": {
+    "@kind": "x4wd11"
+  }
+}

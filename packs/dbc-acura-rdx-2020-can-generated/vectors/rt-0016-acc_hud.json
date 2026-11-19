@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-acc_hud",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "0c03000008000000ed7d542bb29a93e5",
+  "expect": "0c03000008000000ed7d542bb29a93e5",
+  "model": {
+    "@kind": "acc_hud"
+  }
+}

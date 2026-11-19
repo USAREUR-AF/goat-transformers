@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-econ_status",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "210200000600000000000000003a0000",
+  "expect": "210200000600000000000000003a0000",
+  "model": {
+    "@kind": "econ_status"
+  }
+}

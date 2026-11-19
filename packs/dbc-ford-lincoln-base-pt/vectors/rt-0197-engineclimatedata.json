@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-engineclimatedata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "78010000080000001fa9604d8f05732e",
+  "expect": "78010000080000001fa9604d8f05732e",
+  "model": {
+    "@kind": "engineclimatedata"
+  }
+}

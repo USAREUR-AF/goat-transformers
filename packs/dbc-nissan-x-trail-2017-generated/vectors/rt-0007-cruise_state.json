@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-cruise_state",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "0f030000030000000000000000000000",
+  "expect": "0f030000030000000000000000000000",
+  "model": {
+    "@kind": "cruise_state"
+  }
+}

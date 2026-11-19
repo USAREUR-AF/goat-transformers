@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-wheel_speeds_rear",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "e40200000800000036760f12000009c0",
+  "expect": "e40200000800000036760f12000009c0",
+  "model": {
+    "@kind": "wheel_speeds_rear"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-steering_buttons",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "83000000080000002011001000000000",
+  "expect": "83000000080000002011001000000000",
+  "model": {
+    "@kind": "steering_buttons"
+  }
+}

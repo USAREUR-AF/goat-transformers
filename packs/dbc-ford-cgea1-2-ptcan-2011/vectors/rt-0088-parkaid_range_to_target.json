@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-parkaid_range_to_target",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "a9030000080000006b42ddf06b2f7580",
+  "expect": "a9030000080000006b42ddf06b2f7580",
+  "model": {
+    "@kind": "parkaid_range_to_target"
+  }
+}

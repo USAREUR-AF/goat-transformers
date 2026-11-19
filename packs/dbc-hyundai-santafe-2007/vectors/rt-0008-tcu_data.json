@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-tcu_data",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "3f040000080000000200000000971400",
+  "expect": "3f040000080000000200000000971400",
+  "model": {
+    "@kind": "tcu_data"
+  }
+}

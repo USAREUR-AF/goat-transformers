@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-bsd_rcta",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "2802000008000000a108000000000208",
+  "expect": "2802000008000000a108000000000208",
+  "model": {
+    "@kind": "bsd_rcta"
+  }
+}

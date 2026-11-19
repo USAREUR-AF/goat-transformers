@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-wheelspeeds",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "ce000000080000006225397910cde720",
+  "expect": "ce000000080000006225397910cde720",
+  "model": {
+    "@kind": "wheelspeeds"
+  }
+}

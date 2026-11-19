@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-cruisectrl_strg_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8b00000008000000aaaaa9c200000000",
+  "expect": "8b00000008000000aaaaa9c200000000",
+  "model": {
+    "@kind": "cruisectrl_strg_data_fd1"
+  }
+}

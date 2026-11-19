@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-engine_rpm",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "c401000008000000a51f000800000000",
+  "expect": "c401000008000000a51f000800000000",
+  "model": {
+    "@kind": "engine_rpm"
+  }
+}

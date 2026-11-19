@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-seatbelt",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "2a00000008000000612ab5767e8c0000",
+  "expect": "2a00000008000000612ab5767e8c0000",
+  "model": {
+    "@kind": "seatbelt"
+  }
+}

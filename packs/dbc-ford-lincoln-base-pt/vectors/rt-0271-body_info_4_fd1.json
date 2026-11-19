@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-body_info_4_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4202000008000000634a8af89217131b",
+  "expect": "4202000008000000634a8af89217131b",
+  "model": {
+    "@kind": "body_info_4_fd1"
+  }
+}

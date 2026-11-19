@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-licht_hinten_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "d6030000080000008aaa2a05150a8a00",
+  "expect": "d6030000080000008aaa2a05150a8a00",
+  "model": {
+    "@kind": "licht_hinten_01"
+  }
+}

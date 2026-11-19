@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-radar_hud",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "9f030000080000005bd58c31846fb614",
+  "expect": "9f030000080000005bd58c31846fb614",
+  "model": {
+    "@kind": "radar_hud"
+  }
+}

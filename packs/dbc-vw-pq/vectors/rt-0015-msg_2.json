@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-msg_2",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "00050000080000001d7846246fd0987c",
+  "expect": "00050000080000001d7846246fd0987c",
+  "model": {
+    "@kind": "msg_2"
+  }
+}

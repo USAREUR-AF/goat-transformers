@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-scm_feedback",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "26030000080000000000022800000032",
+  "expect": "26030000080000000000022800000032",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

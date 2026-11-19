@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-engine_data",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "0202000008000000ce5022275fe00079",
+  "expect": "0202000008000000ce5022275fe00079",
+  "model": {
+    "@kind": "engine_data"
+  }
+}

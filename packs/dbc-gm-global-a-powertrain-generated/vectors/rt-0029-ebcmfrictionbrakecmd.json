@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ebcmfrictionbrakecmd",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "150300000500000086e6630f01000000",
+  "expect": "150300000500000086e6630f01000000",
+  "model": {
+    "@kind": "ebcmfrictionbrakecmd"
+  }
+}

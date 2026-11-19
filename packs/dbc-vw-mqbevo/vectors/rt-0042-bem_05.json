@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-bem_05",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "650300000800000000000e9121007674",
+  "expect": "650300000800000000000e9121007674",
+  "model": {
+    "@kind": "bem_05"
+  }
+}

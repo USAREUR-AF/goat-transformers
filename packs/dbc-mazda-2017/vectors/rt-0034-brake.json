@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-brake",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "78000000080000002ae294809a00c300",
+  "expect": "78000000080000002ae294809a00c300",
+  "model": {
+    "@kind": "brake"
+  }
+}

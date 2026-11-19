@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-lkas_hud",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "3d030000080000004055b1400800003c",
+  "expect": "3d030000080000004055b1400800003c",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

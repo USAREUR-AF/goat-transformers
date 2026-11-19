@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-es_status",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "2202000008000000b5bc11a76df6827e",
+  "expect": "2202000008000000b5bc11a76df6827e",
+  "model": {
+    "@kind": "es_status"
+  }
+}

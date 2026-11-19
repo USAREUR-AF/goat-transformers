@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-doorstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "ff050000080000000000000000000000",
+  "expect": "ff050000080000000000000000000000",
+  "model": {
+    "@kind": "doorstatus"
+  }
+}

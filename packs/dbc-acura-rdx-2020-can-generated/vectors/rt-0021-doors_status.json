@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-doors_status",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "05040000080000000000000040010003",
+  "expect": "05040000080000000000000040010003",
+  "model": {
+    "@kind": "doors_status"
+  }
+}

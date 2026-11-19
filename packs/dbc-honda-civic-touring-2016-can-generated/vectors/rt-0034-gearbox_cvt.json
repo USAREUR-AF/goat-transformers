@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-touring-2016-can-generated-roundtrip-gearbox_cvt",
+  "from": "dbc-honda-civic-touring-2016-can-generated",
+  "to": "dbc-honda-civic-touring-2016-can-generated",
+  "input": "9101000008000000050080cda43b0027",
+  "expect": "9101000008000000050080cda43b0027",
+  "model": {
+    "@kind": "gearbox_cvt"
+  }
+}

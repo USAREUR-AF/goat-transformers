@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-rcm_dtc",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "0005000008000000a50c532a01d8af00",
+  "expect": "0005000008000000a50c532a01d8af00",
+  "model": {
+    "@kind": "rcm_dtc"
+  }
+}

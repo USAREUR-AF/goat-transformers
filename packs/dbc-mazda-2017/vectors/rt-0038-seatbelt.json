@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-seatbelt",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "40030000080000003fdb400c00000000",
+  "expect": "40030000080000003fdb400c00000000",
+  "model": {
+    "@kind": "seatbelt"
+  }
+}

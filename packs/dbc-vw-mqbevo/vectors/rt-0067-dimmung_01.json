@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-dimmung_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "f0050000080000009cf321f82b000000",
+  "expect": "f0050000080000009cf321f82b000000",
+  "model": {
+    "@kind": "dimmung_01"
+  }
+}

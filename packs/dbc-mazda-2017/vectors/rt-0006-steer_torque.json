@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-steer_torque",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "40020000080000002952f000cdffa458",
+  "expect": "40020000080000002952f000cdffa458",
+  "model": {
+    "@kind": "steer_torque"
+  }
+}

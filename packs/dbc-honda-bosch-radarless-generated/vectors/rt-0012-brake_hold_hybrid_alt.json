@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-brake_hold_hybrid_alt",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "23020000060000000000000052270000",
+  "expect": "23020000060000000000000052270000",
+  "model": {
+    "@kind": "brake_hold_hybrid_alt"
+  }
+}

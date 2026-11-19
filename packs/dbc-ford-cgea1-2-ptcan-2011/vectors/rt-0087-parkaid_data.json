@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-parkaid_data",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "a803000008000000aa1f380000000000",
+  "expect": "a803000008000000aa1f380000000000",
+  "model": {
+    "@kind": "parkaid_data"
+  }
+}

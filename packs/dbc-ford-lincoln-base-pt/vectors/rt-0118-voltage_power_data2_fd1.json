@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-voltage_power_data2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "5f04000008000000c000000000000000",
+  "expect": "5f04000008000000c000000000000000",
+  "model": {
+    "@kind": "voltage_power_data2_fd1"
+  }
+}

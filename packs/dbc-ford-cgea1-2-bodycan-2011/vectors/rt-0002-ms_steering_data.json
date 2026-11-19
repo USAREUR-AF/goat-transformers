@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-ms_steering_data",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "830000000800000091a4b7f400006c90",
+  "expect": "830000000800000091a4b7f400006c90",
+  "model": {
+    "@kind": "ms_steering_data"
+  }
+}

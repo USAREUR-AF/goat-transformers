@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-evp11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "86050000030000000100000000000000",
+  "expect": "86050000030000000100000000000000",
+  "model": {
+    "@kind": "evp11"
+  }
+}

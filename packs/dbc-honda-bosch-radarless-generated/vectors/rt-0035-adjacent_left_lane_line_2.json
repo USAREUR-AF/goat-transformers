@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-adjacent_left_lane_line_2",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "47020000080000008020fba039103536",
+  "expect": "47020000080000008020fba039103536",
+  "model": {
+    "@kind": "adjacent_left_lane_line_2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-acc_control",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "df0100000800000034a541802a800070",
+  "expect": "df0100000800000034a541802a800070",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-das_6",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "a60200000800000000790b0200800000",
+  "expect": "a60200000800000000790b0200800000",
+  "model": {
+    "@kind": "das_6"
+  }
+}

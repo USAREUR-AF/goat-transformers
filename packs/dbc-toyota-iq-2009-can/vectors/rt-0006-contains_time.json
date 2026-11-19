@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-contains_time",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "3b06000008000000399465cb000011f4",
+  "expect": "3b06000008000000399465cb000011f4",
+  "model": {
+    "@kind": "contains_time"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-scm_buttons",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "96020000040000002000003e00000000",
+  "expect": "96020000040000002000003e00000000",
+  "model": {
+    "@kind": "scm_buttons"
+  }
+}

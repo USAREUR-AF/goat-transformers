@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-steer2",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "6000000008000000b6d44317ee20e745",
+  "expect": "6000000008000000b6d44317ee20e745",
+  "model": {
+    "@kind": "steer2"
+  }
+}

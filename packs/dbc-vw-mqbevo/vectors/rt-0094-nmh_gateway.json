@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-nmh_gateway",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "1000009b0800000027003eacaa0a0a00",
+  "expect": "1000009b0800000027003eacaa0a0a00",
+  "model": {
+    "@kind": "nmh_gateway"
+  }
+}

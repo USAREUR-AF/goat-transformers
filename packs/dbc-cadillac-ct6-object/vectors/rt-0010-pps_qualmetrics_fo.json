@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-pps_qualmetrics_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "6502000008000000afce9c29f8bbaa21",
+  "expect": "6502000008000000afce9c29f8bbaa21",
+  "model": {
+    "@kind": "pps_qualmetrics_fo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-steering_torque",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "7103000008000000810058c000dddb00",
+  "expect": "7103000008000000810058c000dddb00",
+  "model": {
+    "@kind": "steering_torque"
+  }
+}

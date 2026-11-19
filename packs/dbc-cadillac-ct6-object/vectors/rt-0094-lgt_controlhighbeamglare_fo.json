@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-lgt_controlhighbeamglare_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "5e03000002000000b801000000000000",
+  "expect": "5e03000002000000b801000000000000",
+  "model": {
+    "@kind": "lgt_controlhighbeamglare_fo"
+  }
+}

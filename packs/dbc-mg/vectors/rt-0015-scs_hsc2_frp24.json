@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-scs_hsc2_frp24",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "5102000008000000f9c55c460000003c",
+  "expect": "5102000008000000f9c55c460000003c",
+  "model": {
+    "@kind": "scs_hsc2_frp24"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-compressor_req",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "2603000008000000009400e6010f0000",
+  "expect": "2603000008000000009400e6010f0000",
+  "model": {
+    "@kind": "compressor_req"
+  }
+}

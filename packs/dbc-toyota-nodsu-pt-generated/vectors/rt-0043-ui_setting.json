@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-ui_setting",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "1106000008000000000000066974122a",
+  "expect": "1106000008000000000000066974122a",
+  "model": {
+    "@kind": "ui_setting"
+  }
+}

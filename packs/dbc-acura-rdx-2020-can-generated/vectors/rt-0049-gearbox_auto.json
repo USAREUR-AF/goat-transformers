@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-gearbox_auto",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "a301000008000000c75e010808000656",
+  "expect": "a301000008000000c75e010808000656",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

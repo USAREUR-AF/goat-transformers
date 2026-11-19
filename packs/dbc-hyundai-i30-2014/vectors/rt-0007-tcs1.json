@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-tcs1",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "53010000080000005a5515875e351f68",
+  "expect": "53010000080000005a5515875e351f68",
+  "model": {
+    "@kind": "tcs1"
+  }
+}

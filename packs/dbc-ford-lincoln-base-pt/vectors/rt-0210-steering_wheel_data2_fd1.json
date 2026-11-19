@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-steering_wheel_data2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8100000008000000b955240000000000",
+  "expect": "8100000008000000b955240000000000",
+  "model": {
+    "@kind": "steering_wheel_data2_fd1"
+  }
+}

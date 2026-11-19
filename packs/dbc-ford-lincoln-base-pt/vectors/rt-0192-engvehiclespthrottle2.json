@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-engvehiclespthrottle2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "0202000008000000be5c9800210a16b8",
+  "expect": "0202000008000000be5c9800210a16b8",
+  "model": {
+    "@kind": "engvehiclespthrottle2"
+  }
+}

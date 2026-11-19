@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-odidyndatamultirequest_auxip_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0040ae8008000000000000004636f8b8",
+  "expect": "0040ae8008000000000000004636f8b8",
+  "model": {
+    "@kind": "odidyndatamultirequest_auxip_ls"
+  }
+}

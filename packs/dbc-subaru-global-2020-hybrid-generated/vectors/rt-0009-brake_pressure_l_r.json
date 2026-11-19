@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-brake_pressure_l_r",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "3801000008000000ba0168c600003f16",
+  "expect": "3801000008000000ba0168c600003f16",
+  "model": {
+    "@kind": "brake_pressure_l_r"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-sas_calibration",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "c007000002000000c549000000000000",
+  "expect": "c007000002000000c549000000000000",
+  "model": {
+    "@kind": "sas_calibration"
+  }
+}

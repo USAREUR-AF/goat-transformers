@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-doors",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "ee030000080000000002000000000000",
+  "expect": "ee030000080000000002000000000000",
+  "model": {
+    "@kind": "doors"
+  }
+}

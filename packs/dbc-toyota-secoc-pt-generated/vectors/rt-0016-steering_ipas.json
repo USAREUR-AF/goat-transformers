@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-steering_ipas",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "6602000008000000315a310860b68d64",
+  "expect": "6602000008000000315a310860b68d64",
+  "model": {
+    "@kind": "steering_ipas"
+  }
+}

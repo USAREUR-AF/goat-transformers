@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-es_distance",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "610100000800000045c3a4fdd405ae8c",
+  "expect": "610100000800000045c3a4fdd405ae8c",
+  "model": {
+    "@kind": "es_distance"
+  }
+}

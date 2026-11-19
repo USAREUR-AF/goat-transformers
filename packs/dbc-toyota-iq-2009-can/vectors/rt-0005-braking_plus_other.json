@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-braking_plus_other",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "bb0300000800000000009a0000000000",
+  "expect": "bb0300000800000000009a0000000000",
+  "model": {
+    "@kind": "braking_plus_other"
+  }
+}

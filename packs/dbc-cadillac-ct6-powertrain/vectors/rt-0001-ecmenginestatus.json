@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ecmenginestatus",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "c90000000800000000f0e80011000000",
+  "expect": "c90000000800000000f0e80011000000",
+  "model": {
+    "@kind": "ecmenginestatus"
+  }
+}

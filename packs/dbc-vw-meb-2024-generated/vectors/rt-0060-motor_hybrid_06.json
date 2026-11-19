@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-motor_hybrid_06",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "8304000008000000829e1ee8ddb5c158",
+  "expect": "8304000008000000829e1ee8ddb5c158",
+  "model": {
+    "@kind": "motor_hybrid_06"
+  }
+}

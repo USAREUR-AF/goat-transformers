@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-cluster_information",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "3004000008000000c002177820d964eb",
+  "expect": "3004000008000000c002177820d964eb",
+  "model": {
+    "@kind": "cluster_information"
+  }
+}

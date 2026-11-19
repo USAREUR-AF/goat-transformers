@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-secoc_synchronization",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "0f00000008000000ff4ce53230a2a6fa",
+  "expect": "0f00000008000000ff4ce53230a2a6fa",
+  "model": {
+    "@kind": "secoc_synchronization"
+  }
+}

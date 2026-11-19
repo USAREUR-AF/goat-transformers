@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-global_pats_subtarget",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4900000008000000200049c4205a0000",
+  "expect": "4900000008000000200049c4205a0000",
+  "model": {
+    "@kind": "global_pats_subtarget"
+  }
+}

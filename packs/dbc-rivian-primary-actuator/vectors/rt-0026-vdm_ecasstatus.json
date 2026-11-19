@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_ecasstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "5002000008000000e3ba916800000000",
+  "expect": "5002000008000000e3ba916800000000",
+  "model": {
+    "@kind": "vdm_ecasstatus"
+  }
+}

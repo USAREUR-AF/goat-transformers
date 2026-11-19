@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_propstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "500100000700000022c95e0b00140300",
+  "expect": "500100000700000022c95e0b00140300",
+  "model": {
+    "@kind": "vdm_propstatus"
+  }
+}

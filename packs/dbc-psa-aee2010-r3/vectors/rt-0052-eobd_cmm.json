@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-eobd_cmm",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "0806000008000000a57c532a01d8af86",
+  "expect": "0806000008000000a57c532a01d8af86",
+  "model": {
+    "@kind": "eobd_cmm"
+  }
+}

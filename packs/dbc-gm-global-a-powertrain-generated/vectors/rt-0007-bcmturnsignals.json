@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-bcmturnsignals",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "40010000030000008000000000000000",
+  "expect": "40010000030000008000000000000000",
+  "model": {
+    "@kind": "bcmturnsignals"
+  }
+}

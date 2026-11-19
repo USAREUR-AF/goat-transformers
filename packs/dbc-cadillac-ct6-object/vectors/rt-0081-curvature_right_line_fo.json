@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-curvature_right_line_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "0a04000007000000031455c4f8eb3800",
+  "expect": "0a04000007000000031455c4f8eb3800",
+  "model": {
+    "@kind": "curvature_right_line_fo"
+  }
+}

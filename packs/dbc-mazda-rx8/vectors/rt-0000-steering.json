@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-rx8-roundtrip-steering",
+  "from": "dbc-mazda-rx8",
+  "to": "dbc-mazda-rx8",
+  "input": "81000000080000000000242800000000",
+  "expect": "81000000080000000000242800000000",
+  "model": {
+    "@kind": "steering"
+  }
+}

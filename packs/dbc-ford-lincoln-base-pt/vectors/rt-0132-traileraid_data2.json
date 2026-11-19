@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-traileraid_data2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "170400000800000002ae800d763248b0",
+  "expect": "170400000800000002ae800d763248b0",
+  "model": {
+    "@kind": "traileraid_data2"
+  }
+}

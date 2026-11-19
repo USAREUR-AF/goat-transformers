@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-wheel_speeds",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "030200000800000042904667023e0615",
+  "expect": "030200000800000042904667023e0615",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

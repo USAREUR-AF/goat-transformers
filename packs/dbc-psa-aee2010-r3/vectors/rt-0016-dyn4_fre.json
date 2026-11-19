@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dyn4_fre",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "0d03000008000000a9ecfdc3519aa571",
+  "expect": "0d03000008000000a9ecfdc3519aa571",
+  "model": {
+    "@kind": "dyn4_fre"
+  }
+}

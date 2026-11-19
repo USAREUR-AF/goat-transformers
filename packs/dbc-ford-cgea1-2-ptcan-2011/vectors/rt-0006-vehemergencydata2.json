@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-vehemergencydata2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "4b00000008000000b0f8206888600000",
+  "expect": "4b00000008000000b0f8206888600000",
+  "model": {
+    "@kind": "vehemergencydata2"
+  }
+}

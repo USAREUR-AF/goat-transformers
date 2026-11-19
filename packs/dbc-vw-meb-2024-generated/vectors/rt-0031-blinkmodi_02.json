@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-blinkmodi_02",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "6603000008000000005055156a180078",
+  "expect": "6603000008000000005055156a180078",
+  "model": {
+    "@kind": "blinkmodi_02"
+  }
+}

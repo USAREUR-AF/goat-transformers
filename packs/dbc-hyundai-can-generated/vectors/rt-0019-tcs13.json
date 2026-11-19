@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-tcs13",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "940300000800000088b50d17ee0baab0",
+  "expect": "940300000800000088b50d17ee0baab0",
+  "model": {
+    "@kind": "tcs13"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "dbc-tesla-can-mcu_locationstatus-to-geojson",
+  "from": "dbc-tesla-can",
+  "to": "geojson",
+  "input": "d8030000080000006e3bd3a253260872",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "mcu_locationstatus",
+    "lat": "47.397742",
+    "lon": "8.545594"
+  }
+}

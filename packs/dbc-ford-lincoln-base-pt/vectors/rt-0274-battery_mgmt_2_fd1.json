@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-battery_mgmt_2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "2c04000008000000b1db3b009a000000",
+  "expect": "2c04000008000000b1db3b009a000000",
+  "model": {
+    "@kind": "battery_mgmt_2_fd1"
+  }
+}

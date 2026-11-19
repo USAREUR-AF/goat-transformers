@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-sas_data",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "b0020000050000004d8124fb92000000",
+  "expect": "b0020000050000004d8124fb92000000",
+  "model": {
+    "@kind": "sas_data"
+  }
+}

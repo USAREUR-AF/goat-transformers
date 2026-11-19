@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-innenlicht_11",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "f405000008000000552c03daaaaa70a6",
+  "expect": "f405000008000000552c03daaaaa70a6",
+  "model": {
+    "@kind": "innenlicht_11"
+  }
+}

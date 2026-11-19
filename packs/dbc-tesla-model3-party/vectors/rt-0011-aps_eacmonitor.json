@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-aps_eacmonitor",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "7d020000030000000305de0000000000",
+  "expect": "7d020000030000000305de0000000000",
+  "model": {
+    "@kind": "aps_eacmonitor"
+  }
+}

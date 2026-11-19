@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-steering_lta",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "9101000008000000306e06743910e7be",
+  "expect": "9101000008000000306e06743910e7be",
+  "model": {
+    "@kind": "steering_lta"
+  }
+}

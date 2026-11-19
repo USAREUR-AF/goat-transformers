@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-radar_turn",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "620300000800000053390a91e18d85ce",
+  "expect": "620300000800000053390a91e18d85ce",
+  "model": {
+    "@kind": "radar_turn"
+  }
+}

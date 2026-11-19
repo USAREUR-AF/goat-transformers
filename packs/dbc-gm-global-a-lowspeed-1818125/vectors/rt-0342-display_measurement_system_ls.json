@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-display_measurement_system_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a08480010000000700000000000000",
+  "expect": "00a08480010000000700000000000000",
+  "model": {
+    "@kind": "display_measurement_system_ls"
+  }
+}

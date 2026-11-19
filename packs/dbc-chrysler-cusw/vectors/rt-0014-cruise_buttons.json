@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-cruise_buttons",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "fa020000030000004a51dc0000000000",
+  "expect": "fa020000030000004a51dc0000000000",
+  "model": {
+    "@kind": "cruise_buttons"
+  }
+}

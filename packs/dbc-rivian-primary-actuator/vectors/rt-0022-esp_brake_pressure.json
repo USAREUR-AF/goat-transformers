@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-esp_brake_pressure",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "0c02000008000000a31affd6ad84d6c6",
+  "expect": "0c02000008000000a31affd6ad84d6c6",
+  "model": {
+    "@kind": "esp_brake_pressure"
+  }
+}

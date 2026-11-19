@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-brake_pressure",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "5001000008000000d3aa000000000000",
+  "expect": "5001000008000000d3aa000000000000",
+  "model": {
+    "@kind": "brake_pressure"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-vin_digits_2_to_9_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "41070000080000000000000053971d33",
+  "expect": "41070000080000000000000053971d33",
+  "model": {
+    "@kind": "vin_digits_2_to_9_fo"
+  }
+}

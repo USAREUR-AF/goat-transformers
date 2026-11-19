@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dyn_stt_bv",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "29030000040000009250000000000000",
+  "expect": "29030000040000009250000000000000",
+  "model": {
+    "@kind": "dyn_stt_bv"
+  }
+}

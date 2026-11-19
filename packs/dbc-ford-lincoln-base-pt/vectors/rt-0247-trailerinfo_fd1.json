@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-trailerinfo_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "43040000080000004700000000000000",
+  "expect": "43040000080000004700000000000000",
+  "model": {
+    "@kind": "trailerinfo_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dyn_easymove",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "ad030000080000000000000400000000",
+  "expect": "ad030000080000000000000400000000",
+  "model": {
+    "@kind": "dyn_easymove"
+  }
+}

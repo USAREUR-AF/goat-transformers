@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-charisma_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "85030000080000001a01563412705604",
+  "expect": "85030000080000001a01563412705604",
+  "model": {
+    "@kind": "charisma_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-acc_hud",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "ee03000007000000e00b000001c40000",
+  "expect": "ee03000007000000e00b000001c40000",
+  "model": {
+    "@kind": "acc_hud"
+  }
+}

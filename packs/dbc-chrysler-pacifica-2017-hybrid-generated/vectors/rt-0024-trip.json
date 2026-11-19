@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-trip",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "e00200000800000057f1abc800000000",
+  "expect": "e00200000800000057f1abc800000000",
+  "model": {
+    "@kind": "trip"
+  }
+}

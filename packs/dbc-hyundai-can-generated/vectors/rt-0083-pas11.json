@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-pas11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "36040000040000002e53b80100000000",
+  "expect": "36040000040000002e53b80100000000",
+  "model": {
+    "@kind": "pas11"
+  }
+}

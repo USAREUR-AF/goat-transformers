@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-esp_epbstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "2b03000008000000ebe2be37ccc00000",
+  "expect": "2b03000008000000ebe2be37ccc00000",
+  "model": {
+    "@kind": "esp_epbstatus"
+  }
+}

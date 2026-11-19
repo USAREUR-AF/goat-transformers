@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-lkas_heartbit",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "e4050000080000000000001000000000",
+  "expect": "e4050000080000000000001000000000",
+  "model": {
+    "@kind": "lkas_heartbit"
+  }
+}

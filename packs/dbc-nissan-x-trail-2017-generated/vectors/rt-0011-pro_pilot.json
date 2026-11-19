@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-pro_pilot",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "b601000008000000000000004100e800",
+  "expect": "b601000008000000000000004100e800",
+  "model": {
+    "@kind": "pro_pilot"
+  }
+}

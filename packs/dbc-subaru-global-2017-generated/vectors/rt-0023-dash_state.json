@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-dash_state",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "8d06000008000000430a002000000000",
+  "expect": "8d06000008000000430a002000000000",
+  "model": {
+    "@kind": "dash_state"
+  }
+}

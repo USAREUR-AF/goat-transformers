@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-pedalandbrake",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "55000000080000000003d8000f86340b",
+  "expect": "55000000080000000003d8000f86340b",
+  "model": {
+    "@kind": "pedalandbrake"
+  }
+}

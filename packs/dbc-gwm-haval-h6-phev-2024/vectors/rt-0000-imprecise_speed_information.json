@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gwm-haval-h6-phev-2024-roundtrip-imprecise_speed_information",
+  "from": "dbc-gwm-haval-h6-phev-2024",
+  "to": "dbc-gwm-haval-h6-phev-2024",
+  "input": "930000000800000000f600cda4000f62",
+  "expect": "930000000800000000f600cda4000f62",
+  "model": {
+    "@kind": "imprecise_speed_information"
+  }
+}

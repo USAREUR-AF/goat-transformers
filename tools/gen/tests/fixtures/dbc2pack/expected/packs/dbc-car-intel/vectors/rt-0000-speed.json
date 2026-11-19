@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-speed",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "0001000008000000399f00beee95000c",
+  "expect": "0001000008000000399f00beee95000c",
+  "model": {
+    "@kind": "speed"
+  }
+}

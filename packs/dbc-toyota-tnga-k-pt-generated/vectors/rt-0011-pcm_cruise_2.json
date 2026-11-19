@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-pcm_cruise_2",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "d30100000800000000e0ad000080005b",
+  "expect": "d30100000800000000e0ad000080005b",
+  "model": {
+    "@kind": "pcm_cruise_2"
+  }
+}

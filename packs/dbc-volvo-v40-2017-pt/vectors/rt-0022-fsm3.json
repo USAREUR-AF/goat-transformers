@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-fsm3",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "70020000080000000000ff0000000000",
+  "expect": "70020000080000000000ff0000000000",
+  "model": {
+    "@kind": "fsm3"
+  }
+}

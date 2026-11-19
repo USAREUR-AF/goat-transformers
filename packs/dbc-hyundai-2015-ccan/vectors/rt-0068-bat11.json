@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-bat11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "4905000008000000e469bb9251da97c5",
+  "expect": "4905000008000000e469bb9251da97c5",
+  "model": {
+    "@kind": "bat11"
+  }
+}

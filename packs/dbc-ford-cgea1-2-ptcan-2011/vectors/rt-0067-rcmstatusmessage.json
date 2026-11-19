@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-rcmstatusmessage",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "400300000800000040411ca0b2db36c6",
+  "expect": "400300000800000040411ca0b2db36c6",
+  "model": {
+    "@kind": "rcmstatusmessage"
+  }
+}

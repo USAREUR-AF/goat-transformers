@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-gear_packet",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "73000000080000000300000000000000",
+  "expect": "73000000080000000300000000000000",
+  "model": {
+    "@kind": "gear_packet"
+  }
+}

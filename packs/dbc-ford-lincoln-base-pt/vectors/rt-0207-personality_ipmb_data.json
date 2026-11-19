@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-personality_ipmb_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "ee03000008000000ba38666140000000",
+  "expect": "ee03000008000000ba38666140000000",
+  "model": {
+    "@kind": "personality_ipmb_data"
+  }
+}

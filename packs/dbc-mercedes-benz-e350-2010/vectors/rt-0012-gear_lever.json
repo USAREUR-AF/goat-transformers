@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-gear_lever",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "6d000000080000000015b0d200000000",
+  "expect": "6d000000080000000015b0d200000000",
+  "model": {
+    "@kind": "gear_lever"
+  }
+}

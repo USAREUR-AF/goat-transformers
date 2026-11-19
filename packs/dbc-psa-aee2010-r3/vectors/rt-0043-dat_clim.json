@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dat_clim",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "0e05000008000000356282026c431af1",
+  "expect": "0e05000008000000356282026c431af1",
+  "model": {
+    "@kind": "dat_clim"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-suspension_stat",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "3a020000080000008124014d0176019f",
+  "expect": "3a020000080000008124014d0176019f",
+  "model": {
+    "@kind": "suspension_stat"
+  }
+}

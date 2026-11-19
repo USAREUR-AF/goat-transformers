@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-rcm_imu_lataccyaw",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "30010000080000002fa60a001495686c",
+  "expect": "30010000080000002fa60a001495686c",
+  "model": {
+    "@kind": "rcm_imu_lataccyaw"
+  }
+}

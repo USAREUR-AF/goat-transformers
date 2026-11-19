@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-econ_status",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "210200000600000000000000003a0000",
+  "expect": "210200000600000000000000003a0000",
+  "model": {
+    "@kind": "econ_status"
+  }
+}

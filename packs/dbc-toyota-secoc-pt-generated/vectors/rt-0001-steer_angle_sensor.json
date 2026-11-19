@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-steer_angle_sensor",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "250000000800000005f50000cda30000",
+  "expect": "250000000800000005f50000cda30000",
+  "model": {
+    "@kind": "steer_angle_sensor"
+  }
+}

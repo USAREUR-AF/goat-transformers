@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-pas11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "360400000400000053b8e51600000000",
+  "expect": "360400000400000053b8e51600000000",
+  "model": {
+    "@kind": "pas11"
+  }
+}

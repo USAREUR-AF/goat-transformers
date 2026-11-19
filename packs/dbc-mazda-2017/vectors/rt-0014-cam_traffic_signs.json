@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_traffic_signs",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "5f030000080000001180002001ef9d00",
+  "expect": "5f030000080000001180002001ef9d00",
+  "model": {
+    "@kind": "cam_traffic_signs"
+  }
+}

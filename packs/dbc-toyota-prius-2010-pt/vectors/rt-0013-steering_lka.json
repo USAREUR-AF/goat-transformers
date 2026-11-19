@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-steering_lka",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "e402000008000000afb24512e9000000",
+  "expect": "e402000008000000afb24512e9000000",
+  "model": {
+    "@kind": "steering_lka"
+  }
+}

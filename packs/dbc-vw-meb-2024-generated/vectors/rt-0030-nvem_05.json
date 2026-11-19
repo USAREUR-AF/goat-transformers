@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-nvem_05",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "6503000008000000c2091ee11ac0b684",
+  "expect": "6503000008000000c2091ee11ac0b684",
+  "model": {
+    "@kind": "nvem_05"
+  }
+}

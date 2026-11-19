@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-car_speed",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "090300000800000092567f04e62dc0a9",
+  "expect": "090300000800000092567f04e62dc0a9",
+  "model": {
+    "@kind": "car_speed"
+  }
+}

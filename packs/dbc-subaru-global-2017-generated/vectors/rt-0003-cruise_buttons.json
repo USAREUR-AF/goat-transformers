@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-cruise_buttons",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "4601000008000000a64da593ba093651",
+  "expect": "4601000008000000a64da593ba093651",
+  "model": {
+    "@kind": "cruise_buttons"
+  }
+}

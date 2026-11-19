@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-msg_17d",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "7d010000080000000000000002560000",
+  "expect": "7d010000080000000000000002560000",
+  "model": {
+    "@kind": "msg_17d"
+  }
+}

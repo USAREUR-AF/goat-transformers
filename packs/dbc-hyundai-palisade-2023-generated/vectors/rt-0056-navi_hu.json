@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-navi_hu",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "44050000080000006d00000000000000",
+  "expect": "44050000080000006d00000000000000",
+  "model": {
+    "@kind": "navi_hu"
+  }
+}

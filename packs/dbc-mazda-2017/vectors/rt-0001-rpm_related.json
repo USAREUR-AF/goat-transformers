@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-rpm_related",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "7600000008000000140008eb00000000",
+  "expect": "7600000008000000140008eb00000000",
+  "model": {
+    "@kind": "rpm_related"
+  }
+}

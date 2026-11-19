@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-high-voltage-management-roundtrip-charger_parameters",
+  "from": "dbc-gm-global-a-high-voltage-management",
+  "to": "dbc-gm-global-a-high-voltage-management",
+  "input": "04030000040000008a61ad3800000000",
+  "expect": "04030000040000008a61ad3800000000",
+  "model": {
+    "@kind": "charger_parameters"
+  }
+}

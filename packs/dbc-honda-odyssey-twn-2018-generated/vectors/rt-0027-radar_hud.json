@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-radar_hud",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "9f030000080000005bd58c31846fb614",
+  "expect": "9f030000080000005bd58c31846fb614",
+  "model": {
+    "@kind": "radar_hud"
+  }
+}

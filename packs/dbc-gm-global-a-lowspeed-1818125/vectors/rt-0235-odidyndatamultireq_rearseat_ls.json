@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-odidyndatamultireq_rearseat_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0000af8008000000000000000ccde5b4",
+  "expect": "0000af8008000000000000000ccde5b4",
+  "model": {
+    "@kind": "odidyndatamultireq_rearseat_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-gw_hsc2_bcm_frp04",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "6a040000080000003905000020188709",
+  "expect": "6a040000080000003905000020188709",
+  "model": {
+    "@kind": "gw_hsc2_bcm_frp04"
+  }
+}

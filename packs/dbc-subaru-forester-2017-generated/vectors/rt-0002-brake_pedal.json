@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-brake_pedal",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "d1000000040000003afa110000000000",
+  "expect": "d1000000040000003afa110000000000",
+  "model": {
+    "@kind": "brake_pedal"
+  }
+}

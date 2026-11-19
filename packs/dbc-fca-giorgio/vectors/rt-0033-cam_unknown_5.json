@@ -1,0 +1,10 @@
+{
+  "name": "dbc-fca-giorgio-roundtrip-cam_unknown_5",
+  "from": "dbc-fca-giorgio",
+  "to": "dbc-fca-giorgio",
+  "input": "b2050000040000002000000000000000",
+  "expect": "b2050000040000002000000000000000",
+  "model": {
+    "@kind": "cam_unknown_5"
+  }
+}

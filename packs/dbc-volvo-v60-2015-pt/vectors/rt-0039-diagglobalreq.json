@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-diagglobalreq",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "df07000008000000e1b88f663d14ebc2",
+  "expect": "df07000008000000e1b88f663d14ebc2",
+  "model": {
+    "@kind": "diagglobalreq"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-throttle",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "40010000080000001f5652b8d7ae8567",
+  "expect": "40010000080000001f5652b8d7ae8567",
+  "model": {
+    "@kind": "throttle"
+  }
+}

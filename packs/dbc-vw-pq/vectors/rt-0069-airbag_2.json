@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-airbag_2",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "5005000002000000a89a000000000000",
+  "expect": "5005000002000000a89a000000000000",
+  "model": {
+    "@kind": "airbag_2"
+  }
+}

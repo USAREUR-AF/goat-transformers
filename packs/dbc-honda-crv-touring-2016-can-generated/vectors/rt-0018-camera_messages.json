@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-camera_messages",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "5e030000080000003c6d441b00002227",
+  "expect": "5e030000080000003c6d441b00002227",
+  "model": {
+    "@kind": "camera_messages"
+  }
+}

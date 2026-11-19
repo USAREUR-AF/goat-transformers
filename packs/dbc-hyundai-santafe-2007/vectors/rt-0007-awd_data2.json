@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-awd_data2",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "2904000008000000d76dae855c330000",
+  "expect": "2904000008000000d76dae855c330000",
+  "model": {
+    "@kind": "awd_data2"
+  }
+}

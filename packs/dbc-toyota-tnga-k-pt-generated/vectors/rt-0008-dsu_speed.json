@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-dsu_speed",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "610100000700000000d2d00000000000",
+  "expect": "610100000700000000d2d00000000000",
+  "model": {
+    "@kind": "dsu_speed"
+  }
+}

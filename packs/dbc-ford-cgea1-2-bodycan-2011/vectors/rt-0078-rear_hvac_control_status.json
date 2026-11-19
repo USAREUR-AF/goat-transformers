@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-rear_hvac_control_status",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "d503000008000000980bc10000000000",
+  "expect": "d503000008000000980bc10000000000",
+  "model": {
+    "@kind": "rear_hvac_control_status"
+  }
+}

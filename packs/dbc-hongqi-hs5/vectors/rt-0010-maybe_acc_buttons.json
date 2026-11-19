@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hongqi-hs5-roundtrip-maybe_acc_buttons",
+  "from": "dbc-hongqi-hs5",
+  "to": "dbc-hongqi-hs5",
+  "input": "a6010000080000000000000000000000",
+  "expect": "a6010000080000000000000000000000",
+  "model": {
+    "@kind": "maybe_acc_buttons"
+  }
+}

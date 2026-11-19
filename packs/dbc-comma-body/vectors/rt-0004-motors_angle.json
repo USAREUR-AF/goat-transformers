@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-motors_angle",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "0502000008000000a328f6ff4ad69ead",
+  "expect": "0502000008000000a328f6ff4ad69ead",
+  "model": {
+    "@kind": "motors_angle"
+  }
+}

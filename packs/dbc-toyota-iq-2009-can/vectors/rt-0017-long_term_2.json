@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-long_term_2",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "80030000080000000000000000007a00",
+  "expect": "80030000080000000000000000007a00",
+  "model": {
+    "@kind": "long_term_2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-body_control_state_2",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "10060000080000000000330a400000e0",
+  "expect": "10060000080000000000330a400000e0",
+  "model": {
+    "@kind": "body_control_state_2"
+  }
+}

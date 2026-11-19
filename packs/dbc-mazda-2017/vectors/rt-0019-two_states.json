@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-two_states",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "d1030000080000000000000010050802",
+  "expect": "d1030000080000000000000010050802",
+  "model": {
+    "@kind": "two_states"
+  }
+}

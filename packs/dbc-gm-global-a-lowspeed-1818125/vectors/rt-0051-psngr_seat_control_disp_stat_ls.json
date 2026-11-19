@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-psngr_seat_control_disp_stat_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c0748006000000300034acae7c0000",
+  "expect": "00c0748006000000300034acae7c0000",
+  "model": {
+    "@kind": "psngr_seat_control_disp_stat_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-transmission",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "4801000008000000a001580d00006f10",
+  "expect": "4801000008000000a001580d00006f10",
+  "model": {
+    "@kind": "transmission"
+  }
+}

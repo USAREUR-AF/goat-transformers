@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2018-can-generated-roundtrip-cruise",
+  "from": "dbc-acura-rdx-2018-can-generated",
+  "to": "dbc-acura-rdx-2018-can-generated",
+  "input": "2403000008000000966db9441bf2c907",
+  "expect": "2403000008000000966db9441bf2c907",
+  "model": {
+    "@kind": "cruise"
+  }
+}

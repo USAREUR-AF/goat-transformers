@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-torque_cmd",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "5002000006000000515ea5350ce30000",
+  "expect": "5002000006000000515ea5350ce30000",
+  "model": {
+    "@kind": "torque_cmd"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_funktionaler_req_obd",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "df070000080000004009e85d00000080",
+  "expect": "df070000080000004009e85d00000080",
+  "model": {
+    "@kind": "iso_funktionaler_req_obd"
+  }
+}

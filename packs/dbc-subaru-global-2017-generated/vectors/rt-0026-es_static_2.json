@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-es_static_2",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "21010000080000008209000000000000",
+  "expect": "21010000080000008209000000000000",
+  "model": {
+    "@kind": "es_static_2"
+  }
+}

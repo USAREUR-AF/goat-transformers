@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-wheel_speeds",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "aa0000000800000045519928ecff40d6",
+  "expect": "aa0000000800000045519928ecff40d6",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

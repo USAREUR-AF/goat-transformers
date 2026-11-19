@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-brake_hold_hybrid_alt",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "23020000060000000000000052270000",
+  "expect": "23020000060000000000000052270000",
+  "model": {
+    "@kind": "brake_hold_hybrid_alt"
+  }
+}

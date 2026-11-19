@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-acc_control",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "ec02000008000000403c001b72180aa1",
+  "expect": "ec02000008000000403c001b72180aa1",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

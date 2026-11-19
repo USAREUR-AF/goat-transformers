@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-parkaid_audible_warn_cmdm",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "0a010000080000004080000000000000",
+  "expect": "0a010000080000004080000000000000",
+  "model": {
+    "@kind": "parkaid_audible_warn_cmdm"
+  }
+}

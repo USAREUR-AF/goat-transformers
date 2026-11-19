@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-veydynamics_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4503000008000000d006e00000000000",
+  "expect": "4503000008000000d006e00000000000",
+  "model": {
+    "@kind": "veydynamics_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-steering_ipas",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "6602000008000000fa966d00600044f2",
+  "expect": "6602000008000000fa966d00600044f2",
+  "model": {
+    "@kind": "steering_ipas"
+  }
+}

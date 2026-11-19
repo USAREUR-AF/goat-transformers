@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-steering_module_adas",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "e2010000080000004a8658545d2b92b0",
+  "expect": "e2010000080000004a8658545d2b92b0",
+  "model": {
+    "@kind": "steering_module_adas"
+  }
+}

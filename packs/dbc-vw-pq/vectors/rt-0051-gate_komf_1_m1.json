@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-gate_komf_1_m1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "90030000080000009511aa5455aeaaaa",
+  "expect": "90030000080000009511aa5455aeaaaa",
+  "model": {
+    "@kind": "gate_komf_1_m1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-blinker_stalks",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "c1030000080000005d40204000000000",
+  "expect": "c1030000080000005d40204000000000",
+  "model": {
+    "@kind": "blinker_stalks"
+  }
+}

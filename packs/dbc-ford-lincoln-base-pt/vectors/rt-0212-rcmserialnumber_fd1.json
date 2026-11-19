@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-rcmserialnumber_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "54040000080000001a436c95bee71039",
+  "expect": "54040000080000001a436c95bee71039",
+  "model": {
+    "@kind": "rcmserialnumber_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-transmission",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "48000000080000001c0300ca00a10000",
+  "expect": "48000000080000001c0300ca00a10000",
+  "model": {
+    "@kind": "transmission"
+  }
+}

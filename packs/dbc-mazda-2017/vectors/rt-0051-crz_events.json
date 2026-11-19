@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-crz_events",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "1f020000080000006453821f00390dce",
+  "expect": "1f020000080000006453821f00390dce",
+  "model": {
+    "@kind": "crz_events"
+  }
+}

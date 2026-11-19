@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-lane_keep_assist_status",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "cc030000080000007000000000000000",
+  "expect": "cc030000080000007000000000000000",
+  "model": {
+    "@kind": "lane_keep_assist_status"
+  }
+}

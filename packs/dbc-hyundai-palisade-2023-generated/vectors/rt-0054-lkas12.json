@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-lkas12",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "3e050000080000007b24a448e2010000",
+  "expect": "3e050000080000007b24a448e2010000",
+  "model": {
+    "@kind": "lkas12"
+  }
+}

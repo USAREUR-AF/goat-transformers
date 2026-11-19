@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-becmbatteryvoltagecurrent",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "c702000006000000000acb6f40000000",
+  "expect": "c702000006000000000acb6f40000000",
+  "model": {
+    "@kind": "becmbatteryvoltagecurrent"
+  }
+}

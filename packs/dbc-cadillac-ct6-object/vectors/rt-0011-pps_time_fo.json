@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-pps_time_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "64020000080000000623de3646718f63",
+  "expect": "64020000080000000623de3646718f63",
+  "model": {
+    "@kind": "pps_time_fo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-hu_mon_pe_01",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "7f050000080000000500000000000000",
+  "expect": "7f050000080000000500000000000000",
+  "model": {
+    "@kind": "hu_mon_pe_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-esp2",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "200200000800000065a0c17ff4725052",
+  "expect": "200200000800000065a0c17ff4725052",
+  "model": {
+    "@kind": "esp2"
+  }
+}

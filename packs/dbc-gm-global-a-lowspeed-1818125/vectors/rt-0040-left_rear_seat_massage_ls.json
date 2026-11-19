@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-left_rear_seat_massage_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0040468008000000000000002e20f3e1",
+  "expect": "0040468008000000000000002e20f3e1",
+  "model": {
+    "@kind": "left_rear_seat_massage_ls"
+  }
+}

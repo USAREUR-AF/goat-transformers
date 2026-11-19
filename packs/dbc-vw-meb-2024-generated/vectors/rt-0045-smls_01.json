@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-smls_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "d4030000080000004259d56e00510100",
+  "expect": "d4030000080000004259d56e00510100",
+  "model": {
+    "@kind": "smls_01"
+  }
+}

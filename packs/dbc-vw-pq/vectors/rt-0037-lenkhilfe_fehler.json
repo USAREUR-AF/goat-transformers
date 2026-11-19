@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-lenkhilfe_fehler",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "de05000007000000a5aaaaeaa8f51000",
+  "expect": "de05000007000000a5aaaaeaa8f51000",
+  "model": {
+    "@kind": "lenkhilfe_fehler"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-bodyinformation_2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "ae03000008000000aabd000085e80000",
+  "expect": "ae03000008000000aabd000085e80000",
+  "model": {
+    "@kind": "bodyinformation_2"
+  }
+}

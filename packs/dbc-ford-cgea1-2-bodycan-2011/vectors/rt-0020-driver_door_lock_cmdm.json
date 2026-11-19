@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-driver_door_lock_cmdm",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "360100000800000077e0000000000000",
+  "expect": "360100000800000077e0000000000000",
+  "model": {
+    "@kind": "driver_door_lock_cmdm"
+  }
+}

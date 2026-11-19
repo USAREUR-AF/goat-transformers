@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-ods13",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "fc050000050000007d542b02d9000000",
+  "expect": "fc050000050000007d542b02d9000000",
+  "model": {
+    "@kind": "ods13"
+  }
+}

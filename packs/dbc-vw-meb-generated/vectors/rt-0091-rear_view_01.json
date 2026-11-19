@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-rear_view_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "af06000008000000ae54701e75000000",
+  "expect": "af06000008000000ae54701e75000000",
+  "model": {
+    "@kind": "rear_view_01"
+  }
+}

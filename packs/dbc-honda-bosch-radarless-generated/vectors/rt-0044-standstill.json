@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-standstill",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "b0010000070000000012000000001800",
+  "expect": "b0010000070000000012000000001800",
+  "model": {
+    "@kind": "standstill"
+  }
+}

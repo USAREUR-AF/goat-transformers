@@ -1,0 +1,10 @@
+{
+  "name": "dbc-opel-omega-2001-roundtrip-sas_data",
+  "from": "dbc-opel-omega-2001",
+  "to": "dbc-opel-omega-2001",
+  "input": "80010000080000001bcaf20000000000",
+  "expect": "80010000080000001bcaf20000000000",
+  "model": {
+    "@kind": "sas_data"
+  }
+}

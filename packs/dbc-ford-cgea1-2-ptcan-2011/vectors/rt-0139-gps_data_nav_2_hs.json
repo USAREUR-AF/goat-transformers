@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-gps_data_nav_2_hs",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "6604000008000000c404a87b26c02800",
+  "expect": "6604000008000000c404a87b26c02800",
+  "model": {
+    "@kind": "gps_data_nav_2_hs"
+  }
+}

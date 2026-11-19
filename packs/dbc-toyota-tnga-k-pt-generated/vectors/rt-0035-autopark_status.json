@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-autopark_status",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "3b040000080000001000000000000000",
+  "expect": "3b040000080000001000000000000000",
+  "model": {
+    "@kind": "autopark_status"
+  }
+}

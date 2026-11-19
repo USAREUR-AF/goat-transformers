@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-clu12",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "b005000004000000c953de0000000000",
+  "expect": "b005000004000000c953de0000000000",
+  "model": {
+    "@kind": "clu12"
+  }
+}

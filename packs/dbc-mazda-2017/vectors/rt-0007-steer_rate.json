@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-steer_rate",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "410200000800000061ed3a3f5c400420",
+  "expect": "410200000800000061ed3a3f5c400420",
+  "model": {
+    "@kind": "steer_rate"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-acc_system",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "68030000080000002ca38fbb43401700",
+  "expect": "68030000080000002ca38fbb43401700",
+  "model": {
+    "@kind": "acc_system"
+  }
+}

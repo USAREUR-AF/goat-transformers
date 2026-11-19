@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-hod_fd_01_100ms",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "af020000080000000000050004db0200",
+  "expect": "af020000080000000000050004db0200",
+  "model": {
+    "@kind": "hod_fd_01_100ms"
+  }
+}

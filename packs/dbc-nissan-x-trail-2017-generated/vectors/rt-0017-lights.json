@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-lights",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "53040000080000000008000000000000",
+  "expect": "53040000080000000008000000000000",
+  "model": {
+    "@kind": "lights"
+  }
+}

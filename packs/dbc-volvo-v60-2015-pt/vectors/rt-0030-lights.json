@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-lights",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "96040000080000000000000000000000",
+  "expect": "96040000080000000000000000000000",
+  "model": {
+    "@kind": "lights"
+  }
+}

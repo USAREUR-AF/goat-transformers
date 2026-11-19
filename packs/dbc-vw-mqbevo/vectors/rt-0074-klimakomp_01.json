@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-klimakomp_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "59060000080000000080c101dbb28900",
+  "expect": "59060000080000000080c101dbb28900",
+  "model": {
+    "@kind": "klimakomp_01"
+  }
+}

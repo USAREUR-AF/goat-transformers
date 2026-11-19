@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-sitz_info",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "3405000002000000cfa8000000000000",
+  "expect": "3405000002000000cfa8000000000000",
+  "model": {
+    "@kind": "sitz_info"
+  }
+}

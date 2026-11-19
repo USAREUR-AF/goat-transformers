@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-vehicle_data",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "f004000008000000c68e866a0ba9f167",
+  "expect": "f004000008000000c68e866a0ba9f167",
+  "model": {
+    "@kind": "vehicle_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-ems20",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "00020000060000000000570001000000",
+  "expect": "00020000060000000000570001000000",
+  "model": {
+    "@kind": "ems20"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-gearbox_auto",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "a301000008000000c75e010808000656",
+  "expect": "a301000008000000c75e010808000656",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

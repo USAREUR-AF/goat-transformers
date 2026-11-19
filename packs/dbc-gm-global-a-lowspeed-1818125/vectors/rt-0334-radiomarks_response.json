@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-radiomarks_response",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00604f8008000000e705000073d890ac",
+  "expect": "00604f8008000000e705000073d890ac",
+  "model": {
+    "@kind": "radiomarks_response"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-new_msg_1",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "40050000080000000655000000000000",
+  "expect": "40050000080000000655000000000000",
+  "model": {
+    "@kind": "new_msg_1"
+  }
+}

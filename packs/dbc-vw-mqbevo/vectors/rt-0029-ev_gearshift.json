@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-ev_gearshift",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "8701000008000000cf16040000000000",
+  "expect": "8701000008000000cf16040000000000",
+  "model": {
+    "@kind": "ev_gearshift"
+  }
+}

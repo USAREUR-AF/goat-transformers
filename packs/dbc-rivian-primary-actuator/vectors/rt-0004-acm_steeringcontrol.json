@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-acm_steeringcontrol",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "1001000008000000edb4389200000000",
+  "expect": "1001000008000000edb4389200000000",
+  "model": {
+    "@kind": "acm_steeringcontrol"
+  }
+}

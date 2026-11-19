@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-steer_motor_torque",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "ab010000030000000a94290000000000",
+  "expect": "ab010000030000000a94290000000000",
+  "model": {
+    "@kind": "steer_motor_torque"
+  }
+}

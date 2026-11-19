@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hongqi-hs5-roundtrip-turn_signals",
+  "from": "dbc-hongqi-hs5",
+  "to": "dbc-hongqi-hs5",
+  "input": "30020000080000000000290000200000",
+  "expect": "30020000080000000000290000200000",
+  "model": {
+    "@kind": "turn_signals"
+  }
+}

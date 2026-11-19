@@ -1,0 +1,10 @@
+{
+  "name": "dbc-opel-omega-2001-roundtrip-esp_data1",
+  "from": "dbc-opel-omega-2001",
+  "to": "dbc-opel-omega-2001",
+  "input": "200100000800000010a1007800000000",
+  "expect": "200100000800000010a1007800000000",
+  "model": {
+    "@kind": "esp_data1"
+  }
+}

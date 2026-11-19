@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-chassis-roundtrip-ebcmfrictionbrakestatus",
+  "from": "dbc-cadillac-ct6-chassis",
+  "to": "dbc-cadillac-ct6-chassis",
+  "input": "70010000080000000000f68d00000000",
+  "expect": "70010000080000000000f68d00000000",
+  "model": {
+    "@kind": "ebcmfrictionbrakestatus"
+  }
+}

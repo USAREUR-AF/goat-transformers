@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-acc_drv_seat_vib_req_io_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00403c8001000000b100000000000000",
+  "expect": "00403c8001000000b100000000000000",
+  "model": {
+    "@kind": "acc_drv_seat_vib_req_io_ls"
+  }
+}

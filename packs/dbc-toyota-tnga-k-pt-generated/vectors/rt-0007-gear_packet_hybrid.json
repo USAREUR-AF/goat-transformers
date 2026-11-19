@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-gear_packet_hybrid",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "270100000800000000000007f9e0d0a7",
+  "expect": "270100000800000000000007f9e0d0a7",
+  "model": {
+    "@kind": "gear_packet_hybrid"
+  }
+}

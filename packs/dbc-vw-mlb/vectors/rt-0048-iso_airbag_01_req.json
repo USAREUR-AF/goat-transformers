@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_airbag_01_req",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "1507000008000000847fa00700000080",
+  "expect": "1507000008000000847fa00700000080",
+  "model": {
+    "@kind": "iso_airbag_01_req"
+  }
+}

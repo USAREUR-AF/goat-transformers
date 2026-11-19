@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-analog_values_slow_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00002e8008000000540000006755fb48",
+  "expect": "00002e8008000000540000006755fb48",
+  "model": {
+    "@kind": "analog_values_slow_ls"
+  }
+}

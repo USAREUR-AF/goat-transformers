@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-fcim_button_press",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "e002000008000000db90000000000000",
+  "expect": "e002000008000000db90000000000000",
+  "model": {
+    "@kind": "fcim_button_press"
+  }
+}

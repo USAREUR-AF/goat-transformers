@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-audio_master_source_status_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00406e80020000000f1f000000000000",
+  "expect": "00406e80020000000f1f000000000000",
+  "model": {
+    "@kind": "audio_master_source_status_ls"
+  }
+}

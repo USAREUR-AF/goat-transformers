@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-motorslave_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "c9030000010000000100000000000000",
+  "expect": "c9030000010000000100000000000000",
+  "model": {
+    "@kind": "motorslave_01"
+  }
+}

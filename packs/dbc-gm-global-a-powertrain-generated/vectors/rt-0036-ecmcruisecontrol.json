@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ecmcruisecontrol",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "d1030000080000000000049380000000",
+  "expect": "d1030000080000000000049380000000",
+  "model": {
+    "@kind": "ecmcruisecontrol"
+  }
+}

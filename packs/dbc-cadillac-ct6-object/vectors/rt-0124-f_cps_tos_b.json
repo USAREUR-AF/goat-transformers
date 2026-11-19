@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_cps_tos_b",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "81050000080000008105f1a705fb925b",
+  "expect": "81050000080000008105f1a705fb925b",
+  "model": {
+    "@kind": "f_cps_tos_b"
+  }
+}

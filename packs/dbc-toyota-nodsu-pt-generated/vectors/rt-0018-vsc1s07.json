@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-vsc1s07",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "2003000008000000154a7645a9080405",
+  "expect": "2003000008000000154a7645a9080405",
+  "model": {
+    "@kind": "vsc1s07"
+  }
+}

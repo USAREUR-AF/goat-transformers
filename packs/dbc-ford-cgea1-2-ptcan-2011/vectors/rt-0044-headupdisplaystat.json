@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-headupdisplaystat",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "88010000080000008000000000000000",
+  "expect": "88010000080000008000000000000000",
+  "model": {
+    "@kind": "headupdisplaystat"
+  }
+}

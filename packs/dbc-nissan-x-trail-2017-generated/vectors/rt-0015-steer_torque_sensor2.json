@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-steer_torque_sensor2",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "00030000020000001800000000000000",
+  "expect": "00030000020000001800000000000000",
+  "model": {
+    "@kind": "steer_torque_sensor2"
+  }
+}

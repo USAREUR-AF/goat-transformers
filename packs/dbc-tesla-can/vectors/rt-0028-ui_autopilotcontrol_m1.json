@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_autopilotcontrol_m1",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "ee03000008000000e161000000000000",
+  "expect": "ee03000008000000e161000000000000",
+  "model": {
+    "@kind": "ui_autopilotcontrol_m1"
+  }
+}

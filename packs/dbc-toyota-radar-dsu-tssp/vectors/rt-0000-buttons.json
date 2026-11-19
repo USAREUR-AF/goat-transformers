@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-radar-dsu-tssp-roundtrip-buttons",
+  "from": "dbc-toyota-radar-dsu-tssp",
+  "to": "dbc-toyota-radar-dsu-tssp",
+  "input": "00030000080000002000000000000000",
+  "expect": "00030000080000002000000000000000",
+  "model": {
+    "@kind": "buttons"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-leftradar",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "b9c07290020000000000000000000000",
+  "expect": "b9c07290020000000000000000000000",
+  "model": {
+    "@kind": "leftradar"
+  }
+}

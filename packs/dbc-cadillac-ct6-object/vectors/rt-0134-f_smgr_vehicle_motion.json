@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_smgr_vehicle_motion",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "0003000008000000155606e96c9eff8d",
+  "expect": "0003000008000000155606e96c9eff8d",
+  "model": {
+    "@kind": "f_smgr_vehicle_motion"
+  }
+}

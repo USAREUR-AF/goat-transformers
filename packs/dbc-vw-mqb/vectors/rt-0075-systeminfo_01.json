@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-systeminfo_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "8505000008000000bf2aaa2a00000000",
+  "expect": "8505000008000000bf2aaa2a00000000",
+  "model": {
+    "@kind": "systeminfo_01"
+  }
+}

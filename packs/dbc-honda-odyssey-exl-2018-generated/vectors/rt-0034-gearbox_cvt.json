@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-gearbox_cvt",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "9101000008000000050080cda43b0027",
+  "expect": "9101000008000000050080cda43b0027",
+  "model": {
+    "@kind": "gearbox_cvt"
+  }
+}

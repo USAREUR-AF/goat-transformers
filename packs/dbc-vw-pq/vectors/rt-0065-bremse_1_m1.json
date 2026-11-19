@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-bremse_1_m1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "a0010000080000004b554768fadbd1a8",
+  "expect": "a0010000080000004b554768fadbd1a8",
+  "model": {
+    "@kind": "bremse_1_m1"
+  }
+}

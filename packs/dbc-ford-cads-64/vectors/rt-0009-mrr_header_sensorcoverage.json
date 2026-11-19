@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-mrr_header_sensorcoverage",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "74010000080000006c009500be000000",
+  "expect": "74010000080000006c009500be000000",
+  "model": {
+    "@kind": "mrr_header_sensorcoverage"
+  }
+}

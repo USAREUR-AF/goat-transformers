@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-chime",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "0000409005000000ea98c1466f000000",
+  "expect": "0000409005000000ea98c1466f000000",
+  "model": {
+    "@kind": "chime"
+  }
+}

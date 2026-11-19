@@ -1,0 +1,10 @@
+{
+  "name": "dbc-fca-giorgio-roundtrip-eps_3",
+  "from": "dbc-fca-giorgio",
+  "to": "dbc-fca-giorgio",
+  "input": "2201000004000000e1a001c800000000",
+  "expect": "2201000004000000e1a001c800000000",
+  "model": {
+    "@kind": "eps_3"
+  }
+}

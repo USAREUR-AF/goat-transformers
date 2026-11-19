@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-dtc_triggered_789_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "8907000007000000aba13dca1c0df300",
+  "expect": "8907000007000000aba13dca1c0df300",
+  "model": {
+    "@kind": "dtc_triggered_789_fo"
+  }
+}

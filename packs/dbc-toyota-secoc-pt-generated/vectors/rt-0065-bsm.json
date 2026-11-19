@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-bsm",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "f6030000080000008104000000000000",
+  "expect": "f6030000080000008104000000000000",
+  "model": {
+    "@kind": "bsm"
+  }
+}

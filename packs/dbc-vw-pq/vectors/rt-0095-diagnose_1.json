@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-diagnose_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "d00700000800000018efcf6a6cbac45c",
+  "expect": "d00700000800000018efcf6a6cbac45c",
+  "model": {
+    "@kind": "diagnose_1"
+  }
+}

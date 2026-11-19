@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-lrrobject17",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "71040000080000000add32848ce0dc0e",
+  "expect": "71040000080000000add32848ce0dc0e",
+  "model": {
+    "@kind": "lrrobject17"
+  }
+}

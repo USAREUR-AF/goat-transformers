@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-side_detect_r_statusm",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "a703000008000000ac05700000000000",
+  "expect": "a703000008000000ac05700000000000",
+  "model": {
+    "@kind": "side_detect_r_statusm"
+  }
+}

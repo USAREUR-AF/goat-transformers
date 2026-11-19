@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-yaw_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "9100000008000000868432adffd61000",
+  "expect": "9100000008000000868432adffd61000",
+  "model": {
+    "@kind": "yaw_data_fd1"
+  }
+}

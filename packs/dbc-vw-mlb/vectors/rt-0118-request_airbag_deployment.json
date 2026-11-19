@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-request_airbag_deployment",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "f1070000080000004eb5b14800000080",
+  "expect": "f1070000080000004eb5b14800000080",
+  "model": {
+    "@kind": "request_airbag_deployment"
+  }
+}

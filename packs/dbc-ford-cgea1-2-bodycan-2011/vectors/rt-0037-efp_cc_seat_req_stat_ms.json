@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-efp_cc_seat_req_stat_ms",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "560300000800000042d9b06000000000",
+  "expect": "560300000800000042d9b06000000000",
+  "model": {
+    "@kind": "efp_cc_seat_req_stat_ms"
+  }
+}

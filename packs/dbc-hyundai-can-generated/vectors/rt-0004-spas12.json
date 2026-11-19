@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-spas12",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "f404000008000000c9dce50a779c7163",
+  "expect": "f404000008000000c9dce50a779c7163",
+  "model": {
+    "@kind": "spas12"
+  }
+}

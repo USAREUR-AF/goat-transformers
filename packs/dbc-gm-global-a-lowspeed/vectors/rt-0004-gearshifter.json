@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-gearshifter",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "00c02c90080000000000010000000000",
+  "expect": "00c02c90080000000000010000000000",
+  "model": {
+    "@kind": "gearshifter"
+  }
+}

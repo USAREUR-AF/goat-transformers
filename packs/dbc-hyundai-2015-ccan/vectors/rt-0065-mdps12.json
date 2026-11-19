@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-mdps12",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "510200000800000049ab532a00d8f59a",
+  "expect": "510200000800000049ab532a00d8f59a",
+  "model": {
+    "@kind": "mdps12"
+  }
+}

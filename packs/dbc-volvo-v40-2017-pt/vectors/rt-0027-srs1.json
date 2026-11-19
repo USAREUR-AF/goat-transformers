@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-srs1",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "c8030000080000000000400000000000",
+  "expect": "c8030000080000000000400000000000",
+  "model": {
+    "@kind": "srs1"
+  }
+}

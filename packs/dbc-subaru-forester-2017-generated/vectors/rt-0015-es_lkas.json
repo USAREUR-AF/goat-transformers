@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-es_lkas",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "640100000800000004cb0f0100000079",
+  "expect": "640100000800000004cb0f0100000079",
+  "model": {
+    "@kind": "es_lkas"
+  }
+}

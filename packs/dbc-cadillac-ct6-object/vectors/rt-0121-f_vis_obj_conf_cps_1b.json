@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_vis_obj_conf_cps_1b",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "5205000008000000c1c7be8fa8d666f5",
+  "expect": "5205000008000000c1c7be8fa8d666f5",
+  "model": {
+    "@kind": "f_vis_obj_conf_cps_1b"
+  }
+}

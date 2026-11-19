@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-espib1",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "8b03000006000000b1880d0000000000",
+  "expect": "8b03000006000000b1880d0000000000",
+  "model": {
+    "@kind": "espib1"
+  }
+}

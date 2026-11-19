@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-wheelspeed_clean",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "f0010000080000000d2e0000000040bb",
+  "expect": "f0010000080000000d2e0000000040bb",
+  "model": {
+    "@kind": "wheelspeed_clean"
+  }
+}

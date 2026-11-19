@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-can-generated-roundtrip-scm_buttons",
+  "from": "dbc-acura-ilx-2016-can-generated",
+  "to": "dbc-acura-ilx-2016-can-generated",
+  "input": "a6010000080000002000040000000032",
+  "expect": "a6010000080000002000040000000032",
+  "model": {
+    "@kind": "scm_buttons"
+  }
+}

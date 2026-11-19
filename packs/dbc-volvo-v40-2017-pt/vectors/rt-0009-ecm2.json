@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-ecm2",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "b00000000800000000000000009903c2",
+  "expect": "b00000000800000000000000009903c2",
+  "model": {
+    "@kind": "ecm2"
+  }
+}

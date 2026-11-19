@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-parkaid_data_2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a90300000800000008a283ac00000000",
+  "expect": "a90300000800000008a283ac00000000",
+  "model": {
+    "@kind": "parkaid_data_2"
+  }
+}

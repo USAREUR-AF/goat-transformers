@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-masterreset_hs3_ecgdat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "330200000800000058e0000000000000",
+  "expect": "330200000800000058e0000000000000",
+  "model": {
+    "@kind": "masterreset_hs3_ecgdat_fd1"
+  }
+}

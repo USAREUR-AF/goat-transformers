@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-motor_bremse",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "8402000006000000fb325773b9800000",
+  "expect": "8402000006000000fb325773b9800000",
+  "model": {
+    "@kind": "motor_bremse"
+  }
+}

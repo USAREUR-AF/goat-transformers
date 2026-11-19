@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-smartchargingdata_ecg_1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "0603000008000000d81c104b74093209",
+  "expect": "0603000008000000d81c104b74093209",
+  "model": {
+    "@kind": "smartchargingdata_ecg_1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-doors_seatbelts",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "1104000008000000be50000110001000",
+  "expect": "1104000008000000be50000110001000",
+  "model": {
+    "@kind": "doors_seatbelts"
+  }
+}

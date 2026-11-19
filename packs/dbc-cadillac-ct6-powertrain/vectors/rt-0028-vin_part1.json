@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-vin_part1",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "140500000800000000000000131a6341",
+  "expect": "140500000800000000000000131a6341",
+  "model": {
+    "@kind": "vin_part1"
+  }
+}

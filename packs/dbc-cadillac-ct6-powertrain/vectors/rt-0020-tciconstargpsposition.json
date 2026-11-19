@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-tciconstargpsposition",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "2a0300000800000005343d1a31afe943",
+  "expect": "2a0300000800000005343d1a31afe943",
+  "model": {
+    "@kind": "tciconstargpsposition"
+  }
+}

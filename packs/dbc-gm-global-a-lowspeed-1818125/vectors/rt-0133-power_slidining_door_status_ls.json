@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-power_slidining_door_status_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00402e80010000006e00000000000000",
+  "expect": "00402e80010000006e00000000000000",
+  "model": {
+    "@kind": "power_slidining_door_status_ls"
+  }
+}

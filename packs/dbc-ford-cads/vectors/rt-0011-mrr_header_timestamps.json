@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-roundtrip-mrr_header_timestamps",
+  "from": "dbc-ford-cads",
+  "to": "dbc-ford-cads",
+  "input": "710100000800000050bd5aaada600000",
+  "expect": "710100000800000050bd5aaada600000",
+  "model": {
+    "@kind": "mrr_header_timestamps"
+  }
+}

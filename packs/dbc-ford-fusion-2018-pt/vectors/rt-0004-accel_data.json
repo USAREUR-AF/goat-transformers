@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-accel_data",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "9200000008000000317e5da769d00000",
+  "expect": "9200000008000000317e5da769d00000",
+  "model": {
+    "@kind": "accel_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-bodyinfo",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "ac030000080000003f0600000a004012",
+  "expect": "ac030000080000003f0600000a004012",
+  "model": {
+    "@kind": "bodyinfo"
+  }
+}

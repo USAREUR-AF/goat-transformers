@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-aebcmd",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "2003000006000000315c3301a1ae0000",
+  "expect": "2003000006000000315c3301a1ae0000",
+  "model": {
+    "@kind": "aebcmd"
+  }
+}

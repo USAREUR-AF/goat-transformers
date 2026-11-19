@@ -1,0 +1,51 @@
+VERSION ""
+
+BU_: ECU GW XXX
+
+BO_ 256 SPEED: 8 ECU
+ SG_ VEHICLE_SPEED : 0|16@1+ (0.01,0) [0|655.35] "km/h" GW
+ SG_ GEAR : 16|3@1+ (1,0) [0|7] "" GW
+ SG_ DOOR_OPEN : 19|1@1+ (1,0) [0|1] "" GW
+ SG_ TEMP : 24|8@1- (0.5,-40) [-104|23.5] "degC" GW
+ SG_ BIG_ENDIAN_WORD : 39|16@0+ (1,0) [0|65535] "" GW
+ SG_ BIG_ENDIAN_NIBBLE : 59|4@0+ (1,0) [0|15] "" GW
+ SG_ BIG_ENDIAN_ODD : 53|10@0+ (1,0) [0|1023] "" GW
+ SG_ OVERLAP : 0|4@1+ (1,0) [0|15] "" GW
+
+BO_ 257 MODES: 2 ECU
+ SG_ MUX M : 0|2@1+ (1,0) [0|3] "" GW
+ SG_ COMMON : 2|6@1+ (1,0) [0|63] "" GW
+ SG_ PAGE0_A m0 : 8|8@1+ (1,0) [0|255] "" GW
+ SG_ PAGE1_B m1 : 8|8@1- (1,0) [-128|127] "" GW
+
+ BO_ 2147484160 EXTENDED: 4 ECU
+ SG_ RATE : 0|32@1- (1,0) [0|0] "deg/s" GW
+ SG_ Flag : 32|1@1+ (1,0) [0|1] "" GW
+
+BO_ 418381312 LONG_ID_NO_FLAG: 1 ECU
+ SG_ COUNTER : 0|4@1+ (1,0) [0|15] "" GW
+ SG_ counter : 4|4@1+ (1,0) [0|15] "" GW
+
+BO_ 600 GPS: 8 ECU
+ SG_ GPS_latitude : 0|28@1- (1E-06,0) [-90|90] "deg" GW
+ SG_ GPS_longitude : 28|29@1- (1E-06,0) [-180|180] "deg" GW
+ SG_ GPS_fix : 57|3@1+ (1,0) [0|7] "" GW
+
+BO_ 601 FLOATS: 8 ECU
+ SG_ ANGLE : 0|32@1- (1,0) [0|0] "rad" GW
+ SG_ SCALED_FLOAT : 32|32@1- (2,0) [0|0] "" GW
+
+BO_ 1536 FD_FRAME: 64 ECU
+ SG_ WIDE : 0|8@1+ (1,0) [0|255] "" GW
+
+BO_ 700 EMPTY: 8 ECU
+
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ ORPHAN : 0|8@1+ (1,0) [0|255] "" XXX
+
+CM_ SG_ 256 VEHICLE_SPEED "a comment the generator does not copy";
+VAL_ 256 GEAR 0 "P" 1 "R" 2 "N" 3 "D" 4 "S" 5 "L" 6 "M" 7 "invalid" ;
+VAL_ 256 DOOR_OPEN 0 "closed" 1 "open" ;
+VAL_ 257 COMMON 0 "zero" 1 "one" ;
+SIG_VALTYPE_ 601 ANGLE : 1;
+SIG_VALTYPE_ 601 SCALED_FLOAT : 1;

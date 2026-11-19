@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-adas_toggle_state",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "f3060000080000000000005344020000",
+  "expect": "f3060000080000000000005344020000",
+  "model": {
+    "@kind": "adas_toggle_state"
+  }
+}

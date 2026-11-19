@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-reverse_camera_state",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "ed030000020000000003000000000000",
+  "expect": "ed030000020000000003000000000000",
+  "model": {
+    "@kind": "reverse_camera_state"
+  }
+}

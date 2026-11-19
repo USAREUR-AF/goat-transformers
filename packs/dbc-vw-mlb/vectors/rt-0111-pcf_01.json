@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-pcf_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "230300000800000025bc81d807000000",
+  "expect": "230300000800000025bc81d807000000",
+  "model": {
+    "@kind": "pcf_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-usdt_req_to_amm_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "5c02000008000000000000003ab644a5",
+  "expect": "5c02000008000000000000003ab644a5",
+  "model": {
+    "@kind": "usdt_req_to_amm_fo"
+  }
+}

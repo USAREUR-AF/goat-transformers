@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-steer_torque_sensor",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "600200000800000000cc9a000078c348",
+  "expect": "600200000800000000cc9a000078c348",
+  "model": {
+    "@kind": "steer_torque_sensor"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-ehbs_hsc2_frp00",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "b6010000080000000005000000cb2498",
+  "expect": "b6010000080000000005000000cb2498",
+  "model": {
+    "@kind": "ehbs_hsc2_frp00"
+  }
+}

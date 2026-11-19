@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-pcm_cruise_2",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "d30100000800000000e0ad000080005b",
+  "expect": "d30100000800000000e0ad000080005b",
+  "model": {
+    "@kind": "pcm_cruise_2"
+  }
+}

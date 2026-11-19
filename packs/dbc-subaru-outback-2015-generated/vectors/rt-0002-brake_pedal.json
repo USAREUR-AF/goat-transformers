@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-brake_pedal",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "d1000000040000003afa110000000000",
+  "expect": "d1000000040000003afa110000000000",
+  "model": {
+    "@kind": "brake_pedal"
+  }
+}

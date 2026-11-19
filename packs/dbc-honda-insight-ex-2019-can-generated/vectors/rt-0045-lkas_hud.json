@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-lkas_hud",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "3d030000050000004055b34027000000",
+  "expect": "3d030000050000004055b34027000000",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

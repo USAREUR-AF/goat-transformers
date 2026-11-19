@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-cal_sas11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "c007000002000000c549000000000000",
+  "expect": "c007000002000000c549000000000000",
+  "model": {
+    "@kind": "cal_sas11"
+  }
+}

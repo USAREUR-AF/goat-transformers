@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-teen_driver_event_report_2_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0040618008000000381dde6d58c58d3a",
+  "expect": "0040618008000000381dde6d58c58d3a",
+  "model": {
+    "@kind": "teen_driver_event_report_2_ls"
+  }
+}

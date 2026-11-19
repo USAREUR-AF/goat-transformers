@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-driverseat",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "0c0300000800000000000e0000000000",
+  "expect": "0c0300000800000000000e0000000000",
+  "model": {
+    "@kind": "driverseat"
+  }
+}

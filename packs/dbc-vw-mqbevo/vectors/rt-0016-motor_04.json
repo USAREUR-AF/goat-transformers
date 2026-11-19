@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-motor_04",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "0701000008000000009200d7cc425c58",
+  "expect": "0701000008000000009200d7cc425c58",
+  "model": {
+    "@kind": "motor_04"
+  }
+}

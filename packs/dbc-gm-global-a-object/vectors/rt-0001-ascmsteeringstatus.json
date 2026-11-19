@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-ascmsteeringstatus",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "0603000008000000405b320000006184",
+  "expect": "0603000008000000405b320000006184",
+  "model": {
+    "@kind": "ascmsteeringstatus"
+  }
+}

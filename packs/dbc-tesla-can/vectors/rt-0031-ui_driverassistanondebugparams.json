@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_driverassistanondebugparams",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "3804000008000000701e4c7a287f562d",
+  "expect": "3804000008000000701e4c7a287f562d",
+  "model": {
+    "@kind": "ui_driverassistanondebugparams"
+  }
+}

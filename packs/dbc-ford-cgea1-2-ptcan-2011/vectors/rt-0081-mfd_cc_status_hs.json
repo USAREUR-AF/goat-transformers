@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-mfd_cc_status_hs",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "5b03000008000000a329065d00000000",
+  "expect": "5b03000008000000a329065d00000000",
+  "model": {
+    "@kind": "mfd_cc_status_hs"
+  }
+}

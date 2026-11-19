@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-waehlhebel_02",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "86050000080000000000000000000000",
+  "expect": "86050000080000000000000000000000",
+  "model": {
+    "@kind": "waehlhebel_02"
+  }
+}

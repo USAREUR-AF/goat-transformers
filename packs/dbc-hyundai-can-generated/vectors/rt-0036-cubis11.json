@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-cubis11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "83050000080000000a00000000000000",
+  "expect": "83050000080000000a00000000000000",
+  "model": {
+    "@kind": "cubis11"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-wheelspeed_cg1",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "17020000080000002e38dedc8f804024",
+  "expect": "17020000080000002e38dedc8f804024",
+  "model": {
+    "@kind": "wheelspeed_cg1"
+  }
+}

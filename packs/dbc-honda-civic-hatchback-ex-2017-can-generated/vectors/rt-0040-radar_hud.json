@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-radar_hud",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "9f03000008000000748e3c61381fe614",
+  "expect": "9f03000008000000748e3c61381fe614",
+  "model": {
+    "@kind": "radar_hud"
+  }
+}

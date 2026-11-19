@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-tcm_rapid_data_response_1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a406000008000000000000002a432b05",
+  "expect": "a406000008000000000000002a432b05",
+  "model": {
+    "@kind": "tcm_rapid_data_response_1"
+  }
+}

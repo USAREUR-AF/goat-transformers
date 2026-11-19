@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_torque_front",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "11020000080000007f0605a404764f89",
+  "expect": "11020000080000007f0605a404764f89",
+  "model": {
+    "@kind": "vdm_torque_front"
+  }
+}

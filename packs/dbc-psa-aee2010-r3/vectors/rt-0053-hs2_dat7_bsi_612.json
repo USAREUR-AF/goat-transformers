@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-hs2_dat7_bsi_612",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "1206000008000000a0b4a197d16e28e0",
+  "expect": "1206000008000000a0b4a197d16e28e0",
+  "model": {
+    "@kind": "hs2_dat7_bsi_612"
+  }
+}

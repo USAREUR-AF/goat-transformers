@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_lrr_azmth_rate_info_2",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "7b040000080000000245c10b2b86b833",
+  "expect": "7b040000080000000245c10b2b86b833",
+  "model": {
+    "@kind": "f_lrr_azmth_rate_info_2"
+  }
+}

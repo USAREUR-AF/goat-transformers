@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-gas_pedal",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "450200000800000000005d0000000000",
+  "expect": "450200000800000000005d0000000000",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-high_voltage_energymgmt_ctrl_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0000878007000000010d34010b04e200",
+  "expect": "0000878007000000010d34010b04e200",
+  "model": {
+    "@kind": "high_voltage_energymgmt_ctrl_ls"
+  }
+}

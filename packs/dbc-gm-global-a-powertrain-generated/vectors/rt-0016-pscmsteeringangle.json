@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-pscmsteeringangle",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "e50100000800000000c9940d6b000000",
+  "expect": "e50100000800000000c9940d6b000000",
+  "model": {
+    "@kind": "pscmsteeringangle"
+  }
+}

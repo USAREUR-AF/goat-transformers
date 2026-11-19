@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-target43",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "2a05000008000000b1798c27d0507c79",
+  "expect": "2a05000008000000b1798c27d0507c79",
+  "model": {
+    "@kind": "target43"
+  }
+}

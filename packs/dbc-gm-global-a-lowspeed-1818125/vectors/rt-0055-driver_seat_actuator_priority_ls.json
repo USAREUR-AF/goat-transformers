@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-driver_seat_actuator_priority_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c073800800000080000000711b9540",
+  "expect": "00c073800800000080000000711b9540",
+  "model": {
+    "@kind": "driver_seat_actuator_priority_ls"
+  }
+}

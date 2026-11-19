@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-vehicle-roundtrip-sccm_steeringanglesensor",
+  "from": "dbc-tesla-model3-vehicle",
+  "to": "dbc-tesla-model3-vehicle",
+  "input": "29010000080000005cefe1d70a44b866",
+  "expect": "29010000080000005cefe1d70a44b866",
+  "model": {
+    "@kind": "sccm_steeringanglesensor"
+  }
+}

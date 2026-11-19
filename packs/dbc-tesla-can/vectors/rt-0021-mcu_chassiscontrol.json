@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-mcu_chassiscontrol",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "1802000008000000bbb1b1e185c9c6d3",
+  "expect": "1802000008000000bbb1b1e185c9c6d3",
+  "model": {
+    "@kind": "mcu_chassiscontrol"
+  }
+}

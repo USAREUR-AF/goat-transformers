@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-es_lkas_angle",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "2401000008000000d219000000574821",
+  "expect": "2401000008000000d219000000574821",
+  "model": {
+    "@kind": "es_lkas_angle"
+  }
+}

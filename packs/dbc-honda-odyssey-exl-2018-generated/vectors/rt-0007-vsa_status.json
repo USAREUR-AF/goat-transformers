@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-vsa_status",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "a401000008000000aa2c00100040002d",
+  "expect": "a401000008000000aa2c00100040002d",
+  "model": {
+    "@kind": "vsa_status"
+  }
+}

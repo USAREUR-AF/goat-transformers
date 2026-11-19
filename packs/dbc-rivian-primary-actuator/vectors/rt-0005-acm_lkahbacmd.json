@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-acm_lkahbacmd",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "20010000080000008e459d49c6141dd3",
+  "expect": "20010000080000008e459d49c6141dd3",
+  "model": {
+    "@kind": "acm_lkahbacmd"
+  }
+}

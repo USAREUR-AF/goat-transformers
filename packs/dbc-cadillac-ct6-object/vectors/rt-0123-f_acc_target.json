@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_acc_target",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "8405000008000000342e00a7b39338e6",
+  "expect": "8405000008000000342e00a7b39338e6",
+  "model": {
+    "@kind": "f_acc_target"
+  }
+}

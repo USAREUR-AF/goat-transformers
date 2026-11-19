@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-bcmdoorbeltstatus",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "2a010000080000000002800000002000",
+  "expect": "2a010000080000000002800000002000",
+  "model": {
+    "@kind": "bcmdoorbeltstatus"
+  }
+}

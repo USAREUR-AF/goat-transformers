@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-drvr_seat_rearward_movmnt_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a07480010000004000000000000000",
+  "expect": "00a07480010000004000000000000000",
+  "model": {
+    "@kind": "drvr_seat_rearward_movmnt_ls"
+  }
+}

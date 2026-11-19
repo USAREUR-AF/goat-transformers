@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-getriebe_hybrid_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "9e000000080000007f16f50e650000a3",
+  "expect": "9e000000080000007f16f50e650000a3",
+  "model": {
+    "@kind": "getriebe_hybrid_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-var_values",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "0202000003000000d94d240000000000",
+  "expect": "0202000003000000d94d240000000000",
+  "model": {
+    "@kind": "var_values"
+  }
+}

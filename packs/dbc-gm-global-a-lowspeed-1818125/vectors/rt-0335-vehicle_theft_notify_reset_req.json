@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-vehicle_theft_notify_reset_req",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0000438008000000040000005ba56ed8",
+  "expect": "0000438008000000040000005ba56ed8",
+  "model": {
+    "@kind": "vehicle_theft_notify_reset_req"
+  }
+}

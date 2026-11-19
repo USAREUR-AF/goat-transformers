@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-brake_pedal",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "3901000008000000da815f60bbfb92f3",
+  "expect": "3901000008000000da815f60bbfb92f3",
+  "model": {
+    "@kind": "brake_pedal"
+  }
+}

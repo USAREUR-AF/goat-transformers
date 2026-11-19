@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-lateralmotioncontrol",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d303000008000000d6eae0e137cc88fc",
+  "expect": "d303000008000000d6eae0e137cc88fc",
+  "model": {
+    "@kind": "lateralmotioncontrol"
+  }
+}

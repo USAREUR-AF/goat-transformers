@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-cluster_info1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "300400000800000061ecb5c88007c801",
+  "expect": "300400000800000061ecb5c88007c801",
+  "model": {
+    "@kind": "cluster_info1_fd1"
+  }
+}

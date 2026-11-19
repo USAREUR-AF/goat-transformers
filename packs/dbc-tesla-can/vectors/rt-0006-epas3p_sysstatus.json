@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-epas3p_sysstatus",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "3101000008000000e4005000c0008fa8",
+  "expect": "3101000008000000e4005000c0008fa8",
+  "model": {
+    "@kind": "epas3p_sysstatus"
+  }
+}

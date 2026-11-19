@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-esp",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "99020000080000000000000000000000",
+  "expect": "99020000080000000000000000000000",
+  "model": {
+    "@kind": "esp"
+  }
+}

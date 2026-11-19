@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-cruise_params",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "7c03000008000000000000f70000001e",
+  "expect": "7c03000008000000000000f70000001e",
+  "model": {
+    "@kind": "cruise_params"
+  }
+}

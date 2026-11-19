@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-passengerocsserialnum",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "53040000080000006e97c0e9123b648d",
+  "expect": "53040000080000006e97c0e9123b648d",
+  "model": {
+    "@kind": "passengerocsserialnum"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-autodrivebeam_data3",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "c203000008000000c8ac6ed2ec0c30b4",
+  "expect": "c203000008000000c8ac6ed2ec0c30b4",
+  "model": {
+    "@kind": "autodrivebeam_data3"
+  }
+}

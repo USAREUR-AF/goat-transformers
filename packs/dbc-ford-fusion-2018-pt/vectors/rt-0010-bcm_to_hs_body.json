@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-bcm_to_hs_body",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "c3030000080000000001000000000000",
+  "expect": "c3030000080000000001000000000000",
+  "model": {
+    "@kind": "bcm_to_hs_body"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-ods13",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "fc050000050000007d542b02d9000000",
+  "expect": "fc050000050000007d542b02d9000000",
+  "model": {
+    "@kind": "ods13"
+  }
+}

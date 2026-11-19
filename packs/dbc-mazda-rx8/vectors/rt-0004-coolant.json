@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-rx8-roundtrip-coolant",
+  "from": "dbc-mazda-rx8",
+  "to": "dbc-mazda-rx8",
+  "input": "2004000008000000dd00000000000000",
+  "expect": "2004000008000000dd00000000000000",
+  "model": {
+    "@kind": "coolant"
+  }
+}

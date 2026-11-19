@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-throttle",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "4000000008000000aa812f81ddb48b92",
+  "expect": "4000000008000000aa812f81ddb48b92",
+  "model": {
+    "@kind": "throttle"
+  }
+}

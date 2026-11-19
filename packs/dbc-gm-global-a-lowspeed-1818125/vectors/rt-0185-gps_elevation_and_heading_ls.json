@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-gps_elevation_and_heading_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c02a80080000000006d030916d5ca7",
+  "expect": "00c02a80080000000006d030916d5ca7",
+  "model": {
+    "@kind": "gps_elevation_and_heading_ls"
+  }
+}

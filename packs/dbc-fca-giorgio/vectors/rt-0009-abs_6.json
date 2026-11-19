@@ -1,0 +1,10 @@
+{
+  "name": "dbc-fca-giorgio-roundtrip-abs_6",
+  "from": "dbc-fca-giorgio",
+  "to": "dbc-fca-giorgio",
+  "input": "010100000800000000d70a3c000e663d",
+  "expect": "010100000800000000d70a3c000e663d",
+  "model": {
+    "@kind": "abs_6"
+  }
+}

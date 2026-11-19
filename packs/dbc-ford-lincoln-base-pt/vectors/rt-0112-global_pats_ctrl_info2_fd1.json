@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-global_pats_ctrl_info2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4200000008000000c00037a402470000",
+  "expect": "4200000008000000c00037a402470000",
+  "model": {
+    "@kind": "global_pats_ctrl_info2_fd1"
+  }
+}

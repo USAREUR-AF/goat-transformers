@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-eps_status",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "62020000050000000f00008cf4000000",
+  "expect": "62020000050000000f00008cf4000000",
+  "model": {
+    "@kind": "eps_status"
+  }
+}

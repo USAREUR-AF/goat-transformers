@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-klr_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "5d02000008000000fe5508dfb60d0000",
+  "expect": "5d02000008000000fe5508dfb60d0000",
+  "model": {
+    "@kind": "klr_01"
+  }
+}

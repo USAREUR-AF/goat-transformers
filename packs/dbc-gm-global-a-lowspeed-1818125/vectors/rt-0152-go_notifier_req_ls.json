@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-go_notifier_req_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0000348005000000c14b5b09d7000000",
+  "expect": "0000348005000000c14b5b09d7000000",
+  "model": {
+    "@kind": "go_notifier_req_ls"
+  }
+}

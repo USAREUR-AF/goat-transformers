@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-brake_pressure",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "e701000004000000fe83d13800000000",
+  "expect": "e701000004000000fe83d13800000000",
+  "model": {
+    "@kind": "brake_pressure"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-awd_4x4_data",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "610200000800000000000006d7100000",
+  "expect": "610200000800000000000006d7100000",
+  "model": {
+    "@kind": "awd_4x4_data"
+  }
+}

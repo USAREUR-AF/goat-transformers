@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-throttle_status",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "35030000080000000400007da6005400",
+  "expect": "35030000080000000400007da6005400",
+  "model": {
+    "@kind": "throttle_status"
+  }
+}

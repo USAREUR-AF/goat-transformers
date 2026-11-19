@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-xterra-2011-roundtrip-speed_break",
+  "from": "dbc-nissan-xterra-2011",
+  "to": "dbc-nissan-xterra-2011",
+  "input": "54030000080000006666000000000000",
+  "expect": "54030000080000006666000000000000",
+  "model": {
+    "@kind": "speed_break"
+  }
+}

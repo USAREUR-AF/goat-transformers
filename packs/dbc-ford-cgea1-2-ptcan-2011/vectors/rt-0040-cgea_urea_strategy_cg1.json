@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-cgea_urea_strategy_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "62010000080000009774c86e00000000",
+  "expect": "62010000080000009774c86e00000000",
+  "model": {
+    "@kind": "cgea_urea_strategy_cg1"
+  }
+}

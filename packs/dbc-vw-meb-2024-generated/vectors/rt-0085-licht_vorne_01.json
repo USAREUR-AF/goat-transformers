@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-licht_vorne_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "5806000008000000265d555555559500",
+  "expect": "5806000008000000265d555555559500",
+  "model": {
+    "@kind": "licht_vorne_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-adjacent_right_lane_line_1",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "49020000080000002490e7206236003e",
+  "expect": "49020000080000002490e7206236003e",
+  "model": {
+    "@kind": "adjacent_right_lane_line_1"
+  }
+}

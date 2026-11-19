@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-wheelspeed",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "17020000080000005ea90ad236fb6324",
+  "expect": "17020000080000005ea90ad236fb6324",
+  "model": {
+    "@kind": "wheelspeed"
+  }
+}

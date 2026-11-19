@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-scm_feedback",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "26030000080000000000022800000032",
+  "expect": "26030000080000000000022800000032",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

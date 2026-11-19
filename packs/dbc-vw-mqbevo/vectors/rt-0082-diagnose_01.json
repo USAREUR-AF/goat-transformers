@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-diagnose_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "b20600000800000019f01d75f4ca469d",
+  "expect": "b20600000800000019f01d75f4ca469d",
+  "model": {
+    "@kind": "diagnose_01"
+  }
+}

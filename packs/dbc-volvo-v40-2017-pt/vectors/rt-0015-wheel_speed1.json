@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-wheel_speed1",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "2001000008000000000000004e78a24f",
+  "expect": "2001000008000000000000004e78a24f",
+  "model": {
+    "@kind": "wheel_speed1"
+  }
+}

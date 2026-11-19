@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-elec_int",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "92000000010000003800000000000000",
+  "expect": "92000000010000003800000000000000",
+  "model": {
+    "@kind": "elec_int"
+  }
+}

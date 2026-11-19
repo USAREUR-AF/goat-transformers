@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-lighting_customization_info_2_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00806f80020000006e4a000000000000",
+  "expect": "00806f80020000006e4a000000000000",
+  "model": {
+    "@kind": "lighting_customization_info_2_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-pcs_hud",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "11040000080000008004000008043000",
+  "expect": "11040000080000008004000008043000",
+  "model": {
+    "@kind": "pcs_hud"
+  }
+}

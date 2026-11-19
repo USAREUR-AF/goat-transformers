@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-acceleratorpedal",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "a1010000070000000000000000005400",
+  "expect": "a1010000070000000000000000005400",
+  "model": {
+    "@kind": "acceleratorpedal"
+  }
+}

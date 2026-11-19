@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-getriebe_4",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "4805000003000000fa78a10000000000",
+  "expect": "4805000003000000fa78a10000000000",
+  "model": {
+    "@kind": "getriebe_4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_lanemaybe",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "460200000800000000b177b5f21b09c9",
+  "expect": "460200000800000000b177b5f21b09c9",
+  "model": {
+    "@kind": "cam_lanemaybe"
+  }
+}

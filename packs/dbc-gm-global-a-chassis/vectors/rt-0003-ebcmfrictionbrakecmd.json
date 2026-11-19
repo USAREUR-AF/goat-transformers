@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-chassis-roundtrip-ebcmfrictionbrakecmd",
+  "from": "dbc-gm-global-a-chassis",
+  "to": "dbc-gm-global-a-chassis",
+  "input": "1503000005000000eaec071503000000",
+  "expect": "1503000005000000eaec071503000000",
+  "model": {
+    "@kind": "ebcmfrictionbrakecmd"
+  }
+}

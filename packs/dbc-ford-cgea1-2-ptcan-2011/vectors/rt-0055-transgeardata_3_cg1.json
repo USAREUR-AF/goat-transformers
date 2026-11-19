@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-transgeardata_3_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "32020000080000008e7109401381cf00",
+  "expect": "32020000080000008e7109401381cf00",
+  "model": {
+    "@kind": "transgeardata_3_cg1"
+  }
+}

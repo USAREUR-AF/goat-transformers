@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-batman_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "7805000001000000af00000000000000",
+  "expect": "7805000001000000af00000000000000",
+  "model": {
+    "@kind": "batman_1"
+  }
+}

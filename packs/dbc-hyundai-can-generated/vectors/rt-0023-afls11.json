@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-afls11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "91050000020000001e00000000000000",
+  "expect": "91050000020000001e00000000000000",
+  "model": {
+    "@kind": "afls11"
+  }
+}

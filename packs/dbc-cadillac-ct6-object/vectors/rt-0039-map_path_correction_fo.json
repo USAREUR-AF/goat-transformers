@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-map_path_correction_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "6001000006000000017bc9da46550000",
+  "expect": "6001000006000000017bc9da46550000",
+  "model": {
+    "@kind": "map_path_correction_fo"
+  }
+}

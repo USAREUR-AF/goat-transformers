@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-compressor_req_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "2603000008000000071c076e03970012",
+  "expect": "2603000008000000071c076e03970012",
+  "model": {
+    "@kind": "compressor_req_fd1"
+  }
+}

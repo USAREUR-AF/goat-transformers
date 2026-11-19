@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-radar_distance",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "6103000008000000b24f886bee8bb10c",
+  "expect": "6103000008000000b24f886bee8bb10c",
+  "model": {
+    "@kind": "radar_distance"
+  }
+}

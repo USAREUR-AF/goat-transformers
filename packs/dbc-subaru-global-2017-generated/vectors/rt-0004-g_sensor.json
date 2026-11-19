@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-g_sensor",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "3b010000080000000000000000009269",
+  "expect": "3b010000080000000000000000009269",
+  "model": {
+    "@kind": "g_sensor"
+  }
+}

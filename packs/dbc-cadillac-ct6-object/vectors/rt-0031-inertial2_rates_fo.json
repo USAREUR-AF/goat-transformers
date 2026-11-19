@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-inertial2_rates_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "4001000008000000824906c41f16429b",
+  "expect": "4001000008000000824906c41f16429b",
+  "model": {
+    "@kind": "inertial2_rates_fo"
+  }
+}

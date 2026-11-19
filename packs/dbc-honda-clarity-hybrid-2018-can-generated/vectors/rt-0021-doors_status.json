@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-doors_status",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "05040000080000000000000040010003",
+  "expect": "05040000080000000000000040010003",
+  "model": {
+    "@kind": "doors_status"
+  }
+}

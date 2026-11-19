@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-steeringwheelangle_slow",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "c80000000600000089cf706023000000",
+  "expect": "c80000000600000089cf706023000000",
+  "model": {
+    "@kind": "steeringwheelangle_slow"
+  }
+}

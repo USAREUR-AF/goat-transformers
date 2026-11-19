@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-scm_buttons",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "96020000040000002000003e00000000",
+  "expect": "96020000040000002000003e00000000",
+  "model": {
+    "@kind": "scm_buttons"
+  }
+}

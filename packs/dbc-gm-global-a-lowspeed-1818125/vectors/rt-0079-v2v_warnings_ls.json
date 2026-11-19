@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-v2v_warnings_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c03c8005000000f80186195d000000",
+  "expect": "00c03c8005000000f80186195d000000",
+  "model": {
+    "@kind": "v2v_warnings_ls"
+  }
+}

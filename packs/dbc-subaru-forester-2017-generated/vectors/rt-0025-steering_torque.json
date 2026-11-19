@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-steering_torque",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "7103000008000000810058c000dddb00",
+  "expect": "7103000008000000810058c000dddb00",
+  "model": {
+    "@kind": "steering_torque"
+  }
+}

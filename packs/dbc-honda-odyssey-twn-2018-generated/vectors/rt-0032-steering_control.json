@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-steering_control",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "940100000400000014e1853a00000000",
+  "expect": "940100000400000014e1853a00000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

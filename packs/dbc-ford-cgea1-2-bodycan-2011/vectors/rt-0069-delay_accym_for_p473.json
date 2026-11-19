@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-delay_accym_for_p473",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "c6030000080000008000000000000000",
+  "expect": "c6030000080000008000000000000000",
+  "model": {
+    "@kind": "delay_accym_for_p473"
+  }
+}

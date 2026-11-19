@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-brakepedal",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "00002590020000000636000000000000",
+  "expect": "00002590020000000636000000000000",
+  "model": {
+    "@kind": "brakepedal"
+  }
+}

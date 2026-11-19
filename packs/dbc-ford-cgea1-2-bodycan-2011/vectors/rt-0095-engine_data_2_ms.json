@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-engine_data_2_ms",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "2504000008000000789759fbd44f287c",
+  "expect": "2504000008000000789759fbd44f287c",
+  "model": {
+    "@kind": "engine_data_2_ms"
+  }
+}

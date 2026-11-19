@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-xcp_mrr_daq_resp",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "f40100000800000048719ac3ec153e67",
+  "expect": "f40100000800000048719ac3ec153e67",
+  "model": {
+    "@kind": "xcp_mrr_daq_resp"
+  }
+}

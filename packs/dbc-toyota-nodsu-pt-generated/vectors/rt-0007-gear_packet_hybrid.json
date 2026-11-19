@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-gear_packet_hybrid",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "270100000800000000000007f9e0d0a7",
+  "expect": "270100000800000000000007f9e0d0a7",
+  "model": {
+    "@kind": "gear_packet_hybrid"
+  }
+}

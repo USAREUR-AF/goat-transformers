@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-gaspedalregencruise",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "00a02c900800000000000000005c3301",
+  "expect": "00a02c900800000000000000005c3301",
+  "model": {
+    "@kind": "gaspedalregencruise"
+  }
+}

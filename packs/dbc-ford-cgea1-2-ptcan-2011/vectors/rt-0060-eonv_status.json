@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-eonv_status",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "500200000800000068f4c14600006070",
+  "expect": "500200000800000068f4c14600006070",
+  "model": {
+    "@kind": "eonv_status"
+  }
+}

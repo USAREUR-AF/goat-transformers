@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dat_abr",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "0d050000070000002000000000001000",
+  "expect": "0d050000070000002000000000001000",
+  "model": {
+    "@kind": "dat_abr"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-speed_2",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "44010000080000000000007de5000000",
+  "expect": "44010000080000000000007de5000000",
+  "model": {
+    "@kind": "speed_2"
+  }
+}

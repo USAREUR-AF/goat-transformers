@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-blink_info",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "9a00000008000000c0000a0002000010",
+  "expect": "9a00000008000000c0000a0002000010",
+  "model": {
+    "@kind": "blink_info"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-lenkwinkel_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "c2000000080000003b99e9c0973bcaa1",
+  "expect": "c2000000080000003b99e9c0973bcaa1",
+  "model": {
+    "@kind": "lenkwinkel_1"
+  }
+}

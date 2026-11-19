@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-wheel_encoders",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "0102000008000000ee9269400000b017",
+  "expect": "0102000008000000ee9269400000b017",
+  "model": {
+    "@kind": "wheel_encoders"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-dsp_request_signals11_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "9201000008000000a44a000000000000",
+  "expect": "9201000008000000a44a000000000000",
+  "model": {
+    "@kind": "dsp_request_signals11_fd1"
+  }
+}

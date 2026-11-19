@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-air_conditioner_2",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "b0030000080000000000000000000000",
+  "expect": "b0030000080000000000000000000000",
+  "model": {
+    "@kind": "air_conditioner_2"
+  }
+}

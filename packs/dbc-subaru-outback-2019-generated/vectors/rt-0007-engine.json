@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-engine",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "41010000080000003fcbed02c4060000",
+  "expect": "41010000080000003fcbed02c4060000",
+  "model": {
+    "@kind": "engine"
+  }
+}

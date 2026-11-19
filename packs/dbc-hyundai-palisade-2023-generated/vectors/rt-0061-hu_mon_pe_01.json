@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-hu_mon_pe_01",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "7f050000080000007700000000000000",
+  "expect": "7f050000080000007700000000000000",
+  "model": {
+    "@kind": "hu_mon_pe_01"
+  }
+}

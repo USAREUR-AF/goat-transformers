@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-ect1s92",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "bc030000080000002156e9b5c080f920",
+  "expect": "bc030000080000002156e9b5c080f920",
+  "model": {
+    "@kind": "ect1s92"
+  }
+}

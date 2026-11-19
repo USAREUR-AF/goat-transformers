@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-becmbatteryvoltagecurrent",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "c70200000600000000185347c0000000",
+  "expect": "c70200000600000000185347c0000000",
+  "model": {
+    "@kind": "becmbatteryvoltagecurrent"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-active_fault_latched_2",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "22000000080000000a00000000000000",
+  "expect": "22000000080000000a00000000000000",
+  "model": {
+    "@kind": "active_fault_latched_2"
+  }
+}

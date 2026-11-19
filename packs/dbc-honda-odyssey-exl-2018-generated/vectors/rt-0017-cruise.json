@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-cruise",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "2403000008000000966db9441bf2c907",
+  "expect": "2403000008000000966db9441bf2c907",
+  "model": {
+    "@kind": "cruise"
+  }
+}

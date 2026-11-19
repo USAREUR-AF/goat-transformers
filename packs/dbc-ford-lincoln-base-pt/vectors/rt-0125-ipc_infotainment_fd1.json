@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-ipc_infotainment_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "250200000800000039c08000d8800000",
+  "expect": "250200000800000039c08000d8800000",
+  "model": {
+    "@kind": "ipc_infotainment_fd1"
+  }
+}

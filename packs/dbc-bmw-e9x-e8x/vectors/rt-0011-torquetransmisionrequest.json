@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-torquetransmisionrequest",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "b8000000080000009c03000000000000",
+  "expect": "b8000000080000009c03000000000000",
+  "model": {
+    "@kind": "torquetransmisionrequest"
+  }
+}

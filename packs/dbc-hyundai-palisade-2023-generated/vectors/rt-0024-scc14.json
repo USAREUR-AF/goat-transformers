@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-scc14",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "89030000080000000f60380100002800",
+  "expect": "89030000080000000f60380100002800",
+  "model": {
+    "@kind": "scc14"
+  }
+}

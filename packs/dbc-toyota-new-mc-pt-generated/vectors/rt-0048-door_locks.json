@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-door_locks",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "38060000080000000000100000000000",
+  "expect": "38060000080000000000100000000000",
+  "model": {
+    "@kind": "door_locks"
+  }
+}

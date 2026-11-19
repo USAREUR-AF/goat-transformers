@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-all_terrain_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "81040000080000000600000000000000",
+  "expect": "81040000080000000600000000000000",
+  "model": {
+    "@kind": "all_terrain_data_fd1"
+  }
+}

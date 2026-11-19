@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-rcmserialnumber",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "54040000080000008eb7e009325b84ad",
+  "expect": "54040000080000008eb7e009325b84ad",
+  "model": {
+    "@kind": "rcmserialnumber"
+  }
+}

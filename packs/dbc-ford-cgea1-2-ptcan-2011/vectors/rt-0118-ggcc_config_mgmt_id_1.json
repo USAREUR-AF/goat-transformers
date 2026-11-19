@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-ggcc_config_mgmt_id_1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "0a040000080000000000000063b16025",
+  "expect": "0a040000080000000000000063b16025",
+  "model": {
+    "@kind": "ggcc_config_mgmt_id_1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-unknown140",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "40010000020000001900000000000000",
+  "expect": "40010000020000001900000000000000",
+  "model": {
+    "@kind": "unknown140"
+  }
+}

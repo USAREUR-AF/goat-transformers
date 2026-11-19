@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-parsedpushsodcmdtogwm",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4660b39b08000000a4f26ce800000000",
+  "expect": "4660b39b08000000a4f26ce800000000",
+  "model": {
+    "@kind": "parsedpushsodcmdtogwm"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-stalk",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "52010000080000000020000000000014",
+  "expect": "52010000080000000020000000000014",
+  "model": {
+    "@kind": "stalk"
+  }
+}

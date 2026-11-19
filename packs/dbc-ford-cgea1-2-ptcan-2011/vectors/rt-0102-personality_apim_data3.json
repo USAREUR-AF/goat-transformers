@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-personality_apim_data3",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "da03000008000000caf3a00000000000",
+  "expect": "da03000008000000caf3a00000000000",
+  "model": {
+    "@kind": "personality_apim_data3"
+  }
+}

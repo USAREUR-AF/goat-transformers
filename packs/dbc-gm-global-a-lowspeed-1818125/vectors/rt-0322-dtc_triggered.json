@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-dtc_triggered",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00006080070000000000002b6740db00",
+  "expect": "00006080070000000000002b6740db00",
+  "model": {
+    "@kind": "dtc_triggered"
+  }
+}

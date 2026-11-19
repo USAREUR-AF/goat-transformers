@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-steering_ipas",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "6602000008000000315a310860b68d64",
+  "expect": "6602000008000000315a310860b68d64",
+  "model": {
+    "@kind": "steering_ipas"
+  }
+}

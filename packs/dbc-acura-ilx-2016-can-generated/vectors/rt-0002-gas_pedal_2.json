@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-can-generated-roundtrip-gas_pedal_2",
+  "from": "dbc-acura-ilx-2016-can-generated",
+  "to": "dbc-acura-ilx-2016-can-generated",
+  "input": "3001000008000000e76b3b4219000007",
+  "expect": "3001000008000000e76b3b4219000007",
+  "model": {
+    "@kind": "gas_pedal_2"
+  }
+}

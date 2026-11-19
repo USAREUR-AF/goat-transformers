@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-instrument_panel",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "3a040000080000000000000000004000",
+  "expect": "3a040000080000000000000000004000",
+  "model": {
+    "@kind": "instrument_panel"
+  }
+}

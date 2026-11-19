@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-pedal",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "420300000800000072490000000000f7",
+  "expect": "420300000800000072490000000000f7",
+  "model": {
+    "@kind": "pedal"
+  }
+}

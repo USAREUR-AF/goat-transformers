@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-engbrakedata",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "6501000008000000c8bd41cce500000b",
+  "expect": "6501000008000000c8bd41cce500000b",
+  "model": {
+    "@kind": "engbrakedata"
+  }
+}

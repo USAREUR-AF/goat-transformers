@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-gas_pedal",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "3c01000008000000000000005000003e",
+  "expect": "3c01000008000000000000005000003e",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

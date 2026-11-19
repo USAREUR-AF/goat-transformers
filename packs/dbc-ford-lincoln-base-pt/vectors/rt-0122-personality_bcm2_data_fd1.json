@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-personality_bcm2_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "eb030000080000003a61780fb5964f00",
+  "expect": "eb030000080000003a61780fb5964f00",
+  "model": {
+    "@kind": "personality_bcm2_data_fd1"
+  }
+}

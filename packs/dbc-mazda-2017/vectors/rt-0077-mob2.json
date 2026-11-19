@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-mob2",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "400000000800000081c5091422000000",
+  "expect": "400000000800000081c5091422000000",
+  "model": {
+    "@kind": "mob2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-sak_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "f8050000080000000000090000000000",
+  "expect": "f8050000080000000000090000000000",
+  "model": {
+    "@kind": "sak_01"
+  }
+}

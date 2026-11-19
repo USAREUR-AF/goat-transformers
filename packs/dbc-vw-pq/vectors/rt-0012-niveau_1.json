@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-niveau_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "90050000060000001da65355a8f50000",
+  "expect": "90050000060000001da65355a8f50000",
+  "model": {
+    "@kind": "niveau_1"
+  }
+}

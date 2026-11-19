@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-bosch_supplemental_1",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "e5000000080000001cf3caa10000000f",
+  "expect": "e5000000080000001cf3caa10000000f",
+  "model": {
+    "@kind": "bosch_supplemental_1"
+  }
+}

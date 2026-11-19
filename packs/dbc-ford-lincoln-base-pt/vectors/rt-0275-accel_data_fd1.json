@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-accel_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "920000000800000070061c2f20aa8158",
+  "expect": "920000000800000070061c2f20aa8158",
+  "model": {
+    "@kind": "accel_data_fd1"
+  }
+}

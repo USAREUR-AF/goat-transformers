@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_obd_reserv5_resp",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "eb07000008000000fcab403800000080",
+  "expect": "eb07000008000000fcab403800000080",
+  "model": {
+    "@kind": "iso_obd_reserv5_resp"
+  }
+}

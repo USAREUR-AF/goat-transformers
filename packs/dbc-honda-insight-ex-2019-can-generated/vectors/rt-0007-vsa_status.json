@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-vsa_status",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "a401000008000000aa2c00100040002d",
+  "expect": "a401000008000000aa2c00100040002d",
+  "model": {
+    "@kind": "vsa_status"
+  }
+}

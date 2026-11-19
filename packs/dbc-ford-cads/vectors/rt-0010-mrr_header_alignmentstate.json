@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-roundtrip-mrr_header_alignmentstate",
+  "from": "dbc-ford-cads",
+  "to": "dbc-ford-cads",
+  "input": "7301000008000000570614000000c700",
+  "expect": "7301000008000000570614000000c700",
+  "model": {
+    "@kind": "mrr_header_alignmentstate"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-airbag_03",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "4100000008000000f007000000000080",
+  "expect": "4100000008000000f007000000000080",
+  "model": {
+    "@kind": "airbag_03"
+  }
+}

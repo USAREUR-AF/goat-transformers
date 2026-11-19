@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-brake_module",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "05000000080000000004039a000050ec",
+  "expect": "05000000080000000004039a000050ec",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

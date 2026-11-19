@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-driver_controls",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "4500000008000000157105005d41609a",
+  "expect": "4500000008000000157105005d41609a",
+  "model": {
+    "@kind": "driver_controls"
+  }
+}

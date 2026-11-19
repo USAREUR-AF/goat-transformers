@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-vehicle-roundtrip-das_bodycontrols",
+  "from": "dbc-tesla-model3-vehicle",
+  "to": "dbc-tesla-model3-vehicle",
+  "input": "e903000008000000861b082000009090",
+  "expect": "e903000008000000861b082000009090",
+  "model": {
+    "@kind": "das_bodycontrols"
+  }
+}

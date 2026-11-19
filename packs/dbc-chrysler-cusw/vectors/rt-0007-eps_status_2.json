@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-eps_status_2",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "08020000070000000588095fd36de400",
+  "expect": "08020000070000000588095fd36de400",
+  "model": {
+    "@kind": "eps_status_2"
+  }
+}

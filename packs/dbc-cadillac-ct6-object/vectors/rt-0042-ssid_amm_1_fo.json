@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-ssid_amm_1_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "8304000008000000800000002a115010",
+  "expect": "8304000008000000800000002a115010",
+  "model": {
+    "@kind": "ssid_amm_1_fo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-cluster_1",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "f0010000080000000c7f005600000d04",
+  "expect": "f0010000080000000c7f005600000d04",
+  "model": {
+    "@kind": "cluster_1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-master_2",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "04010000080000006b7294bdca150000",
+  "expect": "04010000080000006b7294bdca150000",
+  "model": {
+    "@kind": "master_2"
+  }
+}

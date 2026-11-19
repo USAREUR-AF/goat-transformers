@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ebcmbrakepedalsensors",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "d100000007000000a1e875bf966d0000",
+  "expect": "d100000007000000a1e875bf966d0000",
+  "model": {
+    "@kind": "ebcmbrakepedalsensors"
+  }
+}

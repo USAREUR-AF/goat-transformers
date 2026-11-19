@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-low_res_accelerator",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "d3030000080000008102000000000000",
+  "expect": "d3030000080000008102000000000000",
+  "model": {
+    "@kind": "low_res_accelerator"
+  }
+}

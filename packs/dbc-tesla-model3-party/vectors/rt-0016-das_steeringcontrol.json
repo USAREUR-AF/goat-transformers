@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-das_steeringcontrol",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "88040000040000008000e84100000000",
+  "expect": "88040000040000008000e84100000000",
+  "model": {
+    "@kind": "das_steeringcontrol"
+  }
+}

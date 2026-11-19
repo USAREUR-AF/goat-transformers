@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-autopark_status",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "3b040000080000001000000000000000",
+  "expect": "3b040000080000001000000000000000",
+  "model": {
+    "@kind": "autopark_status"
+  }
+}

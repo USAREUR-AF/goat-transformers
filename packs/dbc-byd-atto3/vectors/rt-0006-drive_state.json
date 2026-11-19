@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-drive_state",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "42020000080000000000007d20030000",
+  "expect": "42020000080000000000007d20030000",
+  "model": {
+    "@kind": "drive_state"
+  }
+}

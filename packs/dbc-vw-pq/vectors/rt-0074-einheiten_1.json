@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-einheiten_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "0e060000020000000000000000000000",
+  "expect": "0e060000020000000000000000000000",
+  "model": {
+    "@kind": "einheiten_1"
+  }
+}

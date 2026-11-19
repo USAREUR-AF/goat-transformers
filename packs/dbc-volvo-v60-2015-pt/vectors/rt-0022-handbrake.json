@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-handbrake",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "ee020000080000000000000001100000",
+  "expect": "ee020000080000000000000001100000",
+  "model": {
+    "@kind": "handbrake"
+  }
+}

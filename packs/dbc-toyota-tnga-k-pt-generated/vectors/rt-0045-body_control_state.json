@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-body_control_state",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "20060000080000000000000040140040",
+  "expect": "20060000080000000000000040140040",
+  "model": {
+    "@kind": "body_control_state"
+  }
+}

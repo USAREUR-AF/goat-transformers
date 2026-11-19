@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-chassis-roundtrip-ascmblkasteeringcmd",
+  "from": "dbc-cadillac-ct6-chassis",
+  "to": "dbc-cadillac-ct6-chassis",
+  "input": "5401000006000000b48f901403c20000",
+  "expect": "5401000006000000b48f901403c20000",
+  "model": {
+    "@kind": "ascmblkasteeringcmd"
+  }
+}

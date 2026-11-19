@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-dashlights",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "90030000080000006a01000103000900",
+  "expect": "90030000080000006a01000103000900",
+  "model": {
+    "@kind": "dashlights"
+  }
+}

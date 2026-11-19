@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-motor_6",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "8804000008000000cdf61f48719ac379",
+  "expect": "8804000008000000cdf61f48719ac379",
+  "model": {
+    "@kind": "motor_6"
+  }
+}

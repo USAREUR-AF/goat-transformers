@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-performance_mode_cust_setings_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00e04680040000003b12290000000000",
+  "expect": "00e04680040000003b12290000000000",
+  "model": {
+    "@kind": "performance_mode_cust_setings_ls"
+  }
+}

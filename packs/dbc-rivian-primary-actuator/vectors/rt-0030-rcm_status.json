@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-rcm_status",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "3a030000080000001d0498c100000000",
+  "expect": "3a030000080000001d0498c100000000",
+  "model": {
+    "@kind": "rcm_status"
+  }
+}

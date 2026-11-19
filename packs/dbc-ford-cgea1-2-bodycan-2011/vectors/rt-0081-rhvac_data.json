@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-rhvac_data",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "db030000080000000000000000000000",
+  "expect": "db030000080000000000000000000000",
+  "model": {
+    "@kind": "rhvac_data"
+  }
+}

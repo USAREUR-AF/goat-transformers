@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-accelerations",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "240000000800000004e80096006d00bf",
+  "expect": "240000000800000004e80096006d00bf",
+  "model": {
+    "@kind": "accelerations"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-outside_air_temperature_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "030300000200000001d9000000000000",
+  "expect": "030300000200000001d9000000000000",
+  "model": {
+    "@kind": "outside_air_temperature_fo"
+  }
+}

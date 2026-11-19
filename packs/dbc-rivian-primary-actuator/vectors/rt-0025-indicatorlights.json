@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-indicatorlights",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "35020000080000007d04000d8001a100",
+  "expect": "35020000080000007d04000d8001a100",
+  "model": {
+    "@kind": "indicatorlights"
+  }
+}

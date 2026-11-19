@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-wifi_ap_data_amm_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0020918002000000000d000000000000",
+  "expect": "0020918002000000000d000000000000",
+  "model": {
+    "@kind": "wifi_ap_data_amm_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-personality_data_ms",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "e0030000080000004b9af7c386b800b9",
+  "expect": "e0030000080000004b9af7c386b800b9",
+  "model": {
+    "@kind": "personality_data_ms"
+  }
+}

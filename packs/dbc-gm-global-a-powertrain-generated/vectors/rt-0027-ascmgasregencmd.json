@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ascmgasregencmd",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "cb020000080000004142f31c0089a3c0",
+  "expect": "cb020000080000004142f31c0089a3c0",
+  "model": {
+    "@kind": "ascmgasregencmd"
+  }
+}

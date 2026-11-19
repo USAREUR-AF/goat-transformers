@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-avn1s07",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "8f030000080000000a80a37a5128ffd6",
+  "expect": "8f030000080000000a80a37a5128ffd6",
+  "model": {
+    "@kind": "avn1s07"
+  }
+}

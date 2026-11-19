@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-yaw_data",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "91000000080000003a74e69d92c60000",
+  "expect": "91000000080000003a74e69d92c60000",
+  "model": {
+    "@kind": "yaw_data"
+  }
+}

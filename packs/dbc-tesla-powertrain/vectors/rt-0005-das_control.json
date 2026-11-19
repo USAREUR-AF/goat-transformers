@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-powertrain-roundtrip-das_control",
+  "from": "dbc-tesla-powertrain",
+  "to": "dbc-tesla-powertrain",
+  "input": "bf020000080000007f6511dc96950837",
+  "expect": "bf020000080000007f6511dc96950837",
+  "model": {
+    "@kind": "das_control"
+  }
+}

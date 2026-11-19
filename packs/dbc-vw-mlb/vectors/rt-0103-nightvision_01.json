@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-nightvision_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "a00600000800000000f0420000000080",
+  "expect": "a00600000800000000f0420000000080",
+  "model": {
+    "@kind": "nightvision_01"
+  }
+}

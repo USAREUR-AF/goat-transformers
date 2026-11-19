@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-can-generated-roundtrip-seatbelt_status",
+  "from": "dbc-acura-ilx-2016-can-generated",
+  "to": "dbc-acura-ilx-2016-can-generated",
+  "input": "050300000700000080a8000000003a00",
+  "expect": "050300000700000080a8000000003a00",
+  "model": {
+    "@kind": "seatbelt_status"
+  }
+}

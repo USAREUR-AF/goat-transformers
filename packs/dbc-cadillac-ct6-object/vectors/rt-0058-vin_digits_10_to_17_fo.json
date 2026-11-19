@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-vin_digits_10_to_17_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "43070000080000008000000006cf1c60",
+  "expect": "43070000080000008000000006cf1c60",
+  "model": {
+    "@kind": "vin_digits_10_to_17_fo"
+  }
+}

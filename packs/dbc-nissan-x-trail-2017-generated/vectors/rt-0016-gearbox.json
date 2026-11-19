@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-gearbox",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "1f040000020000000820000000000000",
+  "expect": "1f040000020000000820000000000000",
+  "model": {
+    "@kind": "gearbox"
+  }
+}

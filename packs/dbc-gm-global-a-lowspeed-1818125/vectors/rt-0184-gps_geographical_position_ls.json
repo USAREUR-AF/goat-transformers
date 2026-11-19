@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-gps_geographical_position_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a02a800800000077db07714b5f5b48",
+  "expect": "00a02a800800000077db07714b5f5b48",
+  "model": {
+    "@kind": "gps_geographical_position_ls"
+  }
+}

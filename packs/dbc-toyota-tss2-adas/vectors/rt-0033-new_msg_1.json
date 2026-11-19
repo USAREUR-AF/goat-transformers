@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tss2-adas-roundtrip-new_msg_1",
+  "from": "dbc-toyota-tss2-adas",
+  "to": "dbc-toyota-tss2-adas",
+  "input": "40020000080000000094a10000000000",
+  "expect": "40020000080000000094a10000000000",
+  "model": {
+    "@kind": "new_msg_1"
+  }
+}

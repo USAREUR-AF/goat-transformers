@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-radars",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "800000000800000012000e000000000b",
+  "expect": "800000000800000012000e000000000b",
+  "model": {
+    "@kind": "radars"
+  }
+}

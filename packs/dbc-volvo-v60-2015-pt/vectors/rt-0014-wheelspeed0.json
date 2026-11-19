@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-wheelspeed0",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "350200000800000000000000b8e20cb9",
+  "expect": "350200000800000000000000b8e20cb9",
+  "model": {
+    "@kind": "wheelspeed0"
+  }
+}

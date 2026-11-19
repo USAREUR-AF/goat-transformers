@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tss2-adas-roundtrip-status_msg",
+  "from": "dbc-toyota-tss2-adas",
+  "to": "dbc-toyota-tss2-adas",
+  "input": "23010000070000000000100000063d00",
+  "expect": "23010000070000000000100000063d00",
+  "model": {
+    "@kind": "status_msg"
+  }
+}

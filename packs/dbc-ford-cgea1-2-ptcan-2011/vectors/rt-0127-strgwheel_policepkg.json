@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-strgwheel_policepkg",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "28040000080000005000000000000000",
+  "expect": "28040000080000005000000000000000",
+  "model": {
+    "@kind": "strgwheel_policepkg"
+  }
+}

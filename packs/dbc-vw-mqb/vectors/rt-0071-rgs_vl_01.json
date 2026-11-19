@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-rgs_vl_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "d80300000800000000c00b0ab0875e00",
+  "expect": "d80300000800000000c00b0ab0875e00",
+  "model": {
+    "@kind": "rgs_vl_01"
+  }
+}

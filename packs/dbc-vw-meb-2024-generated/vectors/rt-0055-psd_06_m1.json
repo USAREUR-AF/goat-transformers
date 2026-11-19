@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-psd_06_m1",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "6404000008000000e1a632f09b3a7503",
+  "expect": "6404000008000000e1a632f09b3a7503",
+  "model": {
+    "@kind": "psd_06_m1"
+  }
+}

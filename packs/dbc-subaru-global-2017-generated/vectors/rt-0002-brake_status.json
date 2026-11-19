@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-brake_status",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "3c010000080000009fd644466402005c",
+  "expect": "3c010000080000009fd644466402005c",
+  "model": {
+    "@kind": "brake_status"
+  }
+}

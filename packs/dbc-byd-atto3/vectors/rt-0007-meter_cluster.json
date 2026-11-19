@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-meter_cluster",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "94020000080000002200020000000000",
+  "expect": "94020000080000002200020000000000",
+  "model": {
+    "@kind": "meter_cluster"
+  }
+}

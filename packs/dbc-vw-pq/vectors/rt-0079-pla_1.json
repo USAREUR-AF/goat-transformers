@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-pla_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "d403000008000000c42b499207cead34",
+  "expect": "d403000008000000c42b499207cead34",
+  "model": {
+    "@kind": "pla_1"
+  }
+}

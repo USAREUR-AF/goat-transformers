@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-cruise",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "2403000008000000966db9441bf2c907",
+  "expect": "2403000008000000966db9441bf2c907",
+  "model": {
+    "@kind": "cruise"
+  }
+}

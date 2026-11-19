@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-acceleratorpedal",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "a1010000070000000000000000005400",
+  "expect": "a1010000070000000000000000005400",
+  "model": {
+    "@kind": "acceleratorpedal"
+  }
+}

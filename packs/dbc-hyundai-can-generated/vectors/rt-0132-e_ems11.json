@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-e_ems11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "71030000080000007c1300ec57000086",
+  "expect": "71030000080000007c1300ec57000086",
+  "model": {
+    "@kind": "e_ems11"
+  }
+}

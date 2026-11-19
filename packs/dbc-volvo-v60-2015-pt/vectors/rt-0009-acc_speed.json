@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-acc_speed",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "67010000080000000036000000000af2",
+  "expect": "67010000080000000036000000000af2",
+  "model": {
+    "@kind": "acc_speed"
+  }
+}

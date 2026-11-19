@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-es_distance",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "210200000800000095bcf110aa572e52",
+  "expect": "210200000800000095bcf110aa572e52",
+  "model": {
+    "@kind": "es_distance"
+  }
+}

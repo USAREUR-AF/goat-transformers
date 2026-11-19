@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-bosch_supplemental_1",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "e5000000080000001cf3caa10000000f",
+  "expect": "e5000000080000001cf3caa10000000f",
+  "model": {
+    "@kind": "bosch_supplemental_1"
+  }
+}

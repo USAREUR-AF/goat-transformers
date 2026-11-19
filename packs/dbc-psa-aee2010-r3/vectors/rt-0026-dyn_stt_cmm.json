@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dyn_stt_cmm",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "c8030000020000008c00000000000000",
+  "expect": "c8030000020000008c00000000000000",
+  "model": {
+    "@kind": "dyn_stt_cmm"
+  }
+}

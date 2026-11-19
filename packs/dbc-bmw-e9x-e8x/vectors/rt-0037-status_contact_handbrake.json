@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-status_contact_handbrake",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "4f030000080000000300000000000000",
+  "expect": "4f030000080000000300000000000000",
+  "model": {
+    "@kind": "status_contact_handbrake"
+  }
+}

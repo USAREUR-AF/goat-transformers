@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-clu11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "f1040000040000006d602ca100000000",
+  "expect": "f1040000040000006d602ca100000000",
+  "model": {
+    "@kind": "clu11"
+  }
+}

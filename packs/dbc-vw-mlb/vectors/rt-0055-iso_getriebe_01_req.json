@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_getriebe_01_req",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "e107000008000000cffb8e4d00000000",
+  "expect": "e107000008000000cffb8e4d00000000",
+  "model": {
+    "@kind": "iso_getriebe_01_req"
+  }
+}

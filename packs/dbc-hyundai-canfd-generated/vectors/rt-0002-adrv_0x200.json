@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-adrv_0x200",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "00020000080000009b01724920000000",
+  "expect": "00020000080000009b01724920000000",
+  "model": {
+    "@kind": "adrv_0x200"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-brake_module",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "2602000008000000016b014200000000",
+  "expect": "2602000008000000016b014200000000",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

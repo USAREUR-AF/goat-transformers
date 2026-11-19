@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-clmtctrlseat_setstat_lrpm",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "d2030000080000002200000000000000",
+  "expect": "d2030000080000002200000000000000",
+  "model": {
+    "@kind": "clmtctrlseat_setstat_lrpm"
+  }
+}

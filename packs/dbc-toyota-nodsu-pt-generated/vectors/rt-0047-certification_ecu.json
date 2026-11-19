@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-certification_ecu",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "23060000080000000000000000000020",
+  "expect": "23060000080000000000000000000020",
+  "model": {
+    "@kind": "certification_ecu"
+  }
+}

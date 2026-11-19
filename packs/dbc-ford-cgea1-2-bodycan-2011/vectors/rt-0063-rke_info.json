@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-rke_info",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "b90300000800000003a39bff84add65b",
+  "expect": "b90300000800000003a39bff84add65b",
+  "model": {
+    "@kind": "rke_info"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-accel_gas_134",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "3401000008000000000000000075e000",
+  "expect": "3401000008000000000000000075e000",
+  "model": {
+    "@kind": "accel_gas_134"
+  }
+}

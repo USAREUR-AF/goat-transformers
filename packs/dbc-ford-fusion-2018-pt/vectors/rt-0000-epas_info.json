@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-epas_info",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "82000000080000001c5191b897000000",
+  "expect": "82000000080000001c5191b897000000",
+  "model": {
+    "@kind": "epas_info"
+  }
+}

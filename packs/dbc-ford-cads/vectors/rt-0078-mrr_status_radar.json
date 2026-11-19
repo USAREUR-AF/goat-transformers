@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-roundtrip-mrr_status_radar",
+  "from": "dbc-ford-cads",
+  "to": "dbc-ford-cads",
+  "input": "01010000080000005348000000000000",
+  "expect": "01010000080000005348000000000000",
+  "model": {
+    "@kind": "mrr_status_radar"
+  }
+}

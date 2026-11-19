@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-lh_eps_03",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "9f000000080000008ca31148066d4320",
+  "expect": "9f000000080000008ca31148066d4320",
+  "model": {
+    "@kind": "lh_eps_03"
+  }
+}

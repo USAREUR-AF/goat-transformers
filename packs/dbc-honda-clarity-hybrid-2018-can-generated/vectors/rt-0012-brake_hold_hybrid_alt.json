@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-brake_hold_hybrid_alt",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "23020000060000000000000052270000",
+  "expect": "23020000060000000000000052270000",
+  "model": {
+    "@kind": "brake_hold_hybrid_alt"
+  }
+}

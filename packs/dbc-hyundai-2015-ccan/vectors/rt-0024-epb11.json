@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-epb11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "9004000007000000c1c69dc255012c00",
+  "expect": "9004000007000000c1c69dc255012c00",
+  "model": {
+    "@kind": "epb11"
+  }
+}

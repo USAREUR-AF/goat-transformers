@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-klemmen_steuerung_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "8c05000008000000040b550600000000",
+  "expect": "8c05000008000000040b550600000000",
+  "model": {
+    "@kind": "klemmen_steuerung_01"
+  }
+}

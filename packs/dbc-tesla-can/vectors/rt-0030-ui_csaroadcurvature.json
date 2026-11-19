@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_csaroadcurvature",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "e8020000080000008f1566693d148499",
+  "expect": "e8020000080000008f1566693d148499",
+  "model": {
+    "@kind": "ui_csaroadcurvature"
+  }
+}

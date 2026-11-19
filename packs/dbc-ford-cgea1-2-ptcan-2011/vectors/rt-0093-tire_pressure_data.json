@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-tire_pressure_data",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "b50300000800000034d801af865d0000",
+  "expect": "b50300000800000034d801af865d0000",
+  "model": {
+    "@kind": "tire_pressure_data"
+  }
+}

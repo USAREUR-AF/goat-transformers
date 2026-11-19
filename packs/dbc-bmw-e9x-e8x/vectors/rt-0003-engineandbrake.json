@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-engineandbrake",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "a80000000800000024c34d8a8c109340",
+  "expect": "a80000000800000024c34d8a8c109340",
+  "model": {
+    "@kind": "engineandbrake"
+  }
+}

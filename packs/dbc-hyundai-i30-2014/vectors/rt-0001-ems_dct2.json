@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-ems_dct2",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "810000000800000019875e00000000c5",
+  "expect": "810000000800000019875e00000000c5",
+  "model": {
+    "@kind": "ems_dct2"
+  }
+}

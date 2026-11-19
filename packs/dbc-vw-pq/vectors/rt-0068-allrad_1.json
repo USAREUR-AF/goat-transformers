@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-allrad_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "c002000005000000aa3506ae7d000000",
+  "expect": "c002000005000000aa3506ae7d000000",
+  "model": {
+    "@kind": "allrad_1"
+  }
+}

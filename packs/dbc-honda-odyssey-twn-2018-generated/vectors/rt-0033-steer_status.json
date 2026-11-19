@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-steer_status",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "8f01000007000000910be4e208092700",
+  "expect": "8f01000007000000910be4e208092700",
+  "model": {
+    "@kind": "steer_status"
+  }
+}

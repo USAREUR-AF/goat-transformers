@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-lane_keep_assist",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "f203000008000000402bb9d21bd8670e",
+  "expect": "f203000008000000402bb9d21bd8670e",
+  "model": {
+    "@kind": "lane_keep_assist"
+  }
+}

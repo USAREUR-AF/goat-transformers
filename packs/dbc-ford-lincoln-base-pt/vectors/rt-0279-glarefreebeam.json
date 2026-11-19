@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-glarefreebeam",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d5030000080000005214ae402536d780",
+  "expect": "d5030000080000005214ae402536d780",
+  "model": {
+    "@kind": "glarefreebeam"
+  }
+}

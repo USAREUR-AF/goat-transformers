@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-gws_shiftleverheartbeat",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "de040000080000000000000000000000",
+  "expect": "de040000080000000000000000000000",
+  "model": {
+    "@kind": "gws_shiftleverheartbeat"
+  }
+}

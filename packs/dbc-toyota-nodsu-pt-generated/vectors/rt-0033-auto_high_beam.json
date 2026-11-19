@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-auto_high_beam",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "14040000080000000000000000b6d400",
+  "expect": "14040000080000000000000000b6d400",
+  "model": {
+    "@kind": "auto_high_beam"
+  }
+}

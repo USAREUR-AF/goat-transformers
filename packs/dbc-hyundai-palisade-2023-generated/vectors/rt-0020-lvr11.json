@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-lvr11",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "68030000080000002a6d084beb673500",
+  "expect": "68030000080000002a6d084beb673500",
+  "model": {
+    "@kind": "lvr11"
+  }
+}

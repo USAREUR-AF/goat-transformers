@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-wfs_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "b8050000020000007463000000000000",
+  "expect": "b8050000020000007463000000000000",
+  "model": {
+    "@kind": "wfs_1"
+  }
+}

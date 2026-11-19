@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-tpm_display_commands",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c03d8006000000462b0e2ead320000",
+  "expect": "00c03d8006000000462b0e2ead320000",
+  "model": {
+    "@kind": "tpm_display_commands"
+  }
+}

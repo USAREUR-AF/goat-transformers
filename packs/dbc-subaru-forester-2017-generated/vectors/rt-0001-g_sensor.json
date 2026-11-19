@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-g_sensor",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "d0000000080000001ac4f1170000c86b",
+  "expect": "d0000000080000001ac4f1170000c86b",
+  "model": {
+    "@kind": "g_sensor"
+  }
+}

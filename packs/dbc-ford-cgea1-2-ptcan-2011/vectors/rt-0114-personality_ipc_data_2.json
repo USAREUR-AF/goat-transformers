@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-personality_ipc_data_2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "eb030000080000004f9efbc700000000",
+  "expect": "eb030000080000004f9efbc700000000",
+  "model": {
+    "@kind": "personality_ipc_data_2"
+  }
+}

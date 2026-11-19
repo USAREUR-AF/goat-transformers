@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-lta_related",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "71030000080000000052902900000028",
+  "expect": "71030000080000000052902900000028",
+  "model": {
+    "@kind": "lta_related"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-driver_dr_stat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "32030000080000006df1f76cbee00000",
+  "expect": "32030000080000006df1f76cbee00000",
+  "model": {
+    "@kind": "driver_dr_stat_fd1"
+  }
+}

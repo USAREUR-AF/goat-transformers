@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-accdata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8601000008000000c9d201a93780448a",
+  "expect": "8601000008000000c9d201a93780448a",
+  "model": {
+    "@kind": "accdata"
+  }
+}

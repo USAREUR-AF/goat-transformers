@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-eps_status",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "6202000008000000007000ee0000007c",
+  "expect": "6202000008000000007000ee0000007c",
+  "model": {
+    "@kind": "eps_status"
+  }
+}

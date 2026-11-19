@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-ascmtimestatus",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "a100000007000000b8db208c00000000",
+  "expect": "a100000007000000b8db208c00000000",
+  "model": {
+    "@kind": "ascmtimestatus"
+  }
+}

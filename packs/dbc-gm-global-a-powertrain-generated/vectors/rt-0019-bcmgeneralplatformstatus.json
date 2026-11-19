@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-bcmgeneralplatformstatus",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "f1010000080000002300000000000000",
+  "expect": "f1010000080000002300000000000000",
+  "model": {
+    "@kind": "bcmgeneralplatformstatus"
+  }
+}

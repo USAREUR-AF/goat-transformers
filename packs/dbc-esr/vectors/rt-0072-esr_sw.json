@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-esr_sw",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "e2040000080000004b44d3d6c927adff",
+  "expect": "e2040000080000004b44d3d6c927adff",
+  "model": {
+    "@kind": "esr_sw"
+  }
+}

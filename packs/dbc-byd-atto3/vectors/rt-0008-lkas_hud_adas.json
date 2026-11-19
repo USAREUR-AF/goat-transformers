@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-lkas_hud_adas",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "160300000800000063bc554b845fd2e4",
+  "expect": "160300000800000063bc554b845fd2e4",
+  "model": {
+    "@kind": "lkas_hud_adas"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-elechorizon_data2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "2f02000008000000000000007b54c4ad",
+  "expect": "2f02000008000000000000007b54c4ad",
+  "model": {
+    "@kind": "elechorizon_data2_fd1"
+  }
+}

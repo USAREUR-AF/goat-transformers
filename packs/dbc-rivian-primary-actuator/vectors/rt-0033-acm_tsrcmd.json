@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-acm_tsrcmd",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "70030000080000009a01f8f6cda47b18",
+  "expect": "70030000080000009a01f8f6cda47b18",
+  "model": {
+    "@kind": "acm_tsrcmd"
+  }
+}

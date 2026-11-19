@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-dashlights",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "82020000080000000090000000210000",
+  "expect": "82020000080000000090000000210000",
+  "model": {
+    "@kind": "dashlights"
+  }
+}

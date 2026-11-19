@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-remotestart_ffb",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "9d05000008000000b289600000000000",
+  "expect": "9d05000008000000b289600000000000",
+  "model": {
+    "@kind": "remotestart_ffb"
+  }
+}

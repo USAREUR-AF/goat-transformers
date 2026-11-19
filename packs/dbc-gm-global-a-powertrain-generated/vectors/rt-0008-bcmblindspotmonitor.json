@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-bcmblindspotmonitor",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "42010000070000008000000000000000",
+  "expect": "42010000070000008000000000000000",
+  "model": {
+    "@kind": "bcmblindspotmonitor"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-pcs_hud",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "11040000080000008004000008043000",
+  "expect": "11040000080000008004000008043000",
+  "model": {
+    "@kind": "pcs_hud"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-fca-giorgio-roundtrip-new_msg_109",
+  "from": "dbc-fca-giorgio",
+  "to": "dbc-fca-giorgio",
+  "input": "09010000080000000000000000000c43",
+  "expect": "09010000080000000000000000000c43",
+  "model": {
+    "@kind": "new_msg_109"
+  }
+}

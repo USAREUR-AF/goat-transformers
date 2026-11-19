@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-frt_radar11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "a2040000020000000200000000000000",
+  "expect": "a2040000020000000200000000000000",
+  "model": {
+    "@kind": "frt_radar11"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-brake_1",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "e40100000800000037400000074b02f9",
+  "expect": "e40100000800000037400000074b02f9",
+  "model": {
+    "@kind": "brake_1"
+  }
+}

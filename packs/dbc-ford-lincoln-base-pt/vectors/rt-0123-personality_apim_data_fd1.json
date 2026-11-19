@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-personality_apim_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "e2030000080000009a23464caa500000",
+  "expect": "e2030000080000009a23464caa500000",
+  "model": {
+    "@kind": "personality_apim_data_fd1"
+  }
+}

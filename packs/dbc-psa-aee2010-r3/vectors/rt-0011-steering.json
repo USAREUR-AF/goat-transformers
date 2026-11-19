@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-steering",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "f5020000070000006fbd009a94e6b100",
+  "expect": "f5020000070000006fbd009a94e6b100",
+  "model": {
+    "@kind": "steering"
+  }
+}

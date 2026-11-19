@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-gw_warning_pe_01",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "670100000800000034061bbcc3161b2c",
+  "expect": "670100000800000034061bbcc3161b2c",
+  "model": {
+    "@kind": "gw_warning_pe_01"
+  }
+}

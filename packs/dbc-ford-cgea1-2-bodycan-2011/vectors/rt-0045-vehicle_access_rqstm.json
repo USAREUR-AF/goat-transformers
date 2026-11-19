@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-vehicle_access_rqstm",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "84030000080000009cef21eec57b0640",
+  "expect": "84030000080000009cef21eec57b0640",
+  "model": {
+    "@kind": "vehicle_access_rqstm"
+  }
+}

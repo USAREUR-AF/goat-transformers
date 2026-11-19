@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-es_dashstatus",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "2103000008000000abe2de044bc9751a",
+  "expect": "2103000008000000abe2de044bc9751a",
+  "model": {
+    "@kind": "es_dashstatus"
+  }
+}

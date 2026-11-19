@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-motor_14",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "be03000008000000e17898a850212a82",
+  "expect": "be03000008000000e17898a850212a82",
+  "model": {
+    "@kind": "motor_14"
+  }
+}

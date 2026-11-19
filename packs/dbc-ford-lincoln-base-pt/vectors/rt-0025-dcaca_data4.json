@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-dcaca_data4",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "6e030000080000001170c2fcc4724000",
+  "expect": "6e030000080000001170c2fcc4724000",
+  "model": {
+    "@kind": "dcaca_data4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-acc_control_2",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "8301000008000000aabe0000cd68fe95",
+  "expect": "8301000008000000aabe0000cd68fe95",
+  "model": {
+    "@kind": "acc_control_2"
+  }
+}

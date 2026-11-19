@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-legacy_brake_command",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "fa010000080000000000000000fb0012",
+  "expect": "fa010000080000000000000000fb0012",
+  "model": {
+    "@kind": "legacy_brake_command"
+  }
+}

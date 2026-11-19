@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-es_dashstatus",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "66010000080000000360759ae4100400",
+  "expect": "66010000080000000360759ae4100400",
+  "model": {
+    "@kind": "es_dashstatus"
+  }
+}

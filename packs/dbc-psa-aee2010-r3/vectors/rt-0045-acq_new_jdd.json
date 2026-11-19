@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-acq_new_jdd",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "5f050000010000008700000000000000",
+  "expect": "5f050000010000008700000000000000",
+  "model": {
+    "@kind": "acq_new_jdd"
+  }
+}

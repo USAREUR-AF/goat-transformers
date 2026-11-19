@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-lkas12",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "3e050000060000000004b78e01000000",
+  "expect": "3e050000060000000004b78e01000000",
+  "model": {
+    "@kind": "lkas12"
+  }
+}

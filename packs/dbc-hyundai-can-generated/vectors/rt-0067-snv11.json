@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-snv11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "52050000040000000606000000000000",
+  "expect": "52050000040000000606000000000000",
+  "model": {
+    "@kind": "snv11"
+  }
+}

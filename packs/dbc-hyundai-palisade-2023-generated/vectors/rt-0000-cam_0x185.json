@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-cam_0x185",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "8501000008000000e484bb0000000000",
+  "expect": "8501000008000000e484bb0000000000",
+  "model": {
+    "@kind": "cam_0x185"
+  }
+}

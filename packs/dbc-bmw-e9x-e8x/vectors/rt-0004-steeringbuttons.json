@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-steeringbuttons",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "d6010000020000001900000000000000",
+  "expect": "d6010000020000001900000000000000",
+  "model": {
+    "@kind": "steeringbuttons"
+  }
+}

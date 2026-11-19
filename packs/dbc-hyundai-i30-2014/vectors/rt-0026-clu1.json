@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-clu1",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "f004000008000000ab4d494c2e058611",
+  "expect": "f004000008000000ab4d494c2e058611",
+  "model": {
+    "@kind": "clu1"
+  }
+}

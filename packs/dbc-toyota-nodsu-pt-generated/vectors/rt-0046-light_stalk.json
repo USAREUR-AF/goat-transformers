@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-light_stalk",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "2206000008000000000068a800000000",
+  "expect": "2206000008000000000068a800000000",
+  "model": {
+    "@kind": "light_stalk"
+  }
+}

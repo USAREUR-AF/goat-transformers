@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-ggcc_config_mgmt_id_1",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "0a0400000800000000000000520f042b",
+  "expect": "0a0400000800000000000000520f042b",
+  "model": {
+    "@kind": "ggcc_config_mgmt_id_1"
+  }
+}

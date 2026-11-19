@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-perf_data_recroder_rt_info_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00804c800400000002d2a2c800000000",
+  "expect": "00804c800400000002d2a2c800000000",
+  "model": {
+    "@kind": "perf_data_recroder_rt_info_ls"
+  }
+}

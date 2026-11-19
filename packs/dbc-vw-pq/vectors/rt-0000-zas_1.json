@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-zas_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "7205000002000000557e000000000000",
+  "expect": "7205000002000000557e000000000000",
+  "model": {
+    "@kind": "zas_1"
+  }
+}

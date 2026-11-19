@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-cvt",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "49000000080000003c0300ea00000000",
+  "expect": "49000000080000003c0300ea00000000",
+  "model": {
+    "@kind": "cvt"
+  }
+}

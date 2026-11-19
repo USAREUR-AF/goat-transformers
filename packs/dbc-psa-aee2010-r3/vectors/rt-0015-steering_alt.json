@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-steering_alt",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "05030000070000004cc39a00f8f60000",
+  "expect": "05030000070000004cc39a00f8f60000",
+  "model": {
+    "@kind": "steering_alt"
+  }
+}

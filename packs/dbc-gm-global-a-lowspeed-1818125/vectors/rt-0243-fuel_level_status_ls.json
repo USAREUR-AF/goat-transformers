@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-fuel_level_status_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "008044800400000057612ec100000000",
+  "expect": "008044800400000057612ec100000000",
+  "model": {
+    "@kind": "fuel_level_status_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-powerdistdata_2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "6a030000080000001b1b2c3800000000",
+  "expect": "6a030000080000001b1b2c3800000000",
+  "model": {
+    "@kind": "powerdistdata_2_fd1"
+  }
+}

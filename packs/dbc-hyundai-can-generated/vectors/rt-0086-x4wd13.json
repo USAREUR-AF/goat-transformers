@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-x4wd13",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "2a04000006000000e5bc0b936a000000",
+  "expect": "2a04000006000000e5bc0b936a000000",
+  "model": {
+    "@kind": "x4wd13"
+  }
+}

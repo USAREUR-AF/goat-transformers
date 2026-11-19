@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-yrs13",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "9504000008000000000015864e2f0000",
+  "expect": "9504000008000000000015864e2f0000",
+  "model": {
+    "@kind": "yrs13"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gwm-haval-h6-phev-2024-roundtrip-undefined_2",
+  "from": "dbc-gwm-haval-h6-phev-2024",
+  "to": "dbc-gwm-haval-h6-phev-2024",
+  "input": "1101000008000000fa00000000274408",
+  "expect": "1101000008000000fa00000000274408",
+  "model": {
+    "@kind": "undefined_2"
+  }
+}

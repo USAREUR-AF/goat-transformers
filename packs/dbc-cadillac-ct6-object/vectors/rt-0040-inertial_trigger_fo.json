@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-inertial_trigger_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "0801000001000000c800000000000000",
+  "expect": "0801000001000000c800000000000000",
+  "model": {
+    "@kind": "inertial_trigger_fo"
+  }
+}

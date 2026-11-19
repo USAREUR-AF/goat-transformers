@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-motors_data",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "0102000008000000caa81e7f562d04db",
+  "expect": "0102000008000000caa81e7f562d04db",
+  "model": {
+    "@kind": "motors_data"
+  }
+}

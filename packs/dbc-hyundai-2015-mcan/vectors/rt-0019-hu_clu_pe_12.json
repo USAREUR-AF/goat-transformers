@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-hu_clu_pe_12",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "e601000008000000f3164d9b72200000",
+  "expect": "e601000008000000f3164d9b72200000",
+  "model": {
+    "@kind": "hu_clu_pe_12"
+  }
+}

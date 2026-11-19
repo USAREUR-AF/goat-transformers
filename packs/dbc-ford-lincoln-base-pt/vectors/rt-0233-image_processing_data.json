@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-image_processing_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "51040000080000002872c390de200000",
+  "expect": "51040000080000002872c390de200000",
+  "model": {
+    "@kind": "image_processing_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-ac_state",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "d2020000080000007d04000260000000",
+  "expect": "d2020000080000007d04000260000000",
+  "model": {
+    "@kind": "ac_state"
+  }
+}

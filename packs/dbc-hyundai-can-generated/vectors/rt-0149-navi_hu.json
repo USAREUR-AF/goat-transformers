@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-navi_hu",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "4405000008000000ba00004000000000",
+  "expect": "4405000008000000ba00004000000000",
+  "model": {
+    "@kind": "navi_hu"
+  }
+}

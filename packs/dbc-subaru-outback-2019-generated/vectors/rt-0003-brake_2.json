@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-brake_2",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "d20000000800000000000000080008df",
+  "expect": "d20000000800000000000000080008df",
+  "model": {
+    "@kind": "brake_2"
+  }
+}

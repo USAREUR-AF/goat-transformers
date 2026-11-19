@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-bndry_alert_r_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a203000008000000040438c600000000",
+  "expect": "a203000008000000040438c600000000",
+  "model": {
+    "@kind": "bndry_alert_r_data"
+  }
+}

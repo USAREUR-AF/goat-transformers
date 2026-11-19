@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-tpd_tester_08",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "07030000080000007024010700000080",
+  "expect": "07030000080000007024010700000080",
+  "model": {
+    "@kind": "tpd_tester_08"
+  }
+}

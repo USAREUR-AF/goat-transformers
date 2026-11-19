@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-ex-2017-body-generated-roundtrip-bsm_status_right",
+  "from": "dbc-honda-crv-ex-2017-body-generated",
+  "to": "dbc-honda-crv-ex-2017-body-generated",
+  "input": "a7bff892080000003000000000000000",
+  "expect": "a7bff892080000003000000000000000",
+  "model": {
+    "@kind": "bsm_status_right"
+  }
+}

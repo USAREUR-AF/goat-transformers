@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-yaw_data",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "9100000008000000ffd9ac02582b0000",
+  "expect": "9100000008000000ffd9ac02582b0000",
+  "model": {
+    "@kind": "yaw_data"
+  }
+}

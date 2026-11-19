@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-doors",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "3e040000080000000800074014002000",
+  "expect": "3e040000080000000800074014002000",
+  "model": {
+    "@kind": "doors"
+  }
+}

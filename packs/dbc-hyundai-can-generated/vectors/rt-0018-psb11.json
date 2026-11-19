@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-psb11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "9a050000020000007d22000000000000",
+  "expect": "9a050000020000007d22000000000000",
+  "model": {
+    "@kind": "psb11"
+  }
+}

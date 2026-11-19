@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-gasandacc",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "c301000008000000000000000000c300",
+  "expect": "c301000008000000000000000000c300",
+  "model": {
+    "@kind": "gasandacc"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-brake_module",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "260200000800000001ba019120000000",
+  "expect": "260200000800000001ba019120000000",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-acc_control_on",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "ef01000008000000f9a2f4461d70cb27",
+  "expect": "ef01000008000000f9a2f4461d70cb27",
+  "model": {
+    "@kind": "acc_control_on"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-eps1s90",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "94030000010000000300000000000000",
+  "expect": "94030000010000000300000000000000",
+  "model": {
+    "@kind": "eps1s90"
+  }
+}

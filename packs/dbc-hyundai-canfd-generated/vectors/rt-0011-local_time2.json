@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-local_time2",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "eb0400000800000000c8102780000000",
+  "expect": "eb0400000800000000c8102780000000",
+  "model": {
+    "@kind": "local_time2"
+  }
+}

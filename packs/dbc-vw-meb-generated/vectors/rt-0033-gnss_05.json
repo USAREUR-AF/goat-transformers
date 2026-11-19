@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-gnss_05",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "7b030000080000005fb6a31cdd320100",
+  "expect": "7b030000080000005fb6a31cdd320100",
+  "model": {
+    "@kind": "gnss_05"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-contains_lres_speed",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "10060000080000000000290000000000",
+  "expect": "10060000080000000000290000000000",
+  "model": {
+    "@kind": "contains_lres_speed"
+  }
+}

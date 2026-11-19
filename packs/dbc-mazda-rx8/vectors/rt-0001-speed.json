@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-rx8-roundtrip-speed",
+  "from": "dbc-mazda-rx8",
+  "to": "dbc-mazda-rx8",
+  "input": "01020000080000004459000098300700",
+  "expect": "01020000080000004459000098300700",
+  "model": {
+    "@kind": "speed"
+  }
+}

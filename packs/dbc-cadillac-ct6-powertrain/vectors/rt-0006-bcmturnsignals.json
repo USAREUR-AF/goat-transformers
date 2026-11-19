@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-bcmturnsignals",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "400100000300000000000c0000000000",
+  "expect": "400100000300000000000c0000000000",
+  "model": {
+    "@kind": "bcmturnsignals"
+  }
+}

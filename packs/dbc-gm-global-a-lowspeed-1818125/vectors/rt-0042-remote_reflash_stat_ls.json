@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-remote_reflash_stat_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a06280010000000000000000000000",
+  "expect": "00a06280010000000000000000000000",
+  "model": {
+    "@kind": "remote_reflash_stat_ls"
+  }
+}

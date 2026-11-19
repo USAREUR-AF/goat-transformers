@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-fsm2",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "6202000008000000002900a6d771330a",
+  "expect": "6202000008000000002900a6d771330a",
+  "model": {
+    "@kind": "fsm2"
+  }
+}

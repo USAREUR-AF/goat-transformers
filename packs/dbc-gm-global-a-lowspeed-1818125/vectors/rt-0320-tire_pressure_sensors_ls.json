@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-tire_pressure_sensors_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00403d8006000000bb0d79ac27830000",
+  "expect": "00403d8006000000bb0d79ac27830000",
+  "model": {
+    "@kind": "tire_pressure_sensors_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-between_rides_changes_2",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "b1030000080000000000000100000000",
+  "expect": "b1030000080000000000000100000000",
+  "model": {
+    "@kind": "between_rides_changes_2"
+  }
+}

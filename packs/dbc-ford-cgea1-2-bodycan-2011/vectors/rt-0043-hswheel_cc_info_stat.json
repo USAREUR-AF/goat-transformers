@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-hswheel_cc_info_stat",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "5d030000080000000000000000000003",
+  "expect": "5d030000080000000000000000000003",
+  "model": {
+    "@kind": "hswheel_cc_info_stat"
+  }
+}

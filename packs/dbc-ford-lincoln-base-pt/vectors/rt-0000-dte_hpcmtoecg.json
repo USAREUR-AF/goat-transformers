@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-dte_hpcmtoecg",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "3703000008000000c0456e97e9900000",
+  "expect": "3703000008000000c0456e97e9900000",
+  "model": {
+    "@kind": "dte_hpcmtoecg"
+  }
+}

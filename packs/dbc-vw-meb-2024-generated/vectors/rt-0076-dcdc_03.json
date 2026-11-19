@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-dcdc_03",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "cd05000008000000a80f762000406037",
+  "expect": "cd05000008000000a80f762000406037",
+  "model": {
+    "@kind": "dcdc_03"
+  }
+}

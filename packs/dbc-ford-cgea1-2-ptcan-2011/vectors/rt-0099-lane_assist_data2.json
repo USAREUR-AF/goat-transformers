@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-lane_assist_data2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "cb03000008000000105f08b100000000",
+  "expect": "cb03000008000000105f08b100000000",
+  "model": {
+    "@kind": "lane_assist_data2"
+  }
+}

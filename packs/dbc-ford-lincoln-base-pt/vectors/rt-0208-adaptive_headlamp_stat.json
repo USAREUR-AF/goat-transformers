@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-adaptive_headlamp_stat",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "34030000080000008000000002001000",
+  "expect": "34030000080000008000000002001000",
+  "model": {
+    "@kind": "adaptive_headlamp_stat"
+  }
+}

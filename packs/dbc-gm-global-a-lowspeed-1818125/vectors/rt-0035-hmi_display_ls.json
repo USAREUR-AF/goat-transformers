@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-hmi_display_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a0438008000000556b573c8a900000",
+  "expect": "00a0438008000000556b573c8a900000",
+  "model": {
+    "@kind": "hmi_display_ls"
+  }
+}

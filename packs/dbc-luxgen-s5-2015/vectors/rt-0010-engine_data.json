@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-engine_data",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "160300000800000000845b3209e00000",
+  "expect": "160300000800000000845b3209e00000",
+  "model": {
+    "@kind": "engine_data"
+  }
+}

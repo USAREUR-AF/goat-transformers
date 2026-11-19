@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-brake",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "a600000008000000e400bb0000000000",
+  "expect": "a600000008000000e400bb0000000000",
+  "model": {
+    "@kind": "brake"
+  }
+}

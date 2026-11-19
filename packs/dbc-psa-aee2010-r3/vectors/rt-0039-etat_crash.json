@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-etat_crash",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "c804000003000000e800960000000000",
+  "expect": "c804000003000000e800960000000000",
+  "model": {
+    "@kind": "etat_crash"
+  }
+}

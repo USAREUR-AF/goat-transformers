@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-usdt_resp_from_rsrr",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "5906000008000000800000000ae60c14",
+  "expect": "5906000008000000800000000ae60c14",
+  "model": {
+    "@kind": "usdt_resp_from_rsrr"
+  }
+}

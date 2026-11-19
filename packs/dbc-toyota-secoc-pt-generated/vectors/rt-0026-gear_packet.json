@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-gear_packet",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "bc03000008000000000e000040020000",
+  "expect": "bc03000008000000000e000040020000",
+  "model": {
+    "@kind": "gear_packet"
+  }
+}

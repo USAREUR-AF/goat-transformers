@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-scc13",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "0a050000080000006010000000000000",
+  "expect": "0a050000080000006010000000000000",
+  "model": {
+    "@kind": "scc13"
+  }
+}

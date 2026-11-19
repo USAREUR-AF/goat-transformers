@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-wheel_speeds",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "aa00000008000000863bade9d597fd45",
+  "expect": "aa00000008000000863bade9d597fd45",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

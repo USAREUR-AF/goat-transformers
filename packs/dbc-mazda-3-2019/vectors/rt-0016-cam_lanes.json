@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-cam_lanes",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "300100000800000011fa88dd53000009",
+  "expect": "300100000800000011fa88dd53000009",
+  "model": {
+    "@kind": "cam_lanes"
+  }
+}

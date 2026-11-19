@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ascmactivecruisecontrolstatus",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "70030000060000000103a6a700130000",
+  "expect": "70030000060000000103a6a700130000",
+  "model": {
+    "@kind": "ascmactivecruisecontrolstatus"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-brake_module",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "be0100000300000010000b0000000000",
+  "expect": "be0100000300000010000b0000000000",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-mcu_locationstatus2",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "6800000008000000e925d85f40000000",
+  "expect": "6800000008000000e925d85f40000000",
+  "model": {
+    "@kind": "mcu_locationstatus2"
+  }
+}

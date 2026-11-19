@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-touring-2016-can-generated-roundtrip-brake_command",
+  "from": "dbc-honda-civic-touring-2016-can-generated",
+  "to": "dbc-honda-civic-touring-2016-can-generated",
+  "input": "fa010000080000007a08b525d343c194",
+  "expect": "fa010000080000007a08b525d343c194",
+  "model": {
+    "@kind": "brake_command"
+  }
+}

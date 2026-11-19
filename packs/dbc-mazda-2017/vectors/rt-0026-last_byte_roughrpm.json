@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-last_byte_roughrpm",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "9c0400000800000000000000000000d7",
+  "expect": "9c0400000800000000000000000000d7",
+  "model": {
+    "@kind": "last_byte_roughrpm"
+  }
+}

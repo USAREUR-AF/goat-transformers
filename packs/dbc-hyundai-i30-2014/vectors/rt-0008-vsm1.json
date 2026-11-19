@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-vsm1",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "64010000080000001d78010000000950",
+  "expect": "64010000080000001d78010000000950",
+  "model": {
+    "@kind": "vsm1"
+  }
+}

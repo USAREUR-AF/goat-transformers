@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-passive_entry_target_data",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "4201000008000000e0a5012a53200000",
+  "expect": "4201000008000000e0a5012a53200000",
+  "model": {
+    "@kind": "passive_entry_target_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-propilot_brake",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "c3010000080000003d80000000000000",
+  "expect": "c3010000080000003d80000000000000",
+  "model": {
+    "@kind": "propilot_brake"
+  }
+}

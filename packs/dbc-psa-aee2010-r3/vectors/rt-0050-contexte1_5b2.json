@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-contexte1_5b2",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "b2050000080000000000f9d0a7000000",
+  "expect": "b2050000080000000000f9d0a7000000",
+  "model": {
+    "@kind": "contexte1_5b2"
+  }
+}

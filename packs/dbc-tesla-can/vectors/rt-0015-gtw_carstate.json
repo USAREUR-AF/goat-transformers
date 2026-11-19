@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-gtw_carstate",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "1803000008000000001eb3010f661c1b",
+  "expect": "1803000008000000001eb3010f661c1b",
+  "model": {
+    "@kind": "gtw_carstate"
+  }
+}

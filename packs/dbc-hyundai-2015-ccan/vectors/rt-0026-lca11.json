@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-lca11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "8b05000008000000f836abb58c633a01",
+  "expect": "8b05000008000000f836abb58c633a01",
+  "model": {
+    "@kind": "lca11"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-crz_ctrl_btns",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "16000000080000000000000000400800",
+  "expect": "16000000080000000000000000400800",
+  "model": {
+    "@kind": "crz_ctrl_btns"
+  }
+}

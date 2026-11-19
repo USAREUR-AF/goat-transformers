@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-requestedwheeltorquedrivetrain",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "bf000000080000006900170000000000",
+  "expect": "bf000000080000006900170000000000",
+  "model": {
+    "@kind": "requestedwheeltorquedrivetrain"
+  }
+}

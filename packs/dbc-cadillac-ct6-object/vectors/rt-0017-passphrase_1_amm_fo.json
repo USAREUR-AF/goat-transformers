@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-passphrase_1_amm_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "86040000080000008000000030cda314",
+  "expect": "86040000080000008000000030cda314",
+  "model": {
+    "@kind": "passphrase_1_amm_fo"
+  }
+}

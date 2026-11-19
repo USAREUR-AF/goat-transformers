@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-vin_part_3",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "8205000008000000f000000000000000",
+  "expect": "8205000008000000f000000000000000",
+  "model": {
+    "@kind": "vin_part_3"
+  }
+}

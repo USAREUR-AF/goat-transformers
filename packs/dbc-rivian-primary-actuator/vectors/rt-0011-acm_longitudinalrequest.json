@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-acm_longitudinalrequest",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "6001000005000000740b6449c0000000",
+  "expect": "6001000005000000740b6449c0000000",
+  "model": {
+    "@kind": "acm_longitudinalrequest"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-seatbelt_status",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "050300000700000080a8000000003a00",
+  "expect": "050300000700000080a8000000003a00",
+  "model": {
+    "@kind": "seatbelt_status"
+  }
+}

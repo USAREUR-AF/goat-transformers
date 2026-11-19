@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-tsk_08",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "5a010000080000002d3400000289df4e",
+  "expect": "5a010000080000002d3400000289df4e",
+  "model": {
+    "@kind": "tsk_08"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-rcta_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "b702000008000000b60f000000000000",
+  "expect": "b702000008000000b60f000000000000",
+  "model": {
+    "@kind": "rcta_01"
+  }
+}

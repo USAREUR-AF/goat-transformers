@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-nmh_epb",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "d906000007000000454b2a0aaa000200",
+  "expect": "d906000007000000454b2a0aaa000200",
+  "model": {
+    "@kind": "nmh_epb"
+  }
+}

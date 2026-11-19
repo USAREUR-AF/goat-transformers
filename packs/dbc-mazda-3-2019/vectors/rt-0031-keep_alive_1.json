@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-keep_alive_1",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "b90400000800000000123b64e98db6df",
+  "expect": "b90400000800000000123b64e98db6df",
+  "model": {
+    "@kind": "keep_alive_1"
+  }
+}

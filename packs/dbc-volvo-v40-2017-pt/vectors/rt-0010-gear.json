@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-gear",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "c000000008000000000000000c000000",
+  "expect": "c000000008000000000000000c000000",
+  "model": {
+    "@kind": "gear"
+  }
+}

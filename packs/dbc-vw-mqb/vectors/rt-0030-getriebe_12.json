@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-getriebe_12",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "ae000000080000006920ce734a21f88c",
+  "expect": "ae000000080000006920ce734a21f88c",
+  "model": {
+    "@kind": "getriebe_12"
+  }
+}

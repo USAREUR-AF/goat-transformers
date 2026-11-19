@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-park-assist-can-roundtrip-bsm_blindspotindicator",
+  "from": "dbc-rivian-park-assist-can",
+  "to": "dbc-rivian-park-assist-can",
+  "input": "50030000040000009a0100c000000000",
+  "expect": "50030000040000009a0100c000000000",
+  "model": {
+    "@kind": "bsm_blindspotindicator"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-car_speed",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "090300000800000092567f04e62dc0a9",
+  "expect": "090300000800000092567f04e62dc0a9",
+  "model": {
+    "@kind": "car_speed"
+  }
+}

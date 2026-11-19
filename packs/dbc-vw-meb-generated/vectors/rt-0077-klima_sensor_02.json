@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-klima_sensor_02",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "e105000008000000052c00900f600000",
+  "expect": "e105000008000000052c00900f600000",
+  "model": {
+    "@kind": "klima_sensor_02"
+  }
+}

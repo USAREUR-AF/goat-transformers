@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-solar_sensor",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "fc030000080000000000000000001c50",
+  "expect": "fc030000080000000000000000001c50",
+  "model": {
+    "@kind": "solar_sensor"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-lkas",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "6901000008000000816900f671480d7b",
+  "expect": "6901000008000000816900f671480d7b",
+  "model": {
+    "@kind": "lkas"
+  }
+}

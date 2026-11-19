@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-epb_status",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "c2010000080000004000002000000005",
+  "expect": "c2010000080000004000002000000005",
+  "model": {
+    "@kind": "epb_status"
+  }
+}

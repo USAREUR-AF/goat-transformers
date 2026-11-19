@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-new_msg_2d8",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "d8020000070000000000001000080000",
+  "expect": "d8020000070000000000001000080000",
+  "model": {
+    "@kind": "new_msg_2d8"
+  }
+}

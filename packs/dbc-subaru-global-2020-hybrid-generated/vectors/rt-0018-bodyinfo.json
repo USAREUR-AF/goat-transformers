@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-bodyinfo",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "ac030000080000003f0600000a004012",
+  "expect": "ac030000080000003f0600000a004012",
+  "model": {
+    "@kind": "bodyinfo"
+  }
+}
