@@ -1,0 +1,10 @@
+{
+  "name": "sbp-orientation-roundtrip-orient_euler",
+  "from": "sbp-orientation",
+  "to": "sbp-orientation",
+  "input": "55210202011d9bc5ce09f6bdcfe87711d4e8f864d8e8000060400000a0c0000050c07c",
+  "expect": "55210202011d9bc5ce09f6bdcfe87711d4e8f864d8e8000060400000a0c0000050c07c",
+  "model": {
+    "@kind": "orient_euler"
+  }
+}

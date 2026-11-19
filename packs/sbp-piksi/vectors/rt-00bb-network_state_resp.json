@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-network_state_resp",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55bb000a013261380fe6bd946b4219f0c79e754c23fad1a87f562d04db763c46b2cac019533531000000000000000000000000006072c940",
+  "expect": "55bb000a013261380fe6bd946b4219f0c79e754c23fad1a87f562d04db763c46b2cac019533531000000000000000000000000006072c940",
+  "model": {
+    "@kind": "network_state_resp"
+  }
+}

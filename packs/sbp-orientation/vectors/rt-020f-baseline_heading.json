@@ -1,0 +1,10 @@
+{
+  "name": "sbp-orientation-roundtrip-baseline_heading",
+  "from": "sbp-orientation",
+  "to": "sbp-orientation",
+  "input": "550f0200010acd85e32ca4d967007b52",
+  "expect": "550f0200010acd85e32ca4d967007b52",
+  "model": {
+    "@kind": "baseline_heading"
+  }
+}

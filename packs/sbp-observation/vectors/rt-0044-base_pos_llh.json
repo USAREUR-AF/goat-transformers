@@ -1,0 +1,10 @@
+{
+  "name": "sbp-observation-roundtrip-base_pos_llh",
+  "from": "sbp-observation",
+  "to": "sbp-observation",
+  "input": "5544000001180000000080b2474000000000004721c00000000000000c40",
+  "expect": "5544000001180000000080b2474000000000004721c00000000000000c40",
+  "model": {
+    "@kind": "base_pos_llh"
+  }
+}

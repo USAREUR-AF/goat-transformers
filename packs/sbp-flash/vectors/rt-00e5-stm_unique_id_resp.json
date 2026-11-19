@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-stm_unique_id_resp",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55e50006010c976e451cf3caa1784f26fdd4",
+  "expect": "55e50006010c976e451cf3caa1784f26fdd4",
+  "model": {
+    "@kind": "stm_unique_id_resp"
+  }
+}

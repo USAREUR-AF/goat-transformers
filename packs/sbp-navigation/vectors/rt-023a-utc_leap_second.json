@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-utc_leap_second",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "553a0226010ef6e2773678f9ce7ba5cf7c23537e",
+  "expect": "553a0226010ef6e2773678f9ce7ba5cf7c23537e",
+  "model": {
+    "@kind": "utc_leap_second"
+  }
+}

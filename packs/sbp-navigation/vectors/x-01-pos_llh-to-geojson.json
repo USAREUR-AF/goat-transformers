@@ -1,0 +1,14 @@
+{
+  "name": "sbp-navigation-pos_llh-to-geojson",
+  "from": "sbp-navigation",
+  "to": "geojson",
+  "input": "550a02d3882228f47a13711fb935e9b24740a3c9c518581721400000000000847e400c0014000e02",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742,488.25]},\"properties\":{}}",
+  "model": {
+    "@kind": "pos_llh",
+    "lat": "47.397742",
+    "lon": "8.545594",
+    "hae": "488.25",
+    "sbp.sender": "35027"
+  }
+}

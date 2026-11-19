@@ -1,0 +1,10 @@
+{
+  "name": "sbp-integrity-roundtrip-ssr_flag_high_level",
+  "from": "sbp-integrity",
+  "to": "sbp-integrity",
+  "input": "55ba0b010125f24a3e55c99ea0f2467c77464e9a4f2325eefcd395aae981582f06ddb48b623910e7be956c",
+  "expect": "55ba0b010125f24a3e55c99ea0f2467c77464e9a4f2325eefcd395aae981582f06ddb48b623910e7be956c",
+  "model": {
+    "@kind": "ssr_flag_high_level"
+  }
+}

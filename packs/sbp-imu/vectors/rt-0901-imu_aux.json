@@ -1,0 +1,10 @@
+{
+  "name": "sbp-imu-roundtrip-imu_aux",
+  "from": "sbp-imu",
+  "to": "sbp-imu",
+  "input": "550109010104bbd6c769",
+  "expect": "550109010104bbd6c769",
+  "model": {
+    "@kind": "imu_aux"
+  }
+}

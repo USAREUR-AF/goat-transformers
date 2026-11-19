@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-front_end_gain",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55bf000b011043c445c647c849ca4bcc4dce4fd051d2",
+  "expect": "55bf000b011043c445c647c849ca4bcc4dce4fd051d2",
+  "model": {
+    "@kind": "front_end_gain"
+  }
+}

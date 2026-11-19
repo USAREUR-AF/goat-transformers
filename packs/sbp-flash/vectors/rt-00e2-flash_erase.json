@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-flash_erase",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55e2000301054a214b5f20",
+  "expect": "55e2000301054a214b5f20",
+  "model": {
+    "@kind": "flash_erase"
+  }
+}

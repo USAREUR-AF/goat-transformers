@@ -1,0 +1,10 @@
+{
+  "name": "sbp-vehicle-roundtrip-odometry",
+  "from": "sbp-vehicle",
+  "to": "sbp-vehicle",
+  "input": "55030900010999b96d4a2899adec47",
+  "expect": "55030900010999b96d4a2899adec47",
+  "model": {
+    "@kind": "odometry"
+  }
+}

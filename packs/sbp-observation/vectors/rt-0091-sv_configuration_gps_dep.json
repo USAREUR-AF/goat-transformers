@@ -1,0 +1,10 @@
+{
+  "name": "sbp-observation-roundtrip-sv_configuration_gps_dep",
+  "from": "sbp-observation",
+  "to": "sbp-observation",
+  "input": "55910016010a2b58b86a02acd9ffc011",
+  "expect": "55910016010a2b58b86a02acd9ffc011",
+  "model": {
+    "@kind": "sv_configuration_gps_dep"
+  }
+}

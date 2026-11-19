@@ -1,0 +1,10 @@
+{
+  "name": "sbp-orientation-roundtrip-angular_rate",
+  "from": "sbp-orientation",
+  "to": "sbp-orientation",
+  "input": "5522020301110a8286329fe6e2e8203ae7e8a18debe866",
+  "expect": "5522020301110a8286329fe6e2e8203ae7e8a18debe866",
+  "model": {
+    "@kind": "angular_rate"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-bootload-roundtrip-bootloader_jump_to_app",
+  "from": "sbp-bootload",
+  "to": "sbp-bootload",
+  "input": "55b1000001010b",
+  "expect": "55b1000001010b",
+  "model": {
+    "@kind": "bootloader_jump_to_app"
+  }
+}

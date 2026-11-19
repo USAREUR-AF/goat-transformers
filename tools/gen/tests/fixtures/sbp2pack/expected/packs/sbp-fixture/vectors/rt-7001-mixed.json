@@ -1,0 +1,10 @@
+{
+  "name": "sbp-fixture-roundtrip-mixed",
+  "from": "sbp-fixture",
+  "to": "sbp-fixture",
+  "input": "550170030122bbe9ce65923d694017da145be8f8219c34dd5edff8cfa67d533633000000000080bf",
+  "expect": "550170030122bbe9ce65923d694017da145be8f8219c34dd5edff8cfa67d533633000000000080bf",
+  "model": {
+    "@kind": "mixed"
+  }
+}

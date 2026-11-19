@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-baseline_ecef",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "550b020a01141194040a703f2ae7f1922ee772e632e76de3441b",
+  "expect": "550b020a01141194040a703f2ae7f1922ee772e632e76de3441b",
+  "model": {
+    "@kind": "baseline_ecef"
+  }
+}

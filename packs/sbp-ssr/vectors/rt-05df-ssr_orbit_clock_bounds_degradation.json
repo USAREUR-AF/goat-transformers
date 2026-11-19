@@ -1,0 +1,10 @@
+{
+  "name": "sbp-ssr-roundtrip-ssr_orbit_clock_bounds_degradation",
+  "from": "sbp-ssr",
+  "to": "sbp-ssr",
+  "input": "55df0505011cfdec6169d440ab82593007deb58b8405000000008c633a11e8bf966d",
+  "expect": "55df0505011cfdec6169d440ab82593007deb58b8405000000008c633a11e8bf966d",
+  "model": {
+    "@kind": "ssr_orbit_clock_bounds_degradation"
+  }
+}

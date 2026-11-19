@@ -1,0 +1,10 @@
+{
+  "name": "sbp-observation-roundtrip-group_delay_dep_a",
+  "from": "sbp-observation",
+  "to": "sbp-observation",
+  "input": "55920018010e9a1470137168481f12d9932c1480",
+  "expect": "55920018010e9a1470137168481f12d9932c1480",
+  "model": {
+    "@kind": "group_delay_dep_a"
+  }
+}

@@ -1,0 +1,167 @@
+# A message package for the sbp2pack tests, in the shape of libsbp's spec/yaml.
+package: swiftnav.sbp.fixture
+description: >
+  Messages that exercise each rule of the generator.
+stable: False
+public: True
+include:
+  - types.yaml
+definitions:
+
+ - MSG_POS_LLH:
+    id: 0x020A
+    short_desc: A position
+    desc: A geodetic position.
+    fields:
+        - tow:
+            type: u32
+            units: ms
+            desc: Time in the week
+        - lat:
+            type: double
+            units: deg
+            desc: Latitude
+        - lon:
+            type: double
+            units: deg
+            desc: Longitude
+        - height:
+            type: double
+            units: m
+            desc: Height above WGS84 ellipsoid
+        - h_accuracy:
+            type: u16
+            units: mm
+            desc: Horizontal spread
+        - v_accuracy:
+            type: u16
+            units: mm
+            desc: Vertical spread
+        - n_sats:
+            type: u8
+            desc: Satellites in use
+        - flags:
+            type: u8
+            desc: Flags
+
+ - MSG_VEL_NED:
+    id: 0x020E
+    desc: A velocity.
+    fields:
+        - tow:
+            type: u32
+            units: ms
+            desc: Time in the week
+        - n:
+            type: s32
+            units: mm/s
+            desc: Velocity North coordinate
+        - e:
+            type: s32
+            units: mm/s
+            desc: Velocity East coordinate
+        - d:
+            type: s32
+            units: mm/s
+            desc: Velocity Down coordinate
+
+ - MSG_VEL_COG:
+    id: 0x021C
+    desc: Course and speed.
+    fields:
+        - tow:
+            type: u32
+            units: ms
+            desc: Time in the week
+        - cog:
+            type: u32
+            units: microdegrees
+            desc: Course over ground relative to north direction
+        - sog:
+            type: u32
+            units: mm/s
+            desc: Speed over ground
+        - v_up:
+            type: s32
+            units: mm/s
+            desc: Vertical velocity component (positive up)
+
+ - MSG_MIXED:
+    id: 0x7001
+    desc: Nested types, a fixed array, a fixed string and scaled units.
+    fields:
+        - t:
+            type: WeekTime
+        - sid:
+            type: SignalId
+        - cn0:
+            type: u8
+            units: dB Hz / 4
+            desc: Signal strength
+        - offset:
+            type: s16
+            units: 0.4 mm
+            desc: An offset
+        - drift:
+            type: s32
+            units: s * 2^-35
+            desc: A drift
+        - days:
+            type: u16
+            units: 1 day
+            desc: A count of days
+        - temps:
+            type: array
+            fill: s8
+            size: 3
+            units: degrees C
+            desc: Three temperatures
+        - pairs:
+            type: array
+            fill: SignalId
+            size: 2
+        - label:
+            type: string
+            size: 6
+            desc: A label
+        - ratio:
+            type: float
+            desc: A ratio
+
+ - MSG_TRAILING:
+    id: 0x7002
+    desc: Ends in data that runs to the end of the frame.
+    fields:
+        - seq:
+            type: u32
+        - data:
+            type: array
+            fill: u8
+
+ - MSG_TRAILING_TEXT:
+    id: 0x7003
+    desc: Ends in text that runs to the end of the frame.
+    fields:
+        - index:
+            type: u16
+        - text:
+            type: string
+            encoding: null_terminated
+
+ - MSG_COUNTED:
+    id: 0x7004
+    desc: An array whose length a field states.
+    fields:
+        - n:
+            type: u8
+        - items:
+            type: array
+            fill: SignalId
+            size_fn: n
+        - tail:
+            type: u8
+
+ - MSG_EMPTY:
+    id: 0x7005
+    desc: A request with no payload.
+    fields: []

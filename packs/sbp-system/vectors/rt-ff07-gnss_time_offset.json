@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-gnss_time_offset",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5507ff0401094bcecca10cd64d75da",
+  "expect": "5507ff0401094bcecca10cd64d75da",
+  "model": {
+    "@kind": "gnss_time_offset"
+  }
+}

@@ -1,0 +1,32 @@
+# A types file for the sbp2pack tests, in the shape of libsbp's spec/yaml.
+package: swiftnav.sbp.gnss
+description: Shared types for the tests.
+stable: True
+public: True
+include: []
+definitions:
+
+ - SignalId:
+    short_desc: Which signal
+    desc: A satellite and a code.
+    fields:
+        - sat:
+            type: u8
+            desc: Satellite number
+        - code:
+            type: u8
+            desc: Code number
+
+ - WeekTime:
+    desc: |
+      A week number and a time in the week,
+      written over two lines.
+    fields:
+        - tow:
+            type: u32
+            units: ms
+            desc: Time in the week
+        - wn:
+            type: u16
+            units: week
+            desc: Week number

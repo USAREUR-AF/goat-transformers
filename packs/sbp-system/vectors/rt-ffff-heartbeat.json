@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-heartbeat",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "55ffff010104dde05d6e",
+  "expect": "55ffff010104dde05d6e",
+  "model": {
+    "@kind": "heartbeat"
+  }
+}

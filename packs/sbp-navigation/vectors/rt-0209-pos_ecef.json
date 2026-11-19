@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-pos_ecef",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "550902050120331b95380000000000000ac0000000000000f8bf000000000000d03f8f6a663d",
+  "expect": "550902050120331b95380000000000000ac0000000000000f8bf000000000000d03f8f6a663d",
+  "model": {
+    "@kind": "pos_ecef"
+  }
+}

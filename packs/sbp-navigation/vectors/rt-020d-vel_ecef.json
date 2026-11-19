@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-vel_ecef",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "550d020c0114ef0c745bc29050e743e454e7c43759e74b5c22f9",
+  "expect": "550d020c0114ef0c745bc29050e743e454e7c43759e74b5c22f9",
+  "model": {
+    "@kind": "vel_ecef"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-iar_state",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55190005010423049854",
+  "expect": "55190005010423049854",
+  "model": {
+    "@kind": "iar_state"
+  }
+}

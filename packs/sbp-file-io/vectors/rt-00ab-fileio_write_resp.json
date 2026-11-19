@@ -1,0 +1,10 @@
+{
+  "name": "sbp-file-io-roundtrip-fileio_write_resp",
+  "from": "sbp-file-io",
+  "to": "sbp-file-io",
+  "input": "55ab00000104717b610d",
+  "expect": "55ab00000104717b610d",
+  "model": {
+    "@kind": "fileio_write_resp"
+  }
+}

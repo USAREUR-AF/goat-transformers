@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-pos_llh_dep_a",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "5501021e0122bb37d7720000000040a1474000000000004e21c0000000000000d0bf1787eedac59c",
+  "expect": "5501021e0122bb37d7720000000040a1474000000000004e21c0000000000000d0bf1787eedac59c",
+  "model": {
+    "@kind": "pos_llh_dep_a"
+  }
+}

@@ -61,6 +61,7 @@
     {"name": "SAPIENT", "domain": "sensors", "exact": ["sapient", "sapient-v1"], "detail": "v1, v2"},
     {"name": "MISB ST 0601", "domain": "sensors", "exact": ["misb-st0601"]},
     {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
+    {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
 
     {"name": "GBFS", "domain": "transport", "prefixes": ["gbfs-"], "members": {"pattern": "^gbfs-([0-9]+\\.[0-9]+)-", "label": "versions"}},
     {"name": "GTFS Realtime", "domain": "transport", "prefixes": ["gtfs-realtime"]},

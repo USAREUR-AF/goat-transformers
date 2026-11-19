@@ -1,0 +1,10 @@
+{
+  "name": "sbp-ssr-roundtrip-ssr_tile_definition_dep_b",
+  "from": "sbp-ssr",
+  "to": "sbp-ssr",
+  "input": "55f705020119653ceb133f3eddbf30983a6f8e46e21d36f489422a00000080",
+  "expect": "55f705020119653ceb133f3eddbf30983a6f8e46e21d36f489422a00000080",
+  "model": {
+    "@kind": "ssr_tile_definition_dep_b"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-linux-roundtrip-linux_socket_usage",
+  "from": "sbp-linux",
+  "to": "sbp-linux",
+  "input": "55057f010148775cb84c4eb03c202504fc57d3abaaff815358a72ffb064fdda2b4f68b4a629e39f21046e799beed95416c9543e91a3df190c8e49f38768c4de02434fb87d2dba92f808357d72e2b",
+  "expect": "55057f010148775cb84c4eb03c202504fc57d3abaaff815358a72ffb064fdda2b4f68b4a629e39f21046e799beed95416c9543e91a3df190c8e49f38768c4de02434fb87d2dba92f808357d72e2b",
+  "model": {
+    "@kind": "linux_socket_usage"
+  }
+}

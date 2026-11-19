@@ -1,0 +1,10 @@
+{
+  "name": "sbp-integrity-roundtrip-acknowledge",
+  "from": "sbp-integrity",
+  "to": "sbp-integrity",
+  "input": "55d20b02010b5a3149fc7908dff0b6448d",
+  "expect": "55d20b02010b5a3149fc7908dff0b6448d",
+  "model": {
+    "@kind": "acknowledge"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-protection_level_dep_a",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "551602240121d6ace949ad0084540000000000b6474000000000001f21c00000000000000040e0",
+  "expect": "551602240121d6ace949ad0084540000000000b6474000000000001f21c00000000000000040e0",
+  "model": {
+    "@kind": "protection_level_dep_a"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-mask_satellite",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "552b00060103f1c89f",
+  "expect": "552b00060103f1c89f",
+  "model": {
+    "@kind": "mask_satellite"
+  }
+}

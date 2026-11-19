@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-vel_ecef_cov_gnss",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "55350215012a477e29382aeb4eeaab3e53ea2c9257ea00009840000070c0000000c0000080be0000c03f00005040ad84",
+  "expect": "55350215012a477e29382aeb4eeaab3e53ea2c9257ea00009840000070c0000000c0000080be0000c03f00005040ad84",
+  "model": {
+    "@kind": "vel_ecef_cov_gnss"
+  }
+}

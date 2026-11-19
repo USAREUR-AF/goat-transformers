@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-gps_time",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "55020100010b2a8501d95637007c59d3af",
+  "expect": "55020100010b2a8501d95637007c59d3af",
+  "model": {
+    "@kind": "gps_time"
+  }
+}

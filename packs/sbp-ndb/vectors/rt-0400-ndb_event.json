@@ -1,0 +1,10 @@
+{
+  "name": "sbp-ndb-roundtrip-ndb_event",
+  "from": "sbp-ndb",
+  "to": "sbp-ndb",
+  "input": "5500040001124c5998390000008023fad1a87f562d04db4b",
+  "expect": "5500040001124c5998390000008023fad1a87f562d04db4b",
+  "model": {
+    "@kind": "ndb_event"
+  }
+}

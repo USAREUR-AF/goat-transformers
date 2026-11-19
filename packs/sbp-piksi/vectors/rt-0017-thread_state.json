@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-thread_state",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55170002011a53333700000000000000000000000000000000001cdff332312a",
+  "expect": "55170002011a53333700000000000000000000000000000000001cdff332312a",
+  "model": {
+    "@kind": "thread_state"
+  }
+}
