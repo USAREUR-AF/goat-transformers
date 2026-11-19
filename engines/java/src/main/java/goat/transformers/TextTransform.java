@@ -68,9 +68,12 @@ final class TextTransform {
 
     /** A parameter: decimal digits from {@code lo} to {@code hi}; -1 when it is not. */
     private static int param(String s, int lo, int hi) {
-        if (s.isEmpty() || s.length() > 3) return -1;
+        // an unsigned decimal integer: leading zeros are allowed (ruling 2c of 0.11)
+        if (s.isEmpty()) return -1;
         for (int i = 0; i < s.length(); i++) if (s.charAt(i) < '0' || s.charAt(i) > '9') return -1;
-        int v = Integer.parseInt(s);
+        String t = s.replaceFirst("^0+(?=.)", "");
+        if (t.length() > 3) return -1;
+        int v = Integer.parseInt(t);
         return v < lo || v > hi ? -1 : v;
     }
 

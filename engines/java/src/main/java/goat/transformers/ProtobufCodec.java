@@ -64,6 +64,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         String[] p = locator.split("\\.", -1);
         for (String seg : p) {
             if (seg.isEmpty()) return "protobuf path has an empty field number: " + locator;
+            if (!Transform.UNSIGNED.matcher(seg).matches()) return "protobuf path must be dot-separated field numbers: " + locator;
             long n;
             try {
                 n = Long.parseLong(seg);
@@ -120,6 +121,10 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             v = find(top, (int[]) when.loc);
         } catch (NotSubmessage ex) {
             return false;   // a when path whose prefix is not a submessage does not hold (ruling 31 of 0.8)
+        } catch (GtException ex) {
+            // a prefix whose bytes do not parse as a message: a when path never fails a decode (ruling 9b of 0.11)
+            if (ex.code() == GtException.Code.MALFORMED_WIRE) return false;
+            throw ex;
         }
         if (v == null) return false;
         if (when.present) return true;
@@ -207,6 +212,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 if (v.wt != 2) {
                     throw malformed("an item of " + g.list + " at " + g.locator + " is wire type " + v.wt + ", not a submessage");
                 }
+                takeItems(1);
                 if (v.sub == null) v.sub = parseMessage(v.bytes, 0, v.bytes.length);
                 Entity item = new Entity();
                 decodeScope(v.sub, g.body, item, fails);
@@ -224,10 +230,12 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 }
                 while (pos[0] < b.length) {
                     long num = wt == 0 ? readVarint(b, pos, b.length) : readFixed(b, pos, b.length, wt == 1 ? 8 : 4);
+                    takeItems(1);
                     items.add(scalarItem(g, wt, num, null, fails));
                 }
                 continue;
             }
+            takeItems(1);
             items.add(scalarItem(g, v.wt, v.num, v.bytes, fails));
         }
         return items;
@@ -330,7 +338,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 n.sub = new TreeMap<>();
                 cur.put(path[s], n);
             } else if (n.sub == null) {
-                throw new GtException(GtException.Code.BAD_PACK, pack.format, l.locator,
+                throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, l.locator,
                         "field number " + path[s] + " is used both as a value and as a submessage");
             }
             cur = n.sub;
@@ -388,7 +396,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             Node have = cur.get(last);
             if (have != null) {
                 if (have.sub != null) {
-                    throw new GtException(GtException.Code.BAD_PACK, pack.format, f.locator,
+                    throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, f.locator,
                             "field number " + last + " is used both as a value and as a submessage");
                 }
                 return;                                            // an earlier line on this locator already wrote it

@@ -100,13 +100,17 @@ final class XmlCodec extends Codec<Xml.Element> {
     private static String raw(Xml.Element root, Loc l) {
         Xml.Element el = find(root, l.path);
         if (el == null) return null;
-        if (l.text) return (!el.children.isEmpty() && Xml.isBlank(el.text)) ? "" : el.text.toString();
+        // all character data directly inside, kept exactly; none at all is no text (ruling 1m of 0.11)
+        if (l.text) return el.text.length() == 0 ? null : el.text.toString();
         return el.attrs.get(l.attr);
     }
 
     @Override
     boolean holds(Xml.Element root, Pack.When when) {
-        String raw = raw(root, (Loc) when.loc);
+        Loc loc = (Loc) when.loc;
+        // `when .../#text present` holds when the element exists, with or without text (ruling 1m of 0.11)
+        if (when.present && loc.text) return find(root, loc.path) != null;
+        String raw = raw(root, loc);
         if (raw == null) return false;
         return when.present || raw.equals(when.text);
     }
@@ -140,6 +144,7 @@ final class XmlCodec extends Codec<Xml.Element> {
                 for (Xml.Element c : holder.children) {
                     if (!c.name.equals(name)) continue;
                     if (items == null) items = new ArrayList<>();
+                    takeItems(1);
                     Entity item = new Entity();
                     decodeScope(c, g.body, item, fails, null);
                     items.add(item);
@@ -187,7 +192,11 @@ final class XmlCodec extends Codec<Xml.Element> {
             put(root, split(r.getKey()), r.getValue());
             written.add(r.getKey());
         }
-        return Xml.write(root);
+        try {
+            return Xml.write(root);
+        } catch (Xml.Unwritable ex) {
+            throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, null, ex.getMessage());
+        }
     }
 
     /** Write the lines of one scope under {@code root}: the document root, or one item element. */

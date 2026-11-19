@@ -16,6 +16,7 @@ public final class BitsTransform {
     private final Kind kind;
     private final String name;
     private long maxpos;      // linscale
+    private double maxposD;   // linscale: maxpos as the nearest double
     private double range;     // linscale
     private double factor;    // uscale, sscale: decimal factor
     private boolean fraction; // uscale, sscale: the factor is num/den
@@ -65,20 +66,27 @@ public final class BitsTransform {
         }
     }
 
-    private static final String DECIMAL = "[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?";
-
-    private static double decimal(String s, String what, String name, String format, String where) {
-        if (!s.matches(DECIMAL)) {
-            throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": " + what + " is not a decimal number in \"" + name + "\"");
-        }
-        double d = Double.parseDouble(s);
-        if (!Double.isFinite(d)) {
-            throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": " + what + " is out of range in \"" + name + "\"");
-        }
-        return d;
+    private static GtException bad(String format, String where, String detail) {
+        return new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": " + detail);
     }
 
-    /** Parse a bits transform token. The caller has checked {@link #isBitsName}. */
+    /** Number text (ruling 2b of 0.11) as a parameter; refused text is {@code bad-directive}. */
+    private static double number(String s, String what, String name, String format, String where) {
+        if (!Transform.isNumText(s)) throw bad(format, where, what + " is not number text in \"" + name + "\"");
+        return Double.parseDouble(s);
+    }
+
+    /** An unsigned decimal integer (ruling 2c of 0.11) of at least 1 as a parameter. */
+    private static long positive(String s, String what, String name, String format, String where) {
+        if (!Transform.UNSIGNED.matcher(s).matches()) {
+            throw bad(format, where, what + " is not an unsigned decimal integer in \"" + name + "\"");
+        }
+        double d = new BigDecimal(s).doubleValue();
+        if (d < 1) throw bad(format, where, what + " must be at least 1 in \"" + name + "\"");
+        return d >= 9.223372036854775807E18 ? Long.MAX_VALUE : new BigInteger(s).longValue();
+    }
+
+    /** Parse a bits transform token, checking its parameters (ruling 4d of 0.11). The caller has checked the name. */
     static BitsTransform parse(String name, String format, String where) {
         String[] p = name.split(":", -1);
         switch (p[0]) {
@@ -88,48 +96,34 @@ public final class BitsTransform {
             case "f64": return new BitsTransform(Kind.F64, name);
             case "ascii": return new BitsTransform(Kind.ASCII, name);
             case "linscale": {
-                if (p.length != 3) {
-                    throw new GtException(GtException.Code.BAD_PACK, format, null,
-                            where + ": linscale transform must be linscale:<maxpos>:<range>, got \"" + name + "\"");
-                }
+                if (p.length != 3) throw bad(format, where, "linscale takes linscale:<maxpos>:<range>, got \"" + name + "\"");
                 BitsTransform t = new BitsTransform(Kind.LINSCALE, name);
-                try {
-                    t.maxpos = Long.parseLong(p[1]);
-                } catch (NumberFormatException ex) {
-                    throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": linscale maxpos is not an integer: \"" + p[1] + "\"");
-                }
-                if (t.maxpos <= 0) {
-                    throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": linscale maxpos must be positive, got " + t.maxpos);
-                }
-                t.range = decimal(p[2], "linscale range", name, format, where);
+                t.maxpos = positive(p[1], "linscale maxpos", name, format, where);
+                t.maxposD = new BigDecimal(p[1]).doubleValue();
+                t.range = number(p[2], "linscale range", name, format, where);
+                if (t.range == 0) throw bad(format, where, "linscale range reads as zero in \"" + name + "\"");
                 return t;
             }
             default: {
                 if (p.length != 2 && p.length != 3) {
-                    throw new GtException(GtException.Code.BAD_PACK, format, null,
-                            where + ": transform must be " + p[0] + ":<factor>[:<offset>], got \"" + name + "\"");
+                    throw bad(format, where, p[0] + " takes " + p[0] + ":<factor>[:<offset>], got \"" + name + "\"");
                 }
                 BitsTransform t = new BitsTransform(p[0].equals("uscale") ? Kind.USCALE : Kind.SSCALE, name);
                 int slash = p[1].indexOf('/');
                 if (slash >= 0) {
                     String a = p[1].substring(0, slash), b = p[1].substring(slash + 1);
-                    if (!a.matches("[+-]?\\d+") || !b.matches("[+-]?\\d+")) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null,
-                                where + ": a fraction factor is <num>/<den> of two decimal integers, got \"" + p[1] + "\"");
+                    if (!Transform.UNSIGNED.matcher(a).matches() || !Transform.UNSIGNED.matcher(b).matches()) {
+                        throw bad(format, where, "a fraction factor is <num>/<den> of two unsigned decimal integers, got \"" + p[1] + "\"");
                     }
                     t.fraction = true;
-                    t.num = Double.parseDouble(a);
-                    t.den = Double.parseDouble(b);
-                    if (t.num == 0 || t.den == 0) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": a scale factor cannot be zero: \"" + p[1] + "\"");
-                    }
+                    t.num = new BigDecimal(a).doubleValue();
+                    t.den = new BigDecimal(b).doubleValue();
+                    if (t.num == 0 || t.den == 0) throw bad(format, where, "a scale factor cannot be zero: \"" + p[1] + "\"");
                 } else {
-                    t.factor = decimal(p[1], "scale factor", name, format, where);
-                    if (t.factor == 0) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": a scale factor cannot be zero: \"" + p[1] + "\"");
-                    }
+                    t.factor = number(p[1], "scale factor", name, format, where);
+                    if (t.factor == 0) throw bad(format, where, "a scale factor reads as zero: \"" + p[1] + "\"");
                 }
-                t.offset = p.length == 3 ? decimal(p[2], "scale offset", name, format, where) : 0.0;
+                t.offset = p.length == 3 ? number(p[2], "scale offset", name, format, where) : 0.0;
                 return t;
             }
         }
@@ -174,7 +168,7 @@ public final class BitsTransform {
             case TWOS:
                 return twosValue(raw, len);
             case LINSCALE:
-                return (double) twosValue(raw, len) / maxpos * range;
+                return (double) twosValue(raw, len) / maxposD * range;
             case USCALE:
                 return scaleDecode(unsignedToDouble(raw));
             case SSCALE:
@@ -204,35 +198,36 @@ public final class BitsTransform {
         return f;
     }
 
-    /** Model value to the low {@code len} bits to write. Throws IllegalArgumentException on a value it cannot carry. */
+    /**
+     * Model value to the {@code len} bits to write. A value outside the field's range is refused, never wrapped or
+     * clamped (ruling 4b of 0.11). Throws IllegalArgumentException on a value it cannot carry.
+     */
     long encode(Object value, int len) {
         switch (kind) {
-            case UINT:
-            case TWOS:
-                return Transform.asLong(value) & mask(len);
+            case UINT: {
+                long v = Transform.asLong(value);
+                if (len < 64 && (v < 0 || v > mask(len))) {
+                    throw new IllegalArgumentException("value " + v + " does not fit a " + len + "-bit uint field");
+                }
+                return v & mask(len);
+            }
+            case TWOS: {
+                long v = Transform.asLong(value);
+                if (len < 64 && (v < -(1L << (len - 1)) || v > (1L << (len - 1)) - 1)) {
+                    throw new IllegalArgumentException("value " + v + " does not fit a " + len + "-bit twos field");
+                }
+                return v & mask(len);
+            }
             case LINSCALE: {
                 double x = Transform.asDouble(value);
-                double q = Transform.roundHalfAway(x / range * maxpos);
-                return toLong(q) & mask(len);
+                double q = x / range * maxposD;
+                return fit(q, len, true, x);
             }
             case USCALE:
             case SSCALE: {
                 double x = Transform.asDouble(value);
                 double q = fraction ? (x - offset) * den / num : (x - offset) / factor;
-                double r = Transform.roundHalfAway(q);
-                double lo, hi; // lo <= r < hi
-                if (kind == Kind.USCALE) {
-                    lo = 0;
-                    hi = Math.scalb(1.0, len);
-                } else {
-                    lo = -Math.scalb(1.0, len - 1);
-                    hi = Math.scalb(1.0, len - 1);
-                }
-                if (!(r >= lo && r < hi)) {
-                    throw new IllegalArgumentException("value " + Transform.formatOrText(x) + " scales to " + r
-                            + ", outside the range of a " + len + "-bit " + (kind == Kind.USCALE ? "unsigned" : "signed") + " field");
-                }
-                return toLong(r) & mask(len);
+                return fit(q, len, kind == Kind.SSCALE, x);
             }
             case F32:
                 return Float.floatToIntBits(narrow(Transform.asDouble(value))) & 0xFFFFFFFFL;
@@ -246,12 +241,25 @@ public final class BitsTransform {
         }
     }
 
-    /** An integral double to the 64-bit pattern of that integer (the low 64 bits when it does not fit). */
+    /** {@code round(q)} (ruling 4a) checked against the field's range (4b), as the bits to write. */
+    private static long fit(double q, int len, boolean signed, double x) {
+        if (!Double.isFinite(q)) {
+            throw new IllegalArgumentException("value " + Transform.formatOrText(x) + " scales to a quotient that is not finite");
+        }
+        double r = Transform.roundHalfAway(q);
+        double lo = signed ? -Math.scalb(1.0, len - 1) : 0;
+        double hi = signed ? Math.scalb(1.0, len - 1) : Math.scalb(1.0, len);   // lo <= r < hi, exact powers of two
+        if (!(r >= lo && r < hi)) {
+            throw new IllegalArgumentException("value " + Transform.formatOrText(x) + " rounds to " + Transform.formatOrText(r)
+                    + ", outside the range of a " + len + "-bit " + (signed ? "signed" : "unsigned") + " field");
+        }
+        return toLong(r) & mask(len);
+    }
+
+    /** An integral double within the range of a 64-bit field to the 64-bit pattern of that integer. */
     private static long toLong(double r) {
-        if (Double.isNaN(r)) throw new IllegalArgumentException("value is not a number");
-        if (Double.isInfinite(r)) throw new IllegalArgumentException("value is infinite");
         if (r >= -9.223372036854775808E18 && r < 9.223372036854775808E18) return (long) r;
-        return new BigDecimal(r).toBigInteger().longValue();
+        return new BigDecimal(r).toBigInteger().longValue();   // an unsigned 64-bit value at or above 2^63
     }
 
     /**

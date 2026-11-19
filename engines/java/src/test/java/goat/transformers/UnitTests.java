@@ -27,6 +27,60 @@ final class UnitTests {
         modelAdditions();
         malformedInput(packs);
         sentinels();
+        strictRulings(packs);
+    }
+
+    /** Version 0.11: the parts of the strict rulings no shared vector reaches through the runner. */
+    static void strictRulings(Engine packs) {
+        String bd = "bad-directive";
+        String head = "format x\nversion 0.1.0\ndistribution public\nsource t\n";
+        // ruling 6f: a format not loaded, from before to
+        errorKind("capability of a format not loaded", "unknown-format", () -> packs.capability("no-such-format", "geojson"));
+        errorKind("capability to a format not loaded", "unknown-format", () -> packs.capability("geojson", "no-such-format"));
+        Engine.Capability self = packs.capability("geojson", "geojson");
+        check("a format against itself", self.dropped.isEmpty() && self.grade.equals(self.carried.isEmpty() ? "none" : "full"), self.grade);
+        // ruling 5: convert checks from, then to, before it reads the input
+        try {
+            packs.convert("no-such-from", "no-such-to", "not a message");
+            check("convert checks from first", false, "no error");
+        } catch (GtException ex) {
+            check("convert checks from first", ex.kind().equals("unknown-format") && "no-such-from".equals(ex.format()), ex.getMessage());
+        }
+        // ruling 7b: the limit is an integer of 0 or more
+        Engine limited = new Engine();
+        try {
+            limited.setMaxItems(-1);
+            check("negative limit on list items", false, "accepted");
+        } catch (IllegalArgumentException ex) {
+            check("negative limit on list items", true, "");
+        }
+        eq("default limit on list items", 100_000L, limited.maxItems());
+        // ruling 5e: one argument, a quoted value is one
+        check("quoted source of two words loads", Pack.parse(head + "source \"a b\"\nwire xml\nroot r\n", "t") != null, "");
+        errorKind("uses with two arguments", bd, () -> Pack.parse(head + "uses a b\nwire xml\nroot r\n", "t"));
+        // ruling 4d: parameters
+        String bits = head + "wire bits\nword_bytes 2\n";
+        errorKind("sscale fraction with a sign", bd, () -> Pack.parse(bits + "field x 0:0:8 sscale:-1/2\n", "t"));
+        errorKind("uint with a parameter", bd, () -> Pack.parse(bits + "field x 0:0:8 uint:3\n", "t"));
+        errorKind("linscale range infinite", bd, () -> Pack.parse(bits + "field x 0:0:8 linscale:10:1e400\n", "t"));
+        check("linscale maxpos with leading zeros loads", Pack.parse(bits + "field x 0:0:8 linscale:0010:90\n", "t") != null, "");
+        // ruling 2c: unsigned decimal integers in a pack
+        errorKind("item with a sign", bd, () -> Pack.parse(bits + "group probe.recs 0:8 item +8 count 1\n field probe.x 0:0:8 uint\nend\n", "t"));
+        errorKind("bits locator with a sign", "bad-locator", () -> Pack.parse(bits + "field x 0:+0:8 uint\n", "t"));
+        // ruling 3: iso8601_ms
+        eq("iso8601_ms fraction truncated", -1L, Transform.parseIso("1969-12-31T23:59:59.9999Z"));
+        eq("iso8601_ms leap day", 951782400000L, Transform.parseIso("2000-02-29T00:00:00Z"));
+        check("iso8601_ms 1900-02-29 refused", refuses(() -> Transform.parseIso("1900-02-29T00:00:00Z")), "");
+        eq("iso8601_ms -00:00 is UTC", 0L, Transform.parseIso("1970-01-01T00:00:00-00:00"));
+        eq("iso8601_ms first instant", Transform.ISO_MIN, Transform.parseIso("0001-01-01T00:00:00.000Z"));
+        eq("iso8601_ms last instant", Transform.ISO_MAX, Transform.parseIso("9999-12-31T23:59:59.999Z"));
+        eq("iso8601_ms writes the first instant", "0001-01-01T00:00:00.000Z", Transform.formatIso(Transform.ISO_MIN));
+        // ruling 2b: negative zero and the edge of the doubles
+        check("-1e-400 is negative zero", Double.doubleToRawLongBits(Transform.parseFloat("-1e-400")) == Long.MIN_VALUE, "");
+        check("1.7976931348623159e308 refused", refuses(() -> Transform.parseFloat("1.7976931348623159e308")), "");
+        eq("2f smallest subnormal", "0." + "0".repeat(323) + "5", Transform.formatDouble(Double.MIN_VALUE));
+        eq("2f 1e21", "1" + "0".repeat(21), Transform.formatDouble(1e21));
+        eq("2f negative zero", "0", Transform.formatDouble(-0.0));
     }
 
     /** Version 0.9: the rulings on absent-value sentinels that no shared vector pins (17 to 22) and a few beside them. */
@@ -340,7 +394,8 @@ final class UnitTests {
         // 32: a derive line refused on its own text is a line error, raised as the file is read.
         errorKind("derive line refused on its text, before missing-distribution", "bad-directive",
                 () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o nosuch other.o\n"));
-        errorKind("derive line refused on its text, before a later line error", "bad-directive",
+        // 0.11 ruling 5b: a derive line refused on its text is checked after the file, so a later line error wins
+        errorKind("derive line refused on its text, after a later line error", "unknown-directive",
                 () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o copy\nnosuchdirective\n"));
         errorKind("derive keys are checked after missing-distribution", "missing-distribution",
                 () -> pub.loadModel("module other\nversion 0.1.0\nkey o int -\nderive other.o copy other.nokey\n"));
@@ -442,7 +497,8 @@ final class UnitTests {
         errorKind("word_bytes in a sequential pack", "bad-directive", () -> Pack.parse(head + "word_bytes 1\n", "t"));
         errorKind("unknown layout", "bad-directive", () -> Pack.parse(head.replace("sequential", "serial"), "t"));
         errorKind("layout on another wire", "bad-directive", () -> Pack.parse(head.replace("wire bits", "wire json"), "t"));
-        check("layout after the lines it decides", Pack.parse(head.replace("layout sequential\n", "") + "field probe.x 8 uint\nopt\nend\nlayout sequential\n", "t").seq != null, "");
+        // 0.11 ruling 5b: layout sequential stands before the lines it decides
+        errorKind("layout after the lines it decides", "bad-directive", () -> Pack.parse(head.replace("layout sequential\n", "") + "field probe.x 8 uint\nopt\nend\nlayout sequential\n", "t"));
         errorKind("bit length in a fixed pack", "bad-directive", () -> Pack.parse(head.replace("layout sequential", "word_bytes 1") + "field probe.x 8 uint\n", "t"));
         errorKind("pad in a fixed pack", "bad-directive", () -> Pack.parse(head.replace("layout sequential", "word_bytes 1") + "pad 8\n", "t"));
         errorKind("position in a sequential pack", "bad-directive", () -> Pack.parse(head + "field probe.x 0:0:8 uint\n", "t"));
@@ -587,7 +643,7 @@ final class UnitTests {
         check("a list is not a key", !m.keys.containsKey("items"), m.keys.toString());
         errorKind("list and key of one name", "duplicate-key", () -> ModelModule.parse(probe + "key items string -\n", "t"));
         errorKind("list declared twice", "duplicate-key", () -> ModelModule.parse(probe + "list subs\n", "t"));
-        throwsCode("list name with a dot", GtException.Code.BAD_MODEL, () -> ModelModule.parse(probe + "list a.b\n", "t"));
+        throwsCode("list name with a dot", GtException.Code.BAD_DIRECTIVE, () -> ModelModule.parse(probe + "list a.b\n", "t"));
 
         // Load checks on the block structure.
         String json = "format g\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire json\n";
@@ -679,7 +735,7 @@ final class UnitTests {
         eq("const without kinds loads", 1, Pack.parse(MINI + "const @v 1\n", "t").kinds.get(0).scope.fixed.size());
         Pack roots = Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire xml\nkind a\nroot ra\nkind b\nroot rb\n", "t");
         eq("root per kind", "rb", roots.kind("b").root);
-        throwsCode("xml kind without any root", GtException.Code.BAD_PACK,
+        throwsCode("xml kind without any root", GtException.Code.MISSING_ROOT,
                 () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire xml\nkind a\nroot ra\nkind b\n", "t"));
         Pack tables = Pack.parse(MINI + "field uid @a string via s\nmap s 1 one\nmap i a 1\nmap i b -2\nmap f a 1\nmap f b 2.5\n", "t");
         eq("table type string", "string", tables.tableType("s"));
@@ -846,11 +902,14 @@ final class UnitTests {
                 Pack.parse(MINI + "field uid @a string\nfield uid @b string\nkind a\nfield uid @c string\n", "t").fields.size());
         errorKind("requires before kind", "bad-directive", () -> Pack.parse(MINI + "requires uid\n", "t"));
         errorKind("when without kind", "bad-directive", () -> Pack.parse(MINI + "when @k a\n", "t"));
-        errorKind("bit_order before a text wire line", "bad-directive",
+        errorKind("bit_order on a text wire", "bad-directive",
+                () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire json\nbit_order lsb\n", "t"));
+        // 0.11 ruling 5b: bit_order stands after the wire line
+        errorKind("bit_order before the wire line", "missing-wire",
                 () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nbit_order lsb\nwire json\n", "t"));
         errorKind("bits when value too wide", "bad-directive", () -> Pack.parse(bitsHead + "kind a\nwhen 0:0:3 8\n", "t"));
         errorKind("f32 bad len", "bad-directive", () -> Pack.parse(bitsHead + "field x 0:0:31 f32\n", "t"));
-        throwsCode("bool off the json wire", GtException.Code.UNKNOWN_TRANSFORM, () -> Pack.parse(MINI + "field x @x bool\n", "t"));
+        throwsCode("bool off the json wire", GtException.Code.BAD_DIRECTIVE, () -> Pack.parse(MINI + "field x @x bool\n", "t"));
 
         // Tokens: no escape inside quotes, and # inside quotes is literal.
         eq("quote without escape", "[source, a\\b #c, x]", Pack.tokenize("source \"a\\b #c\" x # tail", "t").toString());
@@ -887,16 +946,17 @@ final class UnitTests {
         eq("module of dotted key", "track", ModelModule.moduleOf("track.confidence"));
         eq("key of dotted key", "b.c", ModelModule.keyOf("a.b.c"));
         throwsCode("module unknown directive", GtException.Code.UNKNOWN_DIRECTIVE, () -> ModelModule.parse(CORE + "field uid @id string\n", "t"));
-        throwsCode("module key with dot", GtException.Code.BAD_MODEL, () -> ModelModule.parse(CORE + "key a.b int -\n", "t"));
-        throwsCode("module key bad type", GtException.Code.BAD_MODEL, () -> ModelModule.parse(CORE + "key a bool -\n", "t"));
-        throwsCode("module bad distribution", GtException.Code.BAD_MODEL,
+        throwsCode("module key with dot", GtException.Code.BAD_DIRECTIVE, () -> ModelModule.parse(CORE + "key a.b int -\n", "t"));
+        throwsCode("module key bad type", GtException.Code.BAD_DIRECTIVE, () -> ModelModule.parse(CORE + "key a bool -\n", "t"));
+        throwsCode("module bad distribution", GtException.Code.BAD_DIRECTIVE,
                 () -> ModelModule.parse("module m\nversion 0.1.0\ndistribution secret\nsource t\n", "t"));
-        throwsCode("module missing distribution before duplicate key", GtException.Code.MISSING_DISTRIBUTION,
+        // 0.11 ruling 5b: duplicate-key is checked right after the file, before missing-distribution
+        throwsCode("module duplicate key before missing distribution", GtException.Code.DUPLICATE_KEY,
                 () -> ModelModule.parse("module m\nversion 0.1.0\nsource t\nkey a int -\nkey a int -\n", "t"));
         throwsCode("module missing source", GtException.Code.MISSING_SOURCE,
                 () -> ModelModule.parse("module m\nversion 0.1.0\ndistribution public\nkey a int -\n", "t"));
         throwsCode("module duplicate key", GtException.Code.DUPLICATE_KEY, () -> ModelModule.parse(CORE + "key uid string -\n", "t"));
-        throwsCode("pack bad distribution", GtException.Code.BAD_PACK,
+        throwsCode("pack bad distribution", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format x\nversion 0.1.0\ndistribution secret\nsource t\nwire xml\nroot r\n", "t"));
         throwsCode("pack missing distribution before missing source", GtException.Code.MISSING_DISTRIBUTION,
                 () -> Pack.parse("format x\nversion 0.1.0\nwire xml\nroot r\n", "t"));
@@ -1004,10 +1064,10 @@ final class UnitTests {
     static void packErrors() {
         throwsCode("unknown directive", GtException.Code.UNKNOWN_DIRECTIVE, () -> Pack.parse(MINI + "frobnicate a b\n", "t"));
         throwsCode("unknown transform", GtException.Code.UNKNOWN_TRANSFORM, () -> Pack.parse(MINI + "field uid @uid base64\n", "t"));
-        throwsCode("xml needs root", GtException.Code.BAD_PACK, () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire xml\n", "t"));
-        throwsCode("unknown wire", GtException.Code.BAD_PACK, () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire csv\n", "t"));
-        throwsCode("bad xml locator", GtException.Code.BAD_PACK, () -> Pack.parse(MINI + "field uid point string\n", "t"));
-        throwsCode("bad geojson locator", GtException.Code.BAD_PACK,
+        throwsCode("xml needs root", GtException.Code.MISSING_ROOT, () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire xml\n", "t"));
+        throwsCode("unknown wire", GtException.Code.UNKNOWN_WIRE, () -> Pack.parse("format x\nversion 0.1.0\ndistribution public\nsource t\nwire csv\n", "t"));
+        throwsCode("bad xml locator", GtException.Code.BAD_LOCATOR, () -> Pack.parse(MINI + "field uid point string\n", "t"));
+        throwsCode("bad geojson locator", GtException.Code.BAD_LOCATOR,
                 () -> Pack.parse("format g\nversion 0.1.0\ndistribution public\nsource t\nwire geojson\nfield lat geometry.z float\n", "t"));
         Pack p = Pack.parse(MINI + "field remarks  \"a b/#text\"  string  # trailing comment\nfield t note/#text string\n", "t");
         eq("quoted locator", "a b/#text", p.fields.get(0).locator);
@@ -1109,19 +1169,19 @@ final class UnitTests {
         eq("linscale encode rounds", 500L, ls.encode(50.0, 16));
 
         // Wire-kind mismatches and bits-pack structural errors.
-        throwsCode("bits transform on text wire", GtException.Code.UNKNOWN_TRANSFORM,
+        throwsCode("bits transform on text wire", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire geojson\nfield lat geometry.lat uint\n", "t"));
-        throwsCode("text transform on bits wire", GtException.Code.UNKNOWN_TRANSFORM,
+        throwsCode("text transform on bits wire", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire bits\nword_bytes 2\nfield x 0:0:8 string\n", "t"));
-        throwsCode("bits needs word_bytes", GtException.Code.BAD_PACK,
+        throwsCode("bits needs word_bytes", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire bits\nfield x 0:0:8 uint\n", "t"));
-        throwsCode("word_bytes only on bits", GtException.Code.BAD_PACK,
+        throwsCode("word_bytes only on bits", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire geojson\nword_bytes 2\n", "t"));
         eq("bits field past its word loads", "0:4:8",
                 Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire bits\nword_bytes 1\nfield x 0:4:8 uint\n", "t").fields.get(0).locator);
         throwsCode("bits len over 64", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire bits\nword_bytes 1\nfield x 0:0:65 uint\n", "t"));
-        throwsCode("bad linscale params", GtException.Code.BAD_PACK,
+        throwsCode("bad linscale params", GtException.Code.BAD_DIRECTIVE,
                 () -> Pack.parse("format b\nversion 0.1.0\ndistribution public\nsource t\nwire bits\nword_bytes 4\nfield x 0:0:16 linscale:abc:90\n", "t"));
     }
 }

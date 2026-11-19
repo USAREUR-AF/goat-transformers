@@ -162,7 +162,7 @@ final class Seq {
 
         private static void arity(String kw, List<String> args, int n, String where, String format) {
             if (args.size() != n) {
-                throw new GtException(GtException.Code.BAD_PACK, format, null,
+                throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null,
                         where + ": " + kw + " takes " + n + " argument(s), got " + args.size());
             }
         }
@@ -172,8 +172,13 @@ final class Seq {
             if (text.indexOf(':') >= 0) {
                 throw bad(format, text, where + ": " + what + " takes a bit length in a sequential pack, not a position: " + text);
             }
-            if (!text.matches("\\d{1,9}")) throw bad(format, text, where + ": " + what + " takes a bit length, got \"" + text + "\"");
-            int n = Integer.parseInt(text);
+            // an unsigned decimal integer: leading zeros are allowed (ruling 2c of 0.11)
+            if (!Transform.UNSIGNED.matcher(text).matches()) throw bad(format, text, where + ": " + what + " takes a bit length, got \"" + text + "\"");
+            String digits = text.replaceFirst("^0+(?=.)", "");
+            if (digits.length() > 10 || Long.parseLong(digits) > Integer.MAX_VALUE) {
+                throw bad(format, text, where + ": " + what + " takes a length of " + min + " to " + max + " bits, got " + text);
+            }
+            int n = Integer.parseInt(digits);
             if (n < min || n > max) {
                 throw bad(format, text, where + ": " + what + " takes a length of " + min + " to " + max + " bits, got " + n);
             }
@@ -182,12 +187,9 @@ final class Seq {
 
         private static long unsignedValue(String v, int len, String what, String where, String format) {
             if (!v.matches("\\d+")) throw bad(format, null, where + ": a " + what + " value is an unsigned decimal integer, got \"" + v + "\"");
-            long n;
-            try {
-                n = Long.parseUnsignedLong(v);
-            } catch (NumberFormatException ex) {
-                throw bad(format, null, where + ": " + what + " value " + v + " does not fit 64 bits");
-            }
+            Long parsed = Transform.parseUnsigned(v, 64);
+            if (parsed == null) throw bad(format, null, where + ": " + what + " value " + v + " does not fit 64 bits");
+            long n = parsed;
             if (len < 64 && (n < 0 || n > BitsTransform.mask(len))) {
                 throw bad(format, null, where + ": " + what + " value " + v + " does not fit " + len + " bits");
             }
@@ -237,17 +239,20 @@ final class Seq {
             switch (kw) {
                 case "field": {
                     if (args.size() < 3) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": field takes at least 3 arguments, got " + args.size());
+                        throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": field takes at least 3 arguments, got " + args.size());
                     }
                     String key = args.get(0), locator = args.get(1), tname = args.get(2);
-                    int len = bitLength(locator, 1, Integer.MAX_VALUE, "a field", where, format);
-                    if (!BitsTransform.isBitsName(tname)) {
-                        String w = (Transform.byName(tname) != null || PbTransform.isPbName(tname))
-                                ? "transform \"" + tname + "\" is not valid on wire bits"
-                                : "unknown transform \"" + tname + "\"";
-                        throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, locator, where + ": " + w);
+                    // the line checks of ruling 5b of 0.11 in order: the transform, the locator, the options, the
+                    // absent values; a length the transform does not allow is checked after the file (ruling 4d)
+                    Pack.checkTransformName(tname, format, locator, where);
+                    if (locator.indexOf(':') < 0 && !Transform.UNSIGNED.matcher(locator).matches()) {
+                        throw new GtException(GtException.Code.BAD_LOCATOR, format, locator, where + ": a field takes a bit length, got \"" + locator + "\"");
                     }
-                    BitsTransform bt = BitsTransform.parse(tname, format, where);
+                    if (locator.matches("0+")) {
+                        throw new GtException(GtException.Code.BAD_LOCATOR, format, locator, where + ": a bit length of 0");
+                    }
+                    int len = bitLength(locator, 1, Integer.MAX_VALUE, "a field", where, format);
+                    BitsTransform bt = BitsTransform.isBitsName(tname) ? BitsTransform.parse(tname, format, where) : null;
                     String via = null, absent = null;
                     boolean swap = false, trim = false;
                     for (int i = 3; i < args.size(); i++) {
@@ -263,13 +268,11 @@ final class Seq {
                         else if (o.equals("optional")) throw bad(format, locator, where + ": optional is not a field option of a sequential pack");
                         else throw bad(format, locator, where + ": unknown or repeated field option \"" + o + "\"");
                     }
-                    if (trim && !bt.isAscii()) throw bad(format, locator, where + ": trim is for the ascii transform only");
-                    String lenWhy = bt.checkLen(len);
-                    if (lenWhy != null) throw bad(format, locator, where + ": " + lenWhy);
-                    if (swap && len % 8 != 0) throw bad(format, locator, where + ": swap needs a length that is a multiple of 8, got " + len);
+                    Sentinels sentinels = absent != null && len <= 64 ? Sentinels.integers(absent, len, format, locator, where) : null;
                     if (via != null) vias.add(new String[]{via, locator, where});
                     Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, swap, trim, false, ln);
-                    if (absent != null) fl.absent = Sentinels.integers(absent, len, format, locator, where);
+                    fl.absent = sentinels;
+                    afterFile.add(new Object[]{fl, tname, len, where, absent});
                     fields.add(fl);
                     typed.add(fl);
                     keyRefs.add(new String[]{key, locator});
@@ -411,9 +414,9 @@ final class Seq {
                         if (o.equals("bytes") && !bytes && !bits) bytes = true;
                         else if (o.equals("bits") && !bytes && !bits) bits = true;
                         else if (o.equals("whole") && !whole) whole = true;
-                        else if (o.equals("plus") && plus == null && i + 1 < args.size() && args.get(i + 1).matches("[+-]?\\d{1,18}")) {
-                            String p = args.get(++i);
-                            plus = Long.parseLong(p.startsWith("+") ? p.substring(1) : p);
+                        else if (o.equals("plus") && plus == null && i + 1 < args.size() && Transform.INT_TEXT.matcher(args.get(i + 1)).matches()
+                                && args.get(i + 1).replaceFirst("^-?0*", "").length() <= 18) {
+                            plus = Transform.parseInt(args.get(++i));   // integer text (ruling 2c of 0.11)
                         } else {
                             throw bad(format, null, where + ": length is length <len> [bytes|bits] [plus <n>] [whole], got \"" + o + "\"");
                         }
@@ -433,7 +436,7 @@ final class Seq {
                 case "group": {
                     String form = "a group of a sequential pack is group <list> count <len> | while | more | fx";
                     if (args.size() < 2) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": group takes at least 2 arguments, got " + args.size());
+                        throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": group takes at least 2 arguments, got " + args.size());
                     }
                     Node n = new Node(Op.GROUP, ln);
                     n.list = args.get(0);
@@ -492,7 +495,7 @@ final class Seq {
                 }
                 case "requires": {
                     if (args.isEmpty()) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, null, where + ": requires takes at least 1 argument, got 0");
+                        throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": requires takes at least 1 argument, got 0");
                     }
                     if (!f.isBody()) throw bad(format, null, where + ": requires inside a block");
                     if (f.kind == null) throw bad(format, null, where + ": requires before the first kind line");
@@ -535,11 +538,29 @@ final class Seq {
             }
         }
 
-        /** The checks that need the whole file: every block is ended, and every table a line names has a map line. */
+        /** The field lines whose transform and length are checked after the file: {field, transform, len, where}. */
+        private final List<Object[]> afterFile = new ArrayList<>();
+
+        /**
+         * The checks that need the whole file: every block is ended, each field's transform is a transform of the
+         * bits wire and allows its length (ruling 25 of 0.5), and every table a line names has a map line.
+         */
         Body finish(Map<String, List<String[]>> tables, String format) {
             if (stack.size() > 1) {
                 Frame f = stack.peek();
                 throw bad(format, null, source + ":" + f.line + ": " + f.what + " has no end");
+            }
+            for (Object[] a : afterFile) {
+                Pack.Field fl = (Pack.Field) a[0];
+                String tname = (String) a[1], where = (String) a[3];
+                int len = (Integer) a[2];
+                if (fl.bits == null) throw bad(format, fl.locator, where + ": transform \"" + tname + "\" is not valid on wire bits");
+                if (fl.trim && !fl.bits.isAscii()) throw bad(format, fl.locator, where + ": trim is for the ascii transform only");
+                String lenWhy = fl.bits.checkLen(len);
+                if (lenWhy != null) throw bad(format, fl.locator, where + ": " + lenWhy);
+                if (fl.swap && len % 8 != 0) throw bad(format, fl.locator, where + ": swap needs a length that is a multiple of 8, got " + len);
+                // the absent option of a field above 64 bits, which the line check leaves (ruling 4d of 0.11)
+                if (a[4] != null && len > 64) Sentinels.integers((String) a[4], len, format, fl.locator, where);
             }
             finishBody(root, format, source);
             for (String[] v : vias) {

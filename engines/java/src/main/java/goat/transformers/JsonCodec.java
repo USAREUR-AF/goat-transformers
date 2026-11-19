@@ -168,7 +168,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
             Object d;
             try {
-                d = geo ? f.transform.decode(GeoJsonCodec.rawText(v, f.transform)) : decodeValue(f.transform, v);
+                d = geo ? GeoJsonCodec.decodeGeo(f.transform, v) : decodeValue(f.transform, v);
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
                 continue;
@@ -183,6 +183,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         if (!(v instanceof List)) throw malformed("the member at " + g.locator + " is " + typeName(v) + ", not an array");
         List<Object> arr = (List<Object>) v;
         List<Entity> items = new ArrayList<>(arr.size());
+        takeItems(arr.size());   // the array is parsed already; its items are counted before any is read
         for (Object el : arr) {
             Entity item = new Entity();
             decodeScope(el, g.body, item, fails, null, geo);

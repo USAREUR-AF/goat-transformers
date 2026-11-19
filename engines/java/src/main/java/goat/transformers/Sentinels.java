@@ -89,12 +89,9 @@ final class Sentinels {
             if (!v.matches("\\d+")) {
                 throw bad(format, locator, where, "a value here is an unsigned decimal integer, got \"" + v + "\"");
             }
-            long n;
-            try {
-                n = Long.parseUnsignedLong(v);
-            } catch (NumberFormatException ex) {
-                throw bad(format, locator, where, "value " + v + " does not fit 64 bits");
-            }
+            Long parsed = Transform.parseUnsigned(v, 64);
+            if (parsed == null) throw bad(format, locator, where, "value " + v + " does not fit 64 bits");
+            long n = parsed;
             if (width < 64 && Long.compareUnsigned(n, BitsTransform.mask(width)) > 0) {
                 throw bad(format, locator, where, "value " + v + " does not fit " + width + " bits");
             }

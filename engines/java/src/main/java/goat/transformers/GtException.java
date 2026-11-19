@@ -7,13 +7,11 @@ public final class GtException extends RuntimeException {
     public enum Code {
         UNKNOWN_DIRECTIVE,
         UNKNOWN_TRANSFORM,
-        BAD_PACK,
         UNKNOWN_FORMAT,
         MALFORMED_WIRE,
         MISSING_ROOT,
         TRANSFORM_DECODE,
         TRANSFORM_ENCODE,
-        BAD_MODEL,
         // Version 0.5.
         NO_KIND,
         DUPLICATE_KIND,
@@ -28,7 +26,16 @@ public final class GtException extends RuntimeException {
         UNDECLARED_KEY("undeclared-key"),
         KEY_TYPE_MISMATCH("key-type-mismatch"),
         DUPLICATE_MODULE("duplicate-module"),
-        DUPLICATE_KEY("duplicate-key");
+        DUPLICATE_KEY("duplicate-key"),
+        // Version 0.11, ruling 5: the load failures that had no kind.
+        UNTERMINATED_QUOTE,
+        UNKNOWN_WIRE,
+        BAD_LOCATOR,
+        MISSING_FORMAT,
+        MISSING_VERSION,
+        MISSING_WIRE,
+        MISSING_MODULE,
+        DUPLICATE_FORMAT;
 
         private final String specKind;
 

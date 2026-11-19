@@ -385,12 +385,11 @@ public final class Pack {
     }
 
     private final Map<String, String> tableTypes = new java.util.HashMap<>();
-    private static final java.util.regex.Pattern INTEGER = java.util.regex.Pattern.compile("[+-]?\\d+");
 
     private String computeTableType(String table) {
         boolean allInt = true, allNum = true;
         for (String[] en : tables.get(table)) {
-            if (!INTEGER.matcher(en[1]).matches()) allInt = false;
+            if (!Transform.INT_TEXT.matcher(en[1]).matches()) allInt = false;
             if (read(en[1], "float") == UNREADABLE) allNum = false;
         }
         return allInt ? "int" : allNum ? "float" : "string";
@@ -424,7 +423,11 @@ public final class Pack {
     }
 
     private static GtException bad(String format, String locator, String detail) {
-        return new GtException(GtException.Code.BAD_PACK, format, locator, detail);
+        return new GtException(GtException.Code.BAD_DIRECTIVE, format, locator, detail);
+    }
+
+    private static GtException badLocator(String format, String locator, String detail) {
+        return new GtException(GtException.Code.BAD_LOCATOR, format, locator, detail);
     }
 
     private static GtException badDirective(String format, String locator, String detail) {
@@ -435,6 +438,204 @@ public final class Pack {
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
             "delimiter", "start", "checksum");
+
+    /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
+    static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
+            "field", "when", "const", "kind", "requires", "default", "map", "typemap", "group", "end", "word_bytes",
+            "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
+            "delimiter", "start", "checksum");
+
+    /** The directives that take exactly one argument (ruling 5e of 0.11). */
+    private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
+            "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum");
+
+    /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
+    private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
+            "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length");
+
+    /** Every transform of the specification, by the text before its first {@code :}. */
+    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
+            "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
+            "dec", "dm", "hms", "hms_dmy");
+
+    /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
+    private static void lineArity(String kw, List<String> args, String where, String format) {
+        int n = args.size();
+        boolean ok;
+        switch (kw) {
+            case "field": ok = n >= 3; break;
+            case "when":
+            case "const":
+            case "default":
+            case "typemap": ok = n == 2; break;
+            case "map": ok = n == 3; break;
+            case "requires": ok = n >= 1; break;
+            case "group": ok = n >= 2; break;
+            case "end": ok = n == 0; break;
+            default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
+        }
+        if (!ok) throw bad(format, null, where + ": " + kw + " has the wrong number of arguments (" + n + ")");
+    }
+
+    /**
+     * Check 7 of ruling 5b: the transform's name, the text before its first {@code :}, is a transform of the
+     * specification ({@code unknown-transform}), and its parameters are valid ({@code bad-directive}). Whether the
+     * transform is valid on the pack's wire is checked after the file.
+     */
+    static void checkTransformName(String name, String format, String locator, String where) {
+        int c = name.indexOf(':');
+        String head = c < 0 ? name : name.substring(0, c);
+        if (!TRANSFORMS.contains(head)) {
+            throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, locator, where + ": unknown transform \"" + name + "\"");
+        }
+        if (TextTransform.isTextOnlyName(name)) {
+            TextTransform.parseTextOnly(name, format, locator, where);
+        } else if (head.equals("linscale") || head.equals("uscale") || head.equals("sscale")) {
+            BitsTransform.parse(name, format, where);
+        } else if (c >= 0) {
+            throw badDirective(format, locator, where + ": transform " + head + " takes no parameters, got \"" + name + "\"");
+        }
+    }
+
+    /**
+     * Check 8 of ruling 5b: the form of a fixed-layout locator on its wire (ruling 5a of 0.11). {@code inGroup}: the
+     * line is in a group body (a {@code geojson} item is read as {@code json}).
+     */
+    static void lineCheckLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
+        String why;
+        switch (wire) {
+            case XML: why = XmlCodec.checkFieldLocator(loc); break;
+            case JSON: why = loc.equals(".") ? null : JsonCodec.checkLocator(loc); break;
+            case GEOJSON: why = loc.equals(".") ? null : inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkFieldLocator(loc); break;
+            case PROTOBUF: why = loc.equals(".") ? null : ProtobufCodec.checkFieldLocator(loc); break;
+            case BITS:
+                // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file)
+                why = Transform.UNSIGNED.matcher(loc).matches() ? null : BitsCodec.checkLocator(loc);
+                break;
+            default:
+                if (TextCodec.parseLocator(loc) == null) {
+                    throw badDirective(format, loc, where + ": a text locator is <i>, <i>:<from>:<len> (len from 1) or <i>+<j>, got \"" + loc + "\"");
+                }
+                why = null;
+        }
+        if (why != null) throw badLocator(format, loc, where + ": " + why);
+    }
+
+    /** The header lines a pack has once (check 5 of ruling 5b). */
+    private static final Set<String> HEADERS = Set.of("format", "version", "wire", "distribution");
+
+    private static final Set<String> WIRES = Set.of("xml", "geojson", "json", "bits", "protobuf", "text");
+
+    /** Check 8 for a {@code group} line of a fixed-layout pack: the form of its locator (ruling 5a of 0.11). */
+    private static void lineCheckGroupLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
+        String why;
+        switch (wire) {
+            case XML: why = XmlCodec.checkGroupLocator(loc); break;
+            case JSON: why = JsonCodec.checkLocator(loc); break;
+            case GEOJSON: why = inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkGroupLocator(loc); break;
+            case PROTOBUF: why = ProtobufCodec.checkFieldLocator(loc); break;
+            // bits: 5a names field, when and const lines only, and a group with a sequential form (`while`) in a
+            // fixed-layout pack stays bad-directive; text: its group form is checked after the file
+            default: why = null;
+        }
+        if (why != null) throw badLocator(format, loc, where + ": " + why);
+    }
+
+    /** Check 8 for a {@code when} or {@code const} line of a sequential pack: its bit length (ruling 5a of 0.11). */
+    private static void lineCheckSeqLocator(String loc, String format, String where) {
+        if (loc.indexOf(':') >= 0) {
+            // an earlier version's case, bad-directive (ruling 5a)
+            throw badDirective(format, loc, where + ": a sequential pack takes a bit length, not a position: " + loc);
+        }
+        if (!Transform.UNSIGNED.matcher(loc).matches()) throw badLocator(format, loc, where + ": a bit length, got \"" + loc + "\"");
+        if (loc.matches("0+")) throw badLocator(format, loc, where + ": a bit length of 0");
+    }
+
+    /**
+     * Checks 7 to 10 of ruling 5b for a {@code field} line of a sequential pack: the transform, the bit length, the
+     * syntax of the options, and the values of an {@code absent} option on a field of at most 64 bits.
+     */
+    private static void lineCheckSeqField(List<String> args, String format, String where) {
+        String loc = args.get(1);
+        checkTransformName(args.get(2), format, loc, where);
+        lineCheckSeqLocator(loc, format, where);
+        String absent = optionSyntax(args, format, loc, where);
+        if (absent == null) return;
+        String digits = loc.replaceFirst("^0+(?=.)", "");
+        if (digits.length() > 2 || Integer.parseInt(digits) > 64) return;   // ruling 4d: checked after the file
+        Sentinels.integers(absent, Integer.parseInt(digits), format, loc, where);
+    }
+
+    /** Check 9: the options this specification has, each once, each with its argument. Returns the absent argument. */
+    private static String optionSyntax(List<String> args, String format, String loc, String where) {
+        String absent = null;
+        Set<String> seen = new HashSet<>();
+        for (int i = 3; i < args.size(); i++) {
+            String o = args.get(i);
+            switch (o) {
+                case "absent":
+                case "via":
+                    if (!seen.add(o)) throw badDirective(format, loc, where + ": " + o + " given twice");
+                    if (i + 1 >= args.size()) throw badDirective(format, loc, where + ": " + o + " takes an argument");
+                    String a = args.get(++i);
+                    if (o.equals("absent")) absent = a;
+                    break;
+                case "swap":
+                case "trim":
+                case "optional":
+                    if (!seen.add(o)) throw badDirective(format, loc, where + ": " + o + " given twice");
+                    break;
+                default:
+                    throw badDirective(format, loc, where + ": unknown field option \"" + o + "\"");
+            }
+        }
+        return absent;
+    }
+
+    /**
+     * Checks 7 to 10 of ruling 5b for a {@code field} line of a fixed-layout pack: the transform, the locator, the
+     * field options, and the values of an {@code absent} option (not on a {@code bits} field above 64 bits, whose
+     * length the check after the file refuses).
+     */
+    private static void lineCheckField(List<String> args, Wire wire, boolean inGroup, String format, String where) {
+        String loc = args.get(1), tname = args.get(2);
+        checkTransformName(tname, format, loc, where);
+        lineCheckLocator(wire, loc, inGroup, format, where);
+        String absent = optionSyntax(args, format, loc, where);
+        // whether an option fits the wire or the transform is checked after the file (ruling 5b, step 9)
+        if (absent == null) return;
+        switch (wire) {
+            case BITS: {
+                if (!loc.contains(":")) return;              // refused after the file
+                int len = BitsCodec.parseLoc(loc)[2];
+                if (len > 64) return;                         // ruling 4d: the length check after the file reports it
+                Sentinels.integers(absent, len, format, loc, where);
+                return;
+            }
+            case PROTOBUF: {
+                PbTransform pb = PbTransform.byName(tname);
+                if (pb == null) return;                       // a transform of another wire, refused after the file
+                if (pb.wireType() == 2) Sentinels.texts(absent, false, format, loc, where);
+                else Sentinels.integers(absent, pb.wireType() == 5 ? 32 : 64, format, loc, where);
+                return;
+            }
+            case XML:
+                Sentinels.texts(absent, true, format, loc, where);
+                return;
+            case TEXT:
+                return;   // absent does not fit the text wire (ruling 16 of 0.10): checked after the file
+            default: {
+                Sentinels sv = Sentinels.json(absent, tname.equals("bool"), format, loc, where);
+                if (wire == Wire.GEOJSON && !inGroup && GeoJsonCodec.coordIndex(loc) >= 0) {
+                    for (Object v : sv.json) {
+                        if (!(v instanceof Json.Num)) {
+                            throw badDirective(format, loc, where + ": absent: a coordinate takes only number text as a sentinel");
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /** What {@link #resolve} needs to know about the pack, and what it collects. */
     private static final class Ctx {
@@ -490,13 +691,60 @@ public final class Pack {
         }
         Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs) : null;
         String layout = null;
+        boolean listedSeen = false;   // a line that must follow the wire line, other than layout, has been read
+        Set<String> headers = new HashSet<>();   // the header lines read so far, for check 5
+        // The first failure that is not a line check (steps 1 to 10 of ruling 5b): it is reported after the file, so
+        // a later line's own line check wins over it. The lines after it are still read, their failures dropped.
+        RuntimeException deferred = null;
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
             String where = source + ":" + ln;
+            // The line checks of ruling 5b of 0.11, in their order: the quote, the directive, the number of
+            // arguments, missing-wire, then (in the switch) a repeated header line and the wire and distribution values.
             List<String> tok = tokenize(lines[i], where);
             if (tok.isEmpty()) continue;
             String kw = tok.get(0);
             List<String> args = tok.subList(1, tok.size());
+            if (!DIRECTIVES.contains(kw)) {
+                throw new GtException(GtException.Code.UNKNOWN_DIRECTIVE, format, null, where + ": unknown directive \"" + kw + "\"");
+            }
+            lineArity(kw, args, where, format);
+            if (AFTER_WIRE.contains(kw)) {
+                if (wire == null) {
+                    throw new GtException(GtException.Code.MISSING_WIRE, format, null,
+                            where + ": " + kw + " stands before the wire line");
+                }
+            }
+            // check 5: a repeated header line; check 6: the wire and distribution values
+            if (HEADERS.contains(kw) && !headers.add(kw)) throw dup(kw, where, format);
+            if (kw.equals("wire") && !WIRES.contains(args.get(0))) {
+                throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": unknown wire \"" + args.get(0) + "\"");
+            }
+            if (kw.equals("distribution") && Distribution.byToken(args.get(0)) == null) {
+                throw bad(format, null, where + ": distribution must be public or controlled, got \"" + args.get(0) + "\"");
+            }
+            // checks 7 to 10
+            if (kw.equals("field") && seq == null) {
+                lineCheckField(args, wire, !open.isEmpty(), format, where);
+            } else if (kw.equals("field")) {
+                lineCheckSeqField(args, format, where);
+            } else if ((kw.equals("when") || kw.equals("const")) && seq == null) {
+                lineCheckLocator(wire, args.get(0), !open.isEmpty(), format, where);
+            } else if (kw.equals("when") || kw.equals("const")) {
+                lineCheckSeqLocator(args.get(0), format, where);
+            } else if (kw.equals("group") && seq == null) {
+                lineCheckGroupLocator(wire, args.get(1), !open.isEmpty(), format, where);
+            }
+            try {
+            if (AFTER_WIRE.contains(kw)) {
+                if (kw.equals("layout")) {
+                    if (args.get(0).equals("sequential") && listedSeen) {
+                        throw badDirective(format, null, where + ": layout sequential stands after a line it must precede");
+                    }
+                } else {
+                    listedSeen = true;
+                }
+            }
             if (seq != null) {
                 if (Seq.LINES.contains(kw)) {
                     seq.line(kw, args, ln, where, format);
@@ -581,18 +829,18 @@ public final class Pack {
                         case "json": wire = Wire.JSON; break;
                         case "text": wire = Wire.TEXT; break;
                         default:
-                            throw bad(format, null, where + ": unknown wire \"" + args.get(0) + "\"");
+                            throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": unknown wire \"" + args.get(0) + "\"");
                     }
                     break;
                 case "word_bytes":
                     arity(kw, args, 1, where, format);
                     if (wordBytes != null) throw dup(kw, where, format);
-                    try {
-                        int wb = Integer.parseInt(args.get(0));
-                        if (wb < 1) throw new NumberFormatException();
-                        wordBytes = wb;
-                    } catch (NumberFormatException ex) {
-                        throw bad(format, null, where + ": word_bytes must be a positive integer, got \"" + args.get(0) + "\"");
+                    {
+                        Long wb = Transform.parseUnsigned(args.get(0), 31);
+                        if (wb == null || wb < 1) {
+                            throw bad(format, null, where + ": word_bytes must be a positive unsigned decimal integer, got \"" + args.get(0) + "\"");
+                        }
+                        wordBytes = (int) (long) wb;
                     }
                     break;
                 case "layout":
@@ -691,7 +939,18 @@ public final class Pack {
                 default:
                     throw new GtException(GtException.Code.UNKNOWN_DIRECTIVE, format, null, where + ": unknown directive \"" + kw + "\"");
             }
+            } catch (GtException ex) {
+                if (deferred == null) deferred = ex;
+            } catch (RuntimeException ex) {
+                if (deferred == null) throw ex;   // a defect, not a cause: never hidden
+            }
         }
+        // After the file (ruling 5b of 0.11): missing-format, missing-version, missing-wire; then the checks that need
+        // the whole file; then the order of 0.4 from missing-distribution on.
+        if (format == null) throw new GtException(GtException.Code.MISSING_FORMAT, null, null, source + ": no format line");
+        if (version == null) throw new GtException(GtException.Code.MISSING_VERSION, format, null, source + ": no version line");
+        if (wire == null) throw new GtException(GtException.Code.MISSING_WIRE, format, null, source + ": no wire line");
+        if (deferred != null) throw deferred;
         if (!open.isEmpty()) {
             LineSpec g = open.peek();
             throw badDirective(format, g.locator, source + ":" + g.line + ": group " + g.key + " has no end");
@@ -785,28 +1044,26 @@ public final class Pack {
                 for (Kind k : kinds) BitsCodec.prepare(k.scope, wb, 0, format, source);
             }
         }
+        if (wire == Wire.XML) {
+            for (Kind k : kinds) {
+                if (k.root == null) {
+                    throw new GtException(GtException.Code.MISSING_ROOT, format, null,
+                            source + ": wire xml needs a root line, in the pack or in every kind");
+                }
+            }
+        }
+        if (wire != Wire.XML && root != null) throw bad(format, null, source + ": root is xml only");
+        if (wire == Wire.BITS && wordBytes == null && seq == null) throw bad(format, null, source + ": a fixed-layout bits pack needs a word_bytes line");
+        if (wire != Wire.BITS && wordBytes != null) throw bad(format, null, source + ": word_bytes is bits only");
+        boolean mapsType = false;
+        for (String[] r : keyRefs) if (r[1] != null && r[0].equals("type")) mapsType = true;
+        if (!n2c.isEmpty() && !mapsType) throw bad(format, null, source + ": typemap without a field for model key type");
         if (distribution == null) {
             throw new GtException(GtException.Code.MISSING_DISTRIBUTION, format, null, source + ": pack has no distribution line");
         }
         if (sources.isEmpty()) {
             throw new GtException(GtException.Code.MISSING_SOURCE, format, null, source + ": pack has no source line");
         }
-        if (format == null) throw bad(null, null, source + ": no format directive");
-        if (version == null) throw bad(format, null, source + ": no version directive");
-        if (wire == null) throw bad(format, null, source + ": no wire directive");
-        if (wire == Wire.XML) {
-            for (Kind k : kinds) {
-                if (k.root == null) {
-                    throw bad(format, null, source + ": wire xml needs a root directive, in the pack or in every kind");
-                }
-            }
-        }
-        if (wire != Wire.XML && root != null) throw bad(format, null, source + ": root is xml only");
-        if (wire == Wire.BITS && wordBytes == null && seq == null) throw bad(format, null, source + ": wire bits needs a word_bytes directive");
-        if (wire != Wire.BITS && wordBytes != null) throw bad(format, null, source + ": word_bytes is bits only");
-        boolean mapsType = false;
-        for (String[] r : keyRefs) if (r[1] != null && r[0].equals("type")) mapsType = true;
-        if (!n2c.isEmpty() && !mapsType) throw bad(format, null, source + ": typemap without a field for model key type");
 
         // Report in file order, as the 0.4 checks do.
         ctx.fields.sort((a, b) -> Integer.compare(a.line, b.line));
@@ -893,8 +1150,9 @@ public final class Pack {
             if (item == null) throw badDirective(format, s.locator, where + ": a bits group needs item <bits>");
             if (count == null) throw badDirective(format, s.locator, where + ": a bits group needs count <locator | n>");
             why = BitsCodec.checkGroupLocator(s.locator);
-            if (why != null) throw bad(format, s.locator, where + ": " + why);
+            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             try {
+                if (!Transform.UNSIGNED.matcher(item).matches()) throw new NumberFormatException();
                 itemBits = Integer.parseInt(item);
                 if (itemBits < 1) throw new NumberFormatException();
             } catch (NumberFormatException ex) {
@@ -908,7 +1166,7 @@ public final class Pack {
                 }
             } else {
                 why = BitsCodec.checkLocator(count);
-                if (why != null) throw bad(format, s.locator, where + ": count: " + why);
+                if (why != null) throw badLocator(format, s.locator, where + ": count: " + why);
                 if (BitsCodec.parseLoc(count)[2] > 64) {
                     throw badDirective(format, s.locator, where + ": a count locator reads at most 64 bits");
                 }
@@ -924,7 +1182,7 @@ public final class Pack {
             else if (ctx.wire == Wire.PROTOBUF) why = ProtobufCodec.checkFieldLocator(s.locator);
             else if (ctx.wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkGroupLocator(s.locator);
             else why = JsonCodec.checkLocator(s.locator);
-            if (why != null) throw bad(format, s.locator, where + ": " + why);
+            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         }
         List<Line> lines = new ArrayList<>(s.body.lines.size());
         Set<String> lists = null;
@@ -1032,7 +1290,7 @@ public final class Pack {
                     if (t != null || BitsTransform.isBitsName(s.arg) || PbTransform.isPbName(s.arg)) {
                         throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire text");
                     }
-                    throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": unknown transform \"" + s.arg + "\"");
+                    throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire text");
                 }
             }
             TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);
@@ -1052,7 +1310,7 @@ public final class Pack {
                 String w = (Transform.byName(s.arg) != null || PbTransform.isPbName(s.arg))
                         ? "transform \"" + s.arg + "\" is not valid on wire bits"
                         : "unknown transform \"" + s.arg + "\"";
-                throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": " + w);
+                throw badDirective(format, s.locator, where + ": " + w);
             }
             if (s.locator.matches("\\d+")) {
                 throw badDirective(format, s.locator, where + ": a bit length for a locator is for a pack with layout sequential");
@@ -1075,7 +1333,7 @@ public final class Pack {
                 String w = (Transform.byName(s.arg) != null || BitsTransform.isBitsName(s.arg))
                         ? "transform \"" + s.arg + "\" is not valid on wire protobuf"
                         : "unknown transform \"" + s.arg + "\"";
-                throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": " + w);
+                throw badDirective(format, s.locator, where + ": " + w);
             }
             f = new Field(s.key, s.locator, null, null, pb, via, false, false, false, s.line);
             why = dot ? null : ProtobufCodec.checkFieldLocator(s.locator);
@@ -1085,7 +1343,7 @@ public final class Pack {
                 String w = (t != null || BitsTransform.isBitsName(s.arg) || PbTransform.isPbName(s.arg))
                         ? "transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase()
                         : "unknown transform \"" + s.arg + "\"";
-                throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": " + w);
+                throw badDirective(format, s.locator, where + ": " + w);
             }
             f = new Field(s.key, s.locator, t, null, null, via, false, false, false, s.line);
             if (dot) why = null;
@@ -1093,7 +1351,7 @@ public final class Pack {
             else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
             else why = JsonCodec.checkLocator(s.locator);
         }
-        if (why != null) throw bad(format, s.locator, where + ": " + why);
+        if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         if (absent != null) {
             f.absent = sentinels(f, absent, wire, format, where);
             if (wire == Wire.GEOJSON && !inGroup && GeoJsonCodec.coordIndex(s.locator) >= 0) {
@@ -1160,7 +1418,7 @@ public final class Pack {
         }
         if (wire == Wire.BITS) {
             String why = BitsCodec.checkLocator(s.locator);
-            if (why != null) throw bad(format, s.locator, where + ": " + why);
+            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             int len = BitsCodec.parseLoc(s.locator)[2];
             if (len > 64) throw badDirective(format, s.locator, where + ": a when line reads at most 64 bits");
             long n = unsigned(v, format, s.locator, where);
@@ -1171,7 +1429,7 @@ public final class Pack {
         }
         if (wire == Wire.PROTOBUF) {
             String why = ProtobufCodec.checkFieldLocator(s.locator);
-            if (why != null) throw bad(format, s.locator, where + ": " + why);
+            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
             return new When(s.locator, v, false, v, false, unsigned(v, format, s.locator, where), s.isConst, s.line);
         }
@@ -1179,7 +1437,7 @@ public final class Pack {
         if (wire == Wire.XML) why = XmlCodec.checkFieldLocator(s.locator);
         else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
         else why = JsonCodec.checkLocator(s.locator);
-        if (why != null) throw bad(format, s.locator, where + ": " + why);
+        if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
         boolean forced = v.startsWith("=");
         return new When(s.locator, v, false, forced ? v.substring(1) : v, forced, 0, s.isConst, s.line);
@@ -1189,11 +1447,9 @@ public final class Pack {
         if (!v.matches("\\d+")) {
             throw badDirective(format, locator, where + ": a when or const value must be an unsigned decimal integer, got \"" + v + "\"");
         }
-        try {
-            return Long.parseUnsignedLong(v);
-        } catch (NumberFormatException ex) {
-            throw badDirective(format, locator, where + ": when value " + v + " does not fit 64 bits");
-        }
+        Long n = Transform.parseUnsigned(v, 64);
+        if (n == null) throw badDirective(format, locator, where + ": when value " + v + " does not fit 64 bits");
+        return n;
     }
 
     private static void arity(String kw, List<String> args, int n, String where, String format) {
@@ -1220,7 +1476,7 @@ public final class Pack {
             if (c == '#') break;
             if (c == '"') {
                 int close = line.indexOf('"', i + 1);
-                if (close < 0) throw bad(null, null, where + ": unterminated quote");
+                if (close < 0) throw new GtException(GtException.Code.UNTERMINATED_QUOTE, null, null, where + ": unterminated quote");
                 out.add(line.substring(i + 1, close));
                 i = close + 1;
                 if (i < n && !Character.isWhitespace(line.charAt(i))) {
