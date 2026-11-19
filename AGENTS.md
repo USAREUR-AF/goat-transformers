@@ -94,6 +94,7 @@ Run from the repository root unless a directory is named.
 |---|---|
 | Boundary gate | `python3 -I tools/boundary-gate` |
 | Counts for `README.md` | `python3 -I tools/repo-stats` |
+| Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families.json`; `--check` (the counts PR) fails when the figure is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
