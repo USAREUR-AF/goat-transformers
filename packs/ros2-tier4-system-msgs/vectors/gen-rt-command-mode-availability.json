@@ -1,0 +1,16 @@
+{
+  "name": "rt-command_mode_availability",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_availability\",\"type\":\"tier4_system_msgs/msg/CommandModeAvailability\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":23212,\"available\":false},{\"mode\":38682,\"available\":false}]},\"id\":\"gen-command_mode_availability\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_availability\",\"type\":\"tier4_system_msgs/msg/CommandModeAvailability\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":23212,\"available\":false},{\"mode\":38682,\"available\":false}]},\"id\":\"gen-command_mode_availability\"}",
+  "model": {
+    "@kind": "command_mode_availability",
+    "ros2tier4system.command_mode_availability_stamp_sec": "40510",
+    "ros2tier4system.command_mode_availability_stamp_nanosec": "2147564661",
+    "ros2tier4system.command_mode_availability_items.#": "2",
+    "ros2tier4system.command_mode_availability_items[0].ros2tier4system.command_mode_availability_items_mode": "23212",
+    "ros2tier4system.topic": "/gen/command_mode_availability"
+  }
+}

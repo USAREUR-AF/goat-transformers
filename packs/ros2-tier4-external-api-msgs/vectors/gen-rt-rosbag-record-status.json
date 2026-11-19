@@ -1,0 +1,14 @@
+{
+  "name": "rt-rosbag_record_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rosbag_record_status\",\"type\":\"tier4_external_api_msgs/msg/RosbagRecordStatus\",\"msg\":{\"status\":190,\"message\":\"s2\"},\"id\":\"gen-rosbag_record_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rosbag_record_status\",\"type\":\"tier4_external_api_msgs/msg/RosbagRecordStatus\",\"msg\":{\"status\":190,\"message\":\"s2\"},\"id\":\"gen-rosbag_record_status\"}",
+  "model": {
+    "@kind": "rosbag_record_status",
+    "ros2tier4externalapi.rosbag_record_status_status": "190",
+    "ros2tier4externalapi.rosbag_record_status_message": "s2",
+    "ros2tier4externalapi.topic": "/gen/rosbag_record_status"
+  }
+}

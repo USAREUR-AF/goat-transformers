@@ -1,0 +1,14 @@
+{
+  "name": "rt-metadata_packages",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/metadata_packages\",\"type\":\"tier4_external_api_msgs/msg/MetadataPackages\",\"msg\":{\"format\":\"s1\",\"json\":\"s2\"},\"id\":\"gen-metadata_packages\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/metadata_packages\",\"type\":\"tier4_external_api_msgs/msg/MetadataPackages\",\"msg\":{\"format\":\"s1\",\"json\":\"s2\"},\"id\":\"gen-metadata_packages\"}",
+  "model": {
+    "@kind": "metadata_packages",
+    "ros2tier4externalapi.metadata_packages_format": "s1",
+    "ros2tier4externalapi.metadata_packages_json": "s2",
+    "ros2tier4externalapi.topic": "/gen/metadata_packages"
+  }
+}

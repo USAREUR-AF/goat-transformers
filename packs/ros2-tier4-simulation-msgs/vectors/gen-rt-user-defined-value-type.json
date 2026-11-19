@@ -1,0 +1,13 @@
+{
+  "name": "rt-user_defined_value_type",
+  "from": "ros2-tier4-simulation-msgs",
+  "to": "ros2-tier4-simulation-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/user_defined_value_type\",\"type\":\"tier4_simulation_msgs/msg/UserDefinedValueType\",\"msg\":{\"data\":190},\"id\":\"gen-user_defined_value_type\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/user_defined_value_type\",\"type\":\"tier4_simulation_msgs/msg/UserDefinedValueType\",\"msg\":{\"data\":190},\"id\":\"gen-user_defined_value_type\"}",
+  "model": {
+    "@kind": "user_defined_value_type",
+    "ros2tier4simulation.user_defined_value_type_data_2": "190",
+    "ros2tier4simulation.topic": "/gen/user_defined_value_type"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-hdd_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_status\",\"type\":\"tier4_external_api_msgs/msg/HddStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"devices\":[{\"name\":\"s4\",\"read_data_rate\":-3.875,\"write_data_rate\":-3.625,\"read_iops\":-3.375,\"write_iops\":-3.125},{\"name\":\"s9\",\"read_data_rate\":-2.625,\"write_data_rate\":-2.375,\"read_iops\":-2.125,\"write_iops\":-1.875}],\"partitions\":[{\"size\":567049,\"used\":607552,\"avail\":648055,\"capacity\":688558,\"filesystem\":\"s18\",\"mounted_on\":\"s19\"},{\"size\":810067,\"used\":850570,\"avail\":891073,\"capacity\":931576,\"filesystem\":\"s24\",\"mounted_on\":\"s25\"}]},\"id\":\"gen-hdd_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_status\",\"type\":\"tier4_external_api_msgs/msg/HddStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"devices\":[{\"name\":\"s4\",\"read_data_rate\":-3.875,\"write_data_rate\":-3.625,\"read_iops\":-3.375,\"write_iops\":-3.125},{\"name\":\"s9\",\"read_data_rate\":-2.625,\"write_data_rate\":-2.375,\"read_iops\":-2.125,\"write_iops\":-1.875}],\"partitions\":[{\"size\":567049,\"used\":607552,\"avail\":648055,\"capacity\":688558,\"filesystem\":\"s18\",\"mounted_on\":\"s19\"},{\"size\":810067,\"used\":850570,\"avail\":891073,\"capacity\":931576,\"filesystem\":\"s24\",\"mounted_on\":\"s25\"}]},\"id\":\"gen-hdd_status\"}",
+  "model": {
+    "@kind": "hdd_status",
+    "ros2tier4externalapi.hdd_status_stamp_sec": "40510",
+    "ros2tier4externalapi.hdd_status_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.hdd_status_hostname": "s3",
+    "ros2tier4externalapi.hdd_status_devices.#": "2",
+    "ros2tier4externalapi.hdd_status_devices[0].ros2tier4externalapi.hdd_status_devices_name": "s4",
+    "ros2tier4externalapi.hdd_status_partitions.#": "2",
+    "ros2tier4externalapi.hdd_status_partitions[0].ros2tier4externalapi.hdd_status_partitions_size": "567049",
+    "ros2tier4externalapi.topic": "/gen/hdd_status"
+  }
+}

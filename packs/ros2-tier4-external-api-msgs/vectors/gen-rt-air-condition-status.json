@@ -1,0 +1,17 @@
+{
+  "name": "rt-air_condition_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/air_condition_status\",\"type\":\"tier4_external_api_msgs/msg/AirConditionStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"enabled\":true,\"temperature_mode\":99,\"temperature\":-3.875},\"id\":\"gen-air_condition_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/air_condition_status\",\"type\":\"tier4_external_api_msgs/msg/AirConditionStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"enabled\":true,\"temperature_mode\":99,\"temperature\":-3.875},\"id\":\"gen-air_condition_status\"}",
+  "model": {
+    "@kind": "air_condition_status",
+    "ros2tier4externalapi.air_condition_status_stamp_sec": "40510",
+    "ros2tier4externalapi.air_condition_status_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.air_condition_status_enabled": "1",
+    "ros2tier4externalapi.air_condition_status_temperature_mode": "99",
+    "ros2tier4externalapi.air_condition_status_temperature": "-3.875",
+    "ros2tier4externalapi.topic": "/gen/air_condition_status"
+  }
+}

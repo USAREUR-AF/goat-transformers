@@ -1,0 +1,13 @@
+{
+  "name": "rt-emergency_state",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/emergency_state\",\"type\":\"tier4_system_msgs/msg/EmergencyState\",\"msg\":{\"state\":190},\"id\":\"gen-emergency_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/emergency_state\",\"type\":\"tier4_system_msgs/msg/EmergencyState\",\"msg\":{\"state\":190},\"id\":\"gen-emergency_state\"}",
+  "model": {
+    "@kind": "emergency_state",
+    "ros2tier4system.emergency_state_state": "190",
+    "ros2tier4system.topic": "/gen/emergency_state"
+  }
+}

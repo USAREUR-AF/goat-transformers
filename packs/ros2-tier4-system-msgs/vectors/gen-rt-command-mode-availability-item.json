@@ -1,0 +1,14 @@
+{
+  "name": "rt-command_mode_availability_item",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_availability_item\",\"type\":\"tier4_system_msgs/msg/CommandModeAvailabilityItem\",\"msg\":{\"mode\":7742,\"available\":false},\"id\":\"gen-command_mode_availability_item\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_availability_item\",\"type\":\"tier4_system_msgs/msg/CommandModeAvailabilityItem\",\"msg\":{\"mode\":7742,\"available\":false},\"id\":\"gen-command_mode_availability_item\"}",
+  "model": {
+    "@kind": "command_mode_availability_item",
+    "ros2tier4system.command_mode_availability_item_mode": "7742",
+    "ros2tier4system.command_mode_availability_item_available": "0",
+    "ros2tier4system.topic": "/gen/command_mode_availability_item"
+  }
+}

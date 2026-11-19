@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"tier4_planning_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"twist\":{\"linear\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"angular\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"accel\":{\"linear\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154}}},{\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}},\"twist\":{\"linear\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224},\"angular\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"accel\":{\"linear\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266},\"angular\":{\"x\":-39.273,\"y\":40.28,\"z\":41.287}}}]},\"id\":\"gen-trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"tier4_planning_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"twist\":{\"linear\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"angular\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"accel\":{\"linear\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154}}},{\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}},\"twist\":{\"linear\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224},\"angular\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"accel\":{\"linear\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266},\"angular\":{\"x\":-39.273,\"y\":40.28,\"z\":41.287}}}]},\"id\":\"gen-trajectory\"}",
+  "model": {
+    "@kind": "trajectory",
+    "ros2tier4planning.trajectory_header_stamp_sec": "40510",
+    "ros2tier4planning.trajectory_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.trajectory_header_frame_id": "s3",
+    "ros2tier4planning.trajectory_points.#": "2",
+    "ros2tier4planning.trajectory_points[0].ros2tier4planning.trajectory_points_pose_position_x": "4.028",
+    "ros2tier4planning.topic": "/gen/trajectory"
+  }
+}

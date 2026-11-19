@@ -1,0 +1,17 @@
+{
+  "name": "rt-hdd_partition_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_partition_status\",\"type\":\"tier4_external_api_msgs/msg/HddPartitionStatus\",\"msg\":{\"size\":40510,\"used\":81013,\"avail\":121516,\"capacity\":162019,\"filesystem\":\"s5\",\"mounted_on\":\"s6\"},\"id\":\"gen-hdd_partition_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_partition_status\",\"type\":\"tier4_external_api_msgs/msg/HddPartitionStatus\",\"msg\":{\"size\":40510,\"used\":81013,\"avail\":121516,\"capacity\":162019,\"filesystem\":\"s5\",\"mounted_on\":\"s6\"},\"id\":\"gen-hdd_partition_status\"}",
+  "model": {
+    "@kind": "hdd_partition_status",
+    "ros2tier4externalapi.hdd_partition_status_size": "40510",
+    "ros2tier4externalapi.hdd_partition_status_used": "81013",
+    "ros2tier4externalapi.hdd_partition_status_avail": "121516",
+    "ros2tier4externalapi.hdd_partition_status_capacity": "162019",
+    "ros2tier4externalapi.hdd_partition_status_filesystem": "s5",
+    "ros2tier4externalapi.topic": "/gen/hdd_partition_status"
+  }
+}

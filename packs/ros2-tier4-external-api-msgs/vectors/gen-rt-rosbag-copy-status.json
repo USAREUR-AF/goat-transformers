@@ -1,0 +1,17 @@
+{
+  "name": "rt-rosbag_copy_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rosbag_copy_status\",\"type\":\"tier4_external_api_msgs/msg/RosbagCopyStatus\",\"msg\":{\"status\":190,\"progress_percentage\":245,\"project_id\":\"s3\",\"vehicle_id\":\"s4\",\"date\":\"s5\",\"message\":\"s6\"},\"id\":\"gen-rosbag_copy_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rosbag_copy_status\",\"type\":\"tier4_external_api_msgs/msg/RosbagCopyStatus\",\"msg\":{\"status\":190,\"progress_percentage\":245,\"project_id\":\"s3\",\"vehicle_id\":\"s4\",\"date\":\"s5\",\"message\":\"s6\"},\"id\":\"gen-rosbag_copy_status\"}",
+  "model": {
+    "@kind": "rosbag_copy_status",
+    "ros2tier4externalapi.rosbag_copy_status_status": "190",
+    "ros2tier4externalapi.rosbag_copy_status_progress_percentage": "245",
+    "ros2tier4externalapi.rosbag_copy_status_project_id": "s3",
+    "ros2tier4externalapi.rosbag_copy_status_vehicle_id": "s4",
+    "ros2tier4externalapi.rosbag_copy_status_date": "s5",
+    "ros2tier4externalapi.topic": "/gen/rosbag_copy_status"
+  }
+}

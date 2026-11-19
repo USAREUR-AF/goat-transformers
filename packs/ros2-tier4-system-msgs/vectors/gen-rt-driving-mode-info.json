@@ -1,0 +1,16 @@
+{
+  "name": "rt-driving_mode_info",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/driving_mode_info\",\"type\":\"tier4_system_msgs/msg/DrivingModeInfo\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":2147605164,\"name\":\"s4\"},{\"mode\":2147686170,\"name\":\"s6\"}]},\"id\":\"gen-driving_mode_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/driving_mode_info\",\"type\":\"tier4_system_msgs/msg/DrivingModeInfo\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":2147605164,\"name\":\"s4\"},{\"mode\":2147686170,\"name\":\"s6\"}]},\"id\":\"gen-driving_mode_info\"}",
+  "model": {
+    "@kind": "driving_mode_info",
+    "ros2tier4system.driving_mode_info_stamp_sec": "40510",
+    "ros2tier4system.driving_mode_info_stamp_nanosec": "2147564661",
+    "ros2tier4system.driving_mode_info_items.#": "2",
+    "ros2tier4system.driving_mode_info_items[0].ros2tier4system.driving_mode_info_items_mode": "2147605164",
+    "ros2tier4system.topic": "/gen/driving_mode_info"
+  }
+}

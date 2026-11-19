@@ -1,0 +1,15 @@
+{
+  "name": "rt-predicted_path",
+  "from": "ros2-tier4-perception-msgs",
+  "to": "ros2-tier4-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_path\",\"type\":\"tier4_perception_msgs/msg/PredictedPath\",\"msg\":{\"path\":[{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"covariance\":[11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322]}},{\"header\":{\"stamp\":{\"sec\":1903648,\"nanosec\":2149427799},\"frame_id\":\"s49\"},\"pose\":{\"pose\":{\"position\":{\"x\":50.35,\"y\":-51.357,\"z\":52.364},\"orientation\":{\"x\":53.371,\"y\":-54.378,\"z\":55.385,\"w\":56.392}},\"covariance\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644]}}],\"confidence\":-93.651},\"id\":\"gen-predicted_path\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_path\",\"type\":\"tier4_perception_msgs/msg/PredictedPath\",\"msg\":{\"path\":[{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"covariance\":[11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322]}},{\"header\":{\"stamp\":{\"sec\":1903648,\"nanosec\":2149427799},\"frame_id\":\"s49\"},\"pose\":{\"pose\":{\"position\":{\"x\":50.35,\"y\":-51.357,\"z\":52.364},\"orientation\":{\"x\":53.371,\"y\":-54.378,\"z\":55.385,\"w\":56.392}},\"covariance\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644]}}],\"confidence\":-93.651},\"id\":\"gen-predicted_path\"}",
+  "model": {
+    "@kind": "predicted_path",
+    "ros2tier4perception.predicted_path_path.#": "2",
+    "ros2tier4perception.predicted_path_path[0].ros2tier4perception.predicted_path_path_header_stamp_sec": "40510",
+    "ros2tier4perception.predicted_path_confidence": "-93.651",
+    "ros2tier4perception.topic": "/gen/predicted_path"
+  }
+}

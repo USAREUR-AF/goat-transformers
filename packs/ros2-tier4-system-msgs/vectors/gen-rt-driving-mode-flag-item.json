@@ -1,0 +1,14 @@
+{
+  "name": "rt-driving_mode_flag_item",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/driving_mode_flag_item\",\"type\":\"tier4_system_msgs/msg/DrivingModeFlagItem\",\"msg\":{\"mode\":2147524158,\"flag\":false},\"id\":\"gen-driving_mode_flag_item\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/driving_mode_flag_item\",\"type\":\"tier4_system_msgs/msg/DrivingModeFlagItem\",\"msg\":{\"mode\":2147524158,\"flag\":false},\"id\":\"gen-driving_mode_flag_item\"}",
+  "model": {
+    "@kind": "driving_mode_flag_item",
+    "ros2tier4system.driving_mode_flag_item_mode": "2147524158",
+    "ros2tier4system.driving_mode_flag_item_flag": "0",
+    "ros2tier4system.topic": "/gen/driving_mode_flag_item"
+  }
+}

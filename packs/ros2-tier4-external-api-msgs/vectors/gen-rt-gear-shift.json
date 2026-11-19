@@ -1,0 +1,13 @@
+{
+  "name": "rt-gear_shift",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gear_shift\",\"type\":\"tier4_external_api_msgs/msg/GearShift\",\"msg\":{\"data\":190},\"id\":\"gen-gear_shift\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gear_shift\",\"type\":\"tier4_external_api_msgs/msg/GearShift\",\"msg\":{\"data\":190},\"id\":\"gen-gear_shift\"}",
+  "model": {
+    "@kind": "gear_shift",
+    "ros2tier4externalapi.gear_shift_data": "190",
+    "ros2tier4externalapi.topic": "/gen/gear_shift"
+  }
+}

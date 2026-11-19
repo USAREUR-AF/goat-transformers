@@ -1,0 +1,17 @@
+{
+  "name": "rt-control_command_stamped",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/control_command_stamped\",\"type\":\"tier4_external_api_msgs/msg/ControlCommandStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"control\":{\"steering_angle\":-3.021,\"steering_angle_velocity\":4.028,\"throttle\":5.035,\"brake\":-6.042}},\"id\":\"gen-control_command_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/control_command_stamped\",\"type\":\"tier4_external_api_msgs/msg/ControlCommandStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"control\":{\"steering_angle\":-3.021,\"steering_angle_velocity\":4.028,\"throttle\":5.035,\"brake\":-6.042}},\"id\":\"gen-control_command_stamped\"}",
+  "model": {
+    "@kind": "control_command_stamped",
+    "ros2tier4externalapi.control_command_stamped_stamp_sec": "40510",
+    "ros2tier4externalapi.control_command_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.control_command_stamped_control_steering_angle": "-3.021",
+    "ros2tier4externalapi.control_command_stamped_control_steering_angle_velocity": "4.028",
+    "ros2tier4externalapi.control_command_stamped_control_throttle": "5.035",
+    "ros2tier4externalapi.topic": "/gen/control_command_stamped"
+  }
+}

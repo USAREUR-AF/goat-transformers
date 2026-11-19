@@ -1,0 +1,13 @@
+{
+  "name": "rt-door_status",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door_status\",\"type\":\"tier4_api_msgs/msg/DoorStatus\",\"msg\":{\"status\":40510},\"id\":\"gen-door_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door_status\",\"type\":\"tier4_api_msgs/msg/DoorStatus\",\"msg\":{\"status\":40510},\"id\":\"gen-door_status\"}",
+  "model": {
+    "@kind": "door_status",
+    "ros2tier4api.door_status_status": "40510",
+    "ros2tier4api.topic": "/gen/door_status"
+  }
+}

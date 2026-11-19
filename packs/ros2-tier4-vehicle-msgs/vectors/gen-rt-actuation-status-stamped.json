@@ -1,0 +1,17 @@
+{
+  "name": "rt-actuation_status_stamped",
+  "from": "ros2-tier4-vehicle-msgs",
+  "to": "ros2-tier4-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_status_stamped\",\"type\":\"tier4_vehicle_msgs/msg/ActuationStatusStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"accel_status\":4.028,\"brake_status\":5.035,\"steer_status\":-6.042}},\"id\":\"gen-actuation_status_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_status_stamped\",\"type\":\"tier4_vehicle_msgs/msg/ActuationStatusStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"accel_status\":4.028,\"brake_status\":5.035,\"steer_status\":-6.042}},\"id\":\"gen-actuation_status_stamped\"}",
+  "model": {
+    "@kind": "actuation_status_stamped",
+    "ros2tier4vehicle.actuation_status_stamped_header_stamp_sec": "40510",
+    "ros2tier4vehicle.actuation_status_stamped_header_stamp_nanosec": "2147564661",
+    "ros2tier4vehicle.actuation_status_stamped_header_frame_id": "s3",
+    "ros2tier4vehicle.actuation_status_stamped_status_accel_status": "4.028",
+    "ros2tier4vehicle.actuation_status_stamped_status_brake_status": "5.035",
+    "ros2tier4vehicle.topic": "/gen/actuation_status_stamped"
+  }
+}

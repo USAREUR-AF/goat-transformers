@@ -1,0 +1,15 @@
+{
+  "name": "rt-vehicle_emergency_stamped",
+  "from": "ros2-tier4-vehicle-msgs",
+  "to": "ros2-tier4-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_emergency_stamped\",\"type\":\"tier4_vehicle_msgs/msg/VehicleEmergencyStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"emergency\":true},\"id\":\"gen-vehicle_emergency_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_emergency_stamped\",\"type\":\"tier4_vehicle_msgs/msg/VehicleEmergencyStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"emergency\":true},\"id\":\"gen-vehicle_emergency_stamped\"}",
+  "model": {
+    "@kind": "vehicle_emergency_stamped",
+    "ros2tier4vehicle.vehicle_emergency_stamped_stamp_sec": "40510",
+    "ros2tier4vehicle.vehicle_emergency_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4vehicle.vehicle_emergency_stamped_emergency": "1",
+    "ros2tier4vehicle.topic": "/gen/vehicle_emergency_stamped"
+  }
+}

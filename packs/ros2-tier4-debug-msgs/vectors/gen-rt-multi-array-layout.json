@@ -1,0 +1,15 @@
+{
+  "name": "rt-multi_array_layout",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/multi_array_layout\",\"type\":\"tier4_debug_msgs/msg/MultiArrayLayout\",\"msg\":{\"dim\":[{\"label\":\"s1\",\"size\":2147564661,\"stride\":2147605164},{\"label\":\"s4\",\"size\":2147686170,\"stride\":2147726673}],\"data_offset\":2147767176},\"id\":\"gen-multi_array_layout\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/multi_array_layout\",\"type\":\"tier4_debug_msgs/msg/MultiArrayLayout\",\"msg\":{\"dim\":[{\"label\":\"s1\",\"size\":2147564661,\"stride\":2147605164},{\"label\":\"s4\",\"size\":2147686170,\"stride\":2147726673}],\"data_offset\":2147767176},\"id\":\"gen-multi_array_layout\"}",
+  "model": {
+    "@kind": "multi_array_layout",
+    "ros2tier4debug.multi_array_layout_dim.#": "2",
+    "ros2tier4debug.multi_array_layout_dim[0].ros2tier4debug.multi_array_layout_dim_label": "s1",
+    "ros2tier4debug.multi_array_layout_data_offset": "2147767176",
+    "ros2tier4debug.topic": "/gen/multi_array_layout"
+  }
+}

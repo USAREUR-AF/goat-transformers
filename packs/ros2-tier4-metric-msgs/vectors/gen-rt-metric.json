@@ -1,0 +1,15 @@
+{
+  "name": "rt-metric",
+  "from": "ros2-tier4-metric-msgs",
+  "to": "ros2-tier4-metric-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/metric\",\"type\":\"tier4_metric_msgs/msg/Metric\",\"msg\":{\"name\":\"s1\",\"unit\":\"s2\",\"value\":\"s3\"},\"id\":\"gen-metric\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/metric\",\"type\":\"tier4_metric_msgs/msg/Metric\",\"msg\":{\"name\":\"s1\",\"unit\":\"s2\",\"value\":\"s3\"},\"id\":\"gen-metric\"}",
+  "model": {
+    "@kind": "metric",
+    "ros2tier4metric.metric_name": "s1",
+    "ros2tier4metric.metric_unit": "s2",
+    "ros2tier4metric.metric_value": "s3",
+    "ros2tier4metric.topic": "/gen/metric"
+  }
+}

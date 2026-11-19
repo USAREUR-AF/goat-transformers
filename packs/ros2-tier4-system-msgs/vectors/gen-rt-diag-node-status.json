@@ -1,0 +1,17 @@
+{
+  "name": "rt-diag_node_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/diag_node_status\",\"type\":\"tier4_system_msgs/msg/DiagNodeStatus\",\"msg\":{\"level\":190,\"input_level\":245,\"latch_level\":44,\"is_dependent\":false,\"is_overridden\":true},\"id\":\"gen-diag_node_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/diag_node_status\",\"type\":\"tier4_system_msgs/msg/DiagNodeStatus\",\"msg\":{\"level\":190,\"input_level\":245,\"latch_level\":44,\"is_dependent\":false,\"is_overridden\":true},\"id\":\"gen-diag_node_status\"}",
+  "model": {
+    "@kind": "diag_node_status",
+    "ros2tier4system.diag_node_status_level": "190",
+    "ros2tier4system.diag_node_status_input_level": "245",
+    "ros2tier4system.diag_node_status_latch_level": "44",
+    "ros2tier4system.diag_node_status_is_dependent": "0",
+    "ros2tier4system.diag_node_status_is_overridden": "1",
+    "ros2tier4system.topic": "/gen/diag_node_status"
+  }
+}

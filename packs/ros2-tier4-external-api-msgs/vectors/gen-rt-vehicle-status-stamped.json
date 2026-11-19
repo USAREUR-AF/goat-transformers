@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_status_stamped",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_status_stamped\",\"type\":\"tier4_external_api_msgs/msg/VehicleStatusStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":{\"twist\":{\"linear\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"angular\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056}},\"steering\":{\"data\":-2.875},\"turn_signal\":{\"data\":173},\"gear_shift\":{\"data\":228}}},\"id\":\"gen-vehicle_status_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_status_stamped\",\"type\":\"tier4_external_api_msgs/msg/VehicleStatusStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":{\"twist\":{\"linear\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"angular\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056}},\"steering\":{\"data\":-2.875},\"turn_signal\":{\"data\":173},\"gear_shift\":{\"data\":228}}},\"id\":\"gen-vehicle_status_stamped\"}",
+  "model": {
+    "@kind": "vehicle_status_stamped",
+    "ros2tier4externalapi.vehicle_status_stamped_stamp_sec": "40510",
+    "ros2tier4externalapi.vehicle_status_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.vehicle_status_stamped_status_twist_linear_x": "-3.021",
+    "ros2tier4externalapi.vehicle_status_stamped_status_twist_linear_y": "4.028",
+    "ros2tier4externalapi.vehicle_status_stamped_status_twist_linear_z": "5.035",
+    "ros2tier4externalapi.topic": "/gen/vehicle_status_stamped"
+  }
+}

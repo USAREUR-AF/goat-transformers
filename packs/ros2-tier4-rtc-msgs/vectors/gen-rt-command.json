@@ -1,0 +1,13 @@
+{
+  "name": "rt-command",
+  "from": "ros2-tier4-rtc-msgs",
+  "to": "ros2-tier4-rtc-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command\",\"type\":\"tier4_rtc_msgs/msg/Command\",\"msg\":{\"type\":190},\"id\":\"gen-command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command\",\"type\":\"tier4_rtc_msgs/msg/Command\",\"msg\":{\"type\":190},\"id\":\"gen-command\"}",
+  "model": {
+    "@kind": "command",
+    "ros2tier4rtc.command_type": "190",
+    "ros2tier4rtc.topic": "/gen/command"
+  }
+}

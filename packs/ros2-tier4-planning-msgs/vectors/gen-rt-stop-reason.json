@@ -1,0 +1,15 @@
+{
+  "name": "rt-stop_reason",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/stop_reason\",\"type\":\"tier4_planning_msgs/msg/StopReason\",\"msg\":{\"reason\":\"s1\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"dist_to_stop_pose\":-9.063,\"stop_factor_points\":[{\"x\":10.07,\"y\":11.077,\"z\":-12.084}]},{\"stop_pose\":{\"position\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"orientation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"w\":19.133}},\"dist_to_stop_pose\":20.14,\"stop_factor_points\":[{\"x\":-21.147,\"y\":22.154,\"z\":23.161}]}]},\"id\":\"gen-stop_reason\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/stop_reason\",\"type\":\"tier4_planning_msgs/msg/StopReason\",\"msg\":{\"reason\":\"s1\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"dist_to_stop_pose\":-9.063,\"stop_factor_points\":[{\"x\":10.07,\"y\":11.077,\"z\":-12.084}]},{\"stop_pose\":{\"position\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"orientation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"w\":19.133}},\"dist_to_stop_pose\":20.14,\"stop_factor_points\":[{\"x\":-21.147,\"y\":22.154,\"z\":23.161}]}]},\"id\":\"gen-stop_reason\"}",
+  "model": {
+    "@kind": "stop_reason",
+    "ros2tier4planning.stop_reason_reason": "s1",
+    "ros2tier4planning.stop_reason_stop_factors.#": "2",
+    "ros2tier4planning.stop_reason_stop_factors[0].ros2tier4planning.stop_reason_stop_factors_stop_pose_position_x": "2.014",
+    "ros2tier4planning.topic": "/gen/stop_reason"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-infrastructure_command",
+  "from": "ros2-tier4-v2x-msgs",
+  "to": "ros2-tier4-v2x-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/infrastructure_command\",\"type\":\"tier4_v2x_msgs/msg/InfrastructureCommand\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":\"s3\",\"id\":\"s4\",\"custom_tags\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}],\"state\":118},\"id\":\"gen-infrastructure_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/infrastructure_command\",\"type\":\"tier4_v2x_msgs/msg/InfrastructureCommand\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":\"s3\",\"id\":\"s4\",\"custom_tags\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}],\"state\":118},\"id\":\"gen-infrastructure_command\"}",
+  "model": {
+    "@kind": "infrastructure_command",
+    "ros2tier4v2x.infrastructure_command_stamp_sec": "40510",
+    "ros2tier4v2x.infrastructure_command_stamp_nanosec": "2147564661",
+    "ros2tier4v2x.infrastructure_command_type": "s3",
+    "ros2tier4v2x.infrastructure_command_id": "s4",
+    "ros2tier4v2x.infrastructure_command_custom_tags.#": "2",
+    "ros2tier4v2x.infrastructure_command_custom_tags[0].ros2tier4v2x.infrastructure_command_custom_tags_key": "s5",
+    "ros2tier4v2x.infrastructure_command_state": "118",
+    "ros2tier4v2x.topic": "/gen/infrastructure_command"
+  }
+}

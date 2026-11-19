@@ -1,0 +1,17 @@
+{
+  "name": "rt-lane_change_debug_msg",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_debug_msg\",\"type\":\"tier4_planning_msgs/msg/LaneChangeDebugMsg\",\"msg\":{\"object_id\":\"s1\",\"allow_lane_change\":false,\"is_front\":true,\"relative_distance\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"velocity\":11.077,\"failed_reason\":\"s12\"},\"id\":\"gen-lane_change_debug_msg\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_debug_msg\",\"type\":\"tier4_planning_msgs/msg/LaneChangeDebugMsg\",\"msg\":{\"object_id\":\"s1\",\"allow_lane_change\":false,\"is_front\":true,\"relative_distance\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"velocity\":11.077,\"failed_reason\":\"s12\"},\"id\":\"gen-lane_change_debug_msg\"}",
+  "model": {
+    "@kind": "lane_change_debug_msg",
+    "ros2tier4planning.lane_change_debug_msg_object_id": "s1",
+    "ros2tier4planning.lane_change_debug_msg_allow_lane_change": "0",
+    "ros2tier4planning.lane_change_debug_msg_is_front": "1",
+    "ros2tier4planning.lane_change_debug_msg_relative_distance_position_x": "4.028",
+    "ros2tier4planning.lane_change_debug_msg_relative_distance_position_y": "5.035",
+    "ros2tier4planning.topic": "/gen/lane_change_debug_msg"
+  }
+}

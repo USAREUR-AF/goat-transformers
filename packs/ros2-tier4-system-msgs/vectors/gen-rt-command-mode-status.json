@@ -1,0 +1,16 @@
+{
+  "name": "rt-command_mode_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_status\",\"type\":\"tier4_system_msgs/msg/CommandModeStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":23212,\"mrm\":63715,\"transition\":true,\"transition_completed\":false,\"request\":true,\"vehicle_selected\":false,\"network_selected\":true,\"command_selected\":false,\"command_exclusive\":true,\"command_enabled\":false,\"command_disabled\":true},{\"mode\":9993,\"mrm\":50496,\"transition\":false,\"transition_completed\":true,\"request\":false,\"vehicle_selected\":true,\"network_selected\":false,\"command_selected\":true,\"command_exclusive\":false,\"command_enabled\":true,\"command_disabled\":false}]},\"id\":\"gen-command_mode_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command_mode_status\",\"type\":\"tier4_system_msgs/msg/CommandModeStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"items\":[{\"mode\":23212,\"mrm\":63715,\"transition\":true,\"transition_completed\":false,\"request\":true,\"vehicle_selected\":false,\"network_selected\":true,\"command_selected\":false,\"command_exclusive\":true,\"command_enabled\":false,\"command_disabled\":true},{\"mode\":9993,\"mrm\":50496,\"transition\":false,\"transition_completed\":true,\"request\":false,\"vehicle_selected\":true,\"network_selected\":false,\"command_selected\":true,\"command_exclusive\":false,\"command_enabled\":true,\"command_disabled\":false}]},\"id\":\"gen-command_mode_status\"}",
+  "model": {
+    "@kind": "command_mode_status",
+    "ros2tier4system.command_mode_status_stamp_sec": "40510",
+    "ros2tier4system.command_mode_status_stamp_nanosec": "2147564661",
+    "ros2tier4system.command_mode_status_items.#": "2",
+    "ros2tier4system.command_mode_status_items[0].ros2tier4system.command_mode_status_items_mode": "23212",
+    "ros2tier4system.topic": "/gen/command_mode_status"
+  }
+}

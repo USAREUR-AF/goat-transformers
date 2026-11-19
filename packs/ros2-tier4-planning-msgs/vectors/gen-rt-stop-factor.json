@@ -1,0 +1,19 @@
+{
+  "name": "rt-stop_factor",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/stop_factor\",\"type\":\"tier4_planning_msgs/msg/StopFactor\",\"msg\":{\"stop_pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"dist_to_stop_pose\":8.056,\"stop_factor_points\":[{\"x\":-9.063,\"y\":10.07,\"z\":11.077},{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},\"id\":\"gen-stop_factor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/stop_factor\",\"type\":\"tier4_planning_msgs/msg/StopFactor\",\"msg\":{\"stop_pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"dist_to_stop_pose\":8.056,\"stop_factor_points\":[{\"x\":-9.063,\"y\":10.07,\"z\":11.077},{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},\"id\":\"gen-stop_factor\"}",
+  "model": {
+    "@kind": "stop_factor",
+    "ros2tier4planning.stop_factor_stop_pose_position_x": "1.007",
+    "ros2tier4planning.stop_factor_stop_pose_position_y": "2.014",
+    "ros2tier4planning.stop_factor_stop_pose_position_z": "-3.021",
+    "ros2tier4planning.stop_factor_stop_pose_orientation_x": "4.028",
+    "ros2tier4planning.stop_factor_stop_pose_orientation_y": "5.035",
+    "ros2tier4planning.stop_factor_stop_factor_points.#": "2",
+    "ros2tier4planning.stop_factor_stop_factor_points[0].ros2tier4planning.stop_factor_stop_factor_points_x": "-9.063",
+    "ros2tier4planning.topic": "/gen/stop_factor"
+  }
+}

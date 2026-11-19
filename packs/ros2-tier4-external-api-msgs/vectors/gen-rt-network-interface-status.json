@@ -1,0 +1,17 @@
+{
+  "name": "rt-network_interface_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/network_interface_status\",\"type\":\"tier4_external_api_msgs/msg/NetworkInterfaceStatus\",\"msg\":{\"name\":\"s1\",\"rx_traffic\":-4.625,\"tx_traffic\":-4.375,\"capacity\":-4.125,\"rx_errors\":2147686170,\"tx_errors\":2147726673,\"collisions\":2147767176},\"id\":\"gen-network_interface_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/network_interface_status\",\"type\":\"tier4_external_api_msgs/msg/NetworkInterfaceStatus\",\"msg\":{\"name\":\"s1\",\"rx_traffic\":-4.625,\"tx_traffic\":-4.375,\"capacity\":-4.125,\"rx_errors\":2147686170,\"tx_errors\":2147726673,\"collisions\":2147767176},\"id\":\"gen-network_interface_status\"}",
+  "model": {
+    "@kind": "network_interface_status",
+    "ros2tier4externalapi.network_interface_status_name": "s1",
+    "ros2tier4externalapi.network_interface_status_rx_traffic": "-4.625",
+    "ros2tier4externalapi.network_interface_status_tx_traffic": "-4.375",
+    "ros2tier4externalapi.network_interface_status_capacity": "-4.125",
+    "ros2tier4externalapi.network_interface_status_rx_errors": "2147686170",
+    "ros2tier4externalapi.topic": "/gen/network_interface_status"
+  }
+}

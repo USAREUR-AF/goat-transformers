@@ -1,0 +1,15 @@
+{
+  "name": "rt-mrm_behavior_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mrm_behavior_status\",\"type\":\"tier4_system_msgs/msg/MrmBehaviorStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"state\":44},\"id\":\"gen-mrm_behavior_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mrm_behavior_status\",\"type\":\"tier4_system_msgs/msg/MrmBehaviorStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"state\":44},\"id\":\"gen-mrm_behavior_status\"}",
+  "model": {
+    "@kind": "mrm_behavior_status",
+    "ros2tier4system.mrm_behavior_status_stamp_sec": "40510",
+    "ros2tier4system.mrm_behavior_status_stamp_nanosec": "2147564661",
+    "ros2tier4system.mrm_behavior_status_state": "44",
+    "ros2tier4system.topic": "/gen/mrm_behavior_status"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-processing_time_tree",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/processing_time_tree\",\"type\":\"tier4_debug_msgs/msg/ProcessingTimeTree\",\"msg\":{\"nodes\":[{\"id\":40510,\"name\":\"s2\",\"processing_time\":-3.021,\"parent_id\":162019,\"comment\":\"s5\"},{\"id\":243025,\"name\":\"s7\",\"processing_time\":8.056,\"parent_id\":364534,\"comment\":\"s10\"}]},\"id\":\"gen-processing_time_tree\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/processing_time_tree\",\"type\":\"tier4_debug_msgs/msg/ProcessingTimeTree\",\"msg\":{\"nodes\":[{\"id\":40510,\"name\":\"s2\",\"processing_time\":-3.021,\"parent_id\":162019,\"comment\":\"s5\"},{\"id\":243025,\"name\":\"s7\",\"processing_time\":8.056,\"parent_id\":364534,\"comment\":\"s10\"}]},\"id\":\"gen-processing_time_tree\"}",
+  "model": {
+    "@kind": "processing_time_tree",
+    "ros2tier4debug.processing_time_tree_nodes.#": "2",
+    "ros2tier4debug.processing_time_tree_nodes[0].ros2tier4debug.processing_time_tree_nodes_id": "40510",
+    "ros2tier4debug.topic": "/gen/processing_time_tree"
+  }
+}

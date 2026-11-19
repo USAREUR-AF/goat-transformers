@@ -1,0 +1,13 @@
+{
+  "name": "rt-gate_mode",
+  "from": "ros2-tier4-control-msgs",
+  "to": "ros2-tier4-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gate_mode\",\"type\":\"tier4_control_msgs/msg/GateMode\",\"msg\":{\"data\":190},\"id\":\"gen-gate_mode\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gate_mode\",\"type\":\"tier4_control_msgs/msg/GateMode\",\"msg\":{\"data\":190},\"id\":\"gen-gate_mode\"}",
+  "model": {
+    "@kind": "gate_mode",
+    "ros2tier4control.gate_mode_data": "190",
+    "ros2tier4control.topic": "/gen/gate_mode"
+  }
+}

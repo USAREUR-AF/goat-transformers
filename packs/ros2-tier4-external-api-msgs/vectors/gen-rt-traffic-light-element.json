@@ -1,0 +1,16 @@
+{
+  "name": "rt-traffic_light_element",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_element\",\"type\":\"tier4_external_api_msgs/msg/TrafficLightElement\",\"msg\":{\"color\":190,\"shape\":245,\"status\":44,\"confidence\":-4.125},\"id\":\"gen-traffic_light_element\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_element\",\"type\":\"tier4_external_api_msgs/msg/TrafficLightElement\",\"msg\":{\"color\":190,\"shape\":245,\"status\":44,\"confidence\":-4.125},\"id\":\"gen-traffic_light_element\"}",
+  "model": {
+    "@kind": "traffic_light_element",
+    "ros2tier4externalapi.traffic_light_element_color": "190",
+    "ros2tier4externalapi.traffic_light_element_shape": "245",
+    "ros2tier4externalapi.traffic_light_element_status": "44",
+    "ros2tier4externalapi.traffic_light_element_confidence": "-4.125",
+    "ros2tier4externalapi.topic": "/gen/traffic_light_element"
+  }
+}

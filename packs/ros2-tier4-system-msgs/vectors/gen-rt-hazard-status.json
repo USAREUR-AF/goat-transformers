@@ -1,0 +1,23 @@
+{
+  "name": "rt-hazard_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status\",\"type\":\"tier4_system_msgs/msg/HazardStatus\",\"msg\":{\"level\":40510,\"emergency\":false,\"emergency_holding\":true,\"diagnostics_nf\":[{\"level\":99,\"name\":\"s5\",\"message\":\"s6\",\"hardware_id\":\"s7\",\"values\":[{\"key\":\"s8\",\"value\":\"s9\"}]},{\"level\":173,\"name\":\"s11\",\"message\":\"s12\",\"hardware_id\":\"s13\",\"values\":[{\"key\":\"s14\",\"value\":\"s15\"}]}],\"diagnostics_sf\":[{\"level\":247,\"name\":\"s17\",\"message\":\"s18\",\"hardware_id\":\"s19\",\"values\":[{\"key\":\"s20\",\"value\":\"s21\"}]},{\"level\":65,\"name\":\"s23\",\"message\":\"s24\",\"hardware_id\":\"s25\",\"values\":[{\"key\":\"s26\",\"value\":\"s27\"}]}],\"diagnostics_lf\":[{\"level\":139,\"name\":\"s29\",\"message\":\"s30\",\"hardware_id\":\"s31\",\"values\":[{\"key\":\"s32\",\"value\":\"s33\"}]},{\"level\":213,\"name\":\"s35\",\"message\":\"s36\",\"hardware_id\":\"s37\",\"values\":[{\"key\":\"s38\",\"value\":\"s39\"}]}],\"diagnostics_spf\":[{\"level\":31,\"name\":\"s41\",\"message\":\"s42\",\"hardware_id\":\"s43\",\"values\":[{\"key\":\"s44\",\"value\":\"s45\"}]},{\"level\":105,\"name\":\"s47\",\"message\":\"s48\",\"hardware_id\":\"s49\",\"values\":[{\"key\":\"s50\",\"value\":\"s51\"}]}]},\"id\":\"gen-hazard_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status\",\"type\":\"tier4_system_msgs/msg/HazardStatus\",\"msg\":{\"level\":40510,\"emergency\":false,\"emergency_holding\":true,\"diagnostics_nf\":[{\"level\":99,\"name\":\"s5\",\"message\":\"s6\",\"hardware_id\":\"s7\",\"values\":[{\"key\":\"s8\",\"value\":\"s9\"}]},{\"level\":173,\"name\":\"s11\",\"message\":\"s12\",\"hardware_id\":\"s13\",\"values\":[{\"key\":\"s14\",\"value\":\"s15\"}]}],\"diagnostics_sf\":[{\"level\":247,\"name\":\"s17\",\"message\":\"s18\",\"hardware_id\":\"s19\",\"values\":[{\"key\":\"s20\",\"value\":\"s21\"}]},{\"level\":65,\"name\":\"s23\",\"message\":\"s24\",\"hardware_id\":\"s25\",\"values\":[{\"key\":\"s26\",\"value\":\"s27\"}]}],\"diagnostics_lf\":[{\"level\":139,\"name\":\"s29\",\"message\":\"s30\",\"hardware_id\":\"s31\",\"values\":[{\"key\":\"s32\",\"value\":\"s33\"}]},{\"level\":213,\"name\":\"s35\",\"message\":\"s36\",\"hardware_id\":\"s37\",\"values\":[{\"key\":\"s38\",\"value\":\"s39\"}]}],\"diagnostics_spf\":[{\"level\":31,\"name\":\"s41\",\"message\":\"s42\",\"hardware_id\":\"s43\",\"values\":[{\"key\":\"s44\",\"value\":\"s45\"}]},{\"level\":105,\"name\":\"s47\",\"message\":\"s48\",\"hardware_id\":\"s49\",\"values\":[{\"key\":\"s50\",\"value\":\"s51\"}]}]},\"id\":\"gen-hazard_status\"}",
+  "model": {
+    "@kind": "hazard_status",
+    "ros2tier4system.hazard_status_level": "40510",
+    "ros2tier4system.hazard_status_emergency": "0",
+    "ros2tier4system.hazard_status_emergency_holding": "1",
+    "ros2tier4system.hazard_status_diagnostics_nf.#": "2",
+    "ros2tier4system.hazard_status_diagnostics_nf[0].ros2tier4system.hazard_status_diagnostics_nf_level": "99",
+    "ros2tier4system.hazard_status_diagnostics_sf.#": "2",
+    "ros2tier4system.hazard_status_diagnostics_sf[0].ros2tier4system.hazard_status_diagnostics_sf_level": "247",
+    "ros2tier4system.hazard_status_diagnostics_lf.#": "2",
+    "ros2tier4system.hazard_status_diagnostics_lf[0].ros2tier4system.hazard_status_diagnostics_lf_level": "139",
+    "ros2tier4system.hazard_status_diagnostics_spf.#": "2",
+    "ros2tier4system.hazard_status_diagnostics_spf[0].ros2tier4system.hazard_status_diagnostics_spf_level": "31",
+    "ros2tier4system.topic": "/gen/hazard_status"
+  }
+}

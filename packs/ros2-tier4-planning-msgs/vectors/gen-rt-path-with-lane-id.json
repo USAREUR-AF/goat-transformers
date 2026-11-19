@@ -1,0 +1,21 @@
+{
+  "name": "rt-path_with_lane_id",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_with_lane_id\",\"type\":\"tier4_planning_msgs/msg/PathWithLaneId\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"point\":{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"longitudinal_velocity_mps\":-2.375,\"lateral_velocity_mps\":-2.125,\"heading_rate_rps\":-1.875,\"is_final\":false},\"lane_ids\":[-1851851835195]},{\"point\":{\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"longitudinal_velocity_mps\":0.625,\"lateral_velocity_mps\":0.875,\"heading_rate_rps\":1.125,\"is_final\":false},\"lane_ids\":[-3333333303351]}],\"left_bound\":[{\"x\":28.196,\"y\":29.203,\"z\":-30.21},{\"x\":31.217,\"y\":32.224,\"z\":-33.231}],\"right_bound\":[{\"x\":34.238,\"y\":35.245,\"z\":-36.252},{\"x\":37.259,\"y\":38.266,\"z\":-39.273}]},\"id\":\"gen-path_with_lane_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_with_lane_id\",\"type\":\"tier4_planning_msgs/msg/PathWithLaneId\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"point\":{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"longitudinal_velocity_mps\":-2.375,\"lateral_velocity_mps\":-2.125,\"heading_rate_rps\":-1.875,\"is_final\":false},\"lane_ids\":[-1851851835195]},{\"point\":{\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"longitudinal_velocity_mps\":0.625,\"lateral_velocity_mps\":0.875,\"heading_rate_rps\":1.125,\"is_final\":false},\"lane_ids\":[-3333333303351]}],\"left_bound\":[{\"x\":28.196,\"y\":29.203,\"z\":-30.21},{\"x\":31.217,\"y\":32.224,\"z\":-33.231}],\"right_bound\":[{\"x\":34.238,\"y\":35.245,\"z\":-36.252},{\"x\":37.259,\"y\":38.266,\"z\":-39.273}]},\"id\":\"gen-path_with_lane_id\"}",
+  "model": {
+    "@kind": "path_with_lane_id",
+    "ros2tier4planning.path_with_lane_id_header_stamp_sec": "40510",
+    "ros2tier4planning.path_with_lane_id_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.path_with_lane_id_header_frame_id": "s3",
+    "ros2tier4planning.path_with_lane_id_points.#": "2",
+    "ros2tier4planning.path_with_lane_id_points[0].ros2tier4planning.path_with_lane_id_points_point_pose_position_x": "4.028",
+    "ros2tier4planning.path_with_lane_id_left_bound.#": "2",
+    "ros2tier4planning.path_with_lane_id_left_bound[0].ros2tier4planning.path_with_lane_id_left_bound_x": "28.196",
+    "ros2tier4planning.path_with_lane_id_right_bound.#": "2",
+    "ros2tier4planning.path_with_lane_id_right_bound[0].ros2tier4planning.path_with_lane_id_right_bound_x": "34.238",
+    "ros2tier4planning.topic": "/gen/path_with_lane_id"
+  }
+}

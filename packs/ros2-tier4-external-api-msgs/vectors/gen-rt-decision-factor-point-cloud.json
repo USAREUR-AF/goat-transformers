@@ -1,0 +1,18 @@
+{
+  "name": "rt-decision_factor_point_cloud",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/decision_factor_point_cloud\",\"type\":\"tier4_external_api_msgs/msg/DecisionFactorPointCloud\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"is_safe\":false,\"points\":[{\"x\":5.035,\"y\":-6.042,\"z\":7.049},{\"x\":8.056,\"y\":-9.063,\"z\":10.07}]},\"id\":\"gen-decision_factor_point_cloud\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/decision_factor_point_cloud\",\"type\":\"tier4_external_api_msgs/msg/DecisionFactorPointCloud\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"is_safe\":false,\"points\":[{\"x\":5.035,\"y\":-6.042,\"z\":7.049},{\"x\":8.056,\"y\":-9.063,\"z\":10.07}]},\"id\":\"gen-decision_factor_point_cloud\"}",
+  "model": {
+    "@kind": "decision_factor_point_cloud",
+    "ros2tier4externalapi.decision_factor_point_cloud_header_stamp_sec": "40510",
+    "ros2tier4externalapi.decision_factor_point_cloud_header_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.decision_factor_point_cloud_header_frame_id": "s3",
+    "ros2tier4externalapi.decision_factor_point_cloud_is_safe": "0",
+    "ros2tier4externalapi.decision_factor_point_cloud_points.#": "2",
+    "ros2tier4externalapi.decision_factor_point_cloud_points[0].ros2tier4externalapi.decision_factor_point_cloud_points_x": "5.035",
+    "ros2tier4externalapi.topic": "/gen/decision_factor_point_cloud"
+  }
+}

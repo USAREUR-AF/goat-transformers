@@ -1,0 +1,17 @@
+{
+  "name": "rt-avoidance_debug_msg",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/avoidance_debug_msg\",\"type\":\"tier4_planning_msgs/msg/AvoidanceDebugMsg\",\"msg\":{\"object_id\":\"s1\",\"allow_avoidance\":false,\"longitudinal_distance\":-3.021,\"lateral_distance_from_centerline\":4.028,\"to_furthest_linestring_distance\":5.035,\"max_shift_length\":-6.042,\"required_jerk\":7.049,\"maximum_jerk\":8.056,\"failed_reason\":\"s9\"},\"id\":\"gen-avoidance_debug_msg\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/avoidance_debug_msg\",\"type\":\"tier4_planning_msgs/msg/AvoidanceDebugMsg\",\"msg\":{\"object_id\":\"s1\",\"allow_avoidance\":false,\"longitudinal_distance\":-3.021,\"lateral_distance_from_centerline\":4.028,\"to_furthest_linestring_distance\":5.035,\"max_shift_length\":-6.042,\"required_jerk\":7.049,\"maximum_jerk\":8.056,\"failed_reason\":\"s9\"},\"id\":\"gen-avoidance_debug_msg\"}",
+  "model": {
+    "@kind": "avoidance_debug_msg",
+    "ros2tier4planning.avoidance_debug_msg_object_id": "s1",
+    "ros2tier4planning.avoidance_debug_msg_allow_avoidance": "0",
+    "ros2tier4planning.avoidance_debug_msg_longitudinal_distance": "-3.021",
+    "ros2tier4planning.avoidance_debug_msg_lateral_distance_from_centerline": "4.028",
+    "ros2tier4planning.avoidance_debug_msg_to_furthest_linestring_distance": "5.035",
+    "ros2tier4planning.topic": "/gen/avoidance_debug_msg"
+  }
+}

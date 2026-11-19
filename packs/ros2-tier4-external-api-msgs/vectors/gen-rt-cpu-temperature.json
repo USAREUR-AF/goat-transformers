@@ -1,0 +1,17 @@
+{
+  "name": "rt-cpu_temperature",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cpu_temperature\",\"type\":\"tier4_external_api_msgs/msg/CpuTemperature\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"temperature\":-4.125,\"thermal_throttling\":154},\"id\":\"gen-cpu_temperature\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cpu_temperature\",\"type\":\"tier4_external_api_msgs/msg/CpuTemperature\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"temperature\":-4.125,\"thermal_throttling\":154},\"id\":\"gen-cpu_temperature\"}",
+  "model": {
+    "@kind": "cpu_temperature",
+    "ros2tier4externalapi.cpu_temperature_stamp_sec": "40510",
+    "ros2tier4externalapi.cpu_temperature_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.cpu_temperature_hostname": "s3",
+    "ros2tier4externalapi.cpu_temperature_temperature": "-4.125",
+    "ros2tier4externalapi.cpu_temperature_thermal_throttling": "154",
+    "ros2tier4externalapi.topic": "/gen/cpu_temperature"
+  }
+}

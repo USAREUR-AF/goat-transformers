@@ -1,0 +1,15 @@
+{
+  "name": "rt-approval",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/approval\",\"type\":\"tier4_planning_msgs/msg/Approval\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"approval\":true},\"id\":\"gen-approval\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/approval\",\"type\":\"tier4_planning_msgs/msg/Approval\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"approval\":true},\"id\":\"gen-approval\"}",
+  "model": {
+    "@kind": "approval",
+    "ros2tier4planning.approval_stamp_sec": "40510",
+    "ros2tier4planning.approval_stamp_nanosec": "2147564661",
+    "ros2tier4planning.approval_approval": "1",
+    "ros2tier4planning.topic": "/gen/approval"
+  }
+}

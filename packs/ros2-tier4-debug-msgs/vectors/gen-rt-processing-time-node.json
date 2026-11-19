@@ -1,0 +1,17 @@
+{
+  "name": "rt-processing_time_node",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/processing_time_node\",\"type\":\"tier4_debug_msgs/msg/ProcessingTimeNode\",\"msg\":{\"id\":40510,\"name\":\"s2\",\"processing_time\":-3.021,\"parent_id\":162019,\"comment\":\"s5\"},\"id\":\"gen-processing_time_node\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/processing_time_node\",\"type\":\"tier4_debug_msgs/msg/ProcessingTimeNode\",\"msg\":{\"id\":40510,\"name\":\"s2\",\"processing_time\":-3.021,\"parent_id\":162019,\"comment\":\"s5\"},\"id\":\"gen-processing_time_node\"}",
+  "model": {
+    "@kind": "processing_time_node",
+    "ros2tier4debug.processing_time_node_id": "40510",
+    "ros2tier4debug.processing_time_node_name": "s2",
+    "ros2tier4debug.processing_time_node_processing_time": "-3.021",
+    "ros2tier4debug.processing_time_node_parent_id": "162019",
+    "ros2tier4debug.processing_time_node_comment": "s5",
+    "ros2tier4debug.topic": "/gen/processing_time_node"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "rt-lane_change_status",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_status\",\"type\":\"tier4_api_msgs/msg/LaneChangeStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"force_lane_change_available\":false,\"lane_change_ready\":true,\"candidate_path\":{\"header\":{\"stamp\":{\"sec\":243025,\"nanosec\":2147767176},\"frame_id\":\"s8\"},\"points\":[{\"pose\":{\"position\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"orientation\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098,\"w\":-15.105}},\"twist\":{\"linear\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"angular\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147}},\"type\":65},{\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}},\"twist\":{\"linear\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224},\"angular\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"type\":67}],\"drivable_area\":{\"header\":{\"stamp\":{\"sec\":1498618,\"nanosec\":2149022769},\"frame_id\":\"s39\"},\"info\":{\"map_load_time\":{\"sec\":1620127,\"nanosec\":2149144278},\"resolution\":5.375,\"width\":2149225284,\"height\":2149265787,\"origin\":{\"position\":{\"x\":-45.315,\"y\":46.322,\"z\":47.329},\"orientation\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35,\"w\":-51.357}}},\"data\":[51,106]}}},\"id\":\"gen-lane_change_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_status\",\"type\":\"tier4_api_msgs/msg/LaneChangeStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"force_lane_change_available\":false,\"lane_change_ready\":true,\"candidate_path\":{\"header\":{\"stamp\":{\"sec\":243025,\"nanosec\":2147767176},\"frame_id\":\"s8\"},\"points\":[{\"pose\":{\"position\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"orientation\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098,\"w\":-15.105}},\"twist\":{\"linear\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"angular\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147}},\"type\":65},{\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}},\"twist\":{\"linear\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224},\"angular\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"type\":67}],\"drivable_area\":{\"header\":{\"stamp\":{\"sec\":1498618,\"nanosec\":2149022769},\"frame_id\":\"s39\"},\"info\":{\"map_load_time\":{\"sec\":1620127,\"nanosec\":2149144278},\"resolution\":5.375,\"width\":2149225284,\"height\":2149265787,\"origin\":{\"position\":{\"x\":-45.315,\"y\":46.322,\"z\":47.329},\"orientation\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35,\"w\":-51.357}}},\"data\":[51,106]}}},\"id\":\"gen-lane_change_status\"}",
+  "model": {
+    "@kind": "lane_change_status",
+    "ros2tier4api.lane_change_status_header_stamp_sec": "40510",
+    "ros2tier4api.lane_change_status_header_stamp_nanosec": "2147564661",
+    "ros2tier4api.lane_change_status_header_frame_id": "s3",
+    "ros2tier4api.lane_change_status_force_lane_change_available": "0",
+    "ros2tier4api.lane_change_status_lane_change_ready": "1",
+    "ros2tier4api.lane_change_status_candidate_path_points.#": "2",
+    "ros2tier4api.lane_change_status_candidate_path_points[0].ros2tier4api.lane_change_status_candidate_path_points_pose_position_x": "-9.063",
+    "ros2tier4api.lane_change_status_candidate_path_drivable_area_data.#": "2",
+    "ros2tier4api.lane_change_status_candidate_path_drivable_area_data[0].ros2tier4api.lane_change_status_candidate_path_drivable_area_data_value": "51",
+    "ros2tier4api.topic": "/gen/lane_change_status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "rt-planning_factor",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/planning_factor\",\"type\":\"tier4_external_api_msgs/msg/PlanningFactor\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"behavior_type\":63715,\"behavior_name\":\"s5\",\"behavior_detail\":\"s6\",\"control_points\":[{\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"distance\":-1.625},{\"pose\":{\"position\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"orientation\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14,\"w\":-21.147}},\"distance\":0.375}],\"is_safe\":true,\"decision_detail\":\"s24\",\"object_factors\":[{\"header\":{\"stamp\":{\"sec\":1012582,\"nanosec\":2148536733},\"frame_id\":\"s27\"},\"is_safe\":false,\"object_id\":{\"uuid\":\"HVf/AIA=\"},\"point\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224}},{\"header\":{\"stamp\":{\"sec\":1336606,\"nanosec\":2148860757},\"frame_id\":\"s35\"},\"is_safe\":false,\"object_id\":{\"uuid\":\"JW//AIA=\"},\"point\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28}}],\"point_cloud_factors\":[{\"header\":{\"stamp\":{\"sec\":1660630,\"nanosec\":2149184781},\"frame_id\":\"s43\"},\"is_safe\":false,\"points\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]},{\"header\":{\"stamp\":{\"sec\":1944151,\"nanosec\":2149468302},\"frame_id\":\"s50\"},\"is_safe\":true,\"points\":[{\"x\":52.364,\"y\":53.371,\"z\":-54.378}]}]},\"id\":\"gen-planning_factor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/planning_factor\",\"type\":\"tier4_external_api_msgs/msg/PlanningFactor\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"behavior_type\":63715,\"behavior_name\":\"s5\",\"behavior_detail\":\"s6\",\"control_points\":[{\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"distance\":-1.625},{\"pose\":{\"position\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"orientation\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14,\"w\":-21.147}},\"distance\":0.375}],\"is_safe\":true,\"decision_detail\":\"s24\",\"object_factors\":[{\"header\":{\"stamp\":{\"sec\":1012582,\"nanosec\":2148536733},\"frame_id\":\"s27\"},\"is_safe\":false,\"object_id\":{\"uuid\":\"HVf/AIA=\"},\"point\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224}},{\"header\":{\"stamp\":{\"sec\":1336606,\"nanosec\":2148860757},\"frame_id\":\"s35\"},\"is_safe\":false,\"object_id\":{\"uuid\":\"JW//AIA=\"},\"point\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28}}],\"point_cloud_factors\":[{\"header\":{\"stamp\":{\"sec\":1660630,\"nanosec\":2149184781},\"frame_id\":\"s43\"},\"is_safe\":false,\"points\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]},{\"header\":{\"stamp\":{\"sec\":1944151,\"nanosec\":2149468302},\"frame_id\":\"s50\"},\"is_safe\":true,\"points\":[{\"x\":52.364,\"y\":53.371,\"z\":-54.378}]}]},\"id\":\"gen-planning_factor\"}",
+  "model": {
+    "@kind": "planning_factor",
+    "ros2tier4externalapi.planning_factor_header_stamp_sec": "40510",
+    "ros2tier4externalapi.planning_factor_header_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.planning_factor_header_frame_id": "s3",
+    "ros2tier4externalapi.planning_factor_behavior_type": "63715",
+    "ros2tier4externalapi.planning_factor_behavior_name": "s5",
+    "ros2tier4externalapi.planning_factor_control_points.#": "2",
+    "ros2tier4externalapi.planning_factor_control_points[0].ros2tier4externalapi.planning_factor_control_points_pose_position_x": "7.049",
+    "ros2tier4externalapi.planning_factor_object_factors.#": "2",
+    "ros2tier4externalapi.planning_factor_object_factors[0].ros2tier4externalapi.planning_factor_object_factors_header_stamp_sec": "1012582",
+    "ros2tier4externalapi.planning_factor_point_cloud_factors.#": "2",
+    "ros2tier4externalapi.planning_factor_point_cloud_factors[0].ros2tier4externalapi.planning_factor_point_cloud_factors_header_stamp_sec": "1660630",
+    "ros2tier4externalapi.topic": "/gen/planning_factor"
+  }
+}

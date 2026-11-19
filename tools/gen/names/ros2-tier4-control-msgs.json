@@ -1,0 +1,16 @@
+{
+ "ExternalCommandSelectorMode:data": "external_command_selector_mode_data",
+ "GateMode:data": "gate_mode_data",
+ "IsPaused:data": "is_paused_data",
+ "IsPaused:stamp.nanosec": "is_paused_stamp_nanosec",
+ "IsPaused:stamp.sec": "is_paused_stamp_sec",
+ "IsStartRequested:data": "is_start_requested_data",
+ "IsStartRequested:stamp.nanosec": "is_start_requested_stamp_nanosec",
+ "IsStartRequested:stamp.sec": "is_start_requested_stamp_sec",
+ "IsStopped:data": "is_stopped_data",
+ "IsStopped:requested_sources[]": "is_stopped_requested_sources",
+ "IsStopped:requested_sources[].": "is_stopped_requested_sources_value",
+ "IsStopped:stamp.nanosec": "is_stopped_stamp_nanosec",
+ "IsStopped:stamp.sec": "is_stopped_stamp_sec",
+ "topic": "topic"
+}

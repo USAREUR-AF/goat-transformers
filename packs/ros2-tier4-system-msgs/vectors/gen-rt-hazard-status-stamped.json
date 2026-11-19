@@ -1,0 +1,25 @@
+{
+  "name": "rt-hazard_status_stamped",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status_stamped\",\"type\":\"tier4_system_msgs/msg/HazardStatusStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"level\":162019,\"emergency\":true,\"emergency_holding\":false,\"diagnostics_nf\":[{\"level\":8,\"name\":\"s8\",\"message\":\"s9\",\"hardware_id\":\"s10\",\"values\":[{\"key\":\"s11\",\"value\":\"s12\"}]},{\"level\":82,\"name\":\"s14\",\"message\":\"s15\",\"hardware_id\":\"s16\",\"values\":[{\"key\":\"s17\",\"value\":\"s18\"}]}],\"diagnostics_sf\":[{\"level\":156,\"name\":\"s20\",\"message\":\"s21\",\"hardware_id\":\"s22\",\"values\":[{\"key\":\"s23\",\"value\":\"s24\"}]},{\"level\":230,\"name\":\"s26\",\"message\":\"s27\",\"hardware_id\":\"s28\",\"values\":[{\"key\":\"s29\",\"value\":\"s30\"}]}],\"diagnostics_lf\":[{\"level\":48,\"name\":\"s32\",\"message\":\"s33\",\"hardware_id\":\"s34\",\"values\":[{\"key\":\"s35\",\"value\":\"s36\"}]},{\"level\":122,\"name\":\"s38\",\"message\":\"s39\",\"hardware_id\":\"s40\",\"values\":[{\"key\":\"s41\",\"value\":\"s42\"}]}],\"diagnostics_spf\":[{\"level\":196,\"name\":\"s44\",\"message\":\"s45\",\"hardware_id\":\"s46\",\"values\":[{\"key\":\"s47\",\"value\":\"s48\"}]},{\"level\":14,\"name\":\"s50\",\"message\":\"s51\",\"hardware_id\":\"s52\",\"values\":[{\"key\":\"s53\",\"value\":\"s54\"}]}]}},\"id\":\"gen-hazard_status_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status_stamped\",\"type\":\"tier4_system_msgs/msg/HazardStatusStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"level\":162019,\"emergency\":true,\"emergency_holding\":false,\"diagnostics_nf\":[{\"level\":8,\"name\":\"s8\",\"message\":\"s9\",\"hardware_id\":\"s10\",\"values\":[{\"key\":\"s11\",\"value\":\"s12\"}]},{\"level\":82,\"name\":\"s14\",\"message\":\"s15\",\"hardware_id\":\"s16\",\"values\":[{\"key\":\"s17\",\"value\":\"s18\"}]}],\"diagnostics_sf\":[{\"level\":156,\"name\":\"s20\",\"message\":\"s21\",\"hardware_id\":\"s22\",\"values\":[{\"key\":\"s23\",\"value\":\"s24\"}]},{\"level\":230,\"name\":\"s26\",\"message\":\"s27\",\"hardware_id\":\"s28\",\"values\":[{\"key\":\"s29\",\"value\":\"s30\"}]}],\"diagnostics_lf\":[{\"level\":48,\"name\":\"s32\",\"message\":\"s33\",\"hardware_id\":\"s34\",\"values\":[{\"key\":\"s35\",\"value\":\"s36\"}]},{\"level\":122,\"name\":\"s38\",\"message\":\"s39\",\"hardware_id\":\"s40\",\"values\":[{\"key\":\"s41\",\"value\":\"s42\"}]}],\"diagnostics_spf\":[{\"level\":196,\"name\":\"s44\",\"message\":\"s45\",\"hardware_id\":\"s46\",\"values\":[{\"key\":\"s47\",\"value\":\"s48\"}]},{\"level\":14,\"name\":\"s50\",\"message\":\"s51\",\"hardware_id\":\"s52\",\"values\":[{\"key\":\"s53\",\"value\":\"s54\"}]}]}},\"id\":\"gen-hazard_status_stamped\"}",
+  "model": {
+    "@kind": "hazard_status_stamped",
+    "ros2tier4system.hazard_status_stamped_header_stamp_sec": "40510",
+    "ros2tier4system.hazard_status_stamped_header_stamp_nanosec": "2147564661",
+    "ros2tier4system.hazard_status_stamped_header_frame_id": "s3",
+    "ros2tier4system.hazard_status_stamped_status_level": "162019",
+    "ros2tier4system.hazard_status_stamped_status_emergency": "1",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_nf.#": "2",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_nf[0].ros2tier4system.hazard_status_stamped_status_diagnostics_nf_level": "8",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_sf.#": "2",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_sf[0].ros2tier4system.hazard_status_stamped_status_diagnostics_sf_level": "156",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_lf.#": "2",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_lf[0].ros2tier4system.hazard_status_stamped_status_diagnostics_lf_level": "48",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_spf.#": "2",
+    "ros2tier4system.hazard_status_stamped_status_diagnostics_spf[0].ros2tier4system.hazard_status_stamped_status_diagnostics_spf_level": "196",
+    "ros2tier4system.topic": "/gen/hazard_status_stamped"
+  }
+}

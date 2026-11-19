@@ -1,0 +1,15 @@
+{
+  "name": "rt-euler",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/euler\",\"type\":\"tier4_api_msgs/msg/Euler\",\"msg\":{\"roll\":1.007,\"pitch\":2.014,\"yaw\":-3.021},\"id\":\"gen-euler\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/euler\",\"type\":\"tier4_api_msgs/msg/Euler\",\"msg\":{\"roll\":1.007,\"pitch\":2.014,\"yaw\":-3.021},\"id\":\"gen-euler\"}",
+  "model": {
+    "@kind": "euler",
+    "ros2tier4api.euler_roll": "1.007",
+    "ros2tier4api.euler_pitch": "2.014",
+    "ros2tier4api.euler_yaw": "-3.021",
+    "ros2tier4api.topic": "/gen/euler"
+  }
+}

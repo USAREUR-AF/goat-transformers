@@ -1,0 +1,17 @@
+{
+  "name": "rt-service_log",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/service_log\",\"type\":\"tier4_system_msgs/msg/ServiceLog\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"name\":\"s4\",\"node\":\"s5\",\"yaml\":\"s6\"},\"id\":\"gen-service_log\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/service_log\",\"type\":\"tier4_system_msgs/msg/ServiceLog\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"name\":\"s4\",\"node\":\"s5\",\"yaml\":\"s6\"},\"id\":\"gen-service_log\"}",
+  "model": {
+    "@kind": "service_log",
+    "ros2tier4system.service_log_stamp_sec": "40510",
+    "ros2tier4system.service_log_stamp_nanosec": "2147564661",
+    "ros2tier4system.service_log_type": "44",
+    "ros2tier4system.service_log_name": "s4",
+    "ros2tier4system.service_log_node": "s5",
+    "ros2tier4system.topic": "/gen/service_log"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "rt-velocity_limit_constraints",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_limit_constraints\",\"type\":\"tier4_planning_msgs/msg/VelocityLimitConstraints\",\"msg\":{\"max_acceleration\":-4.875,\"min_acceleration\":-4.625,\"max_jerk\":-4.375,\"min_jerk\":-4.125},\"id\":\"gen-velocity_limit_constraints\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_limit_constraints\",\"type\":\"tier4_planning_msgs/msg/VelocityLimitConstraints\",\"msg\":{\"max_acceleration\":-4.875,\"min_acceleration\":-4.625,\"max_jerk\":-4.375,\"min_jerk\":-4.125},\"id\":\"gen-velocity_limit_constraints\"}",
+  "model": {
+    "@kind": "velocity_limit_constraints",
+    "ros2tier4planning.velocity_limit_constraints_max_acceleration_2": "-4.875",
+    "ros2tier4planning.velocity_limit_constraints_min_acceleration_2": "-4.625",
+    "ros2tier4planning.velocity_limit_constraints_max_jerk_2": "-4.375",
+    "ros2tier4planning.velocity_limit_constraints_min_jerk_2": "-4.125",
+    "ros2tier4planning.topic": "/gen/velocity_limit_constraints"
+  }
+}

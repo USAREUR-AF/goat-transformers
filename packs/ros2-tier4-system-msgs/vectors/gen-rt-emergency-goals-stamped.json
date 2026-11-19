@@ -1,0 +1,17 @@
+{
+  "name": "rt-emergency_goals_stamped",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/emergency_goals_stamped\",\"type\":\"tier4_system_msgs/msg/EmergencyGoalsStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"goals\":[{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},{\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"orientation\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105,\"w\":16.112}}],\"sender\":\"s17\"},\"id\":\"gen-emergency_goals_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/emergency_goals_stamped\",\"type\":\"tier4_system_msgs/msg/EmergencyGoalsStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"goals\":[{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},{\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"orientation\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105,\"w\":16.112}}],\"sender\":\"s17\"},\"id\":\"gen-emergency_goals_stamped\"}",
+  "model": {
+    "@kind": "emergency_goals_stamped",
+    "ros2tier4system.emergency_goals_stamped_stamp_sec": "40510",
+    "ros2tier4system.emergency_goals_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4system.emergency_goals_stamped_goals.#": "2",
+    "ros2tier4system.emergency_goals_stamped_goals[0].ros2tier4system.emergency_goals_stamped_goals_position_x": "-3.021",
+    "ros2tier4system.emergency_goals_stamped_sender": "s17",
+    "ros2tier4system.topic": "/gen/emergency_goals_stamped"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-text_file",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/text_file\",\"type\":\"tier4_external_api_msgs/msg/TextFile\",\"msg\":{\"text\":\"s1\"},\"id\":\"gen-text_file\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/text_file\",\"type\":\"tier4_external_api_msgs/msg/TextFile\",\"msg\":{\"text\":\"s1\"},\"id\":\"gen-text_file\"}",
+  "model": {
+    "@kind": "text_file",
+    "ros2tier4externalapi.text_file_text": "s1",
+    "ros2tier4externalapi.topic": "/gen/text_file"
+  }
+}

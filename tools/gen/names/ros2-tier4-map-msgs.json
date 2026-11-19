@@ -1,0 +1,9 @@
+{
+ "MapProjectorInfo:map_origin.altitude": "map_projector_info_map_origin_altitude",
+ "MapProjectorInfo:map_origin.latitude": "map_projector_info_map_origin_latitude",
+ "MapProjectorInfo:map_origin.longitude": "map_projector_info_map_origin_longitude",
+ "MapProjectorInfo:mgrs_grid": "map_projector_info_mgrs_grid",
+ "MapProjectorInfo:projector_type": "map_projector_info_projector_type",
+ "MapProjectorInfo:vertical_datum": "map_projector_info_vertical_datum",
+ "topic": "topic"
+}

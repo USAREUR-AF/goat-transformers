@@ -1,0 +1,19 @@
+{
+  "name": "rt-diag_graph_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/diag_graph_status\",\"type\":\"tier4_system_msgs/msg/DiagGraphStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"s3\",\"nodes\":[{\"level\":99,\"input_level\":154,\"latch_level\":209,\"is_dependent\":true,\"is_overridden\":false},{\"level\":118,\"input_level\":173,\"latch_level\":228,\"is_dependent\":false,\"is_overridden\":true}],\"diags\":[{\"level\":137,\"input_level\":192,\"message\":\"s16\",\"hardware_id\":\"s17\",\"values\":[{\"key\":\"s18\",\"value\":\"s19\"}]},{\"level\":211,\"input_level\":10,\"message\":\"s22\",\"hardware_id\":\"s23\",\"values\":[{\"key\":\"s24\",\"value\":\"s25\"}]}],\"links\":[{},{}]},\"id\":\"gen-diag_graph_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/diag_graph_status\",\"type\":\"tier4_system_msgs/msg/DiagGraphStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"s3\",\"nodes\":[{\"level\":99,\"input_level\":154,\"latch_level\":209,\"is_dependent\":true,\"is_overridden\":false},{\"level\":118,\"input_level\":173,\"latch_level\":228,\"is_dependent\":false,\"is_overridden\":true}],\"diags\":[{\"level\":137,\"input_level\":192,\"message\":\"s16\",\"hardware_id\":\"s17\",\"values\":[{\"key\":\"s18\",\"value\":\"s19\"}]},{\"level\":211,\"input_level\":10,\"message\":\"s22\",\"hardware_id\":\"s23\",\"values\":[{\"key\":\"s24\",\"value\":\"s25\"}]}]},\"id\":\"gen-diag_graph_status\"}",
+  "model": {
+    "@kind": "diag_graph_status",
+    "ros2tier4system.diag_graph_status_stamp_sec": "40510",
+    "ros2tier4system.diag_graph_status_stamp_nanosec": "2147564661",
+    "ros2tier4system.diag_graph_status_id": "s3",
+    "ros2tier4system.diag_graph_status_nodes.#": "2",
+    "ros2tier4system.diag_graph_status_nodes[0].ros2tier4system.diag_graph_status_nodes_level": "99",
+    "ros2tier4system.diag_graph_status_diags.#": "2",
+    "ros2tier4system.diag_graph_status_diags[0].ros2tier4system.diag_graph_status_diags_level": "137",
+    "ros2tier4system.topic": "/gen/diag_graph_status"
+  }
+}

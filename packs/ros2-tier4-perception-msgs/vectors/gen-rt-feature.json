@@ -1,0 +1,19 @@
+{
+  "name": "rt-feature",
+  "from": "ros2-tier4-perception-msgs",
+  "to": "ros2-tier4-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/feature\",\"type\":\"tier4_perception_msgs/msg/Feature\",\"msg\":{\"cluster\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"fields\":[{\"name\":\"s6\",\"offset\":2147767176,\"datatype\":63,\"count\":2147848182},{\"name\":\"s10\",\"offset\":2147929188,\"datatype\":27,\"count\":2148010194}],\"is_bigendian\":false,\"point_step\":2148091200,\"row_step\":2148131703,\"data\":\"ETP/AIA=\",\"is_dense\":false},\"roi\":{\"x_offset\":2148253212,\"y_offset\":2148293715,\"height\":2148334218,\"width\":2148374721,\"do_rectify\":true}},\"id\":\"gen-feature\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/feature\",\"type\":\"tier4_perception_msgs/msg/Feature\",\"msg\":{\"cluster\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"fields\":[{\"name\":\"s6\",\"offset\":2147767176,\"datatype\":63,\"count\":2147848182},{\"name\":\"s10\",\"offset\":2147929188,\"datatype\":27,\"count\":2148010194}],\"is_bigendian\":false,\"point_step\":2148091200,\"row_step\":2148131703,\"data\":\"ETP/AIA=\",\"is_dense\":false},\"roi\":{\"x_offset\":2148253212,\"y_offset\":2148293715,\"height\":2148334218,\"width\":2148374721,\"do_rectify\":true}},\"id\":\"gen-feature\"}",
+  "model": {
+    "@kind": "feature",
+    "ros2tier4perception.feature_cluster_header_stamp_sec": "40510",
+    "ros2tier4perception.feature_cluster_header_stamp_nanosec": "2147564661",
+    "ros2tier4perception.feature_cluster_header_frame_id": "s3",
+    "ros2tier4perception.feature_cluster_height": "2147645667",
+    "ros2tier4perception.feature_cluster_width": "2147686170",
+    "ros2tier4perception.feature_cluster_fields.#": "2",
+    "ros2tier4perception.feature_cluster_fields[0].ros2tier4perception.feature_cluster_fields_name": "s6",
+    "ros2tier4perception.topic": "/gen/feature"
+  }
+}
