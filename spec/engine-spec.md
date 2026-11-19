@@ -2406,3 +2406,14 @@ a message; this ruling replaces the last sentence of ruling 38 and holds.
 - Not ruled: whether a `when` on a `json` number whose nearest double is
   infinite holds, fails or is `malformed-wire`.
 - Not ruled: a `linscale` `<maxpos>` too large for a double.
+- Not ruled: in a model module, whether a `module` or `uses` name that holds
+  `.` or is empty, the argument count of `key` and `list`, and a `derive`
+  line whose argument count does not fit its function are line checks or
+  checked after the file.
+- Not ruled: on `protobuf`, which error a decode gives when a field fails
+  and a later submessage does not parse.
+- Not ruled: the error kind of a `protobuf` encode in which one path is both
+  a value and a submessage.
+- Not ruled: whether the locator form of a `bits` fixed-layout `group` line
+  is a line check, and whether `layout sequential` placed after a line it
+  must precede is a line check or checked after the file.
