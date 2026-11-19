@@ -4593,6 +4593,56 @@ wires a package uses.
 
 ---
 
+# Version 0.25: parse once, and a benchmark
+
+Status: Written. Version 0.25 adds no directive to the pack language and
+changes no result. It allows an engine to keep what it has parsed, and it
+states a benchmark that every engine runs the same way.
+
+## Rulings for 0.25
+
+### Ruling 1: what an engine may keep
+
+- **1a.** An engine may keep, for the life of an engine instance, the parsed
+  form of every model module and pack it loaded, and any layout it computes
+  from them (the index of a protobuf message's field numbers, the plan of a
+  `bits` kind, the order of a group's items).
+- **1b.** Keeping changes nothing that can be observed. For every input, a
+  conversion on an instance that has converted other messages before gives
+  the same bytes, model values and named errors as on a new instance that
+  loaded the same packs. A failed conversion leaves nothing behind that a
+  later conversion could see.
+- **1c.** An instance that is used from several threads at once (where the
+  language has threads) gives each conversion the result of 1b.
+- **1d.** Loading reads each pack and module file once. A second load of the
+  same directory into the same instance is `duplicate-format` or
+  `duplicate-module`, as before.
+
+### Ruling 2: the benchmark
+
+- **2a.** The benchmark set is `bench/set.json`: an `iterations` count and a
+  list of conversion vectors, each with an `expect`. It covers every wire.
+- **2b.** An engine runs it like this. It loads only the packs the set's
+  vectors name, and the model modules those packs use, into one instance, and
+  records the time that took. Then, for each vector in order, it converts the
+  vector's input once and checks the output against `expect`. A vector whose
+  output differs fails the run. Then it converts the input `iterations`
+  times, and records the time.
+- **2c.** The run prints one line per vector, then one line for the load, each
+  a JSON object on its own line:
+  `{"vector": "<path as in the set>", "iterations": <n>, "ns_per_op": <integer>}`
+  and `{"load": <number of packs>, "ns": <integer>}`. `ns_per_op` is the total
+  time divided by `iterations`, rounded down. Nothing else is printed on
+  standard output.
+- **2d.** The numbers are measurements of one machine at one time. No vector
+  and no CI check fails on a number. The `conformance` workflow runs each
+  engine's benchmark and keeps its output as an artifact, so a change can be
+  compared with the one before it.
+- **2e.** The command that runs the benchmark belongs to the engine's
+  language and is stated in its README.
+
+---
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
