@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id269leftrearpower",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "6902000008000000e70310be6c439501",
+  "expect": "6902000008000000e70310be6c439501",
+  "model": {
+    "@kind": "id269leftrearpower"
+  }
+}

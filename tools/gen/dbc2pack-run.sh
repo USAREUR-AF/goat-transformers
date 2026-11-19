@@ -18,18 +18,31 @@
 # and unpacks it to <sources>/opendbc-<commit>/. License: MIT, Copyright (c)
 # 2020 Comma.ai, Inc. (LICENSE at the root of the commit, verbatim in
 # tools/gen/sources/dbc-PROVENANCE.md).
+#
+# A second source block writes the pack dbc-tesla-model3 from
+# github.com/joshwardell/model3dbc (Model3CAN.dbc; MIT, Copyright (c) 2019 Josh
+# Wardell, LICENSE verbatim in tools/gen/sources/dbc-model3dbc-PROVENANCE.md).
+# With --fetch the script downloads
+#   https://codeload.github.com/joshwardell/model3dbc/tar.gz/c56c113c353d09b1a5dd57677461f02fe8b7c6ca
+#   sha256 c790e1ddc760ed87b86b285fe8899e1bc282674f991dd00a86a82850a6d2e61a
+# and unpacks it to <sources>/model3dbc-<commit>/.
 set -euo pipefail
 ROOT="$(cd "$1" && pwd)"
 SRC="$(cd "$2" && pwd)"
 GEN="$(cd "$(dirname "$0")" && pwd)"
 COMMIT=79ddcc7bb72d557fc5b20d038c0fad9c9d423446
 TAR_SHA=0f969d44b18b4da6418bd6e7450854e8213acf3cb5327e66844ed1509aeb5dcb
+M3_COMMIT=c56c113c353d09b1a5dd57677461f02fe8b7c6ca
+M3_TAR_SHA=c790e1ddc760ed87b86b285fe8899e1bc282674f991dd00a86a82850a6d2e61a
 shift 2
 if [ "${1:-}" = "--fetch" ]; then
   shift
   curl -sS -f -L -o "$SRC/opendbc-$COMMIT.tar.gz" "https://codeload.github.com/commaai/opendbc/tar.gz/$COMMIT"
   echo "$TAR_SHA  $SRC/opendbc-$COMMIT.tar.gz" | sha256sum -c -
   tar -xzf "$SRC/opendbc-$COMMIT.tar.gz" -C "$SRC"
+  curl -sS -f -L -o "$SRC/model3dbc-$M3_COMMIT.tar.gz" "https://codeload.github.com/joshwardell/model3dbc/tar.gz/$M3_COMMIT"
+  echo "$M3_TAR_SHA  $SRC/model3dbc-$M3_COMMIT.tar.gz" | sha256sum -c -
+  tar -xzf "$SRC/model3dbc-$M3_COMMIT.tar.gz" -C "$SRC"
 fi
 if [ "${1:-}" != "--check" ]; then
   # remove what an earlier run wrote (files whose header names this generator)
@@ -54,3 +67,15 @@ NO_TABLE=(
 )
 python3 -I "$GEN/dbc2pack.py" --src "$SRC/opendbc-$COMMIT" --out "$ROOT" --core-def "$ROOT/model/core.def" \
   --ascii-tables-only "${NO_TABLE[@]}" "$@"
+
+# Tesla Model 3 / Model Y, github.com/joshwardell/model3dbc. GPSLatitude04F and
+# GPSLongitude04F (message ID04FGPSLatLong) state degrees ("Deg", factor 1E-06)
+# under names that do not end in latitude or longitude, so they are bound by --core.
+python3 -I "$GEN/dbc2pack.py" --src "$SRC/model3dbc-$M3_COMMIT" --out "$ROOT" --core-def "$ROOT/model/core.def" \
+  --dbc-dir . --repo https://github.com/joshwardell/model3dbc \
+  --provenance tools/gen/sources/dbc-model3dbc-PROVENANCE.md \
+  --license-line "MIT, copyright (c) 2019 Josh Wardell" \
+  --rename Model3CAN=tesla_model3 \
+  --core tesla_model3:ID04FGPSLatLong.GPSLatitude04F=lat \
+  --core tesla_model3:ID04FGPSLatLong.GPSLongitude04F=lon \
+  --ascii-tables-only "$@"

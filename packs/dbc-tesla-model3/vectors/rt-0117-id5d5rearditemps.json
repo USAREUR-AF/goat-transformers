@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id5d5rearditemps",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "d505000005000000795027fed5000000",
+  "expect": "d505000005000000795027fed5000000",
+  "model": {
+    "@kind": "id5d5rearditemps"
+  }
+}

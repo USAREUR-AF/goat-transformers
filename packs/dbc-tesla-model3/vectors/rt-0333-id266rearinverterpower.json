@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id266rearinverterpower",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "6602000008000000e30035b05e0c8701",
+  "expect": "6602000008000000e30035b05e0c8701",
+  "model": {
+    "@kind": "id266rearinverterpower"
+  }
+}

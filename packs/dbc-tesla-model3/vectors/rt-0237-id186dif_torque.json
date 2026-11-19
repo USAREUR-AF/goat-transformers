@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id186dif_torque",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "8601000008000000b5c398f38e30ea07",
+  "expect": "8601000008000000b5c398f38e30ea07",
+  "model": {
+    "@kind": "id186dif_torque"
+  }
+}

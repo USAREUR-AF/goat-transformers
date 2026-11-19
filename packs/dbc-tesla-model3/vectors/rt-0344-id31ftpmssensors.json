@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id31ftpmssensors",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "1f0300000800000082de59b5308c0763",
+  "expect": "1f0300000800000082de59b5308c0763",
+  "model": {
+    "@kind": "id31ftpmssensors"
+  }
+}

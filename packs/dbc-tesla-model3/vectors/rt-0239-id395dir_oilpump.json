@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id395dir_oilpump",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "9503000008000000faea13c1461df4cb",
+  "expect": "9503000008000000faea13c1461df4cb",
+  "model": {
+    "@kind": "id395dir_oilpump"
+  }
+}

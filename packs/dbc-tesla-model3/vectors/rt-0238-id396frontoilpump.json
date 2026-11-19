@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id396frontoilpump",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "960300000800000003567f042db2d1a8",
+  "expect": "960300000800000003567f042db2d1a8",
+  "model": {
+    "@kind": "id396frontoilpump"
+  }
+}

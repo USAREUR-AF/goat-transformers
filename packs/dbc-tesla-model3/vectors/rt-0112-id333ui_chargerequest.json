@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id333ui_chargerequest",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "3303000005000000094622c400000000",
+  "expect": "3303000005000000094622c400000000",
+  "model": {
+    "@kind": "id333ui_chargerequest"
+  }
+}

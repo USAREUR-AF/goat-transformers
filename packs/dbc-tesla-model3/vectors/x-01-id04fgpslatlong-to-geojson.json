@@ -1,0 +1,12 @@
+{
+  "name": "dbc-tesla-model3-id04fgpslatlong-to-geojson",
+  "from": "dbc-tesla-model3",
+  "to": "geojson",
+  "input": "4f000000080000006e3bd3a253260872",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "id04fgpslatlong",
+    "lon": "8.545594",
+    "lat": "47.397742"
+  }
+}

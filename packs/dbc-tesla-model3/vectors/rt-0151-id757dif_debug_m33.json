@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id757dif_debug_m33",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "5707000008000000215907b2305ede05",
+  "expect": "5707000008000000215907b2305ede05",
+  "model": {
+    "@kind": "id757dif_debug_m33"
+  }
+}

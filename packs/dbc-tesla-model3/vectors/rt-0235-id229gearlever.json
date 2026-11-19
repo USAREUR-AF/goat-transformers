@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id229gearlever",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "29020000030000000030020000000000",
+  "expect": "29020000030000000030020000000000",
+  "model": {
+    "@kind": "id229gearlever"
+  }
+}

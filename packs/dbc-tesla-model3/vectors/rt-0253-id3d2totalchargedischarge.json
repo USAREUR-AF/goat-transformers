@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3d2totalchargedischarge",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "d2030000080000003454c16a0ba8453e",
+  "expect": "d2030000080000003454c16a0ba8453e",
+  "model": {
+    "@kind": "id3d2totalchargedischarge"
+  }
+}

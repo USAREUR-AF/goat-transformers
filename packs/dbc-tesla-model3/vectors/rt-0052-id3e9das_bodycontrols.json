@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3e9das_bodycontrols",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "e903000008000000a4f44e070000b034",
+  "expect": "e903000008000000a4f44e070000b034",
+  "model": {
+    "@kind": "id3e9das_bodycontrols"
+  }
+}

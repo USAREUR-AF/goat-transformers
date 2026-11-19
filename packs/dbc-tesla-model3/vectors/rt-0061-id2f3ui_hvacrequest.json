@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id2f3ui_hvacrequest",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "f302000005000000045be1ab00000000",
+  "expect": "f302000005000000045be1ab00000000",
+  "model": {
+    "@kind": "id2f3ui_hvacrequest"
+  }
+}

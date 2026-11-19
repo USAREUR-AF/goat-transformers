@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id175wheelspeed",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "7501000008000000cb82de756ca32379",
+  "expect": "7501000008000000cb82de756ca32379",
+  "model": {
+    "@kind": "id175wheelspeed"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id1a5fronthvstatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "a50100000700000089033b0e27370300",
+  "expect": "a50100000700000089033b0e27370300",
+  "model": {
+    "@kind": "id1a5fronthvstatus"
+  }
+}

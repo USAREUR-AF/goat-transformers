@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3b3ui_vehiclecontrol2",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "b3030000040000009a908bae00000000",
+  "expect": "b3030000040000009a908bae00000000",
+  "model": {
+    "@kind": "id3b3ui_vehiclecontrol2"
+  }
+}

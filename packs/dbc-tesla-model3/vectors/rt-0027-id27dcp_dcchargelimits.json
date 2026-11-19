@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id27dcp_dcchargelimits",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "7d02000008000000ee993314b7b97a61",
+  "expect": "7d02000008000000ee993314b7b97a61",
+  "model": {
+    "@kind": "id27dcp_dcchargelimits"
+  }
+}

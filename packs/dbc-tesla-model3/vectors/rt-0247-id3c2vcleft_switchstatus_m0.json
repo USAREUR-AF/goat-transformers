@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3c2vcleft_switchstatus_m0",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "c203000008000000c86c6c1e0f0fdc3c",
+  "expect": "c203000008000000c86c6c1e0f0fdc3c",
+  "model": {
+    "@kind": "id3c2vcleft_switchstatus_m0"
+  }
+}

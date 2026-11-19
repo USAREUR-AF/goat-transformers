@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id43dcp_chargestatuslog",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "3d04000006000000105b8e5eb7010000",
+  "expect": "3d04000006000000105b8e5eb7010000",
+  "model": {
+    "@kind": "id43dcp_chargestatuslog"
+  }
+}

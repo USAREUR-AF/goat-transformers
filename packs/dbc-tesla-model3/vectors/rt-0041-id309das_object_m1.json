@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id309das_object_m1",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "0903000008000000b983a68dd53c869e",
+  "expect": "0903000008000000b983a68dd53c869e",
+  "model": {
+    "@kind": "id309das_object_m1"
+  }
+}

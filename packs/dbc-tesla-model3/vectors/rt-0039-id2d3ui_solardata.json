@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id2d3ui_solardata",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "d3020000080000000937e002b7325b84",
+  "expect": "d3020000080000000937e002b7325b84",
+  "model": {
+    "@kind": "id2d3ui_solardata"
+  }
+}

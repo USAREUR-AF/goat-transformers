@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3e3vcright_lightstatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "e3030000020000008503000000000000",
+  "expect": "e3030000020000008503000000000000",
+  "model": {
+    "@kind": "id3e3vcright_lightstatus"
+  }
+}

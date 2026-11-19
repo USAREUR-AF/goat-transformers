@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id225vcright_lvpowerstate",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2502000003000000f9c1160000000000",
+  "expect": "2502000003000000f9c1160000000000",
+  "model": {
+    "@kind": "id225vcright_lvpowerstate"
+  }
+}

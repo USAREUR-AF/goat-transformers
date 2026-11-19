@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id29dcp_dcchargestatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "9d02000004000000303bde0200000000",
+  "expect": "9d02000004000000303bde0200000000",
+  "model": {
+    "@kind": "id29dcp_dcchargestatus"
+  }
+}

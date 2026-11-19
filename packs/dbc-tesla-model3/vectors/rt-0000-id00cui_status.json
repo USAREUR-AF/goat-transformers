@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id00cui_status",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "0c0000000800000061043f4e2f16ddfc",
+  "expect": "0c0000000800000061043f4e2f16ddfc",
+  "model": {
+    "@kind": "id00cui_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id21dcp_evsestatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "1d0200000800000063c5015a482f9273",
+  "expect": "1d0200000800000063c5015a482f9273",
+  "model": {
+    "@kind": "id21dcp_evsestatus"
+  }
+}

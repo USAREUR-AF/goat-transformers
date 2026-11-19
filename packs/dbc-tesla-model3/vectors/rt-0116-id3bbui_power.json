@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3bbui_power",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "bb030000020000008259000000000000",
+  "expect": "bb030000020000008259000000000000",
+  "model": {
+    "@kind": "id3bbui_power"
+  }
+}

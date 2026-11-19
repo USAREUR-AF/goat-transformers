@@ -48,6 +48,11 @@ VERSION = "0.1.0"
 REPO = "https://github.com/commaai/opendbc"
 PROV = "tools/gen/sources/dbc-PROVENANCE.md"
 DBC_DIR = "opendbc/dbc"
+LICENSE_LINE = "MIT, copyright (c) 2020 Comma.ai, Inc."
+RENAME = {}                    # DBC file name -> pack file name (--rename)
+CORE_EXTRA = {}                # (file, message, signal) -> core key (--core)
+# The defaults above describe opendbc; --repo, --dbc-dir, --provenance,
+# --license-line and --rename point a run at another repository.
 CAN_UAPI = "Linux UAPI header include/uapi/linux/can.h, struct can_frame (GPL-2.0 WITH Linux-syscall-note)"
 DATA_BIT0 = 64                 # data[0] starts at byte 8
 EFF, RTR, ERR = 1 << 31, 1 << 30, 1 << 29
@@ -176,7 +181,8 @@ def load_sources(src):
     out = []
     for f in sorted(os.listdir(base)):
         if f.endswith(".dbc"):
-            out.append((f[:-4], read_text(os.path.join(base, f)), [DBC_DIR + "/" + f]))
+            rel = f if DBC_DIR in ("", ".") else DBC_DIR + "/" + f
+            out.append((RENAME.get(f[:-4], f[:-4]), read_text(os.path.join(base, f)), [rel]))
     gen = os.path.join(base, "generator")
     if os.path.isdir(gen):
         for brand in sorted(os.listdir(gen)):
@@ -368,7 +374,7 @@ class FilePlan:
             else:
                 tr = ("sscale:" if sig.signed else "uscale:") + fac + (":" + off if off else "")
                 typ = "float"
-        core = core_of(sig, msg) if typ == "float" else None
+        core = (core_of(sig, msg) or CORE_EXTRA.get((self.dbc.name, msg.name, sig.name))) if typ == "float" else None
         key = core if core else "%s.%s" % (self.module, self.key_of(msg, sig))
         via = None
         table = self.dbc.values.get((msg.id, sig.name))
@@ -1013,7 +1019,7 @@ def provenance_md(fp, sha, table, lic_sha):
         "|---|---|",
         "| repository | %s |" % REPO,
         "| commit | `%s` |" % sha,
-        "| license of the repository | MIT, copyright (c) 2020 Comma.ai, Inc.: `LICENSE` at the root of the commit (SHA-256 `%s`), verbatim in `tools/gen/sources/dbc-PROVENANCE.md` |" % lic_sha,
+        "| license of the repository | %s: `LICENSE` at the root of the commit (SHA-256 `%s`), verbatim in `%s` |" % (LICENSE_LINE, lic_sha, PROV),
         "| frame layout | %s; stated in this project's words, nothing copied |" % CAN_UAPI,
         "| date read | 2026-11-19 |",
         "| what the pack takes | message names, identifiers and sizes; signal names, start bits, lengths, byte orders, signs, factors, offsets and units; complete value tables; no comment text |",
@@ -1033,7 +1039,7 @@ def write_sources_provenance(out, src, sha, files):
          "|---|---|",
          "| repository | %s |" % REPO,
          "| commit | `%s` (head of `master`, read 2026-11-19) |" % sha,
-         "| archive | `https://codeload.github.com/commaai/opendbc/tar.gz/%s` |" % sha,
+         "| archive | `%s/tar.gz/%s` |" % (REPO.replace("https://github.com/", "https://codeload.github.com/"), sha),
          "| license | MIT, the file `LICENSE` at the root of the commit, verbatim below |",
          "",
          "## Files",
@@ -1062,8 +1068,30 @@ def read_sources_provenance(text, src, files):
 
 # ------------------------------------------------------------------- main ---
 
+def configure(args):
+    """Set the source description of one run (defaults: opendbc)."""
+    global REPO, PROV, DBC_DIR, LICENSE_LINE
+    REPO = args.repo or "https://github.com/commaai/opendbc"
+    PROV = args.provenance or "tools/gen/sources/dbc-PROVENANCE.md"
+    DBC_DIR = args.dbc_dir if args.dbc_dir is not None else "opendbc/dbc"
+    LICENSE_LINE = args.license_line or "MIT, copyright (c) 2020 Comma.ai, Inc."
+    RENAME.clear()
+    for item in args.rename or []:
+        a, _, b = item.partition("=")
+        if not a or not re.match(r"^[A-Za-z0-9_]+$", b):
+            raise GenError("--rename takes FILE=NAME, got %s" % item)
+        RENAME[a] = b
+    CORE_EXTRA.clear()
+    for item in args.core or []:
+        m = re.match(r"^([^:]+):([^.]+)\.([^=]+)=(lat|lon)$", item)
+        if not m:
+            raise GenError("--core takes FILE:MESSAGE.SIGNAL=lat|lon, got %s" % item)
+        CORE_EXTRA[m.group(1, 2, 3)] = m.group(4)
+
+
 def run(args, out):
     del SKIPPED_SOURCES[:]
+    configure(args)
     src = args.src
     files = source_files(src)
     if args.commit:
@@ -1129,6 +1157,17 @@ def build_parser():
     ap.add_argument("--commit", help="write %s for this commit" % PROV)
     ap.add_argument("--files", help="only these DBC files (names without .dbc), comma-separated")
     ap.add_argument("--core-def", help="model/core.def (default <out>/model/core.def)")
+    ap.add_argument("--repo", help="the repository URL the sources come from (default opendbc)")
+    ap.add_argument("--dbc-dir", help="the directory of the DBC files under --src (default opendbc/dbc)")
+    ap.add_argument("--provenance", help="the PROVENANCE.md with the commit and SHA-256 table "
+                    "(default tools/gen/sources/dbc-PROVENANCE.md)")
+    ap.add_argument("--license-line", help="the license and copyright as PROVENANCE.md states them "
+                    "(default: opendbc's)")
+    ap.add_argument("--rename", action="append", metavar="FILE=NAME",
+                    help="give the pack of DBC file FILE the name dbc-NAME (repeatable)")
+    ap.add_argument("--core", action="append", metavar="FILE:MESSAGE.SIGNAL=lat|lon",
+                    help="bind a signal the DBC states in degrees to core lat or lon, where its name "
+                         "does not end in latitude or longitude (repeatable)")
     ap.add_argument("--ascii-tables-only", action="store_true",
                     help="leave out every value table with a label that is not plain ASCII; the "
                          "signal keeps its number")

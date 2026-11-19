@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id201vcfront_loggingandvitals10h_m4",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "01020000080000005c50130000000000",
+  "expect": "01020000080000005c50130000000000",
+  "model": {
+    "@kind": "id201vcfront_loggingandvitals10h_m4"
+  }
+}

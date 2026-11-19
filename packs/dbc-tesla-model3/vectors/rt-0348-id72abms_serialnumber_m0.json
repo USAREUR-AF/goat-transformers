@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id72abms_serialnumber_m0",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2a07000008000000000be2b990673e15",
+  "expect": "2a07000008000000000be2b990673e15",
+  "model": {
+    "@kind": "id72abms_serialnumber_m0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id7d5dir_debug_m50",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "d5070000080000003274d20000000000",
+  "expect": "d5070000080000003274d20000000000",
+  "model": {
+    "@kind": "id7d5dir_debug_m50"
+  }
+}

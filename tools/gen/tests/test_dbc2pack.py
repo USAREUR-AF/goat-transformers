@@ -203,6 +203,25 @@ class NoTable(DbcCase):
         self.assertIn("--no-table takes FILE:MESSAGE.SIGNAL", err)
 
 
+class SourceOptions(DbcCase):
+    def test_rename_names_the_pack_and_core_binds_a_named_signal(self):
+        root = self.make_root()
+        status, _, err = self.run_gen(root, "--rename", "car_motorola=other_car",
+                                      "--core", "other_car:STEER.ANGLE=lat")
+        self.assertEqual((status, err), (0, ""))
+        self.assertTrue(os.path.isdir(os.path.join(root, "packs", "dbc-other-car")))
+        self.assertFalse(os.path.isdir(os.path.join(root, "packs", "dbc-car-motorola")))
+        text = self.text(root, "dbc-other-car")
+        # a lone latitude is no position: the binding falls back to the raw key
+        self.assertIn("dbcothercar.steer_angle", text)
+
+    def test_malformed_source_options_are_refused(self):
+        root = self.make_root()
+        for argv in (["--core", "car_intel:SPEED.TEMP=alt"], ["--rename", "car_intel=bad-name"]):
+            status, _, err = self.run_gen(root, *argv)
+            self.assertEqual(status, 1, argv)
+
+
 class CantoolsFiles(unittest.TestCase):
     """Four DBC files from the tests of cantools (MIT; fixtures/dbc2pack/cantools,
     origin in its dbc-PROVENANCE.md): the generator reads them and every vector
