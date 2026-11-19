@@ -96,8 +96,8 @@ Velocities in the map frame are left raw for the same reason.
 
 `Header.timestamp_sec` is a double of seconds (publishing time) and `measurement_time` a double
 of seconds since the GPS epoch (1980-01-06). `time_ms` is an integer of milliseconds since 1970
-in UTC; no protobuf transform turns a double of seconds into it, and the GPS time scale differs
-from UTC by the leap seconds. Both are raw keys.
+in UTC; no protobuf transform turns a double of seconds into it, and time counted from the
+1980 epoch of the satellite system runs ahead of UTC by the leap seconds. Both are raw keys.
 
 ## Generated vectors
 

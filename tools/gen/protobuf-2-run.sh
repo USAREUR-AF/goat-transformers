@@ -1,5 +1,5 @@
 #!/bin/bash
-# Regenerate the protobuf packs foxglove-location-fix, osm-pbf-blob-header, osm-pbf-header,
+# Regenerate the protobuf packs foxglove-location-fix, foxglove-location-fixes, osm-pbf-blob-header, osm-pbf-header,
 # osm-pbf-primitive, mvt, valhalla and tesla-fleet-telemetry.
 #
 # Usage: tools/gen/protobuf-2-run.sh [--check] <checkout> <sources>
@@ -23,7 +23,7 @@
 # PROVENANCE.md has the license and the SHA-256 of every file. Each file is
 # https://raw.githubusercontent.com/<repository>/<commit>/<path>:
 #
-#   <sources>/foxglove/foxglove/{LocationFix,Color,KeyValuePair,Vector3}.proto
+#   <sources>/foxglove/foxglove/{LocationFixes,LocationFix,Color,KeyValuePair,Vector3}.proto
 #     foxglove/foxglove-sdk 8cebcc575cea4a2dfb3622948936a8a2f2552820, schemas/proto/foxglove/<name>.proto
 #   <sources>/osm/osmpbf/{fileformat,osmformat}.proto
 #     openstreetmap/OSM-binary 9f01ad3ece9737503a059d58749e02c9008d5699, osmpbf/<name>.proto
@@ -72,6 +72,16 @@ F="$SRC/foxglove/foxglove"
   --map 1=lat --map 2=lon --map 11.1=track.vel_east_ms --map 11.2=track.vel_north_ms --map 11.3=track.vel_up_ms \
   --names-file "$NAMES/foxglove-location-fix.json" \
   --notes-file "$GEN/notes/foxglove-location-fix.md"
+# foxglove-location-fixes: a list of LocationFix; it extends module foxglove, which the run
+# above has just written.
+"${P2P[@]}" \
+  --proto "$F/LocationFixes.proto" "$F/LocationFix.proto" "$F/Color.proto" "$F/KeyValuePair.proto" "$F/Vector3.proto" \
+  --envelope LocationFixes --format foxglove-location-fixes --module foxglove \
+  --module-base "$ROOT/model/foxglove.def" \
+  --source "Foxglove schema LocationFixes, protobuf: github.com/foxglove/foxglove-sdk commit $FOX, schemas/proto/foxglove (LocationFixes, LocationFix, Color, KeyValuePair, Vector3); field numbers, names and types only" \
+  --source "LICENSE at that commit: MIT License, Copyright (c) Foxglove Technologies Inc" \
+  --names-file "$NAMES/foxglove-location-fixes.json" \
+  --notes-file "$GEN/notes/foxglove-location-fixes.md"
 
 OSM=9f01ad3ece9737503a059d58749e02c9008d5699
 OSM_SRC="OpenStreetMap PBF format definitions: github.com/openstreetmap/OSM-binary commit $OSM, osmpbf/fileformat.proto and osmpbf/osmformat.proto; field numbers, names and types only"

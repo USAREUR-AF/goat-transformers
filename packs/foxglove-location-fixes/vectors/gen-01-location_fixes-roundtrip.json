@@ -1,0 +1,25 @@
+{
+  "name": "gen-location_fixes-roundtrip",
+  "from": "foxglove-location-fixes",
+  "to": "foxglove-location-fixes",
+  "input": "0a9a01090000000000001640110000000000001d4019000000000000224022080000000000803a402801320508641089013a0a6672616d655f69642d324224090000000000803340110000000000403540190000000000003740210000000000c038404a120a066b65792d3136120876616c75652d31375100000000000029405a1b090000000000802c40110000000000003040190000000000c031400a9c0109000000000080424011000000000060434019000000000000e03f220800000000000032402801320608fe0510a3063a0b6672616d655f69642d32304224090000000000002640110000000000802940190000000000002d402100000000004030404a120a066b65792d3334120876616c75652d33355100000000000010405a1b090000000000001740110000000000001e40190000000000802240",
+  "expect": "0a9a01090000000000001640110000000000001d4019000000000000224022080000000000803a402801320508641089013a0a6672616d655f69642d324224090000000000803340110000000000403540190000000000003740210000000000c038404a120a066b65792d3136120876616c75652d31375100000000000029405a1b090000000000802c40110000000000003040190000000000c031400a9c0109000000000080424011000000000060434019000000000000e03f220800000000000032402801320608fe0510a3063a0b6672616d655f69642d32304224090000000000002640110000000000802940190000000000002d402100000000004030404a120a066b65792d3334120876616c75652d33355100000000000010405a1b090000000000001740110000000000001e40190000000000802240",
+  "model": {
+    "@kind": "location_fixes",
+    "foxglove.location_fixes_fixes.#": "2",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_timestamp_seconds": "100",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_timestamp_nanos": "137",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_position_covariance_at_4.#": "1",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_position_covariance_at_4[0].foxglove.location_fix_position_covariance_item_at_4": "26.5",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_metadata_at_9.#": "1",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_metadata_at_9[0].foxglove.key_value_pair_key_at_1": "key-16",
+    "foxglove.location_fixes_fixes[0].foxglove.location_fix_metadata_at_9[0].foxglove.key_value_pair_value_at_2": "value-17",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_timestamp_seconds": "766",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_timestamp_nanos": "803",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_position_covariance_at_4.#": "1",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_position_covariance_at_4[0].foxglove.location_fix_position_covariance_item_at_4": "18",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_metadata_at_9.#": "1",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_metadata_at_9[0].foxglove.key_value_pair_key_at_1": "key-34",
+    "foxglove.location_fixes_fixes[1].foxglove.location_fix_metadata_at_9[0].foxglove.key_value_pair_value_at_2": "value-35"
+  }
+}
