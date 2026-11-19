@@ -9,7 +9,7 @@ written engines read and must agree on, byte for byte. Below, the 25 bytes a
 drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
 
-**45 formats · 2,404 message kinds · 3,299 conversion vectors · 7 engines**, counted
+**49 formats · 2,413 message kinds · 3,320 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console

@@ -2,7 +2,13 @@
 # Regenerate the protobuf packs of public message sets: sparkplug-b, gtfs-realtime-entity,
 # gtfs-realtime, meshtastic.
 #
-# Usage: tools/gen/protobuf-public-run.sh <checkout> <sources>
+# Usage: tools/gen/protobuf-public-run.sh [--check] <checkout> <sources>
+#
+# With --check nothing in <checkout> is written: the runs write into a temporary
+# copy of its model/, packs/ and tools/gen/names/, the copy is compared with
+# <checkout>, every file that differs is listed and the exit status is 1 when
+# there is one (as tools/gen/proto2pack-run.sh does; a later run reads what an
+# earlier run writes, so the runs are not each given `proto2pack.py --check`).
 #
 # <checkout> is a goat-transformers checkout. It is read (model/core.def, model/track.def,
 # the geojson pack) and written: model/sparkplug.def, model/gtfsrt.def, model/meshtastic.def,
@@ -37,9 +43,29 @@
 # The order of the runs matters. gtfs-realtime-entity writes model/gtfsrt.def afresh;
 # gtfs-realtime runs after it and extends that module (--module-base).
 set -euo pipefail
-ROOT="$(cd "$1" && pwd)"
+CHECK=0
+if [ "${1:-}" = "--check" ]; then
+  CHECK=1
+  shift
+fi
+if [ "$#" -ne 2 ]; then
+  echo "usage: $0 [--check] <checkout> <sources>" >&2
+  exit 2
+fi
+CHECKOUT="$(cd "$1" && pwd)"
 SRC="$(cd "$2" && pwd)"
 GEN="$(cd "$(dirname "$0")" && pwd)"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+ROOT="$CHECKOUT"
+NAMES="$GEN/names"
+if [ "$CHECK" = 1 ]; then
+  ROOT="$TMP/checkout"
+  NAMES="$ROOT/tools/gen/names"
+  mkdir -p "$ROOT/tools/gen"
+  cp -R "$CHECKOUT/model" "$CHECKOUT/packs" "$ROOT/"
+  cp -R "$GEN/names" "$NAMES"
+fi
 
 TAHU=5736e404889d4b95910613040a99ba79589ffb13
 python3 -I "$GEN/proto2pack.py" \
@@ -49,7 +75,7 @@ python3 -I "$GEN/proto2pack.py" \
   --pack-version 0.1.0 \
   --source "Sparkplug B payload protobuf definition sparkplug_b.proto: github.com/eclipse-tahu/tahu commit $TAHU, file sparkplug_b/sparkplug_b.proto; field numbers, names and types only" \
   --source "File header at that commit: Copyright (c) 2015, 2018 Cirrus Link Solutions and others; Eclipse Public License 2.0 (SPDX-License-Identifier: EPL-2.0)" \
-  --names-file "$GEN/names/sparkplug-b.json" \
+  --names-file "$NAMES/sparkplug-b.json" \
   --notes-file "$GEN/notes/sparkplug-b.md"
 
 # gtfs-realtime-entity: one FeedEntity, a kind per member. The five bindings are the
@@ -66,7 +92,7 @@ python3 -I "$GEN/proto2pack.py" \
   --source "$GTFS_SRC" --source "$GTFS_LIC" \
   --map 4.2.1=lat --map 4.2.2=lon --map 4.2.5=speed_ms --map 4.8.1=uid --map 4.8.2=callsign \
   --default-kind vehicle --default-requires lat lon \
-  --names-file "$GEN/names/gtfs-realtime-entity.json" \
+  --names-file "$NAMES/gtfs-realtime-entity.json" \
   --cross-text "$ROOT/packs/geojson/pack.def" \
   --notes-file "$GEN/notes/gtfs-realtime-entity.md"
 
@@ -77,9 +103,9 @@ python3 -I "$GEN/proto2pack.py" \
   --format gtfs-realtime --module gtfsrt --out "$ROOT" \
   --pack-version 0.1.0 \
   --module-base "$ROOT/model/gtfsrt.def" \
-  --names-from "$GEN/names/gtfs-realtime-entity.json=2" \
+  --names-from "$NAMES/gtfs-realtime-entity.json=2" \
   --source "$GTFS_SRC" --source "$GTFS_LIC" \
-  --names-file "$GEN/names/gtfs-realtime.json" \
+  --names-file "$NAMES/gtfs-realtime.json" \
   --notes-file "$GEN/notes/gtfs-realtime.md"
 
 MESH=62b09edf40711fd7bd17804b2fa62ba327fcea60
@@ -93,5 +119,17 @@ python3 -I "$GEN/proto2pack.py" \
   --pack-version 0.1.0 \
   --source "Meshtastic protobuf definitions: github.com/meshtastic/protobufs commit $MESH, directory meshtastic (mqtt.proto and the 10 files it imports); field numbers, names and types only" \
   --source "LICENSE at that commit: GNU General Public License, Version 3; the .proto files carry no license header (packs/meshtastic/PROVENANCE.md)" \
-  --names-file "$GEN/names/meshtastic.json" \
+  --names-file "$NAMES/meshtastic.json" \
   --notes-file "$GEN/notes/meshtastic.md"
+
+if [ "$CHECK" = 1 ]; then
+  DIFFERS=0
+  diff -rq "$CHECKOUT/model" "$ROOT/model" >&2 || DIFFERS=1
+  diff -rq "$CHECKOUT/packs" "$ROOT/packs" >&2 || DIFFERS=1
+  diff -rq "$GEN/names" "$NAMES" >&2 || DIFFERS=1
+  if [ "$DIFFERS" = 1 ]; then
+    echo "protobuf-public-run: --check: the files above are not what the generator writes" >&2
+    exit 1
+  fi
+  echo "protobuf-public-run: --check: ok, model/, packs/ and tools/gen/names/ are what the generator writes" >&2
+fi
