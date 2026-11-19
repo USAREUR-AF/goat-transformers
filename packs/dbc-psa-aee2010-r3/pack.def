@@ -28,8 +28,6 @@ map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_type  0  "No braking"
 map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_type  1  "ACC"
 map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_type  2  "FA_HV (high-speed automatic braking) / AFUi braking"
 map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_type  3  "FA_BV (low-speed automatic braking) / FARC2 braking"
-map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_control_req  0  "No UCF control request"
-map   t_hs2_dyn1_mdd_etat_2b6_mdd_decel_control_req  1  "UCF control request"
 map   t_hs2_dyn1_mdd_etat_2b6_gear_type  0  "Downshift"
 map   t_hs2_dyn1_mdd_etat_2b6_gear_type  1  "Upshift"
 map   t_hs2_dyn1_mdd_etat_2b6_prefill_request  0  "No prefill request"
@@ -58,8 +56,6 @@ map   t_hs2_dyn_mdd_etat_2f6_aeb_enabled  0  "FALSE"
 map   t_hs2_dyn_mdd_etat_2f6_aeb_enabled  1  "TRUE"
 map   t_hs2_dyn_mdd_etat_2f6_drive_away_request  0  "No drive away required"
 map   t_hs2_dyn_mdd_etat_2f6_drive_away_request  1  "Drive away required"
-map   t_hs2_dyn_mdd_etat_2f6_mdd_decel_control_req  0  "no UCF control request"
-map   t_hs2_dyn_mdd_etat_2f6_mdd_decel_control_req  1  "UCF control request"
 map   t_hs2_dyn_mdd_etat_2f6_target_position  0  "POS1"
 map   t_hs2_dyn_mdd_etat_2f6_target_position  1  "POS2"
 map   t_hs2_dyn_mdd_etat_2f6_target_position  2  "POS3"
@@ -255,7 +251,7 @@ field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_gmp_wheel_torque 0:96:14 uscale:
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_wheel_torque_request 0:110:2 uint via t_hs2_dyn1_mdd_etat_2b6_wheel_torque_request
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_auto_braking_status 0:117:3 uint
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_mdd_decel_type 0:115:2 uint via t_hs2_dyn1_mdd_etat_2b6_mdd_decel_type
-field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_mdd_decel_control_req 0:114:1 uint via t_hs2_dyn1_mdd_etat_2b6_mdd_decel_control_req
+field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_mdd_decel_control_req 0:114:1 uint
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_gear_type 0:113:1 uint via t_hs2_dyn1_mdd_etat_2b6_gear_type
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_prefill_request 0:112:1 uint via t_hs2_dyn1_mdd_etat_2b6_prefill_request
 field     dbcpsaaee2010r3.hs2_dyn1_mdd_etat_2b6_dyn_acc_checksum 0:124:4 uint
@@ -307,7 +303,7 @@ field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_auto_braking_in_progress 0:83:1 u
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_aeb_enabled 0:82:1 uint via t_hs2_dyn_mdd_etat_2f6_aeb_enabled
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_drive_away_request 0:102:1 uint via t_hs2_dyn_mdd_etat_2f6_drive_away_request
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_display_intervehicle_time 0:96:6 uscale:1/10
-field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_mdd_decel_control_req 0:109:1 uint via t_hs2_dyn_mdd_etat_2f6_mdd_decel_control_req
+field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_mdd_decel_control_req 0:109:1 uint
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_auto_braking_status 0:104:3 uint
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_checksum_transm_dyn_acc2 0:116:4 uint
 field     dbcpsaaee2010r3.hs2_dyn_mdd_etat_2f6_process_counter_4b_acc2 0:112:4 uint

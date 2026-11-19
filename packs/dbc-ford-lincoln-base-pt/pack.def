@@ -1006,14 +1006,6 @@ map   t_cluster_hev_data9_fd1_ntfctnconflict1_d_rq  1  "No_Conflict"
 map   t_cluster_hev_data9_fd1_ntfctnconflict1_d_rq  0  "Invalid"
 map   t_cluster_hev_data7_fd1_brkevntcomplt_b_dsply  1  "On"
 map   t_cluster_hev_data7_fd1_brkevntcomplt_b_dsply  0  "Off"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  7  "Reserved3"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  6  "Reserved2"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  5  "Reserved1"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  4  "Faulted"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  3  "Complete"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  2  "In_Progress"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  1  "Scheduled"
-map   t_cluster_hev_data7_fd1_precondstat_d_dsply  0  "Not_Scheduled"
 map   t_mtrtracdata_1_fd1_mtrtrac2falt_b_stat  1  "Active"
 map   t_mtrtracdata_1_fd1_mtrtrac2falt_b_stat  0  "Inactive"
 map   t_mtrtracdata_1_fd1_mtrtrac2tealrm_b_stat  1  "Active"
@@ -7571,7 +7563,7 @@ when      0:32:8 8
 requires  dbcfordlincolnbasept.cluster_hev_data7_fd1_rgenevntlvl_pc_dsply dbcfordlincolnbasept.cluster_hev_data7_fd1_brkevntcomplt_b_dsply dbcfordlincolnbasept.cluster_hev_data7_fd1_precondstat_d_dsply
 field     dbcfordlincolnbasept.cluster_hev_data7_fd1_rgenevntlvl_pc_dsply 0:78:10 uscale:1/10
 field     dbcfordlincolnbasept.cluster_hev_data7_fd1_brkevntcomplt_b_dsply 0:88:1 uint via t_cluster_hev_data7_fd1_brkevntcomplt_b_dsply
-field     dbcfordlincolnbasept.cluster_hev_data7_fd1_precondstat_d_dsply 0:75:3 uint via t_cluster_hev_data7_fd1_precondstat_d_dsply
+field     dbcfordlincolnbasept.cluster_hev_data7_fd1_precondstat_d_dsply 0:75:3 uint
 const     0:120:8 0
 
 kind      gwm_hpcm_i_frp11_fd1

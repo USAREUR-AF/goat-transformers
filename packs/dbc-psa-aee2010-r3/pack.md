@@ -52,7 +52,7 @@ Keys are `dbcpsaaee2010r3.<message>_<signal>` in lower case, in the unit the DBC
 | messages in the file | 108 |
 | kinds | 58 |
 | `field` lines | 429 |
-| value tables applied | 47 |
+| value tables applied | 45 |
 | messages with no kind | 50 |
 | signals not mapped | 1 |
 | vectors | 58 |
@@ -127,6 +127,9 @@ Signals not mapped:
 | Message | Signal | Reason |
 |---|---|---|
 | HS2_DYN_ABR_38D | ACCEL_LONGI_ROUES | overlaps another signal of the message |
+
+The value tables of `HS2_DYN1_MDD_ETAT_2B6.MDD_DECEL_CONTROL_REQ`, `HS2_DYN_MDD_ETAT_2F6.MDD_DECEL_CONTROL_REQ` are left out by the run (`--no-table`): their label
+text is not taken into the pack, and those signals carry the number.
 
 10 `VAL_` tables are not applied (they do not name every raw value, or the
 signal is scaled or wider than 8 bits): those signals carry the number.

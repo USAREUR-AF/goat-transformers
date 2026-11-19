@@ -52,7 +52,7 @@ Keys are `dbcfordlincolnbasept.<message>_<signal>` in lower case, in the unit th
 | messages in the file | 331 |
 | kinds | 300 |
 | `field` lines | 2119 |
-| value tables applied | 1295 |
+| value tables applied | 1294 |
 | messages with no kind | 31 |
 | signals not mapped | 0 |
 | vectors | 300 |
@@ -102,6 +102,9 @@ Messages with no kind:
 | TesterPhysicalResSODR | 1998 | CAN FD: 64 data bytes (struct canfd_frame) |
 | TesterPhysicalResSODL | 1996 | CAN FD: 64 data bytes (struct canfd_frame) |
 | TesterPhysicalReqSODL | 1988 | CAN FD: 64 data bytes (struct canfd_frame) |
+
+The value tables of `Cluster_HEV_Data7_FD1.PreCondStat_D_Dsply` are left out by the run (`--no-table`): their label
+text is not taken into the pack, and those signals carry the number.
 
 276 `VAL_` tables are not applied (they do not name every raw value, or the
 signal is scaled or wider than 8 bits): those signals carry the number.

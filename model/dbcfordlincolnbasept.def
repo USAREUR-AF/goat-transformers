@@ -370,7 +370,7 @@ key  cluster_hev_data9_fd1_mtrtrac2_tq_actl  float  Nm  "signal MtrTrac2_Tq_Actl
 key  cluster_hev_data9_fd1_ntfctnconflict1_d_rq  string  SED  "signal NtfctnConflict1_D_Rq of message Cluster_HEV_Data9_FD1"
 key  cluster_hev_data7_fd1_rgenevntlvl_pc_dsply  float  percent  "signal RgenEvntLvl_Pc_Dsply of message Cluster_HEV_Data7_FD1"
 key  cluster_hev_data7_fd1_brkevntcomplt_b_dsply  string  SED  "signal BrkEvntComplt_B_Dsply of message Cluster_HEV_Data7_FD1"
-key  cluster_hev_data7_fd1_precondstat_d_dsply  string  SED  "signal PreCondStat_D_Dsply of message Cluster_HEV_Data7_FD1"
+key  cluster_hev_data7_fd1_precondstat_d_dsply  int  SED  "signal PreCondStat_D_Dsply of message Cluster_HEV_Data7_FD1"
 key  gwm_hpcm_i_frp11_fd1_actchrgstrtyr_no2_actl  float  year  "signal ActChrgStrtYr_No2_Actl of message GWM_HPCM_i_FrP11_FD1"
 key  gwm_hpcm_i_frp11_fd1_battchrgtrgtlmax_t_est  int  minute  "signal BattChrgTrgtLMax_T_Est of message GWM_HPCM_i_FrP11_FD1"
 key  gwm_hpcm_i_frp11_fd1_actchrgstrtyr_no_actl  float  year  "signal ActChrgStrtYr_No_Actl of message GWM_HPCM_i_FrP11_FD1"

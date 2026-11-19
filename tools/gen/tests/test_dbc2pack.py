@@ -172,6 +172,23 @@ class Layout(DbcCase):
         self.assertFalse(os.path.exists(os.path.join(self.root, "packs", "dbc-part")))
 
 
+class NoTable(DbcCase):
+    def test_no_table_leaves_the_value_table_out_and_keeps_the_number(self):
+        root = self.make_root()
+        status, _, err = self.run_gen(root, "--no-table", "car_intel:SPEED.GEAR")
+        self.assertEqual((status, err), (0, ""))
+        intel = self.text(root, "dbc-car-intel")
+        self.assertNotIn("t_speed_gear", intel)
+        self.assertIn("field     dbccarintel.speed_gear 0:80:3 uint\n", intel)
+        self.assertIn("are left out by the run (`--no-table`)", self.text(root, "dbc-car-intel", "pack.md"))
+
+    def test_a_malformed_no_table_is_a_refusal(self):
+        root = self.make_root()
+        status, _, err = self.run_gen(root, "--no-table", "car_intel")
+        self.assertEqual(status, 1)
+        self.assertIn("--no-table takes FILE:MESSAGE.SIGNAL", err)
+
+
 class CantoolsFiles(unittest.TestCase):
     """Four DBC files from the tests of cantools (MIT; fixtures/dbc2pack/cantools,
     origin in its dbc-PROVENANCE.md): the generator reads them and every vector

@@ -306,8 +306,11 @@ def core_of(sig, msg):
 
 
 class FilePlan:
-    def __init__(self, dbc, sources):
+    def __init__(self, dbc, sources, no_table=()):
         self.dbc, self.sources = dbc, sources
+        # (message, signal) whose value table the run leaves out (--no-table)
+        self.no_table = {(m, sg) for f, m, sg in no_table if f == dbc.name}
+        self.tables_left_out = []
         self.format = "dbc-" + dbc.name.lower().replace("_", "-")
         self.module = "dbc" + re.sub(r"[^a-z0-9]", "", dbc.name.lower())
         motorola = sum(s.motorola for m in dbc.messages for s in m.signals)
@@ -368,6 +371,10 @@ class FilePlan:
         key = core if core else "%s.%s" % (self.module, self.key_of(msg, sig))
         via = None
         table = self.dbc.values.get((msg.id, sig.name))
+        if table and (msg.name, sig.name) in self.no_table:
+            if (msg.name, sig.name) not in self.tables_left_out:
+                self.tables_left_out.append((msg.name, sig.name))
+            table = None
         if table and typ == "int" and not core and self.complete(table, sig):
             via = "t_" + self.key_of(msg, sig)
             self.tables[via] = table
@@ -954,8 +961,14 @@ def pack_md(fp, sha, nvec):
         for msg, sig, why in fp.unmapped:
             a("| %s | %s | %s |" % (msg.name, sig.name, why))
         a("")
-    partial = [key for key in d.values if key not in {(k.msg.id, s.name) for k in fp.kinds
-                                                      for s, line in zip(k.signals, k.lines) if line.via}]
+    if fp.tables_left_out:
+        a("The value tables of %s are left out by the run (`--no-table`): their label" % ", ".join(
+            "`%s.%s`" % x for x in fp.tables_left_out))
+        a("text is not taken into the pack, and those signals carry the number.")
+        a("")
+    left = {(m.id, sg) for m in d.messages for mn, sg in fp.tables_left_out if m.name == mn}
+    partial = [key for key in d.values if key not in left and key not in {
+        (k.msg.id, s.name) for k in fp.kinds for s, line in zip(k.signals, k.lines) if line.via}]
     if partial:
         a("%d `VAL_` tables are not applied (they do not name every raw value, or the" % len(partial))
         a("signal is scaled or wider than 8 bits): those signals carry the number.")
@@ -1045,10 +1058,16 @@ def run(args, out):
         write_sources_provenance(out, src, args.commit, files)
     sha, table = read_sources_provenance(out.read(PROV), src, files)
     plans = []
+    no_table = []
+    for item in args.no_table or []:
+        m = re.match(r"^([^:]+):([^.]+)\.(.+)$", item)
+        if not m:
+            raise GenError("--no-table takes FILE:MESSAGE.SIGNAL, got %s" % item)
+        no_table.append(m.groups())
     for name, text, sources in load_sources(src):
         if args.files and name not in args.files.split(","):
             continue
-        plans.append(FilePlan(parse_dbc(text, name, sources), sources))
+        plans.append(FilePlan(parse_dbc(text, name, sources), sources, no_table))
     core_text = read_text(args.core_def) if args.core_def else out.read("model/core.def")
     total = 0
     for fp in plans:
@@ -1098,6 +1117,9 @@ def build_parser():
     ap.add_argument("--commit", help="write %s for this commit" % PROV)
     ap.add_argument("--files", help="only these DBC files (names without .dbc), comma-separated")
     ap.add_argument("--core-def", help="model/core.def (default <out>/model/core.def)")
+    ap.add_argument("--no-table", action="append", metavar="FILE:MESSAGE.SIGNAL",
+                    help="leave out the value table of this signal: the signal keeps its number "
+                         "(repeatable; FILE is the DBC file name without .dbc)")
     return ap
 
 
