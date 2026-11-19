@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-testns-choice-roundtrip-real",
+  "from": "dronecan-testns-choice",
+  "to": "dronecan-testns-choice",
+  "input": "800000000000009000",
+  "expect": "800000000000009000",
+  "model": {
+    "@kind": "real",
+    "dctestns.choice_real": "2.25"
+  }
+}

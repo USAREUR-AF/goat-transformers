@@ -1,0 +1,26 @@
+{
+  "name": "cyphal-uavcan-pnp-nodeidallocationdata-2-0-roundtrip",
+  "from": "cyphal-uavcan-pnp-nodeidallocationdata-2-0",
+  "to": "cyphal-uavcan-pnp-nodeidallocationdata-2-0",
+  "input": "a7387e91a4b7caddf00316293c4f6275889b",
+  "expect": "a7387e91a4b7caddf00316293c4f6275889b",
+  "model": {
+    "cyuavcanpnp.node_id_allocation_data_2_0_node_id_value": "14503",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_0": "126",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_1": "145",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_2": "164",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_3": "183",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_4": "202",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_5": "221",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_6": "240",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_7": "3",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_8": "22",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_9": "41",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_10": "60",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_11": "79",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_12": "98",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_13": "117",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_14": "136",
+    "cyuavcanpnp.node_id_allocation_data_2_0_unique_id_15": "155"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-time-synchronizedtimestamp-1-0-roundtrip",
+  "from": "cyphal-uavcan-time-synchronizedtimestamp-1-0",
+  "to": "cyphal-uavcan-time-synchronizedtimestamp-1-0",
+  "input": "d46a624c000000",
+  "expect": "d46a624c000000",
+  "model": {
+    "cyuavcantime.synchronized_timestamp_1_0_microsecond": "1281518292"
+  }
+}

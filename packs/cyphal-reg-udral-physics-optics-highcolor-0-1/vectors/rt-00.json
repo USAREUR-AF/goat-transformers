@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-physics-optics-highcolor-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-optics-highcolor-0-1",
+  "to": "cyphal-reg-udral-physics-optics-highcolor-0-1",
+  "input": "aee0",
+  "expect": "aee0",
+  "model": {
+    "cyregudralphysicsoptics.high_color_0_1_red": "14",
+    "cyregudralphysicsoptics.high_color_0_1_green": "5",
+    "cyregudralphysicsoptics.high_color_0_1_blue": "28"
+  }
+}

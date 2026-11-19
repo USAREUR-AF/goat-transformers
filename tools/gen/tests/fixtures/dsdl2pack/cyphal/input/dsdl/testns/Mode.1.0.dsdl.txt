@@ -1,0 +1,6 @@
+# A union.
+@union
+uint8 idle
+testns.sub.Pair.1.0 pair
+float32 level
+@sealed

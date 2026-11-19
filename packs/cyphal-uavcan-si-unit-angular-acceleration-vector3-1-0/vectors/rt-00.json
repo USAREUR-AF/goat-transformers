@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-si-unit-angular-acceleration-vector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-angular-acceleration-vector3-1-0",
+  "to": "cyphal-uavcan-si-unit-angular-acceleration-vector3-1-0",
+  "input": "000000c00000a0bf000000bf",
+  "expect": "000000c00000a0bf000000bf",
+  "model": {
+    "cyuavcansiunitangularacceleration.vector3_1_0_radian_per_second_per_second_0": "-2",
+    "cyuavcansiunitangularacceleration.vector3_1_0_radian_per_second_per_second_1": "-1.25",
+    "cyuavcansiunitangularacceleration.vector3_1_0_radian_per_second_per_second_2": "-0.5"
+  }
+}

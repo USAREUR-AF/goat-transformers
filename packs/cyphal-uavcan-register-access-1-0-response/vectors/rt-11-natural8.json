@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-uavcan-register-access-1-0-response-roundtrip-natural8",
+  "from": "cyphal-uavcan-register-access-1-0-response",
+  "to": "cyphal-uavcan-register-access-1-0-response",
+  "input": "4e6d9f71000000010b0200e459",
+  "expect": "4e6d9f71000000010b0200e459",
+  "model": {
+    "cyuavcanregister.access_1_0_response_timestamp_microsecond": "1906273614",
+    "cyuavcanregister.access_1_0_response_mutable": "1",
+    "cyuavcanregister.access_1_0_response_persistent": "0",
+    "@kind": "natural8",
+    "cyuavcanregister.access_1_0_response_value_natural8_value.#": "2",
+    "cyuavcanregister.access_1_0_response_value_natural8_value[0].cyuavcanregister.access_1_0_response_value_natural8_value_item": "228",
+    "cyuavcanregister.access_1_0_response_value_natural8_value[1].cyuavcanregister.access_1_0_response_value_natural8_value_item": "89"
+  }
+}

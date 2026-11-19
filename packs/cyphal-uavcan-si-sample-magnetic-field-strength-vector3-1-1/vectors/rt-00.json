@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-si-sample-magnetic-field-strength-vector3-1-1-roundtrip",
+  "from": "cyphal-uavcan-si-sample-magnetic-field-strength-vector3-1-1",
+  "to": "cyphal-uavcan-si-sample-magnetic-field-strength-vector3-1-1",
+  "input": "365ed108000000000000000000403f0000c03f",
+  "expect": "365ed108000000000000000000403f0000c03f",
+  "model": {
+    "cyuavcansisamplemagneticfieldstrength.vector3_1_1_timestamp_microsecond": "147938870",
+    "cyuavcansisamplemagneticfieldstrength.vector3_1_1_ampere_per_meter_0": "0",
+    "cyuavcansisamplemagneticfieldstrength.vector3_1_1_ampere_per_meter_1": "0.75",
+    "cyuavcansisamplemagneticfieldstrength.vector3_1_1_ampere_per_meter_2": "1.5"
+  }
+}

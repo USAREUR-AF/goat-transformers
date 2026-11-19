@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-metatransport-serial-fragment-0-2-roundtrip",
+  "from": "cyphal-uavcan-metatransport-serial-fragment-0-2",
+  "to": "cyphal-uavcan-metatransport-serial-fragment-0-2",
+  "input": "0100c1",
+  "expect": "0100c1",
+  "model": {
+    "cyuavcanmetatransportserial.fragment_0_2_data.#": "1",
+    "cyuavcanmetatransportserial.fragment_0_2_data[0].cyuavcanmetatransportserial.fragment_0_2_data_item": "193"
+  }
+}

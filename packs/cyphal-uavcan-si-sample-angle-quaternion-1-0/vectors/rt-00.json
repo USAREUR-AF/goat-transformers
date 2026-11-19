@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-si-sample-angle-quaternion-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-sample-angle-quaternion-1-0",
+  "to": "cyphal-uavcan-si-sample-angle-quaternion-1-0",
+  "input": "85e4996a000000000080be0000003f0000a03f00000040",
+  "expect": "85e4996a000000000080be0000003f0000a03f00000040",
+  "model": {
+    "cyuavcansisampleangle.quaternion_1_0_timestamp_microsecond": "1788470405",
+    "cyuavcansisampleangle.quaternion_1_0_wxyz_0": "-0.25",
+    "cyuavcansisampleangle.quaternion_1_0_wxyz_1": "0.5",
+    "cyuavcansisampleangle.quaternion_1_0_wxyz_2": "1.25",
+    "cyuavcansisampleangle.quaternion_1_0_wxyz_3": "2"
+  }
+}

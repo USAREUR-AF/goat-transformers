@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-real16",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "0e010000",
+  "expect": "0e010000",
+  "model": {
+    "@kind": "real16",
+    "cyuavcanregister.value_1_0_real16_value.#": "1"
+  }
+}

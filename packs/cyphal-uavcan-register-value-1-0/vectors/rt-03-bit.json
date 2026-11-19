@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-bit",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "03020001",
+  "expect": "03020001",
+  "model": {
+    "@kind": "bit",
+    "cyuavcanregister.value_1_0_bit_value.#": "2",
+    "cyuavcanregister.value_1_0_bit_value[0].cyuavcanregister.value_1_0_bit_value_item": "1",
+    "cyuavcanregister.value_1_0_bit_value[1].cyuavcanregister.value_1_0_bit_value_item": "0"
+  }
+}

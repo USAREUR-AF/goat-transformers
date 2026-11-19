@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-rotation-planarts-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-rotation-planarts-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-rotation-planarts-0-1",
+  "input": "5f0a4d350000000000c0bf0000803e00000040",
+  "expect": "5f0a4d350000000000c0bf0000803e00000040",
+  "model": {
+    "cyregudralphysicskinematicsrotation.planar_ts_0_1_timestamp_microsecond": "894241375",
+    "cyregudralphysicskinematicsrotation.planar_ts_0_1_value_angular_position_radian": "-1.5",
+    "cyregudralphysicskinematicsrotation.planar_ts_0_1_value_angular_velocity_radian_per_second": "0.25",
+    "cyregudralphysicskinematicsrotation.planar_ts_0_1_value_angular_acceleration_radian_per_second_per_second": "2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-mode-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-mode-1-0",
+  "to": "cyphal-uavcan-node-mode-1-0",
+  "input": "04",
+  "expect": "04",
+  "model": {
+    "cyuavcannode.mode_1_0_value": "4"
+  }
+}

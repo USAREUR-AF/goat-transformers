@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-integer8",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "070300304356",
+  "expect": "070300304356",
+  "model": {
+    "@kind": "integer8",
+    "cyuavcanregister.value_1_0_integer8_value.#": "3",
+    "cyuavcanregister.value_1_0_integer8_value[0].cyuavcanregister.value_1_0_integer8_value_item": "48",
+    "cyuavcanregister.value_1_0_integer8_value[1].cyuavcanregister.value_1_0_integer8_value_item": "67",
+    "cyuavcanregister.value_1_0_integer8_value[2].cyuavcanregister.value_1_0_integer8_value_item": "86"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-si-sample-angular-acceleration-vector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-sample-angular-acceleration-vector3-1-0",
+  "to": "cyphal-uavcan-si-sample-angular-acceleration-vector3-1-0",
+  "input": "85e4996a000000000080be0000003f0000a03f",
+  "expect": "85e4996a000000000080be0000003f0000a03f",
+  "model": {
+    "cyuavcansisampleangularacceleration.vector3_1_0_timestamp_microsecond": "1788470405",
+    "cyuavcansisampleangularacceleration.vector3_1_0_radian_per_second_per_second_0": "-0.25",
+    "cyuavcansisampleangularacceleration.vector3_1_0_radian_per_second_per_second_1": "0.5",
+    "cyuavcansisampleangularacceleration.vector3_1_0_radian_per_second_per_second_2": "1.25"
+  }
+}

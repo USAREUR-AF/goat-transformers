@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-primitive-unstructured-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-unstructured-1-0",
+  "to": "cyphal-uavcan-primitive-unstructured-1-0",
+  "input": "030036ab20",
+  "expect": "030036ab20",
+  "model": {
+    "cyuavcanprimitive.unstructured_1_0_value.#": "3",
+    "cyuavcanprimitive.unstructured_1_0_value[0].cyuavcanprimitive.unstructured_1_0_value_item": "54",
+    "cyuavcanprimitive.unstructured_1_0_value[1].cyuavcanprimitive.unstructured_1_0_value_item": "171",
+    "cyuavcanprimitive.unstructured_1_0_value[2].cyuavcanprimitive.unstructured_1_0_value_item": "32"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-empty",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "@kind": "empty"
+  }
+}

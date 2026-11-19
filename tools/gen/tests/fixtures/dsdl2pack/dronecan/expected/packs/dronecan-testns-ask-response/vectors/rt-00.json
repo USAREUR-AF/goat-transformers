@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-testns-ask-response-roundtrip",
+  "from": "dronecan-testns-ask-response",
+  "to": "dronecan-testns-ask-response",
+  "input": "6d",
+  "expect": "6d",
+  "model": {
+    "dctestns.ask_response_answer": "109"
+  }
+}

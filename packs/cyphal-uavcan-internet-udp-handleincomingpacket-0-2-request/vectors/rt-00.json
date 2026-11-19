@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-internet-udp-handleincomingpacket-0-2-request-roundtrip",
+  "from": "cyphal-uavcan-internet-udp-handleincomingpacket-0-2-request",
+  "to": "cyphal-uavcan-internet-udp-handleincomingpacket-0-2-request",
+  "input": "2b13010064",
+  "expect": "2b13010064",
+  "model": {
+    "cyuavcaninternetudp.handle_incoming_packet_0_2_request_session_id": "4907",
+    "cyuavcaninternetudp.handle_incoming_packet_0_2_request_payload.#": "1",
+    "cyuavcaninternetudp.handle_incoming_packet_0_2_request_payload[0].cyuavcaninternetudp.handle_incoming_packet_0_2_request_payload_item": "100"
+  }
+}

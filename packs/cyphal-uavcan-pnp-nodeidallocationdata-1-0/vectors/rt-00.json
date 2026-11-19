@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-pnp-nodeidallocationdata-1-0-roundtrip",
+  "from": "cyphal-uavcan-pnp-nodeidallocationdata-1-0",
+  "to": "cyphal-uavcan-pnp-nodeidallocationdata-1-0",
+  "input": "8e27472100000178e8",
+  "expect": "8e27472100000178e8",
+  "model": {
+    "cyuavcanpnp.node_id_allocation_data_1_0_unique_id_hash": "558311310",
+    "cyuavcanpnp.node_id_allocation_data_1_0_allocated_node_id.#": "1",
+    "cyuavcanpnp.node_id_allocation_data_1_0_allocated_node_id[0].cyuavcanpnp.node_id_allocation_data_1_0_allocated_node_id_item_value": "59512"
+  }
+}

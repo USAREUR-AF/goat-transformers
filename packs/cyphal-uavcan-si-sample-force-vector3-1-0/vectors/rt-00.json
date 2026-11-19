@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-si-sample-force-vector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-sample-force-vector3-1-0",
+  "to": "cyphal-uavcan-si-sample-force-vector3-1-0",
+  "input": "85e4996a000000000080be0000003f0000a03f",
+  "expect": "85e4996a000000000080be0000003f0000a03f",
+  "model": {
+    "cyuavcansisampleforce.vector3_1_0_timestamp_microsecond": "1788470405",
+    "cyuavcansisampleforce.vector3_1_0_newton_0": "-0.25",
+    "cyuavcansisampleforce.vector3_1_0_newton_1": "0.5",
+    "cyuavcansisampleforce.vector3_1_0_newton_2": "1.25"
+  }
+}

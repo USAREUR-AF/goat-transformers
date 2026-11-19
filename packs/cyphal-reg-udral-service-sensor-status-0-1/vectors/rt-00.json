@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-service-sensor-status-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-sensor-status-0-1",
+  "to": "cyphal-reg-udral-service-sensor-status-0-1",
+  "input": "000060c085e4996a00000000",
+  "expect": "000060c085e4996a00000000",
+  "model": {
+    "cyregudralservicesensor.status_0_1_data_validity_period_second": "-3.5",
+    "cyregudralservicesensor.status_0_1_error_count": "1788470405",
+    "cyregudralservicesensor.status_0_1_sensor_temperature_kelvin": "0"
+  }
+}

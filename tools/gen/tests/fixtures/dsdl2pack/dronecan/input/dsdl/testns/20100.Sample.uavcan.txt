@@ -1,0 +1,9 @@
+# A message: scalars, a half float, a nested type, a dynamic array with a
+# length prefix, and a tail array.
+uint8 CONSTANT = 3
+uint32 count
+float16 level
+float32 gain
+Point origin
+Point[<=3] path
+uint8[<=8] data

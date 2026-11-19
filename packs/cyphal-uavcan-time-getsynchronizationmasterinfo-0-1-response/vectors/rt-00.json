@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-time-getsynchronizationmasterinfo-0-1-response-roundtrip",
+  "from": "cyphal-uavcan-time-getsynchronizationmasterinfo-0-1-response",
+  "to": "cyphal-uavcan-time-getsynchronizationmasterinfo-0-1-response",
+  "input": "000088c006dd02",
+  "expect": "000088c006dd02",
+  "model": {
+    "cyuavcantime.get_synchronization_master_info_0_1_response_error_variance": "-4.25",
+    "cyuavcantime.get_synchronization_master_info_0_1_response_time_system_value": "6",
+    "cyuavcantime.get_synchronization_master_info_0_1_response_tai_info_difference_tai_minus_utc": "733"
+  }
+}

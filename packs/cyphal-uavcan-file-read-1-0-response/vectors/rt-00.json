@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-file-read-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-file-read-1-0-response",
+  "to": "cyphal-uavcan-file-read-1-0-response",
+  "input": "1bdd0300a3188d",
+  "expect": "1bdd0300a3188d",
+  "model": {
+    "cyuavcanfile.read_1_0_response_error_value": "56603",
+    "cyuavcanfile.read_1_0_response_data.#": "3",
+    "cyuavcanfile.read_1_0_response_data[0].cyuavcanfile.read_1_0_response_data_item": "163",
+    "cyuavcanfile.read_1_0_response_data[1].cyuavcanfile.read_1_0_response_data_item": "24",
+    "cyuavcanfile.read_1_0_response_data[2].cyuavcanfile.read_1_0_response_data_item": "141"
+  }
+}

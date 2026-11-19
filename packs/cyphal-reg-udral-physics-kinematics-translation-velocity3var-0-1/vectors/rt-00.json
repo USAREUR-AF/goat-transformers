@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-translation-velocity3var-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-translation-velocity3var-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-translation-velocity3var-0-1",
+  "input": "108484530000000000c0bf000040bf00000000000000000000000000000000",
+  "expect": "108484530000000000c0bf000040bf00000000000000000000000000000000",
+  "model": {
+    "cyregudralphysicskinematicstranslation.velocity3_var_0_1_value_timestamp_microsecond": "1401193488",
+    "cyregudralphysicskinematicstranslation.velocity3_var_0_1_value_meter_per_second_0": "-1.5",
+    "cyregudralphysicskinematicstranslation.velocity3_var_0_1_value_meter_per_second_1": "-0.75",
+    "cyregudralphysicskinematicstranslation.velocity3_var_0_1_value_meter_per_second_2": "0"
+  }
+}

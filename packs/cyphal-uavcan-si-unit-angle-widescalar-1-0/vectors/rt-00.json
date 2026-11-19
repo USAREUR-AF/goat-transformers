@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-si-unit-angle-widescalar-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-angle-widescalar-1-0",
+  "to": "cyphal-uavcan-si-unit-angle-widescalar-1-0",
+  "input": "00000000000002c0",
+  "expect": "00000000000002c0",
+  "model": {
+    "cyuavcansiunitangle.wide_scalar_1_0_radian": "-2.25"
+  }
+}

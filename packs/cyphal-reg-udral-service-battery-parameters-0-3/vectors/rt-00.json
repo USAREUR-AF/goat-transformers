@@ -1,0 +1,29 @@
+{
+  "name": "cyphal-reg-udral-service-battery-parameters-0-3-roundtrip",
+  "from": "cyphal-reg-udral-service-battery-parameters-0-3",
+  "to": "cyphal-reg-udral-service-battery-parameters-0-3",
+  "input": "10848453000000800000a0bf0000003f000020400000504000008040000090c0000030c0000080bf0000403f0000204076ca00247b5a0000904057154e5f00029005",
+  "expect": "10848453000000800000a0bf0000003f000020400000504000008040000090c0000030c0000080bf0000403f0000204076ca00247b5a0000904057154e5f00029005",
+  "model": {
+    "cyregudralservicebattery.parameters_0_3_unique_id": "-9223372035453582320",
+    "cyregudralservicebattery.parameters_0_3_mass_kilogram": "-1.25",
+    "cyregudralservicebattery.parameters_0_3_design_capacity_coulomb": "0.5",
+    "cyregudralservicebattery.parameters_0_3_design_cell_voltage_min_max_0_volt": "2.5",
+    "cyregudralservicebattery.parameters_0_3_design_cell_voltage_min_max_1_volt": "3.25",
+    "cyregudralservicebattery.parameters_0_3_discharge_current_ampere": "4",
+    "cyregudralservicebattery.parameters_0_3_discharge_current_burst_ampere": "-4.5",
+    "cyregudralservicebattery.parameters_0_3_charge_current_ampere": "-2.75",
+    "cyregudralservicebattery.parameters_0_3_charge_current_fast_ampere": "-1",
+    "cyregudralservicebattery.parameters_0_3_charge_termination_threshold_ampere": "0.75",
+    "cyregudralservicebattery.parameters_0_3_charge_voltage_volt": "2.5",
+    "cyregudralservicebattery.parameters_0_3_cycle_count": "51830",
+    "cyregudralservicebattery.parameters_0_3_series_cell_count": "36",
+    "cyregudralservicebattery.parameters_0_3_state_of_health_pct": "123",
+    "cyregudralservicebattery.parameters_0_3_technology_value": "90",
+    "cyregudralservicebattery.parameters_0_3_nominal_voltage_volt": "4.5",
+    "cyregudralservicebattery.parameters_0_3_unix_manufacture_time": "1598952791",
+    "cyregudralservicebattery.parameters_0_3_name.#": "2",
+    "cyregudralservicebattery.parameters_0_3_name[0].cyregudralservicebattery.parameters_0_3_name_item": "144",
+    "cyregudralservicebattery.parameters_0_3_name[1].cyregudralservicebattery.parameters_0_3_name_item": "5"
+  }
+}

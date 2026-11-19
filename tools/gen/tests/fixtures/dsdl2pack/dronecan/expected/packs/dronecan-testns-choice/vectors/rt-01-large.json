@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-testns-choice-roundtrip-large",
+  "from": "dronecan-testns-choice",
+  "to": "dronecan-testns-choice",
+  "input": "50c247da00",
+  "expect": "50c247da00",
+  "model": {
+    "@kind": "large",
+    "dctestns.choice_large": "1746864451"
+  }
+}

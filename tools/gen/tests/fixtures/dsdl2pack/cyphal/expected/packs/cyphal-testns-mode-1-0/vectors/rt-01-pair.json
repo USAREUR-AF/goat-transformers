@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-testns-mode-1-0-roundtrip-pair",
+  "from": "cyphal-testns-mode-1-0",
+  "to": "cyphal-testns-mode-1-0",
+  "input": "01c8d3",
+  "expect": "01c8d3",
+  "model": {
+    "@kind": "pair",
+    "cytestns.mode_1_0_pair_a": "0",
+    "cytestns.mode_1_0_pair_b": "-1415"
+  }
+}

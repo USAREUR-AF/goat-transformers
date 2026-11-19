@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-si-sample-magnetic-field-strength-scalar-1-1-roundtrip",
+  "from": "cyphal-uavcan-si-sample-magnetic-field-strength-scalar-1-1",
+  "to": "cyphal-uavcan-si-sample-magnetic-field-strength-scalar-1-1",
+  "input": "365ed108000000000080be",
+  "expect": "365ed108000000000080be",
+  "model": {
+    "cyuavcansisamplemagneticfieldstrength.scalar_1_1_timestamp_microsecond": "147938870",
+    "cyuavcansisamplemagneticfieldstrength.scalar_1_1_ampere_per_meter": "-0.25"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-port-subjectid-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-port-subjectid-1-0",
+  "to": "cyphal-uavcan-node-port-subjectid-1-0",
+  "input": "d40a",
+  "expect": "d40a",
+  "model": {
+    "cyuavcannodeport.subject_id_1_0_value": "2772"
+  }
+}

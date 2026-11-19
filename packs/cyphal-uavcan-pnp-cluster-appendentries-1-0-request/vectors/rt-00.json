@@ -1,0 +1,32 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-appendentries-1-0-request-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-appendentries-1-0-request",
+  "to": "cyphal-uavcan-pnp-cluster-appendentries-1-0-request",
+  "input": "ee7b4b54c5cfcf279c237377015d38037de5f80b1e3144576a7d90a3b6c9dcef02bc59",
+  "expect": "ee7b4b54c5cfcf279c237377015d38037de5f80b1e3144576a7d90a3b6c9dcef02bc59",
+  "model": {
+    "cyuavcanpnpcluster.append_entries_1_0_request_term": "1414233070",
+    "cyuavcanpnpcluster.append_entries_1_0_request_prev_log_term": "667930565",
+    "cyuavcanpnpcluster.append_entries_1_0_request_prev_log_index": "9116",
+    "cyuavcanpnpcluster.append_entries_1_0_request_leader_commit": "30579",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries.#": "1",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_term": "2097363037",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_0": "229",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_1": "248",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_2": "11",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_3": "30",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_4": "49",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_5": "68",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_6": "87",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_7": "106",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_8": "125",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_9": "144",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_10": "163",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_11": "182",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_12": "201",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_13": "220",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_14": "239",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_unique_id_15": "2",
+    "cyuavcanpnpcluster.append_entries_1_0_request_entries[0].cyuavcanpnpcluster.append_entries_1_0_request_entries_item_node_id_value": "22972"
+  }
+}

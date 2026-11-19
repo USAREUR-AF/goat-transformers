@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-testns-sub-note-1-0-roundtrip",
+  "from": "cyphal-testns-sub-note-1-0",
+  "to": "cyphal-testns-sub-note-1-0",
+  "input": "0336ab200000",
+  "expect": "0336ab200000",
+  "model": {
+    "cytestnssub.note_1_0_text.#": "3",
+    "cytestnssub.note_1_0_text[0].cytestnssub.note_1_0_text_item": "54",
+    "cytestnssub.note_1_0_text[1].cytestnssub.note_1_0_text_item": "171",
+    "cytestnssub.note_1_0_text[2].cytestnssub.note_1_0_text_item": "32"
+  }
+}

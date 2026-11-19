@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-port-subjectidlist-1-0-roundtrip-total",
+  "from": "cyphal-uavcan-node-port-subjectidlist-1-0",
+  "to": "cyphal-uavcan-node-port-subjectidlist-1-0",
+  "input": "02",
+  "expect": "02",
+  "model": {
+    "@kind": "total"
+  }
+}

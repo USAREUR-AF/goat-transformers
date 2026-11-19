@@ -1,0 +1,26 @@
+{
+  "name": "cyphal-uavcan-metatransport-ethernet-frame-0-1-roundtrip",
+  "from": "cyphal-uavcan-metatransport-ethernet-frame-0-1",
+  "to": "cyphal-uavcan-metatransport-ethernet-frame-0-1",
+  "input": "5f728598abbe36495c6f82950db20300950a7f",
+  "expect": "5f728598abbe36495c6f82950db20300950a7f",
+  "model": {
+    "cyuavcanmetatransportethernet.frame_0_1_destination_0": "95",
+    "cyuavcanmetatransportethernet.frame_0_1_destination_1": "114",
+    "cyuavcanmetatransportethernet.frame_0_1_destination_2": "133",
+    "cyuavcanmetatransportethernet.frame_0_1_destination_3": "152",
+    "cyuavcanmetatransportethernet.frame_0_1_destination_4": "171",
+    "cyuavcanmetatransportethernet.frame_0_1_destination_5": "190",
+    "cyuavcanmetatransportethernet.frame_0_1_source_0": "54",
+    "cyuavcanmetatransportethernet.frame_0_1_source_1": "73",
+    "cyuavcanmetatransportethernet.frame_0_1_source_2": "92",
+    "cyuavcanmetatransportethernet.frame_0_1_source_3": "111",
+    "cyuavcanmetatransportethernet.frame_0_1_source_4": "130",
+    "cyuavcanmetatransportethernet.frame_0_1_source_5": "149",
+    "cyuavcanmetatransportethernet.frame_0_1_ethertype_value": "45581",
+    "cyuavcanmetatransportethernet.frame_0_1_payload.#": "3",
+    "cyuavcanmetatransportethernet.frame_0_1_payload[0].cyuavcanmetatransportethernet.frame_0_1_payload_item": "149",
+    "cyuavcanmetatransportethernet.frame_0_1_payload[1].cyuavcanmetatransportethernet.frame_0_1_payload_item": "10",
+    "cyuavcanmetatransportethernet.frame_0_1_payload[2].cyuavcanmetatransportethernet.frame_0_1_payload_item": "127"
+  }
+}

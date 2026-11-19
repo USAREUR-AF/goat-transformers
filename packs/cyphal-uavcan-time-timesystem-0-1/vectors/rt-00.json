@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-time-timesystem-0-1-roundtrip",
+  "from": "cyphal-uavcan-time-timesystem-0-1",
+  "to": "cyphal-uavcan-time-timesystem-0-1",
+  "input": "0e",
+  "expect": "0e",
+  "model": {
+    "cyuavcantime.time_system_0_1_value": "14"
+  }
+}

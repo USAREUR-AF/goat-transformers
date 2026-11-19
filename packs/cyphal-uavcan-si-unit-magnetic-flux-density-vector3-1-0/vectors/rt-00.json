@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-si-unit-magnetic-flux-density-vector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-magnetic-flux-density-vector3-1-0",
+  "to": "cyphal-uavcan-si-unit-magnetic-flux-density-vector3-1-0",
+  "input": "000000c00000a0bf000000bf",
+  "expect": "000000c00000a0bf000000bf",
+  "model": {
+    "cyuavcansiunitmagneticfluxdensity.vector3_1_0_tesla_0": "-2",
+    "cyuavcansiunitmagneticfluxdensity.vector3_1_0_tesla_1": "-1.25",
+    "cyuavcansiunitmagneticfluxdensity.vector3_1_0_tesla_2": "-0.5"
+  }
+}

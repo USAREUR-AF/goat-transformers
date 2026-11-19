@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-internet-udp-handleincomingpacket-0-1-request-roundtrip",
+  "from": "cyphal-uavcan-internet-udp-handleincomingpacket-0-1-request",
+  "to": "cyphal-uavcan-internet-udp-handleincomingpacket-0-1-request",
+  "input": "7a990300b3289d",
+  "expect": "7a990300b3289d",
+  "model": {
+    "cyuavcaninternetudp.handle_incoming_packet_0_1_request_session_id": "39290",
+    "cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload.#": "3",
+    "cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload[0].cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload_item": "179",
+    "cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload[1].cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload_item": "40",
+    "cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload[2].cyuavcaninternetudp.handle_incoming_packet_0_1_request_payload_item": "157"
+  }
+}

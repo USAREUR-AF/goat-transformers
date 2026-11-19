@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-file-list-0-1-request-roundtrip",
+  "from": "cyphal-uavcan-file-list-0-1-request",
+  "to": "cyphal-uavcan-file-list-0-1-request",
+  "input": "b8687a2a000000000179",
+  "expect": "b8687a2a000000000179",
+  "model": {
+    "cyuavcanfile.list_0_1_request_entry_index": "712665272",
+    "cyuavcanfile.list_0_1_request_directory_path_path.#": "1",
+    "cyuavcanfile.list_0_1_request_directory_path_path[0].cyuavcanfile.list_0_1_request_directory_path_path_item": "121"
+  }
+}

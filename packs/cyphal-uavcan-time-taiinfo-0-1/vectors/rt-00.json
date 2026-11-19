@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-time-taiinfo-0-1-roundtrip",
+  "from": "cyphal-uavcan-time-taiinfo-0-1",
+  "to": "cyphal-uavcan-time-taiinfo-0-1",
+  "input": "ae00",
+  "expect": "ae00",
+  "model": {
+    "cyuavcantime.tai_info_0_1_difference_tai_minus_utc": "174"
+  }
+}

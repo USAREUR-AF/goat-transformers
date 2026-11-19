@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-health-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-health-1-0",
+  "to": "cyphal-uavcan-node-health-1-0",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "cyuavcannode.health_1_0_value": "0"
+  }
+}

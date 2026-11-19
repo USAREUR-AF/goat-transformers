@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-testns-ask-request-roundtrip",
+  "from": "dronecan-testns-ask-request",
+  "to": "dronecan-testns-ask-request",
+  "input": "b54d00",
+  "expect": "b54d00",
+  "model": {
+    "dctestns.ask_request_what": "19893",
+    "dctestns.ask_request_urgent": "0"
+  }
+}

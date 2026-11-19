@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-array-real16-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-array-real16-1-0",
+  "to": "cyphal-uavcan-primitive-array-real16-1-0",
+  "input": "03000000000000",
+  "expect": "03000000000000",
+  "model": {
+    "cyuavcanprimitivearray.real16_1_0_value.#": "3"
+  }
+}

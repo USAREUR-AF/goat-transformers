@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-si-unit-magnetic-field-strength-scalar-1-1-roundtrip",
+  "from": "cyphal-uavcan-si-unit-magnetic-field-strength-scalar-1-1",
+  "to": "cyphal-uavcan-si-unit-magnetic-field-strength-scalar-1-1",
+  "input": "000000c0",
+  "expect": "000000c0",
+  "model": {
+    "cyuavcansiunitmagneticfieldstrength.scalar_1_1_ampere_per_meter": "-2"
+  }
+}

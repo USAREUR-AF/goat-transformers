@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-file-getinfo-0-2-request-roundtrip",
+  "from": "cyphal-uavcan-file-getinfo-0-2-request",
+  "to": "cyphal-uavcan-file-getinfo-0-2-request",
+  "input": "020d82",
+  "expect": "020d82",
+  "model": {
+    "cyuavcanfile.get_info_0_2_request_path_path.#": "2",
+    "cyuavcanfile.get_info_0_2_request_path_path[0].cyuavcanfile.get_info_0_2_request_path_path_item": "13",
+    "cyuavcanfile.get_info_0_2_request_path_path[1].cyuavcanfile.get_info_0_2_request_path_path_item": "130"
+  }
+}

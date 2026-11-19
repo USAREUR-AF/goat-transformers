@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-node-port-id-1-0-roundtrip-subject_id",
+  "from": "cyphal-uavcan-node-port-id-1-0",
+  "to": "cyphal-uavcan-node-port-id-1-0",
+  "input": "006f05",
+  "expect": "006f05",
+  "model": {
+    "@kind": "subject_id",
+    "cyuavcannodeport.id_1_0_subject_id_value": "1391"
+  }
+}

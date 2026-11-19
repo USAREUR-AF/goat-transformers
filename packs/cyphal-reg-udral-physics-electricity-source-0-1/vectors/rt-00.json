@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-reg-udral-physics-electricity-source-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-electricity-source-0-1",
+  "to": "cyphal-reg-udral-physics-electricity-source-0-1",
+  "input": "000050c00000c0bf0000e0bf00000000",
+  "expect": "000050c00000c0bf0000e0bf00000000",
+  "model": {
+    "cyregudralphysicselectricity.source_0_1_power_current_ampere": "-3.25",
+    "cyregudralphysicselectricity.source_0_1_power_voltage_volt": "-1.5",
+    "cyregudralphysicselectricity.source_0_1_energy_joule": "-1.75",
+    "cyregudralphysicselectricity.source_0_1_full_energy_joule": "0"
+  }
+}

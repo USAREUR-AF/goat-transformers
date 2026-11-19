@@ -1,0 +1,15 @@
+{
+  "name": "cyphal-uavcan-register-access-1-0-response-roundtrip-integer64",
+  "from": "cyphal-uavcan-register-access-1-0-response",
+  "to": "cyphal-uavcan-register-access-1-0-response",
+  "input": "77191b1e000000020401535c0cc0ffffffff",
+  "expect": "77191b1e000000020401535c0cc0ffffffff",
+  "model": {
+    "cyuavcanregister.access_1_0_response_timestamp_microsecond": "505092471",
+    "cyuavcanregister.access_1_0_response_mutable": "0",
+    "cyuavcanregister.access_1_0_response_persistent": "1",
+    "@kind": "integer64",
+    "cyuavcanregister.access_1_0_response_value_integer64_value.#": "1",
+    "cyuavcanregister.access_1_0_response_value_integer64_value[0].cyuavcanregister.access_1_0_response_value_integer64_value_item": "-1072931757"
+  }
+}

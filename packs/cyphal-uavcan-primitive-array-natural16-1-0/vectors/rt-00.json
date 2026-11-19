@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-primitive-array-natural16-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-array-natural16-1-0",
+  "to": "cyphal-uavcan-primitive-array-natural16-1-0",
+  "input": "03365eabbe201f",
+  "expect": "03365eabbe201f",
+  "model": {
+    "cyuavcanprimitivearray.natural16_1_0_value.#": "3",
+    "cyuavcanprimitivearray.natural16_1_0_value[0].cyuavcanprimitivearray.natural16_1_0_value_item": "24118",
+    "cyuavcanprimitivearray.natural16_1_0_value[1].cyuavcanprimitivearray.natural16_1_0_value_item": "48811",
+    "cyuavcanprimitivearray.natural16_1_0_value[2].cyuavcanprimitivearray.natural16_1_0_value_item": "7968"
+  }
+}

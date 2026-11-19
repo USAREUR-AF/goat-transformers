@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-cartesian-point-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-cartesian-point-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-cartesian-point-0-1",
+  "input": "0000000000000ac000000000000004c0000000000000fcbf",
+  "expect": "0000000000000ac000000000000004c0000000000000fcbf",
+  "model": {
+    "cyregudralphysicskinematicscartesian.point_0_1_value_meter_0": "-3.25",
+    "cyregudralphysicskinematicscartesian.point_0_1_value_meter_1": "-2.5",
+    "cyregudralphysicskinematicscartesian.point_0_1_value_meter_2": "-1.75"
+  }
+}

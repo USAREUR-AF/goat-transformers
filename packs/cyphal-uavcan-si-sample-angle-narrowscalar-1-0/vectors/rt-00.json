@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-si-sample-angle-narrowscalar-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-sample-angle-narrowscalar-1-0",
+  "to": "cyphal-uavcan-si-sample-angle-narrowscalar-1-0",
+  "input": "85e4996a0000000000",
+  "expect": "85e4996a0000000000",
+  "model": {
+    "cyuavcansisampleangle.narrow_scalar_1_0_timestamp_microsecond": "1788470405"
+  }
+}

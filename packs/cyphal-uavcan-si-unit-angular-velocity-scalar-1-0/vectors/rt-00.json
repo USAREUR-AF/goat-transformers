@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-si-unit-angular-velocity-scalar-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-angular-velocity-scalar-1-0",
+  "to": "cyphal-uavcan-si-unit-angular-velocity-scalar-1-0",
+  "input": "000010c0",
+  "expect": "000010c0",
+  "model": {
+    "cyuavcansiunitangularvelocity.scalar_1_0_radian_per_second": "-2.25"
+  }
+}

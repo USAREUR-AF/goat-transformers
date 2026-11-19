@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-cartesian-pose-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-cartesian-pose-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-cartesian-pose-0-1",
+  "input": "00000000000008c000000000000002c0000000000000f8bf0000c0bf000040bf000000000000403f",
+  "expect": "00000000000008c000000000000002c0000000000000f8bf0000c0bf000040bf000000000000403f",
+  "model": {
+    "cyregudralphysicskinematicscartesian.pose_0_1_position_value_meter_0": "-3",
+    "cyregudralphysicskinematicscartesian.pose_0_1_position_value_meter_1": "-2.25",
+    "cyregudralphysicskinematicscartesian.pose_0_1_position_value_meter_2": "-1.5",
+    "cyregudralphysicskinematicscartesian.pose_0_1_orientation_wxyz_0": "-1.5",
+    "cyregudralphysicskinematicscartesian.pose_0_1_orientation_wxyz_1": "-0.75",
+    "cyregudralphysicskinematicscartesian.pose_0_1_orientation_wxyz_2": "0",
+    "cyregudralphysicskinematicscartesian.pose_0_1_orientation_wxyz_3": "0.75"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-testns-query-1-0-response-roundtrip-level",
+  "from": "cyphal-testns-query-1-0-response",
+  "to": "cyphal-testns-query-1-0-response",
+  "input": "020000a0bfcf",
+  "expect": "020000a0bfcf",
+  "model": {
+    "@kind": "level",
+    "cytestns.query_1_0_response_mode_level": "-1.25",
+    "cytestns.query_1_0_response_status": "207"
+  }
+}

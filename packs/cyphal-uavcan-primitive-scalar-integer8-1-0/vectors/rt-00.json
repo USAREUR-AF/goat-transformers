@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-integer8-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-integer8-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-integer8-1-0",
+  "input": "e4",
+  "expect": "e4",
+  "model": {
+    "cyuavcanprimitivescalar.integer8_1_0_value": "-28"
+  }
+}

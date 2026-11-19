@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-reg-udral-service-common-heartbeat-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-common-heartbeat-0-1",
+  "to": "cyphal-reg-udral-service-common-heartbeat-0-1",
+  "input": "0302",
+  "expect": "0302",
+  "model": {
+    "cyregudralservicecommon.heartbeat_0_1_readiness_value": "3",
+    "cyregudralservicecommon.heartbeat_0_1_health_value": "2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-reg-udral-service-battery-technology-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-battery-technology-0-1",
+  "to": "cyphal-reg-udral-service-battery-technology-0-1",
+  "input": "ae",
+  "expect": "ae",
+  "model": {
+    "cyregudralservicebattery.technology_0_1_value": "174"
+  }
+}

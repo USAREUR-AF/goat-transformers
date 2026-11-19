@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-uavcan-file-modify-1-1-request-roundtrip",
+  "from": "cyphal-uavcan-file-modify-1-1-request",
+  "to": "cyphal-uavcan-file-modify-1-1-request",
+  "input": "010000000196026de2",
+  "expect": "010000000196026de2",
+  "model": {
+    "cyuavcanfile.modify_1_1_request_preserve_source": "1",
+    "cyuavcanfile.modify_1_1_request_overwrite_destination": "0",
+    "cyuavcanfile.modify_1_1_request_source_path.#": "1",
+    "cyuavcanfile.modify_1_1_request_source_path[0].cyuavcanfile.modify_1_1_request_source_path_item": "150",
+    "cyuavcanfile.modify_1_1_request_destination_path.#": "2",
+    "cyuavcanfile.modify_1_1_request_destination_path[0].cyuavcanfile.modify_1_1_request_destination_path_item": "109",
+    "cyuavcanfile.modify_1_1_request_destination_path[1].cyuavcanfile.modify_1_1_request_destination_path_item": "226"
+  }
+}

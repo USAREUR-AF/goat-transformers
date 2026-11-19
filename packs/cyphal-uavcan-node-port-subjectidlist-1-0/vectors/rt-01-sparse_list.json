@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-node-port-subjectidlist-1-0-roundtrip-sparse_list",
+  "from": "cyphal-uavcan-node-port-subjectidlist-1-0",
+  "to": "cyphal-uavcan-node-port-subjectidlist-1-0",
+  "input": "01028212f712",
+  "expect": "01028212f712",
+  "model": {
+    "@kind": "sparse_list",
+    "cyuavcannodeport.subject_id_list_1_0_sparse_list.#": "2",
+    "cyuavcannodeport.subject_id_list_1_0_sparse_list[0].cyuavcannodeport.subject_id_list_1_0_sparse_list_item_value": "4738",
+    "cyuavcannodeport.subject_id_list_1_0_sparse_list[1].cyuavcannodeport.subject_id_list_1_0_sparse_list_item_value": "4855"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-entry-1-0-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-entry-1-0",
+  "to": "cyphal-uavcan-pnp-cluster-entry-1-0",
+  "input": "d46a624c5c6f8295a8bbcee1f4071a2d40536679338c",
+  "expect": "d46a624c5c6f8295a8bbcee1f4071a2d40536679338c",
+  "model": {
+    "cyuavcanpnpcluster.entry_1_0_term": "1281518292",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_0": "92",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_1": "111",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_2": "130",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_3": "149",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_4": "168",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_5": "187",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_6": "206",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_7": "225",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_8": "244",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_9": "7",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_10": "26",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_11": "45",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_12": "64",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_13": "83",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_14": "102",
+    "cyuavcanpnpcluster.entry_1_0_unique_id_15": "121",
+    "cyuavcanpnpcluster.entry_1_0_node_id_value": "35891"
+  }
+}

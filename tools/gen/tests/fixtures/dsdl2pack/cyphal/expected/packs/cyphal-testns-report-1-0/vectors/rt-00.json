@@ -1,0 +1,21 @@
+{
+  "name": "cyphal-testns-report-1-0-roundtrip",
+  "from": "cyphal-testns-report-1-0",
+  "to": "cyphal-testns-report-1-0",
+  "input": "fce56a2c00ac750400000001bd0000012c91020000000000001440",
+  "expect": "fce56a2c00ac750400000001bd0000012c91020000000000001440",
+  "model": {
+    "cytestns.report_1_0_time": "745203196",
+    "cytestns.report_1_0_pair_a": "4",
+    "cytestns.report_1_0_pair_b": "3765",
+    "cytestns.report_1_0_note_text.#": "1",
+    "cytestns.report_1_0_note_text[0].cytestns.report_1_0_note_text_item": "189",
+    "cytestns.report_1_0_pairs.#": "1",
+    "cytestns.report_1_0_pairs[0].cytestns.report_1_0_pairs_item_a": "4",
+    "cytestns.report_1_0_pairs[0].cytestns.report_1_0_pairs_item_b": "-3547",
+    "cytestns.report_1_0_flags_0": "0",
+    "cytestns.report_1_0_flags_1": "1",
+    "cytestns.report_1_0_flags_2": "0",
+    "cytestns.report_1_0_value": "5"
+  }
+}

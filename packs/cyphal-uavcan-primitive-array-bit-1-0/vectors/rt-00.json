@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-primitive-array-bit-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-array-bit-1-0",
+  "to": "cyphal-uavcan-primitive-array-bit-1-0",
+  "input": "030005",
+  "expect": "030005",
+  "model": {
+    "cyuavcanprimitivearray.bit_1_0_value.#": "3",
+    "cyuavcanprimitivearray.bit_1_0_value[0].cyuavcanprimitivearray.bit_1_0_value_item": "1",
+    "cyuavcanprimitivearray.bit_1_0_value[1].cyuavcanprimitivearray.bit_1_0_value_item": "0",
+    "cyuavcanprimitivearray.bit_1_0_value[2].cyuavcanprimitivearray.bit_1_0_value_item": "1"
+  }
+}

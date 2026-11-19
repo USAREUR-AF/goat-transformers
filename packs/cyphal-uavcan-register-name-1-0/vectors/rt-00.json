@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-register-name-1-0-roundtrip",
+  "from": "cyphal-uavcan-register-name-1-0",
+  "to": "cyphal-uavcan-register-name-1-0",
+  "input": "0336ab20",
+  "expect": "0336ab20",
+  "model": {
+    "cyuavcanregister.name_1_0_name.#": "3",
+    "cyuavcanregister.name_1_0_name[0].cyuavcanregister.name_1_0_name_item": "54",
+    "cyuavcanregister.name_1_0_name[1].cyuavcanregister.name_1_0_name_item": "171",
+    "cyuavcanregister.name_1_0_name[2].cyuavcanregister.name_1_0_name_item": "32"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-node-iostatistics-0-1-roundtrip",
+  "from": "cyphal-uavcan-node-iostatistics-0-1",
+  "to": "cyphal-uavcan-node-iostatistics-0-1",
+  "input": "ae9015170085e4996a005c381e3e00",
+  "expect": "ae9015170085e4996a005c381e3e00",
+  "model": {
+    "cyuavcannode.io_statistics_0_1_num_emitted": "387289262",
+    "cyuavcannode.io_statistics_0_1_num_received": "1788470405",
+    "cyuavcannode.io_statistics_0_1_num_errored": "1042167900"
+  }
+}

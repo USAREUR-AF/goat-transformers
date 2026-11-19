@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-executecommand-1-2-response-roundtrip",
+  "from": "cyphal-uavcan-node-executecommand-1-2-response",
+  "to": "cyphal-uavcan-node-executecommand-1-2-response",
+  "input": "81",
+  "expect": "81",
+  "model": {
+    "cyuavcannode.execute_command_1_2_response_status": "129"
+  }
+}

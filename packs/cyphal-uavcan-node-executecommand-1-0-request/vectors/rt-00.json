@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-node-executecommand-1-0-request-roundtrip",
+  "from": "cyphal-uavcan-node-executecommand-1-0-request",
+  "to": "cyphal-uavcan-node-executecommand-1-0-request",
+  "input": "719b01aa",
+  "expect": "719b01aa",
+  "model": {
+    "cyuavcannode.execute_command_1_0_request_command": "39793",
+    "cyuavcannode.execute_command_1_0_request_parameter.#": "1",
+    "cyuavcannode.execute_command_1_0_request_parameter[0].cyuavcannode.execute_command_1_0_request_parameter_item": "170"
+  }
+}

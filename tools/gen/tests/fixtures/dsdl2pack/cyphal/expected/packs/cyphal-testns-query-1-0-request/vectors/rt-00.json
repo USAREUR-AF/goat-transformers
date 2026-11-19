@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-testns-query-1-0-request-roundtrip",
+  "from": "cyphal-testns-query-1-0-request",
+  "to": "cyphal-testns-query-1-0-request",
+  "input": "e83c",
+  "expect": "e83c",
+  "model": {
+    "cytestns.query_1_0_request_key": "15592"
+  }
+}

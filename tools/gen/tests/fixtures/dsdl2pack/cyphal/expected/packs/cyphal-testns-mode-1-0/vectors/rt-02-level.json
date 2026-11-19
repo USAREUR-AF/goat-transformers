@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-testns-mode-1-0-roundtrip-level",
+  "from": "cyphal-testns-mode-1-0",
+  "to": "cyphal-testns-mode-1-0",
+  "input": "020000403f",
+  "expect": "020000403f",
+  "model": {
+    "@kind": "level",
+    "cytestns.mode_1_0_level": "0.75"
+  }
+}

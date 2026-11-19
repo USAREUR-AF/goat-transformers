@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-metatransport-can-frame-0-1-roundtrip-data_fd",
+  "from": "cyphal-uavcan-metatransport-can-frame-0-1",
+  "to": "cyphal-uavcan-metatransport-can-frame-0-1",
+  "input": "108484530000000101e405da0f02d146",
+  "expect": "1084845300000001",
+  "model": {
+    "cyuavcanmetatransportcan.frame_0_1_timestamp_microsecond": "1401193488",
+    "@kind": "data_fd"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "cyphal-uavcan-metatransport-udp-endpoint-0-1-roundtrip",
+  "from": "cyphal-uavcan-metatransport-udp-endpoint-0-1",
+  "to": "cyphal-uavcan-metatransport-udp-endpoint-0-1",
+  "input": "5f728598abbed1e4f70a1d304356697c36495c6f82955c380000000000000000",
+  "expect": "5f728598abbed1e4f70a1d304356697c36495c6f82955c380000000000000000",
+  "model": {
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_0": "95",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_1": "114",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_2": "133",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_3": "152",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_4": "171",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_5": "190",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_6": "209",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_7": "228",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_8": "247",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_9": "10",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_10": "29",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_11": "48",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_12": "67",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_13": "86",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_14": "105",
+    "cyuavcanmetatransportudp.endpoint_0_1_ip_address_15": "124",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_0": "54",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_1": "73",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_2": "92",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_3": "111",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_4": "130",
+    "cyuavcanmetatransportudp.endpoint_0_1_mac_address_5": "149",
+    "cyuavcanmetatransportudp.endpoint_0_1_port": "14428"
+  }
+}
