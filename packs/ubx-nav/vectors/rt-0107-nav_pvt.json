@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_pvt",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201075c00bedc063295306c431af1c805fb76b648d2ca3adca93a530fe6b86ec6bd0cf319946077ed6bb4fbc042088054195c0428f0af883bc7030d0f9e5791e275ab15364cff990923531e1dfaa6a270d1fade2adbf14039b245c5cc891960ed",
+  "expect": "b56201075c00bedc063295306c431af1c805fb76b648d2ca3adca93a530fe6b86ec6bd0cf319946077ed6bb4fbc042088054195c0428f0af883bc7030d0f9e5791e275ab15364cff990923531e1dfaa6a270d1fade2adbf14039b245c5cc891960ed",
+  "model": {
+    "@kind": "nav_pvt"
+  }
+}

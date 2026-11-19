@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_esfa",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562064c1400d8af4aea1900000000865d340b9ae2edb941040f",
+  "expect": "b562064c1400d8af4aea1900000000865d340b9ae2edb941040f",
+  "model": {
+    "@kind": "cfg_esfa"
+  }
+}

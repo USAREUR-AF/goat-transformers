@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_nak_data0",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621360080000d6ad845b034548",
+  "expect": "b5621360080000d6ad845b034548",
+  "model": {
+    "@kind": "mga_nak_data0"
+  }
+}

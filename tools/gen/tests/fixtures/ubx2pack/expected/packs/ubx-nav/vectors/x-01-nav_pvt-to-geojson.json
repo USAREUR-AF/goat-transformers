@@ -1,0 +1,18 @@
+{
+  "name": "ubx-nav-nav_pvt-to-geojson",
+  "from": "ubx-nav",
+  "to": "geojson",
+  "input": "b5620107340028f47a1303000e44f417054c52401c3a73070038b70600dc0500003cf6ffff2c0100003430000059da4400000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742,488.25]},\"properties\":{\"course\":45.12345,\"speed_ms\":12.34}}",
+  "model": {
+    "@kind": "nav_pvt",
+    "lon": "8.545594",
+    "lat": "47.397742",
+    "hae": "488.25",
+    "track.vel_north_ms": "1.5",
+    "track.vel_east_ms": "-2.5",
+    "track.vel_up_ms": "-0.3",
+    "speed_ms": "12.34",
+    "course": "45.12345"
+  }
+}

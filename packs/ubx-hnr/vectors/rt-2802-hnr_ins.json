@@ -1,0 +1,10 @@
+{
+  "name": "ubx-hnr-roundtrip-hnr_ins",
+  "from": "ubx-hnr",
+  "to": "ubx-hnr",
+  "input": "b562280224003d2a00001ece5a4ff521df22cc756336a3c9e7097a1d6cdd5171f03028c57404ff18f9d7",
+  "expect": "b562280224003d2a00001ece5a4ff521df22cc756336a3c9e7097a1d6cdd5171f03028c57404ff18f9d7",
+  "model": {
+    "@kind": "hnr_ins"
+  }
+}

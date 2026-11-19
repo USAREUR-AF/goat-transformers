@@ -1,0 +1,10 @@
+{
+  "name": "ubx-sec-roundtrip-sec_sign",
+  "from": "ubx-sec",
+  "to": "ubx-sec",
+  "input": "b56227012800cea51a897c532a16016a9a7f00000000d8bd1e5300000080af11a326000000008665277a00000080",
+  "expect": "b56227012800cea51a897c532a16016a9a7f00000000d8bd1e5300000080af11a326000000008665277a00000080",
+  "model": {
+    "@kind": "sec_sign"
+  }
+}

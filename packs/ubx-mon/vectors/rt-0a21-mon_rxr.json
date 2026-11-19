@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_rxr",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a21010001",
+  "expect": "b5620a21010001",
+  "model": {
+    "@kind": "mon_rxr"
+  }
+}

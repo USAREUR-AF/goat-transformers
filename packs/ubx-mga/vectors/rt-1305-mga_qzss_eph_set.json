@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_qzss_eph_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621305440001c1986f461df44ba2f9794d50a7fec8d59c69d3ac7083c45a98f6cd316c08c0df938308b6e7075c8d3b640f3be3941612b7e90ac0de21119732a6e46e862a38455a1c2e",
+  "expect": "b5621305440001c1986f461df44ba2f9794d50a7fec8d59c69d3ac7083c45a98f6cd316c08c0df938308b6e7075c8d3b640f3be3941612b7e90ac0de21119732a6e46e862a38455a1c2e",
+  "model": {
+    "@kind": "mga_qzss_eph_set"
+  }
+}

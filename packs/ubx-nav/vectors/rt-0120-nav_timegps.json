@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_timegps",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562012010004019d25b176d56efee40450221647024",
+  "expect": "b562012010004019d25b176d56efee40450221647024",
+  "model": {
+    "@kind": "nav_timegps"
+  }
+}

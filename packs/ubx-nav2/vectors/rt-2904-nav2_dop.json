@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_dop",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b562290412002e69d23205bddc10b3648ab8610c38600fb4",
+  "expect": "b562290412002e69d23205bddc10b3648ab8610c38600fb4",
+  "model": {
+    "@kind": "nav2_dop"
+  }
+}

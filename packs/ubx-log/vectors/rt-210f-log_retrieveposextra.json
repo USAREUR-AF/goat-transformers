@@ -1,0 +1,10 @@
+{
+  "name": "ubx-log-roundtrip-log_retrieveposextra",
+  "from": "ubx-log",
+  "to": "ubx-log",
+  "input": "b562210f2000195c0428f0c79e57754c23fad1a84eab7fa22f6b56f6b33e000000802d4a3812",
+  "expect": "b562210f2000195c0428f0c79e57754c23fad1a84eab7fa22f6b56f6b33e000000802d4a3812",
+  "model": {
+    "@kind": "log_retrieveposextra"
+  }
+}

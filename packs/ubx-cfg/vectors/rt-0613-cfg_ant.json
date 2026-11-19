@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_ant",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b5620613040015007caa",
+  "expect": "b5620613040015007caa",
+  "model": {
+    "@kind": "cfg_ant"
+  }
+}

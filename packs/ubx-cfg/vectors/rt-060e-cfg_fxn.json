@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_fxn",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562060e24000a00000075ab15764cff994923531e1dfaa6a270d1fa2644a84eab177fa22f6b56f6b33e",
+  "expect": "b562060e24000a00000075ab15764cff994923531e1dfaa6a270d1fa2644a84eab177fa22f6b56f6b33e",
+  "model": {
+    "@kind": "cfg_fxn"
+  }
+}

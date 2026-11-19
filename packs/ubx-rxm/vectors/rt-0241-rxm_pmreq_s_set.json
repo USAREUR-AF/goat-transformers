@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_pmreq_s_set",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b5620241080039b8cd3b02000000",
+  "expect": "b5620241080039b8cd3b02000000",
+  "model": {
+    "@kind": "rxm_pmreq_s_set"
+  }
+}

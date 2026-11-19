@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_txslot",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b5620653100054155e350ccc022fe31f8702ba730b56",
+  "expect": "b5620653100054155e350ccc022fe31f8702ba730b56",
+  "model": {
+    "@kind": "cfg_txslot"
+  }
+}

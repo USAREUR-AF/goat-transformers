@@ -1,0 +1,10 @@
+{
+  "name": "ubx-upd-roundtrip-upd_sos_set",
+  "from": "ubx-upd",
+  "to": "ubx-upd",
+  "input": "b562091404000be2162c",
+  "expect": "b562091404000be2162c",
+  "model": {
+    "@kind": "upd_sos_set"
+  }
+}

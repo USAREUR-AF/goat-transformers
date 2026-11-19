@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_slas",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562068d0400026771da",
+  "expect": "b562068d0400026771da",
+  "model": {
+    "@kind": "cfg_slas"
+  }
+}

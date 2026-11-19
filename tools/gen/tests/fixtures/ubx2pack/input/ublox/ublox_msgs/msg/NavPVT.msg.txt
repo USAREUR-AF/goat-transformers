@@ -1,0 +1,11 @@
+# A stand-in for NavPVT.msg, for the ubx2pack tests: the field lines the
+# generator reads, with their comments in the shape of the ublox_msgs files.
+uint32 i_tow       # time in the week [ms]
+int32 lon          # longitude [deg / 1e-7]
+int32 lat          # latitude [deg / 1e-7]
+int32 height       # height over the ellipsoid [mm]
+int32 vel_n        # north velocity [mm/s]
+int32 vel_e        # east velocity [mm/s]
+int32 vel_d        # down velocity [mm/s]
+int32 g_speed      # ground speed (2-d) [mm/s]
+int32 heading      # heading of motion 2-d [deg / 1e-5]

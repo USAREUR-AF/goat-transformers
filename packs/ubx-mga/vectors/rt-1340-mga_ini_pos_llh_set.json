@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_ini_pos_llh_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621340140001f7ce4ea5a2562d7cf6da00534a5fd42a9ee367",
+  "expect": "b5621340140001f7ce4ea5a2562d7cf6da00534a5fd42a9ee367",
+  "model": {
+    "@kind": "mga_ini_pos_llh_set"
+  }
+}

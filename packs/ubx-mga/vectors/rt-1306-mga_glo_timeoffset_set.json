@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_glo_timeoffset_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b562130614000326fdc7d41bdcc3ab6f601782435997306bed51",
+  "expect": "b562130614000326fdc7d41bdcc3ab6f601782435997306bed51",
+  "model": {
+    "@kind": "mga_glo_timeoffset_set"
+  }
+}

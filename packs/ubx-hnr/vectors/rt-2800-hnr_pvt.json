@@ -1,0 +1,10 @@
+{
+  "name": "ubx-hnr-roundtrip-hnr_pvt",
+  "from": "ubx-hnr",
+  "to": "ubx-hnr",
+  "input": "b562280048007277f30f49cb20f7cea57c05d8bd1e13af0ab908905c412f67b0c5023e044ad61558ce29ecab52fdc3ffd6d09a535b2471a7dff748fb630b1f4fe85ef6a26c32cdf6f005a44a7559",
+  "expect": "b562280048007277f30f49cb20f7cea57c05d8bd1e13af0ab908905c412f67b0c5023e044ad61558ce29ecab52fdc3ffd6d09a535b2471a7dff748fb630b1f4fe85ef6a26c32cdf6f005a44a7559",
+  "model": {
+    "@kind": "hnr_pvt"
+  }
+}

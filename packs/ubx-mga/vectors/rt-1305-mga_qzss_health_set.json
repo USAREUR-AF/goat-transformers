@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_qzss_health_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b56213050c0004d4ab6f82593007deb5667a",
+  "expect": "b56213050c0004d4ab6f82593007deb5667a",
+  "model": {
+    "@kind": "mga_qzss_health_set"
+  }
+}

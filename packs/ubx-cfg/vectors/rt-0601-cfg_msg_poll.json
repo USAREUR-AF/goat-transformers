@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_msg_poll",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562060102004b22",
+  "expect": "b562060102004b22",
+  "model": {
+    "@kind": "cfg_msg_poll"
+  }
+}

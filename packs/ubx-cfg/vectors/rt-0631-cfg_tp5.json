@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_tp5",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206312000835a31610835df88b65c68718db0ec44640471183b58f56b12ac79ff550d0000",
+  "expect": "b56206312000835a31610835df88b65c68718db0ec44640471183b58f56b12ac79ff550d0000",
+  "model": {
+    "@kind": "cfg_tp5"
+  }
+}

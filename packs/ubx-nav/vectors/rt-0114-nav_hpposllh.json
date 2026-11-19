@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_hpposllh",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201142400dcb3c600616e5b4338c2dfd60f16642ae669e8fdbdbd6cd114ebc299f0600233c7b48606",
+  "expect": "b56201142400dcb3c600616e5b4338c2dfd60f16642ae669e8fdbdbd6cd114ebc299f0600233c7b48606",
+  "model": {
+    "@kind": "nav_hpposllh"
+  }
+}

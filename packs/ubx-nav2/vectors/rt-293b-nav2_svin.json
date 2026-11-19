@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_svin",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b562293b2800b2890eaa60622e4937b6b21c0e0a3730e55dbb03bcb13fd713eac118ef54d538c6a8590c9d744ba4",
+  "expect": "b562293b2800b2890eaa60622e4937b6b21c0e0a3730e55dbb03bcb13fd713eac118ef54d538c6a8590c9d744ba4",
+  "model": {
+    "@kind": "nav2_svin"
+  }
+}

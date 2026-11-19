@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_status",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b5622903100057154e5f2e05bd59f0fe0e44c7529317",
+  "expect": "b5622903100057154e5f2e05bd59f0fe0e44c7529317",
+  "model": {
+    "@kind": "nav2_status"
+  }
+}

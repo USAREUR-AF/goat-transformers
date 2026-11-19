@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_ini_att_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b56213401c00407c534a2a9ee32701f267fbd845ecceaf99706286edf4355d417909",
+  "expect": "b56213401c00407c534a2a9ee32701f267fbd845ecceaf99706286edf4355d417909",
+  "model": {
+    "@kind": "mga_ini_att_set"
+  }
+}

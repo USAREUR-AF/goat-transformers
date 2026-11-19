@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_nvs_set",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206220d0061809b2f94b3663cc7e633290a",
+  "expect": "b56206220d0061809b2f94b3663cc7e633290a",
+  "model": {
+    "@kind": "cfg_nvs_set"
+  }
+}

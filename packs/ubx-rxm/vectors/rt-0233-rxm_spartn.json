@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_spartn",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202330800140599f8704c47a0",
+  "expect": "b56202330800140599f8704c47a0",
+  "model": {
+    "@kind": "rxm_spartn"
+  }
+}

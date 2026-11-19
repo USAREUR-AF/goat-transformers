@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_odo",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562061e140003dad2a60505e4c9c00d0000bb9269c54017eec0",
+  "expect": "b562061e140003dad2a60505e4c9c00d0000bb9269c54017eec0",
+  "model": {
+    "@kind": "cfg_odo"
+  }
+}

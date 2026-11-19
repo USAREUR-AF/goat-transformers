@@ -1,0 +1,10 @@
+{
+  "name": "ubx-log-roundtrip-log_findtime_set",
+  "from": "ubx-log",
+  "to": "ubx-log",
+  "input": "b562210e0a00d0a77e21552c03dab188",
+  "expect": "b562210e0a00d0a77e21552c03dab188",
+  "model": {
+    "@kind": "log_findtime_set"
+  }
+}

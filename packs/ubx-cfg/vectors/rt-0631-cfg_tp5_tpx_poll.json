@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_tp5_tpx_poll",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b5620631010041",
+  "expect": "b5620631010041",
+  "model": {
+    "@kind": "cfg_tp5_tpx_poll"
+  }
+}

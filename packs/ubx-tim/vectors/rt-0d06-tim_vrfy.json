@@ -1,0 +1,10 @@
+{
+  "name": "ubx-tim-roundtrip-tim_vrfy",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d0614006b038209425706dd19ab8a30f0fe0e04c7520675",
+  "expect": "b5620d0614006b038209425706dd19ab8a30f0fe0e04c7520675",
+  "model": {
+    "@kind": "tim_vrfy"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_txbuf",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a081c006f5646aa1dfef451cba5a2f9795027fed5ac835a3108dfb68d64bbc0",
+  "expect": "b5620a081c006f5646aa1dfef451cba5a2f9795027fed5ac835a3108dfb68d64bbc0",
+  "model": {
+    "@kind": "mon_txbuf"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_rtcm",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b562023208007f020462dbb5b209",
+  "expect": "b562023208007f020462dbb5b209",
+  "model": {
+    "@kind": "rxm_rtcm"
+  }
+}

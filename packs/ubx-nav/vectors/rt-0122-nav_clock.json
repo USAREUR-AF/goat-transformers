@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_clock",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b5620122140043eb00531a3f85e6f192093ac8e68d4d9f3a1221",
+  "expect": "b5620122140043eb00531a3f85e6f192093ac8e68d4d9f3a1221",
+  "model": {
+    "@kind": "nav_clock"
+  }
+}

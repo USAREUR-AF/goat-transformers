@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_nav5",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206242400aa027b52290ae9f1005e6d0557ae85595cad33010a55e1b88f663df8144cebc2f3a91600",
+  "expect": "b56206242400aa027b52290ae9f1005e6d0557ae85595cad33010a55e1b88f663df8144cebc2f3a91600",
+  "model": {
+    "@kind": "cfg_nav5"
+  }
+}

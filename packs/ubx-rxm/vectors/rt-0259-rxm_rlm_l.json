@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_rlm_l",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202591c00552c03dab1fd7e7000000000885fa587170000000036f90b6b0d4d90",
+  "expect": "b56202591c00552c03dab1fd7e7000000000885fa587170000000036f90b6b0d4d90",
+  "model": {
+    "@kind": "rxm_rlm_l"
+  }
+}

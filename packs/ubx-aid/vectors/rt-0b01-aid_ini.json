@@ -1,0 +1,10 @@
+{
+  "name": "ubx-aid-roundtrip-aid_ini",
+  "from": "ubx-aid",
+  "to": "ubx-aid",
+  "input": "b5620b013000e133abf8b8872fcc8fdbb31f662f38333d8314d7eb2ac52dc27e49c199d2cd5470265228477ad63b1ece5a4ff521df22",
+  "expect": "b5620b013000e133abf8b8872fcc8fdbb31f662f38333d8314d7eb2ac52dc27e49c199d2cd5470265228477ad63b1ece5a4ff521df22",
+  "model": {
+    "@kind": "aid_ini"
+  }
+}

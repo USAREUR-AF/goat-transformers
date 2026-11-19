@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_bds_eph_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621303580001e2b990673e15d8ecab52fdc3ffd6d09a535b647127481ff6a26c32cdf6f005a44a75597b9ef9ec527229c6009a86e7d7ed0a3bae418f0e859513e25ce99735333d1c090a91a0dce1e42430b838a9038f8c2dd766e0b16a",
+  "expect": "b5621303580001e2b990673e15d8ecab52fdc3ffd6d09a535b647127481ff6a26c32cdf6f005a44a75597b9ef9ec527229c6009a86e7d7ed0a3bae418f0e859513e25ce99735333d1c090a91a0dce1e42430b838a9038f8c2dd766e0b16a",
+  "model": {
+    "@kind": "mga_bds_eph_set"
+  }
+}
