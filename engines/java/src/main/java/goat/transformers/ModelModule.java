@@ -27,7 +27,7 @@ public final class ModelModule {
 
     /** One {@code derive} line: the target key follows from the argument keys through a function of the fixed set. */
     public static final class Derive {
-        enum Fn { COPY, HYPOT, BEARING, EAST_OF, NORTH_OF, NEG, SCALE, OFFSET, JOIN, DAY_SECONDS, ANY, NOT, PARSE_INT, TEXT_OF }
+        enum Fn { COPY, HYPOT, BEARING, EAST_OF, NORTH_OF, NEG, SCALE, OFFSET, JOIN, DAY_SECONDS, ANY, NOT, PARSE_INT, TEXT_OF, PRESENT }
 
         /** Target and argument keys as a pack writes them: bare for {@code core}, {@code <module>.<key>} otherwise. */
         public final String target;
@@ -74,6 +74,8 @@ public final class ModelModule {
                 }
                 case NOT:
                     return Transform.asLong(v[0]) == 0 ? 1L : 0L;
+                case PRESENT:
+                    return 1L;   // presence, not value (ruling 1 of 0.12)
                 case PARSE_INT: {
                     String t = String.valueOf(v[0]);
                     if (!DECIMAL_INTEGER.matcher(t).matches()) return null;
@@ -409,6 +411,7 @@ public final class ModelModule {
             case "not": fn = Derive.Fn.NOT; argc = 1; break;
             case "parse_int": fn = Derive.Fn.PARSE_INT; argc = 1; break;
             case "text_of": fn = Derive.Fn.TEXT_OF; argc = 1; break;
+            case "present": fn = Derive.Fn.PRESENT; argc = 1; break;
             default: throw badDerive(module, where, "unknown function \"" + function + "\"");
         }
         boolean takesParam = fn == Derive.Fn.SCALE || fn == Derive.Fn.OFFSET || fn == Derive.Fn.JOIN;
@@ -433,6 +436,10 @@ public final class ModelModule {
             case ANY:
             case NOT:
                 need = "int";
+                break;
+            case PRESENT:
+                need = "int";
+                needArg = "";   // any scalar type: the argument is read for presence only (ruling 3 of 0.12)
                 break;
             case PARSE_INT:
                 need = "int";
@@ -490,7 +497,7 @@ public final class ModelModule {
             throw badDerive(module, where, "target " + target + " is " + type + ", " + head + " gives " + need);
         }
         if (needArg == null) needArg = need;
-        for (int i = 0; i < args.size(); i++) {
+        for (int i = 0; i < args.size() && !needArg.isEmpty(); i++) {
             if (!argTypes.get(i).equals(needArg)) {
                 throw badDerive(module, where, "argument " + args.get(i) + " is " + argTypes.get(i) + ", " + head + " takes " + needArg);
             }
