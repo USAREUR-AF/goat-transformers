@@ -126,14 +126,14 @@ Build targets. Measured: Rust and Go fully static binaries; Rust and Go to
 WebAssembly; Java on the JVM. Built: a C-ABI library (shared and static) and a WebAssembly module of the Rust
 engine with a dependency-free JavaScript wrapper, in `bindings/`, for hosts in
 languages with no native engine (TypeScript, C#, Swift). The module has no
-imports and is 346,027 bytes in its small build (`python3 -I tools/repo-stats`
+imports and is 376,470 bytes in its small build (`python3 -I tools/repo-stats`
 prints the size of a built module); every conversion vector passes through it.
 
 ## Conformance
 
 A conversion vector is `{from, to, input, expect}`; a load vector is a set of
 modules and one pack that must load or must fail with a named error
-(`spec/vector-format.md`). Every engine runs every vector. Built: 3,325 conversion vectors across 98 packs and 314 load vectors (`python3 -I tools/repo-stats` prints the current counts), all passing on all seven engines.
+(`spec/vector-format.md`). Every engine runs every vector. Built: 4,780 conversion vectors across 294 packs and 338 load vectors (`python3 -I tools/repo-stats` prints the current counts), all passing on all seven engines.
 
 ## Separation of pack authors and engine authors
 
