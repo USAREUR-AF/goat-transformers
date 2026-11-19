@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rfrh",
+  "from": "ardupilot-log-rfrh",
+  "to": "ardupilot-log-rfrh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100",
+  "expect": "4333636500000000753c0100",
+  "model": {
+    "aplog.rfrh_timeus": "1701000003",
+    "aplog.rfrh_tf": "81013"
+  }
+}

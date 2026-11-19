@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rgpi",
+  "from": "ardupilot-log-rgpi",
+  "to": "ardupilot-log-rgpi",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c01a5188bf",
+  "expect": "0000ecc00000e4c00000dcc00000d4c01a5188bf",
+  "model": {
+    "aplog.rgpi_ox": "-7.375",
+    "aplog.rgpi_oy": "-7.125",
+    "aplog.rgpi_oz": "-6.875",
+    "aplog.rgpi_lg": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-uart",
+  "from": "ardupilot-log-uart",
+  "to": "ardupilot-log-uart",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c0",
+  "expect": "4333636500000000750000dcc00000d4c0",
+  "model": {
+    "aplog.uart_timeus": "1701000003",
+    "aplog.uart_i": "117",
+    "aplog.uart_tx": "-6.875",
+    "aplog.uart_rx": "-6.625"
+  }
+}

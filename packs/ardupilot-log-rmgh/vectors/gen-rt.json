@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rmgh",
+  "from": "ardupilot-log-rmgh",
+  "to": "ardupilot-log-rmgh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc075ace31a5188bf",
+  "expect": "0000ecc075ace31a5188bf",
+  "model": {
+    "aplog.rmgh_dec": "-7.375",
+    "aplog.rmgh_avail": "117",
+    "aplog.rmgh_numinst": "172",
+    "aplog.rmgh_autodec": "227"
+  }
+}

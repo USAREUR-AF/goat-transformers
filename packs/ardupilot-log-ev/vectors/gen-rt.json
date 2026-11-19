@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-ev",
+  "from": "ardupilot-log-ev",
+  "to": "ardupilot-log-ev",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075",
+  "expect": "433363650000000075",
+  "model": {
+    "aplog.ev_timeus": "1701000003",
+    "aplog.ev_id": "117"
+  }
+}

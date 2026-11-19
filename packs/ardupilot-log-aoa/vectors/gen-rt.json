@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-aoa",
+  "from": "ardupilot-log-aoa",
+  "to": "ardupilot-log-aoa",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0",
+  "expect": "43336365000000000000e4c00000dcc0",
+  "model": {
+    "aplog.aoa_timeus": "1701000003",
+    "aplog.aoa_aoa": "-7.125",
+    "aplog.aoa_ssa": "-6.875"
+  }
+}

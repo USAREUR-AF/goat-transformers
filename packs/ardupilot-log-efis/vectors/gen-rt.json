@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-efis",
+  "from": "ardupilot-log-efis",
+  "to": "ardupilot-log-efis",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cace37802001a17030051b503000000bcc0bff1",
+  "expect": "4333636500000000753cace37802001a17030051b503000000bcc0bff1",
+  "model": {
+    "aplog.efis_timeus": "1701000003",
+    "aplog.efis_eet": "15477",
+    "aplog.efis_flag": "172",
+    "aplog.efis_crf": "162019"
+  }
+}

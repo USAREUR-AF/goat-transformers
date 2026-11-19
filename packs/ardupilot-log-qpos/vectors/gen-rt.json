@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-qpos",
+  "from": "ardupilot-log-qpos",
+  "to": "ardupilot-log-qpos",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc051",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc051",
+  "model": {
+    "aplog.qpos_timeus": "1701000003",
+    "aplog.qpos_state": "117",
+    "aplog.qpos_dist": "-6.875",
+    "aplog.qpos_tspd": "-6.625"
+  }
+}

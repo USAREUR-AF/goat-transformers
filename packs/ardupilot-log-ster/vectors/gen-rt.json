@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ster",
+  "from": "ardupilot-log-ster",
+  "to": "ardupilot-log-ster",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075bc0000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "433363650000000075bc0000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.ster_timeus": "1701000003",
+    "aplog.ster_steerin": "-17291",
+    "aplog.ster_steerout": "-6.875",
+    "aplog.ster_deslatacc": "-6.625"
+  }
+}

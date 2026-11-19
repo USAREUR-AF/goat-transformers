@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-navx",
+  "from": "ardupilot-log-navx",
+  "to": "ardupilot-log-navx",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008f831e87ad8a3c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f174330000000000000000000000000000e9263108ac1c1040",
+  "expect": "43336365000000008f831e87ad8a3c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f174330000000000000000000000000000e9263108ac1c1040",
+  "model": {
+    "aplog.navx_timeus": "1701000003",
+    "aplog.navx_arr_0": "-31857",
+    "aplog.navx_arr_1": "-30946",
+    "aplog.navx_arr_2": "-30035"
+  }
+}

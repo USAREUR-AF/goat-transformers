@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sbre",
+  "from": "ardupilot-log-sbre",
+  "to": "ardupilot-log-sbre",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacda0100e37802801a51",
+  "expect": "4333636500000000753cacda0100e37802801a51",
+  "model": {
+    "aplog.sbre_timeus": "1701000003",
+    "aplog.sbre_gwk": "15477",
+    "aplog.sbre_gms": "121516",
+    "aplog.sbre_ns_residual": "-2147321629"
+  }
+}

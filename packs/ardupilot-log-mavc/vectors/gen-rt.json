@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-mavc",
+  "from": "ardupilot-log-mavc",
+  "to": "ardupilot-log-mavc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a5188530000b4c00000acc00000a4c000009cc09b6a0780d2080880000084c04077",
+  "expect": "433363650000000075ace31a5188530000b4c00000acc00000a4c000009cc09b6a0780d2080880000084c04077",
+  "model": {
+    "aplog.mavc_timeus": "1701000003",
+    "aplog.mavc_ts": "117",
+    "aplog.mavc_tc": "172",
+    "aplog.mavc_ss": "227"
+  }
+}

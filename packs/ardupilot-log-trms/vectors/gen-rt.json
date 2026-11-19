@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-trms",
+  "from": "ardupilot-log-trms",
+  "to": "ardupilot-log-trms",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace378",
+  "expect": "433363650000000075ace378",
+  "model": {
+    "aplog.trms_timeus": "1701000003",
+    "aplog.trms_i": "117",
+    "aplog.trms_state": "172",
+    "aplog.trms_err": "30947"
+  }
+}

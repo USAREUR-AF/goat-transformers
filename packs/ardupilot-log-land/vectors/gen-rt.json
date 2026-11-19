@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-land",
+  "from": "ardupilot-log-land",
+  "to": "ardupilot-log-land",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace30000ccc00000c4c00000bcc00000b4c0",
+  "expect": "433363650000000075ace30000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "aplog.land_timeus": "1701000003",
+    "aplog.land_stage": "117",
+    "aplog.land_f1": "172",
+    "aplog.land_f2": "227"
+  }
+}

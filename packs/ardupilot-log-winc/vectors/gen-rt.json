@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-winc",
+  "from": "ardupilot-log-winc",
+  "to": "ardupilot-log-winc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a510000bcc00000b4c00000acc02d2e00009cc01b",
+  "expect": "433363650000000075ace31a510000bcc00000b4c00000acc02d2e00009cc01b",
+  "model": {
+    "aplog.winc_timeus": "1701000003",
+    "aplog.winc_heal": "117",
+    "aplog.winc_thend": "172",
+    "aplog.winc_mov": "227"
+  }
+}

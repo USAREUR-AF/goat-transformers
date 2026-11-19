@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rey3",
+  "from": "ardupilot-log-rey3",
+  "to": "ardupilot-log-rey3",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c0acda0100e3",
+  "expect": "0000ecc00000e4c0acda0100e3",
+  "model": {
+    "aplog.rey3_yawangle": "-7.375",
+    "aplog.rey3_yawangleerr": "-7.125",
+    "aplog.rey3_timestamp_ms": "121516",
+    "aplog.rey3_type": "227"
+  }
+}

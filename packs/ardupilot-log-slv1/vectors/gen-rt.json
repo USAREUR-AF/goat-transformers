@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-slv1",
+  "from": "ardupilot-log-slv1",
+  "to": "ardupilot-log-slv1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae3781a17030051",
+  "expect": "433363650000000075acdae3781a17030051",
+  "model": {
+    "aplog.slv1_timeus": "1701000003",
+    "aplog.slv1_instance": "117",
+    "aplog.slv1_magic": "55980",
+    "aplog.slv1_frame_rate": "30947"
+  }
+}

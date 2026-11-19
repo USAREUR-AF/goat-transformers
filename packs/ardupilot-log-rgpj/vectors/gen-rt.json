@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rgpj",
+  "from": "ardupilot-log-rgpj",
+  "to": "ardupilot-log-rgpj",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e00000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0bff10400f68f05802d2e068064cc0680000094c000008cc009a740",
+  "expect": "3e9e00000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0bff10400f68f05802d2e068064cc0680000094c000008cc009a740",
+  "model": {
+    "aplog.rgpj_ts": "40510",
+    "aplog.rgpj_vx": "-7.125",
+    "aplog.rgpj_vy": "-6.875",
+    "aplog.rgpj_vz": "-6.625"
+  }
+}

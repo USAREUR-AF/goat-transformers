@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ais4",
+  "from": "ardupilot-log-ais4",
+  "to": "ardupilot-log-ais4",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100e3781a5188bff62d4dc3fce5d4990fe6d20940450900",
+  "expect": "433363650000000075acda0100e3781a5188bff62d4dc3fce5d4990fe6d20940450900",
+  "model": {
+    "aplog.ais4_us": "1701000003",
+    "aplog.ais4_rep": "117",
+    "aplog.ais4_mmsi": "121516",
+    "aplog.ais4_year": "30947"
+  }
+}

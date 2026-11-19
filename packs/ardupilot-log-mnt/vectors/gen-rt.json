@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-mnt",
+  "from": "ardupilot-log-mnt",
+  "to": "ardupilot-log-mnt",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "model": {
+    "aplog.mnt_timeus": "1701000003",
+    "aplog.mnt_i": "117",
+    "aplog.mnt_droll": "-6.875",
+    "aplog.mnt_roll": "-6.625"
+  }
+}

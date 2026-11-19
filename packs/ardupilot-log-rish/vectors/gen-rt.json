@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rish",
+  "from": "ardupilot-log-rish",
+  "to": "ardupilot-log-rish",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e75ac0000d4c01a51",
+  "expect": "3e9e75ac0000d4c01a51",
+  "model": {
+    "aplog.rish_lr": "40510",
+    "aplog.rish_pg": "117",
+    "aplog.rish_pa": "172",
+    "aplog.rish_ld": "-6.625"
+  }
+}

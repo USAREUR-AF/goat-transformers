@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-arsp",
+  "from": "ardupilot-log-arsp",
+  "to": "ardupilot-log-arsp",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c01a970000c4c00000bcc0bff60000a4c000009cc09b",
+  "expect": "4333636500000000750000dcc00000d4c01a970000c4c00000bcc0bff60000a4c000009cc09b",
+  "model": {
+    "aplog.arsp_timeus": "1701000003",
+    "aplog.arsp_i": "117",
+    "aplog.arsp_airspeed": "-6.875",
+    "aplog.arsp_diffpress": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-cam",
+  "from": "ardupilot-log-cam",
+  "to": "ardupilot-log-cam",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075150f66e59ce578e5",
+  "expect": "433363650000000075150f66e59ce578e5",
+  "model": {
+    "aplog.cam_timeus": "1701000003",
+    "aplog.cam_i": "117",
+    "lat": "-44.6296299",
+    "lon": "-44.5061732"
+  }
+}

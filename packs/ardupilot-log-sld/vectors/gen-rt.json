@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sld",
+  "from": "ardupilot-log-sld",
+  "to": "ardupilot-log-sld",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0",
+  "model": {
+    "aplog.sld_timeus": "1701000003",
+    "aplog.sld_altft": "-7.125",
+    "aplog.sld_altm": "-6.875",
+    "aplog.sld_eas": "-6.625"
+  }
+}

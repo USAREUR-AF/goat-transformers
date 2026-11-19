@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-trse",
+  "from": "ardupilot-log-trse",
+  "to": "ardupilot-log-trse",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a1751b588bff68f",
+  "expect": "433363650000000075ace31a1751b588bff68f",
+  "model": {
+    "aplog.trse_timeus": "1701000003",
+    "aplog.trse_i": "117",
+    "aplog.trse_flag": "172",
+    "aplog.trse_mottype": "227"
+  }
+}

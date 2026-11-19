@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sim",
+  "from": "ardupilot-log-sim",
+  "to": "ardupilot-log-sim",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075bcac5ae3780000ccc0aa929ee53169b1e50000b4c00000acc00000a4c000009cc0",
+  "expect": "433363650000000075bcac5ae3780000ccc0aa929ee53169b1e50000b4c00000acc00000a4c000009cc0",
+  "model": {
+    "aplog.sim_timeus": "1701000003",
+    "aplog.sim_roll": "-17291",
+    "aplog.sim_pitch": "23212",
+    "aplog.sim_yaw": "30947"
+  }
+}

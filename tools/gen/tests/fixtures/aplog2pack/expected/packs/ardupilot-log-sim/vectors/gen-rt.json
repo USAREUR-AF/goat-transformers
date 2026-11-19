@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-sim",
+  "from": "ardupilot-log-sim",
+  "to": "ardupilot-log-sim",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008e3853e5150f66e5",
+  "expect": "43336365000000008e3853e5150f66e5",
+  "model": {
+    "aplog.sim_timeus": "1701000003",
+    "lat": "-44.753086599999996",
+    "lon": "-44.6296299"
+  }
+}

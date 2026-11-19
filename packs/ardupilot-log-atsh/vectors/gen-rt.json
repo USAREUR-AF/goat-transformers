@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-atsh",
+  "from": "ardupilot-log-atsh",
+  "to": "ardupilot-log-atsh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.atsh_timeus": "1701000003",
+    "aplog.atsh_freq_m": "-7.125",
+    "aplog.atsh_gain_m": "-6.875",
+    "aplog.atsh_phase_m": "-6.625"
+  }
+}

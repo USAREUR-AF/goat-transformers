@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-qwik",
+  "from": "ardupilot-log-qwik",
+  "to": "ardupilot-log-qwik",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c074350000000000000000000000000000",
+  "expect": "4333636500000000750000dcc00000d4c074350000000000000000000000000000",
+  "model": {
+    "aplog.qwik_timeus": "1701000003",
+    "aplog.qwik_paramno": "117",
+    "aplog.qwik_srate": "-6.875",
+    "aplog.qwik_gain": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rover-guip",
+  "from": "ardupilot-log-rover-guip",
+  "to": "ardupilot-log-rover-guip",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "aplog.rover_guip_timeus": "1701000003",
+    "aplog.rover_guip_type": "117",
+    "aplog.rover_guip_px": "-6.875",
+    "aplog.rover_guip_py": "-6.625"
+  }
+}

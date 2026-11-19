@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ilb2",
+  "from": "ardupilot-log-ilb2",
+  "to": "ardupilot-log-ilb2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c01000000dcc00000d4c00000ccc0",
+  "expect": "4333636500000000753c01000000dcc00000d4c00000ccc0",
+  "model": {
+    "aplog.ilb2_timeus": "1701000003",
+    "aplog.ilb2_gms": "81013",
+    "aplog.ilb2_magx": "-6.875",
+    "aplog.ilb2_magy": "-6.625"
+  }
+}

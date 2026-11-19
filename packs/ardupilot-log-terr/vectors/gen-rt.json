@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-terr",
+  "from": "ardupilot-log-terr",
+  "to": "ardupilot-log-terr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075150f66e59ce578e51a170000c4c00000bcc0bff1f68f0000a4c0",
+  "expect": "433363650000000075150f66e59ce578e51a170000c4c00000bcc0bff1f68f0000a4c0",
+  "model": {
+    "aplog.terr_timeus": "1701000003",
+    "aplog.terr_status": "117",
+    "aplog.terr_lat": "-446296299",
+    "aplog.terr_lng": "-445061732"
+  }
+}

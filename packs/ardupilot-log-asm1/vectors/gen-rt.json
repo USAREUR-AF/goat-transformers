@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-asm1",
+  "from": "ardupilot-log-asm1",
+  "to": "ardupilot-log-asm1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000086757265000000000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "expect": "433363650000000086757265000000000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "aplog.asm1_timeus": "1701000003",
+    "aplog.asm1_tus": "1702000006",
+    "aplog.asm1_r": "-6.875",
+    "aplog.asm1_p": "-6.625"
+  }
+}

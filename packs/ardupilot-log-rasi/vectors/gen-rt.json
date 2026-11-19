@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rasi",
+  "from": "ardupilot-log-rasi",
+  "to": "ardupilot-log-rasi",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc0753c0100ace31a",
+  "expect": "0000ecc0753c0100ace31a",
+  "model": {
+    "aplog.rasi_pd": "-7.375",
+    "aplog.rasi_updatems": "81013",
+    "aplog.rasi_h": "172",
+    "aplog.rasi_use": "227"
+  }
+}

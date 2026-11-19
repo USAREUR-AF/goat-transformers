@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-adsb",
+  "from": "ardupilot-log-adsb",
+  "to": "ardupilot-log-adsb",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acda0180e37802801a17038051b58853bf71f68f",
+  "expect": "4333636500000000753c0100acda0180e37802801a17038051b58853bf71f68f",
+  "model": {
+    "aplog.adsb_timeus": "1701000003",
+    "aplog.adsb_icao_address": "81013",
+    "aplog.adsb_lat": "-2147362132",
+    "aplog.adsb_lng": "-2147321629"
+  }
+}

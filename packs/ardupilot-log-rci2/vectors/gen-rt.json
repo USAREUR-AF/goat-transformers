@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rci2",
+  "from": "ardupilot-log-rci2",
+  "to": "ardupilot-log-rci2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdae3781a",
+  "expect": "4333636500000000753cacdae3781a",
+  "model": {
+    "aplog.rci2_timeus": "1701000003",
+    "aplog.rci2_c15": "15477",
+    "aplog.rci2_c16": "55980",
+    "aplog.rci2_omask": "30947"
+  }
+}

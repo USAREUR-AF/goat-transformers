@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-isbh",
+  "from": "ardupilot-log-isbh",
+  "to": "ardupilot-log-isbh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cace31a1751b5d5c0be65000000000000b4c0",
+  "expect": "4333636500000000753cace31a1751b5d5c0be65000000000000b4c0",
+  "model": {
+    "aplog.isbh_timeus": "1701000003",
+    "aplog.isbh_n": "15477",
+    "aplog.isbh_type": "172",
+    "aplog.isbh_instance": "227"
+  }
+}

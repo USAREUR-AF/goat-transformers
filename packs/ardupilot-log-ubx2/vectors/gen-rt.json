@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ubx2",
+  "from": "ardupilot-log-ubx2",
+  "to": "ardupilot-log-ubx2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000752ce39a51",
+  "expect": "4333636500000000752ce39a51",
+  "model": {
+    "aplog.ubx2_timeus": "1701000003",
+    "aplog.ubx2_instance": "117",
+    "aplog.ubx2_ofsi": "44",
+    "aplog.ubx2_magi": "227"
+  }
+}

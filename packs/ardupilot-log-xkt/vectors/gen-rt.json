@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xkt",
+  "from": "ardupilot-log-xkt",
+  "to": "ardupilot-log-xkt",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda01000000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "expect": "433363650000000075acda01000000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "model": {
+    "aplog.xkt_timeus": "1701000003",
+    "aplog.xkt_c": "117",
+    "aplog.xkt_cnt": "121516",
+    "aplog.xkt_imumin": "-6.625"
+  }
+}

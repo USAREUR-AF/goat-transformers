@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rfnd",
+  "from": "ardupilot-log-rfnd",
+  "to": "ardupilot-log-rfnd",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae31ad1",
+  "expect": "433363650000000075acdae31ad1",
+  "model": {
+    "aplog.rfnd_timeus": "1701000003",
+    "aplog.rfnd_instance": "117",
+    "aplog.rfnd_dist": "55980",
+    "aplog.rfnd_stat": "227"
+  }
+}

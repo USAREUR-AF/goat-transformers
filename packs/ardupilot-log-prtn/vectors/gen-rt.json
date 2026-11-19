@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-prtn",
+  "from": "ardupilot-log-prtn",
+  "to": "ardupilot-log-prtn",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc0",
+  "expect": "433363650000000075ac0000d4c00000ccc0",
+  "model": {
+    "aplog.prtn_timeus": "1701000003",
+    "aplog.prtn_set": "117",
+    "aplog.prtn_parm": "172",
+    "aplog.prtn_value": "-6.625"
+  }
+}

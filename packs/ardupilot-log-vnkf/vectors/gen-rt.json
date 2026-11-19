@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-vnkf",
+  "from": "ardupilot-log-vnkf",
+  "to": "ardupilot-log-vnkf",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c5eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c00000acc00000a4c0",
+  "expect": "4333636500000000753c5eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c00000acc00000a4c0",
+  "model": {
+    "aplog.vnkf_timeus": "1701000003",
+    "aplog.vnkf_insstatus": "15477",
+    "aplog.vnkf_lat": "-3.021",
+    "aplog.vnkf_lon": "4.028"
+  }
+}

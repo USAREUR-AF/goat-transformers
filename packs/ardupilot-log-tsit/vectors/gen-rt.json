@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-tsit",
+  "from": "ardupilot-log-tsit",
+  "to": "ardupilot-log-tsit",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c0",
+  "model": {
+    "aplog.tsit_timeus": "1701000003",
+    "aplog.tsit_ts": "-7.125",
+    "aplog.tsit_ss": "-6.875",
+    "aplog.tsit_tmin": "-6.625"
+  }
+}

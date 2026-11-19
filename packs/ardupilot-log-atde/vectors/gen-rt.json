@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-atde",
+  "from": "ardupilot-log-atde",
+  "to": "ardupilot-log-atde",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0",
+  "expect": "43336365000000000000e4c00000dcc0",
+  "model": {
+    "aplog.atde_timeus": "1701000003",
+    "aplog.atde_angle": "-7.125",
+    "aplog.atde_rate": "-6.875"
+  }
+}

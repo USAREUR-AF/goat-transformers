@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-acc",
+  "from": "ardupilot-log-acc",
+  "to": "ardupilot-log-acc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075c9b78165000000000000d4c00000ccc00000c4c0",
+  "expect": "433363650000000075c9b78165000000000000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.acc_timeus": "1701000003",
+    "aplog.acc_i": "117",
+    "aplog.acc_sampleus": "1703000009",
+    "aplog.acc_accx": "-6.625"
+  }
+}

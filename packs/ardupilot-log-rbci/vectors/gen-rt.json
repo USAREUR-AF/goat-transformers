@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rbci",
+  "from": "ardupilot-log-rbci",
+  "to": "ardupilot-log-rbci",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e00000000e4c00000dcc00000d4c00000ccc05188",
+  "expect": "3e9e00000000e4c00000dcc00000d4c00000ccc05188",
+  "model": {
+    "aplog.rbci_lu": "40510",
+    "aplog.rbci_px": "-7.125",
+    "aplog.rbci_py": "-6.875",
+    "aplog.rbci_pz": "-6.625"
+  }
+}

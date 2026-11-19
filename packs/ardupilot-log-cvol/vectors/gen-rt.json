@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-cvol",
+  "from": "ardupilot-log-cvol",
+  "to": "ardupilot-log-cvol",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc05188d3",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc05188d3",
+  "model": {
+    "aplog.cvol_timeus": "1701000003",
+    "aplog.cvol_id": "117",
+    "aplog.cvol_pos": "-6.875",
+    "aplog.cvol_cur": "-6.625"
+  }
+}

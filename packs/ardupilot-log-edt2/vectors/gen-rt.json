@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-edt2",
+  "from": "ardupilot-log-edt2",
+  "to": "ardupilot-log-edt2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a",
+  "expect": "433363650000000075ace31a",
+  "model": {
+    "aplog.edt2_timeus": "1701000003",
+    "aplog.edt2_instance": "117",
+    "aplog.edt2_stress": "172",
+    "aplog.edt2_maxstress": "227"
+  }
+}

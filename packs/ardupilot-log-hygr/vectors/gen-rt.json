@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-hygr",
+  "from": "ardupilot-log-hygr",
+  "to": "ardupilot-log-hygr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c0",
+  "expect": "4333636500000000750000dcc00000d4c0",
+  "model": {
+    "aplog.hygr_timeus": "1701000003",
+    "aplog.hygr_id": "117",
+    "aplog.hygr_humidity": "-6.875",
+    "aplog.hygr_temp": "-6.625"
+  }
+}

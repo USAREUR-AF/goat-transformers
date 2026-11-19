@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ireg",
+  "from": "ardupilot-log-ireg",
+  "to": "ardupilot-log-ireg",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100ace31a",
+  "expect": "4333636500000000753c0100ace31a",
+  "model": {
+    "aplog.ireg_timeus": "1701000003",
+    "aplog.ireg_devid": "81013",
+    "aplog.ireg_bank": "172",
+    "aplog.ireg_reg": "227"
+  }
+}

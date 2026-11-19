@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rwoh",
+  "from": "ardupilot-log-rwoh",
+  "to": "ardupilot-log-rwoh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c0acda01000000d4c00000ccc00000c4c00000bcc0",
+  "expect": "0000ecc00000e4c0acda01000000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.rwoh_da": "-7.375",
+    "aplog.rwoh_dt": "-7.125",
+    "aplog.rwoh_ts": "121516",
+    "aplog.rwoh_px": "-6.625"
+  }
+}

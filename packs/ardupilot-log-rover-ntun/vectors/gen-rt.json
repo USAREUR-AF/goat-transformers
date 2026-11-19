@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rover-ntun",
+  "from": "ardupilot-log-rover-ntun",
+  "to": "ardupilot-log-rover-ntun",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c01a170000c4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c01a170000c4c0",
+  "model": {
+    "aplog.rover_ntun_timeus": "1701000003",
+    "aplog.rover_ntun_wpdist": "-7.125",
+    "aplog.rover_ntun_wpbrg": "-6.875",
+    "aplog.rover_ntun_desyaw": "-6.625"
+  }
+}

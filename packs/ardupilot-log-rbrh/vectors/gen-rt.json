@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rbrh",
+  "from": "ardupilot-log-rbrh",
+  "to": "ardupilot-log-rbrh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e75",
+  "expect": "3e75",
+  "model": {
+    "aplog.rbrh_primary": "62",
+    "aplog.rbrh_numinst": "117"
+  }
+}

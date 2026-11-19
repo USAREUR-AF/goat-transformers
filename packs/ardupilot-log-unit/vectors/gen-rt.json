@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-unit",
+  "from": "ardupilot-log-unit",
+  "to": "ardupilot-log-unit",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f574330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "4333636500000000f574330000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "aplog.unit_timeus": "1701000003",
+    "aplog.unit_id": "-11",
+    "aplog.unit_label": "t3"
+  }
+}

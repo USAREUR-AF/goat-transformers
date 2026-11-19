@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-risi",
+  "from": "ardupilot-log-risi",
+  "to": "ardupilot-log-risi",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f62d",
+  "expect": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f62d",
+  "model": {
+    "aplog.risi_dvx": "-7.375",
+    "aplog.risi_dvy": "-7.125",
+    "aplog.risi_dvz": "-6.875",
+    "aplog.risi_dax": "-6.625"
+  }
+}

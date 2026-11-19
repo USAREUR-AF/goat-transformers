@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-iefc",
+  "from": "ardupilot-log-iefc",
+  "to": "ardupilot-log-iefc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c01a9751b588bf71f62d2e060064cc0600",
+  "expect": "43336365000000000000e4c00000dcc00000d4c01a9751b588bf71f62d2e060064cc0600",
+  "model": {
+    "aplog.iefc_timeus": "1701000003",
+    "aplog.iefc_tank": "-7.125",
+    "aplog.iefc_inlet": "-6.875",
+    "aplog.iefc_battv": "-6.625"
+  }
+}

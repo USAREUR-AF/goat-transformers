@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-parm",
+  "from": "ardupilot-log-parm",
+  "to": "ardupilot-log-parm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000743200000000000000000000000000000000dcc00000d4c0",
+  "expect": "4333636500000000743200000000000000000000000000000000dcc00000d4c0",
+  "model": {
+    "aplog.parm_timeus": "1701000003",
+    "aplog.parm_name": "t2",
+    "aplog.parm_value": "-6.875",
+    "aplog.parm_default": "-6.625"
+  }
+}

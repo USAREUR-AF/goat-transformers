@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ilb7",
+  "from": "ardupilot-log-ilb7",
+  "to": "ardupilot-log-ilb7",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c01000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc09b6ad208000084c0",
+  "expect": "4333636500000000753c01000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc09b6ad208000084c0",
+  "model": {
+    "aplog.ilb7_timeus": "1701000003",
+    "aplog.ilb7_gms": "81013",
+    "aplog.ilb7_roll": "-6.875",
+    "aplog.ilb7_pitch": "-6.625"
+  }
+}

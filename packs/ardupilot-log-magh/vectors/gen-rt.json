@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-magh",
+  "from": "ardupilot-log-magh",
+  "to": "ardupilot-log-magh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace30000ccc00000c4c00000bcc0",
+  "expect": "433363650000000075ace30000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.magh_timeus": "1701000003",
+    "aplog.magh_node": "117",
+    "aplog.magh_sensor": "172",
+    "aplog.magh_bus": "227"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-rssi",
+  "from": "ardupilot-log-rssi",
+  "to": "ardupilot-log-rssi",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0",
+  "expect": "43336365000000000000e4c00000dcc0",
+  "model": {
+    "aplog.rssi_timeus": "1701000003",
+    "aplog.rssi_rxrssi": "-7.125",
+    "aplog.rssi_rxlq": "-6.875"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-wenc",
+  "from": "ardupilot-log-wenc",
+  "to": "ardupilot-log-wenc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c02c0000d4c09a",
+  "expect": "43336365000000000000e4c02c0000d4c09a",
+  "model": {
+    "aplog.wenc_timeus": "1701000003",
+    "aplog.wenc_dist0": "-7.125",
+    "aplog.wenc_qual0": "44",
+    "aplog.wenc_dist1": "-6.625"
+  }
+}

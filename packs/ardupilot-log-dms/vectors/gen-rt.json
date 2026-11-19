@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-dms",
+  "from": "ardupilot-log-dms",
+  "to": "ardupilot-log-dms",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acda0100e37802001a1703005188bff62d649bd209",
+  "expect": "4333636500000000753c0100acda0100e37802001a1703005188bff62d649bd209",
+  "model": {
+    "aplog.dms_timeus": "1701000003",
+    "aplog.dms_n": "81013",
+    "aplog.dms_dp": "121516",
+    "aplog.dms_rt": "162019"
+  }
+}

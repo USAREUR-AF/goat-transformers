@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-vnat",
+  "from": "ardupilot-log-vnat",
+  "to": "ardupilot-log-vnat",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "model": {
+    "aplog.vnat_timeus": "1701000003",
+    "aplog.vnat_q1": "-7.125",
+    "aplog.vnat_q2": "-6.875",
+    "aplog.vnat_q3": "-6.625"
+  }
+}

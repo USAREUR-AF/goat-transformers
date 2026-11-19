@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-eahr",
+  "from": "ardupilot-log-eahr",
+  "to": "ardupilot-log-eahr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0b83fc4e53f16d7e50000a4c064cc0600",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0b83fc4e53f16d7e50000a4c064cc0600",
+  "model": {
+    "aplog.eahr_timeus": "1701000003",
+    "aplog.eahr_roll": "-7.125",
+    "aplog.eahr_pitch": "-6.875",
+    "aplog.eahr_yaw": "-6.625"
+  }
+}

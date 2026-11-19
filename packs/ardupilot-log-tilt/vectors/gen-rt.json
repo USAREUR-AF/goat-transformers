@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-tilt",
+  "from": "ardupilot-log-tilt",
+  "to": "ardupilot-log-tilt",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c0",
+  "model": {
+    "aplog.tilt_timeus": "1701000003",
+    "aplog.tilt_tilt": "-7.125",
+    "aplog.tilt_fl": "-6.875",
+    "aplog.tilt_fr": "-6.625"
+  }
+}

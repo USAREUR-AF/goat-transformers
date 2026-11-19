@@ -1,0 +1,12 @@
+{
+  "name": "x-ardupilot-log-ahr2-to-geojson",
+  "from": "ardupilot-log-ahr2",
+  "to": "geojson",
+  "source": "Lat and Lng are int32 degrees times 10^7 (pack.md), decoded with sscale:1/10000000; geojson writes [lon, lat] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "433363650000000075bcac5ae3780000ccc093feebea16cfe8580000c4c00000bcc00000b4c00000acc0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[149.1652374,-35.3632621]},\"properties\":{}}",
+  "model": {
+    "lat": "-35.3632621",
+    "lon": "149.1652374"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rwa2",
+  "from": "ardupilot-log-rwa2",
+  "to": "ardupilot-log-rwa2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c0",
+  "expect": "0000ecc00000e4c0",
+  "model": {
+    "aplog.rwa2_airspeed": "-7.375",
+    "aplog.rwa2_uncertainty": "-7.125"
+  }
+}

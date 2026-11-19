@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-bcl2",
+  "from": "ardupilot-log-bcl2",
+  "to": "ardupilot-log-bcl2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae378",
+  "expect": "433363650000000075acdae378",
+  "model": {
+    "aplog.bcl2_timeus": "1701000003",
+    "aplog.bcl2_instance": "117",
+    "aplog.bcl2_v13": "55980",
+    "aplog.bcl2_v14": "30947"
+  }
+}

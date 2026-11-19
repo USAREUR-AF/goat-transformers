@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-efi2",
+  "from": "ardupilot-log-efi2",
+  "to": "ardupilot-log-efi2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a5188bff62d649bd2",
+  "expect": "433363650000000075ace31a5188bff62d649bd2",
+  "model": {
+    "aplog.efi2_timeus": "1701000003",
+    "aplog.efi2_healthy": "117",
+    "aplog.efi2_es": "172",
+    "aplog.efi2_ge": "227"
+  }
+}

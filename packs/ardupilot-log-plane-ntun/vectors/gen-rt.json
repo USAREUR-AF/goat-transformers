@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-plane-ntun",
+  "from": "ardupilot-log-plane-ntun",
+  "to": "ardupilot-log-plane-ntun",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c0ac5ae3f81a970000c4c00000bcc00000b4c03f16d7e5c6ece9e564cc06809b6a0780d2080880",
+  "expect": "43336365000000000000e4c0ac5ae3f81a970000c4c00000bcc00000b4c03f16d7e5c6ece9e564cc06809b6a0780d2080880",
+  "model": {
+    "aplog.plane_ntun_timeus": "1701000003",
+    "aplog.plane_ntun_dist": "-7.125",
+    "aplog.plane_ntun_tbrg": "23212",
+    "aplog.plane_ntun_navbrg": "-1821"
+  }
+}

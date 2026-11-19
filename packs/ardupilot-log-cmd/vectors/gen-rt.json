@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-cmd",
+  "from": "ardupilot-log-cmd",
+  "to": "ardupilot-log-cmd",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdae3780000ccc00000c4c00000bcc00000b4c03f16d7e5c6ece9e500009cc09b",
+  "expect": "4333636500000000753cacdae3780000ccc00000c4c00000bcc00000b4c03f16d7e5c6ece9e500009cc09b",
+  "model": {
+    "aplog.cmd_timeus": "1701000003",
+    "aplog.cmd_ctot": "15477",
+    "aplog.cmd_cnum": "55980",
+    "aplog.cmd_cid": "30947"
+  }
+}

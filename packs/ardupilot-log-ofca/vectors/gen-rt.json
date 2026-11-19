@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ofca",
+  "from": "ardupilot-log-ofca",
+  "to": "ardupilot-log-ofca",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c0",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.ofca_timeus": "1701000003",
+    "aplog.ofca_axis": "117",
+    "aplog.ofca_num": "172",
+    "aplog.ofca_frate": "-6.625"
+  }
+}

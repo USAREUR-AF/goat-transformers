@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-gpa",
+  "from": "ardupilot-log-gpa",
+  "to": "ardupilot-log-gpa",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae3781a1751b50000bcc0bff68f05002d2e64cc06809b6ad208",
+  "expect": "433363650000000075acdae3781a1751b50000bcc0bff68f05002d2e64cc06809b6ad208",
+  "model": {
+    "aplog.gpa_timeus": "1701000003",
+    "aplog.gpa_i": "117",
+    "aplog.gpa_vdop": "55980",
+    "aplog.gpa_hacc": "30947"
+  }
+}

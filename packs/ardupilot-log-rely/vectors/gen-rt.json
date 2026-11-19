@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-rely",
+  "from": "ardupilot-log-rely",
+  "to": "ardupilot-log-rely",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac",
+  "expect": "433363650000000075ac",
+  "model": {
+    "aplog.rely_timeus": "1701000003",
+    "aplog.rely_instance": "117",
+    "aplog.rely_state": "172"
+  }
+}

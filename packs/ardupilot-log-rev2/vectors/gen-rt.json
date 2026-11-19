@@ -1,0 +1,11 @@
+{
+  "name": "rt-ardupilot-log-rev2",
+  "from": "ardupilot-log-rev2",
+  "to": "ardupilot-log-rev2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e",
+  "expect": "3e",
+  "model": {
+    "aplog.rev2_event": "62"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-foll",
+  "from": "ardupilot-log-foll",
+  "to": "ardupilot-log-foll",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008e3853e5150f66e5e37802800000ccc00000c4c00000bcc0b83fc4e53f16d7e52d2e0680",
+  "expect": "43336365000000008e3853e5150f66e5e37802800000ccc00000c4c00000bcc0b83fc4e53f16d7e52d2e0680",
+  "model": {
+    "aplog.foll_timeus": "1701000003",
+    "aplog.foll_lat": "-447530866",
+    "aplog.foll_lon": "-446296299",
+    "aplog.foll_alt": "-2147321629"
+  }
+}

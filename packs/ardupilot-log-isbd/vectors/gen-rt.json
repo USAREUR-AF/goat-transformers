@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-isbd",
+  "from": "ardupilot-log-isbd",
+  "to": "ardupilot-log-isbd",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdaad8a3c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef83c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef88dfccb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef88dfc1c00",
+  "expect": "4333636500000000753cacdaad8a3c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef83c8ecb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef88dfccb915a95e998789c07a096a325a7b4aa43aed2b161b5f0b87fbc0ec09dc32cc7bbca4aced9d168d5f7d886dc15e0a4e333e7c2ea51eee0f16ff5fef88dfc1c00",
+  "model": {
+    "aplog.isbd_timeus": "1701000003",
+    "aplog.isbd_n": "15477",
+    "aplog.isbd_seqno": "55980",
+    "aplog.isbd_x_0": "-30035"
+  }
+}

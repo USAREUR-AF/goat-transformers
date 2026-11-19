@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-thst",
+  "from": "ardupilot-log-thst",
+  "to": "ardupilot-log-thst",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0e3781a1751b58853",
+  "expect": "43336365000000000000e4c00000dcc0e3781a1751b58853",
+  "model": {
+    "aplog.thst_timeus": "1701000003",
+    "aplog.thst_vol": "-7.125",
+    "aplog.thst_mul": "-6.875",
+    "aplog.thst_m1": "30947"
+  }
+}

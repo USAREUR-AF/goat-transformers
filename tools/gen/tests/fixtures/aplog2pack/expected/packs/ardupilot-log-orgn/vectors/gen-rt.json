@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-orgn",
+  "from": "ardupilot-log-orgn",
+  "to": "ardupilot-log-orgn",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008e3853e5150f66e5",
+  "expect": "43336365000000008e3853e5150f66e5",
+  "model": {
+    "aplog.orgn_timeus": "1701000003",
+    "aplog.orgn_lat": "-447530866",
+    "aplog.orgn_lng": "-446296299"
+  }
+}

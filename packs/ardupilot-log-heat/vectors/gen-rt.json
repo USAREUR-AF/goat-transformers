@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-heat",
+  "from": "ardupilot-log-heat",
+  "to": "ardupilot-log-heat",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c02c0000d4c00000ccc00000c4c0",
+  "expect": "43336365000000000000e4c02c0000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.heat_timeus": "1701000003",
+    "aplog.heat_temp": "-7.125",
+    "aplog.heat_targ": "44",
+    "aplog.heat_p": "-6.625"
+  }
+}

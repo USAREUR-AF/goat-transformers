@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-powr",
+  "from": "ardupilot-log-powr",
+  "to": "ardupilot-log-powr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0e3781a1751",
+  "expect": "43336365000000000000e4c00000dcc0e3781a1751",
+  "model": {
+    "aplog.powr_timeus": "1701000003",
+    "aplog.powr_vcc": "-7.125",
+    "aplog.powr_vservo": "-6.875",
+    "aplog.powr_flags": "30947"
+  }
+}

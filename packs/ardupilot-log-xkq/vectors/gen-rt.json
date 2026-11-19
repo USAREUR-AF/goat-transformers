@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xkq",
+  "from": "ardupilot-log-xkq",
+  "to": "ardupilot-log-xkq",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.xkq_timeus": "1701000003",
+    "aplog.xkq_c": "117",
+    "aplog.xkq_q1": "-6.875",
+    "aplog.xkq_q2": "-6.625"
+  }
+}

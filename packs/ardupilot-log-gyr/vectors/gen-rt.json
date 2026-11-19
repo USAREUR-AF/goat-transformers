@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-gyr",
+  "from": "ardupilot-log-gyr",
+  "to": "ardupilot-log-gyr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075c9b78165000000000000d4c00000ccc00000c4c0",
+  "expect": "433363650000000075c9b78165000000000000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.gyr_timeus": "1701000003",
+    "aplog.gyr_i": "117",
+    "aplog.gyr_sampleus": "1703000009",
+    "aplog.gyr_gyrx": "-6.625"
+  }
+}

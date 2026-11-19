@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rad",
+  "from": "ardupilot-log-rad",
+  "to": "ardupilot-log-rad",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a518853bff1",
+  "expect": "433363650000000075ace31a518853bff1",
+  "model": {
+    "aplog.rad_timeus": "1701000003",
+    "aplog.rad_rssi": "117",
+    "aplog.rad_remrssi": "172",
+    "aplog.rad_txbuf": "227"
+  }
+}

@@ -1,0 +1,2 @@
+Licence placeholder written for the aplog2pack tests. The real file is the GNU
+General Public License, version 3; the generator records its SHA-256 only.

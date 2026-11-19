@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rvoh",
+  "from": "ardupilot-log-rvoh",
+  "to": "ardupilot-log-rvoh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc0e37802001a51",
+  "expect": "0000ecc00000e4c00000dcc0e37802001a51",
+  "model": {
+    "aplog.rvoh_ox": "-7.375",
+    "aplog.rvoh_oy": "-7.125",
+    "aplog.rvoh_oz": "-6.875",
+    "aplog.rvoh_del": "162019"
+  }
+}

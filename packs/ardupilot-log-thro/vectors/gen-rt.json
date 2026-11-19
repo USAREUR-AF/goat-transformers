@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-thro",
+  "from": "ardupilot-log-thro",
+  "to": "ardupilot-log-thro",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c0083f76ad",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c0083f76ad",
+  "model": {
+    "aplog.thro_timeus": "1701000003",
+    "aplog.thro_stage": "117",
+    "aplog.thro_vel": "-6.875",
+    "aplog.thro_velz": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-plane-ctun",
+  "from": "ardupilot-log-plane-ctun",
+  "to": "ardupilot-log-plane-ctun",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075bcac5ae3f81a970000c4c00000bcc00000b4c00000acc02d00009cc0000094c0d2080880",
+  "expect": "433363650000000075bcac5ae3f81a970000c4c00000bcc00000b4c00000acc02d00009cc0000094c0d2080880",
+  "model": {
+    "aplog.plane_ctun_timeus": "1701000003",
+    "aplog.plane_ctun_navroll": "-17291",
+    "aplog.plane_ctun_roll": "23212",
+    "aplog.plane_ctun_navpitch": "-1821"
+  }
+}

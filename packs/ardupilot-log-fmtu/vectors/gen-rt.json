@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-fmtu",
+  "from": "ardupilot-log-fmtu",
+  "to": "ardupilot-log-fmtu",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000757433000000000000000000000000000074340000000000000000000000000000",
+  "expect": "4333636500000000757433000000000000000000000000000074340000000000000000000000000000",
+  "model": {
+    "aplog.fmtu_timeus": "1701000003",
+    "aplog.fmtu_fmttype": "117",
+    "aplog.fmtu_unitids": "t3",
+    "aplog.fmtu_multids": "t4"
+  }
+}

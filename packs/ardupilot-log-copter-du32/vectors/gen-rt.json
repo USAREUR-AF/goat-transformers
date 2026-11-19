@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-copter-du32",
+  "from": "ardupilot-log-copter-du32",
+  "to": "ardupilot-log-copter-du32",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100",
+  "expect": "433363650000000075acda0100",
+  "model": {
+    "aplog.copter_du32_timeus": "1701000003",
+    "aplog.copter_du32_id": "117",
+    "aplog.copter_du32_value": "121516"
+  }
+}

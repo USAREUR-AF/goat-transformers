@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-bat",
+  "from": "ardupilot-log-bat",
+  "to": "ardupilot-log-bat",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc0bf710000acc02d649b",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc0bf710000acc02d649b",
+  "model": {
+    "aplog.bat_timeus": "1701000003",
+    "aplog.bat_inst": "117",
+    "aplog.bat_volt": "-6.875",
+    "aplog.bat_voltr": "-6.625"
+  }
+}

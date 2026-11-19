@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-gmb1",
+  "from": "ardupilot-log-gmb1",
+  "to": "ardupilot-log-gmb1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0",
+  "model": {
+    "aplog.gmb1_timeus": "1701000003",
+    "aplog.gmb1_dt": "-7.125",
+    "aplog.gmb1_dax": "-6.875",
+    "aplog.gmb1_day": "-6.625"
+  }
+}

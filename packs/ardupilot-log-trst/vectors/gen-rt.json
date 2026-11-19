@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-trst",
+  "from": "ardupilot-log-trst",
+  "to": "ardupilot-log-trst",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae30000ccc00000c4c08853bf71f62d00009cc0000094c0",
+  "expect": "433363650000000075acdae30000ccc00000c4c08853bf71f62d00009cc0000094c0",
+  "model": {
+    "aplog.trst_timeus": "1701000003",
+    "aplog.trst_i": "117",
+    "aplog.trst_f": "55980",
+    "aplog.trst_err": "227"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-baro",
+  "from": "ardupilot-log-baro",
+  "to": "ardupilot-log-baro",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc051350000bcc0bff104000000acc00000a4c064",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc051350000bcc0bff104000000acc00000a4c064",
+  "model": {
+    "aplog.baro_timeus": "1701000003",
+    "aplog.baro_i": "117",
+    "aplog.baro_alt": "-6.875",
+    "aplog.baro_altamsl": "-6.625"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "ardupilot-log-gps",
+  "to": "ardupilot-log-gps",
+  "source": "one byte short of the 28-byte payload (vector-format, malformed input)",
+  "input": "433363650000000075ace3f823bc8be5aa929ee588530480743800",
+  "expect_error": "malformed-wire"
+}

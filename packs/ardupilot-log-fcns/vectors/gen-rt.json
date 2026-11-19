@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-fcns",
+  "from": "ardupilot-log-fcns",
+  "to": "ardupilot-log-fcns",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c0",
+  "expect": "4333636500000000750000dcc00000d4c0",
+  "model": {
+    "aplog.fcns_timeus": "1701000003",
+    "aplog.fcns_i": "117",
+    "aplog.fcns_cf": "-6.875",
+    "aplog.fcns_hf": "-6.625"
+  }
+}

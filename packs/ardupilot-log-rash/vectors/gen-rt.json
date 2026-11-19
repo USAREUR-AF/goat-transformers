@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rash",
+  "from": "ardupilot-log-rash",
+  "to": "ardupilot-log-rash",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e75",
+  "expect": "3e75",
+  "model": {
+    "aplog.rash_primary": "62",
+    "aplog.rash_numinst": "117"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rbch",
+  "from": "ardupilot-log-rbch",
+  "to": "ardupilot-log-rbch",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c01a17038051b5038088530480bff6",
+  "expect": "0000ecc00000e4c00000dcc00000d4c01a17038051b5038088530480bff6",
+  "model": {
+    "aplog.rbch_px": "-7.375",
+    "aplog.rbch_py": "-7.125",
+    "aplog.rbch_pz": "-6.875",
+    "aplog.rbch_ae": "-6.625"
+  }
+}

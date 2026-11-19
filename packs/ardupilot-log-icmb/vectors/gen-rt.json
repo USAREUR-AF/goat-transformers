@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-icmb",
+  "from": "ardupilot-log-icmb",
+  "to": "ardupilot-log-icmb",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acda01000000d4c00000ccc0",
+  "expect": "4333636500000000753c0100acda01000000d4c00000ccc0",
+  "model": {
+    "aplog.icmb_timeus": "1701000003",
+    "aplog.icmb_traw": "81013",
+    "aplog.icmb_praw": "121516",
+    "aplog.icmb_p": "-6.625"
+  }
+}

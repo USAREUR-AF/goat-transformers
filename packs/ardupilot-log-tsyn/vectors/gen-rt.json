@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-tsyn",
+  "from": "ardupilot-log-tsyn",
+  "to": "ardupilot-log-tsyn",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075c9b7816500000000",
+  "expect": "433363650000000075c9b7816500000000",
+  "model": {
+    "aplog.tsyn_timeus": "1701000003",
+    "aplog.tsyn_sysid": "117",
+    "aplog.tsyn_rtt": "1703000009"
+  }
+}

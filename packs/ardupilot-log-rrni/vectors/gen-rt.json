@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rrni",
+  "from": "ardupilot-log-rrni",
+  "to": "ardupilot-log-rrni",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc0e3781a5188",
+  "expect": "0000ecc00000e4c00000dcc0e3781a5188",
+  "model": {
+    "aplog.rrni_px": "-7.375",
+    "aplog.rrni_py": "-7.125",
+    "aplog.rrni_pz": "-6.875",
+    "aplog.rrni_dist": "30947"
+  }
+}

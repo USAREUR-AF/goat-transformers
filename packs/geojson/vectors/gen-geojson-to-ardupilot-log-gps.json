@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-ardupilot-log-gps",
+  "from": "geojson",
+  "to": "ardupilot-log-gps",
+  "source": "tools/gen/aplog2pack.py: only Lat and Lng have a line bound to geojson keys; every other byte is zero (absent fields write nothing)",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,488]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
+  "expect": "000000000000000000000000000000000000004b52401c42f41705000000000000000000000000000000000000000000",
+  "model": {
+    "lat": "47.3977419",
+    "lon": "8.5455938"
+  }
+}

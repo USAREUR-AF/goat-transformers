@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-cans",
+  "from": "ardupilot-log-cans",
+  "to": "ardupilot-log-cans",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100e37802001a17030051b5030088530400bff10400f68f05002d2e060064cc06009b6a0700d208080009a7080040450900",
+  "expect": "433363650000000075acda0100e37802001a17030051b5030088530400bff10400f68f05002d2e060064cc06009b6a0700d208080009a7080040450900",
+  "model": {
+    "aplog.cans_timeus": "1701000003",
+    "aplog.cans_i": "117",
+    "aplog.cans_t": "121516",
+    "aplog.cans_trq": "162019"
+  }
+}

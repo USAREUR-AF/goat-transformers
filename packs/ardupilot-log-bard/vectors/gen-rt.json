@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-bard",
+  "from": "ardupilot-log-bard",
+  "to": "ardupilot-log-bard",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc0",
+  "model": {
+    "aplog.bard_timeus": "1701000003",
+    "aplog.bard_i": "117",
+    "aplog.bard_dynprx": "-6.875",
+    "aplog.bard_dynpry": "-6.625"
+  }
+}
