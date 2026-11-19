@@ -61,7 +61,7 @@ NAME = "canboat2pack"
 FORMAT = "nmea2000"
 SEQ_FORMAT = "nmea2000-seq"
 MODULE = "n2k"
-PACK_VERSION = "0.1.0"
+PACK_VERSION = "0.2.0"
 MODULE_VERSION = "0.2.0"
 REPO = "canboat/canboat"
 DB_PATH = "docs/canboat.json"
@@ -94,6 +94,9 @@ NUMERIC_TYPES = {"NUMBER", "TIME", "DURATION", "DATE", "MMSI", "PGN", "ISO_NAME"
                  "DYNAMIC_FIELD_KEY", "DYNAMIC_FIELD_LENGTH"}
 VARIABLE_TYPES = {"STRING_LAU", "STRING_LZ", "VARIABLE", "DYNAMIC_FIELD_VALUE"}
 SKIP_TYPES = {"RESERVED", "SPARE"}
+# Members of a CANboat field that state a raw "no value" (spec 0.9 sentinels), in the order
+# written to `absent`: the first is what encode writes for an absent key.
+SENTINEL_MEMBERS = ("UnknownValue", "OutOfRangeValue", "ReservedValue")
 
 # The bits transforms the generator writes and its codec reads.
 CODEC_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "f32", "ascii")
@@ -190,7 +193,7 @@ class SourceField:
     lookup table of any of the four lookup members, or ""."""
     __slots__ = ("where", "id", "field_type", "bit_length", "bit_offset", "has_match", "match",
                  "resolution", "offset", "signed", "range_min", "range_max", "unit", "name",
-                 "label", "description", "physical_quantity", "lookup", "variable_length")
+                 "label", "description", "physical_quantity", "lookup", "variable_length", "sentinels", "stated")
 
 
 class Definition:
@@ -277,6 +280,21 @@ def _parse_field(label, raw, path, context):
     f.range_max = raw.get("RangeMax")
     f.physical_quantity = raw.get("PhysicalQuantity")
     f.variable_length = bool(raw.get("BitLengthVariable"))
+    # Raw wire values that mean "no value" (spec 0.9 `absent`), as the database states them
+    # for the field: UnknownValue first (what encode writes for an absent key), then
+    # OutOfRangeValue and ReservedValue. An MMSI also takes 0: the database's description of
+    # the MMSI field type says devices send it for "none" and it is treated as not available.
+    sent, f.stated = [], {}
+    for member in SENTINEL_MEMBERS:
+        v = r.get(member, _is_int, "an integer", null_ok=True)
+        if v is not None:
+            if v < 0:
+                r.fail(member, "is negative")
+            sent.append(v)
+            f.stated[member] = v
+    if f.field_type == "MMSI":
+        sent.append(0)
+    f.sentinels = tuple(OrderedDict.fromkeys(sent))
     return f
 
 
@@ -426,6 +444,16 @@ class Field:
         self.unit = unit
         self.key = None       # model key as written in the pack
         self.core = False
+        self.absent = src.sentinels
+        for v in self.absent:
+            if v >= 1 << self.len:
+                raise GenError("%s: field %s states the raw value %d for no value, which does not fit %d bits"
+                               % (src.where, src.id, v, self.len))
+
+    @property
+    def absent_option(self):
+        """` absent <values>` for the field line, or ""."""
+        return " absent " + ",".join(str(v) for v in self.absent) if self.absent else ""
 
     @property
     def locator(self):
@@ -1164,7 +1192,7 @@ def emit_seq_pack(seq, sha, db):
         w = max([len(x[1].key) for x in ls if x[0] == "field"] or [1])
         for x in ls:
             if x[0] == "field":
-                out.append("%sfield     %-*s  %-3d %s" % (ind, w, x[1].key, x[1].len, x[1].transform))
+                out.append("%sfield     %-*s  %-3d %s%s" % (ind, w, x[1].key, x[1].len, x[1].transform, x[1].absent_option))
             elif x[0] == "const":
                 out.append("%sconst     %d %d" % (ind, x[1], x[2]))
             else:
@@ -1211,7 +1239,7 @@ def emit_pack(kinds, sha, db):
         out.append("requires  " + " ".join(k.requires))
         w = max(len(f.key) for f in k.fields)
         for f in k.fields:
-            out.append("field     %-*s  %-12s %s" % (w, f.key, f.locator, f.transform))
+            out.append(("field     %-*s  %-12s %s" % (w, f.key, f.locator, f.transform + f.absent_option)).rstrip())
     return "\n".join(out) + "\n"
 
 
@@ -1360,10 +1388,8 @@ def _md_limits(kinds, seq=()):
     L = [
         "## What the pack language cannot express yet",
         "",
-        "- **\"Not available\" values.** NMEA 2000 marks a missing value with all bits set (and uses",
-        "  the next values down for \"out of range\" and \"reserved\"). There is no way to say so in",
-        "  `pack.def`: an all-ones field decodes as a number (`0xFFFF` at resolution 0.01 is 655.35),",
-        "  and an absent model key encodes as zero bits, not all ones.",
+        "- **\"Not available\" values where the database states none.** Section \"Absent values\"",
+        "  lists the field types whose fields carry no `absent` option, and why.",
         "- **Reserved and spare bits.** NMEA 2000 sets them to 1; `encode` writes 0 in every bit no",
         "  field covers. A real message with reserved bits set does not round-trip byte-identically.",
         "- **Trailing bytes.** The message ends at the last mapped or `when` bit, rounded up to a",
@@ -1403,6 +1429,67 @@ def _md_limits(kinds, seq=()):
     return L
 
 
+# Field types with no per-field "no value" statement in the database, and what the database
+# says of the type: why the pack writes no `absent` option for them.
+NO_SENTINEL_REASONS = OrderedDict([
+    ("FLOAT", "the database names NaN for the type and no raw value; a NaN has many bit patterns"),
+    ("STRING_FIX", "the database names the empty string for the type and no raw value, and allows 0x00, 0xff "
+                   "and `@` as padding; most such fields are longer than the 64 bits `absent` takes"),
+    ("BITLOOKUP", "the database states no sentinel for the type: any combination of bits is a value"),
+    ("BINARY", "the database states no sentinel for the type"),
+    ("PGN", "the database states no sentinel for the type"),
+    ("ISO_NAME", "the database states no sentinel for the type"),
+    ("ADDRESS", "the database states that every value is meaningful (254 is the null address, 255 broadcast)"),
+])
+
+
+def sentinel_counts(kinds):
+    """-> (Counter of field types with `absent`, Counter of those without), over mapped fields."""
+    with_, without = Counter(), Counter()
+    for k in kinds:
+        for f in list(k.fields) + list(getattr(k, "item_fields", [])):
+            (with_ if f.absent else without)[f.src.field_type] += 1
+    return with_, without
+
+
+def _md_absent(kinds, seq=()):
+    with_, without = sentinel_counts(list(kinds) + list(seq))
+    L = [
+        "## Absent values",
+        "",
+        "NMEA 2000 reserves the top values of a field for \"no value\": all bits set for not available",
+        "and the values just below it for out of range and reserved. The database states them for each",
+        "field as raw wire integers: `UnknownValue`, `OutOfRangeValue`, `ReservedValue`. A field that",
+        "states them carries the option `absent <unknown>,<out of range>,<reserved>` (spec 0.9), in",
+        "that order, so:",
+        "",
+        "- decode leaves the key absent when the raw value is one of them (an all-ones latitude is no",
+        "  latitude, not 214.7 degrees);",
+        "- encode writes the first, the not-available value, for a key the entity does not hold, where",
+        "  it wrote zero bits before.",
+        "",
+        "An MMSI field also takes the raw value 0: the database's description of the MMSI field type",
+        "says devices send 0 for \"none\" and that it is treated as not available. A field the database",
+        "gives no such member keeps no option, whatever its type: a lookup of one or two bits uses every",
+        "value, and the database states none for the 64-bit numbers (the latitude and longitude of PGN",
+        "129029, for example). The pack uses only these statements of the database.",
+        "",
+        "| Field type | Mapped fields with `absent` | Mapped fields without |",
+        "|---|---|---|",
+    ]
+    for ft in sorted(set(with_) | set(without)):
+        L.append("| %s | %d | %d |" % (ft, with_.get(ft, 0), without.get(ft, 0)))
+    L += ["", "Types whose fields never carry `absent`:", "", "| Field type | Why |", "|---|---|"]
+    for ft, why in NO_SENTINEL_REASONS.items():
+        if without.get(ft):
+            L.append("| %s | %s |" % (ft, why))
+    L += ["",
+          "The option needs engine version 0.9. A round trip of a message that holds an out-of-range or",
+          "reserved value returns the not-available value in its place (ruling 7 of 0.9).",
+          ""]
+    return L
+
+
 def _md_incomplete(kinds):
     incomplete = [k for k in kinds if not k.definition.complete]
     return [
@@ -1431,6 +1518,15 @@ def _md_vectors(xnames, seq=()):
     ] if seq else [
         "  own codec. PGN 129029 has no vector: it has a repeating field set and no kind.",
     ]) + [
+        "- %s: a latitude that holds its not-available or its out-of-range value decodes to no" % ", ".join(
+            "`%s.json`" % spec[0] for spec in SENTINEL_VECTORS),
+        "  `lat` (`@absent`); the out-of-range value re-encodes as the not-available one, and the",
+        "  position without a latitude has no GeoJSON geometry. The raw values are those the database",
+        "  states for the field; the expected bytes are packed by hand from them.",
+        "- `%s`: the other way, a key the entity does not hold is written as its" % GEOJSON_VECTOR,
+        "  not-available value: a Feature with no geometry, with the `requires` keys of the AIS Class A",
+        "  position report as context, encodes latitude and longitude as all-but-the-sign-bit ones.",
+        "  The vector belongs to the pack that owns its input.",
         "",
         "Vectors hold lowercase hex text in `input` / `expect`.",
         "",
@@ -1459,7 +1555,7 @@ def _md_unmapped(unmapped, seq=()):
 def emit_pack_md(kinds, unmapped, keys, db, sha, n_vectors, xnames, seq=()):
     """The text of packs/nmea2000/pack.md."""
     lines = (_md_header(db, sha) + _md_counts(kinds, unmapped, keys, db, n_vectors, xnames, seq)
-             + _md_field_rules(kinds) + _md_core_keys(kinds, seq) + _md_limits(kinds, seq)
+             + _md_field_rules(kinds) + _md_absent(kinds, seq) + _md_core_keys(kinds, seq) + _md_limits(kinds, seq)
              + _md_incomplete(kinds) + _md_vectors(xnames, seq) + _md_unmapped(unmapped, seq))
     return "\n".join(lines)
 
@@ -1607,6 +1703,12 @@ def emit_seq_pack_md(seq, unmapped, seq_keys, seq_lists, db, sha, vec_names):
     A("- `e01-pgn129029-count-beyond-the-input.json`: the count states one item more than the input")
     A("  holds: `malformed-wire` (spec 0.8 ruling 14 and Errors).")
     A("- `e02-fixed-layout-pgn-is-no-kind.json`: a PGN 129025 message is `no-kind` here.")
+    A("- `s01-pgn129029-time-not-available-roundtrip.json`: the position of `x01` with the time of day")
+    A("  at the value the database states for not available: no time key (`@absent`), same bytes back.")
+    A("  The 64-bit latitude and longitude of PGN 129029 state no such value, so they carry no `absent`.")
+    A("")
+    A("Fields carry `absent` as in pack `%s` (its section \"Absent values\"); the option needs" % FORMAT)
+    A("engine version 0.9.")
     A("")
     A("Vectors hold lowercase hex text in `input` / `expect`.")
     A("")
@@ -1617,10 +1719,16 @@ def emit_seq_pack_md(seq, unmapped, seq_keys, seq_lists, db, sha, vec_names):
 #
 # A bits codec for the part of the pack language this generator writes: a fixed
 # layout, `bit_order lsb`, `when` and `field` lines with the transforms of
-# CODEC_TRANSFORMS. It reads the Pack that gtcheck loaded, never the pack text.
+# CODEC_TRANSFORMS and the option `absent` (spec 0.9). It reads the Pack that gtcheck
+# loaded, never the pack text.
 
-CodecField = namedtuple("CodecField", "key start len t factor offset")
+CodecField = namedtuple("CodecField", "key start len t factor offset absent")   # absent: (raw ints)
 CodecKind = namedtuple("CodecKind", "name whens fields requires")   # whens: [(start, len, value)]
+
+
+def absent_of(node):
+    """The sentinels of a loaded `field` line as raw integers, () without `absent`."""
+    return tuple(int(v) for v in node.absent.split(",")) if node.absent else ()
 
 
 def codec_kinds(pack):
@@ -1644,7 +1752,7 @@ def codec_kinds(pack):
                     refuse("this field (transform `%s`, or an option)" % node.tr, node.line)
                 factor = parse_factor(node.targs[0]) if node.targs else None
                 offset = float(node.targs[1]) if len(node.targs) > 1 else 0.0
-                fields.append(CodecField(node.key, node.start, node.bits, node.tr, factor, offset))
+                fields.append(CodecField(node.key, node.start, node.bits, node.tr, factor, offset, absent_of(node)))
             else:
                 refuse("a `%s` line" % node.d, node.line)
         kinds.append(CodecKind(kind.name, whens, fields, list(kind.requires)))
@@ -1715,16 +1823,24 @@ def decode(kinds, data):
         raise GenError("no-kind")
     if (kind_bits(k) + 7) // 8 > len(data):
         raise GenError("malformed-wire")
-    return k, OrderedDict((f.key, decode_field(f, get_bits(data, f.start, f.len))) for f in k.fields)
+    ent = OrderedDict()
+    for f in k.fields:
+        raw = get_bits(data, f.start, f.len)
+        if raw not in f.absent:            # spec 0.9: a sentinel leaves the key absent
+            ent[f.key] = decode_field(f, raw)
+    return k, ent
 
 
 def encode(k, ent):
-    """The message of kind `k` for an entity: its fields, then its `when` values over
-    them; a bit no line covers is 0; the length is kind_bits rounded up to a byte."""
+    """The message of kind `k` for an entity: its fields (the first sentinel for an absent
+    key of a field with `absent`), then its `when` values over them; a bit no line covers
+    is 0; the length is kind_bits rounded up to a byte."""
     acc = 0
     for f in k.fields:
         if f.key in ent:
             acc |= encode_field(f, ent[f.key]) << f.start
+        elif f.absent:                     # spec 0.9: an absent key writes the first sentinel
+            acc |= f.absent[0] << f.start
     for s, l, v in k.whens:
         acc = (acc & ~(((1 << l) - 1) << s)) | (v << s)
     return acc.to_bytes((kind_bits(k) + 7) // 8, "little")
@@ -1818,8 +1934,18 @@ def _pick_scaled(k, f, h, name, args):
 
 
 def _pick_value(k, f, salt=0):
-    """The raw wire integer of one field. `salt` 0 is the first choice; another salt
-    gives another value of the same field, as repeatable as the first."""
+    """The raw wire integer of one field, never one of its sentinels (a sentinel decodes to
+    an absent key). `salt` 0 is the first choice; another salt gives another value of the
+    same field, as repeatable as the first."""
+    for extra in range(256):
+        v = _pick_raw(k, f, salt + 1000 * extra if extra else salt)
+        if v not in getattr(f, "absent", ()):
+            return v
+    raise GenError("%s: every value picked for %s in %s is a sentinel" % (f.src.where, f.id, k.name))
+
+
+def _pick_raw(k, f, salt=0):
+    """The value _pick_value starts from; see there."""
     ident = "%s/%s" % (k.name, f.id) if not salt else "%s/%s#%d" % (k.name, f.id, salt)
     h = zlib.crc32(ident.encode())
     name, *args = f.transform.split(":")
@@ -1955,6 +2081,109 @@ def cross_vector(spec, by_id, codec):
     return _vector(name, "geojson", data, expect, model)
 
 
+# Vectors that pin spec 0.9 sentinels. Raw values by CANboat field id; a text value names the
+# member of the field that states the raw value ("UnknownValue", "OutOfRangeValue"); every
+# other field is 0. `to` is the target; `expect` for geojson is written by hand: with `lat`
+# absent the Feature has no geometry (ruling 5 of 0.1.1). For a same-format target `expect`
+# is the message packed by hand with `reencode` in place of the input values (ruling 7 of
+# 0.9: a sentinel other than the first re-encodes as the first).
+SENTINEL_VECTORS = [
+    ("s01-pgn129025-latitude-not-available-roundtrip", "positionRapidUpdate",
+     {"latitude": "UnknownValue", "longitude": 45000000}, FORMAT, None, ["lat"]),
+    ("s02-pgn129025-latitude-out-of-range-reencodes-as-not-available", "positionRapidUpdate",
+     {"latitude": "OutOfRangeValue", "longitude": 45000000}, FORMAT, {"latitude": "UnknownValue"}, ["lat"]),
+    ("s03-pgn129025-latitude-not-available-to-geojson", "positionRapidUpdate",
+     {"latitude": "UnknownValue", "longitude": 45000000}, "geojson",
+     '{"type":"Feature","geometry":null,"properties":{}}', ["lat"]),
+]
+
+# A missing key encodes as its sentinel. The vector belongs to the pack that owns its input,
+# packs/geojson: a Feature with no geometry and a speed, converted to nmea2000 with the
+# `requires` keys of the AIS Class A position report as context. Latitude and longitude are
+# absent, so the message carries their UnknownValue.
+GEOJSON_VECTOR = "packs/geojson/vectors/gen-to-nmea2000-position-not-given.json"
+GEOJSON_VECTOR_INPUT = '{"type":"Feature","geometry":null,"properties":{"speed_ms":6.5}}'
+GEOJSON_VECTOR_KIND = "aisClassAPositionReport"
+
+
+def _stated(f, spec, name):
+    """A raw value of a vector spec: an integer, or the member of the field that states it."""
+    if isinstance(spec, int):
+        return spec & ((1 << f.len) - 1)
+    if spec not in f.src.stated:
+        raise GenError("vector %s: field %s states no %s" % (name, f.id, spec))
+    return f.src.stated[spec]
+
+
+def sentinel_vector(spec, by_id, codec):
+    """One entry of SENTINEL_VECTORS as a vector, checked against the codec."""
+    name, ident, rawvals, to, expect, absent = spec
+    k = by_id.get(ident)
+    if k is None:
+        raise GenError("sentinel vector %s: definition %s has no kind" % (name, ident))
+    fid = {f.id: f for f in k.fields}
+    for i in rawvals:
+        if i not in fid:
+            raise GenError("sentinel vector %s: no field %s" % (name, i))
+    data = pack_message(k, {fid[i]: _stated(fid[i], v, name) for i, v in rawvals.items()})
+    sel, ent = decode(codec, data)
+    if sel.name != k.name or any(key in ent for key in absent):
+        raise GenError("sentinel vector %s: decodes as %s with %s" % (name, sel.name, sorted(ent)))
+    model = OrderedDict([("@kind", k.name)])
+    for key, x in ent.items():
+        model[key] = model_text(x)
+    model["@absent"] = list(absent)
+    if to == FORMAT:
+        vals = dict(rawvals)
+        vals.update(expect or {})
+        want = pack_message(k, {fid[i]: _stated(fid[i], v, name) for i, v in vals.items()})
+        if encode(sel, ent) != want:
+            raise GenError("sentinel vector %s: the codec writes %s, packed by hand %s" % (name, encode(sel, ent).hex(), want.hex()))
+        return _vector(name, FORMAT, data, want.hex(), model)
+    got = geojson_text(ent)
+    if got != expect:
+        raise GenError("sentinel vector %s: hand-written expect differs from the codec\n  hand:  %s\n  codec: %s" % (name, expect, got))
+    return _vector(name, to, data, expect, model)
+
+
+def select_kind(codec, ent):
+    """The kind encode takes for an entity from another format: the first whose `requires`
+    keys the entity holds (spec 0.5, Encode)."""
+    k = next((ck for ck in codec if all(r in ent for r in ck.requires)), None)
+    if k is None:
+        raise GenError("no-kind")
+    return k
+
+
+def geojson_vector(kinds, codec):
+    """The vector of GEOJSON_VECTOR: from the GeoJSON input, with context, to nmea2000."""
+    by_id = {k.id: k for k in kinds}
+    k = by_id.get(GEOJSON_VECTOR_KIND)
+    if k is None:
+        raise GenError("%s: definition %s has no kind" % (GEOJSON_VECTOR, GEOJSON_VECTOR_KIND))
+    ck = next(c for c in codec if c.name == k.name)
+    fields = {f.key: f for f in k.fields}
+    context = OrderedDict()
+    for key in ck.requires:
+        f = fields[key]
+        x = decode_field(next(cf for cf in ck.fields if cf.key == key), _pick_value(k, f))
+        context[key] = model_text(x)
+    ent = {"speed_ms": 6.5}
+    ent.update((key, int(v) if fields[key].type == "int" else float(v)) for key, v in context.items())
+    sel = select_kind(codec, ent)
+    if sel.name != k.name:
+        raise GenError("%s: the context selects kind %s, not %s" % (GEOJSON_VECTOR, sel.name, k.name))
+    data = encode(sel, ent)
+    for f in k.fields:
+        if f.key in ("lat", "lon") and (not f.absent or get_bits(data, f.pos, f.len) != f.absent[0]):
+            raise GenError("%s: %s is not written as its sentinel" % (GEOJSON_VECTOR, f.key))
+    return OrderedDict([("name", "gen-to-nmea2000-position-not-given"), ("from", "geojson"), ("to", FORMAT),
+                        ("input", GEOJSON_VECTOR_INPUT), ("context", context), ("expect", data.hex()),
+                        ("source", "generated by tools/gen/canboat2pack.py from %s" % DB_PATH),
+                        ("reference", "a Feature with no geometry: the AIS Class A position report it encodes to "
+                                      "carries the UnknownValue of latitude and longitude (spec 0.9, Encode)")])
+
+
 def build_vectors(kinds, codec):
     """-> ([(file name, text)] of every vector, names of the cross-format vectors)."""
     by_name = {ck.name: ck for ck in codec}
@@ -1967,6 +2196,8 @@ def build_vectors(kinds, codec):
     for spec in CROSS:
         files.append(("%s.json" % spec[0], cross_vector(spec, by_id, codec)))
         xnames.append(spec[0])
+    for spec in SENTINEL_VECTORS:
+        files.append(("%s.json" % spec[0], sentinel_vector(spec, by_id, codec)))
     return [(fn, json.dumps(vec, indent=2) + "\n") for fn, vec in files], xnames
 
 
@@ -1998,7 +2229,7 @@ def seq_codec_kinds(pack):
                     refuse("this field (transform `%s`, or an option)" % node.tr, node.line)
                 factor = parse_factor(node.targs[0]) if node.targs else None
                 offset = float(node.targs[1]) if len(node.targs) > 1 else 0.0
-                out.append(("field", CodecField(node.key, None, node.bits, node.tr, factor, offset)))
+                out.append(("field", CodecField(node.key, None, node.bits, node.tr, factor, offset, absent_of(node))))
             elif node.d == "const":
                 out.append(("const", node.bits, int(node.value)))
             elif node.d == "pad":
@@ -2044,7 +2275,9 @@ def seq_decode(kinds, data):
     def run(lines, ent):
         for x in lines:
             if x[0] == "field":
-                ent[x[1].key] = decode_field(x[1], r.take(x[1].len))
+                raw = r.take(x[1].len)
+                if raw not in x[1].absent:
+                    ent[x[1].key] = decode_field(x[1], raw)
             elif x[0] in ("const", "pad"):
                 r.take(x[1])
             else:
@@ -2062,8 +2295,9 @@ def seq_decode(kinds, data):
 
 
 def seq_encode(k, ent):
-    """The message of kind `k`: its `when` values, then its lines; an absent key writes
-    zero bits, a group writes its count then its items; ends at a whole byte."""
+    """The message of kind `k`: its `when` values, then its lines; an absent key writes its
+    first sentinel, or zero bits without one; a group writes its count then its items; ends
+    at a whole byte."""
     acc, pos = 0, 0
 
     def put(n, v):
@@ -2074,7 +2308,8 @@ def seq_encode(k, ent):
     def run(lines, e):
         for x in lines:
             if x[0] == "field":
-                put(x[1].len, encode_field(x[1], e[x[1].key]) if x[1].key in e else 0)
+                f = x[1]
+                put(f.len, encode_field(f, e[f.key]) if f.key in e else (f.absent[0] if f.absent else 0))
             elif x[0] == "const":
                 put(x[1], x[2])
             elif x[0] == "pad":
@@ -2222,6 +2457,22 @@ def build_seq_vectors(seq, codec):
         _expect_error(codec, bytes(bad), "malformed-wire")
         files.append(("e01-%s-count-beyond-the-input.json" % k.name,
                       _seq_vector("%s-count-beyond-the-input" % k.name, bytes(bad), expect_error="malformed-wire")))
+        # the time of day at the value the database states for "not available" (spec 0.9); the
+        # 64-bit latitude and longitude of the PGN state none
+        top = dict(top)
+        tf = tf.get("time")
+        if tf is None:
+            raise GenError("cross-format vector %s: no field time" % name)
+        top[tf] = _stated(tf, "UnknownValue", name)
+        data = seq_message(k, top, items)
+        sel, ent = seq_decode(codec, data)
+        if tf.key in ent or seq_encode(sel, ent) != data:
+            raise GenError("sentinel vector of %s: time" % k.name)
+        model = OrderedDict([("@kind", k.name)])
+        model.update(seq_model(ent))
+        model["@absent"] = [tf.key]
+        files.append(("s01-%s-time-not-available-roundtrip.json" % k.name,
+                      _seq_vector("%s-time-not-available-roundtrip" % k.name, data, expect=data.hex(), model=model)))
     _expect_error(codec, FIXED_LAYOUT_MESSAGE, "no-kind")
     files.append(("e02-fixed-layout-pgn-is-no-kind.json",
                   _seq_vector("fixed-layout-pgn-is-no-kind", FIXED_LAYOUT_MESSAGE, expect_error="no-kind")))
@@ -2256,6 +2507,10 @@ def check_seq_vectors(codec, kinds, vectors):
         got = seq_model(ent)
         for key, want in v["model"].items():
             if key == "@kind":
+                continue
+            if key == "@absent":
+                if any(k in ent for k in want):
+                    raise GenError("vector %s: a key of @absent is present" % fn)
                 continue
             if key not in got:
                 raise GenError("vector %s: %s missing" % (fn, key))
@@ -2386,6 +2641,10 @@ def check_vector(codec, fn, v):
     for key, want in v["model"].items():
         if key == "@kind":
             continue
+        if key == "@absent":
+            if any(k in ent for k in want):
+                raise GenError("vector %s: a key of @absent is present" % fn)
+            continue
         got = ent[key]
         if isinstance(got, float):
             if abs(got - float(want)) > 1e-9:
@@ -2393,8 +2652,10 @@ def check_vector(codec, fn, v):
         elif model_text(got) != want:
             raise GenError("vector %s: %s" % (fn, key))
     if v["to"] == FORMAT:
-        if encode(by_name[sel.name], ent).hex() != v["expect"] or v["expect"] != v["input"]:
+        if encode(by_name[sel.name], ent).hex() != v["expect"]:
             raise GenError("vector %s: round trip" % fn)
+        if v["expect"] != v["input"] and "@absent" not in v["model"]:
+            raise GenError("vector %s: a round trip whose input is not its expect" % fn)
     elif v["to"] == "geojson":
         if geojson_text(ent) != v["expect"]:
             raise GenError("vector %s: geojson" % fn)
@@ -2402,6 +2663,32 @@ def check_vector(codec, fn, v):
     else:
         raise GenError("vector %s: target" % fn)
     return sel.name
+
+
+def geojson_entity(text):
+    """The core keys a GeoJSON Feature holds as the geojson pack decodes them: a Point's
+    coordinates and the numeric `properties` members of GEOJSON_PROPS."""
+    obj = json.loads(text)
+    ent = {}
+    geom = obj.get("geometry")
+    if geom:
+        for key, x in zip(("lon", "lat", "hae"), geom["coordinates"]):
+            ent[key] = float(x)
+    for key, x in (obj.get("properties") or {}).items():
+        if key in GEOJSON_PROPS and isinstance(x, (int, float)) and not isinstance(x, bool):
+            ent[key] = int(x) if CORE_KEYS[key] == "int" else float(x)
+    return ent
+
+
+def check_geojson_vector(codec, module, v):
+    """The vector of GEOJSON_VECTOR: decode its input, add its context, select the kind by
+    `requires`, encode; the result must be its `expect`."""
+    ent = geojson_entity(v["input"])
+    for key, text in v["context"].items():
+        typ = module.keys[key.split(".", 1)[1]]
+        ent.setdefault(key, int(text) if typ == "int" else float(text))
+    if encode(select_kind(codec, ent), ent).hex() != v["expect"]:
+        raise GenError("%s: expect" % GEOJSON_VECTOR)
 
 
 def check_vectors(codec, vectors):
@@ -2413,7 +2700,7 @@ def check_vectors(codec, vectors):
             raise GenError("duplicate vector name %s" % v["name"])
         names.add(v["name"])
         kind = check_vector(codec, fn, v)
-        if v["to"] == FORMAT:
+        if v["to"] == FORMAT and fn.startswith("rt-"):
             seen_kinds.add(kind)
     missing = {ck.name for ck in codec} - seen_kinds
     if missing:
@@ -2460,6 +2747,7 @@ def self_check(files, kinds, seq=()):
     prefix = VECTORS + "/"
     vectors = sorted((rel[len(prefix):], json.loads(text)) for rel, text in files.items() if rel.startswith(prefix))
     check_vectors(codec, vectors)
+    check_geojson_vector(codec, module, json.loads(files[GEOJSON_VECTOR]))
     return len(vectors), len(module.keys), n_seq
 
 
@@ -2477,6 +2765,7 @@ def build_outputs(db, sha):
     for fn, text in vectors:
         files["%s/%s" % (VECTORS, fn)] = text
     files[PACK_MD] = emit_pack_md(plan.kinds, plan.unmapped, plan.keys, db, sha, len(vectors), xnames, plan.seq)
+    files[GEOJSON_VECTOR] = json.dumps(geojson_vector(plan.kinds, codec), indent=2) + "\n"
     if plan.seq:
         files[SEQ_PACK_DEF] = emit_seq_pack(plan.seq, sha, db)
         seq_codec = seq_codec_kinds(load_seq_output(files[MODULE_DEF], files[SEQ_PACK_DEF]))

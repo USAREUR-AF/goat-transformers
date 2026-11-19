@@ -35,7 +35,7 @@ payload field sits at CANboat's `BitOffset` + 24. Input and output are hex text.
 | not mapped: not distinguishable from another definition of the same PGN | 1 |
 | not mapped: no field the pack language can carry | 42 |
 | keys in module `n2k` that this pack maps | 1564 |
-| vectors | 478 (473 same-format round trips, 5 to `geojson`) |
+| vectors | 481 (473 same-format round trips, 5 to `geojson`) |
 
 One kind per fixed-layout PGN definition, named `pgn<number>`, with the CANboat definition id
 appended where the source holds several definitions for that PGN. Each kind has
@@ -69,6 +69,58 @@ where definitions of one PGN disagree, `n2k.<kind name>_<id>`.
 with no `n2k` key lists its core keys. 86 kinds share their `requires` list with another kind;
 for those, an encode from another format selects the first in pack order.
 
+## Absent values
+
+NMEA 2000 reserves the top values of a field for "no value": all bits set for not available
+and the values just below it for out of range and reserved. The database states them for each
+field as raw wire integers: `UnknownValue`, `OutOfRangeValue`, `ReservedValue`. A field that
+states them carries the option `absent <unknown>,<out of range>,<reserved>` (spec 0.9), in
+that order, so:
+
+- decode leaves the key absent when the raw value is one of them (an all-ones latitude is no
+  latitude, not 214.7 degrees);
+- encode writes the first, the not-available value, for a key the entity does not hold, where
+  it wrote zero bits before.
+
+An MMSI field also takes the raw value 0: the database's description of the MMSI field type
+says devices send 0 for "none" and that it is treated as not available. A field the database
+gives no such member keeps no option, whatever its type: a lookup of one or two bits uses every
+value, and the database states none for the 64-bit numbers (the latitude and longitude of PGN
+129029, for example). The pack uses only these statements of the database.
+
+| Field type | Mapped fields with `absent` | Mapped fields without |
+|---|---|---|
+| ADDRESS | 0 | 18 |
+| BINARY | 0 | 101 |
+| BITLOOKUP | 0 | 39 |
+| DATE | 11 | 0 |
+| DURATION | 66 | 0 |
+| DYNAMIC_FIELD_KEY | 1 | 0 |
+| FLOAT | 0 | 9 |
+| INDIRECT_LOOKUP | 5 | 0 |
+| ISO_NAME | 0 | 14 |
+| LOOKUP | 421 | 99 |
+| MMSI | 26 | 0 |
+| NUMBER | 1534 | 32 |
+| PGN | 0 | 11 |
+| STRING_FIX | 0 | 32 |
+| TIME | 11 | 0 |
+
+Types whose fields never carry `absent`:
+
+| Field type | Why |
+|---|---|
+| FLOAT | the database names NaN for the type and no raw value; a NaN has many bit patterns |
+| STRING_FIX | the database names the empty string for the type and no raw value, and allows 0x00, 0xff and `@` as padding; most such fields are longer than the 64 bits `absent` takes |
+| BITLOOKUP | the database states no sentinel for the type: any combination of bits is a value |
+| BINARY | the database states no sentinel for the type |
+| PGN | the database states no sentinel for the type |
+| ISO_NAME | the database states no sentinel for the type |
+| ADDRESS | the database states that every value is meaningful (254 is the null address, 255 broadcast) |
+
+The option needs engine version 0.9. A round trip of a message that holds an out-of-range or
+reserved value returns the not-available value in its place (ruling 7 of 0.9).
+
 ## Core keys
 
 | Kind | PGN | Core keys |
@@ -99,10 +151,8 @@ for those, an encode from another format selects the first in pack order.
 
 ## What the pack language cannot express yet
 
-- **"Not available" values.** NMEA 2000 marks a missing value with all bits set (and uses
-  the next values down for "out of range" and "reserved"). There is no way to say so in
-  `pack.def`: an all-ones field decodes as a number (`0xFFFF` at resolution 0.01 is 655.35),
-  and an absent model key encodes as zero bits, not all ones.
+- **"Not available" values where the database states none.** Section "Absent values"
+  lists the field types whose fields carry no `absent` option, and why.
 - **Reserved and spare bits.** NMEA 2000 sets them to 1; `encode` writes 0 in every bit no
   field covers. A real message with reserved bits set does not round-trip byte-identically.
 - **Trailing bytes.** The message ends at the last mapped or `when` bit, rounded up to a
@@ -158,6 +208,14 @@ in the comment above the kind in `pack.def`.
   written by hand from the canonical GeoJSON rules and checked by the generator against its
   own codec. PGN 129029 (GNSS Position Data) is in pack `nmea2000-seq`, with its own vector to
   `geojson`.
+- `s01-pgn129025-latitude-not-available-roundtrip.json`, `s02-pgn129025-latitude-out-of-range-reencodes-as-not-available.json`, `s03-pgn129025-latitude-not-available-to-geojson.json`: a latitude that holds its not-available or its out-of-range value decodes to no
+  `lat` (`@absent`); the out-of-range value re-encodes as the not-available one, and the
+  position without a latitude has no GeoJSON geometry. The raw values are those the database
+  states for the field; the expected bytes are packed by hand from them.
+- `packs/geojson/vectors/gen-to-nmea2000-position-not-given.json`: the other way, a key the entity does not hold is written as its
+  not-available value: a Feature with no geometry, with the `requires` keys of the AIS Class A
+  position report as context, encodes latitude and longitude as all-but-the-sign-bit ones.
+  The vector belongs to the pack that owns its input.
 
 Vectors hold lowercase hex text in `input` / `expect`.
 

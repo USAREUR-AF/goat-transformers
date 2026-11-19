@@ -1,0 +1,21 @@
+{
+  "name": "pgn129029-time-not-available-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05f80103ffffffff008014ebb72c49070080e4f642df9f0020bcbe000000000001a0029600",
+  "expect": "05f80103ffffffff008014ebb72c49070080e4f642df9f0020bcbe000000000001a0029600",
+  "model": {
+    "@kind": "pgn129029",
+    "n2k.sid": "3",
+    "lat": "52.5",
+    "lon": "4.5",
+    "n2k.altitude": "12.5",
+    "n2k.pgn129029_reference_stations.#": "1",
+    "n2k.pgn129029_reference_stations[0].n2k.reference_station_type": "0",
+    "n2k.pgn129029_reference_stations[0].n2k.reference_station_id": "42",
+    "n2k.pgn129029_reference_stations[0].n2k.age_of_dgnss_corrections": "1.5",
+    "@absent": [
+      "n2k.time"
+    ]
+  }
+}

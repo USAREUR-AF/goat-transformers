@@ -23,11 +23,12 @@ key  label                                          string  -         "Label; CA
 key  gain                                           float   "dB re 1 V"  "Gain; CANboat FLOAT; PGN 65303"
 key  date                                           int     d         "Date; CANboat DATE; PGN 65303"
 key  time                                           float   s         "Time; CANboat TIME; PGN 65303"
-key  user_id                                        int     -         "User ID; CANboat NUMBER; PGN 65308, 129038"
+key  unit_id                                        int     -         "Unit ID; CANboat NUMBER; PGN 65308"
 key  cog_reference                                  int     -         "COG Reference; CANboat LOOKUP DIRECTION_REFERENCE; PGN 129026"
 key  cog                                            float   rad       "COG; CANboat NUMBER; PGN 129026"
 key  message_id                                     int     -         "Message ID; CANboat LOOKUP AIS_MESSAGE_ID; PGN 129038"
 key  repeat_indicator                               int     -         "Repeat Indicator; CANboat LOOKUP REPEAT_INDICATOR; PGN 129038"
+key  user_id                                        int     -         "User ID; CANboat MMSI; PGN 129038"
 
 # Keys and lists first used by pack nmea2000-seq (PGNs with a repeating field set). Keys
 # above are reused there where the field agrees; the PGNs named above are those of
