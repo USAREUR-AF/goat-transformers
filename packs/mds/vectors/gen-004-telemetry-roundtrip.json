@@ -1,0 +1,17 @@
+{
+ "name": "gen-telemetry-roundtrip",
+ "from": "mds",
+ "to": "mds",
+ "input": "{\"device_id\":\"9fa9ef51-dc48-4786-87d1-635e30b00ba1\",\"provider_id\":\"72b090a4-5262-499f-89ac-e18b8f3a843c\",\"data_provider_id\":\"fcbe3f53-7fc9-403c-8c3e-3daf5b62110c\",\"telemetry_id\":\"e291c0cc-3442-4c1f-8d9c-9239c7175c0f\",\"timestamp\":1731834929540,\"trip_ids\":[\"7ac12aff-2f88-428f-888a-73d6f6f7c1b3\",\"22828a31-b164-498d-8d82-9c95520f7735\"],\"journey_id\":\"a13be418-4484-4933-8815-1797d021cb68\",\"stop_id\":\"81802f2b-c62d-4d3c-875a-54d7363b3cfe\",\"location\":{\"altitude\":7.0625,\"heading\":-0.5,\"horizontal_accuracy\":12.5,\"lat\":51.4775,\"lng\":-77.0365,\"satellites\":39804,\"speed\":7.0625,\"vertical_accuracy\":1.5},\"location_type\":\"sidewalk\",\"battery_percent\":0,\"fuel_percent\":84,\"tipped_over\":true}",
+ "expect": "{\"device_id\":\"9fa9ef51-dc48-4786-87d1-635e30b00ba1\",\"provider_id\":\"72b090a4-5262-499f-89ac-e18b8f3a843c\",\"data_provider_id\":\"fcbe3f53-7fc9-403c-8c3e-3daf5b62110c\",\"telemetry_id\":\"e291c0cc-3442-4c1f-8d9c-9239c7175c0f\",\"timestamp\":1731834929540,\"trip_ids\":[\"7ac12aff-2f88-428f-888a-73d6f6f7c1b3\",\"22828a31-b164-498d-8d82-9c95520f7735\"],\"journey_id\":\"a13be418-4484-4933-8815-1797d021cb68\",\"stop_id\":\"81802f2b-c62d-4d3c-875a-54d7363b3cfe\",\"location\":{\"altitude\":7.0625,\"heading\":-0.5,\"horizontal_accuracy\":12.5,\"lat\":51.4775,\"lng\":-77.0365,\"satellites\":39804,\"speed\":7.0625,\"vertical_accuracy\":1.5},\"location_type\":\"sidewalk\",\"battery_percent\":0,\"fuel_percent\":84,\"tipped_over\":true}",
+ "model": {
+  "@kind": "telemetry",
+  "uid": "9fa9ef51-dc48-4786-87d1-635e30b00ba1",
+  "time_ms": "1731834929540",
+  "lat": "51.4775",
+  "lon": "-77.0365",
+  "speed_ms": "7.0625",
+  "mds.device_id": "9fa9ef51-dc48-4786-87d1-635e30b00ba1",
+  "mds.provider_id": "72b090a4-5262-499f-89ac-e18b8f3a843c"
+ }
+}

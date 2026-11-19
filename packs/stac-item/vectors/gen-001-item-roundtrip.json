@@ -1,0 +1,17 @@
+{
+ "name": "gen-item-roundtrip",
+ "from": "stac-item",
+ "to": "stac-item",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"title\":\"s32650\",\"description\":\"s11188\",\"datetime\":\"2025-01-26T05:42:42.342Z\",\"start_datetime\":\"2025-10-27T01:21:06.825Z\",\"end_datetime\":\"2024-08-02T17:16:28.701Z\",\"created\":\"2024-04-24T06:46:44.175Z\",\"updated\":\"2025-04-04T15:18:51.485Z\",\"data_type\":\"uint32\",\"unit\":\"s83437\",\"platform\":\"s90590\",\"constellation\":\"s69517\",\"mission\":\"s93890\",\"gsd\":1.5,\"license\":\"s3956\"},\"id\":\"s81400\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"title\":\"s32650\",\"description\":\"s11188\",\"datetime\":\"2025-01-26T05:42:42.342Z\",\"start_datetime\":\"2025-10-27T01:21:06.825Z\",\"end_datetime\":\"2024-08-02T17:16:28.701Z\",\"created\":\"2024-04-24T06:46:44.175Z\",\"updated\":\"2025-04-04T15:18:51.485Z\",\"data_type\":\"uint32\",\"unit\":\"s83437\",\"platform\":\"s90590\",\"constellation\":\"s69517\",\"mission\":\"s93890\",\"gsd\":1.5,\"license\":\"s3956\"},\"id\":\"s81400\"}",
+ "model": {
+  "uid": "s81400",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "time_ms": "1737870162342",
+  "stac.id": "s81400",
+  "stac.properties_title": "s32650",
+  "stac.properties_description": "s11188"
+ }
+}

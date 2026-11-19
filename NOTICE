@@ -77,6 +77,20 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Pack mds; module mds
+  Mobility Data Specification 2.0 data models, Open Mobility Foundation,
+  https://github.com/openmobilityfoundation/mds-openapi. Creative Commons
+  Attribution 4.0. The pack restates their structure and is not endorsed by
+  the Open Mobility Foundation.
+
+Pack stac-item; module stac
+  SpatioTemporal Asset Catalog (STAC) 1.1.0 Item JSON Schema,
+  https://github.com/radiantearth/stac-spec. Apache License, Version 2.0.
+
+Pack wzdx-device; module wzdx
+  Work Zone Data Exchange (WZDx) 4.2 schemas, U.S. Department of
+  Transportation ITS JPO, https://github.com/usdot-jpo-ode/wzdx. CC0 1.0.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c

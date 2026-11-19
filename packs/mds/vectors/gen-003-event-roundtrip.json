@@ -1,0 +1,17 @@
+{
+ "name": "gen-event-roundtrip",
+ "from": "mds",
+ "to": "mds",
+ "input": "{\"device_id\":\"dfa8000f-0746-40b0-89d8-7e94919dcba0\",\"provider_id\":\"c19f8e3c-db50-4310-8ec6-7468ab5f69c6\",\"data_provider_id\":\"872c1d70-38d4-429c-88e1-8ea1f81a67d2\",\"event_id\":\"7980e028-2c3e-417b-8238-c7deae4a757a\",\"vehicle_state\":\"on_trip\",\"event_types\":[\"trip_resume\",\"compliance_pick_up\"],\"timestamp\":1780174835147,\"publication_time\":1514764832668,\"location\":{\"altitude\":0.75,\"heading\":0.75,\"horizontal_accuracy\":7.0625,\"lat\":-33.865,\"lng\":-0.0014,\"satellites\":17165,\"speed\":-0.5,\"vertical_accuracy\":-3.25},\"event_geographies\":[\"d549c3f1-63f0-4c6e-89a0-00a975649102\",\"ddf2950b-e792-44a6-8bb3-493b12facb42\"],\"battery_percent\":75,\"fuel_percent\":70,\"trip_ids\":[\"4b382d1b-de43-4d6e-8d8e-f34b9fbcdca8\",\"459ca3e1-7ffd-4ef4-818a-1573a5207d10\"],\"associated_ticket\":\"s86285\"}",
+ "expect": "{\"device_id\":\"dfa8000f-0746-40b0-89d8-7e94919dcba0\",\"provider_id\":\"c19f8e3c-db50-4310-8ec6-7468ab5f69c6\",\"data_provider_id\":\"872c1d70-38d4-429c-88e1-8ea1f81a67d2\",\"event_id\":\"7980e028-2c3e-417b-8238-c7deae4a757a\",\"vehicle_state\":\"on_trip\",\"event_types\":[\"trip_resume\",\"compliance_pick_up\"],\"timestamp\":1780174835147,\"publication_time\":1514764832668,\"location\":{\"altitude\":0.75,\"heading\":0.75,\"horizontal_accuracy\":7.0625,\"lat\":-33.865,\"lng\":-0.0014,\"satellites\":17165,\"speed\":-0.5,\"vertical_accuracy\":-3.25},\"event_geographies\":[\"d549c3f1-63f0-4c6e-89a0-00a975649102\",\"ddf2950b-e792-44a6-8bb3-493b12facb42\"],\"battery_percent\":75,\"fuel_percent\":70,\"trip_ids\":[\"4b382d1b-de43-4d6e-8d8e-f34b9fbcdca8\",\"459ca3e1-7ffd-4ef4-818a-1573a5207d10\"],\"associated_ticket\":\"s86285\"}",
+ "model": {
+  "@kind": "event",
+  "uid": "dfa8000f-0746-40b0-89d8-7e94919dcba0",
+  "time_ms": "1780174835147",
+  "lat": "-33.865",
+  "lon": "-0.0014",
+  "speed_ms": "-0.5",
+  "mds.device_id": "dfa8000f-0746-40b0-89d8-7e94919dcba0",
+  "mds.provider_id": "c19f8e3c-db50-4310-8ec6-7468ab5f69c6"
+ }
+}
