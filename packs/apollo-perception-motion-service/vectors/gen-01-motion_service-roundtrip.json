@@ -1,0 +1,25 @@
+{
+  "name": "gen-motion_service-roundtrip",
+  "from": "apollo-perception-motion-service",
+  "to": "apollo-perception-motion-service",
+  "input": "0a88010d0000cc40150000e0401d0000f440250000803e2d0000603f350000c03f3d00000840410000000000003e40490000000000c03f4052510d0000804015000094401d0000a840250000bc402d0000d040350000e4403d0000f840450000c03e4d0000803f550000d03f5d0000104065000038406d0000604075000084407d0000984085010000ac400a88010d0000c040150000d4401d0000e840250000fc402d0000003f350000903f3d0000e03f410000000000e04040490000000000c0414052510d0000684015000088401d00009c40250000b0402d0000c440350000d8403d0000ec4045000000414d0000203f550000a03f5d0000f03f65000020406d0000484075000070407d00008c4085010000a040123f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d39",
+  "expect": "0a88010d0000cc40150000e0401d0000f440250000803e2d0000603f350000c03f3d00000840410000000000003e40490000000000c03f4052510d0000804015000094401d0000a840250000bc402d0000d040350000e4403d0000f840450000c03e4d0000803f550000d03f5d0000104065000038406d0000604075000084407d0000984085010000ac400a88010d0000c040150000d4401d0000e840250000fc402d0000003f350000903f3d0000e03f410000000000e04040490000000000c0414052510d0000684015000088401d00009c40250000b0402d0000c440350000d8403d0000ec4045000000414d0000203f550000a03f5d0000f03f65000020406d0000484075000070407d00008c4085010000a040123f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d39",
+  "model": {
+    "@kind": "motion_service",
+    "apolloperceptionmotionservice.header_timestamp_sec": "0.25",
+    "apolloperceptionmotionservice.header_module_name": "module_name-1",
+    "apolloperceptionmotionservice.header_sequence_num": "174",
+    "apolloperceptionmotionservice.header_lidar_timestamp": "211",
+    "apolloperceptionmotionservice.header_camera_timestamp": "248",
+    "apolloperceptionmotionservice.header_radar_timestamp": "285",
+    "apolloperceptionmotionservice.header_version": "322",
+    "apolloperceptionmotionservice.header_status_error_code": "1000",
+    "apolloperceptionmotionservice.header_status_msg": "msg-8",
+    "apolloperceptionmotionservice.header_frame_id": "frame_id-9",
+    "apolloperceptionmotionservice.motion_service_vehicle_status.#": "2",
+    "apolloperceptionmotionservice.motion_service_vehicle_status[0].apolloperceptionmotionservice.vehicle_status_roll_rate": "6.375",
+    "apolloperceptionmotionservice.motion_service_vehicle_status[0].apolloperceptionmotionservice.vehicle_status_pitch_rate": "7",
+    "apolloperceptionmotionservice.motion_service_vehicle_status[1].apolloperceptionmotionservice.vehicle_status_roll_rate": "6",
+    "apolloperceptionmotionservice.motion_service_vehicle_status[1].apolloperceptionmotionservice.vehicle_status_pitch_rate": "6.625"
+  }
+}

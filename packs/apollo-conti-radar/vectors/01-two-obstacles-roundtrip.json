@@ -1,0 +1,13 @@
+{
+  "name": "01-two-obstacles-roundtrip",
+  "from": "apollo-conti-radar",
+  "to": "apollo-conti-radar",
+  "input": "0a0d4a0b72616461725f66726f6e7412040a02180112040a0218021a0308fa01",
+  "expect": "0a0d4a0b72616461725f66726f6e7412040a02180112040a0218021a0308fa01",
+  "model": {
+    "apollocontiradar.header_frame_id": "radar_front",
+    "apollocontiradar.radar_state_max_distance": "250",
+    "apollocontiradar.conti_radar_contiobs.#": "2",
+    "apollocontiradar.conti_radar_contiobs[1].apollocontiradar.conti_radar_obs_header_sequence_num": "2"
+  }
+}

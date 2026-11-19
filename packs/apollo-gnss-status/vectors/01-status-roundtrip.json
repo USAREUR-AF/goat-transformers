@@ -1,0 +1,12 @@
+{
+  "name": "01-status-roundtrip",
+  "from": "apollo-gnss-status",
+  "to": "apollo-gnss-status",
+  "input": "0a0f0900001040fc54d9411204676e73731001180020322811",
+  "expect": "0a0f0900001040fc54d9411204676e73731001180020322811",
+  "model": {
+    "apollognssstatus.header_module_name": "gnss",
+    "apollognssstatus.gnss_status_num_sats": "17",
+    "apollognssstatus.gnss_status_position_type": "50"
+  }
+}
