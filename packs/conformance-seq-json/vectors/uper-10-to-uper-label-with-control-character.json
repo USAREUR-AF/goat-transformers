@@ -1,0 +1,9 @@
+{
+  "name": "uper-10-to-uper-label-with-control-character",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"label\":\"a\\u0001\"}",
+  "expect": "000000000000200020000e1020000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): label \"a\" and U+0001: codes below 32 are written as they are (ascii on chars does not check printable characters): count 1 in 3 bits, 1100001, 0000001. 127 bits, padded to 16 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

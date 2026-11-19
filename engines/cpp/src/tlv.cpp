@@ -818,4 +818,8 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
     return bytes_to_hex(out);
 }
 
+// v0.19: `hex` and `utf8` on a UPER `octets` locator behave as on tlv.
+bool utf8_is_valid(const std::string& s) { return valid_utf8(s); }
+bool hex_text_bytes(const std::string& s, std::string& out) { return hex_text(s, out); }
+
 }  // namespace goat_transformers::detail

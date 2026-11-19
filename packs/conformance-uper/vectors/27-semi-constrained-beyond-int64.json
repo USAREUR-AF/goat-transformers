@@ -1,0 +1,9 @@
+{
+  "name": "semi-constrained-beyond-int64",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "0700000000011fffffffffffffffe020000efd60000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: y (INTEGER (-5..MAX)) as length 8, ffffffffffffffff: v - lb = 2^64 - 1, so v = 2^64 - 6 does not fit a signed 64-bit integer: transform-decode (ruling 5). Every other line is well formed. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

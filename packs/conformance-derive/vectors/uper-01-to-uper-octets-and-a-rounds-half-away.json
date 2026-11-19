@@ -1,0 +1,9 @@
+{
+  "name": "uper-01-to-uper-octets-and-a-rounds-half-away",
+  "from": "conformance-derive",
+  "to": "conformance-uper",
+  "input": "{\"n\":1,\"a\":2.5,\"s1\":\"DEADBEEF\",\"s2\":\"ü\"}",
+  "expect": "010000000000200020000009bd5b7dde0587780c00",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): a 2.5 through uscale:1 rounds half away from zero to 3 (alt 0, 11); s1 \"DEADBEEF\" (hex accepts either case) is 4 octets: count 100, deadbeef; s2 \"ü\" is 2 UTF-8 octets c3bc. Derived keys of probe are not mapped by conformance-uper. 168 bits, padded to 21 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

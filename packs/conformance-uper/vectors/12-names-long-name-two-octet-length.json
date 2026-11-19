@@ -1,0 +1,27 @@
+{
+  "name": "names-long-name-two-octet-length",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd6000000501053a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a700e20",
+  "expect": "070000000000200020000efd6000000501053a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a74e9d3a700e20",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "2",
+    "probe.names[0].probe.label": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+    "probe.names[1].probe.label": "b"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): names is SEQUENCE OF with no size constraint: length 2, then each Name; the first label has 130 characters, so its length determinant is 10 00000010000010 (128 <= n < 16384), then 130 x 7 bits; the second is length 1 and one character. 1068 bits, padded with 4 zero bits to 134 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

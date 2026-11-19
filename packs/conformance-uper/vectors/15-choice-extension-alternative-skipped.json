@@ -1,0 +1,24 @@
+{
+  "name": "choice-extension-alternative-skipped",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd6000400101f40000",
+  "expect": "070000000000200020000efd60000000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: Alt holds its first extension alternative (big INTEGER (0..65535) in the checking module) with 1000: bit 1, index 0 as a normally small number 0 000000, open type length 2, 03e8. Decode skips it, so neither probe.a nor probe.tag is set; encode finds no alt with content and writes the first alt: bit 0, index 0, and a absent, written as lb 0 in 2 bits (ruling 1). 127 bits, padded with 1 zero bits to 16 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

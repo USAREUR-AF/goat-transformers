@@ -1,0 +1,66 @@
+# Conformance probe pack for ASN.1 unaligned PER (spec 0.19). Public. A
+# synthetic message written as this ASN.1 (AUTOMATIC TAGS):
+#
+#   Probe ::= SEQUENCE {
+#     n      INTEGER (0..255),
+#     lat    INTEGER (-900000000..900000001),         -- 1e-7 degrees
+#     x      INTEGER (0..7, ...),
+#     y      INTEGER (-5..MAX),
+#     z      INTEGER,
+#     w      ENUMERATED { a, b, c, ... },
+#     qty    ENUMERATED { p, q, r, s, t },
+#     c1     BOOLEAN,
+#     label  IA5String (SIZE (1..8)),
+#     s1     OCTET STRING (SIZE (0..4)),
+#     s2     UTF8String,
+#     inner  Inner,
+#     alt    Alt,
+#     items  SEQUENCE (SIZE (0..3)) OF Item,
+#     names  SEQUENCE OF Name
+#   }
+#   Inner ::= SEQUENCE { c2 INTEGER (0..15) OPTIONAL, val INTEGER (0..1000) OPTIONAL, ... }
+#   Alt   ::= CHOICE { a INTEGER (0..3), tag IA5String (SIZE (2..2)), ... }
+#   Item  ::= SEQUENCE { ratio INTEGER (0..1023) }
+#   Name  ::= SEQUENCE { tag IA5String }
+format        conformance-uper
+version       0.19.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+layout        sequential
+bit_order     msb
+encoding      uper
+
+field    probe.n      int:0:255                   uint
+field    lat          int:-900000000:900000001    uscale:1/10000000
+field    probe.x      int:0:7:ext                 uint
+field    probe.y      int:-5:                     twos
+field    probe.z      int::                       twos
+field    probe.w      enum:3:ext                  uint
+field    probe.qty    enum:5                      uint
+field    probe.c1     1                           uint
+field    probe.label  chars:1:8                   ascii
+field    probe.s1     octets:0:4                  hex
+field    probe.s2     octets:                     utf8
+ext
+  presence inner 2
+  if inner.1
+    field  probe.c2   int:0:15                    uint
+  end
+  if inner.2
+    field  probe.val  int:0:1000                  uint
+  end
+end
+choice 2 ext
+  alt 0
+    field  probe.a    int:0:3                     uscale:1
+  alt 1
+    field  probe.tag  chars:2:2                   ascii
+end
+group  probe.items size 0 3
+  field  probe.ratio int:0:1023                   uscale:1
+end
+group  probe.names size
+  field  probe.label chars:                       ascii
+end

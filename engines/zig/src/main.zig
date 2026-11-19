@@ -642,6 +642,15 @@ const Pack = struct {
     gate_line: usize = 0,
     // Version 0.18: the line of the first `element` line (0: none)
     element_line: usize = 0,
+    // Version 0.19: `encoding` as written and the first line that repeats
+    // it, gives it after a `kind` or with another number of values;
+    // `encoding uper`; the first line that only a UPER pack takes (a UPER
+    // locator, `ext`, `choice`, `alt`, `group … size`). Checked after the
+    // file is read.
+    enc_raw: ?[]const u8 = null,
+    enc_bad: usize = 0,
+    uper: bool = false,
+    uper_line: usize = 0,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1621,6 +1630,11 @@ fn checkDerives(alloc: std.mem.Allocator, m: *Module, mods: *const ModuleMap, di
 // Resolve one line against the pack's wire: parse its locator, check its
 // transform belongs to the wire, check the bit length its transform allows.
 fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, diag: *Diag) anyerror!void {
+    // a UPER locator outside a UPER pack (ruling 9 of 0.19); on another
+    // wire such a locator is a path as before (ruling 19)
+    if (p.wire == .bits and isUperLocator(ln.locator)) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a pack with `encoding uper`", .{ ln.lineno, ln.locator });
+    }
     if (ln.t_err) |err| {
         const why = if (p.wire == .tlv) E.@"bad-directive" else err;
         return bad(diag, alloc, why, "line {d}: unknown transform or parameters that do not parse", .{ln.lineno});
@@ -2357,7 +2371,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2394,6 +2408,11 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
     const ok = switch (d) {
         // `armor` takes exactly one, checked here (ruling 13 of 0.14)
         .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key, .armor, .element => n == 1,
+        // Version 0.19: `encoding` takes one, as `armor` does (ruling 13 of
+        // 0.14); `ext` none; `choice <n> [ext]` one or two; `alt <i>` one.
+        // Their wire, layout and values are checked after the file is read.
+        .encoding, .alt => n == 1,
+        .choice => n == 1 or n == 2,
         // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
         .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
         .field => n >= 3,
@@ -2403,7 +2422,7 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         .group => n >= 2,
         .presence => n == 2,
         .also => n == 1 or n == 3,
-        .end, .opt, .chain, .fx => n == 0,
+        .end, .opt, .chain, .fx, .ext => n == 0,
     };
     if (!ok) return lineBad(diag, alloc, bd, "line {d}: {s} takes another number of arguments", .{ lineno, kw });
     if (needsWire(d) and !hdr.wire) {
@@ -2579,6 +2598,16 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // place and value are checked after the file is read
         if ((toks.len != 2 or p.armor_raw != null or p.kinds.items.len > 0) and p.armor_bad == 0) p.armor_bad = lineno;
         p.armor_raw = toks[toks.len - 1];
+    } else if (is(kw, "encoding")) {
+        // encoding <none | uper> (Version 0.19): its argument count is a
+        // line check (packLineChecks); its wire, place and value are checked
+        // after the file is read
+        if ((p.enc_raw != null or p.kinds.items.len > 0) and p.enc_bad == 0) p.enc_bad = lineno;
+        p.enc_raw = toks[toks.len - 1];
+    } else if (is(kw, "ext") or is(kw, "choice") or is(kw, "alt")) {
+        // lines of a UPER pack only (rulings 9 and 21 of 0.19), refused
+        // after the file is read
+        if (p.uper_line == 0) p.uper_line = lineno;
     } else if (is(kw, "layout")) {
         // layout <fixed | sequential>, bits wire only; default fixed
         if (toks.len != 2 or !(is(toks[1], "fixed") or is(toks[1], "sequential"))) {
@@ -2637,7 +2666,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         const is_when = is(kw, "when");
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
         if (is_when) st.any_when = true;
-        if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
+        // a UPER locator on `bits` is `bad-directive` after the file
+        // (rulings 24 and 26 of 0.19), not `bad-locator` here
+        if (p.wire == .bits and isUperLocator(toks[1])) {
+            if (p.uper_line == 0) p.uper_line = lineno;
+        } else if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a {s} on the {s} wire", .{ lineno, toks[1], kw, @tagName(p.wire) });
         }
         const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno, .gate = cur_gate };
@@ -2698,7 +2731,13 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
                 else => return lineBad(diag, alloc, err, "line {d}: the parameters of transform {s} are not valid", .{ lineno, toks[3] }),
             }
         };
-        if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
+        // a UPER locator (`int:`, `enum:`, `chars:`, `octets:`) on a `bits`
+        // field outside a UPER pack is `bad-directive`, checked after the
+        // file is read (rulings 9 and 19 of 0.19), not `bad-locator` here
+        const uper_loc = p.wire == .bits and isUperLocator(toks[2]);
+        if (uper_loc) {
+            if (p.uper_line == 0) p.uper_line = lineno;
+        } else if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a field on the {s} wire", .{ lineno, toks[2], @tagName(p.wire) });
         }
         var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno, .t_err = t_err, .gate = cur_gate };
@@ -2742,7 +2781,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // `absent` does not fit the wire, checked after the file is read
         // (ruling 14 of 0.13)
         if (p.wire == .bits) ln.blen = @intCast(@min(fixedLen(toks[2]) orelse 0, 1 << 20));
-        if (!(p.wire == .bits and ln.blen > 64) and p.wire != .tlv) {
+        if (!(p.wire == .bits and ln.blen > 64) and p.wire != .tlv and !uper_loc) {
             try parseAbsent(alloc, p.wire, &ln, in_group, diag);
             ln.abs_checked = true;
         }
@@ -2818,6 +2857,14 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     }
     if (p.layout_set and p.wire != .bits) {
         return bad(diag, alloc, E.@"bad-directive", "layout on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
+    }
+    if (p.enc_raw) |raw| {
+        if (p.wire != .bits) return bad(diag, alloc, E.@"bad-directive", "encoding on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
+        if (p.enc_bad != 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: encoding is repeated, given after a kind, or not given one value", .{p.enc_bad});
+        if (!std.mem.eql(u8, raw, "none")) return bad(diag, alloc, E.@"bad-directive", "encoding {s}: only `encoding none` is valid outside `layout sequential` with `bit_order msb`", .{raw});
+    }
+    if (p.uper_line != 0) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: a line of a pack with `encoding uper`", .{p.uper_line});
     }
     try armorCheck(alloc, p, diag);
     if (st.any_when and p.kinds.items.len == 0) {
@@ -8656,8 +8703,108 @@ const SAlso = struct {
     lineno: usize = 0,
 };
 
-const SMode = enum { count, while_, more, fx };
-const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole };
+const SMode = enum { count, while_, more, fx, size_c, size_u };
+const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt };
+
+// Version 0.19: a UPER locator. `int:<lb>:<ub>[:ext]`, `int:<lb>:`, `int::`,
+// `enum:<n>[:ext]` (lb 0, ub n - 1), `chars:<lb>:<ub>`, `chars:`,
+// `octets:<lb>:<ub>`, `octets:`.
+const UForm = enum { int_c, int_semi, int_un, enum_, chars_c, chars_u, octets_c, octets_u };
+const ULoc = struct { form: UForm, lb: i64 = 0, ub: i64 = 0, ext: bool = false };
+
+fn isUperLocator(loc: []const u8) bool {
+    for ([_][]const u8{ "int:", "enum:", "chars:", "octets:" }) |pre| {
+        if (std.mem.startsWith(u8, loc, pre)) return true;
+    }
+    return false;
+}
+
+// A number of a UPER line (ruling 15 of 0.19): an optional `-` and digits
+// with no leading zero; `-0` is refused.
+fn uperNum(s: []const u8) ?i128 {
+    var t = s;
+    var neg = false;
+    if (t.len > 0 and t[0] == '-') {
+        neg = true;
+        t = t[1..];
+    }
+    if (t.len == 0 or t.len > 20) return null;
+    for (t) |c| if (!isDigit(c)) return null;
+    if (t[0] == '0' and (t.len > 1 or neg)) return null;
+    var v: i128 = 0;
+    for (t) |c| v = v * 10 + (c - '0');
+    return if (neg) -v else v;
+}
+
+// A number of a `choice`, `alt` or `group … size` line: digits with no
+// leading zero, no sign (ruling 15 of 0.19).
+fn uperCount(s: []const u8) ?i128 {
+    if (s.len == 0 or s[0] == '-') return null;
+    return uperNum(s);
+}
+
+// null: not a UPER locator; `bad-directive`: one that does not parse.
+fn parseULoc(loc: []const u8) !?ULoc {
+    const bd = E.@"bad-directive";
+    if (!isUperLocator(loc)) return null;
+    const colon = std.mem.indexOfScalar(u8, loc, ':').?;
+    const head = loc[0..colon];
+    const rest = loc[colon + 1 ..];
+    var parts: [4][]const u8 = undefined;
+    var np: usize = 0;
+    var it = std.mem.splitScalar(u8, rest, ':');
+    while (it.next()) |x| {
+        if (np == parts.len) return bd;
+        parts[np] = x;
+        np += 1;
+    }
+    const min64: i128 = std.math.minInt(i64);
+    const max64: i128 = std.math.maxInt(i64);
+    if (std.mem.eql(u8, head, "int")) {
+        if (np == 2 and parts[0].len == 0 and parts[1].len == 0) return .{ .form = .int_un };
+        const lb = uperNum(parts[0]) orelse return bd;
+        if (lb < min64 or lb > max64) return bd;
+        if (np == 2 and parts[1].len == 0) return .{ .form = .int_semi, .lb = @intCast(lb) };
+        if (np != 2 and np != 3) return bd;
+        if (np == 3 and !std.mem.eql(u8, parts[2], "ext")) return bd;
+        const ub = uperNum(parts[1]) orelse return bd;
+        if (ub < lb or ub > max64) return bd;
+        return .{ .form = .int_c, .lb = @intCast(lb), .ub = @intCast(ub), .ext = np == 3 };
+    }
+    if (std.mem.eql(u8, head, "enum")) {
+        if (np != 1 and np != 2) return bd;
+        if (np == 2 and !std.mem.eql(u8, parts[1], "ext")) return bd;
+        const n = uperNum(parts[0]) orelse return bd;
+        if (n < 1 or n > 65536) return bd;
+        return .{ .form = .enum_, .lb = 0, .ub = @intCast(n - 1), .ext = np == 2 };
+    }
+    const chars = std.mem.eql(u8, head, "chars");
+    if (np == 1 and parts[0].len == 0) return .{ .form = if (chars) .chars_u else .octets_u };
+    if (np != 2) return bd;
+    const lb = uperNum(parts[0]) orelse return bd;
+    const ub = uperNum(parts[1]) orelse return bd;
+    if (lb < 0 or lb > ub or ub >= 65536) return bd;
+    return .{ .form = if (chars) .chars_c else .octets_c, .lb = @intCast(lb), .ub = @intCast(ub) };
+}
+
+// Does the locator take the transform (the table of 0.19)?
+fn uperTakes(form: UForm, k: TKind) bool {
+    return switch (form) {
+        .int_c, .int_semi, .int_un => k == .uint or k == .twos or k == .uscale or k == .sscale,
+        .enum_ => k == .uint,
+        .chars_c, .chars_u => k == .ascii,
+        .octets_c, .octets_u => k == .hex or k == .utf8,
+    };
+}
+
+// The fewest bits that hold `range` (0 for 0).
+fn uperBits(range: u64) usize {
+    return if (range == 0) 0 else 64 - @as(usize, @clz(range));
+}
+
+fn uperRange(lb: i64, ub: i64) u64 {
+    return @intCast(@as(i128, ub) - @as(i128, lb));
+}
 const DMap = std.StringHashMapUnmanaged(MV);
 
 // One line of a sequential pack; a block holds its lines in `body`.
@@ -8678,6 +8825,13 @@ const SNode = struct {
     gbody: ?*SBody = null,
     in_bits: bool = false, // length: counted in bits
     plus: i64 = 0, // length, whole
+    // Version 0.19: a field's UPER locator; `choice <n> ext` (n in `value`,
+    // the alts in `body`); an `alt`'s index in `value`; `group … size
+    // <lb> <ub>`
+    uloc: ?ULoc = null,
+    ext: bool = false,
+    lb: i64 = 0,
+    ub: i64 = 0,
 };
 
 const SKind = struct {
@@ -8739,7 +8893,7 @@ fn isSequentialPack(alloc: std.mem.Allocator, def_text: []const u8) !bool {
     return bits and seq;
 }
 
-const SFrameTag = enum { body, if_, opt, chain, length };
+const SFrameTag = enum { body, if_, opt, chain, length, ext, choice, alt };
 
 // An open block while a sequential pack is read. The message is the first
 // frame; a group body is a `body` frame with `is_group`.
@@ -8836,6 +8990,21 @@ const SParser = struct {
         }
     }
 
+    // A line only a UPER pack takes: refused after the file is read when the
+    // pack has no `encoding uper` (ruling 9 of 0.19).
+    fn uperLine(self: *SParser) void {
+        if (self.p.uper_line == 0) self.p.uper_line = self.lineno;
+    }
+
+    // The open `alt` ends: it joins its `choice`.
+    fn closeAlt(self: *SParser) !void {
+        var f = self.frames.pop();
+        self.names.shrinkRetainingCapacity(f.names_base);
+        var n = f.node;
+        n.body = try f.nodes.toOwnedSlice(self.alloc);
+        try self.top().nodes.append(self.alloc, n);
+    }
+
     fn bitLen(self: *SParser, text: []const u8, what: []const u8, max: usize) !usize {
         const v = parseUnsigned(text) orelse
             return self.err(bd, "{s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ what, text });
@@ -8845,7 +9014,6 @@ const SParser = struct {
 
     fn line(self: *SParser, toks: []const []const u8) anyerror!void {
         const alloc = self.alloc;
-        const p = self.p;
         const kw = toks[0];
         const is = struct {
             fn f(a: []const u8, b: []const u8) bool {
@@ -8863,10 +9031,35 @@ const SParser = struct {
         // header and table directives belong to the pack, not to a block
         // (ruling 24 of 0.8)
         if (self.frames.items.len > 1) {
-            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "map", "typemap" }) |h| {
+            for ([_][]const u8{ "format", "version", "distribution", "source", "uses", "wire", "layout", "bit_order", "armor", "encoding", "map", "typemap" }) |h| {
                 if (is(kw, h)) return self.err(bd, "{s} inside a block", .{kw});
             }
         }
+        // a `choice` holds `alt` lines only (Version 0.19): another line
+        // there is `bad-directive` after the file (ruling 26), and is read
+        // still, so its line checks run and its blocks match their `end`
+        if (self.top().tag == .choice and !is(kw, "alt")) {
+            const e = self.err(bd, "{s} between `choice` and its first `alt` (a choice needs an `alt` line)", .{kw});
+            const msg = self.diag.msg;
+            self.lineBody(toks) catch |e2| {
+                if (e2 == error.OutOfMemory or self.diag.line_err) return e2;
+            };
+            self.diag.msg = msg;
+            return e;
+        }
+        return self.lineBody(toks);
+    }
+
+    // A line after the checks every line has.
+    fn lineBody(self: *SParser, toks: []const []const u8) anyerror!void {
+        const alloc = self.alloc;
+        const p = self.p;
+        const kw = toks[0];
+        const is = struct {
+            fn f(a: []const u8, b: []const u8) bool {
+                return std.mem.eql(u8, a, b);
+            }
+        }.f;
         if (is(kw, "format")) {
             if (toks.len != 2) return self.err(E.@"bad-directive", "format takes one argument", .{});
             p.format = toks[1];
@@ -8898,6 +9091,55 @@ const SParser = struct {
             // armor <hex | sixbit>, checked after the file is read
             if ((toks.len != 2 or p.armor_raw != null or self.kind_seen) and p.armor_bad == 0) p.armor_bad = self.lineno;
             p.armor_raw = toks[toks.len - 1];
+        } else if (is(kw, "encoding")) {
+            // encoding <none | uper>, checked after the file is read
+            if ((toks.len != 2 or p.enc_raw != null or self.kind_seen) and p.enc_bad == 0) p.enc_bad = self.lineno;
+            p.enc_raw = toks[toks.len - 1];
+        } else if (is(kw, "ext")) {
+            if (toks.len != 1) return self.err(bd, "ext takes no argument", .{});
+            self.uperLine();
+            try self.open(.ext, .{ .tag = .ext, .lineno = self.lineno });
+        } else if (is(kw, "choice")) {
+            // the count of arguments is a line check; the values are
+            // checked after the file (rulings 23 and 26 of 0.19). The block
+            // is opened in either case, so its `alt` and `end` lines match.
+            self.uperLine();
+            var pending: ?anyerror = null;
+            var n: i128 = 1;
+            if (toks.len == 3 and !is(toks[2], "ext")) {
+                pending = self.err(bd, "choice takes a number of alternatives and an optional `ext`", .{});
+            } else if (uperCount(toks[1])) |v| {
+                n = v;
+                if (n < 1 or n > 65536) {
+                    pending = self.err(bd, "choice {s}: not 1 to 65536", .{toks[1]});
+                    n = 65536;
+                }
+            } else pending = self.err(bd, "choice {s}: not a number", .{toks[1]});
+            try self.open(.choice, .{ .tag = .choice, .lineno = self.lineno, .value = @intCast(n), .ext = toks.len == 3 });
+            if (pending) |e| return e;
+        } else if (is(kw, "alt")) {
+            if (toks.len != 2) return self.err(bd, "alt takes an index", .{});
+            self.uperLine();
+            if (self.top().tag == .alt) try self.closeAlt();
+            if (self.top().tag != .choice) return self.err(bd, "alt outside a choice", .{});
+            const cf = self.top();
+            // an index out of range or repeated is `bad-directive` after the
+            // file (ruling 26 of 0.19); the `alt` block is opened still
+            var pending: ?anyerror = null;
+            var i: i128 = 0;
+            if (uperCount(toks[1])) |v| {
+                i = v;
+                if (i < 0 or i >= cf.node.value) {
+                    pending = self.err(bd, "alt {s}: not 0 to {d}", .{ toks[1], cf.node.value - 1 });
+                } else for (cf.nodes.items) |a| {
+                    if (a.value == i) {
+                        pending = self.err(bd, "alt {s} is given twice", .{toks[1]});
+                        break;
+                    }
+                }
+            } else pending = self.err(bd, "alt {s}: not an index", .{toks[1]});
+            try self.open(.alt, .{ .tag = .alt, .lineno = self.lineno, .value = if (pending == null) @intCast(i) else std.math.maxInt(u64) });
+            if (pending) |e| return e;
         } else if (is(kw, "word_bytes") or is(kw, "root")) {
             return self.err(bd, "{s} is not used in a sequential pack", .{kw});
         } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
@@ -8980,10 +9222,24 @@ const SParser = struct {
                 else => return self.lineErr(e, "the parameters of transform {s} are not valid", .{toks[3]}),
             };
             if (!locatorFormOk(.bits, true, toks[2], false)) return self.lineErr(E.@"bad-locator", "field {s}: {s} is not a bit length", .{ toks[1], toks[2] });
-            if (!allDigits(toks[2])) return self.err(bd, "field {s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ toks[1], toks[2] });
-            // the transform against the wire and the bit length against the
-            // transform are checked after the file (ruling 5b of 0.11)
-            const blen: usize = @intCast(@min(parseUnsigned(toks[2]) orelse (1 << 20), 1 << 20));
+            // A UPER locator (Version 0.19) or a bit length. A locator that
+            // does not parse is `bad-directive` after the file is read; the
+            // options of the line are still checked first (steps 9 and 10
+            // of ruling 5b of 0.11).
+            var pending: ?anyerror = null;
+            const uloc = parseULoc(toks[2]) catch |e| blk: {
+                pending = self.err(e, "field {s}: the locator {s} is not a UPER locator of 0.19", .{ toks[1], toks[2] });
+                break :blk null;
+            };
+            if (uloc != null) {
+                self.uperLine();
+            } else if (pending == null and !allDigits(toks[2])) {
+                pending = self.err(bd, "field {s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ toks[1], toks[2] });
+            }
+            // the transform against the wire or the UPER locator, and the
+            // bit length against the transform, are checked after the file
+            // (ruling 5b of 0.11)
+            const blen: usize = if (uloc != null or pending != null) 0 else @intCast(@min(parseUnsigned(toks[2]) orelse (1 << 20), 1 << 20));
             var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = self.lineno, .blen = blen };
             var oi: usize = 4;
             while (oi < toks.len) : (oi += 1) {
@@ -9016,13 +9272,17 @@ const SParser = struct {
                 } else return self.lineErr(bd, "unknown field option {s}", .{o});
                 if (again) return self.lineErr(bd, "field option {s} is repeated", .{o});
             }
-            if (blen <= 64) {
+            if (pending) |e| return e;
+            // the values of `absent` are a line check, except above 64 bits
+            // (ruling 4d of 0.11) and on a UPER locator, which takes no
+            // `absent` (ruling 22 of 0.19, checked after the file is read)
+            if (blen <= 64 and uloc == null) {
                 try parseAbsent(alloc, .bits, &ln, false, self.diag);
                 ln.abs_checked = true;
             }
             try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
             if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
-            try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln });
+            try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln, .uloc = uloc });
         } else if (is(kw, "also")) {
             // also <key> [via <table>], directly after a `field` line
             const f = self.top();
@@ -9042,6 +9302,7 @@ const SParser = struct {
             if (toks.len != 3) return self.err(bd, "presence takes a name and a number of bits or `fx`", .{});
             const name = toks[1];
             if (name.len == 0 or name[0] == '!' or std.mem.indexOfScalar(u8, name, '.') != null) return self.err(bd, "presence name {s}", .{name});
+            if (self.top().tag == .ext and self.top().nodes.items.len > 0) return self.err(bd, "presence {s}: inside an `ext` block a presence line is the first line", .{name});
             const depth = self.frames.items.len;
             for (self.names.items) |nm| {
                 if (nm.depth == depth and is(nm.name, name)) return self.err(bd, "presence {s} is declared twice in one block", .{name});
@@ -9128,7 +9389,18 @@ const SParser = struct {
                 n.mode = .more;
             } else if (toks.len == 3 and is(toks[2], "fx")) {
                 n.mode = .fx;
-            } else return self.err(bd, "a group of a sequential pack is `group <list> count <len>`, `while`, `more` or `fx`", .{});
+            } else if (toks.len == 3 and is(toks[2], "size")) {
+                n.mode = .size_u;
+                self.uperLine();
+            } else if (toks.len == 5 and is(toks[2], "size")) {
+                n.mode = .size_c;
+                const lb = uperCount(toks[3]) orelse return self.err(bd, "group size {s}: not a number", .{toks[3]});
+                const ub = uperCount(toks[4]) orelse return self.err(bd, "group size {s}: not a number", .{toks[4]});
+                if (lb > ub or ub >= 65536) return self.err(bd, "group size {s} {s}: not 0 <= lb <= ub < 65536", .{ toks[3], toks[4] });
+                n.lb = @intCast(lb);
+                n.ub = @intCast(ub);
+                self.uperLine();
+            } else return self.err(bd, "a group of a sequential pack is `group <list> count <len>`, `while`, `more`, `fx` or `size [<lb> <ub>]`", .{});
             n.list = toks[1];
             const parent = self.bodyFrame().grp;
             const g = try alloc.create(Group);
@@ -9144,6 +9416,7 @@ const SParser = struct {
         } else if (is(kw, "end")) {
             if (toks.len != 1) return self.err(bd, "end takes no argument", .{});
             if (self.frames.items.len < 2) return self.err(bd, "end with no open block", .{});
+            if (self.top().tag == .alt) try self.closeAlt();
             var f = self.frames.pop();
             self.names.shrinkRetainingCapacity(f.names_base);
             var n = f.node;
@@ -9169,13 +9442,21 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
     for (nodes) |*n| {
         if (n.tag == .field) {
             const t = n.ln.transform;
-            if (kindCategory(t.kind) != .bits) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
-            if (!bitsLenOk(t, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
-            if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
-            if (n.ln.swap and t.kind == .sixbit) return bad(diag, alloc, bd, "line {d}: swap on sixbit", .{n.lineno});
-            if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
-            if (n.ln.swap and (t.kind == .chars or t.kind == .octal)) return bad(diag, alloc, bd, "line {d}: swap with {s}", .{ n.lineno, @tagName(t.kind) });
-            if (!n.ln.abs_checked) try parseAbsent(alloc, .bits, &n.ln, false, diag);
+            if (n.uloc) |u| {
+                // Version 0.19: the transforms a UPER locator takes; `swap`,
+                // `trim` (ruling 10) and `absent` (ruling 22) are refused
+                if (!uperTakes(u.form, t.kind)) return bad(diag, alloc, bd, "line {d}: the locator {s} does not take the transform of {s}", .{ n.lineno, n.ln.locator, n.ln.key });
+                if (n.ln.swap or n.ln.trim) return bad(diag, alloc, bd, "line {d}: swap and trim are not options of a UPER locator", .{n.lineno});
+                if (n.ln.absent_raw != null) return bad(diag, alloc, bd, "line {d}: absent is not an option of a UPER locator", .{n.lineno});
+            } else {
+                if (kindCategory(t.kind) != .bits) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
+                if (!bitsLenOk(t, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
+                if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
+                if (n.ln.swap and t.kind == .sixbit) return bad(diag, alloc, bd, "line {d}: swap on sixbit", .{n.lineno});
+                if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
+                if (n.ln.swap and (t.kind == .chars or t.kind == .octal)) return bad(diag, alloc, bd, "line {d}: swap with {s}", .{ n.lineno, @tagName(t.kind) });
+                if (!n.ln.abs_checked) try parseAbsent(alloc, .bits, &n.ln, false, diag);
+            }
             if (n.ln.via_name.len > 0) {
                 n.ln.via = p.tables.get(n.ln.via_name) orelse
                     return bad(diag, alloc, bd, "line {d}: via {s} names a table with no map line", .{ n.lineno, n.ln.via_name });
@@ -9202,12 +9483,14 @@ fn seqCollectGroups(alloc: std.mem.Allocator, nodes: []const SNode, blocks: *std
     for (nodes) |*n| {
         switch (n.tag) {
             .group => try out.append(alloc, .{ .node = n, .blocks = try alloc.dupe(*const SNode, blocks.items) }),
-            .if_, .opt => {
+            // an `alt` separates as an `if` or `opt` block does (ruling 20
+            // of 0.19)
+            .if_, .opt, .alt => {
                 try blocks.append(alloc, n);
                 try seqCollectGroups(alloc, n.body, blocks, out);
                 _ = blocks.pop();
             },
-            .chain, .length => try seqCollectGroups(alloc, n.body, blocks, out),
+            .chain, .length, .ext, .choice => try seqCollectGroups(alloc, n.body, blocks, out),
             else => {},
         }
     }
@@ -9220,7 +9503,7 @@ fn seqBlockHolds(blocks: []const *const SNode, b: *const SNode) bool {
 
 // Ruling 23 of 0.8: a list is mapped by two groups of one scope (the common
 // lines plus one kind, or one group body likewise) only when the two groups
-// sit in different `if` or `opt` blocks: each has such a block around it, and
+// sit in different `if`, `opt` or `alt` blocks (ruling 20 of 0.19): each has such a block around it, and
 // neither group's block encloses the other's (ruling 33).
 fn seqCheckLists(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerror!void {
     var blocks = std.ArrayListUnmanaged(*const SNode){};
@@ -9238,7 +9521,7 @@ fn seqCheckLists(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerro
                     !seqBlockHolds(g.blocks, f.blocks[f.blocks.len - 1]) and
                     !seqBlockHolds(f.blocks, g.blocks[g.blocks.len - 1]);
                 if (!apart) {
-                    return bad(diag, alloc, E.@"bad-directive", "line {d}: the list {s} is mapped by a second group of its scope (line {d}), and the two do not sit in different `if` or `opt` blocks", .{ g.node.lineno, g.node.list, f.node.lineno });
+                    return bad(diag, alloc, E.@"bad-directive", "line {d}: the list {s} is mapped by a second group of its scope (line {d}), and the two do not sit in different `if`, `opt` or `alt` blocks", .{ g.node.lineno, g.node.list, f.node.lineno });
                 }
             }
         }
@@ -9279,6 +9562,20 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     }
     try sp.closeBody(&sp.frames.items[0]);
     try armorCheck(alloc, p, diag);
+    // `encoding <none | uper>` (Version 0.19)
+    if (p.enc_raw) |raw| {
+        if (p.enc_bad != 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: encoding is repeated, given after a kind, or not given one value", .{p.enc_bad});
+        if (std.mem.eql(u8, raw, "uper")) {
+            if (!p.bit_order_set or !p.msb) return bad(diag, alloc, E.@"bad-directive", "encoding uper needs bit_order msb", .{});
+            if (p.armor) return bad(diag, alloc, E.@"bad-directive", "encoding uper with armor sixbit", .{});
+            p.uper = true;
+        } else if (!std.mem.eql(u8, raw, "none")) {
+            return bad(diag, alloc, E.@"bad-directive", "encoding {s} is not none or uper", .{raw});
+        }
+    }
+    if (!p.uper and p.uper_line != 0) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: a line of a pack with `encoding uper`", .{p.uper_line});
+    }
     // the armored text has no whole-byte length (ruling 3 of 0.14)
     if (p.armor and sp.whole_line != 0) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: length … whole with armor sixbit", .{sp.whole_line});
@@ -9428,6 +9725,7 @@ const SDec = struct {
         const alloc = self.alloc;
         switch (n.tag) {
             .field => {
+                if (n.uloc) |u| return self.uperField(n, u, se);
                 const ln = &n.ln;
                 if (try self.avail(ln.blen, ln.key) == .absent) return;
                 const at = self.pos;
@@ -9538,8 +9836,175 @@ const SDec = struct {
                 if (!self.in_extent) self.soft_end = self.hard_end;
             },
             .group => try self.group(n, se, env.*),
+            .ext => {
+                if (self.atExtentEnd()) return;
+                const bit = try self.rd(1, "ext");
+                try self.block(n.body, se, env.*);
+                if (bit == 1) try self.additions();
+            },
+            .choice => {
+                if (self.atExtentEnd()) return;
+                if (n.ext and try self.rd(1, "choice") == 1) {
+                    // an extension alternative: its index and an open type,
+                    // skipped
+                    if (try self.small("choice") == null) {
+                        return bad(self.diag, alloc, E.@"transform-decode", "choice: the index of an extension alternative does not fit 64 bits", .{});
+                    }
+                    try self.skipOpen("choice");
+                    return;
+                }
+                const i = try self.cwn(0, @intCast(n.value - 1), "choice");
+                for (n.body) |*a| {
+                    if (a.value == @as(u64, @intCast(i))) return self.block(a.body, se, env.*);
+                }
+                return bad(self.diag, alloc, mw, "choice: the index {d} has no `alt`", .{i});
+            },
+            .alt => unreachable, // an `alt` is read by its `choice`
             .fx => unreachable, // an `fx` line is a line of a chain
         }
+    }
+
+    // Version 0.19 ----------------------------------------------------------
+
+    // At or after the end of a `length` extent a line reads as absent.
+    fn atExtentEnd(self: *const SDec) bool {
+        return self.in_extent and self.pos >= self.soft_end;
+    }
+
+    fn rd(self: *SDec, len: usize, what: []const u8) !u64 {
+        try self.need(len, what);
+        return if (len == 0) 0 else self.take(len);
+    }
+
+    // A constrained whole number in lb..ub; a value above ub is
+    // `malformed-wire`.
+    fn cwn(self: *SDec, lb: i64, ub: i64, what: []const u8) !i64 {
+        const range = uperRange(lb, ub);
+        const v = try self.rd(uperBits(range), what);
+        if (v > range) return bad(self.diag, self.alloc, mw, "{s}: the value {d} above the lower bound is beyond the constraint {d}..{d}", .{ what, v, lb, ub });
+        return @intCast(@as(i128, lb) + v);
+    }
+
+    // A length determinant; a fragmented length is `malformed-wire`.
+    fn lenDet(self: *SDec, what: []const u8) !u64 {
+        if (try self.rd(1, what) == 0) return self.rd(7, what);
+        if (try self.rd(1, what) == 0) return self.rd(14, what);
+        return bad(self.diag, self.alloc, mw, "{s}: a fragmented length (first bits 11)", .{what});
+    }
+
+    // `n` octets the input holds, at the cursor: their value when n <= 8,
+    // else skipped and null (`transform-decode` for the caller).
+    fn octetsBE(self: *SDec, n: u64, what: []const u8) !?u64 {
+        try self.need(@intCast(n * 8), what);
+        if (n > 8) {
+            self.pos += @intCast(n * 8);
+            return null;
+        }
+        return self.take(@intCast(n * 8));
+    }
+
+    // A length determinant of an octet count, then that many octets: the
+    // count and the value. A count of 0 is `malformed-wire`.
+    const Octs = struct { n: usize, v: ?u64 };
+    fn intOctets(self: *SDec, what: []const u8) !Octs {
+        const n = try self.lenDet(what);
+        if (n == 0) return bad(self.diag, self.alloc, mw, "{s}: an integer of 0 octets", .{what});
+        return .{ .n = @intCast(n), .v = try self.octetsBE(n, what) };
+    }
+
+    // A normally small non-negative whole number; null when its long form
+    // holds more than 8 octets.
+    fn small(self: *SDec, what: []const u8) !?u64 {
+        if (try self.rd(1, what) == 0) return try self.rd(6, what);
+        const o = try self.intOctets(what);
+        return o.v;
+    }
+
+    fn skipOpen(self: *SDec, what: []const u8) !void {
+        const n = try self.lenDet(what);
+        try self.need(@intCast(n * 8), what);
+        self.pos += @intCast(n * 8);
+    }
+
+    // The extension additions of a SEQUENCE whose extension bit is 1: their
+    // number, the presence bits, an open type for each bit that is 1; all
+    // skipped.
+    fn additions(self: *SDec) !void {
+        const what = "extension additions";
+        const m: u64 = if (try self.rd(1, what) == 0) try self.rd(6, what) + 1 else try self.lenDet(what);
+        try self.need(@intCast(m), what);
+        var ones: usize = 0;
+        for (0..@as(usize, @intCast(m))) |_| ones += @intCast(self.take(1));
+        for (0..ones) |_| try self.skipOpen(what);
+    }
+
+    fn uperField(self: *SDec, n: *const SNode, u: ULoc, se: *SEnt) !void {
+        if (self.atExtentEnd()) return;
+        const alloc = self.alloc;
+        const ln = &n.ln;
+        const what = ln.key;
+        var val: ?MV = null; // null: the value does not decode
+        switch (u.form) {
+            .int_c, .int_semi, .int_un, .enum_ => {
+                var v: ?i128 = null;
+                switch (u.form) {
+                    .int_c, .enum_ => {
+                        if (u.ext and try self.rd(1, what) == 1) {
+                            if (u.form == .int_c) {
+                                const o = try self.intOctets(what);
+                                if (o.v) |x| v = signExtend(x, o.n * 8);
+                            } else if (try self.small(what)) |x| {
+                                v = @as(i128, u.ub) + 1 + x;
+                            }
+                        } else v = try self.cwn(u.lb, u.ub, what);
+                    },
+                    .int_semi => {
+                        const o = try self.intOctets(what);
+                        if (o.v) |x| v = @as(i128, u.lb) + x;
+                    },
+                    else => {
+                        const o = try self.intOctets(what);
+                        if (o.v) |x| v = signExtend(x, o.n * 8);
+                    },
+                }
+                if (v) |x| {
+                    if (x >= std.math.minInt(i64) and x <= std.math.maxInt(i64)) {
+                        const iv: i64 = @intCast(x);
+                        const t = ln.transform;
+                        val = switch (t.kind) {
+                            .uscale, .sscale => MV{ .float = t.factor.mul(@floatFromInt(iv)) + t.offset },
+                            else => MV{ .int = iv },
+                        };
+                    }
+                }
+            },
+            .chars_c, .chars_u => {
+                const cnt: u64 = if (u.form == .chars_c) @intCast(try self.cwn(u.lb, u.ub, what)) else try self.lenDet(what);
+                try self.need(@intCast(cnt * 7), what);
+                const b = try alloc.alloc(u8, @intCast(cnt));
+                for (b) |*c| c.* = @intCast(self.take(7));
+                val = MV{ .str = b };
+            },
+            .octets_c, .octets_u => {
+                const cnt: u64 = if (u.form == .octets_c) @intCast(try self.cwn(u.lb, u.ub, what)) else try self.lenDet(what);
+                try self.need(@intCast(cnt * 8), what);
+                const b = try alloc.alloc(u8, @intCast(cnt));
+                for (b) |*c| c.* = @intCast(self.take(8));
+                if (ln.transform.kind == .hex) {
+                    val = MV{ .str = try hexEncode(alloc, b) };
+                } else if (std.unicode.utf8ValidateSlice(b)) {
+                    val = MV{ .str = b };
+                }
+            },
+        }
+        const mv = val orelse {
+            // forgiven when another line of the key succeeds
+            try se.failed.append(alloc, ln.key);
+            for (n.also.items) |a| try se.failed.append(alloc, a.key);
+            return;
+        };
+        try self.setKey(se, ln.key, ln.via, ln.via_name, ln.kty, mv);
+        for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, mv);
     }
 
     fn group(self: *SDec, n: *const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
@@ -9582,6 +10047,15 @@ const SDec = struct {
                     try self.item(n, &items, env);
                     if (try self.indicator(n.list) == 0) break;
                 }
+            },
+            .size_c, .size_u => {
+                if (self.atExtentEnd()) return;
+                const cnt: u64 = if (n.mode == .size_c) @intCast(try self.cwn(n.lb, n.ub, n.list)) else try self.lenDet(n.list);
+                // a count larger than the bits left, before any item is read
+                if (cnt > self.left()) {
+                    return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
+                }
+                for (0..@as(usize, @intCast(cnt))) |_| try self.item(n, &items, env);
             },
         }
         // two groups of one list both on the wire: the later group's items
@@ -9741,7 +10215,10 @@ const SEnc = struct {
         return null;
     }
 
-    fn keyPresent(n: *const SNode, ent: *const Entity, ds: DS) bool {
+    // In a UPER pack no `default` counts as content (rulings 2 and 19 of
+    // 0.19).
+    fn keyPresent(self: *const SEnc, n: *const SNode, ent: *const Entity, ds_in: DS) bool {
+        const ds = if (self.p.uper) DS{} else ds_in;
         if (!n.ln.suppressed(ent) and (ent.fields.contains(n.ln.key) or ds.get(n.ln.key) != null)) return true;
         for (n.also.items) |a| if (ent.fields.contains(a.key) or ds.get(a.key) != null) return true;
         return false;
@@ -9752,13 +10229,13 @@ const SEnc = struct {
     fn hasContent(self: *SEnc, list: []const SNode, ent: *const Entity, ds: DS) anyerror!bool {
         for (list) |*n| {
             switch (n.tag) {
-                .field => if (keyPresent(n, ent, ds)) return true,
+                .field => if (self.keyPresent(n, ent, ds)) return true,
                 .group => {
                     if (ent.lists.get(n.list)) |items| {
                         if (items.len > 0) return true;
                     }
                 },
-                .if_, .opt, .chain, .length => if (try self.hasContent(n.body, ent, ds)) return true,
+                .if_, .opt, .chain, .length, .ext, .choice, .alt => if (try self.hasContent(n.body, ent, ds)) return true,
                 else => {},
             }
         }
@@ -9789,7 +10266,7 @@ const SEnc = struct {
                     }
                     try self.scan(pres, n.body, ent, ds, bits);
                 },
-                .opt, .chain, .length => try self.scan(pres, n.body, ent, ds, bits),
+                .opt, .chain, .length, .ext, .choice, .alt => try self.scan(pres, n.body, ent, ds, bits),
                 .group => {
                     const items = ent.lists.get(n.list) orelse continue;
                     const b = n.gbody.?;
@@ -9837,6 +10314,7 @@ const SEnc = struct {
         const alloc = self.alloc;
         switch (n.tag) {
             .field => {
+                if (n.uloc) |u| return self.uperField(n, u, ent, ds);
                 const ln = &n.ln;
                 try self.ensure(self.pos + ln.blen);
                 // an absent key writes zero bits, or with `absent` its first
@@ -9942,6 +10420,22 @@ const SEnc = struct {
                         }
                         try self.put(1, 0);
                     },
+                    .size_c, .size_u => {
+                        if (ent.lists.get(n.list)) |its| {
+                            if (n.mode == .size_c) {
+                                if (its.len < n.lb or its.len > n.ub) {
+                                    return bad(self.diag, alloc, te, "group {s}: {d} items, the size is {d}..{d}", .{ n.list, its.len, n.lb, n.ub });
+                                }
+                                try self.ecwn(@intCast(its.len), n.lb, n.ub);
+                            } else try self.elenDet(its.len, n.list);
+                            for (its) |*it| try self.body(b, it, env.*, true);
+                        } else if (n.mode == .size_c) {
+                            // an absent list: lb items with no keys
+                            try self.ecwn(n.lb, n.lb, n.ub);
+                            const empty = Entity.init(alloc);
+                            for (0..@as(usize, @intCast(n.lb))) |_| try self.body(b, &empty, env.*, true);
+                        } else try self.elenDet(0, n.list);
+                    },
                     .more, .fx => {
                         // a list has at least one item on the wire
                         if (items.len == 0) {
@@ -9956,7 +10450,161 @@ const SEnc = struct {
                     },
                 }
             },
+            .ext => {
+                try self.put(1, 0);
+                try self.block(n.body, ent, ds, env.*);
+            },
+            .choice => {
+                // the first `alt` with content, else the first `alt`
+                var sel = &n.body[0];
+                for (n.body) |*a| {
+                    if (try self.hasContent(a.body, ent, ds)) {
+                        sel = a;
+                        break;
+                    }
+                }
+                if (n.ext) try self.put(1, 0);
+                try self.ecwn(@intCast(sel.value), 0, @intCast(n.value - 1));
+                try self.block(sel.body, ent, ds, env.*);
+            },
+            .alt => unreachable, // an `alt` is written by its `choice`
             .fx => unreachable, // an `fx` line is a line of a chain
+        }
+    }
+
+    // Version 0.19 ----------------------------------------------------------
+
+    fn putN(self: *SEnc, len: usize, value: u64) !void {
+        if (len > 0) try self.put(len, value);
+    }
+
+    // A constrained whole number; v is within lb..ub.
+    fn ecwn(self: *SEnc, v: i64, lb: i64, ub: i64) !void {
+        try self.putN(uperBits(uperRange(lb, ub)), uperRange(lb, v));
+    }
+
+    fn elenDet(self: *SEnc, n: usize, what: []const u8) !void {
+        if (n < 128) return self.put(8, n);
+        if (n < 16384) return self.put(16, 0x8000 | @as(u64, n));
+        return bad(self.diag, self.alloc, te, "{s}: a length of {d} needs a fragmented length", .{ what, n });
+    }
+
+    fn minUnsigned(v: u64) usize {
+        var n: usize = 1;
+        while (n < 8 and (v >> @as(u6, @intCast(8 * n))) != 0) n += 1;
+        return n;
+    }
+
+    fn minSigned(v: i64) usize {
+        var n: usize = 1;
+        while (n < 8) : (n += 1) {
+            const half = @as(i64, 1) << @as(u6, @intCast(8 * n - 1));
+            if (v >= -half and v < half) break;
+        }
+        return n;
+    }
+
+    // A length determinant of the octet count, then the octets.
+    fn eoctets(self: *SEnc, v: u64, n: usize, what: []const u8) !void {
+        try self.elenDet(n, what);
+        try self.put(8 * n, v);
+    }
+
+    fn esmall(self: *SEnc, v: u64, what: []const u8) !void {
+        if (v <= 63) return self.put(7, v);
+        try self.put(1, 1);
+        try self.eoctets(v, minUnsigned(v), what);
+    }
+
+    // The integer a value is on an `int:` locator: the value, or
+    // round((x - o) / f).
+    fn uperInt(self: *SEnc, ln: *const Line, mv: MV) !i64 {
+        const t = ln.transform;
+        switch (t.kind) {
+            .uscale, .sscale => {
+                const x = mvFloat(mv) catch return bad(self.diag, self.alloc, te, "field {s}: not a number", .{ln.key});
+                const r = @round(t.factor.div(x - t.offset)); // half away from zero
+                if (!(r >= -9223372036854775808.0 and r < 9223372036854775808.0)) {
+                    return bad(self.diag, self.alloc, te, "field {s}: the value is beyond 64 bits", .{ln.key});
+                }
+                return @intFromFloat(r);
+            },
+            else => {
+                if (mv != .int) return bad(self.diag, self.alloc, te, "field {s}: not an integer", .{ln.key});
+                return mv.int;
+            },
+        }
+    }
+
+    fn uperField(self: *SEnc, n: *const SNode, u: ULoc, ent: *const Entity, ds: DS) !void {
+        const alloc = self.alloc;
+        const ln = &n.ln;
+        const what = ln.key;
+        const mv_opt = try self.fieldValue(n, ent, ds);
+        switch (u.form) {
+            .int_c => {
+                const v = if (mv_opt) |mv| try self.uperInt(ln, mv) else u.lb;
+                if (v >= u.lb and v <= u.ub) {
+                    if (u.ext) try self.put(1, 0);
+                    return self.ecwn(v, u.lb, u.ub);
+                }
+                if (!u.ext) return bad(self.diag, alloc, te, "field {s}: {d} is outside {d}..{d}", .{ what, v, u.lb, u.ub });
+                try self.put(1, 1);
+                try self.eoctets(@bitCast(v), minSigned(v), what);
+            },
+            .int_semi => {
+                // an absent key: lb in one octet
+                const v = if (mv_opt) |mv| try self.uperInt(ln, mv) else u.lb;
+                if (v < u.lb) return bad(self.diag, alloc, te, "field {s}: {d} is below {d}", .{ what, v, u.lb });
+                const d = uperRange(u.lb, v);
+                try self.eoctets(d, minUnsigned(d), what);
+            },
+            .int_un => {
+                const v = if (mv_opt) |mv| try self.uperInt(ln, mv) else 0;
+                try self.eoctets(@bitCast(v), minSigned(v), what);
+            },
+            .enum_ => {
+                const v = if (mv_opt) |mv| try self.uperInt(ln, mv) else 0;
+                if (v < 0) return bad(self.diag, alloc, te, "field {s}: a negative index {d}", .{ what, v });
+                if (v <= u.ub) {
+                    if (u.ext) try self.put(1, 0);
+                    return self.ecwn(v, 0, u.ub);
+                }
+                if (!u.ext) return bad(self.diag, alloc, te, "field {s}: the index {d} is beyond the {d} root values", .{ what, v, u.ub + 1 });
+                try self.put(1, 1);
+                try self.esmall(@intCast(v - u.ub - 1), what);
+            },
+            .chars_c, .chars_u, .octets_c, .octets_u => {
+                const chars = u.form == .chars_c or u.form == .chars_u;
+                var bytes: []const u8 = &.{};
+                if (mv_opt) |mv| {
+                    if (mv != .str) return bad(self.diag, alloc, te, "field {s}: not text", .{what});
+                    if (chars) {
+                        for (mv.str) |c| if (c > 127) return bad(self.diag, alloc, te, "field {s}: a character above 127", .{what});
+                        bytes = mv.str;
+                    } else if (ln.transform.kind == .hex) {
+                        if (mv.str.len % 2 != 0) return bad(self.diag, alloc, te, "field {s}: hex text of odd length", .{what});
+                        const out = try alloc.alloc(u8, mv.str.len / 2);
+                        for (out, 0..) |*b, i| {
+                            const hi = hexVal(mv.str[2 * i]) orelse return bad(self.diag, alloc, te, "field {s}: not hex text", .{what});
+                            const lo = hexVal(mv.str[2 * i + 1]) orelse return bad(self.diag, alloc, te, "field {s}: not hex text", .{what});
+                            b.* = hi * 16 + lo;
+                        }
+                        bytes = out;
+                    } else bytes = mv.str;
+                } else {
+                    // an absent key: lb characters of code 0, lb zero octets
+                    const z = try alloc.alloc(u8, @intCast(u.lb));
+                    @memset(z, 0);
+                    bytes = z;
+                }
+                const constrained = u.form == .chars_c or u.form == .octets_c;
+                if (constrained) {
+                    if (bytes.len < u.lb or bytes.len > u.ub) return bad(self.diag, alloc, te, "field {s}: a count of {d} is outside {d}..{d}", .{ what, bytes.len, u.lb, u.ub });
+                    try self.ecwn(@intCast(bytes.len), u.lb, u.ub);
+                } else try self.elenDet(bytes.len, what);
+                for (bytes) |c| try self.put(if (chars) 7 else 8, c);
+            },
         }
     }
 };
@@ -9968,6 +10616,8 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
     if (p.armor) return armorEncode(alloc, enc.out.items, enc.pos);
     // a message is a whole number of bytes; `length … whole` holds that
     // number plus n
+    // UPER: an encoding of no bits is one octet 00 (X.691 10.1.3)
+    if (p.uper and enc.out.items.len == 0) try enc.out.append(0);
     const nbytes = enc.out.items.len;
     for (enc.wholes.items) |w| {
         const stated: i128 = @as(i128, nbytes) + w.plus;

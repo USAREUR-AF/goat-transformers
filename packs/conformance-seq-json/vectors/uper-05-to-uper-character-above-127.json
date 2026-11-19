@@ -1,0 +1,9 @@
+{
+  "name": "uper-05-to-uper-character-above-127",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"label\":\"é\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): label \"é\" holds a character of code 233, above 127: transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

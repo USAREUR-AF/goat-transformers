@@ -344,6 +344,48 @@ public final class BitsTransform {
         return r.longValue() & mask(len);
     }
 
+    /**
+     * A UPER integer locator (0.19): the integer value {@code v}, not raw bits, to its model value. {@code uint} and
+     * {@code twos} give {@code v}; the scales give {@code v * f + o} (ruling 4 of 0.19: both are signed).
+     */
+    Object decodeInteger(long v) {
+        switch (kind) {
+            case UINT:
+            case TWOS:
+                return v;
+            case USCALE:
+            case SSCALE:
+                return scaleDecode((double) v);
+            default:
+                throw new IllegalStateException(kind.name());
+        }
+    }
+
+    /**
+     * A UPER integer locator: the model value to the integer to write, {@code round((x - o) / f)} for the scales.
+     * Throws IllegalArgumentException when there is no such 64-bit integer; the caller checks the constraint.
+     */
+    long encodeInteger(Object value) {
+        switch (kind) {
+            case UINT:
+            case TWOS:
+                return Transform.asLong(value);
+            case USCALE:
+            case SSCALE: {
+                double x = Transform.asDouble(value);
+                double q = fraction ? (x - offset) * den / num : (x - offset) / factor;
+                double r = Transform.roundHalfAway(q);
+                if (Double.isNaN(r)) throw new IllegalArgumentException("value is not a number");
+                if (!(r >= -9.223372036854775808E18 && r < 9.223372036854775808E18)) {
+                    throw new IllegalArgumentException("value " + Transform.formatOrText(x) + " scales to " + r + ", outside every 64-bit integer");
+                }
+                return (long) r;
+            }
+            default:
+                throw new IllegalStateException(kind.name());
+        }
+    }
+
     /** A model float is always finite: infinity and not-a-number on the wire are a decode failure. */
     static double finite(double d) {
         if (Double.isNaN(d)) throw new IllegalArgumentException("not-a-number on the wire");

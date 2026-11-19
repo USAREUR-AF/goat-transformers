@@ -1,0 +1,9 @@
+{
+  "name": "value-in-if-block-above-ub",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd6002fd2000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: Inner presence 01, then val (0..1000, 10 bits) holds 1001; 1000 is not 2^10 - 1, so 1001 is outside the constraint (Errors). Zero octets follow. Checking codecs on the same input: asn1tools 0.169.0 decodes it; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

@@ -419,6 +419,8 @@ public final class Pack {
     boolean textNmea;
     /** bits wire: {@code armor sixbit}, the message is six-bit armored text instead of hex (engine-spec 0.14). */
     boolean armorSixbit;
+    /** bits wire: {@code encoding uper}, ASN.1 unaligned PER (engine-spec 0.19). */
+    boolean uper;
     /** tlv wire: bytes of a fixed tag, 0 for {@code ber-oid}. */
     int tlvTagSize;
     /** tlv wire: bytes of a fixed length, 0 for {@code ber}. */
@@ -544,20 +546,22 @@ public final class Pack {
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
-            "delimiter", "start", "checksum", "tag", "key", "length", "armor");
+            "delimiter", "start", "checksum", "tag", "key", "length", "armor", "encoding");
 
     /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
             "field", "when", "const", "kind", "requires", "default", "map", "typemap", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
             "delimiter", "start", "checksum", "tag", "key", "armor",
-            "element");   // engine-spec 0.18
+            "element",    // engine-spec 0.18
+            "encoding", "ext", "choice", "alt");   // 0.19: directives on every wire (ruling 21)
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum",
             "armor",    // armor: ruling 13 of 0.14
-            "element"); // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
+            "element",  // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
+            "encoding", "alt");   // 0.19, ruling 23: counted at step 3 of 5b, as armor is
 
     /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
     private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
@@ -584,7 +588,9 @@ public final class Pack {
             case "requires": ok = n >= 1; break;
             case "group": ok = n >= 2; break;
             case "if": ok = n >= 1; break;   // ruling 13 of 0.17: an if with no argument is a line check
-            case "end": ok = n == 0; break;
+            case "end":
+            case "ext": ok = n == 0; break;   // ext: ruling 23 of 0.19
+            case "choice": ok = n == 1 || n == 2; break;   // ruling 23 of 0.19: its values after the file
             // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e
             case "checksum": ok = n == 1 || (n == 2 && args.get(0).equals("sum16")); break;
             default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
@@ -627,7 +633,9 @@ public final class Pack {
             case PROTOBUF: why = loc.equals(".") ? null : ProtobufCodec.checkFieldLocator(loc); break;
             case TLV: return;   // 0.13: a tlv path is checked after the file, and its failures are bad-directive
             case BITS:
-                // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file)
+                // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file);
+                // so does a UPER locator outside a UPER pack (ruling 9 of 0.19, checked after the file)
+                if (Seq.isUperLocator(loc)) return;
                 why = Transform.UNSIGNED.matcher(loc).matches() ? null : BitsCodec.checkLocator(loc);
                 break;
             default:
@@ -661,6 +669,8 @@ public final class Pack {
 
     /** Check 8 for a {@code when} or {@code const} line of a sequential pack: its bit length (ruling 5a of 0.11). */
     private static void lineCheckSeqLocator(String loc, String format, String where) {
+        // a UPER locator on a when or const line is refused after the file (ruling 26 of 0.19)
+        if (Seq.isUperLocator(loc)) return;
         if (loc.indexOf(':') >= 0) {
             // an earlier version's case, bad-directive (ruling 5a)
             throw badDirective(format, loc, where + ": a sequential pack takes a bit length, not a position: " + loc);
@@ -676,6 +686,12 @@ public final class Pack {
     private static void lineCheckSeqField(List<String> args, String format, String where) {
         String loc = args.get(1);
         checkTransformName(args.get(2), format, loc, where);
+        if (Seq.isUperLocator(loc)) {
+            // 0.19: the form of a UPER locator, whether its transform and options fit it, and whether the pack has
+            // encoding uper (ruling 9) are checked after the file; only the option syntax is a line check here
+            optionSyntax(args, format, loc, where);
+            return;
+        }
         lineCheckSeqLocator(loc, format, where);
         String absent = optionSyntax(args, format, loc, where);
         if (absent == null) return;
@@ -731,7 +747,7 @@ public final class Pack {
         if (absent == null) return;
         switch (wire) {
             case BITS: {
-                if (!loc.contains(":")) return;              // refused after the file
+                if (!loc.contains(":") || Seq.isUperLocator(loc)) return;   // refused after the file
                 int len = BitsCodec.parseLoc(loc)[2];
                 if (len > 64) return;                         // ruling 4d: the length check after the file reports it
                 Sentinels.integers(absent, len, format, loc, where);
@@ -792,6 +808,12 @@ public final class Pack {
         // armor lines {value, line} (each checked once the file is read, ruling 10 of 0.10), the first kind line, and
         // the first `length ... whole` line of a sequential pack
         List<String[]> armorDirs = new ArrayList<>();
+        // encoding lines {value, line, after a kind} (0.19), checked once the file is read; in a fixed-layout bits
+        // pack, the first UPER line and the ext and choice blocks still open
+        List<String[]> encodingDirs = new ArrayList<>();
+        int fixedUperLine = 0;
+        // for each such block, the number of group and gate blocks open when it began: an `end` closes it only then
+        java.util.ArrayDeque<Integer> fixedUperOpen = new java.util.ArrayDeque<>();
         int firstKindLine = 0, wholeLine = 0;
         // text wire directives: {value, line}, or null when not given
         String[] delimiterDir = null, startDir = null, checksumDir = null;
@@ -842,7 +864,17 @@ public final class Pack {
                 break;
             }
         }
-        Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs) : null;
+        // A line `encoding uper` (0.19): the UPER lines of a sequential pack are then checked as the file is read.
+        boolean uperHint = false;
+        for (String l : lines) {
+            if (!l.trim().startsWith("encoding")) continue;
+            try {
+                if (tokenize(l, source).equals(List.of("encoding", "uper"))) uperHint = true;
+            } catch (GtException ex) {
+                // reported with its line number when the file is read
+            }
+        }
+        Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs, uperHint) : null;
         String layout = null;
         boolean listedSeen = false;   // a line that must follow the wire line, other than layout, has been read
         Set<String> headers = new HashSet<>();   // the header lines read so far, for check 5
@@ -914,6 +946,14 @@ public final class Pack {
                 if (kw.equals("word_bytes")) {
                     throw badDirective(format, null, where + ": word_bytes is not used in a sequential pack");
                 }
+            } else if (Seq.UPER_ONLY.contains(kw) || (kw.equals("end") && !fixedUperOpen.isEmpty()
+                    && fixedUperOpen.peek() == open.size())) {
+                // a UPER line outside a sequential pack, on any wire: bad-directive once the file is read (rulings 9
+                // and 21 of 0.19)
+                if (fixedUperLine == 0) fixedUperLine = ln;
+                if (kw.equals("ext") || kw.equals("choice")) fixedUperOpen.push(open.size());
+                if (kw.equals("end")) fixedUperOpen.pop();
+                continue;
             } else if (Seq.SEQUENTIAL_ONLY.contains(kw) && !kw.equals("length") && !kw.equals("if")) {
                 // `length` is also the tlv directive (0.13), and `if` the gate block of a fixed layout (0.17)
                 throw badDirective(format, null, where + ": " + kw + " is a line of a pack with layout sequential");
@@ -1019,6 +1059,10 @@ public final class Pack {
                         throw badDirective(format, null, where + ": layout must be fixed or sequential, got \"" + args.get(0) + "\"");
                     }
                     layout = args.get(0);
+                    break;
+                case "encoding":
+                    encodingDirs.add(new String[]{args.size() == 1 ? args.get(0) : null, Integer.toString(ln),
+                            firstKindLine != 0 ? "after" : null});
                     break;
                 case "armor":
                     if (!open.isEmpty()) throw badDirective(format, null, where + ": armor is not allowed inside a group");
@@ -1159,6 +1203,9 @@ public final class Pack {
             throw badDirective(format, g.locator, source + ":" + g.line + ": " + (g.gate ? "if " + g.locator : "group " + g.key) + " has no end");
         }
         // Checks that need the whole file run here, before missing-distribution (ruling 25 of 0.5).
+        if (fixedUperLine != 0) {
+            throw badDirective(format, null, source + ":" + fixedUperLine + ": ext, choice and alt are lines of a pack with encoding uper (wire bits, layout sequential)");
+        }
         Seq.Body seqRoot = null;
         if (seq != null) {
             if (wire != null && wire != Wire.BITS) {
@@ -1203,6 +1250,28 @@ public final class Pack {
                 throw badDirective(format, null, source + ":" + wholeLine + ": length ... whole in a pack with armor sixbit: the armored text has no whole-byte length");
             }
         }
+        // encoding (0.19): on the bits wire only, at most once, before the first kind, none or uper; uper needs
+        // layout sequential and bit_order msb and refuses armor sixbit. Then the UPER lines need encoding uper.
+        boolean uper = false;
+        for (int k = 0; k < encodingDirs.size(); k++) {
+            String[] d = encodingDirs.get(k);
+            String at = source + ":" + d[1] + ": ";
+            if (wire != null && wire != Wire.BITS) throw badDirective(format, null, at + "encoding is for the bits wire only");
+            if (k > 0) throw badDirective(format, null, at + "encoding given twice");
+            if (d[2] != null) throw badDirective(format, null, at + "encoding after the first kind line");
+            if (d[0] == null || (!d[0].equals("none") && !d[0].equals("uper"))) {
+                throw badDirective(format, null, at + "encoding takes none or uper");
+            }
+            uper = d[0].equals("uper");
+            if (uper && seq == null) throw badDirective(format, null, at + "encoding uper needs layout sequential");
+            if (uper && !"msb".equals(bitOrder)) throw badDirective(format, null, at + "encoding uper needs bit_order msb");
+            if (uper && armorSixbit) throw badDirective(format, null, at + "encoding uper and armor sixbit in one pack");
+        }
+        if (seq != null && seq.uperLine != 0 && !uper) {
+            throw badDirective(format, null, source + ":" + seq.uperLine
+                    + ": UPER locators, ext, choice, alt and group ... size are lines of a pack with encoding uper");
+        }
+        if (seq != null && seq.uperWhy != null) throw badDirective(format, null, seq.uperWhy);
         // Checks that need the wire run after the file is read, wherever the wire line stands (ruling 10 of 0.10).
         if (wire != null && wire != Wire.TEXT) {
             for (String[] d : new String[][]{delimiterDir, startDir, checksumDir}) {
@@ -1315,6 +1384,7 @@ public final class Pack {
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
         pack.armorSixbit = armorSixbit;
+        pack.uper = uper;
         if (wire == Wire.TEXT) {
             String d = delimiterDir == null ? "," : delimiterDir[0];
             pack.textNoDelimiter = d.equals("none");
@@ -1748,6 +1818,9 @@ public final class Pack {
             if (s.locator.matches("\\d+")) {
                 throw badDirective(format, s.locator, where + ": a bit length for a locator is for a pack with layout sequential");
             }
+            if (Seq.isUperLocator(s.locator)) {
+                throw badDirective(format, s.locator, where + ": a UPER locator is for a pack with encoding uper");
+            }
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);
             why = BitsCodec.checkLocator(s.locator);
@@ -1892,6 +1965,9 @@ public final class Pack {
             return w;
         }
         if (wire == Wire.BITS) {
+            if (Seq.isUperLocator(s.locator)) {
+                throw badDirective(format, s.locator, where + ": a UPER locator is for a field line of a pack with encoding uper");
+            }
             String why = BitsCodec.checkLocator(s.locator);
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             int len = BitsCodec.parseLoc(s.locator)[2];

@@ -98,6 +98,7 @@ type Field struct {
 	ttf     *textTf // text wire transform
 	xtf     *tlvTf  // tlv wire transform
 	btf     *bitsTransform
+	uper    *uperLoc // a UPER locator (spec 0.19), nil for a bit length
 	pbf     *pbTransform
 	jbool   bool // json `bool`
 	yields  Kind // the type the transform yields
@@ -190,6 +191,8 @@ type Group struct {
 	countN    int      // bits: the fixed count
 	seqMode   int      // sequential layouts: how the items are delimited (seqCount, seqWhile, seqMore, seqFx)
 	countBits int      // sequential layouts: the length of the count field of a `count` group
+	sizeLB    int      // UPER `group … size <lb> <ub>`: the size bounds
+	sizeUB    int
 	sbody     *seqBody // sequential layouts: the lines of one item
 	dots      []*Field // the `.` fields of the body, in line order
 	packed    bool     // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
@@ -297,6 +300,10 @@ type Pack struct {
 	// bits wire, `armor` (spec 0.14)
 	sixbitArmor bool // `armor sixbit`: the input and output are six-bit text
 	wholeLine   int  // the line of the first `length … whole`, 0 for none
+
+	// bits wire, `encoding uper` (spec 0.19)
+	uper     bool
+	uperLine int // the first `ext`, `choice`, `alt` or `group … size` line, 0 for none
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -507,11 +514,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// `armor` lines, checked after the file is read (spec 0.14).
 	var armorLines []int
 	armorValue, armorAfterKind, firstKind := "", 0, 0
+	// `encoding` lines, checked after the file is read (spec 0.19).
+	var encLines []int
+	encValue, encAfterKind := "", 0
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
-		"element": 1}
+		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -567,6 +577,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		if w < 0 && len(args) < -w {
 			return nil, perr(ErrBadDirective, n, "", "%s takes at least %d argument(s), got %d", kw, -w, len(args))
 		}
+		if kw == "choice" && len(args) > 2 {
+			// `choice <n> [ext]` (spec 0.19): one or two arguments.
+			return nil, perr(ErrBadDirective, n, "", "choice takes 1 or 2 arguments, got %d", len(args))
+		}
 		if w >= 0 && len(args) != w {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
 		}
@@ -596,6 +610,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if len(sp.stack) > 1 {
 				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a block (opened on line %d)", kw, sp.top().line)
 			}
+		} else if uperDirective[kw] {
+			// `ext`, `choice` and `alt` outside a sequential pack: directives
+			// of the language on every wire, bad-directive outside a UPER pack
+			// after the file is read (0.19 ruling 21).
+			if late == nil {
+				late = perr(ErrBadDirective, n, "", "%s is valid only in a pack with encoding uper", kw)
+			}
+			continue
 		} else if seqOnly[kw] && kw != "if" && !(kw == "length" && len(args) == 1) {
 			// `if` outside a sequential layout opens a gate block (0.17);
 			// `length` with one argument is a tlv directive (0.13).
@@ -625,6 +647,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 		}
 		switch kw {
+		case "encoding":
+			encLines = append(encLines, n)
+			if len(encLines) == 1 {
+				encValue = args[0]
+				if firstKind != 0 {
+					encAfterKind = n
+				}
+			}
 		case "armor":
 			armorLines = append(armorLines, n)
 			// Its one argument was counted as the line was read (ruling 13
@@ -973,6 +1003,33 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		p.sixbitArmor = armorValue == "sixbit"
 	}
+	// `encoding` (spec 0.19): on the bits wire, at most once, before the
+	// first kind, none or uper; uper needs layout sequential and bit_order
+	// msb, and refuses armor sixbit (rulings 11 and 18).
+	if len(encLines) > 0 {
+		first := encLines[0]
+		switch {
+		case len(encLines) > 1:
+			return nil, perr(ErrBadDirective, encLines[1], "", "encoding repeated (first on line %d)", first)
+		case p.Wire != WireBits:
+			return nil, perr(ErrBadDirective, first, "", "encoding is valid only on wire bits")
+		case encAfterKind != 0:
+			return nil, perr(ErrBadDirective, first, "", "encoding stands before the first kind (line %d)", firstKind)
+		case encValue != "none" && encValue != "uper":
+			return nil, perr(ErrBadDirective, first, "", "encoding must be none or uper, got %q", encValue)
+		case encValue == "uper" && !p.seq:
+			return nil, perr(ErrBadDirective, first, "", "encoding uper needs layout sequential")
+		case encValue == "uper" && p.BitOrder != "msb":
+			return nil, perr(ErrBadDirective, first, "", "encoding uper needs bit_order msb")
+		case encValue == "uper" && p.sixbitArmor:
+			return nil, perr(ErrBadDirective, first, "", "encoding uper is not valid with armor sixbit")
+		}
+		p.uper = encValue == "uper"
+	}
+	// ext, choice, alt and group … size outside a UPER pack (0.19 ruling 9).
+	if !p.uper && p.uperLine != 0 {
+		return nil, perr(ErrBadDirective, p.uperLine, "", "ext, choice, alt and group … size are valid only in a pack with encoding uper")
+	}
 	hasType := false
 	if g, prev := p.listMappedTwice(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "list %s is already mapped by the group on line %d of the same scope", g.List, prev.Line)
@@ -1026,6 +1083,32 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 				var loc locator
 				var err error
+				if p.Wire == WireBits && isUperLocator(f.Locator) {
+					// A UPER locator (spec 0.19), valid only in a UPER pack
+					// (ruling 9).
+					if !p.uper {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator %s is valid only in a pack with encoding uper", f.Locator)
+					}
+					// `absent` on a UPER locator: its bits depend on the value,
+					// so 0.9's raw value is not stated (0.19 ruling 22).
+					if f.Absent != nil {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "field option `absent` is not valid on the UPER locator %s", f.Locator)
+					}
+					if kind, err := resolveUperField(f); err != nil {
+						if err := note(perr(kind, f.Line, f.Locator, "%v", err)); err != nil {
+							return nil, err
+						}
+						continue
+					}
+					f.yields, _ = transformYields(f.Transform)
+					if f.Via != "" {
+						f.table = p.tables[f.Via]
+						if f.table == nil {
+							return nil, perr(ErrBadDirective, f.Line, f.Locator, "`via %s` names a table with no map line", f.Via)
+						}
+					}
+					continue
+				}
 				if p.seq {
 					// A sequential locator is a bit length; a positional locator
 					// is bad-directive.

@@ -1,0 +1,8 @@
+{
+  "name": "wire-uper-01-every-construct-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey qty int -\nkey c1 int -\nkey c2 int -\nkey val int -\nkey a float -\nkey ratio float -\nkey label string -\nkey tag string -\nkey s1 string -\nkey s2 string -\nlist items \"a list\"\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.19.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\nencoding uper\nfield probe.n int:0:255 uint\nalso probe.qty\nfield probe.x int:-5:5:ext twos\nfield probe.y int:-5: twos\nfield probe.z int:: twos\nfield probe.a int:-9223372036854775808:9223372036854775807 sscale:1/4\nfield probe.w enum:65536:ext uint\nfield probe.c1 1 uint\nfield probe.label chars:8:8 ascii\nfield probe.tag chars: ascii\nfield probe.s1 octets:0:65535 hex\nfield probe.s2 octets: utf8\npad 3\next\n  presence p 2\n  if p.1\n    field probe.c2 int:0:15 uint\n  end\n  if p.2\n    field probe.val int:0:1000 uint\n  end\nend\nchoice 65536 ext\n  alt 0\n    field probe.ratio int:0:3 uscale:1\n  alt 65535\nend\ngroup probe.items size 0 65535\n  field probe.ratio int:0:1023 uscale:1\nend\ngroup probe.names size\n  field probe.label chars: ascii\nend\n"
+}

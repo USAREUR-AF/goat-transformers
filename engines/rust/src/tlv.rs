@@ -478,7 +478,7 @@ fn when_holds(p: &Pack, b: &[u8], top: &[Item], w: &WhenDef) -> bool {
 }
 
 /// A value's bytes -> model value.
-fn decode_value(t: &Transform, v: &[u8]) -> Result<Value, Error> {
+pub(crate) fn decode_value(t: &Transform, v: &[u8]) -> Result<Value, Error> {
     match t {
         Transform::Utf8 => match std::str::from_utf8(v) {
             Ok(s) => Ok(Value::Str(s.to_string())),
@@ -680,7 +680,7 @@ fn be_bytes(v: u64, n: u8) -> Vec<u8> {
 }
 
 /// A model value -> the value's bytes.
-fn encode_value(t: &Transform, v: &Value, n: Option<u8>) -> Result<Vec<u8>, Error> {
+pub(crate) fn encode_value(t: &Transform, v: &Value, n: Option<u8>) -> Result<Vec<u8>, Error> {
     let n = n.unwrap_or(8);
     let bits = n as u32 * 8;
     match (t, v) {

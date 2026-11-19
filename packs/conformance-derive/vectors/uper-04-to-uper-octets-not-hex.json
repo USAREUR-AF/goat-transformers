@@ -1,0 +1,9 @@
+{
+  "name": "uper-04-to-uper-octets-not-hex",
+  "from": "conformance-derive",
+  "to": "conformance-uper",
+  "input": "{\"s1\":\"abc\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): s1 \"abc\" has an odd number of hex digits: transform-encode (hex as on tlv, 0.13). Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

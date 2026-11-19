@@ -1,0 +1,25 @@
+{
+  "name": "x-negative-extension-form-z-minus-128",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "016b49d20101ff01010180243c1aa0006000",
+  "expect": "016b49d20101ff01010180243c1aa0006000",
+  "model": {
+    "probe.n": "1",
+    "lat": "0",
+    "probe.x": "-1",
+    "probe.y": "-4",
+    "probe.z": "-128",
+    "probe.w": "1",
+    "probe.qty": "1",
+    "probe.c1": "0",
+    "probe.label": "x",
+    "probe.s1": "aa",
+    "probe.s2": "",
+    "probe.a": "3",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): x -1 is outside the root: bit 1, length 1, ff; y -4 is 1 above lb: one octet 01; z -128 is one octet 80 (fewest octets of two's complement); presence 00. 141 bits, padded with 3 zero bits to 18 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

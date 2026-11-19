@@ -1,0 +1,9 @@
+{
+  "name": "lat-above-ub",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "00fffffffe00200020000000000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: n 0, then the 31 bits of lat all 1 (2147483647 above lb), above ub - lb = 1800000001; 2^31 - 1 is not ub - lb, so the value lies outside its constraint (Errors). Every other line is well formed (x 0, y -5, z 0, then zero bits). Checking codecs on the same input: asn1tools 0.169.0 decodes it; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

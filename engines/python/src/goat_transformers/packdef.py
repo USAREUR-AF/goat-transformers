@@ -13,7 +13,7 @@ from .transforms import (
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
     build_v15_text, v15_family,
 )
-from . import wire_text, wire_tlv
+from . import uper, wire_text, wire_tlv
 
 WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
 BIT_ORDERS = ("lsb", "msb")
@@ -27,6 +27,9 @@ PACK_DIRECTIVES = frozenset((
     "tag", "key",  # the `tlv` wire (0.13)
     "armor",  # the `bits` wire (0.14)
     "element",  # the `xml` wire (0.18)
+    # 0.19 (ruling 21): directives of the language on every wire, `bad-directive`
+    # outside a UPER pack, checked after the file is read
+    "encoding", "ext", "choice", "alt",
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -50,6 +53,9 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "armor": (1, 1),
     # 0.18: `element <path>`, one path
     "element": (1, 1),
+    # 0.19: `encoding <none | uper>`, `ext`, `choice <n> [ext]`, `alt <i>`;
+    # their counts are checked as the line is read, as for `armor`
+    "encoding": (1, 1), "ext": (0, 0), "choice": (1, 2), "alt": (1, 1),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -377,6 +383,7 @@ class Pack:
     tlv_checksum: int = None   # tlv: the tag of the `sum16` checksum item
     armor: str = "hex"         # bits: `hex` or `sixbit` (0.14)
     gates: list = dc_field(default_factory=list)     # the common gate blocks, at any depth, in line order (0.17)
+    uper: bool = False         # bits, sequential: `encoding uper` (0.19)
     _plans: dict = dc_field(default_factory=dict, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
     _kinds_by_root: dict = dc_field(default_factory=dict, repr=False)
@@ -848,6 +855,16 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
         if loc[0] == "p" and loc[1] == loc[2]:
             raise _LineBad("a pair whose two indexes are equal, at %s" % where, format=name, locator=locator)
     elif wire == "bits":
+        if locator.startswith(uper.PREFIXES):
+            # 0.19 ruling 9: a UPER locator outside a UPER pack is `bad-directive`,
+            # checked after the file is read, not a locator form of step 8. The
+            # field options are still a line check (step 9).
+            _parse_options(options, name, locator, where)
+            deferred.append((lineno, BadDirective(
+                "a UPER locator (%r) outside a UPER pack ('layout sequential', 'encoding uper'), at %s"
+                % (locator, where), format=name, locator=locator,
+            )))
+            return None
         loc = _fixed_bits_locator(name, locator, where)
     elif _item_locator(wire, name, locator, in_group, where):
         loc = ()
@@ -1387,6 +1404,40 @@ def check_armor(lines, wire, bit_order, deferred, source, fmt):
     return value
 
 
+def check_encoding(lines, wire, sequential, bit_order, armor, deferred, source, fmt):
+    """`encoding <none | uper>` (0.19), after the file is read (its one argument
+    is a line check, `line_head`): on the `bits` wire only, whatever its value
+    (ruling 18); at most once; before the first `kind`; `none` or `uper`;
+    `uper` needs `layout sequential` and `bit_order msb`, and not `armor
+    sixbit` (ruling 11). `lines` holds (value, line number, after a kind).
+    Each failure is appended to `deferred`. -> the encoding. Shared by the
+    sequential layout."""
+    value = "none"
+    for k, (arg, lineno, after_kind) in enumerate(lines):
+        where = "%s:%d" % (source, lineno)
+
+        def bad(msg):
+            deferred.append((lineno, BadDirective("%s, at %s" % (msg, where), format=fmt, locator="encoding")))
+
+        if wire != "bits":
+            bad("'encoding' is a directive of the bits wire")
+        elif k > 0:
+            bad("'encoding' is given twice")
+        elif after_kind:
+            bad("'encoding' after the first 'kind'")
+        elif arg not in ("none", "uper"):
+            bad("encoding must be none or uper, got %r" % arg)
+        elif arg == "uper" and not sequential:
+            bad("'encoding uper' needs 'layout sequential'")
+        elif arg == "uper" and bit_order != "msb":
+            bad("'encoding uper' needs 'bit_order msb'")
+        elif arg == "uper" and armor == "sixbit":
+            bad("'encoding uper' with 'armor sixbit'")
+        else:
+            value = arg
+    return value
+
+
 def _find_wire(text, directive="wire"):
     """The value of the first `wire` (or other) line of two tokens, read
     without checking the file: what chooses the parser of a sequential pack."""
@@ -1537,6 +1588,7 @@ def parse_pack_text(text, *, source="pack.def"):
     text_dirs = {}       # text (0.10): `delimiter`, `start`, `checksum` -> (value, lineno)
     tlv_lines = []       # tlv (0.13): `tag`, `length`, `key`, `checksum sum16 <tag>` as (kw, args, lineno, after a kind, in a group)
     armor = []           # bits (0.14): the `armor` lines, checked after the file (`check_armor`)
+    encoding = []        # 0.19: the `encoding` lines, checked after the file (`check_encoding`)
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line:
@@ -1544,7 +1596,9 @@ def parse_pack_text(text, *, source="pack.def"):
         if gstack:
             proto = None  # a line of a gate block: read in full below (lines of a block are not shared)
         elif stack:
-            if line == "end":
+            # `end` stands after the `wire` line (5b of 0.11); a block `ext` or
+            # `choice` opened before it (ruling 25 of 0.19) ends through `line_head`
+            if line == "end" and wire is not None:
                 g = stack.pop()
                 if wire == "protobuf":
                     _check_scalar_body(g, seen.get("format"), "%s:%d" % (source, lineno), deferred)
@@ -1580,6 +1634,25 @@ def parse_pack_text(text, *, source="pack.def"):
             # a line of the tlv wire (0.13): its form, its place and its wire
             # are checked after the file is read
             tlv_lines.append((kw, args, lineno, current is not None, bool(stack)))
+            continue
+        if kw in ("ext", "choice", "alt") or (
+                wire == "bits" and kw == "group" and args[1] == "size"):
+            # 0.19 rulings 9 and 21: a line of a UPER pack, which a pack read here
+            # (not a sequential `bits` pack) is not: `bad-directive` after the file
+            # is read, on every wire for `ext`, `choice` and `alt`, on `bits` for
+            # `group ... size`. Its block is still opened, so that its `end`
+            # closes it; its lines are read, line checks included, and kept nowhere.
+            deferred.append((lineno, BadDirective(
+                "%r is a line of a UPER pack ('layout sequential', 'encoding uper'), at %s" % (kw, where),
+                format=fmt,
+            )))
+            if kw != "alt":
+                if gstack:
+                    # inside a 0.17 gate block the block it opens nests in the
+                    # gate, so that its `end` closes it and not the gate
+                    gstack.append(Gate("", (0, 0, 1), (0,), False, gstack[-1], lineno))
+                else:
+                    stack.append(Group(args[0] if args else "", kw, (), lineno))
             continue
         try:
             if kw in _SEQ_ONLY:
@@ -1632,6 +1705,8 @@ def parse_pack_text(text, *, source="pack.def"):
                 _text_directive(kw, args[0], text_dirs, current, fmt, lineno, where)
             elif kw == "armor":
                 armor_line(args, armor, current is not None, lineno)
+            elif kw == "encoding":  # 0.19: checked after the file is read (`check_encoding`)
+                encoding.append((args[0], lineno, current is not None))
             elif kw == "root":
                 if current is None:
                     if root is not None:
@@ -1786,6 +1861,7 @@ def parse_pack_text(text, *, source="pack.def"):
     elif group_refs and wire in ("xml", "json", "protobuf", "geojson"):
         _check_group_paths(wire, common, kinds, deferred, source, name)
     armor_value = check_armor(armor, wire, once.get("bit_order", (None,))[0], deferred, source, name)
+    check_encoding(encoding, wire, False, once.get("bit_order", (None,))[0], armor_value, deferred, source, name)
     text_values = {k: v for k, (v, _) in text_dirs.items()}
     delimiter = text_values.get("delimiter", ",")
     if delimiter == "none":

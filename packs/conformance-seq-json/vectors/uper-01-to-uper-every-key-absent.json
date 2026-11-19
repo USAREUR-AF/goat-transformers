@@ -1,0 +1,9 @@
+{
+  "name": "uper-01-to-uper-every-key-absent",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{}",
+  "expect": "000000000000200020000000000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Every key absent, written per ruling 1: n 0, lat lb (31 zero bits), x lb (bit 0, 000), y lb in one octet (length 1, 00), z 0 in one octet (length 1, 00), w index 0, qty index 0, c1 0, label of lb = 1 character of code 0, s1 of 0 octets, s2 length 0; presence 00; no alt with content, so alt 0 with a written lb 0; items absent with lb 0 is the empty list (count 0); names absent is length 0. 120 bits, padded to 15 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

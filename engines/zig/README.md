@@ -23,8 +23,9 @@ other bits hold a value (gate blocks `if [!]<locator> <values>` … `end` on the
 fixed `bits` layout, spec Version 0.17), writes a line only when another key
 is held (`with`), builds and reads token lists (`tokens`, `has_token`,
 `text_if`), writes a time without a zero fraction (`iso8601_short`) and empty
-`xml` elements (`element`, spec Version 0.18), and converts between formats
-via the shared model.
+`xml` elements (`element`, spec Version 0.18), reads and writes ASN.1
+unaligned PER (`encoding uper`, spec Version 0.19), and converts between
+formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -213,6 +214,20 @@ prefix is not a submessage does not hold; two groups of one list are allowed
 only when neither group's block encloses the other's, and decode keeps the
 later group's items; a group whose first indicator bit lies at or after the
 end of the extent gives an absent list.
+
+## ASN.1 unaligned PER (spec Version 0.19)
+
+A sequential pack with `encoding uper` takes the locators `int:<lb>:<ub>[:ext]`,
+`int:<lb>:`, `int::`, `enum:<n>[:ext]`, `chars:[<lb>:<ub>]` and
+`octets:[<lb>:<ub>]`, the `ext`, `choice <n> [ext]` / `alt <i>` blocks and
+`group <list> size [<lb> <ub>]`. `encoding`, and every line only a UPER pack
+takes, is checked after the file is read. Bounds and values are computed in
+`i128` or as unsigned 64-bit differences, so no constraint can overflow.
+Decode checks each length, count and index against the bits left before
+reading what it counts. Extension additions and extension alternatives are
+skipped. An integer of more than 8 octets is skipped and fails as its key
+(`transform-decode`). In a UPER pack no `default` counts as content. Encode
+pads to a whole octet and writes `00` for an empty encoding.
 
 ## The `text` wire (spec Version 0.10)
 

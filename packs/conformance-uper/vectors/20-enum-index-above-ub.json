@@ -1,0 +1,9 @@
+{
+  "name": "enum-index-above-ub",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "07000000000020002002800000000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: qty (ENUMERATED with 5 root values, no extension) holds index 5 in its 3 bits; 0..4 is not a power of two minus one wide, so 5 is outside the constraint (Errors). Zero octets follow. Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

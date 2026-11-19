@@ -30,6 +30,113 @@ final class UnitTests {
         strictRulings(packs);
         tlv();
         armor();
+        uper();
+    }
+
+    /** Version 0.19, ASN.1 unaligned PER: the points no shared vector pins. */
+    static void uper() {
+        String body = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
+        String head = body + "encoding uper\n";
+        Engine e = probeEngine(
+                "format one\n" + head + "field probe.x int:5:5 uint\n",
+                "format wide\n" + head + "field probe.x int:-9223372036854775808:9223372036854775807 twos\n",
+                "format semi\n" + head + "field probe.x int:-9223372036854775808: twos\n",
+                "format top\n" + head + "field probe.x int:9223372036854775807: uint\n",
+                "format free\n" + head + "field probe.x int:: twos\n",
+                "format xext\n" + head + "field probe.x int:9223372036854775806:9223372036854775807:ext twos\n",
+                "format oct\n" + head + "field probe.s octets: hex\n",
+                "format ch\n" + head + "choice 3\n alt 0\n alt 2\n  field probe.x int:0:7 uint\nend\n",
+                "format nul\n" + head + "choice 2\n alt 0\n alt 1\n  field probe.x int:0:7 uint\nend\n",
+                "format ex\n" + head + "ext\n field probe.x int:0:1 uint\nend\n",
+                "format dflt\n" + head + "ext\n presence p 1\n if p.1\n  field probe.x int:0:7 uint\n end\nend\n"
+                        + "field probe.y int:0:7 uint\ndefault probe.x 3\ndefault probe.y 3\n",
+                "format grp\n" + head + "group probe.recs size 2 3\n field probe.x int:0:1 uint\nend\n",
+                "format en\n" + head + "field probe.x enum:1:ext uint\n");
+        Entity none = new Entity();
+        Entity x = new Entity();
+        // An encoding of no bits is one octet 00; a 0-bit field decodes at the end of the input.
+        eq("uper: no bits encode as 00", "00", e.encode("one", none));
+        check("uper: a 0-bit integer decodes from no input", Long.valueOf(5).equals(e.decode("one", "").get("probe.x")), "");
+        // Ruling 4: bounds at the ends of 64 bits, without overflow.
+        x.put("probe.x", Long.MIN_VALUE);
+        eq("uper: int at -2^63 over the full range", "0000000000000000", e.encode("wide", x));
+        eq("uper: semi-constrained from -2^63, value -2^63", "0100", e.encode("semi", x));
+        eq("uper: unconstrained -2^63", "088000000000000000", e.encode("free", x));
+        x.put("probe.x", Long.MAX_VALUE);
+        eq("uper: int at 2^63-1 over the full range", "ffffffffffffffff", e.encode("wide", x));
+        eq("uper: semi-constrained from -2^63, value 2^63-1", "08ffffffffffffffff", e.encode("semi", x));
+        eq("uper: semi-constrained round trip", "08ffffffffffffffff", e.convert("semi", "semi", "08ffffffffffffffff"));
+        eq("uper: extensible int at the top of 64 bits, root", "40", e.encode("xext", x));
+        x.put("probe.x", 0L);
+        eq("uper: extensible int outside the root, fewest octets", "808000", e.encode("xext", x));
+        errorKind("uper: semi-constrained value beyond 2^63-1", "transform-decode", () -> e.decode("top", "0101"));
+        eq("uper: semi-constrained absent writes lb in one octet", "0100", e.encode("top", none));
+        errorKind("uper: integer of 9 octets in the extension form", "transform-decode", () -> e.decode("xext", "8480000000000000000000"));
+        // Fragmented lengths: refused on decode and on encode.
+        errorKind("uper: fragmented length on decode", "malformed-wire", () -> e.decode("oct", "c000"));
+        Entity big = new Entity();
+        big.put("probe.s", "00".repeat(16384));
+        errorKind("uper: 16384 octets need a fragmented length", "transform-encode", () -> e.encode("oct", big));
+        big.put("probe.s", "00".repeat(16383));
+        check("uper: 16383 octets take a two-octet length", e.encode("oct", big).startsWith("bfff00"), "");
+        errorKind("uper: a length beyond the input", "malformed-wire", () -> e.decode("oct", "bfff00"));
+        // A choice index with no alt, or above n - 1, is malformed; a NULL alternative re-encodes as the first alt.
+        errorKind("uper: choice index with no alt", "malformed-wire", () -> e.decode("ch", "40"));
+        errorKind("uper: choice index above n - 1", "malformed-wire", () -> e.decode("ch", "c0"));
+        eq("uper: choice alt 2, fill bits ignored", "98", e.convert("ch", "ch", "9c"));
+        eq("uper: no alt with content writes the first alt", "00", e.encode("nul", none));
+        // Extension additions: a fragmented count, and a bitmap beyond the input, are malformed.
+        errorKind("uper: fragmented extension count", "malformed-wire", () -> e.decode("ex", "ffff"));
+        errorKind("uper: extension bitmap beyond the input", "malformed-wire", () -> e.decode("ex", "a0"));
+        eq("uper: extension bit 1 with 64 additions, all absent", "40", e.convert("ex", "ex", "5f8000000000000000"));
+        // Rulings 2 and 19: no default counts as content; a line that writes the key writes its default.
+        eq("uper: a default sets no presence bit, a written key takes its default", "18", e.encode("dflt", none));
+        // An absent list writes lb items with no keys; a present list outside lb..ub is refused.
+        eq("uper: an absent list writes lb items", "00", e.encode("grp", none));
+        Entity empty = new Entity();
+        empty.putList("probe.recs", new java.util.ArrayList<>());
+        errorKind("uper: a present, empty list below lb", "transform-encode", () -> e.encode("grp", empty));
+        // An enumeration extension index beyond 64 signed bits.
+        errorKind("uper: enum extension index beyond 2^63-1", "transform-decode", () -> e.decode("en", "c23fffffffffffffffc0"));
+        // Load checks: numbers of choice, alt and group size (ruling 15); UPER lines elsewhere (rulings 9 and 19).
+        String[] refused = {
+            head + "choice 2\n alt 01\nend\n",
+            head + "choice 02\n alt 0\nend\n",
+            head + "choice -1\n alt 0\nend\n",
+            head + "choice 2\nend\n",
+            head + "group probe.recs size 01 3\n field probe.x int:0:1 uint\nend\n",
+            head + "group probe.recs size 0 -3\n field probe.x int:0:1 uint\nend\n",
+            head + "field probe.x int::ext twos\n",
+            head + "field probe.x int:0:1:ext:ext twos\n",
+            head + "field probe.label chars:-1:3 ascii\n",
+            head + "field probe.x enum:2 twos\n",
+            body.replace("layout sequential\n", "word_bytes 1\n") + "ext\n field probe.x 0:0:8 uint\nend\n",
+            body.replace("layout sequential\n", "word_bytes 1\n") + "field probe.x int:0:7 uint\n",
+        };
+        for (String r : refused) errorKind("uper: refused " + r.substring(body.length()).replace('\n', '|'), "bad-directive", () -> Pack.parse("format r\n" + r, "t"));
+        // Ruling 20: groups in different alts of one choice may map one list, not two in one alt; the presence-first
+        // rule is for lines directly in the ext block.
+        String g = "  group probe.recs size\n   field probe.x int:0:1 uint\n  end\n";
+        check("uper: one list in groups of two alts", Pack.parse("format r\n" + head + "choice 2\n alt 0\n" + g + " alt 1\n" + g + "end\n", "t") != null, "");
+        errorKind("uper: one list in two groups of one alt", "bad-directive",
+                () -> Pack.parse("format r\n" + head + "choice 2\n alt 0\n" + g + g + " alt 1\nend\n", "t"));
+        check("uper: a presence inside an if of an ext block, after other lines", Pack.parse("format r\n" + head
+                + "ext\n presence p 1\n if p.1\n  field probe.x int:0:1 uint\n  presence q 1\n  if q.1\n   field probe.y int:0:1 uint\n  end\n end\nend\n", "t") != null, "");
+        // Ruling 20: the input must hold the octets before a count of 0 is refused.
+        errorKind("uper: integer of 0 octets", "malformed-wire", () -> e.decode("free", "00"));
+        errorKind("uper: integer of 9 octets beyond the input is malformed first", "malformed-wire", () -> e.decode("free", "0900"));
+        errorKind("uper: unknown transform on a UPER locator", "unknown-transform", () -> Pack.parse("format r\n" + head + "field probe.x int:0:7 nosuch\n", "t"));
+        // Without encoding uper, a UPER line is refused after the file is read: a later line error comes first.
+        errorKind("uper: a line error after a UPER line in a pack without encoding", "unknown-directive",
+                () -> Pack.parse("format r\n" + body + "field probe.x int:0:7 uint\nnosuch\n", "t"));
+        // Ruling 21: ext, choice and alt are directives on every wire, refused outside a UPER pack after the file is read.
+        errorKind("uper: ext on the json wire", "bad-directive",
+                () -> Pack.parse("format r\nversion 0.1.0\ndistribution public\nsource t\nwire json\next\nend\n", "t"));
+        errorKind("uper: a line error after choice on json comes first", "unknown-directive",
+                () -> Pack.parse("format r\nversion 0.1.0\ndistribution public\nsource t\nwire json\nchoice 2\n alt 0\nend\nnosuch\n", "t"));
+        check("uper: the same presence name in two alts", Pack.parse("format r\n" + head + "choice 2\n alt 0\n  opt\n  end\n"
+                + "  presence p 1\n  if p.1\n   field probe.x int:0:1 uint\n  end\n alt 1\n  presence p 1\n  if p.1\n   field probe.y int:0:1 uint\n  end\nend\n", "t") != null, "");
+        check("uper: on json int:x is a path", Pack.parse("format r\nversion 0.1.0\ndistribution public\nsource t\nwire json\nfield probe.x int:x int\n", "t") != null, "");
     }
 
     /** Version 0.14, six-bit armor: the cases no shared vector pins (rulings 5, 7, 8, 9 and the character map). */

@@ -1,0 +1,9 @@
+{
+  "name": "empty-input",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: no octets; the first field n needs 8 bits. Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

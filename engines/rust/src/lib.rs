@@ -2085,6 +2085,8 @@ pub struct Pack {
     pub gates: Vec<GateDef>,
     /// xml only: common `element <path>` lines, (path, line) (engine-spec v0.18)
     pub elements: Vec<(String, usize)>,
+    /// bits only, `layout sequential`: `encoding uper` (engine-spec v0.19)
+    pub uper: bool,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -2146,6 +2148,12 @@ impl Pack {
         let mut bad_transform: Option<(usize, Error)> = None;
         // engine-spec v0.14: `armor`
         let mut armor_lines = armor::ArmorLines::default();
+        // engine-spec v0.19: `encoding`, the first line only a UPER pack may
+        // hold, and the `ext` and `choice` blocks open (all refused once the
+        // file is read: this pack is not sequential)
+        let mut encoding_lines = uper::EncodingLines::default();
+        let mut uper_line: Option<usize> = None;
+        let mut uper_open = 0usize;
         for (lineno, raw) in text.lines().enumerate() {
             let toks = tokenize(raw)?;
             if toks.is_empty() {
@@ -2208,6 +2216,14 @@ impl Pack {
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
                 "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
+                "encoding" => encoding_lines.record(&toks, ln, !kinds.is_empty()),
+                d @ ("ext" | "choice" | "alt") => {
+                    uper_line.get_or_insert(ln);
+                    if d != "alt" {
+                        uper_open += 1;
+                    }
+                }
+                "end" if open.is_empty() && uper_open > 0 => uper_open -= 1,
                 "tag" | "length" | "key" => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 "checksum" if toks.get(1).map(|s| s.as_str()) == Some("sum16") => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 d @ ("delimiter" | "start" | "checksum") => {
@@ -2711,6 +2727,10 @@ impl Pack {
             _ => tlv::TlvConf::default(),
         };
         let armor = armor_lines.check(wire == Wire::Bits, bit_order.map_or(false, |(m, _)| m))?;
+        encoding_lines.check(wire == Wire::Bits, false, bit_order.map_or(false, |(m, _)| m), armor == armor::Armor::Sixbit)?;
+        if let Some(ln) = uper_line {
+            return bad(ln, "`ext`, `choice` and `alt` are lines of a pack with `encoding uper`");
+        }
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
         })?;
@@ -2742,6 +2762,7 @@ impl Pack {
             armor,
             gates,
             elements,
+            uper: false,
         })
     }
 
@@ -6976,6 +6997,7 @@ pub mod armor;
 pub mod seq;
 pub mod text;
 pub mod tlv;
+pub mod uper;
 
 // ---------------------------------------------------------------------------
 // protobuf codec: fields by number, dot-path for nested messages. I/O as hex.
@@ -7573,6 +7595,15 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // engine-spec v0.18: `element <path>`; its wire and its path are checked
     // after the file is read
     ("element", 1, 1),
+    // ASN.1 unaligned PER (engine-spec v0.19): `encoding <none | uper>`,
+    // `ext`, `choice <n> [ext]`, `alt <i>`. Only the number of arguments is
+    // a line check (5e of 0.11, as ruling 13 of 0.14 for `armor`); whether a
+    // line fits its pack (ruling 9, 18, 21 of 0.19) is checked after the file.
+    // None of them is in the list of lines that stand after the `wire` line.
+    ("encoding", 1, 1),
+    ("ext", 0, 0),
+    ("choice", 1, 2),
+    ("alt", 1, 1),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
@@ -7615,7 +7646,12 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) two
         let most = if name == "checksum" && toks[1] != "sum16" { 1 } else { most };
         if n < least || n > most {
-            return bad(ln, format!("`{}` takes {} arguments, got {}", name, if least == most { least.to_string() } else { format!("at least {}", least) }, n));
+            let takes = match (least, most) {
+                (l, m) if l == m => l.to_string(),
+                (l, usize::MAX) => format!("at least {}", l),
+                (l, m) => format!("{} to {}", l, m),
+            };
+            return bad(ln, format!("`{}` takes {} arguments, got {}", name, takes, n));
         }
         if AFTER_WIRE.contains(&name) {
             if wire.is_none() {
@@ -7767,6 +7803,10 @@ fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> 
                 }
             }
         }
+        // ruling 9 of 0.19: a UPER locator in a pack that is not a UPER pack
+        // (a fixed-layout one included, ruling 19) is `bad-directive`,
+        // checked after the file is read, not a 5a form error
+        Some(Wire::Bits) if ["int:", "enum:", "chars:", "octets:"].iter().any(|p| loc.starts_with(p)) => {}
         Some(Wire::Bits) => {
             if loc.contains(':') {
                 let parts: Vec<&str> = loc.split(':').collect();

@@ -1,0 +1,12 @@
+{
+  "name": "to-conformance-json",
+  "from": "conformance-uper",
+  "to": "conformance-json",
+  "input": "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c4038c0",
+  "expect": "{\"schema\":\"probe\",\"pos\":{\"lat\":30.0090027}}",
+  "model": {
+    "lat": "30.0090027"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: vector 01; lat 300090027 * 1 / 10000000 = 30.0090027. conformance-json selects kind basic (no requires of another kind is present), writes the common when schema first, then pos.lat; probe.label is not callsign, so no label member. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

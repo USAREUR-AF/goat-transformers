@@ -86,8 +86,9 @@ pub(crate) fn check_no_whole(body: &SeqBody) -> Result<(), Error> {
     fn lines(ls: &[SeqLine]) -> bool {
         ls.iter().any(|l| match l {
             SeqLine::Whole { .. } => true,
-            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => lines(body),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => lines(body),
             SeqLine::Chain { parts, .. } => parts.iter().any(|p| lines(p)),
+            SeqLine::Choice { alts, .. } => alts.iter().any(|(_, p)| lines(p)),
             SeqLine::Group(g) => in_body(&g.body),
             _ => false,
         })

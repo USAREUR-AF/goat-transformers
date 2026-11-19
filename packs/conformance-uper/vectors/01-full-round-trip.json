@@ -1,0 +1,31 @@
+{
+  "name": "full-round-trip",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c4038c0",
+  "expect": "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c4038c0",
+  "model": {
+    "probe.n": "200",
+    "lat": "30.0090027",
+    "probe.x": "5",
+    "probe.y": "1000",
+    "probe.z": "-129",
+    "probe.w": "2",
+    "probe.qty": "4",
+    "probe.c1": "1",
+    "probe.label": "GOAT-1",
+    "probe.s1": "deadbeef",
+    "probe.s2": "hi",
+    "probe.c2": "9",
+    "probe.val": "1000",
+    "probe.a": "2",
+    "probe.items.#": "2",
+    "probe.items[0].probe.ratio": "1",
+    "probe.items[1].probe.ratio": "1023",
+    "probe.names.#": "2",
+    "probe.names[0].probe.label": "ab",
+    "probe.names[1].probe.label": "c"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Every line once: n 200 in 8 bits; lat 300090027 + 900000000 in 31 bits (ub - lb = 1800000001); x 5 root (bit 0, 3 bits); y 1000 + 5 = 1005 in 2 octets after length 2; z -129 = ff7f after length 2; w index 2 root (bit 0, 2 bits); qty 4 in 3 bits; c1 1 bit; label count 6 - 1 in 3 bits then 6 x 7 bits; s1 count 4 in 3 bits then 4 octets; s2 length 2 then \"hi\"; ext bit 0, presence 11, c2 9 in 4 bits, val 1000 in 10 bits; choice ext bit 0, index 0 (1 bit), a 2 in 2 bits; items count 2 in 2 bits, ratio 1 and 1023 in 10 bits each; names length 2, each a length then 7-bit characters. lat decodes as 300090027 * 1 / 10000000 = 30.0090027 (ruling 1 of 0.5) and re-encodes as round(30.0090027 * 10000000 / 1). 290 bits, padded with 6 zero bits to 37 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

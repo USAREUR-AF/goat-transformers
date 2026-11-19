@@ -18,7 +18,13 @@
 //!     characters, at every length from none up, with now and then a
 //!     character just outside the map; and every armored vector input
 //!     mutated within the armor alphabet, so that the mutation reaches the
-//!     lines behind the character check.
+//!     lines behind the character check;
+//! (g) for every pack with `encoding uper` (engine-spec 0.19): bit strings
+//!     built from the pieces X.691 reads (single bits, short and long length
+//!     determinants, the fragmented prefix `11`, normally small numbers,
+//!     runs of ones and of zeros, lengths of 16383 with nothing behind them),
+//!     each of which must also finish within `UPER_TIME_LIMIT`, so that no
+//!     length read from the input makes the work unbounded.
 //!
 //! Each call must return `Ok`, or an error whose message starts with one of
 //! the error kinds `convert` may fail with, then a colon. A panic is caught,
@@ -88,6 +94,63 @@ const TEXTISH: &[u8] = b"$$,,,;;;**  \r\n-+..0123456789ABCDEFabcdefNSEWPXTIMGC";
 const ARMOR: &[u8] = b"0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw";
 /// The characters just outside the armor map, and the line terminators.
 const ARMOR_EDGE: &[u8] = b"/X_x \r\n";
+
+/// The longest one input of (g) may take.
+const UPER_TIME_LIMIT: std::time::Duration = std::time::Duration::from_secs(2);
+
+/// The formats whose pack has an `encoding uper` line.
+fn uper_formats() -> Vec<String> {
+    let mut out = Vec::new();
+    for dir in std::fs::read_dir(repo_packs_dir()).unwrap().flatten() {
+        let text = match std::fs::read_to_string(dir.path().join("pack.def")) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let words = |l: &str| l.split('#').next().unwrap_or("").split_whitespace().map(|w| w.to_string()).collect::<Vec<_>>();
+        if text.lines().any(|l| words(l) == ["encoding", "uper"]) {
+            if let Some(f) = text.lines().map(words).find(|w| w.len() == 2 && w[0] == "format") {
+                out.push(f[1].clone());
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+/// A random bit string of the pieces X.691 reads, as hex.
+fn uper_bits(rng: &mut Rng) -> String {
+    let mut bits: Vec<bool> = Vec::new();
+    let push = |bits: &mut Vec<bool>, v: u64, n: u32| (0..n).rev().for_each(|i| bits.push(v >> i & 1 == 1));
+    for _ in 0..rng.below(40) {
+        match rng.below(10) {
+            0 => push(&mut bits, rng.next() & 1, 1),
+            // a short length determinant, and as many octets now and then
+            1 => {
+                let n = rng.below(128) as u64;
+                push(&mut bits, n, 8);
+                if rng.below(2) == 0 {
+                    (0..n).for_each(|_| push(&mut bits, rng.next() & 0xff, 8));
+                }
+            }
+            // a long length determinant, up to 16383, with little behind it
+            2 => push(&mut bits, 0x8000 | (rng.next() & 0x3fff), 16),
+            3 => push(&mut bits, 0xbfff, 16),
+            // the fragmented prefix
+            4 => push(&mut bits, 0b11, 2),
+            // a normally small number, short and long
+            5 => push(&mut bits, rng.next() & 0x3f, 7),
+            6 => push(&mut bits, 0x80 | 0x09, 9),
+            7 => push(&mut bits, u64::MAX, rng.below(64) as u32 + 1),
+            8 => push(&mut bits, 0, rng.below(64) as u32 + 1),
+            _ => push(&mut bits, rng.next(), rng.below(64) as u32 + 1),
+        }
+    }
+    while bits.len() % 8 != 0 {
+        bits.push(rng.below(2) == 0);
+    }
+    let bytes: Vec<u8> = bits.chunks(8).map(|c| c.iter().fold(0u8, |a, b| a << 1 | *b as u8)).collect();
+    to_hex(&bytes)
+}
 
 /// Is every byte of `s` an armor character (a hex input is one too)?
 fn armored(s: &str) -> bool {
@@ -458,6 +521,19 @@ fn malformed_input_never_panics() {
         }
     }
 
+    // (g) X.691 pieces for every UPER pack, each within the time limit
+    let mut slow: Vec<String> = Vec::new();
+    for format in &uper_formats() {
+        for _ in 0..RANDOM_PER_ALPHABET * 8 * iters {
+            let input = uper_bits(&mut rng);
+            let started = std::time::Instant::now();
+            run(format, format, &input, "uper bits");
+            if started.elapsed() > UPER_TIME_LIMIT {
+                slow.push(format!("{}: {:?} for {} bytes", format, started.elapsed(), input.len() / 2));
+            }
+        }
+    }
+
     // (b) prefixes and (c) one-byte mutations of every vector input
     for case in &vectors {
         let n = case.input.len();
@@ -528,5 +604,9 @@ fn malformed_input_never_panics() {
     for f in &failures {
         let _ = writeln!(out, "  FAIL {}", f);
     }
+    for s in &slow {
+        let _ = writeln!(out, "  SLOW {}", s);
+    }
+    assert!(slow.is_empty(), "{} UPER inputs took longer than {:?}", slow.len(), UPER_TIME_LIMIT);
     assert!(failures.is_empty(), "{} inputs panicked or failed with an error of no named kind", failures.len());
 }

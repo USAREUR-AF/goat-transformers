@@ -29,6 +29,8 @@ pub enum Rep {
     More,
     /// each item ends with one bit: 1 = another item follows
     Fx,
+    /// `size [<lb> <ub>]` (engine-spec v0.19): a constrained count, or a length determinant
+    Size(crate::uper::Size),
 }
 
 #[derive(Clone, Debug)]
@@ -41,8 +43,9 @@ pub struct SeqGroup {
 
 #[derive(Clone, Debug)]
 pub enum SeqLine {
-    /// `also`: the keys of the `also` lines after the field, on the same bits
-    Field { f: FieldDef, len: u32, also: Vec<FieldDef> },
+    /// `also`: the keys of the `also` lines after the field, on the same bits;
+    /// `uper`: a UPER locator (engine-spec v0.19), `len` is then 0
+    Field { f: FieldDef, len: u32, also: Vec<FieldDef>, uper: Option<crate::uper::Loc> },
     Const { len: u32, value: u64 },
     Pad { len: u64 },
     Align { n: u64 },
@@ -59,6 +62,10 @@ pub enum SeqLine {
     Length { len: u32, in_bits: bool, plus: i64, body: Vec<SeqLine> },
     /// `length ... whole`: the length of the whole message in bytes plus `plus`
     Whole { len: u32, plus: i64 },
+    /// `ext` (engine-spec v0.19): a SEQUENCE with an extension marker
+    Ext { body: Vec<SeqLine> },
+    /// `choice <n> [ext]`: (index, lines) of each `alt`, in line order
+    Choice { n: u32, ext: bool, alts: Vec<(u32, Vec<SeqLine>)> },
 }
 
 /// One kind of a message or of an item.
@@ -98,8 +105,11 @@ fn visit_lines<'a>(lines: &'a [SeqLine], f: &mut dyn FnMut(Visit<'a>)) {
                 f(Visit::Field(field));
                 also.iter().for_each(|a| f(Visit::Field(a)));
             }
-            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => visit_lines(body, f),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                visit_lines(body, f)
+            }
             SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| visit_lines(p, f)),
+            SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| visit_lines(p, f)),
             SeqLine::Group(g) => {
                 f(Visit::Group(g.line, &g.list));
                 g.body.visit(f);
@@ -116,8 +126,11 @@ fn visit_lines_mut(lines: &mut [SeqLine], ff: &mut dyn FnMut(&mut FieldDef), fd:
                 ff(f);
                 also.iter_mut().for_each(|a| ff(a));
             }
-            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => visit_lines_mut(body, ff, fd),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                visit_lines_mut(body, ff, fd)
+            }
             SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| visit_lines_mut(p, ff, fd)),
+            SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| visit_lines_mut(p, ff, fd)),
             SeqLine::Group(g) => g.body.visit_mut(ff, fd),
             _ => {}
         }
@@ -159,8 +172,11 @@ impl SeqBody {
                             }
                         }
                     }
-                    SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => lines(prefix, body, out),
+                    SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                        lines(prefix, body, out)
+                    }
                     SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| lines(prefix, p, out)),
+                    SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| lines(prefix, p, out)),
                     SeqLine::Group(g) => {
                         let name = format!("{}{}[]", prefix, g.list);
                         if !out.contains(&name) {
@@ -209,6 +225,9 @@ struct Parser<'a> {
     maps: Vec<(String, Vec<(String, String)>)>,
     /// engine-spec v0.14: `armor`
     armor: crate::armor::ArmorLines,
+    /// engine-spec v0.19: `encoding`, and the first line only a UPER pack may hold
+    encoding: crate::uper::EncodingLines,
+    uper_line: Option<usize>,
     to_cot: BTreeMap<String, String>,
     from_cot: BTreeMap<String, String>,
 }
@@ -244,9 +263,9 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 16] = [
+const HEADER: [&str; 17] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
-    "delimiter", "start", "checksum", "armor",
+    "delimiter", "start", "checksum", "armor", "encoding",
 ];
 
 impl<'a> Parser<'a> {
@@ -342,6 +361,8 @@ impl<'a> Parser<'a> {
                     }
                     if d == "armor" {
                         self.armor.record(toks, ln, !out.kinds.is_empty());
+                    } else if d == "encoding" {
+                        self.encoding.record(toks, ln, !out.kinds.is_empty());
                     } else {
                         self.header(ln, toks)?;
                     }
@@ -457,6 +478,25 @@ impl<'a> Parser<'a> {
         Ok(out)
     }
 
+    /// The lines of one `alt`, up to the next `alt` or the `end` of the
+    /// `choice`, which are not taken.
+    fn alt_block(&mut self) -> Result<Vec<SeqLine>, Error> {
+        let visible = self.names.len();
+        let outer_block = std::mem::replace(&mut self.block_start, visible);
+        let mut out = Vec::new();
+        while let Some((_, toks)) = self.peek() {
+            if toks[0] == "end" || toks[0] == "alt" {
+                break;
+            }
+            if let Some(line) = self.line()? {
+                out.push(line);
+            }
+        }
+        self.names.truncate(visible);
+        self.block_start = outer_block;
+        Ok(out)
+    }
+
     /// One line at the cursor, with the block it opens. None: a `default`
     /// line, which belongs to the scope and not to a position.
     fn line(&mut self) -> Result<Option<SeqLine>, Error> {
@@ -477,7 +517,12 @@ impl<'a> Parser<'a> {
                 if toks.len() < 4 {
                     return bad(ln, "field needs <model-key> <len> <transform> [options]");
                 }
-                let len = bit_len(&toks[2], ln)?;
+                // a UPER locator (engine-spec v0.19), else a bit length
+                let uper = crate::uper::parse_loc(&toks[2], ln)?;
+                let len = match uper {
+                    Some(_) => 0,
+                    None => bit_len(&toks[2], ln)?,
+                };
                 let mut f = FieldDef {
                     model_key: toks[1].clone(),
                     locator: toks[2].clone(),
@@ -497,16 +542,24 @@ impl<'a> Parser<'a> {
                     self.vias.push((table, ln));
                 }
                 let t = &f.transform;
-                if !t.is_bits() {
+                if let Some(loc) = &uper {
+                    self.uper_line.get_or_insert(ln);
+                    crate::uper::check_field(loc, &f)?;
+                    // ruling 22 of 0.19: no raw value of 0.9 is stated for a UPER locator
+                    if f.absent_arg.is_some() {
+                        return bad(ln, format!("`absent` is not valid on the UPER locator of `{}`", f.model_key));
+                    }
+                } else if !t.is_bits() {
                     return bad(ln, format!("transform of `{}` is not valid on a bits wire", f.model_key));
                 }
-                if !u32::try_from(len).map_or(false, |l| t.bits_len_ok(l)) {
+                let ok = uper.is_some() || u32::try_from(len).map_or(false, |l| t.bits_len_ok(l));
+                if !ok {
                     return bad(ln, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
                 }
                 if f.swap && *t == Transform::Sixbit {
                     return bad(ln, "`swap` is not valid on `sixbit`");
                 }
-                if f.swap && len % 8 != 0 {
+                if f.swap && len % 8 != 0 && uper.is_none() {
                     return bad(ln, format!("`swap` needs a bit length that is a multiple of 8, got {}", len));
                 }
                 if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
@@ -533,7 +586,7 @@ impl<'a> Parser<'a> {
                     also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
                     self.i += 1;
                 }
-                SeqLine::Field { f, len: len as u32, also }
+                SeqLine::Field { f, len: len as u32, also, uper }
             }
             "const" => {
                 if toks.len() != 3 {
@@ -695,6 +748,16 @@ impl<'a> Parser<'a> {
             "group" => {
                 let rep = match (toks.get(2).map(|s| s.as_str()), toks.len()) {
                     (Some("count"), 4) => Rep::Count(value_len(&toks[3], ln)?),
+                    // engine-spec v0.19: SEQUENCE OF
+                    (Some("size"), 3 | 5) => {
+                        self.uper_line.get_or_insert(ln);
+                        Rep::Size(match toks.len() {
+                            3 => None,
+                            _ => Some(crate::uper::size(&toks[3], &toks[4]).ok_or_else(|| Error {
+                                msg: format!("bad-directive: line {}: `size` needs <lb> <ub> with 0 <= lb <= ub < 65536", ln),
+                            })?),
+                        })
+                    }
                     (Some("while"), 3) => Rep::While,
                     (Some("more"), 3) => Rep::More,
                     (Some("fx"), 3) => Rep::Fx,
@@ -705,6 +768,63 @@ impl<'a> Parser<'a> {
                 };
                 SeqLine::Group(SeqGroup { list: toks[1].clone(), rep, body: self.body(false, ln)?, line: ln })
             }
+            "ext" => {
+                if toks.len() != 1 {
+                    return bad(ln, "`ext` takes no argument");
+                }
+                self.uper_line.get_or_insert(ln);
+                let body = self.block(ln, "ext")?;
+                // ruling 15 of 0.19: a `presence` line, when there is one, is the first line
+                if body.iter().skip(1).any(|l| matches!(l, SeqLine::Presence { .. })) {
+                    return bad(ln, "inside an `ext` block a `presence` line is the first line");
+                }
+                SeqLine::Ext { body }
+            }
+            "choice" => {
+                let ext = match (toks.len(), toks.get(2).map(|s| s.as_str())) {
+                    (2, _) => false,
+                    (3, Some("ext")) => true,
+                    _ => return bad(ln, "choice needs <n> [ext]"),
+                };
+                let n = match crate::uper::num(&toks[1]) {
+                    Some(n) if (1..=65536).contains(&n) => n as u32,
+                    _ => return bad(ln, format!("`choice {}`: <n> is 1 to 65536", toks[1])),
+                };
+                self.uper_line.get_or_insert(ln);
+                let mut alts: Vec<(u32, Vec<SeqLine>)> = Vec::new();
+                loop {
+                    let (l, t) = match self.peek() {
+                        Some((l, t)) => (*l, t),
+                        None => return bad(ln, "the `choice` block has no `end`"),
+                    };
+                    match t[0].as_str() {
+                        "end" => {
+                            if t.len() != 1 {
+                                return bad(l, "`end` takes no argument");
+                            }
+                            self.i += 1;
+                            break;
+                        }
+                        "alt" => {
+                            let i = match (t.len(), t.get(1).and_then(|s| crate::uper::num(s))) {
+                                (2, Some(i)) if (0..n as i64).contains(&i) => i as u32,
+                                _ => return bad(l, format!("`alt` needs an index from 0 to {}", n - 1)),
+                            };
+                            if alts.iter().any(|(a, _)| *a == i) {
+                                return bad(l, format!("`alt {}` given twice", i));
+                            }
+                            self.i += 1;
+                            alts.push((i, self.alt_block()?));
+                        }
+                        _ => return bad(l, "a line between `choice` and its first `alt`"),
+                    }
+                }
+                if alts.is_empty() {
+                    return bad(ln, "a `choice` with no `alt`");
+                }
+                SeqLine::Choice { n, ext, alts }
+            }
+            "alt" => return bad(ln, "`alt` outside a `choice`"),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
             "also" => return bad(ln, "`also` stands directly after a `field` line"),
             "end" => return bad(ln, "`end` with no open block"),
@@ -735,10 +855,19 @@ fn check_lists(body: &SeqBody) -> Result<(), Error> {
                     walk(body, blocks, next, out)?;
                     blocks.pop();
                 }
-                SeqLine::Length { body, .. } => walk(body, blocks, next, out)?,
+                SeqLine::Length { body, .. } | SeqLine::Ext { body } => walk(body, blocks, next, out)?,
                 SeqLine::Chain { parts, .. } => {
                     for part in parts {
                         walk(part, blocks, next, out)?;
+                    }
+                }
+                // each `alt` is a block of its own, as an `if` is
+                SeqLine::Choice { alts, .. } => {
+                    for (_, body) in alts {
+                        *next += 1;
+                        blocks.push(*next);
+                        walk(body, blocks, next, out)?;
+                        blocks.pop();
                     }
                 }
                 SeqLine::Group(g) => {
@@ -803,6 +932,8 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         uses: Vec::new(),
         maps: Vec::new(),
         armor: Default::default(),
+        encoding: Default::default(),
+        uper_line: None,
         to_cot: BTreeMap::new(),
         from_cot: BTreeMap::new(),
     };
@@ -811,8 +942,11 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         for l in lines {
             match l {
                 SeqLine::Presence { id, named: n, .. } => *n = named[*id].clone(),
-                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => fill(body, named),
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                    fill(body, named)
+                }
                 SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| fill(p, named)),
+                SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| fill(p, named)),
                 SeqLine::Group(g) => fill_body(&mut g.body, named),
                 _ => {}
             }
@@ -837,6 +971,11 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         None => return err("missing-wire: the pack has no `wire` line"),
     }
     let armor = p.armor.check(true, p.msb)?;
+    // engine-spec v0.19: `encoding uper`, and the lines only it allows (ruling 9)
+    let uper = p.encoding.check(true, true, p.msb, armor == crate::armor::Armor::Sixbit)?;
+    if let (false, Some(ln)) = (uper, p.uper_line) {
+        return bad(ln, "a UPER locator, `ext`, `choice` or `group ... size` needs `encoding uper`");
+    }
     if armor == crate::armor::Armor::Sixbit {
         crate::armor::check_no_whole(&body)?;
     }
@@ -876,6 +1015,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         armor,
         gates: Vec::new(),
         elements: Vec::new(),
+        uper,
     })
 }
 
@@ -883,13 +1023,13 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
 // Decode
 // ---------------------------------------------------------------------------
 
-struct Reader<'a> {
-    p: &'a Pack,
+pub(crate) struct Reader<'a> {
+    pub(crate) p: &'a Pack,
     raw: &'a [u8],
-    pos: u64,
+    pub(crate) pos: u64,
     /// the first bit the lines may not read: the end of the input, of the
     /// message (`length ... whole`) or of the innermost `length` extent
-    end: u64,
+    pub(crate) end: u64,
     /// the end of the message
     whole: u64,
     /// how many `length` blocks are open
@@ -899,7 +1039,7 @@ struct Reader<'a> {
 }
 
 impl<'a> Reader<'a> {
-    fn short(&self, what: impl AsRef<str>) -> Error {
+    pub(crate) fn short(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", self.p.format, what.as_ref()) }
     }
     fn need(&self, len: u64, what: &str) -> Result<(), Error> {
@@ -911,7 +1051,7 @@ impl<'a> Reader<'a> {
         Ok(())
     }
     /// `len` (1..=64) bits at the cursor as an unsigned value.
-    fn read(&mut self, len: u32, what: &str) -> Result<u64, Error> {
+    pub(crate) fn read(&mut self, len: u32, what: &str) -> Result<u64, Error> {
         self.need(len as u64, what)?;
         let v = get_bits(self.raw, self.pos, len, self.p.msb).unwrap_or(0);
         self.pos += len as u64;
@@ -967,15 +1107,22 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             continue;
         }
         match line {
-            SeqLine::Field { f, len, also } => {
-                r.need(*len as u64, &format!("`{}`", f.model_key))?;
-                // a sentinel: neither the field's key nor an `also` key gets a value (engine-spec v0.9)
-                if is_sentinel(r.p, f, r.raw, r.pos, *len) {
-                    r.pos += *len as u64;
-                    continue;
-                }
-                let v = read_field(r.p, f, r.raw, r.pos, *len);
-                r.pos += *len as u64;
+            SeqLine::Field { f, len, also, uper } => {
+                let v = match uper {
+                    // engine-spec v0.19: the length follows from the constraint and the value
+                    Some(loc) => crate::uper::read_field(r, f, loc)?,
+                    None => {
+                        r.need(*len as u64, &format!("`{}`", f.model_key))?;
+                        // a sentinel: neither the field's key nor an `also` key gets a value (engine-spec v0.9)
+                        if is_sentinel(r.p, f, r.raw, r.pos, *len) {
+                            r.pos += *len as u64;
+                            continue;
+                        }
+                        let v = read_field(r.p, f, r.raw, r.pos, *len);
+                        r.pos += *len as u64;
+                        v
+                    }
+                };
                 // an `also` key takes the same value through its own table
                 for a in also {
                     d.put(r.p, a, v.clone());
@@ -1077,6 +1224,22 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 r.whole = bits as u64;
                 r.end = r.end.min(r.whole);
             }
+            SeqLine::Ext { body } => {
+                let more = r.read(1, "the extension bit of an `ext`")?;
+                decode_lines(body, r, d)?;
+                if more == 1 {
+                    crate::uper::skip_additions(r)?;
+                }
+            }
+            SeqLine::Choice { n, ext, alts } => {
+                let at = r.pos;
+                if let Some(i) = crate::uper::read_choice(r, *n, *ext)? {
+                    match alts.iter().find(|(a, _)| *a == i) {
+                        Some((_, lines)) => decode_lines(lines, r, d)?,
+                        None => return Err(r.short(format!("the `choice` at bit {} has index {}, which no `alt` holds", at, i))),
+                    }
+                }
+            }
             SeqLine::Group(g) => {
                 let mut items: Vec<Decoded> = Vec::new();
                 let format = r.p.format.clone();
@@ -1097,6 +1260,15 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                     Rep::Count(len) => {
                         let n = r.read(*len, "the count of a group")?;
                         limit::take(&format, &g.list, n)?;
+                        if n > r.end.saturating_sub(r.pos) {
+                            return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
+                        }
+                        for _ in 0..n {
+                            item(r, &mut items)?;
+                        }
+                    }
+                    Rep::Size(size) => {
+                        let n = crate::uper::read_count(r, *size, "the count of a group")?;
                         if n > r.end.saturating_sub(r.pos) {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }
@@ -1177,11 +1349,13 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
 struct Defaults<'a> {
     kind: &'a [DefaultDef],
     common: &'a [DefaultDef],
+    /// a UPER pack: a `default` is not content (ruling 2 of 0.19)
+    uper: bool,
 }
 
 impl<'a> Defaults<'a> {
-    fn of(body: &'a SeqBody, kind: Option<&'a SeqKind>) -> Defaults<'a> {
-        Defaults { kind: kind.map_or(&[], |k| k.defaults.as_slice()), common: &body.defaults }
+    fn of(p: &Pack, body: &'a SeqBody, kind: Option<&'a SeqKind>) -> Defaults<'a> {
+        Defaults { kind: kind.map_or(&[], |k| k.defaults.as_slice()), common: &body.defaults, uper: p.uper }
     }
     /// The `default` of a key, if it has one.
     fn default(&self, key: &str) -> Option<&'a Value> {
@@ -1194,16 +1368,24 @@ impl<'a> Defaults<'a> {
 }
 
 /// Would these lines write a present key or a non-empty list? A key with a
-/// `default` in scope counts as present (ruling 2 of 0.8).
+/// `default` in scope counts as present (ruling 2 of 0.8), except in a UPER
+/// pack (ruling 2 of 0.19).
 fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults) -> bool {
+    let present = |key: &str| if defs.uper { ent.fields.contains_key(key) } else { defs.value(ent, key).is_some() };
     lines.iter().any(|l| match l {
-        // a line suppressed by `with` is not content, nor is its default (ruling 1 of 0.18)
+        // a line suppressed by `with` is not content, nor is its default
+        // (ruling 1 of 0.18); in a UPER pack a default is not content
+        // (ruling 2 of 0.19)
         SeqLine::Field { f, also, .. } => {
-            std::iter::once(f).chain(also.iter()).any(|k| live(ent, k) && defs.value(ent, &k.model_key).is_some())
+            std::iter::once(f).chain(also.iter()).any(|k| live(ent, k) && present(&k.model_key))
         }
         SeqLine::Group(g) => ent.lists.get(&g.list).map_or(false, |l| !l.is_empty()),
-        SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => content(body, ent, defs),
+        SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+            content(body, ent, defs)
+        }
         SeqLine::Chain { parts, .. } => parts.iter().any(|p| content(p, ent, defs)),
+        // ruling 3 of 0.19
+        SeqLine::Choice { alts, .. } => alts.iter().any(|(_, p)| content(p, ent, defs)),
         _ => false,
     })
 }
@@ -1225,12 +1407,15 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, id: 
                 }
                 presence_bits(p, body, ent, defs, id, bits);
             }
-            SeqLine::Opt { body } | SeqLine::Length { body, .. } => presence_bits(p, body, ent, defs, id, bits),
+            SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                presence_bits(p, body, ent, defs, id, bits)
+            }
             SeqLine::Chain { parts, .. } => parts.iter().for_each(|part| presence_bits(p, part, ent, defs, id, bits)),
+            SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, part)| presence_bits(p, part, ent, defs, id, bits)),
             SeqLine::Group(g) => {
                 for item in ent.lists.get(&g.list).into_iter().flatten() {
                     let kind = select(p, &g.body, item, true).ok().flatten();
-                    let item_defs = Defaults::of(&g.body, kind);
+                    let item_defs = Defaults::of(p, &g.body, kind);
                     presence_bits(p, &g.body.common, item, item_defs, id, bits);
                     if let Some(k) = kind {
                         presence_bits(p, &k.lines, item, item_defs, id, bits);
@@ -1242,8 +1427,8 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, id: 
     }
 }
 
-struct Writer<'a> {
-    p: &'a Pack,
+pub(crate) struct Writer<'a> {
+    pub(crate) p: &'a Pack,
     buf: Vec<u8>,
     pos: u64,
     presence: BTreeMap<usize, Vec<bool>>,
@@ -1260,12 +1445,12 @@ impl<'a> Writer<'a> {
             self.buf.resize(bytes, 0);
         }
     }
-    fn put(&mut self, len: u32, v: u64) {
+    pub(crate) fn put(&mut self, len: u32, v: u64) {
         let at = self.pos;
         self.zeros(len as u64);
         set_bits(&mut self.buf, at, len, v, self.p.msb);
     }
-    fn fail(&self, what: impl AsRef<str>) -> Error {
+    pub(crate) fn fail(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("transform-encode: format `{}`: {}", self.p.format, what.as_ref()) }
     }
     fn bit(&self, c: &Cond) -> bool {
@@ -1276,7 +1461,7 @@ impl<'a> Writer<'a> {
 
 fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Result<(), Error> {
     let kind = select(w.p, body, ent, item)?;
-    let defs = Defaults::of(body, kind);
+    let defs = Defaults::of(w.p, body, kind);
     let kind_lines: &[SeqLine] = kind.map_or(&[], |k| k.lines.as_slice());
     // a presence among the common lines is visible in the kind's lines
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
@@ -1295,7 +1480,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
     let p = w.p;
     for (i, line) in lines.iter().enumerate() {
         match line {
-            SeqLine::Field { f, len, also } => {
+            SeqLine::Field { f, len, also, uper } => {
                 // the earliest of the field's keys that the entity holds; when
                 // it holds none, the default of the earliest key that has one
                 // (rulings 13 and 16 of 0.8)
@@ -1304,6 +1489,15 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 let value = keys()
                     .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
                     .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
+                if let Some(loc) = uper {
+                    // engine-spec v0.19: an absent key writes the values of ruling 1
+                    let v = match value {
+                        Some((k, v)) => Some((k, p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?)),
+                        None => None,
+                    };
+                    crate::uper::write_field(w, f, loc, v.as_ref().map(|(k, v)| (*k, v)))?;
+                    continue;
+                }
                 let at = w.pos;
                 // an absent key writes zero bits
                 w.zeros(*len as u64);
@@ -1393,11 +1587,43 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 w.wholes.push((w.pos, *len, *plus));
                 w.zeros(*len as u64);
             }
+            // engine-spec v0.19: the extension bit 0, then the root components
+            SeqLine::Ext { body } => {
+                w.put(1, 0);
+                encode_lines(body, &[], ent, defs, w)?;
+            }
+            // the first `alt` with content, else the first `alt`
+            SeqLine::Choice { n, ext, alts } => {
+                let (i, lines) = match alts.iter().find(|(_, ls)| content(ls, ent, defs)).or(alts.first()) {
+                    Some(a) => a,
+                    None => continue,
+                };
+                if *ext {
+                    w.put(1, 0);
+                }
+                w.put(crate::uper::bits_for(*n as u64 - 1), *i as u64);
+                encode_lines(lines, &[], ent, defs, w)?;
+            }
             SeqLine::Group(g) => {
                 let none: Vec<Entity> = Vec::new();
                 let items = ent.lists.get(&g.list).unwrap_or(&none);
                 let n = items.len();
                 match &g.rep {
+                    Rep::Size(size) => {
+                        // an absent list: `lb` items with no keys (engine-spec v0.19)
+                        let blank: Vec<Entity>;
+                        let items = match ent.lists.get(&g.list) {
+                            Some(items) => items,
+                            None => {
+                                blank = vec![Entity::default(); size.map_or(0, |(lb, _)| lb as usize)];
+                                &blank
+                            }
+                        };
+                        crate::uper::write_count(w, *size, items.len(), &format!("list `{}`", g.list))?;
+                        for item in items {
+                            encode_body(&g.body, item, true, w)?;
+                        }
+                    }
                     Rep::Count(len) => {
                         // an absent list writes a count of 0 (ruling 14 of 0.7)
                         if *len < 64 && (n as u64) >> *len != 0 {
@@ -1445,6 +1671,10 @@ pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> 
 pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u64), Error> {
     let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new() };
     encode_body(body, ent, false, &mut w)?;
+    // an encoding of no bits is one octet `00` (engine-spec v0.19, X.691 10.1.3)
+    if p.uper && w.buf.is_empty() {
+        w.buf.push(0);
+    }
     // a message is a whole number of bytes; the last bits are zero
     let bytes = w.buf.len() as i128;
     for (at, len, plus) in std::mem::take(&mut w.wholes) {

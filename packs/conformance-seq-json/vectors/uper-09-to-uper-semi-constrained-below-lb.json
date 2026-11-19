@@ -1,0 +1,9 @@
+{
+  "name": "uper-09-to-uper-semi-constrained-below-lb",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"y\":-6}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): y -6 is below lb -5 of INTEGER (-5..MAX): transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

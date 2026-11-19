@@ -240,6 +240,17 @@ int main() {
                 for (std::size_t k = at; k < m.size() && k < at + 8; ++k) m[k] = static_cast<char>(0xFF);
                 run_one(eng, from, to, to_hex(m), label + " input bytes from " + std::to_string(at) + " set to ff", t);
             }
+            // UPER (0.19) is unaligned: a length, a count or an index can start
+            // at any bit, so every bit of the chosen bytes is flipped as well.
+            if (eng.has_format(from) && eng.pack(from).uper) {
+                for (std::size_t at : positions(data.size()))
+                    for (int b = 0; b < 8; ++b) {
+                        std::string m = data;
+                        m[at] = static_cast<char>(m[at] ^ (1 << b));
+                        run_one(eng, from, to, to_hex(m),
+                                label + " input byte " + std::to_string(at) + " bit " + std::to_string(b) + " flipped", t);
+                    }
+            }
         }
         // Armored text (a pack with `armor sixbit`): characters replaced by other valid ones, so that the
         // cases reach the lines of the message and not only the character

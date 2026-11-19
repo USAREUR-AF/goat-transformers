@@ -850,6 +850,13 @@ void check_when(const Pack& p, const WhenLine& w, bool in_group) {
     if (w.locator == "." && scalar_item_wire(p.wire))
         throw Error(ErrorKind::BadDirective, p.format, w.locator,
                     p.source + ":" + std::to_string(w.line) + ": the locator '.' outside a group");
+    // A UPER locator outside a UPER pack, here a fixed-layout one (0.19 rulings 9 and 24).
+    if (p.wire == Wire::Bits &&
+        (w.locator.compare(0, 4, "int:") == 0 || w.locator.compare(0, 5, "enum:") == 0 ||
+         w.locator.compare(0, 6, "chars:") == 0 || w.locator.compare(0, 7, "octets:") == 0))
+        throw Error(ErrorKind::BadDirective, p.format, w.locator,
+                    p.source + ":" + std::to_string(w.line) + ": the locator '" + w.locator +
+                        "' needs 'encoding uper', and a 'when' or 'const' takes a bit length");
     const Wire wire = locator_wire(p, in_group);
     bool ok = detail::valid_locator(wire, w.locator);
     if (ok && wire == Wire::GeoJson) {
@@ -944,6 +951,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     // end of the file (ruling 10 of 0.10), as do the checks against the wire.
     std::size_t armor_line = 0;
     std::string armor_error;
+    // v0.19: `encoding`, checked after the file is read: `encoding uper` needs
+    // `layout sequential`, and `ext`, `choice` and `alt` lines are UPER lines,
+    // bad-directive on any wire (rulings 9 and 21).
+    std::size_t encoding_line = 0, uper_line = 0;
+    std::string encoding_error, uper_kw;
     std::string pending_locator, pending_detail;
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
@@ -1226,6 +1238,21 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 p.armor_sixbit = t[1] == "sixbit";
             }
             if (armor_line == 0) armor_line = lineno;
+        } else if (kw == "encoding") {
+            std::string why;
+            if (t.size() != 2) why = "'encoding' takes one value: none or uper";
+            else if (t[1] != "none" && t[1] != "uper") why = "'encoding' is none or uper, not '" + t[1] + "'";
+            else if (encoding_line != 0) why = "'encoding' appears twice";
+            else if (!p.kinds.empty()) why = "'encoding' after the first 'kind'";
+            else if (t[1] == "uper") why = "'encoding uper' needs 'layout sequential'";
+            if (!why.empty() && encoding_error.empty()) encoding_error = where + ": " + why;
+            if (encoding_line == 0) encoding_line = lineno;
+        } else if (kw == "ext" || kw == "choice" || kw == "alt") {
+            // Outside a UPER pack, on any wire (ruling 21 of 0.19).
+            if (uper_line == 0) {
+                uper_line = lineno;
+                uper_kw = kw;
+            }
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -1434,6 +1461,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         throw Error(ErrorKind::BadDirective, p.format, open.back()->locator,
                     source + ":" + std::to_string(open.back()->line) + ": the group '" + open.back()->list +
                         "' has no 'end'");
+    if (encoding_line != 0 && have_wire && p.wire != Wire::Bits)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(encoding_line) + ": 'encoding' applies to wire bits only");
+    if (!encoding_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", encoding_error);
+    if (uper_line != 0) {
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(uper_line) + ": '" + uper_kw + "' needs 'encoding uper'");
+    }
     if (!armor_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", armor_error);
     if (armor_line != 0 && have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1508,6 +1543,13 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 if (!in_group && f.locator == "." && scalar_item_wire(p.wire))
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 source + ":" + std::to_string(f.line) + ": the locator '.' outside a group");
+                // A UPER locator outside a UPER pack (0.19 ruling 9).
+                if (p.wire == Wire::Bits &&
+                    (f.locator.compare(0, 4, "int:") == 0 || f.locator.compare(0, 5, "enum:") == 0 ||
+                     f.locator.compare(0, 6, "chars:") == 0 || f.locator.compare(0, 7, "octets:") == 0))
+                    throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                source + ":" + std::to_string(f.line) + ": the locator '" + f.locator +
+                                    "' needs 'encoding uper'");
                 // A bit length for a locator is a line of a sequential layout (0.8).
                 if (p.wire == Wire::Bits && !f.locator.empty() &&
                     f.locator.find_first_not_of("0123456789") == std::string::npos)

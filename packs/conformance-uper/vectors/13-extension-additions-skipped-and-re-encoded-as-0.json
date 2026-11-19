@@ -1,0 +1,27 @@
+{
+  "name": "extension-additions-skipped-and-re-encoded-as-0",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd6003989a07010701800000",
+  "expect": "070000000000200020000efd6001989a0000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.c2": "3",
+    "probe.val": "77",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: Inner as in the module with two extension additions after \"...\" (e1 INTEGER (0..255) OPTIONAL, e2 BOOLEAN OPTIONAL), both present: bit 1, presence 11, c2 3, val 77, then m = 2 as a normally small length 0 000001 (ruling 16), presence bits 11, then two open types: length 1, 07 and length 1, 80 (BOOLEAN TRUE, 1 bit padded to an octet). Decode skips the additions (not mapped, not residue); encode writes the extension bit 0. 141 bits, padded with 3 zero bits to 18 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

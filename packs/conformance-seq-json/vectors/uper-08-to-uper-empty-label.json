@@ -1,0 +1,9 @@
+{
+  "name": "uper-08-to-uper-empty-label",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"label\":\"\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): label \"\" has count 0, outside SIZE (1..8): transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

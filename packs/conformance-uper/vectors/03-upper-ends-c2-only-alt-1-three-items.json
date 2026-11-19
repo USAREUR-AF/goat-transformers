@@ -1,0 +1,29 @@
+{
+  "name": "upper-ends-c2-only-alt-1-three-items",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "ffd693a402e03fe02fea7c1850e2458d1e4400ff10ab017a5ed8b3801007fe00",
+  "expect": "ffd693a402e03fe02fea7c1850e2458d1e4400ff10ab017a5ed8b3801007fe00",
+  "model": {
+    "probe.n": "255",
+    "lat": "90.0000001",
+    "probe.x": "7",
+    "probe.y": "250",
+    "probe.z": "127",
+    "probe.w": "2",
+    "probe.qty": "4",
+    "probe.c1": "1",
+    "probe.label": "ABCDEFGH",
+    "probe.s1": "00ff10ab",
+    "probe.s2": "z",
+    "probe.c2": "15",
+    "probe.tag": "XY",
+    "probe.items.#": "3",
+    "probe.items[0].probe.ratio": "0",
+    "probe.items[1].probe.ratio": "512",
+    "probe.items[2].probe.ratio": "1023",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Every constrained value at ub: n 255, lat 900000001 - lb = 1800000001 in 31 bits (90.0000001), x 7 root, y 250 + 5 = 255 = ff in one octet, z 127 = 7f in one octet, qty 4, label of 8 characters (count 7 in 3 bits), s1 of 4 octets; presence 10 (c2 only, 15 in 4 bits); choice ext bit 0, index 1, tag of SIZE (2..2) with no count, 2 x 7 bits; items count 3 (the size ub). 255 bits, padded with 1 zero bits to 32 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}
