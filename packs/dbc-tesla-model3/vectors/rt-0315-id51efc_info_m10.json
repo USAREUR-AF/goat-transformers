@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id51efc_info_m10",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "1e050000080000000a0506008b28b4d4",
+  "expect": "1e050000080000000a0506008b28b4d4",
+  "model": {
+    "@kind": "id51efc_info_m10"
+  }
+}

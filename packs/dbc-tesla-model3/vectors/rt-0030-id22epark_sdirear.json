@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id22epark_sdirear",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2e020000080000001ce62bbfe4a608e9",
+  "expect": "2e020000080000001ce62bbfe4a608e9",
+  "model": {
+    "@kind": "id22epark_sdirear"
+  }
+}

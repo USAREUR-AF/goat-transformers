@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3f2bmscounters_m5",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "f2030000080000000511108aaac35b70",
+  "expect": "f2030000080000000511108aaac35b70",
+  "model": {
+    "@kind": "id3f2bmscounters_m5"
+  }
+}

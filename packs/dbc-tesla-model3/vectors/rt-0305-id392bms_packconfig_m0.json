@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id392bms_packconfig_m0",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "92030000080000000008000000000000",
+  "expect": "92030000080000000008000000000000",
+  "model": {
+    "@kind": "id392bms_packconfig_m0"
+  }
+}

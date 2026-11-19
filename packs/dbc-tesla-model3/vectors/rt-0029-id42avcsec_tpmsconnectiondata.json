@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id42avcsec_tpmsconnectiondata",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2a04000008000000a0812fbcc5b5b905",
+  "expect": "2a04000008000000a0812fbcc5b5b905",
+  "model": {
+    "@kind": "id42avcsec_tpmsconnectiondata"
+  }
+}

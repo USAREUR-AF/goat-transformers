@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id301vcfront_info_m31",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "01030000080000001f000000043a7855",
+  "expect": "01030000080000001f000000043a7855",
+  "model": {
+    "@kind": "id301vcfront_info_m31"
+  }
+}

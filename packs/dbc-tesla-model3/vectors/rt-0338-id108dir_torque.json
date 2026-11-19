@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id108dir_torque",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "0801000008000000e8f6db89b0632e3a",
+  "expect": "0801000008000000e8f6db89b0632e3a",
+  "model": {
+    "@kind": "id108dir_torque"
+  }
+}

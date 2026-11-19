@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id3f8ui_driverassistcontrol",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "f803000008000000bfc0b1c4160e1e5f",
+  "expect": "f803000008000000bfc0b1c4160e1e5f",
+  "model": {
+    "@kind": "id3f8ui_driverassistcontrol"
+  }
+}

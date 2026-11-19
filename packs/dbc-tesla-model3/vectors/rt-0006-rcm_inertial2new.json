@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-rcm_inertial2new",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "160100000800000045fa9752f3a107e9",
+  "expect": "160100000800000045fa9752f3a107e9",
+  "model": {
+    "@kind": "rcm_inertial2new"
+  }
+}

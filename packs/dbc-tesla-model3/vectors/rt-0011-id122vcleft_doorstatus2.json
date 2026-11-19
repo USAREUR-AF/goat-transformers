@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id122vcleft_doorstatus2",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2201000006000000eef8440f10450000",
+  "expect": "2201000006000000eef8440f10450000",
+  "model": {
+    "@kind": "id122vcleft_doorstatus2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id335reardiinfo_m11",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "35030000080000000b004b74f9e72294",
+  "expect": "35030000080000000b004b74f9e72294",
+  "model": {
+    "@kind": "id335reardiinfo_m11"
+  }
+}

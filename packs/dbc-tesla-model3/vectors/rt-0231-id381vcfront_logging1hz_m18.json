@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id381vcfront_logging1hz_m18",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "8103000008000000720000000000b693",
+  "expect": "8103000008000000720000000000b693",
+  "model": {
+    "@kind": "id381vcfront_logging1hz_m18"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id219vcsec_tpmsdata_m1",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "1902000005000000019269e403000000",
+  "expect": "1902000005000000019269e403000000",
+  "model": {
+    "@kind": "id219vcsec_tpmsdata_m1"
+  }
+}

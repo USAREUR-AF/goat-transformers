@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id7ffcarconfig_m2",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "ff0700000800000002609508695c0120",
+  "expect": "ff0700000800000002609508695c0120",
+  "model": {
+    "@kind": "id7ffcarconfig_m2"
+  }
+}

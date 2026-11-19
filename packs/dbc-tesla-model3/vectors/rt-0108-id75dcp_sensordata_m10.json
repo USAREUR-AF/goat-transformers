@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id75dcp_sensordata_m10",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "5d070000080000006abebd8f430f0800",
+  "expect": "5d070000080000006abebd8f430f0800",
+  "model": {
+    "@kind": "id75dcp_sensordata_m10"
+  }
+}

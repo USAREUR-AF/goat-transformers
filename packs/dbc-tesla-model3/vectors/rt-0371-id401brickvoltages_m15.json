@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id401brickvoltages_m15",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "01040000080000000f2b0258d9abb0ff",
+  "expect": "01040000080000000f2b0258d9abb0ff",
+  "model": {
+    "@kind": "id401brickvoltages_m15"
+  }
+}

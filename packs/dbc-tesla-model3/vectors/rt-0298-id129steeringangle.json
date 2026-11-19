@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id129steeringangle",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "2901000008000000000066048f30e10a",
+  "expect": "2901000008000000000066048f30e10a",
+  "model": {
+    "@kind": "id129steeringangle"
+  }
+}

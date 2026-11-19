@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id405vin_m17",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "050400000800000011cd635c1c000000",
+  "expect": "050400000800000011cd635c1c000000",
+  "model": {
+    "@kind": "id405vin_m17"
+  }
+}

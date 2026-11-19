@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id2b4pcs_dcdcrailstatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "b402000005000000b16a0b880a000000",
+  "expect": "b402000005000000b16a0b880a000000",
+  "model": {
+    "@kind": "id2b4pcs_dcdcrailstatus"
+  }
+}

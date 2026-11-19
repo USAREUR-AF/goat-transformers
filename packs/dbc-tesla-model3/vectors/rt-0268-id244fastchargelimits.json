@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id244fastchargelimits",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "4402000008000000861caf08d8140101",
+  "expect": "4402000008000000861caf08d8140101",
+  "model": {
+    "@kind": "id244fastchargelimits"
+  }
+}

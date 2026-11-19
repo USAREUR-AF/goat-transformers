@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id33aui_rangesoc",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "3a03000008000000080331038d025f36",
+  "expect": "3a03000008000000080331038d025f36",
+  "model": {
+    "@kind": "id33aui_rangesoc"
+  }
+}

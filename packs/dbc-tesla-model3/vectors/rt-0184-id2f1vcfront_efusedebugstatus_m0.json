@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id2f1vcfront_efusedebugstatus_m0",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "f102000008000000009aba02a61cf874",
+  "expect": "f102000008000000009aba02a61cf874",
+  "model": {
+    "@kind": "id2f1vcfront_efusedebugstatus_m0"
+  }
+}

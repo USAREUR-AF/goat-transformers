@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id20ahvp_contactorstate",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "0a0200000600000013691c771d140000",
+  "expect": "0a0200000600000013691c771d140000",
+  "model": {
+    "@kind": "id20ahvp_contactorstate"
+  }
+}

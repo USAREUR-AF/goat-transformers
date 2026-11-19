@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id292bms_soc",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "920200000800000088c73e80f62c7c01",
+  "expect": "920200000800000088c73e80f62c7c01",
+  "model": {
+    "@kind": "id292bms_soc"
+  }
+}

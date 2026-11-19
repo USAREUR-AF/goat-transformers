@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id214fastchargeva",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "1402000008000000ec833e55b979900d",
+  "expect": "1402000008000000ec833e55b979900d",
+  "model": {
+    "@kind": "id214fastchargeva"
+  }
+}

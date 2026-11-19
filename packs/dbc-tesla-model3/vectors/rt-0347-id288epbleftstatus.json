@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id288epbleftstatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "88020000080000007e1460be8c834bfd",
+  "expect": "88020000080000007e1460be8c834bfd",
+  "model": {
+    "@kind": "id288epbleftstatus"
+  }
+}

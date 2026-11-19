@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id352bms_energystatus",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "520300000800000050c8233d44d15123",
+  "expect": "520300000800000050c8233d44d15123",
+  "model": {
+    "@kind": "id352bms_energystatus"
+  }
+}

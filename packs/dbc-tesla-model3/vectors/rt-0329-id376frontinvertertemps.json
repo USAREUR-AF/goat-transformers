@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id376frontinvertertemps",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "7603000008000000dce638610f8ab301",
+  "expect": "7603000008000000dce638610f8ab301",
+  "model": {
+    "@kind": "id376frontinvertertemps"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-roundtrip-id20epark_sdifront",
+  "from": "dbc-tesla-model3",
+  "to": "dbc-tesla-model3",
+  "input": "0e020000080000006b8464807fdc33bd",
+  "expect": "0e020000080000006b8464807fdc33bd",
+  "model": {
+    "@kind": "id20epark_sdifront"
+  }
+}
