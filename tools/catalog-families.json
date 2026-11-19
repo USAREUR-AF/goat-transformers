@@ -31,7 +31,7 @@
 
     {"name": "NMEA 2000", "domain": "sea", "exact": ["nmea2000", "nmea2000-seq"]},
     {"name": "NMEA 0183", "domain": "sea", "exact": ["nmea0183"]},
-    {"name": "AIS", "domain": "sea", "exact": ["ais"]},
+    {"name": "AIS", "domain": "sea", "exact": ["ais", "ais-binary"]},
 
     {"name": "Space Data Standards", "domain": "space", "prefixes": ["sds-"]},
     {"name": "CCSDS NDM/XML", "domain": "space", "exact": ["ccsds-ndm-xml"]},
@@ -77,6 +77,7 @@
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
     {"name": "IETF packet headers", "domain": "networks", "exact": ["dns-header", "icmp-header", "ipv4-header", "ipv6-header", "ntp-header", "tcp-header", "udp-header"], "members": {"pattern": "^(.+)-header$", "label": "", "upper": true, "rename": {"ipv4": "IPv4", "ipv6": "IPv6"}}},
+    {"name": "IETF option areas", "domain": "networks", "exact": ["dhcpv6-options", "edns0-options"], "members": {"pattern": "^(.+)-options$", "label": "", "upper": true, "rename": {"dhcpv6": "DHCPv6", "edns0": "EDNS(0)"}}},
 
     {"name": "NWS weather.gov API", "domain": "maps", "prefixes": ["nws-"]},
     {"name": "OpenStreetMap PBF", "domain": "maps", "prefixes": ["osm-pbf-"]},
