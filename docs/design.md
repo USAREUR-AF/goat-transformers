@@ -165,9 +165,11 @@ over the planner.
 
 ## Consumers
 
-Three public projects that convert messages, and the place the library would
-join each. Measured comparisons against open-billie and first-bite are in
-`docs/consumer-proofs.md`; the joins themselves are Designed.
+Public projects that convert messages, and the place the library joins each.
+The library runs in open-billie, first-bite, goatstuff and open-entity-gateway
+as a path beside their own code, chosen by a setting (Built); in octo-pod it is
+Built and in review. The measurements are in
+`docs/consumer-proofs.md`. The table below is the original join plan.
 
 | Consumer | Today | Where the library joins | Needs first |
 |---|---|---|---|

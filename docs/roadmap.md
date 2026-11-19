@@ -90,15 +90,16 @@ has a pack:
 
 ## Use by other projects
 
-`docs/consumer-proofs.md` reports comparisons of the library's output with the
-conversion code of two public projects, on those projects' own test inputs:
+`docs/consumer-proofs.md` reports, for each project, where the library runs
+in that project's own conversion path and what its own tests measure:
 
-| Project | Comparison | Fields equal |
+| Project | Library path | Measured in the project's CI |
 |---|---|---|
-| open-billie | Canonical Track v2 to CoT, 33 inputs | 514 of 594 |
-| open-billie | Canonical Track v2 to SAPIENT, 33 inputs | 416 of 717 |
-| first-bite | decode of its four public dictionaries, 42 fixture messages | 406 of 462 |
+| open-billie | CoT, CAT062, SAPIENT encoders, chosen per format | CAT062 397 of 397 fields, CoT 547 of 594, SAPIENT 579 of 717 (33 inputs) |
+| first-bite | the `xf` transform | 443 of 462 fixture fields equal, 18 more in another form |
+| goatstuff | `transform-shim`; goat-map CoT to GeoTrackV1 | 353 of 368 members equal, 15 more in another form |
+| octo-pod | `gateway/translate` | in review |
+| open-entity-gateway | CoT, SAPIENT, CAT062 destinations | 4 inputs; every field equal but 8 named rows (time text, access, callsign, detail, MRH, SRC, I062/080 extents, SAPIENT track_info) |
 
 `docs/consumer-proofs.md` lists what still differs and which Designed row above
-would remove each difference. No project runs the library in place of its own
-conversion code yet (`docs/design.md`, Consumers).
+removes each difference.
