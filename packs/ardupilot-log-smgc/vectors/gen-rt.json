@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-smgc",
+  "from": "ardupilot-log-smgc",
+  "to": "ardupilot-log-smgc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c0",
+  "model": {
+    "aplog.smgc_timeus": "1701000003",
+    "aplog.smgc_m": "-7.125",
+    "aplog.smgc_g": "-6.875",
+    "aplog.smgc_cz": "-6.625"
+  }
+}

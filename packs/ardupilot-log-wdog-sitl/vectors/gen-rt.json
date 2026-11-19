@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-wdog-sitl",
+  "from": "ardupilot-log-wdog-sitl",
+  "to": "ardupilot-log-wdog-sitl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f5acda0100e3781a1751b58853bff1",
+  "expect": "4333636500000000f5acda0100e3781a1751b58853bff1",
+  "model": {
+    "aplog.wdog_sitl_timeus": "1701000003",
+    "aplog.wdog_sitl_task": "-11",
+    "aplog.wdog_sitl_ierr": "121516",
+    "aplog.wdog_sitl_ierrcnt": "30947"
+  }
+}

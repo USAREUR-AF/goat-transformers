@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xkfm",
+  "from": "ardupilot-log-xkfm",
+  "to": "ardupilot-log-xkfm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc0",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.xkfm_timeus": "1701000003",
+    "aplog.xkfm_c": "117",
+    "aplog.xkfm_ognm": "172",
+    "aplog.xkfm_glr": "-6.625"
+  }
+}

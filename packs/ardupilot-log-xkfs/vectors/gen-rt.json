@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xkfs",
+  "from": "ardupilot-log-xkfs",
+  "to": "ardupilot-log-xkfs",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a5188bff62d",
+  "expect": "433363650000000075ace31a5188bff62d",
+  "model": {
+    "aplog.xkfs_timeus": "1701000003",
+    "aplog.xkfs_c": "117",
+    "aplog.xkfs_mi": "172",
+    "aplog.xkfs_bi": "227"
+  }
+}

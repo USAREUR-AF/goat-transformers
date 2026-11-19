@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xky1",
+  "from": "ardupilot-log-xky1",
+  "to": "ardupilot-log-xky1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c0",
+  "model": {
+    "aplog.xky1_timeus": "1701000003",
+    "aplog.xky1_c": "117",
+    "aplog.xky1_ivn0": "-6.875",
+    "aplog.xky1_ivn1": "-6.625"
+  }
+}

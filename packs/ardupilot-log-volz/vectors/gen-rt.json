@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-volz",
+  "from": "ardupilot-log-volz",
+  "to": "ardupilot-log-volz",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f2d2e",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f2d2e",
+  "model": {
+    "aplog.volz_timeus": "1701000003",
+    "aplog.volz_i": "117",
+    "aplog.volz_dang": "-6.875",
+    "aplog.volz_ang": "-6.625"
+  }
+}

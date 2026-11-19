@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rmgi",
+  "from": "ardupilot-log-rmgi",
+  "to": "ardupilot-log-rmgi",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e00000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0bff62d64",
+  "expect": "3e9e00000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0bff62d64",
+  "model": {
+    "aplog.rmgi_lu": "40510",
+    "aplog.rmgi_ox": "-7.125",
+    "aplog.rmgi_oy": "-6.875",
+    "aplog.rmgi_oz": "-6.625"
+  }
+}

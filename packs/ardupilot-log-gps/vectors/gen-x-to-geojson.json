@@ -1,0 +1,12 @@
+{
+  "name": "x-ardupilot-log-gps-to-geojson",
+  "from": "ardupilot-log-gps",
+  "to": "geojson",
+  "source": "Lat and Lng are int32 degrees times 10^7 (pack.md), decoded with sscale:1/10000000; geojson writes [lon, lat] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "433363650000000075ace37802001a175188d393feebea16cfe858bff104800000acc00000a4c000009cc0000094c0d2",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[149.1652374,-35.3632621]},\"properties\":{}}",
+  "model": {
+    "lat": "-35.3632621",
+    "lon": "149.1652374"
+  }
+}

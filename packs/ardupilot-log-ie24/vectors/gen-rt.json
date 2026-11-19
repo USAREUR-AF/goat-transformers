@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ie24",
+  "from": "ardupilot-log-ie24",
+  "to": "ardupilot-log-ie24",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c0acda0180e37802801a170380",
+  "expect": "43336365000000000000e4c0acda0180e37802801a170380",
+  "model": {
+    "aplog.ie24_timeus": "1701000003",
+    "aplog.ie24_fuel": "-7.125",
+    "aplog.ie24_spmpwr": "-2147362132",
+    "aplog.ie24_pout": "-2147321629"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-dpth",
+  "from": "ardupilot-log-dpth",
+  "to": "ardupilot-log-dpth",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075150f66e59ce578e50000ccc00000c4c0",
+  "expect": "433363650000000075150f66e59ce578e50000ccc00000c4c0",
+  "model": {
+    "aplog.dpth_timeus": "1701000003",
+    "aplog.dpth_inst": "117",
+    "aplog.dpth_lat": "-446296299",
+    "aplog.dpth_lng": "-445061732"
+  }
+}

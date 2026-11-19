@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-aisr",
+  "from": "ardupilot-log-aisr",
+  "to": "ardupilot-log-aisr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace374350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "433363650000000075ace374350000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "aplog.aisr_timeus": "1701000003",
+    "aplog.aisr_num": "117",
+    "aplog.aisr_total": "172",
+    "aplog.aisr_id": "227"
+  }
+}

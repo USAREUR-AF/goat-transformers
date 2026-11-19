@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-revh",
+  "from": "ardupilot-log-revh",
+  "to": "ardupilot-log-revh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c01a17030051b5",
+  "expect": "0000ecc00000e4c00000dcc00000d4c01a17030051b5",
+  "model": {
+    "aplog.revh_vx": "-7.375",
+    "aplog.revh_vy": "-7.125",
+    "aplog.revh_vz": "-6.875",
+    "aplog.revh_er": "-6.625"
+  }
+}

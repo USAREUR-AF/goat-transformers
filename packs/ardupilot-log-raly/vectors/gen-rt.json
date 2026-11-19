@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-raly",
+  "from": "ardupilot-log-raly",
+  "to": "ardupilot-log-raly",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac9ce578e523bc8be5513588",
+  "expect": "433363650000000075ac9ce578e523bc8be5513588",
+  "model": {
+    "aplog.raly_timeus": "1701000003",
+    "aplog.raly_tot": "117",
+    "aplog.raly_seq": "172",
+    "aplog.raly_lat": "-445061732"
+  }
+}

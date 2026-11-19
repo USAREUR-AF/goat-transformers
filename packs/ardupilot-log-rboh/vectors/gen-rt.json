@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rboh",
+  "from": "ardupilot-log-rboh",
+  "to": "ardupilot-log-rboh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f05000000a4c000009cc0000094c0d208",
+  "expect": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f05000000a4c000009cc0000094c0d208",
+  "model": {
+    "aplog.rboh_q": "-7.375",
+    "aplog.rboh_dpx": "-7.125",
+    "aplog.rboh_dpy": "-6.875",
+    "aplog.rboh_dpz": "-6.625"
+  }
+}

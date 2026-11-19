@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-escx",
+  "from": "ardupilot-log-escx",
+  "to": "ardupilot-log-escx",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a17030051",
+  "expect": "433363650000000075ace31a17030051",
+  "model": {
+    "aplog.escx_timeus": "1701000003",
+    "aplog.escx_instance": "117",
+    "aplog.escx_inpct": "172",
+    "aplog.escx_outpct": "227"
+  }
+}

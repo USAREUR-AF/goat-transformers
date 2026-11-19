@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ctrl",
+  "from": "ardupilot-log-ctrl",
+  "to": "ardupilot-log-ctrl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.ctrl_timeus": "1701000003",
+    "aplog.ctrl_rmsrollp": "-7.125",
+    "aplog.ctrl_rmsrolld": "-6.875",
+    "aplog.ctrl_rmspitchp": "-6.625"
+  }
+}

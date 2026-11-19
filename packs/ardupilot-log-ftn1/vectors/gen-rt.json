@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ftn1",
+  "from": "ardupilot-log-ftn1",
+  "to": "ardupilot-log-ftn1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc02d649bd2080800",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc02d649bd2080800",
+  "model": {
+    "aplog.ftn1_timeus": "1701000003",
+    "aplog.ftn1_pkavg": "-7.125",
+    "aplog.ftn1_bwavg": "-6.875",
+    "aplog.ftn1_snx": "-6.625"
+  }
+}

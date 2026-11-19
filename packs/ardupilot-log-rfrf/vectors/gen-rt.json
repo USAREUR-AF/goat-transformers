@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rfrf",
+  "from": "ardupilot-log-rfrf",
+  "to": "ardupilot-log-rfrf",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e75",
+  "expect": "3e75",
+  "model": {
+    "aplog.rfrf_ftypes": "62",
+    "aplog.rfrf_slow": "117"
+  }
+}

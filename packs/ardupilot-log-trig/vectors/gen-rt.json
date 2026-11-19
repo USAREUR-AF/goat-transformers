@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-trig",
+  "from": "ardupilot-log-trig",
+  "to": "ardupilot-log-trig",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae37802001a17aa929ee53169b1e5bff10480f68f05802d2e0680644c9bead208",
+  "expect": "433363650000000075acdae37802001a17aa929ee53169b1e5bff10480f68f05802d2e0680644c9bead208",
+  "model": {
+    "aplog.trig_timeus": "1701000003",
+    "aplog.trig_i": "117",
+    "aplog.trig_img": "55980",
+    "aplog.trig_gpstime": "162019"
+  }
+}

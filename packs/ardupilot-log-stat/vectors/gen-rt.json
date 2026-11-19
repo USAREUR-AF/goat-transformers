@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-stat",
+  "from": "ardupilot-log-stat",
+  "to": "ardupilot-log-stat",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc0e31a5188bff6",
+  "expect": "4333636500000000750000dcc0e31a5188bff6",
+  "model": {
+    "aplog.stat_timeus": "1701000003",
+    "aplog.stat_isflying": "117",
+    "aplog.stat_isflyprob": "-6.875",
+    "aplog.stat_armed": "227"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-reph",
+  "from": "ardupilot-log-reph",
+  "to": "ardupilot-log-reph",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc02d2e060064cc06009b6a",
+  "expect": "0000ecc00000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc02d2e060064cc06009b6a",
+  "model": {
+    "aplog.reph_px": "-7.375",
+    "aplog.reph_py": "-7.125",
+    "aplog.reph_pz": "-6.875",
+    "aplog.reph_q1": "-6.625"
+  }
+}

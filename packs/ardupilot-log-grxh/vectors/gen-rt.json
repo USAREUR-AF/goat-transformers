@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-grxh",
+  "from": "ardupilot-log-grxh",
+  "to": "ardupilot-log-grxh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000e9263108ac1c0040acda631a51",
+  "expect": "4333636500000000e9263108ac1c0040acda631a51",
+  "model": {
+    "aplog.grxh_timeus": "1701000003",
+    "aplog.grxh_rcvtime": "2.014",
+    "aplog.grxh_week": "55980",
+    "aplog.grxh_leaps": "99"
+  }
+}

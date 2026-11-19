@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-gen",
+  "from": "ardupilot-log-gen",
+  "to": "ardupilot-log-gen",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acda0100e3781a170000c4c00000bcc0bf",
+  "expect": "4333636500000000753c0100acda0100e3781a170000c4c00000bcc0bf",
+  "model": {
+    "aplog.gen_timeus": "1701000003",
+    "aplog.gen_runtime": "81013",
+    "aplog.gen_mainttime": "121516",
+    "aplog.gen_errors": "30947"
+  }
+}

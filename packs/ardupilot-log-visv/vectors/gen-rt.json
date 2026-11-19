@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-visv",
+  "from": "ardupilot-log-visv",
+  "to": "ardupilot-log-visv",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008675726500000000acda01000000d4c00000ccc00000c4c00000bcc0bff6ad",
+  "expect": "43336365000000008675726500000000acda01000000d4c00000ccc00000c4c00000bcc0bff6ad",
+  "model": {
+    "aplog.visv_timeus": "1701000003",
+    "aplog.visv_rtimeus": "1702000006",
+    "aplog.visv_ctimems": "121516",
+    "aplog.visv_vx": "-6.625"
+  }
+}

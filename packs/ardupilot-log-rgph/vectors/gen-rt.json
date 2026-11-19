@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-rgph",
+  "from": "ardupilot-log-rgph",
+  "to": "ardupilot-log-rgph",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e75",
+  "expect": "3e75",
+  "model": {
+    "aplog.rgph_numinst": "62",
+    "aplog.rgph_primary": "117"
+  }
+}

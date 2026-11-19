@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-arm",
+  "from": "ardupilot-log-arm",
+  "to": "ardupilot-log-arm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100e31a",
+  "expect": "433363650000000075acda0100e31a",
+  "model": {
+    "aplog.arm_timeus": "1701000003",
+    "aplog.arm_armstate": "117",
+    "aplog.arm_armchecks": "121516",
+    "aplog.arm_forced": "227"
+  }
+}

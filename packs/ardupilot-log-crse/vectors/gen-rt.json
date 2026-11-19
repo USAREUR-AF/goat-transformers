@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-crse",
+  "from": "ardupilot-log-crse",
+  "to": "ardupilot-log-crse",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f50000dcc00000d4c0",
+  "expect": "4333636500000000f50000dcc00000d4c0",
+  "model": {
+    "aplog.crse_timeus": "1701000003",
+    "aplog.crse_state": "-11",
+    "aplog.crse_speed": "-6.875",
+    "aplog.crse_throttle": "-6.625"
+  }
+}

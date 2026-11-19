@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-graw",
+  "from": "ardupilot-log-graw",
+  "to": "ardupilot-log-graw",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acdae31a5eba490c022b18c01904560e2d321c400000b4c0f6ad64",
+  "expect": "4333636500000000753c0100acdae31a5eba490c022b18c01904560e2d321c400000b4c0f6ad64",
+  "model": {
+    "aplog.graw_timeus": "1701000003",
+    "aplog.graw_wkms": "81013",
+    "aplog.graw_week": "55980",
+    "aplog.graw_numsv": "227"
+  }
+}

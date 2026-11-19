@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sa",
+  "from": "ardupilot-log-sa",
+  "to": "ardupilot-log-sa",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f6",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f6",
+  "model": {
+    "aplog.sa_timeus": "1701000003",
+    "aplog.sa_state": "117",
+    "aplog.sa_dvelx": "-6.875",
+    "aplog.sa_dvely": "-6.625"
+  }
+}

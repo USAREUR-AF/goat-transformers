@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ais1",
+  "from": "ardupilot-log-ais1",
+  "to": "ardupilot-log-ais1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace37802001ad188533f3f16d7e5c6ece9e564cc9b6ad209c077e30900",
+  "expect": "433363650000000075ace37802001ad188533f3f16d7e5c6ece9e564cc9b6ad209c077e30900",
+  "model": {
+    "aplog.ais1_us": "1701000003",
+    "aplog.ais1_typ": "117",
+    "aplog.ais1_rep": "172",
+    "aplog.ais1_mmsi": "162019"
+  }
+}

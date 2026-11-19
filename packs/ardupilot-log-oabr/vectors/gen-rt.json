@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-oabr",
+  "from": "ardupilot-log-oabr",
+  "to": "ardupilot-log-oabr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace3781a1751b5880000b4c03f16d7e5c6ece9e564cc0680d4990fe65b7022e609a70880",
+  "expect": "433363650000000075ace3781a1751b5880000b4c03f16d7e5c6ece9e564cc0680d4990fe65b7022e609a70880",
+  "model": {
+    "aplog.oabr_timeus": "1701000003",
+    "aplog.oabr_type": "117",
+    "aplog.oabr_act": "172",
+    "aplog.oabr_dyaw": "30947"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sblm",
+  "from": "ardupilot-log-sblm",
+  "to": "ardupilot-log-sblm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c0",
+  "model": {
+    "aplog.sblm_timeus": "1701000003",
+    "aplog.sblm_rax": "-7.125",
+    "aplog.sblm_ray": "-6.875",
+    "aplog.sblm_raz": "-6.625"
+  }
+}

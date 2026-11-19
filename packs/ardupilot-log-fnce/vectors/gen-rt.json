@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-fnce",
+  "from": "ardupilot-log-fnce",
+  "to": "ardupilot-log-fnce",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace323bc8be5aa929ee5880000b4c0",
+  "expect": "433363650000000075ace323bc8be5aa929ee5880000b4c0",
+  "model": {
+    "aplog.fnce_timeus": "1701000003",
+    "aplog.fnce_tot": "117",
+    "aplog.fnce_seq": "172",
+    "aplog.fnce_type": "227"
+  }
+}

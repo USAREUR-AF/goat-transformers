@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-guia",
+  "from": "ardupilot-log-guia",
+  "to": "ardupilot-log-guia",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "model": {
+    "aplog.guia_timeus": "1701000003",
+    "aplog.guia_type": "117",
+    "aplog.guia_roll": "-6.875",
+    "aplog.guia_pitch": "-6.625"
+  }
+}

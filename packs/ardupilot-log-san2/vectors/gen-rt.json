@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-san2",
+  "from": "ardupilot-log-san2",
+  "to": "ardupilot-log-san2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c0",
+  "model": {
+    "aplog.san2_timeus": "1701000003",
+    "aplog.san2_anx": "-7.125",
+    "aplog.san2_any": "-6.875",
+    "aplog.san2_anz": "-6.625"
+  }
+}

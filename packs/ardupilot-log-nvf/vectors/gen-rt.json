@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-nvf",
+  "from": "ardupilot-log-nvf",
+  "to": "ardupilot-log-nvf",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000743200000000000000000000000000000000dcc0",
+  "expect": "4333636500000000743200000000000000000000000000000000dcc0",
+  "model": {
+    "aplog.nvf_timeus": "1701000003",
+    "aplog.nvf_name": "t2",
+    "aplog.nvf_value": "-6.875"
+  }
+}

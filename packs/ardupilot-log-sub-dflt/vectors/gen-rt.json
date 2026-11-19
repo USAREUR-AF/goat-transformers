@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-sub-dflt",
+  "from": "ardupilot-log-sub-dflt",
+  "to": "ardupilot-log-sub-dflt",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc0",
+  "expect": "4333636500000000750000dcc0",
+  "model": {
+    "aplog.sub_dflt_timeus": "1701000003",
+    "aplog.sub_dflt_id": "117",
+    "aplog.sub_dflt_value": "-6.875"
+  }
+}

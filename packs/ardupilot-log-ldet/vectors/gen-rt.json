@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-ldet",
+  "from": "ardupilot-log-ldet",
+  "to": "ardupilot-log-ldet",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacda0100",
+  "expect": "4333636500000000753cacda0100",
+  "model": {
+    "aplog.ldet_timeus": "1701000003",
+    "aplog.ldet_flags": "15477",
+    "aplog.ldet_count": "121516"
+  }
+}

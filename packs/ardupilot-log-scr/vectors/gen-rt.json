@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-scr",
+  "from": "ardupilot-log-scr",
+  "to": "ardupilot-log-scr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000074320000000000000000000000000000acda0100e37802801a170380",
+  "expect": "433363650000000074320000000000000000000000000000acda0100e37802801a170380",
+  "model": {
+    "aplog.scr_timeus": "1701000003",
+    "aplog.scr_name": "t2",
+    "aplog.scr_runtime": "121516",
+    "aplog.scr_total_mem": "-2147321629"
+  }
+}

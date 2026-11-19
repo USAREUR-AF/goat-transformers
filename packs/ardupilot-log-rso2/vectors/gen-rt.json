@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-rso2",
+  "from": "ardupilot-log-rso2",
+  "to": "ardupilot-log-rso2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e0000753c0100acda0100",
+  "expect": "3e9e0000753c0100acda0100",
+  "model": {
+    "aplog.rso2_lat": "40510",
+    "aplog.rso2_lon": "81013",
+    "aplog.rso2_alt": "121516"
+  }
+}

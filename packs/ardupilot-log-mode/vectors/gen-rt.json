@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-mode",
+  "from": "ardupilot-log-mode",
+  "to": "ardupilot-log-mode",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace3",
+  "expect": "433363650000000075ace3",
+  "model": {
+    "aplog.mode_timeus": "1701000003",
+    "aplog.mode_mode": "117",
+    "aplog.mode_modenum": "172",
+    "aplog.mode_rsn": "227"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-nval",
+  "from": "ardupilot-log-nval",
+  "to": "ardupilot-log-nval",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100743300000000000000000000000000000000d4c01a51",
+  "expect": "4333636500000000753c0100743300000000000000000000000000000000d4c01a51",
+  "model": {
+    "aplog.nval_timeus": "1701000003",
+    "aplog.nval_timebootms": "81013",
+    "aplog.nval_name": "t3",
+    "aplog.nval_value": "-6.625"
+  }
+}

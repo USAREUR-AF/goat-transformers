@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-fenc",
+  "from": "ardupilot-log-fenc",
+  "to": "ardupilot-log-fenc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100acda0100e37802001a17030051b503000000bcc0",
+  "expect": "4333636500000000753c0100acda0100e37802001a17030051b503000000bcc0",
+  "model": {
+    "aplog.fenc_timeus": "1701000003",
+    "aplog.fenc_en": "81013",
+    "aplog.fenc_ae": "121516",
+    "aplog.fenc_cf": "162019"
+  }
+}

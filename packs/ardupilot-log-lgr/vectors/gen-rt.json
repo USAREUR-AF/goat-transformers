@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-lgr",
+  "from": "ardupilot-log-lgr",
+  "to": "ardupilot-log-lgr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f52c",
+  "expect": "4333636500000000f52c",
+  "model": {
+    "aplog.lgr_timeus": "1701000003",
+    "aplog.lgr_landinggear": "-11",
+    "aplog.lgr_weightonwheels": "44"
+  }
+}

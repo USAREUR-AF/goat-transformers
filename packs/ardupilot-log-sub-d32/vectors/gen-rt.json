@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-sub-d32",
+  "from": "ardupilot-log-sub-d32",
+  "to": "ardupilot-log-sub-d32",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0180",
+  "expect": "433363650000000075acda0180",
+  "model": {
+    "aplog.sub_d32_timeus": "1701000003",
+    "aplog.sub_d32_id": "117",
+    "aplog.sub_d32_value": "-2147362132"
+  }
+}

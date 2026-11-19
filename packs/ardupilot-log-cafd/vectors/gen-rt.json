@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-cafd",
+  "from": "ardupilot-log-cafd",
+  "to": "ardupilot-log-cafd",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100e34f3ca06500000000927eaf6500000000d5c0be65000000001803ce65000000005b45dd65000000009e87ec6500000000e1c9fb6500000000240c0b6600000000",
+  "expect": "433363650000000075acda0100e34f3ca06500000000927eaf6500000000d5c0be65000000001803ce65000000005b45dd65000000009e87ec6500000000e1c9fb6500000000240c0b6600000000",
+  "model": {
+    "aplog.cafd_timeus": "1701000003",
+    "aplog.cafd_bus": "117",
+    "aplog.cafd_id": "121516",
+    "aplog.cafd_dlc": "227"
+  }
+}

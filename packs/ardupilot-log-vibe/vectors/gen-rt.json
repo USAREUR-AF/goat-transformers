@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-vibe",
+  "from": "ardupilot-log-vibe",
+  "to": "ardupilot-log-vibe",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc051b50300",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc051b50300",
+  "model": {
+    "aplog.vibe_timeus": "1701000003",
+    "aplog.vibe_imu": "117",
+    "aplog.vibe_vibex": "-6.875",
+    "aplog.vibe_vibey": "-6.625"
+  }
+}

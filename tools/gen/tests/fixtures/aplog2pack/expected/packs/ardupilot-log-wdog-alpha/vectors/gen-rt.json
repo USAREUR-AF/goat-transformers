@@ -1,0 +1,12 @@
+{
+  "name": "rt-ardupilot-log-wdog-alpha",
+  "from": "ardupilot-log-wdog-alpha",
+  "to": "ardupilot-log-wdog-alpha",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f5",
+  "expect": "4333636500000000f5",
+  "model": {
+    "aplog.wdog_alpha_timeus": "1701000003",
+    "aplog.wdog_alpha_task": "-11"
+  }
+}

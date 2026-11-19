@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-dstl",
+  "from": "ardupilot-log-dstl",
+  "to": "ardupilot-log-dstl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc09ce578e523bc8be551b5038088d3bf710000acc02d2e068000009cc0000094c000008cc0000084c0",
+  "expect": "4333636500000000750000dcc09ce578e523bc8be551b5038088d3bf710000acc02d2e068000009cc0000094c000008cc0000084c0",
+  "model": {
+    "aplog.dstl_timeus": "1701000003",
+    "aplog.dstl_stg": "117",
+    "aplog.dstl_thdg": "-6.875",
+    "aplog.dstl_lat": "-445061732"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-vpos",
+  "from": "ardupilot-log-vpos",
+  "to": "ardupilot-log-vpos",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008e3853e5150f66e5e37802800000ccc00000c4c00000bcc0",
+  "expect": "43336365000000008e3853e5150f66e5e37802800000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.vpos_timeus": "1701000003",
+    "aplog.vpos_lat": "-447530866",
+    "aplog.vpos_lng": "-446296299",
+    "aplog.vpos_alt": "-2147321629"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-nkf2",
+  "from": "ardupilot-log-nkf2",
+  "to": "ardupilot-log-nkf2",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000752ce3f81a97513588d3bf71f60f2dae644c9bead288092740",
+  "expect": "4333636500000000752ce3f81a97513588d3bf71f60f2dae644c9bead288092740",
+  "model": {
+    "aplog.nkf2_timeus": "1701000003",
+    "aplog.nkf2_c": "117",
+    "aplog.nkf2_azbias": "44",
+    "aplog.nkf2_gsx": "-1821"
+  }
+}

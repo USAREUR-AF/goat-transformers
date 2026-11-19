@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-qbrk",
+  "from": "ardupilot-log-qbrk",
+  "to": "ardupilot-log-qbrk",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0e37802801a170380",
+  "expect": "43336365000000000000e4c00000dcc0e37802801a170380",
+  "model": {
+    "aplog.qbrk_timeus": "1701000003",
+    "aplog.qbrk_spdscaler": "-7.125",
+    "aplog.qbrk_npulcd": "-6.875",
+    "aplog.qbrk_qbplcd": "-2147321629"
+  }
+}

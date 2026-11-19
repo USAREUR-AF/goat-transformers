@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-mag",
+  "from": "ardupilot-log-mag",
+  "to": "ardupilot-log-mag",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac5ae3f81a97513588d3bf71f60f2dae644c9bd2080800",
+  "expect": "433363650000000075ac5ae3f81a97513588d3bf71f60f2dae644c9bd2080800",
+  "model": {
+    "aplog.mag_timeus": "1701000003",
+    "aplog.mag_i": "117",
+    "aplog.mag_magx": "23212",
+    "aplog.mag_magy": "-1821"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-pm",
+  "from": "ardupilot-log-pm",
+  "to": "ardupilot-log-pm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdae3781a17030051b503008853bff1f68f05002d2e060064cc06009b6a0700d208080009a70800edd2386600000000",
+  "expect": "4333636500000000753cacdae3781a17030051b503008853bff1f68f05002d2e060064cc06009b6a0700d208080009a70800edd2386600000000",
+  "model": {
+    "aplog.pm_timeus": "1701000003",
+    "aplog.pm_lr": "15477",
+    "aplog.pm_nlon": "55980",
+    "aplog.pm_nl": "30947"
+  }
+}

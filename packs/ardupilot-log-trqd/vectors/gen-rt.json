@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-trqd",
+  "from": "ardupilot-log-trqd",
+  "to": "ardupilot-log-trqd",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace3f81a9751b5030088530400",
+  "expect": "433363650000000075ace3f81a9751b5030088530400",
+  "model": {
+    "aplog.trqd_timeus": "1701000003",
+    "aplog.trqd_i": "117",
+    "aplog.trqd_health": "172",
+    "aplog.trqd_desmotspeed": "-1821"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rtcm",
+  "from": "ardupilot-log-rtcm",
+  "to": "ardupilot-log-rtcm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae3781a170300",
+  "expect": "433363650000000075acdae3781a170300",
+  "model": {
+    "aplog.rtcm_timeus": "1701000003",
+    "aplog.rtcm_chan": "117",
+    "aplog.rtcm_rtcmid": "55980",
+    "aplog.rtcm_len": "30947"
+  }
+}

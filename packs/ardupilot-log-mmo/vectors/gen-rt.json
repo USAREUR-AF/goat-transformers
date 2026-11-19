@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-mmo",
+  "from": "ardupilot-log-mmo",
+  "to": "ardupilot-log-mmo",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.mmo_timeus": "1701000003",
+    "aplog.mmo_nx": "-7.125",
+    "aplog.mmo_ny": "-6.875",
+    "aplog.mmo_nz": "-6.625"
+  }
+}

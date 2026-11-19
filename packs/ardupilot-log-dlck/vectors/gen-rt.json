@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-dlck",
+  "from": "ardupilot-log-dlck",
+  "to": "ardupilot-log-dlck",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c74330000000000000000000000000000e3780200",
+  "expect": "4333636500000000753c74330000000000000000000000000000e3780200",
+  "model": {
+    "aplog.dlck_timeus": "1701000003",
+    "aplog.dlck_semline": "15477",
+    "aplog.dlck_thdname": "t3",
+    "aplog.dlck_mtxp": "162019"
+  }
+}

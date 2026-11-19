@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-jsn1",
+  "from": "ardupilot-log-jsn1",
+  "to": "ardupilot-log-jsn1",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "aplog.jsn1_timeus": "1701000003",
+    "aplog.jsn1_tstamp": "-7.125",
+    "aplog.jsn1_r": "-6.875",
+    "aplog.jsn1_p": "-6.625"
+  }
+}

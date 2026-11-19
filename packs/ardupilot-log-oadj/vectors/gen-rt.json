@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-oadj",
+  "from": "ardupilot-log-oadj",
+  "to": "ardupilot-log-oadj",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31aaa929ee53169b1e5b83fc4e53f16d7e5",
+  "expect": "433363650000000075ace31aaa929ee53169b1e5b83fc4e53f16d7e5",
+  "model": {
+    "aplog.oadj_timeus": "1701000003",
+    "aplog.oadj_state": "117",
+    "aplog.oadj_err": "172",
+    "aplog.oadj_currpoint": "227"
+  }
+}

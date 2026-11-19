@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ubxt",
+  "from": "ardupilot-log-ubxt",
+  "to": "ardupilot-log-ubxt",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace31a1751b588530400bff10400f68f2d2e060064cc06009b6a0700",
+  "expect": "433363650000000075ace31a1751b588530400bff10400f68f2d2e060064cc06009b6a0700",
+  "model": {
+    "aplog.ubxt_timeus": "1701000003",
+    "aplog.ubxt_i": "117",
+    "aplog.ubxt_ch": "172",
+    "aplog.ubxt_flags": "227"
+  }
+}

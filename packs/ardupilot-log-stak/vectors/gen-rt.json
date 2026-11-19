@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-stak",
+  "from": "ardupilot-log-stak",
+  "to": "ardupilot-log-stak",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace3781a1774360000000000000000000000000000",
+  "expect": "433363650000000075ace3781a1774360000000000000000000000000000",
+  "model": {
+    "aplog.stak_timeus": "1701000003",
+    "aplog.stak_id": "117",
+    "aplog.stak_pri": "172",
+    "aplog.stak_total": "30947"
+  }
+}

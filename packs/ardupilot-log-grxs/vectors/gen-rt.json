@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-grxs",
+  "from": "ardupilot-log-grxs",
+  "to": "ardupilot-log-grxs",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000e9263108ac1c00405eba490c022b08c00000d4c01a5188bff1f62d649bd2",
+  "expect": "4333636500000000e9263108ac1c00405eba490c022b08c00000d4c01a5188bff1f62d649bd2",
+  "model": {
+    "aplog.grxs_timeus": "1701000003",
+    "aplog.grxs_prmes": "2.014",
+    "aplog.grxs_cpmes": "-3.021",
+    "aplog.grxs_domes": "-6.625"
+  }
+}

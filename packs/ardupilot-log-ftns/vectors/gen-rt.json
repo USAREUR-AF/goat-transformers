@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-ftns",
+  "from": "ardupilot-log-ftns",
+  "to": "ardupilot-log-ftns",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc0",
+  "expect": "4333636500000000750000dcc0",
+  "model": {
+    "aplog.ftns_timeus": "1701000003",
+    "aplog.ftns_i": "117",
+    "aplog.ftns_nf": "-6.875"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-slup",
+  "from": "ardupilot-log-slup",
+  "to": "ardupilot-log-slup",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f50000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0",
+  "expect": "4333636500000000f50000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0",
+  "model": {
+    "aplog.slup_timeus": "1701000003",
+    "aplog.slup_land": "-11",
+    "aplog.slup_tens": "-6.875",
+    "aplog.slup_len": "-6.625"
+  }
+}

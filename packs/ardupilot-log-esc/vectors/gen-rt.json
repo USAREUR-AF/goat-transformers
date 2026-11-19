@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-esc",
+  "from": "ardupilot-log-esc",
+  "to": "ardupilot-log-esc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c088d30000b4c0f60f0000a4c0",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c088d30000b4c0f60f0000a4c0",
+  "model": {
+    "aplog.esc_timeus": "1701000003",
+    "aplog.esc_instance": "117",
+    "aplog.esc_rpm": "-6.875",
+    "aplog.esc_rawrpm": "-6.625"
+  }
+}

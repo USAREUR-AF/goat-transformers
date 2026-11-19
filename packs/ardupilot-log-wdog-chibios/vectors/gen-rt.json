@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-wdog-chibios",
+  "from": "ardupilot-log-wdog-chibios",
+  "to": "ardupilot-log-wdog-chibios",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f5acda0100e3781a1751b58853bff1f68f2d2e64cc06009bd208080009a7080074313500",
+  "expect": "4333636500000000f5acda0100e3781a1751b58853bff1f68f2d2e64cc06009bd208080009a7080074313500",
+  "model": {
+    "aplog.wdog_chibios_timeus": "1701000003",
+    "aplog.wdog_chibios_tsk": "-11",
+    "aplog.wdog_chibios_ie": "121516",
+    "aplog.wdog_chibios_iec": "30947"
+  }
+}

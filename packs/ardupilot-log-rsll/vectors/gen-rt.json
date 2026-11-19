@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rsll",
+  "from": "ardupilot-log-rsll",
+  "to": "ardupilot-log-rsll",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e0000753c01000000dcc0e3780200",
+  "expect": "3e9e0000753c01000000dcc0e3780200",
+  "model": {
+    "aplog.rsll_lat": "40510",
+    "aplog.rsll_lng": "81013",
+    "aplog.rsll_posaccsd": "-6.875",
+    "aplog.rsll_ts": "162019"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-surf",
+  "from": "ardupilot-log-surf",
+  "to": "ardupilot-log-surf",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c0",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.surf_timeus": "1701000003",
+    "aplog.surf_i": "117",
+    "aplog.surf_st": "172",
+    "aplog.surf_d": "-6.625"
+  }
+}

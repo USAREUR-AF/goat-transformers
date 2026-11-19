@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-tclr",
+  "from": "ardupilot-log-tclr",
+  "to": "ardupilot-log-tclr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc0bff10400",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc0bff10400",
+  "model": {
+    "aplog.tclr_timeus": "1701000003",
+    "aplog.tclr_i": "117",
+    "aplog.tclr_stype": "172",
+    "aplog.tclr_temp": "-6.625"
+  }
+}

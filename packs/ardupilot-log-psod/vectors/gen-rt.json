@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-psod",
+  "from": "ardupilot-log-psod",
+  "to": "ardupilot-log-psod",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "aplog.psod_timeus": "1701000003",
+    "aplog.psod_tpod": "-7.125",
+    "aplog.psod_pod": "-6.875",
+    "aplog.psod_tvod": "-6.625"
+  }
+}

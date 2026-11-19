@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-hrsc",
+  "from": "ardupilot-log-hrsc",
+  "to": "ardupilot-log-hrsc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc0bf",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc0bf",
+  "model": {
+    "aplog.hrsc_timeus": "1701000003",
+    "aplog.hrsc_i": "117",
+    "aplog.hrsc_drrpm": "-6.875",
+    "aplog.hrsc_errpm": "-6.625"
+  }
+}

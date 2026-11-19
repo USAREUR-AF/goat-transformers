@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ssan",
+  "from": "ardupilot-log-ssan",
+  "to": "ardupilot-log-ssan",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdae3781a17",
+  "expect": "4333636500000000753cacdae3781a17",
+  "model": {
+    "aplog.ssan_timeus": "1701000003",
+    "aplog.ssan_f0": "15477",
+    "aplog.ssan_f1": "55980",
+    "aplog.ssan_f2": "30947"
+  }
+}

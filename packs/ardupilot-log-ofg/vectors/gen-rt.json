@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-ofg",
+  "from": "ardupilot-log-ofg",
+  "to": "ardupilot-log-ofg",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc0510000bcc00000b4c0f6",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc0510000bcc00000b4c0f6",
+  "model": {
+    "aplog.ofg_timeus": "1701000003",
+    "aplog.ofg_arsp": "-7.125",
+    "aplog.ofg_arspa": "-6.875",
+    "aplog.ofg_alt": "-6.625"
+  }
+}

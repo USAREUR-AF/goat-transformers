@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-bcn",
+  "from": "ardupilot-log-bcn",
+  "to": "ardupilot-log-bcn",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "model": {
+    "aplog.bcn_timeus": "1701000003",
+    "aplog.bcn_health": "117",
+    "aplog.bcn_cnt": "172",
+    "aplog.bcn_d0": "-6.625"
+  }
+}

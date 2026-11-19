@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-rtc",
+  "from": "ardupilot-log-rtc",
+  "to": "ardupilot-log-rtc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008675726500000000c9b7816500000000",
+  "expect": "43336365000000008675726500000000c9b7816500000000",
+  "model": {
+    "aplog.rtc_timeus": "1701000003",
+    "aplog.rtc_old_utc": "1702000006",
+    "aplog.rtc_new_utc": "1703000009"
+  }
+}

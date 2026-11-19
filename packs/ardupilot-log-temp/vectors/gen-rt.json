@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-temp",
+  "from": "ardupilot-log-temp",
+  "to": "ardupilot-log-temp",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc0",
+  "expect": "4333636500000000750000dcc0",
+  "model": {
+    "aplog.temp_timeus": "1701000003",
+    "aplog.temp_instance": "117",
+    "aplog.temp_temp": "-6.875"
+  }
+}

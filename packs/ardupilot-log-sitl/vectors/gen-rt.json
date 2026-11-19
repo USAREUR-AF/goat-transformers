@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-sitl",
+  "from": "ardupilot-log-sitl",
+  "to": "ardupilot-log-sitl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "expect": "43336365000000000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "model": {
+    "aplog.sitl_timeus": "1701000003",
+    "aplog.sitl_vn": "-7.125",
+    "aplog.sitl_ve": "-6.875",
+    "aplog.sitl_vd": "-6.625"
+  }
+}

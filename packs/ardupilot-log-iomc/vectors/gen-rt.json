@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-iomc",
+  "from": "ardupilot-log-iomc",
+  "to": "ardupilot-log-iomc",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753cacdae37802001a17030051b5030088530400bff10400",
+  "expect": "4333636500000000753cacdae37802001a17030051b5030088530400bff10400",
+  "model": {
+    "aplog.iomc_timeus": "1701000003",
+    "aplog.iomc_rserr": "15477",
+    "aplog.iomc_mem": "55980",
+    "aplog.iomc_ts": "162019"
+  }
+}

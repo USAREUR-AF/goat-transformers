@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-prx",
+  "from": "ardupilot-log-prx",
+  "to": "ardupilot-log-prx",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0",
+  "expect": "433363650000000075ac0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0",
+  "model": {
+    "aplog.prx_timeus": "1701000003",
+    "aplog.prx_layer": "117",
+    "aplog.prx_he": "172",
+    "aplog.prx_d0": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rpm",
+  "from": "ardupilot-log-rpm",
+  "to": "ardupilot-log-rpm",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c01a",
+  "expect": "4333636500000000750000dcc00000d4c01a",
+  "model": {
+    "aplog.rpm_timeus": "1701000003",
+    "aplog.rpm_i": "117",
+    "aplog.rpm_rpm": "-6.875",
+    "aplog.rpm_qual": "-6.625"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-mult",
+  "from": "ardupilot-log-mult",
+  "to": "ardupilot-log-mult",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000f55eba490c022b08c0",
+  "expect": "4333636500000000f55eba490c022b08c0",
+  "model": {
+    "aplog.mult_timeus": "1701000003",
+    "aplog.mult_id": "-11",
+    "aplog.mult_mult": "-3.021"
+  }
+}

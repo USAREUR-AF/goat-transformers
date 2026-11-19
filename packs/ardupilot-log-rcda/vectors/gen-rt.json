@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rcda",
+  "from": "ardupilot-log-rcda",
+  "to": "ardupilot-log-rcda",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000753c0100ace31a17030051b5030088530400bff10400f68f05002d2e060064cc06009b6a0700d208080009a70800",
+  "expect": "4333636500000000753c0100ace31a17030051b5030088530400bff10400f68f05002d2e060064cc06009b6a0700d208080009a70800",
+  "model": {
+    "aplog.rcda_timeus": "1701000003",
+    "aplog.rcda_ts": "81013",
+    "aplog.rcda_prot": "172",
+    "aplog.rcda_len": "227"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-thr",
+  "from": "ardupilot-log-thr",
+  "to": "ardupilot-log-thr",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075bc0000dcc00000d4c00000ccc00000c4c0",
+  "expect": "433363650000000075bc0000dcc00000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.thr_timeus": "1701000003",
+    "aplog.thr_thrin": "-17291",
+    "aplog.thr_throut": "-6.875",
+    "aplog.thr_desspeed": "-6.625"
+  }
+}

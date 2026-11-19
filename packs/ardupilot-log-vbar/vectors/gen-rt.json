@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-vbar",
+  "from": "ardupilot-log-vbar",
+  "to": "ardupilot-log-vbar",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000000000e4c00000dcc0",
+  "expect": "43336365000000000000e4c00000dcc0",
+  "model": {
+    "aplog.vbar_timeus": "1701000003",
+    "aplog.vbar_press": "-7.125",
+    "aplog.vbar_altdiff": "-6.875"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-srtl",
+  "from": "ardupilot-log-srtl",
+  "to": "ardupilot-log-srtl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acdae3781a0000c4c00000bcc00000b4c0",
+  "expect": "433363650000000075acdae3781a0000c4c00000bcc00000b4c0",
+  "model": {
+    "aplog.srtl_timeus": "1701000003",
+    "aplog.srtl_active": "117",
+    "aplog.srtl_numpts": "55980",
+    "aplog.srtl_maxpts": "30947"
+  }
+}

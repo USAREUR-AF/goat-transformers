@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-bcl",
+  "from": "ardupilot-log-bcl",
+  "to": "ardupilot-log-bcl",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc0e3781a1751b58853bff1f68f2d2e64cc9b6ad20809a74045",
+  "expect": "4333636500000000750000dcc0e3781a1751b58853bff1f68f2d2e64cc9b6ad20809a74045",
+  "model": {
+    "aplog.bcl_timeus": "1701000003",
+    "aplog.bcl_instance": "117",
+    "aplog.bcl_volt": "-6.875",
+    "aplog.bcl_v1": "30947"
+  }
+}

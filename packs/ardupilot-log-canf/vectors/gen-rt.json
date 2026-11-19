@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-canf",
+  "from": "ardupilot-log-canf",
+  "to": "ardupilot-log-canf",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075acda0100e31a5188bff62d649b",
+  "expect": "433363650000000075acda0100e31a5188bff62d649b",
+  "model": {
+    "aplog.canf_timeus": "1701000003",
+    "aplog.canf_bus": "117",
+    "aplog.canf_id": "121516",
+    "aplog.canf_dlc": "227"
+  }
+}

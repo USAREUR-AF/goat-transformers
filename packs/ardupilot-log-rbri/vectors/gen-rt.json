@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-rbri",
+  "from": "ardupilot-log-rbri",
+  "to": "ardupilot-log-rbri",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e9e00000000e4c0ace3",
+  "expect": "3e9e00000000e4c0ace3",
+  "model": {
+    "aplog.rbri_lastupdate": "40510",
+    "aplog.rbri_alt": "-7.125",
+    "aplog.rbri_h": "172",
+    "aplog.rbri_i": "227"
+  }
+}

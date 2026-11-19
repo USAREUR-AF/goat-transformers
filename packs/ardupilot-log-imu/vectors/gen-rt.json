@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-imu",
+  "from": "ardupilot-log-imu",
+  "to": "ardupilot-log-imu",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f05002d2e060000009cc09bd209a74045",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0f68f05002d2e060000009cc09bd209a74045",
+  "model": {
+    "aplog.imu_timeus": "1701000003",
+    "aplog.imu_i": "117",
+    "aplog.imu_gyrx": "-6.875",
+    "aplog.imu_gyry": "-6.625"
+  }
+}

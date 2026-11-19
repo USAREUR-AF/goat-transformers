@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-csrv",
+  "from": "ardupilot-log-csrv",
+  "to": "ardupilot-log-csrv",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c00000ccc0510000bcc00000b4c00000acc00000a4c000009cc09b",
+  "expect": "4333636500000000750000dcc00000d4c00000ccc0510000bcc00000b4c00000acc00000a4c000009cc09b",
+  "model": {
+    "aplog.csrv_timeus": "1701000003",
+    "aplog.csrv_id": "117",
+    "aplog.csrv_pos": "-6.875",
+    "aplog.csrv_force": "-6.625"
+  }
+}

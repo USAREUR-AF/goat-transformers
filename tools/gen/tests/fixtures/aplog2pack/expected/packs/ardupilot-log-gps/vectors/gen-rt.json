@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-gps",
+  "from": "ardupilot-log-gps",
+  "to": "ardupilot-log-gps",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ace3f823bc8be5aa929ee58853048074380000",
+  "expect": "433363650000000075ace3f823bc8be5aa929ee58853048074380000",
+  "model": {
+    "aplog.gps_timeus": "1701000003",
+    "aplog.gps_i": "117",
+    "aplog.gps_status": "172",
+    "aplog.gps_hdop": "-1821"
+  }
+}

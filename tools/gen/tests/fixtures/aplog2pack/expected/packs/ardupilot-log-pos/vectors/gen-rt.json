@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-pos",
+  "from": "ardupilot-log-pos",
+  "to": "ardupilot-log-pos",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "43336365000000008e3853e5150f66e50000d4c00000ccc00000c4c0",
+  "expect": "43336365000000008e3853e5150f66e50000d4c00000ccc00000c4c0",
+  "model": {
+    "aplog.pos_timeus": "1701000003",
+    "lat": "-44.753086599999996",
+    "lon": "-44.6296299",
+    "aplog.pos_alt": "-6.625"
+  }
+}

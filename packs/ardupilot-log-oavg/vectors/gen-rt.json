@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-oavg",
+  "from": "ardupilot-log-oavg",
+  "to": "ardupilot-log-oavg",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac9ce578e523bc8be5",
+  "expect": "433363650000000075ac9ce578e523bc8be5",
+  "model": {
+    "aplog.oavg_timeus": "1701000003",
+    "aplog.oavg_version": "117",
+    "aplog.oavg_point_num": "172",
+    "aplog.oavg_lat": "-445061732"
+  }
+}

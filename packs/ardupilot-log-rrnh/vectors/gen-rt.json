@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-rrnh",
+  "from": "ardupilot-log-rrnh",
+  "to": "ardupilot-log-rrnh",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "3e1e75bcac",
+  "expect": "3e1e75bcac",
+  "model": {
+    "aplog.rrnh_gcl": "7742",
+    "aplog.rrnh_maxd": "-17291",
+    "aplog.rrnh_numsensors": "172"
+  }
+}

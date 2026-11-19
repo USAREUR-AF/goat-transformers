@@ -1,0 +1,14 @@
+{
+  "name": "rt-ardupilot-log-xktv",
+  "from": "ardupilot-log-xktv",
+  "to": "ardupilot-log-xktv",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "4333636500000000750000dcc00000d4c0",
+  "expect": "4333636500000000750000dcc00000d4c0",
+  "model": {
+    "aplog.xktv_timeus": "1701000003",
+    "aplog.xktv_c": "117",
+    "aplog.xktv_tvs": "-6.875",
+    "aplog.xktv_tvd": "-6.625"
+  }
+}

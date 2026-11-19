@@ -1,0 +1,13 @@
+{
+  "name": "rt-ardupilot-log-err",
+  "from": "ardupilot-log-err",
+  "to": "ardupilot-log-err",
+  "source": "tools/gen/aplog2pack.py: values chosen by the generator, packed by its serializer in format-string order",
+  "input": "433363650000000075ac",
+  "expect": "433363650000000075ac",
+  "model": {
+    "aplog.err_timeus": "1701000003",
+    "aplog.err_subsys": "117",
+    "aplog.err_ecode": "172"
+  }
+}
