@@ -54,6 +54,7 @@ DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& wh
     else if (name == "not") d.fn = DeriveFn::Not;
     else if (name == "parse_int") d.fn = DeriveFn::ParseInt;
     else if (name == "text_of") d.fn = DeriveFn::TextOf;
+    else if (name == "present") d.fn = DeriveFn::Present;  // 0.12
     else bad(where, "derive function '" + d.function + "' is not in the function table");
 
     if (takes_param != have_param)
@@ -153,6 +154,7 @@ void check_derives(Module& m, const ModuleLookup& loaded, bool require_core) {
             case DeriveFn::Not: fits = all(KeyType::Int); break;
             case DeriveFn::ParseInt: fits = target == KeyType::Int && args[0] == KeyType::String; break;
             case DeriveFn::TextOf: fits = target == KeyType::String && args[0] == KeyType::Int; break;
+            case DeriveFn::Present: fits = target == KeyType::Int; break;  // any scalar argument (0.12)
             default: fits = all(KeyType::Float); break;
         }
         if (!fits) bad(where, "the key types do not fit derive function '" + d.function + "'");
@@ -266,6 +268,10 @@ bool apply_derive(const DeriveLine& d, Entity& e) {
             case DeriveFn::TextOf:
                 if (a[0]->kind != Value::Kind::Int) return false;
                 e.fields[d.target] = Value::of_string(std::to_string(a[0]->i));
+                return true;
+            case DeriveFn::Present:
+                // Presence, not value: any value the entity holds gives 1 (0.12 ruling 1).
+                e.fields[d.target] = Value::of_int(1);
                 return true;
             case DeriveFn::Any: return false;  // handled above
             case DeriveFn::Scale: {
