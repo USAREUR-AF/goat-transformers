@@ -2,8 +2,8 @@
   "name": "roundtrip-esc_telemetry_21_to_24",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd2c0000452b9c222b000a49bbc26c3c1db6e19c92164390f409b8f0696a1ae4cb5d8f4440bef137a2b166981712c88b79053dee9f50",
-  "expect": "fd2c0000452b9c222b000a49bbc26c3c1db6e19c92164390f409b8f0696a1ae4cb5d8f4440bef137a2b166981712c88b79053dee9f50",
+  "input": "fd2c0001452b9c222b000a49bbc26c3c1db6e19c92164390f409b8f0696a1ae4cb5d8f4440bef137a2b166981712c88b79053dee9f50",
+  "expect": "fd2c0001452b9c222b000a49bbc26c3c1db6e19c92164390f409b8f0696a1ae4cb5d8f4440bef137a2b166981712c88b79053dee9f50",
   "model": {
     "@kind": "esc_telemetry_21_to_24"
   }

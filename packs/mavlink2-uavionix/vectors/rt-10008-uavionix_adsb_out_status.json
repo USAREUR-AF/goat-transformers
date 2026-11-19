@@ -2,8 +2,8 @@
   "name": "roundtrip-uavionix_adsb_out_status",
   "from": "mavlink2-uavionix",
   "to": "mavlink2-uavionix",
-  "input": "fd0e000007094d182700b4308b6239104d38300000000000",
-  "expect": "fd0e000007094d182700b4308b6239104d38300000000000",
+  "input": "fd0e000107094d182700b4308b6239104d38300000000000",
+  "expect": "fd0e000107094d182700b4308b6239104d38300000000000",
   "model": {
     "@kind": "uavionix_adsb_out_status"
   }

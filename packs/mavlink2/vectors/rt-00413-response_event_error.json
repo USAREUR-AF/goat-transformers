@@ -2,8 +2,8 @@
   "name": "roundtrip-response_event_error",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd070000d9a4209d01005f9c36f00de4bb",
-  "expect": "fd070000d9a4209d01005f9c36f00de4bb",
+  "input": "fd070001d9a4209d01005f9c36f00de4bb",
+  "expect": "fd070001d9a4209d01005f9c36f00de4bb",
   "model": {
     "@kind": "response_event_error"
   }

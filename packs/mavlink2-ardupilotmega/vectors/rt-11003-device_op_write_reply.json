@@ -2,8 +2,8 @@
   "name": "roundtrip-device_op_write_reply",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd050000330475fb2a002194b66bf8",
-  "expect": "fd050000330475fb2a002194b66bf8",
+  "input": "fd050001330475fb2a002194b66bf8",
+  "expect": "fd050001330475fb2a002194b66bf8",
   "model": {
     "@kind": "device_op_write_reply"
   }

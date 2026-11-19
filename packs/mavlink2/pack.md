@@ -18,8 +18,8 @@ counted from the first bit of the STX byte.
 |---|---|---|---|
 | STX | 1 | `0:0:8` | common `when` = 253 (0xFD) |
 | LEN | 1 | `0:8:8` | per-kind `when` = full payload length |
-| INCOMPAT | 1 | `0:16:8` | not mapped |
-| COMPAT | 1 | `0:24:8` | not mapped |
+| INCOMPAT | 1 | `0:16:8` | `mavlink.incompat_flags` |
+| COMPAT | 1 | `0:24:8` | `mavlink.compat_flags` |
 | SEQ | 1 | `0:32:8` | `mavlink.seq` |
 | SYSID | 1 | `0:40:8` | `mavlink.sysid` |
 | COMPID | 1 | `0:48:8` | `mavlink.compid` |
@@ -40,14 +40,15 @@ comparing six of them with the values the protocol fixes.
 | Messages in the source (common 232, standard 2, minimal 1) | 235 |
 | Kinds | 235 |
 | Payload fields in the source | 1940 |
-| Payload fields mapped | 1883 |
+| Payload fields mapped | 1940 |
 | ... scalar to a raw `mavlink.` key | 1724 |
 | ... `char[n]` to a string key (`ascii`) | 59 |
 | ... array of 2 to 8 elements, one key per element | 70 (340 element lines) |
+| ... array of more than 8 elements, one key per element | 57 (3374 element lines) |
 | ... `lat` / `lon` in degE7 to core `lat` / `lon` | 30 |
-| Payload fields not mapped (arrays of more than 8 elements) | 57 |
-| `field` lines in `pack.def` (3 common + per kind) | 2156 |
-| Keys in module `mavlink` (3 frame-header + payload) | 1258 |
+| Payload fields not mapped | 0 |
+| `field` lines in `pack.def` (5 common + per kind) | 5532 |
+| Keys in module `mavlink` (5 frame-header + payload) | 3973 |
 | Vectors (235 same-format round trips + 5 to geojson) | 240 |
 
 ## What is mapped
@@ -65,6 +66,78 @@ comparing six of them with the values the protocol fixes.
 Every other value is raw: the integer or float on the wire, in the unit the
 definition states, which `model/mavlink.def` records in the key's unit column.
 
+### Arrays of more than 8 elements
+
+57 array fields (4625 bytes of payload) are mapped one key per element as the
+shorter arrays are, keys `<name>_0` to `<name>_<n-1>`. Their keys are named in
+a pass after every other key, so they never change a key the shorter-array rule
+gives: a field's element keys are shared with other messages only when every
+long use agrees on type class, units and enum and every key name that already
+exists has the same meaning; otherwise the field takes its message name as a
+prefix. Byte blobs (`uint8_t[n]` holding a file chunk, RTCM data, a URI) are
+carried byte by byte as integers 0..255; the model has no byte-string type a
+`bits` transform yields.
+
+| Message | Field | Type | Keys |
+|---|---|---|---|
+| GPS_STATUS | satellite_prn | `uint8_t[20]` | `mavlink.satellite_prn_0` … `_19` |
+| GPS_STATUS | satellite_used | `uint8_t[20]` | `mavlink.satellite_used_0` … `_19` |
+| GPS_STATUS | satellite_elevation | `uint8_t[20]` | `mavlink.satellite_elevation_deg_0` … `_19` |
+| GPS_STATUS | satellite_azimuth | `uint8_t[20]` | `mavlink.satellite_azimuth_deg_0` … `_19` |
+| GPS_STATUS | satellite_snr | `uint8_t[20]` | `mavlink.satellite_snr_db_0` … `_19` |
+| ATTITUDE_QUATERNION_COV | covariance | `float[9]` | `mavlink.covariance_0` … `_8` |
+| GLOBAL_POSITION_INT_COV | covariance | `float[36]` | `mavlink.covariance_0` … `_35` |
+| LOCAL_POSITION_NED_COV | covariance | `float[45]` | `mavlink.covariance_0` … `_44` |
+| HIL_ACTUATOR_CONTROLS | controls | `float[16]` | `mavlink.controls_0` … `_15` |
+| GLOBAL_VISION_POSITION_ESTIMATE | covariance | `float[21]` | `mavlink.covariance_0` … `_20` |
+| VISION_POSITION_ESTIMATE | covariance | `float[21]` | `mavlink.covariance_0` … `_20` |
+| VISION_SPEED_ESTIMATE | covariance | `float[9]` | `mavlink.covariance_0` … `_8` |
+| VICON_POSITION_ESTIMATE | covariance | `float[21]` | `mavlink.covariance_0` … `_20` |
+| FILE_TRANSFER_PROTOCOL | payload | `uint8_t[251]` | `mavlink.payload_0` … `_250` |
+| LOG_DATA | data | `uint8_t[90]` | `mavlink.log_data_data_0` … `_89` |
+| GPS_INJECT_DATA | data | `uint8_t[110]` | `mavlink.gps_inject_data_data_0` … `_109` |
+| SERIAL_CONTROL | data | `uint8_t[70]` | `mavlink.serial_control_data_0` … `_69` |
+| ENCAPSULATED_DATA | data | `uint8_t[253]` | `mavlink.encapsulated_data_data_0` … `_252` |
+| TERRAIN_DATA | data | `int16_t[16]` | `mavlink.data_m_0` … `_15` |
+| ATT_POS_MOCAP | covariance | `float[21]` | `mavlink.covariance_0` … `_20` |
+| RESOURCE_REQUEST | uri | `uint8_t[120]` | `mavlink.uri_0` … `_119` |
+| RESOURCE_REQUEST | storage | `uint8_t[120]` | `mavlink.storage_0` … `_119` |
+| BATTERY_STATUS | voltages | `uint16_t[10]` | `mavlink.voltages_mv_0` … `_9` |
+| AUTOPILOT_VERSION | uid2 | `uint8_t[18]` | `mavlink.uid2_0` … `_17` |
+| GPS_RTCM_DATA | data | `uint8_t[180]` | `mavlink.gps_rtcm_data_data_0` … `_179` |
+| V2_EXTENSION | payload | `uint8_t[249]` | `mavlink.payload_0` … `_248` |
+| MEMORY_VECT | value | `int8_t[32]` | `mavlink.value_0` … `_31` |
+| SETUP_SIGNING | secret_key | `uint8_t[32]` | `mavlink.secret_key_0` … `_31` |
+| CAMERA_INFORMATION | vendor_name | `uint8_t[32]` | `mavlink.vendor_name_0` … `_31` |
+| CAMERA_INFORMATION | model_name | `uint8_t[32]` | `mavlink.model_name_0` … `_31` |
+| LOGGING_DATA | data | `uint8_t[249]` | `mavlink.logging_data_data_0` … `_248` |
+| LOGGING_DATA_ACKED | data | `uint8_t[249]` | `mavlink.logging_data_acked_data_0` … `_248` |
+| UAVCAN_NODE_INFO | hw_unique_id | `uint8_t[16]` | `mavlink.hw_unique_id_0` … `_15` |
+| OBSTACLE_DISTANCE | distances | `uint16_t[72]` | `mavlink.distances_cm_0` … `_71` |
+| ODOMETRY | pose_covariance | `float[21]` | `mavlink.pose_covariance_0` … `_20` |
+| ODOMETRY | velocity_covariance | `float[21]` | `mavlink.velocity_covariance_0` … `_20` |
+| UTM_GLOBAL_POSITION | uas_id | `uint8_t[18]` | `mavlink.uas_id_0` … `_17` |
+| DEBUG_FLOAT_ARRAY | data | `float[58]` | `mavlink.debug_float_array_data_0` … `_57` |
+| ACTUATOR_OUTPUT_STATUS | actuator | `float[32]` | `mavlink.actuator_0` … `_31` |
+| TUNNEL | payload | `uint8_t[128]` | `mavlink.payload_0` … `_127` |
+| CANFD_FRAME | data | `uint8_t[64]` | `mavlink.canfd_frame_data_0` … `_63` |
+| CAN_FILTER_MODIFY | ids | `uint16_t[16]` | `mavlink.ids_0` … `_15` |
+| ONBOARD_COMPUTER_STATUS | cpu_combined | `uint8_t[10]` | `mavlink.cpu_combined_0` … `_9` |
+| ONBOARD_COMPUTER_STATUS | gpu_combined | `uint8_t[10]` | `mavlink.gpu_combined_0` … `_9` |
+| EVENT | arguments | `uint8_t[40]` | `mavlink.arguments_0` … `_39` |
+| RADIO_RC_CHANNELS | channels | `int16_t[32]` | `mavlink.channels_0` … `_31` |
+| WHEEL_DISTANCE | distance | `double[16]` | `mavlink.distance_m_0` … `_15` |
+| OPEN_DRONE_ID_BASIC_ID | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_BASIC_ID | uas_id | `uint8_t[20]` | `mavlink.uas_id_0` … `_19` |
+| OPEN_DRONE_ID_LOCATION | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_AUTHENTICATION | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_AUTHENTICATION | authentication_data | `uint8_t[23]` | `mavlink.authentication_data_0` … `_22` |
+| OPEN_DRONE_ID_SELF_ID | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_SYSTEM | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_OPERATOR_ID | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_MESSAGE_PACK | id_or_mac | `uint8_t[20]` | `mavlink.id_or_mac_0` … `_19` |
+| OPEN_DRONE_ID_MESSAGE_PACK | messages | `uint8_t[225]` | `mavlink.messages_0` … `_224` |
+
 ### Key names
 
 A key is `mavlink.<field name>` with the unit appended when the field declares
@@ -73,12 +146,12 @@ one and the name does not already end with it (`mavlink.alt_mm`,
 becomes `pct`, `*` becomes `_x`. One key is shared by every message whose field
 has that name with the same type class (int, float, string), units and enum.
 When the uses of a name disagree, every use takes the message name as a prefix
-(`mavlink.<message>_<field>…`). 147 fields are named that way:
+(`mavlink.<message>_<field>…`). 156 fields are named that way:
 
 | Reason | Fields |
 |---|---|
 | different enums | 78 |
-| different types | 58 |
+| different types | 67 |
 | same name as a frame-header key | 11 |
 
 ### Core keys
@@ -112,75 +185,19 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
-For 50 kinds the required keys are all shared with at least one other kind
+For 43 kinds the required keys are all shared with at least one other kind
 that maps every one of them; an entity built from such a kind's keys with its
-kind cleared selects the first qualifying kind in id order: `param_request_read`, `param_request_list`, `gps_status`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `attitude_quaternion_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `file_transfer_protocol`, `hil_optical_flow`, `scaled_imu2`, `log_data`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `terrain_check`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_data`, `logging_data_acked`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `canfd_frame`, `supported_tunes`, `wheel_distance`.
+kind cleared selects the first qualifying kind in id order: `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `terrain_check`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`.
 
 ## What is not mapped
 
-- CRC (2 bytes after the payload), INCOMPAT and COMPAT flags, and the 13-byte
-  signature of a signed frame.
-- 57 array fields of more than 8 elements (4625 bytes of payload in total):
-
-| Message | Field | Type |
-|---|---|---|
-| GPS_STATUS | satellite_prn | `uint8_t[20]` |
-| GPS_STATUS | satellite_used | `uint8_t[20]` |
-| GPS_STATUS | satellite_elevation | `uint8_t[20]` |
-| GPS_STATUS | satellite_azimuth | `uint8_t[20]` |
-| GPS_STATUS | satellite_snr | `uint8_t[20]` |
-| ATTITUDE_QUATERNION_COV | covariance | `float[9]` |
-| GLOBAL_POSITION_INT_COV | covariance | `float[36]` |
-| LOCAL_POSITION_NED_COV | covariance | `float[45]` |
-| HIL_ACTUATOR_CONTROLS | controls | `float[16]` |
-| GLOBAL_VISION_POSITION_ESTIMATE | covariance | `float[21]` |
-| VISION_POSITION_ESTIMATE | covariance | `float[21]` |
-| VISION_SPEED_ESTIMATE | covariance | `float[9]` |
-| VICON_POSITION_ESTIMATE | covariance | `float[21]` |
-| FILE_TRANSFER_PROTOCOL | payload | `uint8_t[251]` |
-| LOG_DATA | data | `uint8_t[90]` |
-| GPS_INJECT_DATA | data | `uint8_t[110]` |
-| SERIAL_CONTROL | data | `uint8_t[70]` |
-| ENCAPSULATED_DATA | data | `uint8_t[253]` |
-| TERRAIN_DATA | data | `int16_t[16]` |
-| ATT_POS_MOCAP | covariance | `float[21]` |
-| RESOURCE_REQUEST | uri | `uint8_t[120]` |
-| RESOURCE_REQUEST | storage | `uint8_t[120]` |
-| BATTERY_STATUS | voltages | `uint16_t[10]` |
-| AUTOPILOT_VERSION | uid2 | `uint8_t[18]` |
-| GPS_RTCM_DATA | data | `uint8_t[180]` |
-| V2_EXTENSION | payload | `uint8_t[249]` |
-| MEMORY_VECT | value | `int8_t[32]` |
-| SETUP_SIGNING | secret_key | `uint8_t[32]` |
-| CAMERA_INFORMATION | vendor_name | `uint8_t[32]` |
-| CAMERA_INFORMATION | model_name | `uint8_t[32]` |
-| LOGGING_DATA | data | `uint8_t[249]` |
-| LOGGING_DATA_ACKED | data | `uint8_t[249]` |
-| UAVCAN_NODE_INFO | hw_unique_id | `uint8_t[16]` |
-| OBSTACLE_DISTANCE | distances | `uint16_t[72]` |
-| ODOMETRY | pose_covariance | `float[21]` |
-| ODOMETRY | velocity_covariance | `float[21]` |
-| UTM_GLOBAL_POSITION | uas_id | `uint8_t[18]` |
-| DEBUG_FLOAT_ARRAY | data | `float[58]` |
-| ACTUATOR_OUTPUT_STATUS | actuator | `float[32]` |
-| TUNNEL | payload | `uint8_t[128]` |
-| CANFD_FRAME | data | `uint8_t[64]` |
-| CAN_FILTER_MODIFY | ids | `uint16_t[16]` |
-| ONBOARD_COMPUTER_STATUS | cpu_combined | `uint8_t[10]` |
-| ONBOARD_COMPUTER_STATUS | gpu_combined | `uint8_t[10]` |
-| EVENT | arguments | `uint8_t[40]` |
-| RADIO_RC_CHANNELS | channels | `int16_t[32]` |
-| WHEEL_DISTANCE | distance | `double[16]` |
-| OPEN_DRONE_ID_BASIC_ID | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_BASIC_ID | uas_id | `uint8_t[20]` |
-| OPEN_DRONE_ID_LOCATION | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_AUTHENTICATION | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_AUTHENTICATION | authentication_data | `uint8_t[23]` |
-| OPEN_DRONE_ID_SELF_ID | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_SYSTEM | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_OPERATOR_ID | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_MESSAGE_PACK | id_or_mac | `uint8_t[20]` |
-| OPEN_DRONE_ID_MESSAGE_PACK | messages | `uint8_t[225]` |
+- CRC (2 bytes after the payload) and the 13-byte signature of a signed frame.
+  A field line with the `optional` option could read them, but encode writes
+  every field line of the kind whether its key is present or not (vector
+  `06-optional-truncated-roundtrip-writes-whole-message` of
+  `conformance-rules-bits`), so every unsigned frame would gain 13 zero bytes
+  and every frame from another format a CRC of zero. Mapping them needs a rule
+  that computes the checksum and one that writes a part only when a flag is set.
 
 ## Known limits
 
@@ -193,10 +210,8 @@ kind cleared selects the first qualifying kind in id order: `param_request_read`
   a transmittable frame until a framer adds truncation and the CRC (with the
   message's CRC_EXTRA). Input that carries the CRC or a signature decodes: bytes
   after the last mapped bit are ignored.
-- **Short output.** In 25 kinds the payload ends in unmapped array fields, so
-  encode output is shorter than `10 + LEN` bytes: `gps_status`, `attitude_quaternion_cov`, `vicon_position_estimate`, `file_transfer_protocol`, `log_data`, `gps_inject_data`, `encapsulated_data`, `att_pos_mocap`, `resource_request`, `autopilot_version`, `gps_rtcm_data`, `v2_extension`, `memory_vect`, `setup_signing`, `logging_data`, `logging_data_acked`, `debug_float_array`, `actuator_output_status`, `tunnel`, `canfd_frame`, `event`, `radio_rc_channels`, `open_drone_id_basic_id`, `open_drone_id_authentication`, `open_drone_id_message_pack`.
-- **Unmapped bits do not round-trip.** The bits wire has no residue: INCOMPAT,
-  COMPAT and unmapped arrays are written as zero.
+- **Output length.** Every payload byte is mapped, so encode output is the
+  `10 + LEN` bytes of header and payload, without the CRC.
 - **`invalid` values.** A field's `invalid` attribute (a value that means
   unknown) is not interpreted; the key holds the number.
 - **Text.** `ascii` refuses bytes outside 0x20..0x7E, so a `char[n]` field that
@@ -209,10 +224,10 @@ kind cleared selects the first qualifying kind in id order: `param_request_read`
 ## Vectors
 
 `vectors/rt-<id>-<kind>.json`: one same-format round trip per kind. The input
-is the frame as the encoder writes it (no CRC, unmapped arrays absent or zero),
-so input and expected output are identical. Values are inside each field's
-range; floats are multiples of 0.25 or 0.125; every other `uint64_t` sample has
-its top bit set.
+is the frame as the encoder writes it (no CRC), so input and expected output
+are identical. Values are inside each field's range; floats are multiples of
+0.25 or 0.125; every other `uint64_t` sample has its top bit set; every other
+frame has COMPAT = 1, and INCOMPAT is 0.
 
 `vectors/x-NN-<kind>-to-geojson.json`: 5 full frames with a correct CRC,
 converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees

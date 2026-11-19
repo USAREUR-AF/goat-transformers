@@ -2,8 +2,8 @@
   "name": "roundtrip-named_value_int",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1200008b033efc0000901a846f8934e2d24d363900000000000000",
-  "expect": "fd1200008b033efc0000901a846f8934e2d24d363900000000000000",
+  "input": "fd1200018b033efc0000901a846f8934e2d24d363900000000000000",
+  "expect": "fd1200018b033efc0000901a846f8934e2d24d363900000000000000",
   "model": {
     "@kind": "named_value_int"
   }

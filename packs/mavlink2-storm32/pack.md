@@ -29,8 +29,9 @@ this pack.
 The frame is the one `packs/mavlink2/pack.md` describes: `wire bits`, `bit_order lsb`,
 `word_bytes 1`, locators `0:<bit offset>:<len>` from the STX byte, a common `when`
 on STX = 253, and per kind a `when` on MSGID (`0:56:24`) and on LEN (`0:8:8`) = the
-full payload length. The frame-header keys `mavlink.seq`, `mavlink.sysid` and
-`mavlink.compid` are those of module `mavlink`, so they carry over between every
+full payload length. The frame-header keys `mavlink.seq`, `mavlink.sysid`,
+`mavlink.compid`, `mavlink.incompat_flags` and `mavlink.compat_flags` are those of
+module `mavlink`, so they carry over between every
 MAVLink pack. Payload keys are in this pack's own module `mavlinkstorm32`.
 Payload fields sit at their MAVLink 2 wire offsets: base fields in descending
 type-size order (stable), then extension fields in declaration order. The
@@ -46,14 +47,15 @@ MAVLink project generates from the same definitions (`PROVENANCE.md`).
 | Kinds | 12 |
 | Messages with no field the pack can map (no kind) | 0 |
 | Payload fields of the kinds | 90 |
-| Payload fields mapped | 88 |
+| Payload fields mapped | 90 |
 | ... scalar to a raw `mavlinkstorm32.` key | 85 |
 | ... `char[n]` to a string key (`ascii`) | 2 |
 | ... array of 2 to 8 elements, one key per element | 1 (4 element lines) |
+| ... array of more than 8 elements, one key per element | 2 (488 element lines) |
 | ... latitude / longitude in degE7 to core `lat` / `lon` | 0 |
-| Payload fields not mapped (arrays of more than 8 elements) | 2 |
-| `field` lines in `pack.def` (3 common + per kind) | 94 |
-| Keys in module `mavlinkstorm32` | 71 |
+| Payload fields not mapped | 0 |
+| `field` lines in `pack.def` (5 common + per kind) | 584 |
+| Keys in module `mavlinkstorm32` | 319 |
 | Vectors (12 same-format round trips + 0 to geojson) | 12 |
 
 ## What is mapped
@@ -70,6 +72,23 @@ MAVLink project generates from the same definitions (`PROVENANCE.md`).
 
 Every other value is raw: the integer or float on the wire, in the unit the
 definition states, which `model/mavlinkstorm32.def` records in the key's unit column.
+
+### Arrays of more than 8 elements
+
+2 array fields (488 bytes of payload) are mapped one key per element as the
+shorter arrays are, keys `<name>_0` to `<name>_<n-1>`. Their keys are named in
+a pass after every other key, so they never change a key the shorter-array rule
+gives: a field's element keys are shared with other messages only when every
+long use agrees on type class, units and enum and every key name that already
+exists has the same meaning; otherwise the field takes its message name as a
+prefix. Byte blobs (`uint8_t[n]` holding a file chunk, RTCM data, a URI) are
+carried byte by byte as integers 0..255; the model has no byte-string type a
+`bits` transform yields.
+
+| Message | Field | Type | Keys |
+|---|---|---|---|
+| FRSKY_PASSTHROUGH_ARRAY | packet_buf | `uint8_t[240]` | `mavlinkstorm32.packet_buf_0` … `_239` |
+| PARAM_VALUE_ARRAY | packet_buf | `uint8_t[248]` | `mavlinkstorm32.packet_buf_0` … `_247` |
 
 ### Key names
 
@@ -101,15 +120,13 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 
 ## What is not mapped
 
-- CRC (2 bytes after the payload), INCOMPAT and COMPAT flags, and the 13-byte
-  signature of a signed frame.
-- 2 array fields of more than 8 elements (488 bytes of payload in total):
-
-| Message | Field | Type |
-|---|---|---|
-| FRSKY_PASSTHROUGH_ARRAY | packet_buf | `uint8_t[240]` |
-| PARAM_VALUE_ARRAY | packet_buf | `uint8_t[248]` |
-
+- CRC (2 bytes after the payload) and the 13-byte signature of a signed frame.
+  A field line with the `optional` option could read them, but encode writes
+  every field line of the kind whether its key is present or not (vector
+  `06-optional-truncated-roundtrip-writes-whole-message` of
+  `conformance-rules-bits`), so every unsigned frame would gain 13 zero bytes
+  and every frame from another format a CRC of zero. Mapping them needs a rule
+  that computes the checksum and one that writes a part only when a flag is set.
 - Enum and bitmask values are carried as their integer; enum names are not
   taken into the model.
 
@@ -117,11 +134,9 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 
 Those of `packs/mavlink2/pack.md` (Known limits) hold here unchanged: truncated
 payloads (LEN shorter than the full length) are `no-kind`; the CRC is neither
-checked nor written; unmapped bits are written as zero; an `invalid` value is
+checked nor written; an `invalid` value is
 carried as its number; `ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values
 of 2^63 or above are the negative model integer with the same bits.
-In 2 kinds the payload ends in unmapped array fields, so encode output is
-shorter than `10 + LEN` bytes: `frsky_passthrough_array`, `param_value_array`.
 
 ## Message status in the source
 
@@ -132,5 +147,5 @@ The pack maps them as the pinned commit defines them.
 ## Vectors
 
 `vectors/rt-<id>-<kind>.json`: one same-format round trip per kind, computed by
-the generator's own encoder (no CRC, unmapped arrays absent or zero), so input and
-expected output are identical.
+the generator's own encoder (no CRC; every other frame has COMPAT = 1), so input
+and expected output are identical.

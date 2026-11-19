@@ -2,8 +2,8 @@
   "name": "roundtrip-compassmot_status",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd14000019b2b2b1000000008840000088c0000020c0000040bf67353e89",
-  "expect": "fd14000019b2b2b1000000008840000088c0000020c0000040bf67353e89",
+  "input": "fd14000119b2b2b1000000008840000088c0000020c0000040bf67353e89",
+  "expect": "fd14000119b2b2b1000000008840000088c0000020c0000040bf67353e89",
   "model": {
     "@kind": "compassmot_status"
   }

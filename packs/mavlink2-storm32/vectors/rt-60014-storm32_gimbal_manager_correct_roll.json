@@ -2,8 +2,8 @@
   "name": "roundtrip-storm32_gimbal_manager_correct_roll",
   "from": "mavlink2-storm32",
   "to": "mavlink2-storm32",
-  "input": "fd080000050f296eea000000803ed5ac835a",
-  "expect": "fd080000050f296eea000000803ed5ac835a",
+  "input": "fd080001050f296eea000000803ed5ac835a",
+  "expect": "fd080001050f296eea000000803ed5ac835a",
   "model": {
     "@kind": "storm32_gimbal_manager_correct_roll"
   }

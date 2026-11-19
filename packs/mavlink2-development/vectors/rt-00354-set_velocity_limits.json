@@ -2,8 +2,8 @@
   "name": "roundtrip-set_velocity_limits",
   "from": "mavlink2-development",
   "to": "mavlink2-development",
-  "input": "fd0e00000169a46201000000204000008840000088c04f26",
-  "expect": "fd0e00000169a46201000000204000008840000088c04f26",
+  "input": "fd0e00010169a46201000000204000008840000088c04f26",
+  "expect": "fd0e00010169a46201000000204000008840000088c04f26",
   "model": {
     "@kind": "set_velocity_limits"
   }

@@ -2,8 +2,8 @@
   "name": "roundtrip-remote_log_block_status",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd07000021babab9000083c96d475a3108",
-  "expect": "fd07000021babab9000083c96d475a3108",
+  "input": "fd07000121babab9000083c96d475a3108",
+  "expect": "fd07000121babab9000083c96d475a3108",
   "model": {
     "@kind": "remote_log_block_status"
   }

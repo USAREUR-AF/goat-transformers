@@ -2,8 +2,8 @@
   "name": "roundtrip-radio_rc_channels",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd490000daab27a4010068c317283f1716edc4",
-  "expect": "fd490000daab27a4010068c317283f1716edc4",
+  "input": "fd490000daab27a4010068c317283f1716edc475b1ac4fe3ed1a8c512a88c8bf66f6042da364419bdfd27d091c40ba7758aef6e5941c3353d18a6fc10df8ab2f4a66e89d86d4240bc3426179ffb09de73b1eda",
+  "expect": "fd490000daab27a4010068c317283f1716edc475b1ac4fe3ed1a8c512a88c8bf66f6042da364419bdfd27d091c40ba7758aef6e5941c3353d18a6fc10df8ab2f4a66e89d86d4240bc3426179ffb09de73b1eda",
   "model": {
     "@kind": "radio_rc_channels"
   }

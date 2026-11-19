@@ -2,8 +2,8 @@
   "name": "roundtrip-button_change",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0900008f0843010100bbc81a3b921c9f0e69",
-  "expect": "fd0900008f0843010100bbc81a3b921c9f0e69",
+  "input": "fd0900018f0843010100bbc81a3b921c9f0e69",
+  "expect": "fd0900018f0843010100bbc81a3b921c9f0e69",
   "model": {
     "@kind": "button_change"
   }

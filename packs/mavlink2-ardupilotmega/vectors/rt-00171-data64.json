@@ -2,8 +2,8 @@
   "name": "roundtrip-data64",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd42000013acacab00007148",
-  "expect": "fd42000013acacab00007148",
+  "input": "fd42000113acacab000071481fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d78839ea9b4cfdae",
+  "expect": "fd42000113acacab000071481fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d78839ea9b4cfdae",
   "model": {
     "@kind": "data64"
   }

@@ -2,8 +2,8 @@
   "name": "roundtrip-mission_request",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0500001d2929280000a40e7b5229",
-  "expect": "fd0500001d2929280000a40e7b5229",
+  "input": "fd0500011d2929280000a40e7b5229",
+  "expect": "fd0500011d2929280000a40e7b5229",
   "model": {
     "@kind": "mission_request"
   }

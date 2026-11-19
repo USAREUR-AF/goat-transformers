@@ -2,8 +2,8 @@
   "name": "roundtrip-change_operator_control_ack",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd030000050707060000e6bd94",
-  "expect": "fd030000050707060000e6bd94",
+  "input": "fd030001050707060000e6bd94",
+  "expect": "fd030001050707060000e6bd94",
   "model": {
     "@kind": "change_operator_control_ack"
   }

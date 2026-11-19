@@ -2,8 +2,8 @@
   "name": "roundtrip-event",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e45",
-  "expect": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e45",
+  "input": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e451ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213",
+  "expect": "fd350000d6a11d9a01001267ea10e9ba6e64c00e976e451ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213",
   "model": {
     "@kind": "event"
   }
