@@ -77,11 +77,6 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
-Packs dronecan-* (133); modules dc<namespace> (41)
-  DroneCAN DSDL data type definitions, https://github.com/dronecan/DSDL.
-  MIT License, Copyright (c) 2014-2015 Pavel Kirienko. Type names, field
-  names, types and array forms only.
-
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c
