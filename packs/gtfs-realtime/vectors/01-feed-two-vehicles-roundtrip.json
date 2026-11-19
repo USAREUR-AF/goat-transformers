@@ -1,0 +1,16 @@
+{
+  "name": "01-feed-two-vehicles-roundtrip",
+  "from": "gtfs-realtime",
+  "to": "gtfs-realtime",
+  "input": "0a0d0a03322e3010001880e2cfaa06121b0a0265312215120a0d7b14524215e17a564142070a056275732d37121c0a0265322216120a0d00004142150000834142080a067472616d2d33",
+  "expect": "0a0d0a03322e3010001880e2cfaa06121b0a0265312215120a0d7b14524215e17a564142070a056275732d37121c0a0265322216120a0d00004142150000834142080a067472616d2d33",
+  "model": {
+    "gtfsrt.header_gtfs_realtime_version": "2.0",
+    "gtfsrt.header_incrementality": "0",
+    "gtfsrt.header_timestamp": "1700000000",
+    "gtfsrt.feed_message_entity.#": "2",
+    "gtfsrt.feed_message_entity[0].gtfsrt.feed_entity_id": "e1",
+    "gtfsrt.feed_message_entity[1].gtfsrt.feed_entity_vehicle_vehicle_id": "tram-3",
+    "gtfsrt.feed_message_entity[1].gtfsrt.feed_entity_vehicle_position_latitude": "48.25"
+  }
+}
