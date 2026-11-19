@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-uavionix_adsb_out_dynamic",
+  "from": "mavlink2-uavionix",
+  "to": "mavlink2-uavionix",
+  "input": "fd2900000103471227001ac646350fc9902c901c952c1170992c92c39d2c4d69dc5624bdfb10969117e5983857602eb405dcb3",
+  "expect": "fd2900000103471227001ac646350fc9902c901c952c1170992c92c39d2c4d69dc5624bdfb10969117e5983857602eb405dcb3",
+  "model": {
+    "@kind": "uavionix_adsb_out_dynamic"
+  }
+}

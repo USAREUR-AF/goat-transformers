@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-distance_sensor_v2",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd0a00000f12880502007729b615000060c025fc",
+  "expect": "fd0a00000f12880502007729b615000060c025fc",
+  "model": {
+    "@kind": "distance_sensor_v2"
+  }
+}

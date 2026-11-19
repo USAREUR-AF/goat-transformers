@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-radio",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0900000ea7a7a6000046cd1d21f4cba27950",
+  "expect": "fd0900000ea7a7a6000046cd1d21f4cba27950",
+  "model": {
+    "@kind": "radio"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gopro_set_request",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0700002ddb1cda0000d2a9805708b96a",
+  "expect": "fd0700002ddb1cda0000d2a9805708b96a",
+  "model": {
+    "@kind": "gopro_set_request"
+  }
+}

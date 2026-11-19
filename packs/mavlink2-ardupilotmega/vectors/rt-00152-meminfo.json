@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-meminfo",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd080000029999980000347f0bd3e226c72e",
+  "expect": "fd080000029999980000347f0bd3e226c72e",
+  "model": {
+    "@kind": "meminfo"
+  }
+}

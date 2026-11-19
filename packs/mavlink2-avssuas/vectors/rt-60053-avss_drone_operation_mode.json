@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-avss_drone_operation_mode",
+  "from": "mavlink2-avssuas",
+  "to": "mavlink2-avssuas",
+  "input": "fd06000003365095ea00e7bfd47fbe95",
+  "expect": "fd06000003365095ea00e7bfd47fbe95",
+  "model": {
+    "@kind": "avss_drone_operation_mode"
+  }
+}

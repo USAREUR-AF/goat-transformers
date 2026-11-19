@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-efi_performance",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd31000008c13dba0100f2f4e12700000080000000bf0000a03f77f06e2200009840000070c0fcebd33faa9381e780d12f8f8278ddb48b623910e7",
+  "expect": "fd31000008c13dba0100f2f4e12700000080000000bf0000a03f77f06e2200009840000070c0fcebd33faa9381e780d12f8f8278ddb48b623910e7",
+  "model": {
+    "@kind": "efi_performance"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-led_strip_config",
+  "from": "mavlink2-stemstudios",
+  "to": "mavlink2-stemstudios",
+  "input": "fd26000000654c78cd0054d4ab12054ee330b6c71a4f6741526d18bb890bc934c1297aaef8472b2830662b02d9b0875e",
+  "expect": "fd26000000654c78cd0054d4ab12054ee330b6c71a4f6741526d18bb890bc934c1297aaef8472b2830662b02d9b0875e",
+  "model": {
+    "@kind": "led_strip_config"
+  }
+}

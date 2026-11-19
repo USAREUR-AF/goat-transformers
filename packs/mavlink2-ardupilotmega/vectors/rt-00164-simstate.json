@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-simstate",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd2c00000ca5a5a40000000088c0000020c0000040bf0000803f0000304000009040000080c0000010c0000000bf000e270700f2d8f8",
+  "expect": "fd2c00000ca5a5a40000000088c0000020c0000040bf0000803f0000304000009040000080c0000010c0000000bf000e270700f2d8f8",
+  "model": {
+    "@kind": "simstate"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-group_start",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd10000004a5219e0100ce58c93300000080a5ac4d077c00d25a",
+  "expect": "fd10000004a5219e0100ce58c93300000080a5ac4d077c00d25a",
+  "model": {
+    "@kind": "group_start"
+  }
+}

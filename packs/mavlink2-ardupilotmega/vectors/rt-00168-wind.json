@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-wind",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0c000010a9a9a80000000080c0000010c0000000bf",
+  "expect": "fd0c000010a9a9a80000000080c0000010c0000000bf",
+  "model": {
+    "@kind": "wind"
+  }
+}

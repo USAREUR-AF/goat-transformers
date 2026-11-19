@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-ekf_status_report",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1a000024c203c100000000a0c0000050c00000c0bf0000803e000000402e50000098c0",
+  "expect": "fd1a000024c203c100000000a0c0000050c00000c0bf0000803e000000402e50000098c0",
+  "model": {
+    "@kind": "ekf_status_report"
+  }
+}

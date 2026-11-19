@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-battery2",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0400001db6b6b50000c7d7aa6d",
+  "expect": "fd0400001db6b6b50000c7d7aa6d",
+  "model": {
+    "@kind": "battery2"
+  }
+}

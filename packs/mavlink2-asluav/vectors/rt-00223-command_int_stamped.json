@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-command_int_stamped",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd2f000000e021df0000fdc1b35200000000d4153826000098c0000040c00000a0bf0000003fe93accd06a8ed0d0000090c08cb4633a11e8bf",
+  "expect": "fd2f000000e021df0000fdc1b35200000000d4153826000098c0000040c00000a0bf0000003fe93accd06a8ed0d0000090c08cb4633a11e8bf",
+  "model": {
+    "@kind": "command_int_stamped"
+  }
+}

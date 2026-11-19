@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-control_status",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd0c00000b0d830002004c23",
+  "expect": "fd0c00000b0d830002004c23",
+  "model": {
+    "@kind": "control_status"
+  }
+}

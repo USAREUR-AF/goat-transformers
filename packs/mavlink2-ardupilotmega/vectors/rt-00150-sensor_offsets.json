@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sensor_offsets",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd2a000000979796000000000000330140cbb45444cb0000a0c0000050c00000c0bf0000803e00000040000070403b1dbc703dc4",
+  "expect": "fd2a000000979796000000000000330140cbb45444cb0000a0c0000050c00000c0bf0000803e00000040000070403b1dbc703dc4",
+  "model": {
+    "@kind": "sensor_offsets"
+  }
+}

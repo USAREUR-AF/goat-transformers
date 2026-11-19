@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-camera_status",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1d00001bb4b4b30000e95e1f53000000000000803f0000304000009040000080c01c02f3caa1",
+  "expect": "fd1d00001bb4b4b30000e95e1f53000000000000803f0000304000009040000080c01c02f3caa1",
+  "model": {
+    "@kind": "camera_status"
+  }
+}

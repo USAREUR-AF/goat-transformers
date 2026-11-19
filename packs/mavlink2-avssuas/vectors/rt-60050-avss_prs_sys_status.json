@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-avss_prs_sys_status",
+  "from": "mavlink2-avssuas",
+  "to": "mavlink2-avssuas",
+  "input": "fd0e000000334d92ea009a8aad0571de31594832b62c1ff6",
+  "expect": "fd0e000000334d92ea009a8aad0571de31594832b62c1ff6",
+  "model": {
+    "@kind": "avss_prs_sys_status"
+  }
+}

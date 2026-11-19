@@ -1,0 +1,15 @@
+{
+  "name": "target_absolute-to-geojson",
+  "from": "mavlink2-development",
+  "to": "geojson",
+  "input": "fd6a0000290101fe010000401e18240a060090c14315d8f13c53000020420000803f0000003f000000000000000000000000000000000000803f00000000000000000000000000000000000000000000000000002040000020400000003f0000003f0000003f0000803e0000803e0000803e0301572c",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[139.6503,35.6762]},\"properties\":{}}",
+  "model": {
+    "@kind": "target_absolute",
+    "lat": "35.6762",
+    "lon": "139.6503",
+    "mavlink.seq": "41",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

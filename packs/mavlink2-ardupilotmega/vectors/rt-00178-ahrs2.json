@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-ahrs2",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1800001ab3b3b200000000e03f000060400000a0c0000050c060153208a0eacdf7",
+  "expect": "fd1800001ab3b3b200000000e03f000060400000a0c0000050c060153208a0eacdf7",
+  "model": {
+    "@kind": "ahrs2"
+  }
+}

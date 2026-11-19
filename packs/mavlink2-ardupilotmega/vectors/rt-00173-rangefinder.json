@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-rangefinder",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd08000015aeaead000000008040000090c0",
+  "expect": "fd08000015aeaead000000008040000090c0",
+  "model": {
+    "@kind": "rangefinder"
+  }
+}

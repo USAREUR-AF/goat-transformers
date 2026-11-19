@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-data64",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd42000013acacab00007148",
+  "expect": "fd42000013acacab00007148",
+  "model": {
+    "@kind": "data64"
+  }
+}

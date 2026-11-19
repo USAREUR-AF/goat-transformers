@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-fence_fetch_point",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0300000aa2a2a100001bf2c9",
+  "expect": "fd0300000aa2a2a100001bf2c9",
+  "model": {
+    "@kind": "fence_fetch_point"
+  }
+}

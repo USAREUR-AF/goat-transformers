@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sens_mppt",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd2900000304ad431f00595f8e4200000000000000c0000080be0000c03f000050400000a040000060c03aaa11fee851bf966d",
+  "expect": "fd2900000304ad431f00595f8e4200000000000000c0000080be0000c03f000050400000a040000060c03aaa11fee851bf966d",
+  "model": {
+    "@kind": "sens_mppt"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-esc_eeprom",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fddf0000002b66240100e88b394c9905716a4a7fa808fbf8df26ac7217455dec4e63bf966d441bf2c9",
+  "expect": "fddf0000002b66240100e88b394c9905716a4a7fa808fbf8df26ac7217455dec4e63bf966d441bf2c9",
+  "model": {
+    "@kind": "esc_eeprom"
+  }
+}

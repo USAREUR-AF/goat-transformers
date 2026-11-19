@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-icarous_heartbeat",
+  "from": "mavlink2-icarous",
+  "to": "mavlink2-icarous",
+  "input": "fd0100000001ac10a4003c",
+  "expect": "fd0100000001ac10a4003c",
+  "model": {
+    "@kind": "icarous_heartbeat"
+  }
+}

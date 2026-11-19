@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gnss_integrity",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd11000007c03cb9010083382a7f5a8c31e008dfb68d643b12e9c0",
+  "expect": "fd11000007c03cb9010083382a7f5a8c31e008dfb68d643b12e9c0",
+  "model": {
+    "@kind": "gnss_integrity"
+  }
+}

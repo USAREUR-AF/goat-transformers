@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mcu_status",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0900004228991f2b0023aa94676bbb420f19",
+  "expect": "fd0900004228991f2b0023aa94676bbb420f19",
+  "model": {
+    "@kind": "mcu_status"
+  }
+}

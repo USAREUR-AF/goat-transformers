@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-ap_adc",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0c0000039a9a990000a33b7a8f51e32837ff8ad6de",
+  "expect": "fd0c0000039a9a990000a33b7a8f51e32837ff8ad6de",
+  "model": {
+    "@kind": "ap_adc"
+  }
+}

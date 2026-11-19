@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-data96",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd62000014adadac0000e0b7",
+  "expect": "fd62000014adadac0000e0b7",
+  "model": {
+    "@kind": "data96"
+  }
+}

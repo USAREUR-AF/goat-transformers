@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-ekf_ext",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd2000000708b1471f0015516d65000000000000e0bf000000000000e03f000060400000a0c0000050c0",
+  "expect": "fd2000000708b1471f0015516d65000000000000e0bf000000000000e03f000060400000a0c0000050c0",
+  "model": {
+    "@kind": "ekf_ext"
+  }
+}
