@@ -1,0 +1,32 @@
+# The c2sim module: the values of a C2SIM position report message that have no
+# shared-model key. C2SIM is SISO-STD-019-2020 (Command and Control Systems -
+# Simulation Systems Interoperation); the names, types and units are those of
+# the schema the OpenC2SIM project derives from the C2SIM ontologies
+# (C2SIM_SMX_LOX.xsd, namespace http://www.sisostds.org/schemas/C2SIM/1.1).
+# packs/c2sim/pack.md says why each one is not bound to a core key.
+module        c2sim
+version       0.1.0
+distribution  public
+source        "OpenC2SIM/C2SIMArtifacts, Derived products/C2SIM_SMX_LOX.xsd (MIT License)"
+# Header (C2SIMHeader)
+key  communicative_act        string  -    "CommunicativeActTypeCode: Accept, Agree, Confirm, Inform, Propose, Refuse or Request"
+key  conversation_id          string  -    "ConversationID, a UUID"
+key  from_sending_system      string  -    "FromSendingSystem: name of the system that sent the message"
+key  in_reply_to_message_id   string  -    "InReplyToMessageID, a UUID"
+key  message_id               string  -    "MessageID, a UUID"
+key  protocol                 string  -    "Protocol, as the sender writes it"
+key  protocol_version         string  -    "ProtocolVersion, as the sender writes it"
+key  reply_to_system          string  -    "ReplyToSystem: name of the system replies go to"
+key  security_classification  string  -    "SecurityClassificationCode as the sender writes it; passed through as text, never chosen by a conversion"
+key  sending_time             string  -    "SendingTime/IsoDateTime as written: YYYY-MM-DDTHH:MM:SSZ"
+key  to_receiving_system      string  -    "ToReceivingSystem: name of the system the message is for"
+# Report body (ReportBody)
+key  from_sender              string  -    "FromSender, a UUID"
+key  to_receiver              string  -    "ToReceiver, a UUID"
+key  report_id                string  -    "ReportID, a UUID"
+key  reporting_entity         string  -    "ReportingEntity: UUID of the entity that makes the report"
+# Position report content (PositionReportContent)
+key  time_of_observation      string  -    "TimeOfObservation/DateTime/IsoDateTime as written: YYYY-MM-DDTHH:MM:SSZ, whole seconds, UTC"
+key  heading_deg              float   deg  "HeadingAngle: heading in degrees, north is zero; the schema does not say it is the direction of travel"
+key  altitude_agl_m           float   m    "AltitudeAGL: metres above ground level"
+key  altitude_msl_m           float   m    "AltitudeMSL: metres above mean sea level, not above the WGS 84 ellipsoid"

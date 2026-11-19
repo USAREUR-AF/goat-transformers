@@ -1,0 +1,9 @@
+{
+  "name": "to-c2sim-without-context",
+  "from": "canonical-track-v2",
+  "to": "c2sim",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d\",\"sourceId\":\"sim-a\",\"trackGeneration\":\"1\",\"observedAt\":\"2024-05-01T12:30:00.000Z\",\"position\":{\"latitudeDeg\":48.137154,\"longitudeDeg\":11.576124,\"altitudeM\":610.25},\"velocity\":{\"eastMps\":3,\"northMps\":4},\"classification\":\"vehicle\"}",
+  "expect_error": "no-kind",
+  "source": "written for this repository from the schema; every C2SIM input and expected message validates against the schema (xmllint); expected output computed by the Python engine and reproduced by every engine",
+  "reference": "C2SIM_SMX_LOX.xsd (OpenC2SIM/C2SIMArtifacts commit 947d8b5, Derived products/), MessageType, C2SIMHeaderType, ReportBodyType, PositionReportContentType, GeodeticCoordinateType, IsoDateTimeBaseType; the schema requires the header and report identifiers, which a canonical track does not carry: no kind qualifies"
+}
