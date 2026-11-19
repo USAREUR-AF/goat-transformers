@@ -10,6 +10,10 @@ use crate::{Error, KeyId, Plan, Value};
 /// Deepest nesting of blocks and groups the engine follows. The compiler
 /// refuses a pack that nests deeper; the engine checks again at run time.
 pub const MAX_DEPTH: u8 = 12;
+
+/// The limit on list items one decode holds when the caller sets none
+/// (engine-spec ruling 7 of 0.11).
+pub const DEFAULT_MAX_ITEMS: u64 = 100_000;
 /// Presence fields one format may declare.
 pub const MAX_PRESENCE: usize = 16;
 /// `length ... whole` lines one message may hold.
@@ -284,6 +288,9 @@ pub struct Session<'a, 's> {
     end: u64,
     whole: u64,
     extents: u16,
+    // the limit on list items of a decode, and the items the entity holds
+    max_items: u64,
+    held: u64,
 }
 
 impl<'a, 's> Session<'a, 's> {
@@ -306,7 +313,54 @@ impl<'a, 's> Session<'a, 's> {
             end: 0,
             whole: 0,
             extents: 0,
+            max_items: DEFAULT_MAX_ITEMS,
+            held: 0,
         }
+    }
+
+    /// Set the limit on list items one decode holds (engine-spec ruling 7 of
+    /// 0.11): every item of every list, at every nesting level. A decode
+    /// that would hold one item more is `MalformedWire`. 0 refuses any item.
+    pub fn set_max_items(&mut self, n: u64) {
+        self.max_items = n;
+    }
+
+    /// Hold `n` more items, or fail: past the limit is `malformed-wire`,
+    /// before any of the items is read (rulings 7a, 7d and 7f).
+    fn take_items(&mut self, n: u64) -> Result<(), Error> {
+        if n > self.max_items.saturating_sub(self.held) {
+            return Err(Error::MalformedWire);
+        }
+        self.held += n;
+        Ok(())
+    }
+
+    /// Before a group decodes into a list the scope already holds: those
+    /// items are no longer held once the group replaces them (ruling 7g).
+    fn replacing(&mut self, scope: u16, list: u16) {
+        let old = self.items_under(scope, list, 0);
+        self.held = self.held.saturating_sub(old);
+    }
+
+    /// The items of a list of a scope, those of its items' lists included.
+    fn items_under(&self, scope: u16, list: u16, depth: u8) -> u64 {
+        let n = match self.list_len(scope, list) {
+            Some(n) => n,
+            None => return 0,
+        };
+        let mut total = n as u64;
+        if depth > MAX_DEPTH {
+            return total;
+        }
+        for index in 0..n {
+            if let Some(item) = self.item(scope, list, index) {
+                let lists = self.slots.get(..self.nslots).unwrap_or(&[]);
+                for s in lists.iter().filter(|s| s.scope == item && matches!(s.val, Val::List(_))) {
+                    total += self.items_under(item, s.key, depth + 1);
+                }
+            }
+        }
+        total
     }
 
     // -- the store ----------------------------------------------------------
@@ -576,11 +630,32 @@ impl<'a, 's> Session<'a, 's> {
             return Err(Error::BadPlan);
         }
         let m = mask(len);
+        // ruling 4b of engine-spec 0.11: a value outside the field's range is
+        // refused, never wrapped; `uint` of 64 bits takes every integer
         let mut raw = match (o.xf, v) {
-            (XF_UINT | XF_TWOS, Val::Int(n)) => n as u64 & m,
+            (XF_UINT, Val::Int(n)) if len == 64 => n as u64,
+            (XF_UINT, Val::Int(n)) => {
+                if n < 0 || n as u64 > m {
+                    return Err(fail);
+                }
+                n as u64
+            }
+            (XF_TWOS, Val::Int(n)) => {
+                let half = 1i128 << (len - 1);
+                if (n as i128) < -half || (n as i128) >= half {
+                    return Err(fail);
+                }
+                n as u64 & m
+            }
             (XF_LINSCALE, Val::Float(x)) => {
                 let (maxpos, range, _) = self.scale(o)?;
-                (num::round(x / range * maxpos) as i64) as u64 & m
+                let r = num::round(x / range * maxpos);
+                let half = num::two_pow(len - 1);
+                // NaN and the infinities fail the comparison
+                if !(r >= -half && r < half) {
+                    return Err(fail);
+                }
+                (r as i64) as u64 & m
             }
             (XF_USCALE | XF_SSCALE, Val::Float(x)) => {
                 let (n, d, off) = self.scale(o)?;
@@ -861,6 +936,9 @@ impl<'a, 's> Session<'a, 's> {
                         *reach = (*reach).max(at + o.len as u64);
                         get_bits(self.input, at, o.len as u32, self.src_msb).ok_or(Error::MalformedWire)?
                     };
+                    // the count against what the limit still allows (7d)
+                    self.replacing(scope, o.key);
+                    self.take_items(n)?;
                     let first = base + o.a as u64;
                     let all = n.checked_mul(item_bits).and_then(|b| b.checked_add(first));
                     match all {
@@ -1323,9 +1401,12 @@ impl<'a, 's> Session<'a, 's> {
                 OP_GROUP_SEQ => {
                     let discard = o.flags & 1 != 0;
                     let mut count: u16 = 0;
+                    self.replacing(scope, o.key);
                     match o.xf {
                         0 => {
                             let n = self.read(o.len as u32)?;
+                            // the count against what the limit still allows (7d)
+                            self.take_items(n)?;
                             // ruling 14 of 0.8: before any item is read
                             if n > self.end - self.pos {
                                 return Err(Error::MalformedWire);
@@ -1336,17 +1417,20 @@ impl<'a, 's> Session<'a, 's> {
                         }
                         1 => {
                             while self.indicator()? == 1 {
+                                self.take_items(1)?;
                                 self.sq_decode_item(i + 1, scope, &o, &mut count, discard, depth)?;
                             }
                         }
                         2 => loop {
                             let more = self.indicator()?;
+                            self.take_items(1)?;
                             self.sq_decode_item(i + 1, scope, &o, &mut count, discard, depth)?;
                             if more == 0 {
                                 break;
                             }
                         },
                         3 => loop {
+                            self.take_items(1)?;
                             self.sq_decode_item(i + 1, scope, &o, &mut count, discard, depth)?;
                             if self.indicator()? == 0 {
                                 break;
@@ -1835,6 +1919,7 @@ impl<'a, 's> Session<'a, 's> {
         self.nscopes = 0;
         self.kind = NONE16;
         self.failed = false;
+        self.held = 0;
         self.presence = [0; MAX_PRESENCE];
         if fmt.sequential {
             let total = input.len() as u64 * 8;

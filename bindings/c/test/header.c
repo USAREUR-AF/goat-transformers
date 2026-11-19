@@ -32,6 +32,7 @@ struct signatures {
     gt_engine *(*engine_new)(void);
     void (*engine_free)(gt_engine *);
     int32_t (*engine_set_max_distribution)(gt_engine *, int32_t, gt_buf *);
+    int32_t (*engine_set_max_items)(gt_engine *, uint64_t, gt_buf *);
     int32_t (*load_model)(gt_engine *, const uint8_t *, size_t, gt_buf *);
     int32_t (*load_pack)(gt_engine *, const uint8_t *, size_t, gt_buf *);
     int32_t (*convert)(const gt_engine *, const uint8_t *, size_t, const uint8_t *, size_t,
@@ -46,6 +47,7 @@ const struct signatures gt_signatures = {
     gt_engine_new,
     gt_engine_free,
     gt_engine_set_max_distribution,
+    gt_engine_set_max_items,
     gt_load_model,
     gt_load_pack,
     gt_convert,

@@ -74,6 +74,13 @@ pub fn set_max_distribution(engine: &mut Engine, limit: i32) -> Result<(), Strin
     Ok(())
 }
 
+/// Set the limit on list items one decode holds (engine-spec ruling 7 of
+/// 0.11). 0 refuses any item; a value beyond the platform's `usize` is no
+/// limit. It may be set at any time, also after loading.
+pub fn set_max_items(engine: &mut Engine, max_items: u64) {
+    engine.set_max_items(usize::try_from(max_items).unwrap_or(usize::MAX));
+}
+
 /// The loaded format names, sorted, one per line, each ended by `\n`.
 pub fn formats_text(engine: &Engine) -> String {
     engine

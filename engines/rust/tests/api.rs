@@ -349,3 +349,50 @@ fn directory_loader_loads_a_module_after_the_modules_it_uses() {
     assert_eq!(ent.fields.get("aaa.v"), Some(&Value::I64(4)));
     assert!(cycle.unwrap_err().msg.starts_with("bad-directive:"));
 }
+
+/// Ruling 5 of 0.11: a format that is not loaded is `unknown-format` for
+/// `decode`, `encode`, `model_keys` and the capability report; `convert`
+/// checks `from`, then `to`, before it reads the input.
+#[test]
+fn a_format_that_is_not_loaded_is_unknown_format() {
+    let e = engine();
+    let kind = |r: Result<String, goat_transformers::Error>| r.unwrap_err().msg.split(':').next().unwrap().to_string();
+    assert_eq!(kind(e.decode("no-such-format", "x").map(|_| String::new())), "unknown-format");
+    assert_eq!(kind(e.encode("no-such-format", &Entity::default())), "unknown-format");
+    assert_eq!(kind(e.try_model_keys("no-such-format").map(|_| String::new())), "unknown-format");
+    assert_eq!(kind(e.try_capability("cot-xml", "no-such-format").map(|_| String::new())), "unknown-format");
+    assert_eq!(kind(e.try_capability("no-such-format", "cot-xml").map(|_| String::new())), "unknown-format");
+    // the input is not read: a document cut short is not `malformed-wire` here
+    assert_eq!(kind(e.convert("cot-xml", "no-such-format", "<event")), "unknown-format");
+}
+
+/// Ruling 7 of 0.11: the limit on list items is an engine option; 0 refuses
+/// any item, and `encode` of an entity a program built is not limited.
+#[test]
+fn the_limit_on_list_items_is_an_engine_option() {
+    let mut e = engine();
+    let input = r#"{"id":"u","items":[{"name":"aa"},{"name":"bb"}],"names":[]}"#;
+    assert_eq!(e.max_items(), goat_transformers::DEFAULT_MAX_ITEMS);
+    let ent = e.decode("conformance-groups-json", input).unwrap();
+    e.set_max_items(1);
+    let err = e.decode("conformance-groups-json", input).unwrap_err();
+    assert!(err.msg.starts_with("malformed-wire:"), "{}", err.msg);
+    assert!(e.decode_limited("conformance-groups-json", input, 2).is_ok());
+    e.set_max_items(0);
+    assert!(e.encode("conformance-groups-json", &ent).is_ok());
+}
+
+/// Ruling 5b of 0.11: the values of an `absent` option are a line check, so
+/// they are reported before an unknown directive on a later line; a bit
+/// length against its transform is checked after the file.
+#[test]
+fn absent_values_are_a_line_check() {
+    let head = "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire bits\nword_bytes 1\n";
+    let load = |body: &str| {
+        let mut e = Engine::new();
+        e.load_model("module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey time_ms int ms\n").unwrap();
+        e.load_def(&format!("{}{}", head, body)).unwrap_err().msg
+    };
+    assert!(load("field time_ms 0:0:8 uint absent +7\nbogus 1\n").starts_with("bad-directive:"));
+    assert!(load("field time_ms 0:0:65 uint absent 7\nbogus 1\n").starts_with("unknown-directive:"));
+}

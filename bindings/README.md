@@ -110,6 +110,13 @@ Rules, stated in full at the top of the header:
   loaded anything `gt_engine_set_max_distribution` changes nothing and
   returns `GT_ERR_ARGUMENT`, so a limit cannot be lifted or lowered under
   what is loaded.
+- `gt_engine_set_max_items(engine, n, out)` sets the limit on list items one
+  decode holds (engine-spec ruling 7 of 0.11): 100000 by default, 0 refuses
+  any item, and a conversion whose decode would hold one item more fails with
+  `malformed-wire`. It may be set at any time; it changes the engine, so it
+  needs the engine to itself.
+- A format name is loaded once: a second pack of a loaded format name fails
+  with `duplicate-format` and the first stays loaded.
 
 ### What `test.sh` runs
 
@@ -117,10 +124,10 @@ Rules, stated in full at the top of the header:
 |---|---|
 | `cargo test --release` | the shared glue (argument and context reading, the limit) and what C cannot reach: a panic becomes `GT_ERR_PANIC` with its message, and a panic while the engine is being changed stops the engine |
 | `test/header.c` compiled as C99 and as C++17 with `-Wall -Wextra -Wpedantic -Werror` | the header stands alone in both languages; the type and const-ness of every function; the layout of `gt_buf`; the values of the status and limit constants |
-| `nm` on the shared library against the header | the library exports exactly the 8 functions the header declares |
-| `test/api.c` | the contract of the header, by statement: a NULL engine in every call; a NULL pointer with a length and with length 0, for every text argument; text that is not UTF-8 or is cut inside a character; a NUL inside a format name, a message and a model text; buffer ownership (a zeroed buffer, the same buffer freed twice, `out == NULL`, a buffer used after its engine is freed, an error text as an owned buffer); error kinds; malformed input (a message cut off inside a tag or an attribute, and cot-xml and geojson nested 65 and 30,000 levels deep, give `GT_ERR_ENGINE` with `malformed-wire`, never `GT_ERR_PANIC`; 64 levels convert); context text (`=` in a value, an empty value, UTF-8, an empty key); the same module loaded twice (`duplicate-module`) and the same pack loaded twice (replaced, listed once); the distribution limit (a controlled pack and a controlled module refused with `distribution-refused` under `public`, loaded under the default and under `controlled`, a value that is no limit, a limit set after a load). After each group of refusals the engine must still convert. The controlled texts are synthetic and exist only in the test |
+| `nm` on the shared library against the header | the library exports exactly the 9 functions the header declares |
+| `test/api.c` | the contract of the header, by statement: a NULL engine in every call; a NULL pointer with a length and with length 0, for every text argument; text that is not UTF-8 or is cut inside a character; a NUL inside a format name, a message and a model text; buffer ownership (a zeroed buffer, the same buffer freed twice, `out == NULL`, a buffer used after its engine is freed, an error text as an owned buffer); error kinds; malformed input (a message cut off inside a tag or an attribute, and cot-xml and geojson nested 65 and 30,000 levels deep, give `GT_ERR_ENGINE` with `malformed-wire`, never `GT_ERR_PANIC`; 64 levels convert); context text (`=` in a value, an empty value, UTF-8, an empty key); the same module loaded twice (`duplicate-module`) and the same pack loaded twice (`duplicate-format`, the first stays loaded, listed once); the distribution limit (a controlled pack and a controlled module refused with `distribution-refused` under `public`, loaded under the default and under `controlled`, a value that is no limit, a limit set after a load). After each group of refusals the engine must still convert. The controlled texts are synthetic and exist only in the test |
 | `test/threads.c` | 8 threads, each 1,000 `gt_convert` calls over 6 conversions (4 that succeed, 2 that fail) on one engine, while a ninth thread calls `gt_formats` 2,000 times; all released together; every result equal to the one a single thread got first |
-| `test/vectors.c` | every model module and every pack loaded, then every conversion vector under `packs/*/vectors/` through `gt_convert`, compared with `expect` or with the kind in `expect_error`. The `model` checks and the load vectors are not run: the library has no decode call |
+| `test/vectors.c` | every model module and every pack loaded, then every conversion vector under `packs/*/vectors/` through `gt_convert`, with the vector's `max_items` as the limit on list items, compared with `expect` or with the kind in `expect_error`. The `model` checks and the load vectors are not run: the library has no decode call |
 
 Each of the three programs runs four times: against the shared library,
 against the static library, under AddressSanitizer with
@@ -270,6 +277,7 @@ For a host that does not use `goat_transformers.mjs`. All values are `i32`.
 | `gt_alloc(len) -> ptr`, `gt_free(ptr, len)` | memory for the host to write an argument into |
 | `gt_engine_new() -> engine`, `gt_engine_free(engine)` | an engine |
 | `gt_engine_set_max_distribution(engine, limit) -> result` | the distribution limit: 0 `public`, 1 `controlled` (the default); refused after the first load |
+| `gt_engine_set_max_items(engine, n) -> result` | the limit on list items one decode holds (`n` unsigned; default 100000); `setMaxItems(n)` in `goat_transformers.mjs` |
 | `gt_load_model(engine, ptr, len) -> result` | load a model module text |
 | `gt_load_pack(engine, ptr, len) -> result` | load a pack text |
 | `gt_convert(engine, from, from_len, to, to_len, input, input_len, has_context, context, context_len) -> result` | convert; context is `key=value\n` text |

@@ -664,7 +664,8 @@ impl<'a> Parser<'a> {
                         "whole" if !whole => whole = true,
                         "plus" if plus.is_none() => {
                             i += 1;
-                            plus = Some(match toks.get(i).and_then(|t| t.parse::<i64>().ok()) {
+                            // integer text (ruling 2c of 0.11)
+                            plus = Some(match toks.get(i).and_then(|t| int_text(t)) {
                                 Some(n) => n,
                                 None => return bad(ln, "`plus` needs an integer"),
                             });
@@ -703,7 +704,7 @@ impl<'a> Parser<'a> {
                 return bad(ln, format!("`{}` is not allowed inside an `if`, `opt`, `chain` or `length` block", d));
             }
             d if HEADER.contains(&d) => return bad(ln, format!("`{}` is not allowed inside a block", d)),
-            other => return err(format!("line {}: unknown directive `{}`", ln, other)),
+            other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
         }))
     }
 }
@@ -812,17 +813,24 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
     }
     fill_body(&mut body, &p.named);
     check_lists(&body)?;
+    // after the file is read (ruling 5b of 0.11): the missing header lines first
+    if p.format.is_none() {
+        return err("missing-format: the pack has no `format` line");
+    }
+    if p.version.is_none() {
+        return err("missing-version: the pack has no `version` line");
+    }
     match p.wire.as_deref() {
         Some("bits") => {}
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
-        None => return err("pack missing `wire`"),
+        None => return err("missing-wire: the pack has no `wire` line"),
     }
     for (table, ln) in &p.vias {
         if !p.maps.iter().any(|(name, _)| name == table) {
             return bad(*ln, format!("`via {}` names a table with no `map` line", table));
         }
     }
-    let format = p.format.ok_or(Error { msg: "pack missing `format`".into() })?;
+    let format = p.format.expect("checked above");
     let distribution =
         p.distribution.ok_or(Error { msg: format!("missing-distribution: pack `{}` has no `distribution`", format) })?;
     if p.sources.is_empty() {
@@ -830,7 +838,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
     }
     Ok(Pack {
         format,
-        version: p.version.unwrap_or_else(|| "0".into()),
+        version: p.version.expect("checked above"),
         wire: Wire::Bits,
         root: String::new(),
         word_bytes: 1,
@@ -1053,7 +1061,13 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             SeqLine::Group(g) => {
                 let mut items: Vec<Decoded> = Vec::new();
                 let format = r.p.format.clone();
+                d.replacing(&g.list);
+                // a counted group takes its items at once (7d)
+                let counted = matches!(g.rep, Rep::Count(_));
                 let item = |r: &mut Reader, items: &mut Vec<Decoded>| -> Result<(), Error> {
+                    if !counted {
+                        limit::take(&format, &g.list, 1)?;
+                    }
                     let mut di = Decoded::new();
                     let kind = decode_body(&g.body, r, &mut di)?;
                     di.ent.kind = kind.map(|k| (format.clone(), k.name.clone()));
@@ -1063,6 +1077,7 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 match &g.rep {
                     Rep::Count(len) => {
                         let n = r.read(*len, "the count of a group")?;
+                        limit::take(&format, &g.list, n)?;
                         if n > r.end.saturating_sub(r.pos) {
                             return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
                         }

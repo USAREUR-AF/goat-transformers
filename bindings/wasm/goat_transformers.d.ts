@@ -60,6 +60,14 @@ export declare class GoatTransformers {
    */
   convert(from: string, to: string, input: Text, context?: Context | null): string;
 
+  /**
+   * Set the limit on list items one decode holds (engine-spec ruling 7 of
+   * 0.11). The default is 100000; 0 refuses any item. One item more is a
+   * `malformed-wire` error.
+   * @param n an integer from 0 to 4294967295
+   */
+  setMaxItems(n: number): void;
+
   /** The loaded format names, sorted. */
   formats(): string[];
 

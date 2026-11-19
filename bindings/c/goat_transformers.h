@@ -37,9 +37,9 @@
  *
  * Threads. An engine may be used from any thread. gt_convert and gt_formats
  * only read the engine and may run on several threads at once on one engine.
- * gt_engine_set_max_distribution, gt_load_model, gt_load_pack and
- * gt_engine_free change it and need the engine to themselves: set the limit,
- * load everything, then convert. Each thread passes its own `out`.
+ * gt_engine_set_max_distribution, gt_engine_set_max_items, gt_load_model,
+ * gt_load_pack and gt_engine_free change it and need the engine to
+ * themselves: set the limits, load everything, then convert. Each thread passes its own `out`.
  *
  * Panics. No panic of the engine crosses this boundary: it is caught and the
  * call returns GT_ERR_PANIC with "panic: <message>" (the Rust runtime also
@@ -104,6 +104,16 @@ int32_t gt_engine_set_max_distribution(gt_engine *engine, int32_t limit,
                                        gt_buf *out);
 
 /*
+ * Set the limit on list items one decode holds: every item of every list of
+ * the decoded message, at every nesting level (engine-spec ruling 7 of 0.11).
+ * A conversion whose decode would hold one item more fails with
+ * GT_ERR_ENGINE, "malformed-wire: ...". The default is 100000; 0 refuses any
+ * item. It may be set at any time.
+ */
+int32_t gt_engine_set_max_items(gt_engine *engine, uint64_t max_items,
+                                gt_buf *out);
+
+/*
  * Load one model module: the text of a model/<module>.def. Load `core` first,
  * and every module before the modules and packs that use it. A module name is
  * loaded once: a second load fails with "duplicate-module: ...". A load that
@@ -113,8 +123,9 @@ int32_t gt_load_model(gt_engine *engine, const uint8_t *text, size_t text_len,
                       gt_buf *out);
 
 /*
- * Load one pack: the text of a packs/<format>/pack.def. Loading a pack whose
- * format name is already loaded replaces that format. A load that fails
+ * Load one pack: the text of a packs/<format>/pack.def. A format name is
+ * loaded once: a pack whose format name is already loaded fails with
+ * "duplicate-format: ..." and the first stays loaded. A load that fails
  * changes nothing.
  */
 int32_t gt_load_pack(gt_engine *engine, const uint8_t *text, size_t text_len,

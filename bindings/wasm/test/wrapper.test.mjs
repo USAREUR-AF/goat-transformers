@@ -133,14 +133,14 @@ test("an argument that is neither a string nor bytes is a TypeError", async () =
 
 test("engine errors keep the engine's text and leave the engine usable", async () => {
   const gt = await loadEngine(PACKS);
-  assert.throws(() => gt.convert("no-such-format", "geojson", "x"), /^Error: no pack loaded for format `no-such-format`$/);
+  assert.throws(() => gt.convert("no-such-format", "geojson", "x"), /^Error: unknown-format: no pack loaded for format `no-such-format`$/);
   assert.throws(() => gt.convert("cot-xml", "geojson", "<event"), Error);
   assert.throws(() => gt.loadPack("format x\n"), Error);
-  assert.throws(() => gt.loadModel("module x\n"), /^Error: missing-distribution:/);
-  // a module name is loaded once; a pack loaded again replaces its format
+  assert.throws(() => gt.loadModel("module x\nversion 1\n"), /^Error: missing-distribution:/);
+  // a module name and a format name are each loaded once (ruling 5 of 0.11)
   assert.throws(() => gt.loadModel(PROBE_CORE), /^Error: duplicate-module:/);
   gt.loadPack(probePack("public"));
-  gt.loadPack(probePack("public"));
+  assert.throws(() => gt.loadPack(probePack("public")), /^Error: duplicate-format:/);
   assert.deepEqual(gt.formats(), ["canonical-track-v2", "cot-xml", "geojson", "probe"]);
   assert.equal(gt.convert("cot-xml", "cot-xml", EVENT), EVENT_CANONICAL);
   gt.dispose();
@@ -437,9 +437,20 @@ test("the module imports nothing and exports the documented interface", async ()
   assert.deepEqual(WebAssembly.Module.imports(module), []);
   const documented = [
     "memory", "gt_alloc", "gt_free", "gt_engine_new", "gt_engine_free", "gt_engine_set_max_distribution",
-    "gt_load_model", "gt_load_pack", "gt_convert", "gt_formats",
+    "gt_engine_set_max_items", "gt_load_model", "gt_load_pack", "gt_convert", "gt_formats",
     "gt_result_ok", "gt_result_ptr", "gt_result_len", "gt_result_free",
   ];
   const exported = WebAssembly.Module.exports(module).map((e) => e.name).filter((n) => !n.startsWith("__"));
   assert.deepEqual(exported.sort(), documented.sort());
+});
+
+test("setMaxItems sets the limit on list items and refuses a value that is no limit", async () => {
+  const gt = await GoatTransformers.load(wasm);
+  gt.setMaxItems(0);
+  gt.setMaxItems(4294967295);
+  for (const bad of [-1, 1.5, 4294967296, "3", undefined]) {
+    assert.throws(() => gt.setMaxItems(bad), { name: "TypeError", message: /^bad-argument: the limit on list items/ });
+  }
+  gt.dispose();
+  assert.throws(() => gt.setMaxItems(1), /bad-argument: this engine was disposed/);
 });

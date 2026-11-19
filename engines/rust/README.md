@@ -43,6 +43,7 @@ The methods of `Engine`:
 |---|---|
 | `new()` | an empty engine |
 | `set_max_distribution(d)` | refuse modules and packs above `d` with `distribution-refused` |
+| `set_max_items(n)` | the limit on list items one decode holds (default `DEFAULT_MAX_ITEMS`, 100000); one more is `malformed-wire` |
 | `load_model(text)`, `load_model_dir(dir)` | load one model module, or every `*.def` of a directory (`core.def` first, each module after the modules it uses) |
 | `load_def(text)`, `load_pack_dir(dir)` | load one pack, or every `<dir>/<name>/pack.def` |
 | `load_pack_dir_only(dir, &[names])` | load only the named packs of a directory: the `--packs-only` of the tool |
@@ -51,9 +52,12 @@ The methods of `Engine`:
 | `convert(from, to, bytes)` | decode, then encode; from one format to another it also applies the derivations |
 | `convert_with(from, to, bytes, Some(&[(key, Value)]))` | `convert` with a context: model keys the input lacks |
 | `convert_text(from, to, bytes, Some(&[(key, text)]))` | the same, the context as text, read as each key's declared type |
+| `decode_limited(format, bytes, n)`, `convert_text_limited(from, to, bytes, context, n)` | `decode` and `convert_text` with the limit on list items given for the call |
 | `fill(&mut entity, &context)`, `complete(&mut entity)` | the two middle steps of a conversion on their own: set absent context keys; apply the `derive` lines of the modules |
 | `formats()`, `modules()`, `model_keys(format)` | what is loaded |
 | `capability(from, to)`, `capability_matrix()` | what carries between formats, computed from the packs without converting a message |
+| `try_capability(from, to)`, `try_model_keys(format)` | the same, `unknown-format` for a format that is not loaded |
+| `key_type(key)` | the declared type of a model key |
 
 A message of a binary wire (`bits`, `protobuf`) is hex text. A decode, a
 context and an encode by hand:
@@ -88,6 +92,7 @@ goat-xf matrix [--detail]
 | `--models <dir>` | the model modules; default `<packs>/../model` |
 | `--packs-only <name>[,<name>...]` | load only these packs of `--packs` |
 | `--max-distribution public` | refuse controlled modules and packs (`public` or `controlled`) |
+| `--max-items <n>` | the limit on list items one decode holds; default 100000, 0 refuses any item |
 
 `convert` reads the message on standard input and writes the result to
 standard output; `--set` is repeatable and supplies a model key the input does
