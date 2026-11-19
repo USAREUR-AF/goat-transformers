@@ -295,8 +295,19 @@ def main():
         os.remove(old)
     vecs = build()
     assert len({v["name"] for v in vecs}) == len(vecs)
+    # A vector lives in the pack that owns its input (spec/vector-format.md):
+    # the ones from another format go to that pack as to-gdl90-<name>.json.
+    for d in glob.glob(os.path.join(a.out, "packs", "*", "vectors")):
+        for old in glob.glob(os.path.join(d, "to-gdl90-*.json")):
+            os.remove(old)
     for i, v in enumerate(vecs, 1):
-        with open(os.path.join(vdir, "%02d-%s.json" % (i, v["name"])), "w", encoding="utf-8") as fh:
+        if v["from"] == "gdl90":
+            path = os.path.join(vdir, "%02d-%s.json" % (i, v["name"]))
+        else:
+            odir = os.path.join(a.out, "packs", v["from"], "vectors")
+            os.makedirs(odir, exist_ok=True)
+            path = os.path.join(odir, "to-gdl90-%s.json" % v["name"])
+        with open(path, "w", encoding="utf-8") as fh:
             json.dump(v, fh, indent=2, ensure_ascii=False)
             fh.write("\n")
     print("gdl90: %d vectors" % len(vecs))
