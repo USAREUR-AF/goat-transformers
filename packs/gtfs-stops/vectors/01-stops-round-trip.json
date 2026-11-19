@@ -1,0 +1,23 @@
+{
+  "name": "stops-round-trip",
+  "from": "gtfs-stops",
+  "to": "gtfs-stops",
+  "input": "S100,100,Central Station,,,52.525,13.369,A,,1,,,1,,,",
+  "expect": "S100,100,Central Station,,,52.525,13.369,A,,1,,,1,,,",
+  "model": {
+    "gtfs.stop_id": "S100",
+    "uid": "S100",
+    "gtfs.stop_code": "100",
+    "gtfs.stop_name": "Central Station",
+    "callsign": "Central Station",
+    "gtfs.stop_lat": "52.525",
+    "lat": "52.525",
+    "gtfs.stop_lon": "13.369",
+    "lon": "13.369",
+    "gtfs.zone_id": "A",
+    "gtfs.location_type": "1",
+    "gtfs.wheelchair_boarding": "1"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of stops.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "stops-to-geojson",
+  "from": "gtfs-stops",
+  "to": "geojson",
+  "input": "S100,100,Central Station,,,52.525,13.369,A,,1,,,1,,,",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.369,52.525]},\"properties\":{\"callsign\":\"Central Station\"},\"id\":\"S100\"}",
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), stop_lat and stop_lon are WGS 84 decimal degrees (Field Types, Latitude and Longitude); stop_id as id and stop_name as callsign; geojson canonical form by hand; row written by tools/gen/gtfs-vectors.py"
+}

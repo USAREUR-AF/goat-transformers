@@ -1,0 +1,9 @@
+{
+  "name": "stops-to-cot-xml",
+  "from": "gtfs-stops",
+  "to": "cot-xml",
+  "input": "S100,100,Central Station,,,52.525,13.369,A,,1,,,1,,,",
+  "expect": "<event version=\"2.0\" uid=\"S100\" type=\"a-u-X\"><point lat=\"52.525\" lon=\"13.369\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"Central Station\"/></detail></event>",
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), cot-xml canonical form by hand from its pack; row written by tools/gen/gtfs-vectors.py"
+}

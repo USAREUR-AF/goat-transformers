@@ -1,0 +1,20 @@
+{
+  "name": "stop-times-round-trip",
+  "from": "gtfs-stop-times",
+  "to": "gtfs-stop-times",
+  "input": "T1,25:35:00,25:36:30,S100,,,7,,,,0,1,,,1234.5,1,,",
+  "expect": "T1,25:35:00,25:36:30,S100,,,7,,,,0,1,,,1234.5,1,,",
+  "model": {
+    "gtfs.trip_id": "T1",
+    "gtfs.arrival_time": "25:35:00",
+    "gtfs.departure_time": "25:36:30",
+    "gtfs.stop_id": "S100",
+    "gtfs.stop_sequence": "7",
+    "gtfs.pickup_type": "0",
+    "gtfs.drop_off_type": "1",
+    "gtfs.shape_dist_traveled": "1234.5",
+    "gtfs.timepoint": "1"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of stop_times.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

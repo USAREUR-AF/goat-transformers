@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-stops",
+  "from": "geojson",
+  "to": "gtfs-stops",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1276,51.5072,11]},\"properties\":{\"callsign\":\"Riverside\"},\"id\":\"S7\"}",
+  "expect": "S7,,Riverside,,,51.5072,-0.1276,,,,,,,,,",
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), id, callsign and the point become stop_id, stop_name, stop_lat and stop_lon; the altitude has no column; every other column is empty, all 16 are written; row written by tools/gen/gtfs-vectors.py"
+}

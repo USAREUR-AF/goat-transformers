@@ -1,0 +1,14 @@
+{
+  "name": "stops-short-row-reads-the-first-columns",
+  "from": "gtfs-stops",
+  "to": "gtfs-stops",
+  "input": "S5,,Market,,,48.1,11.5",
+  "expect": "S5,,Market,,,48.1,11.5,,,,,,,,,",
+  "model": {
+    "uid": "S5",
+    "lat": "48.1",
+    "lon": "11.5"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), a row whose file has only the first seven columns: the others are absent, and encode writes all 16; row written by tools/gen/gtfs-vectors.py"
+}

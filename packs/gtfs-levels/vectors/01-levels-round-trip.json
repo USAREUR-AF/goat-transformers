@@ -1,0 +1,14 @@
+{
+  "name": "levels-round-trip",
+  "from": "gtfs-levels",
+  "to": "gtfs-levels",
+  "input": "L-1,-1,Underground",
+  "expect": "L-1,-1,Underground",
+  "model": {
+    "gtfs.level_id": "L-1",
+    "gtfs.level_index": "-1",
+    "gtfs.level_name": "Underground"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of levels.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

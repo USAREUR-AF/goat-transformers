@@ -1,0 +1,21 @@
+{
+  "name": "trips-round-trip",
+  "from": "gtfs-trips",
+  "to": "gtfs-trips",
+  "input": "R1,WD,T1,Airport,,0,,SH1,1,2,,1.5,120",
+  "expect": "R1,WD,T1,Airport,,0,,SH1,1,2,,1.5,120",
+  "model": {
+    "gtfs.route_id": "R1",
+    "gtfs.service_id": "WD",
+    "gtfs.trip_id": "T1",
+    "gtfs.trip_headsign": "Airport",
+    "gtfs.direction_id": "0",
+    "gtfs.shape_id": "SH1",
+    "gtfs.wheelchair_accessible": "1",
+    "gtfs.bikes_allowed": "2",
+    "gtfs.safe_duration_factor": "1.5",
+    "gtfs.safe_duration_offset": "120"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of trips.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

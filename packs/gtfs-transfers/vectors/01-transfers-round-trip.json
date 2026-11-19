@@ -1,0 +1,15 @@
+{
+  "name": "transfers-round-trip",
+  "from": "gtfs-transfers",
+  "to": "gtfs-transfers",
+  "input": "S100,S200,,,,,2,180",
+  "expect": "S100,S200,,,,,2,180",
+  "model": {
+    "gtfs.from_stop_id": "S100",
+    "gtfs.to_stop_id": "S200",
+    "gtfs.transfer_type": "2",
+    "gtfs.min_transfer_time": "180"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of transfers.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

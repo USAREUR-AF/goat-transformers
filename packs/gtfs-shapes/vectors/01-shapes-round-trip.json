@@ -1,0 +1,18 @@
+{
+  "name": "shapes-round-trip",
+  "from": "gtfs-shapes",
+  "to": "gtfs-shapes",
+  "input": "SH1,52.5251,13.3694,3,250.75",
+  "expect": "SH1,52.5251,13.3694,3,250.75",
+  "model": {
+    "gtfs.shape_id": "SH1",
+    "gtfs.shape_pt_lat": "52.5251",
+    "lat": "52.5251",
+    "gtfs.shape_pt_lon": "13.3694",
+    "lon": "13.3694",
+    "gtfs.shape_pt_sequence": "3",
+    "gtfs.shape_dist_traveled": "250.75"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of shapes.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

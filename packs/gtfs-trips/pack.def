@@ -1,0 +1,23 @@
+# GTFS Schedule trips.txt: one data row of the file. Public. Maintained by hand.
+# The columns are in the order the reference lists them (pack.md, Column order);
+# the header row is not a message of this pack.
+format        gtfs-trips
+version       0.1.0
+distribution  public
+source        "GTFS Schedule Reference, gtfs/spec/en/reference.md of https://github.com/google/transit (Apache-2.0) at commit 2ce6aa79e3fa7bdbaf19d2a12765cee5b9fdd699; the column order of each file as the reference lists it; field names and types"
+uses          gtfs
+wire          text
+
+field  gtfs.route_id                    0   string
+field  gtfs.service_id                  1   string
+field  gtfs.trip_id                     2   string
+field  gtfs.trip_headsign               3   string
+field  gtfs.trip_short_name             4   string
+field  gtfs.direction_id                5   int
+field  gtfs.block_id                    6   string
+field  gtfs.shape_id                    7   string
+field  gtfs.wheelchair_accessible       8   int
+field  gtfs.bikes_allowed               9   int
+field  gtfs.cars_allowed                10  int
+field  gtfs.safe_duration_factor        11  float
+field  gtfs.safe_duration_offset        12  float
