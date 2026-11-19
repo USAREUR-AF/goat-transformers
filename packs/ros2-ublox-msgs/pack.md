@@ -62,8 +62,8 @@ the `scale` transform of engine-spec 0.15. The evidence is the comment text of t
 
 | Kind | Wire fields | Model keys | Evidence |
 |---|---|---|---|
-| `nav_posllh` | `lat`, `lon` (int32); `height` (int32) | `lat`, `lon` with `scale:1/10000000`; `hae` with `scale:1/1000` | NavPOSLLH.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", "Height above Ellipsoid [mm]"; the file header: the message gives the geodetic position "in the currently selected Ellipsoid. The default is the WGS84 Ellipsoid, but can be changed with the message CFG-DAT" |
-| `nav_pvt`, `nav_pvt7` | `lat`, `lon`; `height` | as `nav_posllh` | NavPVT.msg, NavPVT7.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", "Height above Ellipsoid [mm]"; these files name no datum, and the binding takes the receiver's selected ellipsoid as NavPOSLLH.msg states it |
+| `nav_posllh` | `lat`, `lon` (int32); `height` (int32) | `lat`, `lon` with `scale:1/10000000`; `hae` with `scale:1/1000` | NavPOSLLH.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", the height in mm, stated as relative to the ellipsoid; the file header: the message gives the geodetic position "in the currently selected Ellipsoid. The default is the WGS84 Ellipsoid, but can be changed with the message CFG-DAT" |
+| `nav_pvt`, `nav_pvt7` | `lat`, `lon`; `height` | as `nav_posllh` | NavPVT.msg, NavPVT7.msg: "Latitude [deg / 1e-7]", "Longitude [deg / 1e-7]", the height in mm, stated as relative to the ellipsoid; these files name no datum, and the binding takes the receiver's selected ellipsoid as NavPOSLLH.msg states it |
 | `hnr_pvt` | `lat`, `lon`; `height` | as `nav_posllh` | HnrPVT.msg: the same three field comments; no datum named, as for `nav_pvt` |
 
 The bindings hold for a receiver left at its default datum, WGS 84. A receiver set to
