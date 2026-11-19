@@ -1,0 +1,26 @@
+# The drip module: the DRIP authentication formats of RFC 9575 that the shared
+# model has no key for. Timestamps are F3411 timestamps (seconds since
+# 2019-01-01T00:00:00Z). Tags, host identities, signatures and hashes are
+# opaque octet strings, held as lists of octets in wire order.
+module        drip
+version       0.1.0
+distribution  public
+source        "IETF RFC 9575, DRIP Entity Tag (DET) Authentication Formats and Protocols for Broadcast Remote Identification, June 2024, https://www.rfc-editor.org/rfc/rfc9575"
+source        "IETF RFC 9374, DRIP Entity Tag (DET) for Unmanned Aircraft System Remote ID, March 2023, https://www.rfc-editor.org/rfc/rfc9374"
+key   vnb                        int  s  "Valid Not Before: seconds since 2019-01-01T00:00:00Z; set by the parent in a Link, by the aircraft otherwise"
+key   vna                        int  s  "Valid Not After: seconds since 2019-01-01T00:00:00Z; set by the parent in a Link, by the aircraft otherwise"
+key   octet                      int  -  "item of an octet list: one octet, 0-255"
+list  child_det                  "Link: DRIP Entity Tag of the endorsed (child) entity, 16 octets"
+list  child_hi                   "Link: host identity (public key) of the child entity, 32 octets"
+list  parent_det                 "Link: DRIP Entity Tag of the endorsing (parent) entity, 16 octets"
+list  parent_signature           "Link: signature by the parent over the preceding fields, 64 octets"
+list  ua_det                     "Wrapper, Manifest: DRIP Entity Tag the aircraft signs with, 16 octets"
+list  ua_signature               "Wrapper, Manifest: signature by the aircraft over the preceding fields, 64 octets"
+list  wrapped                    "Wrapper: the wrapped F3411 messages (25 octets each, no message counter) before a mapped Location message, or all of them; each item holds rid.proto_version, rid.msg_type and message_data"
+list  wrapped_after              "Wrapper: the wrapped F3411 messages after a mapped Location message"
+list  message_data               "item of wrapped: the 24 octets of a wrapped message after its type and version octet"
+list  previous_manifest_hash     "Manifest: hash of the previous Manifest, 8 octets"
+list  current_manifest_hash      "Manifest: hash of this Manifest, 8 octets"
+list  link_hash                  "Manifest: hash of the Link carrying the endorsement of the aircraft by its HDA, 8 octets"
+list  message_hashes             "Manifest: hashes of earlier F3411 messages; each item holds the list hash"
+list  hash                       "item of message_hashes: one 8-octet hash"

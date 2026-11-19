@@ -1,0 +1,8 @@
+{
+  "name": "link-cut-short-is-malformed",
+  "from": "drip",
+  "to": "drip",
+  "input": "0689b70b000001840300000437e1012001003ffe0001050123456789abcdef0524436281a0bfdefd1c3b5a7998b7d6f51433527190afceed0c2b4a6988a7c62001003ffe00010500000000000000aa0714212e3b4855626f7c8996a3b0bdcad7e4f1fe0b",
+  "expect_error": "malformed-wire",
+  "source": "the same Link's first 100 octets: Length states 137 octets of data and the input ends before them"
+}
