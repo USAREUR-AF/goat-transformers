@@ -41,15 +41,15 @@ comparing six of them with the values the protocol fixes.
 | Kinds | 235 |
 | Payload fields in the source | 1940 |
 | Payload fields mapped | 1940 |
-| ... scalar to a raw `mavlink.` key | 1718 |
+| ... scalar to a raw `mavlink.` key | 1713 |
 | ... `char[n]` to a string key (`ascii`) | 59 |
 | ... array of 2 to 8 elements, one key per element | 70 (340 element lines) |
 | ... array of more than 8 elements, one key per element | 57 (3374 element lines) |
 | ... `lat` / `lon` in degE7 to core `lat` / `lon` | 36 |
 | Payload fields not mapped | 0 |
 | `field` lines in `pack.def` (5 common + per kind) | 5532 |
-| Keys in module `mavlink` (5 frame-header + payload) | 3973 |
-| Vectors (235 same-format round trips + 7 to geojson) | 242 |
+| Keys in module `mavlink` (5 frame-header + payload) | 3968 |
+| Vectors (235 same-format round trips + 9 to geojson) | 244 |
 
 ## What is mapped
 
@@ -146,12 +146,12 @@ one and the name does not already end with it (`mavlink.alt_mm`,
 becomes `pct`, `*` becomes `_x`. One key is shared by every message whose field
 has that name with the same type class (int, float, string), units and enum.
 When the uses of a name disagree, every use takes the message name as a prefix
-(`mavlink.<message>_<field>…`). 156 fields are named that way:
+(`mavlink.<message>_<field>…`). 154 fields are named that way:
 
 | Reason | Fields |
 |---|---|
 | different enums | 78 |
-| different types | 67 |
+| different types | 65 |
 | same name as a frame-header key | 11 |
 
 ### Core keys
@@ -170,9 +170,10 @@ Left raw on purpose:
   and `lat_int`). The `lat` / `lon` of `adsb_vehicle`, `ais_vessel` and
   `global_position_sensor` declare INT32_MAX for unknown; the pack states that as
   `absent` (Values that mean unknown, below), so they bind core `lat` / `lon`.
-- UTC epoch times in microseconds (`time_unix_usec`, `time_usec`, `time_utc`):
-  core `time_ms` is an integer and the only scaling transforms yield float; a
-  64-bit microsecond count scaled by 0.001 is not exact in a double.
+- Times the definition gives as "UNIX epoch time or time since system boot"
+  (most `time_usec` fields), times since boot, a date of manufacture and a count
+  of GPS seconds: only a time stated as since the Unix epoch is `time_ms`
+  (Times, below).
 - Altitude. MAVLink `alt` fields are above mean sea level; core `hae` is above
   the WGS84 ellipsoid.
 - Speed, course, heading and velocity components (`vel`, `cog`, `hdg`, `vx`…):
@@ -184,9 +185,28 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
-For 42 kinds the required keys are all shared with at least one other kind
+For 44 kinds the required keys are all shared with at least one other kind
 that maps every one of them; an entity built from such a kind's keys with its
-kind cleared selects the first qualifying kind in id order: `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`.
+kind cleared selects the first qualifying kind in id order: `system_time`, `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`, `open_drone_id_system_update`.
+
+## Times
+
+A field is bound to core `time_ms` (epoch milliseconds UTC) when its definition
+states a time since the Unix epoch, or since a fixed UTC instant, and nothing
+else; the transform is an integer scale of engine-spec 0.15:
+
+| Kind | Field | Transform | The definition states |
+|---|---|---|---|
+| `system_time` | `time_unix_usec` | `uiscale:1/1000` | microseconds since the Unix epoch |
+| `camera_image_captured` | `time_utc` | `uiscale:1/1000` | microseconds since the Unix epoch, UTC; 0 means unknown |
+| `utm_global_position` | `time` | `uiscale:1/1000` | microseconds since the Unix epoch at which the position applies |
+| `open_drone_id_system` | `timestamp` | `uiscale:1000:1546300800000` | seconds since 2019-01-01 00:00:00 UTC, which is 1546300800 s after the Unix epoch |
+| `open_drone_id_system_update` | `timestamp` | `uiscale:1000:1546300800000` | seconds since 2019-01-01 00:00:00 UTC, which is 1546300800 s after the Unix epoch |
+
+A microsecond count keeps whole milliseconds: decode rounds to the nearest
+millisecond (half away from zero) and encode writes that millisecond times 1000,
+so a frame whose count is not a whole number of milliseconds re-encodes rounded
+(`vectors/tm-*.json`). The raw keys these fields had stay declared in the module.
 
 ## Values that mean unknown
 
@@ -264,7 +284,7 @@ are identical. Values are inside each field's range; floats are multiples of
 0.25 or 0.125; every other `uint64_t` sample has its top bit set; every other
 frame has COMPAT = 1, and INCOMPAT is 0.
 
-`vectors/x-NN-<kind>-to-geojson.json`: 7 full frames with a correct CRC,
+`vectors/x-NN-<kind>-to-geojson.json`: 9 full frames with a correct CRC,
 converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees
 (wire value / 10^7), `properties` empty because `geojson` carries no other key
 this pack maps.

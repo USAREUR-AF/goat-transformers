@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-system_time",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0c0000020303020000d0471e18240a0600016a9a7f",
+  "expect": "fd0c0000020303020000d0471e18240a0600016a9a7f",
+  "model": {
+    "@kind": "system_time"
+  }
+}

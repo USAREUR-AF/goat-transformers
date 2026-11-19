@@ -1,0 +1,11 @@
+{
+  "name": "system_time-time-rounding-1",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0c000000010102000058421e18240a060088130000",
+  "expect": "fd0c0000000101020000e8431e18240a060088130000",
+  "model": {
+    "@kind": "system_time",
+    "time_ms": "1700000000001"
+  }
+}

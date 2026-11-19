@@ -2,8 +2,8 @@
   "name": "sentinels-adsb_vehicle",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd26000008f738f60000f6af357bffffff7fffffff7fffffff7fffffffffff7fd7faae4e854d3336000000000000330a",
-  "expect": "fd26000008f738f60000f6af357bffffff7fffffff7fffffff7fffffffffff7fd7faae4e854d3336000000000000330a",
+  "input": "fd26000009f738f60000f6af357bffffff7fffffff7fffffff7fffffffffff7fd7faae4e854d3336000000000000330a",
+  "expect": "fd26000009f738f60000f6af357bffffff7fffffff7fffffff7fffffffffff7fd7faae4e854d3336000000000000330a",
   "model": {
     "@kind": "adsb_vehicle",
     "@absent": [

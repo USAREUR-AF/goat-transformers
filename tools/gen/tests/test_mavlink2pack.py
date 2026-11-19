@@ -220,7 +220,7 @@ class GeneratedFilesLoad(unittest.TestCase):
 
     def test_kinds_are_in_message_id_order_whatever_the_order_in_the_files(self):
         self.assertEqual([k.name for k in self.pack.kinds],
-                         ["heartbeat", "sys_status", "gps_raw_int", "attitude", "global_position_int",
+                         ["heartbeat", "sys_status", "system_time", "gps_raw_int", "attitude", "global_position_int",
                           "command_long", "hil_gps", "gps2_raw", "adsb_vehicle", "test_point", "test_survey",
                           "utm_global_position", "test_shapes", "test_arrays", "test_unknowns"])
 
@@ -260,7 +260,7 @@ class GeneratedFilesLoad(unittest.TestCase):
         for name in sorted(os.listdir(directory)):
             with open(os.path.join(directory, name), encoding="utf-8") as fh:
                 vectors.append((name, fh.read()))
-        self.assertEqual(gen.check_vectors(self.pack, vectors), 15 + 7 + 4)
+        self.assertEqual(gen.check_vectors(self.pack, vectors), 16 + 9 + 4 + 2)
 
     def test_long_arrays_are_listed_in_pack_md_and_have_no_field_line(self):
         with open(os.path.join(EXPECTED, "packs", "mavlink2", "pack.md"), encoding="utf-8") as fh:
@@ -358,7 +358,7 @@ class Determinism(TempDirCase):
     def test_messages_in_another_order_in_the_file_give_the_same_bytes(self):
         def reverse(text):
             blocks = re.findall(r"    <message .*?</message>\n", text, re.S)
-            self.assertEqual(len(blocks), 13)
+            self.assertEqual(len(blocks), 14)
             head = text[:text.index("  <messages>\n")]
             return head + "  <messages>\n" + "".join(reversed(blocks)) + "  </messages>\n</mavlink>\n"
         root = self.make_root(edits={"common.xml": reverse})
@@ -1061,3 +1061,32 @@ class Sentinels(unittest.TestCase):
         self.assertNotIn("lat", entity)
         self.assertNotIn("mavlink.heading_cdeg", entity)
         self.assertEqual(gen.engine_encode(pack, name, entity).hex(), vec["input"])
+
+
+class Times(unittest.TestCase):
+    """Fields bound to core time_ms (engine-spec 0.15 uiscale)."""
+
+    def setUp(self):
+        with open(os.path.join(EXPECTED, "packs", "mavlink2", "pack.def"), encoding="utf-8") as fh:
+            self.text = fh.read()
+
+    def test_a_unix_time_in_microseconds_is_time_ms_and_a_boot_time_stays_raw(self):
+        kind = self.text[self.text.index("kind      system_time"):]
+        kind = kind[:kind.index("\n\n")]
+        self.assertIn("field     time_ms 0:80:64 uiscale:1/1000", kind)
+        self.assertIn("mavlink.time_boot_ms", kind)
+
+    def test_the_old_raw_key_stays_declared(self):
+        with open(os.path.join(EXPECTED, "model", "mavlink.def"), encoding="utf-8") as fh:
+            self.assertIn("key  time_unix_usec_us  int  us", fh.read())
+
+    def test_rounding_vectors_are_whole_milliseconds(self):
+        vdir = os.path.join(EXPECTED, "packs", "mavlink2", "vectors")
+        vec = json.load(open(os.path.join(vdir, "tm-01-system_time-rounding.json"), encoding="utf-8"))
+        self.assertEqual(vec["model"]["time_ms"], "1700000000001")
+        self.assertEqual(struct.unpack("<Q", bytes.fromhex(vec["expect"])[10:18])[0], 1700000000001000)
+
+    def test_uiscale_codec_is_exact(self):
+        self.assertEqual(gen.decode_value("uiscale", ["1/1000"], 64, 1700000000000500), 1700000000001)
+        self.assertEqual(gen.decode_value("uiscale", ["1000", "1546300800000"], 32, 1), 1546300801000)
+        self.assertEqual(gen.encode_value("uiscale", ["1000", "1546300800000"], 32, 1546300801000), 1)

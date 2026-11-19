@@ -48,14 +48,14 @@ MAVLink project generates from the same definitions (`PROVENANCE.md`).
 | Messages with no field the pack can map (no kind) | 0 |
 | Payload fields of the kinds | 127 |
 | Payload fields mapped | 127 |
-| ... scalar to a raw `mavlinkdevelopment.` key | 105 |
+| ... scalar to a raw `mavlinkdevelopment.` key | 103 |
 | ... `char[n]` to a string key (`ascii`) | 0 |
 | ... array of 2 to 8 elements, one key per element | 12 (42 element lines) |
 | ... array of more than 8 elements, one key per element | 6 (261 element lines) |
 | ... latitude / longitude in degE7 to core `lat` / `lon` | 4 |
 | Payload fields not mapped | 0 |
 | `field` lines in `pack.def` (5 common + per kind) | 417 |
-| Keys in module `mavlinkdevelopment` | 384 |
+| Keys in module `mavlinkdevelopment` | 383 |
 | Vectors (17 same-format round trips + 1 to geojson) | 18 |
 
 ## What is mapped
@@ -122,7 +122,7 @@ The position is the one the message reports:
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
-above the ellipsoid), epoch times in microseconds, and speed, course and velocity
+above the ellipsoid), times that may be since boot, and speed, course and velocity
 (the frame is stated in description text, not in the units).
 
 ### `requires`
@@ -133,6 +133,22 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 For 3 kinds the required keys are all mapped by another kind too; an entity
 built from such a kind's keys with its kind cleared selects the first
 qualifying kind in id order: `velocity_limits`, `group_start`, `group_end`.
+
+## Times
+
+A field is bound to core `time_ms` (epoch milliseconds UTC) when its definition
+states a time since the Unix epoch, or since a fixed UTC instant, and nothing
+else; the transform is an integer scale of engine-spec 0.15:
+
+| Kind | Field | Transform | The definition states |
+|---|---|---|---|
+| `target_absolute` | `timestamp` | `uiscale:1/1000` | microseconds since the Unix epoch |
+| `target_relative` | `timestamp` | `uiscale:1/1000` | microseconds since the Unix epoch |
+
+A microsecond count keeps whole milliseconds: decode rounds to the nearest
+millisecond (half away from zero) and encode writes that millisecond times 1000,
+so a frame whose count is not a whole number of milliseconds re-encodes rounded
+(`vectors/tm-*.json`). The raw keys these fields had stay declared in the module.
 
 ## Values that mean unknown
 

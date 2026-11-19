@@ -48,7 +48,7 @@ MAVLink project generates from the same definitions (`PROVENANCE.md`).
 | Messages with no field the pack can map (no kind) | 0 |
 | Payload fields of the kinds | 451 |
 | Payload fields mapped | 451 |
-| ... scalar to a raw `mavlinkardupilotmega.` key | 370 |
+| ... scalar to a raw `mavlinkardupilotmega.` key | 368 |
 | ... `char[n]` to a string key (`ascii`) | 6 |
 | ... array of 2 to 8 elements, one key per element | 52 (206 element lines) |
 | ... array of more than 8 elements, one key per element | 11 (1138 element lines) |
@@ -137,7 +137,7 @@ message has no qualifying partner field.
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
-above the ellipsoid), epoch times in microseconds, and speed, course and velocity
+above the ellipsoid), times that may be since boot, and speed, course and velocity
 (the frame is stated in description text, not in the units).
 
 ### `requires`
@@ -148,6 +148,22 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 For 19 kinds the required keys are all mapped by another kind too; an entity
 built from such a kind's keys with its kind cleared selects the first
 qualifying kind in id order: `fence_fetch_point`, `data16`, `data32`, `data64`, `rally_fetch_point`, `ahrs2`, `autopilot_version_request`, `gopro_get_request`, `device_op_read`, `device_op_write`, `esc_telemetry_1_to_4`, `esc_telemetry_5_to_8`, `esc_telemetry_9_to_12`, `osd_param_show_config`, `esc_telemetry_13_to_16`, `esc_telemetry_17_to_20`, `esc_telemetry_21_to_24`, `esc_telemetry_25_to_28`, `esc_telemetry_29_to_32`.
+
+## Times
+
+A field is bound to core `time_ms` (epoch milliseconds UTC) when its definition
+states a time since the Unix epoch, or since a fixed UTC instant, and nothing
+else; the transform is an integer scale of engine-spec 0.15:
+
+| Kind | Field | Transform | The definition states |
+|---|---|---|---|
+| `camera_status` | `time_usec` | `uiscale:1/1000` | microseconds since the Unix epoch by the camera clock |
+| `camera_feedback` | `time_usec` | `uiscale:1/1000` | microseconds since the Unix epoch of the image |
+
+A microsecond count keeps whole milliseconds: decode rounds to the nearest
+millisecond (half away from zero) and encode writes that millisecond times 1000,
+so a frame whose count is not a whole number of milliseconds re-encodes rounded
+(`vectors/tm-*.json`). The raw keys these fields had stay declared in the module.
 
 ## Values that mean unknown
 

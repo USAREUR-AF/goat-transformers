@@ -50,6 +50,7 @@ import re
 import struct
 import sys
 from decimal import Decimal
+from fractions import Fraction
 from xml.parsers import expat
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -107,8 +108,8 @@ DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is
 # What the pack is checked against when --core-def is not given: a module that
 # declares the only two core keys this pack maps.
 CORE_STAND_IN = ("module core\nversion 0.0.0\ndistribution public\n"
-                 'source "stand-in for model/core.def: the two core keys the mavlink2 pack maps"\n'
-                 "key lat float deg\nkey lon float deg\n")
+                 'source "stand-in for model/core.def: the core keys the mavlink2 pack maps"\n'
+                 "key lat float deg\nkey lon float deg\nkey time_ms int ms\n")
 
 TYPE_RE = re.compile(r"^(char|u?int(?:8|16|32|64)_t|float|double)(?:\[(\d+)\])?$")
 SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2,
@@ -124,7 +125,7 @@ KNOWN_CRC_EXTRA = {"HEARTBEAT": 50, "SYS_STATUS": 124, "ATTITUDE": 39,
                    "COMMAND_LONG": 152}
 
 # The transforms the codec of this file implements; the pack uses no other.
-CODEC_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "f32", "f64", "ascii")
+CODEC_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "f32", "f64", "ascii", "uiscale")
 KIND_NAME_RE = re.compile(r"^[a-z0-9_]+$")
 
 
@@ -224,7 +225,7 @@ CROSS_DIALECT = {
           "vel": [1.0, 0.5, 0.0], "acc": [0.0, 0.0, 0.0], "q_target": [1.0, 0.0, 0.0, 0.0],
           "rates": [0.0, 0.0, 0.0], "position_std": [2.5, 2.5], "vel_std": [0.5, 0.5, 0.5],
           "acc_std": [0.25, 0.25, 0.25]},
-         '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{}}'),
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{"time_ms":1700000000000}}'),
     ],
 }
 
@@ -739,6 +740,43 @@ LON_NAMES = ("lon", "lng")    # `lng` is the spelling of the ardupilotmega diale
 
 
 BIND_INVALID = True           # False: the 0.1.0 rule, a field with `invalid` stays raw
+BIND_TIME = True              # False: the rule before 0.15, epoch times stay raw
+
+# Fields bound to core `time_ms` (epoch milliseconds UTC): (message, field) ->
+# (expected type, units, transform, evidence in this project's words). A field
+# is listed when its definition gives a time since the Unix epoch, or since
+# another fixed UTC instant, with no alternative. Not listed: the many times
+# described as either epoch or boot time, manufacturing dates, and GPS seconds.
+TIME_BINDINGS = {
+    ("SYSTEM_TIME", "time_unix_usec"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch"),
+    ("CAMERA_IMAGE_CAPTURED", "time_utc"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch, UTC; 0 means unknown"),
+    ("UTM_GLOBAL_POSITION", "time"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch at which the position applies"),
+    ("CAMERA_STATUS", "time_usec"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch by the camera clock"),
+    ("CAMERA_FEEDBACK", "time_usec"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch of the image"),
+    ("TARGET_ABSOLUTE", "timestamp"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch"),
+    ("TARGET_RELATIVE", "timestamp"):
+        ("uint64_t", "us", "uiscale:1/1000", "microseconds since the Unix epoch"),
+    ("OPEN_DRONE_ID_SYSTEM", "timestamp"):
+        ("uint32_t", "s", "uiscale:1000:1546300800000",
+         "seconds since 2019-01-01 00:00:00 UTC, which is 1546300800 s after the Unix epoch"),
+    ("OPEN_DRONE_ID_SYSTEM_UPDATE", "timestamp"):
+        ("uint32_t", "s", "uiscale:1000:1546300800000",
+         "seconds since 2019-01-01 00:00:00 UTC, which is 1546300800 s after the Unix epoch"),
+}
+
+
+def time_binding(msg, f):
+    """The TIME_BINDINGS entry of a field, checked against its type and units."""
+    entry = TIME_BINDINGS.get((msg.name, f.name)) if BIND_TIME else None
+    if entry and (entry[0] != f.base or entry[1] != f.units or f.n is not None):
+        raise GenError("%s.%s: TIME_BINDINGS expects %s in %s" % (msg.name, f.name, entry[0], entry[1]))
+    return entry
 
 
 def is_core_latlon(f):
@@ -792,6 +830,12 @@ def classify(layout):
             statuses.append("elements")
         else:
             statuses.append("ascii" if f.base == "char" else "scalar")
+    # an epoch time binds core time_ms when the kind keeps a raw key to require
+    for i, p in enumerate(layout.wire):
+        if time_binding(layout.message, p.field) and statuses[i] == "scalar":
+            others = [s for j, s in enumerate(statuses) if j != i and s in ("scalar", "ascii", "elements", "long")]
+            if others:
+                statuses[i] = "time"
     return core_ok, statuses
 
 
@@ -868,6 +912,8 @@ def assign_keys(layouts):
             pos = PAYLOAD_BIT0 + 8 * placed.offset
             if status == "core":
                 lines.append(Line(core_name(f), pos, 32, "sscale:" + DEGE7))
+            elif status == "time":
+                lines.append(Line("time_ms", pos, 8 * f.bytes, time_binding(m, f)[2]))
             elif status not in ("unmapped", "long"):
                 stem = base_key(f)
                 if (m.name, f.name) in qualified:
@@ -985,13 +1031,13 @@ def make_plan(messages):
     `retired` are the keys the rule of version 0.1.0 (a field with `invalid`
     stays raw) declares and this plan does not map: they stay declared, so no
     key of the module is ever removed (AGENTS.md rule 7)."""
-    global BIND_INVALID
+    global BIND_INVALID, BIND_TIME
     layouts = [lay_out(m) for m in messages]
-    BIND_INVALID = False
+    BIND_INVALID = BIND_TIME = False
     try:
         before = assign_keys(layouts).keys
     finally:
-        BIND_INVALID = True
+        BIND_INVALID = BIND_TIME = True
     assigned = assign_keys(layouts)
     assigned = assigned._replace(fields=[with_sentinels(f) for f in assigned.fields])
     retired = tuple((k, before[k]) for k in before if k not in assigned.keys)
@@ -1025,6 +1071,7 @@ def collect_stats(plan):
     stats = {
         "per_file": collections.Counter(k.message.file for k in kinds), "fields": len(fields),
         "scalar": count("scalar"), "ascii": count("ascii"), "elements": count("elements"),
+        "time": count("time"),
         "element_lines": sum(len(f.lines) for f in fields if f.status == "elements"),
         "long": count("elements_long"),
         "long_lines": sum(len(f.lines) for f in fields if f.status == "elements_long"),
@@ -1228,6 +1275,10 @@ def roundtrip_vector(kind, index, sentinel=False):
             continue                       # bits no field maps stay zero
         if mapped.status == "core":
             values[f.name] = {"lat": 1, "lon": -1}[core_name(f)] * (100000000 + 1250000 * (msgid % 37))
+        elif mapped.status == "time":
+            # a whole number of milliseconds, so the round trip keeps every digit
+            values[f.name] = (1700000000000000 + 1000 * (msgid % 997)) if f.units == "us" \
+                else 150000000 + msgid % 997
         elif mapped.status in ("elements", "elements_long"):
             values[f.name] = [sample_value(f, salt + i) for i in range(f.n)]
         else:
@@ -1271,10 +1322,12 @@ CROSS = [
      {"time_usec": 1000000, "fix_type": 3, "lat": 0, "lon": -1800000000, "alt": 0,
       "satellites_visible": 7},
      '{"type":"Feature","geometry":{"type":"Point","coordinates":[-180,0]},"properties":{}}'),
+    # `time` is microseconds since the Unix epoch, bound to core time_ms (0.15
+    # uiscale:1/1000): 1700000000000000 us is 1700000000000 ms.
     ("UTM_GLOBAL_POSITION", 11, 3, 1,
      {"time": 1700000000000000, "lat": 356762000, "lon": 1396503000, "alt": 40000,
       "relative_alt": 5000, "flight_state": 3},
-     '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{}}'),
+     '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{"time_ms":1700000000000}}'),
     # An aircraft reported by ADS-B: lat and lon state INT32_MAX for unknown,
     # which the pack states as `absent`. A known position converts as above;
     # INT32_MAX in both decodes to no lat and no lon, so `geometry` is null.
@@ -1288,6 +1341,27 @@ CROSS = [
       "heading": 65535, "hor_velocity": 65535, "ver_velocity": 32767, "callsign": "EIN123",
       "emitter_type": 3, "tslc": 1, "flags": 3, "squawk": 1200},
      '{"type":"Feature","geometry":null,"properties":{}}'),
+    # SYSTEM_TIME: the Unix time and no position, so `geometry` is null.
+    ("SYSTEM_TIME", 14, 1, 1, {"time_unix_usec": 1700000000000000, "time_boot_ms": 5000},
+     '{"type":"Feature","geometry":null,"properties":{"time_ms":1700000000000}}'),
+    # The same UTM position as a CoT event: time and start are the report time,
+    # 1700000000000 ms = 2023-11-14T22:13:20.000Z; type and the three point
+    # numbers are the cot-xml pack's defaults for "not known".
+    ("UTM_GLOBAL_POSITION", 15, 3, 1,
+     {"time": 1700000000000000, "lat": 356762000, "lon": 1396503000, "alt": 40000,
+      "relative_alt": 5000, "flight_state": 3},
+     '<event version="2.0" type="a-u-X" time="2023-11-14T22:13:20.000Z" start="2023-11-14T22:13:20.000Z">'
+     '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/></event>', "cot-xml"),
+]
+
+# Same-format vectors of the time binding, written by hand: a microsecond count
+# that is not a whole number of milliseconds decodes to the nearest millisecond
+# (round half away from zero) and re-encodes as that millisecond times 1000.
+TIME_ROUNDING = [
+    ("SYSTEM_TIME", {"time_unix_usec": 1700000000000600, "time_boot_ms": 5000},
+     1700000000001, {"time_unix_usec": 1700000000001000, "time_boot_ms": 5000}),
+    ("SYSTEM_TIME", {"time_unix_usec": 1700000000000499, "time_boot_ms": 5000},
+     1700000000000, {"time_unix_usec": 1700000000000000, "time_boot_ms": 5000}),
 ]
 
 
@@ -1328,9 +1402,11 @@ def vector_files(kinds):
                 ("model", collections.OrderedDict([("@kind", kind.name),
                                                    ("@absent", [line.key for _, line in second])]))])))
     by_name = {kind.message.name: kind for kind in kinds}
-    for n, (name, seq, sysid, compid, values, expect) in enumerate(CROSS, 1):
+    for n, case in enumerate(CROSS, 1):
+        name, seq, sysid, compid, values, expect = case[:6]
+        target = case[6] if len(case) > 6 else "geojson"
         if name not in by_name:
-            raise GenError("the source has no message %s, which a vector to geojson is written from" % name)
+            raise GenError("the source has no message %s, which a vector to %s is written from" % (name, target))
         kind = by_name[name]
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
         pos, gone = {}, []
@@ -1341,19 +1417,39 @@ def vector_files(kinds):
                     gone.append(core_name(f.field))
                 else:
                     pos[core_name(f.field)] = v
+        times = [str(time_ms_of(f, values[f.field.name])) for f in kind.fields if f.status == "time"]
         model = collections.OrderedDict([("@kind", kind.name)] +
                                         [(k, fmt_float(pos[k] * 1.0 / 10000000.0)) for k in ("lat", "lon")
                                          if k in pos] +
+                                        [("time_ms", t) for t in times] +
                                         [(HEADER_MODULE + ".seq", str(seq)),
                                          (HEADER_MODULE + ".sysid", str(sysid)),
                                          (HEADER_MODULE + ".compid", str(compid))])
         if gone:
             model["@absent"] = gone
         stem = kind.name + ("-unknown-position" if gone else "")
-        files.append(("x-%02d-%s-to-geojson.json" % (n, stem), _vector_text([
-            ("name", "%s-to-geojson" % stem), ("from", FORMAT), ("to", "geojson"),
+        files.append(("x-%02d-%s-to-%s.json" % (n, stem, target), _vector_text([
+            ("name", "%s-to-%s" % (stem, target)), ("from", FORMAT), ("to", target),
             ("input", data.hex()), ("expect", expect), ("model", model)])))
+    for n, (name, values, ms, back) in enumerate(TIME_ROUNDING if not DIALECT else [], 1):
+        if name not in by_name:
+            raise GenError("the source has no message %s, which a time vector is written from" % name)
+        kind = by_name[name]
+        data_in = frame(kind, build_payload(kind, values), 0, 1, 1, False)
+        data_out = frame(kind, build_payload(kind, back), 0, 1, 1, False)
+        files.append(("tm-%02d-%s-rounding.json" % (n, kind.name), _vector_text([
+            ("name", "%s-time-rounding-%d" % (kind.name, n)), ("from", FORMAT), ("to", FORMAT),
+            ("input", data_in.hex()), ("expect", data_out.hex()),
+            ("model", collections.OrderedDict([("@kind", kind.name), ("time_ms", str(ms))]))])))
     return files
+
+
+def time_ms_of(mapped, raw):
+    """The time_ms a raw value of a time-bound field decodes to (0.15 uiscale)."""
+    tr = mapped.lines[0].transform
+    num, den, off = exact_scale(tr.split(":")[1:])
+    q = Fraction(raw * num, den)
+    return int(math.floor(abs(q) + Fraction(1, 2))) * (1 if q >= 0 else -1) + off
 
 
 def write_vectors(out, files):
@@ -1511,9 +1607,10 @@ def _md_core(plan):
     a("  and `lat_int`). The `lat` / `lon` of `adsb_vehicle`, `ais_vessel` and")
     a("  `global_position_sensor` declare INT32_MAX for unknown; the pack states that as")
     a("  `absent` (Values that mean unknown, below), so they bind core `lat` / `lon`.")
-    a("- UTC epoch times in microseconds (`time_unix_usec`, `time_usec`, `time_utc`):")
-    a("  core `time_ms` is an integer and the only scaling transforms yield float; a")
-    a("  64-bit microsecond count scaled by 0.001 is not exact in a double.")
+    a("- Times the definition gives as \"UNIX epoch time or time since system boot\"")
+    a("  (most `time_usec` fields), times since boot, a date of manufacture and a count")
+    a("  of GPS seconds: only a time stated as since the Unix epoch is `time_ms`")
+    a("  (Times, below).")
     a("- Altitude. MAVLink `alt` fields are above mean sea level; core `hae` is above")
     a("  the WGS84 ellipsoid.")
     a("- Speed, course, heading and velocity components (`vel`, `cog`, `hdg`, `vx`…):")
@@ -1852,7 +1949,7 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     a("")
     a("Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:")
     a("altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is")
-    a("above the ellipsoid), epoch times in microseconds, and speed, course and velocity")
+    a("above the ellipsoid), times that may be since boot, and speed, course and velocity")
     a("(the frame is stated in description text, not in the units).")
     a("")
     a("### `requires`")
@@ -1865,6 +1962,7 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
         a("built from such a kind's keys with its kind cleared selects the first")
         a("qualifying kind in id order: %s." % ", ".join("`%s`" % m.kind for m in shadow))
     a("")
+    o.extend(_md_times(plan))
     o.extend(_md_sentinels(plan))
     a("## What is not mapped")
     a("")
@@ -1935,6 +2033,36 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     return "\n".join(o) + "\n"
 
 
+def _md_times(plan):
+    """The section on fields bound to core time_ms."""
+    rows = [(k, f) for k in plan.kinds for f in k.fields if f.status == "time"]
+    o = []
+    a = o.append
+    a("## Times")
+    a("")
+    if not rows:
+        a("No field of this message set states a time since the Unix epoch on its own, so")
+        a("no key is bound to core `time_ms`.")
+        a("")
+        return o
+    a("A field is bound to core `time_ms` (epoch milliseconds UTC) when its definition")
+    a("states a time since the Unix epoch, or since a fixed UTC instant, and nothing")
+    a("else; the transform is an integer scale of engine-spec 0.15:")
+    a("")
+    a("| Kind | Field | Transform | The definition states |")
+    a("|---|---|---|---|")
+    for k, f in rows:
+        a("| `%s` | `%s` | `%s` | %s |" % (k.name, f.field.name, f.lines[0].transform,
+                                           TIME_BINDINGS[(k.message.name, f.field.name)][3]))
+    a("")
+    a("A microsecond count keeps whole milliseconds: decode rounds to the nearest")
+    a("millisecond (half away from zero) and encode writes that millisecond times 1000,")
+    a("so a frame whose count is not a whole number of milliseconds re-encodes rounded")
+    a("(`vectors/tm-*.json`). The raw keys these fields had stay declared in the module.")
+    a("")
+    return o
+
+
 def _md_sentinels(plan, extra=()):
     """The section on `absent`: what is stated, and every `invalid` the pack
     cannot state, with the reason."""
@@ -1983,7 +2111,7 @@ def _md_sentinels(plan, extra=()):
 def emit_pack_md(plan, stats, sha):
     """The text of packs/mavlink2/pack.md, section by section."""
     lines = (_md_layout(sha) + _md_numbers(plan, stats) + _md_mapped(plan) + _md_core(plan)
-             + _md_requires(plan) + _md_sentinels(plan) + _md_not_mapped(plan) + _md_limits(plan)
+             + _md_requires(plan) + _md_times(plan) + _md_sentinels(plan) + _md_not_mapped(plan) + _md_limits(plan)
              + _md_vectors())
     return "\n".join(lines) + "\n"
 
@@ -2012,6 +2140,14 @@ def _scale(targs):
     return gtcheck.parse_factor(targs[0]), float(targs[1]) if len(targs) == 2 else 0.0
 
 
+def exact_scale(targs):
+    """(numerator, denominator, offset) of an integer scale (engine-spec 0.15,
+    Exact factors): a fraction or a decimal factor, an integer offset."""
+    f = targs[0]
+    fr = Fraction(*map(int, f.split("/"))) if "/" in f else Fraction(Decimal(f))
+    return fr.numerator, fr.denominator, int(targs[1]) if len(targs) == 2 else 0
+
+
 def decode_value(tr, targs, bits, raw):
     """The model value of the unsigned integer `raw` read from a field of
     `bits` bits (engine-spec 0.2 "Transforms for `bits`", 0.5 "bits: more
@@ -2032,6 +2168,14 @@ def decode_value(tr, targs, bits, raw):
         return struct.unpack("<f", raw.to_bytes(4, "little"))[0]
     if tr == "f64":
         return struct.unpack("<d", raw.to_bytes(8, "little"))[0]
+    if tr == "uiscale":
+        num, den, off = exact_scale(targs)
+        q = Fraction(raw * num, den)                      # 0.15: round(v * factor) + offset, exactly
+        r = int(math.floor(abs(q) + Fraction(1, 2))) * (1 if q >= 0 else -1)
+        v = r + off
+        if not -(1 << 63) <= v < (1 << 63):
+            raise CodecError("transform-decode")
+        return v
     if tr == "ascii":
         text = raw.to_bytes(bits // 8, "little").rstrip(b"\0")
         if any(b < 0x20 or b > 0x7E for b in text):
@@ -2059,6 +2203,13 @@ def encode_value(tr, targs, bits, value):
         return int.from_bytes(struct.pack("<f", value), "little")
     if tr == "f64":
         return int.from_bytes(struct.pack("<d", value), "little")
+    if tr == "uiscale":
+        num, den, off = exact_scale(targs)
+        q = Fraction((value - off) * den, num)            # 0.15: round((x - offset) / factor)
+        r = int(math.floor(abs(q) + Fraction(1, 2))) * (1 if q >= 0 else -1)
+        if not 0 <= r <= mask:
+            raise CodecError("transform-encode")
+        return r
     if tr == "ascii":
         text = value.encode("ascii")
         if len(text) > bits // 8:
@@ -2129,7 +2280,26 @@ def geojson_encode(entity):
         geom = '{"type":"Point","coordinates":[%s,%s]}' % (fmt_float(entity["lon"]), fmt_float(entity["lat"]))
     else:
         geom = "null"
-    return '{"type":"Feature","geometry":%s,"properties":{}}' % geom
+    props = '"time_ms":%d' % entity["time_ms"] if "time_ms" in entity else ""
+    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, props)
+
+
+def iso_ms(ms):
+    """Epoch milliseconds as the cot-xml pack writes them (iso8601_ms)."""
+    import datetime
+    t = datetime.datetime(1970, 1, 1) + datetime.timedelta(milliseconds=ms)
+    return t.strftime("%Y-%m-%dT%H:%M:%S.") + "%03dZ" % (ms % 1000)
+
+
+def cot_encode(entity):
+    """CoT event XML for an entity that holds lat, lon and time_ms and no other
+    key the cot-xml pack maps: its defaults give type a-u-X and the three point
+    numbers 9999999 (packs/cot-xml/pack.def)."""
+    times = (' time="%s" start="%s"' % (iso_ms(entity["time_ms"]), iso_ms(entity["time_ms"]))
+             if "time_ms" in entity else "")
+    point = ('<point lat="%s" lon="%s" hae="9999999" ce="9999999" le="9999999"/>'
+             % (fmt_float(entity["lat"]), fmt_float(entity["lon"])))
+    return '<event version="2.0" type="a-u-X"%s>%s</event>' % (times, point)
 
 
 # ------------------------------------------------------------------ check ---
@@ -2261,6 +2431,8 @@ def check_vectors(pack, vectors):
                 kinds_seen.add(kname)
             elif vec["to"] == "geojson":
                 got = geojson_encode(entity)
+            elif vec["to"] == "cot-xml":
+                got = cot_encode(entity)
             else:
                 raise GenError("unknown target %s" % vec["to"], label)
         except CodecError as e:
