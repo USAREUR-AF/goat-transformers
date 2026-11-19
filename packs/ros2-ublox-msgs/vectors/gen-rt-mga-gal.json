@@ -3,15 +3,15 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mga_gal\",\"type\":\"ublox_msgs/msg/MgaGAL\",\"msg\":{\"type\":190,\"version\":245,\"svid\":44,\"reserved0\":99,\"iod_nav\":38682,\"delta_n\":-19119,\"m0\":283528,\"e\":2147807679,\"sqrt_a\":2147848182,\"omega0\":405037,\"i0\":445540,\"omega\":486043,\"omega_dot\":526546,\"i_dot\":-22775,\"cuc\":17728,\"cus\":-7305,\"crc\":-32338,\"crs\":8165,\"cic\":-16868,\"cis\":23635,\"toe\":31370,\"af0\":891073,\"af1\":931576,\"af2\":47,\"sisaindex_e1_e5b\":230,\"toc\":37277,\"bgd_e1_e5b\":-20524,\"reserved1\":\"HFT/AIA=\",\"health_e1b\":194,\"data_validity_e1b\":249,\"health_e5b\":48,\"data_validity_e5b\":103,\"reserved2\":\"IWP/AIA=\"},\"id\":\"gen-mga_gal\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mga_gal\",\"type\":\"ublox_msgs/msg/MgaGAL\",\"msg\":{\"type\":190,\"version\":245,\"svid\":44,\"reserved0\":99,\"iod_nav\":38682,\"delta_n\":-19119,\"m0\":283528,\"e\":2147807679,\"sqrt_a\":2147848182,\"omega0\":405037,\"i0\":445540,\"omega\":486043,\"omega_dot\":526546,\"i_dot\":-22775,\"cuc\":17728,\"cus\":-7305,\"crc\":-32338,\"crs\":8165,\"cic\":-16868,\"cis\":23635,\"toe\":31370,\"af0\":891073,\"af1\":931576,\"af2\":47,\"sisaindex_e1_e5b\":230,\"toc\":37277,\"bgd_e1_e5b\":-20524,\"reserved1\":\"HFT/AIA=\",\"health_e1b\":194,\"data_validity_e1b\":249,\"health_e5b\":48,\"data_validity_e5b\":103,\"reserved2\":\"IWP/AIA=\"},\"id\":\"gen-mga_gal\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mga_gal\",\"type\":\"ublox_msgs/msg/MgaGAL\",\"msg\":{\"type\":190,\"version\":245,\"svid\":44,\"iod_nav\":63715,\"delta_n\":5914,\"m0\":243025,\"e\":2147767176,\"sqrt_a\":2147807679,\"omega0\":364534,\"i0\":405037,\"omega\":445540,\"omega_dot\":486043,\"i_dot\":2258,\"cuc\":-22775,\"cus\":17728,\"crc\":-7305,\"crs\":-32338,\"cic\":8165,\"cis\":-16868,\"toe\":56403,\"af0\":850570,\"af1\":891073,\"af2\":-8,\"sisaindex_e1_e5b\":175,\"toc\":62310,\"bgd_e1_e5b\":4509,\"health_e1b\":84,\"data_validity_e1b\":139,\"health_e5b\":194,\"data_validity_e5b\":249},\"id\":\"gen-mga_gal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mga_gal\",\"type\":\"ublox_msgs/msg/MgaGAL\",\"msg\":{\"type\":190,\"version\":245,\"svid\":44,\"iod_nav\":63715,\"delta_n\":5914,\"m0\":243025,\"e\":2147767176,\"sqrt_a\":2147807679,\"omega0\":364534,\"i0\":405037,\"omega\":445540,\"omega_dot\":486043,\"i_dot\":2258,\"cuc\":-22775,\"cus\":17728,\"crc\":-7305,\"crs\":-32338,\"cic\":8165,\"cis\":-16868,\"toe\":56403,\"af0\":850570,\"af1\":891073,\"af2\":-8,\"sisaindex_e1_e5b\":175,\"toc\":62310,\"bgd_e1_e5b\":4509,\"health_e1b\":84,\"data_validity_e1b\":139,\"health_e5b\":194,\"data_validity_e5b\":249},\"id\":\"gen-mga_gal\"}",
   "model": {
     "@kind": "mga_gal",
     "ros2ublox.mga_gal_type": "190",
     "ros2ublox.mga_gal_version": "245",
     "ros2ublox.mga_gal_svid": "44",
-    "ros2ublox.mga_gal_reserved0": "99",
-    "ros2ublox.mga_gal_iod_nav": "38682",
+    "ros2ublox.mga_gal_iod_nav": "63715",
+    "ros2ublox.mga_gal_delta_n": "5914",
     "ros2ublox.topic": "/gen/mga_gal"
   }
 }

@@ -3,15 +3,15 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esf_ins\",\"type\":\"ublox_msgs/msg/EsfINS\",\"msg\":{\"bitfield0\":2147524158,\"reserved1\":\"Agb/AIA=\",\"i_tow\":2147605164,\"x_ang_rate\":162019,\"y_ang_rate\":202522,\"z_ang_rate\":243025,\"x_accel\":283528,\"y_accel\":324031,\"z_accel\":364534},\"id\":\"gen-esf_ins\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esf_ins\",\"type\":\"ublox_msgs/msg/EsfINS\",\"msg\":{\"bitfield0\":2147524158,\"reserved1\":\"Agb/AIA=\",\"i_tow\":2147605164,\"x_ang_rate\":162019,\"y_ang_rate\":202522,\"z_ang_rate\":243025,\"x_accel\":283528,\"y_accel\":324031,\"z_accel\":364534},\"id\":\"gen-esf_ins\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esf_ins\",\"type\":\"ublox_msgs/msg/EsfINS\",\"msg\":{\"bitfield0\":2147524158,\"i_tow\":2147564661,\"x_ang_rate\":121516,\"y_ang_rate\":162019,\"z_ang_rate\":202522,\"x_accel\":243025,\"y_accel\":283528,\"z_accel\":324031},\"id\":\"gen-esf_ins\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esf_ins\",\"type\":\"ublox_msgs/msg/EsfINS\",\"msg\":{\"bitfield0\":2147524158,\"i_tow\":2147564661,\"x_ang_rate\":121516,\"y_ang_rate\":162019,\"z_ang_rate\":202522,\"x_accel\":243025,\"y_accel\":283528,\"z_accel\":324031},\"id\":\"gen-esf_ins\"}",
   "model": {
     "@kind": "esf_ins",
     "ros2ublox.esf_ins_bitfield0": "2147524158",
-    "ros2ublox.esf_ins_reserved1": "Agb/AIA=",
-    "ros2ublox.esf_ins_i_tow": "2147605164",
-    "ros2ublox.esf_ins_x_ang_rate": "162019",
-    "ros2ublox.esf_ins_y_ang_rate": "202522",
+    "ros2ublox.esf_ins_i_tow": "2147564661",
+    "ros2ublox.esf_ins_x_ang_rate": "121516",
+    "ros2ublox.esf_ins_y_ang_rate": "162019",
+    "ros2ublox.esf_ins_z_ang_rate": "202522",
     "ros2ublox.topic": "/gen/esf_ins"
   }
 }

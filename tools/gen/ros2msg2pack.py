@@ -229,6 +229,14 @@ class Catalog:
 # Walk: message tree to pack lines
 # --------------------------------------------------------------------------
 
+SKIP_RE = {}            # package -> compiled pattern of field names not mapped (--skip-field-re)
+
+
+def skipped(msg, f):
+    r = SKIP_RE.get(msg.pkg)
+    return bool(r and r.search(f.name))
+
+
 KIND_SLUG = {}           # (package, message) -> kind name, where two names give one slug
 
 
@@ -284,6 +292,13 @@ class Namer:
         self.used.add(k)
         return k
 
+    def drop(self, pattern):
+        """Forget the names of paths that pass through a field the pattern skips."""
+        for p in list(self.names):
+            parts = re.split(r"[:.\[\]]+", p)[1:]
+            if any(pattern.search(x) for x in parts if x):
+                del self.names[p]
+
     def save(self):
         if not self.path:
             return
@@ -296,12 +311,16 @@ class Walker:
     def __init__(self, cat, module, namer, maps):
         self.cat, self.module, self.namer, self.maps = cat, module, namer, maps
         self.not_mapped = []        # (kind msg name, path, rostype, reason)
+        self.skipped = 0            # fields left out by --skip-field-re
 
     def walk(self, kind, msg, loc, kpath, ppath, desc):
         """loc: locator parts relative to the current scope; kpath: path parts for the
         key name from the kind; ppath: path id text from the kind; desc: dotted path."""
         out = []
         for f in msg.fields:
+            if skipped(msg, f):
+                self.skipped += 1
+                continue
             l2 = loc + [f.name]
             k2 = kpath + [f.name]
             p2 = ppath + ("." if ppath and not ppath.endswith(".") else "") + f.name
@@ -541,6 +560,8 @@ class Sampler:
     def message(self, msg, depth):
         obj = collections.OrderedDict()
         for f in msg.fields:
+            if skipped(msg, f):         # not written: the vector would carry the name
+                continue
             if f.array is None:
                 if f.pkg_ref is None:
                     obj[f.name] = self.scalar(f.base)
@@ -1628,12 +1649,13 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
              "field the `msg` omits with its default (protocol 4.3.3), so an absent key needs "
              "no value |" % (", ".join(defaults) if defaults else "none in this package"))
     fixed = sorted({"%s.%s %s" % (m.name, f.name, f.rostype) for m in pkg_msgs for f in m.fields
-                    if f.array and f.array[0] in ("fixed", "bounded")})
+                    if f.array and f.array[0] in ("fixed", "bounded") and not skipped(m, f)})
     if fixed:
         a.append("| Length of a fixed array and bound of a bounded one (%s) | a `json` group has "
                  "no `count` (engine-spec 0.7); any number of items decodes and encodes, and a "
                  "sender that writes another number is not refused |" % ", ".join(fixed))
-    bounded = sorted({"%s.%s" % (m.name, f.name) for m in pkg_msgs for f in m.fields if f.bound})
+    bounded = sorted({"%s.%s" % (m.name, f.name) for m in pkg_msgs for f in m.fields
+                      if f.bound and not skipped(m, f)})
     if bounded:
         a.append("| Bound of a bounded string (%s) | no transform limits a json string's length |"
                  % ", ".join(bounded))
@@ -1655,6 +1677,14 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
                  "requires `msg` |" % ", ".join(empty))
     a.append("| PNG, CBOR and fragment encodings of the protocol (sections 3.2 to 3.5) | other "
              "byte forms of the operation; the pack reads JSON text |")
+    if walker.skipped:
+        a.append("| Padding fields, %d occurrences: the fields the generator was told to skip "
+                 "(`--skip-field-re`, `tools/gen/ros2-run.sh`) | they hold no value, and their "
+                 "names are not wanted in the pack. A sender that writes them keeps them as "
+                 "residue where they stand in `msg` or in a nested object, and they are written "
+                 "back after the mapped members of that object (engine-spec 0.5). Inside an "
+                 "array item they are dropped: items carry no residue (engine-spec 0.7). The "
+                 "vectors do not write them |" % walker.skipped)
     for kname, path, rostype, reason in walker.not_mapped:
         a.append("| `%s.%s` (`%s`) | %s |" % (kname, path, rostype, reason))
     a.append("")
@@ -1828,10 +1858,12 @@ def run_package(args, cat, pkg, maps, reqs):
              ("`group` blocks", ngroup),
              ("Keys and lists of module `%s`" % module, len(decls)),
              ("Shared-model keys bound", len(maps.get(pkg, {}))),
-             ("Fields not mapped", len(walker.not_mapped))]
+             ("Fields not mapped", len(walker.not_mapped) + walker.skipped)]
     with open(os.path.join(pack_dir, "pack.md"), "w", encoding="utf-8") as fh:
         fh.write(emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes,
                               len(vecs), bool(cross), list(cat.closure_all(msgs))))
+    if pkg in SKIP_RE:
+        namer.drop(SKIP_RE[pkg])
     namer.save()
     # self-check from disk
     verify(args, fmt, module, vec_dir, [os.path.join(gj_dir, f) for f, _ in cross])
@@ -1894,6 +1926,9 @@ def main():
                     help="<repository>=<path of a licence file>; repeatable")
     ap.add_argument("--license-note", action="append", default=[],
                     help="<repository>=<licence statement for PROVENANCE.md>")
+    ap.add_argument("--skip-field-re", action="append", default=[],
+                    help="<package>=<regular expression>: fields of that package's messages whose "
+                         "name matches are not mapped and not written in vectors")
     ap.add_argument("--evidence-file", action="append", default=[],
                     help="<package>=<repository>:<path> of a file read as evidence for a binding")
     ap.add_argument("--cross", action="append", default=[],
@@ -1925,6 +1960,9 @@ def main():
     for x in args.license_note:
         k, v = x.split("=", 1)
         LICENSE_NOTES[k] = v
+    for x in args.skip_field_re:
+        k, v = x.split("=", 1)
+        SKIP_RE[k] = re.compile(v)
     for x in args.evidence_file:
         k, v = x.split("=", 1)
         r, f = v.split(":", 1)

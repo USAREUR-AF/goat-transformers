@@ -3,15 +3,15 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_cov\",\"type\":\"ublox_msgs/msg/NavCOV\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"pos_cov_valid\":44,\"vel_cov_valid\":99,\"reserved_0\":\"BQ//AIA=\",\"pos_cov_nn\":-3.625,\"pos_cov_ne\":-3.375,\"pos_cov_nd\":-3.125,\"pos_cov_ee\":-2.875,\"pos_cov_ed\":-2.625,\"pos_cov_dd\":-2.375,\"vel_cov_nn\":-2.125,\"vel_cov_ne\":-1.875,\"vel_cov_nd\":-1.625,\"vel_cov_ee\":-1.375,\"vel_cov_ed\":-1.125,\"vel_cov_dd\":-0.875},\"id\":\"gen-nav_cov\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_cov\",\"type\":\"ublox_msgs/msg/NavCOV\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"pos_cov_valid\":44,\"vel_cov_valid\":99,\"reserved_0\":\"BQ//AIA=\",\"pos_cov_nn\":-3.625,\"pos_cov_ne\":-3.375,\"pos_cov_nd\":-3.125,\"pos_cov_ee\":-2.875,\"pos_cov_ed\":-2.625,\"pos_cov_dd\":-2.375,\"vel_cov_nn\":-2.125,\"vel_cov_ne\":-1.875,\"vel_cov_nd\":-1.625,\"vel_cov_ee\":-1.375,\"vel_cov_ed\":-1.125,\"vel_cov_dd\":-0.875},\"id\":\"gen-nav_cov\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_cov\",\"type\":\"ublox_msgs/msg/NavCOV\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"pos_cov_valid\":44,\"vel_cov_valid\":99,\"pos_cov_nn\":-3.875,\"pos_cov_ne\":-3.625,\"pos_cov_nd\":-3.375,\"pos_cov_ee\":-3.125,\"pos_cov_ed\":-2.875,\"pos_cov_dd\":-2.625,\"vel_cov_nn\":-2.375,\"vel_cov_ne\":-2.125,\"vel_cov_nd\":-1.875,\"vel_cov_ee\":-1.625,\"vel_cov_ed\":-1.375,\"vel_cov_dd\":-1.125},\"id\":\"gen-nav_cov\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_cov\",\"type\":\"ublox_msgs/msg/NavCOV\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"pos_cov_valid\":44,\"vel_cov_valid\":99,\"pos_cov_nn\":-3.875,\"pos_cov_ne\":-3.625,\"pos_cov_nd\":-3.375,\"pos_cov_ee\":-3.125,\"pos_cov_ed\":-2.875,\"pos_cov_dd\":-2.625,\"vel_cov_nn\":-2.375,\"vel_cov_ne\":-2.125,\"vel_cov_nd\":-1.875,\"vel_cov_ee\":-1.625,\"vel_cov_ed\":-1.375,\"vel_cov_dd\":-1.125},\"id\":\"gen-nav_cov\"}",
   "model": {
     "@kind": "nav_cov",
     "ros2ublox.nav_cov_i_tow": "2147524158",
     "ros2ublox.nav_cov_version": "245",
     "ros2ublox.nav_cov_pos_cov_valid": "44",
     "ros2ublox.nav_cov_vel_cov_valid": "99",
-    "ros2ublox.nav_cov_reserved_0": "BQ//AIA=",
+    "ros2ublox.nav_cov_pos_cov_nn": "-3.875",
     "ros2ublox.topic": "/gen/nav_cov"
   }
 }

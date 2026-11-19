@@ -3,8 +3,8 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sbas\",\"type\":\"ublox_msgs/msg/NavSBAS\",\"msg\":{\"i_tow\":2147524158,\"geo\":245,\"mode\":44,\"sys\":-29,\"service\":154,\"cnt\":209,\"reserved0\":\"BxX/AIA=\",\"sv\":[{\"svid\":63,\"flags\":118,\"udre\":173,\"sv_sys\":228,\"sv_service\":27,\"reserved1\":82,\"prc\":-22775,\"reserved2\":50496,\"ic\":-7305},{\"svid\":46,\"flags\":101,\"udre\":156,\"sv_sys\":211,\"sv_service\":10,\"reserved1\":65,\"prc\":14072,\"reserved2\":21807,\"ic\":29542}]},\"id\":\"gen-nav_sbas\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sbas\",\"type\":\"ublox_msgs/msg/NavSBAS\",\"msg\":{\"i_tow\":2147524158,\"geo\":245,\"mode\":44,\"sys\":-29,\"service\":154,\"cnt\":209,\"reserved0\":\"BxX/AIA=\",\"sv\":[{\"svid\":63,\"flags\":118,\"udre\":173,\"sv_sys\":228,\"sv_service\":27,\"reserved1\":82,\"prc\":-22775,\"reserved2\":50496,\"ic\":-7305},{\"svid\":46,\"flags\":101,\"udre\":156,\"sv_sys\":211,\"sv_service\":10,\"reserved1\":65,\"prc\":14072,\"reserved2\":21807,\"ic\":29542}]},\"id\":\"gen-nav_sbas\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sbas\",\"type\":\"ublox_msgs/msg/NavSBAS\",\"msg\":{\"i_tow\":2147524158,\"geo\":245,\"mode\":44,\"sys\":-29,\"service\":154,\"cnt\":209,\"sv\":[{\"svid\":8,\"flags\":63,\"udre\":118,\"sv_sys\":173,\"sv_service\":228,\"prc\":27291,\"ic\":2258},{\"svid\":137,\"flags\":192,\"udre\":247,\"sv_sys\":46,\"sv_service\":101,\"prc\":-16868,\"ic\":23635}]},\"id\":\"gen-nav_sbas\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sbas\",\"type\":\"ublox_msgs/msg/NavSBAS\",\"msg\":{\"i_tow\":2147524158,\"geo\":245,\"mode\":44,\"sys\":-29,\"service\":154,\"cnt\":209,\"sv\":[{\"svid\":8,\"flags\":63,\"udre\":118,\"sv_sys\":173,\"sv_service\":228,\"prc\":27291,\"ic\":2258},{\"svid\":137,\"flags\":192,\"udre\":247,\"sv_sys\":46,\"sv_service\":101,\"prc\":-16868,\"ic\":23635}]},\"id\":\"gen-nav_sbas\"}",
   "model": {
     "@kind": "nav_sbas",
     "ros2ublox.nav_sbas_i_tow": "2147524158",
@@ -13,7 +13,7 @@
     "ros2ublox.nav_sbas_sys": "-29",
     "ros2ublox.nav_sbas_service": "154",
     "ros2ublox.nav_sbas_sv.#": "2",
-    "ros2ublox.nav_sbas_sv[0].ros2ublox.nav_sbas_sv_svid": "63",
+    "ros2ublox.nav_sbas_sv[0].ros2ublox.nav_sbas_sv_svid": "8",
     "ros2ublox.topic": "/gen/nav_sbas"
   }
 }

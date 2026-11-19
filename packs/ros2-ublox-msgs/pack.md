@@ -48,11 +48,11 @@ that carries the optional `type` member in the full notation of section 4.1:
 | Item | Count |
 |---|---|
 | Message kinds (.msg files) | 84 |
-| `field` lines (the common `topic` included) | 746 |
+| `field` lines (the common `topic` included) | 672 |
 | `group` blocks | 30 |
-| Keys and lists of module `ros2ublox` | 776 |
+| Keys and lists of module `ros2ublox` | 702 |
 | Shared-model keys bound | 0 |
-| Fields not mapped | 0 |
+| Fields not mapped | 74 |
 
 ## Shared-model keys
 
@@ -73,63 +73,63 @@ time, which may be simulation time. Every field is a raw key of module
 | `cfg_ant` | `ublox_msgs/msg/CfgANT` | 2 | 0 | 11 |
 | `cfg_cfg` | `ublox_msgs/msg/CfgCFG` | 4 | 0 | 16 |
 | `cfg_dat` | `ublox_msgs/msg/CfgDAT` | 11 | 0 | 4 |
-| `cfg_dgnss` | `ublox_msgs/msg/CfgDGNSS` | 2 | 0 | 4 |
-| `cfg_gnss` | `ublox_msgs/msg/CfgGNSS` | 9 | 1 | 2 |
-| `cfg_gnss_block` | `ublox_msgs/msg/CfgGNSSBlock` | 5 | 0 | 26 |
-| `cfg_hnr` | `ublox_msgs/msg/CfgHNR` | 2 | 0 | 2 |
-| `cfg_inf` | `ublox_msgs/msg/CfgINF` | 3 | 1 | 2 |
-| `cfg_inf_block` | `ublox_msgs/msg/CfgINFBlock` | 3 | 0 | 7 |
+| `cfg_dgnss` | `ublox_msgs/msg/CfgDGNSS` | 1 | 0 | 4 |
+| `cfg_gnss` | `ublox_msgs/msg/CfgGNSS` | 8 | 1 | 2 |
+| `cfg_gnss_block` | `ublox_msgs/msg/CfgGNSSBlock` | 4 | 0 | 26 |
+| `cfg_hnr` | `ublox_msgs/msg/CfgHNR` | 1 | 0 | 2 |
+| `cfg_inf` | `ublox_msgs/msg/CfgINF` | 2 | 1 | 2 |
+| `cfg_inf_block` | `ublox_msgs/msg/CfgINFBlock` | 2 | 0 | 7 |
 | `cfg_msg` | `ublox_msgs/msg/CfgMSG` | 3 | 0 | 2 |
-| `cfg_nav5` | `ublox_msgs/msg/CfgNAV5` | 19 | 0 | 28 |
-| `cfg_navx5` | `ublox_msgs/msg/CfgNAVX5` | 20 | 0 | 11 |
-| `cfg_nmea` | `ublox_msgs/msg/CfgNMEA` | 11 | 0 | 33 |
+| `cfg_nav5` | `ublox_msgs/msg/CfgNAV5` | 17 | 0 | 28 |
+| `cfg_navx5` | `ublox_msgs/msg/CfgNAVX5` | 14 | 0 | 11 |
+| `cfg_nmea` | `ublox_msgs/msg/CfgNMEA` | 10 | 0 | 33 |
 | `cfg_nmea6` | `ublox_msgs/msg/CfgNMEA6` | 4 | 0 | 12 |
-| `cfg_nmea7` | `ublox_msgs/msg/CfgNMEA7` | 9 | 0 | 25 |
-| `cfg_prt` | `ublox_msgs/msg/CfgPRT` | 9 | 0 | 41 |
+| `cfg_nmea7` | `ublox_msgs/msg/CfgNMEA7` | 8 | 0 | 25 |
+| `cfg_prt` | `ublox_msgs/msg/CfgPRT` | 7 | 0 | 41 |
 | `cfg_rate` | `ublox_msgs/msg/CfgRATE` | 3 | 0 | 7 |
-| `cfg_rst` | `ublox_msgs/msg/CfgRST` | 3 | 0 | 21 |
+| `cfg_rst` | `ublox_msgs/msg/CfgRST` | 2 | 0 | 21 |
 | `cfg_sbas` | `ublox_msgs/msg/CfgSBAS` | 5 | 0 | 7 |
-| `cfg_tmode3` | `ublox_msgs/msg/CfgTMODE3` | 14 | 0 | 7 |
-| `cfg_usb` | `ublox_msgs/msg/CfgUSB` | 9 | 3 | 4 |
-| `cfg_valdel` | `ublox_msgs/msg/CfgVALDEL` | 4 | 1 | 4 |
+| `cfg_tmode3` | `ublox_msgs/msg/CfgTMODE3` | 11 | 0 | 7 |
+| `cfg_usb` | `ublox_msgs/msg/CfgUSB` | 7 | 3 | 4 |
+| `cfg_valdel` | `ublox_msgs/msg/CfgVALDEL` | 3 | 1 | 4 |
 | `cfg_valget` | `ublox_msgs/msg/CfgVALGET` | 4 | 1 | 6 |
-| `cfg_valset` | `ublox_msgs/msg/CfgVALSET` | 5 | 1 | 5 |
+| `cfg_valset` | `ublox_msgs/msg/CfgVALSET` | 4 | 1 | 5 |
 | `cfg_valset_cfgdata` | `ublox_msgs/msg/CfgVALSETCfgdata` | 2 | 0 | 18 |
-| `esf_ins` | `ublox_msgs/msg/EsfINS` | 9 | 0 | 9 |
+| `esf_ins` | `ublox_msgs/msg/EsfINS` | 8 | 0 | 9 |
 | `esf_meas` | `ublox_msgs/msg/EsfMEAS` | 5 | 2 | 25 |
-| `esf_raw` | `ublox_msgs/msg/EsfRAW` | 3 | 1 | 2 |
+| `esf_raw` | `ublox_msgs/msg/EsfRAW` | 2 | 1 | 2 |
 | `esf_raw_block` | `ublox_msgs/msg/EsfRAWBlock` | 2 | 0 | 2 |
-| `esf_status` | `ublox_msgs/msg/EsfSTATUS` | 10 | 1 | 6 |
+| `esf_status` | `ublox_msgs/msg/EsfSTATUS` | 8 | 1 | 6 |
 | `esf_status_sens` | `ublox_msgs/msg/EsfSTATUSSens` | 4 | 0 | 0 |
 | `esf_status_sens_2` | `ublox_msgs/msg/EsfSTATUS_Sens` | 4 | 0 | 0 |
-| `hnr_pvt` | `ublox_msgs/msg/HnrPVT` | 25 | 0 | 17 |
+| `hnr_pvt` | `ublox_msgs/msg/HnrPVT` | 23 | 0 | 17 |
 | `inf` | `ublox_msgs/msg/Inf` | 1 | 0 | 1 |
-| `mga_gal` | `ublox_msgs/msg/MgaGAL` | 33 | 0 | 2 |
-| `mon_gnss` | `ublox_msgs/msg/MonGNSS` | 6 | 0 | 6 |
-| `mon_hw` | `ublox_msgs/msg/MonHW` | 17 | 0 | 20 |
-| `mon_hw6` | `ublox_msgs/msg/MonHW6` | 17 | 0 | 20 |
+| `mga_gal` | `ublox_msgs/msg/MgaGAL` | 30 | 0 | 2 |
+| `mon_gnss` | `ublox_msgs/msg/MonGNSS` | 5 | 0 | 6 |
+| `mon_hw` | `ublox_msgs/msg/MonHW` | 15 | 0 | 20 |
+| `mon_hw6` | `ublox_msgs/msg/MonHW6` | 15 | 0 | 20 |
 | `mon_ver` | `ublox_msgs/msg/MonVER` | 3 | 1 | 2 |
 | `mon_ver_extension` | `ublox_msgs/msg/MonVERExtension` | 1 | 0 | 0 |
-| `nav_att` | `ublox_msgs/msg/NavATT` | 9 | 0 | 2 |
+| `nav_att` | `ublox_msgs/msg/NavATT` | 8 | 0 | 2 |
 | `nav_clock` | `ublox_msgs/msg/NavCLOCK` | 5 | 0 | 2 |
-| `nav_cov` | `ublox_msgs/msg/NavCOV` | 17 | 0 | 2 |
-| `nav_dgps` | `ublox_msgs/msg/NavDGPS` | 12 | 1 | 4 |
+| `nav_cov` | `ublox_msgs/msg/NavCOV` | 16 | 0 | 2 |
+| `nav_dgps` | `ublox_msgs/msg/NavDGPS` | 11 | 1 | 4 |
 | `nav_dgpssv` | `ublox_msgs/msg/NavDGPSSV` | 5 | 0 | 2 |
 | `nav_dop` | `ublox_msgs/msg/NavDOP` | 8 | 0 | 2 |
 | `nav_posecef` | `ublox_msgs/msg/NavPOSECEF` | 5 | 0 | 2 |
 | `nav_posllh` | `ublox_msgs/msg/NavPOSLLH` | 7 | 0 | 2 |
-| `nav_pvt` | `ublox_msgs/msg/NavPVT` | 32 | 0 | 29 |
-| `nav_pvt7` | `ublox_msgs/msg/NavPVT7` | 29 | 0 | 29 |
-| `nav_relposned` | `ublox_msgs/msg/NavRELPOSNED` | 15 | 0 | 12 |
-| `nav_relposned9` | `ublox_msgs/msg/NavRELPOSNED9` | 21 | 0 | 14 |
-| `nav_sat` | `ublox_msgs/msg/NavSAT` | 11 | 1 | 2 |
+| `nav_pvt` | `ublox_msgs/msg/NavPVT` | 31 | 0 | 29 |
+| `nav_pvt7` | `ublox_msgs/msg/NavPVT7` | 28 | 0 | 29 |
+| `nav_relposned` | `ublox_msgs/msg/NavRELPOSNED` | 13 | 0 | 12 |
+| `nav_relposned9` | `ublox_msgs/msg/NavRELPOSNED9` | 18 | 0 | 14 |
+| `nav_sat` | `ublox_msgs/msg/NavSAT` | 10 | 1 | 2 |
 | `nav_satsv` | `ublox_msgs/msg/NavSATSV` | 7 | 0 | 34 |
-| `nav_sbas` | `ublox_msgs/msg/NavSBAS` | 16 | 1 | 15 |
-| `nav_sbassv` | `ublox_msgs/msg/NavSBASSV` | 9 | 0 | 0 |
-| `nav_sol` | `ublox_msgs/msg/NavSOL` | 17 | 0 | 12 |
+| `nav_sbas` | `ublox_msgs/msg/NavSBAS` | 13 | 1 | 15 |
+| `nav_sbassv` | `ublox_msgs/msg/NavSBASSV` | 7 | 0 | 0 |
+| `nav_sol` | `ublox_msgs/msg/NavSOL` | 15 | 0 | 12 |
 | `nav_status` | `ublox_msgs/msg/NavSTATUS` | 7 | 0 | 28 |
-| `nav_svin` | `ublox_msgs/msg/NavSVIN` | 16 | 0 | 2 |
-| `nav_svinfo` | `ublox_msgs/msg/NavSVINFO` | 12 | 1 | 7 |
+| `nav_svin` | `ublox_msgs/msg/NavSVIN` | 13 | 0 | 2 |
+| `nav_svinfo` | `ublox_msgs/msg/NavSVINFO` | 11 | 1 | 7 |
 | `nav_svinfosv` | `ublox_msgs/msg/NavSVINFOSV` | 8 | 0 | 16 |
 | `nav_timegps` | `ublox_msgs/msg/NavTIMEGPS` | 6 | 0 | 5 |
 | `nav_timeutc` | `ublox_msgs/msg/NavTIMEUTC` | 10 | 0 | 15 |
@@ -137,19 +137,19 @@ time, which may be simulation time. Every field is a raw key of module
 | `nav_velned` | `ublox_msgs/msg/NavVELNED` | 9 | 0 | 2 |
 | `rxm_alm` | `ublox_msgs/msg/RxmALM` | 3 | 1 | 2 |
 | `rxm_eph` | `ublox_msgs/msg/RxmEPH` | 5 | 3 | 2 |
-| `rxm_raw` | `ublox_msgs/msg/RxmRAW` | 11 | 1 | 2 |
+| `rxm_raw` | `ublox_msgs/msg/RxmRAW` | 10 | 1 | 2 |
 | `rxm_rawsv` | `ublox_msgs/msg/RxmRAWSV` | 7 | 0 | 0 |
-| `rxm_rawx` | `ublox_msgs/msg/RxmRAWX` | 21 | 1 | 4 |
-| `rxm_rawx_meas` | `ublox_msgs/msg/RxmRAWXMeas` | 14 | 0 | 4 |
-| `rxm_rtcm` | `ublox_msgs/msg/RxmRTCM` | 5 | 0 | 3 |
+| `rxm_rawx` | `ublox_msgs/msg/RxmRAWX` | 18 | 1 | 4 |
+| `rxm_rawx_meas` | `ublox_msgs/msg/RxmRAWXMeas` | 12 | 0 | 4 |
+| `rxm_rtcm` | `ublox_msgs/msg/RxmRTCM` | 4 | 0 | 3 |
 | `rxm_sfrb` | `ublox_msgs/msg/RxmSFRB` | 3 | 1 | 2 |
-| `rxm_sfrbx` | `ublox_msgs/msg/RxmSFRBX` | 9 | 1 | 2 |
+| `rxm_sfrbx` | `ublox_msgs/msg/RxmSFRBX` | 7 | 1 | 2 |
 | `rxm_svsi` | `ublox_msgs/msg/RxmSVSI` | 9 | 1 | 2 |
 | `rxm_svsisv` | `ublox_msgs/msg/RxmSVSISV` | 5 | 0 | 7 |
 | `rxm_svsi_sv` | `ublox_msgs/msg/RxmSVSI_SV` | 5 | 0 | 7 |
 | `tim_tm2` | `ublox_msgs/msg/TimTM2` | 10 | 0 | 10 |
-| `upd_sos` | `ublox_msgs/msg/UpdSOS` | 2 | 0 | 4 |
-| `upd_sos_ack` | `ublox_msgs/msg/UpdSOSAck` | 4 | 0 | 10 |
+| `upd_sos` | `ublox_msgs/msg/UpdSOS` | 1 | 0 | 4 |
+| `upd_sos_ack` | `ublox_msgs/msg/UpdSOSAck` | 2 | 0 | 10 |
 
 Fields and lists count every line of the kind, the fields of nested messages and
 of array items included.
@@ -160,11 +160,12 @@ of array items included.
 |---|---|
 | Constants (`uint8 STATUS_FIX = 0` and the like), 732 in this package | the pack language has no line that names a constant of a field; the value of the field is carried as a number |
 | Default values in the .msg (none in this package) | not written on encode: rosbridge fills a field the `msg` omits with its default (protocol 4.3.3), so an absent key needs no value |
-| Length of a fixed array and bound of a bounded one (CfgDAT.datum_name uint8[6], CfgDGNSS.reserved0 uint8[3], CfgHNR.reserved0 uint8[3], CfgINFBlock.inf_msg_mask uint8[6], CfgINFBlock.reserved1 uint8[3], CfgNAV5.reserved1 uint8[2], CfgNAV5.reserved2 uint8[5], CfgNAVX5.reserved1 uint8[2], CfgNAVX5.reserved3 uint8[2], CfgNAVX5.reserved4 uint8[5], CfgNAVX5.reserved5 uint8[2], CfgNAVX5.reserved6 uint8[7], CfgNMEA.bds_talker_id uint8[2], CfgNMEA.reserved1 uint8[6], CfgTMODE3.reserved3 uint8[8], CfgUSB.product_string int8[32], CfgUSB.reserved1 uint8[2], CfgUSB.reserved2 uint8[2], CfgUSB.serial_number int8[32], CfgUSB.vendor_string int8[32], CfgVALDEL.reserved0 uint8[2], CfgVALSET.reserved0 uint8[2], EsfINS.reserved1 uint8[4], EsfRAW.reserved0 uint8[4], EsfSTATUS.reserved1 uint8[7], EsfSTATUS.reserved2 uint8[2], HnrPVT.reserved0 uint8[2], HnrPVT.reserved1 uint8[4], MgaGAL.reserved1 uint8[2], MgaGAL.reserved2 uint8[4], MonGNSS.reserved1 uint8[3], MonHW.reserved1 uint8[2], MonHW.vp uint8[17], MonHW6.reserved1 uint8[2], MonHW6.vp uint8[25], MonVER.hw_version char[10], MonVER.sw_version char[30], MonVERExtension.field char[30], NavATT.reserved0 uint8[3], NavCOV.reserved_0 uint8[9], NavPVT.reserved1 uint8[6], NavPVT7.reserved1 uint8[6], NavRELPOSNED9.reserved2 uint8[4], NavRELPOSNED9.reserved3 uint8[4], NavSAT.reserved0 uint8[2], NavSBAS.reserved0 uint8[3], NavSVIN.reserved0 uint8[3], NavSVIN.reserved3 uint8[2], RxmRAWX.reserved1 uint8[2], RxmRTCM.reserved0 uint8[2], RxmSFRB.dwrd uint32[10], UpdSOS.reserved1 uint8[3], UpdSOSAck.reserved0 uint8[3], UpdSOSAck.reserved1 uint8[3]) | a `json` group has no `count` (engine-spec 0.7); any number of items decodes and encodes, and a sender that writes another number is not refused |
+| Length of a fixed array and bound of a bounded one (CfgDAT.datum_name uint8[6], CfgINFBlock.inf_msg_mask uint8[6], CfgNMEA.bds_talker_id uint8[2], CfgUSB.product_string int8[32], CfgUSB.serial_number int8[32], CfgUSB.vendor_string int8[32], MonHW.vp uint8[17], MonHW6.vp uint8[25], MonVER.hw_version char[10], MonVER.sw_version char[30], MonVERExtension.field char[30], RxmSFRB.dwrd uint32[10]) | a `json` group has no `count` (engine-spec 0.7); any number of items decodes and encodes, and a sender that writes another number is not refused |
 | NaN and infinite floats | rosbridge writes them `null`; `null` is absent (engine-spec 0.5), so the key is absent and nothing is written back |
 | `uint8[]` and `char[]` sent as a list of numbers | rosbridge accepts that from a client (protocol 3.1) but writes base64; the pack reads the base64 string only, and a list there is `transform-decode` |
 | Members inside an array item that the .msg does not define | engine-spec 0.7: items carry no residue |
 | PNG, CBOR and fragment encodings of the protocol (sections 3.2 to 3.5) | other byte forms of the operation; the pack reads JSON text |
+| Padding fields, 74 occurrences: the fields the generator was told to skip (`--skip-field-re`, `tools/gen/ros2-run.sh`) | they hold no value, and their names are not wanted in the pack. A sender that writes them keeps them as residue where they stand in `msg` or in a nested object, and they are written back after the mapped members of that object (engine-spec 0.5). Inside an array item they are dropped: items carry no residue (engine-spec 0.7). The vectors do not write them |
 
 ## Vectors
 

@@ -3,15 +3,15 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_svin\",\"type\":\"ublox_msgs/msg/NavSVIN\",\"msg\":{\"version\":190,\"reserved0\":\"Agb/AIA=\",\"i_tow\":2147605164,\"dur\":2147645667,\"mean_x\":202522,\"mean_y\":243025,\"mean_z\":283528,\"mean_xhp\":-65,\"mean_yhp\":-10,\"mean_zhp\":45,\"reserved1\":228,\"mean_acc\":2147969691,\"obs\":2148010194,\"valid\":137,\"active\":192,\"reserved3\":\"EDD/AIA=\"},\"id\":\"gen-nav_svin\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_svin\",\"type\":\"ublox_msgs/msg/NavSVIN\",\"msg\":{\"version\":190,\"reserved0\":\"Agb/AIA=\",\"i_tow\":2147605164,\"dur\":2147645667,\"mean_x\":202522,\"mean_y\":243025,\"mean_z\":283528,\"mean_xhp\":-65,\"mean_yhp\":-10,\"mean_zhp\":45,\"reserved1\":228,\"mean_acc\":2147969691,\"obs\":2148010194,\"valid\":137,\"active\":192,\"reserved3\":\"EDD/AIA=\"},\"id\":\"gen-nav_svin\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_svin\",\"type\":\"ublox_msgs/msg/NavSVIN\",\"msg\":{\"version\":190,\"i_tow\":2147564661,\"dur\":2147605164,\"mean_x\":162019,\"mean_y\":202522,\"mean_z\":243025,\"mean_xhp\":-120,\"mean_yhp\":-65,\"mean_zhp\":-10,\"mean_acc\":2147888685,\"obs\":2147929188,\"valid\":27,\"active\":82},\"id\":\"gen-nav_svin\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_svin\",\"type\":\"ublox_msgs/msg/NavSVIN\",\"msg\":{\"version\":190,\"i_tow\":2147564661,\"dur\":2147605164,\"mean_x\":162019,\"mean_y\":202522,\"mean_z\":243025,\"mean_xhp\":-120,\"mean_yhp\":-65,\"mean_zhp\":-10,\"mean_acc\":2147888685,\"obs\":2147929188,\"valid\":27,\"active\":82},\"id\":\"gen-nav_svin\"}",
   "model": {
     "@kind": "nav_svin",
     "ros2ublox.nav_svin_version": "190",
-    "ros2ublox.nav_svin_reserved0": "Agb/AIA=",
-    "ros2ublox.nav_svin_i_tow": "2147605164",
-    "ros2ublox.nav_svin_dur": "2147645667",
-    "ros2ublox.nav_svin_mean_x": "202522",
+    "ros2ublox.nav_svin_i_tow": "2147564661",
+    "ros2ublox.nav_svin_dur": "2147605164",
+    "ros2ublox.nav_svin_mean_x": "162019",
+    "ros2ublox.nav_svin_mean_y": "202522",
     "ros2ublox.topic": "/gen/nav_svin"
   }
 }

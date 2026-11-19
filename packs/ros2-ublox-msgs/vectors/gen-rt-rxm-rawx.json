@@ -3,8 +3,8 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawx\",\"type\":\"ublox_msgs/msg/RxmRAWX\",\"msg\":{\"rcv_tow\":1.007,\"week\":48245,\"leap_s\":-84,\"num_meas\":99,\"rec_stat\":154,\"version\":209,\"reserved1\":\"BxX/AIA=\",\"meas\":[{\"pr_mes\":8.056,\"cp_mes\":-9.063,\"do_mes\":-2.625,\"gnss_id\":228,\"sv_id\":27,\"reserved0\":82,\"freq_id\":137,\"locktime\":50496,\"cno\":119,\"pr_stdev\":46,\"cp_stdev\":101,\"do_stdev\":156,\"trk_stat\":211,\"reserved1\":10},{\"pr_mes\":22.154,\"cp_mes\":23.161,\"do_mes\":0.875,\"gnss_id\":230,\"sv_id\":29,\"reserved0\":84,\"freq_id\":139,\"locktime\":27714,\"cno\":121,\"pr_stdev\":48,\"cp_stdev\":103,\"do_stdev\":158,\"trk_stat\":213,\"reserved1\":12}]},\"id\":\"gen-rxm_rawx\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawx\",\"type\":\"ublox_msgs/msg/RxmRAWX\",\"msg\":{\"rcv_tow\":1.007,\"week\":48245,\"leap_s\":-84,\"num_meas\":99,\"rec_stat\":154,\"version\":209,\"reserved1\":\"BxX/AIA=\",\"meas\":[{\"pr_mes\":8.056,\"cp_mes\":-9.063,\"do_mes\":-2.625,\"gnss_id\":228,\"sv_id\":27,\"reserved0\":82,\"freq_id\":137,\"locktime\":50496,\"cno\":119,\"pr_stdev\":46,\"cp_stdev\":101,\"do_stdev\":156,\"trk_stat\":211,\"reserved1\":10},{\"pr_mes\":22.154,\"cp_mes\":23.161,\"do_mes\":0.875,\"gnss_id\":230,\"sv_id\":29,\"reserved0\":84,\"freq_id\":139,\"locktime\":27714,\"cno\":121,\"pr_stdev\":48,\"cp_stdev\":103,\"do_stdev\":158,\"trk_stat\":213,\"reserved1\":12}]},\"id\":\"gen-rxm_rawx\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawx\",\"type\":\"ublox_msgs/msg/RxmRAWX\",\"msg\":{\"rcv_tow\":1.007,\"week\":48245,\"leap_s\":-84,\"num_meas\":99,\"rec_stat\":154,\"version\":209,\"meas\":[{\"pr_mes\":7.049,\"cp_mes\":8.056,\"do_mes\":-2.875,\"gnss_id\":173,\"sv_id\":228,\"freq_id\":27,\"locktime\":35026,\"cno\":9,\"pr_stdev\":192,\"cp_stdev\":247,\"do_stdev\":46,\"trk_stat\":101},{\"pr_mes\":19.133,\"cp_mes\":20.14,\"do_mes\":0.125,\"gnss_id\":65,\"sv_id\":120,\"freq_id\":175,\"locktime\":62310,\"cno\":-99,\"pr_stdev\":84,\"cp_stdev\":139,\"do_stdev\":194,\"trk_stat\":249}]},\"id\":\"gen-rxm_rawx\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawx\",\"type\":\"ublox_msgs/msg/RxmRAWX\",\"msg\":{\"rcv_tow\":1.007,\"week\":48245,\"leap_s\":-84,\"num_meas\":99,\"rec_stat\":154,\"version\":209,\"meas\":[{\"pr_mes\":7.049,\"cp_mes\":8.056,\"do_mes\":-2.875,\"gnss_id\":173,\"sv_id\":228,\"freq_id\":27,\"locktime\":35026,\"cno\":9,\"pr_stdev\":192,\"cp_stdev\":247,\"do_stdev\":46,\"trk_stat\":101},{\"pr_mes\":19.133,\"cp_mes\":20.14,\"do_mes\":0.125,\"gnss_id\":65,\"sv_id\":120,\"freq_id\":175,\"locktime\":62310,\"cno\":-99,\"pr_stdev\":84,\"cp_stdev\":139,\"do_stdev\":194,\"trk_stat\":249}]},\"id\":\"gen-rxm_rawx\"}",
   "model": {
     "@kind": "rxm_rawx",
     "ros2ublox.rxm_rawx_rcv_tow": "1.007",
@@ -13,7 +13,7 @@
     "ros2ublox.rxm_rawx_num_meas": "99",
     "ros2ublox.rxm_rawx_rec_stat": "154",
     "ros2ublox.rxm_rawx_meas.#": "2",
-    "ros2ublox.rxm_rawx_meas[0].ros2ublox.rxm_rawx_meas_pr_mes": "8.056",
+    "ros2ublox.rxm_rawx_meas[0].ros2ublox.rxm_rawx_meas_pr_mes": "7.049",
     "ros2ublox.topic": "/gen/rxm_rawx"
   }
 }

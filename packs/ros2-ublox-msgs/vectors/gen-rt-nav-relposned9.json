@@ -3,15 +3,15 @@
   "from": "ros2-ublox-msgs",
   "to": "ros2-ublox-msgs",
   "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
-  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_relposned9\",\"type\":\"ublox_msgs/msg/NavRELPOSNED9\",\"msg\":{\"version\":190,\"reserved1\":245,\"ref_station_id\":23212,\"i_tow\":2147645667,\"rel_pos_n\":202522,\"rel_pos_e\":243025,\"rel_pos_d\":283528,\"rel_pos_length\":324031,\"rel_pos_heading\":364534,\"reserved2\":\"Ch7/AIA=\",\"rel_pos_hpn\":100,\"rel_pos_hpe\":-101,\"rel_pos_hpd\":-46,\"rel_pos_hp_length\":9,\"acc_n\":2148091200,\"acc_e\":2148131703,\"acc_d\":2148172206,\"acc_length\":2148212709,\"acc_heading\":2148253212,\"reserved3\":\"FDz/AIA=\",\"flags\":2148334218},\"id\":\"gen-nav_relposned9\"}",
-  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_relposned9\",\"type\":\"ublox_msgs/msg/NavRELPOSNED9\",\"msg\":{\"version\":190,\"reserved1\":245,\"ref_station_id\":23212,\"i_tow\":2147645667,\"rel_pos_n\":202522,\"rel_pos_e\":243025,\"rel_pos_d\":283528,\"rel_pos_length\":324031,\"rel_pos_heading\":364534,\"reserved2\":\"Ch7/AIA=\",\"rel_pos_hpn\":100,\"rel_pos_hpe\":-101,\"rel_pos_hpd\":-46,\"rel_pos_hp_length\":9,\"acc_n\":2148091200,\"acc_e\":2148131703,\"acc_d\":2148172206,\"acc_length\":2148212709,\"acc_heading\":2148253212,\"reserved3\":\"FDz/AIA=\",\"flags\":2148334218},\"id\":\"gen-nav_relposned9\"}",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_relposned9\",\"type\":\"ublox_msgs/msg/NavRELPOSNED9\",\"msg\":{\"version\":190,\"ref_station_id\":48245,\"i_tow\":2147605164,\"rel_pos_n\":162019,\"rel_pos_e\":202522,\"rel_pos_d\":243025,\"rel_pos_length\":283528,\"rel_pos_heading\":324031,\"rel_pos_hpn\":-10,\"rel_pos_hpe\":45,\"rel_pos_hpd\":100,\"rel_pos_hp_length\":-101,\"acc_n\":2148010194,\"acc_e\":2148050697,\"acc_d\":2148091200,\"acc_length\":2148131703,\"acc_heading\":2148172206,\"flags\":2148212709},\"id\":\"gen-nav_relposned9\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_relposned9\",\"type\":\"ublox_msgs/msg/NavRELPOSNED9\",\"msg\":{\"version\":190,\"ref_station_id\":48245,\"i_tow\":2147605164,\"rel_pos_n\":162019,\"rel_pos_e\":202522,\"rel_pos_d\":243025,\"rel_pos_length\":283528,\"rel_pos_heading\":324031,\"rel_pos_hpn\":-10,\"rel_pos_hpe\":45,\"rel_pos_hpd\":100,\"rel_pos_hp_length\":-101,\"acc_n\":2148010194,\"acc_e\":2148050697,\"acc_d\":2148091200,\"acc_length\":2148131703,\"acc_heading\":2148172206,\"flags\":2148212709},\"id\":\"gen-nav_relposned9\"}",
   "model": {
     "@kind": "nav_relposned9",
     "ros2ublox.nav_relposned9_version": "190",
-    "ros2ublox.nav_relposned9_reserved1": "245",
-    "ros2ublox.nav_relposned9_ref_station_id": "23212",
-    "ros2ublox.nav_relposned9_i_tow": "2147645667",
-    "ros2ublox.nav_relposned9_rel_pos_n": "202522",
+    "ros2ublox.nav_relposned9_ref_station_id": "48245",
+    "ros2ublox.nav_relposned9_i_tow": "2147605164",
+    "ros2ublox.nav_relposned9_rel_pos_n": "162019",
+    "ros2ublox.nav_relposned9_rel_pos_e": "202522",
     "ros2ublox.topic": "/gen/nav_relposned9"
   }
 }

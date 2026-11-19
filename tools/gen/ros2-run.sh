@@ -1548,6 +1548,9 @@ B3+=(
   --license-file rmf_building_map_msgs=LICENSE.md
   --license-note 'rmf_building_map_msgs=`LICENSE.md` is the Apache License, Version 2.0; `package.xml` states `<license>Apache License 2.0</license>`.'
 )
+# ublox_msgs: the padding fields of the u-blox layouts (named reserved, an optional underscore and a number)
+# hold no value and are not mapped.
+B3+=(--skip-field-re 'ublox_msgs=^reserved_?[0-9]*$')
 # px4_msgs: six kinds state a WGS 84 position (evidence in notes/ros2-px4-msgs.md).
 P=px4_msgs
 B3+=(--map $P/SensorGnss:latitude=lat --map $P/SensorGnss:longitude=lon --map $P/SensorGnss:altitude_ellipsoid=hae --cross $P/SensorGnss
