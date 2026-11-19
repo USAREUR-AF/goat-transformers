@@ -1,0 +1,19 @@
+{
+  "name": "gen-event-roundtrip",
+  "from": "foxglove-proto-event",
+  "to": "foxglove-proto-event",
+  "input": "0a050864108901120608ae0110d3011a100a056b65792d34120776616c75652d351a100a056b65792d36120776616c75652d37",
+  "expect": "0a050864108901120608ae0110d3011a100a056b65792d34120776616c75652d351a100a056b65792d36120776616c75652d37",
+  "model": {
+    "@kind": "event",
+    "foxgloveprotoevent.start_time_seconds": "100",
+    "foxgloveprotoevent.start_time_nanos": "137",
+    "foxgloveprotoevent.end_time_seconds": "174",
+    "foxgloveprotoevent.end_time_nanos": "211",
+    "foxgloveprotoevent.event_metadata.#": "2",
+    "foxgloveprotoevent.event_metadata[0].foxgloveprotoevent.key_value_pair_key": "key-4",
+    "foxgloveprotoevent.event_metadata[0].foxgloveprotoevent.key_value_pair_value": "value-5",
+    "foxgloveprotoevent.event_metadata[1].foxgloveprotoevent.key_value_pair_key": "key-6",
+    "foxgloveprotoevent.event_metadata[1].foxgloveprotoevent.key_value_pair_value": "value-7"
+  }
+}

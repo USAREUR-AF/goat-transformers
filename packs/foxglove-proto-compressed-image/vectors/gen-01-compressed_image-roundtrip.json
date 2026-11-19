@@ -1,0 +1,14 @@
+{
+  "name": "gen-compressed_image-roundtrip",
+  "from": "foxglove-proto-compressed-image",
+  "to": "foxglove-proto-compressed-image",
+  "input": "0a0508641089011a08666f726d61742d33220a6672616d655f69642d32",
+  "expect": "0a0508641089011a08666f726d61742d33220a6672616d655f69642d32",
+  "model": {
+    "@kind": "compressed_image",
+    "foxgloveprotocompressedimage.timestamp_seconds": "100",
+    "foxgloveprotocompressedimage.timestamp_nanos": "137",
+    "foxgloveprotocompressedimage.compressed_image_frame_id": "frame_id-2",
+    "foxgloveprotocompressedimage.compressed_image_format": "format-3"
+  }
+}

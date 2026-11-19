@@ -1,0 +1,25 @@
+{
+  "name": "gen-arrow_primitive-roundtrip",
+  "from": "foxglove-proto-arrow-primitive",
+  "to": "foxglove-proto-arrow-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540110000000000002940190000000000802c40210000000000003040290000000000c031403224090000000000803340110000000000403540190000000000003740210000000000c03840",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540110000000000002940190000000000802c40210000000000003040290000000000c031403224090000000000803340110000000000403540190000000000003740210000000000c03840",
+  "model": {
+    "@kind": "arrow_primitive",
+    "foxgloveprotoarrowprimitive.pose_position_x": "0.25",
+    "foxgloveprotoarrowprimitive.pose_position_y": "2",
+    "foxgloveprotoarrowprimitive.pose_position_z": "3.75",
+    "foxgloveprotoarrowprimitive.pose_orientation_x": "5.5",
+    "foxgloveprotoarrowprimitive.pose_orientation_y": "7.25",
+    "foxgloveprotoarrowprimitive.pose_orientation_z": "9",
+    "foxgloveprotoarrowprimitive.pose_orientation_w": "10.75",
+    "foxgloveprotoarrowprimitive.arrow_primitive_shaft_length": "12.5",
+    "foxgloveprotoarrowprimitive.arrow_primitive_shaft_diameter": "14.25",
+    "foxgloveprotoarrowprimitive.arrow_primitive_head_length": "16",
+    "foxgloveprotoarrowprimitive.arrow_primitive_head_diameter": "17.75",
+    "foxgloveprotoarrowprimitive.color_r": "19.5",
+    "foxgloveprotoarrowprimitive.color_g": "21.25",
+    "foxgloveprotoarrowprimitive.color_b": "23",
+    "foxgloveprotoarrowprimitive.color_a": "24.75"
+  }
+}

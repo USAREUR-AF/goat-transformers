@@ -1,0 +1,18 @@
+{
+  "name": "gen-poses_in_frame-roundtrip",
+  "from": "foxglove-proto-poses-in-frame",
+  "to": "foxglove-proto-poses-in-frame",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030401a430a1b090000000000c031401100000000008033401900000000004035401224090000000000003740110000000000c03840190000000000803a40210000000000403c40",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030401a430a1b090000000000c031401100000000008033401900000000004035401224090000000000003740110000000000c03840190000000000803a40210000000000403c40",
+  "model": {
+    "@kind": "poses_in_frame",
+    "foxgloveprotoposesinframe.timestamp_seconds": "100",
+    "foxgloveprotoposesinframe.timestamp_nanos": "137",
+    "foxgloveprotoposesinframe.poses_in_frame_frame_id": "frame_id-2",
+    "foxgloveprotoposesinframe.poses_in_frame_poses.#": "2",
+    "foxgloveprotoposesinframe.poses_in_frame_poses[0].foxgloveprotoposesinframe.pose_position_x": "5.5",
+    "foxgloveprotoposesinframe.poses_in_frame_poses[0].foxgloveprotoposesinframe.pose_position_y": "7.25",
+    "foxgloveprotoposesinframe.poses_in_frame_poses[1].foxgloveprotoposesinframe.pose_position_x": "17.75",
+    "foxgloveprotoposesinframe.poses_in_frame_poses[1].foxgloveprotoposesinframe.pose_position_y": "19.5"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gen-pose_in_frame-roundtrip",
+  "from": "foxglove-proto-pose-in-frame",
+  "to": "foxglove-proto-pose-in-frame",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040",
+  "model": {
+    "@kind": "pose_in_frame",
+    "foxgloveprotoposeinframe.timestamp_seconds": "100",
+    "foxgloveprotoposeinframe.timestamp_nanos": "137",
+    "foxgloveprotoposeinframe.pose_in_frame_frame_id": "frame_id-2",
+    "foxgloveprotoposeinframe.pose_position_x": "5.5",
+    "foxgloveprotoposeinframe.pose_position_y": "7.25",
+    "foxgloveprotoposeinframe.pose_position_z": "9",
+    "foxgloveprotoposeinframe.pose_orientation_x": "10.75",
+    "foxgloveprotoposeinframe.pose_orientation_y": "12.5",
+    "foxgloveprotoposeinframe.pose_orientation_z": "14.25",
+    "foxgloveprotoposeinframe.pose_orientation_w": "16"
+  }
+}

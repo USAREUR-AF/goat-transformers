@@ -1,0 +1,14 @@
+{
+  "name": "gen-quaternion-roundtrip",
+  "from": "foxglove-proto-quaternion",
+  "to": "foxglove-proto-quaternion",
+  "input": "09000000000000d03f110000000000000040190000000000000e40210000000000001640",
+  "expect": "09000000000000d03f110000000000000040190000000000000e40210000000000001640",
+  "model": {
+    "@kind": "quaternion",
+    "foxgloveprotoquaternion.quaternion_x": "0.25",
+    "foxgloveprotoquaternion.quaternion_y": "2",
+    "foxgloveprotoquaternion.quaternion_z": "3.75",
+    "foxgloveprotoquaternion.quaternion_w": "5.5"
+  }
+}

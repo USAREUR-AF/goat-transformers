@@ -1,0 +1,24 @@
+{
+  "name": "gen-cube_primitive-roundtrip",
+  "from": "foxglove-proto-cube-primitive",
+  "to": "foxglove-proto-cube-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c401900000000000030401a24090000000000c03140110000000000803340190000000000403540210000000000003740",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c401900000000000030401a24090000000000c03140110000000000803340190000000000403540210000000000003740",
+  "model": {
+    "@kind": "cube_primitive",
+    "foxgloveprotocubeprimitive.pose_position_x": "0.25",
+    "foxgloveprotocubeprimitive.pose_position_y": "2",
+    "foxgloveprotocubeprimitive.pose_position_z": "3.75",
+    "foxgloveprotocubeprimitive.pose_orientation_x": "5.5",
+    "foxgloveprotocubeprimitive.pose_orientation_y": "7.25",
+    "foxgloveprotocubeprimitive.pose_orientation_z": "9",
+    "foxgloveprotocubeprimitive.pose_orientation_w": "10.75",
+    "foxgloveprotocubeprimitive.size_x": "12.5",
+    "foxgloveprotocubeprimitive.size_y": "14.25",
+    "foxgloveprotocubeprimitive.size_z": "16",
+    "foxgloveprotocubeprimitive.color_r": "17.75",
+    "foxgloveprotocubeprimitive.color_g": "19.5",
+    "foxgloveprotocubeprimitive.color_b": "21.25",
+    "foxgloveprotocubeprimitive.color_a": "23"
+  }
+}

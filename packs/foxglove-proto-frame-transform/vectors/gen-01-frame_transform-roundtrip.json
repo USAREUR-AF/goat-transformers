@@ -1,0 +1,21 @@
+{
+  "name": "gen-frame_transform-roundtrip",
+  "from": "foxglove-proto-frame-transform",
+  "to": "foxglove-proto-frame-transform",
+  "input": "0a0508641089011211706172656e745f6672616d655f69642d321a106368696c645f6672616d655f69642d33221b090000000000001d401100000000000022401900000000008025402a24090000000000002940110000000000802c40190000000000003040210000000000c03140",
+  "expect": "0a0508641089011211706172656e745f6672616d655f69642d321a106368696c645f6672616d655f69642d33221b090000000000001d401100000000000022401900000000008025402a24090000000000002940110000000000802c40190000000000003040210000000000c03140",
+  "model": {
+    "@kind": "frame_transform",
+    "foxgloveprotoframetransform.timestamp_seconds": "100",
+    "foxgloveprotoframetransform.timestamp_nanos": "137",
+    "foxgloveprotoframetransform.frame_transform_parent_frame_id": "parent_frame_id-2",
+    "foxgloveprotoframetransform.frame_transform_child_frame_id": "child_frame_id-3",
+    "foxgloveprotoframetransform.translation_x": "7.25",
+    "foxgloveprotoframetransform.translation_y": "9",
+    "foxgloveprotoframetransform.translation_z": "10.75",
+    "foxgloveprotoframetransform.rotation_x": "12.5",
+    "foxgloveprotoframetransform.rotation_y": "14.25",
+    "foxgloveprotoframetransform.rotation_z": "16",
+    "foxgloveprotoframetransform.rotation_w": "17.75"
+  }
+}

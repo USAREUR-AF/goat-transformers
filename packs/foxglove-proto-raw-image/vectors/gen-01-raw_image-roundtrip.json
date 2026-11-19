@@ -1,0 +1,14 @@
+{
+  "name": "gen-raw_image-roundtrip",
+  "from": "foxglove-proto-raw-image",
+  "to": "foxglove-proto-raw-image",
+  "input": "0a050864108901220a656e636f64696e672d333a0a6672616d655f69642d32",
+  "expect": "0a050864108901220a656e636f64696e672d333a0a6672616d655f69642d32",
+  "model": {
+    "@kind": "raw_image",
+    "foxgloveprotorawimage.timestamp_seconds": "100",
+    "foxgloveprotorawimage.timestamp_nanos": "137",
+    "foxgloveprotorawimage.raw_image_frame_id": "frame_id-2",
+    "foxgloveprotorawimage.raw_image_encoding": "encoding-3"
+  }
+}

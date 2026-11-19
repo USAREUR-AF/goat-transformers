@@ -1,0 +1,28 @@
+{
+  "name": "gen-laser_scan-roundtrip",
+  "from": "foxglove-proto-laser-scan",
+  "to": "foxglove-proto-laser-scan",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040210000000000c031402900000000008033403210000000000040354000000000000037403a100000000000c038400000000000803a40",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040210000000000c031402900000000008033403210000000000040354000000000000037403a100000000000c038400000000000803a40",
+  "model": {
+    "@kind": "laser_scan",
+    "foxgloveprotolaserscan.timestamp_seconds": "100",
+    "foxgloveprotolaserscan.timestamp_nanos": "137",
+    "foxgloveprotolaserscan.laser_scan_frame_id": "frame_id-2",
+    "foxgloveprotolaserscan.pose_position_x": "5.5",
+    "foxgloveprotolaserscan.pose_position_y": "7.25",
+    "foxgloveprotolaserscan.pose_position_z": "9",
+    "foxgloveprotolaserscan.pose_orientation_x": "10.75",
+    "foxgloveprotolaserscan.pose_orientation_y": "12.5",
+    "foxgloveprotolaserscan.pose_orientation_z": "14.25",
+    "foxgloveprotolaserscan.pose_orientation_w": "16",
+    "foxgloveprotolaserscan.laser_scan_start_angle": "17.75",
+    "foxgloveprotolaserscan.laser_scan_end_angle": "19.5",
+    "foxgloveprotolaserscan.laser_scan_ranges.#": "2",
+    "foxgloveprotolaserscan.laser_scan_ranges[0].foxgloveprotolaserscan.laser_scan_ranges_item": "21.25",
+    "foxgloveprotolaserscan.laser_scan_ranges[1].foxgloveprotolaserscan.laser_scan_ranges_item": "23",
+    "foxgloveprotolaserscan.laser_scan_intensities.#": "2",
+    "foxgloveprotolaserscan.laser_scan_intensities[0].foxgloveprotolaserscan.laser_scan_intensities_item": "24.75",
+    "foxgloveprotolaserscan.laser_scan_intensities[1].foxgloveprotolaserscan.laser_scan_intensities_item": "26.5"
+  }
+}

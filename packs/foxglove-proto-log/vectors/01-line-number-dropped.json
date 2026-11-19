@@ -1,0 +1,11 @@
+{
+  "name": "01-line-number-dropped",
+  "from": "foxglove-proto-log",
+  "to": "foxglove-proto-log",
+  "input": "0a0b0880e2cfaa061080e59a7710031a0b62617474657279206c6f772205706f7765722a09706f7765722e637070352a000000",
+  "expect": "0a0b0880e2cfaa061080e59a7710031a0b62617474657279206c6f772205706f7765722a09706f7765722e637070",
+  "model": {
+    "foxgloveprotolog.log_level": "3",
+    "foxgloveprotolog.log_message": "battery low"
+  }
+}

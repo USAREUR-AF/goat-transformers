@@ -1,0 +1,13 @@
+{
+  "name": "01-pose-roundtrip",
+  "from": "foxglove-proto-pose-in-frame",
+  "to": "foxglove-proto-pose-in-frame",
+  "input": "0a0b0880e2cfaa061080e59a7712036d61701a430a1b09000000000000f83f1100000000000002c019000000000000e03f122409000000000000000011000000000000000019000000000000000021000000000000f03f",
+  "expect": "0a0b0880e2cfaa061080e59a7712036d61701a430a1b09000000000000f83f1100000000000002c019000000000000e03f122409000000000000000011000000000000000019000000000000000021000000000000f03f",
+  "model": {
+    "foxgloveprotoposeinframe.pose_in_frame_frame_id": "map",
+    "foxgloveprotoposeinframe.pose_position_y": "-2.25",
+    "foxgloveprotoposeinframe.pose_orientation_w": "1",
+    "foxgloveprotoposeinframe.timestamp_nanos": "250000000"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gen-point3_in_frame-roundtrip",
+  "from": "foxglove-proto-point3-in-frame",
+  "to": "foxglove-proto-point3-in-frame",
+  "input": "0a050864108901120a6672616d655f69642d321a1b090000000000001640110000000000001d40190000000000002240",
+  "expect": "0a050864108901120a6672616d655f69642d321a1b090000000000001640110000000000001d40190000000000002240",
+  "model": {
+    "@kind": "point3_in_frame",
+    "foxgloveprotopoint3inframe.timestamp_seconds": "100",
+    "foxgloveprotopoint3inframe.timestamp_nanos": "137",
+    "foxgloveprotopoint3inframe.point3_in_frame_frame_id": "frame_id-2",
+    "foxgloveprotopoint3inframe.point_x": "5.5",
+    "foxgloveprotopoint3inframe.point_y": "7.25",
+    "foxgloveprotopoint3inframe.point_z": "9"
+  }
+}

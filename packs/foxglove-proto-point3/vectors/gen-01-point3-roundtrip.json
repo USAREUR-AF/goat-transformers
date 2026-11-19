@@ -1,0 +1,13 @@
+{
+  "name": "gen-point3-roundtrip",
+  "from": "foxglove-proto-point3",
+  "to": "foxglove-proto-point3",
+  "input": "09000000000000d03f110000000000000040190000000000000e40",
+  "expect": "09000000000000d03f110000000000000040190000000000000e40",
+  "model": {
+    "@kind": "point3",
+    "foxgloveprotopoint3.point3_x": "0.25",
+    "foxgloveprotopoint3.point3_y": "2",
+    "foxgloveprotopoint3.point3_z": "3.75"
+  }
+}

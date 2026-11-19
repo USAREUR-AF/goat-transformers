@@ -1,0 +1,26 @@
+{
+  "name": "gen-cylinder_primitive-roundtrip",
+  "from": "foxglove-proto-cylinder-primitive",
+  "to": "foxglove-proto-cylinder-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c40190000000000003040190000000000c031402100000000008033402a24090000000000403540110000000000003740190000000000c03840210000000000803a40",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c40190000000000003040190000000000c031402100000000008033402a24090000000000403540110000000000003740190000000000c03840210000000000803a40",
+  "model": {
+    "@kind": "cylinder_primitive",
+    "foxgloveprotocylinderprimitive.pose_position_x": "0.25",
+    "foxgloveprotocylinderprimitive.pose_position_y": "2",
+    "foxgloveprotocylinderprimitive.pose_position_z": "3.75",
+    "foxgloveprotocylinderprimitive.pose_orientation_x": "5.5",
+    "foxgloveprotocylinderprimitive.pose_orientation_y": "7.25",
+    "foxgloveprotocylinderprimitive.pose_orientation_z": "9",
+    "foxgloveprotocylinderprimitive.pose_orientation_w": "10.75",
+    "foxgloveprotocylinderprimitive.size_x": "12.5",
+    "foxgloveprotocylinderprimitive.size_y": "14.25",
+    "foxgloveprotocylinderprimitive.size_z": "16",
+    "foxgloveprotocylinderprimitive.cylinder_primitive_bottom_scale": "17.75",
+    "foxgloveprotocylinderprimitive.cylinder_primitive_top_scale": "19.5",
+    "foxgloveprotocylinderprimitive.color_r": "21.25",
+    "foxgloveprotocylinderprimitive.color_g": "23",
+    "foxgloveprotocylinderprimitive.color_b": "24.75",
+    "foxgloveprotocylinderprimitive.color_a": "26.5"
+  }
+}

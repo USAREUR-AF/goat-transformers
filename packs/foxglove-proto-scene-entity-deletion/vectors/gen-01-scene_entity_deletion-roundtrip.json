@@ -1,0 +1,14 @@
+{
+  "name": "gen-scene_entity_deletion-roundtrip",
+  "from": "foxglove-proto-scene-entity-deletion",
+  "to": "foxglove-proto-scene-entity-deletion",
+  "input": "0a05086410890110011a0469642d33",
+  "expect": "0a05086410890110011a0469642d33",
+  "model": {
+    "@kind": "scene_entity_deletion",
+    "foxgloveprotosceneentitydeletion.timestamp_seconds": "100",
+    "foxgloveprotosceneentitydeletion.timestamp_nanos": "137",
+    "foxgloveprotosceneentitydeletion.scene_entity_deletion_type": "1",
+    "foxgloveprotosceneentitydeletion.scene_entity_deletion_id": "id-3"
+  }
+}

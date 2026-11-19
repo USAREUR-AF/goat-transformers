@@ -1,0 +1,25 @@
+{
+  "name": "gen-text_primitive-roundtrip",
+  "from": "foxglove-proto-text-primitive",
+  "to": "foxglove-proto-text-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d401900000000000022402100000000008025401001190000000000802c4020012a24090000000000c031401100000000008033401900000000004035402100000000000037403207746578742d3134",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d401900000000000022402100000000008025401001190000000000802c4020012a24090000000000c031401100000000008033401900000000004035402100000000000037403207746578742d3134",
+  "model": {
+    "@kind": "text_primitive",
+    "foxgloveprototextprimitive.pose_position_x": "0.25",
+    "foxgloveprototextprimitive.pose_position_y": "2",
+    "foxgloveprototextprimitive.pose_position_z": "3.75",
+    "foxgloveprototextprimitive.pose_orientation_x": "5.5",
+    "foxgloveprototextprimitive.pose_orientation_y": "7.25",
+    "foxgloveprototextprimitive.pose_orientation_z": "9",
+    "foxgloveprototextprimitive.pose_orientation_w": "10.75",
+    "foxgloveprototextprimitive.text_primitive_billboard": "1",
+    "foxgloveprototextprimitive.text_primitive_font_size": "14.25",
+    "foxgloveprototextprimitive.text_primitive_scale_invariant": "1",
+    "foxgloveprototextprimitive.color_r": "17.75",
+    "foxgloveprototextprimitive.color_g": "19.5",
+    "foxgloveprototextprimitive.color_b": "21.25",
+    "foxgloveprototextprimitive.color_a": "23",
+    "foxgloveprototextprimitive.text_primitive_text": "text-14"
+  }
+}

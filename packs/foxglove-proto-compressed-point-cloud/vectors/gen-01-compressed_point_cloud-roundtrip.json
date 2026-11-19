@@ -1,0 +1,21 @@
+{
+  "name": "gen-compressed_point_cloud-roundtrip",
+  "from": "foxglove-proto-compressed-point-cloud",
+  "to": "foxglove-proto-compressed-point-cloud",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030402a09666f726d61742d3130",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030402a09666f726d61742d3130",
+  "model": {
+    "@kind": "compressed_point_cloud",
+    "foxgloveprotocompressedpointcloud.timestamp_seconds": "100",
+    "foxgloveprotocompressedpointcloud.timestamp_nanos": "137",
+    "foxgloveprotocompressedpointcloud.compressed_point_cloud_frame_id": "frame_id-2",
+    "foxgloveprotocompressedpointcloud.pose_position_x": "5.5",
+    "foxgloveprotocompressedpointcloud.pose_position_y": "7.25",
+    "foxgloveprotocompressedpointcloud.pose_position_z": "9",
+    "foxgloveprotocompressedpointcloud.pose_orientation_x": "10.75",
+    "foxgloveprotocompressedpointcloud.pose_orientation_y": "12.5",
+    "foxgloveprotocompressedpointcloud.pose_orientation_z": "14.25",
+    "foxgloveprotocompressedpointcloud.pose_orientation_w": "16",
+    "foxgloveprotocompressedpointcloud.compressed_point_cloud_format": "format-10"
+  }
+}

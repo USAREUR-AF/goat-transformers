@@ -1,0 +1,8 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2": "point3_in_frame_frame_id",
+ "3.1": "point_x",
+ "3.2": "point_y",
+ "3.3": "point_z"
+}

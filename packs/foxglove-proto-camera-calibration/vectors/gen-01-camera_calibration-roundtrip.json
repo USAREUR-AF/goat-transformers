@@ -1,0 +1,26 @@
+{
+  "name": "gen-camera_calibration-roundtrip",
+  "from": "foxglove-proto-camera-calibration",
+  "to": "foxglove-proto-camera-calibration",
+  "input": "0a0508641089012212646973746f7274696f6e5f6d6f64656c2d332a100000000000001d4000000000000022403210000000000080254000000000000029403a100000000000802c40000000000000304042100000000000c0314000000000008033404a0a6672616d655f69642d32",
+  "expect": "0a0508641089012212646973746f7274696f6e5f6d6f64656c2d332a100000000000001d4000000000000022403210000000000080254000000000000029403a100000000000802c40000000000000304042100000000000c0314000000000008033404a0a6672616d655f69642d32",
+  "model": {
+    "@kind": "camera_calibration",
+    "foxgloveprotocameracalibration.timestamp_seconds": "100",
+    "foxgloveprotocameracalibration.timestamp_nanos": "137",
+    "foxgloveprotocameracalibration.camera_calibration_frame_id": "frame_id-2",
+    "foxgloveprotocameracalibration.camera_calibration_distortion_model": "distortion_model-3",
+    "foxgloveprotocameracalibration.camera_calibration_d.#": "2",
+    "foxgloveprotocameracalibration.camera_calibration_d[0].foxgloveprotocameracalibration.camera_calibration_d_item": "7.25",
+    "foxgloveprotocameracalibration.camera_calibration_d[1].foxgloveprotocameracalibration.camera_calibration_d_item": "9",
+    "foxgloveprotocameracalibration.camera_calibration_k.#": "2",
+    "foxgloveprotocameracalibration.camera_calibration_k[0].foxgloveprotocameracalibration.camera_calibration_k_item": "10.75",
+    "foxgloveprotocameracalibration.camera_calibration_k[1].foxgloveprotocameracalibration.camera_calibration_k_item": "12.5",
+    "foxgloveprotocameracalibration.camera_calibration_r.#": "2",
+    "foxgloveprotocameracalibration.camera_calibration_r[0].foxgloveprotocameracalibration.camera_calibration_r_item": "14.25",
+    "foxgloveprotocameracalibration.camera_calibration_r[1].foxgloveprotocameracalibration.camera_calibration_r_item": "16",
+    "foxgloveprotocameracalibration.camera_calibration_p.#": "2",
+    "foxgloveprotocameracalibration.camera_calibration_p[0].foxgloveprotocameracalibration.camera_calibration_p_item": "17.75",
+    "foxgloveprotocameracalibration.camera_calibration_p[1].foxgloveprotocameracalibration.camera_calibration_p_item": "19.5"
+  }
+}

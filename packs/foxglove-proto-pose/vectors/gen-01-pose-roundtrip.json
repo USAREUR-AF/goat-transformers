@@ -1,0 +1,17 @@
+{
+  "name": "gen-pose-roundtrip",
+  "from": "foxglove-proto-pose",
+  "to": "foxglove-proto-pose",
+  "input": "0a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540",
+  "expect": "0a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540",
+  "model": {
+    "@kind": "pose",
+    "foxgloveprotopose.position_x": "0.25",
+    "foxgloveprotopose.position_y": "2",
+    "foxgloveprotopose.position_z": "3.75",
+    "foxgloveprotopose.orientation_x": "5.5",
+    "foxgloveprotopose.orientation_y": "7.25",
+    "foxgloveprotopose.orientation_z": "9",
+    "foxgloveprotopose.orientation_w": "10.75"
+  }
+}
