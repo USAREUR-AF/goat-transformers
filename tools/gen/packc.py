@@ -887,7 +887,7 @@ class Compiler:
         self.max_depth = max(self.max_depth, depth)
         out = []
         if not pack.seq:
-            # fixed layout: the engine passes over a scope by line type; fields come first
+            # fixed layout: the engine passes over a scope by kind of line; fields come first
             order = {"field": 0, "when": 1, "const": 2, "gfix": 3}
             lines = sorted(lines, key=lambda l: order[l["t"]])
         for l in lines:

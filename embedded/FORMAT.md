@@ -133,7 +133,7 @@ Order inside a block. A BODY holds its DEFAULT operations, then its common
 lines, then its KIND blocks. A KIND holds its WHEN, REQ and DEFAULT
 operations, then its lines. In a fixed-layout scope the FIELD operations come
 first and together, then WHEN, CONST and GROUP_FIX, because the engine passes
-over such a scope once per line type; in a sequential scope the lines keep
+over such a scope once for each kind of line; in a sequential scope the lines keep
 their file order, because the order is the layout.
 
 ### Scales are rationals
