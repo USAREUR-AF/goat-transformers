@@ -1,0 +1,12 @@
+{
+  "name": "string-keeps-its-spaces",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P; u1 ;1.5;2.5;;",
+  "expect": "P; u1 ;1.5;2.5;;",
+  "model": {
+    "uid": " u1 "
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: string decodes the text as it is. Derived without an engine by a standalone reference program."
+}

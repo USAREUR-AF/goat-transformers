@@ -1,0 +1,13 @@
+{
+  "name": "lowercase-checksum-written-uppercase",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HEHDT,12.75,T*2e",
+  "expect": "$HEHDT,12.75,T*2E",
+  "model": {
+    "@kind": "hdt",
+    "nmea0183.heading_true_deg": "12.75"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 4 (digits a-f accepted) and Writing a record step 6 (uppercase). Derived without an engine by a standalone reference program (Python standard library)."
+}

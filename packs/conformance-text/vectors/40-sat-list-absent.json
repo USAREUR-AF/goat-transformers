@@ -1,0 +1,14 @@
+{
+  "name": "sat-list-absent",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$XXSAT,5*5F",
+  "expect": "$XXSAT,5*5F",
+  "model": {
+    "probe.s2": "XX",
+    "probe.w": "5",
+    "probe.items.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Groups: the list is absent when the record has no field at index 2 or beyond. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "dtm-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPDTM,W84,,0.0000,N,0.0000,E,0.0,W84*6F",
+  "expect": "$GPDTM,W84,,0.0000,N,0.0000,E,0.0,W84*6F",
+  "model": {
+    "@kind": "dtm",
+    "nmea0183.talker": "GP",
+    "nmea0183.datum_local": "W84",
+    "nmea0183.datum_reference": "W84"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): DTM fields 1-8; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

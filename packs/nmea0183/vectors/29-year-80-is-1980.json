@@ -1,0 +1,13 @@
+{
+  "name": "year-80-is-1980",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,000000.00,A,4807.50000,N,01107.50000,E,0.000,0.00,010180,,,A*6A",
+  "expect": "$GPRMC,000000.00,A,4807.50000,N,01107.50000,E,0.000,0.00,010180,,,A*6A",
+  "model": {
+    "@kind": "rmc",
+    "time_ms": "315532800000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), hms_dmy: yy 80 to 99 is 19yy; 1980-01-01T00:00:00Z = 3652 days * 86400000 = 315532800000 ms. Derived without an engine by a standalone reference program (Python standard library)."
+}

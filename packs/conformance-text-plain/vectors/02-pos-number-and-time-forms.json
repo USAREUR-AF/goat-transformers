@@ -1,0 +1,14 @@
+{
+  "name": "pos-number-and-time-forms",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P;u1;+1.50;.5;;2021-02-27T21:00:00.1234+01:00",
+  "expect": "P;u1;1.5;0.5;;2021-02-27T20:00:00.123Z",
+  "model": {
+    "lat": "1.5",
+    "lon": "0.5",
+    "time_ms": "1614456000123"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): float accepts + and .5; iso8601_ms offset (0.6) and truncation beyond ms; canonical forms on encode. Derived without an engine by a standalone reference program."
+}

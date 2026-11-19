@@ -78,7 +78,7 @@ on this page lists.
 | Cyphal (UAVCAN v1) data types | `bits` | Not built. Assessed: fits `bit_order lsb` and stated lengths; needs half-precision floats and implicit zero extension | pycyphal |
 | GDL 90 and the ForeFlight extension | `bits` | Built: pack `gdl90`, 7 message payloads (heartbeat, uplink header, ownship, traffic, ownship geometric altitude, ForeFlight ID and AHRS), layouts from Stratux; framing, CRC and the uplink payload need layered framing and a bytes transform | Stratux |
 | AIS / AIVDM | six-bit armor | Not built. Needs the six-bit armor wire | pyais, libais, gpsd |
-| NMEA 0183 | text grammar | Not built. Needs the text-grammar wire | pynmea2 |
+| NMEA 0183 | text grammar | Built: pack `nmea0183`, sentences GGA, RMC, GLL, VTG, GSA, GSV, HDT, ZDA. `packs/nmea0183/pack.md` lists what is unmapped | gpsd NMEA Revealed |
 | KLV / MISB ST 0601 | type-length-value | Not built. Needs the type-length-value wire | klvdata |
 | NITF / NSIF | type-length-value | Not built. Needs the type-length-value wire | GDAL, NITRO |
 | GPX 1.1 | `xml` | Built: pack `gpx`, 3 message kinds (waypoint, route point, track point), the first point of a document | GDAL/OGR, gpxpy |
@@ -148,7 +148,7 @@ channel, not in the issue.
 | Feature | Status | Needed by |
 |---|---|---|
 | Sequential layouts in `bits` (presence fields, repeats, extensible items, stated lengths) | Built | ASTERIX |
-| Text-grammar wire (delimited or positional text records) | Designed | NMEA 0183 |
+| Text-grammar wire (delimited or positional text records) | Built (spec 0.10, `wire text`) | NMEA 0183 |
 | Type-length-value wire | Designed | KLV / MISB ST 0601, NITF |
 | Six-bit armor wire (ASCII-armored bit payloads) | Designed | AIS / AIVDM |
 | Layered wires and framing (declared lengths, trimmed payloads, checksums) | Designed | MAVLink frames, NMEA 2000 fast-packet transport |

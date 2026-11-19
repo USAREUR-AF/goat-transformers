@@ -1,0 +1,136 @@
+# The nmea0183 module: values of NMEA 0183 sentences that the core module has
+# no key for, in the units the sentences carry them. Written from the gpsd
+# document "NMEA Revealed"; packs/nmea0183/pack.md states which sentence holds
+# each key. Letter-coded fields (status, modes) hold the letter as sent.
+module        nmea0183
+version       0.1.0
+distribution  public
+source        "gpsd project, NMEA Revealed (www/NMEA.adoc, dated 12 July 2025), https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b; gpsd COPYING: BSD-2-Clause"
+source        "pynmea2 (https://github.com/Knio/pynmea2, MIT License) at commit d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a, pynmea2/types/talker.py: fields of the added sentences (GNS, HDM, HDG, THS, ROT, VHW, MWV, MWD, DBT, DPT, MTW, TTM, TLL, OSD, DTM)"
+source        "gpsd drivers/driver_nmea0183.c (BSD-2-Clause) at commit c59fc6de479d06620c8b2ba395b728e10a71527b: units and meanings of the added sentences it handles"
+
+# Every sentence
+key  talker           string  -     "talker id: the first two characters of the tag (GP, GN, GL, GA, ...)"
+
+# Time and validity
+key  utc_s            float   s     "UTC time of day of the report, seconds since midnight (GGA, GLL, ZDA); no date"
+key  status           string  -     "validity letter: A data valid, V void or warning (RMC, GLL)"
+key  faa_mode         string  -     "FAA mode indicator letter, NMEA 2.3 and later (A, D, E, F, M, N, P, R, S, ...)"
+key  nav_status       string  -     "navigational status letter of RMC, NMEA 4.1 and later"
+
+# GGA fix data
+key  quality          int     -     "GGA fix quality indicator (0 no fix, 1 GPS, 2 differential; 3 to 8 from NMEA 2.3)"
+key  sats_used        int     -     "number of satellites in use (GGA)"
+key  hdop             float   -     "horizontal dilution of precision (GGA, GSA)"
+key  alt_msl_m        float   m     "antenna altitude above mean sea level (geoid), not above the ellipsoid (GGA)"
+key  geoid_sep_m      float   m     "geoidal separation: height of mean sea level (geoid) above the WGS 84 ellipsoid, negative when below (GGA)"
+key  dgps_age_s       float   s     "age of the differential correction data (GGA)"
+key  dgps_station     int     -     "differential reference station id, 0 to 1023 (GGA)"
+
+# Course and speed
+key  sog_kn           float   kn    "speed over ground in knots (RMC, VTG)"
+key  sog_kmh          float   km/h  "speed over ground in kilometres per hour (VTG)"
+key  course_mag_deg   float   deg   "course over ground, degrees magnetic (VTG)"
+key  magvar_deg       float   deg   "magnetic variation, unsigned degrees; magvar_dir gives the side (RMC)"
+key  magvar_dir       string  -     "side of the magnetic variation: E or W (RMC)"
+key  heading_true_deg float   deg   "heading of the vessel, degrees true; not the course over ground (HDT)"
+
+# GSA
+key  sel_mode         string  -     "GSA selection mode letter: M manual, A automatic"
+key  fix_mode         int     -     "GSA fix mode: 1 no fix, 2 2D, 3 3D"
+key  sat_used_01      int     -     "GSA: id of the 1st satellite used for the fix"
+key  sat_used_02      int     -     "GSA: id of the 2nd satellite used for the fix"
+key  sat_used_03      int     -     "GSA: id of the 3rd satellite used for the fix"
+key  sat_used_04      int     -     "GSA: id of the 4th satellite used for the fix"
+key  sat_used_05      int     -     "GSA: id of the 5th satellite used for the fix"
+key  sat_used_06      int     -     "GSA: id of the 6th satellite used for the fix"
+key  sat_used_07      int     -     "GSA: id of the 7th satellite used for the fix"
+key  sat_used_08      int     -     "GSA: id of the 8th satellite used for the fix"
+key  sat_used_09      int     -     "GSA: id of the 9th satellite used for the fix"
+key  sat_used_10      int     -     "GSA: id of the 10th satellite used for the fix"
+key  sat_used_11      int     -     "GSA: id of the 11th satellite used for the fix"
+key  sat_used_12      int     -     "GSA: id of the 12th satellite used for the fix"
+key  pdop             float   -     "position dilution of precision (GSA)"
+key  vdop             float   -     "vertical dilution of precision (GSA)"
+key  system_id        int     -     "GNSS system id, NMEA 4.11 (GSA)"
+
+# GSV: one sentence of a group; the satellites are a list
+key  gsv_total        int     -     "number of GSV sentences in this group"
+key  gsv_number       int     -     "number of this GSV sentence within its group, from 1"
+key  sats_in_view     int     -     "total number of satellites in view (GSV)"
+list satellites                     "satellites described by one GSV sentence; each item holds sv_id, elevation_deg, azimuth_deg and snr_db"
+key  sv_id            int     -     "item of satellites: satellite id or PRN number"
+key  elevation_deg    int     deg   "item of satellites: elevation, -90 to 90"
+key  azimuth_deg      int     deg   "item of satellites: azimuth from true north, 0 to 359"
+key  snr_db           int     dB    "item of satellites: signal-to-noise ratio, 0 to 99; absent when the satellite is not tracked"
+
+# ZDA
+key  day              int     -     "UTC day of the month, 1 to 31 (ZDA)"
+key  month            int     -     "UTC month, 1 to 12 (ZDA)"
+key  year             int     -     "UTC year, four digits (ZDA)"
+key  zone_hours       int     h     "local time zone offset, hours, -13 to 13 (ZDA)"
+key  zone_minutes     int     min   "local time zone offset, minutes, same sign as zone_hours (ZDA)"
+
+# Added sentences: GNS (with the GGA keys above), HDM, HDG, THS, ROT, VHW, MWV,
+# MWD, DBT, DPT, MTW, TTM, TLL, OSD, DTM
+key  gns_mode           string  -      "GNS mode letters, one per constellation (N no fix, A autonomous, D differential, ...)"
+key  heading_mag_deg    float   deg    "heading of the vessel, degrees magnetic (HDM, VHW)"
+key  heading_sensor_deg float   deg    "magnetic sensor heading, before deviation and variation are applied (HDG)"
+key  deviation_deg      float   deg    "magnetic deviation, unsigned degrees; deviation_dir gives the side (HDG)"
+key  deviation_dir      string  -      "side of the magnetic deviation: E or W (HDG)"
+key  ths_mode           string  -      "THS heading mode letter (A autonomous, E estimated, M manual, S simulator, V not valid)"
+key  rot_deg_min        float   deg/min "rate of turn, degrees per minute, negative when turning to port (ROT)"
+key  stw_kn             float   kn     "speed through the water in knots; not over ground (VHW)"
+key  stw_kmh            float   km/h   "speed through the water in kilometres per hour (VHW)"
+key  wind_angle_deg     float   deg    "wind angle, 0 to 359, relative to the bow or true per wind_reference (MWV)"
+key  wind_reference     string  -      "MWV reference letter: R relative, T true (theoretical)"
+key  wind_speed         float   -      "wind speed in the unit wind_speed_unit names (MWV)"
+key  wind_speed_unit    string  -      "MWV wind speed unit letter: K km/h, M m/s, N knots"
+key  wind_dir_true_deg  float   deg    "wind direction, degrees from true north (MWD)"
+key  wind_dir_mag_deg   float   deg    "wind direction, degrees from magnetic north (MWD)"
+key  wind_speed_kn      float   kn     "wind speed in knots (MWD)"
+key  wind_speed_ms      float   m/s    "wind speed in metres per second (MWD)"
+key  dbt_depth_ft       float   ft     "depth below the transducer, feet (DBT)"
+key  dbt_depth_m        float   m      "depth below the transducer, metres (DBT)"
+key  dbt_depth_fathom   float   fathom "depth below the transducer, fathoms (DBT)"
+key  dpt_depth_m        float   m      "water depth relative to the transducer, metres (DPT)"
+key  dpt_offset_m       float   m      "offset of the transducer: positive to the waterline, negative to the keel (DPT)"
+key  dpt_range_m        float   m      "maximum range scale in use, metres (DPT)"
+key  water_temp         float   -      "water temperature in the unit water_temp_unit names (MTW)"
+key  water_temp_unit    string  -      "MTW temperature unit letter: C degrees Celsius"
+key  target_number      int     -      "number of the tracked target, 00 to 99 (TTM, TLL)"
+key  target_distance    float   -      "target distance from own ship, in target_dist_unit (TTM)"
+key  target_bearing_deg float   deg    "bearing of the target from own ship (TTM); true or relative per target_bearing_ref"
+key  target_bearing_ref string  -      "TTM bearing reference letter: T true, R relative"
+key  target_speed       float   -      "target speed in target_dist_unit per hour (TTM)"
+key  target_course_deg  float   deg    "course of the tracked target (TTM); true or relative per target_course_ref"
+key  target_course_ref  string  -      "TTM course reference letter: T true, R relative"
+key  target_cpa_dist    float   -      "distance of the closest point of approach, in target_dist_unit (TTM)"
+key  target_tcpa_min    float   min    "time to the closest point of approach, minutes, negative when past (TTM)"
+key  target_dist_unit   string  -      "TTM distance and speed unit letter: K kilometres, N nautical miles, S statute miles"
+key  target_status      string  -      "target status letter: L lost, Q acquiring, T tracking (TTM, TLL)"
+key  target_reference   string  -      "R when the target is a reference target, else empty (TTM, TLL)"
+key  target_acquisition string  -      "TTM acquisition letter: A automatic, M manual, R reported"
+key  osd_course_deg     float   deg    "own ship course (OSD), with reference osd_course_ref"
+key  osd_course_ref     string  -      "OSD course reference letter"
+key  osd_speed          float   -      "own ship speed in osd_speed_unit (OSD), with reference osd_speed_ref"
+key  osd_speed_ref      string  -      "OSD speed reference letter"
+key  osd_set_deg        float   deg    "own ship set, degrees true (OSD)"
+key  osd_drift          float   -      "own ship drift (speed of the set), in osd_speed_unit (OSD)"
+key  osd_speed_unit     string  -      "OSD speed unit letter: K km/h, N knots, S statute miles per hour"
+key  datum_local        string  -      "DTM local datum code (W84 WGS 84, W72 WGS 72, S85 SGS 85, P90 PE 90, 999 user defined)"
+key  datum_subdivision  string  -      "DTM local datum subdivision code"
+key  datum_lat_offset   string  -      "DTM latitude offset in minutes, as written"
+key  datum_lat_dir      string  -      "DTM latitude offset side: N positive, S negative"
+key  datum_lon_offset   string  -      "DTM longitude offset in minutes, as written"
+key  datum_lon_dir      string  -      "DTM longitude offset side: E positive, W negative"
+key  datum_alt_offset_m float   m      "DTM altitude offset, metres"
+key  datum_reference    string  -      "DTM reference datum code"
+
+# Speed in the sentence's units and in the core unit. One knot is 1852 m per
+# 3600 s; one km/h is 1000 m per 3600 s. Applied by `convert` only (engine-spec
+# 0.6), so a same-format round trip keeps the sentence's own digits.
+derive  speed_ms          scale:1852/3600  nmea0183.sog_kn
+derive  speed_ms          scale:1000/3600  nmea0183.sog_kmh
+derive  nmea0183.sog_kn   scale:3600/1852  speed_ms
+derive  nmea0183.sog_kmh  scale:3600/1000  speed_ms

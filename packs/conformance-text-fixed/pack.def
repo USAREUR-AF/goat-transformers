@@ -1,0 +1,17 @@
+# Conformance probe pack for the `text` wire (spec 0.10). Public. A
+# fixed-width record: `delimiter none`, so the record is field 0 and every
+# locator is a column. Exercises padding of text and numbers, trimming on
+# decode, a gap between columns, and a column the record does not reach.
+format        conformance-text-fixed
+version       0.10.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          text
+delimiter     none
+
+field  uid       0:0:6     string
+field  probe.n   0:6:5     int
+field  lat       0:11:8    dec:4
+field  probe.s1  0:20:4    string
+field  probe.x   0:24:3    int:2

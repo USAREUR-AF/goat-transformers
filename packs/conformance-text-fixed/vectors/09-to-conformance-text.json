@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text",
+  "input": "ABC   00042048.1173 WXYZ007",
+  "expect": "$XXFIX,,4807.0380,N,,,42,07,,,*36",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): default probe.s2 XX; dm: 48.1173*60 = 2887.038, *10000 -> 28870380 = 48*600000 + 70380 -> 4807.0380 N; checksum 36. Derived without an engine by a standalone reference program."
+}

@@ -242,8 +242,9 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 12] = [
+const HEADER: [&str; 15] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
+    "delimiter", "start", "checksum",
 ];
 
 impl<'a> Parser<'a> {
@@ -847,6 +848,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         typemap_to_cot: p.to_cot,
         typemap_from_cot: p.from_cot,
         seq: Some(body),
+        text: crate::text::TextConf::default(),
     })
 }
 

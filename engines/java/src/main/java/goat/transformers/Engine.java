@@ -434,6 +434,7 @@ public final class Engine {
             case BITS: codec = p.seq != null ? new SeqCodec(p) : new BitsCodec(p); break;
             case PROTOBUF: codec = new ProtobufCodec(p); break;
             case JSON: codec = new JsonCodec(p); break;
+            case TEXT: codec = new TextCodec(p); break;
             default: throw new GtException(GtException.Code.BAD_PACK, p.format, null, "no codec for wire " + p.wire);
         }
         packs.put(p.format, p);

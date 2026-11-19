@@ -1,0 +1,9 @@
+{
+  "name": "checksum-missing",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HEHDT,274.07,T",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 4: with checksum nmea the text ends with '*' and two hex digits. Derived without an engine by a standalone reference program (Python standard library)."
+}

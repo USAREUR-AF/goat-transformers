@@ -215,4 +215,17 @@ std::string encode_protobuf(const Pack& p, const Entity& e);
 Entity decode_json(const Pack& p, const std::string& bytes);
 std::string encode_json(const Pack& p, const Entity& e);
 
+// ---- the `text` wire (Version 0.10)
+
+// `<i>`, `<i>:<from>:<len>` (len from 1) or `<i>+<j>`, indexes in decimal.
+bool parse_text_locator(const std::string& loc, TextLocator& out);
+// Parse the locator of every `field`, `when` and `const` line and of every
+// `group` of a text pack. Throws bad-directive (0.10 ruling 14).
+void parse_text_locators(Pack& p);
+// The checks of a text pack that relate its directives, locators, transforms,
+// values and groups to one another (bad-directive). Run after the file is read.
+void check_text_pack(const Pack& p);
+Entity decode_text(const Pack& p, const std::string& bytes);
+std::string encode_text(const Pack& p, const Entity& e);
+
 }  // namespace goat_transformers::detail

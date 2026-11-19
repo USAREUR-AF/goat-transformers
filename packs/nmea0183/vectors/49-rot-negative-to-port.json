@@ -1,0 +1,15 @@
+{
+  "name": "rot-negative-to-port",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HEROT,-12.50,A*00",
+  "expect": "$HEROT,-12.50,A*00",
+  "model": {
+    "@kind": "rot",
+    "nmea0183.talker": "HE",
+    "nmea0183.rot_deg_min": "-12.5",
+    "nmea0183.status": "A"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): ROT fields 1-2; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

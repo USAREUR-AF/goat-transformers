@@ -1,0 +1,16 @@
+{
+  "name": "tim-round-trip",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPTIM,123519.000,270221,5.5,A,V*45",
+  "expect": "$GPTIM,123519.000,270221,5.5,A,V*45",
+  "model": {
+    "@kind": "tim",
+    "probe.s2": "GP",
+    "time_ms": "1614429319000",
+    "speed_ms": "5.5",
+    "probe.z": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy: 2021-02-27 is day 18685 since 1970-01-01, 18685*86400000 + 45319*1000 = 1614429319000; via modes A -> 1. Derived without an engine by a standalone reference program."
+}

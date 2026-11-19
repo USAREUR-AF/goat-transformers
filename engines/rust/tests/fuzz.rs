@@ -2,7 +2,8 @@
 //! senders, so for every loaded pack this test feeds `convert`:
 //!
 //! (a) random bytes and random text of random length, in the alphabets of
-//!     the wires (hex digits, XML and JSON punctuation);
+//!     the wires (hex digits, XML and JSON punctuation, the delimiters,
+//!     start texts and checksums of text records);
 //! (b) the input of every conversion vector cut at prefix lengths: every
 //!     length when the input is short, an even spread of lengths when it is
 //!     long;
@@ -73,6 +74,12 @@ impl Rng {
 const HEX: &[u8] = b"0123456789abcdef";
 const XMLISH: &[u8] = b"<<<>>>//==\"\"'' \n?!-&;abeEvent:._019[]";
 const JSONISH: &[u8] = b"{{}}[[]]\"\"::,,\\ \n-+.eE0123456789truefalsn/ua";
+const TEXTISH: &[u8] = b"$$,,,;;;**  \r\n-+..0123456789ABCDEFabcdefNSEWPXTIMGC";
+
+/// A text record framed with a start text and an NMEA checksum over `body`.
+fn nmea(start: &str, body: &str) -> String {
+    format!("{}{}*{:02X}", start, body, body.bytes().fold(0u8, |a, c| a ^ c))
+}
 
 /// What one call did wrong, if anything.
 fn check(engine: &Engine, from: &str, to: &str, input: &str) -> Option<String> {
@@ -211,6 +218,42 @@ fn hostile() -> Vec<String> {
     }
     out.push("ff".repeat(65_536));
     out.push("00".repeat(65_536));
+    // text records: very many fields, very long fields, checksums right and
+    // wrong, terminators, columns cut at every point, values at their limits
+    for n in [0usize, 1, 2, 3, 64, 100_000] {
+        out.push(",".repeat(n));
+        out.push(";".repeat(n));
+        out.push(" ".repeat(n));
+        out.push(nmea("$", &",".repeat(n)));
+        out.push(nmea("$", &format!("GPSAT,1{}", ",a,1,0.5".repeat(n))));
+        out.push(nmea("$", &format!("GPFIX{}", ",9".repeat(n))));
+        out.push(format!("P;{}", "x;".repeat(n)));
+    }
+    for s in [
+        "$", "$*", "$*0", "$*00", "*00", "$GPFIX*", "$GPFIX*zz", "$GPFIX*4", "$GPFIX**00", "$a*b*00", "\n", "\r\n", "\r",
+        "x\n\n", "x\r\r\n", "\t", "\u{7f}", "é", "$GPFIX\u{0}*00",
+    ] {
+        out.push(s.to_string());
+    }
+    for body in [
+        "GPFIX,999999.99,9999.9999,N,99999.9999,E,99999999999999999999,99,99999999999999999999.9,-.,,x,y",
+        "GPFIX,235959.999,0000.0000,S,00000.0000,W,-9223372036854775808,-0,-0.0,+.5,,,9223372036854775808",
+        "GPFIX,240000,4860.0000,n,01131.0000,X,1e5,0x1,inf,nan,,,",
+        "GPFIX,123519.,4807.,N,0113,E,,,,,,,",
+        "GPTIM,123519.123456789,290200,1.5,A",
+        "GPTIM,123519,290201,1.5,D",
+        "GPTIM,123519,000000,-0,B",
+        "GPTIM,,230394,,",
+        "GPTIM,123519,,,",
+        "GPSAT,,,,,,,,,,",
+        "GPSAT,1,",
+    ] {
+        out.push(nmea("$", body));
+    }
+    let record = "ABCDEF-0042-30.5000 WXYZ-07";
+    for at in 0..=record.len() {
+        out.push(record[..at].to_string());
+    }
     out
 }
 
@@ -263,7 +306,7 @@ fn malformed_input_never_panics() {
             let len = rng.below(96);
             let bytes: Vec<u8> = (0..len).map(|_| rng.next() as u8).collect();
             run(format, format, &String::from_utf8_lossy(&bytes), "random bytes");
-            for alphabet in [HEX, XMLISH, JSONISH] {
+            for alphabet in [HEX, XMLISH, JSONISH, TEXTISH] {
                 let len = rng.below(96);
                 let text: Vec<u8> = (0..len).map(|_| rng.pick(alphabet)).collect();
                 run(format, format, &String::from_utf8_lossy(&text), "random text");
@@ -301,6 +344,7 @@ fn malformed_input_never_panics() {
                 _ if hex => rng.pick(HEX),
                 1 | 2 => rng.pick(XMLISH),
                 3 | 4 => rng.pick(JSONISH),
+                5 => rng.pick(TEXTISH),
                 _ => (rng.next() % 0x5f) as u8 + 0x20,
             };
             run(&case.from, &case.to, &String::from_utf8_lossy(&bytes), "mutation");

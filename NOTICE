@@ -223,6 +223,14 @@ Pack adsb; module adsb
   pyModeS, https://github.com/junzis/pyModeS  GNU General Public License,
   Version 3. Published test messages and their decoded values; no code.
 
+Pack nmea0183; module nmea0183
+  "NMEA Revealed" (www/NMEA.adoc), Eric S. Raymond and the gpsd project.
+  https://gitlab.com/gpsd/gpsd  Compilation copyright is held by the GPSD
+  project. BSD-2-Clause (the repository's COPYING file). The document states
+  that it was written without consulting the NMEA 0183 standard. Sentence
+  layouts, field positions, units and fixed letters only; no text, table or
+  example sentence.
+
 Pack geojson
   IETF RFC 7946, The GeoJSON Format.
 

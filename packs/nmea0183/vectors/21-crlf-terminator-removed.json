@@ -1,0 +1,13 @@
+{
+  "name": "crlf-terminator-removed",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A,A*6B\r\n",
+  "expect": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A,A*6B",
+  "model": {
+    "@kind": "gll",
+    "lat": "48.125"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 1 and ruling 4; encode writes no terminator. Derived without an engine by a standalone reference program (Python standard library)."
+}

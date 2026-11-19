@@ -1,0 +1,13 @@
+{
+  "name": "flag-when-present-residue-written-back",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "F;5;zz",
+  "expect": "F;5;zz",
+  "model": {
+    "@kind": "flag",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 27 of 0.5 via 0.10: when 2 present does not address field 2; it is residue \"2\" and step 3 writes it. Derived without an engine by a standalone reference program."
+}

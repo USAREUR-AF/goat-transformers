@@ -1,0 +1,17 @@
+{
+  "name": "gll-with-faa-mode",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A,A*6B",
+  "expect": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A,A*6B",
+  "model": {
+    "@kind": "gll",
+    "lat": "48.125",
+    "lon": "11.125",
+    "nmea0183.utc_s": "35112.5",
+    "nmea0183.status": "A",
+    "nmea0183.faa_mode": "A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; packs/nmea0183/pack.def kind gll. Derived without an engine by a standalone reference program (Python standard library)."
+}

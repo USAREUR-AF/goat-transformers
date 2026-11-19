@@ -1,0 +1,13 @@
+{
+  "name": "dpt-without-range-field",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$SDDPT,12.2,-0.5*4E",
+  "expect": "$SDDPT,12.2,-0.5*4E",
+  "model": {
+    "@kind": "dpt",
+    "nmea0183.dpt_depth_m": "12.2"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): the range field is a later addition and optional: the shorter form round-trips; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

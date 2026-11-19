@@ -1,0 +1,9 @@
+{
+  "name": "tll-minutes-of-60-fail",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$RATLL,07,4860.00000,N,01131.00000,E,TGT07,081530.00,T,*6A",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "60 minutes in a dm field (engine-spec 0.10, transform rule 3); sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

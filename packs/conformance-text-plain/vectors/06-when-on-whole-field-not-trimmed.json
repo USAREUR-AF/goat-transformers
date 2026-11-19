@@ -1,0 +1,9 @@
+{
+  "name": "when-on-whole-field-not-trimmed",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P ;u1;1.5;2.5;;",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 9: a when on a whole field compares the field's text, P with a space is not P. Derived without an engine by a standalone reference program."
+}

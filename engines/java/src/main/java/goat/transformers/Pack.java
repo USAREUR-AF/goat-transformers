@@ -11,7 +11,7 @@ import java.util.Set;
 
 /** A parsed {@code pack.def}. */
 public final class Pack {
-    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON }
+    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON, TEXT }
 
     /** One {@code field} or {@code when} line: a locator on the wire. */
     public abstract static class Line {
@@ -26,10 +26,15 @@ public final class Pack {
         }
     }
 
-    /** One {@code field} line. Exactly one of {@code transform} (text wires), {@code bits} and {@code pb} is set. */
+    /**
+     * One {@code field} line. Exactly one of {@code transform} (the xml, geojson and json wires), {@code text}
+     * (the text wire), {@code bits} and {@code pb} is set.
+     */
     public static final class Field extends Line {
         public final String key;
         public final Transform transform;
+        /** The text wire's transform. */
+        final TextTransform text;
         public final BitsTransform bits;
         public final PbTransform pb;
         /** The value table named by {@code via}, or null. */
@@ -38,7 +43,7 @@ public final class Pack {
         public final boolean swap;
         /** bits with ascii: decode also removes trailing spaces. */
         public final boolean trim;
-        /** bits: a field any of whose bits lies beyond the input is absent. */
+        /** bits: a field any of whose bits lies beyond the input is absent. text: step 5 of writing a record may remove it. */
         public final boolean optional;
         /** The key's declared type; set when the pack is checked against the loaded modules. */
         String keyType;
@@ -50,9 +55,15 @@ public final class Pack {
 
         Field(String key, String locator, Transform transform, BitsTransform bits, PbTransform pb,
               String via, boolean swap, boolean trim, boolean optional, int line) {
+            this(key, locator, transform, null, bits, pb, via, swap, trim, optional, line);
+        }
+
+        Field(String key, String locator, Transform transform, TextTransform text, BitsTransform bits, PbTransform pb,
+              String via, boolean swap, boolean trim, boolean optional, int line) {
             super(locator, line);
             this.key = key;
             this.transform = transform;
+            this.text = text;
             this.bits = bits;
             this.pb = pb;
             this.via = via;
@@ -78,12 +89,12 @@ public final class Pack {
 
         /** The transform's name as written in the pack. */
         public String transformName() {
-            return transform != null ? transform.wireName() : bits != null ? bits.wireName() : pb.wireName();
+            return transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
         }
 
         /** The model type the transform yields: {@code string}, {@code float} or {@code int}. */
         public String yields() {
-            return transform != null ? transform.yields() : bits != null ? bits.yields() : pb.yields();
+            return transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
         }
     }
 
@@ -305,6 +316,14 @@ public final class Pack {
     final Seq.Body seq;
     /** {@code layout sequential}: the number of {@code presence} lines, each with its own slot of decode and encode state. */
     final int seqPresences;
+    /** text wire: {@code delimiter none}, the record is one field. */
+    boolean textNoDelimiter;
+    /** text wire: the delimiter, {@code ,} by default. */
+    char textDelimiter = ',';
+    /** text wire: the start text, or null. */
+    String textStart;
+    /** text wire: {@code checksum nmea}. */
+    boolean textNmea;
     /** native code to CoT type token, in file order (first wins). */
     public final Map<String, String> nativeToCot;
     /** CoT type token to native code (first line wins). */
@@ -414,7 +433,8 @@ public final class Pack {
 
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
-            "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap");
+            "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
+            "delimiter", "start", "checksum");
 
     /** What {@link #resolve} needs to know about the pack, and what it collects. */
     private static final class Ctx {
@@ -422,6 +442,8 @@ public final class Pack {
         String format;
         String source;
         int wordBytes;   // 0 when not given
+        /** text wire: the fields of one item of the group being resolved; 0 outside a group. */
+        int itemFields;
         Map<String, List<String[]>> tables;
         final List<Field> fields = new ArrayList<>();
         final List<Line> typed = new ArrayList<>();
@@ -435,6 +457,8 @@ public final class Pack {
         Integer wordBytes = null;
         String bitOrder = null;
         int bitOrderLine = 0;
+        // text wire directives: {value, line}, or null when not given
+        String[] delimiterDir = null, startDir = null, checksumDir = null;
         Distribution distribution = null;
         List<String> sources = new ArrayList<>();
         List<String> uses = new ArrayList<>();
@@ -519,6 +543,33 @@ public final class Pack {
                     arity(kw, args, 1, where, format);
                     if (!uses.contains(args.get(0))) uses.add(args.get(0));
                     break;
+                case "delimiter":
+                case "start":
+                case "checksum": {
+                    arity(kw, args, 1, where, format);
+                    String[] had = kw.equals("delimiter") ? delimiterDir : kw.equals("start") ? startDir : checksumDir;
+                    if (had != null) throw badDirective(format, null, where + ": " + kw + " given twice");
+                    if (cur != common) throw badDirective(format, null, where + ": " + kw + " after the first kind line");
+                    String v = args.get(0);
+                    String[] dir = {v, Integer.toString(ln)};
+                    if (kw.equals("delimiter")) {
+                        if (!v.equals("none") && (v.length() != 1 || v.charAt(0) < 0x21 || v.charAt(0) > 0x7e || v.charAt(0) == '"')) {
+                            throw badDirective(format, null, where + ": delimiter takes one character from 0x21 to 0x7E other than \" or none, got \"" + v + "\"");
+                        }
+                        delimiterDir = dir;
+                    } else if (kw.equals("start")) {
+                        boolean ok = !v.isEmpty();
+                        for (int k = 0; k < v.length(); k++) ok &= v.charAt(k) >= 0x21 && v.charAt(k) <= 0x7e;
+                        if (!ok) throw badDirective(format, null, where + ": start takes one or more characters from 0x21 to 0x7E, got \"" + v + "\"");
+                        startDir = dir;
+                    } else {
+                        if (!v.equals("none") && !v.equals("nmea")) {
+                            throw badDirective(format, null, where + ": checksum takes none or nmea, got \"" + v + "\"");
+                        }
+                        checksumDir = dir;
+                    }
+                    break;
+                }
                 case "wire":
                     arity(kw, args, 1, where, format);
                     if (wire != null) throw dup(kw, where, format);
@@ -528,6 +579,7 @@ public final class Pack {
                         case "bits": wire = Wire.BITS; break;
                         case "protobuf": wire = Wire.PROTOBUF; break;
                         case "json": wire = Wire.JSON; break;
+                        case "text": wire = Wire.TEXT; break;
                         default:
                             throw bad(format, null, where + ": unknown wire \"" + args.get(0) + "\"");
                     }
@@ -611,6 +663,8 @@ public final class Pack {
                 case "field": {
                     if (args.size() < 3) throw bad(format, null, where + ": field takes at least 3 arguments, got " + args.size());
                     String key = args.get(0);
+                    // the parameters of a text transform are checked as the file is read (ruling 2 of 0.10)
+                    if (TextTransform.isTextOnlyName(args.get(2))) TextTransform.parseTextOnly(args.get(2), format, args.get(1), where);
                     body.lines.add(new LineSpec(key, args.get(1), args.get(2), new ArrayList<>(args.subList(3, args.size())), false, ln));
                     keyRefs.add(new String[]{key, args.get(1)});
                     break;
@@ -662,6 +716,12 @@ public final class Pack {
         }
         if (bitOrder != null && wire != null && wire != Wire.BITS) {
             throw badDirective(format, null, source + ":" + bitOrderLine + ": bit_order is for the bits wire only");
+        }
+        // Checks that need the wire run after the file is read, wherever the wire line stands (ruling 10 of 0.10).
+        if (wire != null && wire != Wire.TEXT) {
+            for (String[] d : new String[][]{delimiterDir, startDir, checksumDir}) {
+                if (d != null) throw badDirective(format, null, source + ":" + d[1] + ": delimiter, start and checksum are for the text wire only");
+            }
         }
         boolean kindRoots = false;
         for (KindSpec ks : kindSpecs) {
@@ -716,6 +776,10 @@ public final class Pack {
                 defaults.putAll(ks.defaults);
                 kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
             }
+            if (wire == Wire.TEXT) {
+                TextCodec.checkPack(kinds, ctx.bodies, delimiterDir == null ? "," : delimiterDir[0],
+                        startDir == null ? null : startDir[0], checksumDir != null && checksumDir[0].equals("nmea"), format, source);
+            }
             if (wire == Wire.BITS && wordBytes != null) {
                 // The layout of each scope: common plus one kind (group bodies were checked as they were resolved).
                 for (Kind k : kinds) BitsCodec.prepare(k.scope, wb, 0, format, source);
@@ -747,9 +811,17 @@ public final class Pack {
         // Report in file order, as the 0.4 checks do.
         ctx.fields.sort((a, b) -> Integer.compare(a.line, b.line));
         ctx.typed.sort((a, b) -> Integer.compare(a.line, b.line));
-        return new Pack(format, version, distribution, sources, uses, wire, root, wb, "msb".equals(bitOrder), hasKinds,
+        Pack pack = new Pack(format, version, distribution, sources, uses, wire, root, wb, "msb".equals(bitOrder), hasKinds,
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
+        if (wire == Wire.TEXT) {
+            String d = delimiterDir == null ? "," : delimiterDir[0];
+            pack.textNoDelimiter = d.equals("none");
+            pack.textDelimiter = pack.textNoDelimiter ? 0 : d.charAt(0);
+            pack.textStart = startDir == null ? null : startDir[0];
+            pack.textNmea = checksumDir != null && checksumDir[0].equals("nmea");
+        }
+        return pack;
     }
 
     /**
@@ -757,7 +829,7 @@ public final class Pack {
      * {@code bad-directive} (ruling 21 of 0.7; {@code field} lines only, ruling 15 of 0.8).
      */
     private static void notThroughAGroup(List<Line> lines, Ctx ctx) {
-        if (ctx.wire == Wire.BITS) return;
+        if (ctx.wire == Wire.BITS || ctx.wire == Wire.TEXT) return;
         Map<String, Group> paths = null;
         for (Line g : lines) {
             if (!(g instanceof Group)) continue;
@@ -797,7 +869,20 @@ public final class Pack {
         String countLocator = null;
         long countFixed = -1;
         String why;
-        if (ctx.wire == Wire.BITS) {
+        TextCodec.Loc textLoc = null;
+        if (ctx.wire == Wire.TEXT) {
+            if (inGroup) throw badDirective(format, s.locator, where + ": a group inside a group is not allowed on the text wire");
+            if (s.opts.size() != 2 || !s.opts.get(0).equals("item")) {
+                throw badDirective(format, s.locator, where + ": a text group is group <list> <i> item <n>");
+            }
+            TextCodec.Loc at = TextCodec.parseLocator(s.locator);
+            if (at == null || at.type != TextCodec.FIELD) throw badDirective(format, s.locator, where + ": a text group locator is a field index");
+            TextCodec.Loc n = TextCodec.parseLocator(s.opts.get(1));
+            if (n == null || n.type != TextCodec.FIELD || n.i < 1) {
+                throw badDirective(format, s.locator, where + ": item takes a number of fields from 1, got \"" + s.opts.get(1) + "\"");
+            }
+            textLoc = new TextCodec.Loc(TextCodec.GROUP, at.i, 0, n.i, 0);
+        } else if (ctx.wire == Wire.BITS) {
             String item = null, count = null;
             for (int i = 0; i < s.opts.size(); i++) {
                 String o = s.opts.get(i);
@@ -843,6 +928,8 @@ public final class Pack {
         }
         List<Line> lines = new ArrayList<>(s.body.lines.size());
         Set<String> lists = null;
+        int outerItem = ctx.itemFields;
+        if (textLoc != null) ctx.itemFields = textLoc.len;
         for (LineSpec b : s.body.lines) {
             Line l = resolve(b, ctx, true);
             lines.add(l);
@@ -851,6 +938,7 @@ public final class Pack {
                 oneGroupPerList(lists, (Group) l, ctx);
             }
         }
+        ctx.itemFields = outerItem;
         notThroughAGroup(lines, ctx);
         if (ctx.wire == Wire.PROTOBUF) {
             // a protobuf body is scalar only when every line is `.` (ruling 13 of 0.7)
@@ -865,6 +953,7 @@ public final class Pack {
         }
         Scope body = new Scope(lines, s.body.defaults);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
+        g.loc = textLoc;
         if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsCodec.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
         ctx.bodies.add(body);
         ctx.typed.add(g);
@@ -882,11 +971,11 @@ public final class Pack {
         String where = ctx.source + ":" + s.line;
         if (s.body != null) return resolveGroup(s, ctx, inGroup);
         // `.` is the item itself as a scalar: a field of a group body on json, geojson and protobuf.
-        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS;
+        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT;
         if (dot && (!inGroup || s.key == null)) {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
-        if (s.key == null) return resolveWhen(s, wire, format, where, inGroup);
+        if (s.key == null) return resolveWhen(s, ctx, where, inGroup);
         String via = null, absent = null;
         boolean swap = false, trim = false, optional = false;
         for (int i = 0; i < s.opts.size(); i++) {
@@ -921,12 +1010,44 @@ public final class Pack {
                     throw badDirective(format, s.locator, where + ": unknown field option \"" + o + "\"");
             }
         }
-        if (wire != Wire.BITS && (swap || trim || optional)) {
+        if (wire == Wire.TEXT && optional && inGroup) {
+            throw badDirective(format, s.locator, where + ": optional is not allowed inside a text group");
+        }
+        if (wire != Wire.BITS && (swap || trim || (optional && wire != Wire.TEXT))) {
             throw badDirective(format, s.locator, where + ": " + (swap ? "swap" : trim ? "trim" : "optional") + " is for the bits wire only");
+        }
+        if (wire != Wire.TEXT && TextTransform.isTextOnlyName(s.arg)) {
+            throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the text wire only");
         }
         String why;
         Field f;
-        if (wire == Wire.BITS) {
+        if (wire == Wire.TEXT) {
+            TextTransform tt;
+            if (TextTransform.isTextOnlyName(s.arg)) {
+                tt = TextTransform.parseTextOnly(s.arg, format, s.locator, where);
+            } else {
+                Transform t = Transform.byName(s.arg);
+                tt = t == null ? null : TextTransform.base(t);
+                if (tt == null) {
+                    if (t != null || BitsTransform.isBitsName(s.arg) || PbTransform.isPbName(s.arg)) {
+                        throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire text");
+                    }
+                    throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, s.locator, where + ": unknown transform \"" + s.arg + "\"");
+                }
+            }
+            TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);
+            if (loc.type == TextCodec.PAIR && loc.i == loc.j) {
+                throw badDirective(format, s.locator, where + ": a pair names field " + loc.i + " twice");
+            }
+            if ((loc.type == TextCodec.PAIR) != tt.pair()) {
+                throw badDirective(format, s.locator, where + ": " + (tt.pair()
+                        ? "transform " + tt.name + " takes a pair <i>+<j>"
+                        : "a pair is for the transforms that take two parts (dm, hms_dmy), not " + tt.name));
+            }
+            f = new Field(s.key, s.locator, null, tt, null, null, via, false, false, optional, s.line);
+            f.loc = loc;
+            why = null;
+        } else if (wire == Wire.BITS) {
             if (!BitsTransform.isBitsName(s.arg)) {
                 String w = (Transform.byName(s.arg) != null || PbTransform.isPbName(s.arg))
                         ? "transform \"" + s.arg + "\" is not valid on wire bits"
@@ -999,15 +1120,43 @@ public final class Pack {
                 return Sentinels.integers(arg, f.pb.wireType() == 5 ? 32 : 64, format, f.locator, where);
             case XML:
                 return Sentinels.texts(arg, true, format, f.locator, where);
+            case TEXT:
+                // `absent` on the text wire is bad-directive (ruling 16 of 0.10)
+                throw badDirective(format, f.locator, where + ": absent is not valid on the text wire (ruling 16 of 0.10)");
             default:
                 return Sentinels.json(arg, f.transform == Transform.BOOL, format, f.locator, where);
         }
     }
 
-    private static When resolveWhen(LineSpec s, Wire wire, String format, String where, boolean inGroup) {
+    /** A text locator: its syntax is bad-pack; in a group, an index at or beyond the item's fields is bad-directive. */
+    private static TextCodec.Loc textLocator(LineSpec s, Ctx ctx, String where, boolean inGroup) {
+        TextCodec.Loc loc = TextCodec.parseLocator(s.locator);
+        if (loc == null) {
+            throw badDirective(ctx.format, s.locator, where + ": a text locator is <i>, <i>:<from>:<len> (len from 1) or <i>+<j>, got \"" + s.locator + "\"");
+        }
+        if (inGroup && loc.max() >= ctx.itemFields) {
+            throw badDirective(ctx.format, s.locator, where + ": locator " + s.locator + " is beyond an item of " + ctx.itemFields + " fields");
+        }
+        return loc;
+    }
+
+    private static When resolveWhen(LineSpec s, Ctx ctx, String where, boolean inGroup) {
+        Wire wire = ctx.wire;
+        String format = ctx.format;
         String v = s.arg;
         if (s.isConst && v.equals("present")) {
             throw badDirective(format, s.locator, where + ": const takes a value; write =present for the text");
+        }
+        if (wire == Wire.TEXT) {
+            TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);
+            if (loc.type == TextCodec.PAIR) {
+                throw badDirective(format, s.locator, where + ": a when or const takes a field or a column, not a pair");
+            }
+            When w = v.equals("present")
+                    ? new When(s.locator, v, true, v, false, 0, s.isConst, s.line)
+                    : new When(s.locator, v, false, v.startsWith("=") ? v.substring(1) : v, v.startsWith("="), 0, s.isConst, s.line);
+            w.loc = loc;
+            return w;
         }
         if (wire == Wire.BITS) {
             String why = BitsCodec.checkLocator(s.locator);

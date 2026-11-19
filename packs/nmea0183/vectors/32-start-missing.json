@@ -1,0 +1,9 @@
+{
+  "name": "start-missing",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "HEHDT,274.07,T*19",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 3: the text begins with the start text '$'. Derived without an engine by a standalone reference program (Python standard library)."
+}

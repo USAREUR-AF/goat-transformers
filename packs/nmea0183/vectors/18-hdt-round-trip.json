@@ -1,0 +1,14 @@
+{
+  "name": "hdt-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HEHDT,274.07,T*19",
+  "expect": "$HEHDT,274.07,T*19",
+  "model": {
+    "@kind": "hdt",
+    "nmea0183.talker": "HE",
+    "nmea0183.heading_true_deg": "274.07"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; talker HE (heading sensor) is carried by nmea0183.talker. Derived without an engine by a standalone reference program (Python standard library)."
+}

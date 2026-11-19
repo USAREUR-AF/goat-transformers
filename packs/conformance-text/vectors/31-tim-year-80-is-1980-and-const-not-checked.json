@@ -1,0 +1,12 @@
+{
+  "name": "tim-year-80-is-1980-and-const-not-checked",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPTIM,000000,010180,0.5,A,X*51",
+  "expect": "$GPTIM,000000.000,010180,0.5,A,V*41",
+  "model": {
+    "time_ms": "315532800000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy: yy 80 is 1980, 1980-01-01 = 3652 days = 315532800000 ms; Constants (0.6): not checked on decode, written on encode. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "mwd-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$WIMWD,310.0,T,313.1,M,14.2,N,7.3,M*6B",
+  "expect": "$WIMWD,310.0,T,313.1,M,14.2,N,7.3,M*6B",
+  "model": {
+    "@kind": "mwd",
+    "nmea0183.talker": "WI",
+    "nmea0183.wind_dir_true_deg": "310",
+    "nmea0183.wind_speed_kn": "14.2",
+    "nmea0183.wind_speed_ms": "7.3"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): MWD fields 1-8; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

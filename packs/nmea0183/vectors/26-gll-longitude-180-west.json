@@ -1,0 +1,15 @@
+{
+  "name": "gll-longitude-180-west",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,0000.00000,S,18000.00000,W,120000.00,A,A*6C",
+  "expect": "$GPGLL,0000.00000,N,18000.00000,W,120000.00,A,A*71",
+  "model": {
+    "@kind": "gll",
+    "lat": "0",
+    "lon": "-180",
+    "nmea0183.utc_s": "43200"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm 18000.00000 W = -180; encode m = round(180*60*1e5) = 1080000000, degrees 180 fit 3 digits; lat 0000.00000 S decodes to -0 and encodes with P (m = 0), so S becomes N. Derived without an engine by a standalone reference program (Python standard library)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "checksum-missing",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Reading a record, step 4. Derived without an engine by a standalone reference program."
+}

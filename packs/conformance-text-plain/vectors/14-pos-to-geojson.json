@@ -1,0 +1,9 @@
+{
+  "name": "pos-to-geojson",
+  "from": "conformance-text-plain",
+  "to": "geojson",
+  "input": "P;u1;1.5;2.5;;2021-02-27T20:00:00.000Z",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,1.5]},\"properties\":{\"time_ms\":1614456000000},\"id\":\"u1\"}",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): geojson ruling 4 of 0.1.1; residue of the plain format is not written into geojson. Derived without an engine by a standalone reference program."
+}

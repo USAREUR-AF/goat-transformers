@@ -1,0 +1,12 @@
+{
+  "name": "blank-column-absent-and-tail-not-carried",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "      00042048.1173 WXYZ007EXTRA",
+  "expect": "      00042048.1173 WXYZ007",
+  "model": {
+    "probe.n": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: a column that is empty after trimming is absent; characters after the last column are not carried. Derived without an engine by a standalone reference program."
+}

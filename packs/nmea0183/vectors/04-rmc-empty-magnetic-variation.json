@@ -1,0 +1,14 @@
+{
+  "name": "rmc-empty-magnetic-variation",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,,,A*6B",
+  "expect": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,,,A*6B",
+  "model": {
+    "@kind": "rmc",
+    "nmea0183.faa_mode": "A",
+    "course": "84.4"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Locators (an empty field is absent) and Writing a record step 4 (fields not written are empty): magvar fields 10 and 11 empty, FAA mode present. Derived without an engine by a standalone reference program (Python standard library)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "residue-after-the-last-line",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,,,,TAIL*59",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,,,,TAIL*59",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Residue: field 13 is residue \"13\"; Writing a record, steps 3 and 4 (14 fields); step 5 stops at the non-empty last field. Derived without an engine by a standalone reference program."
+}

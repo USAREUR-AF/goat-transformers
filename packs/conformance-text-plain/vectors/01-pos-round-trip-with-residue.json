@@ -1,0 +1,16 @@
+{
+  "name": "pos-round-trip-with-residue",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P;u1;30.0090027;-85.9578182;extra;2021-02-27T20:00:00.000Z",
+  "expect": "P;u1;30.0090027;-85.9578182;extra;2021-02-27T20:00:00.000Z",
+  "model": {
+    "@kind": "pos",
+    "uid": "u1",
+    "lat": "30.0090027",
+    "lon": "-85.9578182",
+    "time_ms": "1614456000000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Residue: field 4 is residue \"4\"; Writing a record, step 3. Derived without an engine by a standalone reference program."
+}

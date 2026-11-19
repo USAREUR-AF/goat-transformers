@@ -1,0 +1,9 @@
+{
+  "name": "ttm-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$RATTM,07,2.35,112.4,T,8.5,245.0,T,0.40,12.5,N,TGT07,T,,081530.00,A*71",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"TGT07\"}}",
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): TTM has range and bearing, no position: geometry null, the target name as callsign; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

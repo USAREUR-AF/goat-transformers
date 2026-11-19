@@ -1,0 +1,13 @@
+{
+  "name": "dec-pads-to-f-plus-one-digits",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,,,,,,,,.05,5.,*70",
+  "expect": "$GPFIX,,,,,,,,0.1,005.0,*44",
+  "model": {
+    "hae": "0.05",
+    "course": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): dec:1: 0.05*10 = 0.5 (double), round = 1, digits 1 padded to 2 -> 01 -> 0.1; dec:1:5: 5*10 = 50 -> 5.0 -> 005.0. Derived without an engine by a standalone reference program."
+}

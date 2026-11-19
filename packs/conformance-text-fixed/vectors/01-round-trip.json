@@ -1,0 +1,16 @@
+{
+  "name": "round-trip",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   00042048.1173 WXYZ007",
+  "expect": "ABC   00042048.1173 WXYZ007",
+  "model": {
+    "uid": "ABC",
+    "probe.n": "42",
+    "lat": "48.1173",
+    "probe.s1": "WXYZ",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators (columns, trailing spaces removed); Writing a record, step 2 (text padded right, numbers padded left with 0); dec:4 48.1173*10000 = 481173 -> 48.1173 -> 048.1173; int:2 7 -> 07 -> 007. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,35 @@
+# Conformance probe pack for the `text` wire (spec 0.10). Public. A record
+# with `;` between fields, no start text and no checksum. Exercises kinds
+# chosen by a whole field, `when … present`, `float` and `iso8601_ms` on the
+# text wire, residue of unmapped fields, and a whole-field line and columns on
+# one field (ruling 3).
+format        conformance-text-plain
+version       0.10.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          text
+delimiter     ";"
+
+kind      pos
+when      0           P
+field     uid         1       string
+field     lat         2       float
+field     lon         3       float
+field     time_ms     5       iso8601_ms
+
+kind      code
+when      0           C
+field     probe.s1    1       string
+field     probe.s2    1:0:2   string
+field     probe.n     1:2:3   int
+
+kind      flag
+requires  probe.x
+when      0           F
+when      2           present
+field     probe.x     1       int
+
+kind      rev                     # a pair named in descending order: field 2 is the time
+when      0           R
+field     time_ms     2+1     hms_dmy:0

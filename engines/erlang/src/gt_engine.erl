@@ -1,7 +1,7 @@
 %% gt_engine: decode(format, bytes) -> entity, encode(format, entity) -> bytes,
 %% complete(entity), convert. Clean-room from spec/ and packs/ only
-%% (engine-spec Versions 0.1 - 0.9; a sequential
-%% bits pack is read and written by gt_seq).
+%% (engine-spec Versions 0.1 - 0.10; a sequential
+%% bits pack is read and written by gt_seq, the `text` wire by gt_text).
 %%
 %% Entity = #{model => #{Key :: binary() => binary() | integer() | float()},
 %%            lists => #{ListName :: binary() => [Item]},
@@ -34,7 +34,7 @@
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
 %% for gt_seq (sequential layouts)
--export([conv_error/4, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
+-export([conv_error/4, item_source/2, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
          bits_sentinel/3,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2]).
 
@@ -592,7 +592,7 @@ decode_scope(Wire, Ctx, Lines, Pack) ->
                   case maps:is_key(Key, M) of
                       true -> Acc;
                       false ->
-                          case raw(Wire, Ctx, Loc, Opts, C) of
+                          case raw_tr(Wire, Ctx, Loc, Tr, Opts, C) of
                               {absent, C1} -> {M, Ls, F, C1, E};
                               {{ok, Raw}, C1} ->
                                   %% a sentinel: the line yields no value and
@@ -631,6 +631,12 @@ decode_item(Wire, Ctx, #{lines := Lines}, Pack) ->
     #{model => Model, lists => Lists}.
 
 %% ---- the items of a group -> {absent | {ok, [Item]}, Cache, End} ----
+%% text: items of N fields from field Start to the end of the record.
+decode_group(text, Ctx, Start, {text_item, N}, Body, Pack, C) ->
+    case gt_text:items(Ctx, Start, N) of
+        absent -> {absent, C, 0};
+        Items -> {{ok, [decode_item(text, X, Body, Pack) || X <- Items]}, C, 0}
+    end;
 %% xml: each child element named by the last name, under the first element
 %% matched by the names before it; the list is present when an item occurs.
 decode_group(xml, Elem, Path, _Spec, Body, Pack, C) ->
@@ -778,6 +784,7 @@ open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
                            "an object holds the same member name twice", []);
         false -> Json
     end;
+open(text, Pack, Bytes) -> gt_text:open(Pack, Bytes);
 open(bits, Pack, Bytes) ->
     {gt_bits:open(unhex(Pack, Bytes), maps:get(bit_order, Pack)), 0};
 open(protobuf, Pack, Bytes) ->
@@ -804,6 +811,7 @@ when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
         {{ok, false}, {text, T, _}} -> T =:= <<"false">>;
         _ -> false
     end;
+when_holds(text, Ctx, Loc, Val) -> gt_text:when_holds(Ctx, Loc, Val);
 %% a `when` any of whose bits lies beyond the input does not hold
 when_holds(bits, {Msg, Base}, {Off, Len}, Val) -> gt_bits:read(Msg, Base + Off, Len) =:= Val;
 when_holds(protobuf, Top, Path, Val) ->
@@ -856,6 +864,11 @@ mapped_locs(Lines) ->
     lists:foldl(fun({wh, _, present, _}, Acc) -> Acc;
                    (L, Acc) -> Acc#{line_loc(L) => true}
                 end, #{}, Lines).
+
+%% On `text` the transform decides whether a column's leading spaces are
+%% removed.
+raw_tr(text, Ctx, Loc, Tr, _Opts, C) -> {gt_text:raw(Ctx, Loc, Tr), C};
+raw_tr(Wire, Ctx, Loc, _Tr, Opts, C) -> raw(Wire, Ctx, Loc, Opts, C).
 
 %% ---- the raw wire value at a field's locator ----
 %% -> {absent | {ok, Raw}, Cache}. The cache holds the protobuf submessages
@@ -945,6 +958,7 @@ swap_bytes(U, Len) ->
     V.
 
 field_decode(xml, Tr, Raw, _Loc, _Opts, _Pack) -> xml_decode(Tr, Raw);
+field_decode(text, Tr, Raw, _Loc, _Opts, _Pack) -> gt_text:decode_value(Tr, Raw);
 field_decode(geojson, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(gjitem, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> json_decode(Tr, Raw);
@@ -981,6 +995,7 @@ residue(geojson, _Json, Lines, Bytes) ->
     Props ++ Top;
 residue(json, {object, Members}, Lines, _Bytes) ->
     lists:reverse(json_residue(Members, [], mapped_locs(Lines), []));
+residue(text, Ctx, Lines, _Bytes) -> gt_text:residue(Ctx, Lines);
 residue(_, _, _, _) -> [].
 
 %% The members of a geojson object as residue -> [{Name, JsonText}].
@@ -1105,6 +1120,7 @@ encode_wire(json, Pack, Lines, Src, Residue) ->
                           gt_json:encode(V), residue)
            end, T1, Residue),
     jt_write(T2);
+encode_wire(text, Pack, Lines, Src, Residue) -> gt_text:encode(Pack, Lines, Src, Residue);
 encode_wire(bits, #{word_bytes := WB} = Pack, Lines, Src, _Residue) ->
     {Writes, Overs, End} = bits_plan(Pack, Lines, Src, 0, {[], [], 0}),
     M0 = gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack)),

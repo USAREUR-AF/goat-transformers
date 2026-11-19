@@ -1,0 +1,14 @@
+{
+  "name": "sat-empty-middle-item",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPSAT,5,a,1,0.5,,,,c,3,2.5*66",
+  "expect": "$GPSAT,5,a,1,0.5,,,,c,3,2.5*66",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[2].probe.label": "c",
+    "probe.items[2].probe.ratio": "2.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Groups: items are written back to back from field 2, item k at 2+3k. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "wire-text-12-dec-without-parameter",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey ce float m\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey label string -\nkey qty int -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.10.0\ndistribution public\nsource \"probe\"\nuses probe\nwire text\nfield lat 1 dec\n",
+  "expect_error": "bad-directive"
+}

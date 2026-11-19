@@ -1,0 +1,9 @@
+{
+  "name": "gap-between-columns-not-carried",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   00042048.1173XWXYZ007",
+  "expect": "ABC   00042048.1173 WXYZ007",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Residue: characters no column covers are not carried; step 2: they are written as spaces. Derived without an engine by a standalone reference program."
+}

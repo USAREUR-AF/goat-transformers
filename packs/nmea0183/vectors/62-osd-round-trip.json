@@ -1,0 +1,17 @@
+{
+  "name": "osd-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$RAOSD,274.10,A,270.0,B,6.2,W,45.0,0.5,N*56",
+  "expect": "$RAOSD,274.10,A,270.0,B,6.2,W,45.0,0.5,N*56",
+  "model": {
+    "@kind": "osd",
+    "nmea0183.talker": "RA",
+    "nmea0183.heading_true_deg": "274.1",
+    "nmea0183.osd_course_deg": "270",
+    "nmea0183.osd_speed": "6.2",
+    "nmea0183.osd_speed_unit": "N"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): OSD fields 1-9; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

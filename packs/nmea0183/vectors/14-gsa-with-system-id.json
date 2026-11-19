@@ -1,0 +1,21 @@
+{
+  "name": "gsa-with-system-id",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GNGSA,M,2,65,71,,,,,,,,,,,3.10,2.00,2.40,2*0C",
+  "expect": "$GNGSA,M,2,65,71,,,,,,,,,,,3.10,2.00,2.40,2*0C",
+  "model": {
+    "@kind": "gsa",
+    "nmea0183.talker": "GN",
+    "nmea0183.sel_mode": "M",
+    "nmea0183.fix_mode": "2",
+    "nmea0183.sat_used_01": "65",
+    "nmea0183.sat_used_02": "71",
+    "nmea0183.pdop": "3.1",
+    "nmea0183.hdop": "2",
+    "nmea0183.vdop": "2.4",
+    "nmea0183.system_id": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; NMEA 4.11 field 18 present. Derived without an engine by a standalone reference program (Python standard library)."
+}

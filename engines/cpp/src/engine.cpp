@@ -450,6 +450,7 @@ Entity Engine::decode(const std::string& format, const std::string& bytes) const
         case Wire::Bits: return detail::decode_bits(p, bytes);
         case Wire::Protobuf: return detail::decode_protobuf(p, bytes);
         case Wire::Json: return detail::decode_json(p, bytes);
+        case Wire::Text: return detail::decode_text(p, bytes);
     }
     throw Error(ErrorKind::UnknownWire, format, "", "no codec for this wire");
 }
@@ -463,6 +464,7 @@ std::string Engine::encode(const std::string& format, const Entity& entity) cons
         case Wire::Bits: return detail::encode_bits(p, entity);
         case Wire::Protobuf: return detail::encode_protobuf(p, entity);
         case Wire::Json: return detail::encode_json(p, entity);
+        case Wire::Text: return detail::encode_text(p, entity);
     }
     throw Error(ErrorKind::UnknownWire, format, "", "no codec for this wire");
 }

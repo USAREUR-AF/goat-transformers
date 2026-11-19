@@ -1,0 +1,9 @@
+{
+  "name": "optional-trailing-fields-removed",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,,,*65",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,*65",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Writing a record, step 5: fields 12 and 11 are empty and only optional lines address them; field 10 is addressed by no line and stops the removal. Derived without an engine by a standalone reference program."
+}

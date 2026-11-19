@@ -1,0 +1,14 @@
+{
+  "name": "dec-rounds-half-away-and-negative-width",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,,,,,,,-5,-2.25,-1.5,*69",
+  "expect": "$GPFIX,,,,,,,-05,-2.3,-001.5,*6D",
+  "model": {
+    "probe.x": "-5",
+    "hae": "-2.25",
+    "course": "-1.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): int:2: -5 -> -05 (zeros after the -); dec:1: -2.25*10 = -22.5 exactly, round half away = -23 -> -2.3; dec:1:5: -1.5*10 = -15 -> 1.5 -> 001.5 (5 characters, . counted) -> -001.5. Derived without an engine by a standalone reference program."
+}

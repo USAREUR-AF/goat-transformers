@@ -489,6 +489,22 @@ class SequentialTest(Refusals):
         self.refuse_pack(self.SEQ + "group probe.items count 8\n  kind a\n  kind a\nend\n", "duplicate-kind", 11)
 
 
+class TextWireTest(Refusals):
+    TEXT = HEAD + 'wire text\nstart "$"\nchecksum nmea\n'
+
+    def test_text_locators_give_field_indexes_and_columns(self):
+        pack = gtcheck.load_pack(self.TEXT + "field uid 0:2:3 string\nfield lat 2+1 dm:2:4:NS\n"
+                                 "group probe.items 3 item 2\n  field probe.qty 1 int:3\nend\n", model())
+        col, pair, group = pack.common
+        self.assertEqual((col.fields, col.col, pair.fields, pair.col), ((0,), (2, 3), (2, 1), None))
+        self.assertEqual((group.start, group.item, group.body[0].targs), (3, 2, ("3",)))
+
+    def test_text_rules_are_refused_with_their_line(self):
+        self.refuse_pack(self.TEXT + "field uid 0 string\nfield lat 1 dec:1:21\n", "bad-directive", 10)
+        self.refuse_pack(self.TEXT + "kind a\nwhen 0 =\nfield uid 1 string\n", "bad-directive", 10)
+        self.refuse_pack(self.TEXT + "field probe.qty 1 hms:1\n", "key-type-mismatch", 9)
+
+
 class ConformanceLoadVectorsTest(unittest.TestCase):
     """gtcheck against the load vectors every engine must pass
     (spec/vector-format.md, "Load vectors")."""

@@ -1,0 +1,15 @@
+{
+  "name": "rmc-to-cot-xml",
+  "from": "nmea0183",
+  "to": "cot-xml",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,A*15",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\" time=\"2026-03-15T09:45:12.500Z\" start=\"2026-03-15T09:45:12.500Z\"><point lat=\"48.125\" lon=\"11.125\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"84.4\" speed=\"14.46875\"/></detail></event>",
+  "model": {
+    "@complete": true,
+    "time_ms": "1773567912500",
+    "speed_ms": "14.46875",
+    "course": "84.4"
+  },
+  "source": "constructed",
+  "reference": "packs/cot-xml/pack.def: const version 2.0; time_ms at @time and @start (2026-03-15T09:45:12.500Z); defaults type a-u-X and hae, ce, le 9999999; no uid, how or stale. speed_ms derived as in rmc-to-geojson (14.46875, exact). Derived without an engine by a standalone reference program (Python standard library)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "dm-minutes-60",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4860.00000,N,01107.50000,E,094512.50,A,A*6F",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Transforms rule 3: dm minutes of 60 or more are transform-decode. Derived without an engine by a standalone reference program (Python standard library)."
+}

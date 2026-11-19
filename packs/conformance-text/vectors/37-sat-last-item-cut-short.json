@@ -1,0 +1,13 @@
+{
+  "name": "sat-last-item-cut-short",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPSAT,5,a,1,0.5,b*51",
+  "expect": "$GPSAT,5,a,1,0.5,b,,*51",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.label": "b"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Groups: ceil((6-2)/3) = 2 items, the second with qty and ratio absent; on encode each item is 3 fields long, so the record ends at field 2 + 2*3 - 1 = 7. Derived without an engine by a standalone reference program."
+}

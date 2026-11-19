@@ -1,0 +1,8 @@
+{
+  "name": "wire-text-29-columns-under-delimiter-none-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey ce float m\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey label string -\nkey qty int -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.10.0\ndistribution public\nsource \"probe\"\nuses probe\nwire text\ndelimiter none\nfield uid 0:0:6 string\nfield probe.n 0:6:5 int\nkind a\nwhen 0:11:1 A\nfield lat 0:12:8 dec:4\n"
+}

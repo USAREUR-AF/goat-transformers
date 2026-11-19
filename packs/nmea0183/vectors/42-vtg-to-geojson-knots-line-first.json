@@ -1,0 +1,14 @@
+{
+  "name": "vtg-to-geojson-knots-line-first",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$GPVTG,54.70,T,34.40,M,56.250,N,104.170,K,A*11",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"course\":54.7,\"speed_ms\":28.9375}}",
+  "model": {
+    "@complete": true,
+    "course": "54.7",
+    "speed_ms": "28.9375"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Derived keys ('each module's derive lines in order', a line sets only an absent target): the knots line comes first, 56.25*1852/3600 = 28.9375 exactly; the km/h line would give 28.93611111111111 and does not run. Geometry null (ruling 5 of 0.1.1). Derived without an engine by a standalone reference program (Python standard library)."
+}

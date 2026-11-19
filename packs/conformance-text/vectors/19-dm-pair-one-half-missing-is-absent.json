@@ -1,0 +1,13 @@
+{
+  "name": "dm-pair-one-half-missing-is-absent",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,,01131.0000,E,7,05,545.4,084.4,*2B",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: a pair is absent when either of its fields is absent; field 2 is addressed by the pair, so it is not residue and is written empty. Checksum by a standalone XOR.",
+  "expect": "$GPFIX,123519.50,,,01131.0000,E,7,05,545.4,084.4,*05",
+  "model": {
+    "lon": "11.516666666666667",
+    "probe.n": "7"
+  }
+}

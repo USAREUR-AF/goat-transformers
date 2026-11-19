@@ -1,0 +1,9 @@
+{
+  "name": "float-exponent-refused",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P;u1;1e3;2.5;;",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: an exponent is not accepted. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "dbt-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$SDDBT,40.0,f,12.2,M,6.7,F*02",
+  "expect": "$SDDBT,40.0,f,12.2,M,6.7,F*02",
+  "model": {
+    "@kind": "dbt",
+    "nmea0183.talker": "SD",
+    "nmea0183.dbt_depth_ft": "40",
+    "nmea0183.dbt_depth_m": "12.2",
+    "nmea0183.dbt_depth_fathom": "6.7"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): DBT fields 1-6; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

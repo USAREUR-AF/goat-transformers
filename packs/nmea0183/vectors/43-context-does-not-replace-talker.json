@@ -1,0 +1,17 @@
+{
+  "name": "context-does-not-replace-talker",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,A*15",
+  "context": {
+    "nmea0183.talker": "GN"
+  },
+  "expect": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,A*15",
+  "model": {
+    "@complete": true,
+    "nmea0183.talker": "GP",
+    "speed_ms": "14.46875"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Caller-supplied keys: 'each context key the entity lacks is set from the context'; the decoded GP stands. With a context given, derivation runs (speed_ms set), and rmc maps no speed_ms, so the bytes are unchanged. Derived without an engine by a standalone reference program (Python standard library)."
+}

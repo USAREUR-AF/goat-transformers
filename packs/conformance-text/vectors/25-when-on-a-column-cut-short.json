@@ -1,0 +1,9 @@
+{
+  "name": "when-on-a-column-cut-short",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFI,1*05",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: the column 0:2:3 of GPFI is FI, which equals none of FIX, TIM, SAT. Derived without an engine by a standalone reference program."
+}

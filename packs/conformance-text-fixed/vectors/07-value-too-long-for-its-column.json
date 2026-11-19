@@ -1,0 +1,12 @@
+{
+  "name": "value-too-long-for-its-column",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   0004299999999 WXYZ007",
+  "expect_error": "transform-encode",
+  "model": {
+    "lat": "99999999"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Step 2: dec:4 writes 99999999.0000 (13 characters) into 8. Derived without an engine by a standalone reference program."
+}

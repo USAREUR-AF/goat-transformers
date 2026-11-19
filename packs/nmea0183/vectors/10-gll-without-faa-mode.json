@@ -1,0 +1,13 @@
+{
+  "name": "gll-without-faa-mode",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A*06",
+  "expect": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A*06",
+  "model": {
+    "@kind": "gll",
+    "nmea0183.status": "A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Writing a record step 5: field 7 is empty and its line optional, so it is removed. Derived without an engine by a standalone reference program (Python standard library)."
+}

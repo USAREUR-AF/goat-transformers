@@ -1,0 +1,9 @@
+{
+  "name": "checksum-wrong-before-kind",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPXXX,1*00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Kinds: a record that fails its checksum is malformed-wire, not no-kind; XOR of GPXXX,1 is 52, not 00. Derived without an engine by a standalone reference program."
+}

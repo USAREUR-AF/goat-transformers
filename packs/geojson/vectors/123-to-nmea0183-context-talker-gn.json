@@ -1,0 +1,16 @@
+{
+  "name": "to-nmea0183-context-talker-gn",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.125,48.125]},\"properties\":{\"time_ms\":1773567912500}}",
+  "context": {
+    "nmea0183.talker": "GN"
+  },
+  "expect": "$GNRMC,094512.50,,4807.50000,N,01107.50000,E,,,150326,,*6D",
+  "model": {
+    "@complete": true,
+    "nmea0183.talker": "GN"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Caller-supplied keys: the entity lacks nmea0183.talker, so the context sets GN, which the field writes instead of the default GP; no course or speed, so fields 7 and 8 empty. Derived without an engine by a standalone reference program (Python standard library)."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gll-fewer-fraction-digits-rewritten",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4807.5,N,01107.5,E,094512.5,A*36",
+  "expect": "$GPGLL,4807.50000,N,01107.50000,E,094512.50,A*06",
+  "model": {
+    "@kind": "gll",
+    "lat": "48.125",
+    "lon": "11.125",
+    "nmea0183.utc_s": "35112.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm and hms decode any number of fraction digits; encode writes dm:..:5 and hms:2. Derived without an engine by a standalone reference program (Python standard library)."
+}

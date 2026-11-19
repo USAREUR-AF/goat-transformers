@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-fixed",
+  "from": "geojson",
+  "to": "conformance-text-fixed",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.1173]},\"properties\":{},\"id\":\"g1\"}",
+  "expect": "g1         048.1173",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Step 2: uid padded with spaces to 6, columns 6-10 not written are spaces, dec:4 048.1173 at 11; the record ends at the furthest column written (19). Derived without an engine by a standalone reference program."
+}

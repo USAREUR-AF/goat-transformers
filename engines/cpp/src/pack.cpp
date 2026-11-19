@@ -90,8 +90,13 @@ KeyType transform_yields(Transform t) {
         case Transform::Uscale:
         case Transform::Sscale:
         case Transform::F32:
-        case Transform::F64: return KeyType::Float;
+        case Transform::F64:
+        case Transform::Dec:
+        case Transform::Dm:
+        case Transform::Hms: return KeyType::Float;
         case Transform::Ascii: return KeyType::String;
+        case Transform::IntW:
+        case Transform::HmsDmy: return KeyType::Int;
         case Transform::Bool:
         case Transform::Int:
         case Transform::Iso8601Ms:
@@ -130,6 +135,7 @@ const char* wire_name(Wire w) {
         case Wire::Bits: return "bits";
         case Wire::Protobuf: return "protobuf";
         case Wire::Json: return "json";
+        case Wire::Text: return "text";
     }
     return "?";
 }
@@ -433,6 +439,8 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
         f.table = it->second;
     }
     if (!f.swap && !f.trim && !f.optional) return;
+    // v0.10: `optional` on text marks a trailing field encode may remove.
+    if (p.wire == Wire::Text && !f.swap && !f.trim) return;
     const char* option = f.swap ? "swap" : f.trim ? "trim" : "optional";
     if (p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
@@ -462,6 +470,16 @@ void settle_group(const Pack& p, GroupLine& g) {
         if (mixed)
             throw Error(ErrorKind::BadDirective, p.format, g.locator,
                         where + ": the body of the group '" + g.list + "' mixes '.' with paths");
+    }
+    if (p.wire == Wire::Text) {
+        // v0.10: `group <list> <i> item <n>`; `count` is not allowed.
+        if (g.has_count)
+            throw Error(ErrorKind::BadDirective, p.format, g.locator,
+                        where + ": 'count' is not allowed on a group of wire text");
+        if (!g.has_item || !parse_u32(g.item_text, g.text_item) || g.text_item == 0)
+            throw Error(ErrorKind::BadDirective, p.format, g.locator,
+                        where + ": a group on wire text takes 'item <n>', n from 1");
+        return;
     }
     if (p.wire != Wire::Bits) {
         if (g.has_count)
@@ -704,6 +722,7 @@ Wire locator_wire(const Pack& p, bool in_group) {
 bool scalar_item_wire(Wire w) { return w == Wire::Json || w == Wire::GeoJson || w == Wire::Protobuf; }
 
 void check_field(const Pack& p, const FieldLine& f, bool in_group) {
+    if (p.wire == Wire::Text) return;  // checked by detail::check_text_pack
     const bool is_bits = detail::transform_is_bits(f.transform);
     const bool is_pb = detail::transform_is_protobuf(f.transform);
     bool matches;
@@ -721,6 +740,7 @@ void check_field(const Pack& p, const FieldLine& f, bool in_group) {
 }
 
 void check_when(const Pack& p, const WhenLine& w, bool in_group) {
+    if (p.wire == Wire::Text) return;  // checked by detail::check_text_pack
     const Wire wire = locator_wire(p, in_group);
     bool ok = detail::valid_locator(wire, w.locator);
     if (ok && wire == Wire::GeoJson) {
@@ -734,6 +754,7 @@ void check_when(const Pack& p, const WhenLine& w, bool in_group) {
 }
 
 void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
+    if (p.wire == Wire::Text) return;  // checked by detail::parse_text_locators
     const Wire wire = locator_wire(p, in_group);
     bool ok = false;
     switch (wire) {
@@ -755,6 +776,7 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
         }
         case Wire::Json:
         case Wire::Protobuf: ok = detail::valid_locator(wire, g.locator); break;
+        case Wire::Text: ok = true; break;
     }
     if (!ok)
         throw Error(ErrorKind::InvalidLocator, p.format, g.locator,
@@ -777,6 +799,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     std::set<std::string> kind_names, natives;
     std::unordered_map<std::string, int> table_index;  // table name -> position in p.tables
     std::size_t lineno = 0, pos = 0, bit_order_line = 0, kind_root_line = 0;
+    std::size_t delimiter_line = 0, start_line = 0, checksum_line = 0, text_directive_line = 0;
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
     std::vector<GroupLine*> open;
@@ -857,6 +880,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             else if (t[1] == "bits") p.wire = Wire::Bits;
             else if (t[1] == "protobuf") p.wire = Wire::Protobuf;
             else if (t[1] == "json") p.wire = Wire::Json;
+            else if (t[1] == "text") p.wire = Wire::Text;
             else throw Error(ErrorKind::UnknownWire, p.format, "", where + ": wire '" + t[1] + "'");
         } else if (kw == "root") {
             not_in_group();
@@ -888,6 +912,36 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                    kw == "fx" || kw == "length" || kw == "also") {
             throw Error(ErrorKind::BadDirective, p.format, "",
                         where + ": '" + kw + "' is a line of a sequential layout, and the pack's layout is fixed");
+        } else if (kw == "delimiter" || kw == "start" || kw == "checksum") {
+            // v0.10: each once, before the first `kind`, with a value of its own;
+            // on another wire bad-directive once the file is read.
+            auto bad = [&](const std::string& why) {
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": " + why);
+            };
+            if (t.size() != 2) bad("'" + kw + "' takes one value");
+            if (!p.kinds.empty()) bad("'" + kw + "' after the first 'kind'");
+            std::size_t& seen = kw == "delimiter" ? delimiter_line : kw == "start" ? start_line : checksum_line;
+            if (seen != 0) bad("'" + kw + "' appears twice");
+            seen = lineno;
+            if (text_directive_line == 0) text_directive_line = lineno;
+            const std::string& v = t[1];
+            if (kw == "delimiter") {
+                if (v == "none") {
+                    p.delimiter_none = true;
+                } else {
+                    if (v.size() != 1 || v[0] < 0x21 || v[0] > 0x7E || v[0] == '"')
+                        bad("'delimiter' takes one character from 0x21 to 0x7E other than '\"', or 'none'");
+                    p.delimiter = v[0];
+                }
+            } else if (kw == "start") {
+                if (v.empty()) bad("'start' takes one or more characters");
+                for (char c : v)
+                    if (c < 0x21 || c > 0x7E) bad("'start' takes characters from 0x21 to 0x7E");
+                p.start = v;
+            } else {
+                if (v == "nmea") p.checksum_nmea = true;
+                else if (v != "none") bad("'checksum' is none or nmea, not '" + v + "'");
+            }
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -979,7 +1033,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             f.locator = t[2];
             f.line = lineno;
             std::string terr;
-            if (!detail::parse_transform(t[3], f, terr))
+            // v0.10: a text transform with parameters that are not valid is bad-directive.
+            const int text_tf = detail::parse_text_transform(t[3], f, terr);
+            if (text_tf < 0)
+                throw Error(ErrorKind::BadDirective, p.format, f.locator, where + ": " + terr + " for field '" + f.key + "'");
+            if (text_tf == 0 && !detail::parse_transform(t[3], f, terr))
                 throw Error(ErrorKind::UnknownTransform, p.format, f.locator,
                             where + ": " + terr + " for field '" + f.key + "'");
             // v0.6 options after the transform, in any order.
@@ -1044,6 +1102,21 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         for (const auto& k : p.kinds) check_lists_once(p, k.groups, &common, nullptr);
     }
     if (have_wire) {
+        // v0.10: the text wire's locators, read before the checks that relate them.
+        if (p.wire == Wire::Text) detail::parse_text_locators(p);
+        if (p.wire != Wire::Text) {
+            if (text_directive_line != 0)
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            source + ":" + std::to_string(text_directive_line) +
+                                ": 'delimiter', 'start' and 'checksum' apply to wire text only");
+            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
+                for (const auto& f : fields)
+                    if (detail::transform_is_text_only(f.transform))
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) + ": transform '" +
+                                        transform_name(f.transform) + "' applies to wire text only");
+            });
+        }
         if (kind_root_line != 0 && p.wire != Wire::Xml)
             throw Error(ErrorKind::BadDirective, p.format, "",
                         source + ":" + std::to_string(kind_root_line) + ": 'root' in a kind applies to wire xml only");
@@ -1083,6 +1156,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         each_group(p, [&](GroupLine& g) { settle_group(p, g); });
         for (auto& k : p.kinds) each_group(k, [&](GroupLine& g) { settle_group(p, g); });
         if (p.wire == Wire::Bits) check_bits_groups(p);
+        if (p.wire == Wire::Text) detail::check_text_pack(p);
         check_fields_through_groups(p);
     }
 

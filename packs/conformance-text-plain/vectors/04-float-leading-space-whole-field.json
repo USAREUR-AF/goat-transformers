@@ -1,0 +1,9 @@
+{
+  "name": "float-leading-space-whole-field",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P;u1; 1.5;2.5;;",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: only a column's text is trimmed; float decodes an optional sign then digits. Derived without an engine by a standalone reference program."
+}

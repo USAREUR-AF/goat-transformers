@@ -1,0 +1,9 @@
+{
+  "name": "numeric-column-not-a-number",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   00A42048.1173 WXYZ007",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: int is a sign and digits. Derived without an engine by a standalone reference program."
+}

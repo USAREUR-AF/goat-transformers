@@ -463,6 +463,8 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     auto bad = [&](const std::string& why) {
         throw Error(ErrorKind::BadDirective, p.format, f.locator, where + "'absent " + f.absent_arg + "': " + why);
     };
+    // 0.10 ruling 16: `absent` is not stated on the `text` wire yet.
+    if (wire == Wire::Text) bad("'absent' is not available on the text wire");
     // The values: the quoted empty token is the one value "the empty text".
     std::vector<std::string> values;
     const bool empty_text = f.absent_arg.empty();

@@ -1,0 +1,9 @@
+{
+  "name": "non-ascii-character",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5°,W,A*67",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 2: U+00B0 (degree sign) is outside 0x20 to 0x7E. The checksum is the XOR of the UTF-8 bytes, so only the character is at fault. Derived without an engine by a standalone reference program (Python standard library)."
+}

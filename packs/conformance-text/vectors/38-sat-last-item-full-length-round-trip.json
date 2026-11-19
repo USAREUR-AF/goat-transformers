@@ -1,0 +1,13 @@
+{
+  "name": "sat-last-item-full-length-round-trip",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPSAT,5,a,1,0.5,b,,*51",
+  "expect": "$GPSAT,5,a,1,0.5,b,,*51",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.label": "b"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Groups: each item is n fields long whether or not its keys are present; the record ends at field 7; step 5 does not remove group fields (optional is refused inside a group). Derived without an engine by a standalone reference program."
+}

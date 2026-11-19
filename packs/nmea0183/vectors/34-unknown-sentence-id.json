@@ -1,0 +1,9 @@
+{
+  "name": "unknown-sentence-id",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPXTE,A,A,0.67,L,N*6F",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.5 Decode step 2 and spec/engine-spec.md Version 0.10 (the text wire), Kinds: valid framing and checksum, columns 0:2:3 = XTE match no kind. Derived without an engine by a standalone reference program (Python standard library)."
+}

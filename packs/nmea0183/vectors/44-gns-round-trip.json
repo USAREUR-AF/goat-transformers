@@ -1,0 +1,20 @@
+{
+  "name": "gns-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GNGNS,101112.00,4012.50000,N,07401.25000,W,AN,10,1.10,12.0,-33.5,,*6A",
+  "expect": "$GNGNS,101112.00,4012.50000,N,07401.25000,W,AN,10,1.10,12.0,-33.5,,*6A",
+  "model": {
+    "@kind": "gns",
+    "nmea0183.talker": "GN",
+    "lat": "40.208333333333336",
+    "lon": "-74.02083333333333",
+    "nmea0183.gns_mode": "AN",
+    "nmea0183.sats_used": "10",
+    "nmea0183.alt_msl_m": "12",
+    "nmea0183.geoid_sep_m": "-33.5",
+    "nmea0183.utc_s": "36672"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): GNS fields 1-12; the GGA keys hold the same values here; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

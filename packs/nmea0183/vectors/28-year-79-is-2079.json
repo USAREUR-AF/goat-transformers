@@ -1,0 +1,13 @@
+{
+  "name": "year-79-is-2079",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,235959.99,A,4807.50000,N,01107.50000,E,0.000,0.00,311279,,,A*6C",
+  "expect": "$GPRMC,235959.99,A,4807.50000,N,01107.50000,E,0.000,0.00,311279,,,A*6C",
+  "model": {
+    "@kind": "rmc",
+    "time_ms": "3471292799990"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), hms_dmy: yy 00 to 79 is 20yy; 2079-12-31T23:59:59.990Z = 3471292799990 ms, the last centisecond the transform can write. Derived without an engine by a standalone reference program (Python standard library)."
+}

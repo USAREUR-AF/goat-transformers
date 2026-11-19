@@ -13,6 +13,16 @@ namespace goat_transformers::detail {
 // Returns false with `err` set on an unknown transform or bad arguments.
 bool parse_transform(std::string_view token, FieldLine& f, std::string& err);
 
+// v0.10: the transforms of the text wire that take parameters: `int:<w>`,
+// `dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`, `hms:<f>`, `hms_dmy:<f>`, and the bare
+// names `dec`, `dm`, `hms`, `hms_dmy`. Returns 0 when the token is none of
+// them, 1 when it is one with valid parameters (set in `f`), and -1 with `err`
+// set when its parameters are not valid (bad-directive).
+int parse_text_transform(std::string_view token, FieldLine& f, std::string& err);
+
+// True for the transforms valid only on the text wire.
+bool transform_is_text_only(Transform t);
+
 // A scale factor: a decimal number, or the fraction <num>/<den> of two decimal
 // integers (ruling 1 of 0.5). Returns false with `err` set.
 bool parse_scale_factor(std::string_view text, bool& fraction, double& factor, double& num, double& den,

@@ -1,0 +1,14 @@
+{
+  "name": "negative-numbers-padded-after-the-sign",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   -0042-01.5000 WXYZ-1 ",
+  "expect": "ABC   -0042-01.5000 WXYZ-01",
+  "model": {
+    "probe.n": "-42",
+    "lat": "-1.5",
+    "probe.x": "-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Step 2: padded with 0 after any -; dec:4 -1.5 -> -15000 -> -1.5000 -> -01.5000; int:2 -1 -> -01. Derived without an engine by a standalone reference program."
+}

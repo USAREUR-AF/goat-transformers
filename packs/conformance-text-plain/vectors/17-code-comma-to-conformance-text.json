@@ -1,0 +1,12 @@
+{
+  "name": "code-comma-to-conformance-text",
+  "from": "conformance-text-plain",
+  "to": "conformance-text",
+  "input": "C;A,042",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.s2": "A,"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: text holding the delimiter is transform-encode. Derived without an engine by a standalone reference program."
+}

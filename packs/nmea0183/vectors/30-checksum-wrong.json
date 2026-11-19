@@ -1,0 +1,9 @@
+{
+  "name": "checksum-wrong",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HEHDT,274.07,T*18",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Reading a record step 4: the digits are not the XOR (correct is 19). Derived without an engine by a standalone reference program (Python standard library)."
+}

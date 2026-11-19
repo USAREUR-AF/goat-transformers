@@ -91,7 +91,10 @@ fn main() {
             }
             // no `--set`: no context given
             let context = if pairs.is_empty() { None } else { Some(pairs.as_slice()) };
-            let result = engine.convert_text(&from, &to, input.trim(), context);
+            // a `text` record is taken as it is: its decode steps remove one
+            // line terminator, and its spaces may be characters of a column
+            let input = if engine.wire(&from) == Some(goat_transformers::Wire::Text) { input.as_str() } else { input.trim() };
+            let result = engine.convert_text(&from, &to, input, context);
             match result {
                 Ok(out) => println!("{}", out),
                 Err(e) => {

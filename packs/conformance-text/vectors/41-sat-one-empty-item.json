@@ -1,0 +1,12 @@
+{
+  "name": "sat-one-empty-item",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$XXSAT,5,*73",
+  "expect": "$XXSAT,5,,,*73",
+  "model": {
+    "probe.items.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 7: field 2 empty and last is one item with no keys, and that list writes n = 3 empty fields from field 2. Derived without an engine by a standalone reference program."
+}

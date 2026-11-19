@@ -1,0 +1,14 @@
+{
+  "name": "spaces-in-numeric-columns",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC      42 48.1173 WXYZ  7",
+  "expect": "ABC   00042048.1173 WXYZ007",
+  "model": {
+    "probe.n": "42",
+    "lat": "48.1173",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: leading spaces of a numeric column are removed. Derived without an engine by a standalone reference program."
+}

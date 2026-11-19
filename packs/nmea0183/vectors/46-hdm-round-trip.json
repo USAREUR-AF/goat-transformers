@@ -1,0 +1,14 @@
+{
+  "name": "hdm-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HCHDM,271.00,M*1D",
+  "expect": "$HCHDM,271.00,M*1D",
+  "model": {
+    "@kind": "hdm",
+    "nmea0183.talker": "HC",
+    "nmea0183.heading_mag_deg": "271"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): HDM fields 1-2; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

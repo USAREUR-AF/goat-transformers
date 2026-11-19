@@ -1,0 +1,14 @@
+{
+  "name": "to-nmea0183-gga-position-only",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.125,48.125,600]},\"properties\":{\"callsign\":\"BOAT\"}}",
+  "expect": "$GPGGA,,4807.50000,N,01107.50000,E,,,,,M,,M,,*61",
+  "model": {
+    "lat": "48.125",
+    "lon": "11.125",
+    "hae": "600"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5 Encode step 2: no time_ms, so rmc does not qualify and gga (requires lat lon) does; hae and callsign are not mapped by gga; consts M at 10 and 12; fields 13 and 14 not optional, written empty. Derived without an engine by a standalone reference program (Python standard library)."
+}
