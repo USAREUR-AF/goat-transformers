@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-far-below-the-field-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":-1e30}",
+  "expect_error": "transform-encode"
+}

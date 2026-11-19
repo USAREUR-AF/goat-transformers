@@ -1,0 +1,10 @@
+{
+  "name": "uint1-decode-one-bit-set",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "0c01",
+  "expect": "{\"z\":1}",
+  "model": {
+    "@kind": "uint1"
+  }
+}

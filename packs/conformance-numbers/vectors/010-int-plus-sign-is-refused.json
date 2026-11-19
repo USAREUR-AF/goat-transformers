@@ -1,0 +1,7 @@
+{
+  "name": "int-plus-sign-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"+7\"/>",
+  "expect_error": "transform-decode"
+}

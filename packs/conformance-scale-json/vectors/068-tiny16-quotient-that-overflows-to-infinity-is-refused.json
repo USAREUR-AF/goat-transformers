@@ -1,0 +1,7 @@
+{
+  "name": "tiny16-quotient-that-overflows-to-infinity-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"scaled\":1e300}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "uscale8-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ratio\":255.4}",
+  "expect": "02ff"
+}

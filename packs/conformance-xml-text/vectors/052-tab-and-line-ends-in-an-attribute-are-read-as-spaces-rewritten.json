@@ -1,0 +1,7 @@
+{
+  "name": "tab-and-line-ends-in-an-attribute-are-read-as-spaces-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a\tb\nc\r\nd\re\"/>",
+  "expect": "<e id=\"a b c d e\"/>"
+}

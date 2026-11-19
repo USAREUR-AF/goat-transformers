@@ -1,0 +1,7 @@
+{
+  "name": "float-exponent-with-leading-zeros",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"12.5e0003\"/>",
+  "expect": "<e a=\"12500\"/>"
+}

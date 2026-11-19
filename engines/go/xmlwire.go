@@ -1,11 +1,7 @@
 package goatxf
 
 import (
-	"bytes"
-	"encoding/xml"
-	"errors"
 	"fmt"
-	"io"
 	"strings"
 )
 
@@ -21,152 +17,6 @@ type xnode struct {
 	attrs    []xattr
 	text     strings.Builder
 	children []*xnode
-}
-
-func qname(n xml.Name) string {
-	if n.Space != "" {
-		return n.Space + ":" + n.Local
-	}
-	return n.Local
-}
-
-func isBlank(b []byte) bool { return len(bytes.TrimSpace(b)) == 0 }
-
-// xmlSurrogateRef returns the first numeric character reference of b that
-// names a surrogate code point (U+D800 to U+DFFF), "" when there is none.
-// The decoder refuses every other character XML 1.0 does not allow, and
-// would read this one as U+FFFD. Comments, processing instructions and CDATA
-// sections hold no references and are skipped.
-func xmlSurrogateRef(b []byte) string {
-	skip := func(i int, open, end string) (int, bool) {
-		if !bytes.HasPrefix(b[i:], []byte(open)) {
-			return i, false
-		}
-		j := bytes.Index(b[i+len(open):], []byte(end))
-		if j < 0 {
-			return len(b), true
-		}
-		return i + len(open) + j + len(end), true
-	}
-	for i := 0; i < len(b); {
-		if b[i] == '<' {
-			if j, ok := skip(i, "<!--", "-->"); ok {
-				i = j
-				continue
-			}
-			if j, ok := skip(i, "<![CDATA[", "]]>"); ok {
-				i = j
-				continue
-			}
-			if j, ok := skip(i, "<?", "?>"); ok {
-				i = j
-				continue
-			}
-		}
-		if b[i] != '&' || !bytes.HasPrefix(b[i:], []byte("&#")) {
-			i++
-			continue
-		}
-		// At most the digits of U+10FFFF with leading zeros matter; a longer
-		// run is read until its `;` or a byte that is not a digit.
-		j, base := i+2, 10
-		if j < len(b) && b[j] == 'x' {
-			j, base = j+1, 16
-		}
-		var n uint64
-		k := j
-		for ; k < len(b); k++ {
-			c, d := b[k], uint64(99)
-			switch {
-			case c >= '0' && c <= '9':
-				d = uint64(c - '0')
-			case base == 16 && c >= 'a' && c <= 'f':
-				d = uint64(c-'a') + 10
-			case base == 16 && c >= 'A' && c <= 'F':
-				d = uint64(c-'A') + 10
-			}
-			if d == 99 {
-				break
-			}
-			if n = n*uint64(base) + d; n > 0x10ffff {
-				n = 0x110000
-			}
-		}
-		if k > j && k < len(b) && b[k] == ';' && n >= 0xd800 && n <= 0xdfff {
-			return string(b[i : k+1])
-		}
-		i = k
-	}
-	return ""
-}
-
-// parseXML reads one document. It tolerates a prolog, comments and
-// whitespace outside the root, and checks that end tags match.
-func parseXML(format string, b []byte) (*xnode, error) {
-	bad := func(detail string) error { return &Error{Kind: ErrMalformedWire, Format: format, Detail: detail} }
-	if ref := xmlSurrogateRef(b); ref != "" {
-		return nil, bad("character reference " + ref + " names no character XML 1.0 allows")
-	}
-	// Strict: the five predefined entities and numeric character references
-	// only; a reference to any other entity is an error.
-	dec := xml.NewDecoder(bytes.NewReader(b))
-	dec.Strict = true
-	var root *xnode
-	var stack []*xnode
-	for {
-		tok, err := dec.RawToken()
-		if errors.Is(err, io.EOF) {
-			break
-		}
-		if err != nil {
-			return nil, bad(err.Error())
-		}
-		switch t := tok.(type) {
-		case xml.StartElement:
-			if len(stack) >= maxNesting {
-				return nil, bad(fmt.Sprintf("elements are nested deeper than %d levels", maxNesting))
-			}
-			n := &xnode{name: qname(t.Name)}
-			for _, a := range t.Attr {
-				n.attrs = append(n.attrs, xattr{qname(a.Name), a.Value})
-			}
-			if len(stack) == 0 {
-				if root != nil {
-					return nil, bad("more than one root element")
-				}
-				root = n
-			} else {
-				top := stack[len(stack)-1]
-				top.children = append(top.children, n)
-			}
-			stack = append(stack, n)
-		case xml.EndElement:
-			if len(stack) == 0 || stack[len(stack)-1].name != qname(t.Name) {
-				return nil, bad("unexpected end tag </" + qname(t.Name) + ">")
-			}
-			stack = stack[:len(stack)-1]
-		case xml.CharData:
-			if len(stack) == 0 {
-				if !isBlank(t) {
-					return nil, bad("text outside the root element")
-				}
-				continue
-			}
-			stack[len(stack)-1].text.Write(t)
-		case xml.Directive:
-			// A document type declaration anywhere is refused, so no entity
-			// is ever declared (0.8 ruling 40).
-			return nil, bad("the input holds a document type or markup declaration")
-		}
-	}
-	if len(stack) != 0 {
-		return nil, bad("unclosed element <" + stack[len(stack)-1].name + ">")
-	}
-	// An input with no element is not a document (0.8 ruling 37).
-	if root == nil {
-		return nil, bad("the input holds no element")
-	}
-	return root, nil
 }
 
 // find walks a path of child element names from n, taking the first sibling
@@ -218,12 +68,17 @@ func decodeXML(d *decodeState, b []byte) error {
 			v, ok := n.attr(w.loc.name)
 			return ok && (w.present || v == w.text)
 		}
-		return w.present || n.text.String() == w.text
+		// An element with no character data has no text: a when with a
+		// value, the empty text included, does not hold (ruling 1m of 0.11).
+		t := n.text.String()
+		return w.present || (t != "" && t == w.text)
 	})
 	if err != nil {
 		return err
 	}
-	d.xmlScope(lay, root)
+	if err := d.xmlScope(lay, root); err != nil {
+		return err
+	}
 	// Residue is the unmapped attributes of the root element (0.1.1 ruling 6);
 	// unmapped child elements and their attributes are not carried.
 	for _, a := range root.attrs {
@@ -240,7 +95,7 @@ func decodeXML(d *decodeState, b []byte) error {
 // its locator, under the first element matched by the names before it, one
 // item per element, in order. The list is present when at least one item
 // occurs. Unmapped content of an item is dropped.
-func (d *decodeState) xmlScope(lay *layout, node *xnode) {
+func (d *decodeState) xmlScope(lay *layout, node *xnode) error {
 	for _, ln := range lay.lines {
 		switch {
 		case ln.f != nil:
@@ -255,8 +110,10 @@ func (d *decodeState) xmlScope(lay *layout, node *xnode) {
 				}
 				continue
 			}
-			// The text is compared untrimmed (0.9 ruling 14).
-			if text := n.text.String(); !f.sentinelText(text) && strings.TrimSpace(text) != "" {
+			// The text is kept exactly; an element with no character data
+			// has no text, so no sentinel is compared with it (ruling 1m of
+			// 0.11).
+			if text := n.text.String(); text != "" && !f.sentinelText(text) {
 				d.field(f, text)
 			}
 		case ln.g != nil:
@@ -271,7 +128,10 @@ func (d *decodeState) xmlScope(lay *layout, node *xnode) {
 				if c.name != names[len(names)-1] {
 					continue
 				}
-				it, _ := d.item(func() error { d.xmlScope(g.body, c); return nil })
+				it, err := d.item(func() error { return d.xmlScope(g.body, c) })
+				if err != nil {
+					return err
+				}
 				items = append(items, it)
 			}
 			if len(items) > 0 {
@@ -279,6 +139,7 @@ func (d *decodeState) xmlScope(lay *layout, node *xnode) {
 			}
 		}
 	}
+	return nil
 }
 
 func (n *xnode) child(name string) *xnode {
@@ -340,7 +201,9 @@ func encodeXML(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error) {
 		place(root, l, r.Value, false)
 	}
 	var b strings.Builder
-	render(&b, root)
+	if err := render(&b, root); err != nil {
+		return nil, &Error{Kind: ErrTransformEncode, Format: p.Format, Detail: err.Error()}
+	}
 	return []byte(b.String()), nil
 }
 
@@ -401,32 +264,54 @@ func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[st
 	return nil
 }
 
-func render(b *strings.Builder, n *xnode) {
+// render writes an element (rulings 1a to 1e of 0.11). A character XML 1.0
+// cannot hold, in an attribute value or in text, is transform-encode.
+func render(b *strings.Builder, n *xnode) error {
 	b.WriteByte('<')
 	b.WriteString(n.name)
 	for _, a := range n.attrs {
 		b.WriteByte(' ')
 		b.WriteString(a.name)
 		b.WriteString(`="`)
-		escAttr(b, a.value)
+		if err := escAttr(b, a.value); err != nil {
+			return fmt.Errorf("attribute %s of <%s>: %v", a.name, n.name, err)
+		}
 		b.WriteByte('"')
 	}
 	if n.text.Len() == 0 && len(n.children) == 0 {
 		b.WriteString("/>")
-		return
+		return nil
 	}
 	b.WriteByte('>')
-	escText(b, n.text.String())
+	if err := escText(b, n.text.String()); err != nil {
+		return fmt.Errorf("text of <%s>: %v", n.name, err)
+	}
 	for _, c := range n.children {
-		render(b, c)
+		if err := render(b, c); err != nil {
+			return err
+		}
 	}
 	b.WriteString("</")
 	b.WriteString(n.name)
 	b.WriteByte('>')
+	return nil
 }
 
-func escAttr(b *strings.Builder, s string) {
+// writable refuses a character XML 1.0 cannot hold (ruling 1d of 0.11):
+// below U+0020 other than tab, line feed and carriage return, U+FFFE and
+// U+FFFF.
+func writable(r rune) error {
+	if (r < 0x20 && r != '\t' && r != '\n' && r != '\r') || r == 0xfffe || r == 0xffff {
+		return fmt.Errorf("character U+%04X cannot be written in XML 1.0", r)
+	}
+	return nil
+}
+
+func escAttr(b *strings.Builder, s string) error {
 	for _, r := range s {
+		if err := writable(r); err != nil {
+			return err
+		}
 		switch r {
 		case '&':
 			b.WriteString("&amp;")
@@ -437,19 +322,23 @@ func escAttr(b *strings.Builder, s string) {
 		case '"':
 			b.WriteString("&quot;")
 		case '\t':
-			b.WriteString("&#x9;")
+			b.WriteString("&#9;")
 		case '\n':
-			b.WriteString("&#xA;")
+			b.WriteString("&#10;")
 		case '\r':
-			b.WriteString("&#xD;")
+			b.WriteString("&#13;")
 		default:
 			b.WriteRune(r)
 		}
 	}
+	return nil
 }
 
-func escText(b *strings.Builder, s string) {
+func escText(b *strings.Builder, s string) error {
 	for _, r := range s {
+		if err := writable(r); err != nil {
+			return err
+		}
 		switch r {
 		case '&':
 			b.WriteString("&amp;")
@@ -458,9 +347,10 @@ func escText(b *strings.Builder, s string) {
 		case '>':
 			b.WriteString("&gt;")
 		case '\r':
-			b.WriteString("&#xD;")
+			b.WriteString("&#13;")
 		default:
 			b.WriteRune(r)
 		}
 	}
+	return nil
 }

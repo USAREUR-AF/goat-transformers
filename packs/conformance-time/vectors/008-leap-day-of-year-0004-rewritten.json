@@ -1,0 +1,7 @@
+{
+  "name": "leap-day-of-year-0004-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"0004-02-29T00:00:00Z\"/>",
+  "expect": "<e t=\"0004-02-29T00:00:00.000Z\"/>"
+}

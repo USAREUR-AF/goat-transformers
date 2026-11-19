@@ -1,0 +1,17 @@
+{
+  "name": "09-lists-and-item-keys-the-other-way",
+  "from": "conformance-cap-lists-b",
+  "to": "conformance-cap-lists",
+  "grade": "partial",
+  "carried": [
+    "probe.items[]",
+    "probe.items[].probe.label",
+    "probe.items[].probe.subs[]",
+    "probe.items[].probe.subs[].probe.tag",
+    "uid"
+  ],
+  "dropped": [
+    "probe.items[].probe.ratio",
+    "probe.val"
+  ]
+}

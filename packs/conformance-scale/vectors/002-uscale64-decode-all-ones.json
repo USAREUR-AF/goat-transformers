@@ -1,0 +1,10 @@
+{
+  "name": "uscale64-decode-all-ones",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "04ffffffffffffffff",
+  "expect": "{\"lon\":18446744073709552000}",
+  "model": {
+    "@kind": "uscale64"
+  }
+}

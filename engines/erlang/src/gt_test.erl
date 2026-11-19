@@ -10,13 +10,19 @@
 %%     (decode, context, derivations), floats within 1e-9 relative.
 %%     "@absent" lists keys, item paths and list names the entity must not
 %%     have; an entry that is also a member of `model` makes the vector fail;
-%%   - every load vector under PacksDir/conformance/load-vectors/*.json.
+%%     `max_items` sets the limit on list items for the vector, a `model`
+%%     value its grammar refuses makes the vector fail (ruling 2c of 0.11),
+%%     and a vector whose format is not loaded is run (unknown-format);
+%%   - every load vector under PacksDir/conformance/load-vectors/*.json,
+%%     with `pack` or `packs`;
+%%   - every capability vector under PacksDir/conformance/capability-vectors.
 %%   - the named loader: one pack loaded alone with the modules it needs.
 %%   - malformed inputs: every vector input cut short and with single bytes
 %%     replaced converts or fails with a named conversion error.
 %% Every failure is printed as "FAIL <pack>/<vector>: <why>"; then the counts
-%% "vectors: N/M passed", "load vectors: N/M passed" and "malformed inputs:
-%% N/M passed". Exits non-zero on any failure.
+%% "vectors: N/M passed", "load vectors: N/M passed", "capability vectors:
+%% N/M passed" and "malformed inputs: N/M passed". Exits non-zero on any
+%% failure.
 -module(gt_test).
 -export([main/1, run/1, run/2]).
 
@@ -39,15 +45,17 @@ run(PacksDir, ModelsDir) ->
     Engine = load_packs(PacksDir, ModelsDir),
     {Pass, Fail} = run_conversion(Engine, PacksDir),
     {LPass, LFail} = run_load_vectors(PacksDir),
+    {CPass, CFail} = run_capability_vectors(Engine, PacksDir),
     NFail = run_named_load(PacksDir, ModelsDir),
     {MPass0, MFail0} = run_malformed(Engine, PacksDir),
     {RPass, RFail} = run_ruling_cases(Engine),
     {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
     io:format("load vectors: ~p/~p passed~n", [LPass, LPass + LFail]),
+    io:format("capability vectors: ~p/~p passed~n", [CPass, CPass + CFail]),
     io:format("malformed inputs: ~p/~p passed~n", [MPass, MPass + MFail]),
     io:format("elapsed: ~.1f s~n", [(erlang:monotonic_time(millisecond) - T0) / 1000]),
-    case Fail + LFail + NFail + MFail of
+    case Fail + LFail + CFail + NFail + MFail of
         0 -> halt(0);
         N ->
             io:format("FAILED: ~p vector(s)~n", [N]),
@@ -129,7 +137,10 @@ run_vector_file(Engine, File) ->
         {error, filename:basename(File), {unreadable_vector, C, R}}
     end.
 
-run_vector(Engine, Obj) ->
+%% A vector whose format is not loaded is run all the same: it pins
+%% `unknown-format` (spec/vector-format.md, Load vectors). `max_items` sets
+%% the limit on list items for the vector (ruling 7 of 0.11).
+run_vector(Engine0, Obj) ->
     G = fun(K) ->
                 case gt_json:get(Obj, K) of
                     {ok, V} -> V;
@@ -139,15 +150,20 @@ run_vector(Engine, Obj) ->
     From = G(<<"from">>),
     To = G(<<"to">>),
     Input = G(<<"input">>),
-    Packs = gt_engine:packs(Engine),
     Context = case G(<<"context">>) of
                   undefined -> none;
                   {object, Pairs} -> Pairs
               end,
-    case {maps:is_key(From, Packs), maps:is_key(To, Packs)} of
-        {false, _} -> {error, {pack_not_loaded, From}};
-        {_, false} -> {error, {pack_not_loaded, To}};
-        {true, true} ->
+    case G(<<"max_items">>) of
+        undefined -> run_vector(Engine0, G, From, To, Input, Context);
+        N when is_integer(N), N >= 0 ->
+            run_vector(gt_engine:set_max_items(Engine0, N), G, From, To, Input, Context);
+        Other -> {error, {invalid_vector, max_items, Other}}
+    end.
+
+run_vector(Engine, G, From, To, Input, Context) ->
+    case model_valid(Engine, G(<<"model">>)) of
+        ok ->
             Convert = fun() -> gt_engine:convert(Engine, From, To, Input, Context) end,
             Conv = case {G(<<"expect">>), G(<<"expect_error">>)} of
                        {Expect, undefined} when is_binary(Expect) ->
@@ -160,7 +176,53 @@ run_vector(Engine, Obj) ->
             case Conv of
                 ok -> check_model(Engine, From, Input, Context, G(<<"model">>));
                 Err -> Err
-            end
+            end;
+        Invalid -> Invalid
+    end.
+
+%% Ruling 2c of 0.11: a `model` member named by a model key or an item path
+%% `<list>[<i>].<key>` is read as that key's declared type (2a for int, 2b
+%% for float); `<list>.#` is an unsigned decimal integer or `absent`; the
+%% `@` members are not numbers. A value its grammar refuses makes the vector
+%% invalid.
+model_valid(_Engine, undefined) -> ok;
+model_valid(Engine, {object, Pairs}) ->
+    Bad = [{K, V} || {K, V} <- Pairs, not model_value_ok(Engine, K, V)],
+    case Bad of
+        [] -> ok;
+        _ -> {error, {invalid_vector, model, Bad}}
+    end;
+model_valid(_Engine, Other) -> {error, {invalid_vector, model, Other}}.
+
+model_value_ok(_Engine, <<"@", _/binary>>, _V) -> true;
+model_value_ok(Engine, Key, V) ->
+    Last = lists:last(binary:split(Key, <<"].">>, [global])),
+    Size = byte_size(Key) - 2,
+    case {Key, Last} of
+        {_, <<"@kind">>} -> true;
+        {<<_:Size/binary, ".#">>, _} ->
+            V =:= <<"absent">> orelse gt_num:uint_text(V) =/= error;
+        _ when is_binary(V) ->
+            case key_type(Engine, Last) of
+                int -> gt_num:int_text(V) =/= error;
+                float -> gt_num:num_text(V) =/= error;
+                _ -> true
+            end;
+        _ -> false
+    end.
+
+key_type(Engine, Key) ->
+    {Mod, Name} = case binary:split(Key, <<".">>) of
+                      [N] -> {<<"core">>, N};
+                      [M, N] -> {M, N}
+                  end,
+    case maps:find(Mod, gt_engine:modules(Engine)) of
+        {ok, Module} ->
+            case gt_model:key_type(Module, Name) of
+                {ok, T} -> T;
+                error -> undefined
+            end;
+        error -> undefined
     end.
 
 check_convert(Convert, Expect) ->
@@ -306,7 +368,7 @@ lookup(Key, #{model := Model, lists := Lists}) ->
 %% Expected model values are given in string form. A float compares within
 %% 1e-9; on a completed entity within 1e-9 relative, or equal.
 model_eq(Actual, Expected, Complete) when is_float(Actual), is_binary(Expected) ->
-    try gt_num:dec_to_float(Expected) of
+    try gt_num:read_as(float, Expected) of
         Want when Complete ->
             Actual == Want orelse
                 abs(Actual - Want) < 1.0e-9 * max(abs(Actual), abs(Want));
@@ -345,7 +407,11 @@ run_load_vector(Path) ->
         {ok, Bin} = file:read_file(Path),
         Obj = gt_json:parse(Bin),
         {ok, {array, Models}} = gt_json:get(Obj, <<"models">>),
-        {ok, Pack} = gt_json:get(Obj, <<"pack">>),
+        %% `packs` (Version 0.11): pack texts loaded in order into one engine
+        Packs = case {gt_json:get(Obj, <<"pack">>), gt_json:get(Obj, <<"packs">>)} of
+                    {{ok, Pack}, absent} when is_binary(Pack) -> [Pack];
+                    {absent, {ok, {array, Ps}}} -> Ps
+                end,
         Expect = case gt_json:get(Obj, <<"expect_error">>) of
                      {ok, K} -> binary_to_list(K);
                      absent -> none
@@ -356,7 +422,7 @@ run_load_vector(Path) ->
              end,
         Got = try
                   E1 = lists:foldl(fun(M, E) -> gt_engine:load_model(E, M) end, E0, Models),
-                  _ = gt_engine:load_pack(E1, Pack),
+                  _ = lists:foldl(fun(Pk, E) -> gt_engine:load_pack(E, Pk) end, E1, Packs),
                   none
               catch error:{load_error, Kind, Msg} ->
                   %% the message must begin with the kind and a colon
@@ -368,6 +434,43 @@ run_load_vector(Path) ->
         case Got =:= Expect of
             true -> ok;
             false -> {error, {load, [{expect_error, Expect}, {got, Got}]}}
+        end
+    catch Class:Reason ->
+        {error, {exception, Class, Reason}}
+    end.
+
+%% ===================================================================
+%% capability vectors (spec/vector-format.md, Capability vectors)
+%% ===================================================================
+%% capability(from, to) over the loaded packs: the grade and both lists,
+%% entry for entry and in order.
+run_capability_vectors(Engine, PacksDir) ->
+    Dir = filename:join([PacksDir, "conformance", "capability-vectors"]),
+    Files = case file:list_dir(Dir) of
+                {ok, Fs} -> [F || F <- lists:sort(Fs), lists:suffix(".json", F)];
+                {error, _} -> []
+            end,
+    lists:foldl(
+      fun(F, {P, Fl}) ->
+              case run_capability_vector(Engine, filename:join(Dir, F)) of
+                  ok -> {P + 1, Fl};
+                  {error, Why} ->
+                      io:format("FAIL conformance/capability-vectors/~s: ~ts~n", [F, why(Why)]),
+                      {P, Fl + 1}
+              end
+      end, {0, 0}, Files).
+
+run_capability_vector(Engine, Path) ->
+    try
+        {ok, Bin} = file:read_file(Path),
+        Obj = gt_json:parse(Bin),
+        Get = fun(K) -> {ok, V} = gt_json:get(Obj, K), V end,
+        {array, Carried} = Get(<<"carried">>),
+        {array, Dropped} = Get(<<"dropped">>),
+        Want = {binary_to_atom(Get(<<"grade">>)), Carried, Dropped},
+        case gt_engine:capability(Engine, Get(<<"from">>), Get(<<"to">>)) of
+            Want -> ok;
+            Got -> {error, {capability, [{expect, Want}, {got, Got}]}}
         end
     catch Class:Reason ->
         {error, {exception, Class, Reason}}

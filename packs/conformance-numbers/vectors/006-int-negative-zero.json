@@ -1,0 +1,10 @@
+{
+  "name": "int-negative-zero",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"-0\"/>",
+  "expect": "<e n=\"0\"/>",
+  "model": {
+    "probe.n": "0"
+  }
+}

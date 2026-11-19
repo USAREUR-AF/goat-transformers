@@ -1,0 +1,8 @@
+{
+  "name": "434-missing-wire-comes-before-missing-format",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "version 0.11.0\ndistribution public\nsource \"probe\"\nfield uid @id string\nwire xml\nroot item\n",
+  "expect_error": "missing-wire"
+}

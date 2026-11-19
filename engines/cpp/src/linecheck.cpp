@@ -1,0 +1,352 @@
+// The line checks of 0.11 ruling 5b. A pack or a module is read twice: this
+// pass runs the checks of every line in the order of 5b, then the parse of
+// pack.cpp or sequential.cpp runs every other check. A check the parse makes
+// as it reads a line is therefore made after every line has passed these.
+#include "linecheck.hpp"
+
+#include <set>
+#include <string>
+#include <vector>
+
+#include "codecs.hpp"
+#include "sequential.hpp"
+#include "transforms.hpp"
+#include "util.hpp"
+
+namespace goat_transformers::detail {
+
+ErrorKind tokenize_kind(const std::string& err) {
+    return err.compare(0, 12, "unterminated") == 0 ? ErrorKind::UnterminatedQuote : ErrorKind::BadDirective;
+}
+
+namespace {
+
+const std::set<std::string>& pack_directives() {
+    static const std::set<std::string> s{"format", "version", "distribution", "source", "uses",   "wire",
+                                         "root",   "field",   "when",         "const",  "kind",   "requires",
+                                         "default", "map",    "typemap",      "group",  "end",    "word_bytes",
+                                         "bit_order", "layout", "also",       "pad",    "align",  "presence",
+                                         "if",     "opt",     "chain",        "fx",     "length", "delimiter",
+                                         "start",  "checksum"};
+    return s;
+}
+
+// The lines that stand after the `wire` line (5b).
+const std::set<std::string>& after_wire() {
+    static const std::set<std::string> s{"root", "field", "when",  "const", "group", "end",   "word_bytes",
+                                         "bit_order", "layout", "also", "pad", "align", "presence", "if",
+                                         "opt",  "chain", "fx",    "length"};
+    return s;
+}
+
+// The directives that take exactly one argument (5e).
+const std::set<std::string>& one_argument() {
+    static const std::set<std::string> s{"format",     "version",   "distribution", "source", "uses",
+                                         "wire",       "root",      "kind",         "word_bytes",
+                                         "bit_order",  "layout",    "pad",          "align",  "delimiter",
+                                         "start",      "checksum"};
+    return s;
+}
+
+bool digits_only(const std::string& s) {
+    return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
+}
+
+struct LineChecker {
+    std::string source;
+    std::string format;  // for messages, once the `format` line is read
+    std::size_t lineno = 0;
+    std::string where() const { return source + ":" + std::to_string(lineno); }
+    [[noreturn]] void fail(ErrorKind k, const std::string& what, const std::string& locator = "") const {
+        throw Error(k, format, locator, where() + ": " + what);
+    }
+};
+
+// 5a: the form of a locator on a `field`, `when` or `const` line. `in_group`:
+// inside a group, where a geojson pack uses the json locators and `.` is the
+// item. Cases earlier versions name stay for the checks after the file.
+void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_group, bool is_field,
+                   const std::string& loc) {
+    auto bad = [&](const std::string& why) { c.fail(ErrorKind::BadLocator, why, loc); };
+    Wire w = in_group && wire == Wire::GeoJson ? Wire::Json : wire;
+    switch (w) {
+        case Wire::Xml: {
+            XmlLocator x;
+            if (!parse_xml_locator(loc, x)) bad("not an xml locator");
+            if (x.kind == XmlLocator::Kind::Element) bad("an xml locator of this line ends in @name or #text");
+            return;
+        }
+        case Wire::Json: {
+            if (loc == ".") return;  // the item itself; outside a group, bad-directive later
+            std::vector<std::string> path;
+            if (!parse_json_locator(loc, path)) bad("a json locator with an empty member name");
+            return;
+        }
+        case Wire::GeoJson: {
+            if (loc == ".") return;
+            GeoLocator g;
+            if (!parse_geo_locator(loc, g)) bad("not a geojson locator");
+            if (!is_field && g.kind != GeoLocator::Kind::Property && g.kind != GeoLocator::Kind::Member)
+                bad("a geojson 'when' or 'const' locator names a property or a member");
+            return;
+        }
+        case Wire::Protobuf: {
+            if (loc == ".") return;
+            ProtobufLocator pb;
+            if (!parse_protobuf_locator(loc, pb)) bad("not a protobuf locator");
+            return;
+        }
+        case Wire::Bits: {
+            if (sequential) {
+                // A bit length; a <word>:<pos>:<len> locator is bad-directive later.
+                if (loc.find(':') != std::string::npos) return;
+                if (!digits_only(loc)) bad("the locator of a sequential line is a bit length");
+                std::uint64_t n = 0;
+                if (parse_unsigned_text(loc, n) && n == 0) bad("a bit length of 0");
+                return;
+            }
+            // A bit length for a locator is a line of a sequential layout: bad-directive later.
+            if (digits_only(loc)) return;
+            BitsLocator b;
+            if (!parse_bits_locator(loc, b)) bad("not <word>:<pos>:<len> of three unsigned decimal integers");
+            if (b.len == 0) bad("a bit length of 0");
+            return;
+        }
+        case Wire::Text: {
+            TextLocator t;
+            if (!parse_text_locator(loc, t))
+                c.fail(ErrorKind::BadDirective, "'" + loc + "' is not a locator of wire text", loc);
+            return;
+        }
+    }
+}
+
+// 5a: the form of a `group` line's locator, a line check like every other
+// locator (5b step 8): an empty step on xml, an empty member name on json and
+// geojson, and the steps of protobuf. The forms a group locator may end in
+// are not ruled and are left to the checks after the file, as is the bits
+// `<word>:<pos>` and the text index.
+void check_group_locator(const LineChecker& c, Wire wire, const std::string& loc) {
+    auto bad = [&](const std::string& why) { c.fail(ErrorKind::BadLocator, why, loc); };
+    auto empty_step = [&](char sep) {
+        if (loc.empty()) return true;
+        std::size_t st = 0;
+        for (;;) {
+            const std::size_t e = loc.find(sep, st);
+            if (e == st || (e == std::string::npos && st == loc.size())) return true;
+            if (e == std::string::npos) return false;
+            st = e + 1;
+        }
+    };
+    switch (wire) {
+        case Wire::Xml:
+            if (empty_step('/')) bad("an xml group locator with an empty step");
+            return;
+        case Wire::Json:
+        case Wire::GeoJson:
+            if (empty_step('.')) bad("a group locator with an empty member name");
+            return;
+        case Wire::Protobuf: {
+            ProtobufLocator pb;
+            if (!parse_protobuf_locator(loc, pb)) bad("not a protobuf locator");
+            return;
+        }
+        default: return;
+    }
+}
+
+}  // namespace
+
+void check_pack_lines(const std::string& text, const std::string& source) {
+    LineChecker c;
+    c.source = source;
+    const bool sequential = is_sequential_pack(text);
+    bool have_format = false, have_version = false, have_wire = false, have_distribution = false;
+    bool listed_before_layout = false;  // a line that `layout sequential` stands before
+    Wire wire = Wire::Xml;
+    int group_depth = 0;  // fixed layout: the groups open at this line
+    std::size_t pos = 0;
+    while (pos <= text.size()) {
+        const std::size_t nl = text.find('\n', pos);
+        const std::string line = text.substr(pos, nl == std::string::npos ? std::string::npos : nl - pos);
+        pos = nl == std::string::npos ? text.size() + 1 : nl + 1;
+        ++c.lineno;
+
+        // 1. unterminated-quote
+        std::vector<std::string> t;
+        std::string err;
+        if (!tokenize_line(line, t, err)) c.fail(tokenize_kind(err), err);
+        if (t.empty()) continue;
+        const std::string& kw = t[0];
+        const std::size_t nargs = t.size() - 1;
+
+        // 2. unknown-directive
+        if (!pack_directives().count(kw)) c.fail(ErrorKind::UnknownDirective, "directive '" + kw + "'");
+
+        // 3. the number of arguments
+        auto count = [&](bool ok, const std::string& what) {
+            if (!ok)
+                c.fail(ErrorKind::BadDirective,
+                       "'" + kw + "' takes " + what + ", got " + std::to_string(nargs) + " argument(s)");
+        };
+        if (one_argument().count(kw)) count(nargs == 1, "exactly one argument");
+        else if (kw == "field") count(nargs >= 3, "a key, a locator and a transform");
+        else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
+        else if (kw == "map") count(nargs == 3, "three arguments");
+        else if (kw == "typemap") count(nargs == 2, "two arguments");
+        else if (kw == "end") count(nargs == 0, "no argument");
+        else if (kw == "requires") count(nargs >= 1, "at least one argument");
+
+        // 4. missing-wire
+        if (after_wire().count(kw) && !have_wire)
+            c.fail(ErrorKind::MissingWire, "'" + kw + "' stands before the 'wire' line");
+        if (kw == "layout" && t[1] == "sequential" && listed_before_layout)
+            c.fail(ErrorKind::BadDirective, "'layout sequential' stands after a line it must stand before");
+        if (after_wire().count(kw) && kw != "layout") listed_before_layout = true;
+
+        // 5. a repeated header line
+        auto once = [&](bool& seen) {
+            if (seen) c.fail(ErrorKind::BadDirective, "a second '" + kw + "' line");
+            seen = true;
+        };
+        if (kw == "format") {
+            once(have_format);
+            c.format = t[1];
+        } else if (kw == "version") {
+            once(have_version);
+        } else if (kw == "distribution") {
+            once(have_distribution);
+            // 6. the distribution value
+            if (t[1] != "public" && t[1] != "controlled")
+                c.fail(ErrorKind::BadDirective, "distribution '" + t[1] + "' is not public or controlled");
+        } else if (kw == "wire") {
+            once(have_wire);
+            // 6. the wire value
+            if (t[1] == "xml") wire = Wire::Xml;
+            else if (t[1] == "geojson") wire = Wire::GeoJson;
+            else if (t[1] == "bits") wire = Wire::Bits;
+            else if (t[1] == "protobuf") wire = Wire::Protobuf;
+            else if (t[1] == "json") wire = Wire::Json;
+            else if (t[1] == "text") wire = Wire::Text;
+            else c.fail(ErrorKind::UnknownWire, "wire '" + t[1] + "'");
+        }
+
+        if (kw == "group") {
+            // 8. the locator form
+            if (!sequential && nargs >= 2) check_group_locator(c, wire, t[2]);
+            if (!sequential) ++group_depth;
+            continue;
+        }
+        if (kw == "end") {
+            if (group_depth > 0) --group_depth;
+            continue;
+        }
+        if (kw == "when" || kw == "const") {
+            // 8. the locator form
+            check_locator(c, wire, sequential, group_depth > 0, false, t[1]);
+            continue;
+        }
+        if (kw != "field") continue;
+
+        // 7. the transform's name and its parameters
+        FieldLine f;
+        f.key = t[1];
+        f.locator = t[2];
+        f.line = c.lineno;
+        const int tf = parse_any_transform(t[3], f, err);
+        if (tf == -2) c.fail(ErrorKind::UnknownTransform, err + " for field '" + f.key + "'", f.locator);
+        if (tf == -1) c.fail(ErrorKind::BadDirective, err + " for field '" + f.key + "'", f.locator);
+        // 8. the locator form
+        check_locator(c, wire, sequential, group_depth > 0, true, f.locator);
+        // 9. the field options
+        bool swap = false, trim = false, optional = false;
+        for (std::size_t k = 4; k < t.size(); ++k) {
+            if (t[k] == "via") {
+                if (k + 1 >= t.size() || t[k + 1].empty() || !f.via.empty())
+                    c.fail(ErrorKind::BadDirective, "'via' takes one table name, once", f.locator);
+                f.via = t[++k];
+                continue;
+            }
+            if (t[k] == "absent") {
+                if (k + 1 >= t.size() || f.has_absent)
+                    c.fail(ErrorKind::BadDirective, "'absent' takes one argument, once", f.locator);
+                f.has_absent = true;
+                f.absent_arg = t[++k];
+                continue;
+            }
+            bool* flag = t[k] == "swap" ? &swap : t[k] == "trim" ? &trim : t[k] == "optional" ? &optional : nullptr;
+            if (!flag || *flag)
+                c.fail(ErrorKind::BadDirective, "'" + t[k] + "' is not a field option, or is given twice", f.locator);
+            *flag = true;
+        }
+        // 10. the values of an `absent` option, except on a bits field longer than 64 bits (4d)
+        if (!f.has_absent) continue;
+        std::uint32_t len = 0;
+        if (wire == Wire::Bits) {
+            std::uint64_t n = 0;
+            BitsLocator b;
+            if (sequential && parse_unsigned_text(f.locator, n)) len = n > 0xFFFFFFFFull ? 0xFFFFFFFFu : static_cast<std::uint32_t>(n);
+            else if (!sequential && parse_bits_locator(f.locator, b)) len = b.len;
+            if (len > 64) continue;
+        }
+        Pack p;
+        p.format = c.format;
+        p.source = source;
+        p.wire = wire;
+        const bool coordinate = wire == Wire::GeoJson && group_depth == 0 && f.locator.compare(0, 9, "geometry.") == 0;
+        resolve_absent(p, wire, f, len, coordinate);
+    }
+    if (!have_format) throw Error(ErrorKind::MissingFormat, "", "", source + ": the pack has no 'format' line");
+    if (!have_version) throw Error(ErrorKind::MissingVersion, c.format, "", source + ": the pack has no 'version' line");
+    if (!have_wire) throw Error(ErrorKind::MissingWire, c.format, "", source + ": the pack has no 'wire' line");
+}
+
+void check_module_lines(const std::string& text, const std::string& origin) {
+    LineChecker c;
+    c.source = origin;
+    static const std::set<std::string> directives{"module", "version", "distribution", "source",
+                                                  "uses",   "key",     "list",         "derive"};
+    bool have_module = false, have_version = false, have_distribution = false;
+    std::size_t pos = 0;
+    while (pos <= text.size()) {
+        const std::size_t nl = text.find('\n', pos);
+        const std::string line = text.substr(pos, nl == std::string::npos ? std::string::npos : nl - pos);
+        pos = nl == std::string::npos ? text.size() + 1 : nl + 1;
+        ++c.lineno;
+        std::vector<std::string> t;
+        std::string err;
+        if (!tokenize_line(line, t, err)) c.fail(tokenize_kind(err), err);
+        if (t.empty()) continue;
+        const std::string& kw = t[0];
+        const std::size_t nargs = t.size() - 1;
+        if (!directives.count(kw)) c.fail(ErrorKind::UnknownDirective, "directive '" + kw + "'");
+        auto count = [&](bool ok, const std::string& what) {
+            if (!ok)
+                c.fail(ErrorKind::BadDirective,
+                       "'" + kw + "' takes " + what + ", got " + std::to_string(nargs) + " argument(s)");
+        };
+        if (kw == "module" || kw == "version" || kw == "distribution" || kw == "source" || kw == "uses")
+            count(nargs == 1, "exactly one argument");
+        else if (kw == "key") count(nargs == 3 || nargs == 4, "three or four arguments");
+        else if (kw == "list") count(nargs == 1 || nargs == 2, "one or two arguments");
+        auto once = [&](bool& seen) {
+            if (seen) c.fail(ErrorKind::BadDirective, "a second '" + kw + "' line");
+            seen = true;
+        };
+        if (kw == "module") {
+            once(have_module);
+        } else if (kw == "version") {
+            once(have_version);
+        } else if (kw == "distribution") {
+            once(have_distribution);
+            if (t[1] != "public" && t[1] != "controlled")
+                c.fail(ErrorKind::BadDirective, "distribution '" + t[1] + "' is not public or controlled");
+        }
+    }
+    // missing-module and missing-version come after the other causes of a
+    // module line, which the parse checks once this pass is done (5b).
+    (void)have_module;
+    (void)have_version;
+}
+
+}  // namespace goat_transformers::detail

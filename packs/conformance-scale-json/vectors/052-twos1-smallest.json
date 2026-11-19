@@ -1,0 +1,7 @@
+{
+  "name": "twos1-smallest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"y\":-1}",
+  "expect": "0b01"
+}

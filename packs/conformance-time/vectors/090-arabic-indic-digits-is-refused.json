@@ -1,0 +1,7 @@
+{
+  "name": "arabic-indic-digits-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"٢٠٢٤-01-01T00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

@@ -148,6 +148,15 @@ func parseModule(text []byte, source string) (*Module, error) {
 		declared[name] = line
 		return nil
 	}
+	// late holds the first failure of a module line that is not a line
+	// check: it is reported after the file is read, before missing-module
+	// (ruling 5b of 0.11).
+	var late error
+	lateErr := func(err error) {
+		if late == nil {
+			late = err
+		}
+	}
 	sc := bufio.NewScanner(bytes.NewReader(text))
 	sc.Buffer(make([]byte, 0, 64*1024), 1<<20)
 	n := 0
@@ -155,7 +164,7 @@ func parseModule(text []byte, source string) (*Module, error) {
 		n++
 		toks, err := tokenize(sc.Text())
 		if err != nil {
-			return nil, perr(ErrBadDirective, n, "%v", err)
+			return nil, perr(ErrUnterminatedQuote, n, "%v", err)
 		}
 		if len(toks) == 0 {
 			continue
@@ -169,13 +178,15 @@ func parseModule(text []byte, source string) (*Module, error) {
 			}
 			l := ModuleList{Name: args[0], Line: n}
 			if l.Name == "" || strings.Contains(l.Name, ".") {
-				return nil, perr(ErrBadDirective, n, "list name %q must be non-empty and contain no '.'", l.Name)
+				lateErr(perr(ErrBadDirective, n, "list name %q must be non-empty and contain no '.'", l.Name))
+				continue
 			}
 			if len(args) == 2 {
 				l.Meaning = args[1]
 			}
 			if err := declare(l.Name, n); err != nil {
-				return nil, err
+				lateErr(err)
+				continue
 			}
 			m.Lists = append(m.Lists, l)
 		case "module", "version", "distribution":
@@ -189,7 +200,8 @@ func parseModule(text []byte, source string) (*Module, error) {
 			switch kw {
 			case "module":
 				if args[0] == "" || strings.Contains(args[0], ".") {
-					return nil, perr(ErrBadDirective, n, "module name %q must be non-empty and contain no '.'", args[0])
+					lateErr(perr(ErrBadDirective, n, "module name %q must be non-empty and contain no '.'", args[0]))
+					continue
 				}
 				m.Name = args[0]
 			case "version":
@@ -212,7 +224,8 @@ func parseModule(text []byte, source string) (*Module, error) {
 				return nil, perr(ErrBadDirective, n, "uses takes 1 argument(s), got %d", len(args))
 			}
 			if args[0] == "" || strings.Contains(args[0], ".") {
-				return nil, perr(ErrBadDirective, n, "module name %q must be non-empty and contain no '.'", args[0])
+				lateErr(perr(ErrBadDirective, n, "module name %q must be non-empty and contain no '.'", args[0]))
+				continue
 			}
 			m.Uses = append(m.Uses, args[0])
 		case "key":
@@ -221,7 +234,8 @@ func parseModule(text []byte, source string) (*Module, error) {
 			}
 			k := ModuleKey{Name: args[0], Unit: args[2], Line: n}
 			if k.Name == "" || strings.Contains(k.Name, ".") {
-				return nil, perr(ErrBadDirective, n, "key name %q must be non-empty and contain no '.'", k.Name)
+				lateErr(perr(ErrBadDirective, n, "key name %q must be non-empty and contain no '.'", k.Name))
+				continue
 			}
 			switch args[1] {
 			case "string":
@@ -231,13 +245,15 @@ func parseModule(text []byte, source string) (*Module, error) {
 			case "int":
 				k.Type = KindInt
 			default:
-				return nil, perr(ErrBadDirective, n, "key %s: type must be string, float or int, got %q", k.Name, args[1])
+				lateErr(perr(ErrBadDirective, n, "key %s: type must be string, float or int, got %q", k.Name, args[1]))
+				continue
 			}
 			if len(args) == 4 {
 				k.Meaning = args[3]
 			}
 			if err := declare(k.Name, n); err != nil {
-				return nil, err
+				lateErr(err)
+				continue
 			}
 			m.Keys = append(m.Keys, k)
 		case "derive":
@@ -247,7 +263,8 @@ func parseModule(text []byte, source string) (*Module, error) {
 			}
 			d := Derive{Target: args[0], Function: args[1], Args: args[2:], Line: n}
 			if err := parseDerive(&d); err != nil {
-				return nil, perr(ErrBadDirective, n, "derive %s: %v", d.Target, err)
+				lateErr(perr(ErrBadDirective, n, "derive %s: %v", d.Target, err))
+				continue
 			}
 			m.Derives = append(m.Derives, d)
 		default:
@@ -263,14 +280,22 @@ func parseModule(text []byte, source string) (*Module, error) {
 	for i := range m.Lists {
 		m.lists[m.Lists[i].Name] = &m.Lists[i]
 	}
+	// After the line checks: missing-module, missing-version, then the
+	// order of 0.8 ruling 29 (ruling 5b of 0.11).
+	if late != nil {
+		return nil, late
+	}
+	if m.Name == "" {
+		return nil, perr(ErrMissingModule, 0, "module has no module line")
+	}
+	if m.Version == "" {
+		return nil, perr(ErrMissingVersion, 0, "module has no version line")
+	}
 	if m.Distribution == "" {
 		return nil, perr(ErrMissingDistribution, 0, "module has no distribution line")
 	}
 	if len(m.Sources) == 0 {
 		return nil, perr(ErrMissingSource, 0, "module has no source line")
-	}
-	if m.Name == "" {
-		return nil, perr(ErrBadDirective, 0, "missing module directive")
 	}
 	return m, nil
 }

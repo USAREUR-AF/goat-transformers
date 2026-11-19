@@ -425,7 +425,7 @@ public final class Engine {
     public void add(Pack p) {
         checkAgainstModel(p);
         if (packs.containsKey(p.format)) {
-            throw new GtException(GtException.Code.BAD_PACK, p.format, null, "format loaded twice");
+            throw new GtException(GtException.Code.DUPLICATE_FORMAT, p.format, null, "a pack with format " + p.format + " is already loaded");
         }
         Codec<?> codec;
         switch (p.wire) {
@@ -435,7 +435,7 @@ public final class Engine {
             case PROTOBUF: codec = new ProtobufCodec(p); break;
             case JSON: codec = new JsonCodec(p); break;
             case TEXT: codec = new TextCodec(p); break;
-            default: throw new GtException(GtException.Code.BAD_PACK, p.format, null, "no codec for wire " + p.wire);
+            default: throw new GtException(GtException.Code.BAD_DIRECTIVE, p.format, null, "no codec for wire " + p.wire);
         }
         packs.put(p.format, p);
         codecs.put(p.format, codec);
@@ -458,7 +458,44 @@ public final class Engine {
         return packs.get(format).modelKeys();
     }
 
-    public Entity decode(String format, String text) { return codec(format).decode(text); }
+    public Entity decode(String format, String text) { return codec(format).decode(text, maxItems); }
+
+    private long maxItems = Codec.DEFAULT_MAX_ITEMS;
+
+    /** The limit on list items of one decode (ruling 7 of 0.11): 100,000 unless set. */
+    public long maxItems() { return maxItems; }
+
+    /** Set the limit on list items of one decode, counted over every list at every level; 0 refuses any item. */
+    public void setMaxItems(long limit) {
+        if (limit < 0) throw new IllegalArgumentException("the limit on list items is negative: " + limit);
+        maxItems = limit;
+    }
+
+    /** The capability report of one ordered pair of formats (ruling 6 of 0.11). */
+    public static final class Capability {
+        /** {@code full}, {@code partial} or {@code none}. */
+        public final String grade;
+        /** The entries of {@code model_keys(from)} that {@code model_keys(to)} also has, in the order of the first. */
+        public final List<String> carried;
+        /** The other entries of {@code model_keys(from)}, in its order. */
+        public final List<String> dropped;
+
+        Capability(String grade, List<String> carried, List<String> dropped) {
+            this.grade = grade;
+            this.carried = Collections.unmodifiableList(carried);
+            this.dropped = Collections.unmodifiableList(dropped);
+        }
+    }
+
+    /** {@code capability(from, to)}, computed from the two packs alone; a format not loaded is {@code unknown-format}. */
+    public Capability capability(String from, String to) {
+        List<String> source = modelKeys(from);
+        java.util.Set<String> target = new java.util.HashSet<>(modelKeys(to));
+        List<String> carried = new ArrayList<>(), dropped = new ArrayList<>();
+        for (String k : source) (target.contains(k) ? carried : dropped).add(k);
+        String grade = carried.isEmpty() ? "none" : dropped.isEmpty() ? "full" : "partial";
+        return new Capability(grade, carried, dropped);
+    }
 
     public String encode(String format, Entity e) { return codec(format).encode(e); }
 
@@ -470,6 +507,7 @@ public final class Engine {
      * two middle steps are skipped, so a same-format round trip stays byte-exact.
      */
     public String convert(String from, String to, String text, Map<String, String> context) {
+        codec(from);   // from, then to, before the input is read (ruling 5 of 0.11)
         Codec<?> target = codec(to);
         Entity e = decode(from, text);
         if (!from.equals(to)) e.clearKind();

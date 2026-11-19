@@ -22,7 +22,15 @@
 %% ?MAX_DEPTH levels, the root element being level 1 (ruling 35 of 0.8). An
 %% input with no element is malformed (ruling 37).
 parse(Cs) when is_list(Cs) -> parse(unicode:characters_to_binary(Cs));
-parse(Bin) when is_binary(Bin) ->
+parse(Bin0) when is_binary(Bin0) ->
+    %% one byte order mark at the very start is skipped (ruling 1g of 0.11);
+    %% then every CR LF and every CR alone is read as LF (1h)
+    Bin1 = case Bin0 of
+               <<16#EF, 16#BB, 16#BF, R0/binary>> -> R0;
+               _ -> Bin0
+           end,
+    Bin = binary:replace(binary:replace(Bin1, <<"\r\n">>, <<"\n">>, [global]),
+                         <<"\r">>, <<"\n">>, [global]),
     {Elem, Rest} = parse_elem(skip_misc(Bin), 1),
     case skip_misc(Rest) of
         <<>> -> Elem;
@@ -84,7 +92,19 @@ parse_attrs(Bin, Acc) ->
             case R3 of
                 <<Q, R4/binary>> when Q =:= $"; Q =:= $' ->
                     {Val, R5} = split_at(R4, <<Q>>, unterminated_attribute_value),
-                    parse_attrs(R5, [{Name, decode_entities(Val)} | Acc]);
+                    %% `<` in a value is refused; a literal tab or line feed
+                    %% is read as a space, one written as a reference is kept
+                    %% (rulings 1i and 1o of 0.11); a name given twice is refused
+                    case binary:match(Val, <<"<">>) of
+                        nomatch -> ok;
+                        _ -> bad(less_than_in_an_attribute_value)
+                    end,
+                    case lists:keymember(Name, 1, Acc) of
+                        true -> bad(attribute_given_twice);
+                        false -> ok
+                    end,
+                    Spaced = binary:replace(Val, [<<"\t">>, <<"\n">>], <<" ">>, [global]),
+                    parse_attrs(R5, [{Name, decode_entities(Spaced)} | Acc]);
                 _ -> bad(attribute_value_without_quotes)
             end
     end.
@@ -120,22 +140,19 @@ parse_content(Bin, Name, Attrs, ChAcc, TxtAcc, Level) ->
             end
     end.
 
-%% Direct text content: every character-data run of the element, joined.
-%% Whitespace alone is no text.
+%% Direct text content: every character-data run of the element, joined,
+%% kept exactly; whitespace alone is text. An element with no character data
+%% has none (ruling 1m of 0.11).
 text([]) -> undefined;
 text(Acc) ->
     S = iolist_to_binary([case P of
                               {raw, Raw} -> Raw;
                               _ -> decode_entities(P)
                           end || P <- lists:reverse(Acc)]),
-    case all_ws(S) of
-        true -> undefined;
-        false -> S
+    case S of
+        <<>> -> undefined;
+        _ -> S
     end.
-
-all_ws(<<>>) -> true;
-all_ws(<<C, R/binary>>) when ?WS(C) -> all_ws(R);
-all_ws(_) -> false.
 
 %% A name runs to whitespace, `/`, `>` or `=`; it has at least one byte and
 %% the input does not end inside it -> {Name, Rest}.
@@ -263,7 +280,10 @@ put_kv(KVs, K, V) ->
 
 %% ---- serialising (canonical) -> iodata ----
 
-serialize({element, Name, Attrs, [], undefined}) ->
+%% A string XML 1.0 cannot hold (a character below U+0020 other than tab,
+%% line feed and carriage return; U+FFFE; U+FFFF) raises
+%% error:{xml_unwritable, Why} (ruling 1d of 0.11).
+serialize({element, Name, Attrs, [], T}) when T =:= undefined; T =:= <<>> ->
     [$<, Name, ser_attrs(Attrs), "/>"];
 serialize({element, Name, Attrs, Children, Text}) ->
     [$<, Name, ser_attrs(Attrs), $>,
@@ -271,13 +291,36 @@ serialize({element, Name, Attrs, Children, Text}) ->
      "</", Name, $>].
 
 ser_text(undefined) -> [];
-ser_text(T) -> escape(T).
+ser_text(T) -> writable(T), escape_text(T).
 
 ser_attrs(Attrs) ->
-    [[$\s, Name, "=\"", escape(Val), $"] || {Name, Val} <- Attrs].
+    [[$\s, Name, "=\"", (writable(Val)), escape_attr(Val), $"] || {Name, Val} <- Attrs].
 
-escape(Bin) ->
-    case binary:match(Bin, [<<"&">>, <<"<">>, <<">">>, <<"\"">>]) of
+writable(Bin) ->
+    case binary:match(Bin, unwritable()) of
+        nomatch -> [];
+        _ -> erlang:error({xml_unwritable, Bin})
+    end.
+
+unwritable() ->
+    [<<C>> || C <- lists:seq(0, 16#1F), C =/= $\t, C =/= $\n, C =/= $\r]
+        ++ [<<16#FFFE/utf8>>, <<16#FFFF/utf8>>].
+
+%% Attribute values (1a): & < > " tab LF CR as references.
+escape_attr(Bin) ->
+    case binary:match(Bin, [<<"&">>, <<"<">>, <<">">>, <<"\"">>, <<"\t">>, <<"\n">>, <<"\r">>]) of
+        nomatch -> Bin;
+        _ -> << <<(esc_attr(C))/binary>> || <<C>> <= Bin >>
+    end.
+
+esc_attr($") -> <<"&quot;">>;
+esc_attr($\t) -> <<"&#9;">>;
+esc_attr($\n) -> <<"&#10;">>;
+esc_attr(C) -> esc(C).
+
+%% Text content (1b): & < > and CR; tab, LF and both quotes as themselves.
+escape_text(Bin) ->
+    case binary:match(Bin, [<<"&">>, <<"<">>, <<">">>, <<"\r">>]) of
         nomatch -> Bin;
         _ -> << <<(esc(C))/binary>> || <<C>> <= Bin >>
     end.
@@ -285,5 +328,5 @@ escape(Bin) ->
 esc($&) -> <<"&amp;">>;
 esc($<) -> <<"&lt;">>;
 esc($>) -> <<"&gt;">>;
-esc($") -> <<"&quot;">>;
+esc($\r) -> <<"&#13;">>;
 esc(C)  -> <<C>>.

@@ -219,6 +219,8 @@ static void json_skip(json *j) {
 typedef struct {
     text from, to, input, expect, expect_error;
     text context; /* "key=value\n" lines; bytes NULL: the vector has no context */
+    int has_max_items; /* the vector sets the limit on list items (ruling 7 of 0.11) */
+    uint64_t max_items;
 } vector;
 
 static void vector_free(vector *v) {
@@ -282,6 +284,17 @@ static vector read_vector(const char *source, const char *file) {
         if (member && member->bytes) json_stop(&j, "a member appears twice");
         if (member) *member = json_string(&j);
         else if (strcmp(name.bytes, "context") == 0) v.context = context_text(&j);
+        else if (strcmp(name.bytes, "max_items") == 0) {
+            /* an integer of 0 or more */
+            if (*j.at < '0' || *j.at > '9') json_stop(&j, "`max_items` is an integer of 0 or more");
+            uint64_t n = 0;
+            while (*j.at >= '0' && *j.at <= '9') {
+                if (n > (UINT64_MAX - 9) / 10) json_stop(&j, "`max_items` is too large");
+                n = n * 10 + (uint64_t)(*j.at++ - '0');
+            }
+            v.has_max_items = 1;
+            v.max_items = n;
+        }
         else json_skip(&j);
         free(name.bytes);
     } while (json_take(&j, ','));
@@ -289,13 +302,23 @@ static vector read_vector(const char *source, const char *file) {
     return v;
 }
 
+/* The limit on list items when a vector does not set one. */
+#define DEFAULT_MAX_ITEMS 100000
+
 /* Run one vector. Returns 1 when it passes; prints why when it does not. */
-static int run_vector(const gt_engine *e, const char *rel, const vector *v) {
+static int run_vector(gt_engine *e, const char *rel, const vector *v) {
     if (!v->from.bytes || !v->to.bytes || !v->input.bytes || (!v->expect.bytes == !v->expect_error.bytes)) {
         fprintf(stderr, "%s: needs from, to, input, and one of expect and expect_error\n", rel);
         return 0;
     }
     gt_buf out = {0};
+    /* the limit on list items for this vector; absent: the default */
+    if (gt_engine_set_max_items(e, v->has_max_items ? v->max_items : DEFAULT_MAX_ITEMS, &out) != GT_OK) {
+        fprintf(stderr, "%s: cannot set the limit on list items: %s\n", rel, buf_text(&out));
+        gt_buf_free(&out);
+        return 0;
+    }
+    gt_buf_free(&out);
     int32_t status = gt_convert(e, (const uint8_t *)v->from.bytes, v->from.len,
                                 (const uint8_t *)v->to.bytes, v->to.len,
                                 (const uint8_t *)v->input.bytes, v->input.len,

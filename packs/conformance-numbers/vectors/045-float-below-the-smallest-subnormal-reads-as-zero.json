@@ -1,0 +1,7 @@
+{
+  "name": "float-below-the-smallest-subnormal-reads-as-zero",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1e-400\"/>",
+  "expect": "<e a=\"0\"/>"
+}

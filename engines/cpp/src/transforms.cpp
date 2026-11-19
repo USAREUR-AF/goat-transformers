@@ -60,35 +60,48 @@ Value Value::of_int(std::int64_t v) {
 
 namespace detail {
 
-namespace {
-bool parse_decimal_integer(std::string_view s, double& out) {
-    std::size_t i = 0;
-    if (i < s.size() && (s[i] == '-' || s[i] == '+')) ++i;
-    if (i >= s.size()) return false;
-    for (std::size_t k = i; k < s.size(); ++k)
-        if (s[k] < '0' || s[k] > '9') return false;
-    return parse_double(s, out);
-}
-
-}  // namespace
-
 bool parse_scale_factor(std::string_view factor, bool& fraction, double& value, double& num, double& den,
-                        std::string& err) {
+                        std::string& err, bool transform) {
     std::size_t slash = factor.find('/');
     if (slash != std::string_view::npos) {
-        if (!parse_decimal_integer(factor.substr(0, slash), num) ||
-            !parse_decimal_integer(factor.substr(slash + 1), den)) {
-            err = "scale fraction is not <num>/<den> of two decimal integers";
-            return false;
-        }
-        if (den == 0.0) {
-            err = "scale fraction has a zero denominator";
-            return false;
+        if (transform) {
+            // 0.11 ruling 4d: two unsigned decimal integers (2c), neither zero.
+            std::uint64_t n = 0, d = 0;
+            if (!parse_unsigned_text(factor.substr(0, slash), n) || !parse_unsigned_text(factor.substr(slash + 1), d)) {
+                err = "scale fraction is not <num>/<den> of two unsigned decimal integers";
+                return false;
+            }
+            if (n == 0 || d == 0) {
+                err = "scale fraction has a numerator or a denominator of zero";
+                return false;
+            }
+            num = static_cast<double>(n);
+            den = static_cast<double>(d);
+        } else {
+            // The `scale` derive function (0.11 ruling 2c): <num> integer text
+            // (2a), <den> an unsigned decimal integer that is not zero.
+            std::int64_t n = 0;
+            std::uint64_t d = 0;
+            if (!parse_int_text(factor.substr(0, slash), n) || !parse_unsigned_text(factor.substr(slash + 1), d)) {
+                err = "scale fraction is not <num>/<den> of integer text and an unsigned decimal integer";
+                return false;
+            }
+            if (d == 0) {
+                err = "scale fraction has a zero denominator";
+                return false;
+            }
+            num = static_cast<double>(n);
+            den = static_cast<double>(d);
         }
         fraction = true;
     } else {
-        if (factor.empty() || !parse_double(factor, value)) {
-            err = "scale factor is not a decimal number";
+        // Number text (0.11 ruling 2b); a transform's factor is not zero (4d).
+        if (!parse_number_text(factor, value)) {
+            err = "scale factor is not number text";
+            return false;
+        }
+        if (transform && value == 0.0) {
+            err = "scale factor reads as zero";
             return false;
         }
         fraction = false;
@@ -97,7 +110,7 @@ bool parse_scale_factor(std::string_view factor, bool& fraction, double& value, 
 }
 
 namespace {
-// uscale / sscale arguments: <factor>[:<offset>], factor a decimal or <num>/<den>.
+// uscale / sscale arguments: <factor>[:<offset>], factor number text or <num>/<den>.
 bool parse_scale_args(std::string_view args, FieldLine& f, std::string& err) {
     std::string_view factor = args, offset;
     bool have_offset = false;
@@ -107,19 +120,23 @@ bool parse_scale_args(std::string_view args, FieldLine& f, std::string& err) {
         offset = args.substr(colon + 1);
         have_offset = true;
     }
-    if (!parse_scale_factor(factor, f.scale_fraction, f.scale_factor, f.scale_num, f.scale_den, err)) return false;
+    if (!parse_scale_factor(factor, f.scale_fraction, f.scale_factor, f.scale_num, f.scale_den, err, true))
+        return false;
     f.scale_offset = 0.0;
-    if (have_offset && (offset.empty() || !parse_double(offset, f.scale_offset))) {
-        err = "scale offset is not a decimal number";
+    if (have_offset && !parse_number_text(offset, f.scale_offset)) {
+        err = "scale offset is not number text";
         return false;
     }
     return true;
 }
 }  // namespace
 
-bool parse_transform(std::string_view token, FieldLine& f, std::string& err) {
+int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) {
     f.scale_maxpos = 0.0;
     f.scale_range = 0.0;
+    const std::size_t colon = token.find(':');
+    const std::string_view name = token.substr(0, colon);
+    const bool has_params = colon != std::string_view::npos;
     static const struct {
         const char* name;
         Transform t;
@@ -131,42 +148,58 @@ bool parse_transform(std::string_view token, FieldLine& f, std::string& err) {
                   {"pfloat", Transform::Pfloat},   {"bool", Transform::Bool},
                   {"f32", Transform::F32},         {"f64", Transform::F64},
                   {"ascii", Transform::Ascii}};
+    // The text-wire transforms with parameters (v0.10): `int:<w>`, `dec`, `dm`, `hms`, `hms_dmy`.
+    const int text_tf = parse_text_transform(token, f, err);
+    if (text_tf != 0) return text_tf > 0 ? 0 : -1;
     for (const auto& e : kPlain)
-        if (token == e.name) {
+        if (name == e.name) {
+            if (has_params) {
+                err = "transform '" + std::string(name) + "' takes no parameter";
+                return -1;
+            }
             f.transform = e.t;
-            return true;
+            return 0;
         }
-    static const std::string_view kLin = "linscale:";
-    if (token.size() > kLin.size() && token.substr(0, kLin.size()) == kLin) {
-        std::string_view args = token.substr(kLin.size());
-        std::size_t colon = args.find(':');
-        if (colon == std::string_view::npos) {
-            err = "linscale needs <maxpos>:<range>";
-            return false;
-        }
-        std::string mp(args.substr(0, colon));
-        std::string rg(args.substr(colon + 1));
-        double mpv, rgv;
-        if (mp.empty() || rg.empty() || !parse_double(mp, mpv) || !parse_double(rg, rgv)) {
-            err = "linscale arguments are not decimals";
-            return false;
-        }
-        if (!(mpv > 0.0) || !(rgv > 0.0)) {
-            err = "linscale maxpos and range must be positive";
-            return false;
-        }
+    if (name == "linscale") {
+        // 0.11 ruling 4d: exactly <maxpos>:<range>; maxpos an unsigned decimal
+        // integer of at least 1, range number text that does not read as zero.
         f.transform = Transform::Linscale;
-        f.scale_maxpos = mpv;
-        f.scale_range = rgv;
-        return true;
+        const std::string_view args = has_params ? token.substr(colon + 1) : std::string_view();
+        const std::size_t c2 = args.find(':');
+        std::uint64_t mp = 0;
+        double rg = 0;
+        if (!has_params || c2 == std::string_view::npos || args.find(':', c2 + 1) != std::string_view::npos) {
+            err = "linscale takes exactly <maxpos>:<range>";
+            return -1;
+        }
+        if (!parse_unsigned_text(args.substr(0, c2), mp) || mp < 1) {
+            err = "the <maxpos> of linscale is not an unsigned decimal integer of at least 1";
+            return -1;
+        }
+        if (!parse_number_text(args.substr(c2 + 1), rg) || rg == 0.0) {
+            err = "the <range> of linscale is not number text other than zero";
+            return -1;
+        }
+        f.scale_maxpos = static_cast<double>(mp);
+        f.scale_range = rg;
+        return 0;
     }
-    static const std::string_view kU = "uscale:", kS = "sscale:";
-    if (token.size() > kU.size() && (token.substr(0, kU.size()) == kU || token.substr(0, kS.size()) == kS)) {
-        f.transform = token[0] == 'u' ? Transform::Uscale : Transform::Sscale;
-        return parse_scale_args(token.substr(kU.size()), f, err);
+    if (name == "uscale" || name == "sscale") {
+        f.transform = name == "uscale" ? Transform::Uscale : Transform::Sscale;
+        if (!has_params) {
+            err = std::string(name) + " takes a factor";
+            return -1;
+        }
+        const std::string_view args = token.substr(colon + 1);
+        const std::size_t c2 = args.find(':');
+        if (c2 != std::string_view::npos && args.find(':', c2 + 1) != std::string_view::npos) {
+            err = std::string(name) + " takes a factor and an optional offset";
+            return -1;
+        }
+        return parse_scale_args(args, f, err) ? 0 : -1;
     }
     err = "unknown transform '" + std::string(token) + "'";
-    return false;
+    return -2;
 }
 
 namespace {
@@ -270,17 +303,36 @@ int protobuf_wire_type(Transform t) {
     }
 }
 
-Value decode_value(Transform t, const std::string& text) {
+Value decode_json_number(Transform t, const std::string& text) {
     switch (t) {
-        case Transform::String: return Value::of_string(text);
         case Transform::Float: {
             double d;
-            if (!parse_double(text, d)) throw std::invalid_argument("not a decimal number: \"" + text + "\"");
+            if (!parse_number_text(text, d))
+                throw std::invalid_argument("the number " + text + " has no finite nearest double");
             return Value::of_float(d);
         }
         case Transform::Int: {
             std::int64_t v;
-            if (!parse_int(text, v)) throw std::invalid_argument("not an integer: \"" + text + "\"");
+            if (!json_exact_int(text, v))
+                throw std::invalid_argument("the number " + text + " is not an integer within 64 bits");
+            return Value::of_int(v);
+        }
+        default: return decode_value(t, text);
+    }
+}
+
+Value decode_value(Transform t, const std::string& text) {
+    switch (t) {
+        case Transform::String: return Value::of_string(text);
+        // 0.11 ruling 2c: number text (2b) and integer text (2a), nothing trimmed.
+        case Transform::Float: {
+            double d;
+            if (!parse_number_text(text, d)) throw std::invalid_argument("not number text: \"" + text + "\"");
+            return Value::of_float(d);
+        }
+        case Transform::Int: {
+            std::int64_t v;
+            if (!parse_int_text(text, v)) throw std::invalid_argument("not integer text: \"" + text + "\"");
             return Value::of_int(v);
         }
         case Transform::Iso8601Ms: {
@@ -356,9 +408,10 @@ double scale_decode(const FieldLine& f, double v) {
     double x = f.scale_fraction ? v * f.scale_num / f.scale_den : v * f.scale_factor;
     return x + f.scale_offset;
 }
+// The quotient before rounding (0.11 ruling 4).
 double scale_encode(const FieldLine& f, double x) {
     double d = x - f.scale_offset;
-    return std::round(f.scale_fraction ? d * f.scale_den / f.scale_num : d / f.scale_factor);
+    return f.scale_fraction ? d * f.scale_den / f.scale_num : d / f.scale_factor;
 }
 
 // A model float is always finite: infinity and not-a-number on the wire are refused.
@@ -410,32 +463,50 @@ Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len
 
 std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_t len) {
     const std::uint64_t mask = low_mask(len);
+    // 0.11 ruling 4b: a value outside the field's range is refused, never
+    // narrowed. `round` is half away from zero, exact for every double (4a).
+    auto unsigned_fits = [&](double r) { return r >= 0.0 && r < std::ldexp(1.0, static_cast<int>(len)); };
+    auto signed_fits = [&](double r) {
+        const double half = std::ldexp(1.0, static_cast<int>(len) - 1);
+        return r >= -half && r < half;
+    };
+    auto refuse = [&](const std::string& what) -> std::invalid_argument {
+        return std::invalid_argument("value outside the range of " + what + " " + std::to_string(len) + "-bit field");
+    };
     switch (f.transform) {
-        case Transform::Uint:
-        case Transform::Twos:
-            return static_cast<std::uint64_t>(model_int(v)) & mask;
+        case Transform::Uint: {
+            const std::int64_t n = model_int(v);
+            // 64 bits: every model integer, as its two's-complement pattern (ruling 2 of 0.5).
+            if (len < 64 && (n < 0 || static_cast<std::uint64_t>(n) > mask)) throw refuse("an unsigned");
+            return static_cast<std::uint64_t>(n) & mask;
+        }
+        case Transform::Twos: {
+            const std::int64_t n = model_int(v);
+            if (len < 64) {
+                const std::int64_t lo = -(std::int64_t{1} << (len - 1)), hi = (std::int64_t{1} << (len - 1)) - 1;
+                if (n < lo || n > hi) throw refuse("a signed");
+            }
+            return static_cast<std::uint64_t>(n) & mask;
+        }
         case Transform::Linscale: {
-            double x = model_double(v);
-            double scaled = x / f.scale_range * f.scale_maxpos;
-            // llround of a value outside 64 bits is not defined.
-            if (!std::isfinite(scaled) || scaled < -9223372036854775808.0 || scaled >= 9223372036854775808.0)
-                throw std::invalid_argument("linscale value out of range");
-            std::int64_t r = static_cast<std::int64_t>(std::llround(scaled));
-            return static_cast<std::uint64_t>(r) & mask;
+            const double q = model_double(v) / f.scale_range * f.scale_maxpos;
+            if (!std::isfinite(q)) throw std::invalid_argument("the scaled value is not finite");
+            const double r = std::round(q);
+            if (!signed_fits(r)) throw refuse("a signed");
+            return static_cast<std::uint64_t>(static_cast<std::int64_t>(r)) & mask;
         }
         case Transform::Uscale: {
-            double r = scale_encode(f, model_double(v));
-            if (!std::isfinite(r) || r < 0.0 || r >= std::ldexp(1.0, static_cast<int>(len)))
-                throw std::invalid_argument("value outside the range of an unsigned " + std::to_string(len) +
-                                            "-bit field");
+            const double q = scale_encode(f, model_double(v));
+            if (!std::isfinite(q)) throw std::invalid_argument("the scaled value is not finite");
+            const double r = std::round(q);
+            if (!unsigned_fits(r)) throw refuse("an unsigned");
             return static_cast<std::uint64_t>(r) & mask;
         }
         case Transform::Sscale: {
-            double r = scale_encode(f, model_double(v));
-            const double half = std::ldexp(1.0, static_cast<int>(len) - 1);
-            if (!std::isfinite(r) || r < -half || r >= half)
-                throw std::invalid_argument("value outside the range of a signed " + std::to_string(len) +
-                                            "-bit field");
+            const double q = scale_encode(f, model_double(v));
+            if (!std::isfinite(q)) throw std::invalid_argument("the scaled value is not finite");
+            const double r = std::round(q);
+            if (!signed_fits(r)) throw refuse("a signed");
             return static_cast<std::uint64_t>(static_cast<std::int64_t>(r)) & mask;
         }
         case Transform::F32: {

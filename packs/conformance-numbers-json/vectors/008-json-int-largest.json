@@ -1,0 +1,10 @@
+{
+  "name": "json-int-largest",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":9223372036854775807}",
+  "expect": "{\"n\":9223372036854775807}",
+  "model": {
+    "probe.n": "9223372036854775807"
+  }
+}

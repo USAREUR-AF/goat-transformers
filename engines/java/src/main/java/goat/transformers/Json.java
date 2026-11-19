@@ -57,7 +57,8 @@ public final class Json {
         boolean allowDuplicates;
         Reader(String s) {
             this.s = s;
-            this.pos = (s.length() > 0 && s.charAt(0) == '﻿') ? 1 : 0;
+            // a byte order mark at the start is not JSON (ruling 2e of 0.11): it fails as any other character does
+            this.pos = 0;
         }
 
         void ws() {

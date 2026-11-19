@@ -1,0 +1,8 @@
+{
+  "name": "over-the-limit-wins-over-an-earlier-field-that-does-not-read",
+  "from": "conformance-limit-seq-fail",
+  "to": "conformance-limit-seq-fail",
+  "input": "02020102",
+  "max_items": 1,
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "when-path-with-another-value-does-not-hold",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753122020841",
+  "expect": "{\"id\":\"u1\",\"s1\":\"\\bA\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

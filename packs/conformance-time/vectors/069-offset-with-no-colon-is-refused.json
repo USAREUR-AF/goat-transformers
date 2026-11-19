@@ -1,0 +1,7 @@
+{
+  "name": "offset-with-no-colon-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:00:00+0100\"/>",
+  "expect_error": "transform-decode"
+}

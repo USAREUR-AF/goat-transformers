@@ -84,6 +84,21 @@ export class GoatTransformers {
     }, texts);
   }
 
+  /**
+   * Set the limit on list items one decode holds: every item of every list
+   * of the decoded message, at every nesting level (engine-spec ruling 7 of
+   * 0.11). A conversion whose decode would hold one item more throws
+   * "malformed-wire: ...". The default is 100000; 0 refuses any item.
+   * `n` is an integer from 0 to 4294967295.
+   */
+  setMaxItems(n) {
+    this.#live();
+    if (!Number.isInteger(n) || n < 0 || n > 0xffffffff) {
+      throw new TypeError(`bad-argument: the limit on list items must be an integer from 0 to 4294967295, got ${String(n)}`);
+    }
+    this.#call((x, engine) => x.gt_engine_set_max_items(engine, n >>> 0), []);
+  }
+
   /** The loaded format names, sorted. */
   formats() {
     this.#live();

@@ -2,11 +2,12 @@
 %%   object -> {object, [{KeyBinary, Value}]}
 %%   array  -> {array, [Value]}
 %%   string -> binary() (UTF-8)
-%%   number -> integer() (no fraction, no exponent) | float()
+%%   number -> integer() (no fraction, no exponent) | {dnum, Text}
 %%   true/false/null -> 'true' | 'false' | 'null'
 -module(gt_json).
 -export([parse/1, parse_raw/1, get/2, escape/1, encode/1, number_text/1, is_number_text/1,
-         has_duplicate_member/1, read_number/1, canonical_text/1]).
+         has_duplicate_member/1, read_number/1, canonical_text/1,
+         num_float/1, num_int/1, is_num/1]).
 
 %% Arrays and objects nest at most this deep; the outermost is level 1.
 -define(MAX_DEPTH, 64).
@@ -142,9 +143,9 @@ unescape($\\) -> $\\;
 unescape(_) -> bad(unknown_escape).
 
 %% A number as RFC 8259 writes it: [-] (0 | 1-9 digits) [. digits]
-%% [(e|E) [+|-] digits] -> {integer() | float(), Rest}. A leading zero, a
-%% leading `+`, a bare `.` and a point or exponent with no digit are refused
-%% (ruling 39 of 0.8), and so is a number no double holds.
+%% [(e|E) [+|-] digits] -> {integer() | {dnum, Text}, Rest}. A leading zero,
+%% a leading `+`, a bare `.` and a point or exponent with no digit are
+%% refused (ruling 39 of 0.8).
 number_lit(Bin) ->
     N0 = case Bin of
              <<$-, _/binary>> -> 1;
@@ -174,12 +175,12 @@ number_lit(Bin) ->
              _ -> N2
          end,
     <<Text:N3/binary, Rest/binary>> = Bin,
+    %% a number with a fraction or an exponent keeps its text: a transform
+    %% reads it exactly (ruling 2d of 0.11), and one whose nearest double is
+    %% infinite fails only where it is read
     N = case N3 =:= N1 of
             true -> binary_to_integer(Text);
-            false ->
-                try gt_num:dec_to_float(Text)
-                catch error:{float_decode, _} -> bad(number_out_of_range)
-                end
+            false -> {dnum, Text}
         end,
     {N, Rest}.
 
@@ -195,33 +196,57 @@ ws(Bin) -> Bin.
 
 %% ---- canonical output ----
 
-%% Canonical JSON text of a number (ruling 3 of 0.1.1).
+%% Canonical JSON text of a number (ruling 3 of 0.1.1): an integer as its
+%% digits, a number with a fraction or an exponent through its nearest
+%% double (raises when that is infinite).
 number_text(I) when is_integer(I) -> integer_to_list(I);
-number_text(F) when is_float(F) -> gt_num:fmt_float(F).
+number_text(F) when is_float(F) -> gt_num:fmt_float(F);
+number_text({dnum, _} = N) ->
+    {ok, F} = num_float(N),
+    gt_num:fmt_float(F).
+
+%% A parsed number as the nearest double -> {ok, float()} | error (infinite).
+num_float(I) when is_integer(I) ->
+    try {ok, float(I)} catch error:badarg -> error end;
+num_float(F) when is_float(F) -> {ok, F};
+num_float({dnum, Text}) -> gt_num:num_text(Text);
+num_float(_) -> error.
+
+%% A parsed number as an exact integer within a signed 64-bit integer
+%% (ruling 2d of 0.11) -> {ok, integer()} | error.
+num_int(I) when is_integer(I), I >= -(1 bsl 63), I < (1 bsl 63) -> {ok, I};
+num_int({dnum, Text}) -> gt_num:exact_int(Text);
+num_int(_) -> error.
+
+is_num(V) -> is_integer(V) orelse is_float(V) orelse
+                 (is_tuple(V) andalso tuple_size(V) =:= 2 andalso element(1, V) =:= dnum).
 
 %% Text that is wholly one JSON number (RFC 8259 grammar)
-%% -> {ok, Number} | out_of_range | not_number.
+%% -> {ok, CanonicalText} | out_of_range | not_number.
 read_number(Bin) when is_binary(Bin) ->
     try number_lit(Bin) of
-        {N, <<>>} -> {ok, N};
+        {N, <<>>} ->
+            case num_float(N) of
+                {ok, F} -> {ok, list_to_binary(gt_num:fmt_float(F))};
+                error -> out_of_range
+            end;
         _ -> not_number
     catch
-        error:{json_malformed, number_out_of_range} -> out_of_range;
         error:{json_malformed, _} -> not_number
     end.
 
 %% The canonical text of a parsed scalar, as a sentinel compares it
 %% (Version 0.9): a string as it is, a number through a double, a boolean
-%% as `true` or `false` -> binary() | none.
+%% as `true` or `false` -> binary() | none. A number whose nearest double is
+%% infinite has none (ruling 2d of 0.11).
 canonical_text(V) when is_binary(V) -> V;
 canonical_text(true) -> <<"true">>;
 canonical_text(false) -> <<"false">>;
-canonical_text(V) when is_integer(V) ->
-    try list_to_binary(gt_num:fmt_float(float(V)))
-    catch error:badarg -> integer_to_binary(V)
-    end;
-canonical_text(V) when is_float(V) -> list_to_binary(gt_num:fmt_float(V));
-canonical_text(_) -> none.
+canonical_text(V) ->
+    case is_num(V) andalso num_float(V) of
+        {ok, F} -> list_to_binary(gt_num:fmt_float(F));
+        _ -> none
+    end.
 
 %% Is this text canonical JSON number text: a number whose canonical text is
 %% the text itself?
@@ -266,6 +291,7 @@ esc(C) -> <<C>>.
 %% Any parsed value -> canonical JSON iodata, no insignificant whitespace.
 encode(B) when is_binary(B) -> [$", escape(B), $"];
 encode(N) when is_number(N) -> number_text(N);
+encode({dnum, _} = N) -> number_text(N);
 encode({num, Text}) -> Text;
 encode(true) -> "true";
 encode(false) -> "false";

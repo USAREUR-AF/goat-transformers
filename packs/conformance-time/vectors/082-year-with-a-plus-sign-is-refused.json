@@ -1,0 +1,7 @@
+{
+  "name": "year-with-a-plus-sign-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"+2024-01-01T00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

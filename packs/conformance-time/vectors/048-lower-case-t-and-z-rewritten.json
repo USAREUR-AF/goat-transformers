@@ -1,0 +1,7 @@
+{
+  "name": "lower-case-t-and-z-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01t00:00:00z\"/>",
+  "expect": "<e t=\"2024-01-01T00:00:00.000Z\"/>"
+}

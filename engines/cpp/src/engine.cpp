@@ -422,7 +422,8 @@ void Engine::add_pack(Pack pack) {
     }
 
     if (packs_.count(pack.format))
-        throw Error(ErrorKind::InvalidPack, pack.format, "", "format defined twice (" + pack.source + ")");
+        throw Error(ErrorKind::DuplicateFormat, pack.format, "",
+                    "a pack of this format name is already loaded (" + pack.source + ")");
     std::string format = pack.format;
     packs_.emplace(std::move(format), std::move(pack));
 }
@@ -441,8 +442,8 @@ std::vector<std::string> Engine::formats() const {
     return out;
 }
 
-Entity Engine::decode(const std::string& format, const std::string& bytes) const {
-    const Pack& p = pack(format);
+namespace {
+Entity decode_wire(const Pack& p, const std::string& bytes) {
     if (p.sequential) return detail::decode_seq(p, bytes);
     switch (p.wire) {
         case Wire::Xml: return detail::decode_xml(p, bytes);
@@ -452,7 +453,26 @@ Entity Engine::decode(const std::string& format, const std::string& bytes) const
         case Wire::Json: return detail::decode_json(p, bytes);
         case Wire::Text: return detail::decode_text(p, bytes);
     }
-    throw Error(ErrorKind::UnknownWire, format, "", "no codec for this wire");
+    throw Error(ErrorKind::UnknownWire, p.format, "", "no codec for this wire");
+}
+}  // namespace
+
+// One decode counts its list items against the limit (0.11 ruling 7). A failed
+// field is kept while the decode goes on; a failure of the wire found later,
+// going over the limit among them, wins over it (7f). Any other error found
+// later does not: the field's failure comes first, as it would without the limit.
+Entity Engine::decode(const std::string& format, const std::string& bytes) const {
+    const Pack& p = pack(format);
+    detail::DecodeScope scope(max_items_);
+    Entity e;
+    try {
+        e = decode_wire(p, bytes);
+    } catch (const Error& ex) {
+        if (ex.kind() != ErrorKind::MalformedWire) scope.raise_failure();
+        throw;
+    }
+    scope.raise_failure();
+    return e;
 }
 
 std::string Engine::encode(const std::string& format, const Entity& entity) const {
@@ -486,8 +506,9 @@ std::string Engine::convert_text(const std::string& from, const std::string& to,
 // engine-spec.md 0.6, Order inside `convert`.
 std::string Engine::convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
                                  const Context* context, const std::map<std::string, std::string>* text) const {
-    const Pack& target = pack(to);  // fail on an unknown target before decoding
-    (void)target;
+    // unknown-format: `from`, then `to`, before the input is read (0.11 ruling 5).
+    (void)pack(from);
+    (void)pack(to);
     Entity e = decode(from, bytes);
     if (from != to) e.kind = {};  // a cross-format conversion chooses the target kind by `requires`
     // A same-format conversion with no context skips both steps, so it stays byte-exact.
@@ -558,6 +579,19 @@ bool Engine::is_list(const std::string& list) const {
     split_model_key(list, mod, name);
     auto it = modules_.find(mod);
     return it != modules_.end() && it->second.find_list(name) != nullptr;
+}
+
+Capability Engine::capability(const std::string& from, const std::string& to) const {
+    // 6f: `from`, then `to`.
+    const std::vector<std::string> source = model_keys(from);
+    const std::vector<std::string> target = model_keys(to);
+    const std::unordered_set<std::string> in_target(target.begin(), target.end());
+    Capability c;
+    // 6d: entries compared as exact text, in the order of model_keys(from).
+    for (const auto& k : source) (in_target.count(k) ? c.carried : c.dropped).push_back(k);
+    // 6e: none when nothing is carried, else full when nothing is dropped.
+    c.grade = c.carried.empty() ? "none" : c.dropped.empty() ? "full" : "partial";
+    return c;
 }
 
 std::vector<std::string> Engine::model_keys(const std::string& format) const {

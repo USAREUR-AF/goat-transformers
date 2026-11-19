@@ -420,6 +420,8 @@ std::vector<Item> decode_items(const Pack& p, const GroupLine& g, const Record& 
     std::vector<Item> items;
     const std::uint64_t i = g.text_index, n = g.text_item;
     const std::uint64_t count = (rec.size() - i + n - 1) / n;
+    // 0.11 ruling 7d: compared with the limit before any field is read.
+    take_items(p, g.list, count);
     const std::vector<LineRef> lines = group_lines(g);
     items.reserve(static_cast<std::size_t>(count));
     for (std::uint64_t t = 0; t < count; ++t) {

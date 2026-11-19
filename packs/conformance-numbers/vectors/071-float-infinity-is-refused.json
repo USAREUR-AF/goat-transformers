@@ -1,0 +1,7 @@
+{
+  "name": "float-infinity-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"Infinity\"/>",
+  "expect_error": "transform-decode"
+}

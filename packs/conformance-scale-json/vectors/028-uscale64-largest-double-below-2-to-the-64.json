@@ -1,0 +1,7 @@
+{
+  "name": "uscale64-largest-double-below-2-to-the-64",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lon\":18446744073709549568}",
+  "expect": "0400f8ffffffffffff"
+}

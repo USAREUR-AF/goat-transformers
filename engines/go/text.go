@@ -914,7 +914,9 @@ func decodeText(d *decodeState, b []byte) error {
 	if err != nil {
 		return err
 	}
-	d.textScope(lay, fields, 0)
+	if err := d.textScope(lay, fields, 0); err != nil {
+		return err
+	}
 	for i, f := range fields {
 		if f != "" && !lay.text.addresses(i) {
 			d.residue(strconv.Itoa(i), f, false)
@@ -925,7 +927,7 @@ func decodeText(d *decodeState, b []byte) error {
 
 // textScope reads the lines of one scope: the record, or one item of a group
 // whose first field is base.
-func (d *decodeState) textScope(lay *layout, fields []string, base int) {
+func (d *decodeState) textScope(lay *layout, fields []string, base int) error {
 	for _, ln := range lay.lines {
 		switch {
 		case ln.f != nil:
@@ -961,17 +963,23 @@ func (d *decodeState) textScope(lay *layout, fields []string, base int) {
 				continue
 			}
 			n := (len(fields) - g.tstart + g.titem - 1) / g.titem
+			if err := d.room(g.List, uint64(n)); err != nil {
+				return err
+			}
 			items := make([]*Item, 0, n)
 			for k := 0; k < n; k++ {
-				it, _ := d.item(func() error {
-					d.textScope(g.body, fields, g.tstart+k*g.titem)
-					return nil
+				it, err := d.item(func() error {
+					return d.textScope(g.body, fields, g.tstart+k*g.titem)
 				})
+				if err != nil {
+					return err
+				}
 				items = append(items, it)
 			}
 			d.rec.SetList(g.List, items)
 		}
 	}
+	return nil
 }
 
 // --- encode ---

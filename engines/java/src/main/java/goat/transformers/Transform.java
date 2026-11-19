@@ -3,10 +3,8 @@ package goat.transformers;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** The version 0.1 transform set. decode: wire text to model value; encode: model value to wire text. */
@@ -41,10 +39,6 @@ public enum Transform {
         return null;
     }
 
-    private static final Pattern DECIMAL =
-            Pattern.compile("[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?");
-    private static final Pattern ISO =
-            Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})[Tt](\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d+))?(?:[Zz]|([+-])(\\d{2}):(\\d{2}))");
 
     /** Wire text to model value. Throws IllegalArgumentException with a reason on failure. */
     public Object decode(String text) {
@@ -89,17 +83,66 @@ public enum Transform {
         }
     }
 
+    /** Integer text (ruling 2a of 0.11): an optional {@code -}, then ASCII digits; nothing else. */
+    static final Pattern INT_TEXT = Pattern.compile("-?[0-9]+");
+    /** Number text (ruling 2b of 0.11). */
+    static final Pattern NUM_TEXT = Pattern.compile("-?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?");
+    /** An unsigned decimal integer (ruling 2c of 0.11). */
+    static final Pattern UNSIGNED = Pattern.compile("[0-9]+");
+    private static final java.math.BigInteger LONG_MIN = java.math.BigInteger.valueOf(Long.MIN_VALUE);
+    private static final java.math.BigInteger LONG_MAX = java.math.BigInteger.valueOf(Long.MAX_VALUE);
+
+    /** Number text (2b) to the nearest double; text 2b refuses, or whose nearest double is infinite, is refused. */
     static double parseFloat(String text) {
+        if (!NUM_TEXT.matcher(text).matches()) throw new IllegalArgumentException("not number text: \"" + text + "\"");
+        double d = Double.parseDouble(text);
+        if (!Double.isFinite(d)) throw new IllegalArgumentException("out of range: \"" + text + "\"");
+        return d;
+    }
+
+    /** Integer text (2a) within a signed 64-bit integer. */
+    static long parseInt(String text) {
+        if (!INT_TEXT.matcher(text).matches()) throw new IllegalArgumentException("not integer text: \"" + text + "\"");
+        java.math.BigInteger b = new java.math.BigInteger(text);
+        if (b.compareTo(LONG_MIN) < 0 || b.compareTo(LONG_MAX) > 0) {
+            throw new IllegalArgumentException("not an integer in 64-bit range: \"" + text + "\"");
+        }
+        return b.longValue();
+    }
+
+    /** True when {@code text} is number text (2b) whose nearest double is finite. */
+    static boolean isNumText(String text) {
+        try {
+            parseFloat(text);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    /** An unsigned decimal integer (2c) below 2^{@code width}; null when the text is not one or does not fit. */
+    static Long parseUnsigned(String text, int width) {
+        if (!UNSIGNED.matcher(text).matches()) return null;
+        java.math.BigInteger b = new java.math.BigInteger(text);
+        if (b.bitLength() > width) return null;
+        return b.longValue();
+    }
+
+    private static final Pattern DECIMAL_LENIENT =
+            Pattern.compile("[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?");
+
+    /** A model string value carried through a number transform on encode: the reading of the versions before 0.11. */
+    private static double lenientFloat(String text) {
         String t = text.trim();
-        if (!DECIMAL.matcher(t).matches()) throw new IllegalArgumentException("not a decimal number: \"" + text + "\"");
+        if (!DECIMAL_LENIENT.matcher(t).matches()) throw new IllegalArgumentException("not a decimal number: \"" + text + "\"");
         double d = Double.parseDouble(t);
         if (!Double.isFinite(d)) throw new IllegalArgumentException("out of range: \"" + text + "\"");
         return d;
     }
 
-    static long parseInt(String text) {
+    private static long lenientInt(String text) {
         String t = text.trim();
-        if (!DECIMAL.matcher(t).matches()) throw new IllegalArgumentException("not a decimal integer: \"" + text + "\"");
+        if (!DECIMAL_LENIENT.matcher(t).matches()) throw new IllegalArgumentException("not a decimal integer: \"" + text + "\"");
         try {
             return new BigDecimal(t).longValueExact();
         } catch (ArithmeticException e) {
@@ -107,36 +150,78 @@ public enum Transform {
         }
     }
 
-    static long parseIso(String text) {
-        Matcher m = ISO.matcher(text.trim());
-        if (!m.matches()) {
-            throw new IllegalArgumentException("not ISO 8601 YYYY-MM-DDTHH:MM:SS[.fff] with Z or an offset +hh:mm: \"" + text + "\"");
+    /** The first and last instants {@code iso8601_ms} carries (ruling 3 of 0.11). */
+    static final long ISO_MIN = -62135596800000L, ISO_MAX = 253402300799999L;
+
+    private static int digits(String s, int from, int n) {
+        int v = 0;
+        for (int i = from; i < from + n; i++) {
+            char c = s.charAt(i);
+            if (c < '0' || c > '9') return -1;
+            v = v * 10 + (c - '0');
         }
-        try {
-            LocalDateTime ldt = LocalDateTime.of(
-                    Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)),
-                    Integer.parseInt(m.group(4)), Integer.parseInt(m.group(5)), Integer.parseInt(m.group(6)));
-            long ms = 0;
-            String frac = m.group(7);
-            if (frac != null) {
-                String three = (frac + "00").substring(0, 3); // milliseconds, sub-ms digits truncated
-                ms = Integer.parseInt(three);
-            }
-            long offsetSecs = 0;
-            if (m.group(8) != null) {
-                int hh = Integer.parseInt(m.group(9)), mm = Integer.parseInt(m.group(10));
-                if (hh > 23 || mm > 59) throw new DateTimeException("offset out of range");
-                offsetSecs = (hh * 60L + mm) * 60L;
-                if (m.group(8).equals("-")) offsetSecs = -offsetSecs;
-            }
-            // The wire time is local to its offset; the instant in UTC is that time less the offset.
-            return Math.addExact(Math.multiplyExact(ldt.toEpochSecond(ZoneOffset.UTC) - offsetSecs, 1000L), ms);
-        } catch (DateTimeException | ArithmeticException e) {
-            throw new IllegalArgumentException("invalid date-time \"" + text + "\": " + e.getMessage());
+        return v;
+    }
+
+    private static boolean leap(int y) { return (y % 4 == 0 && y % 100 != 0) || y % 400 == 0; }
+
+    private static final int[] MONTH_DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    /** Days from 1970-01-01 to the date, proleptic Gregorian. */
+    private static long epochDay(int y, int m, int d) {
+        long yy = m <= 2 ? y - 1 : y;
+        long era = Math.floorDiv(yy, 400);
+        long yoe = yy - era * 400;
+        long mp = (m + 9) % 12;
+        long doy = (153 * mp + 2) / 5 + d - 1;
+        long doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+        return era * 146097 + doe - 719468;
+    }
+
+    /** {@code iso8601_ms} decode, by the grammar of ruling 3 of 0.11. */
+    static long parseIso(String s) {
+        IllegalArgumentException bad = new IllegalArgumentException("not an iso8601_ms time: \"" + s + "\"");
+        int n = s.length();
+        if (n < 20) throw bad;
+        if (s.charAt(4) != '-' || s.charAt(7) != '-' || (s.charAt(10) != 'T' && s.charAt(10) != 't')
+                || s.charAt(13) != ':' || s.charAt(16) != ':') throw bad;
+        int y = digits(s, 0, 4), mo = digits(s, 5, 2), d = digits(s, 8, 2);
+        int h = digits(s, 11, 2), mi = digits(s, 14, 2), se = digits(s, 17, 2);
+        if (y < 1 || mo < 1 || mo > 12 || d < 1 || h < 0 || h > 23 || mi < 0 || mi > 59 || se < 0 || se > 59) throw bad;
+        int last = MONTH_DAYS[mo - 1] + (mo == 2 && leap(y) ? 1 : 0);
+        if (d > last) throw bad;
+        int i = 19;
+        int ms = 0;
+        if (i < n && s.charAt(i) == '.') {
+            int start = ++i;
+            while (i < n && s.charAt(i) >= '0' && s.charAt(i) <= '9') i++;
+            if (i == start) throw bad;
+            for (int k = 0; k < 3; k++) ms = ms * 10 + (start + k < i ? s.charAt(start + k) - '0' : 0);
         }
+        if (i >= n) throw bad;
+        long offsetMs;
+        char z = s.charAt(i);
+        if (z == 'Z' || z == 'z') {
+            if (i + 1 != n) throw bad;
+            offsetMs = 0;
+        } else if (z == '+' || z == '-') {
+            if (i + 6 != n || s.charAt(i + 3) != ':') throw bad;
+            int oh = digits(s, i + 1, 2), om = digits(s, i + 4, 2);
+            if (oh < 0 || oh > 23 || om < 0 || om > 59) throw bad;
+            offsetMs = (oh * 60L + om) * 60_000L;
+            if (z == '-') offsetMs = -offsetMs;
+        } else {
+            throw bad;
+        }
+        long v = ((epochDay(y, mo, d) * 24 + h) * 60 + mi) * 60_000L + se * 1000L + ms - offsetMs;
+        if (v < ISO_MIN || v > ISO_MAX) throw new IllegalArgumentException("time \"" + s + "\" lies outside years 0001 to 9999");
+        return v;
     }
 
     static String formatIso(long epochMs) {
+        if (epochMs < ISO_MIN || epochMs > ISO_MAX) {
+            throw new IllegalArgumentException("time " + epochMs + " ms lies outside years 0001 to 9999");
+        }
         long secs = Math.floorDiv(epochMs, 1000L);
         int ms = (int) Math.floorMod(epochMs, 1000L);
         LocalDateTime t = LocalDateTime.ofEpochSecond(secs, 0, ZoneOffset.UTC);
@@ -173,7 +258,7 @@ public enum Transform {
 
     static double asDouble(Object v) {
         if (v instanceof Number) return ((Number) v).doubleValue();
-        if (v instanceof String) return parseFloat((String) v);
+        if (v instanceof String) return lenientFloat((String) v);
         throw new IllegalArgumentException("cannot carry " + v + " as float");
     }
 
@@ -186,7 +271,7 @@ public enum Transform {
             }
             return (long) d;
         }
-        if (v instanceof String) return parseInt((String) v);
+        if (v instanceof String) return lenientInt((String) v);
         throw new IllegalArgumentException("cannot carry " + v + " as int");
     }
 }

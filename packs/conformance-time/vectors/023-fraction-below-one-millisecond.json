@@ -1,0 +1,10 @@
+{
+  "name": "fraction-below-one-millisecond",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"2024-01-01T00:00:00.0009Z\"/>",
+  "expect": "{\"t\":1704067200000}",
+  "model": {
+    "time_ms": "1704067200000"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-space-inside-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1 e3\"/>",
+  "expect_error": "transform-decode"
+}

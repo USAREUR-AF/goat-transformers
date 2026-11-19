@@ -1,0 +1,7 @@
+{
+  "name": "json-int-negative-exponent-that-leaves-a-fraction-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1e-1}",
+  "expect_error": "transform-decode"
+}

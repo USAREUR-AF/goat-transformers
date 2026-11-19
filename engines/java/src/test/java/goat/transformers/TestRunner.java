@@ -112,6 +112,30 @@ public final class TestRunner {
             fail("load vectors", "none found under " + loadDir);
         }
 
+        int capVectors = 0, capPassed = 0;
+        Path capDir = packsDir.resolve("conformance").resolve("capability-vectors");
+        List<Path> capFiles = new ArrayList<>();
+        if (Files.isDirectory(capDir)) {
+            try (Stream<Path> v = Files.list(capDir)) {
+                v.filter(p -> p.toString().endsWith(".json")).sorted().forEach(capFiles::add);
+            }
+        }
+        for (Path f : capFiles) {
+            capVectors++;
+            String why;
+            try {
+                why = runCapabilityVector(engine, f);
+            } catch (RuntimeException ex) {
+                why = ex.toString();
+            }
+            if (why == null) capPassed++;
+            else fail(label(packsDir, f), why);
+        }
+        System.out.println("capability vectors: " + capPassed + "/" + capVectors + " passed");
+        if (capVectors == 0) {
+            fail("capability vectors", "none found under " + capDir);
+        }
+
         int before = failures;
         UnitTests.run(engine);
         UnitTests.packsOnly(packsDir);
@@ -148,6 +172,64 @@ public final class TestRunner {
                 context.put(c.getKey(), (String) c.getValue());
             }
         }
+        long maxItems = engine.maxItems();
+        if (v.containsKey("max_items")) {
+            Object m = v.get("max_items");
+            if (!(m instanceof Json.Num) || !Transform.UNSIGNED.matcher(((Json.Num) m).text).matches()
+                    || ((Json.Num) m).text.length() > 18) {
+                return "invalid vector: \"max_items\" is not an integer of 0 or more";
+            }
+            maxItems = Long.parseLong(((Json.Num) m).text);
+        }
+        if (v.containsKey("model")) {
+            if (!(v.get("model") instanceof Map)) return "\"model\" is not an object";
+            for (Map.Entry<String, Object> m : ((Map<String, Object>) v.get("model")).entrySet()) {
+                if (!(m.getValue() instanceof String)) continue;   // reported with the check below
+                String why = modelValueInvalid(engine, m.getKey(), (String) m.getValue());
+                if (why != null) return "invalid vector: model." + m.getKey() + ": " + why;
+            }
+        }
+        long defaultMax = engine.maxItems();
+        engine.setMaxItems(maxItems);
+        try {
+            return runVectorChecks(engine, v, from, to, input, context);
+        } finally {
+            engine.setMaxItems(defaultMax);
+        }
+    }
+
+    /**
+     * Ruling 2c of 0.11: a member named by a model key or an item path is read by the grammar of the key's declared
+     * type, {@code "<list>.#"} is an unsigned decimal integer or {@code absent}; the {@code @} members are not numbers.
+     * Null when the value is valid, else the reason.
+     */
+    static String modelValueInvalid(Engine engine, String key, String value) {
+        if (key.startsWith("@")) return null;
+        String k = key;
+        while (k.indexOf('[') >= 0) {
+            int close = k.indexOf("].");
+            if (close < 0) return null;   // not an item path; the check reports it
+            k = k.substring(close + 2);
+        }
+        if (k.startsWith("@")) return null;
+        if (k.endsWith(".#")) {
+            return value.equals("absent") || Transform.UNSIGNED.matcher(value).matches() ? null
+                    : "a count is an unsigned decimal integer or absent, got \"" + value + "\"";
+        }
+        String type = engine.keyType(k);
+        if (type == null) return null;   // no declared key: the check reports it
+        try {
+            if (type.equals("int")) Transform.parseInt(value);
+            else if (type.equals("float")) Transform.parseFloat(value);
+        } catch (IllegalArgumentException ex) {
+            return "\"" + value + "\" is not " + type + " text (ruling 2 of 0.11)";
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String runVectorChecks(Engine engine, Map<String, Object> v, String from, String to, String input,
+                                          Map<String, String> context) {
         boolean wantsError = v.containsKey("expect_error");
         if (wantsError == v.containsKey("expect")) return "vector needs exactly one of \"expect\" and \"expect_error\"";
         if (wantsError) {
@@ -223,7 +305,18 @@ public final class TestRunner {
         Map<String, Object> v = (Map<String, Object>) doc;
         if (!(v.get("name") instanceof String)) return "load vector lacks string \"name\"";
         if (!(v.get("models") instanceof List)) return "load vector lacks array \"models\"";
-        if (!(v.get("pack") instanceof String)) return "load vector lacks string \"pack\"";
+        List<String> packTexts = new ArrayList<>();
+        if (v.containsKey("pack") == v.containsKey("packs")) return "load vector needs exactly one of \"pack\" and \"packs\"";
+        if (v.containsKey("pack")) {
+            if (!(v.get("pack") instanceof String)) return "load vector lacks string \"pack\"";
+            packTexts.add((String) v.get("pack"));
+        } else {
+            if (!(v.get("packs") instanceof List)) return "\"packs\" is not an array";
+            for (Object p : (List<Object>) v.get("packs")) {
+                if (!(p instanceof String)) return "\"packs\" holds an entry that is not a string";
+                packTexts.add((String) p);
+            }
+        }
         String expect = null;
         if (v.containsKey("expect_error")) {
             if (!(v.get("expect_error") instanceof String)) return "\"expect_error\" is not a string";
@@ -244,7 +337,9 @@ public final class TestRunner {
                 if (!(m instanceof String)) return "models[" + (n - 1) + "] is not a string";
                 engine.loadModel((String) m, "models[" + (n - 1) + "]");
             }
-            engine.loadPack((String) v.get("pack"), "pack");
+            for (int i = 0; i < packTexts.size(); i++) {
+                engine.loadPack(packTexts.get(i), packTexts.size() == 1 && v.containsKey("pack") ? "pack" : "packs[" + i + "]");
+            }
         } catch (GtException ex) {
             failure = ex;
         }
@@ -252,6 +347,25 @@ public final class TestRunner {
         if (failure == null) return "load succeeded, want " + expect;
         if (!failure.kind().equals(expect)) return "want " + expect + " got " + failure.getMessage();
         if (!failure.getMessage().startsWith(expect + ":")) return "message does not begin with \"" + expect + ":\": " + failure.getMessage();
+        return null;
+    }
+
+    /** One capability vector: the grade and both lists of {@code capability(from, to)}, entry for entry. */
+    @SuppressWarnings("unchecked")
+    static String runCapabilityVector(Engine engine, Path f) throws IOException {
+        Object doc = Json.parse(Files.readString(f, StandardCharsets.UTF_8));
+        if (!(doc instanceof Map)) return "capability vector is not a JSON object";
+        Map<String, Object> v = (Map<String, Object>) doc;
+        for (String k : new String[]{"name", "from", "to", "grade"}) {
+            if (!(v.get(k) instanceof String)) return "capability vector lacks string \"" + k + "\"";
+        }
+        for (String k : new String[]{"carried", "dropped"}) {
+            if (!(v.get(k) instanceof List)) return "capability vector lacks array \"" + k + "\"";
+        }
+        Engine.Capability c = engine.capability((String) v.get("from"), (String) v.get("to"));
+        if (!c.grade.equals(v.get("grade"))) return "grade: want " + v.get("grade") + " got " + c.grade;
+        if (!c.carried.equals(v.get("carried"))) return "carried: want " + v.get("carried") + " got " + c.carried;
+        if (!c.dropped.equals(v.get("dropped"))) return "dropped: want " + v.get("dropped") + " got " + c.dropped;
         return null;
     }
 
@@ -281,7 +395,9 @@ public final class TestRunner {
             List<Entity> items = e.list(key.substring(0, key.length() - 2));
             if (want.equals("absent")) return items == null ? null : "want absent, got " + items.size() + " items";
             if (items == null) return "absent, want " + want + " items";
-            return want.equals(Integer.toString(items.size())) ? null : "want " + want + " items, got " + items.size();
+            boolean same = Transform.UNSIGNED.matcher(want).matches()
+                    && new java.math.BigInteger(want).equals(java.math.BigInteger.valueOf(items.size()));
+            return same ? null : "want " + want + " items, got " + items.size();
         }
         if (key.equals("@kind")) {
             // the kind an item recorded when it was decoded; it fails for an item that recorded none
@@ -323,8 +439,8 @@ public final class TestRunner {
         if (have instanceof Double) {
             double w;
             try {
-                w = Double.parseDouble(want);
-            } catch (NumberFormatException ex) {
+                w = Transform.parseFloat(want);
+            } catch (IllegalArgumentException ex) {
                 return "want \"" + want + "\" got float " + have;
             }
             double h = (Double) have;
@@ -334,7 +450,11 @@ public final class TestRunner {
             return ok ? null : "want " + want + " got " + have;
         }
         if (have instanceof Long) {
-            return want.equals(Long.toString((Long) have)) ? null : "want " + want + " got " + have;
+            try {
+                return Transform.parseInt(want) == (Long) have ? null : "want " + want + " got " + have;
+            } catch (IllegalArgumentException ex) {
+                return "want \"" + want + "\" got int " + have;
+            }
         }
         return want.equals(have) ? null : "want \"" + want + "\" got \"" + have + "\"";
     }

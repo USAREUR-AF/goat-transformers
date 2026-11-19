@@ -1,0 +1,7 @@
+{
+  "name": "twos8-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"val\":127}",
+  "expect": "087f"
+}

@@ -12,9 +12,14 @@
 //! `"@absent"` is an array of keys, item paths `<list>[<i>].<key>` and list
 //! names the entity must not have (engine-spec 0.9); a listed key that is also
 //! a member of `model` makes the vector invalid, and it fails.
+//! Version 0.11: `max_items` sets the limit on list items for one vector
+//! (ruling 7); a `model` value is read by the grammar of its key's declared
+//! type (ruling 2c), and a value that grammar refuses makes the vector
+//! invalid; a load vector may carry `packs`; capability vectors pin
+//! `capability(from, to)` (ruling 6).
 
 use goat_transformers::json::Json;
-use goat_transformers::{json, Distribution, Engine, Entity, Value};
+use goat_transformers::{json, Distribution, Engine, Entity, Grade, KeyType, Value};
 use std::path::{Path, PathBuf};
 
 fn repo_packs_dir() -> PathBuf {
@@ -25,11 +30,60 @@ fn repo_packs_dir() -> PathBuf {
         .expect("packs dir")
 }
 
-fn load_engine() -> Engine {
+/// Load every model module and every pack. A pack that fails to load is a
+/// failure of the run, named; the other packs still load.
+fn load_engine() -> (Engine, Vec<(String, String)>) {
     let mut e = Engine::new();
     e.load_model_dir(&repo_packs_dir().join("../model")).unwrap_or_else(|err| panic!("model: {}", err));
-    e.load_pack_dir(&repo_packs_dir()).unwrap_or_else(|err| panic!("pack: {}", err));
-    e
+    let mut failures = Vec::new();
+    let mut dirs: Vec<_> = std::fs::read_dir(repo_packs_dir()).unwrap().flatten().map(|d| d.path()).collect();
+    dirs.sort();
+    for d in dirs {
+        let def = d.join("pack.def");
+        if let Ok(text) = std::fs::read_to_string(&def) {
+            if let Err(err) = e.load_def(&text) {
+                failures.push((format!("{}/pack.def", d.file_name().unwrap().to_string_lossy()), format!("load: {}", err)));
+            }
+        }
+    }
+    (e, failures)
+}
+
+/// The item path or key a `model` member names, reduced to its last key:
+/// `a[0].b[1].c` is `c`. None for `<list>.#` and the `@` members.
+fn last_key(member: &str) -> &str {
+    match member.rfind("].") {
+        Some(i) => &member[i + 2..],
+        None => member,
+    }
+}
+
+/// Read a `model` value by the grammar of the key's declared type (ruling 2c
+/// of 0.11). Err: the vector is invalid.
+fn read_model_value(engine: &Engine, member: &str, want: &str) -> Result<Option<Value>, String> {
+    let key = last_key(member);
+    if key == "#" || key.ends_with(".#") || member.ends_with(".#") {
+        if want == "absent" || (!want.is_empty() && want.bytes().all(|b| b.is_ascii_digit())) {
+            return Ok(None);
+        }
+        return Err(format!("invalid vector: `{}` = `{}` is not an unsigned decimal integer or `absent`", member, want));
+    }
+    if key.starts_with('@') {
+        return Ok(None);
+    }
+    let ty = match engine.key_type(key) {
+        Some(t) => t,
+        None => return Ok(None),
+    };
+    let v = match ty {
+        KeyType::Str => Some(Value::Str(want.to_string())),
+        KeyType::Int => goat_transformers::int_text(want).map(Value::I64),
+        KeyType::Float => goat_transformers::number_text(want).map(Value::F64),
+    };
+    match v {
+        Some(v) => Ok(Some(v)),
+        None => Err(format!("invalid vector: `{}` = `{}` is not {} text", member, want, ty.name())),
+    }
 }
 
 /// What a `model` key of a vector names in a decoded entity.
@@ -106,7 +160,13 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
     }
     // a `context` member, even an empty one, is a context given (ruling 10 of 0.6)
     let given = if v.get("context").is_some() { Some(pairs.as_slice()) } else { None };
-    let convert = || engine.convert_text(from, to, input, given);
+    // `max_items`: the limit on list items for this vector (ruling 7 of 0.11)
+    let max_items = match v.get("max_items") {
+        None => goat_transformers::DEFAULT_MAX_ITEMS,
+        Some(Json::Int(n)) if *n >= 0 => *n as usize,
+        Some(_) => return Err("invalid vector: `max_items` must be an integer of 0 or more".into()),
+    };
+    let convert = || engine.convert_text_limited(from, to, input, given, max_items);
 
     // `expect_error` in place of `expect`: convert must fail with that named error
     if let Some(kind) = jstr(v, "expect_error") {
@@ -124,7 +184,7 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
 
     // optional model checks
     if let Some(Json::Obj(model)) = v.get("model") {
-        let mut ent = engine.decode(from, input).map_err(|e| format!("decode failed: {}", e))?;
+        let mut ent = engine.decode_limited(from, input, max_items).map_err(|e| format!("decode failed: {}", e))?;
         // "@complete": true: the entity as `convert` hands it to the encoder
         let complete = match model.iter().find(|(k, _)| k == "@complete") {
             None | Some((_, Json::Bool(false))) => false,
@@ -176,6 +236,8 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
                 }
                 continue;
             }
+            // every value is checked against its grammar first: an invalid vector fails
+            read_model_value(engine, k, &want)?;
             let got_field = match model_lookup(&ent, k)? {
                 Got::Value(v) => v,
                 Got::Kind(name) => {
@@ -192,8 +254,17 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
                     continue;
                 }
             };
+            // the value read as its key's type (ruling 2c of 0.11)
+            let typed = read_model_value(engine, k, &want)?;
+            if let (Value::I64(a), Some(Value::I64(b))) = (got_field, &typed) {
+                if a != b {
+                    return Err(format!("field `{}` = {} want {}", k, a, b));
+                }
+                continue;
+            }
             // float-tolerant compare
-            if let (Value::F64(a), Ok(b)) = (got_field, want.parse::<f64>()) {
+            if let (Value::F64(a), Some(Value::F64(b))) = (got_field, &typed) {
+                let b = *b;
                 // decoded: within 1e-9; completed: within 1e-9 relative
                 let tolerance = if complete { 1e-9 * a.abs().max(b.abs()) } else { 1e-9 };
                 if *a != b && (a - b).abs() >= tolerance {
@@ -225,10 +296,9 @@ fn report(what: &str, total: usize, failures: &[(String, String)]) {
 
 #[test]
 fn run_all_vectors() {
-    let engine = load_engine();
+    let (engine, mut failures) = load_engine();
     let packs = repo_packs_dir();
     let mut total = 0;
-    let mut failures: Vec<(String, String)> = Vec::new();
     let mut dirs: Vec<_> = std::fs::read_dir(&packs).unwrap().flatten().map(|e| e.path()).collect();
     dirs.sort();
     for dir in dirs {
@@ -291,8 +361,22 @@ fn run_load_vectors() {
                 }
             }
         }
-        if result.is_ok() {
-            result = e.load_def(jstr(&v, "pack").expect("pack"));
+        match (v.get("pack"), v.get("packs")) {
+            (Some(Json::Str(text)), None) => {
+                if result.is_ok() {
+                    result = e.load_def(text);
+                }
+            }
+            (None, Some(Json::Arr(texts))) => {
+                for t in texts {
+                    match t {
+                        Json::Str(text) if result.is_ok() => result = e.load_def(text),
+                        Json::Str(_) => {}
+                        _ => panic!("load vector `{}`: a `packs` entry must be a string", name),
+                    }
+                }
+            }
+            _ => panic!("load vector `{}`: exactly one of `pack` and `packs`", name),
         }
         let why = match (jstr(&v, "expect_error"), result) {
             (None, Ok(())) => None,
@@ -306,4 +390,65 @@ fn run_load_vectors() {
         }
     }
     report("load vectors", total, &failures);
+}
+
+fn str_array(v: &Json, k: &str) -> Option<Vec<String>> {
+    match v.get(k) {
+        Some(Json::Arr(a)) => a
+            .iter()
+            .map(|e| match e {
+                Json::Str(s) => Some(s.clone()),
+                _ => None,
+            })
+            .collect(),
+        _ => None,
+    }
+}
+
+/// Capability vectors (spec/vector-format.md, "Capability vectors"): the grade
+/// and the two lists of `capability(from, to)`, in order.
+#[test]
+fn run_capability_vectors() {
+    let (engine, load_failures) = load_engine();
+    assert!(load_failures.is_empty(), "packs failed to load: {:?}", load_failures);
+    let dir = repo_packs_dir().join("conformance/capability-vectors");
+    let mut files: Vec<_> = std::fs::read_dir(&dir).unwrap().flatten().map(|e| e.path()).collect();
+    files.sort();
+    let mut total = 0;
+    let mut failures: Vec<(String, String)> = Vec::new();
+    for vf in files {
+        if vf.extension().and_then(|s| s.to_str()) != Some("json") {
+            continue;
+        }
+        total += 1;
+        let v = json::parse(&std::fs::read_to_string(&vf).unwrap()).unwrap();
+        let name = jstr(&v, "name").unwrap_or("?").to_string();
+        let check = || -> Result<(), String> {
+            let from = jstr(&v, "from").ok_or("no `from`")?;
+            let to = jstr(&v, "to").ok_or("no `to`")?;
+            let grade = jstr(&v, "grade").ok_or("no `grade`")?;
+            let carried = str_array(&v, "carried").ok_or("no `carried` array of strings")?;
+            let dropped = str_array(&v, "dropped").ok_or("no `dropped` array of strings")?;
+            let c = engine.try_capability(from, to).map_err(|e| format!("capability failed: {}", e))?;
+            let got_grade = match c.grade {
+                Grade::Full => "full",
+                Grade::Partial => "partial",
+                Grade::None => "none",
+            };
+            if got_grade != grade {
+                return Err(format!("grade `{}` want `{}`", got_grade, grade));
+            }
+            if c.carried != carried {
+                return Err(format!("carried {:?} want {:?}", c.carried, carried));
+            }
+            if c.dropped != dropped {
+                return Err(format!("dropped {:?} want {:?}", c.dropped, dropped));
+            }
+            Ok(())
+        };
+        if let Err(why) = check() {
+            failures.push((name, why));
+        }
+    }
+    report("capability vectors", total, &failures);
 }

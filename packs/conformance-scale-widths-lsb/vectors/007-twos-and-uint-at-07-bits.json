@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-07-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0700f8ff0501",
+  "expect": "0700f8ff0501",
+  "model": {
+    "@kind": "w07",
+    "probe.x": "-64",
+    "probe.y": "-1",
+    "probe.z": "63",
+    "probe.w": "65"
+  }
+}

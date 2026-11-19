@@ -1,0 +1,7 @@
+{
+  "name": "float-leading-and-trailing-zeros",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"007.50\"/>",
+  "expect": "<e a=\"7.5\"/>"
+}

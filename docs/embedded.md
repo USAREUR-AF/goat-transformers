@@ -280,7 +280,13 @@ names is 111 KiB. The same pack compiled for the one kind
 - `east_of` and `north_of` for a course beyond ±94 million degrees leave the
   target absent, where the reference engine computes a value.
 - A message with more values or list items than the caller's `Scratch` holds
-  is `scratch-full`. The reference engine has no such limit.
+  is `scratch-full`. The reference engine has no such limit. The limit on
+  list items of engine-spec ruling 7 of 0.11 is the same on both
+  (`Session::set_max_items`, `gt_core::convert_limited`; 100,000 by
+  default), and a count is compared with it before any item is read, so a
+  count above the limit is `malformed-wire` whatever the scratch. A vector
+  whose items fit the limit and not the proof's scratch (`SLOTS`, 4,096) is
+  left out of the equivalence run with the reason `scratch-full`.
 - Text values are never copied: a text value is read from the input message,
   the plan or the caller's context when it is written. A derivation that
   builds new text (`join`, `text_of`) is therefore not compiled.

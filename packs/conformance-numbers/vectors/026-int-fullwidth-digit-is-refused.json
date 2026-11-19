@@ -1,0 +1,7 @@
+{
+  "name": "int-fullwidth-digit-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"７\"/>",
+  "expect_error": "transform-decode"
+}

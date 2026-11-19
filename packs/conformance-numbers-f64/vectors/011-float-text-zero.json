@@ -1,0 +1,7 @@
+{
+  "name": "float-text-zero",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "0000000000000000",
+  "expect": "<e a=\"0\"/>"
+}

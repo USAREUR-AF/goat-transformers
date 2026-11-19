@@ -1,0 +1,7 @@
+{
+  "name": "430-kind-line-before-the-wire-line-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nkind k\nwire xml\nroot item\nfield uid @id string\n"
+}

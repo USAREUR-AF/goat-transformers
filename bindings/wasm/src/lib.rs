@@ -141,6 +141,25 @@ pub unsafe extern "C" fn gt_engine_set_max_distribution(
     into_result(outcome)
 }
 
+/// Set the limit on list items one decode holds (engine-spec ruling 7 of
+/// 0.11; the default is 100000). A conversion whose decode would hold one
+/// item more fails with `malformed-wire`; 0 refuses any item.
+///
+/// # Safety
+/// `engine` is 0 or a live handle from `gt_engine_new`.
+#[no_mangle]
+pub unsafe extern "C" fn gt_engine_set_max_items(
+    engine: *mut Engine,
+    max_items: u32,
+) -> *mut GtResult {
+    // SAFETY: the handle is passed on under this function's own contract.
+    let outcome = unsafe { exclusive(engine) }.map(|engine| {
+        glue::set_max_items(engine, u64::from(max_items));
+        String::new()
+    });
+    into_result(outcome)
+}
+
 /// Load one model module from the text of a `model/<module>.def`.
 ///
 /// # Safety

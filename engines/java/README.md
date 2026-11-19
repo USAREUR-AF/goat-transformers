@@ -23,8 +23,11 @@ loads only the named packs, with `core` and the model modules their `uses`
 lines need. Both have a form that takes a models directory and a
 `Distribution` limit. `convert(from, to, text)` and
 `convert(from, to, text, context)` return the encoded message; `decode`,
-`encode` and `complete` work on an `Entity`. A failure is a `GtException`
-(unchecked) whose `kind()` is the error name of the specification.
+`encode` and `complete` work on an `Entity`. `capability(from, to)` gives the
+capability report of a pair of formats (grade, carried and dropped keys), and
+`setMaxItems(n)` sets the limit on list items of one decode (default
+100,000). A failure is a `GtException` (unchecked) whose `kind()` is the error
+name of the specification.
 
 ```java
 import goat.transformers.Engine;
@@ -73,6 +76,7 @@ $ java -cp lib/goat-transformers-0.8.0.jar:. Convert
 | `--models DIR` | the model modules; default `<packs>/../model` |
 | `--packs-only NAME[,NAME...]` | load only the named packs, with the model modules they need |
 | `--max-distribution public\|controlled` | refuse modules and packs marked above the limit; default `controlled` |
+| `--max-items N` | the limit on list items of one decode; default 100,000 |
 | `--set KEY=VALUE` | `convert` only, repeatable: supply a model key the source does not carry |
 
 Exit codes: 0 success, 1 engine error (printed as `error: <kind>: ...`),
@@ -100,6 +104,7 @@ and runs:
 
 - every conversion vector under `packs/*/vectors/`;
 - every load vector under `packs/conformance/load-vectors/`;
+- every capability vector under `packs/conformance/capability-vectors/`;
 - the unit checks of `UnitTests`: rulings of the specification, `loadOnly`
   and the `--packs-only` option of the tool, malformed-input checks (deep
   nesting, XML declarations, number forms), and a sweep that feeds
@@ -111,10 +116,11 @@ It prints each failure and exits non-zero on any. Measured with
 `nice -n 10 ./build.sh` on this tree:
 
 ```
-conversion vectors: 3299/3299 passed (96 packs, 43 model modules)
-load vectors: 314/314 passed
-malformed input sweep: 637847 inputs over 3299 vectors and 96 packs, 591698 named errors, 0 defects
-unit checks: 741/741 passed
+conversion vectors: 7113/7113 passed (763 packs, 389 model modules)
+load vectors: 505/505 passed
+capability vectors: 18/18 passed
+malformed input sweep: 6114515 inputs over 7113 vectors and 763 packs, 5711459 named errors, 0 defects
+unit checks: 1446/1446 passed
 OK
 ```
 

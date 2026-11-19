@@ -41,9 +41,19 @@ class _Scope:
         self.failed = None  # [(key, locator, reason, final)]
 
 
+def _held(items):
+    """The items a list holds, with the items of the lists inside them (ruling 7a of 0.11)."""
+    n = len(items)
+    for it in items:
+        for inner in it.lists.values():
+            n += _held(inner)
+    return n
+
+
 class _Reader:
-    def __init__(self, pack, data):
+    def __init__(self, pack, data, limit=None):
         buf = _hex_to_bytes(data, pack.name)
+        self.left = limit  # the items the entity may still hold, None for no limit (ruling 7 of 0.11)
         self.pack = pack
         self.msg = Message(pack, buf)
         self.pos = 0
@@ -254,6 +264,19 @@ class _Reader:
             if soft[i] > total:
                 soft[i] = total
 
+    def over(self, nd, n):
+        return MalformedWire(
+            "list %s has %d item(s); the limit on list items allows %d more" % (nd.list, n, max(self.left, 0)),
+            format=self.pack.name,
+        )
+
+    def replaces(self, nd, sc):
+        """The group is on the wire: the items of an earlier group of its list,
+        which it replaces (ruling 33 of 0.8), are no longer held (ruling 7g of 0.11)."""
+        old = sc.lists.get(nd.list)
+        if old and self.left is not None:
+            self.left += _held(old)
+
     def group(self, nd, sc):
         mode = nd.mode
         msg = self.msg
@@ -263,6 +286,9 @@ class _Reader:
             if start is None:
                 return
             n = msg.uint(start, nd.length)
+            self.replaces(nd, sc)
+            if self.left is not None and n > self.left:  # before any item is read (ruling 7d of 0.11)
+                raise self.over(nd, n)
             if n > self.limit() - self.pos:  # ruling 14 of 0.8
                 raise self.short("the %d item(s) of group %s" % (n, nd.list))
             for i in range(n):
@@ -274,6 +300,8 @@ class _Reader:
                     if not items:
                         return
                     break
+                if not items:
+                    self.replaces(nd, sc)
                 if not msg.uint(start, 1):
                     break
                 items.append(self.item(nd, sc, len(items)))
@@ -282,6 +310,8 @@ class _Reader:
                 start = self.take(1, "the bit before an item of group %s" % nd.list)
                 if start is None and not items:
                     return  # the group starts at the end of the extent: an absent list (ruling 7)
+                if not items:
+                    self.replaces(nd, sc)
                 # ruling 21 of 0.8: an indicator at the end of the extent reads
                 # as 0, so the item it stands before is the last one
                 items.append(self.item(nd, sc, len(items)))
@@ -290,6 +320,7 @@ class _Reader:
         else:  # fx
             if self.soft and self.pos >= self.soft[-1]:
                 return
+            self.replaces(nd, sc)
             while True:
                 items.append(self.item(nd, sc, len(items)))
                 start = self.take(1, "the bit after an item of group %s" % nd.list)
@@ -298,6 +329,10 @@ class _Reader:
         sc.lists[nd.list] = items
 
     def item(self, nd, sc, i):
+        if self.left is not None:
+            if self.left < 1:
+                raise self.over(nd, i + 1)
+            self.left -= 1
         item = Item()
         isc = _Scope(item.fields, item.lists, "%s%s[%d]." % (sc.prefix, nd.list, i))
         kind = self.body(nd.scope, isc)
@@ -328,9 +363,10 @@ class _Reader:
         return selected
 
 
-def decode(pack, data):
-    """-> Entity. Input beyond the last line is ignored (ruling 9 of 0.8)."""
-    rd = _Reader(pack, data)
+def decode(pack, data, limit=None):
+    """-> Entity. Input beyond the last line is ignored (ruling 9 of 0.8).
+    `limit` is the limit on list items (ruling 7 of 0.11)."""
+    rd = _Reader(pack, data, limit)
     ent = Entity()
     kind = rd.body(pack.seq, _Scope(ent.fields, ent.lists, ""))
     if kind is not None:

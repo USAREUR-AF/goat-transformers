@@ -1,0 +1,7 @@
+{
+  "name": "json-float-rounds-to-infinity-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":1.7976931348623159e308}",
+  "expect_error": "transform-decode"
+}

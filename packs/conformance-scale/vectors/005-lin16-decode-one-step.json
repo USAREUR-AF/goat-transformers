@@ -1,0 +1,10 @@
+{
+  "name": "lin16-decode-one-step",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "050100",
+  "expect": "{\"hae\":0.0054931640625}",
+  "model": {
+    "@kind": "lin16"
+  }
+}

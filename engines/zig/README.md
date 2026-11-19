@@ -12,7 +12,8 @@ Version 0.7), reads and writes sequential binary layouts (`layout sequential`
 on the `bits` wire, spec Version 0.8), reads wire values that mean "no value"
 as absent keys and writes them for absent keys (the `absent` field option,
 spec Version 0.9), reads and writes one-record text formats (the `text` wire,
-spec Version 0.10), and converts between formats via the shared model.
+spec Version 0.10), follows the strict rulings of spec Version 0.11, and
+converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -23,9 +24,12 @@ zig build fuzz         # the malformed-input run alone
 zig build-exe src/main.zig && ./main ../../packs
 ```
 
-Prints `vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
-(`packs/conformance/load-vectors/`), after one `FAIL <pack>/<vector file>: <why>`
-line per failing vector; non-zero exit on any failure. Stdlib only.
+Prints `vectors: N/N passed` (conversion vectors), `load vectors: N/N passed`
+(`packs/conformance/load-vectors/`) and `capability vectors: N/N passed`
+(`packs/conformance/capability-vectors/`), after one `FAIL <pack>/<vector
+file>: <why>` line per failing vector; non-zero exit on any failure. A
+vector's `max_items` sets the limit on list items for that vector; a `model`
+value its grammar refuses makes the vector fail as invalid. Stdlib only.
 
 ## Malformed input (spec Version 0.8, rulings 35 to 40)
 
@@ -107,21 +111,28 @@ failure message are allocated from `Engine.scratch` (by default the engine's
 allocator; the harness points it at one arena per vector). A
 failure the specification names is a Zig error whose name is the spec's kind
 (`error.@"unknown-module"`, `error.@"no-kind"`, `error.@"missing-root"`,
-`error.@"malformed-wire"`,
+`error.@"malformed-wire"`, `error.@"unknown-format"`,
 `error.@"transform-encode"`, `error.@"transform-decode"`,
-`error.@"bad-directive"`, `error.@"duplicate-kind"`), and `Engine.last_error`
-holds the message `<kind>: <detail>`.
+`error.@"bad-directive"`, `error.@"bad-locator"` and every other kind of the
+table of ruling 5 of 0.11), and `Engine.last_error` holds the message
+`<kind>: <detail>`. `Engine.capability(from, to)` gives the capability report
+(ruling 6 of 0.11) and `Engine.setMaxItems(n)` the limit on list items one
+decode holds (ruling 7; 100,000 by default).
 
 ```
 gt-engine-zig [<packs-dir>] [--models <dir>] [--packs-only <a>,<b>...]
-              [--max-distribution public|controlled] [--model-keys <format>]
+              [--max-distribution public|controlled] [--max-items <n>]
+              [--model-keys <format>]
               [--convert <from> <to> [--set <key>=<value>]... [--peak]] [--fuzz]
 ```
 
 `--models` defaults to `<packs-dir>/../model`; `--max-distribution` defaults to
-`controlled` (`Engine.setMaxDistribution`). `--packs-only <a>,<b>...` loads
+`controlled` (`Engine.setMaxDistribution`); `--max-items` defaults to 100000.
+`--packs-only <a>,<b>...` loads
 only those packs and the modules they need, and runs their vectors: a vector
-that names a pack left out is not run and is counted in a `skipped:` line, and
+that names a pack left out is not run and is counted in a `skipped:` line (a
+format that is no directory of the packs directory is not left out: the
+vector pins `unknown-format` and runs), and
 the load vectors run when `conformance` is one of the named packs. It combines
 with `--model-keys` and `--convert`. `--model-keys <format>` prints
 `model_keys(format)`, the union of mapped keys over the common lines and every
@@ -199,6 +210,36 @@ line addresses, drops trailing empty fields only `optional` lines address, and
 appends the checksum in uppercase. `group <list> <i> item <n>` reads items to
 the end of the record. `--convert` does not trim the input of a `text` format.
 
+## Strict rulings (spec Version 0.11)
+
+- XML text (ruling 1): one leading byte order mark is skipped; line ends are
+  read as line feeds before anything else; a literal tab or line feed in an
+  attribute value reads as a space; every `&` is a predefined entity or a
+  numeric character reference, else `malformed-wire`; CDATA is character
+  data as written; an element with no character data has no `#text`; an
+  attribute name twice on one element is `malformed-wire`. Output escapes
+  `& < > "` tab, line feed and carriage return in attribute values and
+  `& < >` and carriage return in text; a character XML 1.0 cannot hold is
+  `transform-encode`.
+- Numbers (ruling 2): integer text is an optional `-` and digits, number text
+  an optional `-`, digits, an optional fraction and exponent; both read
+  `default` and context values, value tables, transform parameters, `model`
+  values and the `int` and `float` transforms of `xml` and of `geojson`
+  strings. `int` on a `json` number takes its exact value. The `text` wire
+  keeps the grammar of Version 0.10.
+- `iso8601_ms` (ruling 3): real calendar days, no leap second, the instant
+  from year 0001 to 9999 on decode and on encode.
+- `bits` (ruling 4): a value outside its field's range is `transform-encode`;
+  the parameters of `linscale`, `uscale` and `sscale` are checked at load.
+- Load (ruling 5): every failure has a kind, and each line is checked in the
+  order of ruling 5b; `bad-locator` for the locator forms of 5a;
+  `duplicate-format` for a second pack of one format name.
+- The capability report (ruling 6) and the limit on list items (ruling 7),
+  counted over every list of a decode before the items are read; going over
+  it wins over a field that fails: in a fixed layout by a second reading of
+  the scope that counts items only, in a sequential layout by reporting a
+  field that fails once the whole message has been read.
+
 ## Readings where the specification leaves a choice
 
 - `bits`: a `const` counts toward the length a decode needs, as a `field` does.
@@ -206,8 +247,9 @@ the end of the record. `--convert` does not trim the input of a `text` format.
   kind's.
 - A `default` value that cannot be read as its key's type is
   `key-type-mismatch` at load.
-- A `derive` line refused on its own text is a line error raised as the file
-  is read (ruling 32 of 0.8): fewer than a target, a function and one
+- A `derive` line refused on its own text is `bad-directive`, raised once
+  the file is read and before `missing-module` (ruling 5b of 0.11, which
+  also moves a key type, a key name holding `.` and `duplicate-key` there): fewer than a target, a function and one
   argument; a function the specification does not name; a parameter where the
   function takes none, or none where it takes one; a `scale` parameter that
   is not a factor, or an `offset` parameter that is not a decimal number; an
@@ -234,14 +276,22 @@ the end of the record. `--convert` does not trim the input of a `text` format.
     locator is `bad-directive`.
   - `geojson` residue: an array or object comes back with no insignificant
     whitespace and with each number as it was written.
+- Version 0.11, where no vector decides:
+  - The argument counts ruling 5e does not list are a line check (step 3):
+    `field` takes at least three arguments, `when`, `const`, `default` and
+    `typemap` two, `map` three, `group` at least two, `presence` two, `also`
+    one or three, `requires`, `if` and `length` at least one, `end`, `opt`,
+    `chain` and `fx` none.
+  - A failure after the file is read that was found while a line was read
+    (a cause not in steps 1 to 10 of ruling 5b) is reported first among the
+    checks after the file, after `missing-format`, `missing-version` and
+    `missing-wire`; the first one in the file is the error.
 - Malformed input, where no vector decides:
   - A protobuf `when` whose path meets a length-delimited field whose bytes
     do not parse as a message does not hold (ruling 31 of 0.8); on a `field`
     or `group` path the same bytes are `malformed-wire` (ruling 38).
-  - `xml`: a `<![CDATA[…]]>` section is text; a name may not hold `<`, `&`
-    or a quote; a `&` that starts neither a predefined entity nor a numeric
-    character reference stays as text; `&#X…;` with a capital `X` is
-    `malformed-wire`.
+  - `xml`: a name may not hold `<`, `&` or a quote; `&#X…;` with a capital
+    `X` is `malformed-wire`.
   - A JSON input that is not UTF-8 is `malformed-wire`.
 - Sequential layouts, where no vector decides:
   - For rulings 23 and 33 of 0.8 a group's block is the nearest `if` or

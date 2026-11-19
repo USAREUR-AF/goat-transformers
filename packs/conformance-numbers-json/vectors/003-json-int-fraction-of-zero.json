@@ -1,0 +1,10 @@
+{
+  "name": "json-int-fraction-of-zero",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1.0}",
+  "expect": "{\"n\":1}",
+  "model": {
+    "probe.n": "1"
+  }
+}

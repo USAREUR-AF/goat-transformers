@@ -45,6 +45,15 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
         throw new IllegalArgumentException("value is not a scalar");
     }
 
+    /**
+     * A member's model value: a JSON number through {@code int} or {@code float} is read as the {@code json} wire
+     * reads it (ruling 2d of 0.11); any other value through its text (a JSON string by rulings 2a and 2b).
+     */
+    static Object decodeGeo(Transform t, Object v) {
+        if (v instanceof Json.Num && (t == Transform.INT || t == Transform.FLOAT)) return JsonCodec.decodeValue(t, v);
+        return t.decode(rawText(v, t));
+    }
+
     static int coordIndex(String locator) {
         for (int i = 0; i < COORD.length; i++) if (locator.equals("geometry." + COORD[i])) return i;
         return -1;
@@ -144,14 +153,14 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             if (v == null) continue;
             // a string's text, or a number's (also a coordinate's) or boolean's canonical text (rulings 9 and 10 of 0.9)
             if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
-            String raw;
+            Object dv;
             try {
-                raw = rawText(v, f.transform);
+                dv = decodeGeo(f.transform, v);
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
                 continue;
             }
-            decodeField(f, raw, e, fails);
+            putDecoded(f, dv, e, fails);
         }
         // residue: unmapped coordinate slots, properties members and top-level members
         List<Object> coords = d.coords;

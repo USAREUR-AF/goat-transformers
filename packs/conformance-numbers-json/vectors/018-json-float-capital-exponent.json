@@ -1,0 +1,7 @@
+{
+  "name": "json-float-capital-exponent",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":1E2}",
+  "expect": "{\"a\":100}"
+}

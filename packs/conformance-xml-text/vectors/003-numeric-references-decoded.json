@@ -1,0 +1,7 @@
+{
+  "name": "numeric-references-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"&#65;&#x42;&#x63;&#x20AC;\"><name>&#9;&#10;&#13;&#x1F600;</name></e>",
+  "expect": "{\"id\":\"ABc€\",\"name\":\"\\t\\n\\r😀\"}"
+}

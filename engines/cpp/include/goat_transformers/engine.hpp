@@ -14,20 +14,27 @@ namespace goat_transformers {
 
 // ---------------------------------------------------------------- errors
 
+// Every load and call failure has a kind of the specification (0.11 ruling 5),
+// and its message begins with the kind's name and a colon. `Io` alone is not a
+// kind of the specification: a directory or file could not be read.
 enum class ErrorKind {
-    UnknownDirective,   // pack.def line with a keyword the grammar does not define
-    UnknownTransform,   // field line names a transform this engine does not implement
-    UnknownWire,        // wire directive names a codec this engine does not implement
-    InvalidPack,        // pack.def is structurally wrong (missing/duplicate directive, bad arity)
-    InvalidLocator,     // a locator that is not valid for the pack's wire
+    UnterminatedQuote,  // a value that begins with `"` has no closing `"` on its line (0.11)
+    UnknownDirective,   // the first word of a line is not a directive of its file type
+    UnknownTransform,   // a transform name this specification does not have
+    UnknownWire,        // a `wire` value that is not one of the six wires
+    BadLocator,         // a locator that does not have the form its line takes on the wire (0.11)
+    MissingFormat,      // a pack has no `format` line (0.11)
+    MissingVersion,     // a pack or a module has no `version` line (0.11)
+    MissingWire,        // a pack has no `wire` line, or a line that needs it stands before it (0.11)
+    MissingModule,      // a module has no `module` line (0.11)
+    DuplicateFormat,    // a pack whose `format` name is already loaded (0.11)
     UnknownFormat,      // decode/encode/convert asked for a format no loaded pack defines
     MalformedWire,      // input bytes are not well-formed for the wire
-    MissingRoot,        // xml document root element is not the pack's root
+    MissingRoot,        // xml: a pack with no `root` (load), or a document with another root (decode)
     TransformDecode,    // a wire value could not be decoded by its field's transform
     TransformEncode,    // a model value could not be encoded by its field's transform
     Io,                 // a pack directory or file could not be read
-    InvalidModel,       // a model module file is structurally wrong
-    // v0.4 load checks. The kind name is the spec's token and starts the message.
+    // v0.4 load checks.
     MissingDistribution,    // a module or pack has no `distribution` line
     MissingSource,          // a module or pack has no `source` line
     DistributionRefused,    // a module or pack is above the engine's distribution limit
@@ -42,7 +49,7 @@ enum class ErrorKind {
     NoKind,                 // no kind of the format matches the message or the entity
     DuplicateKind,          // a kind name is declared twice in its pack
     DuplicateField,         // withdrawn in 0.6 and never raised: a model key may be mapped by several lines
-    BadDirective,           // a directive that is not allowed where or how it is written
+    BadDirective,           // a directive this specification has, used wrongly
 };
 
 const char* error_kind_name(ErrorKind kind);
@@ -414,6 +421,15 @@ Pack parse_pack(const std::string& text, const std::string& source = "pack.def")
 
 // ---------------------------------------------------------------- engine
 
+// The capability report of an ordered pair of formats (0.11 ruling 6),
+// computed from the two packs alone. `grade` is "full", "partial" or "none";
+// `carried` and `dropped` are entries of model_keys(from), in its order.
+struct Capability {
+    std::string grade;
+    std::vector<std::string> carried;
+    std::vector<std::string> dropped;
+};
+
 class Engine {
 public:
     // Load every `<models_dir>/*.def` in byte order of file name, then every
@@ -436,6 +452,14 @@ public:
     void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
     Distribution max_distribution() const noexcept { return max_distribution_; }
 
+    // The limit on list items one decode holds (0.11 ruling 7): every item of
+    // every list at every nesting level counts one. 100,000 by default; with 0
+    // any item is refused. A decode that would hold one item more fails with
+    // malformed-wire. `encode` of an entity a program built is not limited.
+    static constexpr std::uint64_t kDefaultMaxItems = 100000;
+    void set_max_items(std::uint64_t limit) { max_items_ = limit; }
+    std::uint64_t max_items() const noexcept { return max_items_; }
+
     // Load one model module. Modules are loaded before the packs that use them.
     // A module is checked in this order (0.8 ruling 29): missing-distribution,
     // missing-source, distribution-refused, unknown-module,
@@ -449,13 +473,20 @@ public:
     std::vector<std::string> modules() const;  // sorted
 
     // Check the pack against the loaded modules (engine-spec.md v0.4, Loading), then add it.
+    // A pack whose `format` name is loaded already is refused with
+    // duplicate-format, after every other check (0.11 ruling 5b).
     void add_pack(Pack pack);
     bool has_format(const std::string& format) const;
     const Pack& pack(const std::string& format) const;
     std::vector<std::string> formats() const;  // sorted
-    // Union of the model keys over the common lines and every kind, first appearance
-    // order. A list is `<list>[]` and an item key `<list>[].<key>`, nested lists likewise.
+    // The keys the pack maps, each once, in the order of first appearance
+    // reading the file top to bottom, common lines and every kind alike (0.11
+    // ruling 6a). A list is `<list>[]` and an item key `<list>[].<key>`,
+    // nested lists likewise (6b).
     std::vector<std::string> model_keys(const std::string& format) const;
+    // The capability report of `from` against `to` (0.11 ruling 6). Throws
+    // unknown-format for a format that is not loaded.
+    Capability capability(const std::string& from, const std::string& to) const;
 
     Entity decode(const std::string& format, const std::string& bytes) const;
     std::string encode(const std::string& format, const Entity& entity) const;
@@ -503,6 +534,7 @@ private:
     std::string convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
                              const Context* context, const std::map<std::string, std::string>* text) const;
     Distribution max_distribution_ = Distribution::Controlled;
+    std::uint64_t max_items_ = kDefaultMaxItems;
 };
 
 }  // namespace goat_transformers

@@ -1,0 +1,7 @@
+{
+  "name": "int-group-separator-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"1,000\"/>",
+  "expect_error": "transform-decode"
+}

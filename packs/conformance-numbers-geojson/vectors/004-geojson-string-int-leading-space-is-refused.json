@@ -1,0 +1,7 @@
+{
+  "name": "geojson-string-int-leading-space-is-refused",
+  "from": "conformance-numbers-geojson",
+  "to": "conformance-numbers-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":\" 7\"}}",
+  "expect_error": "transform-decode"
+}

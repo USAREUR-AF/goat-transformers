@@ -1,0 +1,7 @@
+{
+  "name": "geojson-string-float-leading-dot-is-refused",
+  "from": "conformance-numbers-geojson",
+  "to": "conformance-numbers-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"a\":\".5\"}}",
+  "expect_error": "transform-decode"
+}

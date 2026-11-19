@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-19-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "13000080ffffffff5f000001",
+  "expect": "13000080ffffffff5f000001",
+  "model": {
+    "@kind": "w19",
+    "probe.x": "-262144",
+    "probe.y": "-1",
+    "probe.z": "262143",
+    "probe.w": "262145"
+  }
+}

@@ -1,16 +1,19 @@
 // Conformance runner: loads model/*.def and every pack under GT_PACKS_DIR, runs
 // every conversion vector (the `expect_error` vectors, the `context` vectors and
-// the "@kind" and "@complete" checks and the list checks among them), then every load vector under
-// conformance/load-vectors
+// the "@kind" and "@complete" checks and the list checks among them, each with
+// its `max_items`), then every load vector under conformance/load-vectors and
+// every capability vector under conformance/capability-vectors
 // (spec/vector-format.md). Every failure is reported, with its pack and vector
 // name, before the counts; exit status is non-zero on any mismatch or when
 // either set of vectors is empty.
 #include <algorithm>
+#include <cstdint>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -84,6 +87,13 @@ std::string show(const Value& v) {
     return "?";
 }
 
+// A vector whose `model` holds a value its grammar refuses is invalid (0.11
+// ruling 2c): a member named by a model key or an item path is read as that
+// key's declared type, by integer text (2a) or number text (2b).
+struct InvalidVector : std::runtime_error {
+    using std::runtime_error::runtime_error;
+};
+
 // Floats compare within 1e-9; on a completed entity ("@complete") within 1e-9
 // relative: |got - want| < 1e-9 * max(|got|, |want|), or equal.
 bool model_matches(const Value& got, const std::string& want, bool relative) {
@@ -91,11 +101,11 @@ bool model_matches(const Value& got, const std::string& want, bool relative) {
         case Value::Kind::String: return got.s == want;
         case Value::Kind::Int: {
             std::int64_t w;
-            return detail::parse_int(want, w) && w == got.i;
+            return detail::parse_int_text(want, w) && w == got.i;
         }
         case Value::Kind::Float: {
             double w;
-            if (!detail::parse_double(want, w)) return false;
+            if (!detail::parse_number_text(want, w)) return false;
             if (!relative) return std::fabs(w - got.f) <= 1e-9;
             return w == got.f || std::fabs(got.f - w) < 1e-9 * std::max(std::fabs(got.f), std::fabs(w));
         }
@@ -108,17 +118,37 @@ bool model_matches(const Value& got, const std::string& want, bool relative) {
 // or "absent", and "<list>[<i>].<key>" a value of item <i>, with further steps
 // for nested lists; "<list>[<i>].@kind" is the kind item <i> recorded (0.8).
 // Returns an empty string on a pass.
-std::string check_model_key(const goat_transformers::Item& entity, const std::string& format, const std::string& key,
-                            const std::string& want, bool relative) {
+std::string check_model_key(const Engine& eng, const goat_transformers::Item& entity, const std::string& format,
+                            const std::string& key, const std::string& want, bool relative) {
     const goat_transformers::Item* cur = &entity;
+    // The value is read by the grammar of what the member names (0.11 ruling 2c).
+    {
+        std::string last = key;
+        const std::size_t close = key.rfind("].");
+        if (close != std::string::npos) last = key.substr(close + 2);
+        if (last.size() > 2 && last.compare(last.size() - 2, 2, ".#") == 0) {
+            std::uint64_t n = 0;
+            if (want != "absent" && !detail::parse_unsigned_text(want, n))
+                throw InvalidVector("model." + key + ": '" + want + "' is not an unsigned decimal integer or 'absent'");
+        } else if (last != "@kind") {
+            if (const goat_transformers::ModelKey* k = eng.find_key(last)) {
+                std::int64_t i = 0;
+                double d = 0;
+                if (k->type == goat_transformers::KeyType::Int && !detail::parse_int_text(want, i))
+                    throw InvalidVector("model." + key + ": '" + want + "' is not integer text");
+                if (k->type == goat_transformers::KeyType::Float && !detail::parse_number_text(want, d))
+                    throw InvalidVector("model." + key + ": '" + want + "' is not number text");
+            }
+        }
+    }
     std::string rest = key;
     for (;;) {
         const std::size_t open = rest.find('[');
         if (open == std::string::npos) break;
         const std::size_t close = rest.find(']', open);
-        std::int64_t index = -1;
-        if (close == std::string::npos || !detail::parse_int(rest.substr(open + 1, close - open - 1), index) ||
-            index < 0 || rest.compare(close, 2, "].") != 0)
+        std::uint64_t index = 0;
+        if (close == std::string::npos || !detail::parse_unsigned_text(rest.substr(open + 1, close - open - 1), index) ||
+            rest.compare(close, 2, "].") != 0)
             return "model." + key + ": not a list check this runner understands";
         auto list = cur->lists.find(rest.substr(0, open));
         if (list == cur->lists.end()) return "model." + key + ": the list " + rest.substr(0, open) + " is absent";
@@ -134,8 +164,8 @@ std::string check_model_key(const goat_transformers::Item& entity, const std::st
             return list == cur->lists.end() ? "" : "model." + key + " has " + std::to_string(list->second.size()) +
                                                        " items, expected the list to be absent";
         if (list == cur->lists.end()) return "model." + key + ": the list is absent, expected " + want + " items";
-        std::int64_t n = -1;
-        if (!detail::parse_int(want, n) || n < 0 || static_cast<std::size_t>(n) != list->second.size())
+        std::uint64_t n = 0;
+        if (!detail::parse_unsigned_text(want, n) || n != list->second.size())
             return "model." + key + " = " + std::to_string(list->second.size()) + ", expected " + want;
         return "";
     }
@@ -164,9 +194,9 @@ std::string check_absent_key(const goat_transformers::Item& entity, const std::s
         const std::size_t open = rest.find('[');
         if (open == std::string::npos) break;
         const std::size_t close = rest.find(']', open);
-        std::int64_t index = -1;
-        if (close == std::string::npos || !detail::parse_int(rest.substr(open + 1, close - open - 1), index) ||
-            index < 0 || rest.compare(close, 2, "].") != 0)
+        std::uint64_t index = 0;
+        if (close == std::string::npos || !detail::parse_unsigned_text(rest.substr(open + 1, close - open - 1), index) ||
+            rest.compare(close, 2, "].") != 0)
             return "@absent " + key + ": not an entry this runner understands";
         auto list = cur->lists.find(rest.substr(0, open));
         if (list == cur->lists.end()) return "@absent " + key + ": the list " + rest.substr(0, open) + " is absent";
@@ -184,13 +214,26 @@ std::string check_absent_key(const goat_transformers::Item& entity, const std::s
     return "";
 }
 
-// One load vector: a fresh engine, the limit, the modules in order, then the pack,
-// stopping at the first failure. Returns an empty string on a pass.
+// One load vector: a fresh engine, the limit, the modules in order, then the
+// pack, or each pack of `packs` in order (0.11), stopping at the first
+// failure. Returns an empty string on a pass.
 std::string run_load_vector(const json::Value& v) {
     const json::Value* models = v.find("models");
     const json::Value* pack = v.find("pack");
-    if (!models || !models->is(json::Value::Kind::Array) || !pack || !pack->is(json::Value::Kind::String))
-        return "vector lacks models/pack";
+    const json::Value* packs = v.find("packs");
+    if (!models || !models->is(json::Value::Kind::Array)) return "vector lacks models";
+    if ((pack != nullptr) == (packs != nullptr)) return "vector has neither or both of pack and packs";
+    std::vector<std::string> pack_texts;
+    if (pack) {
+        if (!pack->is(json::Value::Kind::String)) return "pack is not a string";
+        pack_texts.push_back(pack->text);
+    } else {
+        if (!packs->is(json::Value::Kind::Array)) return "packs is not an array";
+        for (const auto& p : packs->items) {
+            if (!p.is(json::Value::Kind::String)) return "a packs entry is not a string";
+            pack_texts.push_back(p.text);
+        }
+    }
     std::string want;
     if (const json::Value* x = v.find("expect_error")) {
         if (!x->is(json::Value::Kind::String)) return "expect_error is not a string";
@@ -214,7 +257,9 @@ std::string run_load_vector(const json::Value& v) {
             if (!m.is(json::Value::Kind::String)) return "a models entry is not a string";
             eng.load_model(m.text, "models[" + std::to_string(n++) + "]");
         }
-        eng.add_pack(goat_transformers::parse_pack(pack->text, "pack"));
+        n = 0;
+        for (const auto& text : pack_texts)
+            eng.add_pack(goat_transformers::parse_pack(text, pack ? "pack" : "packs[" + std::to_string(n++) + "]"));
     } catch (const goat_transformers::Error& e) {
         got = goat_transformers::error_kind_name(e.kind());
         message = e.what();
@@ -228,12 +273,45 @@ std::string run_load_vector(const json::Value& v) {
     return "";
 }
 
+// One capability vector (0.11 ruling 6): the report of `from` against `to`,
+// with the engine that loaded every pack. Returns an empty string on a pass.
+std::string run_capability_vector(const Engine& eng, const json::Value& v) {
+    const json::Value* from = v.find("from");
+    const json::Value* to = v.find("to");
+    const json::Value* grade = v.find("grade");
+    if (!from || !to || !grade || !from->is(json::Value::Kind::String) || !to->is(json::Value::Kind::String) ||
+        !grade->is(json::Value::Kind::String))
+        return "vector lacks from, to or grade";
+    auto entries = [&](const char* name, std::vector<std::string>& out) {
+        const json::Value* a = v.find(name);
+        if (!a || !a->is(json::Value::Kind::Array)) return false;
+        for (const auto& e : a->items) {
+            if (!e.is(json::Value::Kind::String)) return false;
+            out.push_back(e.text);
+        }
+        return true;
+    };
+    std::vector<std::string> carried, dropped;
+    if (!entries("carried", carried) || !entries("dropped", dropped)) return "carried or dropped is not an array of strings";
+    const goat_transformers::Capability c = eng.capability(from->text, to->text);
+    auto join = [](const std::vector<std::string>& xs) {
+        std::string out = "[";
+        for (std::size_t k = 0; k < xs.size(); ++k) out += (k ? ", " : "") + xs[k];
+        return out + "]";
+    };
+    std::string err;
+    if (c.grade != grade->text) err += "grade " + c.grade + ", expected " + grade->text + "\n  ";
+    if (c.carried != carried) err += "carried " + join(c.carried) + ", expected " + join(carried) + "\n  ";
+    if (c.dropped != dropped) err += "dropped " + join(c.dropped) + ", expected " + join(dropped) + "\n  ";
+    return err;
+}
+
 }  // namespace
 
 int main() {
     const fs::path packs = GT_PACKS_DIR;
     int ran = 0, failed = 0, error_vectors = 0, kind_checks = 0, context_vectors = 0, complete_checks = 0,
-        list_checks = 0, absent_checks = 0;
+        list_checks = 0, absent_checks = 0, limit_vectors = 0;
 
     Engine eng;
     try {
@@ -275,6 +353,16 @@ int main() {
                 want_error = xe->text;
             } else if (!bytes_field(v, "expect", "expect_b64", expect)) {
                 throw std::runtime_error("vector lacks expect");
+            }
+
+            // `max_items` (0.11 ruling 7b): the limit on list items for this vector.
+            eng.set_max_items(Engine::kDefaultMaxItems);
+            if (const json::Value* m = v.find("max_items")) {
+                std::uint64_t n = 0;
+                if (!m->is(json::Value::Kind::Number) || !detail::parse_unsigned_text(m->text, n))
+                    throw InvalidVector("max_items is not an integer of 0 or more");
+                eng.set_max_items(n);
+                ++limit_vectors;
             }
 
             // `context`: the caller-supplied keys, values in string form.
@@ -362,10 +450,12 @@ int main() {
                         (key.size() > 2 && key.compare(key.size() - 2, 2, ".#") == 0))
                         ++list_checks;
                     if (key.size() > 7 && key.compare(key.size() - 7, 7, "].@kind") == 0) ++kind_checks;
-                    const std::string err = check_model_key(e, from->text, key, wtext, complete);
+                    const std::string err = check_model_key(eng, e, from->text, key, wtext, complete);
                     if (!err.empty()) errs.push_back(err);
                 }
             }
+        } catch (const InvalidVector& e) {
+            errs.push_back(std::string("invalid vector: ") + e.what());
         } catch (const std::exception& e) {
             errs.push_back(std::string("error: ") + e.what());
         }
@@ -375,6 +465,8 @@ int main() {
             for (const auto& m : errs) std::cout << "  " << m << "\n";
         }
     }
+
+    eng.set_max_items(Engine::kDefaultMaxItems);
 
     std::vector<fs::path> load_files;
     const fs::path ldir = packs / "conformance" / "load-vectors";
@@ -399,11 +491,36 @@ int main() {
         }
     }
 
+    std::vector<fs::path> cap_files;
+    const fs::path cdir = packs / "conformance" / "capability-vectors";
+    if (fs::is_directory(cdir))
+        for (const auto& f : fs::directory_iterator(cdir))
+            if (f.path().extension() == ".json") cap_files.push_back(f.path());
+    std::sort(cap_files.begin(), cap_files.end());
+
+    int cap_ran = 0, cap_failed = 0;
+    for (const auto& file : cap_files) {
+        ++cap_ran;
+        std::string label = "capability-vectors/" + file.filename().string();
+        std::string err;
+        try {
+            err = run_capability_vector(eng, json::parse(read_file(file)));
+        } catch (const std::exception& e) {
+            err = std::string("error: ") + e.what();
+        }
+        if (!err.empty()) {
+            ++cap_failed;
+            std::cout << "FAIL " << label << "\n  " << err << "\n";
+        }
+    }
+
     std::cout << "conversion vectors: " << ran << " run, " << (ran - failed) << " passed, " << failed << " failed ("
               << error_vectors << " expect_error, " << kind_checks << " @kind checks, " << context_vectors
               << " with context, " << complete_checks << " @complete, " << list_checks << " list checks, "
-              << absent_checks << " @absent)\n";
+              << absent_checks << " @absent, " << limit_vectors << " with max_items)\n";
     std::cout << "load vectors: " << load_ran << " run, " << (load_ran - load_failed) << " passed, " << load_failed
+              << " failed\n";
+    std::cout << "capability vectors: " << cap_ran << " run, " << (cap_ran - cap_failed) << " passed, " << cap_failed
               << " failed\n";
     if (ran == 0) {
         std::cout << "no vectors found under " << packs << "\n";
@@ -413,5 +530,9 @@ int main() {
         std::cout << "no load vectors found under " << ldir << "\n";
         return 1;
     }
-    return failed == 0 && load_failed == 0 ? 0 : 1;
+    if (cap_ran == 0) {
+        std::cout << "no capability vectors found under " << cdir << "\n";
+        return 1;
+    }
+    return failed == 0 && load_failed == 0 && cap_failed == 0 ? 0 : 1;
 }

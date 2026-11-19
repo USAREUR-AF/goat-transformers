@@ -17,12 +17,13 @@ type loadVector struct {
 	Name            string   `json:"name"`
 	Models          []string `json:"models"`
 	Pack            *string  `json:"pack"`
+	Packs           []string `json:"packs"` // Version 0.11: several packs, loaded in order, in place of pack
 	MaxDistribution *string  `json:"max_distribution"`
 	ExpectError     *string  `json:"expect_error"`
 }
 
 // runLoadVector starts an empty engine, loads the modules in order and then
-// the pack, and returns the first failure.
+// the pack, or each pack of `packs` in order, and returns the first failure.
 func runLoadVector(v *loadVector) error {
 	eng := New()
 	if v.MaxDistribution != nil {
@@ -35,7 +36,15 @@ func runLoadVector(v *loadVector) error {
 			return err
 		}
 	}
-	return eng.LoadPack([]byte(*v.Pack), "pack")
+	if v.Pack != nil {
+		return eng.LoadPack([]byte(*v.Pack), "pack")
+	}
+	for i, p := range v.Packs {
+		if err := eng.LoadPack([]byte(p), fmt.Sprintf("packs[%d]", i)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // TestLoadVectors runs every load vector (spec/vector-format.md, "Load
@@ -64,8 +73,8 @@ func TestLoadVectors(t *testing.T) {
 		if err := dec.Decode(&v); err != nil {
 			t.Fatalf("%s: %v", file, err)
 		}
-		if v.Name == "" || v.Models == nil || v.Pack == nil {
-			t.Fatalf("%s: name, models and pack are required", file)
+		if v.Name == "" || v.Models == nil || (v.Pack == nil) == (v.Packs == nil) {
+			t.Fatalf("%s: name, models and one of pack and packs are required", file)
 		}
 		if prev, dup := names[v.Name]; dup {
 			t.Fatalf("%s: load vector name %q already used by %s", file, v.Name, prev)

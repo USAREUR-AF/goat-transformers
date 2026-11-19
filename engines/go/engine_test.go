@@ -52,10 +52,10 @@ func TestPackErrorsAreNamed(t *testing.T) {
 		{"bad xml locator", "format a\nwire xml\nroot r\nfield uid point string\n", ErrBadLocator},
 		{"bad geojson locator", "format a\nwire geojson\nfield lat geometry.z float\n", ErrBadLocator},
 		{"wrong arity", "format a\nwire geojson\nfield lat geometry.lat\n", ErrBadDirective},
-		{"missing format", "wire geojson\n", ErrBadDirective},
+		{"missing format", "wire geojson\n", ErrMissingFormat},
 	}
 	for _, c := range cases {
-		_, err := ParsePack([]byte("distribution public\nsource s\n"+c.def), "test.def")
+		_, err := ParsePack([]byte("version 1\ndistribution public\nsource s\n"+c.def), "test.def")
 		if err == nil || !IsKind(err, c.kind) {
 			t.Errorf("%s: got %v, want kind %s", c.name, err, c.kind)
 		}
@@ -128,6 +128,7 @@ typemap NAT a-f-G
 `
 
 const geoDef = `format g
+version 1
 distribution public
 source "unit tests"
 wire geojson
@@ -246,6 +247,7 @@ func TestWireErrors(t *testing.T) {
 }
 
 const kindsDef = `format k
+version 1
 distribution public
 source "unit tests"
 wire bits
@@ -265,6 +267,7 @@ when 0:0:8 0
 `
 
 const jsonDef = `format j
+version 1
 distribution public
 source "unit tests"
 wire json
@@ -337,7 +340,7 @@ func TestKinds(t *testing.T) {
 }
 
 func TestKindLoadErrors(t *testing.T) {
-	head := "format a\ndistribution public\nsource s\n"
+	head := "format a\nversion 1\ndistribution public\nsource s\n"
 	cases := []struct {
 		name, def string
 		kind      ErrorKind
@@ -348,11 +351,11 @@ func TestKindLoadErrors(t *testing.T) {
 		{"bit_order on json", "wire json\nbit_order msb\n", ErrBadDirective},
 		{"bad bit_order", "wire bits\nword_bytes 1\nbit_order middle\n", ErrBadDirective},
 		{"f32 length", "wire bits\nword_bytes 1\nfield lat 0:0:31 f32\n", ErrBadDirective},
-		{"ascii length", "wire bits\nword_bytes 1\nfield uid 0:0:2048 ascii\n", ErrBadLocator},
+		{"ascii length", "wire bits\nword_bytes 1\nfield uid 0:0:2048 ascii\n", ErrBadDirective}, // a length the transform does not allow (ruling 4d of 0.11)
 		{"uint over 64 bits", "wire bits\nword_bytes 1\nfield uid 0:0:72 uint\n", ErrBadDirective},
 		{"bits when not a number", "wire bits\nword_bytes 1\nkind a\nwhen 0:0:8 x\n", ErrBadDirective},
 		{"bits when does not fit", "wire bits\nword_bytes 1\nkind a\nwhen 0:0:8 256\n", ErrBadDirective},
-		{"bool on xml", "wire xml\nroot r\nfield uid @a bool\n", ErrUnknownTransform},
+		{"bool on xml", "wire xml\nroot r\nfield uid @a bool\n", ErrBadDirective}, // a transform on a wire it is not valid for (ruling 5 of 0.11)
 		// 0.6
 		{"via with no map line", "wire json\nfield uid a string via t\n", ErrBadDirective},
 		{"via with no table name", "wire json\nfield uid a string via\n", ErrBadDirective},
@@ -378,15 +381,15 @@ func TestKindLoadErrors(t *testing.T) {
 // Whole-file checks run before missing-distribution (0.5 ruling 25), and
 // duplicate-field is withdrawn (0.6).
 func TestWholeFileChecksAndWithdrawnDuplicateField(t *testing.T) {
-	_, err := ParsePack([]byte("format a\nsource s\nwire bits\nword_bytes 4\nfield lat 0:0:16 f32\n"), "test.def")
+	_, err := ParsePack([]byte("format a\nversion 1\nsource s\nwire bits\nword_bytes 4\nfield lat 0:0:16 f32\n"), "test.def")
 	if !IsKind(err, ErrBadDirective) {
 		t.Errorf("bad length with no distribution: got %v, want bad-directive", err)
 	}
-	_, err = ParsePack([]byte("format a\nsource s\nwire bits\nword_bytes 4\nfield lat 0:0:32 f32\n"), "test.def")
+	_, err = ParsePack([]byte("format a\nversion 1\nsource s\nwire bits\nword_bytes 4\nfield lat 0:0:32 f32\n"), "test.def")
 	if !IsKind(err, ErrMissingDistribution) {
 		t.Errorf("no distribution: got %v, want missing-distribution", err)
 	}
-	head := "format a\ndistribution public\nsource s\n"
+	head := "format a\nversion 1\ndistribution public\nsource s\n"
 	for _, def := range []string{
 		"wire json\nfield uid a string\nkind a\nfield uid b string\n",
 		"wire json\nfield uid a string\nfield uid b string\n",
@@ -423,6 +426,7 @@ derive label join:- uid callsign
 `
 
 const rulesJSONDef = `format rj
+version 1
 distribution public
 source "unit tests"
 wire json
@@ -446,6 +450,7 @@ map class 3 uas
 `
 
 const rulesBitsDef = `format rb
+version 1
 distribution public
 source "unit tests"
 wire bits
@@ -458,6 +463,7 @@ field lat 0:56:32 f32 optional swap
 `
 
 const rulesXMLDef = `format rx
+version 1
 distribution public
 source "unit tests"
 wire xml

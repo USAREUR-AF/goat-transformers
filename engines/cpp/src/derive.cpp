@@ -20,14 +20,6 @@ constexpr double kPi = 3.14159265358979323846;
     throw Error(ErrorKind::BadDirective, "", "", where + ": " + what);
 }
 
-bool is_integer_text(const std::string& s) {
-    std::size_t i = !s.empty() && (s[0] == '-' || s[0] == '+') ? 1 : 0;
-    if (i >= s.size()) return false;
-    for (; i < s.size(); ++i)
-        if (s[i] < '0' || s[i] > '9') return false;
-    return true;
-}
-
 }  // namespace
 
 DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& where) {
@@ -75,9 +67,10 @@ DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& wh
         std::string err;
         if (!parse_scale_factor(param, d.fraction, d.factor, d.num, d.den, err)) bad(where, "derive " + err);
     } else if (d.fn == DeriveFn::Offset) {
-        if (param.empty() || !parse_double(param, d.offset)) bad(where, "derive offset is not a decimal number");
+        // Number text (0.11 ruling 2c); an integer when 2a reads it.
+        if (!parse_number_text(param, d.offset)) bad(where, "derive offset is not number text");
         std::int64_t n = 0;
-        if (is_integer_text(param) && parse_int(param, n)) {
+        if (parse_int_text(param, n)) {
             d.offset_is_int = true;
             d.int_offset = n;
         }

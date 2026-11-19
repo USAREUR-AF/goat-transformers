@@ -24,6 +24,10 @@ def main(argv=None):
         "--set", dest="context", action="append", default=None, metavar="KEY=VALUE",
         help="a caller-supplied model key, read as the key's declared type; repeatable",
     )
+    c.add_argument(
+        "--max-items", dest="max_items", type=int, default=None, metavar="N",
+        help="the limit on list items one decode holds, 0 or more (default: 100000)",
+    )
 
     lf = sub.add_parser("list-formats", help="list loaded formats")
     lf.add_argument("--packs", default=default_packs, required=default_packs is None)
@@ -40,6 +44,8 @@ def main(argv=None):
         )
 
     args = ap.parse_args(argv)
+    if getattr(args, "max_items", None) is not None and args.max_items < 0:
+        ap.error("--max-items takes an integer of 0 or more")
     try:
         only = None
         if args.packs_only is not None:
@@ -60,7 +66,7 @@ def main(argv=None):
                 if not eq or not key:
                     ap.error("--set takes <key>=<value>, got %r" % item)
                 context[key] = value
-        out = eng.convert(args.src, args.dst, sys.stdin.buffer.read(), context)
+        out = eng.convert(args.src, args.dst, sys.stdin.buffer.read(), context, max_items=args.max_items)
         sys.stdout.buffer.write(out)
         sys.stdout.buffer.flush()
         return 0

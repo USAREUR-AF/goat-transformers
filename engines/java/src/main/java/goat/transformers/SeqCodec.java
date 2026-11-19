@@ -90,7 +90,7 @@ final class SeqCodec extends Codec<byte[]> {
     }
 
     @Override
-    Entity decode(String text) {
+    Entity decodeMessage(String text) {
         Reader r = new Reader(parse(text));
         Entity e = new Entity();
         Seq.Kind kind = decodeBody(root, r, e);
@@ -283,6 +283,8 @@ final class SeqCodec extends Codec<byte[]> {
             case COUNT: {
                 if (!r.line(g.len, "the count of " + g.list)) return;   // beyond the extent: an absent list
                 long n = r.take(g.len);
+                giveBackItems(e.list(g.list));   // a later group of the list replaces the earlier one's items
+                takeItems(n);                    // before any item is read (ruling 7d of 0.11)
                 long left = r.limit() - r.pos;
                 if (n < 0 || n > left) {
                     throw malformed("the count of " + g.list + " is " + Long.toUnsignedString(n) + " and " + left + " bits are left");
@@ -292,22 +294,28 @@ final class SeqCodec extends Codec<byte[]> {
             }
             case WHILE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
+                giveBackItems(e.list(g.list));
                 while (true) {
                     if (r.indicator("the bit before an item of " + g.list) == 0) break;
+                    takeItems(1);
                     items.add(decodeItem(g, r));
                 }
                 break;
             case MORE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
+                giveBackItems(e.list(g.list));
                 while (true) {
                     long more = r.indicator("the bit before an item of " + g.list);
+                    takeItems(1);
                     items.add(decodeItem(g, r));
                     if (more == 0) break;
                 }
                 break;
             default:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
+                giveBackItems(e.list(g.list));
                 while (true) {
+                    takeItems(1);
                     items.add(decodeItem(g, r));
                     if (r.indicator("the bit after an item of " + g.list) == 0) break;
                 }

@@ -1,0 +1,10 @@
+{
+  "name": "when-prefix-is-the-last-occurrence-and-it-parses",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753122016822020807",
+  "expect": "{\"id\":\"u1\",\"n\":7}",
+  "model": {
+    "@kind": "inner"
+  }
+}

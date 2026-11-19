@@ -1,0 +1,7 @@
+{
+  "name": "int-empty-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"\"/>",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "whitespace-only-text-is-text-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name> </name></e>",
+  "expect": "{\"name\":\" \"}"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "empty-attribute-is-the-empty-string-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"\"/>",
+  "expect": "{\"id\":\"\"}"
+}

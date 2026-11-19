@@ -140,10 +140,44 @@ struct Decoder {
     // table: later lines are not read.
     bool wants(const FieldLine& f) const;
     void set(const FieldLine& f, const std::string& text);  // text-wire transform, then put
+    void set_json_number(const FieldLine& f, const std::string& text);  // a JSON number (0.11 ruling 2d), then put
     void put(const FieldLine& f, Value native);             // the value table, then the key
     void fail(const FieldLine& f, const std::string& why);
     void finish();  // type mapping; throws transform-decode listing every failed field
 };
+
+// ---- one decode: the limit on list items and the failed fields (Version 0.11)
+
+// The state of one decode, set up by Engine::decode for the codec it calls.
+// While one is active, the items of every list are counted against the limit
+// (ruling 7), and a failed field does not end the decode: the first is kept
+// and raised when the decode ends, so that a failure of the wire found later,
+// going over the limit among them, wins over it (ruling 7f).
+class DecodeScope {
+public:
+    explicit DecodeScope(std::uint64_t max_items);
+    ~DecodeScope();
+    DecodeScope(const DecodeScope&) = delete;
+    DecodeScope& operator=(const DecodeScope&) = delete;
+    // Throws the first failed field, when there is one.
+    void raise_failure() const;
+    bool failed() const { return has_failure_; }
+
+    std::uint64_t limit = 0;
+    std::uint64_t held = 0;  // items the entity holds so far
+    bool has_failure_ = false;
+    std::string fail_format, fail_locator, fail_detail;
+
+private:
+    DecodeScope* outer_ = nullptr;
+};
+// `n` more items of the list `list`: malformed-wire when the decode would hold
+// more than the limit (7a). No-op outside a decode.
+void take_items(const Pack& p, const std::string& list, std::uint64_t n);
+// Items a later group of one list replaced are no longer held (7g).
+void give_back_items(std::uint64_t n);
+// The items of a list, those of the lists inside its items included.
+std::uint64_t count_items(const std::vector<Item>& items);
 
 // What encode writes for a field: the item's value, else the `default` in
 // scope, then the reverse type mapping and the field's value table.

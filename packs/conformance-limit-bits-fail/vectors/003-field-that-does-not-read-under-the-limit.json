@@ -1,0 +1,8 @@
+{
+  "name": "field-that-does-not-read-under-the-limit",
+  "from": "conformance-limit-bits-fail",
+  "to": "conformance-limit-bits-fail",
+  "input": "020201",
+  "max_items": 2,
+  "expect_error": "transform-decode"
+}

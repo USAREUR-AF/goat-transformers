@@ -27,6 +27,7 @@ type vector struct {
 	ExpectError *string           `json:"expect_error"`
 	Model       map[string]any    `json:"model"`
 	Context     map[string]string `json:"context"`
+	MaxItems    *json.Number      `json:"max_items"` // Version 0.11: the limit on list items for this vector
 	Source      string            `json:"source"`    // where the vector's bytes come from; not checked
 	Reference   string            `json:"reference"` // not checked
 }
@@ -135,10 +136,11 @@ func checkModelKey(rec *Item, k, want string, relative bool) string {
 			}
 			return ""
 		}
-		n, err := strconv.Atoi(want)
+		u, err := parseUintText(want, 1<<31-1)
 		if err != nil {
-			return fmt.Sprintf("expected count %q is not a number or \"absent\"", want)
+			return fmt.Sprintf("expected count %q is not an unsigned decimal integer or \"absent\"; the vector is invalid", want)
 		}
+		n := int(u)
 		if !present {
 			return fmt.Sprintf("list %s is absent, want %d item(s)", list, n)
 		}
@@ -159,17 +161,74 @@ func checkModelKey(rec *Item, k, want string, relative bool) string {
 		return fmt.Sprintf("absent, want %q", want)
 	}
 	if val.Kind == KindFloat {
-		w, err := strconv.ParseFloat(want, 64)
+		w, err := parseNumberText(want)
 		if err != nil {
-			return fmt.Sprintf("expected value %q is not a float", want)
+			return fmt.Sprintf("expected value %q is not number text; the vector is invalid", want)
 		}
 		if !floatsMatch(val.F, w, relative) {
 			return fmt.Sprintf("got %v, want %v (tolerance 1e-9)", val.F, w)
 		}
 		return ""
 	}
+	if val.Kind == KindInt {
+		w, err := parseIntText(want)
+		if err != nil {
+			return fmt.Sprintf("expected value %q is not integer text; the vector is invalid", want)
+		}
+		if val.I != w {
+			return fmt.Sprintf("got %d, want %d", val.I, w)
+		}
+		return ""
+	}
 	if val.String() != want {
 		return fmt.Sprintf("got %q, want %q", val.String(), want)
+	}
+	return ""
+}
+
+// checkModelGrammar reads one `model` value by the grammar of its member
+// (spec/vector-format.md, Version 0.11; ruling 2c of 0.11): a model key or an
+// item path `<list>[<i>].<key>` by the grammar of the key's declared type, a
+// `<list>.#` value as an unsigned decimal integer or `absent`. It returns
+// what makes the vector invalid, "" when the value reads.
+func checkModelGrammar(eng *Engine, k, want string) string {
+	key := k
+	for {
+		i := strings.IndexByte(key, '[')
+		if i < 0 {
+			break
+		}
+		j := strings.Index(key[i:], "].")
+		if j < 0 {
+			return ""
+		}
+		key = key[i+j+2:]
+	}
+	if key == kindKey {
+		return ""
+	}
+	if _, isCount := strings.CutSuffix(key, ".#"); isCount {
+		if want == "absent" {
+			return ""
+		}
+		if _, err := parseUintText(want, 1<<63-1); err != nil {
+			return fmt.Sprintf("count %q is not an unsigned decimal integer or absent", want)
+		}
+		return ""
+	}
+	kt, err := eng.keyType(key)
+	if err != nil {
+		return ""
+	}
+	switch kt {
+	case KindInt:
+		if _, err := parseIntText(want); err != nil {
+			return fmt.Sprintf("%q is not integer text and %s is int", want, key)
+		}
+	case KindFloat:
+		if _, err := parseNumberText(want); err != nil {
+			return fmt.Sprintf("%q is not number text and %s is float", want, key)
+		}
 	}
 	return ""
 }
@@ -226,8 +285,18 @@ func runConversionVectors(t *testing.T, packsDir string) {
 		names[id] = file
 		run++
 		ok := t.Run(id, func(t *testing.T) {
-			if v.From != pack {
+			// A vector that pins unknown-format names a format no pack
+			// directory holds (spec/vector-format.md, Version 0.11).
+			if _, loaded := eng.packs[v.From]; v.From != pack && loaded {
 				t.Errorf("vector lives in pack %q but from is %q", pack, v.From)
+			}
+			if v.MaxItems != nil {
+				n, err := parseUintText(v.MaxItems.String(), 1<<62)
+				if err != nil {
+					t.Fatalf("max_items %q is not an integer of 0 or more; the vector is invalid", v.MaxItems.String())
+				}
+				eng.SetMaxItems(int64(n))
+				defer eng.SetMaxItems(DefaultMaxItems)
 			}
 			in := bytesOf(t, v.Input, v.InputB64, "input")
 			got, err := eng.ConvertWith(v.From, v.To, in, v.Context)
@@ -309,6 +378,10 @@ func runConversionVectors(t *testing.T, packsDir string) {
 				wantS, isString := v.Model[k].(string)
 				if !isString {
 					t.Errorf("model[%s]: expected value must be in string form", k)
+					continue
+				}
+				if msg := checkModelGrammar(eng, k, wantS); msg != "" {
+					t.Errorf("model[%s]: %s; the vector is invalid", k, msg)
 					continue
 				}
 				if k == kindKey {

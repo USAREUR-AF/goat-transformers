@@ -1,0 +1,7 @@
+{
+  "name": "float-json-number-seventeen-significant-digits",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers-json",
+  "input": "3fd3333333333334",
+  "expect": "{\"a\":0.30000000000000004}"
+}

@@ -12,7 +12,9 @@
 // Model modules load from --models (default <packs>/../model) before the
 // packs. --max-distribution public refuses every controlled module and pack.
 // --set <key>=<value>, repeatable, supplies a model key the source message
-// does not carry (the `context` of convert, engine-spec 0.6).
+// does not carry (the `context` of convert, engine-spec 0.6). --max-items <n>
+// sets the limit on list items one decode holds (default 100000, ruling 7 of
+// engine-spec 0.11).
 package main
 
 import (
@@ -20,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	goatxf "github.com/USAREUR-AF/goat-transformers/engines/go"
@@ -45,7 +48,7 @@ func (s setFlag) Set(arg string) error {
 
 func usage(w io.Writer) {
 	fmt.Fprintln(w, "usage:")
-	fmt.Fprintln(w, "  goat-xf convert --from FORMAT --to FORMAT --packs DIR [--set KEY=VALUE ...]   (stdin -> stdout)")
+	fmt.Fprintln(w, "  goat-xf convert --from FORMAT --to FORMAT --packs DIR [--set KEY=VALUE ...] [--max-items N]   (stdin -> stdout)")
 	fmt.Fprintln(w, "  goat-xf list-formats --packs DIR")
 	fmt.Fprintln(w, "both take: --models DIR (default <packs>/../model), --max-distribution public|controlled (default controlled),")
 	fmt.Fprintln(w, "           --packs-only A,B (load only the named packs of --packs and the modules they need)")
@@ -85,8 +88,18 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 		to := fs.String("to", "", "target format")
 		set := setFlag{}
 		fs.Var(set, "set", "model `key=value` supplied by the caller for a key the message lacks; repeatable")
+		maxItems := fs.String("max-items", "", "the limit on list items one decode holds, an integer of 0 or more (default 100000)")
 		if err := fs.Parse(rest); err != nil {
 			return 2
+		}
+		limit := int64(goatxf.DefaultMaxItems)
+		if *maxItems != "" {
+			n, err := strconv.ParseUint(*maxItems, 10, 63)
+			if err != nil || strings.TrimLeft(*maxItems, "0123456789") != "" {
+				fmt.Fprintf(stderr, "goat-xf: --max-items takes an integer of 0 or more, got %q\n", *maxItems)
+				return 2
+			}
+			limit = int64(n)
 		}
 		if *from == "" || *to == "" || fs.NArg() != 0 {
 			usage(stderr)
@@ -97,6 +110,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 			fmt.Fprintln(stderr, "goat-xf:", err)
 			return 1
 		}
+		eng.SetMaxItems(limit)
 		in, err := io.ReadAll(stdin)
 		if err != nil {
 			fmt.Fprintln(stderr, "goat-xf: reading stdin:", err)

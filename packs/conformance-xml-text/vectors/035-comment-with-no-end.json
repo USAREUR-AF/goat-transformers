@@ -1,0 +1,7 @@
+{
+  "name": "comment-with-no-end",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><!-- c </e>",
+  "expect_error": "malformed-wire"
+}

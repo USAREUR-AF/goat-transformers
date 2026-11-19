@@ -54,8 +54,11 @@ func parseDerive(d *Derive) error {
 			return fmt.Errorf("scale needs a factor: scale:<factor>")
 		}
 		if i := strings.IndexByte(param, '/'); i >= 0 {
-			num, e1 := strconv.ParseInt(param[:i], 10, 64)
-			den, e2 := strconv.ParseInt(param[i+1:], 10, 64)
+			// <num> is integer text and <den> an unsigned decimal integer
+			// that is not zero (ruling 2c of 0.11).
+			num, e1 := parseIntText(param[:i])
+			uden, e2 := parseUintText(param[i+1:], 1<<63-1)
+			den := int64(uden)
 			if e1 != nil || e2 != nil || den == 0 {
 				return fmt.Errorf("scale fraction must be <num>/<den> of two decimal integers, got %q", param)
 			}
@@ -162,7 +165,7 @@ func (e *Engine) checkDerives(m *Module) error {
 			switch {
 			case all(KindFloat):
 			case all(KindInt):
-				n, err := strconv.ParseInt(d.param, 10, 64)
+				n, err := parseIntText(d.param)
 				if err != nil {
 					return bad("offset on int keys needs an integer, got %q", d.param)
 				}
@@ -409,9 +412,9 @@ func (e *Engine) Complete(ent *Entity) {
 func readAs(text string, kind Kind) (Value, error) {
 	switch kind {
 	case KindInt:
-		i, err := strconv.ParseInt(strings.TrimSpace(text), 10, 64)
+		i, err := parseIntText(text)
 		if err != nil {
-			return Value{}, fmt.Errorf("%q is not an integer", text)
+			return Value{}, fmt.Errorf("%q is not integer text", text)
 		}
 		return Value{Kind: KindInt, I: i}, nil
 	case KindFloat:

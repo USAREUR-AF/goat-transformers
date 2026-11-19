@@ -1,0 +1,7 @@
+{
+  "name": "float-d-exponent-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1d3\"/>",
+  "expect_error": "transform-decode"
+}

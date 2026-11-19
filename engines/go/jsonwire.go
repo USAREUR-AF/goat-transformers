@@ -161,8 +161,49 @@ func decodeJSONValue(f *Field, v *jval) (Value, error) {
 		if v.k != jNum {
 			return wrong("number")
 		}
+		return decodeJSONNumber(f, v.s)
 	}
 	return f.tf.decode(v.s)
+}
+
+// decodeJSONNumber reads a JSON number through `int` or `float` (ruling 2d
+// of 0.11): through `float` the nearest double, refused when it is infinite;
+// through `int` the exact value, which must be an integer within a signed
+// 64-bit integer whatever its fraction of zero or its exponent.
+func decodeJSONNumber(f *Field, lit string) (Value, error) {
+	switch f.Transform {
+	case "int":
+		i, err := exactInt(lit)
+		if err != nil {
+			return Value{}, err
+		}
+		return Value{Kind: KindInt, I: i}, nil
+	case "float":
+		x, err := parseNumberText(lit)
+		if err != nil {
+			return Value{}, err
+		}
+		return Value{Kind: KindFloat, F: x}, nil
+	}
+	return f.tf.decode(lit)
+}
+
+// fieldJSON decodes one member with the value types of the geojson wire: a
+// string through the transform's text grammar, a number by ruling 2d of 0.11.
+func (d *decodeState) fieldJSON(f *Field, v *jval) {
+	if v.k != jNum {
+		d.field(f, v.s)
+		return
+	}
+	if _, done := d.rec.Fields[f.Key]; done {
+		return
+	}
+	val, err := decodeJSONNumber(f, v.s)
+	if err != nil {
+		d.fail(f, err.Error())
+		return
+	}
+	d.store(f, val)
 }
 
 func decodeJSONWire(d *decodeState, b []byte) error {
@@ -186,6 +227,7 @@ func decodeJSONWire(d *decodeState, b []byte) error {
 	// Residue: every scalar member at any depth of nested objects that no
 	// field or when line maps, keyed by its path, as canonical JSON text.
 	// Arrays, nulls and members whose name holds a `.` are not carried.
+	var residueErr error
 	var walk func(o *jval, prefix string)
 	walk = func(o *jval, prefix string) {
 		for i, name := range o.keys {
@@ -203,6 +245,11 @@ func decodeJSONWire(d *decodeState, b []byte) error {
 				}
 			case jNum:
 				if !lay.maps(path) {
+					// A residue number whose nearest double is infinite has
+					// no canonical text (ruling 2d of 0.11).
+					if _, ok := jsonNumberCanon(v.s); !ok && residueErr == nil {
+						residueErr = &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: path, Detail: "a number no line maps has no finite double value"}
+					}
 					d.residue(path, canonNumber(v.s), true)
 				}
 			case jBool:
@@ -213,7 +260,7 @@ func decodeJSONWire(d *decodeState, b []byte) error {
 		}
 	}
 	walk(root, "")
-	return nil
+	return residueErr
 }
 
 // jsonScope decodes the lines of one scope from v: the message, or one item
@@ -238,7 +285,7 @@ func (d *decodeState) jsonScope(lay *layout, v *jval, geo bool) error {
 			}
 			if geo {
 				if m.k == jStr || m.k == jNum {
-					d.field(f, m.s)
+					d.fieldJSON(f, m)
 				} else {
 					d.fail(f, "wire value is not a JSON string or number")
 				}

@@ -287,7 +287,7 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 				switch v.k {
 				case jNull:
 				case jStr, jNum:
-					d.field(f, v.s)
+					d.fieldJSON(f, v)
 				default:
 					d.fail(f, "wire value is not a JSON string or number")
 				}

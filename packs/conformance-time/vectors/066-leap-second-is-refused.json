@@ -1,0 +1,7 @@
+{
+  "name": "leap-second-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2016-12-31T23:59:60Z\"/>",
+  "expect_error": "transform-decode"
+}

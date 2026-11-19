@@ -13,16 +13,36 @@ import (
 // Engine holds the loaded model modules, keyed by module name, and the loaded
 // packs, keyed by format name.
 type Engine struct {
-	modules map[string]*Module
-	packs   map[string]*Pack
-	maxDist string
-	derives []*Derive // every derive line in application order; nil until first use
+	modules  map[string]*Module
+	packs    map[string]*Pack
+	maxDist  string
+	derives  []*Derive // every derive line in application order; nil until first use
+	maxItems int64     // the limit on list items one decode holds (ruling 7 of 0.11)
 }
 
-// New returns an empty engine whose distribution limit is controlled.
+// DefaultMaxItems is the limit on list items of a decode unless the caller
+// sets another (ruling 7b of 0.11).
+const DefaultMaxItems = 100000
+
+// New returns an empty engine whose distribution limit is controlled and
+// whose limit on list items is DefaultMaxItems.
 func New() *Engine {
-	return &Engine{modules: map[string]*Module{}, packs: map[string]*Pack{}, maxDist: DistControlled}
+	return &Engine{modules: map[string]*Module{}, packs: map[string]*Pack{}, maxDist: DistControlled, maxItems: DefaultMaxItems}
 }
+
+// SetMaxItems sets the limit on list items one decode holds, counted over
+// every list of the message at every nesting level (ruling 7 of 0.11). With
+// 0 any item is refused; a negative value is read as 0. Going over the limit
+// is malformed-wire. Encode is not limited.
+func (e *Engine) SetMaxItems(n int64) {
+	if n < 0 {
+		n = 0
+	}
+	e.maxItems = n
+}
+
+// MaxItems returns the limit on list items of a decode.
+func (e *Engine) MaxItems() int64 { return e.maxItems }
 
 // SetMaxDistribution sets the distribution limit, public or controlled. It
 // governs what is loaded afterwards.
@@ -359,6 +379,50 @@ func (e *Engine) ModelKeys(format string) ([]string, error) {
 	return p.ModelKeys(), nil
 }
 
+// Capability is the capability report of one ordered pair of formats
+// (ruling 6 of 0.11): the entries of model_keys(from) that are also entries
+// of model_keys(to), the other entries, both in the order of
+// model_keys(from), and the grade.
+type Capability struct {
+	Grade   string // full, partial or none
+	Carried []string
+	Dropped []string
+}
+
+// Capability computes the report of (from, to) from the two packs alone. A
+// format that is not loaded is unknown-format, from checked first.
+func (e *Engine) Capability(from, to string) (*Capability, error) {
+	src, err := e.Pack(from)
+	if err != nil {
+		return nil, err
+	}
+	dst, err := e.Pack(to)
+	if err != nil {
+		return nil, err
+	}
+	target := map[string]bool{}
+	for _, k := range dst.ModelKeys() {
+		target[k] = true
+	}
+	c := &Capability{Carried: []string{}, Dropped: []string{}}
+	for _, k := range src.ModelKeys() {
+		if target[k] {
+			c.Carried = append(c.Carried, k)
+		} else {
+			c.Dropped = append(c.Dropped, k)
+		}
+	}
+	switch {
+	case len(c.Carried) == 0:
+		c.Grade = "none"
+	case len(c.Dropped) == 0:
+		c.Grade = "full"
+	default:
+		c.Grade = "partial"
+	}
+	return c, nil
+}
+
 // Decode turns wire bytes into the shared model. When some fields cannot be
 // decoded the entity is returned with those fields absent together with a
 // *DecodeError listing them. In a pack with kinds the entity records the kind
@@ -368,7 +432,7 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 	if err != nil {
 		return nil, err
 	}
-	d := &decodeState{pack: p, ent: NewEntity()}
+	d := &decodeState{pack: p, ent: NewEntity(), limit: e.maxItems}
 	d.rec = d.ent.item()
 	switch p.Wire {
 	case WireXML:
@@ -451,6 +515,10 @@ func (e *Engine) Convert(from, to string, b []byte) ([]byte, error) {
 // skipped, so a same-format round trip stays byte-exact. A decode that leaves
 // any key without a value fails the conversion.
 func (e *Engine) ConvertWith(from, to string, b []byte, context map[string]string) ([]byte, error) {
+	// from, then to, before the input is read (ruling 5 of 0.11).
+	if _, err := e.Pack(from); err != nil {
+		return nil, err
+	}
 	if _, err := e.Pack(to); err != nil {
 		return nil, err
 	}
@@ -478,10 +546,56 @@ type decodeState struct {
 	failedKey  []string // the model key of each entry of failed
 	failedIn   []*Item  // the entity or item each entry of failed was read for
 	failedHard []bool   // the entry is an error whatever another line of its key gives
+	limit      int64    // the limit on list items (ruling 7 of 0.11)
+	held       int64    // the list items the entity holds so far
+}
+
+// overLimit is the failure of a decode that would hold more list items than
+// the limit allows (ruling 7 of 0.11): a failure of the wire.
+func (d *decodeState) overLimit(list string, n uint64) error {
+	what := ""
+	if list != "" {
+		what = "list " + list + ": "
+	}
+	return &Error{Kind: ErrMalformedWire, Format: d.pack.Format, Detail: fmt.Sprintf("%s%d more item(s) would exceed the limit of %d list items (%d held)", what, n, d.limit, d.held)}
+}
+
+// room checks, before any item is read, that n more items fit the limit
+// (ruling 7d of 0.11). It takes nothing.
+func (d *decodeState) room(list string, n uint64) error {
+	if n > uint64(d.limit-d.held) {
+		return d.overLimit(list, n)
+	}
+	return nil
+}
+
+// replacing releases the items of a list the record already holds, which
+// the group being read replaces (ruling 7g of 0.11).
+func (d *decodeState) replacing(list string) {
+	if old, ok := d.rec.Lists[list]; ok {
+		d.held -= deepItems(old)
+	}
+}
+
+// deepItems counts the items of a list and of every list inside them.
+func deepItems(items []*Item) int64 {
+	n := int64(len(items))
+	for _, it := range items {
+		for _, l := range it.Lists {
+			n += deepItems(l)
+		}
+	}
+	return n
 }
 
 // item decodes one item of a group: read fills a new item, which is returned.
+// The item counts against the limit on list items before it is read (ruling
+// 7 of 0.11).
 func (d *decodeState) item(read func() error) (*Item, error) {
+	if d.held >= d.limit {
+		return nil, d.overLimit("", 1)
+	}
+	d.held++
 	saved := d.rec
 	it := NewItem()
 	d.rec = it

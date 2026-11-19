@@ -1,0 +1,10 @@
+{
+  "name": "json-int-smallest",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":-9223372036854775808}",
+  "expect": "{\"n\":-9223372036854775808}",
+  "model": {
+    "probe.n": "-9223372036854775808"
+  }
+}

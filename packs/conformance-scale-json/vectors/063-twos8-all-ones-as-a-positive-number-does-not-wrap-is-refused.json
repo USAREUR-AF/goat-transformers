@@ -1,0 +1,7 @@
+{
+  "name": "twos8-all-ones-as-a-positive-number-does-not-wrap-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"val\":255}",
+  "expect_error": "transform-encode"
+}

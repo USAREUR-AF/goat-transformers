@@ -1,0 +1,10 @@
+{
+  "name": "offset-that-keeps-the-instant-in-year-9999",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"9999-12-31T23:59:59+00:01\"/>",
+  "expect": "{\"t\":253402300739000}",
+  "model": {
+    "time_ms": "253402300739000"
+  }
+}

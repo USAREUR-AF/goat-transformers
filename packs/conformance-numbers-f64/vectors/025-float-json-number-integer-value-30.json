@@ -1,0 +1,7 @@
+{
+  "name": "float-json-number-integer-value-30",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers-json",
+  "input": "403e000000000000",
+  "expect": "{\"a\":30}"
+}

@@ -39,10 +39,10 @@ public final class Xml {
     public static Element parse(String s) {
         P p = new P(s);
         p.misc();
-        if (p.pos >= s.length() || s.charAt(p.pos) != '<') throw new ParseException("no root element", p.pos);
+        if (p.pos >= p.s.length() || p.s.charAt(p.pos) != '<') throw new ParseException("no root element", p.pos);
         Element root = p.element();
         p.misc();
-        if (p.pos != s.length()) throw new ParseException("content after root element", p.pos);
+        if (p.pos != p.s.length()) throw new ParseException("content after root element", p.pos);
         return root;
     }
 
@@ -52,8 +52,12 @@ public final class Xml {
         int depth;
 
         P(String s) {
-            this.s = s;
-            this.pos = (s.length() > 0 && s.charAt(0) == '﻿') ? 1 : 0;
+            // One byte order mark at the very start is skipped (ruling 1g of 0.11); then, before anything else is
+            // read, each CR LF and each CR alone is one LF (ruling 1h; XML 1.0, section 2.11).
+            String t = (s.length() > 0 && s.charAt(0) == '\ufeff') ? s.substring(1) : s;
+            if (t.indexOf('\r') >= 0) t = t.replace("\r\n", "\n").replace('\r', '\n');
+            this.s = t;
+            this.pos = 0;
         }
 
         boolean at(String t) { return s.startsWith(t, pos); }
@@ -127,8 +131,8 @@ public final class Xml {
                 String raw = s.substring(pos, end);
                 if (raw.indexOf('<') >= 0) throw new ParseException("'<' in attribute value", pos);
                 pos = end + 1;
-                // XML attribute-value normalisation: literal tab / newline / CR become a space.
-                String norm = raw.replace("\r\n", " ").replace('\r', ' ').replace('\n', ' ').replace('\t', ' ');
+                // XML attribute-value normalisation: a literal tab or line feed is a space (ruling 1i of 0.11).
+                String norm = raw.replace('\n', ' ').replace('\t', ' ');
                 if (e.attrs.containsKey(an)) throw new ParseException("duplicate attribute " + an, at);
                 e.attrs.put(an, decodeEntities(norm, at));
             }
@@ -158,7 +162,7 @@ public final class Xml {
                     int end = s.indexOf('<', pos);
                     if (end < 0) end = s.length();
                     pos = end;
-                    e.text.append(decodeEntities(s.substring(start, end).replace("\r\n", "\n").replace('\r', '\n'), start));
+                    e.text.append(decodeEntities(s.substring(start, end), start));
                 }
             }
         }
@@ -246,9 +250,18 @@ public final class Xml {
         b.append("</").append(e.name).append('>');
     }
 
+    /** A character XML 1.0 cannot hold in a string to be written (ruling 1d of 0.11). */
+    public static final class Unwritable extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+        Unwritable(String msg) { super(msg); }
+    }
+
     static void escape(StringBuilder b, CharSequence t, boolean attr) {
         for (int i = 0; i < t.length(); i++) {
             char c = t.charAt(i);
+            if ((c < 0x20 && c != '\t' && c != '\n' && c != '\r') || c == '\ufffe' || c == '\uffff') {
+                throw new Unwritable(String.format("the character U+%04X cannot be written in XML 1.0", (int) c));
+            }
             switch (c) {
                 case '&': b.append("&amp;"); break;
                 case '<': b.append("&lt;"); break;

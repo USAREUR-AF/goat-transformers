@@ -1,0 +1,7 @@
+{
+  "name": "field-path-through-a-varint",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753138012007",
+  "expect_error": "malformed-wire"
+}

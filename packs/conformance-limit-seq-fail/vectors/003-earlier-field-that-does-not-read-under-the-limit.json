@@ -1,0 +1,8 @@
+{
+  "name": "earlier-field-that-does-not-read-under-the-limit",
+  "from": "conformance-limit-seq-fail",
+  "to": "conformance-limit-seq-fail",
+  "input": "02020102",
+  "max_items": 2,
+  "expect_error": "transform-decode"
+}

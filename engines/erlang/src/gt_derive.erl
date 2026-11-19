@@ -46,11 +46,14 @@ check_types(any, int, Args) ->
 check_types('not', int, [int]) -> {ok, 'not'};
 check_types(parse_int, int, [string]) -> {ok, parse_int};
 check_types(text_of, string, [int]) -> {ok, text_of};
+%% the parameter is integer text (2a of 0.11) on an int key, number text
+%% (2b) on a float key
 check_types({offset, Text}, int, [int]) ->
-    try binary_to_integer(Text) of N -> {ok, {offset, N}}
-    catch _:_ -> {error, "an offset on an int key is a decimal integer"}
+    case gt_num:int_text(Text) of
+        {ok, N} -> {ok, {offset, N}};
+        error -> {error, "an offset on an int key is integer text"}
     end;
-check_types({offset, Text}, float, [float]) -> {ok, {offset, gt_num:dec_to_float(Text)}};
+check_types({offset, Text}, float, [float]) -> {ok, {offset, gt_num:read_as(float, Text)}};
 check_types({join, _} = F, string, Args) ->
     case lists:all(fun(A) -> A =:= string end, Args) of
         true -> {ok, F};

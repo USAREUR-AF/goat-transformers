@@ -5,8 +5,11 @@
 // --max-distribution public|controlled (default controlled) and
 // --packs-only A,B: load only the packs named, with the modules they need,
 // and not every pack of the directory.
+// --max-items N sets the limit on list items one decode holds (engine-spec.md
+// 0.11 ruling 7; default 100000).
 // --set supplies a model key the message lacks (engine-spec.md 0.6, Caller-supplied
 // keys); it is repeatable, and the value is read as the key's declared type.
+#include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <iterator>
@@ -24,6 +27,7 @@ int usage() {
                  "options: --models <dir>                         default <packs>/../model\n"
                  "         --max-distribution public|controlled   default controlled\n"
                  "         --packs-only <name>[,<name>...]        load only these packs, with the modules they need\n"
+                 "         --max-items <n>                        convert: the limit on list items, default 100000\n"
                  "         --set <key>=<value>                    convert: a model key the caller supplies; repeatable\n";
     return 2;
 }
@@ -53,7 +57,7 @@ int main(int argc, char** argv) {
             continue;
         }
         if (a != "--from" && a != "--to" && a != "--packs" && a != "--models" && a != "--max-distribution" &&
-            a != "--packs-only") {
+            a != "--packs-only" && a != "--max-items") {
             std::cerr << "goat-xf: unknown option " << a << "\n";
             return usage();
         }
@@ -71,6 +75,22 @@ int main(int argc, char** argv) {
         if (d == "public") limit = goat_transformers::Distribution::Public;
         else if (d != "controlled") {
             std::cerr << "goat-xf: --max-distribution must be public or controlled\n";
+            return usage();
+        }
+    }
+
+    std::uint64_t max_items = goat_transformers::Engine::kDefaultMaxItems;
+    if (opt.count("--max-items")) {
+        // An integer of 0 or more: decimal digits only.
+        const std::string& n = opt["--max-items"];
+        bool ok = !n.empty() && n.size() <= 19;
+        max_items = 0;
+        for (char c : n) {
+            if (c < '0' || c > '9') ok = false;
+            else max_items = max_items * 10 + static_cast<std::uint64_t>(c - '0');
+        }
+        if (!ok) {
+            std::cerr << "goat-xf: --max-items needs an integer of 0 or more, got " << n << "\n";
             return usage();
         }
     }
@@ -95,6 +115,7 @@ int main(int argc, char** argv) {
         } else {
             eng = goat_transformers::Engine::load(opt["--packs"], opt["--models"], limit);
         }
+        eng.set_max_items(max_items);
         if (cmd == "list-formats") {
             for (const auto& f : eng.formats()) std::cout << f << "\n";
             return 0;

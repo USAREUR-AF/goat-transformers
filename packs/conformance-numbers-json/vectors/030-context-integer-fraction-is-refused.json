@@ -1,0 +1,10 @@
+{
+  "name": "context-integer-fraction-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":1}",
+  "expect_error": "key-type-mismatch",
+  "context": {
+    "probe.n": "5.0"
+  }
+}

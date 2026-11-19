@@ -1,0 +1,7 @@
+{
+  "name": "before-1970-fraction-below-one-millisecond-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"1969-12-31T23:59:59.0001Z\"/>",
+  "expect": "<e t=\"1969-12-31T23:59:59.000Z\"/>"
+}

@@ -264,6 +264,7 @@ final class TextCodec extends Codec<String[]> {
                 int first = base + loc.i, n = loc.len;
                 if (rec.length <= first) continue;                 // no field at the group's index: the list is absent
                 int count = (rec.length - first + n - 1) / n;
+                takeItems(count);   // before any field of the group is read (ruling 7d of 0.11)
                 List<Entity> items = new ArrayList<>(count);
                 for (int k = 0; k < count; k++) {
                     Entity item = new Entity();

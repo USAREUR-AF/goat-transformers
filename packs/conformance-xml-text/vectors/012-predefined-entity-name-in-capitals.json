@@ -1,0 +1,7 @@
+{
+  "name": "predefined-entity-name-in-capitals",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"&AMP;\"/>",
+  "expect_error": "malformed-wire"
+}

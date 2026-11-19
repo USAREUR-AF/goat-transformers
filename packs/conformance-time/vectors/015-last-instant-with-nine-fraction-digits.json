@@ -1,0 +1,10 @@
+{
+  "name": "last-instant-with-nine-fraction-digits",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"9999-12-31T23:59:59.999999999Z\"/>",
+  "expect": "{\"t\":253402300799999}",
+  "model": {
+    "time_ms": "253402300799999"
+  }
+}

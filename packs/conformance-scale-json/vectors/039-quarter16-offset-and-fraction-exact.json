@@ -1,0 +1,7 @@
+{
+  "name": "quarter16-offset-and-fraction-exact",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ce\":10.25}",
+  "expect": "060100"
+}

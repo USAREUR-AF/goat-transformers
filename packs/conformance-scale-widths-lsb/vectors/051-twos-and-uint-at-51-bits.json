@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-51-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "3300000000000080ffffffffffffffffffffffff5f00000000000001",
+  "expect": "3300000000000080ffffffffffffffffffffffff5f00000000000001",
+  "model": {
+    "@kind": "w51",
+    "probe.x": "-1125899906842624",
+    "probe.y": "-1",
+    "probe.z": "1125899906842623",
+    "probe.w": "1125899906842625"
+  }
+}

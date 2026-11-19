@@ -1,0 +1,7 @@
+{
+  "name": "float-underscore-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1_0.5\"/>",
+  "expect_error": "transform-decode"
+}

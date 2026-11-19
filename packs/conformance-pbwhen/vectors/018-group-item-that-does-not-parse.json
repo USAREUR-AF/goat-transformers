@@ -1,0 +1,7 @@
+{
+  "name": "group-item-that-does-not-parse",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753138024a03120168",
+  "expect_error": "malformed-wire"
+}

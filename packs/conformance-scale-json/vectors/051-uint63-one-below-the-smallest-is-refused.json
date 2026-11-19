@@ -1,0 +1,7 @@
+{
+  "name": "uint63-one-below-the-smallest-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"x\":-1}",
+  "expect_error": "transform-encode"
+}

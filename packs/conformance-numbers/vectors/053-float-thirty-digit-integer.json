@@ -1,0 +1,7 @@
+{
+  "name": "float-thirty-digit-integer",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"123456789012345678901234567890\"/>",
+  "expect": "<e a=\"123456789012345680000000000000\"/>"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-json-number-negative-zero",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers-json",
+  "input": "8000000000000000",
+  "expect": "{\"a\":0}"
+}

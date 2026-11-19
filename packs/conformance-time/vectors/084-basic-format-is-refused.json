@@ -1,0 +1,7 @@
+{
+  "name": "basic-format-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"20240101T000000Z\"/>",
+  "expect_error": "transform-decode"
+}

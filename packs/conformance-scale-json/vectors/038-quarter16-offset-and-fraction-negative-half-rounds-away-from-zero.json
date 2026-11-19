@@ -1,0 +1,7 @@
+{
+  "name": "quarter16-offset-and-fraction-negative-half-rounds-away-from-zero",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ce\":9.875}",
+  "expect": "06ffff"
+}

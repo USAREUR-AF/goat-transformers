@@ -204,7 +204,7 @@ public final class ModelModule {
         List<String> sources = new ArrayList<>();
         LinkedHashMap<String, String> keys = new LinkedHashMap<>();
         Set<String> lists = new java.util.LinkedHashSet<>();
-        GtException duplicateKey = null;
+        GtException afterFile = null;   // the first failure that is not a line check
         String[] lines = text.split("\r?\n", -1);
         for (int i = 0; i < lines.length; i++) {
             String where = source + ":" + (i + 1);
@@ -216,15 +216,17 @@ public final class ModelModule {
                 case "module":
                     arity(kw, args, 1, 1, where, name);
                     if (name != null) throw bad(name, where + ": module given twice");
-                    if (args.get(0).isEmpty() || args.get(0).indexOf('.') >= 0) {
-                        throw bad(name, where + ": module name must be non-empty and contain no \".\": \"" + args.get(0) + "\"");
+                    if ((args.get(0).isEmpty() || args.get(0).indexOf('.') >= 0) && afterFile == null) {
+                        afterFile = bad(name, where + ": module name must be non-empty and contain no \".\": \"" + args.get(0) + "\"");
                     }
                     name = args.get(0);
                     break;
                 case "version":
                     arity(kw, args, 1, 1, where, name);
                     if (version != null) throw bad(name, where + ": version given twice");
-                    if (!args.get(0).matches(Pack.SEMVER)) throw bad(name, where + ": version is not semver: " + args.get(0));
+                    if (!args.get(0).matches(Pack.SEMVER) && afterFile == null) {
+                        afterFile = bad(name, where + ": version is not semver: " + args.get(0));
+                    }
                     version = args.get(0);
                     break;
                 case "distribution":
@@ -242,16 +244,14 @@ public final class ModelModule {
                 case "key": {
                     arity(kw, args, 3, 4, where, name);
                     String key = args.get(0), type = args.get(1);
+                    // a key's name, its type and duplicate-key are checked after the file (ruling 5b of 0.11)
                     if (key.isEmpty() || key.indexOf('.') >= 0) {
-                        throw bad(name, where + ": key name must be non-empty and contain no \".\": \"" + key + "\"");
-                    }
-                    if (!type.equals("string") && !type.equals("float") && !type.equals("int")) {
-                        throw bad(name, where + ": key type must be string, float or int, got \"" + type + "\"");
-                    }
-                    if (keys.containsKey(key) || lists.contains(key)) {
-                        // Reported after the missing-distribution and missing-source checks, which come first.
-                        if (duplicateKey == null) {
-                            duplicateKey = new GtException(GtException.Code.DUPLICATE_KEY, name, key,
+                        if (afterFile == null) afterFile = bad(name, where + ": key name must be non-empty and contain no \".\": \"" + key + "\"");
+                    } else if (!type.equals("string") && !type.equals("float") && !type.equals("int")) {
+                        if (afterFile == null) afterFile = bad(name, where + ": key type must be string, float or int, got \"" + type + "\"");
+                    } else if (keys.containsKey(key) || lists.contains(key)) {
+                        if (afterFile == null) {
+                            afterFile = new GtException(GtException.Code.DUPLICATE_KEY, name, key,
                                     where + ": key " + key + " appears twice in its module");
                         }
                     } else {
@@ -263,11 +263,10 @@ public final class ModelModule {
                     arity(kw, args, 1, 2, where, name);
                     String list = args.get(0);
                     if (list.isEmpty() || list.indexOf('.') >= 0) {
-                        throw bad(name, where + ": list name must be non-empty and contain no \".\": \"" + list + "\"");
-                    }
-                    if (keys.containsKey(list) || lists.contains(list)) {
-                        if (duplicateKey == null) {
-                            duplicateKey = new GtException(GtException.Code.DUPLICATE_KEY, name, list,
+                        if (afterFile == null) afterFile = bad(name, where + ": list name must be non-empty and contain no \".\": \"" + list + "\"");
+                    } else if (keys.containsKey(list) || lists.contains(list)) {
+                        if (afterFile == null) {
+                            afterFile = new GtException(GtException.Code.DUPLICATE_KEY, name, list,
                                     where + ": list " + list + " has the name of another key or list of its module");
                         }
                     } else {
@@ -285,7 +284,11 @@ public final class ModelModule {
                     for (int a = 0; a < args.size(); a++) d[a + 1] = args.get(a);
                     // A line refused on its own text is a line error, raised as the file is read; its keys and
                     // their types are checked in the place ruling 29 gives (ruling 32 of 0.8).
-                    derive(d, name, keys, uses, loaded, true);
+                    try {
+                        derive(d, name, keys, uses, loaded, true);
+                    } catch (GtException ex) {
+                        if (afterFile == null) afterFile = ex;   // a function name or parameter: after the file
+                    }
                     deriveLines.add(d);
                     break;
                 }
@@ -293,15 +296,17 @@ public final class ModelModule {
                     throw new GtException(GtException.Code.UNKNOWN_DIRECTIVE, name, null, where + ": unknown directive \"" + kw + "\"");
             }
         }
+        // After the file (ruling 5b of 0.11): every cause of a module line other than checks 1 to 3, 5 and 6; then
+        // missing-module, missing-version; then the order of ruling 29 of 0.8.
+        if (afterFile != null) throw afterFile;
+        if (name == null) throw new GtException(GtException.Code.MISSING_MODULE, null, null, source + ": no module line");
+        if (version == null) throw new GtException(GtException.Code.MISSING_VERSION, name, null, source + ": no version line");
         if (distribution == null) {
             throw new GtException(GtException.Code.MISSING_DISTRIBUTION, name, null, source + ": module has no distribution line");
         }
         if (sources.isEmpty()) {
             throw new GtException(GtException.Code.MISSING_SOURCE, name, null, source + ": module has no source line");
         }
-        if (duplicateKey != null) throw duplicateKey;
-        if (name == null) throw bad(null, source + ": no module directive");
-        if (version == null) throw bad(name, source + ": no version directive");
         if (limit != null) {
             if (!distribution.within(limit)) {
                 throw new GtException(GtException.Code.DISTRIBUTION_REFUSED, null, null, source + ": module " + name + " is "
@@ -366,12 +371,9 @@ public final class ModelModule {
         return type;
     }
 
-    private static final String DECIMAL = "[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?";
-
+    /** A derive parameter is number text (ruling 2c of 0.11). */
     private static double decimal(String s, String module, String where) {
-        if (!s.matches(DECIMAL) || !Double.isFinite(Double.parseDouble(s))) {
-            throw badDerive(module, where, "\"" + s + "\" is not a decimal number");
-        }
+        if (!Transform.isNumText(s)) throw badDerive(module, where, "\"" + s + "\" is not number text");
         return Double.parseDouble(s);
     }
 
@@ -450,10 +452,12 @@ public final class ModelModule {
             case OFFSET:
                 if (type.equals("int") && argTypes.get(0).equals("int")) {
                     need = "int";
-                    if (!param.matches("[+-]?\\d+")) throw badDerive(module, where, "an offset on integers is an integer, got \"" + param + "\"");
+                    if (!Transform.INT_TEXT.matcher(param).matches()) {
+                        throw badDerive(module, where, "an offset on integers is integer text, got \"" + param + "\"");
+                    }
                     try {
-                        out.addInt = Long.parseLong(param.startsWith("+") ? param.substring(1) : param);
-                    } catch (NumberFormatException ex) {
+                        out.addInt = Transform.parseInt(param);
+                    } catch (IllegalArgumentException ex) {
                         throw badDerive(module, where, "offset " + param + " does not fit 64 bits");
                     }
                 } else {
@@ -466,12 +470,13 @@ public final class ModelModule {
                 int slash = param.indexOf('/');
                 if (slash >= 0) {
                     String a = param.substring(0, slash), b = param.substring(slash + 1);
-                    if (!a.matches("[+-]?\\d+") || !b.matches("[+-]?\\d+")) {
-                        throw badDerive(module, where, "a fraction factor is <num>/<den> of two decimal integers, got \"" + param + "\"");
+                    if (!Transform.INT_TEXT.matcher(a).matches() || !Transform.UNSIGNED.matcher(b).matches()) {
+                        // <num> integer text, <den> an unsigned decimal integer (ruling 2c of 0.11)
+                        throw badDerive(module, where, "a fraction factor is <num>/<den>: integer text over an unsigned decimal integer, got \"" + param + "\"");
                     }
                     out.fraction = true;
-                    out.num = Double.parseDouble(a);
-                    out.den = Double.parseDouble(b);
+                    out.num = new java.math.BigDecimal(a).doubleValue();
+                    out.den = new java.math.BigDecimal(b).doubleValue();
                     if (out.den == 0) throw badDerive(module, where, "a fraction factor cannot have a zero denominator");
                 } else {
                     out.factor = decimal(param, module, where);
@@ -501,6 +506,6 @@ public final class ModelModule {
     }
 
     private static GtException bad(String module, String detail) {
-        return new GtException(GtException.Code.BAD_MODEL, module, null, detail);
+        return new GtException(GtException.Code.BAD_DIRECTIVE, module, null, detail);
     }
 }

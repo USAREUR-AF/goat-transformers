@@ -1,0 +1,7 @@
+{
+  "name": "float-text-integer-value-2-to-the-53",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "4340000000000000",
+  "expect": "<e a=\"9007199254740992\"/>"
+}

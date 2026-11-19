@@ -1,0 +1,7 @@
+{
+  "name": "float-two-dots-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1.5.2\"/>",
+  "expect_error": "transform-decode"
+}

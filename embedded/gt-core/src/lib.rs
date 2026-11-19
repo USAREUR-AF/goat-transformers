@@ -28,7 +28,9 @@ mod engine;
 pub mod num;
 mod plan;
 
-pub use engine::{Got, Scope, Scratch, Session, TextRef, MAX_ARGS, MAX_DEPTH, MAX_PRESENCE, MAX_WHOLES, ROOT};
+pub use engine::{
+    Got, Scope, Scratch, Session, TextRef, DEFAULT_MAX_ITEMS, MAX_ARGS, MAX_DEPTH, MAX_PRESENCE, MAX_WHOLES, ROOT,
+};
 pub use plan::{Carry, Plan, FORMAT_VERSION};
 
 /// A model key of a compiled plan: its index in the plan's key table. The
@@ -113,7 +115,22 @@ pub fn convert_with<'a, const N: usize>(
     scratch: &mut Scratch<N>,
     context: Option<&'a [(KeyId, Value<'a>)]>,
 ) -> Result<usize, Error> {
+    convert_limited(plan, input, out, scratch, context, DEFAULT_MAX_ITEMS)
+}
+
+/// `convert_with` with the limit on list items the decode may hold
+/// (engine-spec ruling 7 of 0.11; `DEFAULT_MAX_ITEMS` otherwise). One item
+/// more is `MalformedWire`.
+pub fn convert_limited<'a, const N: usize>(
+    plan: &'a Plan<'a>,
+    input: &'a [u8],
+    out: &mut [u8],
+    scratch: &mut Scratch<N>,
+    context: Option<&'a [(KeyId, Value<'a>)]>,
+    max_items: u64,
+) -> Result<usize, Error> {
     let mut s = Session::new(plan, scratch);
+    s.set_max_items(max_items);
     s.decode(input)?;
     // engine-spec 0.6, "Order inside convert": with `from == to` and no
     // context the middle steps are skipped

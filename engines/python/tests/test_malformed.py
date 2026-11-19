@@ -394,9 +394,9 @@ class TestJsonGrammar(_Rulings):
     def test_huge_exponent_on_an_int_field_ends(self):
         """`2e47686170` on an `int` field is a 47-million-digit integer. The
         field's transform refuses it at once instead of building it, and the
-        decode then fails as the wire states for a number outside the double
-        range (ruling 39 of 0.8). Below that range the transform's own limit
-        is 4300 digits."""
+        decode fails with `transform-decode`: through `int` the exact value of
+        a JSON number must be an integer within a signed 64-bit integer
+        (ruling 2d of 0.11)."""
         import time
 
         eng = Engine()
@@ -406,18 +406,21 @@ class TestJsonGrammar(_Rulings):
             start = time.monotonic()
             with self.assertRaises(GTError, msg=v) as cm:
                 eng.decode("x", '{"n":%s}' % v)
-            self.assertEqual(cm.exception.code, "malformed-wire", v)
+            self.assertEqual(cm.exception.code, "transform-decode", v)
             self.assertLess(time.monotonic() - start, 1.0, v)
         self.assertEqual(eng.decode("x", '{"n":1e3}').fields, {"n": 1000})
-        self.assertEqual(len(str(eng.decode("x", '{"n":1e300}').fields["n"])), 301)
+        with self.assertRaises(GTError) as cm:
+            eng.decode("x", '{"n":1e300}')
+        self.assertEqual(cm.exception.code, "transform-decode")
         from goat_transformers.transforms import IntT
 
-        for v in ("1e4300", "2e47686170"):
-            start = time.monotonic()
-            with self.assertRaises(ValueError, msg=v):
-                IntT().decode(v)
-            self.assertLess(time.monotonic() - start, 1.0, v)
-        self.assertEqual(len(str(IntT().decode("1e4299"))), 4300)
+        for v in ("1e4300", "2e47686170", "1e4299", "9" * 6000):
+            for read in (IntT().decode, IntT().decode_json):
+                start = time.monotonic()
+                with self.assertRaises(ValueError, msg=v[:20]):
+                    read(v)
+                self.assertLess(time.monotonic() - start, 1.0, v[:20])
+        self.assertEqual(IntT().decode_json("9.223372036854775807e18"), (1 << 63) - 1)
 
     def test_strings(self):
         self.each(('"a"', '"\\n\\t\\r\\b\\f\\/\\\\\\""', '"\\u0041"', '"\\ud83d\\udc10"', '"\x7f"', '"é"',

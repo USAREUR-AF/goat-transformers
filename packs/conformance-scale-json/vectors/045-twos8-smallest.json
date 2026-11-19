@@ -1,0 +1,7 @@
+{
+  "name": "twos8-smallest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"val\":-128}",
+  "expect": "0880"
+}

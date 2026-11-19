@@ -1,0 +1,7 @@
+{
+  "name": "month-13-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-13-01T00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

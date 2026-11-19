@@ -1,0 +1,14 @@
+{
+  "name": "03-no-shared-key",
+  "from": "conformance-cap-a",
+  "to": "conformance-cap-c",
+  "grade": "none",
+  "carried": [],
+  "dropped": [
+    "uid",
+    "callsign",
+    "lat",
+    "lon",
+    "probe.n"
+  ]
+}

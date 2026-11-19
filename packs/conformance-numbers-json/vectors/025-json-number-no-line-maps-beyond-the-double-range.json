@@ -1,0 +1,7 @@
+{
+  "name": "json-number-no-line-maps-beyond-the-double-range",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1,\"zz\":1e400}",
+  "expect_error": "malformed-wire"
+}

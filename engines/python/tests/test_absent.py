@@ -9,7 +9,7 @@ import unittest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "src")))
 
-from goat_transformers import BadDirective, Engine, Entity  # noqa: E402
+from goat_transformers import BadDirective, Engine, Entity, GTError  # noqa: E402
 
 CORE = "module core\nversion 1\ndistribution public\nsource s\nkey uid string -\n"
 MODEL = "module m\nversion 1\ndistribution public\nsource s\nkey a int -\nkey b int -\nkey f float -\nkey s string -\n"
@@ -77,9 +77,11 @@ class TestDecodeEncode(unittest.TestCase):
         eng = engine("json", "field m.a q int absent 5\ndefault m.a 7\n")
         self.assertEqual(eng.convert("x", "x", '{"q":5}'), b'{"q":7}')
 
-    def test_xml_text_not_trimmed(self):  # ruling 14
+    def test_xml_text_not_trimmed(self):  # ruling 14; rulings 1n and 2a of 0.11: `int` refuses " 0 "
         eng = engine("xml", "field m.a e/#text int absent 0\n")
-        self.assertEqual(eng.decode("x", "<msg><e> 0 </e></msg>").fields, {"m.a": 0})
+        with self.assertRaises(GTError) as cm:
+            eng.decode("x", "<msg><e> 0 </e></msg>")
+        self.assertEqual(cm.exception.code, "transform-decode")
         self.assertEqual(eng.decode("x", "<msg><e>0</e></msg>").fields, {})
 
     def test_sequential_also_shares_the_sentinel(self):

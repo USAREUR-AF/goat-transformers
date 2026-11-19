@@ -1,0 +1,7 @@
+{
+  "name": "float-exponent-only-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"e5\"/>",
+  "expect_error": "transform-decode"
+}

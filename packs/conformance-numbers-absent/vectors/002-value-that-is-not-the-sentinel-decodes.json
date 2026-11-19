@@ -1,0 +1,10 @@
+{
+  "name": "value-that-is-not-the-sentinel-decodes",
+  "from": "conformance-numbers-absent",
+  "to": "conformance-numbers-json",
+  "input": "05",
+  "expect": "{\"n\":5}",
+  "model": {
+    "probe.n": "5"
+  }
+}

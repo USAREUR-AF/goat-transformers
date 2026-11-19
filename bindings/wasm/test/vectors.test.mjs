@@ -1,7 +1,8 @@
 // Conformance through the WebAssembly module: load model/*.def and the packs,
 // run every conversion vector of the loaded packs, compare with `expect` or
-// `expect_error` (spec/vector-format.md). `model` checks are not run: the
-// module's interface has no decode.
+// `expect_error` (spec/vector-format.md), with the vector's `max_items` as
+// the limit on list items. `model` checks are not run: the module's
+// interface has no decode.
 //
 //   node --test bindings/wasm/test/vectors.test.mjs
 //
@@ -24,9 +25,14 @@ function packNames() {
   return chosen;
 }
 
+// The limit on list items when a vector does not set one (ruling 7 of 0.11).
+const DEFAULT_MAX_ITEMS = 100000;
+
 // One conversion vector. Returns null when it passes, else what went wrong.
 function checkVector(gt, v) {
   let got;
+  // `max_items`: the limit on list items for this vector
+  gt.setMaxItems(v.max_items === undefined ? DEFAULT_MAX_ITEMS : v.max_items);
   try {
     // a `context` member, even an empty one, is a context given
     got = gt.convert(v.from, v.to, v.input, v.context);
@@ -56,8 +62,10 @@ test("every conversion vector of the loaded packs", async () => {
     if (!existsSync(dir)) continue;
     for (const file of readdirSync(dir).filter((n) => n.endsWith(".json")).sort(byBytes)) {
       const v = JSON.parse(readFileSync(join(dir, file), "utf8"));
-      // a vector to a format that was not chosen cannot run
-      if (!formats.has(v.from) || !formats.has(v.to)) {
+      // a vector to a pack that was not chosen cannot run; a vector naming a
+      // format that is no pack directory pins `unknown-format` and runs
+      const unchosen = (name) => !formats.has(name) && existsSync(join(root, "packs", name, "pack.def"));
+      if (unchosen(v.from) || unchosen(v.to)) {
         skipped++;
         continue;
       }

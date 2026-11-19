@@ -1,0 +1,7 @@
+{
+  "name": "comment-holds-markup-that-is-not-read-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><!-- <name>z</name> &bogus; --></e>",
+  "expect": "<e id=\"1\"/>"
+}

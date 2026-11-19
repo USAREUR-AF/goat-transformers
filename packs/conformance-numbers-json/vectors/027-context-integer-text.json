@@ -1,0 +1,10 @@
+{
+  "name": "context-integer-text",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":1}",
+  "expect": "{\"n\":-7,\"a\":1}",
+  "context": {
+    "probe.n": "-007"
+  }
+}

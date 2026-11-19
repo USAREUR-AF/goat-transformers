@@ -1,0 +1,7 @@
+{
+  "name": "sscale64-odd-integer-above-2-to-the-52",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lat\":4503599627370497}",
+  "expect": "030100000000001000"
+}

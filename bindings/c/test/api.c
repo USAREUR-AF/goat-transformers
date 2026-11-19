@@ -138,6 +138,7 @@ static void test_null_engine(void) {
     expect(convert(NULL, "a", "b", "c", NULL, &out), &out, GT_ERR_ARGUMENT, "bad-argument: engine", "gt_convert(NULL)");
     expect(gt_engine_set_max_distribution(NULL, GT_DISTRIBUTION_PUBLIC, &out), &out, GT_ERR_ARGUMENT,
            "bad-argument: engine", "gt_engine_set_max_distribution(NULL)");
+    expect(gt_engine_set_max_items(NULL, 1, &out), &out, GT_ERR_ARGUMENT, "bad-argument: engine", "gt_engine_set_max_items(NULL)");
     check(gt_formats(NULL, NULL) == GT_ERR_ARGUMENT, "a null engine and a null out");
 }
 
@@ -214,6 +215,8 @@ static void test_text_that_is_not_utf8(const char *root) {
 /*
  * The length says where a text ends, not a NUL: a NUL inside an argument is
  * one more character, and a result that holds one is longer than its strlen.
+ * An XML encoder refuses to write U+0000 (engine-spec ruling 1d of 0.11), so
+ * a NUL in an attribute value reaches the encoder and fails there.
  */
 static void test_embedded_nul(const char *root) {
     gt_engine *e = repository_engine(root);
@@ -226,14 +229,11 @@ static void test_embedded_nul(const char *root) {
     check(out.len > strlen((const char *)out.data), "the error text holds the whole name, NUL included");
     gt_buf_free(&out);
 
-    /* a value with a NUL in it goes through whole, and `len` counts it */
+    /* a value with a NUL in it is read whole: the document parses (cut at the
+       NUL it would be `malformed-wire`) and the encoder refuses the character */
     const char input[] = "<event uid=\"a\0b\" type=\"a-f-G\"/>";
-    const char want[] = "<event version=\"2.0\" uid=\"a\0b\" type=\"a-f-G\">"
-                        "<point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>";
     rc = convert_bytes(e, (const uint8_t *)input, sizeof input - 1, &out);
-    check(rc == GT_OK && buf_is_bytes(&out, want, sizeof want - 1), "a NUL inside a value is kept (status %d, %zu bytes)", (int)rc, out.len);
-    check(out.data && strlen((const char *)out.data) < out.len, "such a result is longer than its strlen");
-    gt_buf_free(&out);
+    expect(rc, &out, GT_ERR_ENGINE, "transform-encode:", "a NUL inside a value reaches the encoder");
 
     /* a model text is read past a NUL too: the line after it is still seen */
     const char model[] = "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\n\0key uid string -\nnot-a-directive\n";
@@ -258,7 +258,7 @@ static void test_error_kinds(const char *root) {
     expect(convert(e, "cot-xml", "cot-xml", EVENT, "time_ms=soon\n", &out), &out, GT_ERR_ENGINE, "key-type-mismatch:", "a context value of the wrong type");
     expect(convert(e, "cot-xml", "geojson", EVENT, "not a pair\n", &out), &out, GT_ERR_ARGUMENT, "bad-argument: context line `not a pair`", "a context line without =");
     expect(load_pack(e, "format x\n", &out), &out, GT_ERR_ENGINE, "", "a pack that does not parse");
-    expect(load_model(e, "module x\n", &out), &out, GT_ERR_ENGINE, "missing-distribution:", "a model module without a distribution");
+    expect(load_model(e, "module x\nversion 1\n", &out), &out, GT_ERR_ENGINE, "missing-distribution:", "a model module without a distribution");
 
     /* a refused load changes nothing */
     int32_t rc = gt_formats(e, &out);
@@ -387,18 +387,19 @@ static void test_loading_twice(void) {
     check(rc == GT_OK && buf_is(&out, "<item id=\"u1\"/>"), "the engine converts after a duplicate module: %s", buf_text(&out));
     gt_buf_free(&out);
 
-    /* the same pack a second time is accepted and the format is listed once */
-    expect(load_pack(e, PROBE_PACK_PUBLIC, &out), &out, GT_OK, "", "the same pack a second time");
+    /* a format name is loaded once (engine-spec ruling 5 of 0.11): the same
+       pack a second time is refused and the format is listed once */
+    expect(load_pack(e, PROBE_PACK_PUBLIC, &out), &out, GT_ERR_ENGINE, "duplicate-format:", "the same pack a second time");
     rc = gt_formats(e, &out);
     check(rc == GT_OK && buf_is(&out, "probe\n"), "a format loaded twice is listed once: %s", buf_text(&out));
     gt_buf_free(&out);
 
-    /* a pack of a loaded format name replaces that format */
-    expect(load_pack(e, PROBE_PACK_OTHER_ROOT, &out), &out, GT_OK, "", "another pack of the same format name");
-    rc = convert(e, "probe", "probe", "<thing id=\"u1\"/>", NULL, &out);
-    check(rc == GT_OK && buf_is(&out, "<thing id=\"u1\"/>"), "the later pack is the one in use: %s", buf_text(&out));
+    /* another pack of a loaded format name is refused; the first stays loaded */
+    expect(load_pack(e, PROBE_PACK_OTHER_ROOT, &out), &out, GT_ERR_ENGINE, "duplicate-format:", "another pack of the same format name");
+    rc = convert(e, "probe", "probe", "<item id=\"u1\"/>", NULL, &out);
+    check(rc == GT_OK && buf_is(&out, "<item id=\"u1\"/>"), "the first pack is the one in use: %s", buf_text(&out));
     gt_buf_free(&out);
-    expect(convert(e, "probe", "probe", "<item id=\"u1\"/>", NULL, &out), &out, GT_ERR_ENGINE, "", "the earlier pack is gone");
+    expect(convert(e, "probe", "probe", "<thing id=\"u1\"/>", NULL, &out), &out, GT_ERR_ENGINE, "missing-root:", "the refused pack is not in use");
 
     gt_engine_free(e);
 }

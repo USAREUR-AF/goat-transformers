@@ -79,7 +79,7 @@ final class BitsCodec extends Codec<byte[]> {
                     try {
                         ext = Math.addExact(((Loc) l.loc).start, Math.multiplyExact(g.countFixed, (long) g.itemBits));
                     } catch (ArithmeticException ex) {
-                        throw new GtException(GtException.Code.BAD_PACK, format, l.locator, source + ":" + l.line + ": the group is too long");
+                        throw new GtException(GtException.Code.BAD_DIRECTIVE, format, l.locator, source + ":" + l.line + ": the group is too long");
                     }
                 }
                 need = Math.max(need, ext);
@@ -125,6 +125,9 @@ final class BitsCodec extends Codec<byte[]> {
     static String checkGroupLocator(String locator) {
         String[] p = locator.split(":", -1);
         if (p.length != 2) return "a bits group locator is word:pos: " + locator;
+        for (String part : p) {
+            if (!Transform.UNSIGNED.matcher(part).matches()) return "a bits group locator word:pos takes two digit-only parts: " + locator;
+        }
         try {
             if (Integer.parseInt(p[0]) < 0 || Integer.parseInt(p[1]) < 0) return "bits word and pos must be >= 0: " + locator;
         } catch (NumberFormatException ex) {
@@ -134,11 +137,14 @@ final class BitsCodec extends Codec<byte[]> {
     }
 
     /** The bytes of as many whole words as reach bit {@code end}. */
-    private int wholeWords(long end) {
+    private int wholeWords(long end) { return wholeWords(end, GtException.Code.MALFORMED_WIRE); }
+
+    /** As {@link #wholeWords(long)}; a message too long to hold fails with {@code code}. */
+    private int wholeWords(long end, GtException.Code code) {
         long wordBits = (long) wordBytes * 8;
         long bytes = (end + wordBits - 1) / wordBits * wordBytes;
         if (bytes > Integer.MAX_VALUE - 16) {
-            throw new GtException(GtException.Code.BAD_PACK, pack.format, null, "bits message is too long: " + bytes + " bytes");
+            throw new GtException(code, pack.format, null, "bits message is too long: " + bytes + " bytes");
         }
         return (int) bytes;
     }
@@ -166,6 +172,9 @@ final class BitsCodec extends Codec<byte[]> {
     static String checkLocator(String locator) {
         String[] p = locator.split(":", -1);
         if (p.length != 3) return "bits locator must be word:pos:len: " + locator;
+        for (String part : p) {
+            if (!Transform.UNSIGNED.matcher(part).matches()) return "bits locator word:pos:len takes three digit-only parts: " + locator;
+        }
         int word;
         int pos;
         int len;
@@ -227,6 +236,7 @@ final class BitsCodec extends Codec<byte[]> {
                     if (base + c.end() > bits) throw malformed("the input ends before the count of " + g.list + " at " + g.countLocator);
                     n = readBits(msg, base + c.start, c.len);
                 }
+                takeItems(n);   // compared with the limit before any item is read (ruling 7d of 0.11)
                 long pos = base + ((Loc) g.loc).start;
                 List<Entity> items = new ArrayList<>((int) Math.min(n & 0xffff, 4096));
                 for (long i = 0; i != n; i++) {
@@ -294,9 +304,9 @@ final class BitsCodec extends Codec<byte[]> {
     @Override
     String encodeKind(Entity e, Pack.Kind kind) {
         Info info = (Info) kind.scope.info;
-        Buf buf = new Buf(wholeWords(info.end));
+        Buf buf = new Buf(wholeWords(info.end, GtException.Code.TRANSFORM_ENCODE));
         long far = encodeScope(buf, kind.scope, 0, e);
-        return toHex(java.util.Arrays.copyOf(buf.b, wholeWords(Math.max(info.end, far))));
+        return toHex(java.util.Arrays.copyOf(buf.b, wholeWords(Math.max(info.end, far), GtException.Code.TRANSFORM_ENCODE)));
     }
 
     private GtException groupFailure(Pack.Group g, String why) {

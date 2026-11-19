@@ -23,12 +23,67 @@ abstract class Codec<W> {
     /** Encode the entity through the lines of the selected kind. */
     abstract String encodeKind(Entity e, Pack.Kind kind);
 
-    Entity decode(String text) {
+    /** The limit on list items of one decode when the caller sets none (ruling 7b of 0.11). */
+    static final long DEFAULT_MAX_ITEMS = 100_000;
+
+    /** The items one decode may still hold (ruling 7 of 0.11). */
+    private static final class Budget {
+        final long max;
+        long left;
+        Budget(long max) { this.max = max; this.left = max; }
+    }
+
+    /** The budget of the decode running on this thread; a codec is shared, a decode is not. */
+    private static final ThreadLocal<Budget> BUDGET = new ThreadLocal<>();
+
+    Entity decode(String text) { return decode(text, DEFAULT_MAX_ITEMS); }
+
+    /** Decode with at most {@code maxItems} list items, counted over every list at every level (ruling 7 of 0.11). */
+    Entity decode(String text, long maxItems) {
+        Budget outer = BUDGET.get();
+        BUDGET.set(new Budget(maxItems));
+        try {
+            return decodeMessage(text);
+        } finally {
+            if (outer == null) BUDGET.remove();
+            else BUDGET.set(outer);
+        }
+    }
+
+    /** One decode, under the budget set by {@link #decode(String, long)}. */
+    Entity decodeMessage(String text) {
         W wire = parse(text);
         Pack.Kind kind = selectForDecode(wire);
         Entity e = decodeKind(wire, kind);
         if (pack.hasKinds) e.setKind(pack.format, kind.name);
         return e;
+    }
+
+    /**
+     * Take {@code n} items (an unsigned count) from the decode's limit before they are read; one more than the limit
+     * allows is {@code malformed-wire} (ruling 7a, 7d and 7f of 0.11).
+     */
+    void takeItems(long n) {
+        Budget b = BUDGET.get();
+        if (b == null) return;
+        if (Long.compareUnsigned(n, b.left) > 0) {
+            throw malformed("the message holds more than " + b.max + " list items (the limit on list items)");
+        }
+        b.left -= n;
+    }
+
+    /** Give back the items of a list that a later group of the same list replaces (ruling 7g of 0.11). */
+    void giveBackItems(List<Entity> items) {
+        Budget b = BUDGET.get();
+        if (b == null || items == null) return;
+        b.left += deepCount(items);
+    }
+
+    /** The items of a list and of every list inside its items. */
+    static long deepCount(List<Entity> items) {
+        long n = items.size();
+        for (Entity it : items) for (List<Entity> inner : it.lists().values()) n += deepCount(inner);
+        return n;
     }
 
     String encode(Entity e) {

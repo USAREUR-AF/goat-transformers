@@ -1,0 +1,10 @@
+{
+  "name": "int-largest-with-leading-zeros",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"0000000000000000000000009223372036854775807\"/>",
+  "expect": "<e n=\"9223372036854775807\"/>",
+  "model": {
+    "probe.n": "9223372036854775807"
+  }
+}

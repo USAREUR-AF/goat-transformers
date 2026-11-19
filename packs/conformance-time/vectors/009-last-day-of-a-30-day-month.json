@@ -1,0 +1,10 @@
+{
+  "name": "last-day-of-a-30-day-month",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"2023-04-30T23:59:59Z\"/>",
+  "expect": "{\"t\":1682899199000}",
+  "model": {
+    "time_ms": "1682899199000"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-text-five-hundred-thousandths",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "3f0a36e2eb1c432d",
+  "expect": "<e a=\"0.00005\"/>"
+}

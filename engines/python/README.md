@@ -27,11 +27,12 @@ Status: Built. Exported by `goat_transformers`; bytes go in and bytes come out.
 | Call | Does |
 |---|---|
 | `Engine.from_dir(packs_dir, models_dir=None, max_distribution="controlled", packs_only=None)` | loads every `<models_dir>/*.def` (default: `model` beside `packs_dir`), then every `<packs_dir>/<format>/pack.def`; with `packs_only`, only the named packs and the modules they use |
-| `Engine(max_distribution=...)`, `load_model(text, source=...)`, `load(text, source=...)` | an empty engine; load one model module, then one pack, from text |
+| `Engine(max_distribution=..., max_items=100000)`, `load_model(text, source=...)`, `load(text, source=...)` | an empty engine; load one model module, then one pack, from text. A second pack with a loaded `format` name is `duplicate-format`, and the first stays loaded |
+| `set_max_items(n)` | the limit on list items one decode holds, over every list at every level (ruling 7 of 0.11); 0 or more, 100,000 by default. Going over it is `malformed-wire`; `encode` is not limited |
 | `formats()`, `pack(fmt)`, `model_keys(fmt)` | the loaded format names; one parsed pack; the keys a pack maps |
-| `decode(fmt, data)` | message to `Entity` (`fields`, `lists`, `residue`, `kind`) |
+| `decode(fmt, data, max_items=None)` | message to `Entity` (`fields`, `lists`, `residue`, `kind`); `max_items` sets the limit for this call |
 | `encode(fmt, entity)` | `Entity` to message |
-| `convert(from_fmt, to_fmt, data, context=None)` | decode, fill the keys the input lacks from `context`, derive, encode |
+| `convert(from_fmt, to_fmt, data, context=None, max_items=None)` | decode, fill the keys the input lacks from `context`, derive, encode; `from`, then `to`, is checked before the input is read |
 | `complete(entity, context=None)` | the middle steps of `convert` on an entity: fill from `context`, then apply the `derive` lines |
 | `capability(from_fmt, to_fmt)` | `{"from", "to", "carried", "dropped", "grade"}`, grade `full`, `partial` or `none` |
 | `capability_matrix()` | `capability` for every ordered pair of distinct loaded formats |
@@ -78,7 +79,9 @@ and its message begins with that kind and a colon, then the text, then
 
 | Class | `code` |
 |---|---|
-| `InvalidPack`, `InvalidModel`, `UnknownDirective`, `UnknownTransform`, `BadDirective` | `invalid-pack`, `invalid-model`, `unknown-directive`, `unknown-transform`, `bad-directive` |
+| `UnterminatedQuote`, `UnknownDirective`, `UnknownTransform`, `UnknownWire`, `BadLocator`, `BadDirective` | `unterminated-quote`, `unknown-directive`, `unknown-transform`, `unknown-wire`, `bad-locator`, `bad-directive` |
+| `MissingFormat`, `MissingVersion`, `MissingWire`, `MissingModule`, `DuplicateFormat` | `missing-format`, `missing-version`, `missing-wire`, `missing-module`, `duplicate-format` |
+| `InvalidPack`, `InvalidModel` | not raised: the base classes of the load failures of a pack text and of a module text (spec 0.11, ruling 5) |
 | `MissingDistribution`, `MissingSource`, `DistributionRefused`, `DistributionViolation` | `missing-distribution`, `missing-source`, `distribution-refused`, `distribution-violation` |
 | `UnknownModule`, `ModuleNotUsed`, `DuplicateModule`, `DuplicateKey`, `DuplicateKind` | `unknown-module`, `module-not-used`, `duplicate-module`, `duplicate-key`, `duplicate-kind` |
 | `UndeclaredKey`, `KeyTypeMismatch` | `undeclared-key`, `key-type-mismatch` |
@@ -105,6 +108,7 @@ Status: Built. `python3 -m goat_transformers` is the same tool (its help names i
 | `--packs-only <name>[,<name>…]` | both | load only these packs and the modules they need |
 | `--max-distribution public\|controlled` | both | refuse modules and packs above this distribution (default `controlled`) |
 | `--set <key>=<value>` | `convert` | a caller-supplied model key, read as the key's declared type; repeatable |
+| `--max-items <n>` | `convert` | the limit on list items one decode holds (default 100000) |
 
 An error prints `goat_transformers: <kind>: …` on standard error and exits 2.
 Run from `engines/python`, with `feature.json` holding the input of
@@ -127,12 +131,12 @@ in `engines/python`:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-It loads every pack and model module. One run gave `Ran 182 tests … OK`:
+It loads every pack and model module. One run gave `Ran 196 tests … OK`:
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (3299 of 96 packs, all passed) and every load vector (314, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (19001 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
+| `test_vectors.py` | every conversion vector of every pack (7113 of 750 packs, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (505, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (41325 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue |
 
 The same job then installs the package with pip, writes a bundle of `cot-xml`

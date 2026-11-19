@@ -1,0 +1,7 @@
+{
+  "name": "unknown-target-format-comes-before-the-decode",
+  "from": "conformance",
+  "to": "conformance-format-that-is-not-loaded",
+  "input": "<item",
+  "expect_error": "unknown-format"
+}

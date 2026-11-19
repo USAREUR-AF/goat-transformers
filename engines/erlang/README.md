@@ -12,9 +12,13 @@ An independent, clean-room implementation of the gt engine, written from
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
-`vectors: N/N passed` (conversion vectors) and `load vectors: N/N passed`
-(`packs/conformance/load-vectors/`), then `malformed inputs: N/N passed`, and
-exits non-zero on any failure.
+`vectors: N/N passed` (conversion vectors), `load vectors: N/N passed`
+(`packs/conformance/load-vectors/`, with `pack` or `packs`) and
+`capability vectors: N/N passed` (`packs/conformance/capability-vectors/`),
+then `malformed inputs: N/N passed`, and exits non-zero on any failure. A
+conversion vector's `max_items` sets the limit on list items for that vector,
+and a `model` value its grammar refuses (ruling 2c of 0.11) fails the vector.
+A vector whose format is not loaded is run, and pins `unknown-format`.
 It also loads one pack alone through `gt_engine:load_packs/4` and runs that
 pack's vectors on the engine it gives (`named load: ...`).
 The malformed-input check takes the input of the first five conversion vectors
@@ -43,6 +47,9 @@ E0 = gt_engine:new(),                               % limit: controlled
 E1 = gt_engine:set_max_distribution(E0, public),    % optional
 E2 = gt_engine:load_model(E1, ModuleText),          % modules first
 E3 = gt_engine:load_pack(E2, PackText),
+E4 = gt_engine:set_max_items(E3, 1000),             % optional: list items per decode
+                                                    % (default 100000, ruling 7 of 0.11)
+{Grade, Carried, Dropped} = gt_engine:capability(E4, From, To),   % ruling 6 of 0.11
 E  = gt_engine:load_dir(gt_engine:new(), "packs"),  % model/*.def (core first, each
                                                     % module after those it uses), then packs
 E  = gt_engine:load_packs(gt_engine:new(), "packs", % only the packs named, and only the
@@ -61,7 +68,12 @@ again, so the call can be repeated to add packs. `load_packs/4` and
 A refused load raises `error:{load_error, Kind, Message}`; `Kind` is the
 specification's error kind as an atom (`'undeclared-key'`, `'duplicate-kind'`,
 `'bad-directive'`, `'key-type-mismatch'`) and `Message` begins with the kind
-and a colon. A module is checked in the order of ruling 29 of 0.8:
+and a colon. Every kind of ruling 5 of 0.11 is raised (`unknown-directive`,
+`unknown-transform`, `unknown-wire`, `bad-locator`, `missing-format`,
+`missing-version`, `missing-wire`, `missing-module`, `missing-root`,
+`unterminated-quote`, `duplicate-format`), each line checked in the order of
+ruling 5b and every other cause after the file is read. A module is checked
+in the order of ruling 29 of 0.8:
 `missing-distribution`, `missing-source`, `distribution-refused`,
 `unknown-module`, `distribution-violation`, the `derive` checks,
 `duplicate-module`.

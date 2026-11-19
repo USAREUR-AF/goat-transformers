@@ -1,0 +1,10 @@
+{
+  "name": "int-negative-with-leading-zeros",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"-007\"/>",
+  "expect": "<e n=\"-7\"/>",
+  "model": {
+    "probe.n": "-7"
+  }
+}

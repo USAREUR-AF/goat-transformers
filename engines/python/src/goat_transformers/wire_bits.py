@@ -234,6 +234,19 @@ def is_absent(pack, field, raw):
     return raw in field.absent
 
 
+def count(pack, view, group):
+    """The number of items of `group` in the scope of `view`: the fixed count,
+    or the count read from the wire, before any item is laid out (ruling 7d of
+    0.11)."""
+    if group.count_loc is None:
+        return group.count_n
+    msg = view.msg
+    cs = view.base + _start(pack, group.count_loc)
+    if cs + group.count_loc[2] > msg.nbits:
+        raise _short(pack, "the count of group %s" % group.list)
+    return msg.uint(cs, group.count_loc[2])
+
+
 def items(pack, view, group):
     """-> a view per item of `group`. On `bits` a list is always present, with
     `count` items."""

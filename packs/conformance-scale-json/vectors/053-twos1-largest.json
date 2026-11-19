@@ -1,0 +1,7 @@
+{
+  "name": "twos1-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"y\":0}",
+  "expect": "0b00"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "duplicate-attribute-on-the-root",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a\" id=\"b\"/>",
+  "expect_error": "malformed-wire"
+}
