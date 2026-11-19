@@ -2,18 +2,19 @@
   "name": "identification-tc1-roundtrip",
   "from": "adsb",
   "to": "adsb",
-  "input": "8dabc00109607da5503ca1a19695",
-  "expect": "8dabc00109607da5503ca1a19695",
+  "input": "8dabc00109558c33db90c63aad12",
+  "expect": "8dabc00109558c33db90c63aad12",
   "model": {
     "@kind": "identification-tc1",
     "adsb.df": "17",
     "adsb.tc": "1",
     "adsb.icao": "11255809",
     "adsb.category": "1",
-    "adsb.cs_c1": "24",
-    "adsb.cs_c8": "33",
-    "adsb.parity": "10589845"
+    "adsb.cs_c1": "21",
+    "adsb.cs_c8": "6",
+    "adsb.parity": "3845394",
+    "callsign": "UX0369CF"
   },
   "source": "constructed",
-  "reference": "field values chosen by tools/gen/gen.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
 }

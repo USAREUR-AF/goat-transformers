@@ -124,6 +124,7 @@ item that stands directly in the UAP. The text quoted is the definition's.
 | Shared key | Bits | How | Text of the definition |
 |---|---|---|---|
 | `hae` | I021/140 | `field hae … sscale:381/200`: factor 381/1250 folded into the scale; the field has no raw key | I021/140 "Geometric Altitude", definition: "Minimum height from a plane tangent to the earth's ellipsoid, defined by WGS-84, in two's complement form."; LSB 25/4 ft; note: "Note: 1. LSB is required to be less than 10 ft by ICAO." |
+| `callsign` | I021/170 | `field callsign … chars:icao6` (engine-spec 0.15): the characters as text, trailing spaces removed on decode; a code outside the ICAO set is `transform-decode`. The field's raw integer key stays declared in the module and is not on the line, as `also` keeps the transform | I021/170 "Target Identification", definition: "Target (aircraft or vehicle) identification in 8 characters, as reported by the target."; 8 characters of 6 bits in the ICAO character set (StringICAO) |
 | `lat` | I021/130/LAT | `field lat … sscale:45/2097152`, then `also cat021ed023.i130_lat`: same unit, both keys hold the value | I021/130 "Position in WGS-84 Co-ordinates", definition: "Position in WGS-84 Co-ordinates."; subitems LAT and LON in degrees, two's complement; note: "Note: Positive longitude indicates East. Positive latitude indicates North." |
 | `lon` | I021/130/LON | `field lon … sscale:45/2097152`, then `also cat021ed023.i130_lon`: same unit, both keys hold the value | I021/130 "Position in WGS-84 Co-ordinates", definition: "Position in WGS-84 Co-ordinates."; subitems LAT and LON in degrees, two's complement; note: "Note: Positive longitude indicates East. Positive latitude indicates North." |
 
@@ -164,5 +165,5 @@ the generator then reloads the pack and replays every vector through a second co
 | `05-frn-the-pack-does-not-map.json` | FSPEC bit 27 set (spare FRN): ruling 1 of engine-spec 0.8 |
 | `06-category-is-not-21.json` | the first octet is 22 |
 | `07-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
-| `08-to-geojson.json` | a record with I021/130, I021/140: the shared keys `hae`, `lat`, `lon` reach the Feature |
+| `08-to-geojson.json` | a record with I021/130, I021/140, I021/170: the shared keys `hae`, `callsign`, `lat`, `lon` reach the Feature |
 | `packs/canonical-track-v2/vectors/gen-to-asterix-cat021-ed023.json` | from `canonical-track-v2` to this pack: a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at 12:00:00.125 UTC: the record holds I021/130, I021/140; the fields of those items that no key fills are zero |

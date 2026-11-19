@@ -235,6 +235,26 @@ SENTINELS = {"adsb.ew_raw": (0,), "adsb.ns_raw": (0,), "adsb.vr_raw": (0,), "ads
              "adsb.threat_range_raw": (0,), "adsb.threat_bearing_raw": (0,)}
 
 
+# `chars:icao6` (engine-spec 0.15) on the eight 6-bit characters of an identification message:
+# code 1-26 A-Z, 32 space, 48-57 0-9 (pyModeS _callsign.py builds the same alphabet); any other
+# code is transform-decode. Trailing spaces are removed on decode and written back on encode.
+ICAO6 = {c: chr(0x40 | c) for c in range(1, 27)}
+ICAO6.update({32: " "})
+ICAO6.update({c: chr(c) for c in range(48, 58)})
+ICAO6_CODE = {ch: c for c, ch in ICAO6.items()}
+CS_KEYS = ["adsb.cs_c%d" % i for i in range(1, 9)]
+
+
+class Icao6Error(Exception):
+    pass
+
+
+def icao6_text(codes):
+    if any(c not in ICAO6 for c in codes):
+        raise Icao6Error("a code outside the ICAO character set")
+    return "".join(ICAO6[c] for c in codes).rstrip(" ")
+
+
 def kind_lines(df, row):
     """(common fields, kind fields, whens) of a kind row, as (key, offset, length) and
     (offset, length, value): ME bit n (numbered from 1) is message offset 31 + n."""
@@ -247,6 +267,9 @@ def kind_lines(df, row):
 
 def encode(df, row, values):
     common, kind, whens = kind_lines(df, row)
+    if row[0].startswith("identification") and "callsign" in values:
+        # the callsign line comes before the raw characters and wins on encode (ruling 5 of 0.5)
+        values = dict(values, **{k: ICAO6_CODE[ch] for k, ch in zip(CS_KEYS, values["callsign"].ljust(8))})
     acc = 0
     for key, off, n in common + kind:
         v = values.get(key, SENTINELS.get(key, (0,))[0])
@@ -267,7 +290,10 @@ def decode(df, rows, hexmsg):
         common, kind, whens = kind_lines(df, row)
         if all(get(off, n) == v for off, n, v in whens):
             got = {key: get(off, n) for key, off, n in common + kind}
-            return row[0], {k: v for k, v in got.items() if v not in SENTINELS.get(k, ())}
+            got = {k: v for k, v in got.items() if v not in SENTINELS.get(k, ())}
+            if row[0].startswith("identification"):
+                got["callsign"] = icao6_text([got[k] for k in CS_KEYS])
+            return row[0], got
     return None, None
 
 
@@ -294,16 +320,23 @@ def roundtrip_vectors(pack_name, df, frame, kind_rows, first_n):
         for i, (key, off, length) in enumerate(kind):
             if (off, length) in on_when:              # adsb.tc, and adsb.tti in the ACAS kinds
                 values[key] = on_when[(off, length)]
+            elif key in CS_KEYS:                      # a character of the ICAO set, never a space
+                letters = sorted(c for c in ICAO6 if c != 32)
+                values[key] = letters[(37 * (i + 1) * (n + 3) + 11) % len(letters)]
             elif key in ("adsb.reserved", "adsb.reserved2"):
                 values[key] = 0
             else:
                 values[key] = (37 * (i + 1) * (n + 3) + 11) % (1 << length) or 1
         values["adsb.parity"] = crc24(int(encode(df, row, values), 16) >> 24)
         hexmsg = encode(df, row, values)
+        if name.startswith("identification"):
+            values["callsign"] = icao6_text([values[k] for k in CS_KEYS])
         got, entity = decode(df, [r for r in kind_rows], hexmsg)
         assert not any(values.get(k) in v for k, v in SENTINELS.items()), name
         assert got == name and entity == values, name
-        pins = ["adsb.df", "adsb.tc"] + ["adsb." + k for k in requires.split()] + ["adsb.parity"]
+        pins = ["adsb.df", "adsb.tc"] + ["adsb." + k for k in requires.split() if k != "callsign"] + ["adsb.parity"]
+        if "callsign" in entity:
+            pins.append("callsign")
         out.append({"name": name + "-roundtrip", "from": pack_name, "to": pack_name, "input": hexmsg,
                     "expect": hexmsg, "model": pinned(name, entity, pins), "source": "constructed",
                     "reference": "field values chosen by %s; parity computed there with "
@@ -327,7 +360,8 @@ def published_vectors(pack_name, df, rows, table):
         row = next(r for r in rows if r[0] == kind)
         assert encode(df, row, entity) == hexmsg, name
         out.append({"name": name, "from": pack_name, "to": pack_name, "input": hexmsg, "expect": hexmsg,
-                    "model": pinned(kind, entity, ["adsb.df", "adsb.tc"] + pins), "source": "specification",
+                    "model": pinned(kind, entity, ["adsb.df", "adsb.tc"] + pins
+                                    + (["callsign"] if "callsign" in entity else [])), "source": "specification",
                     "reference": "published message " + msg + ": " + reference})
     return out
 
@@ -359,6 +393,51 @@ def sentinel_vector(pack_name, df, frame, row, values, model_keys, ref):
                          % (", ".join(missing), SCRIPT)}
 
 
+CS_REF = ("pyModeS _callsign.py (the 6-bit alphabet: 1-26 A-Z, 32 space, 48-57 0-9) and engine-spec 0.15 "
+          "`chars:icao6`; %s")
+
+
+def callsign_vectors(pack_name, df, rows, published_hex, published_ref, invalid_hex, back_from, back_input,
+                     back_context, back_ref):
+    """The callsign bound by `chars:icao6`: a published identification to GeoJSON and CoT, a message
+    whose characters fall outside the set, and an identification written from another format."""
+    out = []
+    kind, entity = decode(df, rows, published_hex)
+    cs = entity["callsign"]
+    out.append({"name": "identification-callsign-to-geojson", "from": pack_name, "to": "geojson",
+                "input": published_hex,
+                "expect": '{"type":"Feature","geometry":null,"properties":{"callsign":"%s"}}' % cs,
+                "model": {"@kind": kind, "callsign": cs}, "source": "specification",
+                "reference": CS_REF % ("published message %s (%s): the eight characters as the callsign; no "
+                                       "position, so geometry null" % (published_hex.upper(), published_ref))})
+    out.append({"name": "identification-callsign-to-cot-xml", "from": pack_name, "to": "cot-xml",
+                "input": published_hex,
+                "expect": '<event version="2.0" type="a-u-X"><point hae="9999999" ce="9999999" le="9999999"/>'
+                          '<detail><contact callsign="%s"/></detail></event>' % cs,
+                "source": "specification",
+                "reference": CS_REF % ("the same message; cot-xml canonical form by hand from its pack, with its "
+                                       "point defaults; the 24-bit address is an integer and is not uid")})
+    try:
+        decode(df, rows, invalid_hex)
+        raise AssertionError("the invalid characters decoded")
+    except Icao6Error:
+        pass
+    out.append({"name": "identification-character-outside-the-set", "from": pack_name, "to": pack_name,
+                "input": invalid_hex, "expect_error": "transform-decode", "source": "constructed",
+                "reference": CS_REF % "the round trip of version 0.2 of the pack, whose characters were "
+                                      "chosen before the callsign was bound: codes such as 0, 27-31, 33-47 and "
+                                      "58-63 are outside the set"})
+    row = next(r for r in rows if r[0] == "identification-tc4")
+    values = {"adsb.df": df, "adsb.icao": int(back_context["adsb.icao"]), "adsb.tc": 4, "callsign": cs}
+    expect = encode(df, row, values)
+    out.append({"name": "callsign-to-identification-%s" % back_from, "from": back_from, "to": pack_name,
+                "input": back_input, "context": back_context, "expect": expect, "source": "constructed",
+                "reference": CS_REF % (back_ref + "; the kind identification-tc4 requires adsb.icao and callsign, "
+                                       "so the address comes from the context; the category is 0 and the parity "
+                                       "field is written as 0: the pack does not compute the CRC")})
+    return out
+
+
 def adsb_added():
     """Vectors 46-50 of adsb: they follow the 45 of the first edition."""
     out = roundtrip_vectors("adsb", 17, {"adsb.df": 17, "adsb.ca": 5}, ADSB_KINDS[ADSB_KINDS_V1:], ADSB_KINDS_V1)
@@ -373,7 +452,24 @@ def adsb_added():
         ["adsb.icao", "adsb.ns_raw", "adsb.ns_sign", "adsb.nac_v"],
         "pyModeS decoder/bds/bds09.py: an east-west and a vertical-rate magnitude of 0 and a GNSS-baro "
         "difference of 127 are not available; the 127 is written back as 0, the first sentinel"))
+    out += callsign_vectors(
+        "adsb", 17, ADSB_KINDS, "8d4840d6202cc371c32ce0576098", "1090 Megahertz Riddle, chapter 2, as vector 30",
+        V02_IDENT_TC1, "geojson",
+        '{"type":"Feature","geometry":null,"properties":{"callsign":"KLM1023"}}', {"adsb.icao": "4735190"},
+        "a GeoJSON Feature with the callsign KLM1023 and address 4840D6 (4735190) in the context")
     return out
+
+
+# The input of the identification-tc1 round trip of version 0.2 (the same in adsb and, with DF 18
+# and CF 0, in adsb-df18): its characters were chosen as any 6-bit numbers.
+V02_IDENT_TC1 = "8dabc00109607da5503ca1a19695"
+V02_IDENT_TC1_DF18 = "90abc00109607da5503ca1dc9a60"
+
+
+def adsb_first_edition_identifications():
+    """Vectors 01-04 of adsb, the identification round trips: since the callsign is bound their
+    characters are letters and digits, so this script writes them."""
+    return roundtrip_vectors("adsb", 17, {"adsb.df": 17, "adsb.ca": 5}, ADSB_KINDS[:4], 0)
 
 
 def adsb18():
@@ -391,6 +487,13 @@ def adsb18():
                 "reference": "90406B902015A678D4D220AA4BDA with the type code set to 0 and parity recomputed; "
                              "pyModeS decoder/adsb.py has no layout for type code 0"})
     out.append(acas_tti3_vector("adsb-df18", 0x90))
+    late = []
+    late += callsign_vectors(
+        "adsb-df18", 18, ADSB18_KINDS, "90406b902015a678d4d220aa4bda",
+        "pyModeS tests/test_adsb.py, as vector 33", V02_IDENT_TC1_DF18, "cot-xml",
+        '<event version="2.0" type="a-f-A" how="m-g"><point lat="0" lon="0" hae="0" ce="0" le="0"/>'
+        '<detail><contact callsign="EZY85MH"/></detail></event>', {"adsb.icao": "4221840"},
+        "a CoT event with the callsign EZY85MH and address 406B90 (4221840) in the context")
     row = next(r for r in ADSB18_KINDS if r[0] == "surface-position-tc7")
     out.append(sentinel_vector(
         "adsb-df18", 18, {"adsb.df": 18, "adsb.cf": 0, "adsb.icao": 0x3A23FF}, row,
@@ -402,7 +505,7 @@ def adsb18():
     for v in out:
         if "expect_error" in v:
             assert decode(18, ADSB18_KINDS, v["input"])[0] is None, v["name"]
-    return out
+    return out + late
 
 
 def text(v):
@@ -412,12 +515,20 @@ def text(v):
 def build(out):
     written = {}
     vdir = "packs/adsb/vectors"
-    for i, v in enumerate(adsb_added(), 46):
-        out.write("%s/%02d-%s.json" % (vdir, i, v["name"]), text(v))
+    numbered = list(enumerate(adsb_first_edition_identifications(), 1)) + list(enumerate(adsb_added(), 46))
+    for i, v in numbered:
+        if v["from"] == "adsb":
+            rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
+        else:       # a vector lives in the pack that owns its input
+            rel = "packs/%s/vectors/to-adsb-%s.json" % (v["from"], v["name"])
+        out.write(rel, text(v))
         written["adsb"] = written.get("adsb", 0) + 1
     vdir = "packs/adsb-df18/vectors"
     names = set()
     for i, v in enumerate(adsb18(), 1):
+        if v["from"] != "adsb-df18":
+            out.write("packs/%s/vectors/to-adsb-df18-%s.json" % (v["from"], v["name"]), text(v))
+            continue
         rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
         names.add(rel.split("/")[-1])
         out.write(rel, text(v))

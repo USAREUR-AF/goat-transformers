@@ -60,7 +60,7 @@ end
 if f.10                                  # FRN 10, I011/245 Target Identification
   field  cat011.i245_sti  2  uint
   pad    6
-  field  cat011.i245_tid  48  uint
+  field  callsign  48  chars:icao6
 end
 if f.11                                  # FRN 11, I011/380 Mode-S / ADS-B Related Data
   presence p380 fx

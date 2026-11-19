@@ -13,7 +13,8 @@
     "adsb.category": "0",
     "adsb.cs_c1": "5",
     "adsb.cs_c7": "8",
-    "adsb.cs_c8": "32"
+    "adsb.cs_c8": "32",
+    "callsign": "EZY85MH"
   },
   "source": "specification",
   "reference": "published message 90406B902015A678D4D220AA4BDA: pyModeS tests/test_adsb.py at commit 4bf0832, https://github.com/junzis/pyModeS (test_df18_routes_to_same_dispatch: the DF17 message 8D406B90... with the downlink format changed to 18, decoded as type code 4); one bit differs from the message above and the source leaves the parity unchanged, so the parity field is not the frame's remainder"

@@ -189,7 +189,7 @@ if f.28                                  # FRN 28, I021/077 Time of ASTERIX Repo
   field  cat021.i077  24  uscale:1/128
 end
 if f.29                                  # FRN 29, I021/170 Target Identification
-  field  cat021.i170  48  uint
+  field  callsign  48  chars:icao6
 end
 if f.30                                  # FRN 30, I021/020 Emitter Category
   field  cat021.i020  8  uint

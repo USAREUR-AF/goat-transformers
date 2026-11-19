@@ -1,0 +1,12 @@
+{
+  "name": "callsign-to-identification-cot-xml",
+  "from": "cot-xml",
+  "to": "adsb-df18",
+  "input": "<event version=\"2.0\" type=\"a-f-A\" how=\"m-g\"><point lat=\"0\" lon=\"0\" hae=\"0\" ce=\"0\" le=\"0\"/><detail><contact callsign=\"EZY85MH\"/></detail></event>",
+  "context": {
+    "adsb.icao": "4221840"
+  },
+  "expect": "90406b902015a678d4d220000000",
+  "source": "constructed",
+  "reference": "pyModeS _callsign.py (the 6-bit alphabet: 1-26 A-Z, 32 space, 48-57 0-9) and engine-spec 0.15 `chars:icao6`; a CoT event with the callsign EZY85MH and address 406B90 (4221840) in the context; the kind identification-tc4 requires adsb.icao and callsign, so the address comes from the context; the category is 0 and the parity field is written as 0: the pack does not compute the CRC"
+}

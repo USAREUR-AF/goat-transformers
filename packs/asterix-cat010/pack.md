@@ -111,6 +111,7 @@ item that stands directly in the UAP. The text quoted is the definition's.
 | Shared key | Bits | How | Text of the definition |
 |---|---|---|---|
 | `speed_ms` | I010/200/GSP | `field speed_ms … uscale:463/4096`: factor 1852 folded into the scale; the field has no raw key | I010/200 "Calculated Track Velocity in Polar Co-ordinates", subitem GSP "Ground Speed"; LSB 1/16384 NM/s |
+| `callsign` | I010/245/CHR | `field callsign … chars:icao6` (engine-spec 0.15): the characters as text, trailing spaces removed on decode; a code outside the ICAO set is `transform-decode`. The field's raw integer key stays declared in the module and is not on the line, as `also` keeps the transform | I010/245 "Target Identification", definition: "Target (aircraft or vehicle) identification in 8 characters.", subitem CHR "Characters 1-8 (Coded on 6 Bits Each) Defining Target Identification"; 8 characters of 6 bits in the ICAO character set (StringICAO) |
 | `lat` | I010/041/LAT | `field lat … sscale:45/536870912`, then `also cat010.i041_lat`: same unit, both keys hold the value | I010/041 "Position in WGS-84 Co-ordinates", definition: "Position of a target in WGS-84 Co-ordinates."; subitems LAT and LON in degrees, two's complement |
 | `lon` | I010/041/LON | `field lon … sscale:45/536870912`, then `also cat010.i041_lon`: same unit, both keys hold the value | I010/041 "Position in WGS-84 Co-ordinates", definition: "Position of a target in WGS-84 Co-ordinates."; subitems LAT and LON in degrees, two's complement |
 | `cat010.i140` (the module's own key) | I010/140 | `derive cat010.i140 day_seconds time_ms` in the module: on a conversion from another format the time of day follows from `time_ms` | I010/140 "Time of Day", definition: "Absolute time stamping expressed as UTC."; note: "Notes: - The time of day value is reset to zero each day at midnight." |
@@ -152,5 +153,5 @@ the generator then reloads the pack and replays every vector through a second co
 | `05-frn-the-pack-does-not-map.json` | FSPEC bit 26 set (spare FRN): ruling 1 of engine-spec 0.8 |
 | `06-category-is-not-10.json` | the first octet is 11 |
 | `07-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
-| `08-to-geojson.json` | a record with I010/041, I010/200: the shared keys `speed_ms`, `lat`, `lon` reach the Feature |
+| `08-to-geojson.json` | a record with I010/041, I010/200, I010/245: the shared keys `speed_ms`, `callsign`, `lat`, `lon` reach the Feature |
 | `packs/canonical-track-v2/vectors/gen-to-asterix-cat010.json` | from `canonical-track-v2` to this pack: a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at 12:00:00.125 UTC: the record holds I010/140, I010/041, I010/200; the fields of those items that no key fills are zero |
