@@ -109,7 +109,7 @@ The blob layout, the operation table and the full list are in
 | Groups with a fixed count or a count field, nested | Built |
 | `layout sequential`: `pad`, `align`, `presence`, `if`, `opt`, `chain`, `length`, `group ... count / while / more / fx`, items by kind | Built |
 | Context keys, named when the plan is compiled | Built |
-| Derivations `copy`, `neg`, `scale`, `offset`, `day_seconds`, `any`, `not`, `parse_int` | Built |
+| Derivations `copy`, `neg`, `scale`, `offset`, `day_seconds`, `any`, `not`, `parse_int`, `present` | Built |
 | Derivation `hypot` (gt-core feature `sqrt`) | Built |
 | Derivations `bearing`, `east_of`, `north_of` (gt-core feature `trig`) | Built |
 | Text wires `xml`, `geojson`, `json`, `protobuf` | Not built; out of scope |
@@ -142,9 +142,9 @@ runs, in one of three ways:
 
 | Group | What the device does | Compared with | Vectors | Pass |
 |---|---|---|---|---|
-| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 7,372 | 7,372 |
-| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 134 | 134 |
-| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 173 | 173 |
+| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 8,108 | 8,108 |
+| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 142 | 142 |
+| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 175 | 175 |
 
 Measured. 9 vectors with a `bits` side do not run, each for a reason the test
 states and checks: 7 of `conformance-malformed-bits`, whose input is hex text
@@ -157,6 +157,7 @@ the test. By pack that owns the vector:
 |---|---|---|---|
 | `adsb` | 50 | | |
 | `adsb-df18` | 40 | | |
+| the 342 `ardupilot-log-*` packs | 343 | 7 | |
 | `asterix-cat062` | 18 | 2 | |
 | `asterix-cat062-full` | 9 | 1 | |
 | the 28 other `asterix-cat*` packs | 179 | 7 | |
@@ -175,13 +176,13 @@ the test. By pack that owns the vector:
 | `conformance-seq-*` (the 15 sequential bits packs) | 77 | 20 | |
 | `conformance-seq-json` | | | 39 |
 | the 250 `cyphal-*` packs | 304 | | |
-| the 90 `dbc-*` packs | 4,905 | 1 | |
+| the 91 `dbc-*` packs | 5,298 | 2 | |
 | `demo-bits`, `-bytes`, `-msb`, `demo-kinds-bits` | 33 | 7 | |
 | `demo-track-json` | | | 1 |
 | `drip` | 9 | 1 | |
 | the 133 `dronecan-*` packs | 143 | 5 | |
 | `gdl90` | 17 | 2 | |
-| `geojson` | | | 22 |
+| `geojson` | | | 24 |
 | `mavlink2` | 362 | 7 | |
 | the 13 `mavlink2-*` dialect packs | 181 | 5 | |
 | `nmea2000` | 475 | 6 | |
@@ -204,14 +205,14 @@ The example plan of `embedded/example-bare`, with its `Scratch<12>`, gives the
 reference engine's bytes on the four Remote ID Location vectors. Measured.
 
 Fuzz-style runs, with a seeded generator, through the same-format plan of each
-of the 871 `bits` formats and four cross-format plans (875 plans):
+of the 1,214 `bits` formats and four cross-format plans (1,218 plans):
 
 | Run | Inputs | Result |
 |---|---|---|
-| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 9,625,000 | no panic: 4,811,298 converted, 4,813,702 refused with a named error |
-| The same kinds of input, device against reference engine | 1,312,500 | 658,014 equal outputs, 654,345 equal error kinds, 141 beyond the device's buffers, 0 differences |
-| Every proper prefix of every same-format vector input | 160,210 | 159,235 refused with the reference engine's error kind; 975 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
-| Plan blobs with one to four bytes changed | 1,750,000 | no panic; 1,134,929 still parsed and were run |
+| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 13,398,000 | no panic: 6,853,495 converted, 6,544,505 refused with a named error |
+| The same kinds of input, device against reference engine | 1,827,000 | 935,848 equal outputs, 891,060 equal error kinds, 92 beyond the device's buffers, 0 differences |
+| Every proper prefix of every same-format vector input | 178,228 | 177,253 refused with the reference engine's error kind; 975 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
+| Plan blobs with one to four bytes changed | 2,436,000 | no panic; 1,514,112 still parsed and were run |
 
 Measured in a build with overflow checks and debug assertions on.
 
@@ -231,7 +232,7 @@ workflow above: 68 operations, 14 keys, nesting 3.
 |---|---|
 | Plan blob (`.rodata`) | 1,728 |
 | Code (`.text`), no derive features | 29,132 |
-| Code (`.text`), with `sqrt` and `trig` | 33,220 |
+| Code (`.text`), with `sqrt` and `trig` | 33,236 |
 | Zero-initialised data of the measurement image (`.bss`) | 81 |
 
 Of the 29,132 bytes of code, about 22,500 are the engine and the C wrapper,

@@ -1,6 +1,7 @@
 """packc: a derive line whose target the source decode already gives is not
 needed by a cross-format plan; and the sentinels of the `absent` field option
-(engine-spec 0.9) are compiled into the FIELD operation (embedded/FORMAT.md).
+(engine-spec 0.9) are compiled into the FIELD operation (embedded/FORMAT.md);
+and the `present` derive function (engine-spec 0.12) is compiled as function 13.
 
 A model module may state both directions between `uid` and a numeric
 identifier (`derive uid text_of x.id`, `derive x.id parse_int uid`). A derive
@@ -274,6 +275,87 @@ class AbsentSentinelTest(unittest.TestCase):
     def test_absent_is_no_longer_unsupported(self):
         for src, dst in (("fx", "fx"), ("sq", "sq"), ("sx", "tn")):
             self.compile(src, dst)
+
+
+PRESENT_MODEL = """module        probe
+version       0.1.0
+distribution  public
+source        "test"
+key  alt   float  m
+key  name  string -
+key  mrh   int    -
+key  seen  int    -
+derive  probe.mrh   present  probe.alt
+derive  probe.seen  present  probe.name
+"""
+
+PRESENT_SOURCE = """format        ps
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+word_bytes    1
+field  probe.alt   0:0:16   uscale:0.5
+field  probe.name  0:16:16  ascii
+"""
+
+PRESENT_TARGET = """format        pt
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+word_bytes    1
+field  probe.mrh   0:0:1  uint
+field  probe.seen  0:1:1  uint
+"""
+
+
+class PresentDeriveTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = self.tmp.name
+        os.makedirs(os.path.join(root, "model"))
+        for name, text in (("core.def", CORE), ("probe.def", PRESENT_MODEL)):
+            with open(os.path.join(root, "model", name), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        for name, text in (("ps", PRESENT_SOURCE), ("pt", PRESENT_TARGET)):
+            os.makedirs(os.path.join(root, "packs", name))
+            with open(os.path.join(root, "packs", name, "pack.def"), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        self.model_dir = os.path.join(root, "model")
+        self.packs_dir = os.path.join(root, "packs")
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+
+    def tearDown(self):
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+        self.tmp.cleanup()
+
+    def test_present_is_function_13_with_one_argument_of_any_scalar_type(self):
+        self.assertEqual(packc.DERIVE["present"], 13)
+        self.assertNotIn("present", packc.DERIVE_FEATURE)
+        blob, report = packc.compile_plan(self.model_dir, self.packs_dir, "ps", "pt", {}, False)[:2]
+        self.assertEqual(report["derives"], ["probe.mrh = present(probe.alt)", "probe.seen = present(probe.name)"])
+        self.assertEqual(report["features"], [])
+        _, secs = sections(blob)
+        entry, data = secs[packc.S_DERIVES]
+        rows = [struct.unpack_from("<BBHHH", data, i) for i in range(0, len(data), entry)]
+        ids = report["key_ids"]
+        _, args = secs[packc.S_ARGS]
+        for (func, nargs, target, first, _), (t, a) in zip(rows, (("probe.mrh", "probe.alt"), ("probe.seen", "probe.name"))):
+            self.assertEqual((func, nargs, target), (13, 1, ids[t]))
+            self.assertEqual(struct.unpack_from("<H", args, first * 2)[0], ids[a])
+        # both targets reach the target format as derived keys
+        self.assertIn("probe.mrh (derived)", report["carried"])
+        self.assertIn("probe.seen (derived)", report["carried"])
+
+    def test_an_encode_only_plan_keeps_present(self):
+        # the caller may set any key, so the argument may be present
+        blob, report = packc.compile_plan(self.model_dir, self.packs_dir, None, "pt", {}, False)[:2]
+        self.assertIn("probe.mrh = present(probe.alt)", report["derives"])
 
 
 if __name__ == "__main__":
