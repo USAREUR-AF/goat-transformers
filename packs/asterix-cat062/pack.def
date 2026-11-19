@@ -53,6 +53,9 @@ if fspec.1                                   # FRN 1, I062/010 Data Source Ident
   field  cat062.sac  8  uint
   field  cat062.sic  8  uint
 end
+if fspec.3                                   # FRN 3, I062/015 Service Identification
+  field  cat062.service_id  8  uint
+end
 if fspec.4                                   # FRN 4, I062/070 Time Of Track Information, 1/128 s
   field  cat062.time_of_day_s  24  uscale:1/128
 end

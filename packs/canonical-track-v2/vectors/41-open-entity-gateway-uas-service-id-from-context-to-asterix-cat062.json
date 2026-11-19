@@ -1,0 +1,16 @@
+{
+  "name": "open-entity-gateway-uas-service-id-from-context-to-asterix-cat062",
+  "from": "canonical-track-v2",
+  "to": "asterix-cat062",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0007\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"3\",\"observedAt\":\"2025-06-15T15:06:43.250Z\",\"position\":{\"latitudeDeg\":64.8378,\"longitudeDeg\":-147.7164,\"altitudeM\":412.0},\"velocity\":{\"eastMps\":13.0,\"northMps\":0.0,\"upMps\":0.0},\"classification\":\"uas\",\"confidence\":0.82,\"simulated\":true,\"testData\":true,\"identifiers\":[]}",
+  "context": {
+    "cat062.sac": "25",
+    "cat062.sic": "4",
+    "cat062.track_number": "1",
+    "track.confirmed": "1",
+    "cat062.service_id": "7"
+  },
+  "expect": "3e0020bb0d101904076a41a000b86d72fe5bd4330034000000018181010000d8",
+  "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
+  "reference": "as vector 34, with I062/015 service 7 as context: FSPEC first octet sets FRN 3 (10011011 becomes 10111011 = bb), the octet 07 follows I062/010, and LEN grows by one to 0x0020 (EUROCONTROL-SPEC-0149-9 Ed. 1.21, UAP and I062/015)"
+}

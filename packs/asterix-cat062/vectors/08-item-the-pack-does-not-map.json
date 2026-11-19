@@ -2,6 +2,7 @@
   "name": "item-the-pack-does-not-map",
   "from": "asterix-cat062",
   "to": "asterix-cat062",
-  "input": "3e0007a0010705",
-  "expect_error": "malformed-wire"
+  "input": "3e000784010705",
+  "expect_error": "malformed-wire",
+  "reference": "FSPEC 84 sets FRN 1 and FRN 6 (I062/100 Calculated Track Position (Cartesian)), which the pack does not map (ruling 1 of engine-spec 0.8). Before I062/015 was mapped this vector used FRN 3 (FSPEC a0)."
 }
