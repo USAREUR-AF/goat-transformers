@@ -12,9 +12,12 @@ field   probe.pr_f   f      float
 field   probe.pr_i   i      int
 field   probe.pr_t   t      string  absent NA
 field   probe.pr_d   d      int
+field   probe.pr_b   b      bool
 field   probe.has_s  has_s  int
 field   probe.has_f  has_f  int
 field   probe.has_i  has_i  int
 field   probe.has_t  has_t  int
 field   probe.has_d  has_d  int
+field   probe.has_b  has_b  int
+field   probe.has_c  has_c  int
 default probe.pr_d   7

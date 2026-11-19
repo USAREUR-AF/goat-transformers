@@ -4,14 +4,15 @@
   "to": "conformance-present",
   "input": "{\"i\":5}",
   "context": {},
-  "expect": "{\"i\":5,\"t\":\"NA\",\"d\":7,\"has_i\":1}",
+  "expect": "{\"i\":5,\"t\":\"NA\",\"d\":7,\"has_i\":1,\"has_c\":1}",
   "model": {
     "@complete": true,
     "probe.has_i": "1",
     "@absent": [
       "probe.has_s",
       "probe.has_f"
-    ]
+    ],
+    "probe.has_c": "1"
   },
-  "reference": "present sets its target only when its argument is present; it never gives 0"
+  "reference": "present sets its target only when its argument is present; it never gives 0; has_c reads pr_c, which a copy line after it sets from pr_i: ruling 2 of 0.12, the pass repeats"
 }

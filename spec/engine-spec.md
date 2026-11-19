@@ -2427,26 +2427,34 @@ geometric altitude of I062/130. No derive function of 0.6 or 0.8 gives that:
 
 | Function | Arguments | Result |
 |---|---|---|
-| `present` | a (any type) | 1 |
+| `present` | a (any scalar type) | 1 |
 
 The target is an `int` key. Like every function but `any`, `present` sets its
-target only when its argument is present (Version 0.6, Derived keys), so the
-result is 1 or the target stays absent; it is never 0. A format that needs 0
-for "not sent" states it with a `default` on the target in the pack.
+target only when its argument is present and the target is absent (Version
+0.6, Derived keys). `present` writes only 1; a target the entity already
+holds, 0 included, is kept. A format that needs 0 for "not sent" states it
+with a `default` on the target in the pack.
 
 ## Rulings for 0.12
 
 1. **Presence, not value.** The argument is present when the entity holds a
-   value for the key, whatever the value: `0`, `false` read as 0, `0.0` and
-   the empty string all give 1.
-2. **What counts as present.** A key set by decode, by context (step 2 of
-   `convert`) or by an earlier derivation is present. A key left absent by a
-   sentinel (Version 0.9) is absent. A `default` is not a value of the entity
-   (it applies on encode, after derivation), so a key that only a default
-   would write is absent.
-3. **Argument.** Exactly one argument, a key of any type declared by a
-   loaded module, checked as for the other functions (ruling 29 of 0.8).
-   Another count is `bad-directive`.
+   value for the key, whatever the value: `0`, `0.0`, the empty string and
+   `false` decoded by `bool` (the value 0) all give 1. A `json` member whose
+   value is `null` is absent (Version 0.5) and leaves the target absent.
+2. **What counts as present.** Here present means held by the entity, not the
+   present-with-default of ruling 2 of 0.6 and ruling 2 of 0.8. A key set by
+   decode, by context (step 2 of `convert`), or by any derivation in an
+   earlier pass or an earlier line of the same pass is present; the pass
+   repeats until it sets nothing, so the order of `derive` lines does not
+   change the result. A key left absent by a sentinel (Version 0.9) is
+   absent. A `default` is not a value of the entity (it applies on encode,
+   after derivation), so a key that only a default would write is absent.
+3. **Argument.** Exactly one argument. A wrong count is a line error raised
+   as the file is read (ruling 32 of 0.8): `bad-directive`. The argument is a
+   key of `core`, of the module itself, or of a module it `uses`, as for every
+   function; the checks on the argument key and the target type run where
+   ruling 29 of 0.8 places them. A list as the argument is `bad-directive`
+   (ruling 18 of 0.7).
 4. **Target type.** The target must be `int`; another type is `bad-directive`,
    as for the other functions whose result type is fixed.
 5. **Same-format round trip.** As for every derivation, `present` is not
