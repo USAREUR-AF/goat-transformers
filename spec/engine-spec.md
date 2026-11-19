@@ -1529,7 +1529,10 @@ equals a sentinel.
     `conformance-absent-place-xml`.
     The ruling places one member or attribute that several lines name; it
     does not move elements, nested objects or groups, whose order stays that
-    of ruling 10 of 0.5 and Version 0.7.
+    of ruling 10 of 0.5 and Version 0.7. A `when <locator> present`
+    line names no position: it writes nothing and does not map the member
+    (ruling 27 of 0.5), so only `field`, `const` and valued `when` lines
+    count as naming the locator.
 24. **`also` (ruling 13 of 0.8).** The keys of `also` lines share their
     `field` line's sentinels: a sentinel on the bits leaves every key of the
     line absent, and when no key of the line has a value or a `default`, the

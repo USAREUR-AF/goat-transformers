@@ -4361,8 +4361,9 @@ pub mod jsonwire {
         }
         // a place several lines name is written at the position of the first
         // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
-        let firsts = first_lines(lines.iter().map(|l| (l.0, l.1)));
-        lines.sort_by_key(|l| (firsts[l.1], l.0));
+        // a `when <locator> present` line names no position
+        let firsts = first_lines(lines.iter().filter(|l| !(l.3 && l.2.is_none())).map(|l| (l.0, l.1)));
+        lines.sort_by_key(|l| (firsts.get(l.1).copied().unwrap_or(l.0).min(l.0), l.0));
         let mut top: Vec<(String, Json)> = Vec::new();
         for (_, path, value, is_when) in lines {
             let names: Vec<&str> = path.split('.').collect();
