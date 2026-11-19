@@ -200,20 +200,20 @@ sentence id in columns 2-4, positions with five minute decimals, unit letters as
 | `dbt` | depth below the transducer in feet, `f`, metres, `M`, fathoms, `F` | none |
 | `dpt` | depth relative to the transducer, transducer offset, range scale (optional) | none |
 | `mtw` | water temperature, unit letter | none |
-| `ttm` | target number, distance, bearing and its reference, speed, course and its reference, CPA distance and time, distance unit, name, status, reference flag, time, acquisition type | `callsign` (target name) |
-| `tll` | target number, latitude, longitude, name, time, status, reference flag | `lat`, `lon`, `callsign` |
+| `ttm` | number of the target, distance, bearing and its reference, speed, course and its reference, CPA distance and time, distance unit, name, status, reference flag, time, acquisition type | `callsign` (target name) |
+| `tll` | number of the target, latitude, longitude, name, time, status, reference flag | `lat`, `lon`, `callsign` |
 | `osd` | heading, status, course and reference, speed and reference, set, drift, speed unit | none |
 | `dtm` | local datum, subdivision, latitude and longitude offsets in minutes, altitude offset, reference datum | none |
 
 Evidence for the shared keys of these kinds: GNS and TLL positions are degrees
 and minutes with a hemisphere letter, as in GGA (gpsd driver; pynmea2 names TLL
-fields 2-5 "Target Latitude", "Target Longitude" and their directions), with the
+fields 2-5 as the latitude and longitude of the target and their directions), with the
 datum as for the first edition. TTM 11 and TLL 6 are "Target Name" in pynmea2:
 a human-readable name, `callsign`.
 
 Not bound: headings (a heading is not the course over ground); speed through
 the water (not over ground); TTM and OSD speed and course, whose unit and
-true-or-relative reference are other fields of the sentence; the target number
+true-or-relative reference are other fields of the sentence; the number of the target
 (an integer, `uid` is a string). The `requires` of each added kind names one of
 its own keys, so an entity from another format still becomes RMC or GGA.
 
