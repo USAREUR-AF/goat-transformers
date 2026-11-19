@@ -1,0 +1,34 @@
+# The misb0601 module: items of the MISB ST 0601 UAS Datalink Local Set that
+# the core and track modules have no key for. Values are in the document's
+# software units after its integer-to-value mapping; a reserved or "out of
+# range" integer is not recognised (packs/misb-st0601/pack.md).
+module        misb0601
+version       0.1.0
+distribution  public
+source        "MISB ST 0601.19 UAS Datalink Local Set, Motion Imagery Standards Board, NSG Registry public document store (doc/view?i=5471)"
+key  precision_time_us       int     us    "item 2: microseconds since 1970-01-01T00:00:00 counted without leap seconds (MISP time, not UTC)"
+key  mission_id              string  -     "item 3: free-text mission or sortie identifier"
+key  platform_tail_number    string  -     "item 4: free-text identifier of the platform as posted"
+key  platform_heading        float   deg   "item 5: angle from true north to the platform longitudinal axis projected on the horizontal plane, clockwise, 0 to 360"
+key  platform_pitch          float   deg   "item 6: platform pitch, nose up positive, range-restricted to -20 to 20"
+key  platform_roll           float   deg   "item 7: platform roll, right wing down positive, range-restricted to -50 to 50"
+key  platform_true_airspeed  int     m/s   "item 8: true airspeed, whole meters per second, 0 to 255"
+key  platform_indicated_airspeed  int  m/s  "item 9: indicated airspeed, whole meters per second, 0 to 255"
+key  platform_designation    string  -     "item 10: free-text model name of the platform"
+key  image_source_sensor     string  -     "item 11: free-text name of the active sensor"
+key  image_coordinate_system string  -     "item 12: free-text name of the image coordinate system"
+key  sensor_true_altitude    float   m     "item 15: sensor altitude above mean sea level, -900 to 19000 (not height above the ellipsoid)"
+key  sensor_hfov             float   deg   "item 16: horizontal field of view of the imaging sensor, 0 to 180"
+key  sensor_vfov             float   deg   "item 17: vertical field of view of the imaging sensor, 0 to 180"
+key  sensor_rel_azimuth      float   deg   "item 18: sensor azimuth relative to the platform longitudinal axis, 0 to 360"
+key  sensor_rel_elevation    float   deg   "item 19: sensor elevation relative to the platform longitudinal-transverse plane, down negative, -180 to 180"
+key  sensor_rel_roll         float   deg   "item 20: sensor roll about the lens axis, clockwise from behind, 0 to 360"
+key  slant_range             float   m     "item 21: distance from the sensor to the target, 0 to 5000000"
+key  target_width            float   m     "item 22: target width within the field of view, 0 to 10000"
+key  frame_center_lat        float   deg   "item 23: latitude of the terrain at the frame center, WGS84"
+key  frame_center_lon        float   deg   "item 24: longitude of the terrain at the frame center, WGS84"
+key  frame_center_elevation  float   m     "item 25: terrain elevation at the frame center above mean sea level, -900 to 19000"
+key  ls_version              int     -     "item 65: major version of MISB ST 0601 the packet was written to (0 = pre-release or test)"
+key  frame_center_hae        float   m     "item 78: frame center height above the WGS84 ellipsoid, -900 to 19000"
+key  platform_pitch_full     float   deg   "item 90: platform pitch, nose up positive, -90 to 90"
+key  platform_roll_full      float   deg   "item 91: platform roll, right wing down positive, -90 to 90"

@@ -1,0 +1,22 @@
+# Conformance probe pack for the `tlv` wire (spec 0.13). Public. A bare set
+# with one-byte tags and two-byte lengths, no key and no checksum. Exercises
+# kinds chosen by `when … present`, an empty value, a tag that occurs twice,
+# and the shortest long form not used by fixed lengths.
+format        conformance-tlv-fixed
+version       0.13.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          tlv
+tag           1
+length        2
+
+field    probe.n      1:4      uint
+field    callsign     2        utf8
+
+kind     marked
+requires probe.x
+when     9            present
+field    probe.x      10:1     uint
+
+kind     basic

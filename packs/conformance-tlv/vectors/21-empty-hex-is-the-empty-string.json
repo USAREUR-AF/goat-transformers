@@ -1,0 +1,13 @@
+{
+  "name": "empty-hex-is-the-empty-string",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b343e020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001023008020105814802000741010216001701090102c170",
+  "expect": "060e2b343e020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001023008020105814802000741010216001701090102c170",
+  "model": {
+    "probe.s2": "",
+    "@kind": "raw"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Kind raw: item 22 of length 0 decodes to the empty string under hex and is written back with length 0. Derived without an engine by a standalone reference program."
+}

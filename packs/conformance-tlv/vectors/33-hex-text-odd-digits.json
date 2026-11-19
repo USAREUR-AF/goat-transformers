@@ -1,0 +1,12 @@
+{
+  "name": "hex-text-odd-digits",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b343c020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100102300802010581480200074101021701090102a970",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.s2": "abc"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): hex encode needs an even number of digits. Derived without an engine by a standalone reference program."
+}

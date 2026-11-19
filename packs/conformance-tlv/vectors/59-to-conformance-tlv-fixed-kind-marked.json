@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-tlv-fixed-kind-marked",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv-fixed",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402002a0d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a9000001024070",
+  "expect": "0100040000002a0900000a000105",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): probe.x present: kind marked by requires; probe.n 42 as uint 4 bytes; when 9 present writes an empty item at its line's position, then 10 = 05. Derived without an engine by a standalone reference program."
+}

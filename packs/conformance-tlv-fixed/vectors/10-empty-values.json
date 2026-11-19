@@ -1,0 +1,12 @@
+{
+  "name": "empty-values",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "010000020000",
+  "expect": "020000",
+  "model": {
+    "callsign": ""
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): An empty uint value is absent; an empty utf8 value is the empty string, written as an item of length 0. Derived without an engine by a standalone reference program."
+}

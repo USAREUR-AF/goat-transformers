@@ -1,0 +1,12 @@
+{
+  "name": "to-conformance-tlv-n-does-not-fit",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv",
+  "input": "01000400009c40",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.n": "40000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): 40000 does not fit twos:2 (-32768 to 32767). Derived without an engine by a standalone reference program."
+}

@@ -43,6 +43,9 @@ Value decode_json_number(Transform t, const std::string& text);
 // Throws std::invalid_argument on failure.
 std::string encode_value(Transform t, const Value& v);
 
+// True for the transforms valid only on the tlv wire (v0.13): utf8 and hex.
+bool transform_is_tlv_only(Transform t);
+
 // True when the transform's wire value is text (JSON string), false for numbers.
 bool transform_is_textual(Transform t);
 

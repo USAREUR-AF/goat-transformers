@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-for-a-when-value-of-9-bytes",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3441020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741090000000000000000010102946f",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): A when value longer than 8 bytes does not hold. Derived without an engine by a standalone reference program."
+}

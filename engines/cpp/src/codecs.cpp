@@ -523,6 +523,8 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     };
     // 0.10 ruling 16: `absent` is not stated on the `text` wire yet.
     if (wire == Wire::Text) bad("'absent' is not available on the text wire");
+    // 0.13 ruling 10: nor on the `tlv` wire, where an empty value is already absent.
+    if (wire == Wire::Tlv) bad("'absent' is not available on the tlv wire");
     // The values: the quoted empty token is the one value "the empty text".
     std::vector<std::string> values;
     const bool empty_text = f.absent_arg.empty();

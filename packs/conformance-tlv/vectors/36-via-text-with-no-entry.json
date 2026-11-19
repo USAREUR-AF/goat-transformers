@@ -1,0 +1,12 @@
+{
+  "name": "via-text-with-no-entry",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3446020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233333008020105814802000741010114083ff8000000000000150442a9000001025bea",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.s1": "mid"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): probe.s1 = mid has no entry in levels and the types differ: transform-encode. Derived without an engine by a standalone reference program."
+}

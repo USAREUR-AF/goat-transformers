@@ -99,7 +99,9 @@ KeyType transform_yields(Transform t) {
         case Transform::Dec:
         case Transform::Dm:
         case Transform::Hms: return KeyType::Float;
-        case Transform::Ascii: return KeyType::String;
+        case Transform::Ascii:
+        case Transform::Utf8:
+        case Transform::Hex: return KeyType::String;
         case Transform::IntW:
         case Transform::HmsDmy: return KeyType::Int;
         case Transform::Bool:
@@ -141,6 +143,7 @@ const char* wire_name(Wire w) {
         case Wire::Protobuf: return "protobuf";
         case Wire::Json: return "json";
         case Wire::Text: return "text";
+        case Wire::Tlv: return "tlv";
     }
     return "?";
 }
@@ -402,6 +405,7 @@ void check_bits_field_len(const Pack& p, const FieldLine& f) {
 }
 
 void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
+    if (p.wire == Wire::Tlv) return;  // checked by detail::check_tlv_pack
     const std::string where = p.source + ":" + std::to_string(w.line);
     if (p.wire == Wire::Bits) {
         detail::BitsLocator loc;
@@ -482,6 +486,8 @@ void settle_group(const Pack& p, GroupLine& g) {
             throw Error(ErrorKind::BadDirective, p.format, g.locator,
                         where + ": the body of the group '" + g.list + "' mixes '.' with paths");
     }
+    if (p.wire == Wire::Tlv)
+        throw Error(ErrorKind::BadDirective, p.format, g.locator, where + ": 'group' on wire tlv is not defined in 0.13");
     if (p.wire == Wire::Text) {
         // v0.10: `group <list> <i> item <n>`; `count` is not allowed.
         if (g.has_count)
@@ -733,7 +739,7 @@ Wire locator_wire(const Pack& p, bool in_group) {
 bool scalar_item_wire(Wire w) { return w == Wire::Json || w == Wire::GeoJson || w == Wire::Protobuf; }
 
 void check_field(const Pack& p, const FieldLine& f, bool in_group) {
-    if (p.wire == Wire::Text) return;  // checked by detail::check_text_pack
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::check_text_pack
     const bool is_bits = detail::transform_is_bits(f.transform);
     const bool is_pb = detail::transform_is_protobuf(f.transform);
     bool matches;
@@ -751,7 +757,7 @@ void check_field(const Pack& p, const FieldLine& f, bool in_group) {
 }
 
 void check_when(const Pack& p, const WhenLine& w, bool in_group) {
-    if (p.wire == Wire::Text) return;  // checked by detail::check_text_pack
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::check_text_pack, check_tlv_pack
     // `.` is the item itself: outside a group it is bad-directive, as earlier
     // versions state, not bad-locator (0.11 ruling 5a).
     if (w.locator == "." && scalar_item_wire(p.wire))
@@ -770,7 +776,7 @@ void check_when(const Pack& p, const WhenLine& w, bool in_group) {
 }
 
 void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
-    if (p.wire == Wire::Text) return;  // checked by detail::parse_text_locators
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::parse_text_locators
     const Wire wire = locator_wire(p, in_group);
     bool ok = false;
     switch (wire) {
@@ -792,7 +798,8 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
         }
         case Wire::Json:
         case Wire::Protobuf: ok = detail::valid_locator(wire, g.locator); break;
-        case Wire::Text: ok = true; break;
+        case Wire::Text:
+        case Wire::Tlv: ok = true; break;
     }
     if (!ok)
         throw Error(ErrorKind::BadLocator, p.format, g.locator,
@@ -819,6 +826,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     std::unordered_map<std::string, int> table_index;  // table name -> position in p.tables
     std::size_t lineno = 0, pos = 0, bit_order_line = 0, kind_root_line = 0;
     std::size_t delimiter_line = 0, start_line = 0, checksum_line = 0, text_directive_line = 0;
+    // v0.13: `tag`, `length`, `key` and `checksum sum16 <tag>`, the first line of any of them.
+    std::size_t tag_line = 0, length_line = 0, key_line = 0, tlv_directive_line = 0;
+    // A field transform on wire tlv that did not parse (0.13 ruling 8), raised after the file.
+    bool pending_transform = false;
+    std::string pending_locator, pending_detail;
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
     std::vector<GroupLine*> open;
@@ -900,6 +912,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             else if (t[1] == "protobuf") p.wire = Wire::Protobuf;
             else if (t[1] == "json") p.wire = Wire::Json;
             else if (t[1] == "text") p.wire = Wire::Text;
+            else if (t[1] == "tlv") p.wire = Wire::Tlv;
             else throw Error(ErrorKind::UnknownWire, p.format, "", where + ": wire '" + t[1] + "'");
         } else if (kw == "root") {
             not_in_group();
@@ -928,9 +941,55 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": layout '" + t[1] + "' is not fixed or sequential");
             if (layout_line == 0) layout_line = lineno;
         } else if (kw == "pad" || kw == "align" || kw == "presence" || kw == "if" || kw == "opt" || kw == "chain" ||
-                   kw == "fx" || kw == "length" || kw == "also") {
+                   kw == "fx" || kw == "also") {
             throw Error(ErrorKind::BadDirective, p.format, "",
                         where + ": '" + kw + "' is a line of a sequential layout, and the pack's layout is fixed");
+        } else if (kw == "tag" || kw == "length" || kw == "key" ||
+                   (kw == "checksum" && t.size() == 3 && t[1] == "sum16")) {
+            // v0.13: each once, before the first `kind`, with a value of its own;
+            // on another wire bad-directive once the file is read. A `length`
+            // that is not one of these forms is the block of a sequential
+            // layout (0.8), which a fixed layout does not have.
+            auto bad = [&](const std::string& why) {
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": " + why);
+            };
+            const bool sum16 = kw == "checksum";
+            if (!sum16 && t.size() != 2) {
+                if (kw == "length")
+                    bad("'length' with a block is a line of a sequential layout, and 'length' on wire tlv "
+                        "takes one value: ber, 1, 2 or 4");
+                bad("'" + kw + "' takes one value");
+            }
+            const std::string& v = t[1];
+            if (kw == "tag") {
+                if (v == "ber-oid") p.tlv_tag_bytes = 0;
+                else if (v == "1" || v == "2" || v == "4") p.tlv_tag_bytes = static_cast<std::uint32_t>(v[0] - '0');
+                else bad("'tag' is ber-oid, 1, 2 or 4, not '" + v + "'");
+            } else if (kw == "length") {
+                if (v == "ber") p.tlv_length_bytes = 0;
+                else if (v == "1" || v == "2" || v == "4") p.tlv_length_bytes = static_cast<std::uint32_t>(v[0] - '0');
+                else bad("'length' on wire tlv is ber, 1, 2 or 4, not '" + v + "'");
+            } else if (kw == "key") {
+                bool ok = !v.empty() && v.size() % 2 == 0 && v.size() <= 128;
+                for (char c : v) ok = ok && ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'));
+                if (!ok) bad("'key' is 1 to 64 bytes as an even number of lowercase hex digits, not '" + v + "'");
+                p.tlv_has_key = true;
+                p.tlv_key.clear();
+                for (std::size_t k = 0; k < v.size(); k += 2) {
+                    auto nib = [](char c) { return c <= '9' ? c - '0' : c - 'a' + 10; };
+                    p.tlv_key += static_cast<char>((nib(v[k]) << 4) | nib(v[k + 1]));
+                }
+            } else {
+                if (!detail::parse_tlv_tag(t[2], p.tlv_checksum_tag))
+                    bad("'checksum sum16' takes a tag, a decimal integer from 0 to 2^28-1 with no leading zero, not '" +
+                        t[2] + "'");
+                p.tlv_checksum = true;
+            }
+            if (!p.kinds.empty()) bad("'" + kw + "' after the first 'kind'");
+            std::size_t& seen = kw == "tag" ? tag_line : kw == "length" ? length_line : kw == "key" ? key_line : checksum_line;
+            if (seen != 0) bad("'" + kw + "' appears twice");
+            seen = lineno;
+            if (tlv_directive_line == 0) tlv_directive_line = lineno;
         } else if (kw == "delimiter" || kw == "start" || kw == "checksum") {
             // v0.10: each once, before the first `kind`, with a value of its own;
             // on another wire bad-directive once the file is read.
@@ -1053,11 +1112,23 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             f.line = lineno;
             std::string terr;
             const int tf = detail::parse_any_transform(t[3], f, terr);
-            if (tf == -1)
-                throw Error(ErrorKind::BadDirective, p.format, f.locator, where + ": " + terr + " for field '" + f.key + "'");
-            if (tf == -2)
+            if (tf != 0 && p.wire == Wire::Tlv) {
+                // Ruling 8 of 0.13: on tlv a transform that does not parse, by
+                // its name or its parameters, is bad-directive, checked after
+                // the file is read (the line check of 0.11 ruling 5b step 7
+                // leaves it). The `wire` line stands before every `field` (5b).
+                if (!pending_transform) {
+                    pending_transform = true;
+                    pending_locator = f.locator;
+                    pending_detail = where + ": " + terr + " for field '" + f.key + "'";
+                }
+                f.transform = Transform::Utf8;  // a placeholder; the pending error is raised first
+            } else if (tf == -2) {
                 throw Error(ErrorKind::UnknownTransform, p.format, f.locator,
                             where + ": " + terr + " for field '" + f.key + "'");
+            } else if (tf == -1) {
+                throw Error(ErrorKind::BadDirective, p.format, f.locator, where + ": " + terr + " for field '" + f.key + "'");
+            }
             // v0.6 options after the transform, in any order.
             for (std::size_t k = 4; k < t.size(); ++k) {
                 bool* flag = nullptr;
@@ -1100,6 +1171,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
 
     // Line errors that need the whole file: a group left open, where a directive
     // is allowed, and what a `when` value and a bits length may be.
+    if (pending_transform)  // set on wire tlv only (0.13 ruling 8)
+        throw Error(ErrorKind::BadDirective, p.format, pending_locator,
+                    pending_detail + " (on wire tlv, a transform not in the table of 0.13)");
     if (!open.empty())
         throw Error(ErrorKind::BadDirective, p.format, open.back()->locator,
                     source + ":" + std::to_string(open.back()->line) + ": the group '" + open.back()->list +
@@ -1133,6 +1207,21 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                     source + ":" + std::to_string(f.line) + ": transform '" +
                                         transform_name(f.transform) + "' applies to wire text only");
+            });
+        }
+        // v0.13: `tag`, `length`, `key` and `checksum sum16` belong to the tlv
+        // wire, and `utf8` and `hex` are valid on it only.
+        if (p.wire != Wire::Tlv) {
+            if (tlv_directive_line != 0)
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            source + ":" + std::to_string(tlv_directive_line) +
+                                ": 'tag', 'length', 'key' and 'checksum sum16' apply to wire tlv only");
+            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
+                for (const auto& f : fields)
+                    if (detail::transform_is_tlv_only(f.transform))
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) + ": transform '" +
+                                        transform_name(f.transform) + "' applies to wire tlv only");
             });
         }
         if (kind_root_line != 0 && p.wire != Wire::Xml)
@@ -1175,6 +1264,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         for (auto& k : p.kinds) each_group(k, [&](GroupLine& g) { settle_group(p, g); });
         if (p.wire == Wire::Bits) check_bits_groups(p);
         if (p.wire == Wire::Text) detail::check_text_pack(p);
+        if (p.wire == Wire::Tlv) detail::check_tlv_pack(p);
         check_fields_through_groups(p);
     }
 

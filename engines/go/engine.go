@@ -447,6 +447,8 @@ func (e *Engine) Decode(format string, b []byte) (*Entity, error) {
 		err = decodeProtobuf(d, b)
 	case WireText:
 		err = decodeText(d, b)
+	case WireTLV:
+		err = decodeTLV(d, b)
 	}
 	if err != nil {
 		return nil, err
@@ -497,6 +499,8 @@ func (e *Engine) Encode(format string, ent *Entity) ([]byte, error) {
 		return encodeJSONWire(p, lay, ent, rec)
 	case WireText:
 		return encodeText(p, lay, ent, rec)
+	case WireTLV:
+		return encodeTLV(p, lay, ent, rec)
 	default:
 		return encodeGeoJSON(p, lay, ent, rec)
 	}

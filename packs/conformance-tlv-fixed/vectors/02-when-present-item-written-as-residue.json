@@ -1,0 +1,13 @@
+{
+  "name": "when-present-item-written-as-residue",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0100040000002a0200054741544f520900000a000105",
+  "expect": "0100040000002a0200054741544f520a000105090000",
+  "model": {
+    "@kind": "marked",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Item 9 before 10 on input: as residue it is written after the lines of the scope (Writing a message, step 1), so it moves after 10. Derived without an engine by a standalone reference program."
+}

@@ -366,8 +366,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                         raise bad("a second layout, %r, in a sequential pack" % args[0], lineno, "layout")
                     if wired is not None:  # ruling 5b of 0.11
                         raise bad("'layout sequential' after a %r line" % wired, lineno, "layout")
-            elif kw in TEXT_DIRECTIVES:
-                text_dirs.append((lineno, bad("%r is a directive of the text wire" % kw, lineno, kw)))
+            elif kw in TEXT_DIRECTIVES or kw == "tag" or kw == "key":
+                # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16` (0.13): another wire's
+                text_dirs.append((lineno, bad("%r is a directive of another wire" % kw, lineno, kw)))
             elif kw == "word_bytes":
                 deferred.append((lineno, bad("'word_bytes' is not used in a sequential pack", lineno, "word_bytes")))
             elif kw == "root":

@@ -1,0 +1,13 @@
+{
+  "name": "tag-twice",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0200034f4e450100040000002a02000354574f0500010105000102",
+  "expect": "0100040000002a0200034f4e450500010105000102",
+  "model": {
+    "callsign": "ONE",
+    "@kind": "basic"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Tag 2 twice: the first is taken, the later is neither mapped nor residue; unnamed tag 5 twice: two residue entries in input order. Derived without an engine by a standalone reference program."
+}

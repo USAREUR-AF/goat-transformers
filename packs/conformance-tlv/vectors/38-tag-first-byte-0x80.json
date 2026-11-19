@@ -1,0 +1,9 @@
+{
+  "name": "tag-first-byte-0x80",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b344d020800000177e5138e00800101000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a900000102459d",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): A BER-OID tag whose first byte is 0x80 (a group of zero before others). Derived without an engine by a standalone reference program."
+}

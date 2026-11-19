@@ -3,7 +3,7 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.10) and imports no engine, so a generator
+spec/engine-spec.md (Versions 0.1 to 0.10 and 0.13) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -52,19 +52,30 @@ PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
 RECORD_TRANSFORMS = dict(TEXT_TRANSFORMS, dec="float", dm="float", hms="float", hms_dmy="int")
 PAIR_TRANSFORMS = ("dm", "hms_dmy")
 NUMERIC_TEXT = ("int", "float", "dec")
+# 0.13 "Transforms for `tlv`": `utf8` and `hex` are valid on this wire only;
+# any other name is `bad-directive` on it (ruling 8).
+TLV_TRANSFORMS = {"uint": "int", "twos": "int", "uscale": "float", "sscale": "float",
+                  "f32": "float", "f64": "float", "utf8": "string", "hex": "string"}
+TLV_SIZED = ("uint", "twos", "uscale", "sscale")       # `:<n>` required
+TLV_FLOAT_SIZE = {"f32": 4, "f64": 8}                  # `:<n>` optional, and then this
 TRANSFORMS = {"xml": TEXT_TRANSFORMS, "geojson": TEXT_TRANSFORMS, "json": JSON_TRANSFORMS,
-              "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS}
+              "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS,
+              "tlv": TLV_TRANSFORMS}
 WIRES = tuple(TRANSFORMS)
 
 # the directives of the text wire (0.10): at most once, before the first `kind`
 TEXT_HEADER = ("delimiter", "start", "checksum")
+# the directives of the tlv wire (0.13): at most once, before the first `kind`,
+# with their allowed values (`key` and `checksum sum16 <tag>` are checked apart)
+TLV_HEADER = ("tag", "length", "key", "checksum")
+TLV_FORMS = {"tag": ("ber-oid", "1", "2", "4"), "length": ("ber", "1", "2", "4")}
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
           "bit_order", "word_bytes") + TEXT_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length")
 SEQUENTIAL_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
-    "root", "kind", "when", "requires", "field", "const", "default", "end")
+    "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key")
 
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
@@ -76,6 +87,9 @@ _PROTOBUF_PATH = re.compile(r"[1-9][0-9]*(?:\.[1-9][0-9]*)*\Z")
 _CONDITION = re.compile(r"(!?)([^.!]+)\.([0-9]+)\Z")
 _TEXT_COLUMN = re.compile(r"([0-9]+):([0-9]+):([0-9]+)\Z")
 _TEXT_PAIR = re.compile(r"([0-9]+)\+([0-9]+)\Z")
+_TLV_TAG = re.compile(r"(?:0|[1-9][0-9]*)\Z")
+_TLV_LOCATOR = re.compile(r"((?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))*)(?::([0-9]+))?\Z")
+_TLV_KEY = re.compile(r"(?:[0-9a-f]{2}){1,64}\Z")
 
 
 def printable(text, low=0x20):
@@ -439,17 +453,19 @@ class Node:
     On the protobuf wire `path` is the tuple of field numbers, `()` for `.`.
     On the text wire `fields` is the tuple of field indexes (one, or two for a
     pair) and `col` is (from, len) for a column, None otherwise; a group's
-    `start` is its first field and `item` the fields of one item."""
+    `start` is its first field and `item` the fields of one item.
+    On the tlv wire `path` is the tuple of tags and `size` the `:<n>` bytes,
+    None when the locator has none."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = self.absent = self.fields = self.col = None
+        self.start = self.path = self.absent = self.fields = self.col = self.size = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -477,6 +493,8 @@ class Pack:
         self.format = self.version = self.wire = self.distribution = self.root = None
         self.layout, self.bit_order, self.word_bytes = "fixed", "lsb", None
         self.delimiter = self.start = self.checksum = None      # text wire, as written
+        self.tag, self.length, self.key = "ber-oid", "ber", None  # tlv wire
+        self.sum16 = None                                        # tlv: the checksum tag, an int
         self.sources, self.uses = [], ["core"]
         self.tables, self.typemap = {}, []
         self.common, self.kinds = [], []
@@ -526,6 +544,8 @@ class _Loader:
         self.text, self.model = text, model
         self.pack = Pack(label or "<pack>")
         self.key_uses = []          # (node or line number, key, what is expected)
+        self.tlv_lines = []         # (line number, directive, args, after a `kind`), 0.13
+        self._header_lines = {}
 
     def fail(self, kind, message, line=None):
         raise CheckError(kind, message, line, self.pack.label)
@@ -544,8 +564,17 @@ class _Loader:
             d, a = toks[0], toks[1:]
             if d not in DIRECTIVES:
                 self.bad(no, "`%s` is not a directive" % d)
-            if open_blocks and d in HEADER + TABLES:
+            if open_blocks and d in HEADER + TABLES + ("tag", "key"):
                 self.bad(no, "`%s` inside a `%s` block" % (d, open_blocks[-1].d))
+            # the forms of 0.13 are recorded here and checked in `lines`, after
+            # the file is read; `length` is one of them on the tlv wire only, and
+            # `checksum` when it is not the one-word form of 0.10
+            if d in ("tag", "key") or (d in ("length", "checksum") and pack.wire == "tlv") \
+                    or (d == "checksum" and len(a) != 1):
+                if open_blocks:
+                    self.bad(no, "`%s` inside a `%s` block" % (d, open_blocks[-1].d))
+                self.tlv_lines.append((no, d, a, bool(pack.kinds)))
+                continue
             if d in HEADER:
                 if len(a) != 1:
                     self.bad(no, "`%s` takes one argument, has %d" % (d, len(a)))
@@ -644,7 +673,6 @@ class _Loader:
             setattr(pack, d, value)
         else:
             setattr(pack, d, value)
-        self._header_lines = getattr(self, "_header_lines", {})
         self._header_lines.setdefault(d, no)
 
     def _kind_line(self, node, owner, kinds):
@@ -697,6 +725,7 @@ class _Loader:
                                            or (pack.separator is not None and pack.separator in pack.start)):
                 self.bad(where["start"], "start `%s` is not one or more characters from 0x21 to 0x7E "
                                          "without the delimiter" % pack.start)
+        self._tlv_header()
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -708,6 +737,42 @@ class _Loader:
             for _, lines in pack.scopes():
                 self._fixed_extents(lines, item=None)
         return self
+
+    def _tlv_header(self):
+        """0.13: `tag`, `length`, `key` and `checksum sum16 <tag>` on the tlv
+        wire only, at most once each, before the first `kind`, with their values."""
+        pack = self.pack
+        seen = set()
+        for no, d, a, after_kind in self.tlv_lines:
+            if pack.wire != "tlv":
+                self.bad(no, "`%s %s` on the %s wire" % (d, " ".join(a), pack.wire))
+            if d in seen:
+                self.bad(no, "a second `%s` line" % d)
+            seen.add(d)
+            if after_kind:
+                self.bad(no, "`%s` after the first `kind`" % d)
+            if d in TLV_FORMS:
+                if len(a) != 1 or a[0] not in TLV_FORMS[d]:
+                    self.bad(no, "`%s %s`: the %s is one of %s" % (d, " ".join(a), d, ", ".join(TLV_FORMS[d])))
+                setattr(pack, d, a[0])
+            elif d == "key":
+                if len(a) != 1 or not _TLV_KEY.match(a[0]):
+                    self.bad(no, "`key %s` is not 1 to 64 bytes of lowercase hex" % " ".join(a))
+                pack.key = a[0]
+            elif len(a) != 2 or a[0] != "sum16" or not _TLV_TAG.match(a[1]):
+                self.bad(no, "`checksum %s` is not `checksum sum16 <tag>` on the tlv wire" % " ".join(a))
+        for no, d, a, _ in self.tlv_lines:      # the tag is checked against the final `tag` form
+            if d == "checksum":
+                pack.sum16 = self._tlv_tag(no, a[1])
+
+    def _tlv_tag(self, node, text):
+        """One tag of the tlv wire as an int: decimal, no leading zero, 0 to
+        2^28-1, and below 2^(8n) under `tag <n>`."""
+        tag = int(text) if _TLV_TAG.match(text) else -1
+        limit = 1 << 28 if self.pack.tag == "ber-oid" else 1 << (8 * int(self.pack.tag))
+        if not 0 <= tag < min(limit, 1 << 28):
+            self.bad(node, "tag `%s` is not a decimal from 0 to %d with no leading zero" % (text, min(limit, 1 << 28) - 1))
+        return tag
 
     def _scope(self, common, kinds, group, visible, top=False):
         """One body: the common lines, then each kind's. `group` is the group
@@ -723,6 +788,8 @@ class _Loader:
             elif self.pack.wire == "text":
                 self._one_group_per_list(lines)
                 self._text_group_last(lines)
+            elif self.pack.wire == "tlv":
+                self._tlv_paths(lines)
             else:
                 self._one_group_per_list(lines)
                 self._paths_through_groups(lines)
@@ -889,6 +956,15 @@ class _Loader:
         node.loc = text
         if pack.wire == "text":
             self._text_locator(node, text, group, what)
+        elif pack.wire == "tlv":
+            m = _TLV_LOCATOR.match(text)
+            if not m:
+                self.bad(node, "`%s` is not a tlv path of decimal tags with an optional `:<n>`" % text)
+            node.path = tuple(self._tlv_tag(node, t) for t in m.group(1).split("."))
+            if m.group(2) is not None:
+                if len(m.group(2)) != 1 or not 1 <= int(m.group(2)) <= 8:
+                    self.bad(node, "the size `:%s` is not one digit from 1 to 8" % m.group(2))
+                node.size = int(m.group(2))
         elif pack.wire == "bits":
             if pack.sequential:
                 if not _UINT.match(text):
@@ -948,6 +1024,8 @@ class _Loader:
         if text_wire and (node.tr in PAIR_TRANSFORMS) != (len(node.fields) == 2):
             self.bad(node, "transform `%s` %s" % (node.tr, "takes a pair `<i>+<j>`" if node.tr in PAIR_TRANSFORMS
                                                   else "does not take a pair"))
+        if self.pack.wire == "tlv":
+            self._tlv_size(node)
         self._via(node, node.via)
         self.key_uses.append((node, node.key, "field"))
 
@@ -956,6 +1034,8 @@ class _Loader:
         arg, wire = node.absent, self.pack.wire
         if wire == "text":
             self.bad(node, "`absent` is not valid on the text wire (ruling 16 of 0.10)")
+        if wire == "tlv":
+            self.bad(node, "`absent` is not valid on the tlv wire (ruling 10 of 0.13)")
         values = [""] if arg == "" else arg.split(",")
         for v in values:
             if '"' in v or (v == "" and arg != ""):
@@ -995,6 +1075,28 @@ class _Loader:
                         and not all(_JSON_NUMBER.match(v) for v in values):
                     self.bad(node, "`absent` on a geojson coordinate takes only number text")
 
+    def _tlv_size(self, node):
+        """0.13 "Transforms for `tlv`": the size each transform needs or allows."""
+        tr, size = node.tr, node.size
+        if tr in TLV_SIZED and size is None:
+            self.bad(node, "transform `%s` needs a size `:<n>` after the path `%s`" % (tr, node.loc))
+        if tr in TLV_FLOAT_SIZE and size not in (None, TLV_FLOAT_SIZE[tr]):
+            self.bad(node, "transform `%s` takes no size or `:%d`, not `:%d`" % (tr, TLV_FLOAT_SIZE[tr], size))
+        if tr not in TLV_SIZED + tuple(TLV_FLOAT_SIZE) and size is not None:
+            self.bad(node, "transform `%s` takes no size, has `:%d`" % (tr, size))
+
+    def _tlv_value(self, node, what):
+        """0.13 "`when` and `const`": a numeric value needs a size and fits it;
+        `when <path> present` takes no size."""
+        if what == "when" and node.value == "present":
+            if node.size is not None:
+                self.bad(node, "`when %s present` with a size" % node.loc)
+            return
+        if node.size is None:
+            self.bad(node, "a numeric `%s` without a size `:<n>`" % what)
+        if not _UINT.match(node.value) or int(node.value) >> (8 * node.size):
+            self.bad(node, "the `%s` value `%s` does not fit %d bytes" % (what, node.value, node.size))
+
     def _via(self, node, table):
         if table is not None and table not in self.pack.tables:
             self.bad(node, "`via %s` names a table with no `map` line" % table)
@@ -1027,6 +1129,8 @@ class _Loader:
             self.bad(node, "a protobuf `when` value is `present` or an unsigned integer")
         elif self.pack.wire == "text":
             self._text_value(node, "when")
+        elif self.pack.wire == "tlv":
+            self._tlv_value(node, "when")
 
     def _const(self, node, group):
         if len(node.args) != 2:
@@ -1034,11 +1138,14 @@ class _Loader:
         self._locator(node, node.args[0], group, "const")
         node.value = node.args[1]
         if node.value == "present":
-            self.bad(node, "`const <locator> present`; write `=present` for the text")
+            self.bad(node, "`const <path> present` on the tlv wire" if self.pack.wire == "tlv"
+                     else "`const <locator> present`; write `=present` for the text")
         if self.pack.wire == "bits":
             self._unsigned(node, node.value, "const")
         elif self.pack.wire == "text":
             self._text_value(node, "const")
+        elif self.pack.wire == "tlv":
+            self._tlv_value(node, "const")
 
     def _presence(self, node, visible, declared):
         a = node.args
@@ -1092,6 +1199,8 @@ class _Loader:
         pack, a = self.pack, node.args
         if len(a) < 2:
             self.bad(node, "`group` takes a list and a locator or a repeat form")
+        if pack.wire == "tlv":
+            self.bad(node, "`group` on the tlv wire")
         node.key = a[0]
         self.key_uses.append((node, node.key, "group"))
         rest = a[1:]
@@ -1168,6 +1277,25 @@ class _Loader:
         for node in lines:
             if node.d in ("field", "when", "const") and max(node.fields) >= first:
                 self.bad(node, "the %s at `%s` lies at or beyond the group's field %d" % (node.d, node.loc, first))
+
+    def _tlv_paths(self, lines):
+        """0.13 "Locators" and ruling 5, over one scope: no `field`, `when` or
+        `const` on the checksum tag, and no line at a path with another at a
+        path under it."""
+        placed = [n for n in lines if n.d in ("field", "when", "const")]
+        for node in placed:
+            if node.path[0] == self.pack.sum16:
+                self.bad(node, "the %s at `%s` is on the checksum tag" % (node.d, node.loc))
+        paths = {}
+        for node in placed:
+            paths.setdefault(node.path, node)
+        for node in placed:
+            for i in range(1, len(node.path)):
+                other = paths.get(node.path[:i])
+                if other is not None:
+                    later = node if node.line > other.line else other
+                    self.bad(later, "`%s` and `%s` read one item both as a value and as a set"
+                             % (other.loc, node.loc))
 
     def _sequential_lists(self, lines):
         """0.8 rulings 23 and 33: two groups of one list in a sequential scope

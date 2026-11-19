@@ -25,6 +25,9 @@ func (p *Pack) textDirective(kw, val string, line int) error {
 	if prev, dup := p.textSeen[kw]; dup {
 		return fmt.Errorf("%s repeated (first on line %d)", kw, prev)
 	}
+	if prev, dup := p.tlv.lines[kw]; dup {
+		return fmt.Errorf("%s repeated (first on line %d)", kw, prev)
+	}
 	p.textSeen[kw] = line
 	if len(p.Kinds) > 0 {
 		return fmt.Errorf("%s must stand before the first kind line", kw)
@@ -207,7 +210,7 @@ func resolveTextTransform(name string) (*textTf, ErrorKind, error) {
 	case "iso8601_ms":
 		return &textTf{name: name, kind: ttISO}, "", nil
 	}
-	if name == "bool" || isBitsTransformName(name) || isPBTransformName(name) {
+	if name == "bool" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) {
 		return nil, ErrBadDirective, fmt.Errorf("transform %q is not valid on wire text", name)
 	}
 	if !isTextOnlyTransform(name) {

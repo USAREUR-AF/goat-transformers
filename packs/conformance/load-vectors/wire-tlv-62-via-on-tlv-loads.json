@@ -1,0 +1,8 @@
+{
+  "name": "wire-tlv-62-via-on-tlv-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey hae float m\nkey course float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey y int -\nkey a float -\nkey s1 string -\nkey s2 string -\nkey label string -\nkey qty int -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.13.0\ndistribution public\nsource \"probe\"\nuses probe\nwire tlv\nmap levels 1 low\nfield probe.s1 16:1 uint via levels\n"
+}

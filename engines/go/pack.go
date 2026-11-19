@@ -20,6 +20,7 @@ const (
 	WireProtobuf = "protobuf"
 	WireJSON     = "json"
 	WireText     = "text"
+	WireTLV      = "tlv"
 )
 
 type locKind int
@@ -37,6 +38,7 @@ const (
 	locTField                    // text <i>: a whole field
 	locTCol                      // text <i>:<from>:<len>: a column of a field
 	locTPair                     // text <i>+<j>: two fields as one value
+	locTLV                       // tlv <tag>[.<tag>…][:<n>]
 )
 
 // maxBitsLen is the longest bits field: an `ascii` field of 255 bytes.
@@ -59,6 +61,8 @@ type locator struct {
 	ti, tj int      // text: the field index; the second field of a pair
 	from   int      // text: the first character of a column
 	clen   int      // text: the length of a column
+	tags   []uint64 // tlv: the tags of the path
+	tsize  int      // tlv: the size `:<n>`, 0 when the path has none
 }
 
 // Field is one `field` line: a model key bound to a wire locator through a
@@ -82,6 +86,7 @@ type Field struct {
 	also    []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
 	tf      *transform
 	ttf     *textTf // text wire transform
+	xtf     *tlvTf  // tlv wire transform
 	btf     *bitsTransform
 	pbf     *pbTransform
 	jbool   bool // json `bool`
@@ -200,6 +205,7 @@ type layout struct {
 	bytes    int                 // bits: the length an encode writes before any counted items, in bytes
 	decBytes int                 // bits: the shortest input a decode accepts, in bytes
 	text     *textScope          // text: the fields the scope addresses
+	tlv      *tlvSet             // tlv: the sets the scope addresses
 }
 
 // maps reports whether a field, a const or a when line of the layout maps loc.
@@ -256,6 +262,8 @@ type Pack struct {
 	start     string         // the start text, "" for none
 	nmea      bool           // `checksum nmea`
 	textSeen  map[string]int // the line of each text directive the pack has
+
+	tlv tlvConf // tlv wire (spec 0.13)
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -410,7 +418,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
-		"layout": 1, "delimiter": 1, "start": 1, "checksum": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
+		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -455,6 +463,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		if !known {
 			return nil, perr(ErrUnknownDirective, n, "", "unknown directive %q", kw)
 		}
+		// `key` in a pack is unknown-directive (ruling 5 of 0.11); 0.13 adds
+		// the one-argument `key <hex>` of the tlv wire, so a `key` line of
+		// another argument count, the form of a model module, stays
+		// unknown-directive (provisional reading, load vector 445).
+		if kw == "key" && len(args) != 1 {
+			return nil, perr(ErrUnknownDirective, n, "", "key with %d argument(s) is a model-module directive; a pack has only `key <hex>` (wire tlv)", len(args))
+		}
 		if w < 0 && len(args) < -w {
 			return nil, perr(ErrBadDirective, n, "", "%s takes at least %d argument(s), got %d", kw, -w, len(args))
 		}
@@ -484,7 +499,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if len(sp.stack) > 1 {
 				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a block (opened on line %d)", kw, sp.top().line)
 			}
-		} else if seqOnly[kw] {
+		} else if seqOnly[kw] && !(kw == "length" && len(args) == 1) {
 			return nil, perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)
 		}
 		if len(open) > 0 {
@@ -498,7 +513,21 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 		}
 		switch kw {
-		case "delimiter", "start", "checksum":
+		case "tag", "key", "length":
+			// `length` with one argument outside a sequential pack (0.13).
+			p.tlvDirective(kw, args, n)
+		case "checksum":
+			if args[0] == "sum16" {
+				p.tlvDirective(kw, args, n)
+				continue
+			}
+			if len(args) != 1 {
+				return nil, perr(ErrBadDirective, n, "", "checksum takes one argument (none, nmea) or `sum16 <tag>`, got %d", len(args))
+			}
+			if err := p.textDirective(kw, args[0], n); err != nil {
+				return nil, perr(ErrBadDirective, n, "", "%v", err)
+			}
+		case "delimiter", "start":
 			if err := p.textDirective(kw, args[0], n); err != nil {
 				return nil, perr(ErrBadDirective, n, "", "%v", err)
 			}
@@ -562,9 +591,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				p.Version = args[0]
 			case "wire":
 				switch args[0] {
-				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON, WireText:
+				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON, WireText, WireTLV:
 				default:
-					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf or text)", args[0])
+					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf, text or tlv)", args[0])
 				}
 				p.Wire = args[0]
 			case "layout":
@@ -734,6 +763,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if ln, err := p.checkTextDirectives(); err != nil {
 		return nil, perr(ErrBadDirective, ln, "", "%v", err)
 	}
+	// The tlv directives, on another wire and with their values (0.13).
+	if ln, err := p.checkTLVDirectives(); err != nil {
+		return nil, perr(ErrBadDirective, ln, "", "%v", err)
+	}
 	if firstWhen != nil && !p.HasKinds() {
 		return nil, perr(ErrBadDirective, firstWhen.Line, firstWhen.Locator, "a when line needs a pack with a kind line")
 	}
@@ -758,6 +791,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		if p.Wire == WireText {
 			if err := p.resolveText(whens, perr, note); err != nil {
+				return nil, err
+			}
+			for _, f := range p.Fields {
+				if f.Key == "type" {
+					hasType = true
+				}
+			}
+		} else if p.Wire == WireTLV {
+			if err := p.resolveTLV(whens, perr); err != nil {
 				return nil, err
 			}
 			for _, f := range p.Fields {
@@ -965,6 +1007,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		for _, g := range p.Groups {
 			g.body.text = newTextScope(g.lines)
+		}
+	}
+	if p.Wire == WireTLV {
+		for _, l := range p.layouts {
+			l.tlv = newTLVScope(l.lines)
 		}
 	}
 	return p, nil

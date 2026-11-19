@@ -526,7 +526,7 @@ self_contained(PacksDir, Pack) ->
 %% malformed inputs (spec/engine-spec.md, Malformed input)
 %% ===================================================================
 %% The input of the first ?PER_PACK conversion vectors of each pack, and of
-%% every vector of the packs `conformance-malformed-*`, is cut short at prefixes and has
+%% every vector of the packs `conformance-malformed-*` and `conformance-tlv*`, is cut short at prefixes and has
 %% single bytes replaced, and each result is converted as the vector
 %% converts. A case passes when convert returns bytes or fails with a
 %% conversion error of a named kind whose message begins with the kind and
@@ -548,7 +548,8 @@ run_malformed(Engine, PacksDir) ->
         lists:foldl(
           fun({Pack, File}, {P0, F0, Index, Seen}) ->
                   Nth = maps:get(Pack, Seen, 0),
-                  {P1, F1} = case Nth < ?PER_PACK orelse lists:prefix("conformance-malformed-", Pack) of
+                  {P1, F1} = case Nth < ?PER_PACK orelse lists:prefix("conformance-malformed-", Pack)
+                                     orelse lists:prefix("conformance-tlv", Pack) of
                                  true -> malformed_vector(Engine, Pack, File, Index);
                                  false -> {0, 0}
                              end,
@@ -601,6 +602,8 @@ ruling_cases() ->
     B = <<"conformance-malformed-bits">>,
     X = <<"conformance-malformed-xml">>,
     G = <<"conformance-groups-protobuf">>,
+    T = <<"conformance-tlv">>,
+    F = <<"conformance-tlv-fixed">>,
     [{J, refused, <<"{\"id\":\"u1\",\"n\":01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":-01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":+1}">>},
@@ -668,7 +671,22 @@ ruling_cases() ->
      {X, refused, <<"<event uid=\"&#xD800;\"/>">>},
      {X, refused, <<"<event uid=\"&#xFFFE;\"/>">>},
      {X, refused, <<"<event uid=\"&#x110000;\"/>">>},
-     {X, read, <<"<event uid=\"&#65;&#x42;&#9;&#x10FFFF;&amp;&lt;&gt;&quot;&apos;\"/>">>}].
+     {X, read, <<"<event uid=\"&#65;&#x42;&#9;&#x10FFFF;&amp;&lt;&gt;&quot;&apos;\"/>">>},
+     %% the tlv wire (0.13)
+     {T, refused, <<"060e2b34">>},                        % the key and no length
+     {T, refused, <<"060e2b3400">>},                      % no checksum item
+     {T, refused, <<"060e2b3488ffffffffffffffff">>},      % a set of 2^64-1 bytes
+     {T, refused, <<"060e2b3481">>},                      % a long form cut short
+     {T, refused, <<"060e2b3404010201023743">>},          % a wrong checksum
+     {T, refused, <<"060e2b3405ffffffff7f">>},            % a tag of five bytes
+     {F, read, <<>>},                                     % an empty set
+     {F, read, <<"0b0000">>},                             % an empty value
+     {F, read, <<"0b0001ff0c0000">>},
+     {F, refused, <<"0b">>},                              % a tag alone
+     {F, refused, <<"0b00">>},                            % half a length
+     {F, refused, <<"0b0001">>},                          % a value past the set
+     {F, refused, <<"0bffff00">>},
+     {F, refused, <<"0b000">>}].
 
 run_ruling_cases(Engine) ->
     Packs = gt_engine:packs(Engine),

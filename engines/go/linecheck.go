@@ -24,6 +24,7 @@ var noParamTransforms = map[string]bool{
 	"string": true, "float": true, "int": true, "iso8601_ms": true, "bool": true,
 	"uint": true, "twos": true, "f32": true, "f64": true, "ascii": true,
 	"pstring": true, "pvarint": true, "psint": true, "pdouble": true, "pfloat": true,
+	"utf8": true, "hex": true, // tlv (0.13); their wire is checked after the file
 }
 
 // checkTransformName checks the transform of a field line whatever the wire:
@@ -80,6 +81,11 @@ func (p *Pack) lineWire(inGroup bool) string {
 func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKind, error) {
 	wire := p.lineWire(inGroup)
 	switch {
+	case wire == WireTLV:
+		// Every tag of a tlv path is checked after the file, against the
+		// `tag` line (0.13, "every check in this paragraph ... runs after
+		// the file is read"); 5a of 0.11 names no tlv form.
+		return locator{}, false, "", nil
 	case wire == WireText:
 		l, err := parseTextLocator(s)
 		if err != nil {
@@ -115,8 +121,12 @@ func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKin
 // bits, nor where the transform is not valid on the wire: both are checked
 // after the file (ruling 4d of 0.11).
 func (p *Pack) checkFieldLine(f *Field, opts []string, inGroup bool) (ErrorKind, error) {
-	if kind, err := checkTransformName(f.Transform); err != nil {
-		return kind, err
+	// On tlv a transform not in its table, and uscale or sscale parameters
+	// that do not parse, are bad-directive after the file (0.13 ruling 8).
+	if p.Wire != WireTLV {
+		if kind, err := checkTransformName(f.Transform); err != nil {
+			return kind, err
+		}
 	}
 	loc, ok, kind, err := p.checkLocatorForm(f.Locator, inGroup)
 	if err != nil {

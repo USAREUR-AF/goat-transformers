@@ -857,6 +857,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         typemap_from_cot: p.from_cot,
         seq: Some(body),
         text: crate::text::TextConf::default(),
+        tlv: crate::tlv::TlvConf::default(),
     })
 }
 

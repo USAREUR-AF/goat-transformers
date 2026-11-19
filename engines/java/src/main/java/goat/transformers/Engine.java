@@ -435,6 +435,7 @@ public final class Engine {
             case PROTOBUF: codec = new ProtobufCodec(p); break;
             case JSON: codec = new JsonCodec(p); break;
             case TEXT: codec = new TextCodec(p); break;
+            case TLV: codec = new TlvCodec(p); break;
             default: throw new GtException(GtException.Code.BAD_DIRECTIVE, p.format, null, "no codec for wire " + p.wire);
         }
         packs.put(p.format, p);

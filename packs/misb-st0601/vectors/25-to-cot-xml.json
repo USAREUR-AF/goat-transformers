@@ -1,0 +1,24 @@
+{
+  "name": "to-cot-xml",
+  "from": "misb-st0601",
+  "to": "cot-xml",
+  "input": "060e2b34020b01010e0103010100000031020800060a24181e40000d043ccbf7000e04a697d1003b064841574b32314101134b0266664f0203ea5002000001024f31",
+  "context": {
+    "uid": "MISB-UAV-1"
+  },
+  "expect": "<event version=\"2.0\" uid=\"MISB-UAV-1\" type=\"a-u-X\"><point lat=\"42.74770619475642\" lon=\"-125.72854763163652\" hae=\"7060\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"HAWK21\"/><track course=\"0\" speed=\"9.999511703848384\"/></detail></event>",
+  "model": {
+    "@complete": true,
+    "uid": "MISB-UAV-1",
+    "lat": "42.74770619475642",
+    "lon": "-125.72854763163652",
+    "hae": "7060",
+    "callsign": "HAWK21",
+    "track.vel_north_ms": "9.999511703848384",
+    "track.vel_east_ms": "0",
+    "course": "0",
+    "speed_ms": "9.999511703848384"
+  },
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); uid from context; type, ce and le from the cot-xml defaults; north 1002*654/65534, east 0: course = atan2(0, n) = 0 and speed = sqrt(0 + n*n) = n exactly; no time (item 2 is not mapped to time_ms)"
+}

@@ -68,6 +68,35 @@ struct Rng {
     }
 };
 
+// The bytes of hex text (space, tab, CR and LF ignored); false when the text
+// is not hex, or holds no digit.
+bool hex_bytes(const std::string& text, std::string& out) {
+    out.clear();
+    int hi = -1;
+    for (char c : text) {
+        if (c == ' ' || c == '\t' || c == '\r' || c == '\n') continue;
+        int n = c >= '0' && c <= '9' ? c - '0' : c >= 'a' && c <= 'f' ? c - 'a' + 10 : c >= 'A' && c <= 'F' ? c - 'A' + 10 : -1;
+        if (n < 0) return false;
+        if (hi < 0) {
+            hi = n;
+        } else {
+            out += static_cast<char>((hi << 4) | n);
+            hi = -1;
+        }
+    }
+    return hi < 0 && !out.empty();
+}
+
+std::string to_hex(const std::string& data) {
+    static const char* hex = "0123456789abcdef";
+    std::string out;
+    for (unsigned char c : data) {
+        out += hex[c >> 4];
+        out += hex[c & 0xF];
+    }
+    return out;
+}
+
 struct Tally {
     std::uint64_t calls = 0, returned = 0, refused = 0, bad = 0;
 };
@@ -172,6 +201,32 @@ int main() {
                 std::string m = input;
                 m[at] = c;
                 run_one(eng, from, to, m, label + " byte " + std::to_string(at) + " changed", t);
+            }
+        }
+        // Hex input (bits, protobuf, tlv): the same on the bytes it holds, so
+        // that the cases reach the wire's own structure (tags, lengths,
+        // checksums) and not only the hex text. Lengths of all ones and of
+        // the BER long forms are among the replacement bytes.
+        std::string data;
+        if (hex_bytes(input, data)) {
+            for (std::size_t n : positions(data.size()))
+                run_one(eng, from, to, to_hex(data.substr(0, n)), label + " cut to " + std::to_string(n) + " input bytes", t);
+            static const unsigned char kBinary[] = {0x00, 0x01, 0x02, 0x7F, 0x80, 0x81, 0x82, 0x88, 0x89, 0xFF};
+            for (std::size_t at : positions(data.size())) {
+                const char was = data[at];
+                const std::uint64_t r = rng.next();
+                const char with[] = {static_cast<char>(was ^ 0x01), static_cast<char>(was ^ 0x80),
+                                     static_cast<char>(kBinary[r % sizeof kBinary]), static_cast<char>((r >> 8) & 0xFF)};
+                for (char c : with) {
+                    if (c == was) continue;
+                    std::string m = data;
+                    m[at] = c;
+                    run_one(eng, from, to, to_hex(m), label + " input byte " + std::to_string(at) + " changed", t);
+                }
+                // Eight bytes of 0xFF from here: a length of 2^64-1 under a long form.
+                std::string m = data;
+                for (std::size_t k = at; k < m.size() && k < at + 8; ++k) m[k] = static_cast<char>(0xFF);
+                run_one(eng, from, to, to_hex(m), label + " input bytes from " + std::to_string(at) + " set to ff", t);
             }
         }
     }

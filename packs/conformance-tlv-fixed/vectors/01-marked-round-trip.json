@@ -1,0 +1,15 @@
+{
+  "name": "marked-round-trip",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0100040000002a0200054741544f520a000105090000",
+  "expect": "0100040000002a0200054741544f520a000105090000",
+  "model": {
+    "@kind": "marked",
+    "probe.n": "42",
+    "callsign": "GATOR",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Tags of one byte, lengths of two; when 9 present holds on an empty item. The item does not name its path (ruling 27 of 0.5): it is residue holding the empty string, written back after the lines; the when writes no second, empty item. Derived without an engine by a standalone reference program."
+}

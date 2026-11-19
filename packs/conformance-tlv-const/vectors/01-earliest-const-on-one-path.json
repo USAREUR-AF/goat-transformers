@@ -1,0 +1,12 @@
+{
+  "name": "earliest-const-on-one-path",
+  "from": "conformance-tlv-const",
+  "to": "conformance-tlv-const",
+  "input": "050107",
+  "expect": "050101",
+  "model": {
+    "probe.n": "7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.13: decode reads tag 5, length 1, value 7 into probe.n (a const is not checked); encode writes the item once, with the earliest const value, 1 (Writing a message step 1, ruling 9). Derived by hand."
+}

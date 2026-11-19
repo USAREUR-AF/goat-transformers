@@ -9,7 +9,11 @@
 //!     long;
 //! (c) the input of every conversion vector with one byte replaced;
 //! (d) fixed hostile shapes: nesting far beyond the depth limit, lengths and
-//!     counts far beyond the input, tags cut at every point.
+//!     counts far beyond the input, tags cut at every point;
+//! (e) random tag-length-value sets (engine-spec 0.13), bare and framed by a
+//!     key, a length and a sum16 checksum item, so that a mutation reaches
+//!     the items behind the checksum; and every hex vector input mutated
+//!     and then given a correct sum16 in its last two bytes.
 //!
 //! Each call must return `Ok`, or an error whose message starts with one of
 //! the error kinds `convert` may fail with, then a colon. A panic is caught,
@@ -79,6 +83,76 @@ const TEXTISH: &[u8] = b"$$,,,;;;**  \r\n-+..0123456789ABCDEFabcdefNSEWPXTIMGC";
 /// A text record framed with a start text and an NMEA checksum over `body`.
 fn nmea(start: &str, body: &str) -> String {
     format!("{}{}*{:02X}", start, body, body.bytes().fold(0u8, |a, c| a ^ c))
+}
+
+/// sum16 of engine-spec 0.13: a byte at an even offset counts `b * 256`, at
+/// an odd offset `b`, modulo 65536.
+fn sum16(b: &[u8]) -> u16 {
+    b.iter().enumerate().fold(0u16, |a, (i, c)| a.wrapping_add(if i % 2 == 0 { (*c as u16) << 8 } else { *c as u16 }))
+}
+
+fn to_hex(b: &[u8]) -> String {
+    b.iter().map(|c| format!("{:02x}", c)).collect()
+}
+
+/// A BER length: the short form below 128, else the long form.
+fn ber_len(n: usize, out: &mut Vec<u8>) {
+    if n < 0x80 {
+        out.push(n as u8);
+    } else {
+        let b = (n as u64).to_be_bytes();
+        let skip = b.iter().take_while(|c| **c == 0).count();
+        out.push(0x80 + (8 - skip) as u8);
+        out.extend_from_slice(&b[skip..]);
+    }
+}
+
+/// A BER-OID tag.
+fn ber_tag(t: u32, out: &mut Vec<u8>) {
+    let mut g = vec![(t & 0x7f) as u8];
+    let mut t = t >> 7;
+    while t > 0 {
+        g.push((t & 0x7f) as u8 | 0x80);
+        t >>= 7;
+    }
+    out.extend(g.iter().rev());
+}
+
+/// A random set of items with BER-OID tags and BER lengths, values nested
+/// as sets up to `depth` levels; now and then a length or a tag broken.
+fn tlv_set(rng: &mut Rng, depth: usize, out: &mut Vec<u8>) {
+    const TAGS: [u32; 16] = [1, 2, 3, 4, 7, 9, 10, 13, 14, 15, 16, 20, 21, 48, 65, 200];
+    for _ in 0..rng.below(12) {
+        ber_tag(if rng.below(16) == 0 { rng.next() as u32 & 0x0fff_ffff } else { TAGS[rng.below(TAGS.len())] }, out);
+        let mut value = Vec::new();
+        if depth > 0 && rng.below(4) == 0 {
+            tlv_set(rng, depth - 1, &mut value);
+        } else {
+            let n = [0usize, 1, 2, 4, 8, 9, 130][rng.below(7)];
+            value.extend((0..n).map(|_| rng.next() as u8));
+        }
+        match rng.below(24) {
+            0 => out.extend_from_slice(&[0x88, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
+            1 => out.push(0x80),
+            2 => out.extend_from_slice(&[0x84, 0, 0, 0, value.len() as u8]),
+            _ => ber_len(value.len(), out),
+        }
+        out.extend_from_slice(&value);
+    }
+}
+
+/// `set` after a key and its length, with a sum16 item of tag `tag` last.
+fn tlv_framed(key: &[u8], tag: u32, set: &[u8]) -> String {
+    let mut body = set.to_vec();
+    ber_tag(tag, &mut body);
+    body.extend_from_slice(&[2, 0, 0]);
+    let mut out = key.to_vec();
+    ber_len(body.len(), &mut out);
+    out.extend_from_slice(&body);
+    let n = out.len();
+    let s = sum16(&out[..n - 2]);
+    out[n - 2..].copy_from_slice(&s.to_be_bytes());
+    to_hex(&out)
 }
 
 /// What one call did wrong, if anything.
@@ -254,6 +328,31 @@ fn hostile() -> Vec<String> {
     for at in 0..=record.len() {
         out.push(record[..at].to_string());
     }
+    // tag-length-value sets: lengths of 2^64-1 and lengths far beyond the
+    // input at every level, tags that never end, very many items
+    let key = "060e2b34";
+    for s in [
+        "88ffffffffffffffff", "887fffffffffffffff", "84ffffffff", "81", "88", "80", "89", "ff", "0188ffffffffffffffff",
+        "0180", "0189", "01ff", "8080808001", "8181818101", "ffffffff7f00", "300209", "3003020901", "30028800",
+        "3088ffffffffffffffff", "30813002", "0102000101020001", "010000",
+    ] {
+        out.push(s.to_string());
+        out.push(format!("{}{}", key, s));
+    }
+    for n in [1usize, 2, 1_000, 50_000] {
+        out.push("0700".repeat(n));
+        out.push(format!("{}{}", "3002".repeat(n), "0700"));
+        let set = "0700".repeat(n);
+        let mut framed = key.to_string();
+        let mut len = Vec::new();
+        ber_len(set.len() / 2, &mut len);
+        framed.push_str(&to_hex(&len));
+        framed.push_str(&set);
+        out.push(framed);
+        out.push(tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &[0x07, 0x00].repeat(n)));
+    }
+    out.push(tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &[]));
+    out.push(tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &[0x01, 0x02, 0x00, 0x00]));
     out
 }
 
@@ -317,6 +416,16 @@ fn malformed_input_never_panics() {
         }
     }
 
+    // (e) random tag-length-value sets, bare and framed, for every pack
+    for format in &formats {
+        for _ in 0..RANDOM_PER_ALPHABET * iters {
+            let mut set = Vec::new();
+            tlv_set(&mut rng, 3, &mut set);
+            run(format, format, &to_hex(&set), "tlv set");
+            run(format, format, &tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &set), "tlv framed");
+        }
+    }
+
     // (b) prefixes and (c) one-byte mutations of every vector input
     for case in &vectors {
         let n = case.input.len();
@@ -348,6 +457,21 @@ fn malformed_input_never_panics() {
                 _ => (rng.next() % 0x5f) as u8 + 0x20,
             };
             run(&case.from, &case.to, &String::from_utf8_lossy(&bytes), "mutation");
+        }
+        // (e) a hex input mutated, then a correct sum16 in its last two bytes
+        if hex && (8..=LARGE_INPUT).contains(&n) && n % 2 == 0 {
+            let b: Vec<u8> = (0..n / 2).filter_map(|i| u8::from_str_radix(&case.input[2 * i..2 * i + 2], 16).ok()).collect();
+            if b.len() == n / 2 {
+                for _ in 0..capped(MUTATIONS_PER_VECTOR, n) * iters {
+                    let mut m = b.clone();
+                    let at = rng.below(m.len() - 2);
+                    m[at] = rng.next() as u8;
+                    let k = m.len();
+                    let s = sum16(&m[..k - 2]);
+                    m[k - 2..].copy_from_slice(&s.to_be_bytes());
+                    run(&case.from, &case.to, &to_hex(&m), "mutation, sum16 repaired");
+                }
+            }
         }
     }
 

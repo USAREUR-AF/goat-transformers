@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-tlv-sscale-out-of-range",
+  "from": "geojson",
+  "to": "conformance-tlv",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90,91,3080]},\"properties\":{\"time_ms\":1614456000000,\"course\":84.5,\"extra\":\"x\"},\"id\":\"G-1\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): lat 91*2147483647/90 = 2171344465.7 is above 2^31-1. Derived without an engine by a standalone reference program."
+}

@@ -461,5 +461,93 @@ class TestJsonGrammar(_Rulings):
             self.malformed(b"\xed\xa0\x80", fmt)
 
 
+class TestTlv(_Rulings):
+    """The `tlv` wire (0.13, "Encodings" and "Reading a message"): every
+    failure of the reading steps is `malformed-wire`, on lengths compared with
+    the bytes left, whatever the pack maps."""
+
+    fmt = "conformance-tlv"   # key 060e2b34, BER-OID tags, BER lengths, checksum sum16 1
+    fixed = "conformance-tlv-fixed"  # tags of one byte, lengths of two, no key, no checksum
+
+    @staticmethod
+    def message(items, length=None):
+        """The key, the set's BER length (or `length`, hex) and `items` (hex), then a correct checksum item."""
+        body = bytes.fromhex(items) + b"\x01\x02"
+        n = len(body) + 2
+        head = bytes.fromhex("060e2b34") + (
+            bytes.fromhex(length) if length is not None else
+            bytes((n,)) if n < 128 else bytes((0x80 | ((n.bit_length() + 7) // 8),)) + n.to_bytes(
+                (n.bit_length() + 7) // 8, "big"))
+        out = head + body
+        total = sum(b * 256 if i % 2 == 0 else b for i, b in enumerate(out)) & 0xFFFF
+        return (out + total.to_bytes(2, "big")).hex()
+
+    def test_well_formed(self):
+        # the default probe.y 7 writes 48.200 on encode
+        self.assertEqual(self.converts(self.message("410101")), self.message("30058148020007" + "410101"))
+        self.converts(self.message("410101" + "ffffff7f00"))        # a four-byte tag, residue
+        self.converts(self.message("410101" + "3283000001aa"))      # a long form longer than needed
+        self.converts(self.message("410101" + "3288" + "00" * 7 + "01aa"))
+        self.assertEqual(self.converts("", self.fixed), "")         # no key, no checksum: an empty set
+
+    def test_tags(self):
+        self.malformed(self.message("410101" + "8001" + "00"))          # first byte 0x80
+        self.malformed(self.message("410101" + "8180808001" + "00"))    # a fifth byte
+        self.malformed(self.message("410101" + "ffffffff7f" + "00"))
+        self.malformed(self.message("410101" + "81"))                   # a tag cut by the end of the set
+        self.malformed("02", self.fixed)
+
+    def test_lengths(self):
+        for bad in ("80", "89", "ff", "8a01"):
+            self.malformed(self.message("410101" + "32" + bad + "00"))
+        self.malformed(self.message("410101" + "3281"))                      # a long form cut short
+        self.malformed(self.message("410101" + "3288" + "ff" * 8 + "00"))    # 2^64-1
+        self.malformed(self.message("410101" + "3288" + "ff" * 7 + "fe" + "00"))
+        self.malformed(self.message("410101" + "3203" + "aabb"))             # past its set
+        self.malformed(self.message("410101", length="88" + "ff" * 8))       # the set: 2^64-1
+        self.malformed(self.message("410101", length="80"))
+        self.malformed("0200", self.fixed)
+        self.malformed("0200ff41", self.fixed)
+        self.malformed("02ffff41", self.fixed)
+
+    def test_key_and_checksum(self):
+        good = self.message("410101")
+        self.malformed("")
+        self.malformed("060e2b")
+        self.malformed("060e2b35" + good[8:])
+        self.malformed(good[:-2] + "%02x" % (int(good[-2:], 16) ^ 1))
+        self.malformed(good[:-8])                                    # no checksum item
+        self.malformed(self.message("410101" + "01020000"))        # a checksum tag before the last
+        self.malformed(good + "0")                                   # odd digits
+        self.assertEqual(self.converts(good + "dead"), self.converts(good))  # bytes after the set are ignored
+
+    def test_nested_sets(self):
+        # 48 is walked into by the common lines: its items are read whole
+        self.converts(self.message("410101" + "3003020105"))
+        self.malformed(self.message("410101" + "30030205ff"))
+        self.malformed(self.message("410101" + "300180"))
+        self.malformed(self.message("410101" + "30028001"))
+        # 49 is walked into by no line: one residue item, never read as a set
+        self.converts(self.message("410101" + "310180"))
+
+    def test_every_prefix_and_change(self):
+        """Every prefix and every single-character change of a well-formed
+        message of each tlv probe pack."""
+        rng = random.Random(SEED)
+        problems = []
+        for fmt in (self.fmt, self.fixed):
+            with open(glob.glob(os.path.join(PACKS, fmt, "vectors", "01-*.json"))[0], encoding="utf-8") as fh:
+                text = json.load(fh)["input"]
+            forms = [text[:i] for i in range(len(text))]
+            for i in range(len(text)):
+                for ch in rng.sample("0123456789abcdef8f " + ALPHABET, 6):
+                    forms.append(text[:i] + ch + text[i + 1:])
+            for data in forms:
+                what = outcome(engine(), fmt, fmt, data)
+                if what is not None:
+                    problems.append("%s: %s on input %r" % (fmt, what, data[:120]))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+
 if __name__ == "__main__":
     unittest.main()

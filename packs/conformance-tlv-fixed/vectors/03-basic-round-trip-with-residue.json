@@ -1,0 +1,13 @@
+{
+  "name": "basic-round-trip-with-residue",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0100040000002a0200054741544f520a0001050b0002aabb",
+  "expect": "0100040000002a0200054741544f520a0001050b0002aabb",
+  "model": {
+    "@kind": "basic",
+    "probe.n": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): No item 9: kind basic, which has no lines; items 10 and 11 are residue and are written back in input order. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "nested-tag-twice",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3452020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013011020105020106814802000709010109010241010114083ff8000000000000150442a9000001026726",
+  "expect": "060e2b344f020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100101300e020105814802000709010109010241010114083ff8000000000000150442a9000001025827",
+  "model": {
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Inside 48: tag 2 twice, the first (5) taken and the second dropped; unnamed 9 twice kept twice as residue 48.9. Derived without an engine by a standalone reference program."
+}

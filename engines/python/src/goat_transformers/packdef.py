@@ -12,9 +12,9 @@ from .transforms import (
     TRANSFORMS, JSON_TRANSFORMS, build_bits_transform, bits_len_allowed, format_float,
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
 )
-from . import wire_text
+from . import wire_text, wire_tlv
 
-WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text")
+WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
 BIT_ORDERS = ("lsb", "msb")
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
@@ -23,6 +23,7 @@ PACK_DIRECTIVES = frozenset((
     "format", "version", "distribution", "source", "uses", "wire", "root", "field", "when", "const", "kind",
     "requires", "default", "map", "typemap", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad",
     "align", "presence", "if", "opt", "chain", "fx", "length", "delimiter", "start", "checksum",
+    "tag", "key",  # the `tlv` wire (0.13)
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -32,12 +33,15 @@ NEEDS_WIRE = frozenset((
 # The number of arguments of each directive: (at least, at most or None). 5e
 # names the directives of exactly one argument.
 _ONE_ARG = ("format", "version", "distribution", "source", "uses", "wire", "root", "kind", "word_bytes",
-            "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum")
+            "bit_order", "layout", "pad", "align", "delimiter", "start")
 ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "when": (2, 2), "const": (2, 2), "default": (2, 2), "map": (3, 3), "typemap": (2, 2), "presence": (2, 2),
     "end": (0, 0), "opt": (0, 0), "chain": (0, 0), "fx": (0, 0),
     "field": (3, None), "requires": (1, None), "group": (2, None), "also": (1, None), "if": (1, None),
     "length": (1, None),
+    # 0.13 adds `checksum sum16 <tag>` (two arguments) to the one of 5e, and
+    # the `tlv` lines `tag` and `key`, whose form is checked after the file.
+    "checksum": (1, 2), "tag": (1, None), "key": (1, None),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -254,6 +258,10 @@ class Pack:
     delimiter: str = ","   # text: the field delimiter, None for `delimiter none`
     start: str = None      # text: the start text
     checksum: str = "none" # text: `none` or `nmea`
+    tlv_tag: str = "ber-oid"   # tlv: `ber-oid`, `1`, `2` or `4`
+    tlv_length: str = "ber"    # tlv: `ber`, `1`, `2` or `4`
+    tlv_key: bytes = None      # tlv: the bytes the message begins with
+    tlv_checksum: int = None   # tlv: the tag of the `sum16` checksum item
     _plans: dict = dc_field(default_factory=dict, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
     _kinds_by_root: dict = dc_field(default_factory=dict, repr=False)
@@ -386,10 +394,13 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
     kw, args = toks[0], toks[1:]
     fmt = seen.get("format")
     where = "%s:%d" % (source, lineno)
-    if kw not in directives:
+    if kw not in directives or (kw == "key" and directives is PACK_DIRECTIVES and len(args) != 1):
+        # `key <hex>` (0.13) is a line of a pack; `key` with another number of
+        # arguments is the line of a model module (ruling 5 of 0.11)
         raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
     lo, hi = arg_counts[kw]
-    if len(args) < lo or (hi is not None and len(args) > hi):
+    if (len(args) < lo or (hi is not None and len(args) > hi)
+            or (kw == "checksum" and len(args) == 2 and args[0] != "sum16")):  # ruling 12 of 0.13
         want = "%d" % lo if lo == hi else "%d or more" % lo if hi is None else "%d to %d" % (lo, hi)
         raise BadDirective(
             "directive %r takes %s argument(s), got %d at %s" % (kw, want, len(args), where), format=fmt
@@ -690,6 +701,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     and an option where it does not apply are checked after the file. Inside
     a group the locator is relative to one item (0.7)."""
     where = "%s:%d" % (source, lineno)
+    if wire == "tlv":  # 0.13: every transform check of the tlv wire is made after the file (ruling 8)
+        return _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferred)
     _check_transform(name, tname, locator, where)
     valid = transform_valid_on(tname, wire)
     later = []
@@ -779,6 +792,75 @@ def _with_absent(f, wire, opts, fmt, where):
         coord = wire == "geojson" and len(f.loc) == 2 and f.loc[0] == "coord" and isinstance(f.loc[1], int)
         f.absent, f.absent_out = parse_absent(wire, f.transform, length, text, fmt, f.locator, where, coord)
     return f
+
+
+def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferred):
+    """-> Field for one `field` line of a `tlv` pack (0.13), or None when it
+    fails a check (added to `deferred`). The syntax of the field options stays
+    a line check (ruling 5b of 0.11, step 9). The path, the transform (a name
+    not in the table of the tlv wire, scale parameters that do not parse:
+    ruling 8), the size against the transform, and the options `swap`,
+    `trim`, `optional` and `absent` (ruling 10) are `bad-directive` after the
+    file is read."""
+    opts = _parse_options(options, name, locator, where)
+    later = []
+
+    def bad(msg):
+        later.append((lineno, BadDirective("%s, at %s" % (msg, where), format=name, locator=locator)))
+
+    transform = None
+    try:
+        loc = wire_tlv.parse_path(locator)
+    except ValueError as e:
+        bad("bad tlv path: %s" % e)
+        loc = None
+    if loc is not None:
+        try:
+            transform = wire_tlv.build_transform(tname, loc[1])
+        except wire_tlv.ParamError as e:  # ruling 8 of 0.13
+            bad("transform %r: parameters that do not parse: %s" % (tname, e))
+        except ValueError as e:
+            bad(str(e))
+    for opt in ("swap", "trim", "optional"):
+        if opt in opts:
+            bad("field option %r is not an option of the tlv wire" % opt)
+    if "absent" in opts:  # ruling 10 of 0.13: an empty value is already absent on tlv
+        bad("field option 'absent' is not an option of the tlv wire (ruling 10 of 0.13)")
+    if later:
+        deferred.extend(later)
+        return None
+    return Field(key, locator, transform, loc, lineno, via=opts.get("via"))
+
+
+def _resolve_tlv_when(name, locator, value, where, lineno, const):
+    """-> When or Const for one line of a `tlv` pack (0.13, "`when` and
+    `const`"); every failure is `bad-directive` after the file is read."""
+    directive = "const" if const else "when"
+
+    def bad(msg):
+        return _Deferred(BadDirective("%s, at %s" % (msg, where), format=name, locator=locator))
+
+    try:
+        tags, size = wire_tlv.parse_path(locator)
+    except ValueError as e:
+        raise bad("bad tlv path: %s" % e)
+    if value == "present":
+        if const:
+            raise bad("a 'const' value is written, so cannot be 'present'")
+        if size is not None:
+            raise bad("'when <path> present' takes no size")
+        return When(locator, (tags, None), present=True, lineno=lineno)
+    if size is None:
+        raise bad("a numeric '%s' needs a size ':<n>'" % directive)
+    try:
+        n = read_uint_text(value)  # an unsigned decimal integer (ruling 2c of 0.11)
+    except ValueError:
+        raise bad("a tlv '%s' value is an unsigned decimal integer%s, got %r"
+                  % (directive, "" if const else " or 'present'", value))
+    if n >= 1 << (8 * size):
+        raise bad("'%s' value %d does not fit %d byte(s)" % (directive, n, size))
+    cls = Const if const else When
+    return cls(locator, (tags, size), value=n, lineno=lineno)
 
 
 def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_group, deferred):
@@ -907,6 +989,8 @@ def _resolve_when(wire, name, locator, value, source, lineno, deferred, directiv
     that fails adds its error to `deferred` and gives None."""
     where = "%s:%d" % (source, lineno)
     const = directive == "const"
+    if wire == "tlv":
+        return _resolve_tlv_when(name, locator, value, where, lineno, const)
 
     def make(val, forced=False):
         if const:
@@ -1055,6 +1139,52 @@ def _text_directive(kw, value, seen, current, fmt, lineno, where):
         raise bad("%r does not take the value %r" % (kw, value))
 
 
+def _check_tlv_lines(lines, wire, deferred, source, fmt):
+    """`tag`, `length`, `key` and `checksum sum16 <tag>` (0.13), checked after
+    the file is read: on `tlv` each at most once, before the first `kind`, with
+    a value of its form; on another wire `bad-directive`. `lines` holds
+    (directive, arguments, line number, after a `kind`, inside a group).
+    -> {directive: (value, line number)} of the valid lines."""
+    seen = {}
+    out = {}
+    for kw, args, lineno, after_kind, in_group in lines:
+        where = "%s:%d" % (source, lineno)
+
+        def bad(msg):
+            deferred.append((lineno, BadDirective("%s, at %s" % (msg, where), format=fmt, locator=kw)))
+
+        if wire != "tlv":
+            bad("%r is a directive of the tlv wire" % kw)
+            continue
+        if kw in seen:
+            bad("%r is given twice" % kw)
+            continue
+        seen[kw] = lineno
+        if in_group:
+            bad("%r inside a group" % kw)
+            continue
+        if after_kind:
+            bad("%r after the first 'kind'" % kw)
+            continue
+        value = None
+        if kw == "checksum":
+            if len(args) == 2 and args[0] == "sum16":
+                value = wire_tlv.read_tag(args[1])
+        elif len(args) == 1:
+            a = args[0]
+            if kw == "tag":
+                value = a if a in wire_tlv.TAG_FORMS else None
+            elif kw == "length":
+                value = a if a in wire_tlv.LENGTH_FORMS else None
+            else:
+                value = bytes.fromhex(a) if wire_tlv.valid_key(a) else None
+        if value is None:
+            bad("%r does not take %r" % (kw, " ".join(args)))
+            continue
+        out[kw] = (value, lineno)
+    return out
+
+
 def _find_wire(text, directive="wire"):
     """The value of the first `wire` (or other) line of two tokens, read
     without checking the file: what chooses the parser of a sequential pack."""
@@ -1190,6 +1320,7 @@ def parse_pack_text(text, *, source="pack.def"):
     group_memo = ({}, {})
     group_refs = set()   # list names already in key_refs
     text_dirs = {}       # text (0.10): `delimiter`, `start`, `checksum` -> (value, lineno)
+    tlv_lines = []       # tlv (0.13): `tag`, `length`, `key`, `checksum sum16 <tag>` as (kw, args, lineno, after a kind, in a group)
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line:
@@ -1227,6 +1358,11 @@ def parse_pack_text(text, *, source="pack.def"):
         where = "%s:%d" % (source, lineno)
         if kw == "wire":
             wire = args[0]
+        if kw in ("tag", "key") or (kw == "checksum" and len(args) == 2) or (kw == "length" and wire == "tlv"):
+            # a line of the tlv wire (0.13): its form, its place and its wire
+            # are checked after the file is read
+            tlv_lines.append((kw, args, lineno, current is not None, bool(stack)))
+            continue
         try:
             if kw in _SEQ_ONLY:
                 raise _Deferred(BadDirective(
@@ -1298,10 +1434,17 @@ def parse_pack_text(text, *, source="pack.def"):
                 kinds.append(current)
                 kind_lists = set()
             elif kw == "group":
-                n_before = len(deferred)
-                proto = _resolve_group(wire, fmt, args[0], args[1], args[2:], source, lineno, bool(stack), deferred)
-                if len(deferred) == n_before:
-                    group_memo[1 if stack else 0][line] = proto
+                if wire == "tlv":  # 0.13: `group` on `tlv` is `bad-directive`
+                    deferred.append((lineno, BadDirective(
+                        "'group' on the tlv wire, at %s" % where, format=fmt, locator=args[1]
+                    )))
+                    proto = Group(args[0], args[1], (), lineno)
+                else:
+                    n_before = len(deferred)
+                    proto = _resolve_group(wire, fmt, args[0], args[1], args[2:], source, lineno, bool(stack),
+                                           deferred)
+                    if len(deferred) == n_before:
+                        group_memo[1 if stack else 0][line] = proto
                 g = _open_group(proto, lineno, stack, common_lists, kind_lists, fmt, where, deferred)
                 (stack[-1].lines if stack else current.lines if current is not None else common).append(g)
                 if args[0] not in group_refs:
@@ -1393,6 +1536,12 @@ def parse_pack_text(text, *, source="pack.def"):
             deferred.append((ln, BadDirective(
                 "%r is a directive of the text wire, at %s:%d" % (kw, source, ln), format=name, locator=kw
             )))
+    tlv = _check_tlv_lines(tlv_lines, wire, deferred, source, name)
+    if wire == "tlv":
+        wire_tlv.check_pack(
+            tlv.get("tag", ("ber-oid",))[0], tlv.get("checksum", (None,))[0], tlv.get("checksum", (None, 0))[1],
+            common, kinds, deferred, source, name,
+        )
     if first_when is not None and not kinds:
         deferred.append((first_when[0], BadDirective(
             "'when' in a pack with no 'kind' line, at %s:%d" % (source, first_when[0]),
@@ -1426,6 +1575,11 @@ def parse_pack_text(text, *, source="pack.def"):
         distribution=distribution, sources=sources, uses=uses, defaults=defaults, tables=tables,
         delimiter=delimiter, start=text_values.get("start"), checksum=text_values.get("checksum", "none"),
     )
+    if wire == "tlv":
+        pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]
+        pack.tlv_length = tlv.get("length", ("ber",))[0]
+        pack.tlv_key = tlv.get("key", (None,))[0]
+        pack.tlv_checksum = tlv.get("checksum", (None,))[0]
     for lineno, (native, cot) in typemap:
         if native in pack.native_to_cot or cot in pack.cot_to_native:
             raise BadDirective(

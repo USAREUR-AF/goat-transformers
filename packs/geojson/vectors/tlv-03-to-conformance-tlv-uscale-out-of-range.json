@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-tlv-uscale-out-of-range",
+  "from": "geojson",
+  "to": "conformance-tlv",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90,45,-1000]},\"properties\":{\"time_ms\":1614456000000,\"course\":84.5,\"extra\":\"x\"},\"id\":\"G-1\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): hae (-1000+900)*65535/19900 = -329.3 rounds to -329, below 0. Derived without an engine by a standalone reference program."
+}

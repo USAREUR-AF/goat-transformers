@@ -1,0 +1,9 @@
+{
+  "name": "default-probe-y-makes-the-nested-set",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b343f020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f02333310010141010114083ff8000000000000150442a900000102a29d",
+  "expect": "060e2b3446020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013005814802000741010114083ff8000000000000150442a9000001023b12",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): No item 48 on input; the default probe.y 7 makes 48 hold one item 200, at the position of the probe.x line. Derived without an engine by a standalone reference program."
+}

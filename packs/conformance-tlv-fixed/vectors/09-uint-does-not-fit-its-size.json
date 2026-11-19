@@ -1,0 +1,12 @@
+{
+  "name": "uint-does-not-fit-its-size",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0900000a00020100",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.x": "256"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): 10 = 0100 read at its own length is 256; probe.x 10:1 cannot hold it. Derived without an engine by a standalone reference program."
+}

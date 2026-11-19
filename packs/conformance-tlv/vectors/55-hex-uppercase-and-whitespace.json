@@ -1,0 +1,9 @@
+{
+  "name": "hex-uppercase-and-whitespace",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": " 060E2B3449\t020800000177e5138e000305544c56\r\n2D310402FFD60D04400000000E04C00000000F0233331001013008020105814802000741010114083FF8000000000000150442A900000102401C",
+  "expect": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a900000102401c",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Hex input in either case with space, tab, CR and LF (ruling 40 of 0.8); output is lowercase. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "invalid-utf8-mission-id",
+  "from": "misb-st0601",
+  "to": "misb-st0601",
+  "input": "060e2b34020b01010e0103010100000015020800060a24181e40000302c3284101130102d8d0",
+  "expect_error": "transform-decode",
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); item 3 holds c3 28, not UTF-8; checksum is correct so the failure is the transform"
+}

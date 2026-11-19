@@ -1,0 +1,9 @@
+{
+  "name": "via-value-with-no-entry",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001033008020105814802000741010114083ff8000000000000150442a900000102421c",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): 16 = 3: table levels has no entry and the types differ (int on the wire, string key): transform-decode (0.6 Value tables). Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "uscale-of-9-bytes",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3450020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f090000000000000000011001013008020105814802000741010114083ff8000000000000150442a90000010234cf",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): uscale reads as uint; a value longer than 8 bytes is transform-decode. Derived without an engine by a standalone reference program."
+}

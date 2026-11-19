@@ -1,0 +1,9 @@
+{
+  "name": "length-past-the-set",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0200034142",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Item 2 states 3 bytes with 2 left. Derived without an engine by a standalone reference program."
+}

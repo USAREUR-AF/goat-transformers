@@ -35,6 +35,8 @@ const char* transform_name(Transform t) {
         case Transform::Dm: return "dm";
         case Transform::Hms: return "hms";
         case Transform::HmsDmy: return "hms_dmy";
+        case Transform::Utf8: return "utf8";
+        case Transform::Hex: return "hex";
     }
     return "?";
 }
@@ -147,7 +149,8 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
                   {"psint", Transform::Psint},     {"pdouble", Transform::Pdouble},
                   {"pfloat", Transform::Pfloat},   {"bool", Transform::Bool},
                   {"f32", Transform::F32},         {"f64", Transform::F64},
-                  {"ascii", Transform::Ascii}};
+                  {"ascii", Transform::Ascii},     {"utf8", Transform::Utf8},
+                  {"hex", Transform::Hex}};
     // The text-wire transforms with parameters (v0.10): `int:<w>`, `dec`, `dm`, `hms`, `hms_dmy`.
     const int text_tf = parse_text_transform(token, f, err);
     if (text_tf != 0) return text_tf > 0 ? 0 : -1;
@@ -270,6 +273,8 @@ bool transform_is_text_only(Transform t) {
     return t == Transform::IntW || t == Transform::Dec || t == Transform::Dm || t == Transform::Hms ||
            t == Transform::HmsDmy;
 }
+
+bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8 || t == Transform::Hex; }
 
 bool transform_is_textual(Transform t) { return t == Transform::String || t == Transform::Iso8601Ms; }
 

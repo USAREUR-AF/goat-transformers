@@ -28,6 +28,7 @@ final class UnitTests {
         malformedInput(packs);
         sentinels();
         strictRulings(packs);
+        tlv();
     }
 
     /** Version 0.11: the parts of the strict rulings no shared vector reaches through the runner. */
@@ -114,6 +115,63 @@ final class UnitTests {
         check("also: the field line's sentinel", sd.get("probe.x") == null && sd.get("probe.y") == null, "");
         eq("also: no key writes the sentinel", "ff", s.encode("s", new Entity()));
         errorKind("absent on a sequential field over 64 bits", bd, () -> Pack.parse(seq + "field probe.label 72 ascii absent 0\n", "t"));
+    }
+
+    /** Version 0.13, the tlv wire: the cases no shared vector pins. */
+    static void tlv() {
+        String head = "format t\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire tlv\n";
+        String fixed = head + "tag 1\nlength 1\nfield probe.x 1:1 uint\nfield probe.label 2 utf8\n";
+        Engine e = probeEngine(fixed);
+        // residue: every occurrence, written back in input order across tags
+        Entity d = e.decode("t", "0501aa0601bb0501cc");
+        eq("tlv residue keeps every occurrence", "[5, 6, 5#2]", d.residue("t").keySet().toString());
+        eq("tlv residue written in input order", "0501aa0601bb0501cc", e.convert("t", "t", "0501aa0601bb0501cc"));
+        // a length that does not fit a fixed size is transform-encode
+        Entity big = new Entity();
+        big.put("probe.label", "x".repeat(256));
+        errorKind("tlv length beyond length 1", "transform-encode", () -> e.encode("t", big));
+        Entity edge = new Entity();
+        edge.put("probe.label", "x".repeat(255));
+        check("tlv length 255 under length 1", e.encode("t", edge).startsWith("02ff"), "");
+        // BER-OID tags and BER lengths on encode
+        Engine ber = probeEngine(head + "field probe.x 268435455:1 uint\nfield probe.y 128:1 uint\nfield probe.label 48.2 utf8\n");
+        Entity v = new Entity();
+        v.put("probe.x", 1L);
+        v.put("probe.y", 2L);
+        v.put("probe.label", "y".repeat(200));
+        String out = ber.encode("t", v);
+        check("tlv BER-OID tag of four bytes", out.startsWith("ffffff7f0101" + "8100" + "0102" + "3081cb" + "0281c8"), out.substring(0, 30));
+        // a nested length of 2^64-1 is compared with the bytes left, not added to an offset
+        errorKind("tlv nested length 2^64-1", "malformed-wire", () -> ber.decode("t", "300a0288ffffffffffffffff"));
+        errorKind("tlv nested length 2^63", "malformed-wire", () -> ber.decode("t", "300a02888000000000000000"));
+        errorKind("tlv length 2^31 in the top set", "malformed-wire", () -> ber.decode("t", "02848000000000"));
+        // an item of the same tag on a path not walked into is one residue item, even when it is not a set
+        eq("tlv unwalked nested value", "31020501", ber.convert("t", "t", "31020501"));
+        // ruling 5 reads a when … present as a line at its path
+        throwsCode("tlv when present over a set", GtException.Code.BAD_DIRECTIVE, () -> probeEngine(
+                head + "field probe.x 48.2:1 uint\nkind a\nwhen 48 present\n"));
+        throwsCode("tlv absent option (ruling 10 of 0.13)", GtException.Code.BAD_DIRECTIVE, () -> probeEngine(head + "field probe.x 2:1 uint absent 255\n"));
+        throwsCode("tlv unknown transform", GtException.Code.BAD_DIRECTIVE, () -> probeEngine(head + "field probe.x 4:1 foo\n"));
+        throwsCode("tlv utf8 on json", GtException.Code.BAD_DIRECTIVE, () -> probeEngine(
+                "format t\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire json\nfield probe.label a utf8\n"));
+        // random hex fed to a tlv pack gives only the engine's errors
+        java.util.SplittableRandom rnd = new java.util.SplittableRandom(0x0013L);
+        int defects = 0;
+        for (int i = 0; i < 4000; i++) {
+            byte[] b = new byte[rnd.nextInt(24)];
+            for (int k = 0; k < b.length; k++) b[k] = (byte) (rnd.nextInt(4) == 0 ? 0x80 + rnd.nextInt(10) : rnd.nextInt(256));
+            String h = Codec.toHex(b);
+            for (Engine en : new Engine[]{e, ber}) {
+                try {
+                    en.convert("t", "t", h);
+                } catch (GtException ex) {
+                    // an engine error
+                } catch (RuntimeException ex) {
+                    defects++;
+                }
+            }
+        }
+        eq("tlv random input: engine errors only", 0, defects);
     }
 
     /** Version 0.8, rulings 35 to 39: the cases of malformed input no shared vector pins. */

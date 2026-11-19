@@ -1,0 +1,12 @@
+{
+  "name": "uint-of-8-bytes-with-top-bit-into-4",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "010008ffffffffffffffff",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.n": "-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): A uint value of 8 bytes follows ruling 2 of 0.5 whatever n is: -1; uint:4 cannot hold -1 on encode. Derived without an engine by a standalone reference program."
+}

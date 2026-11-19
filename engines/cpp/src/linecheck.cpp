@@ -27,7 +27,9 @@ const std::set<std::string>& pack_directives() {
                                          "default", "map",    "typemap",      "group",  "end",    "word_bytes",
                                          "bit_order", "layout", "also",       "pad",    "align",  "presence",
                                          "if",     "opt",     "chain",        "fx",     "length", "delimiter",
-                                         "start",  "checksum"};
+                                         "start",  "checksum",
+                                         // v0.13, the tlv wire
+                                         "tag",    "key"};
     return s;
 }
 
@@ -112,6 +114,9 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
             if (b.len == 0) bad("a bit length of 0");
             return;
         }
+        case Wire::Tlv:
+            // 0.13: a path and its size are checked after the file is read (bad-directive).
+            return;
         case Wire::Text: {
             TextLocator t;
             if (!parse_text_locator(loc, t))
@@ -182,6 +187,11 @@ void check_pack_lines(const std::string& text, const std::string& source) {
 
         // 2. unknown-directive
         if (!pack_directives().count(kw)) c.fail(ErrorKind::UnknownDirective, "directive '" + kw + "'");
+        // 0.13 ruling 11: only a `key` line of one argument is the directive of
+        // the tlv wire; any other is the model-module form, unknown in a pack.
+        if (kw == "key" && nargs != 1)
+            c.fail(ErrorKind::UnknownDirective, "'key' with " + std::to_string(nargs) +
+                                                    " arguments is a line of a model module, not of a pack");
 
         // 3. the number of arguments
         auto count = [&](bool ok, const std::string& what) {
@@ -189,7 +199,9 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 c.fail(ErrorKind::BadDirective,
                        "'" + kw + "' takes " + what + ", got " + std::to_string(nargs) + " argument(s)");
         };
-        if (one_argument().count(kw)) count(nargs == 1, "exactly one argument");
+        if (kw == "checksum" && nargs == 2 && t[1] == "sum16") {
+            // v0.13: `checksum sum16 <tag>`; whether the wire is tlv is checked after the file.
+        } else if (one_argument().count(kw)) count(nargs == 1, "exactly one argument");
         else if (kw == "field") count(nargs >= 3, "a key, a locator and a transform");
         else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
         else if (kw == "map") count(nargs == 3, "three arguments");
@@ -228,6 +240,7 @@ void check_pack_lines(const std::string& text, const std::string& source) {
             else if (t[1] == "protobuf") wire = Wire::Protobuf;
             else if (t[1] == "json") wire = Wire::Json;
             else if (t[1] == "text") wire = Wire::Text;
+            else if (t[1] == "tlv") wire = Wire::Tlv;
             else c.fail(ErrorKind::UnknownWire, "wire '" + t[1] + "'");
         }
 
@@ -254,8 +267,12 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         f.locator = t[2];
         f.line = c.lineno;
         const int tf = parse_any_transform(t[3], f, err);
-        if (tf == -2) c.fail(ErrorKind::UnknownTransform, err + " for field '" + f.key + "'", f.locator);
-        if (tf == -1) c.fail(ErrorKind::BadDirective, err + " for field '" + f.key + "'", f.locator);
+        // On tlv a transform that does not parse is bad-directive, checked
+        // after the file is read (0.13 ruling 8): not a line check there.
+        if (wire != Wire::Tlv) {
+            if (tf == -2) c.fail(ErrorKind::UnknownTransform, err + " for field '" + f.key + "'", f.locator);
+            if (tf == -1) c.fail(ErrorKind::BadDirective, err + " for field '" + f.key + "'", f.locator);
+        }
         // 8. the locator form
         check_locator(c, wire, sequential, group_depth > 0, true, f.locator);
         // 9. the field options
@@ -281,6 +298,8 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         }
         // 10. the values of an `absent` option, except on a bits field longer than 64 bits (4d)
         if (!f.has_absent) continue;
+        // 0.13 ruling 14: `absent` does not fit the tlv wire, which is checked after the file.
+        if (wire == Wire::Tlv) continue;
         std::uint32_t len = 0;
         if (wire == Wire::Bits) {
             std::uint64_t n = 0;
