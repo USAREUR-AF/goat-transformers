@@ -1,0 +1,32 @@
+{
+  "name": "inland-eta-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:<QD<tht=<D=@U@E8lTPD=@w=lH`tp0",
+  "expect": "63`l7@0001i:<QD<tht=<D=@U@E8lTPD=@w=lH`tp0",
+  "model": {
+    "@kind": "inland-eta",
+    "ais.msg_type": "6",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "aisbin.seqno": "0",
+    "ais.dest_mmsi": "1810",
+    "aisbin.retransmit": "1",
+    "ais.spare": "0",
+    "aisbin.dac": "200",
+    "aisbin.fid": "21",
+    "aisbin.ieta_country": "CO",
+    "aisbin.ieta_locode": "LOC",
+    "aisbin.ieta_section": "SECTI",
+    "aisbin.ieta_terminal": "TERMI",
+    "aisbin.ieta_hectometre": "HECTO",
+    "aisbin.ieta_month": "12",
+    "aisbin.ieta_day": "27",
+    "aisbin.ieta_hour": "20",
+    "aisbin.ieta_minute": "24",
+    "aisbin.ieta_tugs": "5",
+    "aisbin.ieta_airdraught": "487",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 6 message, DAC 200, FI 21, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

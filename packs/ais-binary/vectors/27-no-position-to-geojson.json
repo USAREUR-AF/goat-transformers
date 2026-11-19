@@ -1,0 +1,8 @@
+{
+  "name": "no-position-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "63`l7@0001i:<SL@LoS800000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"244123456\"}",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; an inland persons-on-board message, which has no position: geometry null, the id from the MMSI"
+}

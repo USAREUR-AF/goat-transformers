@@ -1,0 +1,8 @@
+{
+  "name": "met-hydro-imo289-one-character-short",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00Gh9W?1f5qQ8Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; the meteorological report less its last character: 354 bits, the kind maps 360"
+}

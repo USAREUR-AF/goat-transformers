@@ -1,0 +1,31 @@
+{
+  "name": "inland-rta-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:<QH<tht=<D=@U@E8lTPD=@w=lHP",
+  "expect": "63`l7@0001i:<QH<tht=<D=@U@E8lTPD=@w=lHP",
+  "model": {
+    "@kind": "inland-rta",
+    "ais.msg_type": "6",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "aisbin.seqno": "0",
+    "ais.dest_mmsi": "1810",
+    "aisbin.retransmit": "1",
+    "ais.spare": "0",
+    "aisbin.dac": "200",
+    "aisbin.fid": "22",
+    "aisbin.irta_country": "CO",
+    "aisbin.irta_locode": "LOC",
+    "aisbin.irta_section": "SECTI",
+    "aisbin.irta_terminal": "TERMI",
+    "aisbin.irta_hectometre": "HECTO",
+    "aisbin.irta_month": "12",
+    "aisbin.irta_day": "27",
+    "aisbin.irta_hour": "20",
+    "aisbin.irta_minute": "24",
+    "aisbin.irta_status": "2",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 6 message, DAC 200, FI 22, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

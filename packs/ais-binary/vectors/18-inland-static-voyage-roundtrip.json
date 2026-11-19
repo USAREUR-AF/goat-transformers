@@ -1,0 +1,28 @@
+{
+  "name": "inland-static-voyage-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@0j2URCP00007jrcaNbbB`0",
+  "expect": "83`l7@0j2URCP00007jrcaNbbB`0",
+  "model": {
+    "@kind": "inland-static-voyage",
+    "ais.msg_type": "8",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "ais.spare": "0",
+    "aisbin.dac": "200",
+    "aisbin.fid": "10",
+    "aisbin.ist_vin": "VIN",
+    "aisbin.ist_length": "3991",
+    "aisbin.ist_beam": "343",
+    "aisbin.ist_shiptype": "4853",
+    "aisbin.ist_hazard": "2",
+    "aisbin.ist_draught": "1353",
+    "aisbin.ist_loaded": "1",
+    "aisbin.ist_speed_q": "0",
+    "aisbin.ist_course_q": "1",
+    "aisbin.ist_heading_q": "0",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 8 message, DAC 200, FI 10, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "bad-armor-character",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00GhXW?1f5qQ8Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP0",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; the same report with character 11 replaced by X (0x58), which stands for no six bits"
+}
