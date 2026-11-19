@@ -661,7 +661,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			if len(args) == 4 {
 				lb, ok1 := uperCount(args[2])
 				ub, ok2 := uperCount(args[3])
-				if !ok1 || !ok2 || lb > ub || ub >= 65536 {
+				if !ok1 || !ok2 || lb > ub || lb >= 65536 || ub >= 65536 {
 					return sp.bad(n, g.Locator, "group size takes <lb> <ub> with 0 <= lb <= ub < 65536, got %s %s", args[2], args[3])
 				}
 				g.seqMode, g.sizeLB, g.sizeUB = seqSize, int(lb), int(ub)
