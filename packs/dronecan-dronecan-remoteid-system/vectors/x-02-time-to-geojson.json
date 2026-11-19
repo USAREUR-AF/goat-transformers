@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-dronecan-remoteid-system-time-to-geojson",
+  "from": "dronecan-dronecan-remoteid-system",
+  "to": "geojson",
+  "input": "0c701ed27a2280de84baa0dafb21b5c000020600000505fddc900004020402194848",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1700000000000}}",
+  "model": {
+    "time_ms": "1700000000000"
+  }
+}

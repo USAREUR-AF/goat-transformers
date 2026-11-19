@@ -25,4 +25,4 @@ field  dcdronecanremoteid.system_area_floor  32  f32  swap
 field  dcdronecanremoteid.system_category_eu  8  uint
 field  dcdronecanremoteid.system_class_eu  8  uint
 field  dcdronecanremoteid.system_operator_altitude_geo  32  f32  swap
-field  dcdronecanremoteid.system_timestamp  32  uint  swap
+field  time_ms  32  uiscale:1000:1546300800000  swap
