@@ -187,7 +187,7 @@ Pack gdl90; module gdl90
   GDL 90 and ForeFlight message builders; no code.
 
 Pack foxglove-location-fix; module foxglove
-  Foxglove schemas (LocationFix, Color, KeyValuePair, Vector3), protobuf, from
+  Foxglove schemas (LocationFix, LocationFixes, Color, KeyValuePair, Vector3), protobuf, from
   https://github.com/foxglove/foxglove-sdk. MIT License, Copyright (c) Foxglove
   Technologies Inc. Field numbers, names and types only.
 
@@ -210,6 +210,108 @@ Pack valhalla; module valhalla
 
 Pack tesla-fleet-telemetry; module teslafleet
   Tesla Fleet Telemetry vehicle_data.proto, from
+  https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
+  Field numbers, names and types only.
+
+Packs of further ROS 2 message packages (field names, types, array forms and
+constant names only; no comment text):
+  ros2-tf2-msgs; module ros2tf2. https://github.com/ros2/geometry2, BSD
+  3-Clause, Copyright (c) 2008 Willow Garage, Inc.
+  ros2-unique-identifier-msgs; module ros2uuid.
+  https://github.com/ros2/unique_identifier_msgs, BSD 3-Clause, Copyright (C)
+  2012 Jack O'Quin.
+  ros2-rcl-interfaces, ros2-rosgraph-msgs, ros2-statistics-msgs,
+  ros2-lifecycle-msgs; modules ros2rcl, ros2rosgraph, ros2statistics,
+  ros2lifecycle. https://github.com/ros2/rcl_interfaces, Apache License 2.0.
+  ros2-vision-msgs; module ros2vision.
+  https://github.com/ros-perception/vision_msgs, Apache License 2.0.
+  ros2-radar-msgs; module ros2radar. https://github.com/ros-perception/radar_msgs,
+  Apache License 2.0.
+  ros2-ackermann-msgs; module ros2ackermann.
+  https://github.com/ros-drivers/ackermann_msgs, BSD.
+  ros2-gps-msgs; module ros2gps. https://github.com/swri-robotics/gps_umd, BSD,
+  Copyright 2023 Ken Tossell.
+  ros2-geographic-msgs; module ros2geographic.
+  https://github.com/ros-geographic-info/geographic_info, BSD (package.xml).
+  ros2-marine-acoustic-msgs, ros2-marine-sensor-msgs; modules
+  ros2marineacoustic, ros2marinesensor.
+  https://github.com/apl-ocean-engineering/marine_msgs, BSD 3-Clause, Copyright
+  (c) 2020-2022 University of Washington Applied Physics Laboratory.
+  ros2-mavros-msgs; module ros2mavros. https://github.com/mavlink/mavros, taken
+  under BSD (the package is licensed BSD, GPLv3 or LGPLv3), Copyright (c)
+  2013-2021 Vladimir Ermakov.
+
+ROS 2 message packages, batch 3 (field names, types, array forms and
+constant names only; no comment text):
+  navigation2 (nav2_msgs: Apache License 2.0; nav_2d_msgs, dwb_msgs: BSD
+  3-Clause), https://github.com/ros-navigation/navigation2.
+  control_msgs, https://github.com/ros-controls/control_msgs, BSD 3-Clause,
+  Copyright 2025 ros2_control Development Team.
+  controller_manager_msgs, https://github.com/ros-controls/ros2_control, BSD
+  (package.xml; repository LICENSE Apache License 2.0).
+  moveit_msgs, https://github.com/moveit/moveit_msgs, BSD.
+  octomap_msgs, https://github.com/OctoMap/octomap_msgs, BSD (package.xml).
+  object_recognition_msgs, https://github.com/wg-perception/object_recognition_msgs,
+  BSD (package.xml).
+  px4_msgs, https://github.com/PX4/px4_msgs, BSD 3-Clause, Copyright (c) 2019
+  PX4 Development Team.
+  autoware_msgs, https://github.com/autowarefoundation/autoware_msgs, Apache
+  License 2.0.
+  ublox_msgs, https://github.com/KumarRobotics/ublox, BSD, Copyright (c) 2012
+  Johannes Meyer, TU Darmstadt.
+  novatel_gps_msgs, https://github.com/swri-robotics/novatel_gps_driver, BSD
+  3-Clause, Copyright (c) 2017-2019 Southwest Research Institute.
+  foxglove_msgs, https://github.com/foxglove/schemas, MIT, Copyright (c)
+  Foxglove Technologies Inc.
+  velodyne_msgs, https://github.com/ros-drivers/velodyne, Modified BSD,
+  Copyright (C) 2010-2013 Austin Robot Technology, and others.
+  ouster_msgs, https://github.com/ros-drivers/ros2_ouster_drivers, Apache
+  License 2.0.
+  ouster_sensor_msgs, https://github.com/ouster-lidar/ouster-ros, BSD
+  3-Clause, Copyright 2018-2023 Ouster, Inc.
+  realsense2_camera_msgs, https://github.com/IntelRealSense/realsense-ros,
+  Apache License 2.0.
+  rmf_*_msgs, https://github.com/open-rmf/rmf_internal_msgs and
+  rmf_building_map_msgs, Apache License 2.0.
+
+Packs cyphal-* (250); modules cy<namespace> (77)
+  Cyphal public regulated DSDL data types,
+  https://github.com/OpenCyphal/public_regulated_data_types. MIT License,
+  Copyright (c) 2014-2019 UAVCAN Development Team. Type names, field names,
+  types and array forms only.
+
+Packs netex-service-frame, netex-site-frame, netex-timetable-frame,
+netex-service-calendar-frame; modules netexservice, netexsite,
+netextimetable, netexcalendar
+  NeTEx XML schema (CEN/TS 16614 series), https://github.com/NeTEx-CEN/NeTEx
+  commit 11d40b5e. (C) 2009-2026 NeTEx, CEN, Crown Copyright. GNU General
+  Public License, Version 3. Element and attribute names, types and value
+  ranges only.
+
+Packs sdm-*; modules sdm<model>
+  FIWARE Smart Data Models, https://github.com/smart-data-models: data models
+  of the subjects Transportation, Device, Environment, Weather, UrbanMobility,
+  PointOfInterest, Aeronautics and MarineTransport. Creative Commons
+  Attribution 4.0; APDSObservation (c) 2022-2023 APDS (Alliance for Parking
+  Data Standards) under an MIT-form license. The packs restate each model's
+  structure and are not endorsed by the Smart Data Models program.
+
+Packs apollo-*; modules apollo*
+  Apollo common message definitions (modules/common_msgs), from
+  https://github.com/ApolloAuto/apollo. Apache License, Version 2.0,
+  Copyright (c) 2018 Apollo Authors and The Apollo Authors. Field numbers,
+  names and types only.
+
+Packs kuksa-val-v1-*, kuksa-val-v2-*; modules kuksaval*
+  Eclipse KUKSA.val API definitions (kuksa/val/v1, kuksa/val/v2), from
+  https://github.com/eclipse-kuksa/kuksa-proto. Apache License 2.0, Copyright
+  (c) Contributors to the Eclipse Foundation. Field numbers, names and types
+  only.
+
+Packs tesla-fleet-alerts, tesla-fleet-connectivity, tesla-fleet-errors,
+tesla-fleet-metrics; modules teslafleet*
+  Tesla Fleet Telemetry record definitions (vehicle_alert,
+  vehicle_connectivity, vehicle_error, vehicle_metric), from
   https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
   Field numbers, names and types only.
 
