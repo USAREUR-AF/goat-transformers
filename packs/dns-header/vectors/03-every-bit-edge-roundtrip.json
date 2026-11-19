@@ -1,0 +1,23 @@
+{
+  "name": "every-bit-edge-roundtrip",
+  "from": "dns-header",
+  "to": "dns-header",
+  "input": "ffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffff",
+  "model": {
+    "inet.dns_id": "65535",
+    "inet.dns_qr": "1",
+    "inet.dns_opcode": "15",
+    "inet.dns_aa": "1",
+    "inet.dns_tc": "1",
+    "inet.dns_rd": "1",
+    "inet.dns_ra": "1",
+    "inet.dns_z": "7",
+    "inet.dns_rcode": "15",
+    "inet.dns_qdcount": "65535",
+    "inet.dns_ancount": "65535",
+    "inet.dns_nscount": "65535",
+    "inet.dns_arcount": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; every field at its largest value, the Z bits set"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "kiss-of-death-roundtrip",
+  "from": "ntp-header",
+  "to": "ntp-header",
+  "input": "e4000a000000000000000000524154450000000000000000eea8c8908000000000000000000000000000000000000000",
+  "expect": "e4000a000000000000000000524154450000000000000000eea8c8908000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "kiss-code",
+    "inet.ntp_leap": "3",
+    "inet.ntp_version": "4",
+    "inet.ntp_mode": "4",
+    "inet.ntp_stratum": "0",
+    "inet.ntp_poll": "10",
+    "inet.ntp_precision": "0",
+    "inet.ntp_ref_ts_sec": "0",
+    "inet.ntp_ref_ts_frac": "0",
+    "inet.ntp_org_ts_sec": "4004038800",
+    "inet.ntp_org_ts_frac": "2147483648",
+    "inet.ntp_rec_ts_sec": "0",
+    "inet.ntp_rec_ts_frac": "0",
+    "inet.ntp_xmt_ts_sec": "0",
+    "inet.ntp_xmt_ts_frac": "0",
+    "inet.ntp_root_delay": "0",
+    "inet.ntp_root_dispersion": "0",
+    "inet.ntp_kiss_code": "RATE"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a stratum 0 reply carrying the kiss code RATE"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "syn-roundtrip",
+  "from": "tcp-header",
+  "to": "tcp-header",
+  "input": "c00001bb9c1f3a27000000005002faf01ee30000",
+  "expect": "c00001bb9c1f3a27000000005002faf01ee30000",
+  "model": {
+    "inet.src_port": "49152",
+    "inet.dst_port": "443",
+    "inet.tcp_seq": "2619292199",
+    "inet.tcp_ack": "0",
+    "inet.tcp_data_offset": "5",
+    "inet.tcp_syn": "1",
+    "inet.tcp_window": "64240",
+    "inet.tcp_checksum": "7907",
+    "inet.tcp_cwr": "0",
+    "inet.tcp_ece": "0",
+    "inet.tcp_urg": "0",
+    "inet.tcp_ack_flag": "0",
+    "inet.tcp_psh": "0",
+    "inet.tcp_rst": "0",
+    "inet.tcp_fin": "0",
+    "inet.tcp_reserved": "0",
+    "inet.tcp_urgent_pointer": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a SYN from port 49152 to port 443, window 64240, checksum over the IPv4 pseudo header of 192.0.2.1 to 203.0.113.10"
+}

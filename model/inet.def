@@ -1,0 +1,123 @@
+# The inet module: the fixed header fields of seven IETF protocols (IPv4, IPv6,
+# UDP, TCP, ICMP, NTP, the DNS message header), as the wire integer unless the
+# description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
+# name; the three keys without a protocol name hold the same quantity in more than
+# one header (pack.md of each pack gives the evidence).
+module        inet
+version       0.1.0
+distribution  public
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905 and RFC 1035, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+
+# Shared between headers
+key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP and TCP)"
+key  dst_port                  int     -     "transport port of the receiving process, 0-65535 (UDP and TCP)"
+key  ip_protocol               int     -     "number of the header or protocol that follows the IP header, from the IANA protocol numbers registry (IPv4 protocol, IPv6 next header)"
+
+# IPv4, RFC 791 section 3.1
+key  ipv4_version              int     -     "IP version number, 4"
+key  ipv4_ihl                  int     -     "header length in 32-bit words, 5 when there are no options"
+key  ipv4_tos                  int     -     "type of service octet, as one integer"
+key  ipv4_total_length         int     -     "length of the datagram, header and data, in octets"
+key  ipv4_identification       int     -     "value set by the sender to group the fragments of one datagram"
+key  ipv4_flag_reserved        int     -     "first flag bit, reserved, 0"
+key  ipv4_dont_fragment        int     -     "flag: 1 = the datagram must not be fragmented"
+key  ipv4_more_fragments       int     -     "flag: 1 = more fragments follow this one"
+key  ipv4_fragment_offset      int     -     "place of this fragment in the datagram, in units of 8 octets"
+key  ipv4_ttl                  int     -     "time to live; each module that processes the datagram lowers it, and the datagram is dropped at 0"
+key  ipv4_header_checksum      int     -     "ones' complement checksum of the header"
+key  ipv4_src_addr             int     -     "source address, the 32-bit integer (192.0.2.1 is 3221225985)"
+key  ipv4_dst_addr             int     -     "destination address, the 32-bit integer"
+
+# IPv6, RFC 8200 section 3
+key  ipv6_version              int     -     "IP version number, 6"
+key  ipv6_traffic_class        int     -     "traffic class octet, as one integer"
+key  ipv6_flow_label           int     -     "flow label, 20 bits"
+key  ipv6_payload_length       int     -     "length of what follows the 40-octet header, in octets"
+key  ipv6_hop_limit            int     -     "hop limit; each forwarding node lowers it by 1, and the packet is dropped at 0"
+key  ipv6_src_g0               int     -     "source address, 16-bit group 1 of 8 (the first group of the text form)"
+key  ipv6_src_g1               int     -     "source address, 16-bit group 2 of 8"
+key  ipv6_src_g2               int     -     "source address, 16-bit group 3 of 8"
+key  ipv6_src_g3               int     -     "source address, 16-bit group 4 of 8"
+key  ipv6_src_g4               int     -     "source address, 16-bit group 5 of 8"
+key  ipv6_src_g5               int     -     "source address, 16-bit group 6 of 8"
+key  ipv6_src_g6               int     -     "source address, 16-bit group 7 of 8"
+key  ipv6_src_g7               int     -     "source address, 16-bit group 8 of 8 (the last group of the text form)"
+key  ipv6_dst_g0               int     -     "destination address, 16-bit group 1 of 8"
+key  ipv6_dst_g1               int     -     "destination address, 16-bit group 2 of 8"
+key  ipv6_dst_g2               int     -     "destination address, 16-bit group 3 of 8"
+key  ipv6_dst_g3               int     -     "destination address, 16-bit group 4 of 8"
+key  ipv6_dst_g4               int     -     "destination address, 16-bit group 5 of 8"
+key  ipv6_dst_g5               int     -     "destination address, 16-bit group 6 of 8"
+key  ipv6_dst_g6               int     -     "destination address, 16-bit group 7 of 8"
+key  ipv6_dst_g7               int     -     "destination address, 16-bit group 8 of 8"
+
+# UDP, RFC 768
+key  udp_length                int     -     "length of the datagram, header and data, in octets; at least 8"
+key  udp_checksum              int     -     "ones' complement checksum over a pseudo header, the header and the data; 0 = none computed"
+
+# TCP, RFC 9293 section 3.1
+key  tcp_seq                   int     -     "sequence number of the first data octet of the segment (of the SYN when SYN is set)"
+key  tcp_ack                   int     -     "next sequence number the sender of the segment expects to receive, meaningful when ACK is set"
+key  tcp_data_offset           int     -     "header length in 32-bit words, 5 when there are no options"
+key  tcp_reserved              int     -     "four reserved bits after the data offset, 0"
+key  tcp_cwr                   int     -     "control bit CWR, congestion window reduced"
+key  tcp_ece                   int     -     "control bit ECE, ECN echo"
+key  tcp_urg                   int     -     "control bit URG: the urgent pointer is significant"
+key  tcp_ack_flag              int     -     "control bit ACK: the acknowledgment number is significant"
+key  tcp_psh                   int     -     "control bit PSH, push"
+key  tcp_rst                   int     -     "control bit RST, reset the connection"
+key  tcp_syn                   int     -     "control bit SYN, synchronize sequence numbers"
+key  tcp_fin                   int     -     "control bit FIN, the sender has no more data"
+key  tcp_window                int     -     "number of octets the sender of the segment will accept, from the acknowledgment number on"
+key  tcp_checksum              int     -     "ones' complement checksum over a pseudo header, the header and the data"
+key  tcp_urgent_pointer        int     -     "offset from the sequence number to the octet after the urgent data, meaningful when URG is set"
+
+# ICMP, RFC 792
+key  icmp_type                 int     -     "message type (0 echo reply, 3 destination unreachable, 4 source quench, 5 redirect, 8 echo, 11 time exceeded, 12 parameter problem, 13 timestamp, 14 timestamp reply, 15 information request, 16 information reply)"
+key  icmp_code                 int     -     "code, whose meaning depends on the type"
+key  icmp_checksum             int     -     "ones' complement checksum of the ICMP message"
+key  icmp_unused               int     -     "the 32 bits after the checksum that the type leaves unused (24 after the pointer of a parameter problem), 0"
+key  icmp_identifier           int     -     "identifier that helps match replies to requests (echo, timestamp and information messages)"
+key  icmp_sequence             int     -     "sequence number that helps match replies to requests (echo, timestamp and information messages)"
+key  icmp_gateway_addr         int     -     "redirect: address of the gateway to use, the 32-bit integer"
+key  icmp_pointer              int     -     "parameter problem: octet of the original header where the error was found"
+key  icmp_rest                 int     -     "the 32 bits after the checksum of a type this pack has no kind for"
+key  icmp_originate_ms         int     ms    "timestamp messages: time the sender last touched the message, milliseconds since midnight UT"
+key  icmp_receive_ms           int     ms    "timestamp messages: time the echoer first touched it, milliseconds since midnight UT"
+key  icmp_transmit_ms          int     ms    "timestamp messages: time the echoer last touched it, milliseconds since midnight UT"
+
+# NTP, RFC 5905 section 7.3
+key  ntp_leap                  int     -     "leap indicator (0 no warning, 1 last minute has 61 seconds, 2 last minute has 59 seconds, 3 clock unsynchronized)"
+key  ntp_version               int     -     "NTP version number, 4 for NTPv4"
+key  ntp_mode                  int     -     "association mode (1 symmetric active, 2 symmetric passive, 3 client, 4 server, 5 broadcast, 6 control, 7 private)"
+key  ntp_stratum               int     -     "stratum (0 unspecified or invalid, 1 primary server, 2-15 secondary server, 16 unsynchronized)"
+key  ntp_poll                  int     -     "largest interval between successive messages, as a power of two in seconds (signed)"
+key  ntp_precision             int     -     "precision of the system clock, as a power of two in seconds (signed)"
+key  ntp_root_delay            float   s     "total round-trip delay to the reference clock, seconds (16.16 fixed point on the wire)"
+key  ntp_root_dispersion       float   s     "total dispersion to the reference clock, seconds (16.16 fixed point on the wire)"
+key  ntp_kiss_code             string  -     "stratum 0: the reference ID read as a four-character ASCII kiss code"
+key  ntp_ref_clock             string  -     "stratum 1: the reference ID read as the ASCII name of the reference clock, left-justified and zero-padded"
+key  ntp_ref_id                int     -     "stratum 2 and above: the reference ID as a 32-bit integer (an IPv4 address of the upstream server, or the first 32 bits of a hash of its IPv6 address)"
+key  ntp_ref_ts_sec            int     s     "reference timestamp: whole seconds since 1900-01-01 00:00 UTC, modulo 2^32 (NTP era)"
+key  ntp_ref_ts_frac           int     -     "reference timestamp: fraction of a second, in units of 2^-32 s"
+key  ntp_org_ts_sec            int     s     "origin timestamp: whole seconds since 1900-01-01 00:00 UTC, modulo 2^32"
+key  ntp_org_ts_frac           int     -     "origin timestamp: fraction of a second, in units of 2^-32 s"
+key  ntp_rec_ts_sec            int     s     "receive timestamp: whole seconds since 1900-01-01 00:00 UTC, modulo 2^32"
+key  ntp_rec_ts_frac           int     -     "receive timestamp: fraction of a second, in units of 2^-32 s"
+key  ntp_xmt_ts_sec            int     s     "transmit timestamp: whole seconds since 1900-01-01 00:00 UTC, modulo 2^32"
+key  ntp_xmt_ts_frac           int     -     "transmit timestamp: fraction of a second, in units of 2^-32 s"
+
+# DNS message header, RFC 1035 section 4.1.1
+key  dns_id                    int     -     "identifier set by the requester and copied into the reply"
+key  dns_qr                    int     -     "flag: 0 = query, 1 = response"
+key  dns_opcode                int     -     "kind of query (0 standard, 1 inverse, 2 server status)"
+key  dns_aa                    int     -     "flag: authoritative answer"
+key  dns_tc                    int     -     "flag: the message was truncated"
+key  dns_rd                    int     -     "flag: recursion desired"
+key  dns_ra                    int     -     "flag: recursion available"
+key  dns_z                     int     -     "three bits reserved for future use, 0 in RFC 1035"
+key  dns_rcode                 int     -     "response code (0 no error, 1 format error, 2 server failure, 3 name error, 4 not implemented, 5 refused)"
+key  dns_qdcount               int     -     "number of entries in the question section"
+key  dns_ancount               int     -     "number of resource records in the answer section"
+key  dns_nscount               int     -     "number of name server resource records in the authority section"
+key  dns_arcount               int     -     "number of resource records in the additional records section"

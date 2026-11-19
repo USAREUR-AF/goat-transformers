@@ -1,0 +1,15 @@
+{
+  "name": "source-quench-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0400fbff00000000",
+  "expect": "0400fbff00000000",
+  "model": {
+    "@kind": "source-quench",
+    "inet.icmp_type": "4",
+    "inet.icmp_code": "0",
+    "inet.icmp_unused": "0",
+    "inet.icmp_checksum": "64511"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a source quench with no original datagram"
+}

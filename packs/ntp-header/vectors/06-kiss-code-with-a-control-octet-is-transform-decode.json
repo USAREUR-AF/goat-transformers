@@ -1,0 +1,8 @@
+{
+  "name": "kiss-code-with-a-control-octet-is-transform-decode",
+  "from": "ntp-header",
+  "to": "ntp-header",
+  "input": "e4000a000000000000000000524101540000000000000000eea8c8908000000000000000000000000000000000000000",
+  "expect_error": "transform-decode",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the kiss reply with octet 0x01 in its reference ID, which `ascii` does not read"
+}

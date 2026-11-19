@@ -1,0 +1,8 @@
+{
+  "name": "thirty-nine-octets-is-malformed",
+  "from": "ipv6-header",
+  "to": "ipv6-header",
+  "input": "600123450014064020010db800000000000000000000000120010db80000000100000000000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first header cut to 39 octets"
+}

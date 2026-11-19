@@ -1,0 +1,12 @@
+{
+  "name": "options-are-not-written",
+  "from": "tcp-header",
+  "to": "tcp-header",
+  "input": "c00001bb9c1f3a27000000006002faf007270000020405b4",
+  "expect": "c00001bb9c1f3a27000000006002faf007270000",
+  "model": {
+    "inet.tcp_data_offset": "6",
+    "inet.tcp_syn": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the SYN with data offset 6 and a maximum segment size option of 1460; the option is read over and not written"
+}

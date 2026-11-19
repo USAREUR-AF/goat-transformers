@@ -1,0 +1,8 @@
+{
+  "name": "version-4-is-no-kind",
+  "from": "ipv6-header",
+  "to": "ipv6-header",
+  "input": "400123450014064020010db800000000000000000000000120010db8000000010000000000000053",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first header with its version nibble set to 4"
+}

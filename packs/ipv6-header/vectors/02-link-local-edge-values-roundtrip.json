@@ -1,0 +1,33 @@
+{
+  "name": "link-local-edge-values-roundtrip",
+  "from": "ipv6-header",
+  "to": "ipv6-header",
+  "input": "6fffffffffff3afffe800000000000000a0027fffe4e66a1ff020000000000000000000000000001",
+  "expect": "6fffffffffff3afffe800000000000000a0027fffe4e66a1ff020000000000000000000000000001",
+  "model": {
+    "@kind": "ipv6",
+    "inet.ipv6_version": "6",
+    "inet.ipv6_traffic_class": "255",
+    "inet.ipv6_flow_label": "1048575",
+    "inet.ipv6_payload_length": "65535",
+    "inet.ip_protocol": "58",
+    "inet.ipv6_hop_limit": "255",
+    "inet.ipv6_src_g0": "65152",
+    "inet.ipv6_src_g1": "0",
+    "inet.ipv6_src_g2": "0",
+    "inet.ipv6_src_g3": "0",
+    "inet.ipv6_src_g4": "2560",
+    "inet.ipv6_src_g5": "10239",
+    "inet.ipv6_src_g6": "65102",
+    "inet.ipv6_src_g7": "26273",
+    "inet.ipv6_dst_g0": "65282",
+    "inet.ipv6_dst_g1": "0",
+    "inet.ipv6_dst_g2": "0",
+    "inet.ipv6_dst_g3": "0",
+    "inet.ipv6_dst_g4": "0",
+    "inet.ipv6_dst_g5": "0",
+    "inet.ipv6_dst_g6": "0",
+    "inet.ipv6_dst_g7": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a link-local source (first group 0xfe80, top bit set) to the all-nodes group ff02::1, the largest traffic class, flow label, payload length and hop limit, ICMPv6 next header"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "forty-seven-octets-is-malformed",
+  "from": "ntp-header",
+  "to": "ntp-header",
+  "input": "240106e900000000000003e847505300eea8c88fc0000000eea8c89080000000eea8c89080418937eea8c8908041ca",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the primary server reply cut to 47 octets"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "information-reply-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "1000eff600090000",
+  "expect": "1000eff600090000",
+  "model": {
+    "@kind": "information-reply",
+    "inet.icmp_type": "16",
+    "inet.icmp_code": "0",
+    "inet.icmp_identifier": "9",
+    "inet.icmp_sequence": "0",
+    "inet.icmp_checksum": "61430"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; an information reply"
+}

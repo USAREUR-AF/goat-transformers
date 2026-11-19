@@ -1,0 +1,16 @@
+{
+  "name": "echo-reply-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0000fb2d04d2ffff",
+  "expect": "0000fb2d04d2ffff",
+  "model": {
+    "@kind": "echo-reply",
+    "inet.icmp_type": "0",
+    "inet.icmp_code": "0",
+    "inet.icmp_identifier": "1234",
+    "inet.icmp_sequence": "65535",
+    "inet.icmp_checksum": "64301"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; an echo reply with identifier 1234 and the largest sequence number"
+}

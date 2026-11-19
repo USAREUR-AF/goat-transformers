@@ -1,0 +1,22 @@
+{
+  "name": "udp-datagram-header-roundtrip",
+  "from": "ipv4-header",
+  "to": "ipv4-header",
+  "input": "4500001c1c4640004011324fc0000201c6336407",
+  "expect": "4500001c1c4640004011324fc0000201c6336407",
+  "model": {
+    "@kind": "ipv4",
+    "inet.ipv4_version": "4",
+    "inet.ipv4_ihl": "5",
+    "inet.ipv4_tos": "0",
+    "inet.ipv4_total_length": "28",
+    "inet.ipv4_identification": "7238",
+    "inet.ipv4_dont_fragment": "1",
+    "inet.ipv4_ttl": "64",
+    "inet.ip_protocol": "17",
+    "inet.ipv4_src_addr": "3221225985",
+    "inet.ipv4_dst_addr": "3325256711",
+    "inet.ipv4_header_checksum": "12879"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a 28-octet UDP datagram from 192.0.2.1 to 198.51.100.7, don't fragment, TTL 64, header checksum computed over the 20 octets"
+}

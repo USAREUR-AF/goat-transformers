@@ -1,0 +1,8 @@
+{
+  "name": "eleven-octets-is-malformed",
+  "from": "dns-header",
+  "to": "dns-header",
+  "input": "1a2b010000010000000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the query header cut to 11 octets"
+}

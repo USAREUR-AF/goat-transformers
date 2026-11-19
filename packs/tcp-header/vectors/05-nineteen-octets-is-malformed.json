@@ -1,0 +1,8 @@
+{
+  "name": "nineteen-octets-is-malformed",
+  "from": "tcp-header",
+  "to": "tcp-header",
+  "input": "c00001bb9c1f3a27000000005002faf01ee300",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the SYN cut to 19 octets"
+}

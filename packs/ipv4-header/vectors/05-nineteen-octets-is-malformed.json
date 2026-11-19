@@ -1,0 +1,8 @@
+{
+  "name": "nineteen-octets-is-malformed",
+  "from": "ipv4-header",
+  "to": "ipv4-header",
+  "input": "4500001c1c4640004011324fc0000201c63364",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first datagram's header cut to 19 octets"
+}

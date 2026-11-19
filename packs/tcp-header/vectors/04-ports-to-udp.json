@@ -1,0 +1,8 @@
+{
+  "name": "ports-to-udp",
+  "from": "tcp-header",
+  "to": "udp-header",
+  "input": "c00001bb9c1f3a27000000005002faf01ee30000",
+  "expect": "c00001bb00000000",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the SYN converted to udp-header: the two ports carry, length and checksum are not in the entity and are written as zero"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "unknown-type-is-other-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "2a006d5312345678",
+  "expect": "2a006d5312345678",
+  "model": {
+    "@kind": "other",
+    "inet.icmp_type": "42",
+    "inet.icmp_code": "0",
+    "inet.icmp_rest": "305419896",
+    "inet.icmp_checksum": "27987"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; type 42, which RFC 792 does not define: the kind with no `when` takes it"
+}

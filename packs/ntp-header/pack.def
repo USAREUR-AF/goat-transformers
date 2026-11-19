@@ -1,0 +1,48 @@
+# NTP packet header (RFC 5905 section 7.3): the basic 48-octet header, from the
+# first octet to the end of the transmit timestamp. Public. Extension fields,
+# the key identifier and the message digest are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# A 64-bit timestamp is two fields: whole seconds since 1900 and the fraction in
+# units of 2^-32 s. They stay raw: no transform turns 32.32 fixed seconds since
+# 1900 into the integer milliseconds of core time_ms (pack.md).
+format        ntp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 5905, Network Time Protocol Version 4: Protocol and Algorithms Specification, June 2010, sections 6 and 7.3, https://www.rfc-editor.org/rfc/rfc5905.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.ntp_leap                0:0:2      uint
+field  inet.ntp_version             0:2:3      uint
+field  inet.ntp_mode                0:5:3      uint
+field  inet.ntp_stratum             0:8:8      uint
+field  inet.ntp_poll                0:16:8     twos
+field  inet.ntp_precision           0:24:8     twos
+field  inet.ntp_root_delay          0:32:32    uscale:1/65536
+field  inet.ntp_root_dispersion     0:64:32    uscale:1/65536
+field  inet.ntp_ref_ts_sec          0:128:32   uint
+field  inet.ntp_ref_ts_frac         0:160:32   uint
+field  inet.ntp_org_ts_sec          0:192:32   uint
+field  inet.ntp_org_ts_frac         0:224:32   uint
+field  inet.ntp_rec_ts_sec          0:256:32   uint
+field  inet.ntp_rec_ts_frac         0:288:32   uint
+field  inet.ntp_xmt_ts_sec          0:320:32   uint
+field  inet.ntp_xmt_ts_frac         0:352:32   uint
+
+# The reference ID (octets 12-15) is read by the stratum (RFC 5905 section 7.3).
+kind      kiss-code
+when      0:8:8  0
+requires  inet.ntp_kiss_code
+field  inet.ntp_kiss_code           0:96:32    ascii
+
+kind      primary
+when      0:8:8  1
+requires  inet.ntp_ref_clock
+field  inet.ntp_ref_clock           0:96:32    ascii
+
+# Stratum 2 and above.
+kind      secondary
+field  inet.ntp_ref_id              0:96:32    uint

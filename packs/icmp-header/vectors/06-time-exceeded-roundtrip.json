@@ -1,0 +1,15 @@
+{
+  "name": "time-exceeded-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0b00a34b0000000045000024000000000111cd8dc0000201c6336407cf08829b00100000",
+  "expect": "0b00a34b00000000",
+  "model": {
+    "@kind": "time-exceeded",
+    "inet.icmp_type": "11",
+    "inet.icmp_code": "0",
+    "inet.icmp_unused": "0",
+    "inet.icmp_checksum": "41803"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a time to live exceeded in transit (code 0) carrying the original header and data"
+}

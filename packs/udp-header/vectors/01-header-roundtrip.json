@@ -1,0 +1,14 @@
+{
+  "name": "header-roundtrip",
+  "from": "udp-header",
+  "to": "udp-header",
+  "input": "cf08003500084464",
+  "expect": "cf08003500084464",
+  "model": {
+    "inet.src_port": "53000",
+    "inet.dst_port": "53",
+    "inet.udp_length": "8",
+    "inet.udp_checksum": "17508"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a UDP header with no data from port 53000 to port 53, checksum over the IPv4 pseudo header of 192.0.2.1 to 198.51.100.7"
+}

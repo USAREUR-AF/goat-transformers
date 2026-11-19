@@ -1,0 +1,23 @@
+{
+  "name": "name-error-response-roundtrip",
+  "from": "dns-header",
+  "to": "dns-header",
+  "input": "1a2b85830001000000010000",
+  "expect": "1a2b85830001000000010000",
+  "model": {
+    "inet.dns_id": "6699",
+    "inet.dns_qr": "1",
+    "inet.dns_opcode": "0",
+    "inet.dns_aa": "1",
+    "inet.dns_tc": "0",
+    "inet.dns_rd": "1",
+    "inet.dns_ra": "1",
+    "inet.dns_z": "0",
+    "inet.dns_rcode": "3",
+    "inet.dns_qdcount": "1",
+    "inet.dns_ancount": "0",
+    "inet.dns_nscount": "1",
+    "inet.dns_arcount": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; an authoritative response with response code 3 (name error), one question and one authority record"
+}

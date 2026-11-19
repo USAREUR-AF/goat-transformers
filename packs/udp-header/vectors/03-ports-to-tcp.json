@@ -1,0 +1,8 @@
+{
+  "name": "ports-to-tcp",
+  "from": "udp-header",
+  "to": "tcp-header",
+  "input": "cf08003500084464",
+  "expect": "cf08003500000000000000000000000000000000",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first header converted to tcp-header: the two ports carry, every other TCP field is not in the entity and is written as zero bits"
+}

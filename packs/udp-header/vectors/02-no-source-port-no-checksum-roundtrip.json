@@ -1,0 +1,14 @@
+{
+  "name": "no-source-port-no-checksum-roundtrip",
+  "from": "udp-header",
+  "to": "udp-header",
+  "input": "0000ffffffff00000102",
+  "expect": "0000ffffffff0000",
+  "model": {
+    "inet.src_port": "0",
+    "inet.dst_port": "65535",
+    "inet.udp_length": "65535",
+    "inet.udp_checksum": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; source port 0 (not used), checksum 0 (none computed), destination port and length 65535, followed by two octets of data that are read over"
+}
