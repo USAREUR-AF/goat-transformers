@@ -1,0 +1,116 @@
+{
+  "SchemaVersion": "2.8.0",
+  "Comment": "Synthetic fixture written for the tests of canboat2pack.py; not a PGN database of any vendor",
+  "CreatorCode": "canboat2pack test fixture",
+  "License": "Apache License Version 2.0",
+  "Version": "0.0.1",
+  "Copyright": "Synthetic fixture.\nNo definition here is copied from a database.\n",
+  "PGNs": [
+    {"PGN": 65280, "Id": "labProprietaryRange", "Description": "Lab: catch-all for a proprietary range", "Complete": false, "Fallback": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "manufacturerCode", "Name": "Manufacturer Code", "BitLength": 11, "BitOffset": 0, "FieldType": "LOOKUP", "LookupEnumeration": "MANUFACTURER_CODE"},
+      {"Order": 2, "Id": "data", "Name": "Data", "BitLength": 53, "BitOffset": 11, "FieldType": "BINARY"}
+     ]},
+    {"PGN": 65300, "Id": "labEngineSample", "Description": "Lab: engine sample", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "manufacturerCode", "Name": "Manufacturer Code", "BitLength": 11, "BitOffset": 0, "Match": 1999, "FieldType": "LOOKUP", "LookupEnumeration": "MANUFACTURER_CODE"},
+      {"Order": 2, "Id": "reserved", "Name": "Reserved", "BitLength": 2, "BitOffset": 11, "FieldType": "RESERVED"},
+      {"Order": 3, "Id": "industryCode", "Name": "Industry Code", "BitLength": 3, "BitOffset": 13, "Match": 4, "FieldType": "LOOKUP", "LookupEnumeration": "INDUSTRY_CODE"},
+      {"Order": 4, "Id": "engineInstance", "Name": "Engine Instance", "BitLength": 8, "BitOffset": 16, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 30, "FieldType": "LOOKUP", "LookupEnumeration": "LAB_ENGINE"},
+      {"Order": 5, "Id": "fuelRate", "Name": "Fuel Rate", "BitLength": 20, "BitOffset": 24, "Resolution": 0.01, "Signed": false, "Unit": "L/h", "RangeMin": 0, "RangeMax": 10485.72, "FieldType": "NUMBER"},
+      {"Order": 6, "Id": "reserved7", "Name": "Reserved", "BitLength": 20, "BitOffset": 44, "FieldType": "RESERVED"}
+     ]},
+    {"PGN": 65300, "Id": "labEngineSampleDetailed", "Description": "Lab: engine sample, detailed mode", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "manufacturerCode", "Name": "Manufacturer Code", "BitLength": 11, "BitOffset": 0, "Match": 1999, "FieldType": "LOOKUP", "LookupEnumeration": "MANUFACTURER_CODE"},
+      {"Order": 2, "Id": "reserved", "Name": "Reserved", "BitLength": 2, "BitOffset": 11, "FieldType": "RESERVED"},
+      {"Order": 3, "Id": "industryCode", "Name": "Industry Code", "BitLength": 3, "BitOffset": 13, "Match": 4, "FieldType": "LOOKUP", "LookupEnumeration": "INDUSTRY_CODE"},
+      {"Order": 4, "Id": "sampleMode", "Name": "Sample Mode", "BitLength": 3, "BitOffset": 16, "Match": 2, "FieldType": "LOOKUP", "LookupEnumeration": "LAB_SAMPLE_MODE"},
+      {"Order": 5, "Id": "engineInstance", "Name": "Engine Instance", "BitLength": 5, "BitOffset": 19, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 30, "FieldType": "LOOKUP", "LookupEnumeration": "LAB_ENGINE"},
+      {"Order": 6, "Id": "trimAngle", "Name": "Trim Angle", "BitLength": 13, "BitOffset": 24, "Resolution": 0.0001, "Signed": true, "Unit": "rad", "RangeMin": -0.4095, "RangeMax": 0.4092, "FieldType": "NUMBER"},
+      {"Order": 7, "Id": "spare", "Name": "Spare", "BitLength": 3, "BitOffset": 37, "FieldType": "SPARE"},
+      {"Order": 8, "Id": "coolantTemperature", "Name": "Coolant Temperature", "BitLength": 8, "BitOffset": 40, "Resolution": 0.5, "Offset": -40, "Signed": false, "Unit": "C", "RangeMin": -40, "RangeMax": 86, "FieldType": "NUMBER"},
+      {"Order": 9, "Id": "fuelRate", "Name": "Fuel Rate", "BitLength": 16, "BitOffset": 48, "Resolution": 0.1, "Signed": false, "Unit": "L/h", "RangeMin": 0, "RangeMax": 6553.2, "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 65301, "Id": "labTankLevel", "Description": "Lab: tank level", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "sid", "Name": "SID", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 252, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "tankLevel", "Name": "Tank Level", "BitLength": 16, "BitOffset": 8, "Resolution": 0.004, "Signed": true, "Unit": "%", "RangeMin": -131.068, "RangeMax": 131.056, "FieldType": "NUMBER"},
+      {"Order": 3, "Id": "pressure", "Name": "Pressure", "BitLength": 32, "BitOffset": 24, "Resolution": 0.1, "Signed": false, "Unit": "Pa", "RangeMin": 0, "RangeMax": 429496729.2, "FieldType": "NUMBER"},
+      {"Order": 4, "Id": "2ndSensor", "Name": "2nd Sensor", "BitLength": 7, "BitOffset": 56, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 125, "FieldType": "NUMBER"},
+      {"Order": 5, "Id": "alarm", "Name": "Alarm", "BitLength": 1, "BitOffset": 63, "Resolution": 1, "Signed": false, "FieldType": "LOOKUP", "LookupEnumeration": "YES_NO"}
+     ]},
+    {"PGN": 65302, "Id": "labPressure", "Description": "Lab: pressure | signed", "Complete": false, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "sid", "Name": "SID", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 252, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "pressure", "Name": "Pressure", "BitLength": 16, "BitOffset": 8, "Resolution": 1, "Signed": true, "Unit": "Pa", "RangeMin": -32767, "RangeMax": 32764, "FieldType": "NUMBER"},
+      {"Order": 3, "Id": "tank_level", "Name": "Tank Level", "BitLength": 16, "BitOffset": 24, "Resolution": 0.004, "Signed": true, "Unit": "%", "RangeMin": -131.068, "RangeMax": 131.056, "FieldType": "NUMBER"},
+      {"Order": 4, "Id": "statusBits", "Name": "Status Bits", "BitLength": 12, "BitOffset": 40, "FieldType": "BITLOOKUP", "LookupBitEnumeration": "LAB_STATUS"},
+      {"Order": 5, "Id": "reserved", "Name": "Reserved", "BitLength": 12, "BitOffset": 52, "FieldType": "RESERVED"}
+     ]},
+    {"PGN": 65303, "Id": "labStatusText", "Description": "Lab: status text", "Complete": true, "Length": 29,
+     "Fields": [
+      {"Order": 1, "Id": "label", "Name": "Label", "BitLength": 64, "BitOffset": 0, "FieldType": "STRING_FIX"},
+      {"Order": 2, "Id": "gain", "Name": "Gain", "BitLength": 32, "BitOffset": 64, "Unit": "dB re 1 V", "FieldType": "FLOAT"},
+      {"Order": 3, "Id": "signature", "Name": "Signature", "BitLength": 72, "BitOffset": 96, "FieldType": "BINARY"},
+      {"Order": 4, "Id": "partNumber", "Name": "Part Number", "BitLength": 16, "BitOffset": 168, "FieldType": "DECIMAL"},
+      {"Order": 5, "Id": "date", "Name": "Date", "BitLength": 16, "BitOffset": 184, "Resolution": 1, "Signed": false, "Unit": "d", "RangeMin": 0, "RangeMax": 65532, "FieldType": "DATE"},
+      {"Order": 6, "Id": "time", "Name": "Time", "BitLength": 32, "BitOffset": 200, "Resolution": 0.0001, "Signed": false, "Unit": "s", "RangeMin": 0, "RangeMax": 86402, "FieldType": "TIME"}
+     ]},
+    {"PGN": 65304, "Id": "labLogEntries", "Description": "Lab: log entries", "Complete": true, "MinLength": 2,
+     "RepeatingFieldSet1Size": 2, "RepeatingFieldSet1StartField": 2, "RepeatingFieldSet1CountField": 1,
+     "Fields": [
+      {"Order": 1, "Id": "entries", "Name": "Entries", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "entryCode", "Name": "Entry Code", "BitLength": 8, "BitOffset": 8, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 3, "Id": "entryValue", "Name": "Entry Value", "BitLength": 16, "BitOffset": 16, "Resolution": 0.01, "Signed": true, "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 65305, "Id": "labDeviceName", "Description": "Lab: device name", "Complete": true, "MinLength": 3,
+     "Fields": [
+      {"Order": 1, "Id": "sid", "Name": "SID", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "name", "Name": "Name", "BitOffset": 8, "BitLengthVariable": true, "FieldType": "STRING_LAU"}
+     ]},
+    {"PGN": 65306, "Id": "labHeartbeatMarker", "Description": "Lab: marker with no value", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "manufacturerCode", "Name": "Manufacturer Code", "BitLength": 11, "BitOffset": 0, "Match": 1999, "FieldType": "LOOKUP", "LookupEnumeration": "MANUFACTURER_CODE"},
+      {"Order": 2, "Id": "reserved", "Name": "Reserved", "BitLength": 53, "BitOffset": 11, "FieldType": "RESERVED"}
+     ]},
+    {"PGN": 65307, "Id": "labAlphaReport", "Description": "Lab: report, first reading of the layout", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "alpha", "Name": "Alpha", "BitLength": 16, "BitOffset": 0, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 65307, "Id": "labBetaReport", "Description": "Lab: report, second reading of the layout", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "beta", "Name": "Beta", "BitLength": 24, "BitOffset": 0, "Resolution": 1, "Signed": true, "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 65308, "Id": "labTrueCourse", "Description": "Lab: course and height", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "cog", "Name": "COG True", "Description": "Course over ground, true north", "BitLength": 16, "BitOffset": 0, "Resolution": 0.0001, "Signed": false, "Unit": "rad", "RangeMin": 0, "RangeMax": 6.2831852, "FieldType": "NUMBER", "PhysicalQuantity": "ANGLE"},
+      {"Order": 2, "Id": "altitude", "Name": "Altitude", "Description": "Height above the WGS84 ellipsoid", "BitLength": 32, "BitOffset": 16, "Resolution": 0.01, "Signed": true, "Unit": "m", "RangeMin": -21474836.46, "RangeMax": 21474836.44, "FieldType": "NUMBER", "PhysicalQuantity": "DISTANCE"},
+      {"Order": 3, "Id": "userId", "Name": "User ID", "BitLength": 16, "BitOffset": 48, "Resolution": 1, "Signed": false, "FieldType": "NUMBER"}
+     ]},
+    {"PGN": 129025, "Id": "positionRapidUpdate", "Description": "Position, Rapid Update", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "latitude", "Name": "Latitude", "BitLength": 32, "BitOffset": 0, "Resolution": 1e-07, "Signed": true, "Unit": "deg", "RangeMin": -90, "RangeMax": 90, "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LATITUDE"},
+      {"Order": 2, "Id": "longitude", "Name": "Longitude", "BitLength": 32, "BitOffset": 32, "Resolution": 1e-07, "Signed": true, "Unit": "deg", "RangeMin": -180, "RangeMax": 180, "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LONGITUDE"}
+     ]},
+    {"PGN": 129026, "Id": "cogSogRapidUpdate", "Description": "COG and SOG, Rapid Update", "Complete": true, "Length": 8,
+     "Fields": [
+      {"Order": 1, "Id": "sid", "Name": "SID", "BitLength": 8, "BitOffset": 0, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 252, "FieldType": "NUMBER"},
+      {"Order": 2, "Id": "cogReference", "Name": "COG Reference", "BitLength": 2, "BitOffset": 8, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 2, "FieldType": "LOOKUP", "LookupEnumeration": "DIRECTION_REFERENCE"},
+      {"Order": 3, "Id": "reserved", "Name": "Reserved", "BitLength": 6, "BitOffset": 10, "FieldType": "RESERVED"},
+      {"Order": 4, "Id": "cog", "Name": "COG", "BitLength": 16, "BitOffset": 16, "Resolution": 0.0001, "Signed": false, "Unit": "rad", "RangeMin": 0, "RangeMax": 6.2831852, "FieldType": "NUMBER", "PhysicalQuantity": "ANGLE"},
+      {"Order": 5, "Id": "sog", "Name": "SOG", "BitLength": 16, "BitOffset": 32, "Resolution": 0.01, "Signed": false, "Unit": "m/s", "RangeMin": 0, "RangeMax": 655.32, "FieldType": "NUMBER", "PhysicalQuantity": "SPEED"},
+      {"Order": 6, "Id": "reserved6", "Name": "Reserved", "BitLength": 16, "BitOffset": 48, "FieldType": "RESERVED"}
+     ]},
+    {"PGN": 129038, "Id": "aisClassAPositionReport", "Description": "AIS Class A Position Report", "Complete": true, "Length": 16,
+     "Fields": [
+      {"Order": 1, "Id": "messageId", "Name": "Message ID", "BitLength": 6, "BitOffset": 0, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 62, "FieldType": "LOOKUP", "LookupEnumeration": "AIS_MESSAGE_ID"},
+      {"Order": 2, "Id": "repeatIndicator", "Name": "Repeat Indicator", "BitLength": 2, "BitOffset": 6, "Resolution": 1, "Signed": false, "RangeMin": 0, "RangeMax": 2, "FieldType": "LOOKUP", "LookupEnumeration": "REPEAT_INDICATOR"},
+      {"Order": 3, "Id": "userId", "Name": "User ID", "BitLength": 32, "BitOffset": 8, "Resolution": 1, "Signed": false, "RangeMin": 2000000, "RangeMax": 999999999, "FieldType": "MMSI"},
+      {"Order": 4, "Id": "longitude", "Name": "Longitude", "BitLength": 32, "BitOffset": 40, "Resolution": 1e-07, "Signed": true, "Unit": "deg", "RangeMin": -180, "RangeMax": 180, "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LONGITUDE"},
+      {"Order": 5, "Id": "latitude", "Name": "Latitude", "BitLength": 32, "BitOffset": 72, "Resolution": 1e-07, "Signed": true, "Unit": "deg", "RangeMin": -90, "RangeMax": 90, "FieldType": "NUMBER", "PhysicalQuantity": "GEOGRAPHICAL_LATITUDE"},
+      {"Order": 6, "Id": "sog", "Name": "SOG", "BitLength": 16, "BitOffset": 104, "Resolution": 0.01, "Signed": false, "Unit": "m/s", "RangeMin": 0, "RangeMax": 655.32, "FieldType": "NUMBER", "PhysicalQuantity": "SPEED"},
+      {"Order": 7, "Id": "reserved", "Name": "Reserved", "BitLength": 8, "BitOffset": 120, "FieldType": "RESERVED"}
+     ]}
+  ]
+}

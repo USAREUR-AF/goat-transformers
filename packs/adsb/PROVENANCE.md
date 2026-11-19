@@ -40,9 +40,9 @@ Used for: the frame structure; type codes 1-4, 5-8, 9-18, 19 (subtypes 1-4),
 | Files read | `tests/test_adsb.py`, `test_bds05.py`, `test_bds06.py`, `test_bds08.py`, `test_bds09.py`, `test_bds61.py`, `test_bds62.py`, `test_bds65.py` |
 
 No pyModeS code is copied or adapted. What is taken is message hex strings and
-the decoded values the tests assert for them. The decoders in
-`tools/gen/adsb-remoteid-gen.py` that check those values (callsign, Q-bit altitude, Mode A
-code, velocity, parity) were written from the book's descriptions.
+the decoded values the tests assert for them. The pack and its vectors are
+maintained by hand; the values (callsign, Q-bit altitude, Mode A code, velocity, parity)
+were checked with decoders written from the book's descriptions.
 
 Used for: nine of the published-message vectors, and as the check on the type
 code 28 subtype 1 and type code 29 subtype 1 layouts, which the book names but

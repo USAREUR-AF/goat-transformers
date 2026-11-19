@@ -1,0 +1,13 @@
+# A small core module for the proto2pack tests: the keys the fixture packs bind.
+module        core
+version       0.1.0
+distribution  public
+source        "written for the proto2pack tests"
+key  uid       string  -      "stable identifier of the entity"
+key  type      string  -      "type token"
+key  time_ms   int     ms     "time the report is valid, epoch milliseconds UTC"
+key  lat       float   deg    "latitude"
+key  lon       float   deg    "longitude"
+key  hae       float   m      "height above the ellipsoid"
+key  course    float   deg    "direction of travel, degrees true"
+key  speed_ms  float   m/s    "ground speed"

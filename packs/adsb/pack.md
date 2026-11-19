@@ -6,8 +6,8 @@ edition, https://mode-s.org/1090mhz/), which documents ICAO Annex 10 Volume IV,
 ICAO Doc 9871 and RTCA DO-260B. I/O is hex text (`spec/engine-spec.md`, bits
 wire). Needs engine version 0.5 (kinds, `bit_order`, fields past their word).
 
-Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is generated
-by `tools/gen/adsb-remoteid-gen.py` from one layout table.
+Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is maintained
+by hand.
 
 ## This pack maps no `core` key
 
@@ -116,7 +116,7 @@ messages with published decoded values (vectors 41-43).
 
 ## Vectors
 
-45 vectors under `vectors/`, written and replayed by `tools/gen/adsb-remoteid-gen.py`.
+45 vectors under `vectors/`, maintained by hand.
 
 | Vectors | Content | Source |
 |---|---|---|

@@ -1,0 +1,14 @@
+{
+  "name": "pgn65303-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "17ff004e324b463242373600c08d420000000000000000000000beadbe5bad2b",
+  "expect": "17ff004e324b463242373600c08d420000000000000000000000beadbe5bad2b",
+  "model": {
+    "@kind": "pgn65303",
+    "n2k.label": "N2KF2B76",
+    "n2k.gain": "70.875",
+    "n2k.date": "44478",
+    "n2k.time": "73278.1502"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-test_survey",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1d000009346f2d010061a988d6e2fc8cd6635091d6e4a395d60000c0bfe64a9ed6d922b07687",
+  "expect": "fd1d000009346f2d010061a988d6e2fc8cd6635091d6e4a395d60000c0bfe64a9ed6d922b07687",
+  "model": {
+    "@kind": "test_survey"
+  }
+}

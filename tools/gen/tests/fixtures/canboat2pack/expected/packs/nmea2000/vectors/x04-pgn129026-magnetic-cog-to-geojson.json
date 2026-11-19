@@ -1,0 +1,11 @@
+{
+  "name": "x04-pgn129026-magnetic-cog-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "02f8010801b87a0104",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"speed_ms\":10.25}}",
+  "model": {
+    "@kind": "pgn129026",
+    "speed_ms": "10.25"
+  }
+}

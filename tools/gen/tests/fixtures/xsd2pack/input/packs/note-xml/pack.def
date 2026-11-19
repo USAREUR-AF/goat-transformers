@@ -1,0 +1,13 @@
+# A second xml format for the xsd2pack tests: the source of the vector that
+# crosses into the generated pack. No kinds, a pack-level root.
+format        note-xml
+version       0.1.0
+distribution  public
+source        "synthetic format written for the xsd2pack tests"
+uses          track
+wire          xml
+root          note
+const   @v                   1
+field   uid                  @id          string
+field   time_ms              @time        iso8601_ms
+field   track.vel_north_ms   move/@north  float

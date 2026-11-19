@@ -1,0 +1,12 @@
+{
+  "name": "pgn65300_lab_engine_sample-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff00cf8705329602",
+  "expect": "14ff00cf8705329602",
+  "model": {
+    "@kind": "pgn65300_lab_engine_sample",
+    "n2k.engine_instance": "5",
+    "n2k.pgn65300_lab_engine_sample_fuel_rate": "1695.22"
+  }
+}

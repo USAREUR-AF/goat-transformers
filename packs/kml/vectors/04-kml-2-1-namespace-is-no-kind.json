@@ -1,0 +1,9 @@
+{
+  "name": "kml-2-1-namespace-is-no-kind",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://earth.google.com/kml/2.1\"><Placemark><name>A</name><Point><coordinates>1,2</coordinates></Point></Placemark></kml>",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; a document in another KML namespace; the common when does not hold"
+}

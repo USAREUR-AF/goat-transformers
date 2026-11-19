@@ -1,0 +1,11 @@
+# A protobuf message with no kinds, for the proto2pack tests: the target of a
+# conversion from the generated pack into another protobuf pack.
+format  slip
+version 0.1.0
+distribution public
+source  "written for the proto2pack tests"
+wire    protobuf
+field   uid      1    pstring
+field   lat      2.1  pdouble
+field   lon      2.2  pdouble
+field   time_ms  3    pvarint

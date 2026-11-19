@@ -1,0 +1,16 @@
+{
+  "name": "pgn129038-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "0ef801634a1298192a28a11869ffffefbfca",
+  "expect": "0ef801634a1298192a28a11869ffffefbfca",
+  "model": {
+    "@kind": "pgn129038",
+    "n2k.message_id": "35",
+    "n2k.repeat_indicator": "1",
+    "n2k.user_id": "429396554",
+    "lon": "41.3214762",
+    "lat": "-26.8435607",
+    "speed_ms": "519.03"
+  }
+}

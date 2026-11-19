@@ -1,0 +1,9 @@
+{
+  "name": "prefixed-root-is-no-kind",
+  "from": "kml",
+  "to": "kml",
+  "input": "<k:kml xmlns:k=\"http://www.opengis.net/kml/2.2\"><k:Placemark><k:Point><k:coordinates>1,2</k:coordinates></k:Point></k:Placemark></k:kml>",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; the same KML written with a namespace prefix; element names are compared as written, and a root that matches no kind is no-kind in a pack with kinds (ruling 11 of 0.6)"
+}

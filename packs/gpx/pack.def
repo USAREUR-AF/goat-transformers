@@ -1,0 +1,90 @@
+# GPX 1.1 (GPS Exchange Format), XML. Public open standard (TopoGrafix).
+# One message is one GPX document; the pack reads its first waypoint, or else
+# the first point of its first route, or else the first point of the first
+# segment of its first track. Field lines follow the element order of the
+# schema's wptType, so an encoded point is valid against the schema.
+# pack.md states the evidence for every shared-model key and what is not mapped.
+format  gpx
+version 0.1.0
+distribution public
+source  "GPX 1.1 schema, TopoGrafix, https://www.topografix.com/GPX/1/1/gpx.xsd (open standard; https://www.topografix.com/gpx.asp)"
+uses    gpx
+wire    xml
+root    gpx
+# The default namespace of GPX 1.1 and its version attribute: both must be on
+# the root for a document of this version; the encoder writes both.
+when    @xmlns    http://www.topografix.com/GPX/1/1
+when    @version  1.1
+field   gpx.creator  @creator  string
+default gpx.creator  goat-transformers
+
+kind    waypoint
+when    wpt/@lat  present
+requires lat lon
+field   lat               wpt/@lat                 float
+field   lon               wpt/@lon                 float
+field   gpx.ele           wpt/ele/#text            float
+field   time_ms           wpt/time/#text           iso8601_ms
+field   gpx.magvar        wpt/magvar/#text         float
+field   gpx.geoidheight   wpt/geoidheight/#text    float
+field   callsign          wpt/name/#text           string
+field   gpx.cmt           wpt/cmt/#text            string
+field   gpx.desc          wpt/desc/#text           string
+field   gpx.src           wpt/src/#text            string
+field   gpx.sym           wpt/sym/#text            string
+field   gpx.type          wpt/type/#text           string
+field   gpx.fix           wpt/fix/#text            string
+field   gpx.sat           wpt/sat/#text            int
+field   gpx.hdop          wpt/hdop/#text           float
+field   gpx.vdop          wpt/vdop/#text           float
+field   gpx.pdop          wpt/pdop/#text           float
+field   gpx.ageofdgpsdata wpt/ageofdgpsdata/#text  float
+field   gpx.dgpsid        wpt/dgpsid/#text         int
+
+kind    route-point
+when    rte/rtept/@lat  present
+requires lat lon
+field   gpx.route_name    rte/name/#text          string
+field   lat               rte/rtept/@lat                 float
+field   lon               rte/rtept/@lon                 float
+field   gpx.ele           rte/rtept/ele/#text            float
+field   time_ms           rte/rtept/time/#text           iso8601_ms
+field   gpx.magvar        rte/rtept/magvar/#text         float
+field   gpx.geoidheight   rte/rtept/geoidheight/#text    float
+field   callsign          rte/rtept/name/#text           string
+field   gpx.cmt           rte/rtept/cmt/#text            string
+field   gpx.desc          rte/rtept/desc/#text           string
+field   gpx.src           rte/rtept/src/#text            string
+field   gpx.sym           rte/rtept/sym/#text            string
+field   gpx.type          rte/rtept/type/#text           string
+field   gpx.fix           rte/rtept/fix/#text            string
+field   gpx.sat           rte/rtept/sat/#text            int
+field   gpx.hdop          rte/rtept/hdop/#text           float
+field   gpx.vdop          rte/rtept/vdop/#text           float
+field   gpx.pdop          rte/rtept/pdop/#text           float
+field   gpx.ageofdgpsdata rte/rtept/ageofdgpsdata/#text  float
+field   gpx.dgpsid        rte/rtept/dgpsid/#text         int
+
+kind    track-point
+when    trk/trkseg/trkpt/@lat  present
+requires lat lon
+field   gpx.track_name    trk/name/#text          string
+field   lat               trk/trkseg/trkpt/@lat                 float
+field   lon               trk/trkseg/trkpt/@lon                 float
+field   gpx.ele           trk/trkseg/trkpt/ele/#text            float
+field   time_ms           trk/trkseg/trkpt/time/#text           iso8601_ms
+field   gpx.magvar        trk/trkseg/trkpt/magvar/#text         float
+field   gpx.geoidheight   trk/trkseg/trkpt/geoidheight/#text    float
+field   callsign          trk/trkseg/trkpt/name/#text           string
+field   gpx.cmt           trk/trkseg/trkpt/cmt/#text            string
+field   gpx.desc          trk/trkseg/trkpt/desc/#text           string
+field   gpx.src           trk/trkseg/trkpt/src/#text            string
+field   gpx.sym           trk/trkseg/trkpt/sym/#text            string
+field   gpx.type          trk/trkseg/trkpt/type/#text           string
+field   gpx.fix           trk/trkseg/trkpt/fix/#text            string
+field   gpx.sat           trk/trkseg/trkpt/sat/#text            int
+field   gpx.hdop          trk/trkseg/trkpt/hdop/#text           float
+field   gpx.vdop          trk/trkseg/trkpt/vdop/#text           float
+field   gpx.pdop          trk/trkseg/trkpt/pdop/#text           float
+field   gpx.ageofdgpsdata trk/trkseg/trkpt/ageofdgpsdata/#text  float
+field   gpx.dgpsid        trk/trkseg/trkpt/dgpsid/#text         int

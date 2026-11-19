@@ -1,0 +1,14 @@
+{
+  "name": "waypoint-before-track",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"10\" lon=\"20\"><name>WP</name></wpt><trk><trkseg><trkpt lat=\"11\" lon=\"21\"/></trkseg></trk></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"10\" lon=\"20\"><name>WP</name></wpt></gpx>",
+  "model": {
+    "@kind": "waypoint",
+    "lat": "10",
+    "lon": "20"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; kinds are tried in pack order; the waypoint kind holds and the track, which it does not map, is dropped"
+}

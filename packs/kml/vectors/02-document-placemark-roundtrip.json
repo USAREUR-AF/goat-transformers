@@ -1,0 +1,15 @@
+{
+  "name": "document-placemark-roundtrip",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>SITES</name><Placemark><name>BRAVO</name><Point><coordinates>-122.0822035425683,37.42228990140251,0</coordinates></Point></Placemark></Document></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>SITES</name><Placemark><name>BRAVO</name><Point><coordinates>-122.0822035425683,37.42228990140251,0</coordinates></Point></Placemark></Document></kml>",
+  "model": {
+    "@kind": "document-placemark",
+    "callsign": "BRAVO",
+    "kml.document_name": "SITES",
+    "kml.coordinates": "-122.0822035425683,37.42228990140251,0"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; a Placemark inside a Document; the coordinate text is kept exactly, digits and all"
+}

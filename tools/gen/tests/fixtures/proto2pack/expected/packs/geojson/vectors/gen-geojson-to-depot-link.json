@@ -1,0 +1,14 @@
+{
+  "name": "gen-geojson-to-depot-link",
+  "from": "geojson",
+  "to": "depot-link",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[12.5,10.75,5.125]},\"properties\":{\"time_ms\":248},\"id\":\"parcel_id-5\"}",
+  "expect": "122b10f80152260a0b70617263656c5f69642d3512170900000000008025401100000000000029401d0000a440",
+  "model": {
+    "uid": "parcel_id-5",
+    "time_ms": "248",
+    "lat": "10.75",
+    "lon": "12.5",
+    "hae": "5.125"
+  }
+}

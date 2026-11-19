@@ -1,0 +1,17 @@
+{
+  "name": "mrh-set-roundtrip",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a181010000d8",
+  "expect": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a181010000d8",
+  "model": {
+    "@kind": "track",
+    "cat062.mon": "1",
+    "cat062.mrh": "1",
+    "cat062.cnf": "0",
+    "cat062.sim": "1",
+    "hae": "411.48"
+  },
+  "source": "block of canonical-track-v2 vector 34 with the MRH bit set by hand",
+  "reference": "I062/080 first part a1 = MON 1, SPI 0, MRH 1, SRC 000, CNF 0, FX 1; I062/130 00d8 = 216 * 6.25 ft = 411.48 m"
+}

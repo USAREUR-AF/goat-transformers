@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Test input for tools/gen/mavlink2pack.py, written for the tests. It is not
+     a copy of the MAVLink definitions. GLOBAL_POSITION_INT states the field
+     names, types, units and order of the public protocol, because the
+     generator refuses a source whose GLOBAL_POSITION_INT does not give
+     CRC_EXTRA 104. -->
+<mavlink>
+  <include>minimal.xml</include>
+  <messages>
+    <message id="33" name="GLOBAL_POSITION_INT">
+      <field type="uint32_t" name="time_boot_ms" units="ms">time since start</field>
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+      <field type="int32_t" name="alt" units="mm">altitude above mean sea level</field>
+      <field type="int32_t" name="relative_alt" units="mm">altitude above the start point</field>
+      <field type="int16_t" name="vx" units="cm/s">speed north</field>
+      <field type="int16_t" name="vy" units="cm/s">speed east</field>
+      <field type="int16_t" name="vz" units="cm/s">speed down</field>
+      <field type="uint16_t" name="hdg" units="cdeg">heading</field>
+    </message>
+  </messages>
+</mavlink>
