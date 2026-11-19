@@ -14,13 +14,17 @@ from those tables by `pack()` and the expected hex of every vector is that resul
   packs/ccsds-aos-frame/vectors/*.json      CCSDS 732.0-B-4, 4.1.2
   packs/ccsds-clcw/vectors/*.json           CCSDS 232.0-B-4, 4.2.1
 
-Usage: python3 -I tools/gen/ccsds-vectors.py --out <goat-transformers checkout>
+Usage: python3 -I tools/gen/ccsds-vectors.py [--out DIR] [--check]
+With --check nothing is written and the exit status is 1 when a committed file
+differs from what this script writes.
 Every *.json in those five vectors directories is rewritten.
 """
-import argparse
-import glob
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio  # noqa: E402
 
 # ---- layouts: (key, first bit, bits); constants are (None, first bit, bits, value)
 
@@ -372,26 +376,27 @@ def clcw():
     return fmt, out
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", required=True, help="goat-transformers checkout")
-    a = ap.parse_args()
-    for build in (space_packet, tm_frame, tc_frame, aos_frame, clcw):
-        fmt, vecs = build()
-        vdir = os.path.join(a.out, "packs", fmt, "vectors")
-        os.makedirs(vdir, exist_ok=True)
-        for old in glob.glob(os.path.join(vdir, "*.json")):
-            os.remove(old)
+def build(out):
+    written = {}
+    for make in (space_packet, tm_frame, tc_frame, aos_frame, clcw):
+        fmt, vecs = make()
+        vdir = "packs/%s/vectors" % fmt
+        assert len({v["name"] for v in vecs}) == len(vecs), fmt
         names = set()
         for i, v in enumerate(vecs, 1):
-            assert v["name"] not in names
-            names.add(v["name"])
-            path = os.path.join(vdir, "%02d-%s.json" % (i, v["name"]))
-            with open(path, "w", encoding="utf-8") as fh:
-                json.dump(v, fh, indent=2, ensure_ascii=False)
-                fh.write("\n")
-        print("%s: %d vectors" % (fmt, len(vecs)))
+            rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
+            names.add(rel.rsplit("/", 1)[1])
+            out.write(rel, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
+        for old in out.listdir(vdir):
+            if old.endswith(".json") and old not in names:
+                out.remove(vdir + "/" + old)
+        written[fmt] = len(vecs)
+    return written
+
+
+def main(argv=None):
+    return genio.vector_main("ccsds-vectors.py", __doc__, build, argv)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
