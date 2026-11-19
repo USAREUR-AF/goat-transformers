@@ -1,0 +1,17 @@
+{
+ "name": "gen-field_device-roundtrip",
+ "from": "wzdx-device",
+ "to": "wzdx-device",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pattern\":\"right-arrow-static\",\"image_url\":\"https://example.org/547\",\"image_timestamp\":\"2025-10-11T10:49:16.730Z\",\"message_multi_string\":\"s14247\",\"function\":\"reduced-speed\",\"sign_text\":\"s9926\",\"dynamic_message_function\":\"other\",\"dynamic_message_text\":\"s80353\",\"static_sign_text\":\"s78843\",\"collection_interval_start_date\":\"2024-09-28T19:09:08.751Z\",\"collection_interval_end_date\":\"2024-03-12T04:19:10.596Z\",\"average_speed_kph\":12.5,\"volume_vph\":1.5,\"occupancy_percent\":42.375,\"mode\":\"flashing-yellow\"},\"id\":\"s3219\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pattern\":\"right-arrow-static\",\"image_url\":\"https://example.org/547\",\"image_timestamp\":\"2025-10-11T10:49:16.730Z\",\"message_multi_string\":\"s14247\",\"function\":\"reduced-speed\",\"sign_text\":\"s9926\",\"dynamic_message_function\":\"other\",\"dynamic_message_text\":\"s80353\",\"static_sign_text\":\"s78843\",\"collection_interval_start_date\":\"2024-09-28T19:09:08.751Z\",\"collection_interval_end_date\":\"2024-03-12T04:19:10.596Z\",\"average_speed_kph\":12.5,\"volume_vph\":1.5,\"occupancy_percent\":42.375,\"mode\":\"flashing-yellow\"},\"id\":\"s3219\"}",
+ "model": {
+  "uid": "s3219",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "wzdx.id": "s3219",
+  "wzdx.properties_pattern": "right-arrow-static",
+  "wzdx.properties_image_url": "https://example.org/547",
+  "wzdx.properties_image_timestamp": "2025-10-11T10:49:16.730Z",
+  "wzdx.properties_message_multi_string": "s14247"
+ }
+}

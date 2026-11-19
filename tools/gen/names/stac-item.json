@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.constellation|string": "properties_constellation",
+  "|properties.created|string": "properties_created",
+  "|properties.data_type|string": "properties_data_type",
+  "|properties.datetime|string": "properties_datetime",
+  "|properties.description|string": "properties_description",
+  "|properties.end_datetime|string": "properties_end_datetime",
+  "|properties.gsd|float": "properties_gsd",
+  "|properties.license|string": "properties_license",
+  "|properties.mission|string": "properties_mission",
+  "|properties.platform|string": "properties_platform",
+  "|properties.start_datetime|string": "properties_start_datetime",
+  "|properties.title|string": "properties_title",
+  "|properties.unit|string": "properties_unit",
+  "|properties.updated|string": "properties_updated",
+  "|stac_version|string": "stac_version"
+ },
+ "lists": {}
+}
