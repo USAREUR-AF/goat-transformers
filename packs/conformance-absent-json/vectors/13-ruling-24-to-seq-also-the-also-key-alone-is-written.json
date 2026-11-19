@@ -1,11 +1,13 @@
 {
-  "name": "ruling-24-also-key-alone-is-written",
+  "name": "ruling-24-to-seq-also-the-also-key-alone-is-written",
   "from": "conformance-absent-json",
   "to": "conformance-absent-seq-also",
   "input": "{\"y\":9}",
   "expect": "0900",
   "model": {
     "probe.y": "9",
-    "@absent": ["probe.x"]
+    "@absent": [
+      "probe.x"
+    ]
   }
 }

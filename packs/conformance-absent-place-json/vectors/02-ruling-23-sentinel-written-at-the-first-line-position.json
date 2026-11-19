@@ -6,6 +6,9 @@
   "expect": "{\"s\":\"-\",\"x\":1}",
   "model": {
     "probe.x": "1",
-    "@absent": ["probe.s1", "probe.s2"]
+    "@absent": [
+      "probe.s1",
+      "probe.s2"
+    ]
   }
 }

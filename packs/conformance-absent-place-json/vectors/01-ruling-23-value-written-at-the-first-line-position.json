@@ -7,6 +7,8 @@
   "model": {
     "probe.s2": "-",
     "probe.x": "1",
-    "@absent": ["probe.s1"]
+    "@absent": [
+      "probe.s1"
+    ]
   }
 }

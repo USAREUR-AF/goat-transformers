@@ -6,6 +6,9 @@
   "expect": "ff05",
   "model": {
     "probe.z": "5",
-    "@absent": ["probe.x", "probe.y"]
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
   }
 }
