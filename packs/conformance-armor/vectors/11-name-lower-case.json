@@ -1,0 +1,14 @@
+{
+  "name": "name-lower-case",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "2abcdefghijklmnopqrvw",
+  "expect": "2abcdefghijklmnopqrvw",
+  "model": {
+    "@kind": "name",
+    "probe.n": "2",
+    "probe.s1": ")*+,-./0123456789:>?"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): payload characters a-w stand for c - 0x38 (41..63): s1 reads them as ')' to '?'. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "name-trailing-space-kept-without-trim",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "21P2P0000000000000000",
+  "expect": "21P2P0000000000000000",
+  "model": {
+    "@kind": "name",
+    "probe.n": "2",
+    "probe.s1": "A B "
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sixbit without trim removes only trailing @: 'A B ' keeps its trailing space (value 32, payload character P). Derived without an engine by a standalone reference program."
+}

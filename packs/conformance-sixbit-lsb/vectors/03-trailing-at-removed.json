@@ -1,0 +1,13 @@
+{
+  "name": "trailing-at-removed",
+  "from": "conformance-sixbit-lsb",
+  "to": "conformance-sixbit-lsb",
+  "input": "0100",
+  "expect": "0100",
+  "model": {
+    "probe.s1": "A",
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): field value 0x001: first character A (1), second @ (0), removed: 'A'. Derived without an engine by a standalone reference program."
+}

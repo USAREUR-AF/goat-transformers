@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-armor-lat-rounds",
+  "from": "conformance-json",
+  "to": "conformance-armor",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":10.0000009},\"label\":\"A\"}",
+  "expect": "1002o6h88000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sscale encode: 10.0000009 * 600000 / 1 = 6000000.54, rounded to 6000001. Derived without an engine by a standalone reference program."
+}

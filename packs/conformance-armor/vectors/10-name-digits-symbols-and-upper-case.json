@@ -1,0 +1,14 @@
+{
+  "name": "name-digits-symbols-and-upper-case",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "20123456789:;<=>?@AW`",
+  "expect": "20123456789:;<=>?@AW`",
+  "model": {
+    "@kind": "name",
+    "probe.n": "2",
+    "probe.s1": "@ABCDEFGHIJKLMNOPQ'("
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): payload characters 0-9 (0..9), :;<=>?@ (10..16), A and W (17, 39), ` (40); s1 reads values 0..31 as @.._ and 32..63 as themselves; the leading @ is kept. Derived without an engine by a standalone reference program."
+}

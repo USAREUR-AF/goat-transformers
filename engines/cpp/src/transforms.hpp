@@ -68,6 +68,14 @@ Value decode_ascii(const std::string& bytes, bool trim = false);
 // longer text and on a byte outside 0x20-0x7E.
 std::string encode_ascii(const Value& v, std::size_t nbytes);
 
+// v0.14 `sixbit`: `codes` holds one six-bit value per character, first to
+// last -> text, `@` to `_` for 0 to 31 and space to `?` for 32 to 63, trailing
+// `@` removed, and with `trim` the whole trailing run of `@` and space.
+Value decode_sixbit(const std::string& codes, bool trim = false);
+// `sixbit`: text -> `nchars` six-bit values, padded with 0 (`@`). Throws
+// std::invalid_argument on longer text and on a character outside 0x20-0x5F.
+std::string encode_sixbit(const Value& v, std::size_t nchars);
+
 // Model value coerced to an integer / a double; throws std::invalid_argument.
 std::int64_t model_int(const Value& v);
 double model_double(const Value& v);

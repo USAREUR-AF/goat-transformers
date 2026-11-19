@@ -1,0 +1,14 @@
+{
+  "name": "opt-absent-round-trip",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "9D246",
+  "expect": "9D246",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.s2": "ABC"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): 6 + 4 + 1 (opt bit 0) + 18 = 29 bits, cursor not rounded to a byte: 5 characters, 1 fill bit. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "input-too-short",
+  "from": "conformance-sixbit-lsb",
+  "to": "conformance-sixbit-lsb",
+  "input": "81",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): one byte for a two-byte message: malformed-wire. Derived without an engine by a standalone reference program."
+}

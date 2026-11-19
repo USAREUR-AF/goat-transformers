@@ -326,6 +326,8 @@ public final class Pack {
     String textStart;
     /** text wire: {@code checksum nmea}. */
     boolean textNmea;
+    /** bits wire: {@code armor sixbit}, the message is six-bit armored text instead of hex (engine-spec 0.14). */
+    boolean armorSixbit;
     /** tlv wire: bytes of a fixed tag, 0 for {@code ber-oid}. */
     int tlvTagSize;
     /** tlv wire: bytes of a fixed length, 0 for {@code ber}. */
@@ -448,17 +450,18 @@ public final class Pack {
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
-            "delimiter", "start", "checksum", "tag", "key", "length");
+            "delimiter", "start", "checksum", "tag", "key", "length", "armor");
 
     /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
             "field", "when", "const", "kind", "requires", "default", "map", "typemap", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
-            "delimiter", "start", "checksum", "tag", "key");
+            "delimiter", "start", "checksum", "tag", "key", "armor");
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
-            "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum");
+            "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum",
+            "armor");   // armor: ruling 13 of 0.14
 
     /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
     private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
@@ -467,7 +470,7 @@ public final class Pack {
     /** Every transform of the specification, by the text before its first {@code :}. */
     private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
-            "dec", "dm", "hms", "hms_dmy", "utf8", "hex");
+            "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit");
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -681,6 +684,10 @@ public final class Pack {
         Integer wordBytes = null;
         String bitOrder = null;
         int bitOrderLine = 0;
+        // armor lines {value, line} (each checked once the file is read, ruling 10 of 0.10), the first kind line, and
+        // the first `length ... whole` line of a sequential pack
+        List<String[]> armorDirs = new ArrayList<>();
+        int firstKindLine = 0, wholeLine = 0;
         // text wire directives: {value, line}, or null when not given
         String[] delimiterDir = null, startDir = null, checksumDir = null;
         // tlv wire directives (tag, length, key, checksum sum16), checked once the file is read: {kw, args, line, after a kind}
@@ -787,6 +794,8 @@ public final class Pack {
                     listedSeen = true;
                 }
             }
+            if (kw.equals("kind") && firstKindLine == 0) firstKindLine = ln;
+            if (seq != null && kw.equals("length") && args.contains("whole") && wholeLine == 0) wholeLine = ln;
             if (seq != null) {
                 if (Seq.LINES.contains(kw)) {
                     seq.line(kw, args, ln, where, format);
@@ -899,6 +908,11 @@ public final class Pack {
                         throw badDirective(format, null, where + ": layout must be fixed or sequential, got \"" + args.get(0) + "\"");
                     }
                     layout = args.get(0);
+                    break;
+                case "armor":
+                    if (!open.isEmpty()) throw badDirective(format, null, where + ": armor is not allowed inside a group");
+                    armorDirs.add(new String[]{args.size() == 1 ? args.get(0) : null, Integer.toString(ln),
+                            firstKindLine != 0 ? "after" : null});
                     break;
                 case "bit_order":
                     arity(kw, args, 1, where, format);
@@ -1025,6 +1039,24 @@ public final class Pack {
         if (bitOrder != null && wire != null && wire != Wire.BITS) {
             throw badDirective(format, null, source + ":" + bitOrderLine + ": bit_order is for the bits wire only");
         }
+        // armor (0.14): on the bits wire only, at most once, before the first kind, hex or sixbit; sixbit needs
+        // bit_order msb and refuses `length ... whole`. Checked after the file is read, wherever the wire line stands.
+        boolean armorSixbit = false;
+        for (int k = 0; k < armorDirs.size(); k++) {
+            String[] d = armorDirs.get(k);
+            String at = source + ":" + d[1] + ": ";
+            if (k > 0) throw badDirective(format, null, at + "armor given twice");
+            if (wire != null && wire != Wire.BITS) throw badDirective(format, null, at + "armor is for the bits wire only");
+            if (d[2] != null) throw badDirective(format, null, at + "armor after the first kind line");
+            if (d[0] == null || (!d[0].equals("hex") && !d[0].equals("sixbit"))) {
+                throw badDirective(format, null, at + "armor takes hex or sixbit");
+            }
+            armorSixbit = d[0].equals("sixbit");
+            if (armorSixbit && !"msb".equals(bitOrder)) throw badDirective(format, null, at + "armor sixbit needs bit_order msb");
+            if (armorSixbit && wholeLine != 0) {
+                throw badDirective(format, null, source + ":" + wholeLine + ": length ... whole in a pack with armor sixbit: the armored text has no whole-byte length");
+            }
+        }
         // Checks that need the wire run after the file is read, wherever the wire line stands (ruling 10 of 0.10).
         if (wire != null && wire != Wire.TEXT) {
             for (String[] d : new String[][]{delimiterDir, startDir, checksumDir}) {
@@ -1136,6 +1168,7 @@ public final class Pack {
         Pack pack = new Pack(format, version, distribution, sources, uses, wire, root, wb, "msb".equals(bitOrder), hasKinds,
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
+        pack.armorSixbit = armorSixbit;
         if (wire == Wire.TEXT) {
             String d = delimiterDir == null ? "," : delimiterDir[0];
             pack.textNoDelimiter = d.equals("none");
@@ -1403,6 +1436,9 @@ public final class Pack {
         if (wire != Wire.TEXT && TextTransform.isTextOnlyName(s.arg)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the text wire only");
         }
+        if (wire != Wire.BITS && s.arg.equals("sixbit")) {
+            throw badDirective(format, s.locator, where + ": transform \"sixbit\" is valid on the bits wire only");
+        }
         if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the tlv wire only");
         }
@@ -1457,7 +1493,8 @@ public final class Pack {
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);
             why = BitsCodec.checkLocator(s.locator);
-            if (trim && !bt.isAscii()) throw badDirective(format, s.locator, where + ": trim is for the ascii transform only");
+            if (trim && !bt.takesTrim()) throw badDirective(format, s.locator, where + ": trim is for the ascii and sixbit transforms only");
+            if (swap && bt.isSixbit()) throw badDirective(format, s.locator, where + ": swap is not an option of sixbit");
             if (why == null) {
                 int len = BitsCodec.parseLoc(s.locator)[2];
                 String lenWhy = bt.checkLen(len);

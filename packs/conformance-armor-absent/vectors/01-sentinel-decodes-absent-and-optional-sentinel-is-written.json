@@ -1,0 +1,12 @@
+{
+  "name": "sentinel-decodes-absent-and-optional-sentinel-is-written",
+  "from": "conformance-armor-absent",
+  "to": "conformance-armor-absent",
+  "input": "w1",
+  "expect": "w10",
+  "model": {
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.14 (character map, L) with 0.9 (absent) and ruling 12 of 0.14: `w` is 63 (0x77 - 0x38), the sentinel of probe.n, so n is absent; `1` is x = 1; y lies beyond the 12 input bits and is optional, so absent. Encode: n absent writes 63 (`w`), x writes 1, y absent writes its sentinel 0 (`0`) and counts toward L (ruling 12), so L = 18 bits, three characters. Derived by hand."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "line-terminator-after-all-read-bits",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1wwnJV<1n40H9QV@\n",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): a line feed after the 16 characters the lines read is malformed-wire, wherever it stands. Derived without an engine by a standalone reference program."
+}

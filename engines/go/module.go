@@ -85,7 +85,7 @@ func kindName(k Kind) string {
 // type a transform yields").
 func transformYields(name string) (Kind, bool) {
 	switch name {
-	case "string", "pstring", "ascii", "utf8", "hex":
+	case "string", "pstring", "ascii", "sixbit", "utf8", "hex":
 		return KindString, true
 	case "float", "pdouble", "pfloat", "f32", "f64":
 		return KindFloat, true

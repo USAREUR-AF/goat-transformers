@@ -264,6 +264,10 @@ type Pack struct {
 	textSeen  map[string]int // the line of each text directive the pack has
 
 	tlv tlvConf // tlv wire (spec 0.13)
+
+	// bits wire, `armor` (spec 0.14)
+	sixbitArmor bool // `armor sixbit`: the input and output are six-bit text
+	wholeLine   int  // the line of the first `length … whole`, 0 for none
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -379,8 +383,11 @@ func checkFieldOptions(wire string, f *Field) error {
 	if f.Swap && f.loc.blen%8 != 0 {
 		return fmt.Errorf("`swap` needs a length that is a multiple of 8 bits, got %d", f.loc.blen)
 	}
-	if f.Trim && f.Transform != "ascii" {
-		return fmt.Errorf("`trim` is valid only with the ascii transform, not %s", f.Transform)
+	if f.Swap && f.Transform == "sixbit" {
+		return fmt.Errorf("`swap` is not valid with the sixbit transform")
+	}
+	if f.Trim && f.Transform != "ascii" && f.Transform != "sixbit" {
+		return fmt.Errorf("`trim` is valid only with the ascii or sixbit transform, not %s", f.Transform)
 	}
 	return nil
 }
@@ -415,10 +422,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// late holds the first failure a line shows that is not a line check;
 	// it is reported after the file (ruling 5b of 0.11).
 	var late error
+	// `armor` lines, checked after the file is read (spec 0.14).
+	var armorLines []int
+	armorValue, armorAfterKind, firstKind := "", 0, 0
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
-		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
+		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -487,6 +497,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				firstNeedsWire = n
 			}
 		}
+		if kw == "kind" && firstKind == 0 {
+			firstKind = n
+		}
 		if p.seq {
 			if seqStructural[kw] {
 				if err := sp.line(kw, args, n); err != nil {
@@ -513,6 +526,16 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 		}
 		switch kw {
+		case "armor":
+			armorLines = append(armorLines, n)
+			// Its one argument was counted as the line was read (ruling 13
+			// of 0.14); its value and its fit are checked after the file.
+			if len(armorLines) == 1 {
+				armorValue = args[0]
+				if firstKind != 0 {
+					armorAfterKind = n
+				}
+			}
 		case "tag", "key", "length":
 			// `length` with one argument outside a sequential pack (0.13).
 			p.tlvDirective(kw, args, n)
@@ -777,6 +800,27 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		p.BitOrder = "lsb"
 	}
 	p.msb = p.BitOrder == "msb"
+	// `armor` (spec 0.14): on the bits wire, at most once, before the first
+	// kind, hex or sixbit; sixbit needs bit_order msb and refuses
+	// `length … whole`.
+	if len(armorLines) > 0 {
+		first := armorLines[0]
+		switch {
+		case len(armorLines) > 1:
+			return nil, perr(ErrBadDirective, armorLines[1], "", "armor repeated (first on line %d)", first)
+		case p.Wire != WireBits:
+			return nil, perr(ErrBadDirective, first, "", "armor is valid only on wire bits")
+		case armorAfterKind != 0:
+			return nil, perr(ErrBadDirective, first, "", "armor stands before the first kind (line %d)", firstKind)
+		case armorValue != "hex" && armorValue != "sixbit":
+			return nil, perr(ErrBadDirective, first, "", "armor must be hex or sixbit, got %q", armorValue)
+		case armorValue == "sixbit" && p.BitOrder != "msb":
+			return nil, perr(ErrBadDirective, first, "", "armor sixbit needs bit_order msb")
+		case armorValue == "sixbit" && p.wholeLine != 0:
+			return nil, perr(ErrBadDirective, p.wholeLine, "", "length … whole is not valid with armor sixbit: the text has no whole-byte length")
+		}
+		p.sixbitArmor = armorValue == "sixbit"
+	}
 	hasType := false
 	if g, prev := p.listMappedTwice(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "list %s is already mapped by the group on line %d of the same scope", g.List, prev.Line)

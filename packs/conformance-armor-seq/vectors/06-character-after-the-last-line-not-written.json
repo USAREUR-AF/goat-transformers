@@ -1,0 +1,14 @@
+{
+  "name": "character-after-the-last-line-not-written",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "9D246w",
+  "expect": "9D246",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.s2": "ABC"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): bits after the last line are ignored (0.8); the sixth character is not written. Derived without an engine by a standalone reference program."
+}

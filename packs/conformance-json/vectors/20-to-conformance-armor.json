@@ -1,0 +1,13 @@
+{
+  "name": "to-conformance-armor",
+  "from": "conformance-json",
+  "to": "conformance-armor",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":-33.5},\"label\":\"GATOR\"}",
+  "expect": "100nJV<0p:Qr@00",
+  "model": {
+    "lat": "-33.5",
+    "callsign": "GATOR"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): conformance-armor selects pos, its first kind (no requires); n and x absent write zero bits, the when writes 1; y absent: L = 87, 15 characters. Derived without an engine by a standalone reference program."
+}

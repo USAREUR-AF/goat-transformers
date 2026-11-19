@@ -1,0 +1,17 @@
+{
+  "name": "list-to-conformance-seq-json",
+  "from": "conformance-armor",
+  "to": "conformance-seq-json",
+  "input": "380Owt",
+  "expect": "{\"n\":3,\"z\":2,\"items\":[{\"qty\":7},{\"qty\":4095}]}",
+  "model": {
+    "@kind": "list",
+    "probe.n": "3",
+    "probe.z": "2",
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[1].probe.qty": "4095"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): decode as 14; z and the list carry; each item carries qty. Derived without an engine by a standalone reference program."
+}

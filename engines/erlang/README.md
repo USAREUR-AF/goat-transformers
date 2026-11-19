@@ -22,14 +22,16 @@ A vector whose format is not loaded is run, and pins `unknown-format`.
 It also loads one pack alone through `gt_engine:load_packs/4` and runs that
 pack's vectors on the engine it gives (`named load: ...`).
 The malformed-input check takes the input of the first five conversion vectors
-of each pack and of every vector of the packs `conformance-malformed-*` and
-`conformance-tlv*`, cuts
+of each pack and of every vector of the packs `conformance-malformed-*`,
+`conformance-tlv*`, `conformance-armor*` and `conformance-sixbit*`, cuts
 it short at prefixes (every length when the input has at most 16 bytes, else 8
 lengths spread evenly) and replaces single bytes (at most 8 positions spread
 evenly, each with the next byte of a fixed table), and converts each result as
 the vector converts. It then runs fixed cases of rulings 36 to 40 on the
 `conformance-malformed-*` packs and `conformance-groups-protobuf`, and fixed
-cases of the `tlv` wire on `conformance-tlv` and `conformance-tlv-fixed`. A case passes when `convert` returns bytes or raises
+cases of the `tlv` wire on `conformance-tlv` and `conformance-tlv-fixed`, and
+fixed cases of six-bit armor (0.14) on `conformance-armor` and
+`conformance-armor-seq`. A case passes when `convert` returns bytes or raises
 `error:{convert_error, Kind, Message}` with a named `Kind` and a `Message`
 beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.

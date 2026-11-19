@@ -1,0 +1,16 @@
+{
+  "name": "pos-trim-all-spaces-is-empty-present",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "107000044444440",
+  "expect": "107000000000000",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "7",
+    "lat": "0",
+    "callsign": ""
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sixbit with trim: seven spaces (value 32) decode to the empty string, present (ruling 6); encode writes seven @ (value 0). Derived without an engine by a standalone reference program."
+}

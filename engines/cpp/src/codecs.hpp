@@ -226,6 +226,22 @@ std::string json_when_text(const WhenLine& w);
 std::string hex_to_bytes(const Pack& p, const std::string& text);
 std::string bytes_to_hex(const std::string& data);
 
+// v0.14, `armor sixbit`: armored text -> the message bits, packed most
+// significant bit first into bytes (the last byte's spare bits zero); `bits`
+// is 6 * the characters. Every character is checked first: throws
+// malformed-wire on any outside `0`-`W` and `` ` ``-`w`.
+std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t& bits);
+// The first `bits` bits of `data` (msb order), zero-filled to a multiple of 6,
+// as armored text. Bits of `data` past its end read as zero.
+std::string bytes_to_armor(const std::string& data, std::uint64_t bits);
+
+// bits: one field's message text, read from or written to `len` bits at
+// `start`, for `ascii` and `sixbit`. False for any other transform.
+bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, bool msb,
+                      Value& out);
+bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std::uint64_t start, std::uint32_t len,
+                      bool msb);
+
 // json and geojson: the items of a group, from the array `arr` (an item per
 // element), and back to the JSON text of an array. `geo` selects the geojson
 // value types (0.7 ruling 7). Throws malformed-wire when `arr` is not an array.

@@ -1286,6 +1286,60 @@ int main() {
         check(false, std::string("ruling 40 checks threw: ") + ex.what());
     }
 
+    // v0.14, six-bit armor: the rulings no vector pins.
+    try {
+        gt::Engine ae;
+        ae.load_model(kCoreModel, "core");
+        // Ruling 7: an `optional` field whose key has a `default` counts toward L.
+        ae.add_pack(gt::parse_pack(HDR "format t-armor\nwire bits\nword_bytes 1\nbit_order msb\n"
+                                       "armor sixbit\nfield a 0:0:6 uint\nfield b 0:6:6 uint optional\ndefault b 5\n",
+                                   "t-armor"));
+        eq(ae.convert("t-armor", "t-armor", "1"), "15", "armor: an optional field with a default is written");
+        eq(ae.convert("t-armor", "t-armor", "17"), "17", "armor: an optional field present");
+        // Ruling 9: a scope that writes no bit gives the empty text.
+        ae.add_pack(gt::parse_pack(HDR "format t-armor0\nwire bits\nword_bytes 4\nbit_order msb\n"
+                                       "armor sixbit\nfield a 0:0:6 uint optional\n",
+                                   "t-armor0"));
+        eq(ae.convert("t-armor0", "t-armor0", ""), "", "armor: nothing to write is the empty text");
+        eq(ae.convert("t-armor0", "t-armor0", "w"), "w", "armor: one character, no whole word");
+        // Ruling 8: a `length ... bytes` block is still padded to a whole byte.
+        ae.add_pack(gt::parse_pack(HDR "format t-armor-seq\nwire bits\nlayout sequential\n"
+                                       "bit_order msb\narmor sixbit\nfield a 6 uint\nlength 4\n  field b 6 uint\nend\n",
+                                   "t-armor-seq"));
+        eq(ae.convert("t-armor-seq", "t-armor-seq", "148"), "148", "armor: a length block padded to a byte");
+        expect_error(gt::ErrorKind::MalformedWire, [&] { ae.convert("t-armor-seq", "t-armor-seq", "14"); },
+                     "armor: a length block past the input");
+    } catch (const std::exception& ex) {
+        check(false, std::string("armor checks threw: ") + ex.what());
+    }
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] {
+                     gt::parse_pack(HDR "format a\nwire bits\nlayout sequential\nbit_order msb\nfield a 6 uint\n"
+                                        "opt\n  armor sixbit\nend\n");
+                 },
+                 "armor inside an opt block");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] {
+                     gt::parse_pack(HDR "format a\nwire bits\nlayout sequential\nbit_order msb\nkind k\n"
+                                        "when 6 1\narmor sixbit\n");
+                 },
+                 "armor after a kind, sequential");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] {
+                     gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nbit_order msb\n"
+                                        "group items 0:0 item 6 count 1\n  armor sixbit\nend\n");
+                 },
+                 "armor inside a group");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nfield a 0:0:12 sixbit trim swap\n"); },
+                 "sixbit swap");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nfield a 0:0:8 uint trim\n"); },
+                 "trim on uint");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_pack(HDR "format a\nwire bits\nlayout sequential\nfield a 1536 sixbit\n"); },
+                 "sixbit 1536 bits, sequential");
+
     std::cout << "unit: " << checks << " checks, " << failures << " failed\n";
     return failures == 0 ? 0 : 1;
 }

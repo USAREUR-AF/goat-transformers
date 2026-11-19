@@ -1,0 +1,15 @@
+{
+  "name": "list-zero-items",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "30",
+  "expect": "30",
+  "model": {
+    "@kind": "list",
+    "probe.n": "3",
+    "probe.z": "0",
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): count 0: a present, empty list; L = 10 (z is the highest line), 2 characters. Derived without an engine by a standalone reference program."
+}

@@ -17,7 +17,7 @@ from .transforms import bits_len_allowed, build_bits_transform, read_int_text, r
 
 GROUP_MODES = ("count", "while", "more", "fx")
 _HEADER = ("format", "version", "wire", "layout", "bit_order", "word_bytes", "distribution", "source", "uses",
-           "map", "typemap", "root")
+           "map", "typemap", "root", "armor")
 _SINGLE = ("layout", "bit_order")
 
 
@@ -179,7 +179,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     `missing-distribution`, `missing-source`."""
     from .packdef import (
         BIT_ORDERS, HEADER_ONCE, NEEDS_WIRE, TEXT_DIRECTIVES, Default, Field, Pack, _check_transform, _Deferred,
-        _LineBad, line_head, parse_absent,
+        _LineBad, armor_line, check_armor, line_head, parse_absent,
     )
 
     seen = {}          # the header values (`line_head`)
@@ -197,6 +197,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     msg = Body()
     stack = []         # open blocks, outermost first
     last_field = None  # the field node of the line before, for `also`: (node, transform name, options)
+    armor = []         # 0.14: the `armor` lines, checked after the file (`check_armor`)
+    any_kind = False   # a `kind` line read, in any body (ruling 11 of 0.14)
+    wholes = []        # the `length ... whole` nodes, refused under `armor sixbit` (ruling 3 of 0.14)
 
     def line_bad(msg_text, lineno, locator=None):
         """A line check of ruling 5b of 0.11 (steps 7 to 10)."""
@@ -292,14 +295,17 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             if length > 64:  # the values of `absent` are not checked as the line is read (ruling 4d of 0.11)
                 return None
         transform = build_bits_transform(tname, length)
-        if "swap" in opts and length % 8 != 0:
+        if "swap" in opts and tname == "sixbit":  # 0.14
+            deferred.append((lineno, bad("field option 'swap' does not apply to the 'sixbit' transform",
+                                         lineno, len_text)))
+        elif "swap" in opts and length % 8 != 0:
             deferred.append((lineno, bad(
                 "field option 'swap' needs a bit length that is a multiple of 8, got %d" % length, lineno, len_text
             )))
         if "trim" in opts:
-            if tname != "ascii":
-                deferred.append((lineno, bad("field option 'trim' applies to the 'ascii' transform only",
-                                             lineno, len_text)))
+            if tname not in ("ascii", "sixbit"):  # ruling 5 of 0.14
+                deferred.append((lineno, bad("field option 'trim' applies to the 'ascii' and 'sixbit' "
+                                             "transforms only", lineno, len_text)))
             else:
                 transform.trim = True
         f = Field(key, len_text, transform, (0, 0, length), lineno, via=opts.get("via"), swap="swap" in opts)
@@ -369,6 +375,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             elif kw in TEXT_DIRECTIVES or kw == "tag" or kw == "key":
                 # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16` (0.13): another wire's
                 text_dirs.append((lineno, bad("%r is a directive of another wire" % kw, lineno, kw)))
+            elif kw == "armor":
+                armor_line(args, armor, any_kind, lineno)
             elif kw == "word_bytes":
                 deferred.append((lineno, bad("'word_bytes' is not used in a sequential pack", lineno, "word_bytes")))
             elif kw == "root":
@@ -391,6 +399,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 if body.kind(args[0]) is not None:
                     raise DuplicateKind("kind %r is declared twice in one body, at %s" % (args[0], where), format=fmt)
                 body.cur = SeqKind(args[0], lineno)
+                any_kind = True
                 body.kinds.append(body.cur)
                 body._index[args[0]] = body.cur
             elif kw == "requires":
@@ -529,7 +538,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 if whole:
                     if unit == "bits":  # ruling 8 of 0.8
                         raise bad("'length ... bits whole': the whole message is counted in bytes", lineno, args[0])
-                    target(body).append(Node(T_WHOLE, lineno, length=length, plus=plus or 0, locator=args[0]))
+                    nd = Node(T_WHOLE, lineno, length=length, plus=plus or 0, locator=args[0])
+                    target(body).append(nd)
+                    wholes.append(nd)
                 else:
                     nd = Node(T_LENGTH, lineno, length=length, unit=unit or "bytes", plus=plus or 0, body=[],
                               locator=args[0])
@@ -591,6 +602,11 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         if fr.what == "group":
             fr.body.close()
     close_body(msg, 0)
+    armor_value = check_armor(armor, "bits", once.get("bit_order"), deferred, source, name)
+    if armor_value == "sixbit":
+        for nd in wholes:
+            deferred.append((nd.lineno, bad("'length ... whole' under 'armor sixbit': the armored text has no "
+                                            "whole-byte length", nd.lineno, nd.locator)))
     for f in via_fields:
         if f.via not in tables:
             deferred.append((f.lineno, bad("'via' names table %r, which has no 'map' line" % f.via, f.lineno,
@@ -606,6 +622,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     pack = Pack(
         name=name, version=version, wire="bits", bit_order=once.get("bit_order", "lsb"), kinds=msg.kinds,
         key_refs=key_refs, distribution=distribution, sources=sources, uses=uses, tables=tables,
+        armor=armor_value,
     )
     pack.layout = "sequential"
     pack.seq = msg

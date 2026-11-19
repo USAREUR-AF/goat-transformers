@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-type-four",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "4CB>fwT0p:Qr@00",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): type value 4 matches no kind's when, every character valid: no-kind. Derived without an engine by a standalone reference program."
+}

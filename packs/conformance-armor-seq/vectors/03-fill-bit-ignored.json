@@ -1,0 +1,14 @@
+{
+  "name": "fill-bit-ignored",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "9D247",
+  "expect": "9D246",
+  "model": {
+    "probe.n": "9",
+    "probe.x": "5",
+    "probe.s2": "ABC"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): ruling 2: bit 29, after the last line, set on input, written as zero. Derived without an engine by a standalone reference program."
+}

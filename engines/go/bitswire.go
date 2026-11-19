@@ -27,6 +27,99 @@ func parseHexInput(format string, b []byte) ([]byte, error) {
 	return out, nil
 }
 
+// parseSixbitArmor reads armored text (spec 0.14): each character stands for
+// six bits, first character first, most significant bit first; `0`..`W` for
+// c - 0x30 and the backquote (0x60)..`w` for c - 0x38. Every character is checked before
+// any line is read; any other character is malformed-wire. It returns the
+// message, msb first in its bytes, and its length in bits.
+func parseSixbitArmor(format string, b []byte) ([]byte, int, error) {
+	nbits := 6 * len(b)
+	data := make([]byte, (nbits+7)/8)
+	for i, c := range b {
+		var v byte
+		switch {
+		case c >= 0x30 && c <= 0x57:
+			v = c - 0x30
+		case c >= 0x60 && c <= 0x77:
+			v = c - 0x38
+		default:
+			return nil, 0, &Error{Kind: ErrMalformedWire, Format: format, Detail: fmt.Sprintf("character %d (byte 0x%02x) is not a six-bit armor character", i, c)}
+		}
+		putBits(data, 6*i, 6, uint64(v), true)
+	}
+	return data, nbits, nil
+}
+
+// sixbitArmorText writes the first nbits bits of data (msb first) as armored
+// text: zero bits up to the next multiple of 6, then each six bits as its
+// character, values 0..39 as 0x30 + v and 40..63 as 0x38 + v.
+func sixbitArmorText(data []byte, nbits int) []byte {
+	out := make([]byte, 0, (nbits+5)/6)
+	for at := 0; at < nbits; at += 6 {
+		var v byte
+		for k := 0; k < 6; k++ {
+			v <<= 1
+			if i := at + k; i < nbits && i/8 < len(data) {
+				v |= byte(bitAt(data, i, true))
+			}
+		}
+		if v < 40 {
+			out = append(out, 0x30+v)
+		} else {
+			out = append(out, 0x38+v)
+		}
+	}
+	return out
+}
+
+// decodeSixbit reads a sixbit field whose scope starts at bit base (spec
+// 0.14): its six-bit characters first to last, each in the pack's bit order,
+// values 0..31 as `@`.._ and 32..63 as space..`?`; trailing `@` removed, and
+// with `trim` the whole trailing run of `@` and space.
+func decodeSixbit(data []byte, f *Field, base int, msb bool) Value {
+	buf := make([]byte, f.loc.blen/6)
+	for k := range buf {
+		v := byte(getBits(data, base+f.loc.bit+6*k, 6, msb))
+		if v < 32 {
+			v += 0x40
+		}
+		buf[k] = v
+	}
+	n := len(buf)
+	for n > 0 && (buf[n-1] == '@' || (f.Trim && buf[n-1] == ' ')) {
+		n--
+	}
+	return Value{Kind: KindString, S: string(buf[:n])}
+}
+
+// encodeSixbit writes a sixbit field at message bit at: each character as its
+// value, padded with `@` (0) to len / 6 characters.
+func encodeSixbit(p *Pack, f *Field, v Value, data []byte, at int) error {
+	s, err := encString(v)
+	if err != nil {
+		return encodeErr(p, f, err)
+	}
+	n := f.loc.blen / 6
+	if len(s) > n {
+		return encodeErr(p, f, fmt.Errorf("text is %d character(s), the field holds %d", len(s), n))
+	}
+	vals := make([]byte, n)
+	for k := 0; k < len(s); k++ {
+		c := s[k]
+		if c < 0x20 || c > 0x5f {
+			return encodeErr(p, f, fmt.Errorf("byte 0x%02x has no six-bit code", c))
+		}
+		if c >= 0x40 {
+			c -= 0x40
+		}
+		vals[k] = c
+	}
+	for k, c := range vals {
+		putBits(data, at+6*k, 6, uint64(c), p.msb)
+	}
+	return nil
+}
+
 // A bits locator <word>:<pos>:<len> addresses len bits starting at bit
 // word*word_bytes*8 + pos of the message (locator.bit); a field may run past
 // the end of its word. With bit_order lsb, bit i of the message is bit i%8 of
@@ -119,14 +212,22 @@ func decodeASCII(data []byte, f *Field, base int, msb bool) (Value, error) {
 
 func decodeBits(d *decodeState, b []byte) error {
 	p := d.pack
-	data, err := parseHexInput(p.Format, b)
+	var data []byte
+	var bits int
+	var err error
+	if p.sixbitArmor {
+		data, bits, err = parseSixbitArmor(p.Format, b)
+	} else {
+		data, err = parseHexInput(p.Format, b)
+		bits = len(data) * 8
+	}
 	if err != nil {
 		return err
 	}
+	d.nbits = bits
 	if p.seq {
-		return decodeSeq(d, data)
+		return decodeSeq(d, data, bits)
 	}
-	bits := len(data) * 8
 	// A when any of whose bits lies beyond the input does not hold.
 	lay, err := d.choose(func(w *When) bool {
 		if w.loc.bit+w.loc.blen > bits {
@@ -142,6 +243,16 @@ func decodeBits(d *decodeState, b []byte) error {
 	// not count: one any of whose bits lies beyond the input is absent.
 	short := func(need int) error {
 		return &Error{Kind: ErrMalformedWire, Format: p.Format, Detail: fmt.Sprintf("message is %d byte(s), the format needs at least %d", len(data), need)}
+	}
+	if p.sixbitArmor {
+		// Armored text is any number of bits: it must reach every bit of the
+		// lines that are not optional, and the group items (checked as they
+		// are read); whole words are not required (spec 0.14).
+		if bits < lay.needBit {
+			return &Error{Kind: ErrMalformedWire, Format: p.Format, Detail: fmt.Sprintf("message is %d bit(s), the format needs at least %d", bits, lay.needBit)}
+		}
+		_, err := d.bitsScope(lay, data, 0)
+		return err
 	}
 	if len(data) < lay.decBytes {
 		return short(lay.decBytes)
@@ -165,7 +276,7 @@ func decodeBits(d *decodeState, b []byte) error {
 // nested group counted by a locator ends when that is further (0.7 ruling 4).
 func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error) {
 	p := d.pack
-	bits := len(data) * 8
+	bits := d.nbits
 	end := 0
 	for _, ln := range lay.lines {
 		switch {
@@ -176,9 +287,15 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				if f.Optional {
 					continue
 				}
-				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: fmt.Sprintf("message is %d byte(s) and does not reach field %s", len(data), f.Key)}
+				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: fmt.Sprintf("message is %d bit(s) and does not reach field %s", bits, f.Key)}
 			}
+			// A sentinel is read before any transform, `sixbit` and `ascii`
+			// included (0.9 ruling 2, 0.14 ruling 12).
 			if f.bitsSentinel(data, at, p.msb) {
+				continue
+			}
+			if f.btf.sixbit {
+				d.store(f, decodeSixbit(data, f, base, p.msb))
 				continue
 			}
 			if f.btf.ascii {
@@ -203,7 +320,7 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 		case ln.g != nil:
 			g := ln.g
 			bad := func(detail string) error {
-				return &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: g.Locator, Detail: fmt.Sprintf("list %s: message is %d byte(s) and %s", g.List, len(data), detail)}
+				return &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: g.Locator, Detail: fmt.Sprintf("list %s: message is %d bit(s) and %s", g.List, bits, detail)}
 			}
 			count := uint64(g.countN)
 			if c := g.countLoc; c != nil {
@@ -253,6 +370,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 // putBitsField writes the value of one field at message bit at, through the
 // field's transform and its `swap` option.
 func putBitsField(p *Pack, f *Field, v Value, data []byte, at int) error {
+	if f.btf.sixbit {
+		return encodeSixbit(p, f, v, data, at)
+	}
 	if f.btf.ascii {
 		s, err := encString(v)
 		if err != nil {
@@ -311,12 +431,64 @@ func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if p.sixbitArmor {
+		// The armored text is the first L bits (spec 0.14): one more than the
+		// highest bit of any line of the scope or of its group items, except
+		// an optional field with no value to write.
+		l, err := armorLength(p, lay, rec, end)
+		if err != nil {
+			return nil, err
+		}
+		buf.need(l)
+		return sixbitArmorText(buf.data, l), nil
+	}
 	if lay.maxBit > end {
 		end = lay.maxBit
 	}
 	n := p.wholeWords(end)
 	buf.need(n * 8)
 	return []byte(hex.EncodeToString(buf.data[:n])), nil
+}
+
+// armorLength is the length L in bits of the armored text an encode of a
+// fixed-layout scope writes: the furthest bit of its field, when and const
+// lines, counts and group items (end, the furthest bit the items reach), an
+// optional field counting only when it has a value or a default to write, or
+// a sentinel (`absent`, 0.9) to write when its key is absent (0.14 ruling 12).
+func armorLength(p *Pack, lay *layout, rec *Item, end int) (int, error) {
+	l := end
+	for _, ln := range lay.lines {
+		var loc locator
+		switch {
+		case ln.f != nil:
+			if ln.f.Optional && ln.f.absent == nil {
+				_, ok, err := fieldValue(p, lay, ln.f, rec)
+				if err != nil {
+					return 0, err
+				}
+				if !ok {
+					continue
+				}
+			}
+			loc = ln.f.loc
+		case ln.w != nil:
+			loc = ln.w.loc
+		case ln.g != nil:
+			g := ln.g
+			e := g.start + g.countN*g.itemBits
+			if g.countLoc != nil {
+				e = g.countLoc.bit + g.countLoc.blen
+			}
+			if e > l {
+				l = e
+			}
+			continue
+		}
+		if e := loc.bit + loc.blen; e > l {
+			l = e
+		}
+	}
+	return l, nil
 }
 
 // encodeBitsScope writes the lines of one scope whose first bit is message

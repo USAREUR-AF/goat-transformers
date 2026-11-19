@@ -1,0 +1,13 @@
+{
+  "name": "optional-sentinel-on-the-wire-decodes-absent",
+  "from": "conformance-armor-absent",
+  "to": "conformance-armor-absent",
+  "input": "510",
+  "expect": "510",
+  "model": {
+    "probe.n": "5",
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.14 (character map, L) with 0.9 (absent) and ruling 12 of 0.14: `0` is 0, the sentinel of y, so y is absent and re-encodes as its sentinel `0`. Derived by hand."
+}

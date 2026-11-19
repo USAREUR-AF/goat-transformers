@@ -1,0 +1,17 @@
+{
+  "name": "pos-fill-bit-after-optional-field-ignored",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1wwnJV<1n40H9QVA",
+  "expect": "1wwnJV<1n40H9QV@",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "4095",
+    "lat": "-33.5",
+    "callsign": "N0 CALL",
+    "probe.y": "200"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): ruling 2: bit 95, beyond L = 95, is set on input and written as zero. Derived without an engine by a standalone reference program."
+}

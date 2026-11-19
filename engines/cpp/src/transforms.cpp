@@ -30,6 +30,7 @@ const char* transform_name(Transform t) {
         case Transform::F32: return "f32";
         case Transform::F64: return "f64";
         case Transform::Ascii: return "ascii";
+        case Transform::Sixbit: return "sixbit";
         case Transform::IntW: return "int:<w>";
         case Transform::Dec: return "dec";
         case Transform::Dm: return "dm";
@@ -150,7 +151,7 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
                   {"pfloat", Transform::Pfloat},   {"bool", Transform::Bool},
                   {"f32", Transform::F32},         {"f64", Transform::F64},
                   {"ascii", Transform::Ascii},     {"utf8", Transform::Utf8},
-                  {"hex", Transform::Hex}};
+                  {"hex", Transform::Hex},         {"sixbit", Transform::Sixbit}};
     // The text-wire transforms with parameters (v0.10): `int:<w>`, `dec`, `dm`, `hms`, `hms_dmy`.
     const int text_tf = parse_text_transform(token, f, err);
     if (text_tf != 0) return text_tf > 0 ? 0 : -1;
@@ -287,7 +288,8 @@ bool transform_is_bits(Transform t) {
         case Transform::Sscale:
         case Transform::F32:
         case Transform::F64:
-        case Transform::Ascii: return true;
+        case Transform::Ascii:
+        case Transform::Sixbit: return true;
         default: return false;
     }
 }
@@ -545,6 +547,49 @@ Value decode_ascii(const std::string& bytes, bool trim) {
                                         ") is not printable ASCII");
     }
     return Value::of_string(bytes.substr(0, n));
+}
+
+Value decode_sixbit(const std::string& codes, bool trim) {
+    std::string text;
+    text.reserve(codes.size());
+    for (char c : codes) {
+        const unsigned v = static_cast<unsigned char>(c) & 0x3Fu;
+        text += static_cast<char>(v < 32 ? 0x40 + v : v);
+    }
+    std::size_t n = text.size();
+    if (trim)
+        while (n > 0 && (text[n - 1] == '@' || text[n - 1] == ' ')) --n;
+    else
+        while (n > 0 && text[n - 1] == '@') --n;
+    text.resize(n);
+    return Value::of_string(text);
+}
+
+std::string encode_sixbit(const Value& v, std::size_t nchars) {
+    std::string text;
+    switch (v.kind) {
+        case Value::Kind::String: text = v.s; break;
+        case Value::Kind::Int: text = std::to_string(v.i); break;
+        case Value::Kind::Float:
+            try {
+                text = format_double(v.f);
+            } catch (const std::domain_error& e) {
+                throw std::invalid_argument(e.what());
+            }
+            break;
+    }
+    if (text.size() > nchars)
+        throw std::invalid_argument("text of " + std::to_string(text.size()) + " characters does not fit " +
+                                    std::to_string(nchars) + " six-bit characters");
+    std::string codes(nchars, '\0');  // padded with '@', value 0
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        const unsigned char c = static_cast<unsigned char>(text[k]);
+        if (c < 0x20 || c > 0x5F)
+            throw std::invalid_argument("character " + std::to_string(k) + " (" + std::to_string(c) +
+                                        ") is not in the six-bit set 0x20 to 0x5F");
+        codes[k] = static_cast<char>(c >= 0x40 ? c - 0x40 : c);
+    }
+    return codes;
 }
 
 std::string encode_ascii(const Value& v, std::size_t nbytes) {

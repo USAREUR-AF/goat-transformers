@@ -1,0 +1,17 @@
+{
+  "name": "list-two-items",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "380Owt",
+  "expect": "380Owt",
+  "model": {
+    "@kind": "list",
+    "probe.n": "3",
+    "probe.z": "2",
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "7",
+    "probe.items[1].probe.qty": "4095"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): list kind; count 2 at bits 6..9 (z maps the same bits); items of 12 bits from bit 10; L = 34, 6 characters, 2 fill bits. Derived without an engine by a standalone reference program."
+}

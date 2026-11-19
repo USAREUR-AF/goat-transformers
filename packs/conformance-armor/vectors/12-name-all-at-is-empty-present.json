@@ -1,0 +1,14 @@
+{
+  "name": "name-all-at-is-empty-present",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "200000000000000000000",
+  "expect": "200000000000000000000",
+  "model": {
+    "@kind": "name",
+    "probe.n": "2",
+    "probe.s1": ""
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): ruling 6: an s1 of 20 @ decodes to the empty string, present; encode pads the empty string with 20 @. Derived without an engine by a standalone reference program."
+}

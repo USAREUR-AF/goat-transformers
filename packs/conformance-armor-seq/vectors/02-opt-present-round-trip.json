@@ -1,0 +1,15 @@
+{
+  "name": "opt-present-round-trip",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "wwT=LwP",
+  "expect": "wwT=LwP",
+  "model": {
+    "probe.n": "63",
+    "probe.x": "15",
+    "probe.y": "200",
+    "probe.s2": "Z9?"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): 6 + 4 + 1 (opt bit 1) + 8 + 18 = 37 bits: 7 characters, 5 fill bits. Derived without an engine by a standalone reference program."
+}

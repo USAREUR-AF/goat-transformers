@@ -187,6 +187,8 @@ def parse_transform(name):
         return (name, None, T_FLOAT)
     if name == "ascii":
         return (name, None, T_STR)
+    if name == "sixbit":
+        refuse("unsupported-feature", "transform `sixbit` (six-bit text, spec 0.14) is not in the device profile")
     refuse("bad-pack", "transform `%s` is not a bits transform" % name)
 
 
@@ -283,7 +285,7 @@ class Pack:
             self._fixed(rows)
 
     HEADER = ("format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map",
-              "typemap", "word_bytes", "root")
+              "typemap", "word_bytes", "root", "armor")
 
     def _header(self, rows):
         for t in rows:
@@ -296,6 +298,9 @@ class Pack:
                 self.msb = t[1] == "msb"
             elif d == "word_bytes":
                 self.word_bytes = int(t[1])
+            elif d == "armor" and len(t) == 2 and t[1] != "hex":
+                refuse("unsupported-feature", "%s: `armor %s` (six-bit armored text, spec 0.14) is not in the "
+                       "device profile" % (self.where, t[1]))
             elif d == "map" and len(t) == 4:
                 self.maps.setdefault(t[1], []).append((t[2], t[3]))
             elif d == "typemap" and len(t) == 3:

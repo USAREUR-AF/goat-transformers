@@ -1,0 +1,34 @@
+# Conformance probe pack for six-bit armor (spec 0.14). Public. A fixed-layout
+# `bits` message read from armored text, in the shape of an AIS payload: a
+# six-bit type selects the kind. Exercises the character map, the encode
+# length L (an optional trailing field), `sixbit` with and without `trim`,
+# a counted group, and fill bits.
+format        conformance-armor
+version       0.14.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+word_bytes    1
+bit_order     msb
+armor         sixbit
+
+field    probe.n      0:0:6     uint
+
+kind     pos
+when     0:0:6        1
+field    probe.x      0:6:12    uint
+field    lat          0:18:27   sscale:1/600000
+field    callsign     0:45:42   sixbit   trim
+field    probe.y      0:87:8    uint     optional
+
+kind     name
+when     0:0:6        2
+field    probe.s1     0:6:120   sixbit
+
+kind     list
+when     0:0:6        3
+field    probe.z      0:6:4     uint
+group    probe.items  0:10      item 12  count 0:6:4
+  field  probe.qty    0:0:12    uint
+end

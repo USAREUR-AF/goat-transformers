@@ -29,7 +29,11 @@ const std::set<std::string>& pack_directives() {
                                          "if",     "opt",     "chain",        "fx",     "length", "delimiter",
                                          "start",  "checksum",
                                          // v0.13, the tlv wire
-                                         "tag",    "key"};
+                                         "tag",    "key",
+                                         // v0.14, six-bit armor of the bits wire. Its value, its
+                                         // wire, `bit_order msb`, a second line and its place before
+                                         // the first `kind` are checked after the file is read.
+                                         "armor"};
     return s;
 }
 
@@ -46,7 +50,9 @@ const std::set<std::string>& one_argument() {
     static const std::set<std::string> s{"format",     "version",   "distribution", "source", "uses",
                                          "wire",       "root",      "kind",         "word_bytes",
                                          "bit_order",  "layout",    "pad",          "align",  "delimiter",
-                                         "start",      "checksum"};
+                                         "start",      "checksum",
+                                         // v0.14 ruling 13
+                                         "armor"};
     return s;
 }
 

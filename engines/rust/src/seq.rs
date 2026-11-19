@@ -207,6 +207,8 @@ struct Parser<'a> {
     sources: Vec<String>,
     uses: Vec<String>,
     maps: Vec<(String, Vec<(String, String)>)>,
+    /// engine-spec v0.14: `armor`
+    armor: crate::armor::ArmorLines,
     to_cot: BTreeMap<String, String>,
     from_cot: BTreeMap<String, String>,
 }
@@ -242,9 +244,9 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 15] = [
+const HEADER: [&str; 16] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
-    "delimiter", "start", "checksum",
+    "delimiter", "start", "checksum", "armor",
 ];
 
 impl<'a> Parser<'a> {
@@ -338,7 +340,11 @@ impl<'a> Parser<'a> {
                     if !top {
                         return bad(ln, format!("`{}` is not allowed inside a group", d));
                     }
-                    self.header(ln, toks)?;
+                    if d == "armor" {
+                        self.armor.record(toks, ln, !out.kinds.is_empty());
+                    } else {
+                        self.header(ln, toks)?;
+                    }
                     self.i += 1;
                 }
                 "kind" => {
@@ -496,16 +502,20 @@ impl<'a> Parser<'a> {
                     Transform::F32 => len == 32,
                     Transform::F64 => len == 64,
                     Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
+                    Transform::Sixbit => crate::armor::sixbit_len_ok(len),
                     _ => (1..=64).contains(&len),
                 };
                 if !ok {
                     return bad(ln, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
                 }
+                if f.swap && *t == Transform::Sixbit {
+                    return bad(ln, "`swap` is not valid on `sixbit`");
+                }
                 if f.swap && len % 8 != 0 {
                     return bad(ln, format!("`swap` needs a bit length that is a multiple of 8, got {}", len));
                 }
-                if f.trim && *t != Transform::Ascii {
-                    return bad(ln, "`trim` is valid only with `ascii`");
+                if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
+                    return bad(ln, "`trim` is valid only with `ascii` or `sixbit`");
                 }
                 resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
                 // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)
@@ -792,6 +802,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         sources: Vec::new(),
         uses: Vec::new(),
         maps: Vec::new(),
+        armor: Default::default(),
         to_cot: BTreeMap::new(),
         from_cot: BTreeMap::new(),
     };
@@ -824,6 +835,10 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         Some("bits") => {}
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
         None => return err("missing-wire: the pack has no `wire` line"),
+    }
+    let armor = p.armor.check(true, p.msb)?;
+    if armor == crate::armor::Armor::Sixbit {
+        crate::armor::check_no_whole(&body)?;
     }
     for (table, ln) in &p.vias {
         if !p.maps.iter().any(|(name, _)| name == table) {
@@ -858,6 +873,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         seq: Some(body),
         text: crate::text::TextConf::default(),
         tlv: crate::tlv::TlvConf::default(),
+        armor,
     })
 }
 
@@ -1112,8 +1128,8 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
     Ok(())
 }
 
-pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8]) -> Result<Entity, Error> {
-    let total = raw.len() as u64 * 8;
+/// `total`: the bits of the input (8 a byte of hex, 6 a character of armor).
+pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity, Error> {
     let mut r = Reader { p, raw, pos: 0, end: total, whole: total, depth: 0, presence: BTreeMap::new() };
     let mut d = Decoded::new();
     let kind = decode_body(body, &mut r, &mut d)?;
@@ -1415,6 +1431,11 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
 }
 
 pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> {
+    encode_bits(p, body, ent).map(|(b, _)| b)
+}
+
+/// The message as whole bytes, and the cursor after the last line.
+pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u64), Error> {
     let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new() };
     encode_body(body, ent, false, &mut w)?;
     // a message is a whole number of bytes; the last bits are zero
@@ -1426,5 +1447,5 @@ pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> 
         }
         set_bits(&mut w.buf, at, len, stated as u64, p.msb);
     }
-    Ok(w.buf)
+    Ok((w.buf, w.pos))
 }

@@ -1,0 +1,9 @@
+{
+  "name": "pos-input-too-short",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1CB>fwT0p:Qr@0",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): Fixed layout: 14 characters are 84 bits; the callsign reaches bit 86 and is not optional: malformed-wire. Derived without an engine by a standalone reference program."
+}

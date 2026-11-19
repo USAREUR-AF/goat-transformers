@@ -552,6 +552,7 @@ type decodeState struct {
 	failedHard []bool   // the entry is an error whatever another line of its key gives
 	limit      int64    // the limit on list items (ruling 7 of 0.11)
 	held       int64    // the list items the entity holds so far
+	nbits      int      // bits wire: the length of the message in bits
 }
 
 // overLimit is the failure of a decode that would hold more list items than

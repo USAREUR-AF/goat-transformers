@@ -178,7 +178,7 @@ channel, not in the issue.
 | Sequential layouts in `bits` (presence fields, repeats, extensible items, stated lengths) | Built | ASTERIX |
 | Text-grammar wire (delimited or positional text records) | Built (spec 0.10, `wire text`) | NMEA 0183 |
 | Type-length-value wire | Built (spec 0.13, `wire tlv`) | KLV / MISB ST 0601, NITF |
-| Six-bit armor wire (ASCII-armored bit payloads) | Designed | AIS / AIVDM |
+| Six-bit armor wire (ASCII-armored bit payloads) | Built (spec 0.14, `armor sixbit`) | AIS / AIVDM |
 | Layered wires and framing (declared lengths, trimmed payloads, checksums) | Designed | MAVLink frames, NMEA 2000 fast-packet transport |
 
 [roadmap.md](roadmap.md) lists these with the other designed additions to the

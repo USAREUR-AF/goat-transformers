@@ -56,7 +56,7 @@ seven engines, and vectors.
 |---|---|---|---|
 | Text grammar | delimited or positional text records | NMEA 0183 | Built (spec 0.10, `wire text`) |
 | Type-length-value | records of key, length and value | KLV / MISB ST 0601, NITF | Built (spec 0.13, `wire tlv`) |
-| Six-bit armor | ASCII-armored bit payloads | AIS / AIVDM | Designed |
+| Six-bit armor | ASCII-armored bit payloads | AIS / AIVDM | Built (spec 0.14, `armor sixbit` on `bits`) |
 | ASN.1 UPER | packed-encoding ASN.1 | SAE J2735 (V2X) message sets | Designed |
 
 ## Packs

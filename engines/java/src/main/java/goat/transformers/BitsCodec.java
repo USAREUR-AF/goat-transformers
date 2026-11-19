@@ -9,9 +9,11 @@ import java.util.List;
  * {@code word * word_bytes * 8 + pos} of the message, and may run past its word. With {@code bit_order lsb} bit
  * {@code i} of the message is bit {@code i mod 8} of byte {@code i div 8} and a value's first bit is its least
  * significant; with {@code msb} it is bit {@code 7 - (i mod 8)} and a value's first bit is its most significant.
- * {@code encode} writes only mapped fields and {@code when} values and leaves every other bit zero.
+ * {@code encode} writes only mapped fields and {@code when} values and leaves every other bit zero. With
+ * {@code armor sixbit} (engine-spec 0.14) the message is armored text of any number of bits: decode needs the bits
+ * the lines reach, not whole words, and encode writes the first {@code L} bits.
  */
-final class BitsCodec extends Codec<byte[]> {
+final class BitsCodec extends Codec<Codec.BitMsg> {
     private final int wordBytes;
     private final boolean msb;
 
@@ -192,28 +194,43 @@ final class BitsCodec extends Codec<byte[]> {
     }
 
     @Override
-    byte[] parse(String text) { return fromHex(text); }
+    BitMsg parse(String text) { return parseBits(text); }
 
     @Override
-    boolean holds(byte[] msg, Pack.When when) {
+    boolean holds(BitMsg msg, Pack.When when) {
         Loc loc = (Loc) when.loc;
-        if (loc.start + loc.len > (long) msg.length * 8) return false; // beyond the input: does not hold
-        return readBits(msg, loc.start, loc.len) == when.number;
+        if (loc.start + loc.len > msg.bits) return false; // beyond the input: does not hold
+        return readBits(msg.b, loc.start, loc.len) == when.number;
     }
 
     @Override
-    Entity decodeKind(byte[] msg, Pack.Kind kind) {
+    Entity decodeKind(BitMsg in, Pack.Kind kind) {
         Info info = (Info) kind.scope.info;
-        int need = wholeWords(info.need);
-        if (msg.length < need) throw tooShort(msg, need, kind);
+        byte[] msg = in.b;
+        if (pack.armorSixbit) {
+            // Armored text: the bits the lines reach, whatever word_bytes is (0.14, "Fixed layout").
+            if (in.bits < info.need) throw armorShort(in.bits, info.need, kind);
+        } else {
+            int need = wholeWords(info.need);
+            if (msg.length < need) throw tooShort(msg, need, kind);
+        }
         Entity e = new Entity();
         Failures fails = new Failures();
-        long far = decodeScope(msg, (long) msg.length * 8, kind.scope, 0, e, fails);
-        // The message is extended by the items, to whole words.
-        need = wholeWords(Math.max(info.need, far));
-        if (msg.length < need) throw tooShort(msg, need, kind);
+        long far = decodeScope(msg, in.bits, kind.scope, 0, e, fails);
+        if (pack.armorSixbit) {
+            if (in.bits < far) throw armorShort(in.bits, far, kind);
+        } else {
+            // The message is extended by the items, to whole words.
+            int need = wholeWords(Math.max(info.need, far));
+            if (msg.length < need) throw tooShort(msg, need, kind);
+        }
         finishDecode(e, fails);
         return e;
+    }
+
+    private GtException armorShort(long bits, long need, Pack.Kind kind) {
+        return malformed("armored message is " + bits + " bits, shorter than the " + need + " bits"
+                + (kind.name == null ? "" : " of kind " + kind.name) + " its lines reach");
     }
 
     private GtException tooShort(byte[] msg, int need, Pack.Kind kind) {
@@ -274,6 +291,8 @@ final class BitsCodec extends Codec<byte[]> {
                     for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) readBits(msg, start + 8L * i, 8);
                     if (f.swap) reverse(bytes);
                     v = f.bits.decodeAscii(bytes, f.trim);
+                } else if (f.bits.isSixbit()) {
+                    v = BitsTransform.decodeSixbit(readSixbit(msg, start, loc.len, msb), f.trim);
                 } else {
                     long raw = readBits(msg, start, loc.len);
                     v = f.bits.decode(f.swap ? swapBytes(raw, loc.len) : raw, loc.len);
@@ -306,7 +325,32 @@ final class BitsCodec extends Codec<byte[]> {
         Info info = (Info) kind.scope.info;
         Buf buf = new Buf(wholeWords(info.end, GtException.Code.TRANSFORM_ENCODE));
         long far = encodeScope(buf, kind.scope, 0, e);
+        if (pack.armorSixbit) return toArmor(buf.b, armorLength(kind.scope, e, far));
         return toHex(java.util.Arrays.copyOf(buf.b, wholeWords(Math.max(info.end, far), GtException.Code.TRANSFORM_ENCODE)));
+    }
+
+    /**
+     * {@code L} of 0.14 in the fixed layout: one more than the highest bit of any field, when or const line of the
+     * scope, or of a group's items (a count locator counts, whatever the list), except an {@code optional} field
+     * whose key is absent with no default and no {@code absent} sentinel. {@code far} is the bit after the last item written.
+     */
+    private static long armorLength(Pack.Scope scope, Entity e, long far) {
+        long l = far;
+        for (Pack.Line line : scope.lines) {
+            if (line instanceof Pack.Group) {
+                Pack.Group g = (Pack.Group) line;
+                if (g.countLocator != null) l = Math.max(l, ((Loc) g.countLoc).end());
+                else if (g.countFixed > 0) l = Math.max(l, ((Loc) g.loc).start + g.countFixed * (long) g.itemBits);
+                continue;
+            }
+            if (line instanceof Pack.Field) {
+                Pack.Field f = (Pack.Field) line;
+                // A field with absent writes its first sentinel, so it counts, optional or not (ruling 12 of 0.14).
+                if (f.optional && f.absent == null && e.get(f.key) == null && scope.defaultValues.get(f.key) == null) continue;
+            }
+            l = Math.max(l, ((Loc) line.loc).end());
+        }
+        return l;
     }
 
     private GtException groupFailure(Pack.Group g, String why) {
@@ -346,6 +390,8 @@ final class BitsCodec extends Codec<byte[]> {
                     byte[] bytes = f.bits.encodeAscii(v, loc.len / 8);
                     if (f.swap) reverse(bytes);
                     for (int b = 0; b < bytes.length; b++) writeBits(buf.b, start + 8L * b, 8, bytes[b] & 0xffL);
+                } else if (f.bits.isSixbit()) {
+                    writeSixbit(buf.b, start, BitsTransform.encodeSixbit(v, loc.len / 6), msb);
                 } else {
                     long raw = f.bits.encode(v, loc.len);
                     writeBits(buf.b, start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
@@ -427,4 +473,16 @@ final class BitsCodec extends Codec<byte[]> {
     }
 
     static void reverseBytes(byte[] b) { reverse(b); }
+
+    /** The {@code len / 6} six-bit values of a {@code sixbit} field, first character first, each in the pack's bit order. */
+    static int[] readSixbit(byte[] msg, long start, int len, boolean msb) {
+        int[] v = new int[len / 6];
+        for (int i = 0; i < v.length; i++) v[i] = (int) readBits(msg, start + 6L * i, 6, msb);
+        return v;
+    }
+
+    /** Write the six-bit values of a {@code sixbit} field, first character first, each in the pack's bit order. */
+    static void writeSixbit(byte[] msg, long start, int[] values, boolean msb) {
+        for (int i = 0; i < values.length; i++) writeBits(msg, start + 6L * i, 6, values[i], msb);
+    }
 }

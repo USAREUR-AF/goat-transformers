@@ -13,7 +13,12 @@
 //! (e) random tag-length-value sets (engine-spec 0.13), bare and framed by a
 //!     key, a length and a sum16 checksum item, so that a mutation reaches
 //!     the items behind the checksum; and every hex vector input mutated
-//!     and then given a correct sum16 in its last two bytes.
+//!     and then given a correct sum16 in its last two bytes;
+//! (f) six-bit armored text (engine-spec 0.14): random runs of the 64 armor
+//!     characters, at every length from none up, with now and then a
+//!     character just outside the map; and every armored vector input
+//!     mutated within the armor alphabet, so that the mutation reaches the
+//!     lines behind the character check.
 //!
 //! Each call must return `Ok`, or an error whose message starts with one of
 //! the error kinds `convert` may fail with, then a colon. A panic is caught,
@@ -79,6 +84,15 @@ const HEX: &[u8] = b"0123456789abcdef";
 const XMLISH: &[u8] = b"<<<>>>//==\"\"'' \n?!-&;abeEvent:._019[]";
 const JSONISH: &[u8] = b"{{}}[[]]\"\"::,,\\ \n-+.eE0123456789truefalsn/ua";
 const TEXTISH: &[u8] = b"$$,,,;;;**  \r\n-+..0123456789ABCDEFabcdefNSEWPXTIMGC";
+/// The 64 characters of six-bit armor: `0` (0x30) to `W` (0x57), `` ` `` (0x60) to `w` (0x77).
+const ARMOR: &[u8] = b"0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw";
+/// The characters just outside the armor map, and the line terminators.
+const ARMOR_EDGE: &[u8] = b"/X_x \r\n";
+
+/// Is every byte of `s` an armor character (a hex input is one too)?
+fn armored(s: &str) -> bool {
+    !s.is_empty() && s.bytes().all(|b| ARMOR.contains(&b))
+}
 
 /// A text record framed with a start text and an NMEA checksum over `body`.
 fn nmea(start: &str, body: &str) -> String {
@@ -426,10 +440,30 @@ fn malformed_input_never_panics() {
         }
     }
 
+    // (f) six-bit armored text for every pack: every length up to 40
+    // characters, then random lengths, an edge character now and then
+    for format in &formats {
+        for len in 0..40 {
+            let text: Vec<u8> = (0..len).map(|_| rng.pick(ARMOR)).collect();
+            run(format, format, &String::from_utf8_lossy(&text), "armored text");
+        }
+        for _ in 0..RANDOM_PER_ALPHABET * iters {
+            let len = rng.below(300);
+            let mut text: Vec<u8> = (0..len).map(|_| rng.pick(ARMOR)).collect();
+            if len > 0 && rng.below(4) == 0 {
+                let at = rng.below(len);
+                text[at] = rng.pick(ARMOR_EDGE);
+            }
+            run(format, format, &String::from_utf8_lossy(&text), "armored text");
+        }
+    }
+
     // (b) prefixes and (c) one-byte mutations of every vector input
     for case in &vectors {
         let n = case.input.len();
         let hex = !case.input.is_empty() && case.input.bytes().all(|b| b.is_ascii_hexdigit() || b.is_ascii_whitespace());
+        // (f) armored text (hex digits excepted) mostly stays armored
+        let armor = !hex && armored(&case.input);
         let mut last = usize::MAX;
         let prefixes = capped(PREFIXES_PER_VECTOR, n);
         for k in 0..prefixes.min(n) {
@@ -451,6 +485,8 @@ fn malformed_input_never_panics() {
             bytes[at] = match rng.below(8) {
                 0 => rng.next() as u8,
                 _ if hex => rng.pick(HEX),
+                1 if armor => rng.pick(ARMOR_EDGE),
+                _ if armor => rng.pick(ARMOR),
                 1 | 2 => rng.pick(XMLISH),
                 3 | 4 => rng.pick(JSONISH),
                 5 => rng.pick(TEXTISH),
