@@ -1,0 +1,7 @@
+{
+ "name": "gen-zone_forecast_geo_json-residue",
+ "from": "nws-zone-forecast",
+ "to": "nws-zone-forecast",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"https://example.org/17\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-3.25,-3.25]},\"properties\":{\"geometry\":\"s57369\",\"zone\":\"https://example.org/831\",\"updated\":\"2024-05-18T21:32:53.505Z\",\"periods\":[{\"number\":25169,\"name\":\"s57226\",\"detailedForecast\":\"s21024\"},{\"number\":19536,\"name\":\"s90971\",\"detailedForecast\":\"s30509\"}]}}",
+ "expect": "{\"id\":\"https://example.org/17\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiLineString\",\"bbox\":[-3.25,-3.25]},\"properties\":{\"geometry\":\"s57369\",\"zone\":\"https://example.org/831\",\"updated\":\"2024-05-18T21:32:53.505Z\",\"periods\":[{\"number\":25169,\"name\":\"s57226\",\"detailedForecast\":\"s21024\"},{\"number\":19536,\"name\":\"s90971\",\"detailedForecast\":\"s30509\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

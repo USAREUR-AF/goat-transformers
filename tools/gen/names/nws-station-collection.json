@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "features_geometry_bbox|.|float": "features_geometry_bbox_value",
+  "features|geometry.type|string": "features_geometry_type",
+  "features|id|string": "features_id",
+  "features|properties.@id|string": "features_properties_id",
+  "features|properties.@type|string": "features_properties_type",
+  "features|properties.bearing.maxValue|float": "features_properties_bearing_max_value",
+  "features|properties.bearing.minValue|float": "features_properties_bearing_min_value",
+  "features|properties.bearing.qualityControl|string": "features_properties_bearing_quality_control",
+  "features|properties.bearing.unitCode|string": "features_properties_bearing_unit_code",
+  "features|properties.bearing.value|float": "features_properties_bearing_value",
+  "features|properties.county|string": "features_properties_county",
+  "features|properties.distance.maxValue|float": "features_properties_distance_max_value",
+  "features|properties.distance.minValue|float": "features_properties_distance_min_value",
+  "features|properties.distance.qualityControl|string": "features_properties_distance_quality_control",
+  "features|properties.distance.unitCode|string": "features_properties_distance_unit_code",
+  "features|properties.distance.value|float": "features_properties_distance_value",
+  "features|properties.elevation.maxValue|float": "features_properties_elevation_max_value",
+  "features|properties.elevation.minValue|float": "features_properties_elevation_min_value",
+  "features|properties.elevation.qualityControl|string": "features_properties_elevation_quality_control",
+  "features|properties.elevation.unitCode|string": "features_properties_elevation_unit_code",
+  "features|properties.elevation.value|float": "features_properties_elevation_value",
+  "features|properties.fireWeatherZone|string": "features_properties_fire_weather_zone",
+  "features|properties.forecast|string": "features_properties_forecast",
+  "features|properties.geometry|string": "features_properties_geometry",
+  "features|properties.name|string": "features_properties_name",
+  "features|properties.provider|string": "features_properties_provider",
+  "features|properties.stationIdentifier|string": "features_properties_station_identifier",
+  "features|properties.subProvider|string": "features_properties_sub_provider",
+  "features|properties.timeZone|string": "features_properties_time_zone",
+  "features|type|string": "features_type",
+  "observation_stations|.|string": "observation_stations_value",
+  "|pagination.next|string": "pagination_next",
+  "|type|string": "type"
+ },
+ "lists": {
+  "features|geometry.bbox": "features_geometry_bbox",
+  "|features": "features",
+  "|observationStations": "observation_stations"
+ }
+}

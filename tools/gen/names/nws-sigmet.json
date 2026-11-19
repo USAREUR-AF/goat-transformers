@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|properties.atsu|string": "properties_atsu",
+  "|properties.end|string": "properties_end",
+  "|properties.fir|string": "properties_fir",
+  "|properties.id|string": "properties_id",
+  "|properties.issueTime|string": "properties_issue_time",
+  "|properties.phenomenon|string": "properties_phenomenon",
+  "|properties.sequence|string": "properties_sequence",
+  "|properties.start|string": "properties_start",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.bbox": "geometry_bbox"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-center_weather_advisory_geo_json-residue",
+ "from": "nws-cwa",
+ "to": "nws-cwa",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"https://example.org/243\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"id\":\"s66476\",\"issueTime\":\"2026-08-09T00:41:20.380Z\",\"cwsu\":\"ZBW\",\"sequence\":91433,\"start\":\"2026-12-01T05:16:12.964Z\",\"end\":\"2024-03-30T23:31:51.213Z\",\"observedProperty\":\"s75319\",\"text\":\"s11764\"}}",
+ "expect": "{\"id\":\"https://example.org/243\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"id\":\"s66476\",\"issueTime\":\"2026-08-09T00:41:20.380Z\",\"cwsu\":\"ZBW\",\"sequence\":91433,\"start\":\"2026-12-01T05:16:12.964Z\",\"end\":\"2024-03-30T23:31:51.213Z\",\"observedProperty\":\"s75319\",\"text\":\"s11764\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

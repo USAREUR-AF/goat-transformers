@@ -1,0 +1,17 @@
+{
+ "name": "gen-gridpoint12h_forecast_geo_json-roundtrip",
+ "from": "nws-forecast",
+ "to": "nws-forecast",
+ "input": "{\"id\":\"https://example.org/482\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiPolygon\",\"bbox\":[0.75,12.5]},\"properties\":{\"geometry\":\"s72406\",\"units\":\"us\",\"forecastGenerator\":\"s71231\",\"generatedAt\":\"2025-07-08T21:11:56.867Z\",\"updateTime\":\"2025-04-10T06:03:23.685Z\",\"validTimes\":\"s31894\",\"elevation\":{\"value\":-3.25,\"maxValue\":7.0625,\"minValue\":7.0625,\"unitCode\":\"s13818\",\"qualityControl\":\"S\"},\"periods\":[{\"number\":64893,\"name\":\"s41377\",\"startTime\":\"2024-10-25T08:40:26.661Z\",\"endTime\":\"2026-03-23T19:05:19.434Z\",\"isDaytime\":true,\"temperatureUnit\":\"F\",\"temperatureTrend\":\"rising\",\"probabilityOfPrecipitation\":{\"value\":1.5,\"maxValue\":1.5,\"minValue\":7.0625,\"unitCode\":\"s94315\",\"qualityControl\":\"X\"},\"windDirection\":\"S\",\"icon\":\"https://example.org/406\",\"shortForecast\":\"s39509\",\"detailedForecast\":\"s28417\"},{\"number\":34188,\"name\":\"s17284\",\"startTime\":\"2027-01-08T08:01:29.764Z\",\"endTime\":\"2026-09-20T13:14:16.446Z\",\"isDaytime\":true,\"temperatureUnit\":\"C\",\"temperatureTrend\":\"rising\",\"probabilityOfPrecipitation\":{\"value\":-3.25,\"maxValue\":7.0625,\"minValue\":101.125,\"unitCode\":\"s40677\",\"qualityControl\":\"V\"},\"windDirection\":\"WSW\",\"icon\":\"https://example.org/662\",\"shortForecast\":\"s52667\",\"detailedForecast\":\"s30740\"}]}}",
+ "expect": "{\"id\":\"https://example.org/482\",\"type\":\"Feature\",\"geometry\":{\"type\":\"MultiPolygon\",\"bbox\":[0.75,12.5]},\"properties\":{\"geometry\":\"s72406\",\"units\":\"us\",\"forecastGenerator\":\"s71231\",\"generatedAt\":\"2025-07-08T21:11:56.867Z\",\"updateTime\":\"2025-04-10T06:03:23.685Z\",\"validTimes\":\"s31894\",\"elevation\":{\"value\":-3.25,\"maxValue\":7.0625,\"minValue\":7.0625,\"unitCode\":\"s13818\",\"qualityControl\":\"S\"},\"periods\":[{\"number\":64893,\"name\":\"s41377\",\"startTime\":\"2024-10-25T08:40:26.661Z\",\"endTime\":\"2026-03-23T19:05:19.434Z\",\"isDaytime\":true,\"temperatureUnit\":\"F\",\"temperatureTrend\":\"rising\",\"probabilityOfPrecipitation\":{\"value\":1.5,\"maxValue\":1.5,\"minValue\":7.0625,\"unitCode\":\"s94315\",\"qualityControl\":\"X\"},\"windDirection\":\"S\",\"icon\":\"https://example.org/406\",\"shortForecast\":\"s39509\",\"detailedForecast\":\"s28417\"},{\"number\":34188,\"name\":\"s17284\",\"startTime\":\"2027-01-08T08:01:29.764Z\",\"endTime\":\"2026-09-20T13:14:16.446Z\",\"isDaytime\":true,\"temperatureUnit\":\"C\",\"temperatureTrend\":\"rising\",\"probabilityOfPrecipitation\":{\"value\":-3.25,\"maxValue\":7.0625,\"minValue\":101.125,\"unitCode\":\"s40677\",\"qualityControl\":\"V\"},\"windDirection\":\"WSW\",\"icon\":\"https://example.org/662\",\"shortForecast\":\"s52667\",\"detailedForecast\":\"s30740\"}]}}",
+ "model": {
+  "time_ms": "1752009116867",
+  "nwsfc.id": "https://example.org/482",
+  "nwsfc.type": "Feature",
+  "nwsfc.geometry_type": "MultiPolygon",
+  "nwsfc.geometry_bbox.#": "2",
+  "nwsfc.properties_geometry": "s72406",
+  "nwsfc.properties_units": "us",
+  "nwsfc.properties_forecast_generator": "s71231"
+ }
+}

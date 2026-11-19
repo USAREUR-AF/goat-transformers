@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "features_geometry_bbox|.|float": "features_geometry_bbox_value",
+  "features|geometry.type|string": "features_geometry_type",
+  "features|id|string": "features_id",
+  "features|properties.cwsu|string": "features_properties_cwsu",
+  "features|properties.end|string": "features_properties_end",
+  "features|properties.id|string": "features_properties_id",
+  "features|properties.issueTime|string": "features_properties_issue_time",
+  "features|properties.observedProperty|string": "features_properties_observed_property",
+  "features|properties.sequence|int": "features_properties_sequence",
+  "features|properties.start|string": "features_properties_start",
+  "features|properties.text|string": "features_properties_text",
+  "features|type|string": "features_type",
+  "|type|string": "type"
+ },
+ "lists": {
+  "features|geometry.bbox": "features_geometry_bbox",
+  "|features": "features"
+ }
+}

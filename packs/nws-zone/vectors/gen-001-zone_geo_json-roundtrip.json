@@ -1,0 +1,17 @@
+{
+ "name": "gen-zone_geo_json-roundtrip",
+ "from": "nws-zone",
+ "to": "nws-zone",
+ "input": "{\"id\":\"https://example.org/907\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"geometry\":\"s95929\",\"@id\":\"https://example.org/603\",\"@type\":\"wx:Zone\",\"id\":\"s96861\",\"type\":\"public\",\"name\":\"s73090\",\"effectiveDate\":\"2025-12-25T05:07:42.705Z\",\"expirationDate\":\"2024-02-07T22:43:30.336Z\",\"state\":\"NE\",\"forecastOffice\":\"https://example.org/104\",\"gridIdentifier\":\"s87946\",\"awipsLocationIdentifier\":\"s51475\",\"cwa\":[\"STO\",\"ILM\"],\"forecastOffices\":[\"https://example.org/946\",\"https://example.org/4\"],\"timeZone\":[\"s92848\",\"s50753\"],\"observationStations\":[\"https://example.org/596\",\"https://example.org/357\"],\"radarStation\":\"s85919\"}}",
+ "expect": "{\"id\":\"https://example.org/907\",\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"bbox\":[-0.5,0.75]},\"properties\":{\"geometry\":\"s95929\",\"@id\":\"https://example.org/603\",\"@type\":\"wx:Zone\",\"id\":\"s96861\",\"type\":\"public\",\"name\":\"s73090\",\"effectiveDate\":\"2025-12-25T05:07:42.705Z\",\"expirationDate\":\"2024-02-07T22:43:30.336Z\",\"state\":\"NE\",\"forecastOffice\":\"https://example.org/104\",\"gridIdentifier\":\"s87946\",\"awipsLocationIdentifier\":\"s51475\",\"cwa\":[\"STO\",\"ILM\"],\"forecastOffices\":[\"https://example.org/946\",\"https://example.org/4\"],\"timeZone\":[\"s92848\",\"s50753\"],\"observationStations\":[\"https://example.org/596\",\"https://example.org/357\"],\"radarStation\":\"s85919\"}}",
+ "model": {
+  "uid": "https://example.org/907",
+  "nwszone.id": "https://example.org/907",
+  "nwszone.type": "Feature",
+  "nwszone.geometry_type": "LineString",
+  "nwszone.geometry_bbox.#": "2",
+  "nwszone.properties_geometry": "s95929",
+  "nwszone.properties_id": "https://example.org/603",
+  "nwszone.properties_type": "wx:Zone"
+ }
+}

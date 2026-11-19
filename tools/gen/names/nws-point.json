@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.@id|string": "properties_id",
+  "|properties.@type|string": "properties_type",
+  "|properties.county|string": "properties_county",
+  "|properties.cwa|string": "properties_cwa",
+  "|properties.fireWeatherZone|string": "properties_fire_weather_zone",
+  "|properties.forecastGridData|string": "properties_forecast_grid_data",
+  "|properties.forecastHourly|string": "properties_forecast_hourly",
+  "|properties.forecastOffice|string": "properties_forecast_office",
+  "|properties.forecastZone|string": "properties_forecast_zone",
+  "|properties.forecast|string": "properties_forecast",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.gridId|string": "properties_grid_id",
+  "|properties.gridX|int": "properties_grid_x",
+  "|properties.gridY|int": "properties_grid_y",
+  "|properties.observationStations|string": "properties_observation_stations",
+  "|properties.radarStation|string": "properties_radar_station",
+  "|properties.timeZone|string": "properties_time_zone",
+  "|properties.type|string": "properties_type_2"
+ },
+ "lists": {}
+}

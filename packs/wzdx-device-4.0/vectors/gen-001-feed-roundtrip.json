@@ -1,0 +1,17 @@
+{
+ "name": "gen-feed-roundtrip",
+ "from": "wzdx-device-4.0",
+ "to": "wzdx-device-4.0",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pattern\":\"blank\",\"image_url\":\"https://example.org/840\",\"image_timestamp\":\"2025-05-11T03:09:17.174Z\",\"message_multi_string\":\"s37988\",\"function\":\"reduced-speed\",\"dynamic_message_function\":\"travel-time\",\"dynamic_message_text\":\"s96470\",\"static_sign_text\":\"s94351\",\"collection_interval_start_date\":\"2025-10-26T18:26:02.228Z\",\"collection_interval_end_date\":\"2026-06-08T03:27:44.041Z\",\"average_speed_kph\":1045,\"volume_vph\":83611,\"occupancy_percent\":75099},\"id\":\"s59246\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pattern\":\"blank\",\"image_url\":\"https://example.org/840\",\"image_timestamp\":\"2025-05-11T03:09:17.174Z\",\"message_multi_string\":\"s37988\",\"function\":\"reduced-speed\",\"dynamic_message_function\":\"travel-time\",\"dynamic_message_text\":\"s96470\",\"static_sign_text\":\"s94351\",\"collection_interval_start_date\":\"2025-10-26T18:26:02.228Z\",\"collection_interval_end_date\":\"2026-06-08T03:27:44.041Z\",\"average_speed_kph\":1045,\"volume_vph\":83611,\"occupancy_percent\":75099},\"id\":\"s59246\"}",
+ "model": {
+  "uid": "s59246",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "wzdxdev40.id": "s59246",
+  "wzdxdev40.properties_pattern": "blank",
+  "wzdxdev40.properties_image_url": "https://example.org/840",
+  "wzdxdev40.properties_image_timestamp": "2025-05-11T03:09:17.174Z",
+  "wzdxdev40.properties_message_multi_string": "s37988"
+ }
+}

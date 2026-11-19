@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.@id|string": "properties_id",
+  "|properties.@type|string": "properties_type",
+  "|properties.geometry|string": "properties_geometry",
+  "|properties.icon|string": "properties_icon",
+  "|properties.rawMessage|string": "properties_raw_message",
+  "|properties.stationId|string": "properties_station_id",
+  "|properties.stationName|string": "properties_station_name",
+  "|properties.station|string": "properties_station",
+  "|properties.textDescription|string": "properties_text_description",
+  "|properties.timestamp|string": "properties_timestamp"
+ },
+ "lists": {}
+}
