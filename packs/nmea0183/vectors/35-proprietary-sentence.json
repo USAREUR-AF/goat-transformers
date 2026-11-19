@@ -3,7 +3,14 @@
   "from": "nmea0183",
   "to": "nmea0183",
   "input": "$PGRME,15.0,M,45.0,M,25.0,M*1C",
-  "expect_error": "no-kind",
+  "expect": "$PGRME,15.0,M,45.0,M,25.0,M*1C",
+  "model": {
+    "@kind": "pgrme",
+    "nmea0183.proprietary_tag": "PGRME",
+    "nmea0183.pgrme_hpe_m": "15",
+    "nmea0183.pgrme_vpe_m": "45",
+    "nmea0183.pgrme_spe_m": "25"
+  },
   "source": "constructed",
-  "reference": "pack.md 'Not mapped': $P... selects no kind; columns 0:2:3 of PGRME are RME. Derived without an engine by a standalone reference program (Python standard library)."
+  "reference": "pack.md 'Proprietary sentences': a $P sentence selects its vendor kind by the whole tag (here pgrme) or the kind `proprietary`, never a standard kind. Until version 0.2.0 of the pack this vector expected no-kind. Checksum 1C is the XOR of the characters between $ and *."
 }

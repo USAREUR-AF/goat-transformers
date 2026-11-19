@@ -1,0 +1,25 @@
+{
+  "name": "psti030-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PSTI,030,081530.250,A,2502.3412345,N,12130.5098765,E,41.5,0.3,-1.2,0.05,190326,R,1.4,999.9*1F",
+  "expect": "$PSTI,030,081530.250,A,2502.3412345,N,12130.5098765,E,41.5,0.3,-1.2,0.05,190326,R,1.4,999.9*1F",
+  "model": {
+    "@kind": "psti030",
+    "nmea0183.proprietary_tag": "PSTI",
+    "time_ms": "1773908130250",
+    "nmea0183.utc_s": "29730.25",
+    "nmea0183.status": "A",
+    "lat": "25.039020575",
+    "lon": "121.50849794166666",
+    "nmea0183.alt_msl_m": "41.5",
+    "track.vel_east_ms": "0.3",
+    "track.vel_north_ms": "-1.2",
+    "track.vel_up_ms": "0.05",
+    "nmea0183.faa_mode": "R",
+    "nmea0183.rtk_age_s": "1.4",
+    "nmea0183.rtk_ratio": "999.9"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PSTI,030: field 12 the UTC date; fields 9-11 east, north, up velocity in metres per second; field 8 above mean sea level"
+}

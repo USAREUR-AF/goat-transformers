@@ -1,0 +1,13 @@
+{
+  "name": "pgrmv-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$PGRMV,0.0,5.0,-0.4*70",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "model": {
+    "track.vel_east_ms": "0",
+    "track.vel_north_ms": "5"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; speed_ms = hypot(0, 5) = 5 and course = bearing(0, 5) = 0 by the derived keys of model/track.def; no position"
+}

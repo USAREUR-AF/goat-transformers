@@ -1,0 +1,22 @@
+{
+  "name": "pashr-sat-numbers-rewritten",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PASHR,SAT,3,12,045,67,48,U,25,210,12,31,,31,300,05,22,U*3F",
+  "expect": "$PASHR,SAT,3,12,45,67,48,U,25,210,12,31,,31,300,5,22,U*3F",
+  "model": {
+    "@kind": "pashr-sat",
+    "nmea0183.proprietary_tag": "PASHR",
+    "nmea0183.pashr_sat_count": "3",
+    "nmea0183.pashr_satellites.#": "3",
+    "nmea0183.pashr_satellites[0].nmea0183.sv_id": "12",
+    "nmea0183.pashr_satellites[0].nmea0183.azimuth_deg": "45",
+    "nmea0183.pashr_satellites[0].nmea0183.elevation_deg": "67",
+    "nmea0183.pashr_satellites[0].nmea0183.pashr_snr": "48",
+    "nmea0183.pashr_satellites[0].nmea0183.pashr_sat_used": "U",
+    "nmea0183.pashr_satellites[1].nmea0183.sv_id": "25",
+    "nmea0183.pashr_satellites[2].nmea0183.pashr_sat_used": "U"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PASHR,SAT: five fields per satellite; `int` writes 045 and 05 as 45 and 5"
+}

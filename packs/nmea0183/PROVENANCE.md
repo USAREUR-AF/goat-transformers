@@ -67,7 +67,7 @@ from "NMEA Revealed".
 | Upstream | https://github.com/Knio/pynmea2 | https://gitlab.com/gpsd/gpsd |
 | Version | commit `d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a` | commit `c59fc6de479d06620c8b2ba395b728e10a71527b` |
 | Download | `https://codeload.github.com/Knio/pynmea2/tar.gz/d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a`, sha256 `fbd85b707a17bd9978a602fdd4340d8eee318b6075e51e9972992b14760e4c52` | `https://gitlab.com/gpsd/gpsd/-/raw/c59fc6de479d06620c8b2ba395b728e10a71527b/drivers/driver_nmea0183.c` |
-| File | `pynmea2/types/talker.py`, sha256 `dacfe523dd1ed177925066db3426f0465fe396d1431697508b3b2aec365bf668`: the `fields` tables of the fifteen classes | `drivers/driver_nmea0183.c`, sha256 `63abff66fb824f350d365b3a4c6b66effd2f7cd0c697b3e236e97a4f59a580b8`: the comments and handling of GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW, DTM |
+| File | `pynmea2/types/talker.py`, sha256 `dacfe523dd1ed177925066db3426f0465fe396d1431697508b3b2aec365bf668`: the `fields` tables of the fifteen classes | `drivers/driver_nmea0183.c`, sha256 `63abff66fb824f350d365b3a4c6b66effd2f7cd0c697b3e236e97a4f59a580b8`: the comments and handling of GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW, DTM; for version 0.2.0 also the proprietary sentences of pack.md "Proprietary sentences" (the comment above each handler and the fields the code reads) |
 | License | `LICENSE`, sha256 `4736b5d379253afa45744afc79ddb475912b213e939bdf7cb97d9a8b6f700e5f`: the MIT License | the file's header: "This file is Copyright by the GPSD project", "SPDX-License-Identifier: BSD-2-clause"; `COPYING` as above |
 
 The MIT grant, quoted from pynmea2's `LICENSE`:

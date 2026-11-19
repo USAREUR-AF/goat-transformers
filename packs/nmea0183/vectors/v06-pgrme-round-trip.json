@@ -1,0 +1,16 @@
+{
+  "name": "pgrme-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRME,15.0,M,45.0,M,25.0,M*1C",
+  "expect": "$PGRME,15.0,M,45.0,M,25.0,M*1C",
+  "model": {
+    "@kind": "pgrme",
+    "nmea0183.proprietary_tag": "PGRME",
+    "nmea0183.pgrme_hpe_m": "15",
+    "nmea0183.pgrme_vpe_m": "45",
+    "nmea0183.pgrme_spe_m": "25"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PGRME: three error estimates in metres; their confidence level is not stated, so no ce/le"
+}

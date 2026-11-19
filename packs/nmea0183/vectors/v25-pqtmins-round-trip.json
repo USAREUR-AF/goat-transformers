@@ -1,0 +1,21 @@
+{
+  "name": "pqtmins-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PQTMINS,42529,1,31.822038,117.1151828,67.681,,,,-0.392663,1.300793,0.030088*4D",
+  "expect": "$PQTMINS,42529,1,31.822038,117.1151828,67.681,,,,-0.392663,1.300793,0.030088*4D",
+  "model": {
+    "@kind": "pqtmins",
+    "nmea0183.proprietary_tag": "PQTMINS",
+    "nmea0183.uptime_ms": "42529",
+    "nmea0183.ins_solution": "1",
+    "lat": "31.822038",
+    "lon": "117.1151828",
+    "nmea0183.ins_height_m": "67.681",
+    "nmea0183.attitude_roll_deg": "-0.392663",
+    "nmea0183.attitude_pitch_deg": "1.300793",
+    "nmea0183.attitude_heading_deg": "0.030088"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PQTMINS: empty velocity fields are absent"
+}

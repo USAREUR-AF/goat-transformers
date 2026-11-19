@@ -149,7 +149,7 @@ re-encodes the same.
 | GSV signal id (NMEA 4.11) | One extra field after the last satellite. A group runs to the end of the record in fours, so the signal id is read as the `sv_id` of a last item with no other keys, and re-encodes as a four-field item. The pack language has no way to end a group one field before the end of the record. Decode a 4.11 GSV with this in mind |
 | VTG, older form | Four values with no unit letters. Field 2 is not `T`, so it selects no kind (`no-kind`) rather than being misread |
 | Sentences without a checksum | The source states the checksum is mandatory; `checksum nmea` makes such a sentence `malformed-wire` |
-| Proprietary sentences (`$P...`) | Their tags are not `<talker><id>` with one of the eight ids, so they select no kind (`no-kind`). Their layouts are each vendor's |
+| Proprietary sentences (`$P...`) other than those of section "Proprietary sentences" | They decode as the kind `proprietary`: the tag is kept whole in `nmea0183.proprietary_tag` and the other fields as residue, so they round-trip; nothing of them is mapped |
 | Other sentence ids | Not in scope of this pack: `no-kind`. RSD (radar system data) is not added: neither added source lays it out |
 | `!` start (AIVDM, AIVDO) | A different payload (AIS); `start "$"` refuses it as `malformed-wire` |
 | Tag blocks (`\...\` before `$`) | The source does not describe them. A sentence that begins with one does not begin with `$` and is `malformed-wire`; the caller strips the tag block first |
@@ -223,3 +223,105 @@ tree): a round trip of every added kind, DPT without its optional field, GNS and
 TLL to GeoJSON, TLL to CoT, TTM to GeoJSON (no position, name as callsign), and
 60 minutes in a TLL position (`transform-decode`). Vectors 01-43 are not
 written by it.
+
+## Proprietary sentences
+
+Version 0.2.0 of the pack adds the vendor sentences that gpsd's NMEA driver
+parses, with layouts and meanings restated from `drivers/driver_nmea0183.c`
+(gpsd, BSD-2-Clause, commit `c59fc6de479d06620c8b2ba395b728e10a71527b`): the
+comment above each handler names the fields, and the code shows which field it
+reads and how. Every sentence and value in the vectors is written for them.
+
+### Tag and kinds
+
+A proprietary sentence starts `$P`, then a three-letter manufacturer code
+(`GRM` Garmin, `ASH` Ashtech, `MTK` MediaTek, `SRF` SiRF, `STI` SkyTraq, `TNT`
+True North and iSync, `QTM` Quectel) and the vendor's sentence name; the tag is
+4 to 7 characters (`PSTI`, `PGRME`, `PMTK001`, `PTNTHTM`, `PQTMGPS`). It has no
+two-character talker id. Convention:
+
+- Each vendor kind selects on the whole tag, `when 0 <tag>`, and also on field
+  1 where the vendor writes a sentence number or type there (`PSTI,030`,
+  `PASHR,POS`), or on a fixed field (`PTNTA` field 3 `T4`).
+- Each maps the whole tag to `nmea0183.proprietary_tag` and lists it in
+  `requires`: an entity from another format has no tag, so an encode from
+  another format still selects RMC, GGA or VTG.
+- After them the kind `proprietary` (`when 0:0:1 P`) takes every other `$P`
+  sentence, keeping the tag and the other fields as residue.
+- These kinds stand before the standard kinds. A standard kind selects on
+  columns 2-4 of the tag, and a proprietary tag can hold one of its ids there
+  (Garmin `PGRMC` holds `RMC`); taken first, a `$P` sentence never reaches a
+  standard kind. A standard tag never begins with `P`, so the standard
+  sentences decode as before (vectors 01-64 unchanged, but for vector 35, below).
+- The common talker column `0:0:2` still reads the first two characters of a
+  proprietary tag (`PG` for `PGRME`); it holds no talker there.
+
+Vector 35 decoded `$PGRME` as `no-kind` before 0.2.0; it now decodes as
+`pgrme`, and its `expect` is the sentence itself.
+
+| Kind | `when` | Fields | Shared keys |
+|---|---|---|---|
+| `pashr-pos` | `0 PASHR`, `1 POS` | position type, satellites used, time, position, height, track, speed km/h, climb, PDOP, HDOP, VDOP, TDOP | `lat`, `lon`, `hae` |
+| `pashr-sat` | `0 PASHR`, `1 SAT` | satellite count, then five fields per satellite (PRN, azimuth, elevation, signal, `U` if used) | none |
+| `pashr-rid` | `0 PASHR`, `1 RID` | receiver type, firmware version | none |
+| `pgrme` | `0 PGRME` | horizontal, vertical and spherical error estimates, each with the unit `M` | none |
+| `pgrmf` | `0 PGRMF` | GPS week, GPS seconds, UTC date, UTC time, leap seconds, position, mode, fix type, speed km/h, course, PDOP, TDOP | `time_ms`, `lat`, `lon`, `course` |
+| `pgrmm` | `0 PGRMM` | map datum name | none |
+| `pgrmt` | `0 PGRMT` | product text and eight status fields | none |
+| `pgrmv` | `0 PGRMV` | velocity east, north, up | `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` |
+| `pgrmz` | `0 PGRMZ` | altitude in feet, the unit `f`, fix mode | none |
+| `pmtk001` | `0 PMTK001` | command number, result flag | none |
+| `pmtk424` | `0 PMTK424` | TSIP, antenna detect, PPS, PPS timing, duration of the PPS pulse | none |
+| `psrfepe` | `0 PSRFEPE` | time, status, HDOP, four error estimates | none |
+| `psti030` | `0 PSTI`, `1 030` | time, status, position, altitude above mean sea level, velocity east/north/up, date, mode, RTK age and ratio | `time_ms`, `lat`, `lon`, `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` |
+| `psti032`, `psti035` | `0 PSTI`, `1 032` or `035` | time, date, status, RTK mode, baseline east/north/up, length, course; fields 11-15 are reserved and not mapped | `time_ms` |
+| `psti036` | `0 PSTI`, `1 036` | time, date, heading, pitch, roll, mode | `time_ms` |
+| `ptnta` | `0 PTNTA`, `3 T4` | date-time text, oscillator quality, PPS interval, fine phase, status, GPS message and transfer quality codes | none |
+| `ptnthtm` | `0 PTNTHTM` | heading, pitch, roll, dip and horizontal field, each with a status letter where the driver names one | none |
+| `pqtmgps` | `0 PQTMGPS` | uptime, time of week, latitude and longitude in degrees, height above the ellipsoid, altitude above mean sea level, ground speed, heading, accuracy, HDOP, PDOP, fix type, satellites | `lat`, `lon`, `hae`, `speed_ms` |
+| `pqtmins` | `0 PQTMINS` | uptime, solution type, latitude and longitude in degrees, height, velocities, roll, pitch, heading | `lat`, `lon` |
+| `pqtmimu` | `0 PQTMIMU` | uptime, three accelerations in g, three angular rates in degrees per second, wheel ticks, time of the last tick | none |
+| `proprietary` | `0:0:1 P` | the tag; other fields as residue | none |
+
+### Evidence for the shared keys
+
+| Key | Where | Evidence in the driver |
+|---|---|---|
+| `lat`, `lon` | PASHR,POS 5-8; PGRMF 6-9; PSTI,030 4-7 | read with the driver's common latitude/longitude reading of degrees, minutes and hemisphere letter, as for GGA and RMC (the datum note of "Not mapped" applies) |
+| `lat`, `lon` | PQTMGPS 3-4; PQTMINS 3-4 | the comments name them "Latitude. Degrees" and "Longitude. Degrees": decimal degrees, `float` |
+| `hae` | PASHR,POS 9 | the driver stores it as the height above the ellipsoid, with the comment "altitude is already WGS 84" |
+| `hae` | PQTMGPS 5 | the comment gives field 5 as the height relative to the ellipsoid, in metres |
+| `time_ms` | PGRMF 4+3; PSTI,030 2+12; PSTI,032/035/036 2+3 | the comments name UTC time hhmmss and UTC date ddmmyy; the driver joins them into the fix time |
+| `course` | PGRMF 13 | "Course over ground, 0 to 359 degrees true" |
+| `speed_ms` | PQTMGPS 7 | "Ground speed (2D). Meters / sec" |
+| `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` | PGRMV 1-3; PSTI,030 9-11 | "true east velocity, m/s", "true north velocity, m/s", "true up velocity, m/s"; PSTI,030 "East Velocity meters/sec" and the like, stored as the fix's east/north/up velocity |
+| `nmea0183.sog_kmh` | PASHR,POS 12; PGRMF 12 | the driver divides by its km/h-per-m/s constant (PASHR) and the comment says "0 to 1151 km/hr" (PGRMF); the module derives `speed_ms` from it |
+
+Not bound, on purpose: PASHR,POS track and the PSTI,036 and PQTM headings (the
+driver does not say true or magnetic); PGRME and PSRFEPE error estimates (the
+driver says the vendors do not state the confidence level, and `ce` / `le` are
+not defined at an unknown one); PGRMZ altitude (feet, read by gpsd as above
+mean sea level), PSTI,030 field 8 (above mean sea level) and PQTMINS height
+(the comment asks "HAE?, MSL?"); PQTMINS velocities (no unit stated);
+PTNTHTM angles (integers in the compass's own units, kept as text).
+
+### Left out
+
+| Sentence | Why |
+|---|---|
+| `PASHR` in the OxTS form (field 3 `T`) | the driver guesses it from field 3 being `T` and marks the decoding FIXME; its fields collide with the Ashtech sentence types. A `$PASHR` of this form decodes as `proprietary` |
+| `PMGNST` (Magellan) | the comment numbers the mode as field 2 and the fix flag as field 3, the code reads fields 3 and 4: the layout is ambiguous |
+| `PMTK705` | field 3 is a date code for one vendor and a product model for another, and field 4 is present for one only |
+| `PSTI,033` | the comment and the code disagree on which field holds the L1 count and on the BDS fields |
+| `PUBX` (u-blox) | the driver lists it with no handler: it gives no layout |
+| `PGRMB`, `PGRMC`, `PGRMH`, `PGRMI`, `PGRMO`, `PMTK010`, `PMTK011`, `PSRF140`-`155`, `PSTI,000/001/005`, `PEMT`, `PERD...`, `PJLT...`, `PSSN`, `PSXN`, `PTNI`, `PTKM`, `PRWIZCH`, `PSTM`, `PTFTTXT`, `PTNLRHVR`, `PTNLRPT`, `PTNLRSVR`, `PTNLRZD` | listed by the driver with no handler, so no layout |
+| `PERC...`, `PAIR...`, `PDTINFO`, `PGLOR`, `PGPSP`, `PSTMCPU`, `PSTMANTENNASTATUS`, `PSTMVER`, `PTNLRBA`, `PTNLRNM`, `PTNLRTP`, `PTNLRXO`, `PQTMVER`, `PQVERNO`, `PQTM...ERROR/OK`, `PRHS` | handled by the driver but not added here; candidates for a later addition |
+
+All of these decode as `proprietary`.
+
+Vectors `v01`-`v28` are written by `tools/gen/nmea0183-vendor-vectors.py`
+(standard library only, no pack read, no engine run; `--check` compares them
+with the tree): a round trip of every vendor kind, PASHR,SAT numbers rewritten
+in the form `int` writes, PSTI,032 with its empty reserved fields dropped,
+PASHR,POS, PGRMF, PGRMV and PQTMGPS to GeoJSON, and `$PGRMC`, `$PASHR,ACK` and
+`$PUBX` as `proprietary`.

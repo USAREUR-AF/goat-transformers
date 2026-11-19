@@ -1,0 +1,26 @@
+{
+  "name": "pqtmgps-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PQTMGPS,671335,463792.25,31.8220846,117.1152211,59.426,63.042,2.5,-171.7101,5.989,1.33,2.11,3,18*6C",
+  "expect": "$PQTMGPS,671335,463792.25,31.8220846,117.1152211,59.426,63.042,2.5,-171.7101,5.989,1.33,2.11,3,18*6C",
+  "model": {
+    "@kind": "pqtmgps",
+    "nmea0183.proprietary_tag": "PQTMGPS",
+    "nmea0183.uptime_ms": "671335",
+    "nmea0183.quectel_tow_s": "463792.25",
+    "lat": "31.8220846",
+    "lon": "117.1152211",
+    "hae": "59.426",
+    "nmea0183.alt_msl_m": "63.042",
+    "speed_ms": "2.5",
+    "nmea0183.heading_2d_deg": "-171.7101",
+    "nmea0183.h_acc_m": "5.989",
+    "nmea0183.hdop": "1.33",
+    "nmea0183.pdop": "2.11",
+    "nmea0183.quectel_fix_type": "3",
+    "nmea0183.sats_used": "18"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PQTMGPS: latitude and longitude in degrees, field 5 height above the ellipsoid, field 7 ground speed in metres per second"
+}

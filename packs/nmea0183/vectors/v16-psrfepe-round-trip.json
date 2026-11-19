@@ -1,0 +1,20 @@
+{
+  "name": "psrfepe-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PSRFEPE,100542.000,A,0.7,6.82,10.69,0.1,180.5*20",
+  "expect": "$PSRFEPE,100542.000,A,0.7,6.82,10.69,0.1,180.5*20",
+  "model": {
+    "@kind": "psrfepe",
+    "nmea0183.proprietary_tag": "PSRFEPE",
+    "nmea0183.utc_s": "36342",
+    "nmea0183.status": "A",
+    "nmea0183.hdop": "0.7",
+    "nmea0183.sirf_ehpe_m": "6.82",
+    "nmea0183.sirf_evpe_m": "10.69",
+    "nmea0183.sirf_ehve": "0.1",
+    "nmea0183.sirf_ehe_deg": "180.5"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PSRFEPE: time, status, HDOP and four error estimates"
+}

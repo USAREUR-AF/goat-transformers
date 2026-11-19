@@ -1,0 +1,18 @@
+{
+  "name": "pmtk424-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PMTK424,0,1,1,0,127875*12",
+  "expect": "$PMTK424,0,1,1,0,127875*12",
+  "model": {
+    "@kind": "pmtk424",
+    "nmea0183.proprietary_tag": "PMTK424",
+    "nmea0183.mtk_tsip": "0",
+    "nmea0183.mtk_antenna": "1",
+    "nmea0183.mtk_pps": "1",
+    "nmea0183.mtk_pps_timing": "0",
+    "nmea0183.mtk_pps_width": "127875"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PMTK424: five settings"
+}

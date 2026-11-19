@@ -1,0 +1,15 @@
+{
+  "name": "pgrmz-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRMZ,1493,f,3*24",
+  "expect": "$PGRMZ,1493,f,3*24",
+  "model": {
+    "@kind": "pgrmz",
+    "nmea0183.proprietary_tag": "PGRMZ",
+    "nmea0183.pgrmz_alt_ft": "1493",
+    "nmea0183.pgrmz_fix_mode": "3"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PGRMZ: altitude in feet, read by gpsd as above mean sea level, so not hae"
+}

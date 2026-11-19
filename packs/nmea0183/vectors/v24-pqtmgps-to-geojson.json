@@ -1,0 +1,15 @@
+{
+  "name": "pqtmgps-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$PQTMGPS,671335,463792.25,31.8220846,117.1152211,59.426,63.042,2.5,-171.7101,5.989,1.33,2.11,3,18*6C",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[117.1152211,31.8220846,59.426]},\"properties\":{\"speed_ms\":2.5}}",
+  "model": {
+    "lat": "31.8220846",
+    "lon": "117.1152211",
+    "hae": "59.426",
+    "speed_ms": "2.5"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; written by hand from the decimal degrees"
+}

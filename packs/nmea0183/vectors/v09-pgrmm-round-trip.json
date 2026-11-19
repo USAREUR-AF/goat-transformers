@@ -1,0 +1,14 @@
+{
+  "name": "pgrmm-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRMM,WGS 84*06",
+  "expect": "$PGRMM,WGS 84*06",
+  "model": {
+    "@kind": "pgrmm",
+    "nmea0183.proprietary_tag": "PGRMM",
+    "nmea0183.map_datum": "WGS 84"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PGRMM: the name of the map datum"
+}
