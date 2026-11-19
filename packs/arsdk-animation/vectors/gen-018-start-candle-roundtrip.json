@@ -1,0 +1,16 @@
+{
+  "name": "start-candle-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000120037000090400000b84000000000",
+  "expect": "9000120037000090400000b84000000000",
+  "model": {
+    "@kind": "start_candle",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_candle_provided_params": "55",
+    "arsdkanimation.start_candle_speed": "4.5",
+    "arsdkanimation.start_candle_vertical_distance": "5.75",
+    "arsdkanimation.start_candle_play_mode": "0"
+  },
+  "source": "constructed"
+}

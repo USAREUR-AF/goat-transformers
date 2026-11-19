@@ -1,0 +1,14 @@
+{
+  "name": "stabilization-state-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940013003801000000",
+  "expect": "940013003801000000",
+  "model": {
+    "@kind": "stabilization_state",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.stabilization_state_gimbal_id": "56",
+    "arsdkgimbal.stabilization_state_state": "1"
+  },
+  "source": "constructed"
+}

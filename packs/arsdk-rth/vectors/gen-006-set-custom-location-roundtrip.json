@@ -1,0 +1,15 @@
+{
+  "name": "set-custom-location-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000600000000000000114000000000000016400000d840",
+  "expect": "92000600000000000000114000000000000016400000d840",
+  "model": {
+    "@kind": "set_custom_location",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.set_custom_location_latitude": "4.25",
+    "arsdkrth.set_custom_location_longitude": "5.5",
+    "arsdkrth.set_custom_location_altitude": "6.75"
+  },
+  "source": "constructed"
+}

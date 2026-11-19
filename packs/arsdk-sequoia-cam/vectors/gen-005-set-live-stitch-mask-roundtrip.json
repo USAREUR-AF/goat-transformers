@@ -1,0 +1,14 @@
+{
+  "name": "set-live-stitch-mask-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "930007002c51",
+  "expect": "930007002c51",
+  "model": {
+    "@kind": "set_live_stitch_mask",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.set_live_stitch_mask_id": "44",
+    "arsdksequoiacam.set_live_stitch_mask_sensors_mask": "81"
+  },
+  "source": "constructed"
+}

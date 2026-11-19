@@ -1,0 +1,16 @@
+{
+  "name": "wifi-state-wifi-auth-channel-list-changed-v2-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04000500000000004f7419",
+  "expect": "04000500000000004f7419",
+  "model": {
+    "@kind": "wifi_state_wifi_auth_channel_list_changed_v2",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.wifi_state_wifi_auth_channel_list_changed_v2_band": "0",
+    "arsdkskyctrl.wifi_state_wifi_auth_channel_list_changed_v2_channel": "79",
+    "arsdkskyctrl.wifi_state_wifi_auth_channel_list_changed_v2_in_or_out": "116",
+    "arsdkskyctrl.wifi_state_wifi_auth_channel_list_changed_v2_list_flags": "25"
+  },
+  "source": "constructed"
+}

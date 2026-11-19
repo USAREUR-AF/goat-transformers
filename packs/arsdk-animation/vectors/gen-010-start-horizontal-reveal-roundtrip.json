@@ -1,0 +1,16 @@
+{
+  "name": "start-horizontal-reveal-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000a002f000080400000a84000000000",
+  "expect": "90000a002f000080400000a84000000000",
+  "model": {
+    "@kind": "start_horizontal_reveal",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_horizontal_reveal_provided_params": "47",
+    "arsdkanimation.start_horizontal_reveal_speed": "4",
+    "arsdkanimation.start_horizontal_reveal_distance": "5.25",
+    "arsdkanimation.start_horizontal_reveal_play_mode": "0"
+  },
+  "source": "constructed"
+}

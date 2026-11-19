@@ -1,0 +1,16 @@
+{
+  "name": "takeoff-location-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "920005000000000000000e4000000000000014400000c84019",
+  "expect": "920005000000000000000e4000000000000014400000c84019",
+  "model": {
+    "@kind": "takeoff_location",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.takeoff_location_latitude": "3.75",
+    "arsdkrth.takeoff_location_longitude": "5",
+    "arsdkrth.takeoff_location_altitude": "6.25",
+    "arsdkrth.takeoff_location_fixed_before_takeoff": "25"
+  },
+  "source": "constructed"
+}

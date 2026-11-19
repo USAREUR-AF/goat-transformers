@@ -1,0 +1,13 @@
+{
+  "name": "calibration-magneto-calibration-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000d000025",
+  "expect": "000d000025",
+  "model": {
+    "@kind": "calibration_magneto_calibration",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_magneto_calibration_calibrate": "37"
+  },
+  "source": "constructed"
+}

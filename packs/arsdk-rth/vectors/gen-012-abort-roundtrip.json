@@ -1,0 +1,12 @@
+{
+  "name": "abort-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000c00",
+  "expect": "92000c00",
+  "model": {
+    "@kind": "abort",
+    "arsdkrth.feature_id": "146"
+  },
+  "source": "constructed"
+}

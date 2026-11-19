@@ -1,0 +1,13 @@
+{
+  "name": "close-session-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "930005002a",
+  "expect": "930005002a",
+  "model": {
+    "@kind": "close_session",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.close_session_id": "42"
+  },
+  "source": "constructed"
+}

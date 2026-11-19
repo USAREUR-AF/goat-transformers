@@ -1,0 +1,13 @@
+{
+  "name": "charger-state-max-charge-rate-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001d000000000000",
+  "expect": "001d000000000000",
+  "model": {
+    "@kind": "charger_state_max_charge_rate_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.charger_state_max_charge_rate_changed_rate": "0"
+  },
+  "source": "constructed"
+}

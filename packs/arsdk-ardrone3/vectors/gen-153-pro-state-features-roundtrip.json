@@ -1,0 +1,13 @@
+{
+  "name": "pro-state-features-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "012000002500000000000000",
+  "expect": "012000002500000000000000",
+  "model": {
+    "@kind": "pro_state_features",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.pro_state_features_features": "37"
+  },
+  "source": "constructed"
+}

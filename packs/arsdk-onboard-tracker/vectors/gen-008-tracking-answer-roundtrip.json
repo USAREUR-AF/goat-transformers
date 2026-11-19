@@ -1,0 +1,13 @@
+{
+  "name": "tracking-answer-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d00080000000000",
+  "expect": "9d00080000000000",
+  "model": {
+    "@kind": "tracking_answer",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.tracking_answer_answer": "0"
+  },
+  "source": "constructed"
+}

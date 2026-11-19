@@ -1,0 +1,14 @@
+{
+  "name": "gps-settings-state-geofence-center-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0118060000000000000011400000000000001640",
+  "expect": "0118060000000000000011400000000000001640",
+  "model": {
+    "@kind": "gps_settings_state_geofence_center_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_state_geofence_center_changed_latitude": "4.25",
+    "arsdkardrone3.gps_settings_state_geofence_center_changed_longitude": "5.5"
+  },
+  "source": "constructed"
+}

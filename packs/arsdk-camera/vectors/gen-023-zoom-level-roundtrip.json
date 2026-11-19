@@ -1,0 +1,14 @@
+{
+  "name": "zoom-level-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0016003b00004040",
+  "expect": "8f0016003b00004040",
+  "model": {
+    "@kind": "zoom_level",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.zoom_level_cam_id": "59",
+    "arsdkcamera.zoom_level_level": "3"
+  },
+  "source": "constructed"
+}

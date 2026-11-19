@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-fcr",
+  "to": "arsdk-fcr",
+  "input": "ae0001002600000000000000",
+  "expect": "ae0001002600000000000000",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkfcr.feature_id": "174",
+    "arsdkfcr.capabilities_capabilities": "38"
+  },
+  "source": "constructed"
+}

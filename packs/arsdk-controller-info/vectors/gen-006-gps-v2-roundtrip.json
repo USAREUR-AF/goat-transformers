@@ -1,0 +1,32 @@
+{
+  "name": "gps-v2-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c000600000000000000000000704840000000000080024000000041000014410000284100003c410000504100006441000078410000864100009041670c02000000000000",
+  "expect": "8c000600000000000000000000704840000000000080024000000041000014410000284100003c410000504100006441000078410000864100009041670c02000000000000",
+  "model": {
+    "@kind": "gps_v2",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.gps_v2_source": "0",
+    "arsdkcontrollerinfo.gps_v2_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkcontrollerinfo.gps_v2_longitude": "2.3125",
+    "lon": "2.3125",
+    "arsdkcontrollerinfo.gps_v2_amsl_altitude": "8",
+    "arsdkcontrollerinfo.gps_v2_wgs84_altitude": "9.25",
+    "hae": "9.25",
+    "arsdkcontrollerinfo.gps_v2_latitude_accuracy": "10.5",
+    "arsdkcontrollerinfo.gps_v2_longitude_accuracy": "11.75",
+    "arsdkcontrollerinfo.gps_v2_altitude_accuracy": "13",
+    "arsdkcontrollerinfo.gps_v2_north_velocity": "14.25",
+    "track.vel_north_ms": "14.25",
+    "arsdkcontrollerinfo.gps_v2_east_velocity": "15.5",
+    "track.vel_east_ms": "15.5",
+    "arsdkcontrollerinfo.gps_v2_up_velocity": "16.75",
+    "track.vel_up_ms": "16.75",
+    "arsdkcontrollerinfo.gps_v2_velocity_accuracy": "18",
+    "arsdkcontrollerinfo.gps_v2_number_of_satellites": "103",
+    "arsdkcontrollerinfo.gps_v2_timestamp": "524"
+  },
+  "source": "constructed"
+}

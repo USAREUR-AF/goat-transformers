@@ -1,0 +1,16 @@
+{
+  "name": "start-dolly-slide-anim-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86001400390000b0400000d84000000041",
+  "expect": "86001400390000b0400000d84000000041",
+  "model": {
+    "@kind": "start_dolly_slide_anim",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.start_dolly_slide_anim_use_default": "57",
+    "arsdkfollowme.start_dolly_slide_anim_speed": "5.5",
+    "arsdkfollowme.start_dolly_slide_anim_angle": "6.75",
+    "arsdkfollowme.start_dolly_slide_anim_horizontal_distance": "8"
+  },
+  "source": "constructed"
+}

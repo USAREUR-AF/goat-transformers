@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-circling-radius-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01020d003200",
+  "expect": "01020d003200",
+  "model": {
+    "@kind": "piloting_settings_circling_radius",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_circling_radius_value": "50"
+  },
+  "source": "constructed"
+}

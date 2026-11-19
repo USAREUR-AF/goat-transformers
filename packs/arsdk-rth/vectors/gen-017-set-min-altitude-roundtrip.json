@@ -1,0 +1,13 @@
+{
+  "name": "set-min-altitude-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200110000003040",
+  "expect": "9200110000003040",
+  "model": {
+    "@kind": "set_min_altitude",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.set_min_altitude_altitude": "2.75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "gps-settings-send-controller-gps-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0117020000000000000002400000000000000c40000000000000134000000000000018400000000000001d40",
+  "expect": "0117020000000000000002400000000000000c40000000000000134000000000000018400000000000001d40",
+  "model": {
+    "@kind": "gps_settings_send_controller_gps",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_send_controller_gps_latitude": "2.25",
+    "arsdkardrone3.gps_settings_send_controller_gps_longitude": "3.5",
+    "arsdkardrone3.gps_settings_send_controller_gps_altitude": "4.75",
+    "arsdkardrone3.gps_settings_send_controller_gps_horizontal_accuracy": "6",
+    "arsdkardrone3.gps_settings_send_controller_gps_vertical_accuracy": "7.25"
+  },
+  "source": "constructed"
+}

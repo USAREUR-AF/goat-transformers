@@ -1,0 +1,15 @@
+{
+  "name": "boomerang-anim-config-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "8600110036000080400000a840",
+  "expect": "8600110036000080400000a840",
+  "model": {
+    "@kind": "boomerang_anim_config",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.boomerang_anim_config_use_default": "54",
+    "arsdkfollowme.boomerang_anim_config_speed": "4",
+    "arsdkfollowme.boomerang_anim_config_distance": "5.25"
+  },
+  "source": "constructed"
+}

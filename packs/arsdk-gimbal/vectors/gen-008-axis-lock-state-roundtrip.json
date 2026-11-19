@@ -1,0 +1,14 @@
+{
+  "name": "axis-lock-state-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940007002c51",
+  "expect": "940007002c51",
+  "model": {
+    "@kind": "axis_lock_state",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.axis_lock_state_gimbal_id": "44",
+    "arsdkgimbal.axis_lock_state_locked": "81"
+  },
+  "source": "constructed"
+}

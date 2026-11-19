@@ -1,0 +1,13 @@
+{
+  "name": "piloting-state-return-home-battery-capacity-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040f0000000000",
+  "expect": "01040f0000000000",
+  "model": {
+    "@kind": "piloting_state_return_home_battery_capacity",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_return_home_battery_capacity_status": "0"
+  },
+  "source": "constructed"
+}

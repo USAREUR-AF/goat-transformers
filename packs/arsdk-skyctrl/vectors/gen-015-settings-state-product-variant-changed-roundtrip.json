@@ -1,0 +1,13 @@
+{
+  "name": "settings-state-product-variant-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0405030000000000",
+  "expect": "0405030000000000",
+  "model": {
+    "@kind": "settings_state_product_variant_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.settings_state_product_variant_changed_variant": "0"
+  },
+  "source": "constructed"
+}

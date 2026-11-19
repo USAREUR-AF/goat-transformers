@@ -1,0 +1,15 @@
+{
+  "name": "piloting-start-piloted-poi-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000c000000000000000e4000000000000014400000000000001940",
+  "expect": "01000c000000000000000e4000000000000014400000000000001940",
+  "model": {
+    "@kind": "piloting_start_piloted_poi",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_start_piloted_poi_latitude": "3.75",
+    "arsdkardrone3.piloting_start_piloted_poi_longitude": "5",
+    "arsdkardrone3.piloting_start_piloted_poi_altitude": "6.25"
+  },
+  "source": "constructed"
+}

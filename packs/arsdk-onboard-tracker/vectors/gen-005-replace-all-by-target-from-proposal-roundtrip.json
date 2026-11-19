@@ -1,0 +1,15 @@
+{
+  "name": "replace-all-by-target-from-proposal-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d0005002a000000000000004f00000074000000",
+  "expect": "9d0005002a000000000000004f00000074000000",
+  "model": {
+    "@kind": "replace_all_by_target_from_proposal",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.replace_all_by_target_from_proposal_timestamp": "42",
+    "arsdkonboardtracker.replace_all_by_target_from_proposal_target_id": "79",
+    "arsdkonboardtracker.replace_all_by_target_from_proposal_cookie": "116"
+  },
+  "source": "constructed"
+}

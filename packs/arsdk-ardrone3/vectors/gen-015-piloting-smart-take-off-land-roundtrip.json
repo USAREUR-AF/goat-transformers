@@ -1,0 +1,12 @@
+{
+  "name": "piloting-smart-take-off-land-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01001000",
+  "expect": "01001000",
+  "model": {
+    "@kind": "piloting_smart_take_off_land",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

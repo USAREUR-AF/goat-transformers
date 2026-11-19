@@ -1,0 +1,14 @@
+{
+  "name": "charger-state-current-charge-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001d01000000000001000000",
+  "expect": "001d01000000000001000000",
+  "model": {
+    "@kind": "charger_state_current_charge_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.charger_state_current_charge_state_changed_status": "0",
+    "arsdkcommon.charger_state_current_charge_state_changed_phase": "1"
+  },
+  "source": "constructed"
+}

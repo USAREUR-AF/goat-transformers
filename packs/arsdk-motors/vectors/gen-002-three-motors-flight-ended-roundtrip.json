@@ -1,0 +1,12 @@
+{
+  "name": "three-motors-flight-ended-roundtrip",
+  "from": "arsdk-motors",
+  "to": "arsdk-motors",
+  "input": "ad000200",
+  "expect": "ad000200",
+  "model": {
+    "@kind": "three_motors_flight_ended",
+    "arsdkmotors.feature_id": "173"
+  },
+  "source": "constructed"
+}

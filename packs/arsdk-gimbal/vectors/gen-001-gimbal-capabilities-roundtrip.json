@@ -1,0 +1,15 @@
+{
+  "name": "gimbal-capabilities-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000100260100000070",
+  "expect": "94000100260100000070",
+  "model": {
+    "@kind": "gimbal_capabilities",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.gimbal_capabilities_gimbal_id": "38",
+    "arsdkgimbal.gimbal_capabilities_model": "1",
+    "arsdkgimbal.gimbal_capabilities_axes": "112"
+  },
+  "source": "constructed"
+}

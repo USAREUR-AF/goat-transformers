@@ -1,0 +1,15 @@
+{
+  "name": "flat-field-calibration-mode-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e000b0030010000007a",
+  "expect": "8e000b0030010000007a",
+  "model": {
+    "@kind": "flat_field_calibration_mode",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.flat_field_calibration_mode_cam_id": "48",
+    "arsdkthermalcam.flat_field_calibration_mode_mode": "1",
+    "arsdkthermalcam.flat_field_calibration_mode_list_flags": "122"
+  },
+  "source": "constructed"
+}

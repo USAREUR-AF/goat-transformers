@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-max-altitude-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010200000000a03f",
+  "expect": "010200000000a03f",
+  "model": {
+    "@kind": "piloting_settings_max_altitude",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_max_altitude_current": "1.25"
+  },
+  "source": "constructed"
+}

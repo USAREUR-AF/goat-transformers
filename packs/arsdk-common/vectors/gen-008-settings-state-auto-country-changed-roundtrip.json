@@ -1,0 +1,13 @@
+{
+  "name": "settings-state-auto-country-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000307002c",
+  "expect": "000307002c",
+  "model": {
+    "@kind": "settings_state_auto_country_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.settings_state_auto_country_changed_automatic": "44"
+  },
+  "source": "constructed"
+}

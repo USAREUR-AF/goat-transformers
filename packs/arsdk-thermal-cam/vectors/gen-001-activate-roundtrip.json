@@ -1,0 +1,13 @@
+{
+  "name": "activate-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e00010026",
+  "expect": "8e00010026",
+  "model": {
+    "@kind": "activate",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.activate_cam_id": "38"
+  },
+  "source": "constructed"
+}

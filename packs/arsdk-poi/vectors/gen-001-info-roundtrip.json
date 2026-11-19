@@ -1,0 +1,13 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-poi",
+  "to": "arsdk-poi",
+  "input": "a800010026000000",
+  "expect": "a800010026000000",
+  "model": {
+    "@kind": "info",
+    "arsdkpoi.feature_id": "168",
+    "arsdkpoi.info_missing_inputs": "38"
+  },
+  "source": "constructed"
+}

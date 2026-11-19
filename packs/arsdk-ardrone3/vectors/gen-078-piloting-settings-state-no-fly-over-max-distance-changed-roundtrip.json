@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-state-no-fly-over-max-distance-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0106040029",
+  "expect": "0106040029",
+  "model": {
+    "@kind": "piloting_settings_state_no_fly_over_max_distance_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_no_fly_over_max_distance_changed_should_not_fly_over": "41"
+  },
+  "source": "constructed"
+}

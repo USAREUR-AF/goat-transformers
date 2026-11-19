@@ -1,0 +1,16 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-auto-look-at",
+  "to": "arsdk-auto-look-at",
+  "input": "a3000100000000004b0000007000000015",
+  "expect": "a3000100000000004b0000007000000015",
+  "model": {
+    "@kind": "info",
+    "arsdkautolookat.feature_id": "163",
+    "arsdkautolookat.info_mode": "0",
+    "arsdkautolookat.info_missing_inputs": "75",
+    "arsdkautolookat.info_improvements": "112",
+    "arsdkautolookat.info_list_flags": "21"
+  },
+  "source": "constructed"
+}

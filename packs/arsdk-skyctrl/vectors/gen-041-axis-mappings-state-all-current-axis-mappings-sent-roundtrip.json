@@ -1,0 +1,12 @@
+{
+  "name": "axis-mappings-state-all-current-axis-mappings-sent-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040f0100",
+  "expect": "040f0100",
+  "model": {
+    "@kind": "axis_mappings_state_all_current_axis_mappings_sent",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

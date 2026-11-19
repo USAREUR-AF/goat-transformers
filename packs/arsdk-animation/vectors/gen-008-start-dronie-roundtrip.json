@@ -1,0 +1,16 @@
+{
+  "name": "start-dronie-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "900008002d000040400000884000000000",
+  "expect": "900008002d000040400000884000000000",
+  "model": {
+    "@kind": "start_dronie",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_dronie_provided_params": "45",
+    "arsdkanimation.start_dronie_speed": "3",
+    "arsdkanimation.start_dronie_distance": "4.25",
+    "arsdkanimation.start_dronie_play_mode": "0"
+  },
+  "source": "constructed"
+}

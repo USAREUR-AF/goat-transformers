@@ -1,0 +1,13 @@
+{
+  "name": "antiflicker-capabilities-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00040029",
+  "expect": "8f00040029",
+  "model": {
+    "@kind": "antiflicker_capabilities",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.antiflicker_capabilities_supported_modes": "41"
+  },
+  "source": "constructed"
+}

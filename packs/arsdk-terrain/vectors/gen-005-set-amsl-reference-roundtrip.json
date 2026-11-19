@@ -1,0 +1,15 @@
+{
+  "name": "set-amsl-reference-roundtrip",
+  "from": "arsdk-terrain",
+  "to": "arsdk-terrain",
+  "input": "b00005000000704000000000000014400000000000001940",
+  "expect": "b00005000000704000000000000014400000000000001940",
+  "model": {
+    "@kind": "set_amsl_reference",
+    "arsdkterrain.feature_id": "176",
+    "arsdkterrain.set_amsl_reference_elevation": "3.75",
+    "arsdkterrain.set_amsl_reference_latitude": "5",
+    "arsdkterrain.set_amsl_reference_longitude": "6.25"
+  },
+  "source": "constructed"
+}

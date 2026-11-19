@@ -1,0 +1,13 @@
+{
+  "name": "gps-settings-state-home-type-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0118040000000000",
+  "expect": "0118040000000000",
+  "model": {
+    "@kind": "gps_settings_state_home_type_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_state_home_type_changed_type": "0"
+  },
+  "source": "constructed"
+}

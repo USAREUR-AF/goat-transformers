@@ -1,0 +1,14 @@
+{
+  "name": "alert-timer-roundtrip",
+  "from": "arsdk-obstacle-avoidance",
+  "to": "arsdk-obstacle-avoidance",
+  "input": "ac000400000000004e000000",
+  "expect": "ac000400000000004e000000",
+  "model": {
+    "@kind": "alert_timer",
+    "arsdkobstacleavoidance.feature_id": "172",
+    "arsdkobstacleavoidance.alert_timer_alert": "0",
+    "arsdkobstacleavoidance.alert_timer_timer": "78"
+  },
+  "source": "constructed"
+}

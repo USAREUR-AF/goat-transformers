@@ -1,0 +1,13 @@
+{
+  "name": "cycle-count-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "9500040029000000",
+  "expect": "9500040029000000",
+  "model": {
+    "@kind": "cycle_count",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.cycle_count_count": "41"
+  },
+  "source": "constructed"
+}

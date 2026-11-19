@@ -1,0 +1,14 @@
+{
+  "name": "network-mode-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab0007002c01000000",
+  "expect": "ab0007002c01000000",
+  "model": {
+    "@kind": "network_mode",
+    "arsdkcellular.feature_id": "171",
+    "arsdkcellular.network_mode_modem_id": "44",
+    "arsdkcellular.network_mode_network_mode": "1"
+  },
+  "source": "constructed"
+}

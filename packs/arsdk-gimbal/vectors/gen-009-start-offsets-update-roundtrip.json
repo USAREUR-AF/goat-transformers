@@ -1,0 +1,13 @@
+{
+  "name": "start-offsets-update-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000c0031",
+  "expect": "94000c0031",
+  "model": {
+    "@kind": "start_offsets_update",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.start_offsets_update_gimbal_id": "49"
+  },
+  "source": "constructed"
+}

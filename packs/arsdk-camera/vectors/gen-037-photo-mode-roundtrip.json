@@ -1,0 +1,19 @@
+{
+  "name": "photo-mode-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00240049010000000200000000000000010000000200000000001441",
+  "expect": "8f00240049010000000200000000000000010000000200000000001441",
+  "model": {
+    "@kind": "photo_mode",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.photo_mode_cam_id": "73",
+    "arsdkcamera.photo_mode_mode": "1",
+    "arsdkcamera.photo_mode_format": "2",
+    "arsdkcamera.photo_mode_file_format": "0",
+    "arsdkcamera.photo_mode_burst": "1",
+    "arsdkcamera.photo_mode_bracketing": "2",
+    "arsdkcamera.photo_mode_capture_interval": "9.25"
+  },
+  "source": "constructed"
+}

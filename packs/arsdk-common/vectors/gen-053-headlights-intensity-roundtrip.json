@@ -1,0 +1,14 @@
+{
+  "name": "headlights-intensity-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00160000254a",
+  "expect": "00160000254a",
+  "model": {
+    "@kind": "headlights_intensity",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.headlights_intensity_left": "37",
+    "arsdkcommon.headlights_intensity_right": "74"
+  },
+  "source": "constructed"
+}

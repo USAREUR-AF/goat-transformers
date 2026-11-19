@@ -1,0 +1,13 @@
+{
+  "name": "media-streaming-video-stream-mode-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0115010000000000",
+  "expect": "0115010000000000",
+  "model": {
+    "@kind": "media_streaming_video_stream_mode",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.media_streaming_video_stream_mode_mode": "0"
+  },
+  "source": "constructed"
+}

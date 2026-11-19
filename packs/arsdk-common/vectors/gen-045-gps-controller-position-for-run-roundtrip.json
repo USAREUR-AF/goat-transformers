@@ -1,0 +1,16 @@
+{
+  "name": "gps-controller-position-for-run-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0010000000000000007048400000000000800240",
+  "expect": "0010000000000000007048400000000000800240",
+  "model": {
+    "@kind": "gps_controller_position_for_run",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.gps_controller_position_for_run_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkcommon.gps_controller_position_for_run_longitude": "2.3125",
+    "lon": "2.3125"
+  },
+  "source": "constructed"
+}

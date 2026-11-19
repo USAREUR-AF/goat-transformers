@@ -1,0 +1,15 @@
+{
+  "name": "access-point-settings-wifi-selection-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04090200000000000100000071",
+  "expect": "04090200000000000100000071",
+  "model": {
+    "@kind": "access_point_settings_wifi_selection",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.access_point_settings_wifi_selection_type": "0",
+    "arsdkskyctrl.access_point_settings_wifi_selection_band": "1",
+    "arsdkskyctrl.access_point_settings_wifi_selection_channel": "113"
+  },
+  "source": "constructed"
+}

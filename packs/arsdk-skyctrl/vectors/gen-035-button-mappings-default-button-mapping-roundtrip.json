@@ -1,0 +1,12 @@
+{
+  "name": "button-mappings-default-button-mapping-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040c0300",
+  "expect": "040c0300",
+  "model": {
+    "@kind": "button_mappings_default_button_mapping",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

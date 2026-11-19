@@ -1,0 +1,15 @@
+{
+  "name": "settings-state-motor-flights-status-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0110040029004e0073000000",
+  "expect": "0110040029004e0073000000",
+  "model": {
+    "@kind": "settings_state_motor_flights_status_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.settings_state_motor_flights_status_changed_nb_flights": "41",
+    "arsdkardrone3.settings_state_motor_flights_status_changed_last_flight_duration": "78",
+    "arsdkardrone3.settings_state_motor_flights_status_changed_total_flight_duration": "115"
+  },
+  "source": "constructed"
+}

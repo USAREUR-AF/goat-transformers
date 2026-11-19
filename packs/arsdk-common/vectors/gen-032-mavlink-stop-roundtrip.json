@@ -1,0 +1,12 @@
+{
+  "name": "mavlink-stop-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000b0200",
+  "expect": "000b0200",
+  "model": {
+    "@kind": "mavlink_stop",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

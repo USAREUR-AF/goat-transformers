@@ -1,0 +1,13 @@
+{
+  "name": "set-emissivity-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "98000a0000003040",
+  "expect": "98000a0000003040",
+  "model": {
+    "@kind": "set_emissivity",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.set_emissivity_emissivity": "2.75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "update-authorized-channels-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000300",
+  "expect": "87000300",
+  "model": {
+    "@kind": "update_authorized_channels",
+    "arsdkwifi.feature_id": "135"
+  },
+  "source": "constructed"
+}

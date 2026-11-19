@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "910008002d00",
+  "expect": "910008002d00",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.capabilities_supported_features": "45"
+  },
+  "source": "constructed"
+}

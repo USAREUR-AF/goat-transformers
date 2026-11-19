@@ -1,0 +1,12 @@
+{
+  "name": "flight-plan-event-speed-bridle-event-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00130100",
+  "expect": "00130100",
+  "model": {
+    "@kind": "flight_plan_event_speed_bridle_event",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

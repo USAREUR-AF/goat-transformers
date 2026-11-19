@@ -1,0 +1,15 @@
+{
+  "name": "set-inverted-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000e003300a8ffffff7d",
+  "expect": "8a000e003300a8ffffff7d",
+  "model": {
+    "@kind": "set_inverted",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.set_inverted_product": "51",
+    "arsdkmapper.set_inverted_axis": "-88",
+    "arsdkmapper.set_inverted_inverted": "125"
+  },
+  "source": "constructed"
+}

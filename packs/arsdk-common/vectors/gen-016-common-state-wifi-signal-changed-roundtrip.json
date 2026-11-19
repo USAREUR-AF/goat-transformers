@@ -1,0 +1,13 @@
+{
+  "name": "common-state-wifi-signal-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000507002c00",
+  "expect": "000507002c00",
+  "model": {
+    "@kind": "common_state_wifi_signal_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_wifi_signal_changed_rssi": "44"
+  },
+  "source": "constructed"
+}

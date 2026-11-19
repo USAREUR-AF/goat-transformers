@@ -1,0 +1,15 @@
+{
+  "name": "lock-exposure-on-roi-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0007002c0000204000007040",
+  "expect": "8f0007002c0000204000007040",
+  "model": {
+    "@kind": "lock_exposure_on_roi",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.lock_exposure_on_roi_cam_id": "44",
+    "arsdkcamera.lock_exposure_on_roi_roi_center_x": "2.5",
+    "arsdkcamera.lock_exposure_on_roi_roi_center_y": "3.75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "candle-anim-config-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86001300380000a0400000c840",
+  "expect": "86001300380000a0400000c840",
+  "model": {
+    "@kind": "candle_anim_config",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.candle_anim_config_use_default": "56",
+    "arsdkfollowme.candle_anim_config_speed": "5",
+    "arsdkfollowme.candle_anim_config_vertical_distance": "6.25"
+  },
+  "source": "constructed"
+}

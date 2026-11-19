@@ -1,0 +1,13 @@
+{
+  "name": "sky-controller-state-charger-type-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0408050000000000",
+  "expect": "0408050000000000",
+  "model": {
+    "@kind": "sky_controller_state_charger_type",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_charger_type_type": "0"
+  },
+  "source": "constructed"
+}

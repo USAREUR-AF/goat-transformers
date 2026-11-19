@@ -1,0 +1,15 @@
+{
+  "name": "add-target-from-proposal-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d00020027000000000000004c00000071000000",
+  "expect": "9d00020027000000000000004c00000071000000",
+  "model": {
+    "@kind": "add_target_from_proposal",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.add_target_from_proposal_timestamp": "39",
+    "arsdkonboardtracker.add_target_from_proposal_target_id": "76",
+    "arsdkonboardtracker.add_target_from_proposal_cookie": "113"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-min-altitude-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01020b0000005040",
+  "expect": "01020b0000005040",
+  "model": {
+    "@kind": "piloting_settings_min_altitude",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_min_altitude_current": "3.25"
+  },
+  "source": "constructed"
+}

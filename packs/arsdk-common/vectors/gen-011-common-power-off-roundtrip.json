@@ -1,0 +1,12 @@
+{
+  "name": "common-power-off-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00040500",
+  "expect": "00040500",
+  "model": {
+    "@kind": "common_power_off",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-circling-direction-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01020c0000000000",
+  "expect": "01020c0000000000",
+  "model": {
+    "@kind": "piloting_settings_circling_direction",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_circling_direction_value": "0"
+  },
+  "source": "constructed"
+}

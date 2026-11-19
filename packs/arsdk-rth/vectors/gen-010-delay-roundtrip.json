@@ -1,0 +1,15 @@
+{
+  "name": "delay-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000a002f0054007900",
+  "expect": "92000a002f0054007900",
+  "model": {
+    "@kind": "delay",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.delay_delay": "47",
+    "arsdkrth.delay_min": "84",
+    "arsdkrth.delay_max": "121"
+  },
+  "source": "constructed"
+}

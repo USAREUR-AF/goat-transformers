@@ -1,0 +1,13 @@
+{
+  "name": "decryption-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "91000e0000000000",
+  "expect": "91000e0000000000",
+  "model": {
+    "@kind": "decryption",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.decryption_result": "0"
+  },
+  "source": "constructed"
+}

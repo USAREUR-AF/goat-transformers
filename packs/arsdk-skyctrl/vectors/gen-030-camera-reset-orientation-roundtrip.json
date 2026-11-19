@@ -1,0 +1,12 @@
+{
+  "name": "camera-reset-orientation-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040b0000",
+  "expect": "040b0000",
+  "model": {
+    "@kind": "camera_reset_orientation",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

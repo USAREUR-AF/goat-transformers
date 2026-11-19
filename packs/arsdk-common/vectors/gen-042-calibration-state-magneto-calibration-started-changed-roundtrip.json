@@ -1,0 +1,13 @@
+{
+  "name": "calibration-state-magneto-calibration-started-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000e030028",
+  "expect": "000e030028",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_started_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_state_magneto_calibration_started_changed_started": "40"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "live-stitch-mask-changed-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "930008002d5277",
+  "expect": "930008002d5277",
+  "model": {
+    "@kind": "live_stitch_mask_changed",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.live_stitch_mask_changed_cam_id": "45",
+    "arsdksequoiacam.live_stitch_mask_changed_mask": "82",
+    "arsdksequoiacam.live_stitch_mask_changed_list_flags": "119"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "volatile-mapping-state-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a00130038",
+  "expect": "8a00130038",
+  "model": {
+    "@kind": "volatile_mapping_state",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.volatile_mapping_state_active": "56"
+  },
+  "source": "constructed"
+}

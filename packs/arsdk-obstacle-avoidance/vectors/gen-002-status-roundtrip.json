@@ -1,0 +1,15 @@
+{
+  "name": "status-roundtrip",
+  "from": "arsdk-obstacle-avoidance",
+  "to": "arsdk-obstacle-avoidance",
+  "input": "ac000200000000000100000002000000",
+  "expect": "ac000200000000000100000002000000",
+  "model": {
+    "@kind": "status",
+    "arsdkobstacleavoidance.feature_id": "172",
+    "arsdkobstacleavoidance.status_mode": "0",
+    "arsdkobstacleavoidance.status_state": "1",
+    "arsdkobstacleavoidance.status_availability": "2"
+  },
+  "source": "constructed"
+}

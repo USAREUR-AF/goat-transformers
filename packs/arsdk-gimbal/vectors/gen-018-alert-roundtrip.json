@@ -1,0 +1,14 @@
+{
+  "name": "alert-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94001100365b",
+  "expect": "94001100365b",
+  "model": {
+    "@kind": "alert",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.alert_gimbal_id": "54",
+    "arsdkgimbal.alert_error": "91"
+  },
+  "source": "constructed"
+}

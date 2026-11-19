@@ -1,0 +1,12 @@
+{
+  "name": "button-events-settings-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04180000",
+  "expect": "04180000",
+  "model": {
+    "@kind": "button_events_settings",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

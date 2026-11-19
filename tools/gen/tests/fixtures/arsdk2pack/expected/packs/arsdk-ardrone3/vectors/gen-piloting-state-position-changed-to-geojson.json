@@ -1,0 +1,14 @@
+{
+  "name": "piloting-state-position-changed-to-geojson",
+  "from": "arsdk-ardrone3",
+  "to": "geojson",
+  "input": "01040400000000000070484000000000008002400000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.3125,48.875]},\"properties\":{}}",
+  "model": {
+    "@complete": true,
+    "lat": "48.875",
+    "lon": "2.3125"
+  },
+  "reference": "the position as a GeoJSON point (engine-spec 0.1.1 rulings 3 and 4)",
+  "source": "constructed"
+}

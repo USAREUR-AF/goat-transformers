@@ -1,0 +1,13 @@
+{
+  "name": "set-environment-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000b0000000000",
+  "expect": "87000b0000000000",
+  "model": {
+    "@kind": "set_environment",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.set_environment_environment": "0"
+  },
+  "source": "constructed"
+}

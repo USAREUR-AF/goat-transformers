@@ -1,0 +1,15 @@
+{
+  "name": "pilot-location-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92001a000000000000000e4000000000000014400000c840",
+  "expect": "92001a000000000000000e4000000000000014400000c840",
+  "model": {
+    "@kind": "pilot_location",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.pilot_location_latitude": "3.75",
+    "arsdkrth.pilot_location_longitude": "5",
+    "arsdkrth.pilot_location_altitude": "6.25"
+  },
+  "source": "constructed"
+}

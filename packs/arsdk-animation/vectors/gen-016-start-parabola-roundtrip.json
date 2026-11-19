@@ -1,0 +1,16 @@
+{
+  "name": "start-parabola-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000100035000060400000984000000000",
+  "expect": "9000100035000060400000984000000000",
+  "model": {
+    "@kind": "start_parabola",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_parabola_provided_params": "53",
+    "arsdkanimation.start_parabola_speed": "3.5",
+    "arsdkanimation.start_parabola_vertical_distance": "4.75",
+    "arsdkanimation.start_parabola_play_mode": "0"
+  },
+  "source": "constructed"
+}

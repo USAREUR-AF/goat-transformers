@@ -1,0 +1,16 @@
+{
+  "name": "target-tracking-state-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d0007002c00000051000000020000001b",
+  "expect": "9d0007002c00000051000000020000001b",
+  "model": {
+    "@kind": "target_tracking_state",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.target_tracking_state_target_id": "44",
+    "arsdkonboardtracker.target_tracking_state_cookie": "81",
+    "arsdkonboardtracker.target_tracking_state_state": "2",
+    "arsdkonboardtracker.target_tracking_state_list_flags": "27"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "piloting-state-altitude-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040800000000000000fc3f",
+  "expect": "01040800000000000000fc3f",
+  "model": {
+    "@kind": "piloting_state_altitude_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_altitude_changed_altitude": "1.75"
+  },
+  "source": "constructed"
+}

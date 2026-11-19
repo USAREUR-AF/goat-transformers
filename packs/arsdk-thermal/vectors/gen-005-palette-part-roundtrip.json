@@ -1,0 +1,17 @@
+{
+  "name": "palette-part-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "98000500000070400000a0400000c8400000f0403e",
+  "expect": "98000500000070400000a0400000c8400000f0403e",
+  "model": {
+    "@kind": "palette_part",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.palette_part_red": "3.75",
+    "arsdkthermal.palette_part_green": "5",
+    "arsdkthermal.palette_part_blue": "6.25",
+    "arsdkthermal.palette_part_index": "7.5",
+    "arsdkthermal.palette_part_list_flags": "62"
+  },
+  "source": "constructed"
+}

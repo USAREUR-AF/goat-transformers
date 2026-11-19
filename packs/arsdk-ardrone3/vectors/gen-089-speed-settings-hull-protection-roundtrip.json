@@ -1,0 +1,13 @@
+{
+  "name": "speed-settings-hull-protection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010b020027",
+  "expect": "010b020027",
+  "model": {
+    "@kind": "speed_settings_hull_protection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.speed_settings_hull_protection_present": "39"
+  },
+  "source": "constructed"
+}

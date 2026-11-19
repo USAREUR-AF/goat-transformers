@@ -1,0 +1,13 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-hand-land",
+  "to": "arsdk-hand-land",
+  "input": "a100010000000000",
+  "expect": "a100010000000000",
+  "model": {
+    "@kind": "state",
+    "arsdkhandland.feature_id": "161",
+    "arsdkhandland.state_state": "0"
+  },
+  "source": "constructed"
+}

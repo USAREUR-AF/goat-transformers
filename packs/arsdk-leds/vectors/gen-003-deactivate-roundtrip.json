@@ -1,0 +1,12 @@
+{
+  "name": "deactivate-roundtrip",
+  "from": "arsdk-leds",
+  "to": "arsdk-leds",
+  "input": "9a000300",
+  "expect": "9a000300",
+  "model": {
+    "@kind": "deactivate",
+    "arsdkleds.feature_id": "154"
+  },
+  "source": "constructed"
+}

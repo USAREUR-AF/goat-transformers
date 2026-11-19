@@ -1,0 +1,13 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-precise-home",
+  "to": "arsdk-precise-home",
+  "input": "9700040000000000",
+  "expect": "9700040000000000",
+  "model": {
+    "@kind": "state",
+    "arsdkprecisehome.feature_id": "151",
+    "arsdkprecisehome.state_state": "0"
+  },
+  "source": "constructed"
+}

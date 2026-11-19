@@ -1,0 +1,13 @@
+{
+  "name": "cancel-calibration-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "9400120037",
+  "expect": "9400120037",
+  "model": {
+    "@kind": "cancel_calibration",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.cancel_calibration_gimbal_id": "55"
+  },
+  "source": "constructed"
+}

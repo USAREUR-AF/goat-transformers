@@ -1,0 +1,15 @@
+{
+  "name": "supported-formatting-types-roundtrip",
+  "from": "arsdk-user-storage-v2",
+  "to": "arsdk-user-storage-v2",
+  "input": "a60009002e5378",
+  "expect": "a60009002e5378",
+  "model": {
+    "@kind": "supported_formatting_types",
+    "arsdkuserstoragev2.feature_id": "166",
+    "arsdkuserstoragev2.supported_formatting_types_storage_id": "46",
+    "arsdkuserstoragev2.supported_formatting_types_supported_types": "83",
+    "arsdkuserstoragev2.supported_formatting_types_list_flags": "120"
+  },
+  "source": "constructed"
+}

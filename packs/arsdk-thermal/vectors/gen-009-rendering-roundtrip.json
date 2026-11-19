@@ -1,0 +1,14 @@
+{
+  "name": "rendering-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "980009000000000000006040",
+  "expect": "980009000000000000006040",
+  "model": {
+    "@kind": "rendering",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.rendering_mode": "0",
+    "arsdkthermal.rendering_blending_rate": "3.5"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "invert-channel-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "880008000000000052",
+  "expect": "880008000000000052",
+  "model": {
+    "@kind": "invert_channel",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.invert_channel_action": "0",
+    "arsdkrc.invert_channel_flag": "82"
+  },
+  "source": "constructed"
+}

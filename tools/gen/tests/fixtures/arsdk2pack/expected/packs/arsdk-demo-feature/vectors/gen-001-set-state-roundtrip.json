@@ -1,0 +1,15 @@
+{
+  "name": "set-state-roundtrip",
+  "from": "arsdk-demo-feature",
+  "to": "arsdk-demo-feature",
+  "input": "c8000100000000004b0070000000",
+  "expect": "c8000100000000004b0070000000",
+  "model": {
+    "@kind": "set_state",
+    "arsdkdemofeature.feature_id": "200",
+    "arsdkdemofeature.set_state_state": "0",
+    "arsdkdemofeature.set_state_mask": "75",
+    "arsdkdemofeature.set_state_offset": "112"
+  },
+  "source": "constructed"
+}

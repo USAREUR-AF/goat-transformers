@@ -1,0 +1,12 @@
+{
+  "name": "over-heat-state-over-heat-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00070000",
+  "expect": "00070000",
+  "model": {
+    "@kind": "over_heat_state_over_heat_changed",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

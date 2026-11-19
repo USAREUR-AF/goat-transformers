@@ -1,0 +1,13 @@
+{
+  "name": "controller-is-piloting-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0008000025",
+  "expect": "0008000025",
+  "model": {
+    "@kind": "controller_is_piloting",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.controller_is_piloting_piloting": "37"
+  },
+  "source": "constructed"
+}

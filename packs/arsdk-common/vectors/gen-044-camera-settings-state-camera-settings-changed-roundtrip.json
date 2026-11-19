@@ -1,0 +1,17 @@
+{
+  "name": "camera-settings-state-camera-settings-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000f00000000a03f00002040000070400000a0400000c840",
+  "expect": "000f00000000a03f00002040000070400000a0400000c840",
+  "model": {
+    "@kind": "camera_settings_state_camera_settings_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.camera_settings_state_camera_settings_changed_fov": "1.25",
+    "arsdkcommon.camera_settings_state_camera_settings_changed_pan_max": "2.5",
+    "arsdkcommon.camera_settings_state_camera_settings_changed_pan_min": "3.75",
+    "arsdkcommon.camera_settings_state_camera_settings_changed_tilt_max": "5",
+    "arsdkcommon.camera_settings_state_camera_settings_changed_tilt_min": "6.25"
+  },
+  "source": "constructed"
+}

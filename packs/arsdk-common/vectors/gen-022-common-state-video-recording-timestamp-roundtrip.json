@@ -1,0 +1,14 @@
+{
+  "name": "common-state-video-recording-timestamp-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00050e0033000000000000005800000000000000",
+  "expect": "00050e0033000000000000005800000000000000",
+  "model": {
+    "@kind": "common_state_video_recording_timestamp",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_video_recording_timestamp_start_timestamp": "51",
+    "arsdkcommon.common_state_video_recording_timestamp_stop_timestamp": "88"
+  },
+  "source": "constructed"
+}

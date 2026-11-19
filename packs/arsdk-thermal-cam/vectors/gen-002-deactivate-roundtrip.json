@@ -1,0 +1,13 @@
+{
+  "name": "deactivate-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e00020027",
+  "expect": "8e00020027",
+  "model": {
+    "@kind": "deactivate",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.deactivate_cam_id": "39"
+  },
+  "source": "constructed"
+}

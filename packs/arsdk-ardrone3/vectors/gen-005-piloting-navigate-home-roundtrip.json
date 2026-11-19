@@ -1,0 +1,13 @@
+{
+  "name": "piloting-navigate-home-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010005002a",
+  "expect": "010005002a",
+  "model": {
+    "@kind": "piloting_navigate_home",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_navigate_home_start": "42"
+  },
+  "source": "constructed"
+}

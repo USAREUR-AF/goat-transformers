@@ -1,0 +1,12 @@
+{
+  "name": "custom-msg-enable-roundtrip",
+  "from": "arsdk-mission",
+  "to": "arsdk-mission",
+  "input": "a5000900",
+  "expect": "a5000900",
+  "model": {
+    "@kind": "custom_msg_enable",
+    "arsdkmission.feature_id": "165"
+  },
+  "source": "constructed"
+}

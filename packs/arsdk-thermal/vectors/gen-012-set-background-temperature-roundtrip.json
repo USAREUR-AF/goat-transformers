@@ -1,0 +1,13 @@
+{
+  "name": "set-background-temperature-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "98000c0000007040",
+  "expect": "98000c0000007040",
+  "model": {
+    "@kind": "set_background_temperature",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.set_background_temperature_background_temperature": "3.75"
+  },
+  "source": "constructed"
+}

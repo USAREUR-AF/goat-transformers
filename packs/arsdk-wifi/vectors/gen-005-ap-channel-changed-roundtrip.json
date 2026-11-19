@@ -1,0 +1,15 @@
+{
+  "name": "ap-channel-changed-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000600000000000100000075",
+  "expect": "87000600000000000100000075",
+  "model": {
+    "@kind": "ap_channel_changed",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.ap_channel_changed_type": "0",
+    "arsdkwifi.ap_channel_changed_band": "1",
+    "arsdkwifi.ap_channel_changed_channel": "117"
+  },
+  "source": "constructed"
+}

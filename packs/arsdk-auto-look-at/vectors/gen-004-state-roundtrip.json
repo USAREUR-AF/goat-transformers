@@ -1,0 +1,14 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-auto-look-at",
+  "to": "arsdk-auto-look-at",
+  "input": "a30004000000000001000000",
+  "expect": "a30004000000000001000000",
+  "model": {
+    "@kind": "state",
+    "arsdkautolookat.feature_id": "163",
+    "arsdkautolookat.state_mode": "0",
+    "arsdkautolookat.state_behavior": "1"
+  },
+  "source": "constructed"
+}

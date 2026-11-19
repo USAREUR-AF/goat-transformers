@@ -1,0 +1,16 @@
+{
+  "name": "map-axis-action-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a0006002b0001000000750000009a000000",
+  "expect": "8a0006002b0001000000750000009a000000",
+  "model": {
+    "@kind": "map_axis_action",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.map_axis_action_product": "43",
+    "arsdkmapper.map_axis_action_action": "1",
+    "arsdkmapper.map_axis_action_axis": "117",
+    "arsdkmapper.map_axis_action_buttons": "154"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "set-target-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940005002a01000000020000000000f04001000000000020410000000000004841",
+  "expect": "940005002a01000000020000000000f04001000000000020410000000000004841",
+  "model": {
+    "@kind": "set_target",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.set_target_gimbal_id": "42",
+    "arsdkgimbal.set_target_control_mode": "1",
+    "arsdkgimbal.set_target_yaw_frame_of_reference": "2",
+    "arsdkgimbal.set_target_yaw": "7.5",
+    "arsdkgimbal.set_target_pitch_frame_of_reference": "1",
+    "arsdkgimbal.set_target_pitch": "10",
+    "arsdkgimbal.set_target_roll_frame_of_reference": "0",
+    "arsdkgimbal.set_target_roll": "12.5"
+  },
+  "source": "constructed"
+}

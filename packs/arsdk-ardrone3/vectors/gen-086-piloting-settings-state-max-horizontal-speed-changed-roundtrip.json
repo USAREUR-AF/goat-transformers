@@ -1,0 +1,15 @@
+{
+  "name": "piloting-settings-state-max-horizontal-speed-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0106110000003040000080400000a840",
+  "expect": "0106110000003040000080400000a840",
+  "model": {
+    "@kind": "piloting_settings_state_max_horizontal_speed_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_max_horizontal_speed_changed_current": "2.75",
+    "arsdkardrone3.piloting_settings_state_max_horizontal_speed_changed_min": "4",
+    "arsdkardrone3.piloting_settings_state_max_horizontal_speed_changed_max": "5.25"
+  },
+  "source": "constructed"
+}

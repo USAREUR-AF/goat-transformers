@@ -1,0 +1,13 @@
+{
+  "name": "start-tracking-engine-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d000a002f",
+  "expect": "9d000a002f",
+  "model": {
+    "@kind": "start_tracking_engine",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.start_tracking_engine_box_proposals": "47"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "absolute-attitude-bounds-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000a002f000080400000a8400000d0400000f8400000104100002441",
+  "expect": "94000a002f000080400000a8400000d0400000f8400000104100002441",
+  "model": {
+    "@kind": "absolute_attitude_bounds",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.absolute_attitude_bounds_gimbal_id": "47",
+    "arsdkgimbal.absolute_attitude_bounds_min_yaw": "4",
+    "arsdkgimbal.absolute_attitude_bounds_max_yaw": "5.25",
+    "arsdkgimbal.absolute_attitude_bounds_min_pitch": "6.5",
+    "arsdkgimbal.absolute_attitude_bounds_max_pitch": "7.75",
+    "arsdkgimbal.absolute_attitude_bounds_min_roll": "9",
+    "arsdkgimbal.absolute_attitude_bounds_max_roll": "10.25"
+  },
+  "source": "constructed"
+}

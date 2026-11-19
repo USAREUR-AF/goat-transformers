@@ -1,0 +1,13 @@
+{
+  "name": "unlock-exposure-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0008002d",
+  "expect": "8f0008002d",
+  "model": {
+    "@kind": "unlock_exposure",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.unlock_exposure_cam_id": "45"
+  },
+  "source": "constructed"
+}

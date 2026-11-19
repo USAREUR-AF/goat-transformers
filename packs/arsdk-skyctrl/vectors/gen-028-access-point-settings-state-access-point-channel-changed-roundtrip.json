@@ -1,0 +1,13 @@
+{
+  "name": "access-point-settings-state-access-point-channel-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040a010026",
+  "expect": "040a010026",
+  "model": {
+    "@kind": "access_point_settings_state_access_point_channel_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.access_point_settings_state_access_point_channel_changed_channel": "38"
+  },
+  "source": "constructed"
+}

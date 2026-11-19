@@ -1,0 +1,12 @@
+{
+  "name": "activate-roundtrip",
+  "from": "arsdk-leds",
+  "to": "arsdk-leds",
+  "input": "9a000200",
+  "expect": "9a000200",
+  "model": {
+    "@kind": "activate",
+    "arsdkleds.feature_id": "154"
+  },
+  "source": "constructed"
+}

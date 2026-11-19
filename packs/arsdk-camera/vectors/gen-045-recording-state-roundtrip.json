@@ -1,0 +1,16 @@
+{
+  "name": "recording-state-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f002d00520100000002000000c100000000000000",
+  "expect": "8f002d00520100000002000000c100000000000000",
+  "model": {
+    "@kind": "recording_state",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.recording_state_cam_id": "82",
+    "arsdkcamera.recording_state_available": "1",
+    "arsdkcamera.recording_state_state": "2",
+    "arsdkcamera.recording_state_start_timestamp": "193"
+  },
+  "source": "constructed"
+}

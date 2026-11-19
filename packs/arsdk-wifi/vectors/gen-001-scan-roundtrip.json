@@ -1,0 +1,13 @@
+{
+  "name": "scan-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "8700010026",
+  "expect": "8700010026",
+  "model": {
+    "@kind": "scan",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.scan_band": "38"
+  },
+  "source": "constructed"
+}

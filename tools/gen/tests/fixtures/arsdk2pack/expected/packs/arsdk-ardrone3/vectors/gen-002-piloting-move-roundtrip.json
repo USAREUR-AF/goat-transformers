@@ -1,0 +1,17 @@
+{
+  "name": "piloting-move-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000300284d0000a84000000000bc00000000000000",
+  "expect": "01000300284d0000a84000000000bc00000000000000",
+  "model": {
+    "@kind": "piloting_move",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_move_roll": "40",
+    "arsdkardrone3.piloting_move_flag": "77",
+    "arsdkardrone3.piloting_move_speed": "5.25",
+    "arsdkardrone3.piloting_move_mode": "0",
+    "arsdkardrone3.piloting_move_count": "188"
+  },
+  "source": "constructed"
+}

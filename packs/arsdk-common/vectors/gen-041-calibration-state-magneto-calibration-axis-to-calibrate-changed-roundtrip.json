@@ -1,0 +1,13 @@
+{
+  "name": "calibration-state-magneto-calibration-axis-to-calibrate-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000e020000000000",
+  "expect": "000e020000000000",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_axis_to_calibrate_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_state_magneto_calibration_axis_to_calibrate_changed_axis": "0"
+  },
+  "source": "constructed"
+}

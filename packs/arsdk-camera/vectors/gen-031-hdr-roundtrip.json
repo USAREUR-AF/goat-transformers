@@ -1,0 +1,15 @@
+{
+  "name": "hdr-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f001e00430100000002000000",
+  "expect": "8f001e00430100000002000000",
+  "model": {
+    "@kind": "hdr",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.hdr_cam_id": "67",
+    "arsdkcamera.hdr_available": "1",
+    "arsdkcamera.hdr_state": "2"
+  },
+  "source": "constructed"
+}

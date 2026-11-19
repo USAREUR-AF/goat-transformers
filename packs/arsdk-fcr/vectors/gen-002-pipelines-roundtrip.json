@@ -1,0 +1,13 @@
+{
+  "name": "pipelines-roundtrip",
+  "from": "arsdk-fcr",
+  "to": "arsdk-fcr",
+  "input": "ae0002002700000000000000",
+  "expect": "ae0002002700000000000000",
+  "model": {
+    "@kind": "pipelines",
+    "arsdkfcr.feature_id": "174",
+    "arsdkfcr.pipelines_id": "39"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "candle-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90001300000000000000a0400000c84000000000",
+  "expect": "90001300000000000000a0400000c84000000000",
+  "model": {
+    "@kind": "candle_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.candle_state_state": "0",
+    "arsdkanimation.candle_state_speed": "5",
+    "arsdkanimation.candle_state_vertical_distance": "6.25",
+    "arsdkanimation.candle_state_play_mode": "0"
+  },
+  "source": "constructed"
+}

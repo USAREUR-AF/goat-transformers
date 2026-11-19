@@ -1,0 +1,18 @@
+{
+  "name": "piloting-pcmd-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0100020027b471ea3be0000000",
+  "expect": "0100020027b471ea3be0000000",
+  "model": {
+    "@kind": "piloting_pcmd",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_pcmd_flag": "39",
+    "arsdkardrone3.piloting_pcmd_roll": "-76",
+    "arsdkardrone3.piloting_pcmd_pitch": "113",
+    "arsdkardrone3.piloting_pcmd_yaw": "-22",
+    "arsdkardrone3.piloting_pcmd_gaz": "59",
+    "arsdkardrone3.piloting_pcmd_timestamp_and_seq_num": "224"
+  },
+  "source": "constructed"
+}

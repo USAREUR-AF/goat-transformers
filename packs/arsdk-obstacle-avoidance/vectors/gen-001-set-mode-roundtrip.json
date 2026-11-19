@@ -1,0 +1,13 @@
+{
+  "name": "set-mode-roundtrip",
+  "from": "arsdk-obstacle-avoidance",
+  "to": "arsdk-obstacle-avoidance",
+  "input": "ac00010000000000",
+  "expect": "ac00010000000000",
+  "model": {
+    "@kind": "set_mode",
+    "arsdkobstacleavoidance.feature_id": "172",
+    "arsdkobstacleavoidance.set_mode_mode": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "factory-reset-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001f0000",
+  "expect": "001f0000",
+  "model": {
+    "@kind": "factory_reset",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

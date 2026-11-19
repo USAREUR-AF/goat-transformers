@@ -1,0 +1,14 @@
+{
+  "name": "flip-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "900005000000000001000000",
+  "expect": "900005000000000001000000",
+  "model": {
+    "@kind": "flip_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.flip_state_state": "0",
+    "arsdkanimation.flip_state_type": "1"
+  },
+  "source": "constructed"
+}

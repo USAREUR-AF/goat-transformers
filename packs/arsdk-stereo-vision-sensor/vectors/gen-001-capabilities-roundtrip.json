@@ -1,0 +1,15 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-stereo-vision-sensor",
+  "to": "arsdk-stereo-vision-sensor",
+  "input": "9f00010026010000007000",
+  "expect": "9f00010026010000007000",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkstereovisionsensor.feature_id": "159",
+    "arsdkstereovisionsensor.capabilities_sensor_id": "38",
+    "arsdkstereovisionsensor.capabilities_model": "1",
+    "arsdkstereovisionsensor.capabilities_supported_features": "112"
+  },
+  "source": "constructed"
+}

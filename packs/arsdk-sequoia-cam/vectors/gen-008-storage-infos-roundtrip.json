@@ -1,0 +1,25 @@
+{
+  "name": "storage-infos-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "93000a002f01000000799e00000000000000c300000000000000680d3257010000000000007c0100000000000021466b",
+  "expect": "93000a002f01000000799e00000000000000c300000000000000680d3257010000000000007c0100000000000021466b",
+  "model": {
+    "@kind": "storage_infos",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.storage_infos_cam_id": "47",
+    "arsdksequoiacam.storage_infos_selected": "1",
+    "arsdksequoiacam.storage_infos_internal_available": "121",
+    "arsdksequoiacam.storage_infos_internal_total_size": "158",
+    "arsdksequoiacam.storage_infos_internal_free_size": "195",
+    "arsdksequoiacam.storage_infos_internal_is_ro": "104",
+    "arsdksequoiacam.storage_infos_internal_is_corrupted": "13",
+    "arsdksequoiacam.storage_infos_sd_available": "50",
+    "arsdksequoiacam.storage_infos_sd_total_size": "343",
+    "arsdksequoiacam.storage_infos_sd_free_size": "380",
+    "arsdksequoiacam.storage_infos_sd_is_ro": "33",
+    "arsdksequoiacam.storage_infos_sd_is_corrupted": "70",
+    "arsdksequoiacam.storage_infos_list_flags": "107"
+  },
+  "source": "constructed"
+}

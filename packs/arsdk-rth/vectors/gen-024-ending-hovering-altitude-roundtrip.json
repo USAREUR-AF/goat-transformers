@@ -1,0 +1,15 @@
+{
+  "name": "ending-hovering-altitude-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200180000003040000080400000a840",
+  "expect": "9200180000003040000080400000a840",
+  "model": {
+    "@kind": "ending_hovering_altitude",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.ending_hovering_altitude_current": "2.75",
+    "arsdkrth.ending_hovering_altitude_min": "4",
+    "arsdkrth.ending_hovering_altitude_max": "5.25"
+  },
+  "source": "constructed"
+}

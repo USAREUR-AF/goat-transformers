@@ -1,0 +1,15 @@
+{
+  "name": "grab-state-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000200270000004c00000071000000",
+  "expect": "8a000200270000004c00000071000000",
+  "model": {
+    "@kind": "grab_state",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.grab_state_buttons": "39",
+    "arsdkmapper.grab_state_axes": "76",
+    "arsdkmapper.grab_state_buttons_state": "113"
+  },
+  "source": "constructed"
+}

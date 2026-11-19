@@ -1,0 +1,16 @@
+{
+  "name": "set-offsets-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940009002e00006040000098400000c040",
+  "expect": "940009002e00006040000098400000c040",
+  "model": {
+    "@kind": "set_offsets",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.set_offsets_gimbal_id": "46",
+    "arsdkgimbal.set_offsets_yaw": "3.5",
+    "arsdkgimbal.set_offsets_pitch": "4.75",
+    "arsdkgimbal.set_offsets_roll": "6"
+  },
+  "source": "constructed"
+}

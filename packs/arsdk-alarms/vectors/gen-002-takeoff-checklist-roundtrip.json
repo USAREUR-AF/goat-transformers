@@ -1,0 +1,15 @@
+{
+  "name": "takeoff-checklist-roundtrip",
+  "from": "arsdk-alarms",
+  "to": "arsdk-alarms",
+  "input": "af000200000000000100000071",
+  "expect": "af000200000000000100000071",
+  "model": {
+    "@kind": "takeoff_checklist",
+    "arsdkalarms.feature_id": "175",
+    "arsdkalarms.takeoff_checklist_check": "0",
+    "arsdkalarms.takeoff_checklist_state": "1",
+    "arsdkalarms.takeoff_checklist_list_flags": "113"
+  },
+  "source": "constructed"
+}

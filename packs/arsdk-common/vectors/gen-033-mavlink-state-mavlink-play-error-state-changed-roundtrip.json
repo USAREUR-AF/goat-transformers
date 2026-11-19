@@ -1,0 +1,13 @@
+{
+  "name": "mavlink-state-mavlink-play-error-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000c010000000000",
+  "expect": "000c010000000000",
+  "model": {
+    "@kind": "mavlink_state_mavlink_play_error_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.mavlink_state_mavlink_play_error_state_changed_error": "0"
+  },
+  "source": "constructed"
+}

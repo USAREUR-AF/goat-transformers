@@ -1,0 +1,17 @@
+{
+  "name": "vertigo-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "900017000000000000006040000098400000000001000000",
+  "expect": "900017000000000000006040000098400000000001000000",
+  "model": {
+    "@kind": "vertigo_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.vertigo_state_state": "0",
+    "arsdkanimation.vertigo_state_duration": "3.5",
+    "arsdkanimation.vertigo_state_max_zoom_level": "4.75",
+    "arsdkanimation.vertigo_state_finish_action": "0",
+    "arsdkanimation.vertigo_state_play_mode": "1"
+  },
+  "source": "constructed"
+}

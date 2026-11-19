@@ -1,0 +1,16 @@
+{
+  "name": "leash-config-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86001d004200004040000088400000b040",
+  "expect": "86001d004200004040000088400000b040",
+  "model": {
+    "@kind": "leash_config",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.leash_config_use_default": "66",
+    "arsdkfollowme.leash_config_distance": "3",
+    "arsdkfollowme.leash_config_elevation": "4.25",
+    "arsdkfollowme.leash_config_azimuth": "5.5"
+  },
+  "source": "constructed"
+}

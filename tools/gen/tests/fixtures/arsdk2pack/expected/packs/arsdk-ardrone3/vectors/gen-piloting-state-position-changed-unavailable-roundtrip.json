@@ -1,0 +1,9 @@
+{
+  "name": "piloting-state-position-changed-unavailable-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010404000000000000407f400000000000407f400000000000000000",
+  "expect": "010404000000000000407f400000000000407f400000000000000000",
+  "reference": "the raw keys keep 500 on a same-format round trip",
+  "source": "constructed"
+}

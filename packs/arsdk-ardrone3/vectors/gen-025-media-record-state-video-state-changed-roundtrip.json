@@ -1,0 +1,14 @@
+{
+  "name": "media-record-state-video-state-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01080100000000004b",
+  "expect": "01080100000000004b",
+  "model": {
+    "@kind": "media_record_state_video_state_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.media_record_state_video_state_changed_state": "0",
+    "arsdkardrone3.media_record_state_video_state_changed_mass_storage_id": "75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "map-axis-action-roundtrip",
+  "from": "arsdk-mapper-mini",
+  "to": "arsdk-mapper-mini",
+  "input": "8d00020027010000007196000000",
+  "expect": "8d00020027010000007196000000",
+  "model": {
+    "@kind": "map_axis_action",
+    "arsdkmappermini.feature_id": "141",
+    "arsdkmappermini.map_axis_action_modes": "39",
+    "arsdkmappermini.map_axis_action_action": "1",
+    "arsdkmappermini.map_axis_action_axis": "113",
+    "arsdkmappermini.map_axis_action_buttons": "150"
+  },
+  "source": "constructed"
+}

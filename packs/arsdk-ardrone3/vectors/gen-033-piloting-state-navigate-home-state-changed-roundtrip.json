@@ -1,0 +1,14 @@
+{
+  "name": "piloting-state-navigate-home-state-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010403000000000001000000",
+  "expect": "010403000000000001000000",
+  "model": {
+    "@kind": "piloting_state_navigate_home_state_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_navigate_home_state_changed_state": "0",
+    "arsdkardrone3.piloting_state_navigate_home_state_changed_reason": "1"
+  },
+  "source": "constructed"
+}

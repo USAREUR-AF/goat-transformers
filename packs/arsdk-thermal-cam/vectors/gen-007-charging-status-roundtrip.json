@@ -1,0 +1,15 @@
+{
+  "name": "charging-status-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e0007002c0100000076",
+  "expect": "8e0007002c0100000076",
+  "model": {
+    "@kind": "charging_status",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.charging_status_cam_id": "44",
+    "arsdkthermalcam.charging_status_state": "1",
+    "arsdkthermalcam.charging_status_list_flags": "118"
+  },
+  "source": "constructed"
+}

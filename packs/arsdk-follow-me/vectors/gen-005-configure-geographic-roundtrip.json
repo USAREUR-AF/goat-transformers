@@ -1,0 +1,16 @@
+{
+  "name": "configure-geographic-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "860006002b0000b0400000d84000000041",
+  "expect": "860006002b0000b0400000d84000000041",
+  "model": {
+    "@kind": "configure_geographic",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.configure_geographic_use_default": "43",
+    "arsdkfollowme.configure_geographic_distance": "5.5",
+    "arsdkfollowme.configure_geographic_elevation": "6.75",
+    "arsdkfollowme.configure_geographic_azimuth": "8"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "flight-plan-settings-return-home-on-disconnect-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0020000025",
+  "expect": "0020000025",
+  "model": {
+    "@kind": "flight_plan_settings_return_home_on_disconnect",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.flight_plan_settings_return_home_on_disconnect_value": "37"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "co-piloting-state-piloting-source-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0415000000000000",
+  "expect": "0415000000000000",
+  "model": {
+    "@kind": "co_piloting_state_piloting_source",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.co_piloting_state_piloting_source_source": "0"
+  },
+  "source": "constructed"
+}

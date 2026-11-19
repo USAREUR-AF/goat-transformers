@@ -1,0 +1,16 @@
+{
+  "name": "set-style-params-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00130038a302d9",
+  "expect": "8f00130038a302d9",
+  "model": {
+    "@kind": "set_style_params",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_style_params_cam_id": "56",
+    "arsdkcamera.set_style_params_saturation": "-93",
+    "arsdkcamera.set_style_params_contrast": "2",
+    "arsdkcamera.set_style_params_sharpness": "-39"
+  },
+  "source": "constructed"
+}

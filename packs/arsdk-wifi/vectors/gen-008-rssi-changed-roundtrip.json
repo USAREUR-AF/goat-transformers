@@ -1,0 +1,13 @@
+{
+  "name": "rssi-changed-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000d003200",
+  "expect": "87000d003200",
+  "model": {
+    "@kind": "rssi_changed",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.rssi_changed_rssi": "50"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "button-mapping-item-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a0007002c0000005100020000009b00000040",
+  "expect": "8a0007002c0000005100020000009b00000040",
+  "model": {
+    "@kind": "button_mapping_item",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.button_mapping_item_uid": "44",
+    "arsdkmapper.button_mapping_item_product": "81",
+    "arsdkmapper.button_mapping_item_action": "2",
+    "arsdkmapper.button_mapping_item_buttons": "155",
+    "arsdkmapper.button_mapping_item_list_flags": "64"
+  },
+  "source": "constructed"
+}

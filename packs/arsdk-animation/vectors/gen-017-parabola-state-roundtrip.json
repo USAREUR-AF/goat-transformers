@@ -1,0 +1,16 @@
+{
+  "name": "parabola-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000110000000000000080400000a84000000000",
+  "expect": "9000110000000000000080400000a84000000000",
+  "model": {
+    "@kind": "parabola_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.parabola_state_state": "0",
+    "arsdkanimation.parabola_state_speed": "4",
+    "arsdkanimation.parabola_state_vertical_distance": "5.25",
+    "arsdkanimation.parabola_state_play_mode": "0"
+  },
+  "source": "constructed"
+}

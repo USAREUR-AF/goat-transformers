@@ -1,0 +1,12 @@
+{
+  "name": "wifi-wifi-auth-channel-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04010400",
+  "expect": "04010400",
+  "model": {
+    "@kind": "wifi_wifi_auth_channel",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

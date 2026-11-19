@@ -1,0 +1,12 @@
+{
+  "name": "common-reboot-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00040300",
+  "expect": "00040300",
+  "model": {
+    "@kind": "common_reboot",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

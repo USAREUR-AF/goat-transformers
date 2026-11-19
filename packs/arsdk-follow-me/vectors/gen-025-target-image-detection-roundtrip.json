@@ -1,0 +1,18 @@
+{
+  "name": "target-image-detection-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "8600180000003040000080400000a8402c51f600000000000000",
+  "expect": "8600180000003040000080400000a8402c51f600000000000000",
+  "model": {
+    "@kind": "target_image_detection",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.target_image_detection_target_azimuth": "2.75",
+    "arsdkfollowme.target_image_detection_target_elevation": "4",
+    "arsdkfollowme.target_image_detection_change_of_scale": "5.25",
+    "arsdkfollowme.target_image_detection_confidence_index": "44",
+    "arsdkfollowme.target_image_detection_is_new_selection": "81",
+    "arsdkfollowme.target_image_detection_timestamp": "246"
+  },
+  "source": "constructed"
+}

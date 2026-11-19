@@ -1,0 +1,14 @@
+{
+  "name": "picture-settings-state-video-autorecord-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011405002a4f",
+  "expect": "011405002a4f",
+  "model": {
+    "@kind": "picture_settings_state_video_autorecord_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_state_video_autorecord_changed_enabled": "42",
+    "arsdkardrone3.picture_settings_state_video_autorecord_changed_mass_storage_id": "79"
+  },
+  "source": "constructed"
+}

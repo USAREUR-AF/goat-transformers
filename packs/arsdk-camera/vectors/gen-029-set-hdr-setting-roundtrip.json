@@ -1,0 +1,14 @@
+{
+  "name": "set-hdr-setting-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f001c004101000000",
+  "expect": "8f001c004101000000",
+  "model": {
+    "@kind": "set_hdr_setting",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_hdr_setting_cam_id": "65",
+    "arsdkcamera.set_hdr_setting_value": "1"
+  },
+  "source": "constructed"
+}

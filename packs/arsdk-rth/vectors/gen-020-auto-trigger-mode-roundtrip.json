@@ -1,0 +1,13 @@
+{
+  "name": "auto-trigger-mode-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200140000000000",
+  "expect": "9200140000000000",
+  "model": {
+    "@kind": "auto_trigger_mode",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.auto_trigger_mode_mode": "0"
+  },
+  "source": "constructed"
+}

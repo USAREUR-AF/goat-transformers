@@ -1,0 +1,14 @@
+{
+  "name": "target-framing-position-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "860016003ba0",
+  "expect": "860016003ba0",
+  "model": {
+    "@kind": "target_framing_position",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.target_framing_position_horizontal": "59",
+    "arsdkfollowme.target_framing_position_vertical": "-96"
+  },
+  "source": "constructed"
+}

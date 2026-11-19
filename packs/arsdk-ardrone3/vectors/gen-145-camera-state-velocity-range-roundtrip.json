@@ -1,0 +1,14 @@
+{
+  "name": "camera-state-velocity-range-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011904000000504000009040",
+  "expect": "011904000000504000009040",
+  "model": {
+    "@kind": "camera_state_velocity_range",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.camera_state_velocity_range_max_tilt": "3.25",
+    "arsdkardrone3.camera_state_velocity_range_max_pan": "4.5"
+  },
+  "source": "constructed"
+}

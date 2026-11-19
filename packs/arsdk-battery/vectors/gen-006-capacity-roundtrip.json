@@ -1,0 +1,14 @@
+{
+  "name": "capacity-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "950008002d00000052000000",
+  "expect": "950008002d00000052000000",
+  "model": {
+    "@kind": "capacity",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.capacity_full_charge": "45",
+    "arsdkbattery.capacity_remaining": "82"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-exposition-selection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113020000001040",
+  "expect": "0113020000001040",
+  "model": {
+    "@kind": "picture_settings_exposition_selection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_exposition_selection_value": "2.25"
+  },
+  "source": "constructed"
+}

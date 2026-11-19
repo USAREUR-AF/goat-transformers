@@ -1,0 +1,16 @@
+{
+  "name": "calibration-state-magneto-calibration-state-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04170000000000004a6f14",
+  "expect": "04170000000000004a6f14",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_state",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.calibration_state_magneto_calibration_state_status": "0",
+    "arsdkskyctrl.calibration_state_magneto_calibration_state_x_quality": "74",
+    "arsdkskyctrl.calibration_state_magneto_calibration_state_y_quality": "111",
+    "arsdkskyctrl.calibration_state_magneto_calibration_state_z_quality": "20"
+  },
+  "source": "constructed"
+}

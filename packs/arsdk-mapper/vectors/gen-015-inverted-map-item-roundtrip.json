@@ -1,0 +1,17 @@
+{
+  "name": "inverted-map-item-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000f003400000059007e0000002348",
+  "expect": "8a000f003400000059007e0000002348",
+  "model": {
+    "@kind": "inverted_map_item",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.inverted_map_item_uid": "52",
+    "arsdkmapper.inverted_map_item_product": "89",
+    "arsdkmapper.inverted_map_item_axis": "126",
+    "arsdkmapper.inverted_map_item_inverted": "35",
+    "arsdkmapper.inverted_map_item_list_flags": "72"
+  },
+  "source": "constructed"
+}

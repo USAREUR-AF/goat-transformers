@@ -1,0 +1,15 @@
+{
+  "name": "animations-state-list-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00190000000000000100000002000000",
+  "expect": "00190000000000000100000002000000",
+  "model": {
+    "@kind": "animations_state_list",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.animations_state_list_anim": "0",
+    "arsdkcommon.animations_state_list_state": "1",
+    "arsdkcommon.animations_state_list_error": "2"
+  },
+  "source": "constructed"
+}

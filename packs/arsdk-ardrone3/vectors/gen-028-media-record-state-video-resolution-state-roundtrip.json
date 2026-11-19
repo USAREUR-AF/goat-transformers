@@ -1,0 +1,14 @@
+{
+  "name": "media-record-state-video-resolution-state-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010804000000000001000000",
+  "expect": "010804000000000001000000",
+  "model": {
+    "@kind": "media_record_state_video_resolution_state",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.media_record_state_video_resolution_state_streaming": "0",
+    "arsdkardrone3.media_record_state_video_resolution_state_recording": "1"
+  },
+  "source": "constructed"
+}

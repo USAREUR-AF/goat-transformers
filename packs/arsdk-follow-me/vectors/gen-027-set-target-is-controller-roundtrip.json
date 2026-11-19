@@ -1,0 +1,13 @@
+{
+  "name": "set-target-is-controller-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86001a003f",
+  "expect": "86001a003f",
+  "model": {
+    "@kind": "set_target_is_controller",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.set_target_is_controller_target_is_controller": "63"
+  },
+  "source": "constructed"
+}

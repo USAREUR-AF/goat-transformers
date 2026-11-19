@@ -1,0 +1,14 @@
+{
+  "name": "ev-compensation-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f000f003401000000",
+  "expect": "8f000f003401000000",
+  "model": {
+    "@kind": "ev_compensation",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.ev_compensation_cam_id": "52",
+    "arsdkcamera.ev_compensation_value": "1"
+  },
+  "source": "constructed"
+}

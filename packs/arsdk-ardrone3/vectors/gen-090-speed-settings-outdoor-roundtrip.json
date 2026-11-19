@@ -1,0 +1,13 @@
+{
+  "name": "speed-settings-outdoor-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010b030028",
+  "expect": "010b030028",
+  "model": {
+    "@kind": "speed_settings_outdoor",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.speed_settings_outdoor_outdoor": "40"
+  },
+  "source": "constructed"
+}

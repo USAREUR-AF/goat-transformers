@@ -1,0 +1,12 @@
+{
+  "name": "over-heat-ventilate-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00060100",
+  "expect": "00060100",
+  "model": {
+    "@kind": "over_heat_ventilate",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

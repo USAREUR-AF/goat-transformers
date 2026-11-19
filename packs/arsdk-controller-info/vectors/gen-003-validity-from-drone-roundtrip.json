@@ -1,0 +1,13 @@
+{
+  "name": "validity-from-drone-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c00030028",
+  "expect": "8c00030028",
+  "model": {
+    "@kind": "validity_from_drone",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.validity_from_drone_is_valid": "40"
+  },
+  "source": "constructed"
+}

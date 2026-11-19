@@ -1,0 +1,16 @@
+{
+  "name": "format-progress-roundtrip",
+  "from": "arsdk-user-storage-v2",
+  "to": "arsdk-user-storage-v2",
+  "input": "a6000b0030010000007a1f",
+  "expect": "a6000b0030010000007a1f",
+  "model": {
+    "@kind": "format_progress",
+    "arsdkuserstoragev2.feature_id": "166",
+    "arsdkuserstoragev2.format_progress_storage_id": "48",
+    "arsdkuserstoragev2.format_progress_step": "1",
+    "arsdkuserstoragev2.format_progress_percentage": "122",
+    "arsdkuserstoragev2.format_progress_list_flags": "31"
+  },
+  "source": "constructed"
+}

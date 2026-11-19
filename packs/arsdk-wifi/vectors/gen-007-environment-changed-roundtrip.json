@@ -1,0 +1,13 @@
+{
+  "name": "environment-changed-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000c0000000000",
+  "expect": "87000c0000000000",
+  "model": {
+    "@kind": "environment_changed",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.environment_changed_environment": "0"
+  },
+  "source": "constructed"
+}

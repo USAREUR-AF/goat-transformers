@@ -1,0 +1,13 @@
+{
+  "name": "temperature-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "950007002c00",
+  "expect": "950007002c00",
+  "model": {
+    "@kind": "temperature",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.temperature_temperature": "44"
+  },
+  "source": "constructed"
+}

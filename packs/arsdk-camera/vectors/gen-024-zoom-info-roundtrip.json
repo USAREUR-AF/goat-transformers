@@ -1,0 +1,16 @@
+{
+  "name": "zoom-info-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0017003c01000000000098400000c040",
+  "expect": "8f0017003c01000000000098400000c040",
+  "model": {
+    "@kind": "zoom_info",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.zoom_info_cam_id": "60",
+    "arsdkcamera.zoom_info_available": "1",
+    "arsdkcamera.zoom_info_high_quality_maximum_level": "4.75",
+    "arsdkcamera.zoom_info_maximum_level": "6"
+  },
+  "source": "constructed"
+}

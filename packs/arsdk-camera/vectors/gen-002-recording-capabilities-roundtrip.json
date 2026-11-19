@@ -1,0 +1,18 @@
+{
+  "name": "recording-capabilities-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00020027004c007100960000000100000060",
+  "expect": "8f00020027004c007100960000000100000060",
+  "model": {
+    "@kind": "recording_capabilities",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.recording_capabilities_id": "39",
+    "arsdkcamera.recording_capabilities_recording_modes": "76",
+    "arsdkcamera.recording_capabilities_resolutions": "113",
+    "arsdkcamera.recording_capabilities_framerates": "150",
+    "arsdkcamera.recording_capabilities_hdr": "1",
+    "arsdkcamera.recording_capabilities_list_flags": "96"
+  },
+  "source": "constructed"
+}

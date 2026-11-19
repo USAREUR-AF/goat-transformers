@@ -1,0 +1,13 @@
+{
+  "name": "health-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "9500020027",
+  "expect": "9500020027",
+  "model": {
+    "@kind": "health",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.health_state_of_health": "39"
+  },
+  "source": "constructed"
+}

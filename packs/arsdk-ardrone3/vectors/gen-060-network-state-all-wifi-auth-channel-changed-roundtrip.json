@@ -1,0 +1,12 @@
+{
+  "name": "network-state-all-wifi-auth-channel-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010e0300",
+  "expect": "010e0300",
+  "model": {
+    "@kind": "network_state_all_wifi_auth_channel_changed",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

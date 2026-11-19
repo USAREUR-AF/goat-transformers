@@ -1,0 +1,13 @@
+{
+  "name": "gps-settings-return-home-delay-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011704002900",
+  "expect": "011704002900",
+  "model": {
+    "@kind": "gps_settings_return_home_delay",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_return_home_delay_delay": "41"
+  },
+  "source": "constructed"
+}

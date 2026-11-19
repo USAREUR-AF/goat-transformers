@@ -1,0 +1,18 @@
+{
+  "name": "piloting-state-move-to-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040c000000000000000e40000000000000144000000000000019400000000000000c4102000000",
+  "expect": "01040c000000000000000e40000000000000144000000000000019400000000000000c4102000000",
+  "model": {
+    "@kind": "piloting_state_move_to_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_move_to_changed_latitude": "3.75",
+    "arsdkardrone3.piloting_state_move_to_changed_longitude": "5",
+    "arsdkardrone3.piloting_state_move_to_changed_altitude": "6.25",
+    "arsdkardrone3.piloting_state_move_to_changed_orientation_mode": "0",
+    "arsdkardrone3.piloting_state_move_to_changed_heading": "8.75",
+    "arsdkardrone3.piloting_state_move_to_changed_status": "2"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,30 @@
+{
+  "name": "camera-capabilities-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0001002601000000700000000001000000df0000000000000004010000290100000000000002000000730118bd01e20107022c0000a4410000ae419b02",
+  "expect": "8f0001002601000000700000000001000000df0000000000000004010000290100000000000002000000730118bd01e20107022c0000a4410000ae419b02",
+  "model": {
+    "@kind": "camera_capabilities",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.camera_capabilities_cam_id": "38",
+    "arsdkcamera.camera_capabilities_model": "1",
+    "arsdkcamera.camera_capabilities_exposure_modes": "112",
+    "arsdkcamera.camera_capabilities_exposure_lock_supported": "0",
+    "arsdkcamera.camera_capabilities_exposure_roi_lock_supported": "1",
+    "arsdkcamera.camera_capabilities_ev_compensations": "223",
+    "arsdkcamera.camera_capabilities_white_balance_modes": "260",
+    "arsdkcamera.camera_capabilities_custom_white_balance_temperatures": "297",
+    "arsdkcamera.camera_capabilities_white_balance_lock_supported": "2",
+    "arsdkcamera.camera_capabilities_styles": "371",
+    "arsdkcamera.camera_capabilities_camera_modes": "24",
+    "arsdkcamera.camera_capabilities_hyperlapse_values": "445",
+    "arsdkcamera.camera_capabilities_bracketing_presets": "482",
+    "arsdkcamera.camera_capabilities_burst_values": "519",
+    "arsdkcamera.camera_capabilities_streaming_modes": "44",
+    "arsdkcamera.camera_capabilities_timelapse_interval_min": "20.5",
+    "arsdkcamera.camera_capabilities_gpslapse_interval_min": "21.75",
+    "arsdkcamera.camera_capabilities_auto_exposure_metering_modes": "667"
+  },
+  "source": "constructed"
+}

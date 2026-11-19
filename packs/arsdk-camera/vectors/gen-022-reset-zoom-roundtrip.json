@@ -1,0 +1,13 @@
+{
+  "name": "reset-zoom-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00300055",
+  "expect": "8f00300055",
+  "model": {
+    "@kind": "reset_zoom",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.reset_zoom_cam_id": "85"
+  },
+  "source": "constructed"
+}

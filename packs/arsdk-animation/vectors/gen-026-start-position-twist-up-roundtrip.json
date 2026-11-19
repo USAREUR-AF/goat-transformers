@@ -1,0 +1,18 @@
+{
+  "name": "start-position-twist-up-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90001a003f0000a0400000c8400000f04000000c4102000000",
+  "expect": "90001a003f0000a0400000c8400000f04000000c4102000000",
+  "model": {
+    "@kind": "start_position_twist_up",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_position_twist_up_provided_params": "63",
+    "arsdkanimation.start_position_twist_up_speed": "5",
+    "arsdkanimation.start_position_twist_up_vertical_distance": "6.25",
+    "arsdkanimation.start_position_twist_up_rotation_angle": "7.5",
+    "arsdkanimation.start_position_twist_up_rotation_speed": "8.75",
+    "arsdkanimation.start_position_twist_up_play_mode": "2"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "set-max-speed-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "9400040029000090400000b8400000e040",
+  "expect": "9400040029000090400000b8400000e040",
+  "model": {
+    "@kind": "set_max_speed",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.set_max_speed_gimbal_id": "41",
+    "arsdkgimbal.set_max_speed_yaw": "4.5",
+    "arsdkgimbal.set_max_speed_pitch": "5.75",
+    "arsdkgimbal.set_max_speed_roll": "7"
+  },
+  "source": "constructed"
+}

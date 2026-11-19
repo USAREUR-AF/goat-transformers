@@ -1,0 +1,9 @@
+{
+  "name": "to-arsdk-common-gps-controller-position-for-run",
+  "from": "geojson",
+  "to": "arsdk-common",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.3125,48.875]},\"properties\":{}}",
+  "expect": "0010000000000000007048400000000000800240",
+  "reference": "the default kind gps_controller_position_for_run; the arguments with no shared key are absent and written as zero bits (engine-spec 0.5)",
+  "source": "constructed"
+}

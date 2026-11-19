@@ -1,0 +1,14 @@
+{
+  "name": "headlights-state-intensity-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00170000254a",
+  "expect": "00170000254a",
+  "model": {
+    "@kind": "headlights_state_intensity_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.headlights_state_intensity_changed_left": "37",
+    "arsdkcommon.headlights_state_intensity_changed_right": "74"
+  },
+  "source": "constructed"
+}

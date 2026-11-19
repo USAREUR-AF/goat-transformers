@@ -1,0 +1,12 @@
+{
+  "name": "get-all-settings-roundtrip",
+  "from": "arsdk-debug",
+  "to": "arsdk-debug",
+  "input": "8b000000",
+  "expect": "8b000000",
+  "model": {
+    "@kind": "get_all_settings",
+    "arsdkdebug.feature_id": "139"
+  },
+  "source": "constructed"
+}

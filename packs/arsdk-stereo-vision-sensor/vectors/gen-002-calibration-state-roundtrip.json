@@ -1,0 +1,14 @@
+{
+  "name": "calibration-state-roundtrip",
+  "from": "arsdk-stereo-vision-sensor",
+  "to": "arsdk-stereo-vision-sensor",
+  "input": "9f0002002701000000",
+  "expect": "9f0002002701000000",
+  "model": {
+    "@kind": "calibration_state",
+    "arsdkstereovisionsensor.feature_id": "159",
+    "arsdkstereovisionsensor.calibration_state_sensor_id": "39",
+    "arsdkstereovisionsensor.calibration_state_state": "1"
+  },
+  "source": "constructed"
+}

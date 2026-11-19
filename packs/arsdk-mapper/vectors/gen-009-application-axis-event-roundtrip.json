@@ -1,0 +1,14 @@
+{
+  "name": "application-axis-event-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a00090000000000ad",
+  "expect": "8a00090000000000ad",
+  "model": {
+    "@kind": "application_axis_event",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.application_axis_event_action": "0",
+    "arsdkmapper.application_axis_event_value": "-83"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "mode-info-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86000400000000004e007300",
+  "expect": "86000400000000004e007300",
+  "model": {
+    "@kind": "mode_info",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.mode_info_mode": "0",
+    "arsdkfollowme.mode_info_missing_requirements": "78",
+    "arsdkfollowme.mode_info_improvements": "115"
+  },
+  "source": "constructed"
+}

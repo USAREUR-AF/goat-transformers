@@ -1,0 +1,14 @@
+{
+  "name": "media-record-event-video-event-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010301000000000001000000",
+  "expect": "010301000000000001000000",
+  "model": {
+    "@kind": "media_record_event_video_event_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.media_record_event_video_event_changed_event": "0",
+    "arsdkardrone3.media_record_event_video_event_changed_error": "1"
+  },
+  "source": "constructed"
+}

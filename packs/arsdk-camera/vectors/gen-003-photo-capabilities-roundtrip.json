@@ -1,0 +1,18 @@
+{
+  "name": "photo-capabilities-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00030028004d00720097000100000061",
+  "expect": "8f00030028004d00720097000100000061",
+  "model": {
+    "@kind": "photo_capabilities",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.photo_capabilities_id": "40",
+    "arsdkcamera.photo_capabilities_photo_modes": "77",
+    "arsdkcamera.photo_capabilities_photo_formats": "114",
+    "arsdkcamera.photo_capabilities_photo_file_formats": "151",
+    "arsdkcamera.photo_capabilities_hdr": "1",
+    "arsdkcamera.photo_capabilities_list_flags": "97"
+  },
+  "source": "constructed"
+}

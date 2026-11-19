@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-state-motion-detection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0106100035",
+  "expect": "0106100035",
+  "model": {
+    "@kind": "piloting_settings_state_motion_detection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_motion_detection_enabled": "53"
+  },
+  "source": "constructed"
+}

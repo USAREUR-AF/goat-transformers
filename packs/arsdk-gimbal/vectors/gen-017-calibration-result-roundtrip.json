@@ -1,0 +1,14 @@
+{
+  "name": "calibration-result-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940010003501000000",
+  "expect": "940010003501000000",
+  "model": {
+    "@kind": "calibration_result",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.calibration_result_gimbal_id": "53",
+    "arsdkgimbal.calibration_result_result": "1"
+  },
+  "source": "constructed"
+}

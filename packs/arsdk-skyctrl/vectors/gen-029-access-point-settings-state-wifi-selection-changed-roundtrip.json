@@ -1,0 +1,15 @@
+{
+  "name": "access-point-settings-state-wifi-selection-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040a0200000000000100000071",
+  "expect": "040a0200000000000100000071",
+  "model": {
+    "@kind": "access_point_settings_state_wifi_selection_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.access_point_settings_state_wifi_selection_changed_type": "0",
+    "arsdkskyctrl.access_point_settings_state_wifi_selection_changed_band": "1",
+    "arsdkskyctrl.access_point_settings_state_wifi_selection_changed_channel": "113"
+  },
+  "source": "constructed"
+}

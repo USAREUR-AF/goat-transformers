@@ -1,0 +1,12 @@
+{
+  "name": "settings-state-reset-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04050100",
+  "expect": "04050100",
+  "model": {
+    "@kind": "settings_state_reset_changed",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

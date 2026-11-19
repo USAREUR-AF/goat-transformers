@@ -1,0 +1,12 @@
+{
+  "name": "prepare-roundtrip",
+  "from": "arsdk-gauge-fw-updater",
+  "to": "arsdk-gauge-fw-updater",
+  "input": "a0000100",
+  "expect": "a0000100",
+  "model": {
+    "@kind": "prepare",
+    "arsdkgaugefwupdater.feature_id": "160"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "target-trajectory-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86000a00000000000000064000000000000010400000a8400000d0400000f84000001041",
+  "expect": "86000a00000000000000064000000000000010400000a8400000d0400000f84000001041",
+  "model": {
+    "@kind": "target_trajectory",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.target_trajectory_latitude": "2.75",
+    "arsdkfollowme.target_trajectory_longitude": "4",
+    "arsdkfollowme.target_trajectory_altitude": "5.25",
+    "arsdkfollowme.target_trajectory_north_speed": "6.5",
+    "arsdkfollowme.target_trajectory_east_speed": "7.75",
+    "arsdkfollowme.target_trajectory_down_speed": "9"
+  },
+  "source": "constructed"
+}

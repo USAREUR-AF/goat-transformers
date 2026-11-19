@@ -1,0 +1,17 @@
+{
+  "name": "calibration-infos-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e0006002b0000b0400000d840000000413f",
+  "expect": "8e0006002b0000b0400000d840000000413f",
+  "model": {
+    "@kind": "calibration_infos",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.calibration_infos_cam_id": "43",
+    "arsdkthermalcam.calibration_infos_roll": "5.5",
+    "arsdkthermalcam.calibration_infos_pitch": "6.75",
+    "arsdkthermalcam.calibration_infos_yaw": "8",
+    "arsdkthermalcam.calibration_infos_list_flags": "63"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "mavlink-pause-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000b0100",
+  "expect": "000b0100",
+  "model": {
+    "@kind": "mavlink_pause",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

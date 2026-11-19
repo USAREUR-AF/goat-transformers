@@ -1,0 +1,12 @@
+{
+  "name": "over-heat-switch-off-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00060000",
+  "expect": "00060000",
+  "model": {
+    "@kind": "over_heat_switch_off",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

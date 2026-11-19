@@ -1,0 +1,13 @@
+{
+  "name": "common-state-imminent-shutdown-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040702002700",
+  "expect": "040702002700",
+  "model": {
+    "@kind": "common_state_imminent_shutdown_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.common_state_imminent_shutdown_changed_duration": "39"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "common-state-battery-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0005010026",
+  "expect": "0005010026",
+  "model": {
+    "@kind": "common_state_battery_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_battery_state_changed_percent": "38"
+  },
+  "source": "constructed"
+}

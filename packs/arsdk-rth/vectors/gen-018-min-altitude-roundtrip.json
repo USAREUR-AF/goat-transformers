@@ -1,0 +1,15 @@
+{
+  "name": "min-altitude-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200120000005040000090400000b840",
+  "expect": "9200120000005040000090400000b840",
+  "model": {
+    "@kind": "min_altitude",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.min_altitude_current": "3.25",
+    "arsdkrth.min_altitude_min": "4.5",
+    "arsdkrth.min_altitude_max": "5.75"
+  },
+  "source": "constructed"
+}

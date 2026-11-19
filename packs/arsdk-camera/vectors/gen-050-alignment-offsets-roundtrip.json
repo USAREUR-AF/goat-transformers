@@ -1,0 +1,22 @@
+{
+  "name": "alignment-offsets-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00340059000080400000a8400000d0400000f84000001041000024410000384100004c4100006041",
+  "expect": "8f00340059000080400000a8400000d0400000f84000001041000024410000384100004c4100006041",
+  "model": {
+    "@kind": "alignment_offsets",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.alignment_offsets_cam_id": "89",
+    "arsdkcamera.alignment_offsets_min_bound_yaw": "4",
+    "arsdkcamera.alignment_offsets_max_bound_yaw": "5.25",
+    "arsdkcamera.alignment_offsets_current_yaw": "6.5",
+    "arsdkcamera.alignment_offsets_min_bound_pitch": "7.75",
+    "arsdkcamera.alignment_offsets_max_bound_pitch": "9",
+    "arsdkcamera.alignment_offsets_current_pitch": "10.25",
+    "arsdkcamera.alignment_offsets_min_bound_roll": "11.5",
+    "arsdkcamera.alignment_offsets_max_bound_roll": "12.75",
+    "arsdkcamera.alignment_offsets_current_roll": "14"
+  },
+  "source": "constructed"
+}

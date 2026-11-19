@@ -1,0 +1,15 @@
+{
+  "name": "gps-settings-set-home-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01170000000000000000f43f00000000000004400000000000000e40",
+  "expect": "01170000000000000000f43f00000000000004400000000000000e40",
+  "model": {
+    "@kind": "gps_settings_set_home",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_set_home_latitude": "1.25",
+    "arsdkardrone3.gps_settings_set_home_longitude": "2.5",
+    "arsdkardrone3.gps_settings_set_home_altitude": "3.75"
+  },
+  "source": "constructed"
+}

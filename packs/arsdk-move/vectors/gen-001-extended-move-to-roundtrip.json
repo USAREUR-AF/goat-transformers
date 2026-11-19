@@ -1,0 +1,20 @@
+{
+  "name": "extended-move-to-roundtrip",
+  "from": "arsdk-move",
+  "to": "arsdk-move",
+  "input": "aa000100000000000000fc3f00000000000008400000000000001140000000000000d840000000410000144100002841",
+  "expect": "aa000100000000000000fc3f00000000000008400000000000001140000000000000d840000000410000144100002841",
+  "model": {
+    "@kind": "extended_move_to",
+    "arsdkmove.feature_id": "170",
+    "arsdkmove.extended_move_to_latitude": "1.75",
+    "arsdkmove.extended_move_to_longitude": "3",
+    "arsdkmove.extended_move_to_altitude": "4.25",
+    "arsdkmove.extended_move_to_orientation_mode": "0",
+    "arsdkmove.extended_move_to_heading": "6.75",
+    "arsdkmove.extended_move_to_max_horizontal_speed": "8",
+    "arsdkmove.extended_move_to_max_vertical_speed": "9.25",
+    "arsdkmove.extended_move_to_max_yaw_rotation_speed": "10.5"
+  },
+  "source": "constructed"
+}

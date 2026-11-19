@@ -1,0 +1,14 @@
+{
+  "name": "gps-state-home-type-availability-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011f0100000000004b",
+  "expect": "011f0100000000004b",
+  "model": {
+    "@kind": "gps_state_home_type_availability_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_state_home_type_availability_changed_type": "0",
+    "arsdkardrone3.gps_state_home_type_availability_changed_available": "75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "tracking-feature-availability-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d0009002e",
+  "expect": "9d0009002e",
+  "model": {
+    "@kind": "tracking_feature_availability",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.tracking_feature_availability_availability": "46"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "network-settings-wifi-selection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0109000000000000010000006f",
+  "expect": "0109000000000000010000006f",
+  "model": {
+    "@kind": "network_settings_wifi_selection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.network_settings_wifi_selection_type": "0",
+    "arsdkardrone3.network_settings_wifi_selection_band": "1",
+    "arsdkardrone3.network_settings_wifi_selection_channel": "111"
+  },
+  "source": "constructed"
+}

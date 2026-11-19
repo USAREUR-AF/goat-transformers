@@ -1,0 +1,15 @@
+{
+  "name": "horizontal-panorama-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000700000000000000204000007040",
+  "expect": "90000700000000000000204000007040",
+  "model": {
+    "@kind": "horizontal_panorama_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.horizontal_panorama_state_state": "0",
+    "arsdkanimation.horizontal_panorama_state_rotation_angle": "2.5",
+    "arsdkanimation.horizontal_panorama_state_rotation_speed": "3.75"
+  },
+  "source": "constructed"
+}

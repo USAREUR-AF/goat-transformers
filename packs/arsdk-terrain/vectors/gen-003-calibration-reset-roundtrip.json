@@ -1,0 +1,12 @@
+{
+  "name": "calibration-reset-roundtrip",
+  "from": "arsdk-terrain",
+  "to": "arsdk-terrain",
+  "input": "b0000300",
+  "expect": "b0000300",
+  "model": {
+    "@kind": "calibration_reset",
+    "arsdkterrain.feature_id": "176"
+  },
+  "source": "constructed"
+}

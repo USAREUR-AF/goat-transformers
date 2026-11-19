@@ -1,0 +1,18 @@
+{
+  "name": "twist-up-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000190000000000000090400000b8400000e0400000044102000000",
+  "expect": "9000190000000000000090400000b8400000e0400000044102000000",
+  "model": {
+    "@kind": "twist_up_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.twist_up_state_state": "0",
+    "arsdkanimation.twist_up_state_speed": "4.5",
+    "arsdkanimation.twist_up_state_vertical_distance": "5.75",
+    "arsdkanimation.twist_up_state_rotation_angle": "7",
+    "arsdkanimation.twist_up_state_rotation_speed": "8.25",
+    "arsdkanimation.twist_up_state_play_mode": "2"
+  },
+  "source": "constructed"
+}

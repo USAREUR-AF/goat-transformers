@@ -1,0 +1,13 @@
+{
+  "name": "stop-photo-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00320057",
+  "expect": "8f00320057",
+  "model": {
+    "@kind": "stop_photo",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.stop_photo_cam_id": "87"
+  },
+  "source": "constructed"
+}

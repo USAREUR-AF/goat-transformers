@@ -1,0 +1,9 @@
+{
+  "name": "to-arsdk-ardrone3-piloting-state-position-changed",
+  "from": "geojson",
+  "to": "arsdk-ardrone3",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.3125,48.875]},\"properties\":{}}",
+  "expect": "01040400000000000070484000000000008002400000000000000000",
+  "reference": "the default kind piloting_state_position_changed; the arguments with no shared key are absent and written as zero bits (engine-spec 0.5)",
+  "source": "constructed"
+}

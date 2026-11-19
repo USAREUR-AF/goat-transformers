@@ -1,0 +1,13 @@
+{
+  "name": "start-monitoring-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "910005002a",
+  "expect": "910005002a",
+  "model": {
+    "@kind": "start_monitoring",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.start_monitoring_period": "42"
+  },
+  "source": "constructed"
+}

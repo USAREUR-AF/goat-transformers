@@ -1,0 +1,13 @@
+{
+  "name": "start-flip-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000040000000000",
+  "expect": "9000040000000000",
+  "model": {
+    "@kind": "start_flip",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_flip_type": "0"
+  },
+  "source": "constructed"
+}

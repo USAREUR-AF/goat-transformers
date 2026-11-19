@@ -1,0 +1,12 @@
+{
+  "name": "piloting-take-off-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000100",
+  "expect": "01000100",
+  "model": {
+    "@kind": "piloting_take_off",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

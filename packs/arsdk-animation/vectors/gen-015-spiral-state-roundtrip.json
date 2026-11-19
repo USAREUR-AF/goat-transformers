@@ -1,0 +1,18 @@
+{
+  "name": "spiral-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000f000000000000004040000088400000b0400000d84002000000",
+  "expect": "90000f000000000000004040000088400000b0400000d84002000000",
+  "model": {
+    "@kind": "spiral_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.spiral_state_state": "0",
+    "arsdkanimation.spiral_state_speed": "3",
+    "arsdkanimation.spiral_state_radius_variation": "4.25",
+    "arsdkanimation.spiral_state_vertical_distance": "5.5",
+    "arsdkanimation.spiral_state_revolution_nb": "6.75",
+    "arsdkanimation.spiral_state_play_mode": "2"
+  },
+  "source": "constructed"
+}

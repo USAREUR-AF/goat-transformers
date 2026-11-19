@@ -1,0 +1,13 @@
+{
+  "name": "audio-controller-ready-for-streaming-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0014000025",
+  "expect": "0014000025",
+  "model": {
+    "@kind": "audio_controller_ready_for_streaming",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.audio_controller_ready_for_streaming_ready": "37"
+  },
+  "source": "constructed"
+}

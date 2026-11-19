@@ -1,0 +1,12 @@
+{
+  "name": "piloting-cancel-move-by-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000e00",
+  "expect": "01000e00",
+  "model": {
+    "@kind": "piloting_cancel_move_by",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "followee-location-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000800000000000000fc3f000000000000084000008840",
+  "expect": "92000800000000000000fc3f000000000000084000008840",
+  "model": {
+    "@kind": "followee_location",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.followee_location_latitude": "1.75",
+    "arsdkrth.followee_location_longitude": "3",
+    "arsdkrth.followee_location_altitude": "4.25"
+  },
+  "source": "constructed"
+}

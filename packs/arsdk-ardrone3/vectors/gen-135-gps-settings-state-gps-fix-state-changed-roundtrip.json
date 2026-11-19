@@ -1,0 +1,13 @@
+{
+  "name": "gps-settings-state-gps-fix-state-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0118020027",
+  "expect": "0118020027",
+  "model": {
+    "@kind": "gps_settings_state_gps_fix_state_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_state_gps_fix_state_changed_fixed": "39"
+  },
+  "source": "constructed"
+}

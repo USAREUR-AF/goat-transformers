@@ -1,0 +1,12 @@
+{
+  "name": "deactivate-logs-roundtrip",
+  "from": "arsdk-security-edition",
+  "to": "arsdk-security-edition",
+  "input": "a9000200",
+  "expect": "a9000200",
+  "model": {
+    "@kind": "deactivate_logs",
+    "arsdksecurityedition.feature_id": "169"
+  },
+  "source": "constructed"
+}

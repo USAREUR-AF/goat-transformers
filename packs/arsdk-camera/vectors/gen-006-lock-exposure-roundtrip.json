@@ -1,0 +1,13 @@
+{
+  "name": "lock-exposure-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0006002b",
+  "expect": "8f0006002b",
+  "model": {
+    "@kind": "lock_exposure",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.lock_exposure_cam_id": "43"
+  },
+  "source": "constructed"
+}

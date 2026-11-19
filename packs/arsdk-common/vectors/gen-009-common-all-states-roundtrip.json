@@ -1,0 +1,12 @@
+{
+  "name": "common-all-states-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00040000",
+  "expect": "00040000",
+  "model": {
+    "@kind": "common_all_states",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "counters-roundtrip",
+  "from": "arsdk-mediastore",
+  "to": "arsdk-mediastore",
+  "input": "9600020027000000b4ffffff710000006affffff",
+  "expect": "9600020027000000b4ffffff710000006affffff",
+  "model": {
+    "@kind": "counters",
+    "arsdkmediastore.feature_id": "150",
+    "arsdkmediastore.counters_video_media_count": "39",
+    "arsdkmediastore.counters_photo_media_count": "-76",
+    "arsdkmediastore.counters_video_resource_count": "113",
+    "arsdkmediastore.counters_photo_resource_count": "-150"
+  },
+  "source": "constructed"
+}

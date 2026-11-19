@@ -1,0 +1,13 @@
+{
+  "name": "piloting-circle-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0100090000000000",
+  "expect": "0100090000000000",
+  "model": {
+    "@kind": "piloting_circle",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_circle_direction": "0"
+  },
+  "source": "constructed"
+}

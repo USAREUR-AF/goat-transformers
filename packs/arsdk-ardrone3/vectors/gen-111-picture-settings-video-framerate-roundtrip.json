@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-video-framerate-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113080000000000",
+  "expect": "0113080000000000",
+  "model": {
+    "@kind": "picture_settings_video_framerate",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_video_framerate_framerate": "0"
+  },
+  "source": "constructed"
+}

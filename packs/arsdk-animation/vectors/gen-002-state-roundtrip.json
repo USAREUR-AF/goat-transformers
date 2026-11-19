@@ -1,0 +1,14 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000200000000004c",
+  "expect": "90000200000000004c",
+  "model": {
+    "@kind": "state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.state_type": "0",
+    "arsdkanimation.state_percent": "76"
+  },
+  "source": "constructed"
+}

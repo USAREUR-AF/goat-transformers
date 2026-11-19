@@ -1,0 +1,17 @@
+{
+  "name": "piloting-event-move-by-end-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "012200000000a03f00002040000070400000a04001000000",
+  "expect": "012200000000a03f00002040000070400000a04001000000",
+  "model": {
+    "@kind": "piloting_event_move_by_end",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_event_move_by_end_d_x": "1.25",
+    "arsdkardrone3.piloting_event_move_by_end_d_y": "2.5",
+    "arsdkardrone3.piloting_event_move_by_end_d_z": "3.75",
+    "arsdkardrone3.piloting_event_move_by_end_d_psi": "5",
+    "arsdkardrone3.piloting_event_move_by_end_error": "1"
+  },
+  "source": "constructed"
+}

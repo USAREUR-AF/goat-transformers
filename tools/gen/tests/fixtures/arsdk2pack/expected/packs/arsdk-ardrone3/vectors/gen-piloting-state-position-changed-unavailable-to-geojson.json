@@ -1,0 +1,9 @@
+{
+  "name": "piloting-state-position-changed-unavailable-to-geojson",
+  "from": "arsdk-ardrone3",
+  "to": "geojson",
+  "input": "010404000000000000407f400000000000407f400000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "reference": "latitude and longitude 500 mean no position (engine-spec 0.9): no geometry",
+  "source": "constructed"
+}

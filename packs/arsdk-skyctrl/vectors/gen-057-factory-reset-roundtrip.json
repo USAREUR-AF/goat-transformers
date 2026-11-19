@@ -1,0 +1,12 @@
+{
+  "name": "factory-reset-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04190000",
+  "expect": "04190000",
+  "model": {
+    "@kind": "factory_reset",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

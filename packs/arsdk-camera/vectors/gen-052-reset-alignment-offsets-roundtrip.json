@@ -1,0 +1,13 @@
+{
+  "name": "reset-alignment-offsets-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0036005b",
+  "expect": "8f0036005b",
+  "model": {
+    "@kind": "reset_alignment_offsets",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.reset_alignment_offsets_cam_id": "91"
+  },
+  "source": "constructed"
+}

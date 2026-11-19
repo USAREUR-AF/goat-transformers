@@ -1,0 +1,13 @@
+{
+  "name": "piloting-state-vibration-level-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0104140000000000",
+  "expect": "0104140000000000",
+  "model": {
+    "@kind": "piloting_state_vibration_level_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_vibration_level_changed_state": "0"
+  },
+  "source": "constructed"
+}

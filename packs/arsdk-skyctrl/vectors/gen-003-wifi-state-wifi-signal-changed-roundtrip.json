@@ -1,0 +1,13 @@
+{
+  "name": "wifi-state-wifi-signal-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0400040029",
+  "expect": "0400040029",
+  "model": {
+    "@kind": "wifi_state_wifi_signal_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.wifi_state_wifi_signal_changed_level": "41"
+  },
+  "source": "constructed"
+}

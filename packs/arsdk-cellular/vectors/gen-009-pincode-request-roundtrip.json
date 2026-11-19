@@ -1,0 +1,15 @@
+{
+  "name": "pincode-request-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab000f0034597e",
+  "expect": "ab000f0034597e",
+  "model": {
+    "@kind": "pincode_request",
+    "arsdkcellular.feature_id": "171",
+    "arsdkcellular.pincode_request_modem_id": "52",
+    "arsdkcellular.pincode_request_invalid_pincode": "89",
+    "arsdkcellular.pincode_request_pin_remaining_tries": "126"
+  },
+  "source": "constructed"
+}

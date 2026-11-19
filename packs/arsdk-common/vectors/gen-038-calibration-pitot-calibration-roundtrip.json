@@ -1,0 +1,13 @@
+{
+  "name": "calibration-pitot-calibration-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000d010026",
+  "expect": "000d010026",
+  "model": {
+    "@kind": "calibration_pitot_calibration",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_pitot_calibration_calibrate": "38"
+  },
+  "source": "constructed"
+}

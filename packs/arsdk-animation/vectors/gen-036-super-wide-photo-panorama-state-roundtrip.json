@@ -1,0 +1,13 @@
+{
+  "name": "super-wide-photo-panorama-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000240000000000",
+  "expect": "9000240000000000",
+  "model": {
+    "@kind": "super_wide_photo_panorama_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.super_wide_photo_panorama_state_state": "0"
+  },
+  "source": "constructed"
+}

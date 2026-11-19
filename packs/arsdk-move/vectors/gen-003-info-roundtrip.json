@@ -1,0 +1,13 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-move",
+  "to": "arsdk-move",
+  "input": "aa00030028000000",
+  "expect": "aa00030028000000",
+  "model": {
+    "@kind": "info",
+    "arsdkmove.feature_id": "170",
+    "arsdkmove.info_missing_inputs": "40"
+  },
+  "source": "constructed"
+}

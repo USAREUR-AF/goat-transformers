@@ -1,0 +1,12 @@
+{
+  "name": "get-all-settings-roundtrip",
+  "from": "arsdk-skyctrl-debug",
+  "to": "arsdk-skyctrl-debug",
+  "input": "b1000000",
+  "expect": "b1000000",
+  "model": {
+    "@kind": "get_all_settings",
+    "arsdkskyctrldebug.feature_id": "177"
+  },
+  "source": "constructed"
+}

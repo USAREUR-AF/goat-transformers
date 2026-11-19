@@ -1,0 +1,18 @@
+{
+  "name": "sky-controller-state-gps-position-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040802000000000000704840000000000080024000000000000013400000c040",
+  "expect": "040802000000000000704840000000000080024000000000000013400000c040",
+  "model": {
+    "@kind": "sky_controller_state_gps_position_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_gps_position_changed_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkskyctrl.sky_controller_state_gps_position_changed_longitude": "2.3125",
+    "lon": "2.3125",
+    "arsdkskyctrl.sky_controller_state_gps_position_changed_altitude": "4.75",
+    "arsdkskyctrl.sky_controller_state_gps_position_changed_heading": "6"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-arsdk-controller-info-gps-v2",
+  "from": "geojson",
+  "to": "arsdk-controller-info",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.3125,48.875,35.5]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "expect": "8c00060000000000000000000070484000000000008002400000000000000e420000000000000000000000000000a040000000000000000000000000000000000000000000",
+  "reference": "the default kind gps_v2; the arguments with no shared key are absent and written as zero bits (engine-spec 0.5); east velocity 0 and north 5 from course 0 and speed 5",
+  "source": "constructed"
+}
