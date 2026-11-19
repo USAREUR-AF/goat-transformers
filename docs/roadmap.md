@@ -86,7 +86,7 @@ has a pack:
 | An HTTP front end over the package planner | Designed |
 | Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
 | A Zenoh adapter, its own crate outside the adapters workspace | Built; not built in CI |
-| A README for each engine | Erlang and Zig are written; the other five are not |
+| A README for each engine: build, library use, the command-line tool, the tests and their counts | Built |
 
 ## Use by other projects
 

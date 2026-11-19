@@ -19,3 +19,131 @@ The package holds the engine. The packs are data: `tools/goat-pkg bundle` in
 the repository writes the ones you name, and the model modules they use, to a
 directory you vendor or ship as package data. `docs/using.md` in the repository
 shows the whole path. `goat-xf-py` is the command-line tool.
+
+## The library API
+
+Status: Built. Exported by `goat_transformers`; bytes go in and bytes come out.
+
+| Call | Does |
+|---|---|
+| `Engine.from_dir(packs_dir, models_dir=None, max_distribution="controlled", packs_only=None)` | loads every `<models_dir>/*.def` (default: `model` beside `packs_dir`), then every `<packs_dir>/<format>/pack.def`; with `packs_only`, only the named packs and the modules they use |
+| `Engine(max_distribution=...)`, `load_model(text, source=...)`, `load(text, source=...)` | an empty engine; load one model module, then one pack, from text |
+| `formats()`, `pack(fmt)`, `model_keys(fmt)` | the loaded format names; one parsed pack; the keys a pack maps |
+| `decode(fmt, data)` | message to `Entity` (`fields`, `lists`, `residue`, `kind`) |
+| `encode(fmt, entity)` | `Entity` to message |
+| `convert(from_fmt, to_fmt, data, context=None)` | decode, fill the keys the input lacks from `context`, derive, encode |
+| `complete(entity, context=None)` | the middle steps of `convert` on an entity: fill from `context`, then apply the `derive` lines |
+| `capability(from_fmt, to_fmt)` | `{"from", "to", "carried", "dropped", "grade"}`, grade `full`, `partial` or `none` |
+| `capability_matrix()` | `capability` for every ordered pair of distinct loaded formats |
+
+A `context` value is text read as the key's declared type, or a value of that
+type. Run from the repository root with `event.xml` holding the input of
+`packs/cot-xml/vectors/01-track-to-geojson.json`, this prints the comments:
+
+```python
+from goat_transformers import Engine, GTError, UndeclaredKey
+
+engine = Engine.from_dir("packs", packs_only=["cot-xml", "geojson"])
+cot = open("event.xml", "rb").read()
+
+entity = engine.decode("cot-xml", cot)
+print(entity.fields["callsign"], entity.fields["time_ms"])     # GATOR 1614456000000
+geojson = engine.encode("geojson", entity)
+print(engine.convert("cot-xml", "geojson", cot) == geojson)     # True
+out = engine.convert("geojson", "cot-xml", geojson, {"stale_ms": "1614456180000"})
+print(b'stale="2021-02-27T20:03:00.000Z"' in out)               # True
+engine.complete(entity, {"stale_ms": 1614456180000})
+print(entity.fields["stale_ms"])                                # 1614456180000
+print(engine.capability("cot-xml", "geojson")["grade"])         # partial
+print(len(engine.capability_matrix()))                          # 2
+try:
+    engine.convert("geojson", "cot-xml", geojson, {"no_such_key": "1"})
+except UndeclaredKey as e:
+    print(e)    # undeclared-key: context key no_such_key is declared by no loaded module
+try:
+    engine.convert("cot-xml", "geojson", b"<event")
+except GTError as e:
+    print(e.code)                                               # malformed-wire
+
+e2 = Engine()
+for m in ("core", "track"):
+    e2.load_model(open("model/%s.def" % m).read(), source=m + ".def")
+e2.load(open("packs/demo-track-json/pack.def").read())
+print(e2.formats())                                             # ['demo-track-json']
+```
+
+Errors. Every error is a subclass of `GTError`. Its `code` is the error kind,
+and its message begins with that kind and a colon, then the text, then
+`[format=…]`, `[locator=…]` and `[detail=…]` where they apply.
+
+| Class | `code` |
+|---|---|
+| `InvalidPack`, `InvalidModel`, `UnknownDirective`, `UnknownTransform`, `BadDirective` | `invalid-pack`, `invalid-model`, `unknown-directive`, `unknown-transform`, `bad-directive` |
+| `MissingDistribution`, `MissingSource`, `DistributionRefused`, `DistributionViolation` | `missing-distribution`, `missing-source`, `distribution-refused`, `distribution-violation` |
+| `UnknownModule`, `ModuleNotUsed`, `DuplicateModule`, `DuplicateKey`, `DuplicateKind` | `unknown-module`, `module-not-used`, `duplicate-module`, `duplicate-key`, `duplicate-kind` |
+| `UndeclaredKey`, `KeyTypeMismatch` | `undeclared-key`, `key-type-mismatch` |
+| `UnknownFormat`, `NoKind`, `MalformedWire`, `MissingRoot` | `unknown-format`, `no-kind`, `malformed-wire`, `missing-root` |
+| `TransformDecodeFailure`, `TransformEncodeFailure` | `transform-decode` (with `entity`, the fields that decoded, and `absent`), `transform-encode` |
+| `DuplicateField` | `duplicate-field`; withdrawn in version 0.6, kept as a name, not raised |
+
+Also exported: `Entity`, `Item`, `Pack`, `load_pack`, `parse_pack_text`, `Key`,
+`Module`, `Derive`, `load_model_file`, `parse_model_text`.
+
+## The command-line tool `goat-xf-py`
+
+Status: Built. `python3 -m goat_transformers` is the same tool (its help names it so).
+
+| Subcommand | Does |
+|---|---|
+| `convert --from <format> --to <format>` | reads the message on standard input, writes the result on standard output |
+| `list-formats` | prints one line per loaded pack: name, version, wire, separated by tabs |
+
+| Option | Of | Means |
+|---|---|---|
+| `--packs <dir>` | both | the packs directory; required unless `GT_PACKS` is set |
+| `--models <dir>` | both | the model module directory (default `<packs>/../model`) |
+| `--packs-only <name>[,<name>…]` | both | load only these packs and the modules they need |
+| `--max-distribution public\|controlled` | both | refuse modules and packs above this distribution (default `controlled`) |
+| `--set <key>=<value>` | `convert` | a caller-supplied model key, read as the key's declared type; repeatable |
+
+An error prints `goat_transformers: <kind>: …` on standard error and exits 2.
+Run from `engines/python`, with `feature.json` holding the input of
+`packs/geojson/vectors/01-geojson-to-cot.json`:
+
+```
+$ goat-xf-py list-formats --packs ../../packs --packs-only cot-xml,geojson
+cot-xml	0.2.0	xml
+geojson	0.1.0	geojson
+$ goat-xf-py convert --from geojson --to cot-xml --packs ../../packs --packs-only cot-xml,geojson --set stale_ms=1614456180000 < feature.json
+<event version="2.0" uid="J-01334" type="a-f-G-U-C" time="2021-02-27T20:00:00.000Z" start="2021-02-27T20:00:00.000Z" stale="2021-02-27T20:03:00.000Z" how="m-g"><point lat="30.0090027" lon="-85.9578182" hae="-42.6" ce="45.3" le="99.5"/><detail><contact callsign="GATOR"/></detail></event>
+```
+
+## Test
+
+Status: Measured. The `python` job of `.github/workflows/conformance.yml` runs,
+in `engines/python`:
+
+```
+PYTHONPATH=src python -m unittest discover -s tests
+```
+
+It loads every pack and model module. One run gave `Ran 182 tests … OK`:
+
+| Test file | Covers |
+|---|---|
+| `test_vectors.py` | every conversion vector of every pack (3299 of 96 packs, all passed) and every load vector (314, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (19001 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
+| `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue |
+
+The same job then installs the package with pip, writes a bundle of `cot-xml`
+and `geojson` with `tools/goat-pkg bundle`, and checks that `Engine.from_dir`
+and `goat-xf-py list-formats` load it.
+
+## Tools that use this engine
+
+- `tools/goat-options` imports this engine from `engines/python/src` and reads
+  the packs through `Engine.from_dir` and `Engine.capability` to report what
+  carries and what is dropped on each conversion path.
+- `tools/goat-pkg bundle --embed python` writes a Python module whose
+  `engine()` returns `Engine.from_dir` over the bundled packs, found through
+  `importlib.resources`. `tools/goat-pkg` itself does not import the engine.
