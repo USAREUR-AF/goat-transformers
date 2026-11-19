@@ -7,12 +7,12 @@
     "cat062.sac": "1",
     "cat062.sic": "7"
   },
-  "expect": "3e001b990d100107546010ff9f7134fe51fc1f0137818101000050",
+  "expect": "3e001b990d100107546010ff9f7134fe51fc1f0137a18101000050",
   "model": {
     "@complete": true,
     "cat062.sim": "1",
     "track.simulated": "0"
   },
   "source": "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0), commit 19fccdb",
-  "reference": "byte for byte the block the open-billie encoder writes for this track"
+  "reference": "the block the open-billie encoder writes for this track, except the MRH bit: the pack writes MRH 1 when it writes I062/130 (`derive cat062.mrh present hae`, spec 0.12), the open-billie encoder 0; the first octet of I062/080 gains 0x20"
 }

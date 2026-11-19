@@ -175,11 +175,40 @@ def build(sink):
 
 
     SAME = "byte for byte the block the open-billie encoder writes for this track"
+    MRH = ("the block the open-billie encoder writes for this track, except the MRH bit: the pack "
+           "writes MRH 1 when it writes I062/130 (`derive cat062.mrh present hae`, spec 0.12), the "
+           "open-billie encoder 0; the first octet of I062/080 gains 0x20")
+    SIZES = {1: 2, 3: 1, 4: 3, 5: 8, 7: 4, 12: 2, 18: 2}   # octets of the items before I062/080
+
+
+    def with_mrh(block):
+        """`block` with the MRH bit of I062/080 set, when the block carries I062/130."""
+        b = bytearray(bytes.fromhex(block))
+        frns, i, n = [], 3, 0
+        while True:
+            octet = b[i]
+            i += 1
+            for k in range(7):
+                n += 1
+                if octet & (0x80 >> k):
+                    frns.append(n)
+            if not octet & 1:
+                break
+        if 18 not in frns:
+            return block
+        for frn in frns:
+            if frn == 13:
+                break
+            i += SIZES[frn]
+        b[i] |= 0x20
+        return b.hex()
+
+
     # 12:00:00.123 is 43200.123 s; times 128 and rounded, 5529616 = 0x546010
-    vec(CT, 24, "to-asterix-cat062-open-billie-sample", CT, CAT, track(), OB_SAMPLE, context=CTX, reference=SAME,
+    vec(CT, 24, "to-asterix-cat062-open-billie-sample", CT, CAT, track(), with_mrh(OB_SAMPLE), context=CTX, reference=MRH,
         model={"@complete": True, "cat062.time_of_day_s": "43200.123", "cat062.track_number": "311", "cat062.sim": "0"})
-    vec(CT, 25, "to-asterix-cat062-status-bits", CT, CAT, track(simulated=True, confirmed=False, coasting=True, finalUpdate=True), OB_STATUS,
-        context=CTX, reference=SAME)
+    vec(CT, 25, "to-asterix-cat062-status-bits", CT, CAT, track(simulated=True, confirmed=False, coasting=True, finalUpdate=True), with_mrh(OB_STATUS),
+        context=CTX, reference=MRH)
     vec(CT, 26, "to-asterix-cat062-no-velocity-no-altitude", CT, CAT,
         track(velocity=None, position={"latitudeDeg": 0.0, "longitudeDeg": 0.0}), OB_BARE, context=CTX, reference=SAME)
     # the pack computes x * 2^25 / 180 and the encoder x * (2^25 / 180): the same
@@ -188,11 +217,11 @@ def build(sink):
         assert round(deg * 2 ** 25 / 180) == raw == round(deg * (2 ** 25 / 180.0))
     vec(CT, 27, "to-asterix-cat062-position-velocity-and-negative-altitude", CT, CAT,
         track(trackId="4095", observedAt="2026-03-01T23:59:59.250Z", position={"latitudeDeg": 56.9496, "longitudeDeg": 24.1052, "altitudeM": -100.0},
-              velocity={"eastMps": 250.75, "northMps": -3.5}), OB_RIGA, context=CTX, reference=SAME)
+              velocity={"eastMps": 250.75, "northMps": -3.5}), with_mrh(OB_RIGA), context=CTX, reference=MRH)
     # headerSimulated is true and simulated is false: SIM is 1, from `any`
     vec(CT, 28, "to-asterix-cat062-header-simulated-sets-sim", CT, CAT,
         track(headerSimulated=True, velocity=None, position={"latitudeDeg": -33.9461, "longitudeDeg": -151.1772, "altitudeM": 152.4}),
-        OB_SOUTH, context=CTX, reference=SAME, model={"@complete": True, "cat062.sim": "1", "track.simulated": "0"})
+        with_mrh(OB_SOUTH), context=CTX, reference=MRH, model={"@complete": True, "cat062.sim": "1", "track.simulated": "0"})
     # simulated, coasting, finalUpdate, testData and headerSimulated are absent:
     # the defaults of the pack write them 0, in the first part and three extents
     vec(CT, 29, "to-asterix-cat062-absent-flags-write-the-defaults", CT, CAT,
