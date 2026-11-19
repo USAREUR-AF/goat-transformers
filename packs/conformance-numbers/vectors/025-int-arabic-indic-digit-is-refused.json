@@ -1,0 +1,7 @@
+{
+  "name": "int-arabic-indic-digit-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"٧\"/>",
+  "expect_error": "transform-decode"
+}

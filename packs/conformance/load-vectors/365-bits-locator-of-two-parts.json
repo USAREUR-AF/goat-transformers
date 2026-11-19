@@ -1,0 +1,8 @@
+{
+  "name": "365-bits-locator-of-two-parts",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire bits\nword_bytes 1\nfield time_ms 0:8 uint\n",
+  "expect_error": "bad-locator"
+}

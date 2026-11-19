@@ -1,0 +1,7 @@
+{
+  "name": "byte-order-mark-before-the-xml-declaration-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?><e id=\"a\"/>",
+  "expect": "<e id=\"a\"/>"
+}

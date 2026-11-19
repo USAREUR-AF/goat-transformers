@@ -1,0 +1,7 @@
+{
+  "name": "unknown-target-format",
+  "from": "conformance",
+  "to": "conformance-format-that-is-not-loaded",
+  "input": "<item id=\"u1\"/>",
+  "expect_error": "unknown-format"
+}

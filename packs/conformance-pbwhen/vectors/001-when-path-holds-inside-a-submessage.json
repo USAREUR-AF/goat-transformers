@@ -1,0 +1,10 @@
+{
+  "name": "when-path-holds-inside-a-submessage",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753122050807120141",
+  "expect": "{\"id\":\"u1\",\"n\":7,\"cs\":\"A\"}",
+  "model": {
+    "@kind": "inner"
+  }
+}

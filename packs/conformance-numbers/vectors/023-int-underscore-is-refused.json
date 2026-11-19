@@ -1,0 +1,7 @@
+{
+  "name": "int-underscore-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"7_0\"/>",
+  "expect_error": "transform-decode"
+}

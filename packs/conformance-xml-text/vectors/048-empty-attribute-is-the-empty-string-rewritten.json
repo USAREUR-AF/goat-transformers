@@ -1,0 +1,7 @@
+{
+  "name": "empty-attribute-is-the-empty-string-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"\"/>",
+  "expect": "<e id=\"\"/>"
+}

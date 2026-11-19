@@ -1,0 +1,7 @@
+{
+  "name": "int-fraction-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"7.0\"/>",
+  "expect_error": "transform-decode"
+}

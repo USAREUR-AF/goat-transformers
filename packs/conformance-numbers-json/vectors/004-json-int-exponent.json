@@ -1,0 +1,10 @@
+{
+  "name": "json-int-exponent",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1e3}",
+  "expect": "{\"n\":1000}",
+  "model": {
+    "probe.n": "1000"
+  }
+}

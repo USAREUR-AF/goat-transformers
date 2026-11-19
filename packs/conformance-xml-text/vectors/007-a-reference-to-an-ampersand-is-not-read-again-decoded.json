@@ -1,0 +1,7 @@
+{
+  "name": "a-reference-to-an-ampersand-is-not-read-again-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"&#38;lt;\"><name>&amp;amp;</name></e>",
+  "expect": "{\"id\":\"&lt;\",\"name\":\"&amp;\"}"
+}

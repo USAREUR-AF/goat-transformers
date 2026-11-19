@@ -1,0 +1,12 @@
+{
+  "name": "sentinel-with-leading-zeros-decodes-as-absent",
+  "from": "conformance-numbers-absent",
+  "to": "conformance-numbers-json",
+  "input": "07",
+  "expect": "{}",
+  "model": {
+    "@absent": [
+      "probe.n"
+    ]
+  }
+}

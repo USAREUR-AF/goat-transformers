@@ -1,0 +1,7 @@
+{
+  "name": "empty-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"\"/>",
+  "expect_error": "transform-decode"
+}

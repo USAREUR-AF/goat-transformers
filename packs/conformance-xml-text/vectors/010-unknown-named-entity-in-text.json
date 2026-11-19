@@ -1,0 +1,7 @@
+{
+  "name": "unknown-named-entity-in-text",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>&copy;</name></e>",
+  "expect_error": "malformed-wire"
+}

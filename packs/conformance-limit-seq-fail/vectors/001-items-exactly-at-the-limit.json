@@ -1,0 +1,12 @@
+{
+  "name": "items-exactly-at-the-limit",
+  "from": "conformance-limit-seq-fail",
+  "to": "conformance-limit-seq-fail",
+  "input": "01020102",
+  "max_items": 2,
+  "expect": "01020102",
+  "model": {
+    "probe.tag": "one",
+    "probe.recs.#": "2"
+  }
+}

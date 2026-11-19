@@ -1,0 +1,7 @@
+{
+  "name": "twos64-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"w\":9223372036854775807}",
+  "expect": "0dffffffffffffff7f"
+}

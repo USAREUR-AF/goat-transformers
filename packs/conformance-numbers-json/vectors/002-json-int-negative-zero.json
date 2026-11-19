@@ -1,0 +1,10 @@
+{
+  "name": "json-int-negative-zero",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":-0}",
+  "expect": "{\"n\":0}",
+  "model": {
+    "probe.n": "0"
+  }
+}

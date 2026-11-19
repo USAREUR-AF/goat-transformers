@@ -1,0 +1,7 @@
+{
+  "name": "offset-that-keeps-the-instant-in-year-9999-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"9999-12-31T23:59:59+00:01\"/>",
+  "expect": "<e t=\"9999-12-31T23:58:59.000Z\"/>"
+}

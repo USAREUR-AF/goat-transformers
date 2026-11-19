@@ -1,0 +1,7 @@
+{
+  "name": "uscale8-rounds-up-out-of-the-field-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ratio\":255.5}",
+  "expect_error": "transform-encode"
+}

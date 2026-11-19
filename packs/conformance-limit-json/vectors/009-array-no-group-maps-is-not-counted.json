@@ -1,0 +1,8 @@
+{
+  "name": "array-no-group-maps-is-not-counted",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"nums\":[1],\"other\":[1,2,3,4,5,6]}",
+  "max_items": 1,
+  "expect": "{\"nums\":[1]}"
+}

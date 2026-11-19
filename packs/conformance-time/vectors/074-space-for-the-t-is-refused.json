@@ -1,0 +1,7 @@
+{
+  "name": "space-for-the-t-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01 00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

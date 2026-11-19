@@ -1,0 +1,10 @@
+{
+  "name": "uint64-decode-all-ones",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "09ffffffffffffffff",
+  "expect": "{\"qty\":-1}",
+  "model": {
+    "@kind": "uint64"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "int-largest",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"9223372036854775807\"/>",
+  "expect": "<e n=\"9223372036854775807\"/>",
+  "model": {
+    "probe.n": "9223372036854775807"
+  }
+}

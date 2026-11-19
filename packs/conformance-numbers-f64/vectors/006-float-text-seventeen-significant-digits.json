@@ -1,0 +1,7 @@
+{
+  "name": "float-text-seventeen-significant-digits",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "3fd3333333333334",
+  "expect": "<e a=\"0.30000000000000004\"/>"
+}

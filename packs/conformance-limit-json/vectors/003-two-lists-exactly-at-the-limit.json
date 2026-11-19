@@ -1,0 +1,8 @@
+{
+  "name": "two-lists-exactly-at-the-limit",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"items\":[{\"name\":\"a\",\"subs\":[]},{\"name\":\"b\",\"subs\":[]}],\"nums\":[1,2]}",
+  "max_items": 4,
+  "expect": "{\"items\":[{\"name\":\"a\",\"subs\":[]},{\"name\":\"b\",\"subs\":[]}],\"nums\":[1,2]}"
+}

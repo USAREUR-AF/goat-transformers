@@ -1,0 +1,7 @@
+{
+  "name": "lin16-quarter-range",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":90}",
+  "expect": "050040"
+}

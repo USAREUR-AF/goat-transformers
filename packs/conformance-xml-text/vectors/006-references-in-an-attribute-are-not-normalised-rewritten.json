@@ -1,0 +1,7 @@
+{
+  "name": "references-in-an-attribute-are-not-normalised-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a&#9;b&#10;c&#13;d\"/>",
+  "expect": "<e id=\"a&#9;b&#10;c&#13;d\"/>"
+}

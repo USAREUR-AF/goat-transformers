@@ -1,0 +1,7 @@
+{
+  "name": "float-halfway-between-two-doubles-goes-to-the-even-one",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"9007199254740993\"/>",
+  "expect": "<e a=\"9007199254740992\"/>"
+}

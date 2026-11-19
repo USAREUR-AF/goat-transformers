@@ -1,0 +1,7 @@
+{
+  "name": "geojson-number-float-overflow-is-refused",
+  "from": "conformance-numbers-geojson",
+  "to": "conformance-numbers-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"a\":1e400}}",
+  "expect_error": "transform-decode"
+}

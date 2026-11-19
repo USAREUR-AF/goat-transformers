@@ -1,0 +1,11 @@
+{
+  "name": "const-of-the-empty-text-writes-an-empty-element",
+  "from": "conformance-xml-empty",
+  "to": "conformance-xml-empty",
+  "input": "<e k=\"m\" id=\"a\"/>",
+  "expect": "<e k=\"m\" id=\"a\"/>",
+  "model": {
+    "@kind": "marked",
+    "uid": "a"
+  }
+}

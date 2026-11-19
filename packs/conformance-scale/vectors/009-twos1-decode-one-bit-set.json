@@ -1,0 +1,10 @@
+{
+  "name": "twos1-decode-one-bit-set",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "0b01",
+  "expect": "{\"y\":-1}",
+  "model": {
+    "@kind": "twos1"
+  }
+}

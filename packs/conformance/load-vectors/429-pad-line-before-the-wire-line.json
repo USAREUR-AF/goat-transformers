@@ -1,0 +1,8 @@
+{
+  "name": "429-pad-line-before-the-wire-line",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\npad 8\nwire bits\nlayout sequential\nfield time_ms 8 uint\n",
+  "expect_error": "missing-wire"
+}

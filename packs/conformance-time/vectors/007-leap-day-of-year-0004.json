@@ -1,0 +1,10 @@
+{
+  "name": "leap-day-of-year-0004",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"0004-02-29T00:00:00Z\"/>",
+  "expect": "{\"t\":-62035891200000}",
+  "model": {
+    "time_ms": "-62035891200000"
+  }
+}

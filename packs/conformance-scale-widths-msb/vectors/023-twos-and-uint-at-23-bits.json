@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-23-bits",
+  "from": "conformance-scale-widths-msb",
+  "to": "conformance-scale-widths-msb",
+  "input": "170400000fffffefffffe00000800000",
+  "expect": "170400000fffffefffffe00000800000",
+  "model": {
+    "@kind": "w23",
+    "probe.x": "-4194304",
+    "probe.y": "-1",
+    "probe.z": "4194303",
+    "probe.w": "4194305"
+  }
+}

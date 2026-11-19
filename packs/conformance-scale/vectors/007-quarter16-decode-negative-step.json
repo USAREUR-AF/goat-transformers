@@ -1,0 +1,10 @@
+{
+  "name": "quarter16-decode-negative-step",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "06fdff",
+  "expect": "{\"ce\":9.25}",
+  "model": {
+    "@kind": "quarter16"
+  }
+}

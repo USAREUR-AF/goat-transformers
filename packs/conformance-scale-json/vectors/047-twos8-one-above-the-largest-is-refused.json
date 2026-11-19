@@ -1,0 +1,7 @@
+{
+  "name": "twos8-one-above-the-largest-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"val\":128}",
+  "expect_error": "transform-encode"
+}

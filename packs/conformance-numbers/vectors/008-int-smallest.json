@@ -1,0 +1,10 @@
+{
+  "name": "int-smallest",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"-9223372036854775808\"/>",
+  "expect": "<e n=\"-9223372036854775808\"/>",
+  "model": {
+    "probe.n": "-9223372036854775808"
+  }
+}

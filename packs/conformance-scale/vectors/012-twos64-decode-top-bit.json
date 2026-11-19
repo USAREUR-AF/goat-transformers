@@ -1,0 +1,10 @@
+{
+  "name": "twos64-decode-top-bit",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "0d0000000000000080",
+  "expect": "{\"w\":-9223372036854775808}",
+  "model": {
+    "@kind": "twos64"
+  }
+}

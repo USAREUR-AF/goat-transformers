@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-37-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "250000000000feffffffffffffffff170000000001",
+  "expect": "250000000000feffffffffffffffff170000000001",
+  "model": {
+    "@kind": "w37",
+    "probe.x": "-68719476736",
+    "probe.y": "-1",
+    "probe.z": "68719476735",
+    "probe.w": "68719476737"
+  }
+}

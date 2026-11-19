@@ -1,0 +1,7 @@
+{
+  "name": "lin16-below-full-range",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":179.997}",
+  "expect": "05ff7f"
+}

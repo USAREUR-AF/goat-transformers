@@ -1,0 +1,8 @@
+{
+  "name": "items-one-over-the-limit-before-any-field-is-read",
+  "from": "conformance-limit-text",
+  "to": "conformance-limit-text",
+  "input": "x,1",
+  "max_items": 1,
+  "expect_error": "malformed-wire"
+}

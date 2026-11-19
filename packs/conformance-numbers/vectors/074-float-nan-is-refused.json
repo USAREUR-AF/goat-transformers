@@ -1,0 +1,7 @@
+{
+  "name": "float-nan-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"NaN\"/>",
+  "expect_error": "transform-decode"
+}

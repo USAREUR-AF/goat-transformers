@@ -1,0 +1,19 @@
+{
+  "name": "10-list-source-and-scalar-target",
+  "from": "conformance-cap-lists",
+  "to": "conformance-cap-a",
+  "grade": "partial",
+  "carried": [
+    "uid"
+  ],
+  "dropped": [
+    "probe.items[]",
+    "probe.items[].probe.label",
+    "probe.items[].probe.qty",
+    "probe.items[].probe.subs[]",
+    "probe.items[].probe.subs[].probe.tag",
+    "probe.items[].probe.subs[].probe.val",
+    "probe.nums[]",
+    "probe.nums[].probe.val"
+  ]
+}

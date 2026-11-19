@@ -1,0 +1,7 @@
+{
+  "name": "uint1-one-above-the-largest-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"z\":2}",
+  "expect_error": "transform-encode"
+}

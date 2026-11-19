@@ -1,0 +1,7 @@
+{
+  "name": "ampersand-at-the-end-of-an-attribute",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a&\"/>",
+  "expect_error": "malformed-wire"
+}

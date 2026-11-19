@@ -1,0 +1,7 @@
+{
+  "name": "quarter16-offset-and-fraction-above-the-field-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ce\":8202}",
+  "expect_error": "transform-encode"
+}

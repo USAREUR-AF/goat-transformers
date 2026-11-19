@@ -1,0 +1,7 @@
+{
+  "name": "float-decimal-comma-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1,5\"/>",
+  "expect_error": "transform-decode"
+}

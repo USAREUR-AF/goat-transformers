@@ -1,0 +1,10 @@
+{
+  "name": "before-1970-fraction-digits-after-the-third-are-dropped",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"1969-12-31T23:59:59.9999Z\"/>",
+  "expect": "{\"t\":-1}",
+  "model": {
+    "time_ms": "-1"
+  }
+}

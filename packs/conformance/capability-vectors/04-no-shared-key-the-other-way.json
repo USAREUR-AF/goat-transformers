@@ -1,0 +1,10 @@
+{
+  "name": "04-no-shared-key-the-other-way",
+  "from": "conformance-cap-c",
+  "to": "conformance-cap-a",
+  "grade": "none",
+  "carried": [],
+  "dropped": [
+    "probe.s1"
+  ]
+}

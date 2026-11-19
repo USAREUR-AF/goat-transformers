@@ -1,0 +1,7 @@
+{
+  "name": "bare-ampersand-in-an-attribute",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a & b\"/>",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "sscale64-largest-double-below-2-to-the-63",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lat\":9223372036854774784}",
+  "expect": "0300fcffffffffff7f"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "int-in-element-text",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e><v>-42</v></e>",
+  "expect": "<e><v>-42</v></e>",
+  "model": {
+    "probe.val": "-42"
+  }
+}

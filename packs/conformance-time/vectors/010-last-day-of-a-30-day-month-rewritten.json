@@ -1,0 +1,7 @@
+{
+  "name": "last-day-of-a-30-day-month-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2023-04-30T23:59:59Z\"/>",
+  "expect": "<e t=\"2023-04-30T23:59:59.000Z\"/>"
+}

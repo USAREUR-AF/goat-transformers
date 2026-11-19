@@ -1,0 +1,7 @@
+{
+  "name": "lin16-full-range-does-not-fit-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":180}",
+  "expect_error": "transform-encode"
+}

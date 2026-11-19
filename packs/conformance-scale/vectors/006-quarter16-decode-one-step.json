@@ -1,0 +1,10 @@
+{
+  "name": "quarter16-decode-one-step",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "060100",
+  "expect": "{\"ce\":10.25}",
+  "model": {
+    "@kind": "quarter16"
+  }
+}

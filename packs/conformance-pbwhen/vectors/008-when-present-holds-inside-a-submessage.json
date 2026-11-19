@@ -1,0 +1,10 @@
+{
+  "name": "when-present-holds-inside-a-submessage",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a0275312a0208003003",
+  "expect": "{\"id\":\"u1\",\"val\":3}",
+  "model": {
+    "@kind": "marked"
+  }
+}

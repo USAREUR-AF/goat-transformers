@@ -1,0 +1,7 @@
+{
+  "name": "float-type-suffix-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1.5f\"/>",
+  "expect_error": "transform-decode"
+}

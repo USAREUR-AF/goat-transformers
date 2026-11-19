@@ -1,0 +1,7 @@
+{
+  "name": "json-int-exponent-far-above-the-largest-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1e400}",
+  "expect_error": "transform-decode"
+}

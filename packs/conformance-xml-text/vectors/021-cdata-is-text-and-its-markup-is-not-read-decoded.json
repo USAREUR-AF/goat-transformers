@@ -1,0 +1,7 @@
+{
+  "name": "cdata-is-text-and-its-markup-is-not-read-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name><![CDATA[a<b&amp;c]]></name></e>",
+  "expect": "{\"name\":\"a<b&amp;c\"}"
+}

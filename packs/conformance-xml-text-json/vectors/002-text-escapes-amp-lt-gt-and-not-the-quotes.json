@@ -1,0 +1,7 @@
+{
+  "name": "text-escapes-amp-lt-gt-and-not-the-quotes",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"name\":\"a&b<c>d\\\"e'f\"}",
+  "expect": "<e><name>a&amp;b&lt;c&gt;d\"e'f</name></e>"
+}

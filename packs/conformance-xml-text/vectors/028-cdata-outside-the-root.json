@@ -1,0 +1,7 @@
+{
+  "name": "cdata-outside-the-root",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<![CDATA[a]]><e id=\"1\"/>",
+  "expect_error": "malformed-wire"
+}

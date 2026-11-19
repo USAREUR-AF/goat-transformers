@@ -1,0 +1,7 @@
+{
+  "name": "uscale8-one-above-the-field-does-not-wrap-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ratio\":256}",
+  "expect_error": "transform-encode"
+}

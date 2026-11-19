@@ -1,0 +1,7 @@
+{
+  "name": "text-whitespace-is-kept-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name>  a  b\t\n </name></e>",
+  "expect": "{\"name\":\"  a  b\\t\\n \"}"
+}

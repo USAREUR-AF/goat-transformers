@@ -1,0 +1,7 @@
+{
+  "name": "when-of-the-empty-text-does-not-hold-on-an-element-with-children",
+  "from": "conformance-xml-empty",
+  "to": "conformance-xml-empty",
+  "input": "<e id=\"a\"><x/></e>",
+  "expect_error": "no-kind"
+}

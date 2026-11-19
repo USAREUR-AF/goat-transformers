@@ -1,6 +1,6 @@
 # Code sharing and cross-language interop
 
-Status: Written. Version 0.1.
+Status: Written. Version 0.11.
 
 Two kinds of sharing, kept separate on purpose. Blurring them trades away the
 redundancy the polyglot design exists to buy.
@@ -21,13 +21,16 @@ engines/<lang>/        the one shared core library
 consumers link that library; packs/ is shared across all languages
 ```
 
-## Across languages: independent engines, verified against each other
+## Across languages: independent engines, verified by the same vectors
 
 Rust, Go, Python, Java, C++, Erlang and Zig each implement the engine natively, from
 `spec/engine-spec.md` and the vectors — never from another engine's source. They
-exist so that a defect in one is caught by the others: all engines run all
-vectors, and they are run against each other on generated inputs. For this to
-work the native engines must stay independent and must not call one another.
+exist so that a defect in one is caught by the others. Built: all engines run
+all vectors, and each must give the bytes the vector states, so engines that
+pass agree with one another on every vector input. Designed, not built: a
+comparison harness that feeds generated inputs to all seven engines and
+compares their outputs with one another. For either to work the native engines
+must stay independent and must not call one another.
 
 ## Across languages: FFI and embedding, for shipping only
 
@@ -37,8 +40,8 @@ native engine can embed the Rust engine through that ABI instead of writing its
 own. This is a packaging convenience.
 
 The rule that keeps redundancy intact: **FFI is allowed for deployment; the
-vector cross-check always runs the independent native engines against each
-other, never one engine calling another.** An embedded Rust engine and a native
+vector cross-check always runs each independent native engine on the vectors,
+never one engine calling another.** An embedded Rust engine and a native
 Go engine are two shipping options over the same packs and vectors; they are not
 a substitute for the independent Go engine in the cross-check.
 

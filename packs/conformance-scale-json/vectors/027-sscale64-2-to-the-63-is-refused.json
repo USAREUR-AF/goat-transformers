@@ -1,0 +1,7 @@
+{
+  "name": "sscale64-2-to-the-63-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lat\":9223372036854775808}",
+  "expect_error": "transform-encode"
+}

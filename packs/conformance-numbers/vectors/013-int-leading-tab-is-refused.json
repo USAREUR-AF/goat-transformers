@@ -1,0 +1,7 @@
+{
+  "name": "int-leading-tab-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"&#9;7\"/>",
+  "expect_error": "transform-decode"
+}

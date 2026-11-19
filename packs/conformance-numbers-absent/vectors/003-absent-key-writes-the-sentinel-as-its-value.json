@@ -1,0 +1,7 @@
+{
+  "name": "absent-key-writes-the-sentinel-as-its-value",
+  "from": "conformance-numbers-absent",
+  "to": "conformance-numbers-absent",
+  "input": "07",
+  "expect": "07"
+}
