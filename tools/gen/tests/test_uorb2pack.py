@@ -101,6 +101,33 @@ class Case(unittest.TestCase):
                   encoding="utf-8") as fh:
             self.assertIn("field  lat  0:64:64  f64", fh.read())
 
+    def test_time_and_height_bindings(self):
+        self.first_run()
+        with open(os.path.join(self.root, "packs", "px4-ulog-sensor-gps", "pack.def"), encoding="utf-8") as fh:
+            text = fh.read()
+        # layout: timestamp 0, latitude 8, longitude 16, altitude_ellipsoid_m 24, time_utc_usec 32
+        self.assertIn("field  hae  0:192:64  f64", text)
+        self.assertIn("field  time_ms  0:256:64  uiscale:1/1000  absent 0", text)
+        with open(os.path.join(self.root, "model", "px4ulog.def"), encoding="utf-8") as fh:
+            self.assertNotIn("sensor_gps_time_utc_usec", fh.read())   # bound from the first run: no raw key
+        self.assertEqual(gen.utc_ms(1970, 1, 1, 0, 0, 0, 0), 0)
+        self.assertEqual(gen.utc_ms(2000, 3, 1, 0, 0, 1, 5), 951868801005)
+        self.assertEqual(gen.decode_value(1500, 64, "uiscale:1/1000"), 2)
+        self.assertEqual(gen.decode_value(2500, 64, "uiscale:1/1000"), 3)
+        self.assertEqual(gen.encode_value(3, 64, "uiscale:1/1000"), 3000)
+
+    def test_bound_field_keeps_its_earlier_raw_key(self):
+        names = os.path.join(self.root, "tools", "gen", "names")
+        os.makedirs(names)
+        with open(os.path.join(names, "px4-ulog.json"), "w", encoding="utf-8") as fh:
+            json.dump({"SensorGps:time_utc_usec": "sensor_gps_time_utc_usec"}, fh)
+        self.first_run()
+        with open(os.path.join(self.root, "model", "px4ulog.def"), encoding="utf-8") as fh:
+            model = fh.read()
+        self.assertRegex(model, r'key  sensor_gps_time_utc_usec +int +- +"SensorGps.time_utc_usec \(uint64\); bound to `time_ms`')
+        with open(os.path.join(self.root, "packs", "px4-ulog-sensor-gps", "pack.def"), encoding="utf-8") as fh:
+            self.assertNotIn("px4ulog.sensor_gps_time_utc_usec", fh.read())
+
     def test_compare_formats(self):
         msgs = gen.load_catalog(self.px4)
         jdir = os.path.join(self.tmp, "json")

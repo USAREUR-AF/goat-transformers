@@ -2,11 +2,13 @@
   "name": "gen-geojson-to-px4-ulog-sensor-gps",
   "from": "geojson",
   "to": "px4-ulog-sensor-gps",
-  "source": "tools/gen/uorb2pack.py: only lat and lon have a line; every other byte is zero (absent fields write nothing); hae, uid and callsign have no line",
-  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
-  "expect": "000000000000000000000000000000000000000000a04740000000000000214000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "source": "tools/gen/uorb2pack.py: time_ms is 2026-11-19T06:30:15.250Z counted from the Unix epoch by date arithmetic (no engine); it is written as microseconds, time_ms times 1000 (uiscale:1/1000); lat, lon and hae as float64; every other byte is zero (no value, and 0 is also the absent sentinel of the time)",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410.5]},\"properties\":{\"time_ms\":1795069815250,\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
+  "expect": "000000000000000000000000000000000000000000a04740000000000000214000000000000000000000000000a87940505caf429b60060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   "model": {
     "lat": "47.25",
-    "lon": "8.5"
+    "lon": "8.5",
+    "hae": "410.5",
+    "time_ms": "1795069815250"
   }
 }

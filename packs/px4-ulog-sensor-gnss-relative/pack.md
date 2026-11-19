@@ -30,7 +30,7 @@ the ROS 2 copy of the same messages.
 |---|---|---|---|---|
 | 0 | 64 | `timestamp` | uint64 | `px4ulog.sensor_gnss_relative_timestamp` uint |
 | 8 | 64 | `timestamp_sample` | uint64 | `px4ulog.sensor_gnss_relative_timestamp_sample` uint |
-| 16 | 64 | `time_utc_usec` | uint64 | `px4ulog.sensor_gnss_relative_time_utc_usec` uint |
+| 16 | 64 | `time_utc_usec` | uint64 | `time_ms` uiscale:1/1000 |
 | 24 | 32 | `device_id` | uint32 | `px4ulog.sensor_gnss_relative_device_id` uint |
 | 28 | 32 | `position[0]` | float32 | `px4ulog.sensor_gnss_relative_position_0` f32 |
 | 32 | 32 | `position[1]` | float32 | `px4ulog.sensor_gnss_relative_position_1` f32 |
@@ -60,9 +60,15 @@ with a fixed count. A `char` array is `ascii` text.
 
 ## Shared-model keys
 
-None. No field of this message is stated as a WGS 84 latitude or longitude in
-degrees. `timestamp` is microseconds since the system started, not UTC, so it is
-not `time_ms`. Every field is a raw key of module `px4ulog`.
+| Field | Key | Evidence in the .msg file |
+|---|---|---|
+| `time_utc_usec` | `time_ms` | field: a UTC timestamp in microseconds from the receiver, 0 while it is not yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value |
+
+`timestamp` is microseconds since the system started, not UTC, and stays a raw
+key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
+packs map the field to the shared key only. A UTC time in microseconds that is
+not a whole millisecond decodes to the nearest millisecond (half away from zero)
+and re-encodes as that millisecond times 1000.
 
 ## Not mapped, and why
 
@@ -80,7 +86,7 @@ not `time_ms`. Every field is a raw key of module `px4ulog`.
 `vectors/gen-rt.json` is a round trip with every field set: values chosen by the
 generator, serialized by its own code from the layout, zero padding. `gen-*` files
 beside it, where there are any, are edge and error cases and conversions to
-geojson; each states its rule in `source`. 1 vector file(s).
+geojson; each states its rule in `source`. 4 vector file(s).
 
 ## Sources
 

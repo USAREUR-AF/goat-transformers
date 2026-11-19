@@ -13,7 +13,7 @@ bit_order     lsb
 word_bytes    1
 field  px4ulog.sensor_gnss_relative_timestamp  0:0:64  uint
 field  px4ulog.sensor_gnss_relative_timestamp_sample  0:64:64  uint
-field  px4ulog.sensor_gnss_relative_time_utc_usec  0:128:64  uint
+field  time_ms  0:128:64  uiscale:1/1000  absent 0
 field  px4ulog.sensor_gnss_relative_device_id  0:192:32  uint
 field  px4ulog.sensor_gnss_relative_position_0  0:224:32  f32
 field  px4ulog.sensor_gnss_relative_position_1  0:256:32  f32

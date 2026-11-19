@@ -2,5 +2,7 @@
 uint64 timestamp
 float64 latitude_deg		# Latitude in degrees
 float64 longitude_deg		# Longitude in degrees
+float64 altitude_ellipsoid_m	# test field: ellipsoidal altitude in metres
 float32 altitude_msl_m
+uint64 time_utc_usec		# test field: UTC microseconds, 0 when not known
 uint8 fix_type

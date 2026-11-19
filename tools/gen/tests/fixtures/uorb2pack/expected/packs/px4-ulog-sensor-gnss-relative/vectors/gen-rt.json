@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_gnss_relative",
+  "from": "px4-ulog-sensor-gnss-relative",
+  "to": "px4-ulog-sensor-gnss-relative",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060080c43c18240a06000000dcc00000d4c00000ccc0",
+  "expect": "43822d18240a060080c43c18240a06000000dcc00000d4c00000ccc0",
+  "model": {
+    "px4ulog.sensor_gnss_relative_timestamp": "1700000001000003",
+    "time_ms": "1700000002000",
+    "px4ulog.sensor_gnss_relative_position_0": "-6.875",
+    "px4ulog.sensor_gnss_relative_position_1": "-6.625"
+  }
+}

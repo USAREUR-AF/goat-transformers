@@ -19,7 +19,8 @@ Date read: 2026-11-19.
 | `msg/CameraCapture.msg` | `ca57ee01ac0c23d9ce31ad8085574640d2f865d7d0cd376385e5e176106d35f0` |
 | `msg/Holder.msg` | `3a00b1bc93fac772cbf1c6823ca10e5c458989e1fa02c9213bf067e8a37b3916` |
 | `msg/Item.msg` | `d59e09ca46a3be86783bfb903511e25068bcafbee51423a38dd44fac6773c9d9` |
-| `msg/SensorGps.msg` | `21b4c4a977ca5881f58bf8f3b77c8a3a08e464b56a46fa62de049106c8d2ca5d` |
+| `msg/SensorGnssRelative.msg` | `8d2851a15c00ece7123c0dad38dfc121a753ac86fc5cb37d540683393ba38107` |
+| `msg/SensorGps.msg` | `3d9d3781c62396cd29c8696d57e3605f05ef6ce8f84530da2e361f8ba03be52c` |
 | `msg/versioned/HomePosition.msg` | `3e7f6a4169d75652e81d4eae3b7a806707054a1ee22c1bebde0422c767af9cbd` |
 | `msg/versioned/VehicleGlobalPosition.msg` | `0bdfc2799ac36b4f102c0f1133d94665f43eca9a4600f996682f1dcba745d0bb` |
 

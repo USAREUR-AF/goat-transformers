@@ -1,0 +1,8 @@
+{
+  "name": "x-sensor_gnss_relative-no-time-to-geojson",
+  "from": "px4-ulog-sensor-gnss-relative",
+  "to": "geojson",
+  "source": "time_utc_usec 0 is the receiver's 'not yet known' (pack.md); `absent 0` gives no time_ms, so properties has none (engine-spec 0.9)",
+  "input": "43822d18240a060086c43c18240a06000000000000000000fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0985100010001000100010001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}"
+}

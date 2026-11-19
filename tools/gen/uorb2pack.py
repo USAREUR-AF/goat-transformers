@@ -64,6 +64,7 @@ import re
 import struct
 import sys
 from decimal import Decimal
+from fractions import Fraction
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genio      # noqa: E402  (the script directory is not on the path under `python3 -I`)
@@ -96,8 +97,22 @@ CORE = {
     ("HomePosition", "lon"): ("lon", "as lat; longitude in degrees"),
     ("CameraCapture", "lat"): ("lat", "field: latitude in degrees (WGS84), float64; the position where the image was taken"),
     ("CameraCapture", "lon"): ("lon", "field: longitude in degrees (WGS84), float64"),
+    # A time is bound where the .msg states microseconds of UTC and nothing else; an
+    # entry of four values also names the transform and its options (engine-spec 0.15,
+    # 0.9). The raw key a field had before its binding stays declared in the module.
+    ("SensorGps", "time_utc_usec"): (
+        "time_ms", "field: a UTC timestamp in microseconds from the receiver, 0 while it is not "
+        "yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value",
+        "uiscale:1/1000", "absent 0"),
+    ("SensorGps", "altitude_ellipsoid_m"): (
+        "hae", "file header: GPS position in WGS84 coordinates; field: the ellipsoidal altitude "
+        "in metres, float64. The altitude over mean sea level is a separate field"),
+    ("SensorGnssRelative", "time_utc_usec"): (
+        "time_ms", "field: a UTC timestamp in microseconds from the receiver, 0 while it is not "
+        "yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value",
+        "uiscale:1/1000", "absent 0"),
 }
-CORE_TYPES = {"lat": "float", "lon": "float"}
+CORE_TYPES = {"lat": "float", "lon": "float", "hae": "float", "time_ms": "int"}
 # Every pack whose message binds lat and lon gets a vector to geojson; these get one from it.
 FROM_GEOJSON = ["vehicle_global_position", "sensor_gps"]
 
@@ -297,9 +312,11 @@ def compare_formats(msgs, json_dir):
 # --------------------------------------------------------------------------
 
 class Leaf:
-    def __init__(self, key, bit, length, transform, keytype, desc, pathid, rostype):
+    def __init__(self, key, bit, length, transform, keytype, desc, pathid, rostype, options="", raw_key=None):
         self.key, self.bit, self.length, self.transform = key, bit, length, transform
         self.keytype, self.desc, self.pathid, self.rostype = keytype, desc, pathid, rostype
+        self.options = options      # field options after the transform (`absent 0`)
+        self.raw_key = raw_key      # the raw key the field had before it was bound
 
 
 class Group:
@@ -378,7 +395,14 @@ def leaves(msgs, top, name, base_bit, kpath, ppath, desc, namer, inside_group=Fa
 def scalar(top, f, bit, length, tr, kt, kpath, pathid, desc, rostype, namer):
     bound = CORE.get((top, pathid))
     if bound:
-        return Leaf(bound[0], bit, length, tr, kt, desc, pathid, rostype)
+        pid = "%s:%s" % (top, pathid)
+        raw = namer.names.get(pid)     # a field bound after it had a raw key keeps that key declared
+        if raw is not None:
+            namer.name(pid, raw)
+        if len(bound) == 4:
+            return Leaf(bound[0], bit, length, bound[2], CORE_TYPES[bound[0]], desc, pathid, rostype,
+                        bound[3], raw)
+        return Leaf(bound[0], bit, length, tr, kt, desc, pathid, rostype, "", raw)
     key = namer.name("%s:%s" % (top, pathid), "_".join([snake(top)] + kpath))
     return Leaf(key, bit, length, tr, kt, "%s (%s)" % (desc, rostype), pathid, rostype)
 
@@ -450,8 +474,11 @@ def serialize(msgs, name, buf, base, sampler, values, path, top):
             values[p] = b.rstrip(b"\0").decode("ascii")
         elif f.builtin:
             size = BUILTIN[f.type][0]
+            bound = CORE.get((top, p))
             for i in range(f.count or 1):
                 v = sampler.value(f.type)
+                if bound and len(bound) == 4 and bound[2] == "uiscale:1/1000":
+                    v -= v % 1000       # a whole number of milliseconds, so a round trip is exact
                 buf[at + i * size:at + (i + 1) * size] = pack_scalar(f.type, v)
                 values[p if f.count is None else "%s[%d]" % (p, i)] = v
         else:
@@ -488,7 +515,8 @@ def read_pack(text):
         d = t[0]
         if d == "field":
             w, p, n = (int(x) for x in t[2].split(":"))
-            cur.append(("field", t[1], w * 8 + p, n, t[3]))
+            absent = [int(x) for x in t[t.index("absent") + 1].split(",")] if "absent" in t[4:] else []
+            cur.append(("field", t[1], w * 8 + p, n, t[3], absent))
         elif d == "const":
             w, p, n = (int(x) for x in t[1].split(":"))
             cur.append(("const", w * 8 + p, n, int(t[2])))
@@ -521,7 +549,24 @@ def get_bits(data, pos, length):
     return (int.from_bytes(data, "little") >> pos) & ((1 << length) - 1)
 
 
+def iscale_parts(tr):
+    """(factor, offset) of `uiscale:<factor>[:<offset>]` as exact numbers (engine-spec 0.15)."""
+    parts = tr.split(":")[1:]
+    num, den = (parts[0].split("/") + ["1"])[:2]
+    return Fraction(int(num), int(den)), int(parts[1]) if len(parts) > 1 else 0
+
+
+def round_away(x):
+    """Round half away from zero, of an exact Fraction."""
+    n = abs(x)
+    r = int(n) + (1 if n - int(n) >= Fraction(1, 2) else 0)
+    return r if x >= 0 else -r
+
+
 def decode_value(raw, length, tr):
+    if tr.startswith("uiscale:"):
+        factor, offset = iscale_parts(tr)
+        return round_away(raw * factor) + offset
     if tr == "uint":
         return raw
     if tr == "twos":
@@ -546,13 +591,21 @@ def decode(lines, data, base=0):
     ent = {}
     for ln in lines:
         if ln[0] == "field":
-            ent[ln[1]] = decode_value(get_bits(data, base + ln[2], ln[3]), ln[3], ln[4])
+            raw = get_bits(data, base + ln[2], ln[3])
+            if raw not in ln[5]:            # a sentinel of `absent` gives no value (engine-spec 0.9)
+                ent[ln[1]] = decode_value(raw, ln[3], ln[4])
         elif ln[0] == "group":
             ent[ln[1]] = [decode(ln[5], data, base + ln[2] + i * ln[3]) for i in range(ln[4])]
     return ent
 
 
 def encode_value(v, length, tr):
+    if tr.startswith("uiscale:"):
+        factor, offset = iscale_parts(tr)
+        r = round_away((Fraction(v) - offset) / factor)
+        if not 0 <= r < (1 << length):
+            raise Fail("transform-encode", "does not fit")
+        return r
     if tr in ("uint", "twos"):
         return int(v) & ((1 << length) - 1)
     if tr == "f32":
@@ -569,9 +622,10 @@ def encode_value(v, length, tr):
 
 def encode(lines, ent, base=0, acc=0):
     for ln in lines:
-        if ln[0] == "field" and ln[1] in ent:
+        if ln[0] == "field" and (ln[1] in ent or ln[5]):
             mask = ((1 << ln[3]) - 1) << (base + ln[2])
-            acc = (acc & ~mask) | (encode_value(ent[ln[1]], ln[3], ln[4]) << (base + ln[2]))
+            value = encode_value(ent[ln[1]], ln[3], ln[4]) if ln[1] in ent else ln[5][0]
+            acc = (acc & ~mask) | (value << (base + ln[2]))
         elif ln[0] == "group":
             items = ent.get(ln[1])
             if items is None:
@@ -610,6 +664,19 @@ def geojson_point(lat, lon):
         fmt_float(lon), fmt_float(lat))
 
 
+def geojson_feature(ent):
+    """The canonical geojson of an entity holding at most lat, lon, hae and time_ms
+    (engine-spec 0.1.1 rulings 3 to 5; packs/geojson/pack.def maps time_ms to
+    properties.time_ms and hae to the third coordinate)."""
+    if "lat" in ent and "lon" in ent:
+        c = [ent["lon"], ent["lat"]] + ([ent["hae"]] if "hae" in ent else [])
+        geom = '{"type":"Point","coordinates":[%s]}' % ",".join(fmt_float(x) for x in c)
+    else:
+        geom = "null"
+    props = '"time_ms":%d' % ent["time_ms"] if "time_ms" in ent else ""
+    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, props)
+
+
 def check_vector(vec, lines_of, where):
     src, dst = vec["from"], vec["to"]
     try:
@@ -617,12 +684,17 @@ def check_vector(vec, lines_of, where):
             g = json.loads(vec["input"])
             c = (g.get("geometry") or {}).get("coordinates") or []
             ent = {"lat": float(c[1]), "lon": float(c[0])} if len(c) >= 2 else {}
+            if len(c) >= 3:
+                ent["hae"] = float(c[2])
+            t = (g.get("properties") or {}).get("time_ms")
+            if t is not None:
+                ent["time_ms"] = int(t)
             lines = lines_of[dst]
             out = encode(lines, ent).to_bytes((extent(lines) + 7) // 8, "little").hex()
         else:
             out, ent = convert_bits(lines_of[src], vec["input"])
             if dst == "geojson":
-                out = geojson_point(ent["lat"], ent["lon"]) if "lat" in ent and "lon" in ent else None
+                out = geojson_feature({k: v for k, v in ent.items() if k in CORE_TYPES})
         for k, want in vec.get("model", {}).items():
             got = ent.get(k)
             if isinstance(got, float):
@@ -657,7 +729,8 @@ def emit_lines(items, indent=""):
             out.extend(emit_lines(x.body, indent + "  "))
             out.append("%send" % indent)
         else:
-            out.append("%sfield  %s  0:%d:%d  %s" % (indent, qual(x.key), x.bit, x.length, x.transform))
+            out.append("%sfield  %s  0:%d:%d  %s%s" % (indent, qual(x.key), x.bit, x.length, x.transform,
+                                                     "  " + x.options if x.options else ""))
     return out
 
 
@@ -740,8 +813,15 @@ def emit_pack_md(topic, msg, items, lay, deps, n_vec, cross_to, cross_from, msgs
         a += ["| Field | Key | Evidence in the .msg file |", "|---|---|---|"]
         for x in bound:
             a.append("| `%s` | `%s` | %s |" % (x.pathid, x.key, CORE[(msg.name, x.pathid)][1]))
-        a += ["", "Altitude, velocity and time are not bound: this pack binds latitude and",
-              "longitude only, and `timestamp` is microseconds since the system started, not UTC."]
+        if any(x.key in ("time_ms", "hae") for x in bound):
+            a += ["", "`timestamp` is microseconds since the system started, not UTC, and stays a raw",
+                  "key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the",
+                  "packs map the field to the shared key only. A UTC time in microseconds that is",
+                  "not a whole millisecond decodes to the nearest millisecond (half away from zero)",
+                  "and re-encodes as that millisecond times 1000."]
+        else:
+            a += ["", "Altitude, velocity and time are not bound: this pack binds latitude and",
+                  "longitude only, and `timestamp` is microseconds since the system started, not UTC."]
     else:
         a += ["None. No field of this message is stated as a WGS 84 latitude or longitude in",
               "degrees. `timestamp` is microseconds since the system started, not UTC, so it is",
@@ -848,7 +928,74 @@ def dump_json(v):
     return json.dumps(v, indent=2, ensure_ascii=False) + "\n"
 
 
+def utc_ms(year, month, day, hour, minute, second, ms):
+    """Milliseconds from 1970-01-01T00:00:00Z to the given UTC instant, by counting days
+    (proleptic Gregorian calendar, no leap seconds, as Unix time counts)."""
+    import datetime
+    days = datetime.date(year, month, day).toordinal() - datetime.date(1970, 1, 1).toordinal()
+    return ((days * 24 + hour) * 60 + minute) * 60000 + second * 1000 + ms
+
+
+def model_raw(x, v):
+    """The model value of a bound field from its wire value."""
+    if x.transform.startswith("uiscale:"):
+        return decode_value(v, x.length, x.transform)
+    return v
+
+
+def model_text(v):
+    return fmt_float(v) if isinstance(v, float) else str(v)
+
+
+def time_vectors(topic, fmt, buf, lay, bound):
+    """A UTC time from a calendar date, a time that is not a whole millisecond, and the
+    absent sentinel, each to geojson or as a round trip."""
+    x = bound["time_ms"]
+    at = x.bit // 8
+
+    def with_time(usec):
+        b = bytearray(buf)
+        b[at:at + 8] = struct.pack("<Q", usec)
+        return bytes(b[:lay.logged_size])
+
+    def entity(b):
+        ent = {}
+        for k, y in bound.items():
+            if k == "time_ms":
+                raw = int.from_bytes(b[y.bit // 8:y.bit // 8 + 8], "little")
+                if raw != 0:
+                    ent[k] = decode_value(raw, y.length, y.transform)
+            else:
+                ent[k] = struct.unpack("<d", b[y.bit // 8:y.bit // 8 + 8])[0]
+        return ent
+    t_ms = utc_ms(2026, 11, 19, 6, 30, 15, 250)
+    out = []
+    b = with_time(t_ms * 1000)
+    ent = entity(b)
+    out.append(("gen-x-utc-time-to-geojson.json", vec(
+        "x-%s-utc-time-to-geojson" % topic, fmt, "geojson", b.hex(), geojson_feature(ent),
+        {"time_ms": str(t_ms)},
+        source="time_utc_usec holds 2026-11-19T06:30:15.250Z in microseconds since the Unix epoch, "
+               "%d, counted from the calendar date in tools/gen/uorb2pack.py (no engine); "
+               "uiscale:1/1000 gives %d ms" % (t_ms * 1000, t_ms))))
+    b = with_time(t_ms * 1000 + 500)
+    rounded = with_time(t_ms * 1000 + 1000)
+    out.append(("gen-tm-rounding.json", vec(
+        "tm-%s-rounding" % topic, fmt, fmt, b.hex(), rounded.hex(), {"time_ms": str(t_ms + 1)},
+        source="%d us is %d.5 ms; uiscale rounds half away from zero to %d ms (engine-spec 0.15) and "
+               "writes %d us back" % (t_ms * 1000 + 500, t_ms, t_ms + 1, (t_ms + 1) * 1000))))
+    b = with_time(0)
+    ent = entity(b)
+    out.append(("gen-x-no-time-to-geojson.json", vec(
+        "x-%s-no-time-to-geojson" % topic, fmt, "geojson", b.hex(), geojson_feature(ent),
+        source="time_utc_usec 0 is the receiver's 'not yet known' (pack.md); `absent 0` gives no "
+               "time_ms, so properties has none (engine-spec 0.9)")))
+    return out
+
+
 def model_value(x, v):
+    if x.transform.startswith("uiscale:"):
+        return str(decode_value(v, x.length, x.transform))
     if x.transform in ("f32", "f64"):
         return fmt_float(v)
     return str(v)
@@ -870,7 +1017,7 @@ def build(args, out):
     if args.compare_formats:
         n = compare_formats(msgs, args.compare_formats)
         print("uorb2pack: layout of %d messages matches PX4's generator" % n)
-    for (mname, field), (key, _) in CORE.items():
+    for (mname, field), entry in CORE.items():
         if mname not in msgs or not any(f.name == field for f in msgs[mname].fields):
             fail("binding %s.%s: no such field" % (mname, field))
     names = json.loads(out.read(NAMES_REL)) if out.exists(NAMES_REL) else {}
@@ -892,6 +1039,11 @@ def build(args, out):
         per_msg[m.name] = items
         for x in items:
             for y in ([x] + (x.body if isinstance(x, Group) else [])):
+                if y.key in CORE_TYPES and getattr(y, "raw_key", None) and y.raw_key not in seen:
+                    seen.add(y.raw_key)
+                    decls.append(("key", y.raw_key, BUILTIN[y.rostype.split("[")[0]][2],
+                                  "%s (%s); bound to `%s` in the packs" % (y.desc.split(" (")[0], y.rostype, y.key)))
+                    continue
                 if y.key in CORE_TYPES or y.key in seen:
                     continue
                 seen.add(y.key)
@@ -950,13 +1102,27 @@ def build(args, out):
             b2 = bytearray(buf)
             b2[bound["lat"].bit // 8:bound["lat"].bit // 8 + 8] = struct.pack("<d", lat)
             b2[bound["lon"].bit // 8:bound["lon"].bit // 8 + 8] = struct.pack("<d", lon)
-            vs.append(("gen-x-to-geojson.json", vec(
-                "x-%s-to-geojson" % topic, fmt, "geojson", bytes(b2[:lay.logged_size]).hex(),
-                geojson_point(lat, lon), {"lat": fmt_float(lat), "lon": fmt_float(lon)},
-                source="the bound fields lat and lon (pack.md) are float64 degrees; geojson writes [lon, lat] "
-                       "(RFC 7946, engine-spec 0.1.1 ruling 4); no other key of this format is a geojson key")))
+            if set(bound) == {"lat", "lon"}:
+                vs.append(("gen-x-to-geojson.json", vec(
+                    "x-%s-to-geojson" % topic, fmt, "geojson", bytes(b2[:lay.logged_size]).hex(),
+                    geojson_point(lat, lon), {"lat": fmt_float(lat), "lon": fmt_float(lon)},
+                    source="the bound fields lat and lon (pack.md) are float64 degrees; geojson writes [lon, lat] "
+                           "(RFC 7946, engine-spec 0.1.1 ruling 4); no other key of this format is a geojson key")))
+            else:
+                ent = {"lat": lat, "lon": lon}
+                for k, x in bound.items():
+                    if k not in ent:
+                        ent[k] = model_raw(x, values[x.pathid])
+                vs.append(("gen-x-to-geojson.json", vec(
+                    "x-%s-to-geojson" % topic, fmt, "geojson", bytes(b2[:lay.logged_size]).hex(),
+                    geojson_feature(ent), collections.OrderedDict((k, model_text(v)) for k, v in ent.items()),
+                    source="the bound fields (pack.md): lat, lon and hae float64 degrees and metres, time_ms the "
+                           "UTC microseconds divided by 1000; geojson writes [lon, lat, alt] and properties.time_ms "
+                           "(RFC 7946, engine-spec 0.1.1 rulings 3 to 5)")))
+        if "time_ms" in bound:
+            vs += time_vectors(topic, fmt, buf, lay, bound)
         cross_from = cross_to and topic in FROM_GEOJSON
-        if cross_from:
+        if cross_from and set(bound) == {"lat", "lon"}:
             b3 = bytearray(lay.size)
             b3[bound["lat"].bit // 8:bound["lat"].bit // 8 + 8] = struct.pack("<d", 47.25)
             b3[bound["lon"].bit // 8:bound["lon"].bit // 8 + 8] = struct.pack("<d", 8.5)
@@ -966,6 +1132,25 @@ def build(args, out):
                      bytes(b3[:lay.logged_size]).hex(), {"lat": "47.25", "lon": "8.5"},
                      source="tools/gen/uorb2pack.py: only lat and lon have a line; every other byte "
                             "is zero (absent fields write nothing); hae, uid and callsign have no line")
+        elif cross_from:
+            t_ms = utc_ms(2026, 11, 19, 6, 30, 15, 250)
+            b3 = bytearray(lay.size)
+            for k, value in (("lat", 47.25), ("lon", 8.5), ("hae", 410.5), ("time_ms", t_ms)):
+                if k in bound:
+                    x = bound[k]
+                    raw = (encode_value(value, x.length, x.transform) if x.transform.startswith("uiscale:")
+                           else int.from_bytes(struct.pack("<d", value), "little"))
+                    b3[x.bit // 8:x.bit // 8 + x.length // 8] = raw.to_bytes(x.length // 8, "little")
+            gv = vec("gen-geojson-to-%s" % fmt, "geojson", fmt,
+                     '{"type":"Feature","geometry":{"type":"Point","coordinates":[8.5,47.25,410.5]},'
+                     '"properties":{"time_ms":%d,"callsign":"UAV1"},"id":"u-1"}' % t_ms,
+                     bytes(b3[:lay.logged_size]).hex(),
+                     {"lat": "47.25", "lon": "8.5", "hae": "410.5", "time_ms": str(t_ms)},
+                     source="tools/gen/uorb2pack.py: time_ms is 2026-11-19T06:30:15.250Z counted from the "
+                            "Unix epoch by date arithmetic (no engine); it is written as microseconds, "
+                            "time_ms times 1000 (uiscale:1/1000); lat, lon and hae as float64; every other "
+                            "byte is zero (no value, and 0 is also the absent sentinel of the time)")
+        if cross_from:
             out.write("packs/geojson/vectors/gen-geojson-to-%s.json" % fmt, dump_json(gv))
             vectors.append(("packs/geojson/vectors/gen-geojson-to-%s.json" % fmt, gv))
         if topic == "vehicle_global_position":

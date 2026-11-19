@@ -16,8 +16,8 @@ field  px4ulog.sensor_gps_timestamp_sample  0:64:64  uint
 field  lat  0:128:64  f64
 field  lon  0:192:64  f64
 field  px4ulog.sensor_gps_altitude_msl_m  0:256:64  f64
-field  px4ulog.sensor_gps_altitude_ellipsoid_m  0:320:64  f64
-field  px4ulog.sensor_gps_time_utc_usec  0:384:64  uint
+field  hae  0:320:64  f64
+field  time_ms  0:384:64  uiscale:1/1000  absent 0
 field  px4ulog.sensor_gps_device_id  0:448:32  uint
 field  px4ulog.sensor_gps_s_variance_m_s  0:480:32  f32
 field  px4ulog.sensor_gps_c_variance_rad  0:512:32  f32
