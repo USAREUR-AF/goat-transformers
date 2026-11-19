@@ -1,0 +1,16 @@
+{
+  "name": "maplob-round-trip",
+  "from": "nitf-tre-maplob",
+  "to": "nitf-tre-maplob",
+  "input": "ADG0008000117VY147ADGJMPSVY1258BEHKNQTWZ258",
+  "expect": "ADG0008000117VY147ADGJMPSVY1258BEHKNQTWZ258",
+  "model": {
+    "nitftre.maplob_uniloa": "ADG",
+    "nitftre.maplob_lod": "80",
+    "nitftre.maplob_lad": "117",
+    "nitftre.maplob_lso": "VY147ADGJMPSVY1",
+    "nitftre.maplob_pso": "258BEHKNQTWZ258"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "cscrna-round-trip",
+  "from": "nitf-tre-cscrna",
+  "to": "nitf-tre-cscrna",
+  "input": "AHKNQTWZ25ORUX0369CFVY147ADG258BEHKNQ9CFILORUX0GJMPSVY1NQTWZ258BUX0369CFIL147ADGJM8BEHKNQTWFILORUX036MPSVY147",
+  "expect": "AHKNQTWZ25ORUX0369CFVY147ADG258BEHKNQ9CFILORUX0GJMPSVY1NQTWZ258BUX0369CFIL147ADGJM8BEHKNQTWFILORUX036MPSVY147",
+  "model": {
+    "nitftre.cscrna_predict_corners": "A",
+    "nitftre.cscrna_ulcnr_lat": "HKNQTWZ25",
+    "nitftre.cscrna_ulcnr_long": "ORUX0369CF",
+    "nitftre.cscrna_ulcnr_ht": "VY147ADG",
+    "nitftre.cscrna_urcnr_lat": "258BEHKNQ",
+    "nitftre.cscrna_urcnr_long": "9CFILORUX0",
+    "nitftre.cscrna_urcnr_ht": "GJMPSVY1",
+    "nitftre.cscrna_lrcnr_lat": "NQTWZ258B",
+    "nitftre.cscrna_lrcnr_long": "UX0369CFIL",
+    "nitftre.cscrna_lrcnr_ht": "147ADGJM",
+    "nitftre.cscrna_llcnr_lat": "8BEHKNQTW",
+    "nitftre.cscrna_llcnr_long": "FILORUX036",
+    "nitftre.cscrna_llcnr_ht": "MPSVY147"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

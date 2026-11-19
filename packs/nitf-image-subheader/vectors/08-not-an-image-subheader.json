@@ -1,0 +1,9 @@
+{
+  "name": "not-an-image-subheader",
+  "from": "nitf-image-subheader",
+  "to": "nitf-image-subheader",
+  "input": "GSIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.6530",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "file part type GS (a graphic subheader), not IM"
+}

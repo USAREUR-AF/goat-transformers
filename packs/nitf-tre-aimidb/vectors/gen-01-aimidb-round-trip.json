@@ -1,0 +1,29 @@
+{
+  "name": "aimidb-round-trip",
+  "from": "nitf-tre-aimidb",
+  "to": "nitf-tre-aimidb",
+  "input": "ADGJMPSVY147ADHKNQORUX0369CFVY2589CGJNQTU1478BEHKFIMPSTWZ25037ADGEHKNQTWZ258LORUX0369CFIL",
+  "expect": "ADGJMPSVY147ADHKNQORUX0369CFVY2589CGJNQTU1478BEHKFIMPSTWZ25037ADGEHKNQTWZ258LORUX0369CFIL",
+  "model": {
+    "nitftre.aimidb_acquisition_date": "ADGJMPSVY147AD",
+    "nitftre.aimidb_mission_no": "HKNQ",
+    "nitftre.aimidb_mission_identification": "ORUX0369CF",
+    "nitftre.aimidb_flight_no": "VY",
+    "nitftre.aimidb_op_num": "258",
+    "nitftre.aimidb_current_segment": "9C",
+    "nitftre.aimidb_repro_num": "GJ",
+    "nitftre.aimidb_replay": "NQT",
+    "nitftre.aimidb_reserved_1": "U",
+    "nitftre.aimidb_start_tile_column": "147",
+    "nitftre.aimidb_start_tile_row": "8BEHK",
+    "nitftre.aimidb_end_segment": "FI",
+    "nitftre.aimidb_end_tile_column": "MPS",
+    "nitftre.aimidb_end_tile_row": "TWZ25",
+    "nitftre.aimidb_country": "03",
+    "nitftre.aimidb_reserved_2": "7ADG",
+    "nitftre.aimidb_location": "EHKNQTWZ258",
+    "nitftre.aimidb_reserved_3": "LORUX0369CFIL"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

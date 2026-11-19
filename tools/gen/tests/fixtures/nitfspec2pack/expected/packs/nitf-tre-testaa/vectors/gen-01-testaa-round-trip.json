@@ -1,0 +1,19 @@
+{
+  "name": "testaa-round-trip",
+  "from": "nitf-tre-testaa",
+  "to": "nitf-tre-testaa",
+  "input": "043HKNQTWZ200VY147258BEH9CFIGJMPNQTWUX03",
+  "expect": "043HKNQTWZ200VY147258BEH9CFIGJMPNQTWUX03",
+  "model": {
+    "nitftre.testaa_count_a": "43",
+    "nitftre.testaa_label": "HKNQTWZ2",
+    "nitftre.testaa_offset": "VY147",
+    "nitftre.testaa_rate": "258BEH",
+    "nitftre.testaa_pair_01": "9CFI",
+    "nitftre.testaa_pair_02": "GJMP",
+    "nitftre.testaa_reserved_32": "NQTW",
+    "nitftre.testaa_note": "UX03"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

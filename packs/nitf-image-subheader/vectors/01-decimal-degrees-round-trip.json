@@ -1,0 +1,31 @@
+{
+  "name": "decimal-degrees-round-trip",
+  "from": "nitf-image-subheader",
+  "to": "nitf-image-subheader",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.6530",
+  "expect": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.6530",
+  "model": {
+    "@kind": "geo-decimal-degrees",
+    "lat": "45.123",
+    "lon": "-122.654",
+    "nitf.is_igeolo": "+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.653",
+    "nitf.is_nicom": "0",
+    "nitf.is_im": "IM",
+    "nitf.is_iid1": "IMG0000001",
+    "nitf.is_idatim": "20261119081500",
+    "nitf.is_iid2": "Example image",
+    "nitf.is_isclas": "U",
+    "nitf.is_encryp": "0",
+    "nitf.is_isorce": "Example sensor",
+    "nitf.is_nrows": "1024",
+    "nitf.is_ncols": "2048",
+    "nitf.is_pvtype": "INT",
+    "nitf.is_irep": "MONO",
+    "nitf.is_icat": "VIS",
+    "nitf.is_abpp": "8",
+    "nitf.is_pjust": "R",
+    "nitf.is_icords": "D"
+  },
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, table A-3, IM through ICORDS, IGEOLO with ICORDS D (+-dd.ddd+-ddd.ddd four times, WGS 84 by default), NICOM; the first corner is image (0,0); header written by tools/gen/nitf-header-vectors.py"
+}

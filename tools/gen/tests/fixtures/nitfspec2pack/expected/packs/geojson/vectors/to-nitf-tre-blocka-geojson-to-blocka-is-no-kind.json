@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-blocka-is-no-kind",
+  "from": "geojson",
+  "to": "nitf-tre-blocka",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2]},\"properties\":{}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "every kind requires the raw corner key, which another format does not have"
+}

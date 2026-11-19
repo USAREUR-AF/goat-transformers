@@ -1,0 +1,26 @@
+{
+  "name": "expltb-round-trip",
+  "from": "nitf-tre-expltb",
+  "to": "nitf-tre-expltb",
+  "input": "ADGJMPSHKNQTWORUX036VY147A258                GJMPSNQTWZUX03614004130MTWZ258BEHKNQ0369CFILORUX03603572",
+  "expect": "ADGJMPSHKNQTWORUX036VY147A258                GJMPSNQTWZUX03614004130MTWZ258BEHKNQ0369CFILORUX03603572",
+  "model": {
+    "nitftre.expltb_angle_to_north": "ADGJMPS",
+    "nitftre.expltb_angle_to_north_accy": "HKNQTW",
+    "nitftre.expltb_squint_angle": "ORUX036",
+    "nitftre.expltb_squint_angle_accy": "VY147A",
+    "nitftre.expltb_mode": "258",
+    "nitftre.expltb_graze_ang": "GJMPS",
+    "nitftre.expltb_graze_ang_accy": "NQTWZ",
+    "nitftre.expltb_slope_ang": "UX036",
+    "nitftre.expltb_polar": "14",
+    "nitftre.expltb_nsamp": "413",
+    "nitftre.expltb_seq_num": "M",
+    "nitftre.expltb_prime_id": "TWZ258BEHKNQ",
+    "nitftre.expltb_prime_be": "0369CFILORUX036",
+    "nitftre.expltb_n_sec": "35",
+    "nitftre.expltb_ipr": "72"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

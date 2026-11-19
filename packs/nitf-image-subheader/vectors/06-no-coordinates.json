@@ -1,0 +1,13 @@
+{
+  "name": "no-coordinates",
+  "from": "nitf-image-subheader",
+  "to": "nitf-image-subheader",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08R 0",
+  "expect": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08R 0",
+  "model": {
+    "@kind": "no-location",
+    "nitf.is_nicom": "0"
+  },
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, ICORDS a space: IGEOLO is omitted and NICOM follows ICORDS; header written by tools/gen/nitf-header-vectors.py"
+}

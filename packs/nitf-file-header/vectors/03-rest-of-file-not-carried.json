@@ -1,0 +1,13 @@
+{
+  "name": "rest-of-file-not-carried",
+  "from": "nitf-file-header",
+  "to": "nitf-file-header",
+  "input": "NITF02.1003BF01GTTEST    20261119081530Example file for the goat-transformers vectors                                  U                                                                                                                                                                      00000000000   Example Originator      +1 555 0100       000001234567000404001000IMXXXXXXXXXXXXXXXXXXXX",
+  "expect": "NITF02.1003BF01GTTEST    20261119081530Example file for the goat-transformers vectors                                  U                                                                                                                                                                      00000000000   Example Originator      +1 555 0100       000001234567000404001",
+  "model": {
+    "@kind": "nitf-2-1",
+    "nitf.fh_numi": "1"
+  },
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, table A-1: the bytes after NUMI (the image segment lengths that NUMI counts, and the rest of the file) are not mapped; encode writes FHDR through NUMI; header written by tools/gen/nitf-header-vectors.py"
+}

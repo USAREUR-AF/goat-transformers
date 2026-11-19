@@ -1,0 +1,19 @@
+{
+  "name": "csccga-round-trip",
+  "from": "nitf-tre-csccga",
+  "to": "nitf-tre-csccga",
+  "input": "ADGJMPSVY147ADGJMPHKNQTWORUX036VY147258BEHK9CFILGJMPSVYNQTWZ",
+  "expect": "ADGJMPSVY147ADGJMPHKNQTWORUX036VY147258BEHK9CFILGJMPSVYNQTWZ",
+  "model": {
+    "nitftre.csccga_ccg_source": "ADGJMPSVY147ADGJMP",
+    "nitftre.csccga_reg_sensor": "HKNQTW",
+    "nitftre.csccga_origin_line": "ORUX036",
+    "nitftre.csccga_origin_sample": "VY147",
+    "nitftre.csccga_as_cell_size": "258BEHK",
+    "nitftre.csccga_cs_cell_size": "9CFIL",
+    "nitftre.csccga_ccg_max_line": "GJMPSVY",
+    "nitftre.csccga_ccg_max_sample": "NQTWZ"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

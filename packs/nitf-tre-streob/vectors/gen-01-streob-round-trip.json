@@ -1,0 +1,20 @@
+{
+  "name": "streob-round-trip",
+  "from": "nitf-tre-streob",
+  "to": "nitf-tre-streob",
+  "input": "ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY14717VY147258BE9CFILGJMPSNQTWZ2UX0369",
+  "expect": "ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY14717VY147258BE9CFILGJMPSNQTWZ2UX0369",
+  "model": {
+    "nitftre.streob_st_id": "ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJMPSVY147",
+    "nitftre.streob_n_mates": "1",
+    "nitftre.streob_mate_instance": "7",
+    "nitftre.streob_b_conv": "VY147",
+    "nitftre.streob_e_conv": "258BE",
+    "nitftre.streob_b_asym": "9CFIL",
+    "nitftre.streob_e_asym": "GJMPS",
+    "nitftre.streob_b_bie": "NQTWZ2",
+    "nitftre.streob_e_bie": "UX0369"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}
