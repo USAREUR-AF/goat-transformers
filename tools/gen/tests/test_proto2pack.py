@@ -1411,5 +1411,53 @@ class CheckVectorsTest(TempDirCase):
         self.assertEqual(self.check(model={"@kind": "point", "@complete": True, "speed_ms": "5"}), 1)
 
 
+class SeveralKeysOnOnePathTest(TempDirCase):
+    """--map given twice for one path (0.5 ruling 16, as packs/cot-xml binds
+    @uid to track.scoped_id and uid): one line per shared key, in --map order,
+    then the raw key."""
+
+    def setUp(self):
+        super().setUp()
+        shutil.copytree(os.path.join(INPUT, "model"), os.path.join(self.tmp, "model"))
+        self.proto = self.write("proto/fix.proto", 'syntax = "proto3";\n'
+                                'message Fix { string id = 1; double lat = 2; double lon = 3; }\n')
+
+    def argv(self, *extra):
+        return ["--proto", self.proto, "--envelope", "Fix", "--format", "fix", "--module", "fix",
+                "--out", self.tmp, "--source", "a test", "--no-comments",
+                "--map", "1=type", "--map", "1=uid", "--map", "2=lat", "--map", "3=lon"] + list(extra)
+
+    def test_each_key_has_a_line_in_map_order_before_the_raw_key(self):
+        self.run_ok(self.argv())
+        model = gtcheck.Model().load_dir(os.path.join(self.tmp, "model"))
+        pack = gtcheck.load_pack_file(os.path.join(self.tmp, "packs", "fix", "pack.def"), model)
+        at = [f.key for f in pack.common + [l for k in pack.kinds for l in k.lines] if f.d == "field" and f.loc == "1"]
+        self.assertEqual(at, ["type", "uid", "fix.fix_id"])
+
+    def test_the_round_trip_vector_holds_the_value_under_every_key(self):
+        self.run_ok(self.argv())
+        with open(os.path.join(self.tmp, "packs", "fix", "vectors", "gen-01-fix-roundtrip.json"),
+                  encoding="utf-8") as fh:
+            model = json.load(fh)["model"]
+        self.assertEqual(model["type"], model["uid"])
+        self.assertEqual(model["uid"], model["fix.fix_id"])
+
+    def test_pack_md_lists_every_key_and_says_which_path_carries_several(self):
+        self.run_ok(self.argv())
+        md = self.read("packs/fix/pack.md")
+        self.assertIn("| `type` | `1` | `Fix.id` (string) |", md)
+        self.assertIn("| `uid` | `1` | `Fix.id` (string) |", md)
+        self.assertIn("`1` carries more than one shared key", md)
+
+    def test_one_key_per_path_says_nothing_of_several(self):
+        self.run_ok(["--proto", self.proto, "--envelope", "Fix", "--format", "fix", "--module", "fix",
+                     "--out", self.tmp, "--source", "a test", "--no-comments", "--map", "1=uid"])
+        self.assertNotIn("more than one shared key", self.read("packs/fix/pack.md"))
+
+    def test_a_second_run_with_check_finds_nothing_to_change(self):
+        self.run_ok(self.argv())
+        self.run_ok(self.argv("--check"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,7 @@
     "takproto.cot_event_qos": "qos-5",
     "takproto.cot_event_opex": "opex-6",
     "takproto.cot_event_uid": "uid-7",
+    "track.scoped_id": "uid-7",
     "uid": "uid-7",
     "takproto.cot_event_send_time": "396",
     "time_ms": "396",

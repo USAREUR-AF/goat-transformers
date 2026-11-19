@@ -6,6 +6,7 @@
   "expect": "<event version=\"2.0\" uid=\"uid-7\" type=\"type-3\" time=\"1970-01-01T00:00:00.396Z\" start=\"1970-01-01T00:00:00.396Z\" stale=\"1970-01-01T00:00:00.470Z\" how=\"how-11\"><point lat=\"21.25\" lon=\"23\" hae=\"24.75\" ce=\"26.5\" le=\"28.25\"/><detail><contact callsign=\"callsign-19\"/><track course=\"12.75\" speed=\"11\"/></detail></event>",
   "model": {
     "@kind": "cot_event",
+    "track.scoped_id": "uid-7",
     "uid": "uid-7",
     "type": "type-3",
     "time_ms": "396",
