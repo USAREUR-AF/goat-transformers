@@ -1,0 +1,179 @@
+# ETSI ITS Cooperative Awareness Message (CAM), EN 302 637-2 v1.4.1, in
+# unaligned PER (engine-spec 0.19). Public. The lines follow the ASN.1 of
+# CAM-PDU-Descriptions and the ITS-Container types it imports, in X.691
+# order: ItsPduHeader, then CoopAwareness. pack.md names the ASN.1 type of
+# every line and what is not stated.
+format        etsi-cam
+version       0.1.0
+distribution  public
+source        "ETSI CAM-PDU-Descriptions, ASN.1 of EN 302 637-2 v1.4.1, https://forge.etsi.org/rep/ITS/asn1/cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a, BSD-3-Clause, Copyright 2019 ETSI"
+source        "ETSI ITS-Container, ASN.1 of TS 102 894-2 v1.3.1, https://forge.etsi.org/rep/ITS/asn1/cdd_ts102894_2 commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9, BSD-3-Clause, Copyright 2019 ETSI"
+uses          etsicam
+wire          bits
+layout        sequential
+bit_order     msb
+encoding      uper
+
+# What an encoder writes for a mandatory component the entity does not hold:
+# the value the ASN.1 names unavailable (pack.md, "Defaults").
+default  etsicam.protocol_version                      2
+default  lat                                           90.0000001
+default  lon                                           180.0000001
+default  etsicam.semi_major_confidence                 4095
+default  etsicam.semi_minor_confidence                 4095
+default  etsicam.semi_major_orientation                3601
+default  etsicam.altitude_value                        800001
+default  etsicam.altitude_confidence                   15
+default  course                                        360.1
+default  etsicam.heading_confidence                    127
+default  speed_ms                                      163.83
+default  etsicam.speed_confidence                      127
+default  etsicam.drive_direction                       2
+default  etsicam.vehicle_length_value                  1023
+default  etsicam.vehicle_length_confidence_indication  4
+default  etsicam.vehicle_width                         62
+default  etsicam.longitudinal_acceleration_value       161
+default  etsicam.longitudinal_acceleration_confidence  102
+default  etsicam.curvature_value                       1023
+default  etsicam.curvature_confidence                  7
+default  etsicam.curvature_calculation_mode            2
+default  etsicam.yaw_rate_value                        32767
+default  etsicam.yaw_rate_confidence                   8
+default  etsicam.steering_wheel_angle_confidence       127
+default  etsicam.lateral_acceleration_confidence       102
+default  etsicam.vertical_acceleration_confidence      102
+
+# ItsPduHeader (SEQUENCE, no extension marker)
+field    etsicam.protocol_version   int:0:255           uint
+
+kind     cam
+when     8  2                                          # messageID INTEGER (0..255): 2 = cam
+field    etsicam.station_id         int:0:4294967295    uint
+
+# CoopAwareness (SEQUENCE, no extension marker)
+field    etsicam.generation_delta_time  int:0:65535     uint
+
+# CamParameters (SEQUENCE with an extension marker)
+ext
+  presence cp 2                                        # lowFrequencyContainer, specialVehicleContainer
+
+  # basicContainer: BasicContainer (SEQUENCE with an extension marker)
+  ext
+    field  etsicam.station_type            int:0:255                  uint
+    # referencePosition: ReferencePosition (SEQUENCE, no extension marker)
+    field  lat                             int:-900000000:900000001   uscale:1/10000000
+    field  lon                             int:-1800000000:1800000001 uscale:1/10000000
+    field  etsicam.semi_major_confidence   int:0:4095                 uint
+    field  etsicam.semi_minor_confidence   int:0:4095                 uint
+    field  etsicam.semi_major_orientation  int:0:3601                 uint
+    field  etsicam.altitude_value          int:-100000:800001         uint
+    field  etsicam.altitude_confidence     enum:16                    uint
+  end
+
+  # highFrequencyContainer: HighFrequencyContainer (CHOICE, extensible)
+  choice 2 ext
+    alt 0
+      # basicVehicleContainerHighFrequency (SEQUENCE, no extension marker)
+      presence hf 7
+      field  course                                        int:0:3601        uscale:1/10
+      field  etsicam.heading_confidence                    int:1:127         uint
+      field  speed_ms                                      int:0:16383       uscale:1/100
+      field  etsicam.speed_confidence                      int:1:127         uint
+      field  etsicam.drive_direction                       enum:3            uint
+      field  etsicam.vehicle_length_value                  int:1:1023        uint
+      field  etsicam.vehicle_length_confidence_indication  enum:5            uint
+      field  etsicam.vehicle_width                         int:1:62          uint
+      field  etsicam.longitudinal_acceleration_value       int:-160:161      uint
+      field  etsicam.longitudinal_acceleration_confidence  int:0:102         uint
+      field  etsicam.curvature_value                       int:-1023:1023    uint
+      field  etsicam.curvature_confidence                  enum:8            uint
+      field  etsicam.curvature_calculation_mode            enum:3:ext        uint
+      field  etsicam.yaw_rate_value                        int:-32766:32767  uint
+      field  etsicam.yaw_rate_confidence                   enum:9            uint
+      if hf.1
+        field  etsicam.acceleration_control                7                 uint
+      end
+      if hf.2
+        field  etsicam.lane_position                       int:-1:14         uint
+      end
+      if hf.3
+        field  etsicam.steering_wheel_angle_value          int:-511:512      uint
+        field  etsicam.steering_wheel_angle_confidence     int:1:127         uint
+      end
+      if hf.4
+        field  etsicam.lateral_acceleration_value          int:-160:161      uint
+        field  etsicam.lateral_acceleration_confidence     int:0:102         uint
+      end
+      if hf.5
+        field  etsicam.vertical_acceleration_value         int:-160:161      uint
+        field  etsicam.vertical_acceleration_confidence    int:0:102         uint
+      end
+      if hf.6
+        field  etsicam.performance_class                   int:0:7           uint
+      end
+      if hf.7
+        # cenDsrcTollingZone: CenDsrcTollingZone (SEQUENCE with an extension marker)
+        ext
+          presence tz 1
+          field  etsicam.tolling_zone_latitude             int:-900000000:900000001    uint
+          field  etsicam.tolling_zone_longitude            int:-1800000000:1800000001  uint
+          if tz.1
+            field  etsicam.tolling_zone_id                 int:0:134217727             uint
+          end
+        end
+      end
+    alt 1
+      # rsuContainerHighFrequency (SEQUENCE with an extension marker)
+      ext
+        presence rsu 1
+        if rsu.1
+          # ProtectedCommunicationZonesRSU: SEQUENCE (SIZE(1..16)) OF ProtectedCommunicationZone
+          group  etsicam.protected_zones size 1 16
+            # ProtectedCommunicationZone (SEQUENCE with an extension marker)
+            ext
+              presence pz 3
+              field  etsicam.zone_type                     enum:1:ext                  uint
+              if pz.1
+                field  etsicam.zone_expiry_time            int:0:4398046511103         uint
+              end
+              field  etsicam.zone_latitude                 int:-900000000:900000001    uint
+              field  etsicam.zone_longitude                int:-1800000000:1800000001  uint
+              if pz.2
+                field  etsicam.zone_radius                 int:1:255:ext               uint
+              end
+              if pz.3
+                field  etsicam.zone_id                     int:0:134217727             uint
+              end
+            end
+          end
+        end
+      end
+  end
+
+  if cp.1
+    # lowFrequencyContainer: LowFrequencyContainer (CHOICE, extensible)
+    choice 1 ext
+      alt 0
+        # basicVehicleContainerLowFrequency (SEQUENCE, no extension marker)
+        field  etsicam.vehicle_role       enum:16   uint
+        field  etsicam.exterior_lights    8         uint
+        # pathHistory: PathHistory, SEQUENCE (SIZE(0..40)) OF PathPoint
+        group  etsicam.path_history size 0 40
+          # PathPoint (SEQUENCE, no extension marker)
+          presence pp 1
+          field  etsicam.delta_latitude   int:-131071:131072  uint
+          field  etsicam.delta_longitude  int:-131071:131072  uint
+          field  etsicam.delta_altitude   int:-12700:12800    uint
+          if pp.1
+            field  etsicam.path_delta_time  int:1:65535:ext   uint
+          end
+        end
+    end
+  end
+
+  if cp.2
+    # specialVehicleContainer: not stated (pack.md, "Not mapped"). It is the
+    # last root component of CamParameters, so decode reads nothing here and
+    # the rest of the input is ignored; encode writes the presence bit 0.
+  end
+end

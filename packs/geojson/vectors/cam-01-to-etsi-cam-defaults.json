@@ -1,0 +1,16 @@
+{
+  "name": "cam-01-to-etsi-cam-defaults",
+  "from": "geojson",
+  "to": "etsi-cam",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.2]},\"properties\":{},\"id\":\"12345\"}",
+  "expect": "0202000030390000000a4bf4b00e4492981ffffffc23b7743e00e11fdffffebfe9ed0737feebfff600",
+  "model": {
+    "@complete": true,
+    "uid": "12345",
+    "lat": "48.2",
+    "lon": "11.5",
+    "etsicam.station_id": "12345"
+  },
+  "source": "constructed",
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. A GeoJSON Feature holding a position and an id only. etsicam.station_id 12345 derives from uid \"12345\" by parse_int (model/etsicam.def). Encode: protocolVersion 2 and every mandatory component of the basic and high-frequency containers from the pack's defaults (positionConfidenceEllipse 4095/4095/3601, altitude 800001 unavailable, heading 3601/127, speed 16383/127, driveDirection unavailable, length 1023/unavailable, width 62, acceleration 161/102, curvature 1023/unavailable, curvatureCalculationMode unavailable, yaw rate 32767/unavailable); stationType and generationDeltaTime have no value and no default and are written as their lower bound 0 (ruling 1 of 0.19); no alt has content, so alt 0 is written; no OPTIONAL is present. lat round(48.2 * 10000000 / 1) = 482000000. 322 bits. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+}

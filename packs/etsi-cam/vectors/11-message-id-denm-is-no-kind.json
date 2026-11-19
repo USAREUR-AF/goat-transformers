@@ -1,0 +1,9 @@
+{
+  "name": "message-id-denm-is-no-kind",
+  "from": "etsi-cam",
+  "to": "etsi-cam",
+  "input": "020100003039a028005a4bf4b00e44929803e82587084a3e4c00384120fa0402c08a9453ff61fff8c0",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. Vector 01 with ItsPduHeader messageID 1 (denm). The pack's one kind cam has `when 8 2`; 1 matches no kind. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+}

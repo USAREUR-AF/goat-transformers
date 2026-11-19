@@ -1,0 +1,9 @@
+{
+  "name": "cam-03-speed-163.84-transform-encode",
+  "from": "geojson",
+  "to": "etsi-cam",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.2]},\"properties\":{\"speed_ms\":163.84},\"id\":\"12345\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "speed_ms 163.84 encodes as round(163.84 * 100 / 1) = 16384 (the product is exactly 16384.0 in doubles), above SpeedValue INTEGER (0..16383) of the line int:0:16383 uscale:1/100: transform-encode (0.19, Transforms on UPER locators; ruling 1 of 0.5). Derived without an engine."
+}

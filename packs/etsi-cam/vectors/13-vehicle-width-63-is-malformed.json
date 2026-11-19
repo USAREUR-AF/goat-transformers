@@ -1,0 +1,9 @@
+{
+  "name": "vehicle-width-63-is-malformed",
+  "from": "etsi-cam",
+  "to": "etsi-cam",
+  "input": "020200003039a028005a4bf4b00e44929803e82587084a3e4c00384120fa0402c1f29453ff61fff8c0",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. Vector 01 with the 6 bits of vehicleWidth (INTEGER (1..62), bit 263) set to 111110: 62 + 1 = 63, above the upper bound (ub - lb = 61 is not a power of two minus one, so 6 bits can hold it). A value read outside its constraint is malformed-wire (0.19, Errors). Built by hand from vector 01. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+}

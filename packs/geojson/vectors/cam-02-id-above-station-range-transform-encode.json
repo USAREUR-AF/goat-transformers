@@ -1,0 +1,14 @@
+{
+  "name": "cam-02-id-above-station-range-transform-encode",
+  "from": "geojson",
+  "to": "etsi-cam",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.2]},\"properties\":{},\"id\":\"99999999999\"}",
+  "expect_error": "transform-encode",
+  "model": {
+    "@complete": true,
+    "uid": "99999999999",
+    "etsicam.station_id": "99999999999"
+  },
+  "source": "constructed",
+  "reference": "parse_int gives etsicam.station_id 99999999999, outside StationID INTEGER (0..4294967295) of the line int:0:4294967295: a value outside the constraint is transform-encode (0.19, Transforms on UPER locators). Derived without an engine."
+}
