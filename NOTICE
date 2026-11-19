@@ -321,6 +321,8 @@ gtfs-transfers, gtfs-pathways, gtfs-levels, gtfs-feed-info, gtfs-attributions;
 module gtfs
   GTFS Schedule Reference, https://github.com/google/transit. Apache License,
   Version 2.0. Column names, order and types; no text.
+  The same source covers the 17 further packs gtfs-fare-attributes …
+  gtfs-translations (fares, areas, networks, Flex groups, translations).
 
 Pack drip; module drip
   IETF RFC 9575, DRIP Entity Tag (DET) Authentication Formats and Protocols
@@ -329,6 +331,76 @@ Pack drip; module drip
   document authors; subject to BCP 78 and the IETF Trust's Legal Provisions
   Relating to IETF Documents (https://trustee.ietf.org/license-info). Layouts
   restated in packs/drip.
+
+Packs nitf-file-header, nitf-image-subheader; module nitf
+  MIL-STD-2500C, National Imagery Transmission Format Version 2.1, Department
+  of Defense, Distribution Statement A. Field order, sizes and types; no text.
+
+Packs nitf-tre-* (30); module nitftre
+  GDAL frmts/nitf/data/nitf_spec.xml, https://github.com/OSGeo/gdal.
+  Copyright (c) 2011 Even Rouault. MIT License. TRE field names, lengths and
+  order; no code.
+
+Pack gpsd-json; module gpsd
+  gpsd_json(5), the gpsd JSON protocol, https://gitlab.com/gpsd/gpsd commit
+  a9266948. Copyright the GPSD project. BSD 2-Clause License. Member names,
+  types and units; no text or example message.
+
+Packs gbfs-*; modules gbfs*
+  General Bikeshare Feed Specification (GBFS) JSON Schemas, MobilityData,
+  https://github.com/MobilityData/gbfs-json-schema. Apache License, Version
+  2.0. They describe the GBFS specification, https://github.com/MobilityData/gbfs
+  (Creative Commons Attribution 3.0). The packs restate the schemas' structure
+  and are not endorsed by MobilityData.
+
+Packs dbc-* (90); modules dbc<file>
+  CAN DBC files of opendbc, https://github.com/commaai/opendbc. MIT License,
+  Copyright (c) 2020 Comma.ai, Inc. Message and signal names, layouts, scales
+  and value tables; no code. The SocketCAN can_frame layout restated from the
+  Linux UAPI header include/uapi/linux/can.h (GPL-2.0 WITH Linux-syscall-note).
+  Test inputs only: four DBC files of cantools, https://github.com/cantools/cantools,
+  MIT License, Copyright (c) 2015-2019 Erik Moqvist.
+
+Packs px4-ulog-*; module px4ulog
+  PX4 uORB message definitions, https://github.com/PX4/PX4-Autopilot tag
+  v1.17.0. BSD 3-Clause License, Copyright (c) 2012-2023 PX4 Development Team.
+  Field names, types and array lengths only. The layout rule follows PX4's
+  Tools/msg uORB generator (BSD) and the ULog file format document (CC BY
+  4.0), restated.
+
+Packs meshtastic-position, -user, -telemetry, -waypoint, -tak-packet,
+-neighbor-info, -route-discovery, -routing, -store-and-forward, -paxcount,
+-map-report; modules meshtastic*
+  Meshtastic protobuf definitions, https://github.com/meshtastic/protobufs.
+  The repository's LICENSE is the GNU General Public License, Version 3; the
+  .proto files carry no license or copyright header. Field numbers, names and
+  types only.
+
+Packs otlp-*; modules otlp*
+  OpenTelemetry protocol (OTLP) definitions,
+  https://github.com/open-telemetry/opentelemetry-proto. Apache License,
+  Version 2.0, Copyright The OpenTelemetry Authors. Field numbers, names and
+  types only.
+
+Packs gnmi-*; modules gnmi*
+  gNMI protobuf definitions, https://github.com/openconfig/gnmi. Apache
+  License, Version 2.0, Copyright Google Inc. Field numbers, names and types
+  only.
+
+Pack openxc-vehicle-message; module openxc
+  OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
+  BSD 3-Clause License, Copyright (c) 2012 Ford Motor Company. Field numbers,
+  names and types only.
+
+Pack geobuf; module geobuf
+  geobuf.proto, https://github.com/mapbox/geobuf. ISC License, Copyright (c)
+  Mapbox. Field numbers, names and types only.
+
+Packs waymo-frame, waymo-scenario; modules waymoframe, waymoscenario
+  Waymo Open Dataset protobuf definitions (src/waymo_open_dataset, excluding
+  wdl_limited), https://github.com/waymo-research/waymo-open-dataset. Apache
+  License, Version 2.0, Copyright Waymo LLC and The Waymo Open Dataset Authors.
+  Field numbers, names and types only; no data of the dataset.
 
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
