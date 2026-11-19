@@ -1,0 +1,17 @@
+{
+  "name": "df18-surface-stopped",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "903a33ff40100858d34ff3cce976",
+  "expect": "903a33ff40100858d34ff3cce976",
+  "model": {
+    "@kind": "surface-position-tc8",
+    "adsb.df": "18",
+    "adsb.tc": "8",
+    "adsb.cf": "0",
+    "adsb.icao": "3814399",
+    "adsb.movement_raw": "1"
+  },
+  "source": "specification",
+  "reference": "published message 903a33ff40100858d34ff3cce976: pyModeS tests/test_bds06.py at commit 4bf0832, https://github.com/junzis/pyModeS (movement code 1: ground speed 0)"
+}

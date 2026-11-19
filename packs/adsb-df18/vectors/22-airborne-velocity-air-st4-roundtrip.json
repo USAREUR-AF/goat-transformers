@@ -1,0 +1,19 @@
+{
+  "name": "airborne-velocity-air-st4-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc0169cdcdbf978cc9bd68485",
+  "expect": "90abc0169cdcdbf978cc9bd68485",
+  "model": {
+    "@kind": "airborne-velocity-air-st4",
+    "adsb.df": "18",
+    "adsb.tc": "19",
+    "adsb.icao": "11255830",
+    "adsb.heading_raw": "219",
+    "adsb.airspeed_raw": "971",
+    "adsb.vr_raw": "51",
+    "adsb.parity": "14058629"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

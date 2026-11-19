@@ -1,0 +1,20 @@
+{
+  "name": "airborne-position-baro-tc16-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc01087a73c248214db49a92b",
+  "expect": "90abc01087a73c248214db49a92b",
+  "model": {
+    "@kind": "airborne-position-baro-tc16",
+    "adsb.df": "18",
+    "adsb.tc": "16",
+    "adsb.icao": "11255824",
+    "adsb.alt_baro_raw": "2675",
+    "adsb.cpr_odd": "1",
+    "adsb.cpr_lat": "4673",
+    "adsb.cpr_lon": "5339",
+    "adsb.parity": "4827435"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

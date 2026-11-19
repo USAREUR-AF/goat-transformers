@@ -1,0 +1,18 @@
+{
+  "name": "acas-ra-threat-address-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc01fe2ffe3f40144800d0068",
+  "expect": "90abc01fe2ffe3f40144800d0068",
+  "model": {
+    "@kind": "acas-ra-threat-address",
+    "adsb.df": "18",
+    "adsb.tc": "28",
+    "adsb.icao": "11255839",
+    "adsb.ra_active": "1",
+    "adsb.threat_icao": "20768",
+    "adsb.parity": "852072"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "df18-surface-position-even",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "903a23ff426a38565950432ebf95",
+  "expect": "903a23ff426a38565950432ebf95",
+  "model": {
+    "@kind": "surface-position-tc8",
+    "adsb.df": "18",
+    "adsb.tc": "8",
+    "adsb.cf": "0",
+    "adsb.icao": "3810303",
+    "adsb.movement_raw": "38",
+    "adsb.track_valid": "1",
+    "adsb.track_raw": "35",
+    "adsb.cpr_odd": "0",
+    "adsb.cpr_lat": "11052",
+    "adsb.cpr_lon": "86083"
+  },
+  "source": "specification",
+  "reference": "published message 903a23ff426a38565950432ebf95: pyModeS tests/test_cpr.py at commit 4bf0832, https://github.com/junzis/pyModeS (TestSurfacePositionPair, even frame of ICAO 3A23FF at LFBO)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "df17-no-kind",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "8d406b902015a678d4d220aa4bda",
+  "expect_error": "no-kind",
+  "source": "specification",
+  "reference": "published DF17 message 8D406B902015A678D4D220AA4BDA: pyModeS tests/test_bds08.py at commit 4bf0832, https://github.com/junzis/pyModeS; downlink format 17 is the pack adsb"
+}

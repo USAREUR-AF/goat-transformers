@@ -52,6 +52,21 @@ documented; the pack's reading of them reproduces every value the tests assert
 setting 1012.8 hPa, selected heading 66.8 and 246.8, autopilot, VNAV, altitude
 hold, approach, TCAS and LNAV bits).
 
+### pyModeS decoder code (type code 28 subtype 2)
+
+The three `acas-ra-*` kinds (vectors 46-49) are laid out from pyModeS alone, at
+the commit above: `src/pyModeS/decoder/bds/bds61.py` (subtype 2 carries bits
+8-55 of the BDS 3,0 register) and `decoder/bds/bds30.py` (the place of each
+advisory and complement flag, the threat type indicator, and the threat
+identity for indicators 1 and 2; indicator 3 reserved). Positions are restated;
+no code is copied. Archive
+`https://codeload.github.com/junzis/pyModeS/tar.gz/4bf083284c0d9878ca0c88f16b9b5f6514ca194a`,
+SHA-256 `6f7ddcce89bf792acd3b732c477d4b22061b87465ccd550c3da5dc77e02060a9`. pyModeS
+publishes no message of this subtype; the vectors are constructed, and after
+they were written pyModeS itself decoded each one (outside the tree) to the
+same advisory flag, indicator, threat address, range and bearing. Read on
+2026-11-19.
+
 ### Published messages used as vectors
 
 | Vector | Message | Published in |

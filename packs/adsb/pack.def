@@ -12,6 +12,7 @@ version       0.1.0
 distribution  public
 source        "Junzi Sun, The 1090 Megahertz Riddle, second edition, TU Delft OPEN Publishing, https://mode-s.org/1090mhz/ (CC BY-NC-SA 4.0): ADS-B chapters 1-6; the layouts documented there are from ICAO Annex 10 Volume IV, ICAO Doc 9871 and RTCA DO-260B"
 source        "pyModeS tests (https://github.com/junzis/pyModeS, GPL-3.0): published messages with decoded values, used as facts to check the type code 28 and 29 layouts; no code copied"
+source        "pyModeS (https://github.com/junzis/pyModeS, GPL-3.0) at commit 4bf083284c0d9878ca0c88f16b9b5f6514ca194a, decoder/bds/bds61.py and bds30.py: the layout of the three type code 28 subtype 2 kinds (ACAS resolution advisory), restated; no code copied"
 uses          adsb
 wire          bits
 word_bytes    1
@@ -460,3 +461,78 @@ field  adsb.track_heading             0:84:1     uint
 field  adsb.hrd                       0:85:1     uint
 field  adsb.sil_supp                  0:86:1     uint
 field  adsb.reserved                  0:87:1     uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 0 (no threat identity; the 26 identity bits are carried as they are).
+kind      acas-ra-no-threat-identity
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     0
+requires  adsb.icao adsb.ra_active adsb.tid_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.tid_raw                   0:62:26    uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 1 (the threat's 24-bit address).
+kind      acas-ra-threat-address
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     1
+requires  adsb.icao adsb.ra_active adsb.threat_icao
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.threat_icao               0:62:24    uint
+field  adsb.reserved                  0:86:2     uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 2 (the threat's altitude code, range and bearing).
+kind      acas-ra-threat-position
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     2
+requires  adsb.icao adsb.ra_active adsb.threat_alt_code adsb.threat_range_raw adsb.threat_bearing_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.threat_alt_code           0:62:13    uint
+field  adsb.threat_range_raw          0:75:7     uint
+field  adsb.threat_bearing_raw        0:82:6     uint
