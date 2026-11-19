@@ -152,6 +152,7 @@ field  sdscvp.provenance_retrieved_at  PROVENANCE.RETRIEVED_AT  int
 field  sdscvp.provenance_license  PROVENANCE.LICENSE  string
 field  sdscvp.provenance_non_commercial_only  PROVENANCE.NON_COMMERCIAL_ONLY  bool
 field  sdscvp.provenance_citation  PROVENANCE.CITATION  string
+field  time_ms  COMPUTED_AT  int
 field  sdscvp.computed_at  COMPUTED_AT  int
 field  sdscvp.producer_id  PRODUCER_ID  string
 group  sdscvp.signature  SIGNATURE

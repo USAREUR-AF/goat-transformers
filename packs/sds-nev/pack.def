@@ -9,6 +9,7 @@ source        "https://github.com/DigitalArsenal/spacedatastandards.org at commi
 uses          sdsnev
 wire          json
 field  sdsnev.node_id  NODE_ID  string
+field  time_ms  GENERATED_AT_MS  int
 field  sdsnev.generated_at_ms  GENERATED_AT_MS  int
 group  sdsnev.events  EVENTS
   field  sdsnev.events_time_ms  TIME_MS  int

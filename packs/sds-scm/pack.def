@@ -23,4 +23,5 @@ group  sdsscm.records  RECORDS
   field  sdsscm.records_record_type_ordinal  RECORD_TYPE_ORDINAL  int
 end
 field  sdsscm.standards_version  STANDARDS_VERSION  string
+field  time_ms  GENERATED_AT_MS  int
 field  sdsscm.generated_at_ms  GENERATED_AT_MS  int

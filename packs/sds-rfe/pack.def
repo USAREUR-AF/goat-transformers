@@ -76,6 +76,7 @@ field  sdsrfe.provenance_module_id  PROVENANCE.MODULE_ID  string
 field  sdsrfe.provenance_module_version  PROVENANCE.MODULE_VERSION  string
 field  sdsrfe.provenance_module_content_hash  PROVENANCE.MODULE_CONTENT_HASH  string
 field  sdsrfe.provenance_computed_at  PROVENANCE.COMPUTED_AT  int
+field  time_ms  COMPUTED_AT  int
 field  sdsrfe.computed_at  COMPUTED_AT  int
 field  sdsrfe.producer_id  PRODUCER_ID  string
 group  sdsrfe.signature  SIGNATURE

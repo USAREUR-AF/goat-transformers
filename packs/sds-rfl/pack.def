@@ -251,6 +251,7 @@ field  sdsrfl.provenance_citation  PROVENANCE.CITATION  string
 field  sdsrfl.provenance_module_id  PROVENANCE.MODULE_ID  string
 field  sdsrfl.provenance_module_version  PROVENANCE.MODULE_VERSION  string
 field  sdsrfl.provenance_module_content_hash  PROVENANCE.MODULE_CONTENT_HASH  string
+field  time_ms  COMPUTED_AT  int
 field  sdsrfl.computed_at  COMPUTED_AT  int
 field  sdsrfl.producer_id  PRODUCER_ID  string
 group  sdsrfl.signature  SIGNATURE

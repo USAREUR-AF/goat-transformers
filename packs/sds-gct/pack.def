@@ -138,6 +138,7 @@ end
 group  sdsgct.cover_column_optical_depth  COVER.COLUMN_OPTICAL_DEPTH
   field  sdsgct.cover_column_optical_depth_value  .  float
 end
+field  time_ms  VALID_TIME_MS  int
 field  sdsgct.valid_time_ms  VALID_TIME_MS  int
 field  sdsgct.init_time_ms  INIT_TIME_MS  int
 field  sdsgct.lead_hours  LEAD_HOURS  float

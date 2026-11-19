@@ -9,6 +9,7 @@ source        "https://github.com/DigitalArsenal/spacedatastandards.org at commi
 uses          sdspnv
 wire          json
 field  sdspnv.verifier_peer_id  VERIFIER_PEER_ID  string
+field  time_ms  GENERATED_AT_MS  int
 field  sdspnv.generated_at_ms  GENERATED_AT_MS  int
 group  sdspnv.entries  ENTRIES
   field  sdspnv.entries_pnm_cid  PNM_CID  string

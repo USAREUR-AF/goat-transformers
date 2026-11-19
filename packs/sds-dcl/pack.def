@@ -10,6 +10,7 @@ uses          sdsdcl
 wire          json
 field  uid  ID  string
 field  sdsdcl.id  ID  string
+field  time_ms  CREATED_AT_MS  int
 field  sdsdcl.created_at_ms  CREATED_AT_MS  int
 field  sdsdcl.producer  PRODUCER  string
 field  sdsdcl.product  PRODUCT  string

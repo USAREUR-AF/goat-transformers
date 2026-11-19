@@ -21,6 +21,7 @@ group  sdsrpt.content_hash  CONTENT_HASH
 end
 field  sdsrpt.content_type  CONTENT_TYPE  string
 field  sdsrpt.content_cid  CONTENT_CID  string
+field  time_ms  GENERATED_AT  int
 field  sdsrpt.generated_at  GENERATED_AT  int
 field  sdsrpt.generator_module_id  GENERATOR_MODULE_ID  string
 field  sdsrpt.generator_module_version  GENERATOR_MODULE_VERSION  string
