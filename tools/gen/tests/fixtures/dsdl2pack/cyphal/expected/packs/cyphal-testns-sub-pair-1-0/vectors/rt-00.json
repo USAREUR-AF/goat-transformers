@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-testns-sub-pair-1-0-roundtrip",
+  "from": "cyphal-testns-sub-pair-1-0",
+  "to": "cyphal-testns-sub-pair-1-0",
+  "input": "2c7f",
+  "expect": "2c7f",
+  "model": {
+    "cytestnssub.pair_1_0_a": "4",
+    "cytestnssub.pair_1_0_b": "4069"
+  }
+}

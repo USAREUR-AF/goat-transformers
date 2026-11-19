@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-reg-udral-physics-time-tai64-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-time-tai64-0-1",
+  "to": "cyphal-reg-udral-physics-time-tai64-0-1",
+  "input": "1a1703c0ffffffff",
+  "expect": "1a1703c0ffffffff",
+  "model": {
+    "cyregudralphysicstime.tai64_0_1_tai64n": "-1073539302"
+  }
+}

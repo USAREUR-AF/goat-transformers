@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-bit-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-bit-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-bit-1-0",
+  "input": "01",
+  "expect": "01",
+  "model": {
+    "cyuavcanprimitivescalar.bit_1_0_value": "1"
+  }
+}

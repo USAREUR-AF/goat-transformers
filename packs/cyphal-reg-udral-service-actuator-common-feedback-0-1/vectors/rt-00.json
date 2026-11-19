@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-service-actuator-common-feedback-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-actuator-common-feedback-0-1",
+  "to": "cyphal-reg-udral-service-actuator-common-feedback-0-1",
+  "input": "00031b",
+  "expect": "00031b",
+  "model": {
+    "cyregudralserviceactuatorcommon.feedback_0_1_heartbeat_readiness_value": "0",
+    "cyregudralserviceactuatorcommon.feedback_0_1_heartbeat_health_value": "3",
+    "cyregudralserviceactuatorcommon.feedback_0_1_demand_factor_pct": "27"
+  }
+}

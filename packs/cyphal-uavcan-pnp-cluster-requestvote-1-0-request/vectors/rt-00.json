@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-requestvote-1-0-request-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-requestvote-1-0-request",
+  "to": "cyphal-uavcan-pnp-cluster-requestvote-1-0-request",
+  "input": "5d38037d348c87500be0",
+  "expect": "5d38037d348c87500be0",
+  "model": {
+    "cyuavcanpnpcluster.request_vote_1_0_request_term": "2097363037",
+    "cyuavcanpnpcluster.request_vote_1_0_request_last_log_term": "1351060532",
+    "cyuavcanpnpcluster.request_vote_1_0_request_last_log_index": "57355"
+  }
+}

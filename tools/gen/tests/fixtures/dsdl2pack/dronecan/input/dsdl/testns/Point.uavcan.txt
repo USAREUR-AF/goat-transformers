@@ -1,0 +1,4 @@
+# A nested type with no data type ID.
+int16 x
+uint12 y          # not a whole number of bytes: padded
+void4

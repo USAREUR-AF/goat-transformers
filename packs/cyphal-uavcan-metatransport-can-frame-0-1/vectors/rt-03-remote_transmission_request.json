@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-metatransport-can-frame-0-1-roundtrip-remote_transmission_request",
+  "from": "cyphal-uavcan-metatransport-can-frame-0-1",
+  "to": "cyphal-uavcan-metatransport-can-frame-0-1",
+  "input": "7277f30f000000030146f9480c",
+  "expect": "7277f30f00000003",
+  "model": {
+    "cyuavcanmetatransportcan.frame_0_1_timestamp_microsecond": "267614066",
+    "@kind": "remote_transmission_request"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-file-path-1-0-roundtrip",
+  "from": "cyphal-uavcan-file-path-1-0",
+  "to": "cyphal-uavcan-file-path-1-0",
+  "input": "0336ab20",
+  "expect": "0336ab20",
+  "model": {
+    "cyuavcanfile.path_1_0_path.#": "3",
+    "cyuavcanfile.path_1_0_path[0].cyuavcanfile.path_1_0_path_item": "54",
+    "cyuavcanfile.path_1_0_path[1].cyuavcanfile.path_1_0_path_item": "171",
+    "cyuavcanfile.path_1_0_path[2].cyuavcanfile.path_1_0_path_item": "32"
+  }
+}

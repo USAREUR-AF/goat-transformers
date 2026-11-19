@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-register-list-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-register-list-1-0-response",
+  "to": "cyphal-uavcan-register-list-1-0-response",
+  "input": "0184",
+  "expect": "0184",
+  "model": {
+    "cyuavcanregister.list_1_0_response_name_name.#": "1",
+    "cyuavcanregister.list_1_0_response_name_name[0].cyuavcanregister.list_1_0_response_name_name_item": "132"
+  }
+}

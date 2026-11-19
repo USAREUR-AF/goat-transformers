@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-file-write-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-file-write-1-0-response",
+  "to": "cyphal-uavcan-file-write-1-0-response",
+  "input": "8a99",
+  "expect": "8a99",
+  "model": {
+    "cyuavcanfile.write_1_0_response_error_value": "39306"
+  }
+}

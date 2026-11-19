@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-natural8-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-natural8-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-natural8-1-0",
+  "input": "d4",
+  "expect": "d4",
+  "model": {
+    "cyuavcanprimitivescalar.natural8_1_0_value": "212"
+  }
+}

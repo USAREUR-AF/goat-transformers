@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-integer16-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-integer16-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-integer16-1-0",
+  "input": "644c",
+  "expect": "644c",
+  "model": {
+    "cyuavcanprimitivescalar.integer16_1_0_value": "19556"
+  }
+}

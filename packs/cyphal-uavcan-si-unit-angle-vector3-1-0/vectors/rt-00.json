@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-si-unit-angle-vector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-angle-vector3-1-0",
+  "to": "cyphal-uavcan-si-unit-angle-vector3-1-0",
+  "input": "000000c00000a0bf000000bf",
+  "expect": "000000c00000a0bf000000bf",
+  "model": {
+    "cyuavcansiunitangle.vector3_1_0_radian_0": "-2",
+    "cyuavcansiunitangle.vector3_1_0_radian_1": "-1.25",
+    "cyuavcansiunitangle.vector3_1_0_radian_2": "-0.5"
+  }
+}

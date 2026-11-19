@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-register-list-1-0-request-roundtrip",
+  "from": "cyphal-uavcan-register-list-1-0-request",
+  "to": "cyphal-uavcan-register-list-1-0-request",
+  "input": "c3cd",
+  "expect": "c3cd",
+  "model": {
+    "cyuavcanregister.list_1_0_request_index": "52675"
+  }
+}

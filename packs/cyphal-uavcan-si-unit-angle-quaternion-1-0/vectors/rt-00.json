@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-si-unit-angle-quaternion-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-angle-quaternion-1-0",
+  "to": "cyphal-uavcan-si-unit-angle-quaternion-1-0",
+  "input": "000000c00000a0bf000000bf0000803e",
+  "expect": "000000c00000a0bf000000bf0000803e",
+  "model": {
+    "cyuavcansiunitangle.quaternion_1_0_wxyz_0": "-2",
+    "cyuavcansiunitangle.quaternion_1_0_wxyz_1": "-1.25",
+    "cyuavcansiunitangle.quaternion_1_0_wxyz_2": "-0.5",
+    "cyuavcansiunitangle.quaternion_1_0_wxyz_3": "0.25"
+  }
+}

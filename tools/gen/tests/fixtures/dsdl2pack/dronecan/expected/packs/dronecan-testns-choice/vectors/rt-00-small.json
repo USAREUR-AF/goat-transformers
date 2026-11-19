@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-testns-choice-roundtrip-small",
+  "from": "dronecan-testns-choice",
+  "to": "dronecan-testns-choice",
+  "input": "2480",
+  "expect": "2480",
+  "model": {
+    "@kind": "small",
+    "dctestns.choice_small": "146"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-natural32-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-natural32-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-natural32-1-0",
+  "input": "d46a624c",
+  "expect": "d46a624c",
+  "model": {
+    "cyuavcanprimitivescalar.natural32_1_0_value": "1281518292"
+  }
+}

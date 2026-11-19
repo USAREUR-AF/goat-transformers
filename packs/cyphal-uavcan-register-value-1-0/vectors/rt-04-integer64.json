@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-integer64",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "04030b4e11c0ffffffff1e6514c0ffffffff317c17c0ffffffff",
+  "expect": "04030b4e11c0ffffffff1e6514c0ffffffff317c17c0ffffffff",
+  "model": {
+    "@kind": "integer64",
+    "cyuavcanregister.value_1_0_integer64_value.#": "3",
+    "cyuavcanregister.value_1_0_integer64_value[0].cyuavcanregister.value_1_0_integer64_value_item": "-1072607733",
+    "cyuavcanregister.value_1_0_integer64_value[1].cyuavcanregister.value_1_0_integer64_value_item": "-1072405218",
+    "cyuavcanregister.value_1_0_integer64_value[2].cyuavcanregister.value_1_0_integer64_value_item": "-1072202703"
+  }
+}

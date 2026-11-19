@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-real32",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "0d0300008840000098c0000060c0",
+  "expect": "0d0300008840000098c0000060c0",
+  "model": {
+    "@kind": "real32",
+    "cyuavcanregister.value_1_0_real32_value.#": "3",
+    "cyuavcanregister.value_1_0_real32_value[0].cyuavcanregister.value_1_0_real32_value_item": "4.25",
+    "cyuavcanregister.value_1_0_real32_value[1].cyuavcanregister.value_1_0_real32_value_item": "-4.75",
+    "cyuavcanregister.value_1_0_real32_value[2].cyuavcanregister.value_1_0_real32_value_item": "-3.5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-requestvote-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-requestvote-1-0-response",
+  "to": "cyphal-uavcan-pnp-cluster-requestvote-1-0-response",
+  "input": "0be00b2401",
+  "expect": "0be00b2401",
+  "model": {
+    "cyuavcanpnpcluster.request_vote_1_0_response_term": "604758027",
+    "cyuavcanpnpcluster.request_vote_1_0_response_vote_granted": "1"
+  }
+}

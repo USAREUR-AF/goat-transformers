@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-testns-query-1-0-response-roundtrip-pair",
+  "from": "cyphal-testns-query-1-0-response",
+  "to": "cyphal-testns-query-1-0-response",
+  "input": "0108461e",
+  "expect": "0108461e",
+  "model": {
+    "@kind": "pair",
+    "cytestns.query_1_0_response_mode_pair_a": "0",
+    "cytestns.query_1_0_response_mode_pair_b": "2241",
+    "cytestns.query_1_0_response_status": "30"
+  }
+}

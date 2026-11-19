@@ -1,0 +1,4 @@
+# A delimited nested type: written after a delimiter header.
+uint8[<=testns.Limits.1.0.CAPACITY] text
+float16 weight
+@extent 32 * 8

@@ -1,0 +1,5 @@
+# A service.
+uint16 what
+bool urgent
+---
+int8 answer

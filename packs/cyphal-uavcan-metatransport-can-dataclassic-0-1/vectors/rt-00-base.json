@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-metatransport-can-dataclassic-0-1-roundtrip-base",
+  "from": "cyphal-uavcan-metatransport-can-dataclassic-0-1",
+  "to": "cyphal-uavcan-metatransport-can-dataclassic-0-1",
+  "input": "00e707000001e7",
+  "expect": "00e707000001e7",
+  "model": {
+    "@kind": "base",
+    "cyuavcanmetatransportcan.data_classic_0_1_arbitration_id_base_value": "2023",
+    "cyuavcanmetatransportcan.data_classic_0_1_data.#": "1",
+    "cyuavcanmetatransportcan.data_classic_0_1_data[0].cyuavcanmetatransportcan.data_classic_0_1_data_item": "231"
+  }
+}

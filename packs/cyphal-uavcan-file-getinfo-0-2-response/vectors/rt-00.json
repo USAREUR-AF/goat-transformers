@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-uavcan-file-getinfo-0-2-response-roundtrip",
+  "from": "cyphal-uavcan-file-getinfo-0-2-response",
+  "to": "cyphal-uavcan-file-getinfo-0-2-response",
+  "input": "59477f21871a0056750b6e000a",
+  "expect": "59477f21871a0056750b6e000a",
+  "model": {
+    "cyuavcanfile.get_info_0_2_response_error_value": "18265",
+    "cyuavcanfile.get_info_0_2_response_size": "445063551",
+    "cyuavcanfile.get_info_0_2_response_unix_timestamp_of_last_modification": "1846244694",
+    "cyuavcanfile.get_info_0_2_response_is_file_not_directory": "0",
+    "cyuavcanfile.get_info_0_2_response_is_link": "1",
+    "cyuavcanfile.get_info_0_2_response_is_readable": "0",
+    "cyuavcanfile.get_info_0_2_response_is_writeable": "1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-cartesian-twist-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-cartesian-twist-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-cartesian-twist-0-1",
+  "input": "000050c0000020c00000e0bf0000c0bf000040bf00000000",
+  "expect": "000050c0000020c00000e0bf0000c0bf000040bf00000000",
+  "model": {
+    "cyregudralphysicskinematicscartesian.twist_0_1_linear_meter_per_second_0": "-3.25",
+    "cyregudralphysicskinematicscartesian.twist_0_1_linear_meter_per_second_1": "-2.5",
+    "cyregudralphysicskinematicscartesian.twist_0_1_linear_meter_per_second_2": "-1.75",
+    "cyregudralphysicskinematicscartesian.twist_0_1_angular_radian_per_second_0": "-1.5",
+    "cyregudralphysicskinematicscartesian.twist_0_1_angular_radian_per_second_1": "-0.75",
+    "cyregudralphysicskinematicscartesian.twist_0_1_angular_radian_per_second_2": "0"
+  }
+}

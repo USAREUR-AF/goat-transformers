@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-cartesian-pointstatevarts-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-cartesian-pointstatevarts-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-cartesian-pointstatevarts-0-1",
+  "input": "5f0a4d35000000000000000000e8bf0000000000000000000000000000e83f0000000000000000000000000000403f0000c03f00001040000000000000000000000000",
+  "expect": "5f0a4d35000000000000000000e8bf0000000000000000000000000000e83f0000000000000000000000000000403f0000c03f00001040000000000000000000000000",
+  "model": {
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_timestamp_microsecond": "894241375",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_position_value_value_meter_0": "-0.75",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_position_value_value_meter_1": "0",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_position_value_value_meter_2": "0.75",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_velocity_value_meter_per_second_0": "0.75",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_velocity_value_meter_per_second_1": "1.5",
+    "cyregudralphysicskinematicscartesian.point_state_var_ts_0_1_value_velocity_value_meter_per_second_2": "2.25"
+  }
+}

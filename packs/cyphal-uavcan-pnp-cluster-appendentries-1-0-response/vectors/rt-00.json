@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-appendentries-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-appendentries-1-0-response",
+  "to": "cyphal-uavcan-pnp-cluster-appendentries-1-0-response",
+  "input": "9c23547b00",
+  "expect": "9c23547b00",
+  "model": {
+    "cyuavcanpnpcluster.append_entries_1_0_response_term": "2069111708",
+    "cyuavcanpnpcluster.append_entries_1_0_response_success": "0"
+  }
+}

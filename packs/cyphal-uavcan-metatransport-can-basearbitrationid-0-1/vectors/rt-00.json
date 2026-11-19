@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-metatransport-can-basearbitrationid-0-1-roundtrip",
+  "from": "cyphal-uavcan-metatransport-can-basearbitrationid-0-1",
+  "to": "cyphal-uavcan-metatransport-can-basearbitrationid-0-1",
+  "input": "ae000000",
+  "expect": "ae000000",
+  "model": {
+    "cyuavcanmetatransportcan.base_arbitration_id_0_1_value": "174"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-metatransport-ethernet-ethertype-0-1-roundtrip",
+  "from": "cyphal-uavcan-metatransport-ethernet-ethertype-0-1",
+  "to": "cyphal-uavcan-metatransport-ethernet-ethertype-0-1",
+  "input": "ae90",
+  "expect": "ae90",
+  "model": {
+    "cyuavcanmetatransportethernet.ether_type_0_1_value": "37038"
+  }
+}

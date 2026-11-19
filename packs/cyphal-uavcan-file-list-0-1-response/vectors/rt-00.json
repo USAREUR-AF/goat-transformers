@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-file-list-0-1-response-roundtrip",
+  "from": "cyphal-uavcan-file-list-0-1-response",
+  "to": "cyphal-uavcan-file-list-0-1-response",
+  "input": "000000000250c5",
+  "expect": "000000000250c5",
+  "model": {
+    "cyuavcanfile.list_0_1_response_entry_base_name_path.#": "2",
+    "cyuavcanfile.list_0_1_response_entry_base_name_path[0].cyuavcanfile.list_0_1_response_entry_base_name_path_item": "80",
+    "cyuavcanfile.list_0_1_response_entry_base_name_path[1].cyuavcanfile.list_0_1_response_entry_base_name_path_item": "197"
+  }
+}

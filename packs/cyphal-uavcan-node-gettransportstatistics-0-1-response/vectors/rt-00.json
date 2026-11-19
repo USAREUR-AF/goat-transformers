@@ -1,0 +1,19 @@
+{
+  "name": "cyphal-uavcan-node-gettransportstatistics-0-1-response-roundtrip",
+  "from": "cyphal-uavcan-node-gettransportstatistics-0-1-response",
+  "to": "cyphal-uavcan-node-gettransportstatistics-0-1-response",
+  "input": "3b26d36300127a573700e9cddb0a0002746dc673004bc14a47002215cf1a00e9cddb0a00c021605e009775e43100",
+  "expect": "3b26d36300127a573700e9cddb0a0002746dc673004bc14a47002215cf1a00e9cddb0a00c021605e009775e43100",
+  "model": {
+    "cyuavcannode.get_transport_statistics_0_1_response_transfer_statistics_num_emitted": "1674782267",
+    "cyuavcannode.get_transport_statistics_0_1_response_transfer_statistics_num_received": "928479762",
+    "cyuavcannode.get_transport_statistics_0_1_response_transfer_statistics_num_errored": "182177257",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics.#": "2",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[0].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_emitted": "1942383988",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[0].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_received": "1196081483",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[0].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_errored": "449778978",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[1].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_emitted": "182177257",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[1].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_received": "1583358400",
+    "cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics[1].cyuavcannode.get_transport_statistics_0_1_response_network_interface_statistics_item_num_errored": "837055895"
+  }
+}

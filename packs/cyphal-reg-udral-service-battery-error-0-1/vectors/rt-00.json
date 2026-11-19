@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-reg-udral-service-battery-error-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-battery-error-0-1",
+  "to": "cyphal-reg-udral-service-battery-error-0-1",
+  "input": "ae",
+  "expect": "ae",
+  "model": {
+    "cyregudralservicebattery.error_0_1_value": "174"
+  }
+}

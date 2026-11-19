@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-si-sample-duration-widescalar-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-sample-duration-widescalar-1-0",
+  "to": "cyphal-uavcan-si-sample-duration-widescalar-1-0",
+  "input": "85e4996a000000000000000000e0bf",
+  "expect": "85e4996a000000000000000000e0bf",
+  "model": {
+    "cyuavcansisampleduration.wide_scalar_1_0_timestamp_microsecond": "1788470405",
+    "cyuavcansisampleduration.wide_scalar_1_0_second": "-0.5"
+  }
+}

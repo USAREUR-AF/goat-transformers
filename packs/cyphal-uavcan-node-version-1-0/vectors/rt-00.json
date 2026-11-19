@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-uavcan-node-version-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-version-1-0",
+  "to": "cyphal-uavcan-node-version-1-0",
+  "input": "d4ab",
+  "expect": "d4ab",
+  "model": {
+    "cyuavcannode.version_1_0_major": "212",
+    "cyuavcannode.version_1_0_minor": "171"
+  }
+}

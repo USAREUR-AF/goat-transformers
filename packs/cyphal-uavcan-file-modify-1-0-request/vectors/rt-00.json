@@ -1,0 +1,17 @@
+{
+  "name": "cyphal-uavcan-file-modify-1-0-request-roundtrip",
+  "from": "cyphal-uavcan-file-modify-1-0-request",
+  "to": "cyphal-uavcan-file-modify-1-0-request",
+  "input": "0200000003e55acf01bc",
+  "expect": "0200000003e55acf01bc",
+  "model": {
+    "cyuavcanfile.modify_1_0_request_preserve_source": "0",
+    "cyuavcanfile.modify_1_0_request_overwrite_destination": "1",
+    "cyuavcanfile.modify_1_0_request_source_path.#": "3",
+    "cyuavcanfile.modify_1_0_request_source_path[0].cyuavcanfile.modify_1_0_request_source_path_item": "229",
+    "cyuavcanfile.modify_1_0_request_source_path[1].cyuavcanfile.modify_1_0_request_source_path_item": "90",
+    "cyuavcanfile.modify_1_0_request_source_path[2].cyuavcanfile.modify_1_0_request_source_path_item": "207",
+    "cyuavcanfile.modify_1_0_request_destination_path.#": "1",
+    "cyuavcanfile.modify_1_0_request_destination_path[0].cyuavcanfile.modify_1_0_request_destination_path_item": "188"
+  }
+}

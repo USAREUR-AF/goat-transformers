@@ -1,0 +1,12 @@
+# Provenance: cyphal-uavcan-node-executecommand-1-3-request
+
+| Fact | Value |
+|---|---|
+| data type | `uavcan.node.ExecuteCommand.1.3` (request), fixed port-ID 435 |
+| definition read | `uavcan/node/435.ExecuteCommand.1.3.dsdl` of https://github.com/OpenCyphal/public_regulated_data_types |
+| commit | `86e2f332419ff015f4cc9f1bb7843b02d5f7a5ed` |
+| SHA-256 of the definition | `a9a5a8e0d56105d72d12ac5ebeaab4a4dd5855122595a0ae43233f1ae820a4e6` |
+| license of the repository | MIT, copyright (c) 2014-2019 UAVCAN Development Team: `LICENSE` at the root of the commit (SHA-256 `ed48b6197cc36def00df55424b4dd598e6af4ce58e0239f7f67d91f40cdeb5de`), verbatim in `tools/gen/sources/cyphal-PROVENANCE.md`; the definition file carries no license or copyright header of its own |
+| date read | 2026-11-19 |
+| what the pack takes | type and field names, field types, array bounds, constants that bound arrays, the `@union`, `@sealed` and `@extent` directives and the fixed port-ID; no comment text |
+| generator | `tools/gen/dsdl2pack.py --cyphal` |

@@ -1,0 +1,3 @@
+# Constants that bound arrays of other types.
+uint8 CAPACITY = 2 * 2 + 1
+@sealed

@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-testns-mode-1-0-roundtrip-idle",
+  "from": "cyphal-testns-mode-1-0",
+  "to": "cyphal-testns-mode-1-0",
+  "input": "00be",
+  "expect": "00be",
+  "model": {
+    "@kind": "idle",
+    "cytestns.mode_1_0_idle": "190"
+  }
+}

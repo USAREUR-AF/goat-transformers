@@ -1,0 +1,20 @@
+{
+  "name": "cyphal-uavcan-internet-udp-outgoingpacket-0-2-roundtrip",
+  "from": "cyphal-uavcan-internet-udp-outgoingpacket-0-2",
+  "to": "cyphal-uavcan-internet-udp-outgoingpacket-0-2",
+  "input": "91aa68fe02a116010300fd72e7",
+  "expect": "91aa68fe02a116010300fd72e7",
+  "model": {
+    "cyuavcaninternetudp.outgoing_packet_0_2_session_id": "43665",
+    "cyuavcaninternetudp.outgoing_packet_0_2_destination_port": "65128",
+    "cyuavcaninternetudp.outgoing_packet_0_2_destination_address.#": "2",
+    "cyuavcaninternetudp.outgoing_packet_0_2_destination_address[0].cyuavcaninternetudp.outgoing_packet_0_2_destination_address_item": "161",
+    "cyuavcaninternetudp.outgoing_packet_0_2_destination_address[1].cyuavcaninternetudp.outgoing_packet_0_2_destination_address_item": "22",
+    "cyuavcaninternetudp.outgoing_packet_0_2_use_masquerading": "1",
+    "cyuavcaninternetudp.outgoing_packet_0_2_use_dtls": "0",
+    "cyuavcaninternetudp.outgoing_packet_0_2_payload.#": "3",
+    "cyuavcaninternetudp.outgoing_packet_0_2_payload[0].cyuavcaninternetudp.outgoing_packet_0_2_payload_item": "253",
+    "cyuavcaninternetudp.outgoing_packet_0_2_payload[1].cyuavcaninternetudp.outgoing_packet_0_2_payload_item": "114",
+    "cyuavcaninternetudp.outgoing_packet_0_2_payload[2].cyuavcaninternetudp.outgoing_packet_0_2_payload_item": "231"
+  }
+}

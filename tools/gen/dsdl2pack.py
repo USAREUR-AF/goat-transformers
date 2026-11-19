@@ -36,6 +36,9 @@ import struct
 import sys
 from decimal import Decimal
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio      # noqa: E402  (the script directory is not on the path under `python3 -I`)
+
 VERSION = "0.1.0"
 REPO = "https://github.com/dronecan/DSDL"
 SPEC = "https://dronecan.github.io/Specification/3._Data_structure_description_language/"
@@ -186,7 +189,7 @@ def parse_file(path, rel):
     full = ".".join(parts[:-1] + [m.group(2)])
     t = DType(full, dtid, rel)
     body = t.bodies[0]
-    for ln, raw in enumerate(open(path, encoding="utf-8").read().splitlines(), 1):
+    for ln, raw in enumerate(read_text(path).splitlines(), 1):
         line = raw.split("#", 1)[0].strip()
         if not line:
             continue
@@ -1151,11 +1154,12 @@ def force_variant(val, body, types, v):
     return walk_body(body, val)
 
 
-def write_vectors(ps, types, vdir):
-    os.makedirs(vdir, exist_ok=True)
-    for old in os.listdir(vdir):
-        if old.endswith(".json"):
-            os.remove(os.path.join(vdir, old))
+def vector_text(vec):
+    return json.dumps(vec, indent=2) + "\n"
+
+
+def vector_files(ps, types):
+    """[(file name, text)] of the vectors of one pack."""
     vecs = []
     for i, val in enumerate(values_for(ps, types)):
         w = BitWriter()
@@ -1171,10 +1175,7 @@ def write_vectors(ps, types, vdir):
             ("input", full.hex()), ("expect", expect.hex()),
             ("model", model_strings(ent))])
         fn = "rt-%02d%s.json" % (i, ("-" + ent["@kind"]) if "@kind" in ent else "")
-        with open(os.path.join(vdir, fn), "w", encoding="utf-8") as fh:
-            json.dump(vec, fh, indent=2)
-            fh.write("\n")
-        vecs.append(fn)
+        vecs.append((fn, vector_text(vec)))
     if ps.t.full in CROSS and not ps.t.service:
         val = values_for(ps, types)[0]
         w = BitWriter()
@@ -1185,12 +1186,18 @@ def write_vectors(ps, types, vdir):
         vec = collections.OrderedDict([
             ("name", "%s-to-geojson" % ps.format), ("from", ps.format), ("to", "geojson"),
             ("input", w.to_bytes().hex()), ("expect", CROSS[ps.t.full][2]), ("model", model)])
-        fn = "x-01-to-geojson.json"
-        with open(os.path.join(vdir, fn), "w", encoding="utf-8") as fh:
-            json.dump(vec, fh, indent=2)
-            fh.write("\n")
-        vecs.append(fn)
+        vecs.append(("x-01-to-geojson.json", vector_text(vec)))
     return vecs
+
+
+def write_vectors(out, vdir, files):
+    """Write the vector files of a pack; remove every other .json there."""
+    keep = {name for name, _ in files}
+    for old in out.listdir(vdir):
+        if old.endswith(".json") and old not in keep:
+            out.remove("%s/%s" % (vdir, old))
+    for name, text in files:
+        out.write("%s/%s" % (vdir, name), text)
 
 
 def geojson_of(ent):
@@ -1201,14 +1208,17 @@ def geojson_of(ent):
     return '{"type":"Feature","geometry":%s,"properties":{}}' % geom
 
 
-def check_vectors(pack_root, vdir, fmt):
+def check_vectors(pack_root, vectors, fmt, reader=None, decode=None, encode=None):
+    """Decode and encode every vector [(file name, text)] with the reader of
+    this file; the number checked."""
+    reader, decode, encode = reader or Reader, decode or dec_scope, encode or (Writer, enc_scope)
     n = 0
-    for fn in sorted(os.listdir(vdir)):
-        vec = json.load(open(os.path.join(vdir, fn), encoding="utf-8"))
+    for fn, text in vectors:
+        vec = json.loads(text)
         data = bytes.fromhex(vec["input"])
         ent = {}
-        r = Reader(data)
-        dec_scope(r, pack_root, ent)
+        r = reader(data)
+        decode(r, pack_root, ent)
         got_model = model_strings(collections.OrderedDict(
             (k, v) for k, v in ent.items()))
         for k, want in vec["model"].items():
@@ -1228,8 +1238,8 @@ def check_vectors(pack_root, vdir, fmt):
                 raise GenError("%s/%s: geojson %s, vector expects %s" % (fmt, fn, got, vec["expect"]))
             n += 1
             continue
-        w = Writer()
-        enc_scope(w, pack_root, ent)
+        w = encode[0]()
+        encode[1](w, pack_root, ent)
         got = w.to_bytes().hex()
         if got != vec["expect"]:
             raise GenError("%s/%s: encode gives %s, vector expects %s" % (fmt, fn, got, vec["expect"]))
@@ -1437,8 +1447,8 @@ def provenance_md(ps, sha, file_sha, license_sha):
         ""])
 
 
-def write_sources_provenance(path, dsdl, sha, files):
-    lic = open(os.path.join(dsdl, "LICENSE"), encoding="utf-8").read()
+def write_sources_provenance(out, rel, dsdl, sha, files):
+    lic = read_text(os.path.join(dsdl, "LICENSE"))
     o = ["# Provenance of the DroneCAN DSDL inputs",
          "",
          "| Fact | Value |",
@@ -1453,19 +1463,25 @@ def write_sources_provenance(path, dsdl, sha, files):
          "| Path | SHA-256 |",
          "|---|---|",
          "| `LICENSE` | `%s` |" % sha256(os.path.join(dsdl, "LICENSE"))]
-    for rel in files:
-        o.append("| `%s` | `%s` |" % (rel, sha256(os.path.join(dsdl, rel))))
+    for f in files:
+        o.append("| `%s` | `%s` |" % (f, sha256(os.path.join(dsdl, f))))
     o += ["", "## LICENSE", "", "```"] + lic.rstrip("\n").splitlines() + ["```", ""]
-    with open(path, "w", encoding="utf-8") as fh:
-        fh.write("\n".join(o))
+    out.write(rel, "\n".join(o))
 
 
 def sha256(p):
-    return hashlib.sha256(open(p, "rb").read()).hexdigest()
+    with open(p, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
 
 
-def read_sources_provenance(path, dsdl, files):
-    text = open(path, encoding="utf-8").read()
+def read_text(p):
+    with open(p, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def read_sources_provenance(path, dsdl, files, text=None):
+    if text is None:
+        text = read_text(path)
     m = re.search(r"\| commit \| `([0-9a-f]{40})`", text)
     if not m:
         raise GenError("%s states no commit" % path)
@@ -1478,26 +1494,1295 @@ def read_sources_provenance(path, dsdl, files):
     return m.group(1), table
 
 
+# ================================================================ Cyphal ===
+# Cyphal (UAVCAN v1) DSDL, github.com/OpenCyphal/public_regulated_data_types.
+#
+# Serialization, as the Cyphal DSDL rules state and pydsdl implements them:
+# bits are filled least significant first (`bit_order lsb`); a primitive needs
+# no alignment; a composite starts and ends on a byte boundary; a
+# variable-length array has a length prefix of 8, 16, 32 or 64 bits (the
+# smallest that holds the capacity), then its elements; a union starts with a
+# tag of 8, 16, 32 or 64 bits; a composite that is not @sealed is written
+# after a 32-bit delimiter header that states its length in bytes. A message
+# at top level has no delimiter header.
+
+CY_REPO = "https://github.com/OpenCyphal/public_regulated_data_types"
+CY_SPEC = "https://opencyphal.org/specification"
+CY_PROV_NAME = "cyphal-PROVENANCE.md"
+CY_NAMESPACES = ["uavcan", "reg"]
+CY_FILE_RE = re.compile(r"^(?:(\d+)\.)?([A-Za-z_][A-Za-z0-9_]*)\.(\d+)\.(\d+)\.dsdl$")
+CY_PRIM_RE = re.compile(r"^(uint|int|float)(\d+)$")
+
+
+class CyBody:
+    def __init__(self):
+        self.fields, self.union, self.sealed, self.extent = [], False, False, None
+        self.consts = {}              # name -> expression text
+
+
+class CyType:
+    def __init__(self, ns, short, major, minor, port, path):
+        self.ns, self.short, self.major, self.minor, self.port, self.path = ns, short, major, minor, port, path
+        self.name = "%s.%s" % (ns, short)
+        self.full = "%s.%d.%d" % (self.name, major, minor)
+        self.bodies = [CyBody()]
+        self.service = False
+        self.deprecated = False
+
+
+def cy_ref(text, ns):
+    """A composite type reference: `a.b.Name.1.0` or, in the same namespace,
+    `Name.1.0`."""
+    parts = text.split(".")
+    if len(parts) < 3 or not parts[-1].isdigit() or not parts[-2].isdigit():
+        raise GenError("bad type reference " + text)
+    if len(parts) == 3:
+        return "%s.%s" % (ns, text)
+    return text
+
+
+CY_ARR_RE = re.compile(r"^([^\[]+)\[(<=|<)?([^\]]+)\]$")
+
+
+def cy_parse_type(text, ns):
+    m = CY_ARR_RE.match(text)
+    if m:
+        inner, op, n = m.group(1), m.group(2), m.group(3)
+        return ("array", cy_parse_type(inner, ns), op, n)       # n resolved later
+    if text == "bool":
+        return Prim("bool", 1)
+    if text in ("utf8", "byte"):
+        return Prim("uint", 8)
+    m = CY_PRIM_RE.match(text)
+    if m:
+        k, b = m.group(1), int(m.group(2))
+        if k == "float" and b not in (16, 32, 64):
+            raise GenError("bad float width " + text)
+        return Prim(k, b)
+    m = re.match(r"^void(\d+)$", text)
+    if m:
+        return Void(int(m.group(1)))
+    return Ref(cy_ref(text, ns))
+
+
+def cy_parse_file(path, rel):
+    parts = rel.split("/")
+    m = CY_FILE_RE.match(parts[-1])
+    if not m:
+        raise GenError("bad file name " + rel)
+    port = int(m.group(1)) if m.group(1) else None
+    t = CyType(".".join(parts[:-1]), m.group(2), int(m.group(3)), int(m.group(4)), port, rel)
+    body = t.bodies[0]
+    text = read_text(path)
+    for ln, raw in enumerate(text.splitlines(), 1):
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        where = "%s:%d" % (rel, ln)
+        if line == "---":
+            t.service = True
+            body = CyBody()
+            t.bodies.append(body)
+            continue
+        if line.startswith("@"):
+            d = line.split(None, 1)
+            if d[0] == "@union":
+                body.union = True
+            elif d[0] == "@sealed":
+                body.sealed = True
+            elif d[0] == "@extent":
+                body.extent = d[1]
+            elif d[0] == "@deprecated":
+                t.deprecated = True
+            elif d[0] in ("@assert", "@print"):
+                pass
+            else:
+                raise GenError("%s: unknown directive %s" % (where, d[0]))
+            continue
+        toks = line.split(None, 1)
+        if toks[0] in ("saturated", "truncated"):
+            line = toks[1]
+        m = re.match(r"^(\S+)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)$", line)
+        if m:
+            body.consts[m.group(2)] = m.group(3)
+            continue
+        toks = line.split()
+        if len(toks) == 1 and toks[0].startswith("void"):
+            body.fields.append(Field(None, cy_parse_type(toks[0], t.ns)))
+            continue
+        if len(toks) != 2 or not NAME_RE.match(toks[1]):
+            raise GenError("%s: cannot read %r" % (where, raw))
+        body.fields.append(Field(toks[1], cy_parse_type(toks[0], t.ns)))
+    return t
+
+
+class CyEval:
+    """Integer and rational expressions of the DSDL: numbers, + - * / % **,
+    parentheses, constants of the same body and `Type.M.N.CONST` of others."""
+
+    def __init__(self, types):
+        self.types = types
+
+    def value(self, text, t, body):
+        import ast
+        from fractions import Fraction
+        refs = {}
+
+        def sub(m):
+            name = m.group(0)
+            if re.match(r"^0[xX][0-9a-fA-F]+$", name) or re.match(r"^\d", name):
+                return name
+            if name in ("true", "false"):
+                return "1" if name == "true" else "0"
+            key = "_r%d" % len(refs)
+            refs[key] = self.resolve(name, t, body)
+            return key
+        expr = re.sub(r"[A-Za-z_0-9][A-Za-z_0-9.]*", sub, text.strip())
+        tree = ast.parse(expr, mode="eval")
+
+        def ev(node):
+            if isinstance(node, ast.Expression):
+                return ev(node.body)
+            if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+                return Fraction(node.value)
+            if isinstance(node, ast.Name) and node.id in refs:
+                return refs[node.id]
+            if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
+                v = ev(node.operand)
+                return -v if isinstance(node.op, ast.USub) else v
+            if isinstance(node, ast.BinOp):
+                a, b = ev(node.left), ev(node.right)
+                op = type(node.op)
+                if op is ast.Add:
+                    return a + b
+                if op is ast.Sub:
+                    return a - b
+                if op is ast.Mult:
+                    return a * b
+                if op is ast.Div:
+                    return a / b
+                if op is ast.FloorDiv:
+                    return Fraction(a // b)
+                if op is ast.Mod:
+                    return a % b
+                if op is ast.Pow and b.denominator == 1:
+                    return a ** int(b)
+            raise GenError("%s: expression %r not understood" % (t.path, text))
+        return ev(tree)
+
+    def resolve(self, name, t, body):
+        if "." not in name:
+            if name in body.consts:
+                return self.value(body.consts[name], t, body)
+            raise GenError("%s: unknown constant %s" % (t.path, name))
+        type_part, const = name.rsplit(".", 1)
+        full = cy_ref(type_part, t.ns)
+        if full not in self.types:
+            raise GenError("%s: unknown type %s" % (t.path, full))
+        other = self.types[full]
+        return self.value(other.bodies[0].consts[const], other, other.bodies[0])
+
+    def integer(self, text, t, body):
+        v = self.value(text, t, body)
+        if v.denominator != 1:
+            raise GenError("%s: %r is not an integer" % (t.path, text))
+        return int(v)
+
+
+def cy_load(root, namespaces):
+    types = {}
+    for ns in namespaces:
+        for dp, dn, fn in os.walk(os.path.join(root, ns)):
+            dn.sort()
+            for f in sorted(fn):
+                if f.endswith(".dsdl"):
+                    p = os.path.join(dp, f)
+                    rel = os.path.relpath(p, root).replace(os.sep, "/")
+                    t = cy_parse_file(p, rel)
+                    if t.full in types:
+                        raise GenError("type %s defined twice" % t.full)
+                    types[t.full] = t
+    ev = CyEval(types)
+
+    def fix(typ, t, body):
+        if isinstance(typ, tuple):
+            _, elem, op, n = typ
+            cap = ev.integer(n, t, body)
+            elem = fix(elem, t, body)
+            if op is None:
+                return Arr(elem, "static", cap)
+            return Arr(elem, "dynamic", cap if op == "<=" else cap - 1)
+        if isinstance(typ, Ref):
+            if typ.full not in types:
+                raise GenError("%s refers to unknown type %s" % (t.path, typ.full))
+            if types[typ.full].service:
+                raise GenError("%s nests a service type" % t.path)
+        return typ
+
+    for t in types.values():
+        for b in t.bodies:
+            for f in b.fields:
+                f.typ = fix(f.typ, t, b)
+            if b.extent is not None:
+                b.extent_bits = ev.integer(b.extent, t, b)
+    return types
+
+
+def cy_align(typ, types):
+    """The alignment of a type in bits: 8 for a composite, 1 for a primitive or
+    void, that of the element for an array."""
+    if isinstance(typ, Ref):
+        return 8
+    if isinstance(typ, Arr):
+        return cy_align(typ.elem, types)
+    return 1
+
+
+def cy_std_bits(n, align):
+    """8, 16, 32 or 64: the smallest that holds n bits, and not below `align`."""
+    b = 8
+    while b < n:
+        b *= 2
+    return max(b, align)
+
+
+def cy_prefix_bits(arr, types):
+    return cy_std_bits(arr.n.bit_length(), cy_align(arr.elem, types))
+
+
+def cy_tag_bits(body, types):
+    return cy_std_bits((len(body.fields) - 1).bit_length(), max(cy_align(f.typ, types) for f in body.fields))
+
+
+def cy_sealed(full, types):
+    return types[full].bodies[0].sealed
+
+
+class CyWriter:
+    """Bits least significant first; `align`; nested writers for delimited
+    composites."""
+
+    def __init__(self):
+        self.bits = []
+
+    def write(self, v, n):
+        self.bits += [(v >> i) & 1 for i in range(n)]
+
+    def align(self, n):
+        self.bits += [0] * (-len(self.bits) % n)
+
+    def to_bytes(self):
+        b = self.bits + [0] * (-len(self.bits) % 8)
+        return bytes(sum(b[i + j] << j for j in range(8)) for i in range(0, len(b), 8))
+
+
+def cy_ser_value(w, typ, val, types):
+    if isinstance(typ, Void):
+        w.write(0, typ.bits)
+    elif isinstance(typ, Prim):
+        if typ.kind == "float":
+            raw = {16: f16_bits, 32: lambda x: struct.unpack("<I", struct.pack("<f", x))[0],
+                   64: lambda x: struct.unpack("<Q", struct.pack("<d", x))[0]}[typ.bits](val)
+            w.write(raw, typ.bits)
+        else:
+            w.write(val & ((1 << typ.bits) - 1), typ.bits)
+    elif isinstance(typ, Ref):
+        w.align(8)
+        body = types[typ.full].bodies[0]
+        if body.sealed:
+            cy_ser_body(w, body, val, types)
+        else:
+            inner = CyWriter()
+            cy_ser_body(inner, body, val, types)
+            data = inner.to_bytes()
+            w.write(len(data), 32)
+            for byte in data:
+                w.write(byte, 8)
+    else:
+        w.align(cy_align(typ.elem, types))
+        if typ.mode == "dynamic":
+            w.write(len(val), cy_prefix_bits(typ, types))
+        for v in val:
+            cy_ser_value(w, typ.elem, v, types)
+
+
+def cy_ser_body(w, body, val, types):
+    if body.union:
+        tag, inner = val
+        w.write(tag, cy_tag_bits(body, types))
+        cy_ser_value(w, body.fields[tag].typ, inner, types)
+    else:
+        for f in body.fields:
+            if f.name is None:
+                w.write(0, f.typ.bits)
+            else:
+                cy_ser_value(w, f.typ, val[f.name], types)
+    w.align(8)
+
+
+# ------------------------------------------------------- Cyphal layout ---
+
+def cy_prim_line(typ):
+    if typ.kind in ("uint", "bool"):
+        return "uint"
+    if typ.kind == "int":
+        return "twos"
+    if typ.bits == 16:
+        return None
+    return "f32" if typ.bits == 32 else "f64"
+
+
+class CyLayout:
+    """Nodes, as for DroneCAN, plus ("align", 8) and ("block", nodes) for a
+    delimited composite."""
+
+    def __init__(self, types, module):
+        self.types, self.module = types, module
+        self.unmapped = []
+
+    def key(self, path):
+        return "%s.%s" % (self.module, "_".join(path))
+
+    def body(self, body, path):
+        if body.union:
+            variants = [(f.name, self.value(f.typ, path + [f.name]) + [("align", 8)]) for f in body.fields]
+            return [("union", cy_tag_bits(body, self.types), variants)]
+        out = []
+        for f in body.fields:
+            if f.name is None:
+                out.append(("pad", f.typ.bits, "void"))
+            else:
+                out += self.value(f.typ, path + [f.name])
+        return out + [("align", 8)]
+
+    def value(self, typ, path):
+        types = self.types
+        if isinstance(typ, Void):
+            return [("pad", typ.bits, "void")]
+        if isinstance(typ, Prim):
+            tr = cy_prim_line(typ)
+            if tr is None:
+                why = "float16: no half-precision transform"
+                self.unmapped.append(("_".join(path), repr(typ), why))
+                return [("pad", 16, why)]
+            return [("field", self.key(path), typ.bits, tr, False, tuple(path))]
+        if isinstance(typ, Ref):
+            inner = self.body(types[typ.full].bodies[0], path)
+            if types[typ.full].bodies[0].sealed:
+                return [("align", 8)] + inner
+            return [("align", 8), ("block", inner)]
+        align = [("align", 8)] if cy_align(typ.elem, types) == 8 else []
+        if typ.mode == "static":
+            if typ.n > MAX_STATIC_UNROLL:
+                why = "static array of %d elements (more than %d)" % (typ.n, MAX_STATIC_UNROLL)
+                self.unmapped.append(("_".join(path), "%s[%d]" % (type_text(typ.elem), typ.n), why))
+                if cy_fixed(typ, types):
+                    return align + [("pad", cy_fixed(typ, types), why)]
+                return [("stop", why)]
+            out = list(align)
+            for i in range(typ.n):
+                out += self.value(typ.elem, path + [str(i)])
+            return out
+        inner = CyLayout(types, self.module)
+        nodes = inner.value(typ.elem, path + ["item"])
+        self.unmapped += inner.unmapped
+        return align + [("group", self.key(path), cy_prefix_bits(typ, types), nodes, typ)]
+
+
+def cy_fixed(typ, types):
+    """The bit length of a value of fixed length, or None."""
+    if isinstance(typ, (Prim, Void)):
+        return typ.bits
+    if isinstance(typ, Arr):
+        e = cy_fixed(typ.elem, types)
+        return e * typ.n if typ.mode == "static" and e is not None and cy_align(typ.elem, types) == 1 else None
+    return None
+
+
+def cy_flat(nodes, scope):
+    """Flatten nodes of one scope. `scope` is "top", "item" or "block". In a
+    block (a delimited composite) a union or a stop ends what the block maps;
+    decode skips the rest of the block by its length."""
+    out = []
+    for n in nodes:
+        if n[0] in ("field", "pad", "align"):
+            out.append(n)
+        elif n[0] in ("stop", "union"):
+            why = n[1] if n[0] == "stop" else (
+                "a union inside a delimited type" if scope == "block" else "a second union in one scope")
+            if scope in ("top", "block"):
+                out.append(("stop", why))
+                return out, True
+            raise Unsupported(why)
+        elif n[0] == "block":
+            inner, _ = cy_flat(n[1], "block")
+            out.append(("block", inner))
+        elif n[0] == "group":
+            try:
+                c, k = cy_resolve(n[3], "item")
+            except Unsupported as e:
+                why = "array %s: %s" % (n[1], e)
+                if scope in ("top", "block"):
+                    out.append(("stop", why))
+                    return out, True
+                raise
+            out.append(("group", n[1], n[2], c, k, n[4]))
+    return out, False
+
+
+def cy_resolve(nodes, scope):
+    """(common lines, kinds) of a message or group-item scope: the first union
+    of the scope becomes one kind per variant, the rest of the scope repeated in
+    each."""
+    common = []
+    for i, n in enumerate(nodes):
+        if n[0] == "union":
+            kinds = []
+            for v, (vname, vnodes) in enumerate(n[2]):
+                lines, _ = cy_flat(vnodes + nodes[i + 1:], scope)
+                kinds.append((vname, n[1], v, lines))
+            return common, kinds
+        lines, stopped = cy_flat([n], scope)
+        common += lines
+        if stopped:
+            return common, []
+    return common, []
+
+
+def cy_emit_lines(lines, ind, out, keys, lists):
+    for ln in lines:
+        if ln[0] == "field":
+            _, key, bits, tr, _, _ = ln
+            out.append("%sfield  %s  %d  %s" % (ind, key, bits, tr))
+            if "." in key:
+                keys[key] = "float" if tr.startswith(("f", "sscale")) else "int"
+        elif ln[0] == "pad":
+            out.append("%spad    %d" % (ind, ln[1]))
+        elif ln[0] == "align":
+            if not (out and out[-1] == "%salign  %d" % (ind, ln[1])):   # one line for two in a row
+                out.append("%salign  %d" % (ind, ln[1]))
+        elif ln[0] == "stop":
+            out.append("%s# not mapped from here on: %s" % (ind, ln[1]))
+        elif ln[0] == "block":
+            out.append("%slength 32 bytes" % ind)
+            cy_emit_lines(ln[1], ind + "  ", out, keys, lists)
+            out.append("%send" % ind)
+        elif ln[0] == "group":
+            _, lst, pbits, common, kinds, _t = ln
+            lists[lst] = True
+            out.append("%sgroup  %s  count %d" % (ind, lst, pbits))
+            cy_emit_scope(common, kinds, ind + "  ", out, keys, lists)
+            out.append("%send" % ind)
+
+
+def cy_emit_scope(common, kinds, ind, out, keys, lists):
+    cy_emit_lines(common, ind, out, keys, lists)
+    order = sorted(kinds, key=lambda k: (not cy_req_keys(k[3]), k[2]))
+    for name, tbits, tval, lines in order:
+        out.append("%skind   %s" % (ind, name))
+        out.append("%swhen   %d  %d" % (ind, tbits, tval))
+        rk = cy_req_keys(lines)
+        if rk:
+            out.append("%srequires %s" % (ind, " ".join(rk[:4])))
+        cy_emit_lines(lines, ind, out, keys, lists)
+
+
+def cy_req_keys(lines):
+    out = []
+    for ln in lines:
+        if ln[0] == "field":
+            out.append(ln[1])
+        elif ln[0] == "block":
+            out += cy_req_keys(ln[1])
+    return out
+
+
+def cy_iter(lines):
+    for ln in lines:
+        if ln[0] == "field":
+            yield ln
+        elif ln[0] == "block":
+            yield from cy_iter(ln[1])
+        elif ln[0] == "group":
+            yield from cy_iter(ln[3])
+            for k in ln[4]:
+                yield from cy_iter(k[3])
+
+
+def cy_stops(lines):
+    out = []
+    for ln in lines:
+        if ln[0] == "stop":
+            out.append(ln[1])
+        elif ln[0] == "block":
+            out += cy_stops(ln[1])
+        elif ln[0] == "group":
+            out += cy_stops(ln[3])
+            for k in ln[4]:
+                out += cy_stops(k[3])
+    return out
+
+
+class CyPack:
+    def __init__(self, t, bi, types):
+        self.t, self.bi, self.types = t, bi, types
+        self.body = t.bodies[bi]
+        self.role = None if not t.service else ("request" if bi == 0 else "response")
+        base = ("%s-%d-%d" % (t.name, t.major, t.minor)).lower().replace("_", "-").replace(".", "-")
+        self.format = "cyphal-" + base + ("-" + self.role if self.role else "")
+        self.module = "cy" + re.sub(r"[^a-z0-9]", "", t.ns.lower())
+        self.prefix = ["%s_%d_%d" % (snake(t.short), t.major, t.minor)] + ([self.role] if self.role else [])
+        lay = CyLayout(types, self.module)
+        nodes = lay.body(self.body, self.prefix)
+        self.common, self.kinds = cy_resolve(nodes, "top")
+        self.unmapped = lay.unmapped
+        lines, self.keys, self.lists = [], collections.OrderedDict(), collections.OrderedDict()
+        cy_emit_scope(self.common, self.kinds, "", lines, self.keys, self.lists)
+        self.lines_text = lines
+        self.stops = cy_stops(self.common) + [s for k in self.kinds for s in cy_stops(k[3])]
+        self.nfields = sum(1 for _ in cy_iter(self.common + [l for k in self.kinds for l in k[3]]))
+
+
+def cy_pack_text(ps, sha):
+    t = ps.t
+    port = ("fixed port-ID %d" % t.port) if t.port is not None else "no fixed port-ID"
+    o = ["# Cyphal (UAVCAN v1) data type %s%s, %s." % (t.full, " (%s)" % ps.role if ps.role else "", port),
+         "# Generated by tools/gen/dsdl2pack.py --cyphal; do not edit by hand.",
+         "# The message is the transfer payload. The subject-ID or service-ID travels",
+         "# in the transport frame, so the caller names this format.",
+         "format        %s" % ps.format,
+         "version       %s" % VERSION,
+         "distribution  public",
+         'source        "%s %s at commit %s"' % (CY_REPO, t.path, sha),
+         'source        "Cyphal specification, data structure description language, %s"' % CY_SPEC,
+         "uses          %s" % ps.module,
+         "wire          bits",
+         "layout        sequential",
+         "bit_order     lsb"]
+    return "\n".join(o + ps.lines_text) + "\n"
+
+
+def cy_module_text(ns, packs, sha):
+    mod = packs[0].module
+    o = ["# The %s module: fields of the Cyphal data types in namespace %s." % (mod, ns),
+         "# Generated by tools/gen/dsdl2pack.py --cyphal; do not edit by hand.",
+         "# Raw values in the units the definition states; a key is",
+         "# <type>_<major>_<minor>_<field path>.",
+         "module        %s" % mod,
+         "version       %s" % VERSION,
+         "distribution  public"]
+    for p in sorted({p.t.path for p in packs}):
+        o.append('source        "%s %s at commit %s"' % (CY_REPO, p, sha))
+    seen = set()
+    for p in packs:
+        plen = len("_".join(p.prefix)) + 1
+        for k, typ in p.keys.items():
+            name = k.split(".", 1)[1]
+            if name in seen:
+                raise GenError("key %s twice in module %s" % (name, mod))
+            seen.add(name)
+            o.append('key   %s  %s  -  "field %s%s of %s"' % (
+                name, typ, name[plen:], " (%s)" % p.role if p.role else "", p.t.full))
+        for l in p.lists:
+            name = l.split(".", 1)[1]
+            if name in seen:
+                raise GenError("list %s twice in module %s" % (name, mod))
+            seen.add(name)
+            o.append('list  %s  "the items of variable-length array %s of %s"' % (name, name[plen:], p.t.full))
+    return "\n".join(o) + "\n"
+
+
+# --------------------------------------------- Cyphal reader and engine ---
+
+def cy_read_pack(text):
+    head, uses = {}, []
+    root = {"lines": [], "kinds": []}
+    stack = [("scope", root, root["lines"])]
+
+    def cur():
+        return stack[-1][2]
+
+    for ln, raw in enumerate(text.splitlines(), 1):
+        t = tokens(raw)
+        if not t:
+            continue
+        d, a = t[0], t[1:]
+        if d in ("format", "version", "distribution", "wire", "layout", "bit_order"):
+            head[d] = a[0]
+        elif d == "source":
+            head["sources"] = head.get("sources", 0) + 1
+        elif d == "uses":
+            uses.append(a[0])
+        elif d == "field":
+            cur().append(("field", a[0], int(a[1]), a[2]))
+        elif d == "pad":
+            cur().append(("pad", int(a[0])))
+        elif d == "align":
+            cur().append(("align", int(a[0])))
+        elif d == "length":
+            if a != ["32", "bytes"]:
+                raise GenError("line %d: length form %s" % (ln, a))
+            blk = {"lines": []}
+            cur().append(("block", blk))
+            stack.append(("block", blk, blk["lines"]))
+        elif d == "group":
+            if a[1] != "count":
+                raise GenError("line %d: group form %s" % (ln, a[1]))
+            g = {"list": a[0], "count": int(a[2]), "lines": [], "kinds": []}
+            cur().append(("group", g))
+            stack.append(("scope", g, g["lines"]))
+        elif d == "end":
+            stack.pop()
+        elif d == "kind":
+            scope = next(s[1] for s in reversed(stack) if s[0] == "scope")
+            k = {"name": a[0], "when": [], "requires": [], "lines": []}
+            scope["kinds"].append(k)
+            stack[-1] = (stack[-1][0], stack[-1][1], k["lines"])
+        elif d == "when":
+            scope = next(s[1] for s in reversed(stack) if s[0] == "scope")
+            scope["kinds"][-1]["when"].append((int(a[0]), int(a[1])))
+        elif d == "requires":
+            scope = next(s[1] for s in reversed(stack) if s[0] == "scope")
+            scope["kinds"][-1]["requires"] += a
+        else:
+            raise GenError("line %d: directive %s" % (ln, d))
+    if len(stack) != 1:
+        raise GenError("unbalanced block")
+    for need in ("format", "version", "distribution", "wire", "layout", "bit_order"):
+        if need not in head:
+            raise GenError("pack lacks " + need)
+    if head["bit_order"] != "lsb" or head["layout"] != "sequential":
+        raise GenError("a Cyphal pack is sequential, bit_order lsb")
+    return head, uses, root
+
+
+class CyReader:
+    """Reads bits least significant first, within an extent (engine-spec 0.8,
+    Lengths: a line that starts at or after the end of the extent is absent)."""
+
+    def __init__(self, data):
+        self.data, self.pos, self.end = data, 0, 8 * len(data)
+
+    def read(self, n):
+        if self.pos + n > self.end:
+            raise GenError("malformed-wire")
+        v = 0
+        for i in range(n):
+            p = self.pos + i
+            v |= ((self.data[p // 8] >> (p % 8)) & 1) << i
+        self.pos += n
+        return v
+
+
+def cy_from_raw(tr, n, v):
+    if tr == "uint":
+        return v - (1 << 64) if n == 64 and v >> 63 else v
+    if tr == "twos":
+        return v - (1 << n) if v >> (n - 1) else v
+    if tr == "f32":
+        return struct.unpack("<f", v.to_bytes(4, "little"))[0]
+    if tr == "f64":
+        return struct.unpack("<d", v.to_bytes(8, "little"))[0]
+    raise GenError("transform " + tr)
+
+
+def cy_to_raw(tr, n, x):
+    if tr in ("uint", "twos"):
+        return x & ((1 << n) - 1)
+    if tr == "f32":
+        return int.from_bytes(struct.pack("<f", x), "little")
+    return int.from_bytes(struct.pack("<d", x), "little")
+
+
+def cy_dec_scope(r, scope, ent):
+    cy_dec_lines(r, scope["lines"], ent)
+    if scope["kinds"]:
+        start = r.pos
+        for k in scope["kinds"]:
+            r.pos = start
+            if all(r.pos + n <= r.end and r.read(n) == v for n, v in k["when"]):
+                ent["@kind"] = k["name"]
+                cy_dec_lines(r, k["lines"], ent)
+                return
+        raise GenError("no-kind")
+
+
+def cy_dec_lines(r, lines, ent):
+    for ln in lines:
+        if ln[0] == "field":
+            _, key, n, tr = ln
+            if r.pos >= r.end and r.end < 8 * len(r.data):
+                continue                    # past the extent of a block: absent
+            ent[key] = cy_from_raw(tr, n, r.read(n))
+        elif ln[0] == "pad":
+            if r.pos >= r.end and r.end < 8 * len(r.data):
+                continue
+            r.read(ln[1])
+        elif ln[0] == "align":
+            r.pos = min(r.pos + (-r.pos % ln[1]), max(r.end, r.pos))
+        elif ln[0] == "block":
+            size = r.read(32)
+            outer_end, start = r.end, r.pos
+            if start + 8 * size > outer_end:
+                raise GenError("malformed-wire")
+            r.end = start + 8 * size
+            cy_dec_lines(r, ln[1]["lines"], ent)
+            r.pos, r.end = start + 8 * size, outer_end
+        else:
+            g = ln[1]
+            cnt = r.read(g["count"])
+            items = []
+            for _ in range(cnt):
+                it = {}
+                cy_dec_scope(r, g, it)
+                items.append(it)
+            ent[g["list"]] = items
+
+
+def cy_enc_scope(w, scope, ent):
+    cy_enc_lines(w, scope["lines"], ent)
+    if scope["kinds"]:
+        k = None
+        if "@kind" in ent:
+            k = next(x for x in scope["kinds"] if x["name"] == ent["@kind"])
+        else:
+            k = next((x for x in scope["kinds"] if all(rk in ent for rk in x["requires"])), None)
+        if k is None:
+            raise GenError("no-kind")
+        for n, v in k["when"]:
+            w.write(v, n)
+        cy_enc_lines(w, k["lines"], ent)
+
+
+def cy_enc_lines(w, lines, ent):
+    for ln in lines:
+        if ln[0] == "field":
+            _, key, n, tr = ln
+            w.write(cy_to_raw(tr, n, ent[key]) if key in ent else 0, n)
+        elif ln[0] == "pad":
+            w.write(0, ln[1])
+        elif ln[0] == "align":
+            w.align(ln[1])
+        elif ln[0] == "block":
+            inner = CyWriter()
+            inner.bits = [0] * len(w.bits)        # so `align` counts from the message start
+            cy_enc_lines(inner, ln[1]["lines"], ent)
+            body = inner.bits[len(w.bits):]
+            body += [0] * (-len(body) % 8)
+            w.write(len(body) // 8, 32)
+            w.bits += body
+        else:
+            g = ln[1]
+            items = ent.get(g["list"], [])
+            w.write(len(items), g["count"])
+            for it in items:
+                cy_enc_scope(w, g, it)
+
+
+# ------------------------------------------------- Cyphal sample values ---
+
+def cy_sample(typ, types, salt):
+    if isinstance(typ, Void):
+        return None
+    if isinstance(typ, Prim):
+        if typ.kind == "float":
+            return 0.0 if typ.bits == 16 else ((salt % 41) - 20) * 0.25
+        if typ.kind == "bool":
+            return salt % 2
+        if typ.kind == "uint":
+            v = (salt * 2654435761 + 12345) % (1 << min(typ.bits, 31))
+            if typ.bits == 64 and salt % 2:
+                v |= 1 << 63
+            return v
+        span = 1 << min(typ.bits, 31)
+        return (salt * 40503 + 7) % span - span // 2
+    if isinstance(typ, Ref):
+        return cy_sample_body(types[typ.full].bodies[0], types, salt, None)
+    if typ.mode == "static":
+        if typ.n > MAX_STATIC_UNROLL:
+            return [cy_zero(typ.elem, types) for _ in range(typ.n)]
+        return [cy_sample(typ.elem, types, salt + 3 * i + 1) for i in range(typ.n)]
+    count = min(typ.n, 1 + salt % 3)
+    return [cy_sample(typ.elem, types, salt + 5 * i + 2) for i in range(count)]
+
+
+def cy_zero(typ, types):
+    if isinstance(typ, Void):
+        return None
+    if isinstance(typ, Prim):
+        return 0.0 if typ.kind == "float" else 0
+    if isinstance(typ, Ref):
+        b = types[typ.full].bodies[0]
+        if b.union:
+            return (0, cy_zero(b.fields[0].typ, types))
+        return {f.name: cy_zero(f.typ, types) for f in b.fields if f.name}
+    if typ.mode == "static":
+        return [cy_zero(typ.elem, types) for _ in range(typ.n)]
+    return []
+
+
+def cy_sample_body(body, types, salt, variant):
+    if body.union:
+        v = variant if variant is not None else salt % len(body.fields)
+        return (v, cy_sample(body.fields[v].typ, types, salt + 11))
+    return {f.name: cy_sample(f.typ, types, salt + 7 * i + 1) for i, f in enumerate(body.fields) if f.name}
+
+
+def cy_force_variant(val, body, types, v):
+    """Set the first union of the message scope (fields in order, through sealed
+    composites and static arrays, not into arrays of variable length or
+    delimited composites) to variant v."""
+    done = [False]
+
+    def walk_body(b, x):
+        if b.union:
+            if not done[0]:
+                done[0] = True
+                return (v, cy_sample(b.fields[v].typ, types, 13 + v))
+            return x
+        for f in b.fields:
+            if f.name and not done[0]:
+                x[f.name] = walk_val(f.typ, x[f.name])
+        return x
+
+    def walk_val(typ, x):
+        if isinstance(typ, Ref) and types[typ.full].bodies[0].sealed:
+            return walk_body(types[typ.full].bodies[0], x)
+        if isinstance(typ, Arr) and typ.mode == "static" and typ.n <= MAX_STATIC_UNROLL:
+            return [walk_val(typ.elem, e) for e in x]
+        return x
+    return walk_body(body, val)
+
+
+def cy_values(ps):
+    types = ps.types
+    salt = (ps.t.port or 0) * 31 + ps.t.major * 7 + ps.t.minor + (17 if ps.role == "response" else 3)
+    if ps.kinds and ps.body.union:
+        return [cy_sample_body(ps.body, types, salt + i, i) for i in range(len(ps.body.fields))]
+    if ps.kinds:
+        return [cy_force_variant(cy_sample_body(ps.body, types, salt + i, None), ps.body, types, i)
+                for i in range(len(ps.kinds))]
+    return [cy_sample_body(ps.body, types, salt, None)]
+
+
+# ------------------------------------- Cyphal: what the pack writes back ---
+# The expected output is the serialization of the value with the rules above,
+# where the pack stops: in a message, everything after a point it cannot
+# state; in a delimited composite, the rest of that composite (its length then
+# counts the bytes written). This walk follows the serialization rules and the
+# layout decisions, not the pack text.
+
+class _CyStop(Exception):
+    pass
+
+
+def cy_supported_item(typ, types, module):
+    try:
+        cy_resolve(CyLayout(types, module).value(typ, ["x"]), "item")
+        return True
+    except Unsupported:
+        return False
+
+
+def cy_mapped_bytes(ps, val):
+    types = ps.types
+    w = CyWriter()
+    state = {"unions": 0}
+
+    def body(b, v, scope, w):
+        if b.union:
+            if scope == "block" or (scope == "top" and state["unions"] >= 1):
+                raise _CyStop()
+            if scope == "top":
+                state["unions"] += 1
+            tag, inner = v
+            w.write(tag, cy_tag_bits(b, types))
+            value(b.fields[tag].typ, inner, scope, w)
+        else:
+            for f in b.fields:
+                if f.name is None:
+                    w.write(0, f.typ.bits)
+                else:
+                    value(f.typ, v[f.name], scope, w)
+        w.align(8)
+
+    def value(typ, v, scope, w):
+        if isinstance(typ, Ref):
+            b = types[typ.full].bodies[0]
+            w.align(8)
+            if b.sealed:
+                body(b, v, scope, w)
+                return
+            inner = CyWriter()
+            inner.bits = [0] * len(w.bits)
+            try:
+                body(b, v, "block", inner)
+            except _CyStop:
+                pass
+            content = inner.bits[len(w.bits):]
+            content += [0] * (-len(content) % 8)
+            w.write(len(content) // 8, 32)
+            w.bits += content
+            return
+        if isinstance(typ, Arr):
+            if typ.mode == "static" and typ.n > MAX_STATIC_UNROLL and not cy_fixed(typ, types):
+                raise _CyStop()
+            if typ.mode == "dynamic" and not cy_supported_item(typ.elem, types, ps.module):
+                raise _CyStop()
+            w.align(cy_align(typ.elem, types))
+            if typ.mode == "dynamic":
+                w.write(len(v), cy_prefix_bits(typ, types))
+                for x in v:
+                    cy_ser_value(w, typ.elem, x, types)
+            else:
+                for x in v:
+                    value(typ.elem, x, scope, w)
+            return
+        cy_ser_value(w, typ, v, types)
+
+    try:
+        body(ps.body, val, "top", w)
+    except _CyStop:
+        pass
+    return w.to_bytes()
+
+
+def cy_model_of(ps, val):
+    """The entity the pack decodes from the value, from the DSDL value and the
+    key-naming rule; then cut to the keys and lists the pack maps."""
+    types = ps.types
+    ent = collections.OrderedDict()
+
+    def body(b, v, path, out):
+        if b.union:
+            tag, inner = v
+            if "@kind" not in out:
+                out["@kind"] = b.fields[tag].name
+            value(b.fields[tag].typ, inner, path + [b.fields[tag].name], out)
+            return
+        for f in b.fields:
+            if f.name:
+                value(f.typ, v[f.name], path + [f.name], out)
+
+    def value(typ, v, path, out):
+        key = "%s.%s" % (ps.module, "_".join(path))
+        if isinstance(typ, Prim):
+            if cy_prim_line(typ) is not None:
+                if typ.kind in ("uint", "bool") and typ.bits == 64 and v >> 63:
+                    v -= 1 << 64
+                out[key] = v
+        elif isinstance(typ, Ref):
+            body(types[typ.full].bodies[0], v, path, out)
+        elif typ.mode == "static":
+            if typ.n <= MAX_STATIC_UNROLL:
+                for i, x in enumerate(v):
+                    value(typ.elem, x, path + [str(i)], out)
+        else:
+            items = []
+            for x in v:
+                it = collections.OrderedDict()
+                value(typ.elem, x, path + ["item"], it)
+                items.append(it)
+            out[key] = items
+
+    body(ps.body, val, ps.prefix, ent)
+    return cy_prune(ent, ps)
+
+
+def cy_prune(ent, ps):
+    names = set(ps.keys) | set(ps.lists)
+    out = collections.OrderedDict()
+    for k, v in ent.items():
+        if k == "@kind" or k in names:
+            out[k] = [cy_prune(i, ps) for i in v] if isinstance(v, list) else v
+    return out
+
+
+def cy_vector_files(ps):
+    files = []
+    for i, val in enumerate(cy_values(ps)):
+        w = CyWriter()
+        cy_ser_body(w, ps.body, val, ps.types)
+        ent = cy_model_of(ps, val)
+        kind = ent.get("@kind")
+        vec = collections.OrderedDict([
+            ("name", "%s-roundtrip%s" % (ps.format, "-" + kind if kind else "")),
+            ("from", ps.format), ("to", ps.format),
+            ("input", w.to_bytes().hex()), ("expect", cy_mapped_bytes(ps, val).hex()),
+            ("model", model_strings(ent))])
+        files.append(("rt-%02d%s.json" % (i, "-" + kind if kind else ""), vector_text(vec)))
+    return files
+
+
+# ------------------------------------------------ Cyphal documents, run ---
+
+def cy_pack_md(ps, sha, nvec):
+    t = ps.t
+    o = []
+    a = o.append
+    a("# Pack: %s" % ps.format)
+    a("")
+    a("Cyphal (UAVCAN v1) data type `%s`%s, as the payload of a transfer. Public." % (
+        t.full, " (the %s of the service)" % ps.role if ps.role else ""))
+    a("Generated by `tools/gen/dsdl2pack.py --cyphal` from `%s` (`%s`) at commit" % (CY_REPO, t.path))
+    a("`%s`; do not edit `pack.def`, this file, `PROVENANCE.md` or the vectors by" % sha)
+    a("hand. Module: `model/%s.def`." % ps.module)
+    if t.deprecated:
+        a("")
+        a("The definition marks the type deprecated.")
+    a("")
+    a("Status: Built. Generated and checked by the generator's own codec and reader.")
+    a("")
+    a("## The message")
+    a("")
+    a("`wire bits`, `layout sequential`, `bit_order lsb`. The input is the transfer")
+    a("payload: the bytes the transport delivers for one transfer, without transport")
+    a("headers, tail bytes or transfer CRC. Hex text.")
+    a("")
+    if t.port is not None:
+        a("**Port-ID.** The type has the fixed %s-ID %d. The port-ID travels in the" % (
+            "service" if t.service else "subject", t.port))
+    else:
+        a("**Port-ID.** The type has no fixed port-ID; the subject-ID or service-ID is")
+        a("configured on each node. The port-ID travels in the")
+    a("transport frame (the CAN identifier, the UDP header), not in the payload, and the")
+    a("payload has no field that tells types apart. So each data type is its own")
+    a("format, and the caller names the format.")
+    a("")
+    a("**Extensibility.** The type is %s." % (
+        "sealed: its layout never grows" if ps.body.sealed else
+        "delimited (`@extent %s` bits): a later minor version may append fields" % (
+            getattr(ps.body, "extent_bits", "?"))))
+    a("")
+    a("## What is mapped")
+    a("")
+    a("| DSDL | Pack line | Model type |")
+    a("|---|---|---|")
+    a("| `uintN`, `bool` | `field … N uint` | int |")
+    a("| `intN` | `field … N twos` | int |")
+    a("| `float32`, `float64` | `f32` / `f64` | float |")
+    a("| `voidN` | `pad N` | - |")
+    a("| a composite field | `align 8`, its fields, `align 8` | - |")
+    a("| a composite field of a type that is not `@sealed` | `align 8`, then `length 32 bytes` … `end` | - |")
+    a("| `T[N]`, N up to %d | one line per element | as the element |" % MAX_STATIC_UNROLL)
+    a("| `T[<=N]`, `T[<N]` | `group … count <8, 16, 32 or 64>` | list |")
+    a("| `@union` at the top of the type, or one union in it | one `kind` per variant, `when <tag bits> <variant>` | - |")
+    a("")
+    a("Bits are filled least significant first, so a value of any width at any bit")
+    a("position is one `field` line. The keys are `%s.%s_<field path>`, the" % (ps.module, "_".join(ps.prefix)))
+    a("path joined by `_`, an element of a static array numbered from 0.")
+    a("")
+    a("| | Count |")
+    a("|---|---|")
+    a("| `field` lines | %d |" % ps.nfields)
+    a("| model keys | %d |" % len(ps.keys))
+    a("| lists (variable-length arrays) | %d |" % len(ps.lists))
+    a("| kinds | %d |" % len(ps.kinds))
+    a("| fields not mapped | %d |" % len(ps.unmapped))
+    a("| vectors | %d |" % nvec)
+    if ps.kinds:
+        a("")
+        a("Kinds: %s. The union's tag is the `when` of each kind; the lines after the" % ", ".join(
+            "`%s` (tag %d)" % (k[0], k[2]) for k in ps.kinds))
+        a("union are repeated in every kind. Encode chooses a kind by its `requires`;")
+        a("a variant with no key is tried last.")
+    a("")
+    a("No key of this pack is bound to a `core` or `track` key. The Cyphal positions")
+    a("(`reg.udral.physics.kinematics.geodetic`) are in radians as float64, and the")
+    a("pack language has no scaling transform for a float.")
+    a("")
+    a("## What is not mapped")
+    a("")
+    if ps.unmapped:
+        a("| Field | Type | Reason |")
+        a("|---|---|---|")
+        for p, ty, why in ps.unmapped:
+            a("| `%s` | `%s` | %s |" % (p, ty, why))
+        a("")
+        a("A field of fixed length that is not mapped is a `pad` line: decode skips it,")
+        a("encode writes zero bits.")
+    else:
+        a("Every field is mapped.")
+    if ps.stops:
+        a("")
+        a("Mapping ends early: %s. In a delimited composite the rest of that composite" % "; ".join(
+            sorted(set(ps.stops))))
+        a("is skipped by its length; anywhere else decode ignores the rest of the payload.")
+    a("")
+    a("- Implicit zero extension: Cyphal reads a field beyond the end of a short")
+    a("  payload, or of a delimited composite, as zero. The pack reads the first as")
+    a("  `malformed-wire` and the second as absent.")
+    a("- Constants and `@assert` lines (not on the wire). Cast modes: encode writes")
+    a("  the low bits of a value.")
+    a("")
+    a("## Vectors")
+    a("")
+    a("`vectors/rt-NN*.json`: a same-format round trip%s. The input is the payload a" % (
+        " per kind" if ps.kinds else ""))
+    a("Cyphal serializer written in the generator produces from sample values; fields")
+    a("the pack does not map are zero. The expected output is what the pack writes")
+    a("back: the same bytes, cut where the mapping ends. The generator decodes and")
+    a("re-encodes every vector with its own reader of the pack.")
+    return "\n".join(o) + "\n"
+
+
+def cy_provenance_md(ps, sha, file_sha, license_sha):
+    t = ps.t
+    return "\n".join([
+        "# Provenance: %s" % ps.format,
+        "",
+        "| Fact | Value |",
+        "|---|---|",
+        "| data type | `%s`%s, %s |" % (t.full, " (%s)" % ps.role if ps.role else "",
+                                       "fixed port-ID %d" % t.port if t.port is not None else "no fixed port-ID"),
+        "| definition read | `%s` of %s |" % (t.path, CY_REPO),
+        "| commit | `%s` |" % sha,
+        "| SHA-256 of the definition | `%s` |" % file_sha,
+        "| license of the repository | MIT, copyright (c) 2014-2019 UAVCAN Development Team: `LICENSE` at the root of the commit (SHA-256 `%s`), verbatim in `tools/gen/sources/%s`; the definition file carries no license or copyright header of its own |" % (license_sha, CY_PROV_NAME),
+        "| date read | 2026-11-19 |",
+        "| what the pack takes | type and field names, field types, array bounds, constants that bound arrays, the `@union`, `@sealed` and `@extent` directives and the fixed port-ID; no comment text |",
+        "| generator | `tools/gen/dsdl2pack.py --cyphal` |",
+        ""])
+
+
+def cy_write_sources_provenance(out, rel, root, sha, files):
+    lic = read_text(os.path.join(root, "LICENSE"))
+    o = ["# Provenance of the Cyphal DSDL inputs",
+         "",
+         "| Fact | Value |",
+         "|---|---|",
+         "| repository | %s |" % CY_REPO,
+         "| commit | `%s` (head of `master`, read 2026-11-19) |" % sha,
+         "| archive | `https://codeload.github.com/OpenCyphal/public_regulated_data_types/tar.gz/%s` |" % sha,
+         "| license | MIT, the file `LICENSE` at the root of the commit, verbatim below |",
+         "",
+         "## Files",
+         "",
+         "| Path | SHA-256 |",
+         "|---|---|",
+         "| `LICENSE` | `%s` |" % sha256(os.path.join(root, "LICENSE"))]
+    for f in files:
+        o.append("| `%s` | `%s` |" % (f, sha256(os.path.join(root, f))))
+    o += ["", "## LICENSE", "", "```"] + lic.rstrip("\n").splitlines() + ["```", ""]
+    out.write(rel, "\n".join(o))
+
+
+def cy_check_keys(scope, module, mods):
+    def walk(lines):
+        for ln in lines:
+            if ln[0] == "field":
+                m, k = ln[1].split(".", 1) if "." in ln[1] else ("core", ln[1])
+                if m not in (module, "core") or k not in mods[m]["keys"]:
+                    raise GenError("undeclared-key " + ln[1])
+                if mods[m]["keys"][k] != ("float" if ln[3].startswith("f") else "int"):
+                    raise GenError("key-type-mismatch " + ln[1])
+            elif ln[0] == "block":
+                walk(ln[1]["lines"])
+            elif ln[0] == "group":
+                if ln[1]["list"].split(".", 1)[1] not in mods[module]["lists"]:
+                    raise GenError("undeclared list " + ln[1]["list"])
+                scope_walk(ln[1])
+
+    def scope_walk(sc):
+        walk(sc["lines"])
+        names = [k["name"] for k in sc["kinds"]]
+        if len(set(names)) != len(names):
+            raise GenError("duplicate-kind")
+        for k in sc["kinds"]:
+            walk(k["lines"])
+            for rk in k["requires"]:
+                if rk.split(".", 1)[1] not in mods[module]["keys"]:
+                    raise GenError("requires undeclared " + rk)
+    scope_walk(scope)
+
+
+def run_cyphal(args, out):
+    root = args.dsdl
+    namespaces = args.namespaces.split(",") if args.namespaces else CY_NAMESPACES
+    types = cy_load(root, namespaces)
+    files = sorted(t.path for t in types.values())
+    prov = "tools/gen/sources/" + CY_PROV_NAME
+    if args.commit:
+        cy_write_sources_provenance(out, prov, root, args.commit, files)
+    sha, table = read_sources_provenance(prov, root, files, out.read(prov))
+
+    seen = {}
+    for t in types.values():
+        if t.port is not None:
+            # the versions of one type share its port-ID; two types may not
+            k = ("service" if t.service else "subject", t.port)
+            if k in seen and seen[k].name != t.name:
+                raise GenError("fixed port-ID %s used by %s and %s" % (k, seen[k].full, t.full))
+            seen[k] = t
+
+    packs, skipped = [], []
+    for t in sorted(types.values(), key=lambda x: x.full):
+        for bi in range(len(t.bodies)):
+            ps = CyPack(t, bi, types)
+            if not ps.body.fields:
+                skipped.append((ps.format, "the %s has no field" % (ps.role or "type")))
+                continue
+            if not ps.keys and not ps.lists:
+                skipped.append((ps.format, "no field the pack can state: %s" % "; ".join(
+                    sorted({w for _, _, w in ps.unmapped} | set(ps.stops)))))
+                continue
+            packs.append(ps)
+
+    by_ns = collections.OrderedDict()
+    for ps in packs:
+        by_ns.setdefault(ps.t.ns, []).append(ps)
+    for ns, lst in by_ns.items():
+        out.write("model/%s.def" % lst[0].module, cy_module_text(ns, lst, sha))
+    for ps in packs:
+        pdir = "packs/" + ps.format
+        out.write(pdir + "/pack.def", cy_pack_text(ps, sha))
+        vecs = cy_vector_files(ps)
+        write_vectors(out, pdir + "/vectors", vecs)
+        out.write(pdir + "/pack.md", cy_pack_md(ps, sha, len(vecs)))
+        out.write(pdir + "/PROVENANCE.md", cy_provenance_md(ps, sha, table[ps.t.path], table["LICENSE"]))
+
+    mods = {"core": check_model(core_text(args, out), None)}
+    for lst in by_ns.values():
+        mods[lst[0].module] = check_model(out.read("model/%s.def" % lst[0].module), None)
+    total = 0
+    for ps in packs:
+        pdir = "packs/" + ps.format
+        head, uses, scope = cy_read_pack(out.read(pdir + "/pack.def"))
+        if head["format"] != ps.format or uses != [ps.module]:
+            raise GenError("%s: header" % ps.format)
+        cy_check_keys(scope, ps.module, mods)
+        total += check_vectors(scope, read_vectors(out, pdir + "/vectors"), ps.format,
+                               CyReader, cy_dec_scope, (CyWriter, cy_enc_scope))
+
+    reasons = collections.Counter(w for p in packs for _, _, w in p.unmapped)
+    lines = ["commit          %s" % sha,
+             "types           %d (%d with a fixed port-ID)" % (
+                 len(types), sum(t.port is not None for t in types.values())),
+             "packs           %d in %d modules" % (len(packs), len(by_ns))]
+    lines += ["no pack         %s: %s" % (f, why) for f, why in skipped]
+    lines += ["field lines     %d" % sum(p.nfields for p in packs),
+              "lists           %d" % sum(len(p.lists) for p in packs),
+              "kinds           %d" % sum(len(p.kinds) for p in packs),
+              "not mapped      %d fields %s" % (sum(reasons.values()), dict(reasons)),
+              "ends early      %d packs %s" % (sum(bool(p.stops) for p in packs),
+                                               dict(collections.Counter(s for p in packs for s in set(p.stops)))),
+              "vectors         %d checked" % total,
+              "self-check      ok"]
+    return lines
+
+
 # ------------------------------------------------------------------ main ---
 
-def main():
-    here = os.path.dirname(os.path.abspath(__file__))
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--dsdl", required=True, help="checkout of github.com/dronecan/DSDL")
-    ap.add_argument("--root", default=os.path.normpath(os.path.join(here, "..", "..")))
-    ap.add_argument("--namespaces", default=",".join(NAMESPACES))
-    ap.add_argument("--commit", help="write tools/gen/sources/%s for this commit" % PROV_NAME)
-    ap.add_argument("--core-def", help="model/core.def (default <root>/model/core.def)")
-    args = ap.parse_args()
-    root, dsdl = args.root, args.dsdl
-    namespaces = args.namespaces.split(",")
-
+def run_dronecan(args, out):
+    """The DroneCAN run; the summary lines."""
+    dsdl = args.dsdl
+    namespaces = args.namespaces.split(",") if args.namespaces else NAMESPACES
     types = load_dsdl(dsdl, namespaces)
     files = sorted(t.path for t in types.values())
-    prov = os.path.join(root, "tools", "gen", "sources", PROV_NAME)
+    prov = "tools/gen/sources/" + PROV_NAME
     if args.commit:
-        write_sources_provenance(prov, dsdl, args.commit, files)
-    sha, table = read_sources_provenance(prov, dsdl, files)
+        write_sources_provenance(out, prov, dsdl, args.commit, files)
+    sha, table = read_sources_provenance(prov, dsdl, files, out.read(prov))
 
     # data type IDs are unique among messages and among services
     seen = {}
@@ -1530,53 +2815,93 @@ def main():
     for ps in packs:
         by_ns.setdefault(ps.t.ns, []).append(ps)
     for ns, lst in by_ns.items():
-        with open(os.path.join(root, "model", module_name(ns) + ".def"), "w", encoding="utf-8") as fh:
-            fh.write(module_text(ns, lst, sha))
+        out.write("model/%s.def" % module_name(ns), module_text(ns, lst, sha))
 
     total_vec = 0
     for ps in packs:
-        pdir = os.path.join(root, "packs", ps.format)
-        os.makedirs(pdir, exist_ok=True)
-        with open(os.path.join(pdir, "pack.def"), "w", encoding="utf-8") as fh:
-            fh.write(pack_text(ps, sha))
-        vecs = write_vectors(ps, types, os.path.join(pdir, "vectors"))
-        with open(os.path.join(pdir, "pack.md"), "w", encoding="utf-8") as fh:
-            fh.write(pack_md(ps, sha, len(vecs)))
-        with open(os.path.join(pdir, "PROVENANCE.md"), "w", encoding="utf-8") as fh:
-            fh.write(provenance_md(ps, sha, table[ps.t.path], table["LICENSE"]))
+        pdir = "packs/" + ps.format
+        out.write(pdir + "/pack.def", pack_text(ps, sha))
+        vecs = vector_files(ps, types)
+        write_vectors(out, pdir + "/vectors", vecs)
+        out.write(pdir + "/pack.md", pack_md(ps, sha, len(vecs)))
+        out.write(pdir + "/PROVENANCE.md", provenance_md(ps, sha, table[ps.t.path], table["LICENSE"]))
 
-    # ---- self-check from the files on disk
-    mods = {"core": check_model(open(args.core_def or os.path.join(root, "model", "core.def"),
-                                     encoding="utf-8").read(), None)}
+    # ---- self-check from the files as written
+    mods = {"core": check_model(core_text(args, out), None)}
     for ns in by_ns:
         mn = module_name(ns)
-        mods[mn] = check_model(open(os.path.join(root, "model", mn + ".def"), encoding="utf-8").read(), None)
+        mods[mn] = check_model(out.read("model/%s.def" % mn), None)
     for ps in packs:
-        pdir = os.path.join(root, "packs", ps.format)
-        head, uses, scope = read_pack(open(os.path.join(pdir, "pack.def"), encoding="utf-8").read())
+        pdir = "packs/" + ps.format
+        head, uses, scope = read_pack(out.read(pdir + "/pack.def"))
         if head["format"] != ps.format or uses != [ps.module]:
             raise GenError("%s: header" % ps.format)
         check_pack_keys(scope, ps.module, mods)
-        total_vec += check_vectors(scope, os.path.join(pdir, "vectors"), ps.format)
+        total_vec += check_vectors(scope, read_vectors(out, pdir + "/vectors"), ps.format)
 
-    print("commit          %s" % sha)
-    print("types           %d (%d with a data type ID)" % (len(types), sum(t.dtid is not None for t in types.values())))
-    print("packs           %d in %d modules" % (len(packs), len(by_ns)))
-    for f, why in skipped:
-        print("no pack         %s: %s" % (f, why))
-    print("field lines     %d" % sum(count_lines(p.common, p.kinds) for p in packs))
-    print("lists           %d" % sum(len(p.lists) for p in packs))
-    print("kinds           %d" % sum(len(p.kinds) for p in packs))
+    lines = ["commit          %s" % sha,
+             "types           %d (%d with a data type ID)" % (
+                 len(types), sum(t.dtid is not None for t in types.values())),
+             "packs           %d in %d modules" % (len(packs), len(by_ns))]
+    lines += ["no pack         %s: %s" % (f, why) for f, why in skipped]
     reasons = collections.Counter(w for p in packs for _, _, w in p.unmapped)
-    print("not mapped      %d fields %s" % (sum(reasons.values()), dict(reasons)))
-    print("ends early      %d packs" % sum(bool(p.stops) for p in packs))
-    print("vectors         %d checked" % total_vec)
-    print("self-check      ok")
+    lines += ["field lines     %d" % sum(count_lines(p.common, p.kinds) for p in packs),
+              "lists           %d" % sum(len(p.lists) for p in packs),
+              "kinds           %d" % sum(len(p.kinds) for p in packs),
+              "not mapped      %d fields %s" % (sum(reasons.values()), dict(reasons)),
+              "ends early      %d packs" % sum(bool(p.stops) for p in packs),
+              "vectors         %d checked" % total_vec,
+              "self-check      ok"]
+    return lines
+
+
+def core_text(args, out):
+    if args.core_def:
+        return read_text(args.core_def)
+    return out.read("model/core.def")
+
+
+def read_vectors(out, vdir):
+    return [(name, out.read("%s/%s" % (vdir, name))) for name in out.listdir(vdir) if name.endswith(".json")]
+
+
+def build_parser():
+    here = os.path.dirname(os.path.abspath(__file__))
+    ap = argparse.ArgumentParser(
+        prog="dsdl2pack",
+        description="Generate one pack per data type from DSDL definitions: DroneCAN (UAVCAN v0, "
+                    "github.com/dronecan/DSDL) by default, Cyphal (UAVCAN v1, "
+                    "github.com/OpenCyphal/public_regulated_data_types) with --cyphal. Reads the DSDL tree "
+                    "given by --dsdl and tools/gen/sources/<family>-PROVENANCE.md (the SHA-256 of every file; "
+                    "a file that differs is refused). Writes model/<module>.def per namespace and "
+                    "packs/<family>-<type>/ (pack.def, pack.md, PROVENANCE.md, vectors/). Every vector is "
+                    "decoded and encoded by the generator's own reader of the pack. Exit status: 0 when every "
+                    "check passed, 1 for a refused input or a failed check, 2 for a usage error.")
+    genio.add_arguments(ap, default_out=os.path.normpath(os.path.join(here, "..", "..")),
+                        what="the checkout to write into")
+    ap.add_argument("--root", dest="out", metavar="DIR", default=argparse.SUPPRESS, help="the same as --out")
+    ap.add_argument("--dsdl", required=True, metavar="DIR", help="the root of the DSDL tree")
+    ap.add_argument("--cyphal", action="store_true", help="read Cyphal (UAVCAN v1) DSDL")
+    ap.add_argument("--namespaces", help="root namespaces to read (default: all the family has)")
+    ap.add_argument("--commit", help="write tools/gen/sources/<family>-PROVENANCE.md for this commit")
+    ap.add_argument("--core-def", help="model/core.def (default <out>/model/core.def)")
+    return ap
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    out = genio.Output(args.out, check=args.check)
+    try:
+        lines = run_cyphal(args, out) if args.cyphal else run_dronecan(args, out)
+    except GenError as e:
+        print("dsdl2pack: %s" % e, file=sys.stderr)
+        return 1
+    except OSError as e:
+        print("dsdl2pack: %s: %s" % (e.filename, e.strerror), file=sys.stderr)
+        return 1
+    print("\n".join(lines))
+    return out.report("dsdl2pack")
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except GenError as e:
-        sys.stderr.write("dsdl2pack: FAILED: %s\n" % e)
-        sys.exit(1)
+    sys.exit(main())

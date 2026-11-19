@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-register-access-1-0-request-roundtrip-empty",
+  "from": "cyphal-uavcan-register-access-1-0-request",
+  "to": "cyphal-uavcan-register-access-1-0-request",
+  "input": "016700",
+  "expect": "016700",
+  "model": {
+    "cyuavcanregister.access_1_0_request_name_name.#": "1",
+    "cyuavcanregister.access_1_0_request_name_name[0].cyuavcanregister.access_1_0_request_name_name_item": "103",
+    "@kind": "empty"
+  }
+}

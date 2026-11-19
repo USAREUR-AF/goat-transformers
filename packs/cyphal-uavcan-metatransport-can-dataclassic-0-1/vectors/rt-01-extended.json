@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-metatransport-can-dataclassic-0-1-roundtrip-extended",
+  "from": "cyphal-uavcan-metatransport-can-dataclassic-0-1",
+  "to": "cyphal-uavcan-metatransport-can-dataclassic-0-1",
+  "input": "019851400502980d",
+  "expect": "019851400502980d",
+  "model": {
+    "@kind": "extended",
+    "cyuavcanmetatransportcan.data_classic_0_1_arbitration_id_extended_value": "88101272",
+    "cyuavcanmetatransportcan.data_classic_0_1_data.#": "2",
+    "cyuavcanmetatransportcan.data_classic_0_1_data[0].cyuavcanmetatransportcan.data_classic_0_1_data_item": "152",
+    "cyuavcanmetatransportcan.data_classic_0_1_data[1].cyuavcanmetatransportcan.data_classic_0_1_data_item": "13"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "cyphal-reg-udral-physics-time-tai64var-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-time-tai64var-0-1",
+  "to": "cyphal-reg-udral-physics-time-tai64var-0-1",
+  "input": "51b503c0ffffffff000000c0",
+  "expect": "51b503c0ffffffff000000c0",
+  "model": {
+    "cyregudralphysicstime.tai64_var_0_1_value_tai64n": "-1073498799",
+    "cyregudralphysicstime.tai64_var_0_1_error_variance": "-2"
+  }
+}

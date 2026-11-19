@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-translation-linearvarts-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-translation-linearvarts-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-translation-linearvarts-0-1",
+  "input": "108484530000000000a0bf0000003f00001040000000000000",
+  "expect": "108484530000000000a0bf0000003f00001040000000000000",
+  "model": {
+    "cyregudralphysicskinematicstranslation.linear_var_ts_0_1_value_timestamp_microsecond": "1401193488",
+    "cyregudralphysicskinematicstranslation.linear_var_ts_0_1_value_value_position_meter": "-1.25",
+    "cyregudralphysicskinematicstranslation.linear_var_ts_0_1_value_value_velocity_meter_per_second": "0.5",
+    "cyregudralphysicskinematicstranslation.linear_var_ts_0_1_value_value_acceleration_meter_per_second_per_second": "2.25"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-node-executecommand-1-2-request-roundtrip",
+  "from": "cyphal-uavcan-node-executecommand-1-2-request",
+  "to": "cyphal-uavcan-node-executecommand-1-2-request",
+  "input": "d38e030c81f6",
+  "expect": "d38e030c81f6",
+  "model": {
+    "cyuavcannode.execute_command_1_2_request_command": "36563",
+    "cyuavcannode.execute_command_1_2_request_parameter.#": "3",
+    "cyuavcannode.execute_command_1_2_request_parameter[0].cyuavcannode.execute_command_1_2_request_parameter_item": "12",
+    "cyuavcannode.execute_command_1_2_request_parameter[1].cyuavcannode.execute_command_1_2_request_parameter_item": "129",
+    "cyuavcannode.execute_command_1_2_request_parameter[2].cyuavcannode.execute_command_1_2_request_parameter_item": "246"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "dronecan-testns-sample-roundtrip",
+  "from": "dronecan-testns-sample",
+  "to": "dronecan-testns-sample",
+  "input": "3912057300000000a0c0c1060000ec25800030eb400035b100003380",
+  "expect": "3912057300000000a0c0c1060000ec25800030eb400035b1000000",
+  "model": {
+    "dctestns.sample_count": "1929712185",
+    "dctestns.sample_gain": "-5",
+    "dctestns.sample_origin_x": "1729",
+    "dctestns.sample_path.#": "3",
+    "dctestns.sample_path[0].dctestns.sample_path_item_x": "-26960",
+    "dctestns.sample_path[1].dctestns.sample_path_item_x": "-21053",
+    "dctestns.sample_path[2].dctestns.sample_path_item_x": "-15146"
+  }
+}

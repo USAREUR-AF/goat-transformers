@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-unstructured",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "02010033",
+  "expect": "02010033",
+  "model": {
+    "@kind": "unstructured",
+    "cyuavcanregister.value_1_0_unstructured_value.#": "1",
+    "cyuavcanregister.value_1_0_unstructured_value[0].cyuavcanregister.value_1_0_unstructured_value_item": "51"
+  }
+}

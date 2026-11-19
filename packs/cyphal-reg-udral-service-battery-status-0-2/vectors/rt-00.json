@@ -1,0 +1,16 @@
+{
+  "name": "cyphal-reg-udral-service-battery-status-0-2-roundtrip",
+  "from": "cyphal-reg-udral-service-battery-status-0-2",
+  "to": "cyphal-reg-udral-service-battery-status-0-2",
+  "input": "01000000a0bf000000bf0000803e950200000000",
+  "expect": "01000000a0bf000000bf0000803e950200000000",
+  "model": {
+    "cyregudralservicebattery.status_0_2_heartbeat_readiness_value": "1",
+    "cyregudralservicebattery.status_0_2_heartbeat_health_value": "0",
+    "cyregudralservicebattery.status_0_2_temperature_min_max_0_kelvin": "-1.25",
+    "cyregudralservicebattery.status_0_2_temperature_min_max_1_kelvin": "-0.5",
+    "cyregudralservicebattery.status_0_2_available_charge_coulomb": "0.25",
+    "cyregudralservicebattery.status_0_2_error_value": "149",
+    "cyregudralservicebattery.status_0_2_cell_voltages.#": "2"
+  }
+}

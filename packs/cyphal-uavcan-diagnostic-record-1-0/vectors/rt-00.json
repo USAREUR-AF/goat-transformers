@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-diagnostic-record-1-0-roundtrip",
+  "from": "cyphal-uavcan-diagnostic-record-1-0",
+  "to": "cyphal-uavcan-diagnostic-record-1-0",
+  "input": "0de1691c00000004026ce1",
+  "expect": "0de1691c00000004026ce1",
+  "model": {
+    "cyuavcandiagnostic.record_1_0_timestamp_microsecond": "476700941",
+    "cyuavcandiagnostic.record_1_0_severity_value": "4",
+    "cyuavcandiagnostic.record_1_0_text.#": "2",
+    "cyuavcandiagnostic.record_1_0_text[0].cyuavcandiagnostic.record_1_0_text_item": "108",
+    "cyuavcandiagnostic.record_1_0_text[1].cyuavcandiagnostic.record_1_0_text_item": "225"
+  }
+}

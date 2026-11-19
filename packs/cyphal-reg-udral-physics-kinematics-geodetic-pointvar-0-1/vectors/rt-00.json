@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-physics-kinematics-geodetic-pointvar-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-kinematics-geodetic-pointvar-0-1",
+  "to": "cyphal-reg-udral-physics-kinematics-geodetic-pointvar-0-1",
+  "input": "0000000000000cc0000000000000fcbf000000000000d03f000000000000000000000000",
+  "expect": "0000000000000cc0000000000000fcbf000000000000d03f000000000000000000000000",
+  "model": {
+    "cyregudralphysicskinematicsgeodetic.point_var_0_1_value_latitude": "-3.5",
+    "cyregudralphysicskinematicsgeodetic.point_var_0_1_value_longitude": "-1.75",
+    "cyregudralphysicskinematicsgeodetic.point_var_0_1_value_altitude_meter": "0.25"
+  }
+}

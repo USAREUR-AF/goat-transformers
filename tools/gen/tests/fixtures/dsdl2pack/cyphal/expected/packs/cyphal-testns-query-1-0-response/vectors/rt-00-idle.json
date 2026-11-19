@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-testns-query-1-0-response-roundtrip-idle",
+  "from": "cyphal-testns-query-1-0-response",
+  "to": "cyphal-testns-query-1-0-response",
+  "input": "00366d",
+  "expect": "00366d",
+  "model": {
+    "@kind": "idle",
+    "cytestns.query_1_0_response_mode_idle": "54",
+    "cytestns.query_1_0_response_status": "109"
+  }
+}

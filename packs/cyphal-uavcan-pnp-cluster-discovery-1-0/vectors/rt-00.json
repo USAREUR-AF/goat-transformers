@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-pnp-cluster-discovery-1-0-roundtrip",
+  "from": "cyphal-uavcan-pnp-cluster-discovery-1-0",
+  "to": "cyphal-uavcan-pnp-cluster-discovery-1-0",
+  "input": "000371c3e6235b84",
+  "expect": "000371c3e6235b84",
+  "model": {
+    "cyuavcanpnpcluster.discovery_1_0_configured_cluster_size": "0",
+    "cyuavcanpnpcluster.discovery_1_0_known_nodes.#": "3",
+    "cyuavcanpnpcluster.discovery_1_0_known_nodes[0].cyuavcanpnpcluster.discovery_1_0_known_nodes_item_value": "50033",
+    "cyuavcanpnpcluster.discovery_1_0_known_nodes[1].cyuavcanpnpcluster.discovery_1_0_known_nodes_item_value": "9190",
+    "cyuavcanpnpcluster.discovery_1_0_known_nodes[2].cyuavcanpnpcluster.discovery_1_0_known_nodes_item_value": "33883"
+  }
+}

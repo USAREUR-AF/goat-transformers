@@ -1,0 +1,7 @@
+# A service with a union in its response.
+uint16 key
+@sealed
+---
+Mode.1.0 mode
+uint8 status
+@extent 16 * 8

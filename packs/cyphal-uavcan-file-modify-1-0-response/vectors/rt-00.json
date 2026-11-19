@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-file-modify-1-0-response-roundtrip",
+  "from": "cyphal-uavcan-file-modify-1-0-response",
+  "to": "cyphal-uavcan-file-modify-1-0-response",
+  "input": "ac20",
+  "expect": "ac20",
+  "model": {
+    "cyuavcanfile.modify_1_0_response_error_value": "8364"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-reg-udral-physics-thermodynamics-pressuretempvarts-0-1-roundtrip",
+  "from": "cyphal-reg-udral-physics-thermodynamics-pressuretempvarts-0-1",
+  "to": "cyphal-reg-udral-physics-thermodynamics-pressuretempvarts-0-1",
+  "input": "5f0a4d350000000000e0bf00000000000000000000",
+  "expect": "5f0a4d350000000000e0bf00000000000000000000",
+  "model": {
+    "cyregudralphysicsthermodynamics.pressure_temp_var_ts_0_1_timestamp_microsecond": "894241375",
+    "cyregudralphysicsthermodynamics.pressure_temp_var_ts_0_1_pressure_pascal": "-1.75",
+    "cyregudralphysicsthermodynamics.pressure_temp_var_ts_0_1_temperature_kelvin": "0"
+  }
+}

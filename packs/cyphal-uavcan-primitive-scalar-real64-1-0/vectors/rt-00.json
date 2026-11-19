@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-primitive-scalar-real64-1-0-roundtrip",
+  "from": "cyphal-uavcan-primitive-scalar-real64-1-0",
+  "to": "cyphal-uavcan-primitive-scalar-real64-1-0",
+  "input": "00000000000002c0",
+  "expect": "00000000000002c0",
+  "model": {
+    "cyuavcanprimitivescalar.real64_1_0_value": "-2.25"
+  }
+}

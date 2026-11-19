@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-register-value-1-0-roundtrip-natural64",
+  "from": "cyphal-uavcan-register-value-1-0",
+  "to": "cyphal-uavcan-register-value-1-0",
+  "input": "08015966ef4600000000",
+  "expect": "08015966ef4600000000",
+  "model": {
+    "@kind": "natural64",
+    "cyuavcanregister.value_1_0_natural64_value.#": "1",
+    "cyuavcanregister.value_1_0_natural64_value[0].cyuavcanregister.value_1_0_natural64_value_item": "1190094425"
+  }
+}

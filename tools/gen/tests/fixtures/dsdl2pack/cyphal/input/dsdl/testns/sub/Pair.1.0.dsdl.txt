@@ -1,0 +1,4 @@
+# A sealed nested type.
+uint3 a
+int13 b
+@sealed

@@ -1,0 +1,10 @@
+{
+  "name": "cyphal-uavcan-node-port-serviceid-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-port-serviceid-1-0",
+  "to": "cyphal-uavcan-node-port-serviceid-1-0",
+  "input": "d400",
+  "expect": "d400",
+  "model": {
+    "cyuavcannodeport.service_id_1_0_value": "212"
+  }
+}

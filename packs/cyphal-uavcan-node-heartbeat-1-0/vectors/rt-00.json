@@ -1,0 +1,13 @@
+{
+  "name": "cyphal-uavcan-node-heartbeat-1-0-roundtrip",
+  "from": "cyphal-uavcan-node-heartbeat-1-0",
+  "to": "cyphal-uavcan-node-heartbeat-1-0",
+  "input": "af8ebc21030634",
+  "expect": "af8ebc21030634",
+  "model": {
+    "cyuavcannode.heartbeat_1_0_uptime": "566005423",
+    "cyuavcannode.heartbeat_1_0_health_value": "3",
+    "cyuavcannode.heartbeat_1_0_mode_value": "6",
+    "cyuavcannode.heartbeat_1_0_vendor_specific_status_code": "52"
+  }
+}

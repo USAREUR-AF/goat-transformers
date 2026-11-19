@@ -1,0 +1,17 @@
+{
+  "name": "cyphal-uavcan-register-access-1-0-response-roundtrip-natural32",
+  "from": "cyphal-uavcan-register-access-1-0-response",
+  "to": "cyphal-uavcan-register-access-1-0-response",
+  "input": "ec79303500000001090382126b73f772800a6cd39521",
+  "expect": "ec79303500000001090382126b73f772800a6cd39521",
+  "model": {
+    "cyuavcanregister.access_1_0_response_timestamp_microsecond": "892369388",
+    "cyuavcanregister.access_1_0_response_mutable": "1",
+    "cyuavcanregister.access_1_0_response_persistent": "0",
+    "@kind": "natural32",
+    "cyuavcanregister.access_1_0_response_value_natural32_value.#": "3",
+    "cyuavcanregister.access_1_0_response_value_natural32_value[0].cyuavcanregister.access_1_0_response_value_natural32_value_item": "1936396930",
+    "cyuavcanregister.access_1_0_response_value_natural32_value[1].cyuavcanregister.access_1_0_response_value_natural32_value_item": "176190199",
+    "cyuavcanregister.access_1_0_response_value_natural32_value[2].cyuavcanregister.access_1_0_response_value_natural32_value_item": "563467116"
+  }
+}

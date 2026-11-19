@@ -1,0 +1,10 @@
+# A message with a fixed port-ID: a nested sealed type, a delimited one, arrays
+# with a length prefix, a bool array and padding.
+uint40 time
+testns.sub.Pair.1.0 pair
+testns.sub.Note.1.0 note
+testns.sub.Pair.1.0[<=2] pairs
+bool[3] flags
+void5
+float64 value
+@extent 64 * 8

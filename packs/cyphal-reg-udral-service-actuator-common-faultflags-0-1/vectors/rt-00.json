@@ -1,0 +1,19 @@
+{
+  "name": "cyphal-reg-udral-service-actuator-common-faultflags-0-1-roundtrip",
+  "from": "cyphal-reg-udral-service-actuator-common-faultflags-0-1",
+  "to": "cyphal-reg-udral-service-actuator-common-faultflags-0-1",
+  "input": "5581",
+  "expect": "5581",
+  "model": {
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_overload": "1",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_voltage": "0",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_motor_temperature": "1",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_controller_temperature": "0",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_velocity": "1",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_mechanical": "0",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_vibration": "1",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_configuration": "0",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_control_mode": "1",
+    "cyregudralserviceactuatorcommon.fault_flags_0_1_other": "1"
+  }
+}

@@ -1,0 +1,5 @@
+# A union at the top of the type.
+@union
+uint8 small
+uint32 large
+float64 real

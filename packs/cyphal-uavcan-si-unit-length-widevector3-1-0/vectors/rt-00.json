@@ -1,0 +1,12 @@
+{
+  "name": "cyphal-uavcan-si-unit-length-widevector3-1-0-roundtrip",
+  "from": "cyphal-uavcan-si-unit-length-widevector3-1-0",
+  "to": "cyphal-uavcan-si-unit-length-widevector3-1-0",
+  "input": "00000000000000c0000000000000f4bf000000000000e0bf",
+  "expect": "00000000000000c0000000000000f4bf000000000000e0bf",
+  "model": {
+    "cyuavcansiunitlength.wide_vector3_1_0_meter_0": "-2",
+    "cyuavcansiunitlength.wide_vector3_1_0_meter_1": "-1.25",
+    "cyuavcansiunitlength.wide_vector3_1_0_meter_2": "-0.5"
+  }
+}

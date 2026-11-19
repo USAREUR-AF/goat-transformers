@@ -1,0 +1,14 @@
+{
+  "name": "cyphal-uavcan-file-read-1-1-request-roundtrip",
+  "from": "cyphal-uavcan-file-read-1-1-request",
+  "to": "cyphal-uavcan-file-read-1-1-request",
+  "input": "6d356e4f000357cc41",
+  "expect": "6d356e4f000357cc41",
+  "model": {
+    "cyuavcanfile.read_1_1_request_offset": "1332622701",
+    "cyuavcanfile.read_1_1_request_path_path.#": "3",
+    "cyuavcanfile.read_1_1_request_path_path[0].cyuavcanfile.read_1_1_request_path_path_item": "87",
+    "cyuavcanfile.read_1_1_request_path_path[1].cyuavcanfile.read_1_1_request_path_path_item": "204",
+    "cyuavcanfile.read_1_1_request_path_path[2].cyuavcanfile.read_1_1_request_path_path_item": "65"
+  }
+}
