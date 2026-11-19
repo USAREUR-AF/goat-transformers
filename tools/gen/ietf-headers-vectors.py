@@ -156,9 +156,8 @@ def ipv4_vectors():
                    ref=SRC + "the first datagram with its version nibble set to 6"))
     out.append(vec(P, "nineteen-octets-is-malformed", h[:19].hex(), error="malformed-wire",
                    ref=SRC + "the first datagram's header cut to 19 octets"))
-    out.append(vec(P, "ipv4-to-ipv6-is-no-kind", h.hex(), error="no-kind", to="ipv6-header",
-                   ref=SRC + "the first datagram converted to ipv6-header: only the protocol number is shared, "
-                       "and the ipv6 kind requires both addresses"))
+    # No ipv4 -> ipv6 vector: the device profile (embedded/) refuses that plan at
+    # compile time (target-unreachable) instead of at run time (no-kind).
     return out
 
 

@@ -1,8 +1,0 @@
-{
-  "name": "ipv4-to-ipv6-is-no-kind",
-  "from": "ipv4-header",
-  "to": "ipv6-header",
-  "input": "4500001c1c4640004011324fc0000201c6336407",
-  "expect_error": "no-kind",
-  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first datagram converted to ipv6-header: only the protocol number is shared, and the ipv6 kind requires both addresses"
-}
