@@ -35,7 +35,7 @@ vectors, and the same change in the other six engines.
 | Sequential binary layouts | fields placed by what came before: presence bits, parts that repeat while an indicator is set, extensible items, blocks that state their own length, list items decoded by kind | Built, seven engines (spec 0.8) |
 | Layered wires and framing | one pack's payload is another pack's whole message; declared lengths, trimmed payloads, checksums | Designed |
 | Absent-value sentinels | a wire value that means "unknown" decodes to an absent key, and an absent key encodes as that value | Built, seven engines (spec 0.9) |
-| Strict rulings | one byte sequence and one named error where earlier sections were silent: XML text, number and time grammars, rounding and range on `bits`, a kind for every load failure, the capability report, a limit on list items | Designed (spec 0.11) |
+| Strict rulings | one byte sequence and one named error where earlier sections were silent: XML text, number and time grammars, rounding and range on `bits`, a kind for every load failure, the capability report, a limit on list items | Built, seven engines (spec 0.11) |
 | Further value functions | character sets, sign-and-magnitude numbers, scales that yield integers, a scale on a text wire, an instant split into seconds and nanoseconds, frame conversions (ECEF, radians, mean sea level) | Designed |
 | Encode selection by value | choosing the target message kind from the value of a key, not only from which keys are present | Designed |
 | Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Designed |
