@@ -1,0 +1,14 @@
+{
+  "name": "edge-int64-extremes",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "the int64 range ends; an empty array is a present empty list and is written []",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int64MultiArray\",\"msg\":{\"layout\":{\"dim\":[],\"data_offset\":0},\"data\":[-9223372036854775808,9223372036854775807]}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int64MultiArray\",\"msg\":{\"layout\":{\"dim\":[],\"data_offset\":0},\"data\":[-9223372036854775808,9223372036854775807]}}",
+  "model": {
+    "@kind": "int64_multi_array",
+    "ros2std.int64_multi_array_layout_dim.#": "0",
+    "ros2std.int64_multi_array_data.#": "2",
+    "ros2std.int64_multi_array_data[1].ros2std.int64_multi_array_data_value": "9223372036854775807"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-u_int16",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/u_int16\",\"type\":\"std_msgs/msg/UInt16\",\"msg\":{\"data\":7742},\"id\":\"gen-u_int16\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/u_int16\",\"type\":\"std_msgs/msg/UInt16\",\"msg\":{\"data\":7742},\"id\":\"gen-u_int16\"}",
+  "model": {
+    "@kind": "u_int16",
+    "ros2std.u_int16_data": "7742",
+    "ros2std.topic": "/gen/u_int16"
+  }
+}

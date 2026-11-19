@@ -1,0 +1,15 @@
+{
+  "name": "rt-mesh",
+  "from": "ros2-shape-msgs",
+  "to": "ros2-shape-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mesh\",\"type\":\"shape_msgs/msg/Mesh\",\"msg\":{\"triangles\":[{\"vertex_indices\":[2147524158,2147564661,2147605164]},{\"vertex_indices\":[2147645667,2147686170,2147726673]}],\"vertices\":[{\"x\":7.049,\"y\":8.056,\"z\":-9.063},{\"x\":10.07,\"y\":11.077,\"z\":-12.084}]},\"id\":\"gen-mesh\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mesh\",\"type\":\"shape_msgs/msg/Mesh\",\"msg\":{\"triangles\":[{\"vertex_indices\":[2147524158,2147564661,2147605164]},{\"vertex_indices\":[2147645667,2147686170,2147726673]}],\"vertices\":[{\"x\":7.049,\"y\":8.056,\"z\":-9.063},{\"x\":10.07,\"y\":11.077,\"z\":-12.084}]},\"id\":\"gen-mesh\"}",
+  "model": {
+    "@kind": "mesh",
+    "ros2shape.mesh_triangles.#": "2",
+    "ros2shape.mesh_vertices.#": "2",
+    "ros2shape.mesh_vertices[0].ros2shape.mesh_vertices_x": "7.049",
+    "ros2shape.topic": "/gen/mesh"
+  }
+}

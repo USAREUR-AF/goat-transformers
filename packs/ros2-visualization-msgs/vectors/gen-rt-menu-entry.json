@@ -1,0 +1,17 @@
+{
+  "name": "rt-menu_entry",
+  "from": "ros2-visualization-msgs",
+  "to": "ros2-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/menu_entry\",\"type\":\"visualization_msgs/msg/MenuEntry\",\"msg\":{\"id\":2147524158,\"parent_id\":2147564661,\"title\":\"s3\",\"command\":\"s4\",\"command_type\":154},\"id\":\"gen-menu_entry\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/menu_entry\",\"type\":\"visualization_msgs/msg/MenuEntry\",\"msg\":{\"id\":2147524158,\"parent_id\":2147564661,\"title\":\"s3\",\"command\":\"s4\",\"command_type\":154},\"id\":\"gen-menu_entry\"}",
+  "model": {
+    "@kind": "menu_entry",
+    "ros2visualization.menu_entry_id": "2147524158",
+    "ros2visualization.menu_entry_parent_id": "2147564661",
+    "ros2visualization.menu_entry_title": "s3",
+    "ros2visualization.menu_entry_command": "s4",
+    "ros2visualization.menu_entry_command_type": "154",
+    "ros2visualization.topic": "/gen/menu_entry"
+  }
+}

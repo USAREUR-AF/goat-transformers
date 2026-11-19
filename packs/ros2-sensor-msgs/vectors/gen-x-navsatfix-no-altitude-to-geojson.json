@@ -1,0 +1,13 @@
+{
+  "name": "x-navsatfix-no-altitude-to-geojson",
+  "from": "ros2-sensor-msgs",
+  "to": "geojson",
+  "source": "rosbridge writes a NaN altitude (no altitude available) as null; null is absent (engine-spec 0.5), so the point has two coordinates",
+  "input": "{\"op\":\"publish\",\"topic\":\"/fix\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"status\":{\"status\":-1,\"service\":0},\"latitude\":-33.75,\"longitude\":151.25,\"altitude\":null,\"position_covariance_type\":0}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.25,-33.75]},\"properties\":{}}",
+  "model": {
+    "@kind": "nav_sat_fix",
+    "lat": "-33.75",
+    "lon": "151.25"
+  }
+}

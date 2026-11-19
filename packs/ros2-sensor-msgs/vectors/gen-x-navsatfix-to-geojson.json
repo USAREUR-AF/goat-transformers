@@ -1,0 +1,14 @@
+{
+  "name": "x-navsatfix-to-geojson",
+  "from": "ros2-sensor-msgs",
+  "to": "geojson",
+  "source": "latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4); no other key of this kind is a geojson key",
+  "input": "{\"op\":\"publish\",\"topic\":\"/fix\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"header\":{\"stamp\":{\"sec\":1700000000,\"nanosec\":250000000},\"frame_id\":\"gps\"},\"status\":{\"status\":0,\"service\":1},\"latitude\":48.1372,\"longitude\":11.5756,\"altitude\":519.25,\"position_covariance\":[1.5,0,0,0,1.5,0,0,0,4],\"position_covariance_type\":2}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5756,48.1372,519.25]},\"properties\":{}}",
+  "model": {
+    "@kind": "nav_sat_fix",
+    "lat": "48.1372",
+    "lon": "11.5756",
+    "hae": "519.25"
+  }
+}

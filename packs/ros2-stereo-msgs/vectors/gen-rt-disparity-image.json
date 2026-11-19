@@ -1,0 +1,17 @@
+{
+  "name": "rt-disparity_image",
+  "from": "ros2-stereo-msgs",
+  "to": "ros2-stereo-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/disparity_image\",\"type\":\"stereo_msgs/msg/DisparityImage\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"image\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"height\":2147767176,\"width\":2147807679,\"encoding\":\"s9\",\"is_bigendian\":173,\"step\":2147929188,\"data\":\"DCT/AIA=\"},\"f\":-1.875,\"t\":-1.625,\"valid_window\":{\"x_offset\":2148091200,\"y_offset\":2148131703,\"height\":2148172206,\"width\":2148212709,\"do_rectify\":true},\"min_disparity\":-0.125,\"max_disparity\":0.125,\"delta_d\":0.375},\"id\":\"gen-disparity_image\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/disparity_image\",\"type\":\"stereo_msgs/msg/DisparityImage\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"image\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"height\":2147767176,\"width\":2147807679,\"encoding\":\"s9\",\"is_bigendian\":173,\"step\":2147929188,\"data\":\"DCT/AIA=\"},\"f\":-1.875,\"t\":-1.625,\"valid_window\":{\"x_offset\":2148091200,\"y_offset\":2148131703,\"height\":2148172206,\"width\":2148212709,\"do_rectify\":true},\"min_disparity\":-0.125,\"max_disparity\":0.125,\"delta_d\":0.375},\"id\":\"gen-disparity_image\"}",
+  "model": {
+    "@kind": "disparity_image",
+    "ros2stereo.disparity_image_header_stamp_sec": "40510",
+    "ros2stereo.disparity_image_header_stamp_nanosec": "2147564661",
+    "ros2stereo.disparity_image_header_frame_id": "s3",
+    "ros2stereo.disparity_image_image_header_stamp_sec": "162019",
+    "ros2stereo.disparity_image_image_header_stamp_nanosec": "2147686170",
+    "ros2stereo.topic": "/gen/disparity_image"
+  }
+}

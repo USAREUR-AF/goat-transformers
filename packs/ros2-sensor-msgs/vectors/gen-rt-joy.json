@@ -1,0 +1,19 @@
+{
+  "name": "rt-joy",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joy\",\"type\":\"sensor_msgs/msg/Joy\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"axes\":[-4.125,-3.875],\"buttons\":[243025,283528]},\"id\":\"gen-joy\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joy\",\"type\":\"sensor_msgs/msg/Joy\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"axes\":[-4.125,-3.875],\"buttons\":[243025,283528]},\"id\":\"gen-joy\"}",
+  "model": {
+    "@kind": "joy",
+    "ros2sensor.joy_header_stamp_sec": "40510",
+    "ros2sensor.joy_header_stamp_nanosec": "2147564661",
+    "ros2sensor.joy_header_frame_id": "s3",
+    "ros2sensor.joy_axes.#": "2",
+    "ros2sensor.joy_axes[0].ros2sensor.joy_axes_value": "-4.125",
+    "ros2sensor.joy_buttons.#": "2",
+    "ros2sensor.joy_buttons[0].ros2sensor.joy_buttons_value": "243025",
+    "ros2sensor.topic": "/gen/joy"
+  }
+}

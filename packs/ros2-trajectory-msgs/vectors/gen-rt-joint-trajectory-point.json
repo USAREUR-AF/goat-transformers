@@ -1,0 +1,22 @@
+{
+  "name": "rt-joint_trajectory_point",
+  "from": "ros2-trajectory-msgs",
+  "to": "ros2-trajectory-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_trajectory_point\",\"type\":\"trajectory_msgs/msg/JointTrajectoryPoint\",\"msg\":{\"positions\":[1.007,2.014],\"velocities\":[-3.021,4.028],\"accelerations\":[5.035,-6.042],\"effort\":[7.049,8.056],\"time_from_start\":{\"sec\":364534,\"nanosec\":2147888685}},\"id\":\"gen-joint_trajectory_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_trajectory_point\",\"type\":\"trajectory_msgs/msg/JointTrajectoryPoint\",\"msg\":{\"positions\":[1.007,2.014],\"velocities\":[-3.021,4.028],\"accelerations\":[5.035,-6.042],\"effort\":[7.049,8.056],\"time_from_start\":{\"sec\":364534,\"nanosec\":2147888685}},\"id\":\"gen-joint_trajectory_point\"}",
+  "model": {
+    "@kind": "joint_trajectory_point",
+    "ros2trajectory.joint_trajectory_point_positions.#": "2",
+    "ros2trajectory.joint_trajectory_point_positions[0].ros2trajectory.joint_trajectory_point_positions_value": "1.007",
+    "ros2trajectory.joint_trajectory_point_velocities.#": "2",
+    "ros2trajectory.joint_trajectory_point_velocities[0].ros2trajectory.joint_trajectory_point_velocities_value": "-3.021",
+    "ros2trajectory.joint_trajectory_point_accelerations.#": "2",
+    "ros2trajectory.joint_trajectory_point_accelerations[0].ros2trajectory.joint_trajectory_point_accelerations_value": "5.035",
+    "ros2trajectory.joint_trajectory_point_effort.#": "2",
+    "ros2trajectory.joint_trajectory_point_effort[0].ros2trajectory.joint_trajectory_point_effort_value": "7.049",
+    "ros2trajectory.joint_trajectory_point_time_from_start_sec": "364534",
+    "ros2trajectory.joint_trajectory_point_time_from_start_nanosec": "2147888685",
+    "ros2trajectory.topic": "/gen/joint_trajectory_point"
+  }
+}

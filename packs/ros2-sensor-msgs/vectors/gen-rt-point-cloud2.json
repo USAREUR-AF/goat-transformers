@@ -1,0 +1,19 @@
+{
+  "name": "rt-point_cloud2",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud2\",\"type\":\"sensor_msgs/msg/PointCloud2\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"fields\":[{\"name\":\"s6\",\"offset\":2147767176,\"datatype\":63,\"count\":2147848182},{\"name\":\"s10\",\"offset\":2147929188,\"datatype\":27,\"count\":2148010194}],\"is_bigendian\":false,\"point_step\":2148091200,\"row_step\":2148131703,\"data\":\"ETP/AIA=\",\"is_dense\":false},\"id\":\"gen-point_cloud2\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud2\",\"type\":\"sensor_msgs/msg/PointCloud2\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"fields\":[{\"name\":\"s6\",\"offset\":2147767176,\"datatype\":63,\"count\":2147848182},{\"name\":\"s10\",\"offset\":2147929188,\"datatype\":27,\"count\":2148010194}],\"is_bigendian\":false,\"point_step\":2148091200,\"row_step\":2148131703,\"data\":\"ETP/AIA=\",\"is_dense\":false},\"id\":\"gen-point_cloud2\"}",
+  "model": {
+    "@kind": "point_cloud2",
+    "ros2sensor.point_cloud2_header_stamp_sec": "40510",
+    "ros2sensor.point_cloud2_header_stamp_nanosec": "2147564661",
+    "ros2sensor.point_cloud2_header_frame_id": "s3",
+    "ros2sensor.point_cloud2_height": "2147645667",
+    "ros2sensor.point_cloud2_width": "2147686170",
+    "ros2sensor.point_cloud2_fields.#": "2",
+    "ros2sensor.point_cloud2_fields[0].ros2sensor.point_cloud2_fields_name": "s6",
+    "ros2sensor.topic": "/gen/point_cloud2"
+  }
+}

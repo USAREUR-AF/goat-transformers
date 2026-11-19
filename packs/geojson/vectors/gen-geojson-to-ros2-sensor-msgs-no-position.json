@@ -1,0 +1,8 @@
+{
+  "name": "gen-geojson-to-ros2-sensor-msgs-no-position",
+  "from": "geojson",
+  "to": "ros2-sensor-msgs",
+  "source": "no kind of the pack has its requires held by uid and callsign",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"ROVER\"},\"id\":\"r-1\"}",
+  "expect_error": "no-kind"
+}

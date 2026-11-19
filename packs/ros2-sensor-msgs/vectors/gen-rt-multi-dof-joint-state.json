@@ -1,0 +1,23 @@
+{
+  "name": "rt-multi_dof_joint_state",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_joint_state\",\"type\":\"sensor_msgs/msg/MultiDOFJointState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"transforms\":[{\"translation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"rotation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},{\"translation\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"rotation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"w\":19.133}}],\"twist\":[{\"linear\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"angular\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175}},{\"linear\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"angular\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217}}],\"wrench\":[{\"force\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238},\"torque\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259}},{\"force\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28},\"torque\":{\"x\":41.287,\"y\":-42.294,\"z\":43.301}}]},\"id\":\"gen-multi_dof_joint_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_joint_state\",\"type\":\"sensor_msgs/msg/MultiDOFJointState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"transforms\":[{\"translation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"rotation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},{\"translation\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"rotation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"w\":19.133}}],\"twist\":[{\"linear\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"angular\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175}},{\"linear\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"angular\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217}}],\"wrench\":[{\"force\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238},\"torque\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259}},{\"force\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28},\"torque\":{\"x\":41.287,\"y\":-42.294,\"z\":43.301}}]},\"id\":\"gen-multi_dof_joint_state\"}",
+  "model": {
+    "@kind": "multi_dof_joint_state",
+    "ros2sensor.multi_dof_joint_state_header_stamp_sec": "40510",
+    "ros2sensor.multi_dof_joint_state_header_stamp_nanosec": "2147564661",
+    "ros2sensor.multi_dof_joint_state_header_frame_id": "s3",
+    "ros2sensor.multi_dof_joint_state_joint_names.#": "2",
+    "ros2sensor.multi_dof_joint_state_joint_names[0].ros2sensor.multi_dof_joint_state_joint_names_value": "s4",
+    "ros2sensor.multi_dof_joint_state_transforms.#": "2",
+    "ros2sensor.multi_dof_joint_state_transforms[0].ros2sensor.multi_dof_joint_state_transforms_translation_x": "-6.042",
+    "ros2sensor.multi_dof_joint_state_twist.#": "2",
+    "ros2sensor.multi_dof_joint_state_twist[0].ros2sensor.multi_dof_joint_state_twist_linear_x": "20.14",
+    "ros2sensor.multi_dof_joint_state_wrench.#": "2",
+    "ros2sensor.multi_dof_joint_state_wrench[0].ros2sensor.multi_dof_joint_state_wrench_force_x": "32.224",
+    "ros2sensor.topic": "/gen/multi_dof_joint_state"
+  }
+}

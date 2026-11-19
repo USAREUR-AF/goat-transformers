@@ -1,0 +1,20 @@
+{
+ "GoalID:id": "goal_id_id",
+ "GoalID:stamp.nanosec": "goal_id_stamp_nanosec",
+ "GoalID:stamp.sec": "goal_id_stamp_sec",
+ "GoalStatus:goal_id.id": "goal_status_goal_id_id",
+ "GoalStatus:goal_id.stamp.nanosec": "goal_status_goal_id_stamp_nanosec",
+ "GoalStatus:goal_id.stamp.sec": "goal_status_goal_id_stamp_sec",
+ "GoalStatus:status": "goal_status_status",
+ "GoalStatus:text": "goal_status_text",
+ "GoalStatusArray:header.frame_id": "goal_status_array_header_frame_id",
+ "GoalStatusArray:header.stamp.nanosec": "goal_status_array_header_stamp_nanosec",
+ "GoalStatusArray:header.stamp.sec": "goal_status_array_header_stamp_sec",
+ "GoalStatusArray:status_list[]": "goal_status_array_status_list",
+ "GoalStatusArray:status_list[].goal_id.id": "goal_status_array_status_list_goal_id_id",
+ "GoalStatusArray:status_list[].goal_id.stamp.nanosec": "goal_status_array_status_list_goal_id_stamp_nanosec",
+ "GoalStatusArray:status_list[].goal_id.stamp.sec": "goal_status_array_status_list_goal_id_stamp_sec",
+ "GoalStatusArray:status_list[].status": "goal_status_array_status_list_status",
+ "GoalStatusArray:status_list[].text": "goal_status_array_status_list_text",
+ "topic": "topic"
+}

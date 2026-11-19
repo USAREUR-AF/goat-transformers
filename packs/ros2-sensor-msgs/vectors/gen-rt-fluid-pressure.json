@@ -1,0 +1,17 @@
+{
+  "name": "rt-fluid_pressure",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fluid_pressure\",\"type\":\"sensor_msgs/msg/FluidPressure\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fluid_pressure\":4.028,\"variance\":5.035},\"id\":\"gen-fluid_pressure\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fluid_pressure\",\"type\":\"sensor_msgs/msg/FluidPressure\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fluid_pressure\":4.028,\"variance\":5.035},\"id\":\"gen-fluid_pressure\"}",
+  "model": {
+    "@kind": "fluid_pressure",
+    "ros2sensor.fluid_pressure_header_stamp_sec": "40510",
+    "ros2sensor.fluid_pressure_header_stamp_nanosec": "2147564661",
+    "ros2sensor.fluid_pressure_header_frame_id": "s3",
+    "ros2sensor.fluid_pressure_fluid_pressure": "4.028",
+    "ros2sensor.fluid_pressure_variance": "5.035",
+    "ros2sensor.topic": "/gen/fluid_pressure"
+  }
+}

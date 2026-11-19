@@ -1,0 +1,8 @@
+{
+  "name": "err-navsatfix-latitude-text",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "engine-spec 0.5: a value of the wrong JSON type",
+  "input": "{\"op\":\"publish\",\"topic\":\"/fix\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"latitude\":\"48.1\",\"longitude\":11.5}}",
+  "expect_error": "transform-decode"
+}

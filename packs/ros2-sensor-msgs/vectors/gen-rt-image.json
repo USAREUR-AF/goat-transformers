@@ -1,0 +1,17 @@
+{
+  "name": "rt-image",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/image\",\"type\":\"sensor_msgs/msg/Image\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"encoding\":\"s6\",\"is_bigendian\":8,\"step\":2147807679,\"data\":\"CRv/AIA=\"},\"id\":\"gen-image\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/image\",\"type\":\"sensor_msgs/msg/Image\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"encoding\":\"s6\",\"is_bigendian\":8,\"step\":2147807679,\"data\":\"CRv/AIA=\"},\"id\":\"gen-image\"}",
+  "model": {
+    "@kind": "image",
+    "ros2sensor.image_header_stamp_sec": "40510",
+    "ros2sensor.image_header_stamp_nanosec": "2147564661",
+    "ros2sensor.image_header_frame_id": "s3",
+    "ros2sensor.image_height": "2147645667",
+    "ros2sensor.image_width": "2147686170",
+    "ros2sensor.topic": "/gen/image"
+  }
+}

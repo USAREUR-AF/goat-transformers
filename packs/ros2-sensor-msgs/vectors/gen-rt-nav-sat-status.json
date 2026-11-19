@@ -1,0 +1,14 @@
+{
+  "name": "rt-nav_sat_status",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat_status\",\"type\":\"sensor_msgs/msg/NavSatStatus\",\"msg\":{\"status\":62,\"service\":48245},\"id\":\"gen-nav_sat_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat_status\",\"type\":\"sensor_msgs/msg/NavSatStatus\",\"msg\":{\"status\":62,\"service\":48245},\"id\":\"gen-nav_sat_status\"}",
+  "model": {
+    "@kind": "nav_sat_status",
+    "ros2sensor.nav_sat_status_status": "62",
+    "ros2sensor.nav_sat_status_service": "48245",
+    "ros2sensor.topic": "/gen/nav_sat_status"
+  }
+}

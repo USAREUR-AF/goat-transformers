@@ -1,0 +1,12 @@
+{
+  "name": "edge-float-plain-notation",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.1.1 ruling 3: shortest round-trip decimal, plain notation, integral floats without a point, negative zero as 0",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Float64MultiArray\",\"msg\":{\"layout\":{\"dim\":[{\"label\":\"x\",\"size\":2,\"stride\":2}],\"data_offset\":0},\"data\":[1e-07,2.0,-0.0,1.5E+3]}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Float64MultiArray\",\"msg\":{\"layout\":{\"dim\":[{\"label\":\"x\",\"size\":2,\"stride\":2}],\"data_offset\":0},\"data\":[0.0000001,2,0,1500]}}",
+  "model": {
+    "@kind": "float64_multi_array",
+    "ros2std.float64_multi_array_data.#": "4"
+  }
+}

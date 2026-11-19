@@ -1,0 +1,14 @@
+{
+  "name": "rt-plane",
+  "from": "ros2-shape-msgs",
+  "to": "ros2-shape-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/plane\",\"type\":\"shape_msgs/msg/Plane\",\"msg\":{\"coef\":[1.007,2.014,-3.021,4.028]},\"id\":\"gen-plane\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/plane\",\"type\":\"shape_msgs/msg/Plane\",\"msg\":{\"coef\":[1.007,2.014,-3.021,4.028]},\"id\":\"gen-plane\"}",
+  "model": {
+    "@kind": "plane",
+    "ros2shape.plane_coef.#": "4",
+    "ros2shape.plane_coef[0].ros2shape.plane_coef_value": "1.007",
+    "ros2shape.topic": "/gen/plane"
+  }
+}

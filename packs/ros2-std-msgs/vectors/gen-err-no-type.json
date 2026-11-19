@@ -1,0 +1,8 @@
+{
+  "name": "err-no-type",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "a publish with no type member selects no kind (pack.md, message convention)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"msg\":{\"data\":\"x\"}}",
+  "expect_error": "no-kind"
+}

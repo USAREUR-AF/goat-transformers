@@ -1,0 +1,12 @@
+{
+  "name": "edge-int-written-as-float",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5 ruling 12: int accepts any integral number",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int32\",\"msg\":{\"data\":5.0}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int32\",\"msg\":{\"data\":5}}",
+  "model": {
+    "@kind": "int32",
+    "ros2std.int32_data": "5"
+  }
+}

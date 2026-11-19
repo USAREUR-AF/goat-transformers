@@ -1,0 +1,21 @@
+{
+  "name": "rt-odometry",
+  "from": "ros2-nav-msgs",
+  "to": "ros2-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/odometry\",\"type\":\"nav_msgs/msg/Odometry\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"child_frame_id\":\"s4\",\"pose\":{\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"covariance\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329]},\"twist\":{\"twist\":{\"linear\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"angular\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371}},\"covariance\":[-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623]}},\"id\":\"gen-odometry\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/odometry\",\"type\":\"nav_msgs/msg/Odometry\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"child_frame_id\":\"s4\",\"pose\":{\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"covariance\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329]},\"twist\":{\"twist\":{\"linear\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"angular\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371}},\"covariance\":[-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623]}},\"id\":\"gen-odometry\"}",
+  "model": {
+    "@kind": "odometry",
+    "ros2nav.odometry_header_stamp_sec": "40510",
+    "ros2nav.odometry_header_stamp_nanosec": "2147564661",
+    "ros2nav.odometry_header_frame_id": "s3",
+    "ros2nav.odometry_child_frame_id": "s4",
+    "ros2nav.odometry_pose_pose_position_x": "5.035",
+    "ros2nav.odometry_pose_covariance.#": "36",
+    "ros2nav.odometry_pose_covariance[0].ros2nav.odometry_pose_covariance_value": "-12.084",
+    "ros2nav.odometry_twist_covariance.#": "36",
+    "ros2nav.odometry_twist_covariance[0].ros2nav.odometry_twist_covariance_value": "-54.378",
+    "ros2nav.topic": "/gen/odometry"
+  }
+}

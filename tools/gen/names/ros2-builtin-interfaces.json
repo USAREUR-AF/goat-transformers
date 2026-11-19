@@ -1,0 +1,7 @@
+{
+ "Duration:nanosec": "duration_nanosec",
+ "Duration:sec": "duration_sec",
+ "Time:nanosec": "time_nanosec",
+ "Time:sec": "time_sec",
+ "topic": "topic"
+}

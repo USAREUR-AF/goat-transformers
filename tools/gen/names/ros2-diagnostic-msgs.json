@@ -1,0 +1,23 @@
+{
+ "DiagnosticArray:header.frame_id": "diagnostic_array_header_frame_id",
+ "DiagnosticArray:header.stamp.nanosec": "diagnostic_array_header_stamp_nanosec",
+ "DiagnosticArray:header.stamp.sec": "diagnostic_array_header_stamp_sec",
+ "DiagnosticArray:status[]": "diagnostic_array_status",
+ "DiagnosticArray:status[].hardware_id": "diagnostic_array_status_hardware_id",
+ "DiagnosticArray:status[].level": "diagnostic_array_status_level",
+ "DiagnosticArray:status[].message": "diagnostic_array_status_message",
+ "DiagnosticArray:status[].name": "diagnostic_array_status_name",
+ "DiagnosticArray:status[].values[]": "diagnostic_array_status_values",
+ "DiagnosticArray:status[].values[].key": "diagnostic_array_status_values_key",
+ "DiagnosticArray:status[].values[].value": "diagnostic_array_status_values_value",
+ "DiagnosticStatus:hardware_id": "diagnostic_status_hardware_id",
+ "DiagnosticStatus:level": "diagnostic_status_level",
+ "DiagnosticStatus:message": "diagnostic_status_message",
+ "DiagnosticStatus:name": "diagnostic_status_name",
+ "DiagnosticStatus:values[]": "diagnostic_status_values",
+ "DiagnosticStatus:values[].key": "diagnostic_status_values_key",
+ "DiagnosticStatus:values[].value": "diagnostic_status_values_value",
+ "KeyValue:key": "key_value_key",
+ "KeyValue:value": "key_value_value",
+ "topic": "topic"
+}

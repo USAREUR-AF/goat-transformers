@@ -1,0 +1,17 @@
+{
+  "name": "rt-wrench_stamped",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wrench_stamped\",\"type\":\"geometry_msgs/msg/WrenchStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"wrench\":{\"force\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"torque\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063}}},\"id\":\"gen-wrench_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wrench_stamped\",\"type\":\"geometry_msgs/msg/WrenchStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"wrench\":{\"force\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"torque\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063}}},\"id\":\"gen-wrench_stamped\"}",
+  "model": {
+    "@kind": "wrench_stamped",
+    "ros2geometry.wrench_stamped_header_stamp_sec": "40510",
+    "ros2geometry.wrench_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geometry.wrench_stamped_header_frame_id": "s3",
+    "ros2geometry.wrench_stamped_wrench_force_x": "4.028",
+    "ros2geometry.wrench_stamped_wrench_force_y": "5.035",
+    "ros2geometry.topic": "/gen/wrench_stamped"
+  }
+}

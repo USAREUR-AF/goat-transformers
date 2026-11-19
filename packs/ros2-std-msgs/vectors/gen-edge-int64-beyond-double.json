@@ -1,0 +1,12 @@
+{
+  "name": "edge-int64-beyond-double",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "2^53+1 is an int64 value rosbridge writes as a JSON integer; the model int is 64-bit",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int64\",\"msg\":{\"data\":9007199254740993}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int64\",\"msg\":{\"data\":9007199254740993}}",
+  "model": {
+    "@kind": "int64",
+    "ros2std.int64_data": "9007199254740993"
+  }
+}

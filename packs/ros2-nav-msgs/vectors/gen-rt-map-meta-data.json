@@ -1,0 +1,17 @@
+{
+  "name": "rt-map_meta_data",
+  "from": "ros2-nav-msgs",
+  "to": "ros2-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/map_meta_data\",\"type\":\"nav_msgs/msg/MapMetaData\",\"msg\":{\"map_load_time\":{\"sec\":40510,\"nanosec\":2147564661},\"resolution\":-4.375,\"width\":2147645667,\"height\":2147686170,\"origin\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}}},\"id\":\"gen-map_meta_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/map_meta_data\",\"type\":\"nav_msgs/msg/MapMetaData\",\"msg\":{\"map_load_time\":{\"sec\":40510,\"nanosec\":2147564661},\"resolution\":-4.375,\"width\":2147645667,\"height\":2147686170,\"origin\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}}},\"id\":\"gen-map_meta_data\"}",
+  "model": {
+    "@kind": "map_meta_data",
+    "ros2nav.map_meta_data_map_load_time_sec": "40510",
+    "ros2nav.map_meta_data_map_load_time_nanosec": "2147564661",
+    "ros2nav.map_meta_data_resolution": "-4.375",
+    "ros2nav.map_meta_data_width": "2147645667",
+    "ros2nav.map_meta_data_height": "2147686170",
+    "ros2nav.topic": "/gen/map_meta_data"
+  }
+}

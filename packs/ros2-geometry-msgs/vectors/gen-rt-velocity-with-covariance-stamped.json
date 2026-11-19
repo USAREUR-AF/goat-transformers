@@ -1,0 +1,19 @@
+{
+  "name": "rt-velocity_with_covariance_stamped",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_with_covariance_stamped\",\"type\":\"geometry_msgs/msg/VelocityWithCovarianceStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"body_frame_id\":\"s4\",\"reference_frame_id\":\"s5\",\"velocity\":{\"twist\":{\"linear\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"angular\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077}},\"covariance\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329]}},\"id\":\"gen-velocity_with_covariance_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_with_covariance_stamped\",\"type\":\"geometry_msgs/msg/VelocityWithCovarianceStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"body_frame_id\":\"s4\",\"reference_frame_id\":\"s5\",\"velocity\":{\"twist\":{\"linear\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"angular\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077}},\"covariance\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329]}},\"id\":\"gen-velocity_with_covariance_stamped\"}",
+  "model": {
+    "@kind": "velocity_with_covariance_stamped",
+    "ros2geometry.velocity_with_covariance_stamped_header_stamp_sec": "40510",
+    "ros2geometry.velocity_with_covariance_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geometry.velocity_with_covariance_stamped_header_frame_id": "s3",
+    "ros2geometry.velocity_with_covariance_stamped_body_frame_id": "s4",
+    "ros2geometry.velocity_with_covariance_stamped_reference_frame_id": "s5",
+    "ros2geometry.velocity_with_covariance_stamped_velocity_covariance.#": "36",
+    "ros2geometry.velocity_with_covariance_stamped_velocity_covariance[0].ros2geometry.velocity_with_covariance_stamped_velocity_covariance_value": "-12.084",
+    "ros2geometry.topic": "/gen/velocity_with_covariance_stamped"
+  }
+}

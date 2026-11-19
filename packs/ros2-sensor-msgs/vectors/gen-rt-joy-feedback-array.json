@@ -1,0 +1,14 @@
+{
+  "name": "rt-joy_feedback_array",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joy_feedback_array\",\"type\":\"sensor_msgs/msg/JoyFeedbackArray\",\"msg\":{\"array\":[{\"type\":190,\"id\":245,\"intensity\":-4.375},{\"type\":99,\"id\":154,\"intensity\":-3.625}]},\"id\":\"gen-joy_feedback_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joy_feedback_array\",\"type\":\"sensor_msgs/msg/JoyFeedbackArray\",\"msg\":{\"array\":[{\"type\":190,\"id\":245,\"intensity\":-4.375},{\"type\":99,\"id\":154,\"intensity\":-3.625}]},\"id\":\"gen-joy_feedback_array\"}",
+  "model": {
+    "@kind": "joy_feedback_array",
+    "ros2sensor.joy_feedback_array_array.#": "2",
+    "ros2sensor.joy_feedback_array_array[0].ros2sensor.joy_feedback_array_array_type": "190",
+    "ros2sensor.topic": "/gen/joy_feedback_array"
+  }
+}

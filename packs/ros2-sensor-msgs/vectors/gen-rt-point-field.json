@@ -1,0 +1,16 @@
+{
+  "name": "rt-point_field",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_field\",\"type\":\"sensor_msgs/msg/PointField\",\"msg\":{\"name\":\"s1\",\"offset\":2147564661,\"datatype\":44,\"count\":2147645667},\"id\":\"gen-point_field\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_field\",\"type\":\"sensor_msgs/msg/PointField\",\"msg\":{\"name\":\"s1\",\"offset\":2147564661,\"datatype\":44,\"count\":2147645667},\"id\":\"gen-point_field\"}",
+  "model": {
+    "@kind": "point_field",
+    "ros2sensor.point_field_name": "s1",
+    "ros2sensor.point_field_offset": "2147564661",
+    "ros2sensor.point_field_datatype": "44",
+    "ros2sensor.point_field_count": "2147645667",
+    "ros2sensor.topic": "/gen/point_field"
+  }
+}

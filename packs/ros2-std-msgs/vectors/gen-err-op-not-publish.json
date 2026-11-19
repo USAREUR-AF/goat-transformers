@@ -1,0 +1,8 @@
+{
+  "name": "err-op-not-publish",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "the common when op publish does not hold",
+  "input": "{\"op\":\"advertise\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/String\"}",
+  "expect_error": "no-kind"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-char",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/char\",\"type\":\"std_msgs/msg/Char\",\"msg\":{\"data\":190},\"id\":\"gen-char\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/char\",\"type\":\"std_msgs/msg/Char\",\"msg\":{\"data\":190},\"id\":\"gen-char\"}",
+  "model": {
+    "@kind": "char",
+    "ros2std.char_data": "190",
+    "ros2std.topic": "/gen/char"
+  }
+}

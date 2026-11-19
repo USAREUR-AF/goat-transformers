@@ -1,0 +1,14 @@
+{
+  "name": "rt-mesh_triangle",
+  "from": "ros2-shape-msgs",
+  "to": "ros2-shape-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mesh_triangle\",\"type\":\"shape_msgs/msg/MeshTriangle\",\"msg\":{\"vertex_indices\":[2147524158,2147564661,2147605164]},\"id\":\"gen-mesh_triangle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mesh_triangle\",\"type\":\"shape_msgs/msg/MeshTriangle\",\"msg\":{\"vertex_indices\":[2147524158,2147564661,2147605164]},\"id\":\"gen-mesh_triangle\"}",
+  "model": {
+    "@kind": "mesh_triangle",
+    "ros2shape.mesh_triangle_vertex_indices.#": "3",
+    "ros2shape.mesh_triangle_vertex_indices[0].ros2shape.mesh_triangle_vertex_indices_value": "2147524158",
+    "ros2shape.topic": "/gen/mesh_triangle"
+  }
+}

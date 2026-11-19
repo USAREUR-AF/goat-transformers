@@ -1,0 +1,23 @@
+{
+  "name": "rt-marker",
+  "from": "ros2-visualization-msgs",
+  "to": "ros2-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/marker\",\"type\":\"visualization_msgs/msg/Marker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"type\":243025,\"action\":283528,\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"scale\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"color\":{\"r\":-0.625,\"g\":-0.375,\"b\":-0.125,\"a\":0.125},\"lifetime\":{\"sec\":891073,\"nanosec\":2148415224},\"frame_locked\":false,\"points\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189},{\"x\":28.196,\"y\":29.203,\"z\":-30.21}],\"colors\":[{\"r\":2.625,\"g\":2.875,\"b\":3.125,\"a\":3.375},{\"r\":3.625,\"g\":3.875,\"b\":4.125,\"a\":4.375}],\"texture_resource\":\"s39\",\"texture\":{\"header\":{\"stamp\":{\"sec\":1620127,\"nanosec\":2149144278},\"frame_id\":\"s42\"},\"format\":\"s43\",\"data\":\"LIT/AIA=\"},\"uv_coordinates\":[{\"u\":6.125,\"v\":6.375},{\"u\":6.625,\"v\":6.875}],\"text\":\"s49\",\"mesh_resource\":\"s50\",\"mesh_file\":{\"filename\":\"s51\",\"data\":\"NJz/AIA=\"},\"mesh_use_embedded_materials\":true},\"id\":\"gen-marker\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/marker\",\"type\":\"visualization_msgs/msg/Marker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"type\":243025,\"action\":283528,\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"scale\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"color\":{\"r\":-0.625,\"g\":-0.375,\"b\":-0.125,\"a\":0.125},\"lifetime\":{\"sec\":891073,\"nanosec\":2148415224},\"frame_locked\":false,\"points\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189},{\"x\":28.196,\"y\":29.203,\"z\":-30.21}],\"colors\":[{\"r\":2.625,\"g\":2.875,\"b\":3.125,\"a\":3.375},{\"r\":3.625,\"g\":3.875,\"b\":4.125,\"a\":4.375}],\"texture_resource\":\"s39\",\"texture\":{\"header\":{\"stamp\":{\"sec\":1620127,\"nanosec\":2149144278},\"frame_id\":\"s42\"},\"format\":\"s43\",\"data\":\"LIT/AIA=\"},\"uv_coordinates\":[{\"u\":6.125,\"v\":6.375},{\"u\":6.625,\"v\":6.875}],\"text\":\"s49\",\"mesh_resource\":\"s50\",\"mesh_file\":{\"filename\":\"s51\",\"data\":\"NJz/AIA=\"},\"mesh_use_embedded_materials\":true},\"id\":\"gen-marker\"}",
+  "model": {
+    "@kind": "marker",
+    "ros2visualization.marker_header_stamp_sec": "40510",
+    "ros2visualization.marker_header_stamp_nanosec": "2147564661",
+    "ros2visualization.marker_header_frame_id": "s3",
+    "ros2visualization.marker_ns": "s4",
+    "ros2visualization.marker_id": "202522",
+    "ros2visualization.marker_points.#": "2",
+    "ros2visualization.marker_points[0].ros2visualization.marker_points_x": "25.175",
+    "ros2visualization.marker_colors.#": "2",
+    "ros2visualization.marker_colors[0].ros2visualization.marker_colors_r": "2.625",
+    "ros2visualization.marker_uv_coordinates.#": "2",
+    "ros2visualization.marker_uv_coordinates[0].ros2visualization.marker_uv_coordinates_u": "6.125",
+    "ros2visualization.topic": "/gen/marker"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "edge-bool-false",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5, transform bool: false is 0 and is written false; no topic, none written",
+  "input": "{\"op\":\"publish\",\"type\":\"std_msgs/msg/Bool\",\"msg\":{\"data\":false}}",
+  "expect": "{\"op\":\"publish\",\"type\":\"std_msgs/msg/Bool\",\"msg\":{\"data\":false}}",
+  "model": {
+    "@kind": "bool",
+    "ros2std.bool_data": "0"
+  }
+}

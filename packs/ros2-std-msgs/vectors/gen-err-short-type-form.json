@@ -1,0 +1,8 @@
+{
+  "name": "err-short-type-form",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "the pack selects by the full form <package>/msg/<Name> only (pack.md)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/String\",\"msg\":{\"data\":\"x\"}}",
+  "expect_error": "no-kind"
+}

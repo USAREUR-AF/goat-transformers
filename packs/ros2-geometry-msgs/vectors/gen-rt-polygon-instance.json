@@ -1,0 +1,15 @@
+{
+  "name": "rt-polygon_instance",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_instance\",\"type\":\"geometry_msgs/msg/PolygonInstance\",\"msg\":{\"polygon\":{\"points\":[{\"x\":-4.875,\"y\":-4.625,\"z\":-4.375},{\"x\":-4.125,\"y\":-3.875,\"z\":-3.625}]},\"id\":-864197523091},\"id\":\"gen-polygon_instance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_instance\",\"type\":\"geometry_msgs/msg/PolygonInstance\",\"msg\":{\"polygon\":{\"points\":[{\"x\":-4.875,\"y\":-4.625,\"z\":-4.375},{\"x\":-4.125,\"y\":-3.875,\"z\":-3.625}]},\"id\":-864197523091},\"id\":\"gen-polygon_instance\"}",
+  "model": {
+    "@kind": "polygon_instance",
+    "ros2geometry.polygon_instance_polygon_points.#": "2",
+    "ros2geometry.polygon_instance_polygon_points[0].ros2geometry.polygon_instance_polygon_points_x": "-4.875",
+    "ros2geometry.polygon_instance_id": "-864197523091",
+    "ros2geometry.topic": "/gen/polygon_instance"
+  }
+}

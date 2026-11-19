@@ -1,0 +1,14 @@
+{
+  "name": "rt-duration",
+  "from": "ros2-builtin-interfaces",
+  "to": "ros2-builtin-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/duration\",\"type\":\"builtin_interfaces/msg/Duration\",\"msg\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"gen-duration\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/duration\",\"type\":\"builtin_interfaces/msg/Duration\",\"msg\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"gen-duration\"}",
+  "model": {
+    "@kind": "duration",
+    "ros2builtin.duration_sec": "40510",
+    "ros2builtin.duration_nanosec": "2147564661",
+    "ros2builtin.topic": "/gen/duration"
+  }
+}

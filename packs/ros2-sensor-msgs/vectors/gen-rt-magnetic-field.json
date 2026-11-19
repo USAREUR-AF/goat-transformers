@@ -1,0 +1,19 @@
+{
+  "name": "rt-magnetic_field",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/magnetic_field\",\"type\":\"sensor_msgs/msg/MagneticField\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"magnetic_field\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"magnetic_field_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105]},\"id\":\"gen-magnetic_field\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/magnetic_field\",\"type\":\"sensor_msgs/msg/MagneticField\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"magnetic_field\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"magnetic_field_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105]},\"id\":\"gen-magnetic_field\"}",
+  "model": {
+    "@kind": "magnetic_field",
+    "ros2sensor.magnetic_field_header_stamp_sec": "40510",
+    "ros2sensor.magnetic_field_header_stamp_nanosec": "2147564661",
+    "ros2sensor.magnetic_field_header_frame_id": "s3",
+    "ros2sensor.magnetic_field_magnetic_field_x": "4.028",
+    "ros2sensor.magnetic_field_magnetic_field_y": "5.035",
+    "ros2sensor.magnetic_field_magnetic_field_covariance.#": "9",
+    "ros2sensor.magnetic_field_magnetic_field_covariance[0].ros2sensor.magnetic_field_magnetic_field_covariance_value": "7.049",
+    "ros2sensor.topic": "/gen/magnetic_field"
+  }
+}

@@ -77,6 +77,21 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Packs ros2-builtin-interfaces, ros2-std-msgs, ros2-geometry-msgs,
+ros2-sensor-msgs, ros2-nav-msgs, ros2-diagnostic-msgs, ros2-shape-msgs,
+ros2-trajectory-msgs, ros2-visualization-msgs, ros2-stereo-msgs,
+ros2-actionlib-msgs; modules ros2builtin, ros2std, ros2geometry, ros2sensor,
+ros2nav, ros2diagnostic, ros2shape, ros2trajectory, ros2visualization,
+ros2stereo, ros2actionlib
+  ROS 2 message definitions (.msg), https://github.com/ros2/common_interfaces
+  (tag 5.3.8) and https://github.com/ros2/rcl_interfaces (tag 2.0.4, package
+  builtin_interfaces). Apache License, Version 2.0. Field names, types, array
+  forms and constant names only; no comment text.
+  rosbridge v2.1.0 protocol specification,
+  https://github.com/RobotWebTools/rosbridge_suite (branch jazzy). Copyright
+  (c) The Rosbridge Authors. BSD 3-Clause License. The JSON form of a message
+  and of the publish operation; no text.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c

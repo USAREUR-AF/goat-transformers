@@ -1,0 +1,17 @@
+{
+  "name": "rt-velocity_stamped",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_stamped\",\"type\":\"geometry_msgs/msg/VelocityStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"body_frame_id\":\"s4\",\"reference_frame_id\":\"s5\",\"velocity\":{\"linear\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"angular\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077}}},\"id\":\"gen-velocity_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_stamped\",\"type\":\"geometry_msgs/msg/VelocityStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"body_frame_id\":\"s4\",\"reference_frame_id\":\"s5\",\"velocity\":{\"linear\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"angular\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077}}},\"id\":\"gen-velocity_stamped\"}",
+  "model": {
+    "@kind": "velocity_stamped",
+    "ros2geometry.velocity_stamped_header_stamp_sec": "40510",
+    "ros2geometry.velocity_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geometry.velocity_stamped_header_frame_id": "s3",
+    "ros2geometry.velocity_stamped_body_frame_id": "s4",
+    "ros2geometry.velocity_stamped_reference_frame_id": "s5",
+    "ros2geometry.topic": "/gen/velocity_stamped"
+  }
+}
