@@ -1,0 +1,25 @@
+{
+  "name": "sentinels-mlrs_radio_link_stats",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd170001092e488dea006fdc461dffffff7fffff7fff7fff7f0000000000000000",
+  "expect": "fd170001092e488dea006fdc461dffffff7fffff7fff7fff7f0000000000000000",
+  "model": {
+    "@kind": "mlrs_radio_link_stats",
+    "@absent": [
+      "mavlinkstorm32.rx_lq_rc_cpct",
+      "mavlinkstorm32.rx_lq_ser_cpct",
+      "mavlinkstorm32.rx_rssi1",
+      "mavlinkstorm32.rx_snr1",
+      "mavlinkstorm32.tx_lq_ser_cpct",
+      "mavlinkstorm32.tx_rssi1",
+      "mavlinkstorm32.tx_snr1",
+      "mavlinkstorm32.rx_rssi2",
+      "mavlinkstorm32.rx_snr2",
+      "mavlinkstorm32.tx_rssi2",
+      "mavlinkstorm32.tx_snr2",
+      "mavlinkstorm32.frequency1_hz",
+      "mavlinkstorm32.frequency2_hz"
+    ]
+  }
+}

@@ -188,6 +188,7 @@ POSITION_NOTES = {
     "WATER_DEPTH": "the vehicle when the water depth was measured",
     "AVSS_DRONE_POSITION": "the drone",
     "TARGET_ABSOLUTE": "a target observed by the vehicle's sensors, not the vehicle (WGS84 stated)",
+    "RANGING_BEACON": "a radio beacon the vehicle ranges to, not the vehicle (WGS84 stated)",
 }
 
 # Cross-format cases per dialect, as CROSS below. `expect` is written by hand
@@ -496,8 +497,9 @@ Layout = collections.namedtuple("Layout", "message wire length crc_extra")
 Layout.__doc__ = """A message on the wire: its Placed fields in wire order, the full payload
 length in bytes and its CRC_EXTRA."""
 
-Line = collections.namedtuple("Line", "key pos bits transform")
-Line.__doc__ = "One `field` line of the pack: model key, first bit, length in bits, transform."
+Line = collections.namedtuple("Line", "key pos bits transform absent", defaults=((),))
+Line.__doc__ = """One `field` line of the pack: model key, first bit, length in bits, transform,
+and the raw values that mean "no value" (`absent`, engine-spec 0.9), first the one encode writes."""
 
 MappedField = collections.namedtuple("MappedField", "field offset status lines")
 MappedField.__doc__ = """A placed field with its mapping decided. `status` is `core`, `scalar`,
@@ -529,7 +531,7 @@ class KindPlan(collections.namedtuple("KindPlan", "message name length crc_extra
         return max((f.offset + f.field.bytes for f in self.fields if f.status != "unmapped"), default=0)
 
 
-Plan = collections.namedtuple("Plan", "kinds keys qualified")
+Plan = collections.namedtuple("Plan", "kinds keys qualified retired", defaults=((),))
 Plan.__doc__ = "The kinds in id order, the module keys and the message-qualified fields."
 
 
@@ -619,15 +621,136 @@ def transform_for(f):
     return "uint" if f.base.startswith("u") else "twos"
 
 
+# --------------------------------------------------- sentinels (0.9) ---
+#
+# A field's `invalid` attribute names the value that means "no value". The
+# pack states it as `absent <raw value>[,...]` (engine-spec 0.9): the raw value
+# is the field's bits read as an unsigned integer. The notation, as the MAVLink
+# message-definition schema states it: a scalar names its value; for an array
+# `[v]` marks every element that holds v, `[v1,,v3,]` the element at each
+# position that has a value, and `[v:]` the whole array when the first element
+# holds v.
+
+LIMIT_NAMES = {"INT8_MAX": 127, "INT16_MAX": 32767, "INT32_MAX": 2147483647,
+               "INT64_MAX": 9223372036854775807, "UINT8_MAX": 255, "UINT16_MAX": 65535,
+               "UINT32_MAX": 4294967295, "UINT64_MAX": 18446744073709551615,
+               "INT8_MIN": -128, "INT16_MIN": -32768, "INT32_MIN": -2147483648,
+               "INT64_MIN": -9223372036854775808,
+               "UINT8_MIN": 0, "UINT16_MIN": 0, "UINT32_MIN": 0, "UINT64_MIN": 0}
+# The quiet NaN a C compiler writes for NAN, and the same with the sign bit set
+# (what 0.0/0.0 gives on common hardware). Another NaN payload is not matched.
+NAN_RAW = {"float": (0x7FC00000, 0xFFC00000), "double": (0x7FF8000000000000, 0xFFF8000000000000)}
+
+
+class Unstatable(Exception):
+    """An `invalid` value the pack cannot state as `absent`; the text says why."""
+
+
+def raw_sentinels(base, token):
+    """The raw values (unsigned, of the element's width) that one `invalid`
+    token names for an element of type `base`."""
+    t = token.strip()
+    bits = 8 * SIZES[base]
+    if base in ("float", "double"):
+        if t.lower() == "nan":
+            return list(NAN_RAW[base])
+        code = "<f" if base == "float" else "<d"
+        if re.match(r"^-?\d+(\.\d+)?$", t):
+            return [int.from_bytes(struct.pack(code, float(t)), "little")]
+        if t in LIMIT_NAMES or re.match(r"^0[xX][0-9a-fA-F]+$", t):
+            # an integer limit on a float field: that number as a float
+            # (`UINT16_MAX` on GPS_INPUT.hdop is 65535.0)
+            v = LIMIT_NAMES[t] if t in LIMIT_NAMES else int(t, 16)
+            return [int.from_bytes(struct.pack(code, float(v)), "little")]
+        raise Unstatable("`%s` on a %s: not a number" % (t, base))
+    if base == "char":
+        raise Unstatable("text field")
+    if t in LIMIT_NAMES:
+        v = LIMIT_NAMES[t]
+    elif re.match(r"^-?\d+$", t):
+        v = int(t)
+    elif re.match(r"^0[xX][0-9a-fA-F]+$", t):
+        v = int(t, 16)
+    else:
+        raise Unstatable("`%s` names no number (an enum entry is not resolved)" % t)
+    lo, hi = (0, (1 << bits) - 1) if base.startswith("u") else (-(1 << (bits - 1)), (1 << (bits - 1)) - 1)
+    if not lo <= v <= hi:
+        raise Unstatable("`%s` is outside the range of %s" % (t, base))
+    return [v & ((1 << bits) - 1)]
+
+
+def field_sentinels(f):
+    """The `absent` values of each line of a field: a list with one entry per
+    element (one entry for a scalar or a text), each a tuple of raw values or
+    () for none. Raises Unstatable when the attribute cannot be stated."""
+    inv = f.invalid
+    count = f.n if f.is_array else 1
+    if inv is None:
+        return [()] * count
+    inv = inv.strip()
+    if f.base == "char":
+        if inv in ("0", "[0]") and 8 * f.bytes <= 64:
+            return [(0,)]                            # an all-NUL text (0.9 ruling 2)
+        raise Unstatable("text of %d bytes: `absent` is for fields of at most 64 bits" % f.bytes
+                         if inv in ("0", "[0]") else "`%s` on a text" % inv)
+    if not f.is_array:
+        if inv.startswith("["):
+            raise Unstatable("array notation `%s` on a scalar" % inv)
+        return [tuple(raw_sentinels(f.base, inv))]
+    if not (inv.startswith("[") and inv.endswith("]")):
+        raise Unstatable("`%s` on an array" % inv)
+    body = inv[1:-1]
+    if body.endswith(":"):
+        value = body[:-1]
+        if f.base in ("float", "double") and value.lower() == "nan":
+            # A NaN is never a model value, so every NaN element is absent;
+            # that the other elements are invalid too is not stated.
+            return [tuple(NAN_RAW[f.base])] * count
+        raise Unstatable("`%s`: the whole array is invalid when the first element holds %s"
+                         % (inv, value))
+    if "," in body:
+        parts = body.split(",")
+        out = []
+        for i in range(count):
+            p = parts[i].strip() if i < len(parts) else ""
+            out.append(tuple(raw_sentinels(f.base, p)) if p else ())
+        return out
+    return [tuple(raw_sentinels(f.base, body))] * count
+
+
+def sentinel_or_none(f):
+    """field_sentinels, or None when the attribute cannot be stated."""
+    try:
+        return field_sentinels(f)
+    except Unstatable:
+        return None
+
+
+def unstatable_reason(f):
+    try:
+        field_sentinels(f)
+        return None
+    except Unstatable as e:
+        return str(e)
+
+
 LAT_NAMES = ("lat",)
 LON_NAMES = ("lon", "lng")    # `lng` is the spelling of the ardupilotmega dialect
 
 
+BIND_INVALID = True           # False: the 0.1.0 rule, a field with `invalid` stays raw
+
+
 def is_core_latlon(f):
     """True for a position this pack can state as core `lat` or `lon`: an
-    int32_t in degE7 with that name and no value that means unknown."""
-    return (f.name in LAT_NAMES + LON_NAMES and f.units == "degE7" and f.base == "int32_t"
-            and f.n is None and f.invalid is None)
+    int32_t in degE7 with that name, whose value that means unknown, if it
+    declares one, the pack states as `absent`."""
+    if not (f.name in LAT_NAMES + LON_NAMES and f.units == "degE7" and f.base == "int32_t"
+            and f.n is None):
+        return False
+    if f.invalid is None:
+        return True
+    return BIND_INVALID and sentinel_or_none(f) is not None
 
 
 def core_name(f):
@@ -844,10 +967,34 @@ def find_shadows(names, requires, raw):
             for i, required in enumerate(requires)]
 
 
+def with_sentinels(fields):
+    """The mapped fields with the `absent` values of every line."""
+    out = []
+    for mf in fields:
+        sent = sentinel_or_none(mf.field) if mf.lines else None
+        if sent and len(sent) == len(mf.lines):
+            lines = tuple(line._replace(absent=s) for line, s in zip(mf.lines, sent))
+            mf = mf._replace(lines=lines)
+        out.append(mf)
+    return tuple(out)
+
+
 def make_plan(messages):
-    """The Plan of a list of messages: nothing is left for the emitters to decide."""
+    """The Plan of a list of messages: nothing is left for the emitters to decide.
+
+    `retired` are the keys the rule of version 0.1.0 (a field with `invalid`
+    stays raw) declares and this plan does not map: they stay declared, so no
+    key of the module is ever removed (AGENTS.md rule 7)."""
+    global BIND_INVALID
     layouts = [lay_out(m) for m in messages]
+    BIND_INVALID = False
+    try:
+        before = assign_keys(layouts).keys
+    finally:
+        BIND_INVALID = True
     assigned = assign_keys(layouts)
+    assigned = assigned._replace(fields=[with_sentinels(f) for f in assigned.fields])
+    retired = tuple((k, before[k]) for k in before if k not in assigned.keys)
     names = [m.name for m in messages]
     raw = [raw_keys(fields) for fields in assigned.fields]
     requires = choose_requires(names, raw)
@@ -855,7 +1002,7 @@ def make_plan(messages):
     kinds = [KindPlan(layout.message, kind_name(layout.message), layout.length, layout.crc_extra,
                       assigned.core_ok[i], assigned.fields[i], requires[i], shadows[i])
              for i, layout in enumerate(layouts)]
-    return Plan(kinds, assigned.keys, assigned.qualified)
+    return Plan(kinds, assigned.keys, assigned.qualified, retired)
 
 
 def check_known_crc_extra(kinds):
@@ -903,7 +1050,7 @@ def _source_lines(sha):
     return out
 
 
-def emit_model(keys, sha):
+def emit_model(keys, sha, retired=()):
     """The text of model/<module>.def."""
     if DIALECT:
         first = ["# The %s module: fields of the messages that the MAVLink dialect" % MODULE,
@@ -926,6 +1073,10 @@ def emit_model(keys, sha):
         fname = decl.uses[0][1]
         shown = ", ".join(names[:3]) + (" and %d more" % (len(names) - 3) if len(names) > 3 else "")
         out.append('key  %s  %s  %s  "field %s of %s"' % (k, decl.type, decl.unit, fname, shown))
+    for k, decl in retired:
+        names = ", ".join(m for m, _ in decl.uses)
+        out.append('key  %s  %s  %s  "field %s of %s until its value that means unknown was stated; '
+                   'now a core key, this key is no longer mapped"' % (k, decl.type, decl.unit, decl.uses[0][1], names))
     return "\n".join(out) + "\n"
 
 
@@ -965,7 +1116,9 @@ def emit_pack(kinds, sha):
         out.append("requires  %s" % " ".join(kind.requires))
         for f in kind.fields:
             for line in f.lines:
-                out.append("field     %s %s %s" % (line.key, loc(line.pos, line.bits), line.transform))
+                out.append("field     %s %s %s%s" % (line.key, loc(line.pos, line.bits), line.transform,
+                                                   " absent " + ",".join(map(str, line.absent))
+                                                   if line.absent else ""))
     return "\n".join(out) + "\n"
 
 
@@ -1040,7 +1193,29 @@ def frame(kind, payload, seq, sysid, compid, with_crc, compat=0):
     return body
 
 
-def roundtrip_vector(kind, index):
+def avoid_sentinels(f, values, sent):
+    """Move a sample off the values that mean unknown, so a round trip keeps it:
+    the nearest value below, else above, whose raw value is no sentinel."""
+    step = 0.25 if f.base in ("float", "double") else 1
+
+    def fix(v, s):
+        if not s or f.base == "char":
+            return v
+        for k in range(0, 8):
+            for cand in ((v - k * step, v + k * step) if k else (v,)):
+                try:
+                    raw = int.from_bytes(pack_scalar(f, cand), "little")
+                except struct.error:
+                    continue
+                if raw not in s:
+                    return cand
+        raise GenError("%s: no sample value off its sentinels" % f.name)
+    if isinstance(values, list):
+        return [fix(v, s) for v, s in zip(values, sent)]
+    return fix(values, sent[0])
+
+
+def roundtrip_vector(kind, index, sentinel=False):
     """The frame of a kind's round-trip vector, as the encoder writes it: every
     mapped field holds a sample value, unmapped arrays are zero, the bytes end
     at the last mapped byte and there is no CRC."""
@@ -1057,7 +1232,18 @@ def roundtrip_vector(kind, index):
             values[f.name] = [sample_value(f, salt + i) for i in range(f.n)]
         else:
             values[f.name] = sample_value(f, salt)
-    payload = build_payload(kind, values)
+        sent = [line.absent for line in mapped.lines]
+        if any(sent):
+            values[f.name] = avoid_sentinels(f, values[f.name], sent)
+    payload = bytearray(build_payload(kind, values))
+    if sentinel:
+        # every line that has `absent` holds its first sentinel
+        for mapped in kind.fields:
+            for line in mapped.lines:
+                if line.absent:
+                    start = (line.pos - PAYLOAD_BIT0) // 8
+                    payload[start:start + line.bits // 8] = line.absent[0].to_bytes(line.bits // 8, "little")
+    payload = bytes(payload)
     # with --compat-flags every other frame sets COMPAT (it changes no layout);
     # INCOMPAT stays 0, its bit 0x01 would announce a signature
     return frame(kind, payload[:kind.mapped_len], index % 256, 1 + msgid % 250, 1 + msgid % 191, False,
@@ -1089,6 +1275,19 @@ CROSS = [
      {"time": 1700000000000000, "lat": 356762000, "lon": 1396503000, "alt": 40000,
       "relative_alt": 5000, "flight_state": 3},
      '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{}}'),
+    # An aircraft reported by ADS-B: lat and lon state INT32_MAX for unknown,
+    # which the pack states as `absent`. A known position converts as above;
+    # INT32_MAX in both decodes to no lat and no lon, so `geometry` is null.
+    ("ADSB_VEHICLE", 12, 1, 156,
+     {"ICAO_address": 0x4CA2B1, "lat": 534213000, "lon": -62700000, "altitude": 1066800,
+      "heading": 27000, "hor_velocity": 12860, "ver_velocity": 0, "callsign": "EIN123",
+      "emitter_type": 3, "tslc": 1, "flags": 3, "squawk": 1200},
+     '{"type":"Feature","geometry":{"type":"Point","coordinates":[-6.27,53.4213]},"properties":{}}'),
+    ("ADSB_VEHICLE", 13, 1, 156,
+     {"ICAO_address": 0x4CA2B1, "lat": 2147483647, "lon": 2147483647, "altitude": 2147483647,
+      "heading": 65535, "hor_velocity": 65535, "ver_velocity": 32767, "callsign": "EIN123",
+      "emitter_type": 3, "tslc": 1, "flags": 3, "squawk": 1200},
+     '{"type":"Feature","geometry":null,"properties":{}}'),
 ]
 
 
@@ -1105,21 +1304,54 @@ def vector_files(kinds):
         files.append(("rt-%05d-%s.json" % (kind.message.id, kind.name), _vector_text([
             ("name", "roundtrip-%s" % kind.name), ("from", FORMAT), ("to", FORMAT),
             ("input", data), ("expect", data), ("model", {"@kind": kind.name})])))
+    for i, kind in enumerate(kinds):
+        absent = [line.key for f in kind.fields for line in f.lines if line.absent]
+        if not absent:
+            continue
+        # every sentinel decodes to an absent key, and the absent key encodes
+        # back to the sentinel: the frame comes back unchanged
+        data = roundtrip_vector(kind, i, sentinel=True).hex()
+        files.append(("sn-%05d-%s.json" % (kind.message.id, kind.name), _vector_text([
+            ("name", "sentinels-%s" % kind.name), ("from", FORMAT), ("to", FORMAT),
+            ("input", data), ("expect", data),
+            ("model", collections.OrderedDict([("@kind", kind.name), ("@absent", absent)]))])))
+        second = [(f, line) for f in kind.fields for line in f.lines if len(line.absent) > 1]
+        if second:
+            # a second sentinel (a NaN with the sign bit set) re-encodes as the first
+            frame_in = bytearray(bytes.fromhex(data))
+            for _, line in second:
+                start = line.pos // 8
+                frame_in[start:start + line.bits // 8] = line.absent[1].to_bytes(line.bits // 8, "little")
+            files.append(("sn-%05d-%s-second.json" % (kind.message.id, kind.name), _vector_text([
+                ("name", "second-sentinels-%s" % kind.name), ("from", FORMAT), ("to", FORMAT),
+                ("input", bytes(frame_in).hex()), ("expect", data),
+                ("model", collections.OrderedDict([("@kind", kind.name),
+                                                   ("@absent", [line.key for _, line in second])]))])))
     by_name = {kind.message.name: kind for kind in kinds}
     for n, (name, seq, sysid, compid, values, expect) in enumerate(CROSS, 1):
         if name not in by_name:
             raise GenError("the source has no message %s, which a vector to geojson is written from" % name)
         kind = by_name[name]
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
-        pos = {core_name(f.field): values[f.field.name] for f in kind.fields if f.status == "core"}
-        model = collections.OrderedDict([("@kind", kind.name),
-                                         ("lat", fmt_float(pos["lat"] * 1.0 / 10000000.0)),
-                                         ("lon", fmt_float(pos["lon"] * 1.0 / 10000000.0)),
-                                         (HEADER_MODULE + ".seq", str(seq)),
+        pos, gone = {}, []
+        for f in kind.fields:
+            if f.status == "core":
+                v = values[f.field.name]
+                if (v & 0xFFFFFFFF) in f.lines[0].absent:
+                    gone.append(core_name(f.field))
+                else:
+                    pos[core_name(f.field)] = v
+        model = collections.OrderedDict([("@kind", kind.name)] +
+                                        [(k, fmt_float(pos[k] * 1.0 / 10000000.0)) for k in ("lat", "lon")
+                                         if k in pos] +
+                                        [(HEADER_MODULE + ".seq", str(seq)),
                                          (HEADER_MODULE + ".sysid", str(sysid)),
                                          (HEADER_MODULE + ".compid", str(compid))])
-        files.append(("x-%02d-%s-to-geojson.json" % (n, kind.name), _vector_text([
-            ("name", "%s-to-geojson" % kind.name), ("from", FORMAT), ("to", "geojson"),
+        if gone:
+            model["@absent"] = gone
+        stem = kind.name + ("-unknown-position" if gone else "")
+        files.append(("x-%02d-%s-to-geojson.json" % (n, stem), _vector_text([
+            ("name", "%s-to-geojson" % stem), ("from", FORMAT), ("to", "geojson"),
             ("input", data.hex()), ("expect", expect), ("model", model)])))
     return files
 
@@ -1229,7 +1461,7 @@ def _md_mapped(plan):
     a("| `double` | `f64` | float |")
     a("| `char[n]` | `ascii` over `8n` bits | string |")
     a("| other `type[n]`, n of 2 to %d | one line per element, keys `…_0`, `…_1`, … | as the element |" % MAX_ARRAY_ELEMENTS)
-    a("| `int32_t` degE7 named `lat` or `lon`, with no `invalid` value declared | `sscale:%s` | float, core `lat` / `lon` |" % DEGE7)
+    a("| `int32_t` degE7 named `lat` or `lon`, whose `invalid` value, if any, is stated as `absent` | `sscale:%s` | float, core `lat` / `lon` |" % DEGE7)
     a("")
     a("Every other value is raw: the integer or float on the wire, in the unit the")
     a("definition states, which `model/mavlink.def` records in the key's unit column.")
@@ -1275,18 +1507,17 @@ def _md_core(plan):
     a("")
     a("Left raw on purpose:")
     a("")
-    a("- degE7 fields that are not named `lat` / `lon` or that declare an `invalid`")
-    a("  value (%d fields, for example `latitude`, `lat_int`, and `lat` of `adsb_vehicle`," % len(raw_latlon))
-    a("  `ais_vessel`, `global_position_sensor`, where INT32_MAX means unknown and would")
-    a("  decode to 214.7483647 degrees).")
+    a("- degE7 fields that are not named `lat` / `lon` (%d fields, for example `latitude`" % len(raw_latlon))
+    a("  and `lat_int`). The `lat` / `lon` of `adsb_vehicle`, `ais_vessel` and")
+    a("  `global_position_sensor` declare INT32_MAX for unknown; the pack states that as")
+    a("  `absent` (Values that mean unknown, below), so they bind core `lat` / `lon`.")
     a("- UTC epoch times in microseconds (`time_unix_usec`, `time_usec`, `time_utc`):")
     a("  core `time_ms` is an integer and the only scaling transforms yield float; a")
     a("  64-bit microsecond count scaled by 0.001 is not exact in a double.")
     a("- Altitude. MAVLink `alt` fields are above mean sea level; core `hae` is above")
     a("  the WGS84 ellipsoid.")
     a("- Speed, course, heading and velocity components (`vel`, `cog`, `hdg`, `vx`…):")
-    a("  the reference frame is in the description text, not in the units, and most")
-    a("  declare an `invalid` value (UINT16_MAX).")
+    a("  the reference frame is in the description text, not in the units.")
     a("")
     return o
 
@@ -1355,8 +1586,9 @@ def _md_limits(plan):
     else:
         a("- **Output length.** Every payload byte is mapped, so encode output is the")
         a("  `10 + LEN` bytes of header and payload, without the CRC.")
-    a("- **`invalid` values.** A field's `invalid` attribute (a value that means")
-    a("  unknown) is not interpreted; the key holds the number.")
+    a("- **Values that mean unknown** are stated as `absent` where the pack can")
+    a("  state them (below); another NaN bit pattern than the two listed still fails")
+    a("  to decode (`transform-decode`), as any NaN did before.")
     a("- **Text.** `ascii` refuses bytes outside 0x20..0x7E, so a `char[n]` field that")
     a("  holds UTF-8 or binary data fails to decode. Trailing NULs are dropped; an")
     a("  all-NUL field is the empty string, present.")
@@ -1596,7 +1828,8 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     if core:
         a("The binding is the one `mavlink2` makes, for the same field semantics: an")
         a("`int32_t` field in degE7 that the definition names and describes as the")
-        a("latitude or longitude, with no `invalid` value. A message binds only when it has")
+        a("latitude or longitude, whose `invalid` value, if any, the pack states as `absent`.")
+        a("A message binds only when it has")
         a("one latitude and one longitude field that qualify.")
         if any(f.name == "lng" for m in core for f in m.wire if f.status == "core"):
             a("This dialect spells the longitude `lng`; it is treated as `lon`.")
@@ -1614,8 +1847,8 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
         a("")
         a("Left raw: %s. A field stays raw when its name is not `lat`, `lon` or `lng`," % ", ".join(
             "`%s.%s`" % (m.name, f.name) for m, f in raw_deg))
-        a("when it declares an `invalid` value (INT32_MAX would decode to 214.7483647")
-        a("degrees), or when its message has no qualifying partner field.")
+        a("when it declares an `invalid` value the pack cannot state, or when its")
+        a("message has no qualifying partner field.")
     a("")
     a("Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:")
     a("altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is")
@@ -1632,6 +1865,7 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
         a("built from such a kind's keys with its kind cleared selects the first")
         a("qualifying kind in id order: %s." % ", ".join("`%s`" % m.kind for m in shadow))
     a("")
+    o.extend(_md_sentinels(plan))
     a("## What is not mapped")
     a("")
     md_signature(a)
@@ -1661,9 +1895,9 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     a("")
     a("Those of `packs/mavlink2/pack.md` (Known limits) hold here unchanged: truncated")
     a("payloads (LEN shorter than the full length) are `no-kind`; the CRC is neither")
-    a("checked nor written; unmapped bits are written as zero; an `invalid` value is"
-      if LEGACY else "checked nor written; an `invalid` value is")
-    a("carried as its number; `ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values")
+    a("checked nor written; unmapped bits are written as zero;"
+      if LEGACY else "checked nor written;")
+    a("`ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values")
     a("of 2^63 or above are the negative model integer with the same bits.")
     if short:
         a("In %d kinds the payload ends in unmapped array fields, so encode output is" % len(short))
@@ -1701,10 +1935,56 @@ def emit_dialect_md(plan, skipped_layouts, stats, sha):
     return "\n".join(o) + "\n"
 
 
+def _md_sentinels(plan, extra=()):
+    """The section on `absent`: what is stated, and every `invalid` the pack
+    cannot state, with the reason."""
+    lines = [(k, f, line) for k in plan.kinds for f in k.fields for line in f.lines if line.absent]
+    fields = {(k.name, f.field.name) for k, f, _ in lines}
+    nan = sum(1 for _, _, line in lines if len(line.absent) > 1)
+    unstated = [(k.message.name, f.field) for k in plan.kinds for f in k.fields
+                if f.field.invalid is not None and not any(line.absent for line in f.lines)]
+    unstated += list(extra)
+    o = []
+    a = o.append
+    a("## Values that mean unknown")
+    a("")
+    a("A field whose definition declares an `invalid` value carries the option")
+    a("`absent <raw value>[,...]` (engine-spec 0.9): the value decodes to no key, and")
+    a("an entity without the key encodes the first raw value. %d `field` lines of %d" % (len(lines), len(fields)))
+    a("fields carry it. The raw value is the field's bits as an unsigned integer:")
+    a("")
+    a("| `invalid` | Raw value |")
+    a("|---|---|")
+    a("| `INT32_MAX`, `UINT16_MAX` and the other limits | the limit's bits (INT32_MAX: 2147483647) |")
+    a("| a decimal number (`0`, `-1`, `-1000`) | its two's-complement bits for an integer, its IEEE bits for a float |")
+    a("| a limit or a hex number on a float (`UINT16_MAX`, `0xFFFF`) | the IEEE bits of that number (65535.0) |")
+    a("| `NaN` on a `float` / `double` | 2143289344,4290772992 / 9221120237041090560,18444492273895866368 (the quiet NaN, then with the sign bit) |")
+    a("| `[v]` on an array | `v` on every element |")
+    a("| `[v1,,v3,]` | `v1` on the first element, `v3` on the third |")
+    a("| `[NaN:]` on a float array | NaN on every element |")
+    a("")
+    a("`[NaN:]` means the whole array is unknown when the first element is NaN; the pack")
+    a("states only that each NaN element has no value (a NaN is never a model value).")
+    a("%d lines take two raw values (the NaNs); an input with the second re-encodes" % nan)
+    a("with the first.")
+    a("")
+    if unstated:
+        a("Not stated (%d fields), so the key holds the wire value as before:" % len(unstated))
+        a("")
+        a("| Message | Field | `invalid` | Why |")
+        a("|---|---|---|---|")
+        for name, f in unstated:
+            a("| %s | %s | `%s` | %s |" % (name, f.name, f.invalid, unstatable_reason(f) or
+                                          "the field is not mapped"))
+        a("")
+    return o
+
+
 def emit_pack_md(plan, stats, sha):
     """The text of packs/mavlink2/pack.md, section by section."""
     lines = (_md_layout(sha) + _md_numbers(plan, stats) + _md_mapped(plan) + _md_core(plan)
-             + _md_requires(plan) + _md_not_mapped(plan) + _md_limits(plan) + _md_vectors())
+             + _md_requires(plan) + _md_sentinels(plan) + _md_not_mapped(plan) + _md_limits(plan)
+             + _md_vectors())
     return "\n".join(lines) + "\n"
 
 
@@ -1813,9 +2093,16 @@ def engine_decode(pack, data):
     entity = collections.OrderedDict()
     for node in lines:
         if node.d == "field":
-            entity[node.key] = decode_value(node.tr, node.targs, node.bits,
-                                            get_bits(word, node.start, node.bits))
+            raw = get_bits(word, node.start, node.bits)
+            if raw in sentinels_of(node):
+                continue                # engine-spec 0.9: the sentinel means no value
+            entity[node.key] = decode_value(node.tr, node.targs, node.bits, raw)
     return kind.name, entity
+
+
+def sentinels_of(node):
+    """The raw values of a loaded field line's `absent` option, in order."""
+    return [int(v) for v in node.absent.split(",")] if node.absent else []
 
 
 def engine_encode(pack, name, entity):
@@ -1828,6 +2115,8 @@ def engine_encode(pack, name, entity):
     for node in lines:
         if node.d == "field" and node.key in entity:
             word |= encode_value(node.tr, node.targs, node.bits, entity[node.key]) << node.start
+        elif node.d == "field" and node.absent:
+            word |= sentinels_of(node)[0] << node.start      # 0.9: an absent key writes the first sentinel
         elif node.d == "when":
             word |= int(node.value) << node.start
     return word.to_bytes(message_bytes(lines), "little")
@@ -1931,7 +2220,7 @@ def check_pack_matches_plan(pack, module, plan):
             module_name, key = gtcheck.split_key(node.key)
             if module_name == MODULE:
                 used.add(key)
-    if used != set(module.keys):
+    if used | {k for k, _ in plan.retired} != set(module.keys) or used & {k for k, _ in plan.retired}:
         raise GenError("module keys and mapped keys differ", module.label)
 
 
@@ -1952,6 +2241,11 @@ def check_vectors(pack, vectors):
         try:
             kname, entity = engine_decode(pack, bytes.fromhex(vec["input"]))
             for key, want in vec.get("model", {}).items():
+                if key == "@absent":
+                    present = [k for k in want if k in entity]
+                    if present:
+                        raise GenError("model keys %s should be absent" % present, label)
+                    continue
                 if key == "@kind":
                     if want != kname:
                         raise GenError("decoded kind %s, vector says %s" % (kname, want), label)
@@ -2071,7 +2365,7 @@ def generate(out, core_text, core_label, src=None, provenance=None):
     else:
         check_known_crc_extra(plan.kinds)
 
-    out.write(MODEL_PATH, emit_model(plan.keys, sha))
+    out.write(MODEL_PATH, emit_model(plan.keys, sha, plan.retired))
     out.write(PACK_PATH, emit_pack(plan.kinds, sha))
     vectors = vector_files(plan.kinds)
     write_vectors(out, vectors)

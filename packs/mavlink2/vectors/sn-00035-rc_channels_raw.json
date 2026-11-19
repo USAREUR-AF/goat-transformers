@@ -1,0 +1,21 @@
+{
+  "name": "sentinels-rc_channels_raw",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1600001824242300007960c56bffffffffffffffffffffffffffffffff08ff",
+  "expect": "fd1600001824242300007960c56bffffffffffffffffffffffffffffffff08ff",
+  "model": {
+    "@kind": "rc_channels_raw",
+    "@absent": [
+      "mavlink.chan1_raw_us",
+      "mavlink.chan2_raw_us",
+      "mavlink.chan3_raw_us",
+      "mavlink.chan4_raw_us",
+      "mavlink.chan5_raw_us",
+      "mavlink.chan6_raw_us",
+      "mavlink.chan7_raw_us",
+      "mavlink.chan8_raw_us",
+      "mavlink.rssi"
+    ]
+  }
+}

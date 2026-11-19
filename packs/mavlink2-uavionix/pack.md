@@ -90,8 +90,8 @@ No message of `uAvionix.xml` has a latitude and a longitude field that bind core
 so no kind maps a shared key and the pack converts to no other format.
 
 Left raw: `UAVIONIX_ADSB_OUT_DYNAMIC.gpsLat`, `UAVIONIX_ADSB_OUT_DYNAMIC.gpsLon`. A field stays raw when its name is not `lat`, `lon` or `lng`,
-when it declares an `invalid` value (INT32_MAX would decode to 214.7483647
-degrees), or when its message has no qualifying partner field.
+when it declares an `invalid` value the pack cannot state, or when its
+message has no qualifying partner field.
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
@@ -106,6 +106,28 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 For 1 kinds the required keys are all mapped by another kind too; an entity
 built from such a kind's keys with its kind cleared selects the first
 qualifying kind in id order: `uavionix_adsb_out_cfg_flightid`.
+
+## Values that mean unknown
+
+A field whose definition declares an `invalid` value carries the option
+`absent <raw value>[,...]` (engine-spec 0.9): the value decodes to no key, and
+an entity without the key encodes the first raw value. 0 `field` lines of 0
+fields carry it. The raw value is the field's bits as an unsigned integer:
+
+| `invalid` | Raw value |
+|---|---|
+| `INT32_MAX`, `UINT16_MAX` and the other limits | the limit's bits (INT32_MAX: 2147483647) |
+| a decimal number (`0`, `-1`, `-1000`) | its two's-complement bits for an integer, its IEEE bits for a float |
+| a limit or a hex number on a float (`UINT16_MAX`, `0xFFFF`) | the IEEE bits of that number (65535.0) |
+| `NaN` on a `float` / `double` | 2143289344,4290772992 / 9221120237041090560,18444492273895866368 (the quiet NaN, then with the sign bit) |
+| `[v]` on an array | `v` on every element |
+| `[v1,,v3,]` | `v1` on the first element, `v3` on the third |
+| `[NaN:]` on a float array | NaN on every element |
+
+`[NaN:]` means the whole array is unknown when the first element is NaN; the pack
+states only that each NaN element has no value (a NaN is never a model value).
+0 lines take two raw values (the NaNs); an input with the second re-encodes
+with the first.
 
 ## What is not mapped
 
@@ -123,8 +145,8 @@ qualifying kind in id order: `uavionix_adsb_out_cfg_flightid`.
 
 Those of `packs/mavlink2/pack.md` (Known limits) hold here unchanged: truncated
 payloads (LEN shorter than the full length) are `no-kind`; the CRC is neither
-checked nor written; an `invalid` value is
-carried as its number; `ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values
+checked nor written;
+`ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values
 of 2^63 or above are the negative model integer with the same bits.
 
 ## Vectors

@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-scaled_imu3",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1800016382828100003b913c5f562bd77e58d2d9255a79dbcc5c20dd735ec70000",
+  "expect": "fd1800016382828100003b913c5f562bd77e58d2d9255a79dbcc5c20dd735ec70000",
+  "model": {
+    "@kind": "scaled_imu3",
+    "@absent": [
+      "mavlink.temperature_cdegc"
+    ]
+  }
+}

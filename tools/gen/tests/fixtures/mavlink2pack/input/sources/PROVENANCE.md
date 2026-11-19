@@ -8,7 +8,7 @@ MAVLink repository; the commit below is a placeholder of the right shape.
 
 | Local file | Path | SHA-256 |
 |---|---|---|
-| `common.xml` | `tools/gen/tests/fixtures/mavlink2pack/input/sources/common.xml` | `3db8b93ec2eb44cb9e36cb24bb07d0bf894ef0f5f2761fce130e849e8e39e3b3` |
+| `common.xml` | `tools/gen/tests/fixtures/mavlink2pack/input/sources/common.xml` | `b50a50b9ab48d854dec20418c31ce0eea3d2a314bfa8217377a4510c339eb89a` |
 | `standard.xml` | `tools/gen/tests/fixtures/mavlink2pack/input/sources/standard.xml` | `64150ec2955fe49fbbc4280220cb01d6de912510cc8a0d211d880f20be2717bb` |
 | `minimal.xml` | `tools/gen/tests/fixtures/mavlink2pack/input/sources/minimal.xml` | `49c856c4a3dc2293392f95f67ac0edcb79f74e61e7363394977433a337b4bc65` |
 

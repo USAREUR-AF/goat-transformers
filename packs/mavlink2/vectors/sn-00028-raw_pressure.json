@@ -1,0 +1,14 @@
+{
+  "name": "sentinels-raw_pressure",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd100001111d1d1c00007039bf4e00000080a920000000002c1b",
+  "expect": "fd100001111d1d1c00007039bf4e00000080a920000000002c1b",
+  "model": {
+    "@kind": "raw_pressure",
+    "@absent": [
+      "mavlink.press_diff1",
+      "mavlink.press_diff2"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "second-sentinels-gimbal_manager_set_pitchyaw",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd170000a826611f0100bddda2000000c0ff0000c0ff0000c0ff0000c0fff0c79e",
+  "expect": "fd170000a826611f0100bddda2000000c07f0000c07f0000c07f0000c07ff0c79e",
+  "model": {
+    "@kind": "gimbal_manager_set_pitchyaw",
+    "@absent": [
+      "mavlink.pitch_rad",
+      "mavlink.yaw_rad",
+      "mavlink.pitch_rate_rad_per_s",
+      "mavlink.yaw_rate_rad_per_s"
+    ]
+  }
+}

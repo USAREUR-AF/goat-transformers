@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-winch_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd220000e0061d2d2300cfe9b521000000000000c07f0000c07f0000c07f0000c07f0000c07fd9e0cf16ff7f",
+  "expect": "fd220000e0061d2d2300cfe9b521000000000000c07f0000c07f0000c07f0000c07f0000c07fd9e0cf16ff7f",
+  "model": {
+    "@kind": "winch_status",
+    "@absent": [
+      "mavlink.line_length_m",
+      "mavlink.speed_m_per_s",
+      "mavlink.tension_kg",
+      "mavlink.voltage_v",
+      "mavlink.current_a",
+      "mavlink.winch_status_temperature_degc"
+    ]
+  }
+}

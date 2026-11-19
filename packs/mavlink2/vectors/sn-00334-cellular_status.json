@@ -1,0 +1,25 @@
+{
+  "name": "sentinels-cellular_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd350000bc55904e0100ffffffff0000a37a51ffff00000000000000004d343800000000000000000000000000000000000000000000000000000000000000",
+  "expect": "fd350000bc55904e0100ffffffff0000a37a51ffff00000000000000004d343800000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "cellular_status",
+    "@absent": [
+      "mavlink.mcc",
+      "mavlink.mnc",
+      "mavlink.lac",
+      "mavlink.quality",
+      "mavlink.link_tx_rate_kib_per_s",
+      "mavlink.link_rx_rate_kib_per_s",
+      "mavlink.band_number",
+      "mavlink.band_frequency_mhz",
+      "mavlink.channel_number",
+      "mavlink.rx_level_dbm",
+      "mavlink.tx_level_dbm",
+      "mavlink.rx_quality_dbm",
+      "mavlink.sinr_db"
+    ]
+  }
+}

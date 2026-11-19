@@ -1,0 +1,14 @@
+{
+  "name": "sentinels-control_status",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd0c00010b0d830002004c0000ab5c0dbe6f20d18233",
+  "expect": "fd0c00010b0d830002004c0000ab5c0dbe6f20d18233",
+  "model": {
+    "@kind": "control_status",
+    "@absent": [
+      "mavlinkdevelopment.gcs_main",
+      "mavlinkdevelopment.gcs_secondary_0"
+    ]
+  }
+}

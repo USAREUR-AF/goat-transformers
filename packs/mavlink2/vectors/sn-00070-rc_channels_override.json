@@ -1,0 +1,30 @@
+{
+  "name": "sentinels-rc_channels_override",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd260001334747460000ffffffffffffffffffffffffffffffff5e350000000000000000000000000000000000000000",
+  "expect": "fd260001334747460000ffffffffffffffffffffffffffffffff5e350000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "rc_channels_override",
+    "@absent": [
+      "mavlink.chan1_raw_us",
+      "mavlink.chan2_raw_us",
+      "mavlink.chan3_raw_us",
+      "mavlink.chan4_raw_us",
+      "mavlink.chan5_raw_us",
+      "mavlink.chan6_raw_us",
+      "mavlink.chan7_raw_us",
+      "mavlink.chan8_raw_us",
+      "mavlink.chan9_raw_us",
+      "mavlink.chan10_raw_us",
+      "mavlink.chan11_raw_us",
+      "mavlink.chan12_raw_us",
+      "mavlink.chan13_raw_us",
+      "mavlink.chan14_raw_us",
+      "mavlink.chan15_raw_us",
+      "mavlink.chan16_raw_us",
+      "mavlink.chan17_raw_us",
+      "mavlink.chan18_raw_us"
+    ]
+  }
+}

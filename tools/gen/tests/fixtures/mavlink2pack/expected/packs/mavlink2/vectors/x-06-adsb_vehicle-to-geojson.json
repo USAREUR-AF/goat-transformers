@@ -1,0 +1,15 @@
+{
+  "name": "adsb_vehicle-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd2600000c019cf60000b1a24c008871d71f204643fc3047100078693c3200000300b0040045494e3132330000000301e65c",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-6.27,53.4213]},\"properties\":{}}",
+  "model": {
+    "@kind": "adsb_vehicle",
+    "lat": "53.4213",
+    "lon": "-6.27",
+    "mavlink.seq": "12",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "156"
+  }
+}

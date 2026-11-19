@@ -1,0 +1,15 @@
+{
+  "name": "sentinels-time_estimate_to_target",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd140001cb83be7c0100883572dc098976dcffffffffffffffffffffffff",
+  "expect": "fd140001cb83be7c0100883572dc098976dcffffffffffffffffffffffff",
+  "model": {
+    "@kind": "time_estimate_to_target",
+    "@absent": [
+      "mavlink.mission_next_item_s",
+      "mavlink.mission_end_s",
+      "mavlink.commanded_action_s"
+    ]
+  }
+}

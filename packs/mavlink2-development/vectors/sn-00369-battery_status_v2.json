@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-battery_status_v2",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd1b00010378b37101000000c07f0000c07f0000c07f0000c07f0000c07f7edc122dff7f2c",
+  "expect": "fd1b00010378b37101000000c07f0000c07f0000c07f0000c07f0000c07f7edc122dff7f2c",
+  "model": {
+    "@kind": "battery_status_v2",
+    "@absent": [
+      "mavlinkdevelopment.voltage_v",
+      "mavlinkdevelopment.current_a",
+      "mavlinkdevelopment.capacity_consumed_ah",
+      "mavlinkdevelopment.capacity_remaining_ah",
+      "mavlinkdevelopment.state_of_charge_pct",
+      "mavlinkdevelopment.temperature_cdegc"
+    ]
+  }
+}

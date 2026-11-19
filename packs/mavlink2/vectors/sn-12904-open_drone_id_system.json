@@ -1,0 +1,17 @@
+{
+  "name": "sentinels-open_drone_id_system",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd360001e59b6c683200000000000000000000007ac400007ac400007ac4977bae696ecf45231cf3ca7b2cdd8e3ff0a15203b46516c77829da8b3ceda1784f26",
+  "expect": "fd360001e59b6c683200000000000000000000007ac400007ac400007ac4977bae696ecf45231cf3ca7b2cdd8e3ff0a15203b46516c77829da8b3ceda1784f26",
+  "model": {
+    "@kind": "open_drone_id_system",
+    "@absent": [
+      "mavlink.operator_latitude_dege7",
+      "mavlink.operator_longitude_dege7",
+      "mavlink.area_ceiling_m",
+      "mavlink.area_floor_m",
+      "mavlink.operator_altitude_geo_m"
+    ]
+  }
+}

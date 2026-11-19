@@ -1,0 +1,17 @@
+{
+  "name": "sentinels-hil_gps",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2700015372727100004bcac05300000000a0061c0660f9e3f9c8c783c8ffffffffffffcc954de9ce3cffff88ff360d60",
+  "expect": "fd2700015372727100004bcac05300000000a0061c0660f9e3f9c8c783c8ffffffffffffcc954de9ce3cffff88ff360d60",
+  "model": {
+    "@kind": "hil_gps",
+    "@absent": [
+      "mavlink.eph",
+      "mavlink.epv",
+      "mavlink.vel_cm_per_s",
+      "mavlink.cog_cdeg",
+      "mavlink.satellites_visible"
+    ]
+  }
+}

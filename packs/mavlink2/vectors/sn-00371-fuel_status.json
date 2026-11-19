@@ -1,0 +1,17 @@
+{
+  "name": "sentinels-fuel_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1a0000c67ab57301000000803f0000c07f0000c07f0000c07f0000c07f5c55827e33ff",
+  "expect": "fd1a0000c67ab57301000000803f0000c07f0000c07f0000c07f0000c07f5c55827e33ff",
+  "model": {
+    "@kind": "fuel_status",
+    "@absent": [
+      "mavlink.consumed_fuel",
+      "mavlink.remaining_fuel",
+      "mavlink.flow_rate",
+      "mavlink.temperature_k",
+      "mavlink.percent_remaining_pct"
+    ]
+  }
+}

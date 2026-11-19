@@ -136,7 +136,9 @@
       <field type="int32_t" name="lat" units="degE7">latitude</field>
       <field type="int32_t" name="lon" units="degE7">longitude</field>
     </message>
-    <!-- Positions that stay raw, and names that clash with other messages:
+    <!-- A position whose value for unknown the pack states as `absent`, a
+         position under other names that stays raw, and names that clash with
+         other messages:
          `mode` (no enum here), `level` (float here), `alt_mm` (no unit here,
          same name as `alt` in mm elsewhere), `seq` (a frame-header key). -->
     <message id="301" name="TEST_SURVEY">
@@ -149,6 +151,35 @@
       <field type="int32_t" name="alt_mm">same key name as alt in mm</field>
       <field type="uint16_t" name="seq">same name as a frame-header key</field>
       <field type="uint16_t" name="Vcc" units="mV">shares a key with vcc of TEST_SHAPES</field>
+    </message>
+    <!-- The ADS-B report the generator's vectors to geojson are written from,
+         and the forms of `invalid` the pack states as `absent`, or lists as
+         not stated. -->
+    <message id="246" name="ADSB_VEHICLE">
+      <field type="uint32_t" name="ICAO_address">address</field>
+      <field type="int32_t" name="lat" units="degE7" invalid="INT32_MAX">latitude</field>
+      <field type="int32_t" name="lon" units="degE7" invalid="INT32_MAX">longitude</field>
+      <field type="uint8_t" name="altitude_type">reference</field>
+      <field type="int32_t" name="altitude" units="mm" invalid="INT32_MAX">altitude</field>
+      <field type="uint16_t" name="heading" units="cdeg" invalid="UINT16_MAX">heading</field>
+      <field type="uint16_t" name="hor_velocity" units="cm/s" invalid="UINT16_MAX">speed</field>
+      <field type="int16_t" name="ver_velocity" units="cm/s" invalid="INT16_MAX">climb</field>
+      <field type="char[9]" name="callsign">callsign</field>
+      <field type="uint8_t" name="emitter_type">emitter</field>
+      <field type="uint8_t" name="tslc" units="s">time since last communication</field>
+      <field type="uint16_t" name="flags">flags</field>
+      <field type="uint16_t" name="squawk">code</field>
+    </message>
+    <message id="50003" name="TEST_UNKNOWNS">
+      <field type="float" name="speed" units="m/s" invalid="NaN">NaN for unknown</field>
+      <field type="float" name="dop" invalid="UINT16_MAX">an integer limit on a float</field>
+      <field type="int8_t" name="charge" units="%" invalid="-1">a negative value</field>
+      <field type="uint16_t[3]" name="cells" units="mV" invalid="[UINT16_MAX]">every element</field>
+      <field type="uint8_t[3]" name="slots" invalid="[0,,7]">by position</field>
+      <field type="float[4]" name="cov" invalid="[NaN:]">the whole array when the first is NaN</field>
+      <field type="char[4]" name="code" invalid="0">a short text</field>
+      <field type="char[12]" name="label" invalid="[0]">a text longer than 64 bits</field>
+      <field type="uint8_t" name="state" invalid="STATE_UNKNOWN">an enum entry</field>
     </message>
   </messages>
 </mavlink>

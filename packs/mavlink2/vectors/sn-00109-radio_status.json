@@ -1,0 +1,16 @@
+{
+  "name": "sentinels-radio_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0900014f6e6e6d00008fd8662cffffebffff",
+  "expect": "fd0900014f6e6e6d00008fd8662cffffebffff",
+  "model": {
+    "@kind": "radio_status",
+    "@absent": [
+      "mavlink.rssi",
+      "mavlink.remrssi",
+      "mavlink.noise",
+      "mavlink.remnoise"
+    ]
+  }
+}

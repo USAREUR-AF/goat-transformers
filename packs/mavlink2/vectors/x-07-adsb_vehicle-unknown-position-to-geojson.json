@@ -1,0 +1,17 @@
+{
+  "name": "adsb_vehicle-unknown-position-to-geojson",
+  "from": "mavlink2",
+  "to": "geojson",
+  "input": "fd2600000d019cf60000b1a24c00ffffff7fffffff7fffffff7fffffffffff7f0300b0040045494e313233000000030162d9",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "adsb_vehicle",
+    "mavlink.seq": "13",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "156",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  }
+}

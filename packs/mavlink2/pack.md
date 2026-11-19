@@ -41,15 +41,15 @@ comparing six of them with the values the protocol fixes.
 | Kinds | 235 |
 | Payload fields in the source | 1940 |
 | Payload fields mapped | 1940 |
-| ... scalar to a raw `mavlink.` key | 1724 |
+| ... scalar to a raw `mavlink.` key | 1718 |
 | ... `char[n]` to a string key (`ascii`) | 59 |
 | ... array of 2 to 8 elements, one key per element | 70 (340 element lines) |
 | ... array of more than 8 elements, one key per element | 57 (3374 element lines) |
-| ... `lat` / `lon` in degE7 to core `lat` / `lon` | 30 |
+| ... `lat` / `lon` in degE7 to core `lat` / `lon` | 36 |
 | Payload fields not mapped | 0 |
 | `field` lines in `pack.def` (5 common + per kind) | 5532 |
 | Keys in module `mavlink` (5 frame-header + payload) | 3973 |
-| Vectors (235 same-format round trips + 5 to geojson) | 240 |
+| Vectors (235 same-format round trips + 7 to geojson) | 242 |
 
 ## What is mapped
 
@@ -61,7 +61,7 @@ comparing six of them with the values the protocol fixes.
 | `double` | `f64` | float |
 | `char[n]` | `ascii` over `8n` bits | string |
 | other `type[n]`, n of 2 to 8 | one line per element, keys `…_0`, `…_1`, … | as the element |
-| `int32_t` degE7 named `lat` or `lon`, with no `invalid` value declared | `sscale:1/10000000` | float, core `lat` / `lon` |
+| `int32_t` degE7 named `lat` or `lon`, whose `invalid` value, if any, is stated as `absent` | `sscale:1/10000000` | float, core `lat` / `lon` |
 
 Every other value is raw: the integer or float on the wire, in the unit the
 definition states, which `model/mavlink.def` records in the key's unit column.
@@ -156,7 +156,7 @@ When the uses of a name disagree, every use takes the message name as a prefix
 
 ### Core keys
 
-15 kinds map core `lat` and `lon`: `gps_raw_int`, `global_position_int`, `global_position_int_cov`, `hil_state`, `hil_gps`, `hil_state_quaternion`, `gps2_raw`, `terrain_request`, `terrain_data`, `terrain_report`, `follow_target`, `gps_input`, `camera_image_captured`, `camera_tracking_geo_status`, `utm_global_position`.
+18 kinds map core `lat` and `lon`: `gps_raw_int`, `global_position_int`, `global_position_int_cov`, `hil_state`, `hil_gps`, `hil_state_quaternion`, `gps2_raw`, `terrain_request`, `terrain_data`, `terrain_report`, `follow_target`, `gps_input`, `adsb_vehicle`, `camera_image_captured`, `camera_tracking_geo_status`, `global_position_sensor`, `ais_vessel`, `utm_global_position`.
 The position is the one the message reports, which is not always the sending
 vehicle's: `terrain_request`, `terrain_data` and `terrain_report`
 carry a terrain grid point, `follow_target` a target, `camera_image_captured` the
@@ -166,18 +166,17 @@ key to require, otherwise any entity with a position would encode as that kind.
 
 Left raw on purpose:
 
-- degE7 fields that are not named `lat` / `lon` or that declare an `invalid`
-  value (36 fields, for example `latitude`, `lat_int`, and `lat` of `adsb_vehicle`,
-  `ais_vessel`, `global_position_sensor`, where INT32_MAX means unknown and would
-  decode to 214.7483647 degrees).
+- degE7 fields that are not named `lat` / `lon` (30 fields, for example `latitude`
+  and `lat_int`). The `lat` / `lon` of `adsb_vehicle`, `ais_vessel` and
+  `global_position_sensor` declare INT32_MAX for unknown; the pack states that as
+  `absent` (Values that mean unknown, below), so they bind core `lat` / `lon`.
 - UTC epoch times in microseconds (`time_unix_usec`, `time_usec`, `time_utc`):
   core `time_ms` is an integer and the only scaling transforms yield float; a
   64-bit microsecond count scaled by 0.001 is not exact in a double.
 - Altitude. MAVLink `alt` fields are above mean sea level; core `hae` is above
   the WGS84 ellipsoid.
 - Speed, course, heading and velocity components (`vel`, `cog`, `hdg`, `vx`…):
-  the reference frame is in the description text, not in the units, and most
-  declare an `invalid` value (UINT16_MAX).
+  the reference frame is in the description text, not in the units.
 
 ### `requires`
 
@@ -185,9 +184,44 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
-For 43 kinds the required keys are all shared with at least one other kind
+For 42 kinds the required keys are all shared with at least one other kind
 that maps every one of them; an entity built from such a kind's keys with its
-kind cleared selects the first qualifying kind in id order: `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `terrain_check`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`.
+kind cleared selects the first qualifying kind in id order: `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`.
+
+## Values that mean unknown
+
+A field whose definition declares an `invalid` value carries the option
+`absent <raw value>[,...]` (engine-spec 0.9): the value decodes to no key, and
+an entity without the key encodes the first raw value. 851 `field` lines of 394
+fields carry it. The raw value is the field's bits as an unsigned integer:
+
+| `invalid` | Raw value |
+|---|---|
+| `INT32_MAX`, `UINT16_MAX` and the other limits | the limit's bits (INT32_MAX: 2147483647) |
+| a decimal number (`0`, `-1`, `-1000`) | its two's-complement bits for an integer, its IEEE bits for a float |
+| a limit or a hex number on a float (`UINT16_MAX`, `0xFFFF`) | the IEEE bits of that number (65535.0) |
+| `NaN` on a `float` / `double` | 2143289344,4290772992 / 9221120237041090560,18444492273895866368 (the quiet NaN, then with the sign bit) |
+| `[v]` on an array | `v` on every element |
+| `[v1,,v3,]` | `v1` on the first element, `v3` on the third |
+| `[NaN:]` on a float array | NaN on every element |
+
+`[NaN:]` means the whole array is unknown when the first element is NaN; the pack
+states only that each NaN element has no value (a NaN is never a model value).
+410 lines take two raw values (the NaNs); an input with the second re-encodes
+with the first.
+
+Not stated (8 fields), so the key holds the wire value as before:
+
+| Message | Field | `invalid` | Why |
+|---|---|---|---|
+| AUTOPILOT_STATE_FOR_GIMBAL_DEVICE | landed_state | `MAV_LANDED_STATE_UNDEFINED` | `MAV_LANDED_STATE_UNDEFINED` names no number (an enum entry is not resolved) |
+| CELLULAR_STATUS | cell_tower_id | `0` | text of 9 bytes: `absent` is for fields of at most 64 bits |
+| SMART_BATTERY_INFO | serial_number | `[0]` | text of 16 bytes: `absent` is for fields of at most 64 bits |
+| SMART_BATTERY_INFO | device_name | `[0]` | text of 50 bytes: `absent` is for fields of at most 64 bits |
+| SMART_BATTERY_INFO | manufacture_date | `[0]` | text of 11 bytes: `absent` is for fields of at most 64 bits |
+| BATTERY_INFO | manufacture_date | `[0]` | text of 9 bytes: `absent` is for fields of at most 64 bits |
+| BATTERY_INFO | serial_number | `[0]` | text of 32 bytes: `absent` is for fields of at most 64 bits |
+| BATTERY_INFO | name | `[0]` | text of 50 bytes: `absent` is for fields of at most 64 bits |
 
 ## What is not mapped
 
@@ -212,8 +246,9 @@ kind cleared selects the first qualifying kind in id order: `param_request_read`
   after the last mapped bit are ignored.
 - **Output length.** Every payload byte is mapped, so encode output is the
   `10 + LEN` bytes of header and payload, without the CRC.
-- **`invalid` values.** A field's `invalid` attribute (a value that means
-  unknown) is not interpreted; the key holds the number.
+- **Values that mean unknown** are stated as `absent` where the pack can
+  state them (below); another NaN bit pattern than the two listed still fails
+  to decode (`transform-decode`), as any NaN did before.
 - **Text.** `ascii` refuses bytes outside 0x20..0x7E, so a `char[n]` field that
   holds UTF-8 or binary data fails to decode. Trailing NULs are dropped; an
   all-NUL field is the empty string, present.
@@ -229,7 +264,7 @@ are identical. Values are inside each field's range; floats are multiples of
 0.25 or 0.125; every other `uint64_t` sample has its top bit set; every other
 frame has COMPAT = 1, and INCOMPAT is 0.
 
-`vectors/x-NN-<kind>-to-geojson.json`: 5 full frames with a correct CRC,
+`vectors/x-NN-<kind>-to-geojson.json`: 7 full frames with a correct CRC,
 converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees
 (wire value / 10^7), `properties` empty because `geojson` carries no other key
 this pack maps.

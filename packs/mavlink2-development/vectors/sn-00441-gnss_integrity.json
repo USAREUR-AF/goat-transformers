@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-gnss_integrity",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd11000107c03cb9010083382a7fffffffff08dfb68d64ffffffff",
+  "expect": "fd11000107c03cb9010083382a7fffffffff08dfb68d64ffffffff",
+  "model": {
+    "@kind": "gnss_integrity",
+    "@absent": [
+      "mavlinkdevelopment.raim_hfom_cm",
+      "mavlinkdevelopment.raim_vfom_cm",
+      "mavlinkdevelopment.corrections_quality",
+      "mavlinkdevelopment.system_status_summary",
+      "mavlinkdevelopment.gnss_signal_quality",
+      "mavlinkdevelopment.post_processing_quality"
+    ]
+  }
+}

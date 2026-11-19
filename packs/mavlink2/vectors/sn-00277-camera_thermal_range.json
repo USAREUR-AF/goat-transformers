@@ -1,0 +1,16 @@
+{
+  "name": "sentinels-camera_thermal_range",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1e0000a01c5715010067817569000000400000c07f0000c07f000040c00000c07f0000c07f481f",
+  "expect": "fd1e0000a01c5715010067817569000000400000c07f0000c07f000040c00000c07f0000c07f481f",
+  "model": {
+    "@kind": "camera_thermal_range",
+    "@absent": [
+      "mavlink.max_point_x",
+      "mavlink.max_point_y",
+      "mavlink.min_point_x",
+      "mavlink.min_point_y"
+    ]
+  }
+}

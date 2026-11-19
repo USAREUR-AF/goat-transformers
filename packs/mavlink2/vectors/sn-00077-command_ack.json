@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-command_ack",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0a0000384e4e4d0000af4a86ff0410d2c50be2",
+  "expect": "fd0a0000384e4e4d0000af4a86ff0410d2c50be2",
+  "model": {
+    "@kind": "command_ack",
+    "@absent": [
+      "mavlink.progress_pct"
+    ]
+  }
+}

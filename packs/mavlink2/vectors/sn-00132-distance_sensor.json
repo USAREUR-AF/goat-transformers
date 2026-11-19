@@ -1,0 +1,20 @@
+{
+  "name": "sentinels-distance_sensor",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd27000066858584000088c663595f1a366e0dc2e4bb92ff00000000000000000000000000000000000000000000000000",
+  "expect": "fd27000066858584000088c663595f1a366e0dc2e4bb92ff00000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "distance_sensor",
+    "@absent": [
+      "mavlink.covariance_cm2",
+      "mavlink.horizontal_fov_rad",
+      "mavlink.vertical_fov_rad",
+      "mavlink.quaternion_0",
+      "mavlink.quaternion_1",
+      "mavlink.quaternion_2",
+      "mavlink.quaternion_3",
+      "mavlink.signal_quality_pct"
+    ]
+  }
+}

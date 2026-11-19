@@ -1,0 +1,21 @@
+{
+  "name": "sentinels-camera_fov_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3600019d16510f0100cd162775ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f000050c0000040c0000030c0000020c00000c07f0000c07f3300",
+  "expect": "fd3600019d16510f0100cd162775ffffff7fffffff7fffffff7fffffff7fffffff7fffffff7f000050c0000040c0000030c0000020c00000c07f0000c07f3300",
+  "model": {
+    "@kind": "camera_fov_status",
+    "@absent": [
+      "mavlink.lat_camera_dege7",
+      "mavlink.lon_camera_dege7",
+      "mavlink.alt_camera_mm",
+      "mavlink.lat_image_dege7",
+      "mavlink.lon_image_dege7",
+      "mavlink.alt_image_mm",
+      "mavlink.camera_fov_status_hfov_deg",
+      "mavlink.vfov_deg",
+      "mavlink.camera_fov_status_stream_id"
+    ]
+  }
+}

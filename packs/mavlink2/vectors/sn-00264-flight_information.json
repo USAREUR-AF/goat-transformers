@@ -1,0 +1,16 @@
+{
+  "name": "sentinels-flight_information",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd200000960f4a08010000000000000000000000000000000000000000000000000049ebad5200000000",
+  "expect": "fd200000960f4a08010000000000000000000000000000000000000000000000000049ebad5200000000",
+  "model": {
+    "@kind": "flight_information",
+    "@absent": [
+      "mavlink.arming_time_utc_us",
+      "mavlink.takeoff_time_utc_us",
+      "mavlink.flight_uuid",
+      "mavlink.landing_time_ms"
+    ]
+  }
+}

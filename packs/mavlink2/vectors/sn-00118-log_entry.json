@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-log_entry",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0e0000587777760000000000004dccdb722420fb73d2c7",
+  "expect": "fd0e0000587777760000000000004dccdb722420fb73d2c7",
+  "model": {
+    "@kind": "log_entry",
+    "@absent": [
+      "mavlink.time_utc_s"
+    ]
+  }
+}

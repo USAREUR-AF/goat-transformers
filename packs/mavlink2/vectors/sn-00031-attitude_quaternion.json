@@ -1,0 +1,16 @@
+{
+  "name": "sentinels-attitude_quaternion",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3000001420201f0000bd6ee6480000004000007040000098c0000040c00000a0bf0000003f0000104000000000000000000000000000000000",
+  "expect": "fd3000001420201f0000bd6ee6480000004000007040000098c0000040c00000a0bf0000003f0000104000000000000000000000000000000000",
+  "model": {
+    "@kind": "attitude_quaternion",
+    "@absent": [
+      "mavlink.repr_offset_q_0",
+      "mavlink.repr_offset_q_1",
+      "mavlink.repr_offset_q_2",
+      "mavlink.repr_offset_q_3"
+    ]
+  }
+}

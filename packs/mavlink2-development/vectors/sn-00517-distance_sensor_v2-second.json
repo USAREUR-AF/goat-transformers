@@ -1,0 +1,13 @@
+{
+  "name": "second-sentinels-distance_sensor_v2",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd0a00001012880502007729b6150000c0ff257f",
+  "expect": "fd0a00001012880502007729b6150000c07f257f",
+  "model": {
+    "@kind": "distance_sensor_v2",
+    "@absent": [
+      "mavlinkdevelopment.distance_m"
+    ]
+  }
+}

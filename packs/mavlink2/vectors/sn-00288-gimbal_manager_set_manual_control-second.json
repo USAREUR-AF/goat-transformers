@@ -1,0 +1,16 @@
+{
+  "name": "second-sentinels-gimbal_manager_set_manual_control",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd170001a927622001002c9a5a290000c0ff0000c0ff0000c0ff0000c0ff5f360d",
+  "expect": "fd170001a927622001002c9a5a290000c07f0000c07f0000c07f0000c07f5f360d",
+  "model": {
+    "@kind": "gimbal_manager_set_manual_control",
+    "@absent": [
+      "mavlink.pitch",
+      "mavlink.yaw",
+      "mavlink.pitch_rate",
+      "mavlink.yaw_rate"
+    ]
+  }
+}

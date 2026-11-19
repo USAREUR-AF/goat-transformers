@@ -1,0 +1,19 @@
+{
+  "name": "sentinels-autopilot_state_for_gimbal_device",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd390001a725601e01004e21eb5700000080000000000000803e0000003f0000403f000000000000c07f0000c07f0000c07f000000000000c07f06c0ddb48b00000000",
+  "expect": "fd390001a725601e01004e21eb5700000080000000000000803e0000003f0000403f000000000000c07f0000c07f0000c07f000000000000c07f06c0ddb48b00000000",
+  "model": {
+    "@kind": "autopilot_state_for_gimbal_device",
+    "@absent": [
+      "mavlink.q_estimated_delay_us",
+      "mavlink.vx_m_per_s",
+      "mavlink.vy_m_per_s",
+      "mavlink.vz_m_per_s",
+      "mavlink.v_estimated_delay_us",
+      "mavlink.feed_forward_angular_velocity_z_rad_per_s",
+      "mavlink.angular_velocity_z_rad_per_s"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "sentinels-eye_tracking_data",
+  "from": "mavlink2-marsh",
+  "to": "mavlink2-marsh",
+  "input": "fd3200000406ac19cd0023e77c76000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f6000",
+  "expect": "fd3200000406ac19cd0023e77c76000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f6000",
+  "model": {
+    "@kind": "eye_tracking_data",
+    "@absent": [
+      "mavlinkmarsh.gaze_origin_x_m",
+      "mavlinkmarsh.gaze_origin_y_m",
+      "mavlinkmarsh.gaze_origin_z_m",
+      "mavlinkmarsh.gaze_direction_x",
+      "mavlinkmarsh.gaze_direction_y",
+      "mavlinkmarsh.gaze_direction_z",
+      "mavlinkmarsh.video_gaze_x",
+      "mavlinkmarsh.video_gaze_y",
+      "mavlinkmarsh.surface_gaze_x",
+      "mavlinkmarsh.surface_gaze_y",
+      "mavlinkmarsh.surface_id"
+    ]
+  }
+}

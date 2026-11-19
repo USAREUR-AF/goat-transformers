@@ -1,0 +1,17 @@
+{
+  "name": "sentinels-mlrs_radio_link_flow_control",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd0700010b304a8fea00ffffffffffffff",
+  "expect": "fd0700010b304a8fea00ffffffffffffff",
+  "model": {
+    "@kind": "mlrs_radio_link_flow_control",
+    "@absent": [
+      "mavlinkstorm32.tx_ser_rate_bytes_per_s",
+      "mavlinkstorm32.rx_ser_rate_bytes_per_s",
+      "mavlinkstorm32.tx_used_ser_bandwidth_cpct",
+      "mavlinkstorm32.rx_used_ser_bandwidth_cpct",
+      "mavlinkstorm32.txbuf_cpct"
+    ]
+  }
+}

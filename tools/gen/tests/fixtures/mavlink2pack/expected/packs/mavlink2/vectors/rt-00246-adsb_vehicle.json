@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-adsb_vehicle",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd26000008f738f60000f6af357b80a4bf07805b40f895e777d252ff29531862d7faae4e854d3336000000000000330a",
+  "expect": "fd26000008f738f60000f6af357b80a4bf07805b40f895e777d252ff29531862d7faae4e854d3336000000000000330a",
+  "model": {
+    "@kind": "adsb_vehicle"
+  }
+}

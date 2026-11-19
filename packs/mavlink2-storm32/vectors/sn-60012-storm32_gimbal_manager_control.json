@@ -1,0 +1,21 @@
+{
+  "name": "sentinels-storm32_gimbal_manager_control",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd240001030d276cea000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07fffff00002a01d8af",
+  "expect": "fd240001030d276cea000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07fffff00002a01d8af",
+  "model": {
+    "@kind": "storm32_gimbal_manager_control",
+    "@absent": [
+      "mavlinkstorm32.q_0",
+      "mavlinkstorm32.q_1",
+      "mavlinkstorm32.q_2",
+      "mavlinkstorm32.q_3",
+      "mavlinkstorm32.angular_velocity_x_rad_per_s",
+      "mavlinkstorm32.angular_velocity_y_rad_per_s",
+      "mavlinkstorm32.angular_velocity_z_rad_per_s",
+      "mavlinkstorm32.device_flags",
+      "mavlinkstorm32.manager_flags"
+    ]
+  }
+}

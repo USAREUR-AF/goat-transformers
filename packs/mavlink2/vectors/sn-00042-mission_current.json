@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-mission_current",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1200011f2b2b2a00008287ffff0000000000000000000000000000",
+  "expect": "fd1200011f2b2b2a00008287ffff0000000000000000000000000000",
+  "model": {
+    "@kind": "mission_current",
+    "@absent": [
+      "mavlink.total",
+      "mavlink.mission_state",
+      "mavlink.mission_mode",
+      "mavlink.mission_id",
+      "mavlink.fence_id",
+      "mavlink.rally_points_id"
+    ]
+  }
+}

@@ -116,7 +116,8 @@ takes the message name as a prefix. 17 fields are named that way:
 
 The binding is the one `mavlink2` makes, for the same field semantics: an
 `int32_t` field in degE7 that the definition names and describes as the
-latitude or longitude, with no `invalid` value. A message binds only when it has
+latitude or longitude, whose `invalid` value, if any, the pack states as `absent`.
+A message binds only when it has
 one latitude and one longitude field that qualify.
 This dialect spells the longitude `lng`; it is treated as `lon`.
 The position is the one the message reports:
@@ -131,8 +132,8 @@ The position is the one the message reports:
 | `water_depth` | `lat` / `lng` | the vehicle when the water depth was measured |
 
 Left raw: `DEEPSTALL.landing_lat`, `DEEPSTALL.landing_lon`, `DEEPSTALL.path_lat`, `DEEPSTALL.path_lon`, `DEEPSTALL.arc_entry_lat`, `DEEPSTALL.arc_entry_lon`. A field stays raw when its name is not `lat`, `lon` or `lng`,
-when it declares an `invalid` value (INT32_MAX would decode to 214.7483647
-degrees), or when its message has no qualifying partner field.
+when it declares an `invalid` value the pack cannot state, or when its
+message has no qualifying partner field.
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
@@ -147,6 +148,28 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 For 19 kinds the required keys are all mapped by another kind too; an entity
 built from such a kind's keys with its kind cleared selects the first
 qualifying kind in id order: `fence_fetch_point`, `data16`, `data32`, `data64`, `rally_fetch_point`, `ahrs2`, `autopilot_version_request`, `gopro_get_request`, `device_op_read`, `device_op_write`, `esc_telemetry_1_to_4`, `esc_telemetry_5_to_8`, `esc_telemetry_9_to_12`, `osd_param_show_config`, `esc_telemetry_13_to_16`, `esc_telemetry_17_to_20`, `esc_telemetry_21_to_24`, `esc_telemetry_25_to_28`, `esc_telemetry_29_to_32`.
+
+## Values that mean unknown
+
+A field whose definition declares an `invalid` value carries the option
+`absent <raw value>[,...]` (engine-spec 0.9): the value decodes to no key, and
+an entity without the key encodes the first raw value. 0 `field` lines of 0
+fields carry it. The raw value is the field's bits as an unsigned integer:
+
+| `invalid` | Raw value |
+|---|---|
+| `INT32_MAX`, `UINT16_MAX` and the other limits | the limit's bits (INT32_MAX: 2147483647) |
+| a decimal number (`0`, `-1`, `-1000`) | its two's-complement bits for an integer, its IEEE bits for a float |
+| a limit or a hex number on a float (`UINT16_MAX`, `0xFFFF`) | the IEEE bits of that number (65535.0) |
+| `NaN` on a `float` / `double` | 2143289344,4290772992 / 9221120237041090560,18444492273895866368 (the quiet NaN, then with the sign bit) |
+| `[v]` on an array | `v` on every element |
+| `[v1,,v3,]` | `v1` on the first element, `v3` on the third |
+| `[NaN:]` on a float array | NaN on every element |
+
+`[NaN:]` means the whole array is unknown when the first element is NaN; the pack
+states only that each NaN element has no value (a NaN is never a model value).
+0 lines take two raw values (the NaNs); an input with the second re-encodes
+with the first.
 
 ## What is not mapped
 
@@ -164,8 +187,8 @@ qualifying kind in id order: `fence_fetch_point`, `data16`, `data32`, `data64`, 
 
 Those of `packs/mavlink2/pack.md` (Known limits) hold here unchanged: truncated
 payloads (LEN shorter than the full length) are `no-kind`; the CRC is neither
-checked nor written; an `invalid` value is
-carried as its number; `ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values
+checked nor written;
+`ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values
 of 2^63 or above are the negative model integer with the same bits.
 
 ## Message status in the source

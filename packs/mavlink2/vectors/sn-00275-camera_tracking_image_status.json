@@ -1,0 +1,19 @@
+{
+  "name": "sentinels-camera_tracking_image_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2000009e1a551301000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f6a4118ef",
+  "expect": "fd2000009e1a551301000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f6a4118ef",
+  "model": {
+    "@kind": "camera_tracking_image_status",
+    "@absent": [
+      "mavlink.point_x",
+      "mavlink.point_y",
+      "mavlink.radius",
+      "mavlink.rec_top_x",
+      "mavlink.rec_top_y",
+      "mavlink.rec_bottom_x",
+      "mavlink.rec_bottom_y"
+    ]
+  }
+}

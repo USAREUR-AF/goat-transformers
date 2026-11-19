@@ -221,8 +221,8 @@ class GeneratedFilesLoad(unittest.TestCase):
     def test_kinds_are_in_message_id_order_whatever_the_order_in_the_files(self):
         self.assertEqual([k.name for k in self.pack.kinds],
                          ["heartbeat", "sys_status", "gps_raw_int", "attitude", "global_position_int",
-                          "command_long", "hil_gps", "gps2_raw", "test_point", "test_survey",
-                          "utm_global_position", "test_shapes", "test_arrays"])
+                          "command_long", "hil_gps", "gps2_raw", "adsb_vehicle", "test_point", "test_survey",
+                          "utm_global_position", "test_shapes", "test_arrays", "test_unknowns"])
 
     def test_a_kind_is_selected_by_message_id_and_full_payload_length(self):
         # TEST_SHAPES: id 50001 in the 24-bit MSGID at bit 56; 52 base bytes and
@@ -260,7 +260,7 @@ class GeneratedFilesLoad(unittest.TestCase):
         for name in sorted(os.listdir(directory)):
             with open(os.path.join(directory, name), encoding="utf-8") as fh:
                 vectors.append((name, fh.read()))
-        self.assertEqual(gen.check_vectors(self.pack, vectors), 13 + 5)
+        self.assertEqual(gen.check_vectors(self.pack, vectors), 15 + 7 + 4)
 
     def test_long_arrays_are_listed_in_pack_md_and_have_no_field_line(self):
         with open(os.path.join(EXPECTED, "packs", "mavlink2", "pack.md"), encoding="utf-8") as fh:
@@ -358,7 +358,7 @@ class Determinism(TempDirCase):
     def test_messages_in_another_order_in_the_file_give_the_same_bytes(self):
         def reverse(text):
             blocks = re.findall(r"    <message .*?</message>\n", text, re.S)
-            self.assertEqual(len(blocks), 11)
+            self.assertEqual(len(blocks), 13)
             head = text[:text.index("  <messages>\n")]
             return head + "  <messages>\n" + "".join(reversed(blocks)) + "  </messages>\n</mavlink>\n"
         root = self.make_root(edits={"common.xml": reverse})
@@ -1017,3 +1017,47 @@ class FrameInvariants(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Sentinels(unittest.TestCase):
+    """`invalid` as `absent` raw values (engine-spec 0.9)."""
+
+    def sent(self, type_text, invalid):
+        return gen.field_sentinels(field(type_text, invalid=invalid))
+
+    def test_limits_are_the_raw_bits_of_the_type(self):
+        self.assertEqual(self.sent("int32_t", "INT32_MAX"), [(2147483647,)])
+        self.assertEqual(self.sent("uint16_t", "UINT16_MAX"), [(65535,)])
+        self.assertEqual(self.sent("int8_t", "-1"), [(255,)])
+        self.assertEqual(self.sent("int16_t", "-1000"), [(64536,)])
+
+    def test_floats_take_their_ieee_bits(self):
+        self.assertEqual(self.sent("float", "NaN"), [(0x7FC00000, 0xFFC00000)])
+        self.assertEqual(self.sent("double", "NAN"), [(0x7FF8000000000000, 0xFFF8000000000000)])
+        self.assertEqual(self.sent("float", "-1000"), [(struct.unpack("<I", struct.pack("<f", -1000.0))[0],)])
+        self.assertEqual(self.sent("float", "UINT16_MAX"), [(struct.unpack("<I", struct.pack("<f", 65535.0))[0],)])
+
+    def test_array_forms(self):
+        self.assertEqual(self.sent("uint16_t[3]", "[UINT16_MAX]"), [(65535,)] * 3)
+        self.assertEqual(self.sent("uint8_t[4]", "[0,,7]"), [(0,), (), (7,), ()])
+        self.assertEqual(self.sent("float[2]", "[NaN:]"), [(0x7FC00000, 0xFFC00000)] * 2)
+
+    def test_what_cannot_be_stated(self):
+        for type_text, invalid in (("uint8_t", "MAV_STATE_UNKNOWN"), ("char[12]", "[0]"),
+                                   ("float[3]", "[0:]"), ("uint8_t", "300"), ("uint8_t[2]", "7")):
+            with self.assertRaises(gen.Unstatable, msg=(type_text, invalid)):
+                self.sent(type_text, invalid)
+        self.assertEqual(self.sent("char[4]", "0"), [(0,)])
+
+    def test_a_sentinel_decodes_to_no_key_and_an_absent_key_encodes_the_first(self):
+        model = gtcheck.Model()
+        model.add(gen.CORE_STAND_IN, "<core stand-in>")
+        model.add(open(os.path.join(EXPECTED, "model", "mavlink.def"), encoding="utf-8").read(), "mavlink.def")
+        pack = gtcheck.load_pack(open(os.path.join(EXPECTED, "packs", "mavlink2", "pack.def"),
+                                      encoding="utf-8").read(), model, "pack.def")
+        vec = json.load(open(os.path.join(EXPECTED, "packs", "mavlink2", "vectors",
+                                          "sn-00246-adsb_vehicle.json"), encoding="utf-8"))
+        name, entity = gen.engine_decode(pack, bytes.fromhex(vec["input"]))
+        self.assertNotIn("lat", entity)
+        self.assertNotIn("mavlink.heading_cdeg", entity)
+        self.assertEqual(gen.engine_encode(pack, name, entity).hex(), vec["input"])

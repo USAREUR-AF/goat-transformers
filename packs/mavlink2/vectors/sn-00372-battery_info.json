@@ -1,0 +1,26 @@
+{
+  "name": "sentinels-battery_info",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd8c0001c77bb67401000000000000000000000000000000000000000000000000000000000000000000000000000000c07fffff0000ac835aff004d31340000000000004d323100000000000000000000000000000000000000000000000000000000004d32380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "fd8c0001c77bb67401000000000000000000000000000000000000000000000000000000000000000000000000000000c07fffff0000ac835aff004d31340000000000004d323100000000000000000000000000000000000000000000000000000000004d32380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "battery_info",
+    "@absent": [
+      "mavlink.discharge_minimum_voltage_v",
+      "mavlink.charging_minimum_voltage_v",
+      "mavlink.resting_minimum_voltage_v",
+      "mavlink.charging_maximum_voltage_v",
+      "mavlink.charging_maximum_current_a",
+      "mavlink.nominal_voltage_v",
+      "mavlink.discharge_maximum_current_a",
+      "mavlink.discharge_maximum_burst_current_a",
+      "mavlink.design_capacity_ah",
+      "mavlink.full_charge_capacity_ah",
+      "mavlink.cycle_count",
+      "mavlink.weight_g",
+      "mavlink.state_of_health_pct",
+      "mavlink.cells_in_series"
+    ]
+  }
+}

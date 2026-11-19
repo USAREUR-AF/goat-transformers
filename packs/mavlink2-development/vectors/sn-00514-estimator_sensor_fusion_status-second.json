@@ -1,0 +1,21 @@
+{
+  "name": "second-sentinels-estimator_sensor_fusion_status",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd3600010d0f850202000000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff01b26314c57627d889d8893aeb9c4dfeaf60",
+  "expect": "fd3600010d0f850202000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f01b26314c57627d889d8893aeb9c4dfeaf60",
+  "model": {
+    "@kind": "estimator_sensor_fusion_status",
+    "@absent": [
+      "mavlinkdevelopment.test_ratio_0",
+      "mavlinkdevelopment.test_ratio_1",
+      "mavlinkdevelopment.test_ratio_2",
+      "mavlinkdevelopment.test_ratio_3",
+      "mavlinkdevelopment.test_ratio_4",
+      "mavlinkdevelopment.test_ratio_5",
+      "mavlinkdevelopment.test_ratio_6",
+      "mavlinkdevelopment.test_ratio_7",
+      "mavlinkdevelopment.test_ratio_8"
+    ]
+  }
+}

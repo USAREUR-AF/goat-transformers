@@ -1,0 +1,16 @@
+{
+  "name": "sentinels-manual_control",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1e0000324646450000ff7fff7fff7fff7f93b66a415e1841ecc23f4393c4e6453ac68d47e1c834",
+  "expect": "fd1e0000324646450000ff7fff7fff7fff7f93b66a415e1841ecc23f4393c4e6453ac68d47e1c834",
+  "model": {
+    "@kind": "manual_control",
+    "@absent": [
+      "mavlink.manual_control_x",
+      "mavlink.manual_control_y",
+      "mavlink.manual_control_z",
+      "mavlink.r"
+    ]
+  }
+}

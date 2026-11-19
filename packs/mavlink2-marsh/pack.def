@@ -104,15 +104,15 @@ when      0:56:24 52505
 when      0:8:8 50
 requires  mavlinkmarsh.time_usec_us mavlinkmarsh.gaze_origin_x_m mavlinkmarsh.gaze_origin_y_m mavlinkmarsh.gaze_origin_z_m mavlinkmarsh.gaze_direction_x mavlinkmarsh.gaze_direction_y
 field     mavlinkmarsh.time_usec_us 0:80:64 uint
-field     mavlinkmarsh.gaze_origin_x_m 0:144:32 f32
-field     mavlinkmarsh.gaze_origin_y_m 0:176:32 f32
-field     mavlinkmarsh.gaze_origin_z_m 0:208:32 f32
-field     mavlinkmarsh.gaze_direction_x 0:240:32 f32
-field     mavlinkmarsh.gaze_direction_y 0:272:32 f32
-field     mavlinkmarsh.gaze_direction_z 0:304:32 f32
-field     mavlinkmarsh.video_gaze_x 0:336:32 f32
-field     mavlinkmarsh.video_gaze_y 0:368:32 f32
-field     mavlinkmarsh.surface_gaze_x 0:400:32 f32
-field     mavlinkmarsh.surface_gaze_y 0:432:32 f32
+field     mavlinkmarsh.gaze_origin_x_m 0:144:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.gaze_origin_y_m 0:176:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.gaze_origin_z_m 0:208:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.gaze_direction_x 0:240:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.gaze_direction_y 0:272:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.gaze_direction_z 0:304:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.video_gaze_x 0:336:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.video_gaze_y 0:368:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.surface_gaze_x 0:400:32 f32 absent 2143289344,4290772992
+field     mavlinkmarsh.surface_gaze_y 0:432:32 f32 absent 2143289344,4290772992
 field     mavlinkmarsh.sensor_id 0:464:8 uint
-field     mavlinkmarsh.surface_id 0:472:8 uint
+field     mavlinkmarsh.surface_id 0:472:8 uint absent 0
