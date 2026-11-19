@@ -10,7 +10,7 @@ is worked out from the rules of spec/engine-spec.md, not by running a conversion
 - protobuf output is canonical (0.3): only mapped fields, ascending field numbers inside every
   message and every item, a repeated number packed (0.7); so an input written that way with
   mapped fields only is its own expected output, and a field no line maps is left out;
-- the derivations of model/track.def (0.6) on the velocity north 5, east 0: `speed_ms` = 5 and
+- the derivations of model/track.def (0.6) on a north velocity of 5 and an east velocity of 0: `speed_ms` = 5 and
   `course` = 0 exactly; and the other way, speed 5 and course 0 give east 5 * sin 0 = 0 and
   north 5 * cos 0 = 5 exactly;
 - geojson output (Canonicalisation, 0.5 "Canonical output"): `geometry` null with no position,
