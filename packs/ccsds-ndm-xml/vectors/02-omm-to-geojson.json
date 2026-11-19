@@ -1,0 +1,16 @@
+{
+  "name": "omm-to-geojson",
+  "from": "ccsds-ndm-xml",
+  "to": "geojson",
+  "input": "<omm id=\"CCSDS_OMM_VERS\" version=\"3.0\"><header><CREATION_DATE>2026-11-19T00:00:00</CREATION_DATE><ORIGINATOR>EXAMPLE ORIGINATOR</ORIGINATOR></header><body><segment><metadata><OBJECT_NAME>SAT TWO</OBJECT_NAME><OBJECT_ID>2026-002B</OBJECT_ID><CENTER_NAME>EARTH</CENTER_NAME><REF_FRAME>TEME</REF_FRAME><TIME_SYSTEM>UTC</TIME_SYSTEM><MEAN_ELEMENT_THEORY>SGP4</MEAN_ELEMENT_THEORY></metadata><data><meanElements><EPOCH>2026-323T06:00:00</EPOCH><MEAN_MOTION>15.5</MEAN_MOTION><ECCENTRICITY>0.001</ECCENTRICITY><INCLINATION>51.5</INCLINATION><RA_OF_ASC_NODE>120.25</RA_OF_ASC_NODE><ARG_OF_PERICENTER>90</ARG_OF_PERICENTER><MEAN_ANOMALY>270</MEAN_ANOMALY></meanElements></data></segment></body></omm>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"SAT TWO\"},\"id\":\"2026-002B\"}",
+  "model": {
+    "@kind": "omm",
+    "uid": "2026-002B",
+    "callsign": "SAT TWO",
+    "ccsdsndm.body_segment_data_mean_elements_epoch": "2026-323T06:00:00",
+    "ccsdsndm.body_segment_data_mean_elements_inclination": "51.5"
+  },
+  "source": "constructed",
+  "reference": "an OMM written for this vector, with a day-of-year epoch, which stays a raw string key; geojson canonical form by hand as in opm-to-geojson"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "version-00-is-no-kind",
+  "from": "ccsds-aos-frame",
+  "to": "ccsds-aos-frame",
+  "input": "2d0c01234549",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "CCSDS 732.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. Version number 00 is a TM or TC frame, not an AOS frame (4.1.2.2.2.2)."
+}

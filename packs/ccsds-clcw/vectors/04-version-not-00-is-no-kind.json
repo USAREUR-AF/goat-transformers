@@ -1,0 +1,9 @@
+{
+  "name": "version-not-00-is-no-kind",
+  "from": "ccsds-clcw",
+  "to": "ccsds-clcw",
+  "input": "210c047b",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.2.1; bytes computed by tools/gen/ccsds-vectors.py. CLCW version number 01: not defined by this standard (4.2.1.3.2)."
+}

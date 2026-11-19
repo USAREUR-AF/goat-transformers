@@ -1,0 +1,22 @@
+{
+  "name": "no-packet-starts-and-largest-values",
+  "from": "ccsds-tm-frame",
+  "to": "ccsds-tm-frame",
+  "input": "3ffeffff1fff",
+  "expect": "3ffeffff1fff",
+  "model": {
+    "@kind": "primary-header",
+    "ccsdstm.spacecraft_id": "1023",
+    "ccsdstm.virtual_channel_id": "7",
+    "ccsdstm.ocf_flag": "0",
+    "ccsdstm.mc_frame_count": "255",
+    "ccsdstm.vc_frame_count": "255",
+    "ccsdstm.secondary_header_flag": "0",
+    "ccsdstm.sync_flag": "0",
+    "ccsdstm.packet_order_flag": "0",
+    "ccsdstm.segment_length_id": "3",
+    "ccsdstm.first_header_pointer": "2047"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 132.0-B-3 4.1.2 and 4.1.3.2; bytes computed by tools/gen/ccsds-vectors.py. First header pointer all ones: no packet starts in this frame (4.1.2.7.6.4); identifiers and counts at their largest values."
+}

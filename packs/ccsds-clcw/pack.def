@@ -1,0 +1,26 @@
+# CCSDS Communications Link Control Word (CLCW), the 4-octet report of the receiving
+# end of a TC link, carried in the operational control field of TM and AOS frames.
+# Public (CCSDS Blue Book). A message of this pack is the 4 octets.
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-clcw
+version    0.1.0
+distribution public
+source     "CCSDS 232.0-B-4 TC Space Data Link Protocol, Blue Book, October 2021 with Technical Corrigendum 1 (October 2023), https://ccsds.org/Pubs/232x0b4e1c1.pdf, section 4.2.1; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdsclcw
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:1  0                                       # control word type: 0 = CLCW
+when   0:1:2  0                                       # CLCW version number: 00 (version 1)
+field  ccsdsclcw.status_field        0:3:3    uint
+field  ccsdsclcw.cop_in_effect       0:6:2    uint
+field  ccsdsclcw.virtual_channel_id  0:8:6    uint
+field  ccsdsclcw.no_rf_available     0:16:1   uint
+field  ccsdsclcw.no_bit_lock         0:17:1   uint
+field  ccsdsclcw.lockout             0:18:1   uint
+field  ccsdsclcw.wait                0:19:1   uint
+field  ccsdsclcw.retransmit          0:20:1   uint
+field  ccsdsclcw.farm_b_counter      0:21:2   uint
+field  ccsdsclcw.report_value        0:24:8   uint
+
+kind   clcw                                           # the one layout; a kind so that type and version are checked

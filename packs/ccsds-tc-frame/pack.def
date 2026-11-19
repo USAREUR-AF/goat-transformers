@@ -1,0 +1,21 @@
+# CCSDS TC Transfer Frame, the 5-octet primary header. Public (CCSDS Blue Book).
+# A message of this pack is a whole frame. Decode ignores the data field and the
+# frame error control field; encode writes the 5 header octets (pack.md, "Not mapped").
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-tc-frame
+version    0.1.0
+distribution public
+source     "CCSDS 232.0-B-4 TC Space Data Link Protocol, Blue Book, October 2021 with Technical Corrigendum 1 (October 2023), https://ccsds.org/Pubs/232x0b4e1c1.pdf, section 4.1.2; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdstc
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:2  0                                       # transfer frame version number: 00 (version 1)
+field  ccsdstc.bypass_flag            0:2:1    uint
+field  ccsdstc.control_command_flag   0:3:1    uint
+field  ccsdstc.spacecraft_id          0:6:10   uint
+field  ccsdstc.virtual_channel_id     0:16:6   uint
+field  ccsdstc.frame_length           0:22:10  uint
+field  ccsdstc.frame_sequence_number  0:32:8   uint
+
+kind   frame                                          # the one layout; a kind so that the version is checked

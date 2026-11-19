@@ -1,0 +1,9 @@
+{
+  "name": "header-cut-short",
+  "from": "ccsds-tc-frame",
+  "to": "ccsds-tc-frame",
+  "input": "01ab241a",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. Four octets: shorter than the 5-octet primary header."
+}

@@ -1,0 +1,18 @@
+{
+  "name": "whole-frame-header-carried",
+  "from": "ccsds-tc-frame",
+  "to": "ccsds-tc-frame",
+  "input": "01ab241a2a404142434445464748494a4b4c4d4e4f50515253c0de",
+  "expect": "01ab241a2a",
+  "model": {
+    "@kind": "frame",
+    "ccsdstc.bypass_flag": "0",
+    "ccsdstc.control_command_flag": "0",
+    "ccsdstc.spacecraft_id": "427",
+    "ccsdstc.virtual_channel_id": "9",
+    "ccsdstc.frame_length": "26",
+    "ccsdstc.frame_sequence_number": "42"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. A whole 27-octet frame: the data field and the frame error control field are not mapped; encode writes the 5 header octets. The error control value is not a computed CRC: the pack does not read it."
+}

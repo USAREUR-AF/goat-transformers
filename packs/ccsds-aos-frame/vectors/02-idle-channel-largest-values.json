@@ -1,0 +1,18 @@
+{
+  "name": "idle-channel-largest-values",
+  "from": "ccsds-aos-frame",
+  "to": "ccsds-aos-frame",
+  "input": "7fffffffffcf",
+  "expect": "7fffffffffcf",
+  "model": {
+    "@kind": "frame",
+    "ccsdsaos.spacecraft_id": "255",
+    "ccsdsaos.virtual_channel_id": "63",
+    "ccsdsaos.vc_frame_count": "16777215",
+    "ccsdsaos.replay_flag": "1",
+    "ccsdsaos.vc_count_cycle_use_flag": "1",
+    "ccsdsaos.vc_count_cycle": "15"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 732.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. Virtual channel all ones (only idle data, 4.1.2.3 note 1), replay, and every count at its largest value."
+}

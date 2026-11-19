@@ -1,0 +1,18 @@
+{
+  "name": "telemetry-packet-data-field-not-carried",
+  "from": "ccsds-space-packet",
+  "to": "ccsds-space-packet",
+  "input": "0864c4d200090102030405060708090a",
+  "expect": "0864c4d20009",
+  "model": {
+    "@kind": "telemetry",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.secondary_header_flag": "1",
+    "ccsdssp.apid": "100",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "9",
+    "ccsdssp.sequence_count": "1234"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 133.0-B-2 4.1.3; bytes computed by tools/gen/ccsds-vectors.py. A whole packet with a 10-octet data field (data_length 9): decode ignores the octets after the header and encode writes the header only."
+}

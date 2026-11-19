@@ -1,0 +1,13 @@
+{
+  "name": "opm-root-namespace-attributes-are-residue",
+  "from": "ccsds-ndm-xml",
+  "to": "ccsds-ndm-xml",
+  "input": "<opm xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://sanaregistry.org/r/ndmxml_unqualified/ndmxml-4.0.0-master-4.0.xsd\" id=\"CCSDS_OPM_VERS\" version=\"3.0\"><header><CREATION_DATE>2026-11-19T00:00:00</CREATION_DATE><ORIGINATOR>EXAMPLE ORIGINATOR</ORIGINATOR></header><body><segment><metadata><OBJECT_NAME>SAT ONE</OBJECT_NAME><OBJECT_ID>2026-001A</OBJECT_ID><CENTER_NAME>EARTH</CENTER_NAME><REF_FRAME>GCRF</REF_FRAME><TIME_SYSTEM>UTC</TIME_SYSTEM></metadata><data><stateVector><EPOCH>2026-11-19T12:00:00</EPOCH><X>7000.5</X><Y>-1200.25</Y><Z>350</Z><X_DOT>0.5</X_DOT><Y_DOT>7.25</Y_DOT><Z_DOT>-0.125</Z_DOT></stateVector></data></segment></body></opm>",
+  "expect": "<opm id=\"CCSDS_OPM_VERS\" version=\"3.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://sanaregistry.org/r/ndmxml_unqualified/ndmxml-4.0.0-master-4.0.xsd\"><header><CREATION_DATE>2026-11-19T00:00:00</CREATION_DATE><ORIGINATOR>EXAMPLE ORIGINATOR</ORIGINATOR></header><body><segment><metadata><OBJECT_NAME>SAT ONE</OBJECT_NAME><OBJECT_ID>2026-001A</OBJECT_ID><CENTER_NAME>EARTH</CENTER_NAME><REF_FRAME>GCRF</REF_FRAME><TIME_SYSTEM>UTC</TIME_SYSTEM></metadata><data><stateVector><EPOCH>2026-11-19T12:00:00</EPOCH><X>7000.5</X><Y>-1200.25</Y><Z>350</Z><X_DOT>0.5</X_DOT><Y_DOT>7.25</Y_DOT><Z_DOT>-0.125</Z_DOT></stateVector></data></segment></body></opm>",
+  "model": {
+    "@kind": "opm",
+    "uid": "2026-001A"
+  },
+  "source": "constructed",
+  "reference": "the root of an unqualified NDM/XML instance carries xmlns:xsi and xsi:noNamespaceSchemaLocation (CCSDS 505.0-B-3 4.3); they are unmapped root attributes, kept as residue and written after the mapped id and version; canonical form by hand from spec/engine-spec.md: xml attributes in field-line order then residue in input order (Canonicalisation; 0.1.1 ruling 6); elements in field-line order of the opm kind"
+}

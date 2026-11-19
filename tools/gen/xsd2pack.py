@@ -206,8 +206,9 @@ Include = collections.namedtuple("Include", "base tag location resolved path lin
 class FileContext:
     """What a declaration needs to know about the file it stands in."""
 
-    def __init__(self, path, prefixes, qualified, lines):
+    def __init__(self, path, prefixes, qualified, lines, imports=frozenset()):
         self.path, self.prefixes, self.qualified, self.lines = path, prefixes, qualified, lines
+        self.imports = imports      # namespaces the file imports (names it may refer to)
 
     def line(self, node):
         return self.lines.get(node)
@@ -271,6 +272,7 @@ class Schema:
         self.attr_groups = {}       # name -> (xs:attributeGroup node, FileContext)
         self.global_attrs = {}
         self.tns = None
+        self.import_only = []       # (file base name, namespaces): files with no targetNamespace that import
         self.files = []             # SchemaFile
         self.includes = []          # Include
         self.element_form = collections.OrderedDict()   # file base name -> elementFormDefault
@@ -290,14 +292,20 @@ class Schema:
         if root.tag != xs("schema"):
             raise GenError("the root element is not xs:schema", path, lines.get(root))
         tns = root.get("targetNamespace")
-        if self.tns is None:
+        base = os.path.basename(path)
+        imports = frozenset(c.get("namespace") for c in root if c.tag == xs("import") and c.get("namespace"))
+        if tns is None and imports:
+            # A "master" file with no targetNamespace that imports the set's namespace: its own
+            # declarations (the message roots) are in no namespace, and it may refer to names of
+            # the namespaces it imports. read_schema checks that it imports only the set's.
+            self.import_only.append((base, imports))
+        elif self.tns is None:
             self.tns = tns
         elif tns != self.tns:
             raise GenError("targetNamespace %r differs from %r" % (tns, self.tns), path, lines.get(root))
-        base = os.path.basename(path)
         self.files.append(SchemaFile(path, base, hashlib.sha256(raw).hexdigest(), len(raw)))
         self.element_form[base] = root.get("elementFormDefault") or "unqualified (absent)"
-        ctx = FileContext(path, prefixes, root.get("elementFormDefault") == "qualified", lines)
+        ctx = FileContext(path, prefixes, root.get("elementFormDefault") == "qualified", lines, imports)
         for c in root:
             if c.tag in (xs("include"), xs("import")):
                 loc = c.get("schemaLocation") or ""
@@ -329,7 +337,7 @@ class Schema:
         uri = ctx.prefixes.get(pfx)
         if uri == XS:
             return ("xs", name)
-        if uri == self.tns or (pfx == "" and uri in (None, "")):
+        if uri == self.tns or uri in ctx.imports or (pfx == "" and uri in (None, "")):
             return ("t", name)
         raise ctx.error(node, "%r is in namespace %r, which no file given here defines" % (text, uri))
 
@@ -607,19 +615,31 @@ def header_statement(head):
     return " ".join(m.group().split()).rstrip(" !-") if m else None
 
 
-def read_schema(paths, aliases):
+PUBLIC_PREFIX = "(no statement in the file; publisher's statement) "
+
+
+def read_schema(paths, aliases, public_statement=None):
     """Parse step: (Schema, [(file base name, header statement)]). A file whose
-    head does not carry the statement is refused before it is parsed, and every
-    xs:include and xs:import must be satisfied by a file given."""
+    head does not carry the statement is refused before it is parsed, unless
+    `public_statement` (the publisher's statement that the set is public) is
+    given, which is then recorded for that file. Every xs:include and xs:import
+    must be satisfied by a file given."""
     schema, statements = Schema(), []
     for path in paths:
         with open(path, "rb") as fh:
             raw = fh.read()
         statement = header_statement(raw)
+        if statement is None and public_statement:
+            statement = PUBLIC_PREFIX + " ".join(public_statement.split())
         if statement is None:
-            raise GenError("the file header does not state Distribution Statement A; refusing this set", path)
+            raise GenError("the file header does not state Distribution Statement A, and no "
+                           "--public-statement is given; refusing this set", path)
         statements.append((os.path.basename(path), statement))
         schema.read_bytes(raw, path, aliases)
+    for base, imports in schema.import_only:
+        if imports != {schema.tns}:
+            raise GenError("has no targetNamespace and imports %s; the set's namespace is %r"
+                           % (sorted(imports), schema.tns), base)
     given = {f.base for f in schema.files}
     for inc in schema.includes:
         if os.path.basename(inc.resolved) not in given:
@@ -2061,6 +2081,8 @@ class Plan:
 
     def __init__(self):
         self.format = self.module = self.title = self.version = None
+        self.import_only = []       # base names of files with no targetNamespace that import the set's
+        self.notes = None           # text of --notes-file, placed in pack.md
         self.msg_names, self.rule = [], []
         self.walked = None          # Walked
         self.kinds, self.empty, self.pack_kinds = [], [], []
@@ -2108,10 +2130,20 @@ def make_plan(schema, statements, shared, pinned, args, key_budget=KEY_BUDGET):
     plan.pack_kinds = [k for k in kinds if not k.default] + [k for k in kinds if k.default]
 
     plan.tns = schema.tns
-    plan.use_xmlns = args.vector_xmlns == "auto" and bool(schema.tns) and w.unqualified == 0
+    plan.import_only = [base for base, _ in schema.import_only]
+    plan.use_xmlns = (args.vector_xmlns == "auto" and bool(schema.tns) and w.unqualified == 0
+                      and not plan.import_only)
     plan.src_lines = ["%s: %s" % (plan.title, ", ".join("%s sha256 %s" % (f.base, f.sha256) for f in schema.files))]
-    plan.src_lines += ["File header of %s: %s" % (base, st) for base, st in statements]
+    public = [base for base, st in statements if st.startswith(PUBLIC_PREFIX)]
+    plan.src_lines += ["File header of %s: %s" % (base, st) for base, st in statements if base not in public]
+    if public:
+        plan.src_lines.append("No file of the set carries a statement in its header (%s); publisher's statement: %s"
+                              % (", ".join(public), " ".join(args.public_statement.split())))
     plan.src_lines += args.source
+    plan.notes = None
+    if args.notes_file:
+        with open(args.notes_file, encoding="utf-8") as fh:
+            plan.notes = fh.read().rstrip("\n")
     plan.uses = [plan.module] + sorted({key.split(".")[0] for _, _, key in plan.maps if "." in key})
     return plan
 
@@ -2672,6 +2704,15 @@ def md_namespaces(plan):
               "back after the mapped root attributes. A document that uses a prefix (`<p:Root xmlns:p=...>`)",
               "does not match any `root` and fails with `no-kind`; a namespace declaration on a child",
               "element is dropped."]
+    elif plan.import_only and plan.walked.unqualified:
+        L += ["The message roots are declared in %s, which has no targetNamespace and imports"
+              % ", ".join("`%s`" % b for b in plan.import_only),
+              "`%s`; local elements are unqualified. A schema-valid document of this set therefore" % tns,
+              "carries no namespace on any element, which is what this wire reads. Namespace declarations",
+              "and `xsi:` attributes on the root (`xmlns:xsi`, `xsi:noNamespaceSchemaLocation`) are unmapped",
+              "root attributes: by 0.1.1 ruling 6 they are residue and are written back after the mapped root",
+              "attributes. A document that puts a prefix on an element (`<p:root xmlns:p=...>`) matches no",
+              "`root` line and fails with `no-kind`. The vectors carry no namespace declaration."]
     elif tns and plan.walked.unqualified:
         L += ["The schema puts its global elements in `%s` and leaves local elements" % tns,
               "unqualified (no elementFormDefault), so a schema-valid document needs a prefixed root",
@@ -2808,6 +2849,8 @@ def pack_md(schema, statements, plan, stats, vectors, cross, names_file):
     L += md_mapped(plan, stats)
     L += md_namespaces(plan)
     L += md_keys(schema, plan, stats, names_file)
+    if plan.notes:
+        L.append("\n" + plan.notes)
     L += md_requires(plan, stats, cross)
     L += md_vectors(vectors)
     L += md_kinds(plan)
@@ -3003,6 +3046,11 @@ def build_parser():
     ap.add_argument("--vector-xmlns", choices=("auto", "never"), default="auto",
                     help="auto: the vectors declare the schema's namespace on the root when every element is "
                          "qualified; never: no namespace declaration")
+    ap.add_argument("--notes-file", default=None, metavar="FILE",
+                    help="markdown placed in pack.md after the section on shared keys")
+    ap.add_argument("--public-statement", default=None, metavar="TEXT",
+                    help="for a set whose file headers carry no Distribution Statement A: the publisher's "
+                         "statement that the set is public and may be reused, recorded for every such file")
     ap.add_argument("--version", default="0.2.0", help="the version line of the pack and of the module")
     return ap
 
@@ -3010,7 +3058,7 @@ def build_parser():
 def run(args):
     """parse -> plan -> emit -> self-check. Returns the exit status."""
     out = genio.Output(args.out, check=args.check)
-    schema, statements = read_schema(args.xsd, dict(args.alias))
+    schema, statements = read_schema(args.xsd, dict(args.alias), args.public_statement)
     shared = read_shared_modules(args.model_dir, out)
     plan = make_plan(schema, statements, shared, read_pinned(args.names_file), args)
     warning = over_budget_warning(plan.walked, plan.module)

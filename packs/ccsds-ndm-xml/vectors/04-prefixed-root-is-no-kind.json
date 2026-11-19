@@ -1,0 +1,9 @@
+{
+  "name": "prefixed-root-is-no-kind",
+  "from": "ccsds-ndm-xml",
+  "to": "ccsds-ndm-xml",
+  "input": "<ndm:opm xmlns:ndm=\"urn:ccsds:schema:ndmxml\" id=\"CCSDS_OPM_VERS\" version=\"3.0\"><ndm:header><ndm:CREATION_DATE>2026-11-19T00:00:00</ndm:CREATION_DATE><ndm:ORIGINATOR>EXAMPLE ORIGINATOR</ndm:ORIGINATOR></ndm:header><ndm:body><ndm:segment><ndm:metadata><ndm:OBJECT_NAME>SAT ONE</ndm:OBJECT_NAME><ndm:OBJECT_ID>2026-001A</ndm:OBJECT_ID><ndm:CENTER_NAME>EARTH</ndm:CENTER_NAME><ndm:REF_FRAME>GCRF</ndm:REF_FRAME><ndm:TIME_SYSTEM>UTC</ndm:TIME_SYSTEM></ndm:metadata><ndm:data><ndm:stateVector><ndm:EPOCH>2026-11-19T12:00:00</ndm:EPOCH><ndm:X>7000.5</ndm:X><ndm:Y>-1200.25</ndm:Y><ndm:Z>350</ndm:Z><ndm:X_DOT>0.5</ndm:X_DOT><ndm:Y_DOT>7.25</ndm:Y_DOT><ndm:Z_DOT>-0.125</ndm:Z_DOT></ndm:stateVector></ndm:data></ndm:segment></ndm:body></ndm:opm>",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "the qualified variant of the schema set puts every element in urn:ccsds:schema:ndmxml; a document that writes a prefix matches no root line of this pack (pack.md, Namespaces; docs/roadmap.md, XML namespaces and prefixes)"
+}

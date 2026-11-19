@@ -1,0 +1,9 @@
+{
+  "name": "control-word-type-1-is-no-kind",
+  "from": "ccsds-clcw",
+  "to": "ccsds-clcw",
+  "input": "810c047b",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.2.1; bytes computed by tools/gen/ccsds-vectors.py. Control word type 1 is another kind of report in the operational control field, not a CLCW (4.2.1.2)."
+}

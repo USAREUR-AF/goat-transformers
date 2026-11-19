@@ -1,0 +1,18 @@
+{
+  "name": "reserved-spare-written-as-zero",
+  "from": "ccsds-aos-frame",
+  "to": "ccsds-aos-frame",
+  "input": "6d0c01234579",
+  "expect": "6d0c01234549",
+  "model": {
+    "@kind": "frame",
+    "ccsdsaos.spacecraft_id": "180",
+    "ccsdsaos.virtual_channel_id": "12",
+    "ccsdsaos.vc_frame_count": "74565",
+    "ccsdsaos.replay_flag": "0",
+    "ccsdsaos.vc_count_cycle_use_flag": "1",
+    "ccsdsaos.vc_count_cycle": "9"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 732.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. Signaling field spare bits 42-43 are 11 on the input; the pack does not map them, so encode writes 00, the value 4.1.2.5.4.2 requires."
+}

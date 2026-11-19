@@ -1,0 +1,9 @@
+{
+  "name": "word-cut-short",
+  "from": "ccsds-clcw",
+  "to": "ccsds-clcw",
+  "input": "010c04",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.2.1; bytes computed by tools/gen/ccsds-vectors.py. Three octets: shorter than the 4-octet word."
+}

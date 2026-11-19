@@ -1,0 +1,18 @@
+{
+  "name": "type-bc-largest-values",
+  "from": "ccsds-tc-frame",
+  "to": "ccsds-tc-frame",
+  "input": "33ffffffff",
+  "expect": "33ffffffff",
+  "model": {
+    "@kind": "frame",
+    "ccsdstc.bypass_flag": "1",
+    "ccsdstc.control_command_flag": "1",
+    "ccsdstc.spacecraft_id": "1023",
+    "ccsdstc.virtual_channel_id": "63",
+    "ccsdstc.frame_length": "1023",
+    "ccsdstc.frame_sequence_number": "255"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. A type-BC frame (table 4-1) with every identifier and count at its largest value; frame length 1023 is a 1024-octet frame (4.1.2.7.2)."
+}

@@ -1,0 +1,17 @@
+# The ccsdsclcw module: the fields of the CCSDS Communications Link Control Word, the
+# 4-octet report of the receiving end of a TC link, each as the wire integer. The pack
+# ccsds-clcw maps them. Bit numbers count from 0 at the first transmitted bit.
+module        ccsdsclcw
+version       0.1.0
+distribution  public
+source        "CCSDS 232.0-B-4 TC Space Data Link Protocol, Blue Book, October 2021 with Technical Corrigendum 1 (October 2023), https://ccsds.org/Pubs/232x0b4e1c1.pdf, section 4.2.1 (Communications Link Control Word); reuse with attribution under the CCSDS reproduction permission statement"
+key  status_field         int  -  "bits 3-5: mission-defined status"
+key  cop_in_effect        int  -  "bits 6-7: the communications operation procedure in use; 1 = COP-1"
+key  virtual_channel_id   int  -  "bits 8-13: the TC virtual channel this report is about"
+key  no_rf_available      int  -  "bit 16: 1 = the physical layer is not available"
+key  no_bit_lock          int  -  "bit 17: 1 = bit lock not achieved; 0 when the mission does not use the flag"
+key  lockout              int  -  "bit 18: 1 = the receiver (FARM) of this virtual channel is in lockout"
+key  wait                 int  -  "bit 19: 1 = the receiver cannot accept further type-A frames on this virtual channel for now"
+key  retransmit           int  -  "bit 20: 1 = one or more type-A frames were rejected or are missing and must be sent again"
+key  farm_b_counter       int  -  "bits 21-22: the two low bits of the count of type-B frames accepted"
+key  report_value         int  -  "bits 24-31: the next expected frame sequence number N(R)"

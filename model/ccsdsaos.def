@@ -1,0 +1,13 @@
+# The ccsdsaos module: the fields of the CCSDS AOS Transfer Frame primary header, each
+# as the wire integer. The pack ccsds-aos-frame maps them. Bit numbers count from 0 at
+# the first transmitted bit.
+module        ccsdsaos
+version       0.1.0
+distribution  public
+source        "CCSDS 732.0-B-4 AOS Space Data Link Protocol, Blue Book, October 2021, https://ccsds.org/Pubs/732x0b4.pdf, section 4.1.2; reuse with attribution under the CCSDS reproduction permission statement"
+key  spacecraft_id             int  -  "bits 2-9: spacecraft identifier assigned through SANA"
+key  virtual_channel_id        int  -  "bits 10-15: virtual channel identifier; 63 (all ones) marks only-idle-data frames"
+key  vc_frame_count            int  -  "bits 16-39: count of the frames of the virtual channel, modulo 16777216"
+key  replay_flag               int  -  "bit 40: 0 = realtime frame, 1 = replayed frame"
+key  vc_count_cycle_use_flag   int  -  "bit 41: 1 = vc_count_cycle is in use, 0 = it is not and reads as zero"
+key  vc_count_cycle            int  -  "bits 44-47: incremented each time vc_frame_count wraps to zero; extends the count to 28 bits"

@@ -1,0 +1,14 @@
+# The ccsdssp module: the fields of the CCSDS Space Packet primary header, each as
+# the wire integer. The pack ccsds-space-packet maps them; pack.md there states the
+# layout. Bit numbers below count from 0 at the first transmitted bit of the header.
+module        ccsdssp
+version       0.1.0
+distribution  public
+source        "CCSDS 133.0-B-2 Space Packet Protocol, Blue Book, June 2020 (Editorial Change 2), https://ccsds.org/Pubs/133x0b2e2.pdf, section 4.1.3; reuse with attribution under the CCSDS reproduction permission statement"
+key  packet_type             int  -  "bit 3: 0 = telemetry or reporting packet, 1 = telecommand or requesting packet"
+key  secondary_header_flag   int  -  "bit 4: 1 = a packet secondary header follows the primary header, 0 = none"
+key  apid                    int  -  "bits 5-15: application process identifier, the managed data path the packet belongs to; 2047 (all ones) marks an idle packet"
+key  sequence_flags          int  -  "bits 16-17: 0 = continuation segment of user data, 1 = first segment, 2 = last segment, 3 = unsegmented"
+key  sequence_count          int  -  "bits 18-31 of a telemetry packet: count of the packets of this APID, modulo 16384"
+key  sequence_count_or_name  int  -  "bits 18-31 of a telecommand packet: the packet sequence count, or a 14-bit packet name the mission chooses"
+key  data_length             int  -  "bits 32-47: number of octets in the packet data field, minus one"

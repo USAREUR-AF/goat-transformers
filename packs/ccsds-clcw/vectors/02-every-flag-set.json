@@ -1,0 +1,22 @@
+{
+  "name": "every-flag-set",
+  "from": "ccsds-clcw",
+  "to": "ccsds-clcw",
+  "input": "1dfcfeff",
+  "expect": "1dfcfeff",
+  "model": {
+    "@kind": "clcw",
+    "ccsdsclcw.status_field": "7",
+    "ccsdsclcw.cop_in_effect": "1",
+    "ccsdsclcw.virtual_channel_id": "63",
+    "ccsdsclcw.no_rf_available": "1",
+    "ccsdsclcw.no_bit_lock": "1",
+    "ccsdsclcw.lockout": "1",
+    "ccsdsclcw.wait": "1",
+    "ccsdsclcw.retransmit": "1",
+    "ccsdsclcw.farm_b_counter": "3",
+    "ccsdsclcw.report_value": "255"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.2.1; bytes computed by tools/gen/ccsds-vectors.py. Every flag 1 and every field at its largest value."
+}

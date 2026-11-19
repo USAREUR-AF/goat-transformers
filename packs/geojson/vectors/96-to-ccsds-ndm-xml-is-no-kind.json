@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-ccsds-ndm-xml-is-no-kind",
+  "from": "geojson",
+  "to": "ccsds-ndm-xml",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,20,30]},\"properties\":{\"callsign\":\"SAT ONE\"},\"id\":\"2026-001A\"}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "every kind of this pack requires raw keys of module ccsdsndm (pack.md, requires); an entity from another format has none, so encode selects no kind"
+}
