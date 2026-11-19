@@ -83,7 +83,8 @@ CORE_KEYS = OrderedDict([
     ("uid", "string"), ("type", "string"), ("time_ms", "int"), ("lat", "float"),
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
     ("callsign", "string"), ("course", "float"), ("speed_ms", "float"), ("how", "string"),
-    ("stale_ms", "int"),
+    ("stale_ms", "int"), ("time_text", "string"), ("stale_text", "string"),
+    ("display_name", "string"),
 ])
 # packs/geojson/pack.def: member order of the canonical output
 GEOJSON_PROPS = ["type", "time_ms", "how", "ce", "le", "callsign", "course", "speed_ms"]
