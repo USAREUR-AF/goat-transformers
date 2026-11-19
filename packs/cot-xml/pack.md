@@ -12,6 +12,8 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 | `point/@lat`, `@lon`, `@hae`, `@ce`, `@le` | `lat`, `lon`, `hae`, `ce`, `le` | |
 | `detail/contact/@callsign` | `callsign` | |
 | `detail/track/@course`, `@speed` | `course`, `speed_ms` | degrees true, metres per second |
+| `@time`, `@stale` as written | `time_text`, `stale_text` | the sender's text, unparsed, for a target that keeps it (`geo-track-v1`). Encode writes `time_ms` and `stale_ms` first, so the text is written only when the instant is absent |
+| `detail/uid/@Droid` | `display_name` | the name the sender shows for the entity |
 
 Written when the entity has no value: `type` `a-u-X`, and `hae`, `ce`, `le`
 `9999999`. `how` and `stale` are written only when the entity has them.

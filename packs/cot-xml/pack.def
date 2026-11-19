@@ -8,7 +8,7 @@
 # a-u-X (atom, unknown affiliation, other) for the type. `how` is required too,
 # but the schema names no value for "not known", so it has no default.
 format  cot-xml
-version 0.2.0
+version 0.3.0
 distribution public
 source  "Cursor on Target event schema (MITRE, public release); field use cross-checked against pytak"
 uses    track
@@ -30,6 +30,11 @@ field   le        point/@le                   float
 field   callsign  detail/contact/@callsign    string
 field   course    detail/track/@course        float
 field   speed_ms  detail/track/@speed         float
+# The sender's text of the two instants, after the lines that parse them, so
+# a changed time_ms or stale_ms is what encode writes (ruling 16 of 0.5).
+field   time_text     @time              string
+field   stale_text    @stale             string
+field   display_name  detail/uid/@Droid  string
 default type      a-u-X
 default hae       9999999
 default ce        9999999
