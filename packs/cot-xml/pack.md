@@ -7,6 +7,7 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 |---|---|---|
 | `@version` | none | constant `2.0`, written on every encode |
 | `@uid`, `@type`, `@how` | `uid`, `type`, `how` | |
+| `@access` | `access` | text as the sender or the caller gives it; no default, so a conversion never chooses one. The base-event schema of atak-civ (`takcot/mitre`) requires it; a caller that must validate against that schema supplies it as context |
 | `@time`, `@start` | `time_ms` | ISO 8601; both are written from the one key. Decode reads `time`, and `start` only when `time` is absent |
 | `@stale` | `stale_ms` | supplied by the caller: `convert` context, CLI `--set stale_ms=<epoch ms>` |
 | `point/@lat`, `@lon`, `@hae`, `@ce`, `@le` | `lat`, `lon`, `hae`, `ce`, `le` | |
