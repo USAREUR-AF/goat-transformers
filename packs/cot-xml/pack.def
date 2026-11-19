@@ -8,7 +8,7 @@
 # a-u-X (atom, unknown affiliation, other) for the type. `how` is required too,
 # but the schema names no value for "not known", so it has no default.
 format  cot-xml
-version 0.3.0
+version 0.4.0
 distribution public
 source  "Cursor on Target event schema (MITRE, public release); field use cross-checked against pytak"
 uses    track
@@ -24,9 +24,9 @@ field   stale_ms  @stale                      iso8601_ms
 field   how       @how                        string
 field   lat       point/@lat                  float
 field   lon       point/@lon                  float
-field   hae       point/@hae                  float
-field   ce        point/@ce                   float
-field   le        point/@le                   float
+field   hae       point/@hae                  float  absent 9999999,9999999.0
+field   ce        point/@ce                   float  absent 9999999,9999999.0
+field   le        point/@le                   float  absent 9999999,9999999.0
 field   callsign  detail/contact/@callsign    string
 field   course    detail/track/@course        float
 field   speed_ms  detail/track/@speed         float

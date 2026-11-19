@@ -1,0 +1,8 @@
+{
+  "name": "not-known-point-values-roundtrip-as-the-default",
+  "from": "cot-xml",
+  "to": "cot-xml",
+  "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"9999999\" ce=\"9999999.0\" le=\"9999999\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" start=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "reference": "decode leaves hae, ce and le absent; encode writes the default 9999999 for each, so 9999999.0 is written 9999999"
+}
