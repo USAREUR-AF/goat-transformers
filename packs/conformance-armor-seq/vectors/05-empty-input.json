@@ -1,0 +1,9 @@
+{
+  "name": "empty-input",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): no bits: the first field reads past the end: malformed-wire. Derived without an engine by a standalone reference program."
+}

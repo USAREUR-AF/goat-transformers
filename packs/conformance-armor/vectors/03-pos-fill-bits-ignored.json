@@ -1,0 +1,16 @@
+{
+  "name": "pos-fill-bits-ignored",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1CB>fwT0p:Qr@07",
+  "expect": "1CB>fwT0p:Qr@00",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "1234",
+    "lat": "51.5",
+    "callsign": "GATOR"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): ruling 2: the last character's 3 bits beyond L = 87 are set on input and written as zero. Derived without an engine by a standalone reference program."
+}

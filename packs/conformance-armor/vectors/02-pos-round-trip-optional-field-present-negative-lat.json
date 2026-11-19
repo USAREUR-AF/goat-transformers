@@ -1,0 +1,17 @@
+{
+  "name": "pos-round-trip-optional-field-present-negative-lat",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1wwnJV<1n40H9QV@",
+  "expect": "1wwnJV<1n40H9QV@",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "4095",
+    "lat": "-33.5",
+    "callsign": "N0 CALL",
+    "probe.y": "200"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): pos kind; L = 95 with y present, 16 characters, 1 fill bit; lat two's complement -20100000 / 600000 = -33.5; callsign fills its 7 characters. Derived without an engine by a standalone reference program."
+}

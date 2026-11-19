@@ -1,0 +1,9 @@
+{
+  "name": "invalid-character-after-a-type-of-no-kind",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "4CB>fwT0!:Qr@00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): type 4 would be no-kind, but every character is checked first: '!' is malformed-wire. Derived without an engine by a standalone reference program."
+}

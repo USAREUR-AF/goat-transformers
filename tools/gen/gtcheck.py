@@ -3,7 +3,7 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.10 and 0.13) and imports no engine, so a generator
+spec/engine-spec.md (Versions 0.1 to 0.10, 0.13 and 0.14) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -44,7 +44,8 @@ DISTRIBUTIONS = ("public", "controlled")
 TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
-                   "sscale": "float", "f32": "float", "f64": "float", "ascii": "string"}
+                   "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
+                   "sixbit": "string"}       # `sixbit`: 0.14, either layout and either armor
 PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
                        "pdouble": "float", "pfloat": "float"}
 # 0.10 "Transforms for `text`": `int:<w>` is `int` with a parameter; `dec`,
@@ -69,8 +70,10 @@ TEXT_HEADER = ("delimiter", "start", "checksum")
 # with their allowed values (`key` and `checksum sum16 <tag>` are checked apart)
 TLV_HEADER = ("tag", "length", "key", "checksum")
 TLV_FORMS = {"tag": ("ber-oid", "1", "2", "4"), "length": ("ber", "1", "2", "4")}
+# the armor of the bits wire (0.14): at most once, before the first `kind`
+ARMORS = ("hex", "sixbit")
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
-          "bit_order", "word_bytes") + TEXT_HEADER
+          "bit_order", "word_bytes", "armor") + TEXT_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length")
 SEQUENTIAL_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
@@ -492,6 +495,7 @@ class Pack:
         self.label = label
         self.format = self.version = self.wire = self.distribution = self.root = None
         self.layout, self.bit_order, self.word_bytes = "fixed", "lsb", None
+        self.armor = "hex"                                       # bits wire, 0.14
         self.delimiter = self.start = self.checksum = None      # text wire, as written
         self.tag, self.length, self.key = "ber-oid", "ber", None  # tlv wire
         self.sum16 = None                                        # tlv: the checksum tag, an int
@@ -545,6 +549,7 @@ class _Loader:
         self.pack = Pack(label or "<pack>")
         self.key_uses = []          # (node or line number, key, what is expected)
         self.tlv_lines = []         # (line number, directive, args, after a `kind`), 0.13
+        self.armor_line = None      # (line number, value, after a `kind`), 0.14
         self._header_lines = {}
 
     def fail(self, kind, message, line=None):
@@ -663,6 +668,9 @@ class _Loader:
             if not _UINT.match(value) or int(value) < 1:
                 self.bad(no, "word_bytes `%s` is not a positive integer" % value)
             pack.word_bytes = int(value)
+        elif d == "armor":
+            # checked in `lines`, after the file is read (0.14; ruling 10 of 0.10)
+            self.armor_line = (no, value, bool(pack.kinds))
         elif d in TEXT_HEADER:
             if pack.kinds:
                 self.bad(no, "`%s` after the first `kind`" % d)
@@ -726,6 +734,7 @@ class _Loader:
                 self.bad(where["start"], "start `%s` is not one or more characters from 0x21 to 0x7E "
                                          "without the delimiter" % pack.start)
         self._tlv_header()
+        self._armor()
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -737,6 +746,23 @@ class _Loader:
             for _, lines in pack.scopes():
                 self._fixed_extents(lines, item=None)
         return self
+
+    def _armor(self):
+        """0.14: `armor <hex|sixbit>` on the bits wire only, before the first
+        `kind`; `armor sixbit` needs `bit_order msb` (the default is lsb)."""
+        if self.armor_line is None:
+            return
+        pack = self.pack
+        no, value, after_kind = self.armor_line
+        if pack.wire != "bits":
+            self.bad(no, "`armor` on the %s wire" % pack.wire)
+        if after_kind:
+            self.bad(no, "`armor` after the first `kind`")
+        if value not in ARMORS:
+            self.bad(no, "armor `%s` is not hex or sixbit" % value)
+        if value == "sixbit" and pack.bit_order != "msb":
+            self.bad(no, "`armor sixbit` needs `bit_order msb`")
+        pack.armor = value
 
     def _tlv_header(self):
         """0.13: `tag`, `length`, `key` and `checksum sum16 <tag>` on the tlv
@@ -882,6 +908,8 @@ class _Loader:
         if bits is not None:
             if name == "ascii":
                 ok = bits % 8 == 0 and 8 <= bits <= 2040
+            elif name == "sixbit":
+                ok = bits % 6 == 0 and 6 <= bits <= 1530
             elif name in ("f32", "f64"):
                 ok = bits == int(name[1:])
             else:
@@ -1014,8 +1042,10 @@ class _Loader:
         bits_wire = self.pack.wire == "bits"
         if "swap" in node.opts and not (bits_wire and node.bits % 8 == 0):
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
-        if "trim" in node.opts and not (bits_wire and node.tr == "ascii"):
-            self.bad(node, "`trim` needs the bits wire and the `ascii` transform")
+        if "swap" in node.opts and node.tr == "sixbit":
+            self.bad(node, "`swap` on the `sixbit` transform")
+        if "trim" in node.opts and not (bits_wire and node.tr in ("ascii", "sixbit")):
+            self.bad(node, "`trim` needs the bits wire and the `ascii` or `sixbit` transform")
         text_wire = self.pack.wire == "text"
         if "optional" in node.opts and not ((bits_wire and not self.pack.sequential) or text_wire):
             self.bad(node, "`optional` needs a fixed-layout bits pack or the text wire")
@@ -1193,6 +1223,8 @@ class _Loader:
             i += 1
         if node.whole and node.unit == "bits":
             self.bad(node, "`length ... bits whole`")
+        if node.whole and self.pack.armor == "sixbit":
+            self.bad(node, "`length ... whole` in a pack with `armor sixbit` (ruling 3 of 0.14)")
         node.unit, node.plus = node.unit or "bytes", node.plus or 0
 
     def _group(self, node, group):

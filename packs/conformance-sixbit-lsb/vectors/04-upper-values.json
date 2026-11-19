@@ -1,0 +1,13 @@
+{
+  "name": "upper-values",
+  "from": "conformance-sixbit-lsb",
+  "to": "conformance-sixbit-lsb",
+  "input": "fff7",
+  "expect": "fff7",
+  "model": {
+    "probe.s1": "?_",
+    "probe.n": "15"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): '?' = 63 low, '_' = 31 high: 63 + 31 * 64 = 0x7ff; n = 15: word 0xf7ff, bytes ff f7. Derived without an engine by a standalone reference program."
+}

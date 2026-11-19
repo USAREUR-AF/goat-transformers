@@ -1,0 +1,16 @@
+{
+  "name": "pos-round-trip-optional-field-absent",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1CB>fwT0p:Qr@00",
+  "expect": "1CB>fwT0p:Qr@00",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "1234",
+    "lat": "51.5",
+    "callsign": "GATOR"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): pos kind; L = 87 (y optional and absent), 15 characters, 3 zero fill bits; the optional y at bits 87..94 lies beyond 90 input bits and is absent; lat 30900000 * 1 / 600000 = 51.5; callsign GATOR padded with @. Derived without an engine by a standalone reference program."
+}

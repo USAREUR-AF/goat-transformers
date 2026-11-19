@@ -2692,3 +2692,135 @@ that kind is not selected. `group` on `tlv` is `bad-directive` in 0.13.
     (ruling 10) is `bad-directive` after the file, and a later line's error
     comes first: `field probe.n 4:1 uint absent 255` followed by a line
     `bogus` is `unknown-directive`.
+
+---
+
+# Version 0.14: six-bit armor
+
+Status: Written. Some binary messages travel as printable text in which each
+character carries six bits: the payload of an AIS `AIVDM` or `AIVDO` sentence
+is one. A `bits` pack with `armor sixbit` reads and writes that text instead of
+hex. Every other rule of the `bits` wire, in either layout, applies to the bits
+the text carries. A text field inside the message whose characters are six-bit
+codes is read with the transform `sixbit`, which any `bits` pack may use.
+
+```
+wire       bits
+bit_order  msb
+armor      <hex | sixbit>     # default hex
+```
+
+`armor` is valid only on the `bits` wire, at most once, before the first
+`kind`; `armor sixbit` needs `bit_order msb`. Anything else is
+`bad-directive`, checked after the file is read (ruling 10 of 0.10).
+
+## Reading the armored text
+
+Each character of the input stands for six bits, first character first, the
+most significant of its six bits first. A character `c` from `0` (0x30) to `W`
+(0x57) stands for `c - 0x30`, and from `` ` `` (0x60) to `w` (0x77) for
+`c - 0x38`; together they give the 64 values 0 to 63. Any other character,
+whitespace and a line terminator included, is `malformed-wire`. Every
+character is checked before any `when` or field is read, so a bad character
+is `malformed-wire` and not `no-kind`, wherever it stands. The message is the
+`6 * <characters>` bits so obtained, any number of bits: the whole-byte rule
+of 0.8 and ruling 14 of 0.6 do not apply under `armor sixbit`. An empty input
+is a message of no bits.
+
+The `bits` rules then apply unchanged, with these readings of the message
+length:
+
+- **Fixed layout.** The input must reach every bit of each `field` line of
+  the selected scope that is not `optional`, of each `when` and `const` line,
+  and of a group's items, whatever `word_bytes` is; whole words are not
+  required. Input shorter than that is `malformed-wire` (ruling 21 of 0.5:
+  a `when` beyond the input does not hold). An `optional` field beyond the
+  input is absent.
+- **Sequential layout.** Bits after the last line are ignored, as in 0.8.
+
+## Writing the armored text
+
+The encoder lays out the message as for hex output, and then takes its first
+`L` bits, where `L` is:
+
+- in the fixed layout, one more than the highest bit of any `field`, `when`
+  or `const` line of the selected scope, or of a group's items, whether or
+  not its key is present, except an `optional` field whose key is absent
+  (with no `default`);
+- in the sequential layout, the position of the cursor after the last line,
+  not rounded to a byte.
+
+The `L` bits, followed by zero bits up to the next multiple of 6, are written
+as `L / 6` characters (rounded up), each six bits as the character that stands
+for them above: values 0 to 39 as `0x30 + v`, values 40 to 63 as `0x38 + v`.
+The count of zero bits added (0 to 5) is not part of the output.
+
+So a same-format round trip of armored text is exact when the input has no
+characters beyond those the pack's lines reach, and its last character's bits
+beyond `L` are zero.
+
+## The `sixbit` transform
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `sixbit` | string | `len` is a multiple of 6, from 6 to 1530: each six bits, in the pack's bit order, as one character: values 0 to 31 as `@` to `_` (`0x40 + v`), 32 to 63 as space to `?` (`v`); then trailing `@` characters removed | each character of the text as its value, `@` to `_` as `c - 0x40` and space to `?` as `c`; padded with `@` (value 0) to `len / 6` characters. A character outside 0x20 to 0x5F, or text longer than `len / 6`, is `transform-encode` |
+
+`sixbit` is valid on the `bits` wire in either layout and with either armor.
+Its characters are read first to last, each one's six bits in the pack's bit
+order, as `ascii` reads its bytes (0.5): with `lsb` the first character is the
+low six bits of the field. With the field option `trim`, decode removes the
+whole trailing run of `@` and space characters, in any mix. `swap` on
+`sixbit` is `bad-directive`. A `len` that is not a multiple of 6, or outside
+6 to 1530, is `bad-directive`.
+
+## Vectors
+
+`input` and `expect` of a format with `armor sixbit` are the armored text in a
+JSON string, with no fill-bit count and no sentence around it.
+
+## Rulings for 0.14
+
+1. **What `armor` does not carry.** The `AIVDM` sentence around a payload, the
+   fill-bit count, and the joining of a payload split across sentences belong
+   to a layered wire. A pack with `armor sixbit` reads one whole payload.
+2. **Fill bits on decode.** Bits in the last character beyond what the lines
+   read are ignored, like any bits past the last line.
+3. **`length … whole`** (0.8) in a pack with `armor sixbit` is
+   `bad-directive`: the armored text has no whole-byte length.
+4. **Short input and kinds.** The length rule of "Fixed layout" applies to
+   the lines of the selected kind, once a kind is selected; an input too
+   short for every kind's `when` lines is `no-kind` (ruling 21 of 0.5).
+5. **Earlier tables.** `trim` applies to `sixbit` as to `ascii` (the field
+   options table of 0.6 reads "`bits`, with `ascii` or `sixbit`"), and `armor`
+   joins the header directives of ruling 24 of 0.8 that are `bad-directive`
+   inside any block.
+6. **Empty `sixbit`.** A field that is all `@` decodes to the empty string,
+   present, as ruling 3 of 0.5 states for `ascii`.
+7. **What counts toward `L`.** An `optional` field whose key has a `default`
+   counts, since encode writes the default. A count locator counts whether
+   the list is present, empty or absent (ruling 14 of 0.7 writes 0).
+8. **Byte padding inside the message.** Only the rule that a whole message is
+   a number of bytes is set aside; a `length … bytes` block is still padded
+   to a whole byte.
+9. **Nothing to write.** A scope that writes no bit gives the empty text.
+10. **A group's items in `L` and on decode** count at their full extent,
+    `item <bits>` each (longer where a nested group runs past it), not at the
+    last bit a line inside them reads.
+11. **"Before the first `kind`"** counts every `kind` line, a `kind` inside a
+    group body included.
+12. **`absent` (0.9) with armor.** A `bits` pack with `armor sixbit` takes
+    `absent` as any `bits` pack does: the raw value is the field's bits as an
+    unsigned integer, `sixbit` fields included. A field with `absent` whose
+    key is absent writes its first sentinel, so it counts toward `L`, whether
+    or not it is `optional`.
+13. **The argument count of `armor`.** `armor` takes exactly one argument,
+    checked as the line is read (step 3 of 5b of 0.11, as for `checksum` in
+    ruling 12 of 0.13): a bare `armor`, or `armor sixbit hex`, is
+    `bad-directive` there. Whether a one-argument `armor` fits its pack (its
+    value, its wire, `bit_order msb`, once, before the first `kind`) is
+    checked after the file is read. `armor` is not in the list of 0.11 (5b)
+    of lines that stand after the `wire` line.
+14. **When the length of a `sixbit` field is checked.** A `len` that is not a
+    multiple of 6, or outside 6 to 1530, is a bit length against its
+    transform, which 5b of 0.11 checks after the file is read: `field s
+    0:0:8 sixbit` followed by a line `bogus` is `unknown-directive`.

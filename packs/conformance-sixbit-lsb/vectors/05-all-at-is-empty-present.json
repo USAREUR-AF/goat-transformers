@@ -1,0 +1,13 @@
+{
+  "name": "all-at-is-empty-present",
+  "from": "conformance-sixbit-lsb",
+  "to": "conformance-sixbit-lsb",
+  "input": "0000",
+  "expect": "0000",
+  "model": {
+    "probe.s1": "",
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): ruling 6: two @ decode to the empty string, present. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "sixbit-across-characters-trailing-at-removed",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "00200",
+  "expect": "00200",
+  "model": {
+    "probe.n": "0",
+    "probe.x": "0",
+    "probe.s2": "A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): s2 starts at bit 11, across payload characters; 'A@@' decodes to 'A'. Derived without an engine by a standalone reference program."
+}

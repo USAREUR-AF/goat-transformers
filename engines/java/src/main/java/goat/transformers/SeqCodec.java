@@ -6,7 +6,9 @@ import java.util.List;
 
 /**
  * The {@code bits} wire with {@code layout sequential} (engine-spec 0.8): the lines of the pack are read, and
- * written, in file order from a cursor. Hex text in and out; a message is a whole number of bytes.
+ * written, in file order from a cursor. Hex text in and out; a message is a whole number of bytes. With
+ * {@code armor sixbit} (engine-spec 0.14) armored text in and out: a message is any number of bits, and encode
+ * writes the bits up to the cursor.
  */
 final class SeqCodec extends Codec<byte[]> {
     private final boolean msb;
@@ -45,9 +47,9 @@ final class SeqCodec extends Codec<byte[]> {
         final boolean[][] presence = new boolean[pack.seqPresences][];
         final Failures fails = new Failures();
 
-        Reader(byte[] msg) {
-            this.msg = msg;
-            this.end = (long) msg.length * 8;
+        Reader(BitMsg in) {
+            this.msg = in.b;
+            this.end = in.bits;
         }
 
         long limit() { return soft >= 0 ? soft : end; }
@@ -91,7 +93,7 @@ final class SeqCodec extends Codec<byte[]> {
 
     @Override
     Entity decodeMessage(String text) {
-        Reader r = new Reader(parse(text));
+        Reader r = new Reader(parseBits(text));
         Entity e = new Entity();
         Seq.Kind kind = decodeBody(root, r, e);
         finishDecode(e, r.fails);
@@ -156,6 +158,10 @@ final class SeqCodec extends Codec<byte[]> {
                             for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) r.take(8);
                             if (f.swap) BitsCodec.reverseBytes(bytes);
                             v = f.bits.decodeAscii(bytes, f.trim);
+                        } else if (f.bits.isSixbit()) {
+                            long at = r.pos;
+                            r.pos += n.len;
+                            v = BitsTransform.decodeSixbit(BitsCodec.readSixbit(r.msg, at, n.len, msb), f.trim);
                         } else {
                             long at = r.pos;
                             r.pos += n.len;   // the cursor moves on whether or not the transform succeeds
@@ -371,6 +377,8 @@ final class SeqCodec extends Codec<byte[]> {
         Writer w = new Writer();
         Seq.Kind kind = selectForEncode(root, e, "the entity");
         encodeLines(kind.all, w, e, kind.scope);
+        // armored text: the bits up to the cursor, not rounded to a byte (`length ... whole` is refused at load)
+        if (pack.armorSixbit) return toArmor(w.b, w.pos);
         int bytes = (int) ((w.pos + 7) >>> 3);   // a whole number of bytes; the remaining bits are zero
         w.ensure(w.pos);
         for (int i = 0; i < w.wholes.size(); i++) {
@@ -602,6 +610,8 @@ final class SeqCodec extends Codec<byte[]> {
                     byte[] bytes = f.bits.encodeAscii(v, n.len / 8);
                     if (f.swap) BitsCodec.reverseBytes(bytes);
                     for (byte b : bytes) w.put(8, b & 0xffL);
+                } else if (f.bits.isSixbit()) {
+                    for (int c : BitsTransform.encodeSixbit(v, n.len / 6)) w.put(6, c);
                 } else {
                     long raw = f.bits.encode(v, n.len);
                     w.put(n.len, f.swap ? BitsCodec.swapBytes(raw, n.len) : raw);

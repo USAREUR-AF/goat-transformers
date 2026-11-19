@@ -1,0 +1,9 @@
+{
+  "name": "to-armor-seq-opt-present",
+  "from": "conformance-seq-json",
+  "to": "conformance-armor-seq",
+  "input": "{\"n\":9,\"x\":5,\"y\":200}",
+  "expect": "9GT0000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): opt bit 1 (y present); s2 absent writes 18 zero bits; L = 37, 7 characters. Derived without an engine by a standalone reference program."
+}

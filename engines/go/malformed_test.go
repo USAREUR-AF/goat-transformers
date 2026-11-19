@@ -51,6 +51,8 @@ func TestMalformedInputNeverPanics(t *testing.T) {
 	}
 	maxPrefixes, maxMutations := perVector, perVector
 	const hexDigits = "0123456789abcdefABCDEF"
+	// The characters of six-bit armor (spec 0.14): `0`..`W` and `` ` ``..`w`.
+	const armorChars = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw"
 	eng, err := Load(packsDir)
 	if err != nil {
 		t.Fatalf("loading packs from %s: %v", packsDir, err)
@@ -76,7 +78,8 @@ func TestMalformedInputNeverPanics(t *testing.T) {
 			continue
 		}
 		in := bytesOf(t, v.Input, v.InputB64, "input")
-		hexWire := p.Wire == WireBits || p.Wire == WireProtobuf || p.Wire == WireTLV
+		armored := p.sixbitArmor
+		hexWire := !armored && (p.Wire == WireBits || p.Wire == WireProtobuf || p.Wire == WireTLV)
 		jsonWire := p.Wire == WireJSON || p.Wire == WireGeoJSON
 		try := func(what string, b []byte) {
 			inputs++
@@ -103,12 +106,28 @@ func TestMalformedInputNeverPanics(t *testing.T) {
 		}
 		// Single bytes changed. On a hex wire two changes in three stay hex
 		// digits, so the change reaches the message and not only the hex text.
+		// Armored text: random armor characters, every length from empty to
+		// a few characters past the vector's input, so the message ends at
+		// every place a line, a group item or a fill bit stands.
+		if armored {
+			for n := 0; n <= len(in)+3; n++ {
+				m := make([]byte, n)
+				for i := range m {
+					m[i] = armorChars[rng.Intn(len(armorChars))]
+				}
+				try("armor characters", m)
+			}
+		}
 		for k := 0; k < maxMutations && len(in) > 0; k++ {
 			m := append([]byte(nil), in...)
 			at := rng.Intn(len(m))
 			c := byte(rng.Intn(256))
 			if hexWire && k%3 != 0 {
 				c = hexDigits[rng.Intn(len(hexDigits))]
+			}
+			// On armored text two changes in three stay armor characters.
+			if armored && k%3 != 0 {
+				c = armorChars[rng.Intn(len(armorChars))]
 			}
 			if c == m[at] {
 				c ^= 0x01

@@ -1,0 +1,14 @@
+{
+  "name": "values-round-trip",
+  "from": "conformance-armor-absent",
+  "to": "conformance-armor-absent",
+  "input": "512",
+  "expect": "512",
+  "model": {
+    "probe.n": "5",
+    "probe.x": "1",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.14 (character map, L) with 0.9 (absent) and ruling 12 of 0.14: `5`, `1`, `2` are 5, 1, 2 (c - 0x30); none is a sentinel. Derived by hand."
+}

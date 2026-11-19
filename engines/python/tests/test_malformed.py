@@ -549,5 +549,70 @@ class TestTlv(_Rulings):
         self.assertEqual(problems, [], "\n".join(problems[:40]))
 
 
+class TestArmor(_Rulings):
+    """Armored text (0.14, "Reading the armored text"): every character is
+    checked before any line is read, so a character outside the map is
+    `malformed-wire` wherever it stands, and never `no-kind`."""
+
+    fmt = "conformance-armor"     # fixed layout, kinds selected by a six-bit type
+    seq = "conformance-armor-seq"  # sequential layout
+    GOOD = "1wwnJV<1n40H9QV@"     # kind pos, every line present
+    GOOD_SEQ = "wwT=LwP"
+
+    def test_character_map(self):
+        valid = [chr(c) for c in range(0x30, 0x58)] + [chr(c) for c in range(0x60, 0x78)]
+        self.assertEqual(len(valid), 64)
+        for c in valid:
+            self.assertIsNone(outcome(engine(), self.fmt, self.fmt, self.GOOD[:1] + c + self.GOOD[2:]), c)
+        bad = [chr(c) for c in range(0, 0x80) if chr(c) not in valid] + ["é", "\u0660", "\uff10", "\U0001f410"]
+        for c in bad:
+            for at in (0, 5, len(self.GOOD)):  # where the type is read, inside a field, after every read bit
+                self.malformed(self.GOOD[:at] + c + self.GOOD[at:])
+                self.malformed(self.GOOD_SEQ[:at] + c + self.GOOD_SEQ[at:], self.seq)
+
+    def test_bad_character_is_not_no_kind(self):
+        for data in ("4" + self.GOOD[1:] + " ", "4" + self.GOOD[1:] + "\n", "4!", "x"):
+            self.malformed(data)
+        with self.assertRaises(GTError) as cm:
+            engine().decode(self.fmt, "4" + self.GOOD[1:])
+        self.assertEqual(cm.exception.code, "no-kind")
+
+    def test_white_space_is_not_ignored(self):
+        for data in (" " + self.GOOD, self.GOOD + "\r\n", self.GOOD[:4] + "\t" + self.GOOD[4:]):
+            self.malformed(data)
+        self.malformed(self.GOOD_SEQ + " ", self.seq)
+
+    def test_not_utf8(self):
+        for fmt in (self.fmt, self.seq):
+            self.malformed(b"\xff\xfe", fmt)
+            self.malformed(b"1\xc3", fmt)
+
+    def test_short_input(self):
+        # every prefix of a message that needs all its characters fails, as
+        # malformed-wire once the type selects a kind, as no-kind before
+        for i in range(len(self.GOOD) - 1):
+            with self.assertRaises(GTError) as cm:
+                engine().decode(self.fmt, self.GOOD[:i])
+            self.assertEqual(cm.exception.code, "no-kind" if i == 0 else "malformed-wire", i)
+        self.converts(self.GOOD[:-1])  # the optional field at bits 87..94 is then absent
+        for i in range(len(self.GOOD_SEQ)):
+            self.malformed(self.GOOD_SEQ[:i], self.seq)
+
+    def test_every_prefix_and_change(self):
+        rng = random.Random(SEED)
+        problems = []
+        for fmt, text in ((self.fmt, self.GOOD), (self.seq, self.GOOD_SEQ), (self.fmt, "380Owt")):
+            forms = [text[:i] for i in range(len(text))]
+            for i in range(len(text)):
+                for ch in rng.sample("0Ww`@x " + ALPHABET, 6):
+                    forms.append(text[:i] + ch + text[i + 1:])
+            for data in forms:
+                for dst in (fmt, "conformance-seq-json"):
+                    what = outcome(engine(), fmt, dst, data)
+                    if what is not None:
+                        problems.append("%s: %s on input %r" % (fmt, what, data[:120]))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+
 if __name__ == "__main__":
     unittest.main()

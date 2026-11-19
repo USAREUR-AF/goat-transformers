@@ -1,0 +1,9 @@
+{
+  "name": "to-armor-pos-optional-field-present",
+  "from": "conformance-seq-json",
+  "to": "conformance-armor",
+  "input": "{\"n\":9,\"x\":5,\"y\":200}",
+  "expect": "105000000000006@",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): kind pos (first, no requires); n = 9 is written, then the when 1 over it; lat and callsign absent are zero but count in L; y present: L = 95, 16 characters. Derived without an engine by a standalone reference program."
+}

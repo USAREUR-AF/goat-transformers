@@ -109,6 +109,8 @@ pub enum Transform {
     F64,
     /// bits: bytes in wire order as text, trailing NULs removed
     Ascii,
+    /// bits: six-bit character codes as text, trailing `@` removed (engine-spec v0.14)
+    Sixbit,
     /// text: `int:<w>`, an integer zero-padded to at least `w` digits
     IntW(u32),
     /// text: `dec:<f>[:<w>]`, a number with `f` fraction digits, zero-padded
@@ -180,7 +182,7 @@ impl Transform {
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
             "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
-            "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
+            "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
@@ -220,6 +222,7 @@ impl Transform {
             "f32" => Ok(Transform::F32),
             "f64" => Ok(Transform::F64),
             "ascii" => Ok(Transform::Ascii),
+            "sixbit" => Ok(Transform::Sixbit),
             "string" => Ok(Transform::StringT),
             "float" => Ok(Transform::Float),
             "int" => Ok(Transform::Int),
@@ -276,7 +279,9 @@ impl Transform {
     /// The shared-model type this transform yields (spec/shared-model.md).
     pub fn value_type(&self) -> KeyType {
         match self {
-            Transform::StringT | Transform::Pstring | Transform::Ascii | Transform::Utf8 | Transform::Hex => KeyType::Str,
+            Transform::StringT | Transform::Pstring | Transform::Ascii | Transform::Sixbit | Transform::Utf8 | Transform::Hex => {
+                KeyType::Str
+            }
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
             Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
@@ -309,6 +314,7 @@ impl Transform {
                 | Transform::F32
                 | Transform::F64
                 | Transform::Ascii
+                | Transform::Sixbit
         )
     }
 
@@ -448,7 +454,13 @@ impl Transform {
     /// The JSON kind this transform produces, so a JSON wire emits it correctly.
     fn json_kind(&self) -> JsonKind {
         match self {
-            Transform::StringT | Transform::Iso8601Ms | Transform::Pstring | Transform::Ascii | Transform::Utf8 | Transform::Hex => {
+            Transform::StringT
+            | Transform::Iso8601Ms
+            | Transform::Pstring
+            | Transform::Ascii
+            | Transform::Sixbit
+            | Transform::Utf8
+            | Transform::Hex => {
                 JsonKind::StringK
             }
             Transform::Float
@@ -1447,6 +1459,8 @@ pub struct Pack {
     pub text: text::TextConf,
     /// tlv only: the tag and length encodings, the key and the checksum
     pub tlv: tlv::TlvConf,
+    /// bits only: how the message travels as text (engine-spec v0.14)
+    pub armor: armor::Armor,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -1498,6 +1512,8 @@ impl Pack {
         // a transform that does not parse, while the wire may still be `tlv`
         // (ruling 8 of 0.13): (line, error), raised once the wire is known
         let mut bad_transform: Option<(usize, Error)> = None;
+        // engine-spec v0.14: `armor`
+        let mut armor_lines = armor::ArmorLines::default();
         for (lineno, raw) in text.lines().enumerate() {
             let toks = tokenize(raw)?;
             if toks.is_empty() {
@@ -1511,6 +1527,7 @@ impl Pack {
                     return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
+                "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
                 "tag" | "length" | "key" => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 "checksum" if toks.get(1).map(|s| s.as_str()) == Some("sum16") => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 d @ ("delimiter" | "start" | "checksum") => {
@@ -1945,6 +1962,7 @@ impl Pack {
             (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` are valid only on the tlv wire"),
             _ => tlv::TlvConf::default(),
         };
+        let armor = armor_lines.check(wire == Wire::Bits, bit_order.map_or(false, |(m, _)| m))?;
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
         })?;
@@ -1973,6 +1991,7 @@ impl Pack {
             seq: None,
             text: text_conf,
             tlv: tlv_conf,
+            armor,
         })
     }
 
@@ -2433,8 +2452,12 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if wire == Wire::Text && !text::valid_on_text(t) {
         return bad(f.line, format!("the transform of `{}` is not valid on the text wire", f.model_key));
     }
-    if f.trim && *t != Transform::Ascii {
-        return bad(f.line, "`trim` is valid only with `ascii`");
+    if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
+        return bad(f.line, "`trim` is valid only with `ascii` or `sixbit`");
+    }
+    // engine-spec v0.14
+    if *t == Transform::Sixbit && wire != Wire::Bits {
+        return bad(f.line, "`sixbit` is valid only on a bits wire");
     }
     if *t == Transform::Bool && wire != Wire::Json {
         return bad(f.line, "`bool` is valid only on the json wire");
@@ -2484,10 +2507,14 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                 Transform::F32 => len == 32,
                 Transform::F64 => len == 64,
                 Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
+                Transform::Sixbit => armor::sixbit_len_ok(len as u64),
                 _ => (1..=64).contains(&len),
             };
             if !ok {
                 return bad(f.line, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
+            }
+            if f.swap && *t == Transform::Sixbit {
+                return bad(f.line, "`swap` is not valid on `sixbit`");
             }
             if f.swap && len % 8 != 0 {
                 return bad(f.line, format!("`swap` needs a bit length that is a multiple of 8, got {}", len));
@@ -5103,7 +5130,7 @@ pub mod bits {
     }
 
     /// (first message bit, bit length) of a locator.
-    fn span(p: &Pack, loc: &str) -> Result<(u64, u32), Error> {
+    pub(crate) fn span(p: &Pack, loc: &str) -> Result<(u64, u32), Error> {
         let (word, pos, len) = parse_locator(loc)?;
         Ok((word as u64 * p.word_bytes as u64 * 8 + pos as u64, len))
     }
@@ -5156,6 +5183,14 @@ pub mod bits {
     /// `when` or `const` bit reaches, over the lines in force. `all`: count
     /// `optional` fields too (encode writes them; decode does not need them).
     fn message_bytes(p: &Pack, sel: &Sel, all: bool) -> Result<usize, Error> {
+        let end = message_end(p, sel, all)?;
+        let word_bits = p.word_bytes as u64 * 8;
+        let words = ((end + word_bits - 1) / word_bits).max(1);
+        Ok(words as usize * p.word_bytes)
+    }
+
+    /// The furthest bit the lines in force reach, not rounded to a word.
+    fn message_end(p: &Pack, sel: &Sel, all: bool) -> Result<u64, Error> {
         let mut end: u64 = 0;
         let locators = sel
             .fields
@@ -5167,9 +5202,7 @@ pub mod bits {
             let (start, len) = span(p, loc)?;
             end = end.max(start + len as u64);
         }
-        let word_bits = p.word_bytes as u64 * 8;
-        let words = ((end + word_bits - 1) / word_bits).max(1);
-        Ok(words as usize * p.word_bytes)
+        Ok(end)
     }
 
     /// The low `len` bits of `raw` with their bytes in reverse order (`swap`).
@@ -5180,6 +5213,9 @@ pub mod bits {
     /// The value of a field whose `len` bits start at message bit `start`,
     /// through its transform. The caller has checked the bits are in the input.
     pub(crate) fn read_field(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
+        if f.transform == Transform::Sixbit {
+            return armor::read_sixbit(p, f, raw, start, len);
+        }
         if f.transform == Transform::Ascii {
             // bytes first to last, each byte's bits in the pack's bit order
             let mut bytes: Vec<u8> =
@@ -5208,6 +5244,9 @@ pub mod bits {
 
     /// Write the wire value `v` of a field into its `len` bits at message bit `start`.
     pub(crate) fn write_field(p: &Pack, f: &FieldDef, v: &Value, start: u64, len: u32, msg: &mut [u8]) -> Result<(), Error> {
+        if f.transform == Transform::Sixbit {
+            return armor::write_sixbit(p, f, v, start, len, msg);
+        }
         if f.transform == Transform::Ascii {
             let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
             let text = match v {
@@ -5276,9 +5315,16 @@ pub mod bits {
 
     /// Decode the fields and groups of one scope: the message (`base` 0), or
     /// one item, whose first bit is `base`. `reach` is the furthest bit the
-    /// message must hold.
-    fn decode_scope(p: &Pack, sel: &Sel, raw: &[u8], base: u64, d: &mut Decoded, reach: &mut u64) -> Result<u64, Error> {
-        let total = raw.len() as u64 * 8;
+    /// message must hold; `total` the bits of the input.
+    fn decode_scope(
+        p: &Pack,
+        sel: &Sel,
+        raw: &[u8],
+        total: u64,
+        base: u64,
+        d: &mut Decoded,
+        reach: &mut u64,
+    ) -> Result<u64, Error> {
         // where the items of this scope's groups end
         let mut groups_end = 0u64;
         for f in &sel.fields {
@@ -5308,6 +5354,7 @@ pub mod bits {
                     let (off, len) = span(p, l)?;
                     *reach = (*reach).max(base + off + len as u64);
                     get_bits(raw, base + off, len, p.msb)
+                        .filter(|_| base + off + len as u64 <= total)
                         .ok_or_else(|| short(p, format!("the input ends before the count of list `{}`", g.list)))?
                 }
                 None => 0,
@@ -5331,7 +5378,7 @@ pub mod bits {
                     return Err(short(p, format!("the input ends inside an item of list `{}`", g.list)));
                 }
                 let mut di = Decoded::new();
-                let nested_end = decode_scope(p, &body, raw, at, &mut di, reach)?;
+                let nested_end = decode_scope(p, &body, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
                 items.push(di);
             }
@@ -5344,15 +5391,33 @@ pub mod bits {
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
-        let raw = from_hex(hex)?;
+        // the message and its length in bits: hex, or six-bit armor (engine-spec v0.14)
+        let sixbit = p.armor == armor::Armor::Sixbit;
+        let (raw, total) = if sixbit {
+            armor::read(p, hex)?
+        } else {
+            let raw = from_hex(hex)?;
+            let total = raw.len() as u64 * 8;
+            (raw, total)
+        };
         if let Some(body) = &p.seq {
-            return super::seq::decode(p, body, &raw);
+            return super::seq::decode(p, body, &raw, total);
         }
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, &w.locator) {
-            Ok((start, len)) => get_bits(&raw, start, len, p.msb) == Some(w.num),
+            Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.msb) == Some(w.num),
             Err(_) => false,
         })?;
+        if sixbit {
+            // every bit of the lines in force, not whole words (engine-spec v0.14)
+            let need = message_end(p, &sel, false)?;
+            if total < need {
+                return Err(short(p, format!("input is {} bits, need {}", total, need)));
+            }
+            let mut d = Decoded::new();
+            decode_scope(p, &sel, &raw, total, 0, &mut d, &mut 0)?;
+            return d.finish(p, &sel);
+        }
         let words = |need: usize| {
             format!("input is {} bytes, need {} ({} words of {})", raw.len(), need, need / p.word_bytes, p.word_bytes)
         };
@@ -5362,7 +5427,7 @@ pub mod bits {
         }
         let mut d = Decoded::new();
         let mut reach = 0u64;
-        decode_scope(p, &sel, &raw, 0, &mut d, &mut reach)?;
+        decode_scope(p, &sel, &raw, total, 0, &mut d, &mut reach)?;
         // whole words up to the furthest bit, the items of every group included
         let word_bits = p.word_bytes as u64 * 8;
         let need = ((reach + word_bits - 1) / word_bits) as usize * p.word_bytes;
@@ -5381,7 +5446,7 @@ pub mod bits {
 
     /// The furthest bit the groups of a scope write: each count locator, and
     /// the items of each list the entity has.
-    fn group_reach(p: &Pack, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
+    pub(crate) fn group_reach(p: &Pack, sel: &Sel, ent: &Entity, base: u64) -> Result<u64, Error> {
         let mut end = 0u64;
         for g in &sel.groups {
             if let Some(Count::Locator(l)) = &g.count {
@@ -5475,8 +5540,11 @@ pub mod bits {
     }
 
     pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+        let sixbit = p.armor == armor::Armor::Sixbit;
         if let Some(body) = &p.seq {
-            return super::seq::encode(p, body, ent).map(|b| to_hex(&b));
+            // six-bit armor: the cursor after the last line, not rounded (engine-spec v0.14)
+            let (b, cursor) = super::seq::encode_bits(p, body, ent)?;
+            return Ok(if sixbit { armor::write(&b, cursor) } else { to_hex(&b) });
         }
         let sel = p.select_encode(ent)?;
         // whole words up to the furthest bit: the lines in force, extended by the items
@@ -5484,6 +5552,9 @@ pub mod bits {
         let items = ((group_reach(p, &sel, ent, 0)? + word_bits - 1) / word_bits) as usize * p.word_bytes;
         let mut msg: Vec<u8> = vec![0u8; message_bytes(p, &sel, true)?.max(items)];
         write_scope(p, &sel, ent, 0, &mut msg)?;
+        if sixbit {
+            return Ok(armor::write(&msg, armor::fixed_len(p, &sel, ent)?));
+        }
         Ok(to_hex(&msg))
     }
 
@@ -5529,6 +5600,7 @@ pub mod bits {
     }
 }
 
+pub mod armor;
 pub mod seq;
 pub mod text;
 pub mod tlv;
@@ -6119,6 +6191,10 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // after the file is read, with the other checks of that version
     ("tag", 1, usize::MAX),
     ("key", 1, usize::MAX),
+    // six-bit armor (engine-spec v0.14, ruling 13): exactly one argument, a
+    // line check; the rest of the line is checked after the file is read, and
+    // it may stand before the `wire` line
+    ("armor", 1, 1),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).

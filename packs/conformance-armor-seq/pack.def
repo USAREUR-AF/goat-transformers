@@ -1,0 +1,19 @@
+# Conformance probe pack for six-bit armor (spec 0.14) in the sequential
+# layout. Public. The message is any number of bits: L is the cursor after the
+# last line, not rounded to a byte.
+format        conformance-armor-seq
+version       0.14.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+layout        sequential
+bit_order     msb
+armor         sixbit
+
+field    probe.n      6         uint
+field    probe.x      4         uint
+opt
+  field  probe.y      8         uint
+end
+field    probe.s2     18        sixbit

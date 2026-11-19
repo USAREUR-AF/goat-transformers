@@ -38,7 +38,8 @@
 -export([conv_error/4, item_source/2, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
          bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
-         via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2]).
+         via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2,
+         unwire/2, trim/2, armor_out/3]).
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
@@ -899,9 +900,21 @@ open(Wire, Pack, Bytes) when Wire =:= geojson; Wire =:= json ->
     end;
 open(text, Pack, Bytes) -> gt_text:open(Pack, Bytes);
 open(bits, Pack, Bytes) ->
-    {gt_bits:open(unhex(Pack, Bytes), maps:get(bit_order, Pack)), 0};
+    {gt_bits:open(unwire(Pack, Bytes), maps:get(bit_order, Pack)), 0};
 open(protobuf, Pack, Bytes) ->
     gt_protobuf:parse_msg(unhex(Pack, Bytes)).
+
+%% The message of a bits pack: hex text, or under `armor sixbit` the six-bit
+%% armored text, every character checked before any line is read (0.14).
+unwire(#{armor := sixbit} = Pack, Text) ->
+    try gt_bits:unarmor(Text)
+    catch error:{armor_malformed, Why} ->
+        conv_error('malformed-wire', Pack, "the input is not six-bit armored text: ~0p", [Why])
+    end;
+unwire(Pack, Bytes) -> unhex(Pack, Bytes).
+
+%% The first L bits of a laid-out message as armored text (0.14).
+armor_out(Bits, L, _Pack) -> gt_bits:armor(Bits, L).
 
 %% The bytes of hex text (ruling 36 of 0.8).
 unhex(Pack, Bytes) ->
@@ -944,6 +957,14 @@ when_holds(protobuf, Top, Path, Val) ->
     end.
 
 %% ---- the message must hold whole words up to a bit (bits) ----
+%% Under `armor sixbit` the message must only reach the bit (0.14).
+fit(bits, #{armor := sixbit} = Pack, {Msg, _}, EndBit) ->
+    case gt_bits:bit_size(Msg) >= EndBit of
+        true -> ok;
+        false -> conv_error('malformed-wire', Pack,
+                            "the message needs ~p bits and the input has ~p",
+                            [EndBit, gt_bits:bit_size(Msg)])
+    end;
 fit(bits, #{word_bytes := WB} = Pack, {Msg, _}, EndBit) ->
     Need = whole_words(EndBit, WB) * 8,
     case gt_bits:bit_size(Msg) >= Need of
@@ -1085,7 +1106,7 @@ field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> json_decode(Tr, Raw);
 field_decode(bits, Tr, U, {_Off, Len}, {_, _, Trim, _, _}, Pack) ->
     V = bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
     case Trim of
-        true -> strip_trailing(V, $\s);
+        true -> trim(Tr, V);
         false -> V
     end;
 field_decode(Wire, Tr, {WT, V}, _Loc, _Opts, _Pack) when Wire =:= protobuf; Wire =:= pbitem ->
@@ -1258,7 +1279,11 @@ encode_wire(text, Pack, Lines, Src, Residue) -> gt_text:encode(Pack, Lines, Src,
 encode_wire(tlv, Pack, Lines, Src, Residue) -> gt_tlv:encode(Pack, Lines, Src, Residue);
 encode_wire(bits, #{word_bytes := WB} = Pack, Lines, Src, _Residue) ->
     {Writes, Overs, End} = bits_plan(Pack, Lines, Src, 0, {[], [], 0}),
-    M0 = gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack)),
+    Armor = maps:get(armor, Pack),
+    M0 = case Armor of
+             sixbit -> gt_bits:new_bits(End, maps:get(bit_order, Pack));
+             hex -> gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack))
+         end,
     %% fields in line order: where two present fields cover the same bits,
     %% the bits hold the earlier line's value
     %% the sentinels of absent keys after them, in the bits no present
@@ -1271,7 +1296,10 @@ encode_wire(bits, #{word_bytes := WB} = Pack, Lines, Src, _Residue) ->
     %% written last, over any field
     M2 = lists:foldl(fun({_, Off, Len, U}, M) -> gt_bits:overwrite(M, Off, Len, U) end,
                      M1, lists:keysort(1, lists:reverse(Overs))),
-    gt_bits:bytes_to_hex(gt_bits:to_bytes(M2));
+    case Armor of
+        sixbit -> armor_out(gt_bits:to_bytes(M2), End, Pack);
+        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M2))
+    end;
 encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
     gt_bits:bytes_to_hex(gt_protobuf:serialize(pb_tree(Pack, Lines, Src))).
 
@@ -1331,10 +1359,16 @@ json_item(Item, #{lines := Ls} = Body, Pack) ->
 %% 2 for `when`, 3 for the count of a group; End the furthest bit reached.
 bits_plan(Pack, Lines, {Value, Lists}, Base, Acc0) ->
     Order = maps:get(bit_order, Pack),
+    Armor = maps:get(armor, Pack, hex),
     lists:foldl(
-      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, _, Absent} = Opts}, {Ws, Os, End}) ->
+      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent} = Opts}, {Ws, Os, End}) ->
               End1 = max(End, Base + Off + Len),
               case Value(Key) of
+                  %% under armor an optional field whose key is absent, with
+                  %% no default and no `absent`, does not count toward the
+                  %% length L (0.14); one with `absent` writes its first
+                  %% sentinel and counts, optional or not (ruling 12 of 0.14)
+                  error when Absent =:= none, Optional, Armor =:= sixbit -> {Ws, Os, End};
                   error when Absent =:= none -> {Ws, Os, End1};
                   error ->
                       {[{sentinel, Base + Off, Len, bits_sentinel(Absent, Len, Swap)} | Ws], Os, End1};
@@ -1767,7 +1801,35 @@ bits_decode(ascii, U, L, Order) ->
             end,
     Text = strip_trailing(Bytes, 0),
     true = printable(Text),
-    Text.
+    Text;
+%% sixbit (0.14): each six bits, first character first in the pack's bit
+%% order, as @.._ for 0..31 and space..? for 32..63; trailing @ removed.
+bits_decode(sixbit, U, L, Order) ->
+    N = L div 6,
+    Chars = [sixbit_char((U bsr sixbit_shift(Order, I, N)) band 63) || I <- lists:seq(0, N - 1)],
+    strip_trailing(list_to_binary(Chars), $@).
+
+sixbit_char(V) when V < 32 -> 16#40 + V;
+sixbit_char(V) -> V.
+
+%% the shift of character I of N in the field value
+sixbit_shift(msb, I, N) -> 6 * (N - 1 - I);
+sixbit_shift(lsb, I, _N) -> 6 * I.
+
+sixbit_value(C) when C >= 16#40, C =< 16#5F -> C - 16#40;
+sixbit_value(C) when C >= 16#20, C =< 16#3F -> C.
+
+%% The field option `trim`: ascii removes trailing spaces, sixbit the whole
+%% trailing run of @ and spaces in any mix (0.14).
+trim(sixbit, V) -> strip_trailing_any(V, [$@, $\s]);
+trim(_Tr, V) -> strip_trailing(V, $\s).
+
+strip_trailing_any(<<>>, _Cs) -> <<>>;
+strip_trailing_any(Bin, Cs) ->
+    case lists:member(binary:last(Bin), Cs) of
+        true -> strip_trailing_any(binary:part(Bin, 0, byte_size(Bin) - 1), Cs);
+        false -> Bin
+    end.
 
 printable(<<>>) -> true;
 printable(<<C, R/binary>>) when C >= 16#20, C =< 16#7E -> printable(R);
@@ -1813,7 +1875,14 @@ bits_encode(ascii, V, L, Order) when is_binary(V) ->
     case Order of
         msb -> <<U:L/big>> = Padded, U;
         lsb -> <<U:L/little>> = Padded, U
-    end.
+    end;
+bits_encode(sixbit, V, L, Order) when is_binary(V) ->
+    N = L div 6,
+    true = byte_size(V) =< N,
+    Vals = [sixbit_value(C) || <<C>> <= V] ++ lists:duplicate(N - byte_size(V), 0),
+    {U, _} = lists:foldl(fun(X, {Acc, I}) -> {Acc bor (X bsl sixbit_shift(Order, I, N)), I + 1} end,
+                         {0, 0}, Vals),
+    U.
 
 %% A double narrowed to a big-endian IEEE-754 single. A value outside single
 %% range narrows to an infinity, which is refused.

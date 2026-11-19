@@ -306,11 +306,13 @@ func encISO(v Value) (string, error) {
 
 // bitsTransform is a reversible pair between an unsigned field of `length` bits
 // and a model value: decode turns the raw bits into a value; encode returns the
-// low `length` bits to write back. `ascii` is the one transform whose field
-// may be longer than 64 bits; the bits wire reads and writes its bytes itself.
+// low `length` bits to write back. `ascii` and `sixbit` are the transforms
+// whose field may be longer than 64 bits; the bits wire reads and writes their
+// characters itself.
 type bitsTransform struct {
 	name   string
 	ascii  bool
+	sixbit bool // spec 0.14: six-bit characters
 	decode func(raw uint64, length int) (Value, error)
 	encode func(v Value, length int) (uint64, error)
 }
@@ -601,9 +603,14 @@ func narrowToSingle(x float64) (float32, error) {
 
 var bitsASCII = &bitsTransform{name: "ascii", ascii: true}
 
+var bitsSixbit = &bitsTransform{name: "sixbit", sixbit: true}
+
+// maxSixbitLen is the longest `sixbit` field: 255 characters (spec 0.14).
+const maxSixbitLen = 1530
+
 func isBitsTransformName(name string) bool {
 	switch name {
-	case "uint", "twos", "f32", "f64", "ascii":
+	case "uint", "twos", "f32", "f64", "ascii", "sixbit":
 		return true
 	}
 	return strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:")
@@ -627,6 +634,10 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	if isTLVOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire tlv", name)
 	}
+	// sixbit is valid only on the bits wire (spec 0.14).
+	if name == "sixbit" && wire != WireBits {
+		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire bits", name)
+	}
 	switch wire {
 	case WireBits:
 		switch {
@@ -640,6 +651,8 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			f.btf = bitsF64
 		case name == "ascii":
 			f.btf = bitsASCII
+		case name == "sixbit":
+			f.btf = bitsSixbit
 		case strings.HasPrefix(name, "linscale:"):
 			bt, err := newLinscale(name)
 			if err != nil {
@@ -657,7 +670,7 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 		case isPBTransformName(name):
 			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a protobuf wire, not bits", name)
 		default:
-			return ErrUnknownTransform, fmt.Errorf("unknown transform %q (bits: uint, twos, linscale, uscale, sscale, f32, f64, ascii)", name)
+			return ErrUnknownTransform, fmt.Errorf("unknown transform %q (bits: uint, twos, linscale, uscale, sscale, f32, f64, ascii, sixbit)", name)
 		}
 		n := f.loc.blen
 		switch {
@@ -667,7 +680,9 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			return ErrBadDirective, fmt.Errorf("f64 needs a 64-bit field, got %d", n)
 		case name == "ascii" && (n%8 != 0 || n < 8 || n > maxBitsLen):
 			return ErrBadDirective, fmt.Errorf("ascii needs a multiple of 8 bits from 8 to %d, got %d", maxBitsLen, n)
-		case name != "ascii" && n > 64:
+		case name == "sixbit" && (n%6 != 0 || n < 6 || n > maxSixbitLen):
+			return ErrBadDirective, fmt.Errorf("sixbit needs a multiple of 6 bits from 6 to %d, got %d", maxSixbitLen, n)
+		case name != "ascii" && name != "sixbit" && n > 64:
 			return ErrBadDirective, fmt.Errorf("%s covers at most 64 bits, got %d", name, n)
 		}
 		return "", nil

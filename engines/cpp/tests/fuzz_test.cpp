@@ -97,6 +97,18 @@ std::string to_hex(const std::string& data) {
     return out;
 }
 
+// Six-bit armor (0.14): is every character of the text one of the 64 that
+// stand for six bits, `0` to `W` and `` ` `` to `w`?
+bool armor_text(const std::string& text) {
+    if (text.empty()) return false;
+    for (char c : text)
+        if (!((c >= 0x30 && c <= 0x57) || (c >= 0x60 && c <= 0x77))) return false;
+    return true;
+}
+
+// The armor character that stands for `v` (0 to 63).
+char armor_char(unsigned v) { return static_cast<char>(v < 40 ? 0x30 + v : 0x38 + v); }
+
 struct Tally {
     std::uint64_t calls = 0, returned = 0, refused = 0, bad = 0;
 };
@@ -227,6 +239,28 @@ int main() {
                 std::string m = data;
                 for (std::size_t k = at; k < m.size() && k < at + 8; ++k) m[k] = static_cast<char>(0xFF);
                 run_one(eng, from, to, to_hex(m), label + " input bytes from " + std::to_string(at) + " set to ff", t);
+            }
+        }
+        // Armored text (a pack with `armor sixbit`): characters replaced by other valid ones, so that the
+        // cases reach the lines of the message and not only the character
+        // check; and the text with characters added (all ones, all zeros).
+        if (eng.has_format(from) && eng.pack(from).armor_sixbit && armor_text(input)) {
+            for (std::size_t at : positions(input.size())) {
+                const std::uint64_t r = rng.next();
+                const unsigned v = input[at] <= 0x57 ? static_cast<unsigned>(input[at] - 0x30)
+                                                     : static_cast<unsigned>(input[at] - 0x38);
+                const char with[] = {armor_char(v ^ 0x01), armor_char(v ^ 0x20), armor_char(63), armor_char(0),
+                                     armor_char(static_cast<unsigned>(r % 64))};
+                for (char c : with) {
+                    if (c == input[at]) continue;
+                    std::string m = input;
+                    m[at] = c;
+                    run_one(eng, from, to, m, label + " armor character " + std::to_string(at) + " changed", t);
+                }
+            }
+            for (std::size_t extra : {1, 7, 64}) {
+                run_one(eng, from, to, input + std::string(extra, 'w'), label + " with " + std::to_string(extra) + " w added", t);
+                run_one(eng, from, to, input + std::string(extra, '0'), label + " with " + std::to_string(extra) + " 0 added", t);
             }
         }
     }

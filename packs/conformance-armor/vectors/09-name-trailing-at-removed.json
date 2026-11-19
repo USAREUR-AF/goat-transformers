@@ -1,0 +1,14 @@
+{
+  "name": "name-trailing-at-removed",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "285<<?000000000000000",
+  "expect": "285<<?000000000000000",
+  "model": {
+    "@kind": "name",
+    "probe.n": "2",
+    "probe.s1": "HELLO"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): name kind; s1 at bits 6..125 is 20 characters, one per payload character after the first; trailing @ (value 0) removed: HELLO; encode pads back with @. L = 126, 21 characters. Derived without an engine by a standalone reference program."
+}

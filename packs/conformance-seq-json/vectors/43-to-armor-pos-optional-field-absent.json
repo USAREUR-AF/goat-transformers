@@ -1,0 +1,9 @@
+{
+  "name": "to-armor-pos-optional-field-absent",
+  "from": "conformance-seq-json",
+  "to": "conformance-armor",
+  "input": "{\"n\":9,\"x\":5}",
+  "expect": "105000000000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): as 42 with y absent: L = 87, 15 characters. Derived without an engine by a standalone reference program."
+}

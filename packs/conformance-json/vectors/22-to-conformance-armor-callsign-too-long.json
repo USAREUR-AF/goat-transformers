@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-armor-callsign-too-long",
+  "from": "conformance-json",
+  "to": "conformance-armor",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":1},\"label\":\"GATOR123\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sixbit encode: 8 characters in a field of 42 / 6 = 7: transform-encode. Derived without an engine by a standalone reference program."
+}

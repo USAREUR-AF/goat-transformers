@@ -1,0 +1,17 @@
+{
+  "name": "pos-character-beyond-the-lines-not-written",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "1wwnJV<1n40H9QV@w",
+  "expect": "1wwnJV<1n40H9QV@",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "4095",
+    "lat": "-33.5",
+    "callsign": "N0 CALL",
+    "probe.y": "200"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): 17 characters; the lines reach bit 94; the 17th character is ignored on decode and not written. Derived without an engine by a standalone reference program."
+}

@@ -515,6 +515,8 @@ V011_FIRST, V011_LAST = 339, 499
 # 0.11 line checks (`unknown-directive`, `missing-wire`, and their order), so
 # they wait for gtcheck's 0.11 too.
 V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tlv-74"}
+# Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
+V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
@@ -538,6 +540,39 @@ class TlvWireTest(Refusals):
         # before `missing-distribution`
         no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\nwire json\n'
         self.refuse_pack(no_distribution + "tag 1\nfield uid id string\n", "bad-directive", 6)
+
+
+class ArmorTest(Refusals):
+    ARMOR = HEAD + "wire bits\nword_bytes 1\nbit_order msb\narmor sixbit\n"
+    SEQ = HEAD + "wire bits\nlayout sequential\nbit_order msb\narmor sixbit\n"
+
+    def test_armor_and_sixbit_load_in_either_layout(self):
+        pack = gtcheck.load_pack(self.ARMOR + "field uid 0:0:42 sixbit trim\n", model())
+        self.assertEqual((pack.armor, pack.common[0].tr, pack.common[0].bits), ("sixbit", "sixbit", 42))
+        pack = gtcheck.load_pack(self.SEQ + "field uid 120 sixbit\nlength 8 bytes\n  field probe.qty 8 uint\nend\n",
+                                 model())
+        self.assertEqual(pack.armor, "sixbit")
+        # the default is hex, and `sixbit` needs no armor
+        pack = gtcheck.load_pack(HEAD + "wire bits\nword_bytes 1\nfield uid 0:0:6 sixbit\n", model())
+        self.assertEqual(pack.armor, "hex")
+
+    def test_armor_rules_are_refused_with_their_line(self):
+        bits = HEAD + "wire bits\nword_bytes 1\n"
+        self.refuse_pack(bits + "armor sixbit\nfield probe.qty 0:0:6 uint\n", "bad-directive", 8)
+        self.refuse_pack(bits + "bit_order msb\narmor ascii\nfield probe.qty 0:0:6 uint\n", "bad-directive", 9)
+        self.refuse_pack(self.ARMOR + "armor hex\n", "bad-directive", 10)
+        self.refuse_pack(self.ARMOR + "kind a\nwhen 0:0:6 1\narmor hex\n", "bad-directive", 12)
+        self.refuse_pack(self.SEQ + "opt\n  armor hex\nend\n", "bad-directive", 11)
+        self.refuse_pack(self.SEQ + "field probe.qty 6 uint\nlength 12 whole\n", "bad-directive", 11)
+        self.refuse_pack(self.ARMOR + "field uid 0:0:12 sixbit swap\n", "bad-directive", 10)
+        self.refuse_pack(self.ARMOR + "field uid 0:0:16 sixbit\n", "bad-directive", 10)
+        self.refuse_pack(self.ARMOR + "field uid 0:0:1536 sixbit\n", "bad-directive", 10)
+        self.refuse_pack(self.ARMOR + "field probe.qty 0:0:6 sixbit\n", "key-type-mismatch", 10)
+        self.refuse_pack(HEAD + "wire json\nfield uid id sixbit\n", "bad-directive", 7)
+        # `armor` on another wire is refused after the file is read, before
+        # `missing-distribution`
+        no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\n'
+        self.refuse_pack(no_distribution + "armor hex\nwire json\nfield uid id string\n", "bad-directive", 5)
 
 
 class ConformanceLoadVectorsTest(unittest.TestCase):

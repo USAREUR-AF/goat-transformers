@@ -192,7 +192,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Bool,                             // v0.5, json wire only
                        Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
                        IntW, Dec, Dm, Hms, HmsDmy,       // v0.10, text wire only
-                       Utf8, Hex                         // v0.13, tlv wire only
+                       Utf8, Hex,                        // v0.13, tlv wire only
+                       Sixbit                            // v0.14, bits wire
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 
@@ -240,7 +241,7 @@ struct FieldLine {
     std::string via;            // `via <table>`: the value table's name; empty when none
     int table = -1;             // index of that table in Pack::tables (parse_pack resolves it)
     bool swap = false;          // bits: the field's bytes are taken in reverse order
-    bool trim = false;          // bits + ascii: decode also removes trailing spaces
+    bool trim = false;          // bits + ascii or sixbit: decode also removes trailing spaces (sixbit: and '@')
     bool optional = false;      // bits: absent when any of its bits lies beyond the input
     // v0.9 `absent <value>[,<value>…]`: the raw wire values that mean "no value".
     bool has_absent = false;
@@ -394,6 +395,7 @@ struct Pack {
     std::string root;                                         // xml only; may be empty when every kind has its own
     std::uint32_t word_bytes = 0;                            // bits only: bytes per word
     BitOrder bit_order = BitOrder::Lsb;                       // bits only
+    bool armor_sixbit = false;                                // v0.14, bits only: `armor sixbit`
     std::vector<FieldLine> fields;                            // common lines (every line when the pack has no kinds)
     std::vector<WhenLine> whens;                              // common `when` lines
     std::vector<WhenLine> consts;                             // common `const` lines

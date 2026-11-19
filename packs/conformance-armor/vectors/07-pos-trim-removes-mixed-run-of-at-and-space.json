@@ -1,0 +1,16 @@
+{
+  "name": "pos-trim-removes-mixed-run-of-at-and-space",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "10700000<0@4040",
+  "expect": "10700000<0@0000",
+  "model": {
+    "@kind": "pos",
+    "probe.n": "1",
+    "probe.x": "7",
+    "lat": "0",
+    "callsign": "A B"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sixbit with trim: the trailing run '@ @ ' is removed, the inner space kept: callsign 'A B'; encode pads with @, so the two trailing spaces come back as @. Derived without an engine by a standalone reference program."
+}

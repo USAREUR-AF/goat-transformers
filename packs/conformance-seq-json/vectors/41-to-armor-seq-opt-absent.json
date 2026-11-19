@@ -1,0 +1,9 @@
+{
+  "name": "to-armor-seq-opt-absent",
+  "from": "conformance-seq-json",
+  "to": "conformance-armor-seq",
+  "input": "{\"n\":9,\"x\":5}",
+  "expect": "9D000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): opt bit 0; L = 29, 5 characters. Derived without an engine by a standalone reference program."
+}

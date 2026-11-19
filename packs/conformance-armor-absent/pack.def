@@ -1,0 +1,17 @@
+# Conformance probe pack for six-bit armor with absent-value sentinels
+# (spec 0.14 ruling 12, spec 0.9). Public. The type field's value 63 (the
+# character `w`) means "no value"; an optional field with a sentinel is
+# written, and counted in L, when its key is absent.
+format        conformance-armor-absent
+version       0.14.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+word_bytes    1
+bit_order     msb
+armor         sixbit
+
+field  probe.n  0:0:6   uint  absent 63
+field  probe.x  0:6:6   uint
+field  probe.y  0:12:6  uint  optional absent 0

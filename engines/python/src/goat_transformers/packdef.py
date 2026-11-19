@@ -24,6 +24,7 @@ PACK_DIRECTIVES = frozenset((
     "requires", "default", "map", "typemap", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad",
     "align", "presence", "if", "opt", "chain", "fx", "length", "delimiter", "start", "checksum",
     "tag", "key",  # the `tlv` wire (0.13)
+    "armor",  # the `bits` wire (0.14)
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -42,6 +43,9 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     # 0.13 adds `checksum sum16 <tag>` (two arguments) to the one of 5e, and
     # the `tlv` lines `tag` and `key`, whose form is checked after the file.
     "checksum": (1, 2), "tag": (1, None), "key": (1, None),
+    # 0.14: `armor <hex | sixbit>`, exactly one argument, checked as the line
+    # is read (ruling 13 of 0.14)
+    "armor": (1, 1),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -52,6 +56,7 @@ _GROUP_LINES = ("field", "const", "default", "group", "end")
 FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent")
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
+ARMORS = ("hex", "sixbit")  # the `bits` wire (0.14)
 
 
 @dataclass
@@ -262,6 +267,7 @@ class Pack:
     tlv_length: str = "ber"    # tlv: `ber`, `1`, `2` or `4`
     tlv_key: bytes = None      # tlv: the bytes the message begins with
     tlv_checksum: int = None   # tlv: the tag of the `sum16` checksum item
+    armor: str = "hex"         # bits: `hex` or `sixbit` (0.14)
     _plans: dict = dc_field(default_factory=dict, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
     _kinds_by_root: dict = dc_field(default_factory=dict, repr=False)
@@ -740,10 +746,12 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     opts = _parse_options(options, name, locator, where)
     via = opts.get("via")
     if wire == "bits":
-        if "swap" in opts and loc[2] % 8 != 0:
+        if "swap" in opts and tname == "sixbit":  # 0.14
+            defer("field option 'swap' does not apply to the 'sixbit' transform")
+        elif "swap" in opts and loc[2] % 8 != 0:
             defer("field option 'swap' needs a bit length that is a multiple of 8, got %d" % loc[2])
-        if "trim" in opts and tname != "ascii":
-            defer("field option 'trim' applies to the 'ascii' transform only")
+        if "trim" in opts and tname not in ("ascii", "sixbit"):  # ruling 5 of 0.14
+            defer("field option 'trim' applies to the 'ascii' and 'sixbit' transforms only")
     else:
         for opt in (("swap", "trim") if wire == "text" else ("swap", "trim", "optional")):
             if opt in opts:
@@ -758,7 +766,7 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             if not bits_len_allowed(tname, length):
                 defer("transform %s does not allow a bit length of %d" % (tname, length))
             transform = build_bits_transform(tname, length)
-            if "trim" in opts and tname == "ascii":
+            if "trim" in opts and tname in ("ascii", "sixbit"):
                 transform.trim = True
         elif wire == "protobuf":
             transform = PROTOBUF_TRANSFORMS[tname]
@@ -1185,6 +1193,40 @@ def _check_tlv_lines(lines, wire, deferred, source, fmt):
     return out
 
 
+def armor_line(args, lines, after_kind, lineno):
+    """Record an `armor` line (0.14), whose one argument `line_head` checked
+    (ruling 13 of 0.14). Whether it fits its pack is checked after the file
+    is read (`check_armor`). Shared by the sequential layout."""
+    lines.append((args, lineno, after_kind))
+
+
+def check_armor(lines, wire, bit_order, deferred, source, fmt):
+    """`armor <hex | sixbit>` (0.14), after the file is read: on the `bits`
+    wire only, at most once, before the first `kind`, with one argument that
+    is `hex` or `sixbit` (its count is a line check); `armor sixbit` needs `bit_order msb`, wherever the
+    lines stand. Each failure is appended to `deferred`. -> the armor."""
+    value = "hex"
+    for k, (args, lineno, after_kind) in enumerate(lines):
+        where = "%s:%d" % (source, lineno)
+
+        def bad(msg):
+            deferred.append((lineno, BadDirective("%s, at %s" % (msg, where), format=fmt, locator="armor")))
+
+        if wire != "bits":
+            bad("'armor' is a directive of the bits wire")
+        elif k > 0:
+            bad("'armor' is given twice")
+        elif after_kind:
+            bad("'armor' after the first 'kind'")
+        elif args[0] not in ARMORS:
+            bad("armor must be one of %s, got %r" % (", ".join(ARMORS), args[0]))
+        else:
+            value = args[0]
+            if value == "sixbit" and bit_order != "msb":
+                bad("'armor sixbit' needs 'bit_order msb'")
+    return value
+
+
 def _find_wire(text, directive="wire"):
     """The value of the first `wire` (or other) line of two tokens, read
     without checking the file: what chooses the parser of a sequential pack."""
@@ -1321,6 +1363,7 @@ def parse_pack_text(text, *, source="pack.def"):
     group_refs = set()   # list names already in key_refs
     text_dirs = {}       # text (0.10): `delimiter`, `start`, `checksum` -> (value, lineno)
     tlv_lines = []       # tlv (0.13): `tag`, `length`, `key`, `checksum sum16 <tag>` as (kw, args, lineno, after a kind, in a group)
+    armor = []           # bits (0.14): the `armor` lines, checked after the file (`check_armor`)
     for lineno, raw in enumerate(text.splitlines(), 1):
         line = raw.strip()
         if not line:
@@ -1409,6 +1452,8 @@ def parse_pack_text(text, *, source="pack.def"):
                     ))
             elif kw in TEXT_DIRECTIVES:
                 _text_directive(kw, args[0], text_dirs, current, fmt, lineno, where)
+            elif kw == "armor":
+                armor_line(args, armor, current is not None, lineno)
             elif kw == "root":
                 if current is None:
                     if root is not None:
@@ -1522,6 +1567,7 @@ def parse_pack_text(text, *, source="pack.def"):
         _check_bits_groups(word_bytes_raw, common, kinds, deferred, source, name)
     elif group_refs and wire in ("xml", "json", "protobuf", "geojson"):
         _check_group_paths(wire, common, kinds, deferred, source, name)
+    armor_value = check_armor(armor, wire, once.get("bit_order", (None,))[0], deferred, source, name)
     text_values = {k: v for k, (v, _) in text_dirs.items()}
     delimiter = text_values.get("delimiter", ",")
     if delimiter == "none":
@@ -1574,6 +1620,7 @@ def parse_pack_text(text, *, source="pack.def"):
         bit_order=once.get("bit_order", ("lsb",))[0], common=common, kinds=kinds, key_refs=key_refs,
         distribution=distribution, sources=sources, uses=uses, defaults=defaults, tables=tables,
         delimiter=delimiter, start=text_values.get("start"), checksum=text_values.get("checksum", "none"),
+        armor=armor_value,
     )
     if wire == "tlv":
         pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]

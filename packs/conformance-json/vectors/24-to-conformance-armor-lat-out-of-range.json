@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-armor-lat-out-of-range",
+  "from": "conformance-json",
+  "to": "conformance-armor",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":120},\"label\":\"A\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sscale encode: 120 * 600000 = 72000000 exceeds 2^26 - 1 = 67108863 for 27 bits: transform-encode. Derived without an engine by a standalone reference program."
+}

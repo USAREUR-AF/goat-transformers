@@ -13,7 +13,7 @@ caller has to pass the length. Bits transforms are valid only on a `bits` wire,
 text transforms only on a text wire (spec/engine-spec.md).
 
 Version 0.5 adds `bool` (the `json` wire only) and the bits transforms `uscale`,
-`sscale`, `f32`, `f64` and `ascii`. A transform reports a failure as ValueError;
+`sscale`, `f32`, `f64` and `ascii`; Version 0.14 adds `sixbit`. A transform reports a failure as ValueError;
 the engine names it `transform-decode` or `transform-encode`.
 """
 
@@ -543,19 +543,59 @@ class AsciiT(BitsTransform):
         return body + b"\x00" * (self.nbytes - len(body))
 
 
+class SixbitT(BitsTransform):
+    """`len / 6` characters of six bits each (0.14). The wire hands `decode`
+    the six-bit values, first character first, each one's six bits read in
+    the pack's bit order, and takes such values back from `encode`
+    (`as_sixbit`). Values 0 to 31 are `@` to `_`, 32 to 63 space to `?`.
+    Trailing `@` are removed on decode (with `trim`, the whole trailing run of
+    `@` and space, in any mix) and added on encode; an all-`@` field is the
+    empty string, present (ruling 6 of 0.14)."""
+
+    yields = "string"
+    as_sixbit = True
+    trim = False
+
+    def __init__(self, name, length):
+        self.name = name
+        self.length = length
+        self.nchars = length // 6
+
+    def decode(self, raw):
+        text = "".join(chr(0x40 + v) if v < 32 else chr(v) for v in raw)
+        return text.rstrip("@ ") if self.trim else text.rstrip("@")
+
+    def encode(self, value):
+        if not isinstance(value, str):
+            raise ValueError("sixbit transform needs a str, got %s" % type(value).__name__)
+        out = []
+        for c in value:
+            o = ord(c)
+            if not 0x20 <= o <= 0x5F:
+                raise ValueError("sixbit: character %r is outside 0x20..0x5f" % c)
+            out.append(o - 0x40 if o >= 0x40 else o)
+        if len(out) > self.nchars:
+            raise ValueError("sixbit: text of %d character(s) does not fit %d" % (len(out), self.nchars))
+        out.extend([0] * (self.nchars - len(out)))
+        return tuple(out)
+
+
 def is_bits_transform_name(name):
-    return name in ("uint", "twos", "f32", "f64", "ascii") or name.startswith(("linscale:", "uscale:", "sscale:"))
+    return name in ("uint", "twos", "f32", "f64", "ascii", "sixbit") or name.startswith(("linscale:", "uscale:", "sscale:"))
 
 
 def bits_len_allowed(name, length):
     """Whether a bits transform allows bit length `length` (spec 0.5: `f32` 32,
-    `f64` 64, `ascii` a multiple of 8 from 8 to 2040; the rest 1..=64)."""
+    `f64` 64, `ascii` a multiple of 8 from 8 to 2040; 0.14: `sixbit` a
+    multiple of 6 from 6 to 1530; the rest 1..=64)."""
     if name == "f32":
         return length == 32
     if name == "f64":
         return length == 64
     if name == "ascii":
         return 8 <= length <= 2040 and length % 8 == 0
+    if name == "sixbit":
+        return 6 <= length <= 1530 and length % 6 == 0
     return 1 <= length <= 64
 
 
@@ -625,6 +665,8 @@ def build_bits_transform(name, length):
         return F64T(name, length)
     if name == "ascii":
         return AsciiT(name, length)
+    if name == "sixbit":
+        return SixbitT(name, length)
     if name.startswith(("uscale:", "sscale:")):
         return _build_scale(name, length)
     if name.startswith("linscale:"):
@@ -640,6 +682,7 @@ TRANSFORM_WIRES = {
     "string": _TEXTUAL, "float": _TEXTUAL, "int": _TEXTUAL, "iso8601_ms": _TEXTUAL, "bool": ("json",),
     "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
     "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),
+    "sixbit": ("bits",),  # 0.14
     "utf8": ("tlv",), "hex": ("tlv",),  # 0.13
     "pstring": ("protobuf",), "pvarint": ("protobuf",), "psint": ("protobuf",), "pdouble": ("protobuf",),
     "pfloat": ("protobuf",),

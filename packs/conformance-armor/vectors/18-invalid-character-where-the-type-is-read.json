@@ -1,0 +1,9 @@
+{
+  "name": "invalid-character-where-the-type-is-read",
+  "from": "conformance-armor",
+  "to": "conformance-armor",
+  "input": "XCB>fwT0p:Qr@00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): X (0x58) is just past W: malformed-wire, not no-kind, though it stands where the when is read. Derived without an engine by a standalone reference program."
+}

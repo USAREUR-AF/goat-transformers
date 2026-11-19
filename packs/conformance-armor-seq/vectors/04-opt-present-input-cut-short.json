@@ -1,0 +1,9 @@
+{
+  "name": "opt-present-input-cut-short",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "wwT=L",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): the opt bit is 1, so the lines need 37 bits; 5 characters are 30: malformed-wire. Derived without an engine by a standalone reference program."
+}

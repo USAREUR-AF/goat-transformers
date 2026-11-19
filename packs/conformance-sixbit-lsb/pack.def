@@ -1,0 +1,14 @@
+# Conformance probe pack for the `sixbit` transform (spec 0.14) on a hex
+# `bits` message in `lsb` order. Public. Characters are read first to last,
+# each one's six bits low bit first.
+format        conformance-sixbit-lsb
+version       0.14.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+word_bytes    2
+bit_order     lsb
+
+field    probe.s1     0:0:12    sixbit
+field    probe.n      0:12:4    uint

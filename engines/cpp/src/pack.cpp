@@ -100,6 +100,7 @@ KeyType transform_yields(Transform t) {
         case Transform::Dm:
         case Transform::Hms: return KeyType::Float;
         case Transform::Ascii:
+        case Transform::Sixbit:
         case Transform::Utf8:
         case Transform::Hex: return KeyType::String;
         case Transform::IntW:
@@ -396,6 +397,7 @@ void check_bits_field_len(const Pack& p, const FieldLine& f) {
         case Transform::F32: ok = loc.len == 32; break;
         case Transform::F64: ok = loc.len == 64; break;
         case Transform::Ascii: ok = loc.len >= 8 && loc.len <= 2040 && loc.len % 8 == 0; break;
+        case Transform::Sixbit: ok = loc.len >= 6 && loc.len <= 1530 && loc.len % 6 == 0; break;
         default: ok = loc.len >= 1 && loc.len <= 64; break;
     }
     if (!ok)
@@ -460,9 +462,12 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
     if (p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     where + ": option '" + option + "' applies to wire bits only");
-    if (f.trim && f.transform != Transform::Ascii)
+    if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                    where + ": option 'trim' applies to transform ascii only");
+                    where + ": option 'trim' applies to transforms ascii and sixbit only");
+    if (f.swap && f.transform == Transform::Sixbit)
+        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                    where + ": option 'swap' does not apply to transform sixbit");
     detail::BitsLocator loc;
     if (f.swap && detail::parse_bits_locator(f.locator, loc) && loc.len % 8 != 0)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
@@ -830,6 +835,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     std::size_t tag_line = 0, length_line = 0, key_line = 0, tlv_directive_line = 0;
     // A field transform on wire tlv that did not parse (0.13 ruling 8), raised after the file.
     bool pending_transform = false;
+    // v0.14: `armor <hex | sixbit>`. The first error of its lines waits for the
+    // end of the file (ruling 10 of 0.10), as do the checks against the wire.
+    std::size_t armor_line = 0;
+    std::string armor_error;
     std::string pending_locator, pending_detail;
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
@@ -1020,6 +1029,18 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 if (v == "nmea") p.checksum_nmea = true;
                 else if (v != "none") bad("'checksum' is none or nmea, not '" + v + "'");
             }
+        } else if (kw == "armor") {
+            std::string why;
+            if (t.size() != 2) why = "'armor' takes one value: hex or sixbit";
+            else if (t[1] != "hex" && t[1] != "sixbit") why = "'armor' is hex or sixbit, not '" + t[1] + "'";
+            else if (armor_line != 0) why = "'armor' appears twice";
+            else if (!p.kinds.empty()) why = "'armor' after the first 'kind'";
+            if (!why.empty()) {
+                if (armor_error.empty()) armor_error = where + ": " + why;
+            } else {
+                p.armor_sixbit = t[1] == "sixbit";
+            }
+            if (armor_line == 0) armor_line = lineno;
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -1178,6 +1199,13 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         throw Error(ErrorKind::BadDirective, p.format, open.back()->locator,
                     source + ":" + std::to_string(open.back()->line) + ": the group '" + open.back()->list +
                         "' has no 'end'");
+    if (!armor_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", armor_error);
+    if (armor_line != 0 && have_wire && p.wire != Wire::Bits)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(armor_line) + ": 'armor' applies to wire bits only");
+    if (p.armor_sixbit && p.bit_order != BitOrder::Msb)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(armor_line) + ": 'armor sixbit' needs 'bit_order msb'");
     if (have_bit_order && have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(bit_order_line) + ": 'bit_order' applies to wire bits only");
@@ -1224,6 +1252,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                                         transform_name(f.transform) + "' applies to wire tlv only");
             });
         }
+        // v0.14: `sixbit` is a transform of the bits wire only.
+        if (p.wire != Wire::Bits)
+            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
+                for (const auto& f : fields)
+                    if (f.transform == Transform::Sixbit)
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) + ": transform 'sixbit' applies to wire bits only");
+            });
         if (kind_root_line != 0 && p.wire != Wire::Xml)
             throw Error(ErrorKind::BadDirective, p.format, "",
                         source + ":" + std::to_string(kind_root_line) + ": 'root' in a kind applies to wire xml only");

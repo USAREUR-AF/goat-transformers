@@ -532,6 +532,9 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 				return sp.bad(n, "", "length: `whole` counts bytes; `bits` with `whole` is not allowed")
 			}
 			node.op = seqWhole
+			if sp.p.wholeLine == 0 {
+				sp.p.wholeLine = n
+			}
 			add(node)
 			break
 		}
@@ -676,9 +679,9 @@ func (r *seqReader) take(n int, what string) (start int, ok bool, err error) {
 // extent.
 func (r *seqReader) beyond() bool { return r.ext && r.pos >= r.limit }
 
-func decodeSeq(d *decodeState, data []byte) error {
+func decodeSeq(d *decodeState, data []byte, nbits int) error {
 	p := d.pack
-	r := &seqReader{d: d, p: p, data: data, limit: len(data) * 8, pres: map[*seqPresenceDef][]bool{}}
+	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}}
 	k, err := r.body(p.sbody)
 	if err != nil {
 		return err
@@ -739,7 +742,9 @@ func (r *seqReader) node(n *seqNode) error {
 			return nil
 		}
 		var v Value
-		if f.btf.ascii {
+		if f.btf.sixbit {
+			v = decodeSixbit(r.data, f, at, p.msb)
+		} else if f.btf.ascii {
 			v, err = decodeASCII(r.data, f, at, p.msb)
 		} else {
 			raw := getBits(r.data, at, f.loc.blen, p.msb)
@@ -1060,6 +1065,12 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 	}
 	if err := w.emit(nodes, seqScope{rec: rec, defs: defs}, false); err != nil {
 		return nil, err
+	}
+	// Armored text is the bits up to the cursor, not rounded to a byte
+	// (spec 0.14); `length … whole` is refused under armor at load.
+	if p.sixbitArmor {
+		w.buf.need(w.pos)
+		return sixbitArmorText(w.buf.data, w.pos), nil
 	}
 	// A message is a whole number of bytes; the last bits are zero.
 	if rem := w.pos % 8; rem != 0 {

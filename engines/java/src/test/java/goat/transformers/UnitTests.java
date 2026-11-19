@@ -29,6 +29,79 @@ final class UnitTests {
         sentinels();
         strictRulings(packs);
         tlv();
+        armor();
+    }
+
+    /** Version 0.14, six-bit armor: the cases no shared vector pins (rulings 5, 7, 8, 9 and the character map). */
+    static void armor() {
+        String head = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nbit_order msb\narmor sixbit\n";
+        // layout sequential stands before bit_order (ruling 5b of 0.11)
+        String seqHead = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\narmor sixbit\n";
+        Engine e = probeEngine(
+                "format d\n" + head + "word_bytes 2\nfield probe.x 0:0:6 uint\nfield probe.y 0:6:8 uint optional\ndefault probe.y 3\n",
+                "format o\n" + head + "word_bytes 2\nfield probe.x 0:0:6 uint\nfield probe.y 0:6:8 uint optional\n",
+                "format n\n" + head + "word_bytes 4\nfield probe.x 0:0:6 uint optional\n",
+                "format l\n" + seqHead + "field probe.x 6 uint\nlength 4 bytes\n field probe.y 4 uint\nend\nfield probe.z 6 uint\n",
+                "format k\n" + seqHead + "kind a\nwhen 6 1\nfield probe.x 6 uint\n",
+                "format m\n" + head + "word_bytes 1\nfield probe.x 0:0:6 uint\nfield probe.y 0:6:36 uint\n");
+        Entity x1 = new Entity();
+        x1.put("probe.x", 1L);
+        // 7: an optional field whose key has a default counts toward L, since encode writes the default.
+        eq("optional with a default counts toward L", "10h", e.encode("d", x1));
+        eq("optional absent with no default does not count", "1", e.encode("o", x1));
+        // whole words are not required: 6 bits of a pack with 16-bit words decode
+        Entity o = e.decode("o", "1");
+        check("six bits of a two-byte-word pack decode, optional beyond is absent", Long.valueOf(1).equals(o.get("probe.x")) && o.get("probe.y") == null, o.toString());
+        // 9: a scope that writes no bit gives the empty text; the empty input is a message of no bits.
+        eq("nothing to write is the empty text", "", e.encode("n", new Entity()));
+        check("empty input decodes with every line optional", e.decode("n", "").get("probe.x") == null, "");
+        // 8: a length ... bytes block is still padded to a whole byte: 6 + 4 + 8 + 6 = 24 bits.
+        Entity l = new Entity();
+        l.put("probe.x", 1L);
+        l.put("probe.y", 5L);
+        l.put("probe.z", 2L);
+        eq("length bytes block padded to a byte under armor", "15@2", e.encode("l", l));
+        eq("length bytes block round trip", "15@2", e.convert("l", "l", "15@2"));
+        // ruling 4 in a sequential pack: too short for the when is no-kind; a bad character first is malformed-wire.
+        errorKind("sequential armored input too short for every when", "no-kind", () -> e.decode("k", ""));
+        errorKind("sequential armored input that ends after the when", "malformed-wire", () -> e.decode("k", "1"));
+        errorKind("bad character before kind selection", "malformed-wire", () -> e.decode("k", "X"));
+        eq("sequential kind under armor", "a", e.decode("k", "11").kindName());
+        // the character map, both ranges and their edges; a 64-bit-wide uint across characters
+        Entity m = e.decode("m", "0w0000w");
+        eq("character map: w is 63", 63L, m.get("probe.y") == null ? null : ((Long) m.get("probe.y")) >>> 30);
+        eq("character map round trip", "0w0000w", e.convert("m", "m", "0w0000w"));
+        for (char c : new char[]{'/', 'X', '_', '\'', 'x', ' ', '\n', '\r', '\t', '\u00e9'}) {
+            errorKind("armor refuses " + (int) c, "malformed-wire", () -> e.decode("m", "0w0000" + c + "0"));
+        }
+        eq("armor value of W", 39, Codec.armorValue('W'));
+        eq("armor value of `", 40, Codec.armorValue('`'));
+        eq("toArmor zero-fills beyond L", "w", Codec.toArmor(new byte[]{(byte) 0xff}, 6));
+        eq("toArmor fill bits beyond L are zero", "t", Codec.toArmor(new byte[]{(byte) 0xff}, 4));
+        // sixbit helpers
+        eq("sixbit decode trims only @ without trim", "A ", BitsTransform.decodeSixbit(new int[]{1, 32, 0}, false));
+        eq("sixbit decode trim removes a mixed run", "A", BitsTransform.decodeSixbit(new int[]{1, 32, 0, 32}, true));
+        eq("sixbit encode pads with @", "[1, 2, 0]", java.util.Arrays.toString(BitsTransform.encodeSixbit("AB", 3)));
+        // load: armor in a block, sixbit off the bits wire, trim and swap on sixbit
+        String pk = "format p\nversion 0.1.0\ndistribution public\nsource t\nuses probe\n";
+        errorKind("armor inside a group", "bad-directive", () -> probeEngine(pk + "wire bits\nword_bytes 1\nbit_order msb\ngroup probe.recs 0:0 item 8 count 1\narmor sixbit\n field probe.x 0:0:8 uint\nend\n"));
+        errorKind("armor inside a sequential block", "bad-directive", () -> probeEngine(pk + "wire bits\nlayout sequential\nbit_order msb\nopt\narmor sixbit\n field probe.x 6 uint\nend\n"));
+        errorKind("armor with no value", "bad-directive", () -> probeEngine(pk + "wire bits\nword_bytes 1\nbit_order msb\narmor\nfield probe.x 0:0:6 uint\n"));
+        errorKind("sixbit on the text wire", "bad-directive", () -> probeEngine(pk + "wire text\nfield probe.label 0 sixbit\n"));
+        errorKind("sixbit swap in a sequential pack", "bad-directive", () -> probeEngine(pk + "wire bits\nlayout sequential\nbit_order msb\nfield probe.label 24 sixbit swap\n"));
+        errorKind("sixbit len 0 mod 6 but 1536 in a sequential pack", "bad-directive", () -> probeEngine(pk + "wire bits\nlayout sequential\nbit_order msb\nfield probe.label 1536 sixbit\n"));
+        errorKind("trim on uint", "bad-directive", () -> probeEngine(pk + "wire bits\nword_bytes 1\nfield probe.x 0:0:6 uint trim\n"));
+        probeEngine(pk + "wire bits\nlayout sequential\nbit_order lsb\nfield probe.label 1530 sixbit trim\n");
+        errorKind("length whole after armor sixbit", "bad-directive", () -> probeEngine(pk + "wire bits\nlayout sequential\nlength 8 whole\nbit_order msb\narmor sixbit\nfield probe.x 6 uint\n"));
+        probeEngine(pk + "wire bits\nlayout sequential\nlength 8 whole\nbit_order msb\narmor hex\nfield probe.x 6 uint\n");
+        Engine h = probeEngine(pk + "wire bits\nlayout sequential\nbit_order msb\nfield probe.label 12 sixbit\n");
+        Entity lab = new Entity();
+        lab.put("probe.label", "a");
+        errorKind("sixbit encode of a lower-case letter in a sequential pack", "transform-encode", () -> h.encode("p", lab));
+        lab.put("probe.label", "\u00c9");
+        errorKind("sixbit encode of a character beyond ASCII", "transform-encode", () -> h.encode("p", lab));
+        lab.put("probe.label", "A");
+        eq("sixbit in a hex sequential pack", "0400", h.encode("p", lab));
     }
 
     /** Version 0.11: the parts of the strict rulings no shared vector reaches through the runner. */
@@ -329,6 +402,10 @@ final class UnitTests {
             byte[] in = ((String) v.get("input")).getBytes(java.nio.charset.StandardCharsets.UTF_8);
             boolean hex = true;
             for (byte c : in) hex &= Json.hexDigit((char) c) >= 0 || c == ' ' || c == '\n';
+            // six-bit armor (0.14): an armored input changes within the armor alphabet, so a changed copy is still
+            // armored text and reaches the lines; a copy with a character outside the alphabet is added below
+            boolean armored = false;
+            for (Pack p : engine.packs()) if (p.format.equals(from)) armored = p.armorSixbit;
             java.util.List<byte[]> cases = new java.util.ArrayList<>();
             // prefixes: every one of a short input, 24 spread over a long one
             int step = Math.max(1, in.length / 24);
@@ -340,9 +417,29 @@ final class UnitTests {
                 int at = rnd.nextInt(m.length);
                 switch (k % 3) {
                     case 0: m[at] = (byte) rnd.nextInt(256); break;
-                    case 1: m[at] = hex ? (byte) "0123456789abcdef".charAt(rnd.nextInt(16)) : in[rnd.nextInt(in.length)]; break;
+                    case 1:
+                        if (armored) {
+                            int a = rnd.nextInt(64);
+                            m[at] = (byte) (a < 40 ? 0x30 + a : 0x38 + a);
+                        } else {
+                            m[at] = hex ? (byte) "0123456789abcdef".charAt(rnd.nextInt(16)) : in[rnd.nextInt(in.length)];
+                        }
+                        break;
                     default: m[at] ^= (byte) (1 << rnd.nextInt(7));
                 }
+                cases.add(m);
+            }
+            if (armored) {
+                // every armored prefix extended by one character of the alphabet, and one outside it
+                for (int len = 0; len <= in.length; len += step) {
+                    byte[] m = java.util.Arrays.copyOf(in, len + 1);
+                    int a = rnd.nextInt(64);
+                    m[len] = (byte) (a < 40 ? 0x30 + a : 0x38 + a);
+                    cases.add(m);
+                }
+                byte[] m = in.clone();
+                String outside = "XYZ[\\]^_/ !\n\rxyz{";
+                if (m.length > 0) m[rnd.nextInt(m.length)] = (byte) outside.charAt(rnd.nextInt(outside.length()));
                 cases.add(m);
             }
             String label = f.getParent().getParent().getFileName() + "/" + f.getFileName();

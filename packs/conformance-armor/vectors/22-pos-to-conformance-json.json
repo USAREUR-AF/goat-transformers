@@ -1,0 +1,13 @@
+{
+  "name": "pos-to-conformance-json",
+  "from": "conformance-armor",
+  "to": "conformance-json",
+  "input": "1wwnJV<1n40H9QV@",
+  "expect": "{\"schema\":\"probe\",\"pos\":{\"lat\":-33.5},\"label\":\"N0 CALL\"}",
+  "model": {
+    "lat": "-33.5",
+    "callsign": "N0 CALL"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): decode as 02; conformance-json selects kind basic (no requires of another kind present), writes the when schema first, then pos.lat and label in line order. Derived without an engine by a standalone reference program."
+}

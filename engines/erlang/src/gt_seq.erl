@@ -19,7 +19,7 @@
             pack, named}).
 
 decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} = Pack, Bytes) ->
-    Msg = gt_bits:open(gt_engine:unhex(Pack, Bytes), maps:get(bit_order, Pack)),
+    Msg = gt_bits:open(gt_engine:unwire(Pack, Bytes), maps:get(bit_order, Pack)),
     D0 = #d{msg = Msg, hard = gt_bits:bit_size(Msg), pack = Pack,
             named = maps:get(presence_named, Pack)},
     D1 = lines(Common, none, D0),
@@ -218,7 +218,7 @@ set_key({Key, Via}, U, Len, Tr, LenT, Trim, #d{model = Model, pack = Pack} = D) 
             try
                 V = gt_engine:bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
                 case Trim of
-                    true -> gt_engine:strip_trailing(V, $\s);
+                    true -> gt_engine:trim(Tr, V);
                     false -> V
                 end
             of
@@ -373,12 +373,21 @@ encode(Pack, Lines, Defaults, Entity) ->
             defaults => Defaults},
     #e{pos = End, segs = Segs} = elines(Lines, Src, #e{pack = Pack}),
     Bytes = (End + 7) div 8,                    % a whole number of bytes
+    %% under `armor sixbit` the message is the End bits the cursor reached,
+    %% not rounded to a byte (0.14); `length ... whole` is refused there
+    M0 = case maps:get(armor, Pack) of
+             sixbit -> gt_bits:new_bits(End, maps:get(bit_order, Pack));
+             hex -> gt_bits:new(Bytes, maps:get(bit_order, Pack))
+         end,
     M = lists:foldl(
           fun({whole, Pos, Len, Plus}, Acc) ->
                   gt_bits:overwrite(Acc, Pos, Len, fits(Bytes + Plus, Len, Pack));
              ({Pos, Len, Val}, Acc) -> gt_bits:overwrite(Acc, Pos, Len, Val)
-          end, gt_bits:new(Bytes, maps:get(bit_order, Pack)), Segs),
-    gt_bits:bytes_to_hex(gt_bits:to_bytes(M)).
+          end, M0, Segs),
+    case maps:get(armor, Pack) of
+        sixbit -> gt_engine:armor_out(gt_bits:to_bytes(M), End, Pack);
+        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M))
+    end.
 
 fits(V, Len, _Pack) when V >= 0, V < (1 bsl Len) -> V;
 fits(V, Len, Pack) ->

@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-armor-lower-case-callsign",
+  "from": "conformance-json",
+  "to": "conformance-armor",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":1},\"label\":\"gator\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): sixbit encode: 'g' (0x67) is outside 0x20 to 0x5f: transform-encode. Derived without an engine by a standalone reference program."
+}

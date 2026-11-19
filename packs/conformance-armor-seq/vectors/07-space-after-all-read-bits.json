@@ -1,0 +1,9 @@
+{
+  "name": "space-after-all-read-bits",
+  "from": "conformance-armor-seq",
+  "to": "conformance-armor-seq",
+  "input": "9D246 ",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): a space after the 5 characters the lines read is malformed-wire. Derived without an engine by a standalone reference program."
+}

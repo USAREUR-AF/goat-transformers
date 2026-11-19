@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
  * A bits transform is valid only on a bits wire.
  */
 public final class BitsTransform {
-    enum Kind { UINT, TWOS, LINSCALE, USCALE, SSCALE, F32, F64, ASCII }
+    enum Kind { UINT, TWOS, LINSCALE, USCALE, SSCALE, F32, F64, ASCII, SIXBIT }
 
     private final Kind kind;
     private final String name;
@@ -36,12 +36,19 @@ public final class BitsTransform {
         switch (kind) {
             case UINT:
             case TWOS: return "int";
-            case ASCII: return "string";
+            case ASCII:
+            case SIXBIT: return "string";
             default: return "float";
         }
     }
 
     boolean isAscii() { return kind == Kind.ASCII; }
+
+    /** {@code sixbit} (engine-spec 0.14): six-bit character codes. */
+    boolean isSixbit() { return kind == Kind.SIXBIT; }
+
+    /** {@code ascii} or {@code sixbit}: the transforms that take the field option {@code trim}. */
+    boolean takesTrim() { return kind == Kind.ASCII || kind == Kind.SIXBIT; }
 
     private static String head(String n) {
         int c = n.indexOf(':');
@@ -60,6 +67,7 @@ public final class BitsTransform {
             case "f32":
             case "f64":
             case "ascii":
+            case "sixbit":
                 return n.indexOf(':') < 0;
             default:
                 return false;
@@ -95,6 +103,7 @@ public final class BitsTransform {
             case "f32": return new BitsTransform(Kind.F32, name);
             case "f64": return new BitsTransform(Kind.F64, name);
             case "ascii": return new BitsTransform(Kind.ASCII, name);
+            case "sixbit": return new BitsTransform(Kind.SIXBIT, name);
             case "linscale": {
                 if (p.length != 3) throw bad(format, where, "linscale takes linscale:<maxpos>:<range>, got \"" + name + "\"");
                 BitsTransform t = new BitsTransform(Kind.LINSCALE, name);
@@ -137,6 +146,9 @@ public final class BitsTransform {
             case ASCII:
                 return (len % 8 == 0 && len >= 8 && len <= 2040) ? null
                         : "ascii needs a length that is a multiple of 8 from 8 to 2040, got " + len;
+            case SIXBIT:
+                return (len % 6 == 0 && len >= 6 && len <= 1530) ? null
+                        : "sixbit needs a length that is a multiple of 6 from 6 to 1530, got " + len;
             default: return (len >= 1 && len <= 64) ? null : name + " needs a length of 1 to 64 bits, got " + len;
         }
     }
@@ -277,6 +289,49 @@ public final class BitsTransform {
             }
         }
         return new String(bytes, 0, n, StandardCharsets.US_ASCII);
+    }
+
+    /**
+     * {@code sixbit}: the field's six-bit values, first character first, to text: 0 to 31 as {@code @} to
+     * {@code _}, 32 to 63 as space to {@code ?}; trailing {@code @} removed, and with {@code trim} the whole
+     * trailing run of {@code @} and space, in any mix. Never fails.
+     */
+    static String decodeSixbit(int[] values, boolean trim) {
+        char[] c = new char[values.length];
+        for (int i = 0; i < c.length; i++) {
+            int v = values[i] & 0x3f;
+            c[i] = (char) (v < 32 ? 0x40 + v : v);
+        }
+        int n = c.length;
+        if (trim) {
+            while (n > 0 && (c[n - 1] == '@' || c[n - 1] == ' ')) n--;
+        } else {
+            while (n > 0 && c[n - 1] == '@') n--;
+        }
+        return new String(c, 0, n);
+    }
+
+    /**
+     * {@code sixbit}: text to {@code chars} six-bit values, padded with {@code @} (0). A character outside 0x20 to
+     * 0x5F, or text longer than {@code chars}, is an error.
+     */
+    static int[] encodeSixbit(Object value, int chars) {
+        String s = value instanceof Double ? Transform.formatDouble((Double) value) : String.valueOf(value);
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c < 0x20 || c > 0x5F) {
+                throw new IllegalArgumentException(String.format("character U+%04X at offset %d is not a six-bit character (0x20 to 0x5F)", (int) c, i));
+            }
+        }
+        if (s.length() > chars) {
+            throw new IllegalArgumentException("text of " + s.length() + " characters does not fit a field of " + chars + " six-bit characters");
+        }
+        int[] out = new int[chars];
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            out[i] = c >= 0x40 ? c - 0x40 : c;
+        }
+        return out;
     }
 
     /** {@code ascii}: text to {@code size} bytes, NUL-padded. Longer text is an error. */

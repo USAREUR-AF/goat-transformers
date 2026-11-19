@@ -13,7 +13,9 @@ on the `bits` wire, spec Version 0.8), reads wire values that mean "no value"
 as absent keys and writes them for absent keys (the `absent` field option,
 spec Version 0.9), reads and writes one-record text formats (the `text` wire,
 spec Version 0.10), follows the strict rulings of spec Version 0.11, reads and
-writes tag-length-value sets (the `tlv` wire, spec Version 0.13), and converts
+writes tag-length-value sets (the `tlv` wire, spec Version 0.13), reads and
+writes `bits` messages as six-bit armored text (`armor sixbit` and the
+`sixbit` transform, spec Version 0.14), and converts
 between formats via the shared model.
 
 ## Build and run the conformance harness
@@ -50,6 +52,9 @@ An input that is not a well-formed message of its wire fails with
 - `xml`, `json`, `geojson`: at most 64 levels of nesting.
 - `bits`, `protobuf`: hex digits and whitespace (space, tab, line feed,
   carriage return) only, an even number of digits.
+- `bits` with `armor sixbit`: every character is checked to be `0`..`W` or
+  `` ` ``..`w` before any line is read; the message is six bits per character,
+  and every read is checked against that number of bits.
 - `protobuf`: the whole top-level message is parsed before any line is read;
   a submessage a `field` or `group` path walks into is parsed when it is
   reached. Field number 0, a field number above 2^29-1 and wire types 3, 4, 6

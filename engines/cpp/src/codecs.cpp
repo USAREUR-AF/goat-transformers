@@ -684,6 +684,79 @@ std::string hex_to_bytes(const Pack& p, const std::string& text) {
     return data;
 }
 
+std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t& bits) {
+    std::string data((text.size() * 6 + 7) / 8, '\0');
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        const unsigned char c = static_cast<unsigned char>(text[k]);
+        unsigned v;
+        if (c >= 0x30 && c <= 0x57) v = c - 0x30u;
+        else if (c >= 0x60 && c <= 0x77) v = c - 0x38u;
+        else
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        "character " + std::to_string(k) + " (0x" + bytes_to_hex(std::string(1, static_cast<char>(c))) +
+                            ") is not a six-bit armor character");
+        write_bits(data, 6ull * k, 6, v, true);
+    }
+    bits = 6ull * text.size();
+    return data;
+}
+
+std::string bytes_to_armor(const std::string& data, std::uint64_t bits) {
+    const std::uint64_t chars = (bits + 5) / 6;
+    std::string out;
+    out.reserve(static_cast<std::size_t>(chars));
+    const std::uint64_t have = static_cast<std::uint64_t>(data.size()) * 8;
+    for (std::uint64_t k = 0; k < chars; ++k) {
+        unsigned v = 0;
+        for (std::uint64_t b = 6 * k; b < 6 * k + 6; ++b) {
+            const bool one = b < bits && b < have &&
+                             ((static_cast<unsigned char>(data[static_cast<std::size_t>(b / 8)]) >> (7 - b % 8)) & 1u);
+            v = (v << 1) | (one ? 1u : 0u);
+        }
+        out += static_cast<char>(v < 40 ? 0x30 + v : 0x38 + v);
+    }
+    return out;
+}
+
+bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, bool msb,
+                      Value& out) {
+    if (f.transform == Transform::Ascii) {
+        std::string text;
+        for (std::uint32_t k = 0; k < len / 8; ++k)
+            text += static_cast<char>(read_bits(data, start + 8ull * k, 8, msb));
+        if (f.swap) std::reverse(text.begin(), text.end());
+        out = decode_ascii(text, f.trim);
+        return true;
+    }
+    if (f.transform == Transform::Sixbit) {
+        // Characters first to last, each one's six bits in the pack's bit order.
+        std::string codes;
+        for (std::uint32_t k = 0; k < len / 6; ++k)
+            codes += static_cast<char>(read_bits(data, start + 6ull * k, 6, msb));
+        out = decode_sixbit(codes, f.trim);
+        return true;
+    }
+    return false;
+}
+
+bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std::uint64_t start, std::uint32_t len,
+                      bool msb) {
+    if (f.transform == Transform::Ascii) {
+        std::string text = encode_ascii(v, len / 8);
+        if (f.swap) std::reverse(text.begin(), text.end());
+        for (std::uint32_t k = 0; k < len / 8; ++k)
+            write_bits(data, start + 8ull * k, 8, static_cast<std::uint8_t>(text[k]), msb);
+        return true;
+    }
+    if (f.transform == Transform::Sixbit) {
+        const std::string codes = encode_sixbit(v, len / 6);
+        for (std::uint32_t k = 0; k < len / 6; ++k)
+            write_bits(data, start + 6ull * k, 6, static_cast<std::uint8_t>(codes[k]), msb);
+        return true;
+    }
+    return false;
+}
+
 std::string bytes_to_hex(const std::string& data) {
     static const char* kHex = "0123456789abcdef";
     std::string out;
@@ -1346,12 +1419,9 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, s
             if (sentinel_num(f, raw)) continue;
         }
         try {
-            if (f.transform == Transform::Ascii) {
-                std::string text;
-                for (std::uint32_t k = 0; k < r.len / 8; ++k)
-                    text += static_cast<char>(read_bits(in.data, r.start + 8ull * k, 8, in.msb));
-                if (f.swap) std::reverse(text.begin(), text.end());
-                d.put(f, decode_ascii(text, f.trim));
+            Value text;
+            if (decode_bits_text(f, in.data, r.start, r.len, in.msb, text)) {
+                d.put(f, text);
             } else {
                 std::uint64_t raw = read_bits(in.data, r.start, r.len, in.msb);
                 if (f.swap) raw = swap_bytes(raw, r.len);
@@ -1401,6 +1471,9 @@ struct BitsOut {
     const Pack& p;
     std::string data;
     bool msb;
+    // v0.14: the length L of armored output, one more than the highest bit of
+    // any line written, an `optional` field with no value aside.
+    std::uint64_t armor_end = 0;
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -1426,6 +1499,8 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
         if (src.value(f, mv)) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
+        // 0.14 ruling 12: a written sentinel counts toward L, optional or not.
+        out.armor_end = std::max(out.armor_end, r.end());
         std::uint64_t raw = f.absent_num.front();
         if (f.swap) raw = swap_bytes(raw, r.len);
         write_bits(out.data, r.start, r.len, raw, out.msb);
@@ -1434,18 +1509,23 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
     // (0.5 ruling 5): write the lines last to first. Absent fields without
     // `absent` leave zero bits.
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
-        if (!it->field) continue;
+        if (it->group) {
+            if (!it->group->count_fixed)
+                out.armor_end = std::max(out.armor_end, base + it->group->count_start + it->group->count_len);
+            continue;
+        }
+        if (!it->field) {
+            out.armor_end = std::max(out.armor_end, base + bit_range(p, it->locator()).end());
+            continue;
+        }
         const FieldLine& f = *it->field;
-        if (!src.value(f, mv)) continue;
+        const bool has = src.value(f, mv);
+        if (has || !f.optional) out.armor_end = std::max(out.armor_end, base + bit_range(p, f.locator).end());
+        if (!has) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
         try {
-            if (f.transform == Transform::Ascii) {
-                std::string text = encode_ascii(mv, r.len / 8);
-                if (f.swap) std::reverse(text.begin(), text.end());
-                for (std::uint32_t k = 0; k < r.len / 8; ++k)
-                    write_bits(out.data, r.start + 8ull * k, 8, static_cast<std::uint8_t>(text[k]), out.msb);
-            } else {
+            if (!encode_bits_text(f, mv, out.data, r.start, r.len, out.msb)) {
                 std::uint64_t raw = encode_bits_value(f, mv, r.len);
                 if (f.swap) raw = swap_bytes(raw, r.len);
                 write_bits(out.data, r.start, r.len, raw, out.msb);
@@ -1490,6 +1570,7 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
             const std::vector<LineRef> body = group_lines(g);
             for (const Item& item : *items) {
                 out.reach(at + g.item_bits);
+                out.armor_end = std::max(out.armor_end, at + g.item_bits);
                 const std::uint64_t used = bits_encode_scope(out, body, at, EncodeSource(p, g, item));
                 at = std::max(at + g.item_bits, used);
             }
@@ -1502,9 +1583,12 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
 }  // namespace
 
 Entity decode_bits(const Pack& p, const std::string& bytes) {
-    // Hex text in, whitespace ignored, even nibble count (engine-spec.md, I/O).
-    const std::string data = hex_to_bytes(p, bytes);
-    BitsIn in{p, data, p.bit_order == BitOrder::Msb, static_cast<std::uint64_t>(data.size()) * 8, false, {}, {}};
+    // Hex text in, whitespace ignored, even nibble count (engine-spec.md, I/O);
+    // or, under `armor sixbit`, six bits a character (0.14), every one checked here.
+    std::uint64_t armored = 0;
+    const std::string data = p.armor_sixbit ? armor_to_bytes(p, bytes, armored) : hex_to_bytes(p, bytes);
+    BitsIn in{p, data, p.bit_order == BitOrder::Msb,
+              p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, false, {}, {}};
 
     // A `when` any of whose bits lies beyond the input does not hold.
     const Kind* kind = select_decode_kind(p, [&](const WhenLine& w) {
@@ -1518,7 +1602,8 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     const std::string what = "the message" + (kind ? " of kind '" + kind->name + "'" : std::string());
     Entity e;
     const std::uint64_t end = bits_decode_scope(in, active_lines(p, kind), 0, e, what);
-    const std::size_t need = whole_words(p, end);
+    // Under armor the message is any number of bits: whole words are not required.
+    const std::size_t need = p.armor_sixbit ? 0 : whole_words(p, end);
     if (data.size() < need)
         throw Error(ErrorKind::MalformedWire, p.format, "",
                     what + " is " + std::to_string(need) + " bytes, got " + std::to_string(data.size()));
@@ -1531,6 +1616,7 @@ std::string encode_bits(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
     BitsOut out{p, std::string(), p.bit_order == BitOrder::Msb};
     const std::uint64_t end = bits_encode_scope(out, active_lines(p, kind), 0, EncodeSource(p, kind, e));
+    if (p.armor_sixbit) return bytes_to_armor(out.data, out.armor_end);
     out.data.resize(whole_words(p, end), '\0');
     return bytes_to_hex(out.data);
 }

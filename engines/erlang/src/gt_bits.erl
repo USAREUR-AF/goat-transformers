@@ -9,7 +9,8 @@
 %%   of N bits, bit i of the message is bit N - 1 - i of the integer.
 -module(gt_bits).
 -export([hex_to_bytes/1, bytes_to_hex/1, open/2, bit_size/1, read/3,
-         new/2, write/4, overwrite/4, to_bytes/1]).
+         new/2, new_bits/2, write/4, overwrite/4, to_bytes/1,
+         unarmor/1, armor/2]).
 
 -define(WS(C), (C =:= $\s orelse C =:= $\t orelse C =:= $\r orelse C =:= $\n)).
 
@@ -30,6 +31,30 @@ hexval(C) when C >= $0, C =< $9 -> C - $0;
 hexval(C) when C >= $a, C =< $f -> C - $a + 10;
 hexval(C) when C >= $A, C =< $F -> C - $A + 10;
 hexval(C) -> erlang:error({hex_malformed, {not_a_hex_digit, C}}).
+
+%% Six-bit armored text (Version 0.14) -> the bitstring of 6 * N bits it
+%% stands for, first character first, each most significant bit first.
+%% Every character is checked: one outside `0`..`W` and `` ` ``..`w` raises
+%% error:{armor_malformed, {position, Index, Byte}}.
+unarmor(Bin) when is_binary(Bin) -> unarmor(Bin, 0, <<>>).
+
+unarmor(<<>>, _I, Acc) -> Acc;
+unarmor(<<C, R/binary>>, I, Acc) when C >= 16#30, C =< 16#57 ->
+    unarmor(R, I + 1, <<Acc/bits, (C - 16#30):6>>);
+unarmor(<<C, R/binary>>, I, Acc) when C >= 16#60, C =< 16#77 ->
+    unarmor(R, I + 1, <<Acc/bits, (C - 16#38):6>>);
+unarmor(<<C, _/binary>>, I, _Acc) ->
+    erlang:error({armor_malformed, {position, I, C}}).
+
+%% The first L bits of a bitstring, then zero bits to a multiple of 6, as
+%% armored text: values 0 to 39 as 0x30 + v, 40 to 63 as 0x38 + v.
+armor(Bits, L) ->
+    Fill = (6 - L rem 6) rem 6,
+    <<Head:L/bits, _/bits>> = Bits,
+    << <<(armor_char(V))>> || <<V:6>> <= <<Head/bits, 0:Fill>> >>.
+
+armor_char(V) when V < 40 -> 16#30 + V;
+armor_char(V) -> 16#38 + V.
 
 %% binary -> lowercase hex, no separators
 bytes_to_hex(Bin) ->
@@ -64,6 +89,9 @@ read({lsb, _, Bin}, Off, Len) ->
 
 %% A zeroed message of Bytes bytes: {Order, BitSize, Value, WrittenMask}.
 new(Bytes, Order) -> {Order, Bytes * 8, 0, 0}.
+
+%% A zeroed message of Bits bits (msb; to_bytes gives a bitstring).
+new_bits(Bits, Order) -> {Order, Bits, 0, 0}.
 
 %% Write a field. Bits an earlier field already wrote keep that field's value.
 write({Order, Size, Val, Written}, Off, Len, U) ->

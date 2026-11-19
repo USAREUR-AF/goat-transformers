@@ -526,7 +526,8 @@ self_contained(PacksDir, Pack) ->
 %% malformed inputs (spec/engine-spec.md, Malformed input)
 %% ===================================================================
 %% The input of the first ?PER_PACK conversion vectors of each pack, and of
-%% every vector of the packs `conformance-malformed-*` and `conformance-tlv*`, is cut short at prefixes and has
+%% every vector of the packs `conformance-malformed-*`, `conformance-tlv*`,
+%% `conformance-armor*` and `conformance-sixbit*`, is cut short at prefixes and has
 %% single bytes replaced, and each result is converted as the vector
 %% converts. A case passes when convert returns bytes or fails with a
 %% conversion error of a named kind whose message begins with the kind and
@@ -549,7 +550,9 @@ run_malformed(Engine, PacksDir) ->
           fun({Pack, File}, {P0, F0, Index, Seen}) ->
                   Nth = maps:get(Pack, Seen, 0),
                   {P1, F1} = case Nth < ?PER_PACK orelse lists:prefix("conformance-malformed-", Pack)
-                                     orelse lists:prefix("conformance-tlv", Pack) of
+                                     orelse lists:prefix("conformance-tlv", Pack)
+                                     orelse lists:prefix("conformance-armor", Pack)
+                                     orelse lists:prefix("conformance-sixbit", Pack) of
                                  true -> malformed_vector(Engine, Pack, File, Index);
                                  false -> {0, 0}
                              end,
@@ -604,6 +607,8 @@ ruling_cases() ->
     G = <<"conformance-groups-protobuf">>,
     T = <<"conformance-tlv">>,
     F = <<"conformance-tlv-fixed">>,
+    A = <<"conformance-armor">>,
+    S = <<"conformance-armor-seq">>,
     [{J, refused, <<"{\"id\":\"u1\",\"n\":01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":-01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":+1}">>},
@@ -686,7 +691,30 @@ ruling_cases() ->
      {F, refused, <<"0b00">>},                            % half a length
      {F, refused, <<"0b0001">>},                          % a value past the set
      {F, refused, <<"0bffff00">>},
-     {F, refused, <<"0b000">>}].
+     {F, refused, <<"0b000">>},
+     %% six-bit armor (0.14): every character is checked, wherever it stands
+     {A, read, <<"1CB>fwT0p:Qr@00">>},
+     {A, read, <<"1CB>fwT0p:Qr@0w">>},                    % fill bits set
+     {A, read, <<"1CB>fwT0p:Qr@00www">>},                 % characters past the lines
+     {A, refused, <<"1CB>fwT0p:Qr@0">>},                  % short of the callsign
+     {A, refused, <<"1CB>fwT0p:Qr@0X">>},                 % 0x58, just past W
+     {A, refused, <<"1CB>fwT0p:Qr@0_">>},                 % 0x5F
+     {A, refused, <<"1CB>fwT0p:Qr@0/">>},                 % 0x2F, just below 0
+     {A, refused, <<"1CB>fwT0p:Qr@0x">>},                 % 0x78, just past w
+     {A, refused, <<"1CB>fwT0p:Qr@00\r\n">>},
+     {A, refused, <<" 1CB>fwT0p:Qr@00">>},
+     {A, refused, <<"1CB>fwT0p:Qr@00\t">>},
+     {A, refused, <<"1CB>fwT0p:Qr@0", 0>>},
+     {A, refused, <<"1CB>fwT0p:Qr@0", 16#C2, 16#A0>>},
+     {A, refused, <<"X">>},                               % a bad character where the type is
+     {A, refused, <<"380O">>},                            % items cut short
+     {S, read, <<"9D246">>},
+     {S, read, <<"@D246">>},                              % @ (0x40) stands for 16
+     {S, read, <<"9D246www">>},
+     {S, refused, <<"9D24">>},
+     {S, refused, <<"9D24 6">>},
+     {S, refused, <<"9D246\n">>},
+     {S, refused, <<>>}].
 
 run_ruling_cases(Engine) ->
     Packs = gt_engine:packs(Engine),

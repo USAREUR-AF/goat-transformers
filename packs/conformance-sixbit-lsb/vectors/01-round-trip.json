@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-sixbit-lsb",
+  "to": "conformance-sixbit-lsb",
+  "input": "8150",
+  "expect": "8150",
+  "model": {
+    "probe.s1": "AB",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): lsb: the first character is the low six bits of the 12-bit field: A=1 + B=2 * 64 = 0x081, n=5 at bits 12..15: word 0x5081, bytes 81 50. Derived without an engine by a standalone reference program."
+}

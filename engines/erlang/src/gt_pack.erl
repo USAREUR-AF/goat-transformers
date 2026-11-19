@@ -1,4 +1,4 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.13).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.14).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
 %% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
@@ -40,6 +40,7 @@
 %%     tlv      {[Tag], Size :: none | 1..8}
 %%   A text pack also has delimiter (binary() | none), start (binary(), <<>>
 %%   for none) and checksum (none | nmea).
+%%   A bits pack has armor (hex | sixbit, 0.14); every pack carries the key.
 %%   A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
 %%   4), key (none | binary()) and sum16 (none | {sum16, Tag}).
 %%   Inside a group a geojson pack uses the json locators.
@@ -84,6 +85,7 @@ parse(Bin) ->
              common => [], defaults => [], kinds => [], kind_names => #{},
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
              tag_enc => ber_oid, len_enc => ber, key => none, sum16 => none, tlv_seen => #{},
+             armor => hex, armor_seen => false,
              cur => common, late => [], gstack => [], sstack => [],
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
@@ -116,6 +118,22 @@ parse(Bin) ->
          ({raw, Kind, Msg}) -> erlang:error({load_error, Kind, Msg});
          ({text_only, _Dir}) when Wire =:= text -> ok;
          ({tlv_only, _Dir}) when Wire =:= tlv -> ok;
+         ({bits_only, _Dir}) when Wire =:= bits -> ok;
+         ({bits_only, Dir}) ->
+              load_error('bad-directive', "~s is valid only on a bits wire, not ~s", [Dir, Wire]);
+         (need_msb) ->
+              %% `armor sixbit` needs `bit_order msb`, wherever that line stands
+              case maps:get(bit_order, P1) of
+                  msb -> ok;
+                  _ -> load_error('bad-directive', "armor sixbit needs bit_order msb", [])
+              end;
+         (no_whole) ->
+              %% ruling 3 of 0.14
+              case maps:get(armor, P1) of
+                  sixbit -> load_error('bad-directive',
+                                       "length ... whole in a pack with armor sixbit", []);
+                  _ -> ok
+              end;
          ({tlv_only, Text}) ->
               load_error('bad-directive', "~s is valid only on a tlv wire, not ~s", [Text, Wire]);
          ({text_only, Dir}) ->
@@ -159,7 +177,7 @@ parse(Bin) ->
              fixed -> check_scopes(P2), P2
          end,
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
-                      headers, listed_seen],
+                      headers, listed_seen, armor_seen, body_kind_seen],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
@@ -223,6 +241,7 @@ distribution_atom(D) ->
 yields(string)  -> string;
 yields(pstring) -> string;
 yields(ascii)   -> string;
+yields(sixbit)  -> string;
 yields(float)   -> float;
 yields({linscale, _, _}) -> float;
 yields({uscale, _, _}) -> float;
@@ -358,7 +377,9 @@ pack_directives() ->
      <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>, <<"delimiter">>,
      <<"start">>, <<"checksum">>,
      %% the `tlv` wire (Version 0.13)
-     <<"tag">>, <<"key">>].
+     <<"tag">>, <<"key">>,
+     %% six-bit armor (Version 0.14)
+     <<"armor">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -371,7 +392,9 @@ arg_count_ok(Dir, N) ->
     One = [<<"format">>, <<"version">>, <<"distribution">>, <<"source">>, <<"uses">>,
            <<"wire">>, <<"root">>, <<"kind">>, <<"word_bytes">>, <<"bit_order">>,
            <<"layout">>, <<"pad">>, <<"align">>, <<"delimiter">>, <<"start">>,
-           <<"checksum">>],
+           <<"checksum">>,
+           %% ruling 13 of 0.14
+           <<"armor">>],
     case lists:member(Dir, One) of
         true -> N =:= 1;
         false ->
@@ -465,7 +488,7 @@ known_directives() ->
      <<"default">>, <<"map">>, <<"group">>, <<"end">>,
      <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
      <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
-     <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>].
+     <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -488,6 +511,7 @@ apply_line([<<"tag">> | Args], P) -> tlv_directive(tag, Args, P);
 apply_line([<<"key">> | Args], P) -> tlv_directive(key, Args, P);
 apply_line([<<"checksum">>, <<"sum16">>, _] = Args, P) ->
     tlv_directive(checksum, tl(Args), P);
+apply_line([<<"armor">>, V], P) -> armor_directive(V, P);
 apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
                              Dir =:= <<"checksum">> ->
     text_directive(binary_to_atom(Dir), V, P);
@@ -601,8 +625,9 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
          || not len_ok(Wire, Tr, Loc)] ++
         [{bad, "swap on ~s: valid only on a bits wire, with a length that is a multiple of 8", [LocS]}
          || Swap, not (Wire =:= bits andalso element(2, Loc) rem 8 =:= 0)] ++
-        [{bad, "trim on ~s: valid only on a bits wire, with ascii", [LocS]}
-         || Trim, not (Wire =:= bits andalso Tr =:= ascii)] ++
+        [{bad, "swap on ~s: not allowed on sixbit", [LocS]} || Swap, Tr =:= sixbit] ++
+        [{bad, "trim on ~s: valid only on a bits wire, with ascii or sixbit", [LocS]}
+         || Trim, not (Wire =:= bits andalso (Tr =:= ascii orelse Tr =:= sixbit))] ++
         [{bad, "optional on ~s: valid only on a bits or text wire", [LocS]}
          || Optional, Wire =/= bits, Wire =/= text] ++
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
@@ -1144,6 +1169,7 @@ len_ok(bits, Tr, {_Off, Len}) ->
         f32 -> Len =:= 32;
         f64 -> Len =:= 64;
         ascii -> Len rem 8 =:= 0 andalso Len >= 8 andalso Len =< 2040;
+        sixbit -> Len rem 6 =:= 0 andalso Len >= 6 andalso Len =< 1530;
         _ -> Len >= 1 andalso Len =< 64
     end;
 len_ok(_Wire, _Tr, _Loc) -> true.
@@ -1219,6 +1245,9 @@ parse_transform1(Wire, S) ->
              {textonly, text} -> true;
              {json, json} -> true;
              {bits, bits} -> true;
+             %% sixbit on another wire is bad-directive (0.14)
+             {sixbit, bits} -> true;
+             {sixbit, _} -> late;
              {protobuf, protobuf} -> true;
              {tlvonly, tlv} -> true;
              {tlvonly, _} -> late;
@@ -1249,6 +1278,7 @@ transform(<<"twos">>)       -> {bits, twos};
 transform(<<"f32">>)        -> {bits, f32};
 transform(<<"f64">>)        -> {bits, f64};
 transform(<<"ascii">>)      -> {bits, ascii};
+transform(<<"sixbit">>)     -> {sixbit, sixbit};
 transform(<<"linscale:", Rest/binary>> = S) ->
     %% ruling 4d of 0.11: <maxpos> an unsigned decimal integer of at least 1,
     %% <range> number text that does not read as zero
@@ -1424,6 +1454,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
+                 <<"armor">>,
                  <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
@@ -1451,8 +1482,9 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
          || not len_ok(bits, Tr, {0, Len})] ++
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
          || Swap, Len rem 8 =/= 0] ++
-        [{bad, "trim on a field of ~s bits: valid only with ascii", [LenS]}
-         || Trim, Tr =/= ascii] ++
+        [{bad, "swap on a sixbit field of ~s bits", [LenS]} || Swap, Tr =:= sixbit] ++
+        [{bad, "trim on a field of ~s bits: valid only with ascii or sixbit", [LenS]}
+         || Trim, Tr =/= ascii, Tr =/= sixbit] ++
         [{via, Via} || Via =/= none] ++
         AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
@@ -1513,7 +1545,7 @@ seq_apply([<<"length">>, LenS | Rest], P) ->
     {Unit, Plus, Whole} = seq_length_opts(Rest, {undefined, undefined, false}),
     case {Whole, Unit} of
         {true, bits} -> load_error('bad-directive', "length ... bits whole", []);
-        {true, _} -> seq_add({lenwhole, Len, default(Plus, 0)}, P);
+        {true, _} -> seq_add({lenwhole, Len, default(Plus, 0)}, late(no_whole, P));
         {false, _} -> seq_push(#{type => length,
                                  hdr => {Len, default(Unit, bytes), default(Plus, 0)}}, P)
     end;
@@ -1541,7 +1573,10 @@ seq_apply([<<"kind">>, Name] = Tokens, #{sstack := Stack} = P) ->
                 false -> ok
             end,
             F = seq_close_kind(F0),
-            P#{sstack := [F#{cur := #{name => Name, requires => [], lines => [], defaults => []},
+            %% a kind of a group body counts for "before the first kind"
+            %% of `armor` (ruling 11 of 0.14)
+            P#{body_kind_seen => true,
+               sstack := [F#{cur := #{name => Name, requires => [], lines => [], defaults => []},
                              kind_names := Names#{Name => true}} | Rest]};
         _ -> load_error('bad-directive', "kind ~s inside a block", [Name])
     end;
@@ -1807,6 +1842,32 @@ seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc
 seq_res_block(Body, Env, St) ->
     {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),
     {Body1, St1}.
+
+%% ===================================================================
+%% six-bit armor (engine-spec Version 0.14)
+%% ===================================================================
+%% `armor <hex | sixbit>`: valid only on the bits wire, at most once, before
+%% the first `kind`; `armor sixbit` needs `bit_order msb`. Every refusal is
+%% bad-directive after the file is read (ruling 10 of 0.10).
+armor_directive(V, #{armor_seen := Seen, cur := Cur, kind_names := Kinds} = P0) ->
+    %% the wire is checked after the file is read, wherever the wire line
+    %% stands (ruling 13 of 0.14)
+    P1 = late({bits_only, "armor"}, P0),
+    P2 = case Seen of
+             true -> late({bad, "armor appears more than once", []}, P1);
+             false -> P1
+         end,
+    P3 = case Cur =:= common andalso map_size(Kinds) =:= 0
+             andalso not maps:get(body_kind_seen, P0, false) of
+             true -> P2;
+             false -> late({bad, "armor stands after the first kind", []}, P2)
+         end,
+    P = P3#{armor_seen := true},
+    case V of
+        <<"hex">> -> P#{armor := hex};
+        <<"sixbit">> -> late(need_msb, P#{armor := sixbit});
+        _ -> late({bad, "armor ~s is neither hex nor sixbit", [V]}, P)
+    end.
 
 %% ===================================================================
 %% the `text` wire (engine-spec Version 0.10)

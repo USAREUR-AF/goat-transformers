@@ -173,6 +173,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // `field` or an `also`.
     SeqNode* also_target = nullptr;
     std::size_t lineno = 0, pos = 0;
+    // v0.14: `armor <hex | sixbit>`, checked after the file is read (ruling 10
+    // of 0.10): the first error of its lines, and the first `kind` and
+    // `length ... whole` lines.
+    std::size_t armor_line = 0, first_kind_line = 0, whole_line = 0;
+    std::string armor_error;
 
     auto lines_of = [](Frame& f) -> std::vector<SeqNode>& {
         return f.body->kinds.empty() ? f.body->lines : f.body->kinds.back().lines;
@@ -251,7 +256,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         // message: inside any block they are bad-directive (0.8 ruling 24).
         if (stack.size() > 1 &&
             (kw == "format" || kw == "version" || kw == "distribution" || kw == "source" || kw == "uses" ||
-             kw == "wire" || kw == "layout" || kw == "bit_order" || kw == "map" || kw == "typemap"))
+             kw == "wire" || kw == "layout" || kw == "bit_order" || kw == "armor" || kw == "map" || kw == "typemap"))
             throw bad("'" + kw + "' is not allowed inside " + stack.back().what);
 
         if (kw == "format") {
@@ -299,6 +304,18 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             throw bad("'" + kw + "' applies to wire tlv only");
         } else if (kw == "root") {
             throw bad("'root' applies to wire xml only");
+        } else if (kw == "armor") {
+            std::string why;
+            if (t.size() != 2) why = "'armor' takes one value: hex or sixbit";
+            else if (t[1] != "hex" && t[1] != "sixbit") why = "'armor' is hex or sixbit, not '" + t[1] + "'";
+            else if (armor_line != 0) why = "'armor' appears twice";
+            else if (first_kind_line != 0) why = "'armor' after the first 'kind'";
+            if (!why.empty()) {
+                if (armor_error.empty()) armor_error = where + ": " + why;
+            } else {
+                p.armor_sixbit = t[1] == "sixbit";
+            }
+            if (armor_line == 0) armor_line = lineno;
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -331,6 +348,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.body->kinds.back().name = t[1];
             f.body->kinds.back().line = lineno;
             f.kind_names.clear();
+            if (first_kind_line == 0) first_kind_line = lineno;
         } else if (kw == "when") {
             // The `when` lines of a kind are its first lines; a `when` before
             // the first `kind` is a common one (0.8 ruling 10).
@@ -417,12 +435,15 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 case Transform::F32: ok = n.len == 32; break;
                 case Transform::F64: ok = n.len == 64; break;
                 case Transform::Ascii: ok = n.len >= 8 && n.len <= 2040 && n.len % 8 == 0; break;
+                case Transform::Sixbit: ok = n.len >= 6 && n.len <= 1530 && n.len % 6 == 0; break;
                 default: ok = n.len >= 1 && n.len <= 64; break;
             }
             if (!ok)
                 throw bad("transform '" + std::string(transform_name(f.transform)) + "' does not allow a length of " +
                           std::to_string(n.len) + " bits");
-            if (f.trim && f.transform != Transform::Ascii) throw bad("option 'trim' applies to transform ascii only");
+            if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
+                throw bad("option 'trim' applies to transforms ascii and sixbit only");
+            if (f.swap && f.transform == Transform::Sixbit) throw bad("option 'swap' does not apply to transform sixbit");
             if (f.swap && n.len % 8 != 0)
                 throw bad("option 'swap' needs a length that is a multiple of 8 bits, not " + std::to_string(n.len));
             also_target = &add(std::move(n));
@@ -556,6 +577,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 if (n.unit_bits) throw bad("'length ... whole' counts bytes; 'bits' is not allowed with it");
                 n.type = Type::LengthWhole;
                 add(std::move(n));
+                if (whole_line == 0) whole_line = lineno;
             } else {
                 open(std::move(n), "a 'length' block");
             }
@@ -592,6 +614,14 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     check_common_when(stack[0]);
     if (have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "", source + ": 'layout sequential' applies to wire bits only");
+    if (!armor_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", armor_error);
+    if (p.armor_sixbit && p.bit_order != BitOrder::Msb)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(armor_line) + ": 'armor sixbit' needs 'bit_order msb'");
+    // Ruling 3 of 0.14: the armored text has no whole-byte length.
+    if (p.armor_sixbit && whole_line != 0)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(whole_line) + ": 'length ... whole' in a pack with 'armor sixbit'");
     check_lists_once(p, p.seq, source);
     // `via` names a table of the pack; a `map` line may follow the field.
     auto resolve = [&](FieldLine& f) {
@@ -812,13 +842,7 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             // Every key bound to the bits takes the value, each through its own table.
             try {
                 Value v;
-                if (f.transform == Transform::Ascii) {
-                    std::string text;
-                    for (std::uint32_t k = 0; k < n.len / 8; ++k)
-                        text += static_cast<char>(read_bits(in.data, start + 8ull * k, 8, in.msb));
-                    if (f.swap) std::reverse(text.begin(), text.end());
-                    v = decode_ascii(text, f.trim);
-                } else {
+                if (!decode_bits_text(f, in.data, start, n.len, in.msb, v)) {
                     std::uint64_t raw = read_bits(in.data, start, n.len, in.msb);
                     if (f.swap) raw = swap_bytes(raw, n.len);
                     v = decode_bits_value(f, raw, n.len);
@@ -988,8 +1012,12 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
 }  // namespace
 
 Entity decode_seq(const Pack& p, const std::string& bytes) {
-    const std::string data = hex_to_bytes(p, bytes);
-    SeqIn in{p, data, p.bit_order == BitOrder::Msb, static_cast<std::uint64_t>(data.size()) * 8, kNoExtent, 0,
+    // Hex text, or under `armor sixbit` six bits a character, every one checked
+    // before any line is read (0.14). The armored message is any number of bits.
+    std::uint64_t armored = 0;
+    const std::string data = p.armor_sixbit ? armor_to_bytes(p, bytes, armored) : hex_to_bytes(p, bytes);
+    SeqIn in{p, data, p.bit_order == BitOrder::Msb,
+             p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, kNoExtent, 0,
              std::vector<std::vector<bool>>(p.seq_presences.size()), false, {}, {}};
     Entity e;
     decode_body(in, p.seq, e);
@@ -1180,10 +1208,9 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
         return;
     }
     try {
-        if (f->transform == Transform::Ascii) {
-            std::string text = encode_ascii(mv, n.len / 8);
-            if (f->swap) std::reverse(text.begin(), text.end());
-            for (std::uint32_t k = 0; k < n.len / 8; ++k) out.put(static_cast<std::uint8_t>(text[k]), 8);
+        out.reach(out.cur + n.len);
+        if (encode_bits_text(*f, mv, out.data, out.cur, n.len, out.msb)) {
+            out.cur += n.len;
         } else {
             std::uint64_t raw = encode_bits_value(*f, mv, n.len);
             if (f->swap) raw = swap_bytes(raw, n.len);
@@ -1334,6 +1361,9 @@ std::string encode_seq(const Pack& p, const Entity& e) {
     SeqOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0,
                std::vector<std::vector<bool>>(p.seq_presences.size()), {}};
     encode_body(out, p.seq, e);
+    // Under armor, L is the cursor after the last line, not rounded to a byte
+    // (0.14); `length ... whole` is refused at load.
+    if (p.armor_sixbit) return bytes_to_armor(out.data, out.cur);
     // A message is a whole number of bytes: the last byte's remaining bits are zero.
     out.data.resize(static_cast<std::size_t>((out.cur + 7) / 8), '\0');
     for (const auto& w : out.wholes) {

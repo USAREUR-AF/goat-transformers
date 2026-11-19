@@ -1,0 +1,14 @@
+{
+  "name": "pos-to-conformance-seq-json",
+  "from": "conformance-armor",
+  "to": "conformance-seq-json",
+  "input": "1wwnJV<1n40H9QV@",
+  "expect": "{\"n\":1,\"x\":4095,\"y\":200}",
+  "model": {
+    "probe.n": "1",
+    "probe.x": "4095",
+    "probe.y": "200"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor): decode as 02; conformance-seq-json writes n, x, y in line order. Derived without an engine by a standalone reference program."
+}
