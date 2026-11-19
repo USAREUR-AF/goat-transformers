@@ -1,0 +1,30 @@
+{
+  "name": "pgn127504-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "10f2016d02f6135dd3b3e564ec74ea1a024830bcc6b031f60d777068ce9a88448756a7d3bf2dae1ea4",
+  "expect": "10f2016d02f6135dd3b3e564ec74ea1a024830bcc6b031f60d777068ce9a88448756a7d3bf2dae1ea4",
+  "model": {
+    "@kind": "pgn127504",
+    "n2k.instance": "109",
+    "n2k.pgn127504_number_of_lines.#": "2",
+    "n2k.pgn127504_number_of_lines[0].n2k.pgn127504_line": "2",
+    "n2k.pgn127504_number_of_lines[0].n2k.pgn127504_waveform": "5",
+    "n2k.pgn127504_number_of_lines[0].n2k.voltage": "238.27",
+    "n2k.pgn127504_number_of_lines[0].n2k.current": "4603.5",
+    "n2k.pgn127504_number_of_lines[0].n2k.frequency": "258.29",
+    "n2k.pgn127504_number_of_lines[0].n2k.pgn127504_breaker_size": "2993.2",
+    "n2k.pgn127504_number_of_lines[0].n2k.real_power": "1208097514",
+    "n2k.pgn127504_number_of_lines[0].n2k.reactive_power": "2965814320",
+    "n2k.pgn127504_number_of_lines[0].n2k.power_factor": "0.49",
+    "n2k.pgn127504_number_of_lines[1].n2k.pgn127504_line": "2",
+    "n2k.pgn127504_number_of_lines[1].n2k.pgn127504_waveform": "5",
+    "n2k.pgn127504_number_of_lines[1].n2k.voltage": "304.77",
+    "n2k.pgn127504_number_of_lines[1].n2k.current": "2673.6",
+    "n2k.pgn127504_number_of_lines[1].n2k.frequency": "396.3",
+    "n2k.pgn127504_number_of_lines[1].n2k.pgn127504_breaker_size": "1754.4",
+    "n2k.pgn127504_number_of_lines[1].n2k.real_power": "3550959239",
+    "n2k.pgn127504_number_of_lines[1].n2k.reactive_power": "514731455",
+    "n2k.pgn127504_number_of_lines[1].n2k.power_factor": "-0.92"
+  }
+}

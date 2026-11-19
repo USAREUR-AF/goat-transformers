@@ -1,0 +1,24 @@
+{
+  "name": "pgn130565-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05fe018102dd4b976f94d85faadfb2ac4c2af6",
+  "expect": "05fe018102dd4b976f94d85faadfb2ac4c2af6",
+  "model": {
+    "@kind": "pgn130565",
+    "n2k.sequence_index": "129",
+    "n2k.pgn130565_color_count.#": "2",
+    "n2k.pgn130565_color_count[0].n2k.color_index": "221",
+    "n2k.pgn130565_color_count[0].n2k.red_component": "75",
+    "n2k.pgn130565_color_count[0].n2k.green_component": "151",
+    "n2k.pgn130565_color_count[0].n2k.blue_component": "111",
+    "n2k.pgn130565_color_count[0].n2k.color_temperature": "55444",
+    "n2k.pgn130565_color_count[0].n2k.intensity": "95",
+    "n2k.pgn130565_color_count[1].n2k.color_index": "170",
+    "n2k.pgn130565_color_count[1].n2k.red_component": "223",
+    "n2k.pgn130565_color_count[1].n2k.green_component": "178",
+    "n2k.pgn130565_color_count[1].n2k.blue_component": "172",
+    "n2k.pgn130565_color_count[1].n2k.color_temperature": "10828",
+    "n2k.pgn130565_color_count[1].n2k.intensity": "246"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pgn129540-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04fa01d6fd00",
+  "expect": "04fa01d6fd00",
+  "model": {
+    "@kind": "pgn129540",
+    "n2k.sid": "214",
+    "n2k.range_residual_mode": "1",
+    "n2k.pgn129540_sats_in_view.#": "0"
+  }
+}

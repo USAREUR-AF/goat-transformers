@@ -1,0 +1,16 @@
+{
+  "name": "pgn129816-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "18fb01bd582af89c132f00",
+  "expect": "18fb01bd582af89c132f00",
+  "model": {
+    "@kind": "pgn129816",
+    "n2k.sequence_id": "189",
+    "n2k.message_id": "24",
+    "n2k.repeat_indicator": "1",
+    "n2k.source_id": "329054250",
+    "n2k.ais_transceiver_information": "11",
+    "n2k.pgn129816_number_of_acknowledgments.#": "0"
+  }
+}

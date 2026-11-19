@@ -1,0 +1,17 @@
+{
+  "name": "pgn130564-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04fe0111c58d870200ffd6f788123f0979499f",
+  "expect": "04fe0111c58d870200ffd6f788123f0979499f",
+  "model": {
+    "@kind": "pgn130564",
+    "n2k.index_of_first_device": "50449",
+    "n2k.total_number_of_devices": "34701",
+    "n2k.pgn130564_number_of_devices.#": "2",
+    "n2k.pgn130564_number_of_devices[0].n2k.device_id": "2297943807",
+    "n2k.pgn130564_number_of_devices[0].n2k.pgn130564_status": "18",
+    "n2k.pgn130564_number_of_devices[1].n2k.device_id": "1232668991",
+    "n2k.pgn130564_number_of_devices[1].n2k.pgn130564_status": "159"
+  }
+}

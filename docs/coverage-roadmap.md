@@ -38,7 +38,7 @@ on this page lists.
 | Format | Wire type | Status | Open-source codecs to compare with |
 |---|---|---|---|
 | ADS-B on Mode S extended squitter | `bits` | Built: pack `adsb`, 29 message kinds of downlink format 17, raw field values. Position needs two paired messages and is outside the pack | pyModeS, dump1090, readsb |
-| NMEA 2000 parameter groups | `bits` | Built: pack `nmea2000`, 473 of the 647 definitions in the CANboat database. `packs/nmea2000/pack.md` lists what the others need | CANboat |
+| NMEA 2000 parameter groups | `bits`, fixed and sequential | Built: packs `nmea2000` (473 definitions) and `nmea2000-seq` (15 definitions with counted repeating sets), 488 of the 647 definitions in the CANboat database. `packs/nmea2000-seq/pack.md` lists what the others need: text with a length byte, sets that run to the end of the message, fields typed by an earlier field, PGN ranges | CANboat |
 | MAVLink 2, common message set | `bits` | Built: pack `mavlink2`, 235 message kinds at full payload length. Trimmed payloads and the checksum need framing | pymavlink |
 | ASTM F3411 Remote ID | `bits` | Built: pack `remote-id`, 8 message kinds including the Message Pack | opendroneid-core-c |
 | AIS / AIVDM | six-bit armor | Not built. Needs the six-bit armor wire | pyais, libais, gpsd |

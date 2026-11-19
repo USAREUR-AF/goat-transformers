@@ -1,0 +1,7 @@
+{
+  "name": "fixed-layout-pgn-is-no-kind",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "01f8015047f41f40a9ae02",
+  "expect_error": "no-kind"
+}

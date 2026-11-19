@@ -1,0 +1,12 @@
+{
+  "name": "pgn130565-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05fe018100",
+  "expect": "05fe018100",
+  "model": {
+    "@kind": "pgn130565",
+    "n2k.sequence_index": "129",
+    "n2k.pgn130565_color_count.#": "0"
+  }
+}

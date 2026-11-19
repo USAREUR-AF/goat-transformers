@@ -1,0 +1,30 @@
+{
+  "name": "pgn129029-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05f8012743752d57421a99387452000000008769c159000000008a4ca6a8ffffffffd5fefcb138d1e15eeb4e070257323e9db5d8adf6",
+  "expect": "05f8012743752d57421a99387452000000008769c159000000008a4ca6a8ffffffffd5fefcb138d1e15eeb4e070257323e9db5d8adf6",
+  "model": {
+    "@kind": "pgn129029",
+    "n2k.sid": "39",
+    "n2k.date": "30019",
+    "n2k.time": "44055.5309",
+    "lat": "0.0000001383348377",
+    "lon": "0.0000001505847687",
+    "n2k.pgn129029_altitude": "-1465.496438",
+    "n2k.pgn129029_gnss_type": "5",
+    "n2k.method": "13",
+    "n2k.integrity": "2",
+    "n2k.number_of_svs": "252",
+    "n2k.hdop": "145.13",
+    "n2k.pdop": "-77.27",
+    "n2k.geoidal_separation": "1226125.74",
+    "n2k.pgn129029_reference_stations.#": "2",
+    "n2k.pgn129029_reference_stations[0].n2k.reference_station_type": "7",
+    "n2k.pgn129029_reference_stations[0].n2k.reference_station_id": "805",
+    "n2k.pgn129029_reference_stations[0].n2k.age_of_dgnss_corrections": "402.54",
+    "n2k.pgn129029_reference_stations[1].n2k.reference_station_type": "5",
+    "n2k.pgn129029_reference_stations[1].n2k.reference_station_id": "3467",
+    "n2k.pgn129029_reference_stations[1].n2k.age_of_dgnss_corrections": "631.49"
+  }
+}

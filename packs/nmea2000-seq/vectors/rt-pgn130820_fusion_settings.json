@@ -1,0 +1,15 @@
+{
+  "name": "pgn130820_fusion_settings-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04ff01a399158002000000ab553086df4288311b7c50bb414222fd",
+  "expect": "04ff01a399158002000000ab553086df4288311b7c50bb414222fd",
+  "model": {
+    "@kind": "pgn130820_fusion_settings",
+    "n2k.pgn130820_count.#": "2",
+    "n2k.pgn130820_count[0].n2k.id": "2251314603",
+    "n2k.pgn130820_count[0].n2k.value": "831013599",
+    "n2k.pgn130820_count[1].n2k.id": "3142614043",
+    "n2k.pgn130820_count[1].n2k.value": "4246880833"
+  }
+}

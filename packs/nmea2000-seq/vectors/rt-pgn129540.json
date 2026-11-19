@@ -1,0 +1,27 @@
+{
+  "name": "pgn129540-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04fa01d6fd027fd6107f850a01aa3b7ae151e06d169236f91eebf0dc665d",
+  "expect": "04fa01d6fd027fd6107f850a01aa3b7ae151e06d169236f91eebf0dc665d",
+  "model": {
+    "@kind": "pgn129540",
+    "n2k.sid": "214",
+    "n2k.range_residual_mode": "1",
+    "n2k.pgn129540_sats_in_view.#": "2",
+    "n2k.pgn129540_sats_in_view[0].n2k.prn": "127",
+    "n2k.pgn129540_sats_in_view[0].n2k.elevation": "0.431",
+    "n2k.pgn129540_sats_in_view[0].n2k.azimuth": "3.4175",
+    "n2k.pgn129540_sats_in_view[0].n2k.snr": "2.66",
+    "n2k.pgn129540_sats_in_view[0].n2k.range_residuals": "-5120.8303",
+    "n2k.pgn129540_sats_in_view[0].n2k.pgn129540_status": "1",
+    "n2k.pgn129540_sats_in_view[0].n2k.gnss_system": "5",
+    "n2k.pgn129540_sats_in_view[1].n2k.prn": "224",
+    "n2k.pgn129540_sats_in_view[1].n2k.elevation": "0.5741",
+    "n2k.pgn129540_sats_in_view[1].n2k.azimuth": "1.397",
+    "n2k.pgn129540_sats_in_view[1].n2k.snr": "79.29",
+    "n2k.pgn129540_sats_in_view[1].n2k.range_residuals": "17257.55627",
+    "n2k.pgn129540_sats_in_view[1].n2k.pgn129540_status": "13",
+    "n2k.pgn129540_sats_in_view[1].n2k.gnss_system": "5"
+  }
+}

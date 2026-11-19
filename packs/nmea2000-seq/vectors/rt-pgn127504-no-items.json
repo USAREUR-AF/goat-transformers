@@ -1,0 +1,12 @@
+{
+  "name": "pgn127504-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "10f2016d00",
+  "expect": "10f2016d00",
+  "model": {
+    "@kind": "pgn127504",
+    "n2k.instance": "109",
+    "n2k.pgn127504_number_of_lines.#": "0"
+  }
+}

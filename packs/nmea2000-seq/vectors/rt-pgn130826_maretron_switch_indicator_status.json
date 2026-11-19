@@ -1,0 +1,14 @@
+{
+  "name": "pgn130826_maretron_switch_indicator_status-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "0aff0189983d0293c0",
+  "expect": "0aff0189983d0293c0",
+  "model": {
+    "@kind": "pgn130826_maretron_switch_indicator_status",
+    "n2k.indicator_bank_instance": "61",
+    "n2k.pgn130826_number_of_status_fields.#": "2",
+    "n2k.pgn130826_number_of_status_fields[0].n2k.indicator_status": "147",
+    "n2k.pgn130826_number_of_status_fields[1].n2k.indicator_status": "192"
+  }
+}
