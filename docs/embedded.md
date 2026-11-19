@@ -181,12 +181,14 @@ Every vector in a row passes. In the text-to-bits group the model values come
 from the reference engine's decode of the text side, because a vector's
 `model` lists only some keys.
 
-Plans compiled for one kind of a format: 77 one-kind plans over nine formats
-(`remote-id`, `adsb`, `demo-kinds-bits`, `demo-bits-bytes`, `demo-bits-msb`,
-`conformance-seq-kinds`, `conformance-seq-msb`, and twelve kinds each of
-`mavlink2` and `nmea2000`). 101 vector messages of the compiled kind converted
-to the vector's bytes; 10,031 messages of other kinds were refused with
-`no-kind`. Measured.
+Plans compiled for one kind of a format, over nine formats (`remote-id`,
+`adsb`, `demo-kinds-bits`, `demo-bits-bytes`, `demo-bits-msb`,
+`conformance-seq-kinds`, `conformance-seq-msb`, and up to twelve kinds each of
+`mavlink2` and `nmea2000`): 33 one-kind plans; 43 vector messages of the
+compiled kind converted to the vector's bytes; 2,941 messages of other kinds
+were refused with `no-kind`. 44 kinds use absent-value sentinels and are
+refused by the compiler as `unsupported-feature`, so they have no plan.
+Measured.
 
 The example plan of `embedded/example-bare`, with its `Scratch<12>`, gives the
 reference engine's bytes on the four Remote ID Location vectors. Measured.

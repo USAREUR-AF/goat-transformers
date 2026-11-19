@@ -1,7 +1,9 @@
 //! A plan compiled for one kind of a format. For every same-format vector of
 //! the formats below: when the vector's message is of the compiled kind the
 //! output is the vector's `expect`; when it is of another kind the device
-//! refuses it with `no-kind` and never reads it as the compiled kind.
+//! refuses it with `no-kind` and never reads it as the compiled kind. A kind
+//! the compiler refuses as `unsupported-feature` (one that uses absent-value
+//! sentinels) is left out and counted.
 
 use gt_core::{Error, Plan};
 use gt_proof::*;
@@ -42,11 +44,19 @@ fn a_plan_for_one_kind_refuses_the_others() {
     p.compile(&specs);
     let mut scratch = Box::new(Scratch::new());
     let mut out = vec![0u8; 1 << 16];
-    let (mut plans, mut converted, mut refused) = (0usize, 0usize, 0usize);
+    let (mut plans, mut converted, mut refused, mut unsupported) = (0usize, 0usize, 0usize, 0usize);
     for (format, list) in &kinds {
         for kind in list {
             let side = format!("{}:{}", format, kind);
-            let blob = p.plan(Some(&side), Some(&side), &[]).unwrap_or_else(|e| panic!("{}: {}", side, e));
+            let blob = match p.plan(Some(&side), Some(&side), &[]) {
+                Ok(b) => b,
+                // a kind that uses a feature outside the device profile has no plan
+                Err(e) if e.contains("refused: unsupported-feature:") => {
+                    unsupported += 1;
+                    continue;
+                }
+                Err(e) => panic!("{}: {}", side, e),
+            };
             let plan = Plan::parse(&blob).expect("plan");
             plans += 1;
             for v in vectors.iter().filter(|v| v.from == *format && v.to == *format && v.context.is_none()) {
@@ -67,11 +77,12 @@ fn a_plan_for_one_kind_refuses_the_others() {
         }
     }
     eprintln!(
-        "slicing: {} one-kind plans over {} formats: {} messages of the compiled kind converted to the vector's bytes, {} messages of other kinds refused with no-kind",
+        "slicing: {} one-kind plans over {} formats: {} messages of the compiled kind converted to the vector's bytes, {} messages of other kinds refused with no-kind; {} kinds refused by the compiler as unsupported-feature",
         plans,
         kinds.len(),
         converted,
-        refused
+        refused,
+        unsupported
     );
     assert!(converted > 0 && refused > 0);
 }
