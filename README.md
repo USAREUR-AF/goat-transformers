@@ -337,6 +337,7 @@ model/       the shared model's modules, one file each
 packs/       one directory per format: pack.def, pack.md, vectors/
 engines/     one directory per language
 bindings/    the Rust engine as a C library and as a WebAssembly module
+adapters/    transports around the Rust engine: goat-xf-pipe over files, TCP, UDP, serial, MQTT
 examples/    fictional system records and a site file for tools/goat-options
 tools/       goat-pkg, goat-options, boundary-gate, repo-stats, and the pack generators in gen/
 docs/        design, language guidance, decision records, format coverage, the package planner

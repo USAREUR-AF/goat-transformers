@@ -1,0 +1,17 @@
+[package]
+name = "goat-adapters-std"
+version = "0.1.0"
+edition = "2021"
+description = "Standard-library transport adapters for goat-transformers and the goat-xf-pipe tool. std-only."
+license = "Apache-2.0"
+
+[lib]
+name = "goat_adapters_std"
+path = "src/lib.rs"
+
+[[bin]]
+name = "goat-xf-pipe"
+path = "src/main.rs"
+
+[dependencies]
+goat-adapters-core = { path = "../core" }

@@ -1,0 +1,18 @@
+[package]
+name = "goat-adapters-mqtt"
+version = "0.1.0"
+edition = "2021"
+description = "MQTT 3.1.1 (QoS 0, plain TCP) transport adapter for goat-transformers. std-only."
+license = "Apache-2.0"
+
+[lib]
+name = "goat_adapters_mqtt"
+path = "src/lib.rs"
+
+[[bin]]
+name = "goat-xf-pipe-mqtt"
+path = "src/main.rs"
+
+[dependencies]
+goat-adapters-core = { path = "../core" }
+goat-adapters-std = { path = "../std" }

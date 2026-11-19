@@ -174,3 +174,27 @@ jobs:
         run: |
           node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync("packs/canonical-track-v2/vectors/02-to-cot-xml.json","utf8")).input)' \
             | node bindings/wasm/example/translate.mjs | grep -q 'stale="2021-02-27T20:03:00.250Z"'
+
+  adapters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: cargo test --locked
+        working-directory: adapters
+      - run: cargo build --locked --release -p goat-adapters-std
+        working-directory: adapters
+      - name: the adapters workspace has no third-party dependency
+        run: |
+          if grep -n '^source = ' adapters/Cargo.lock; then
+            echo "adapters/Cargo.lock names a crate from a registry; core, std and mqtt are standard library only" >&2
+            exit 1
+          fi
+      - name: goat-xf-pipe converts one message end to end
+        working-directory: adapters
+        run: |
+          out=$(printf '%s\n' 02223132333435363738393031323334353637383930000000 \
+            | target/release/goat-xf-pipe --packs ../packs --packs-only \
+                --from-format remote-id --in stdin: --in-frame newline,hex \
+                --out stdout: --to-format geojson --out-frame newline)
+          test "$out" = '{"type":"Feature","geometry":null,"properties":{},"id":"12345678901234567890"}'

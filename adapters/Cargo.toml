@@ -1,0 +1,14 @@
+# The optional transport adapters. Not part of the engine: `engines/rust`
+# does not know this directory exists and has no dependency.
+#
+# `zenoh/` is outside the workspace on purpose: it has third-party
+# dependencies, and building the workspace must never fetch them.
+[workspace]
+resolver = "2"
+members = ["core", "std", "mqtt"]
+exclude = ["zenoh"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,13 @@
+[package]
+name = "goat-adapters-core"
+version = "0.1.0"
+edition = "2021"
+description = "Traits, framers and the pipeline for goat-transformers transport adapters. std-only."
+license = "Apache-2.0"
+
+[lib]
+name = "goat_adapters_core"
+path = "src/lib.rs"
+
+[dependencies]
+goat-transformers = { path = "../../engines/rust" }

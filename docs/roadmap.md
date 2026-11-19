@@ -84,6 +84,8 @@ has a pack:
 | The capability matrix as a checked CI artifact | Designed |
 | Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
 | An HTTP front end over the package planner | Designed |
+| Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
+| A Zenoh adapter, its own crate outside the adapters workspace | Built; not built in CI |
 | A README for each engine | Erlang and Zig are written; the other five are not |
 
 ## Use by other projects
