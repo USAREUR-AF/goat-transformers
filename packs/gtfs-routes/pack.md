@@ -22,8 +22,8 @@ reference's order, all of them. A row of a file whose header is exactly
     route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order,continuous_pickup,continuous_drop_off,network_id,cemv_support
 
 decodes and encodes as is. A row of a file with the same columns ending
-earlier decodes (the missing trailing columns are absent) and encodes with all
-14. A row of a file whose columns are in another order, or that leaves out a
+earlier decodes (the missing trailing columns are absent) and encodes with all 14
+columns. A row of a file whose columns are in another order, or that leaves out a
 column before its last one, or adds a column, does not decode correctly: the
 caller reorders it first. The header row itself is not a message (where a
 column is numeric it fails with `transform-decode`).

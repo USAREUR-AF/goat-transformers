@@ -22,8 +22,8 @@ reference's order, all of them. A row of a file whose header is exactly
     feed_publisher_name,feed_publisher_url,feed_lang,default_lang,feed_start_date,feed_end_date,feed_version,feed_contact_email,feed_contact_url
 
 decodes and encodes as is. A row of a file with the same columns ending
-earlier decodes (the missing trailing columns are absent) and encodes with all
-9. A row of a file whose columns are in another order, or that leaves out a
+earlier decodes (the missing trailing columns are absent) and encodes with all 9
+columns. A row of a file whose columns are in another order, or that leaves out a
 column before its last one, or adds a column, does not decode correctly: the
 caller reorders it first. The header row itself is not a message (where a
 column is numeric it fails with `transform-decode`).
