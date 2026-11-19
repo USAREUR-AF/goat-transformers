@@ -1,0 +1,14 @@
+{
+  "name": "05-same-format",
+  "from": "conformance-cap-a",
+  "to": "conformance-cap-a",
+  "grade": "full",
+  "carried": [
+    "uid",
+    "callsign",
+    "lat",
+    "lon",
+    "probe.n"
+  ],
+  "dropped": []
+}

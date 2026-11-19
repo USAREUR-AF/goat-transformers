@@ -1,0 +1,7 @@
+{
+  "name": "encode-smallest-integer-is-refused",
+  "from": "conformance-time-json",
+  "to": "conformance-time",
+  "input": "{\"t\":-9223372036854775808}",
+  "expect_error": "transform-encode"
+}

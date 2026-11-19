@@ -1,0 +1,7 @@
+{
+  "name": "float-hexadecimal-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"0x10\"/>",
+  "expect_error": "transform-decode"
+}

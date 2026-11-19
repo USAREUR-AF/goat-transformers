@@ -1,0 +1,7 @@
+{
+  "name": "numeric-references-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"&#65;&#x42;&#x63;&#x20AC;\"><name>&#9;&#10;&#13;&#x1F600;</name></e>",
+  "expect": "<e id=\"ABc€\"><name>\t\n&#13;😀</name></e>"
+}

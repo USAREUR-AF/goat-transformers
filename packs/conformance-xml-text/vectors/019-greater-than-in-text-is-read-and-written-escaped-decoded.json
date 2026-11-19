@@ -1,0 +1,7 @@
+{
+  "name": "greater-than-in-text-is-read-and-written-escaped-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name>a>b</name></e>",
+  "expect": "{\"name\":\"a>b\"}"
+}

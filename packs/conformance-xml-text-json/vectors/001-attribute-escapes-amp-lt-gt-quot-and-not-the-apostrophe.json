@@ -1,0 +1,7 @@
+{
+  "name": "attribute-escapes-amp-lt-gt-quot-and-not-the-apostrophe",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"a&b<c>d\\\"e'f\"}",
+  "expect": "<e id=\"a&amp;b&lt;c&gt;d&quot;e'f\"/>"
+}

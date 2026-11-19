@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":32767.4}",
+  "expect": "01ff7f"
+}

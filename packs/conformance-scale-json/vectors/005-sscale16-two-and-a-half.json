@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-two-and-a-half",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":2.5}",
+  "expect": "010300"
+}

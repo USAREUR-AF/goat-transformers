@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-rounds-down-out-of-the-field-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":-32768.5}",
+  "expect_error": "transform-encode"
+}

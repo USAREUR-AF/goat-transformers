@@ -1,0 +1,7 @@
+{
+  "name": "float-text-4-35",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "4011666666666666",
+  "expect": "<e a=\"4.35\"/>"
+}

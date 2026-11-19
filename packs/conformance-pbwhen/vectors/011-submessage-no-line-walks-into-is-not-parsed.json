@@ -1,0 +1,10 @@
+{
+  "name": "submessage-no-line-walks-into-is-not-parsed",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a0275315202ffff",
+  "expect": "{\"id\":\"u1\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

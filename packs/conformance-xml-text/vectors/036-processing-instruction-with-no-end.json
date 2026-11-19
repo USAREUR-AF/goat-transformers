@@ -1,0 +1,7 @@
+{
+  "name": "processing-instruction-with-no-end",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><?pi x </e>",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "uint63-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"x\":9223372036854775807}",
+  "expect": "0affffffffffffff7f"
+}

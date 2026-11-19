@@ -1,0 +1,7 @@
+{
+  "name": "float-nan-in-lower-case-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"nan\"/>",
+  "expect_error": "transform-decode"
+}

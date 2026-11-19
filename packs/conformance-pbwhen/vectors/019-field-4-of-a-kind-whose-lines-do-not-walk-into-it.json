@@ -1,0 +1,10 @@
+{
+  "name": "field-4-of-a-kind-whose-lines-do-not-walk-into-it",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a0275313802220168",
+  "expect": "{\"id\":\"u1\"}",
+  "model": {
+    "@kind": "listed"
+  }
+}

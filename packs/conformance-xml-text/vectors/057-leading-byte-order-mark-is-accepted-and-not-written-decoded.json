@@ -1,0 +1,7 @@
+{
+  "name": "leading-byte-order-mark-is-accepted-and-not-written-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "﻿<e id=\"a\"/>",
+  "expect": "{\"id\":\"a\"}"
+}

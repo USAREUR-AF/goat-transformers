@@ -1,0 +1,7 @@
+{
+  "name": "encode-half-a-second-before-1970",
+  "from": "conformance-time-json",
+  "to": "conformance-time",
+  "input": "{\"t\":-500}",
+  "expect": "<e t=\"1969-12-31T23:59:59.500Z\"/>"
+}

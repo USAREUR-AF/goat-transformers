@@ -1,0 +1,7 @@
+{
+  "name": "json-float-below-the-smallest-subnormal-reads-as-zero",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":1e-400}",
+  "expect": "{\"a\":0}"
+}

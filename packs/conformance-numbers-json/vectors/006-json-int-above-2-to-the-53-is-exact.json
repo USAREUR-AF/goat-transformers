@@ -1,0 +1,10 @@
+{
+  "name": "json-int-above-2-to-the-53-is-exact",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":9007199254740993}",
+  "expect": "{\"n\":9007199254740993}",
+  "model": {
+    "probe.n": "9007199254740993"
+  }
+}

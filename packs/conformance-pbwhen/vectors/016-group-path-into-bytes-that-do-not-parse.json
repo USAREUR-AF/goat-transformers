@@ -1,0 +1,7 @@
+{
+  "name": "group-path-into-bytes-that-do-not-parse",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753138024a0168",
+  "expect_error": "malformed-wire"
+}

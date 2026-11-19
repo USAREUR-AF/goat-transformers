@@ -1,0 +1,7 @@
+{
+  "name": "cdata-joins-the-text-around-it-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>x<![CDATA[y]]>z<![CDATA[w]]></name></e>",
+  "expect": "<e><name>xyzw</name></e>"
+}

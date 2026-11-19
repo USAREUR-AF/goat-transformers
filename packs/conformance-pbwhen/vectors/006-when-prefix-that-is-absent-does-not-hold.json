@@ -1,0 +1,10 @@
+{
+  "name": "when-prefix-that-is-absent-does-not-hold",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a027531",
+  "expect": "{\"id\":\"u1\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

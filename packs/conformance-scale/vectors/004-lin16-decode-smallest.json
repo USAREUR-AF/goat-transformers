@@ -1,0 +1,10 @@
+{
+  "name": "lin16-decode-smallest",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "050080",
+  "expect": "{\"hae\":-180}",
+  "model": {
+    "@kind": "lin16"
+  }
+}

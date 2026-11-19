@@ -1,0 +1,7 @@
+{
+  "name": "five-digit-year-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"10000-01-01T00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

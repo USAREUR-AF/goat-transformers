@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-03-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "03805f01",
+  "expect": "03805f01",
+  "model": {
+    "@kind": "w03",
+    "probe.x": "-4",
+    "probe.y": "-1",
+    "probe.z": "3",
+    "probe.w": "5"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "int-hexadecimal-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"0x7\"/>",
+  "expect_error": "transform-decode"
+}

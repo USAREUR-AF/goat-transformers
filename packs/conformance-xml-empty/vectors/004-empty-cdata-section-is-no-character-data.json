@@ -1,0 +1,7 @@
+{
+  "name": "empty-cdata-section-is-no-character-data",
+  "from": "conformance-xml-empty",
+  "to": "conformance-xml-empty",
+  "input": "<e id=\"a\"><![CDATA[]]></e>",
+  "expect_error": "no-kind"
+}

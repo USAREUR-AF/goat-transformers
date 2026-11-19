@@ -1,0 +1,7 @@
+{
+  "name": "twos8-one-below-the-smallest-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"val\":-129}",
+  "expect_error": "transform-encode"
+}

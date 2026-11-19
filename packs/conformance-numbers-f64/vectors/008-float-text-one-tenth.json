@@ -1,0 +1,7 @@
+{
+  "name": "float-text-one-tenth",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "3fb999999999999a",
+  "expect": "<e a=\"0.1\"/>"
+}

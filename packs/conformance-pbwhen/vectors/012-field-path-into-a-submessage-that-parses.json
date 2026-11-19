@@ -1,0 +1,10 @@
+{
+  "name": "field-path-into-a-submessage-that-parses",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a027531380122020809",
+  "expect": "{\"id\":\"u1\",\"val\":9}",
+  "model": {
+    "@kind": "deep"
+  }
+}

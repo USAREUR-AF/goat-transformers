@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-largest-double-below-a-half-rounds-to-zero",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":0.49999999999999994}",
+  "expect": "010000"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "geojson-number-int-above-the-largest-is-refused",
+  "from": "conformance-numbers-geojson",
+  "to": "conformance-numbers-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":9223372036854775808}}",
+  "expect_error": "transform-decode"
+}

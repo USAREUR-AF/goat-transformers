@@ -1,0 +1,10 @@
+{
+  "name": "json-int-integer",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":7}",
+  "expect": "{\"n\":7}",
+  "model": {
+    "probe.n": "7"
+  }
+}

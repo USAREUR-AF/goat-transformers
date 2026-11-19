@@ -1,0 +1,15 @@
+{
+  "name": "16-sequential-pack-with-also-opt-and-a-group",
+  "from": "conformance-cap-seq",
+  "to": "conformance-cap-seq-b",
+  "grade": "partial",
+  "carried": [
+    "probe.y",
+    "probe.z",
+    "probe.recs[]",
+    "probe.recs[].probe.x"
+  ],
+  "dropped": [
+    "probe.x"
+  ]
+}

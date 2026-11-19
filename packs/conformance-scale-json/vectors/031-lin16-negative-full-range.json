@@ -1,0 +1,7 @@
+{
+  "name": "lin16-negative-full-range",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":-180}",
+  "expect": "050080"
+}

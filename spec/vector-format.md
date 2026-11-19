@@ -1,6 +1,6 @@
 # Vector format
 
-Status: Written. Version 0.1.
+Status: Written. Version 0.11.
 
 A vector is one conformance case. Every engine runs every vector of every loaded
 pack and must reproduce it. Vectors are the single definition of correct
@@ -19,9 +19,10 @@ is the pack that owns the input. Fields:
 | `to` | yes | target format name; equal to `from` for a round-trip |
 | `input` | yes | source message as a UTF-8 string; for a `bits` or `protobuf` format, hex text |
 | `expect` | unless `expect_error` | expected canonical target message as a UTF-8 string; for a `bits` or `protobuf` format, lowercase hex text |
-| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, and with `context` `undeclared-key`, `key-type-mismatch`) |
+| `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, `unknown-format`, and with `context` `undeclared-key`, `key-type-mismatch`) |
 | `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9) |
 | `context` | optional | map of shared-model key to value in string form: the caller-supplied keys of `convert(from, to, input, context)` (`spec/engine-spec.md`, Version 0.6). Each value is read as its key's declared type. A `context` member that is present is a context given, also when it is `{}` (ruling 10 of 0.6) |
+| `max_items` | optional | Version 0.11: an integer of 0 or more, the limit on list items the engine is set to for this vector (`spec/engine-spec.md`, ruling 7 of 0.11). Absent: the default, 100,000 |
 
 ## What the engine checks per vector
 
@@ -144,7 +145,8 @@ under `packs/conformance/load-vectors/*.json`:
 |---|---|---|
 | `name` | yes | unique within the directory |
 | `models` | yes | array of model module texts, loaded in order |
-| `pack` | yes | one `pack.def` text, loaded after the modules |
+| `pack` | unless `packs` | one `pack.def` text, loaded after the modules |
+| `packs` | in place of `pack` | Version 0.11: an array of `pack.def` texts, loaded in order after the modules into the one engine |
 | `max_distribution` | no | `public` or `controlled`; the engine's distribution limit, set before loading |
 | `expect_error` | no | the error kind the load must fail with; absent means every load must succeed |
 
@@ -216,7 +218,57 @@ element of a group's own path) and, for a module, the order of its checks:
 its kind, and a field at exactly a group's path loads on `json`, `geojson` and
 `protobuf`.
 
+Version 0.11 (rulings 2, 4 and 5) names the load failures that had no kind.
+Load vectors 339 to 462 pin them: `unknown-directive` (in a pack and in a
+module), `unknown-transform`, `unknown-wire`, `bad-locator` (per wire),
+`missing-format`, `missing-version`, `missing-wire`, `missing-module`,
+`missing-root` at load, `unterminated-quote` and `duplicate-format` (with
+`packs`); and they add causes of `bad-directive` (a transform on a wire it is
+not valid for, the wrong number of arguments, a `distribution` value or key
+type the grammar does not have, a `.` in a key name, a `format`, `wire` or
+`module` line given twice, a fixed-layout `bits` pack with no `word_bytes`,
+`linscale`, `uscale` and `sscale` parameters that are not valid, a bit length
+above 64 on an integer or scaled transform, a sign or other text where an
+unsigned decimal integer stands, a factor or range that reads as zero) and
+of `key-type-mismatch` (a `default` value the grammar of its type refuses).
+They also pin a directive of the other file type as `unknown-directive`, the
+lines that must follow the `wire` line, and which checks are line checks. The load vectors of Version
+0.9 (numbered 315 to 338) and of Version 0.10 (named `wire-text-*`) keep their
+expected errors: on the `text` wire a locator that is not valid stays
+`bad-directive` (`spec/engine-spec.md`, ruling 5a of 0.11).
+
+A conversion vector whose `from` or `to` names a format that is not a
+directory under `packs/` pins `unknown-format`. Three such vectors stand in
+`packs/conformance/vectors/`; a runner runs them with the packs it has loaded
+and does not skip a vector because one of its formats is not loaded.
+
+Version 0.11 (ruling 2c) states how a `model` value is read: a member named by
+a model key or an item path `<list>[<i>].<key>` by the grammar of that key's
+declared type, `"<list>.#"` as an unsigned decimal integer or `absent`; the
+`@` members are not numbers. A vector whose `model` holds a value its grammar
+refuses is invalid, and an invalid vector fails the run.
+
 The engine starts empty for each load vector. It loads the modules in order and
-then the pack, stopping at the first failure. With `expect_error` present the
-vector passes when that first failure is of the named kind; without it the
-vector passes when nothing fails.
+then the pack, or each pack of `packs` in order, stopping at the first
+failure. With `expect_error` present the vector passes when that first failure
+is of the named kind; without it the vector passes when nothing fails.
+
+## Capability vectors
+
+Status: Written. Version 0.11. A capability vector pins the capability report
+of one ordered pair of formats (`spec/engine-spec.md`, ruling 6 of 0.11). One
+JSON object per file under `packs/conformance/capability-vectors/*.json`:
+
+| Key | Required | Meaning |
+|---|---|---|
+| `name` | yes | unique within the directory |
+| `from` | yes | source format name |
+| `to` | yes | target format name; may equal `from` |
+| `grade` | yes | `full`, `partial` or `none` |
+| `carried` | yes | array of entries, in the order of `model_keys(from)` |
+| `dropped` | yes | array of entries, in the order of `model_keys(from)` |
+
+The engine loads the model modules and the two packs, calls
+`capability(from, to)`, and passes when the grade and both arrays are equal to
+the vector's, entry for entry and in order. The packs `conformance-cap-*` are
+the formats these vectors name; they have no conversion vectors.

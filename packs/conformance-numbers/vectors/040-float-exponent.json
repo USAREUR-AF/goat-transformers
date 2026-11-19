@@ -1,0 +1,7 @@
+{
+  "name": "float-exponent",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1e3\"/>",
+  "expect": "<e a=\"1000\"/>"
+}

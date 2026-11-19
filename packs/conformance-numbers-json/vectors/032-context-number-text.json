@@ -1,0 +1,10 @@
+{
+  "name": "context-number-text",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1}",
+  "expect": "{\"n\":1,\"a\":1500}",
+  "context": {
+    "probe.a": "1.5e3"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "comment-holds-markup-that-is-not-read-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"1\"><!-- <name>z</name> &bogus; --></e>",
+  "expect": "{\"id\":\"1\"}"
+}

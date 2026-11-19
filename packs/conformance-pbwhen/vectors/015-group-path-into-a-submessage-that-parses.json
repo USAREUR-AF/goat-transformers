@@ -1,0 +1,10 @@
+{
+  "name": "group-path-into-a-submessage-that-parses",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753138024a0a12030a016112030a0162",
+  "expect": "{\"id\":\"u1\",\"items\":[{\"name\":\"a\"},{\"name\":\"b\"}]}",
+  "model": {
+    "@kind": "listed"
+  }
+}

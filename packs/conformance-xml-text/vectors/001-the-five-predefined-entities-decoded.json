@@ -1,0 +1,7 @@
+{
+  "name": "the-five-predefined-entities-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"&amp;&lt;&gt;&quot;&apos;\"><name>&amp;&lt;&gt;&quot;&apos;</name></e>",
+  "expect": "{\"id\":\"&<>\\\"'\",\"name\":\"&<>\\\"'\"}"
+}

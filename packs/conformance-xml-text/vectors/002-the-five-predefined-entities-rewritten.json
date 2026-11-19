@@ -1,0 +1,7 @@
+{
+  "name": "the-five-predefined-entities-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"&amp;&lt;&gt;&quot;&apos;\"><name>&amp;&lt;&gt;&quot;&apos;</name></e>",
+  "expect": "<e id=\"&amp;&lt;&gt;&quot;'\"><name>&amp;&lt;&gt;\"'</name></e>"
+}

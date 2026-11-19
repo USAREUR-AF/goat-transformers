@@ -1,0 +1,7 @@
+{
+  "name": "uscale8-half-rounds-away-from-zero",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ratio\":0.5}",
+  "expect": "0201"
+}

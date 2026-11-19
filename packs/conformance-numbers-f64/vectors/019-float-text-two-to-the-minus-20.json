@@ -1,0 +1,7 @@
+{
+  "name": "float-text-two-to-the-minus-20",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "3eb0000000000000",
+  "expect": "<e a=\"0.00000095367431640625\"/>"
+}

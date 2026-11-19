@@ -1,0 +1,7 @@
+{
+  "name": "date-only-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01\"/>",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-small-plain",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"0.000001\"/>",
+  "expect": "<e a=\"0.000001\"/>"
+}

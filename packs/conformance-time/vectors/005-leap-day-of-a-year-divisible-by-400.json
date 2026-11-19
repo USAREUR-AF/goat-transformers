@@ -1,0 +1,10 @@
+{
+  "name": "leap-day-of-a-year-divisible-by-400",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"2000-02-29T00:00:00Z\"/>",
+  "expect": "{\"t\":951782400000}",
+  "model": {
+    "time_ms": "951782400000"
+  }
+}

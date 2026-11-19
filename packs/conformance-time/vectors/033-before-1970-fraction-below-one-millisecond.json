@@ -1,0 +1,10 @@
+{
+  "name": "before-1970-fraction-below-one-millisecond",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"1969-12-31T23:59:59.0001Z\"/>",
+  "expect": "{\"t\":-1000}",
+  "model": {
+    "time_ms": "-1000"
+  }
+}

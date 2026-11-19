@@ -1,0 +1,7 @@
+{
+  "name": "json-float-negative-overflow-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"a\":-1e400}",
+  "expect_error": "transform-decode"
+}

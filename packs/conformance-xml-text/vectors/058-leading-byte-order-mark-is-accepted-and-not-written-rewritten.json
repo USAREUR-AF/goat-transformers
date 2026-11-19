@@ -1,0 +1,7 @@
+{
+  "name": "leading-byte-order-mark-is-accepted-and-not-written-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "﻿<e id=\"a\"/>",
+  "expect": "<e id=\"a\"/>"
+}

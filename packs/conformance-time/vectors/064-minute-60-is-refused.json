@@ -1,0 +1,7 @@
+{
+  "name": "minute-60-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:60:00Z\"/>",
+  "expect_error": "transform-decode"
+}

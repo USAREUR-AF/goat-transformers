@@ -1,0 +1,8 @@
+{
+  "name": "383-xml-pack-with-no-root",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire xml\nfield uid @id string\n",
+  "expect_error": "missing-root"
+}

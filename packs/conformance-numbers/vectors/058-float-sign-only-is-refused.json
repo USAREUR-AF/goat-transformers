@@ -1,0 +1,7 @@
+{
+  "name": "float-sign-only-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"-\"/>",
+  "expect_error": "transform-decode"
+}

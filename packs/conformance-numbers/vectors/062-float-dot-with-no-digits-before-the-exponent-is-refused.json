@@ -1,0 +1,7 @@
+{
+  "name": "float-dot-with-no-digits-before-the-exponent-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"5.e3\"/>",
+  "expect_error": "transform-decode"
+}

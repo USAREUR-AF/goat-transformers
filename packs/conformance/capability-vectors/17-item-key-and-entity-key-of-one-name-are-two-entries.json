@@ -1,0 +1,15 @@
+{
+  "name": "17-item-key-and-entity-key-of-one-name-are-two-entries",
+  "from": "conformance-cap-seq-b",
+  "to": "conformance-cap-seq",
+  "grade": "partial",
+  "carried": [
+    "probe.z",
+    "probe.y",
+    "probe.recs[]",
+    "probe.recs[].probe.x"
+  ],
+  "dropped": [
+    "probe.recs[].probe.y"
+  ]
+}

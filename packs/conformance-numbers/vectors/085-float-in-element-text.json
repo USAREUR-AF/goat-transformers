@@ -1,0 +1,10 @@
+{
+  "name": "float-in-element-text",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e><r>-2.5</r></e>",
+  "expect": "<e><r>-2.5</r></e>",
+  "model": {
+    "probe.ratio": "-2.5"
+  }
+}

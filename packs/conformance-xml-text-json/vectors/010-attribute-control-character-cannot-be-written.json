@@ -1,0 +1,7 @@
+{
+  "name": "attribute-control-character-cannot-be-written",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"a\\u0001b\"}",
+  "expect_error": "transform-encode"
+}

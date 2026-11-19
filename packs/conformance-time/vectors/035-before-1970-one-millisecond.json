@@ -1,0 +1,10 @@
+{
+  "name": "before-1970-one-millisecond",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"1960-06-15T12:00:00.001Z\"/>",
+  "expect": "{\"t\":-301233599999}",
+  "model": {
+    "time_ms": "-301233599999"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "nested-items-exactly-at-the-limit",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"items\":[{\"name\":\"a\",\"subs\":[{\"v\":1}]},{\"name\":\"b\",\"subs\":[{\"v\":2}]}]}",
+  "max_items": 4,
+  "expect": "{\"items\":[{\"name\":\"a\",\"subs\":[{\"v\":1}]},{\"name\":\"b\",\"subs\":[{\"v\":2}]}]}"
+}

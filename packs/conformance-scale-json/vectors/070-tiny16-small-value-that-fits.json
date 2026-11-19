@@ -1,0 +1,7 @@
+{
+  "name": "tiny16-small-value-that-fits",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"scaled\":0.000000001}",
+  "expect": "0e0a00"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-smallest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":-32768.4}",
+  "expect": "010080"
+}

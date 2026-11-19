@@ -1,0 +1,10 @@
+{
+  "name": "uscale8-decode-all-ones",
+  "from": "conformance-scale",
+  "to": "conformance-scale-json",
+  "input": "02ff",
+  "expect": "{\"ratio\":255}",
+  "model": {
+    "@kind": "uscale8"
+  }
+}

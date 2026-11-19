@@ -1,0 +1,10 @@
+{
+  "name": "when-prefix-with-bytes-after-a-field-does-not-hold",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a0275312203080768",
+  "expect": "{\"id\":\"u1\",\"s1\":\"\\b\\u0007h\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

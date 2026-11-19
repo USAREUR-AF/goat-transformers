@@ -1,0 +1,15 @@
+{
+  "name": "07-target-with-kinds",
+  "from": "conformance-cap-a",
+  "to": "conformance-cap-kinds",
+  "grade": "partial",
+  "carried": [
+    "uid",
+    "callsign",
+    "lat",
+    "lon"
+  ],
+  "dropped": [
+    "probe.n"
+  ]
+}

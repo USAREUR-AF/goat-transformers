@@ -1,0 +1,12 @@
+{
+  "name": "items-exactly-at-the-limit",
+  "from": "conformance-limit-bits-fail",
+  "to": "conformance-limit-bits-fail",
+  "input": "020101",
+  "max_items": 2,
+  "expect": "020101",
+  "model": {
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "one"
+  }
+}

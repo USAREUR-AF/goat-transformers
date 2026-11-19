@@ -1,0 +1,7 @@
+{
+  "name": "lin16-half-a-step-rounds-away-from-zero",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":0.00274658203125}",
+  "expect": "050100"
+}

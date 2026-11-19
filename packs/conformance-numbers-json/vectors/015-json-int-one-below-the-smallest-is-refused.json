@@ -1,0 +1,7 @@
+{
+  "name": "json-int-one-below-the-smallest-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":-9223372036854775809}",
+  "expect_error": "transform-decode"
+}

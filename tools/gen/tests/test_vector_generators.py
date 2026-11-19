@@ -18,6 +18,8 @@ SCRIPTS = (
     "conformance-groups-vectors.py",
     "conformance-malformed-vectors.py",
     "conformance-rulings07-vectors.py",
+    "conformance-rulings011-vectors.py",
+    "conformance-rulings011b-vectors.py",
     "conformance-rulings08-vectors.py",
     "conformance-seq-vectors.py",
 )

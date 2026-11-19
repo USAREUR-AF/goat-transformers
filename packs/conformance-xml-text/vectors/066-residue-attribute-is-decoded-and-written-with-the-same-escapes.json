@@ -1,0 +1,7 @@
+{
+  "name": "residue-attribute-is-decoded-and-written-with-the-same-escapes",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e z=\"a&#38;b&#9;c&lt;&apos;\" id=\"1\"/>",
+  "expect": "<e id=\"1\" z=\"a&amp;b&#9;c&lt;'\"/>"
+}

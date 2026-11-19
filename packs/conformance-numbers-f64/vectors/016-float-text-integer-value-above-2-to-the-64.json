@@ -1,0 +1,7 @@
+{
+  "name": "float-text-integer-value-above-2-to-the-64",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "441ac53a7e04bcda",
+  "expect": "<e a=\"123456789012345680000\"/>"
+}

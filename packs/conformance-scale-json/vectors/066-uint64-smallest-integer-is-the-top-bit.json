@@ -1,0 +1,7 @@
+{
+  "name": "uint64-smallest-integer-is-the-top-bit",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"qty\":-9223372036854775808}",
+  "expect": "090000000000000080"
+}

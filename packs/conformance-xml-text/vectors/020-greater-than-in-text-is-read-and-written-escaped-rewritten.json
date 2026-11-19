@@ -1,0 +1,7 @@
+{
+  "name": "greater-than-in-text-is-read-and-written-escaped-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>a>b</name></e>",
+  "expect": "<e><name>a&gt;b</name></e>"
+}

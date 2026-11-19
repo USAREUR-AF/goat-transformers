@@ -1,0 +1,7 @@
+{
+  "name": "encode-largest-integer-is-refused",
+  "from": "conformance-time-json",
+  "to": "conformance-time",
+  "input": "{\"t\":9223372036854775807}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "items-with-no-value-are-counted",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"nums\":[null,null,null]}",
+  "max_items": 2,
+  "expect_error": "malformed-wire"
+}

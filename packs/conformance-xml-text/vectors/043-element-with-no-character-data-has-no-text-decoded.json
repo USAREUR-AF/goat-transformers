@@ -1,0 +1,7 @@
+{
+  "name": "element-with-no-character-data-has-no-text-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"1\"><name></name></e>",
+  "expect": "{\"id\":\"1\"}"
+}

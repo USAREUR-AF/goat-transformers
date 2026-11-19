@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-08-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0800f0ff2f10",
+  "expect": "0800f0ff2f10",
+  "model": {
+    "@kind": "w08",
+    "probe.x": "-128",
+    "probe.y": "-1",
+    "probe.z": "127",
+    "probe.w": "129"
+  }
+}
