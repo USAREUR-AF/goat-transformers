@@ -107,22 +107,67 @@ and runs:
 - every capability vector under `packs/conformance/capability-vectors/`;
 - the unit checks of `UnitTests`: rulings of the specification, `loadOnly`
   and the `--packs-only` option of the tool, malformed-input checks (deep
-  nesting, XML declarations, number forms), and a sweep that feeds
-  truncated and byte-changed copies of every vector's input to `decode` and
-  `convert` and requires each failure to be a `GtException` with a named
-  kind.
+  nesting, XML declarations, number forms), and a sweep that feeds damaged
+  copies of every conversion vector's input to `decode` and `convert` and
+  requires each failure to be a `GtException` with a named kind: never
+  another exception.
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree:
+`nice -n 10 ./build.sh` on this tree (14028 vectors, 1761 packs):
 
 ```
-conversion vectors: 7113/7113 passed (763 packs, 389 model modules)
-load vectors: 505/505 passed
+conversion vectors: 14028/14028 passed (1761 packs, 679 model modules)
+load vectors: 512/512 passed
 capability vectors: 18/18 passed
-malformed input sweep: 6114515 inputs over 7113 vectors and 763 packs, 5711459 named errors, 0 defects
-unit checks: 1446/1446 passed
+packs-only: loadOnly checked for 48 of 1761 packs, 24061 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1468191 inputs over 14028 of 14028 conversion vectors (49 damaged copies each) and 1761 packs of 6 wires, 1103663 named errors, 0 defects, 13860 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+unit checks: 733/733 passed
 OK
 ```
+
+`./build.sh` takes 52 s in all.
+
+### The bounded sweep and `GOAT_SWEEP_FULL=1`
+
+The sweep is bounded, and its size does not depend on the number of packs:
+
+- Each conversion vector gets at most 50 damaged copies, and each one is
+  given to `decode` and to `convert`. Every kind of damage is used at least
+  once per vector: a cut at a prefix, the last byte cut, one byte replaced by
+  any byte, one byte replaced by a byte of the input's own alphabet, and one
+  bit flipped. The seed comes from the vector's file name, so a vector is
+  damaged the same way in every run whatever else is loaded.
+- One damaged copy of each vector is also decoded by other packs. The packs
+  rotate over every loaded pack, so every pack decodes damaged input,
+  including a pack with no vectors. One pack of each wire is added, so every
+  wire reads damaged input of every wire. A check fails if any loaded pack
+  or wire was never fed.
+- The total is about 1,500,000 inputs (`SWEEP_BUDGET`). When there are more
+  vectors than that allows, the damaged copies per vector shrink to 5. Past
+  that point, the first vector of every pack is kept and the others are
+  sampled by seed.
+
+`loadOnly` reads the whole `model` directory on each call, which is about
+0.5 s here. So `--packs-only` loading is checked one pack at a time for a
+fixed sample of 48 packs: the first of each wire, the pack with the most
+`uses` lines, and the rest chosen by seed.
+
+`GOAT_SWEEP_FULL=1 ./build.sh` runs the full checks for a deliberate deep run.
+These are the earlier sweep, which gives a damaged copy of every vector to
+every pack, and `loadOnly` for every pack. Measured with
+`GOAT_SWEEP_FULL=1 nice -n 10 ./build.sh` on the same tree:
+
+```
+packs-only: loadOnly checked for 1761 of 1761 packs, 731380 ms
+malformed input sweep (full): 26151719 inputs over 14028 vectors and 1761 packs, 23270288 named errors, 0 defects, 131951 ms
+unit checks: 2444/2444 passed
+OK
+```
+
+That run takes 14 min 38 s in all. Before the sweep was bounded, the plain
+`./build.sh` took 13 min 50 s with 26,151,719 sweep inputs. The one-pack
+`loadOnly` loop took most of that time, about 12 minutes, and the sweep about
+2 minutes. Both grow with the number of packs.
 
 ## Where to read next
 
