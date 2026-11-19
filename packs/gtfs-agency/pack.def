@@ -1,0 +1,19 @@
+# GTFS Schedule agency.txt: one data row of the file. Public. Maintained by hand.
+# The columns are in the order the reference lists them (pack.md, Column order);
+# the header row is not a message of this pack.
+format        gtfs-agency
+version       0.1.0
+distribution  public
+source        "GTFS Schedule Reference, gtfs/spec/en/reference.md of https://github.com/google/transit (Apache-2.0) at commit 2ce6aa79e3fa7bdbaf19d2a12765cee5b9fdd699; the column order of each file as the reference lists it; field names and types"
+uses          gtfs
+wire          text
+
+field  gtfs.agency_id                   0   string
+field  gtfs.agency_name                 1   string
+field  gtfs.agency_url                  2   string
+field  gtfs.agency_timezone             3   string
+field  gtfs.agency_lang                 4   string
+field  gtfs.agency_phone                5   string
+field  gtfs.agency_fare_url             6   string
+field  gtfs.agency_email                7   string
+field  gtfs.cemv_support                8   int

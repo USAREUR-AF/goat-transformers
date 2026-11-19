@@ -1,0 +1,9 @@
+{
+  "name": "shapes-to-geojson",
+  "from": "gtfs-shapes",
+  "to": "geojson",
+  "input": "SH1,52.5251,13.3694,3,250.75",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.3694,52.5251]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), one shape point as a GeoJSON point; shape_id is not an entity id (many rows share it), so it is not uid; row written by tools/gen/gtfs-vectors.py"
+}

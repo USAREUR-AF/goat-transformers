@@ -1,0 +1,20 @@
+{
+  "name": "pathways-round-trip",
+  "from": "gtfs-pathways",
+  "to": "gtfs-pathways",
+  "input": "P1,S100,S101,2,1,12.5,30,-20,,,Platform 3,",
+  "expect": "P1,S100,S101,2,1,12.5,30,-20,,,Platform 3,",
+  "model": {
+    "gtfs.pathway_id": "P1",
+    "gtfs.from_stop_id": "S100",
+    "gtfs.to_stop_id": "S101",
+    "gtfs.pathway_mode": "2",
+    "gtfs.is_bidirectional": "1",
+    "gtfs.length": "12.5",
+    "gtfs.traversal_time": "30",
+    "gtfs.stair_count": "-20",
+    "gtfs.signposted_as": "Platform 3"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of pathways.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

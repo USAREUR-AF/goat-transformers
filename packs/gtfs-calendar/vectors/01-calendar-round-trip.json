@@ -1,0 +1,21 @@
+{
+  "name": "calendar-round-trip",
+  "from": "gtfs-calendar",
+  "to": "gtfs-calendar",
+  "input": "WD,1,1,1,1,1,0,0,20260101,20261231",
+  "expect": "WD,1,1,1,1,1,0,0,20260101,20261231",
+  "model": {
+    "gtfs.service_id": "WD",
+    "gtfs.monday": "1",
+    "gtfs.tuesday": "1",
+    "gtfs.wednesday": "1",
+    "gtfs.thursday": "1",
+    "gtfs.friday": "1",
+    "gtfs.saturday": "0",
+    "gtfs.sunday": "0",
+    "gtfs.start_date": "20260101",
+    "gtfs.end_date": "20261231"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of calendar.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "calendar-dates-round-trip",
+  "from": "gtfs-calendar-dates",
+  "to": "gtfs-calendar-dates",
+  "input": "WD,20261225,2",
+  "expect": "WD,20261225,2",
+  "model": {
+    "gtfs.service_id": "WD",
+    "gtfs.date": "20261225",
+    "gtfs.exception_type": "2"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of calendar_dates.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

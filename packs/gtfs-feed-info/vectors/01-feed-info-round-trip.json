@@ -1,0 +1,17 @@
+{
+  "name": "feed-info-round-trip",
+  "from": "gtfs-feed-info",
+  "to": "gtfs-feed-info",
+  "input": "Example Transit,https://transit.example.org,de,,20260101,20261231,2026.1,,",
+  "expect": "Example Transit,https://transit.example.org,de,,20260101,20261231,2026.1,,",
+  "model": {
+    "gtfs.feed_publisher_name": "Example Transit",
+    "gtfs.feed_publisher_url": "https://transit.example.org",
+    "gtfs.feed_lang": "de",
+    "gtfs.feed_start_date": "20260101",
+    "gtfs.feed_end_date": "20261231",
+    "gtfs.feed_version": "2026.1"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of feed_info.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

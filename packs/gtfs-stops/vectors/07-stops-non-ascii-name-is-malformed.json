@@ -1,0 +1,9 @@
+{
+  "name": "stops-non-ascii-name-is-malformed",
+  "from": "gtfs-stops",
+  "to": "gtfs-stops",
+  "input": "S9,,Café Platz,,,48.1,11.5",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "GTFS text is UTF-8; the text wire accepts characters 0x20 to 0x7E only (engine-spec 0.10, Reading a record, step 2)"
+}

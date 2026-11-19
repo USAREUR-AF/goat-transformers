@@ -1,0 +1,30 @@
+# GTFS Schedule stops.txt: one data row of the file. Public. Maintained by hand.
+# The columns are in the order the reference lists them (pack.md, Column order);
+# the header row is not a message of this pack.
+format        gtfs-stops
+version       0.1.0
+distribution  public
+source        "GTFS Schedule Reference, gtfs/spec/en/reference.md of https://github.com/google/transit (Apache-2.0) at commit 2ce6aa79e3fa7bdbaf19d2a12765cee5b9fdd699; the column order of each file as the reference lists it; field names and types"
+uses          gtfs
+wire          text
+
+field  uid                              0   string
+field  gtfs.stop_id                     0   string
+field  gtfs.stop_code                   1   string
+field  callsign                         2   string
+field  gtfs.stop_name                   2   string
+field  gtfs.tts_stop_name               3   string
+field  gtfs.stop_desc                   4   string
+field  lat                              5   float
+field  gtfs.stop_lat                    5   float
+field  lon                              6   float
+field  gtfs.stop_lon                    6   float
+field  gtfs.zone_id                     7   string
+field  gtfs.stop_url                    8   string
+field  gtfs.location_type               9   int
+field  gtfs.parent_station              10  string
+field  gtfs.stop_timezone               11  string
+field  gtfs.wheelchair_boarding         12  int
+field  gtfs.level_id                    13  string
+field  gtfs.platform_code               14  string
+field  gtfs.stop_access                 15  int
