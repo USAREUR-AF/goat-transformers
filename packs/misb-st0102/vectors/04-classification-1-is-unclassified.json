@@ -1,0 +1,12 @@
+{
+  "name": "classification-1-is-unclassified",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000070101011602000c",
+  "expect": "060e2b34020301010e01030302000000070101011602000c",
+  "model": {
+    "misb0102.security_classification": "UNCLASSIFIED//"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): tag 1 = 01: uint 1 byte is 1, table classification maps 1 to UNCLASSIFIED//; encode maps it back to 1. Input values chosen for this vector; derived without an engine by a standalone program."
+}

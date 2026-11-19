@@ -1,0 +1,15 @@
+{
+  "name": "empty-caveats-and-empty-coding-method",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e010303020000000b010101020005001602000c",
+  "expect": "060e2b34020301010e010303020000000901010105001602000c",
+  "model": {
+    "misb0102.caveats": "",
+    "@absent": [
+      "misb0102.country_coding_method"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): tag 2 empty under uint is absent (ruling 1 of 0.13) and is named by a line, so it is not residue and is not written; tag 5 empty under utf8 is the empty string and is written as 05 00. Set length 0b -> 09. Input values chosen for this vector; derived without an engine by a standalone program."
+}

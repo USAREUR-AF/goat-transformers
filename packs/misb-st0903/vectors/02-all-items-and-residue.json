@@ -1,0 +1,20 @@
+{
+  "name": "all-items-and-residue",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e010303060000005c020800060a24181e4000030b564543544f5220544553540402000605030000030603000002080300050009030002d00a07454f20544553540b020a000c0208000d100102030405060708090a0b0c0d0e0f1065040a0b0c0d0102373d",
+  "expect": "060e2b34020b01010e010303060000005c020800060a24181e4000030b564543544f5220544553540402000605030000030603000002080300050009030002d00a07454f20544553540d100102030405060708090a0b0c0d0e0f100b020a000c02080065040a0b0c0d0102373d",
+  "model": {
+    "misb0903.precision_time_us": "1700000000000000",
+    "misb0903.vmti_system_name": "VECTOR TEST",
+    "misb0903.ls_version": "6",
+    "misb0903.total_num_targets_detected": "3",
+    "misb0903.num_targets_reported": "2",
+    "misb0903.frame_width": "1280",
+    "misb0903.frame_height": "720",
+    "misb0903.vmti_source_sensor": "EO TEST",
+    "misb0903.miis_id": "0102030405060708090a0b0c0d0e0f10"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): input in tag order 2..13, 101; items 11 (0a00), 12 (0800) and 101 (0a0b0c0d, opaque) are named by no line: residue, written after the mapped items (2,3,4,5,6,8,9,10,13) in input order 11, 12, 101; set length unchanged, checksum recomputed over the new order. Input values chosen for this vector; derived without an engine by a standalone program."
+}

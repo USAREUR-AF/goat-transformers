@@ -1,0 +1,27 @@
+# MISB ST 0903 VMTI Local Set, standalone form: the 16-byte key, a BER
+# length, items with BER-OID tags and BER lengths, and the checksum item 1
+# last. Public. Top-level items only; the series 101 to 103 are residue.
+# Variable-size integers are written at the largest size the document allows.
+format        misb-st0903
+version       0.1.0
+distribution  public
+source        "MISB ST 0903.6 Video Moving Target Indicator Metadata (21 October 2021, revised 05/08/2024), Motion Imagery Standards Board"
+source        "NSG Registry public document store, doc/view?i=5310; the registry states its public portions are public domain, released for public use, or fair use"
+uses          misb0903
+wire          tlv
+tag           ber-oid
+length        ber
+key           060e2b34020b01010e01030306000000
+checksum      sum16 1
+
+default  misb0903.ls_version  6
+
+field    misb0903.precision_time_us           2:8    uint
+field    misb0903.vmti_system_name            3      utf8
+field    misb0903.ls_version                  4:2    uint
+field    misb0903.total_num_targets_detected  5:3    uint
+field    misb0903.num_targets_reported        6:3    uint
+field    misb0903.frame_width                 8:3    uint
+field    misb0903.frame_height                9:3    uint
+field    misb0903.vmti_source_sensor          10     utf8
+field    misb0903.miis_id                     13     hex

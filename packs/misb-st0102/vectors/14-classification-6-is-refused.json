@@ -1,0 +1,9 @@
+{
+  "name": "classification-6-is-refused",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000070101061602000c",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): tag 1 = 6: table classification has no entry and the types differ (int from uint, string key): transform-decode (0.6 Value tables; ruling 4 of the 0.6 rulings). Input values chosen for this vector; derived without an engine by a standalone program."
+}

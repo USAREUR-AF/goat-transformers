@@ -1,0 +1,9 @@
+{
+  "name": "wrong-key",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000001070101041602000c",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): the last key byte is 01, not 00: the input does not begin with the key (Reading a message step 2). Input values chosen for this vector; derived without an engine by a standalone program."
+}

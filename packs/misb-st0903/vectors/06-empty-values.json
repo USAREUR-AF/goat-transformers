@@ -1,0 +1,17 @@
+{
+  "name": "empty-values",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e010303060000001b020800060a24181e400003000400050006030000010d000102c7cb",
+  "expect": "060e2b34020b01010e010303060000001b020800060a24181e400003000402000606030000010d000102cfc6",
+  "model": {
+    "misb0903.vmti_system_name": "",
+    "misb0903.miis_id": "",
+    "@absent": [
+      "misb0903.ls_version",
+      "misb0903.total_num_targets_detected"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): empty items 3 (utf8) and 13 (hex) are the empty string, written as 03 00 and 0d 00; empty items 4 and 5 (uint) are absent (ruling 1 of 0.13): 5 is not written, 4 is written as its default 6 (04 02 0006). Set length stays 1b (two 2-byte empty items out, one 4-byte item in). Input values chosen for this vector; derived without an engine by a standalone program."
+}

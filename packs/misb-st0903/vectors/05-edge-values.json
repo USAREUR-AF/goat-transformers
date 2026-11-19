@@ -1,0 +1,13 @@
+{
+  "name": "edge-values",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e010303060000001c02088000000000000001040200060503ffffff0603000002010286df",
+  "expect": "060e2b34020b01010e010303060000001c02088000000000000001040200060503ffffff0603000002010286df",
+  "model": {
+    "misb0903.precision_time_us": "-9223372036854775807",
+    "misb0903.total_num_targets_detected": "16777215"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): item 2 = 8000000000000001: an 8-byte uint with the top bit set is the negative integer of that bit pattern (ruling 2 of 0.5), -9223372036854775807, and is written back as the same 8 bytes; item 5 = ffffff is 16777215, the largest value of :3. Input values chosen for this vector; derived without an engine by a standalone program."
+}

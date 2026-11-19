@@ -1,0 +1,12 @@
+{
+  "name": "duplicate-item-first-read",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e0103030600000021020800060a24181e4000040200060503000003050300000706030000020102d7cf",
+  "expect": "060e2b34020b01010e010303060000001c020800060a24181e400004020006050300000306030000020102ccc6",
+  "model": {
+    "misb0903.total_num_targets_detected": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): item 5 occurs twice (000003, then 000007): the line reads the first; the later occurrence of a tag a line names is neither mapped nor residue (Locators), so it is dropped. Set length 21 -> 1c. Input values chosen for this vector; derived without an engine by a standalone program."
+}

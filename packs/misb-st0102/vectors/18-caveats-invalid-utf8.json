@@ -1,0 +1,9 @@
+{
+  "name": "caveats-invalid-utf8",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e010303020000000c010104050341c3281602000c",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): tag 5 = 41 c3 28: c3 starts a two-byte sequence and 28 is not a continuation byte; invalid UTF-8 under utf8 is transform-decode. Input values chosen for this vector; derived without an engine by a standalone program."
+}

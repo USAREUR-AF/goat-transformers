@@ -1,0 +1,9 @@
+{
+  "name": "checksum-not-last",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e0103030600000017020800060a24181e4000040200060102bcbb0603000002",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): the checksum item 1 stands before item 6, and the last item has tag 6: malformed-wire (step 4). Its value is the sum16 through its own length byte, so only the position is wrong. Input values chosen for this vector; derived without an engine by a standalone program."
+}

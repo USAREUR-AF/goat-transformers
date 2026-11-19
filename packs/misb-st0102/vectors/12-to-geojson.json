@@ -1,0 +1,14 @@
+{
+  "name": "to-geojson",
+  "from": "misb-st0102",
+  "to": "geojson",
+  "input": "060e2b34020301010e010303020000000e010103050243311401011602000c",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "misb0102.security_classification": "CONFIDENTIAL//",
+    "misb0102.caveats": "C1",
+    "misb0102.version": "12"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): no misb0102 key has a geojson line and residue is written only into its own format; lon and lat absent so geometry is null (rulings 4, 5 of 0.1.1). Input values chosen for this vector; derived without an engine by a standalone program."
+}
