@@ -1,0 +1,387 @@
+# gpsd JSON protocol (gpsd_json(5)): one response or report object of the gpsd
+# daemon, the kind chosen by its "class" member. Public, BSD-2-Clause.
+# Written by hand from the member tables of the document; lines follow each
+# table's order, so an encoded object lists its members as the table does.
+# pack.md states the evidence for every shared-model key and what is not mapped.
+format  gpsd-json
+version 0.1.0
+distribution public
+source  "gpsd_json(5), the gpsd request/response protocol: gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc (sha256 967647de0ed70560e60aa290d8a4b223ee0bcb8263b4dccf8a93f66e4904ba48); BSD-2-Clause (COPYING)"
+uses    gpsd
+wire    json
+
+kind    tpv
+when    class  TPV
+requires lat lon
+field  gpsd.device        device       string
+field  gpsd.mode          mode         int
+field  gpsd.alt           alt          float
+field  hae                altHAE       float
+field  gpsd.alt_msl       altMSL       float
+field  gpsd.ant           ant          int
+field  gpsd.ant_pwr       antPwr       int
+field  gpsd.climb         climb        float
+field  gpsd.clockbias     clockbias    float
+field  gpsd.clockdrift    clockdrift   float
+field  gpsd.datum         datum        string
+field  gpsd.depth         depth        float
+field  gpsd.dgps_age      dgpsAge      float
+field  gpsd.dgps_sta      dgpsSta      int
+field  gpsd.ecefx         ecefx        float
+field  gpsd.ecefy         ecefy        float
+field  gpsd.ecefz         ecefz        float
+field  gpsd.ecef_p_acc    ecefpAcc     float
+field  gpsd.ecefvx        ecefvx       float
+field  gpsd.ecefvy        ecefvy       float
+field  gpsd.ecefvz        ecefvz       float
+field  gpsd.ecef_v_acc    ecefvAcc     float
+field  gpsd.epc           epc          float
+field  gpsd.epd           epd          float
+field  gpsd.eph           eph          float
+field  gpsd.eps           eps          float
+field  gpsd.ept           ept          float
+field  gpsd.epx           epx          float
+field  gpsd.epy           epy          float
+field  gpsd.epv           epv          float
+field  gpsd.geoid_sep     geoidSep     float
+field  gpsd.jam           jam          int
+field  lat                lat          float
+field  gpsd.leapseconds   leapseconds  int
+field  lon                lon          float
+field  gpsd.magdev        magdev       float
+field  gpsd.magtrack      magtrack     float
+field  gpsd.magvar        magvar       float
+field  gpsd.rel_d         relD         float
+field  gpsd.rel_e         relE         float
+field  gpsd.rel_n         relN         float
+field  gpsd.sep           sep          float
+field  speed_ms           speed        float
+field  gpsd.status        status       int
+field  gpsd.temp          temp         float
+field  time_ms            time         iso8601_ms
+field  course             track        float
+field  gpsd.vel_d         velD         float
+field  gpsd.vel_e         velE         float
+field  gpsd.vel_n         velN         float
+field  gpsd.wanglem       wanglem      float
+field  gpsd.wangler       wangler      float
+field  gpsd.wanglet       wanglet      float
+field  gpsd.wspeedr       wspeedr      float
+field  gpsd.wspeedt       wspeedt      float
+field  gpsd.wtemp         wtemp        float
+
+kind    sky
+when    class  SKY
+requires gpsd.satellites
+field  gpsd.device        device       string
+field  gpsd.n_sat         nSat         int
+field  gpsd.gdop          gdop         float
+field  gpsd.hdop          hdop         float
+field  gpsd.pdop          pdop         float
+field  gpsd.pr            pr           float
+field  gpsd.pr_rate       prRate       float
+field  gpsd.pr_res        prRes        float
+field  gpsd.qual          qual         int
+group  gpsd.satellites  satellites
+  field  gpsd.prn           PRN          int
+  field  gpsd.az            az           float
+  field  gpsd.el            el           float
+  field  gpsd.freqid        freqid       int
+  field  gpsd.gnssid        gnssid       int
+  field  gpsd.health        health       int
+  field  gpsd.ss            ss           float
+  field  gpsd.sigid         sigid        int
+  field  gpsd.svid          svid         int
+  field  gpsd.used          used         bool
+end
+field  gpsd.tdop          tdop         float
+field  time_ms            time         iso8601_ms
+field  gpsd.u_sat         uSat         int
+field  gpsd.vdop          vdop         float
+field  gpsd.xdop          xdop         float
+field  gpsd.ydop          ydop         float
+
+kind    gst
+when    class  GST
+requires gpsd.gst_rms
+field  gpsd.device        device       string
+field  time_ms            time         iso8601_ms
+field  gpsd.gst_rms       rms          float
+field  gpsd.gst_major     major        float
+field  gpsd.gst_minor     minor        float
+field  gpsd.gst_orient    orient       float
+field  gpsd.gst_alt       alt          float
+field  gpsd.gst_lat       lat          float
+field  gpsd.gst_lon       lon          float
+field  gpsd.gst_ve        ve           float
+field  gpsd.gst_vn        vn           float
+field  gpsd.gst_vu        vu           float
+
+kind    att
+when    class  ATT
+requires gpsd.heading
+field  gpsd.device        device       string
+field  time_ms            time         iso8601_ms
+field  gpsd.time_tag      timeTag      string
+field  gpsd.heading       heading      float
+field  gpsd.mag_st        mag_st       string
+field  gpsd.mheading      mheading     float
+field  gpsd.pitch         pitch        float
+field  gpsd.pitch_st      pitch_st     string
+field  gpsd.rot           rot          float
+field  gpsd.yaw           yaw          float
+field  gpsd.yaw_st        yaw_st       string
+field  gpsd.roll          roll         float
+field  gpsd.roll_st       roll_st      string
+field  gpsd.dip           dip          float
+field  gpsd.mag_len       mag_len      float
+field  gpsd.mag_x         mag_x        float
+field  gpsd.mag_y         mag_y        float
+field  gpsd.mag_z         mag_z        float
+field  gpsd.acc_len       acc_len      float
+field  gpsd.acc_x         acc_x        float
+field  gpsd.acc_y         acc_y        float
+field  gpsd.acc_z         acc_z        float
+field  gpsd.gyro_x        gyro_x       float
+field  gpsd.gyro_y        gyro_y       float
+field  gpsd.gyro_z        gyro_z       float
+field  gpsd.att_depth     depth        float
+field  gpsd.att_temp      temp         float
+
+kind    imu
+when    class  IMU
+requires gpsd.heading
+field  gpsd.device        device       string
+field  time_ms            time         iso8601_ms
+field  gpsd.time_tag      timeTag      string
+field  gpsd.heading       heading      float
+field  gpsd.mag_st        mag_st       string
+field  gpsd.mheading      mheading     float
+field  gpsd.pitch         pitch        float
+field  gpsd.pitch_st      pitch_st     string
+field  gpsd.rot           rot          float
+field  gpsd.yaw           yaw          float
+field  gpsd.yaw_st        yaw_st       string
+field  gpsd.roll          roll         float
+field  gpsd.roll_st       roll_st      string
+field  gpsd.dip           dip          float
+field  gpsd.mag_len       mag_len      float
+field  gpsd.mag_x         mag_x        float
+field  gpsd.mag_y         mag_y        float
+field  gpsd.mag_z         mag_z        float
+field  gpsd.acc_len       acc_len      float
+field  gpsd.acc_x         acc_x        float
+field  gpsd.acc_y         acc_y        float
+field  gpsd.acc_z         acc_z        float
+field  gpsd.gyro_x        gyro_x       float
+field  gpsd.gyro_y        gyro_y       float
+field  gpsd.gyro_z        gyro_z       float
+field  gpsd.att_depth     depth        float
+field  gpsd.att_temp      temp         float
+
+kind    pps
+when    class  PPS
+requires gpsd.real_sec gpsd.precision
+field  gpsd.device        device       string
+field  gpsd.real_sec      real_sec     int
+field  gpsd.real_nsec     real_nsec    int
+field  gpsd.clock_sec     clock_sec    int
+field  gpsd.clock_nsec    clock_nsec   int
+field  gpsd.precision     precision    int
+field  gpsd.shm           shm          string
+field  gpsd.q_err         qErr         float
+
+kind    toff
+when    class  TOFF
+requires gpsd.real_sec
+field  gpsd.device        device       string
+field  gpsd.real_sec      real_sec     int
+field  gpsd.real_nsec     real_nsec    int
+field  gpsd.clock_sec     clock_sec    int
+field  gpsd.clock_nsec    clock_nsec   int
+
+kind    osc
+when    class  OSC
+requires gpsd.running
+field  gpsd.device        device       string
+field  gpsd.running       running      bool
+field  gpsd.reference     reference    bool
+field  gpsd.disciplined   disciplined  bool
+field  gpsd.delta         delta        float
+
+kind    version
+when    class  VERSION
+requires gpsd.release
+field  gpsd.release       release      string
+field  gpsd.rev           rev          string
+field  gpsd.proto_major   proto_major  int
+field  gpsd.proto_minor   proto_minor  int
+field  gpsd.remote        remote       string
+
+kind    devices
+when    class  DEVICES
+requires gpsd.devices
+group  gpsd.devices  devices
+  const  class  DEVICE
+  field  gpsd.bps           bps          int
+  field  gpsd.cycle         cycle        float
+  field  gpsd.driver        driver       string
+  field  gpsd.flags         flags        int
+  field  gpsd.hexdata       hexdata      string
+  field  gpsd.mincycle      mincycle     float
+  field  gpsd.native        native       int
+  field  gpsd.parity        parity       string
+  field  gpsd.path          path         string
+  field  gpsd.readonly      readonly     bool
+  field  gpsd.sernum        sernum       string
+  field  gpsd.stopbits      stopbits     int
+  field  gpsd.subtype       subtype      string
+  field  gpsd.subtype1      subtype1     string
+end
+field  gpsd.remote        remote       string
+
+kind    device
+when    class  DEVICE
+requires gpsd.stopbits
+field  gpsd.bps           bps          int
+field  gpsd.cycle         cycle        float
+field  gpsd.driver        driver       string
+field  gpsd.flags         flags        int
+field  gpsd.hexdata       hexdata      string
+field  gpsd.mincycle      mincycle     float
+field  gpsd.native        native       int
+field  gpsd.parity        parity       string
+field  gpsd.path          path         string
+field  gpsd.readonly      readonly     bool
+field  gpsd.sernum        sernum       string
+field  gpsd.stopbits      stopbits     int
+field  gpsd.subtype       subtype      string
+field  gpsd.subtype1      subtype1     string
+
+kind    watch
+when    class  WATCH
+requires gpsd.enable
+field  gpsd.enable        enable       bool
+field  gpsd.json          json         bool
+field  gpsd.nmea          nmea         bool
+field  gpsd.raw           raw          int
+field  gpsd.scaled        scaled       bool
+field  gpsd.split24       split24      bool
+field  gpsd.pps           pps          bool
+field  gpsd.device        device       string
+field  gpsd.remote        remote       string
+
+kind    poll
+when    class  POLL
+requires gpsd.poll_tpv
+field  time_ms            time         iso8601_ms
+field  gpsd.active        active       int
+group  gpsd.poll_tpv  tpv
+  const  class  TPV
+  field  gpsd.device        device       string
+  field  gpsd.mode          mode         int
+  field  gpsd.alt           alt          float
+  field  hae                altHAE       float
+  field  gpsd.alt_msl       altMSL       float
+  field  gpsd.ant           ant          int
+  field  gpsd.ant_pwr       antPwr       int
+  field  gpsd.climb         climb        float
+  field  gpsd.clockbias     clockbias    float
+  field  gpsd.clockdrift    clockdrift   float
+  field  gpsd.datum         datum        string
+  field  gpsd.depth         depth        float
+  field  gpsd.dgps_age      dgpsAge      float
+  field  gpsd.dgps_sta      dgpsSta      int
+  field  gpsd.ecefx         ecefx        float
+  field  gpsd.ecefy         ecefy        float
+  field  gpsd.ecefz         ecefz        float
+  field  gpsd.ecef_p_acc    ecefpAcc     float
+  field  gpsd.ecefvx        ecefvx       float
+  field  gpsd.ecefvy        ecefvy       float
+  field  gpsd.ecefvz        ecefvz       float
+  field  gpsd.ecef_v_acc    ecefvAcc     float
+  field  gpsd.epc           epc          float
+  field  gpsd.epd           epd          float
+  field  gpsd.eph           eph          float
+  field  gpsd.eps           eps          float
+  field  gpsd.ept           ept          float
+  field  gpsd.epx           epx          float
+  field  gpsd.epy           epy          float
+  field  gpsd.epv           epv          float
+  field  gpsd.geoid_sep     geoidSep     float
+  field  gpsd.jam           jam          int
+  field  lat                lat          float
+  field  gpsd.leapseconds   leapseconds  int
+  field  lon                lon          float
+  field  gpsd.magdev        magdev       float
+  field  gpsd.magtrack      magtrack     float
+  field  gpsd.magvar        magvar       float
+  field  gpsd.rel_d         relD         float
+  field  gpsd.rel_e         relE         float
+  field  gpsd.rel_n         relN         float
+  field  gpsd.sep           sep          float
+  field  speed_ms           speed        float
+  field  gpsd.status        status       int
+  field  gpsd.temp          temp         float
+  field  time_ms            time         iso8601_ms
+  field  course             track        float
+  field  gpsd.vel_d         velD         float
+  field  gpsd.vel_e         velE         float
+  field  gpsd.vel_n         velN         float
+  field  gpsd.wanglem       wanglem      float
+  field  gpsd.wangler       wangler      float
+  field  gpsd.wanglet       wanglet      float
+  field  gpsd.wspeedr       wspeedr      float
+  field  gpsd.wspeedt       wspeedt      float
+  field  gpsd.wtemp         wtemp        float
+end
+group  gpsd.poll_sky  sky
+  const  class  SKY
+  field  gpsd.device        device       string
+  field  gpsd.n_sat         nSat         int
+  field  gpsd.gdop          gdop         float
+  field  gpsd.hdop          hdop         float
+  field  gpsd.pdop          pdop         float
+  field  gpsd.pr            pr           float
+  field  gpsd.pr_rate       prRate       float
+  field  gpsd.pr_res        prRes        float
+  field  gpsd.qual          qual         int
+  group  gpsd.satellites  satellites
+    field  gpsd.prn           PRN          int
+    field  gpsd.az            az           float
+    field  gpsd.el            el           float
+    field  gpsd.freqid        freqid       int
+    field  gpsd.gnssid        gnssid       int
+    field  gpsd.health        health       int
+    field  gpsd.ss            ss           float
+    field  gpsd.sigid         sigid        int
+    field  gpsd.svid          svid         int
+    field  gpsd.used          used         bool
+  end
+  field  gpsd.tdop          tdop         float
+  field  time_ms            time         iso8601_ms
+  field  gpsd.u_sat         uSat         int
+  field  gpsd.vdop          vdop         float
+  field  gpsd.xdop          xdop         float
+  field  gpsd.ydop          ydop         float
+end
+
+kind    error
+when    class  ERROR
+requires gpsd.message
+field  gpsd.message       message      string
+
+kind    subframe
+when    class  SUBFRAME
+requires gpsd.t_sv
+field  gpsd.device        device       string
+field  gpsd.frame         frame        int
+field  gpsd.gnss_id       gnssId       int
+field  gpsd.scaled        scaled       bool
+field  gpsd.t_sv          tSV          int
+field  gpsd.tow17         TOW17        int
+
+kind    ack
+when    class  ACK
+requires gpsd.ack
+

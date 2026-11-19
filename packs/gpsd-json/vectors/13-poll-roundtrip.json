@@ -1,0 +1,32 @@
+{
+  "name": "poll-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"POLL\",\"time\":\"2026-03-04T05:06:09.250Z\",\"active\":1,\"tpv\":[{\"class\":\"TPV\",\"device\":\"/dev/ttyACM0\",\"mode\":3,\"time\":\"2026-03-04T05:06:09Z\",\"lat\":-33.856784,\"lon\":151.215297,\"altHAE\":23.5,\"speed\":0.25,\"track\":180}],\"sky\":[{\"class\":\"SKY\",\"device\":\"/dev/ttyACM0\",\"hdop\":1.25,\"satellites\":[{\"PRN\":12,\"az\":45,\"el\":60.5,\"ss\":40,\"used\":true}]}]}",
+  "expect": "{\"class\":\"POLL\",\"time\":\"2026-03-04T05:06:09.250Z\",\"active\":1,\"tpv\":[{\"class\":\"TPV\",\"device\":\"/dev/ttyACM0\",\"mode\":3,\"altHAE\":23.5,\"lat\":-33.856784,\"lon\":151.215297,\"speed\":0.25,\"time\":\"2026-03-04T05:06:09.000Z\",\"track\":180}],\"sky\":[{\"class\":\"SKY\",\"device\":\"/dev/ttyACM0\",\"hdop\":1.25,\"satellites\":[{\"PRN\":12,\"az\":45,\"el\":60.5,\"ss\":40,\"used\":true}]}]}",
+  "model": {
+    "time_ms": "1772600769250",
+    "gpsd.active": "1",
+    "gpsd.poll_tpv.#": "1",
+    "gpsd.poll_tpv[0].gpsd.device": "/dev/ttyACM0",
+    "gpsd.poll_tpv[0].gpsd.mode": "3",
+    "gpsd.poll_tpv[0].hae": "23.5",
+    "gpsd.poll_tpv[0].lat": "-33.856784",
+    "gpsd.poll_tpv[0].lon": "151.215297",
+    "gpsd.poll_tpv[0].speed_ms": "0.25",
+    "gpsd.poll_tpv[0].time_ms": "1772600769000",
+    "gpsd.poll_tpv[0].course": "180",
+    "gpsd.poll_sky.#": "1",
+    "gpsd.poll_sky[0].gpsd.device": "/dev/ttyACM0",
+    "gpsd.poll_sky[0].gpsd.hdop": "1.25",
+    "gpsd.poll_sky[0].gpsd.satellites.#": "1",
+    "gpsd.poll_sky[0].gpsd.satellites[0].gpsd.prn": "12",
+    "gpsd.poll_sky[0].gpsd.satellites[0].gpsd.az": "45",
+    "gpsd.poll_sky[0].gpsd.satellites[0].gpsd.el": "60.5",
+    "gpsd.poll_sky[0].gpsd.satellites[0].gpsd.ss": "40",
+    "gpsd.poll_sky[0].gpsd.satellites[0].gpsd.used": "1",
+    "@kind": "poll"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; tpv and sky are groups whose items are TPV and SKY objects; a SKY item has its own satellites group"
+}

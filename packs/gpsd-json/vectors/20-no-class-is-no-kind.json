@@ -1,0 +1,9 @@
+{
+  "name": "no-class-is-no-kind",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"lat\":1.5,\"lon\":2.5}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; every response has a class; without it no kind holds"
+}

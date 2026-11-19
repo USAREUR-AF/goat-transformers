@@ -1,0 +1,9 @@
+{
+  "name": "to-gpsd-json-tpv",
+  "from": "geojson",
+  "to": "gpsd-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.4567891,47.9123456,559.5]},\"properties\":{\"time_ms\":1772600767123,\"course\":95.75,\"speed_ms\":12.5,\"callsign\":\"UNIT 7\"},\"id\":\"u7\"}",
+  "expect": "{\"class\":\"TPV\",\"altHAE\":559.5,\"lat\":47.9123456,\"lon\":11.4567891,\"speed\":12.5,\"time\":\"2026-03-04T05:06:07.123Z\",\"track\":95.75}",
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; encode picks the first kind whose requires hold (tpv: lat lon); the when writes class; callsign and id have no gpsd line; mode, which gpsd always sends, has no source here and is not written"
+}

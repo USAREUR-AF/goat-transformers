@@ -1,0 +1,24 @@
+{
+  "name": "gst-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"GST\",\"device\":\"/dev/ttyACM0\",\"time\":\"2026-03-04T05:06:07.5Z\",\"rms\":2.25,\"major\":1.75,\"minor\":1.25,\"orient\":33.5,\"lat\":1.5,\"lon\":1.125,\"alt\":2.75,\"ve\":0.25,\"vn\":0.375,\"vu\":0.5}",
+  "expect": "{\"class\":\"GST\",\"device\":\"/dev/ttyACM0\",\"time\":\"2026-03-04T05:06:07.500Z\",\"rms\":2.25,\"major\":1.75,\"minor\":1.25,\"orient\":33.5,\"alt\":2.75,\"lat\":1.5,\"lon\":1.125,\"ve\":0.25,\"vn\":0.375,\"vu\":0.5}",
+  "model": {
+    "gpsd.device": "/dev/ttyACM0",
+    "time_ms": "1772600767500",
+    "gpsd.gst_rms": "2.25",
+    "gpsd.gst_major": "1.75",
+    "gpsd.gst_minor": "1.25",
+    "gpsd.gst_orient": "33.5",
+    "gpsd.gst_alt": "2.75",
+    "gpsd.gst_lat": "1.5",
+    "gpsd.gst_lon": "1.125",
+    "gpsd.gst_ve": "0.25",
+    "gpsd.gst_vn": "0.375",
+    "gpsd.gst_vu": "0.5",
+    "@kind": "gst"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; lat, lon and alt of GST are error standard deviations in metres: raw keys, not the shared position"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "version-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"VERSION\",\"release\":\"3.27\",\"rev\":\"release-3.27-12-gabcdef0\",\"proto_major\":3,\"proto_minor\":17}",
+  "expect": "{\"class\":\"VERSION\",\"release\":\"3.27\",\"rev\":\"release-3.27-12-gabcdef0\",\"proto_major\":3,\"proto_minor\":17}",
+  "model": {
+    "gpsd.release": "3.27",
+    "gpsd.rev": "release-3.27-12-gabcdef0",
+    "gpsd.proto_major": "3",
+    "gpsd.proto_minor": "17",
+    "@kind": "version"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc"
+}
