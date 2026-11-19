@@ -35,7 +35,7 @@ jobs:
       # committed), so the scripts checked here are the ones that need none.
       - name: Committed vectors are what their scripts write
         run: |
-          for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py tools/gen/protobuf-*-vectors.py tools/gen/ccsds-vectors.py tools/gen/gdl90-vectors.py tools/gen/adsb-vectors.py; do
+          for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py tools/gen/protobuf-*-vectors.py tools/gen/ccsds-vectors.py tools/gen/gdl90-vectors.py tools/gen/adsb-vectors.py tools/gen/drip-vectors.py tools/gen/gtfs-vectors.py; do
             python3 -I "$script" --check
           done
   rust:

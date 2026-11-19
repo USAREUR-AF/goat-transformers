@@ -315,6 +315,21 @@ tesla-fleet-metrics; modules teslafleet*
   https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
   Field numbers, names and types only.
 
+Packs gtfs-agency, gtfs-stops, gtfs-routes, gtfs-trips, gtfs-stop-times,
+gtfs-calendar, gtfs-calendar-dates, gtfs-shapes, gtfs-frequencies,
+gtfs-transfers, gtfs-pathways, gtfs-levels, gtfs-feed-info, gtfs-attributions;
+module gtfs
+  GTFS Schedule Reference, https://github.com/google/transit. Apache License,
+  Version 2.0. Column names, order and types; no text.
+
+Pack drip; module drip
+  IETF RFC 9575, DRIP Entity Tag (DET) Authentication Formats and Protocols
+  for Broadcast Remote Identification (RID), with RFC 9374 and RFC 9434 for
+  context. Copyright (c) 2024 IETF Trust and the persons identified as the
+  document authors; subject to BCP 78 and the IETF Trust's Legal Provisions
+  Relating to IETF Documents (https://trustee.ietf.org/license-info). Layouts
+  restated in packs/drip.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c
@@ -336,6 +351,10 @@ Pack nmea0183; module nmea0183
   that it was written without consulting the NMEA 0183 standard. Sentence
   layouts, field positions, units and fixed letters only; no text, table or
   example sentence.
+  The fifteen sentences added after the first eight: pynmea2,
+  https://github.com/Knio/pynmea2, MIT License, for field order; gpsd
+  drivers/driver_nmea0183.c, BSD 2-Clause License, Copyright the GPSD project,
+  for units and meanings. No code, text or example sentences.
 
 Pack geojson
   IETF RFC 7946, The GeoJSON Format.
