@@ -45,12 +45,12 @@ checked on decode.
 
 Downlink format 18 (ADS-B from equipment that cannot be interrogated, TIS-B)
 uses the same ME layouts but fails the common `when`: `no-kind` (vector
-`df18-no-kind`). A second pack, or a `when` that accepts a list of values,
-would admit it.
+`df18-no-kind`). It is the pack `adsb-df18`, with the same layouts and the
+module `adsb`.
 
 ## Kinds
 
-29 kinds. Every kind maps all 112 bits, reserved bits included, so every
+32 kinds. Every kind maps all 112 bits, reserved bits included, so every
 message of a mapped kind round-trips byte-identically.
 
 | Kinds | Type code | Second `when` | Content |
@@ -65,6 +65,18 @@ message of a mapped kind round-trips byte-identically.
 | `target-state` | 29 | subtype 1 (2 bits) | selected altitude, barometric setting, selected heading, accuracy and integrity indicators, autopilot mode bits |
 | `operational-status-airborne` | 31 | subtype 0 | capability class, operational mode, version, accuracy and integrity indicators |
 | `operational-status-surface` | 31 | subtype 1 | surface capability class, length/width code, operational mode, version, indicators |
+| `acas-ra-no-threat-identity` | 28 | subtype 2, threat type 0 | ACAS resolution advisory: seven advisory flags, the ACAS III bits, four complement flags, terminated, multiple threat, threat type indicator, the 26 unused identity bits |
+| `acas-ra-threat-address` | 28 | subtype 2, threat type 1 | the same, then the threat's 24-bit address and 2 reserved bits |
+| `acas-ra-threat-position` | 28 | subtype 2, threat type 2 | the same, then the threat's 13-bit altitude code, 7-bit range and 6-bit bearing |
+
+The three `acas-ra-*` kinds are laid out from pyModeS alone
+(`decoder/bds/bds61.py`: subtype 2 carries bits 8-55 of the BDS 3,0 register;
+`decoder/bds/bds30.py`: the place of each flag and of the threat identity for
+each indicator). The threat type indicator is a third `when` and the field
+`adsb.tti`. Indicator 3, which pyModeS names reserved, is `no-kind` (vector
+`acas-ra-threat-type-3-no-kind`). pyModeS has no published message of this
+subtype; the vectors are constructed, and what `tools/gen/adsb-vectors.py` writes was compared
+with pyModeS's own decoding of the same messages (`PROVENANCE.md`).
 
 **One kind per type code.** `when` compares for equality, and a type code
 range (9-18) is ten values, so each value is its own kind with the same field
@@ -108,15 +120,20 @@ messages with published decoded values (vectors 41-43).
 
 - Type code 0 (no position information), 23-27 (reserved, test), 30:
   `no-kind` (vector `type-code-0-no-kind`).
-- Type code 28 subtype 2 (ACAS resolution advisory) and other subtypes.
-- Type code 29 subtype 0 (ADS-B version 1 target state).
+- Type code 28 subtypes 0 and 3-7.
+- Type code 29 subtype 0 (ADS-B version 1 target state). pyModeS
+  (`decoder/bds/bds62.py`) parses subtype 0 with the subtype 1 layout as a
+  fallback and says a caller can ignore the result; that is not a statement of
+  the subtype 0 layout, and no other public source with a usable license lays
+  it out, so it is not mapped.
 - Type code 31 subtypes 2-7 (reserved).
 - Type code 19 subtypes 0 and 5-7 (reserved).
-- Downlink formats other than 17.
+- Downlink formats other than 17 (18 is the pack `adsb-df18`).
 
 ## Vectors
 
-45 vectors under `vectors/`, maintained by hand.
+49 vectors under `vectors/`. Vectors 01-45 are maintained by hand; 46-49 are
+written by `tools/gen/adsb-vectors.py` (`--check` compares them with the tree).
 
 | Vectors | Content | Source |
 |---|---|---|
@@ -124,6 +141,8 @@ messages with published decoded values (vectors 41-43).
 | 30-43 | 14 published messages: the kind selected, raw values pinned, byte-identical round trip | `"source": "specification"`; each `reference` names the book chapter or the pyModeS test file |
 | 44 | published DF18 message, `expect_error: no-kind` | pyModeS `tests/test_adsb.py` |
 | 45 | type code 0, `expect_error: no-kind` | constructed |
+| 46-48 | one same-format round trip per `acas-ra-*` kind, parity computed as for 01-29 | constructed |
+| 49 | threat type indicator 3, `expect_error: no-kind` | constructed |
 
 Before writing vectors 30-43 the generator decodes each published message
 with the pack and checks the raw values against the published decoded values

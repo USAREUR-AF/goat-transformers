@@ -1,0 +1,18 @@
+{
+  "name": "acas-ra-no-threat-identity-roundtrip",
+  "from": "adsb",
+  "to": "adsb",
+  "input": "8dabc01ee2feaff0004eab1d31a6",
+  "expect": "8dabc01ee2feaff0004eab1d31a6",
+  "model": {
+    "@kind": "acas-ra-no-threat-identity",
+    "adsb.df": "17",
+    "adsb.tc": "28",
+    "adsb.icao": "11255838",
+    "adsb.ra_active": "1",
+    "adsb.tid_raw": "20139",
+    "adsb.parity": "1913254"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

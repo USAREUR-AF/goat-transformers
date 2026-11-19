@@ -1,0 +1,19 @@
+{
+  "name": "identification-tc4-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc0042794387f77b677766733",
+  "expect": "90abc0042794387f77b677766733",
+  "model": {
+    "@kind": "identification-tc4",
+    "adsb.df": "18",
+    "adsb.tc": "4",
+    "adsb.icao": "11255812",
+    "adsb.category": "7",
+    "adsb.cs_c1": "37",
+    "adsb.cs_c8": "55",
+    "adsb.parity": "7759667"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

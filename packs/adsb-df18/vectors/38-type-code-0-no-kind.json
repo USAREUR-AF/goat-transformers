@@ -1,0 +1,9 @@
+{
+  "name": "type-code-0-no-kind",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90406b900015a678d4d220a76169",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "90406B902015A678D4D220AA4BDA with the type code set to 0 and parity recomputed; pyModeS decoder/adsb.py has no layout for type code 0"
+}

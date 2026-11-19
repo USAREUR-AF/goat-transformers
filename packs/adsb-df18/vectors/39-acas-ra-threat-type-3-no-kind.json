@@ -1,0 +1,9 @@
+{
+  "name": "acas-ra-threat-type-3-no-kind",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc0ffe280000c000000231a36",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "type code 28 subtype 2 with threat type indicator 3, reserved in pyModeS decoder/bds/bds30.py; parity computed by tools/gen/adsb-vectors.py"
+}

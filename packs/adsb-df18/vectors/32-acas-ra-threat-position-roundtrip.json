@@ -1,0 +1,20 @@
+{
+  "name": "acas-ra-threat-position-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc020e2ff17fa72bfe9c8b6c9",
+  "expect": "90abc020e2ff17fa72bfe9c8b6c9",
+  "model": {
+    "@kind": "acas-ra-threat-position",
+    "adsb.df": "18",
+    "adsb.tc": "28",
+    "adsb.icao": "11255840",
+    "adsb.ra_active": "1",
+    "adsb.threat_alt_code": "5013",
+    "adsb.threat_range_raw": "127",
+    "adsb.threat_bearing_raw": "41",
+    "adsb.parity": "13153993"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

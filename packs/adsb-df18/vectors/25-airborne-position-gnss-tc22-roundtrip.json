@@ -1,0 +1,20 @@
+{
+  "name": "airborne-position-gnss-tc22-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc019b3fa7c36b81f43c84cc5",
+  "expect": "90abc019b3fa7c36b81f43c84cc5",
+  "model": {
+    "@kind": "airborne-position-gnss-tc22",
+    "adsb.df": "18",
+    "adsb.tc": "22",
+    "adsb.icao": "11255833",
+    "adsb.gnss_height_m": "4007",
+    "adsb.cpr_odd": "1",
+    "adsb.cpr_lat": "7004",
+    "adsb.cpr_lon": "8003",
+    "adsb.parity": "13126853"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}

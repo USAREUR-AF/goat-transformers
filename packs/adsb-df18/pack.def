@@ -1,0 +1,531 @@
+# Mode S Extended Squitter, downlink format 18: ADS-B from equipment that is not a
+# transponder, TIS-B and ADS-R. 112 bits. Public.
+# Maintained by hand, with the pack adsb; tools/gen/adsb-vectors.py writes the vectors.
+# pack.md states what is mapped, what is not, and the one source of every layout.
+#
+# Addressing as in packs/adsb: word_bytes 1, bit_order msb, locator 0:<bit offset>:<len>,
+# ME bit n (numbered from 1) at offset 31 + n.
+format        adsb-df18
+version       0.1.0
+distribution  public
+source        "pyModeS (https://github.com/junzis/pyModeS, GPL-3.0) at commit 4bf083284c0d9878ca0c88f16b9b5f6514ca194a: decoder/adsb.py (DF17 and DF18 share the frame and the ME layouts), decoder/bds/bds05.py, bds06.py, bds08.py, bds09.py, bds30.py, bds61.py, bds62.py, bds65.py; layouts restated, no code copied; test messages from tests/test_adsb.py, test_bds06.py, test_cpr.py"
+uses          adsb
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# Frame: [DF : 5][CF : 3][address : 24][ME : 56][PI : 24]. pyModeS reads bits 9-32
+# as the ICAO address for DF18 as for DF17 and does not interpret the control field.
+when   0:0:5   18
+field  adsb.df                        0:0:5      uint
+field  adsb.cf                        0:5:3      uint
+field  adsb.icao                      0:8:24     uint
+field  adsb.parity                    0:88:24    uint
+
+# Aircraft identification, type code 1.
+kind      identification-tc1
+when      0:32:5     1
+requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+field  adsb.tc                        0:32:5     uint
+field  adsb.category                  0:37:3     uint
+field  adsb.cs_c1                     0:40:6     uint
+field  adsb.cs_c2                     0:46:6     uint
+field  adsb.cs_c3                     0:52:6     uint
+field  adsb.cs_c4                     0:58:6     uint
+field  adsb.cs_c5                     0:64:6     uint
+field  adsb.cs_c6                     0:70:6     uint
+field  adsb.cs_c7                     0:76:6     uint
+field  adsb.cs_c8                     0:82:6     uint
+
+# Aircraft identification, type code 2.
+kind      identification-tc2
+when      0:32:5     2
+requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+field  adsb.tc                        0:32:5     uint
+field  adsb.category                  0:37:3     uint
+field  adsb.cs_c1                     0:40:6     uint
+field  adsb.cs_c2                     0:46:6     uint
+field  adsb.cs_c3                     0:52:6     uint
+field  adsb.cs_c4                     0:58:6     uint
+field  adsb.cs_c5                     0:64:6     uint
+field  adsb.cs_c6                     0:70:6     uint
+field  adsb.cs_c7                     0:76:6     uint
+field  adsb.cs_c8                     0:82:6     uint
+
+# Aircraft identification, type code 3.
+kind      identification-tc3
+when      0:32:5     3
+requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+field  adsb.tc                        0:32:5     uint
+field  adsb.category                  0:37:3     uint
+field  adsb.cs_c1                     0:40:6     uint
+field  adsb.cs_c2                     0:46:6     uint
+field  adsb.cs_c3                     0:52:6     uint
+field  adsb.cs_c4                     0:58:6     uint
+field  adsb.cs_c5                     0:64:6     uint
+field  adsb.cs_c6                     0:70:6     uint
+field  adsb.cs_c7                     0:76:6     uint
+field  adsb.cs_c8                     0:82:6     uint
+
+# Aircraft identification, type code 4.
+kind      identification-tc4
+when      0:32:5     4
+requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+field  adsb.tc                        0:32:5     uint
+field  adsb.category                  0:37:3     uint
+field  adsb.cs_c1                     0:40:6     uint
+field  adsb.cs_c2                     0:46:6     uint
+field  adsb.cs_c3                     0:52:6     uint
+field  adsb.cs_c4                     0:58:6     uint
+field  adsb.cs_c5                     0:64:6     uint
+field  adsb.cs_c6                     0:70:6     uint
+field  adsb.cs_c7                     0:76:6     uint
+field  adsb.cs_c8                     0:82:6     uint
+
+# Surface position, type code 5.
+kind      surface-position-tc5
+when      0:32:5     5
+requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.movement_raw              0:37:7     uint
+field  adsb.track_valid               0:44:1     uint
+field  adsb.track_raw                 0:45:7     uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Surface position, type code 6.
+kind      surface-position-tc6
+when      0:32:5     6
+requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.movement_raw              0:37:7     uint
+field  adsb.track_valid               0:44:1     uint
+field  adsb.track_raw                 0:45:7     uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Surface position, type code 7.
+kind      surface-position-tc7
+when      0:32:5     7
+requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.movement_raw              0:37:7     uint
+field  adsb.track_valid               0:44:1     uint
+field  adsb.track_raw                 0:45:7     uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Surface position, type code 8.
+kind      surface-position-tc8
+when      0:32:5     8
+requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.movement_raw              0:37:7     uint
+field  adsb.track_valid               0:44:1     uint
+field  adsb.track_raw                 0:45:7     uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 9.
+kind      airborne-position-baro-tc9
+when      0:32:5     9
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 10.
+kind      airborne-position-baro-tc10
+when      0:32:5     10
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 11.
+kind      airborne-position-baro-tc11
+when      0:32:5     11
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 12.
+kind      airborne-position-baro-tc12
+when      0:32:5     12
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 13.
+kind      airborne-position-baro-tc13
+when      0:32:5     13
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 14.
+kind      airborne-position-baro-tc14
+when      0:32:5     14
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 15.
+kind      airborne-position-baro-tc15
+when      0:32:5     15
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 16.
+kind      airborne-position-baro-tc16
+when      0:32:5     16
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 17.
+kind      airborne-position-baro-tc17
+when      0:32:5     17
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with barometric altitude, type code 18.
+kind      airborne-position-baro-tc18
+when      0:32:5     18
+requires  adsb.icao adsb.alt_baro_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.alt_baro_raw              0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne velocity, type code 19, subtype 1: ground velocity components.
+kind      airborne-velocity-ground-st1
+when      0:32:5     19
+when      0:37:3     1
+requires  adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.intent_change             0:40:1     uint
+field  adsb.ifr                       0:41:1     uint
+field  adsb.nac_v                     0:42:3     uint
+field  adsb.ew_sign                   0:45:1     uint
+field  adsb.ew_raw                    0:46:10    uint
+field  adsb.ns_sign                   0:56:1     uint
+field  adsb.ns_raw                    0:57:10    uint
+field  adsb.vr_source                 0:67:1     uint
+field  adsb.vr_sign                   0:68:1     uint
+field  adsb.vr_raw                    0:69:9     uint
+field  adsb.reserved                  0:78:2     uint
+field  adsb.galt_diff_sign            0:80:1     uint
+field  adsb.galt_diff_raw             0:81:7     uint
+
+# Airborne velocity, type code 19, subtype 2: ground velocity components, supersonic scale.
+kind      airborne-velocity-ground-st2
+when      0:32:5     19
+when      0:37:3     2
+requires  adsb.icao adsb.ew_raw adsb.ns_raw adsb.vr_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.intent_change             0:40:1     uint
+field  adsb.ifr                       0:41:1     uint
+field  adsb.nac_v                     0:42:3     uint
+field  adsb.ew_sign                   0:45:1     uint
+field  adsb.ew_raw                    0:46:10    uint
+field  adsb.ns_sign                   0:56:1     uint
+field  adsb.ns_raw                    0:57:10    uint
+field  adsb.vr_source                 0:67:1     uint
+field  adsb.vr_sign                   0:68:1     uint
+field  adsb.vr_raw                    0:69:9     uint
+field  adsb.reserved                  0:78:2     uint
+field  adsb.galt_diff_sign            0:80:1     uint
+field  adsb.galt_diff_raw             0:81:7     uint
+
+# Airborne velocity, type code 19, subtype 3: airspeed and magnetic heading.
+kind      airborne-velocity-air-st3
+when      0:32:5     19
+when      0:37:3     3
+requires  adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.intent_change             0:40:1     uint
+field  adsb.ifr                       0:41:1     uint
+field  adsb.nac_v                     0:42:3     uint
+field  adsb.heading_valid             0:45:1     uint
+field  adsb.heading_raw               0:46:10    uint
+field  adsb.airspeed_true             0:56:1     uint
+field  adsb.airspeed_raw              0:57:10    uint
+field  adsb.vr_source                 0:67:1     uint
+field  adsb.vr_sign                   0:68:1     uint
+field  adsb.vr_raw                    0:69:9     uint
+field  adsb.reserved                  0:78:2     uint
+field  adsb.galt_diff_sign            0:80:1     uint
+field  adsb.galt_diff_raw             0:81:7     uint
+
+# Airborne velocity, type code 19, subtype 4: airspeed and magnetic heading, supersonic scale.
+kind      airborne-velocity-air-st4
+when      0:32:5     19
+when      0:37:3     4
+requires  adsb.icao adsb.heading_raw adsb.airspeed_raw adsb.vr_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.intent_change             0:40:1     uint
+field  adsb.ifr                       0:41:1     uint
+field  adsb.nac_v                     0:42:3     uint
+field  adsb.heading_valid             0:45:1     uint
+field  adsb.heading_raw               0:46:10    uint
+field  adsb.airspeed_true             0:56:1     uint
+field  adsb.airspeed_raw              0:57:10    uint
+field  adsb.vr_source                 0:67:1     uint
+field  adsb.vr_sign                   0:68:1     uint
+field  adsb.vr_raw                    0:69:9     uint
+field  adsb.reserved                  0:78:2     uint
+field  adsb.galt_diff_sign            0:80:1     uint
+field  adsb.galt_diff_raw             0:81:7     uint
+
+# Airborne position with GNSS height, type code 20.
+kind      airborne-position-gnss-tc20
+when      0:32:5     20
+requires  adsb.icao adsb.gnss_height_m adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.gnss_height_m             0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with GNSS height, type code 21.
+kind      airborne-position-gnss-tc21
+when      0:32:5     21
+requires  adsb.icao adsb.gnss_height_m adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.gnss_height_m             0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Airborne position with GNSS height, type code 22.
+kind      airborne-position-gnss-tc22
+when      0:32:5     22
+requires  adsb.icao adsb.gnss_height_m adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
+field  adsb.tc                        0:32:5     uint
+field  adsb.ss                        0:37:2     uint
+field  adsb.saf                       0:39:1     uint
+field  adsb.gnss_height_m             0:40:12    uint
+field  adsb.time_flag                 0:52:1     uint
+field  adsb.cpr_odd                   0:53:1     uint
+field  adsb.cpr_lat                   0:54:17    uint
+field  adsb.cpr_lon                   0:71:17    uint
+
+# Aircraft status, type code 28, subtype 1: emergency / priority status and Mode A code.
+kind      aircraft-status-emergency
+when      0:32:5     28
+when      0:37:3     1
+requires  adsb.icao adsb.emergency_state adsb.squawk_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.emergency_state           0:40:3     uint
+field  adsb.squawk_raw                0:43:13    uint
+field  adsb.reserved                  0:56:32    uint
+
+# Target state and status, type code 29, subtype 1 (ADS-B version 2).
+kind      target-state
+when      0:32:5     29
+when      0:37:2     1
+requires  adsb.icao adsb.sel_alt_raw adsb.baro_setting_raw adsb.sel_heading_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.sil_supp                  0:39:1     uint
+field  adsb.sel_alt_fms               0:40:1     uint
+field  adsb.sel_alt_raw               0:41:11    uint
+field  adsb.baro_setting_raw          0:52:9     uint
+field  adsb.sel_heading_valid         0:61:1     uint
+field  adsb.sel_heading_sign          0:62:1     uint
+field  adsb.sel_heading_raw           0:63:8     uint
+field  adsb.nac_p                     0:71:4     uint
+field  adsb.nic_baro                  0:75:1     uint
+field  adsb.sil                       0:76:2     uint
+field  adsb.mode_valid                0:78:1     uint
+field  adsb.autopilot                 0:79:1     uint
+field  adsb.vnav                      0:80:1     uint
+field  adsb.alt_hold                  0:81:1     uint
+field  adsb.reserved                  0:82:1     uint
+field  adsb.approach                  0:83:1     uint
+field  adsb.tcas_operational          0:84:1     uint
+field  adsb.lnav                      0:85:1     uint
+field  adsb.reserved2                 0:86:2     uint
+
+# Aircraft operational status, type code 31, subtype 0 (airborne), version 2 field names.
+kind      operational-status-airborne
+when      0:32:5     31
+when      0:37:3     0
+requires  adsb.icao adsb.capability_class adsb.operational_mode adsb.version
+field  adsb.tc                        0:32:5     uint
+field  adsb.capability_class          0:40:16    uint
+field  adsb.operational_mode          0:56:16    uint
+field  adsb.version                   0:72:3     uint
+field  adsb.nic_supp_a                0:75:1     uint
+field  adsb.nac_p                     0:76:4     uint
+field  adsb.gva                       0:80:2     uint
+field  adsb.sil                       0:82:2     uint
+field  adsb.nic_baro                  0:84:1     uint
+field  adsb.hrd                       0:85:1     uint
+field  adsb.sil_supp                  0:86:1     uint
+field  adsb.reserved                  0:87:1     uint
+
+# Aircraft operational status, type code 31, subtype 1 (surface), version 2 field names.
+kind      operational-status-surface
+when      0:32:5     31
+when      0:37:3     1
+requires  adsb.icao adsb.capability_class adsb.operational_mode adsb.version
+field  adsb.tc                        0:32:5     uint
+field  adsb.capability_class          0:40:16    uint
+field  adsb.operational_mode          0:56:16    uint
+field  adsb.version                   0:72:3     uint
+field  adsb.nic_supp_a                0:75:1     uint
+field  adsb.nac_p                     0:76:4     uint
+field  adsb.reserved2                 0:80:2     uint
+field  adsb.sil                       0:82:2     uint
+field  adsb.track_heading             0:84:1     uint
+field  adsb.hrd                       0:85:1     uint
+field  adsb.sil_supp                  0:86:1     uint
+field  adsb.reserved                  0:87:1     uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 0 (no threat identity; the 26 identity bits are carried as they are).
+kind      acas-ra-no-threat-identity
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     0
+requires  adsb.icao adsb.ra_active adsb.tid_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.tid_raw                   0:62:26    uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 1 (the threat's 24-bit address).
+kind      acas-ra-threat-address
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     1
+requires  adsb.icao adsb.ra_active adsb.threat_icao
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.threat_icao               0:62:24    uint
+field  adsb.reserved                  0:86:2     uint
+
+# Aircraft status, type code 28, subtype 2: ACAS resolution advisory, threat type indicator 2 (the threat's altitude code, range and bearing).
+kind      acas-ra-threat-position
+when      0:32:5     28
+when      0:37:3     2
+when      0:60:2     2
+requires  adsb.icao adsb.ra_active adsb.threat_alt_code adsb.threat_range_raw adsb.threat_bearing_raw
+field  adsb.tc                        0:32:5     uint
+field  adsb.ra_active                 0:40:1     uint
+field  adsb.ra_corrective             0:41:1     uint
+field  adsb.ra_downward               0:42:1     uint
+field  adsb.ra_increased_rate         0:43:1     uint
+field  adsb.ra_sense_reversal         0:44:1     uint
+field  adsb.ra_altitude_crossing      0:45:1     uint
+field  adsb.ra_positive               0:46:1     uint
+field  adsb.ara_acas3                 0:47:7     uint
+field  adsb.rac_no_below              0:54:1     uint
+field  adsb.rac_no_above              0:55:1     uint
+field  adsb.rac_no_left               0:56:1     uint
+field  adsb.rac_no_right              0:57:1     uint
+field  adsb.ra_terminated             0:58:1     uint
+field  adsb.multiple_threat           0:59:1     uint
+field  adsb.tti                       0:60:2     uint
+field  adsb.threat_alt_code           0:62:13    uint
+field  adsb.threat_range_raw          0:75:7     uint
+field  adsb.threat_bearing_raw        0:82:6     uint

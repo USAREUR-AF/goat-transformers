@@ -1,0 +1,21 @@
+{
+  "name": "surface-position-tc7-roundtrip",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc0073a5bfc124c0a73a70bf1",
+  "expect": "90abc0073a5bfc124c0a73a70bf1",
+  "model": {
+    "@kind": "surface-position-tc7",
+    "adsb.df": "18",
+    "adsb.tc": "7",
+    "adsb.icao": "11255815",
+    "adsb.movement_raw": "37",
+    "adsb.track_raw": "63",
+    "adsb.cpr_odd": "1",
+    "adsb.cpr_lat": "2342",
+    "adsb.cpr_lon": "2675",
+    "adsb.parity": "10947569"
+  },
+  "source": "constructed",
+  "reference": "field values chosen by tools/gen/adsb-vectors.py; parity computed there with the Mode S generator 0x1FFF409 so the frame is self-consistent"
+}
