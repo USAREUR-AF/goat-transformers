@@ -1,0 +1,14 @@
+{
+  "name": "s03-pgn129025-latitude-not-available-to-geojson",
+  "from": "nmea2000",
+  "to": "geojson",
+  "input": "01f801ffffff7f40a5ae02",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "pgn129025",
+    "lon": "4.5",
+    "@absent": [
+      "lat"
+    ]
+  }
+}

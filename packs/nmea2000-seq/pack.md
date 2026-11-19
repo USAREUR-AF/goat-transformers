@@ -32,7 +32,7 @@ make it, trailing reserved bits included.
 | distinct PGNs | 15 |
 | lists in module `n2k` | 15 |
 | keys added to module `n2k` by this pack | 58 |
-| vectors | 33 |
+| vectors | 34 |
 
 | Kind | PGN | CANboat id | Description | List (one item per) |
 |---|---|---|---|---|
@@ -234,5 +234,11 @@ limits both packs share ("not available" values, lookup names, 64-bit unsigned v
 - `e01-pgn129029-count-beyond-the-input.json`: the count states one item more than the input
   holds: `malformed-wire` (spec 0.8 ruling 14 and Errors).
 - `e02-fixed-layout-pgn-is-no-kind.json`: a PGN 129025 message is `no-kind` here.
+- `s01-pgn129029-time-not-available-roundtrip.json`: the position of `x01` with the time of day
+  at the value the database states for not available: no time key (`@absent`), same bytes back.
+  The 64-bit latitude and longitude of PGN 129029 state no such value, so they carry no `absent`.
+
+Fields carry `absent` as in pack `nmea2000` (its section "Absent values"); the option needs
+engine version 0.9.
 
 Vectors hold lowercase hex text in `input` / `expect`.

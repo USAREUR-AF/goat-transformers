@@ -315,7 +315,7 @@ class RepositoryPackTest(unittest.TestCase):
         vdir = os.path.join(support.REPO, "packs", "nmea2000", "vectors")
         names = sorted(n for n in os.listdir(vdir) if n.endswith(".json"))
         vectors = [(n, json.loads(text("packs", "nmea2000", "vectors", n))) for n in names]
-        self.assertEqual(len([v for _, v in vectors if v["to"] == "nmea2000"]), len(pack.kinds))
+        self.assertEqual(len([n for n, v in vectors if v["to"] == "nmea2000" and n.startswith("rt-")]), len(pack.kinds))
         c.check_vectors(codec, vectors)
         c.check_kind_order(codec)
         seq_codec = c.seq_codec_kinds(load(text("model", "n2k.def"), text("packs", "nmea2000-seq", "pack.def"))[1])
@@ -1412,3 +1412,111 @@ class SeqOutputTest(Workdir):
         self.assertEqual(e["expect_error"], "malformed-wire")
         e = json.loads(self.read("packs/nmea2000-seq/vectors/e02-fixed-layout-pgn-is-no-kind.json"))
         self.assertEqual((e["input"], e["expect_error"]), (c.FIXED_LAYOUT_MESSAGE.hex(), "no-kind"))
+
+
+# ---------------------------------------------------------------- spec 0.9 sentinels (`absent`)
+
+class SentinelParseTest(unittest.TestCase):
+    def test_stated_values_are_read_in_order_unknown_out_of_range_reserved(self):
+        f = source_field(length=8, ReservedValue=253, UnknownValue=255, OutOfRangeValue=254)
+        self.assertEqual(f.sentinels, (255, 254, 253))
+        self.assertEqual(f.stated, {"UnknownValue": 255, "OutOfRangeValue": 254, "ReservedValue": 253})
+
+    def test_a_field_that_states_none_has_none_whatever_its_type(self):
+        self.assertEqual(source_field(length=2, field_type="LOOKUP").sentinels, ())
+        self.assertEqual(source_field(length=64, Signed=True).sentinels, ())
+        self.assertEqual(source_field(length=32, field_type="FLOAT").sentinels, ())
+
+    def test_an_mmsi_also_takes_zero(self):
+        f = source_field(length=32, field_type="MMSI", UnknownValue=4294967295)
+        self.assertEqual(f.sentinels, (4294967295, 0))
+        self.assertEqual(source_field(length=32, field_type="MMSI").sentinels, (0,))
+
+    def test_negative_or_mistyped_value_is_refused(self):
+        with self.assertRaisesRegex(c.GenError, "UnknownValue.*is negative"):
+            source_field(UnknownValue=-1)
+        with self.assertRaisesRegex(c.GenError, "UnknownValue.*expected an integer"):
+            source_field(UnknownValue="255")
+
+    def test_value_that_does_not_fit_the_field_is_refused(self):
+        with self.assertRaisesRegex(c.GenError, "states the raw value 256 for no value, which does not fit 8 bits"):
+            kinds_of(definition(65040, "wide", [field("x", UnknownValue=256)]))
+
+    def test_field_line_carries_the_values_in_order(self):
+        plan = c.make_plan(database(definition(65041, "one", [field("x", UnknownValue=255, OutOfRangeValue=254)])))
+        text = c.emit_pack(plan.kinds, COMMIT, database())
+        self.assertIn("uint absent 255,254\n", text)
+
+
+class SentinelCodecTest(unittest.TestCase):
+    """The expected packs of the fixture, read by the generator's codecs."""
+
+    @classmethod
+    def setUpClass(cls):
+        def text(rel):
+            with open(os.path.join(EXPECTED, *rel.split("/")), encoding="utf-8") as fh:
+                return fh.read()
+        module, pack = load(text(MODULE), text(PACK))
+        cls.codec = c.codec_kinds(pack)
+        cls.kind = {k.name: k for k in cls.codec}
+        cls.seq = c.seq_codec_kinds(load(text(MODULE), text(SEQ_PACK))[1])
+
+    def test_loaded_field_has_the_values_of_the_database(self):
+        lat = next(f for f in self.kind["pgn129025"].fields if f.key == "lat")
+        self.assertEqual(lat.absent, (2147483647, 2147483646, 2147483645))
+
+    def test_sentinel_decodes_to_an_absent_key_and_re_encodes_as_the_first(self):
+        # PGN 129025 = 0x01f801; latitude 0x7ffffffe (out of range); longitude 45000000 = 0x02aea540
+        data = bytes.fromhex("01f801" "feffff7f" "40a5ae02")
+        kind, ent = c.decode(self.codec, data)
+        self.assertEqual((kind.name, dict(ent)), ("pgn129025", {"lon": 4.5}))
+        self.assertEqual(c.encode(kind, ent).hex(), "01f801" "ffffff7f" "40a5ae02")
+
+    def test_absent_key_writes_the_first_sentinel_and_a_present_one_its_value(self):
+        k = self.kind["pgn129025"]
+        self.assertEqual(c.encode(k, {}).hex(), "01f801" "ffffff7f" "ffffff7f")
+        self.assertEqual(c.encode(k, {"lat": 52.5, "lon": 4.5}).hex(), "01f801" "40dd4a1f" "40a5ae02")   # 525000000 = 0x1f4add40
+
+    def test_mmsi_zero_decodes_to_an_absent_key(self):
+        k = self.kind["pgn129038"]
+        user = next(f for f in k.fields if f.key == "n2k.user_id")
+        self.assertEqual(user.absent, (4294967295, 4294967294, 4294967293, 0))
+        _, ent = c.decode(self.codec, c.encode(k, {"n2k.message_id": 1, "n2k.repeat_indicator": 0}))
+        self.assertNotIn("n2k.user_id", ent)
+
+    def test_sequential_pack_reads_and_writes_the_sentinel_too(self):
+        k = next(ck for ck in self.seq if ck.name == "pgn129029")
+        data = c.seq_encode(k, {"n2k.sid": 1, "n2k.pgn129029_reference_stations": []})
+        _, ent = c.seq_decode(self.seq, data)
+        self.assertNotIn("n2k.time", ent)
+        self.assertEqual(data[4:8].hex(), "ffffffff")       # time: UnknownValue after PGN and SID
+
+    def test_geojson_vector_bytes_by_hand(self):
+        # PGN 129038 = 0x01f80e; message id 35 | repeat 1 << 6 = 0x63; user id 429396554 =
+        # 0x1998124a; longitude and latitude absent: 0x7fffffff each; sog 6.5 m/s / 0.01 = 650 = 0x028a
+        with open(os.path.join(EXPECTED, "packs", "geojson", "vectors", "gen-to-nmea2000-position-not-given.json"),
+                  encoding="utf-8") as fh:
+            v = json.load(fh)
+        self.assertEqual(v["expect"], "0ef801" "63" "4a129819" "ffffff7f" "ffffff7f" "8a02")
+        self.assertEqual(v["context"], {"n2k.message_id": "35", "n2k.repeat_indicator": "1", "n2k.user_id": "429396554"})
+
+
+class SentinelVectorTest(unittest.TestCase):
+    def test_a_picked_value_is_never_a_sentinel(self):
+        k = kinds_of(definition(65042, "one", [field("x", UnknownValue=255, OutOfRangeValue=254)]))[0][0]
+        f = k.fields[0]
+        real = c._pick_raw
+        with mock.patch.object(c, "_pick_raw", side_effect=lambda kk, ff, salt=0: 255 if salt == 0 else real(kk, ff, salt)):
+            self.assertNotIn(c.pick_values(k)[f], (255, 254))
+
+    def test_vector_naming_a_value_the_field_does_not_state_is_refused(self):
+        k = kinds_of(definition(65043, "one", [field("x")]))[0][0]
+        with self.assertRaisesRegex(c.GenError, "field x states no UnknownValue"):
+            c._stated(k.fields[0], "UnknownValue", "v")
+
+    def test_pack_md_names_each_type_left_without_absent(self):
+        with open(os.path.join(EXPECTED, *"packs/nmea2000/pack.md".split("/")), encoding="utf-8") as fh:
+            md = fh.read()
+        self.assertIn("## Absent values", md)
+        self.assertIn("| FLOAT | the database names NaN for the type and no raw value", md)
+        self.assertIn("| STRING_FIX | the database names the empty string", md)

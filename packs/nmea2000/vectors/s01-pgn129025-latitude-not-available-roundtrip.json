@@ -1,0 +1,14 @@
+{
+  "name": "s01-pgn129025-latitude-not-available-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "01f801ffffff7f40a5ae02",
+  "expect": "01f801ffffff7f40a5ae02",
+  "model": {
+    "@kind": "pgn129025",
+    "lon": "4.5",
+    "@absent": [
+      "lat"
+    ]
+  }
+}
