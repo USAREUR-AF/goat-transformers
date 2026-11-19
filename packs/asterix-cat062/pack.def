@@ -42,6 +42,7 @@ when    8  62                                # CAT
 # and `uid` (model/cat062.def); CNF has no default, so the flag is required.
 requires cat062.sac cat062.sic cat062.time_of_day_s cat062.track_number track.confirmed
 default cat062.mon          1
+default cat062.mrh          0
 default track.simulated     0
 default track.final_update  0
 default track.coasting      0
@@ -68,7 +69,9 @@ end
 if fspec.13                                  # FRN 13, I062/080 Track Status
   chain
     field  cat062.mon  1  uint                  # MON
-    pad    5                                    # SPI, MRH, SRC
+    pad    1                                    # SPI
+    field  cat062.mrh  1  uint                  # MRH: 1 = geometric height more reliable
+    pad    3                                    # SRC
     field  cat062.cnf  1  uint                  # CNF: 0 = confirmed, 1 = tentative
     also   track.confirmed  via cnf
     fx
