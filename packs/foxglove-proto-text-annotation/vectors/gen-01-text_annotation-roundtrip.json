@@ -1,0 +1,29 @@
+{
+  "name": "gen-text_annotation-roundtrip",
+  "from": "foxglove-proto-text-annotation",
+  "to": "foxglove-proto-text-annotation",
+  "input": "0a0508641089011212090000000000000e401100000000000016401a06746578742d342100000000000022402a24090000000000802540110000000000002940190000000000802c402100000000000030403224090000000000c031401100000000008033401900000000004035402100000000000037403a120a066b65792d3134120876616c75652d31353a120a066b65792d3136120876616c75652d3137",
+  "expect": "0a0508641089011212090000000000000e401100000000000016401a06746578742d342100000000000022402a24090000000000802540110000000000002940190000000000802c402100000000000030403224090000000000c031401100000000008033401900000000004035402100000000000037403a120a066b65792d3134120876616c75652d31353a120a066b65792d3136120876616c75652d3137",
+  "model": {
+    "@kind": "text_annotation",
+    "foxgloveprototextannotation.timestamp_seconds": "100",
+    "foxgloveprototextannotation.timestamp_nanos": "137",
+    "foxgloveprototextannotation.position_x": "3.75",
+    "foxgloveprototextannotation.position_y": "5.5",
+    "foxgloveprototextannotation.text_annotation_text": "text-4",
+    "foxgloveprototextannotation.text_annotation_font_size": "9",
+    "foxgloveprototextannotation.text_color_r": "10.75",
+    "foxgloveprototextannotation.text_color_g": "12.5",
+    "foxgloveprototextannotation.text_color_b": "14.25",
+    "foxgloveprototextannotation.text_color_a": "16",
+    "foxgloveprototextannotation.background_color_r": "17.75",
+    "foxgloveprototextannotation.background_color_g": "19.5",
+    "foxgloveprototextannotation.background_color_b": "21.25",
+    "foxgloveprototextannotation.background_color_a": "23",
+    "foxgloveprototextannotation.text_annotation_metadata.#": "2",
+    "foxgloveprototextannotation.text_annotation_metadata[0].foxgloveprototextannotation.key_value_pair_key": "key-14",
+    "foxgloveprototextannotation.text_annotation_metadata[0].foxgloveprototextannotation.key_value_pair_value": "value-15",
+    "foxgloveprototextannotation.text_annotation_metadata[1].foxgloveprototextannotation.key_value_pair_key": "key-16",
+    "foxgloveprototextannotation.text_annotation_metadata[1].foxgloveprototextannotation.key_value_pair_value": "value-17"
+  }
+}

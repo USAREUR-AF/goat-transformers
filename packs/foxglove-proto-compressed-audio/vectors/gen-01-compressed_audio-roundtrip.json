@@ -1,0 +1,13 @@
+{
+  "name": "gen-compressed_audio-roundtrip",
+  "from": "foxglove-proto-compressed-audio",
+  "to": "foxglove-proto-compressed-audio",
+  "input": "0a0508641089011a08666f726d61742d32",
+  "expect": "0a0508641089011a08666f726d61742d32",
+  "model": {
+    "@kind": "compressed_audio",
+    "foxgloveprotocompressedaudio.timestamp_seconds": "100",
+    "foxgloveprotocompressedaudio.timestamp_nanos": "137",
+    "foxgloveprotocompressedaudio.compressed_audio_format": "format-2"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "gen-triangle_list_primitive-roundtrip",
+  "from": "foxglove-proto-triangle-list-primitive",
+  "to": "foxglove-proto-triangle-list-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000803340110000000000403540190000000000003740121b090000000000c03840110000000000803a40190000000000403c401a24090000000000002940110000000000802c40190000000000003040210000000000c031402224090000000000003e40110000000000c03f40190000000000c04040210000000000a04140222409000000000080424011000000000060434019000000000000e03f210000000000000240",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000803340110000000000403540190000000000003740121b090000000000c03840110000000000803a40190000000000403c401a24090000000000002940110000000000802c40190000000000003040210000000000c031402224090000000000003e40110000000000c03f40190000000000c04040210000000000a04140222409000000000080424011000000000060434019000000000000e03f210000000000000240",
+  "model": {
+    "@kind": "triangle_list_primitive",
+    "foxgloveprototrianglelistprimitive.pose_position_x": "0.25",
+    "foxgloveprototrianglelistprimitive.pose_position_y": "2",
+    "foxgloveprototrianglelistprimitive.pose_position_z": "3.75",
+    "foxgloveprototrianglelistprimitive.pose_orientation_x": "5.5",
+    "foxgloveprototrianglelistprimitive.pose_orientation_y": "7.25",
+    "foxgloveprototrianglelistprimitive.pose_orientation_z": "9",
+    "foxgloveprototrianglelistprimitive.pose_orientation_w": "10.75",
+    "foxgloveprototrianglelistprimitive.color_r": "12.5",
+    "foxgloveprototrianglelistprimitive.color_g": "14.25",
+    "foxgloveprototrianglelistprimitive.color_b": "16",
+    "foxgloveprototrianglelistprimitive.color_a": "17.75",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_points.#": "2",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_points[0].foxgloveprototrianglelistprimitive.point3_x": "19.5",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_points[0].foxgloveprototrianglelistprimitive.point3_y": "21.25",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_points[1].foxgloveprototrianglelistprimitive.point3_x": "24.75",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_points[1].foxgloveprototrianglelistprimitive.point3_y": "26.5",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_colors.#": "2",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_colors[0].foxgloveprototrianglelistprimitive.color_r": "30",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_colors[0].foxgloveprototrianglelistprimitive.color_g": "31.75",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_colors[1].foxgloveprototrianglelistprimitive.color_r": "37",
+    "foxgloveprototrianglelistprimitive.triangle_list_primitive_colors[1].foxgloveprototrianglelistprimitive.color_g": "38.75"
+  }
+}

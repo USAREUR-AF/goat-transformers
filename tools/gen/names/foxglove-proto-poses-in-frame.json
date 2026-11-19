@@ -1,0 +1,13 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2": "poses_in_frame_frame_id",
+ "3[]": "poses_in_frame_poses",
+ "foxglove.Pose:1.1": "pose_position_x",
+ "foxglove.Pose:1.2": "pose_position_y",
+ "foxglove.Pose:1.3": "pose_position_z",
+ "foxglove.Pose:2.1": "pose_orientation_x",
+ "foxglove.Pose:2.2": "pose_orientation_y",
+ "foxglove.Pose:2.3": "pose_orientation_z",
+ "foxglove.Pose:2.4": "pose_orientation_w"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-joint_state-roundtrip",
+  "from": "foxglove-proto-joint-state",
+  "to": "foxglove-proto-joint-state",
+  "input": "0a066e616d652d30110000000000000040190000000000000e40210000000000001640290000000000001d40",
+  "expect": "0a066e616d652d30110000000000000040190000000000000e40210000000000001640290000000000001d40",
+  "model": {
+    "@kind": "joint_state",
+    "foxgloveprotojointstate.joint_state_name": "name-0",
+    "foxgloveprotojointstate.joint_state_position": "2",
+    "foxgloveprotojointstate.joint_state_velocity": "3.75",
+    "foxgloveprotojointstate.joint_state_acceleration": "5.5",
+    "foxgloveprotojointstate.joint_state_effort": "7.25"
+  }
+}

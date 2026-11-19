@@ -1,0 +1,12 @@
+{
+  "name": "gen-point2-roundtrip",
+  "from": "foxglove-proto-point2",
+  "to": "foxglove-proto-point2",
+  "input": "09000000000000d03f110000000000000040",
+  "expect": "09000000000000d03f110000000000000040",
+  "model": {
+    "@kind": "point2",
+    "foxgloveprotopoint2.point2_x": "0.25",
+    "foxgloveprotopoint2.point2_y": "2"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "gen-grid-roundtrip",
+  "from": "foxglove-proto-grid",
+  "to": "foxglove-proto-grid",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030402a12090000000000c03140110000000000803340420b0a076e616d652d31321801420b0a076e616d652d31341801",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c402100000000000030402a12090000000000c03140110000000000803340420b0a076e616d652d31321801420b0a076e616d652d31341801",
+  "model": {
+    "@kind": "grid",
+    "foxgloveprotogrid.timestamp_seconds": "100",
+    "foxgloveprotogrid.timestamp_nanos": "137",
+    "foxgloveprotogrid.grid_frame_id": "frame_id-2",
+    "foxgloveprotogrid.pose_position_x": "5.5",
+    "foxgloveprotogrid.pose_position_y": "7.25",
+    "foxgloveprotogrid.pose_position_z": "9",
+    "foxgloveprotogrid.pose_orientation_x": "10.75",
+    "foxgloveprotogrid.pose_orientation_y": "12.5",
+    "foxgloveprotogrid.pose_orientation_z": "14.25",
+    "foxgloveprotogrid.pose_orientation_w": "16",
+    "foxgloveprotogrid.cell_size_x": "17.75",
+    "foxgloveprotogrid.cell_size_y": "19.5",
+    "foxgloveprotogrid.grid_fields.#": "2",
+    "foxgloveprotogrid.grid_fields[0].foxgloveprotogrid.packed_element_field_name": "name-12",
+    "foxgloveprotogrid.grid_fields[0].foxgloveprotogrid.packed_element_field_type": "1",
+    "foxgloveprotogrid.grid_fields[1].foxgloveprotogrid.packed_element_field_name": "name-14",
+    "foxgloveprotogrid.grid_fields[1].foxgloveprotogrid.packed_element_field_type": "1"
+  }
+}

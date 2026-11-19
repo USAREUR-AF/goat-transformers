@@ -1,0 +1,28 @@
+{
+  "name": "gen-voxel_grid-roundtrip",
+  "from": "foxglove-proto-voxel-grid",
+  "to": "foxglove-proto-voxel-grid",
+  "input": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040321b090000000000c03140110000000000803340190000000000403540520b0a076e616d652d31331801520b0a076e616d652d31351801",
+  "expect": "0a050864108901120a6672616d655f69642d321a430a1b090000000000001640110000000000001d401900000000000022401224090000000000802540110000000000002940190000000000802c40210000000000003040321b090000000000c03140110000000000803340190000000000403540520b0a076e616d652d31331801520b0a076e616d652d31351801",
+  "model": {
+    "@kind": "voxel_grid",
+    "foxgloveprotovoxelgrid.timestamp_seconds": "100",
+    "foxgloveprotovoxelgrid.timestamp_nanos": "137",
+    "foxgloveprotovoxelgrid.voxel_grid_frame_id": "frame_id-2",
+    "foxgloveprotovoxelgrid.pose_position_x": "5.5",
+    "foxgloveprotovoxelgrid.pose_position_y": "7.25",
+    "foxgloveprotovoxelgrid.pose_position_z": "9",
+    "foxgloveprotovoxelgrid.pose_orientation_x": "10.75",
+    "foxgloveprotovoxelgrid.pose_orientation_y": "12.5",
+    "foxgloveprotovoxelgrid.pose_orientation_z": "14.25",
+    "foxgloveprotovoxelgrid.pose_orientation_w": "16",
+    "foxgloveprotovoxelgrid.cell_size_x": "17.75",
+    "foxgloveprotovoxelgrid.cell_size_y": "19.5",
+    "foxgloveprotovoxelgrid.cell_size_z": "21.25",
+    "foxgloveprotovoxelgrid.voxel_grid_fields.#": "2",
+    "foxgloveprotovoxelgrid.voxel_grid_fields[0].foxgloveprotovoxelgrid.packed_element_field_name": "name-13",
+    "foxgloveprotovoxelgrid.voxel_grid_fields[0].foxgloveprotovoxelgrid.packed_element_field_type": "1",
+    "foxgloveprotovoxelgrid.voxel_grid_fields[1].foxgloveprotovoxelgrid.packed_element_field_name": "name-15",
+    "foxgloveprotovoxelgrid.voxel_grid_fields[1].foxgloveprotovoxelgrid.packed_element_field_type": "1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-vector3-roundtrip",
+  "from": "foxglove-proto-vector3",
+  "to": "foxglove-proto-vector3",
+  "input": "09000000000000d03f110000000000000040190000000000000e40",
+  "expect": "09000000000000d03f110000000000000040190000000000000e40",
+  "model": {
+    "@kind": "vector3",
+    "foxgloveprotovector3.vector3_x": "0.25",
+    "foxgloveprotovector3.vector3_y": "2",
+    "foxgloveprotovector3.vector3_z": "3.75"
+  }
+}

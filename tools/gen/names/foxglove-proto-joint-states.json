@@ -1,0 +1,10 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2[]": "joint_states_joints",
+ "foxglove.JointState:1": "joint_state_name",
+ "foxglove.JointState:2": "joint_state_position",
+ "foxglove.JointState:3": "joint_state_velocity",
+ "foxglove.JointState:4": "joint_state_acceleration",
+ "foxglove.JointState:5": "joint_state_effort"
+}

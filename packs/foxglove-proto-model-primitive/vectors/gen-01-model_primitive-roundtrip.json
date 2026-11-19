@@ -1,0 +1,27 @@
+{
+  "name": "gen-model_primitive-roundtrip",
+  "from": "foxglove-proto-model-primitive",
+  "to": "foxglove-proto-model-primitive",
+  "input": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c401900000000000030401a24090000000000c0314011000000000080334019000000000040354021000000000000374020012a0675726c2d3135320d6d656469615f747970652d3136",
+  "expect": "0a430a1b09000000000000d03f110000000000000040190000000000000e401224090000000000001640110000000000001d40190000000000002240210000000000802540121b090000000000002940110000000000802c401900000000000030401a24090000000000c0314011000000000080334019000000000040354021000000000000374020012a0675726c2d3135320d6d656469615f747970652d3136",
+  "model": {
+    "@kind": "model_primitive",
+    "foxgloveprotomodelprimitive.pose_position_x": "0.25",
+    "foxgloveprotomodelprimitive.pose_position_y": "2",
+    "foxgloveprotomodelprimitive.pose_position_z": "3.75",
+    "foxgloveprotomodelprimitive.pose_orientation_x": "5.5",
+    "foxgloveprotomodelprimitive.pose_orientation_y": "7.25",
+    "foxgloveprotomodelprimitive.pose_orientation_z": "9",
+    "foxgloveprotomodelprimitive.pose_orientation_w": "10.75",
+    "foxgloveprotomodelprimitive.scale_x": "12.5",
+    "foxgloveprotomodelprimitive.scale_y": "14.25",
+    "foxgloveprotomodelprimitive.scale_z": "16",
+    "foxgloveprotomodelprimitive.color_r": "17.75",
+    "foxgloveprotomodelprimitive.color_g": "19.5",
+    "foxgloveprotomodelprimitive.color_b": "21.25",
+    "foxgloveprotomodelprimitive.color_a": "23",
+    "foxgloveprotomodelprimitive.model_primitive_override_color": "1",
+    "foxgloveprotomodelprimitive.model_primitive_url": "url-15",
+    "foxgloveprotomodelprimitive.model_primitive_media_type": "media_type-16"
+  }
+}

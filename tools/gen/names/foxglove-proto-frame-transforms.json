@@ -1,0 +1,14 @@
+{
+ "1[]": "frame_transforms_transforms",
+ "foxglove.FrameTransform:1.1": "frame_transform_timestamp_seconds",
+ "foxglove.FrameTransform:1.2": "frame_transform_timestamp_nanos",
+ "foxglove.FrameTransform:2": "frame_transform_parent_frame_id",
+ "foxglove.FrameTransform:3": "frame_transform_child_frame_id",
+ "foxglove.FrameTransform:4.1": "frame_transform_translation_x",
+ "foxglove.FrameTransform:4.2": "frame_transform_translation_y",
+ "foxglove.FrameTransform:4.3": "frame_transform_translation_z",
+ "foxglove.FrameTransform:5.1": "frame_transform_rotation_x",
+ "foxglove.FrameTransform:5.2": "frame_transform_rotation_y",
+ "foxglove.FrameTransform:5.3": "frame_transform_rotation_z",
+ "foxglove.FrameTransform:5.4": "frame_transform_rotation_w"
+}

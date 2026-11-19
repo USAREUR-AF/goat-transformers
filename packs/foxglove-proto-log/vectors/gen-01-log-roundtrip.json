@@ -1,0 +1,16 @@
+{
+  "name": "gen-log-roundtrip",
+  "from": "foxglove-proto-log",
+  "to": "foxglove-proto-log",
+  "input": "0a05086410890110011a096d6573736167652d3322066e616d652d342a0666696c652d35",
+  "expect": "0a05086410890110011a096d6573736167652d3322066e616d652d342a0666696c652d35",
+  "model": {
+    "@kind": "log",
+    "foxgloveprotolog.timestamp_seconds": "100",
+    "foxgloveprotolog.timestamp_nanos": "137",
+    "foxgloveprotolog.log_level": "1",
+    "foxgloveprotolog.log_message": "message-3",
+    "foxgloveprotolog.log_name": "name-4",
+    "foxgloveprotolog.log_file": "file-5"
+  }
+}

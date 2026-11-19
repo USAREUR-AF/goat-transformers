@@ -1,0 +1,7 @@
+{
+ "1": "joint_state_name",
+ "2": "joint_state_position",
+ "3": "joint_state_velocity",
+ "4": "joint_state_acceleration",
+ "5": "joint_state_effort"
+}

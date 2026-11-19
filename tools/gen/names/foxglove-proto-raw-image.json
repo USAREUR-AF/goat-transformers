@@ -1,0 +1,6 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "4": "raw_image_encoding",
+ "7": "raw_image_frame_id"
+}

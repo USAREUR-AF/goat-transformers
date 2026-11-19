@@ -1,0 +1,13 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2": "frame_transform_parent_frame_id",
+ "3": "frame_transform_child_frame_id",
+ "4.1": "translation_x",
+ "4.2": "translation_y",
+ "4.3": "translation_z",
+ "5.1": "rotation_x",
+ "5.2": "rotation_y",
+ "5.3": "rotation_z",
+ "5.4": "rotation_w"
+}

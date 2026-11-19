@@ -1,0 +1,10 @@
+{
+  "name": "01-document-carried-as-text",
+  "from": "foxglove-proto-geojson",
+  "to": "foxglove-proto-geojson",
+  "input": "0a2c7b2274797065223a22506f696e74222c22636f6f7264696e61746573223a5b31332e3337352c35322e355d7d",
+  "expect": "0a2c7b2274797065223a22506f696e74222c22636f6f7264696e61746573223a5b31332e3337352c35322e355d7d",
+  "model": {
+    "foxgloveprotogeojson.geo_json_geojson": "{\"type\":\"Point\",\"coordinates\":[13.375,52.5]}"
+  }
+}

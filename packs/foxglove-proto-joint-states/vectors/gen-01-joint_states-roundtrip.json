@@ -1,0 +1,17 @@
+{
+  "name": "gen-joint_states-roundtrip",
+  "from": "foxglove-proto-joint-states",
+  "to": "foxglove-proto-joint-states",
+  "input": "0a050864108901122c0a066e616d652d32110000000000001640190000000000001d40210000000000002240290000000000802540122c0a066e616d652d37110000000000802c40190000000000003040210000000000c03140290000000000803340",
+  "expect": "0a050864108901122c0a066e616d652d32110000000000001640190000000000001d40210000000000002240290000000000802540122c0a066e616d652d37110000000000802c40190000000000003040210000000000c03140290000000000803340",
+  "model": {
+    "@kind": "joint_states",
+    "foxgloveprotojointstates.timestamp_seconds": "100",
+    "foxgloveprotojointstates.timestamp_nanos": "137",
+    "foxgloveprotojointstates.joint_states_joints.#": "2",
+    "foxgloveprotojointstates.joint_states_joints[0].foxgloveprotojointstates.joint_state_name": "name-2",
+    "foxgloveprotojointstates.joint_states_joints[0].foxgloveprotojointstates.joint_state_position": "5.5",
+    "foxgloveprotojointstates.joint_states_joints[1].foxgloveprotojointstates.joint_state_name": "name-7",
+    "foxgloveprotojointstates.joint_states_joints[1].foxgloveprotojointstates.joint_state_position": "14.25"
+  }
+}

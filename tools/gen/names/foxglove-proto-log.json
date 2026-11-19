@@ -1,0 +1,8 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2": "log_level",
+ "3": "log_message",
+ "4": "log_name",
+ "5": "log_file"
+}
