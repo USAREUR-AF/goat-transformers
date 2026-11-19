@@ -11,7 +11,7 @@ field by field and fail when the result moves.
 | first-bite | Rust | `flow`: a transform `xf` beside `cot`; its dictionaries generated into packs by `tools/bite2pack` | cargo feature `goat-transformers` and `subtype: "xf"` in a subpub | Rust crate by git `rev`; target packs copied, `UPSTREAM` names the commit | Built, merged (first-bite#72); both tests run in its CI |
 | goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE=library` | `ops/xf/goat-transformers.ref`; bundles checked against a manifest | Built, merged (goatstuff#106); not deployed |
 | octo-pod | Rust | `gateway/translate`, a separate gateway beside the capture arms | a pod's `50-translate.yml`; none means no gateway | Rust crate by git `rev`; packs copied with a manifest | Built, open for review (octo-pod#31) |
-| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination, `native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums | Designed (open-entity-gateway#8); its example tracks are vectors 33 to 39 of `canonical-track-v2` |
+| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, in review (`feat/goat-transformers-encoder`, closes open-entity-gateway#8) |
 
 ## open-billie: Canonical Track v2 to CoT, CAT062 and SAPIENT
 
@@ -127,12 +127,34 @@ pod declares it. Built, in review as octo-pod#31 with its ADR 0004.
 
 ## open-entity-gateway: CoT, SAPIENT and CAT062 adapters
 
-Its two example tracks are vectors 33 to 39 of `canonical-track-v2`, passing
-on all seven engines. What differs from the gateway's own encoders:
+Each destination chooses `encoder: native` or `goat-transformers`. The gateway
+passes the values it owns as context: the CoT scoped `uid`, type, stale, `how`,
+callsign, course and speed; the CAT062 SAC, SIC, track number, confirmed and
+SIM; the SAPIENT object and report identifiers and class.
+`tests/test_goat_transformers_compare.py` compares both paths field by field
+against a committed baseline, and the gateway's existing suites run once per
+encoder; each library run that fails is a strict `xfail` naming its row below.
+Measured at library commit `712df03`, 24 inputs per format:
 
-| Format | Gateway writes | Pack writes | Closed by |
+| Format | Encoded by both | Refused by both | Refused by one | Fields equal |
+|---|---|---|---|---|
+| CoT | 23 | 1 | 0 | 266 of 371 |
+| SAPIENT | 24 | 0 | 0 | 187 of 343 |
+| CAT062 | 22 | 1 | 1 | 399 of 466 |
+
+Its two example tracks are also vectors 33 to 39 of `canonical-track-v2`.
+
+| Format | Field | Inputs | Closed by |
 |---|---|---|---|
-| CoT | `uid` = `<sourceId>_<trackId>` | `uid` = `trackId` | the gateway supplies `uid` as context |
-| CoT | fraction trimmed (`.25Z`, none on a whole second) | milliseconds always | none: equivalent `xs:dateTime` |
-| CoT | `access="Undefined"`, `<contact callsign>` | neither | keys the pack does not take |
-| CAT062 | MRH 1 when an altitude is sent | MRH from `cat062.mrh`, 0 when absent | the gateway supplies `cat062.mrh`; the rule itself needs Conditional output |
+| CoT | `@access` | 23 | a key and field in `cot-xml` |
+| CoT | time text `.250Z` against `.25Z` | 13 | a time transform that writes the shortest fraction (not yet a row) |
+| CoT | a track time with sub-millisecond digits | 9 | a time key finer than the millisecond (not yet a row) |
+| CoT | an empty `<detail/>` | 16 | an `xml` directive that always writes an element (not yet a row) |
+| SAPIENT | `track_info[]` | 24 | context for the items of a list key (not yet a row) |
+| SAPIENT | `classification`, `detection_confidence`, `up_rate` written by the library only | 3, 2, 2 | none: the gateway's own encoder drops them |
+| SAPIENT | `north_rate` 8e-16 against 0 | 2 | none: the gateway's round trip through course and speed |
+| CAT062 | I062/080 MRH | 20 | `cat062.mrh` as context, then the rule through Conditional output |
+| CAT062 | I062/080 written as four octets against one or two, and LEN | 22 | a chain extent written only when it holds a non-zero bit (not yet a row) |
+| CAT062 | I062/080 SRC | 2 | a `cat062.src` key |
+| CAT062 | longitude 180 | 1 | a longitude wrap (not yet a row) |
+| CAT062 | an altitude outside -1500 to 150000 ft, refused by the gateway only | 1 | a field option that refuses a value outside a range (not yet a row) |

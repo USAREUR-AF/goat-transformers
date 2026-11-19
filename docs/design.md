@@ -167,8 +167,8 @@ over the planner.
 
 Public projects that convert messages, and the place the library joins each.
 The library runs in open-billie, first-bite and goatstuff as a path beside
-their own code, chosen by a setting (Built); in octo-pod it is in review and
-in open-entity-gateway Designed. The measurements are in
+their own code, chosen by a setting (Built); in octo-pod and open-entity-gateway
+it is Built and in review. The measurements are in
 `docs/consumer-proofs.md`. The table below is the original join plan.
 
 | Consumer | Today | Where the library joins | Needs first |
