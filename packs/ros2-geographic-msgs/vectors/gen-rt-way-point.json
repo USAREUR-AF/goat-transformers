@@ -1,0 +1,18 @@
+{
+  "name": "rt-way_point",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/way_point\",\"type\":\"geographic_msgs/msg/WayPoint\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"position\":{\"latitude\":2.014,\"longitude\":-3.021,\"altitude\":4.028},\"props\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-way_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/way_point\",\"type\":\"geographic_msgs/msg/WayPoint\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"position\":{\"latitude\":2.014,\"longitude\":-3.021,\"altitude\":4.028},\"props\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-way_point\"}",
+  "model": {
+    "@kind": "way_point",
+    "ros2geographic.way_point_id_uuid": "AQP/AIA=",
+    "lat": "2.014",
+    "lon": "-3.021",
+    "hae": "4.028",
+    "ros2geographic.way_point_props.#": "2",
+    "ros2geographic.way_point_props[0].ros2geographic.way_point_props_key": "s5",
+    "ros2geographic.topic": "/gen/way_point"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-open_drone_id_system_update",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_system_update\",\"type\":\"mavros_msgs/msg/OpenDroneIDSystemUpdate\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"operator_latitude\":162019,\"operator_longitude\":202522,\"operator_altitude_geo\":-3.625},\"id\":\"gen-open_drone_id_system_update\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_system_update\",\"type\":\"mavros_msgs/msg/OpenDroneIDSystemUpdate\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"operator_latitude\":162019,\"operator_longitude\":202522,\"operator_altitude_geo\":-3.625},\"id\":\"gen-open_drone_id_system_update\"}",
+  "model": {
+    "@kind": "open_drone_id_system_update",
+    "ros2mavros.open_drone_id_system_update_header_stamp_sec": "40510",
+    "ros2mavros.open_drone_id_system_update_header_stamp_nanosec": "2147564661",
+    "ros2mavros.open_drone_id_system_update_header_frame_id": "s3",
+    "ros2mavros.open_drone_id_system_update_operator_latitude": "162019",
+    "ros2mavros.open_drone_id_system_update_operator_longitude": "202522",
+    "ros2mavros.topic": "/gen/open_drone_id_system_update"
+  }
+}

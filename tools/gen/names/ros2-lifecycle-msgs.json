@@ -1,0 +1,20 @@
+{
+ "State:id": "state_id",
+ "State:label": "state_label",
+ "Transition:id": "transition_id",
+ "Transition:label": "transition_label",
+ "TransitionDescription:goal_state.id": "transition_description_goal_state_id",
+ "TransitionDescription:goal_state.label": "transition_description_goal_state_label",
+ "TransitionDescription:start_state.id": "transition_description_start_state_id",
+ "TransitionDescription:start_state.label": "transition_description_start_state_label",
+ "TransitionDescription:transition.id": "transition_description_transition_id",
+ "TransitionDescription:transition.label": "transition_description_transition_label",
+ "TransitionEvent:goal_state.id": "transition_event_goal_state_id",
+ "TransitionEvent:goal_state.label": "transition_event_goal_state_label",
+ "TransitionEvent:start_state.id": "transition_event_start_state_id",
+ "TransitionEvent:start_state.label": "transition_event_start_state_label",
+ "TransitionEvent:timestamp": "transition_event_timestamp",
+ "TransitionEvent:transition.id": "transition_event_transition_id",
+ "TransitionEvent:transition.label": "transition_event_transition_label",
+ "topic": "topic"
+}

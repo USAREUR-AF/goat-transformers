@@ -1,0 +1,17 @@
+{
+  "name": "rt-hil_gps",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hil_gps\",\"type\":\"mavros_msgs/msg/HilGPS\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fix_type\":99,\"geo\":{\"latitude\":5.035,\"longitude\":-6.042,\"altitude\":7.049},\"eph\":29119,\"epv\":4086,\"vel\":44589,\"vn\":-13212,\"ve\":27291,\"vd\":2258,\"cog\":9993,\"satellites_visible\":192,\"id\":247,\"yaw\":430},\"id\":\"gen-hil_gps\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hil_gps\",\"type\":\"mavros_msgs/msg/HilGPS\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fix_type\":99,\"geo\":{\"latitude\":5.035,\"longitude\":-6.042,\"altitude\":7.049},\"eph\":29119,\"epv\":4086,\"vel\":44589,\"vn\":-13212,\"ve\":27291,\"vd\":2258,\"cog\":9993,\"satellites_visible\":192,\"id\":247,\"yaw\":430},\"id\":\"gen-hil_gps\"}",
+  "model": {
+    "@kind": "hil_gps",
+    "ros2mavros.hil_gps_header_stamp_sec": "40510",
+    "ros2mavros.hil_gps_header_stamp_nanosec": "2147564661",
+    "ros2mavros.hil_gps_header_frame_id": "s3",
+    "ros2mavros.hil_gps_fix_type": "99",
+    "ros2mavros.hil_gps_geo_latitude": "5.035",
+    "ros2mavros.topic": "/gen/hil_gps"
+  }
+}

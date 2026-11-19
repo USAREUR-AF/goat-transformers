@@ -1,0 +1,17 @@
+{
+  "name": "rt-transition_description",
+  "from": "ros2-lifecycle-msgs",
+  "to": "ros2-lifecycle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/transition_description\",\"type\":\"lifecycle_msgs/msg/TransitionDescription\",\"msg\":{\"transition\":{\"id\":190,\"label\":\"s2\"},\"start_state\":{\"id\":44,\"label\":\"s4\"},\"goal_state\":{\"id\":154,\"label\":\"s6\"}},\"id\":\"gen-transition_description\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/transition_description\",\"type\":\"lifecycle_msgs/msg/TransitionDescription\",\"msg\":{\"transition\":{\"id\":190,\"label\":\"s2\"},\"start_state\":{\"id\":44,\"label\":\"s4\"},\"goal_state\":{\"id\":154,\"label\":\"s6\"}},\"id\":\"gen-transition_description\"}",
+  "model": {
+    "@kind": "transition_description",
+    "ros2lifecycle.transition_description_transition_id": "190",
+    "ros2lifecycle.transition_description_transition_label": "s2",
+    "ros2lifecycle.transition_description_start_state_id": "44",
+    "ros2lifecycle.transition_description_start_state_label": "s4",
+    "ros2lifecycle.transition_description_goal_state_id": "154",
+    "ros2lifecycle.topic": "/gen/transition_description"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_set_attitude",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_attitude\",\"type\":\"mavros_msgs/msg/GimbalManagerSetAttitude\",\"msg\":{\"target_system\":190,\"target_component\":245,\"flags\":2147605164,\"gimbal_device_id\":99,\"q\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056},\"angular_velocity_x\":-2.875,\"angular_velocity_y\":-2.625,\"angular_velocity_z\":-2.375},\"id\":\"gen-gimbal_manager_set_attitude\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_attitude\",\"type\":\"mavros_msgs/msg/GimbalManagerSetAttitude\",\"msg\":{\"target_system\":190,\"target_component\":245,\"flags\":2147605164,\"gimbal_device_id\":99,\"q\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056},\"angular_velocity_x\":-2.875,\"angular_velocity_y\":-2.625,\"angular_velocity_z\":-2.375},\"id\":\"gen-gimbal_manager_set_attitude\"}",
+  "model": {
+    "@kind": "gimbal_manager_set_attitude",
+    "ros2mavros.gimbal_manager_set_attitude_target_system": "190",
+    "ros2mavros.gimbal_manager_set_attitude_target_component": "245",
+    "ros2mavros.gimbal_manager_set_attitude_flags": "2147605164",
+    "ros2mavros.gimbal_manager_set_attitude_gimbal_device_id": "99",
+    "ros2mavros.gimbal_manager_set_attitude_q_x": "5.035",
+    "ros2mavros.topic": "/gen/gimbal_manager_set_attitude"
+  }
+}

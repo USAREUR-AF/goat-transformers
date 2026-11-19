@@ -1,0 +1,17 @@
+{
+  "name": "rt-log",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/log\",\"type\":\"rcl_interfaces/msg/Log\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"level\":44,\"name\":\"s4\",\"msg\":\"s5\",\"file\":\"s6\",\"function\":\"s7\",\"line\":2147807679},\"id\":\"gen-log\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/log\",\"type\":\"rcl_interfaces/msg/Log\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"level\":44,\"name\":\"s4\",\"msg\":\"s5\",\"file\":\"s6\",\"function\":\"s7\",\"line\":2147807679},\"id\":\"gen-log\"}",
+  "model": {
+    "@kind": "log",
+    "ros2rcl.log_stamp_sec": "40510",
+    "ros2rcl.log_stamp_nanosec": "2147564661",
+    "ros2rcl.log_level": "44",
+    "ros2rcl.log_name": "s4",
+    "ros2rcl.log_msg": "s5",
+    "ros2rcl.topic": "/gen/log"
+  }
+}

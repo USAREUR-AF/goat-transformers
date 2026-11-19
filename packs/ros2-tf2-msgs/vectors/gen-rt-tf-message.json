@@ -1,0 +1,14 @@
+{
+  "name": "rt-tf_message",
+  "from": "ros2-tf2-msgs",
+  "to": "ros2-tf2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tf_message\",\"type\":\"tf2_msgs/msg/TFMessage\",\"msg\":{\"transforms\":[{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"child_frame_id\":\"s4\",\"transform\":{\"translation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"rotation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},{\"header\":{\"stamp\":{\"sec\":486043,\"nanosec\":2148010194},\"frame_id\":\"s14\"},\"child_frame_id\":\"s15\",\"transform\":{\"translation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"rotation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}}}]},\"id\":\"gen-tf_message\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tf_message\",\"type\":\"tf2_msgs/msg/TFMessage\",\"msg\":{\"transforms\":[{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"child_frame_id\":\"s4\",\"transform\":{\"translation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"rotation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},{\"header\":{\"stamp\":{\"sec\":486043,\"nanosec\":2148010194},\"frame_id\":\"s14\"},\"child_frame_id\":\"s15\",\"transform\":{\"translation\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"rotation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}}}]},\"id\":\"gen-tf_message\"}",
+  "model": {
+    "@kind": "tf_message",
+    "ros2tf2.tf_message_transforms.#": "2",
+    "ros2tf2.tf_message_transforms[0].ros2tf2.tf_message_transforms_header_stamp_sec": "40510",
+    "ros2tf2.topic": "/gen/tf_message"
+  }
+}

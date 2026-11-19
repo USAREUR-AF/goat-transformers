@@ -1,0 +1,17 @@
+{
+  "name": "rt-radar_tracks",
+  "from": "ros2-radar-msgs",
+  "to": "ros2-radar-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_tracks\",\"type\":\"radar_msgs/msg/RadarTracks\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tracks\":[{\"uuid\":{\"uuid\":\"BAz/AIA=\"},\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"acceleration\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"size\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"classification\":430,\"position_covariance\":[-0.625,-0.375,-0.125,0.125,0.375,0.625],\"velocity_covariance\":[0.875,1.125,1.375,1.625,1.875,2.125],\"acceleration_covariance\":[2.375,2.625,2.875,3.125,3.375,3.625],\"size_covariance\":[3.875,4.125,4.375,4.625,4.875,5.125]},{\"uuid\":{\"uuid\":\"Kn7/AIA=\"},\"position\":{\"x\":43.301,\"y\":44.308,\"z\":-45.315},\"velocity\":{\"x\":46.322,\"y\":47.329,\"z\":-48.336},\"acceleration\":{\"x\":49.343,\"y\":50.35,\"z\":-51.357},\"size\":{\"x\":52.364,\"y\":53.371,\"z\":-54.378},\"classification\":32216,\"position_covariance\":[-3.625,-3.375,-3.125,-2.875,-2.625,-2.375],\"velocity_covariance\":[-2.125,-1.875,-1.625,-1.375,-1.125,-0.875],\"acceleration_covariance\":[-0.625,-0.375,-0.125,0.125,0.375,0.625],\"size_covariance\":[0.875,1.125,1.375,1.625,1.875,2.125]}]},\"id\":\"gen-radar_tracks\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_tracks\",\"type\":\"radar_msgs/msg/RadarTracks\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tracks\":[{\"uuid\":{\"uuid\":\"BAz/AIA=\"},\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"acceleration\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"size\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"classification\":430,\"position_covariance\":[-0.625,-0.375,-0.125,0.125,0.375,0.625],\"velocity_covariance\":[0.875,1.125,1.375,1.625,1.875,2.125],\"acceleration_covariance\":[2.375,2.625,2.875,3.125,3.375,3.625],\"size_covariance\":[3.875,4.125,4.375,4.625,4.875,5.125]},{\"uuid\":{\"uuid\":\"Kn7/AIA=\"},\"position\":{\"x\":43.301,\"y\":44.308,\"z\":-45.315},\"velocity\":{\"x\":46.322,\"y\":47.329,\"z\":-48.336},\"acceleration\":{\"x\":49.343,\"y\":50.35,\"z\":-51.357},\"size\":{\"x\":52.364,\"y\":53.371,\"z\":-54.378},\"classification\":32216,\"position_covariance\":[-3.625,-3.375,-3.125,-2.875,-2.625,-2.375],\"velocity_covariance\":[-2.125,-1.875,-1.625,-1.375,-1.125,-0.875],\"acceleration_covariance\":[-0.625,-0.375,-0.125,0.125,0.375,0.625],\"size_covariance\":[0.875,1.125,1.375,1.625,1.875,2.125]}]},\"id\":\"gen-radar_tracks\"}",
+  "model": {
+    "@kind": "radar_tracks",
+    "ros2radar.radar_tracks_header_stamp_sec": "40510",
+    "ros2radar.radar_tracks_header_stamp_nanosec": "2147564661",
+    "ros2radar.radar_tracks_header_frame_id": "s3",
+    "ros2radar.radar_tracks_tracks.#": "2",
+    "ros2radar.radar_tracks_tracks[0].ros2radar.radar_tracks_tracks_uuid_uuid": "BAz/AIA=",
+    "ros2radar.topic": "/gen/radar_tracks"
+  }
+}

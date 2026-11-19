@@ -1,0 +1,17 @@
+{
+  "name": "rt-radar_scan",
+  "from": "ros2-radar-msgs",
+  "to": "ros2-radar-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_scan\",\"type\":\"radar_msgs/msg/RadarScan\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"returns\":[{\"range\":-4.125,\"azimuth\":-3.875,\"elevation\":-3.625,\"doppler_velocity\":-3.375,\"amplitude\":-3.125},{\"range\":-2.875,\"azimuth\":-2.625,\"elevation\":-2.375,\"doppler_velocity\":-2.125,\"amplitude\":-1.875}]},\"id\":\"gen-radar_scan\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_scan\",\"type\":\"radar_msgs/msg/RadarScan\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"returns\":[{\"range\":-4.125,\"azimuth\":-3.875,\"elevation\":-3.625,\"doppler_velocity\":-3.375,\"amplitude\":-3.125},{\"range\":-2.875,\"azimuth\":-2.625,\"elevation\":-2.375,\"doppler_velocity\":-2.125,\"amplitude\":-1.875}]},\"id\":\"gen-radar_scan\"}",
+  "model": {
+    "@kind": "radar_scan",
+    "ros2radar.radar_scan_header_stamp_sec": "40510",
+    "ros2radar.radar_scan_header_stamp_nanosec": "2147564661",
+    "ros2radar.radar_scan_header_frame_id": "s3",
+    "ros2radar.radar_scan_returns.#": "2",
+    "ros2radar.radar_scan_returns[0].ros2radar.radar_scan_returns_range": "-4.125",
+    "ros2radar.topic": "/gen/radar_scan"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-magnetometer_reporter",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/magnetometer_reporter\",\"type\":\"mavros_msgs/msg/MagnetometerReporter\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"report\":99,\"confidence\":-3.875,\"compass_id\":209,\"cal_mask\":8,\"cal_status\":63,\"autosaved\":118,\"fitness\":-2.625,\"ofs_x\":-2.375,\"ofs_y\":-2.125,\"ofs_z\":-1.875,\"diag_x\":-1.625,\"diag_y\":-1.375,\"diag_z\":-1.125,\"offdiag_x\":-0.875,\"offdiag_y\":-0.625,\"offdiag_z\":-0.375,\"orientation_confidence\":-0.125,\"old_orientation\":10,\"new_orientation\":65,\"scale_factor\":0.625},\"id\":\"gen-magnetometer_reporter\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/magnetometer_reporter\",\"type\":\"mavros_msgs/msg/MagnetometerReporter\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"report\":99,\"confidence\":-3.875,\"compass_id\":209,\"cal_mask\":8,\"cal_status\":63,\"autosaved\":118,\"fitness\":-2.625,\"ofs_x\":-2.375,\"ofs_y\":-2.125,\"ofs_z\":-1.875,\"diag_x\":-1.625,\"diag_y\":-1.375,\"diag_z\":-1.125,\"offdiag_x\":-0.875,\"offdiag_y\":-0.625,\"offdiag_z\":-0.375,\"orientation_confidence\":-0.125,\"old_orientation\":10,\"new_orientation\":65,\"scale_factor\":0.625},\"id\":\"gen-magnetometer_reporter\"}",
+  "model": {
+    "@kind": "magnetometer_reporter",
+    "ros2mavros.magnetometer_reporter_header_stamp_sec": "40510",
+    "ros2mavros.magnetometer_reporter_header_stamp_nanosec": "2147564661",
+    "ros2mavros.magnetometer_reporter_header_frame_id": "s3",
+    "ros2mavros.magnetometer_reporter_report": "99",
+    "ros2mavros.magnetometer_reporter_confidence": "-3.875",
+    "ros2mavros.topic": "/gen/magnetometer_reporter"
+  }
+}

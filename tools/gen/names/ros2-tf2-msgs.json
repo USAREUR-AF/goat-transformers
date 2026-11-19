@@ -1,0 +1,17 @@
+{
+ "TF2Error:error": "tf2_error_error",
+ "TF2Error:error_string": "tf2_error_error_string",
+ "TFMessage:transforms[]": "tf_message_transforms",
+ "TFMessage:transforms[].child_frame_id": "tf_message_transforms_child_frame_id",
+ "TFMessage:transforms[].header.frame_id": "tf_message_transforms_header_frame_id",
+ "TFMessage:transforms[].header.stamp.nanosec": "tf_message_transforms_header_stamp_nanosec",
+ "TFMessage:transforms[].header.stamp.sec": "tf_message_transforms_header_stamp_sec",
+ "TFMessage:transforms[].transform.rotation.w": "tf_message_transforms_transform_rotation_w",
+ "TFMessage:transforms[].transform.rotation.x": "tf_message_transforms_transform_rotation_x",
+ "TFMessage:transforms[].transform.rotation.y": "tf_message_transforms_transform_rotation_y",
+ "TFMessage:transforms[].transform.rotation.z": "tf_message_transforms_transform_rotation_z",
+ "TFMessage:transforms[].transform.translation.x": "tf_message_transforms_transform_translation_x",
+ "TFMessage:transforms[].transform.translation.y": "tf_message_transforms_transform_translation_y",
+ "TFMessage:transforms[].transform.translation.z": "tf_message_transforms_transform_translation_z",
+ "topic": "topic"
+}

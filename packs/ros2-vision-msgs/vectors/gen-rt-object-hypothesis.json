@@ -1,0 +1,14 @@
+{
+  "name": "rt-object_hypothesis",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/object_hypothesis\",\"type\":\"vision_msgs/msg/ObjectHypothesis\",\"msg\":{\"class_id\":\"s1\",\"score\":2.014},\"id\":\"gen-object_hypothesis\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/object_hypothesis\",\"type\":\"vision_msgs/msg/ObjectHypothesis\",\"msg\":{\"class_id\":\"s1\",\"score\":2.014},\"id\":\"gen-object_hypothesis\"}",
+  "model": {
+    "@kind": "object_hypothesis",
+    "ros2vision.object_hypothesis_class_id": "s1",
+    "ros2vision.object_hypothesis_score": "2.014",
+    "ros2vision.topic": "/gen/object_hypothesis"
+  }
+}

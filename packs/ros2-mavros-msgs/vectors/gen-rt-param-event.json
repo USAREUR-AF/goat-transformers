@@ -1,0 +1,25 @@
+{
+  "name": "rt-param_event",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/param_event\",\"type\":\"mavros_msgs/msg/ParamEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"param_id\":\"s4\",\"value\":{\"type\":154,\"bool_value\":false,\"integer_value\":-864197523091,\"double_value\":8.056,\"string_value\":\"s9\",\"byte_array_value\":[173,228],\"bool_array_value\":[false,true],\"integer_array_value\":[1728395046182,-1851851835195],\"double_array_value\":[16.112,17.119],\"string_array_value\":[\"s18\",\"s19\"]},\"param_index\":56403,\"param_count\":31370},\"id\":\"gen-param_event\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/param_event\",\"type\":\"mavros_msgs/msg/ParamEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"param_id\":\"s4\",\"value\":{\"type\":154,\"bool_value\":false,\"integer_value\":-864197523091,\"double_value\":8.056,\"string_value\":\"s9\",\"bool_array_value\":[false,true],\"integer_array_value\":[1728395046182,-1851851835195],\"double_array_value\":[16.112,17.119],\"string_array_value\":[\"s18\",\"s19\"]},\"param_index\":56403,\"param_count\":31370},\"id\":\"gen-param_event\"}",
+  "model": {
+    "@kind": "param_event",
+    "ros2mavros.param_event_header_stamp_sec": "40510",
+    "ros2mavros.param_event_header_stamp_nanosec": "2147564661",
+    "ros2mavros.param_event_header_frame_id": "s3",
+    "ros2mavros.param_event_param_id": "s4",
+    "ros2mavros.param_event_value_type": "154",
+    "ros2mavros.param_event_value_bool_array_value.#": "2",
+    "ros2mavros.param_event_value_bool_array_value[0].ros2mavros.param_event_value_bool_array_value_value": "0",
+    "ros2mavros.param_event_value_integer_array_value.#": "2",
+    "ros2mavros.param_event_value_integer_array_value[0].ros2mavros.param_event_value_integer_array_value_value": "1728395046182",
+    "ros2mavros.param_event_value_double_array_value.#": "2",
+    "ros2mavros.param_event_value_double_array_value[0].ros2mavros.param_event_value_double_array_value_value": "16.112",
+    "ros2mavros.param_event_value_string_array_value.#": "2",
+    "ros2mavros.param_event_value_string_array_value[0].ros2mavros.param_event_value_string_array_value_value": "s18",
+    "ros2mavros.topic": "/gen/param_event"
+  }
+}

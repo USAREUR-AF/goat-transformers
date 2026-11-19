@@ -1,0 +1,17 @@
+{
+  "name": "rt-waypoint",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/waypoint\",\"type\":\"mavros_msgs/msg/Waypoint\",\"msg\":{\"frame\":190,\"command\":48245,\"is_current\":true,\"autocontinue\":false,\"param1\":-3.875,\"param2\":-3.625,\"param3\":-3.375,\"param4\":-3.125,\"x_lat\":-9.063,\"y_long\":10.07,\"z_alt\":11.077},\"id\":\"gen-waypoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/waypoint\",\"type\":\"mavros_msgs/msg/Waypoint\",\"msg\":{\"frame\":190,\"command\":48245,\"is_current\":true,\"autocontinue\":false,\"param1\":-3.875,\"param2\":-3.625,\"param3\":-3.375,\"param4\":-3.125,\"x_lat\":-9.063,\"y_long\":10.07,\"z_alt\":11.077},\"id\":\"gen-waypoint\"}",
+  "model": {
+    "@kind": "waypoint",
+    "ros2mavros.waypoint_frame": "190",
+    "ros2mavros.waypoint_command": "48245",
+    "ros2mavros.waypoint_is_current": "1",
+    "ros2mavros.waypoint_autocontinue": "0",
+    "ros2mavros.waypoint_param1": "-3.875",
+    "ros2mavros.topic": "/gen/waypoint"
+  }
+}

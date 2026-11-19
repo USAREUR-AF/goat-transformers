@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_info",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_info\",\"type\":\"mavros_msgs/msg/VehicleInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"available_info\":99,\"sysid\":154,\"compid\":209,\"autopilot\":8,\"type\":63,\"system_status\":118,\"base_mode\":173,\"custom_mode\":2147929188,\"mode\":\"s12\",\"mode_id\":2148010194,\"capabilities\":1728395046182,\"flight_sw_version\":2148091200,\"middleware_sw_version\":2148131703,\"os_sw_version\":2148172206,\"board_version\":2148212709,\"flight_custom_version\":\"s19\",\"vendor_id\":56403,\"product_id\":31370,\"uid\":2716049358286},\"id\":\"gen-vehicle_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_info\",\"type\":\"mavros_msgs/msg/VehicleInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"available_info\":99,\"sysid\":154,\"compid\":209,\"autopilot\":8,\"type\":63,\"system_status\":118,\"base_mode\":173,\"custom_mode\":2147929188,\"mode\":\"s12\",\"mode_id\":2148010194,\"capabilities\":1728395046182,\"flight_sw_version\":2148091200,\"middleware_sw_version\":2148131703,\"os_sw_version\":2148172206,\"board_version\":2148212709,\"flight_custom_version\":\"s19\",\"vendor_id\":56403,\"product_id\":31370,\"uid\":2716049358286},\"id\":\"gen-vehicle_info\"}",
+  "model": {
+    "@kind": "vehicle_info",
+    "ros2mavros.vehicle_info_header_stamp_sec": "40510",
+    "ros2mavros.vehicle_info_header_stamp_nanosec": "2147564661",
+    "ros2mavros.vehicle_info_header_frame_id": "s3",
+    "ros2mavros.vehicle_info_available_info": "99",
+    "ros2mavros.vehicle_info_sysid": "154",
+    "ros2mavros.topic": "/gen/vehicle_info"
+  }
+}

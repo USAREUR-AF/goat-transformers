@@ -71,6 +71,11 @@ MODULE_OF = {
     "builtin_interfaces": "ros2builtin",
 }
 REPO_OF = {"builtin_interfaces": "rcl_interfaces"}     # every other package: common_interfaces
+PKG_DIR = {}            # package -> directory under its repository (--package-at); default the name
+REPO_LICENSE = {"common_interfaces": "Apache License 2.0", "rcl_interfaces": "Apache License 2.0"}
+LICENSE_FILES = {}      # repository -> licence files read (--license-file); default as below
+LICENSE_NOTES = collections.OrderedDict()   # repository -> licence statement for PROVENANCE.md
+EXTRA_FILES = {}        # package -> other files read as evidence (--evidence-file)
 REPO_URL = {"common_interfaces": "https://github.com/ros2/common_interfaces",
             "rcl_interfaces": "https://github.com/ros2/rcl_interfaces",
             "rosbridge_suite": "https://github.com/RobotWebTools/rosbridge_suite"}
@@ -170,9 +175,14 @@ def parse_msg(pkg, name, path):
     return m
 
 
+def pkg_dir(pkg):
+    """(repository, directory of the package under it; "" when the package is the root)."""
+    return REPO_OF.get(pkg, "common_interfaces"), PKG_DIR.get(pkg, pkg)
+
+
 def msg_files(src, pkg):
-    repo = REPO_OF.get(pkg, "common_interfaces")
-    return repo, sorted(glob.glob(os.path.join(src, repo, pkg, "msg", "*.msg")))
+    repo, d = pkg_dir(pkg)
+    return repo, sorted(glob.glob(os.path.join(src, repo, d, "msg", "*.msg")))
 
 
 class Catalog:
@@ -183,8 +193,8 @@ class Catalog:
     def get(self, pkg, name):
         k = (pkg, name)
         if k not in self.msgs:
-            repo = REPO_OF.get(pkg, "common_interfaces")
-            path = os.path.join(self.src, repo, pkg, "msg", name + ".msg")
+            repo, d = pkg_dir(pkg)
+            path = os.path.join(self.src, repo, d, "msg", name + ".msg")
             if not os.path.isfile(path):
                 fail("message %s/%s not found at %s" % (pkg, name, path))
             self.msgs[k] = parse_msg(pkg, name, path)
@@ -1399,6 +1409,66 @@ def geojson_cross_vectors(fmt, pkg, kinds):
     return out
 
 
+CROSS_POINT = {"lat": 47.0625, "lon": 8.53125, "hae": 431.5}    # exact in binary
+
+
+def set_path(obj, loc, value):
+    parts = loc.split(".")[1:]          # the locator starts at the envelope's `msg`
+    cur = obj
+    for p in parts[:-1]:
+        cur = cur.setdefault(p, collections.OrderedDict())
+    cur[parts[-1]] = value
+
+
+def generic_cross(fmt, module, kinds, cat, names):
+    """Vectors for kinds bound to core lat/lon (and hae): to geojson from a full sample
+    message, and from geojson into the kind the pack's requires select."""
+    by = {k.msg.name: k for k in kinds}
+    out, gout = [], []
+    for name in names:
+        if name not in by:
+            fail("--cross %s: no such kind in %s" % (name, fmt))
+        k = by[name]
+        bound = [x for x in k.lines if isinstance(x, FLine) and x.key in CORE_KEYS]
+        if {x.key for x in bound} - set(CROSS_POINT) or not {"lat", "lon"} <= {x.key for x in bound}:
+            fail("--cross %s: binds %s; only lat, lon, hae are handled" % (name, [x.key for x in bound]))
+        obj = Sampler(cat).message(k.msg, 0)
+        for x in bound:
+            set_path(obj, x.loc, CROSS_POINT[x.key])
+        inp = dump(envelope(k, "/geo", obj, []))
+        coords = [CROSS_POINT["lon"], CROSS_POINT["lat"]] + (
+            [CROSS_POINT["hae"]] if any(x.key == "hae" for x in bound) else [])
+        exp = '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s]},"properties":{}}' % (
+            ",".join(fmt_float(c) for c in coords))
+        model = collections.OrderedDict([("@kind", k.name)])
+        for x in bound:
+            model[x.key] = fmt_float(CROSS_POINT[x.key])
+        out.append(("gen-x-%s-to-geojson.json" % k.name.replace("_", "-"), vec_obj(
+            "x-%s-to-geojson" % k.name, fmt, "geojson", inp, exp, model,
+            source="tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to "
+                   "a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); "
+                   "geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)")))
+    # from geojson: uid, lat, lon, hae and callsign; the first kind whose requires hold
+    have = {"uid", "lat", "lon", "hae", "callsign"}
+    sel = next((k for k in kinds if set(k.requires) <= have), None)
+    if sel is not None:
+        msgobj = collections.OrderedDict()
+        for x in sel.lines:
+            if isinstance(x, FLine) and x.key in CROSS_POINT:
+                set_path(msgobj, x.loc, CROSS_POINT[x.key])
+        exp = dump(envelope(sel, None, msgobj, []))
+        gout.append(("gen-geojson-to-%s-%s.json" % (fmt, sel.name.replace("_", "-")), vec_obj(
+            "gen-geojson-to-%s-%s" % (fmt, sel.name), "geojson", fmt,
+            '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s,%s]},'
+            '"properties":{"callsign":"ROVER"},"id":"r-1"}' % tuple(
+                fmt_float(CROSS_POINT[c]) for c in ("lon", "lat", "hae")),
+            exp, {"lat": fmt_float(CROSS_POINT["lat"]), "uid": "r-1"},
+            source="tools/gen/ros2msg2pack.py: the kind is the first in pack order whose requires "
+                   "the entity holds (%s); op and type are its when values; uid and callsign have "
+                   "no line in the pack; no topic is known" % " ".join(sel.requires))))
+    return out, gout
+
+
 # --------------------------------------------------------------------------
 # Documents
 # --------------------------------------------------------------------------
@@ -1439,11 +1509,15 @@ def emit_provenance(args, fmt, pkg, files):
     a.append("")
     a.append("## Licenses, as the sources state them")
     a.append("")
-    a.append("- common_interfaces and rcl_interfaces: each package directory of common_interfaces")
-    a.append("  holds a `LICENSE` file, and rcl_interfaces holds one at its root, that begins")
-    a.append('  "Apache License / Version 2.0, January 2004" and is the full text of the Apache')
-    a.append("  License, Version 2.0. Each package's `package.xml` states")
-    a.append("  `<license>Apache License 2.0</license>`. The .msg files carry no header.")
+    if {"common_interfaces", "rcl_interfaces"} & set(repos):
+        a.append("- common_interfaces and rcl_interfaces: each package directory of common_interfaces")
+        a.append("  holds a `LICENSE` file, and rcl_interfaces holds one at its root, that begins")
+        a.append('  "Apache License / Version 2.0, January 2004" and is the full text of the Apache')
+        a.append("  License, Version 2.0. Each package's `package.xml` states")
+        a.append("  `<license>Apache License 2.0</license>`. The .msg files carry no header.")
+    for r, note in LICENSE_NOTES.items():
+        if r in repos:
+            a.append("- %s: %s" % (r, note))
     a.append("- rosbridge_suite: `LICENSE` at the root begins \"BSD 3-Clause License\" and")
     a.append('  "Copyright (c) The Rosbridge Authors"; `message_conversion.py` carries the header')
     a.append('  "Software License Agreement (BSD License)", "Copyright (c) 2012, Willow Garage, Inc."')
@@ -1634,6 +1708,9 @@ def run_package(args, cat, pkg, maps, reqs):
         explicit = reqs.get((pkg, msg.name))
         if explicit:
             requires = explicit
+        elif any(isinstance(x, FLine) and x.key == "lat" for x in lines) and \
+                any(isinstance(x, FLine) and x.key == "lon" for x in lines):
+            requires = ["lat", "lon"]
         elif lines:
             requires = [lines[0].key]
         else:
@@ -1660,15 +1737,16 @@ def run_package(args, cat, pkg, maps, reqs):
                    for k in kinds if k.msg.name == mname for x in iter_lines(k.lines)):
             fail("--map %s/%s:%s matched no field" % (pkg, mname, path))
     # sources
-    repo = REPO_OF.get(pkg, "common_interfaces")
-    msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s/msg; field names, types and array forms only" % (
-        pkg, REPO_URL[repo], args.ref[repo], "Apache License 2.0", args.commit[repo], pkg)
+    repo, pdir = pkg_dir(pkg)
+    msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s; field names, types and array forms only" % (
+        pkg, REPO_URL[repo], args.ref[repo], REPO_LICENSE[repo], args.commit[repo],
+        (pdir + "/msg") if pdir else "msg")
     deps = sorted({(m.pkg) for k in kinds for (p, _), m in cat.closure(k.msg).items() if p != pkg})
     sources = [msg_src]
     for d in deps:
         r = REPO_OF.get(d, "common_interfaces")
-        sources.append("ROS 2 interface package %s (messages %s refers to), %s %s at commit %s, Apache License 2.0" % (
-            d, pkg, REPO_URL[r], args.ref[r], args.commit[r]))
+        sources.append("ROS 2 interface package %s (messages %s refers to), %s %s at commit %s, %s" % (
+            d, pkg, REPO_URL[r], args.ref[r], args.commit[r], REPO_LICENSE[r]))
     sources.append("rosbridge v2.1.0 Protocol Specification, ROSBRIDGE_PROTOCOL.md, %s %s at commit %s, BSD 3-Clause License; JSON form of a message and of the publish operation" % (
         REPO_URL["rosbridge_suite"], args.ref["rosbridge_suite"], args.commit["rosbridge_suite"]))
     # write
@@ -1687,6 +1765,12 @@ def run_package(args, cat, pkg, maps, reqs):
     for fname, v in vecs:
         write_json(os.path.join(vec_dir, fname), v)
     cross = geojson_cross_vectors(fmt, pkg, kinds)
+    if pkg in args.cross:
+        more, gmore = generic_cross(fmt, module, kinds, cat, args.cross[pkg])
+        for fname, v in more:
+            write_json(os.path.join(vec_dir, fname), v)
+        vecs += more
+        cross += gmore
     for fname, v in cross:
         write_json(os.path.join(gj_dir, fname), v)
     # provenance: every .msg the pack reads, the licence files, the rosbridge files
@@ -1701,12 +1785,15 @@ def run_package(args, cat, pkg, maps, reqs):
                 files.append((r, rel))
     files.sort()
     lic = set()
-    for r, rel in list(files):
-        p = rel.split("/")[0]
-        lp = (r, "LICENSE") if r == "rcl_interfaces" else (r, p + "/LICENSE")
-        lic.add(lp)
-        lic.add((r, p + "/package.xml"))
-    files = sorted(lic) + files + [("rosbridge_suite", f) for f in ROSBRIDGE_FILES]
+    for p_ in sorted({m.pkg for k in kinds for m in cat.closure(k.msg).values()}):
+        r, d = pkg_dir(p_)
+        if r in LICENSE_FILES:
+            for lf in LICENSE_FILES[r]:
+                lic.add((r, lf))
+        else:
+            lic.add((r, "LICENSE") if r == "rcl_interfaces" else (r, d + "/LICENSE"))
+        lic.add((r, (d + "/package.xml") if d else "package.xml"))
+    files = sorted(lic) + files + EXTRA_FILES.get(pkg, []) + [("rosbridge_suite", f) for f in ROSBRIDGE_FILES]
     with open(os.path.join(pack_dir, "PROVENANCE.md"), "w", encoding="utf-8") as fh:
         fh.write(emit_provenance(args, fmt, pkg, files))
     # pack.md
@@ -1782,11 +1869,53 @@ def main():
     ap.add_argument("--model-dir", help="model/ of the checkout (core.def, track.def)")
     ap.add_argument("--geojson-pack", help="packs/geojson/pack.def of the checkout")
     ap.add_argument("--date-read", default="2026-11-19")
+    ap.add_argument("--repo", action="append", default=[], help="<repository>=<address>")
+    ap.add_argument("--package-at", action="append", default=[],
+                    help="<package>=<repository>:<directory> ('.' when the package is the root)")
+    ap.add_argument("--module", action="append", default=[], help="<package>=<module name>")
+    ap.add_argument("--license", action="append", default=[], help="<repository>=<licence name>")
+    ap.add_argument("--license-file", action="append", default=[],
+                    help="<repository>=<path of a licence file>; repeatable")
+    ap.add_argument("--license-note", action="append", default=[],
+                    help="<repository>=<licence statement for PROVENANCE.md>")
+    ap.add_argument("--evidence-file", action="append", default=[],
+                    help="<package>=<repository>:<path> of a file read as evidence for a binding")
+    ap.add_argument("--cross", action="append", default=[],
+                    help="<package>/<Msg>: write geojson vectors for a kind bound to lat and lon")
     args = ap.parse_args()
     args.model_dir = args.model_dir or os.path.join(args.out, "model")
     args.geojson_pack = args.geojson_pack or os.path.join(args.out, "packs", "geojson", "pack.def")
     args.ref = dict(x.split("=", 1) for x in args.ref)
     args.commit = dict(x.split("=", 1) for x in args.commit)
+    for x in args.repo:
+        k, v = x.split("=", 1)
+        REPO_URL[k] = v
+    for x in args.package_at:
+        k, v = x.split("=", 1)
+        r, d = v.split(":", 1)
+        REPO_OF[k] = r
+        PKG_DIR[k] = "" if d == "." else d
+    for x in args.module:
+        k, v = x.split("=", 1)
+        MODULE_OF[k] = v
+    for x in args.license:
+        k, v = x.split("=", 1)
+        REPO_LICENSE[k] = v
+    for x in args.license_file:
+        k, v = x.split("=", 1)
+        LICENSE_FILES.setdefault(k, []).append(v)
+    for x in args.license_note:
+        k, v = x.split("=", 1)
+        LICENSE_NOTES[k] = v
+    for x in args.evidence_file:
+        k, v = x.split("=", 1)
+        r, f = v.split(":", 1)
+        EXTRA_FILES.setdefault(k, []).append((r, f))
+    cross = {}
+    for x in args.cross:
+        pk, mn = x.split("/", 1)
+        cross.setdefault(pk, []).append(mn)
+    args.cross = cross
     for r in REPO_URL:
         if r not in args.ref or r not in args.commit:
             fail("--ref and --commit are needed for %s" % r)

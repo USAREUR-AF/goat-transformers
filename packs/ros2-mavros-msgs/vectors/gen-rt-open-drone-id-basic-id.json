@@ -1,0 +1,17 @@
+{
+  "name": "rt-open_drone_id_basic_id",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_basic_id\",\"type\":\"mavros_msgs/msg/OpenDroneIDBasicID\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id_or_mac\":\"s4\",\"id_type\":154,\"ua_type\":209,\"uas_id\":\"s7\"},\"id\":\"gen-open_drone_id_basic_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_basic_id\",\"type\":\"mavros_msgs/msg/OpenDroneIDBasicID\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id_or_mac\":\"s4\",\"id_type\":154,\"ua_type\":209,\"uas_id\":\"s7\"},\"id\":\"gen-open_drone_id_basic_id\"}",
+  "model": {
+    "@kind": "open_drone_id_basic_id",
+    "ros2mavros.open_drone_id_basic_id_header_stamp_sec": "40510",
+    "ros2mavros.open_drone_id_basic_id_header_stamp_nanosec": "2147564661",
+    "ros2mavros.open_drone_id_basic_id_header_frame_id": "s3",
+    "ros2mavros.open_drone_id_basic_id_id_or_mac": "s4",
+    "ros2mavros.open_drone_id_basic_id_id_type": "154",
+    "ros2mavros.topic": "/gen/open_drone_id_basic_id"
+  }
+}

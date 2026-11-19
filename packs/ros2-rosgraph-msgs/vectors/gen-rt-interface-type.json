@@ -1,0 +1,15 @@
+{
+  "name": "rt-interface_type",
+  "from": "ros2-rosgraph-msgs",
+  "to": "ros2-rosgraph-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/interface_type\",\"type\":\"rosgraph_msgs/msg/InterfaceType\",\"msg\":{\"name\":\"s1\",\"hash\":{\"version\":245,\"value\":\"Awn/AIA=\"}},\"id\":\"gen-interface_type\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/interface_type\",\"type\":\"rosgraph_msgs/msg/InterfaceType\",\"msg\":{\"name\":\"s1\",\"hash\":{\"version\":245,\"value\":\"Awn/AIA=\"}},\"id\":\"gen-interface_type\"}",
+  "model": {
+    "@kind": "interface_type",
+    "ros2rosgraph.interface_type_name": "s1",
+    "ros2rosgraph.interface_type_hash_version": "245",
+    "ros2rosgraph.interface_type_hash_value": "Awn/AIA=",
+    "ros2rosgraph.topic": "/gen/interface_type"
+  }
+}

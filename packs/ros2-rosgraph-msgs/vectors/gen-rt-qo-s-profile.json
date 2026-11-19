@@ -1,0 +1,17 @@
+{
+  "name": "rt-qo_s_profile",
+  "from": "ros2-rosgraph-msgs",
+  "to": "ros2-rosgraph-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/qo_s_profile\",\"type\":\"rosgraph_msgs/msg/QoSProfile\",\"msg\":{\"depth\":2147524158,\"deadline\":{\"sec\":81013,\"nanosec\":2147605164},\"lifespan\":{\"sec\":162019,\"nanosec\":2147686170},\"history\":209,\"reliability\":8,\"durability\":63,\"liveliness\":118,\"liveliness_lease_duration\":{\"sec\":405037,\"nanosec\":2147929188}},\"id\":\"gen-qo_s_profile\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/qo_s_profile\",\"type\":\"rosgraph_msgs/msg/QoSProfile\",\"msg\":{\"depth\":2147524158,\"deadline\":{\"sec\":81013,\"nanosec\":2147605164},\"lifespan\":{\"sec\":162019,\"nanosec\":2147686170},\"history\":209,\"reliability\":8,\"durability\":63,\"liveliness\":118,\"liveliness_lease_duration\":{\"sec\":405037,\"nanosec\":2147929188}},\"id\":\"gen-qo_s_profile\"}",
+  "model": {
+    "@kind": "qo_s_profile",
+    "ros2rosgraph.qo_s_profile_depth": "2147524158",
+    "ros2rosgraph.qo_s_profile_deadline_sec": "81013",
+    "ros2rosgraph.qo_s_profile_deadline_nanosec": "2147605164",
+    "ros2rosgraph.qo_s_profile_lifespan_sec": "162019",
+    "ros2rosgraph.qo_s_profile_lifespan_nanosec": "2147686170",
+    "ros2rosgraph.topic": "/gen/qo_s_profile"
+  }
+}

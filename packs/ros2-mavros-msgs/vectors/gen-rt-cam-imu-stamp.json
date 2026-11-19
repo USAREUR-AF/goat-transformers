@@ -1,0 +1,15 @@
+{
+  "name": "rt-cam_imu_stamp",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cam_imu_stamp\",\"type\":\"mavros_msgs/msg/CamIMUStamp\",\"msg\":{\"frame_stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_seq_id\":121516},\"id\":\"gen-cam_imu_stamp\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cam_imu_stamp\",\"type\":\"mavros_msgs/msg/CamIMUStamp\",\"msg\":{\"frame_stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_seq_id\":121516},\"id\":\"gen-cam_imu_stamp\"}",
+  "model": {
+    "@kind": "cam_imu_stamp",
+    "ros2mavros.cam_imu_stamp_frame_stamp_sec": "40510",
+    "ros2mavros.cam_imu_stamp_frame_stamp_nanosec": "2147564661",
+    "ros2mavros.cam_imu_stamp_frame_seq_id": "121516",
+    "ros2mavros.topic": "/gen/cam_imu_stamp"
+  }
+}

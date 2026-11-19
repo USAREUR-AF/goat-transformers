@@ -1,0 +1,12 @@
+{
+  "name": "rt-command_code",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command_code\",\"type\":\"mavros_msgs/msg/CommandCode\",\"id\":\"gen-command_code\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command_code\",\"type\":\"mavros_msgs/msg/CommandCode\",\"id\":\"gen-command_code\"}",
+  "model": {
+    "@kind": "command_code",
+    "ros2mavros.topic": "/gen/command_code"
+  }
+}

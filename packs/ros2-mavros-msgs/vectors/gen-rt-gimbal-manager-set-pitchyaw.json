@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_set_pitchyaw",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_pitchyaw\",\"type\":\"mavros_msgs/msg/GimbalManagerSetPitchyaw\",\"msg\":{\"target_system\":190,\"target_component\":245,\"flags\":2147605164,\"gimbal_device_id\":99,\"pitch\":-3.875,\"yaw\":-3.625,\"pitch_rate\":-3.375,\"yaw_rate\":-3.125},\"id\":\"gen-gimbal_manager_set_pitchyaw\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_pitchyaw\",\"type\":\"mavros_msgs/msg/GimbalManagerSetPitchyaw\",\"msg\":{\"target_system\":190,\"target_component\":245,\"flags\":2147605164,\"gimbal_device_id\":99,\"pitch\":-3.875,\"yaw\":-3.625,\"pitch_rate\":-3.375,\"yaw_rate\":-3.125},\"id\":\"gen-gimbal_manager_set_pitchyaw\"}",
+  "model": {
+    "@kind": "gimbal_manager_set_pitchyaw",
+    "ros2mavros.gimbal_manager_set_pitchyaw_target_system": "190",
+    "ros2mavros.gimbal_manager_set_pitchyaw_target_component": "245",
+    "ros2mavros.gimbal_manager_set_pitchyaw_flags": "2147605164",
+    "ros2mavros.gimbal_manager_set_pitchyaw_gimbal_device_id": "99",
+    "ros2mavros.gimbal_manager_set_pitchyaw_pitch": "-3.875",
+    "ros2mavros.topic": "/gen/gimbal_manager_set_pitchyaw"
+  }
+}

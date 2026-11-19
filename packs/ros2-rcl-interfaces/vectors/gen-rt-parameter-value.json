@@ -1,0 +1,25 @@
+{
+  "name": "rt-parameter_value",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_value\",\"type\":\"rcl_interfaces/msg/ParameterValue\",\"msg\":{\"type\":190,\"bool_value\":false,\"integer_value\":-370370367039,\"double_value\":4.028,\"string_value\":\"s5\",\"byte_array_value\":[209,8],\"bool_array_value\":[false,true],\"integer_array_value\":[1234567890130,-1358024679143],\"double_array_value\":[-12.084,13.091],\"string_array_value\":[\"s14\",\"s15\"]},\"id\":\"gen-parameter_value\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_value\",\"type\":\"rcl_interfaces/msg/ParameterValue\",\"msg\":{\"type\":190,\"bool_value\":false,\"integer_value\":-370370367039,\"double_value\":4.028,\"string_value\":\"s5\",\"bool_array_value\":[false,true],\"integer_array_value\":[1234567890130,-1358024679143],\"double_array_value\":[-12.084,13.091],\"string_array_value\":[\"s14\",\"s15\"]},\"id\":\"gen-parameter_value\"}",
+  "model": {
+    "@kind": "parameter_value",
+    "ros2rcl.parameter_value_type_2": "190",
+    "ros2rcl.parameter_value_bool_value_2": "0",
+    "ros2rcl.parameter_value_integer_value_2": "-370370367039",
+    "ros2rcl.parameter_value_double_value_2": "4.028",
+    "ros2rcl.parameter_value_string_value_2": "s5",
+    "ros2rcl.parameter_value_bool_array_value_2.#": "2",
+    "ros2rcl.parameter_value_bool_array_value_2[0].ros2rcl.parameter_value_bool_array_value_value_2": "0",
+    "ros2rcl.parameter_value_integer_array_value_2.#": "2",
+    "ros2rcl.parameter_value_integer_array_value_2[0].ros2rcl.parameter_value_integer_array_value_value_2": "1234567890130",
+    "ros2rcl.parameter_value_double_array_value_2.#": "2",
+    "ros2rcl.parameter_value_double_array_value_2[0].ros2rcl.parameter_value_double_array_value_value_2": "-12.084",
+    "ros2rcl.parameter_value_string_array_value_2.#": "2",
+    "ros2rcl.parameter_value_string_array_value_2[0].ros2rcl.parameter_value_string_array_value_value_2": "s14",
+    "ros2rcl.topic": "/gen/parameter_value"
+  }
+}

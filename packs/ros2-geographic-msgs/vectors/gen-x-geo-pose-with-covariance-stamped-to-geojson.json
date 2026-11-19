@@ -1,0 +1,14 @@
+{
+  "name": "x-geo_pose_with_covariance_stamped-to-geojson",
+  "from": "ros2-geographic-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"geographic_msgs/msg/GeoPoseWithCovarianceStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"pose\":{\"position\":{\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":431.5},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"covariance\":[11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322]}}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "geo_pose_with_covariance_stamped",
+    "lat": "47.0625",
+    "lon": "8.53125",
+    "hae": "431.5"
+  }
+}

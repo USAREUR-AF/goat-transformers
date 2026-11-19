@@ -1,0 +1,25 @@
+{
+  "name": "rt-radar_track",
+  "from": "ros2-radar-msgs",
+  "to": "ros2-radar-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_track\",\"type\":\"radar_msgs/msg/RadarTrack\",\"msg\":{\"uuid\":{\"uuid\":\"AQP/AIA=\"},\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"velocity\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"acceleration\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"size\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"classification\":9993,\"position_covariance\":[-1.375,-1.125,-0.875,-0.625,-0.375,-0.125],\"velocity_covariance\":[0.125,0.375,0.625,0.875,1.125,1.375],\"acceleration_covariance\":[1.625,1.875,2.125,2.375,2.625,2.875],\"size_covariance\":[3.125,3.375,3.625,3.875,4.125,4.375]},\"id\":\"gen-radar_track\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_track\",\"type\":\"radar_msgs/msg/RadarTrack\",\"msg\":{\"uuid\":{\"uuid\":\"AQP/AIA=\"},\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"velocity\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"acceleration\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"size\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"classification\":9993,\"position_covariance\":[-1.375,-1.125,-0.875,-0.625,-0.375,-0.125],\"velocity_covariance\":[0.125,0.375,0.625,0.875,1.125,1.375],\"acceleration_covariance\":[1.625,1.875,2.125,2.375,2.625,2.875],\"size_covariance\":[3.125,3.375,3.625,3.875,4.125,4.375]},\"id\":\"gen-radar_track\"}",
+  "model": {
+    "@kind": "radar_track",
+    "ros2radar.radar_track_uuid_uuid": "AQP/AIA=",
+    "ros2radar.radar_track_position_x": "2.014",
+    "ros2radar.radar_track_position_y": "-3.021",
+    "ros2radar.radar_track_position_z": "4.028",
+    "ros2radar.radar_track_velocity_x": "5.035",
+    "ros2radar.radar_track_position_covariance.#": "6",
+    "ros2radar.radar_track_position_covariance[0].ros2radar.radar_track_position_covariance_value": "-1.375",
+    "ros2radar.radar_track_velocity_covariance.#": "6",
+    "ros2radar.radar_track_velocity_covariance[0].ros2radar.radar_track_velocity_covariance_value": "0.125",
+    "ros2radar.radar_track_acceleration_covariance.#": "6",
+    "ros2radar.radar_track_acceleration_covariance[0].ros2radar.radar_track_acceleration_covariance_value": "1.625",
+    "ros2radar.radar_track_size_covariance.#": "6",
+    "ros2radar.radar_track_size_covariance[0].ros2radar.radar_track_size_covariance_value": "3.125",
+    "ros2radar.topic": "/gen/radar_track"
+  }
+}

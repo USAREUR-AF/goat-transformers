@@ -1,0 +1,18 @@
+{
+  "name": "rt-radar_sector",
+  "from": "ros2-marine-sensor-msgs",
+  "to": "ros2-marine-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_sector\",\"type\":\"marine_sensor_msgs/msg/RadarSector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"angle_start\":-4.125,\"angle_increment\":-3.875,\"time_increment\":{\"sec\":243025,\"nanosec\":2147767176},\"scan_time\":{\"sec\":324031,\"nanosec\":2147848182},\"range_min\":-2.625,\"range_max\":-2.375,\"intensities\":[{\"echoes\":[-2.125]},{\"echoes\":[-1.875]}]},\"id\":\"gen-radar_sector\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_sector\",\"type\":\"marine_sensor_msgs/msg/RadarSector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"angle_start\":-4.125,\"angle_increment\":-3.875,\"time_increment\":{\"sec\":243025,\"nanosec\":2147767176},\"scan_time\":{\"sec\":324031,\"nanosec\":2147848182},\"range_min\":-2.625,\"range_max\":-2.375,\"intensities\":[{\"echoes\":[-2.125]},{\"echoes\":[-1.875]}]},\"id\":\"gen-radar_sector\"}",
+  "model": {
+    "@kind": "radar_sector",
+    "ros2marinesensor.radar_sector_header_stamp_sec": "40510",
+    "ros2marinesensor.radar_sector_header_stamp_nanosec": "2147564661",
+    "ros2marinesensor.radar_sector_header_frame_id": "s3",
+    "ros2marinesensor.radar_sector_angle_start": "-4.125",
+    "ros2marinesensor.radar_sector_angle_increment": "-3.875",
+    "ros2marinesensor.radar_sector_intensities.#": "2",
+    "ros2marinesensor.topic": "/gen/radar_sector"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-actuator_control",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_control\",\"type\":\"mavros_msgs/msg/ActuatorControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"group_mix\":99,\"controls\":[-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125]},\"id\":\"gen-actuator_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_control\",\"type\":\"mavros_msgs/msg/ActuatorControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"group_mix\":99,\"controls\":[-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125]},\"id\":\"gen-actuator_control\"}",
+  "model": {
+    "@kind": "actuator_control",
+    "ros2mavros.actuator_control_header_stamp_sec": "40510",
+    "ros2mavros.actuator_control_header_stamp_nanosec": "2147564661",
+    "ros2mavros.actuator_control_header_frame_id": "s3",
+    "ros2mavros.actuator_control_group_mix": "99",
+    "ros2mavros.actuator_control_controls.#": "8",
+    "ros2mavros.actuator_control_controls[0].ros2mavros.actuator_control_controls_value": "-3.875",
+    "ros2mavros.topic": "/gen/actuator_control"
+  }
+}

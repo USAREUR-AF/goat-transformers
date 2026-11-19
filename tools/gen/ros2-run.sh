@@ -221,3 +221,312 @@ python3 -I "$GEN/ros2msg2pack.py" --src "$SRC" --out "$ROOT" \
   --names-dir "$GEN/names" --notes-dir "$GEN/notes" \
   --date-read 2026-11-19 \
   "${ARGS[@]}"
+
+# ---------------------------------------------------------------------------
+# Second run: fourteen more packs, from the repositories below and the three above
+# (ros2-tf2-msgs, ros2-unique-identifier-msgs, ros2-rcl-interfaces, ros2-rosgraph-msgs,
+# ros2-statistics-msgs, ros2-lifecycle-msgs, ros2-vision-msgs, ros2-radar-msgs,
+# ros2-ackermann-msgs, ros2-gps-msgs, ros2-geographic-msgs, ros2-marine-acoustic-msgs,
+# ros2-marine-sensor-msgs, ros2-mavros-msgs). It writes nothing the first run writes.
+#
+#   geometry2               https://github.com/ros2/geometry2  branch jazzy
+#       f702874b1c8535d6a038230ab2cda0ba5d521ebd  BSD 3-Clause (LICENSE); package tf2_msgs
+#   unique_identifier_msgs  https://github.com/ros2/unique_identifier_msgs  branch jazzy
+#       901599ee92c2ee949f42a5c5d821c92b3e515d69  BSD 3-Clause (LICENSE)
+#   vision_msgs             https://github.com/ros-perception/vision_msgs  branch jazzy
+#       adbf56af9f77e3c8ab2552e25dc99e4a8a77fb27  Apache License 2.0 (LICENSE)
+#   radar_msgs              https://github.com/ros-perception/radar_msgs  branch ros2
+#       47d2f26906ef38fa15ada352aea6b5aad547781d  Apache License 2.0 (LICENSE)
+#   ackermann_msgs          https://github.com/ros-drivers/ackermann_msgs  branch ros2
+#       81a5f2d9ae1c1048216678b9dc3db6afc0cb815e  BSD (LICENSE, package.xml)
+#   gps_umd                 https://github.com/swri-robotics/gps_umd  branch ros2-devel
+#       94d2b361be86198a8029def6677cee8e4a82189b  BSD (LICENSE, package.xml); package gps_msgs
+#   geographic_info         https://github.com/ros-geographic-info/geographic_info  branch jazzy
+#       24806adc767414eb3a34a58aefeb648ee415b09a  BSD (package.xml; no LICENSE file; the
+#       same authors' geodesy sources carry the BSD text); package geographic_msgs
+#   marine_msgs             https://github.com/apl-ocean-engineering/marine_msgs  branch ros2
+#       14bddb417a51767600e3feada3bc7fc378d0e6f9  BSD 3-Clause (LICENSE.txt)
+#   mavros                  https://github.com/mavlink/mavros  branch ros2
+#       3e580649f4b6344d428796711694fd7f0a6f31ff  BSD, GPLv3 or LGPLv3 (LICENSE.md); package mavros_msgs
+fetch geometry2 https://github.com/ros2/geometry2 jazzy f702874b1c8535d6a038230ab2cda0ba5d521ebd
+fetch unique_identifier_msgs https://github.com/ros2/unique_identifier_msgs jazzy 901599ee92c2ee949f42a5c5d821c92b3e515d69
+fetch vision_msgs https://github.com/ros-perception/vision_msgs jazzy adbf56af9f77e3c8ab2552e25dc99e4a8a77fb27
+fetch radar_msgs https://github.com/ros-perception/radar_msgs ros2 47d2f26906ef38fa15ada352aea6b5aad547781d
+fetch ackermann_msgs https://github.com/ros-drivers/ackermann_msgs ros2 81a5f2d9ae1c1048216678b9dc3db6afc0cb815e
+fetch gps_umd https://github.com/swri-robotics/gps_umd ros2-devel 94d2b361be86198a8029def6677cee8e4a82189b
+fetch geographic_info https://github.com/ros-geographic-info/geographic_info jazzy 24806adc767414eb3a34a58aefeb648ee415b09a
+fetch marine_msgs https://github.com/apl-ocean-engineering/marine_msgs ros2 14bddb417a51767600e3feada3bc7fc378d0e6f9
+fetch mavros https://github.com/mavlink/mavros ros2 3e580649f4b6344d428796711694fd7f0a6f31ff
+
+(cd "$SRC" && sha256sum --quiet -c -) <<'SUMS'
+ad81ded414166b6e1cec6ec4318c2892086272b96510dadc21266ba07c9d18fa  ackermann_msgs/LICENSE
+c6f225a36fd24e24c4e827570d14683d563153fb28e41119bc83484f756d6f9c  ackermann_msgs/msg/AckermannDrive.msg
+6c01c1039574709c37ed5b3082412c414aeefc92656e380ebc8c796bd1a24976  ackermann_msgs/msg/AckermannDriveStamped.msg
+cde7eaf57ebb185072fc7b07e6bb4860683e4587743b8d1b6bbbb9414e47fce0  ackermann_msgs/package.xml
+1afe3e985feead30f62aac31c5455b76f8b95babb77bf38a765a150758fa8afa  geographic_info/geodesy/src/geodesy/props.py
+d5359b0288ac92cb7b25284ced7e7d7705bb59ce99124002e6cce530dcc084f4  geographic_info/geographic_msgs/msg/BoundingBox.msg
+3edcc3c60c978abc3a35938e4ab583b545e4d87f90f14db473da40e97ddd6de9  geographic_info/geographic_msgs/msg/GeoPath.msg
+5da33ee983077753c2616185cc9071c36e7de567e785fb86be79f2d4f4e47300  geographic_info/geographic_msgs/msg/GeoPoint.msg
+f360b8e90aec1b2b67afaae14c95c18c270383111dc11d3005a3d79049ac9f98  geographic_info/geographic_msgs/msg/GeoPointStamped.msg
+e73d777935ab82ff6b76c0e5a15c1fb7dc31d30712dc2a1fd6614ea5f06ccf64  geographic_info/geographic_msgs/msg/GeoPose.msg
+39f7f3dadb24343241b63a476883f4254e2093ffb5984ce02c343f5099733ff8  geographic_info/geographic_msgs/msg/GeoPoseStamped.msg
+1afaec8b28c9e0aa60458c9fc4ccba045bff57ca486678a7a7bb49127cff1046  geographic_info/geographic_msgs/msg/GeoPoseWithCovariance.msg
+ae310557467dcc15edac58aa292ffbae83a2ae96ab148dc1a7850c3a8a0af554  geographic_info/geographic_msgs/msg/GeoPoseWithCovarianceStamped.msg
+9c1f2c8fd656e6f199d6d86850531780409c2f8c28c097b6a0a595dcd5a037d9  geographic_info/geographic_msgs/msg/GeographicMap.msg
+82ac354a459c9b990b48b4247f6b66530042c83c4d781806051e9ceb35cffb3c  geographic_info/geographic_msgs/msg/GeographicMapChanges.msg
+50192914557b487e304ca9f5bbc4000d526a2bf0a7927e235f18678c0ab09555  geographic_info/geographic_msgs/msg/KeyValue.msg
+12a8fcf3b96c38dd0adafd562f554cf87e82a1ccb4dee7a979c364d72a34c565  geographic_info/geographic_msgs/msg/MapFeature.msg
+9905809c17d40f489e8182d847fe2d48cb873366ca8903296f8c1b74a1b933e5  geographic_info/geographic_msgs/msg/RouteNetwork.msg
+96b9b219a733ea29ebaafc29d4a3bba375eb2ba8e7a0e9e4e8efebbe83c7b6f0  geographic_info/geographic_msgs/msg/RoutePath.msg
+9414a48a553ee0f71292cca3c3616f9aa41f22ea473c087a1dd9707a72729405  geographic_info/geographic_msgs/msg/RouteSegment.msg
+5f6a486c31e5e18dd11af7fe0081c64b86ddd808976f3cb3ab04864fd045dab2  geographic_info/geographic_msgs/msg/WayPoint.msg
+2a1ec28ec1c580002256afc5f657e300dd7c59b4b8912641c5065d5b8b92a2ac  geographic_info/geographic_msgs/package.xml
+1b1e5ebcad699924203feced7205a4bbdf4f153d34065a19a8a4e107cf1e154b  geometry2/LICENSE
+f1f3603b877ed51a5a28b264257e9bc37312e32a767838f52310d07027d819ab  geometry2/tf2_msgs/msg/TF2Error.msg
+f3fca610a59b31ee4c7b740522ecdd0fd8c76002170088111409e4df513f1dfc  geometry2/tf2_msgs/msg/TFMessage.msg
+ac78cb0ff503bc07b20358bbe7bcb7475db7b6f0d87d2a84e321b92755bfb14e  geometry2/tf2_msgs/package.xml
+26670bbaee6bf3c08d7ef22e7a50e74cf92d4f4f77918a4afbcc20dc77ba939f  gps_umd/LICENSE
+594d1d8ce5fd68bd93498f96e67396d09188ff4f3824f5b72e910e703e5935f4  gps_umd/gps_msgs/msg/GPSDJson.msg
+3044450058f2c8d2746a095bdfb6a8ae450f6acf830f18834556db3f6468430a  gps_umd/gps_msgs/msg/GPSDRaw10v0.msg
+d1de146b5253e318663ce2ce3f64e1dc4de7212346042d738d41c8a94420eed4  gps_umd/gps_msgs/msg/GPSDRaw10v1.msg
+524481a0a2ecc2f1c06ed446c8bd5bed785ca2d503bf4c701e69ab0fa7f0193f  gps_umd/gps_msgs/msg/GPSDRaw11v0.msg
+f2a506b524e75f6e4f581a2389680cc7660a7bb920294aaaa915e007079b505e  gps_umd/gps_msgs/msg/GPSDRaw12v0.msg
+a41428b8d3e5af8968e4ec7b8523bb2e5ad6c1e3a66a8aaa20197e9fe2623f2d  gps_umd/gps_msgs/msg/GPSDRaw13v0.msg
+072a30054868075786941f560a5748d5d2d037a48ad9c496112dba68081591c5  gps_umd/gps_msgs/msg/GPSDRaw14v0.msg
+03811c24721850527d15fee3351638d44aba01496254f7115503d6a032eb9a1d  gps_umd/gps_msgs/msg/GPSDRaw16v0.msg
+3fd06ab66f5775c985cd870a019b66d4c156b2cb505bbef13d2a556a997cc741  gps_umd/gps_msgs/msg/GPSDRaw16v1.msg
+add2d463a5bc1410447e738c758a7795d20fb28d01e8e2ae8d7790f82e145b39  gps_umd/gps_msgs/msg/GPSDRaw9v0.msg
+12a0ae3a166f5916bea133876b9d577edfce40a9d0c120ba34a63c906548642a  gps_umd/gps_msgs/msg/GPSDRaw9v1.msg
+eba58895f5cef598a79603adbf99d395b9d26919c9b03651685bb4aa6b86e687  gps_umd/gps_msgs/msg/GPSFix.msg
+913a0e97e13d849584265f8ec1179f15480665554c658eb1e1d318cc4b101d4f  gps_umd/gps_msgs/msg/GPSStatus.msg
+131a34f5718c1ab5f74fe69966d65405d99735bc7f14c95f31bbbaf4144453f5  gps_umd/gps_msgs/package.xml
+4e96cc42fb8f5cfbc77902b5fb2220d293c6896dec906ab7b2a988c8d58818cf  marine_msgs/LICENSE.txt
+6cd959404d0ec0a363ca57fd848294b186db8362741d4a35e92247b03d2e6afc  marine_msgs/marine_acoustic_msgs/msg/DetectionFlag.msg
+735c15844b9d22e7ba6013199474d929e82f654754900d52a674ac92575400c1  marine_msgs/marine_acoustic_msgs/msg/Dvl.msg
+644ff84d931ba88e7b13298f98fbcbe4447f2a49f82d979e643bbaf7687e1bfc  marine_msgs/marine_acoustic_msgs/msg/PingInfo.msg
+5f4f817ebe14ab641360745baa2aac6fc32e55f1709d9bee3f6bad14a843e618  marine_msgs/marine_acoustic_msgs/msg/ProjectedSonarImage.msg
+4fdeeb039b592380c2a299bfec59a663f9e31d686abfa71eed9581e0d76ce9ea  marine_msgs/marine_acoustic_msgs/msg/RawSonarImage.msg
+58c91e753b437d9b1cf7d2ebb4ce674f8d7fa1e7e69b72e1872292462f16624c  marine_msgs/marine_acoustic_msgs/msg/SonarDetections.msg
+f3bf3961f1f68054ea0a6221c7b41db723c1ccef643ab7bd0d82efc704a0732a  marine_msgs/marine_acoustic_msgs/msg/SonarImageData.msg
+0255e0c49961e397cea1a839c7fd2a3e91e294c9f0020b19b3a51b06be32c139  marine_msgs/marine_acoustic_msgs/msg/SonarRanges.msg
+d9e90bfcfb1922e6bf84673b946f186d9470a56c982d2a1cc27e52bc57e07dd0  marine_msgs/marine_acoustic_msgs/package.xml
+8d2577deaca0b6fb41cc87fb7124f13f176c87e311f903ce586efade125f584d  marine_msgs/marine_sensor_msgs/msg/RadarEcho.msg
+e50aacf3ca4cd4a259cbd7f99eea9598e7d134e971ea61ae6fb27631399082f1  marine_msgs/marine_sensor_msgs/msg/RadarSector.msg
+0b5016762c4699f364594f40934d5bf26ef2737e0692577a69fbf1b10835be98  marine_msgs/marine_sensor_msgs/msg/TurbidityNTU.msg
+085a94ee82dcf9a70835ce90f59f61dcaed59741cf2719455ea8da44ac2d7dfc  marine_msgs/marine_sensor_msgs/package.xml
+a2b0498e8df6e1f25d2d6b6f0d52363cc6fca8dc308dc9b4a6d19538f5817d9c  mavros/LICENSE-BSD.txt
+89a9a4fc3cf00cf4364ee1ab726325f8d2573327fa44ecc9ed1590232e939b2c  mavros/LICENSE.md
+a700721634cca4b0487d91857a520a4ddc7aa1a11be14820758c34fb0a3854b8  mavros/mavros/src/plugins/home_position.cpp
+68a63079f5b91ace94b64514f5960007b28746a09fa7b8159a7d17c28644fe1b  mavros/mavros_msgs/msg/ADSBTransceiverHealthReport.msg
+a2c07fdc10771361150a9fbf5ac4e5050d68e059eb7a424aaf313f086ce2df16  mavros/mavros_msgs/msg/ADSBVehicle.msg
+db46ca84f51002beb161baf5c3910359b7ff0215f8744e488d67c51963e25d5d  mavros/mavros_msgs/msg/ActuatorControl.msg
+0a087be834dea2e36eda59a806c978ad588b198afe23ae8c6147873ba4c4757a  mavros/mavros_msgs/msg/Altitude.msg
+33517f9d7dd65d0f0e81ca9010259aca65f0c7f7327aafac7b2f13efd659178a  mavros/mavros_msgs/msg/AttitudeTarget.msg
+2d1ea9de0c1ff589ab3adbceeb05fb9fb7f323227ccda12f249cee790ccd8cce  mavros/mavros_msgs/msg/CamIMUStamp.msg
+8a3adea13d52d00dedd7e199c1564a2523746329900e2487eb337c6f4bf5fba3  mavros/mavros_msgs/msg/CameraImageCaptured.msg
+3e8a9ce30aa8455c8c0bd767f687402a3f84ddbbc8ee4e9cfc4fc4a51687ebcc  mavros/mavros_msgs/msg/CellularStatus.msg
+56c7129e09820366b14e5993abfb44d61b3c94a79e71267f8ea7bd5cbf5231d3  mavros/mavros_msgs/msg/CommandCode.msg
+5e8955e1de8b983b17298fbd2386b2f18993ecfbf40106f97fa4276ebdd108c5  mavros/mavros_msgs/msg/CompanionProcessStatus.msg
+b6a165b79d6eba0bbef4d59df623be7c1599fd78a3e19f03bf01b36003526249  mavros/mavros_msgs/msg/DebugValue.msg
+31fcf33f04a92dacab23390a5b7d7da9af5b97bb4f52c0bb12948475da8b0171  mavros/mavros_msgs/msg/ESCInfo.msg
+47193d6e9a2fa0fadbc603cbd33412b4e5108dbf99e5316da7935703c16d40ad  mavros/mavros_msgs/msg/ESCInfoItem.msg
+1b0bceecf4dd47330571640c08d84b60a5f98b449f66e39ddbe3904dbe251659  mavros/mavros_msgs/msg/ESCStatus.msg
+6ec0faf7a5677a932a1420b7fe946b330e42b8dcc419c6b34a52a2f434c80721  mavros/mavros_msgs/msg/ESCStatusItem.msg
+7f4a35e4721cca3ce3de5df434c2580356abcc33f8b9baf441350271f12e439c  mavros/mavros_msgs/msg/ESCTelemetry.msg
+d796e79464bb9f06903563bdd4b313032f80226a4a7cf152e5d5245bd6a5f846  mavros/mavros_msgs/msg/ESCTelemetryItem.msg
+66a6a59623be0c4d6d7dfbef9aa763f8f3ae08c28366f02d82f479c16e82e528  mavros/mavros_msgs/msg/EstimatorStatus.msg
+030a409d293dbd452067a054a62132d4459e8abf760d5e09b6b9d31c78b38f82  mavros/mavros_msgs/msg/ExtendedState.msg
+5a829a620bdf63cfd066ce9f39b26a1eaa804f6a36a4d2f2ef5b9b3de52dd853  mavros/mavros_msgs/msg/FileEntry.msg
+673ed27c0c05b47d960785aed3d0e6e5a82a99fbc158dc099579e87b587eb1f3  mavros/mavros_msgs/msg/GPSINPUT.msg
+51d5a9a1c848fea0f767902ece0720d06131b873abf95c60812d9c3bb94e2890  mavros/mavros_msgs/msg/GPSRAW.msg
+b243bedd7cb3671decaef0af9de8735438885fdf2de74b4dcd5e8e709f252feb  mavros/mavros_msgs/msg/GPSRTK.msg
+8461e905a07b2970db56578a9dafc5d20e6271e45c13c50508356e8691cb428e  mavros/mavros_msgs/msg/GimbalDeviceAttitudeStatus.msg
+caad7ca6ef3873776d3862c0f98e98a8c6153b3f5459666958b4f07cc1e3c852  mavros/mavros_msgs/msg/GimbalDeviceInformation.msg
+95ac8127b7f7a328ee9a8d818eb210cca56459a4f66d8280b6dfd16a6f24f325  mavros/mavros_msgs/msg/GimbalDeviceSetAttitude.msg
+09f711f4796650dde365e2f73afc36df9b28c10baabad8d169598ea176e5655a  mavros/mavros_msgs/msg/GimbalManagerInformation.msg
+7b5b82cc206fb7dcba85c7dffa7c6781999afec97247777536e5d806709701b2  mavros/mavros_msgs/msg/GimbalManagerSetAttitude.msg
+69d380ef030a4c1ae85a13abe10985ae9b1473b06f7d8c37e40473aef5d9bc6c  mavros/mavros_msgs/msg/GimbalManagerSetPitchyaw.msg
+6b4e967fa41442ced1abee46addbd788600cefd8e489e18eb343b054cebb54d3  mavros/mavros_msgs/msg/GimbalManagerStatus.msg
+b782d6151eb978688c5ef0fbfd652a2fcd6522dade0f319c9c55edba39b6eac4  mavros/mavros_msgs/msg/GlobalPositionTarget.msg
+b68b83e345e734577268ed5d1eb7792c582cd08227f6d45fc044e2a0b56a0840  mavros/mavros_msgs/msg/HilActuatorControls.msg
+d678c972bc4afb005d8105b1b63af16fdb514032b6560c69bb70f1fdf2278c6b  mavros/mavros_msgs/msg/HilControls.msg
+89328e9a593b086304fc0ae73d8e94dd15ad0a58d34f761a27f15b36d56b4d5a  mavros/mavros_msgs/msg/HilGPS.msg
+f81ca8913e5f642de0222e749404c08f4af08efeb9577cff61f77caab13b6e9f  mavros/mavros_msgs/msg/HilSensor.msg
+dd9c2c883f3584c0ad5efd7bba74ee550f4ec0607e38f6f47a8229e864ce0c12  mavros/mavros_msgs/msg/HilStateQuaternion.msg
+aaa38aa9ff4986859ba88463789e4db2d347129b0e96055ffd739137cdb08143  mavros/mavros_msgs/msg/HomePosition.msg
+c74f9c850c44d0532129239e3ac690fea00aaf5b407a93dd6c3e0571e98f62c5  mavros/mavros_msgs/msg/LandingTarget.msg
+176cb274d6f5a93acb29ec5c490f27ae2465f1ad6de254c8a95f182f5c4aaeb5  mavros/mavros_msgs/msg/LogData.msg
+7f897d7bb7b18b6f1c0d6b41e3ac2a3ff2d72ebc3e21177a5336a3a28efee742  mavros/mavros_msgs/msg/LogEntry.msg
+deb627293cdd741e32085adb75e5a1f2af95df18f8b52e90a830b29182ac1342  mavros/mavros_msgs/msg/MagnetometerReporter.msg
+dfe6f70b5c66fa3753880293b593281b0b5aecfcc223ae2109a76ddf7f595a97  mavros/mavros_msgs/msg/ManualControl.msg
+556ef846c6f554940a88592fd4fd760ffcf917f7b67feb14c2a41c8121972d98  mavros/mavros_msgs/msg/Mavlink.msg
+4922199b1d9e2bd3b9428b0c8dd4aad07c1893a925ee174c912cbf65ccbeaaa8  mavros/mavros_msgs/msg/MountControl.msg
+f4e91d7aa9bfcaf33531b8856b013c8af4e2699b4dbff884d6fbcaa4f6e9214b  mavros/mavros_msgs/msg/NavControllerOutput.msg
+7980f4d08d3ef08b87d1ada31ea0d710995b106e2b932a3c50db263b2a207b9e  mavros/mavros_msgs/msg/ObstacleDistance3D.msg
+acf292500b69cf80a6f160d0a6677d2e4a654e4faa619b01f2286f6871040b3b  mavros/mavros_msgs/msg/OnboardComputerStatus.msg
+a5fcc5ebfca67c1d94566e5472ee08296cc65d980825513d19e66621b77cdc6d  mavros/mavros_msgs/msg/OpenDroneIDBasicID.msg
+1711cd9f51b96adb78bbc472014c246cd3a6102373512fbf210d41d0a8c2b893  mavros/mavros_msgs/msg/OpenDroneIDOperatorID.msg
+74f75bbcf50277633123e37cde4ac1da678bd3abb132846aea1fe6a4fbf20c81  mavros/mavros_msgs/msg/OpenDroneIDSelfID.msg
+39cb59ceb2cf8ca5c7f2bcbd6d5cf7f856948a655522174f69a5c50bb575a14f  mavros/mavros_msgs/msg/OpenDroneIDSystem.msg
+2af142ba828d8cde7a51533a1ccfdb6f0c771c1ef9f2607348ddc88fbaf62d9f  mavros/mavros_msgs/msg/OpenDroneIDSystemUpdate.msg
+51563d0c593ebac51b8a0feb1df3dec58b7ff02a29b6e652d840a9848b1c9a5a  mavros/mavros_msgs/msg/OpticalFlow.msg
+c4f459f25afe6c1879269f11a47706137665165081b3f1ef4054351c247bf5fd  mavros/mavros_msgs/msg/OpticalFlowRad.msg
+529a3f7d6182cd16cbb873b97c02b018394b3de767243e7e5cef9f3d67e1a493  mavros/mavros_msgs/msg/OverrideRCIn.msg
+7f69bbaecd911d03ebf00f88146286dd5ec6cd7b63c386b7764d487283ca4ce7  mavros/mavros_msgs/msg/Param.msg
+04fe662daf395d4578ec70bfbbfcb8d893fde80340eccd21cfcd63545af240b9  mavros/mavros_msgs/msg/ParamEvent.msg
+f61fa3f893a8bc9fad574aa6520ae938f80d101d5c8c034e964da19a0631996a  mavros/mavros_msgs/msg/ParamValue.msg
+3a8ad13a3789cd40ab5b8b7d4faf08522bd81c5f5a5386de3af2068dca2b2a2a  mavros/mavros_msgs/msg/PlayTuneV2.msg
+078af11684b4c6587fbc2dd068a334f3f4e8e571d990fff024daacaaf8c41664  mavros/mavros_msgs/msg/PositionTarget.msg
+d7f3a260e8a09770b69b9f8f207fd854023f9751e79ed9997822a100651537cb  mavros/mavros_msgs/msg/RCIn.msg
+c421decbb758a07891c172e0d618f16787753329038c68e421cdd2594d04b2c9  mavros/mavros_msgs/msg/RCOut.msg
+347ac5aded27204d3ded308cdc25a77b238e2c886bc8bd1dc4894a4e4621b2c3  mavros/mavros_msgs/msg/RTCM.msg
+aad7d5e1200f446c8cabe82254da223d1c704ea34d37f53a2d920944fedcd695  mavros/mavros_msgs/msg/RTKBaseline.msg
+f5f4ac4bbbb49a58bc4e53e2b427095106b6cd0fd5c880780207a696a7e695b0  mavros/mavros_msgs/msg/RadioStatus.msg
+5d6c5d7629727c1d37d8aae3a041d1a02849115a1a7f644258546a6a9f88dd25  mavros/mavros_msgs/msg/State.msg
+85f9dce80a8db5a146dce637e6f2e70f081d0a1a83876f98e0401ed9018f9683  mavros/mavros_msgs/msg/StatusEvent.msg
+66b7f0c29743a0ac2a547cb95f0aaf44a323546e9737f01be45b079137030ef5  mavros/mavros_msgs/msg/StatusText.msg
+5ca709327ac3d71be8ea8d1f0331e6b25c2b0e0b91365faab5b75e4ce09c8328  mavros/mavros_msgs/msg/SysStatus.msg
+15fcdf8047836691959a1d450ed047fb0cb76a9114cee8e1011f843158f4aa86  mavros/mavros_msgs/msg/TerrainData.msg
+6ca53e97b9b31f9736140fc895b5f21df61dd586f31a8a3e412e294ad82e0cda  mavros/mavros_msgs/msg/TerrainReport.msg
+0df5fd8cc037f814295c3bde4baef4a6b8398a5430daffaacb6448bcee8a0b76  mavros/mavros_msgs/msg/TerrainRequest.msg
+161f4761d8ef6131eca016c1cebdb0ce8665a4d119ffd1e858aa385a038767b3  mavros/mavros_msgs/msg/Thrust.msg
+23dbe8ae02bbf4d4028389888717e9ea114fce834aefee815c673e040825e0da  mavros/mavros_msgs/msg/TimesyncStatus.msg
+6e5c8a96ca6a47c26a661c885e646b12ef8c7b03138e571eec7d4d1ab7b8d165  mavros/mavros_msgs/msg/Trajectory.msg
+84d21d734256e8d31f75383a2020e11bb80927ba0c80ffb05aeb83554f698e63  mavros/mavros_msgs/msg/Tunnel.msg
+76d985b75ada20c56e3125776770c3295ec115fc6ef830aec5f818b3892b5596  mavros/mavros_msgs/msg/VehicleInfo.msg
+af56a37481311570b105a7a14ebcca88c587166c0864758b4bc5a959f0d4f704  mavros/mavros_msgs/msg/VfrHud.msg
+123fa2648837da5dfc318a8db473aca4d69e367a6c6b42d36a4891a1ae08bbea  mavros/mavros_msgs/msg/Vibration.msg
+c318526332c5c0fcb4ed64a9031c11d5e61acf71d54121b7b9dccafa22e5c607  mavros/mavros_msgs/msg/Waypoint.msg
+aea998935f93cdd5a94bc436ba972d135788ce61c190ad8976845afb29a5523c  mavros/mavros_msgs/msg/WaypointList.msg
+c5fa4e0e85e0b14ab84509724fd84c8813e5e51d195818b3067b1dba15eccfc8  mavros/mavros_msgs/msg/WaypointReached.msg
+11b886cd8c1f642d708b4e545b175761ea2d9e79c1b075a18bd14515351278fd  mavros/mavros_msgs/msg/WheelOdomStamped.msg
+3131eb64fdadf1821e199c6de4af36d4116c2a66e40b9d454c590cbaed648992  mavros/mavros_msgs/package.xml
+c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4  radar_msgs/LICENSE
+7f28a18e1bcb71988aad1c0efe3dac08e5eaa2f4522c3c23ce6e7666569f8942  radar_msgs/msg/RadarReturn.msg
+b78322dbfe16a9001e8092de3643fbffd209b84b13ec7d6fb671bedbd21db8ca  radar_msgs/msg/RadarScan.msg
+7ce1e6811b4ff5076a8fbc3cea16b6b753167539a942992314e07a0051cab0c6  radar_msgs/msg/RadarTrack.msg
+77fe3789d82e7362ff82d4de9dafb77b96e4ee7b1da1ac29e67b5dadbe3f0aa3  radar_msgs/msg/RadarTracks.msg
+61383d33a88610dc41832f588ad06adb7a38166d8d52f95dbeabcf149013b235  radar_msgs/package.xml
+1fe05a274a589325985f1320b44462c3379e3b60f8be54c73266bbbd2dd6a9cd  rcl_interfaces/lifecycle_msgs/msg/State.msg
+aa87f7f95771b2b83ef65456121b66740179a65b4ee0384c5c9d6cf4a8b4c0b5  rcl_interfaces/lifecycle_msgs/msg/Transition.msg
+596a8000e7b79d9f2ec804df3307ebfbf85edd96f55058c71e53c8c4a948b481  rcl_interfaces/lifecycle_msgs/msg/TransitionDescription.msg
+de8755d1a661503ce7eab99d5d338291f0f162cfdd8ad5adc14eeb1a6f62551f  rcl_interfaces/lifecycle_msgs/msg/TransitionEvent.msg
+300fb86d1b1fac7fd0717972379277062ff0f42bca0f5e4e40357f6b4aa3d4b7  rcl_interfaces/lifecycle_msgs/package.xml
+1ab3ea0d423cece5169061a33388ce45a0c00a67df45995e78450b3563ea6bdf  rcl_interfaces/rcl_interfaces/msg/FloatingPointRange.msg
+a7a970ee3f920e209d245868ef4ea0e959b5d600fd7e95f27913c3ab1ddfbace  rcl_interfaces/rcl_interfaces/msg/IntegerRange.msg
+505555153e477cf78a31b1f0463cbdc6b3fc0dc677afd42454340ebb4f50b186  rcl_interfaces/rcl_interfaces/msg/ListParametersResult.msg
+55cfd6664610a922e7f549920b2c4a515b50e83c868238e1aaf4a27413d7b374  rcl_interfaces/rcl_interfaces/msg/Log.msg
+3ff1f091ebd9b65e3ca225bd91cd016457401415bee99286fb0b1cf5d6c5bcc2  rcl_interfaces/rcl_interfaces/msg/LoggerLevel.msg
+2d49c337bdbbcfefccc5d24796b2eef8a025511ddff8a899c84e5c84638d5261  rcl_interfaces/rcl_interfaces/msg/Parameter.msg
+66146fcc63a324ef4769b954f2ce6c9f92941274a40874275fb31b960db65e50  rcl_interfaces/rcl_interfaces/msg/ParameterDescriptor.msg
+99f239f007b55c675d4a21fb654a690f30d52395da48cf18c038384bbe857a29  rcl_interfaces/rcl_interfaces/msg/ParameterEvent.msg
+f46edb36a5d3aab37c1767300451e5d2355f2392a637ac8cce35ac507bc12636  rcl_interfaces/rcl_interfaces/msg/ParameterEventDescriptors.msg
+abf7010b64fe2a087d3fd64627261d475323b8c0e765636f175ddb21ca6f4edc  rcl_interfaces/rcl_interfaces/msg/ParameterType.msg
+5f7c95ce49c1c8a39b8c15171346de7bd1dc046a60ac33b2508cac1add5eedff  rcl_interfaces/rcl_interfaces/msg/ParameterValue.msg
+79a9bd8065dca9a5bc6f1740b9209579e5537ecf5c659fc2741c8c207798794d  rcl_interfaces/rcl_interfaces/msg/SetLoggerLevelsResult.msg
+fb29a40cbabef53f6de34ccdc294053557b5d073bef47ea8b43d268e806c3e5a  rcl_interfaces/rcl_interfaces/msg/SetParametersResult.msg
+ced0475529c2e6cb54b0332101e8b4a4429c6f79f71f1c2d1b0d92b83d9453be  rcl_interfaces/rcl_interfaces/package.xml
+c25eb0d13b798d7b43ccd1a3a6ee398117dfc42f6a7b54b163f80b87bc31a1a0  rcl_interfaces/rosgraph_msgs/msg/Action.msg
+a8d1d14b0057bea4040f2e9662279e6ee270bd9fd6d00e1b2bcfb449bf4d521c  rcl_interfaces/rosgraph_msgs/msg/Clock.msg
+9cb4b7bd37f7b55c33e4bf713d6754b31b962efd930bd7863c692a07f79fe242  rcl_interfaces/rosgraph_msgs/msg/Graph.msg
+ad4254ebeabbe03a427daa8eb7ae29af0e43a893128e81c14ef59b6bd40e14d7  rcl_interfaces/rosgraph_msgs/msg/InterfaceType.msg
+bbb49b7563bd21a46c7396612d7f864ff107afcda76465d5268bda99899ed68a  rcl_interfaces/rosgraph_msgs/msg/Node.msg
+ec8c8fd026b207726c86043be766296ac7d2b3bafe00be0b50107f3873249298  rcl_interfaces/rosgraph_msgs/msg/QoSProfile.msg
+c96a75eb1368fbe833e077c4ea43a17f8f2a85f5b0aa20a38c605bc826517c77  rcl_interfaces/rosgraph_msgs/msg/Service.msg
+62dee70bf4de7aff59a4c27b5df44c5533a732846cd7422da57ccc675fae1391  rcl_interfaces/rosgraph_msgs/msg/Topic.msg
+00e1273c383a62270c20c2384e9a50743d824af7d5b3af2be4564678eae8ddeb  rcl_interfaces/rosgraph_msgs/msg/TypeHash.msg
+fded8f7b97d39d3aeb1d1b55104cbd1f0ad5057d6f5dfb0c0a9c95f0b35827e1  rcl_interfaces/rosgraph_msgs/package.xml
+0fff26b05d1d54ad86307193a0b1ba643d922bec0d534dc9e4698208ab289e03  rcl_interfaces/statistics_msgs/msg/MetricsMessage.msg
+c60e5ffb625c38c1ba59377d489a78215f36c67d48413f25d5ddd8e0f3748fec  rcl_interfaces/statistics_msgs/msg/StatisticDataPoint.msg
+a6ce81d2f70e36e5635c303231adec5315eabde8bd0193614e8e280e97688c27  rcl_interfaces/statistics_msgs/msg/StatisticDataType.msg
+2df0c1749fe3a16c4e008b5ca2ff9ceba627627116102382fd098dddb4f3e24a  rcl_interfaces/statistics_msgs/package.xml
+7519e06b59f0f95cce60868686174422abf04cce419453477d77255b58d434d8  unique_identifier_msgs/LICENSE
+2777f29769eb0958dfd86a6c1bd15af95ecb48a8b935513abefa6f1dd807e143  unique_identifier_msgs/msg/UUID.msg
+e12288f3066fdbceecb1da85d12faa8e45bce0fb9eccb9f8030ed6d20731e291  unique_identifier_msgs/package.xml
+c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4  vision_msgs/LICENSE
+74ed6347e3c8f74b884a81c5a36925c0e320836c1a5ea55df2b8d03574cc25b1  vision_msgs/vision_msgs/msg/BoundingBox2D.msg
+0045d22aad0e9ab13e54b365e56b1a8c99829086a5126a4ede2c1916850ffb44  vision_msgs/vision_msgs/msg/BoundingBox2DArray.msg
+30502a6e247a84d87b4c2c0262fd07ce6ba3fa8d6d24e6e39c1522d7e469c450  vision_msgs/vision_msgs/msg/BoundingBox3D.msg
+dac9423ac1a15724f3a068a3987e9702ddcff6ea7eedacc92d7352aa24ba478d  vision_msgs/vision_msgs/msg/BoundingBox3DArray.msg
+05c1206c9db5728e8e6a8528354bbc6a9d2c5be9147268227c887019c7ecaf34  vision_msgs/vision_msgs/msg/Classification.msg
+868ffec733235c01bb5bfba3f3c528f193ea0fb3069650aaf95383a7fa9a8200  vision_msgs/vision_msgs/msg/Detection2D.msg
+bb2eeef88b466103b89a7ae9f927164d2064e9d94e8455bb98ad2b69130331ae  vision_msgs/vision_msgs/msg/Detection2DArray.msg
+68885eeededfc57231f171f2b3eb97f0d0a18580ca08307bc60b9b87216df985  vision_msgs/vision_msgs/msg/Detection3D.msg
+077f34a634e6de6654265af5b26508eea1105bef72395cffae50fde61b713c41  vision_msgs/vision_msgs/msg/Detection3DArray.msg
+96cf2fa183f8f20a7356fd18163d2a8e875306c799f3fadec08169e5e487f3aa  vision_msgs/vision_msgs/msg/LabelInfo.msg
+6224cb18c032fe062d18859089444f4e1f311ab478e45d937fdfac18a980695b  vision_msgs/vision_msgs/msg/ObjectHypothesis.msg
+162639c82b24a8fc4f3e93a4dc91704928d5cff9d39d169515bb748eccf4d573  vision_msgs/vision_msgs/msg/ObjectHypothesisWithPose.msg
+6b99220dccc3193a603fb40d6a2880b4de67fb2175121c5683d0bde9f71e3733  vision_msgs/vision_msgs/msg/Point2D.msg
+0cdb3bc9872a5c3379a5122c14d03ec13d59b92752d3b444cc41592492258ab2  vision_msgs/vision_msgs/msg/Pose2D.msg
+ae82ce087350e3ee1c0f0f8bb8f6e6c2e08f94dea6d984dec579fd72663bdb72  vision_msgs/vision_msgs/msg/VisionClass.msg
+5a47776dfea36e48958dbde43ab55e9cb94fb337b0f68b4fcc444807f333b23d  vision_msgs/vision_msgs/msg/VisionInfo.msg
+b69e5eb38183cbcf2cf0b729a21ea6217eb76a48bd0613c00539a598a5f35872  vision_msgs/vision_msgs/package.xml
+SUMS
+
+MORE=(tf2_msgs unique_identifier_msgs rcl_interfaces rosgraph_msgs statistics_msgs lifecycle_msgs
+      vision_msgs radar_msgs ackermann_msgs gps_msgs geographic_msgs marine_acoustic_msgs
+      marine_sensor_msgs mavros_msgs)
+ARGS=()
+for p in "${MORE[@]}"; do ARGS+=(--package "$p"); done
+# geographic_msgs: every kind that holds one GeoPoint for the whole message binds it
+# (evidence in notes/ros2-geographic-msgs.md); mavros_msgs/HomePosition binds its
+# GeoPoint `geo` (notes/ros2-mavros-msgs.md).
+G=geographic_msgs
+for k in "GeoPoint:" "GeoPointStamped:position." "GeoPose:position." "GeoPoseStamped:pose.position." \
+         "GeoPoseWithCovariance:pose.position." "GeoPoseWithCovarianceStamped:pose.pose.position." \
+         "WayPoint:position."; do
+  n="${k%%:*}"; pre="${k#*:}"
+  ARGS+=(--map "$G/$n:${pre}latitude=lat" --map "$G/$n:${pre}longitude=lon"
+         --map "$G/$n:${pre}altitude=hae" --cross "$G/$n")
+done
+ARGS+=(--map mavros_msgs/HomePosition:geo.latitude=lat --map mavros_msgs/HomePosition:geo.longitude=lon
+       --map mavros_msgs/HomePosition:geo.altitude=hae --cross mavros_msgs/HomePosition
+       --evidence-file mavros_msgs=mavros:mavros/src/plugins/home_position.cpp)
+
+python3 -I "$GEN/ros2msg2pack.py" --src "$SRC" --out "$ROOT" \
+  --ref common_interfaces=5.3.8 --commit common_interfaces=a941f14bb318d8d904505ed935ccbb97f24a70a4 \
+  --ref rcl_interfaces=2.0.4 --commit rcl_interfaces=7aa3caf43377ea6ad615bc1040832e2c7566bfbe \
+  --ref rosbridge_suite=jazzy --commit rosbridge_suite=cb33a16b890e4b8d9def531326409f3ee6c12537 \
+  --repo geometry2=https://github.com/ros2/geometry2 --ref geometry2=jazzy --commit geometry2=f702874b1c8535d6a038230ab2cda0ba5d521ebd \
+  --repo unique_identifier_msgs=https://github.com/ros2/unique_identifier_msgs --ref unique_identifier_msgs=jazzy --commit unique_identifier_msgs=901599ee92c2ee949f42a5c5d821c92b3e515d69 \
+  --repo vision_msgs=https://github.com/ros-perception/vision_msgs --ref vision_msgs=jazzy --commit vision_msgs=adbf56af9f77e3c8ab2552e25dc99e4a8a77fb27 \
+  --repo radar_msgs=https://github.com/ros-perception/radar_msgs --ref radar_msgs=ros2 --commit radar_msgs=47d2f26906ef38fa15ada352aea6b5aad547781d \
+  --repo ackermann_msgs=https://github.com/ros-drivers/ackermann_msgs --ref ackermann_msgs=ros2 --commit ackermann_msgs=81a5f2d9ae1c1048216678b9dc3db6afc0cb815e \
+  --repo gps_umd=https://github.com/swri-robotics/gps_umd --ref gps_umd=ros2-devel --commit gps_umd=94d2b361be86198a8029def6677cee8e4a82189b \
+  --repo geographic_info=https://github.com/ros-geographic-info/geographic_info --ref geographic_info=jazzy --commit geographic_info=24806adc767414eb3a34a58aefeb648ee415b09a \
+  --repo marine_msgs=https://github.com/apl-ocean-engineering/marine_msgs --ref marine_msgs=ros2 --commit marine_msgs=14bddb417a51767600e3feada3bc7fc378d0e6f9 \
+  --repo mavros=https://github.com/mavlink/mavros --ref mavros=ros2 --commit mavros=3e580649f4b6344d428796711694fd7f0a6f31ff \
+  --package-at tf2_msgs=geometry2:tf2_msgs --package-at unique_identifier_msgs=unique_identifier_msgs:. \
+  --package-at rcl_interfaces=rcl_interfaces:rcl_interfaces --package-at rosgraph_msgs=rcl_interfaces:rosgraph_msgs \
+  --package-at statistics_msgs=rcl_interfaces:statistics_msgs --package-at lifecycle_msgs=rcl_interfaces:lifecycle_msgs \
+  --package-at vision_msgs=vision_msgs:vision_msgs --package-at radar_msgs=radar_msgs:. \
+  --package-at ackermann_msgs=ackermann_msgs:. --package-at gps_msgs=gps_umd:gps_msgs \
+  --package-at geographic_msgs=geographic_info:geographic_msgs \
+  --package-at marine_acoustic_msgs=marine_msgs:marine_acoustic_msgs \
+  --package-at marine_sensor_msgs=marine_msgs:marine_sensor_msgs --package-at mavros_msgs=mavros:mavros_msgs \
+  --module tf2_msgs=ros2tf2 --module unique_identifier_msgs=ros2uuid --module rcl_interfaces=ros2rcl \
+  --module rosgraph_msgs=ros2rosgraph --module statistics_msgs=ros2statistics --module lifecycle_msgs=ros2lifecycle \
+  --module vision_msgs=ros2vision --module radar_msgs=ros2radar --module ackermann_msgs=ros2ackermann \
+  --module gps_msgs=ros2gps --module geographic_msgs=ros2geographic --module marine_acoustic_msgs=ros2marineacoustic \
+  --module marine_sensor_msgs=ros2marinesensor --module mavros_msgs=ros2mavros \
+  --license "geometry2=BSD 3-Clause License" --license "unique_identifier_msgs=BSD 3-Clause License" \
+  --license "vision_msgs=Apache License 2.0" --license "radar_msgs=Apache License 2.0" \
+  --license "ackermann_msgs=BSD License" --license "gps_umd=BSD License" \
+  --license "geographic_info=BSD License (package.xml)" --license "marine_msgs=BSD 3-Clause License" \
+  --license "mavros=BSD License, GPLv3 or LGPLv3 (triple licensed)" \
+  --license-file geometry2=LICENSE --license-file unique_identifier_msgs=LICENSE --license-file vision_msgs=LICENSE \
+  --license-file radar_msgs=LICENSE --license-file ackermann_msgs=LICENSE --license-file gps_umd=LICENSE \
+  --license-file geographic_info=geodesy/src/geodesy/props.py --license-file marine_msgs=LICENSE.txt \
+  --license-file mavros=LICENSE.md --license-file mavros=LICENSE-BSD.txt \
+  --license-note 'geometry2=`LICENSE` at the root begins "BSD 3-Clause License" and "Copyright (c) 2008, Willow Garage, Inc."; `tf2_msgs/package.xml` states `<license>BSD</license>`.' \
+  --license-note 'unique_identifier_msgs=`LICENSE` begins "BSD 3-Clause License" and "Copyright (C) 2012, Jack O'"'"'Quin"; `package.xml` states `<license>BSD</license>`.' \
+  --license-note 'vision_msgs=`LICENSE` at the root is the Apache License, Version 2.0; `vision_msgs/package.xml` states `<license>Apache License 2.0</license>`.' \
+  --license-note 'radar_msgs=`LICENSE` is the Apache License, Version 2.0; `package.xml` states `<license>Apache-2.0</license>`.' \
+  --license-note 'ackermann_msgs=`LICENSE` is the three-clause BSD text with no copyright line ("Redistribution and use in source and binary forms, with or without modification, are permitted provided that ..."); `package.xml` states `<license>BSD</license>`.' \
+  --license-note 'gps_umd=`LICENSE` begins "Copyright 2023, Ken Tossell" followed by the BSD text ("Redistribution and use in source and binary forms ..."); `gps_msgs/package.xml` states `<license>BSD</license>`.' \
+  --license-note 'geographic_info=the repository has no LICENSE file. `geographic_msgs/package.xml` states `<license>BSD</license>`; the sources of the sibling package geodesy by the same author carry "Software License Agreement (BSD License)", "Copyright (C) 2012, Jack O'"'"'Quin" and the BSD text (`geodesy/src/geodesy/props.py` is listed). The .msg files carry no header.' \
+  --license-note 'marine_msgs=`LICENSE.txt` begins "BSD 3-Clause License" and "Copyright (c) 2020-2022, University of Washington Applied Physics Laboratory"; each `package.xml` states `<license>BSD-3-Clause</license>`.' \
+  --license-note 'mavros=`LICENSE.md` states "Mavros is available triple-licensed as BSD, GPLv3 and LGPLv3"; `LICENSE-BSD.txt` begins "Copyright (c) 2013-2021 Vladimir Ermakov. All rights reserved." with the BSD text; `mavros_msgs/package.xml` states `<license>GPLv3</license>`, `<license>LGPLv3</license>` and `<license>BSD</license>`. This pack takes it under the BSD license.' \
+  --names-dir "$GEN/names" --notes-dir "$GEN/notes" \
+  --date-read 2026-11-19 \
+  "${ARGS[@]}"

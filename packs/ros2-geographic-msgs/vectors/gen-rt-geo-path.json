@@ -1,0 +1,17 @@
+{
+  "name": "rt-geo_path",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geo_path\",\"type\":\"geographic_msgs/msg/GeoPath\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"poses\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"latitude\":7.049,\"longitude\":8.056,\"altitude\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}}},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"pose\":{\"position\":{\"latitude\":17.119,\"longitude\":-18.126,\"altitude\":19.133},\"orientation\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154,\"w\":23.161}}}]},\"id\":\"gen-geo_path\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geo_path\",\"type\":\"geographic_msgs/msg/GeoPath\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"poses\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"latitude\":7.049,\"longitude\":8.056,\"altitude\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}}},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"pose\":{\"position\":{\"latitude\":17.119,\"longitude\":-18.126,\"altitude\":19.133},\"orientation\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154,\"w\":23.161}}}]},\"id\":\"gen-geo_path\"}",
+  "model": {
+    "@kind": "geo_path",
+    "ros2geographic.geo_path_header_stamp_sec": "40510",
+    "ros2geographic.geo_path_header_stamp_nanosec": "2147564661",
+    "ros2geographic.geo_path_header_frame_id": "s3",
+    "ros2geographic.geo_path_poses.#": "2",
+    "ros2geographic.geo_path_poses[0].ros2geographic.geo_path_poses_header_stamp_sec": "162019",
+    "ros2geographic.topic": "/gen/geo_path"
+  }
+}

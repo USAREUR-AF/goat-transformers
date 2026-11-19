@@ -1,0 +1,12 @@
+{
+  "name": "rt-statistic_data_type",
+  "from": "ros2-statistics-msgs",
+  "to": "ros2-statistics-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/statistic_data_type\",\"type\":\"statistics_msgs/msg/StatisticDataType\",\"id\":\"gen-statistic_data_type\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/statistic_data_type\",\"type\":\"statistics_msgs/msg/StatisticDataType\",\"id\":\"gen-statistic_data_type\"}",
+  "model": {
+    "@kind": "statistic_data_type",
+    "ros2statistics.topic": "/gen/statistic_data_type"
+  }
+}

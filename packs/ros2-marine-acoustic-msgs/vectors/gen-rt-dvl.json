@@ -1,0 +1,31 @@
+{
+  "name": "rt-dvl",
+  "from": "ros2-marine-acoustic-msgs",
+  "to": "ros2-marine-acoustic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dvl\",\"type\":\"marine_acoustic_msgs/msg/Dvl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity_mode\":99,\"dvl_type\":154,\"velocity\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"velocity_covar\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"altitude\":-18.126,\"course_gnd\":19.133,\"speed_gnd\":20.14,\"num_good_beams\":10,\"sound_speed\":0.375,\"beam_ranges_valid\":true,\"beam_velocities_valid\":false,\"beam_unit_vec\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189},{\"x\":28.196,\"y\":29.203,\"z\":-30.21},{\"x\":31.217,\"y\":32.224,\"z\":-33.231},{\"x\":34.238,\"y\":35.245,\"z\":-36.252}],\"range\":[37.259,38.266,-39.273,40.28],\"range_covar\":[5.125,5.375,5.625,5.875],\"beam_quality\":[6.125,6.375,6.625,6.875],\"beam_velocity\":[7.125,-5.125,-4.875,-4.625],\"beam_velocity_covar\":[-4.375,-4.125,-3.875,-3.625]},\"id\":\"gen-dvl\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dvl\",\"type\":\"marine_acoustic_msgs/msg/Dvl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity_mode\":99,\"dvl_type\":154,\"velocity\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"velocity_covar\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"altitude\":-18.126,\"course_gnd\":19.133,\"speed_gnd\":20.14,\"num_good_beams\":10,\"sound_speed\":0.375,\"beam_ranges_valid\":true,\"beam_velocities_valid\":false,\"beam_unit_vec\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189},{\"x\":28.196,\"y\":29.203,\"z\":-30.21},{\"x\":31.217,\"y\":32.224,\"z\":-33.231},{\"x\":34.238,\"y\":35.245,\"z\":-36.252}],\"range\":[37.259,38.266,-39.273,40.28],\"range_covar\":[5.125,5.375,5.625,5.875],\"beam_quality\":[6.125,6.375,6.625,6.875],\"beam_velocity\":[7.125,-5.125,-4.875,-4.625],\"beam_velocity_covar\":[-4.375,-4.125,-3.875,-3.625]},\"id\":\"gen-dvl\"}",
+  "model": {
+    "@kind": "dvl",
+    "ros2marineacoustic.dvl_header_stamp_sec": "40510",
+    "ros2marineacoustic.dvl_header_stamp_nanosec": "2147564661",
+    "ros2marineacoustic.dvl_header_frame_id": "s3",
+    "ros2marineacoustic.dvl_velocity_mode": "99",
+    "ros2marineacoustic.dvl_dvl_type": "154",
+    "ros2marineacoustic.dvl_velocity_covar.#": "9",
+    "ros2marineacoustic.dvl_velocity_covar[0].ros2marineacoustic.dvl_velocity_covar_value": "-9.063",
+    "ros2marineacoustic.dvl_beam_unit_vec.#": "4",
+    "ros2marineacoustic.dvl_beam_unit_vec[0].ros2marineacoustic.dvl_beam_unit_vec_x": "25.175",
+    "ros2marineacoustic.dvl_range.#": "4",
+    "ros2marineacoustic.dvl_range[0].ros2marineacoustic.dvl_range_value": "37.259",
+    "ros2marineacoustic.dvl_range_covar.#": "4",
+    "ros2marineacoustic.dvl_range_covar[0].ros2marineacoustic.dvl_range_covar_value": "5.125",
+    "ros2marineacoustic.dvl_beam_quality.#": "4",
+    "ros2marineacoustic.dvl_beam_quality[0].ros2marineacoustic.dvl_beam_quality_value": "6.125",
+    "ros2marineacoustic.dvl_beam_velocity.#": "4",
+    "ros2marineacoustic.dvl_beam_velocity[0].ros2marineacoustic.dvl_beam_velocity_value": "7.125",
+    "ros2marineacoustic.dvl_beam_velocity_covar.#": "4",
+    "ros2marineacoustic.dvl_beam_velocity_covar[0].ros2marineacoustic.dvl_beam_velocity_covar_value": "-4.375",
+    "ros2marineacoustic.topic": "/gen/dvl"
+  }
+}

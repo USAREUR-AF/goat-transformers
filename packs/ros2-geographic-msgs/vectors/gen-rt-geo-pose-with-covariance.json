@@ -1,0 +1,19 @@
+{
+  "name": "rt-geo_pose_with_covariance",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geo_pose_with_covariance\",\"type\":\"geographic_msgs/msg/GeoPoseWithCovariance\",\"msg\":{\"pose\":{\"position\":{\"latitude\":1.007,\"longitude\":2.014,\"altitude\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301]},\"id\":\"gen-geo_pose_with_covariance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geo_pose_with_covariance\",\"type\":\"geographic_msgs/msg/GeoPoseWithCovariance\",\"msg\":{\"pose\":{\"position\":{\"latitude\":1.007,\"longitude\":2.014,\"altitude\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301]},\"id\":\"gen-geo_pose_with_covariance\"}",
+  "model": {
+    "@kind": "geo_pose_with_covariance",
+    "lat": "1.007",
+    "lon": "2.014",
+    "hae": "-3.021",
+    "ros2geographic.geo_pose_with_covariance_pose_orientation_x": "4.028",
+    "ros2geographic.geo_pose_with_covariance_pose_orientation_y": "5.035",
+    "ros2geographic.geo_pose_with_covariance_covariance.#": "36",
+    "ros2geographic.geo_pose_with_covariance_covariance[0].ros2geographic.geo_pose_with_covariance_covariance_value": "8.056",
+    "ros2geographic.topic": "/gen/geo_pose_with_covariance"
+  }
+}

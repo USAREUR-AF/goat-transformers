@@ -1,0 +1,17 @@
+{
+  "name": "rt-hil_sensor",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hil_sensor\",\"type\":\"mavros_msgs/msg/HilSensor\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"acc\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"gyro\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"mag\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"abs_pressure\":-1.875,\"diff_pressure\":-1.625,\"pressure_alt\":-1.375,\"temperature\":-1.125,\"fields_updated\":2148172206},\"id\":\"gen-hil_sensor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hil_sensor\",\"type\":\"mavros_msgs/msg/HilSensor\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"acc\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"gyro\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"mag\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"abs_pressure\":-1.875,\"diff_pressure\":-1.625,\"pressure_alt\":-1.375,\"temperature\":-1.125,\"fields_updated\":2148172206},\"id\":\"gen-hil_sensor\"}",
+  "model": {
+    "@kind": "hil_sensor",
+    "ros2mavros.hil_sensor_header_stamp_sec": "40510",
+    "ros2mavros.hil_sensor_header_stamp_nanosec": "2147564661",
+    "ros2mavros.hil_sensor_header_frame_id": "s3",
+    "ros2mavros.hil_sensor_acc_x": "4.028",
+    "ros2mavros.hil_sensor_acc_y": "5.035",
+    "ros2mavros.topic": "/gen/hil_sensor"
+  }
+}

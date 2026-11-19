@@ -1,0 +1,15 @@
+{
+  "name": "rt-integer_range",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/integer_range\",\"type\":\"rcl_interfaces/msg/IntegerRange\",\"msg\":{\"from_value\":-123456789013,\"to_value\":246913578026,\"step\":370370367039},\"id\":\"gen-integer_range\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/integer_range\",\"type\":\"rcl_interfaces/msg/IntegerRange\",\"msg\":{\"from_value\":-123456789013,\"to_value\":246913578026,\"step\":370370367039},\"id\":\"gen-integer_range\"}",
+  "model": {
+    "@kind": "integer_range",
+    "ros2rcl.integer_range_from_value": "-123456789013",
+    "ros2rcl.integer_range_to_value": "246913578026",
+    "ros2rcl.integer_range_step": "370370367039",
+    "ros2rcl.topic": "/gen/integer_range"
+  }
+}

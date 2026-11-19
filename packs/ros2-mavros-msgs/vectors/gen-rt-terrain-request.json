@@ -1,0 +1,17 @@
+{
+  "name": "rt-terrain_request",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_request\",\"type\":\"mavros_msgs/msg/TerrainRequest\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"latitude\":4.028,\"longitude\":5.035,\"grid_spacing\":13649,\"mask\":864197523091},\"id\":\"gen-terrain_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_request\",\"type\":\"mavros_msgs/msg/TerrainRequest\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"latitude\":4.028,\"longitude\":5.035,\"grid_spacing\":13649,\"mask\":864197523091},\"id\":\"gen-terrain_request\"}",
+  "model": {
+    "@kind": "terrain_request",
+    "ros2mavros.terrain_request_header_stamp_sec": "40510",
+    "ros2mavros.terrain_request_header_stamp_nanosec": "2147564661",
+    "ros2mavros.terrain_request_header_frame_id": "s3",
+    "ros2mavros.terrain_request_latitude": "4.028",
+    "ros2mavros.terrain_request_longitude": "5.035",
+    "ros2mavros.topic": "/gen/terrain_request"
+  }
+}

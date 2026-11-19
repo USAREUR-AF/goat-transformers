@@ -1,0 +1,17 @@
+{
+  "name": "rt-param",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/param\",\"type\":\"mavros_msgs/msg/Param\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"param_id\":\"s4\",\"value\":{\"integer\":-617283945065,\"real\":-6.042},\"param_index\":54152,\"param_count\":29119},\"id\":\"gen-param\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/param\",\"type\":\"mavros_msgs/msg/Param\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"param_id\":\"s4\",\"value\":{\"integer\":-617283945065,\"real\":-6.042},\"param_index\":54152,\"param_count\":29119},\"id\":\"gen-param\"}",
+  "model": {
+    "@kind": "param",
+    "ros2mavros.param_header_stamp_sec": "40510",
+    "ros2mavros.param_header_stamp_nanosec": "2147564661",
+    "ros2mavros.param_header_frame_id": "s3",
+    "ros2mavros.param_param_id": "s4",
+    "ros2mavros.param_value_integer": "-617283945065",
+    "ros2mavros.topic": "/gen/param"
+  }
+}

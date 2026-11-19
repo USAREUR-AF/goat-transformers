@@ -1,0 +1,17 @@
+{
+  "name": "rt-estimator_status",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_status\",\"type\":\"mavros_msgs/msg/EstimatorStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"attitude_status_flag\":false,\"velocity_horiz_status_flag\":true,\"velocity_vert_status_flag\":false,\"pos_horiz_rel_status_flag\":true,\"pos_horiz_abs_status_flag\":false,\"pos_vert_abs_status_flag\":true,\"pos_vert_agl_status_flag\":false,\"const_pos_mode_status_flag\":true,\"pred_pos_horiz_rel_status_flag\":false,\"pred_pos_horiz_abs_status_flag\":true,\"gps_glitch_status_flag\":false,\"accel_error_status_flag\":true},\"id\":\"gen-estimator_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_status\",\"type\":\"mavros_msgs/msg/EstimatorStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"attitude_status_flag\":false,\"velocity_horiz_status_flag\":true,\"velocity_vert_status_flag\":false,\"pos_horiz_rel_status_flag\":true,\"pos_horiz_abs_status_flag\":false,\"pos_vert_abs_status_flag\":true,\"pos_vert_agl_status_flag\":false,\"const_pos_mode_status_flag\":true,\"pred_pos_horiz_rel_status_flag\":false,\"pred_pos_horiz_abs_status_flag\":true,\"gps_glitch_status_flag\":false,\"accel_error_status_flag\":true},\"id\":\"gen-estimator_status\"}",
+  "model": {
+    "@kind": "estimator_status",
+    "ros2mavros.estimator_status_header_stamp_sec": "40510",
+    "ros2mavros.estimator_status_header_stamp_nanosec": "2147564661",
+    "ros2mavros.estimator_status_header_frame_id": "s3",
+    "ros2mavros.estimator_status_attitude_status_flag": "0",
+    "ros2mavros.estimator_status_velocity_horiz_status_flag": "1",
+    "ros2mavros.topic": "/gen/estimator_status"
+  }
+}

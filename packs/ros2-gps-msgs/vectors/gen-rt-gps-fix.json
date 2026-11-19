@@ -1,0 +1,29 @@
+{
+  "name": "rt-gps_fix",
+  "from": "ros2-gps-msgs",
+  "to": "ros2-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gps_fix\",\"type\":\"gps_msgs/msg/GPSFix\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"satellites_used\":54152,\"satellite_used_prn\":[324031,364534],\"satellites_visible\":44589,\"satellite_visible_prn\":[445540,486043],\"satellite_visible_z\":[526546,567049],\"satellite_visible_azimuth\":[607552,648055],\"satellite_visible_snr\":[688558,729061],\"status\":-16868,\"motion_source\":56403,\"orientation_source\":31370,\"position_source\":6337},\"latitude\":23.161,\"longitude\":-24.168,\"altitude\":25.175,\"track\":26.182,\"speed\":-27.189,\"climb\":28.196,\"pitch\":29.203,\"roll\":-30.21,\"dip\":31.217,\"time\":32.224,\"gdop\":-33.231,\"pdop\":34.238,\"hdop\":35.245,\"vdop\":-36.252,\"tdop\":37.259,\"err\":38.266,\"err_horz\":-39.273,\"err_vert\":40.28,\"err_track\":41.287,\"err_speed\":-42.294,\"err_climb\":43.301,\"err_time\":44.308,\"err_pitch\":-45.315,\"err_roll\":46.322,\"err_dip\":47.329,\"position_covariance\":[-48.336,49.343,50.35,-51.357,52.364,53.371,-54.378,55.385,56.392],\"position_covariance_type\":198},\"id\":\"gen-gps_fix\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gps_fix\",\"type\":\"gps_msgs/msg/GPSFix\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"satellites_used\":54152,\"satellite_used_prn\":[324031,364534],\"satellites_visible\":44589,\"satellite_visible_prn\":[445540,486043],\"satellite_visible_z\":[526546,567049],\"satellite_visible_azimuth\":[607552,648055],\"satellite_visible_snr\":[688558,729061],\"status\":-16868,\"motion_source\":56403,\"orientation_source\":31370,\"position_source\":6337},\"latitude\":23.161,\"longitude\":-24.168,\"altitude\":25.175,\"track\":26.182,\"speed\":-27.189,\"climb\":28.196,\"pitch\":29.203,\"roll\":-30.21,\"dip\":31.217,\"time\":32.224,\"gdop\":-33.231,\"pdop\":34.238,\"hdop\":35.245,\"vdop\":-36.252,\"tdop\":37.259,\"err\":38.266,\"err_horz\":-39.273,\"err_vert\":40.28,\"err_track\":41.287,\"err_speed\":-42.294,\"err_climb\":43.301,\"err_time\":44.308,\"err_pitch\":-45.315,\"err_roll\":46.322,\"err_dip\":47.329,\"position_covariance\":[-48.336,49.343,50.35,-51.357,52.364,53.371,-54.378,55.385,56.392],\"position_covariance_type\":198},\"id\":\"gen-gps_fix\"}",
+  "model": {
+    "@kind": "gps_fix",
+    "ros2gps.gps_fix_header_stamp_sec": "40510",
+    "ros2gps.gps_fix_header_stamp_nanosec": "2147564661",
+    "ros2gps.gps_fix_header_frame_id": "s3",
+    "ros2gps.gps_fix_status_header_stamp_sec": "162019",
+    "ros2gps.gps_fix_status_header_stamp_nanosec": "2147686170",
+    "ros2gps.gps_fix_status_satellite_used_prn.#": "2",
+    "ros2gps.gps_fix_status_satellite_used_prn[0].ros2gps.gps_fix_status_satellite_used_prn_value": "324031",
+    "ros2gps.gps_fix_status_satellite_visible_prn.#": "2",
+    "ros2gps.gps_fix_status_satellite_visible_prn[0].ros2gps.gps_fix_status_satellite_visible_prn_value": "445540",
+    "ros2gps.gps_fix_status_satellite_visible_z.#": "2",
+    "ros2gps.gps_fix_status_satellite_visible_z[0].ros2gps.gps_fix_status_satellite_visible_z_value": "526546",
+    "ros2gps.gps_fix_status_satellite_visible_azimuth.#": "2",
+    "ros2gps.gps_fix_status_satellite_visible_azimuth[0].ros2gps.gps_fix_status_satellite_visible_azimuth_value": "607552",
+    "ros2gps.gps_fix_status_satellite_visible_snr.#": "2",
+    "ros2gps.gps_fix_status_satellite_visible_snr[0].ros2gps.gps_fix_status_satellite_visible_snr_value": "688558",
+    "ros2gps.gps_fix_position_covariance.#": "9",
+    "ros2gps.gps_fix_position_covariance[0].ros2gps.gps_fix_position_covariance_value": "-48.336",
+    "ros2gps.topic": "/gen/gps_fix"
+  }
+}

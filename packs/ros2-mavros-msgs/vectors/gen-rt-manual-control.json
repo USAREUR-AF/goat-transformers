@@ -1,0 +1,17 @@
+{
+  "name": "rt-manual_control",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/manual_control\",\"type\":\"mavros_msgs/msg/ManualControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"x\":-4.125,\"y\":-3.875,\"z\":-3.625,\"r\":-3.375,\"buttons\":29119,\"buttons2\":4086,\"enabled_extensions\":173,\"s\":-2.375,\"t\":-2.125,\"aux1\":-1.875,\"aux2\":-1.625,\"aux3\":-1.375,\"aux4\":-1.125,\"aux5\":-0.875,\"aux6\":-0.625},\"id\":\"gen-manual_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/manual_control\",\"type\":\"mavros_msgs/msg/ManualControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"x\":-4.125,\"y\":-3.875,\"z\":-3.625,\"r\":-3.375,\"buttons\":29119,\"buttons2\":4086,\"enabled_extensions\":173,\"s\":-2.375,\"t\":-2.125,\"aux1\":-1.875,\"aux2\":-1.625,\"aux3\":-1.375,\"aux4\":-1.125,\"aux5\":-0.875,\"aux6\":-0.625},\"id\":\"gen-manual_control\"}",
+  "model": {
+    "@kind": "manual_control",
+    "ros2mavros.manual_control_header_stamp_sec": "40510",
+    "ros2mavros.manual_control_header_stamp_nanosec": "2147564661",
+    "ros2mavros.manual_control_header_frame_id": "s3",
+    "ros2mavros.manual_control_x": "-4.125",
+    "ros2mavros.manual_control_y": "-3.875",
+    "ros2mavros.topic": "/gen/manual_control"
+  }
+}

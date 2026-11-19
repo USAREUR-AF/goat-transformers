@@ -1,0 +1,15 @@
+{
+  "name": "rt-waypoint_list",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/waypoint_list\",\"type\":\"mavros_msgs/msg/WaypointList\",\"msg\":{\"current_seq\":7742,\"waypoints\":[{\"frame\":245,\"command\":23212,\"is_current\":false,\"autocontinue\":true,\"param1\":-3.625,\"param2\":-3.375,\"param3\":-3.125,\"param4\":-2.875,\"x_lat\":10.07,\"y_long\":11.077,\"z_alt\":-12.084},{\"frame\":82,\"command\":9993,\"is_current\":true,\"autocontinue\":false,\"param1\":-0.875,\"param2\":-0.625,\"param3\":-0.375,\"param4\":-0.125,\"x_lat\":-21.147,\"y_long\":22.154,\"z_alt\":23.161}]},\"id\":\"gen-waypoint_list\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/waypoint_list\",\"type\":\"mavros_msgs/msg/WaypointList\",\"msg\":{\"current_seq\":7742,\"waypoints\":[{\"frame\":245,\"command\":23212,\"is_current\":false,\"autocontinue\":true,\"param1\":-3.625,\"param2\":-3.375,\"param3\":-3.125,\"param4\":-2.875,\"x_lat\":10.07,\"y_long\":11.077,\"z_alt\":-12.084},{\"frame\":82,\"command\":9993,\"is_current\":true,\"autocontinue\":false,\"param1\":-0.875,\"param2\":-0.625,\"param3\":-0.375,\"param4\":-0.125,\"x_lat\":-21.147,\"y_long\":22.154,\"z_alt\":23.161}]},\"id\":\"gen-waypoint_list\"}",
+  "model": {
+    "@kind": "waypoint_list",
+    "ros2mavros.waypoint_list_current_seq": "7742",
+    "ros2mavros.waypoint_list_waypoints.#": "2",
+    "ros2mavros.waypoint_list_waypoints[0].ros2mavros.waypoint_list_waypoints_frame": "245",
+    "ros2mavros.topic": "/gen/waypoint_list"
+  }
+}

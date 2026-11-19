@@ -1,0 +1,15 @@
+{
+ "MetricsMessage:measurement_source_name": "metrics_message_measurement_source_name",
+ "MetricsMessage:metrics_source": "metrics_message_metrics_source",
+ "MetricsMessage:statistics[]": "metrics_message_statistics",
+ "MetricsMessage:statistics[].data": "metrics_message_statistics_data",
+ "MetricsMessage:statistics[].data_type": "metrics_message_statistics_data_type",
+ "MetricsMessage:unit": "metrics_message_unit",
+ "MetricsMessage:window_start.nanosec": "metrics_message_window_start_nanosec",
+ "MetricsMessage:window_start.sec": "metrics_message_window_start_sec",
+ "MetricsMessage:window_stop.nanosec": "metrics_message_window_stop_nanosec",
+ "MetricsMessage:window_stop.sec": "metrics_message_window_stop_sec",
+ "StatisticDataPoint:data": "statistic_data_point_data",
+ "StatisticDataPoint:data_type": "statistic_data_point_data_type",
+ "topic": "topic"
+}

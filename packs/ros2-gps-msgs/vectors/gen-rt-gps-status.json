@@ -1,0 +1,27 @@
+{
+  "name": "rt-gps_status",
+  "from": "ros2-gps-msgs",
+  "to": "ros2-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gps_status\",\"type\":\"gps_msgs/msg/GPSStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"satellites_used\":63715,\"satellite_used_prn\":[202522,243025],\"satellites_visible\":54152,\"satellite_visible_prn\":[324031,364534],\"satellite_visible_z\":[405037,445540],\"satellite_visible_azimuth\":[486043,526546],\"satellite_visible_snr\":[567049,607552],\"status\":-7305,\"motion_source\":430,\"orientation_source\":40933,\"position_source\":15900},\"id\":\"gen-gps_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gps_status\",\"type\":\"gps_msgs/msg/GPSStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"satellites_used\":63715,\"satellite_used_prn\":[202522,243025],\"satellites_visible\":54152,\"satellite_visible_prn\":[324031,364534],\"satellite_visible_z\":[405037,445540],\"satellite_visible_azimuth\":[486043,526546],\"satellite_visible_snr\":[567049,607552],\"status\":-7305,\"motion_source\":430,\"orientation_source\":40933,\"position_source\":15900},\"id\":\"gen-gps_status\"}",
+  "model": {
+    "@kind": "gps_status",
+    "ros2gps.gps_status_header_stamp_sec": "40510",
+    "ros2gps.gps_status_header_stamp_nanosec": "2147564661",
+    "ros2gps.gps_status_header_frame_id": "s3",
+    "ros2gps.gps_status_satellites_used": "63715",
+    "ros2gps.gps_status_satellite_used_prn.#": "2",
+    "ros2gps.gps_status_satellite_used_prn[0].ros2gps.gps_status_satellite_used_prn_value": "202522",
+    "ros2gps.gps_status_satellites_visible": "54152",
+    "ros2gps.gps_status_satellite_visible_prn.#": "2",
+    "ros2gps.gps_status_satellite_visible_prn[0].ros2gps.gps_status_satellite_visible_prn_value": "324031",
+    "ros2gps.gps_status_satellite_visible_z.#": "2",
+    "ros2gps.gps_status_satellite_visible_z[0].ros2gps.gps_status_satellite_visible_z_value": "405037",
+    "ros2gps.gps_status_satellite_visible_azimuth.#": "2",
+    "ros2gps.gps_status_satellite_visible_azimuth[0].ros2gps.gps_status_satellite_visible_azimuth_value": "486043",
+    "ros2gps.gps_status_satellite_visible_snr.#": "2",
+    "ros2gps.gps_status_satellite_visible_snr[0].ros2gps.gps_status_satellite_visible_snr_value": "567049",
+    "ros2gps.topic": "/gen/gps_status"
+  }
+}

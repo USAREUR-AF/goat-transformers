@@ -1,0 +1,16 @@
+{
+  "name": "rt-adsb_transceiver_health_report",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/adsb_transceiver_health_report\",\"type\":\"mavros_msgs/msg/ADSBTransceiverHealthReport\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rf_health\":99},\"id\":\"gen-adsb_transceiver_health_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/adsb_transceiver_health_report\",\"type\":\"mavros_msgs/msg/ADSBTransceiverHealthReport\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rf_health\":99},\"id\":\"gen-adsb_transceiver_health_report\"}",
+  "model": {
+    "@kind": "adsb_transceiver_health_report",
+    "ros2mavros.adsb_transceiver_health_report_header_stamp_sec": "40510",
+    "ros2mavros.adsb_transceiver_health_report_header_stamp_nanosec": "2147564661",
+    "ros2mavros.adsb_transceiver_health_report_header_frame_id": "s3",
+    "ros2mavros.adsb_transceiver_health_report_rf_health": "99",
+    "ros2mavros.topic": "/gen/adsb_transceiver_health_report"
+  }
+}

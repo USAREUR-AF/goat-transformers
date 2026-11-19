@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_device_information",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_information\",\"type\":\"mavros_msgs/msg/GimbalDeviceInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vendor_name\":\"s4\",\"model_name\":\"s5\",\"custom_name\":\"s6\",\"firmware_version\":2147767176,\"hardware_version\":2147807679,\"uid\":1111111101117,\"cap_flags\":2147888685,\"custom_cap_flags\":19556,\"roll_min\":-2.125,\"roll_max\":-1.875,\"pitch_min\":-1.625,\"pitch_max\":-1.375,\"yaw_min\":-1.125,\"yaw_max\":-0.875},\"id\":\"gen-gimbal_device_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_information\",\"type\":\"mavros_msgs/msg/GimbalDeviceInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vendor_name\":\"s4\",\"model_name\":\"s5\",\"custom_name\":\"s6\",\"firmware_version\":2147767176,\"hardware_version\":2147807679,\"uid\":1111111101117,\"cap_flags\":2147888685,\"custom_cap_flags\":19556,\"roll_min\":-2.125,\"roll_max\":-1.875,\"pitch_min\":-1.625,\"pitch_max\":-1.375,\"yaw_min\":-1.125,\"yaw_max\":-0.875},\"id\":\"gen-gimbal_device_information\"}",
+  "model": {
+    "@kind": "gimbal_device_information",
+    "ros2mavros.gimbal_device_information_header_stamp_sec": "40510",
+    "ros2mavros.gimbal_device_information_header_stamp_nanosec": "2147564661",
+    "ros2mavros.gimbal_device_information_header_frame_id": "s3",
+    "ros2mavros.gimbal_device_information_vendor_name": "s4",
+    "ros2mavros.gimbal_device_information_model_name": "s5",
+    "ros2mavros.topic": "/gen/gimbal_device_information"
+  }
+}

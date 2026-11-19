@@ -1,0 +1,17 @@
+{
+  "name": "rt-radar_return",
+  "from": "ros2-radar-msgs",
+  "to": "ros2-radar-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_return\",\"type\":\"radar_msgs/msg/RadarReturn\",\"msg\":{\"range\":-4.875,\"azimuth\":-4.625,\"elevation\":-4.375,\"doppler_velocity\":-4.125,\"amplitude\":-3.875},\"id\":\"gen-radar_return\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_return\",\"type\":\"radar_msgs/msg/RadarReturn\",\"msg\":{\"range\":-4.875,\"azimuth\":-4.625,\"elevation\":-4.375,\"doppler_velocity\":-4.125,\"amplitude\":-3.875},\"id\":\"gen-radar_return\"}",
+  "model": {
+    "@kind": "radar_return",
+    "ros2radar.radar_return_range": "-4.875",
+    "ros2radar.radar_return_azimuth": "-4.625",
+    "ros2radar.radar_return_elevation": "-4.375",
+    "ros2radar.radar_return_doppler_velocity": "-4.125",
+    "ros2radar.radar_return_amplitude": "-3.875",
+    "ros2radar.topic": "/gen/radar_return"
+  }
+}
