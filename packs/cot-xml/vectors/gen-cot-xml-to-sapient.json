@@ -5,6 +5,7 @@
   "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
   "expect": "3a21321f09df20b5e44c7d55c01161133e004e023e4019cdcccccccc4c45c038014001",
   "model": {
+    "track.scoped_id": "J-01334",
     "uid": "J-01334",
     "type": "a-f-G-U-C",
     "time_ms": "1614456000000",

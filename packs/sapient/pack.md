@@ -118,7 +118,7 @@ require only common keys, so they are reached only by an entity that lacks
 
 | From | Encodes as | Keys carried | Keys the pack has no place for | Vector |
 |---|---|---|---|---|
-| `cot-xml` | `detection_report` | `hae` `lat` `lon` | `uid` `type` `time_ms` `how` `ce` `le` `callsign` | `packs/cot-xml/vectors/gen-cot-xml-to-sapient.json` |
+| `cot-xml` | `detection_report` | `hae` `lat` `lon` | `track.scoped_id` `uid` `type` `time_ms` `how` `ce` `le` `callsign` | `packs/cot-xml/vectors/gen-cot-xml-to-sapient.json` |
 | `geojson` | `detection_report` | `hae` `lat` `lon` | none | `packs/geojson/vectors/gen-geojson-to-sapient.json` |
 
 ## Position assumption

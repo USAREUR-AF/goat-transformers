@@ -1,19 +1,30 @@
 #!/usr/bin/env python3
 """Generate the goat-transformers pack `mavlink2` from the MAVLink XML definitions.
 
-Reads   <root>/sources/{common,standard,minimal}.xml and PROVENANCE.md
-Writes  <root>/model/mavlink.def
-        <root>/packs/mavlink2/pack.def
-        <root>/packs/mavlink2/pack.md
-        <root>/packs/mavlink2/vectors/*.json
+Reads   <out>/sources/{common,standard,minimal}.xml and <out>/sources/PROVENANCE.md
+Writes  <out>/model/mavlink.def
+        <out>/packs/mavlink2/pack.def
+        <out>/packs/mavlink2/pack.md
+        <out>/packs/mavlink2/vectors/*.json
 
-Python 3 standard library only. Re-runnable: the same inputs give the same
-bytes. After writing, the script reads its own output back from disk and checks
-it with a second, independent parser and a small bits-wire engine written from
-spec/engine-spec.md (Versions 0.2, 0.4, 0.5). Exit status is non-zero when any
-check fails.
+The run has four stages, each a set of functions that can be called alone:
 
-Usage: mavlink2pack.py [--root DIR] [--core-def PATH/model/core.def]
+  parse   `load_messages`: the XML files as SourceMessage and SourceField records
+  plan    `make_plan`: wire layout (`lay_out`), model keys (`assign_keys`) and
+          `requires` (`choose_requires`) of every kind, with every decision made
+  emit    `emit_model`, `emit_pack`, `vector_files`, `emit_pack_md`: text only
+  check   the module and the pack are loaded by gtcheck (the rules of
+          spec/engine-spec.md), `check_frame_invariants` holds the pack to the
+          MAVLink 2 frame, and `check_vectors` decodes and encodes every vector
+          with the small codec in this file
+
+Guarantees: the same inputs give the same bytes; a source file whose SHA-256
+differs from PROVENANCE.md is refused; exit status 0 only when every check
+passed, 1 for a refused input or a failed check, 2 for a usage error.
+
+Python 3 standard library only.
+
+Usage: mavlink2pack.py [--out DIR] [--check] [--core-def PATH/model/core.def]
 """
 import argparse
 import collections
@@ -24,17 +35,31 @@ import os
 import re
 import struct
 import sys
-import xml.etree.ElementTree as ET
 from decimal import Decimal
+from xml.parsers import expat
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio      # noqa: E402  (the script directory is not on the path under `python3 -I`)
+import gtcheck    # noqa: E402
+
+NAME = "mavlink2pack"
 FORMAT = "mavlink2"
 PACK_VERSION = "0.1.0"
 MODULE = "mavlink"
 XML_FILES = ["common.xml", "standard.xml", "minimal.xml"]
+ROOT_XML = "common.xml"
 REPO = "https://github.com/mavlink/mavlink"
 XML_DIR = "message_definitions/v1.0"
 
-# MAVLink 2 frame: STX LEN INCOMPAT COMPAT SEQ SYSID COMPID MSGID(3, LE) PAYLOAD CRC(2)
+SOURCE_DIR = "sources"
+MODEL_PATH = "model/%s.def" % MODULE
+PACK_DIR = "packs/%s" % FORMAT
+PACK_PATH = PACK_DIR + "/pack.def"
+PACK_MD_PATH = PACK_DIR + "/pack.md"
+VECTOR_DIR = PACK_DIR + "/vectors"
+
+# MAVLink 2 frame: STX LEN INCOMPAT COMPAT SEQ SYSID COMPID MSGID(3, LE) PAYLOAD CRC(2).
+# A location is (first bit counted from the STX byte, length in bits).
 STX = 0xFD
 HEADER_BYTES = 10
 PAYLOAD_BIT0 = HEADER_BYTES * 8
@@ -52,42 +77,302 @@ MAX_ARRAY_ELEMENTS = 8        # longer non-char arrays are not mapped
 MAX_REQUIRES = 6
 DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is a fraction
 
-# The only core keys this pack maps. Overridden by --core-def when given.
-CORE_FALLBACK = {"lat": "float", "lon": "float"}
+# What the pack is checked against when --core-def is not given: a module that
+# declares the only two core keys this pack maps.
+CORE_STAND_IN = ("module core\nversion 0.0.0\ndistribution public\n"
+                 'source "stand-in for model/core.def: the two core keys the mavlink2 pack maps"\n'
+                 "key lat float deg\nkey lon float deg\n")
 
 TYPE_RE = re.compile(r"^(char|u?int(?:8|16|32|64)_t|float|double)(?:\[(\d+)\])?$")
 SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2,
          "uint32_t": 4, "int32_t": 4, "float": 4, "uint64_t": 8, "int64_t": 8,
          "double": 8}
+STRUCT_CODES = {"uint8_t": "B", "int8_t": "b", "uint16_t": "H", "int16_t": "h",
+                "uint32_t": "I", "int32_t": "i", "uint64_t": "Q", "int64_t": "q",
+                "float": "f", "double": "d"}
 
 # CRC_EXTRA values fixed by the protocol; a wrong field order changes them.
 KNOWN_CRC_EXTRA = {"HEARTBEAT": 50, "SYS_STATUS": 124, "ATTITUDE": 39,
                    "GLOBAL_POSITION_INT": 104, "GPS_RAW_INT": 24,
                    "COMMAND_LONG": 152}
 
+# The transforms the codec of this file implements; the pack uses no other.
+CODEC_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "f32", "f64", "ascii")
+KIND_NAME_RE = re.compile(r"^[a-z0-9_]+$")
+
 
 class GenError(Exception):
-    pass
+    """A refused input or a failed check. `file` and `line` say where, when the
+    error belongs to a place in a source file or in a generated file."""
+
+    def __init__(self, message, file=None, line=None):
+        self.message, self.file, self.line = message, file, line
+        super().__init__(message, file, line)
+
+    def __str__(self):
+        if self.file is None:
+            return self.message
+        if self.line is None:
+            return "%s: %s" % (self.file, self.message)
+        return "%s:%d: %s" % (self.file, self.line, self.message)
 
 
-# ----------------------------------------------------------------- source ---
+class CodecError(Exception):
+    """A message the codec cannot decode or an entity it cannot encode; the
+    text is the error kind of the specification (`no-kind`, `malformed-wire`,
+    `transform-decode`, `transform-encode`)."""
+
+
+def source_label(name):
+    """How an error names a source file: its path below the --out directory."""
+    return "%s/%s" % (SOURCE_DIR, name)
+
+
+# ------------------------------------------------------------------ parse ---
+
+class SourceField(collections.namedtuple("SourceField", "name base n units enum invalid ext line")):
+    """One <field> of a message. `base` is the element type, `n` the array
+    length (None for a scalar), `ext` is true after <extensions/>, `line` the
+    line of the element in its file."""
+    __slots__ = ()
+
+    @property
+    def size(self):
+        """Bytes of one element."""
+        return SIZES[self.base]
+
+    @property
+    def bytes(self):
+        """Bytes of the whole field in the payload."""
+        return self.size * (self.n or 1)
+
+    @property
+    def is_array(self):
+        """True for `type[n]` of a numeric type; `char[n]` is one text value."""
+        return self.n is not None and self.base != "char"
+
+
+SourceMessage = collections.namedtuple("SourceMessage", "name id fields file line")
+SourceMessage.__doc__ = """One <message>: its name, id, fields in declaration order, the name of the
+file that declares it and the line of the element."""
+
 
 def read_provenance(src):
-    text = open(os.path.join(src, "PROVENANCE.md"), encoding="utf-8").read()
+    """The commit PROVENANCE.md states, after checking that every XML file has
+    the SHA-256 its table row states."""
+    label = source_label("PROVENANCE.md")
+    with open(os.path.join(src, "PROVENANCE.md"), encoding="utf-8") as fh:
+        text = fh.read()
     m = re.search(r"Commit: `([0-9a-f]{40})`", text)
     if not m:
-        raise GenError("PROVENANCE.md has no `Commit:` line with a 40-hex SHA")
+        raise GenError("no `Commit:` line with a 40-hex SHA", label)
     for name in XML_FILES:
         row = re.search(r"\| `%s` \|[^|]*\| `([0-9a-f]{64})` \|" % re.escape(name), text)
         if not row:
-            raise GenError("PROVENANCE.md has no SHA-256 row for %s" % name)
-        got = hashlib.sha256(open(os.path.join(src, name), "rb").read()).hexdigest()
+            raise GenError("no SHA-256 row for %s" % name, label)
+        with open(os.path.join(src, name), "rb") as fh:
+            got = hashlib.sha256(fh.read()).hexdigest()
         if got != row.group(1):
-            raise GenError("%s does not match the SHA-256 in PROVENANCE.md" % name)
+            raise GenError("does not match the SHA-256 in PROVENANCE.md", source_label(name))
     return m.group(1)
 
 
+def parse_field(attrs, message_name, ext, label, line):
+    """A SourceField from the attributes of a <field> element."""
+    name, text = attrs.get("name"), attrs.get("type")
+    if not name or text is None:
+        raise GenError("%s: a field has no name or no type" % message_name, label, line)
+    if text == "uint8_t_mavlink_version":       # the protocol version byte is a uint8_t on the wire
+        text = "uint8_t"
+    tm = TYPE_RE.match(text)
+    if not tm:
+        raise GenError("%s.%s: unknown type %s" % (message_name, name, text), label, line)
+    base, n = tm.group(1), int(tm.group(2)) if tm.group(2) else None
+    if n == 0 or (base == "char" and n is None):
+        raise GenError("%s.%s: type %s has no length" % (message_name, name, text), label, line)
+    return SourceField(name, base, n, attrs.get("units"), attrs.get("enum"), attrs.get("invalid"), ext, line)
+
+
+class _OpenElement:
+    """An element the parser is inside. `message` is set for a <message>;
+    `text` collects character data until the first child element starts and
+    is None for an element whose text is not read."""
+    __slots__ = ("tag", "message", "text")
+
+    def __init__(self, tag, message=None, text=None):
+        self.tag, self.message, self.text = tag, message, text
+
+
+class _MessageDraft:
+    """A <message> while its children are read."""
+    __slots__ = ("name", "id", "fields", "line", "in_extensions")
+
+    def __init__(self, name, msgid, line):
+        self.name, self.id, self.line = name, msgid, line
+        self.fields, self.in_extensions = [], False
+
+
+class _DialectReader:
+    """The expat handlers that collect, from one dialect file, the <include>
+    children of the root element and every <message> with its <field> and
+    <extensions/> children. Other elements (enums, descriptions) are skipped."""
+
+    def __init__(self, parser, label):
+        self.parser, self.label = parser, label
+        self.includes = []
+        self.messages = []          # _MessageDraft, in document order
+        self.stack = []             # _OpenElement, the root first
+
+    def start(self, tag, attrs):
+        line = self.parser.CurrentLineNumber
+        parent = self.stack[-1] if self.stack else None
+        element = _OpenElement(tag)
+        if parent is not None:
+            parent.text = None                  # text after a child element is not the element's text
+        if tag == "message":
+            element.message = _MessageDraft(self._message_name(attrs, line), self._message_id(attrs, line), line)
+            self.messages.append(element.message)
+        elif tag == "include" and len(self.stack) == 1:
+            element.text = []
+        elif parent is not None and parent.message is not None:
+            message = parent.message
+            if tag == "extensions":
+                message.in_extensions = True
+            elif tag == "field":
+                message.fields.append(parse_field(attrs, message.name, message.in_extensions, self.label, line))
+        self.stack.append(element)
+
+    def text(self, data):
+        if self.stack and self.stack[-1].text is not None:
+            self.stack[-1].text.append(data)
+
+    def end(self, tag):
+        element = self.stack.pop()
+        if element.tag == "include" and len(self.stack) == 1:
+            name = "".join(element.text or ()).strip()
+            if not name:
+                raise GenError("an <include> names no file", self.label, self.parser.CurrentLineNumber)
+            self.includes.append(name)
+
+    def _message_name(self, attrs, line):
+        if not attrs.get("name"):
+            raise GenError("a message has no name", self.label, line)
+        return attrs["name"]
+
+    def _message_id(self, attrs, line):
+        try:
+            return int(attrs.get("id", ""))
+        except ValueError:
+            raise GenError("%s: id `%s` is not a number" % (attrs.get("name"), attrs.get("id")),
+                           self.label, line) from None
+
+
+def parse_dialect(data, file_name):
+    """One dialect file (bytes) -> (names of the files it includes, its
+    SourceMessage records in document order).
+
+    Read as the MAVLink schema states: <include> elements are children of the
+    root; a <message> has `id` and `name`; its <field> children have `type`,
+    `name` and optional `units`, `enum` and `invalid`; a field after
+    <extensions/> is an extension field."""
+    label = source_label(file_name)
+    # The separator keeps an element of an XML namespace from being read as a
+    # MAVLink element of the same local name.
+    parser = expat.ParserCreate(namespace_separator="}")
+    parser.buffer_text = True
+    reader = _DialectReader(parser, label)
+    parser.StartElementHandler = reader.start
+    parser.EndElementHandler = reader.end
+    parser.CharacterDataHandler = reader.text
+    try:
+        parser.Parse(data, True)
+    except expat.ExpatError as e:
+        raise GenError("not well-formed XML: %s (column %d)" % (expat.ErrorString(e.code), e.offset),
+                       label, e.lineno) from None
+    return reader.includes, [SourceMessage(m.name, m.id, tuple(m.fields), file_name, m.line)
+                             for m in reader.messages]
+
+
+def load_messages(src):
+    """Every message of common.xml and of the files it includes, in id order.
+    Refuses an include chain that is not exactly the three known files, and
+    two messages with one id or one name."""
+    messages, seen = [], []
+
+    def read(name):
+        if name in seen:
+            return
+        seen.append(name)
+        with open(os.path.join(src, name), "rb") as fh:
+            includes, own = parse_dialect(fh.read(), name)
+        for included in includes:
+            read(included)
+        messages.extend(own)
+
+    read(ROOT_XML)
+    if set(seen) != set(XML_FILES):
+        raise GenError("include chain is %s, expected %s" % (sorted(seen), sorted(XML_FILES)),
+                       source_label(ROOT_XML))
+    by_id, by_name = {}, {}
+    for m in messages:
+        for what, value, known in (("id", m.id, by_id), ("name", m.name, by_name)):
+            if value in known:
+                first = known[value]
+                raise GenError("message %s %s is also declared at %s:%d"
+                               % (what, value, source_label(first.file), first.line),
+                               source_label(m.file), m.line)
+            known[value] = m
+    return sorted(messages, key=lambda m: m.id)
+
+
+# ------------------------------------------------------------------- plan ---
+
+Placed = collections.namedtuple("Placed", "field offset")
+Placed.__doc__ = "A field and the byte offset of its first byte in the payload."
+
+Layout = collections.namedtuple("Layout", "message wire length crc_extra")
+Layout.__doc__ = """A message on the wire: its Placed fields in wire order, the full payload
+length in bytes and its CRC_EXTRA."""
+
+Line = collections.namedtuple("Line", "key pos bits transform")
+Line.__doc__ = "One `field` line of the pack: model key, first bit, length in bits, transform."
+
+MappedField = collections.namedtuple("MappedField", "field offset status lines")
+MappedField.__doc__ = """A placed field with its mapping decided. `status` is `core`, `scalar`,
+`ascii`, `elements` (one line per array element) or `unmapped` (no line)."""
+
+KeyDecl = collections.namedtuple("KeyDecl", "type unit uses")
+KeyDecl.__doc__ = "A key of module `mavlink`: type, unit and the (message, field) names that map it."
+
+Assignment = collections.namedtuple("Assignment", "fields core_ok keys qualified")
+Assignment.__doc__ = """The result of `assign_keys`. `fields[i]` and `core_ok[i]` belong to the i-th
+layout; `keys` maps a key name to its KeyDecl in first-use order; `qualified`
+maps (message name, field name) to the reason the key carries the message name."""
+
+
+class KindPlan(collections.namedtuple("KindPlan", "message name length crc_extra core_ok fields "
+                                                  "requires shadowed_by")):
+    """Everything the emitters need for one kind. `core_ok` is false when
+    `lat`/`lon` stay raw because the message has no other mappable field;
+    `shadowed_by` names the messages that map every key this kind requires."""
+    __slots__ = ()
+
+    @property
+    def raw_keys(self):
+        return raw_keys(self.fields)
+
+    @property
+    def mapped_len(self):
+        """Payload bytes up to the end of the last mapped field."""
+        return max((f.offset + f.field.bytes for f in self.fields if f.status != "unmapped"), default=0)
+
+
+Plan = collections.namedtuple("Plan", "kinds keys qualified")
+Plan.__doc__ = "The kinds in id order, the module keys and the message-qualified fields."
+
+
 def x25(data, crc=0xFFFF):
+    """CRC-16/MCRF4XX as MAVLink uses it (initial value 0xFFFF, no final XOR)."""
     for b in data:
         tmp = b ^ (crc & 0xFF)
         tmp = (tmp ^ (tmp << 4)) & 0xFF
@@ -95,98 +380,55 @@ def x25(data, crc=0xFFFF):
     return crc
 
 
-class Field:
-    def __init__(self, name, base, n, units, enum, invalid, ext):
-        self.name, self.base, self.n = name, base, n   # n is None for a scalar
-        self.units, self.enum, self.invalid, self.ext = units, enum, invalid, ext
-        self.size = SIZES[base]
-        self.bytes = self.size * (n or 1)
-        self.offset = None
-        self.lines = []          # [(model key, bit pos, bit len, transform)]
-        self.status = None       # core | scalar | ascii | elements | unmapped
+def wire_order(fields):
+    """MAVLink 2 wire order: the fields before <extensions/> by descending
+    type size, fields of one size in declaration order; then the extension
+    fields in declaration order. An array sorts by the size of its element."""
+    base = [f for f in fields if not f.ext]
+    return sorted(base, key=lambda f: -f.size) + [f for f in fields if f.ext]     # sorted() is stable
 
 
-class Message:
-    def __init__(self, name, msgid, fields, file):
-        self.name, self.id, self.fields, self.file = name, msgid, fields, file
-        self.kind = name.lower()
-
-
-def load_messages(src):
-    msgs, seen_files, order = [], set(), []
-
-    def walk(fname):
-        if fname in seen_files:
-            return
-        seen_files.add(fname)
-        root = ET.parse(os.path.join(src, fname)).getroot()
-        for inc in root.findall("include"):
-            walk(inc.text.strip())
-        order.append(fname)
-        for m in root.iter("message"):
-            fields, ext = [], False
-            for ch in m:
-                if ch.tag == "extensions":
-                    ext = True
-                elif ch.tag == "field":
-                    t = ch.get("type")
-                    if t == "uint8_t_mavlink_version":
-                        t = "uint8_t"
-                    tm = TYPE_RE.match(t)
-                    if not tm:
-                        raise GenError("%s.%s: unknown type %s" % (m.get("name"), ch.get("name"), t))
-                    n = int(tm.group(2)) if tm.group(2) else None
-                    fields.append(Field(ch.get("name"), tm.group(1), n, ch.get("units"),
-                                        ch.get("enum"), ch.get("invalid"), ext))
-            msgs.append(Message(m.get("name"), int(m.get("id")), fields, fname))
-
-    walk("common.xml")
-    if set(order) != set(XML_FILES):
-        raise GenError("include chain is %s, expected %s" % (order, XML_FILES))
-    ids = collections.Counter(m.id for m in msgs)
-    names = collections.Counter(m.name for m in msgs)
-    dup = [i for i, c in ids.items() if c > 1] + [n for n, c in names.items() if c > 1]
-    if dup:
-        raise GenError("duplicate message ids or names: %s" % dup)
-    msgs.sort(key=lambda m: m.id)
-    return msgs
-
-
-def lay_out(msg):
-    """MAVLink 2 wire order: base fields by descending type size (stable),
-    then extension fields in declaration order."""
-    base = [f for f in msg.fields if not f.ext]
-    ext = [f for f in msg.fields if f.ext]
-    base_sorted = sorted(base, key=lambda f: -f.size)       # sorted() is stable
-    off = 0
-    for f in base_sorted + ext:
-        f.offset = off
-        off += f.bytes
-    msg.wire = base_sorted + ext
-    msg.length = off
-    if not 0 < off <= 255:
-        raise GenError("%s: payload length %d outside 1..255" % (msg.name, off))
-    if not 0 <= msg.id < (1 << 24):
-        raise GenError("%s: id out of range" % msg.name)
-    crc = x25((msg.name + " ").encode())
-    for f in base_sorted:
+def crc_extra(message_name, fields):
+    """CRC_EXTRA of a message: the X.25 checksum of the message name and of the
+    type, name and array length of every non-extension field in wire order,
+    folded to one byte. Extension fields are not part of it."""
+    crc = x25((message_name + " ").encode())
+    for f in wire_order(fields):
+        if f.ext:
+            continue
         crc = x25((f.base + " " + f.name + " ").encode(), crc)
         if f.n:
             crc = x25(bytes([f.n]), crc)
-    msg.crc_extra = (crc & 0xFF) ^ (crc >> 8)
+    return (crc & 0xFF) ^ (crc >> 8)
 
 
-# ----------------------------------------------------------------- naming ---
+def lay_out(msg):
+    """The Layout of a message: every field at its payload offset."""
+    label = source_label(msg.file)
+    wire, offset = [], 0
+    for f in wire_order(msg.fields):
+        wire.append(Placed(f, offset))
+        offset += f.bytes
+    if not 0 < offset <= 255:
+        raise GenError("%s: payload length %d outside 1..255" % (msg.name, offset), label, msg.line)
+    if not 0 <= msg.id < (1 << 24):
+        raise GenError("%s: id out of range" % msg.name, label, msg.line)
+    return Layout(msg, tuple(wire), offset, crc_extra(msg.name, msg.fields))
+
 
 def slug(text):
+    """A field name or a unit as part of a key name: lower case, `%` as `pct`,
+    `/` as `_per_`, `*` as `_x`, `^` dropped, any other run of characters
+    outside a-z and 0-9 as one `_`, no `_` at either end."""
     s = text.lower()
     for a, b in (("%", "pct"), ("/", "_per_"), ("*", "_x"), ("^", "")):
         s = s.replace(a, b)
-    s = re.sub(r"[^a-z0-9]+", "_", s).strip("_")
-    return s
+    return re.sub(r"[^a-z0-9]+", "_", s).strip("_")
 
 
 def base_key(f):
+    """The key name a field proposes: its name, then its unit unless the name
+    is the unit or already ends with it."""
     name = slug(f.name)
     if f.units:
         u = slug(f.units)
@@ -196,6 +438,7 @@ def base_key(f):
 
 
 def type_class(f):
+    """The model type of a field's key: `string`, `float` or `int`."""
     if f.base == "char":
         return "string"
     if f.base in ("float", "double"):
@@ -204,6 +447,7 @@ def type_class(f):
 
 
 def transform_for(f):
+    """The bits transform of a raw field (engine-spec 0.2 and 0.5)."""
     if f.base == "char":
         return "ascii"
     if f.base == "float":
@@ -214,117 +458,223 @@ def transform_for(f):
 
 
 def is_core_latlon(f):
+    """True for a position this pack can state as core `lat` or `lon`: an
+    int32_t in degE7 with that name and no value that means unknown."""
     return (f.name in ("lat", "lon") and f.units == "degE7" and f.base == "int32_t"
             and f.n is None and f.invalid is None)
 
 
-def assign_keys(msgs):
-    """Decide every field's mapping and its model key. Returns the module keys
-    in first-appearance order: {name: (type, unit, [(message, field)])}."""
-    # pass 1: classify, propose shared names
-    proposals = collections.defaultdict(list)     # key name -> [(msg, field, index)]
-    for m in msgs:
-        # a kind needs a raw key of its own for `requires`; a message whose only
-        # mappable fields are lat/lon keeps them raw
-        m.core_ok = any(not is_core_latlon(f) and
-                        not (f.n is not None and f.base != "char" and f.n > MAX_ARRAY_ELEMENTS)
-                        for f in m.wire)
-        for f in m.wire:
-            if f.n is not None and f.base != "char" and f.n > MAX_ARRAY_ELEMENTS:
-                f.status = "unmapped"
-            elif is_core_latlon(f) and m.core_ok:
-                f.status = "core"
-            elif f.n is not None and f.base != "char":
-                f.status = "elements"
-                for i in range(f.n):
-                    proposals["%s_%d" % (base_key(f), i)].append((m, f, i))
-            else:
-                f.status = "ascii" if f.base == "char" else "scalar"
-                proposals[base_key(f)].append((m, f, None))
+def is_long_array(f):
+    return f.is_array and f.n > MAX_ARRAY_ELEMENTS
 
-    # pass 2: a shared name stands only when every use agrees on type class,
-    # units and enum, the name is not a common key, and no kind would get it twice
+
+def classify(layout):
+    """(core_ok, the status of every field in wire order) of one message.
+
+    A kind needs a raw key of its own for `requires`, so a message whose only
+    mappable fields are lat and lon keeps them raw (core_ok is false)."""
+    core_ok = any(not is_core_latlon(p.field) and not is_long_array(p.field) for p in layout.wire)
+    statuses = []
+    for p in layout.wire:
+        f = p.field
+        if is_long_array(f):
+            statuses.append("unmapped")
+        elif is_core_latlon(f) and core_ok:
+            statuses.append("core")
+        elif f.is_array:
+            statuses.append("elements")
+        else:
+            statuses.append("ascii" if f.base == "char" else "scalar")
+    return core_ok, statuses
+
+
+def _clash_reason(name, uses, reserved):
+    """Why the fields that propose one key name cannot share it, or None.
+    `uses` is [(message, field)]."""
+    sigs = {(type_class(f), f.units, f.enum) for _, f in uses}
+    per_message = collections.Counter(m.name for m, _ in uses)
+    if name in reserved:
+        return "same name as a frame-header key"
+    if len({s[0] for s in sigs}) > 1:
+        return "different types"
+    if len({s[1] for s in sigs}) > 1:
+        return "different units"
+    if len(sigs) > 1:
+        return "different enums"
+    if max(per_message.values()) > 1:
+        return "two fields of one message give the same name"
+    return None
+
+
+def assign_keys(layouts):
+    """Decide every field's mapping and its model key; an Assignment.
+
+    A key name is shared by every message whose field proposes it, as long as
+    all of them agree on type class, units and enum, the name is not a
+    frame-header key and no message proposes it twice. Otherwise every field
+    that proposes the name takes its message name as a prefix."""
+    classes = [classify(layout) for layout in layouts]
+
+    # pass 1: the key names the raw fields propose, in first-appearance order
+    proposals = collections.OrderedDict()         # key name -> [(message, field)]
+    for layout, (_, statuses) in zip(layouts, classes):
+        for placed, status in zip(layout.wire, statuses):
+            f = placed.field
+            if status == "elements":
+                for i in range(f.n):
+                    proposals.setdefault("%s_%d" % (base_key(f), i), []).append((layout.message, f))
+            elif status in ("ascii", "scalar"):
+                proposals.setdefault(base_key(f), []).append((layout.message, f))
+
+    # pass 2: the fields whose proposed name cannot be shared
     reserved = {k for k, _, _ in COMMON_KEYS}
-    qualified = {}                                # (msg name, field name) -> reason
+    qualified = collections.OrderedDict()         # (message name, field name) -> reason
     for name, uses in proposals.items():
-        sigs = {(type_class(f), f.units, f.enum) for _, f, _ in uses}
-        per_msg = collections.Counter(m.name for m, _, _ in uses)
-        reason = None
-        if name in reserved:
-            reason = "same name as a frame-header key"
-        elif len({s[0] for s in sigs}) > 1:
-            reason = "different types"
-        elif len({s[1] for s in sigs}) > 1:
-            reason = "different units"
-        elif len(sigs) > 1:
-            reason = "different enums"
-        elif max(per_msg.values()) > 1:
-            reason = "two fields of one message give the same name"
+        reason = _clash_reason(name, uses, reserved)
         if reason:
-            for m, f, _ in uses:
+            for m, f in uses:
                 qualified[(m.name, f.name)] = reason
 
+    # pass 3: declare the keys and write the lines
     keys = collections.OrderedDict()
 
     def declare(name, typ, unit, m, f):
-        if name in keys:
-            if keys[name][0] != typ or keys[name][1] != unit:
-                raise GenError("key %s declared twice with different type or unit" % name)
-        else:
-            keys[name] = (typ, unit, [])
-        if (m.name, f.name) not in keys[name][2]:
-            keys[name][2].append((m.name, f.name))
+        label = source_label(m.file)
+        if name not in keys:
+            keys[name] = KeyDecl(typ, unit, [])
+        elif keys[name].type != typ or keys[name].unit != unit:
+            raise GenError("%s.%s: key %s is already declared with another type or unit"
+                           % (m.name, f.name, name), label, f.line)
+        for other_message, other_field in keys[name].uses:
+            if other_message == m.name:
+                raise GenError("%s: fields %s and %s both give the key %s"
+                               % (m.name, other_field, f.name, name), label, f.line)
+        keys[name].uses.append((m.name, f.name))
 
-    for m in msgs:
-        for f in m.wire:
-            pos = PAYLOAD_BIT0 + 8 * f.offset
-            if f.status == "unmapped":
-                continue
-            if f.status == "core":
-                f.lines.append((f.name, pos, 32, "sscale:" + DEGE7))
-                continue
-            stem = base_key(f)
-            if (m.name, f.name) in qualified:
-                stem = m.kind + "_" + stem
-            unit = f.units or "-"
-            if f.status == "elements":
-                for i in range(f.n):
-                    k = "%s_%d" % (stem, i)
-                    declare(k, type_class(f), unit, m, f)
-                    f.lines.append((MODULE + "." + k, pos + 8 * f.size * i, 8 * f.size,
-                                    transform_for(f)))
-            else:
-                declare(stem, type_class(f), unit, m, f)
-                f.lines.append((MODULE + "." + stem, pos, 8 * f.bytes, transform_for(f)))
+    fields = []
+    for layout, (_, statuses) in zip(layouts, classes):
+        m, mapped = layout.message, []
+        for placed, status in zip(layout.wire, statuses):
+            f, lines = placed.field, []
+            pos = PAYLOAD_BIT0 + 8 * placed.offset
+            if status == "core":
+                lines.append(Line(f.name, pos, 32, "sscale:" + DEGE7))
+            elif status != "unmapped":
+                stem = base_key(f)
+                if (m.name, f.name) in qualified:
+                    stem = kind_name(m) + "_" + stem
+                unit = f.units or "-"
+                if status == "elements":
+                    for i in range(f.n):
+                        key = "%s_%d" % (stem, i)
+                        declare(key, type_class(f), unit, m, f)
+                        lines.append(Line(MODULE + "." + key, pos + 8 * f.size * i, 8 * f.size,
+                                          transform_for(f)))
+                else:
+                    declare(stem, type_class(f), unit, m, f)
+                    lines.append(Line(MODULE + "." + stem, pos, 8 * f.bytes, transform_for(f)))
+            mapped.append(MappedField(f, placed.offset, status, tuple(lines)))
+        fields.append(tuple(mapped))
     for k, _, _ in COMMON_KEYS:
         if k in keys:
             raise GenError("payload key collides with common key %s" % k)
-    return keys, qualified
+    return Assignment(fields, [core_ok for core_ok, _ in classes], keys, qualified)
 
 
-def choose_requires(msgs):
+def kind_name(msg):
+    """A kind is named by its message name in lower case."""
+    return msg.name.lower()
+
+
+def raw_keys(fields):
+    """The `mavlink.` keys a kind maps, in line order."""
+    return [line.key for f in fields for line in f.lines if line.key.startswith(MODULE + ".")]
+
+
+def choose_requires(names, raw):
+    """The `requires` keys of every kind: up to MAX_REQUIRES of its own raw
+    keys, the ones the fewest kinds map (ties: the earlier line), written in
+    line order. `names[i]` and `raw[i]` belong to one kind."""
     usage = collections.Counter()
-    for m in msgs:
-        m.raw_keys = [k for f in m.wire for k, _, _, _ in f.lines if k.startswith(MODULE + ".")]
-        usage.update(set(m.raw_keys))
-    for m in msgs:
-        ranked = sorted(range(len(m.raw_keys)), key=lambda i: (usage[m.raw_keys[i]], i))
+    for keys in raw:
+        usage.update(set(keys))
+    chosen = []
+    for name, keys in zip(names, raw):
+        ranked = sorted(range(len(keys)), key=lambda i: (usage[keys[i]], i))
         picked = sorted(ranked[:MAX_REQUIRES])
-        m.requires = [m.raw_keys[i] for i in picked]
-        if not m.requires:
-            raise GenError("%s has no raw key to require" % m.name)
-    for m in msgs:
-        r = set(m.requires)
-        m.shadowed_by = [o.name for o in msgs if o is not m and r <= set(o.raw_keys)]
+        if not picked:
+            raise GenError("%s has no raw key to require" % name)
+        chosen.append([keys[i] for i in picked])
+    return chosen
 
 
-# ---------------------------------------------------------------- emitting ---
+def find_shadows(names, requires, raw):
+    """For every kind, the names of the other kinds that map all of its
+    required keys: an entity with those keys and no kind selects the first."""
+    key_sets = [set(keys) for keys in raw]
+    return [[names[j] for j in range(len(names)) if j != i and set(required) <= key_sets[j]]
+            for i, required in enumerate(requires)]
+
+
+def make_plan(messages):
+    """The Plan of a list of messages: nothing is left for the emitters to decide."""
+    layouts = [lay_out(m) for m in messages]
+    assigned = assign_keys(layouts)
+    names = [m.name for m in messages]
+    raw = [raw_keys(fields) for fields in assigned.fields]
+    requires = choose_requires(names, raw)
+    shadows = find_shadows(names, requires, raw)
+    kinds = [KindPlan(layout.message, kind_name(layout.message), layout.length, layout.crc_extra,
+                      assigned.core_ok[i], assigned.fields[i], requires[i], shadows[i])
+             for i, layout in enumerate(layouts)]
+    return Plan(kinds, assigned.keys, assigned.qualified)
+
+
+def check_known_crc_extra(kinds):
+    """The field order is right when the messages whose CRC_EXTRA the protocol
+    fixes give that value. Refuses a source in which one differs or is absent."""
+    for name, want in KNOWN_CRC_EXTRA.items():
+        got = [k.crc_extra for k in kinds if k.message.name == name]
+        if got != [want]:
+            raise GenError("CRC_EXTRA of %s is %s, protocol value is %d" % (name, got, want))
+
+
+def collect_stats(plan):
+    """The counts pack.md and the run summary state."""
+    kinds = plan.kinds
+    fields = [f for k in kinds for f in k.fields]
+
+    def count(status):
+        return sum(f.status == status for f in fields)
+
+    stats = {
+        "per_file": collections.Counter(k.message.file for k in kinds), "fields": len(fields),
+        "scalar": count("scalar"), "ascii": count("ascii"), "elements": count("elements"),
+        "element_lines": sum(len(f.lines) for f in fields if f.status == "elements"),
+        "core": count("core"), "unmapped": count("unmapped"),
+        "field_lines": len(COMMON_KEYS) + sum(len(f.lines) for f in fields),
+    }
+    stats["mapped"] = stats["fields"] - stats["unmapped"]
+    return stats
+
+
+# ------------------------------------------------------------------- emit ---
 
 def loc(pos, length):
+    """A fixed-layout bits locator `<word>:<pos>:<len>`. Every locator of this
+    pack is written from word 0, so `pos` is the bit offset from the STX byte
+    (engine-spec 0.5 "bits: fields that run past their word")."""
     return "0:%d:%d" % (pos, length)
 
 
+def _source_lines(sha):
+    out = ['source        "%s %s/%s at commit %s"' % (REPO, XML_DIR, name, sha) for name in XML_FILES]
+    out.append('source        "MAVLink 2 packet format, https://mavlink.io/en/guide/serialization.html"')
+    return out
+
+
 def emit_model(keys, sha):
+    """The text of model/mavlink.def."""
     out = ["# The mavlink module: MAVLink fields in their wire units, as raw values.",
            "# Generated by tools/gen/mavlink2pack.py; do not edit by hand.",
            "# A key is shared by every message whose field has that name, type class,",
@@ -332,20 +682,21 @@ def emit_model(keys, sha):
            "module        %s" % MODULE,
            "version       %s" % PACK_VERSION,
            "distribution  public"]
-    for name in XML_FILES:
-        out.append('source        "%s %s/%s at commit %s"' % (REPO, XML_DIR, name, sha))
-    out.append('source        "MAVLink 2 packet format, https://mavlink.io/en/guide/serialization.html"')
+    out += _source_lines(sha)
     for k, _, meaning in COMMON_KEYS:
         out.append('key  %s  int  -  "MAVLink 2 frame header: %s"' % (k, meaning))
-    for k, (typ, unit, uses) in keys.items():
-        names = [m for m, _ in uses]
-        fname = uses[0][1]
+    for k, decl in keys.items():
+        names = [m for m, _ in decl.uses]
+        fname = decl.uses[0][1]
         shown = ", ".join(names[:3]) + (" and %d more" % (len(names) - 3) if len(names) > 3 else "")
-        out.append('key  %s  %s  %s  "field %s of %s"' % (k, typ, unit, fname, shown))
+        out.append('key  %s  %s  %s  "field %s of %s"' % (k, decl.type, decl.unit, fname, shown))
     return "\n".join(out) + "\n"
 
 
-def emit_pack(msgs, sha):
+def emit_pack(kinds, sha):
+    """The text of packs/mavlink2/pack.def: the header, the common `when` on
+    STX and the three frame-header fields, then one kind per message selected
+    by a `when` on the message id and a `when` on the payload length."""
     out = ["# MAVLink 2 frames, message set common.xml (with standard.xml, minimal.xml).",
            "# Generated by tools/gen/mavlink2pack.py; do not edit by hand.",
            "# One byte-aligned frame addressed by bit offset from the STX byte:",
@@ -354,245 +705,27 @@ def emit_pack(msgs, sha):
            "format        %s" % FORMAT,
            "version       %s" % PACK_VERSION,
            "distribution  public"]
-    for name in XML_FILES:
-        out.append('source        "%s %s/%s at commit %s"' % (REPO, XML_DIR, name, sha))
-    out.append('source        "MAVLink 2 packet format, https://mavlink.io/en/guide/serialization.html"')
+    out += _source_lines(sha)
     out += ["uses          %s" % MODULE,
             "wire          bits",
             "bit_order     lsb",
             "word_bytes    1",
             "when   %s %d" % (loc(*LOC_STX), STX)]
-    for k, l, _ in COMMON_KEYS:
-        out.append("field  %s.%s %s uint" % (MODULE, k, loc(*l)))
-    for m in msgs:
+    for k, location, _ in COMMON_KEYS:
+        out.append("field  %s.%s %s uint" % (MODULE, k, loc(*location)))
+    for kind in kinds:
         out.append("")
-        out.append("kind      %s" % m.kind)
-        out.append("when      %s %d" % (loc(*LOC_MSGID), m.id))
-        out.append("when      %s %d" % (loc(*LOC_LEN), m.length))
-        out.append("requires  %s" % " ".join(m.requires))
-        for f in m.wire:
-            for key, pos, length, tr in f.lines:
-                out.append("field     %s %s %s" % (key, loc(pos, length), tr))
+        out.append("kind      %s" % kind.name)
+        out.append("when      %s %d" % (loc(*LOC_MSGID), kind.message.id))
+        out.append("when      %s %d" % (loc(*LOC_LEN), kind.length))
+        out.append("requires  %s" % " ".join(kind.requires))
+        for f in kind.fields:
+            for line in f.lines:
+                out.append("field     %s %s %s" % (line.key, loc(line.pos, line.bits), line.transform))
     return "\n".join(out) + "\n"
 
 
-# ------------------------------------------------- independent pack reader ---
-
-YIELDS = {"uint": "int", "twos": "int", "f32": "float", "f64": "float", "ascii": "string",
-          "uscale": "float", "sscale": "float", "linscale": "float"}
-LOC_RE = re.compile(r"^(\d+):(\d+):(\d+)$")
-KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-
-
-def tokens(line):
-    """Whitespace-separated tokens; `#` starts a comment only at token start;
-    double quotes wrap a value that contains whitespace."""
-    out, i, n = [], 0, len(line)
-    while i < n:
-        if line[i].isspace():
-            i += 1
-        elif line[i] == "#":
-            break
-        elif line[i] == '"':
-            j = line.find('"', i + 1)
-            if j < 0:
-                raise GenError("unterminated quote: " + line)
-            out.append(line[i + 1:j])
-            i = j + 1
-        else:
-            j = i
-            while j < n and not line[j].isspace():
-                j += 1
-            out.append(line[i:j])
-            i = j
-    return out
-
-
-def parse_model(text):
-    mod = {"keys": {}, "name": None, "dist": None, "sources": 0}
-    for ln, line in enumerate(text.splitlines(), 1):
-        t = tokens(line)
-        if not t:
-            continue
-        d, a = t[0], t[1:]
-        if d == "module" and len(a) == 1:
-            mod["name"] = a[0]
-        elif d == "version" and len(a) == 1 and re.match(r"^\d+\.\d+\.\d+$", a[0]):
-            pass
-        elif d == "distribution" and len(a) == 1 and a[0] in ("public", "controlled"):
-            mod["dist"] = a[0]
-        elif d == "source" and len(a) == 1:
-            mod["sources"] += 1
-        elif d == "key" and len(a) in (3, 4):
-            if not KEY_RE.match(a[0]) or a[1] not in ("string", "float", "int"):
-                raise GenError("model line %d: bad key or type" % ln)
-            if a[0] in mod["keys"]:
-                raise GenError("model line %d: duplicate-key %s" % (ln, a[0]))
-            mod["keys"][a[0]] = a[1]
-        else:
-            raise GenError("model line %d: bad directive: %s" % (ln, line))
-    if not mod["name"] or not mod["dist"] or not mod["sources"]:
-        raise GenError("model lacks module, distribution or source")
-    return mod
-
-
-def parse_transform(tr, length, where):
-    parts = tr.split(":")
-    name = parts[0]
-    if name not in YIELDS or name == "linscale":
-        raise GenError("%s: transform %s not valid here" % (where, tr))
-    if name in ("uscale", "sscale"):
-        if len(parts) not in (2, 3):
-            raise GenError("%s: bad %s" % (where, tr))
-        num_re = r"^-?\d+(\.\d+)?$"
-        frac = re.match(r"^(-?\d+)/(\d+)$", parts[1])
-        if not (frac or re.match(num_re, parts[1])) or not all(re.match(num_re, p) for p in parts[2:]):
-            raise GenError("%s: bad number in %s" % (where, tr))
-        off = float(parts[2]) if len(parts) == 3 else 0.0
-        if frac:
-            if int(frac.group(1)) == 0 or int(frac.group(2)) == 0:
-                raise GenError("%s: zero in fraction" % where)
-            return name, ("frac", int(frac.group(1)), int(frac.group(2)), off)
-        if float(parts[1]) == 0:
-            raise GenError("%s: zero factor" % where)
-        return name, ("mul", float(parts[1]), None, off)
-    elif len(parts) != 1:
-        raise GenError("%s: %s takes no argument" % (where, tr))
-    if name == "f32" and length != 32:
-        raise GenError("%s: f32 needs len 32" % where)
-    if name == "f64" and length != 64:
-        raise GenError("%s: f64 needs len 64" % where)
-    if name == "ascii":
-        if length % 8 or not 8 <= length <= 2040:
-            raise GenError("%s: ascii len %d" % (where, length))
-    elif not 1 <= length <= 64:
-        raise GenError("%s: len %d outside 1..64" % (where, length))
-    return name, [float(p) for p in parts[1:]]
-
-
-def parse_pack(text):
-    """Read pack.def text into {head, common, kinds}. Checks the grammar."""
-    pack = {"head": {}, "uses": [], "sources": 0,
-            "common": {"when": [], "fields": []}, "kinds": collections.OrderedDict()}
-    cur = pack["common"]
-    for ln, line in enumerate(text.splitlines(), 1):
-        t = tokens(line)
-        if not t:
-            continue
-        d, a = t[0], t[1:]
-        where = "pack line %d" % ln
-        if d in ("format", "version", "wire", "bit_order", "word_bytes", "distribution"):
-            if len(a) != 1 or d in pack["head"]:
-                raise GenError(where + ": bad or repeated " + d)
-            pack["head"][d] = a[0]
-        elif d == "source" and len(a) == 1:
-            pack["sources"] += 1
-        elif d == "uses" and len(a) == 1:
-            pack["uses"].append(a[0])
-        elif d == "kind" and len(a) == 1:
-            if a[0] in pack["kinds"]:
-                raise GenError(where + ": duplicate-kind " + a[0])
-            if not re.match(r"^[a-z0-9_]+$", a[0]):
-                raise GenError(where + ": bad kind name")
-            cur = {"when": [], "fields": [], "requires": []}
-            pack["kinds"][a[0]] = cur
-        elif d == "when" and len(a) == 2:
-            lm = LOC_RE.match(a[0])
-            if not lm or not a[1].isdigit():
-                raise GenError(where + ": bad when")
-            w, p, l = (int(x) for x in lm.groups())
-            if not 1 <= l <= 64 or int(a[1]) >= (1 << l):
-                raise GenError(where + ": when value does not fit")
-            cur["when"].append((w, p, l, int(a[1])))
-        elif d == "requires" and a:
-            if cur is pack["common"]:
-                raise GenError(where + ": bad-directive requires before first kind")
-            cur["requires"] += a
-        elif d == "field" and len(a) == 3:
-            lm = LOC_RE.match(a[1])
-            if not lm:
-                raise GenError(where + ": bad locator " + a[1])
-            w, p, l = (int(x) for x in lm.groups())
-            name, args = parse_transform(a[2], l, where)
-            cur["fields"].append((a[0], w, p, l, name, args))
-        else:
-            raise GenError(where + ": bad directive: " + line)
-    h = pack["head"]
-    for need in ("format", "version", "wire", "word_bytes", "distribution"):
-        if need not in h:
-            raise GenError("pack lacks " + need)
-    if h["wire"] != "bits" or h.get("bit_order", "lsb") != "lsb" or h["word_bytes"] != "1":
-        raise GenError("this checker reads only wire bits, bit_order lsb, word_bytes 1")
-    if not pack["sources"]:
-        raise GenError("missing-source")
-    return pack
-
-
-def check_pack(pack, modules):
-    """Version 0.4 and 0.5 load checks, plus the frame checks of this pack."""
-    if pack["head"]["distribution"] == "public":
-        for u in pack["uses"]:
-            if u not in modules:
-                raise GenError("unknown-module " + u)
-            if modules[u]["dist"] != "public":
-                raise GenError("distribution-violation " + u)
-
-    def key_type(key, where):
-        mod, name = key.split(".", 1) if "." in key else ("core", key)
-        if mod not in modules:
-            raise GenError("%s: unknown-module %s" % (where, mod))
-        if mod != "core" and mod not in pack["uses"]:
-            raise GenError("%s: module-not-used %s" % (where, mod))
-        if name not in modules[mod]["keys"]:
-            raise GenError("%s: undeclared-key %s" % (where, key))
-        return modules[mod]["keys"][name]
-
-    def span(fields, whens):
-        return [(w * 8 + p, w * 8 + p + l) for _, w, p, l, _, _ in fields] + \
-               [(w * 8 + p, w * 8 + p + l) for w, p, l, _ in whens]
-
-    common = pack["common"]
-    if (0, 0, 8, STX) not in common["when"]:
-        raise GenError("common `when` on STX missing")
-    for kname, k in pack["kinds"].items():
-        where = "kind " + kname
-        seen = set()
-        for key, w, p, l, tr, _ in common["fields"] + k["fields"]:
-            if key in seen:
-                raise GenError("%s: duplicate-field %s" % (where, key))
-            seen.add(key)
-            if key_type(key, where) != YIELDS[tr]:
-                raise GenError("%s: key-type-mismatch %s via %s" % (where, key, tr))
-        if not k["requires"]:
-            raise GenError(where + ": no requires")
-        for key in k["requires"]:
-            key_type(key, where)
-            if key not in {f[0] for f in k["fields"]}:
-                raise GenError("%s: requires %s which the kind does not map" % (where, key))
-        ids = [v for w, p, l, v in k["when"] if (w * 8 + p, l) == LOC_MSGID]
-        lens = [v for w, p, l, v in k["when"] if (w * 8 + p, l) == LOC_LEN]
-        if len(ids) != 1 or len(lens) != 1 or len(k["when"]) != 2:
-            raise GenError(where + ": needs exactly one MSGID when and one LEN when")
-        end = PAYLOAD_BIT0 + 8 * lens[0]
-        taken = sorted(span(common["fields"] + k["fields"], common["when"] + k["when"]))
-        for (a0, a1), (b0, b1) in zip(taken, taken[1:]):
-            if b0 < a1:
-                raise GenError("%s: bit ranges overlap at %d" % (where, b0))
-        for a0, a1 in span(k["fields"], []):
-            if a0 < PAYLOAD_BIT0 or a1 > end:
-                raise GenError("%s: field bits %d..%d outside the payload" % (where, a0, a1))
-            if a0 % 8 or a1 % 8:
-                raise GenError("%s: field not byte aligned" % where)
-    pairs = [tuple(sorted(k["when"])) for k in pack["kinds"].values()]
-    if len(set(pairs)) != len(pairs):
-        raise GenError("two kinds have the same `when` set")
-
-
-# --------------------------------------------- small engine, from the spec ---
-
-def round_away(x):
-    return int(math.floor(abs(x) + 0.5)) * (1 if x >= 0 else -1)
-
+# ---------------------------------------------------------------- vectors ---
 
 def fmt_float(x):
     """Shortest round-trip decimal, plain notation, integers without a point."""
@@ -603,101 +736,6 @@ def fmt_float(x):
     r = repr(x)
     return format(Decimal(r), "f") if "e" in r or "E" in r else r
 
-
-def get_bits(data, pos, length):
-    return (int.from_bytes(data, "little") >> pos) & ((1 << length) - 1)
-
-
-def message_bytes(lines_fields, lines_when):
-    top = max([w * 8 + p + l for _, w, p, l, _, _ in lines_fields] +
-              [w * 8 + p + l for w, p, l, _ in lines_when])
-    return (top + 7) // 8
-
-
-def engine_decode(pack, data):
-    c = pack["common"]
-    def holds(whens):
-        return all(w * 8 + p + l <= 8 * len(data) and get_bits(data, w * 8 + p, l) == v
-                   for w, p, l, v in whens)
-    if not holds(c["when"]):
-        raise GenError("no-kind")
-    for kname, k in pack["kinds"].items():
-        if holds(k["when"]):
-            break
-    else:
-        raise GenError("no-kind")
-    fields = c["fields"] + k["fields"]
-    if len(data) < message_bytes(fields, c["when"] + k["when"]):
-        raise GenError("malformed-wire")
-    ent = collections.OrderedDict()
-    for key, w, p, l, tr, args in fields:
-        v = get_bits(data, w * 8 + p, l)
-        if tr == "uint":
-            # ruling 2: a 64-bit field with the top bit set is the negative integer
-            ent[key] = v - (1 << 64) if l == 64 and v >> 63 else v
-        elif tr == "twos":
-            ent[key] = v - (1 << l) if v >> (l - 1) else v
-        elif tr in ("uscale", "sscale"):
-            if tr == "sscale" and v >> (l - 1):
-                v -= 1 << l
-            mode, a, b, off = args          # ruling 1: v * num / den, then + offset
-            ent[key] = (v * float(a) / float(b) if mode == "frac" else v * a) + off
-        elif tr == "f32":
-            ent[key] = struct.unpack("<f", v.to_bytes(4, "little"))[0]
-        elif tr == "f64":
-            ent[key] = struct.unpack("<d", v.to_bytes(8, "little"))[0]
-        elif tr == "ascii":
-            raw = v.to_bytes(l // 8, "little").rstrip(b"\0")
-            if any(b < 0x20 or b > 0x7E for b in raw):
-                raise GenError("transform-decode ascii")
-            ent[key] = raw.decode("ascii")
-    return kname, ent
-
-
-def engine_encode(pack, kname, ent):
-    c, k = pack["common"], pack["kinds"][kname]
-    fields = c["fields"] + k["fields"]
-    whens = c["when"] + k["when"]
-    acc = 0
-    for key, w, p, l, tr, args in fields:
-        if key not in ent:
-            continue
-        x = ent[key]
-        if tr in ("uint", "twos"):
-            v = x & ((1 << l) - 1)
-        elif tr in ("uscale", "sscale"):
-            mode, a, b, off = args          # ruling 1: (x - offset) * den / num
-            n = round_away((x - off) * float(b) / float(a) if mode == "frac" else (x - off) / a)
-            lo, hi = (0, (1 << l) - 1) if tr == "uscale" else (-(1 << (l - 1)), (1 << (l - 1)) - 1)
-            if not lo <= n <= hi:
-                raise GenError("transform-encode")
-            v = n & ((1 << l) - 1)
-        elif tr == "f32":
-            v = int.from_bytes(struct.pack("<f", x), "little")
-        elif tr == "f64":
-            v = int.from_bytes(struct.pack("<d", x), "little")
-        elif tr == "ascii":
-            raw = x.encode("ascii")
-            if len(raw) > l // 8:
-                raise GenError("transform-encode ascii")
-            v = int.from_bytes(raw.ljust(l // 8, b"\0"), "little")
-        acc |= v << (w * 8 + p)
-    for w, p, l, v in whens:
-        acc |= v << (w * 8 + p)
-    return acc.to_bytes(message_bytes(fields, whens), "little")
-
-
-def geojson_encode(ent):
-    """Canonical GeoJSON for an entity that holds no geojson key but lat/lon
-    (engine-spec 0.1.1 rulings 3-5; packs/geojson/pack.def)."""
-    if "lat" in ent and "lon" in ent:
-        geom = '{"type":"Point","coordinates":[%s,%s]}' % (fmt_float(ent["lon"]), fmt_float(ent["lat"]))
-    else:
-        geom = "null"
-    return '{"type":"Feature","geometry":%s,"properties":{}}' % geom
-
-
-# ------------------------------------------------------------------ vectors ---
 
 def sample_value(f, salt):
     """A value inside the field's range that survives decode then encode."""
@@ -718,70 +756,71 @@ def sample_value(f, salt):
 
 
 def pack_scalar(f, v):
+    """One element of a field as MAVLink writes it: little-endian; text
+    padded with NUL bytes to the field length."""
     if f.base == "char":
         return v.encode("ascii").ljust(f.n, b"\0")
-    code = {"uint8_t": "B", "int8_t": "b", "uint16_t": "H", "int16_t": "h",
-            "uint32_t": "I", "int32_t": "i", "uint64_t": "Q", "int64_t": "q",
-            "float": "f", "double": "d"}[f.base]
-    return struct.pack("<" + code, v)
+    return struct.pack("<" + STRUCT_CODES[f.base], v)
 
 
-def build_payload(msg, values):
-    """values: {field name: scalar | list}. Unnamed fields are zero."""
-    unknown = set(values) - {f.name for f in msg.wire}
+def build_payload(kind, values):
+    """The full payload of a kind. values: {field name: scalar | list for an
+    array}. A field that is not named is zero."""
+    unknown = set(values) - {f.field.name for f in kind.fields}
     if unknown:
-        raise GenError("%s has no field %s" % (msg.name, sorted(unknown)))
+        raise GenError("%s has no field %s" % (kind.message.name, sorted(unknown)))
     out = b""
-    for f in msg.wire:
+    for mapped in kind.fields:
+        f = mapped.field
         if f.name not in values:
             out += bytes(f.bytes)
-        elif f.n is not None and f.base != "char":
+        elif f.is_array:
             out += b"".join(pack_scalar(f, v) for v in values[f.name])
         else:
             out += pack_scalar(f, values[f.name])
-    assert len(out) == msg.length
+    if len(out) != kind.length:
+        raise GenError("%s: the values give %d payload bytes, the message has %d"
+                       % (kind.message.name, len(out), kind.length))
     return out
 
 
-def frame(msg, payload, seq, sysid, compid, with_crc):
-    head = bytes([STX, msg.length, 0, 0, seq, sysid, compid]) + msg.id.to_bytes(3, "little")
+def frame(kind, payload, seq, sysid, compid, with_crc):
+    """A MAVLink 2 frame with both flag bytes zero. LEN is the kind's full
+    payload length even when `payload` is cut short. The CRC covers every byte
+    after STX and then CRC_EXTRA, and is written little-endian."""
+    head = bytes([STX, kind.length, 0, 0, seq, sysid, compid]) + kind.message.id.to_bytes(3, "little")
     body = head + payload
     if with_crc:
-        crc = x25(body[1:] + bytes([msg.crc_extra]))
+        crc = x25(body[1:] + bytes([kind.crc_extra]))
         body += struct.pack("<H", crc)
     return body
 
 
-def model_strings(kname, ent):
-    out = collections.OrderedDict([("@kind", kname)])
-    for k, v in ent.items():
-        out[k] = fmt_float(v) if isinstance(v, float) else str(v)
-    return out
-
-
-def roundtrip_vector(msg, index):
+def roundtrip_vector(kind, index):
+    """The frame of a kind's round-trip vector, as the encoder writes it: every
+    mapped field holds a sample value, unmapped arrays are zero, the bytes end
+    at the last mapped byte and there is no CRC."""
+    msgid = kind.message.id
     values = {}
-    for j, f in enumerate(msg.wire):
-        salt = msg.id * 31 + j * 7 + 3
-        if f.status == "unmapped":
+    for j, mapped in enumerate(kind.fields):
+        f = mapped.field
+        salt = msgid * 31 + j * 7 + 3
+        if mapped.status == "unmapped":
             continue                       # bits no field maps stay zero
-        if f.status == "core":
-            values[f.name] = {"lat": 1, "lon": -1}[f.name] * (100000000 + 1250000 * (msg.id % 37))
-        elif f.status == "elements":
+        if mapped.status == "core":
+            values[f.name] = {"lat": 1, "lon": -1}[f.name] * (100000000 + 1250000 * (msgid % 37))
+        elif mapped.status == "elements":
             values[f.name] = [sample_value(f, salt + i) for i in range(f.n)]
         else:
             values[f.name] = sample_value(f, salt)
-    payload = build_payload(msg, values)
-    # the encoder writes whole bytes up to the last mapped bit and no CRC
-    last = max((f.offset + f.bytes for f in msg.wire if f.status != "unmapped"), default=0)
-    data = frame(msg, payload[:last], index % 256, 1 + msg.id % 250, 1 + msg.id % 191, False)
-    return data
+    payload = build_payload(kind, values)
+    return frame(kind, payload[:kind.mapped_len], index % 256, 1 + msgid % 250, 1 + msgid % 191, False)
 
 
 # Five cross-format cases. `expect` is written by hand from the field values:
 # lat and lon are int32 degE7, so degrees = value / 10^7; GeoJSON coordinates
 # are [lon, lat]; geojson carries no other key this pack maps, so `properties`
-# is empty. The generator checks each against its own engine.
+# is empty. The generator checks each against its own codec.
 CROSS = [
     ("GLOBAL_POSITION_INT", 7, 1, 1,
      {"time_boot_ms": 123456, "lat": 473977420, "lon": 85455940, "alt": 488100,
@@ -806,86 +845,54 @@ CROSS = [
 ]
 
 
-def write_vectors(msgs, vec_dir):
-    os.makedirs(vec_dir, exist_ok=True)
-    for old in os.listdir(vec_dir):
-        if old.endswith(".json"):
-            os.remove(os.path.join(vec_dir, old))
-    by_name = {m.name: m for m in msgs}
-    count = 0
-    for i, m in enumerate(msgs):
-        data = roundtrip_vector(m, i)
-        vec = collections.OrderedDict([
-            ("name", "roundtrip-%s" % m.kind), ("from", FORMAT), ("to", FORMAT),
-            ("input", data.hex()), ("expect", data.hex()),
-            ("model", {"@kind": m.kind})])
-        with open(os.path.join(vec_dir, "rt-%05d-%s.json" % (m.id, m.kind)), "w", encoding="utf-8") as fh:
-            json.dump(vec, fh, indent=2)
-            fh.write("\n")
-        count += 1
+def _vector_text(pairs):
+    return json.dumps(collections.OrderedDict(pairs), indent=2) + "\n"
+
+
+def vector_files(kinds):
+    """[(file name, text)] of every vector: one round trip per kind in id
+    order, then the cross-format cases of CROSS."""
+    files = []
+    for i, kind in enumerate(kinds):
+        data = roundtrip_vector(kind, i).hex()
+        files.append(("rt-%05d-%s.json" % (kind.message.id, kind.name), _vector_text([
+            ("name", "roundtrip-%s" % kind.name), ("from", FORMAT), ("to", FORMAT),
+            ("input", data), ("expect", data), ("model", {"@kind": kind.name})])))
+    by_name = {kind.message.name: kind for kind in kinds}
     for n, (name, seq, sysid, compid, values, expect) in enumerate(CROSS, 1):
-        m = by_name[name]
-        data = frame(m, build_payload(m, values), seq, sysid, compid, True)
-        model = collections.OrderedDict([("@kind", m.kind),
+        if name not in by_name:
+            raise GenError("the source has no message %s, which a vector to geojson is written from" % name)
+        kind = by_name[name]
+        data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
+        model = collections.OrderedDict([("@kind", kind.name),
                                          ("lat", fmt_float(values["lat"] * 1.0 / 10000000.0)),
                                          ("lon", fmt_float(values["lon"] * 1.0 / 10000000.0)),
                                          (MODULE + ".seq", str(seq)),
                                          (MODULE + ".sysid", str(sysid)),
                                          (MODULE + ".compid", str(compid))])
-        vec = collections.OrderedDict([
-            ("name", "%s-to-geojson" % m.kind), ("from", FORMAT), ("to", "geojson"),
-            ("input", data.hex()), ("expect", expect), ("model", model)])
-        with open(os.path.join(vec_dir, "x-%02d-%s-to-geojson.json" % (n, m.kind)), "w", encoding="utf-8") as fh:
-            json.dump(vec, fh, indent=2)
-            fh.write("\n")
-        count += 1
-    return count
+        files.append(("x-%02d-%s-to-geojson.json" % (n, kind.name), _vector_text([
+            ("name", "%s-to-geojson" % kind.name), ("from", FORMAT), ("to", "geojson"),
+            ("input", data.hex()), ("expect", expect), ("model", model)])))
+    return files
 
 
-def check_vectors(pack, vec_dir):
-    names, kinds_seen, n = set(), set(), 0
-    for fn in sorted(os.listdir(vec_dir)):
-        vec = json.load(open(os.path.join(vec_dir, fn), encoding="utf-8"))
-        if vec["name"] in names:
-            raise GenError("duplicate vector name " + vec["name"])
-        names.add(vec["name"])
-        data = bytes.fromhex(vec["input"])
-        kname, ent = engine_decode(pack, data)
-        for k, want in vec.get("model", {}).items():
-            if k == "@kind":
-                if want != kname:
-                    raise GenError("%s: decoded kind %s, vector says %s" % (fn, kname, want))
-            elif isinstance(ent[k], float):
-                if abs(ent[k] - float(want)) > 1e-9:
-                    raise GenError("%s: model %s" % (fn, k))
-            elif str(ent[k]) != want:
-                raise GenError("%s: model %s" % (fn, k))
-        if vec["to"] == FORMAT:
-            got = engine_encode(pack, kname, ent).hex()
-            kinds_seen.add(kname)
-        elif vec["to"] == "geojson":
-            got = geojson_encode(ent)
-        else:
-            raise GenError(fn + ": unknown target")
-        if got != vec["expect"]:
-            raise GenError("%s: convert gives\n  %s\nvector expects\n  %s" % (fn, got, vec["expect"]))
-        n += 1
-    missing = set(pack["kinds"]) - kinds_seen
-    if missing:
-        raise GenError("kinds with no round-trip vector: %s" % sorted(missing))
-    return n
+def write_vectors(out, files):
+    """Write the vector files and remove every other .json of the directory."""
+    keep = {name for name, _ in files}
+    for old in out.listdir(VECTOR_DIR):
+        if old.endswith(".json") and old not in keep:
+            out.remove("%s/%s" % (VECTOR_DIR, old))
+    for name, text in files:
+        out.write("%s/%s" % (VECTOR_DIR, name), text)
 
 
-# ------------------------------------------------------------------ pack.md ---
+# ---------------------------------------------------------------- pack.md ---
 
-def emit_pack_md(msgs, keys, qualified, stats, sha):
-    core = [m for m in msgs if any(f.status == "core" for f in m.wire)]
-    unmapped = [(m, f) for m in msgs for f in m.wire if f.status == "unmapped"]
-    short = [m for m in msgs if m.mapped_len < m.length]
-    shadow = [m for m in msgs if m.shadowed_by]
-    raw_latlon = [(m, f) for m in msgs for f in m.wire
-                  if f.units == "degE7" and f.status != "core" and m.core_ok]
-    reasons = collections.Counter(qualified.values())
+def _ticked(names):
+    return ", ".join("`%s`" % name for name in names)
+
+
+def _md_layout(sha):
     o = []
     a = o.append
     a("# Pack: mavlink2")
@@ -923,14 +930,21 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("The generator confirms its field order by computing each message's CRC_EXTRA and")
     a("comparing six of them with the values the protocol fixes.")
     a("")
+    return o
+
+
+def _md_numbers(plan, stats):
+    n_kinds = len(plan.kinds)
+    o = []
+    a = o.append
     a("## Numbers")
     a("")
     a("| | Count |")
     a("|---|---|")
     a("| Messages in the source (common %d, standard %d, minimal %d) | %d |" % (
         stats["per_file"]["common.xml"], stats["per_file"]["standard.xml"],
-        stats["per_file"]["minimal.xml"], len(msgs)))
-    a("| Kinds | %d |" % len(msgs))
+        stats["per_file"]["minimal.xml"], n_kinds))
+    a("| Kinds | %d |" % n_kinds)
     a("| Payload fields in the source | %d |" % stats["fields"])
     a("| Payload fields mapped | %d |" % stats["mapped"])
     a("| ... scalar to a raw `mavlink.` key | %d |" % stats["scalar"])
@@ -941,10 +955,17 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("| Payload fields not mapped (arrays of more than %d elements) | %d |" % (
         MAX_ARRAY_ELEMENTS, stats["unmapped"]))
     a("| `field` lines in `pack.def` (3 common + per kind) | %d |" % stats["field_lines"])
-    a("| Keys in module `mavlink` (3 frame-header + payload) | %d |" % (len(keys) + 3))
+    a("| Keys in module `mavlink` (3 frame-header + payload) | %d |" % (len(plan.keys) + 3))
     a("| Vectors (%d same-format round trips + %d to geojson) | %d |" % (
-        len(msgs), len(CROSS), len(msgs) + len(CROSS)))
+        n_kinds, len(CROSS), n_kinds + len(CROSS)))
     a("")
+    return o
+
+
+def _md_mapped(plan):
+    reasons = collections.Counter(plan.qualified.values())
+    o = []
+    a = o.append
     a("## What is mapped")
     a("")
     a("| MAVLink type | Transform | Model type |")
@@ -968,23 +989,34 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("becomes `pct`, `*` becomes `_x`. One key is shared by every message whose field")
     a("has that name with the same type class (int, float, string), units and enum.")
     a("When the uses of a name disagree, every use takes the message name as a prefix")
-    a("(`mavlink.<message>_<field>…`). %d fields are named that way:" % len(qualified))
+    a("(`mavlink.<message>_<field>…`). %d fields are named that way:" % len(plan.qualified))
     a("")
     a("| Reason | Fields |")
     a("|---|---|")
+    # most fields first; reasons with one count stay in first-use order (the sort is stable)
     for r, c in sorted(reasons.items(), key=lambda x: -x[1]):
         a("| %s | %d |" % (r, c))
     a("")
+    return o
+
+
+def _md_core(plan):
+    kinds = plan.kinds
+    core = [k for k in kinds if any(f.status == "core" for f in k.fields)]
+    nocore = [k for k in kinds if not k.core_ok]
+    raw_latlon = [f for k in kinds for f in k.fields
+                  if f.field.units == "degE7" and f.status != "core" and k.core_ok]
+    o = []
+    a = o.append
     a("### Core keys")
     a("")
-    a("%d kinds map core `lat` and `lon`: %s." % (len(core), ", ".join("`%s`" % m.kind for m in core)))
+    a("%d kinds map core `lat` and `lon`: %s." % (len(core), _ticked(k.name for k in core)))
     a("The position is the one the message reports, which is not always the sending")
     a("vehicle's: `terrain_request`, `terrain_data` and `terrain_report`")
     a("carry a terrain grid point, `follow_target` a target, `camera_image_captured` the")
     a("camera at capture time.")
-    nocore = [m for m in msgs if not m.core_ok]
     if nocore:
-        a("%s has no field but `lat` and `lon`; they stay raw there so the kind has a raw" % ", ".join("`%s`" % m.kind for m in nocore))
+        a("%s has no field but `lat` and `lon`; they stay raw there so the kind has a raw" % _ticked(k.name for k in nocore))
         a("key to require, otherwise any entity with a position would encode as that kind.")
     a("")
     a("Left raw on purpose:")
@@ -1002,6 +1034,13 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("  the reference frame is in the description text, not in the units, and most")
     a("  declare an `invalid` value (UINT16_MAX).")
     a("")
+    return o
+
+
+def _md_requires(plan):
+    shadow = [k for k in plan.kinds if k.shadowed_by]
+    o = []
+    a = o.append
     a("### `requires`")
     a("")
     a("Each kind requires up to %d of its own raw keys, the ones used by the fewest" % MAX_REQUIRES)
@@ -1011,9 +1050,15 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     if shadow:
         a("For %d kinds the required keys are all shared with at least one other kind" % len(shadow))
         a("that maps every one of them; an entity built from such a kind's keys with its")
-        a("kind cleared selects the first qualifying kind in id order: %s." % ", ".join(
-            "`%s`" % m.kind for m in shadow))
+        a("kind cleared selects the first qualifying kind in id order: %s." % _ticked(k.name for k in shadow))
     a("")
+    return o
+
+
+def _md_not_mapped(plan):
+    unmapped = [(k, f.field) for k in plan.kinds for f in k.fields if f.status == "unmapped"]
+    o = []
+    a = o.append
     a("## What is not mapped")
     a("")
     a("- CRC (2 bytes after the payload), INCOMPAT and COMPAT flags, and the 13-byte")
@@ -1023,9 +1068,16 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("")
     a("| Message | Field | Type |")
     a("|---|---|---|")
-    for m, f in unmapped:
-        a("| %s | %s | `%s[%d]` |" % (m.name, f.name, f.base, f.n))
+    for k, f in unmapped:
+        a("| %s | %s | `%s[%d]` |" % (k.message.name, f.name, f.base, f.n))
     a("")
+    return o
+
+
+def _md_limits(plan):
+    short = [k for k in plan.kinds if k.mapped_len < k.length]
+    o = []
+    a = o.append
     a("## Known limits")
     a("")
     a("- **Truncated payloads.** MAVLink 2 senders drop trailing zero bytes of the")
@@ -1038,7 +1090,7 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("  message's CRC_EXTRA). Input that carries the CRC or a signature decodes: bytes")
     a("  after the last mapped bit are ignored.")
     a("- **Short output.** In %d kinds the payload ends in unmapped array fields, so" % len(short))
-    a("  encode output is shorter than `10 + LEN` bytes: %s." % ", ".join("`%s`" % m.kind for m in short))
+    a("  encode output is shorter than `10 + LEN` bytes: %s." % _ticked(k.name for k in short))
     a("- **Unmapped bits do not round-trip.** The bits wire has no residue: INCOMPAT,")
     a("  COMPAT and unmapped arrays are written as zero.")
     a("- **`invalid` values.** A field's `invalid` attribute (a value that means")
@@ -1050,6 +1102,12 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("  above is the negative model integer with the same bits (engine-spec 0.5, ruling 2).")
     a("- **Enums and bitmasks** are carried as their integer.")
     a("")
+    return o
+
+
+def _md_vectors():
+    o = []
+    a = o.append
     a("## Vectors")
     a("")
     a("`vectors/rt-<id>-<kind>.json`: one same-format round trip per kind. The input")
@@ -1062,105 +1120,398 @@ def emit_pack_md(msgs, keys, qualified, stats, sha):
     a("converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees")
     a("(wire value / 10^7), `properties` empty because `geojson` carries no other key")
     a("this pack maps.")
-    return "\n".join(o) + "\n"
+    return o
 
 
-# --------------------------------------------------------------------- main ---
+def emit_pack_md(plan, stats, sha):
+    """The text of packs/mavlink2/pack.md, section by section."""
+    lines = (_md_layout(sha) + _md_numbers(plan, stats) + _md_mapped(plan) + _md_core(plan)
+             + _md_requires(plan) + _md_not_mapped(plan) + _md_limits(plan) + _md_vectors())
+    return "\n".join(lines) + "\n"
 
-def main():
-    here = os.path.dirname(os.path.abspath(__file__))
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--root", default=os.path.normpath(os.path.join(here, "..", "..")))
-    ap.add_argument("--core-def", help="path to model/core.def of goat-transformers")
-    args = ap.parse_args()
-    root = args.root
-    src = os.path.join(root, "sources")
 
-    sha = read_provenance(src)
-    msgs = load_messages(src)
-    for m in msgs:
-        lay_out(m)
-    for name, want in KNOWN_CRC_EXTRA.items():
-        got = [m.crc_extra for m in msgs if m.name == name]
-        if got != [want]:
-            raise GenError("CRC_EXTRA of %s is %s, protocol value is %d" % (name, got, want))
-    keys, qualified = assign_keys(msgs)
-    choose_requires(msgs)
-    for m in msgs:
-        m.mapped_len = max((f.offset + f.bytes for f in m.wire if f.status != "unmapped"), default=0)
+# ------------------------------------------- codec, from the specification ---
+#
+# Decode and encode for the part of the bits wire this pack uses: fixed
+# layout, `bit_order lsb`, `word_bytes 1`, `when` and `field` lines. The codec
+# reads the Pack that gtcheck loaded; `check_frame_invariants` refuses a pack
+# that holds anything else.
 
-    model_text = emit_model(keys, sha)
-    pack_text = emit_pack(msgs, sha)
-    model_path = os.path.join(root, "model", MODULE + ".def")
-    pack_dir = os.path.join(root, "packs", FORMAT)
-    vec_dir = os.path.join(pack_dir, "vectors")
-    os.makedirs(os.path.dirname(model_path), exist_ok=True)
-    os.makedirs(pack_dir, exist_ok=True)
-    with open(model_path, "w", encoding="utf-8") as fh:
-        fh.write(model_text)
-    with open(os.path.join(pack_dir, "pack.def"), "w", encoding="utf-8") as fh:
-        fh.write(pack_text)
-    n_vec = write_vectors(msgs, vec_dir)
+def round_away(x):
+    """Round half away from zero (engine-spec 0.2 "Transforms for `bits`")."""
+    return int(math.floor(abs(x) + 0.5)) * (1 if x >= 0 else -1)
 
-    # ---- self-check, from the files on disk
-    modules = {MODULE: parse_model(open(model_path, encoding="utf-8").read())}
-    if args.core_def:
-        modules["core"] = parse_model(open(args.core_def, encoding="utf-8").read())
+
+def get_bits(word, pos, length):
+    """`length` bits of the message from bit `pos`. With `bit_order lsb` the
+    message is one little-endian integer, `word`."""
+    return (word >> pos) & ((1 << length) - 1)
+
+
+def _scale(targs):
+    """(factor, offset) of a `uscale` or `sscale` transform. The factor is a
+    float, or (numerator, denominator) for a fraction (0.5 ruling 1)."""
+    return gtcheck.parse_factor(targs[0]), float(targs[1]) if len(targs) == 2 else 0.0
+
+
+def decode_value(tr, targs, bits, raw):
+    """The model value of the unsigned integer `raw` read from a field of
+    `bits` bits (engine-spec 0.2 "Transforms for `bits`", 0.5 "bits: more
+    transforms")."""
+    if tr == "uint":
+        # 0.5 ruling 2: a 64-bit field with the top bit set is the negative integer
+        return raw - (1 << 64) if bits == 64 and raw >> 63 else raw
+    if tr == "twos":
+        return raw - (1 << bits) if raw >> (bits - 1) else raw
+    if tr in ("uscale", "sscale"):
+        if tr == "sscale" and raw >> (bits - 1):
+            raw -= 1 << bits
+        factor, offset = _scale(targs)
+        if isinstance(factor, tuple):       # 0.5 ruling 1: v * num / den, then + offset
+            return raw * float(factor[0]) / float(factor[1]) + offset
+        return raw * factor + offset
+    if tr == "f32":
+        return struct.unpack("<f", raw.to_bytes(4, "little"))[0]
+    if tr == "f64":
+        return struct.unpack("<d", raw.to_bytes(8, "little"))[0]
+    if tr == "ascii":
+        text = raw.to_bytes(bits // 8, "little").rstrip(b"\0")
+        if any(b < 0x20 or b > 0x7E for b in text):
+            raise CodecError("transform-decode")
+        return text.decode("ascii")
+    raise CodecError("transform-decode")
+
+
+def encode_value(tr, targs, bits, value):
+    """The unsigned integer a field of `bits` bits holds for a model value."""
+    mask = (1 << bits) - 1
+    if tr in ("uint", "twos"):
+        return value & mask
+    if tr in ("uscale", "sscale"):
+        factor, offset = _scale(targs)
+        if isinstance(factor, tuple):       # 0.5 ruling 1: (x - offset) * den / num
+            n = round_away((value - offset) * float(factor[1]) / float(factor[0]))
+        else:
+            n = round_away((value - offset) / factor)
+        lo, hi = (0, mask) if tr == "uscale" else (-(1 << (bits - 1)), (1 << (bits - 1)) - 1)
+        if not lo <= n <= hi:
+            raise CodecError("transform-encode")
+        return n & mask
+    if tr == "f32":
+        return int.from_bytes(struct.pack("<f", value), "little")
+    if tr == "f64":
+        return int.from_bytes(struct.pack("<d", value), "little")
+    if tr == "ascii":
+        text = value.encode("ascii")
+        if len(text) > bits // 8:
+            raise CodecError("transform-encode")
+        return int.from_bytes(text.ljust(bits // 8, b"\0"), "little")
+    raise CodecError("transform-encode")
+
+
+def _when_holds(lines, word, total_bits):
+    return all(node.start + node.bits <= total_bits and get_bits(word, node.start, node.bits) == int(node.value)
+               for node in lines if node.d == "when")
+
+
+def message_bytes(lines):
+    """Bytes up to the last bit a `when` or `field` line of the scope names."""
+    return (max(node.start + node.bits for node in lines) + 7) // 8
+
+
+def engine_decode(pack, data):
+    """(kind name, {key: value}) of a message: the first kind in file order
+    whose `when` lines and the common ones all hold (engine-spec 0.5 "Message
+    kinds")."""
+    word, total_bits = int.from_bytes(data, "little"), 8 * len(data)
+    kind = None
+    if _when_holds(pack.common, word, total_bits):
+        kind = next((k for k in pack.kinds if _when_holds(k.lines, word, total_bits)), None)
+    if kind is None:
+        raise CodecError("no-kind")
+    lines = pack.common + kind.lines
+    if len(data) < message_bytes(lines):
+        raise CodecError("malformed-wire")
+    entity = collections.OrderedDict()
+    for node in lines:
+        if node.d == "field":
+            entity[node.key] = decode_value(node.tr, node.targs, node.bits,
+                                            get_bits(word, node.start, node.bits))
+    return kind.name, entity
+
+
+def engine_encode(pack, name, entity):
+    """The bytes of an entity as the named kind: the fields the entity holds
+    and the values of the `when` lines; every other bit is zero; whole bytes
+    up to the last bit a line names."""
+    kind = next(k for k in pack.kinds if k.name == name)
+    lines = pack.common + kind.lines
+    word = 0
+    for node in lines:
+        if node.d == "field" and node.key in entity:
+            word |= encode_value(node.tr, node.targs, node.bits, entity[node.key]) << node.start
+        elif node.d == "when":
+            word |= int(node.value) << node.start
+    return word.to_bytes(message_bytes(lines), "little")
+
+
+def geojson_encode(entity):
+    """Canonical GeoJSON for an entity that holds no geojson key but lat/lon
+    (engine-spec 0.1.1 rulings 3-5; packs/geojson/pack.def)."""
+    if "lat" in entity and "lon" in entity:
+        geom = '{"type":"Point","coordinates":[%s,%s]}' % (fmt_float(entity["lon"]), fmt_float(entity["lat"]))
     else:
-        modules["core"] = {"keys": dict(CORE_FALLBACK), "dist": "public"}
-    pack = parse_pack(open(os.path.join(pack_dir, "pack.def"), encoding="utf-8").read())
-    check_pack(pack, modules)
-    if list(pack["kinds"]) != [m.kind for m in msgs]:
-        raise GenError("kinds on disk differ from the source messages")
-    for m in msgs:
-        k = pack["kinds"][m.kind]
-        if sorted(k["when"]) != sorted([(0, LOC_MSGID[0], 24, m.id), (0, LOC_LEN[0], 8, m.length)]):
-            raise GenError("%s: when lines do not match id and length" % m.kind)
-    used = {f[0].split(".", 1)[1] for k in [pack["common"]] + list(pack["kinds"].values())
-            for f in k["fields"] if f[0].startswith(MODULE + ".")}
-    if used != set(modules[MODULE]["keys"]):
-        raise GenError("module keys and mapped keys differ")
-    checked = check_vectors(pack, vec_dir)
-    if checked != n_vec:
-        raise GenError("vector count mismatch")
+        geom = "null"
+    return '{"type":"Feature","geometry":%s,"properties":{}}' % geom
 
-    per_file = collections.Counter(m.file for m in msgs)
-    allf = [f for m in msgs for f in m.wire]
-    stats = {
-        "per_file": per_file, "fields": len(allf),
-        "scalar": sum(f.status == "scalar" for f in allf),
-        "ascii": sum(f.status == "ascii" for f in allf),
-        "elements": sum(f.status == "elements" for f in allf),
-        "element_lines": sum(len(f.lines) for f in allf if f.status == "elements"),
-        "core": sum(f.status == "core" for f in allf),
-        "unmapped": sum(f.status == "unmapped" for f in allf),
-        "field_lines": 3 + sum(len(f.lines) for f in allf),
-    }
-    stats["mapped"] = stats["fields"] - stats["unmapped"]
-    with open(os.path.join(pack_dir, "pack.md"), "w", encoding="utf-8") as fh:
-        fh.write(emit_pack_md(msgs, keys, qualified, stats, sha))
 
-    unm = collections.Counter(f.base for f in allf if f.status == "unmapped")
-    print("commit            %s" % sha)
-    print("messages          %d %s" % (len(msgs), dict(per_file)))
-    print("kinds             %d" % len(pack["kinds"]))
-    print("payload fields    %d  mapped %d (scalar %d, ascii %d, element arrays %d = %d lines, core %d)"
-          % (stats["fields"], stats["mapped"], stats["scalar"], stats["ascii"], stats["elements"],
-             stats["element_lines"], stats["core"]))
-    print("not mapped        %d arrays > %d elements, by element type %s"
-          % (stats["unmapped"], MAX_ARRAY_ELEMENTS, dict(unm)))
-    print("field lines       %d" % stats["field_lines"])
-    print("module keys       %d" % len(modules[MODULE]["keys"]))
-    print("message-qualified %d fields %s" % (len(qualified), dict(collections.Counter(qualified.values()))))
-    print("kinds short of LEN %d; kinds whose requires another kind also satisfies %d"
-          % (sum(m.mapped_len < m.length for m in msgs), sum(bool(m.shadowed_by) for m in msgs)))
-    print("vectors           %d written, %d checked" % (n_vec, checked))
-    print("self-check        ok")
+# ------------------------------------------------------------------ check ---
+
+def _span(node):
+    return node.start, node.start + node.bits
+
+
+def check_frame_invariants(pack):
+    """What must hold for a pack of MAVLink 2 frames beyond the load rules of
+    the specification, over the Pack gtcheck loaded:
+
+    - fixed-layout bits wire, `bit_order lsb`, `word_bytes 1`, only `when` and
+      plain `field` lines with a transform the codec of this file implements;
+    - a common `when` on STX;
+    - every kind: a lower-case name; exactly one `when` on MSGID, one on LEN
+      and no other; `requires` of one or more keys the kind itself maps; no key
+      mapped twice; no two lines on the same bit; every field inside the
+      payload LEN states, on byte boundaries;
+    - no two kinds with the same `when` set."""
+    def fail(message, line=None):
+        raise GenError(message, pack.label, line)
+
+    if (pack.wire, pack.layout, pack.bit_order, pack.word_bytes) != ("bits", "fixed", "lsb", 1):
+        fail("a MAVLink 2 pack is wire bits, fixed layout, bit_order lsb, word_bytes 1")
+    for scope in [pack.common] + [k.lines for k in pack.kinds]:
+        for node in scope:
+            if node.d not in ("when", "field"):
+                fail("`%s` line: the frame has only `when` and `field` lines" % node.d, node.line)
+            if node.d == "field" and (node.tr not in CODEC_TRANSFORMS or node.via or node.opts or node.also):
+                fail("field %s: transform or option outside what a MAVLink 2 frame uses" % node.key, node.line)
+    stx = (LOC_STX[0], LOC_STX[0] + LOC_STX[1], STX)
+    if not any(n.d == "when" and _span(n) + (int(n.value),) == stx for n in pack.common):
+        fail("common `when` on STX missing")
+    when_sets = {}
+    for kind in pack.kinds:
+        where = "kind " + kind.name
+        if not KIND_NAME_RE.match(kind.name):
+            fail("%s: bad kind name" % where, kind.line)
+        whens = [n for n in kind.lines if n.d == "when"]
+        fields = [n for n in kind.lines if n.d == "field"]
+        seen = set()
+        for node in pack.common + fields:
+            if node.d == "field":
+                if node.key in seen:
+                    fail("%s: duplicate-field %s" % (where, node.key), node.line)
+                seen.add(node.key)
+        if not kind.requires:
+            fail("%s: no requires" % where, kind.line)
+        own = {n.key for n in fields}
+        for key in kind.requires:
+            if key not in own:
+                fail("%s: requires %s which the kind does not map" % (where, key), kind.line)
+        ids = [int(n.value) for n in whens if (n.start, n.bits) == LOC_MSGID]
+        lens = [int(n.value) for n in whens if (n.start, n.bits) == LOC_LEN]
+        if len(ids) != 1 or len(lens) != 1 or len(whens) != 2:
+            fail("%s: needs exactly one MSGID when and one LEN when" % where, kind.line)
+        taken = sorted((_span(n) + (n.line,) for n in pack.common + kind.lines))
+        for (_, a1, _), (b0, _, line) in zip(taken, taken[1:]):
+            if b0 < a1:
+                fail("%s: bit ranges overlap at %d" % (where, b0), line)
+        end = PAYLOAD_BIT0 + 8 * lens[0]
+        for node in fields:
+            a0, a1 = _span(node)
+            if a0 < PAYLOAD_BIT0 or a1 > end:
+                fail("%s: field bits %d..%d outside the payload" % (where, a0, a1), node.line)
+            if a0 % 8 or a1 % 8:
+                fail("%s: field not byte aligned" % where, node.line)
+        when_set = tuple(sorted(_span(n) + (int(n.value),) for n in whens))
+        if when_set in when_sets:
+            fail("%s: the same `when` set as kind %s" % (where, when_sets[when_set]), kind.line)
+        when_sets[when_set] = kind.name
+
+
+def check_pack_matches_plan(pack, module, plan):
+    """The loaded pack states what was planned: the same kinds in the same
+    order, each selected by its message id and full payload length, and the
+    module declares exactly the `mavlink.` keys the pack maps."""
+    if [k.name for k in pack.kinds] != [k.name for k in plan.kinds]:
+        raise GenError("the kinds differ from the source messages", pack.label)
+    for loaded, kind in zip(pack.kinds, plan.kinds):
+        whens = sorted((n.start, n.bits, int(n.value)) for n in loaded.lines if n.d == "when")
+        if whens != sorted([LOC_MSGID + (kind.message.id,), LOC_LEN + (kind.length,)]):
+            raise GenError("kind %s: when lines do not match id and length" % kind.name, pack.label, loaded.line)
+    used = set()
+    for _, lines in pack.scopes():
+        for node in gtcheck.walk(lines, "field"):
+            module_name, key = gtcheck.split_key(node.key)
+            if module_name == MODULE:
+                used.add(key)
+    if used != set(module.keys):
+        raise GenError("module keys and mapped keys differ", module.label)
+
+
+def check_vectors(pack, vectors):
+    """Run every vector through the codec; the number checked.
+
+    `vectors` is [(file name, JSON text)]. The input must decode to the kind
+    and the model values the vector states; converting to `mavlink2` or to
+    `geojson` must give `expect`; and every kind must have a same-format
+    round trip."""
+    names, kinds_seen, n = set(), set(), 0
+    for file_name, text in vectors:
+        label = "%s/%s" % (VECTOR_DIR, file_name)
+        vec = json.loads(text)
+        if vec["name"] in names:
+            raise GenError("duplicate vector name " + vec["name"], label)
+        names.add(vec["name"])
+        try:
+            kname, entity = engine_decode(pack, bytes.fromhex(vec["input"]))
+            for key, want in vec.get("model", {}).items():
+                if key == "@kind":
+                    if want != kname:
+                        raise GenError("decoded kind %s, vector says %s" % (kname, want), label)
+                elif key not in entity:
+                    raise GenError("model %s is not decoded" % key, label)
+                elif isinstance(entity[key], float):
+                    if abs(entity[key] - float(want)) > 1e-9:
+                        raise GenError("model %s" % key, label)
+                elif str(entity[key]) != want:
+                    raise GenError("model %s" % key, label)
+            if vec["to"] == FORMAT:
+                got = engine_encode(pack, kname, entity).hex()
+                kinds_seen.add(kname)
+            elif vec["to"] == "geojson":
+                got = geojson_encode(entity)
+            else:
+                raise GenError("unknown target %s" % vec["to"], label)
+        except CodecError as e:
+            raise GenError(str(e), label) from None
+        if got != vec["expect"]:
+            raise GenError("convert gives\n  %s\nvector expects\n  %s" % (got, vec["expect"]), label)
+        n += 1
+    missing = {k.name for k in pack.kinds} - kinds_seen
+    if missing:
+        raise GenError("kinds with no round-trip vector: %s" % sorted(missing), pack.label)
+    return n
+
+
+def load_output(out, core_text, core_label):
+    """Load what the run wrote: (the gtcheck Model, the Pack). The module and
+    the pack are read back through `out`, so the bytes checked are the bytes
+    written (or, with --check, the bytes that would be written)."""
+    model = gtcheck.Model()
+    model.add(core_text, core_label)
+    model.add(out.read(MODEL_PATH), MODEL_PATH)
+    return model, gtcheck.load_pack(out.read(PACK_PATH), model, PACK_PATH)
+
+
+def read_vectors(out):
+    """[(file name, text)] of the .json files in the vector directory, by name."""
+    return [(name, out.read("%s/%s" % (VECTOR_DIR, name)))
+            for name in out.listdir(VECTOR_DIR) if name.endswith(".json")]
+
+
+# ------------------------------------------------------------------- main ---
+
+def summary(plan, stats, sha, pack, module, written, checked):
+    """The lines a successful run prints."""
+    unmapped = collections.Counter(f.field.base for k in plan.kinds for f in k.fields
+                                   if f.status == "unmapped")
+    kinds = plan.kinds
+    return [
+        "commit            %s" % sha,
+        "messages          %d %s" % (len(kinds), dict(stats["per_file"])),
+        "kinds             %d" % len(pack.kinds),
+        "payload fields    %d  mapped %d (scalar %d, ascii %d, element arrays %d = %d lines, core %d)"
+        % (stats["fields"], stats["mapped"], stats["scalar"], stats["ascii"], stats["elements"],
+           stats["element_lines"], stats["core"]),
+        "not mapped        %d arrays > %d elements, by element type %s"
+        % (stats["unmapped"], MAX_ARRAY_ELEMENTS, dict(unmapped)),
+        "field lines       %d" % stats["field_lines"],
+        "module keys       %d" % len(module.keys),
+        "message-qualified %d fields %s" % (len(plan.qualified),
+                                            dict(collections.Counter(plan.qualified.values()))),
+        "kinds short of LEN %d; kinds whose requires another kind also satisfies %d"
+        % (sum(k.mapped_len < k.length for k in kinds), sum(bool(k.shadowed_by) for k in kinds)),
+        "vectors           %d written, %d checked" % (written, checked),
+        "self-check        ok",
+    ]
+
+
+def generate(out, core_text, core_label):
+    """One run over the directory of `out`: parse, plan, emit, check. Returns
+    the summary lines; raises GenError or gtcheck.CheckError."""
+    src = out.path(SOURCE_DIR)
+    sha = read_provenance(src)
+    plan = make_plan(load_messages(src))
+    check_known_crc_extra(plan.kinds)
+
+    out.write(MODEL_PATH, emit_model(plan.keys, sha))
+    out.write(PACK_PATH, emit_pack(plan.kinds, sha))
+    vectors = vector_files(plan.kinds)
+    write_vectors(out, vectors)
+
+    model, pack = load_output(out, core_text, core_label)
+    module = model.modules[MODULE]
+    check_frame_invariants(pack)
+    check_pack_matches_plan(pack, module, plan)
+    checked = check_vectors(pack, read_vectors(out))
+    if checked != len(vectors):
+        raise GenError("%d vectors written, %d checked" % (len(vectors), checked), VECTOR_DIR)
+
+    stats = collect_stats(plan)
+    out.write(PACK_MD_PATH, emit_pack_md(plan, stats, sha))
+    return summary(plan, stats, sha, pack, module, len(vectors), checked)
+
+
+def build_parser():
+    here = os.path.dirname(os.path.abspath(__file__))
+    ap = argparse.ArgumentParser(
+        prog=NAME,
+        description="Generate the pack `mavlink2` from the MAVLink message definitions. "
+                    "Reads DIR/sources/common.xml, standard.xml, minimal.xml and DIR/sources/PROVENANCE.md "
+                    "(the commit and the SHA-256 of each file; a file that differs is refused). "
+                    "Writes DIR/model/mavlink.def, DIR/packs/mavlink2/pack.def, pack.md and vectors/*.json. "
+                    "Guarantees: the same inputs give the same bytes; the module and the pack are loaded by "
+                    "gtcheck, the pack is held to the MAVLink 2 frame, and every vector is decoded and "
+                    "encoded by the generator's codec. Exit status: 0 when every check passed, 1 for a "
+                    "refused input or a failed check (one line on stderr), 2 for a usage error.")
+    genio.add_arguments(ap, default_out=os.path.normpath(os.path.join(here, "..", "..")),
+                        what="the checkout to read sources/ from and to write into")
+    ap.add_argument("--root", dest="out", metavar="DIR", default=argparse.SUPPRESS,
+                    help="the same as --out")
+    ap.add_argument("--core-def", metavar="PATH",
+                    help="model/core.def to check the pack against; without it the check uses a stand-in "
+                         "that declares only `lat` and `lon`")
+    return ap
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    out = genio.Output(args.out, check=args.check)
+    try:
+        if args.core_def:
+            with open(args.core_def, encoding="utf-8") as fh:
+                core_text, core_label = fh.read(), args.core_def
+        else:
+            core_text, core_label = CORE_STAND_IN, "<core stand-in>"
+        lines = generate(out, core_text, core_label)
+    except (GenError, gtcheck.CheckError) as e:
+        print("%s: %s" % (NAME, e), file=sys.stderr)
+        return 1
+    except OSError as e:
+        print("%s: %s: %s" % (NAME, e.filename, e.strerror), file=sys.stderr)
+        return 1
+    print("\n".join(lines))
+    return out.report(NAME)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except GenError as e:
-        sys.stderr.write("mavlink2pack: FAILED: %s\n" % e)
-        sys.exit(1)
+    sys.exit(main())

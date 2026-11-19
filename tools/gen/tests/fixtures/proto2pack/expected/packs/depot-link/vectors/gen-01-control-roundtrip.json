@@ -1,0 +1,12 @@
+{
+  "name": "gen-control-roundtrip",
+  "from": "depot-link",
+  "to": "depot-link",
+  "input": "0a050864108901",
+  "expect": "0a050864108901",
+  "model": {
+    "@kind": "control",
+    "depot.control_min_version": "100",
+    "depot.control_max_version": "137"
+  }
+}

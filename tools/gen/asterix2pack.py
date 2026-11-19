@@ -1,42 +1,59 @@
 #!/usr/bin/env python3
 """asterix2pack: turn ASTERIX category definitions into goat-transformers packs.
 
-Reads   sources/asterix-specs/manifest.json and cat<NNN>-<edition>.json: the JSON form of the
-        category definitions of zoranbosnjak/asterix-specs (BSD-3-Clause) at a pinned commit
-Writes  sources/PROVENANCE.md                       (only with --commit)
-        model/cat<NNN>.def                          raw keys and lists of the category
-        packs/asterix-cat<NNN>/pack.def             wire bits, layout sequential, bit_order msb
-        packs/asterix-cat<NNN>/pack.md              what is mapped, what is not, and why
-        packs/asterix-cat<NNN>/PROVENANCE.md
-        packs/asterix-cat<NNN>/vectors/*.json
-        packs/canonical-track-v2/vectors/gen-to-asterix-cat<NNN>.json   (position-bearing categories)
-        tools/gen/names/asterix-cat<NNN>.json       item path -> key name, read and rewritten
+Reads, under --out:
+  sources/asterix-specs/manifest.json           the categories and their editions
+  sources/asterix-specs/cat<NNN>-<edition>.json the JSON form of the category definitions of
+                                                zoranbosnjak/asterix-specs (BSD-3-Clause) at a
+                                                pinned commit; the newest edition of each category
+  sources/PROVENANCE.md                         the two commits, when --commit is not given
+  tools/gen/names/asterix-cat<NNN>.json         item path -> key name of an earlier run
+
+Writes, under --out:
+  sources/PROVENANCE.md                         (only with --commit)
+  model/cat<NNN>.def                            raw keys and lists of the category
+  packs/asterix-cat<NNN>/pack.def               wire bits, layout sequential, bit_order msb
+  packs/asterix-cat<NNN>/pack.md                what is mapped, what is not, and why
+  packs/asterix-cat<NNN>/PROVENANCE.md
+  packs/asterix-cat<NNN>/vectors/*.json
+  packs/canonical-track-v2/vectors/gen-to-asterix-cat<NNN>.json   (position-bearing categories)
+  tools/gen/names/asterix-cat<NNN>.json         read and rewritten, sorted
 
 Category 062 is written as the pack `asterix-cat062-full` with the module `cat062full`, because
 the library holds a hand-written pack `asterix-cat062` and module `cat062`.
 
-Python 3 standard library only. Re-runnable: every output is rewritten from the sources, and a
-generated vectors directory is emptied of *.json first.
+One record per data block; the first UAP of a category that has several.
+
+Guarantees:
+  - The same input gives the same bytes. Every output is rewritten from the sources; a key keeps
+    the name the names file pins; a vectors directory holds only the vectors of this run.
+  - Every module and pack is loaded back through gtcheck (the load rules of spec/engine-spec.md)
+    and checked to have the shape this generator writes. Every vector is replayed through a
+    sequential codec written from spec/engine-spec.md (Version 0.8) that reads the loaded pack.
+  - A category that fails a check is reported with its definition file and the reason, and
+    leaves no files; the other categories are still written.
+  - The network is reached only with --fetch.
+
+Exit status: 0 when every category asked for was written and every check passed (with --check:
+and no file differs); 1 when an input was refused or a check failed; 2 for a usage error.
 
 Usage:
-  asterix2pack.py --out <dir> [--commit <sha> [--fetch]] [--cats 048,062,...|all]
+  asterix2pack.py --out <dir> [--check] [--commit <sha> [--fetch]] [--cats 048,062,...|all]
                   [--lib <goat-transformers checkout>]
 
+--check         writes nothing; reports every file under --out that differs from what the
+                generator writes, is missing, or would be removed.
 --commit <sha>  commit of the gh-pages branch of zoranbosnjak/asterix-specs (the published JSON);
-                recorded in sources/PROVENANCE.md. With --fetch, or when a source file is
-                missing, the files are downloaded from raw.githubusercontent.com at that commit
-                with curl. Without --commit the commit is read back from sources/PROVENANCE.md.
+                recorded in sources/PROVENANCE.md with the size and SHA-256 of every source file.
+                Without --commit the commit is read back from sources/PROVENANCE.md.
+--fetch         with --commit: download every source file from raw.githubusercontent.com at that
+                commit with curl, then generate. Without --fetch a missing source file is an error.
 --lib <dir>     checks the built-in tables of `core`, `track`, `geojson` and
                 `canonical-track-v2` against the files of that checkout.
 
-One record per data block; the first UAP of a category that has several. A category is
-written when every check passes; one that fails is reported with the reason and leaves no
-files. After writing, the generator re-reads its own output from disk with an independent
-loader and replays every vector through a sequential codec written from spec/engine-spec.md
-(Version 0.8). Any failed check exits non-zero.
+Python 3 standard library only.
 """
 import argparse
-import glob
 import hashlib
 import json
 import math
@@ -48,6 +65,11 @@ from collections import OrderedDict
 from decimal import Decimal
 from fractions import Fraction
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))     # under `python3 -I` the script directory is not on the path
+import genio            # noqa: E402
+import gtcheck          # noqa: E402
+
+NAME = "asterix2pack"
 REPO = "zoranbosnjak/asterix-specs"
 PACK_VERSION = "0.1.0"
 MODULE_VERSION = "0.1.0"
@@ -55,7 +77,9 @@ PRIORITY = [48, 62, 21, 34, 10]
 # the library holds a hand-written pack and module of these names
 RENAME = {62: ("asterix-cat062-full", "cat062full")}
 
-# model/core.def and model/track.def of goat-transformers (checked against --lib when given)
+# model/core.def and model/track.def of goat-transformers: the keys, lists and derive lines the
+# generator needs to load its packs and to work out the cross-format vectors. --lib checks these
+# tables against a checkout, and so does the test that reads the repository.
 CORE_KEYS = OrderedDict([
     ("uid", "string"), ("type", "string"), ("time_ms", "int"), ("lat", "float"),
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
@@ -63,13 +87,14 @@ CORE_KEYS = OrderedDict([
     ("stale_ms", "int"),
 ])
 TRACK_KEYS = OrderedDict([
-    ("source_id", "string"), ("generation", "string"), ("vel_east_ms", "float"),
+    ("source_id", "string"), ("generation", "string"), ("scoped_id", "string"), ("vel_east_ms", "float"),
     ("vel_north_ms", "float"), ("vel_up_ms", "float"), ("class", "string"),
     ("confidence", "float"), ("sigma_east_m", "float"), ("sigma_north_m", "float"),
     ("sigma_up_m", "float"), ("confirmed", "int"), ("coasting", "int"), ("simulated", "int"),
     ("header_simulated", "int"), ("test_data", "int"), ("final_update", "int"),
     ("id_scheme", "string"), ("id_value", "string"),
 ])
+TRACK_LISTS = ("identifiers",)
 TRACK_DERIVES = [
     ("course", "bearing", ["track.vel_east_ms", "track.vel_north_ms"]),
     ("speed_ms", "hypot", ["track.vel_east_ms", "track.vel_north_ms"]),
@@ -142,7 +167,17 @@ ASCII_FOLD = {"’": "'", "‘": "'", "“": "'", "”": "'", '"': "'", "°": " 
 
 
 class GenError(Exception):
-    pass
+    """An input the generator refuses, or a check of its own output that failed. `file` is the
+    source or output file the error belongs to and `line` a 1-based line of it, where one exists;
+    `str()` is `<file>:<line>: <what>` with the parts that are known."""
+
+    def __init__(self, message, file=None, line=None):
+        Exception.__init__(self, message, file, line)
+        self.message, self.file, self.line = message, file, line
+
+    def __str__(self):
+        where = "" if self.file is None else self.file + (":%d" % self.line if self.line is not None else "") + ": "
+        return where + self.message
 
 
 class Unmappable(Exception):
@@ -150,13 +185,11 @@ class Unmappable(Exception):
 
 
 class WireError(Exception):
+    """A decode or encode failure of the codec; `kind` is the error kind of the specification."""
+
     def __init__(self, kind, msg=""):
         Exception.__init__(self, "%s: %s" % (kind, msg))
         self.kind = kind
-
-
-def die(msg):
-    raise GenError(msg)
 
 
 # ---------------------------------------------------------------- small helpers
@@ -176,11 +209,13 @@ def plain(x):
 
 
 def round_half_away(q):
+    """Round to the nearest integer, a half away from zero (engine-spec 0.5 "bits: more transforms")."""
     f = math.floor(abs(q) + 0.5)
     return int(-f if q < 0 else f)
 
 
 def frac_text(fr):
+    """A Fraction as a pack writes a scale: `<num>` or `<num>/<den>` (ruling 1 of 0.5)."""
     return str(fr.numerator) if fr.denominator == 1 else "%d/%d" % (fr.numerator, fr.denominator)
 
 
@@ -199,67 +234,108 @@ def fold(text):
     return "".join(out)
 
 
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 16), b""):
-            h.update(chunk)
-    return h.hexdigest()
+def read_bytes(root, rel):
+    """The bytes of an input file under the output root."""
+    try:
+        with open(os.path.join(root, *rel.split("/")), "rb") as fh:
+            return fh.read()
+    except OSError as x:
+        raise GenError("cannot be read (%s)" % (x.strerror or x), file=rel)
 
 
-def write(path, text):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(text if text.endswith("\n") else text + "\n")
+def ending_in_newline(text):
+    """Every output file ends with one line end."""
+    return text if text.endswith("\n") else text + "\n"
 
 
 def edition_key(text):
+    """An edition `<major>.<minor>` as a tuple of numbers, so that 1.10 is newer than 1.9."""
     return tuple(int(x) for x in text.split("."))
 
 
 # ---------------------------------------------------------------- sources
 
-def src_dir_of(out):
-    return os.path.join(out, "sources", "asterix-specs")
+SOURCES_DIR = "sources/asterix-specs"           # under --out
+SOURCES_PROVENANCE = "sources/PROVENANCE.md"
+RAW_URL = "https://raw.githubusercontent.com/%s/%s/%s"
+
+
+def read_text(root, rel):
+    """The text of an input file under the output root; a missing file is a GenError naming it."""
+    try:
+        with open(os.path.join(root, *rel.split("/")), encoding="utf-8") as fh:
+            return fh.read()
+    except OSError as x:
+        raise GenError("cannot be read (%s)" % (x.strerror or x), file=rel)
+
+
+def read_json(root, rel):
+    """A JSON input file; text that is not JSON is a GenError with the file and the line."""
+    try:
+        return json.loads(read_text(root, rel))
+    except json.JSONDecodeError as x:
+        raise GenError("not JSON: %s" % x.msg, file=rel, line=x.lineno)
+
+
+def definition_files(manifest):
+    """[(category number, local file name, repository path)] in manifest order: for each
+    category the newest edition the manifest lists, editions compared as numbers."""
+    out = []
+    try:
+        for e in manifest:
+            ed = max(e["cats"], key=edition_key)
+            out.append((int(e["category"]), "cat%s-%s.json" % (e["category"], ed),
+                        "specs/cat%s/cats/cat%s/definition.json" % (e["category"], ed)))
+    except (KeyError, TypeError, ValueError) as x:
+        raise GenError("not a manifest of categories and editions (%s: %s)" % (type(x).__name__, x),
+                       file=SOURCES_DIR + "/manifest.json")
+    return out
 
 
 def curl(url, dest):
+    """Download one file. The only place the generator reaches the network."""
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    subprocess.run(["curl", "-fsSL", "-o", dest, url], check=True)
+    try:
+        subprocess.run(["curl", "-fsSL", "-o", dest, url], check=True)
+    except (OSError, subprocess.CalledProcessError) as x:
+        raise GenError("download failed: %s" % x, file=url)
 
 
-def fetch_sources(out, sha, force):
-    """-> (list of (local name, repository path, commit), master commit)"""
-    sd = src_dir_of(out)
-    raw = "https://raw.githubusercontent.com/%s/%s/%s"
-    got = []
-    for name in ("manifest.json", "gitrev.txt"):
-        dest = os.path.join(sd, name)
-        if force or not os.path.exists(dest):
-            curl(raw % (REPO, sha, name), dest)
-        got.append((name, name, sha))
-    master = open(os.path.join(sd, "gitrev.txt"), encoding="utf-8").read().strip()
+def master_commit(root):
+    """The commit of the `master` branch that `gitrev.txt` states."""
+    master = read_text(root, SOURCES_DIR + "/gitrev.txt").strip()
     if not re.fullmatch(r"[0-9a-f]{40}", master):
-        die("gitrev.txt does not hold a commit: %r" % master)
-    dest = os.path.join(sd, "LICENSE")
-    if force or not os.path.exists(dest):
-        curl(raw % (REPO, master, "LICENSE"), dest)
-    got.append(("LICENSE", "LICENSE", master))
-    manifest = json.load(open(os.path.join(sd, "manifest.json"), encoding="utf-8"))
-    for e in manifest:
-        ed = max(e["cats"], key=edition_key)
-        name = "cat%s-%s.json" % (e["category"], ed)
-        rel = "specs/cat%s/cats/cat%s/definition.json" % (e["category"], ed)
-        dest = os.path.join(sd, name)
-        if force or not os.path.exists(dest):
-            curl(raw % (REPO, sha, rel), dest)
-        got.append((name, rel, sha))
+        raise GenError("does not hold a commit: %r" % master, file=SOURCES_DIR + "/gitrev.txt")
+    return master
+
+
+def source_list(root, sha, download=None):
+    """-> ([(local name, repository path, commit)], master commit): every file of the source
+    directory with the place it comes from. With `download` (a function of URL and destination)
+    each file is fetched first, in the order a later one needs an earlier one: `gitrev.txt` names
+    the commit of `LICENSE`, and `manifest.json` names the definitions."""
+    def get(name, rel, commit):
+        path = os.path.join(root, *SOURCES_DIR.split("/"), name)
+        if download:
+            download(RAW_URL % (REPO, commit, rel), path)
+        elif not os.path.isfile(path):
+            raise GenError("is missing; --commit with --fetch downloads the sources", file=SOURCES_DIR + "/" + name)
+        got.append((name, rel, commit))
+
+    got = []
+    get("manifest.json", "manifest.json", sha)
+    get("gitrev.txt", "gitrev.txt", sha)
+    master = master_commit(root)
+    get("LICENSE", "LICENSE", master)
+    for _, name, rel in definition_files(read_json(root, SOURCES_DIR + "/manifest.json")):
+        get(name, rel, sha)
     return got, master
 
 
-def write_provenance(out, sha, got, master):
-    sd = src_dir_of(out)
-    lic = open(os.path.join(sd, "LICENSE"), encoding="utf-8").read()
+def emit_sources_provenance(root, sha, got, master):
+    """The text of sources/PROVENANCE.md: both commits, every file with its size and SHA-256, and
+    the license file verbatim."""
+    lic = read_text(root, SOURCES_DIR + "/LICENSE")
     L = ["# Provenance of the inputs in `sources/asterix-specs/`", "",
          "| Fact | Value |", "|---|---|",
          "| repository | https://github.com/%s |" % REPO,
@@ -273,8 +349,8 @@ def write_provenance(out, sha, got, master):
          "Every file is downloaded from `https://raw.githubusercontent.com/%s/<commit>/<repository path>`." % REPO, "",
          "| File | Repository path | Commit | Bytes | SHA-256 |", "|---|---|---|---|---|"]
     for name, rel, commit in got:
-        p = os.path.join(sd, name)
-        L.append("| `%s` | `%s` | `%s` | %d | `%s` |" % (name, rel, commit[:12], os.path.getsize(p), sha256_file(p)))
+        data = read_bytes(root, SOURCES_DIR + "/" + name)
+        L.append("| `%s` | `%s` | `%s` | %d | `%s` |" % (name, rel, commit[:12], len(data), hashlib.sha256(data).hexdigest()))
     L += ["", "## The licence file, verbatim", "", "```", lic.rstrip("\n"), "```", "",
           "## Sample blocks", "",
           "The vectors named `sample-*` take their input from the README of the Python library of",
@@ -284,24 +360,41 @@ def write_provenance(out, sha, got, master):
           "| Repository | Licence GitHub reports | Used |", "|---|---|---|",
           "| https://github.com/CroatiaControlLtd/asterix (XML category definitions) | GPL-2.0 | no |",
           "| https://github.com/hpuhr/jASTERIX (JSON category definitions) | GPL-3.0 | no |", ""]
-    write(os.path.join(out, "sources", "PROVENANCE.md"), "\n".join(L))
+    return "\n".join(L)
 
 
-def read_commit(out):
-    p = os.path.join(out, "sources", "PROVENANCE.md")
-    if not os.path.exists(p):
-        die("no --commit given and %s does not exist" % p)
-    text = open(p, encoding="utf-8").read()
+def read_commits(text):
+    """(commit of the published JSON, commit of its sources) as sources/PROVENANCE.md states them."""
     m = re.search(r"commit of the published JSON[^|]*\| `([0-9a-f]{40})`", text)
     m2 = re.search(r"commit of the sources the JSON was built from[^|]*\| `([0-9a-f]{40})`", text)
     if not m or not m2:
-        die("sources/PROVENANCE.md does not state the commits")
+        raise GenError("does not state the two commits", file=SOURCES_PROVENANCE)
     return m.group(1), m2.group(1)
 
 
-# ---------------------------------------------------------------- reading a definition
+# ---------------------------------------------------------------- parse: definition JSON -> Cat
+#
+# The JSON form of asterix-specs, as far as the generator reads it. A tagged value is
+# {"tag": <name>, "contents": <value>}.
+#
+#   category   AsterixBasic {category, edition {major, minor}, date {year, month, day}, title,
+#              catalogue [item], uap}
+#   uap        Uap [uap item] | Uaps {cases [[name, [uap item]]], selector {item [name]} | null}
+#   uap item   UapItem <item name> | UapItemSpare | UapItemRFS
+#   item       {name, title, rule, documentation {definition, remark}}
+#   rule       ContextFree <x> | Dependent {path [[name]], default <x>, cases [[values, <x>]]}
+#              where <x> is a variation (the rule of an item) or a content (the rule of an Element)
+#   variation  Element {bitSize, rule} | Group [member] | Extended [member | null]
+#              | Repetitive {type RepetitiveRegular {byteSize} | RepetitiveFx, variation}
+#              | Compound [item | null] | Explicit
+#   member     Item <item> | Spare <bits>; null in an Extended stands for the extension bit
+#   content    ContentRaw | ContentTable [[value, text]] | ContentString {tag StringAscii |
+#              StringICAO | StringOctal} | ContentInteger {signedness} | ContentQuantity
+#              {signedness, lsb <number>, unit} | ContentBds {tag}
+#   number     NumInt <int> | NumDiv {numerator <number>, denominator <number>} | NumPow {base, exponent}
 
 def num(n):
+    """A number of the definition as an exact Fraction."""
     t, c = n["tag"], n["contents"]
     if t == "NumInt":
         return Fraction(c)
@@ -309,7 +402,7 @@ def num(n):
         return num(c["numerator"]) / num(c["denominator"])
     if t == "NumPow":
         return Fraction(c["base"]) ** c["exponent"]
-    die("unknown number tag %s" % t)
+    raise GenError("unknown number tag %s" % t)
 
 
 def fixed_bits(v):
@@ -332,6 +425,9 @@ def fixed_bits(v):
 
 
 def rule_bits(rule):
+    """Bit size of the variation a rule gives: of a context-free rule its variation's, of a
+    dependent rule the one size every case and the default share; None when they differ or the
+    variation is not fixed."""
     if rule["tag"] == "ContextFree":
         return fixed_bits(rule["contents"])
     d = rule["contents"]
@@ -339,124 +435,190 @@ def rule_bits(rule):
     return sizes.pop() if len(sizes) == 1 else None
 
 
+def dependency_text(paths):
+    """The item paths a dependent rule names, as text."""
+    return " and ".join("/".join(p) for p in paths)
+
+
 class Cat:
-    """One category: the definition, and what the generator made of it."""
+    """One category as its definition states it. Nothing here is decided by the generator but the
+    pack and module names. `label` is the definition file as error messages name it."""
 
     def __init__(self, d, src_name, rel):
-        c = d["contents"]
-        if d["tag"] != "AsterixBasic":
-            die("%s: not a category definition (%s)" % (src_name, d["tag"]))
-        self.num = c["category"]
-        self.nnn = "%03d" % self.num
-        self.edition = "%d.%d" % (c["edition"]["major"], c["edition"]["minor"])
-        self.date = "%04d-%02d-%02d" % (c["date"]["year"], c["date"]["month"], c["date"]["day"])
-        self.title = fold(c["title"])
-        self.catalogue = OrderedDict((it["name"], it) for it in c["catalogue"])
         self.src_name, self.rel = src_name, rel
+        self.label = SOURCES_DIR + "/" + src_name
+        if not isinstance(d, dict) or d.get("tag") != "AsterixBasic":
+            raise GenError("not a category definition (the tag is %s)"
+                           % (d.get("tag") if isinstance(d, dict) else type(d).__name__), file=self.label)
+        try:
+            c = d["contents"]
+            self.num = c["category"]
+            self.nnn = "%03d" % self.num
+            self.edition = "%d.%d" % (c["edition"]["major"], c["edition"]["minor"])
+            self.date = "%04d-%02d-%02d" % (c["date"]["year"], c["date"]["month"], c["date"]["day"])
+            self.title = fold(c["title"])
+            self.catalogue = OrderedDict((it["name"], it) for it in c["catalogue"])
+            self.uap, self.uap_note = self._first_uap(c["uap"])
+        except (KeyError, TypeError, IndexError) as x:
+            raise GenError("the definition lacks a member the generator reads (%s: %s)" % (type(x).__name__, x),
+                           file=self.label)
         self.format, self.module = RENAME.get(self.num, ("asterix-cat" + self.nnn, "cat" + self.nnn))
-        u = c["uap"]
-        self.uap_note = None
+
+    def _first_uap(self, u):
+        """(the UAP the pack holds, a note for pack.md when the category has several)."""
         if u["tag"] == "Uap":
-            self.uap = u["contents"]
-        elif u["tag"] == "Uaps":
-            cases = u["contents"]["cases"]
-            self.uap = cases[0][1]
-            sel = u["contents"]["selector"]
-            self.uap_note = ("The category has %d UAPs (%s)%s. The pack holds the first, `%s`; a record of "
-                             "another UAP is read wrongly or fails."
-                             % (len(cases), ", ".join("`%s`" % n for n, _ in cases),
-                                ", selected by the value of item %s" % "/".join(sel["item"]) if sel else "",
-                                cases[0][0]))
-        else:
-            die("unknown uap tag %s" % u["tag"])
-        self.entries = []       # one per FRN: dict(frn, name, title, kind, nodes, reason)
-        self.keys = OrderedDict()   # name -> (type, unit, meaning)
-        self.lists = OrderedDict()  # name -> meaning
-        self.derives = []           # (target, function, [arguments])
-        self.bindings = []          # dict(key, ident, how, evidence)
-        self.names = {}
-        self.pinned = {}
-        self.uses = []
+            return u["contents"], None
+        if u["tag"] != "Uaps":
+            raise GenError("unknown uap tag %s" % u["tag"], file=self.label)
+        cases = u["contents"]["cases"]
+        sel = u["contents"]["selector"]
+        note = ("The category has %d UAPs (%s)%s. The pack holds the first, `%s`; a record of "
+                "another UAP is read wrongly or fails."
+                % (len(cases), ", ".join("`%s`" % n for n, _ in cases),
+                   ", selected by the value of item %s" % "/".join(sel["item"]) if sel else "",
+                   cases[0][0]))
+        return cases[0][1], note
 
 
-# ---------------------------------------------------------------- definition -> lines (IR)
+def load_category(root, src_name, rel):
+    """Read one definition file of the source directory."""
+    return Cat(read_json(root, SOURCES_DIR + "/" + src_name), src_name, rel)
+
+
+# ---------------------------------------------------------------- plan: Cat -> what the pack holds
+#
+# The plan is a tree of nodes, one list per UAP item. A node is a dict whose `t` names its type:
+#
+#   field     one Element. ident (item path, the key of the names file), sub (path below the
+#             item), key (the key on the `field` line), also (keys on `also` lines), raw (the
+#             module's own key), declare (False when the field holds a shared key alone), bits,
+#             tr (transform text), kind (transform name), frac (LSB as a Fraction, or None),
+#             signed, vt (key type), unit, meaning, src_unit (the unit as the definition writes
+#             it), title
+#   pad       spare bits. bits
+#   chain     an Extended item. parts (lists of field and pad nodes), trailing (True when the last
+#             part ends with an extension bit)
+#   group     a Repetitive item. list (the list key), mode (`count` or `fx`), cbits (bits of the
+#             count), body (field and pad nodes), ident
+#   compound  a Compound item. name (the presence name), subs ([(bit number, name, title, nodes)])
+#   explicit  an Explicit item (RE, SP): a length octet and content the pack does not map
+
+class Plan:
+    """What the generator decided for one category: every FRN, key, list, derive line and shared
+    key. `plan_category` fills it; the emit functions only read it."""
+
+    def __init__(self, cat, pinned=None):
+        self.cat = cat
+        self.pinned = dict(pinned or {})    # item path -> key name, from the names file
+        self.entries = []                   # one per FRN: dict(frn, name, title, kind, nodes, reason)
+        self.keys = OrderedDict()           # name -> (type, unit, meaning)
+        self.lists = OrderedDict()          # name -> meaning
+        self.derives = []                   # (target, function, [arguments])
+        self.bindings = []                  # dict(key, ident, how, evidence, ...): pack.md rows
+        self.names = {}                     # item path -> key name, of this run
+        self.uses = []                      # modules the pack uses beside `core` and its own
+
+    def mapped(self):
+        """The entries the pack has an `if` block for."""
+        return [e for e in self.entries if e["nodes"]]
+
+    def unmapped(self):
+        """The entries with no `if` block: spare FRNs, RFS, and items that cannot be described."""
+        return [e for e in self.entries if e["nodes"] is None]
+
+    def field_count(self):
+        """The number of `field` lines of the pack."""
+        return sum(1 for e in self.mapped() for _ in walk_fields(e["nodes"]))
+
+    def names_file(self):
+        """The names to pin: those of earlier runs, overwritten by those of this run."""
+        names = dict(self.pinned)
+        names.update(self.names)
+        return names
+
+
+VARIATION_KIND = {"Element": "fixed", "Group": "fixed", "Extended": "extended", "Repetitive": "repetitive",
+                  "Compound": "compound", "Explicit": "explicit"}
+
 
 class Builder:
-    def __init__(self, cat):
-        self.cat = cat
-        self.used = {}
+    """Turns the rules and variations of a definition into plan nodes, and names their keys."""
+
+    def __init__(self, plan):
+        self.plan = plan
+        self.cat = plan.cat
+        self.used = {}                      # key name -> the item path that has it
 
     def name_of(self, ident, parts):
-        cat = self.cat
-        if ident in cat.pinned:
-            name = cat.pinned[ident]
+        """The key name of an item path: the pinned name when the names file has one, otherwise
+        the lowercase path joined with `_`, with `i` before a leading digit. Two paths never share
+        a name: the second is refused."""
+        plan = self.plan
+        if ident in plan.pinned:
+            name = plan.pinned[ident]
         else:
             head = parts[0].lower()
             name = "_".join((["i" + head] if head[:1].isdigit() else [head]) + [p.lower() for p in parts[1:]])
         if not re.fullmatch(r"[a-z][a-z0-9_]*", name):
-            die("cat %s: %s gives the key name %r" % (cat.nnn, ident, name))
+            raise GenError("%s gives the key name %r" % (ident, name))
         if self.used.get(name, ident) != ident:
-            die("cat %s: key name %s for both %s and %s" % (cat.nnn, name, self.used[name], ident))
+            raise GenError("key name %s for both %s and %s" % (name, self.used[name], ident))
         self.used[name] = ident
-        cat.names[ident] = name
+        plan.names[ident] = name
         return name
 
-    def leaf(self, path, titles, bits, rule, bare=False):
-        """An Element -> a field node."""
-        cat = self.cat
-        ident = "/".join(path) + ("/#" if bare else "")
-        note, unit, vt = "", "-", "int"
-        frac, signed = None, False
+    def content(self, rule, bits, ident):
+        """How the content of an Element is written -> dict(tr, vt, unit, note, frac, signed).
+        Raw bits, tables, BDS registers, 6-bit and octal strings and dependent contents are `uint`;
+        an integer is `uint` or `twos`; a quantity is `uscale` or `sscale` with its LSB as an exact
+        fraction; an ASCII string is `ascii`."""
+        r = dict(tr="uint", vt="int", unit="-", note="", frac=None, signed=False)
         if rule["tag"] == "Dependent":
-            tr = "uint"
-            note = "raw value; its content depends on the value of " + " and ".join(
-                "/".join(p) for p in rule["contents"]["path"])
-        else:
-            ct = rule["contents"]
-            t, c = ct["tag"], ct["contents"]
-            if t == "ContentRaw":
-                tr = "uint"
-            elif t == "ContentTable":
-                tr = "uint"
-                note = ", ".join("%d = %s" % (v, fold(s)) for v, s in c)
-            elif t == "ContentString":
-                st = c["tag"]
-                if st == "StringAscii":
-                    if bits % 8 or bits > 2040:
-                        raise Unmappable("an ASCII string of %d bits" % bits)
-                    tr, vt = "ascii", "string"
-                    note = "%d ASCII characters" % (bits // 8)
-                elif st == "StringICAO":
-                    tr = "uint"
-                    note = "raw value: %d characters of 6 bits each in the ICAO character set (ICAO Annex 10)" % (bits // 6)
-                elif st == "StringOctal":
-                    tr = "uint"
-                    note = "raw value: %d octal digits of 3 bits each" % (bits // 3)
-                else:
-                    die("unknown string type %s" % st)
-            elif t == "ContentInteger":
-                signed = c["signedness"]["tag"] == "Signed"
-                tr = "twos" if signed else "uint"
-            elif t == "ContentQuantity":
-                signed = c["signedness"]["tag"] == "Signed"
-                frac = num(c["lsb"])
-                if frac <= 0:
-                    die("%s: LSB %s" % (ident, frac))
-                tr = ("sscale:" if signed else "uscale:") + frac_text(frac)
-                vt = "float"
-                unit = UNIT_TOKEN.get(c["unit"], c["unit"])
-                if not re.fullmatch(r"[\x21-\x7e]+", unit):
-                    die("%s: unit %r" % (ident, c["unit"]))
-                note = "LSB %s %s" % (frac_text(frac), unit if unit != "-" else "")
-            elif t == "ContentBds":
-                tr = "uint"
-                note = "raw value: a Mode S BDS register" + (" with its address" if c["tag"] == "BdsWithAddress" else "")
+            r["note"] = "raw value; its content depends on the value of " + dependency_text(rule["contents"]["path"])
+            return r
+        ct = rule["contents"]
+        t, c = ct["tag"], ct["contents"]
+        if t == "ContentRaw":
+            pass
+        elif t == "ContentTable":
+            r["note"] = ", ".join("%d = %s" % (v, fold(s)) for v, s in c)
+        elif t == "ContentString":
+            st = c["tag"]
+            if st == "StringAscii":
+                if bits % 8 or bits > 2040:
+                    raise Unmappable("an ASCII string of %d bits" % bits)
+                r["tr"], r["vt"] = "ascii", "string"
+                r["note"] = "%d ASCII characters" % (bits // 8)
+            elif st == "StringICAO":
+                r["note"] = "raw value: %d characters of 6 bits each in the ICAO character set (ICAO Annex 10)" % (bits // 6)
+            elif st == "StringOctal":
+                r["note"] = "raw value: %d octal digits of 3 bits each" % (bits // 3)
             else:
-                die("unknown content tag %s" % t)
-        if tr != "ascii" and not 1 <= bits <= 64:
-            raise Unmappable("an element of %d bits (a field holds at most 64)" % bits)
-        name = self.name_of(ident, path + (["val"] if bare else []))
-        label = "I%s/%s" % (cat.nnn, "/".join(path))
+                raise GenError("unknown string type %s" % st)
+        elif t == "ContentInteger":
+            r["signed"] = c["signedness"]["tag"] == "Signed"
+            r["tr"] = "twos" if r["signed"] else "uint"
+        elif t == "ContentQuantity":
+            r["signed"] = c["signedness"]["tag"] == "Signed"
+            frac = r["frac"] = num(c["lsb"])
+            if frac <= 0:
+                raise GenError("%s has the LSB %s; an LSB is above zero" % (ident, frac))
+            r["tr"] = scale_text(r["signed"], frac)
+            r["vt"] = "float"
+            unit = r["unit"] = UNIT_TOKEN.get(c["unit"], c["unit"])
+            if not re.fullmatch(r"[\x21-\x7e]+", unit):
+                raise GenError("%s has the unit %r, which is not one token" % (ident, c["unit"]))
+            r["note"] = "LSB %s %s" % (frac_text(frac), unit if unit != "-" else "")
+        elif t == "ContentBds":
+            r["note"] = "raw value: a Mode S BDS register" + (" with its address" if c["tag"] == "BdsWithAddress" else "")
+        else:
+            raise GenError("unknown content tag %s" % t)
+        return r
+
+    def meaning(self, path, titles, note):
+        """The quoted meaning of a key in the module: item path, titles, then the note; 400
+        characters at most."""
+        label = "I%s/%s" % (self.cat.nnn, "/".join(path))
         title = fold("; ".join(t for t in titles[1:] if t)) if len(titles) > 1 else fold(titles[0])
         meaning = label + (": " + title if title else "")
         if len(titles) > 1 and titles[0]:
@@ -465,90 +627,115 @@ class Builder:
             meaning += ". " + note.strip()
         if len(meaning) > 400:
             meaning = meaning[:397] + "..."
-        return dict(t="field", ident=ident, sub=path[1:], key=cat.module + "." + name, also=[], bits=bits,
-                    tr=tr, kind=tr.split(":")[0], frac=frac, signed=signed, vt=vt, unit=unit,
-                    meaning=meaning, raw=cat.module + "." + name, declare=True,
-                    src_unit=(rule["contents"]["contents"]["unit"]
-                              if rule["tag"] == "ContextFree" and rule["contents"]["tag"] == "ContentQuantity" else None),
+        return meaning
+
+    def leaf(self, path, titles, bits, rule, bare=False):
+        """An Element -> a field node. `bare` marks the Element that is the whole repetition of a
+        repetitive item: its key takes the suffix `_val`, the list has the item's name."""
+        ident = "/".join(path) + ("/#" if bare else "")
+        c = self.content(rule, bits, ident)
+        if c["tr"] != "ascii" and not 1 <= bits <= 64:
+            raise Unmappable("an element of %d bits (a field holds at most 64)" % bits)
+        name = self.name_of(ident, path + (["val"] if bare else []))
+        key = self.cat.module + "." + name
+        quantity = rule["tag"] == "ContextFree" and rule["contents"]["tag"] == "ContentQuantity"
+        return dict(t="field", ident=ident, sub=path[1:], key=key, also=[], bits=bits,
+                    tr=c["tr"], kind=c["tr"].split(":")[0], frac=c["frac"], signed=c["signed"], vt=c["vt"],
+                    unit=c["unit"], meaning=self.meaning(path, titles, c["note"]), raw=key, declare=True,
+                    src_unit=rule["contents"]["contents"]["unit"] if quantity else None,
                     title=titles[-1] or "")
 
-    def item(self, it, path, titles, bare_ok=False):
+    def item(self, it, path, titles):
         return self.rule(it["rule"], path + [it["name"]], titles + [it["title"]])
 
     def rule(self, rule, path, titles, bare=False):
+        """The nodes of an item's rule. A dependent rule whose cases all have one size is written
+        as its default structure; one whose cases differ in size cannot be described."""
         if rule["tag"] == "ContextFree":
             return self.variation(rule["contents"], path, titles, bare)
         d = rule["contents"]
         if rule_bits(rule) is None:
             raise Unmappable("a structure that depends on the value of %s, with cases of different sizes"
-                             % " and ".join("/".join(p) for p in d["path"]))
-        # same size in every case: the default structure carries the bits
+                             % dependency_text(d["path"]))
         nodes = self.variation(d["default"], path, titles, bare)
         for n in nodes:
             if n["t"] == "field":
-                n["meaning"] += ". Raw value: the structure depends on the value of " + " and ".join(
-                    "/".join(p) for p in d["path"])
+                n["meaning"] += ". Raw value: the structure depends on the value of " + dependency_text(d["path"])
         return nodes
 
+    def members(self, members, path, titles):
+        """The nodes of Group members: a Spare is a pad, an Item its own nodes."""
+        nodes = []
+        for it in members:
+            if it["tag"] == "Spare":
+                nodes.append(dict(t="pad", bits=it["contents"]))
+            else:
+                nodes += self.item(it["contents"], path, titles)
+        return nodes
+
+    def extended(self, c, path, titles):
+        """An Extended variation -> one chain node; a null member ends a part with its extension bit."""
+        parts, cur = [], []
+        for it in c:
+            if it is None:
+                parts.append(cur)
+                cur = []
+                continue
+            sub = self.members([it], path, titles)
+            if any(n["t"] not in ("field", "pad") for n in sub):
+                raise Unmappable("an extended item that holds a part that is not fixed")
+            cur += sub
+        trailing = c[-1] is None
+        if not trailing:
+            parts.append(cur)
+        return [dict(t="chain", parts=parts, trailing=trailing)]
+
+    def repetitive(self, c, path, titles):
+        """A Repetitive variation -> one group node and a list of the module."""
+        ident = "/".join(path) + "[]"
+        lname = self.name_of(ident, path)
+        body = self.variation(c["variation"], path, titles, bare=c["variation"]["tag"] == "Element")
+        if any(n["t"] not in ("field", "pad") for n in body):
+            raise Unmappable("a repetitive item whose repeated part is not fixed")
+        ty = c["type"]
+        label = "I%s/%s" % (self.cat.nnn, "/".join(path))
+        self.plan.lists[lname] = "%s: %s, one item per repetition" % (label, fold(titles[-1] or titles[0]))
+        key = self.cat.module + "." + lname
+        if ty["tag"] == "RepetitiveRegular":
+            return [dict(t="group", list=key, mode="count", cbits=8 * ty["contents"]["byteSize"], body=body, ident=ident)]
+        if ty["tag"] == "RepetitiveFx":
+            return [dict(t="group", list=key, mode="fx", body=body, ident=ident)]
+        raise GenError("unknown repetitive type %s" % ty["tag"])
+
+    def compound(self, c, path, titles):
+        """A Compound variation -> one compound node; subfield n has presence bit n, a null slot none."""
+        subs = []
+        for i, it in enumerate(c):
+            if it is not None:
+                subs.append((i + 1, it["name"], fold(it["title"]),
+                             self.rule(it["rule"], path + [it["name"]], titles + [it["title"]])))
+        return [dict(t="compound", name="p" + "".join(p.lower() for p in path), subs=subs)]
+
     def variation(self, v, path, titles, bare=False):
-        cat = self.cat
         t, c = v["tag"], v["contents"]
         if t == "Element":
             return [self.leaf(path, titles, c["bitSize"], c["rule"], bare)]
         if t == "Group":
-            nodes = []
-            for it in c:
-                if it["tag"] == "Spare":
-                    nodes.append(dict(t="pad", bits=it["contents"]))
-                else:
-                    nodes += self.item(it["contents"], path, titles)
-            return nodes
+            return self.members(c, path, titles)
         if t == "Extended":
-            parts, cur = [], []
-            for it in c:
-                if it is None:
-                    parts.append(cur)
-                    cur = []
-                elif it["tag"] == "Spare":
-                    cur.append(dict(t="pad", bits=it["contents"]))
-                else:
-                    sub = self.item(it["contents"], path, titles)
-                    if any(n["t"] not in ("field", "pad") for n in sub):
-                        raise Unmappable("an extended item that holds a part that is not fixed")
-                    cur += sub
-            trailing = c[-1] is None
-            if not trailing:
-                parts.append(cur)
-            return [dict(t="chain", parts=parts, trailing=trailing)]
+            return self.extended(c, path, titles)
         if t == "Repetitive":
-            ident = "/".join(path) + "[]"
-            lname = self.name_of(ident, path)
-            body = self.variation(c["variation"], path, titles, bare=c["variation"]["tag"] == "Element")
-            if any(n["t"] not in ("field", "pad") for n in body):
-                raise Unmappable("a repetitive item whose repeated part is not fixed")
-            ty = c["type"]
-            label = "I%s/%s" % (cat.nnn, "/".join(path))
-            cat.lists[lname] = "%s: %s, one item per repetition" % (label, fold(titles[-1] or titles[0]))
-            if ty["tag"] == "RepetitiveRegular":
-                return [dict(t="group", list=cat.module + "." + lname, mode="count",
-                             cbits=8 * ty["contents"]["byteSize"], body=body, ident=ident)]
-            if ty["tag"] == "RepetitiveFx":
-                return [dict(t="group", list=cat.module + "." + lname, mode="fx", body=body, ident=ident)]
-            die("unknown repetitive type %s" % ty["tag"])
+            return self.repetitive(c, path, titles)
         if t == "Compound":
-            subs = []
-            for i, it in enumerate(c):
-                if it is not None:
-                    subs.append((i + 1, it["name"], fold(it["title"]),
-                                 self.rule(it["rule"], path + [it["name"]], titles + [it["title"]])))
-            return [dict(t="compound", name="p" + "".join(p.lower() for p in path), subs=subs)]
+            return self.compound(c, path, titles)
         if t == "Explicit":
             return [dict(t="explicit")]
-        die("unknown variation tag %s" % t)
+        raise GenError("unknown variation tag %s" % t)
 
 
-VARIATION_KIND = {"Element": "fixed", "Group": "fixed", "Extended": "extended", "Repetitive": "repetitive",
-                  "Compound": "compound", "Explicit": "explicit"}
+def scale_text(signed, frac):
+    """The scale transform of a quantity: the LSB as an exact fraction, never a rounded decimal."""
+    return ("sscale:" if signed else "uscale:") + frac_text(frac)
 
 
 def walk_fields(nodes, in_list=None):
@@ -567,140 +754,226 @@ def walk_fields(nodes, in_list=None):
                 yield from walk_fields(sub, in_list)
 
 
-def build(cat):
-    b = Builder(cat)
+def stray_bits(nodes):
+    """Bits by which a run of nodes misses a whole number of octets, or 0. An ASTERIX item is a
+    whole number of octets, and so is each part of an extended item with its extension bit, each
+    repetition (with its extension bit in the FX form) and each subfield of a compound item. The
+    first run that is not is reported: (bits over, what)."""
+    total = 0
+    for n in nodes:
+        t = n["t"]
+        if t in ("field", "pad"):
+            total += n["bits"]
+        elif t == "chain":
+            for i, part in enumerate(n["parts"]):
+                has_fx = i < len(n["parts"]) - 1 or n["trailing"]
+                size = sum(x["bits"] for x in part) + (1 if has_fx else 0)
+                if size % 8:
+                    return size, "part %d of the extended item, with its extension bit," % (i + 1)
+        elif t == "group":
+            size = sum(x["bits"] for x in n["body"]) + (1 if n["mode"] == "fx" else 0)
+            if size % 8:
+                return size, "one repetition" + (", with its extension bit," if n["mode"] == "fx" else "")
+        elif t == "compound":
+            for _, name, _, sub in n["subs"]:
+                found = stray_bits(sub)
+                if found:
+                    return found[0], "subfield %s: %s" % (name, found[1])
+    return (total, "the item") if total % 8 else None
+
+
+def plan_entry(builder, frn, u):
+    """One FRN of the UAP -> its entry. An item the pack language cannot describe keeps `nodes`
+    None and the reason; the names and lists it had claimed are released."""
+    plan, cat = builder.plan, builder.cat
+    e = dict(frn=frn, name=None, title="", kind=None, nodes=None, reason=None)
+    if u["tag"] == "UapItemSpare":
+        e["kind"], e["reason"] = "spare", "spare FRN"
+        return e
+    if u["tag"] == "UapItemRFS":
+        e["kind"], e["reason"] = "rfs", "random field sequencing: the items that follow name themselves by FRN, in any order"
+        return e
+    it = cat.catalogue.get(u["contents"])
+    if it is None:
+        raise GenError("the UAP names item %s, which the catalogue does not hold" % u["contents"], file=cat.label)
+    try:
+        e["name"], e["title"] = it["name"], fold(it["title"])
+        rule = it["rule"]
+        tag = rule["contents"]["tag"] if rule["tag"] == "ContextFree" else None
+        if tag is not None and tag not in VARIATION_KIND:
+            raise GenError("unknown variation tag %s" % tag)
+        e["kind"] = VARIATION_KIND[tag] if tag else "fixed"
+        saved = (dict(builder.used), dict(plan.names), OrderedDict(plan.lists))
+        try:
+            e["nodes"] = builder.rule(rule, [it["name"]], [it["title"]])
+        except Unmappable as x:
+            builder.used, plan.names, plan.lists = saved
+            e["reason"] = str(x)
+    except GenError as x:
+        raise GenError("item %s: %s" % (it.get("name"), x.message), file=x.file or cat.label)
+    except (KeyError, TypeError, IndexError) as x:
+        raise GenError("item %s: the definition lacks a member the generator reads (%s: %s)"
+                       % (it.get("name"), type(x).__name__, x), file=cat.label)
+    if e["nodes"]:
+        stray = stray_bits(e["nodes"])
+        if stray:
+            raise GenError("item %s: %s is %d bits, not a whole number of octets" % (e["name"], stray[1], stray[0]),
+                           file=cat.label)
+    return e
+
+
+def plan_category(cat, pinned=None):
+    """Cat -> Plan: every decision the emit functions need. `pinned` is the names file of an
+    earlier run (item path -> key name)."""
+    plan = Plan(cat, pinned)
+    builder = Builder(plan)
     for i, u in enumerate(cat.uap):
-        frn = i + 1
-        e = dict(frn=frn, name=None, title="", kind=None, nodes=None, reason=None)
-        if u["tag"] == "UapItemSpare":
-            e["kind"], e["reason"] = "spare", "spare FRN"
-        elif u["tag"] == "UapItemRFS":
-            e["kind"], e["reason"] = "rfs", "random field sequencing: the items that follow name themselves by FRN, in any order"
-        else:
-            it = cat.catalogue.get(u["contents"])
-            if it is None:
-                die("cat %s: UAP names item %s, which the catalogue does not hold" % (cat.nnn, u["contents"]))
-            e["name"], e["title"] = it["name"], fold(it["title"])
-            rule = it["rule"]
-            e["kind"] = VARIATION_KIND[rule["contents"]["tag"]] if rule["tag"] == "ContextFree" else "fixed"
-            saved = (dict(b.used), dict(cat.names), OrderedDict(cat.lists))
-            try:
-                e["nodes"] = b.rule(rule, [it["name"]], [it["title"]])
-            except Unmappable as x:
-                b.used, cat.names, cat.lists = saved
-                e["reason"] = str(x)
-        cat.entries.append(e)
-    bind(cat)
-    for e in cat.entries:
-        if e["nodes"]:
-            for n, _ in walk_fields(e["nodes"]):
-                if n["declare"]:
-                    cat.keys[n["raw"].split(".", 1)[1]] = (n["vt"], n["unit"], n["meaning"])
-    dup = set(cat.keys) & set(cat.lists)
+        plan.entries.append(plan_entry(builder, i + 1, u))
+    bind(plan)
+    for e in plan.mapped():
+        for n, _ in walk_fields(e["nodes"]):
+            if n["declare"]:
+                plan.keys[n["raw"].split(".", 1)[1]] = (n["vt"], n["unit"], n["meaning"])
+    dup = set(plan.keys) & set(plan.lists)
     if dup:
-        die("cat %s: a key and a list share the name %s" % (cat.nnn, sorted(dup)))
+        raise GenError("a key and a list share the name %s" % sorted(dup), file=cat.label)
+    if not any(e["kind"] != "explicit" for e in plan.mapped()):
+        raise GenError("no item of the UAP can be mapped", file=cat.label)
+    return plan
 
 
-# ---------------------------------------------------------------- shared-model bindings
+# ---------------------------------------------------------------- plan: shared-model bindings
 
-def doc_text(it):
-    d = it["documentation"]
-    return fold(d["definition"]), fold(d["remark"])
+class Candidate:
+    """A fixed item that stands directly in the UAP, with the text the binding rules read."""
+
+    def __init__(self, cat, entry):
+        it = cat.catalogue[entry["name"]]
+        doc = it["documentation"]
+        self.entry = entry
+        self.nodes = entry["nodes"]
+        self.title = fold(it["title"])
+        self.definition, self.remark = fold(doc["definition"]), fold(doc["remark"])
+        self.label = "I%s/%s" % (cat.nnn, entry["name"])
+        self.fields = [n for n in self.nodes if n["t"] == "field"]
+        self.by_sub = {"/".join(n["sub"]): n for n in self.fields}
+
+    def single_field(self):
+        """The field of an item that is one Element and nothing else, or None."""
+        return self.fields[0] if len(self.fields) == 1 and len(self.nodes) == 1 else None
 
 
-def bind(cat):
+def position_of(c):
+    """WGS-84 position of the reported target: subitems LAT and LON, signed degrees of one LSB,
+    under a title that says so -> [(LSB, FRN, LAT field, LON field, evidence)], else []."""
+    la, lo = c.by_sub.get("LAT"), c.by_sub.get("LON")
+    if not (la and lo and len(c.fields) == 2 and la["src_unit"] == "°" and lo["src_unit"] == "°"
+            and la["signed"] and lo["signed"] and la["frac"] == lo["frac"]
+            and re.match(r"(calculated |high-resolution )?position in wgs-?84 co-?ordinates", c.title, re.I)
+            and not re.search(r"message type", c.remark, re.I)):       # what the item holds depends on the message
+        return []
+    return [(la["frac"], c.entry["frn"], la, lo,
+             '%s "%s", definition: "%s"; subitems LAT and LON in degrees, two\'s complement%s'
+             % (c.label, c.title, c.definition,
+                '; note: "%s"' % c.remark if re.search(r"positive", c.remark, re.I) else ""))]
+
+
+def bind_height(plan, c):
+    """Height above the WGS-84 ellipsoid, in feet or metres -> `hae` (metres)."""
+    n = c.single_field()
+    if (n and n["src_unit"] in ("ft", "m") and n["signed"]
+            and re.search(r"geometric (height|altitude)", c.title, re.I)
+            and re.search(r"ellipsoid", c.definition, re.I) and re.search(r"wgs-? ?84", c.definition, re.I)):
+        mult = FT if n["src_unit"] == "ft" else Fraction(1)
+        convert(plan, n, "hae", mult,
+                '%s "%s", definition: "%s"; LSB %s %s%s' % (c.label, c.title, c.definition, frac_text(n["frac"]), n["src_unit"],
+                                                           '; note: "%s"' % c.remark if c.remark else ""))
+
+
+def bind_speed_and_course(plan, c):
+    """Ground speed in m/s, kt or NM/s -> `speed_ms`; track angle from true north -> `course`."""
+    for n in c.fields:
+        if (n["src_unit"] in SPEED_TO_MS and not n["signed"]
+                and re.search(r"ground ?speed", n["title"], re.I)):
+            convert(plan, n, "speed_ms", SPEED_TO_MS[n["src_unit"]],
+                    '%s "%s", subitem %s "%s"; LSB %s %s' % (c.label, c.title, "/".join(n["sub"]), fold(n["title"]),
+                                                             frac_text(n["frac"]), n["src_unit"]))
+        if (n["src_unit"] == "°" and not n["signed"] and re.search(r"track angle", n["title"], re.I)
+                and re.search(r"true north", n["title"], re.I)):
+            convert(plan, n, "course", Fraction(1),
+                    '%s "%s", subitem %s "%s"; LSB %s degrees' % (c.label, c.title, "/".join(n["sub"]), fold(n["title"]),
+                                                                  frac_text(n["frac"])))
+
+
+def bind_velocity(plan, c):
+    """Cartesian velocity VX, VY in m/s whose y-axis the definition states to point north ->
+    `track.vel_east_ms`, `track.vel_north_ms`; the pack then uses the module `track`."""
+    vx, vy = c.by_sub.get("VX"), c.by_sub.get("VY")
+    if (vx and vy and len(c.fields) == 2 and vx["src_unit"] == "m/s" and vy["src_unit"] == "m/s"
+            and vx["signed"] and vy["signed"] and re.search(r"cartesian", c.title + " " + c.definition, re.I)
+            and re.search(r"y-axis points to the geographical north", c.remark, re.I)):
+        ev = ('%s "%s", definition: "%s"; note: "%s"; subitems VX and VY in m/s, two\'s complement'
+              % (c.label, c.title, c.definition, c.remark))
+        convert(plan, vx, "track.vel_east_ms", Fraction(1), ev + ". The x-axis of that system points east")
+        convert(plan, vy, "track.vel_north_ms", Fraction(1), ev)
+        if "track" not in plan.uses:
+            plan.uses.append("track")
+
+
+def time_of_day_of(c):
+    """Absolute UTC time of day: one unsigned Element of 24 bits in 1/128 s -> [(field, evidence)]."""
+    n = c.single_field()
+    if (n and n["src_unit"] == "s" and n["bits"] == 24 and n["frac"] == Fraction(1, 128) and not n["signed"]
+            and re.search(r"absolute time stamping", c.definition, re.I) and re.search(r"UTC|universal", c.definition)):
+        return [(n, '%s "%s", definition: "%s"%s' % (c.label, c.title, c.definition,
+                                                    '; note: "%s"' % c.remark[:200] if c.remark else ""))]
+    return []
+
+
+def bind_position(plan, pos):
+    """Of the items that hold a position the one of the finest resolution (the lowest FRN among
+    equals) is bound on the wire; the others feed `lat` and `lon` through `derive ... copy` lines."""
+    if not pos:
+        return
+    pos = sorted(pos, key=lambda p: (p[0], p[1]))
+    _, _, la, lo, ev = pos[0]
+    convert(plan, la, "lat", Fraction(1), ev)
+    convert(plan, lo, "lon", Fraction(1), ev)
+    for _, _, la2, lo2, ev2 in sorted(pos[1:], key=lambda p: p[1]):
+        plan.derives.append(("lat", "copy", [la2["raw"]]))
+        plan.derives.append(("lon", "copy", [lo2["raw"]]))
+        plan.bindings.append(dict(key="lat, lon", ident=la2["ident"].rsplit("/", 1)[0], how="derive",
+                                  evidence=ev2, raws=[la2["raw"], lo2["raw"]]))
+
+
+def bind(plan):
     """Bind shared-model keys where the definition text and the unit leave no doubt. Only items
-    that stand directly in the UAP and are fixed (an Element or a Group) are looked at."""
+    that stand directly in the UAP and are fixed (an Element or a Group) are looked at. A time of
+    day is bound, through `derive ... day_seconds time_ms`, only when the category has one."""
     pos, tod = [], []
-    for e in cat.entries:
+    for e in plan.entries:
         if not e["nodes"] or e["kind"] != "fixed":
             continue
-        it = cat.catalogue[e["name"]]
-        definition, remark = doc_text(it)
-        title = fold(it["title"])
-        label = "I%s/%s" % (cat.nnn, e["name"])
-        fields = [n for n in e["nodes"] if n["t"] == "field"]
-        by_sub = {"/".join(n["sub"]): n for n in fields}
-        text = title + " " + definition
-
-        # WGS-84 position of the reported target
-        la, lo = by_sub.get("LAT"), by_sub.get("LON")
-        if (la and lo and len(fields) == 2 and la["src_unit"] == "°" and lo["src_unit"] == "°"
-                and la["signed"] and lo["signed"] and la["frac"] == lo["frac"]
-                and re.match(r"(calculated |high-resolution )?position in wgs-?84 co-?ordinates", title, re.I)
-                and not re.search(r"message type", remark, re.I)):      # what the item holds depends on the message
-            pos.append((la["frac"], e["frn"], la, lo,
-                        '%s "%s", definition: "%s"; subitems LAT and LON in degrees, two\'s complement%s'
-                        % (label, title, definition,
-                           '; note: "%s"' % remark if re.search(r"positive", remark, re.I) else "")))
-
-        # height above the WGS-84 ellipsoid
-        if (len(fields) == 1 and len(e["nodes"]) == 1 and fields[0]["src_unit"] in ("ft", "m") and fields[0]["signed"]
-                and re.search(r"geometric (height|altitude)", title, re.I)
-                and re.search(r"ellipsoid", definition, re.I) and re.search(r"wgs-? ?84", definition, re.I)):
-            n = fields[0]
-            mult = FT if n["src_unit"] == "ft" else Fraction(1)
-            convert(cat, n, "hae", mult,
-                    '%s "%s", definition: "%s"; LSB %s %s%s' % (label, title, definition, frac_text(n["frac"]), n["src_unit"],
-                                                               '; note: "%s"' % remark if remark else ""))
-
-        # ground speed, and track angle from true north
-        for n in fields:
-            if (n["src_unit"] in SPEED_TO_MS and not n["signed"]
-                    and re.search(r"ground ?speed", n["title"], re.I)):
-                convert(cat, n, "speed_ms", SPEED_TO_MS[n["src_unit"]],
-                        '%s "%s", subitem %s "%s"; LSB %s %s' % (label, title, "/".join(n["sub"]), fold(n["title"]),
-                                                                 frac_text(n["frac"]), n["src_unit"]))
-            if (n["src_unit"] == "°" and not n["signed"] and re.search(r"track angle", n["title"], re.I)
-                    and re.search(r"true north", n["title"], re.I)):
-                convert(cat, n, "course", Fraction(1),
-                        '%s "%s", subitem %s "%s"; LSB %s degrees' % (label, title, "/".join(n["sub"]), fold(n["title"]),
-                                                                      frac_text(n["frac"])))
-
-        # Cartesian velocity with the axes stated
-        vx, vy = by_sub.get("VX"), by_sub.get("VY")
-        if (vx and vy and len(fields) == 2 and vx["src_unit"] == "m/s" and vy["src_unit"] == "m/s"
-                and vx["signed"] and vy["signed"] and re.search(r"cartesian", text, re.I)
-                and re.search(r"y-axis points to the geographical north", remark, re.I)):
-            ev = ('%s "%s", definition: "%s"; note: "%s"; subitems VX and VY in m/s, two\'s complement'
-                  % (label, title, definition, remark))
-            convert(cat, vx, "track.vel_east_ms", Fraction(1), ev + ". The x-axis of that system points east")
-            convert(cat, vy, "track.vel_north_ms", Fraction(1), ev)
-            if "track" not in cat.uses:
-                cat.uses.append("track")
-
-        # time of day
-        if (len(fields) == 1 and len(e["nodes"]) == 1 and fields[0]["src_unit"] == "s" and fields[0]["bits"] == 24
-                and fields[0]["frac"] == Fraction(1, 128) and not fields[0]["signed"]
-                and re.search(r"absolute time stamping", definition, re.I) and re.search(r"UTC|universal", definition)):
-            tod.append((fields[0], '%s "%s", definition: "%s"%s' % (label, title, definition,
-                                                                   '; note: "%s"' % remark[:200] if remark else "")))
-
-    if pos:
-        # several items qualify: the finest resolution is bound, the others feed `lat` and `lon`
-        # through derive lines of the module
-        pos.sort(key=lambda p: (p[0], p[1]))
-        _, _, la, lo, ev = pos[0]
-        convert(cat, la, "lat", Fraction(1), ev)
-        convert(cat, lo, "lon", Fraction(1), ev)
-        for _, _, la2, lo2, ev2 in sorted(pos[1:], key=lambda p: p[1]):
-            cat.derives.append(("lat", "copy", [la2["raw"]]))
-            cat.derives.append(("lon", "copy", [lo2["raw"]]))
-            cat.bindings.append(dict(key="lat, lon", ident=la2["ident"].rsplit("/", 1)[0], how="derive",
-                                     evidence=ev2, raws=[la2["raw"], lo2["raw"]]))
+        c = Candidate(plan.cat, e)
+        pos += position_of(c)
+        bind_height(plan, c)
+        bind_speed_and_course(plan, c)
+        bind_velocity(plan, c)
+        tod += time_of_day_of(c)
+    bind_position(plan, pos)
     if len(tod) == 1:
         n, ev = tod[0]
-        cat.derives.append((n["raw"], "day_seconds", ["time_ms"]))
-        cat.bindings.append(dict(key=n["raw"], ident=n["ident"], how="day_seconds", evidence=ev))
+        plan.derives.append((n["raw"], "day_seconds", ["time_ms"]))
+        plan.bindings.append(dict(key=n["raw"], ident=n["ident"], how="day_seconds", evidence=ev))
 
 
-def convert(cat, n, shared, mult, evidence):
-    """Bind `shared` to the field. Same unit: the shared key is the field's key and the raw key
-    follows on an `also` line. Another unit: the factor is folded into the scale and the field
-    has the shared key only."""
+def convert(plan, n, shared, mult, evidence):
+    """Bind `shared` to the field, unless the field or the shared key is bound already. Same
+    unit: the shared key is the field's key and the raw key follows on an `also` line. Another
+    unit: the factor is folded into the scale, exactly, and the field has the shared key only."""
     if n["key"] != n["raw"]:
         return
-    if any(b["key"] == shared for b in cat.bindings):
+    if any(b["key"] == shared for b in plan.bindings):
         return
     if mult == 1:
         n["key"], n["also"] = shared, [n["raw"]]
@@ -708,26 +981,29 @@ def convert(cat, n, shared, mult, evidence):
     else:
         f = n["frac"] * mult
         n["key"], n["frac"], n["declare"] = shared, f, False
-        n["tr"] = ("sscale:" if n["signed"] else "uscale:") + frac_text(f)
+        n["tr"] = scale_text(n["signed"], f)
         how = "factor %s folded into the scale" % frac_text(mult)
-    n["meaning_shared"] = evidence
-    cat.bindings.append(dict(key=shared, ident=n["ident"], how=how, evidence=evidence, tr=n["tr"],
-                             raw=n["raw"] if mult == 1 else None))
+    plan.bindings.append(dict(key=shared, ident=n["ident"], how=how, evidence=evidence, tr=n["tr"],
+                              raw=n["raw"] if mult == 1 else None))
 
 
-# ---------------------------------------------------------------- emitting
+# ---------------------------------------------------------------- emit: module and pack
 
 def q(text):
+    """A double-quoted value of a .def file; a quote inside it becomes `'` (ruling 6 of 0.5)."""
     return '"' + text.replace('"', "'") + '"'
 
 
 def source_line(cat, sha):
+    """The text of the `source` line of the module and of the pack."""
     return ("ASTERIX Category %s, %s, edition %s (%s), as transcribed in github.com/%s (BSD-3-Clause), "
             "commit %s, %s. The category is specified by EUROCONTROL"
             % (cat.nnn, cat.title, cat.edition, cat.date, REPO, sha, cat.rel))
 
 
-def emit_module(cat, sha):
+def emit_module(plan, sha):
+    """The text of model/<module>.def: keys and lists in UAP order, then the derive lines."""
+    cat = plan.cat
     L = ["# The %s module: the values of ASTERIX Category %s (%s), edition %s," % (cat.module, cat.nnn, cat.title, cat.edition),
          "# as the category holds them. Used by the pack `%s`. Generated by" % cat.format,
          "# tools/gen/asterix2pack.py; do not edit by hand. A key is named after its item",
@@ -735,22 +1011,22 @@ def emit_module(cat, sha):
          "# repetition.",
          "module        " + cat.module, "version       " + MODULE_VERSION, "distribution  public",
          "source        " + q(source_line(cat, sha))]
-    w = max([len(k) for k in cat.keys] + [len(k) for k in cat.lists] + [4])
-    ents = [(name, ("key", v)) for name, v in cat.keys.items()] + [(name, ("list", m)) for name, m in cat.lists.items()]
-    order = {name: i for i, name in enumerate(order_of_names(cat))}
+    w = max([len(k) for k in plan.keys] + [len(k) for k in plan.lists] + [4])
+    ents = [(name, ("key", v)) for name, v in plan.keys.items()] + [(name, ("list", m)) for name, m in plan.lists.items()]
+    order = {name: i for i, name in enumerate(order_of_names(plan))}
     for name, (what, v) in sorted(ents, key=lambda x: order[x[0]]):
         if what == "key":
             L.append("key   %-*s  %-6s  %-6s  %s" % (w, name, v[0], v[1], q(v[2])))
         else:
             L.append("list  %-*s  %s" % (w, name, q(v)))
-    if cat.derives:
+    if plan.derives:
         L.append("# Derived keys (engine-spec 0.6 and 0.8), applied by `convert` between decode and encode.")
-        for target, fn, args in cat.derives:
+        for target, fn, args in plan.derives:
             L.append("derive  %s  %s  %s" % (target, fn, "  ".join(args)))
     return "\n".join(L)
 
 
-def order_of_names(cat):
+def order_of_names(plan):
     """Keys and lists in UAP order, a list before the keys of its items."""
     out = []
 
@@ -768,13 +1044,14 @@ def order_of_names(cat):
             elif t == "compound":
                 for _, _, _, sub in n["subs"]:
                     walk(sub)
-    for e in cat.entries:
+    for e in plan.entries:
         if e["nodes"]:
             walk(e["nodes"])
     return out
 
 
 def emit_nodes(nodes, ind, L):
+    """Append the pack lines of plan nodes to `L`, indented by `ind` levels."""
     pad = "  " * ind
     for n in nodes:
         t = n["t"]
@@ -807,7 +1084,9 @@ def emit_nodes(nodes, ind, L):
             L.append(pad + "end")
 
 
-def emit_pack(cat, sha):
+def emit_pack(plan, sha):
+    """The text of pack.def: the header, CAT, LEN, the FSPEC and one `if` block per mapped FRN."""
+    cat = plan.cat
     L = ["# ASTERIX Category %s, %s, edition %s: one data block holding one record." % (cat.nnn, cat.title, cat.edition),
          "# Public. Generated by tools/gen/asterix2pack.py from the category definition of",
          "# github.com/%s (BSD-3-Clause); do not edit by hand. I/O is hex text." % REPO,
@@ -822,12 +1101,12 @@ def emit_pack(cat, sha):
          "# with `malformed-wire` (ruling 1 of engine-spec 0.8), and encode never sets the bit.",
          "format     " + cat.format, "version    " + PACK_VERSION, "distribution public",
          "source  " + q(source_line(cat, sha))]
-    for m in cat.uses:
+    for m in plan.uses:
         L.append("uses       " + m)
     L += ["uses       " + cat.module, "wire       bits", "layout     sequential", "bit_order  msb",
           "kind    record", "when    8  %d%s# CAT" % (cat.num, " " * 30), "length  16 whole" + " " * 25 + "# LEN",
           "presence f fx"]
-    for e in cat.entries:
+    for e in plan.entries:
         if e["nodes"] is None:
             L.append("# FRN %d: %s" % (e["frn"], ("I%s/%s %s, not mapped: %s" % (cat.nnn, e["name"], e["title"], e["reason"]))
                                        if e["name"] else e["reason"]))
@@ -841,10 +1120,13 @@ def emit_pack(cat, sha):
 # ---------------------------------------------------------------- raw records (written from the definition)
 
 def to_bits(v, n):
+    """The low `n` bits of `v` as text, most significant bit first (`bit_order msb`); a negative
+    value is written in two's complement."""
     return format(v & ((1 << n) - 1), "0%db" % n) if n else ""
 
 
 def raw_has(nodes, rec):
+    """True when the raw record holds a value for a field or list of these nodes."""
     for n in nodes:
         t = n["t"]
         if t == "field" and n["key"] in rec:
@@ -859,7 +1141,9 @@ def raw_has(nodes, rec):
 
 
 def fx_octets(setbits):
-    """FSPEC-style octets for a set of 1-based bit numbers."""
+    """The bits of an FX presence field (an FSPEC, or the primary subfield of a compound item) for
+    a set of bit numbers counted from 1: octets of 7 presence bits and an extension bit that is 1
+    when another octet follows. Octets after the last set bit are not written; one octet always is."""
     n = max(1, (max(setbits) + 6) // 7) if setbits else 1
     out = ""
     for o in range(n):
@@ -904,22 +1188,23 @@ def raw_enc(nodes, rec):
                 if bit in setbits:
                     out += raw_enc(sub, rec)
         elif t == "explicit":
-            die("a raw record cannot hold an explicit item")
+            raise GenError("a raw record cannot hold an explicit item")
     return out
 
 
-def raw_block(cat, rec, extra=None):
+def raw_block(plan, rec, extra=None):
     """Hex of the data block for a raw record. `extra` is FRN -> bits of an item written as is."""
+    cat = plan.cat
     extra = extra or {}
-    setbits = {e["frn"] for e in cat.entries if e["nodes"] and raw_has(e["nodes"], rec)} | set(extra)
+    setbits = {e["frn"] for e in plan.entries if e["nodes"] and raw_has(e["nodes"], rec)} | set(extra)
     body = fx_octets(setbits)
-    for e in cat.entries:
+    for e in plan.entries:
         if e["frn"] in extra:
             body += extra[e["frn"]]
         elif e["frn"] in setbits:
             body += raw_enc(e["nodes"], rec)
     if len(body) % 8:
-        die("cat %s: a record of %d bits" % (cat.nnn, len(body)))
+        raise GenError("cat %s: a record of %d bits" % (cat.nnn, len(body)))
     total = 3 + len(body) // 8
     bits = to_bits(cat.num, 8) + to_bits(total, 16) + body
     return "%0*x" % (len(bits) // 4, int(bits, 2))
@@ -936,6 +1221,8 @@ def raw_value(n, v):
 
 
 def raw_model(nodes, rec, prefix, model):
+    """Fill `model` with the model values of a raw record, under the key names a vector's `model`
+    member uses (`<list>.#`, `<list>[<i>].<key>`)."""
     for n in nodes:
         t = n["t"]
         if t == "field":
@@ -972,15 +1259,17 @@ class Picker:
         h ^= h >> 7
         if n["signed"]:
             lim = 1 << (bits - 1)
-            v = h % lim if lim > 1 else 0
-            if v == 0:
-                v = 1 if lim > 1 else -1
+            if lim == 1:
+                return -1               # a signed field of one bit holds 0 or -1
+            v = h % lim or 1
             return -v if self.i % 2 else v
         lim = 1 << min(bits, 63)
         v = h % lim
         return v or 1
 
     def fill(self, nodes, rec, items=2):
+        """Set every field of the nodes in the raw record: a bound key to its fixed value, any
+        other to the next picked value; `items` repetitions in every list."""
         for n in nodes:
             t = n["t"]
             if t == "field":
@@ -1000,6 +1289,7 @@ class Picker:
 
 
 def nice(target):
+    """A function of a field node that gives the raw value of `target`, halved until it fits."""
     def f(n):
         t = target
         while True:         # a field too narrow for the value takes half of it, and so on
@@ -1017,7 +1307,7 @@ def model_to_raw(n, x):
     v = round_half_away(qv)
     lo, hi = (-(1 << (n["bits"] - 1)), (1 << (n["bits"] - 1)) - 1) if n["signed"] else (0, (1 << n["bits"]) - 1)
     if not lo <= v <= hi:
-        die("%s: %r does not fit %d bits" % (n["ident"], x, n["bits"]))
+        raise GenError("%s: %r does not fit %d bits" % (n["ident"], x, n["bits"]))
     return v
 
 
@@ -1029,6 +1319,8 @@ NICE = {"lat": nice(47.5), "lon": nice(-122.25), "hae": nice(1524.0), "speed_ms"
 # ---------------------------------------------------------------- derivations (engine-spec 0.6, 0.8)
 
 def apply_derives(ent, derives):
+    """Apply derive lines to an entity until nothing changes: a target that is absent is set when
+    every argument is present (engine-spec 0.6 "Derived keys")."""
     for _ in range(8):
         changed = False
         for target, fn, args in derives:
@@ -1054,7 +1346,7 @@ def apply_derives(ent, derives):
             elif fn == "day_seconds":
                 r = (a[0] % 86400000) / 1000.0
             else:
-                die("derive function %s is not in the self-check" % fn)
+                raise GenError("derive function %s is not in the self-check" % fn)
             if r is not None and not (isinstance(r, float) and not math.isfinite(r)):
                 ent[target] = r
                 changed = True
@@ -1063,11 +1355,12 @@ def apply_derives(ent, derives):
     return ent
 
 
-def all_derives(modules):
-    """Derive lines of the loaded modules in byte order of module name."""
+def all_derives(model):
+    """The derive lines of every module of a gtcheck model as (target, function, arguments), the
+    modules in byte order of name."""
     out = []
-    for name in sorted(modules):
-        out += modules[name]["derives"]
+    for name in sorted(model.modules):
+        out += [(d.target, d.function, d.arguments) for d in model.modules[name].derives]
     return out
 
 
@@ -1090,9 +1383,10 @@ def geojson_text(ent):
 
 
 def iso8601_ms(text):
+    """Milliseconds since 1970-01-01T00:00:00Z of an ISO 8601 UTC time (days from the civil date)."""
     m = re.fullmatch(r"(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(?:\.(\d+))?Z", text)
     if not m:
-        die("time %r" % text)
+        raise GenError("time %r" % text)
     y, mo, d, h, mi, s = (int(m.group(i)) for i in range(1, 7))
     frac = int((m.group(7) or "0")[:3].ljust(3, "0"))
     y2 = y - (mo <= 2)
@@ -1120,468 +1414,324 @@ def track_json_decode(text):
     return ent
 
 
-# ---------------------------------------------------------------- vectors
+# ---------------------------------------------------------------- emit: vectors
+#
+# Input and expected bytes of every vector but the published samples come from `raw_block`,
+# which writes a record from the plan; the pack that was loaded back is not consulted. The
+# self-check then replays each vector through the sequential codec, which reads only the pack.
+
+TRACK_INPUT = ('{"apiVersion":"billie.dev/track-v2","kind":"Track","trackId":"311","sourceId":"sensor-a",'
+               '"trackGeneration":"generation-1","observedAt":"2025-10-29T12:00:00.125Z",'
+               '"position":{"latitudeDeg":47.5,"longitudeDeg":-122.25,"altitudeM":1524},'
+               '"velocity":{"eastMps":3,"northMps":4}}')
+
 
 def model_strings(model):
+    """The `model` member of a vector: every value as text (spec/vector-format.md)."""
     return OrderedDict((k, plain(v) if not isinstance(v, str) else v) for k, v in model.items())
 
 
-def find_field(cat, key):
-    for e in cat.entries:
-        if e["nodes"]:
-            for n, lst in walk_fields(e["nodes"]):
-                if n["key"] == key and lst is None:
-                    return e, n
+def json_text(value):
+    return json.dumps(value, indent=2, ensure_ascii=False)
+
+
+def find_field(plan, key):
+    """(entry, field node) of the field outside every list that has `key` as its first key."""
+    for e in plan.mapped():
+        for n, lst in walk_fields(e["nodes"]):
+            if n["key"] == key and lst is None:
+                return e, n
     return None, None
 
 
-def write_vectors(cat, out, pack, modules):
-    """-> list of (file name, what it shows); also the vector for packs/canonical-track-v2."""
-    vdir = os.path.join(out, "packs", cat.format, "vectors")
-    os.makedirs(vdir, exist_ok=True)
-    for old in glob.glob(os.path.join(vdir, "*.json")):
-        os.remove(old)
-    made = []
-    src = "generated by tools/gen/asterix2pack.py from %s of github.com/%s" % (cat.rel, REPO)
-
-    def put(name, what, **body):
-        v = OrderedDict([("name", name), ("from", body.pop("frm", cat.format)), ("to", body.pop("to", cat.format))])
-        v.update(body)
-        v["source"] = body.get("source", src)
-        v["reference"] = what
-        fn = "%02d-%s.json" % (len(made) + 1, name)
-        write(os.path.join(vdir, fn), json.dumps(v, indent=2, ensure_ascii=False))
-        made.append((fn, what))
-
-    mapped = [e for e in cat.entries if e["nodes"] and e["kind"] != "explicit"]
-    # 1. every mapped item
+def filled(entries, items=2, part=None):
+    """(raw record, model) with every field of the entries set by a Picker of their own; `part`
+    selects one part of each extended item."""
     rec = {}
     pk = Picker()
-    for e in mapped:
-        pk.fill(e["nodes"], rec)
+    for e in entries:
+        if part is None:
+            pk.fill(e["nodes"], rec, items)
+        else:
+            Picker().fill(e["nodes"][0]["parts"][part], rec)
     model = OrderedDict([("@kind", "record")])
-    for e in mapped:
+    for e in entries:
         raw_model(e["nodes"], rec, "", model)
-    hx = raw_block(cat, rec)
-    put("every-mapped-item-roundtrip",
-        "every mapped FRN present, every field of it set, two repetitions in every repetitive item, every extent "
-        "of every extended item: %d octets" % (len(hx) // 2),
-        input=hx, expect=hx, model=model_strings(model))
-    # 2. one item
-    first = mapped[0]
-    rec = {}
-    Picker().fill(first["nodes"], rec, items=1)
-    model = OrderedDict([("@kind", "record")])
-    raw_model(first["nodes"], rec, "", model)
-    hx = raw_block(cat, rec)
-    put("one-item-roundtrip",
-        "a record holding only FRN %d, I%s/%s (the definition does not mark items as mandatory)" % (first["frn"], cat.nnn, first["name"]),
-        input=hx, expect=hx, model=model_strings(model))
-    # 3. extended items with their first part only
-    chains = [e for e in mapped if e["kind"] == "extended"]
-    if chains:
-        rec = {}
-        for e in chains:
-            Picker().fill(e["nodes"][0]["parts"][0], rec)
-        model = OrderedDict([("@kind", "record")])
-        for e in chains:
-            raw_model(e["nodes"], rec, "", model)
-        if rec:
-            hx = raw_block(cat, rec)
-            put("extended-items-first-part-only-roundtrip",
-                "each extended item with its first part and the extension bit 0; the keys of later parts are absent",
-                input=hx, expect=hx, model=model_strings(model))
-    # 4. explicit item: read over, not written
-    expl = [e for e in cat.entries if e["nodes"] and e["kind"] == "explicit"]
-    if expl:
-        rec = {}
-        Picker().fill(first["nodes"], rec, items=1)
-        model = OrderedDict([("@kind", "record")])
-        raw_model(first["nodes"], rec, "", model)
+    return rec, model
+
+
+class VectorSet:
+    """The vectors of one pack in the order made: (file name, text, what it shows)."""
+
+    def __init__(self, plan):
+        self.plan = plan
+        self.source = "generated by tools/gen/asterix2pack.py from %s of github.com/%s" % (plan.cat.rel, REPO)
+        self.made = []
+
+    def put(self, name, what, **body):
+        fmt = self.plan.cat.format
+        v = OrderedDict([("name", name), ("from", body.pop("frm", fmt)), ("to", body.pop("to", fmt))])
+        v.update(body)
+        v["source"] = body.get("source", self.source)
+        v["reference"] = what
+        self.made.append(("%02d-%s.json" % (len(self.made) + 1, name), json_text(v), what))
+
+    def roundtrips(self):
+        """Every mapped item; one item; extended items cut after their first part."""
+        plan, cat = self.plan, self.plan.cat
+        mapped = [e for e in plan.mapped() if e["kind"] != "explicit"]
+        rec, model = filled(mapped)
+        hx = raw_block(plan, rec)
+        self.put("every-mapped-item-roundtrip",
+                 "every mapped FRN present, every field of it set, two repetitions in every repetitive item, every extent "
+                 "of every extended item: %d octets" % (len(hx) // 2),
+                 input=hx, expect=hx, model=model_strings(model))
+        first = mapped[0]
+        rec, model = filled([first], items=1)
+        hx = raw_block(plan, rec)
+        self.put("one-item-roundtrip",
+                 "a record holding only FRN %d, I%s/%s (the definition does not mark items as mandatory)" % (first["frn"], cat.nnn, first["name"]),
+                 input=hx, expect=hx, model=model_strings(model))
+        chains = [e for e in mapped if e["kind"] == "extended"]
+        if chains:
+            rec, model = filled(chains, part=0)
+            if rec:
+                hx = raw_block(plan, rec)
+                self.put("extended-items-first-part-only-roundtrip",
+                         "each extended item with its first part and the extension bit 0; the keys of later parts are absent",
+                         input=hx, expect=hx, model=model_strings(model))
+        return first
+
+    def explicit_items(self, first):
+        """Explicit items are read over on decode and not written on encode."""
+        plan = self.plan
+        expl = [e for e in plan.mapped() if e["kind"] == "explicit"]
+        if not expl:
+            return
+        rec, model = filled([first], items=1)
         extra = {e["frn"]: to_bits(4, 8) + to_bits(0xA1B2C3, 24) for e in expl}
-        put("explicit-items-are-read-over-and-not-written",
-            "the same record with %s present, each a length octet of 4 and three octets of content: decode passes "
-            "over them, encode does not write them" % " and ".join("FRN %d (%s)" % (e["frn"], e["name"]) for e in expl),
-            input=raw_block(cat, rec, extra), expect=raw_block(cat, rec), model=model_strings(model))
-    # 5. an FRN the pack does not map
-    unm = [e for e in cat.entries if e["nodes"] is None]
-    if unm:
-        e = unm[0]
-        put("frn-the-pack-does-not-map",
-            "FSPEC bit %d set (%s): ruling 1 of engine-spec 0.8" % (e["frn"], "I%s/%s" % (cat.nnn, e["name"]) if e["name"] else e["reason"]),
-            input=raw_block(cat, {}, {e["frn"]: to_bits(0, 8)}), expect_error="malformed-wire")
-    # 6. another category
-    rec = {}
-    Picker().fill(first["nodes"], rec, items=1)
-    hx = raw_block(cat, rec)
-    other = "%02x" % ((cat.num + 1) % 256)
-    put("category-is-not-%d" % cat.num, "the first octet is %d" % ((cat.num + 1) % 256),
-        input=other + hx[2:], expect_error="no-kind")
-    # 7. a block shorter than LEN
-    put("block-shorter-than-len", "LEN states %d octets and the input holds %d" % (len(hx) // 2, len(hx) // 2 - 1),
-        input=hx[:-2], expect_error="malformed-wire")
-    # 8. to geojson
-    track_vec = None
-    bound = [b["key"] for b in cat.bindings if b["how"] not in ("derive", "day_seconds")]
-    if "lat" in bound and "lon" in bound:
+        self.put("explicit-items-are-read-over-and-not-written",
+                 "the same record with %s present, each a length octet of 4 and three octets of content: decode passes "
+                 "over them, encode does not write them" % " and ".join("FRN %d (%s)" % (e["frn"], e["name"]) for e in expl),
+                 input=raw_block(plan, rec, extra), expect=raw_block(plan, rec), model=model_strings(model))
+
+    def refusals(self, first):
+        """An FRN with no `if` block, another category, and a block shorter than its LEN."""
+        plan, cat = self.plan, self.plan.cat
+        unm = plan.unmapped()
+        if unm:
+            e = unm[0]
+            self.put("frn-the-pack-does-not-map",
+                     "FSPEC bit %d set (%s): ruling 1 of engine-spec 0.8" % (e["frn"], "I%s/%s" % (cat.nnn, e["name"]) if e["name"] else e["reason"]),
+                     input=raw_block(plan, {}, {e["frn"]: to_bits(0, 8)}), expect_error="malformed-wire")
+        rec, _ = filled([first], items=1)
+        hx = raw_block(plan, rec)
+        other = (cat.num + 1) % 256
+        self.put("category-is-not-%d" % cat.num, "the first octet is %d" % other,
+                 input="%02x" % other + hx[2:], expect_error="no-kind")
+        self.put("block-shorter-than-len", "LEN states %d octets and the input holds %d" % (len(hx) // 2, len(hx) // 2 - 1),
+                 input=hx[:-2], expect_error="malformed-wire")
+
+    def to_geojson(self, bound, derives):
+        """A record of the items that hold shared keys, converted to a GeoJSON Feature."""
+        plan, cat = self.plan, self.plan.cat
         rec, items = {}, []
         for key in bound:
-            e, n = find_field(cat, key)
+            e, _ = find_field(plan, key)
             if e not in items:
                 items.append(e)
-        for e in sorted(items, key=lambda e: e["frn"]):
+        in_frn_order = sorted(items, key=lambda e: e["frn"])
+        for e in in_frn_order:
             for n in e["nodes"]:
                 if n["t"] == "field":
                     rec[n["key"]] = NICE[n["key"]](n) if n["key"] in NICE else 0
         model = OrderedDict()
         for e in items:
             raw_model(e["nodes"], rec, "", model)
-        ent = apply_derives(dict(model), all_derives(modules))
-        hx = raw_block(cat, rec)
-        put("to-geojson",
-            "a record with %s: the shared keys %s reach the Feature" % (
-                ", ".join("I%s/%s" % (cat.nnn, e["name"]) for e in sorted(items, key=lambda e: e["frn"])),
-                ", ".join("`%s`" % k for k in bound)),
-            to="geojson", input=hx, expect=geojson_text(ent),
-            model=model_strings(OrderedDict((k, v) for k, v in model.items() if k in bound)))
-        # 9. from canonical-track-v2 (the vector belongs to that pack: it owns the input)
-        tj = ('{"apiVersion":"billie.dev/track-v2","kind":"Track","trackId":"311","sourceId":"sensor-a",'
-              '"trackGeneration":"generation-1","observedAt":"2025-10-29T12:00:00.125Z",'
-              '"position":{"latitudeDeg":47.5,"longitudeDeg":-122.25,"altitudeM":1524},'
-              '"velocity":{"eastMps":3,"northMps":4}}')
-        ent = apply_derives(track_json_decode(tj), all_derives(modules))
-        fits = True
-        for e in cat.entries:           # a field too narrow for the track's value: no vector
-            for n, lst in walk_fields(e["nodes"] or []):
-                if lst is None and n["key"] in ent and n["frac"] is not None:
-                    try:
-                        model_to_raw(n, ent[n["key"]])
-                    except GenError:
-                        fits = False
-        rec = {}
-        for e in cat.entries:
-            if not e["nodes"] or not fits:
+        ent = apply_derives(dict(model), derives)
+        self.put("to-geojson",
+                 "a record with %s: the shared keys %s reach the Feature" % (
+                     ", ".join("I%s/%s" % (cat.nnn, e["name"]) for e in in_frn_order),
+                     ", ".join("`%s`" % k for k in bound)),
+                 to="geojson", input=raw_block(plan, rec), expect=geojson_text(ent),
+                 model=model_strings(OrderedDict((k, v) for k, v in model.items() if k in bound)))
+
+    def samples(self, pack):
+        """Blocks a publisher prints with the values they hold. A sample whose decode does not give
+        the stated values, or that does not encode back to the expected bytes, is refused."""
+        plan, cat = self.plan, self.plan.cat
+        for s in SAMPLES:
+            if s["cat"] != cat.num:
                 continue
-            for n, lst in walk_fields(e["nodes"]):
-                if lst is None:
-                    for k in [n["key"]] + n["also"]:
-                        if k in ent and n["key"] not in rec:
-                            rec[n["key"]] = model_to_raw(n, ent[k])
-        written = [e for e in cat.entries if e["nodes"] and raw_has(e["nodes"], rec)]
-        complete = OrderedDict([("@complete", True)])
-        for d in cat.derives:
-            if d[1] == "day_seconds":
-                complete[d[0]] = plain(ent[d[0]])
-        track_vec = None if not fits else OrderedDict([
-            ("name", "gen-to-" + cat.format), ("from", "canonical-track-v2"), ("to", cat.format),
-            ("input", tj), ("expect", raw_block(cat, rec))])
-        if fits and len(complete) > 1:
-            track_vec["model"] = complete
-        if fits:
-            track_vec["source"] = src
-            track_vec["reference"] = ("a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at "
-                                      "12:00:00.125 UTC: the record holds %s; the fields of those items that no key "
-                                      "fills are zero" % ", ".join("I%s/%s" % (cat.nnn, e["name"]) for e in written))
-    # 10. published samples
-    for s in SAMPLES:
-        if s["cat"] != cat.num:
-            continue
-        ent, lists = seq_decode(pack, s["hex"])
-        for path, want in s["stated"].items():
-            ident = "%s" % path
-            name = cat.names.get(ident)
-            keys = [k for k in ent if name and k.endswith("." + name)] or \
-                   [n["key"] for e in cat.entries if e["nodes"] for n, _ in walk_fields(e["nodes"]) if n["ident"] == ident]
-            if not keys or keys[0] not in ent or abs(ent[keys[0]] - want) > 1e-9:
-                die("cat %s sample %s: %s is %r, the publisher states %r" % (cat.nnn, s["name"], path, ent.get(keys[0]) if keys else None, want))
-        expect = seq_encode(pack, ent, lists)
-        if expect != s.get("expect", s["hex"]):
-            die("cat %s sample %s: re-encoded %s" % (cat.nnn, s["name"], expect))
-        model = OrderedDict([("@kind", "record")])
-        for k, v in ent.items():
-            model[k] = v
-        put(s["name"], s["note"], input=s["hex"], expect=expect, model=model_strings(model),
-            source="github.com/%s (BSD-3-Clause), %s, commit %s" % (SAMPLES_REPO, SAMPLES_PATH, SAMPLES_COMMIT))
-    return made, track_vec
+            ent, lists = seq_decode(pack, s["hex"])
+            for path, want in s["stated"].items():
+                name = plan.names.get(path)
+                keys = [k for k in ent if name and k.endswith("." + name)] or \
+                       [n["key"] for e in plan.mapped() for n, _ in walk_fields(e["nodes"]) if n["ident"] == path]
+                if not keys or keys[0] not in ent or abs(ent[keys[0]] - want) > 1e-9:
+                    raise GenError("sample %s: %s is %r, the publisher states %r"
+                                   % (s["name"], path, ent.get(keys[0]) if keys else None, want))
+            expect = seq_encode(pack, ent, lists)
+            if expect != s.get("expect", s["hex"]):
+                raise GenError("sample %s: re-encoded %s" % (s["name"], expect))
+            model = OrderedDict([("@kind", "record")])
+            model.update(ent)
+            self.put(s["name"], s["note"], input=s["hex"], expect=expect, model=model_strings(model),
+                     source="github.com/%s (BSD-3-Clause), %s, commit %s" % (SAMPLES_REPO, SAMPLES_PATH, SAMPLES_COMMIT))
 
 
-# ---------------------------------------------------------------- independent loader (spec 0.4 to 0.8)
-
-def tokenize(line):
-    out, i, n = [], 0, len(line)
-    while i < n:
-        ch = line[i]
-        if ch in " \t\r\n":
-            i += 1
-        elif ch == "#":
-            break
-        elif ch == '"':
-            j = line.find('"', i + 1)
-            if j < 0:
-                raise GenError("bad-directive: unterminated quote")
-            out.append(line[i + 1:j])
-            i = j + 1
-        else:
-            j = i
-            while j < n and line[j] not in " \t\r\n":
-                j += 1
-            out.append(line[i:j])
-            i = j
-    return out
-
-
-def parse_module(text):
-    m = dict(name=None, distribution=None, sources=[], keys=OrderedDict(), lists=OrderedDict(), derives=[], uses=[])
-    for line in text.splitlines():
-        a = tokenize(line)
-        if not a:
-            continue
-        d = a[0]
-        if d == "module" and len(a) == 2:
-            m["name"] = a[1]
-        elif d == "version" and len(a) == 2:
-            pass
-        elif d == "distribution" and len(a) == 2 and a[1] in ("public", "controlled"):
-            m["distribution"] = a[1]
-        elif d == "source" and len(a) == 2:
-            m["sources"].append(a[1])
-        elif d == "uses" and len(a) == 2:
-            m["uses"].append(a[1])
-        elif d == "key" and len(a) in (4, 5) and a[2] in ("string", "float", "int"):
-            if "." in a[1] or a[1] in m["keys"] or a[1] in m["lists"]:
-                raise GenError("duplicate-key: %s" % a[1])
-            m["keys"][a[1]] = a[2]
-        elif d == "list" and len(a) in (2, 3):
-            if "." in a[1] or a[1] in m["keys"] or a[1] in m["lists"]:
-                raise GenError("duplicate-key: %s" % a[1])
-            m["lists"][a[1]] = True
-        elif d == "derive" and len(a) >= 4:
-            m["derives"].append((a[1], a[2], a[3:]))
-        else:
-            raise GenError("bad-directive: module line %r" % line)
-    if not m["distribution"]:
-        raise GenError("missing-distribution: module %s" % m["name"])
-    if not m["sources"]:
-        raise GenError("missing-source: module %s" % m["name"])
-    return m
+def track_vector(plan, derives, source):
+    """The vector of packs/canonical-track-v2 that converts one track to this pack, or None when
+    a field is too narrow for the track's value."""
+    cat = plan.cat
+    ent = apply_derives(track_json_decode(TRACK_INPUT), derives)
+    top = [n for e in plan.mapped() for n, lst in walk_fields(e["nodes"]) if lst is None]
+    try:
+        for n in top:
+            if n["key"] in ent and n["frac"] is not None:
+                model_to_raw(n, ent[n["key"]])
+    except GenError:
+        return None
+    rec = {}
+    for n in top:
+        for k in [n["key"]] + n["also"]:
+            if k in ent and n["key"] not in rec:
+                rec[n["key"]] = model_to_raw(n, ent[k])
+    written = [e for e in plan.mapped() if raw_has(e["nodes"], rec)]
+    complete = OrderedDict([("@complete", True)])
+    for target, function, _ in plan.derives:
+        if function == "day_seconds":
+            complete[target] = plain(ent[target])
+    vec = OrderedDict([("name", "gen-to-" + cat.format), ("from", "canonical-track-v2"), ("to", cat.format),
+                       ("input", TRACK_INPUT), ("expect", raw_block(plan, rec))])
+    if len(complete) > 1:
+        vec["model"] = complete
+    vec["source"] = source
+    vec["reference"] = ("a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at "
+                        "12:00:00.125 UTC: the record holds %s; the fields of those items that no key "
+                        "fills are zero" % ", ".join("I%s/%s" % (cat.nnn, e["name"]) for e in written))
+    return vec
 
 
-def key_type(modules, key):
-    mod, name = key.split(".", 1) if "." in key else ("core", key)
-    if mod not in modules:
-        raise GenError("unknown-module: %s" % mod)
-    if name in modules[mod]["lists"]:
-        return "list"
-    if name not in modules[mod]["keys"]:
-        raise GenError("undeclared-key: %s" % key)
-    return modules[mod]["keys"][name]
+def make_vectors(plan, pack, model):
+    """-> ([(file name, text, what it shows)], the vector for packs/canonical-track-v2 or None).
+    `pack` and `model` are the generated pack and modules as gtcheck loaded them."""
+    vs = VectorSet(plan)
+    derives = all_derives(model)
+    first = vs.roundtrips()
+    vs.explicit_items(first)
+    vs.refusals(first)
+    track_vec = None
+    bound = [b["key"] for b in plan.bindings if b["how"] not in ("derive", "day_seconds")]
+    if "lat" in bound and "lon" in bound:
+        vs.to_geojson(bound, derives)
+        track_vec = track_vector(plan, derives, vs.source)
+    vs.samples(pack)
+    return vs.made, track_vec
 
 
-def check_module(m, modules):
-    """`derive` lines: declared keys, types that fit (engine-spec 0.6 and 0.8)."""
-    for target, fn, args in m["derives"]:
-        tt = key_type(modules, target)
-        at = [key_type(modules, a) for a in args]
-        mod_t = target.split(".", 1)[0] if "." in target else "core"
-        if mod_t not in ("core", m["name"]):
-            raise GenError("bad-directive: derive target %s of another module" % target)
-        for a in args:
-            ma = a.split(".", 1)[0] if "." in a else "core"
-            if ma not in ["core", m["name"]] + m["uses"]:
-                raise GenError("bad-directive: derive argument %s of a module not used" % a)
-        ok = {"copy": len(at) == 1 and at[0] == tt,
-              "day_seconds": at == ["int"] and tt == "float"}.get(fn)
-        if ok is None:
-            raise GenError("bad-directive: derive function %s is not one the generator writes" % fn)
-        if not ok:
-            raise GenError("bad-directive: derive %s %s: types do not fit" % (target, fn))
+# ---------------------------------------------------------------- loading what was written (gtcheck)
+
+def builtin_module_text(name, keys, lists=(), derives=()):
+    """The text of a model module made from a built-in table."""
+    lines = ["module %s" % name, "version 0", "distribution public", 'source "built into asterix2pack.py"']
+    lines += ["key %s %s -" % (key, key_type) for key, key_type in keys.items()]
+    lines += ["list %s" % name_ for name_ in lists]
+    lines += ["derive %s %s %s" % (target, function, " ".join(arguments)) for target, function, arguments in derives]
+    return "\n".join(lines) + "\n"
 
 
-YIELDS = {"uint": "int", "twos": "int", "uscale": "float", "sscale": "float", "ascii": "string"}
+def shared_model():
+    """A gtcheck model that holds `core` and `track` as the built-in tables state them."""
+    model = gtcheck.Model()
+    model.add(builtin_module_text("core", CORE_KEYS), "core (built in)")
+    model.add(builtin_module_text("track", TRACK_KEYS, TRACK_LISTS, TRACK_DERIVES), "track (built in)")
+    return model
 
 
-def parse_pack(text, modules):
-    """-> dict(format, uses, kinds=[(name, lines)]); lines are nested dicts. Checks the load rules
-    a sequential pack of this shape can break."""
-    p = dict(format=None, distribution=None, sources=[], uses=[], wire=None, layout=None, bit_order="lsb", kind=None)
-    root = []
-    stack = [("root", root, None)]      # (block type, lines, node)
-    last_field = None
-    for ln_no, line in enumerate(text.splitlines(), 1):
-        a = tokenize(line)
-        if not a:
-            continue
-        d = a[0]
-        cur = stack[-1][1]
+def load_module(model, text, label):
+    """Add a generated module to the model; a gtcheck refusal becomes a GenError."""
+    try:
+        return model.add(text, label)
+    except gtcheck.CheckError as e:
+        raise GenError("%s: %s" % (e.kind, e.message), file=e.label, line=e.line)
 
-        def bad(msg):
-            raise GenError("bad-directive: line %d: %s" % (ln_no, msg))
-        if d != "also":
-            keep_last, last_field = last_field, None
-        if d == "format":
-            p["format"] = a[1]
-        elif d == "version":
-            pass
-        elif d == "distribution":
-            p["distribution"] = a[1]
-        elif d == "source":
-            p["sources"].append(a[1])
-        elif d == "uses":
-            p["uses"].append(a[1])
-        elif d == "wire":
-            p["wire"] = a[1]
-        elif d == "layout":
-            p["layout"] = a[1]
-        elif d == "bit_order":
-            p["bit_order"] = a[1]
-        elif d == "kind":
-            if p["kind"] or len(stack) != 1 or root:
-                bad("the generator writes one kind, before every line")
-            p["kind"] = a[1]
-        elif d == "when":
-            if len(stack) != 1 or any(x["t"] != "when" for x in root):
-                bad("`when` after another line of its kind or inside a block")
-            if not 1 <= int(a[1]) <= 64 or int(a[2]) >= 1 << int(a[1]):
-                bad("`when` value does not fit")
-            cur.append(dict(t="when", bits=int(a[1]), value=int(a[2])))
+
+def load_pack(model, text, label):
+    """Load a generated pack through gtcheck; a refusal becomes a GenError."""
+    try:
+        return gtcheck.load_pack(text, model, label)
+    except gtcheck.CheckError as e:
+        raise GenError("%s: %s" % (e.kind, e.message), file=e.label, line=e.line)
+
+
+# The transforms and derive functions the generator writes. The codec below implements these and
+# no others, so `check_shape` refuses a pack or module that holds anything else.
+SHAPE_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "ascii")
+SHAPE_DERIVES = ("copy", "day_seconds")
+_SHAPE_SCALE = re.compile(r"\d+(/\d+)?\Z")
+
+
+def check_shape(pack, module):
+    """The invariants of this generator's output that are narrower than the specification.
+
+    gtcheck has already applied the load rules. A generated pack is, beyond them: the bits wire,
+    `layout sequential`, `bit_order msb`; one kind that holds every line and has no `requires`; no
+    value table; `field` lines with no option, one of five transforms and a scale that is an
+    integer or a fraction with no offset; `also` lines with no table; `presence` in the `fx` form
+    only; groups in the `count` and `fx` forms with no item kinds; each list mapped by one group;
+    no `const`, `default`, `align` or `opt` line. A generated module derives with `copy` and
+    `day_seconds` only. The sequential codec of this file relies on every one of these."""
+
+    def bad(what, line=None):
+        raise GenError("not a pack this generator writes: " + what, file=pack.label, line=line)
+
+    if (pack.wire, pack.layout, pack.bit_order) != ("bits", "sequential", "msb"):
+        bad("wire %s, layout %s, bit_order %s" % (pack.wire, pack.layout, pack.bit_order))
+    if pack.common or len(pack.kinds) != 1:
+        bad("%d lines before the first kind and %d kinds; one kind holds every line"
+            % (len(pack.common), len(pack.kinds)))
+    if pack.kinds[0].requires:
+        bad("the kind has a `requires` line", pack.kinds[0].line)
+    if pack.tables or pack.typemap:
+        bad("a `map` or `typemap` line")
+    lists = set()
+    for node in gtcheck.walk(pack.kinds[0].lines):
+        d = node.d
+        if d in ("const", "default", "align", "opt"):
+            bad("a `%s` line" % d, node.line)
         elif d == "field":
-            if len(a) != 4:
-                bad("field with options")
-            key, bits, tr = a[1], int(a[2]), a[3]
-            name, _, arg = tr.partition(":")
-            if name not in YIELDS:
-                raise GenError("unknown-transform: %s" % tr)
-            kt = key_type(modules, key)
-            if kt == "list":
-                raise GenError("key-type-mismatch: field names the list %s" % key)
-            if kt != YIELDS[name]:
-                raise GenError("key-type-mismatch: %s is %s, %s yields %s" % (key, kt, tr, YIELDS[name]))
-            if name == "ascii":
-                if bits % 8 or not 8 <= bits <= 2040:
-                    bad("ascii of %d bits" % bits)
-            elif not 1 <= bits <= 64:
-                bad("field of %d bits" % bits)
-            fac = None
-            if name in ("uscale", "sscale"):
-                if not re.fullmatch(r"\d+(/\d+)?", arg):
-                    bad("scale %r" % arg)
-                nd = arg.split("/")
-                fac = (float(int(nd[0])), float(int(nd[1])) if len(nd) == 2 else None)
-            elif arg:
-                bad("transform argument %r" % arg)
-            last_field = dict(t="field", keys=[key], bits=bits, tr=name, fac=fac)
-            cur.append(last_field)
-        elif d == "also":
-            if last_field is None or len(a) != 2:
-                bad("`also` not directly after a field")
-            kt = key_type(modules, a[1])
-            if kt != YIELDS[last_field["tr"]]:
-                raise GenError("key-type-mismatch: also %s" % a[1])
-            last_field["keys"].append(a[1])
-        elif d == "pad":
-            cur.append(dict(t="pad", bits=int(a[1])))
-        elif d == "presence":
-            if len(a) != 3 or a[2] != "fx":
-                bad("presence form")
-            if any(x["t"] == "presence" and x["name"] == a[1] for x in cur):
-                bad("presence name declared twice in one block")
-            cur.append(dict(t="presence", name=a[1]))
-        elif d == "if":
-            conds = []
-            for c in a[1:]:
-                m = re.fullmatch(r"(!?)([A-Za-z0-9_]+)\.(\d+)", c)
-                if not m:
-                    bad("if condition %r" % c)
-                if not any(any(x["t"] == "presence" and x["name"] == m.group(2) for x in blk[1]) for blk in stack):
-                    bad("`if` names the presence %s, which is not visible" % m.group(2))
-                conds.append((m.group(1) == "!", m.group(2), int(m.group(3))))
-            if not conds:
-                bad("if with no condition")
-            node = dict(t="if", conds=conds, body=[])
-            cur.append(node)
-            stack.append(("if", node["body"], node))
-        elif d == "chain":
-            node = dict(t="chain", body=[])
-            cur.append(node)
-            stack.append(("chain", node["body"], node))
-        elif d == "fx":
-            if stack[-1][0] != "chain":
-                bad("`fx` outside a chain")
-            cur.append(dict(t="fx"))
+            if node.opts or node.via is not None:
+                bad("a field with an option", node.line)
+            if node.tr not in SHAPE_TRANSFORMS:
+                bad("the transform `%s`" % node.tr, node.line)
+            if node.tr in ("uscale", "sscale") and not (len(node.targs) == 1 and _SHAPE_SCALE.match(node.targs[0])):
+                bad("the scale `%s`" % ":".join(node.targs), node.line)
+            if any(via is not None for _, via in node.also):
+                bad("an `also` line with a table", node.line)
+        elif d == "presence" and node.bits != "fx":
+            bad("a `presence` of a fixed number of bits", node.line)
         elif d == "group":
-            if key_type(modules, a[1]) != "list":
-                raise GenError("key-type-mismatch: group names the scalar key %s" % a[1])
-            if a[2:] == ["fx"]:
-                node = dict(t="group", list=a[1], mode="fx", body=[])
-            elif len(a) == 4 and a[2] == "count" and 1 <= int(a[3]) <= 64:
-                node = dict(t="group", list=a[1], mode="count", cbits=int(a[3]), body=[])
-            else:
-                bad("group form")
-            if any(x["t"] == "group" and x["list"] == a[1] for x in cur):
-                bad("a list mapped by two groups of one scope")
-            cur.append(node)
-            stack.append(("group", node["body"], node))
-        elif d == "length":
-            bits, rest = int(a[1]), a[2:]
-            node = dict(t="length", bits=bits, unit="bytes", plus=0, whole=False, body=[])
-            i = 0
-            while i < len(rest):
-                if rest[i] in ("bytes", "bits"):
-                    node["unit"] = rest[i]
-                elif rest[i] == "plus":
-                    i += 1
-                    node["plus"] = int(rest[i])
-                elif rest[i] == "whole":
-                    node["whole"] = True
-                else:
-                    bad("length argument %r" % rest[i])
-                i += 1
-            if not 1 <= bits <= 64 or (node["whole"] and node["unit"] == "bits"):
-                bad("length form")
-            cur.append(node)
-            if not node["whole"]:
-                stack.append(("length", node["body"], node))
-        elif d == "end":
-            if len(stack) == 1:
-                bad("`end` with no open block")
-            stack.pop()
-        else:
-            bad("directive %r" % d)
-    if len(stack) != 1:
-        raise GenError("bad-directive: a block with no `end`")
-    if not p["distribution"]:
-        raise GenError("missing-distribution")
-    if not p["sources"]:
-        raise GenError("missing-source")
-    if p["wire"] != "bits" or p["layout"] != "sequential" or p["bit_order"] != "msb" or not p["kind"]:
-        raise GenError("bad-directive: not a sequential msb bits pack with one kind")
-    for m in p["uses"]:
-        if m not in modules:
-            raise GenError("unknown-module: %s" % m)
-        if p["distribution"] == "public" and modules[m]["distribution"] != "public":
-            raise GenError("distribution-violation: %s" % m)
-
-    def used(lines):
-        for x in lines:
-            if x["t"] == "field":
-                for k in x["keys"]:
-                    mod = k.split(".", 1)[0] if "." in k else "core"
-                    if mod != "core" and mod not in p["uses"]:
-                        raise GenError("module-not-used: %s" % k)
-            if x["t"] == "group":
-                mod = x["list"].split(".", 1)[0]
-                if mod not in p["uses"]:
-                    raise GenError("module-not-used: %s" % x["list"])
-            if "body" in x:
-                used(x["body"])
-    used(root)
-    p["lines"] = root
-    return p
+            if node.mode not in ("count", "fx") or node.kinds:
+                bad("a group that is not `count` or `fx`, or that has item kinds", node.line)
+            if node.key in lists:
+                bad("the list %s is mapped by two groups" % node.key, node.line)
+            lists.add(node.key)
+    for derive in module.derives:
+        if derive.function not in SHAPE_DERIVES:
+            raise GenError("not a module this generator writes: the derive function `%s`" % derive.function,
+                           file=module.label, line=derive.line)
 
 
 # ---------------------------------------------------------------- sequential codec (spec 0.8)
+#
+# Decode and encode of a pack that passed `check_shape`, written from spec/engine-spec.md. It walks
+# the tree gtcheck returns. An entity is a dict of key -> value and a dict of list -> items, an
+# item being a pair of the same two dicts.
 
 class Reader:
+    """A cursor over the bits of a message, as a text of `0` and `1`, first bit first."""
+
     def __init__(self, bits):
         self.bits, self.pos, self.end = bits, 0, len(bits)
         self.extents = []
@@ -1601,38 +1751,53 @@ class Reader:
         return v
 
 
+def pack_lines(pack):
+    """The lines of the one kind of a generated pack."""
+    return pack.kinds[0].lines
+
+
 def named_bits(lines, name):
     """Bit numbers of presence `name` that an `if` of these lines names without `!`, with the blocks."""
     out = []
     for x in lines:
-        if x["t"] == "if":
-            for neg, nm, bit in x["conds"]:
+        if x.d == "if":
+            for neg, nm, bit in x.conds:
                 if nm == name and not neg:
                     out.append((bit, x))
-        if "body" in x:
-            out += named_bits(x["body"], name)
+        if x.body:
+            out += named_bits(x.body, name)
     return out
 
 
 def all_named(lines, name):
+    """Every bit number of presence `name` that an `if` of these lines names (ruling 17 of 0.8)."""
     out = set()
     for x in lines:
-        if x["t"] == "if":
-            out |= {bit for _, nm, bit in x["conds"] if nm == name}
-        if "body" in x:
-            out |= all_named(x["body"], name)
+        if x.d == "if":
+            out |= {bit for _, nm, bit in x.conds if nm == name}
+        if x.body:
+            out |= all_named(x.body, name)
     return out
 
 
+def scale_of(field):
+    """(numerator, denominator or None) of a scale transform, as doubles (ruling 1 of 0.5)."""
+    factor = gtcheck.parse_factor(field.targs[0])
+    if isinstance(factor, tuple):
+        return float(factor[0]), float(factor[1])
+    return factor, None
+
+
 def t_decode(x, v):
-    tr, bits = x["tr"], x["bits"]
+    """Model value of the unsigned wire value `v` of a field (engine-spec 0.2 and 0.5)."""
+    tr, bits = x.tr, x.bits
     if tr == "uint":
-        return v - (1 << 64) if bits == 64 and v >> 63 else v
+        return v - (1 << 64) if bits == 64 and v >> 63 else v      # ruling 2 of 0.5
     signed = v - (1 << bits) if v >> (bits - 1) else v
     if tr == "twos":
         return signed
     if tr in ("uscale", "sscale"):
-        num_, den = x["fac"]
+        num_, den = scale_of(x)
         r = float(v if tr == "uscale" else signed) * num_
         return r / den if den is not None else r
     if tr == "ascii":
@@ -1640,18 +1805,19 @@ def t_decode(x, v):
         if any(c < 0x20 or c > 0x7E for c in b):
             raise WireError("transform-decode", "ascii byte out of range")
         return b.decode("ascii")
-    raise GenError("transform %s" % tr)
+    raise GenError("the codec has no transform %s" % tr)
 
 
 def t_encode(x, val):
-    tr, bits = x["tr"], x["bits"]
+    """Unsigned wire value of a model value; out of range is `transform-encode`."""
+    tr, bits = x.tr, x.bits
     if tr == "ascii":
         b = val.encode("utf-8")
         if len(b) > bits // 8 or any(c < 0x20 or c > 0x7E for c in b):
             raise WireError("transform-encode", "ascii text")
         return int.from_bytes(b.ljust(bits // 8, b"\0"), "big")
     if tr in ("uscale", "sscale"):
-        num_, den = x["fac"]
+        num_, den = scale_of(x)
         v = round_half_away(val * den / num_ if den is not None else val / num_)
     else:
         v = val
@@ -1666,187 +1832,228 @@ def t_encode(x, val):
     return v & ((1 << bits) - 1)
 
 
+def holds(conds, env):
+    """True when every condition of an `if` line holds for the presence bits read or computed."""
+    return all((bit in env[name]) != negated for negated, name, bit in conds)
+
+
+def dec_presence(x, rd, following):
+    """The set bits of an `fx` presence: octets of 7 bits and an extension bit. A set bit that no
+    `if` of the lines after it names is `malformed-wire` (ruling 1 of 0.8)."""
+    setbits, octet = set(), 0
+    while True:
+        v = rd.take(8)
+        if v is None:
+            break
+        for b in range(7):
+            if v >> (7 - b) & 1:
+                setbits.add(octet * 7 + b + 1)
+        octet += 1
+        if not v & 1:
+            break
+    stray = setbits - all_named(following, x.name)
+    if stray:
+        raise WireError("malformed-wire", "presence bit %s.%d is 1 and no `if` names it" % (x.name, min(stray)))
+    return setbits
+
+
+def dec_chain(x, rd, ent, lists, env):
+    """A chain: at each `fx` line a 0 bit ends it; a 1 bit on a last `fx` line is refused (ruling 3)."""
+    for i, y in enumerate(x.body):
+        if y.d == "fx":
+            if not rd.take(1):
+                break
+            if i == len(x.body) - 1:
+                raise WireError("malformed-wire", "a chain that ends with an fx line whose bit is 1")
+        else:
+            dec_lines([y], rd, ent, lists, env)
+
+
+def dec_group(x, rd, lists, env):
+    """A `count` or `fx` group. Inside a length extent that has ended the list stays absent."""
+    items = []
+    if x.mode == "count":
+        n = rd.take(x.count)
+        if n is None:
+            return
+        if n > rd.end - rd.pos:         # rulings 14 and 25 of 0.8
+            raise WireError("malformed-wire", "count larger than the bits left")
+        for _ in range(n):
+            it = ({}, {})
+            dec_lines(x.body, rd, it[0], it[1], env)
+            items.append(it)
+    else:
+        if rd.extents and rd.pos >= rd.extents[-1]:
+            return
+        while True:
+            it = ({}, {})
+            dec_lines(x.body, rd, it[0], it[1], env)
+            items.append(it)
+            if not rd.take(1):
+                break
+    lists[x.key] = items
+
+
+def dec_length(x, rd, ent, lists, env):
+    """`length ... whole` sets the end of the input; another `length` opens an extent for its block."""
+    v = rd.take(x.bits)
+    if x.whole:
+        total = v - x.plus
+        if total * 8 < rd.pos or total * 8 > rd.end:
+            raise WireError("malformed-wire", "whole length %d, input %d octets" % (total, rd.end // 8))
+        rd.end = total * 8
+    elif v is not None:
+        n = v - x.plus
+        if n < 0:
+            raise WireError("malformed-wire", "stated length below `plus`")
+        ext = rd.pos + n * (8 if x.unit == "bytes" else 1)
+        if ext > rd.end or (rd.extents and ext > rd.extents[-1]):
+            raise WireError("malformed-wire", "length extent beyond the input")
+        rd.extents.append(ext)
+        dec_lines(x.body, rd, ent, lists, env)
+        rd.extents.pop()
+        rd.pos = ext
+
+
 def dec_lines(lines, rd, ent, lists, env):
+    """Read the lines of one block in file order. `env` maps a visible presence name to its set bits."""
     env = dict(env)
     for i, x in enumerate(lines):
-        t = x["t"]
-        if t == "when":
-            v = rd.take(x["bits"])
-            if v != x["value"]:
-                raise WireError("no-kind", "when %d" % x["value"])
-        elif t == "field":
-            v = rd.take(x["bits"])
+        d = x.d
+        if d == "when":
+            if rd.take(x.bits) != int(x.value):
+                raise WireError("no-kind", "when %s" % x.value)
+        elif d == "field":
+            v = rd.take(x.bits)
             if v is not None:
                 val = t_decode(x, v)
-                for k in x["keys"]:
+                for k in gtcheck.keys_of(x):
                     ent.setdefault(k, val)
-        elif t == "pad":
-            rd.take(x["bits"])
-        elif t == "presence":
-            setbits, o = set(), 0
-            while True:
-                v = rd.take(8)
-                if v is None:
-                    break
-                for b in range(7):
-                    if v >> (7 - b) & 1:
-                        setbits.add(o * 7 + b + 1)
-                o += 1
-                if not v & 1:
-                    break
-            stray = setbits - all_named(lines[i + 1:], x["name"])
-            if stray:
-                raise WireError("malformed-wire", "presence bit %s.%d is 1 and no `if` names it" % (x["name"], min(stray)))
-            env[x["name"]] = setbits
-        elif t == "if":
-            if all((bit in env[nm]) != neg for neg, nm, bit in x["conds"]):
-                dec_lines(x["body"], rd, ent, lists, env)
-        elif t == "chain":
-            for y_i, y in enumerate(x["body"]):
-                if y["t"] == "fx":
-                    v = rd.take(1)
-                    if not v:
-                        break
-                    if y_i == len(x["body"]) - 1:
-                        raise WireError("malformed-wire", "a chain that ends with an fx line whose bit is 1")
-                else:
-                    dec_lines([y], rd, ent, lists, env)
-        elif t == "group":
-            items = []
-            if x["mode"] == "count":
-                n = rd.take(x["cbits"])
-                if n is None:
-                    continue
-                if n > rd.end - rd.pos:
-                    raise WireError("malformed-wire", "count larger than the bits left")
-                for _ in range(n):
-                    it = ({}, {})
-                    dec_lines(x["body"], rd, it[0], it[1], env)
-                    items.append(it)
-            else:
-                if rd.extents and rd.pos >= rd.extents[-1]:
-                    continue
-                while True:
-                    it = ({}, {})
-                    dec_lines(x["body"], rd, it[0], it[1], env)
-                    items.append(it)
-                    if not rd.take(1):
-                        break
-            lists[x["list"]] = items
-        elif t == "length":
-            v = rd.take(x["bits"])
-            if x["whole"]:
-                total = v - x["plus"]
-                if total * 8 < rd.pos or total * 8 > rd.end:
-                    raise WireError("malformed-wire", "whole length %d, input %d octets" % (total, rd.end // 8))
-                rd.end = total * 8
-            elif v is not None:
-                n = v - x["plus"]
-                if n < 0:
-                    raise WireError("malformed-wire", "stated length below `plus`")
-                ext = rd.pos + n * (8 if x["unit"] == "bytes" else 1)
-                if ext > rd.end or (rd.extents and ext > rd.extents[-1]):
-                    raise WireError("malformed-wire", "length extent beyond the input")
-                rd.extents.append(ext)
-                dec_lines(x["body"], rd, ent, lists, env)
-                rd.extents.pop()
-                rd.pos = ext
+        elif d == "also":
+            pass                        # its key is on the field node
+        elif d == "pad":
+            rd.take(x.bits)
+        elif d == "presence":
+            env[x.name] = dec_presence(x, rd, lines[i + 1:])
+        elif d == "if":
+            if holds(x.conds, env):
+                dec_lines(x.body, rd, ent, lists, env)
+        elif d == "chain":
+            dec_chain(x, rd, ent, lists, env)
+        elif d == "group":
+            dec_group(x, rd, lists, env)
+        elif d == "length":
+            dec_length(x, rd, ent, lists, env)
         else:
-            raise GenError("line %s" % t)
+            raise GenError("the codec has no line `%s`" % d)
 
 
 def seq_decode(pack, hx):
+    """Decode hex text through a generated pack -> (keys, lists)."""
     hx = "".join(hx.split())
     if len(hx) % 2 or not re.fullmatch(r"[0-9a-fA-F]*", hx):
         raise WireError("malformed-wire", "hex")
     rd = Reader("".join(format(int(c, 16), "04b") for c in hx))
     ent, lists = {}, {}
-    dec_lines(pack["lines"], rd, ent, lists, {})
+    dec_lines(pack_lines(pack), rd, ent, lists, {})
     return ent, lists
 
 
 def has_content(lines, ent, lists):
-    """Would these lines write a present key, a non-empty list, or a nested presence that is not all zero?"""
+    """Would these lines write a present key, a non-empty list, or a nested presence that is not
+    all zero? Nested conditions are not evaluated (ruling 22 of 0.8)."""
     for i, x in enumerate(lines):
-        t = x["t"]
-        if t == "field" and any(k in ent for k in x["keys"]):
+        d = x.d
+        if d == "field" and any(k in ent for k in gtcheck.keys_of(x)):
             return True
-        if t == "group" and lists.get(x["list"]):
+        if d == "group" and lists.get(x.key):
             return True
-        if t in ("chain", "length") and has_content(x["body"], ent, lists):
+        if d in ("chain", "length") and x.body and has_content(x.body, ent, lists):
             return True
-        if t == "presence" and any(has_content(blk["body"], ent, lists) for _, blk in named_bits(lines[i + 1:], x["name"])):
+        if d == "presence" and any(has_content(blk.body, ent, lists) for _, blk in named_bits(lines[i + 1:], x.name)):
             return True
     return False
 
 
+def enc_chain(x, ent, lists, env, st):
+    """A chain: an `fx` bit is 1 when a line after it would write a present key; the chain stops at
+    the first 0."""
+    out = ""
+    for i, y in enumerate(x.body):
+        if y.d == "fx":
+            more = has_content([z for z in x.body[i + 1:] if z.d != "fx"], ent, lists)
+            out += "1" if more else "0"
+            if not more:
+                break
+        else:
+            out += enc_lines([y], ent, lists, env, st)
+    return out
+
+
+def enc_group(x, lists, env, st):
+    """A `count` group writes its count and items; an `fx` group needs one item (ruling 6 of 0.8)."""
+    items = lists.get(x.key, [])
+    if x.mode == "count":
+        if len(items) >= 1 << x.count:
+            raise WireError("transform-encode", "count does not fit")
+        return to_bits(len(items), x.count) + "".join(enc_lines(x.body, it[0], it[1], env, st) for it in items)
+    if not items:
+        raise WireError("transform-encode", "an fx group with no item")
+    return "".join(enc_lines(x.body, it[0], it[1], env, st) + ("1" if j < len(items) - 1 else "0")
+                   for j, it in enumerate(items))
+
+
 def enc_lines(lines, ent, lists, env, st):
+    """Write the lines of one block. Presence bits are computed from the blocks that follow before
+    they are written. `st` records where a `length ... whole` field stands, for `seq_encode`."""
     env = dict(env)
     out = ""
     for i, x in enumerate(lines):
-        t = x["t"]
-        if t == "when":
-            out += to_bits(x["value"], x["bits"])
-        elif t == "field":
-            val = next((ent[k] for k in x["keys"] if k in ent), None)
-            out += to_bits(t_encode(x, val) if val is not None else 0, x["bits"])
-        elif t == "pad":
-            out += "0" * x["bits"]
-        elif t == "presence":
-            setbits = {bit for bit, blk in named_bits(lines[i + 1:], x["name"]) if has_content(blk["body"], ent, lists)}
-            env[x["name"]] = setbits
+        d = x.d
+        if d == "when":
+            out += to_bits(int(x.value), x.bits)
+        elif d == "field":
+            val = next((ent[k] for k in gtcheck.keys_of(x) if k in ent), None)     # ruling 13 of 0.8
+            out += to_bits(t_encode(x, val) if val is not None else 0, x.bits)
+        elif d == "pad":
+            out += "0" * x.bits
+        elif d == "presence":
+            setbits = {bit for bit, blk in named_bits(lines[i + 1:], x.name) if has_content(blk.body, ent, lists)}
+            env[x.name] = setbits
             out += fx_octets(setbits)
-        elif t == "if":
-            if all((bit in env[nm]) != neg for neg, nm, bit in x["conds"]):
-                out += enc_lines(x["body"], ent, lists, env, st)
-        elif t == "chain":
-            body = x["body"]
-            for y_i, y in enumerate(body):
-                if y["t"] == "fx":
-                    more = has_content([z for z in body[y_i + 1:] if z["t"] != "fx"], ent, lists)
-                    out += "1" if more else "0"
-                    if not more:
-                        break
-                else:
-                    out += enc_lines([y], ent, lists, env, st)
-        elif t == "group":
-            items = lists.get(x["list"], [])
-            if x["mode"] == "count":
-                if len(items) >= 1 << x["cbits"]:
-                    raise WireError("transform-encode", "count does not fit")
-                out += to_bits(len(items), x["cbits"])
-                for it in items:
-                    out += enc_lines(x["body"], it[0], it[1], env, st)
-            else:
-                if not items:
-                    raise WireError("transform-encode", "an fx group with no item")
-                for j, it in enumerate(items):
-                    out += enc_lines(x["body"], it[0], it[1], env, st) + ("1" if j < len(items) - 1 else "0")
-        elif t == "length":
-            if x["whole"]:
+        elif d == "if":
+            if holds(x.conds, env):
+                out += enc_lines(x.body, ent, lists, env, st)
+        elif d == "chain":
+            out += enc_chain(x, ent, lists, env, st)
+        elif d == "group":
+            out += enc_group(x, lists, env, st)
+        elif d == "length":
+            if x.whole:
                 st["whole"] = (len(st["prefix"]) + len(out), x)
-                out += "0" * x["bits"]
+                out += "0" * x.bits
             else:
-                body = enc_lines(x["body"], ent, lists, env, st)
-                if x["unit"] == "bytes":
+                body = enc_lines(x.body, ent, lists, env, st)
+                if x.unit == "bytes":
                     body += "0" * (-len(body) % 8)
                     n = len(body) // 8
                 else:
                     n = len(body)
-                out += to_bits(n + x["plus"], x["bits"]) + body
+                out += to_bits(n + x.plus, x.bits) + body
     return out
 
 
 def seq_encode(pack, ent, lists):
+    """Encode an entity through a generated pack -> hex text. The whole length is filled in last."""
     st = dict(prefix="", whole=None)
-    bits = enc_lines(pack["lines"], ent, lists, {}, st)
+    bits = enc_lines(pack_lines(pack), ent, lists, {}, st)
     bits += "0" * (-len(bits) % 8)
     if st["whole"]:
         pos, x = st["whole"]
-        v = len(bits) // 8 + x["plus"]
-        if not 0 <= v < 1 << x["bits"]:
+        v = len(bits) // 8 + x.plus
+        if not 0 <= v < 1 << x.bits:
             raise WireError("transform-encode", "whole length does not fit")
-        bits = bits[:pos] + to_bits(v, x["bits"]) + bits[pos + x["bits"]:]
+        bits = bits[:pos] + to_bits(v, x.bits) + bits[pos + x.bits:]
     return "%0*x" % (len(bits) // 4, int(bits, 2)) if bits else ""
 
 
@@ -1867,8 +2074,9 @@ def lookup(ent, lists, key):
     return ent[key]
 
 
-def replay(v, packs, modules):
-    """One vector through the codec. Raises GenError when it does not hold."""
+def replay(v, packs, derives):
+    """One vector through the codec. `packs` maps a format to its loaded pack and `derives` holds
+    the derive lines of every loaded module. Raises GenError when the vector does not hold."""
     frm, to = v["from"], v["to"]
     name = "%s/%s" % (frm, v["name"])
     try:
@@ -1880,7 +2088,7 @@ def replay(v, packs, modules):
             raise GenError("%s: the self-check does not read %s" % (name, frm))
         decoded = (dict(ent), lists)
         if frm != to:
-            ent = apply_derives(ent, all_derives(modules))
+            ent = apply_derives(ent, derives)
         if to in packs:
             got = seq_encode(packs[to], ent, lists)
         elif to == "geojson":
@@ -1901,7 +2109,7 @@ def replay(v, packs, modules):
         if k == "@complete":
             continue
         if k == "@kind":
-            if want != packs[frm]["kind"]:
+            if want != packs[frm].kinds[0].name:
                 raise GenError("%s: kind %s" % (name, want))
             continue
         got_v = lookup(base[0], base[1], k)
@@ -1913,7 +2121,7 @@ def replay(v, packs, modules):
             raise GenError("%s: model key %s is %r, the vector expects %s" % (name, k, got_v, want))
 
 
-# ---------------------------------------------------------------- pack.md
+# ---------------------------------------------------------------- emit: pack.md and PROVENANCE.md
 
 def count_nodes(nodes):
     """(fields, pad bits, lists) of an item."""
@@ -1939,6 +2147,7 @@ def count_nodes(nodes):
 
 
 def mapped_as(e):
+    """The "Written as" cell of pack.md for one mapped FRN."""
     n0 = e["nodes"][0]
     f, p, g = count_nodes(e["nodes"])
     if e["kind"] == "fixed":
@@ -1959,9 +2168,9 @@ def mapped_as(e):
     return s
 
 
-def emit_pack_md(cat, sha, master, made, track_vec, stats):
-    A = []
-    a = A.append
+def md_intro(a, plan, sha):
+    """pack.md: what the pack is, where its definition comes from and which modules it uses."""
+    cat = plan.cat
     a("# Pack: %s" % cat.format)
     a("")
     a("ASTERIX Category %s, %s, edition %s (%s): one data block holding one record." % (cat.nnn, cat.title, cat.edition, cat.date))
@@ -1971,11 +2180,16 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
     a("Needs engine version 0.8 (`layout sequential`).")
     a("")
     a("Uses the modules `core`%s and `%s` (`model/%s.def`, generated with the pack)." % (
-        "".join(", `%s`" % m for m in cat.uses), cat.module, cat.module))
+        "".join(", `%s`" % m for m in plan.uses), cat.module, cat.module))
     if cat.num in RENAME:
         a("")
         a("The pack and its module carry these names because the library also holds the hand-written pack")
         a("`asterix-cat%s` with the module `cat%s`. Section \"Beside the hand-written pack\" compares the two." % (cat.nnn, cat.nnn))
+
+
+def md_layout(a, plan):
+    """pack.md: the block layout and how each item type and content type is written."""
+    cat = plan.cat
     a("")
     a("## Layout")
     a("")
@@ -2014,34 +2228,44 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
     a("| ASCII string | `ascii` | string |")
     a("| string of 6-bit ICAO characters, octal digits | `uint` | int: the raw bits |")
     a("| content that depends on another subitem | `uint` | int: the raw bits |")
+
+
+def md_items(a, plan):
+    """pack.md: the counts, and one row per mapped FRN."""
+    cat = plan.cat
     a("")
     a("## Items")
     a("")
     a("| | Count |")
     a("|---|---|")
-    a("| FRNs in the UAP | %d |" % len(cat.entries))
+    a("| FRNs in the UAP | %d |" % len(plan.entries))
     for kind in ("fixed", "extended", "repetitive", "compound", "explicit"):
-        n = sum(1 for e in cat.entries if e["nodes"] and e["kind"] == kind)
+        n = sum(1 for e in plan.entries if e["nodes"] and e["kind"] == kind)
         if n:
             a("| mapped, %s | %d |" % (kind, n))
-    a("| not mapped | %d |" % sum(1 for e in cat.entries if e["nodes"] is None))
-    a("| keys of `%s` | %d |" % (cat.module, len(cat.keys)))
-    a("| lists of `%s` | %d |" % (cat.module, len(cat.lists)))
-    a("| `field` lines | %d |" % stats["fields"])
+    a("| not mapped | %d |" % sum(1 for e in plan.entries if e["nodes"] is None))
+    a("| keys of `%s` | %d |" % (cat.module, len(plan.keys)))
+    a("| lists of `%s` | %d |" % (cat.module, len(plan.lists)))
+    a("| `field` lines | %d |" % plan.field_count())
     a("")
     a("| FRN | Item | Title | Type | Written as |")
     a("|---|---|---|---|---|")
-    for e in cat.entries:
+    for e in plan.entries:
         if e["nodes"]:
             a("| %d | I%s/%s | %s | %s | %s |" % (e["frn"], cat.nnn, e["name"], e["title"], e["kind"], mapped_as(e)))
     a("")
-    ex = next((i, k) for i, k in sorted(cat.names.items()) if "/" in i and not i.endswith(("[]", "#")))
+    ex = next((i, k) for i, k in sorted(plan.names.items()) if "/" in i and not i.endswith(("[]", "#")))
     a("A key is named after its item and subitems: `%s.%s` is I%s/%s. The meaning of" % (cat.module, ex[1], cat.nnn, ex[0]))
     a("every key, with its table of values or its LSB and unit, is in `model/%s.def`." % cat.module)
+
+
+def md_not_mapped(a, plan):
+    """pack.md: the FRNs with no `if` block and why, explicit items, items no FRN names."""
+    cat = plan.cat
     a("")
     a("## Items not mapped")
     a("")
-    unm = [e for e in cat.entries if e["nodes"] is None]
+    unm = [e for e in plan.entries if e["nodes"] is None]
     if unm:
         a("No `if` block names these FSPEC bits. A record with one of them set fails to decode with")
         a("`malformed-wire`, and encode never sets them.")
@@ -2052,22 +2276,27 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
             a("| %d | %s | %s |" % (e["frn"], "I%s/%s %s" % (cat.nnn, e["name"], e["title"]) if e["name"] else "-", e["reason"]))
     else:
         a("Every FRN of the UAP has an `if` block.")
-    expl = [e for e in cat.entries if e["nodes"] and e["kind"] == "explicit"]
+    expl = [e for e in plan.entries if e["nodes"] and e["kind"] == "explicit"]
     if expl:
         a("")
         a("Mapped without content: %s. Decode reads the length octet and passes over the content; no key holds it," %
           ", ".join("FRN %d (%s, %s)" % (e["frn"], e["name"], e["title"]) for e in expl))
         a("so encode never writes the item, and a same-format round trip of a record that holds one returns the")
         a("record without it.")
-    notin = [n for n in cat.catalogue if n not in [e["name"] for e in cat.entries]]
+    notin = [n for n in cat.catalogue if n not in [e["name"] for e in plan.entries]]
     if notin:
         a("")
         a("Items of the catalogue that the UAP read here does not name, and that the pack therefore does not hold: %s." %
           ", ".join("I%s/%s" % (cat.nnn, n) for n in notin))
+
+
+def md_shared_keys(a, plan):
+    """pack.md: each shared key bound, how, and the text of the definition that supports it."""
+    cat = plan.cat
     a("")
     a("## Shared-model keys")
     a("")
-    binds = [b for b in cat.bindings]
+    binds = [b for b in plan.bindings]
     if binds:
         a("A shared key is bound only where the text of the definition and the unit leave no doubt, and only on an")
         a("item that stands directly in the UAP. The text quoted is the definition's.")
@@ -2107,12 +2336,22 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
     a("altitude (`hae` is geometric); a heading, or a track angle whose reference the definition does not state")
     a("(`course` is degrees true); a Cartesian velocity or position in a local system whose axes the definition")
     a("does not state; a polar position relative to a sensor; a time item where the category has several.")
+
+
+def md_converting(a, plan):
+    """pack.md: what encode writes."""
+    cat = plan.cat
     a("")
     a("## Converting to this pack")
     a("")
     a("The kind has no `requires` line: the definition does not mark items as mandatory, so encode writes the")
     a("items whose keys the entity holds. A field of a written item whose key is absent is written as zero.")
     a("Keys of `%s` that another format does not carry (SAC and SIC, for example) are given as context." % cat.module)
+
+
+def md_beside_hand_written(a, plan):
+    """pack.md of a renamed category: the generated pack beside the hand-written one."""
+    cat = plan.cat
     if cat.num in RENAME:
         a("")
         a("## Beside the hand-written pack")
@@ -2121,8 +2360,8 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
         a("|---|---|---|")
         a("| written from | the EUROCONTROL document, edition 1.21 | the transcription of edition %s in `%s` |" % (cat.edition, REPO))
         a("| FRNs mapped | 7: I062/010, 070, 105, 185, 040, 080, 130 | %d of %d; a record with any item of the UAP decodes |" % (
-            sum(1 for e in cat.entries if e["nodes"]), sum(1 for e in cat.entries if e["name"])))
-        a("| module | `cat062`: 9 keys named by meaning (`sac`, `time_of_day_s`, `track_number`, `mon`, `cnf`, `sim`, `tse`, `cst`) | `%s`: %d keys and %d lists named by item (`i010_sac`, `i070`, `i040`, `i080_mon`) |" % (cat.module, len(cat.keys), len(cat.lists)))
+            sum(1 for e in plan.entries if e["nodes"]), sum(1 for e in plan.entries if e["name"])))
+        a("| module | `cat062`: 9 keys named by meaning (`sac`, `time_of_day_s`, `track_number`, `mon`, `cnf`, `sim`, `tse`, `cst`) | `%s`: %d keys and %d lists named by item (`i010_sac`, `i070`, `i040`, `i080_mon`) |" % (cat.module, len(plan.keys), len(plan.lists)))
         a("| I062/105, 185, 130 | `lat`, `lon`, `track.vel_east_ms`, `track.vel_north_ms`, `hae` | the same shared keys with the same scales; `lat`, `lon` and the velocities also have raw keys |")
         a("| I062/080 Track Status | MON, CNF, SIM, TSE, CST mapped; CNF, SIM, TSE, CST also bound to the `track` flags (`confirmed` through a table that turns CNF over); the other bits are `pad` | every bit has a raw key; no `track` flag is bound, because a generator rule cannot tell from the table text which bit means what a flag means |")
         a("| defaults | MON 1, SIM, TSE, CST 0: the status item always has its first part and three extents | none: a key that is absent is not written, and an extent is written only when a key of it or of a later one is present |")
@@ -2134,6 +2373,10 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
         a("both to the same `lat`, `lon`, `hae` and velocity. The hand-written pack is the one to convert a track")
         a("into: it writes the mandatory items and the status flags. The generated pack is the one to read a")
         a("record of an operational system with: it holds every item.")
+
+
+def md_vectors(a, made, track_vec):
+    """pack.md: one row per vector."""
     a("")
     a("## Vectors")
     a("")
@@ -2143,15 +2386,31 @@ def emit_pack_md(cat, sha, master, made, track_vec, stats):
     a("")
     a("| File | Shows |")
     a("|---|---|")
-    for fn, what in made:
+    for fn, _, what in made:
         a("| `%s` | %s |" % (fn, what))
     if track_vec:
         a("| `packs/canonical-track-v2/vectors/%s.json` | from `canonical-track-v2` to this pack: %s |" % (track_vec["name"], track_vec["reference"]))
     a("")
-    return "\n".join(A)
 
 
-def emit_pack_provenance(cat, sha, master, src_path):
+def emit_pack_md(plan, sha, made, track_vec):
+    """The text of pack.md. `made` is the vectors of the pack as `make_vectors` returns them."""
+    lines = []
+    a = lines.append
+    md_intro(a, plan, sha)
+    md_layout(a, plan)
+    md_items(a, plan)
+    md_not_mapped(a, plan)
+    md_shared_keys(a, plan)
+    md_converting(a, plan)
+    md_beside_hand_written(a, plan)
+    md_vectors(a, made, track_vec)
+    return "\n".join(lines)
+
+
+def emit_pack_provenance(cat, sha, master, definition_sha256):
+    """The text of the pack's PROVENANCE.md: edition, where the definition is, both commits and
+    the SHA-256 of the definition file."""
     return "\n".join([
         "# Provenance: %s" % cat.format, "",
         "| Fact | Value |", "|---|---|",
@@ -2161,187 +2420,299 @@ def emit_pack_provenance(cat, sha, master, src_path):
         "| definition read | `%s` of https://github.com/%s |" % (cat.rel, REPO),
         "| commit (branch `gh-pages`, the published JSON) | `%s` |" % sha,
         "| built from commit (branch `master`) | `%s` |" % master,
-        "| SHA-256 of the definition | `%s` |" % sha256_file(src_path),
+        "| SHA-256 of the definition | `%s` |" % definition_sha256,
         "| licence of the repository | BSD 3-Clause, copyright (c) 2019 KZPS (`LICENSE` at the `master` commit; verbatim in `sources/PROVENANCE.md`) |",
         "| generator | `tools/gen/asterix2pack.py`; key names pinned in `tools/gen/names/%s.json` |" % cat.format,
         ""])
 
 
+def emit_names(names):
+    """The text of a names file: item path -> key name, sorted by item path."""
+    return json.dumps(OrderedDict(sorted(names.items())), indent=1)
+
+
 # ---------------------------------------------------------------- one category
 
-def generate(cat, out, sha, master, core_track):
-    names_path = os.path.join(out, "tools", "gen", "names", cat.format + ".json")
-    if os.path.exists(names_path):
-        cat.pinned = json.load(open(names_path, encoding="utf-8"))
-    build(cat)
-    if not any(e["nodes"] and e["kind"] != "explicit" for e in cat.entries):
-        die("no item of the UAP can be mapped")
-    mod_text = emit_module(cat, sha)
-    pack_text = emit_pack(cat, sha)
-    # independent reload
-    modules = dict(core_track)
-    m = parse_module(mod_text)
-    if m["name"] != cat.module:
-        die("module name")
-    modules[cat.module] = m
-    check_module(m, modules)
-    pack = parse_pack(pack_text, modules)
-    fields = sum(1 for e in cat.entries if e["nodes"] for _ in walk_fields(e["nodes"]))
-    declared = set(m["keys"])
-    mapped_keys = {n["raw"].split(".", 1)[1] for e in cat.entries if e["nodes"] for n, _ in walk_fields(e["nodes"]) if n["declare"]}
-    if declared != mapped_keys:
-        die("module keys and mapped keys differ: %s" % sorted(declared ^ mapped_keys)[:5])
-    made, track_vec = write_vectors(cat, out, pack, modules)
-    pdir = os.path.join(out, "packs", cat.format)
-    write(os.path.join(out, "model", cat.module + ".def"), mod_text)
-    write(os.path.join(pdir, "pack.def"), pack_text)
-    write(os.path.join(pdir, "pack.md"), emit_pack_md(cat, sha, master, made, track_vec, dict(fields=fields)))
-    write(os.path.join(pdir, "PROVENANCE.md"), emit_pack_provenance(cat, sha, master, os.path.join(src_dir_of(out), cat.src_name)))
-    names = dict(cat.pinned)
-    names.update(cat.names)
-    write(names_path, json.dumps(OrderedDict(sorted(names.items())), indent=1))
-    tdir = os.path.join(out, "packs", "canonical-track-v2", "vectors")
-    tpath = os.path.join(tdir, "gen-to-%s.json" % cat.format)
+def module_path(cat):
+    return "model/%s.def" % cat.module
+
+
+def pack_dir(cat):
+    return "packs/" + cat.format
+
+
+def names_path(cat):
+    return "tools/gen/names/%s.json" % cat.format
+
+
+def track_vector_path(cat):
+    """The vector that converts a track to this pack belongs to the pack that owns its input."""
+    return "packs/canonical-track-v2/vectors/gen-to-%s.json" % cat.format
+
+
+class Generated:
+    """Everything one category gives: the plan, and the text of every file, by output path.
+    `vectors` holds the files of the pack's vectors directory apart, because the directory is
+    emptied of other `*.json` files when it is written. `track_vector` is a text or None."""
+
+    def __init__(self, plan):
+        self.plan, self.cat = plan, plan.cat
+        self.files = OrderedDict()
+        self.vectors = OrderedDict()
+        self.track_vector = None
+
+
+def generate(cat, pinned, sha, master, definition_sha256):
+    """Plan one category, emit its module and pack, load both back through gtcheck, check that
+    they have the shape the codec reads, and make the vectors. Nothing is written here."""
+    plan = plan_category(cat, pinned)
+    module_text = emit_module(plan, sha)
+    pack_text = emit_pack(plan, sha)
+    model = shared_model()
+    module = load_module(model, module_text, module_path(cat))
+    if module.name != cat.module:
+        raise GenError("the module is named %s" % module.name, file=module_path(cat))
+    pack = load_pack(model, pack_text, pack_dir(cat) + "/pack.def")
+    check_shape(pack, module)
+    mapped_keys = {n["raw"].split(".", 1)[1] for e in plan.mapped() for n, _ in walk_fields(e["nodes"]) if n["declare"]}
+    if set(module.keys) != mapped_keys:
+        raise GenError("module keys and mapped keys differ: %s" % sorted(set(module.keys) ^ mapped_keys)[:5],
+                       file=module_path(cat))
+    made, track_vec = make_vectors(plan, pack, model)
+    g = Generated(plan)
+    g.files[module_path(cat)] = module_text
+    g.files[pack_dir(cat) + "/pack.def"] = pack_text
+    g.files[pack_dir(cat) + "/pack.md"] = emit_pack_md(plan, sha, made, track_vec)
+    g.files[pack_dir(cat) + "/PROVENANCE.md"] = emit_pack_provenance(cat, sha, master, definition_sha256)
+    g.files[names_path(cat)] = emit_names(plan.names_file())
+    for file_name, text, _ in made:
+        g.vectors[pack_dir(cat) + "/vectors/" + file_name] = text
     if track_vec:
-        write(tpath, json.dumps(track_vec, indent=2, ensure_ascii=False))
-    elif os.path.exists(tpath):
-        os.remove(tpath)
-    return dict(made=made, track=bool(track_vec), fields=fields)
+        g.track_vector = json_text(track_vec)
+    return g
 
 
-def remove_outputs(cat, out):
-    pdir = os.path.join(out, "packs", cat.format)
-    for p in glob.glob(os.path.join(pdir, "vectors", "*.json")) + [os.path.join(pdir, f) for f in ("pack.def", "pack.md", "PROVENANCE.md")] + \
-            [os.path.join(out, "model", cat.module + ".def"),
-             os.path.join(out, "packs", "canonical-track-v2", "vectors", "gen-to-%s.json" % cat.format)]:
-        if os.path.exists(p):
-            os.remove(p)
-    for d in (os.path.join(pdir, "vectors"), pdir):
-        if os.path.isdir(d) and not os.listdir(d):
-            os.rmdir(d)
+def vector_files(out, cat):
+    """The `*.json` files of the pack's vectors directory as the run sees them, sorted."""
+    vdir = pack_dir(cat) + "/vectors"
+    return [vdir + "/" + name for name in out.listdir(vdir) if name.endswith(".json")]
 
 
-def self_check(out, cats, core_track):
-    """Re-read every output from disk and replay every vector."""
-    modules = dict(core_track)
+def write_category(out, g):
+    """Write the files of one category through genio. Vectors of an earlier run that this run
+    does not write are removed, and so is a track vector the category no longer gives."""
+    for rel in vector_files(out, g.cat):
+        if rel not in g.vectors:
+            out.remove(rel)
+    for rel, text in list(g.vectors.items()) + list(g.files.items()):
+        out.write(rel, ending_in_newline(text))
+    if g.track_vector:
+        out.write(track_vector_path(g.cat), ending_in_newline(g.track_vector))
+    else:
+        out.remove(track_vector_path(g.cat))
+
+
+def remove_outputs(out, cat):
+    """A category that failed leaves no files: remove what an earlier run wrote for it. The names
+    file stays; it pins names across runs."""
+    pdir = pack_dir(cat)
+    for rel in vector_files(out, cat) + [pdir + "/" + f for f in ("pack.def", "pack.md", "PROVENANCE.md")] + \
+            [module_path(cat), track_vector_path(cat)]:
+        out.remove(rel)
+    if not out.check:
+        for d in (out.path(pdir + "/vectors"), out.path(pdir)):
+            if os.path.isdir(d) and not os.listdir(d):
+                os.rmdir(d)
+
+
+def read_names(out, cat):
+    """The names file of an earlier run: item path -> key name. {} when there is none."""
+    rel = names_path(cat)
+    if not out.exists(rel):
+        return {}
+    try:
+        names = json.loads(out.read(rel))
+    except json.JSONDecodeError as x:
+        raise GenError("not JSON: %s" % x.msg, file=rel, line=x.lineno)
+    if not isinstance(names, dict) or not all(isinstance(v, str) for v in names.values()):
+        raise GenError("not an object of item path -> key name", file=rel)
+    return names
+
+
+# ---------------------------------------------------------------- self-check: what was written, read back
+
+def self_check(out, generated):
+    """Read every module, pack and vector back as the run left them, load them through gtcheck
+    into one model, and replay every vector through the codec -> the number replayed. A file that
+    holds the output directory or the home directory as text is refused."""
+    model = shared_model()
     packs = {}
-    for cat in cats:
-        m = parse_module(open(os.path.join(out, "model", cat.module + ".def"), encoding="utf-8").read())
-        if m["name"] in modules:
-            die("duplicate-module: %s" % m["name"])
-        modules[m["name"]] = m
-        check_module(m, modules)
-    for cat in cats:
-        text = open(os.path.join(out, "packs", cat.format, "pack.def"), encoding="utf-8").read()
-        for needle in (os.path.abspath(out), os.path.expanduser("~")):
-            for path in glob.glob(os.path.join(out, "packs", cat.format, "**", "*"), recursive=True) + \
-                    [os.path.join(out, "model", cat.module + ".def")]:
-                if os.path.isfile(path) and needle in open(path, encoding="utf-8").read():
-                    die("%s holds a local path" % path)
-        p = parse_pack(text, modules)
-        if p["format"] != cat.format:
-            die("format name of %s" % cat.format)
-        packs[cat.format] = p
+    for g in generated:
+        load_module(model, out.read(module_path(g.cat)), module_path(g.cat))
+    needles = (out.root, os.path.expanduser("~"))
+    for g in generated:
+        cat, pdir = g.cat, pack_dir(g.cat)
+        for rel in [pdir + "/" + name for name in out.listdir(pdir)] + vector_files(out, cat) + [module_path(cat)]:
+            if any(needle in out.read(rel) for needle in needles):
+                raise GenError("holds a local path", file=rel)
+        pack = load_pack(model, out.read(pdir + "/pack.def"), pdir + "/pack.def")
+        check_shape(pack, model.modules[cat.module])
+        if pack.format != cat.format:
+            raise GenError("the format is named %s" % pack.format, file=pdir + "/pack.def")
+        packs[cat.format] = pack
+    derives = all_derives(model)
     n = 0
-    for cat in cats:
-        seen = set()
-        files = sorted(glob.glob(os.path.join(out, "packs", cat.format, "vectors", "*.json")))
-        tv = os.path.join(out, "packs", "canonical-track-v2", "vectors", "gen-to-%s.json" % cat.format)
-        for path in files + ([tv] if os.path.exists(tv) else []):
-            v = json.load(open(path, encoding="utf-8"))
-            if path != tv:
+    for g in generated:
+        cat, seen = g.cat, set()
+        track = track_vector_path(cat)
+        for rel in vector_files(out, cat) + ([track] if out.exists(track) else []):
+            v = json.loads(out.read(rel))
+            if rel != track:
                 if v["name"] in seen or v["from"] != cat.format:
-                    die("%s: vector name or owner" % path)
+                    raise GenError("vector name or owner", file=rel)
                 seen.add(v["name"])
-            replay(v, packs, modules)
+            try:
+                replay(v, packs, derives)
+            except GenError as x:
+                raise GenError(x.message, file=x.file or rel)
             n += 1
     return n
 
 
-def lib_tables(lib):
-    """core and track as modules; checked against the checkout when one is given."""
-    core = dict(name="core", distribution="public", sources=["built in"], keys=OrderedDict(CORE_KEYS),
-                lists=OrderedDict(), derives=[], uses=[])
-    track = dict(name="track", distribution="public", sources=["built in"], keys=OrderedDict(TRACK_KEYS),
-                 lists=OrderedDict([("identifiers", True)]), derives=list(TRACK_DERIVES), uses=[])
-    if lib:
-        c = parse_module(open(os.path.join(lib, "model", "core.def"), encoding="utf-8").read())
-        t = parse_module(open(os.path.join(lib, "model", "track.def"), encoding="utf-8").read())
-        if dict(c["keys"]) != dict(CORE_KEYS):
-            die("model/core.def of --lib differs from the built-in table")
-        if dict(t["keys"]) != dict(TRACK_KEYS) or [(a, b, list(x)) for a, b, x in t["derives"]] != TRACK_DERIVES:
-            die("model/track.def of --lib differs from the built-in table")
-        gj = [tokenize(l) for l in open(os.path.join(lib, "packs", "geojson", "pack.def"), encoding="utf-8")]
-        if [(a[1], a[2]) for a in gj if a and a[0] == "field"] != GEOJSON_FIELDS:
-            die("packs/geojson/pack.def of --lib differs from the built-in table")
-        tj = [tokenize(l) for l in open(os.path.join(lib, "packs", "canonical-track-v2", "pack.def"), encoding="utf-8")]
-        have = {(a[1], a[2], a[3]) for a in tj if a and a[0] == "field" and len(a) == 4}
-        if not set(TRACK_JSON_FIELDS) <= have:
-            die("packs/canonical-track-v2/pack.def of --lib differs from the built-in table")
-    return {"core": core, "track": track}
+def check_lib(lib):
+    """Compare the built-in tables of `core`, `track`, `geojson` and `canonical-track-v2` with the
+    files of a goat-transformers checkout; a difference is a GenError naming the file."""
+    def text(rel):
+        return read_text(lib, rel)
+
+    def module(rel):
+        try:
+            return gtcheck.parse_module(text(rel), rel)
+        except gtcheck.CheckError as e:
+            raise GenError("%s: %s" % (e.kind, e.message), file=rel, line=e.line)
+
+    def fields(rel):
+        try:
+            return [toks for _, toks in gtcheck.directive_lines(text(rel), rel) if toks[0] == "field"]
+        except gtcheck.CheckError as e:
+            raise GenError("%s: %s" % (e.kind, e.message), file=rel, line=e.line)
+
+    differs = "of --lib differs from the built-in table %s of the generator"
+    if module("model/core.def").keys != dict(CORE_KEYS):
+        raise GenError(differs % "CORE_KEYS", file="model/core.def")
+    track = module("model/track.def")
+    if track.keys != dict(TRACK_KEYS) or tuple(track.lists) != TRACK_LISTS:
+        raise GenError(differs % "TRACK_KEYS", file="model/track.def")
+    if [(d.target, d.function, d.arguments) for d in track.derives] != TRACK_DERIVES:
+        raise GenError(differs % "TRACK_DERIVES", file="model/track.def")
+    if [(a[1], a[2]) for a in fields("packs/geojson/pack.def")] != GEOJSON_FIELDS:
+        raise GenError(differs % "GEOJSON_FIELDS", file="packs/geojson/pack.def")
+    have = {(a[1], a[2], a[3]) for a in fields("packs/canonical-track-v2/pack.def") if len(a) == 4}
+    if not set(TRACK_JSON_FIELDS) <= have:
+        raise GenError(differs % "TRACK_JSON_FIELDS", file="packs/canonical-track-v2/pack.def")
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", required=True, help="output root (holds sources/, model/, packs/, tools/gen/names/)")
-    ap.add_argument("--commit", help="gh-pages commit of %s; writes sources/PROVENANCE.md" % REPO)
-    ap.add_argument("--fetch", action="store_true", help="download the sources again even when present")
-    ap.add_argument("--cats", default="all", help="comma-separated category numbers, or `all` (default)")
-    ap.add_argument("--lib", help="goat-transformers checkout, to check the built-in tables")
-    a = ap.parse_args()
-    out = a.out
+# ---------------------------------------------------------------- command line
+
+def summary_line(g, n_vectors):
+    """One line of the run report for a category that was written."""
+    plan, cat = g.plan, g.cat
+    mapped = plan.mapped()
+    by_kind = ", ".join("%s %d" % (k, sum(1 for e in mapped if e["kind"] == k))
+                        for k in ("fixed", "extended", "repetitive", "compound", "explicit")
+                        if any(e["kind"] == k for e in mapped))
+    return ("%s  edition %s  FRNs %d  mapped %d (%s)  not mapped %d  keys %d  lists %d  fields %d  vectors %d%s  shared: %s" % (
+        cat.format, cat.edition, len(plan.entries), len(mapped), by_kind, len(plan.unmapped()), len(plan.keys),
+        len(plan.lists), plan.field_count(), n_vectors, "+1 from track" if g.track_vector else "",
+        ", ".join(b["key"] for b in plan.bindings) or "none"))
+
+
+def sources_and_commits(args, out):
+    """-> (commit of the published JSON, commit of its sources). With --commit the source files
+    are listed (and with --fetch downloaded first) and sources/PROVENANCE.md is written; without
+    it both commits are read back from that file."""
+    root = out.root
+    if not args.commit:
+        return read_commits(read_text(root, SOURCES_PROVENANCE))
+    if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
+        raise GenError("--commit takes a full 40-digit SHA")
+    got, master = source_list(root, args.commit, download=curl if args.fetch else None)
+    out.write(SOURCES_PROVENANCE, ending_in_newline(emit_sources_provenance(root, args.commit, got, master)))
+    return args.commit, master
+
+
+def run(args, out):
+    """The whole run -> exit status. A category that is refused is reported and leaves no files;
+    the others are still written."""
+    root = out.root
+    sha, master = sources_and_commits(args, out)
+    avail = OrderedDict((n, (name, rel)) for n, name, rel in
+                        definition_files(read_json(root, SOURCES_DIR + "/manifest.json")))
     try:
-        if a.commit:
-            if not re.fullmatch(r"[0-9a-f]{40}", a.commit):
-                die("--commit takes a full 40-digit SHA")
-            got, master = fetch_sources(out, a.commit, a.fetch)
-            write_provenance(out, a.commit, got, master)
-            sha = a.commit
-        else:
-            sha, master = read_commit(out)
-        sd = src_dir_of(out)
-        manifest = json.load(open(os.path.join(sd, "manifest.json"), encoding="utf-8"))
-        avail = OrderedDict()
-        for e in manifest:
-            ed = max(e["cats"], key=edition_key)
-            avail[int(e["category"])] = ("cat%s-%s.json" % (e["category"], ed),
-                                         "specs/cat%s/cats/cat%s/definition.json" % (e["category"], ed))
-        want = sorted(avail) if a.cats == "all" else [int(x) for x in a.cats.split(",")]
-        order = [c for c in PRIORITY if c in want] + [c for c in want if c not in PRIORITY]
-        core_track = lib_tables(a.lib)
-        done, failed = [], []
-        for n in order:
-            if n not in avail:
-                failed.append((n, "the source holds no category %03d" % n))
-                continue
-            name, rel = avail[n]
-            cat = Cat(json.load(open(os.path.join(sd, name), encoding="utf-8")), name, rel)
-            try:
-                st = generate(cat, out, sha, master, core_track)
-                done.append((cat, st))
-            except (GenError, WireError) as x:
-                remove_outputs(cat, out)
-                failed.append((n, str(x)))
-        n_vec = self_check(out, [c for c, _ in done], core_track)
-    except GenError as x:
-        print("asterix2pack: " + str(x), file=sys.stderr)
-        return 1
-    for cat, st in done:
-        unm = [e for e in cat.entries if e["nodes"] is None]
-        print("%s  edition %s  FRNs %d  mapped %d (%s)  not mapped %d  keys %d  lists %d  fields %d  vectors %d%s  shared: %s" % (
-            cat.format, cat.edition, len(cat.entries), sum(1 for e in cat.entries if e["nodes"]),
-            ", ".join("%s %d" % (k, sum(1 for e in cat.entries if e["nodes"] and e["kind"] == k))
-                      for k in ("fixed", "extended", "repetitive", "compound", "explicit")
-                      if any(e["nodes"] and e["kind"] == k for e in cat.entries)),
-            len(unm), len(cat.keys), len(cat.lists), st["fields"], len(st["made"]), "+1 from track" if st["track"] else "",
-            ", ".join(b["key"] for b in cat.bindings) or "none"))
-        for e in unm:
-            if e["kind"] not in ("spare",):
+        want = sorted(avail) if args.cats == "all" else [int(x) for x in args.cats.split(",")]
+    except ValueError:
+        raise GenError("--cats takes category numbers separated by commas, or `all`: %r" % args.cats)
+    if args.lib:
+        check_lib(args.lib)
+    done, failed = [], []
+    for n in [c for c in PRIORITY if c in want] + [c for c in want if c not in PRIORITY]:
+        if n not in avail:
+            failed.append((n, GenError("holds no category %03d" % n, file=SOURCES_DIR + "/manifest.json")))
+            continue
+        name, rel = avail[n]
+        cat = None
+        try:
+            cat = load_category(root, name, rel)
+            definition_sha256 = hashlib.sha256(read_bytes(root, cat.label)).hexdigest()
+            g = generate(cat, read_names(out, cat), sha, master, definition_sha256)
+            write_category(out, g)
+            done.append(g)
+        except (GenError, WireError) as x:
+            if cat is not None:
+                remove_outputs(out, cat)
+            label = SOURCES_DIR + "/" + name
+            failed.append((n, GenError(x.message, file=x.file or label, line=x.line) if isinstance(x, GenError)
+                           else GenError(str(x), file=label)))
+    n_vec = self_check(out, done)
+    for g in done:
+        print(summary_line(g, len(g.vectors)))
+        for e in g.plan.unmapped():
+            if e["kind"] != "spare":
                 print("    not mapped: FRN %d %s: %s" % (e["frn"], e["name"] or "", e["reason"]))
     for n, why in failed:
-        print("cat%03d  NOT GENERATED: %s" % (n, why))
+        print("cat%03d  NOT GENERATED: %s" % (n, why.message))
+        print("%s: %s" % (NAME, why), file=sys.stderr)
     print("self-check: %d vectors replayed, %d packs" % (n_vec, len(done)))
-    return 0
+    return 1 if failed else 0
+
+
+def build_parser():
+    ap = argparse.ArgumentParser(prog=NAME + ".py", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    genio.add_arguments(ap, what="output root: holds sources/ (read), and model/, packs/, tools/gen/names/ (written)")
+    ap.add_argument("--commit", metavar="SHA",
+                    help="gh-pages commit of %s the sources are at; writes sources/PROVENANCE.md" % REPO)
+    ap.add_argument("--fetch", action="store_true",
+                    help="with --commit: download every source file at that commit with curl before reading it")
+    ap.add_argument("--cats", default="all", metavar="LIST", help="comma-separated category numbers, or `all` (default)")
+    ap.add_argument("--lib", metavar="DIR", help="goat-transformers checkout, to check the built-in tables against")
+    return ap
+
+
+def main(argv=None):
+    ap = build_parser()
+    args = ap.parse_args(argv)
+    if args.fetch and not args.commit:
+        ap.error("--fetch needs --commit: the commit names what to download")
+    if args.fetch and args.check:
+        ap.error("--fetch downloads the sources and --check writes nothing: use one of them")
+    out = genio.Output(args.out, check=args.check)
+    try:
+        status = run(args, out)
+    except GenError as x:
+        print("%s: %s" % (NAME, x), file=sys.stderr)
+        return 1
+    return max(status, out.report(NAME))
 
 
 if __name__ == "__main__":

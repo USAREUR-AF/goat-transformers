@@ -1,0 +1,7 @@
+{
+  "name": "point-roundtrip",
+  "from": "geojson",
+  "to": "geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410]},\"properties\":{\"type\":\"a-box\",\"time_ms\":1700000000000},\"id\":\"P-17\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410]},\"properties\":{\"type\":\"a-box\",\"time_ms\":1700000000000},\"id\":\"P-17\"}"
+}

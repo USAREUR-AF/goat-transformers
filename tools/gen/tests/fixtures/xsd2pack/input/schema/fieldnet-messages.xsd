@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fn="urn:example:fieldnet" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:example:fieldnet" elementFormDefault="qualified" version="1.0">
+  <xs:annotation>
+    <xs:documentation>Synthetic test schema, written for the xsd2pack tests. It describes no real system and is not copied from any document.
+
+Distribution Statement A. Approved for public release: distribution is unlimited.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:include schemaLocation="fieldnet-types-v1.xsd"/>
+
+  <!-- Messages: the global elements whose type name ends in MT. -->
+  <xs:element name="StationReport" type="fn:StationReportMT">
+    <xs:annotation><xs:documentation>Where a station is and what it reads.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="SensorStatus" type="fn:SensorStatusMT">
+    <xs:annotation><xs:documentation>The health of one sensor.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Heartbeat" type="fn:HeartbeatMT"/>
+  <!-- Not a message: its type name does not end in MT. -->
+  <xs:element name="Envelope" type="fn:OpaqueType"/>
+
+  <xs:complexType name="StationReportMT">
+    <xs:complexContent>
+      <xs:extension base="fn:MessageBaseType">
+        <xs:sequence>
+          <xs:element name="MessageData" type="fn:StationDataType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SensorStatusMT">
+    <xs:complexContent>
+      <xs:extension base="fn:MessageBaseType">
+        <xs:sequence>
+          <xs:element name="MessageData" type="fn:SensorDataType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- A message in which nothing can be mapped: no kind is written for it. -->
+  <xs:complexType name="HeartbeatMT">
+    <xs:sequence>
+      <xs:any minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="StationDataType">
+    <xs:annotation><xs:documentation>The body of a station report.</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="StationID" type="fn:IdentifierType"/>
+      <xs:element name="ObservedAt" type="fn:DateTimeZType">
+        <xs:annotation><xs:documentation>When the station made the observation. Always UTC.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Position" type="fn:PositionType"/>
+      <xs:element name="Kinematics" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="NorthSpeed" type="xs:double">
+              <xs:annotation><xs:documentation>Speed toward true north, meters per second.</xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="EastSpeed" type="xs:double"/>
+            <xs:element name="Heading" type="fn:HeadingType"/>
+            <xs:element name="Bearing" type="fn:AngleRadType" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Level" type="xs:int"/>
+      <xs:element name="Priority" type="fn:PriorityType"/>
+      <xs:element name="Channel" type="fn:ChannelType"/>
+      <xs:element name="Counter" type="xs:unsignedLong" minOccurs="0"/>
+      <xs:element name="Active" type="xs:boolean"/>
+      <xs:element name="Commissioned" type="xs:date" minOccurs="0"/>
+      <xs:element name="LastContact" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="Plate" type="fn:PlateType" minOccurs="0"/>
+      <xs:choice>
+        <xs:element name="Callsign" type="fn:ShortTextType"/>
+        <xs:element name="Serial" type="xs:positiveInteger"/>
+      </xs:choice>
+      <xs:choice>
+        <xs:element name="Fixed" type="fn:PositionType"/>
+        <xs:element name="Mobile" type="xs:string"/>
+      </xs:choice>
+      <xs:element name="Reading" type="fn:ReadingType" maxOccurs="unbounded"/>
+      <xs:element name="Tag" type="fn:ShortTextType" minOccurs="0" maxOccurs="5"/>
+      <xs:element name="Extension" type="fn:OpaqueType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Attachment" type="fn:AttachmentType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Comment" type="fn:ShortTextType" minOccurs="0"/>
+      <xs:any minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="revision" type="xs:int" use="required"/>
+    <xs:anyAttribute/>
+  </xs:complexType>
+
+  <xs:complexType name="SensorDataType">
+    <xs:sequence>
+      <xs:element name="SensorID" type="fn:IdentifierType"/>
+      <xs:element name="Level" type="xs:string"/>
+      <xs:element name="Site" type="fn:SiteType"/>
+      <xs:element name="Codes" type="fn:CodeListType" minOccurs="0"/>
+      <xs:element name="Remark" type="fn:RemarkType" minOccurs="0"/>
+      <xs:element name="Shape" type="fn:ShapeType" minOccurs="0"/>
+      <xs:element name="Tree" type="fn:TreeNodeType" minOccurs="0"/>
+      <xs:element name="Raw" minOccurs="0"/>
+      <xs:element name="Marker" type="fn:EmptyType" minOccurs="0"/>
+      <xs:element name="Retired" type="xs:string" minOccurs="0" maxOccurs="0"/>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Key" type="xs:string"/>
+        <xs:element name="Val" type="xs:string"/>
+      </xs:sequence>
+      <xs:group ref="fn:PowerGroup"/>
+      <xs:element name="Quality" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="GOOD"/>
+            <xs:enumeration value="DEGRADED"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="ExtendedDiagnosticInformationBlock" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SecondaryPowerDistributionSubsystem">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="TemperatureCompensatedOscillatorDriftEstimate" type="xs:float"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Note" type="xs:string" minOccurs="0"/>
+      <xs:element name="Note" type="xs:string" minOccurs="0"/>
+      <xs:element name="Reading" type="fn:ReadingType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="fn:AuditAttributes"/>
+  </xs:complexType>
+</xs:schema>

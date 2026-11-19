@@ -25,6 +25,19 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/tests
+  generators:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: python3 -I -m unittest discover -s tools/gen/tests
+      # No pack generator has its sources in the tree (schema files are not
+      # committed), so the scripts checked here are the ones that need none.
+      - name: Committed vectors are what their scripts write
+        run: |
+          for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py; do
+            python3 -I "$script" --check
+          done
   rust:
     runs-on: ubuntu-latest
     timeout-minutes: 10

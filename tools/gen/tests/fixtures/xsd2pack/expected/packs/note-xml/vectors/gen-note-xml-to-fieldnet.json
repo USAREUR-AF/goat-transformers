@@ -1,0 +1,12 @@
+{
+  "name": "gen-note-xml-to-fieldnet",
+  "from": "note-xml",
+  "to": "fieldnet",
+  "input": "<note v=\"1\" id=\"00000000-0000-4000-8000-000000000042\" time=\"2026-03-04T05:06:07.250Z\"><move north=\"-2.5\"/></note>",
+  "expect": "<StationReport><MessageData><StationID><UUID>00000000-0000-4000-8000-000000000042</UUID></StationID><ObservedAt>2026-03-04T05:06:07.250Z</ObservedAt><Kinematics><NorthSpeed>-2.5</NorthSpeed></Kinematics></MessageData></StationReport>",
+  "model": {
+    "uid": "00000000-0000-4000-8000-000000000042",
+    "time_ms": "1772600767250",
+    "track.vel_north_ms": "-2.5"
+  }
+}

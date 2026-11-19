@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fn="urn:example:fieldnet" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:example:fieldnet" elementFormDefault="qualified" version="1.0">
+  <xs:annotation>
+    <xs:documentation>Synthetic test schema, written for the xsd2pack tests: the types the message file includes.
+
+Distribution Statement A. Approved for public release: distribution is unlimited.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:attribute name="origin" type="xs:string"/>
+
+  <xs:attributeGroup name="AuditAttributes">
+    <xs:attribute name="source" type="xs:anyURI"/>
+    <xs:attribute ref="fn:origin"/>
+  </xs:attributeGroup>
+
+  <xs:group name="PowerGroup">
+    <xs:sequence>
+      <xs:element name="Voltage" type="fn:VoltageType"/>
+      <xs:element name="OnBattery" type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- Simple types -->
+  <xs:simpleType name="DateTimeZType">
+    <xs:annotation><xs:documentation>A date and time in UTC, written with a trailing Z.</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:dateTime">
+      <xs:pattern value=".*Z"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ModeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LIVE"/>
+      <xs:enumeration value="SIMULATION"/>
+      <xs:enumeration value="REPLAY"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="QuantityEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="n/a (unset)"/>
+      <xs:enumeration value="TEMPERATURE"/>
+      <xs:enumeration value="PRESSURE"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="UuidType">
+    <xs:annotation><xs:documentation>A universally unique identifier in its usual text form.</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ShortTextType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="40"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PlateType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{3}-[0-9]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LatitudeType">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="-90"/>
+      <xs:maxInclusive value="90"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LongitudeType">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="-180"/>
+      <xs:maxInclusive value="180"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="HeadingType">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+      <xs:maxExclusive value="360"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AngleRadType">
+    <xs:annotation><xs:documentation>An angle in radians, between minus pi and pi.</xs:documentation></xs:annotation>
+    <xs:restriction base="xs:double">
+      <xs:minExclusive value="-3.2"/>
+      <xs:maxExclusive value="3.2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="VoltageType">
+    <xs:restriction base="xs:float">
+      <xs:minInclusive value="9"/>
+      <xs:maxInclusive value="48"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PriorityType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="5"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ChannelType">
+    <xs:restriction base="xs:integer">
+      <xs:minExclusive value="10"/>
+      <xs:maxExclusive value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="CodeListType">
+    <xs:list itemType="xs:int"/>
+  </xs:simpleType>
+
+  <!-- Complex types -->
+  <xs:complexType name="MessageBaseType" abstract="true">
+    <xs:sequence>
+      <xs:element name="MessageHeader" type="fn:HeaderType"/>
+    </xs:sequence>
+    <xs:attribute name="schemaVersion" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <xs:element name="Timestamp" type="fn:DateTimeZType"/>
+      <xs:element name="Mode" type="fn:ModeEnum"/>
+      <xs:element name="Sequence" type="xs:unsignedInt" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="IdentifierType">
+    <xs:annotation><xs:documentation>What names a thing for its whole life.</xs:documentation></xs:annotation>
+    <xs:sequence>
+      <xs:element name="UUID" type="fn:UuidType">
+        <xs:annotation><xs:documentation>The identifier. It never changes.</xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="Label" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PositionType">
+    <xs:sequence>
+      <xs:element name="Latitude" type="fn:LatitudeType"/>
+      <xs:element name="Longitude" type="fn:LongitudeType"/>
+      <xs:element name="Altitude" type="fn:MeasurementType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- A type that extends PositionType: an instance may put it where a PositionType is declared. -->
+  <xs:complexType name="SurveyedPositionType">
+    <xs:complexContent>
+      <xs:extension base="fn:PositionType">
+        <xs:sequence>
+          <xs:element name="Accuracy" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="MeasurementType">
+    <xs:simpleContent>
+      <xs:extension base="xs:double">
+        <xs:attribute name="datum" type="xs:token" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ReadingType">
+    <xs:sequence>
+      <xs:element name="Value" type="xs:decimal"/>
+      <xs:element name="Flag" type="xs:token" minOccurs="0" maxOccurs="3"/>
+      <xs:element name="Sample" type="fn:SampleType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="quantity" type="fn:QuantityEnum" use="required"/>
+    <xs:attribute name="unit" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="SampleType">
+    <xs:attribute name="at" type="fn:DateTimeZType" use="required"/>
+    <xs:attribute name="v" type="xs:double" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="SiteType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="RemarkType" mixed="true">
+    <xs:attribute name="lang" type="xs:language"/>
+  </xs:complexType>
+  <xs:complexType name="ShapeType" abstract="true">
+    <xs:sequence>
+      <xs:element name="Area" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TreeNodeType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Child" type="fn:TreeNodeType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EmptyType"/>
+  <xs:complexType name="AttachmentType">
+    <xs:sequence>
+      <xs:element name="Body" type="fn:OpaqueType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="OpaqueType">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -198,7 +198,7 @@ An entity without it ends in `no-kind`.
 
 | From | Encodes as | Keys carried | Keys the kind has no place for | Vector |
 |---|---|---|---|---|
-| `cot-xml` | `entity` | `uid` `time_ms` | `type` `how` `lat` `lon` `hae` `ce` `le` `callsign` | `packs/cot-xml/vectors/gen-cot-xml-to-a-gra.json` |
+| `cot-xml` | `entity` | `uid` `time_ms` | `track.scoped_id` `type` `how` `lat` `lon` `hae` `ce` `le` `callsign` | `packs/cot-xml/vectors/gen-cot-xml-to-a-gra.json` |
 
 ## Vectors
 

@@ -2,7 +2,15 @@
 # Regenerate the six protobuf packs: sapient, isa, isa-message, isa-ipl1, sapient-v1,
 # cot-protobuf.
 #
-# Usage: tools/gen/proto2pack-run.sh <checkout> <sources>
+# Usage: tools/gen/proto2pack-run.sh [--check] <checkout> <sources>
+#
+# With --check nothing in <checkout> is written: the six runs write into a
+# temporary copy of its model/, packs/ and tools/gen/names/, the copy is compared
+# with <checkout>, every file that differs is listed and the exit status is 1
+# when there is one. The runs cannot each be given `proto2pack.py --check`
+# instead, because a later run reads what an earlier run writes: `isa` writes
+# model/isa.def afresh and `isa-message` extends it, so the file a correct
+# checkout holds is not the file the `isa` run alone writes.
 #
 # <checkout> is a goat-transformers checkout. It is read (model/core.def,
 # model/track.def, the cot-xml and geojson packs, the hand-written vectors of
@@ -54,9 +62,31 @@
 # `isa` (--names-from: paths under the prefix, names of items as they are) and
 # writes gen-isa-to-isa-message.json back.
 set -euo pipefail
-ROOT="$(cd "$1" && pwd)"
+CHECK=0
+if [ "${1:-}" = "--check" ]; then
+  CHECK=1
+  shift
+fi
+if [ "$#" -ne 2 ]; then
+  echo "usage: $0 [--check] <checkout> <sources>" >&2
+  exit 2
+fi
+CHECKOUT="$(cd "$1" && pwd)"
 SRC="$(cd "$2" && pwd)"
 GEN="$(cd "$(dirname "$0")" && pwd)"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+# ROOT is where the runs read and write: the checkout, or with --check a copy of
+# the three directories they touch. NAMES is the directory of the names files.
+ROOT="$CHECKOUT"
+NAMES="$GEN/names"
+if [ "$CHECK" = 1 ]; then
+  ROOT="$TMP/checkout"
+  NAMES="$ROOT/tools/gen/names"
+  mkdir -p "$ROOT/tools/gen"
+  cp -R "$CHECKOUT/model" "$CHECKOUT/packs" "$ROOT/"
+  cp -R "$GEN/names" "$NAMES"
+fi
 SHA=244a741c13bcee628f84944aef91e4a66854bd7d
 ISA37="Integrated Sensor Architecture IPL 3.7 protobuf declaration file ipl-3.7-6.0.13.proto (ISA IPL Format 6.0, Iteration 149, Git Hash c02e800), sha256 a959dde49e752d326b8e050a07d798d131e59853e45c74add51b02b339235927"
 ISA16="Integrated Sensor Architecture IPL 1.6 protobuf declaration file ipl-1.6-6.0.13.proto (ISA IPL Format 6.0, Iteration 90, Git Hash c02e800), sha256 aff034e73a12435c2176f5af6d68ffa4be7116f09fe68e4dda1c1dfec3f645a5"
@@ -67,8 +97,6 @@ LICENCE="LICENCE.txt at that commit: Crown owned Copyright 2023; licensed under 
 # hand-written vectors as that pack does: the file as it is before this run.
 # The sapient pack takes no --supersedes: the hand-written pack it replaced bound
 # `uid` to DetectionReport.object_id (7.2), and this pack does not (notes/sapient.md).
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
 SUP_ISA=()
 if [ -f "$ROOT/packs/isa/pack.def" ]; then
   cp "$ROOT/packs/isa/pack.def" "$TMP/isa-pack.def"
@@ -103,7 +131,7 @@ python3 -I "$GEN/proto2pack.py" \
   --source "$LICENCE" \
   "${DETECTION[@]}" \
   --pack-version 0.3.0 \
-  --names-file "$GEN/names/sapient.json" \
+  --names-file "$NAMES/sapient.json" \
   --cross "$ROOT/packs/cot-xml/pack.def=$ROOT/packs/cot-xml/vectors/02-cot-roundtrip.json:input" \
   --cross "$ROOT/packs/geojson/pack.def=$ROOT/packs/sapient/vectors/01-sapient-to-geojson.json:expect" \
   --notes-file "$GEN/notes/sapient.md"
@@ -113,7 +141,7 @@ python3 -I "$GEN/proto2pack.py" \
   --envelope Event --format isa --module isa --out "$ROOT" \
   --source "$ISA37" --source "$DISTA" \
   --map 25.1=lat --map 25.2=lon --map 25.3=hae --map 29.1.1=course --map 29.3.1=speed_ms \
-  --names-file "$GEN/names/isa.json" \
+  --names-file "$NAMES/isa.json" \
   --cross "$ROOT/packs/geojson/pack.def=$ROOT/packs/isa/vectors/01-isa-to-geojson.json:expect" \
   --notes-file "$GEN/notes/isa.md" ${SUP_ISA[@]+"${SUP_ISA[@]}"}
 
@@ -125,7 +153,7 @@ python3 -I "$GEN/proto2pack.py" \
   --envelope Message --kinds-from-fields --format isa-message --module isa --out "$ROOT" \
   --max-depth 14 \
   --module-base "$ROOT/model/isa.def" --module-version 0.2.0 \
-  --names-from "$GEN/names/isa.json=3" --names-file "$GEN/names/isa-message.json" \
+  --names-from "$NAMES/isa.json=3" --names-file "$NAMES/isa-message.json" \
   --source "$ISA37" --source "$DISTA" \
   --map 3.25.1=lat --map 3.25.2=lon --map 3.25.3=hae --map 3.29.1.1=course --map 3.29.3.1=speed_ms \
   --default-kind event --default-requires lat lon \
@@ -136,7 +164,7 @@ python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC/isa/ipl-1.6-6.0.13.proto" \
   --envelope Message --kinds-from-fields --format isa-ipl1 --module isa1 --out "$ROOT" \
   --source "$ISA16" --source "$DISTA" \
-  --names-file "$GEN/names/isa-ipl1.json" \
+  --names-file "$NAMES/isa-ipl1.json" \
   --cross-text "$ROOT/packs/geojson/pack.def" --cross-kind event \
   --notes-file "$GEN/notes/isa-ipl1.md"
 
@@ -150,7 +178,7 @@ python3 -I "$GEN/proto2pack.py" \
   --source "BSI Flex 335 v1.0 protobuf definitions: github.com/dstl/SAPIENT-Proto-Files commit $SHA, directory bsi_flex_335_v1_0 (15 .proto files) and proto_options.proto" \
   --source "$LICENCE" \
   "${DETECTION[@]}" \
-  --names-file "$GEN/names/sapient-v1.json" \
+  --names-file "$NAMES/sapient-v1.json" \
   --cross-text "$ROOT/packs/geojson/pack.def" \
   --cross-omit 7.6.6 --cross-omit 7.19.1 --cross-omit 7.19.2 \
   --notes-file "$GEN/notes/sapient-v1.md"
@@ -173,7 +201,19 @@ python3 -I "$GEN/proto2pack.py" \
   --map 2.10=lat --map 2.11=lon --map 2.12=hae --map 2.13=ce --map 2.14=le \
   --map 2.15.2.2=callsign --map 2.15.7.1=speed_ms --map 2.15.7.2=course \
   --default-kind cot_event --default-requires lat lon \
-  --names-file "$GEN/names/cot-protobuf.json" \
+  --names-file "$NAMES/cot-protobuf.json" \
   --cross "$ROOT/packs/cot-xml/pack.def=$ROOT/packs/cot-xml/vectors/02-cot-roundtrip.json:input" \
   --cross-text "$ROOT/packs/geojson/pack.def" --cross-text "$ROOT/packs/cot-xml/pack.def" \
   --notes-file "$GEN/notes/cot-protobuf.md"
+
+if [ "$CHECK" = 1 ]; then
+  DIFFERS=0
+  diff -rq "$CHECKOUT/model" "$ROOT/model" >&2 || DIFFERS=1
+  diff -rq "$CHECKOUT/packs" "$ROOT/packs" >&2 || DIFFERS=1
+  diff -rq "$GEN/names" "$NAMES" >&2 || DIFFERS=1
+  if [ "$DIFFERS" = 1 ]; then
+    echo "proto2pack-run: --check: the files above are not what the generator writes" >&2
+    exit 1
+  fi
+  echo "proto2pack-run: --check: ok, model/, packs/ and tools/gen/names/ are what the generator writes" >&2
+fi

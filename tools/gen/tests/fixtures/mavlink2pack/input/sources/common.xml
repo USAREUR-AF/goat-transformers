@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!-- Test input for tools/gen/mavlink2pack.py, written for the tests. It is not
+     a copy of the MAVLink definitions.
+
+     SYS_STATUS, GPS_RAW_INT, ATTITUDE and COMMAND_LONG state the field names,
+     types, units and order of the public protocol, because the generator
+     refuses a source in which they do not give the CRC_EXTRA values the
+     protocol fixes (124, 24, 39, 152). HIL_GPS, GPS2_RAW and
+     UTM_GLOBAL_POSITION exist because the generator writes a vector to
+     GeoJSON for each; they are cut down to the fields those vectors set.
+     Every TEST_ message is synthetic. Messages are not in id order on
+     purpose: the generator sorts kinds by id. -->
+<mavlink>
+  <include>standard.xml</include>
+  <messages>
+    <!-- Every shape of field. On the wire the fields before <extensions/> are
+         sorted by type size, largest first, and the rest keep this order. -->
+    <message id="50001" name="TEST_SHAPES">
+      <description>One field of every shape the generator maps.</description>
+      <field type="uint8_t" name="mode" enum="TEST_MODE">enum-typed field</field>
+      <field type="uint16_t[4]" name="counts">array, one key per element</field>
+      <field type="char[10]" name="label">text</field>
+      <field type="uint64_t" name="total">largest unsigned integer</field>
+      <field type="float" name="ratio">32-bit float</field>
+      <field type="double" name="precise">64-bit float</field>
+      <field type="int8_t" name="offset_small">smallest signed integer</field>
+      <field type="int16_t" name="level" units="cm">signed, with a unit</field>
+      <field type="int16_t" name="climb" units="cm/s">unit with a slash</field>
+      <field type="uint16_t" name="course" units="cdeg">unsigned, with a unit</field>
+      <field type="int32_t" name="height" units="mm">signed 32-bit</field>
+      <field type="uint16_t" name="vcc" units="mV">shares a key with Vcc of TEST_SURVEY</field>
+      <extensions/>
+      <field type="char[4]" name="note">extension text</field>
+      <field type="int8_t[3]" name="trail">extension array</field>
+      <field type="uint8_t" name="spare">extension scalar</field>
+    </message>
+    <message id="340" name="UTM_GLOBAL_POSITION">
+      <field type="uint64_t" name="time" units="us">time of the position</field>
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+      <field type="int32_t" name="alt" units="mm">altitude</field>
+      <field type="int32_t" name="relative_alt" units="mm">altitude above ground</field>
+      <field type="uint8_t" name="flight_state">state of the flight</field>
+    </message>
+    <message id="1" name="SYS_STATUS">
+      <field type="uint32_t" name="onboard_control_sensors_present">sensors present</field>
+      <field type="uint32_t" name="onboard_control_sensors_enabled">sensors enabled</field>
+      <field type="uint32_t" name="onboard_control_sensors_health">sensors healthy</field>
+      <field type="uint16_t" name="load" units="d%">processor load</field>
+      <field type="uint16_t" name="voltage_battery" units="mV">battery voltage</field>
+      <field type="int16_t" name="current_battery" units="cA">battery current</field>
+      <field type="int8_t" name="battery_remaining" units="%">battery left</field>
+      <field type="uint16_t" name="drop_rate_comm" units="c%">link drop rate</field>
+      <field type="uint16_t" name="errors_comm">link errors</field>
+      <field type="uint16_t" name="errors_count1">error counter 1</field>
+      <field type="uint16_t" name="errors_count2">error counter 2</field>
+      <field type="uint16_t" name="errors_count3">error counter 3</field>
+      <field type="uint16_t" name="errors_count4">error counter 4</field>
+      <extensions/>
+      <field type="uint32_t" name="onboard_control_sensors_present_extended">more sensors present</field>
+      <field type="uint32_t" name="onboard_control_sensors_enabled_extended">more sensors enabled</field>
+      <field type="uint32_t" name="onboard_control_sensors_health_extended">more sensors healthy</field>
+    </message>
+    <message id="24" name="GPS_RAW_INT">
+      <field type="uint64_t" name="time_usec" units="us">time of the fix</field>
+      <field type="uint8_t" name="fix_type">kind of fix</field>
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+      <field type="int32_t" name="alt" units="mm">altitude above mean sea level</field>
+      <field type="uint16_t" name="eph">horizontal dilution</field>
+      <field type="uint16_t" name="epv">vertical dilution</field>
+      <field type="uint16_t" name="vel" units="cm/s">ground speed</field>
+      <field type="uint16_t" name="cog" units="cdeg">course over ground</field>
+      <field type="uint8_t" name="satellites_visible">satellites in view</field>
+      <extensions/>
+      <field type="int32_t" name="alt_ellipsoid" units="mm">altitude above the ellipsoid</field>
+      <field type="uint32_t" name="h_acc" units="mm">horizontal uncertainty</field>
+      <field type="uint32_t" name="v_acc" units="mm">vertical uncertainty</field>
+      <field type="uint32_t" name="vel_acc" units="mm">speed uncertainty</field>
+      <field type="uint32_t" name="hdg_acc" units="degE5">heading uncertainty</field>
+      <field type="uint16_t" name="yaw" units="cdeg">yaw</field>
+    </message>
+    <message id="30" name="ATTITUDE">
+      <field type="uint32_t" name="time_boot_ms" units="ms">time since start</field>
+      <field type="float" name="roll" units="rad">roll angle</field>
+      <field type="float" name="pitch" units="rad">pitch angle</field>
+      <field type="float" name="yaw" units="rad">yaw angle</field>
+      <field type="float" name="rollspeed" units="rad/s">roll rate</field>
+      <field type="float" name="pitchspeed" units="rad/s">pitch rate</field>
+      <field type="float" name="yawspeed" units="rad/s">yaw rate</field>
+    </message>
+    <message id="76" name="COMMAND_LONG">
+      <field type="uint8_t" name="target_system">system to command</field>
+      <field type="uint8_t" name="target_component">component to command</field>
+      <field type="uint16_t" name="command">command number</field>
+      <field type="uint8_t" name="confirmation">retransmission count</field>
+      <field type="float" name="param1">parameter 1</field>
+      <field type="float" name="param2">parameter 2</field>
+      <field type="float" name="param3">parameter 3</field>
+      <field type="float" name="param4">parameter 4</field>
+      <field type="float" name="param5">parameter 5</field>
+      <field type="float" name="param6">parameter 6</field>
+      <field type="float" name="param7">parameter 7</field>
+    </message>
+    <!-- HIL_GPS and GPS2_RAW share every key but `alt`, which takes the message
+         name because TEST_SURVEY declares `alt_mm` with no unit. -->
+    <message id="113" name="HIL_GPS">
+      <field type="uint64_t" name="time_usec" units="us">time of the fix</field>
+      <field type="uint8_t" name="fix_type">kind of fix</field>
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+      <field type="int32_t" name="alt" units="mm">altitude</field>
+      <field type="uint8_t" name="satellites_visible">satellites in view</field>
+    </message>
+    <message id="124" name="GPS2_RAW">
+      <field type="uint64_t" name="time_usec" units="us">time of the fix</field>
+      <field type="uint8_t" name="fix_type">kind of fix</field>
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+      <field type="int32_t" name="alt" units="mm">altitude</field>
+      <field type="uint8_t" name="satellites_visible">satellites in view</field>
+    </message>
+    <!-- Arrays at and beyond the eight-element limit. `history` ends the
+         payload and is not mapped, so encode output is shorter than LEN. -->
+    <message id="50002" name="TEST_ARRAYS">
+      <field type="float[8]" name="window">eight elements, the most that are mapped</field>
+      <field type="uint8_t[9]" name="samples">nine elements, not mapped</field>
+      <field type="uint16_t" name="count">scalar after the arrays</field>
+      <extensions/>
+      <field type="int16_t[12]" name="history">extension array, not mapped</field>
+    </message>
+    <!-- Nothing but lat and lon: they stay raw so the kind has a key to require.
+         TEST_SURVEY maps both keys too, so pack.md lists this kind as one whose
+         required keys another kind also maps. -->
+    <message id="300" name="TEST_POINT">
+      <field type="int32_t" name="lat" units="degE7">latitude</field>
+      <field type="int32_t" name="lon" units="degE7">longitude</field>
+    </message>
+    <!-- Positions that stay raw, and names that clash with other messages:
+         `mode` (no enum here), `level` (float here), `alt_mm` (no unit here,
+         same name as `alt` in mm elsewhere), `seq` (a frame-header key). -->
+    <message id="301" name="TEST_SURVEY">
+      <field type="int32_t" name="lat" units="degE7" invalid="INT32_MAX">latitude, with a value for unknown</field>
+      <field type="int32_t" name="lon" units="degE7" invalid="INT32_MAX">longitude, with a value for unknown</field>
+      <field type="int32_t" name="latitude" units="degE7">latitude under another name</field>
+      <field type="int32_t" name="longitude" units="degE7">longitude under another name</field>
+      <field type="uint8_t" name="mode">same name as an enum field</field>
+      <field type="float" name="level" units="cm">same name as an integer field</field>
+      <field type="int32_t" name="alt_mm">same key name as alt in mm</field>
+      <field type="uint16_t" name="seq">same name as a frame-header key</field>
+      <field type="uint16_t" name="Vcc" units="mV">shares a key with vcc of TEST_SHAPES</field>
+    </message>
+  </messages>
+</mavlink>

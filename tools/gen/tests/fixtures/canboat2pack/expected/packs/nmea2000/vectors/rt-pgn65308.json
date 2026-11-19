@@ -1,0 +1,13 @@
+{
+  "name": "pgn65308-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "1cff00ad4d9c1cb5bcce3e",
+  "expect": "1cff00ad4d9c1cb5bcce3e",
+  "model": {
+    "@kind": "pgn65308",
+    "course": "113.93265756176422",
+    "hae": "-11289813.48",
+    "n2k.user_id": "16078"
+  }
+}
