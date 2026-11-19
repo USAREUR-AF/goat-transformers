@@ -114,9 +114,11 @@ engines/rust/target/release/goat-xf list-formats --packs packs --packs-only geoj
 engines/rust/target/release/goat-xf matrix --detail --packs packs --packs-only geojson,cot-xml
 ```
 
-`goat-xf` reads packs from `../../packs` relative to the current directory
-unless `--packs <dir>` is given, and model modules from `<packs>/../model`
-unless `--models <dir>` is given. `--packs-only <name>[,<name>…]` loads only the
+Every tool reads model modules from `<packs>/../model` unless `--models <dir>`
+is given. Where the packs come from when `--packs <dir>` is not given differs:
+the Rust `goat-xf` reads `../../packs` relative to the current directory, the
+Go `goat-xf` reads `packs`, and the Java tool requires `--packs`. Each engine's
+`README.md` states its tool's options. `--packs-only <name>[,<name>…]` loads only the
 named packs of that directory; every engine's command-line tool has it.
 
 ## How to add a pack
