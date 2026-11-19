@@ -1,24 +1,49 @@
 #!/usr/bin/env python3
-"""goat-pkg: plan the minimum goat-transformers package for a set of constraints.
+"""goat-pkg: plan and write the smallest goat-transformers package for a set
+of constraints.
 
-A caller brings their constraints — the message standards they need, the
-language, the runtime, the OS and chip architecture, and static vs dynamic
-linkage — and this computes the smallest package that meets them: which engine,
-which packs (only the formats asked for), which wire codecs those packs use, the
-build target and command, and whether the requested formats actually
-inter-convert.
+A caller brings constraints: the formats they need, the language, the runtime,
+the operating system, the processor architecture, and static or dynamic
+linkage. This tool answers with the smallest package that meets them.
 
-Run with -I (the repo ships it executable). It reads only data files; it never
-imports anything from the packs it inspects.
+  plan      prints the engine, the packs (only the formats named), the wire
+            types those packs use, the build command, and what carries between
+            each pair of the named formats
+  formats   lists every format of the tree, its wire type and the model keys
+            it maps
+  bundle    writes the packs of the named formats and the model modules they
+            use to a directory, with LICENSE, NOTICE and a manifest.json that
+            records the library version, the commit and the SHA-256 of each
+            file; --embed adds a source file that compiles them into a program
+  archive   writes every model module and every pack as one .tar.gz, the same
+            bytes for the same tree
+
+What it guarantees:
+  - Packs and model modules are read by the Python engine of this repository
+    (engines/python), never by a second parser here. The keys a format maps,
+    what carries between two formats, and the modules a pack needs are the
+    engine's answers (`Pack.model_keys`, `Engine.capability`, `Engine.from_dir`).
+  - A build command is printed only for a combination the table below states.
+    Anything else is an error that names what is supported.
+  - A format that is not in the tree, or a pack that does not load, is an
+    error; nothing is written or planned around it.
+
+It reads the tree it is in: in this repository the public formats, in an
+assembled overlay tree that overlay's formats as well (docs/boundary.md).
+
+Run with -I. Standard library only.
 
 Usage:
   tools/goat-pkg plan --formats cot-xml,sapient --language rust \
-      --runtime native --linkage static --os linux --arch x86_64
-  tools/goat-pkg formats        # list available formats and the wire each uses
+      --runtime native --linkage static --os linux --arch x86_64 [--json]
+  tools/goat-pkg formats
   tools/goat-pkg bundle --formats cot-xml,geojson --out vendor/goat [--embed rust|go|python]
-                                # write only those packs and the model modules they use
+  tools/goat-pkg archive --out packs.tar.gz [--vectors] [--prefix NAME]
+
+Exit status: 0 done, 1 the request cannot be met, 2 a wrong command line.
 """
 import argparse
+import gzip
 import hashlib
 import json
 import os
@@ -26,20 +51,25 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-PACKS = os.path.join(REPO, "packs")
+ENGINE_SRC = os.path.join(REPO, "engines", "python", "src")
 
 LANGUAGES = ["rust", "go", "python", "java", "cpp", "erlang", "zig"]
+OS_NAMES = {"macos": "darwin"}  # other spellings of an operating system
+ARCH_NAMES = {"arm64": "aarch64", "amd64": "x86_64"}  # other spellings of an architecture
+GOARCH = {"x86_64": "amd64", "aarch64": "arm64"}
 
-# Which (language, runtime) pairs are supported, and how each builds for a given
-# linkage. {arch},{os},{goarch} are filled from the constraints. "any" linkage
-# means linkage does not apply to that runtime.
+# The build command of each (language, runtime) pair, by linkage. "any" means
+# linkage, operating system and architecture do not apply to that runtime.
+# {target} is the compiler's name for the machine (TARGETS); {os}, {arch} and
+# {goarch} are the constraints.
 BUILD = {
     ("rust", "native"): {
-        "static": "cargo build --release --target {arch}-unknown-{os}-musl",
-        "dynamic": "cargo build --release --target {arch}-unknown-{os}-gnu",
+        "static": "cargo build --release --target {target}",
+        "dynamic": "cargo build --release --target {target}",
     },
     ("rust", "wasm"): {"any": "cargo build --release --lib --target wasm32-unknown-unknown"},
     ("rust", "js"): {"any": "cargo build --release --lib --target wasm32-unknown-unknown  # wrap with a thin JS/WASM loader"},
@@ -57,93 +87,152 @@ BUILD = {
     ("python", "native"): {"any": "no build step; ship the package and a Python 3 runtime"},
     ("erlang", "native"): {"any": "./build.sh   # runs on the BEAM VM"},
     ("zig", "native"): {
-        "static": "zig build -Dtarget={arch}-{os}-musl -Doptimize=ReleaseSmall",
-        "dynamic": "zig build -Dtarget={arch}-{os}-gnu -Doptimize=ReleaseSmall",
+        "static": "zig build -Dtarget={target} -Doptimize=ReleaseSmall",
+        "dynamic": "zig build -Dtarget={target} -Doptimize=ReleaseSmall",
     },
     ("zig", "wasm"): {"any": "zig build -Dtarget=wasm32-wasi -Doptimize=ReleaseSmall"},
 }
 
-GOARCH = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64", "amd64": "amd64"}
+# The machines a native build is stated for: (language, linkage) -> {os:
+# target}. A language with no row here builds on the machine it is given
+# (Go names it with GOOS and GOARCH). A fully static program exists only
+# where the C library can be linked in, which is Linux with musl; a program
+# on darwin always links the system library dynamically.
+TARGETS = {
+    ("rust", "static"): {"linux": "{arch}-unknown-linux-musl"},
+    ("rust", "dynamic"): {
+        "linux": "{arch}-unknown-linux-gnu",
+        "darwin": "{arch}-apple-darwin",
+        "windows": "{arch}-pc-windows-msvc",
+    },
+    ("zig", "static"): {"linux": "{arch}-linux-musl"},
+    ("zig", "dynamic"): {"linux": "{arch}-linux-gnu", "darwin": "{arch}-macos", "windows": "{arch}-windows-gnu"},
+    ("cpp", "static"): {"linux": ""},
+}
 
 
-def load_formats():
-    """Scan packs/ -> {format: {wire, fields:[model keys]}} from each pack.def."""
-    out = {}
-    if not os.path.isdir(PACKS):
-        return out
-    for name in sorted(os.listdir(PACKS)):
-        pdef = os.path.join(PACKS, name, "pack.def")
-        if not os.path.isfile(pdef):
+class Unmet(Exception):
+    """The request cannot be met; the text says why and what can be."""
+
+
+# --------------------------------------------------------------------------
+# The tree, read by the Python engine
+# --------------------------------------------------------------------------
+
+def engine_api():
+    """The Python engine of this repository, imported on first use."""
+    if ENGINE_SRC not in sys.path:
+        sys.path.insert(0, ENGINE_SRC)
+    import goat_transformers
+    return goat_transformers
+
+
+def read_packs(root):
+    """Every pack under `<root>/packs`, parsed by the engine.
+    -> ({format: Pack} in directory order, [(directory, why it does not load)])"""
+    api = engine_api()
+    packs_dir = os.path.join(root, "packs")
+    packs, broken = {}, []
+    for name in sorted(os.listdir(packs_dir)) if os.path.isdir(packs_dir) else []:
+        directory = os.path.join(packs_dir, name)
+        if not os.path.isfile(os.path.join(directory, "pack.def")):
             continue
-        fmt, wire, fields = None, None, []
-        with open(pdef, encoding="utf-8") as fh:
-            for raw in fh:
-                line = raw.split("#", 1)[0].strip()
-                if not line:
-                    continue
-                tok = line.split()
-                if tok[0] == "format" and len(tok) > 1:
-                    fmt = tok[1]
-                elif tok[0] == "wire" and len(tok) > 1:
-                    wire = tok[1]
-                elif tok[0] == "field" and len(tok) > 1:
-                    fields.append(tok[1])
-        if fmt:
-            out[fmt] = {"wire": wire, "fields": fields, "dir": name}
-    return out
+        try:
+            pack = api.load_pack(directory)
+        except (api.GTError, OSError, UnicodeDecodeError) as e:
+            broken.append((name, str(e)))
+            continue
+        packs.setdefault(pack.name, pack)
+    return packs, broken
 
 
-def capability(a_fields, b_fields):
-    """What carries A->B and what B cannot represent, from the field sets."""
-    carried = [k for k in a_fields if k in b_fields]
-    dropped = [k for k in a_fields if k not in b_fields]
-    grade = "full" if carried and not dropped else ("partial" if carried else "none")
-    return {"carried": carried, "dropped": dropped, "grade": grade}
+def pack_dir(pack):
+    """The name of the directory a pack was read from."""
+    return os.path.basename(pack.path)
 
 
-def cmd_formats(_args):
-    fmts = load_formats()
-    if not fmts:
-        print("no packs found under", PACKS)
+def warn_broken(broken):
+    for name, why in broken:
+        print(f"warning: packs/{name} does not load and is left out: {why}", file=sys.stderr)
+
+
+def named_formats(text):
+    """The formats of a comma-separated list, in order, each once."""
+    return list(dict.fromkeys(f.strip() for f in text.split(",") if f.strip()))
+
+
+def select(root, formats_arg):
+    """The packs of the named formats. -> (formats, [Pack]); raises Unmet
+    when none is named or one is not in the tree."""
+    packs, broken = read_packs(root)
+    warn_broken(broken)
+    want = named_formats(formats_arg)
+    missing = [f for f in want if f not in packs]
+    if missing or not want:
+        raise Unmet("formats not available: %s\navailable: %s" % (
+            ", ".join(missing) or "(none named)", ", ".join(sorted(packs))))
+    return want, [packs[f] for f in want]
+
+
+def load_engine(root, packs):
+    """An engine holding only `packs` and the model modules they need, loaded
+    from the tree the way every engine loads a package."""
+    api = engine_api()
+    try:
+        return api.Engine.from_dir(
+            os.path.join(root, "packs"), os.path.join(root, "model"), packs_only=[pack_dir(p) for p in packs])
+    except api.GTError as e:
+        raise Unmet("the named packs do not load: %s" % e) from e
+
+
+# --------------------------------------------------------------------------
+# formats
+# --------------------------------------------------------------------------
+
+def cmd_formats(_args, root):
+    packs, broken = read_packs(root)
+    warn_broken(broken)
+    if not packs:
+        print("no packs found under", os.path.join(root, "packs"))
         return 1
-    width = max(len(f) for f in fmts)
-    for f, info in fmts.items():
-        print(f"{f:<{width}}  wire={info['wire']:<9} fields={', '.join(info['fields'])}")
+    width = max(len(f) for f in packs)
+    for name, pack in packs.items():
+        print(f"{name:<{width}}  wire={pack.wire:<9} fields={', '.join(pack.model_keys())}")
     return 0
 
 
-def cmd_plan(args):
-    fmts = load_formats()
-    want = [f.strip() for f in args.formats.split(",") if f.strip()]
-    missing = [f for f in want if f not in fmts]
-    if missing:
-        print("error: formats not available:", ", ".join(missing), file=sys.stderr)
-        print("available:", ", ".join(sorted(fmts)), file=sys.stderr)
-        return 1
+# --------------------------------------------------------------------------
+# plan
+# --------------------------------------------------------------------------
 
-    wires = sorted({fmts[f]["wire"] for f in want})
-    key = (args.language, args.runtime)
-    if key not in BUILD:
-        print(f"error: {args.language} has no {args.runtime} runtime target yet", file=sys.stderr)
-        print("supported:", ", ".join(f"{l}/{r}" for (l, r) in sorted(BUILD)), file=sys.stderr)
-        return 1
-    builds = BUILD[key]
-    linkage = "any" if "any" in builds else args.linkage
-    if linkage not in builds:
-        print(f"error: {args.language}/{args.runtime} supports linkage {sorted(builds)}", file=sys.stderr)
-        return 1
-    goarch = GOARCH.get(args.arch, args.arch)
-    build_cmd = builds[linkage].format(arch=args.arch, os=args.os, goarch=goarch)
+def build_command(language, runtime, linkage, os_name, arch):
+    """-> (the linkage that applies, the build command); raises Unmet for a
+    combination BUILD and TARGETS do not state."""
+    builds = BUILD.get((language, runtime))
+    if builds is None:
+        raise Unmet("%s has no %s runtime target yet\nsupported: %s" % (
+            language, runtime, ", ".join(f"{lang}/{rt}" for lang, rt in sorted(BUILD))))
+    if "any" in builds:
+        return "any", builds["any"]
+    os_name = OS_NAMES.get(os_name, os_name)
+    arch = ARCH_NAMES.get(arch, arch)
+    target = ""
+    if (language, linkage) in TARGETS:
+        template = TARGETS[(language, linkage)].get(os_name)
+        if template is None:
+            raise Unmet("%s/%s has no %s build for --os %s\n%s builds are stated for: %s%s" % (
+                language, runtime, linkage, os_name, linkage, ", ".join(sorted(TARGETS[(language, linkage)])),
+                "; try --linkage dynamic" if linkage == "static" else ""))
+        target = template.format(arch=arch)
+    return linkage, builds[linkage].format(target=target, os=os_name, arch=arch, goarch=GOARCH.get(arch, arch))
 
-    # inter-convertibility among the requested formats (the "why not" per pair)
-    pairs = []
-    for a in want:
-        for b in want:
-            if a != b:
-                cap = capability(fmts[a]["fields"], fmts[b]["fields"])
-                pairs.append({"from": a, "to": b, **cap})
 
-    manifest = {
+def plan(root, args):
+    """The manifest of the smallest package for the constraints in `args`."""
+    want, packs = select(root, args.formats)
+    linkage, command = build_command(args.language, args.runtime, args.linkage, args.os, args.arch)
+    engine = load_engine(root, packs)
+    return {
         "constraints": {
             "formats": want,
             "language": args.language,
@@ -154,89 +243,56 @@ def cmd_plan(args):
         },
         "package": {
             "engine": f"engines/{args.language}",
-            "packs": [f"packs/{fmts[f]['dir']}" for f in want],
-            "wires_used": wires,
-            "build_command": build_cmd,
+            "packs": [f"packs/{pack_dir(p)}" for p in packs],
+            "wires_used": sorted({p.wire for p in packs}),
+            "build_command": command,
         },
-        "convertibility": pairs,
+        # what carries between each ordered pair of the named formats
+        "convertibility": [engine.capability(a, b) for a in want for b in want if a != b],
     }
 
-    if args.json:
-        print(json.dumps(manifest, indent=2))
-        return 0
 
-    print(f"# Minimum package for: {', '.join(want)}")
-    print(f"#   {args.language} / {args.runtime} / linkage={linkage} / {args.os} / {args.arch}\n")
-    print(f"engine:      engines/{args.language}")
-    print(f"packs:       {', '.join(fmts[f]['dir'] for f in want)}   (only these)")
-    print(f"wires used:  {', '.join(wires)}   (a minimal engine build can exclude the rest)")
-    print(f"build:       {build_cmd}\n")
+def print_plan(manifest):
+    constraints, package = manifest["constraints"], manifest["package"]
+    print(f"# Minimum package for: {', '.join(constraints['formats'])}")
+    print("#   {language} / {runtime} / linkage={linkage} / {os} / {arch}\n".format(**constraints))
+    print(f"engine:      {package['engine']}")
+    print(f"packs:       {', '.join(p.split('/', 1)[1] for p in package['packs'])}   (only these)")
+    print(f"wires used:  {', '.join(package['wires_used'])}   (a minimal engine build can exclude the rest)")
+    print(f"build:       {package['build_command']}\n")
     print("convertibility among the requested formats:")
-    for p in pairs:
+    for p in manifest["convertibility"]:
         why = "" if not p["dropped"] else f"  (drops {', '.join(p['dropped'])}: {p['to']} has no field for them)"
         print(f"  {p['from']:>12} -> {p['to']:<12} {p['grade'].upper():7} carries [{', '.join(p['carried'])}]{why}")
+
+
+def cmd_plan(args, root):
+    manifest = plan(root, args)
+    if args.json:
+        print(json.dumps(manifest, indent=2))
+    else:
+        print_plan(manifest)
     return 0
 
 
-def head(path):
-    """-> (module name or None, [used modules]) of a model module or a pack."""
-    name, uses = None, []
-    with open(path, encoding="utf-8") as fh:
-        for raw in fh:
-            tok = raw.split("#", 1)[0].split()
-            if len(tok) == 2 and tok[0] == "module" and name is None:
-                name = tok[1]
-            elif len(tok) == 2 and tok[0] == "uses" and tok[1] not in uses:
-                uses.append(tok[1])
-    return name, uses
+# --------------------------------------------------------------------------
+# bundle
+# --------------------------------------------------------------------------
 
-
-def modules_for(pack_dirs):
-    """The module files the packs need, in loading order: `core` first, then
-    each module after the modules it uses. -> [(module, file name)]"""
-    model = os.path.join(REPO, "model")
-    heads = {}
-    for fname in sorted(os.listdir(model)) if os.path.isdir(model) else []:
-        if fname.endswith(".def"):
-            name, uses = head(os.path.join(model, fname))
-            if name is not None and name not in heads:
-                heads[name] = (fname, uses)
-    order, placing = [], []
-
-    def place(name, wanted_by):
-        if any(m == name for m, _ in order):
-            return
-        if name not in heads:
-            raise SystemExit(f"error: {wanted_by} uses module {name}, and no file in model/ declares it")
-        if name in placing:
-            raise SystemExit(f"error: the uses lines of the model modules form a cycle through {name}")
-        placing.append(name)
-        for used in heads[name][1]:
-            if used != name:
-                place(used, f"module {name}")
-        placing.pop()
-        order.append((name, heads[name][0]))
-
-    place("core", "every pack")
-    for d in pack_dirs:
-        for used in head(os.path.join(PACKS, d, "pack.def"))[1]:
-            place(used, f"pack {d}")
-    return order
-
-
-def library_version():
+def library_version(root):
     """The library version: the version of the reference engine's crate."""
     try:
-        with open(os.path.join(REPO, "engines", "rust", "Cargo.toml"), encoding="utf-8") as fh:
+        with open(os.path.join(root, "engines", "rust", "Cargo.toml"), encoding="utf-8") as fh:
             m = re.search(r'^version\s*=\s*"([^"]+)"', fh.read(), re.M)
             return m.group(1) if m else None
     except OSError:
         return None
 
 
-def git(*args):
+def git(root, *args):
+    """The output of a git command in `root`, or None where git cannot answer."""
     try:
-        out = subprocess.run(["git", "-C", REPO, *args], check=True, capture_output=True, text=True).stdout
+        out = subprocess.run(["git", "-C", root, *args], check=True, capture_output=True, text=True).stdout
         return out.strip()
     except (OSError, subprocess.CalledProcessError):
         return None
@@ -307,68 +363,66 @@ def engine(max_distribution="controlled"):
 '''
 
 
-def cmd_bundle(args):
-    fmts = load_formats()
-    want = list(dict.fromkeys(f.strip() for f in args.formats.split(",") if f.strip()))
-    missing = [f for f in want if f not in fmts]
-    if missing or not want:
-        print("error: formats not available:", ", ".join(missing) or "(none named)", file=sys.stderr)
-        print("available:", ", ".join(sorted(fmts)), file=sys.stderr)
-        return 1
-    dirs = [fmts[f]["dir"] for f in want]
-    modules = modules_for(dirs)
+def embed_source(language, package, formats, dirs, module_files):
+    """-> (file name, text) of the source file that compiles the bundle into
+    a program of `language`."""
+    listed = ", ".join(formats)
+    names = ", ".join(json.dumps(d) for d in dirs)
+    if language == "rust":
+        loads = [f'    engine.load_model(include_str!("model/{fname}"))?;\n' for fname in module_files]
+        loads += [f'    engine.load_def(include_str!("packs/{d}/pack.def"))?;\n' for d in dirs]
+        return "goat_packs.rs", EMBED_RUST.format(formats=listed, loads="".join(loads))
+    if language == "go":
+        return "goatpacks.go", EMBED_GO.format(package=package, formats=listed, names=names)
+    return "__init__.py", EMBED_PYTHON.format(formats=listed, names=names)
+
+
+def sha256(path):
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def cmd_bundle(args, root):
+    want, packs = select(root, args.formats)
+    engine = load_engine(root, packs)
+    dirs = [pack_dir(p) for p in packs]
+    # The modules the engine loaded for these packs, in the order it loaded them.
+    modules = [(m.name, os.path.basename(m.path)) for m in engine.models.values()]
     out = args.out
     # Only what this command writes is replaced: model/, packs/ and its own files.
     for sub in ("model", "packs"):
         shutil.rmtree(os.path.join(out, sub), ignore_errors=True)
     files = []  # paths relative to the bundle, in loading order
 
-    def copy(src, rel):
-        dst = os.path.join(out, *rel.split("/"))
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copyfile(src, dst)
+    def place(rel):
         files.append(rel)
+        path = os.path.join(out, *rel.split("/"))
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        return path
 
     for _, fname in modules:
-        copy(os.path.join(REPO, "model", fname), f"model/{fname}")
+        shutil.copyfile(os.path.join(root, "model", fname), place(f"model/{fname}"))
     for d in dirs:
-        copy(os.path.join(PACKS, d, "pack.def"), f"packs/{d}/pack.def")
+        shutil.copyfile(os.path.join(root, "packs", d, "pack.def"), place(f"packs/{d}/pack.def"))
     for name in ("LICENSE", "NOTICE"):
-        if os.path.isfile(os.path.join(REPO, name)):
-            copy(os.path.join(REPO, name), name)
+        if os.path.isfile(os.path.join(root, name)):
+            shutil.copyfile(os.path.join(root, name), place(name))
+    for language in dict.fromkeys(args.embed or []):
+        fname, text = embed_source(language, args.package, want, dirs, [fname for _, fname in modules])
+        with open(place(fname), "w", encoding="utf-8") as fh:
+            fh.write(text)
 
-    def rust_source():
-        loads = [f'    engine.load_model(include_str!("model/{fname}"))?;\n' for _, fname in modules]
-        loads += [f'    engine.load_def(include_str!("packs/{d}/pack.def"))?;\n' for d in dirs]
-        return EMBED_RUST.format(formats=", ".join(want), loads="".join(loads))
-
-    names = ", ".join(json.dumps(d) for d in dirs)
-    generated = {
-        "rust": ("goat_packs.rs", rust_source),
-        "go": ("goatpacks.go", lambda: EMBED_GO.format(package=args.package, formats=", ".join(want), names=names)),
-        "python": ("__init__.py", lambda: EMBED_PYTHON.format(formats=", ".join(want), names=names)),
-    }
-    for lang in dict.fromkeys(args.embed or []):
-        fname, text = generated[lang]
-        with open(os.path.join(out, fname), "w", encoding="utf-8") as fh:
-            fh.write(text())
-        files.append(fname)
-
-    sums = {}
-    for rel in files:
-        with open(os.path.join(out, *rel.split("/")), "rb") as fh:
-            sums[rel] = hashlib.sha256(fh.read()).hexdigest()
-    dirty = git("status", "--porcelain", "--", "model", "packs", "LICENSE", "NOTICE")
+    dirty = git(root, "status", "--porcelain", "--", "model", "packs", "LICENSE", "NOTICE")
     manifest = {
         "library": "goat-transformers",
-        "version": library_version(),
-        "commit": git("rev-parse", "HEAD"),
+        "version": library_version(root),
+        "commit": git(root, "rev-parse", "HEAD"),
         # true when model/, packs/, LICENSE or NOTICE differed from that commit when the bundle was written
         "modified": bool(dirty) if dirty is not None else None,
         "formats": want,
         "packs": dirs,
         "modules": [m for m, _ in modules],
-        "sha256": sums,
+        "sha256": {rel: sha256(os.path.join(out, *rel.split("/"))) for rel in files},
     }
     with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as fh:
         json.dump(manifest, fh, indent=2)
@@ -381,23 +435,27 @@ def cmd_bundle(args):
     return 0
 
 
-def cmd_archive(args):
-    """Every model module and every pack as one .tar.gz, the same bytes for the
-    same tree: sorted members, no owner, no times."""
-    import gzip
-    import tarfile
+# --------------------------------------------------------------------------
+# archive
+# --------------------------------------------------------------------------
 
-    members = []
-    for top in ("LICENSE", "NOTICE"):
-        if os.path.isfile(os.path.join(REPO, top)):
-            members.append(top)
+def archive_members(root, vectors):
+    """The files of the archive, relative to `root`, sorted: LICENSE, NOTICE
+    and everything under model/ and packs/, without the vectors unless asked."""
+    members = [top for top in ("LICENSE", "NOTICE") if os.path.isfile(os.path.join(root, top))]
     for top in ("model", "packs"):
-        for d, dirs, names in os.walk(os.path.join(REPO, top)):
-            if not args.vectors:
-                dirs[:] = [x for x in dirs if x not in ("vectors", "load-vectors")]
-            for n in names:
-                members.append(os.path.relpath(os.path.join(d, n), REPO).replace(os.sep, "/"))
-    members.sort()
+        for folder, dirs, names in os.walk(os.path.join(root, top)):
+            if not vectors:
+                dirs[:] = [d for d in dirs if d not in ("vectors", "load-vectors")]
+            for name in names:
+                members.append(os.path.relpath(os.path.join(folder, name), root).replace(os.sep, "/"))
+    return sorted(members)
+
+
+def cmd_archive(args, root):
+    """One .tar.gz, the same bytes for the same tree: sorted members, one
+    mode, no owner, no times."""
+    members = archive_members(root, args.vectors)
     prefix = args.prefix.strip("/")
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "wb") as raw:
@@ -405,7 +463,7 @@ def cmd_archive(args):
             with tarfile.open(fileobj=gz, mode="w", format=tarfile.PAX_FORMAT) as tar:
                 for rel in members:
                     info = tarfile.TarInfo(f"{prefix}/{rel}" if prefix else rel)
-                    path = os.path.join(REPO, *rel.split("/"))
+                    path = os.path.join(root, *rel.split("/"))
                     info.size = os.path.getsize(path)
                     info.mode = 0o644
                     with open(path, "rb") as fh:
@@ -414,24 +472,39 @@ def cmd_archive(args):
     return 0
 
 
-def main():
-    ap = argparse.ArgumentParser(prog="goat-pkg", description=__doc__)
+# --------------------------------------------------------------------------
+# The command line
+# --------------------------------------------------------------------------
+
+def parser():
+    ap = argparse.ArgumentParser(
+        prog="goat-pkg",
+        description="Plan and write the smallest goat-transformers package for a set of constraints. "
+                    "Packs are read by the Python engine of this repository.",
+    )
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("formats", help="list available formats and their wire")
-    p = sub.add_parser("plan", help="plan the minimum package for a set of constraints")
+    sub.add_parser("formats", help="list every format of the tree, its wire type and the model keys it maps")
+    p = sub.add_parser(
+        "plan",
+        help="print the smallest package for a set of constraints: engine, packs, wire types, build "
+             "command, and what carries between the named formats; exit 1 when a format is not in the "
+             "tree or the build is not one this tool states")
     p.add_argument("--formats", required=True, help="comma-separated message formats needed")
-    p.add_argument("--language", default="rust", choices=LANGUAGES)
-    p.add_argument("--runtime", default="native", help="native | wasm | js | jvm")
-    p.add_argument("--linkage", default="static", choices=["static", "dynamic"])
-    p.add_argument("--os", default="linux")
-    p.add_argument("--arch", default="x86_64")
-    p.add_argument("--json", action="store_true", help="emit the manifest as JSON")
+    p.add_argument("--language", default="rust", choices=LANGUAGES, help="the engine (default rust)")
+    p.add_argument("--runtime", default="native", help="native | wasm | js | jvm (default native)")
+    p.add_argument("--linkage", default="static", choices=["static", "dynamic"],
+                   help="for a native build (default static). A static build is stated for linux only")
+    p.add_argument("--os", default="linux", help="linux | darwin | windows (default linux)")
+    p.add_argument("--arch", default="x86_64", help="x86_64 | aarch64 (default x86_64)")
+    p.add_argument("--json", action="store_true", help="print the plan as JSON")
     b = sub.add_parser(
         "bundle",
         help="write the packs for the named formats and the model modules they use to a directory, with a manifest",
     )
     b.add_argument("--formats", required=True, help="comma-separated message formats needed")
-    b.add_argument("--out", required=True, help="directory to write: model/, packs/, LICENSE, NOTICE, manifest.json")
+    b.add_argument("--out", required=True,
+                   help="directory to write: model/, packs/, LICENSE, NOTICE, manifest.json. Its model/ and "
+                        "packs/ are replaced; nothing else in it is removed")
     b.add_argument(
         "--embed", action="append", choices=["rust", "go", "python"],
         help="also write a source file that compiles the bundle into a program of that language; repeatable",
@@ -441,16 +514,21 @@ def main():
     a.add_argument("--out", required=True, help="the .tar.gz to write")
     a.add_argument("--vectors", action="store_true", help="include the conformance vectors (left out by default)")
     a.add_argument("--prefix", default="", help="a directory name every member is placed under")
-    args = ap.parse_args()
-    if args.cmd == "bundle":
-        return cmd_bundle(args)
-    if args.cmd == "archive":
-        return cmd_archive(args)
-    if args.cmd == "formats":
-        return cmd_formats(args)
-    if args.cmd == "plan":
-        return cmd_plan(args)
-    return 2
+    return ap
+
+
+COMMANDS = {"formats": cmd_formats, "plan": cmd_plan, "bundle": cmd_bundle, "archive": cmd_archive}
+
+
+def main(argv=None, root=REPO):
+    """Run one command on the tree at `root` (the tree this tool is in).
+    -> the exit status"""
+    args = parser().parse_args(argv)
+    try:
+        return COMMANDS[args.cmd](args, root)
+    except Unmet as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
