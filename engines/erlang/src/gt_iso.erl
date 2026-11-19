@@ -4,6 +4,9 @@
 -export([decode/1, encode/1]).
 
 -define(EPOCH_GREGORIAN_SECONDS, 62167219200).
+%% 0001-01-01T00:00:00.000Z and 9999-12-31T23:59:59.999Z (ruling 3 of 0.11)
+-define(MIN_MS, -62135596800000).
+-define(MAX_MS, 253402300799999).
 
 %% "YYYY-MM-DDTHH:MM:SS[.f...]<designator>" -> integer epoch ms. The
 %% designator is `Z`, `z`, `+hh:mm` or `-hh:mm`; the `T` may be lowercase; the
@@ -13,20 +16,30 @@ decode(S) when is_list(S) -> decode(list_to_binary(S));
 decode(<<Y:4/binary, $-, Mo:2/binary, $-, D:2/binary, T,
          H:2/binary, $:, Mi:2/binary, $:, Sec:2/binary, Rest/binary>> = Bin)
   when T =:= $T; T =:= $t ->
-    Date = {int(Y), int(Mo), int(D)},
+    Date = {Yy, _, _} = {int(Y), int(Mo), int(D)},
     Time = {Hh, Mm, Ss} = {int(H), int(Mi), int(Sec)},
-    Valid = calendar:valid_date(Date) andalso Hh =< 23 andalso Mm =< 59 andalso Ss =< 59,
+    %% ruling 3b of 0.11: year 0001 to 9999, the proleptic Gregorian calendar,
+    %% no leap second and no 24:00:00
+    Valid = Yy >= 1 andalso calendar:valid_date(Date)
+        andalso Hh =< 23 andalso Mm =< 59 andalso Ss =< 59,
     {Ms, Rest1} = fraction(Rest),
     OffsetSecs = designator(Rest1),
     case Valid of
         true ->
             Secs = calendar:datetime_to_gregorian_seconds({Date, Time})
                 - ?EPOCH_GREGORIAN_SECONDS - OffsetSecs,
-            Secs * 1000 + Ms;
+            Value = Secs * 1000 + Ms,
+            %% 3d: the instant lies from year 0001 to the end of year 9999
+            case Value >= ?MIN_MS andalso Value =< ?MAX_MS of
+                true -> Value;
+                false -> erlang:error({iso8601_decode, Bin})
+            end;
         false -> erlang:error({iso8601_decode, Bin})
     end;
 decode(Other) -> erlang:error({iso8601_decode, Other}).
 
+%% `.` and one or more digits; the first three are the milliseconds, the
+%% rest dropped (3c)
 fraction(<<$., Rest/binary>>) ->
     N = digits(Rest, 0),
     true = N >= 1,
@@ -56,13 +69,13 @@ designator(<<Sign, H:2/binary, $:, M:2/binary>>) when Sign =:= $+; Sign =:= $- -
         $- -> -Secs
     end.
 
-%% two or four decimal digits, nothing else
+%% two or four ASCII digits, nothing else
 int(B) ->
     true = digits(B, 0) =:= byte_size(B),
     binary_to_integer(B).
 
 %% epoch ms -> "YYYY-MM-DDTHH:MM:SS.fffZ"
-encode(Ms) when is_integer(Ms) ->
+encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS ->
     Milli = ((Ms rem 1000) + 1000) rem 1000,
     Secs = (Ms - Milli) div 1000,
     {{Y, Mo, D}, {H, Mi, S}} =

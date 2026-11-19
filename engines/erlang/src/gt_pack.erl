@@ -1,4 +1,4 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.10).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.11).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
 %% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
@@ -47,7 +47,7 @@
 %% gt_engine:load_pack/2 checks the pack against the loaded modules, types the
 %% defaults and adds the lookup indexes (index/1).
 -module(gt_pack).
--export([parse/1, tokens/1, load_error/3, distribution_atom/1,
+-export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, named/1,
          index/1, factor/1, number/1]).
 
@@ -57,28 +57,68 @@
 %% modules run in gt_engine:load_pack/2.
 parse(Text) when is_list(Text) -> parse(unicode:characters_to_binary(Text));
 parse(Bin) ->
-    Lines = [T || L <- binary:split(Bin, <<"\n">>, [global]),
-                  T <- [tokens(L)], T =/= []],
-    Layout = case first_arg(<<"layout">>, Lines) of
+    RawLines = binary:split(Bin, <<"\n">>, [global]),
+    %% the layout, the word size and whether the pack has kinds are read
+    %% ahead, leniently; every line is checked when it is read below
+    Lax = [T || L <- RawLines, T <- [tokens_lax(L)], T =/= []],
+    Layout = case first_arg(<<"layout">>, Lax) of
                  <<"sequential">> -> sequential;
                  _ -> fixed
              end,
     Base = #{name => undefined, version => undefined,
-             wire => first_arg(<<"wire">>, Lines),
+             wire => undefined,
              root => undefined,
-             word_bytes => first_arg(<<"word_bytes">>, Lines),
+             word_bytes => first_arg(<<"word_bytes">>, Lax),
              layout => Layout,
              bit_order => lsb,
              %% in a sequential pack a `kind` line may belong to a group
              %% body; the flag is set when a kind of the message opens
              has_kinds => Layout =/= sequential andalso
-                 lists:any(fun([<<"kind">> | _]) -> true; (_) -> false end, Lines),
+                 lists:any(fun([<<"kind">> | _]) -> true; (_) -> false end, Lax),
              typemap => [], tables => #{}, table_names => [],
              distribution => undefined, sources => [], uses => [],
              common => [], defaults => [], kinds => [], kind_names => #{},
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
-             cur => common, late => [], gstack => [], sstack => []},
-    P0 = lists:foldl(fun line/2, Base, Lines),
+             cur => common, late => [], gstack => [], sstack => [],
+             headers => #{}, listed_seen => false},
+    P0 = lists:foldl(fun(L, P) ->
+                             case tokens(L) of
+                                 [] -> P;
+                                 T -> line(T, P)
+                             end
+                     end, Base, RawLines),
+    %% after the file (ruling 5b of 0.11): missing-format, missing-version,
+    %% missing-wire; then the checks that need the whole file; then
+    %% missing-distribution and missing-source
+    case maps:get(name, P0) of
+        undefined -> load_error('missing-format', "the pack has no format line", []);
+        _ -> ok
+    end,
+    case maps:get(version, P0) of
+        undefined -> load_error('missing-version', "pack ~s has no version line", [name_str(P0)]);
+        _ -> ok
+    end,
+    case maps:get(wire, P0) of
+        undefined -> load_error('missing-wire', "pack ~s has no wire line", [name_str(P0)]);
+        _ -> ok
+    end,
+    P1 = close_kind(P0),
+    Tables = finish_tables(P1),
+    Wire = maps:get(wire, P1),
+    %% the checks that need the whole file, in file order (ruling 25 of 0.5)
+    lists:foreach(
+      fun({bad, Fmt, Args}) -> load_error('bad-directive', Fmt, Args);
+         ({raw, Kind, Msg}) -> erlang:error({load_error, Kind, Msg});
+         ({text_only, _Dir}) when Wire =:= text -> ok;
+         ({text_only, Dir}) ->
+              load_error('bad-directive', "~s is valid only on a text wire, not ~s", [Dir, Wire]);
+         ({via, Table}) ->
+              case maps:is_key(Table, Tables) of
+                  true -> ok;
+                  false -> load_error('bad-directive',
+                                      "via names table ~s, which has no map line", [Table])
+              end
+      end, lists:reverse(maps:get(late, P1))),
     case maps:get(gstack, P0) of
         [] -> ok;
         [#{list := Open} | _] ->
@@ -89,21 +129,19 @@ parse(Bin) ->
         [#{type := Type} | _] ->
             load_error('bad-directive', "a ~s block has no end line", [Type])
     end,
-    P1 = close_kind(P0),
-    Tables = finish_tables(P1),
-    %% the checks that need the whole file, in file order (ruling 25 of 0.5)
-    lists:foreach(
-      fun({bad, Fmt, Args}) -> load_error('bad-directive', Fmt, Args);
-         ({via, Table}) ->
-              case maps:is_key(Table, Tables) of
-                  true -> ok;
-                  false -> load_error('bad-directive',
-                                      "via names table ~s, which has no map line", [Table])
-              end
-      end, lists:reverse(maps:get(late, P1))),
     P2 = P1#{common := lists:reverse(maps:get(common, P1)),
              kinds := lists:reverse(maps:get(kinds, P1))},
-    case maps:get(wire, P2) of
+    case Wire of
+        xml -> check_roots(P2);
+        _ -> ok
+    end,
+    case {Wire, Layout, maps:get(word_bytes, P2)} of
+        {bits, fixed, undefined} ->
+            load_error('bad-directive', "the fixed-layout bits pack ~s has no word_bytes line",
+                       [name_str(P2)]);
+        _ -> ok
+    end,
+    case Wire of
         text -> text_checks(P2);
         _ -> ok
     end,
@@ -111,22 +149,14 @@ parse(Bin) ->
              sequential -> seq_resolve(P2);
              fixed -> check_scopes(P2), P2
          end,
-    P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen],
+    P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen,
+                      headers, listed_seen],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
                          uses := lists:reverse(maps:get(uses, P1)),
                          tables := Tables}),
     require_marking(["pack ", name_str(P)], P),
-    case maps:get(name, P) of
-        undefined -> load_error('bad-directive', "the pack has no format line", []);
-        _ -> ok
-    end,
-    case maps:get(wire, P) of
-        undefined -> load_error('bad-directive', "pack ~s has no wire line", [name_str(P)]);
-        xml -> check_roots(P);
-        _ -> ok
-    end,
     P.
 
 %% An xml pack needs a root for every message: the pack's, or one per kind.
@@ -137,7 +167,7 @@ check_roots(#{root := Root, kinds := Kinds, has_kinds := HasKinds} = P) ->
                               lists:any(fun(#{root := R}) -> R =:= undefined end, Kinds)
               end,
     case Missing of
-        true -> load_error('bad-directive', "xml pack ~s has no root line", [name_str(P)]);
+        true -> load_error('missing-root', "xml pack ~s has no root line", [name_str(P)]);
         false -> ok
     end.
 
@@ -146,9 +176,12 @@ check_roots(#{root := Root, kinds := Kinds, has_kinds := HasKinds} = P) ->
 first_arg(Dir, Lines) ->
     case [A || [D, A] <- Lines, D =:= Dir] of
         [] -> undefined;
-        [A | _] when Dir =:= <<"wire">> -> wire_atom(A);
         [A | _] when Dir =:= <<"layout">> -> A;
-        [A | _] when Dir =:= <<"word_bytes">> -> word_bytes(A)
+        [A | _] when Dir =:= <<"word_bytes">> ->
+            case uint(A) of
+                N when is_integer(N), N >= 1 -> N;
+                _ -> undefined
+            end
     end.
 
 name_str(#{name := undefined}) -> "?";
@@ -284,8 +317,116 @@ index(#{kinds := Kinds, root := PackRoot} = P) ->
 %% ===================================================================
 %% One line. Inside a group `when`, `requires`, `root`, `kind`, `map` and
 %% `typemap` are not allowed.
-line(Tokens, #{layout := sequential, wire := bits} = P) -> seq_line(Tokens, P);
-line([Dir | _] = Tokens, #{gstack := Stack} = P) ->
+%% Each line is checked in the order of ruling 5b of 0.11: the quotes (by
+%% tokens/1), the directive, the number of arguments, the `wire` line before
+%% it, a repeated header line, the wire and distribution values; then the
+%% transform, the locator, the field options and the `absent` values, which
+%% raise {line_error, ...}. Any other failure of the line is checked after
+%% the file is read, in file order.
+line(Tokens, P0) ->
+    P = try pre_line(Tokens, P0)
+        catch error:{line_error, K, M} -> erlang:error({load_error, K, M})
+        end,
+    try dispatch(Tokens, P)
+    catch
+        error:{line_error, Kind, Msg} -> erlang:error({load_error, Kind, Msg});
+        error:{load_error, Kind, Msg} -> late({raw, Kind, Msg}, P)
+    end.
+
+%% A failure that is a line check (ruling 5b of 0.11).
+line_error(Kind, Fmt, Args) ->
+    Msg = lists:flatten(io_lib:format("~s: " ++ Fmt, [Kind | Args])),
+    erlang:error({line_error, Kind, Msg}).
+
+%% The directives of a pack (ruling 5 of 0.11).
+pack_directives() ->
+    [<<"format">>, <<"version">>, <<"distribution">>, <<"source">>, <<"uses">>, <<"wire">>,
+     <<"root">>, <<"field">>, <<"when">>, <<"const">>, <<"kind">>, <<"requires">>,
+     <<"default">>, <<"map">>, <<"typemap">>, <<"group">>, <<"end">>, <<"word_bytes">>,
+     <<"bit_order">>, <<"layout">>, <<"also">>, <<"pad">>, <<"align">>, <<"presence">>,
+     <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>, <<"delimiter">>,
+     <<"start">>, <<"checksum">>].
+
+%% The lines that stand after the `wire` line (ruling 5b of 0.11).
+after_wire() ->
+    [<<"root">>, <<"field">>, <<"when">>, <<"const">>, <<"group">>, <<"end">>,
+     <<"word_bytes">>, <<"bit_order">>, <<"layout">>, <<"also">>, <<"pad">>, <<"align">>,
+     <<"presence">>, <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>].
+
+%% Does a directive take this number of arguments? (ruling 5e of 0.11)
+arg_count_ok(Dir, N) ->
+    One = [<<"format">>, <<"version">>, <<"distribution">>, <<"source">>, <<"uses">>,
+           <<"wire">>, <<"root">>, <<"kind">>, <<"word_bytes">>, <<"bit_order">>,
+           <<"layout">>, <<"pad">>, <<"align">>, <<"delimiter">>, <<"start">>,
+           <<"checksum">>],
+    case lists:member(Dir, One) of
+        true -> N =:= 1;
+        false ->
+            case Dir of
+                <<"field">> -> N >= 3;
+                <<"when">> -> N =:= 2;
+                <<"const">> -> N =:= 2;
+                <<"default">> -> N =:= 2;
+                <<"map">> -> N =:= 3;
+                <<"typemap">> -> N =:= 2;
+                <<"group">> -> N >= 2;
+                <<"presence">> -> N =:= 2;
+                <<"end">> -> N =:= 0;
+                <<"opt">> -> N =:= 0;
+                <<"chain">> -> N =:= 0;
+                <<"fx">> -> N =:= 0;
+                _ -> N >= 1                       % requires, also, if, length
+            end
+    end.
+
+pre_line([Dir | Args], P0) ->
+    case lists:member(Dir, pack_directives()) of
+        true -> ok;
+        false -> line_error('unknown-directive', "~s is not a directive of a pack", [Dir])
+    end,
+    case arg_count_ok(Dir, length(Args)) of
+        true -> ok;
+        false -> line_error('bad-directive', "~s does not take ~p argument(s)", [Dir, length(Args)])
+    end,
+    Listed = lists:member(Dir, after_wire()),
+    case Listed andalso maps:get(wire, P0) =:= undefined of
+        true -> line_error('missing-wire', "~s stands before the wire line", [Dir]);
+        false -> ok
+    end,
+    Headers = maps:get(headers, P0),
+    IsHeader = lists:member(Dir, [<<"format">>, <<"version">>, <<"wire">>, <<"distribution">>]),
+    case IsHeader andalso maps:is_key(Dir, Headers) of
+        true -> line_error('bad-directive', "a second ~s line", [Dir]);
+        false -> ok
+    end,
+    P1 = case IsHeader of
+             true -> P0#{headers := Headers#{Dir => true}};
+             false -> P0
+         end,
+    P2 = case {Dir, Args} of
+             {<<"wire">>, [W]} -> P1#{wire := wire_atom(W)};
+             {<<"distribution">>, [D]} ->
+                 case D of
+                     <<"public">> -> P1;
+                     <<"controlled">> -> P1;
+                     _ -> line_error('bad-directive',
+                                     "distribution ~s is neither public nor controlled", [D])
+                 end;
+             _ -> P1
+         end,
+    %% `layout sequential` stands before every line of the list
+    case {Dir, Args, maps:get(listed_seen, P2)} of
+        {<<"layout">>, [<<"sequential">>], true} ->
+            line_error('bad-directive', "layout sequential stands after a line it must precede", []);
+        _ -> ok
+    end,
+    case Listed andalso Dir =/= <<"layout">> of
+        true -> P2#{listed_seen := true};
+        false -> P2
+    end.
+
+dispatch(Tokens, #{layout := sequential, wire := bits} = P) -> seq_line(Tokens, P);
+dispatch([Dir | _] = Tokens, #{gstack := Stack} = P) ->
     %% inside a group only these are lines of the body (ruling 18 of 0.7);
     %% a name that is no directive at all stays unknown-directive
     Allowed = [<<"field">>, <<"const">>, <<"default">>, <<"group">>, <<"end">>],
@@ -308,7 +449,7 @@ in_group(#{gstack := Stack}) -> Stack =/= [].
 
 apply_line([<<"format">>, N], P)   -> P#{name => N};
 apply_line([<<"version">>, V], P)  -> P#{version => V};
-apply_line([<<"wire">>, W], P)     -> _ = wire_atom(W), P;       % read by first_arg
+apply_line([<<"wire">>, _W], P)    -> P;                         % read by pre_line/2
 apply_line([<<"root">>, R], #{cur := Cur} = P) ->
     case Cur of
         common -> P#{root => R};
@@ -393,10 +534,14 @@ apply_line([<<"default">>, Key, Val], #{cur := Cur} = P) ->
     end;
 apply_line([<<"group">>, List, LocS | Rest], #{gstack := Stack} = P) ->
     Wire = need_wire(P),
-    G = #{list => List, loc => group_loc(Wire, LocS, in_group(P), P),
-          spec => group_spec(Wire, Rest, LocS, P), loct => LocS,
+    Loc = group_loc(Wire, LocS, in_group(P), P),
+    %% a group's options are checked after the file is read (ruling 5b of 0.11)
+    {Spec, P1} = try {group_spec(Wire, Rest, LocS, P), P}
+                 catch error:{load_error, K, M} -> {none, late({raw, K, M}, P)}
+                 end,
+    G = #{list => List, loc => Loc, spec => Spec, loct => LocS,
           lines => [], defaults => []},
-    P#{gstack := [G | Stack]};
+    P1#{gstack := [G | Stack]};
 apply_line([<<"end">>], #{gstack := Stack} = P) ->
     case Stack of
         [] -> load_error('bad-directive', "end with no open group", []);
@@ -456,14 +601,14 @@ parse_opts([<<"optional">> | Rest], Opts) ->
 %% the token after `absent` is always its argument (ruling 11 of 0.9)
 parse_opts([<<"absent">>, Arg | Rest], Opts) ->
     parse_opts(Rest, set_opt(5, none, {arg, Arg}, <<"absent">>, Opts));
-parse_opts([<<"absent">>], _) -> load_error('bad-directive', "absent names no value", []);
-parse_opts([<<"via">>], _) -> load_error('bad-directive', "via names no table", []);
-parse_opts([Other | _], _) -> load_error('bad-directive', "unknown field option ~s", [Other]).
+parse_opts([<<"absent">>], _) -> line_error('bad-directive', "absent names no value", []);
+parse_opts([<<"via">>], _) -> line_error('bad-directive', "via names no table", []);
+parse_opts([Other | _], _) -> line_error('bad-directive', "unknown field option ~s", [Other]).
 
 set_opt(I, Unset, Value, Name, Opts) ->
     case element(I, Opts) of
         Unset -> setelement(I, Opts, Value);
-        _ -> load_error('bad-directive', "field option ~s is given twice", [Name])
+        _ -> line_error('bad-directive', "field option ~s is given twice", [Name])
     end.
 
 need_wire(#{wire := undefined}) ->
@@ -486,7 +631,7 @@ wire_atom(<<"json">>) -> json;
 wire_atom(<<"bits">>) -> bits;
 wire_atom(<<"protobuf">>) -> protobuf;
 wire_atom(<<"text">>) -> text;
-wire_atom(W) -> load_error('bad-directive', "unknown wire ~s", [W]).
+wire_atom(W) -> line_error('unknown-wire', "~s", [W]).
 
 word_bytes(S) ->
     case uint(S) of
@@ -517,10 +662,17 @@ sentinels(Wire, Tr, Len, Opts) ->
     case element(5, Opts) of
         none -> {Opts, []};
         {arg, Arg} ->
+            %% the values are a line check, except on a bits field longer than
+            %% 64 bits, which the check of its length after the file refuses
+            %% (rulings 4d and 5b of 0.11)
             try absent_values(Wire, Tr, Len, Arg) of
                 Values -> {setelement(5, Opts, Values), []}
             catch
-                throw:{absent_bad, Fmt, Args} -> {setelement(5, Opts, none), [{bad, Fmt, Args}]}
+                throw:{absent_bad, Fmt, Args} ->
+                    case Wire =:= bits andalso is_integer(Len) andalso Len > 64 of
+                        true -> {setelement(5, Opts, none), [{bad, Fmt, Args}]};
+                        false -> line_error('bad-directive', Fmt, Args)
+                    end
             end
     end.
 
@@ -589,10 +741,7 @@ absent_json(<<"null">>) -> absent_bad("absent null: null is not a value", []);
 absent_json(V) when V =:= <<"true">>; V =:= <<"false">> -> {bool, V};
 absent_json(V) ->
     case gt_json:read_number(V) of
-        {ok, N} ->
-            try {num, list_to_binary(gt_num:fmt_float(float(N)))}
-            catch error:badarg -> absent_bad("absent ~s does not fit a double", [V])
-            end;
+        {ok, Canonical} -> {num, Canonical};
         out_of_range -> absent_bad("absent ~s does not fit a double", [V]);
         not_number -> {str, V}
     end.
@@ -636,13 +785,10 @@ canon_as(Type, Text) ->
     catch _:_ -> Text
     end.
 
-is_int_text(<<$-, R/binary>>) -> R =/= <<>> andalso all_digits(R);
-is_int_text(B) -> B =/= <<>> andalso all_digits(B).
+%% an entry is an integer when 2a of 0.11 accepts it, a number when 2b does
+is_int_text(B) -> gt_num:int_text(B) =/= error.
 
-is_number_text(B) ->
-    try gt_num:dec_to_float(B) of _ -> true
-    catch _:_ -> false
-    end.
+is_number_text(B) -> gt_num:num_text(B) =/= error.
 
 %% ===================================================================
 %% locators
@@ -655,7 +801,7 @@ parse_loc(text, S, P) ->
         [#{spec := {text_item, N}} | _] ->
             case lists:all(fun(K) -> K < N end, gt_text:loc_indexes(Loc)) of
                 true -> ok;
-                false -> load_error('bad-directive', "locator ~s lies beyond an item of ~p fields",
+                false -> line_error('bad-directive', "locator ~s lies beyond an item of ~p fields",
                                     [S, N])
             end;
         _ -> ok
@@ -674,41 +820,74 @@ parse_loc(Wire, S, P) ->
             end
     end.
 
+%% The locator forms of ruling 5a of 0.11: a form the line does not take on
+%% the pack's wire is bad-locator, raised as the line is read.
 top_loc(xml, S, _P) ->
     Parts = binary:split(S, <<"/">>, [global]),
+    case lists:member(<<>>, Parts) of
+        true -> line_error('bad-locator', "xml locator ~s has an empty step", [S]);
+        false -> ok
+    end,
     Path = lists:droplast(Parts),
+    case [X || X <- Path, is_leaf_step(X)] of
+        [] -> ok;
+        _ -> line_error('bad-locator', "xml locator ~s has a step after @name or #text", [S])
+    end,
     case lists:last(Parts) of
-        <<"@", A/binary>> when A =/= <<>> -> {Path, {attr, A}};
+        <<"@">> -> line_error('bad-locator', "xml locator ~s has an empty attribute name", [S]);
+        <<"@", A/binary>> -> {Path, {attr, A}};
         <<"#text">> -> {Path, text};
-        _ -> load_error('bad-directive', "xml locator ~s names no attribute or #text", [S])
+        _ -> line_error('bad-locator', "xml locator ~s does not end in @name or #text", [S])
     end;
 top_loc(geojson, <<"geometry.lon">>, _P) -> {geom, 1};
 top_loc(geojson, <<"geometry.lat">>, _P) -> {geom, 2};
 top_loc(geojson, <<"geometry.alt">>, _P) -> {geom, 3};
-top_loc(geojson, <<"properties.", Name/binary>>, _P) when Name =/= <<>> -> {prop, Name};
+top_loc(geojson, <<"geometry.", _/binary>> = S, _P) ->
+    line_error('bad-locator', "geojson locator ~s: geometry. is followed by lon, lat or alt", [S]);
+top_loc(geojson, <<"properties.">> = S, _P) ->
+    line_error('bad-locator', "geojson locator ~s has an empty member name", [S]);
+top_loc(geojson, <<"properties.", Name/binary>>, _P) -> {prop, Name};
+top_loc(geojson, <<>>, _P) ->
+    line_error('bad-locator', "geojson locator with an empty member name", []);
 top_loc(geojson, Name, _P) -> {top, Name};
+top_loc(json, <<".">>, _P) ->
+    line_error('bad-directive', "the locator . stands outside a group", []);
 top_loc(json, S, _P) ->
     Parts = binary:split(S, <<".">>, [global]),
     case lists:member(<<>>, Parts) of
-        true -> load_error('bad-directive', "json path ~s has an empty member name", [S]);
+        true -> line_error('bad-locator', "json path ~s has an empty member name", [S]);
         false -> Parts
     end;
-top_loc(bits, S, #{word_bytes := WB}) ->
-    case WB of
-        undefined -> load_error('bad-directive', "the bits pack has no word_bytes line", []);
-        _ -> ok
+top_loc(bits, S, #{word_bytes := WB0}) ->
+    %% a missing word_bytes line is checked after the file is read
+    WB = case WB0 of
+             undefined -> 1;
+             _ -> WB0
+         end,
+    %% a bit length (digits only) as the locator is bad-directive; any other
+    %% text that is not <word>:<pos>:<len> is bad-locator (ruling 5a of 0.11)
+    case binary:match(S, <<":">>) =:= nomatch andalso uint(S) =/= error of
+        true -> line_error('bad-directive',
+                           "bits locator ~s is a bit length in a fixed-layout pack", [S]);
+        false -> ok
     end,
     case [uint(X) || X <- binary:split(S, <<":">>, [global])] of
         [W, Pos, Len] when is_integer(W), is_integer(Pos), is_integer(Len), Len >= 1 ->
             {W * WB * 8 + Pos, Len};
-        _ -> load_error('bad-directive', "bits locator ~s is not <word>:<pos>:<len>", [S])
+        _ -> line_error('bad-locator', "bits locator ~s is not <word>:<pos>:<len>", [S])
     end;
+top_loc(protobuf, <<".">>, _P) ->
+    line_error('bad-directive', "the locator . stands outside a group", []);
 top_loc(protobuf, S, _P) ->
     Nums = [uint(X) || X <- binary:split(S, <<".">>, [global])],
-    case lists:all(fun(N) -> is_integer(N) andalso N >= 1 end, Nums) of
+    case lists:all(fun(N) -> is_integer(N) andalso N >= 1 andalso N =< 536870911 end, Nums) of
         true -> Nums;
-        false -> load_error('bad-directive', "protobuf path ~s is not field numbers", [S])
+        false -> line_error('bad-locator', "protobuf path ~s is not field numbers from 1 to 536870911", [S])
     end.
+
+is_leaf_step(<<"@", _/binary>>) -> true;
+is_leaf_step(<<"#text">>) -> true;
+is_leaf_step(_) -> false.
 
 %% The locator of a `group` line.
 group_loc(text, S, true, _P) ->
@@ -720,6 +899,10 @@ group_loc(text, S, false, _P) ->
     end;
 group_loc(xml, S, _InGroup, _P) ->
     Parts = binary:split(S, <<"/">>, [global]),
+    case lists:member(<<>>, Parts) of
+        true -> line_error('bad-locator', "xml locator ~s has an empty step", [S]);
+        false -> ok
+    end,
     Ok = lists:all(fun(<<>>) -> false;
                       (<<"@", _/binary>>) -> false;
                       (<<"#", _/binary>>) -> false;
@@ -735,11 +918,11 @@ group_loc(geojson, S, false, P) -> top_loc(geojson, S, P);
 group_loc(geojson, S, true, P) -> top_loc(json, S, P);
 group_loc(json, S, _InGroup, P) -> top_loc(json, S, P);
 group_loc(protobuf, S, _InGroup, P) -> top_loc(protobuf, S, P);
-group_loc(bits, S, _InGroup, #{word_bytes := WB}) ->
-    case WB of
-        undefined -> load_error('bad-directive', "the bits pack has no word_bytes line", []);
-        _ -> ok
-    end,
+group_loc(bits, S, _InGroup, #{word_bytes := WB0}) ->
+    WB = case WB0 of
+             undefined -> 1;
+             _ -> WB0
+         end,
     case [uint(X) || X <- binary:split(S, <<":">>, [global])] of
         [W, Pos] when is_integer(W), is_integer(Pos) -> W * WB * 8 + Pos;
         _ -> load_error('bad-directive', "bits group locator ~s is not <word>:<pos>", [S])
@@ -971,10 +1154,11 @@ parse_transform(Wire, S) ->
              {_, text} -> late;
              _ -> false
          end,
+    %% a transform on a wire it is not valid for is checked after the file
+    %% is read (ruling 5b of 0.11)
     case Ok of
         true -> {Tr, []};
-        late -> {Tr, [{bad, "transform ~s is not valid on a ~s wire", [S, Wire]}]};
-        false -> load_error('bad-transform', "transform ~s is not valid on a ~s wire", [S, Wire])
+        _ -> {Tr, [{bad, "transform ~s is not valid on a ~s wire", [S, Wire]}]}
     end.
 
 transform(<<"string">>)     -> {text, string};
@@ -988,9 +1172,17 @@ transform(<<"f32">>)        -> {bits, f32};
 transform(<<"f64">>)        -> {bits, f64};
 transform(<<"ascii">>)      -> {bits, ascii};
 transform(<<"linscale:", Rest/binary>> = S) ->
+    %% ruling 4d of 0.11: <maxpos> an unsigned decimal integer of at least 1,
+    %% <range> number text that does not read as zero
     case binary:split(Rest, <<":">>, [global]) of
-        [Max, Range] -> {bits, {linscale, number(Max), number(Range)}};
-        _ -> load_error('bad-directive', "~s is not linscale:<maxpos>:<range>", [S])
+        [MaxS, RangeS] ->
+            Max = case gt_num:uint_text(MaxS) of
+                      {ok, M} when M >= 1 -> M;
+                      _ -> line_error('bad-directive', "~s: ~s is not an unsigned decimal integer of at least 1",
+                                      [S, MaxS])
+                  end,
+            {bits, {linscale, Max, nonzero(RangeS, S)}};
+        _ -> line_error('bad-directive', "~s is not linscale:<maxpos>:<range>", [S])
     end;
 transform(<<"uscale:", Rest/binary>> = S) -> {bits, scale(uscale, Rest, S)};
 transform(<<"sscale:", Rest/binary>> = S) -> {bits, scale(sscale, Rest, S)};
@@ -1004,45 +1196,81 @@ transform(<<"dec:", Rest/binary>> = S) ->
     case binary:split(Rest, <<":">>, [global]) of
         [F] -> {textonly, {dec, tparam(F, 0, 9, S), none}};
         [F, W] -> {textonly, {dec, tparam(F, 0, 9, S), tparam(W, 1, 20, S)}};
-        _ -> load_error('bad-directive', "~s is not dec:<f>[:<w>]", [S])
+        _ -> line_error('bad-directive', "~s is not dec:<f>[:<w>]", [S])
     end;
 transform(<<"dm:", Rest/binary>> = S) ->
     case binary:split(Rest, <<":">>, [global]) of
         [D, F, <<Pos, Neg>>] when Pos >= $A, Pos =< $Z, Neg >= $A, Neg =< $Z, Pos =/= Neg ->
             {textonly, {dm, tparam(D, 1, 3, S), tparam(F, 0, 9, S), Pos, Neg}};
-        _ -> load_error('bad-directive', "~s is not dm:<d>:<f>:<PN>, two different letters A to Z", [S])
+        _ -> line_error('bad-directive', "~s is not dm:<d>:<f>:<PN>, two different letters A to Z", [S])
     end;
 transform(<<"hms:", F/binary>> = S) -> {textonly, {hms, tparam(F, 0, 3, S)}};
 transform(<<"hms_dmy:", F/binary>> = S) -> {textonly, {hms_dmy, tparam(F, 0, 3, S)}};
-transform(T) when T =:= <<"dec">>; T =:= <<"dm">>; T =:= <<"hms">>; T =:= <<"hms_dmy">> ->
-    load_error('bad-directive', "transform ~s needs its parameters", [T]);
-transform(T) -> load_error('unknown-transform', "~s", [T]).
-
-%% <factor>[:<offset>]
-scale(Name, Rest, S) ->
-    case binary:split(Rest, <<":">>, [global]) of
-        [F] -> {Name, factor(F), 0.0};
-        [F, O] -> {Name, factor(F), number(O)};
-        _ -> load_error('bad-directive', "~s has too many arguments", [S])
+transform(T) ->
+    %% a transform's name is the text before its first `:`
+    [Name | _] = binary:split(T, <<":">>),
+    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"bool">>, <<"uint">>,
+             <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
+             <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
+             <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>],
+    case lists:member(Name, Known) of
+        true -> line_error('bad-directive', "transform ~s: its parameters are not valid", [T]);
+        false -> line_error('unknown-transform', "~s", [T])
     end.
 
-%% A factor is a decimal or a fraction <num>/<den> of two decimal integers
-%% (ruling 1 of 0.5) -> {dec, float()} | {frac, float(), float()}.
+%% <factor>[:<offset>] (ruling 4d of 0.11)
+scale(Name, Rest, S) ->
+    case binary:split(Rest, <<":">>, [global]) of
+        [F] -> {Name, scale_factor(F, S), 0.0};
+        [F, O] ->
+            case gt_num:num_text(O) of
+                {ok, Off} -> {Name, scale_factor(F, S), Off};
+                error -> line_error('bad-directive', "~s: offset ~s is not number text", [S, O])
+            end;
+        _ -> line_error('bad-directive', "~s has too many parameters", [S])
+    end.
+
+%% A factor of uscale or sscale: number text that does not read as zero, or
+%% <num>/<den> of two unsigned decimal integers, neither zero.
+scale_factor(Text, S) ->
+    case binary:split(Text, <<"/">>, [global]) of
+        [_] -> {dec, nonzero(Text, S)};
+        [N, D] ->
+            case {gt_num:uint_text(N), gt_num:uint_text(D)} of
+                {{ok, Num}, {ok, Den}} when Num >= 1, Den >= 1 -> {frac, float(Num), float(Den)};
+                _ -> line_error('bad-directive', "~s: ~s is not <num>/<den> of two integers above zero",
+                                [S, Text])
+            end;
+        _ -> line_error('bad-directive', "~s: ~s is not a factor", [S, Text])
+    end.
+
+nonzero(Text, S) ->
+    case gt_num:num_text(Text) of
+        {ok, F} when F /= 0.0 -> F;
+        _ -> line_error('bad-directive', "~s: ~s is not number text that reads as other than zero",
+                        [S, Text])
+    end.
+
+%% The factor of the `scale` derive function (ruling 1 of 0.5, ruling 2c of
+%% 0.11): number text, or <num>/<den> where <num> is integer text and <den>
+%% an unsigned decimal integer that is not zero
+%% -> {dec, float()} | {frac, float(), float()}.
 factor(Text) ->
     case binary:split(Text, <<"/">>, [global]) of
         [_] -> {dec, number(Text)};
-        [N, D] -> {frac, float(integer(N)), float(integer(D))};
+        [N, D] ->
+            case {gt_num:int_text(N), gt_num:uint_text(D)} of
+                {{ok, Num}, {ok, Den}} when Den >= 1 -> {frac, float(Num), float(Den)};
+                _ -> load_error('bad-directive', "~s is not a fraction", [Text])
+            end;
         _ -> load_error('bad-directive', "~s is not a fraction", [Text])
     end.
 
+%% Number text (ruling 2b of 0.11).
 number(Text) ->
-    try gt_num:dec_to_float(Text)
-    catch _:_ -> load_error('bad-directive', "~s is not a decimal number", [Text])
-    end.
-
-integer(Text) ->
-    try binary_to_integer(Text)
-    catch _:_ -> load_error('bad-directive', "~s is not a decimal integer", [Text])
+    case gt_num:num_text(Text) of
+        {ok, F} -> F;
+        error -> load_error('bad-directive', "~s is not number text", [Text])
     end.
 
 %% ===================================================================
@@ -1052,24 +1280,32 @@ integer(Text) ->
 %% boundary (line start or after whitespace); inside a token, and inside a
 %% double-quoted value, it is literal. A double-quoted value may contain
 %% whitespace and cannot contain a double quote.
+%% A value that begins with `"` and has no closing `"` on its line is
+%% unterminated-quote (ruling 5 of 0.11); tokens_lax/1 reads it to the end
+%% of the line, for the readers that look ahead.
 tokens(Line) when is_list(Line) -> tokens(unicode:characters_to_binary(Line));
-tokens(Line) -> tokens(Line, []).
+tokens(Line) -> tokens(Line, [], strict).
 
-tokens(<<>>, Acc) -> lists:reverse(Acc);
-tokens(<<C, Rest/binary>>, Acc) when C =:= $\s; C =:= $\t; C =:= $\r ->
-    tokens(Rest, Acc);                         % skip inter-token whitespace
-tokens(<<$#, _/binary>>, Acc) -> lists:reverse(Acc);   % comment to end of line
-tokens(<<$", Rest/binary>>, Acc) ->
+tokens_lax(Line) when is_list(Line) -> tokens_lax(unicode:characters_to_binary(Line));
+tokens_lax(Line) -> tokens(Line, [], lax).
+
+tokens(<<>>, Acc, _Mode) -> lists:reverse(Acc);
+tokens(<<C, Rest/binary>>, Acc, Mode) when C =:= $\s; C =:= $\t; C =:= $\r ->
+    tokens(Rest, Acc, Mode);                   % skip inter-token whitespace
+tokens(<<$#, _/binary>>, Acc, _Mode) -> lists:reverse(Acc);   % comment to end of line
+tokens(<<$", Rest/binary>>, Acc, Mode) ->
     N = scan_quoted(Rest, 0),
     <<Tok:N/binary, Rest1/binary>> = Rest,
     case Rest1 of
-        <<$", Rest2/binary>> -> tokens(Rest2, [Tok | Acc]);
-        <<>> -> tokens(<<>>, [Tok | Acc])
+        <<$", Rest2/binary>> -> tokens(Rest2, [Tok | Acc], Mode);
+        <<>> when Mode =:= strict ->
+            load_error('unterminated-quote', "the value \"~ts has no closing quote", [Tok]);
+        <<>> -> tokens(<<>>, [Tok | Acc], Mode)
     end;
-tokens(Line, Acc) ->
+tokens(Line, Acc, Mode) ->
     N = scan_bare(Line, 0),
     <<Tok:N/binary, Rest1/binary>> = Line,
-    tokens(Rest1, [Tok | Acc]).
+    tokens(Rest1, [Tok | Acc], Mode).
 
 scan_quoted(Bin, N) ->
     case Bin of
@@ -1121,7 +1357,7 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
 
 seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
     {Tr, TrChecks} = parse_transform(bits, TrS),
-    Len = seq_len(LenS, 1, infinity),
+    Len = seq_loc(LenS, infinity),
     {Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
     Absent = element(5, Opts),
@@ -1156,12 +1392,12 @@ seq_apply([<<"also">>, Key | Rest], P0) ->
         _ -> load_error('bad-directive', "also ~s does not follow a field line", [Key])
     end;
 seq_apply([<<"const">>, LenS, ValS], P) ->
-    Len = seq_len(LenS, 1, 64),
+    Len = seq_loc(LenS, 64),
     seq_add({sconst, Len, seq_value(ValS, Len)}, P);
 seq_apply([<<"pad">>, LenS], P) -> seq_add({pad, seq_len(LenS, 0, infinity)}, P);
 seq_apply([<<"align">>, NS], P) -> seq_add({align, seq_len(NS, 1, infinity)}, P);
 seq_apply([<<"when">>, LenS, ValS], #{sstack := Stack} = P) ->
-    Len = seq_len(LenS, 1, 64),
+    Len = seq_loc(LenS, 64),
     %% a `when` stands among the common lines, or first in its kind
     First = fun(Ls) -> lists:all(fun(L) -> element(1, L) =:= swhen end, Ls) end,
     Ok = case Stack of
@@ -1264,6 +1500,23 @@ seq_len(S, Min, Max) ->
         _ -> load_error('bad-directive', "~s is not a bit length a sequential pack allows", [S])
     end.
 
+%% The locator of a `field`, `when` or `const` line of a sequential pack: a
+%% bit length. A `<word>:<pos>:<len>` locator is bad-directive; text that is
+%% not digits only, and a length of 0, are bad-locator (ruling 5a of 0.11).
+seq_loc(S, Max) ->
+    case binary:match(S, <<":">>) of
+        nomatch -> ok;
+        _ -> line_error('bad-directive', "~s is a <word>:<pos>:<len> locator in a sequential pack", [S])
+    end,
+    case uint(S) of
+        N when is_integer(N), N >= 1 ->
+            case Max =:= infinity orelse N =< Max of
+                true -> N;
+                false -> load_error('bad-directive', "~s is more bits than this line allows", [S])
+            end;
+        _ -> line_error('bad-locator', "~s is not a bit length", [S])
+    end.
+
 seq_value(ValS, Len) ->
     case uint(ValS) of
         V when is_integer(V), V < (1 bsl Len) -> V;
@@ -1293,8 +1546,9 @@ seq_length_opts([<<"bytes">> | R], {undefined, P, W}) -> seq_length_opts(R, {byt
 seq_length_opts([<<"bits">> | R], {undefined, P, W}) -> seq_length_opts(R, {bits, P, W});
 seq_length_opts([<<"whole">> | R], {U, P, false}) -> seq_length_opts(R, {U, P, true});
 seq_length_opts([<<"plus">>, NS | R], {U, undefined, W}) ->
-    N = try binary_to_integer(NS)
-        catch _:_ -> load_error('bad-directive', "length plus ~s is not an integer", [NS])
+    N = case gt_num:int_text(NS) of
+            {ok, I} -> I;
+            error -> load_error('bad-directive', "length plus ~s is not integer text", [NS])
         end,
     seq_length_opts(R, {U, N, W});
 seq_length_opts([Tok | _], _) ->
@@ -1480,10 +1734,9 @@ seq_res_block(Body, Env, St) ->
 %% read; another wire, a second line and a line after the first `kind` are
 %% refused after the file is read (rulings 2 and 10 of 0.10).
 text_directive(Dir, V, #{text_seen := Seen, cur := Cur, kind_names := Kinds} = P0) ->
-    P1 = case maps:get(wire, P0) of
-             text -> P0;
-             W -> late({bad, "~s is valid only on a text wire, not ~s", [Dir, W]}, P0)
-         end,
+    %% the wire is checked after the file is read, wherever the wire line
+    %% stands (ruling 10 of 0.10)
+    P1 = late({text_only, Dir}, P0),
     P2 = case maps:is_key(Dir, Seen) of
              true -> late({bad, "~s appears more than once", [Dir]}, P1);
              false -> P1
@@ -1523,15 +1776,15 @@ text_loc(S) ->
             case {uint(A), uint(B)} of
                 {I, J} when is_integer(I), is_integer(J), I =/= J -> {pair, I, J};
                 {I, I} when is_integer(I) ->
-                    load_error('bad-directive', "pair ~s names one field twice", [S]);
-                _ -> load_error('bad-directive', "text locator ~s is not <i>+<j>", [S])
+                    line_error('bad-directive', "pair ~s names one field twice", [S]);
+                _ -> line_error('bad-directive', "text locator ~s is not <i>+<j>", [S])
             end;
         [_] ->
             case [uint(X) || X <- binary:split(S, <<":">>, [global])] of
                 [I] when is_integer(I) -> {fld, I};
                 [I, From, Len] when is_integer(I), is_integer(From), is_integer(Len), Len >= 1 ->
                     {col, I, From, Len};
-                _ -> load_error('bad-directive',
+                _ -> line_error('bad-directive',
                                 "text locator ~s is not <i>, <i>:<from>:<len> or <i>+<j>", [S])
             end
     end.
@@ -1544,7 +1797,7 @@ no_pair(_, _, _) -> ok.
 tparam(T, Min, Max, S) ->
     case uint(T) of
         N when is_integer(N), N >= Min, N =< Max -> N;
-        _ -> load_error('bad-directive', "transform ~s: parameter ~s is not from ~p to ~p",
+        _ -> line_error('bad-directive', "transform ~s: parameter ~s is not from ~p to ~p",
                         [S, T, Min, Max])
     end.
 

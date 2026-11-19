@@ -19,18 +19,67 @@ parse(Text) when is_list(Text) -> parse(unicode:characters_to_binary(Text));
 parse(Bin) ->
     Base = #{name => undefined, version => undefined, distribution => undefined,
              sources => [], uses => [], keys => [], types => #{}, derives => []},
-    M0 = lists:foldl(fun(Line, Acc) -> apply_line(gt_pack:tokens(Line), Acc) end,
-                     Base, binary:split(Bin, <<"\n">>, [global])),
-    M = M0#{sources := lists:reverse(maps:get(sources, M0)),
-            uses := lists:reverse(maps:get(uses, M0)),
-            keys := lists:reverse(maps:get(keys, M0)),
-            derives := lists:reverse(maps:get(derives, M0))},
-    gt_pack:require_marking(["module ", name_str(M)], M),
+    M0 = lists:foldl(fun(Line, Acc) -> line(gt_pack:tokens(Line), Acc) end,
+                     Base#{headers => #{}, deferred => []}, binary:split(Bin, <<"\n">>, [global])),
+    %% every other cause of a module line, after the file is read and before
+    %% missing-module (ruling 5b of 0.11)
+    case maps:get(deferred, M0) of
+        [] -> ok;
+        Deferred -> erlang:error(lists:last(Deferred))
+    end,
+    M = maps:without([headers, deferred],
+                    M0#{sources := lists:reverse(maps:get(sources, M0)),
+                        uses := lists:reverse(maps:get(uses, M0)),
+                        keys := lists:reverse(maps:get(keys, M0)),
+                        derives := lists:reverse(maps:get(derives, M0))}),
+    %% after the file (ruling 5b of 0.11): missing-module, missing-version,
+    %% then missing-distribution and missing-source
     case maps:get(name, M) of
-        undefined -> gt_pack:load_error('bad-directive', "the module has no module line", []);
+        undefined -> gt_pack:load_error('missing-module', "the module has no module line", []);
         _ -> ok
     end,
+    case maps:get(version, M) of
+        undefined -> gt_pack:load_error('missing-version', "module ~s has no version line",
+                                        [name_str(M)]);
+        _ -> ok
+    end,
+    gt_pack:require_marking(["module ", name_str(M)], M),
     M.
+
+%% The line checks of a module (ruling 5b of 0.11): the directive, the
+%% number of arguments, a repeated header line and the distribution value.
+%% Any other failure of a line is raised after the file is read.
+line([], M) -> M;
+line([Dir | Args] = Tokens, #{headers := Headers} = M) ->
+    case lists:member(Dir, [<<"module">>, <<"version">>, <<"distribution">>, <<"source">>,
+                            <<"uses">>, <<"key">>, <<"list">>, <<"derive">>]) of
+        true -> ok;
+        false -> gt_pack:load_error('unknown-directive', "~s is not a directive of a module", [Dir])
+    end,
+    N = length(Args),
+    CountOk = case Dir of
+                  <<"key">> -> N =:= 3 orelse N =:= 4;
+                  <<"list">> -> N =:= 1 orelse N =:= 2;
+                  <<"derive">> -> N >= 3;
+                  _ -> N =:= 1
+              end,
+    case CountOk of
+        true -> ok;
+        false -> gt_pack:load_error('bad-directive', "~s does not take ~p argument(s)", [Dir, N])
+    end,
+    IsHeader = lists:member(Dir, [<<"module">>, <<"version">>, <<"distribution">>]),
+    case IsHeader andalso maps:is_key(Dir, Headers) of
+        true -> gt_pack:load_error('bad-directive', "a second ~s line", [Dir]);
+        false -> ok
+    end,
+    case Tokens of
+        [<<"distribution">>, D] -> _ = gt_pack:distribution_atom(D);
+        _ -> ok
+    end,
+    M1 = M#{headers := Headers#{Dir => true}},
+    try apply_line(Tokens, M1)
+    catch error:{load_error, _, _} = E -> M1#{deferred := [E | maps:get(deferred, M1)]}
+    end.
 
 %% Parse and check a module against the modules loaded so far, without an
 %% engine's distribution limit.

@@ -1,6 +1,6 @@
 %% gt_engine: decode(format, bytes) -> entity, encode(format, entity) -> bytes,
 %% complete(entity), convert. Clean-room from spec/ and packs/ only
-%% (engine-spec Versions 0.1 - 0.10; a sequential
+%% (engine-spec Versions 0.1 - 0.11; a sequential
 %% bits pack is read and written by gt_seq, the `text` wire by gt_text).
 %%
 %% Entity = #{model => #{Key :: binary() => binary() | integer() | float()},
@@ -30,15 +30,22 @@
 -module(gt_engine).
 -export([new/0, set_max_distribution/2, load_model/2, load_pack/2, load_dir/2,
          load_dir/3, load_packs/3, load_packs/4, model_files/1, packs/1, modules/1,
-         model_keys/1, pack/2]).
+         model_keys/1, pack/2, set_max_items/2, capability/3]).
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
 %% for gt_seq (sequential layouts)
 -export([conv_error/4, item_source/2, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
-         bits_sentinel/3,
+         bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
+         record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2]).
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
+
+%% the limit on list items of one decode (ruling 7 of 0.11)
+-define(DEFAULT_MAX_ITEMS, 100000).
+-define(ITEMS, {gt_engine, items}).
+-define(OVER, {gt_engine, over}).
+-define(FAILED, {gt_engine, failed}).
 
 %% Marks the message of a failure that no reader or writer names.
 -define(UNCLASSIFIED, "[unclassified:").
@@ -54,12 +61,28 @@ set_max_distribution(Engine, Max) ->
     set_max_distribution(Engine, gt_pack:distribution_atom(Max)).
 
 packs(#{packs := Packs}) -> Packs.
+
+%% The limit on the list items of one decode (ruling 7b of 0.11): an
+%% integer of 0 or more.
+set_max_items(Engine, N) when is_integer(N), N >= 0 -> Engine#{max_items => N}.
+
+%% The capability report of an ordered pair of formats (ruling 6 of 0.11),
+%% from the two packs alone -> {Grade, Carried, Dropped}.
+capability(Engine, From, To) ->
+    FromKeys = model_keys(pack(Engine, From)),
+    ToKeys = maps:from_list([{K, true} || K <- model_keys(pack(Engine, To))]),
+    {Carried, Dropped} = lists:partition(fun(K) -> maps:is_key(K, ToKeys) end, FromKeys),
+    Grade = if Carried =:= [] -> none;
+               Dropped =:= [] -> full;
+               true -> partial
+            end,
+    {Grade, Carried, Dropped}.
 modules(#{modules := Modules}) -> Modules.
 
 %% A loaded pack by format name.
-pack(#{packs := Packs}, Name) ->
+pack(#{packs := Packs} = Engine, Name) ->
     case maps:find(Name, Packs) of
-        {ok, P} -> P;
+        {ok, P} -> P#{max_items => maps:get(max_items, Engine, ?DEFAULT_MAX_ITEMS)};
         error -> conv_error('unknown-format', "format ~s is not loaded", [Name])
     end.
 
@@ -209,6 +232,12 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
                           typemap_dec => maps:from_list(lists:reverse(Typemap)),
                           typemap_enc => maps:from_list([{C, N} || {N, C} <- lists:reverse(Typemap)]),
                           common := type_groups(maps:get(common, P), TypeDefaults)}),
+    %% last: a format name already loaded, compared byte for byte; the first
+    %% pack stays loaded (ruling 5 of 0.11)
+    case maps:is_key(Name, Packs) of
+        true -> gt_pack:load_error('duplicate-format', "format ~s is already loaded", [Name]);
+        false -> ok
+    end,
     Engine#{packs := maps:put(Name, P1, Packs)}.
 
 %% The defaults of every group body, read as their keys' types.
@@ -313,7 +342,7 @@ load_packs(#{modules := Loaded} = Engine, PacksDir, Names, ModelsDir) ->
 
 uses_lines(Text) ->
     [U || L <- binary:split(Text, <<"\n">>, [global]),
-          [<<"uses">>, U] <- [gt_pack:tokens(L)]].
+          [<<"uses">>, U] <- [gt_pack:tokens_lax(L)]].
 
 %% The modules to load for a set of names: those names and what they use,
 %% less what the engine holds.
@@ -351,7 +380,7 @@ model_files(ModelsDir) ->
 %% The module name and the `uses` names of a module file.
 module_head(Path) ->
     {ok, Bin} = file:read_file(Path),
-    Toks = [gt_pack:tokens(L) || L <- binary:split(Bin, <<"\n">>, [global])],
+    Toks = [gt_pack:tokens_lax(L) || L <- binary:split(Bin, <<"\n">>, [global])],
     {case [N || [<<"module">>, N] <- Toks] of
          [N | _] -> N;
          [] -> undefined
@@ -545,9 +574,44 @@ decode(Engine, Format, Bytes) -> decode(pack(Engine, Format), Bytes).
 %% conformance runner counts such a message as a defect of the engine.
 decode(Pack, Bytes) when is_list(Bytes) -> decode(Pack, iolist_to_binary(Bytes));
 decode(Pack, Bytes) when is_binary(Bytes) ->
-    try decode_wire(Pack, Bytes)
+    %% the limit on list items (ruling 7 of 0.11) and the first field
+    %% failure, which is raised when the decode ends or fails otherwise, so
+    %% that going over the limit wins over it (7f)
+    put(?ITEMS, {maps:get(max_items, Pack, ?DEFAULT_MAX_ITEMS), 0}),
+    erase(?OVER),
+    erase(?FAILED),
+    try decode_checked(Pack, Bytes)
+    after
+        erase(?ITEMS),
+        erase(?OVER),
+        erase(?FAILED)
+    end.
+
+decode_checked(Pack, Bytes) ->
+    try decode_wire(Pack, Bytes) of
+        Entity ->
+            case get(?FAILED) of
+                undefined -> Entity;
+                Msg -> erlang:error({convert_error, 'transform-decode', Msg})
+            end
     catch
-        error:{convert_error, _, _} = Named:Stack -> erlang:raise(error, Named, Stack);
+        error:{convert_error, _, _} = Named:Stack ->
+            case {get(?OVER), get(?FAILED)} of
+                {true, _} -> erlang:raise(error, Named, Stack);
+                {_, undefined} -> erlang:raise(error, Named, Stack);
+                {_, Msg} -> erlang:error({convert_error, 'transform-decode', Msg})
+            end;
+        Class:Reason:Stack ->
+            case {get(?OVER), get(?FAILED)} of
+                {undefined, Msg} when Msg =/= undefined ->
+                    erlang:error({convert_error, 'transform-decode', Msg});
+                _ -> decode_failure(Pack, Class, Reason, Stack)
+            end
+    end.
+
+decode_failure(Pack, Class, Reason, Stack) ->
+    try erlang:raise(Class, Reason, Stack)
+    catch
         error:{protobuf_malformed, Why} ->
             conv_error('malformed-wire', Pack, "protobuf: ~0p", [Why]);
         error:{json_malformed, Why} ->
@@ -556,9 +620,47 @@ decode(Pack, Bytes) when is_binary(Bytes) ->
             conv_error('malformed-wire', Pack, "the input is not well-formed xml: ~0p", [Why]);
         error:{hex_malformed, Why} ->
             conv_error('malformed-wire', Pack, "the input is not hex text of even length: ~0p", [Why]);
-        Class:Reason ->
+        Class2:Reason2 ->
             conv_error('malformed-wire', Pack, "the input cannot be read ~s ~0P]",
-                       [?UNCLASSIFIED, {Class, Reason}, 8])
+                       [?UNCLASSIFIED, {Class2, Reason2}, 8])
+    end.
+
+%% Take N items of the limit; one more than it allows is malformed-wire.
+items_reserve(N, Pack) ->
+    {Limit, Count} = get(?ITEMS),
+    case Count + N > Limit of
+        true ->
+            put(?OVER, true),
+            conv_error('malformed-wire', Pack, "the message holds more than ~p list items", [Limit]);
+        false -> put(?ITEMS, {Limit, Count + N})
+    end.
+
+%% Give back the items of a list a later group replaces (ruling 7g of 0.11).
+items_release(N) ->
+    {Limit, Count} = get(?ITEMS),
+    put(?ITEMS, {Limit, Count - N}).
+
+%% The number of items a list holds, at every nesting level.
+items_held(Items) ->
+    lists:sum([1 + lists:sum([items_held(L) || L <- maps:values(maps:get(lists, I, #{}))])
+               || I <- Items]).
+
+%% A field failure whose message is formed: kept when it is the first.
+record_failure_msg(Msg) ->
+    case get(?FAILED) of
+        undefined -> put(?FAILED, Msg);
+        _ -> ok
+    end.
+
+%% A field failure of the decode: the first is kept and raised at the end.
+record_failure(Pack, Fmt, Args) ->
+    case get(?FAILED) of
+        undefined ->
+            #{name := Name} = Pack,
+            Msg = lists:flatten(io_lib:format("~s: format ~s: " ++ Fmt,
+                                              ['transform-decode', Name | Args])),
+            put(?FAILED, Msg);
+        _ -> ok
     end.
 
 decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
@@ -620,8 +722,8 @@ decode_scope(Wire, Ctx, Lines, Pack) ->
     case [KL || {K, _} = KL <- lists:reverse(Failed), not maps:is_key(K, Model)] of
         [] -> ok;
         Bad ->
-            conv_error('transform-decode', Pack, "failed fields: ~s",
-                       [lists:join(", ", [[K, " at ", L] || {K, L} <- Bad])])
+            record_failure(Pack, "failed fields: ~s",
+                           [lists:join(", ", [[K, " at ", L] || {K, L} <- Bad])])
     end,
     {Model, Lists, End}.
 
@@ -635,7 +737,9 @@ decode_item(Wire, Ctx, #{lines := Lines}, Pack) ->
 decode_group(text, Ctx, Start, {text_item, N}, Body, Pack, C) ->
     case gt_text:items(Ctx, Start, N) of
         absent -> {absent, C, 0};
-        Items -> {{ok, [decode_item(text, X, Body, Pack) || X <- Items]}, C, 0}
+        Items ->
+            items_reserve(length(Items), Pack),
+            {{ok, [decode_item(text, X, Body, Pack) || X <- Items]}, C, 0}
     end;
 %% xml: each child element named by the last name, under the first element
 %% matched by the names before it; the list is present when an item occurs.
@@ -646,7 +750,9 @@ decode_group(xml, Elem, Path, _Spec, Body, Pack, C) ->
             end,
     case Found of
         [] -> {absent, C, 0};
-        _ -> {{ok, [decode_item(xml, E, Body, Pack) || E <- Found]}, C, 0}
+        _ ->
+            items_reserve(length(Found), Pack),
+            {{ok, [decode_item(xml, E, Body, Pack) || E <- Found]}, C, 0}
     end;
 %% json, geojson: the member is an array and each element an item. `null` is
 %% an absent list; another value is malformed-wire.
@@ -655,6 +761,7 @@ decode_group(Wire, Json, Loc, _Spec, Body, Pack, C)
     case member(Wire, Json, Loc) of
         absent -> {absent, C, 0};
         {ok, {array, Els}} ->
+            items_reserve(length(Els), Pack),
             ItemWire = item_wire(Wire),
             {{ok, [decode_item(ItemWire, E, Body, Pack) || E <- Els]}, C, 0};
         {ok, _} ->
@@ -702,7 +809,9 @@ decode_group(Wire, Msg, Path, _Spec, #{lines := Lines} = Body, Pack, C)
            end,
     case Ctxs of
         [] -> {absent, C2, 0};
-        _ -> {{ok, [decode_item(pbitem, X, Body, Pack) || X <- Ctxs]}, C2, 0}
+        _ ->
+            items_reserve(length(Ctxs), Pack),
+            {{ok, [decode_item(pbitem, X, Body, Pack) || X <- Ctxs]}, C2, 0}
     end;
 %% bits: `count` consecutive items from the group's start; an item is
 %% `item <bits>` long, or longer when a nested group counted by a locator
@@ -717,6 +826,8 @@ decode_group(bits, {Msg, Base}, Start, {ItemBits, Count}, #{lines := Lines}, Pac
                     K -> K
                 end
         end,
+    %% a count is compared with the limit before any item is read (7d)
+    items_reserve(N, Pack),
     {Items, End} = bits_items(N, Base + Start, Msg, ItemBits, Lines, Pack, []),
     {{ok, Items}, C, End}.
 
@@ -798,6 +909,8 @@ unhex(Pack, Bytes) ->
     end.
 
 %% ---- does a `when` hold? the value is compared with the raw wire value ----
+%% `when <locator> present` on `#text` holds when the element exists
+when_holds(xml, Tree, {Path, text}, present) -> navigate(Tree, Path) =/= absent;
 when_holds(xml, Tree, Loc, present) -> xml_when(Tree, Loc) =/= absent;
 when_holds(xml, Tree, Loc, {text, T, _}) -> xml_when(Tree, Loc) =:= {ok, T};
 when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
@@ -805,8 +918,9 @@ when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
         {absent, _} -> false;
         {{ok, _}, present} -> true;
         {{ok, V}, {text, T, _}} when is_binary(V) -> V =:= T;
-        {{ok, V}, {text, T, _}} when is_number(V) ->
-            list_to_binary(gt_json:number_text(V)) =:= T;
+        {{ok, V}, {text, T, _}} when not is_atom(V) ->
+            %% a number by its canonical text; one with none holds no value
+            gt_json:canonical_text(V) =:= T;
         {{ok, true}, {text, T, _}} -> T =:= <<"true">>;
         {{ok, false}, {text, T, _}} -> T =:= <<"false">>;
         _ -> false
@@ -814,8 +928,12 @@ when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
 when_holds(text, Ctx, Loc, Val) -> gt_text:when_holds(Ctx, Loc, Val);
 %% a `when` any of whose bits lies beyond the input does not hold
 when_holds(bits, {Msg, Base}, {Off, Len}, Val) -> gt_bits:read(Msg, Base + Off, Len) =:= Val;
+%% A `when` path never fails a decode: a prefix whose bytes do not parse as
+%% a message makes it not hold (ruling 9b of 0.11).
 when_holds(protobuf, Top, Path, Val) ->
-    {Found, _} = pb_get(Top, Path, #{}),
+    {Found, _} = try pb_get(Top, Path, #{})
+                 catch error:{protobuf_malformed, _} -> {absent, #{}}
+                 end,
     case {Found, Val} of
         {absent, _} -> false;
         {{ok, _}, present} -> true;
@@ -1035,7 +1153,17 @@ json_residue([{Name, V} | Rest], Prefix, Mapped, Acc) ->
                     _ ->
                         case maps:is_key(Path, Mapped) of
                             true -> Acc;
-                            false -> [{path_text(Path), V} | Acc]
+                            false ->
+                                %% a residue number whose nearest double is
+                                %% infinite has no canonical text (ruling 2d
+                                %% of 0.11)
+                                case gt_json:canonical_text(V) of
+                                    none -> erlang:error({json_malformed,
+                                                          {residue_number_has_no_canonical_text,
+                                                           path_text(Path)}});
+                                    _ -> ok
+                                end,
+                                [{path_text(Path), V} | Acc]
                         end
                 end;
             _ -> Acc
@@ -1091,7 +1219,11 @@ encode_wire(xml, Pack, Lines, Src, Residue) ->
                       end;
                  (_, R) -> R
               end, Root1, Residue),
-    gt_xml:serialize(Root2);
+    try iolist_to_binary(gt_xml:serialize(Root2))
+    catch error:{xml_unwritable, Text} ->
+        conv_error('transform-encode', Pack,
+                   "the text ~0p holds a character XML 1.0 cannot hold", [Text])
+    end;
 encode_wire(geojson, Pack, Lines, Src, Residue) ->
     Ops = [{Loc, V} || {Loc, {value, V}} <- json_plan(Lines, Src, Pack)],
     Coord = fun(I) -> proplists:get_value({geom, I}, Ops) end,
@@ -1561,24 +1693,26 @@ typemap_encode(_, V, _) -> V.
 %% ===================================================================
 %% transforms (text wires)
 %% ===================================================================
-%% xml: the wire value is text
+%% xml: the wire value is text, read by the grammars of ruling 2 of 0.11
 xml_decode(string, S) -> S;
-xml_decode(float, S) -> gt_num:dec_to_float(S);
-xml_decode(int, S) -> gt_num:wrap64(binary_to_integer(S));
+xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
+xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
 xml_decode(iso8601_ms, S) -> gt_iso:decode(S).
 
-%% geojson (Version 0.1): the wire value is a JSON value
+%% geojson (Version 0.1): the wire value is a JSON value; a string member is
+%% read as xml text is, a number member as ruling 2d of 0.11 states
 geojson_decode(string, V) when is_binary(V) -> V;
-geojson_decode(string, V) when is_number(V) -> list_to_binary(gt_json:number_text(V));
-geojson_decode(float, V) when is_number(V) -> float(V);
-geojson_decode(float, V) when is_binary(V) -> gt_num:dec_to_float(V);
-geojson_decode(int, V) when is_number(V); is_binary(V) -> gt_num:wrap64(gt_num:to_int(V));
-geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V).
+geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms -> xml_decode(Tr, V);
+geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
+geojson_decode(string, V) ->
+    true = gt_json:is_num(V),
+    list_to_binary(gt_json:number_text(V));
+geojson_decode(Tr, V) -> json_decode(Tr, V).
 
 %% json (Version 0.5): a value of the wrong JSON type is a decode failure
 json_decode(string, V) when is_binary(V) -> V;
-json_decode(float, V) when is_number(V) -> float(V);
-json_decode(int, V) when is_number(V) -> gt_num:wrap64(gt_num:to_int(V));
+json_decode(float, V) -> {ok, F} = gt_json:num_float(V), F;
+json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
 json_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
@@ -1651,18 +1785,20 @@ strip_trailing(Bin, C) when is_binary(Bin) ->
         _ -> Bin
     end.
 
-bits_encode(uint, V, L, _) when is_integer(V) -> V band mask(L);
-bits_encode(twos, V, L, _) when is_integer(V) -> V band mask(L);
+%% A value that does not fit the field fails; nothing is wrapped or clamped
+%% (ruling 4b of 0.11). `round` is to the nearest integer, a half away from
+%% zero (4a); an infinite or NaN quotient raises in the arithmetic.
+bits_encode(uint, V, 64, _) when is_integer(V) -> V band mask(64);
+bits_encode(uint, V, L, _) when is_integer(V), V >= 0, V =< (1 bsl L) - 1 -> V;
+bits_encode(twos, V, L, _) when is_integer(V) -> signed_fit(V, L);
 bits_encode({linscale, Max, Range}, V, L, _) when is_number(V) ->
-    round((V / Range) * Max) band mask(L);
+    signed_fit(round((float(V) / Range) * Max), L);
 bits_encode({uscale, Factor, Offset}, V, L, _) when is_number(V) ->
     R = round(scale_encode(float(V), Factor, Offset)),
     true = (R >= 0) andalso (R =< mask(L)),
     R;
 bits_encode({sscale, Factor, Offset}, V, L, _) when is_number(V) ->
-    R = round(scale_encode(float(V), Factor, Offset)),
-    true = (R >= -(1 bsl (L - 1))) andalso (R < (1 bsl (L - 1))),
-    R band mask(L);
+    signed_fit(round(scale_encode(float(V), Factor, Offset)), L);
 %% a value outside single range does not fit a 32-bit float segment
 bits_encode(f32, V, 32, _) when is_number(V) -> <<U:32>> = single(V), U;
 bits_encode(f64, V, 64, _) when is_number(V) -> <<U:64>> = <<(float(V)):64/float>>, U;
@@ -1689,6 +1825,9 @@ to_signed(U, L) ->
     end.
 
 mask(L) -> (1 bsl L) - 1.
+
+%% -2^(L-1) .. 2^(L-1) - 1, written as its low L bits
+signed_fit(R, L) when R >= -(1 bsl (L - 1)), R < (1 bsl (L - 1)) -> R band mask(L).
 
 %% ===================================================================
 %% transforms (protobuf wire): each fixes the field's wire type
@@ -1738,18 +1877,15 @@ navigate(Elem, [H | T]) ->
     end.
 
 %% The text a `when` compares: the attribute's value, or the element's text
-%% (empty when the element exists and has none) -> absent | {ok, Binary}
+%% -> absent | {ok, Binary}. An element with no character data has no text,
+%% so a `when` with a value does not hold on it (ruling 1m of 0.11).
 xml_when(Tree, {Path, Last}) ->
     case navigate(Tree, Path) of
         absent -> absent;
         {ok, Elem} ->
             case Last of
                 {attr, A} -> gt_xml:get_attr(Elem, A);
-                text ->
-                    case gt_xml:get_text(Elem) of
-                        absent -> {ok, <<>>};
-                        Found -> Found
-                    end
+                text -> gt_xml:get_text(Elem)
             end
     end.
 

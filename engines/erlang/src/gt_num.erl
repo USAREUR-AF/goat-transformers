@@ -1,7 +1,7 @@
 %% gt_num: number parsing and canonical number text (engine-spec ruling 3).
 -module(gt_num).
 -export([to_float/1, to_int/1, fmt_float/1, fmt_int/1, dec_to_float/1, wrap64/1,
-         canon/1, read_as/2]).
+         canon/1, read_as/2, int_text/1, uint_text/1, num_text/1, exact_int/1]).
 
 %% Canonical text of a model value: a string as it is, an integer as decimal
 %% digits, a float as in ruling 3 of 0.1.1.
@@ -10,10 +10,172 @@ canon(V) when is_integer(V) -> integer_to_binary(V);
 canon(V) when is_float(V) -> list_to_binary(fmt_float(V)).
 
 %% Read text as a model type; raises when the text is not of that type.
+%% Integers by ruling 2a of 0.11, numbers by ruling 2b.
 read_as(string, T) when is_binary(T) -> T;
-read_as(int, <<$-, D/binary>> = T) when D =/= <<>> -> true = all_digits(D), binary_to_integer(T);
-read_as(int, T) when is_binary(T), T =/= <<>> -> true = all_digits(T), binary_to_integer(T);
-read_as(float, T) when is_binary(T) -> dec_to_float(T).
+read_as(int, T) when is_binary(T) -> {ok, I} = int_text(T), I;
+read_as(float, T) when is_binary(T) -> {ok, F} = num_text(T), F.
+
+%% ---- the grammars of ruling 2 of 0.11 ----
+
+%% 2a: an optional `-`, one or more ASCII digits, within a signed 64-bit
+%% integer -> {ok, integer()} | error.
+int_text(<<$-, D/binary>>) when D =/= <<>> -> int_range(D, true);
+int_text(D) when is_binary(D), D =/= <<>> -> int_range(D, false);
+int_text(_) -> error.
+
+int_range(D, Neg) ->
+    case all_digits(D) of
+        false -> error;
+        true ->
+            Stripped = strip_zeros(D),
+            case byte_size(Stripped) > 19 of
+                true -> error;
+                false ->
+                    N = case Neg of
+                            true -> -binary_to_integer(D);
+                            false -> binary_to_integer(D)
+                        end,
+                    in_int64(N)
+            end
+    end.
+
+in_int64(N) when N >= -(1 bsl 63), N < (1 bsl 63) -> {ok, N};
+in_int64(_) -> error.
+
+strip_zeros(<<$0, R/binary>>) when R =/= <<>> -> strip_zeros(R);
+strip_zeros(B) -> B.
+
+%% An unsigned decimal integer (2c): one or more ASCII digits -> {ok, N} | error.
+uint_text(B) when is_binary(B), B =/= <<>> ->
+    case all_digits(B) of
+        true -> {ok, binary_to_integer(B)};
+        false -> error
+    end;
+uint_text(_) -> error.
+
+%% 2b: [-] digits [. digits] [(e|E) [+|-] digits], read as the nearest
+%% double; a text whose nearest double is infinite is refused, one nearer to
+%% zero than the smallest subnormal reads as 0, and `-` before a zero gives
+%% -0.0 -> {ok, float()} | error.
+num_text(B) when is_binary(B) ->
+    case num_parts(B) of
+        {ok, Neg, Int, Frac, Exp} -> parts_to_float(Neg, Int, Frac, Exp);
+        error -> error
+    end;
+num_text(_) -> error.
+
+%% The parts of number text by the grammar of 2b
+%% -> {ok, Negative, IntDigits, FracDigits, ExpText} | error.
+num_parts(B) ->
+    {Neg, B1} = case B of
+                    <<$-, R/binary>> -> {true, R};
+                    _ -> {false, B}
+                end,
+    {Int, B2} = take_digits(B1),
+    case Int of
+        <<>> -> error;
+        _ ->
+            case B2 of
+                <<$., B3/binary>> ->
+                    case take_digits(B3) of
+                        {<<>>, _} -> error;
+                        {Frac, B4} -> num_exp(Neg, Int, Frac, B4)
+                    end;
+                _ -> num_exp(Neg, Int, <<>>, B2)
+            end
+    end.
+
+num_exp(Neg, Int, Frac, <<>>) -> {ok, Neg, Int, Frac, <<"0">>};
+num_exp(Neg, Int, Frac, <<E, R/binary>>) when E =:= $e; E =:= $E ->
+    {Sign, R1} = case R of
+                     <<$+, X/binary>> -> {<<>>, X};
+                     <<$-, X/binary>> -> {<<"-">>, X};
+                     _ -> {<<>>, R}
+                 end,
+    case take_digits(R1) of
+        {<<>>, _} -> error;
+        {Ds, <<>>} -> {ok, Neg, Int, Frac, <<Sign/binary, Ds/binary>>};
+        _ -> error
+    end;
+num_exp(_, _, _, _) -> error.
+
+take_digits(B) -> take_digits(B, 0).
+take_digits(B, N) ->
+    case B of
+        <<_:N/binary, C, _/binary>> when C >= $0, C =< $9 -> take_digits(B, N + 1);
+        <<D:N/binary, R/binary>> -> {D, R}
+    end.
+
+parts_to_float(Neg, Int, Frac, Exp) ->
+    AllZero = all_zero(Int) andalso all_zero(Frac),
+    Sign = case Neg of true -> "-"; false -> "" end,
+    case AllZero of
+        true ->
+            {ok, case Neg of true -> -0.0; false -> 0.0 end};
+        false ->
+            %% an exponent of very many digits is read by its sign alone
+            ExpS = binary_to_list(Exp),
+            ExpN = case length(ExpS) > 12 of
+                       true ->
+                           case ExpS of
+                               [$- | _] -> -100000000;
+                               _ -> 100000000
+                           end;
+                       false -> list_to_integer(ExpS)
+                   end,
+            Text = Sign ++ binary_to_list(Int) ++ "." ++ or0(binary_to_list(Frac))
+                ++ "e" ++ integer_to_list(ExpN),
+            try list_to_float(Text) of
+                F when F == 0.0, Neg -> {ok, -0.0};
+                F -> {ok, F}
+            catch _:_ ->
+                %% list_to_float refuses an infinite result; a result below
+                %% the smallest subnormal it gives as 0
+                error
+            end
+    end.
+
+all_zero(<<>>) -> true;
+all_zero(<<$0, R/binary>>) -> all_zero(R);
+all_zero(_) -> false.
+
+%% The exact value of number text (2b, or JSON number text) as an integer
+%% within a signed 64-bit integer (ruling 2d of 0.11) -> {ok, I} | error.
+exact_int(B) when is_binary(B) ->
+    case num_parts(B) of
+        error -> error;
+        {ok, Neg, Int, Frac, Exp} ->
+            Digits0 = strip_zeros(<<Int/binary, Frac/binary>>),
+            case all_zero(Digits0) of
+                true -> {ok, 0};
+                false ->
+                    ExpS = binary_to_list(Exp),
+                    case length(ExpS) > 12 of
+                        true ->
+                            error;          % far above the range, or not an integer
+                        false ->
+                            E = list_to_integer(ExpS) - byte_size(Frac),
+                            {Digits, E1} = drop_trailing_zeros(Digits0, E),
+                            case E1 < 0 orelse byte_size(Digits) + E1 > 19 of
+                                true -> error;
+                                false ->
+                                    M = binary_to_integer(Digits) * pow10(E1),
+                                    in_int64(case Neg of true -> -M; false -> M end)
+                            end
+                    end
+            end
+    end;
+exact_int(_) -> error.
+
+drop_trailing_zeros(D, E) when byte_size(D) > 1 ->
+    case binary:last(D) of
+        $0 -> drop_trailing_zeros(binary:part(D, 0, byte_size(D) - 1), E + 1);
+        _ -> {D, E}
+    end;
+drop_trailing_zeros(D, E) -> {D, E}.
+
+pow10(0) -> 1;
+pow10(N) -> 10 * pow10(N - 1).
 
 all_digits(<<>>) -> true;
 all_digits(<<C, R/binary>>) when C >= $0, C =< $9 -> all_digits(R);

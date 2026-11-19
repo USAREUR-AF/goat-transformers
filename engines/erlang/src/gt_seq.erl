@@ -37,8 +37,10 @@ check_failed(#d{failed = Failed, model = Model, pack = Pack}) ->
     case [KL || {K, _} = KL <- lists:reverse(Failed), not maps:is_key(K, Model)] of
         [] -> ok;
         Bad ->
-            gt_engine:conv_error('transform-decode', Pack, "failed fields: ~s",
-                                 [lists:join(", ", [[K, " of ", L, " bits"] || {K, L} <- Bad])])
+            %% raised when the decode ends, so that the limit on list items
+            %% wins over it (ruling 7f of 0.11)
+            gt_engine:record_failure(Pack, "failed fields: ~s",
+                                     [lists:join(", ", [[K, " of ", L, " bits"] || {K, L} <- Bad])])
     end.
 
 malformed(#d{pack = Pack}, Fmt, Args) ->
@@ -183,7 +185,15 @@ line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
             D#d{pos = Pos + Len, hard = Bits}  % input beyond it is ignored
     end;
 line({sgroup, List, Mode, Body}, Ext, D) ->
-    case group(Mode, Body, Ext, D) of
+    %% a later group of a list replaces the items of an earlier one; those
+    %% are no longer counted against the limit (ruling 7g of 0.11)
+    Release = fun() ->
+                      case maps:find(List, D#d.lists) of
+                          {ok, Old} -> gt_engine:items_release(gt_engine:items_held(Old));
+                          error -> ok
+                      end
+              end,
+    case group(Mode, Body, Ext, D, Release) of
         absent -> D;
         {Items, D1} -> D1#d{lists = (D1#d.lists)#{List => Items}}
     end.
@@ -213,8 +223,16 @@ set_key({Key, Via}, U, Len, Tr, LenT, Trim, #d{model = Model, pack = Pack} = D) 
                 end
             of
                 V0 ->
-                    V1 = gt_engine:via_decode({Via, false, false, false, none}, V0, Tr, Key, LenT, Pack),
-                    D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
+                    %% a value with no table entry fails the decode when it
+                    %% ends, so that the limit on list items read later still
+                    %% wins (ruling 7f of 0.11)
+                    try gt_engine:via_decode({Via, false, false, false, none}, V0, Tr, Key, LenT, Pack) of
+                        V1 -> D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
+                    catch
+                        error:{convert_error, 'transform-decode', Msg} ->
+                            gt_engine:record_failure_msg(Msg),
+                            D
+                    end
             catch
                 _:_ -> D#d{failed = [{Key, LenT} | D#d.failed]}
             end
@@ -260,33 +278,36 @@ parts([Part | Rest], EndsFx, Ext, D) ->
     end.
 
 %% The items of a group -> absent | {[Item], D}.
-group({count, Len}, Body, Ext, #d{pos = Pos} = D) ->
+group({count, Len}, Body, Ext, #d{pos = Pos} = D, Release) ->
     case need(Pos, Len, Ext, D) of
         absent -> absent;
         ok ->
             N = gt_bits:read(D#d.msg, Pos, Len),
             Pos1 = Pos + Len,
+            %% the count is compared with the limit before any item is read
+            Release(),
+            gt_engine:items_reserve(N, D#d.pack),
             case N > limit(Ext, D) - Pos1 of
                 true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
                 false -> ok
             end,
-            lists:mapfoldl(fun(_, Acc) -> item(Body, Ext, Acc) end, D#d{pos = Pos1},
+            lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D#d{pos = Pos1},
                            lists:seq(1, N))
     end;
-group(while, Body, Ext, D) ->
+group(while, Body, Ext, D, Release) ->
     case bit(Ext, D) of
         absent -> absent;
-        {B, D1} -> while(B, Body, Ext, D1, [])
+        {B, D1} -> Release(), while(B, Body, Ext, D1, [])
     end;
-group(more, Body, Ext, D) ->
+group(more, Body, Ext, D, Release) ->
     case bit(Ext, D) of
         absent -> absent;
-        {B, D1} -> more(B, Body, Ext, D1, [])
+        {B, D1} -> Release(), more(B, Body, Ext, D1, [])
     end;
-group(fx, Body, Ext, D) ->
+group(fx, Body, Ext, D, Release) ->
     case avail(D#d.pos, 0, Ext, D) of
         absent -> absent;
-        _ -> fx_items(Body, Ext, D, [])
+        _ -> Release(), fx_items(Body, Ext, D, [])
     end.
 
 while(0, _Body, _Ext, D, Acc) -> {lists:reverse(Acc), D};
@@ -320,7 +341,11 @@ fx_items(Body, Ext, D, Acc) ->
 
 %% One item at the cursor: the lines common to every item, then the kind
 %% its `when` lines select.
-item(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F} = D) ->
+item(Body, Ext, D) ->
+    gt_engine:items_reserve(1, D#d.pack),
+    item_lines(Body, Ext, D).
+
+item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, failed = F} = D) ->
     D1 = lines(Common, Ext, D#d{model = #{}, lists = #{}, failed = []}),
     {Item, D2} =
         case Kinds of
