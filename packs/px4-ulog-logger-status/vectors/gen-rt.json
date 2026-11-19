@@ -1,0 +1,14 @@
+{
+  "name": "rt-logger_status",
+  "from": "px4-ulog-logger-status",
+  "to": "px4-ulog-logger-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc0fd16de78ae9015175f0a4db510848453c17200d4",
+  "expect": "43822d18240a06000000e4c00000dcc0fd16de78ae9015175f0a4db510848453c17200d4",
+  "model": {
+    "px4ulog.logger_status_timestamp": "1700000001000003",
+    "px4ulog.logger_status_total_written_kb": "-7.125",
+    "px4ulog.logger_status_write_rate_kb_s": "-6.875",
+    "px4ulog.logger_status_dropouts": "2027820797"
+  }
+}

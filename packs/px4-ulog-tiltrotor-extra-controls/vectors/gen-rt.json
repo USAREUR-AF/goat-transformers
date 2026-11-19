@@ -1,0 +1,13 @@
+{
+  "name": "rt-tiltrotor_extra_controls",
+  "from": "px4-ulog-tiltrotor-extra-controls",
+  "to": "px4-ulog-tiltrotor-extra-controls",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc0",
+  "expect": "43822d18240a06000000e4c00000dcc0",
+  "model": {
+    "px4ulog.tiltrotor_extra_controls_timestamp": "1700000001000003",
+    "px4ulog.tiltrotor_extra_controls_collective_tilt_normalized_setpoint": "-7.125",
+    "px4ulog.tiltrotor_extra_controls_collective_thrust_normalized_setpoint": "-6.875"
+  }
+}

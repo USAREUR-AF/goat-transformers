@@ -1,0 +1,14 @@
+{
+  "name": "rt-airspeed_wind",
+  "from": "px4-ulog-airspeed-wind",
+  "to": "px4-ulog-airspeed-wind",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0e7",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0e7",
+  "model": {
+    "px4ulog.airspeed_wind_timestamp": "1700000001000003",
+    "px4ulog.airspeed_wind_timestamp_sample": "1700000002000006",
+    "px4ulog.airspeed_wind_windspeed_north": "-6.875",
+    "px4ulog.airspeed_wind_windspeed_east": "-6.625"
+  }
+}

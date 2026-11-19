@@ -1,0 +1,13 @@
+{
+  "name": "rt-vtol_vehicle_status",
+  "from": "px4-ulog-vtol-vehicle-status",
+  "to": "px4-ulog-vtol-vehicle-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b01",
+  "expect": "43822d18240a06009b01",
+  "model": {
+    "px4ulog.vtol_vehicle_status_timestamp": "1700000001000003",
+    "px4ulog.vtol_vehicle_status_vehicle_vtol_state": "155",
+    "px4ulog.vtol_vehicle_status_fixed_wing_system_failure": "1"
+  }
+}

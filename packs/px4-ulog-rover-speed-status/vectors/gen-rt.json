@@ -1,0 +1,14 @@
+{
+  "name": "rt-rover_speed_status",
+  "from": "px4-ulog-rover-speed-status",
+  "to": "px4-ulog-rover-speed-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "px4ulog.rover_speed_status_timestamp": "1700000001000003",
+    "px4ulog.rover_speed_status_measured_speed_body_x": "-7.125",
+    "px4ulog.rover_speed_status_adjusted_speed_body_x_setpoint": "-6.875",
+    "px4ulog.rover_speed_status_pid_throttle_body_x_integral": "-6.625"
+  }
+}

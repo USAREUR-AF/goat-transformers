@@ -1,0 +1,14 @@
+{
+  "name": "rt-camera_capture",
+  "from": "px4-ulog-camera-capture",
+  "to": "px4-ulog-camera-capture",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00000c4c00000bcc0",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00000c4c00000bcc0",
+  "model": {
+    "px4ulog.camera_capture_timestamp": "1700000001000003",
+    "lat": "2.014",
+    "lon": "-3.021",
+    "px4ulog.camera_capture_q_0": "-6.625"
+  }
+}

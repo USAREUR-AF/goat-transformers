@@ -1,0 +1,13 @@
+{
+  "name": "rt-message_format_request",
+  "from": "px4-ulog-message-format-request",
+  "to": "px4-ulog-message-format-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b237433000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "43822d18240a06009b237433000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "px4ulog.message_format_request_timestamp": "1700000001000003",
+    "px4ulog.message_format_request_protocol_version": "9115",
+    "px4ulog.message_format_request_topic_name": "t3"
+  }
+}

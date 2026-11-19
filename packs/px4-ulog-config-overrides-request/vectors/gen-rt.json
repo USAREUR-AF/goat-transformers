@@ -1,0 +1,14 @@
+{
+  "name": "rt-config_overrides_request",
+  "from": "px4-ulog-config-overrides-request",
+  "to": "px4-ulog-config-overrides-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060075bc01009a5f",
+  "expect": "43822d18240a060075bc01009a5f",
+  "model": {
+    "px4ulog.config_overrides_timestamp": "1700000001000003",
+    "px4ulog.config_overrides_defer_failsafes_timeout_s": "-17291",
+    "px4ulog.config_overrides_disable_auto_disarm": "1",
+    "px4ulog.config_overrides_defer_failsafes": "0"
+  }
+}

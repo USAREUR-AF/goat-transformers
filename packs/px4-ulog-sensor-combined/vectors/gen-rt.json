@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_combined",
+  "from": "px4-ulog-sensor-combined",
+  "to": "px4-ulog-sensor-combined",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0ae90151751b503800000bcc00000b4c00000acc023f12a2ed48536e7",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0ae90151751b503800000bcc00000b4c00000acc023f12a2ed48536e7",
+  "model": {
+    "px4ulog.sensor_combined_timestamp": "1700000001000003",
+    "px4ulog.sensor_combined_gyro_rad_0": "-7.125",
+    "px4ulog.sensor_combined_gyro_rad_1": "-6.875",
+    "px4ulog.sensor_combined_gyro_rad_2": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-pwm_input",
+  "from": "px4-ulog-pwm-input",
+  "to": "px4-ulog-pwm-input",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6dafd16de78",
+  "expect": "43822d18240a060086c43c18240a06004c9da6dafd16de78",
+  "model": {
+    "px4ulog.pwm_input_timestamp": "1700000001000003",
+    "px4ulog.pwm_input_error_count": "1700000002000006",
+    "px4ulog.pwm_input_pulse_width": "3668352332",
+    "px4ulog.pwm_input_period": "2027820797"
+  }
+}

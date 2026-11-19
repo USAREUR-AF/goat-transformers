@@ -1,0 +1,14 @@
+{
+  "name": "rt-ekf2_timestamps",
+  "from": "px4-ulog-ekf2-timestamps",
+  "to": "px4-ulog-ekf2-timestamps",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060075bcac5ae3f81a97513588d3bf71",
+  "expect": "43822d18240a060075bcac5ae3f81a97513588d3bf71",
+  "model": {
+    "px4ulog.ekf2_timestamps_timestamp": "1700000001000003",
+    "px4ulog.ekf2_timestamps_airspeed_timestamp_rel": "-17291",
+    "px4ulog.ekf2_timestamps_airspeed_validated_timestamp_rel": "23212",
+    "px4ulog.ekf2_timestamps_distance_sensor_timestamp_rel": "-1821"
+  }
+}

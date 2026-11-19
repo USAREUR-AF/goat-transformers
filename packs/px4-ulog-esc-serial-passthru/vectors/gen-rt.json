@@ -1,0 +1,14 @@
+{
+  "name": "rt-esc_serial_passthru",
+  "from": "px4-ulog-esc-serial-passthru",
+  "to": "px4-ulog-esc-serial-passthru",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b234cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbac5d0ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2e",
+  "expect": "43822d18240a06009b234cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbac5d0ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2e",
+  "model": {
+    "px4ulog.mavlink_tunnel_timestamp": "1700000001000003",
+    "px4ulog.mavlink_tunnel_payload_type": "9115",
+    "px4ulog.mavlink_tunnel_target_system": "76",
+    "px4ulog.mavlink_tunnel_target_component": "253"
+  }
+}

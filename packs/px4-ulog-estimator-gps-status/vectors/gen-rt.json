@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_gps_status",
+  "from": "px4-ulog-estimator-gps-status",
+  "to": "px4-ulog-estimator-gps-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc0000100010001000100010001",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc0000100010001000100010001",
+  "model": {
+    "px4ulog.estimator_gps_status_timestamp": "1700000001000003",
+    "px4ulog.estimator_gps_status_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_gps_status_position_drift_rate_horizontal_m_s": "-6.875",
+    "px4ulog.estimator_gps_status_position_drift_rate_vertical_m_s": "-6.625"
+  }
+}

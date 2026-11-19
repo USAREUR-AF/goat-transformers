@@ -1,0 +1,12 @@
+{
+  "name": "rt-ulog_stream_ack",
+  "from": "px4-ulog-ulog-stream-ack",
+  "to": "px4-ulog-ulog-stream-ack",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b23",
+  "expect": "43822d18240a06009b23",
+  "model": {
+    "px4ulog.ulog_stream_ack_timestamp": "1700000001000003",
+    "px4ulog.ulog_stream_ack_msg_sequence": "9115"
+  }
+}

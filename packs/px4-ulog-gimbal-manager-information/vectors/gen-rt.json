@@ -1,0 +1,14 @@
+{
+  "name": "rt-gimbal_manager_information",
+  "from": "px4-ulog-gimbal-manager-information",
+  "to": "px4-ulog-gimbal-manager-information",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c072",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c072",
+  "model": {
+    "px4ulog.gimbal_manager_information_timestamp": "1700000001000003",
+    "px4ulog.gimbal_manager_information_cap_flags": "1013916571",
+    "px4ulog.gimbal_manager_information_roll_min": "-6.875",
+    "px4ulog.gimbal_manager_information_roll_max": "-6.625"
+  }
+}

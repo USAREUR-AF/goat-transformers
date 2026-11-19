@@ -1,0 +1,13 @@
+{
+  "name": "rt-parameter_reset_request",
+  "from": "px4-ulog-parameter-reset-request",
+  "to": "px4-ulog-parameter-reset-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b2301",
+  "expect": "43822d18240a06009b2301",
+  "model": {
+    "px4ulog.parameter_reset_request_timestamp": "1700000001000003",
+    "px4ulog.parameter_reset_request_parameter_index": "9115",
+    "px4ulog.parameter_reset_request_reset_all": "1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-gimbal_manager_set_manual_control",
+  "from": "px4-ulog-gimbal-manager-set-manual-control",
+  "to": "px4-ulog-gimbal-manager-set-manual-control",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c010c17223d4",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c010c17223d4",
+  "model": {
+    "px4ulog.gimbal_manager_set_manual_control_timestamp": "1700000001000003",
+    "px4ulog.gimbal_manager_set_manual_control_flags": "1013916571",
+    "px4ulog.gimbal_manager_set_manual_control_pitch": "-6.875",
+    "px4ulog.gimbal_manager_set_manual_control_yaw": "-6.625"
+  }
+}

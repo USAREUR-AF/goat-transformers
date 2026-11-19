@@ -1,0 +1,14 @@
+{
+  "name": "rt-actuator_controls_status_0",
+  "from": "px4-ulog-actuator-controls-status-0",
+  "to": "px4-ulog-actuator-controls-status-0",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "model": {
+    "px4ulog.actuator_controls_status_timestamp": "1700000001000003",
+    "px4ulog.actuator_controls_status_control_power_0": "-7.125",
+    "px4ulog.actuator_controls_status_control_power_1": "-6.875",
+    "px4ulog.actuator_controls_status_control_power_2": "-6.625"
+  }
+}

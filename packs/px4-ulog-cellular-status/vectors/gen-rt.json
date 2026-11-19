@@ -1,0 +1,14 @@
+{
+  "name": "rt-cellular_status",
+  "from": "px4-ulog-cellular-status",
+  "to": "px4-ulog-cellular-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b234c9dfd16ae905f10c1",
+  "expect": "43822d18240a06009b234c9dfd16ae905f10c1",
+  "model": {
+    "px4ulog.cellular_status_timestamp": "1700000001000003",
+    "px4ulog.cellular_status_status": "9115",
+    "px4ulog.cellular_status_mcc": "40268",
+    "px4ulog.cellular_status_mnc": "5885"
+  }
+}

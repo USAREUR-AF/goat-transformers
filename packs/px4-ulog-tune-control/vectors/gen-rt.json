@@ -1,0 +1,14 @@
+{
+  "name": "rt-tune_control",
+  "from": "px4-ulog-tune-control",
+  "to": "px4-ulog-tune-control",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16ae0010",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16ae0010",
+  "model": {
+    "px4ulog.tune_control_timestamp": "1700000001000003",
+    "px4ulog.tune_control_duration": "1013916571",
+    "px4ulog.tune_control_silence": "3668352332",
+    "px4ulog.tune_control_frequency": "5885"
+  }
+}

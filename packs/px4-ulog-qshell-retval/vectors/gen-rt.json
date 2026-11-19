@@ -1,0 +1,13 @@
+{
+  "name": "rt-qshell_retval",
+  "from": "px4-ulog-qshell-retval",
+  "to": "px4-ulog-qshell-retval",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c01804c9da6da",
+  "expect": "43822d18240a0600753c01804c9da6da",
+  "model": {
+    "px4ulog.qshell_retval_timestamp": "1700000001000003",
+    "px4ulog.qshell_retval_return_value": "-2147402635",
+    "px4ulog.qshell_retval_return_sequence": "3668352332"
+  }
+}

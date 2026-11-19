@@ -1,0 +1,12 @@
+{
+  "name": "rt-button_event",
+  "from": "px4-ulog-button-event",
+  "to": "px4-ulog-button-event",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060000",
+  "expect": "43822d18240a060000",
+  "model": {
+    "px4ulog.button_event_timestamp": "1700000001000003",
+    "px4ulog.button_event_triggered": "0"
+  }
+}

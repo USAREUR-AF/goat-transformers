@@ -1,0 +1,13 @@
+{
+  "name": "rt-battery_info",
+  "from": "px4-ulog-battery-info",
+  "to": "px4-ulog-battery-info",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b7433000000000000000000000000000000000000000000000000000000000000",
+  "expect": "43822d18240a06009b7433000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "px4ulog.battery_info_timestamp": "1700000001000003",
+    "px4ulog.battery_info_id": "155",
+    "px4ulog.battery_info_serial_number": "t3"
+  }
+}

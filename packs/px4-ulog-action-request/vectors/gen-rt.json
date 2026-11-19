@@ -1,0 +1,14 @@
+{
+  "name": "rt-action_request",
+  "from": "px4-ulog-action-request",
+  "to": "px4-ulog-action-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b4cfd",
+  "expect": "43822d18240a06009b4cfd",
+  "model": {
+    "px4ulog.action_request_timestamp": "1700000001000003",
+    "px4ulog.action_request_action": "155",
+    "px4ulog.action_request_source": "76",
+    "px4ulog.action_request_mode": "253"
+  }
+}

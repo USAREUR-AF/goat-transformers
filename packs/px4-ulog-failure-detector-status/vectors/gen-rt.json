@@ -1,0 +1,14 @@
+{
+  "name": "rt-failure_detector_status",
+  "from": "px4-ulog-failure-detector-status",
+  "to": "px4-ulog-failure-detector-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c04c9dfd160100010001000100",
+  "expect": "43822d18240a06000000e4c04c9dfd160100010001000100",
+  "model": {
+    "px4ulog.failure_detector_status_timestamp": "1700000001000003",
+    "px4ulog.failure_detector_status_imbalanced_prop_metric": "-7.125",
+    "px4ulog.failure_detector_status_motor_failure_mask": "40268",
+    "px4ulog.failure_detector_status_motor_stop_mask": "5885"
+  }
+}

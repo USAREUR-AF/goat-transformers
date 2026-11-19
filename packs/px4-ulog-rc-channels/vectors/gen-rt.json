@@ -1,0 +1,14 @@
+{
+  "name": "rt-rc_channels",
+  "from": "px4-ulog-rc-channels",
+  "to": "px4-ulog-rc-channels",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0be2b8dfa6f78afe61d548bc2f930679ed50c437ab1e81f568dc4fb3269a0d70e457cb3de00",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0be2b8dfa6f78afe61d548bc2f930679ed50c437ab1e81f568dc4fb3269a0d70e457cb3de00",
+  "model": {
+    "px4ulog.rc_channels_timestamp": "1700000001000003",
+    "px4ulog.rc_channels_timestamp_last_valid": "1700000002000006",
+    "px4ulog.rc_channels_channels_0": "-6.875",
+    "px4ulog.rc_channels_channels_1": "-6.625"
+  }
+}

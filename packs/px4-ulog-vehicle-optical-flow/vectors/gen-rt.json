@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_optical_flow",
+  "from": "px4-ulog-vehicle-optical-flow",
+  "to": "px4-ulog-vehicle-optical-flow",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc023f12a2e00009cc0000094c000008cc0e7",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc023f12a2e00009cc0000094c000008cc0e7",
+  "model": {
+    "px4ulog.vehicle_optical_flow_timestamp": "1700000001000003",
+    "px4ulog.vehicle_optical_flow_timestamp_sample": "1700000002000006",
+    "px4ulog.vehicle_optical_flow_device_id": "3668352332",
+    "px4ulog.vehicle_optical_flow_pixel_flow_0": "-6.625"
+  }
+}

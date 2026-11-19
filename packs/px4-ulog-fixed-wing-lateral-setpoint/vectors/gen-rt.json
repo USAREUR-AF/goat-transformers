@@ -1,0 +1,14 @@
+{
+  "name": "rt-fixed_wing_lateral_setpoint",
+  "from": "px4-ulog-fixed-wing-lateral-setpoint",
+  "to": "px4-ulog-fixed-wing-lateral-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "model": {
+    "px4ulog.fixed_wing_lateral_setpoint_timestamp": "1700000001000003",
+    "px4ulog.fixed_wing_lateral_setpoint_course": "-7.125",
+    "px4ulog.fixed_wing_lateral_setpoint_airspeed_direction": "-6.875",
+    "px4ulog.fixed_wing_lateral_setpoint_lateral_acceleration": "-6.625"
+  }
+}

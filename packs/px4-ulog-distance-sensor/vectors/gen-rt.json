@@ -1,0 +1,14 @@
+{
+  "name": "rt-distance_sensor",
+  "from": "px4-ulog-distance-sensor",
+  "to": "px4-ulog-distance-sensor",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c052e79849",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c052e79849",
+  "model": {
+    "px4ulog.distance_sensor_timestamp": "1700000001000003",
+    "px4ulog.distance_sensor_device_id": "1013916571",
+    "px4ulog.distance_sensor_min_distance": "-6.875",
+    "px4ulog.distance_sensor_max_distance": "-6.625"
+  }
+}

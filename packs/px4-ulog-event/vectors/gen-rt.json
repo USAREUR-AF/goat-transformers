@@ -1,0 +1,14 @@
+{
+  "name": "rt-event",
+  "from": "px4-ulog-event",
+  "to": "px4-ulog-event",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9dfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546",
+  "expect": "43822d18240a06009b236f3c4c9dfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546",
+  "model": {
+    "px4ulog.event_timestamp": "1700000001000003",
+    "px4ulog.event_id": "1013916571",
+    "px4ulog.event_event_sequence": "40268",
+    "px4ulog.event_arguments_0": "253"
+  }
+}

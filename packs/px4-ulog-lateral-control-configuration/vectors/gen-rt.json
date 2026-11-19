@@ -1,0 +1,12 @@
+{
+  "name": "rt-lateral_control_configuration",
+  "from": "px4-ulog-lateral-control-configuration",
+  "to": "px4-ulog-lateral-control-configuration",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c0",
+  "expect": "43822d18240a06000000e4c0",
+  "model": {
+    "px4ulog.lateral_control_configuration_timestamp": "1700000001000003",
+    "px4ulog.lateral_control_configuration_lateral_accel_max": "-7.125"
+  }
+}

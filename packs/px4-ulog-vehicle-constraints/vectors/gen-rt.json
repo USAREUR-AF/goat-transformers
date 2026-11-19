@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_constraints",
+  "from": "px4-ulog-vehicle-constraints",
+  "to": "px4-ulog-vehicle-constraints",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc000",
+  "expect": "43822d18240a06000000e4c00000dcc000",
+  "model": {
+    "px4ulog.vehicle_constraints_timestamp": "1700000001000003",
+    "px4ulog.vehicle_constraints_speed_up": "-7.125",
+    "px4ulog.vehicle_constraints_speed_down": "-6.875",
+    "px4ulog.vehicle_constraints_want_takeoff": "0"
+  }
+}

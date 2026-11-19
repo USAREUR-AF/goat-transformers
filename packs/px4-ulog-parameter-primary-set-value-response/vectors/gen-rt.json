@@ -1,0 +1,13 @@
+{
+  "name": "rt-parameter_primary_set_value_response",
+  "from": "px4-ulog-parameter-primary-set-value-response",
+  "to": "px4-ulog-parameter-primary-set-value-response",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9d",
+  "expect": "43822d18240a060086c43c18240a06004c9d",
+  "model": {
+    "px4ulog.parameter_set_value_response_timestamp": "1700000001000003",
+    "px4ulog.parameter_set_value_response_request_timestamp": "1700000002000006",
+    "px4ulog.parameter_set_value_response_parameter_index": "40268"
+  }
+}

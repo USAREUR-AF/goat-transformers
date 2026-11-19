@@ -1,0 +1,14 @@
+{
+  "name": "rt-input_rc",
+  "from": "px4-ulog-input-rc",
+  "to": "px4-ulog-input-rc",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600acda01800000d4c0ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd198821233010046f9",
+  "expect": "43822d18240a060086c43c18240a0600acda01800000d4c0ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd198821233010046f9",
+  "model": {
+    "px4ulog.input_rc_timestamp": "1700000001000003",
+    "px4ulog.input_rc_timestamp_last_signal": "1700000002000006",
+    "px4ulog.input_rc_rssi": "-2147362132",
+    "px4ulog.input_rc_rssi_dbm": "-6.625"
+  }
+}

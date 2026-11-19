@@ -1,0 +1,14 @@
+{
+  "name": "rt-rate_ctrl_status",
+  "from": "px4-ulog-rate-ctrl-status",
+  "to": "px4-ulog-rate-ctrl-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "model": {
+    "px4ulog.rate_ctrl_status_timestamp": "1700000001000003",
+    "px4ulog.rate_ctrl_status_rollspeed_integ": "-7.125",
+    "px4ulog.rate_ctrl_status_pitchspeed_integ": "-6.875",
+    "px4ulog.rate_ctrl_status_yawspeed_integ": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-actuator_test",
+  "from": "px4-ulog-actuator-test",
+  "to": "px4-ulog-actuator-test",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c04c9da6dafd16ae",
+  "expect": "43822d18240a06000000e4c04c9da6dafd16ae",
+  "model": {
+    "px4ulog.actuator_test_timestamp": "1700000001000003",
+    "px4ulog.actuator_test_value": "-7.125",
+    "px4ulog.actuator_test_timeout_ms": "3668352332",
+    "px4ulog.actuator_test_function": "5885"
+  }
+}

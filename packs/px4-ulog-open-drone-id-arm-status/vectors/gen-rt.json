@@ -1,0 +1,13 @@
+{
+  "name": "rt-open_drone_id_arm_status",
+  "from": "px4-ulog-open-drone-id-arm-status",
+  "to": "px4-ulog-open-drone-id-arm-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b7433000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "43822d18240a06009b7433000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "px4ulog.open_drone_id_arm_status_timestamp": "1700000001000003",
+    "px4ulog.open_drone_id_arm_status_status": "155",
+    "px4ulog.open_drone_id_arm_status_error": "t3"
+  }
+}

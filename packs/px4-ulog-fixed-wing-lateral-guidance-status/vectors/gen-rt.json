@@ -1,0 +1,14 @@
+{
+  "name": "rt-fixed_wing_lateral_guidance_status",
+  "from": "px4-ulog-fixed-wing-lateral-guidance-status",
+  "to": "px4-ulog-fixed-wing-lateral-guidance-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c072",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c072",
+  "model": {
+    "px4ulog.fixed_wing_lateral_guidance_status_timestamp": "1700000001000003",
+    "px4ulog.fixed_wing_lateral_guidance_status_course_setpoint": "-7.125",
+    "px4ulog.fixed_wing_lateral_guidance_status_lateral_acceleration_ff": "-6.875",
+    "px4ulog.fixed_wing_lateral_guidance_status_bearing_feas": "-6.625"
+  }
+}

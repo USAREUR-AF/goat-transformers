@@ -1,0 +1,14 @@
+{
+  "name": "rt-ping",
+  "from": "px4-ulog-ping",
+  "to": "px4-ulog-ping",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6dafd16de780000ccc05f10",
+  "expect": "43822d18240a060086c43c18240a06004c9da6dafd16de780000ccc05f10",
+  "model": {
+    "px4ulog.ping_timestamp": "1700000001000003",
+    "px4ulog.ping_ping_time": "1700000002000006",
+    "px4ulog.ping_ping_sequence": "3668352332",
+    "px4ulog.ping_dropped_packets": "2027820797"
+  }
+}

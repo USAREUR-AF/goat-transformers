@@ -1,0 +1,14 @@
+{
+  "name": "rt-orbit_status",
+  "from": "px4-ulog-orbit-status",
+  "to": "px4-ulog-orbit-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc05f10",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc05f10",
+  "model": {
+    "px4ulog.orbit_status_timestamp": "1700000001000003",
+    "px4ulog.orbit_status_x": "2.014",
+    "px4ulog.orbit_status_y": "-3.021",
+    "px4ulog.orbit_status_radius": "-6.625"
+  }
+}

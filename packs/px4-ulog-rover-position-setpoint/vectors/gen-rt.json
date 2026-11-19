@@ -1,0 +1,14 @@
+{
+  "name": "rt-rover_position_setpoint",
+  "from": "px4-ulog-rover-position-setpoint",
+  "to": "px4-ulog-rover-position-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "px4ulog.rover_position_setpoint_timestamp": "1700000001000003",
+    "px4ulog.rover_position_setpoint_position_ned_0": "-7.125",
+    "px4ulog.rover_position_setpoint_position_ned_1": "-6.875",
+    "px4ulog.rover_position_setpoint_start_ned_0": "-6.625"
+  }
+}

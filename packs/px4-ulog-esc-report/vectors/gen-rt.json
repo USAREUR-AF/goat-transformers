@@ -1,0 +1,14 @@
+{
+  "name": "rt-esc_report",
+  "from": "px4-ulog-esc-report",
+  "to": "px4-ulog-esc-report",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3cacda01800000d4c00000ccc00000c4c01084c17223d41b",
+  "expect": "43822d18240a06009b236f3cacda01800000d4c00000ccc00000c4c01084c17223d41b",
+  "model": {
+    "px4ulog.esc_report_timestamp": "1700000001000003",
+    "px4ulog.esc_report_esc_errorcount": "1013916571",
+    "px4ulog.esc_report_esc_rpm": "-2147362132",
+    "px4ulog.esc_report_esc_voltage": "-6.625"
+  }
+}

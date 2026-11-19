@@ -1,0 +1,4 @@
+uint64 timestamp
+float64 lat		# Latitude in degrees (WGS84)
+float64 lon		# Longitude in degrees (WGS84)
+float32[4] q

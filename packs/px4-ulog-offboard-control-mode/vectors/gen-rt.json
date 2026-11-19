@@ -1,0 +1,14 @@
+{
+  "name": "rt-offboard_control_mode",
+  "from": "px4-ulog-offboard-control-mode",
+  "to": "px4-ulog-offboard-control-mode",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060000010001000100",
+  "expect": "43822d18240a060000010001000100",
+  "model": {
+    "px4ulog.offboard_control_mode_timestamp": "1700000001000003",
+    "px4ulog.offboard_control_mode_position": "0",
+    "px4ulog.offboard_control_mode_velocity": "1",
+    "px4ulog.offboard_control_mode_acceleration": "0"
+  }
+}

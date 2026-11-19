@@ -1,0 +1,14 @@
+{
+  "name": "rt-actuator_servos",
+  "from": "px4-ulog-actuator-servos",
+  "to": "px4-ulog-actuator-servos",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0",
+  "model": {
+    "px4ulog.actuator_servos_timestamp": "1700000001000003",
+    "px4ulog.actuator_servos_timestamp_sample": "1700000002000006",
+    "px4ulog.actuator_servos_control_0": "-6.875",
+    "px4ulog.actuator_servos_control_1": "-6.625"
+  }
+}

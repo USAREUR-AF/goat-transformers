@@ -1,0 +1,14 @@
+{
+  "name": "rt-px4io_status",
+  "from": "px4-ulog-px4io-status",
+  "to": "px4-ulog-px4io-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc0fd16ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd1988212338ce405957f46f9f772a8ec59660ae0bb596cd31d4dcec67f4030bae13392ad4327f4a0a51a5694070eb88769011a7bcbf47c6e2de8de618fdb0100010001000100010001000100010001000100010001",
+  "expect": "43822d18240a06000000e4c00000dcc0fd16ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd1988212338ce405957f46f9f772a8ec59660ae0bb596cd31d4dcec67f4030bae13392ad4327f4a0a51a5694070eb88769011a7bcbf47c6e2de8de618fdb0100010001000100010001000100010001000100010001",
+  "model": {
+    "px4ulog.px4io_status_timestamp": "1700000001000003",
+    "px4ulog.px4io_status_voltage_v": "-7.125",
+    "px4ulog.px4io_status_rssi_v": "-6.875",
+    "px4ulog.px4io_status_free_memory_bytes": "5885"
+  }
+}

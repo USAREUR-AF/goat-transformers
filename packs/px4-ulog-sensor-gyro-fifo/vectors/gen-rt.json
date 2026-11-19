@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_gyro_fifo",
+  "from": "px4-ulog-sensor-gyro-fifo",
+  "to": "px4-ulog-sensor-gyro-fifo",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc0513588d3bf71f60f2dae644c9bead288092740c57763ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce426c790ab0a8e7461ee555838c21c3bffa5d31fc689a9f38d6d60d7544137bb1b24fe9ed208c572a8ec8c566fc0433a36a41a1dfd87d0f1c46ba7d58b4f6eb94223359d1906fc70dfeab354a6ce8a386da2411c348617fffb69ded3b24da5b789216c9b4005337f16e8fa52ddccb136a4a0881a6b844efe226815d1f94bdcb5b02fa39987036a7d4de7215114caf834dbaebbf",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc0513588d3bf71f60f2dae644c9bead288092740c57763ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce426c790ab0a8e7461ee555838c21c3bffa5d31fc689a9f38d6d60d7544137bb1b24fe9ed208c572a8ec8c566fc0433a36a41a1dfd87d0f1c46ba7d58b4f6eb94223359d1906fc70dfeab354a6ce8a386da2411c348617fffb69ded3b24da5b789216c9b4005337f16e8fa52ddccb136a4a0881a6b844efe226815d1f94bdcb5b02fa39987036a7d4de7215114caf834dbaebbf",
+  "model": {
+    "px4ulog.sensor_gyro_fifo_timestamp": "1700000001000003",
+    "px4ulog.sensor_gyro_fifo_timestamp_sample": "1700000002000006",
+    "px4ulog.sensor_gyro_fifo_device_id": "3668352332",
+    "px4ulog.sensor_gyro_fifo_dt": "-6.625"
+  }
+}

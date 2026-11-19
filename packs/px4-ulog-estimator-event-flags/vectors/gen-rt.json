@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_event_flags",
+  "from": "px4-ulog-estimator-event-flags",
+  "to": "px4-ulog-estimator-event-flags",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0001000100010001000100010001000100",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0001000100010001000100010001000100",
+  "model": {
+    "px4ulog.estimator_event_flags_timestamp": "1700000001000003",
+    "px4ulog.estimator_event_flags_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_event_flags_information_event_changes": "3668352332",
+    "px4ulog.estimator_event_flags_gps_checks_passed": "0"
+  }
+}

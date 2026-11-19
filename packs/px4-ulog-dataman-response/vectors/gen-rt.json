@@ -1,0 +1,14 @@
+{
+  "name": "rt-dataman_response",
+  "from": "px4-ulog-dataman-response",
+  "to": "px4-ulog-dataman-response",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617",
+  "expect": "43822d18240a06009b236f3c4cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617",
+  "model": {
+    "px4ulog.dataman_response_timestamp": "1700000001000003",
+    "px4ulog.dataman_response_index": "1013916571",
+    "px4ulog.dataman_response_client_id": "76",
+    "px4ulog.dataman_response_request_type": "253"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-health_report",
+  "from": "px4-ulog-health-report",
+  "to": "px4-ulog-health-report",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a06004f8b6a18240a060092cd7918240a0600d50f8918240a060018529818240a0600",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a06004f8b6a18240a060092cd7918240a0600d50f8918240a060018529818240a0600",
+  "model": {
+    "px4ulog.health_report_timestamp": "1700000001000003",
+    "px4ulog.health_report_can_arm_mode_flags": "1700000002000006",
+    "px4ulog.health_report_can_run_mode_flags": "1700000003000009",
+    "px4ulog.health_report_health_is_present_flags": "1700000004000012"
+  }
+}

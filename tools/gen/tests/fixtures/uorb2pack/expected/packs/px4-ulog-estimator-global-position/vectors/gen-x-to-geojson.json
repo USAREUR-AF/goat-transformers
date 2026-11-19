@@ -1,0 +1,12 @@
+{
+  "name": "x-estimator_global_position-to-geojson",
+  "from": "px4-ulog-estimator-global-position",
+  "to": "geojson",
+  "source": "the bound fields lat and lon (pack.md) are float64 degrees; geojson writes [lon, lat] (RFC 7946, engine-spec 0.1.1 ruling 4); no other key of this format is a geojson key",
+  "input": "43822d18240a0600dc5fe234e9b24740fdcc0f12581721400000d4c0015f",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419]},\"properties\":{}}",
+  "model": {
+    "lat": "47.3977419",
+    "lon": "8.5455938"
+  }
+}

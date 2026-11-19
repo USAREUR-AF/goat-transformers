@@ -1,0 +1,14 @@
+{
+  "name": "rt-fuel_tank_status",
+  "from": "px4-ulog-fuel-tank-status",
+  "to": "px4-ulog-fuel-tank-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc05f0a4db50000bcc0c172",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc05f0a4db50000bcc0c172",
+  "model": {
+    "px4ulog.fuel_tank_status_timestamp": "1700000001000003",
+    "px4ulog.fuel_tank_status_maximum_fuel_capacity": "-7.125",
+    "px4ulog.fuel_tank_status_consumed_fuel": "-6.875",
+    "px4ulog.fuel_tank_status_fuel_consumption_rate": "-6.625"
+  }
+}

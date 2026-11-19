@@ -1,0 +1,6 @@
+# GPS home position in WGS84 coordinates (test copy).
+uint64 timestamp
+float64 lat
+float64 lon
+float32 alt
+bool valid_hpos

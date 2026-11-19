@@ -1,0 +1,12 @@
+{
+  "name": "rt-rover_attitude_setpoint",
+  "from": "px4-ulog-rover-attitude-setpoint",
+  "to": "px4-ulog-rover-attitude-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c0",
+  "expect": "43822d18240a06000000e4c0",
+  "model": {
+    "px4ulog.rover_attitude_setpoint_timestamp": "1700000001000003",
+    "px4ulog.rover_attitude_setpoint_yaw_setpoint": "-7.125"
+  }
+}

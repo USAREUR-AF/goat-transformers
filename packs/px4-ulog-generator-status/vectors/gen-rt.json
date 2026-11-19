@@ -1,0 +1,14 @@
+{
+  "name": "rt-generator_status",
+  "from": "px4-ulog-generator-status",
+  "to": "px4-ulog-generator-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc0c1fdbbf1f68f058023f1644c9bea",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc0c1fdbbf1f68f058023f1644c9bea",
+  "model": {
+    "px4ulog.generator_status_timestamp": "1700000001000003",
+    "px4ulog.generator_status_status": "1700000002000006",
+    "px4ulog.generator_status_battery_current": "-6.875",
+    "px4ulog.generator_status_load_current": "-6.625"
+  }
+}

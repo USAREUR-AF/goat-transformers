@@ -1,0 +1,14 @@
+{
+  "name": "rt-rover_rate_status",
+  "from": "px4-ulog-rover-rate-status",
+  "to": "px4-ulog-rover-rate-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0",
+  "model": {
+    "px4ulog.rover_rate_status_timestamp": "1700000001000003",
+    "px4ulog.rover_rate_status_measured_yaw_rate": "-7.125",
+    "px4ulog.rover_rate_status_adjusted_yaw_rate_setpoint": "-6.875",
+    "px4ulog.rover_rate_status_pid_yaw_rate_integral": "-6.625"
+  }
+}

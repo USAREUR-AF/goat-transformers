@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_imu",
+  "from": "px4-ulog-vehicle-imu",
+  "to": "px4-ulog-vehicle-imu",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c0d46a62cc85e4996a36e79849",
+  "expect": "43822d18240a060086c43c18240a06004c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c0d46a62cc85e4996a36e79849",
+  "model": {
+    "px4ulog.vehicle_imu_timestamp": "1700000001000003",
+    "px4ulog.vehicle_imu_timestamp_sample": "1700000002000006",
+    "px4ulog.vehicle_imu_accel_device_id": "3668352332",
+    "px4ulog.vehicle_imu_gyro_device_id": "2027820797"
+  }
+}

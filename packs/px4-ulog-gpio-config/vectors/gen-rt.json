@@ -1,0 +1,14 @@
+{
+  "name": "rt-gpio_config",
+  "from": "px4-ulog-gpio-config",
+  "to": "px4-ulog-gpio-config",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16de78ae901517",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16de78ae901517",
+  "model": {
+    "px4ulog.gpio_config_timestamp": "1700000001000003",
+    "px4ulog.gpio_config_device_id": "1013916571",
+    "px4ulog.gpio_config_mask": "3668352332",
+    "px4ulog.gpio_config_state": "2027820797"
+  }
+}

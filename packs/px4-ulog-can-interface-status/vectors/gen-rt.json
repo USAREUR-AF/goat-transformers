@@ -1,0 +1,14 @@
+{
+  "name": "rt-can_interface_status",
+  "from": "px4-ulog-can-interface-status",
+  "to": "px4-ulog-can-interface-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a0600ae",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a0600ae",
+  "model": {
+    "px4ulog.can_interface_status_timestamp": "1700000001000003",
+    "px4ulog.can_interface_status_io_errors": "1700000002000006",
+    "px4ulog.can_interface_status_frames_tx": "1700000003000009",
+    "px4ulog.can_interface_status_frames_rx": "1700000004000012"
+  }
+}

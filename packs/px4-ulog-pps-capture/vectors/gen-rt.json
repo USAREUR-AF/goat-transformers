@@ -1,0 +1,13 @@
+{
+  "name": "rt-pps_capture",
+  "from": "px4-ulog-pps-capture",
+  "to": "px4-ulog-pps-capture",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c",
+  "expect": "43822d18240a060086c43c18240a06004c",
+  "model": {
+    "px4ulog.pps_capture_timestamp": "1700000001000003",
+    "px4ulog.pps_capture_rtc_timestamp": "1700000002000006",
+    "px4ulog.pps_capture_pps_rate_exceeded_counter": "76"
+  }
+}

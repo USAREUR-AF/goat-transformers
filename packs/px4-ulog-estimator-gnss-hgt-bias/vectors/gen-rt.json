@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_gnss_hgt_bias",
+  "from": "px4-ulog-estimator-gnss-hgt-bias",
+  "to": "px4-ulog-estimator-gnss-hgt-bias",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c0",
+  "model": {
+    "px4ulog.estimator_bias_timestamp": "1700000001000003",
+    "px4ulog.estimator_bias_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_bias_device_id": "3668352332",
+    "px4ulog.estimator_bias_bias": "-6.625"
+  }
+}

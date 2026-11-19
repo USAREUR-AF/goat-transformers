@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_aid_src_airspeed",
+  "from": "px4-ulog-estimator-aid-src-airspeed",
+  "to": "px4-ulog-estimator-aid-src-airspeed",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0850100",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0850100",
+  "model": {
+    "px4ulog.estimator_aid_source1d_timestamp": "1700000001000003",
+    "px4ulog.estimator_aid_source1d_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_aid_source1d_time_last_fuse": "1700000003000009",
+    "px4ulog.estimator_aid_source1d_device_id": "2027820797"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-navigator_mission_item",
+  "from": "px4-ulog-navigator-mission-item",
+  "to": "px4-ulog-navigator-mission-item",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0727723f1d4850100010001",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0727723f1d4850100010001",
+  "model": {
+    "px4ulog.navigator_mission_item_timestamp": "1700000001000003",
+    "px4ulog.navigator_mission_item_latitude": "-7.125",
+    "px4ulog.navigator_mission_item_longitude": "-6.875",
+    "px4ulog.navigator_mission_item_time_inside": "-6.625"
+  }
+}

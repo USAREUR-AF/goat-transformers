@@ -1,0 +1,14 @@
+{
+  "name": "rt-timesync_status",
+  "from": "px4-ulog-timesync-status",
+  "to": "px4-ulog-timesync-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06003739d2fffffffffff4f6c2ffffffffffae9015175f",
+  "expect": "43822d18240a060086c43c18240a06003739d2fffffffffff4f6c2ffffffffffae9015175f",
+  "model": {
+    "px4ulog.timesync_status_timestamp": "1700000001000003",
+    "px4ulog.timesync_status_remote_timestamp": "1700000002000006",
+    "px4ulog.timesync_status_observed_offset": "-3000009",
+    "px4ulog.timesync_status_estimated_offset": "-4000012"
+  }
+}

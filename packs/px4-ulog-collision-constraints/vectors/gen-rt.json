@@ -1,0 +1,14 @@
+{
+  "name": "rt-collision_constraints",
+  "from": "px4-ulog-collision-constraints",
+  "to": "px4-ulog-collision-constraints",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc0",
+  "model": {
+    "px4ulog.collision_constraints_timestamp": "1700000001000003",
+    "px4ulog.collision_constraints_original_setpoint_0": "-7.125",
+    "px4ulog.collision_constraints_original_setpoint_1": "-6.875",
+    "px4ulog.collision_constraints_adapted_setpoint_0": "-6.625"
+  }
+}

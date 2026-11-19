@@ -1,0 +1,14 @@
+{
+  "name": "rt-internal_combustion_engine_status",
+  "from": "px4-ulog-internal-combustion-engine-status",
+  "to": "px4-ulog-internal-combustion-engine-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c05c0dbe6f20",
+  "expect": "43822d18240a06009b236f3c4c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c05c0dbe6f20",
+  "model": {
+    "px4ulog.internal_combustion_engine_status_timestamp": "1700000001000003",
+    "px4ulog.internal_combustion_engine_status_flags": "1013916571",
+    "px4ulog.internal_combustion_engine_status_engine_speed_rpm": "3668352332",
+    "px4ulog.internal_combustion_engine_status_spark_dwell_time_ms": "-6.625"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_gnss_relative",
+  "from": "px4-ulog-sensor-gnss-relative",
+  "to": "px4-ulog-sensor-gnss-relative",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0985100010001000100010001",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0985100010001000100010001",
+  "model": {
+    "px4ulog.sensor_gnss_relative_timestamp": "1700000001000003",
+    "px4ulog.sensor_gnss_relative_timestamp_sample": "1700000002000006",
+    "px4ulog.sensor_gnss_relative_time_utc_usec": "1700000003000009",
+    "px4ulog.sensor_gnss_relative_device_id": "2027820797"
+  }
+}

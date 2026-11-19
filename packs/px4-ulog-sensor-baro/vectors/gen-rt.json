@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_baro",
+  "from": "px4-ulog-sensor-baro",
+  "to": "px4-ulog-sensor-baro",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc05f0a4db5",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc05f0a4db5",
+  "model": {
+    "px4ulog.sensor_baro_timestamp": "1700000001000003",
+    "px4ulog.sensor_baro_timestamp_sample": "1700000002000006",
+    "px4ulog.sensor_baro_device_id": "3668352332",
+    "px4ulog.sensor_baro_pressure": "-6.625"
+  }
+}

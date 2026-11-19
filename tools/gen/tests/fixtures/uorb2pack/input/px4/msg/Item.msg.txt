@@ -1,0 +1,6 @@
+# A nested type written for the uorb2pack tests.
+uint64 timestamp
+uint8 MODE_A = 1
+uint8 mode
+float32 value
+int16 delta
