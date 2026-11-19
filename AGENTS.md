@@ -30,6 +30,7 @@ vectors only, and all seven must produce the same bytes for every vector.
 | `packs/conformance*`, `packs/demo-*` | synthetic formats that exercise the rules of the specification |
 | `engines/<language>/` | `rust` (the reference), `go`, `python`, `java`, `cpp`, `erlang`, `zig` |
 | `bindings/c`, `bindings/wasm` | the Rust engine as a C library and as a WebAssembly module |
+| `adapters/` | transports around the Rust engine (`goat-xf-pipe`); the engine does not depend on it |
 | `tools/boundary-gate` | refuses content that is not public |
 | `tools/goat-pkg` | plans the smallest package for a set of constraints |
 | `tools/repo-stats` | prints the counts that `README.md` quotes |
@@ -103,6 +104,7 @@ Run from the repository root unless a directory is named.
 | C library | `cd bindings/c && ./test.sh` |
 | WebAssembly module | `cd bindings/wasm && cargo build --release --target wasm32-unknown-unknown` (`--profile small` for the smallest) |
 | WebAssembly, vectors | `node --test bindings/wasm/test/vectors.test.mjs` (`GT_PACKS=a,b` chooses packs, `GT_WASM=<file>` chooses the build) |
+| Transport adapters | `cd adapters && cargo test --locked` (`adapters/zenoh` is built on its own: `cd adapters/zenoh && cargo test`) |
 
 Each engine test command loads every pack and runs every vector. For a quick
 check of one pack, load only the packs you name with `--packs-only`:
