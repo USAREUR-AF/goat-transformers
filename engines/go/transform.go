@@ -14,8 +14,10 @@ import (
 type transform struct {
 	name   string
 	number bool
-	decode func(string) (Value, error)
-	encode func(Value) (string, error)
+	// numOnly refuses a string member on json and geojson (0.15 ruling 23).
+	numOnly bool
+	decode  func(string) (Value, error)
+	encode  func(Value) (string, error)
 }
 
 var transforms = map[string]*transform{
@@ -313,8 +315,13 @@ type bitsTransform struct {
 	name   string
 	ascii  bool
 	sixbit bool // spec 0.14: six-bit characters
-	decode func(raw uint64, length int) (Value, error)
-	encode func(v Value, length int) (uint64, error)
+	noSwap bool // `swap` is bad-directive with this transform (0.15)
+	// decodeAt and encodeAt, when set, read and write the field's bits
+	// themselves (0.15 `chars`, which may be longer than 64 bits).
+	decodeAt func(data []byte, at, length int, msb bool) (Value, error)
+	encodeAt func(v Value, data []byte, at, length int, msb bool) error
+	decode   func(raw uint64, length int) (Value, error)
+	encode   func(v Value, length int) (uint64, error)
 }
 
 func maskBits(v uint64, length int) uint64 {
@@ -506,9 +513,9 @@ func parseScale(spec string) (*scale, error) {
 // up is the decode direction: v * factor (or v * num / den), then + offset.
 func (sc *scale) up(v float64) float64 {
 	if sc.frac {
-		return v*sc.num/sc.den + sc.offset
+		return float64(float64(v*sc.num)/sc.den) + sc.offset
 	}
-	return v*sc.factor + sc.offset
+	return float64(v*sc.factor) + sc.offset
 }
 
 // down is the encode direction, before rounding: (x - offset) / factor (or
@@ -638,6 +645,13 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	if name == "sixbit" && wire != WireBits {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire bits", name)
 	}
+	// The value transforms of 0.15 check their wire and length themselves.
+	if base := v015Base(name); base != "" {
+		if err := resolveV015(wire, base, f); err != nil {
+			return ErrBadDirective, err
+		}
+		return "", nil
+	}
 	switch wire {
 	case WireBits:
 		switch {
@@ -660,6 +674,9 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			}
 			f.btf = bt
 		case strings.HasPrefix(name, "uscale:"), strings.HasPrefix(name, "sscale:"):
+			if err := checkUnsignedFraction(name); err != nil {
+				return ErrBadDirective, err
+			}
 			bt, err := newScale(name, name[0] == 's')
 			if err != nil {
 				return ErrUnknownTransform, err

@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-smag-magnitude-out-of-range-12-bit-2048",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"c1\":0,\"c2\":2048}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "a magnitude of 2^(len-1) or more"
+}

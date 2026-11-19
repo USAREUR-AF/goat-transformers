@@ -1,0 +1,12 @@
+{
+  "name": "ruling-6-other-number-goes-through-iscale",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{\"cnt\":101}",
+  "expect": "{\"cnt\":102}",
+  "model": {
+    "probe.cnt": "51"
+  },
+  "source": "constructed",
+  "reference": "101/2 = 50.5 rounds to 51; encode 51 / (1/2) = 102"
+}

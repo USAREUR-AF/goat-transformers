@@ -1,0 +1,8 @@
+{
+  "name": "ascii7-nul-followed-by-a-character",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a0000000000008208208208200104000000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

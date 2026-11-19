@@ -1,0 +1,9 @@
+{
+  "name": "to-xml-ruling-8-scale-writes-12-5",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-xml",
+  "input": "{\"ratio\":1.25}",
+  "expect": "<msg r=\"12.5\"/>",
+  "source": "constructed",
+  "reference": "ruling 8: (1.25 - 0) x 10 / 1 = 12.5, not rounded"
+}

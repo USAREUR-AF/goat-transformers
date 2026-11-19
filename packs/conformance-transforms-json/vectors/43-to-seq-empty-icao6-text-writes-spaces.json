@@ -1,0 +1,8 @@
+{
+  "name": "to-seq-empty-icao6-text-writes-spaces",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-seq",
+  "input": "{\"c1\":0,\"cs\":\"\",\"s2\":\"000\"}",
+  "expect": "00000000000208200000",
+  "source": "constructed"
+}

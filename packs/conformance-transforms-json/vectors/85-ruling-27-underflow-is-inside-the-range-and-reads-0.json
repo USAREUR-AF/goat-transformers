@@ -1,0 +1,12 @@
+{
+  "name": "ruling-27-underflow-is-inside-the-range-and-reads-0",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"a\":1e-400}",
+  "expect": "{\"a\":0}",
+  "model": {
+    "probe.a": "0"
+  },
+  "source": "constructed",
+  "reference": "ruling 27: a number that rounds to 0 is inside the double range and reads as 0"
+}

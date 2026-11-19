@@ -95,6 +95,14 @@ func transformYields(name string) (Kind, bool) {
 	if strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:") {
 		return KindFloat, true
 	}
+	switch v015Base(name) {
+	case "uiscale", "siscale", "smag", "iscale":
+		return KindInt, true
+	case "smscale", "f32scale", "f64scale", "scale":
+		return KindFloat, true
+	case "chars", "octal":
+		return KindString, true
+	}
 	return textTransformYields(name)
 }
 

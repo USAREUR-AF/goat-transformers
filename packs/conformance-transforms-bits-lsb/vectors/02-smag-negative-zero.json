@@ -1,0 +1,14 @@
+{
+  "name": "smag-negative-zero",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "1080000880",
+  "expect": "1000000000",
+  "model": {
+    "probe.c1": "0",
+    "probe.c2": "0",
+    "probe.ratio": "0"
+  },
+  "source": "constructed",
+  "reference": "sign 1 with magnitude 0 decodes 0 and encodes with sign 0"
+}

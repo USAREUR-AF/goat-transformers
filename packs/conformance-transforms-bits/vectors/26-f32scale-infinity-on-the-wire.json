@@ -1,0 +1,8 @@
+{
+  "name": "f32scale-infinity-on-the-wire",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "167f800000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

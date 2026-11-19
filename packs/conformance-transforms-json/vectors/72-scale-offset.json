@@ -1,0 +1,12 @@
+{
+  "name": "scale-offset",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"crs\":-4500}",
+  "expect": "{\"crs\":-4500}",
+  "model": {
+    "course": "135"
+  },
+  "source": "constructed",
+  "reference": "-4500 x 1 / 100 + 180 = 135; (135-180) x 100 / 1 = -4500"
+}

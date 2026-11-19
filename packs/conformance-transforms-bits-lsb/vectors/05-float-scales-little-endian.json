@@ -1,0 +1,13 @@
+{
+  "name": "float-scales-little-endian",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "120000c03f0000000000000440",
+  "expect": "120000c03f0000000000000440",
+  "model": {
+    "@kind": "f32s",
+    "probe.a": "10.75",
+    "hae": "25"
+  },
+  "source": "constructed"
+}

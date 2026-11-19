@@ -1,0 +1,25 @@
+# Conformance probe pack for value transforms (spec 0.15) in a sequential
+# `bits` layout, most-significant-bit-first (ruling 3). Public. No kinds.
+# Exercises transforms at bit positions that are not byte boundaries; an
+# absent `chars` key, which writes zero bits and not padding (ruling 16), so
+# an absent icao6 callsign writes codes 0, which do not decode; and the empty
+# text, present, in an `opt` block (ruling 13), which sets the bit.
+#
+#   time_ms 40 (uiscale:1/1000, microseconds) | c1 6 (smag) |
+#   callsign 18 (3 icao6 characters) | opt bit | opt: s1 12 (2 ais6
+#   characters) | s2 9 (3 octal digits) | zero bits to the byte
+format     conformance-transforms-seq
+version    0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   time_ms   40  uiscale:1/1000
+field   probe.c1  6   smag
+field   callsign  18  chars:icao6
+opt
+  field  probe.s1  12  chars:ais6
+end
+field   probe.s2  9   octal

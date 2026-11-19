@@ -1100,6 +1100,9 @@ swap_bytes(U, Len) ->
 
 field_decode(xml, Tr, Raw, _Loc, _Opts, _Pack) -> xml_decode(Tr, Raw);
 field_decode(text, Tr, Raw, _Loc, _Opts, _Pack) -> gt_text:decode_value(Tr, Raw);
+field_decode(Wire, {iscale, N, D, Off}, Raw, _Loc, _Opts, _Pack)
+  when Wire =:= geojson; Wire =:= gjitem; Wire =:= json ->
+    iscale_decode(json_number_text(Raw), N, D, Off);
 field_decode(geojson, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(gjitem, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> json_decode(Tr, Raw);
@@ -1134,7 +1137,8 @@ residue(geojson, _Json, Lines, Bytes) ->
                      not lists:member(K, [<<"type">>, <<"geometry">>, <<"properties">>]),
                      not maps:is_key({top, K}, Mapped)],
     Props ++ Top;
-residue(json, {object, Members}, Lines, _Bytes) ->
+residue(json, {object, Members} = Json, Lines, _Bytes) ->
+    json_unread_check(Json, Lines),
     lists:reverse(json_residue(Members, [], mapped_locs(Lines), []));
 residue(text, Ctx, Lines, _Bytes) -> gt_text:residue(Ctx, Lines);
 residue(_, _, _, _) -> [].
@@ -1176,17 +1180,10 @@ json_residue([{Name, V} | Rest], Prefix, Mapped, Acc) ->
                     _ ->
                         case maps:is_key(Path, Mapped) of
                             true -> Acc;
-                            false ->
-                                %% a residue number whose nearest double is
-                                %% infinite has no canonical text (ruling 2d
-                                %% of 0.11)
-                                case gt_json:canonical_text(V) of
-                                    none -> erlang:error({json_malformed,
-                                                          {residue_number_has_no_canonical_text,
-                                                           path_text(Path)}});
-                                    _ -> ok
-                                end,
-                                [{path_text(Path), V} | Acc]
+                            %% a residue number whose nearest double is
+                            %% infinite has no canonical text (ruling 2d of
+                            %% 0.11); json_unread_check/2 has refused it
+                            false -> [{path_text(Path), V} | Acc]
                         end
                 end;
             _ -> Acc
@@ -1194,6 +1191,33 @@ json_residue([{Name, V} | Rest], Prefix, Mapped, Acc) ->
     json_residue(Rest, Prefix, Mapped, Acc1).
 
 path_text(Path) -> iolist_to_binary(lists:join(<<".">>, Path)).
+
+%% A number outside the double range that no field line reads, anywhere in
+%% the document, is malformed-wire (ruling 2d of 0.11, as ruling 27 of 0.15
+%% extends it): in arrays, in unmapped members of group items and in `when`
+%% members too. A member at a field line's locator is read, whether or not
+%% that line gave its key's value; the items of a group are read by the
+%% group's body.
+json_unread_check(Json, Lines) ->
+    Fields = maps:from_list([{Loc, true} || {field, _, Loc, _, _, _} <- Lines]),
+    Groups = maps:from_list([{Loc, BLs} || {group, _, Loc, _, #{lines := BLs}, _} <- Lines]),
+    unread_value(Json, [], Fields, Groups).
+
+unread_value({object, Ms}, Path, Fields, Groups) ->
+    lists:foreach(fun({Name, V}) -> unread_value(V, Path ++ [Name], Fields, Groups) end, Ms);
+unread_value({array, Vs}, Path, _Fields, Groups) ->
+    case maps:find(Path, Groups) of
+        {ok, BLs} -> [json_unread_check(V, BLs) || V <- Vs];
+        error -> [unread_value(V, Path ++ [<<"[]">>], #{}, #{}) || V <- Vs]
+    end,
+    ok;
+unread_value(V, Path, Fields, _Groups) ->
+    case gt_json:is_num(V) andalso gt_json:num_float(V) =:= error
+        andalso not maps:is_key(Path, Fields) of
+        true -> erlang:error({json_malformed, {unread_number_outside_the_double_range,
+                                               path_text(Path)}});
+        false -> ok
+    end.
 
 %% ===================================================================
 %% encode
@@ -1730,14 +1754,19 @@ typemap_encode(_, V, _) -> V.
 %% ===================================================================
 %% transforms (text wires)
 %% ===================================================================
-%% xml: the wire value is text, read by the grammars of ruling 2 of 0.11
+%% xml: the wire value is text, read by the grammars of ruling 2 of 0.11;
+%% iscale reads it untrimmed as an exact decimal (ruling 24 of 0.15)
+xml_decode({iscale, N, D, Off}, S) -> iscale_decode(S, N, D, Off);
+xml_decode({scale, F, O}, S) -> scale_decode(xml_decode(float, S), F, O);
 xml_decode(string, S) -> S;
 xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
 xml_decode(iso8601_ms, S) -> gt_iso:decode(S).
 
 %% geojson (Version 0.1): the wire value is a JSON value; a string member is
-%% read as xml text is, a number member as ruling 2d of 0.11 states
+%% read as xml text is, a number member as ruling 2d of 0.11 states. scale
+%% refuses a string member, as on json (ruling 23 of 0.15).
+geojson_decode({scale, _, _} = Tr, V) -> json_decode(Tr, V);
 geojson_decode(string, V) when is_binary(V) -> V;
 geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms -> xml_decode(Tr, V);
 geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
@@ -1747,6 +1776,7 @@ geojson_decode(string, V) ->
 geojson_decode(Tr, V) -> json_decode(Tr, V).
 
 %% json (Version 0.5): a value of the wrong JSON type is a decode failure
+json_decode({scale, F, O}, V) -> scale_decode(json_decode(float, V), F, O);
 json_decode(string, V) when is_binary(V) -> V;
 json_decode(float, V) -> {ok, F} = gt_json:num_float(V), F;
 json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
@@ -1755,6 +1785,8 @@ json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
 
 %% model value -> a tagged value a text wire renders
+text_encode({scale, F, O}, V) when is_number(V) -> {float, scale_encode(float(V), F, O)};
+text_encode({iscale, N, D, Off}, V) when is_integer(V) -> {num, iscale_encode(V, N, D, Off)};
 text_encode(string, V) -> {str, to_str(V)};
 text_encode(float, V) when is_number(V) -> {float, float(V)};
 text_encode(int, V) when is_integer(V) -> {int, V};
@@ -1763,10 +1795,12 @@ text_encode(bool, 1) -> {bool, <<"true">>};
 text_encode(bool, 0) -> {bool, <<"false">>}.
 
 xml_render({str, S}) -> S;
+xml_render({num, T}) -> T;
 xml_render({int, I}) -> integer_to_binary(I);
 xml_render({float, F}) -> list_to_binary(gt_num:fmt_float(F)).
 
 json_render({str, S}) -> [$", gt_json:escape(S), $"];
+json_render({num, T}) -> T;
 json_render({int, I}) -> integer_to_list(I);
 json_render({float, F}) -> gt_num:fmt_float(F);
 json_render({bool, B}) -> B.
@@ -1781,6 +1815,89 @@ fixed_json({text, T, false}) ->
         true -> T;
         false -> [$", gt_json:escape(T), $"]
     end.
+
+%% ---- iscale (Version 0.15): exact decimals ----
+%% The text of a json number as written: a plain integer is its digits.
+json_number_text(I) when is_integer(I) -> integer_to_binary(I);
+json_number_text({dnum, T}) -> T.
+
+%% -?digits(.digits)?([eE][+-]?digits)? read exactly, then
+%% round(r * N / D) + Off, which must fit the signed 64-bit range. An
+%% exponent above 400 in absolute value fails.
+iscale_decode(Text, N, D, Off) when is_binary(Text) ->
+    {Neg, R0} = case Text of
+                    <<$-, R/binary>> -> {true, R};
+                    _ -> {false, Text}
+                end,
+    {Int, R1} = take_digits(R0),
+    true = Int =/= <<>>,
+    {Frac, R2} = case R1 of
+                     <<$., RF/binary>> ->
+                         {F, RF1} = take_digits(RF),
+                         true = F =/= <<>>,
+                         {F, RF1};
+                     _ -> {<<>>, R1}
+                 end,
+    Exp = case R2 of
+              <<>> -> 0;
+              <<E, RE/binary>> when E =:= $e; E =:= $E ->
+                  {ESign, RE1} = case RE of
+                                     <<$-, X/binary>> -> {-1, X};
+                                     <<$+, X/binary>> -> {1, X};
+                                     _ -> {1, RE}
+                                 end,
+                  {ED, <<>>} = take_digits(RE1),
+                  true = ED =/= <<>>,
+                  ESign * binary_to_integer(ED)
+          end,
+    true = abs(Exp) =< 400,
+    M0 = binary_to_integer(<<Int/binary, Frac/binary>>),
+    M = case Neg of
+            true -> -M0;
+            false -> M0
+        end,
+    E10 = Exp - byte_size(Frac),
+    {Num, Den} = case E10 >= 0 of
+                     true -> {M * pow10(E10), 1};
+                     false -> {M, pow10(-E10)}
+                 end,
+    int64(round_div(Num * N, Den * D) + Off).
+
+take_digits(Bin) -> take_digits(Bin, 0).
+take_digits(Bin, I) ->
+    case Bin of
+        <<_:I/binary, C, _/binary>> when C >= $0, C =< $9 -> take_digits(Bin, I + 1);
+        <<Ds:I/binary, Rest/binary>> -> {Ds, Rest}
+    end.
+
+pow10(E) -> pow10(E, 1).
+pow10(0, Acc) -> Acc;
+pow10(E, Acc) -> pow10(E - 1, Acc * 10).
+
+%% (x - Off) / (N / D) exactly, in plain decimal notation with at most 18
+%% fraction digits and no trailing zero.
+iscale_encode(X, N, D, Off) ->
+    {A0, B0} = {(X - Off) * D, N},
+    {A, B} = case B0 < 0 of
+                 true -> {-A0, -B0};
+                 false -> {A0, B0}
+             end,
+    Scaled = A * pow10(18),
+    0 = Scaled rem B,
+    Q = Scaled div B,
+    Sign = case Q < 0 of
+               true -> <<"-">>;
+               false -> <<>>
+           end,
+    Abs = abs(Q),
+    IntPart = integer_to_binary(Abs div pow10(18)),
+    FracPart = case Abs rem pow10(18) of
+                   0 -> <<>>;
+                   F ->
+                       Ds = iolist_to_binary(io_lib:format("~18..0b", [F])),
+                       <<$., (strip_trailing(Ds, $0))/binary>>
+               end,
+    <<Sign/binary, IntPart/binary, FracPart/binary>>.
 
 %% ===================================================================
 %% transforms (bits wire)
@@ -1807,7 +1924,26 @@ bits_decode(ascii, U, L, Order) ->
 bits_decode(sixbit, U, L, Order) ->
     N = L div 6,
     Chars = [sixbit_char((U bsr sixbit_shift(Order, I, N)) band 63) || I <- lists:seq(0, N - 1)],
-    strip_trailing(list_to_binary(Chars), $@).
+    strip_trailing(list_to_binary(Chars), $@);
+%% ---- Version 0.15 ----
+bits_decode({uiscale, N, D, Off}, U, _L, _) -> int64(round_div(U * N, D) + Off);
+bits_decode({siscale, N, D, Off}, U, L, _) -> int64(round_div(to_signed(U, L) * N, D) + Off);
+bits_decode(smag, U, L, _) -> smag_decode(U, L);
+bits_decode({smscale, Factor, Offset}, U, L, _) -> scale_decode(smag_decode(U, L), Factor, Offset);
+bits_decode({f32scale, Factor, Offset}, U, 32, _) ->
+    <<F:32/float>> = <<U:32>>,
+    scale_decode(F, Factor, Offset);
+bits_decode({f64scale, Factor, Offset}, U, 64, _) ->
+    <<F:64/float>> = <<U:64>>,
+    scale_decode(F, Factor, Offset);
+bits_decode({chars, Set}, U, L, Order) ->
+    W = chars_width(Set),
+    Codes = [char_code(U, L, W, I, Order) || I <- lists:seq(0, L div W - 1)],
+    Text = list_to_binary([chars_char(Set, C) || C <- Codes]),
+    chars_strip(Set, Text);
+bits_decode(octal, U, L, _) ->
+    N = L div 3,
+    list_to_binary(io_lib:format("~*.8.0b", [N, U])).
 
 sixbit_char(V) when V < 32 -> 16#40 + V;
 sixbit_char(V) -> V.
@@ -1882,7 +2018,102 @@ bits_encode(sixbit, V, L, Order) when is_binary(V) ->
     Vals = [sixbit_value(C) || <<C>> <= V] ++ lists:duplicate(N - byte_size(V), 0),
     {U, _} = lists:foldl(fun(X, {Acc, I}) -> {Acc bor (X bsl sixbit_shift(Order, I, N)), I + 1} end,
                          {0, 0}, Vals),
-    U.
+    U;
+bits_encode({uiscale, N, D, Off}, V, L, _) when is_integer(V) ->
+    R = round_div((V - Off) * D, N),
+    true = (R >= 0) andalso (R =< mask(L)),
+    R;
+bits_encode({siscale, N, D, Off}, V, L, _) when is_integer(V) ->
+    R = round_div((V - Off) * D, N),
+    true = (R >= -(1 bsl (L - 1))) andalso (R < (1 bsl (L - 1))),
+    R band mask(L);
+bits_encode(smag, V, L, _) when is_integer(V) -> smag_encode(V, L);
+bits_encode({smscale, Factor, Offset}, V, L, _) when is_number(V) ->
+    smag_encode(round(scale_encode(float(V), Factor, Offset)), L);
+bits_encode({f32scale, Factor, Offset}, V, 32, _) when is_number(V) ->
+    <<U:32>> = single(scale_encode(float(V), Factor, Offset)),
+    U;
+bits_encode({f64scale, Factor, Offset}, V, 64, _) when is_number(V) ->
+    <<U:64>> = <<(scale_encode(float(V), Factor, Offset)):64/float>>,
+    U;
+bits_encode({chars, Set}, V, L, Order) when is_binary(V) ->
+    W = chars_width(Set),
+    N = L div W,
+    true = byte_size(V) =< N,
+    Codes = [chars_code(Set, C) || <<C>> <= V] ++
+        lists:duplicate(N - byte_size(V), chars_pad(Set)),
+    {U, _} = lists:foldl(
+               fun(C, {Acc, I}) ->
+                       Shift = case Order of
+                                   msb -> L - (I + 1) * W;
+                                   lsb -> I * W
+                               end,
+                       {Acc bor (C bsl Shift), I + 1}
+               end, {0, 0}, Codes),
+    U;
+bits_encode(octal, V, L, _) when is_binary(V) ->
+    true = byte_size(V) =:= L div 3,
+    true = lists:all(fun(C) -> C >= $0 andalso C =< $7 end, binary_to_list(V)),
+    binary_to_integer(V, 8).
+
+%% round-half-away-from-zero of the exact quotient A / B, B not 0
+round_div(A, B) when B < 0 -> round_div(-A, -B);
+round_div(A, B) when A >= 0 -> (2 * A + B) div (2 * B);
+round_div(A, B) -> -((2 * (-A) + B) div (2 * B)).
+
+%% a result outside the signed 64-bit range fails the decode
+int64(V) when V >= -(1 bsl 63), V < (1 bsl 63) -> V.
+
+%% sign and magnitude: the field's top bit is the sign, 1 negative
+smag_decode(U, L) ->
+    M = U band mask(L - 1),
+    case U bsr (L - 1) of
+        1 -> -M;
+        0 -> M
+    end.
+
+smag_encode(V, L) ->
+    M = abs(V),
+    true = M < (1 bsl (L - 1)),
+    case V < 0 of
+        true -> (1 bsl (L - 1)) bor M;
+        false -> M
+    end.
+
+chars_width(ascii7) -> 7;
+chars_width(_) -> 6.
+
+%% character I of a field: the W bits at bit I * W of the field, read as
+%% uint reads a W-bit field there in the pack's bit order
+char_code(U, L, W, I, msb) -> (U bsr (L - (I + 1) * W)) band mask(W);
+char_code(U, _L, W, I, lsb) -> (U bsr (I * W)) band mask(W).
+
+chars_char(icao6, C) when C >= 1, C =< 26 -> $A + C - 1;
+chars_char(icao6, 32) -> $\s;
+chars_char(icao6, C) when C >= 48, C =< 57 -> C;
+chars_char(ais6, C) when C < 32 -> C + 64;
+chars_char(ais6, C) -> C;
+chars_char(ascii7, 0) -> 0;
+chars_char(ascii7, C) when C >= 32, C =< 126 -> C.
+
+chars_code(icao6, C) when C >= $A, C =< $Z -> C - $A + 1;
+chars_code(icao6, $\s) -> 32;
+chars_code(icao6, C) when C >= $0, C =< $9 -> C;
+chars_code(ais6, C) when C >= 64, C =< 95 -> C - 64;
+chars_code(ais6, C) when C >= 32, C =< 63 -> C;
+chars_code(ascii7, C) when C >= 32, C =< 126 -> C.
+
+chars_pad(icao6) -> 32;
+chars_pad(ais6) -> 0;
+chars_pad(ascii7) -> 0.
+
+%% trailing padding removed, with icao6 and ais6 trailing spaces too in any
+%% mix; with ascii7 a NUL before a character that is not NUL fails
+chars_strip(ascii7, Text) ->
+    T = strip_trailing(Text, 0),
+    nomatch = binary:match(T, <<0>>),
+    T;
+chars_strip(_, Text) -> strip_trailing_any(Text, [$@, $\s]).
 
 %% A double narrowed to a big-endian IEEE-754 single. A value outside single
 %% range narrows to an infinity, which is refused.

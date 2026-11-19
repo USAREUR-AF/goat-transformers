@@ -41,11 +41,18 @@ const (
 	locTLV                       // tlv <tag>[.<tag>…][:<n>]
 )
 
-// maxBitsLen is the longest bits field: an `ascii` field of 255 bytes.
+// maxBitsLen is the longest bits field: an `ascii` field of 255 bytes, or a
+// `chars` field (0.15).
 const maxBitsLen = 2040
 
 // maxFieldNumber is the largest protobuf field number, 2^29 - 1.
 const maxFieldNumber = 536870911
+
+// maxLocatorLen bounds the length a sequential locator states. A field's
+// transform decides which lengths it allows (bad-directive, 0.5 and 0.15 "a
+// `len` it does not allow"); the bound only keeps the arithmetic on lengths
+// in range.
+const maxLocatorLen = 1 << 24
 
 type locator struct {
 	raw    string
@@ -386,6 +393,10 @@ func checkFieldOptions(wire string, f *Field) error {
 	if f.Swap && f.Transform == "sixbit" {
 		return fmt.Errorf("`swap` is not valid with the sixbit transform")
 	}
+	if f.Swap && f.btf != nil && f.btf.noSwap {
+		return fmt.Errorf("`swap` is not valid with the %s transform", f.Transform)
+	}
+	// trim with a transform of 0.15 is bad-directive (0.15 ruling 18).
 	if f.Trim && f.Transform != "ascii" && f.Transform != "sixbit" {
 		return fmt.Errorf("`trim` is valid only with the ascii or sixbit transform, not %s", f.Transform)
 	}
@@ -881,8 +892,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 						return nil, perr(ErrBadDirective, f.Line, f.Locator, "a locator in a sequential pack is a bit length, not <word>:<pos>:<len>")
 					}
 					n, aerr := strconv.Atoi(f.Locator)
-					if aerr != nil || n < 1 || n > maxBitsLen {
-						err = fmt.Errorf("a sequential locator is a bit length 1..%d, got %q", maxBitsLen, f.Locator)
+					if aerr != nil || n < 1 || n > maxLocatorLen {
+						err = fmt.Errorf("a sequential locator is a bit length 1..%d, got %q", maxLocatorLen, f.Locator)
 					}
 					loc = locator{raw: f.Locator, kind: locBits, blen: n}
 				} else if p.Wire == WireBits && isDigits(f.Locator) {

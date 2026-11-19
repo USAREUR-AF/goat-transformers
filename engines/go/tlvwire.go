@@ -221,6 +221,10 @@ func resolveTLVTransform(name string, size int) (*tlvTf, error) {
 		t.kind, needSize = tlvTwos, true
 	case strings.HasPrefix(name, "uscale:"), strings.HasPrefix(name, "sscale:"):
 		signed := name[0] == 's'
+		// A fraction factor is unsigned (ruling 25 of 0.15).
+		if err := checkUnsignedFraction(name); err != nil {
+			return nil, err
+		}
 		bt, err := newScale(name, signed)
 		if err != nil {
 			return nil, err

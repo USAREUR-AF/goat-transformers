@@ -103,8 +103,20 @@ KeyType transform_yields(Transform t) {
         case Transform::Sixbit:
         case Transform::Utf8:
         case Transform::Hex: return KeyType::String;
+        case Transform::Smscale:
+        case Transform::F32scale:
+        case Transform::F64scale:
+        case Transform::Scale: return KeyType::Float;
+        case Transform::CharsIcao6:
+        case Transform::CharsAis6:
+        case Transform::CharsAscii7:
+        case Transform::Octal: return KeyType::String;
         case Transform::IntW:
-        case Transform::HmsDmy: return KeyType::Int;
+        case Transform::HmsDmy:
+        case Transform::Uiscale:
+        case Transform::Siscale:
+        case Transform::Smag:
+        case Transform::Iscale:
         case Transform::Bool:
         case Transform::Int:
         case Transform::Iso8601Ms:
@@ -392,15 +404,7 @@ void each_scope(P& p, Fn&& fn) {
 void check_bits_field_len(const Pack& p, const FieldLine& f) {
     detail::BitsLocator loc;
     if (!detail::parse_bits_locator(f.locator, loc)) return;  // reported as invalid_locator later
-    bool ok = false;
-    switch (f.transform) {
-        case Transform::F32: ok = loc.len == 32; break;
-        case Transform::F64: ok = loc.len == 64; break;
-        case Transform::Ascii: ok = loc.len >= 8 && loc.len <= 2040 && loc.len % 8 == 0; break;
-        case Transform::Sixbit: ok = loc.len >= 6 && loc.len <= 1530 && loc.len % 6 == 0; break;
-        default: ok = loc.len >= 1 && loc.len <= 64; break;
-    }
-    if (!ok)
+    if (!detail::bits_len_allowed(f.transform, loc.len))
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     p.source + ":" + std::to_string(f.line) + ": transform '" + transform_name(f.transform) +
                         "' does not allow a length of " + std::to_string(loc.len) + " bits");
@@ -444,6 +448,18 @@ void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
     }
 }
 
+// v0.15: a transform of this version on a wire it does not list (bad-directive).
+void check_v015_wire(const Pack& p, const FieldLine& f) {
+    if (!detail::transform_is_v015(f.transform)) return;
+    const bool ok = detail::transform_is_text_scale(f.transform)
+                        ? p.wire == Wire::Xml || p.wire == Wire::Json || p.wire == Wire::GeoJson
+                        : p.wire == Wire::Bits;
+    if (!ok)
+        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                    p.source + ":" + std::to_string(f.line) + ": transform '" + transform_name(f.transform) +
+                        "' is not valid on wire " + wire_name(p.wire));
+}
+
 // v0.6 field options: `via` names a table of the pack, and `swap`, `trim` and
 // `optional` apply to the bits wire only (bad-directive).
 void check_field_options(const Pack& p, const std::unordered_map<std::string, int>& tables, FieldLine& f) {
@@ -465,9 +481,9 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
     if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     where + ": option 'trim' applies to transforms ascii and sixbit only");
-    if (f.swap && f.transform == Transform::Sixbit)
+    if (f.swap && (f.transform == Transform::Sixbit || detail::chars_width(f.transform) || f.transform == Transform::Octal))
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
-                    where + ": option 'swap' does not apply to transform sixbit");
+                    where + ": option 'swap' does not apply to transform " + transform_name(f.transform));
     detail::BitsLocator loc;
     if (f.swap && detail::parse_bits_locator(f.locator, loc) && loc.len % 8 != 0)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
@@ -1275,6 +1291,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 source + ":" + std::to_string(f.line) +
                                     ": a field with a bit length for a locator is a line of a sequential layout");
+                check_v015_wire(p, f);
                 if (p.wire == Wire::Bits && detail::transform_is_bits(f.transform)) check_bits_field_len(p, f);
                 check_field_options(p, table_index, f);
                 if (f.has_absent) {

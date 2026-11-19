@@ -1,0 +1,23 @@
+# Conformance probe pack for ruling 24 of spec 0.15 on the `xml` wire: an
+# element whose text is empty or only whitespace has no `#text` for a field,
+# but `when <path>/#text present` keeps its 0.5 meaning and holds when the
+# element exists, whatever its text. Public. Two kinds: `t` when the element
+# `v` exists, `other` (no `when`) for any other message. Each kind writes a
+# constant attribute `k` naming it, so the output shows the kind selected.
+# Unmapped child elements are not carried (ruling 6 of 0.1.1), and a `when
+# ... present` writes nothing, so `v` is not written back.
+format  conformance-transforms-xml-when
+version 0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+kind    t
+when    v/#text  present
+requires probe.x
+const   @k  t
+field   probe.x  @x  iscale:1
+kind    other
+const   @k  other
+field   probe.y  @y  int

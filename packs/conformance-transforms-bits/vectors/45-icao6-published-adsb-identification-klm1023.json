@@ -1,0 +1,14 @@
+{
+  "name": "icao6-published-adsb-identification-klm1023",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "8d4840d6202cc371c32ce0576098",
+  "expect": "884840d6202cc371c32ce0",
+  "model": {
+    "@kind": "adsb",
+    "probe.val": "4735190",
+    "callsign": "KLM1023"
+  },
+  "source": "specification",
+  "reference": "published message 8D4840D6202CC371C32CE0576098: The 1090 Megahertz Riddle, 2nd ed., https://mode-s.org/1090mhz/, ADS-B chapter 2 (Aircraft identification). Bits 40-87 are the codes 11 12 13 49 48 50 51 32. Encode writes the two when values and the mapped fields: CA, the 3 bits after TC and the parity are not mapped and are 0, and the message is 11 bytes"
+}

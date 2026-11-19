@@ -1,0 +1,13 @@
+{
+  "name": "ruling-27-iscale-reads-a-number-below-the-double-range-exactly",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":1e-400,\"n\":1}",
+  "expect": "{\"big\":0,\"n\":1}",
+  "model": {
+    "probe.big": "0",
+    "probe.n": "1"
+  },
+  "source": "constructed",
+  "reference": "ruling 27 and ruling 9: iscale reads 10^-400 exactly, rounds to 0"
+}

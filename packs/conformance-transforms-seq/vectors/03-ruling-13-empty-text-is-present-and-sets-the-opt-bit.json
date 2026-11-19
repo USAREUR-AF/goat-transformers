@@ -1,0 +1,12 @@
+{
+  "name": "ruling-13-empty-text-is-present-and-sets-the-opt-bit",
+  "from": "conformance-transforms-seq",
+  "to": "conformance-transforms-seq",
+  "input": "00000f42409410b18007fc",
+  "expect": "00000f42409410b18007fc",
+  "model": {
+    "probe.s1": ""
+  },
+  "source": "constructed",
+  "reference": "ruling 13: 12 bits of @ (0) decode the empty text, present, so the opt bit is 1"
+}

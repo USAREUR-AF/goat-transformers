@@ -1,0 +1,8 @@
+{
+  "name": "icao6-code-27-is-transform-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a0000000000006e08208208200000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

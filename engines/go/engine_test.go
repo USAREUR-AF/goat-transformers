@@ -351,7 +351,9 @@ func TestKindLoadErrors(t *testing.T) {
 		{"bit_order on json", "wire json\nbit_order msb\n", ErrBadDirective},
 		{"bad bit_order", "wire bits\nword_bytes 1\nbit_order middle\n", ErrBadDirective},
 		{"f32 length", "wire bits\nword_bytes 1\nfield lat 0:0:31 f32\n", ErrBadDirective},
-		{"ascii length", "wire bits\nword_bytes 1\nfield uid 0:0:2048 ascii\n", ErrBadDirective}, // a length the transform does not allow (ruling 4d of 0.11)
+		// A len the transform does not allow is bad-directive (ruling 4d of
+		// 0.11; 0.15 load errors), above 2040 bits too.
+		{"ascii length", "wire bits\nword_bytes 1\nfield uid 0:0:2048 ascii\n", ErrBadDirective},
 		{"uint over 64 bits", "wire bits\nword_bytes 1\nfield uid 0:0:72 uint\n", ErrBadDirective},
 		{"bits when not a number", "wire bits\nword_bytes 1\nkind a\nwhen 0:0:8 x\n", ErrBadDirective},
 		{"bits when does not fit", "wire bits\nword_bytes 1\nkind a\nwhen 0:0:8 256\n", ErrBadDirective},

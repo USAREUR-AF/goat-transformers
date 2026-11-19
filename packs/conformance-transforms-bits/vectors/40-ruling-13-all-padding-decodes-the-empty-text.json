@@ -1,0 +1,14 @@
+{
+  "name": "ruling-13-all-padding-decodes-the-empty-text",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a0000000000008208208208200000000000",
+  "expect": "1a0000000000008208208208200000000000",
+  "model": {
+    "probe.s1": "",
+    "callsign": "",
+    "uid": ""
+  },
+  "source": "constructed",
+  "reference": "ruling 13: ais6 all @ (0), icao6 all spaces (32), ascii7 all NUL: present and empty"
+}

@@ -247,6 +247,16 @@ yields({linscale, _, _}) -> float;
 yields({uscale, _, _}) -> float;
 yields({sscale, _, _}) -> float;
 yields(f32)     -> float;
+yields({uiscale, _, _, _}) -> int;
+yields({siscale, _, _, _}) -> int;
+yields({iscale, _, _, _}) -> int;
+yields(smag) -> int;
+yields({smscale, _, _}) -> float;
+yields({f32scale, _, _}) -> float;
+yields({f64scale, _, _}) -> float;
+yields({scale, _, _}) -> float;
+yields({chars, _}) -> string;
+yields(octal) -> string;
 yields(f64)     -> float;
 yields(utf8)    -> string;
 yields(hex)     -> string;
@@ -625,7 +635,7 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
          || not len_ok(Wire, Tr, Loc)] ++
         [{bad, "swap on ~s: valid only on a bits wire, with a length that is a multiple of 8", [LocS]}
          || Swap, not (Wire =:= bits andalso element(2, Loc) rem 8 =:= 0)] ++
-        [{bad, "swap on ~s: not allowed on sixbit", [LocS]} || Swap, Tr =:= sixbit] ++
+        [{bad, "swap with ~s on ~s", [TrS, LocS]} || Swap, not swap_ok(Tr)] ++
         [{bad, "trim on ~s: valid only on a bits wire, with ascii or sixbit", [LocS]}
          || Trim, not (Wire =:= bits andalso (Tr =:= ascii orelse Tr =:= sixbit))] ++
         [{bad, "optional on ~s: valid only on a bits or text wire", [LocS]}
@@ -1170,9 +1180,27 @@ len_ok(bits, Tr, {_Off, Len}) ->
         f64 -> Len =:= 64;
         ascii -> Len rem 8 =:= 0 andalso Len >= 8 andalso Len =< 2040;
         sixbit -> Len rem 6 =:= 0 andalso Len >= 6 andalso Len =< 1530;
+        smag -> Len >= 2 andalso Len =< 64;
+        {smscale, _, _} -> Len >= 2 andalso Len =< 64;
+        {f32scale, _, _} -> Len =:= 32;
+        {f64scale, _, _} -> Len =:= 64;
+        {chars, Set} ->
+            W = chars_width(Set),
+            Len rem W =:= 0 andalso Len >= W andalso Len =< 2040;
+        octal -> Len rem 3 =:= 0 andalso Len >= 3 andalso Len =< 63;
         _ -> Len >= 1 andalso Len =< 64
     end;
 len_ok(_Wire, _Tr, _Loc) -> true.
+
+chars_width(ascii7) -> 7;
+chars_width(_) -> 6.
+
+%% `swap` reverses bytes, which a character or digit sequence does not have
+%% (sixbit: Version 0.14; chars and octal: Version 0.15).
+swap_ok(sixbit) -> false;
+swap_ok({chars, _}) -> false;
+swap_ok(octal) -> false;
+swap_ok(_) -> true.
 
 %% ===================================================================
 %% `when` and `const` values -> {Value, Pack}
@@ -1237,7 +1265,21 @@ parse_transform(Wire, S) -> parse_transform1(Wire, S).
 
 parse_transform1(Wire, S) ->
     {Class, Tr} = transform(S),
+    %% the transforms of 0.15 on a wire they do not list are bad-directive;
+    %% the older ones keep bad-transform (ruling 26 of 0.15). On tlv every
+    %% transform outside its table is bad-directive after the file is read
+    %% (ruling 8 of 0.13), which the late check below gives.
+    case {Class, Wire} of
+        {bits15, bits} -> ok;
+        {text15, W} when W =:= xml; W =:= json; W =:= geojson -> ok;
+        {_, tlv} -> ok;
+        {C, _} when C =:= bits15; C =:= text15 ->
+            load_error('bad-directive', "transform ~s is not valid on a ~s wire", [S, Wire]);
+        _ -> ok
+    end,
     Ok = case {Class, Wire} of
+             {bits15, bits} -> true;
+             {text15, Tw} when Tw =/= tlv -> true;
              {text, xml} -> true;
              {text, geojson} -> true;
              {text, json} -> true;
@@ -1296,6 +1338,27 @@ transform(<<"uscale:", Rest/binary>> = S) -> {bits, scale(uscale, Rest, S)};
 transform(<<"sscale:", Rest/binary>> = S) -> {bits, scale(sscale, Rest, S)};
 transform(<<"utf8">>)       -> {tlvonly, utf8};
 transform(<<"hex">>)        -> {tlvonly, hex};
+%% Version 0.15: value transforms
+transform(<<"uiscale:", Rest/binary>> = S) -> {bits15, exact_scale(uiscale, Rest, S)};
+transform(<<"siscale:", Rest/binary>> = S) -> {bits15, exact_scale(siscale, Rest, S)};
+transform(<<"iscale:", Rest/binary>> = S) -> {text15, exact_scale(iscale, Rest, S)};
+transform(<<"smag">>) -> {bits15, smag};
+transform(<<"octal">>) -> {bits15, octal};
+transform(<<"smscale:", Rest/binary>> = S) -> {bits15, float_scale(smscale, Rest, S)};
+transform(<<"f32scale:", Rest/binary>> = S) -> {bits15, float_scale(f32scale, Rest, S)};
+transform(<<"f64scale:", Rest/binary>> = S) -> {bits15, float_scale(f64scale, Rest, S)};
+transform(<<"scale:", Rest/binary>> = S) -> {text15, float_scale(scale, Rest, S)};
+transform(<<"chars:icao6">>) -> {bits15, {chars, icao6}};
+transform(<<"chars:ais6">>) -> {bits15, {chars, ais6}};
+transform(<<"chars:ascii7">>) -> {bits15, {chars, ascii7}};
+transform(<<"chars", _/binary>> = S) ->
+    load_error('bad-directive', "~s names no character set (icao6, ais6, ascii7)", [S]);
+transform(T) when T =:= <<"uiscale">>; T =:= <<"siscale">>; T =:= <<"iscale">>;
+                  T =:= <<"smscale">>; T =:= <<"f32scale">>; T =:= <<"f64scale">>;
+                  T =:= <<"scale">> ->
+    load_error('bad-directive', "~s needs a factor", [T]);
+transform(<<"smag:", _/binary>> = S) -> load_error('bad-directive', "smag takes no parameter: ~s", [S]);
+transform(<<"octal:", _/binary>> = S) -> load_error('bad-directive', "octal takes no parameter: ~s", [S]);
 transform(<<"pstring">>)    -> {protobuf, pstring};
 transform(<<"pvarint">>)    -> {protobuf, pvarint};
 transform(<<"psint">>)      -> {protobuf, psint};
@@ -1364,7 +1427,8 @@ nonzero(Text, S) ->
 
 %% The factor of the `scale` derive function (ruling 1 of 0.5, ruling 2c of
 %% 0.11): number text, or <num>/<den> where <num> is integer text and <den>
-%% an unsigned decimal integer that is not zero
+%% an unsigned decimal integer that is not zero; a derive function is not a
+%% transform, so ruling 25 of 0.15 leaves <num> signed
 %% -> {dec, float()} | {frac, float(), float()}.
 factor(Text) ->
     case binary:split(Text, <<"/">>, [global]) of
@@ -1376,6 +1440,78 @@ factor(Text) ->
             end;
         _ -> load_error('bad-directive', "~s is not a fraction", [Text])
     end.
+
+%% The exact scales (0.15): <factor>[:<offset>], the factor a decimal or a
+%% fraction read exactly, in lowest terms with a numerator and a denominator
+%% each at most 2^32 and not 0; the offset a decimal integer below 2^63 in
+%% absolute value -> {Name, Num, Den, Offset}, Den > 0.
+exact_scale(Name, Rest, S) ->
+    {F, O} = case binary:split(Rest, <<":">>, [global]) of
+                 [F0] -> {F0, 0};
+                 [F0, O0] -> {F0, exact_offset(O0, S)};
+                 _ -> load_error('bad-directive', "~s has too many parameters", [S])
+             end,
+    {N0, D0} = exact_factor(F, S),
+    G = gcd(abs(N0), D0),
+    {N, D} = {N0 div G, D0 div G},
+    case N =/= 0 andalso abs(N) =< (1 bsl 32) andalso D =< (1 bsl 32) of
+        true -> {Name, N, D, O};
+        false -> load_error('bad-directive', "the factor of ~s is 0 or does not fit 2^32 in lowest terms", [S])
+    end.
+
+exact_factor(F, S) ->
+    case binary:split(F, <<"/">>, [global]) of
+        [Dec] ->
+            {Neg, Body} = minus(Dec),
+            case binary:split(Body, <<".">>, [global]) of
+                [I] -> {sign(Neg, digits_int(I, S)), 1};
+                [I, Fr] ->
+                    IV = digits_int(I, S),
+                    FV = digits_int(Fr, S),
+                    Den = pow10(byte_size(Fr)),
+                    {sign(Neg, IV * Den + FV), Den};
+                _ -> load_error('bad-directive', "~s: the factor is not a decimal", [S])
+            end;
+        [Num, Den] ->
+            {Neg, NumB} = minus(Num),
+            NV = digits_int(NumB, S),
+            case digits_int(Den, S) of
+                0 -> load_error('bad-directive', "~s: the denominator is 0", [S]);
+                DV -> {sign(Neg, NV), DV}
+            end;
+        _ -> load_error('bad-directive', "~s: the factor is not a fraction", [S])
+    end.
+
+exact_offset(O, S) ->
+    {Neg, Body} = minus(O),
+    V = sign(Neg, digits_int(Body, S)),
+    case abs(V) < (1 bsl 63) of
+        true -> V;
+        false -> load_error('bad-directive', "~s: the offset does not fit below 2^63", [S])
+    end.
+
+minus(<<$-, R/binary>>) -> {true, R};
+minus(B) -> {false, B}.
+
+sign(true, V) -> -V;
+sign(false, V) -> V.
+
+%% one or more decimal digits, nothing else
+digits_int(B, S) ->
+    case B =/= <<>> andalso lists:all(fun(C) -> C >= $0 andalso C =< $9 end, binary_to_list(B)) of
+        true -> binary_to_integer(B);
+        false -> load_error('bad-directive', "~s: ~s is not decimal digits", [S, B])
+    end.
+
+pow10(0) -> 1;
+pow10(N) -> 10 * pow10(N - 1).
+
+gcd(A, 0) -> A;
+gcd(A, B) -> gcd(B, A rem B).
+
+%% The float scales of 0.15 read factor and offset as sscale does
+%% (ruling 25 of 0.15: a fraction has unsigned num and den).
+float_scale(Name, Rest, S) -> scale(Name, Rest, S).
 
 %% Number text (ruling 2b of 0.11).
 number(Text) ->
@@ -1482,7 +1618,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
          || not len_ok(bits, Tr, {0, Len})] ++
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
          || Swap, Len rem 8 =/= 0] ++
-        [{bad, "swap on a sixbit field of ~s bits", [LenS]} || Swap, Tr =:= sixbit] ++
+        [{bad, "swap with ~s", [TrS]} || Swap, not swap_ok(Tr)] ++
         [{bad, "trim on a field of ~s bits: valid only with ascii or sixbit", [LenS]}
          || Trim, Tr =/= ascii, Tr =/= sixbit] ++
         [{via, Via} || Via =/= none] ++

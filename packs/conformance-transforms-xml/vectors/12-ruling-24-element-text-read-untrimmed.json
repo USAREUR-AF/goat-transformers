@@ -1,0 +1,9 @@
+{
+  "name": "ruling-24-element-text-read-untrimmed",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg><v> 1</v></msg>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 24: text that is not only whitespace is read untrimmed by iscale"
+}

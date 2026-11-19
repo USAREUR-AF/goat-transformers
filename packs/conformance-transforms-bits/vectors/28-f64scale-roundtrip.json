@@ -1,0 +1,12 @@
+{
+  "name": "f64scale-roundtrip",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "174004000000000000",
+  "expect": "174004000000000000",
+  "model": {
+    "@kind": "f64s",
+    "hae": "25"
+  },
+  "source": "constructed"
+}

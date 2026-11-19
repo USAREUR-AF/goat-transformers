@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-octal-three-digits",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s2\":\"777\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "encode takes exactly len/3 characters 0-7"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "siscale-result-int64-min",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "14c000000000000000",
+  "expect": "14c000000000000000",
+  "model": {
+    "@kind": "si64",
+    "probe.w": "-9223372036854775808"
+  },
+  "source": "constructed"
+}

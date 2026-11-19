@@ -1,0 +1,9 @@
+{
+  "name": "to-lsb-chars",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "1a0428008000000600a08208208280000000",
+  "expect": "130128802008824110001008",
+  "source": "constructed",
+  "reference": "the lsb kind chars, selected by requires callsign"
+}

@@ -396,7 +396,10 @@ class TestJsonGrammar(_Rulings):
         field's transform refuses it at once instead of building it, and the
         decode fails with `transform-decode`: through `int` the exact value of
         a JSON number must be an integer within a signed 64-bit integer
-        (ruling 2d of 0.11)."""
+        (ruling 2d of 0.11), and a number outside the double range that a
+        field maps is read by that field's transform (ruling 27 of 0.15).
+        Unmapped, such a number stays `malformed-wire` (ruling 39 of 0.8,
+        ruling 2d of 0.11)."""
         import time
 
         eng = Engine()
@@ -407,6 +410,11 @@ class TestJsonGrammar(_Rulings):
             with self.assertRaises(GTError, msg=v) as cm:
                 eng.decode("x", '{"n":%s}' % v)
             self.assertEqual(cm.exception.code, "transform-decode", v)
+            self.assertLess(time.monotonic() - start, 1.0, v)
+            start = time.monotonic()
+            with self.assertRaises(GTError, msg=v) as cm:
+                eng.decode("x", '{"n":1,"m":%s}' % v)
+            self.assertEqual(cm.exception.code, "malformed-wire", v)
             self.assertLess(time.monotonic() - start, 1.0, v)
         self.assertEqual(eng.decode("x", '{"n":1e3}').fields, {"n": 1000})
         with self.assertRaises(GTError) as cm:

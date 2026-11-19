@@ -1,0 +1,14 @@
+{
+  "name": "octal-lsb",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "149c7214",
+  "expect": "149c7214",
+  "model": {
+    "@kind": "octal",
+    "probe.tag": "1234",
+    "probe.s2": "507"
+  },
+  "source": "constructed",
+  "reference": "0o1234 = 0x29c written low bit first from bit 8; 0o507 = 0x147 from bit 20"
+}

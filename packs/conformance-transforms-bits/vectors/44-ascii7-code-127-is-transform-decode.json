@@ -1,0 +1,8 @@
+{
+  "name": "ascii7-code-127-is-transform-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a000000000000820820820820fe00000000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

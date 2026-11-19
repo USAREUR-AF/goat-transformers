@@ -1,0 +1,13 @@
+{
+  "name": "f32scale-roundtrip",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "163fc00000",
+  "expect": "163fc00000",
+  "model": {
+    "@kind": "f32s",
+    "probe.a": "10.75"
+  },
+  "source": "constructed",
+  "reference": "single 1.5 x 0.5 + 10 = 10.75"
+}

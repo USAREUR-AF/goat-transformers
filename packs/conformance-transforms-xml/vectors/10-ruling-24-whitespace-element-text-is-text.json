@@ -1,0 +1,9 @@
+{
+  "name": "ruling-24-whitespace-element-text-is-text",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg><v>  </v></msg>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 24 (and 0.11 ruling 1m): whitespace-only text is text, which iscale refuses"
+}

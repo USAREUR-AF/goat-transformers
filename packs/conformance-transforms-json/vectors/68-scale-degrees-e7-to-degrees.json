@@ -1,0 +1,12 @@
+{
+  "name": "scale-degrees-e7-to-degrees",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"lat\":300090027}",
+  "expect": "{\"lat\":300090027}",
+  "model": {
+    "lat": "30.0090027"
+  },
+  "source": "constructed",
+  "reference": "300090027 x 1 / 10000000 in doubles; encode x x 10000000 / 1"
+}

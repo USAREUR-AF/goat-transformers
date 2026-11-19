@@ -1,0 +1,13 @@
+{
+  "name": "ruling-10-offset-brings-the-result-into-int64",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-json",
+  "input": "11ffffffffffffffff",
+  "expect": "{\"n\":9223372036854775807}",
+  "model": {
+    "@kind": "uihalf",
+    "probe.n": "9223372036854775807"
+  },
+  "source": "constructed",
+  "reference": "ruling 10: (2^64-1)/2 = 9223372036854775807.5 rounds to 2^63, beyond int64; the offset -1 gives 2^63-1, and only the final value is checked"
+}

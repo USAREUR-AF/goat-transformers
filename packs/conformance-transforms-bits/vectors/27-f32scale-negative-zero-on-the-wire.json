@@ -1,0 +1,12 @@
+{
+  "name": "f32scale-negative-zero-on-the-wire",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1680000000",
+  "expect": "1600000000",
+  "model": {
+    "probe.a": "10"
+  },
+  "source": "constructed",
+  "reference": "-0 x 0.5 + 10 = 10; (10-10)/0.5 = 0"
+}

@@ -41,11 +41,16 @@ DISTRIBUTIONS = ("public", "controlled")
 
 # The type a transform yields (engine-spec 0.4 "The type a transform yields",
 # with the additions of 0.5), by the wires it is valid on.
-TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int"}
+TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int",
+                   "scale": "float", "iscale": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
-                   "sixbit": "string"}       # `sixbit`: 0.14, either layout and either armor
+                   "sixbit": "string",      # `sixbit`: 0.14, either layout and either armor
+                   # engine-spec 0.15
+                   "uiscale": "int", "siscale": "int", "smag": "int", "smscale": "float",
+                   "f32scale": "float", "f64scale": "float", "chars": "string", "octal": "string"}
+CHAR_SETS = {"icao6": 6, "ais6": 6, "ascii7": 7}
 PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
                        "pdouble": "float", "pfloat": "float"}
 # 0.10 "Transforms for `text`": `int:<w>` is `int` with a parameter; `dec`,
@@ -83,7 +88,7 @@ DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
 _NUMBER = re.compile(r"[-+]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][-+]?[0-9]+)?\Z")
-_FRACTION = re.compile(r"(-?[0-9]+)/([0-9]+)\Z")
+_FRACTION = re.compile(r"([0-9]+)/([0-9]+)\Z")  # spec 0.15 ruling 25: unsigned
 _BITS_LOCATOR = re.compile(r"([0-9]+):([0-9]+):([0-9]+)\Z")
 _BITS_START = re.compile(r"([0-9]+):([0-9]+)\Z")
 _PROTOBUF_PATH = re.compile(r"[1-9][0-9]*(?:\.[1-9][0-9]*)*\Z")
@@ -169,9 +174,15 @@ def split_key(key):
     return (module, name) if dot else ("core", key)
 
 
-def parse_factor(text):
+def parse_factor(text, signed=False):
     """A scale factor (0.5 ruling 1): a decimal number as a float, or a fraction
-    `<num>/<den>` as the pair (num, den). None when the text is neither."""
+    `<num>/<den>` as the pair (num, den). None when the text is neither. A
+    transform's fraction is unsigned (0.15 ruling 25); the derive function
+    `scale:` takes integer text as `<num>` (0.11 ruling 2c): signed=True."""
+    if signed and text.startswith(("-", "+")) and _FRACTION.match(text[1:]):
+        m = _FRACTION.match(text[1:])
+        num, den = int(m.group(1)), int(m.group(2))
+        return (-num if text[0] == "-" else num, den) if num and den else None
     m = _FRACTION.match(text)
     if m:
         num, den = int(m.group(1)), int(m.group(2))
@@ -179,6 +190,33 @@ def parse_factor(text):
     if _NUMBER.match(text) and float(text) != 0:
         return float(text)
     return None
+
+
+_EXACT_DECIMAL = re.compile(r"(-?)([0-9]+)(?:\.([0-9]+))?\Z")
+_EXACT_FRACTION = re.compile(r"(-?)([0-9]+)/([0-9]+)\Z")
+_EXACT_OFFSET = re.compile(r"-?[0-9]+\Z")
+
+
+def exact_factor_ok(text):
+    """An exact factor of the integer scales (engine-spec 0.15): a decimal with
+    no exponent or a fraction with a sign only before the numerator; not 0; in
+    lowest terms numerator and denominator at most 2^32."""
+    from fractions import Fraction
+    m = _EXACT_FRACTION.match(text)
+    if m:
+        if int(m.group(3)) == 0:
+            return False
+        value = Fraction(int(m.group(2)), int(m.group(3)))
+    else:
+        m = _EXACT_DECIMAL.match(text)
+        if not m:
+            return False
+        value = Fraction(m.group(2) + (m.group(3) or "")) / (10 ** len(m.group(3) or ""))
+    return value != 0 and value.numerator <= 2 ** 32 and value.denominator <= 2 ** 32
+
+
+def exact_offset_ok(text):
+    return bool(_EXACT_OFFSET.match(text)) and abs(int(text)) < 2 ** 63
 
 
 def reads_as(value, key_type):
@@ -299,7 +337,7 @@ def parse_module(text, label=None):
             least, most, takes_parameter = shape
             if bool(colon) != takes_parameter:
                 bad("derive function `%s` %s a parameter" % (function, "takes" if takes_parameter else "takes no"))
-            if function == "scale" and parse_factor(parameter) is None:
+            if function == "scale" and parse_factor(parameter, signed=True) is None:
                 bad("`%s` is not a scale factor" % parameter)
             if function == "offset" and not _NUMBER.match(parameter):
                 bad("`%s` is not a number" % parameter)
@@ -898,6 +936,17 @@ class _Loader:
             if len(targs) not in (1, 2) or parse_factor(targs[0]) is None or not all(
                     _NUMBER.match(t) for t in targs[1:]):
                 self.bad(node, "`%s` takes a factor (a number or `<num>/<den>`) and an optional offset" % name)
+        elif name in ("smscale", "f32scale", "f64scale", "scale"):
+            if len(targs) not in (1, 2) or parse_factor(targs[0]) is None or not all(
+                    _NUMBER.match(t) for t in targs[1:]):
+                self.bad(node, "`%s` takes a factor (a number or `<num>/<den>`) and an optional offset" % name)
+        elif name in ("uiscale", "siscale", "iscale"):
+            if len(targs) not in (1, 2) or not exact_factor_ok(targs[0]) or not all(
+                    exact_offset_ok(t) for t in targs[1:]):
+                self.bad(node, "`%s` takes an exact factor and an optional integer offset" % name)
+        elif name == "chars":
+            if len(targs) != 1 or targs[0] not in CHAR_SETS:
+                self.bad(node, "`chars` takes one of the sets %s" % ", ".join(sorted(CHAR_SETS)))
         elif name == "linscale":
             if len(targs) != 2 or not all(_NUMBER.match(t) for t in targs) or float(targs[0]) == 0:
                 self.bad(node, "`linscale` takes a maximum and a range")
@@ -912,6 +961,15 @@ class _Loader:
                 ok = bits % 6 == 0 and 6 <= bits <= 1530
             elif name in ("f32", "f64"):
                 ok = bits == int(name[1:])
+            elif name in ("f32scale", "f64scale"):
+                ok = bits == int(name[1:3])
+            elif name in ("smag", "smscale"):
+                ok = 2 <= bits <= 64
+            elif name == "chars":
+                w = CHAR_SETS[targs[0]]
+                ok = bits % w == 0 and w <= bits <= 2040
+            elif name == "octal":
+                ok = bits % 3 == 0 and 3 <= bits <= 63
             else:
                 ok = 1 <= bits <= 64
             if not ok:
@@ -1042,8 +1100,8 @@ class _Loader:
         bits_wire = self.pack.wire == "bits"
         if "swap" in node.opts and not (bits_wire and node.bits % 8 == 0):
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
-        if "swap" in node.opts and node.tr == "sixbit":
-            self.bad(node, "`swap` on the `sixbit` transform")
+        if "swap" in node.opts and node.tr in ("sixbit", "chars", "octal"):
+            self.bad(node, "`swap` with `%s`" % node.tr)
         if "trim" in node.opts and not (bits_wire and node.tr in ("ascii", "sixbit")):
             self.bad(node, "`trim` needs the bits wire and the `ascii` or `sixbit` transform")
         text_wire = self.pack.wire == "text"

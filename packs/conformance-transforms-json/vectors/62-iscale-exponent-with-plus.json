@@ -1,0 +1,11 @@
+{
+  "name": "iscale-exponent-with-plus",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":1E+2}",
+  "expect": "{\"big\":100}",
+  "model": {
+    "probe.big": "100"
+  },
+  "source": "constructed"
+}

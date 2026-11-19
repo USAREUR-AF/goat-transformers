@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-siscale-64-int64-max-encodes-to-a-value-that-does-not-decode",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"w\":9223372036854775807}",
+  "expect": "144000000000000000",
+  "source": "constructed",
+  "reference": "(2^63-1)/2 = 2^62-0.5 -> 2^62, which fits; decoding it gives 2^63"
+}

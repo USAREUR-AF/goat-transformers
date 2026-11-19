@@ -1,0 +1,14 @@
+{
+  "name": "ruling-6-sentinel-compared-through-a-double",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{\"cnt\":9007199254740992}",
+  "expect": "{\"cnt\":100}",
+  "model": {
+    "@absent": [
+      "probe.cnt"
+    ]
+  },
+  "source": "constructed",
+  "reference": "ruling 9 and ruling 19 of 0.9: the sentinel 9007199254740993 is held as 9007199254740992, the canonical text of the wire number 9007199254740992; iscale does not change the comparison (ruling 6)"
+}

@@ -37,7 +37,8 @@ vectors, and the same change in the other six engines.
 | Absent-value sentinels | a wire value that means "unknown" decodes to an absent key, and an absent key encodes as that value | Built, seven engines (spec 0.9) |
 | A value from presence | the `present` derive function: an integer 1 when another key holds a value of any type, so a pack sets a flag from whether a value is sent (ASTERIX CAT062 MRH) | Built, seven engines (spec 0.12) |
 | Strict rulings | one byte sequence and one named error where earlier sections were silent: XML text, number and time grammars, rounding and range on `bits`, a kind for every load failure, the capability report, a limit on list items | Built, seven engines (spec 0.11) |
-| Further value functions | character sets, sign-and-magnitude numbers, scales that yield integers, a scale on a text wire, an instant split into seconds and nanoseconds, frame conversions (ECEF, radians, mean sea level) | Designed |
+| Value transforms | scales that yield integers, a scale on a text wire, sign-and-magnitude numbers, scaled IEEE floats, 6-bit and 7-bit character sets, octal digits | Built, seven engines (spec 0.15) |
+| Derive functions for time, distance and frames | an instant split into seconds and nanoseconds, meters to degrees at a latitude, radians, sums and differences (mean sea level from a geoid separation), ECEF | Designed |
 | Encode selection by value | choosing the target message kind from the value of a key, not only from which keys are present | Designed |
 | Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Designed |
 | XML namespaces and prefixes | documents whose elements carry a prefix | Designed |

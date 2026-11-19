@@ -1,0 +1,12 @@
+{
+  "name": "uiscale-int64-max-roundtrip",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "127fffffffffffffff",
+  "expect": "127fffffffffffffff",
+  "model": {
+    "@kind": "uione",
+    "probe.qty": "9223372036854775807"
+  },
+  "source": "constructed"
+}

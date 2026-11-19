@@ -1,0 +1,9 @@
+{
+  "name": "iscale-string-member",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":\"5\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "the member must be a number, as for float"
+}

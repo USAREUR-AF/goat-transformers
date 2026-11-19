@@ -1,0 +1,15 @@
+{
+  "name": "smag-sign-is-the-last-bit-of-the-field",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "1081503880",
+  "expect": "1081503880",
+  "model": {
+    "@kind": "smag",
+    "probe.c1": "-1",
+    "probe.c2": "-5",
+    "probe.ratio": "-1.5"
+  },
+  "source": "constructed",
+  "reference": "lsb: byte 81 is the value 0x81, whose most significant bit is the sign: -1. c2 at bit 20 is 0x85 (low nibble in the high half of byte 2, high nibble in the low half of byte 3): -5. ratio is 0x803: -3 x 0.5"
+}

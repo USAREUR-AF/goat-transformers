@@ -59,6 +59,10 @@ key  any1     int     -  "derived: 1 when any of x, y, z that is present is not 
 key  notx     int     -  "derived: 1 when x is 0, else 0"
 key  parsed   int     -  "derived: the decimal integer s1 holds"
 key  text     string  -  "derived: n as decimal text"
+# Keys of the value-transform probe packs (engine-spec 0.15).
+key  big     int     -  "an integer a text wire carries with its exact decimal digits (iscale)"
+key  thirds  int     -  "an integer the wire states in thirds of a unit (iscale:3:1)"
+key  cnt     int     -  "an integer that a scaled text number holds, with an absent sentinel"
 derive  probe.j1       join:-       probe.s1
 derive  probe.ds       day_seconds  time_ms
 derive  probe.any1     any          probe.x  probe.y  probe.z

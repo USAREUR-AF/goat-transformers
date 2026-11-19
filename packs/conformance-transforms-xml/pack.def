@@ -1,0 +1,19 @@
+# Conformance probe pack for value transforms (spec 0.15) on the `xml` wire.
+# Public. No kinds. `scale:1/10` writes 1.25 as `12.5` (ruling 8); `iscale`
+# text must have the number form exactly, with no surrounding whitespace and
+# no sign `+`; leading zeros are part of that form on this wire. Two factors
+# put the quotient of 1 at 18 and at 19 fraction digits (2^-18 and 2^-19).
+format  conformance-transforms-xml
+version 0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   probe.ratio  @r        scale:1/10
+field   time_ms      @t        iscale:1000
+field   probe.big    @big      iscale:1
+field   probe.x      @q18      iscale:262144
+field   probe.y      @q19      iscale:524288
+field   lat          pos/@lat  scale:1/10000000
+field   probe.z      v/#text   iscale:1:-1

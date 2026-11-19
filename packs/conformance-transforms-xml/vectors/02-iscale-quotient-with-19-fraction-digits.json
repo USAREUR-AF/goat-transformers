@@ -1,0 +1,9 @@
+{
+  "name": "iscale-quotient-with-19-fraction-digits",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg q19=\"0.0000019073486328125\"/>",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "1 / 524288 = 2^-19 = 0.0000019073486328125: it terminates, but not within 18 fraction digits"
+}

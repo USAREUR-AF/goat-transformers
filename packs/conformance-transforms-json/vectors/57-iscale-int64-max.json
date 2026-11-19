@@ -1,0 +1,11 @@
+{
+  "name": "iscale-int64-max",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":9223372036854775807}",
+  "expect": "{\"big\":9223372036854775807}",
+  "model": {
+    "probe.big": "9223372036854775807"
+  },
+  "source": "constructed"
+}

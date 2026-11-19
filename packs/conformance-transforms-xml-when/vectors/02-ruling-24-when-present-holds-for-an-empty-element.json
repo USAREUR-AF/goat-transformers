@@ -1,0 +1,16 @@
+{
+  "name": "ruling-24-when-present-holds-for-an-empty-element",
+  "from": "conformance-transforms-xml-when",
+  "to": "conformance-transforms-xml-when",
+  "input": "<msg><v/></msg>",
+  "expect": "<msg k=\"t\"/>",
+  "model": {
+    "@kind": "t",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "ruling 24: when v/#text present holds when the element v exists, whatever its text; the kind's const writes k; when present writes nothing and v is not residue (ruling 6 of 0.1.1), so v is not written; probe.x and probe.y are absent"
+}

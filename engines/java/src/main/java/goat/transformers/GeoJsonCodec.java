@@ -155,7 +155,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
             Object dv;
             try {
-                dv = decodeGeo(f.transform, v);
+                if (f.scale != null) {
+                    // scale and iscale refuse a string member (ruling 23 of 0.15); iscale reads the text as written
+                    if (!(v instanceof Json.Num)) throw new IllegalArgumentException(f.scale.wireName() + " needs a JSON number");
+                    dv = f.scale.decode(((Json.Num) v).text);
+                } else {
+                    dv = decodeGeo(f.transform, v);
+                }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
                 continue;

@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-smscale-rounds-to-magnitude-128",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"c1\":0,\"ratio\":31.875}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "31.875/0.25 = 127.5 rounds to 128, a magnitude of 2^7"
+}

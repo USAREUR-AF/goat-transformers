@@ -1,0 +1,12 @@
+{
+  "name": "octal-zero-with-leading-zeros",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1900000000000000000000",
+  "expect": "1900000000000000000000",
+  "model": {
+    "probe.s2": "0000",
+    "probe.tag": "000000000000000000000"
+  },
+  "source": "constructed"
+}

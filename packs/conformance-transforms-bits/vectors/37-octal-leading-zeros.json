@@ -1,0 +1,13 @@
+{
+  "name": "octal-leading-zeros",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "19008000000000000000a6",
+  "expect": "19008000000000000000a6",
+  "model": {
+    "probe.s2": "0010",
+    "probe.tag": "000000000000000000123"
+  },
+  "source": "constructed",
+  "reference": "s2 is 0x008, tag is 83 = 0o123 in the top 63 bits of the last 8 bytes (a6 = 83 << 1)"
+}

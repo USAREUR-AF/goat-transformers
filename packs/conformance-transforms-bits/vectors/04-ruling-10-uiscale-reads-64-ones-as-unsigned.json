@@ -1,0 +1,12 @@
+{
+  "name": "ruling-10-uiscale-reads-64-ones-as-unsigned",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-json",
+  "input": "10ffffffffffffffff",
+  "expect": "{\"sec\":18446744073709.552}",
+  "model": {
+    "time_ms": "18446744073709552"
+  },
+  "source": "constructed",
+  "reference": "ruling 10: v = 2^64-1 = 18446744073709551615; x 1/1000 rounds to 18446744073709552"
+}

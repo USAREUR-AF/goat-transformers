@@ -1,0 +1,54 @@
+# Conformance probe pack for value transforms (spec 0.15) on the fixed `bits`
+# wire, least-significant-bit-first. Public. One byte per word. One kind per
+# group of transforms, selected by the first byte; the last kind has no
+# `when` and takes any other message. Exercises the sign of `smag` as the
+# most significant bit of the field's value, which in this order is the last
+# bit of the field; characters numbered from the field's first bit, each read
+# low bit first; little-endian floats; and `swap` with an integer scale.
+#
+#   smag   0x10  c1 8 bits smag (byte 1); c2 8 bits smag at bit 20 (across
+#                bytes 2 and 3); ratio 12 bits smscale:0.5 at bit 28
+#   uis    0x11  time_ms 64 bits uiscale:1/1000 (microseconds, little-
+#                endian); n 16 bits uiscale:1:-5 swap (big-endian)
+#   f32s   0x12  a f32scale:0.5:10; hae f64scale:10
+#   chars  0x13  callsign 8 icao6 characters; uid 4 ascii7 characters at
+#                bit 56; s1 2 ais6 characters at bit 84
+#   octal  0x14  tag 12 bits (4 digits); s2 9 bits (3 digits) at bit 20
+#   plain  any   s1 2 ais6 characters at bit 0 (12 bits)
+format     conformance-transforms-bits-lsb
+version    0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  lsb
+kind    smag
+when    0:0:8  16
+requires probe.c1
+field   probe.c1     0:8:8    smag
+field   probe.c2     0:20:8   smag
+field   probe.ratio  0:28:12  smscale:0.5
+kind    uis
+when    0:0:8  17
+requires time_ms
+field   time_ms      0:8:64   uiscale:1/1000
+field   probe.n      0:72:16  uiscale:1:-5  swap
+kind    f32s
+when    0:0:8  18
+requires probe.a
+field   probe.a      0:8:32   f32scale:0.5:10
+field   hae          0:40:64  f64scale:10
+kind    chars
+when    0:0:8  19
+requires callsign
+field   callsign     0:8:48   chars:icao6
+field   uid          0:56:28  chars:ascii7
+field   probe.s1     0:84:12  chars:ais6
+kind    octal
+when    0:0:8  20
+requires probe.tag
+field   probe.tag    0:8:12   octal
+field   probe.s2     0:20:9   octal
+kind    plain
+field   probe.s1     0:0:12   chars:ais6

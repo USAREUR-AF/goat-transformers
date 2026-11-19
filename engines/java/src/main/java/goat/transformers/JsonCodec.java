@@ -122,6 +122,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         Failures fails = new Failures();
         Set<String> mapped = new HashSet<>();
         decodeScope(top, kind.scope, e, fails, mapped, false);
+        unreadOverflow(top, fails.read);
         residue(top, "", mapped, e);
         finishDecode(e, fails);
         return e;
@@ -152,23 +153,27 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             }
             if (mapped != null) mapped.add(l.locator);
             Pack.Field f = (Pack.Field) l;
+            Object v = path.length == 0 ? (el == Json.NULL ? null : el) : obj == null ? null : member(obj, path);
+            if (v instanceof Json.Num) fails.read.put(v, Boolean.TRUE);  // a field maps it (ruling 27 of 0.15)
             if (e.get(f.key) != null) continue;         // an earlier line already gave the key its value
-            Object v;
             if (path.length == 0) {
-                v = el == Json.NULL ? null : el;
                 if (v instanceof Map || v instanceof List) {
                     fails.add(f, "the item is " + typeName(v) + ", not a scalar", e);
                     continue;
                 }
-            } else {
-                v = obj == null ? null : member(obj, path);
             }
             if (v == null) continue;                    // absent or null: the key is absent
             // a string's text, or a number's or boolean's canonical text: a sentinel yields no value (Version 0.9)
             if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
             Object d;
             try {
-                d = geo ? GeoJsonCodec.decodeGeo(f.transform, v) : decodeValue(f.transform, v);
+                if (f.scale != null) {
+                    // scale and iscale need a number, on geojson too (ruling 23 of 0.15); iscale reads its text as written
+                    if (!(v instanceof Json.Num)) throw new IllegalArgumentException(f.scale.wireName() + " needs a JSON number, found " + typeName(v));
+                    d = f.scale.decode(((Json.Num) v).text);
+                } else {
+                    d = geo ? GeoJsonCodec.decodeGeo(f.transform, v) : decodeValue(f.transform, v);
+                }
             } catch (IllegalArgumentException ex) {
                 fails.add(f, ex.getMessage(), e);
                 continue;
@@ -190,6 +195,22 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             items.add(item);
         }
         return items;
+    }
+
+    /**
+     * A number outside the double range that no field reads, anywhere in the document (arrays, members of group
+     * items and when members included), is malformed-wire (ruling 27 of 0.15).
+     */
+    @SuppressWarnings("unchecked")
+    private void unreadOverflow(Object v, java.util.Map<Object, Boolean> read) {
+        if (v instanceof Map) {
+            for (Object c : ((Map<String, Object>) v).values()) unreadOverflow(c, read);
+        } else if (v instanceof List) {
+            for (Object c : (List<Object>) v) unreadOverflow(c, read);
+        } else if (v instanceof Json.Num && !read.containsKey(v)) {
+            String t = ((Json.Num) v).text;
+            if (Double.isInfinite(Double.parseDouble(t))) throw malformed("number out of range: " + t);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -344,6 +365,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         Object v = valueToEncode(f, e, scope);
         if (v == null) return null;
         try {
+            if (f.scale != null) return new Json.Num(f.scale.encode(v));
             return encodeValue(f.transform, v);
         } catch (IllegalArgumentException ex) {
             throw encodeFailure(f, ex);

@@ -1,0 +1,14 @@
+{
+  "name": "opt-block-left-out",
+  "from": "conformance-transforms-seq",
+  "to": "conformance-transforms-seq",
+  "input": "00000f42409410b17fc0",
+  "expect": "00000f42409410b17fc0",
+  "model": {
+    "probe.c1": "-5",
+    "@absent": [
+      "probe.s1"
+    ]
+  },
+  "source": "constructed"
+}

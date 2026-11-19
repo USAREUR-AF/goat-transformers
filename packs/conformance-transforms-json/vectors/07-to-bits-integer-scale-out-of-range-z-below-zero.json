@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-integer-scale-out-of-range-z-below-zero",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":0,\"z\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(9-10)*2/3 = -0.67 -> -1 < 0"
+}

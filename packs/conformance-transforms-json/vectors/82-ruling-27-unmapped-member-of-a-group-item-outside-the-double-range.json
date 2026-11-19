@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-unmapped-member-of-a-group-item-outside-the-double-range",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"items\":[{\"q\":1,\"zz\":1e400}]}",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "ruling 27: no field reads items[].zz; a number outside the double range anywhere is malformed-wire"
+}

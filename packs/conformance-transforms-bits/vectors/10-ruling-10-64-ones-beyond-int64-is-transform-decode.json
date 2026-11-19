@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-64-ones-beyond-int64-is-transform-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "12ffffffffffffffff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 10: uiscale reads 2^64-1, not -1 (ruling 2 of 0.5 does not apply)"
+}

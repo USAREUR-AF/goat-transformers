@@ -1,0 +1,8 @@
+{
+  "name": "iscale-int64-max-plus-one",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":9223372036854775808}",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "509-transforms-scale-and-iscale-on-text-wires-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\nkey n int -\nkey a float -\nkey s1 string -\n"
+  ],
+  "pack": "format probe\nversion 0.15.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield probe.a a scale:0.1:-5.5\nfield probe.x x iscale:1/3:-7\n"
+}

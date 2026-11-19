@@ -1,0 +1,11 @@
+{
+  "name": "ruling-9-0e400-is-0",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":0e400}",
+  "expect": "{\"sec\":0}",
+  "model": {
+    "time_ms": "0"
+  },
+  "source": "constructed"
+}

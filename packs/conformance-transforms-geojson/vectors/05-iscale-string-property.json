@@ -1,0 +1,9 @@
+{
+  "name": "iscale-string-property",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"1\"},\"id\":\"u4\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "on geojson the member must be a number, as for float"
+}

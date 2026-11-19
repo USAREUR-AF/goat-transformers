@@ -1,0 +1,9 @@
+{
+  "name": "siscale-rounded-maximum-does-not-encode-back",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "137f0000",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "127/2 = 63.5 -> 64; encode 64*2 = 128 does not fit 8 bits two's complement"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "smag-largest-magnitudes",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "15fffff7f0",
+  "expect": "15fffff7f0",
+  "model": {
+    "probe.c1": "-127",
+    "probe.c2": "-2047",
+    "probe.ratio": "31.75"
+  },
+  "source": "constructed"
+}

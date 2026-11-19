@@ -342,7 +342,7 @@ void Decoder::set(const FieldLine& f, const std::string& text) {
     if (!wants(f)) return;
     Value v;
     try {
-        v = decode_value(f.transform, text);
+        v = decode_value(f, text);
     } catch (const std::invalid_argument& ex) {
         fail(f, ex.what());
         return;
@@ -354,7 +354,7 @@ void Decoder::set_json_number(const FieldLine& f, const std::string& text) {
     if (!wants(f)) return;
     Value v;
     try {
-        v = decode_json_number(f.transform, text);
+        v = decode_json_number(f, text);
     } catch (const std::invalid_argument& ex) {
         fail(f, ex.what());
         return;
@@ -463,7 +463,7 @@ Value typemapped_out(const Pack& p, const FieldLine& f, const Value& v) {
 
 std::string field_text(const Pack& p, const FieldLine& f, const Value& v) {
     try {
-        return encode_value(f.transform, v);
+        return encode_value(f, v);
     } catch (const std::invalid_argument& ex) {
         throw Error(ErrorKind::TransformEncode, p.format, f.locator, f.key + ": " + ex.what());
     }
@@ -736,6 +736,14 @@ bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t
         out = decode_sixbit(codes, f.trim);
         return true;
     }
+    if (const unsigned w = chars_width(f.transform)) {
+        // v0.15 `chars`: character i is the w bits at bit i * w of the field.
+        std::vector<std::uint8_t> codes(len / w);
+        for (std::uint32_t k = 0; k < codes.size(); ++k)
+            codes[k] = static_cast<std::uint8_t>(read_bits(data, start + std::uint64_t{w} * k, w, msb));
+        out = decode_chars(f.transform, codes);
+        return true;
+    }
     return false;
 }
 
@@ -752,6 +760,11 @@ bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std
         const std::string codes = encode_sixbit(v, len / 6);
         for (std::uint32_t k = 0; k < len / 6; ++k)
             write_bits(data, start + 6ull * k, 6, static_cast<std::uint8_t>(codes[k]), msb);
+        return true;
+    }
+    if (const unsigned w = chars_width(f.transform)) {
+        const std::vector<std::uint8_t> codes = encode_chars(f.transform, v, len / w);
+        for (std::uint32_t k = 0; k < codes.size(); ++k) write_bits(data, start + std::uint64_t{w} * k, w, codes[k], msb);
         return true;
     }
     return false;
@@ -1153,6 +1166,13 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
         const json::Value* v = lookup(loc);
         std::string text;
         if (v && line.field->has_absent && json_raw_text(*v, text) && sentinel_text(*line.field, text)) continue;
+        if (v && transform_is_text_scale(line.field->transform) && !v->is(json::Value::Kind::Null) &&
+            !v->is(json::Value::Kind::Number)) {
+            // scale and iscale read a number, on geojson as on json (0.15 ruling 23).
+            d.fail(*line.field, std::string("the member is not a number, which transform '") +
+                                    transform_name(line.field->transform) + "' reads");
+            continue;
+        }
         if (v && v->is(json::Value::Kind::Number)) d.set_json_number(*line.field, v->text);
         else if (v && json_text(*v, text)) d.set(*line.field, text);
     }

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-24-empty-element-has-no-text",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg><v/></msg>",
+  "expect": "<msg/>",
+  "model": {
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed"
+}

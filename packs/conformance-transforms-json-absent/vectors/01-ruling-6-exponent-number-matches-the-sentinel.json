@@ -1,0 +1,14 @@
+{
+  "name": "ruling-6-exponent-number-matches-the-sentinel",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{\"cnt\":1e2}",
+  "expect": "{\"cnt\":100}",
+  "model": {
+    "@absent": [
+      "probe.cnt"
+    ]
+  },
+  "source": "constructed",
+  "reference": "ruling 6: canonical text of 1e2 is 100, the sentinel; the absent key writes the first sentinel"
+}

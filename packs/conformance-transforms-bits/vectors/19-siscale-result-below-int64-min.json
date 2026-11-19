@@ -1,0 +1,9 @@
+{
+  "name": "siscale-result-below-int64-min",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "14bfffffffffffffff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "(-2^62-1) * 2 = -2^63-2"
+}

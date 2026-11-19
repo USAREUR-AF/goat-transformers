@@ -1,0 +1,9 @@
+{
+  "name": "ruling-2-via-integer-with-no-entry",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1808",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "8/2 = 4 has no entry and int is not string (Version 0.6, Value tables)"
+}

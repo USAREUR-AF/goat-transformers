@@ -1,0 +1,17 @@
+{
+  "name": "transforms-roundtrip",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg r=\"12.5\" t=\"1614456000.001\" big=\"9007199254740993\" q18=\"0.000003814697265625\"><pos lat=\"125000000\"/><v>-2.5</v></msg>",
+  "expect": "<msg r=\"12.5\" t=\"1614456000.001\" big=\"9007199254740993\" q18=\"0.000003814697265625\"><pos lat=\"125000000\"/><v>-3</v></msg>",
+  "model": {
+    "probe.ratio": "1.25",
+    "time_ms": "1614456000001",
+    "probe.big": "9007199254740993",
+    "probe.x": "1",
+    "lat": "12.5",
+    "probe.z": "-4"
+  },
+  "source": "constructed",
+  "reference": "q18: 2^-18 x 262144 = 1, written back with 18 fraction digits; v: round(-2.5) = -3, -1 = -4, encode -4 + 1 = -3"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "missing-member-writes-the-first-sentinel",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{}",
+  "expect": "{\"cnt\":100}",
+  "model": {
+    "@absent": [
+      "probe.cnt"
+    ]
+  },
+  "source": "constructed"
+}

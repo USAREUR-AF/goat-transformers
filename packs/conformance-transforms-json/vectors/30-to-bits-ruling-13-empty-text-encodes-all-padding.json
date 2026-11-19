@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-ruling-13-empty-text-encodes-all-padding",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"\",\"cs\":\"\",\"id\":\"\"}",
+  "expect": "1a0000000000008208208208200000000000",
+  "source": "constructed"
+}

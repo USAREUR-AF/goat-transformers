@@ -1,0 +1,11 @@
+{
+  "name": "ruling-2-via-low",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1802",
+  "expect": "1802",
+  "model": {
+    "probe.label": "low"
+  },
+  "source": "constructed"
+}

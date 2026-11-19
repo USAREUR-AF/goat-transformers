@@ -1,0 +1,12 @@
+{
+  "name": "iscale-factor-and-offset",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"th\":2}",
+  "expect": "{\"th\":2}",
+  "model": {
+    "probe.thirds": "7"
+  },
+  "source": "constructed",
+  "reference": "2 x 3 + 1 = 7; (7-1)/3 = 2"
+}

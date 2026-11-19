@@ -2,6 +2,7 @@ package goatxf
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -22,6 +23,26 @@ func isIntLiteral(s string) bool {
 		}
 	}
 	return true
+}
+
+// unmappedOverflow returns a number anywhere in v whose magnitude rounds
+// above the largest finite double and that no field line read, or nil.
+func unmappedOverflow(v *jval) *jval {
+	switch v.k {
+	case jNum:
+		if !v.mapped {
+			if f, _ := strconv.ParseFloat(v.s, 64); math.IsInf(f, 0) {
+				return v
+			}
+		}
+	case jObj, jArr:
+		for _, c := range v.vals {
+			if o := unmappedOverflow(c); o != nil {
+				return o
+			}
+		}
+	}
+	return nil
 }
 
 // canonNumber is the canonical text of a JSON number literal: shortest
@@ -224,6 +245,11 @@ func decodeJSONWire(d *decodeState, b []byte) error {
 	if err := d.jsonScope(lay, root, false); err != nil {
 		return err
 	}
+	// A number outside the double range that no field reads is malformed
+	// (0.15 ruling 27, extending 0.8 ruling 39).
+	if v := unmappedOverflow(root); v != nil {
+		return &Error{Kind: ErrMalformedWire, Format: p.Format, Detail: "number " + v.s + " is outside the double range and no field maps it"}
+	}
 	// Residue: every scalar member at any depth of nested objects that no
 	// field or when line maps, keyed by its path, as canonical JSON text.
 	// Arrays, nulls and members whose name holds a `.` are not carried.
@@ -280,11 +306,15 @@ func (d *decodeState) jsonScope(lay *layout, v *jval, geo bool) error {
 			if m == nil || m.k == jNull {
 				continue
 			}
+			m.mapped = true
 			if f.sentinelJSON(m) {
 				continue
 			}
 			if geo {
-				if m.k == jStr || m.k == jNum {
+				if m.k == jStr && f.tf != nil && f.tf.numOnly {
+					// scale and iscale refuse a string member (0.15 ruling 23).
+					d.fail(f, "wire value is not a JSON number")
+				} else if m.k == jStr || m.k == jNum {
 					d.fieldJSON(f, m)
 				} else {
 					d.fail(f, "wire value is not a JSON string or number")

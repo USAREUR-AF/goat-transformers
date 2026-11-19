@@ -498,14 +498,7 @@ impl<'a> Parser<'a> {
                 if !t.is_bits() {
                     return bad(ln, format!("transform of `{}` is not valid on a bits wire", f.model_key));
                 }
-                let ok = match t {
-                    Transform::F32 => len == 32,
-                    Transform::F64 => len == 64,
-                    Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
-                    Transform::Sixbit => crate::armor::sixbit_len_ok(len),
-                    _ => (1..=64).contains(&len),
-                };
-                if !ok {
+                if !u32::try_from(len).map_or(false, |l| t.bits_len_ok(l)) {
                     return bad(ln, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
                 }
                 if f.swap && *t == Transform::Sixbit {
@@ -516,6 +509,9 @@ impl<'a> Parser<'a> {
                 }
                 if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
                     return bad(ln, "`trim` is valid only with `ascii` or `sixbit`");
+                }
+                if f.swap && t.refuses_swap() {
+                    return bad(ln, "`swap` is not valid with `chars` or `octal`");
                 }
                 resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
                 // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)

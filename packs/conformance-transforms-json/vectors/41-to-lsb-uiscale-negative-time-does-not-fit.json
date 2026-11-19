@@ -1,0 +1,9 @@
+{
+  "name": "to-lsb-uiscale-negative-time-does-not-fit",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "{\"sec\":-0.001}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "time_ms -1: -1/(1/1000) = -1000 does not fit unsigned"
+}

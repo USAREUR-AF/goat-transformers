@@ -236,7 +236,8 @@ std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t
 std::string bytes_to_armor(const std::string& data, std::uint64_t bits);
 
 // bits: one field's message text, read from or written to `len` bits at
-// `start`, for `ascii` and `sixbit`. False for any other transform.
+// `start`, for `ascii`, `sixbit` and the `chars` sets of 0.15. False for any
+// other transform.
 bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, bool msb,
                       Value& out);
 bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std::uint64_t start, std::uint32_t len,

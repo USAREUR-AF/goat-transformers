@@ -1,0 +1,11 @@
+{
+  "name": "ruling-7-exact-digits-exponent",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":90071992547409925e-1}",
+  "expect": "{\"big\":9007199254740993}",
+  "model": {
+    "probe.big": "9007199254740993"
+  },
+  "source": "constructed"
+}

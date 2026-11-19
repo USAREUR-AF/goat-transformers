@@ -298,6 +298,15 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				d.store(f, decodeSixbit(data, f, base, p.msb))
 				continue
 			}
+			if f.btf.decodeAt != nil {
+				v, err := f.btf.decodeAt(data, at, f.loc.blen, p.msb)
+				if err != nil {
+					d.fail(f, err.Error())
+					continue
+				}
+				d.store(f, v)
+				continue
+			}
 			if f.btf.ascii {
 				v, err := decodeASCII(data, f, base, p.msb)
 				if err != nil {
@@ -372,6 +381,12 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 func putBitsField(p *Pack, f *Field, v Value, data []byte, at int) error {
 	if f.btf.sixbit {
 		return encodeSixbit(p, f, v, data, at)
+	}
+	if f.btf.encodeAt != nil {
+		if err := f.btf.encodeAt(v, data, at, f.loc.blen, p.msb); err != nil {
+			return encodeErr(p, f, err)
+		}
+		return nil
 	}
 	if f.btf.ascii {
 		s, err := encString(v)

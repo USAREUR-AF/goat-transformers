@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-integer-scale-out-of-range-y-rounds-to-128",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":0,\"y\":252}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(252+3)/2 = 127.5 -> 128 > 127"
+}

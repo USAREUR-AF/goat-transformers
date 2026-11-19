@@ -1,0 +1,15 @@
+{
+  "name": "chars-lsb-first-character-in-the-low-bits",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "130bd3c4b03c8341614c1608",
+  "expect": "130bd3c4b03c8341614c1608",
+  "model": {
+    "@kind": "chars",
+    "callsign": "KLM1023",
+    "uid": "AB12",
+    "probe.s1": "AB"
+  },
+  "source": "constructed",
+  "reference": "lsb: character i is bits 6i to 6i+5 of the field, read low bit first, so the field value is the sum of code_i << 6i: 0x833cb0c4d30b, written low byte first; s1 starts at bit 84, the high half of byte 10"
+}

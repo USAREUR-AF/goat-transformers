@@ -1,0 +1,12 @@
+{
+  "name": "scale-small-result-in-plain-notation",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"lat\":1}",
+  "expect": "{\"lat\":1}",
+  "model": {
+    "lat": "0.0000001"
+  },
+  "source": "constructed",
+  "reference": "1 x 1 / 10000000 = 1e-7, which a model check writes 0.0000001; 1e-7 x 10000000 / 1 = 1 in doubles"
+}

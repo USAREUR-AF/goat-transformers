@@ -1,0 +1,11 @@
+{
+  "name": "uiscale-offset-zero-bits",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "110000000000000000",
+  "expect": "110000000000000000",
+  "model": {
+    "probe.n": "-1"
+  },
+  "source": "constructed"
+}

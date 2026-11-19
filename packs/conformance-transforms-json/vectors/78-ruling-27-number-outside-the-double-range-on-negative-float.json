@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-number-outside-the-double-range-on-negative-float",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"a\":-1e400}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 27: a number outside the double range that a field maps is read by its transform; int, float and scale fail with transform-decode"
+}

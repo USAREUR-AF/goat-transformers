@@ -1,0 +1,9 @@
+{
+  "name": "f64scale-result-not-finite",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "177fefffffffffffff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "the largest double x 10 is infinite"
+}

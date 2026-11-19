@@ -2824,3 +2824,215 @@ JSON string, with no fill-bit count and no sentence around it.
     multiple of 6, or outside 6 to 1530, is a bit length against its
     transform, which 5b of 0.11 checks after the file is read: `field s
     0:0:8 sixbit` followed by a line `bogus` is `unknown-directive`.
+
+---
+
+# Version 0.15: value transforms
+
+Status: Written. Transforms for values that 0.5 can only carry as raw bits: a
+scale whose result is an integer (microseconds to `time_ms`), a scale on a
+number of a text wire (an integer of 1e-7 degrees in JSON), numbers in
+sign-and-magnitude form, IEEE floats with a scale, text in a 6-bit or 7-bit
+character set, and integers written as octal digits.
+
+## Exact factors
+
+The integer scales below read `<factor>` and `<offset>` as exact numbers, not
+as doubles:
+
+- `<factor>` is a decimal (`[-]digits[.digits]`, no exponent) or a fraction
+  `<num>/<den>` of two decimal integers, `den` not 0. A decimal is the exact
+  fraction its digits state: `0.001` is 1/1000. The factor in lowest terms
+  must have a numerator and a denominator each at most 2^32, and must not be
+  0; otherwise `bad-directive`.
+- `<offset>` is a decimal integer (`[-]digits`) with absolute value below
+  2^63; anything else is `bad-directive`.
+
+`round` is round-half-away-from-zero of the exact value. Engines compute with
+integers wide enough to hold the exact products (128 bits suffice for every
+`bits` field), never through a double.
+
+## `bits`: integer scales
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `uiscale:<factor>[:<offset>]` | int | the bits as unsigned `v`, then `round(v × factor) + offset` | `round((x − offset) / factor)`, which must fit the field as unsigned |
+| `siscale:<factor>[:<offset>]` | int | the bits as two's-complement `v`, then `round(v × factor) + offset` | `round((x − offset) / factor)`, which must fit the field as two's-complement |
+
+A decoded result outside the signed 64-bit range is `transform-decode`. An
+encoded value that does not fit is `transform-encode`. `len` is 1 to 64.
+
+## `bits`: sign and magnitude
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `smag` | int | the most significant bit of the field's value (as `uint` reads it) is the sign, 1 negative; the other `len − 1` bits are the magnitude | sign 1 when `x < 0`; magnitude `|x|` |
+| `smscale:<factor>[:<offset>]` | float | the `smag` value `v`, then `v × factor + offset` as `sscale` computes it (ruling 1 of 0.5) | `round((x − offset) / factor)` as `sscale` computes it, then as `smag` |
+
+`len` is 2 to 64. Sign 1 with magnitude 0 decodes as 0; 0 encodes with sign
+0. A magnitude of `2^(len−1)` or more is `transform-encode`.
+
+## `bits`: scaled floating point
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `f32scale:<factor>[:<offset>]` | float | as `f32`, then `v × factor + offset` (ruling 1 of 0.5) | `(x − offset) / factor` (ruling 1 of 0.5), then as `f32` |
+| `f64scale:<factor>[:<offset>]` | float | as `f64`, then `v × factor + offset` | `(x − offset) / factor`, then as `f64` |
+
+`len` must be 32 and 64 respectively. Factor and offset are read as for
+`sscale`. A decoded value that is not finite is `transform-decode`.
+
+## `bits`: character sets
+
+```
+field  <key> <locator> chars:<set>
+```
+
+Yields `string`. The field is a sequence of characters of the set's width
+`w`: character `i` is the `w` bits that start at bit `i × w` of the field,
+read as `uint` reads a `w`-bit field at that place in the pack's bit order.
+`len` is a multiple of `w`, from `w` to 2040.
+
+| Set | `w` | Codes | Padding |
+|---|---|---|---|
+| `icao6` | 6 | 1–26 `A`–`Z`, 32 space, 48–57 `0`–`9`; every other code is `transform-decode` | space |
+| `ais6` | 6 | code `c` below 32 is the character `c + 64` (`@`, `A`–`Z`, `[`, `\`, `]`, `^`, `_`); code `c` from 32 is the character `c` (space to `?`) | `@` |
+| `ascii7` | 7 | 0 is NUL; 32–126 are themselves; every other code is `transform-decode` | NUL |
+
+Character 0 starts at the field's first bit, `pos`, in either bit order, so
+the first character on the wire is the first character of the text.
+Decode removes trailing padding characters, and with `icao6` and `ais6` also
+trailing spaces; with `ascii7` a NUL followed by a character that is not NUL
+is `transform-decode`. Encode writes the text's characters and fills the
+remaining characters with the padding. A character the set cannot hold, or
+text longer than `len / w` characters, is `transform-encode`.
+
+## `bits`: octal digits
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `octal` | string | the bits as unsigned, written as exactly `len / 3` octal digits with leading zeros | text of exactly `len / 3` characters `0`–`7`, read as an octal number; anything else is `transform-encode` |
+
+`len` is a multiple of 3, from 3 to 63.
+
+## Text wires: scales
+
+On `xml`, `json` and `geojson`:
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `scale:<factor>[:<offset>]` | float | the number as `float` decodes it, `v`, then `v × factor + offset` (ruling 1 of 0.5) | `(x − offset) / factor` (ruling 1 of 0.5), written as `float` writes it |
+| `iscale:<factor>[:<offset>]` | int | the number's text read as an exact decimal `r`, then `round(r × factor) + offset` | `(x − offset) / factor` exactly, written as an exact decimal |
+
+`scale` reads `<factor>` and `<offset>` as `sscale` does; `iscale` as the
+integer scales do (Exact factors). On `json` and `geojson` the member must be
+a number, as for `float`.
+
+`iscale` decode reads the number's text, on `json` as written in the input:
+`-?digits(.digits)?([eE][+-]?digits)?`. On `xml` the text must have that form
+exactly, without surrounding whitespace. An exponent whose absolute value is
+above 400, other text, or a result outside the signed 64-bit range is
+`transform-decode`.
+
+`iscale` encode writes the exact quotient in plain decimal notation: a `-` for
+a negative value, the integer digits (`0` when there are none), and, when the
+quotient is not an integer, a `.` and the fraction digits with no trailing
+zero. A quotient that does not terminate within 18 fraction digits is
+`transform-encode`. On `json` and `geojson` the text is written as a number.
+
+## Load errors
+
+`bad-directive`: one of these transforms on a wire it does not list; a `len`
+it does not allow; a parameter that does not parse; an unknown character set;
+`swap` with `chars` or `octal`.
+
+## Rulings for 0.15
+
+1. **`absent` (0.9)** compares the raw value as before: the field's bits on
+   `bits`, the number's text on text wires. A `chars` field longer than 64
+   bits takes no `absent`.
+2. **`via` tables** see what the transform yields: an integer for the integer
+   scales and `smag`, a string for `chars` and `octal`.
+3. **Sequential layouts** (0.8) take every `bits` transform of this version.
+4. **Rounding of a negative half.** `round(-2.5)` is `-3`; `round(2.5)` is
+   `3`.
+5. **`ais6` and spaces.** Decode removes trailing `@` and trailing spaces in
+   any mix: `AB @ @` decodes `AB`.
+6. **`absent` on `json` and `geojson`** compares the canonical text of ruling
+   9 of 0.9, whatever the transform; `iscale` does not change it.
+7. **Exact digits on `json` and `geojson`.** `iscale` reads the digits as
+   written and writes the exact digits, never through a double, on both
+   wires and on `geometry.*` slots: `9007199254740993` stays itself.
+8. **No rounding for float scales.** `scale`, `f32scale` and `f64scale` take
+   the arithmetic and order of ruling 1 of 0.5 and never round: `scale:1/10`
+   writes 1.25 as `12.5`.
+9. **Exact means exact.** A factor is the value its text states whatever its
+   number of digits; it loads when its lowest terms fit the bounds. An
+   `iscale` text with an exponent of at most 400 in absolute value decodes to
+   its exact rounded value (`1e-400` is 0, `0e400` is 0). Engines use big
+   integers or an equivalent bound.
+10. **Range.** `uiscale` reads the true unsigned value in `[0, 2^64)` (ruling
+    2 of 0.5 does not apply). Only the final value, after the offset, is
+    checked against the signed 64-bit range.
+11. **Signs in factors.** A fraction takes an optional `-` before `num` only;
+    `den` is unsigned and not 0; a `+` anywhere is `bad-directive`.
+12. **`smscale`** reads factor and offset as `sscale` does, not as the
+    integer scales.
+13. **Empty text.** As ruling 3 of 0.5: a `chars` field that is all padding
+    decodes to `""`, present, and `""` encodes to all padding.
+14. **Not finite.** A `scale` result that is not finite is `transform-decode`
+    on decode and `transform-encode` on encode.
+15. **Sign of zero.** `smag` and `smscale` take the sign from the integer
+    after rounding: a value that rounds to 0 writes sign 0.
+16. **An absent `chars` key** writes zero bits, as every `bits` field does; a
+    pack that wants padding there uses `absent` with that value.
+17. **NUL in `ascii7` text** is `transform-encode`.
+18. **`trim`** with any transform of this version is `bad-directive`.
+19. **Bounds.** A factor of `4294967296` loads and `4294967297` is
+    `bad-directive`; an offset of `-9223372036854775807` loads and
+    `-9223372036854775808` is `bad-directive`; `uiscale:-0` is
+    `bad-directive` (factor 0).
+20. **IEEE zero.** The float scales compute exactly the operations stated,
+    the offset included when it is 0: a wire `-0.0` through `f64scale:10`
+    gives `-0 × 10 + 0`, which is `+0`; a model `-0` encodes as
+    `(-0 − 0) / 10`, which is `-0`.
+21. **18 digits.** A quotient that needs more than 18 fraction digits is
+    `transform-encode` even when it terminates: `2^-19` fails, `2^-18`
+    writes.
+22. **Leading zeros on `xml`.** The `iscale` text form allows them: `007`
+    decodes 7. (On `json` they are already `malformed-wire`.)
+23. **`geojson` strings.** `scale` and `iscale` refuse a string member on
+    `geojson` as on `json` (`transform-decode`), although `float` there keeps
+    its 0.1 typing.
+24. **`xml` whitespace.** An empty element has no `#text`. Text that is only
+    whitespace is text (ruling 1m of 0.11), and `iscale` reads every text
+    untrimmed, so `<v>  </v>` and `<v> 1</v>` are `transform-decode`.
+    This is about field decode only: `when <path>/#text present` keeps its
+    0.5 meaning and holds when the element exists, whatever its text.
+25. **Fractions are unsigned.** Every fraction factor of a float scale
+    transform — `uscale`, `sscale`, `scale`, `smscale`, `f32scale`, `f64scale`
+    — has unsigned `num` and `den`, on every wire that has them (`tlv` of
+    0.13 included); `sscale:-1/10` and `scale:-1/10` are `bad-directive`. A negative factor is written as a decimal
+    (`scale:-0.1`). The derive function `scale:` is not a transform: its
+    `<num>` is integer text (ruling 2c of 0.11), so `scale:-1/4` loads. This states what ruling 1 of 0.5 meant by "two
+    decimal integers"; no pack used a signed fraction. Ruling 11 is for the
+    exact factors.
+26. **Older transforms** keep their wire checks; apart from ruling 25 this
+    version adds checks for its own transforms only.
+27. **JSON numbers outside the double range.** A number is outside the
+    double range when its magnitude rounds above the largest finite double
+    (overflow); a number that rounds to 0 (`1e-400`) is inside it and reads
+    as 0. On `json` and `geojson` a number outside the range that a field
+    maps is read by that field's transform: `iscale` reads it exactly (ruling
+    9), and `float`, `int` and `scale` fail with `transform-decode`. On
+    `json` one that no field reads, anywhere in the document (arrays,
+    unmapped members of group items, `when` members included; a member at a
+    field line's locator counts as read even when an earlier line of the
+    same key already gave the value, and so does one holding a sentinel), is
+    `malformed-wire`, as ruling 39 of 0.8 is extended here; on `geojson` an unmapped number stays residue with its
+    text as written (ruling 13 of 0.6).
+28. **On `tlv`** (Version 0.13) every transform of this version is
+    `bad-directive`, checked after the file as ruling 8 of 0.13 states for
+    any transform the `tlv` table does not hold: `iscale:10` on a `tlv` field
+    is `bad-directive`, and with a later line `bogus` the error is
+    `unknown-directive`.

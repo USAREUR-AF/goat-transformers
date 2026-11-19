@@ -1,0 +1,9 @@
+{
+  "name": "uiscale-roundtrip-of-64-ones-does-not-fit-on-encode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "10ffffffffffffffff",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "18446744073709552 x 1000 = 18446744073709552000 > 2^64-1"
+}

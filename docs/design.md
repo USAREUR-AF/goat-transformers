@@ -89,8 +89,10 @@ floating-point and text binary fields (spec 0.5); constants, defaults, value
 tables, derived keys, values the caller supplies, per-field byte swap, optional
 trailing fields and an XML root per kind (spec 0.6); groups, which map a
 repeating part of a message to a list in the model (spec 0.7); wire values that
-mean "no value" (spec 0.9). Designed: layered wires and framing, further value
-functions, conditional output, XML namespaces.
+mean "no value" (spec 0.9); integer and text-wire scales, sign-and-magnitude
+numbers, character sets and octal digits (spec 0.15). Designed: layered wires
+and framing, derive functions for time, distance and frames, conditional
+output, XML namespaces.
 
 ### What an encoder does around the copy of a value
 

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-14-scale-result-not-finite",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"ce\":1e308}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "1e308 x 10 is infinite"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "iscale-text-form-leading-zeros",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg big=\"007\"/>",
+  "expect": "<msg big=\"7\"/>",
+  "model": {
+    "probe.big": "7"
+  },
+  "source": "constructed"
+}

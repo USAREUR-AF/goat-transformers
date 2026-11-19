@@ -1,0 +1,11 @@
+{
+  "name": "iscale-text-form-ruling-9-1e-400",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg big=\"1e-400\"/>",
+  "expect": "<msg big=\"0\"/>",
+  "model": {
+    "probe.big": "0"
+  },
+  "source": "constructed"
+}

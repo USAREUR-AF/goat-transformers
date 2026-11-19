@@ -1,0 +1,11 @@
+{
+  "name": "iscale-text-form-negative-zero",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg big=\"-0\"/>",
+  "expect": "<msg big=\"0\"/>",
+  "model": {
+    "probe.big": "0"
+  },
+  "source": "constructed"
+}

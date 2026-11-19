@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-f64scale-negative-zero",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"hae\":-0}",
+  "expect": "178000000000000000",
+  "source": "constructed",
+  "reference": "(x - offset)/factor in doubles: (-0 - 0)/10 = -0, the double -0"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ruling-6-string-holding-the-sentinel",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{\"cnt\":\"100\"}",
+  "expect": "{\"cnt\":100}",
+  "model": {
+    "@absent": [
+      "probe.cnt"
+    ]
+  },
+  "source": "constructed",
+  "reference": "the sentinel check comes before the transform; a string member's text 100 equals it"
+}

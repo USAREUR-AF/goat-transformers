@@ -1,0 +1,11 @@
+{
+  "name": "iscale-int64-min",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":-9223372036854775808}",
+  "expect": "{\"big\":-9223372036854775808}",
+  "model": {
+    "probe.big": "-9223372036854775808"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-13-icao6-all-spaces-lsb",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "132008822008820000000000",
+  "expect": "132008822008820000000000",
+  "model": {
+    "callsign": "",
+    "uid": "",
+    "probe.s1": ""
+  },
+  "source": "constructed"
+}

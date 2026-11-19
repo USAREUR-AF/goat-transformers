@@ -286,7 +286,13 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             }
             Object v;
             try {
-                if (f.bits.isAscii()) {
+                if (f.bits.isChars()) {
+                    // character i is the w bits from bit i * w of the field, read as uint reads them
+                    int w = f.bits.charWidth();
+                    int[] codes = new int[loc.len / w];
+                    for (int i = 0; i < codes.length; i++) codes[i] = (int) readBits(msg, start + (long) w * i, w);
+                    v = f.bits.decodeChars(codes);
+                } else if (f.bits.isAscii()) {
                     byte[] bytes = new byte[loc.len / 8];
                     for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) readBits(msg, start + 8L * i, 8);
                     if (f.swap) reverse(bytes);
@@ -386,7 +392,11 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             Loc loc = (Loc) f.loc;
             long start = base + loc.start;
             try {
-                if (f.bits.isAscii()) {
+                if (f.bits.isChars()) {
+                    int w = f.bits.charWidth();
+                    int[] codes = f.bits.encodeChars(v, loc.len / w);
+                    for (int c = 0; c < codes.length; c++) writeBits(buf.b, start + (long) w * c, w, codes[c]);
+                } else if (f.bits.isAscii()) {
                     byte[] bytes = f.bits.encodeAscii(v, loc.len / 8);
                     if (f.swap) reverse(bytes);
                     for (int b = 0; b < bytes.length; b++) writeBits(buf.b, start + 8L * b, 8, bytes[b] & 0xffL);
