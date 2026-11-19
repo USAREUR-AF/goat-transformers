@@ -183,10 +183,10 @@ _DERIVE_SHAPE = {
     "east_of": (2, 2, False), "north_of": (2, 2, False), "neg": (1, 1, False),
     "scale": (1, 1, True), "offset": (1, 1, True), "join": (1, None, True),
     "day_seconds": (1, 1, False), "any": (1, None, False), "not": (1, 1, False),
-    "parse_int": (1, 1, False), "text_of": (1, 1, False),
+    "parse_int": (1, 1, False), "text_of": (1, 1, False), "present": (1, 1, False),
 }
-# function -> (type of every argument, type of the target); `copy` and `offset`
-# are checked apart because they take more than one type.
+# function -> (type of every argument, type of the target); `copy`, `offset`
+# and `present` are checked apart because they take more than one type.
 _DERIVE_TYPES = {
     "hypot": ("float", "float"), "bearing": ("float", "float"), "east_of": ("float", "float"),
     "north_of": ("float", "float"), "neg": ("float", "float"), "scale": ("float", "float"),
@@ -372,6 +372,8 @@ class Model:
         fn = derive.function
         if fn == "copy":
             fits = args[0] == target
+        elif fn == "present":
+            fits = target == "int"  # any scalar argument (spec 0.12); a list is refused above
         elif fn == "offset":
             fits = args[0] == target and target in ("int", "float") and (
                 target == "float" or bool(_INT.match(derive.parameter)))
