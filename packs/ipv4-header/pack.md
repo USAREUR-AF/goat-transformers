@@ -66,5 +66,7 @@ identity of a tracked entity.
 `tools/gen/ietf-headers-vectors.py` builds every input from values it chooses and
 packs it by its own restatement of the layout; no message is taken from a
 document. Round trips of a datagram header and of edge values, a header with an
-option and data, a version-6 packet (`no-kind`), 19 octets (`malformed-wire`)
-and a conversion to `ipv6-header` (`no-kind`).
+option and data, a version-6 packet (`no-kind`) and 19 octets (`malformed-wire`).
+A conversion to `ipv6-header` gives `no-kind` (its kind requires both
+addresses); no vector pins it, because the device profile refuses that plan
+at compile time.
