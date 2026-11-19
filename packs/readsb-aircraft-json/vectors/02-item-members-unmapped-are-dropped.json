@@ -5,7 +5,8 @@
   "input": "{\"now\":1714566601,\"messages\":7,\"aircraft\":[{\"hex\":\"~1a2b3c\",\"type\":\"tisb_other\",\"gs\":12,\"lat\":50.0,\"lon\":8.5,\"seen\":3.5,\"alt_baro\":\"ground\",\"nav_modes\":[\"tcas\"]}]}",
   "expect": "{\"now\":1714566601,\"messages\":7,\"aircraft\":[{\"hex\":\"~1a2b3c\",\"type\":\"tisb_other\",\"gs\":12,\"lat\":50,\"lon\":8.5,\"seen\":3.5}]}",
   "model": {
-    "readsb.aircraft.#": "1"
+    "readsb.aircraft.#": "1",
+    "time_ms": "1714566601000"
   },
   "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
   "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; items carry no residue (0.7 Decode): alt_baro and nav_modes of an aircraft object are dropped"

@@ -10,6 +10,7 @@ source  "readsb README-json.md, https://github.com/wiedehopf/readsb commit 88877
 source  "dump1090-fa README-json.md, https://github.com/flightaware/dump1090 commit 465e06330372ab0586a6a5063c66b60a8750f2b6 (GPL-2.0-or-later)"
 uses    readsb
 wire    json
+field   time_ms          now       iscale:1000
 field   readsb.now       now       float
 field   readsb.messages  messages  int
 group   readsb.aircraft  aircraft

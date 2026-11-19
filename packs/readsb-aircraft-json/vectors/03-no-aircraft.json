@@ -5,7 +5,8 @@
   "input": "{\"now\":1714566602,\"messages\":0,\"aircraft\":[]}",
   "expect": "{\"now\":1714566602,\"messages\":0,\"aircraft\":[]}",
   "model": {
-    "readsb.aircraft.#": "0"
+    "readsb.aircraft.#": "0",
+    "time_ms": "1714566602000"
   },
   "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
   "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; an empty aircraft array is a present, empty list and is written as []"

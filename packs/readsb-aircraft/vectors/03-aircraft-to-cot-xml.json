@@ -3,7 +3,7 @@
   "from": "readsb-aircraft",
   "to": "cot-xml",
   "input": "{\"now\":1714566600.5,\"hex\":\"a1b2c3\",\"flight\":\"TEST01\",\"alt_geom\":1000,\"gs\":360,\"track\":45.5,\"lat\":47.25,\"lon\":-122.5}",
-  "expect": "<event version=\"2.0\" uid=\"a1b2c3\" type=\"a-u-X\"><point lat=\"47.25\" lon=\"-122.5\" hae=\"304.8\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"TEST01\"/><track course=\"45.5\" speed=\"185.2\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"a1b2c3\" type=\"a-u-X\" time=\"2024-05-01T12:30:00.500Z\" start=\"2024-05-01T12:30:00.500Z\"><point lat=\"47.25\" lon=\"-122.5\" hae=\"304.8\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"TEST01\"/><track course=\"45.5\" speed=\"185.2\"/></detail></event>",
   "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
-  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; packs/cot-xml/pack.def; now is seconds as a float and does not carry to time_ms (no scale yields an integer); cot-xml writes its defaults for type, ce and le"
+  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; packs/cot-xml/pack.def; now 1714566600.5 s is time_ms 1714566600500 (iscale:1000), which cot-xml writes as time and start (iso8601_ms); no stale is derived; cot-xml writes its defaults for type, ce and le"
 }

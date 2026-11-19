@@ -2,10 +2,11 @@
  "name": "gen-gbfs_versions-roundtrip",
  "from": "gbfs-2.2-gbfs-versions",
  "to": "gbfs-2.2-gbfs-versions",
- "input": "{\"last_updated\":1450236520,\"ttl\":44975,\"version\":\"2.2\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
- "expect": "{\"last_updated\":1450236520,\"ttl\":44975,\"version\":\"2.2\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
+ "input": "{\"last_updated\":1763758601,\"ttl\":44975,\"version\":\"2.2\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
+ "expect": "{\"last_updated\":1763758601,\"ttl\":44975,\"version\":\"2.2\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
  "model": {
-  "gbfs22gbfsversions.last_updated": "1450236520",
+  "time_ms": "1763758601000",
+  "gbfs22gbfsversions.last_updated": "1763758601",
   "gbfs22gbfsversions.ttl": "44975",
   "gbfs22gbfsversions.version": "2.2",
   "gbfs22gbfsversions.data_versions.#": "2"

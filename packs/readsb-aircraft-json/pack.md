@@ -20,7 +20,9 @@ binding). Hand-written; vectors derived by
   CoT carries nothing from the aircraft. For one aircraft at a time, use
   `readsb-aircraft`. A conversion that splits a list into one message per item
   is not in the pack language.
-- `now` is seconds as a float and is not `time_ms` (see `readsb-aircraft`).
+- `now` is `time_ms` through `iscale:1000` and also `readsb.now`, as in
+  `readsb-aircraft` (see its pack.md for the evidence). The file's `now` is the
+  entity's time; items have no `now`.
 
 ## Vectors
 

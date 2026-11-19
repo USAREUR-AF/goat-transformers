@@ -2,10 +2,11 @@
  "name": "gen-gbfs-roundtrip",
  "from": "gbfs-1.1-gbfs",
  "to": "gbfs-1.1-gbfs",
- "input": "{\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"1.1\"}",
- "expect": "{\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"1.1\"}",
+ "input": "{\"last_updated\":1790447896,\"ttl\":18505,\"version\":\"1.1\"}",
+ "expect": "{\"last_updated\":1790447896,\"ttl\":18505,\"version\":\"1.1\"}",
  "model": {
-  "gbfs11gbfs.last_updated": "1450163795",
+  "time_ms": "1790447896000",
+  "gbfs11gbfs.last_updated": "1790447896",
   "gbfs11gbfs.ttl": "18505",
   "gbfs11gbfs.version": "1.1"
  }

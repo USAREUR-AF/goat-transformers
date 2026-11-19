@@ -2,10 +2,11 @@
  "name": "gen-station_status-roundtrip",
  "from": "gbfs-1.1-station-status",
  "to": "gbfs-1.1-station-status",
- "input": "{\"last_updated\":1450224864,\"ttl\":72081,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600}]}}",
- "expect": "{\"last_updated\":1450224864,\"ttl\":72081,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600}]}}",
+ "input": "{\"last_updated\":1766066723,\"ttl\":72081,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600}]}}",
+ "expect": "{\"last_updated\":1766066723,\"ttl\":72081,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"is_installed\":0.75,\"is_renting\":0.75,\"is_returning\":0.75,\"last_reported\":1450155600}]}}",
  "model": {
-  "gbfs11stationstatus.last_updated": "1450224864",
+  "time_ms": "1766066723000",
+  "gbfs11stationstatus.last_updated": "1766066723",
   "gbfs11stationstatus.ttl": "72081",
   "gbfs11stationstatus.version": "1.1",
   "gbfs11stationstatus.data_stations.#": "2"

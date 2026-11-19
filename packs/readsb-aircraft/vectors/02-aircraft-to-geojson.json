@@ -3,13 +3,14 @@
   "from": "readsb-aircraft",
   "to": "geojson",
   "input": "{\"now\":1714566600.5,\"hex\":\"a1b2c3\",\"flight\":\"TEST01\",\"alt_geom\":1000,\"gs\":360,\"track\":45.5,\"lat\":47.25,\"lon\":-122.5}",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.5,47.25,304.8]},\"properties\":{\"callsign\":\"TEST01\",\"course\":45.5,\"speed_ms\":185.2},\"id\":\"a1b2c3\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.5,47.25,304.8]},\"properties\":{\"time_ms\":1714566600500,\"callsign\":\"TEST01\",\"course\":45.5,\"speed_ms\":185.2},\"id\":\"a1b2c3\"}",
   "model": {
     "@complete": true,
     "hae": "304.8",
     "speed_ms": "185.2",
-    "uid": "a1b2c3"
+    "uid": "a1b2c3",
+    "time_ms": "1714566600500"
   },
   "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
-  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; alt_geom (feet above the WGS 84 ellipsoid) gives hae = 1000 * 3048 / 10000 = 304.8 m; gs (knots) gives speed_ms = 360 * 1852 / 3600 = 185.2 m/s; track is course"
+  "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; alt_geom (feet above the WGS 84 ellipsoid) gives hae = 1000 * 3048 / 10000 = 304.8 m; gs (knots) gives speed_ms = 360 * 1852 / 3600 = 185.2 m/s; track is course; now 1714566600.5 s gives time_ms 1714566600500 (iscale:1000)"
 }

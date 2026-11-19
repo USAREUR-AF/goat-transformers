@@ -2,10 +2,11 @@
  "name": "gen-system_pricing_plans-roundtrip",
  "from": "gbfs-2.1-system-pricing-plans",
  "to": "gbfs-2.1-system-pricing-plans",
- "input": "{\"last_updated\":1450228233,\"ttl\":30483,\"version\":\"2.1\",\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"https://example.org/729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":true,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"https://example.org/541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":true,\"description\":\"s88385\"}]}}",
- "expect": "{\"last_updated\":1450228233,\"ttl\":30483,\"version\":\"2.1\",\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"https://example.org/729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":true,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"https://example.org/541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":true,\"description\":\"s88385\"}]}}",
+ "input": "{\"last_updated\":1710086648,\"ttl\":30483,\"version\":\"2.1\",\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"https://example.org/729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":true,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"https://example.org/541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":true,\"description\":\"s88385\"}]}}",
+ "expect": "{\"last_updated\":1710086648,\"ttl\":30483,\"version\":\"2.1\",\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"https://example.org/729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":true,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"https://example.org/541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":true,\"description\":\"s88385\"}]}}",
  "model": {
-  "gbfs21systempricingplans.last_updated": "1450228233",
+  "time_ms": "1710086648000",
+  "gbfs21systempricingplans.last_updated": "1710086648",
   "gbfs21systempricingplans.ttl": "30483",
   "gbfs21systempricingplans.version": "2.1",
   "gbfs21systempricingplans.data_plans.#": "2"

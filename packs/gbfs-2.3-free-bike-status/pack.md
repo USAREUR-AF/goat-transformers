@@ -36,7 +36,12 @@ carried back; arrays no group maps, and anything inside them, are not.
 
 ## Mapped to shared keys
 
-None.
+| Kind | Path | Key | Schema type | Evidence (the schema's own text) |
+|---|---|---|---|---|
+| `free_bike_status` | `last_updated` | `time_ms` (int, ms) | integer, read with `iscale:1000` | "Last time the data in the feed was updated in POSIX time." |
+
+Each bound path also has its raw key on a second line (ruling 16 of 0.5): the shared
+key first, so encode writes the shared value when the entity has it.
 
 ## Evidence for the shared keys
 
@@ -44,8 +49,11 @@ None.
   time the data in the feed was updated, as an RFC 3339 `date-time`. The `iso8601_ms`
   transform reads it (an offset is converted to UTC) and writes it with milliseconds and
   `Z`; the raw key keeps the text as written.
-- Before 3.0, `last_updated` is the same instant as an integer count of POSIX seconds. The
-  json wire has no transform that scales seconds to milliseconds, so it is a raw key only.
+- `time_ms` (`last_updated`), before 3.0: the schema states it is the last time the data in
+  the feed was updated, in POSIX time, an integer: seconds since 1970-01-01 UTC. The
+  `iscale:1000` transform (engine-spec 0.15) reads it as milliseconds and writes
+  milliseconds divided by 1000 exactly, so a whole second comes back as written; the raw
+  key keeps the integer as written.
 
 ## What is not bound
 
@@ -79,4 +87,6 @@ existing name and only adds new ones.
 One same-format round trip per kind, computed by the generator's own json codec (no engine):
 every mapped place holds a value, an array has two items (one inside an item), the input is
 canonical, so the expected output is the input.
+
+`packs/geojson/vectors/gen-geojson-to-gbfs-2.3-free-bike-status.json`: from the input of an existing hand-written `geojson` vector. Carried: `time_ms`. Not carried: `uid`, `type`, `how`, `lat`, `lon`, `hae`, `ce`, `le`, `callsign`.
 

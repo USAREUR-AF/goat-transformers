@@ -2,10 +2,11 @@
  "name": "gen-system_hours-roundtrip",
  "from": "gbfs-2.0-system-hours",
  "to": "gbfs-2.0-system-hours",
- "input": "{\"last_updated\":1450231296,\"ttl\":14033,\"version\":\"2.0\",\"data\":{\"rental_hours\":[{\"user_types\":[\"nonmember\"],\"days\":[\"sat\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_types\":[\"member\"],\"days\":[\"tue\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
- "expect": "{\"last_updated\":1450231296,\"ttl\":14033,\"version\":\"2.0\",\"data\":{\"rental_hours\":[{\"user_types\":[\"nonmember\"],\"days\":[\"sat\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_types\":[\"member\"],\"days\":[\"tue\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
+ "input": "{\"last_updated\":1731369075,\"ttl\":14033,\"version\":\"2.0\",\"data\":{\"rental_hours\":[{\"user_types\":[\"nonmember\"],\"days\":[\"sat\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_types\":[\"member\"],\"days\":[\"tue\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
+ "expect": "{\"last_updated\":1731369075,\"ttl\":14033,\"version\":\"2.0\",\"data\":{\"rental_hours\":[{\"user_types\":[\"nonmember\"],\"days\":[\"sat\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_types\":[\"member\"],\"days\":[\"tue\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
  "model": {
-  "gbfs20systemhours.last_updated": "1450231296",
+  "time_ms": "1731369075000",
+  "gbfs20systemhours.last_updated": "1731369075",
   "gbfs20systemhours.ttl": "14033",
   "gbfs20systemhours.version": "2.0",
   "gbfs20systemhours.data_rental_hours.#": "2"
