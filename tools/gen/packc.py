@@ -189,7 +189,14 @@ def parse_transform(name):
         return (name, None, T_STR)
     if name == "sixbit":
         refuse("unsupported-feature", "transform `sixbit` (six-bit text, spec 0.14) is not in the device profile")
+    if name.split(":", 1)[0] in V015_BITS:
+        refuse("unsupported-feature", "transform `%s` (value transforms, spec 0.15) is not in the device profile"
+               % name.split(":", 1)[0])
     refuse("bad-pack", "transform `%s` is not a bits transform" % name)
+
+
+# The bits transforms of spec 0.15; the device profile does not carry them.
+V015_BITS = ("uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal")
 
 
 # ---------------------------------------------------------------------------
