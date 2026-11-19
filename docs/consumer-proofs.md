@@ -11,7 +11,7 @@ field by field and fail when the result moves.
 | first-bite | Rust | `flow`: a transform `xf` beside `cot`; its dictionaries generated into packs by `tools/bite2pack` | cargo feature `goat-transformers` and `subtype: "xf"` in a subpub | Rust crate by git `rev`; target packs copied, `UPSTREAM` names the commit | Built, merged (first-bite#72); both tests run in its CI |
 | goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE=library` | `ops/xf/goat-transformers.ref`; bundles checked against a manifest | Built, merged (goatstuff#106); not deployed |
 | octo-pod | Rust | `gateway/translate`, a separate gateway beside the capture arms | a pod's `50-translate.yml`; none means no gateway | Rust crate by git `rev`; packs copied with a manifest | Built, open for review (octo-pod#31) |
-| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, in review (`feat/goat-transformers-encoder`, closes open-entity-gateway#8) |
+| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, merged (open-entity-gateway#18, #19); the compare test runs in its CI |
 
 ## open-billie: Canonical Track v2 to CoT, CAT062 and SAPIENT
 
@@ -125,36 +125,40 @@ engine and publishes the result on its own key with the source key, timestamp
 and SHA-256 attached; the captured sample is never changed. It is off unless a
 pod declares it. Built, in review as octo-pod#31 with its ADR 0004.
 
-## open-entity-gateway: CoT, SAPIENT and CAT062 adapters
+## open-entity-gateway: CoT, SAPIENT and CAT062 destinations
 
-Each destination chooses `encoder: native` or `goat-transformers`. The gateway
-passes the values it owns as context: the CoT scoped `uid`, type, stale, `how`,
-callsign, course and speed; the CAT062 SAC, SIC, track number, confirmed and
-SIM; the SAPIENT object and report identifiers and class.
-`tests/test_goat_transformers_compare.py` compares both paths field by field
-against a committed baseline, and the gateway's existing suites run once per
-encoder; each library run that fails is a strict `xfail` naming its row below.
-Measured at library commit `712df03`, 24 inputs per format:
+Each destination takes `encoder: native` (the default) or `goat-transformers`
+(`docs/goat-transformers-encoder.md` in that repository). The track is written
+as Canonical Track v2 and converted by the Python engine; the gateway passes
+what it decides as context: the CoT `track.scoped_id`, type, stale and `how`;
+the CAT062 SAC, SIC, track number and confirmed; the SAPIENT object and report
+identifiers and class. The SAPIENT session stays the gateway's. With
+`goat-transformers`, a pack that does not load, or a destination key only the
+native encoder writes, stops the gateway at start.
 
-| Format | Encoded by both | Refused by both | Refused by one | Fields equal |
-|---|---|---|---|---|
-| CoT | 23 | 1 | 0 | 266 of 371 |
-| SAPIENT | 24 | 0 | 0 | 187 of 343 |
-| CAT062 | 22 | 1 | 1 | 399 of 466 |
-
-Its two example tracks are also vectors 33 to 39 of `canonical-track-v2`.
+`tests/test_goat_transformers_encoder.py` encodes every example record and
+track both ways (four inputs a mapping matches) and compares the outputs
+field by field against a committed baseline. Equal on every input: the CoT
+`uid`, type, position, errors, `how`, stale instant, course and speed; the
+CAT062 data source, time of day, position, track number, velocity and
+altitude; the SAPIENT object id, report id, location, datum, class and
+velocity. Measured in its CI at library commit `712df03`:
 
 | Format | Field | Inputs | Closed by |
 |---|---|---|---|
-| CoT | `@access` | 23 | a key and field in `cot-xml` |
-| CoT | time text `.250Z` against `.25Z` | 13 | a time transform that writes the shortest fraction (not yet a row) |
-| CoT | a track time with sub-millisecond digits | 9 | a time key finer than the millisecond (not yet a row) |
-| CoT | an empty `<detail/>` | 16 | an `xml` directive that always writes an element (not yet a row) |
-| SAPIENT | `track_info[]` | 24 | context for the items of a list key (not yet a row) |
-| SAPIENT | `classification`, `detection_confidence`, `up_rate` written by the library only | 3, 2, 2 | none: the gateway's own encoder drops them |
-| SAPIENT | `north_rate` 8e-16 against 0 | 2 | none: the gateway's round trip through course and speed |
-| CAT062 | I062/080 MRH | 20 | `cat062.mrh` as context, then the rule through Conditional output |
-| CAT062 | I062/080 written as four octets against one or two, and LEN | 22 | a chain extent written only when it holds a non-zero bit (not yet a row) |
-| CAT062 | I062/080 SRC | 2 | a `cat062.src` key |
-| CAT062 | longitude 180 | 1 | a longitude wrap (not yet a row) |
-| CAT062 | an altitude outside -1500 to 150000 ft, refused by the gateway only | 1 | a field option that refuses a value outside a range (not yet a row) |
+| CoT | time text: `.000Z` against the destination's `time_form` | 4 | none: the same instant; or a time transform that writes the shortest fraction (not yet a row) |
+| CoT | `@access` | 4 | a key and field in `cot-xml` |
+| CoT | `detail/contact/@callsign` | 4 | the gateway passes the callsign as context |
+| CoT | an empty `detail` | 2 | an `xml` directive that always writes an element (not yet a row) |
+| CAT062 | I062/080 MRH | 3 | the gateway passes `cat062.mrh` (#18 of this repository); the rule through spec 0.12 `present` |
+| CAT062 | I062/080 SRC | 1 | a `cat062.src` key |
+| CAT062 | I062/080 second and third extents written, all zero | 4 | a chain extent written only when it holds a non-zero bit (not yet a row) |
+| SAPIENT | `track_info[]` | 4 | context for the items of a list key (not yet a row) |
+
+The gateway's destination suites run once per encoder; 18 library runs are
+strict expected failures, each naming its cause: CoT schema validation without
+`access` (14), CAT062 `service_id` (I062/015, not mapped), longitude 180
+written as 2^25, an altitude outside -1500 to 150000 ft written (1 each), and
+SAPIENT `track_info` (1).
+
+Its two example tracks are also vectors 33 to 39 of `canonical-track-v2`.

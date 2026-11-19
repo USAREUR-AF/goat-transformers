@@ -97,7 +97,7 @@ in that project's own conversion path and what its own tests measure:
 | first-bite | the `xf` transform | 443 of 462 fixture fields equal, 18 more in another form |
 | goatstuff | `transform-shim`; goat-map CoT to GeoTrackV1 | 353 of 368 members equal, 15 more in another form |
 | octo-pod | `gateway/translate` | in review |
-| open-entity-gateway | CoT, SAPIENT, CAT062 adapters | CoT 266 of 371 fields, SAPIENT 187 of 343, CAT062 399 of 466 (24 inputs; in review) |
+| open-entity-gateway | CoT, SAPIENT, CAT062 destinations | 4 inputs; every field equal but 8 named rows (time text, access, callsign, detail, MRH, SRC, I062/080 extents, SAPIENT track_info) |
 
 `docs/consumer-proofs.md` lists what still differs and which Designed row above
 removes each difference.
