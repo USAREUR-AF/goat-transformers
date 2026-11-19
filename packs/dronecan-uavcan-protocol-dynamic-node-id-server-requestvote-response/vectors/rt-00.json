@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-response",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-response",
+  "input": "1c90260e80",
+  "expect": "1c90260e80",
+  "model": {
+    "dcuavcanprotocoldynamicnodeidserver.request_vote_response_term": "237408284",
+    "dcuavcanprotocoldynamicnodeidserver.request_vote_response_vote_granted": "1"
+  }
+}

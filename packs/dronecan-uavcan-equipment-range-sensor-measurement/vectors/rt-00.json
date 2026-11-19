@@ -1,0 +1,17 @@
+{
+  "name": "dronecan-uavcan-equipment-range-sensor-measurement-roundtrip",
+  "from": "dronecan-uavcan-equipment-range-sensor-measurement",
+  "to": "dronecan-uavcan-equipment-range-sensor-measurement",
+  "input": "f46fb0180000001a6caf0000fe0000",
+  "expect": "f46fb0180000001a6caf0000fe0000",
+  "model": {
+    "dcuavcanequipmentrangesensor.measurement_timestamp_usec": "414216180",
+    "dcuavcanequipmentrangesensor.measurement_sensor_id": "26",
+    "dcuavcanequipmentrangesensor.measurement_beam_orientation_in_body_frame_fixed_axis_roll_pitch_yaw_0": "13",
+    "dcuavcanequipmentrangesensor.measurement_beam_orientation_in_body_frame_fixed_axis_roll_pitch_yaw_1": "-14",
+    "dcuavcanequipmentrangesensor.measurement_beam_orientation_in_body_frame_fixed_axis_roll_pitch_yaw_2": "-9",
+    "dcuavcanequipmentrangesensor.measurement_beam_orientation_in_body_frame_orientation_defined": "1",
+    "dcuavcanequipmentrangesensor.measurement_sensor_type": "31",
+    "dcuavcanequipmentrangesensor.measurement_reading_type": "6"
+  }
+}

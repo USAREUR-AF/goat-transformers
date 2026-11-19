@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-enumeration-begin-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-enumeration-begin-response",
+  "to": "dronecan-uavcan-protocol-enumeration-begin-response",
+  "input": "2c",
+  "expect": "2c",
+  "model": {
+    "dcuavcanprotocolenumeration.begin_response_error": "44"
+  }
+}

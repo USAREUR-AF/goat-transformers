@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-param-getset-response-roundtrip-empty",
+  "from": "dronecan-uavcan-protocol-param-getset-response",
+  "to": "dronecan-uavcan-protocol-param-getset-response",
+  "input": "0000010a4dfac0ffffffff008aff",
+  "expect": "0000",
+  "model": {
+    "@kind": "empty"
+  }
+}

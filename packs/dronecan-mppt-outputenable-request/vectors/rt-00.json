@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-mppt-outputenable-request-roundtrip",
+  "from": "dronecan-mppt-outputenable-request",
+  "to": "dronecan-mppt-outputenable-request",
+  "input": "01",
+  "expect": "01",
+  "model": {
+    "dcmppt.output_enable_request_enable": "0",
+    "dcmppt.output_enable_request_disable": "1"
+  }
+}

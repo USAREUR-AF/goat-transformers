@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-protocol-debug-logmessage-roundtrip",
+  "from": "dronecan-uavcan-protocol-debug-logmessage",
+  "to": "dronecan-uavcan-protocol-debug-logmessage",
+  "input": "e3c73cb19e",
+  "expect": "e3c73cb1",
+  "model": {
+    "dcuavcanprotocoldebug.log_message_level_value": "7",
+    "dcuavcanprotocoldebug.log_message_source.#": "3",
+    "dcuavcanprotocoldebug.log_message_source[0].dcuavcanprotocoldebug.log_message_source_item": "199",
+    "dcuavcanprotocoldebug.log_message_source[1].dcuavcanprotocoldebug.log_message_source_item": "60",
+    "dcuavcanprotocoldebug.log_message_source[2].dcuavcanprotocoldebug.log_message_source_item": "177"
+  }
+}

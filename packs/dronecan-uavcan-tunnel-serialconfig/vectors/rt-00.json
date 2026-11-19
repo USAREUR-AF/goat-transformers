@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-tunnel-serialconfig-roundtrip",
+  "from": "dronecan-uavcan-tunnel-serialconfig",
+  "to": "dronecan-uavcan-tunnel-serialconfig",
+  "input": "f2c9a6b727a0fa3b",
+  "expect": "f2c9a6b727a0fa3b",
+  "model": {
+    "dcuavcantunnel.serial_config_channel_id": "242",
+    "dcuavcantunnel.serial_config_baud": "666347209",
+    "dcuavcantunnel.serial_config_options": "3930784"
+  }
+}

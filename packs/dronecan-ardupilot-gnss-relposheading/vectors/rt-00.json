@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-ardupilot-gnss-relposheading-roundtrip",
+  "from": "dronecan-ardupilot-gnss-relposheading",
+  "to": "dronecan-ardupilot-gnss-relposheading",
+  "input": "285bc51d00000000004820000040600000000000",
+  "expect": "285bc51d00000000004820000040600000000000",
+  "model": {
+    "dcardupilotgnss.rel_pos_heading_timestamp_usec": "499473192",
+    "dcardupilotgnss.rel_pos_heading_reported_heading_acc_available": "0",
+    "dcardupilotgnss.rel_pos_heading_reported_heading_deg": "4.5",
+    "dcardupilotgnss.rel_pos_heading_reported_heading_acc_deg": "-4"
+  }
+}

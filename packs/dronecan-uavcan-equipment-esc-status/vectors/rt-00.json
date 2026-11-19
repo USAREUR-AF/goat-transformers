@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-equipment-esc-status-roundtrip",
+  "from": "dronecan-uavcan-equipment-esc-status",
+  "to": "dronecan-uavcan-equipment-esc-status",
+  "input": "532ffd6e00000000000000000374",
+  "expect": "532ffd6e00000000000000000374",
+  "model": {
+    "dcuavcanequipmentesc.status_error_count": "1862086483",
+    "dcuavcanequipmentesc.status_power_rating_pct": "6",
+    "dcuavcanequipmentesc.status_esc_index": "29"
+  }
+}

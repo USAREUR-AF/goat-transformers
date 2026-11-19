@@ -1,0 +1,15 @@
+{
+  "name": "dronecan-ardupilot-indication-notifystate-roundtrip",
+  "from": "dronecan-ardupilot-indication-notifystate",
+  "to": "dronecan-ardupilot-indication-notifystate",
+  "input": "e6031f940994454e4f00000080",
+  "expect": "e6031f940994454e4f00000080",
+  "model": {
+    "dcardupilotindication.notify_state_aux_data_type": "230",
+    "dcardupilotindication.notify_state_aux_data.#": "3",
+    "dcardupilotindication.notify_state_aux_data[0].dcardupilotindication.notify_state_aux_data_item": "31",
+    "dcardupilotindication.notify_state_aux_data[1].dcardupilotindication.notify_state_aux_data_item": "148",
+    "dcardupilotindication.notify_state_aux_data[2].dcardupilotindication.notify_state_aux_data_item": "9",
+    "dcardupilotindication.notify_state_vehicle_state": "-9223372035524246124"
+  }
+}

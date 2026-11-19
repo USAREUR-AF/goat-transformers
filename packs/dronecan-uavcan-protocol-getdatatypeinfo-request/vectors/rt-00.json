@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-getdatatypeinfo-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-getdatatypeinfo-request",
+  "to": "dronecan-uavcan-protocol-getdatatypeinfo-request",
+  "input": "db8f63eb60d5",
+  "expect": "db8f63",
+  "model": {
+    "dcuavcanprotocol.get_data_type_info_request_id": "36827",
+    "dcuavcanprotocol.get_data_type_info_request_kind_value": "99"
+  }
+}

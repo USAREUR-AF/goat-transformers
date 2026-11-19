@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-gnss-auxiliary-roundtrip",
+  "from": "dronecan-uavcan-equipment-gnss-auxiliary",
+  "to": "dronecan-uavcan-equipment-gnss-auxiliary",
+  "input": "0000000000000000000000000000d200",
+  "expect": "0000000000000000000000000000d200",
+  "model": {
+    "dcuavcanequipmentgnss.auxiliary_sats_visible": "105",
+    "dcuavcanequipmentgnss.auxiliary_sats_used": "0"
+  }
+}

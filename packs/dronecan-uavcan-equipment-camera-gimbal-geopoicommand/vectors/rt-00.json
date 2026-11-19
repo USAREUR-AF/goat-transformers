@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-equipment-camera-gimbal-geopoicommand-roundtrip",
+  "from": "dronecan-uavcan-equipment-camera-gimbal-geopoicommand",
+  "to": "dronecan-uavcan-equipment-camera-gimbal-geopoicommand",
+  "input": "5ce444f417054c52401c000003",
+  "expect": "5ce444f417054c52401c000003",
+  "model": {
+    "dcuavcanequipmentcameragimbal.geopoi_command_gimbal_id": "92",
+    "dcuavcanequipmentcameragimbal.geopoi_command_mode_command_mode": "228",
+    "lon": "8.545594",
+    "lat": "47.397742",
+    "dcuavcanequipmentcameragimbal.geopoi_command_height_reference": "3"
+  }
+}

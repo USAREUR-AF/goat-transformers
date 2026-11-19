@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-request",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-server-requestvote-request",
+  "input": "6ee81d67453ca23a1c",
+  "expect": "6ee81d67453ca23a1c",
+  "model": {
+    "dcuavcanprotocoldynamicnodeidserver.request_vote_request_term": "1730013294",
+    "dcuavcanprotocoldynamicnodeidserver.request_vote_request_last_log_term": "983710789",
+    "dcuavcanprotocoldynamicnodeidserver.request_vote_request_last_log_index": "28"
+  }
+}

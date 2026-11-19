@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-read-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-read-response",
+  "to": "dronecan-uavcan-protocol-file-read-response",
+  "input": "ccddb429",
+  "expect": "ccdd",
+  "model": {
+    "dcuavcanprotocolfile.read_response_error_value": "-8756"
+  }
+}

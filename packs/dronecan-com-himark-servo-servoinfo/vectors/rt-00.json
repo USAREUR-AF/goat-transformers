@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-com-himark-servo-servoinfo-roundtrip",
+  "from": "dronecan-com-himark-servo-servoinfo",
+  "to": "dronecan-com-himark-servo-servoinfo",
+  "input": "5000602620d0000000000002",
+  "expect": "5000602620d0000000000002",
+  "model": {
+    "dccomhimarkservo.servo_info_servo_id": "10",
+    "dccomhimarkservo.servo_info_pos_cmd": "19648",
+    "dccomhimarkservo.servo_info_pos_sensor": "-24511",
+    "dccomhimarkservo.servo_info_error_status": "2"
+  }
+}

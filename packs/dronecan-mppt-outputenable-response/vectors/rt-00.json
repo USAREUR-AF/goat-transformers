@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-mppt-outputenable-response-roundtrip",
+  "from": "dronecan-mppt-outputenable-response",
+  "to": "dronecan-mppt-outputenable-response",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "dcmppt.output_enable_response_enabled": "0"
+  }
+}

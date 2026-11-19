@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-write-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-write-response",
+  "to": "dronecan-uavcan-protocol-file-write-response",
+  "input": "7506",
+  "expect": "7506",
+  "model": {
+    "dcuavcanprotocolfile.write_response_error_value": "1653"
+  }
+}

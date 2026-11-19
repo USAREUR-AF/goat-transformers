@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-ardupilot-indication-button-roundtrip",
+  "from": "dronecan-ardupilot-indication-button",
+  "to": "dronecan-ardupilot-indication-button",
+  "input": "4c23",
+  "expect": "4c23",
+  "model": {
+    "dcardupilotindication.button_button": "76",
+    "dcardupilotindication.button_press_time": "35"
+  }
+}

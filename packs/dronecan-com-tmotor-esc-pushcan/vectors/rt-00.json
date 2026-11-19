@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-tmotor-esc-pushcan-roundtrip",
+  "from": "dronecan-com-tmotor-esc-pushcan",
+  "to": "dronecan-com-tmotor-esc-pushcan",
+  "input": "7edd933ab7",
+  "expect": "7edd933a",
+  "model": {
+    "dccomtmotoresc.pushcan_data_sequence": "982769022"
+  }
+}

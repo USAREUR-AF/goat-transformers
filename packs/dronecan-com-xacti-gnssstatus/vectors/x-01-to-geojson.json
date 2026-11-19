@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-com-xacti-gnssstatus-to-geojson",
+  "from": "dronecan-com-xacti-gnssstatus",
+  "to": "geojson",
+  "input": "1cf3caa1f2784f26fd000098c000000000008056c000000000008066400000003f",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[180,-90]},\"properties\":{}}",
+  "model": {
+    "lat": "-90",
+    "lon": "180"
+  }
+}

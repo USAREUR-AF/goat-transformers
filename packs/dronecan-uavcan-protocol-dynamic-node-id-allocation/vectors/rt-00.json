@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-allocation-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-allocation",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-allocation",
+  "input": "d97cf1",
+  "expect": "d9",
+  "model": {
+    "dcuavcanprotocoldynamicnodeid.allocation_node_id": "108",
+    "dcuavcanprotocoldynamicnodeid.allocation_first_part_of_unique_id": "1"
+  }
+}

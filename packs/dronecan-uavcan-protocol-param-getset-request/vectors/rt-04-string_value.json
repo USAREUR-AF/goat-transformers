@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-protocol-param-getset-request-roundtrip-string_value",
+  "from": "dronecan-uavcan-protocol-param-getset-request",
+  "to": "dronecan-uavcan-protocol-param-getset-request",
+  "input": "0004035cd14696",
+  "expect": "0004035cd146",
+  "model": {
+    "@kind": "string_value",
+    "dcuavcanprotocolparam.get_set_request_value_string_value.#": "3",
+    "dcuavcanprotocolparam.get_set_request_value_string_value[0].dcuavcanprotocolparam.get_set_request_value_string_value_item": "92",
+    "dcuavcanprotocolparam.get_set_request_value_string_value[1].dcuavcanprotocolparam.get_set_request_value_string_value_item": "209",
+    "dcuavcanprotocolparam.get_set_request_value_string_value[2].dcuavcanprotocolparam.get_set_request_value_string_value_item": "70"
+  }
+}

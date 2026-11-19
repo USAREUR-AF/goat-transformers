@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-camera-gimbal-geopoicommand-to-geojson",
+  "from": "dronecan-uavcan-equipment-camera-gimbal-geopoicommand",
+  "to": "geojson",
+  "input": "5ce444f417054c52401c000003",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "lon": "8.545594",
+    "lat": "47.397742"
+  }
+}

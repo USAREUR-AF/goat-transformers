@@ -1,0 +1,15 @@
+{
+  "name": "dronecan-com-hex-equipment-flow-measurement-roundtrip",
+  "from": "dronecan-com-hex-equipment-flow-measurement",
+  "to": "dronecan-com-hex-equipment-flow-measurement",
+  "input": "000010c0000080be0000003f0000c03f000010401a",
+  "expect": "000010c0000080be0000003f0000c03f000010401a",
+  "model": {
+    "dccomhexequipmentflow.measurement_integration_interval": "-2.25",
+    "dccomhexequipmentflow.measurement_rate_gyro_integral_0": "-0.25",
+    "dccomhexequipmentflow.measurement_rate_gyro_integral_1": "0.5",
+    "dccomhexequipmentflow.measurement_flow_integral_0": "1.5",
+    "dccomhexequipmentflow.measurement_flow_integral_1": "2.25",
+    "dccomhexequipmentflow.measurement_quality": "26"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-debug-keyvalue-roundtrip",
+  "from": "dronecan-uavcan-protocol-debug-keyvalue",
+  "to": "dronecan-uavcan-protocol-debug-keyvalue",
+  "input": "000040bf2499",
+  "expect": "000040bf",
+  "model": {
+    "dcuavcanprotocoldebug.key_value_value": "-0.75"
+  }
+}

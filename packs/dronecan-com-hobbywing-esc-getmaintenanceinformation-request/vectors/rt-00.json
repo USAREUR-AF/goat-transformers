@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-getmaintenanceinformation-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-getmaintenanceinformation-request",
+  "to": "dronecan-com-hobbywing-esc-getmaintenanceinformation-request",
+  "input": "7c",
+  "expect": "7c",
+  "model": {
+    "dccomhobbywingesc.get_maintenance_information_request_option": "124"
+  }
+}

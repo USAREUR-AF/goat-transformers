@@ -1,0 +1,21 @@
+{
+  "name": "dronecan-dronecan-protocol-stats-roundtrip",
+  "from": "dronecan-dronecan-protocol-stats",
+  "to": "dronecan-dronecan-protocol-stats",
+  "input": "47d3535e1e27f57a5c05cccea3227a7651ca281eff71d6c5ad19846d",
+  "expect": "47d3535e1e27f57a5c05cccea3227a7651ca281eff71d6c5ad19846d",
+  "model": {
+    "dcdronecanprotocol.stats_tx_frames": "1582551879",
+    "dcdronecanprotocol.stats_tx_errors": "10014",
+    "dcdronecanprotocol.stats_rx_frames": "89946869",
+    "dcdronecanprotocol.stats_rx_error_oom": "52940",
+    "dcdronecanprotocol.stats_rx_error_internal": "8867",
+    "dcdronecanprotocol.stats_rx_error_missed_start": "30330",
+    "dcdronecanprotocol.stats_rx_error_wrong_toggle": "51793",
+    "dcdronecanprotocol.stats_rx_error_short_frame": "7720",
+    "dcdronecanprotocol.stats_rx_error_bad_crc": "29183",
+    "dcdronecanprotocol.stats_rx_ignored_wrong_address": "50646",
+    "dcdronecanprotocol.stats_rx_ignored_not_wanted": "6573",
+    "dcdronecanprotocol.stats_rx_ignored_unexpected_tid": "28036"
+  }
+}

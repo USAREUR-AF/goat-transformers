@@ -1,0 +1,16 @@
+{
+  "name": "dronecan-uavcan-equipment-gnss-fix-roundtrip",
+  "from": "dronecan-uavcan-equipment-gnss-fix",
+  "to": "dronecan-uavcan-equipment-gnss-fix",
+  "input": "4accdd2f00000021206203000000e0f500000000000000000000000000000000000000000000fe00000200000000000000000000",
+  "expect": "4accdd2f00000021206203000000e0f500000000000000000000000000000000000000000000fe00000200000000",
+  "model": {
+    "dcuavcanequipmentgnss.fix_timestamp_usec": "803064906",
+    "dcuavcanequipmentgnss.fix_gnss_timestamp_usec": "56762401",
+    "dcuavcanequipmentgnss.fix_gnss_time_standard": "7",
+    "dcuavcanequipmentgnss.fix_num_leap_seconds": "245",
+    "dcuavcanequipmentgnss.fix_sats_used": "63",
+    "dcuavcanequipmentgnss.fix_status": "2",
+    "dcuavcanequipmentgnss.fix_position_covariance.#": "2"
+  }
+}

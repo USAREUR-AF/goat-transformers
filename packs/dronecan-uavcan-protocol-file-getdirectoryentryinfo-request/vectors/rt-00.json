@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-request",
+  "to": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-request",
+  "input": "eff2e149d94e",
+  "expect": "eff2e149",
+  "model": {
+    "dcuavcanprotocolfile.get_directory_entry_info_request_entry_index": "1239544559"
+  }
+}

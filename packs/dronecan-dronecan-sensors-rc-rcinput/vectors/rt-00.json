@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-dronecan-sensors-rc-rcinput-roundtrip",
+  "from": "dronecan-dronecan-sensors-rc-rcinput",
+  "to": "dronecan-dronecan-sensors-rc-rcinput",
+  "input": "49352070000000",
+  "expect": "49352070",
+  "model": {
+    "dcdronecansensorsrc.rc_input_status": "13641",
+    "dcdronecansensorsrc.rc_input_quality": "32",
+    "dcdronecansensorsrc.rc_input_id": "7"
+  }
+}

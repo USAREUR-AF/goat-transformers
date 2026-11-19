@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-param-getset-response-roundtrip-boolean_value",
+  "from": "dronecan-uavcan-protocol-param-getset-response",
+  "to": "dronecan-uavcan-protocol-param-getset-response",
+  "input": "034903a301af27fcc0ffffffff009d12",
+  "expect": "034900",
+  "model": {
+    "@kind": "boolean_value",
+    "dcuavcanprotocolparam.get_set_response_value_boolean_value": "73"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-equipment-air-data-staticpressure-roundtrip",
+  "from": "dronecan-uavcan-equipment-air-data-staticpressure",
+  "to": "dronecan-uavcan-equipment-air-data-staticpressure",
+  "input": "0000a0bf0000",
+  "expect": "0000a0bf0000",
+  "model": {
+    "dcuavcanequipmentairdata.static_pressure_static_pressure": "-1.25"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-globaltimesync-roundtrip",
+  "from": "dronecan-uavcan-protocol-globaltimesync",
+  "to": "dronecan-uavcan-protocol-globaltimesync",
+  "input": "b908bd1b000000",
+  "expect": "b908bd1b000000",
+  "model": {
+    "dcuavcanprotocol.global_time_sync_previous_transmission_timestamp_usec": "465373369"
+  }
+}

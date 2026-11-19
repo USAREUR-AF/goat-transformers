@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-delete-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-delete-response",
+  "to": "dronecan-uavcan-protocol-file-delete-response",
+  "input": "23b5",
+  "expect": "23b5",
+  "model": {
+    "dcuavcanprotocolfile.delete_response_error_value": "-19165"
+  }
+}

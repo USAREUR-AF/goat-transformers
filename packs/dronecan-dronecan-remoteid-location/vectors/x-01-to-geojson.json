@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-dronecan-remoteid-location-to-geojson",
+  "from": "dronecan-dronecan-remoteid-location",
+  "to": "geojson",
+  "input": "1581292fe77e9a1bf630c31590f687e767f80000020000038206e8000206045b11c88000048605f0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1246,51.5007]},\"properties\":{}}",
+  "model": {
+    "lat": "51.5007",
+    "lon": "-0.1246"
+  }
+}

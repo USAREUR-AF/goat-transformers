@@ -1,0 +1,21 @@
+{
+  "name": "dronecan-com-xacti-gnssstatus-roundtrip",
+  "from": "dronecan-com-xacti-gnssstatus",
+  "to": "dronecan-com-xacti-gnssstatus",
+  "input": "1cf3caa1f2784f26fd000098c000000000008056c000000000008066400000003f",
+  "expect": "1cf3caa1f2784f26fd000098c000000000008056c000000000008066400000003f",
+  "model": {
+    "dccomxacti.gnss_status_gps_status": "28",
+    "dccomxacti.gnss_status_order": "243",
+    "dccomxacti.gnss_status_remain_buffer": "202",
+    "dccomxacti.gnss_status_utc_year": "62113",
+    "dccomxacti.gnss_status_utc_month": "120",
+    "dccomxacti.gnss_status_utc_day": "79",
+    "dccomxacti.gnss_status_utc_hour": "38",
+    "dccomxacti.gnss_status_utc_minute": "253",
+    "dccomxacti.gnss_status_utc_seconds": "-4.75",
+    "lat": "-90",
+    "lon": "180",
+    "dccomxacti.gnss_status_altitude": "0.5"
+  }
+}

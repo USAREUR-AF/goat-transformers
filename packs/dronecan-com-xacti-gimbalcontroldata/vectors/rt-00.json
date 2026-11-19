@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-com-xacti-gimbalcontroldata-roundtrip",
+  "from": "dronecan-com-xacti-gimbalcontroldata",
+  "to": "dronecan-com-xacti-gimbalcontroldata",
+  "input": "13eac1e6983a",
+  "expect": "13eac1e6983a",
+  "model": {
+    "dccomxacti.gimbal_control_data_pitch_cmd_type": "19",
+    "dccomxacti.gimbal_control_data_yaw_cmd_type": "234",
+    "dccomxacti.gimbal_control_data_pitch_cmd_value": "59073",
+    "dccomxacti.gimbal_control_data_yaw_cmd_value": "15000"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-com-hobbywing-esc-statusmsg3-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-statusmsg3",
+  "to": "dronecan-com-hobbywing-esc-statusmsg3",
+  "input": "694017",
+  "expect": "694017",
+  "model": {
+    "dccomhobbywingesc.status_msg3_MOS_T": "105",
+    "dccomhobbywingesc.status_msg3_CAP_T": "64",
+    "dccomhobbywingesc.status_msg3_Motor_T": "23"
+  }
+}

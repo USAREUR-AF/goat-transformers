@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-equipment-safety-armingstatus-roundtrip",
+  "from": "dronecan-uavcan-equipment-safety-armingstatus",
+  "to": "dronecan-uavcan-equipment-safety-armingstatus",
+  "input": "f1",
+  "expect": "f1",
+  "model": {
+    "dcuavcanequipmentsafety.arming_status_status": "241"
+  }
+}

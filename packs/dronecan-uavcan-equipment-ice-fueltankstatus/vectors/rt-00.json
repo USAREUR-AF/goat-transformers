@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-uavcan-equipment-ice-fueltankstatus-roundtrip",
+  "from": "dronecan-uavcan-equipment-ice-fueltankstatus",
+  "to": "dronecan-uavcan-equipment-ice-fueltankstatus",
+  "input": "005b000088c0000020c00000b7",
+  "expect": "005b000088c0000020c00000b7",
+  "model": {
+    "dcuavcanequipmentice.fuel_tank_status_available_fuel_volume_percent": "91",
+    "dcuavcanequipmentice.fuel_tank_status_available_fuel_volume_cm3": "-4.25",
+    "dcuavcanequipmentice.fuel_tank_status_fuel_consumption_rate_cm3pm": "-2.5",
+    "dcuavcanequipmentice.fuel_tank_status_fuel_tank_id": "183"
+  }
+}

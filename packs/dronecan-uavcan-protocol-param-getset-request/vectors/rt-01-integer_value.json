@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-param-getset-request-roundtrip-integer_value",
+  "from": "dronecan-uavcan-protocol-param-getset-request",
+  "to": "dronecan-uavcan-protocol-param-getset-request",
+  "input": "000109a708c0ffffffff83",
+  "expect": "000109a708c0ffffffff",
+  "model": {
+    "@kind": "integer_value",
+    "dcuavcanprotocolparam.get_set_request_value_integer_value": "-1073174775"
+  }
+}

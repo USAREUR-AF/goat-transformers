@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-protocol-file-getinfo-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-getinfo-response",
+  "to": "dronecan-uavcan-protocol-file-getinfo-response",
+  "input": "2ede32480052b78d",
+  "expect": "2ede32480052b78d",
+  "model": {
+    "dcuavcanprotocolfile.get_info_response_size": "1211293230",
+    "dcuavcanprotocolfile.get_info_response_error_value": "-18606",
+    "dcuavcanprotocolfile.get_info_response_entry_type_flags": "141"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-dronecan-sensors-rpm-rpm-roundtrip",
+  "from": "dronecan-dronecan-sensors-rpm-rpm",
+  "to": "dronecan-dronecan-sensors-rpm-rpm",
+  "input": "18ef9b0000403f",
+  "expect": "18ef9b0000403f",
+  "model": {
+    "dcdronecansensorsrpm.rpm_sensor_id": "24",
+    "dcdronecansensorsrpm.rpm_flags": "39919",
+    "dcdronecansensorsrpm.rpm_rpm": "0.75"
+  }
+}

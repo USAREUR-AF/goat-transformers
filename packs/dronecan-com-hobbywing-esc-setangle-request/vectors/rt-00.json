@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setangle-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setangle-request",
+  "to": "dronecan-com-hobbywing-esc-setangle-request",
+  "input": "14eb24",
+  "expect": "14eb24",
+  "model": {
+    "dccomhobbywingesc.set_angle_request_option": "20",
+    "dccomhobbywingesc.set_angle_request_angle": "9451"
+  }
+}

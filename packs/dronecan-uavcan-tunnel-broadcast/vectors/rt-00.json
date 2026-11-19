@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-tunnel-broadcast-roundtrip",
+  "from": "dronecan-uavcan-tunnel-broadcast",
+  "to": "dronecan-uavcan-tunnel-broadcast",
+  "input": "345a93",
+  "expect": "345a",
+  "model": {
+    "dcuavcantunnel.broadcast_protocol_protocol": "52",
+    "dcuavcantunnel.broadcast_channel_id": "90"
+  }
+}

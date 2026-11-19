@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-param-getset-request-roundtrip-real_value",
+  "from": "dronecan-uavcan-protocol-param-getset-request",
+  "to": "dronecan-uavcan-protocol-param-getset-request",
+  "input": "00020000a0bf34a9",
+  "expect": "00020000a0bf",
+  "model": {
+    "@kind": "real_value",
+    "dcuavcanprotocolparam.get_set_request_value_real_value": "-1.25"
+  }
+}

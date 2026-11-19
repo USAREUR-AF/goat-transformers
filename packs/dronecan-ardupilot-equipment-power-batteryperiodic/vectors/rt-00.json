@@ -1,0 +1,26 @@
+{
+  "name": "dronecan-ardupilot-equipment-power-batteryperiodic-roundtrip",
+  "from": "dronecan-ardupilot-equipment-power-batteryperiodic",
+  "to": "dronecan-ardupilot-equipment-power-batteryperiodic",
+  "input": "0c11e7b81db2b22700008040fe000000000000000000008840000088c0000020c0000040bf8dd164",
+  "expect": "0c11e7b81db2b22700008040fe000000000000000000008840000088c0000020c0000040bf8dd164",
+  "model": {
+    "dcardupilotequipmentpower.battery_periodic_name.#": "3",
+    "dcardupilotequipmentpower.battery_periodic_name[0].dcardupilotequipmentpower.battery_periodic_name_item": "4",
+    "dcardupilotequipmentpower.battery_periodic_name[1].dcardupilotequipmentpower.battery_periodic_name_item": "121",
+    "dcardupilotequipmentpower.battery_periodic_name[2].dcardupilotequipmentpower.battery_periodic_name_item": "238",
+    "dcardupilotequipmentpower.battery_periodic_serial_number.#": "1",
+    "dcardupilotequipmentpower.battery_periodic_serial_number[0].dcardupilotequipmentpower.battery_periodic_serial_number_item": "219",
+    "dcardupilotequipmentpower.battery_periodic_manufacture_date.#": "2",
+    "dcardupilotequipmentpower.battery_periodic_manufacture_date[0].dcardupilotequipmentpower.battery_periodic_manufacture_date_item": "178",
+    "dcardupilotequipmentpower.battery_periodic_manufacture_date[1].dcardupilotequipmentpower.battery_periodic_manufacture_date_item": "39",
+    "dcardupilotequipmentpower.battery_periodic_design_capacity": "4",
+    "dcardupilotequipmentpower.battery_periodic_cells_in_series": "254",
+    "dcardupilotequipmentpower.battery_periodic_charging_maximum_current": "4.25",
+    "dcardupilotequipmentpower.battery_periodic_discharge_maximum_current": "-4.25",
+    "dcardupilotequipmentpower.battery_periodic_discharge_maximum_burst_current": "-2.5",
+    "dcardupilotequipmentpower.battery_periodic_full_charge_capacity": "-0.75",
+    "dcardupilotequipmentpower.battery_periodic_cycle_count": "53645",
+    "dcardupilotequipmentpower.battery_periodic_state_of_health": "100"
+  }
+}

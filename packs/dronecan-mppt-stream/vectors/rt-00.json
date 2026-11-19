@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-mppt-stream-roundtrip",
+  "from": "dronecan-mppt-stream",
+  "to": "dronecan-mppt-stream",
+  "input": "c4f5000000000000000000000000",
+  "expect": "c4f5000000000000000000000000",
+  "model": {
+    "dcmppt.stream_fault_flags": "196",
+    "dcmppt.stream_temperature": "-11"
+  }
+}

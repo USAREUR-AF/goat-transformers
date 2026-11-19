@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-equipment-gnss-rtcmstream-roundtrip",
+  "from": "dronecan-uavcan-equipment-gnss-rtcmstream",
+  "to": "dronecan-uavcan-equipment-gnss-rtcmstream",
+  "input": "77b0259a",
+  "expect": "77",
+  "model": {
+    "dcuavcanequipmentgnss.rtcm_stream_protocol_id": "119"
+  }
+}

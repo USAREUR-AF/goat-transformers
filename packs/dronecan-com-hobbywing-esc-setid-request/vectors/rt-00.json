@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setid-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setid-request",
+  "to": "dronecan-com-hobbywing-esc-setid-request",
+  "input": "0be2",
+  "expect": "0be2",
+  "model": {
+    "dccomhobbywingesc.set_id_request_node_id": "11",
+    "dccomhobbywingesc.set_id_request_throttle_channel": "226"
+  }
+}

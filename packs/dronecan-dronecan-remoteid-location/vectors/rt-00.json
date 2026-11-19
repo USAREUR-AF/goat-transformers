@@ -1,0 +1,28 @@
+{
+  "name": "dronecan-dronecan-remoteid-location-roundtrip",
+  "from": "dronecan-dronecan-remoteid-location",
+  "to": "dronecan-dronecan-remoteid-location",
+  "input": "1581292fe77e9a1bf630c31590f687e767f80000020000038206e8000206045b11c88000048605f0",
+  "expect": "1581292fe77e9a1bf630c31590f687e767f80000020000038206e8000206045b11c88000048605f0",
+  "model": {
+    "dcdronecanremoteid.location_id_or_mac.#": "2",
+    "dcdronecanremoteid.location_id_or_mac[0].dcdronecanremoteid.location_id_or_mac_item": "176",
+    "dcdronecanremoteid.location_id_or_mac[1].dcdronecanremoteid.location_id_or_mac_item": "37",
+    "dcdronecanremoteid.location_status": "37",
+    "dcdronecanremoteid.location_direction": "61436",
+    "dcdronecanremoteid.location_speed_horizontal": "17363",
+    "dcdronecanremoteid.location_speed_vertical": "-14722",
+    "lat": "51.5007",
+    "lon": "-0.1246",
+    "dcdronecanremoteid.location_altitude_barometric": "2",
+    "dcdronecanremoteid.location_altitude_geodetic": "3.75",
+    "dcdronecanremoteid.location_height_reference": "221",
+    "dcdronecanremoteid.location_height": "-3",
+    "dcdronecanremoteid.location_horizontal_accuracy": "139",
+    "dcdronecanremoteid.location_vertical_accuracy": "98",
+    "dcdronecanremoteid.location_barometer_accuracy": "57",
+    "dcdronecanremoteid.location_speed_accuracy": "16",
+    "dcdronecanremoteid.location_timestamp": "-4.5",
+    "dcdronecanremoteid.location_timestamp_accuracy": "190"
+  }
+}

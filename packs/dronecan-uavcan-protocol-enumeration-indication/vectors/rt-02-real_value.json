@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-enumeration-indication-roundtrip-real_value",
+  "from": "dronecan-uavcan-protocol-enumeration-indication",
+  "to": "dronecan-uavcan-protocol-enumeration-indication",
+  "input": "020000a0bf33a8",
+  "expect": "020000a0bf",
+  "model": {
+    "@kind": "real_value",
+    "dcuavcanprotocolenumeration.indication_value_real_value": "-1.25"
+  }
+}

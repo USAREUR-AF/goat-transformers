@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-getmajorconfig-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-getmajorconfig-request",
+  "to": "dronecan-com-hobbywing-esc-getmajorconfig-request",
+  "input": "eb",
+  "expect": "eb",
+  "model": {
+    "dccomhobbywingesc.get_major_config_request_option": "235"
+  }
+}

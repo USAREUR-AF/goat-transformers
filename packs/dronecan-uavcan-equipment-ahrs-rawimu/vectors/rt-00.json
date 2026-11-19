@@ -1,0 +1,17 @@
+{
+  "name": "dronecan-uavcan-equipment-ahrs-rawimu-roundtrip",
+  "from": "dronecan-uavcan-equipment-ahrs-rawimu",
+  "to": "dronecan-uavcan-equipment-ahrs-rawimu",
+  "input": "93d7f41e0000000000c03f0000000000000000a0c0000088c0000060c00000000000000000c0bf000040bf00000000000000000000",
+  "expect": "93d7f41e0000000000c03f0000000000000000a0c0000088c0000060c00000000000000000c0bf000040bf00000000",
+  "model": {
+    "dcuavcanequipmentahrs.raw_imu_timestamp_usec": "519362451",
+    "dcuavcanequipmentahrs.raw_imu_integration_interval": "1.5",
+    "dcuavcanequipmentahrs.raw_imu_rate_gyro_integral_0": "-5",
+    "dcuavcanequipmentahrs.raw_imu_rate_gyro_integral_1": "-4.25",
+    "dcuavcanequipmentahrs.raw_imu_rate_gyro_integral_2": "-3.5",
+    "dcuavcanequipmentahrs.raw_imu_accelerometer_integral_0": "-1.5",
+    "dcuavcanequipmentahrs.raw_imu_accelerometer_integral_1": "-0.75",
+    "dcuavcanequipmentahrs.raw_imu_accelerometer_integral_2": "0"
+  }
+}

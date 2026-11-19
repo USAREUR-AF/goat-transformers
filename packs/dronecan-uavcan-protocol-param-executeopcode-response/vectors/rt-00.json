@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-param-executeopcode-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-param-executeopcode-response",
+  "to": "dronecan-uavcan-protocol-param-executeopcode-response",
+  "input": "7fb6cac0ffff00",
+  "expect": "7fb6cac0ffff00",
+  "model": {
+    "dcuavcanprotocolparam.execute_opcode_response_argument": "-1060456833",
+    "dcuavcanprotocolparam.execute_opcode_response_ok": "0"
+  }
+}

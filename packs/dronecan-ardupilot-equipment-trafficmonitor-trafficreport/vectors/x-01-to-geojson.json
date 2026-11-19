@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-ardupilot-equipment-trafficmonitor-trafficreport-to-geojson",
+  "from": "dronecan-ardupilot-equipment-trafficmonitor-trafficreport",
+  "to": "geojson",
+  "input": "186f76500000003e49c305159dc0dcd1eba89f215a000030c000000000000000001f94a7bacde0f306192c3fa4f6aa",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[151.2153,-33.8568]},\"properties\":{}}",
+  "model": {
+    "lat": "-33.8568",
+    "lon": "151.2153"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "dronecan-dronecan-remoteid-system-roundtrip",
+  "from": "dronecan-dronecan-remoteid-system",
+  "to": "dronecan-dronecan-remoteid-system",
+  "input": "0c701ed27a2280de84baa0dafb21b5c000020600000505fddc9000040202057911a8",
+  "expect": "0c701ed27a2280de84baa0dafb21b5c000020600000505fddc9000040202057911a8",
+  "model": {
+    "dcdronecanremoteid.system_id_or_mac.#": "1",
+    "dcdronecanremoteid.system_id_or_mac[0].dcdronecanremoteid.system_id_or_mac_item": "142",
+    "dcdronecanremoteid.system_operator_location_type": "3",
+    "dcdronecanremoteid.system_classification_type": "218",
+    "dcdronecanremoteid.system_operator_latitude": "458245199",
+    "dcdronecanremoteid.system_operator_longitude": "458528720",
+    "dcdronecanremoteid.system_area_count": "25695",
+    "dcdronecanremoteid.system_area_radius": "47158",
+    "dcdronecanremoteid.system_area_ceiling": "-3",
+    "dcdronecanremoteid.system_area_floor": "-1.25",
+    "dcdronecanremoteid.system_category_eu": "187",
+    "dcdronecanremoteid.system_class_eu": "146",
+    "dcdronecanremoteid.system_operator_altitude_geo": "4",
+    "dcdronecanremoteid.system_timestamp": "891465536"
+  }
+}

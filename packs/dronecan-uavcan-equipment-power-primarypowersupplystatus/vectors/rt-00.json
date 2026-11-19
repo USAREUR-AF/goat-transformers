@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-equipment-power-primarypowersupplystatus-roundtrip",
+  "from": "dronecan-uavcan-equipment-power-primarypowersupplystatus",
+  "to": "dronecan-uavcan-equipment-power-primarypowersupplystatus",
+  "input": "00000000a0ee",
+  "expect": "00000000a0ee",
+  "model": {
+    "dcuavcanequipmentpower.primary_power_supply_status_external_power_available": "1",
+    "dcuavcanequipmentpower.primary_power_supply_status_remaining_energy_pct": "32",
+    "dcuavcanequipmentpower.primary_power_supply_status_remaining_energy_pct_stdev": "119"
+  }
+}

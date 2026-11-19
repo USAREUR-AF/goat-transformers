@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-enumeration-indication-roundtrip-integer_value",
+  "from": "dronecan-uavcan-protocol-enumeration-indication",
+  "to": "dronecan-uavcan-protocol-enumeration-indication",
+  "input": "0109a708c0ffffffff82",
+  "expect": "0109a708c0ffffffff",
+  "model": {
+    "@kind": "integer_value",
+    "dcuavcanprotocolenumeration.indication_value_integer_value": "-1073174775"
+  }
+}

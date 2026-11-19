@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setangle-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setangle-response",
+  "to": "dronecan-com-hobbywing-esc-setangle-response",
+  "input": "c2fbbf7020",
+  "expect": "c2",
+  "model": {
+    "dccomhobbywingesc.set_angle_response_option": "194"
+  }
+}

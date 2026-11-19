@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-uavcan-protocol-file-write-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-write-request",
+  "to": "dronecan-uavcan-protocol-file-write-request",
+  "input": "3c2809440002269b4cc1",
+  "expect": "3c2809440002269b",
+  "model": {
+    "dcuavcanprotocolfile.write_request_offset": "1141450812",
+    "dcuavcanprotocolfile.write_request_path_path.#": "2",
+    "dcuavcanprotocolfile.write_request_path_path[0].dcuavcanprotocolfile.write_request_path_path_item": "38",
+    "dcuavcanprotocolfile.write_request_path_path[1].dcuavcanprotocolfile.write_request_path_path_item": "155"
+  }
+}

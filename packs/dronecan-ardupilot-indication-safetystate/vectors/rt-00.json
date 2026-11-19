@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-ardupilot-indication-safetystate-roundtrip",
+  "from": "dronecan-ardupilot-indication-safetystate",
+  "to": "dronecan-ardupilot-indication-safetystate",
+  "input": "dd",
+  "expect": "dd",
+  "model": {
+    "dcardupilotindication.safety_state_status": "221"
+  }
+}

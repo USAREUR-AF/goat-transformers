@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-selftest-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-selftest-response",
+  "to": "dronecan-com-hobbywing-esc-selftest-response",
+  "input": "53",
+  "expect": "53",
+  "model": {
+    "dccomhobbywingesc.self_test_response_status": "83"
+  }
+}

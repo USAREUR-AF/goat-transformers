@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-protocol-nodestatus-roundtrip",
+  "from": "dronecan-uavcan-protocol-nodestatus",
+  "to": "dronecan-uavcan-protocol-nodestatus",
+  "input": "d8169c35f53466",
+  "expect": "d8169c35f53466",
+  "model": {
+    "dcuavcanprotocol.node_status_uptime_sec": "899421912",
+    "dcuavcanprotocol.node_status_health": "3",
+    "dcuavcanprotocol.node_status_mode": "6",
+    "dcuavcanprotocol.node_status_sub_mode": "5",
+    "dcuavcanprotocol.node_status_vendor_specific_status_code": "26164"
+  }
+}

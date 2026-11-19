@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-equipment-power-batteryinfo-roundtrip",
+  "from": "dronecan-uavcan-equipment-power-batteryinfo",
+  "to": "dronecan-uavcan-equipment-power-batteryinfo",
+  "input": "0000000000000000000000000000000c445fb68dced112c63bb0",
+  "expect": "0000000000000000000000000000000c445fb68dced112",
+  "model": {
+    "dcuavcanequipmentpower.battery_info_state_of_health_pct": "49",
+    "dcuavcanequipmentpower.battery_info_state_of_charge_pct": "8",
+    "dcuavcanequipmentpower.battery_info_state_of_charge_pct_stdev": "95",
+    "dcuavcanequipmentpower.battery_info_battery_id": "182",
+    "dcuavcanequipmentpower.battery_info_model_instance_id": "315739789"
+  }
+}

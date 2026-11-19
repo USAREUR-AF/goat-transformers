@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-tunnel-call-request-roundtrip",
+  "from": "dronecan-uavcan-tunnel-call-request",
+  "to": "dronecan-uavcan-tunnel-call-request",
+  "input": "ff255e",
+  "expect": "ff25",
+  "model": {
+    "dcuavcantunnel.call_request_protocol_protocol": "255",
+    "dcuavcantunnel.call_request_channel_id": "37"
+  }
+}

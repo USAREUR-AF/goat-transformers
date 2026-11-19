@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-equipment-air-data-angleofattack-roundtrip",
+  "from": "dronecan-uavcan-equipment-air-data-angleofattack",
+  "to": "dronecan-uavcan-equipment-air-data-angleofattack",
+  "input": "6c00000000",
+  "expect": "6c00000000",
+  "model": {
+    "dcuavcanequipmentairdata.angle_of_attack_sensor_id": "108"
+  }
+}

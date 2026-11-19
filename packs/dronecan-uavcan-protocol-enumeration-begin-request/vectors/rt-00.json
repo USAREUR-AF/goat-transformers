@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-enumeration-begin-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-enumeration-begin-request",
+  "to": "dronecan-uavcan-protocol-enumeration-begin-request",
+  "input": "7e21b72ca1",
+  "expect": "7e21",
+  "model": {
+    "dcuavcanprotocolenumeration.begin_request_timeout_sec": "8574"
+  }
+}

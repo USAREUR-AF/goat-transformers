@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-protocol-gettransportstats-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-gettransportstats-response",
+  "to": "dronecan-uavcan-protocol-gettransportstats-response",
+  "input": "67b0c54200003e044a1600001558ce690000ff18f9170000d66c7d6b0000adc0013f000074790e2f00004bcd92020000222117560000",
+  "expect": "67b0c54200003e044a1600001558ce690000",
+  "model": {
+    "dcuavcanprotocol.get_transport_stats_response_transfers_tx": "1120252007",
+    "dcuavcanprotocol.get_transport_stats_response_transfers_rx": "373949502",
+    "dcuavcanprotocol.get_transport_stats_response_transfer_errors": "1775130645"
+  }
+}
