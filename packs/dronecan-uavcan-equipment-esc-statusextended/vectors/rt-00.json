@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-equipment-esc-statusextended-roundtrip",
+  "from": "dronecan-uavcan-equipment-esc-statusextended",
+  "to": "dronecan-uavcan-equipment-esc-statusextended",
+  "input": "62200000000004",
+  "expect": "62200000000004",
+  "model": {
+    "dcuavcanequipmentesc.status_extended_input_pct": "49",
+    "dcuavcanequipmentesc.status_extended_output_pct": "8",
+    "dcuavcanequipmentesc.status_extended_esc_index": "4"
+  }
+}

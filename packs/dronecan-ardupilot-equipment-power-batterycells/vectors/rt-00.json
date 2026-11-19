@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-ardupilot-equipment-power-batterycells-roundtrip",
+  "from": "dronecan-ardupilot-equipment-power-batterycells",
+  "to": "dronecan-ardupilot-equipment-power-batterycells",
+  "input": "08000744f8",
+  "expect": "08000744f8",
+  "model": {
+    "dcardupilotequipmentpower.battery_cells_voltages.#": "1",
+    "dcardupilotequipmentpower.battery_cells_index": "40936"
+  }
+}

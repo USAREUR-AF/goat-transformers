@@ -1,0 +1,20 @@
+{
+  "name": "dronecan-dronecan-protocol-canstats-roundtrip",
+  "from": "dronecan-dronecan-protocol-canstats",
+  "to": "dronecan-dronecan-protocol-canstats",
+  "input": "b68de38f5a64373b8b12dfe932c08697daa94f6e2e45821cd6",
+  "expect": "b68de38f5a64373b8b12dfe932c08697daa94f6e2e45821cd6",
+  "model": {
+    "dcdronecanprotocol.can_stats_interface": "182",
+    "dcdronecanprotocol.can_stats_tx_requests": "1519379341",
+    "dcdronecanprotocol.can_stats_tx_rejected": "14180",
+    "dcdronecanprotocol.can_stats_tx_overflow": "35643",
+    "dcdronecanprotocol.can_stats_tx_success": "57106",
+    "dcdronecanprotocol.can_stats_tx_timedout": "13033",
+    "dcdronecanprotocol.can_stats_tx_abort": "34496",
+    "dcdronecanprotocol.can_stats_rx_received": "1336531607",
+    "dcdronecanprotocol.can_stats_rx_overflow": "11886",
+    "dcdronecanprotocol.can_stats_rx_errors": "33349",
+    "dcdronecanprotocol.can_stats_busoff_errors": "54812"
+  }
+}

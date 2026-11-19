@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-xacti-gnssstatusreq-roundtrip",
+  "from": "dronecan-com-xacti-gnssstatusreq",
+  "to": "dronecan-com-xacti-gnssstatusreq",
+  "input": "8b",
+  "expect": "8b",
+  "model": {
+    "dccomxacti.gnss_status_req_requirement": "139"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-server-discovery-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-server-discovery",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-server-discovery",
+  "input": "1750c53a",
+  "expect": "17",
+  "model": {
+    "dcuavcanprotocoldynamicnodeidserver.discovery_configured_cluster_size": "23"
+  }
+}

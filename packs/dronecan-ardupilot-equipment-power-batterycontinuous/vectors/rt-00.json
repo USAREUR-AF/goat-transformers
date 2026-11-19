@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-ardupilot-equipment-power-batterycontinuous-roundtrip",
+  "from": "dronecan-ardupilot-equipment-power-batterycontinuous",
+  "to": "dronecan-ardupilot-equipment-power-batterycontinuous",
+  "input": "000000000000000070c0000000c000003d00005040eb718f3e",
+  "expect": "000000000000000070c0000000c000003d00005040eb718f3e",
+  "model": {
+    "dcardupilotequipmentpower.battery_continuous_current": "-3.75",
+    "dcardupilotequipmentpower.battery_continuous_voltage": "-2",
+    "dcardupilotequipmentpower.battery_continuous_slot_id": "61",
+    "dcardupilotequipmentpower.battery_continuous_capacity_consumed": "3.25",
+    "dcardupilotequipmentpower.battery_continuous_status_flags": "1049588203"
+  }
+}

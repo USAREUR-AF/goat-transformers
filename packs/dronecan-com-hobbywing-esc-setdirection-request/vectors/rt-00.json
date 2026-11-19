@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setdirection-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setdirection-request",
+  "to": "dronecan-com-hobbywing-esc-setdirection-request",
+  "input": "58",
+  "expect": "58",
+  "model": {
+    "dccomhobbywingesc.set_direction_request_direction": "88"
+  }
+}

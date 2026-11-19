@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-dronecan-remoteid-basicid-roundtrip",
+  "from": "dronecan-dronecan-remoteid-basicid",
+  "to": "dronecan-dronecan-remoteid-basicid",
+  "input": "0a0db46e30",
+  "expect": "0a0db468",
+  "model": {
+    "dcdronecanremoteid.basic_id_id_or_mac.#": "1",
+    "dcdronecanremoteid.basic_id_id_or_mac[0].dcdronecanremoteid.basic_id_id_or_mac_item": "65",
+    "dcdronecanremoteid.basic_id_id_type": "182",
+    "dcdronecanremoteid.basic_id_ua_type": "141"
+  }
+}

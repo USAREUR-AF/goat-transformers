@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-camera-gimbal-angularcommand-roundtrip",
+  "from": "dronecan-uavcan-equipment-camera-gimbal-angularcommand",
+  "to": "dronecan-uavcan-equipment-camera-gimbal-angularcommand",
+  "input": "ed750000000000000000",
+  "expect": "ed750000000000000000",
+  "model": {
+    "dcuavcanequipmentcameragimbal.angular_command_gimbal_id": "237",
+    "dcuavcanequipmentcameragimbal.angular_command_mode_command_mode": "117"
+  }
+}

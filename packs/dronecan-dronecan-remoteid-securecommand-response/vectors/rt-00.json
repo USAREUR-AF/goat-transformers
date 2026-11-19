@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-dronecan-remoteid-securecommand-response-roundtrip",
+  "from": "dronecan-dronecan-remoteid-securecommand-response",
+  "to": "dronecan-dronecan-remoteid-securecommand-response",
+  "input": "6bdad54d422e5a211952c7",
+  "expect": "6bdad54d422e5a2119",
+  "model": {
+    "dcdronecanremoteid.secure_command_response_sequence": "1305860715",
+    "dcdronecanremoteid.secure_command_response_operation": "559558210",
+    "dcdronecanremoteid.secure_command_response_result": "25"
+  }
+}

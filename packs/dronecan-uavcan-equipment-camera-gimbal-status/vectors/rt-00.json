@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-camera-gimbal-status-roundtrip",
+  "from": "dronecan-uavcan-equipment-camera-gimbal-status",
+  "to": "dronecan-uavcan-equipment-camera-gimbal-status",
+  "input": "a931000000000000000000000000",
+  "expect": "a9310000000000000000",
+  "model": {
+    "dcuavcanequipmentcameragimbal.status_gimbal_id": "169",
+    "dcuavcanequipmentcameragimbal.status_mode_command_mode": "49"
+  }
+}

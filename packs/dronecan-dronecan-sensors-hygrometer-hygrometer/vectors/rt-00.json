@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-dronecan-sensors-hygrometer-hygrometer-roundtrip",
+  "from": "dronecan-dronecan-sensors-hygrometer-hygrometer",
+  "to": "dronecan-dronecan-sensors-hygrometer-hygrometer",
+  "input": "0000000023",
+  "expect": "0000000023",
+  "model": {
+    "dcdronecansensorshygrometer.hygrometer_id": "35"
+  }
+}

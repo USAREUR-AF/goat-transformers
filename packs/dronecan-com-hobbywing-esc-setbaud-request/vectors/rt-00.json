@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setbaud-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setbaud-request",
+  "to": "dronecan-com-hobbywing-esc-setbaud-request",
+  "input": "7a",
+  "expect": "7a",
+  "model": {
+    "dccomhobbywingesc.set_baud_request_baud": "122"
+  }
+}

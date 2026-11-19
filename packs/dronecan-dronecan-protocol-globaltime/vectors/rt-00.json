@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-dronecan-protocol-globaltime-roundtrip",
+  "from": "dronecan-dronecan-protocol-globaltime",
+  "to": "dronecan-dronecan-protocol-globaltime",
+  "input": "d6c5fa4d000000",
+  "expect": "d6c5fa4d000000",
+  "model": {
+    "dcdronecanprotocol.global_time_timestamp_usec": "1308280278"
+  }
+}

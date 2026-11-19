@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-dronecan-protocol-flexdebug-roundtrip",
+  "from": "dronecan-dronecan-protocol-flexdebug",
+  "to": "dronecan-dronecan-protocol-flexdebug",
+  "input": "5a4593087d",
+  "expect": "5a45",
+  "model": {
+    "dcdronecanprotocol.flex_debug_id": "17754"
+  }
+}

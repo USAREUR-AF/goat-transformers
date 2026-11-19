@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setthrottlesource-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setthrottlesource-request",
+  "to": "dronecan-com-hobbywing-esc-setthrottlesource-request",
+  "input": "36",
+  "expect": "36",
+  "model": {
+    "dccomhobbywingesc.set_throttle_source_request_source": "54"
+  }
+}

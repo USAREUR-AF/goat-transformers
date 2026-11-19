@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-com-hobbywing-esc-statusmsg2-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-statusmsg2",
+  "to": "dronecan-com-hobbywing-esc-statusmsg2",
+  "input": "aea52ff9a8",
+  "expect": "aea52ff9a8",
+  "model": {
+    "dccomhobbywingesc.status_msg2_input_voltage": "-23122",
+    "dccomhobbywingesc.status_msg2_current": "-1745",
+    "dccomhobbywingesc.status_msg2_temperature": "168"
+  }
+}

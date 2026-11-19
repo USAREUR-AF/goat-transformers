@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-equipment-air-data-rawairdata-roundtrip",
+  "from": "dronecan-uavcan-equipment-air-data-rawairdata",
+  "to": "dronecan-uavcan-equipment-air-data-rawairdata",
+  "input": "4a000040400000984000000000000000000000",
+  "expect": "4a00004040000098400000000000000000",
+  "model": {
+    "dcuavcanequipmentairdata.raw_air_data_flags": "74",
+    "dcuavcanequipmentairdata.raw_air_data_static_pressure": "3",
+    "dcuavcanequipmentairdata.raw_air_data_differential_pressure": "4.75"
+  }
+}

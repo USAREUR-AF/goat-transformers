@@ -1,0 +1,19 @@
+{
+  "name": "dronecan-com-hobbywing-esc-getmajorconfig-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-getmajorconfig-response",
+  "to": "dronecan-com-hobbywing-esc-getmajorconfig-response",
+  "input": "87f5c37a2a0215",
+  "expect": "87f5c37a2a0215",
+  "model": {
+    "dccomhobbywingesc.get_major_config_response_direction": "1",
+    "dccomhobbywingesc.get_major_config_response_throttle_source": "0",
+    "dccomhobbywingesc.get_major_config_response_throttle_channel": "7",
+    "dccomhobbywingesc.get_major_config_response_led_status": "30",
+    "dccomhobbywingesc.get_major_config_response_led_color": "5",
+    "dccomhobbywingesc.get_major_config_response_MSG2_rate": "12",
+    "dccomhobbywingesc.get_major_config_response_MSG1_rate": "3",
+    "dccomhobbywingesc.get_major_config_response_positioning_angle": "10874",
+    "dccomhobbywingesc.get_major_config_response_reserved_0": "2",
+    "dccomhobbywingesc.get_major_config_response_reserved_1": "21"
+  }
+}

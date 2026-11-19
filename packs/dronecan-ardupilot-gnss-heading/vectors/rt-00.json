@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-ardupilot-gnss-heading-roundtrip",
+  "from": "dronecan-ardupilot-gnss-heading",
+  "to": "dronecan-ardupilot-gnss-heading",
+  "input": "8000000000",
+  "expect": "8000000000",
+  "model": {
+    "dcardupilotgnss.heading_heading_valid": "1",
+    "dcardupilotgnss.heading_heading_accuracy_valid": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-param-executeopcode-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-param-executeopcode-request",
+  "to": "dronecan-uavcan-protocol-param-executeopcode-request",
+  "input": "53fe62c6c0ffff",
+  "expect": "53fe62c6c0ffff",
+  "model": {
+    "dcuavcanprotocolparam.execute_opcode_request_opcode": "83",
+    "dcuavcanprotocolparam.execute_opcode_request_argument": "-1060740354"
+  }
+}

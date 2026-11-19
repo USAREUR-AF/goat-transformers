@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-dronecan-sensors-magnetometer-magneticfieldstrengthhires-roundtrip",
+  "from": "dronecan-dronecan-sensors-magnetometer-magneticfieldstrengthhires",
+  "to": "dronecan-dronecan-sensors-magnetometer-magneticfieldstrengthhires",
+  "input": "3a000088400000a040000090c0",
+  "expect": "3a000088400000a040000090c0",
+  "model": {
+    "dcdronecansensorsmagnetometer.magnetic_field_strength_hi_res_sensor_id": "58",
+    "dcdronecansensorsmagnetometer.magnetic_field_strength_hi_res_magnetic_field_ga_0": "4.25",
+    "dcdronecansensorsmagnetometer.magnetic_field_strength_hi_res_magnetic_field_ga_1": "5",
+    "dcdronecansensorsmagnetometer.magnetic_field_strength_hi_res_magnetic_field_ga_2": "-4.5"
+  }
+}

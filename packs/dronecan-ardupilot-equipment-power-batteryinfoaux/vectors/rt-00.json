@@ -1,0 +1,15 @@
+{
+  "name": "dronecan-ardupilot-equipment-power-batteryinfoaux-roundtrip",
+  "from": "dronecan-ardupilot-equipment-power-batteryinfoaux",
+  "to": "dronecan-ardupilot-equipment-power-batteryinfoaux",
+  "input": "4ae2554c0000000300000000000047101e6400000000bd00",
+  "expect": "4ae2554c0000000300000000000047101e6400000000bd00",
+  "model": {
+    "dcardupilotequipmentpower.battery_info_aux_timestamp_usec": "1280696906",
+    "dcardupilotequipmentpower.battery_info_aux_voltage_cell.#": "3",
+    "dcardupilotequipmentpower.battery_info_aux_cycle_count": "4167",
+    "dcardupilotequipmentpower.battery_info_aux_over_discharge_count": "25630",
+    "dcardupilotequipmentpower.battery_info_aux_is_powering_off": "1",
+    "dcardupilotequipmentpower.battery_info_aux_battery_id": "122"
+  }
+}

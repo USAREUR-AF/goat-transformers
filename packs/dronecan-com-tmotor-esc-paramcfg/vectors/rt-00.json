@@ -1,0 +1,24 @@
+{
+  "name": "dronecan-com-tmotor-esc-paramcfg-roundtrip",
+  "from": "dronecan-com-tmotor-esc-paramcfg",
+  "to": "dronecan-com-tmotor-esc-paramcfg",
+  "input": "e4bbc6c919921a696e40c21716ee69c5bddca6734a210df8cfb4a6",
+  "expect": "e4bbc6c919921a696e40c21716ee69c5bddca6734a210df8cfb4a6",
+  "model": {
+    "dccomtmotoresc.param_cfg_esc_index": "228",
+    "dccomtmotoresc.param_cfg_esc_uuid": "432654011",
+    "dccomtmotoresc.param_cfg_esc_id_set": "6802",
+    "dccomtmotoresc.param_cfg_esc_ov_threshold": "28265",
+    "dccomtmotoresc.param_cfg_esc_oc_threshold": "49728",
+    "dccomtmotoresc.param_cfg_esc_ot_threshold": "5655",
+    "dccomtmotoresc.param_cfg_esc_acc_threshold": "27118",
+    "dccomtmotoresc.param_cfg_esc_dacc_threshold": "48581",
+    "dccomtmotoresc.param_cfg_esc_rotate_dir": "-22820",
+    "dccomtmotoresc.param_cfg_esc_timing": "115",
+    "dccomtmotoresc.param_cfg_esc_signal_priority": "74",
+    "dccomtmotoresc.param_cfg_esc_led_mode": "3361",
+    "dccomtmotoresc.param_cfg_esc_can_rate": "248",
+    "dccomtmotoresc.param_cfg_esc_fdb_rate": "46287",
+    "dccomtmotoresc.param_cfg_esc_save_option": "166"
+  }
+}

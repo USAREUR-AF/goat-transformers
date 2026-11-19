@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-uavcan-equipment-ahrs-solution-roundtrip",
+  "from": "dronecan-uavcan-equipment-ahrs-solution",
+  "to": "dronecan-uavcan-equipment-ahrs-solution",
+  "input": "46a2cd240000000000000000000000030000000000000000000000000300000000000000000000000000000000",
+  "expect": "46a2cd2400000000000000000000000300000000000000000000000003000000000000000000000000",
+  "model": {
+    "dcuavcanequipmentahrs.solution_timestamp_usec": "617456198",
+    "dcuavcanequipmentahrs.solution_orientation_covariance.#": "3",
+    "dcuavcanequipmentahrs.solution_angular_velocity_covariance.#": "3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-navigation-globalnavigationsolution-to-geojson",
+  "from": "dronecan-uavcan-navigation-globalnavigationsolution",
+  "to": "geojson",
+  "input": "deb38532000000d712f241cf74614011c7bab88dd64140000050400000a040000060c00000e0bf0000000000400000304000006040000088400400000002630000020300000143000001030000004300000302fc00000000000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[139.6503,35.6762]},\"properties\":{}}",
+  "model": {
+    "lon": "139.6503",
+    "lat": "35.6762"
+  }
+}

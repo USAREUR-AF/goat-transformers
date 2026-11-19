@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-response",
+  "to": "dronecan-uavcan-protocol-file-getdirectoryentryinfo-response",
+  "input": "7a8c255ed3",
+  "expect": "7a8c25",
+  "model": {
+    "dcuavcanprotocolfile.get_directory_entry_info_response_error_value": "-29574",
+    "dcuavcanprotocolfile.get_directory_entry_info_response_entry_type_flags": "37"
+  }
+}

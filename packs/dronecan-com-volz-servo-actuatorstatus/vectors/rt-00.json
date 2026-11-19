@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-com-volz-servo-actuatorstatus-roundtrip",
+  "from": "dronecan-com-volz-servo-actuatorstatus",
+  "to": "dronecan-com-volz-servo-actuatorstatus",
+  "input": "890000370ee5bc",
+  "expect": "890000370ee5bc",
+  "model": {
+    "dccomvolzservo.actuator_status_actuator_id": "137",
+    "dccomvolzservo.actuator_status_current": "55",
+    "dccomvolzservo.actuator_status_voltage": "14",
+    "dccomvolzservo.actuator_status_motor_pwm": "229",
+    "dccomvolzservo.actuator_status_motor_temperature": "188"
+  }
+}

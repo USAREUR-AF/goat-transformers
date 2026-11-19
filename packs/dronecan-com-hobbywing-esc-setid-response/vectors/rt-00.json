@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setid-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setid-response",
+  "to": "dronecan-com-hobbywing-esc-setid-response",
+  "input": "b990",
+  "expect": "b990",
+  "model": {
+    "dccomhobbywingesc.set_id_response_node_id": "185",
+    "dccomhobbywingesc.set_id_response_throttle_channel": "144"
+  }
+}

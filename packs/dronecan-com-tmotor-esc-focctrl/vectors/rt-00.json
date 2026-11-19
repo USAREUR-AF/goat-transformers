@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-com-tmotor-esc-focctrl-roundtrip",
+  "from": "dronecan-com-tmotor-esc-focctrl",
+  "to": "dronecan-com-tmotor-esc-focctrl",
+  "input": "c29970472a2a890d",
+  "expect": "c29970472a2a890d",
+  "model": {
+    "dccomtmotoresc.foc_ctrl_esc_index": "194",
+    "dccomtmotoresc.foc_ctrl_esc_mode": "153",
+    "dccomtmotoresc.foc_ctrl_esc_fdb_rate": "112",
+    "dccomtmotoresc.foc_ctrl_esc_cmd": "71",
+    "dccomtmotoresc.foc_ctrl_esc_cmd_val": "227093034"
+  }
+}

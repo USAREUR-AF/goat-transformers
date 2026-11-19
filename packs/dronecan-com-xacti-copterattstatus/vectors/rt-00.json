@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-com-xacti-copterattstatus-roundtrip",
+  "from": "dronecan-com-xacti-copterattstatus",
+  "to": "dronecan-com-xacti-copterattstatus",
+  "input": "e9ce8ea93384d85e0000",
+  "expect": "e9ce8ea93384d85e",
+  "model": {
+    "dccomxacti.copter_att_status_quaternion_wxyz_e4_0": "-12567",
+    "dccomxacti.copter_att_status_quaternion_wxyz_e4_1": "-22130",
+    "dccomxacti.copter_att_status_quaternion_wxyz_e4_2": "-31693",
+    "dccomxacti.copter_att_status_quaternion_wxyz_e4_3": "24280"
+  }
+}

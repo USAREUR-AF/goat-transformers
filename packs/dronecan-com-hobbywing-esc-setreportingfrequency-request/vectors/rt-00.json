@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setreportingfrequency-request-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setreportingfrequency-request",
+  "to": "dronecan-com-hobbywing-esc-setreportingfrequency-request",
+  "input": "c79eef75",
+  "expect": "c79eef75",
+  "model": {
+    "dccomhobbywingesc.set_reporting_frequency_request_option": "199",
+    "dccomhobbywingesc.set_reporting_frequency_request_MSG_ID": "61342",
+    "dccomhobbywingesc.set_reporting_frequency_request_rate": "117"
+  }
+}

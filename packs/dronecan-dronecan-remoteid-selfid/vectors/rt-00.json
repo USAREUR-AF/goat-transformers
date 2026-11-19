@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-dronecan-remoteid-selfid-roundtrip",
+  "from": "dronecan-dronecan-remoteid-selfid",
+  "to": "dronecan-dronecan-remoteid-selfid",
+  "input": "18fca04ca66a10",
+  "expect": "18fca04ca0",
+  "model": {
+    "dcdronecanremoteid.self_id_id_or_mac.#": "3",
+    "dcdronecanremoteid.self_id_id_or_mac[0].dcdronecanremoteid.self_id_id_or_mac_item": "31",
+    "dcdronecanremoteid.self_id_id_or_mac[1].dcdronecanremoteid.self_id_id_or_mac_item": "148",
+    "dcdronecanremoteid.self_id_id_or_mac[2].dcdronecanremoteid.self_id_id_or_mac_item": "9",
+    "dcdronecanremoteid.self_id_description_type": "148"
+  }
+}

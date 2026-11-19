@@ -1,0 +1,27 @@
+{
+  "name": "dronecan-uavcan-navigation-globalnavigationsolution-roundtrip",
+  "from": "dronecan-uavcan-navigation-globalnavigationsolution",
+  "to": "dronecan-uavcan-navigation-globalnavigationsolution",
+  "input": "deb38532000000d712f241cf74614011c7bab88dd64140000050400000a040000060c00000e0bf0000000000400000304000006040000088400400000002630000020300000143000001030000004300000302fc00000000000000000000",
+  "expect": "deb38532000000d712f241cf74614011c7bab88dd64140000050400000a040000060c00000e0bf0000000000400000304000006040000088400400000002630000020300000143000001030000004300000302fc000000000000",
+  "model": {
+    "dcuavcannavigation.global_navigation_solution_timestamp_usec": "847623134",
+    "lon": "139.6503",
+    "lat": "35.6762",
+    "dcuavcannavigation.global_navigation_solution_height_ellipsoid": "3.25",
+    "dcuavcannavigation.global_navigation_solution_height_msl": "5",
+    "dcuavcannavigation.global_navigation_solution_height_agl": "-3.5",
+    "dcuavcannavigation.global_navigation_solution_height_baro": "-1.75",
+    "dcuavcannavigation.global_navigation_solution_orientation_xyzw_0": "2",
+    "dcuavcannavigation.global_navigation_solution_orientation_xyzw_1": "2.75",
+    "dcuavcannavigation.global_navigation_solution_orientation_xyzw_2": "3.5",
+    "dcuavcannavigation.global_navigation_solution_orientation_xyzw_3": "4.25",
+    "dcuavcannavigation.global_navigation_solution_pose_covariance.#": "1",
+    "dcuavcannavigation.global_navigation_solution_linear_velocity_body_0": "-4.75",
+    "dcuavcannavigation.global_navigation_solution_linear_velocity_body_1": "-4",
+    "dcuavcannavigation.global_navigation_solution_linear_velocity_body_2": "-3.25",
+    "dcuavcannavigation.global_navigation_solution_angular_velocity_body_0": "-3",
+    "dcuavcannavigation.global_navigation_solution_angular_velocity_body_1": "-2.25",
+    "dcuavcannavigation.global_navigation_solution_angular_velocity_body_2": "-1.5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-hardpoint-command-roundtrip",
+  "from": "dronecan-uavcan-equipment-hardpoint-command",
+  "to": "dronecan-uavcan-equipment-hardpoint-command",
+  "input": "efc602",
+  "expect": "efc602",
+  "model": {
+    "dcuavcanequipmenthardpoint.command_hardpoint_id": "239",
+    "dcuavcanequipmenthardpoint.command_command": "710"
+  }
+}

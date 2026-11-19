@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-dronecan-remoteid-armstatus-roundtrip",
+  "from": "dronecan-dronecan-remoteid-armstatus",
+  "to": "dronecan-dronecan-remoteid-armstatus",
+  "input": "0a43",
+  "expect": "0a",
+  "model": {
+    "dcdronecanremoteid.arm_status_status": "10"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-power-circuitstatus-roundtrip",
+  "from": "dronecan-uavcan-equipment-power-circuitstatus",
+  "to": "dronecan-uavcan-equipment-power-circuitstatus",
+  "input": "0a24000000008f",
+  "expect": "0a24000000008f",
+  "model": {
+    "dcuavcanequipmentpower.circuit_status_circuit_id": "9226",
+    "dcuavcanequipmentpower.circuit_status_error_flags": "143"
+  }
+}

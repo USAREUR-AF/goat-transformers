@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-enumeration-indication-roundtrip-empty",
+  "from": "dronecan-uavcan-protocol-enumeration-indication",
+  "to": "dronecan-uavcan-protocol-enumeration-indication",
+  "input": "00d146bb",
+  "expect": "00",
+  "model": {
+    "@kind": "empty"
+  }
+}

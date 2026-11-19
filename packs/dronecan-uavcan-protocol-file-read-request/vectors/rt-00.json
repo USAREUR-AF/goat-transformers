@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-read-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-read-request",
+  "to": "dronecan-uavcan-protocol-file-read-request",
+  "input": "cd6b511b00b7",
+  "expect": "cd6b511b00",
+  "model": {
+    "dcuavcanprotocolfile.read_request_offset": "458320845"
+  }
+}

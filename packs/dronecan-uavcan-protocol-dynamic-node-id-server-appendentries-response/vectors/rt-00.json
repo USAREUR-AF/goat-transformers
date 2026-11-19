@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-response",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-response",
+  "input": "add36e6500",
+  "expect": "add36e6500",
+  "model": {
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_response_term": "1701761965",
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_response_success": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-com-hobbywing-esc-getmaintenanceinformation-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-getmaintenanceinformation-response",
+  "to": "dronecan-com-hobbywing-esc-getmaintenanceinformation-response",
+  "input": "2a23df74017763",
+  "expect": "2a23df74017763",
+  "model": {
+    "dccomhobbywingesc.get_maintenance_information_response_total_rotation_time_min": "1960780586",
+    "dccomhobbywingesc.get_maintenance_information_response_time_since_maintainence_min": "6518529"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setthrottlesource-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setthrottlesource-response",
+  "to": "dronecan-com-hobbywing-esc-setthrottlesource-response",
+  "input": "e4",
+  "expect": "e4",
+  "model": {
+    "dccomhobbywingesc.set_throttle_source_response_source": "228"
+  }
+}

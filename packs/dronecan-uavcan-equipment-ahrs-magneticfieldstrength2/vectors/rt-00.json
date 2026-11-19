@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-equipment-ahrs-magneticfieldstrength2-roundtrip",
+  "from": "dronecan-uavcan-equipment-ahrs-magneticfieldstrength2",
+  "to": "dronecan-uavcan-equipment-ahrs-magneticfieldstrength2",
+  "input": "730000000000000000",
+  "expect": "73000000000000",
+  "model": {
+    "dcuavcanequipmentahrs.magnetic_field_strength2_sensor_id": "115"
+  }
+}

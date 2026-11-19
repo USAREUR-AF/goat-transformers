@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-actuator-status-roundtrip",
+  "from": "dronecan-uavcan-equipment-actuator-status",
+  "to": "dronecan-uavcan-equipment-actuator-status",
+  "input": "5a0000000000000d",
+  "expect": "5a0000000000000d",
+  "model": {
+    "dcuavcanequipmentactuator.status_actuator_id": "90",
+    "dcuavcanequipmentactuator.status_power_rating_pct": "13"
+  }
+}

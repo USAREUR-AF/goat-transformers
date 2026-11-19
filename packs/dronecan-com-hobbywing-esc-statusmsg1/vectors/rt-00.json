@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-com-hobbywing-esc-statusmsg1-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-statusmsg1",
+  "to": "dronecan-com-hobbywing-esc-statusmsg1",
+  "input": "8b44629839ec",
+  "expect": "8b44629839ec",
+  "model": {
+    "dccomhobbywingesc.status_msg1_rpm": "17547",
+    "dccomhobbywingesc.status_msg1_pwm": "39010",
+    "dccomhobbywingesc.status_msg1_status": "60473"
+  }
+}

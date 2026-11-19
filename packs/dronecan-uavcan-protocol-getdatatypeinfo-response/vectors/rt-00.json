@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-uavcan-protocol-getdatatypeinfo-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-getdatatypeinfo-response",
+  "to": "dronecan-uavcan-protocol-getdatatypeinfo-response",
+  "input": "8937567100000000608be80e47",
+  "expect": "8937567100000000608be80e",
+  "model": {
+    "dcuavcanprotocol.get_data_type_info_response_signature": "1901475721",
+    "dcuavcanprotocol.get_data_type_info_response_id": "35680",
+    "dcuavcanprotocol.get_data_type_info_response_kind_value": "232",
+    "dcuavcanprotocol.get_data_type_info_response_flags": "14"
+  }
+}

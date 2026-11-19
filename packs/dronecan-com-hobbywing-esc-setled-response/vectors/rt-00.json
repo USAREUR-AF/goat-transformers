@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-com-hobbywing-esc-setled-response-roundtrip",
+  "from": "dronecan-com-hobbywing-esc-setled-response",
+  "to": "dronecan-com-hobbywing-esc-setled-response",
+  "input": "976e45",
+  "expect": "976e45",
+  "model": {
+    "dccomhobbywingesc.set_led_response_option": "151",
+    "dccomhobbywingesc.set_led_response_color": "110",
+    "dccomhobbywingesc.set_led_response_blink": "69"
+  }
+}

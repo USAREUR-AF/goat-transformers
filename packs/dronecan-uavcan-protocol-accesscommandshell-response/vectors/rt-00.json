@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-protocol-accesscommandshell-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-accesscommandshell-response",
+  "to": "dronecan-uavcan-protocol-accesscommandshell-response",
+  "input": "db137ec01c55ca3f",
+  "expect": "db137ec01c",
+  "model": {
+    "dcuavcanprotocol.access_command_shell_response_last_exit_status": "-1065479205",
+    "dcuavcanprotocol.access_command_shell_response_flags": "28"
+  }
+}

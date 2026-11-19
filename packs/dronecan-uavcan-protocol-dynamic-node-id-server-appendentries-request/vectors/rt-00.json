@@ -1,0 +1,13 @@
+{
+  "name": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-request",
+  "to": "dronecan-uavcan-protocol-dynamic-node-id-server-appendentries-request",
+  "input": "ff2b663ed67fea11ad846ee81d67f6091c2f4255687b8ea1b4c7daed001373",
+  "expect": "ff2b663ed67fea11ad84",
+  "model": {
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_request_term": "1046883327",
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_request_prev_log_term": "300580822",
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_request_prev_log_index": "173",
+    "dcuavcanprotocoldynamicnodeidserver.append_entries_request_leader_commit": "132"
+  }
+}

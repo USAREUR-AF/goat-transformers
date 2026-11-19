@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-beginfirmwareupdate-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-beginfirmwareupdate-response",
+  "to": "dronecan-uavcan-protocol-file-beginfirmwareupdate-response",
+  "input": "033cb126",
+  "expect": "03",
+  "model": {
+    "dcuavcanprotocolfile.begin_firmware_update_response_error": "3"
+  }
+}

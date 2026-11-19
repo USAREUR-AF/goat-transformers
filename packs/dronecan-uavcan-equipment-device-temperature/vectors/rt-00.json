@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-device-temperature-roundtrip",
+  "from": "dronecan-uavcan-equipment-device-temperature",
+  "to": "dronecan-uavcan-equipment-device-temperature",
+  "input": "47200000f5",
+  "expect": "47200000f5",
+  "model": {
+    "dcuavcanequipmentdevice.temperature_device_id": "8263",
+    "dcuavcanequipmentdevice.temperature_error_flags": "245"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-restartnode-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-restartnode-request",
+  "to": "dronecan-uavcan-protocol-restartnode-request",
+  "input": "28c5744400",
+  "expect": "28c5744400",
+  "model": {
+    "dcuavcanprotocol.restart_node_request_magic_number": "1148503336"
+  }
+}

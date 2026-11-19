@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-uavcan-equipment-hardpoint-status-roundtrip",
+  "from": "dronecan-uavcan-equipment-hardpoint-status",
+  "to": "dronecan-uavcan-equipment-hardpoint-status",
+  "input": "5e00000000e366",
+  "expect": "5e00000000e366",
+  "model": {
+    "dcuavcanequipmenthardpoint.status_hardpoint_id": "94",
+    "dcuavcanequipmenthardpoint.status_status": "26339"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-restartnode-response-roundtrip",
+  "from": "dronecan-uavcan-protocol-restartnode-response",
+  "to": "dronecan-uavcan-protocol-restartnode-response",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "dcuavcanprotocol.restart_node_response_ok": "0"
+  }
+}

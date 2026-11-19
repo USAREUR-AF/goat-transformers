@@ -1,0 +1,11 @@
+{
+  "name": "dronecan-ardupilot-gnss-status-roundtrip",
+  "from": "dronecan-ardupilot-gnss-status",
+  "to": "dronecan-ardupilot-gnss-status",
+  "input": "2aac6605800000",
+  "expect": "2aac6605800000",
+  "model": {
+    "dcardupilotgnss.status_error_codes": "90614826",
+    "dcardupilotgnss.status_healthy": "1"
+  }
+}

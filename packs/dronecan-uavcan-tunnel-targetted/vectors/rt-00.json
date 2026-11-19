@@ -1,0 +1,14 @@
+{
+  "name": "dronecan-uavcan-tunnel-targetted-roundtrip",
+  "from": "dronecan-uavcan-tunnel-targetted",
+  "to": "dronecan-uavcan-tunnel-targetted",
+  "input": "e517699057cfc93e",
+  "expect": "e517699057cf",
+  "model": {
+    "dcuavcantunnel.targetted_protocol_protocol": "229",
+    "dcuavcantunnel.targetted_target_node": "11",
+    "dcuavcantunnel.targetted_serial_id": "-10",
+    "dcuavcantunnel.targetted_options": "9",
+    "dcuavcantunnel.targetted_baudrate": "13588368"
+  }
+}

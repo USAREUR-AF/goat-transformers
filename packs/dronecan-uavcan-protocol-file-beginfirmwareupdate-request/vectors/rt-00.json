@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-file-beginfirmwareupdate-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-file-beginfirmwareupdate-request",
+  "to": "dronecan-uavcan-protocol-file-beginfirmwareupdate-request",
+  "input": "553fb4",
+  "expect": "55",
+  "model": {
+    "dcuavcanprotocolfile.begin_firmware_update_request_source_node_id": "85"
+  }
+}

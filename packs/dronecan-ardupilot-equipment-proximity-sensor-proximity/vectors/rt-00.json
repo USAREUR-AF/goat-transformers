@@ -1,0 +1,12 @@
+{
+  "name": "dronecan-ardupilot-equipment-proximity-sensor-proximity-roundtrip",
+  "from": "dronecan-ardupilot-equipment-proximity-sensor-proximity",
+  "to": "dronecan-ardupilot-equipment-proximity-sensor-proximity",
+  "input": "07d5000000000000",
+  "expect": "07d5000000000000",
+  "model": {
+    "dcardupilotequipmentproximitysensor.proximity_sensor_id": "7",
+    "dcardupilotequipmentproximitysensor.proximity_reading_type": "6",
+    "dcardupilotequipmentproximitysensor.proximity_flags": "21"
+  }
+}

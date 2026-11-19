@@ -1,0 +1,10 @@
+{
+  "name": "dronecan-uavcan-protocol-accesscommandshell-request-roundtrip",
+  "from": "dronecan-uavcan-protocol-accesscommandshell-request",
+  "to": "dronecan-uavcan-protocol-accesscommandshell-request",
+  "input": "97d045ba",
+  "expect": "97",
+  "model": {
+    "dcuavcanprotocol.access_command_shell_request_flags": "151"
+  }
+}

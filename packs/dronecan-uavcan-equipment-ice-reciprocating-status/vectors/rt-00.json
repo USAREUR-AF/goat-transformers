@@ -1,0 +1,16 @@
+{
+  "name": "dronecan-uavcan-equipment-ice-reciprocating-status-roundtrip",
+  "from": "dronecan-uavcan-equipment-ice-reciprocating-status",
+  "to": "dronecan-uavcan-equipment-ice-reciprocating-status",
+  "input": "40000000000044000000000000000000000000000000000000000060c00000e0bf6c6c000000000000000000000000000000000000000000000000000000000000",
+  "expect": "40000000000044000000000000000000000000000000000000000060c00000e0bf6c6c",
+  "model": {
+    "dcuavcanequipmenticereciprocating.status_state": "1",
+    "dcuavcanequipmenticereciprocating.status_engine_load_percent": "34",
+    "dcuavcanequipmenticereciprocating.status_fuel_consumption_rate_cm3pm": "-3.5",
+    "dcuavcanequipmenticereciprocating.status_estimated_consumed_fuel_volume_cm3": "-1.75",
+    "dcuavcanequipmenticereciprocating.status_throttle_position_percent": "54",
+    "dcuavcanequipmenticereciprocating.status_ecu_index": "13",
+    "dcuavcanequipmenticereciprocating.status_spark_plug_usage": "4"
+  }
+}

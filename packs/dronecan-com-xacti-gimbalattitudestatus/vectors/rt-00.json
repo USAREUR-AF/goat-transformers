@@ -1,0 +1,15 @@
+{
+  "name": "dronecan-com-xacti-gimbalattitudestatus-roundtrip",
+  "from": "dronecan-com-xacti-gimbalattitudestatus",
+  "to": "dronecan-com-xacti-gimbalattitudestatus",
+  "input": "6565e6b8670ce85f69b3ea06",
+  "expect": "6565e6b8670ce85f69b3ea06",
+  "model": {
+    "dccomxacti.gimbal_attitude_status_gimbal_roll": "25957",
+    "dccomxacti.gimbal_attitude_status_gimbal_pitch": "-18202",
+    "dccomxacti.gimbal_attitude_status_gimbal_yaw": "3175",
+    "dccomxacti.gimbal_attitude_status_magneticencoder_roll": "24552",
+    "dccomxacti.gimbal_attitude_status_magneticencoder_pitch": "-19607",
+    "dccomxacti.gimbal_attitude_status_magneticencoder_yaw": "1770"
+  }
+}

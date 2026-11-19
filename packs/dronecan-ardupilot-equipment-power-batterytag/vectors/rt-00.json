@@ -1,0 +1,15 @@
+{
+  "name": "dronecan-ardupilot-equipment-power-batterytag-roundtrip",
+  "from": "dronecan-ardupilot-equipment-power-batterytag",
+  "to": "dronecan-ardupilot-equipment-power-batterytag",
+  "input": "a97f1b1280d39f65000000bf2e7ba80c05cf2c60dc22b133",
+  "expect": "a97f1b1280d39f65000000bf2e7ba80c05cf2c60dc22b133",
+  "model": {
+    "dcardupilotequipmentpower.battery_tag_serial_number": "303792041",
+    "dcardupilotequipmentpower.battery_tag_num_cycles": "1704973184",
+    "dcardupilotequipmentpower.battery_tag_armed_hours": "-0.5",
+    "dcardupilotequipmentpower.battery_tag_battery_capacity_mAh": "212368174",
+    "dcardupilotequipmentpower.battery_tag_first_use_mins": "1613549317",
+    "dcardupilotequipmentpower.battery_tag_last_arm_time_mins": "867246812"
+  }
+}
