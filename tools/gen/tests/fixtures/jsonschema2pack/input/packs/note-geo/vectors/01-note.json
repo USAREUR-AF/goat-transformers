@@ -1,0 +1,7 @@
+{
+ "name": "note-geo-roundtrip",
+ "from": "note-geo",
+ "to": "note-geo",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25]},\"properties\":{\"time_ms\":1700000000000},\"id\":\"N-1\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25]},\"properties\":{\"time_ms\":1700000000000},\"id\":\"N-1\"}"
+}

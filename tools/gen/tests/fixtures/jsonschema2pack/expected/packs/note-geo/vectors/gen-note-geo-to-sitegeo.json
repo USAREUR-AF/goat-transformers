@@ -1,0 +1,12 @@
+{
+ "name": "gen-note-geo-to-sitegeo",
+ "from": "note-geo",
+ "to": "sitegeo",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25]},\"properties\":{\"time_ms\":1700000000000},\"id\":\"N-1\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25]},\"properties\":{},\"id\":\"N-1\"}",
+ "model": {
+  "uid": "N-1",
+  "lat": "48.25",
+  "lon": "11.5"
+ }
+}

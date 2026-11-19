@@ -1,6 +1,6 @@
 #!/bin/bash
 # Regenerate the JSON Schema packs: mds, stac-item, wzdx-device.
-# Usage: tools/gen/jsonschema2pack-run.sh <sources> <goat-transformers checkout>
+# Usage: tools/gen/jsonschema2pack-run.sh [--check] <sources> <goat-transformers checkout>
 #
 # <sources> holds three git checkouts, each at the commit below (the script checks):
 #   mds-openapi  https://github.com/openmobilityfoundation/mds-openapi  branch v2.0,
@@ -14,10 +14,32 @@
 # Writes model/{mds,stac,wzdx}.def, packs/{mds,stac-item,wzdx-device}/ (pack.def, pack.md,
 # vectors/gen-*), packs/geojson/vectors/gen-geojson-to-{mds,stac-item,wzdx-device}.json and
 # tools/gen/names/{mds,stac-item,wzdx-device}.json. PROVENANCE.md is not generated.
+#
+# With --check nothing is written: each of the three runs compares what it would write
+# with the checkout and its names file, all three runs are made, and the exit status is
+# 1 when any file differs. Without it the script stops at the first run that fails.
 set -euo pipefail
+CHECK=""
+if [ "${1:-}" = "--check" ]; then
+  CHECK="--check"
+  shift
+fi
+if [ "$#" -ne 2 ]; then
+  echo "usage: $0 [--check] <sources> <goat-transformers checkout>" >&2
+  exit 2
+fi
 SRC="$(cd "$1" && pwd)"
 W="$(cd "$2" && pwd)"
 GEN="$W/tools/gen"
+STATUS=0
+
+# One run of the generator. The three runs do not read one another's output.
+jsonschema2pack() {
+  if ! python3 -I "$GEN/jsonschema2pack.py" "$@" ${CHECK:+"$CHECK"}; then
+    STATUS=1
+    [ -n "$CHECK" ] || exit 1
+  fi
+}
 check() {
   local got
   got="$(git -C "$SRC/$1" rev-parse HEAD)"
@@ -30,7 +52,7 @@ cd "$W"
 
 # MDS 2.0: five data models, one kind each, selected by a member only that model has.
 M="$SRC/mds-openapi/models"
-python3 -I "$GEN/jsonschema2pack.py" \
+jsonschema2pack \
   --schema $(cd "$SRC" && find mds-openapi/models -name '*.yaml' | LC_ALL=C sort | sed "s|^|$SRC/|") \
   --message VehicleStatus="$M/vehicle-status.yaml" --message Trip="$M/trip.yaml" \
   --message Event="$M/event.yaml" --message Telemetry="$M/telemetry.yaml" --message Vehicle="$M/vehicle.yaml" \
@@ -54,7 +76,7 @@ python3 -I "$GEN/jsonschema2pack.py" \
 # STAC Item 1.1.0, a GeoJSON Feature. common.json declares a mistyped $id; the alias
 # points the references at the file. The geojson.org schemas are the wire's own structure.
 J="$SRC/stac-spec/item-spec/json-schema"
-python3 -I "$GEN/jsonschema2pack.py" \
+jsonschema2pack \
   --schema $(cd "$SRC" && ls stac-spec/item-spec/json-schema/*.json | LC_ALL=C sort | sed "s|^|$SRC/|") \
   --opaque https://geojson.org/schema/ \
   --alias "https://schemas.stacspec.org/v1.1.0/item-spec/json-schema/common.json=$J/common.json" \
@@ -70,7 +92,7 @@ python3 -I "$GEN/jsonschema2pack.py" \
 
 # WZDx 4.2 Device Feed: one FieldDeviceFeature, a GeoJSON Feature with a Point geometry.
 Z="$SRC/wzdx/schemas/4.2"
-python3 -I "$GEN/jsonschema2pack.py" \
+jsonschema2pack \
   --schema "$Z/DeviceFeed.json" "$Z/Direction.json" "$Z/BoundingBox.json" "$Z/FeedInfo.json" \
   --opaque https://geojson.org/schema/ \
   --message FieldDevice="$Z/DeviceFeed.json#/definitions/FieldDeviceFeature" \
@@ -81,3 +103,5 @@ python3 -I "$GEN/jsonschema2pack.py" \
   --source "https://github.com/usdot-jpo-ode/wzdx at tag v4.2, commit 42b98fcdd837e897ae3e208780c45ce61f7fc12a" \
   --out "$W" --model-dir "$W/model" --names-file "$GEN/names/wzdx-device.json" --notes-file "$GEN/notes/wzdx-device.md" \
   --cross "$W/packs/geojson/pack.def=$W/packs/geojson/vectors/01-geojson-to-cot.json:input"
+
+exit "$STATUS"

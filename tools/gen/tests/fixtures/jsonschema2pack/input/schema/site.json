@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Site",
+  "description": "A GeoJSON Feature of a synthetic site, written for the jsonschema2pack tests.",
+  "type": "object",
+  "required": ["type", "geometry", "properties"],
+  "properties": {
+    "type": {"enum": ["Feature"]},
+    "id": {"type": "string"},
+    "geometry": {"$ref": "https://geojson.example/schema/Point.json"},
+    "bbox": {"type": "array", "items": {"type": "number"}},
+    "properties": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "height": {"type": "number"},
+        "active": {"type": "boolean"},
+        "notes": {"type": "object"}
+      }
+    }
+  }
+}

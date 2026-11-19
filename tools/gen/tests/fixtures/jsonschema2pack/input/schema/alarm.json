@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Alarm",
+  "description": "An alarm of a synthetic station, written for the jsonschema2pack tests.",
+  "type": "object",
+  "required": ["alarmId", "level"],
+  "properties": {
+    "alarmId": {"type": "string"},
+    "level": {"type": "integer", "minimum": 1, "maximum": 5},
+    "station": {"$ref": "common.json#/$defs/StationRef"},
+    "raisedAt": {"type": "number", "multipleOf": 1, "description": "Milliseconds since the Unix epoch."}
+  }
+}

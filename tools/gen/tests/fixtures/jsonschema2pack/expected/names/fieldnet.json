@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "readings_samples|.|int": "readings_samples_value",
+  "readings|name|string": "readings_name",
+  "readings|value|float": "readings_value",
+  "tags|.|string": "tags_value",
+  "|alarmId|string": "alarm_id",
+  "|level|int": "level",
+  "|observedAt|string": "observed_at",
+  "|online|int": "online",
+  "|position.alt|float": "position_alt",
+  "|position.lat|float": "position_lat",
+  "|position.lon|float": "position_lon",
+  "|raisedAt|int": "raised_at",
+  "|speed|float": "speed",
+  "|stationId|string": "station",
+  "|station|string": "station_2",
+  "|status|string": "status"
+ },
+ "lists": {
+  "readings|samples": "readings_samples",
+  "|readings": "readings",
+  "|tags": "tags"
+ }
+}

@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.height|float": "properties_height",
+  "|properties.name|string": "properties_name"
+ },
+ "lists": {}
+}

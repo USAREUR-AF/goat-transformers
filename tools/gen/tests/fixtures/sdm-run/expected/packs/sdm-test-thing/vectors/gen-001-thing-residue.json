@@ -1,0 +1,7 @@
+{
+ "name": "gen-thing-residue",
+ "from": "sdm-test-thing",
+ "to": "sdm-test-thing",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Thing\",\"id\":\"s79123\",\"dateObserved\":\"2026-06-03T05:18:42.622Z\",\"level\":7.0625,\"location\":{\"type\":\"Point\"}}",
+ "expect": "{\"type\":\"Thing\",\"id\":\"s79123\",\"dateObserved\":\"2026-06-03T05:18:42.622Z\",\"level\":7.0625,\"location\":{\"type\":\"Point\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

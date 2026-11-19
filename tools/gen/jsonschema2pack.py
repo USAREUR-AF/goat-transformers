@@ -31,6 +31,11 @@ On the geojson wire (the message is one Feature) only the places the wire
 addresses are mapped: top-level members, one level of `properties`, and the
 Point coordinates through --map; the rest is residue, which that wire carries.
 
+Every file goes through tools/gen/genio.py. With --check nothing is written:
+each file the run would write is compared with the one under --out (and with the
+names file), every difference is reported, and the exit status is 1 when any
+file differs, is missing or would be removed.
+
 Usage: see --help. Run with `python3 -I`.
 """
 import argparse
@@ -42,6 +47,11 @@ import os
 import re
 import sys
 import urllib.parse
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio      # noqa: E402  (the directory of this file is put on the path above)
+
+NAME = "jsonschema2pack"
 
 MAX_DEPTH = 8
 MAX_KEY_LEN = 96
@@ -327,7 +337,8 @@ def yaml_load(text):
 
 
 def load_doc(path):
-    raw = open(path, "rb").read()
+    with open(path, "rb") as fh:
+        raw = fh.read()
     text = raw.decode("utf-8-sig")
     if path.endswith((".yaml", ".yml")):
         return yaml_load(text), raw
@@ -664,7 +675,8 @@ class Names:
         self.path = path
         self.data = {"keys": {}, "lists": {}}
         if os.path.exists(path):
-            self.data = json.load(open(path, encoding="utf-8"))
+            with open(path, encoding="utf-8") as fh:
+                self.data = json.load(fh)
         self.used = set(self.data["keys"].values()) | set(self.data["lists"].values())
 
     def key(self, ident, base):
@@ -691,11 +703,17 @@ class Names:
         self.used.add(name)
         return name
 
-    def save(self):
-        os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
-        with open(self.path, "w", encoding="utf-8") as fh:
-            json.dump(self.data, fh, indent=1, sort_keys=True)
-            fh.write("\n")
+    def text(self):
+        return json.dumps(self.data, indent=1, sort_keys=True) + "\n"
+
+
+def names_output(names_file, out):
+    """(Output, relative path) through which the names file is written: the
+    run's Output when the file lies under --out, one of its own otherwise."""
+    path = os.path.abspath(names_file)
+    if path.startswith(out.root + os.sep):
+        return out, os.path.relpath(path, out.root).replace(os.sep, "/")
+    return genio.Output(os.path.dirname(path), check=out.check), os.path.basename(path)
 
 
 def transform_for(leaf, wire, shared_type=None):
@@ -1336,7 +1354,9 @@ def read_module_keys(model_dir):
         if not fn.endswith(".def"):
             continue
         mod = None
-        for raw in open(os.path.join(model_dir, fn), encoding="utf-8"):
+        with open(os.path.join(model_dir, fn), encoding="utf-8") as fh:
+            text = fh.read()
+        for raw in text.split("\n"):
             t = tokens(raw)
             if not t:
                 continue
@@ -1350,6 +1370,14 @@ def read_module_keys(model_dir):
 
 
 def main(argv=None):
+    try:
+        return run(argv)
+    except GenError as e:
+        sys.stderr.write("%s: %s\n" % (NAME, e))
+        return 1
+
+
+def run(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--schema", nargs="+", required=True, help="every schema file of the set (JSON or YAML)")
     ap.add_argument("--alias", action="append", default=[], metavar="URI=FILE")
@@ -1369,7 +1397,7 @@ def main(argv=None):
     ap.add_argument("--title", required=True)
     ap.add_argument("--source", action="append", default=[])
     ap.add_argument("--license", required=True, help="the license statement, for source lines and pack.md")
-    ap.add_argument("--out", required=True)
+    genio.add_arguments(ap, what="the checkout that receives model/ and packs/")
     ap.add_argument("--model-dir", required=True, help="the checkout's model/ (core.def, track.def, ...)")
     ap.add_argument("--names-file", required=True)
     ap.add_argument("--notes-file", help="hand-written notes placed into pack.md")
@@ -1584,35 +1612,37 @@ def main(argv=None):
     for spec in a.cross:
         cross.append(make_cross(spec, a, pack, kinds, shared_keys, derives))
 
-    # write
-    pdir = os.path.join(a.out, "packs", a.format)
-    vdir = os.path.join(pdir, "vectors")
-    os.makedirs(vdir, exist_ok=True)
-    os.makedirs(os.path.join(a.out, "model"), exist_ok=True)
-    for fn in os.listdir(vdir):
-        if fn.startswith("gen-"):
-            os.remove(os.path.join(vdir, fn))
-    total = 0
-    for fn, v in vectors:
-        t = json.dumps(v, indent=1, ensure_ascii=False) + "\n"
-        total += len(t)
-        open(os.path.join(vdir, fn), "w", encoding="utf-8").write(t)
+    # write, through genio: with --check nothing is written and every difference is reported
+    out = genio.Output(a.out, check=a.check)
+    pdir = "packs/%s" % a.format
+    vdir = pdir + "/vectors"
+    texts = [(fn, json.dumps(v, indent=1, ensure_ascii=False) + "\n") for fn, v in vectors]
+    total = sum(len(t) for _, t in texts)
     if total > VECTOR_BUDGET:
         raise GenError("vectors of %d bytes are over the budget" % total)
+    new = {fn for fn, _ in texts}
+    for old in out.listdir(vdir):
+        if old.startswith("gen-") and old not in new:
+            out.remove("%s/%s" % (vdir, old))
+    for fn, t in texts:
+        out.write("%s/%s" % (vdir, fn), t)
     for other, fn, v, _c, _d in cross:
-        od = os.path.join(a.out, "packs", other, "vectors")
-        os.makedirs(od, exist_ok=True)
-        open(os.path.join(od, fn), "w", encoding="utf-8").write(json.dumps(v, indent=1, ensure_ascii=False) + "\n")
-    open(os.path.join(pdir, "pack.def"), "w", encoding="utf-8").write(pack_text)
-    open(os.path.join(a.out, "model", a.module + ".def"), "w", encoding="utf-8").write(module_text)
-    write_md(a, reg, kinds, bound, module_keys, module_lists, vectors, cross, use_kinds,
-             os.path.join(pdir, "pack.md"))
-    names.save()
-    print(json.dumps({"format": a.format, "kinds": len(kinds), "keys": len(module_keys),
-                      "lists": len(module_lists), "bound": len(bound), "vectors": len(vectors),
-                      "cross": [c[1] for c in cross],
-                      "not_mapped": sum(len(k["notmapped"]) for k in kinds)}, indent=1))
-    return 0
+        out.write("packs/%s/vectors/%s" % (other, fn), json.dumps(v, indent=1, ensure_ascii=False) + "\n")
+    out.write(pdir + "/pack.def", pack_text)
+    out.write("model/%s.def" % a.module, module_text)
+    out.write(pdir + "/pack.md", write_md(a, reg, kinds, bound, module_keys, module_lists, vectors, cross,
+                                          use_kinds))
+    names_out, names_rel = names_output(a.names_file, out)
+    names_out.write(names_rel, names.text())
+    if not a.check:
+        print(json.dumps({"format": a.format, "kinds": len(kinds), "keys": len(module_keys),
+                          "lists": len(module_lists), "bound": len(bound), "vectors": len(vectors),
+                          "cross": [c[1] for c in cross],
+                          "not_mapped": sum(len(k["notmapped"]) for k in kinds)}, indent=1))
+    status = out.report(NAME)
+    if names_out is not out:
+        status = max(status, names_out.report(NAME + " (names file)"))
+    return status
 
 
 def walk_leaves(lines):
@@ -1729,10 +1759,12 @@ def make_cross(spec, a, pack, kinds, shared_keys, derives):
         spec, ctx_part = spec.split("@", 1)
     pdef, rest = spec.split("=", 1)
     vpath, field = rest.rsplit(":", 1)
-    other = Pack(open(pdef, encoding="utf-8").read())
+    with open(pdef, encoding="utf-8") as fh:
+        other = Pack(fh.read())
     if other.wire not in ("json", "geojson") or other.kinds:
         raise GenError("--cross: %s is not a json or geojson pack without kinds" % pdef)
-    v = json.load(open(vpath, encoding="utf-8"))
+    with open(vpath, encoding="utf-8") as fh:
+        v = json.load(fh)
     text = v[field]
     _, ent, _ = decode(other, text)
     source_keys = list(ent)
@@ -1805,7 +1837,8 @@ def all_field_lines(pack):
             yield x
 
 
-def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds, md_path):
+def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
+    """The text of pack.md."""
     w = []
     w.append("# Pack: %s\n" % a.format)
     w.append("%s, as %s. Generated by `tools/gen/jsonschema2pack.py`. Wire `%s`. Edit the generator, "
@@ -1860,7 +1893,8 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds, md_pa
     else:
         w.append("None.\n")
     if a.notes_file:
-        w.append(open(a.notes_file, encoding="utf-8").read().rstrip() + "\n")
+        with open(a.notes_file, encoding="utf-8") as fh:
+            w.append(fh.read().rstrip() + "\n")
     w.append("## Not mapped\n")
     reasons = collections.Counter(why for k in kinds for _, why in k["notmapped"])
     if reasons:
@@ -1892,14 +1926,10 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds, md_pa
                                           (" Context: %s." % ", ".join("`%s`" % x for x in v.get("context", {})))
                                           if v.get("context") else ""))
     w.append("")
-    open(md_path, "w", encoding="utf-8").write("\n".join(w) + "\n")
+    return "\n".join(w) + "\n"
 
 
 KEYS_CACHE = {}
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except GenError as e:
-        sys.stderr.write("jsonschema2pack: %s\n" % e)
-        sys.exit(1)
+    sys.exit(main())

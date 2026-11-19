@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|dateObserved|string": "date_observed",
+  "|id|string": "id",
+  "|level|float": "level",
+  "|location.type|string": "location_type",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

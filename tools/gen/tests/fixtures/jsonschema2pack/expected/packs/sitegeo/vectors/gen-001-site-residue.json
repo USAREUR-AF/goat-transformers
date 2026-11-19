@@ -1,0 +1,7 @@
+{
+ "name": "gen-site-residue",
+ "from": "sitegeo",
+ "to": "sitegeo",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"name\":\"s67052\",\"height\":-3.25,\"notes\":{\"r\":\"1\"}},\"id\":\"s38184\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"name\":\"s67052\",\"height\":-3.25,\"notes\":{\"r\":\"1\"}},\"id\":\"s38184\"}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-alarm-residue",
+ "from": "fieldnet",
+ "to": "fieldnet",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"alarmId\":\"s43161\",\"level\":4,\"station\":\"0bb501a1-1213-4360-82a5-a2d4e89d1787\",\"raisedAt\":1736357382400}",
+ "expect": "{\"alarmId\":\"s43161\",\"level\":4,\"station\":\"0bb501a1-1213-4360-82a5-a2d4e89d1787\",\"raisedAt\":1736357382400,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

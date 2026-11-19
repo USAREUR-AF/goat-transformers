@@ -1,0 +1,16 @@
+{
+ "name": "gen-note-geo-to-fieldnet",
+ "from": "note-geo",
+ "to": "fieldnet",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25]},\"properties\":{\"time_ms\":1700000000000},\"id\":\"N-1\"}",
+ "context": {
+  "fieldnet.station": "0f1e2d3c-4b5a-4968-8776-655443322110"
+ },
+ "expect": "{\"stationId\":\"N-1\",\"observedAt\":\"2023-11-14T22:13:20.000Z\",\"position\":{\"lat\":48.25,\"lon\":11.5}}",
+ "model": {
+  "uid": "N-1",
+  "time_ms": "1700000000000",
+  "lat": "48.25",
+  "lon": "11.5"
+ }
+}
