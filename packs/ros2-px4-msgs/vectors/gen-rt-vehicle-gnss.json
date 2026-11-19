@@ -1,0 +1,19 @@
+{
+  "name": "rt-vehicle_gnss",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_gnss\",\"type\":\"px4_msgs/msg/VehicleGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"receiver\":{\"timestamp\":370370367039,\"timestamp_sample\":493827156052,\"device_id\":2147686170,\"latitude\":-6.042,\"longitude\":7.049,\"altitude_msl\":8.056,\"altitude_ellipsoid\":-9.063,\"speed_accuracy\":-2.625,\"course_accuracy\":-2.375,\"fix_type\":27,\"eph\":-1.875,\"epv\":-1.625,\"hdop\":-1.375,\"vdop\":-1.125,\"noise\":688558,\"automatic_gain_control\":40933,\"jamming_state\":156,\"jamming_indicator\":810067,\"spoofing_state\":10,\"authentication_state\":65,\"ground_speed\":0.625,\"vel_north\":0.875,\"vel_east\":1.125,\"vel_down\":1.375,\"course\":1.625,\"vel_ned_valid\":false,\"timestamp_time_relative\":1174594,\"time_utc_usec\":3703703670390,\"satellites_used\":48,\"system_error\":2148779751,\"rtcm_injection_rate\":3.125,\"selected_rtcm_instance\":213,\"corrections_protocol\":12,\"corrections_crc_failed\":false,\"corrections_msg_used\":122},\"antenna_offset\":[4.375,4.625,4.875],\"selected_instance\":86,\"selection_count\":141,\"selection_reason\":196,\"usable\":false,\"strict\":true,\"failed_strict_checks\":60905,\"failed_relaxed_checks\":35872},\"id\":\"gen-vehicle_gnss\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_gnss\",\"type\":\"px4_msgs/msg/VehicleGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"receiver\":{\"timestamp\":370370367039,\"timestamp_sample\":493827156052,\"device_id\":2147686170,\"latitude\":-6.042,\"longitude\":7.049,\"altitude_msl\":8.056,\"altitude_ellipsoid\":-9.063,\"speed_accuracy\":-2.625,\"course_accuracy\":-2.375,\"fix_type\":27,\"eph\":-1.875,\"epv\":-1.625,\"hdop\":-1.375,\"vdop\":-1.125,\"noise\":688558,\"automatic_gain_control\":40933,\"jamming_state\":156,\"jamming_indicator\":810067,\"spoofing_state\":10,\"authentication_state\":65,\"ground_speed\":0.625,\"vel_north\":0.875,\"vel_east\":1.125,\"vel_down\":1.375,\"course\":1.625,\"vel_ned_valid\":false,\"timestamp_time_relative\":1174594,\"time_utc_usec\":3703703670390,\"satellites_used\":48,\"system_error\":2148779751,\"rtcm_injection_rate\":3.125,\"selected_rtcm_instance\":213,\"corrections_protocol\":12,\"corrections_crc_failed\":false,\"corrections_msg_used\":122},\"antenna_offset\":[4.375,4.625,4.875],\"selected_instance\":86,\"selection_count\":141,\"selection_reason\":196,\"usable\":false,\"strict\":true,\"failed_strict_checks\":60905,\"failed_relaxed_checks\":35872},\"id\":\"gen-vehicle_gnss\"}",
+  "model": {
+    "@kind": "vehicle_gnss",
+    "ros2px4.vehicle_gnss_timestamp": "123456789013",
+    "ros2px4.vehicle_gnss_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_gnss_receiver_timestamp": "370370367039",
+    "ros2px4.vehicle_gnss_receiver_timestamp_sample": "493827156052",
+    "ros2px4.vehicle_gnss_receiver_device_id": "2147686170",
+    "ros2px4.vehicle_gnss_antenna_offset.#": "3",
+    "ros2px4.vehicle_gnss_antenna_offset[0].ros2px4.vehicle_gnss_antenna_offset_value": "4.375",
+    "ros2px4.topic": "/gen/vehicle_gnss"
+  }
+}

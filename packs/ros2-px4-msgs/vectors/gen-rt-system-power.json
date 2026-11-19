@@ -1,0 +1,19 @@
+{
+  "name": "rt-system_power",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/system_power\",\"type\":\"px4_msgs/msg/SystemPower\",\"msg\":{\"timestamp\":123456789013,\"voltage5v_v\":-4.625,\"voltage_payload_v\":-4.375,\"sensors3v3\":[-4.125,-3.875,-3.625,-3.375],\"sensors3v3_valid\":63,\"usb_connected\":118,\"brick_valid\":173,\"usb_valid\":228,\"servo_valid\":27,\"periph_5v_oc\":82,\"hipower_5v_oc\":137,\"comp_5v_valid\":192,\"can1_gps1_5v_valid\":247,\"payload_v_valid\":46},\"id\":\"gen-system_power\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/system_power\",\"type\":\"px4_msgs/msg/SystemPower\",\"msg\":{\"timestamp\":123456789013,\"voltage5v_v\":-4.625,\"voltage_payload_v\":-4.375,\"sensors3v3\":[-4.125,-3.875,-3.625,-3.375],\"sensors3v3_valid\":63,\"usb_connected\":118,\"brick_valid\":173,\"usb_valid\":228,\"servo_valid\":27,\"periph_5v_oc\":82,\"hipower_5v_oc\":137,\"comp_5v_valid\":192,\"can1_gps1_5v_valid\":247,\"payload_v_valid\":46},\"id\":\"gen-system_power\"}",
+  "model": {
+    "@kind": "system_power",
+    "ros2px4.system_power_timestamp": "123456789013",
+    "ros2px4.system_power_voltage5v_v": "-4.625",
+    "ros2px4.system_power_voltage_payload_v": "-4.375",
+    "ros2px4.system_power_sensors3v3.#": "4",
+    "ros2px4.system_power_sensors3v3[0].ros2px4.system_power_sensors3v3_value": "-4.125",
+    "ros2px4.system_power_sensors3v3_valid": "63",
+    "ros2px4.system_power_usb_connected": "118",
+    "ros2px4.topic": "/gen/system_power"
+  }
+}

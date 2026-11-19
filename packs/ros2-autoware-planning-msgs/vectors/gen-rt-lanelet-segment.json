@@ -1,0 +1,16 @@
+{
+  "name": "rt-lanelet_segment",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_segment\",\"type\":\"autoware_planning_msgs/msg/LaneletSegment\",\"msg\":{\"preferred_primitive\":{\"id\":-123456789013,\"primitive_type\":\"s2\"},\"primitives\":[{\"id\":-370370367039,\"primitive_type\":\"s4\"},{\"id\":-617283945065,\"primitive_type\":\"s6\"}]},\"id\":\"gen-lanelet_segment\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_segment\",\"type\":\"autoware_planning_msgs/msg/LaneletSegment\",\"msg\":{\"preferred_primitive\":{\"id\":-123456789013,\"primitive_type\":\"s2\"},\"primitives\":[{\"id\":-370370367039,\"primitive_type\":\"s4\"},{\"id\":-617283945065,\"primitive_type\":\"s6\"}]},\"id\":\"gen-lanelet_segment\"}",
+  "model": {
+    "@kind": "lanelet_segment",
+    "ros2autowareplanning.lanelet_segment_preferred_primitive_id": "-123456789013",
+    "ros2autowareplanning.lanelet_segment_preferred_primitive_primitive_type": "s2",
+    "ros2autowareplanning.lanelet_segment_primitives.#": "2",
+    "ros2autowareplanning.lanelet_segment_primitives[0].ros2autowareplanning.lanelet_segment_primitives_id": "-370370367039",
+    "ros2autowareplanning.topic": "/gen/lanelet_segment"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-metrics_message",
+  "from": "ros2-statistics-msgs",
+  "to": "ros2-statistics-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/metrics_message\",\"type\":\"statistics_msgs/msg/MetricsMessage\",\"msg\":{\"measurement_source_name\":\"s1\",\"metrics_source\":\"s2\",\"unit\":\"s3\",\"window_start\":{\"sec\":162019,\"nanosec\":2147686170},\"window_stop\":{\"sec\":243025,\"nanosec\":2147767176},\"statistics\":[{\"data_type\":63,\"data\":-9.063},{\"data_type\":173,\"data\":11.077}]},\"id\":\"gen-metrics_message\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/metrics_message\",\"type\":\"statistics_msgs/msg/MetricsMessage\",\"msg\":{\"measurement_source_name\":\"s1\",\"metrics_source\":\"s2\",\"unit\":\"s3\",\"window_start\":{\"sec\":162019,\"nanosec\":2147686170},\"window_stop\":{\"sec\":243025,\"nanosec\":2147767176},\"statistics\":[{\"data_type\":63,\"data\":-9.063},{\"data_type\":173,\"data\":11.077}]},\"id\":\"gen-metrics_message\"}",
+  "model": {
+    "@kind": "metrics_message",
+    "ros2statistics.metrics_message_measurement_source_name": "s1",
+    "ros2statistics.metrics_message_metrics_source": "s2",
+    "ros2statistics.metrics_message_unit": "s3",
+    "ros2statistics.metrics_message_window_start_sec": "162019",
+    "ros2statistics.metrics_message_window_start_nanosec": "2147686170",
+    "ros2statistics.metrics_message_statistics.#": "2",
+    "ros2statistics.metrics_message_statistics[0].ros2statistics.metrics_message_statistics_data_type": "63",
+    "ros2statistics.topic": "/gen/metrics_message"
+  }
+}

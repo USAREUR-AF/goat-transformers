@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_dgpssv",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_dgpssv\",\"type\":\"ublox_msgs/msg/NavDGPSSV\",\"msg\":{\"svid\":190,\"flags\":245,\"age_c\":23212,\"prc\":-4.125,\"prrc\":-3.875},\"id\":\"gen-nav_dgpssv\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_dgpssv\",\"type\":\"ublox_msgs/msg/NavDGPSSV\",\"msg\":{\"svid\":190,\"flags\":245,\"age_c\":23212,\"prc\":-4.125,\"prrc\":-3.875},\"id\":\"gen-nav_dgpssv\"}",
+  "model": {
+    "@kind": "nav_dgpssv",
+    "ros2ublox.nav_dgpssv_svid": "190",
+    "ros2ublox.nav_dgpssv_flags": "245",
+    "ros2ublox.nav_dgpssv_age_c": "23212",
+    "ros2ublox.nav_dgpssv_prc": "-4.125",
+    "ros2ublox.nav_dgpssv_prrc": "-3.875",
+    "ros2ublox.topic": "/gen/nav_dgpssv"
+  }
+}

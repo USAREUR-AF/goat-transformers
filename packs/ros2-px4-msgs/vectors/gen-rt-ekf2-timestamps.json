@@ -1,0 +1,17 @@
+{
+  "name": "rt-ekf2_timestamps",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ekf2_timestamps\",\"type\":\"px4_msgs/msg/Ekf2Timestamps\",\"msg\":{\"timestamp\":123456789013,\"airspeed_timestamp_rel\":15477,\"airspeed_validated_timestamp_rel\":-9556,\"distance_sensor_timestamp_rel\":30947,\"optical_flow_timestamp_rel\":5914,\"vehicle_air_data_timestamp_rel\":-19119,\"vehicle_magnetometer_timestamp_rel\":21384,\"visual_odometry_timestamp_rel\":-3649},\"id\":\"gen-ekf2_timestamps\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ekf2_timestamps\",\"type\":\"px4_msgs/msg/Ekf2Timestamps\",\"msg\":{\"timestamp\":123456789013,\"airspeed_timestamp_rel\":15477,\"airspeed_validated_timestamp_rel\":-9556,\"distance_sensor_timestamp_rel\":30947,\"optical_flow_timestamp_rel\":5914,\"vehicle_air_data_timestamp_rel\":-19119,\"vehicle_magnetometer_timestamp_rel\":21384,\"visual_odometry_timestamp_rel\":-3649},\"id\":\"gen-ekf2_timestamps\"}",
+  "model": {
+    "@kind": "ekf2_timestamps",
+    "ros2px4.ekf2_timestamps_timestamp": "123456789013",
+    "ros2px4.ekf2_timestamps_airspeed_timestamp_rel": "15477",
+    "ros2px4.ekf2_timestamps_airspeed_validated_timestamp_rel": "-9556",
+    "ros2px4.ekf2_timestamps_distance_sensor_timestamp_rel": "30947",
+    "ros2px4.ekf2_timestamps_optical_flow_timestamp_rel": "5914",
+    "ros2px4.topic": "/gen/ekf2_timestamps"
+  }
+}

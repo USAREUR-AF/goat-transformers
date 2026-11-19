@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_dop",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_dop\",\"type\":\"ublox_msgs/msg/NavDOP\",\"msg\":{\"i_tow\":2147524158,\"g_dop\":48245,\"p_dop\":23212,\"t_dop\":63715,\"v_dop\":38682,\"h_dop\":13649,\"n_dop\":54152,\"e_dop\":29119},\"id\":\"gen-nav_dop\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_dop\",\"type\":\"ublox_msgs/msg/NavDOP\",\"msg\":{\"i_tow\":2147524158,\"g_dop\":48245,\"p_dop\":23212,\"t_dop\":63715,\"v_dop\":38682,\"h_dop\":13649,\"n_dop\":54152,\"e_dop\":29119},\"id\":\"gen-nav_dop\"}",
+  "model": {
+    "@kind": "nav_dop",
+    "ros2ublox.nav_dop_i_tow": "2147524158",
+    "ros2ublox.nav_dop_g_dop": "48245",
+    "ros2ublox.nav_dop_p_dop": "23212",
+    "ros2ublox.nav_dop_t_dop": "63715",
+    "ros2ublox.nav_dop_v_dop": "38682",
+    "ros2ublox.topic": "/gen/nav_dop"
+  }
+}

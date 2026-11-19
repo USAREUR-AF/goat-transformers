@@ -1,0 +1,17 @@
+{
+  "name": "rt-transponder_report",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/transponder_report\",\"type\":\"px4_msgs/msg/TransponderReport\",\"msg\":{\"timestamp\":123456789013,\"icao_address\":2147564661,\"lat\":-3.021,\"lon\":4.028,\"altitude_type\":154,\"altitude\":-3.625,\"heading\":-3.375,\"hor_velocity\":-3.125,\"ver_velocity\":-2.875,\"callsign\":\"Ch7/AIA=\",\"emitter_type\":228,\"tslc\":27,\"flags\":35026,\"squawk\":9993,\"uas_id\":\"Dy3/AIA=\"},\"id\":\"gen-transponder_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/transponder_report\",\"type\":\"px4_msgs/msg/TransponderReport\",\"msg\":{\"timestamp\":123456789013,\"icao_address\":2147564661,\"lat\":-3.021,\"lon\":4.028,\"altitude_type\":154,\"altitude\":-3.625,\"heading\":-3.375,\"hor_velocity\":-3.125,\"ver_velocity\":-2.875,\"callsign\":\"Ch7/AIA=\",\"emitter_type\":228,\"tslc\":27,\"flags\":35026,\"squawk\":9993,\"uas_id\":\"Dy3/AIA=\"},\"id\":\"gen-transponder_report\"}",
+  "model": {
+    "@kind": "transponder_report",
+    "ros2px4.transponder_report_timestamp": "123456789013",
+    "ros2px4.transponder_report_icao_address": "2147564661",
+    "ros2px4.transponder_report_lat": "-3.021",
+    "ros2px4.transponder_report_lon": "4.028",
+    "ros2px4.transponder_report_altitude_type": "154",
+    "ros2px4.topic": "/gen/transponder_report"
+  }
+}

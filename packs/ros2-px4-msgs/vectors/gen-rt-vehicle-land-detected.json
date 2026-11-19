@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_land_detected",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_land_detected\",\"type\":\"px4_msgs/msg/VehicleLandDetected\",\"msg\":{\"timestamp\":123456789013,\"freefall\":false,\"ground_contact\":true,\"maybe_landed\":false,\"landed\":true,\"in_ground_effect\":false,\"in_descend\":true,\"has_low_throttle\":false,\"vertical_movement\":true,\"horizontal_movement\":false,\"rotational_movement\":true,\"close_to_ground_or_skipped_check\":false,\"at_rest\":true},\"id\":\"gen-vehicle_land_detected\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_land_detected\",\"type\":\"px4_msgs/msg/VehicleLandDetected\",\"msg\":{\"timestamp\":123456789013,\"freefall\":false,\"ground_contact\":true,\"maybe_landed\":false,\"landed\":true,\"in_ground_effect\":false,\"in_descend\":true,\"has_low_throttle\":false,\"vertical_movement\":true,\"horizontal_movement\":false,\"rotational_movement\":true,\"close_to_ground_or_skipped_check\":false,\"at_rest\":true},\"id\":\"gen-vehicle_land_detected\"}",
+  "model": {
+    "@kind": "vehicle_land_detected",
+    "ros2px4.vehicle_land_detected_timestamp": "123456789013",
+    "ros2px4.vehicle_land_detected_freefall": "0",
+    "ros2px4.vehicle_land_detected_ground_contact": "1",
+    "ros2px4.vehicle_land_detected_maybe_landed": "0",
+    "ros2px4.vehicle_land_detected_landed": "1",
+    "ros2px4.topic": "/gen/vehicle_land_detected"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-terrain_report",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_report\",\"type\":\"mavros_msgs/msg/TerrainReport\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"latitude\":4.028,\"longitude\":5.035,\"spacing\":13649,\"terrain_height\":-3.375,\"current_height\":-3.125,\"pending\":4086,\"loaded\":44589},\"id\":\"gen-terrain_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_report\",\"type\":\"mavros_msgs/msg/TerrainReport\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"latitude\":4.028,\"longitude\":5.035,\"spacing\":13649,\"terrain_height\":-3.375,\"current_height\":-3.125,\"pending\":4086,\"loaded\":44589},\"id\":\"gen-terrain_report\"}",
+  "model": {
+    "@kind": "terrain_report",
+    "ros2mavros.terrain_report_header_stamp_sec": "40510",
+    "ros2mavros.terrain_report_header_stamp_nanosec": "2147564661",
+    "ros2mavros.terrain_report_header_frame_id": "s3",
+    "ros2mavros.terrain_report_latitude": "4.028",
+    "ros2mavros.terrain_report_longitude": "5.035",
+    "ros2mavros.topic": "/gen/terrain_report"
+  }
+}

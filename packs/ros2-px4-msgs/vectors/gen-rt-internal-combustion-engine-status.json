@@ -1,0 +1,17 @@
+{
+  "name": "rt-internal_combustion_engine_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/internal_combustion_engine_status\",\"type\":\"px4_msgs/msg/InternalCombustionEngineStatus\",\"msg\":{\"timestamp\":123456789013,\"state\":245,\"substate\":44,\"flags\":2147645667,\"engine_load_percent\":154,\"engine_speed_rpm\":2147726673,\"spark_dwell_time_ms\":-3.375,\"atmospheric_pressure_kpa\":-3.125,\"intake_manifold_pressure_kpa\":-2.875,\"intake_manifold_temperature\":-2.625,\"coolant_temperature\":-2.375,\"oil_pressure\":-2.125,\"oil_temperature\":-1.875,\"fuel_pressure\":-1.625,\"fuel_consumption_rate_cm3pm\":-1.375,\"estimated_consumed_fuel_volume_cm3\":-1.125,\"throttle_position_percent\":46,\"ecu_index\":101,\"spark_plug_usage\":156,\"ignition_timing_deg\":-0.125,\"injection_time_ms\":0.125,\"cylinder_head_temperature\":0.375,\"exhaust_gas_temperature\":0.625,\"lambda_coefficient\":0.875,\"pid_idle_rpm_integral\":1.125},\"id\":\"gen-internal_combustion_engine_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/internal_combustion_engine_status\",\"type\":\"px4_msgs/msg/InternalCombustionEngineStatus\",\"msg\":{\"timestamp\":123456789013,\"state\":245,\"substate\":44,\"flags\":2147645667,\"engine_load_percent\":154,\"engine_speed_rpm\":2147726673,\"spark_dwell_time_ms\":-3.375,\"atmospheric_pressure_kpa\":-3.125,\"intake_manifold_pressure_kpa\":-2.875,\"intake_manifold_temperature\":-2.625,\"coolant_temperature\":-2.375,\"oil_pressure\":-2.125,\"oil_temperature\":-1.875,\"fuel_pressure\":-1.625,\"fuel_consumption_rate_cm3pm\":-1.375,\"estimated_consumed_fuel_volume_cm3\":-1.125,\"throttle_position_percent\":46,\"ecu_index\":101,\"spark_plug_usage\":156,\"ignition_timing_deg\":-0.125,\"injection_time_ms\":0.125,\"cylinder_head_temperature\":0.375,\"exhaust_gas_temperature\":0.625,\"lambda_coefficient\":0.875,\"pid_idle_rpm_integral\":1.125},\"id\":\"gen-internal_combustion_engine_status\"}",
+  "model": {
+    "@kind": "internal_combustion_engine_status",
+    "ros2px4.internal_combustion_engine_status_timestamp": "123456789013",
+    "ros2px4.internal_combustion_engine_status_state": "245",
+    "ros2px4.internal_combustion_engine_status_substate": "44",
+    "ros2px4.internal_combustion_engine_status_flags": "2147645667",
+    "ros2px4.internal_combustion_engine_status_engine_load_percent": "154",
+    "ros2px4.topic": "/gen/internal_combustion_engine_status"
+  }
+}

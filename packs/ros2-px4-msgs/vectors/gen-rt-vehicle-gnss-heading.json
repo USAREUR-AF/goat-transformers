@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_gnss_heading",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_gnss_heading\",\"type\":\"px4_msgs/msg/VehicleGnssHeading\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"heading\":-4.125,\"heading_accuracy\":-3.875,\"heading_offset\":-3.625,\"baseline_length\":-3.375,\"jamming_state\":63,\"spoofing_state\":118,\"usable\":false},\"id\":\"gen-vehicle_gnss_heading\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_gnss_heading\",\"type\":\"px4_msgs/msg/VehicleGnssHeading\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"heading\":-4.125,\"heading_accuracy\":-3.875,\"heading_offset\":-3.625,\"baseline_length\":-3.375,\"jamming_state\":63,\"spoofing_state\":118,\"usable\":false},\"id\":\"gen-vehicle_gnss_heading\"}",
+  "model": {
+    "@kind": "vehicle_gnss_heading",
+    "ros2px4.vehicle_gnss_heading_timestamp": "123456789013",
+    "ros2px4.vehicle_gnss_heading_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_gnss_heading_device_id": "2147605164",
+    "ros2px4.vehicle_gnss_heading_heading": "-4.125",
+    "ros2px4.vehicle_gnss_heading_heading_accuracy": "-3.875",
+    "ros2px4.topic": "/gen/vehicle_gnss_heading"
+  }
+}

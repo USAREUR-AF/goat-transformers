@@ -1,0 +1,22 @@
+{
+  "name": "rt-radar_info",
+  "from": "ros2-autoware-sensing-msgs",
+  "to": "ros2-autoware-sensing-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_info\",\"type\":\"autoware_sensing_msgs/msg/RadarInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"object_fields_info\":[{\"field_name\":{\"data\":\"s4\"},\"min_value_available\":true,\"max_value_available\":false,\"resolution_available\":true,\"min_value\":-3.125,\"max_value\":-2.875,\"resolution\":-2.625},{\"field_name\":{\"data\":\"s11\"},\"min_value_available\":false,\"max_value_available\":true,\"resolution_available\":false,\"min_value\":-1.375,\"max_value\":-1.125,\"resolution\":-0.875}],\"detection_fields_info\":[{\"field_name\":{\"data\":\"s18\"},\"min_value_available\":true,\"max_value_available\":false,\"resolution_available\":true,\"min_value\":0.375,\"max_value\":0.625,\"resolution\":0.875},{\"field_name\":{\"data\":\"s25\"},\"min_value_available\":false,\"max_value_available\":true,\"resolution_available\":false,\"min_value\":2.125,\"max_value\":2.375,\"resolution\":2.625}],\"available_classes\":[2148779751,2148820254],\"absolute_dynamics\":false},\"id\":\"gen-radar_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_info\",\"type\":\"autoware_sensing_msgs/msg/RadarInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"object_fields_info\":[{\"field_name\":{\"data\":\"s4\"},\"min_value_available\":true,\"max_value_available\":false,\"resolution_available\":true,\"min_value\":-3.125,\"max_value\":-2.875,\"resolution\":-2.625},{\"field_name\":{\"data\":\"s11\"},\"min_value_available\":false,\"max_value_available\":true,\"resolution_available\":false,\"min_value\":-1.375,\"max_value\":-1.125,\"resolution\":-0.875}],\"detection_fields_info\":[{\"field_name\":{\"data\":\"s18\"},\"min_value_available\":true,\"max_value_available\":false,\"resolution_available\":true,\"min_value\":0.375,\"max_value\":0.625,\"resolution\":0.875},{\"field_name\":{\"data\":\"s25\"},\"min_value_available\":false,\"max_value_available\":true,\"resolution_available\":false,\"min_value\":2.125,\"max_value\":2.375,\"resolution\":2.625}],\"available_classes\":[2148779751,2148820254],\"absolute_dynamics\":false},\"id\":\"gen-radar_info\"}",
+  "model": {
+    "@kind": "radar_info",
+    "ros2autowaresensing.radar_info_header_stamp_sec": "40510",
+    "ros2autowaresensing.radar_info_header_stamp_nanosec": "2147564661",
+    "ros2autowaresensing.radar_info_header_frame_id": "s3",
+    "ros2autowaresensing.radar_info_object_fields_info.#": "2",
+    "ros2autowaresensing.radar_info_object_fields_info[0].ros2autowaresensing.radar_info_object_fields_info_field_name_data": "s4",
+    "ros2autowaresensing.radar_info_detection_fields_info.#": "2",
+    "ros2autowaresensing.radar_info_detection_fields_info[0].ros2autowaresensing.radar_info_detection_fields_info_field_name_data": "s18",
+    "ros2autowaresensing.radar_info_available_classes.#": "2",
+    "ros2autowaresensing.radar_info_available_classes[0].ros2autowaresensing.radar_info_available_classes_value": "2148779751",
+    "ros2autowaresensing.radar_info_absolute_dynamics": "0",
+    "ros2autowaresensing.topic": "/gen/radar_info"
+  }
+}

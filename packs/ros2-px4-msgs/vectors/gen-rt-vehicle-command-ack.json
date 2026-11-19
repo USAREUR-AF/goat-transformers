@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_command_ack",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command_ack\",\"type\":\"px4_msgs/msg/VehicleCommandAck\",\"msg\":{\"timestamp\":123456789013,\"command\":2147564661,\"result\":44,\"result_param1\":99,\"result_param2\":202522,\"target_system\":2147726673,\"target_component\":54152,\"from_external\":false},\"id\":\"gen-vehicle_command_ack\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command_ack\",\"type\":\"px4_msgs/msg/VehicleCommandAck\",\"msg\":{\"timestamp\":123456789013,\"command\":2147564661,\"result\":44,\"result_param1\":99,\"result_param2\":202522,\"target_system\":2147726673,\"target_component\":54152,\"from_external\":false},\"id\":\"gen-vehicle_command_ack\"}",
+  "model": {
+    "@kind": "vehicle_command_ack",
+    "ros2px4.vehicle_command_ack_timestamp": "123456789013",
+    "ros2px4.vehicle_command_ack_command": "2147564661",
+    "ros2px4.vehicle_command_ack_result": "44",
+    "ros2px4.vehicle_command_ack_result_param1": "99",
+    "ros2px4.vehicle_command_ack_result_param2": "202522",
+    "ros2px4.topic": "/gen/vehicle_command_ack"
+  }
+}

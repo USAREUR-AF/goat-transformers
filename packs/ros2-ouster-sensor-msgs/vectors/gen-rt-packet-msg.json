@@ -1,0 +1,13 @@
+{
+  "name": "rt-packet_msg",
+  "from": "ros2-ouster-sensor-msgs",
+  "to": "ros2-ouster-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/packet_msg\",\"type\":\"ouster_sensor_msgs/msg/PacketMsg\",\"msg\":{\"buf\":\"AQP/AIA=\"},\"id\":\"gen-packet_msg\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/packet_msg\",\"type\":\"ouster_sensor_msgs/msg/PacketMsg\",\"msg\":{\"buf\":\"AQP/AIA=\"},\"id\":\"gen-packet_msg\"}",
+  "model": {
+    "@kind": "packet_msg",
+    "ros2oustersensor.packet_msg_buf": "AQP/AIA=",
+    "ros2oustersensor.topic": "/gen/packet_msg"
+  }
+}

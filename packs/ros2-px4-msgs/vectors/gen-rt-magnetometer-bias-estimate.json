@@ -1,0 +1,23 @@
+{
+  "name": "rt-magnetometer_bias_estimate",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/magnetometer_bias_estimate\",\"type\":\"px4_msgs/msg/MagnetometerBiasEstimate\",\"msg\":{\"timestamp\":123456789013,\"bias_x\":[-4.625,-4.375,-4.125,-3.875],\"bias_y\":[-3.625,-3.375,-3.125,-2.875],\"bias_z\":[-2.625,-2.375,-2.125,-1.875],\"valid\":[false,true,false,true],\"stable\":[false,true,false,true]},\"id\":\"gen-magnetometer_bias_estimate\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/magnetometer_bias_estimate\",\"type\":\"px4_msgs/msg/MagnetometerBiasEstimate\",\"msg\":{\"timestamp\":123456789013,\"bias_x\":[-4.625,-4.375,-4.125,-3.875],\"bias_y\":[-3.625,-3.375,-3.125,-2.875],\"bias_z\":[-2.625,-2.375,-2.125,-1.875],\"valid\":[false,true,false,true],\"stable\":[false,true,false,true]},\"id\":\"gen-magnetometer_bias_estimate\"}",
+  "model": {
+    "@kind": "magnetometer_bias_estimate",
+    "ros2px4.magnetometer_bias_estimate_timestamp": "123456789013",
+    "ros2px4.magnetometer_bias_estimate_bias_x.#": "4",
+    "ros2px4.magnetometer_bias_estimate_bias_x[0].ros2px4.magnetometer_bias_estimate_bias_x_value": "-4.625",
+    "ros2px4.magnetometer_bias_estimate_bias_y.#": "4",
+    "ros2px4.magnetometer_bias_estimate_bias_y[0].ros2px4.magnetometer_bias_estimate_bias_y_value": "-3.625",
+    "ros2px4.magnetometer_bias_estimate_bias_z.#": "4",
+    "ros2px4.magnetometer_bias_estimate_bias_z[0].ros2px4.magnetometer_bias_estimate_bias_z_value": "-2.625",
+    "ros2px4.magnetometer_bias_estimate_valid.#": "4",
+    "ros2px4.magnetometer_bias_estimate_valid[0].ros2px4.magnetometer_bias_estimate_valid_value": "0",
+    "ros2px4.magnetometer_bias_estimate_stable.#": "4",
+    "ros2px4.magnetometer_bias_estimate_stable[0].ros2px4.magnetometer_bias_estimate_stable_value": "0",
+    "ros2px4.topic": "/gen/magnetometer_bias_estimate"
+  }
+}

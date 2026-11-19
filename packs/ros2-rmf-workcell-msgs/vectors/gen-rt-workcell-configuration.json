@@ -1,0 +1,20 @@
+{
+  "name": "rt-workcell_configuration",
+  "from": "ros2-rmf-workcell-msgs",
+  "to": "ros2-rmf-workcell-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/workcell_configuration\",\"type\":\"rmf_workcell_msgs/msg/WorkcellConfiguration\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"type\":\"s4\",\"assets\":[{\"guid\":\"s5\",\"type\":\"s6\"},{\"guid\":\"s7\",\"type\":\"s8\"}],\"traits\":[{\"key\":\"s9\",\"value\":[\"s10\"]},{\"key\":\"s11\",\"value\":[\"s12\"]}]},\"id\":\"gen-workcell_configuration\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/workcell_configuration\",\"type\":\"rmf_workcell_msgs/msg/WorkcellConfiguration\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"type\":\"s4\",\"assets\":[{\"guid\":\"s5\",\"type\":\"s6\"},{\"guid\":\"s7\",\"type\":\"s8\"}],\"traits\":[{\"key\":\"s9\",\"value\":[\"s10\"]},{\"key\":\"s11\",\"value\":[\"s12\"]}]},\"id\":\"gen-workcell_configuration\"}",
+  "model": {
+    "@kind": "workcell_configuration",
+    "ros2rmfworkcell.workcell_configuration_time_sec": "40510",
+    "ros2rmfworkcell.workcell_configuration_time_nanosec": "2147564661",
+    "ros2rmfworkcell.workcell_configuration_guid": "s3",
+    "ros2rmfworkcell.workcell_configuration_type": "s4",
+    "ros2rmfworkcell.workcell_configuration_assets.#": "2",
+    "ros2rmfworkcell.workcell_configuration_assets[0].ros2rmfworkcell.workcell_configuration_assets_guid": "s5",
+    "ros2rmfworkcell.workcell_configuration_traits.#": "2",
+    "ros2rmfworkcell.workcell_configuration_traits[0].ros2rmfworkcell.workcell_configuration_traits_key": "s9",
+    "ros2rmfworkcell.topic": "/gen/workcell_configuration"
+  }
+}

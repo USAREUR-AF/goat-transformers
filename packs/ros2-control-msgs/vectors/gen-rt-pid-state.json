@@ -1,0 +1,17 @@
+{
+  "name": "rt-pid_state",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pid_state\",\"type\":\"control_msgs/msg/PidState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"timestep\":{\"sec\":162019,\"nanosec\":2147686170},\"error\":-6.042,\"error_dot\":7.049,\"p_error\":8.056,\"i_error\":-9.063,\"d_error\":10.07,\"p_term\":11.077,\"i_term\":-12.084,\"d_term\":13.091,\"i_max\":14.098,\"i_min\":-15.105,\"output\":16.112},\"id\":\"gen-pid_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pid_state\",\"type\":\"control_msgs/msg/PidState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"timestep\":{\"sec\":162019,\"nanosec\":2147686170},\"error\":-6.042,\"error_dot\":7.049,\"p_error\":8.056,\"i_error\":-9.063,\"d_error\":10.07,\"p_term\":11.077,\"i_term\":-12.084,\"d_term\":13.091,\"i_max\":14.098,\"i_min\":-15.105,\"output\":16.112},\"id\":\"gen-pid_state\"}",
+  "model": {
+    "@kind": "pid_state",
+    "ros2control.pid_state_header_stamp_sec": "40510",
+    "ros2control.pid_state_header_stamp_nanosec": "2147564661",
+    "ros2control.pid_state_header_frame_id": "s3",
+    "ros2control.pid_state_timestep_sec": "162019",
+    "ros2control.pid_state_timestep_nanosec": "2147686170",
+    "ros2control.topic": "/gen/pid_state"
+  }
+}

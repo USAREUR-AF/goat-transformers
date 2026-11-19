@@ -1,0 +1,17 @@
+{
+  "name": "rt-bounding_box3d_array",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/bounding_box3d_array\",\"type\":\"vision_msgs/msg/BoundingBox3DArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"boxes\":[{\"center\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"size\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091}},{\"center\":{\"position\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"orientation\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133,\"w\":20.14}},\"size\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161}}]},\"id\":\"gen-bounding_box3d_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/bounding_box3d_array\",\"type\":\"vision_msgs/msg/BoundingBox3DArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"boxes\":[{\"center\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"size\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091}},{\"center\":{\"position\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"orientation\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133,\"w\":20.14}},\"size\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161}}]},\"id\":\"gen-bounding_box3d_array\"}",
+  "model": {
+    "@kind": "bounding_box3d_array",
+    "ros2vision.bounding_box3d_array_header_stamp_sec": "40510",
+    "ros2vision.bounding_box3d_array_header_stamp_nanosec": "2147564661",
+    "ros2vision.bounding_box3d_array_header_frame_id": "s3",
+    "ros2vision.bounding_box3d_array_boxes.#": "2",
+    "ros2vision.bounding_box3d_array_boxes[0].ros2vision.bounding_box3d_array_boxes_center_position_x": "4.028",
+    "ros2vision.topic": "/gen/bounding_box3d_array"
+  }
+}

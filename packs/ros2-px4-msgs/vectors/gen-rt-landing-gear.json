@@ -1,0 +1,14 @@
+{
+  "name": "rt-landing_gear",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/landing_gear\",\"type\":\"px4_msgs/msg/LandingGear\",\"msg\":{\"timestamp\":123456789013,\"landing_gear\":117},\"id\":\"gen-landing_gear\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/landing_gear\",\"type\":\"px4_msgs/msg/LandingGear\",\"msg\":{\"timestamp\":123456789013,\"landing_gear\":117},\"id\":\"gen-landing_gear\"}",
+  "model": {
+    "@kind": "landing_gear",
+    "ros2px4.landing_gear_timestamp": "123456789013",
+    "ros2px4.landing_gear_landing_gear": "117",
+    "ros2px4.topic": "/gen/landing_gear"
+  }
+}

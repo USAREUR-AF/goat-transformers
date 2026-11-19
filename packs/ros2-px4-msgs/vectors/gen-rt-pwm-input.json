@@ -1,0 +1,16 @@
+{
+  "name": "rt-pwm_input",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pwm_input\",\"type\":\"px4_msgs/msg/PwmInput\",\"msg\":{\"timestamp\":123456789013,\"error_count\":246913578026,\"pulse_width\":2147605164,\"period\":2147645667},\"id\":\"gen-pwm_input\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pwm_input\",\"type\":\"px4_msgs/msg/PwmInput\",\"msg\":{\"timestamp\":123456789013,\"error_count\":246913578026,\"pulse_width\":2147605164,\"period\":2147645667},\"id\":\"gen-pwm_input\"}",
+  "model": {
+    "@kind": "pwm_input",
+    "ros2px4.pwm_input_timestamp": "123456789013",
+    "ros2px4.pwm_input_error_count": "246913578026",
+    "ros2px4.pwm_input_pulse_width": "2147605164",
+    "ros2px4.pwm_input_period": "2147645667",
+    "ros2px4.topic": "/gen/pwm_input"
+  }
+}

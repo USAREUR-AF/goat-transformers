@@ -1,0 +1,17 @@
+{
+  "name": "rt-trackstat_channel",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trackstat_channel\",\"type\":\"novatel_gps_msgs/msg/TrackstatChannel\",\"msg\":{\"prn\":-25026,\"glofreq\":15477,\"ch_tr_status\":2147605164,\"psr\":4.028,\"doppler\":-3.875,\"c_no\":-3.625,\"locktime\":-3.375,\"psr_res\":-3.125,\"reject\":\"s9\",\"psr_weight\":-2.625},\"id\":\"gen-trackstat_channel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trackstat_channel\",\"type\":\"novatel_gps_msgs/msg/TrackstatChannel\",\"msg\":{\"prn\":-25026,\"glofreq\":15477,\"ch_tr_status\":2147605164,\"psr\":4.028,\"doppler\":-3.875,\"c_no\":-3.625,\"locktime\":-3.375,\"psr_res\":-3.125,\"reject\":\"s9\",\"psr_weight\":-2.625},\"id\":\"gen-trackstat_channel\"}",
+  "model": {
+    "@kind": "trackstat_channel",
+    "ros2novatelgps.trackstat_channel_prn": "-25026",
+    "ros2novatelgps.trackstat_channel_glofreq": "15477",
+    "ros2novatelgps.trackstat_channel_ch_tr_status": "2147605164",
+    "ros2novatelgps.trackstat_channel_psr": "4.028",
+    "ros2novatelgps.trackstat_channel_doppler": "-3.875",
+    "ros2novatelgps.topic": "/gen/trackstat_channel"
+  }
+}

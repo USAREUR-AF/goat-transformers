@@ -1,0 +1,15 @@
+{
+  "name": "rt-schedule_identity",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_identity\",\"type\":\"rmf_traffic_msgs/msg/ScheduleIdentity\",\"msg\":{\"node_uuid\":\"s1\",\"timestamp\":{\"sec\":81013,\"nanosec\":2147605164}},\"id\":\"gen-schedule_identity\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_identity\",\"type\":\"rmf_traffic_msgs/msg/ScheduleIdentity\",\"msg\":{\"node_uuid\":\"s1\",\"timestamp\":{\"sec\":81013,\"nanosec\":2147605164}},\"id\":\"gen-schedule_identity\"}",
+  "model": {
+    "@kind": "schedule_identity",
+    "ros2rmftraffic.schedule_identity_node_uuid": "s1",
+    "ros2rmftraffic.schedule_identity_timestamp_sec": "81013",
+    "ros2rmftraffic.schedule_identity_timestamp_nanosec": "2147605164",
+    "ros2rmftraffic.topic": "/gen/schedule_identity"
+  }
+}

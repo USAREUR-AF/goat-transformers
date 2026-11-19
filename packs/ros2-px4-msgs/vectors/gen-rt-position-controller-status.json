@@ -1,0 +1,17 @@
+{
+  "name": "rt-position_controller_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/position_controller_status\",\"type\":\"px4_msgs/msg/PositionControllerStatus\",\"msg\":{\"timestamp\":123456789013,\"nav_roll\":-4.625,\"nav_pitch\":-4.375,\"nav_bearing\":-4.125,\"target_bearing\":-3.875,\"xtrack_error\":-3.625,\"wp_dist\":-3.375,\"acceptance_radius\":-3.125,\"type\":118},\"id\":\"gen-position_controller_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/position_controller_status\",\"type\":\"px4_msgs/msg/PositionControllerStatus\",\"msg\":{\"timestamp\":123456789013,\"nav_roll\":-4.625,\"nav_pitch\":-4.375,\"nav_bearing\":-4.125,\"target_bearing\":-3.875,\"xtrack_error\":-3.625,\"wp_dist\":-3.375,\"acceptance_radius\":-3.125,\"type\":118},\"id\":\"gen-position_controller_status\"}",
+  "model": {
+    "@kind": "position_controller_status",
+    "ros2px4.position_controller_status_timestamp": "123456789013",
+    "ros2px4.position_controller_status_nav_roll": "-4.625",
+    "ros2px4.position_controller_status_nav_pitch": "-4.375",
+    "ros2px4.position_controller_status_nav_bearing": "-4.125",
+    "ros2px4.position_controller_status_target_bearing": "-3.875",
+    "ros2px4.topic": "/gen/position_controller_status"
+  }
+}

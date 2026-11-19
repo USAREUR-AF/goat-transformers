@@ -1,0 +1,17 @@
+{
+  "name": "rt-bid_proposal",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/bid_proposal\",\"type\":\"rmf_task_msgs/msg/BidProposal\",\"msg\":{\"fleet_name\":\"s1\",\"expected_robot_name\":\"s2\",\"prev_cost\":-3.021,\"new_cost\":4.028,\"finish_time\":{\"sec\":202522,\"nanosec\":2147726673}},\"id\":\"gen-bid_proposal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/bid_proposal\",\"type\":\"rmf_task_msgs/msg/BidProposal\",\"msg\":{\"fleet_name\":\"s1\",\"expected_robot_name\":\"s2\",\"prev_cost\":-3.021,\"new_cost\":4.028,\"finish_time\":{\"sec\":202522,\"nanosec\":2147726673}},\"id\":\"gen-bid_proposal\"}",
+  "model": {
+    "@kind": "bid_proposal",
+    "ros2rmftask.bid_proposal_fleet_name": "s1",
+    "ros2rmftask.bid_proposal_expected_robot_name": "s2",
+    "ros2rmftask.bid_proposal_prev_cost": "-3.021",
+    "ros2rmftask.bid_proposal_new_cost": "4.028",
+    "ros2rmftask.bid_proposal_finish_time_sec": "202522",
+    "ros2rmftask.topic": "/gen/bid_proposal"
+  }
+}

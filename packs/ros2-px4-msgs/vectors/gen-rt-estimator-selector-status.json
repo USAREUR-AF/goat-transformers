@@ -1,0 +1,27 @@
+{
+  "name": "rt-estimator_selector_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_selector_status\",\"type\":\"px4_msgs/msg/EstimatorSelectorStatus\",\"msg\":{\"timestamp\":123456789013,\"primary_instance\":245,\"instances_available\":44,\"instance_changed_count\":2147645667,\"last_instance_change\":617283945065,\"accel_device_id\":2147726673,\"baro_device_id\":2147767176,\"gyro_device_id\":2147807679,\"mag_device_id\":2147848182,\"combined_test_ratio\":[-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625],\"relative_test_ratio\":[-0.375,-0.125,0.125,0.375,0.625,0.875,1.125,1.375,1.625],\"healthy\":[false,true,false,true,false,true,false,true,false],\"accumulated_gyro_error\":[4.125,4.375,4.625,4.875],\"accumulated_accel_error\":[5.125,5.375,5.625,5.875],\"gyro_fault_detected\":true,\"accel_fault_detected\":false},\"id\":\"gen-estimator_selector_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_selector_status\",\"type\":\"px4_msgs/msg/EstimatorSelectorStatus\",\"msg\":{\"timestamp\":123456789013,\"primary_instance\":245,\"instances_available\":44,\"instance_changed_count\":2147645667,\"last_instance_change\":617283945065,\"accel_device_id\":2147726673,\"baro_device_id\":2147767176,\"gyro_device_id\":2147807679,\"mag_device_id\":2147848182,\"combined_test_ratio\":[-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625],\"relative_test_ratio\":[-0.375,-0.125,0.125,0.375,0.625,0.875,1.125,1.375,1.625],\"healthy\":[false,true,false,true,false,true,false,true,false],\"accumulated_gyro_error\":[4.125,4.375,4.625,4.875],\"accumulated_accel_error\":[5.125,5.375,5.625,5.875],\"gyro_fault_detected\":true,\"accel_fault_detected\":false},\"id\":\"gen-estimator_selector_status\"}",
+  "model": {
+    "@kind": "estimator_selector_status",
+    "ros2px4.estimator_selector_status_timestamp": "123456789013",
+    "ros2px4.estimator_selector_status_primary_instance": "245",
+    "ros2px4.estimator_selector_status_instances_available": "44",
+    "ros2px4.estimator_selector_status_instance_changed_count": "2147645667",
+    "ros2px4.estimator_selector_status_last_instance_change": "617283945065",
+    "ros2px4.estimator_selector_status_combined_test_ratio.#": "9",
+    "ros2px4.estimator_selector_status_combined_test_ratio[0].ros2px4.estimator_selector_status_combined_test_ratio_value": "-2.625",
+    "ros2px4.estimator_selector_status_relative_test_ratio.#": "9",
+    "ros2px4.estimator_selector_status_relative_test_ratio[0].ros2px4.estimator_selector_status_relative_test_ratio_value": "-0.375",
+    "ros2px4.estimator_selector_status_healthy.#": "9",
+    "ros2px4.estimator_selector_status_healthy[0].ros2px4.estimator_selector_status_healthy_value": "0",
+    "ros2px4.estimator_selector_status_accumulated_gyro_error.#": "4",
+    "ros2px4.estimator_selector_status_accumulated_gyro_error[0].ros2px4.estimator_selector_status_accumulated_gyro_error_value": "4.125",
+    "ros2px4.estimator_selector_status_accumulated_accel_error.#": "4",
+    "ros2px4.estimator_selector_status_accumulated_accel_error[0].ros2px4.estimator_selector_status_accumulated_accel_error_value": "5.125",
+    "ros2px4.topic": "/gen/estimator_selector_status"
+  }
+}

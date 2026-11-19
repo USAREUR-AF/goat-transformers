@@ -1,0 +1,16 @@
+{
+  "name": "rt-satellite",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/satellite\",\"type\":\"novatel_gps_msgs/msg/Satellite\",\"msg\":{\"prn\":190,\"elevation\":245,\"azimuth\":23212,\"snr\":-29},\"id\":\"gen-satellite\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/satellite\",\"type\":\"novatel_gps_msgs/msg/Satellite\",\"msg\":{\"prn\":190,\"elevation\":245,\"azimuth\":23212,\"snr\":-29},\"id\":\"gen-satellite\"}",
+  "model": {
+    "@kind": "satellite",
+    "ros2novatelgps.satellite_prn": "190",
+    "ros2novatelgps.satellite_elevation": "245",
+    "ros2novatelgps.satellite_azimuth": "23212",
+    "ros2novatelgps.satellite_snr": "-29",
+    "ros2novatelgps.topic": "/gen/satellite"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-tf2_error",
+  "from": "ros2-tf2-msgs",
+  "to": "ros2-tf2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tf2_error\",\"type\":\"tf2_msgs/msg/TF2Error\",\"msg\":{\"error\":190,\"error_string\":\"s2\"},\"id\":\"gen-tf2_error\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tf2_error\",\"type\":\"tf2_msgs/msg/TF2Error\",\"msg\":{\"error\":190,\"error_string\":\"s2\"},\"id\":\"gen-tf2_error\"}",
+  "model": {
+    "@kind": "tf2_error",
+    "ros2tf2.tf2_error_error": "190",
+    "ros2tf2.tf2_error_error_string": "s2",
+    "ros2tf2.topic": "/gen/tf2_error"
+  }
+}

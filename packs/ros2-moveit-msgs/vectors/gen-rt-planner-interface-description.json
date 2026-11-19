@@ -1,0 +1,16 @@
+{
+  "name": "rt-planner_interface_description",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/planner_interface_description\",\"type\":\"moveit_msgs/msg/PlannerInterfaceDescription\",\"msg\":{\"name\":\"s1\",\"pipeline_id\":\"s2\",\"planner_ids\":[\"s3\",\"s4\"]},\"id\":\"gen-planner_interface_description\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/planner_interface_description\",\"type\":\"moveit_msgs/msg/PlannerInterfaceDescription\",\"msg\":{\"name\":\"s1\",\"pipeline_id\":\"s2\",\"planner_ids\":[\"s3\",\"s4\"]},\"id\":\"gen-planner_interface_description\"}",
+  "model": {
+    "@kind": "planner_interface_description",
+    "ros2moveit.planner_interface_description_name": "s1",
+    "ros2moveit.planner_interface_description_pipeline_id": "s2",
+    "ros2moveit.planner_interface_description_planner_ids.#": "2",
+    "ros2moveit.planner_interface_description_planner_ids[0].ros2moveit.planner_interface_description_planner_ids_value": "s3",
+    "ros2moveit.topic": "/gen/planner_interface_description"
+  }
+}

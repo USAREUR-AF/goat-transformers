@@ -1,0 +1,15 @@
+{
+  "name": "rt-trait",
+  "from": "ros2-rmf-workcell-msgs",
+  "to": "ros2-rmf-workcell-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trait\",\"type\":\"rmf_workcell_msgs/msg/Trait\",\"msg\":{\"key\":\"s1\",\"value\":[\"s2\",\"s3\"]},\"id\":\"gen-trait\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trait\",\"type\":\"rmf_workcell_msgs/msg/Trait\",\"msg\":{\"key\":\"s1\",\"value\":[\"s2\",\"s3\"]},\"id\":\"gen-trait\"}",
+  "model": {
+    "@kind": "trait",
+    "ros2rmfworkcell.trait_key": "s1",
+    "ros2rmfworkcell.trait_value.#": "2",
+    "ros2rmfworkcell.trait_value[0].ros2rmfworkcell.trait_value_value": "s2",
+    "ros2rmfworkcell.topic": "/gen/trait"
+  }
+}

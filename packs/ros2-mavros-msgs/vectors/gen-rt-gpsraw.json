@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpsraw",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpsraw\",\"type\":\"mavros_msgs/msg/GPSRAW\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fix_type\":99,\"lat\":202522,\"lon\":243025,\"alt\":283528,\"eph\":29119,\"epv\":4086,\"vel\":44589,\"cog\":19556,\"satellites_visible\":27,\"alt_ellipsoid\":526546,\"h_acc\":2148050697,\"v_acc\":2148091200,\"vel_acc\":2148131703,\"hdg_acc\":688558,\"yaw\":40933,\"dgps_numch\":156,\"dgps_age\":2148293715},\"id\":\"gen-gpsraw\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpsraw\",\"type\":\"mavros_msgs/msg/GPSRAW\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"fix_type\":99,\"lat\":202522,\"lon\":243025,\"alt\":283528,\"eph\":29119,\"epv\":4086,\"vel\":44589,\"cog\":19556,\"satellites_visible\":27,\"alt_ellipsoid\":526546,\"h_acc\":2148050697,\"v_acc\":2148091200,\"vel_acc\":2148131703,\"hdg_acc\":688558,\"yaw\":40933,\"dgps_numch\":156,\"dgps_age\":2148293715},\"id\":\"gen-gpsraw\"}",
+  "model": {
+    "@kind": "gpsraw",
+    "ros2mavros.gpsraw_header_stamp_sec": "40510",
+    "ros2mavros.gpsraw_header_stamp_nanosec": "2147564661",
+    "ros2mavros.gpsraw_header_frame_id": "s3",
+    "ros2mavros.gpsraw_fix_type": "99",
+    "ros2mavros.gpsraw_lat": "202522",
+    "ros2mavros.topic": "/gen/gpsraw"
+  }
+}

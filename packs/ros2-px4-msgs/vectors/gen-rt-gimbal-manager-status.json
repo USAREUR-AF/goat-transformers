@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_status\",\"type\":\"px4_msgs/msg/GimbalManagerStatus\",\"msg\":{\"timestamp\":123456789013,\"flags\":2147564661,\"gimbal_device_id\":44,\"primary_control_sysid\":99,\"primary_control_compid\":154,\"secondary_control_sysid\":209,\"secondary_control_compid\":8},\"id\":\"gen-gimbal_manager_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_status\",\"type\":\"px4_msgs/msg/GimbalManagerStatus\",\"msg\":{\"timestamp\":123456789013,\"flags\":2147564661,\"gimbal_device_id\":44,\"primary_control_sysid\":99,\"primary_control_compid\":154,\"secondary_control_sysid\":209,\"secondary_control_compid\":8},\"id\":\"gen-gimbal_manager_status\"}",
+  "model": {
+    "@kind": "gimbal_manager_status",
+    "ros2px4.gimbal_manager_status_timestamp": "123456789013",
+    "ros2px4.gimbal_manager_status_flags": "2147564661",
+    "ros2px4.gimbal_manager_status_gimbal_device_id": "44",
+    "ros2px4.gimbal_manager_status_primary_control_sysid": "99",
+    "ros2px4.gimbal_manager_status_primary_control_compid": "154",
+    "ros2px4.topic": "/gen/gimbal_manager_status"
+  }
+}

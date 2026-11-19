@@ -1,0 +1,17 @@
+{
+  "name": "rt-navigator_mission_item",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/navigator_mission_item\",\"type\":\"px4_msgs/msg/NavigatorMissionItem\",\"msg\":{\"timestamp\":123456789013,\"sequence_current\":48245,\"nav_cmd\":23212,\"latitude\":-4.125,\"longitude\":-3.875,\"time_inside\":-3.625,\"acceptance_radius\":-3.375,\"loiter_radius\":-3.125,\"yaw\":-2.875,\"altitude\":-2.625,\"frame\":228,\"origin\":27,\"loiter_exit_xtrack\":true,\"force_heading\":false,\"altitude_is_relative\":true,\"autocontinue\":false,\"vtol_back_transition\":true},\"id\":\"gen-navigator_mission_item\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/navigator_mission_item\",\"type\":\"px4_msgs/msg/NavigatorMissionItem\",\"msg\":{\"timestamp\":123456789013,\"sequence_current\":48245,\"nav_cmd\":23212,\"latitude\":-4.125,\"longitude\":-3.875,\"time_inside\":-3.625,\"acceptance_radius\":-3.375,\"loiter_radius\":-3.125,\"yaw\":-2.875,\"altitude\":-2.625,\"frame\":228,\"origin\":27,\"loiter_exit_xtrack\":true,\"force_heading\":false,\"altitude_is_relative\":true,\"autocontinue\":false,\"vtol_back_transition\":true},\"id\":\"gen-navigator_mission_item\"}",
+  "model": {
+    "@kind": "navigator_mission_item",
+    "ros2px4.navigator_mission_item_timestamp": "123456789013",
+    "ros2px4.navigator_mission_item_sequence_current": "48245",
+    "ros2px4.navigator_mission_item_nav_cmd": "23212",
+    "ros2px4.navigator_mission_item_latitude": "-4.125",
+    "ros2px4.navigator_mission_item_longitude": "-3.875",
+    "ros2px4.topic": "/gen/navigator_mission_item"
+  }
+}

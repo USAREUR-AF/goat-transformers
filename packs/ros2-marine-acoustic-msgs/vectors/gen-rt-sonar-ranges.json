@@ -1,0 +1,31 @@
+{
+  "name": "rt-sonar_ranges",
+  "from": "ros2-marine-acoustic-msgs",
+  "to": "ros2-marine-acoustic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sonar_ranges\",\"type\":\"marine_acoustic_msgs/msg/SonarRanges\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ping_info\":{\"frequency\":-4.125,\"sound_speed\":-3.875,\"tx_beamwidths\":[-3.625,-3.375],\"rx_beamwidths\":[-3.125,-2.875]},\"flags\":[{\"flag\":173},{\"flag\":228}],\"transmit_delays\":[-2.125,-1.875],\"intensities\":[-1.625,-1.375],\"beam_unit_vec\":[{\"x\":16.112,\"y\":17.119,\"z\":-18.126},{\"x\":19.133,\"y\":20.14,\"z\":-21.147}],\"ranges\":[0.375,0.625]},\"id\":\"gen-sonar_ranges\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sonar_ranges\",\"type\":\"marine_acoustic_msgs/msg/SonarRanges\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ping_info\":{\"frequency\":-4.125,\"sound_speed\":-3.875,\"tx_beamwidths\":[-3.625,-3.375],\"rx_beamwidths\":[-3.125,-2.875]},\"flags\":[{\"flag\":173},{\"flag\":228}],\"transmit_delays\":[-2.125,-1.875],\"intensities\":[-1.625,-1.375],\"beam_unit_vec\":[{\"x\":16.112,\"y\":17.119,\"z\":-18.126},{\"x\":19.133,\"y\":20.14,\"z\":-21.147}],\"ranges\":[0.375,0.625]},\"id\":\"gen-sonar_ranges\"}",
+  "model": {
+    "@kind": "sonar_ranges",
+    "ros2marineacoustic.sonar_ranges_header_stamp_sec": "40510",
+    "ros2marineacoustic.sonar_ranges_header_stamp_nanosec": "2147564661",
+    "ros2marineacoustic.sonar_ranges_header_frame_id": "s3",
+    "ros2marineacoustic.sonar_ranges_ping_info_frequency": "-4.125",
+    "ros2marineacoustic.sonar_ranges_ping_info_sound_speed": "-3.875",
+    "ros2marineacoustic.sonar_ranges_ping_info_tx_beamwidths.#": "2",
+    "ros2marineacoustic.sonar_ranges_ping_info_tx_beamwidths[0].ros2marineacoustic.sonar_ranges_ping_info_tx_beamwidths_value": "-3.625",
+    "ros2marineacoustic.sonar_ranges_ping_info_rx_beamwidths.#": "2",
+    "ros2marineacoustic.sonar_ranges_ping_info_rx_beamwidths[0].ros2marineacoustic.sonar_ranges_ping_info_rx_beamwidths_value": "-3.125",
+    "ros2marineacoustic.sonar_ranges_flags.#": "2",
+    "ros2marineacoustic.sonar_ranges_flags[0].ros2marineacoustic.sonar_ranges_flags_flag": "173",
+    "ros2marineacoustic.sonar_ranges_transmit_delays.#": "2",
+    "ros2marineacoustic.sonar_ranges_transmit_delays[0].ros2marineacoustic.sonar_ranges_transmit_delays_value": "-2.125",
+    "ros2marineacoustic.sonar_ranges_intensities.#": "2",
+    "ros2marineacoustic.sonar_ranges_intensities[0].ros2marineacoustic.sonar_ranges_intensities_value": "-1.625",
+    "ros2marineacoustic.sonar_ranges_beam_unit_vec.#": "2",
+    "ros2marineacoustic.sonar_ranges_beam_unit_vec[0].ros2marineacoustic.sonar_ranges_beam_unit_vec_x": "16.112",
+    "ros2marineacoustic.sonar_ranges_ranges.#": "2",
+    "ros2marineacoustic.sonar_ranges_ranges[0].ros2marineacoustic.sonar_ranges_ranges_value": "0.375",
+    "ros2marineacoustic.topic": "/gen/sonar_ranges"
+  }
+}

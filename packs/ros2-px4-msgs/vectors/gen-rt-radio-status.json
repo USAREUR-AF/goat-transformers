@@ -1,0 +1,17 @@
+{
+  "name": "rt-radio_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radio_status\",\"type\":\"px4_msgs/msg/RadioStatus\",\"msg\":{\"timestamp\":123456789013,\"rssi\":245,\"remote_rssi\":44,\"txbuf\":99,\"noise\":154,\"remote_noise\":209,\"rxerrors\":54152,\"fix\":29119},\"id\":\"gen-radio_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radio_status\",\"type\":\"px4_msgs/msg/RadioStatus\",\"msg\":{\"timestamp\":123456789013,\"rssi\":245,\"remote_rssi\":44,\"txbuf\":99,\"noise\":154,\"remote_noise\":209,\"rxerrors\":54152,\"fix\":29119},\"id\":\"gen-radio_status\"}",
+  "model": {
+    "@kind": "radio_status",
+    "ros2px4.radio_status_timestamp": "123456789013",
+    "ros2px4.radio_status_rssi": "245",
+    "ros2px4.radio_status_remote_rssi": "44",
+    "ros2px4.radio_status_txbuf": "99",
+    "ros2px4.radio_status_noise": "154",
+    "ros2px4.topic": "/gen/radio_status"
+  }
+}

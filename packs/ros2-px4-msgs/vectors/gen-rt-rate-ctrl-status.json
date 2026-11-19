@@ -1,0 +1,16 @@
+{
+  "name": "rt-rate_ctrl_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rate_ctrl_status\",\"type\":\"px4_msgs/msg/RateCtrlStatus\",\"msg\":{\"timestamp\":123456789013,\"rollspeed_integ\":-4.625,\"pitchspeed_integ\":-4.375,\"yawspeed_integ\":-4.125},\"id\":\"gen-rate_ctrl_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rate_ctrl_status\",\"type\":\"px4_msgs/msg/RateCtrlStatus\",\"msg\":{\"timestamp\":123456789013,\"rollspeed_integ\":-4.625,\"pitchspeed_integ\":-4.375,\"yawspeed_integ\":-4.125},\"id\":\"gen-rate_ctrl_status\"}",
+  "model": {
+    "@kind": "rate_ctrl_status",
+    "ros2px4.rate_ctrl_status_timestamp": "123456789013",
+    "ros2px4.rate_ctrl_status_rollspeed_integ": "-4.625",
+    "ros2px4.rate_ctrl_status_pitchspeed_integ": "-4.375",
+    "ros2px4.rate_ctrl_status_yawspeed_integ": "-4.125",
+    "ros2px4.topic": "/gen/rate_ctrl_status"
+  }
+}

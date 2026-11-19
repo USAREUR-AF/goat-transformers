@@ -1,0 +1,16 @@
+{
+  "name": "rt-joint_tolerance",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_tolerance\",\"type\":\"control_msgs/msg/JointTolerance\",\"msg\":{\"name\":\"s1\",\"position\":2.014,\"velocity\":-3.021,\"acceleration\":4.028},\"id\":\"gen-joint_tolerance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_tolerance\",\"type\":\"control_msgs/msg/JointTolerance\",\"msg\":{\"name\":\"s1\",\"position\":2.014,\"velocity\":-3.021,\"acceleration\":4.028},\"id\":\"gen-joint_tolerance\"}",
+  "model": {
+    "@kind": "joint_tolerance",
+    "ros2control.joint_tolerance_name": "s1",
+    "ros2control.joint_tolerance_position": "2.014",
+    "ros2control.joint_tolerance_velocity": "-3.021",
+    "ros2control.joint_tolerance_acceleration": "4.028",
+    "ros2control.topic": "/gen/joint_tolerance"
+  }
+}

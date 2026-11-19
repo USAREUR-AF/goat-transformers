@@ -1,0 +1,17 @@
+{
+  "name": "rt-gps_dump",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gps_dump\",\"type\":\"px4_msgs/msg/GpsDump\",\"msg\":{\"timestamp\":123456789013,\"instance\":245,\"device_id\":2147605164,\"len\":99,\"data\":\"BQ//AIA=\"},\"id\":\"gen-gps_dump\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gps_dump\",\"type\":\"px4_msgs/msg/GpsDump\",\"msg\":{\"timestamp\":123456789013,\"instance\":245,\"device_id\":2147605164,\"len\":99,\"data\":\"BQ//AIA=\"},\"id\":\"gen-gps_dump\"}",
+  "model": {
+    "@kind": "gps_dump",
+    "ros2px4.gps_dump_timestamp": "123456789013",
+    "ros2px4.gps_dump_instance": "245",
+    "ros2px4.gps_dump_device_id": "2147605164",
+    "ros2px4.gps_dump_len": "99",
+    "ros2px4.gps_dump_data": "BQ//AIA=",
+    "ros2px4.topic": "/gen/gps_dump"
+  }
+}

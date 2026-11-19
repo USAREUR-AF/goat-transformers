@@ -1,0 +1,19 @@
+{
+  "name": "rt-arming_check_reply",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/arming_check_reply\",\"type\":\"px4_msgs/msg/ArmingCheckReply\",\"msg\":{\"timestamp\":123456789013,\"request_id\":245,\"registration_id\":44,\"health_component_index\":99,\"health_component_is_present\":true,\"health_component_warning\":false,\"health_component_error\":true,\"can_arm_and_run\":false,\"num_events\":118,\"events\":[{\"timestamp\":1234567890130,\"id\":2147929188,\"event_sequence\":60059,\"arguments\":\"DSf/AIA=\",\"log_levels\":137},{\"timestamp\":1851851835195,\"id\":2148131703,\"event_sequence\":430,\"arguments\":\"Ejb/AIA=\",\"log_levels\":156},{\"timestamp\":2469135780260,\"id\":2148334218,\"event_sequence\":6337,\"arguments\":\"F0X/AIA=\",\"log_levels\":175},{\"timestamp\":3086419725325,\"id\":2148536733,\"event_sequence\":12244,\"arguments\":\"HFT/AIA=\",\"log_levels\":194},{\"timestamp\":3703703670390,\"id\":2148739248,\"event_sequence\":18151,\"arguments\":\"IWP/AIA=\",\"log_levels\":213}],\"mode_req_angular_velocity\":true,\"mode_req_attitude\":false,\"mode_req_local_alt\":true,\"mode_req_local_position\":false,\"mode_req_local_position_relaxed\":true,\"mode_req_global_position\":false,\"mode_req_global_position_relaxed\":true,\"mode_req_mission\":false,\"mode_req_home_position\":true,\"mode_req_prevent_arming\":false,\"mode_req_manual_control\":true},\"id\":\"gen-arming_check_reply\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/arming_check_reply\",\"type\":\"px4_msgs/msg/ArmingCheckReply\",\"msg\":{\"timestamp\":123456789013,\"request_id\":245,\"registration_id\":44,\"health_component_index\":99,\"health_component_is_present\":true,\"health_component_warning\":false,\"health_component_error\":true,\"can_arm_and_run\":false,\"num_events\":118,\"events\":[{\"timestamp\":1234567890130,\"id\":2147929188,\"event_sequence\":60059,\"arguments\":\"DSf/AIA=\",\"log_levels\":137},{\"timestamp\":1851851835195,\"id\":2148131703,\"event_sequence\":430,\"arguments\":\"Ejb/AIA=\",\"log_levels\":156},{\"timestamp\":2469135780260,\"id\":2148334218,\"event_sequence\":6337,\"arguments\":\"F0X/AIA=\",\"log_levels\":175},{\"timestamp\":3086419725325,\"id\":2148536733,\"event_sequence\":12244,\"arguments\":\"HFT/AIA=\",\"log_levels\":194},{\"timestamp\":3703703670390,\"id\":2148739248,\"event_sequence\":18151,\"arguments\":\"IWP/AIA=\",\"log_levels\":213}],\"mode_req_angular_velocity\":true,\"mode_req_attitude\":false,\"mode_req_local_alt\":true,\"mode_req_local_position\":false,\"mode_req_local_position_relaxed\":true,\"mode_req_global_position\":false,\"mode_req_global_position_relaxed\":true,\"mode_req_mission\":false,\"mode_req_home_position\":true,\"mode_req_prevent_arming\":false,\"mode_req_manual_control\":true},\"id\":\"gen-arming_check_reply\"}",
+  "model": {
+    "@kind": "arming_check_reply",
+    "ros2px4.arming_check_reply_timestamp": "123456789013",
+    "ros2px4.arming_check_reply_request_id": "245",
+    "ros2px4.arming_check_reply_registration_id": "44",
+    "ros2px4.arming_check_reply_health_component_index": "99",
+    "ros2px4.arming_check_reply_health_component_is_present": "1",
+    "ros2px4.arming_check_reply_events.#": "5",
+    "ros2px4.arming_check_reply_events[0].ros2px4.arming_check_reply_events_timestamp": "1234567890130",
+    "ros2px4.topic": "/gen/arming_check_reply"
+  }
+}

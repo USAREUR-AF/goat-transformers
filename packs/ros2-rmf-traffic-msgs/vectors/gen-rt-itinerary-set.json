@@ -1,0 +1,18 @@
+{
+  "name": "rt-itinerary_set",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_set\",\"type\":\"rmf_traffic_msgs/msg/ItinerarySet\",\"msg\":{\"participant\":123456789013,\"plan\":246913578026,\"itinerary\":[{\"map\":\"s3\",\"trajectory\":{\"waypoints\":[{\"time\":493827156052,\"position\":[5.035,-6.042,7.049],\"velocity\":[8.056,-9.063,10.07]}]},\"checkpoints\":[1358024679143],\"dependencies\":[{\"dependent_checkpoint\":1481481468156,\"on_participant\":1604938257169,\"on_plan\":1728395046182,\"on_route\":1851851835195,\"on_checkpoint\":1975308624208}]},{\"map\":\"s17\",\"trajectory\":{\"waypoints\":[{\"time\":2222222202234,\"position\":[19.133,20.14,-21.147],\"velocity\":[22.154,23.161,-24.168]}]},\"checkpoints\":[3086419725325],\"dependencies\":[{\"dependent_checkpoint\":3209876514338,\"on_participant\":3333333303351,\"on_plan\":3456790092364,\"on_route\":3580246881377,\"on_checkpoint\":3703703670390}]}],\"storage_base\":3827160459403,\"itinerary_version\":3950617248416},\"id\":\"gen-itinerary_set\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_set\",\"type\":\"rmf_traffic_msgs/msg/ItinerarySet\",\"msg\":{\"participant\":123456789013,\"plan\":246913578026,\"itinerary\":[{\"map\":\"s3\",\"trajectory\":{\"waypoints\":[{\"time\":493827156052,\"position\":[5.035,-6.042,7.049],\"velocity\":[8.056,-9.063,10.07]}]},\"checkpoints\":[1358024679143],\"dependencies\":[{\"dependent_checkpoint\":1481481468156,\"on_participant\":1604938257169,\"on_plan\":1728395046182,\"on_route\":1851851835195,\"on_checkpoint\":1975308624208}]},{\"map\":\"s17\",\"trajectory\":{\"waypoints\":[{\"time\":2222222202234,\"position\":[19.133,20.14,-21.147],\"velocity\":[22.154,23.161,-24.168]}]},\"checkpoints\":[3086419725325],\"dependencies\":[{\"dependent_checkpoint\":3209876514338,\"on_participant\":3333333303351,\"on_plan\":3456790092364,\"on_route\":3580246881377,\"on_checkpoint\":3703703670390}]}],\"storage_base\":3827160459403,\"itinerary_version\":3950617248416},\"id\":\"gen-itinerary_set\"}",
+  "model": {
+    "@kind": "itinerary_set",
+    "ros2rmftraffic.itinerary_set_participant": "123456789013",
+    "ros2rmftraffic.itinerary_set_plan": "246913578026",
+    "ros2rmftraffic.itinerary_set_itinerary.#": "2",
+    "ros2rmftraffic.itinerary_set_itinerary[0].ros2rmftraffic.itinerary_set_itinerary_map": "s3",
+    "ros2rmftraffic.itinerary_set_storage_base": "3827160459403",
+    "ros2rmftraffic.itinerary_set_itinerary_version": "3950617248416",
+    "ros2rmftraffic.topic": "/gen/itinerary_set"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-target_gnss",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/target_gnss\",\"type\":\"px4_msgs/msg/TargetGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"latitude_deg\":-3.021,\"longitude_deg\":4.028,\"altitude_msl_m\":-3.875,\"eph\":-3.625,\"epv\":-3.375,\"abs_pos_updated\":false,\"vel_n_m_s\":-2.875,\"vel_e_m_s\":-2.625,\"vel_d_m_s\":-2.375,\"s_acc_m_s\":-2.125,\"vel_ned_updated\":true},\"id\":\"gen-target_gnss\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/target_gnss\",\"type\":\"px4_msgs/msg/TargetGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"latitude_deg\":-3.021,\"longitude_deg\":4.028,\"altitude_msl_m\":-3.875,\"eph\":-3.625,\"epv\":-3.375,\"abs_pos_updated\":false,\"vel_n_m_s\":-2.875,\"vel_e_m_s\":-2.625,\"vel_d_m_s\":-2.375,\"s_acc_m_s\":-2.125,\"vel_ned_updated\":true},\"id\":\"gen-target_gnss\"}",
+  "model": {
+    "@kind": "target_gnss",
+    "ros2px4.target_gnss_timestamp": "123456789013",
+    "ros2px4.target_gnss_timestamp_sample": "246913578026",
+    "lat": "-3.021",
+    "lon": "4.028",
+    "ros2px4.target_gnss_altitude_msl_m": "-3.875",
+    "ros2px4.topic": "/gen/target_gnss"
+  }
+}

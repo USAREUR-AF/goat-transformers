@@ -1,0 +1,16 @@
+{
+  "name": "rt-traffic_signal_array",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_signal_array\",\"type\":\"autoware_perception_msgs/msg/TrafficSignalArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"signals\":[{\"traffic_signal_id\":-370370367039,\"elements\":[{\"color\":99,\"shape\":154,\"status\":209,\"confidence\":-3.375}]},{\"traffic_signal_id\":987654312104,\"elements\":[{\"color\":118,\"shape\":173,\"status\":228,\"confidence\":-2.125}]}]},\"id\":\"gen-traffic_signal_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_signal_array\",\"type\":\"autoware_perception_msgs/msg/TrafficSignalArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"signals\":[{\"traffic_signal_id\":-370370367039,\"elements\":[{\"color\":99,\"shape\":154,\"status\":209,\"confidence\":-3.375}]},{\"traffic_signal_id\":987654312104,\"elements\":[{\"color\":118,\"shape\":173,\"status\":228,\"confidence\":-2.125}]}]},\"id\":\"gen-traffic_signal_array\"}",
+  "model": {
+    "@kind": "traffic_signal_array",
+    "ros2autowareperception.traffic_signal_array_stamp_sec": "40510",
+    "ros2autowareperception.traffic_signal_array_stamp_nanosec": "2147564661",
+    "ros2autowareperception.traffic_signal_array_signals.#": "2",
+    "ros2autowareperception.traffic_signal_array_signals[0].ros2autowareperception.traffic_signal_array_signals_traffic_signal_id": "-370370367039",
+    "ros2autowareperception.topic": "/gen/traffic_signal_array"
+  }
+}

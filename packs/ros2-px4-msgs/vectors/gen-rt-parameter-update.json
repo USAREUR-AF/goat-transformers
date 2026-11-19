@@ -1,0 +1,17 @@
+{
+  "name": "rt-parameter_update",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_update\",\"type\":\"px4_msgs/msg/ParameterUpdate\",\"msg\":{\"timestamp\":123456789013,\"instance\":2147564661,\"get_count\":2147605164,\"set_count\":2147645667,\"find_count\":2147686170,\"export_count\":2147726673,\"active\":54152,\"changed\":29119,\"custom_default\":4086},\"id\":\"gen-parameter_update\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_update\",\"type\":\"px4_msgs/msg/ParameterUpdate\",\"msg\":{\"timestamp\":123456789013,\"instance\":2147564661,\"get_count\":2147605164,\"set_count\":2147645667,\"find_count\":2147686170,\"export_count\":2147726673,\"active\":54152,\"changed\":29119,\"custom_default\":4086},\"id\":\"gen-parameter_update\"}",
+  "model": {
+    "@kind": "parameter_update",
+    "ros2px4.parameter_update_timestamp": "123456789013",
+    "ros2px4.parameter_update_instance": "2147564661",
+    "ros2px4.parameter_update_get_count": "2147605164",
+    "ros2px4.parameter_update_set_count": "2147645667",
+    "ros2px4.parameter_update_find_count": "2147686170",
+    "ros2px4.topic": "/gen/parameter_update"
+  }
+}

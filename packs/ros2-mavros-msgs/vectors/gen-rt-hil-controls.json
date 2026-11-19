@@ -1,0 +1,17 @@
+{
+  "name": "rt-hil_controls",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hil_controls\",\"type\":\"mavros_msgs/msg/HilControls\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"roll_ailerons\":-4.125,\"pitch_elevator\":-3.875,\"yaw_rudder\":-3.625,\"throttle\":-3.375,\"aux1\":-3.125,\"aux2\":-2.875,\"aux3\":-2.625,\"aux4\":-2.375,\"mode\":27,\"nav_mode\":82},\"id\":\"gen-hil_controls\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hil_controls\",\"type\":\"mavros_msgs/msg/HilControls\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"roll_ailerons\":-4.125,\"pitch_elevator\":-3.875,\"yaw_rudder\":-3.625,\"throttle\":-3.375,\"aux1\":-3.125,\"aux2\":-2.875,\"aux3\":-2.625,\"aux4\":-2.375,\"mode\":27,\"nav_mode\":82},\"id\":\"gen-hil_controls\"}",
+  "model": {
+    "@kind": "hil_controls",
+    "ros2mavros.hil_controls_header_stamp_sec": "40510",
+    "ros2mavros.hil_controls_header_stamp_nanosec": "2147564661",
+    "ros2mavros.hil_controls_header_frame_id": "s3",
+    "ros2mavros.hil_controls_roll_ailerons": "-4.125",
+    "ros2mavros.hil_controls_pitch_elevator": "-3.875",
+    "ros2mavros.topic": "/gen/hil_controls"
+  }
+}

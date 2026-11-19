@@ -1,0 +1,16 @@
+{
+  "name": "rt-position_controller_landing_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/position_controller_landing_status\",\"type\":\"px4_msgs/msg/PositionControllerLandingStatus\",\"msg\":{\"timestamp\":123456789013,\"lateral_touchdown_offset\":-4.625,\"flaring\":true,\"abort_status\":99},\"id\":\"gen-position_controller_landing_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/position_controller_landing_status\",\"type\":\"px4_msgs/msg/PositionControllerLandingStatus\",\"msg\":{\"timestamp\":123456789013,\"lateral_touchdown_offset\":-4.625,\"flaring\":true,\"abort_status\":99},\"id\":\"gen-position_controller_landing_status\"}",
+  "model": {
+    "@kind": "position_controller_landing_status",
+    "ros2px4.position_controller_landing_status_timestamp": "123456789013",
+    "ros2px4.position_controller_landing_status_lateral_touchdown_offset": "-4.625",
+    "ros2px4.position_controller_landing_status_flaring": "1",
+    "ros2px4.position_controller_landing_status_abort_status": "99",
+    "ros2px4.topic": "/gen/position_controller_landing_status"
+  }
+}

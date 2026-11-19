@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"autoware_planning_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"time_from_start\":{\"sec\":162019,\"nanosec\":2147686170},\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"longitudinal_velocity_mps\":-1.875,\"lateral_velocity_mps\":-1.625,\"acceleration_mps2\":-1.375,\"heading_rate_rps\":-1.125,\"front_wheel_angle_rad\":-0.875,\"rear_wheel_angle_rad\":-0.625},{\"time_from_start\":{\"sec\":769564,\"nanosec\":2148293715},\"pose\":{\"position\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"orientation\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182,\"w\":-27.189}},\"longitudinal_velocity_mps\":1.875,\"lateral_velocity_mps\":2.125,\"acceleration_mps2\":2.375,\"heading_rate_rps\":2.625,\"front_wheel_angle_rad\":2.875,\"rear_wheel_angle_rad\":3.125}]},\"id\":\"gen-trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"autoware_planning_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"time_from_start\":{\"sec\":162019,\"nanosec\":2147686170},\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"longitudinal_velocity_mps\":-1.875,\"lateral_velocity_mps\":-1.625,\"acceleration_mps2\":-1.375,\"heading_rate_rps\":-1.125,\"front_wheel_angle_rad\":-0.875,\"rear_wheel_angle_rad\":-0.625},{\"time_from_start\":{\"sec\":769564,\"nanosec\":2148293715},\"pose\":{\"position\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"orientation\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182,\"w\":-27.189}},\"longitudinal_velocity_mps\":1.875,\"lateral_velocity_mps\":2.125,\"acceleration_mps2\":2.375,\"heading_rate_rps\":2.625,\"front_wheel_angle_rad\":2.875,\"rear_wheel_angle_rad\":3.125}]},\"id\":\"gen-trajectory\"}",
+  "model": {
+    "@kind": "trajectory",
+    "ros2autowareplanning.trajectory_header_stamp_sec": "40510",
+    "ros2autowareplanning.trajectory_header_stamp_nanosec": "2147564661",
+    "ros2autowareplanning.trajectory_header_frame_id": "s3",
+    "ros2autowareplanning.trajectory_points.#": "2",
+    "ros2autowareplanning.trajectory_points[0].ros2autowareplanning.trajectory_points_time_from_start_sec": "162019",
+    "ros2autowareplanning.topic": "/gen/trajectory"
+  }
+}

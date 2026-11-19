@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_gnss",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss\",\"type\":\"px4_msgs/msg/SensorGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"latitude\":4.028,\"longitude\":5.035,\"altitude_msl\":-6.042,\"altitude_ellipsoid\":7.049,\"speed_accuracy\":-3.125,\"course_accuracy\":-2.875,\"fix_type\":173,\"eph\":-2.375,\"epv\":-2.125,\"hdop\":-1.875,\"vdop\":-1.625,\"noise\":607552,\"automatic_gain_control\":25463,\"jamming_state\":46,\"jamming_indicator\":729061,\"spoofing_state\":156,\"authentication_state\":211,\"ground_speed\":0.125,\"vel_north\":0.375,\"vel_east\":0.625,\"vel_down\":0.875,\"course\":1.125,\"vel_ned_valid\":false,\"timestamp_time_relative\":1093588,\"time_utc_usec\":3456790092364,\"satellites_used\":194,\"system_error\":2148698745,\"rtcm_injection_rate\":2.625,\"selected_rtcm_instance\":103,\"corrections_protocol\":158,\"corrections_crc_failed\":false,\"corrections_msg_used\":12},\"id\":\"gen-sensor_gnss\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss\",\"type\":\"px4_msgs/msg/SensorGnss\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"latitude\":4.028,\"longitude\":5.035,\"altitude_msl\":-6.042,\"altitude_ellipsoid\":7.049,\"speed_accuracy\":-3.125,\"course_accuracy\":-2.875,\"fix_type\":173,\"eph\":-2.375,\"epv\":-2.125,\"hdop\":-1.875,\"vdop\":-1.625,\"noise\":607552,\"automatic_gain_control\":25463,\"jamming_state\":46,\"jamming_indicator\":729061,\"spoofing_state\":156,\"authentication_state\":211,\"ground_speed\":0.125,\"vel_north\":0.375,\"vel_east\":0.625,\"vel_down\":0.875,\"course\":1.125,\"vel_ned_valid\":false,\"timestamp_time_relative\":1093588,\"time_utc_usec\":3456790092364,\"satellites_used\":194,\"system_error\":2148698745,\"rtcm_injection_rate\":2.625,\"selected_rtcm_instance\":103,\"corrections_protocol\":158,\"corrections_crc_failed\":false,\"corrections_msg_used\":12},\"id\":\"gen-sensor_gnss\"}",
+  "model": {
+    "@kind": "sensor_gnss",
+    "ros2px4.sensor_gnss_timestamp": "123456789013",
+    "ros2px4.sensor_gnss_timestamp_sample": "246913578026",
+    "ros2px4.sensor_gnss_device_id": "2147605164",
+    "lat": "4.028",
+    "lon": "5.035",
+    "ros2px4.topic": "/gen/sensor_gnss"
+  }
+}

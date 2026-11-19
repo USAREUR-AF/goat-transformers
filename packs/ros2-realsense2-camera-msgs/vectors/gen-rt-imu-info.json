@@ -1,0 +1,21 @@
+{
+  "name": "rt-imu_info",
+  "from": "ros2-realsense2-camera-msgs",
+  "to": "ros2-realsense2-camera-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/imu_info\",\"type\":\"realsense2_camera_msgs/msg/IMUInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"data\":[4.028,5.035,-6.042,7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"noise_variances\":[16.112,17.119,-18.126],\"bias_variances\":[19.133,20.14,-21.147]},\"id\":\"gen-imu_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/imu_info\",\"type\":\"realsense2_camera_msgs/msg/IMUInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"data\":[4.028,5.035,-6.042,7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"noise_variances\":[16.112,17.119,-18.126],\"bias_variances\":[19.133,20.14,-21.147]},\"id\":\"gen-imu_info\"}",
+  "model": {
+    "@kind": "imu_info",
+    "ros2realsense2camera.imu_info_header_stamp_sec": "40510",
+    "ros2realsense2camera.imu_info_header_stamp_nanosec": "2147564661",
+    "ros2realsense2camera.imu_info_header_frame_id": "s3",
+    "ros2realsense2camera.imu_info_data.#": "12",
+    "ros2realsense2camera.imu_info_data[0].ros2realsense2camera.imu_info_data_value": "4.028",
+    "ros2realsense2camera.imu_info_noise_variances.#": "3",
+    "ros2realsense2camera.imu_info_noise_variances[0].ros2realsense2camera.imu_info_noise_variances_value": "16.112",
+    "ros2realsense2camera.imu_info_bias_variances.#": "3",
+    "ros2realsense2camera.imu_info_bias_variances[0].ros2realsense2camera.imu_info_bias_variances_value": "19.133",
+    "ros2realsense2camera.topic": "/gen/imu_info"
+  }
+}

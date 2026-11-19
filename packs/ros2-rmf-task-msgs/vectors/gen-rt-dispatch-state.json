@@ -1,0 +1,19 @@
+{
+  "name": "rt-dispatch_state",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_state\",\"type\":\"rmf_task_msgs/msg/DispatchState\",\"msg\":{\"task_id\":\"s1\",\"status\":117,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s4\",\"expected_robot_name\":\"s5\"},\"errors\":[\"s6\",\"s7\"]},\"id\":\"gen-dispatch_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_state\",\"type\":\"rmf_task_msgs/msg/DispatchState\",\"msg\":{\"task_id\":\"s1\",\"status\":117,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s4\",\"expected_robot_name\":\"s5\"},\"errors\":[\"s6\",\"s7\"]},\"id\":\"gen-dispatch_state\"}",
+  "model": {
+    "@kind": "dispatch_state",
+    "ros2rmftask.dispatch_state_task_id": "s1",
+    "ros2rmftask.dispatch_state_status": "117",
+    "ros2rmftask.dispatch_state_assignment_is_assigned": "1",
+    "ros2rmftask.dispatch_state_assignment_fleet_name": "s4",
+    "ros2rmftask.dispatch_state_assignment_expected_robot_name": "s5",
+    "ros2rmftask.dispatch_state_errors.#": "2",
+    "ros2rmftask.dispatch_state_errors[0].ros2rmftask.dispatch_state_errors_value": "s6",
+    "ros2rmftask.topic": "/gen/dispatch_state"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-route",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"rmf_traffic_msgs/msg/Route\",\"msg\":{\"map\":\"s1\",\"trajectory\":{\"waypoints\":[{\"time\":246913578026,\"position\":[-3.021,4.028,5.035],\"velocity\":[-6.042,7.049,8.056]},{\"time\":-1111111101117,\"position\":[10.07,11.077,-12.084],\"velocity\":[13.091,14.098,-15.105]}]},\"checkpoints\":[1975308624208,2098765413221],\"dependencies\":[{\"dependent_checkpoint\":2222222202234,\"on_participant\":2345678991247,\"on_plan\":2469135780260,\"on_route\":2592592569273,\"on_checkpoint\":2716049358286},{\"dependent_checkpoint\":2839506147299,\"on_participant\":2962962936312,\"on_plan\":3086419725325,\"on_route\":3209876514338,\"on_checkpoint\":3333333303351}]},\"id\":\"gen-route\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"rmf_traffic_msgs/msg/Route\",\"msg\":{\"map\":\"s1\",\"trajectory\":{\"waypoints\":[{\"time\":246913578026,\"position\":[-3.021,4.028,5.035],\"velocity\":[-6.042,7.049,8.056]},{\"time\":-1111111101117,\"position\":[10.07,11.077,-12.084],\"velocity\":[13.091,14.098,-15.105]}]},\"checkpoints\":[1975308624208,2098765413221],\"dependencies\":[{\"dependent_checkpoint\":2222222202234,\"on_participant\":2345678991247,\"on_plan\":2469135780260,\"on_route\":2592592569273,\"on_checkpoint\":2716049358286},{\"dependent_checkpoint\":2839506147299,\"on_participant\":2962962936312,\"on_plan\":3086419725325,\"on_route\":3209876514338,\"on_checkpoint\":3333333303351}]},\"id\":\"gen-route\"}",
+  "model": {
+    "@kind": "route",
+    "ros2rmftraffic.route_map": "s1",
+    "ros2rmftraffic.route_trajectory_waypoints.#": "2",
+    "ros2rmftraffic.route_trajectory_waypoints[0].ros2rmftraffic.route_trajectory_waypoints_time": "246913578026",
+    "ros2rmftraffic.route_checkpoints.#": "2",
+    "ros2rmftraffic.route_checkpoints[0].ros2rmftraffic.route_checkpoints_value": "1975308624208",
+    "ros2rmftraffic.route_dependencies.#": "2",
+    "ros2rmftraffic.route_dependencies[0].ros2rmftraffic.route_dependencies_dependent_checkpoint": "2222222202234",
+    "ros2rmftraffic.topic": "/gen/route"
+  }
+}

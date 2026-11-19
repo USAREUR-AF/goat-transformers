@@ -1,0 +1,17 @@
+{
+  "name": "rt-device_information",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/device_information\",\"type\":\"px4_msgs/msg/DeviceInformation\",\"msg\":{\"timestamp\":123456789013,\"device_type\":245,\"name\":\"Awn/AIA=\",\"device_id\":2147645667,\"firmware_version\":\"BQ//AIA=\",\"hardware_version\":\"BhL/AIA=\",\"serial_number\":\"BxX/AIA=\"},\"id\":\"gen-device_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/device_information\",\"type\":\"px4_msgs/msg/DeviceInformation\",\"msg\":{\"timestamp\":123456789013,\"device_type\":245,\"name\":\"Awn/AIA=\",\"device_id\":2147645667,\"firmware_version\":\"BQ//AIA=\",\"hardware_version\":\"BhL/AIA=\",\"serial_number\":\"BxX/AIA=\"},\"id\":\"gen-device_information\"}",
+  "model": {
+    "@kind": "device_information",
+    "ros2px4.device_information_timestamp": "123456789013",
+    "ros2px4.device_information_device_type": "245",
+    "ros2px4.device_information_name": "Awn/AIA=",
+    "ros2px4.device_information_device_id": "2147645667",
+    "ros2px4.device_information_firmware_version": "BQ//AIA=",
+    "ros2px4.topic": "/gen/device_information"
+  }
+}

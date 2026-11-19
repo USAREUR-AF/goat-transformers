@@ -1,0 +1,17 @@
+{
+  "name": "rt-visibility_constraint",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/visibility_constraint\",\"type\":\"moveit_msgs/msg/VisibilityConstraint\",\"msg\":{\"target_radius\":1.007,\"target_pose\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},\"cone_sides\":486043,\"sensor_pose\":{\"header\":{\"stamp\":{\"sec\":526546,\"nanosec\":2148050697},\"frame_id\":\"s15\"},\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}}},\"max_view_angle\":23.161,\"max_range_angle\":-24.168,\"sensor_view_direction\":230,\"weight\":26.182},\"id\":\"gen-visibility_constraint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/visibility_constraint\",\"type\":\"moveit_msgs/msg/VisibilityConstraint\",\"msg\":{\"target_radius\":1.007,\"target_pose\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},\"cone_sides\":486043,\"sensor_pose\":{\"header\":{\"stamp\":{\"sec\":526546,\"nanosec\":2148050697},\"frame_id\":\"s15\"},\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}}},\"max_view_angle\":23.161,\"max_range_angle\":-24.168,\"sensor_view_direction\":230,\"weight\":26.182},\"id\":\"gen-visibility_constraint\"}",
+  "model": {
+    "@kind": "visibility_constraint",
+    "ros2moveit.visibility_constraint_target_radius": "1.007",
+    "ros2moveit.visibility_constraint_target_pose_header_stamp_sec": "81013",
+    "ros2moveit.visibility_constraint_target_pose_header_stamp_nanosec": "2147605164",
+    "ros2moveit.visibility_constraint_target_pose_header_frame_id": "s4",
+    "ros2moveit.visibility_constraint_target_pose_pose_position_x": "5.035",
+    "ros2moveit.topic": "/gen/visibility_constraint"
+  }
+}

@@ -1,0 +1,11 @@
+{
+ "PacketMsg:buf": "packet_msg_buf",
+ "Telemetry:countdown_shot_limiting": "telemetry_countdown_shot_limiting",
+ "Telemetry:countdown_thermal_shutdown": "telemetry_countdown_thermal_shutdown",
+ "Telemetry:header.frame_id": "telemetry_header_frame_id",
+ "Telemetry:header.stamp.nanosec": "telemetry_header_stamp_nanosec",
+ "Telemetry:header.stamp.sec": "telemetry_header_stamp_sec",
+ "Telemetry:shot_limiting": "telemetry_shot_limiting",
+ "Telemetry:thermal_shutdown": "telemetry_thermal_shutdown",
+ "topic": "topic"
+}

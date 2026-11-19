@@ -1,0 +1,21 @@
+{
+  "name": "rt-wheel_encoders",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_encoders\",\"type\":\"px4_msgs/msg/WheelEncoders\",\"msg\":{\"timestamp\":123456789013,\"wheel_speed\":[-4.625,-4.375,-4.125,-3.875],\"wheel_angle\":[-3.625,-3.375,-3.125,-2.875],\"counts_per_rev\":[2147888685,2147929188,2147969691,2148010194],\"encoder_counts\":[1728395046182,-1851851835195,1975308624208,-2098765413221]},\"id\":\"gen-wheel_encoders\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_encoders\",\"type\":\"px4_msgs/msg/WheelEncoders\",\"msg\":{\"timestamp\":123456789013,\"wheel_speed\":[-4.625,-4.375,-4.125,-3.875],\"wheel_angle\":[-3.625,-3.375,-3.125,-2.875],\"counts_per_rev\":[2147888685,2147929188,2147969691,2148010194],\"encoder_counts\":[1728395046182,-1851851835195,1975308624208,-2098765413221]},\"id\":\"gen-wheel_encoders\"}",
+  "model": {
+    "@kind": "wheel_encoders",
+    "ros2px4.wheel_encoders_timestamp": "123456789013",
+    "ros2px4.wheel_encoders_wheel_speed.#": "4",
+    "ros2px4.wheel_encoders_wheel_speed[0].ros2px4.wheel_encoders_wheel_speed_value": "-4.625",
+    "ros2px4.wheel_encoders_wheel_angle.#": "4",
+    "ros2px4.wheel_encoders_wheel_angle[0].ros2px4.wheel_encoders_wheel_angle_value": "-3.625",
+    "ros2px4.wheel_encoders_counts_per_rev.#": "4",
+    "ros2px4.wheel_encoders_counts_per_rev[0].ros2px4.wheel_encoders_counts_per_rev_value": "2147888685",
+    "ros2px4.wheel_encoders_encoder_counts.#": "4",
+    "ros2px4.wheel_encoders_encoder_counts[0].ros2px4.wheel_encoders_encoder_counts_value": "1728395046182",
+    "ros2px4.topic": "/gen/wheel_encoders"
+  }
+}

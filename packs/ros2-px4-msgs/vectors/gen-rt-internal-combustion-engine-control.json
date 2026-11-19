@@ -1,0 +1,17 @@
+{
+  "name": "rt-internal_combustion_engine_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/internal_combustion_engine_control\",\"type\":\"px4_msgs/msg/InternalCombustionEngineControl\",\"msg\":{\"timestamp\":123456789013,\"ignition_on\":false,\"throttle_control\":-4.375,\"choke_control\":-4.125,\"starter_engine_control\":-3.875,\"user_request_motor_on\":false},\"id\":\"gen-internal_combustion_engine_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/internal_combustion_engine_control\",\"type\":\"px4_msgs/msg/InternalCombustionEngineControl\",\"msg\":{\"timestamp\":123456789013,\"ignition_on\":false,\"throttle_control\":-4.375,\"choke_control\":-4.125,\"starter_engine_control\":-3.875,\"user_request_motor_on\":false},\"id\":\"gen-internal_combustion_engine_control\"}",
+  "model": {
+    "@kind": "internal_combustion_engine_control",
+    "ros2px4.internal_combustion_engine_control_timestamp": "123456789013",
+    "ros2px4.internal_combustion_engine_control_ignition_on": "0",
+    "ros2px4.internal_combustion_engine_control_throttle_control": "-4.375",
+    "ros2px4.internal_combustion_engine_control_choke_control": "-4.125",
+    "ros2px4.internal_combustion_engine_control_starter_engine_control": "-3.875",
+    "ros2px4.topic": "/gen/internal_combustion_engine_control"
+  }
+}

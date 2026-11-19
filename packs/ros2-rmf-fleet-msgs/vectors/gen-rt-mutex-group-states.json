@@ -1,0 +1,14 @@
+{
+  "name": "rt-mutex_group_states",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mutex_group_states\",\"type\":\"rmf_fleet_msgs/msg/MutexGroupStates\",\"msg\":{\"assignments\":[{\"group\":\"s1\",\"claimant\":246913578026,\"claim_time\":{\"sec\":121516,\"nanosec\":2147645667}},{\"group\":\"s5\",\"claimant\":740740734078,\"claim_time\":{\"sec\":283528,\"nanosec\":2147807679}}]},\"id\":\"gen-mutex_group_states\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mutex_group_states\",\"type\":\"rmf_fleet_msgs/msg/MutexGroupStates\",\"msg\":{\"assignments\":[{\"group\":\"s1\",\"claimant\":246913578026,\"claim_time\":{\"sec\":121516,\"nanosec\":2147645667}},{\"group\":\"s5\",\"claimant\":740740734078,\"claim_time\":{\"sec\":283528,\"nanosec\":2147807679}}]},\"id\":\"gen-mutex_group_states\"}",
+  "model": {
+    "@kind": "mutex_group_states",
+    "ros2rmffleet.mutex_group_states_assignments.#": "2",
+    "ros2rmffleet.mutex_group_states_assignments[0].ros2rmffleet.mutex_group_states_assignments_group": "s1",
+    "ros2rmffleet.topic": "/gen/mutex_group_states"
+  }
+}

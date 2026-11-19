@@ -1,0 +1,14 @@
+{
+  "name": "rt-behavior_parameter",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_parameter\",\"type\":\"rmf_task_msgs/msg/BehaviorParameter\",\"msg\":{\"name\":\"s1\",\"value\":\"s2\"},\"id\":\"gen-behavior_parameter\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_parameter\",\"type\":\"rmf_task_msgs/msg/BehaviorParameter\",\"msg\":{\"name\":\"s1\",\"value\":\"s2\"},\"id\":\"gen-behavior_parameter\"}",
+  "model": {
+    "@kind": "behavior_parameter",
+    "ros2rmftask.behavior_parameter_name": "s1",
+    "ros2rmftask.behavior_parameter_value": "s2",
+    "ros2rmftask.topic": "/gen/behavior_parameter"
+  }
+}

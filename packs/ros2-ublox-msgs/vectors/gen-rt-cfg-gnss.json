@@ -1,0 +1,18 @@
+{
+  "name": "rt-cfg_gnss",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_gnss\",\"type\":\"ublox_msgs/msg/CfgGNSS\",\"msg\":{\"msg_ver\":190,\"num_trk_ch_hw\":245,\"num_trk_ch_use\":44,\"num_config_blocks\":99,\"blocks\":[{\"gnss_id\":154,\"res_trk_ch\":209,\"max_trk_ch\":8,\"flags\":2147807679},{\"gnss_id\":118,\"res_trk_ch\":173,\"max_trk_ch\":228,\"flags\":2147969691}]},\"id\":\"gen-cfg_gnss\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_gnss\",\"type\":\"ublox_msgs/msg/CfgGNSS\",\"msg\":{\"msg_ver\":190,\"num_trk_ch_hw\":245,\"num_trk_ch_use\":44,\"num_config_blocks\":99,\"blocks\":[{\"gnss_id\":154,\"res_trk_ch\":209,\"max_trk_ch\":8,\"flags\":2147807679},{\"gnss_id\":118,\"res_trk_ch\":173,\"max_trk_ch\":228,\"flags\":2147969691}]},\"id\":\"gen-cfg_gnss\"}",
+  "model": {
+    "@kind": "cfg_gnss",
+    "ros2ublox.cfg_gnss_msg_ver": "190",
+    "ros2ublox.cfg_gnss_num_trk_ch_hw": "245",
+    "ros2ublox.cfg_gnss_num_trk_ch_use": "44",
+    "ros2ublox.cfg_gnss_num_config_blocks": "99",
+    "ros2ublox.cfg_gnss_blocks.#": "2",
+    "ros2ublox.cfg_gnss_blocks[0].ros2ublox.cfg_gnss_blocks_gnss_id": "154",
+    "ros2ublox.topic": "/gen/cfg_gnss"
+  }
+}

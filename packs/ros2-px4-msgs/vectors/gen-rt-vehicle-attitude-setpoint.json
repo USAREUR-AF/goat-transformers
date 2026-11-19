@@ -1,0 +1,18 @@
+{
+  "name": "rt-vehicle_attitude_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_attitude_setpoint\",\"type\":\"px4_msgs/msg/VehicleAttitudeSetpoint\",\"msg\":{\"timestamp\":123456789013,\"yaw_sp_move_rate\":-4.625,\"q_d\":[-4.375,-4.125,-3.875,-3.625],\"thrust_body\":[-3.375,-3.125,-2.875]},\"id\":\"gen-vehicle_attitude_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_attitude_setpoint\",\"type\":\"px4_msgs/msg/VehicleAttitudeSetpoint\",\"msg\":{\"timestamp\":123456789013,\"yaw_sp_move_rate\":-4.625,\"q_d\":[-4.375,-4.125,-3.875,-3.625],\"thrust_body\":[-3.375,-3.125,-2.875]},\"id\":\"gen-vehicle_attitude_setpoint\"}",
+  "model": {
+    "@kind": "vehicle_attitude_setpoint",
+    "ros2px4.vehicle_attitude_setpoint_timestamp": "123456789013",
+    "ros2px4.vehicle_attitude_setpoint_yaw_sp_move_rate": "-4.625",
+    "ros2px4.vehicle_attitude_setpoint_q_d.#": "4",
+    "ros2px4.vehicle_attitude_setpoint_q_d[0].ros2px4.vehicle_attitude_setpoint_q_d_value": "-4.375",
+    "ros2px4.vehicle_attitude_setpoint_thrust_body.#": "3",
+    "ros2px4.vehicle_attitude_setpoint_thrust_body[0].ros2px4.vehicle_attitude_setpoint_thrust_body_value": "-3.375",
+    "ros2px4.topic": "/gen/vehicle_attitude_setpoint"
+  }
+}

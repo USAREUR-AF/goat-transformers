@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_status",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_status\",\"type\":\"ublox_msgs/msg/NavSTATUS\",\"msg\":{\"i_tow\":2147524158,\"gps_fix\":245,\"flags\":44,\"fix_stat\":99,\"flags2\":154,\"ttff\":2147726673,\"msss\":2147767176},\"id\":\"gen-nav_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_status\",\"type\":\"ublox_msgs/msg/NavSTATUS\",\"msg\":{\"i_tow\":2147524158,\"gps_fix\":245,\"flags\":44,\"fix_stat\":99,\"flags2\":154,\"ttff\":2147726673,\"msss\":2147767176},\"id\":\"gen-nav_status\"}",
+  "model": {
+    "@kind": "nav_status",
+    "ros2ublox.nav_status_i_tow": "2147524158",
+    "ros2ublox.nav_status_gps_fix": "245",
+    "ros2ublox.nav_status_flags": "44",
+    "ros2ublox.nav_status_fix_stat": "99",
+    "ros2ublox.nav_status_flags2": "154",
+    "ros2ublox.topic": "/gen/nav_status"
+  }
+}

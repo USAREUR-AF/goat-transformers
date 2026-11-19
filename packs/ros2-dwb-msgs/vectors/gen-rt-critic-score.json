@@ -1,0 +1,15 @@
+{
+  "name": "rt-critic_score",
+  "from": "ros2-dwb-msgs",
+  "to": "ros2-dwb-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/critic_score\",\"type\":\"dwb_msgs/msg/CriticScore\",\"msg\":{\"name\":\"s1\",\"raw_score\":-4.625,\"scale\":-4.375},\"id\":\"gen-critic_score\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/critic_score\",\"type\":\"dwb_msgs/msg/CriticScore\",\"msg\":{\"name\":\"s1\",\"raw_score\":-4.625,\"scale\":-4.375},\"id\":\"gen-critic_score\"}",
+  "model": {
+    "@kind": "critic_score",
+    "ros2dwb.critic_score_name": "s1",
+    "ros2dwb.critic_score_raw_score": "-4.625",
+    "ros2dwb.critic_score_scale": "-4.375",
+    "ros2dwb.topic": "/gen/critic_score"
+  }
+}

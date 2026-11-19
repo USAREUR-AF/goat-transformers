@@ -1,0 +1,17 @@
+{
+  "name": "rt-obstacles",
+  "from": "ros2-rmf-obstacle-msgs",
+  "to": "ros2-rmf-obstacle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacles\",\"type\":\"rmf_obstacle_msgs/msg/Obstacles\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacles\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":283528,\"source\":\"s8\",\"level_name\":\"s9\",\"classification\":\"s10\",\"bbox\":{\"center\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"size\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},\"data_resolution\":-21.147,\"data\":[-63],\"lifetime\":{\"sec\":931576,\"nanosec\":2148455727},\"action\":1012582},{\"header\":{\"stamp\":{\"sec\":1053085,\"nanosec\":2148577236},\"frame_id\":\"s28\"},\"id\":1174594,\"source\":\"s30\",\"level_name\":\"s31\",\"classification\":\"s32\",\"bbox\":{\"center\":{\"position\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"orientation\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266,\"w\":-39.273}},\"size\":{\"x\":40.28,\"y\":41.287,\"z\":-42.294}},\"data_resolution\":43.301,\"data\":[123],\"lifetime\":{\"sec\":1822642,\"nanosec\":2149346793},\"action\":1903648}]},\"id\":\"gen-obstacles\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacles\",\"type\":\"rmf_obstacle_msgs/msg/Obstacles\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacles\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":283528,\"source\":\"s8\",\"level_name\":\"s9\",\"classification\":\"s10\",\"bbox\":{\"center\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"size\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},\"data_resolution\":-21.147,\"data\":[-63],\"lifetime\":{\"sec\":931576,\"nanosec\":2148455727},\"action\":1012582},{\"header\":{\"stamp\":{\"sec\":1053085,\"nanosec\":2148577236},\"frame_id\":\"s28\"},\"id\":1174594,\"source\":\"s30\",\"level_name\":\"s31\",\"classification\":\"s32\",\"bbox\":{\"center\":{\"position\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"orientation\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266,\"w\":-39.273}},\"size\":{\"x\":40.28,\"y\":41.287,\"z\":-42.294}},\"data_resolution\":43.301,\"data\":[123],\"lifetime\":{\"sec\":1822642,\"nanosec\":2149346793},\"action\":1903648}]},\"id\":\"gen-obstacles\"}",
+  "model": {
+    "@kind": "obstacles",
+    "ros2rmfobstacle.obstacles_header_stamp_sec": "40510",
+    "ros2rmfobstacle.obstacles_header_stamp_nanosec": "2147564661",
+    "ros2rmfobstacle.obstacles_header_frame_id": "s3",
+    "ros2rmfobstacle.obstacles_obstacles.#": "2",
+    "ros2rmfobstacle.obstacles_obstacles[0].ros2rmfobstacle.obstacles_obstacles_header_stamp_sec": "162019",
+    "ros2rmfobstacle.topic": "/gen/obstacles"
+  }
+}

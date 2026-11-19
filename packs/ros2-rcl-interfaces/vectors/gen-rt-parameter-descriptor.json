@@ -1,0 +1,21 @@
+{
+  "name": "rt-parameter_descriptor",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_descriptor\",\"type\":\"rcl_interfaces/msg/ParameterDescriptor\",\"msg\":{\"name\":\"s1\",\"type\":245,\"description\":\"s3\",\"additional_constraints\":\"s4\",\"read_only\":true,\"dynamic_typing\":false,\"floating_point_range\":[{\"from_value\":7.049,\"to_value\":8.056,\"step\":-9.063}],\"integer_range\":[{\"from_value\":1234567890130,\"to_value\":-1358024679143,\"step\":1481481468156}]},\"id\":\"gen-parameter_descriptor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_descriptor\",\"type\":\"rcl_interfaces/msg/ParameterDescriptor\",\"msg\":{\"name\":\"s1\",\"type\":245,\"description\":\"s3\",\"additional_constraints\":\"s4\",\"read_only\":true,\"dynamic_typing\":false,\"floating_point_range\":[{\"from_value\":7.049,\"to_value\":8.056,\"step\":-9.063}],\"integer_range\":[{\"from_value\":1234567890130,\"to_value\":-1358024679143,\"step\":1481481468156}]},\"id\":\"gen-parameter_descriptor\"}",
+  "model": {
+    "@kind": "parameter_descriptor",
+    "ros2rcl.parameter_descriptor_name": "s1",
+    "ros2rcl.parameter_descriptor_type": "245",
+    "ros2rcl.parameter_descriptor_description": "s3",
+    "ros2rcl.parameter_descriptor_additional_constraints": "s4",
+    "ros2rcl.parameter_descriptor_read_only": "1",
+    "ros2rcl.parameter_descriptor_floating_point_range.#": "1",
+    "ros2rcl.parameter_descriptor_floating_point_range[0].ros2rcl.parameter_descriptor_floating_point_range_from_value": "7.049",
+    "ros2rcl.parameter_descriptor_integer_range.#": "1",
+    "ros2rcl.parameter_descriptor_integer_range[0].ros2rcl.parameter_descriptor_integer_range_from_value": "1234567890130",
+    "ros2rcl.topic": "/gen/parameter_descriptor"
+  }
+}

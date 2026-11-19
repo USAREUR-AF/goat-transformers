@@ -1,0 +1,19 @@
+{
+  "name": "rt-mavlink",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mavlink\",\"type\":\"mavros_msgs/msg/Mavlink\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"framing_status\":99,\"magic\":154,\"len\":209,\"incompat_flags\":8,\"compat_flags\":63,\"seq\":118,\"sysid\":173,\"compid\":228,\"msgid\":2147969691,\"checksum\":35026,\"payload64\":[1728395046182,1851851835195,1975308624208,2098765413221,2222222202234,2345678991247,2469135780260,2592592569273,2716049358286,2839506147299,2962962936312,3086419725325,3209876514338,3333333303351,3456790092364,3580246881377,3703703670390,3827160459403,3950617248416,4074074037429,4197530826442,4320987615455,4444444404468,4567901193481,4691357982494,4814814771507,4938271560520,5061728349533,5185185138546,5308641927559,5432098716572,5555555505585,5679012294598],\"signature\":\"L43/AIA=\"},\"id\":\"gen-mavlink\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mavlink\",\"type\":\"mavros_msgs/msg/Mavlink\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"framing_status\":99,\"magic\":154,\"len\":209,\"incompat_flags\":8,\"compat_flags\":63,\"seq\":118,\"sysid\":173,\"compid\":228,\"msgid\":2147969691,\"checksum\":35026,\"payload64\":[1728395046182,1851851835195,1975308624208,2098765413221,2222222202234,2345678991247,2469135780260,2592592569273,2716049358286,2839506147299,2962962936312,3086419725325,3209876514338,3333333303351,3456790092364,3580246881377,3703703670390,3827160459403,3950617248416,4074074037429,4197530826442,4320987615455,4444444404468,4567901193481,4691357982494,4814814771507,4938271560520,5061728349533,5185185138546,5308641927559,5432098716572,5555555505585,5679012294598],\"signature\":\"L43/AIA=\"},\"id\":\"gen-mavlink\"}",
+  "model": {
+    "@kind": "mavlink",
+    "ros2mavros.mavlink_header_stamp_sec": "40510",
+    "ros2mavros.mavlink_header_stamp_nanosec": "2147564661",
+    "ros2mavros.mavlink_header_frame_id": "s3",
+    "ros2mavros.mavlink_framing_status": "99",
+    "ros2mavros.mavlink_magic": "154",
+    "ros2mavros.mavlink_payload64.#": "33",
+    "ros2mavros.mavlink_payload64[0].ros2mavros.mavlink_payload64_value": "1728395046182",
+    "ros2mavros.topic": "/gen/mavlink"
+  }
+}

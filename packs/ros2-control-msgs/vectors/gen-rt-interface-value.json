@@ -1,0 +1,16 @@
+{
+  "name": "rt-interface_value",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/interface_value\",\"type\":\"control_msgs/msg/InterfaceValue\",\"msg\":{\"interface_names\":[\"s1\",\"s2\"],\"values\":[-3.021,4.028]},\"id\":\"gen-interface_value\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/interface_value\",\"type\":\"control_msgs/msg/InterfaceValue\",\"msg\":{\"interface_names\":[\"s1\",\"s2\"],\"values\":[-3.021,4.028]},\"id\":\"gen-interface_value\"}",
+  "model": {
+    "@kind": "interface_value",
+    "ros2control.interface_value_interface_names.#": "2",
+    "ros2control.interface_value_interface_names[0].ros2control.interface_value_interface_names_value": "s1",
+    "ros2control.interface_value_values.#": "2",
+    "ros2control.interface_value_values[0].ros2control.interface_value_values_value": "-3.021",
+    "ros2control.topic": "/gen/interface_value"
+  }
+}

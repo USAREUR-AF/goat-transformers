@@ -1,0 +1,17 @@
+{
+  "name": "rt-extended_state",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/extended_state\",\"type\":\"mavros_msgs/msg/ExtendedState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vtol_state\":99,\"landed_state\":154},\"id\":\"gen-extended_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/extended_state\",\"type\":\"mavros_msgs/msg/ExtendedState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vtol_state\":99,\"landed_state\":154},\"id\":\"gen-extended_state\"}",
+  "model": {
+    "@kind": "extended_state",
+    "ros2mavros.extended_state_header_stamp_sec": "40510",
+    "ros2mavros.extended_state_header_stamp_nanosec": "2147564661",
+    "ros2mavros.extended_state_header_frame_id": "s3",
+    "ros2mavros.extended_state_vtol_state": "99",
+    "ros2mavros.extended_state_landed_state": "154",
+    "ros2mavros.topic": "/gen/extended_state"
+  }
+}

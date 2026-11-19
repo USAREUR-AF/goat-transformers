@@ -1,0 +1,17 @@
+{
+  "name": "rt-tecs_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tecs_status\",\"type\":\"px4_msgs/msg/TecsStatus\",\"msg\":{\"timestamp\":123456789013,\"altitude_sp\":-4.625,\"altitude_reference\":-4.375,\"altitude_time_constant\":-4.125,\"height_rate_reference\":-3.875,\"height_rate_direct\":-3.625,\"height_rate_setpoint\":-3.375,\"height_rate\":-3.125,\"equivalent_airspeed_sp\":-2.875,\"true_airspeed_sp\":-2.625,\"true_airspeed_filtered\":-2.375,\"true_airspeed_derivative_sp\":-2.125,\"true_airspeed_derivative\":-1.875,\"true_airspeed_derivative_raw\":-1.625,\"total_energy_rate_sp\":-1.375,\"total_energy_rate\":-1.125,\"total_energy_balance_rate_sp\":-0.875,\"total_energy_balance_rate\":-0.625,\"throttle_integ\":-0.375,\"pitch_integ\":-0.125,\"throttle_sp\":0.125,\"pitch_sp_rad\":0.375,\"throttle_trim\":0.625,\"underspeed_ratio\":0.875,\"fast_descend_ratio\":1.125,\"weight_ratio\":1.375},\"id\":\"gen-tecs_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tecs_status\",\"type\":\"px4_msgs/msg/TecsStatus\",\"msg\":{\"timestamp\":123456789013,\"altitude_sp\":-4.625,\"altitude_reference\":-4.375,\"altitude_time_constant\":-4.125,\"height_rate_reference\":-3.875,\"height_rate_direct\":-3.625,\"height_rate_setpoint\":-3.375,\"height_rate\":-3.125,\"equivalent_airspeed_sp\":-2.875,\"true_airspeed_sp\":-2.625,\"true_airspeed_filtered\":-2.375,\"true_airspeed_derivative_sp\":-2.125,\"true_airspeed_derivative\":-1.875,\"true_airspeed_derivative_raw\":-1.625,\"total_energy_rate_sp\":-1.375,\"total_energy_rate\":-1.125,\"total_energy_balance_rate_sp\":-0.875,\"total_energy_balance_rate\":-0.625,\"throttle_integ\":-0.375,\"pitch_integ\":-0.125,\"throttle_sp\":0.125,\"pitch_sp_rad\":0.375,\"throttle_trim\":0.625,\"underspeed_ratio\":0.875,\"fast_descend_ratio\":1.125,\"weight_ratio\":1.375},\"id\":\"gen-tecs_status\"}",
+  "model": {
+    "@kind": "tecs_status",
+    "ros2px4.tecs_status_timestamp": "123456789013",
+    "ros2px4.tecs_status_altitude_sp": "-4.625",
+    "ros2px4.tecs_status_altitude_reference": "-4.375",
+    "ros2px4.tecs_status_altitude_time_constant": "-4.125",
+    "ros2px4.tecs_status_height_rate_reference": "-3.875",
+    "ros2px4.topic": "/gen/tecs_status"
+  }
+}

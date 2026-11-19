@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_controller_output",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_controller_output\",\"type\":\"mavros_msgs/msg/NavControllerOutput\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"nav_roll\":-4.125,\"nav_pitch\":-3.875,\"nav_bearing\":-19119,\"target_bearing\":21384,\"wp_dist\":29119,\"alt_error\":-2.875,\"aspd_error\":-2.625,\"xtrack_error\":-2.375},\"id\":\"gen-nav_controller_output\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_controller_output\",\"type\":\"mavros_msgs/msg/NavControllerOutput\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"nav_roll\":-4.125,\"nav_pitch\":-3.875,\"nav_bearing\":-19119,\"target_bearing\":21384,\"wp_dist\":29119,\"alt_error\":-2.875,\"aspd_error\":-2.625,\"xtrack_error\":-2.375},\"id\":\"gen-nav_controller_output\"}",
+  "model": {
+    "@kind": "nav_controller_output",
+    "ros2mavros.nav_controller_output_header_stamp_sec": "40510",
+    "ros2mavros.nav_controller_output_header_stamp_nanosec": "2147564661",
+    "ros2mavros.nav_controller_output_header_frame_id": "s3",
+    "ros2mavros.nav_controller_output_nav_roll": "-4.125",
+    "ros2mavros.nav_controller_output_nav_pitch": "-3.875",
+    "ros2mavros.topic": "/gen/nav_controller_output"
+  }
+}

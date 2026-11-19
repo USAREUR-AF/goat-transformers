@@ -1,0 +1,18 @@
+{
+  "name": "rt-terrain_data",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_data\",\"type\":\"mavros_msgs/msg/TerrainData\",\"msg\":{\"latitude\":1.007,\"longitude\":2.014,\"grid_spacing\":23212,\"gridbit\":99,\"data\":[5914,-19119,21384,-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165,-16868,23635]},\"id\":\"gen-terrain_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/terrain_data\",\"type\":\"mavros_msgs/msg/TerrainData\",\"msg\":{\"latitude\":1.007,\"longitude\":2.014,\"grid_spacing\":23212,\"gridbit\":99,\"data\":[5914,-19119,21384,-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165,-16868,23635]},\"id\":\"gen-terrain_data\"}",
+  "model": {
+    "@kind": "terrain_data",
+    "ros2mavros.terrain_data_latitude": "1.007",
+    "ros2mavros.terrain_data_longitude": "2.014",
+    "ros2mavros.terrain_data_grid_spacing": "23212",
+    "ros2mavros.terrain_data_gridbit": "99",
+    "ros2mavros.terrain_data_data.#": "16",
+    "ros2mavros.terrain_data_data[0].ros2mavros.terrain_data_data_value": "5914",
+    "ros2mavros.topic": "/gen/terrain_data"
+  }
+}

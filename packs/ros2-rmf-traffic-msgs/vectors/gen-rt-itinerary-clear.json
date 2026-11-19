@@ -1,0 +1,14 @@
+{
+  "name": "rt-itinerary_clear",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_clear\",\"type\":\"rmf_traffic_msgs/msg/ItineraryClear\",\"msg\":{\"participant\":123456789013,\"itinerary_version\":246913578026},\"id\":\"gen-itinerary_clear\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_clear\",\"type\":\"rmf_traffic_msgs/msg/ItineraryClear\",\"msg\":{\"participant\":123456789013,\"itinerary_version\":246913578026},\"id\":\"gen-itinerary_clear\"}",
+  "model": {
+    "@kind": "itinerary_clear",
+    "ros2rmftraffic.itinerary_clear_participant": "123456789013",
+    "ros2rmftraffic.itinerary_clear_itinerary_version": "246913578026",
+    "ros2rmftraffic.topic": "/gen/itinerary_clear"
+  }
+}

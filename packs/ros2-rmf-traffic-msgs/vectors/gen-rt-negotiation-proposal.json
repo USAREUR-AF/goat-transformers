@@ -1,0 +1,20 @@
+{
+  "name": "rt-negotiation_proposal",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_proposal\",\"type\":\"rmf_traffic_msgs/msg/NegotiationProposal\",\"msg\":{\"conflict_version\":123456789013,\"proposal_version\":246913578026,\"for_participant\":370370367039,\"to_accommodate\":[{\"participant\":493827156052,\"version\":617283945065},{\"participant\":740740734078,\"version\":864197523091}],\"plan_id\":987654312104,\"itinerary\":[{\"map\":\"s9\",\"trajectory\":{\"waypoints\":[{\"time\":1234567890130,\"position\":[11.077,-12.084,13.091],\"velocity\":[14.098,-15.105,16.112]}]},\"checkpoints\":[2098765413221],\"dependencies\":[{\"dependent_checkpoint\":2222222202234,\"on_participant\":2345678991247,\"on_plan\":2469135780260,\"on_route\":2592592569273,\"on_checkpoint\":2716049358286}]},{\"map\":\"s23\",\"trajectory\":{\"waypoints\":[{\"time\":2962962936312,\"position\":[25.175,26.182,-27.189],\"velocity\":[28.196,29.203,-30.21]}]},\"checkpoints\":[3827160459403],\"dependencies\":[{\"dependent_checkpoint\":3950617248416,\"on_participant\":4074074037429,\"on_plan\":4197530826442,\"on_route\":4320987615455,\"on_checkpoint\":4444444404468}]}]},\"id\":\"gen-negotiation_proposal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_proposal\",\"type\":\"rmf_traffic_msgs/msg/NegotiationProposal\",\"msg\":{\"conflict_version\":123456789013,\"proposal_version\":246913578026,\"for_participant\":370370367039,\"to_accommodate\":[{\"participant\":493827156052,\"version\":617283945065},{\"participant\":740740734078,\"version\":864197523091}],\"plan_id\":987654312104,\"itinerary\":[{\"map\":\"s9\",\"trajectory\":{\"waypoints\":[{\"time\":1234567890130,\"position\":[11.077,-12.084,13.091],\"velocity\":[14.098,-15.105,16.112]}]},\"checkpoints\":[2098765413221],\"dependencies\":[{\"dependent_checkpoint\":2222222202234,\"on_participant\":2345678991247,\"on_plan\":2469135780260,\"on_route\":2592592569273,\"on_checkpoint\":2716049358286}]},{\"map\":\"s23\",\"trajectory\":{\"waypoints\":[{\"time\":2962962936312,\"position\":[25.175,26.182,-27.189],\"velocity\":[28.196,29.203,-30.21]}]},\"checkpoints\":[3827160459403],\"dependencies\":[{\"dependent_checkpoint\":3950617248416,\"on_participant\":4074074037429,\"on_plan\":4197530826442,\"on_route\":4320987615455,\"on_checkpoint\":4444444404468}]}]},\"id\":\"gen-negotiation_proposal\"}",
+  "model": {
+    "@kind": "negotiation_proposal",
+    "ros2rmftraffic.negotiation_proposal_conflict_version": "123456789013",
+    "ros2rmftraffic.negotiation_proposal_proposal_version": "246913578026",
+    "ros2rmftraffic.negotiation_proposal_for_participant": "370370367039",
+    "ros2rmftraffic.negotiation_proposal_to_accommodate.#": "2",
+    "ros2rmftraffic.negotiation_proposal_to_accommodate[0].ros2rmftraffic.negotiation_proposal_to_accommodate_participant": "493827156052",
+    "ros2rmftraffic.negotiation_proposal_plan_id": "987654312104",
+    "ros2rmftraffic.negotiation_proposal_itinerary.#": "2",
+    "ros2rmftraffic.negotiation_proposal_itinerary[0].ros2rmftraffic.negotiation_proposal_itinerary_map": "s9",
+    "ros2rmftraffic.topic": "/gen/negotiation_proposal"
+  }
+}

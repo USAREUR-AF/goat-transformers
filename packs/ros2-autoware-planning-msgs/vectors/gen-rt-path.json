@@ -1,0 +1,21 @@
+{
+  "name": "rt-path",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path\",\"type\":\"autoware_planning_msgs/msg/Path\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"longitudinal_velocity_mps\":-2.375,\"lateral_velocity_mps\":-2.125,\"heading_rate_rps\":-1.875,\"is_final\":false},{\"pose\":{\"position\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"orientation\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14,\"w\":-21.147}},\"longitudinal_velocity_mps\":0.375,\"lateral_velocity_mps\":0.625,\"heading_rate_rps\":0.875,\"is_final\":true}],\"left_bound\":[{\"x\":26.182,\"y\":-27.189,\"z\":28.196},{\"x\":29.203,\"y\":-30.21,\"z\":31.217}],\"right_bound\":[{\"x\":32.224,\"y\":-33.231,\"z\":34.238},{\"x\":35.245,\"y\":-36.252,\"z\":37.259}]},\"id\":\"gen-path\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path\",\"type\":\"autoware_planning_msgs/msg/Path\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"longitudinal_velocity_mps\":-2.375,\"lateral_velocity_mps\":-2.125,\"heading_rate_rps\":-1.875,\"is_final\":false},{\"pose\":{\"position\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"orientation\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14,\"w\":-21.147}},\"longitudinal_velocity_mps\":0.375,\"lateral_velocity_mps\":0.625,\"heading_rate_rps\":0.875,\"is_final\":true}],\"left_bound\":[{\"x\":26.182,\"y\":-27.189,\"z\":28.196},{\"x\":29.203,\"y\":-30.21,\"z\":31.217}],\"right_bound\":[{\"x\":32.224,\"y\":-33.231,\"z\":34.238},{\"x\":35.245,\"y\":-36.252,\"z\":37.259}]},\"id\":\"gen-path\"}",
+  "model": {
+    "@kind": "path",
+    "ros2autowareplanning.path_header_stamp_sec": "40510",
+    "ros2autowareplanning.path_header_stamp_nanosec": "2147564661",
+    "ros2autowareplanning.path_header_frame_id": "s3",
+    "ros2autowareplanning.path_points.#": "2",
+    "ros2autowareplanning.path_points[0].ros2autowareplanning.path_points_pose_position_x": "4.028",
+    "ros2autowareplanning.path_left_bound.#": "2",
+    "ros2autowareplanning.path_left_bound[0].ros2autowareplanning.path_left_bound_x": "26.182",
+    "ros2autowareplanning.path_right_bound.#": "2",
+    "ros2autowareplanning.path_right_bound[0].ros2autowareplanning.path_right_bound_x": "32.224",
+    "ros2autowareplanning.topic": "/gen/path"
+  }
+}

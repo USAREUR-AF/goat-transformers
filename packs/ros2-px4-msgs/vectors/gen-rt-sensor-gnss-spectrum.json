@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_gnss_spectrum",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_spectrum\",\"type\":\"px4_msgs/msg/SensorGnssSpectrum\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"block_id\":99,\"spectrum\":\"BQ//AIA=\",\"spectrum_span\":2147726673,\"resolution\":2147767176,\"center_frequency\":2147807679,\"programmable_gain_amplifier\":118},\"id\":\"gen-sensor_gnss_spectrum\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_spectrum\",\"type\":\"px4_msgs/msg/SensorGnssSpectrum\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"block_id\":99,\"spectrum\":\"BQ//AIA=\",\"spectrum_span\":2147726673,\"resolution\":2147767176,\"center_frequency\":2147807679,\"programmable_gain_amplifier\":118},\"id\":\"gen-sensor_gnss_spectrum\"}",
+  "model": {
+    "@kind": "sensor_gnss_spectrum",
+    "ros2px4.sensor_gnss_spectrum_timestamp": "123456789013",
+    "ros2px4.sensor_gnss_spectrum_timestamp_sample": "246913578026",
+    "ros2px4.sensor_gnss_spectrum_device_id": "2147605164",
+    "ros2px4.sensor_gnss_spectrum_block_id": "99",
+    "ros2px4.sensor_gnss_spectrum_spectrum": "BQ//AIA=",
+    "ros2px4.topic": "/gen/sensor_gnss_spectrum"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "rt-sensor_accel_fifo",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_accel_fifo\",\"type\":\"px4_msgs/msg/SensorAccelFifo\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"dt\":-3.875,\"scale\":-3.625,\"samples\":8,\"x\":[-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165,-16868,23635,-1398,-26431,14072,-10961,29542,4509,-20524,19979,-5054,-30087,10416,-14617,25886,853,-24180,16323,-8710,31793,6760],\"y\":[-18273,22230,-2803,-27836,12667,-12366,28137,3104,-21929,18574,-6459,-31492,9011,-16022,24481,-552,-25585,14918,-10115,30388,5355,-19678,20825,-4208,-29241,11262,-13771,26732,1699,-23334,17169,-7864],\"z\":[32639,7606,-17427,23076,-1957,-26990,13513,-11520,28983,3950,-21083,19420,-5613,-30646,9857,-15176,25327,294,-24739,15764,-9269,31234,6201,-18832,21671,-3362,-28395,12108,-12925,27578,2545,-22488]},\"id\":\"gen-sensor_accel_fifo\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_accel_fifo\",\"type\":\"px4_msgs/msg/SensorAccelFifo\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"dt\":-3.875,\"scale\":-3.625,\"samples\":8,\"x\":[-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165,-16868,23635,-1398,-26431,14072,-10961,29542,4509,-20524,19979,-5054,-30087,10416,-14617,25886,853,-24180,16323,-8710,31793,6760],\"y\":[-18273,22230,-2803,-27836,12667,-12366,28137,3104,-21929,18574,-6459,-31492,9011,-16022,24481,-552,-25585,14918,-10115,30388,5355,-19678,20825,-4208,-29241,11262,-13771,26732,1699,-23334,17169,-7864],\"z\":[32639,7606,-17427,23076,-1957,-26990,13513,-11520,28983,3950,-21083,19420,-5613,-30646,9857,-15176,25327,294,-24739,15764,-9269,31234,6201,-18832,21671,-3362,-28395,12108,-12925,27578,2545,-22488]},\"id\":\"gen-sensor_accel_fifo\"}",
+  "model": {
+    "@kind": "sensor_accel_fifo",
+    "ros2px4.sensor_accel_fifo_timestamp": "123456789013",
+    "ros2px4.sensor_accel_fifo_timestamp_sample": "246913578026",
+    "ros2px4.sensor_accel_fifo_device_id": "2147605164",
+    "ros2px4.sensor_accel_fifo_is_external": "0",
+    "ros2px4.sensor_accel_fifo_dt": "-3.875",
+    "ros2px4.sensor_accel_fifo_x.#": "32",
+    "ros2px4.sensor_accel_fifo_x[0].ros2px4.sensor_accel_fifo_x_value": "-3649",
+    "ros2px4.sensor_accel_fifo_y.#": "32",
+    "ros2px4.sensor_accel_fifo_y[0].ros2px4.sensor_accel_fifo_y_value": "-18273",
+    "ros2px4.sensor_accel_fifo_z.#": "32",
+    "ros2px4.sensor_accel_fifo_z[0].ros2px4.sensor_accel_fifo_z_value": "32639",
+    "ros2px4.topic": "/gen/sensor_accel_fifo"
+  }
+}

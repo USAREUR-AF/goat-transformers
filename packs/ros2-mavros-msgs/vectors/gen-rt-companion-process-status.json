@@ -1,0 +1,17 @@
+{
+  "name": "rt-companion_process_status",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/companion_process_status\",\"type\":\"mavros_msgs/msg/CompanionProcessStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"state\":99,\"component\":154},\"id\":\"gen-companion_process_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/companion_process_status\",\"type\":\"mavros_msgs/msg/CompanionProcessStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"state\":99,\"component\":154},\"id\":\"gen-companion_process_status\"}",
+  "model": {
+    "@kind": "companion_process_status",
+    "ros2mavros.companion_process_status_header_stamp_sec": "40510",
+    "ros2mavros.companion_process_status_header_stamp_nanosec": "2147564661",
+    "ros2mavros.companion_process_status_header_frame_id": "s3",
+    "ros2mavros.companion_process_status_state": "99",
+    "ros2mavros.companion_process_status_component": "154",
+    "ros2mavros.topic": "/gen/companion_process_status"
+  }
+}

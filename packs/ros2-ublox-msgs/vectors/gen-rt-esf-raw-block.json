@@ -1,0 +1,14 @@
+{
+  "name": "rt-esf_raw_block",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esf_raw_block\",\"type\":\"ublox_msgs/msg/EsfRAWBlock\",\"msg\":{\"data\":2147524158,\"s_t_tag\":2147564661},\"id\":\"gen-esf_raw_block\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esf_raw_block\",\"type\":\"ublox_msgs/msg/EsfRAWBlock\",\"msg\":{\"data\":2147524158,\"s_t_tag\":2147564661},\"id\":\"gen-esf_raw_block\"}",
+  "model": {
+    "@kind": "esf_raw_block",
+    "ros2ublox.esf_raw_block_data": "2147524158",
+    "ros2ublox.esf_raw_block_s_t_tag": "2147564661",
+    "ros2ublox.topic": "/gen/esf_raw_block"
+  }
+}

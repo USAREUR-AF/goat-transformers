@@ -1,0 +1,16 @@
+{
+  "name": "rt-point_cloud_map_cell_meta_data",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_cell_meta_data\",\"type\":\"autoware_map_msgs/msg/PointCloudMapCellMetaData\",\"msg\":{\"min_x\":-4.875,\"min_y\":-4.625,\"max_x\":-4.375,\"max_y\":-4.125},\"id\":\"gen-point_cloud_map_cell_meta_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_cell_meta_data\",\"type\":\"autoware_map_msgs/msg/PointCloudMapCellMetaData\",\"msg\":{\"min_x\":-4.875,\"min_y\":-4.625,\"max_x\":-4.375,\"max_y\":-4.125},\"id\":\"gen-point_cloud_map_cell_meta_data\"}",
+  "model": {
+    "@kind": "point_cloud_map_cell_meta_data",
+    "ros2autowaremap.point_cloud_map_cell_meta_data_min_x": "-4.875",
+    "ros2autowaremap.point_cloud_map_cell_meta_data_min_y": "-4.625",
+    "ros2autowaremap.point_cloud_map_cell_meta_data_max_x": "-4.375",
+    "ros2autowaremap.point_cloud_map_cell_meta_data_max_y": "-4.125",
+    "ros2autowaremap.topic": "/gen/point_cloud_map_cell_meta_data"
+  }
+}

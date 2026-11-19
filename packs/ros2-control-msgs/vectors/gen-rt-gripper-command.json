@@ -1,0 +1,14 @@
+{
+  "name": "rt-gripper_command",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gripper_command\",\"type\":\"control_msgs/msg/GripperCommand\",\"msg\":{\"position\":1.007,\"max_effort\":2.014},\"id\":\"gen-gripper_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gripper_command\",\"type\":\"control_msgs/msg/GripperCommand\",\"msg\":{\"position\":1.007,\"max_effort\":2.014},\"id\":\"gen-gripper_command\"}",
+  "model": {
+    "@kind": "gripper_command",
+    "ros2control.gripper_command_position": "1.007",
+    "ros2control.gripper_command_max_effort": "2.014",
+    "ros2control.topic": "/gen/gripper_command"
+  }
+}

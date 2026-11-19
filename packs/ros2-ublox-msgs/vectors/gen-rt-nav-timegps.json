@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_timegps",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_timegps\",\"type\":\"ublox_msgs/msg/NavTIMEGPS\",\"msg\":{\"i_tow\":2147524158,\"f_tow\":81013,\"week\":-9556,\"leap_s\":-29,\"valid\":154,\"t_acc\":2147726673},\"id\":\"gen-nav_timegps\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_timegps\",\"type\":\"ublox_msgs/msg/NavTIMEGPS\",\"msg\":{\"i_tow\":2147524158,\"f_tow\":81013,\"week\":-9556,\"leap_s\":-29,\"valid\":154,\"t_acc\":2147726673},\"id\":\"gen-nav_timegps\"}",
+  "model": {
+    "@kind": "nav_timegps",
+    "ros2ublox.nav_timegps_i_tow": "2147524158",
+    "ros2ublox.nav_timegps_f_tow": "81013",
+    "ros2ublox.nav_timegps_week": "-9556",
+    "ros2ublox.nav_timegps_leap_s": "-29",
+    "ros2ublox.nav_timegps_valid": "154",
+    "ros2ublox.topic": "/gen/nav_timegps"
+  }
+}

@@ -71,6 +71,12 @@ MODULE_OF = {
     "builtin_interfaces": "ros2builtin",
 }
 REPO_OF = {"builtin_interfaces": "rcl_interfaces"}     # every other package: common_interfaces
+PKG_DIR = {}            # package -> directory under its repository (--package-at); default the name
+MSG_SUB = {}            # package -> directory of its .msg files under the package; default msg
+REPO_LICENSE = {"common_interfaces": "Apache License 2.0", "rcl_interfaces": "Apache License 2.0"}
+LICENSE_FILES = {}      # repository -> licence files read (--license-file); default as below
+LICENSE_NOTES = collections.OrderedDict()   # repository -> licence statement for PROVENANCE.md
+EXTRA_FILES = {}        # package -> other files read as evidence (--evidence-file)
 REPO_URL = {"common_interfaces": "https://github.com/ros2/common_interfaces",
             "rcl_interfaces": "https://github.com/ros2/rcl_interfaces",
             "rosbridge_suite": "https://github.com/RobotWebTools/rosbridge_suite"}
@@ -170,9 +176,14 @@ def parse_msg(pkg, name, path):
     return m
 
 
+def pkg_dir(pkg):
+    """(repository, directory of the package under it; "" when the package is the root)."""
+    return REPO_OF.get(pkg, "common_interfaces"), PKG_DIR.get(pkg, pkg)
+
+
 def msg_files(src, pkg):
-    repo = REPO_OF.get(pkg, "common_interfaces")
-    return repo, sorted(glob.glob(os.path.join(src, repo, pkg, "msg", "*.msg")))
+    repo, d = pkg_dir(pkg)
+    return repo, sorted(glob.glob(os.path.join(src, repo, d, MSG_SUB.get(pkg, "msg"), "*.msg")))
 
 
 class Catalog:
@@ -183,8 +194,8 @@ class Catalog:
     def get(self, pkg, name):
         k = (pkg, name)
         if k not in self.msgs:
-            repo = REPO_OF.get(pkg, "common_interfaces")
-            path = os.path.join(self.src, repo, pkg, "msg", name + ".msg")
+            repo, d = pkg_dir(pkg)
+            path = os.path.join(self.src, repo, d, MSG_SUB.get(pkg, "msg"), name + ".msg")
             if not os.path.isfile(path):
                 fail("message %s/%s not found at %s" % (pkg, name, path))
             self.msgs[k] = parse_msg(pkg, name, path)
@@ -217,6 +228,21 @@ class Catalog:
 # --------------------------------------------------------------------------
 # Walk: message tree to pack lines
 # --------------------------------------------------------------------------
+
+SKIP_RE = {}            # package -> compiled pattern of field names not mapped (--skip-field-re)
+
+
+def skipped(msg, f):
+    r = SKIP_RE.get(msg.pkg)
+    return bool(r and r.search(f.name))
+
+
+KIND_SLUG = {}           # (package, message) -> kind name, where two names give one slug
+
+
+def kind_slug(msg):
+    return KIND_SLUG.get((msg.pkg, msg.name), slug(msg.name))
+
 
 def slug(name):
     s = re.sub(r"([a-z])([A-Z])", r"\1_\2", name)
@@ -266,6 +292,13 @@ class Namer:
         self.used.add(k)
         return k
 
+    def drop(self, pattern):
+        """Forget the names of paths that pass through a field the pattern skips."""
+        for p in list(self.names):
+            parts = re.split(r"[:.\[\]]+", p)[1:]
+            if any(pattern.search(x) for x in parts if x):
+                del self.names[p]
+
     def save(self):
         if not self.path:
             return
@@ -278,12 +311,16 @@ class Walker:
     def __init__(self, cat, module, namer, maps):
         self.cat, self.module, self.namer, self.maps = cat, module, namer, maps
         self.not_mapped = []        # (kind msg name, path, rostype, reason)
+        self.skipped = 0            # fields left out by --skip-field-re
 
     def walk(self, kind, msg, loc, kpath, ppath, desc):
         """loc: locator parts relative to the current scope; kpath: path parts for the
         key name from the kind; ppath: path id text from the kind; desc: dotted path."""
         out = []
         for f in msg.fields:
+            if skipped(msg, f):
+                self.skipped += 1
+                continue
             l2 = loc + [f.name]
             k2 = kpath + [f.name]
             p2 = ppath + ("." if ppath and not ppath.endswith(".") else "") + f.name
@@ -319,7 +356,7 @@ class Walker:
         return out
 
     def key(self, kind, kpath, pathid):
-        return self.namer.name("%s:%s" % (kind.name, pathid), "_".join([slug(kind.name)] + kpath))
+        return self.namer.name("%s:%s" % (kind.name, pathid), "_".join([kind_slug(kind)] + kpath))
 
     def scalar(self, kind, f, loc, kpath, pathid, desc, rostype):
         kt, tr = PRIMITIVES[f.base]
@@ -523,6 +560,8 @@ class Sampler:
     def message(self, msg, depth):
         obj = collections.OrderedDict()
         for f in msg.fields:
+            if skipped(msg, f):         # not written: the vector would carry the name
+                continue
             if f.array is None:
                 if f.pkg_ref is None:
                     obj[f.name] = self.scalar(f.base)
@@ -1399,6 +1438,66 @@ def geojson_cross_vectors(fmt, pkg, kinds):
     return out
 
 
+CROSS_POINT = {"lat": 47.0625, "lon": 8.53125, "hae": 431.5}    # exact in binary
+
+
+def set_path(obj, loc, value):
+    parts = loc.split(".")[1:]          # the locator starts at the envelope's `msg`
+    cur = obj
+    for p in parts[:-1]:
+        cur = cur.setdefault(p, collections.OrderedDict())
+    cur[parts[-1]] = value
+
+
+def generic_cross(fmt, module, kinds, cat, names):
+    """Vectors for kinds bound to core lat/lon (and hae): to geojson from a full sample
+    message, and from geojson into the kind the pack's requires select."""
+    by = {k.msg.name: k for k in kinds}
+    out, gout = [], []
+    for name in names:
+        if name not in by:
+            fail("--cross %s: no such kind in %s" % (name, fmt))
+        k = by[name]
+        bound = [x for x in k.lines if isinstance(x, FLine) and x.key in CORE_KEYS]
+        if {x.key for x in bound} - set(CROSS_POINT) or not {"lat", "lon"} <= {x.key for x in bound}:
+            fail("--cross %s: binds %s; only lat, lon, hae are handled" % (name, [x.key for x in bound]))
+        obj = Sampler(cat).message(k.msg, 0)
+        for x in bound:
+            set_path(obj, x.loc, CROSS_POINT[x.key])
+        inp = dump(envelope(k, "/geo", obj, []))
+        coords = [CROSS_POINT["lon"], CROSS_POINT["lat"]] + (
+            [CROSS_POINT["hae"]] if any(x.key == "hae" for x in bound) else [])
+        exp = '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s]},"properties":{}}' % (
+            ",".join(fmt_float(c) for c in coords))
+        model = collections.OrderedDict([("@kind", k.name)])
+        for x in bound:
+            model[x.key] = fmt_float(CROSS_POINT[x.key])
+        out.append(("gen-x-%s-to-geojson.json" % k.name.replace("_", "-"), vec_obj(
+            "x-%s-to-geojson" % k.name, fmt, "geojson", inp, exp, model,
+            source="tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to "
+                   "a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); "
+                   "geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)")))
+    # from geojson: uid, lat, lon, hae and callsign; the first kind whose requires hold
+    have = {"uid", "lat", "lon", "hae", "callsign"}
+    sel = next((k for k in kinds if set(k.requires) <= have), None)
+    if sel is not None:
+        msgobj = collections.OrderedDict()
+        for x in sel.lines:
+            if isinstance(x, FLine) and x.key in CROSS_POINT:
+                set_path(msgobj, x.loc, CROSS_POINT[x.key])
+        exp = dump(envelope(sel, None, msgobj, []))
+        gout.append(("gen-geojson-to-%s-%s.json" % (fmt, sel.name.replace("_", "-")), vec_obj(
+            "gen-geojson-to-%s-%s" % (fmt, sel.name), "geojson", fmt,
+            '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s,%s]},'
+            '"properties":{"callsign":"ROVER"},"id":"r-1"}' % tuple(
+                fmt_float(CROSS_POINT[c]) for c in ("lon", "lat", "hae")),
+            exp, {"lat": fmt_float(CROSS_POINT["lat"]), "uid": "r-1"},
+            source="tools/gen/ros2msg2pack.py: the kind is the first in pack order whose requires "
+                   "the entity holds (%s); op and type are its when values; uid and callsign have "
+                   "no line in the pack; no topic is known" % " ".join(sel.requires))))
+    return out, gout
+
+
 # --------------------------------------------------------------------------
 # Documents
 # --------------------------------------------------------------------------
@@ -1439,11 +1538,15 @@ def emit_provenance(args, fmt, pkg, files):
     a.append("")
     a.append("## Licenses, as the sources state them")
     a.append("")
-    a.append("- common_interfaces and rcl_interfaces: each package directory of common_interfaces")
-    a.append("  holds a `LICENSE` file, and rcl_interfaces holds one at its root, that begins")
-    a.append('  "Apache License / Version 2.0, January 2004" and is the full text of the Apache')
-    a.append("  License, Version 2.0. Each package's `package.xml` states")
-    a.append("  `<license>Apache License 2.0</license>`. The .msg files carry no header.")
+    if {"common_interfaces", "rcl_interfaces"} & set(repos):
+        a.append("- common_interfaces and rcl_interfaces: each package directory of common_interfaces")
+        a.append("  holds a `LICENSE` file, and rcl_interfaces holds one at its root, that begins")
+        a.append('  "Apache License / Version 2.0, January 2004" and is the full text of the Apache')
+        a.append("  License, Version 2.0. Each package's `package.xml` states")
+        a.append("  `<license>Apache License 2.0</license>`. The .msg files carry no header.")
+    for r, note in LICENSE_NOTES.items():
+        if r in repos:
+            a.append("- %s: %s" % (r, note))
     a.append("- rosbridge_suite: `LICENSE` at the root begins \"BSD 3-Clause License\" and")
     a.append('  "Copyright (c) The Rosbridge Authors"; `message_conversion.py` carries the header')
     a.append('  "Software License Agreement (BSD License)", "Copyright (c) 2012, Willow Garage, Inc."')
@@ -1546,12 +1649,13 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
              "field the `msg` omits with its default (protocol 4.3.3), so an absent key needs "
              "no value |" % (", ".join(defaults) if defaults else "none in this package"))
     fixed = sorted({"%s.%s %s" % (m.name, f.name, f.rostype) for m in pkg_msgs for f in m.fields
-                    if f.array and f.array[0] in ("fixed", "bounded")})
+                    if f.array and f.array[0] in ("fixed", "bounded") and not skipped(m, f)})
     if fixed:
         a.append("| Length of a fixed array and bound of a bounded one (%s) | a `json` group has "
                  "no `count` (engine-spec 0.7); any number of items decodes and encodes, and a "
                  "sender that writes another number is not refused |" % ", ".join(fixed))
-    bounded = sorted({"%s.%s" % (m.name, f.name) for m in pkg_msgs for f in m.fields if f.bound})
+    bounded = sorted({"%s.%s" % (m.name, f.name) for m in pkg_msgs for f in m.fields
+                      if f.bound and not skipped(m, f)})
     if bounded:
         a.append("| Bound of a bounded string (%s) | no transform limits a json string's length |"
                  % ", ".join(bounded))
@@ -1573,6 +1677,14 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
                  "requires `msg` |" % ", ".join(empty))
     a.append("| PNG, CBOR and fragment encodings of the protocol (sections 3.2 to 3.5) | other "
              "byte forms of the operation; the pack reads JSON text |")
+    if walker.skipped:
+        a.append("| Padding fields, %d occurrences: the fields the generator was told to skip "
+                 "(`--skip-field-re`, `tools/gen/ros2-run.sh`) | they hold no value, and their "
+                 "names are not wanted in the pack. A sender that writes them keeps them as "
+                 "residue where they stand in `msg` or in a nested object, and they are written "
+                 "back after the mapped members of that object (engine-spec 0.5). Inside an "
+                 "array item they are dropped: items carry no residue (engine-spec 0.7). The "
+                 "vectors do not write them |" % walker.skipped)
     for kname, path, rostype, reason in walker.not_mapped:
         a.append("| `%s.%s` (`%s`) | %s |" % (kname, path, rostype, reason))
     a.append("")
@@ -1597,7 +1709,7 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
 def parse_maps(items):
     maps = {}
     for it in items or []:
-        m = re.match(r"^([a-z_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)$", it)
         if not m:
             fail("--map %r: want <package>/<Msg>:<field path>=<key>" % it)
         maps.setdefault(m.group(1), {})[(m.group(2), m.group(3))] = m.group(4)
@@ -1607,7 +1719,7 @@ def parse_maps(items):
 def parse_requires(items):
     req = {}
     for it in items or []:
-        m = re.match(r"^([a-z_]+)/([A-Za-z0-9]+)=([a-z_.,]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+)=([a-z_.,]+)$", it)
         if not m:
             fail("--requires %r: want <package>/<Msg>=<key>[,<key>]" % it)
         req[(m.group(1), m.group(2))] = m.group(3).split(",")
@@ -1628,12 +1740,22 @@ def run_package(args, cat, pkg, maps, reqs):
     msgs = cat.package(pkg)
     namer.name("topic", "topic")
     kinds = []
+    seen_slug = {}
+    for msg in msgs:                    # sorted by file name; a later message whose slug is
+        sl = slug(msg.name)             # taken gets _2, _3 ... (ublox_msgs: EsfSTATUSSens and
+        n = seen_slug.get(sl, 0) + 1    # EsfSTATUS_Sens)
+        seen_slug[sl] = n
+        if n > 1:
+            KIND_SLUG[(msg.pkg, msg.name)] = "%s_%d" % (sl, n)
     for msg in msgs:
         lines = walker.walk(msg, msg, ["msg"], [], "", msg.name)
-        kname = slug(msg.name)
+        kname = kind_slug(msg)
         explicit = reqs.get((pkg, msg.name))
         if explicit:
             requires = explicit
+        elif any(isinstance(x, FLine) and x.key == "lat" for x in lines) and \
+                any(isinstance(x, FLine) and x.key == "lon" for x in lines):
+            requires = ["lat", "lon"]
         elif lines:
             requires = [lines[0].key]
         else:
@@ -1660,15 +1782,16 @@ def run_package(args, cat, pkg, maps, reqs):
                    for k in kinds if k.msg.name == mname for x in iter_lines(k.lines)):
             fail("--map %s/%s:%s matched no field" % (pkg, mname, path))
     # sources
-    repo = REPO_OF.get(pkg, "common_interfaces")
-    msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s/msg; field names, types and array forms only" % (
-        pkg, REPO_URL[repo], args.ref[repo], "Apache License 2.0", args.commit[repo], pkg)
+    repo, pdir = pkg_dir(pkg)
+    msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s; field names, types and array forms only" % (
+        pkg, REPO_URL[repo], args.ref[repo], REPO_LICENSE[repo], args.commit[repo],
+        "/".join(x for x in (pdir, MSG_SUB.get(pkg, "msg")) if x))
     deps = sorted({(m.pkg) for k in kinds for (p, _), m in cat.closure(k.msg).items() if p != pkg})
     sources = [msg_src]
     for d in deps:
         r = REPO_OF.get(d, "common_interfaces")
-        sources.append("ROS 2 interface package %s (messages %s refers to), %s %s at commit %s, Apache License 2.0" % (
-            d, pkg, REPO_URL[r], args.ref[r], args.commit[r]))
+        sources.append("ROS 2 interface package %s (messages %s refers to), %s %s at commit %s, %s" % (
+            d, pkg, REPO_URL[r], args.ref[r], args.commit[r], REPO_LICENSE[r]))
     sources.append("rosbridge v2.1.0 Protocol Specification, ROSBRIDGE_PROTOCOL.md, %s %s at commit %s, BSD 3-Clause License; JSON form of a message and of the publish operation" % (
         REPO_URL["rosbridge_suite"], args.ref["rosbridge_suite"], args.commit["rosbridge_suite"]))
     # write
@@ -1687,6 +1810,12 @@ def run_package(args, cat, pkg, maps, reqs):
     for fname, v in vecs:
         write_json(os.path.join(vec_dir, fname), v)
     cross = geojson_cross_vectors(fmt, pkg, kinds)
+    if pkg in args.cross:
+        more, gmore = generic_cross(fmt, module, kinds, cat, args.cross[pkg])
+        for fname, v in more:
+            write_json(os.path.join(vec_dir, fname), v)
+        vecs += more
+        cross += gmore
     for fname, v in cross:
         write_json(os.path.join(gj_dir, fname), v)
     # provenance: every .msg the pack reads, the licence files, the rosbridge files
@@ -1701,12 +1830,15 @@ def run_package(args, cat, pkg, maps, reqs):
                 files.append((r, rel))
     files.sort()
     lic = set()
-    for r, rel in list(files):
-        p = rel.split("/")[0]
-        lp = (r, "LICENSE") if r == "rcl_interfaces" else (r, p + "/LICENSE")
-        lic.add(lp)
-        lic.add((r, p + "/package.xml"))
-    files = sorted(lic) + files + [("rosbridge_suite", f) for f in ROSBRIDGE_FILES]
+    for p_ in sorted({m.pkg for k in kinds for m in cat.closure(k.msg).values()}):
+        r, d = pkg_dir(p_)
+        if r in LICENSE_FILES:
+            for lf in LICENSE_FILES[r]:
+                lic.add((r, lf))
+        else:
+            lic.add((r, "LICENSE") if r == "rcl_interfaces" else (r, d + "/LICENSE"))
+        lic.add((r, (d + "/package.xml") if d else "package.xml"))
+    files = sorted(lic) + files + EXTRA_FILES.get(pkg, []) + [("rosbridge_suite", f) for f in ROSBRIDGE_FILES]
     with open(os.path.join(pack_dir, "PROVENANCE.md"), "w", encoding="utf-8") as fh:
         fh.write(emit_provenance(args, fmt, pkg, files))
     # pack.md
@@ -1726,10 +1858,12 @@ def run_package(args, cat, pkg, maps, reqs):
              ("`group` blocks", ngroup),
              ("Keys and lists of module `%s`" % module, len(decls)),
              ("Shared-model keys bound", len(maps.get(pkg, {}))),
-             ("Fields not mapped", len(walker.not_mapped))]
+             ("Fields not mapped", len(walker.not_mapped) + walker.skipped)]
     with open(os.path.join(pack_dir, "pack.md"), "w", encoding="utf-8") as fh:
         fh.write(emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes,
                               len(vecs), bool(cross), list(cat.closure_all(msgs))))
+    if pkg in SKIP_RE:
+        namer.drop(SKIP_RE[pkg])
     namer.save()
     # self-check from disk
     verify(args, fmt, module, vec_dir, [os.path.join(gj_dir, f) for f, _ in cross])
@@ -1782,11 +1916,62 @@ def main():
     ap.add_argument("--model-dir", help="model/ of the checkout (core.def, track.def)")
     ap.add_argument("--geojson-pack", help="packs/geojson/pack.def of the checkout")
     ap.add_argument("--date-read", default="2026-11-19")
+    ap.add_argument("--repo", action="append", default=[], help="<repository>=<address>")
+    ap.add_argument("--package-at", action="append", default=[],
+                    help="<package>=<repository>:<directory>[:<msg directory>] ('.' when the package "
+                         "is the root; the .msg files are under msg/ unless named)")
+    ap.add_argument("--module", action="append", default=[], help="<package>=<module name>")
+    ap.add_argument("--license", action="append", default=[], help="<repository>=<licence name>")
+    ap.add_argument("--license-file", action="append", default=[],
+                    help="<repository>=<path of a licence file>; repeatable")
+    ap.add_argument("--license-note", action="append", default=[],
+                    help="<repository>=<licence statement for PROVENANCE.md>")
+    ap.add_argument("--skip-field-re", action="append", default=[],
+                    help="<package>=<regular expression>: fields of that package's messages whose "
+                         "name matches are not mapped and not written in vectors")
+    ap.add_argument("--evidence-file", action="append", default=[],
+                    help="<package>=<repository>:<path> of a file read as evidence for a binding")
+    ap.add_argument("--cross", action="append", default=[],
+                    help="<package>/<Msg>: write geojson vectors for a kind bound to lat and lon")
     args = ap.parse_args()
     args.model_dir = args.model_dir or os.path.join(args.out, "model")
     args.geojson_pack = args.geojson_pack or os.path.join(args.out, "packs", "geojson", "pack.def")
     args.ref = dict(x.split("=", 1) for x in args.ref)
     args.commit = dict(x.split("=", 1) for x in args.commit)
+    for x in args.repo:
+        k, v = x.split("=", 1)
+        REPO_URL[k] = v
+    for x in args.package_at:
+        k, v = x.split("=", 1)
+        r, d = v.split(":", 1)
+        if ":" in d:
+            d, MSG_SUB[k] = d.split(":", 1)
+        REPO_OF[k] = r
+        PKG_DIR[k] = "" if d == "." else d
+    for x in args.module:
+        k, v = x.split("=", 1)
+        MODULE_OF[k] = v
+    for x in args.license:
+        k, v = x.split("=", 1)
+        REPO_LICENSE[k] = v
+    for x in args.license_file:
+        k, v = x.split("=", 1)
+        LICENSE_FILES.setdefault(k, []).append(v)
+    for x in args.license_note:
+        k, v = x.split("=", 1)
+        LICENSE_NOTES[k] = v
+    for x in args.skip_field_re:
+        k, v = x.split("=", 1)
+        SKIP_RE[k] = re.compile(v)
+    for x in args.evidence_file:
+        k, v = x.split("=", 1)
+        r, f = v.split(":", 1)
+        EXTRA_FILES.setdefault(k, []).append((r, f))
+    cross = {}
+    for x in args.cross:
+        pk, mn = x.split("/", 1)
+        cross.setdefault(pk, []).append(mn)
+    args.cross = cross
     for r in REPO_URL:
         if r not in args.ref or r not in args.commit:
             fail("--ref and --commit are needed for %s" % r)

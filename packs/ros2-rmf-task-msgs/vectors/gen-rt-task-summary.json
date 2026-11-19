@@ -1,0 +1,23 @@
+{
+  "name": "rt-task_summary",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/task_summary\",\"type\":\"rmf_task_msgs/msg/TaskSummary\",\"msg\":{\"fleet_name\":\"s1\",\"task_id\":\"s2\",\"task_profile\":{\"task_id\":\"s3\",\"submission_time\":{\"sec\":162019,\"nanosec\":2147686170},\"description\":{\"start_time\":{\"sec\":243025,\"nanosec\":2147767176},\"priority\":{\"value\":987654312104},\"task_type\":{\"type\":2147848182},\"station\":{\"task_id\":\"s10\",\"robot_type\":\"s11\",\"place_name\":\"s12\"},\"loop\":{\"task_id\":\"s13\",\"robot_type\":\"s14\",\"num_loops\":2148091200,\"start_name\":\"s16\",\"finish_name\":\"s17\"},\"delivery\":{\"task_id\":\"s18\",\"items\":[{\"type_guid\":\"s19\",\"quantity\":810067,\"compartment_name\":\"s21\"},{\"type_guid\":\"s22\",\"quantity\":931576,\"compartment_name\":\"s24\"}],\"pickup_place_name\":\"s25\",\"pickup_dispenser\":\"s26\",\"pickup_behavior\":{\"name\":\"s27\",\"parameters\":[{\"name\":\"s28\",\"value\":\"s29\"},{\"name\":\"s30\",\"value\":\"s31\"}]},\"dropoff_place_name\":\"s32\",\"dropoff_ingestor\":\"s33\",\"dropoff_behavior\":{\"name\":\"s34\",\"parameters\":[{\"name\":\"s35\",\"value\":\"s36\"},{\"name\":\"s37\",\"value\":\"s38\"}]}},\"clean\":{\"start_waypoint\":\"s39\"}}},\"state\":2149103775,\"status\":\"s41\",\"submission_time\":{\"sec\":1701133,\"nanosec\":2149225284},\"start_time\":{\"sec\":1782139,\"nanosec\":2149306290},\"end_time\":{\"sec\":1863145,\"nanosec\":2149387296},\"robot_name\":\"s48\"},\"id\":\"gen-task_summary\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/task_summary\",\"type\":\"rmf_task_msgs/msg/TaskSummary\",\"msg\":{\"fleet_name\":\"s1\",\"task_id\":\"s2\",\"task_profile\":{\"task_id\":\"s3\",\"submission_time\":{\"sec\":162019,\"nanosec\":2147686170},\"description\":{\"start_time\":{\"sec\":243025,\"nanosec\":2147767176},\"priority\":{\"value\":987654312104},\"task_type\":{\"type\":2147848182},\"station\":{\"task_id\":\"s10\",\"robot_type\":\"s11\",\"place_name\":\"s12\"},\"loop\":{\"task_id\":\"s13\",\"robot_type\":\"s14\",\"num_loops\":2148091200,\"start_name\":\"s16\",\"finish_name\":\"s17\"},\"delivery\":{\"task_id\":\"s18\",\"items\":[{\"type_guid\":\"s19\",\"quantity\":810067,\"compartment_name\":\"s21\"},{\"type_guid\":\"s22\",\"quantity\":931576,\"compartment_name\":\"s24\"}],\"pickup_place_name\":\"s25\",\"pickup_dispenser\":\"s26\",\"pickup_behavior\":{\"name\":\"s27\",\"parameters\":[{\"name\":\"s28\",\"value\":\"s29\"},{\"name\":\"s30\",\"value\":\"s31\"}]},\"dropoff_place_name\":\"s32\",\"dropoff_ingestor\":\"s33\",\"dropoff_behavior\":{\"name\":\"s34\",\"parameters\":[{\"name\":\"s35\",\"value\":\"s36\"},{\"name\":\"s37\",\"value\":\"s38\"}]}},\"clean\":{\"start_waypoint\":\"s39\"}}},\"state\":2149103775,\"status\":\"s41\",\"submission_time\":{\"sec\":1701133,\"nanosec\":2149225284},\"start_time\":{\"sec\":1782139,\"nanosec\":2149306290},\"end_time\":{\"sec\":1863145,\"nanosec\":2149387296},\"robot_name\":\"s48\"},\"id\":\"gen-task_summary\"}",
+  "model": {
+    "@kind": "task_summary",
+    "ros2rmftask.task_summary_fleet_name": "s1",
+    "ros2rmftask.task_summary_task_id": "s2",
+    "ros2rmftask.task_summary_task_profile_task_id": "s3",
+    "ros2rmftask.task_summary_task_profile_submission_time_sec": "162019",
+    "ros2rmftask.task_summary_task_profile_submission_time_nanosec": "2147686170",
+    "ros2rmftask.task_summary_task_profile_description_delivery_items.#": "2",
+    "ros2rmftask.task_summary_task_profile_description_delivery_items[0].ros2rmftask.task_summary_task_profile_description_delivery_items_type_guid": "s19",
+    "ros2rmftask.task_summary_task_profile_description_delivery_pickup_behavior_parameters.#": "2",
+    "ros2rmftask.task_summary_task_profile_description_delivery_pickup_behavior_parameters[0].ros2rmftask.task_summary_task_profile_description_delivery_pickup_behavior_parameters_name": "s28",
+    "ros2rmftask.task_summary_task_profile_description_delivery_dropoff_behavior_parameters.#": "2",
+    "ros2rmftask.task_summary_task_profile_description_delivery_dropoff_behavior_parameters[0].ros2rmftask.task_summary_task_profile_description_delivery_dropoff_behavior_parameters_name": "s35",
+    "ros2rmftask.topic": "/gen/task_summary"
+  }
+}

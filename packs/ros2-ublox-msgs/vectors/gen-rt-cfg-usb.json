@@ -1,0 +1,22 @@
+{
+  "name": "rt-cfg_usb",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_usb\",\"type\":\"ublox_msgs/msg/CfgUSB\",\"msg\":{\"vendor_id\":7742,\"product_id\":48245,\"power_consumption\":23212,\"flags\":63715,\"vendor_string\":[26,81,-120,-65,-10,45,100,-101,-46,9,64,119,-82,-27,28,83,-118,-63,-8,47,102,-99,-44,11,66,121,-80,-25,30,85,-116,-61],\"product_string\":[-6,49,104,-97,-42,13,68,123,-78,-23,32,87,-114,-59,-4,51,106,-95,-40,15,70,125,-76,-21,34,89,-112,-57,-2,53,108,-93],\"serial_number\":[-38,17,72,127,-74,-19,36,91,-110,-55,0,55,110,-91,-36,19,74,-127,-72,-17,38,93,-108,-53,2,57,112,-89,-34,21,76,-125]},\"id\":\"gen-cfg_usb\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_usb\",\"type\":\"ublox_msgs/msg/CfgUSB\",\"msg\":{\"vendor_id\":7742,\"product_id\":48245,\"power_consumption\":23212,\"flags\":63715,\"vendor_string\":[26,81,-120,-65,-10,45,100,-101,-46,9,64,119,-82,-27,28,83,-118,-63,-8,47,102,-99,-44,11,66,121,-80,-25,30,85,-116,-61],\"product_string\":[-6,49,104,-97,-42,13,68,123,-78,-23,32,87,-114,-59,-4,51,106,-95,-40,15,70,125,-76,-21,34,89,-112,-57,-2,53,108,-93],\"serial_number\":[-38,17,72,127,-74,-19,36,91,-110,-55,0,55,110,-91,-36,19,74,-127,-72,-17,38,93,-108,-53,2,57,112,-89,-34,21,76,-125]},\"id\":\"gen-cfg_usb\"}",
+  "model": {
+    "@kind": "cfg_usb",
+    "ros2ublox.cfg_usb_vendor_id": "7742",
+    "ros2ublox.cfg_usb_product_id": "48245",
+    "ros2ublox.cfg_usb_power_consumption": "23212",
+    "ros2ublox.cfg_usb_flags": "63715",
+    "ros2ublox.cfg_usb_vendor_string.#": "32",
+    "ros2ublox.cfg_usb_vendor_string[0].ros2ublox.cfg_usb_vendor_string_value": "26",
+    "ros2ublox.cfg_usb_product_string.#": "32",
+    "ros2ublox.cfg_usb_product_string[0].ros2ublox.cfg_usb_product_string_value": "-6",
+    "ros2ublox.cfg_usb_serial_number.#": "32",
+    "ros2ublox.cfg_usb_serial_number[0].ros2ublox.cfg_usb_serial_number_value": "-38",
+    "ros2ublox.topic": "/gen/cfg_usb"
+  }
+}

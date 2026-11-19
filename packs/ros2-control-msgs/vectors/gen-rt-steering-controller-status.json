@@ -1,0 +1,25 @@
+{
+  "name": "rt-steering_controller_status",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/steering_controller_status\",\"type\":\"control_msgs/msg/SteeringControllerStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"traction_wheels_position\":[4.028,5.035],\"traction_wheels_velocity\":[-6.042,7.049],\"steer_positions\":[8.056,-9.063],\"linear_velocity_command\":[10.07,11.077],\"steering_angle_command\":[-12.084,13.091]},\"id\":\"gen-steering_controller_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/steering_controller_status\",\"type\":\"control_msgs/msg/SteeringControllerStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"traction_wheels_position\":[4.028,5.035],\"traction_wheels_velocity\":[-6.042,7.049],\"steer_positions\":[8.056,-9.063],\"linear_velocity_command\":[10.07,11.077],\"steering_angle_command\":[-12.084,13.091]},\"id\":\"gen-steering_controller_status\"}",
+  "model": {
+    "@kind": "steering_controller_status",
+    "ros2control.steering_controller_status_header_stamp_sec": "40510",
+    "ros2control.steering_controller_status_header_stamp_nanosec": "2147564661",
+    "ros2control.steering_controller_status_header_frame_id": "s3",
+    "ros2control.steering_controller_status_traction_wheels_position.#": "2",
+    "ros2control.steering_controller_status_traction_wheels_position[0].ros2control.steering_controller_status_traction_wheels_position_value": "4.028",
+    "ros2control.steering_controller_status_traction_wheels_velocity.#": "2",
+    "ros2control.steering_controller_status_traction_wheels_velocity[0].ros2control.steering_controller_status_traction_wheels_velocity_value": "-6.042",
+    "ros2control.steering_controller_status_steer_positions.#": "2",
+    "ros2control.steering_controller_status_steer_positions[0].ros2control.steering_controller_status_steer_positions_value": "8.056",
+    "ros2control.steering_controller_status_linear_velocity_command.#": "2",
+    "ros2control.steering_controller_status_linear_velocity_command[0].ros2control.steering_controller_status_linear_velocity_command_value": "10.07",
+    "ros2control.steering_controller_status_steering_angle_command.#": "2",
+    "ros2control.steering_controller_status_steering_angle_command[0].ros2control.steering_controller_status_steering_angle_command_value": "-12.084",
+    "ros2control.topic": "/gen/steering_controller_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_accel",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_accel\",\"type\":\"px4_msgs/msg/SensorAccel\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"temperature\":-3.125,\"error_count\":2147848182,\"clip_counter\":\"Ch7/AIA=\",\"samples\":228},\"id\":\"gen-sensor_accel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_accel\",\"type\":\"px4_msgs/msg/SensorAccel\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"temperature\":-3.125,\"error_count\":2147848182,\"clip_counter\":\"Ch7/AIA=\",\"samples\":228},\"id\":\"gen-sensor_accel\"}",
+  "model": {
+    "@kind": "sensor_accel",
+    "ros2px4.sensor_accel_timestamp": "123456789013",
+    "ros2px4.sensor_accel_timestamp_sample": "246913578026",
+    "ros2px4.sensor_accel_device_id": "2147605164",
+    "ros2px4.sensor_accel_is_external": "0",
+    "ros2px4.sensor_accel_x": "-3.875",
+    "ros2px4.topic": "/gen/sensor_accel"
+  }
+}

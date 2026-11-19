@@ -1,0 +1,17 @@
+{
+  "name": "rt-range_information",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/range_information\",\"type\":\"novatel_gps_msgs/msg/RangeInformation\",\"msg\":{\"prn_number\":7742,\"glofreq\":48245,\"psr\":-3.021,\"psr_std\":-4.125,\"adr\":5.035,\"adr_std\":-3.625,\"dopp\":-3.375,\"noise_density_ratio\":-3.125,\"locktime\":-2.875,\"tracking_status\":2147888685},\"id\":\"gen-range_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/range_information\",\"type\":\"novatel_gps_msgs/msg/RangeInformation\",\"msg\":{\"prn_number\":7742,\"glofreq\":48245,\"psr\":-3.021,\"psr_std\":-4.125,\"adr\":5.035,\"adr_std\":-3.625,\"dopp\":-3.375,\"noise_density_ratio\":-3.125,\"locktime\":-2.875,\"tracking_status\":2147888685},\"id\":\"gen-range_information\"}",
+  "model": {
+    "@kind": "range_information",
+    "ros2novatelgps.range_information_prn_number": "7742",
+    "ros2novatelgps.range_information_glofreq": "48245",
+    "ros2novatelgps.range_information_psr": "-3.021",
+    "ros2novatelgps.range_information_psr_std": "-4.125",
+    "ros2novatelgps.range_information_adr": "5.035",
+    "ros2novatelgps.topic": "/gen/range_information"
+  }
+}

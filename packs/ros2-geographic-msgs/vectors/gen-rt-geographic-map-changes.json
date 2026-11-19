@@ -1,0 +1,25 @@
+{
+  "name": "rt-geographic_map_changes",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geographic_map_changes\",\"type\":\"geographic_msgs/msg/GeographicMapChanges\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"diffs\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":{\"uuid\":\"BxX/AIA=\"},\"bounds\":{\"min_pt\":{\"latitude\":8.056,\"longitude\":-9.063,\"altitude\":10.07},\"max_pt\":{\"latitude\":11.077,\"longitude\":-12.084,\"altitude\":13.091}},\"points\":[{\"id\":{\"uuid\":\"Dir/AIA=\"},\"position\":{\"latitude\":-15.105,\"longitude\":16.112,\"altitude\":17.119},\"props\":[{\"key\":\"s18\",\"value\":\"s19\"}]},{\"id\":{\"uuid\":\"FDz/AIA=\"},\"position\":{\"latitude\":-21.147,\"longitude\":22.154,\"altitude\":23.161},\"props\":[{\"key\":\"s24\",\"value\":\"s25\"}]}],\"features\":[{\"id\":{\"uuid\":\"Gk7/AIA=\"},\"components\":[{\"uuid\":\"G1H/AIA=\"}],\"props\":[{\"key\":\"s28\",\"value\":\"s29\"}]},{\"id\":{\"uuid\":\"Hlr/AIA=\"},\"components\":[{\"uuid\":\"H13/AIA=\"}],\"props\":[{\"key\":\"s32\",\"value\":\"s33\"}]}],\"props\":[{\"key\":\"s34\",\"value\":\"s35\"},{\"key\":\"s36\",\"value\":\"s37\"}]},\"deletes\":[{\"uuid\":\"JnL/AIA=\"},{\"uuid\":\"J3X/AIA=\"}]},\"id\":\"gen-geographic_map_changes\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geographic_map_changes\",\"type\":\"geographic_msgs/msg/GeographicMapChanges\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"diffs\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":{\"uuid\":\"BxX/AIA=\"},\"bounds\":{\"min_pt\":{\"latitude\":8.056,\"longitude\":-9.063,\"altitude\":10.07},\"max_pt\":{\"latitude\":11.077,\"longitude\":-12.084,\"altitude\":13.091}},\"points\":[{\"id\":{\"uuid\":\"Dir/AIA=\"},\"position\":{\"latitude\":-15.105,\"longitude\":16.112,\"altitude\":17.119},\"props\":[{\"key\":\"s18\",\"value\":\"s19\"}]},{\"id\":{\"uuid\":\"FDz/AIA=\"},\"position\":{\"latitude\":-21.147,\"longitude\":22.154,\"altitude\":23.161},\"props\":[{\"key\":\"s24\",\"value\":\"s25\"}]}],\"features\":[{\"id\":{\"uuid\":\"Gk7/AIA=\"},\"components\":[{\"uuid\":\"G1H/AIA=\"}],\"props\":[{\"key\":\"s28\",\"value\":\"s29\"}]},{\"id\":{\"uuid\":\"Hlr/AIA=\"},\"components\":[{\"uuid\":\"H13/AIA=\"}],\"props\":[{\"key\":\"s32\",\"value\":\"s33\"}]}],\"props\":[{\"key\":\"s34\",\"value\":\"s35\"},{\"key\":\"s36\",\"value\":\"s37\"}]},\"deletes\":[{\"uuid\":\"JnL/AIA=\"},{\"uuid\":\"J3X/AIA=\"}]},\"id\":\"gen-geographic_map_changes\"}",
+  "model": {
+    "@kind": "geographic_map_changes",
+    "ros2geographic.geographic_map_changes_header_stamp_sec": "40510",
+    "ros2geographic.geographic_map_changes_header_stamp_nanosec": "2147564661",
+    "ros2geographic.geographic_map_changes_header_frame_id": "s3",
+    "ros2geographic.geographic_map_changes_diffs_header_stamp_sec": "162019",
+    "ros2geographic.geographic_map_changes_diffs_header_stamp_nanosec": "2147686170",
+    "ros2geographic.geographic_map_changes_diffs_points.#": "2",
+    "ros2geographic.geographic_map_changes_diffs_points[0].ros2geographic.geographic_map_changes_diffs_points_id_uuid": "Dir/AIA=",
+    "ros2geographic.geographic_map_changes_diffs_features.#": "2",
+    "ros2geographic.geographic_map_changes_diffs_features[0].ros2geographic.geographic_map_changes_diffs_features_id_uuid": "Gk7/AIA=",
+    "ros2geographic.geographic_map_changes_diffs_props.#": "2",
+    "ros2geographic.geographic_map_changes_diffs_props[0].ros2geographic.geographic_map_changes_diffs_props_key": "s34",
+    "ros2geographic.geographic_map_changes_deletes.#": "2",
+    "ros2geographic.geographic_map_changes_deletes[0].ros2geographic.geographic_map_changes_deletes_uuid": "JnL/AIA=",
+    "ros2geographic.topic": "/gen/geographic_map_changes"
+  }
+}

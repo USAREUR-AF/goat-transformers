@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpsrtk",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpsrtk\",\"type\":\"mavros_msgs/msg/GPSRTK\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rtk_receiver_id\":99,\"wn\":5914,\"tow\":2147726673,\"rtk_health\":8,\"rtk_rate\":63,\"nsats\":118,\"baseline_a\":405037,\"baseline_b\":445540,\"baseline_c\":486043,\"accuracy\":2148010194,\"iar_num_hypotheses\":567049},\"id\":\"gen-gpsrtk\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpsrtk\",\"type\":\"mavros_msgs/msg/GPSRTK\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rtk_receiver_id\":99,\"wn\":5914,\"tow\":2147726673,\"rtk_health\":8,\"rtk_rate\":63,\"nsats\":118,\"baseline_a\":405037,\"baseline_b\":445540,\"baseline_c\":486043,\"accuracy\":2148010194,\"iar_num_hypotheses\":567049},\"id\":\"gen-gpsrtk\"}",
+  "model": {
+    "@kind": "gpsrtk",
+    "ros2mavros.gpsrtk_header_stamp_sec": "40510",
+    "ros2mavros.gpsrtk_header_stamp_nanosec": "2147564661",
+    "ros2mavros.gpsrtk_header_frame_id": "s3",
+    "ros2mavros.gpsrtk_rtk_receiver_id": "99",
+    "ros2mavros.gpsrtk_wn": "5914",
+    "ros2mavros.topic": "/gen/gpsrtk"
+  }
+}

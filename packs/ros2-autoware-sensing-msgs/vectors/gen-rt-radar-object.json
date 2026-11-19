@@ -1,0 +1,27 @@
+{
+  "name": "rt-radar_object",
+  "from": "ros2-autoware-sensing-msgs",
+  "to": "ros2-autoware-sensing-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_object\",\"type\":\"autoware_sensing_msgs/msg/RadarObject\",\"msg\":{\"object_id\":2147524158,\"age\":48245,\"measurement_status\":44,\"movement_status\":99,\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"acceleration\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"size\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"position_covariance\":[-0.875,-0.625,-0.375,-0.125,0.125,0.375],\"velocity_covariance\":[0.625,0.875,1.125,1.375,1.625,1.875],\"acceleration_covariance\":[2.125,2.375,2.625,2.875,3.125,3.375],\"size_covariance\":[3.625,3.875,4.125,4.375,4.625,4.875],\"orientation\":5.125,\"orientation_std\":5.375,\"orientation_rate\":5.625,\"orientation_rate_std\":5.875,\"existence_probability\":6.125,\"classifications\":[{\"label\":105,\"probability\":6.625},{\"label\":215,\"probability\":7.125}]},\"id\":\"gen-radar_object\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_object\",\"type\":\"autoware_sensing_msgs/msg/RadarObject\",\"msg\":{\"object_id\":2147524158,\"age\":48245,\"measurement_status\":44,\"movement_status\":99,\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"acceleration\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"size\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"position_covariance\":[-0.875,-0.625,-0.375,-0.125,0.125,0.375],\"velocity_covariance\":[0.625,0.875,1.125,1.375,1.625,1.875],\"acceleration_covariance\":[2.125,2.375,2.625,2.875,3.125,3.375],\"size_covariance\":[3.625,3.875,4.125,4.375,4.625,4.875],\"orientation\":5.125,\"orientation_std\":5.375,\"orientation_rate\":5.625,\"orientation_rate_std\":5.875,\"existence_probability\":6.125,\"classifications\":[{\"label\":105,\"probability\":6.625},{\"label\":215,\"probability\":7.125}]},\"id\":\"gen-radar_object\"}",
+  "model": {
+    "@kind": "radar_object",
+    "ros2autowaresensing.radar_object_object_id": "2147524158",
+    "ros2autowaresensing.radar_object_age": "48245",
+    "ros2autowaresensing.radar_object_measurement_status": "44",
+    "ros2autowaresensing.radar_object_movement_status": "99",
+    "ros2autowaresensing.radar_object_position_x": "5.035",
+    "ros2autowaresensing.radar_object_position_covariance.#": "6",
+    "ros2autowaresensing.radar_object_position_covariance[0].ros2autowaresensing.radar_object_position_covariance_value": "-0.875",
+    "ros2autowaresensing.radar_object_velocity_covariance.#": "6",
+    "ros2autowaresensing.radar_object_velocity_covariance[0].ros2autowaresensing.radar_object_velocity_covariance_value": "0.625",
+    "ros2autowaresensing.radar_object_acceleration_covariance.#": "6",
+    "ros2autowaresensing.radar_object_acceleration_covariance[0].ros2autowaresensing.radar_object_acceleration_covariance_value": "2.125",
+    "ros2autowaresensing.radar_object_size_covariance.#": "6",
+    "ros2autowaresensing.radar_object_size_covariance[0].ros2autowaresensing.radar_object_size_covariance_value": "3.625",
+    "ros2autowaresensing.radar_object_classifications.#": "2",
+    "ros2autowaresensing.radar_object_classifications[0].ros2autowaresensing.radar_object_classifications_label": "105",
+    "ros2autowaresensing.topic": "/gen/radar_object"
+  }
+}

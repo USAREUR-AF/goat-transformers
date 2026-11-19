@@ -1,0 +1,20 @@
+{
+  "name": "rt-adc_report",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/adc_report\",\"type\":\"px4_msgs/msg/AdcReport\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"channel_id\":[-9556,30947,5914,-19119,21384,-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165],\"raw_data\":[769564,810067,850570,891073,931576,972079,1012582,1053085,1093588,1134091,1174594,1215097,1255600,1296103,1336606,1377109],\"resolution\":2148901260,\"v_ref\":3.875},\"id\":\"gen-adc_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/adc_report\",\"type\":\"px4_msgs/msg/AdcReport\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"channel_id\":[-9556,30947,5914,-19119,21384,-3649,-28682,11821,-13212,27291,2258,-22775,17728,-7305,-32338,8165],\"raw_data\":[769564,810067,850570,891073,931576,972079,1012582,1053085,1093588,1134091,1174594,1215097,1255600,1296103,1336606,1377109],\"resolution\":2148901260,\"v_ref\":3.875},\"id\":\"gen-adc_report\"}",
+  "model": {
+    "@kind": "adc_report",
+    "ros2px4.adc_report_timestamp": "123456789013",
+    "ros2px4.adc_report_device_id": "2147564661",
+    "ros2px4.adc_report_channel_id.#": "16",
+    "ros2px4.adc_report_channel_id[0].ros2px4.adc_report_channel_id_value": "-9556",
+    "ros2px4.adc_report_raw_data.#": "16",
+    "ros2px4.adc_report_raw_data[0].ros2px4.adc_report_raw_data_value": "769564",
+    "ros2px4.adc_report_resolution": "2148901260",
+    "ros2px4.adc_report_v_ref": "3.875",
+    "ros2px4.topic": "/gen/adc_report"
+  }
+}

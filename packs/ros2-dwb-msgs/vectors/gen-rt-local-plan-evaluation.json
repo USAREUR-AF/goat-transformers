@@ -1,0 +1,19 @@
+{
+  "name": "rt-local_plan_evaluation",
+  "from": "ros2-dwb-msgs",
+  "to": "ros2-dwb-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/local_plan_evaluation\",\"type\":\"dwb_msgs/msg/LocalPlanEvaluation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"twists\":[{\"traj\":{\"velocity\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042},\"time_offsets\":[{\"sec\":283528,\"nanosec\":2147807679}],\"poses\":[{\"x\":-9.063,\"y\":10.07,\"theta\":11.077}]},\"scores\":[{\"name\":\"s12\",\"raw_score\":-1.875,\"scale\":-1.625}],\"total\":-1.375},{\"traj\":{\"velocity\":{\"x\":16.112,\"y\":17.119,\"theta\":-18.126},\"time_offsets\":[{\"sec\":769564,\"nanosec\":2148293715}],\"poses\":[{\"x\":-21.147,\"y\":22.154,\"theta\":23.161}]},\"scores\":[{\"name\":\"s24\",\"raw_score\":1.125,\"scale\":1.375}],\"total\":1.625}],\"best_index\":52747,\"worst_index\":27714},\"id\":\"gen-local_plan_evaluation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/local_plan_evaluation\",\"type\":\"dwb_msgs/msg/LocalPlanEvaluation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"twists\":[{\"traj\":{\"velocity\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042},\"time_offsets\":[{\"sec\":283528,\"nanosec\":2147807679}],\"poses\":[{\"x\":-9.063,\"y\":10.07,\"theta\":11.077}]},\"scores\":[{\"name\":\"s12\",\"raw_score\":-1.875,\"scale\":-1.625}],\"total\":-1.375},{\"traj\":{\"velocity\":{\"x\":16.112,\"y\":17.119,\"theta\":-18.126},\"time_offsets\":[{\"sec\":769564,\"nanosec\":2148293715}],\"poses\":[{\"x\":-21.147,\"y\":22.154,\"theta\":23.161}]},\"scores\":[{\"name\":\"s24\",\"raw_score\":1.125,\"scale\":1.375}],\"total\":1.625}],\"best_index\":52747,\"worst_index\":27714},\"id\":\"gen-local_plan_evaluation\"}",
+  "model": {
+    "@kind": "local_plan_evaluation",
+    "ros2dwb.local_plan_evaluation_header_stamp_sec": "40510",
+    "ros2dwb.local_plan_evaluation_header_stamp_nanosec": "2147564661",
+    "ros2dwb.local_plan_evaluation_header_frame_id": "s3",
+    "ros2dwb.local_plan_evaluation_twists.#": "2",
+    "ros2dwb.local_plan_evaluation_twists[0].ros2dwb.local_plan_evaluation_twists_traj_velocity_x": "4.028",
+    "ros2dwb.local_plan_evaluation_best_index": "52747",
+    "ros2dwb.local_plan_evaluation_worst_index": "27714",
+    "ros2dwb.topic": "/gen/local_plan_evaluation"
+  }
+}

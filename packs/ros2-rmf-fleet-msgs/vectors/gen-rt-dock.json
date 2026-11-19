@@ -1,0 +1,15 @@
+{
+  "name": "rt-dock",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dock\",\"type\":\"rmf_fleet_msgs/msg/Dock\",\"msg\":{\"fleet_name\":\"s1\",\"params\":[{\"start\":\"s2\",\"finish\":\"s3\",\"path\":[{\"t\":{\"sec\":162019,\"nanosec\":2147686170},\"x\":-3.625,\"y\":-3.375,\"yaw\":-3.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-2.625,\"level_name\":\"s11\",\"index\":1481481468156}]},{\"start\":\"s13\",\"finish\":\"s14\",\"path\":[{\"t\":{\"sec\":607552,\"nanosec\":2148131703},\"x\":-0.875,\"y\":-0.625,\"yaw\":-0.375,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":0.125,\"level_name\":\"s22\",\"index\":2839506147299}]}]},\"id\":\"gen-dock\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dock\",\"type\":\"rmf_fleet_msgs/msg/Dock\",\"msg\":{\"fleet_name\":\"s1\",\"params\":[{\"start\":\"s2\",\"finish\":\"s3\",\"path\":[{\"t\":{\"sec\":162019,\"nanosec\":2147686170},\"x\":-3.625,\"y\":-3.375,\"yaw\":-3.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-2.625,\"level_name\":\"s11\",\"index\":1481481468156}]},{\"start\":\"s13\",\"finish\":\"s14\",\"path\":[{\"t\":{\"sec\":607552,\"nanosec\":2148131703},\"x\":-0.875,\"y\":-0.625,\"yaw\":-0.375,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":0.125,\"level_name\":\"s22\",\"index\":2839506147299}]}]},\"id\":\"gen-dock\"}",
+  "model": {
+    "@kind": "dock",
+    "ros2rmffleet.dock_fleet_name": "s1",
+    "ros2rmffleet.dock_params.#": "2",
+    "ros2rmffleet.dock_params[0].ros2rmffleet.dock_params_start": "s2",
+    "ros2rmffleet.topic": "/gen/dock"
+  }
+}

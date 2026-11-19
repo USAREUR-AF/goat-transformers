@@ -1,0 +1,13 @@
+{
+  "name": "x-camera_capture-to-geojson",
+  "from": "ros2-px4-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"px4_msgs/msg/CameraCapture\",\"msg\":{\"timestamp\":123456789013,\"timestamp_utc\":246913578026,\"seq\":2147605164,\"lat\":47.0625,\"lon\":8.53125,\"alt\":-3.625,\"ground_distance\":-3.375,\"q\":[-3.125,-2.875,-2.625,-2.375],\"result\":-101,\"report\":true}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "camera_capture",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

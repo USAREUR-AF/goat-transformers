@@ -1,0 +1,29 @@
+{
+  "name": "rt-estimator_sensor_bias",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_sensor_bias\",\"type\":\"px4_msgs/msg/EstimatorSensorBias\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"gyro_device_id\":2147605164,\"gyro_bias\":[-4.125,-3.875,-3.625],\"gyro_bias_limit\":-3.375,\"gyro_bias_variance\":[-3.125,-2.875,-2.625],\"gyro_bias_valid\":true,\"gyro_bias_stable\":false,\"accel_device_id\":2148010194,\"accel_bias\":[-1.625,-1.375,-1.125],\"accel_bias_limit\":-0.875,\"accel_bias_variance\":[-0.625,-0.375,-0.125],\"accel_bias_valid\":true,\"accel_bias_stable\":false,\"mag_device_id\":2148415224,\"mag_bias\":[0.875,1.125,1.375],\"mag_bias_limit\":1.625,\"mag_bias_variance\":[1.875,2.125,2.375],\"mag_bias_valid\":true,\"mag_bias_stable\":false},\"id\":\"gen-estimator_sensor_bias\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_sensor_bias\",\"type\":\"px4_msgs/msg/EstimatorSensorBias\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"gyro_device_id\":2147605164,\"gyro_bias\":[-4.125,-3.875,-3.625],\"gyro_bias_limit\":-3.375,\"gyro_bias_variance\":[-3.125,-2.875,-2.625],\"gyro_bias_valid\":true,\"gyro_bias_stable\":false,\"accel_device_id\":2148010194,\"accel_bias\":[-1.625,-1.375,-1.125],\"accel_bias_limit\":-0.875,\"accel_bias_variance\":[-0.625,-0.375,-0.125],\"accel_bias_valid\":true,\"accel_bias_stable\":false,\"mag_device_id\":2148415224,\"mag_bias\":[0.875,1.125,1.375],\"mag_bias_limit\":1.625,\"mag_bias_variance\":[1.875,2.125,2.375],\"mag_bias_valid\":true,\"mag_bias_stable\":false},\"id\":\"gen-estimator_sensor_bias\"}",
+  "model": {
+    "@kind": "estimator_sensor_bias",
+    "ros2px4.estimator_sensor_bias_timestamp": "123456789013",
+    "ros2px4.estimator_sensor_bias_timestamp_sample": "246913578026",
+    "ros2px4.estimator_sensor_bias_gyro_device_id": "2147605164",
+    "ros2px4.estimator_sensor_bias_gyro_bias.#": "3",
+    "ros2px4.estimator_sensor_bias_gyro_bias[0].ros2px4.estimator_sensor_bias_gyro_bias_value": "-4.125",
+    "ros2px4.estimator_sensor_bias_gyro_bias_limit": "-3.375",
+    "ros2px4.estimator_sensor_bias_gyro_bias_variance.#": "3",
+    "ros2px4.estimator_sensor_bias_gyro_bias_variance[0].ros2px4.estimator_sensor_bias_gyro_bias_variance_value": "-3.125",
+    "ros2px4.estimator_sensor_bias_gyro_bias_valid": "1",
+    "ros2px4.estimator_sensor_bias_accel_bias.#": "3",
+    "ros2px4.estimator_sensor_bias_accel_bias[0].ros2px4.estimator_sensor_bias_accel_bias_value": "-1.625",
+    "ros2px4.estimator_sensor_bias_accel_bias_variance.#": "3",
+    "ros2px4.estimator_sensor_bias_accel_bias_variance[0].ros2px4.estimator_sensor_bias_accel_bias_variance_value": "-0.625",
+    "ros2px4.estimator_sensor_bias_mag_bias.#": "3",
+    "ros2px4.estimator_sensor_bias_mag_bias[0].ros2px4.estimator_sensor_bias_mag_bias_value": "0.875",
+    "ros2px4.estimator_sensor_bias_mag_bias_variance.#": "3",
+    "ros2px4.estimator_sensor_bias_mag_bias_variance[0].ros2px4.estimator_sensor_bias_mag_bias_variance_value": "1.875",
+    "ros2px4.topic": "/gen/estimator_sensor_bias"
+  }
+}

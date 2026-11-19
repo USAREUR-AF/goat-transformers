@@ -1,0 +1,17 @@
+{
+  "name": "rt-mavlink_tunnel",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mavlink_tunnel\",\"type\":\"px4_msgs/msg/MavlinkTunnel\",\"msg\":{\"timestamp\":123456789013,\"payload_type\":48245,\"target_system\":2147605164,\"target_component\":99,\"payload_length\":154,\"payload\":\"BhL/AIA=\"},\"id\":\"gen-mavlink_tunnel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mavlink_tunnel\",\"type\":\"px4_msgs/msg/MavlinkTunnel\",\"msg\":{\"timestamp\":123456789013,\"payload_type\":48245,\"target_system\":2147605164,\"target_component\":99,\"payload_length\":154,\"payload\":\"BhL/AIA=\"},\"id\":\"gen-mavlink_tunnel\"}",
+  "model": {
+    "@kind": "mavlink_tunnel",
+    "ros2px4.mavlink_tunnel_timestamp": "123456789013",
+    "ros2px4.mavlink_tunnel_payload_type": "48245",
+    "ros2px4.mavlink_tunnel_target_system": "2147605164",
+    "ros2px4.mavlink_tunnel_target_component": "99",
+    "ros2px4.mavlink_tunnel_payload_length": "154",
+    "ros2px4.topic": "/gen/mavlink_tunnel"
+  }
+}

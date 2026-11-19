@@ -1,0 +1,18 @@
+{
+  "name": "rt-label_info",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/label_info\",\"type\":\"vision_msgs/msg/LabelInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"class_map\":[{\"class_id\":63715,\"class_name\":\"s5\"},{\"class_id\":13649,\"class_name\":\"s7\"}],\"threshold\":-3.125},\"id\":\"gen-label_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/label_info\",\"type\":\"vision_msgs/msg/LabelInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"class_map\":[{\"class_id\":63715,\"class_name\":\"s5\"},{\"class_id\":13649,\"class_name\":\"s7\"}],\"threshold\":-3.125},\"id\":\"gen-label_info\"}",
+  "model": {
+    "@kind": "label_info",
+    "ros2vision.label_info_header_stamp_sec": "40510",
+    "ros2vision.label_info_header_stamp_nanosec": "2147564661",
+    "ros2vision.label_info_header_frame_id": "s3",
+    "ros2vision.label_info_class_map.#": "2",
+    "ros2vision.label_info_class_map[0].ros2vision.label_info_class_map_class_id": "63715",
+    "ros2vision.label_info_threshold": "-3.125",
+    "ros2vision.topic": "/gen/label_info"
+  }
+}

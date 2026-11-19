@@ -1,0 +1,16 @@
+{
+  "name": "rt-sonar_image_data",
+  "from": "ros2-marine-acoustic-msgs",
+  "to": "ros2-marine-acoustic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sonar_image_data\",\"type\":\"marine_acoustic_msgs/msg/SonarImageData\",\"msg\":{\"is_bigendian\":true,\"dtype\":2147564661,\"beam_count\":2147605164,\"data\":\"BAz/AIA=\"},\"id\":\"gen-sonar_image_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sonar_image_data\",\"type\":\"marine_acoustic_msgs/msg/SonarImageData\",\"msg\":{\"is_bigendian\":true,\"dtype\":2147564661,\"beam_count\":2147605164,\"data\":\"BAz/AIA=\"},\"id\":\"gen-sonar_image_data\"}",
+  "model": {
+    "@kind": "sonar_image_data",
+    "ros2marineacoustic.sonar_image_data_is_bigendian": "1",
+    "ros2marineacoustic.sonar_image_data_dtype": "2147564661",
+    "ros2marineacoustic.sonar_image_data_beam_count": "2147605164",
+    "ros2marineacoustic.sonar_image_data_data": "BAz/AIA=",
+    "ros2marineacoustic.topic": "/gen/sonar_image_data"
+  }
+}

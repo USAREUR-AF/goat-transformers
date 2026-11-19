@@ -1,0 +1,19 @@
+{
+  "name": "rt-obstacle",
+  "from": "ros2-rmf-obstacle-msgs",
+  "to": "ros2-rmf-obstacle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle\",\"type\":\"rmf_obstacle_msgs/msg/Obstacle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":162019,\"source\":\"s5\",\"level_name\":\"s6\",\"classification\":\"s7\",\"bbox\":{\"center\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"size\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119}},\"data_resolution\":-18.126,\"data\":[28,83],\"lifetime\":{\"sec\":850570,\"nanosec\":2148374721},\"action\":931576},\"id\":\"gen-obstacle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle\",\"type\":\"rmf_obstacle_msgs/msg/Obstacle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":162019,\"source\":\"s5\",\"level_name\":\"s6\",\"classification\":\"s7\",\"bbox\":{\"center\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"size\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119}},\"data_resolution\":-18.126,\"data\":[28,83],\"lifetime\":{\"sec\":850570,\"nanosec\":2148374721},\"action\":931576},\"id\":\"gen-obstacle\"}",
+  "model": {
+    "@kind": "obstacle",
+    "ros2rmfobstacle.obstacle_header_stamp_sec": "40510",
+    "ros2rmfobstacle.obstacle_header_stamp_nanosec": "2147564661",
+    "ros2rmfobstacle.obstacle_header_frame_id": "s3",
+    "ros2rmfobstacle.obstacle_id": "162019",
+    "ros2rmfobstacle.obstacle_source": "s5",
+    "ros2rmfobstacle.obstacle_data.#": "2",
+    "ros2rmfobstacle.obstacle_data[0].ros2rmfobstacle.obstacle_data_value": "28",
+    "ros2rmfobstacle.topic": "/gen/obstacle"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-kinematic_solver_info",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/kinematic_solver_info\",\"type\":\"moveit_msgs/msg/KinematicSolverInfo\",\"msg\":{\"joint_names\":[\"s1\",\"s2\"],\"limits\":[{\"joint_name\":\"s3\",\"has_position_limits\":false,\"min_position\":5.035,\"max_position\":-6.042,\"has_velocity_limits\":true,\"max_velocity\":8.056,\"has_acceleration_limits\":true,\"max_acceleration\":10.07,\"has_jerk_limits\":true,\"max_jerk\":-12.084},{\"joint_name\":\"s13\",\"has_position_limits\":false,\"min_position\":-15.105,\"max_position\":16.112,\"has_velocity_limits\":true,\"max_velocity\":-18.126,\"has_acceleration_limits\":true,\"max_acceleration\":20.14,\"has_jerk_limits\":true,\"max_jerk\":22.154}],\"link_names\":[\"s23\",\"s24\"]},\"id\":\"gen-kinematic_solver_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/kinematic_solver_info\",\"type\":\"moveit_msgs/msg/KinematicSolverInfo\",\"msg\":{\"joint_names\":[\"s1\",\"s2\"],\"limits\":[{\"joint_name\":\"s3\",\"has_position_limits\":false,\"min_position\":5.035,\"max_position\":-6.042,\"has_velocity_limits\":true,\"max_velocity\":8.056,\"has_acceleration_limits\":true,\"max_acceleration\":10.07,\"has_jerk_limits\":true,\"max_jerk\":-12.084},{\"joint_name\":\"s13\",\"has_position_limits\":false,\"min_position\":-15.105,\"max_position\":16.112,\"has_velocity_limits\":true,\"max_velocity\":-18.126,\"has_acceleration_limits\":true,\"max_acceleration\":20.14,\"has_jerk_limits\":true,\"max_jerk\":22.154}],\"link_names\":[\"s23\",\"s24\"]},\"id\":\"gen-kinematic_solver_info\"}",
+  "model": {
+    "@kind": "kinematic_solver_info",
+    "ros2moveit.kinematic_solver_info_joint_names.#": "2",
+    "ros2moveit.kinematic_solver_info_joint_names[0].ros2moveit.kinematic_solver_info_joint_names_value": "s1",
+    "ros2moveit.kinematic_solver_info_limits.#": "2",
+    "ros2moveit.kinematic_solver_info_limits[0].ros2moveit.kinematic_solver_info_limits_joint_name": "s3",
+    "ros2moveit.kinematic_solver_info_link_names.#": "2",
+    "ros2moveit.kinematic_solver_info_link_names[0].ros2moveit.kinematic_solver_info_link_names_value": "s23",
+    "ros2moveit.topic": "/gen/kinematic_solver_info"
+  }
+}

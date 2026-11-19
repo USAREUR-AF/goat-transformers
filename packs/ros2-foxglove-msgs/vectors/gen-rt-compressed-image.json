@@ -1,0 +1,17 @@
+{
+  "name": "rt-compressed_image",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/compressed_image\",\"type\":\"foxglove_msgs/msg/CompressedImage\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"data\":\"BAz/AIA=\",\"format\":\"s5\"},\"id\":\"gen-compressed_image\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/compressed_image\",\"type\":\"foxglove_msgs/msg/CompressedImage\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"data\":\"BAz/AIA=\",\"format\":\"s5\"},\"id\":\"gen-compressed_image\"}",
+  "model": {
+    "@kind": "compressed_image",
+    "ros2foxglove.compressed_image_timestamp_sec": "40510",
+    "ros2foxglove.compressed_image_timestamp_nanosec": "2147564661",
+    "ros2foxglove.compressed_image_frame_id": "s3",
+    "ros2foxglove.compressed_image_data": "BAz/AIA=",
+    "ros2foxglove.compressed_image_format": "s5",
+    "ros2foxglove.topic": "/gen/compressed_image"
+  }
+}

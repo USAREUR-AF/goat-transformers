@@ -1,0 +1,17 @@
+{
+  "name": "rt-config_overrides",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/config_overrides\",\"type\":\"px4_msgs/msg/ConfigOverrides\",\"msg\":{\"timestamp\":123456789013,\"disable_auto_disarm\":false,\"defer_failsafes\":true,\"defer_failsafes_timeout_s\":30947,\"disable_auto_set_home\":true,\"source_type\":81,\"source_id\":8},\"id\":\"gen-config_overrides\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/config_overrides\",\"type\":\"px4_msgs/msg/ConfigOverrides\",\"msg\":{\"timestamp\":123456789013,\"disable_auto_disarm\":false,\"defer_failsafes\":true,\"defer_failsafes_timeout_s\":30947,\"disable_auto_set_home\":true,\"source_type\":81,\"source_id\":8},\"id\":\"gen-config_overrides\"}",
+  "model": {
+    "@kind": "config_overrides",
+    "ros2px4.config_overrides_timestamp": "123456789013",
+    "ros2px4.config_overrides_disable_auto_disarm": "0",
+    "ros2px4.config_overrides_defer_failsafes": "1",
+    "ros2px4.config_overrides_defer_failsafes_timeout_s": "30947",
+    "ros2px4.config_overrides_disable_auto_set_home": "1",
+    "ros2px4.topic": "/gen/config_overrides"
+  }
+}

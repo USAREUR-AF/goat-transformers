@@ -1,0 +1,24 @@
+{
+  "name": "rt-position_constraint",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/position_constraint\",\"type\":\"moveit_msgs/msg/PositionConstraint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"link_name\":\"s4\",\"target_point_offset\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"constraint_region\":{\"primitives\":[{\"type\":63,\"dimensions\":[-9.063,10.07,11.077],\"polygon\":{\"points\":[{\"x\":-2.125,\"y\":-1.875,\"z\":-1.625}]}},{\"type\":192,\"dimensions\":[16.112,17.119,-18.126],\"polygon\":{\"points\":[{\"x\":-0.375,\"y\":-0.125,\"z\":0.125}]}}],\"primitive_poses\":[{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}},{\"position\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217},\"orientation\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238,\"w\":35.245}}],\"meshes\":[{\"triangles\":[{\"vertex_indices\":[2148941763,2148982266,2149022769]}],\"vertices\":[{\"x\":-39.273,\"y\":40.28,\"z\":41.287}]},{\"triangles\":[{\"vertex_indices\":[2149184781,2149225284,2149265787]}],\"vertices\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]}],\"mesh_poses\":[{\"position\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"orientation\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371,\"w\":-54.378}},{\"position\":{\"x\":55.385,\"y\":56.392,\"z\":-57.399},\"orientation\":{\"x\":58.406,\"y\":59.413,\"z\":-60.42,\"w\":61.427}}]},\"weight\":62.434},\"id\":\"gen-position_constraint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/position_constraint\",\"type\":\"moveit_msgs/msg/PositionConstraint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"link_name\":\"s4\",\"target_point_offset\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"constraint_region\":{\"primitives\":[{\"type\":63,\"dimensions\":[-9.063,10.07,11.077],\"polygon\":{\"points\":[{\"x\":-2.125,\"y\":-1.875,\"z\":-1.625}]}},{\"type\":192,\"dimensions\":[16.112,17.119,-18.126],\"polygon\":{\"points\":[{\"x\":-0.375,\"y\":-0.125,\"z\":0.125}]}}],\"primitive_poses\":[{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}},{\"position\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217},\"orientation\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238,\"w\":35.245}}],\"meshes\":[{\"triangles\":[{\"vertex_indices\":[2148941763,2148982266,2149022769]}],\"vertices\":[{\"x\":-39.273,\"y\":40.28,\"z\":41.287}]},{\"triangles\":[{\"vertex_indices\":[2149184781,2149225284,2149265787]}],\"vertices\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]}],\"mesh_poses\":[{\"position\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"orientation\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371,\"w\":-54.378}},{\"position\":{\"x\":55.385,\"y\":56.392,\"z\":-57.399},\"orientation\":{\"x\":58.406,\"y\":59.413,\"z\":-60.42,\"w\":61.427}}]},\"weight\":62.434},\"id\":\"gen-position_constraint\"}",
+  "model": {
+    "@kind": "position_constraint",
+    "ros2moveit.position_constraint_header_stamp_sec": "40510",
+    "ros2moveit.position_constraint_header_stamp_nanosec": "2147564661",
+    "ros2moveit.position_constraint_header_frame_id": "s3",
+    "ros2moveit.position_constraint_link_name": "s4",
+    "ros2moveit.position_constraint_target_point_offset_x": "5.035",
+    "ros2moveit.position_constraint_constraint_region_primitives.#": "2",
+    "ros2moveit.position_constraint_constraint_region_primitives[0].ros2moveit.position_constraint_constraint_region_primitives_type": "63",
+    "ros2moveit.position_constraint_constraint_region_primitive_poses.#": "2",
+    "ros2moveit.position_constraint_constraint_region_primitive_poses[0].ros2moveit.position_constraint_constraint_region_primitive_poses_position_x": "22.154",
+    "ros2moveit.position_constraint_constraint_region_meshes.#": "2",
+    "ros2moveit.position_constraint_constraint_region_mesh_poses.#": "2",
+    "ros2moveit.position_constraint_constraint_region_mesh_poses[0].ros2moveit.position_constraint_constraint_region_mesh_poses_position_x": "-48.336",
+    "ros2moveit.topic": "/gen/position_constraint"
+  }
+}

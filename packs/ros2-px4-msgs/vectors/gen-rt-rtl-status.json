@@ -1,0 +1,17 @@
+{
+  "name": "rt-rtl_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rtl_status\",\"type\":\"px4_msgs/msg/RtlStatus\",\"msg\":{\"timestamp\":123456789013,\"safe_points_id\":2147564661,\"is_evaluation_pending\":true,\"has_vtol_approach\":false,\"rtl_type\":154,\"safe_point_index\":209},\"id\":\"gen-rtl_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rtl_status\",\"type\":\"px4_msgs/msg/RtlStatus\",\"msg\":{\"timestamp\":123456789013,\"safe_points_id\":2147564661,\"is_evaluation_pending\":true,\"has_vtol_approach\":false,\"rtl_type\":154,\"safe_point_index\":209},\"id\":\"gen-rtl_status\"}",
+  "model": {
+    "@kind": "rtl_status",
+    "ros2px4.rtl_status_timestamp": "123456789013",
+    "ros2px4.rtl_status_safe_points_id": "2147564661",
+    "ros2px4.rtl_status_is_evaluation_pending": "1",
+    "ros2px4.rtl_status_has_vtol_approach": "0",
+    "ros2px4.rtl_status_rtl_type": "154",
+    "ros2px4.topic": "/gen/rtl_status"
+  }
+}

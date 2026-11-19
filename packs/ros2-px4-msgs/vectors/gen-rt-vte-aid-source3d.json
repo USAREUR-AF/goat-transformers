@@ -1,0 +1,29 @@
+{
+  "name": "rt-vte_aid_source3d",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vte_aid_source3d\",\"type\":\"px4_msgs/msg/VteAidSource3d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"time_last_predict\":370370367039,\"observation\":[-4.125,-3.875,-3.625],\"observation_variance\":[-3.375,-3.125,-2.875],\"innovation\":[-2.625,-2.375,-2.125],\"innovation_variance\":[-1.875,-1.625,-1.375],\"test_ratio\":[-1.125,-0.875,-0.625],\"fusion_status\":\"Ezn/AIA=\",\"time_since_meas_ms\":-0.125,\"history_steps\":10,\"replayed_count\":65,\"replay_revised_count\":120,\"replay_test_ratio_max\":[0.875,1.125,1.375]},\"id\":\"gen-vte_aid_source3d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vte_aid_source3d\",\"type\":\"px4_msgs/msg/VteAidSource3d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"time_last_predict\":370370367039,\"observation\":[-4.125,-3.875,-3.625],\"observation_variance\":[-3.375,-3.125,-2.875],\"innovation\":[-2.625,-2.375,-2.125],\"innovation_variance\":[-1.875,-1.625,-1.375],\"test_ratio\":[-1.125,-0.875,-0.625],\"fusion_status\":\"Ezn/AIA=\",\"time_since_meas_ms\":-0.125,\"history_steps\":10,\"replayed_count\":65,\"replay_revised_count\":120,\"replay_test_ratio_max\":[0.875,1.125,1.375]},\"id\":\"gen-vte_aid_source3d\"}",
+  "model": {
+    "@kind": "vte_aid_source3d",
+    "ros2px4.vte_aid_source3d_timestamp": "123456789013",
+    "ros2px4.vte_aid_source3d_timestamp_sample": "246913578026",
+    "ros2px4.vte_aid_source3d_time_last_predict": "370370367039",
+    "ros2px4.vte_aid_source3d_observation.#": "3",
+    "ros2px4.vte_aid_source3d_observation[0].ros2px4.vte_aid_source3d_observation_value": "-4.125",
+    "ros2px4.vte_aid_source3d_observation_variance.#": "3",
+    "ros2px4.vte_aid_source3d_observation_variance[0].ros2px4.vte_aid_source3d_observation_variance_value": "-3.375",
+    "ros2px4.vte_aid_source3d_innovation.#": "3",
+    "ros2px4.vte_aid_source3d_innovation[0].ros2px4.vte_aid_source3d_innovation_value": "-2.625",
+    "ros2px4.vte_aid_source3d_innovation_variance.#": "3",
+    "ros2px4.vte_aid_source3d_innovation_variance[0].ros2px4.vte_aid_source3d_innovation_variance_value": "-1.875",
+    "ros2px4.vte_aid_source3d_test_ratio.#": "3",
+    "ros2px4.vte_aid_source3d_test_ratio[0].ros2px4.vte_aid_source3d_test_ratio_value": "-1.125",
+    "ros2px4.vte_aid_source3d_fusion_status": "Ezn/AIA=",
+    "ros2px4.vte_aid_source3d_time_since_meas_ms": "-0.125",
+    "ros2px4.vte_aid_source3d_replay_test_ratio_max.#": "3",
+    "ros2px4.vte_aid_source3d_replay_test_ratio_max[0].ros2px4.vte_aid_source3d_replay_test_ratio_max_value": "0.875",
+    "ros2px4.topic": "/gen/vte_aid_source3d"
+  }
+}

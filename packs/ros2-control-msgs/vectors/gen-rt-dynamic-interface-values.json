@@ -1,0 +1,23 @@
+{
+  "name": "rt-dynamic_interface_values",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dynamic_interface_values\",\"type\":\"control_msgs/msg/DynamicInterfaceValues\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"states\":{\"interface_names\":[\"s4\",\"s5\"],\"values\":[-6.042,7.049]},\"commands\":{\"interface_names\":[\"s8\",\"s9\"],\"values\":[10.07,11.077]}},\"id\":\"gen-dynamic_interface_values\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dynamic_interface_values\",\"type\":\"control_msgs/msg/DynamicInterfaceValues\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"states\":{\"interface_names\":[\"s4\",\"s5\"],\"values\":[-6.042,7.049]},\"commands\":{\"interface_names\":[\"s8\",\"s9\"],\"values\":[10.07,11.077]}},\"id\":\"gen-dynamic_interface_values\"}",
+  "model": {
+    "@kind": "dynamic_interface_values",
+    "ros2control.dynamic_interface_values_header_stamp_sec": "40510",
+    "ros2control.dynamic_interface_values_header_stamp_nanosec": "2147564661",
+    "ros2control.dynamic_interface_values_header_frame_id": "s3",
+    "ros2control.dynamic_interface_values_states_interface_names.#": "2",
+    "ros2control.dynamic_interface_values_states_interface_names[0].ros2control.dynamic_interface_values_states_interface_names_value": "s4",
+    "ros2control.dynamic_interface_values_states_values.#": "2",
+    "ros2control.dynamic_interface_values_states_values[0].ros2control.dynamic_interface_values_states_values_value": "-6.042",
+    "ros2control.dynamic_interface_values_commands_interface_names.#": "2",
+    "ros2control.dynamic_interface_values_commands_interface_names[0].ros2control.dynamic_interface_values_commands_interface_names_value": "s8",
+    "ros2control.dynamic_interface_values_commands_values.#": "2",
+    "ros2control.dynamic_interface_values_commands_values[0].ros2control.dynamic_interface_values_commands_values_value": "10.07",
+    "ros2control.topic": "/gen/dynamic_interface_values"
+  }
+}

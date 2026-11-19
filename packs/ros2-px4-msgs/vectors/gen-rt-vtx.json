@@ -1,0 +1,17 @@
+{
+  "name": "rt-vtx",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vtx\",\"type\":\"px4_msgs/msg/Vtx\",\"msg\":{\"timestamp\":123456789013,\"protocol\":245,\"device\":44,\"mode\":99,\"band\":26,\"channel\":81,\"frequency\":54152,\"band_letter\":63,\"band_name\":\"CRv/AIA=\",\"power_level\":45,\"power_label\":\"CyH/AIA=\"},\"id\":\"gen-vtx\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vtx\",\"type\":\"px4_msgs/msg/Vtx\",\"msg\":{\"timestamp\":123456789013,\"protocol\":245,\"device\":44,\"mode\":99,\"band\":26,\"channel\":81,\"frequency\":54152,\"band_letter\":63,\"band_name\":\"CRv/AIA=\",\"power_level\":45,\"power_label\":\"CyH/AIA=\"},\"id\":\"gen-vtx\"}",
+  "model": {
+    "@kind": "vtx",
+    "ros2px4.vtx_timestamp": "123456789013",
+    "ros2px4.vtx_protocol": "245",
+    "ros2px4.vtx_device": "44",
+    "ros2px4.vtx_mode": "99",
+    "ros2px4.vtx_band": "26",
+    "ros2px4.topic": "/gen/vtx"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-rtk_baseline",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rtk_baseline\",\"type\":\"mavros_msgs/msg/RTKBaseline\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_last_baseline_ms\":2147645667,\"rtk_receiver_id\":154,\"wn\":13649,\"tow\":2147767176,\"rtk_health\":63,\"rtk_rate\":118,\"nsats\":173,\"baseline_coords_type\":228,\"baseline_a_mm\":486043,\"baseline_b_mm\":526546,\"baseline_c_mm\":567049,\"accuracy\":2148091200,\"iar_num_hypotheses\":648055},\"id\":\"gen-rtk_baseline\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rtk_baseline\",\"type\":\"mavros_msgs/msg/RTKBaseline\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_last_baseline_ms\":2147645667,\"rtk_receiver_id\":154,\"wn\":13649,\"tow\":2147767176,\"rtk_health\":63,\"rtk_rate\":118,\"nsats\":173,\"baseline_coords_type\":228,\"baseline_a_mm\":486043,\"baseline_b_mm\":526546,\"baseline_c_mm\":567049,\"accuracy\":2148091200,\"iar_num_hypotheses\":648055},\"id\":\"gen-rtk_baseline\"}",
+  "model": {
+    "@kind": "rtk_baseline",
+    "ros2mavros.rtk_baseline_header_stamp_sec": "40510",
+    "ros2mavros.rtk_baseline_header_stamp_nanosec": "2147564661",
+    "ros2mavros.rtk_baseline_header_frame_id": "s3",
+    "ros2mavros.rtk_baseline_time_last_baseline_ms": "2147645667",
+    "ros2mavros.rtk_baseline_rtk_receiver_id": "154",
+    "ros2mavros.topic": "/gen/rtk_baseline"
+  }
+}

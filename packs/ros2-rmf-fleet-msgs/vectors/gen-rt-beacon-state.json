@@ -1,0 +1,17 @@
+{
+  "name": "rt-beacon_state",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/beacon_state\",\"type\":\"rmf_fleet_msgs/msg/BeaconState\",\"msg\":{\"id\":\"s1\",\"online\":false,\"category\":\"s3\",\"activated\":false,\"level\":\"s5\"},\"id\":\"gen-beacon_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/beacon_state\",\"type\":\"rmf_fleet_msgs/msg/BeaconState\",\"msg\":{\"id\":\"s1\",\"online\":false,\"category\":\"s3\",\"activated\":false,\"level\":\"s5\"},\"id\":\"gen-beacon_state\"}",
+  "model": {
+    "@kind": "beacon_state",
+    "ros2rmffleet.beacon_state_id": "s1",
+    "ros2rmffleet.beacon_state_online": "0",
+    "ros2rmffleet.beacon_state_category": "s3",
+    "ros2rmffleet.beacon_state_activated": "0",
+    "ros2rmffleet.beacon_state_level": "s5",
+    "ros2rmffleet.topic": "/gen/beacon_state"
+  }
+}

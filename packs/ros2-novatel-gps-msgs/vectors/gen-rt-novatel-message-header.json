@@ -1,0 +1,17 @@
+{
+  "name": "rt-novatel_message_header",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_message_header\",\"type\":\"novatel_gps_msgs/msg/NovatelMessageHeader\",\"msg\":{\"message_name\":\"s1\",\"port\":\"s2\",\"sequence_num\":2147605164,\"percent_idle_time\":-4.125,\"gps_time_status\":\"s5\",\"gps_week_num\":2147726673,\"gps_seconds\":7.049,\"receiver_status\":{\"original_status_code\":2147807679,\"error_flag\":true,\"temperature_flag\":false,\"voltage_supply_flag\":true,\"antenna_powered\":false,\"antenna_is_open\":true,\"antenna_is_shorted\":false,\"cpu_overload_flag\":true,\"com1_buffer_overrun\":false,\"com2_buffer_overrun\":true,\"com3_buffer_overrun\":false,\"usb_buffer_overrun\":true,\"rf1_agc_flag\":false,\"rf2_agc_flag\":true,\"almanac_flag\":false,\"position_solution_flag\":true,\"position_fixed_flag\":false,\"clock_steering_status_enabled\":true,\"clock_model_flag\":false,\"oemv_external_oscillator_flag\":true,\"software_resource_flag\":false,\"aux1_status_event_flag\":true,\"aux2_status_event_flag\":false,\"aux3_status_event_flag\":true},\"receiver_software_version\":2148779751},\"id\":\"gen-novatel_message_header\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_message_header\",\"type\":\"novatel_gps_msgs/msg/NovatelMessageHeader\",\"msg\":{\"message_name\":\"s1\",\"port\":\"s2\",\"sequence_num\":2147605164,\"percent_idle_time\":-4.125,\"gps_time_status\":\"s5\",\"gps_week_num\":2147726673,\"gps_seconds\":7.049,\"receiver_status\":{\"original_status_code\":2147807679,\"error_flag\":true,\"temperature_flag\":false,\"voltage_supply_flag\":true,\"antenna_powered\":false,\"antenna_is_open\":true,\"antenna_is_shorted\":false,\"cpu_overload_flag\":true,\"com1_buffer_overrun\":false,\"com2_buffer_overrun\":true,\"com3_buffer_overrun\":false,\"usb_buffer_overrun\":true,\"rf1_agc_flag\":false,\"rf2_agc_flag\":true,\"almanac_flag\":false,\"position_solution_flag\":true,\"position_fixed_flag\":false,\"clock_steering_status_enabled\":true,\"clock_model_flag\":false,\"oemv_external_oscillator_flag\":true,\"software_resource_flag\":false,\"aux1_status_event_flag\":true,\"aux2_status_event_flag\":false,\"aux3_status_event_flag\":true},\"receiver_software_version\":2148779751},\"id\":\"gen-novatel_message_header\"}",
+  "model": {
+    "@kind": "novatel_message_header",
+    "ros2novatelgps.novatel_message_header_message_name": "s1",
+    "ros2novatelgps.novatel_message_header_port": "s2",
+    "ros2novatelgps.novatel_message_header_sequence_num": "2147605164",
+    "ros2novatelgps.novatel_message_header_percent_idle_time": "-4.125",
+    "ros2novatelgps.novatel_message_header_gps_time_status": "s5",
+    "ros2novatelgps.topic": "/gen/novatel_message_header"
+  }
+}

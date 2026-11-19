@@ -1,0 +1,15 @@
+{
+  "name": "rt-schedule_query_participants",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_query_participants\",\"type\":\"rmf_traffic_msgs/msg/ScheduleQueryParticipants\",\"msg\":{\"type\":7742,\"ids\":[246913578026,370370367039]},\"id\":\"gen-schedule_query_participants\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_query_participants\",\"type\":\"rmf_traffic_msgs/msg/ScheduleQueryParticipants\",\"msg\":{\"type\":7742,\"ids\":[246913578026,370370367039]},\"id\":\"gen-schedule_query_participants\"}",
+  "model": {
+    "@kind": "schedule_query_participants",
+    "ros2rmftraffic.schedule_query_participants_type_2": "7742",
+    "ros2rmftraffic.schedule_query_participants_ids_2.#": "2",
+    "ros2rmftraffic.schedule_query_participants_ids_2[0].ros2rmftraffic.schedule_query_participants_ids_value_2": "246913578026",
+    "ros2rmftraffic.topic": "/gen/schedule_query_participants"
+  }
+}

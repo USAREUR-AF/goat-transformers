@@ -1,0 +1,14 @@
+{
+  "name": "x-way_point-to-geojson",
+  "from": "ros2-geographic-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"geographic_msgs/msg/WayPoint\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"position\":{\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":431.5},\"props\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "way_point",
+    "lat": "47.0625",
+    "lon": "8.53125",
+    "hae": "431.5"
+  }
+}

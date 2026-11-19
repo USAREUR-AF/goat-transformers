@@ -1,0 +1,31 @@
+{
+  "name": "rt-estimator_aid_source2d",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_aid_source2d\",\"type\":\"px4_msgs/msg/EstimatorAidSource2d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"estimator_instance\":44,\"device_id\":2147645667,\"time_last_fuse\":617283945065,\"observation\":[-6.042,7.049],\"observation_variance\":[-3.125,-2.875],\"innovation\":[-2.625,-2.375],\"innovation_filtered\":[-2.125,-1.875],\"innovation_variance\":[-1.625,-1.375],\"test_ratio\":[-1.125,-0.875],\"test_ratio_filtered\":[-0.625,-0.375],\"innovation_rejected\":false,\"fused\":true},\"id\":\"gen-estimator_aid_source2d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_aid_source2d\",\"type\":\"px4_msgs/msg/EstimatorAidSource2d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"estimator_instance\":44,\"device_id\":2147645667,\"time_last_fuse\":617283945065,\"observation\":[-6.042,7.049],\"observation_variance\":[-3.125,-2.875],\"innovation\":[-2.625,-2.375],\"innovation_filtered\":[-2.125,-1.875],\"innovation_variance\":[-1.625,-1.375],\"test_ratio\":[-1.125,-0.875],\"test_ratio_filtered\":[-0.625,-0.375],\"innovation_rejected\":false,\"fused\":true},\"id\":\"gen-estimator_aid_source2d\"}",
+  "model": {
+    "@kind": "estimator_aid_source2d",
+    "ros2px4.estimator_aid_source2d_timestamp": "123456789013",
+    "ros2px4.estimator_aid_source2d_timestamp_sample": "246913578026",
+    "ros2px4.estimator_aid_source2d_estimator_instance": "44",
+    "ros2px4.estimator_aid_source2d_device_id": "2147645667",
+    "ros2px4.estimator_aid_source2d_time_last_fuse": "617283945065",
+    "ros2px4.estimator_aid_source2d_observation.#": "2",
+    "ros2px4.estimator_aid_source2d_observation[0].ros2px4.estimator_aid_source2d_observation_value": "-6.042",
+    "ros2px4.estimator_aid_source2d_observation_variance.#": "2",
+    "ros2px4.estimator_aid_source2d_observation_variance[0].ros2px4.estimator_aid_source2d_observation_variance_value": "-3.125",
+    "ros2px4.estimator_aid_source2d_innovation.#": "2",
+    "ros2px4.estimator_aid_source2d_innovation[0].ros2px4.estimator_aid_source2d_innovation_value": "-2.625",
+    "ros2px4.estimator_aid_source2d_innovation_filtered.#": "2",
+    "ros2px4.estimator_aid_source2d_innovation_filtered[0].ros2px4.estimator_aid_source2d_innovation_filtered_value": "-2.125",
+    "ros2px4.estimator_aid_source2d_innovation_variance.#": "2",
+    "ros2px4.estimator_aid_source2d_innovation_variance[0].ros2px4.estimator_aid_source2d_innovation_variance_value": "-1.625",
+    "ros2px4.estimator_aid_source2d_test_ratio.#": "2",
+    "ros2px4.estimator_aid_source2d_test_ratio[0].ros2px4.estimator_aid_source2d_test_ratio_value": "-1.125",
+    "ros2px4.estimator_aid_source2d_test_ratio_filtered.#": "2",
+    "ros2px4.estimator_aid_source2d_test_ratio_filtered[0].ros2px4.estimator_aid_source2d_test_ratio_filtered_value": "-0.625",
+    "ros2px4.topic": "/gen/estimator_aid_source2d"
+  }
+}

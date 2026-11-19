@@ -1,0 +1,19 @@
+{
+  "name": "rt-neural_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/neural_control\",\"type\":\"px4_msgs/msg/NeuralControl\",\"msg\":{\"timestamp\":123456789013,\"observation\":[-4.625,-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125],\"network_output\":[-0.875,-0.625,-0.375,-0.125],\"controller_time\":850570,\"inference_time\":891073},\"id\":\"gen-neural_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/neural_control\",\"type\":\"px4_msgs/msg/NeuralControl\",\"msg\":{\"timestamp\":123456789013,\"observation\":[-4.625,-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125],\"network_output\":[-0.875,-0.625,-0.375,-0.125],\"controller_time\":850570,\"inference_time\":891073},\"id\":\"gen-neural_control\"}",
+  "model": {
+    "@kind": "neural_control",
+    "ros2px4.neural_control_timestamp": "123456789013",
+    "ros2px4.neural_control_observation.#": "15",
+    "ros2px4.neural_control_observation[0].ros2px4.neural_control_observation_value": "-4.625",
+    "ros2px4.neural_control_network_output.#": "4",
+    "ros2px4.neural_control_network_output[0].ros2px4.neural_control_network_output_value": "-0.875",
+    "ros2px4.neural_control_controller_time": "850570",
+    "ros2px4.neural_control_inference_time": "891073",
+    "ros2px4.topic": "/gen/neural_control"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-satellite_info",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/satellite_info\",\"type\":\"px4_msgs/msg/SatelliteInfo\",\"msg\":{\"timestamp\":123456789013,\"count\":245,\"svid\":\"Awn/AIA=\",\"used\":\"BAz/AIA=\",\"elevation\":\"BQ//AIA=\",\"azimuth\":\"BhL/AIA=\",\"snr\":\"BxX/AIA=\",\"prn\":\"CBj/AIA=\"},\"id\":\"gen-satellite_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/satellite_info\",\"type\":\"px4_msgs/msg/SatelliteInfo\",\"msg\":{\"timestamp\":123456789013,\"count\":245,\"svid\":\"Awn/AIA=\",\"used\":\"BAz/AIA=\",\"elevation\":\"BQ//AIA=\",\"azimuth\":\"BhL/AIA=\",\"snr\":\"BxX/AIA=\",\"prn\":\"CBj/AIA=\"},\"id\":\"gen-satellite_info\"}",
+  "model": {
+    "@kind": "satellite_info",
+    "ros2px4.satellite_info_timestamp": "123456789013",
+    "ros2px4.satellite_info_count": "245",
+    "ros2px4.satellite_info_svid": "Awn/AIA=",
+    "ros2px4.satellite_info_used": "BAz/AIA=",
+    "ros2px4.satellite_info_elevation": "BQ//AIA=",
+    "ros2px4.topic": "/gen/satellite_info"
+  }
+}

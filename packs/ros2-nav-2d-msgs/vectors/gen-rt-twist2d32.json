@@ -1,0 +1,15 @@
+{
+  "name": "rt-twist2d32",
+  "from": "ros2-nav-2d-msgs",
+  "to": "ros2-nav-2d-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/twist2d32\",\"type\":\"nav_2d_msgs/msg/Twist2D32\",\"msg\":{\"x\":-4.875,\"y\":-4.625,\"theta\":-4.375},\"id\":\"gen-twist2d32\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/twist2d32\",\"type\":\"nav_2d_msgs/msg/Twist2D32\",\"msg\":{\"x\":-4.875,\"y\":-4.625,\"theta\":-4.375},\"id\":\"gen-twist2d32\"}",
+  "model": {
+    "@kind": "twist2d32",
+    "ros2nav2d.twist2d32_x": "-4.875",
+    "ros2nav2d.twist2d32_y": "-4.625",
+    "ros2nav2d.twist2d32_theta": "-4.375",
+    "ros2nav2d.topic": "/gen/twist2d32"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-allowed_collision_matrix",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/allowed_collision_matrix\",\"type\":\"moveit_msgs/msg/AllowedCollisionMatrix\",\"msg\":{\"entry_names\":[\"s1\",\"s2\"],\"entry_values\":[{\"enabled\":[true]},{\"enabled\":[false]}],\"default_entry_names\":[\"s5\",\"s6\"],\"default_entry_values\":[true,false]},\"id\":\"gen-allowed_collision_matrix\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/allowed_collision_matrix\",\"type\":\"moveit_msgs/msg/AllowedCollisionMatrix\",\"msg\":{\"entry_names\":[\"s1\",\"s2\"],\"entry_values\":[{\"enabled\":[true]},{\"enabled\":[false]}],\"default_entry_names\":[\"s5\",\"s6\"],\"default_entry_values\":[true,false]},\"id\":\"gen-allowed_collision_matrix\"}",
+  "model": {
+    "@kind": "allowed_collision_matrix",
+    "ros2moveit.allowed_collision_matrix_entry_names.#": "2",
+    "ros2moveit.allowed_collision_matrix_entry_names[0].ros2moveit.allowed_collision_matrix_entry_names_value": "s1",
+    "ros2moveit.allowed_collision_matrix_entry_values.#": "2",
+    "ros2moveit.allowed_collision_matrix_default_entry_names.#": "2",
+    "ros2moveit.allowed_collision_matrix_default_entry_names[0].ros2moveit.allowed_collision_matrix_default_entry_names_value": "s5",
+    "ros2moveit.allowed_collision_matrix_default_entry_values.#": "2",
+    "ros2moveit.allowed_collision_matrix_default_entry_values[0].ros2moveit.allowed_collision_matrix_default_entry_values_value": "1",
+    "ros2moveit.topic": "/gen/allowed_collision_matrix"
+  }
+}

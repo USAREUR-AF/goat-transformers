@@ -1,0 +1,16 @@
+{
+  "name": "rt-dispatch_states",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_states\",\"type\":\"rmf_task_msgs/msg/DispatchStates\",\"msg\":{\"active\":[{\"task_id\":\"s1\",\"status\":117,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s4\",\"expected_robot_name\":\"s5\"},\"errors\":[\"s6\"]},{\"task_id\":\"s7\",\"status\":-65,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s10\",\"expected_robot_name\":\"s11\"},\"errors\":[\"s12\"]}],\"finished\":[{\"task_id\":\"s13\",\"status\":9,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s16\",\"expected_robot_name\":\"s17\"},\"errors\":[\"s18\"]},{\"task_id\":\"s19\",\"status\":83,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s22\",\"expected_robot_name\":\"s23\"},\"errors\":[\"s24\"]}]},\"id\":\"gen-dispatch_states\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_states\",\"type\":\"rmf_task_msgs/msg/DispatchStates\",\"msg\":{\"active\":[{\"task_id\":\"s1\",\"status\":117,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s4\",\"expected_robot_name\":\"s5\"},\"errors\":[\"s6\"]},{\"task_id\":\"s7\",\"status\":-65,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s10\",\"expected_robot_name\":\"s11\"},\"errors\":[\"s12\"]}],\"finished\":[{\"task_id\":\"s13\",\"status\":9,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s16\",\"expected_robot_name\":\"s17\"},\"errors\":[\"s18\"]},{\"task_id\":\"s19\",\"status\":83,\"assignment\":{\"is_assigned\":true,\"fleet_name\":\"s22\",\"expected_robot_name\":\"s23\"},\"errors\":[\"s24\"]}]},\"id\":\"gen-dispatch_states\"}",
+  "model": {
+    "@kind": "dispatch_states",
+    "ros2rmftask.dispatch_states_active.#": "2",
+    "ros2rmftask.dispatch_states_active[0].ros2rmftask.dispatch_states_active_task_id": "s1",
+    "ros2rmftask.dispatch_states_finished.#": "2",
+    "ros2rmftask.dispatch_states_finished[0].ros2rmftask.dispatch_states_finished_task_id": "s13",
+    "ros2rmftask.topic": "/gen/dispatch_states"
+  }
+}

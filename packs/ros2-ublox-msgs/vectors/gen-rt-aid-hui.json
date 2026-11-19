@@ -1,0 +1,17 @@
+{
+  "name": "rt-aid_hui",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/aid_hui\",\"type\":\"ublox_msgs/msg/AidHUI\",\"msg\":{\"health\":2147524158,\"utc_a0\":2.014,\"utc_a1\":-3.021,\"utc_tow\":162019,\"utc_wnt\":5914,\"utc_ls\":-19119,\"utc_wnf\":21384,\"utc_dn\":-3649,\"utc_lsf\":-28682,\"utc_spare\":11821,\"klob_a0\":-2.375,\"klob_a1\":-2.125,\"klob_a2\":-1.875,\"klob_a3\":-1.625,\"klob_b0\":-1.375,\"klob_b1\":-1.125,\"klob_b2\":-0.875,\"klob_b3\":-0.625,\"flags\":2148253212},\"id\":\"gen-aid_hui\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/aid_hui\",\"type\":\"ublox_msgs/msg/AidHUI\",\"msg\":{\"health\":2147524158,\"utc_a0\":2.014,\"utc_a1\":-3.021,\"utc_tow\":162019,\"utc_wnt\":5914,\"utc_ls\":-19119,\"utc_wnf\":21384,\"utc_dn\":-3649,\"utc_lsf\":-28682,\"utc_spare\":11821,\"klob_a0\":-2.375,\"klob_a1\":-2.125,\"klob_a2\":-1.875,\"klob_a3\":-1.625,\"klob_b0\":-1.375,\"klob_b1\":-1.125,\"klob_b2\":-0.875,\"klob_b3\":-0.625,\"flags\":2148253212},\"id\":\"gen-aid_hui\"}",
+  "model": {
+    "@kind": "aid_hui",
+    "ros2ublox.aid_hui_health": "2147524158",
+    "ros2ublox.aid_hui_utc_a0": "2.014",
+    "ros2ublox.aid_hui_utc_a1": "-3.021",
+    "ros2ublox.aid_hui_utc_tow": "162019",
+    "ros2ublox.aid_hui_utc_wnt": "5914",
+    "ros2ublox.topic": "/gen/aid_hui"
+  }
+}

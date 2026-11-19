@@ -1,0 +1,19 @@
+{
+  "name": "rt-battery_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/battery_status\",\"type\":\"px4_msgs/msg/BatteryStatus\",\"msg\":{\"timestamp\":123456789013,\"connected\":false,\"voltage_v\":-4.375,\"current_a\":-4.125,\"current_average_a\":-3.875,\"discharged_mah\":-3.625,\"remaining\":-3.375,\"scale\":-3.125,\"time_remaining_s\":-2.875,\"temperature\":-2.625,\"cell_count\":228,\"source\":27,\"priority\":82,\"capacity\":9993,\"cycle_count\":50496,\"average_time_to_empty\":25463,\"manufacture_date\":430,\"state_of_health\":40933,\"max_error\":15900,\"id\":211,\"interface_error\":31370,\"voltage_cell_v\":[0.375,0.625,0.875,1.125,1.375,1.625,1.875,2.125,2.375,2.625,2.875,3.125,3.375,3.625],\"max_cell_voltage_delta\":3.875,\"is_powering_off\":true,\"is_required\":false,\"warning\":232,\"faults\":14495,\"full_charge_capacity_wh\":5.125,\"remaining_capacity_wh\":5.375,\"over_discharge_count\":4932,\"nominal_voltage\":5.875,\"internal_resistance_estimate\":6.125,\"ocv_estimate\":6.375,\"ocv_estimate_filtered\":6.625,\"volt_based_soc_estimate\":6.875,\"voltage_prediction\":7.125,\"prediction_error\":-5.125,\"estimation_covariance_norm\":-4.875},\"id\":\"gen-battery_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/battery_status\",\"type\":\"px4_msgs/msg/BatteryStatus\",\"msg\":{\"timestamp\":123456789013,\"connected\":false,\"voltage_v\":-4.375,\"current_a\":-4.125,\"current_average_a\":-3.875,\"discharged_mah\":-3.625,\"remaining\":-3.375,\"scale\":-3.125,\"time_remaining_s\":-2.875,\"temperature\":-2.625,\"cell_count\":228,\"source\":27,\"priority\":82,\"capacity\":9993,\"cycle_count\":50496,\"average_time_to_empty\":25463,\"manufacture_date\":430,\"state_of_health\":40933,\"max_error\":15900,\"id\":211,\"interface_error\":31370,\"voltage_cell_v\":[0.375,0.625,0.875,1.125,1.375,1.625,1.875,2.125,2.375,2.625,2.875,3.125,3.375,3.625],\"max_cell_voltage_delta\":3.875,\"is_powering_off\":true,\"is_required\":false,\"warning\":232,\"faults\":14495,\"full_charge_capacity_wh\":5.125,\"remaining_capacity_wh\":5.375,\"over_discharge_count\":4932,\"nominal_voltage\":5.875,\"internal_resistance_estimate\":6.125,\"ocv_estimate\":6.375,\"ocv_estimate_filtered\":6.625,\"volt_based_soc_estimate\":6.875,\"voltage_prediction\":7.125,\"prediction_error\":-5.125,\"estimation_covariance_norm\":-4.875},\"id\":\"gen-battery_status\"}",
+  "model": {
+    "@kind": "battery_status",
+    "ros2px4.battery_status_timestamp": "123456789013",
+    "ros2px4.battery_status_connected": "0",
+    "ros2px4.battery_status_voltage_v": "-4.375",
+    "ros2px4.battery_status_current_a": "-4.125",
+    "ros2px4.battery_status_current_average_a": "-3.875",
+    "ros2px4.battery_status_voltage_cell_v.#": "14",
+    "ros2px4.battery_status_voltage_cell_v[0].ros2px4.battery_status_voltage_cell_v_value": "0.375",
+    "ros2px4.topic": "/gen/battery_status"
+  }
+}

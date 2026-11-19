@@ -1,0 +1,17 @@
+{
+  "name": "rt-missed_waypoint",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/missed_waypoint\",\"type\":\"nav2_msgs/msg/MissedWaypoint\",\"msg\":{\"index\":2147524158,\"goal\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},\"error_code\":60059},\"id\":\"gen-missed_waypoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/missed_waypoint\",\"type\":\"nav2_msgs/msg/MissedWaypoint\",\"msg\":{\"index\":2147524158,\"goal\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}}},\"error_code\":60059},\"id\":\"gen-missed_waypoint\"}",
+  "model": {
+    "@kind": "missed_waypoint",
+    "ros2nav2.missed_waypoint_index": "2147524158",
+    "ros2nav2.missed_waypoint_goal_header_stamp_sec": "81013",
+    "ros2nav2.missed_waypoint_goal_header_stamp_nanosec": "2147605164",
+    "ros2nav2.missed_waypoint_goal_header_frame_id": "s4",
+    "ros2nav2.missed_waypoint_goal_pose_position_x": "5.035",
+    "ros2nav2.topic": "/gen/missed_waypoint"
+  }
+}

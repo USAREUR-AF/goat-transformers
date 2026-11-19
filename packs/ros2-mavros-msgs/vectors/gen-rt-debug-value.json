@@ -1,0 +1,19 @@
+{
+  "name": "rt-debug_value",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/debug_value\",\"type\":\"mavros_msgs/msg/DebugValue\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"index\":162019,\"array_id\":202522,\"name\":\"s6\",\"value_float\":-3.375,\"value_int\":324031,\"data\":[-2.875,-2.625],\"type\":228},\"id\":\"gen-debug_value\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/debug_value\",\"type\":\"mavros_msgs/msg/DebugValue\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"index\":162019,\"array_id\":202522,\"name\":\"s6\",\"value_float\":-3.375,\"value_int\":324031,\"data\":[-2.875,-2.625],\"type\":228},\"id\":\"gen-debug_value\"}",
+  "model": {
+    "@kind": "debug_value",
+    "ros2mavros.debug_value_header_stamp_sec": "40510",
+    "ros2mavros.debug_value_header_stamp_nanosec": "2147564661",
+    "ros2mavros.debug_value_header_frame_id": "s3",
+    "ros2mavros.debug_value_index": "162019",
+    "ros2mavros.debug_value_array_id": "202522",
+    "ros2mavros.debug_value_data.#": "2",
+    "ros2mavros.debug_value_data[0].ros2mavros.debug_value_data_value": "-2.875",
+    "ros2mavros.topic": "/gen/debug_value"
+  }
+}

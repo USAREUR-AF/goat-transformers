@@ -1,0 +1,14 @@
+{
+  "name": "x-geo_pose_stamped-to-geojson",
+  "from": "ros2-geographic-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"geographic_msgs/msg/GeoPoseStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":431.5},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}}}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "geo_pose_stamped",
+    "lat": "47.0625",
+    "lon": "8.53125",
+    "hae": "431.5"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "rt-landing_target",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target\",\"type\":\"mavros_msgs/msg/LandingTarget\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"target_num\":99,\"frame\":154,\"angle\":[-3.625,-3.375],\"distance\":-3.125,\"size\":[-2.875,-2.625],\"pose\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"type\":101},\"id\":\"gen-landing_target\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target\",\"type\":\"mavros_msgs/msg/LandingTarget\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"target_num\":99,\"frame\":154,\"angle\":[-3.625,-3.375],\"distance\":-3.125,\"size\":[-2.875,-2.625],\"pose\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"type\":101},\"id\":\"gen-landing_target\"}",
+  "model": {
+    "@kind": "landing_target",
+    "ros2mavros.landing_target_header_stamp_sec": "40510",
+    "ros2mavros.landing_target_header_stamp_nanosec": "2147564661",
+    "ros2mavros.landing_target_header_frame_id": "s3",
+    "ros2mavros.landing_target_target_num": "99",
+    "ros2mavros.landing_target_frame": "154",
+    "ros2mavros.landing_target_angle.#": "2",
+    "ros2mavros.landing_target_angle[0].ros2mavros.landing_target_angle_value": "-3.625",
+    "ros2mavros.landing_target_size.#": "2",
+    "ros2mavros.landing_target_size[0].ros2mavros.landing_target_size_value": "-2.875",
+    "ros2mavros.topic": "/gen/landing_target"
+  }
+}

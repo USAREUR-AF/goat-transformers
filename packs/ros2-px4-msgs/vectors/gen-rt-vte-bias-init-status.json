@@ -1,0 +1,18 @@
+{
+  "name": "rt-vte_bias_init_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vte_bias_init_status\",\"type\":\"px4_msgs/msg/VteBiasInitStatus\",\"msg\":{\"timestamp\":123456789013,\"raw_bias\":[-4.625,-4.375,-4.125],\"filtered_bias\":[-3.875,-3.625,-3.375],\"delta_norm\":-3.125},\"id\":\"gen-vte_bias_init_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vte_bias_init_status\",\"type\":\"px4_msgs/msg/VteBiasInitStatus\",\"msg\":{\"timestamp\":123456789013,\"raw_bias\":[-4.625,-4.375,-4.125],\"filtered_bias\":[-3.875,-3.625,-3.375],\"delta_norm\":-3.125},\"id\":\"gen-vte_bias_init_status\"}",
+  "model": {
+    "@kind": "vte_bias_init_status",
+    "ros2px4.vte_bias_init_status_timestamp": "123456789013",
+    "ros2px4.vte_bias_init_status_raw_bias.#": "3",
+    "ros2px4.vte_bias_init_status_raw_bias[0].ros2px4.vte_bias_init_status_raw_bias_value": "-4.625",
+    "ros2px4.vte_bias_init_status_filtered_bias.#": "3",
+    "ros2px4.vte_bias_init_status_filtered_bias[0].ros2px4.vte_bias_init_status_filtered_bias_value": "-3.875",
+    "ros2px4.vte_bias_init_status_delta_norm": "-3.125",
+    "ros2px4.topic": "/gen/vte_bias_init_status"
+  }
+}

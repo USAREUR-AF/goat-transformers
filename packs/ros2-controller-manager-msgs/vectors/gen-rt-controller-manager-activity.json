@@ -1,0 +1,19 @@
+{
+  "name": "rt-controller_manager_activity",
+  "from": "ros2-controller-manager-msgs",
+  "to": "ros2-controller-manager-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/controller_manager_activity\",\"type\":\"controller_manager_msgs/msg/ControllerManagerActivity\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"controllers\":[{\"name\":\"s4\",\"state\":{\"id\":154,\"label\":\"s6\"}},{\"name\":\"s7\",\"state\":{\"id\":63,\"label\":\"s9\"}}],\"hardware_components\":[{\"name\":\"s10\",\"state\":{\"id\":228,\"label\":\"s12\"}},{\"name\":\"s13\",\"state\":{\"id\":137,\"label\":\"s15\"}}]},\"id\":\"gen-controller_manager_activity\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/controller_manager_activity\",\"type\":\"controller_manager_msgs/msg/ControllerManagerActivity\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"controllers\":[{\"name\":\"s4\",\"state\":{\"id\":154,\"label\":\"s6\"}},{\"name\":\"s7\",\"state\":{\"id\":63,\"label\":\"s9\"}}],\"hardware_components\":[{\"name\":\"s10\",\"state\":{\"id\":228,\"label\":\"s12\"}},{\"name\":\"s13\",\"state\":{\"id\":137,\"label\":\"s15\"}}]},\"id\":\"gen-controller_manager_activity\"}",
+  "model": {
+    "@kind": "controller_manager_activity",
+    "ros2controllermanager.controller_manager_activity_header_stamp_sec": "40510",
+    "ros2controllermanager.controller_manager_activity_header_stamp_nanosec": "2147564661",
+    "ros2controllermanager.controller_manager_activity_header_frame_id": "s3",
+    "ros2controllermanager.controller_manager_activity_controllers.#": "2",
+    "ros2controllermanager.controller_manager_activity_controllers[0].ros2controllermanager.controller_manager_activity_controllers_name": "s4",
+    "ros2controllermanager.controller_manager_activity_hardware_components.#": "2",
+    "ros2controllermanager.controller_manager_activity_hardware_components[0].ros2controllermanager.controller_manager_activity_hardware_components_name": "s10",
+    "ros2controllermanager.topic": "/gen/controller_manager_activity"
+  }
+}

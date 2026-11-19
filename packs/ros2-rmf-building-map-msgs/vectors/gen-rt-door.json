@@ -1,0 +1,17 @@
+{
+  "name": "rt-door",
+  "from": "ros2-rmf-building-map-msgs",
+  "to": "ros2-rmf-building-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door\",\"type\":\"rmf_building_map_msgs/msg/Door\",\"msg\":{\"name\":\"s1\",\"v1_x\":-4.625,\"v1_y\":-4.375,\"v2_x\":-4.125,\"v2_y\":-3.875,\"door_type\":209,\"motion_range\":-3.375,\"motion_direction\":324031},\"id\":\"gen-door\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door\",\"type\":\"rmf_building_map_msgs/msg/Door\",\"msg\":{\"name\":\"s1\",\"v1_x\":-4.625,\"v1_y\":-4.375,\"v2_x\":-4.125,\"v2_y\":-3.875,\"door_type\":209,\"motion_range\":-3.375,\"motion_direction\":324031},\"id\":\"gen-door\"}",
+  "model": {
+    "@kind": "door",
+    "ros2rmfbuildingmap.door_name": "s1",
+    "ros2rmfbuildingmap.door_v1_x": "-4.625",
+    "ros2rmfbuildingmap.door_v1_y": "-4.375",
+    "ros2rmfbuildingmap.door_v2_x": "-4.125",
+    "ros2rmfbuildingmap.door_v2_y": "-3.875",
+    "ros2rmfbuildingmap.topic": "/gen/door"
+  }
+}

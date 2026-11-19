@@ -1,0 +1,15 @@
+{
+  "name": "rt-pps_capture",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pps_capture\",\"type\":\"px4_msgs/msg/PpsCapture\",\"msg\":{\"timestamp\":123456789013,\"rtc_timestamp\":246913578026,\"pps_rate_exceeded_counter\":44},\"id\":\"gen-pps_capture\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pps_capture\",\"type\":\"px4_msgs/msg/PpsCapture\",\"msg\":{\"timestamp\":123456789013,\"rtc_timestamp\":246913578026,\"pps_rate_exceeded_counter\":44},\"id\":\"gen-pps_capture\"}",
+  "model": {
+    "@kind": "pps_capture",
+    "ros2px4.pps_capture_timestamp": "123456789013",
+    "ros2px4.pps_capture_rtc_timestamp": "246913578026",
+    "ros2px4.pps_capture_pps_rate_exceeded_counter": "44",
+    "ros2px4.topic": "/gen/pps_capture"
+  }
+}

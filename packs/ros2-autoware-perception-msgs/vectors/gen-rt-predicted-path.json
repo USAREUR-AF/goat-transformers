@@ -1,0 +1,17 @@
+{
+  "name": "rt-predicted_path",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_path\",\"type\":\"autoware_perception_msgs/msg/PredictedPath\",\"msg\":{\"path\":[{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}],\"time_step\":{\"sec\":607552,\"nanosec\":2148131703},\"confidence\":-0.875},\"id\":\"gen-predicted_path\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_path\",\"type\":\"autoware_perception_msgs/msg/PredictedPath\",\"msg\":{\"path\":[{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}],\"time_step\":{\"sec\":607552,\"nanosec\":2148131703},\"confidence\":-0.875},\"id\":\"gen-predicted_path\"}",
+  "model": {
+    "@kind": "predicted_path",
+    "ros2autowareperception.predicted_path_path.#": "2",
+    "ros2autowareperception.predicted_path_path[0].ros2autowareperception.predicted_path_path_position_x": "1.007",
+    "ros2autowareperception.predicted_path_time_step_sec": "607552",
+    "ros2autowareperception.predicted_path_time_step_nanosec": "2148131703",
+    "ros2autowareperception.predicted_path_confidence": "-0.875",
+    "ros2autowareperception.topic": "/gen/predicted_path"
+  }
+}

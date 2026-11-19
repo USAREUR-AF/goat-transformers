@@ -1,0 +1,21 @@
+{
+  "name": "rt-laser_scan",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/laser_scan\",\"type\":\"foxglove_msgs/msg/LaserScan\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"start_angle\":11.077,\"end_angle\":-12.084,\"ranges\":[13.091,14.098],\"intensities\":[-15.105,16.112]},\"id\":\"gen-laser_scan\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/laser_scan\",\"type\":\"foxglove_msgs/msg/LaserScan\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"start_angle\":11.077,\"end_angle\":-12.084,\"ranges\":[13.091,14.098],\"intensities\":[-15.105,16.112]},\"id\":\"gen-laser_scan\"}",
+  "model": {
+    "@kind": "laser_scan",
+    "ros2foxglove.laser_scan_timestamp_sec": "40510",
+    "ros2foxglove.laser_scan_timestamp_nanosec": "2147564661",
+    "ros2foxglove.laser_scan_frame_id": "s3",
+    "ros2foxglove.laser_scan_pose_position_x": "4.028",
+    "ros2foxglove.laser_scan_pose_position_y": "5.035",
+    "ros2foxglove.laser_scan_ranges.#": "2",
+    "ros2foxglove.laser_scan_ranges[0].ros2foxglove.laser_scan_ranges_value": "13.091",
+    "ros2foxglove.laser_scan_intensities.#": "2",
+    "ros2foxglove.laser_scan_intensities[0].ros2foxglove.laser_scan_intensities_value": "-15.105",
+    "ros2foxglove.topic": "/gen/laser_scan"
+  }
+}

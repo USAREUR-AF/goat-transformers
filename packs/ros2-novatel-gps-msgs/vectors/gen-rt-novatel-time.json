@@ -1,0 +1,17 @@
+{
+  "name": "rt-novatel_time",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_time\",\"type\":\"novatel_gps_msgs/msg/NovatelTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"clock_status\":\"s4\",\"offset\":5.035,\"offset_std\":-6.042,\"utc_offset\":7.049,\"utc_year\":2147807679,\"utc_month\":118,\"utc_day\":173,\"utc_hour\":228,\"utc_minute\":27,\"utc_millisecond\":2148010194,\"utc_status\":\"s14\"},\"id\":\"gen-novatel_time\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_time\",\"type\":\"novatel_gps_msgs/msg/NovatelTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"clock_status\":\"s4\",\"offset\":5.035,\"offset_std\":-6.042,\"utc_offset\":7.049,\"utc_year\":2147807679,\"utc_month\":118,\"utc_day\":173,\"utc_hour\":228,\"utc_minute\":27,\"utc_millisecond\":2148010194,\"utc_status\":\"s14\"},\"id\":\"gen-novatel_time\"}",
+  "model": {
+    "@kind": "novatel_time",
+    "ros2novatelgps.novatel_time_header_stamp_sec": "40510",
+    "ros2novatelgps.novatel_time_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.novatel_time_header_frame_id": "s3",
+    "ros2novatelgps.novatel_time_clock_status": "s4",
+    "ros2novatelgps.novatel_time_offset": "5.035",
+    "ros2novatelgps.topic": "/gen/novatel_time"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "rt-joint_command",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_command\",\"type\":\"control_msgs/msg/JointCommand\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"interface_name\":\"s6\",\"values\":[7.049,8.056]},\"id\":\"gen-joint_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_command\",\"type\":\"control_msgs/msg/JointCommand\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"interface_name\":\"s6\",\"values\":[7.049,8.056]},\"id\":\"gen-joint_command\"}",
+  "model": {
+    "@kind": "joint_command",
+    "ros2control.joint_command_header_stamp_sec": "40510",
+    "ros2control.joint_command_header_stamp_nanosec": "2147564661",
+    "ros2control.joint_command_header_frame_id": "s3",
+    "ros2control.joint_command_joint_names.#": "2",
+    "ros2control.joint_command_joint_names[0].ros2control.joint_command_joint_names_value": "s4",
+    "ros2control.joint_command_interface_name": "s6",
+    "ros2control.joint_command_values.#": "2",
+    "ros2control.joint_command_values[0].ros2control.joint_command_values_value": "7.049",
+    "ros2control.topic": "/gen/joint_command"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_sat",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat\",\"type\":\"ublox_msgs/msg/NavSAT\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"num_svs\":44,\"sv\":[{\"gnss_id\":99,\"sv_id\":154,\"cno\":209,\"elev\":-120,\"azim\":-3649,\"pr_res\":-28682,\"flags\":2147888685},{\"gnss_id\":228,\"sv_id\":27,\"cno\":82,\"elev\":9,\"azim\":17728,\"pr_res\":-7305,\"flags\":2148172206}]},\"id\":\"gen-nav_sat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat\",\"type\":\"ublox_msgs/msg/NavSAT\",\"msg\":{\"i_tow\":2147524158,\"version\":245,\"num_svs\":44,\"sv\":[{\"gnss_id\":99,\"sv_id\":154,\"cno\":209,\"elev\":-120,\"azim\":-3649,\"pr_res\":-28682,\"flags\":2147888685},{\"gnss_id\":228,\"sv_id\":27,\"cno\":82,\"elev\":9,\"azim\":17728,\"pr_res\":-7305,\"flags\":2148172206}]},\"id\":\"gen-nav_sat\"}",
+  "model": {
+    "@kind": "nav_sat",
+    "ros2ublox.nav_sat_i_tow": "2147524158",
+    "ros2ublox.nav_sat_version": "245",
+    "ros2ublox.nav_sat_num_svs": "44",
+    "ros2ublox.nav_sat_sv.#": "2",
+    "ros2ublox.nav_sat_sv[0].ros2ublox.nav_sat_sv_gnss_id": "99",
+    "ros2ublox.topic": "/gen/nav_sat"
+  }
+}

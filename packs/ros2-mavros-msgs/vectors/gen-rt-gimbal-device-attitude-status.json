@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_device_attitude_status",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_attitude_status\",\"type\":\"mavros_msgs/msg/GimbalDeviceAttitudeStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"target_system\":99,\"target_component\":154,\"flags\":13649,\"q\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07},\"angular_velocity_x\":-2.375,\"angular_velocity_y\":-2.125,\"angular_velocity_z\":-1.875,\"failure_flags\":2148050697},\"id\":\"gen-gimbal_device_attitude_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_attitude_status\",\"type\":\"mavros_msgs/msg/GimbalDeviceAttitudeStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"target_system\":99,\"target_component\":154,\"flags\":13649,\"q\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07},\"angular_velocity_x\":-2.375,\"angular_velocity_y\":-2.125,\"angular_velocity_z\":-1.875,\"failure_flags\":2148050697},\"id\":\"gen-gimbal_device_attitude_status\"}",
+  "model": {
+    "@kind": "gimbal_device_attitude_status",
+    "ros2mavros.gimbal_device_attitude_status_header_stamp_sec": "40510",
+    "ros2mavros.gimbal_device_attitude_status_header_stamp_nanosec": "2147564661",
+    "ros2mavros.gimbal_device_attitude_status_header_frame_id": "s3",
+    "ros2mavros.gimbal_device_attitude_status_target_system": "99",
+    "ros2mavros.gimbal_device_attitude_status_target_component": "154",
+    "ros2mavros.topic": "/gen/gimbal_device_attitude_status"
+  }
+}

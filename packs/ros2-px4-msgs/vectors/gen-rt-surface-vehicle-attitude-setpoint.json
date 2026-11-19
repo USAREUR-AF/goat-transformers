@@ -1,0 +1,14 @@
+{
+  "name": "rt-surface_vehicle_attitude_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_attitude_setpoint\",\"type\":\"px4_msgs/msg/SurfaceVehicleAttitudeSetpoint\",\"msg\":{\"timestamp\":123456789013,\"yaw_setpoint\":-4.625},\"id\":\"gen-surface_vehicle_attitude_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_attitude_setpoint\",\"type\":\"px4_msgs/msg/SurfaceVehicleAttitudeSetpoint\",\"msg\":{\"timestamp\":123456789013,\"yaw_setpoint\":-4.625},\"id\":\"gen-surface_vehicle_attitude_setpoint\"}",
+  "model": {
+    "@kind": "surface_vehicle_attitude_setpoint",
+    "ros2px4.surface_vehicle_attitude_setpoint_timestamp": "123456789013",
+    "ros2px4.surface_vehicle_attitude_setpoint_yaw_setpoint": "-4.625",
+    "ros2px4.topic": "/gen/surface_vehicle_attitude_setpoint"
+  }
+}

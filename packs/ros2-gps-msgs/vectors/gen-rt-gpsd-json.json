@@ -1,0 +1,16 @@
+{
+  "name": "rt-gpsd_json",
+  "from": "ros2-gps-msgs",
+  "to": "ros2-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpsd_json\",\"type\":\"gps_msgs/msg/GPSDJson\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"json\":\"s4\"},\"id\":\"gen-gpsd_json\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpsd_json\",\"type\":\"gps_msgs/msg/GPSDJson\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"json\":\"s4\"},\"id\":\"gen-gpsd_json\"}",
+  "model": {
+    "@kind": "gpsd_json",
+    "ros2gps.gpsd_json_header_stamp_sec": "40510",
+    "ros2gps.gpsd_json_header_stamp_nanosec": "2147564661",
+    "ros2gps.gpsd_json_header_frame_id": "s3",
+    "ros2gps.gpsd_json_json": "s4",
+    "ros2gps.topic": "/gen/gpsd_json"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-response_status",
+  "from": "ros2-autoware-common-msgs",
+  "to": "ros2-autoware-common-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/response_status\",\"type\":\"autoware_common_msgs/msg/ResponseStatus\",\"msg\":{\"success\":true,\"code\":48245,\"message\":\"s3\"},\"id\":\"gen-response_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/response_status\",\"type\":\"autoware_common_msgs/msg/ResponseStatus\",\"msg\":{\"success\":true,\"code\":48245,\"message\":\"s3\"},\"id\":\"gen-response_status\"}",
+  "model": {
+    "@kind": "response_status",
+    "ros2autowarecommon.response_status_success": "1",
+    "ros2autowarecommon.response_status_code": "48245",
+    "ros2autowarecommon.response_status_message": "s3",
+    "ros2autowarecommon.topic": "/gen/response_status"
+  }
+}

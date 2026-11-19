@@ -1,0 +1,16 @@
+{
+  "name": "rt-cfg_valset",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_valset\",\"type\":\"ublox_msgs/msg/CfgVALSET\",\"msg\":{\"version\":190,\"layers\":245,\"cfgdata\":[{\"key\":2147605164,\"data\":\"BAz/AIA=\"},{\"key\":2147686170,\"data\":\"BhL/AIA=\"}]},\"id\":\"gen-cfg_valset\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_valset\",\"type\":\"ublox_msgs/msg/CfgVALSET\",\"msg\":{\"version\":190,\"layers\":245,\"cfgdata\":[{\"key\":2147605164,\"data\":\"BAz/AIA=\"},{\"key\":2147686170,\"data\":\"BhL/AIA=\"}]},\"id\":\"gen-cfg_valset\"}",
+  "model": {
+    "@kind": "cfg_valset",
+    "ros2ublox.cfg_valset_version": "190",
+    "ros2ublox.cfg_valset_layers": "245",
+    "ros2ublox.cfg_valset_cfgdata.#": "2",
+    "ros2ublox.cfg_valset_cfgdata[0].ros2ublox.cfg_valset_cfgdata_key": "2147605164",
+    "ros2ublox.topic": "/gen/cfg_valset"
+  }
+}

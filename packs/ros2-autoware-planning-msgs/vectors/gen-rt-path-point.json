@@ -1,0 +1,17 @@
+{
+  "name": "rt-path_point",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_point\",\"type\":\"autoware_planning_msgs/msg/PathPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"longitudinal_velocity_mps\":-3.125,\"lateral_velocity_mps\":-2.875,\"heading_rate_rps\":-2.625,\"is_final\":true},\"id\":\"gen-path_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_point\",\"type\":\"autoware_planning_msgs/msg/PathPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"longitudinal_velocity_mps\":-3.125,\"lateral_velocity_mps\":-2.875,\"heading_rate_rps\":-2.625,\"is_final\":true},\"id\":\"gen-path_point\"}",
+  "model": {
+    "@kind": "path_point",
+    "ros2autowareplanning.path_point_pose_position_x": "1.007",
+    "ros2autowareplanning.path_point_pose_position_y": "2.014",
+    "ros2autowareplanning.path_point_pose_position_z": "-3.021",
+    "ros2autowareplanning.path_point_pose_orientation_x": "4.028",
+    "ros2autowareplanning.path_point_pose_orientation_y": "5.035",
+    "ros2autowareplanning.topic": "/gen/path_point"
+  }
+}

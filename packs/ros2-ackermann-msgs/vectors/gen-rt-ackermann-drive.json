@@ -1,0 +1,17 @@
+{
+  "name": "rt-ackermann_drive",
+  "from": "ros2-ackermann-msgs",
+  "to": "ros2-ackermann-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ackermann_drive\",\"type\":\"ackermann_msgs/msg/AckermannDrive\",\"msg\":{\"steering_angle\":-4.875,\"steering_angle_velocity\":-4.625,\"speed\":-4.375,\"acceleration\":-4.125,\"jerk\":-3.875},\"id\":\"gen-ackermann_drive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ackermann_drive\",\"type\":\"ackermann_msgs/msg/AckermannDrive\",\"msg\":{\"steering_angle\":-4.875,\"steering_angle_velocity\":-4.625,\"speed\":-4.375,\"acceleration\":-4.125,\"jerk\":-3.875},\"id\":\"gen-ackermann_drive\"}",
+  "model": {
+    "@kind": "ackermann_drive",
+    "ros2ackermann.ackermann_drive_steering_angle": "-4.875",
+    "ros2ackermann.ackermann_drive_steering_angle_velocity": "-4.625",
+    "ros2ackermann.ackermann_drive_speed": "-4.375",
+    "ros2ackermann.ackermann_drive_acceleration": "-4.125",
+    "ros2ackermann.ackermann_drive_jerk": "-3.875",
+    "ros2ackermann.topic": "/gen/ackermann_drive"
+  }
+}

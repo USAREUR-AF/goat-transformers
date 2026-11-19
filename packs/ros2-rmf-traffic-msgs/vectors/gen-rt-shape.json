@@ -1,0 +1,14 @@
+{
+  "name": "rt-shape",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/shape\",\"type\":\"rmf_traffic_msgs/msg/Shape\",\"msg\":{\"type\":190,\"index\":245},\"id\":\"gen-shape\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/shape\",\"type\":\"rmf_traffic_msgs/msg/Shape\",\"msg\":{\"type\":190,\"index\":245},\"id\":\"gen-shape\"}",
+  "model": {
+    "@kind": "shape",
+    "ros2rmftraffic.shape_type": "190",
+    "ros2rmftraffic.shape_index": "245",
+    "ros2rmftraffic.topic": "/gen/shape"
+  }
+}

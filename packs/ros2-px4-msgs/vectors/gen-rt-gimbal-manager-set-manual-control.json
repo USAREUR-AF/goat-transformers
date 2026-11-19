@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_set_manual_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_manual_control\",\"type\":\"px4_msgs/msg/GimbalManagerSetManualControl\",\"msg\":{\"timestamp\":123456789013,\"origin_sysid\":245,\"origin_compid\":44,\"target_system\":99,\"target_component\":154,\"flags\":2147726673,\"gimbal_device_id\":8,\"pitch\":-3.125,\"yaw\":-2.875,\"pitch_rate\":-2.625,\"yaw_rate\":-2.375},\"id\":\"gen-gimbal_manager_set_manual_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_set_manual_control\",\"type\":\"px4_msgs/msg/GimbalManagerSetManualControl\",\"msg\":{\"timestamp\":123456789013,\"origin_sysid\":245,\"origin_compid\":44,\"target_system\":99,\"target_component\":154,\"flags\":2147726673,\"gimbal_device_id\":8,\"pitch\":-3.125,\"yaw\":-2.875,\"pitch_rate\":-2.625,\"yaw_rate\":-2.375},\"id\":\"gen-gimbal_manager_set_manual_control\"}",
+  "model": {
+    "@kind": "gimbal_manager_set_manual_control",
+    "ros2px4.gimbal_manager_set_manual_control_timestamp": "123456789013",
+    "ros2px4.gimbal_manager_set_manual_control_origin_sysid": "245",
+    "ros2px4.gimbal_manager_set_manual_control_origin_compid": "44",
+    "ros2px4.gimbal_manager_set_manual_control_target_system": "99",
+    "ros2px4.gimbal_manager_set_manual_control_target_component": "154",
+    "ros2px4.topic": "/gen/gimbal_manager_set_manual_control"
+  }
+}

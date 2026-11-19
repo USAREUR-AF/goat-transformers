@@ -1,0 +1,19 @@
+{
+  "name": "rt-bid_response",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/bid_response\",\"type\":\"rmf_task_msgs/msg/BidResponse\",\"msg\":{\"task_id\":\"s1\",\"has_proposal\":false,\"proposal\":{\"fleet_name\":\"s3\",\"expected_robot_name\":\"s4\",\"prev_cost\":5.035,\"new_cost\":-6.042,\"finish_time\":{\"sec\":283528,\"nanosec\":2147807679}},\"errors\":[\"s9\",\"s10\"]},\"id\":\"gen-bid_response\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/bid_response\",\"type\":\"rmf_task_msgs/msg/BidResponse\",\"msg\":{\"task_id\":\"s1\",\"has_proposal\":false,\"proposal\":{\"fleet_name\":\"s3\",\"expected_robot_name\":\"s4\",\"prev_cost\":5.035,\"new_cost\":-6.042,\"finish_time\":{\"sec\":283528,\"nanosec\":2147807679}},\"errors\":[\"s9\",\"s10\"]},\"id\":\"gen-bid_response\"}",
+  "model": {
+    "@kind": "bid_response",
+    "ros2rmftask.bid_response_task_id": "s1",
+    "ros2rmftask.bid_response_has_proposal": "0",
+    "ros2rmftask.bid_response_proposal_fleet_name": "s3",
+    "ros2rmftask.bid_response_proposal_expected_robot_name": "s4",
+    "ros2rmftask.bid_response_proposal_prev_cost": "5.035",
+    "ros2rmftask.bid_response_errors.#": "2",
+    "ros2rmftask.bid_response_errors[0].ros2rmftask.bid_response_errors_value": "s9",
+    "ros2rmftask.topic": "/gen/bid_response"
+  }
+}

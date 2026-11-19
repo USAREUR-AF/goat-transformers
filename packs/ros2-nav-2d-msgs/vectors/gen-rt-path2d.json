@@ -1,0 +1,17 @@
+{
+  "name": "rt-path2d",
+  "from": "ros2-nav-2d-msgs",
+  "to": "ros2-nav-2d-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path2d\",\"type\":\"nav_2d_msgs/msg/Path2D\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"poses\":[{\"x\":4.028,\"y\":5.035,\"theta\":-6.042},{\"x\":7.049,\"y\":8.056,\"theta\":-9.063}]},\"id\":\"gen-path2d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path2d\",\"type\":\"nav_2d_msgs/msg/Path2D\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"poses\":[{\"x\":4.028,\"y\":5.035,\"theta\":-6.042},{\"x\":7.049,\"y\":8.056,\"theta\":-9.063}]},\"id\":\"gen-path2d\"}",
+  "model": {
+    "@kind": "path2d",
+    "ros2nav2d.path2d_header_stamp_sec": "40510",
+    "ros2nav2d.path2d_header_stamp_nanosec": "2147564661",
+    "ros2nav2d.path2d_header_frame_id": "s3",
+    "ros2nav2d.path2d_poses.#": "2",
+    "ros2nav2d.path2d_poses[0].ros2nav2d.path2d_poses_x": "4.028",
+    "ros2nav2d.topic": "/gen/path2d"
+  }
+}

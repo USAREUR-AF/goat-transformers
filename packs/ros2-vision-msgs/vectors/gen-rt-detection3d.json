@@ -1,0 +1,19 @@
+{
+  "name": "rt-detection3d",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/detection3d\",\"type\":\"vision_msgs/msg/Detection3D\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"results\":[{\"hypothesis\":{\"class_id\":\"s4\",\"score\":5.035},\"pose\":{\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"covariance\":[13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336]}},{\"hypothesis\":{\"class_id\":\"s49\",\"score\":50.35},\"pose\":{\"pose\":{\"position\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371},\"orientation\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392,\"w\":-57.399}},\"covariance\":[58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644,-93.651]}}],\"bbox\":{\"center\":{\"position\":{\"x\":94.658,\"y\":95.665,\"z\":-96.672},\"orientation\":{\"x\":97.679,\"y\":98.686,\"z\":-99.693,\"w\":100.7}},\"size\":{\"x\":101.707,\"y\":-102.714,\"z\":103.721}},\"id\":\"s104\"},\"id\":\"gen-detection3d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/detection3d\",\"type\":\"vision_msgs/msg/Detection3D\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"results\":[{\"hypothesis\":{\"class_id\":\"s4\",\"score\":5.035},\"pose\":{\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"covariance\":[13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336]}},{\"hypothesis\":{\"class_id\":\"s49\",\"score\":50.35},\"pose\":{\"pose\":{\"position\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371},\"orientation\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392,\"w\":-57.399}},\"covariance\":[58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644,-93.651]}}],\"bbox\":{\"center\":{\"position\":{\"x\":94.658,\"y\":95.665,\"z\":-96.672},\"orientation\":{\"x\":97.679,\"y\":98.686,\"z\":-99.693,\"w\":100.7}},\"size\":{\"x\":101.707,\"y\":-102.714,\"z\":103.721}},\"id\":\"s104\"},\"id\":\"gen-detection3d\"}",
+  "model": {
+    "@kind": "detection3d",
+    "ros2vision.detection3d_header_stamp_sec": "40510",
+    "ros2vision.detection3d_header_stamp_nanosec": "2147564661",
+    "ros2vision.detection3d_header_frame_id": "s3",
+    "ros2vision.detection3d_results.#": "2",
+    "ros2vision.detection3d_results[0].ros2vision.detection3d_results_hypothesis_class_id": "s4",
+    "ros2vision.detection3d_bbox_center_position_x": "94.658",
+    "ros2vision.detection3d_bbox_center_position_y": "95.665",
+    "ros2vision.topic": "/gen/detection3d"
+  }
+}

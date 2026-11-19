@@ -1,0 +1,17 @@
+{
+  "name": "rt-pure_pursuit_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pure_pursuit_status\",\"type\":\"px4_msgs/msg/PurePursuitStatus\",\"msg\":{\"timestamp\":123456789013,\"lookahead_distance\":-4.625,\"target_bearing\":-4.375,\"crosstrack_error\":-4.125,\"distance_to_waypoint\":-3.875,\"bearing_to_waypoint\":-3.625},\"id\":\"gen-pure_pursuit_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pure_pursuit_status\",\"type\":\"px4_msgs/msg/PurePursuitStatus\",\"msg\":{\"timestamp\":123456789013,\"lookahead_distance\":-4.625,\"target_bearing\":-4.375,\"crosstrack_error\":-4.125,\"distance_to_waypoint\":-3.875,\"bearing_to_waypoint\":-3.625},\"id\":\"gen-pure_pursuit_status\"}",
+  "model": {
+    "@kind": "pure_pursuit_status",
+    "ros2px4.pure_pursuit_status_timestamp": "123456789013",
+    "ros2px4.pure_pursuit_status_lookahead_distance": "-4.625",
+    "ros2px4.pure_pursuit_status_target_bearing": "-4.375",
+    "ros2px4.pure_pursuit_status_crosstrack_error": "-4.125",
+    "ros2px4.pure_pursuit_status_distance_to_waypoint": "-3.875",
+    "ros2px4.topic": "/gen/pure_pursuit_status"
+  }
+}

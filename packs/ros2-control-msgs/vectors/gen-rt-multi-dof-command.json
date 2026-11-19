@@ -1,0 +1,18 @@
+{
+  "name": "rt-multi_dof_command",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_command\",\"type\":\"control_msgs/msg/MultiDOFCommand\",\"msg\":{\"dof_names\":[\"s1\",\"s2\"],\"values\":[-3.021,4.028],\"values_dot\":[5.035,-6.042]},\"id\":\"gen-multi_dof_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_command\",\"type\":\"control_msgs/msg/MultiDOFCommand\",\"msg\":{\"dof_names\":[\"s1\",\"s2\"],\"values\":[-3.021,4.028],\"values_dot\":[5.035,-6.042]},\"id\":\"gen-multi_dof_command\"}",
+  "model": {
+    "@kind": "multi_dof_command",
+    "ros2control.multi_dof_command_dof_names.#": "2",
+    "ros2control.multi_dof_command_dof_names[0].ros2control.multi_dof_command_dof_names_value": "s1",
+    "ros2control.multi_dof_command_values.#": "2",
+    "ros2control.multi_dof_command_values[0].ros2control.multi_dof_command_values_value": "-3.021",
+    "ros2control.multi_dof_command_values_dot.#": "2",
+    "ros2control.multi_dof_command_values_dot[0].ros2control.multi_dof_command_values_dot_value": "5.035",
+    "ros2control.topic": "/gen/multi_dof_command"
+  }
+}

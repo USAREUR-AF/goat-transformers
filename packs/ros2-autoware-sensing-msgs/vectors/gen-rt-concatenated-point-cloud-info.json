@@ -1,0 +1,19 @@
+{
+  "name": "rt-concatenated_point_cloud_info",
+  "from": "ros2-autoware-sensing-msgs",
+  "to": "ros2-autoware-sensing-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/concatenated_point_cloud_info\",\"type\":\"autoware_sensing_msgs/msg/ConcatenatedPointCloudInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"concatenation_success\":false,\"matching_strategy\":154,\"matching_strategy_config\":\"BhL/AIA=\",\"source_info\":[{\"header\":{\"stamp\":{\"sec\":283528,\"nanosec\":2147807679},\"frame_id\":\"s9\"},\"topic\":\"s10\",\"status\":228,\"idx_begin\":2147969691,\"length\":2148010194},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"topic\":\"s17\",\"status\":101,\"idx_begin\":2148253212,\"length\":2148293715}]},\"id\":\"gen-concatenated_point_cloud_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/concatenated_point_cloud_info\",\"type\":\"autoware_sensing_msgs/msg/ConcatenatedPointCloudInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"concatenation_success\":false,\"matching_strategy\":154,\"matching_strategy_config\":\"BhL/AIA=\",\"source_info\":[{\"header\":{\"stamp\":{\"sec\":283528,\"nanosec\":2147807679},\"frame_id\":\"s9\"},\"topic\":\"s10\",\"status\":228,\"idx_begin\":2147969691,\"length\":2148010194},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"topic\":\"s17\",\"status\":101,\"idx_begin\":2148253212,\"length\":2148293715}]},\"id\":\"gen-concatenated_point_cloud_info\"}",
+  "model": {
+    "@kind": "concatenated_point_cloud_info",
+    "ros2autowaresensing.concatenated_point_cloud_info_header_stamp_sec": "40510",
+    "ros2autowaresensing.concatenated_point_cloud_info_header_stamp_nanosec": "2147564661",
+    "ros2autowaresensing.concatenated_point_cloud_info_header_frame_id": "s3",
+    "ros2autowaresensing.concatenated_point_cloud_info_concatenation_success": "0",
+    "ros2autowaresensing.concatenated_point_cloud_info_matching_strategy": "154",
+    "ros2autowaresensing.concatenated_point_cloud_info_source_info.#": "2",
+    "ros2autowaresensing.concatenated_point_cloud_info_source_info[0].ros2autowaresensing.concatenated_point_cloud_info_source_info_header_stamp_sec": "283528",
+    "ros2autowaresensing.topic": "/gen/concatenated_point_cloud_info"
+  }
+}

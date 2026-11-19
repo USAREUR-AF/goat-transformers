@@ -1,0 +1,19 @@
+{
+  "name": "rt-esc_info",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esc_info\",\"type\":\"mavros_msgs/msg/ESCInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"counter\":63715,\"count\":154,\"connection_type\":209,\"info\":8,\"esc_info\":[{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"failure_flags\":19556,\"error_count\":2147969691,\"temperature\":526546},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"failure_flags\":430,\"error_count\":2148212709,\"temperature\":769564}]},\"id\":\"gen-esc_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esc_info\",\"type\":\"mavros_msgs/msg/ESCInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"counter\":63715,\"count\":154,\"connection_type\":209,\"info\":8,\"esc_info\":[{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"failure_flags\":19556,\"error_count\":2147969691,\"temperature\":526546},{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"failure_flags\":430,\"error_count\":2148212709,\"temperature\":769564}]},\"id\":\"gen-esc_info\"}",
+  "model": {
+    "@kind": "esc_info",
+    "ros2mavros.esc_info_header_stamp_sec": "40510",
+    "ros2mavros.esc_info_header_stamp_nanosec": "2147564661",
+    "ros2mavros.esc_info_header_frame_id": "s3",
+    "ros2mavros.esc_info_counter": "63715",
+    "ros2mavros.esc_info_count": "154",
+    "ros2mavros.esc_info_esc_info.#": "2",
+    "ros2mavros.esc_info_esc_info[0].ros2mavros.esc_info_esc_info_header_stamp_sec": "324031",
+    "ros2mavros.topic": "/gen/esc_info"
+  }
+}

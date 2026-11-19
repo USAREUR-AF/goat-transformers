@@ -1,0 +1,13 @@
+{
+  "name": "rt-negotiation_refusal",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_refusal\",\"type\":\"rmf_traffic_msgs/msg/NegotiationRefusal\",\"msg\":{\"conflict_version\":123456789013},\"id\":\"gen-negotiation_refusal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_refusal\",\"type\":\"rmf_traffic_msgs/msg/NegotiationRefusal\",\"msg\":{\"conflict_version\":123456789013},\"id\":\"gen-negotiation_refusal\"}",
+  "model": {
+    "@kind": "negotiation_refusal",
+    "ros2rmftraffic.negotiation_refusal_conflict_version": "123456789013",
+    "ros2rmftraffic.topic": "/gen/negotiation_refusal"
+  }
+}

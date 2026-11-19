@@ -1,0 +1,23 @@
+{
+  "name": "rt-triangle_list_primitive",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/triangle_list_primitive\",\"type\":\"foxglove_msgs/msg/TriangleListPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"points\":[{\"x\":8.056,\"y\":-9.063,\"z\":10.07},{\"x\":11.077,\"y\":-12.084,\"z\":13.091}],\"color\":{\"r\":14.098,\"g\":-15.105,\"b\":16.112,\"a\":17.119},\"colors\":[{\"r\":-18.126,\"g\":19.133,\"b\":20.14,\"a\":-21.147},{\"r\":22.154,\"g\":23.161,\"b\":-24.168,\"a\":25.175}],\"indices\":[2148536733,2148577236]},\"id\":\"gen-triangle_list_primitive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/triangle_list_primitive\",\"type\":\"foxglove_msgs/msg/TriangleListPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"points\":[{\"x\":8.056,\"y\":-9.063,\"z\":10.07},{\"x\":11.077,\"y\":-12.084,\"z\":13.091}],\"color\":{\"r\":14.098,\"g\":-15.105,\"b\":16.112,\"a\":17.119},\"colors\":[{\"r\":-18.126,\"g\":19.133,\"b\":20.14,\"a\":-21.147},{\"r\":22.154,\"g\":23.161,\"b\":-24.168,\"a\":25.175}],\"indices\":[2148536733,2148577236]},\"id\":\"gen-triangle_list_primitive\"}",
+  "model": {
+    "@kind": "triangle_list_primitive",
+    "ros2foxglove.triangle_list_primitive_pose_position_x": "1.007",
+    "ros2foxglove.triangle_list_primitive_pose_position_y": "2.014",
+    "ros2foxglove.triangle_list_primitive_pose_position_z": "-3.021",
+    "ros2foxglove.triangle_list_primitive_pose_orientation_x": "4.028",
+    "ros2foxglove.triangle_list_primitive_pose_orientation_y": "5.035",
+    "ros2foxglove.triangle_list_primitive_points.#": "2",
+    "ros2foxglove.triangle_list_primitive_points[0].ros2foxglove.triangle_list_primitive_points_x": "8.056",
+    "ros2foxglove.triangle_list_primitive_colors.#": "2",
+    "ros2foxglove.triangle_list_primitive_colors[0].ros2foxglove.triangle_list_primitive_colors_r": "-18.126",
+    "ros2foxglove.triangle_list_primitive_indices.#": "2",
+    "ros2foxglove.triangle_list_primitive_indices[0].ros2foxglove.triangle_list_primitive_indices_value": "2148536733",
+    "ros2foxglove.topic": "/gen/triangle_list_primitive"
+  }
+}

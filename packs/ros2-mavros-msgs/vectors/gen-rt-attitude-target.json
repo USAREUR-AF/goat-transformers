@@ -1,0 +1,17 @@
+{
+  "name": "rt-attitude_target",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/attitude_target\",\"type\":\"mavros_msgs/msg/AttitudeTarget\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"type_mask\":99,\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056},\"body_rate\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"thrust\":-2.125},\"id\":\"gen-attitude_target\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/attitude_target\",\"type\":\"mavros_msgs/msg/AttitudeTarget\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"type_mask\":99,\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056},\"body_rate\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"thrust\":-2.125},\"id\":\"gen-attitude_target\"}",
+  "model": {
+    "@kind": "attitude_target",
+    "ros2mavros.attitude_target_header_stamp_sec": "40510",
+    "ros2mavros.attitude_target_header_stamp_nanosec": "2147564661",
+    "ros2mavros.attitude_target_header_frame_id": "s3",
+    "ros2mavros.attitude_target_type_mask": "99",
+    "ros2mavros.attitude_target_orientation_x": "5.035",
+    "ros2mavros.topic": "/gen/attitude_target"
+  }
+}

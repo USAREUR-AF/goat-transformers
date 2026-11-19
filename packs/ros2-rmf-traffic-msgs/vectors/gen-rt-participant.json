@@ -1,0 +1,19 @@
+{
+  "name": "rt-participant",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/participant\",\"type\":\"rmf_traffic_msgs/msg/Participant\",\"msg\":{\"id\":123456789013,\"description\":{\"name\":\"s2\",\"owner\":\"s3\",\"responsiveness\":99,\"profile\":{\"footprint\":{\"type\":154,\"index\":209},\"vicinity\":{\"type\":8,\"index\":63},\"shape_context\":{\"circles\":[{\"radius\":-9.063},{\"radius\":10.07}]}}}},\"id\":\"gen-participant\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/participant\",\"type\":\"rmf_traffic_msgs/msg/Participant\",\"msg\":{\"id\":123456789013,\"description\":{\"name\":\"s2\",\"owner\":\"s3\",\"responsiveness\":99,\"profile\":{\"footprint\":{\"type\":154,\"index\":209},\"vicinity\":{\"type\":8,\"index\":63},\"shape_context\":{\"circles\":[{\"radius\":-9.063},{\"radius\":10.07}]}}}},\"id\":\"gen-participant\"}",
+  "model": {
+    "@kind": "participant",
+    "ros2rmftraffic.participant_id": "123456789013",
+    "ros2rmftraffic.participant_description_name": "s2",
+    "ros2rmftraffic.participant_description_owner": "s3",
+    "ros2rmftraffic.participant_description_responsiveness": "99",
+    "ros2rmftraffic.participant_description_profile_footprint_type": "154",
+    "ros2rmftraffic.participant_description_profile_shape_context_circles.#": "2",
+    "ros2rmftraffic.participant_description_profile_shape_context_circles[0].ros2rmftraffic.participant_description_profile_shape_context_circles_radius": "-9.063",
+    "ros2rmftraffic.topic": "/gen/participant"
+  }
+}

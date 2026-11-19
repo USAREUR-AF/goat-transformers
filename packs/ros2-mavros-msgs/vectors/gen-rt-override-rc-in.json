@@ -1,0 +1,14 @@
+{
+  "name": "rt-override_rc_in",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/override_rc_in\",\"type\":\"mavros_msgs/msg/OverrideRCIn\",\"msg\":{\"channels\":[7742,48245,23212,63715,38682,13649,54152,29119,4086,44589,19556,60059,35026,9993,50496,25463,430,40933]},\"id\":\"gen-override_rc_in\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/override_rc_in\",\"type\":\"mavros_msgs/msg/OverrideRCIn\",\"msg\":{\"channels\":[7742,48245,23212,63715,38682,13649,54152,29119,4086,44589,19556,60059,35026,9993,50496,25463,430,40933]},\"id\":\"gen-override_rc_in\"}",
+  "model": {
+    "@kind": "override_rc_in",
+    "ros2mavros.override_rc_in_channels.#": "18",
+    "ros2mavros.override_rc_in_channels[0].ros2mavros.override_rc_in_channels_value": "7742",
+    "ros2mavros.topic": "/gen/override_rc_in"
+  }
+}

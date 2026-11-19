@@ -1,0 +1,17 @@
+{
+  "name": "rt-cfg_tmode3",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_tmode3\",\"type\":\"ublox_msgs/msg/CfgTMODE3\",\"msg\":{\"version\":190,\"flags\":48245,\"ecef_x_or_lat\":121516,\"ecef_y_or_lon\":162019,\"ecef_z_or_alt\":202522,\"ecef_x_or_lat_hp\":81,\"ecef_y_or_lon_hp\":-120,\"ecef_z_or_alt_hp\":-65,\"fixed_pos_acc\":2147848182,\"svin_min_dur\":2147888685,\"svin_acc_limit\":2147929188},\"id\":\"gen-cfg_tmode3\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_tmode3\",\"type\":\"ublox_msgs/msg/CfgTMODE3\",\"msg\":{\"version\":190,\"flags\":48245,\"ecef_x_or_lat\":121516,\"ecef_y_or_lon\":162019,\"ecef_z_or_alt\":202522,\"ecef_x_or_lat_hp\":81,\"ecef_y_or_lon_hp\":-120,\"ecef_z_or_alt_hp\":-65,\"fixed_pos_acc\":2147848182,\"svin_min_dur\":2147888685,\"svin_acc_limit\":2147929188},\"id\":\"gen-cfg_tmode3\"}",
+  "model": {
+    "@kind": "cfg_tmode3",
+    "ros2ublox.cfg_tmode3_version": "190",
+    "ros2ublox.cfg_tmode3_flags": "48245",
+    "ros2ublox.cfg_tmode3_ecef_x_or_lat": "121516",
+    "ros2ublox.cfg_tmode3_ecef_y_or_lon": "162019",
+    "ros2ublox.cfg_tmode3_ecef_z_or_alt": "202522",
+    "ros2ublox.topic": "/gen/cfg_tmode3"
+  }
+}

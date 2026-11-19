@@ -1,0 +1,19 @@
+{
+  "name": "rt-distance_sensor",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/distance_sensor\",\"type\":\"px4_msgs/msg/DistanceSensor\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"min_distance\":-4.375,\"max_distance\":-4.125,\"current_distance\":-3.875,\"variance\":-3.625,\"signal_quality\":-120,\"type\":63,\"h_fov\":-2.875,\"v_fov\":-2.625,\"q\":[-2.375,-2.125,-1.875,-1.625],\"orientation\":192,\"mode\":247},\"id\":\"gen-distance_sensor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/distance_sensor\",\"type\":\"px4_msgs/msg/DistanceSensor\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"min_distance\":-4.375,\"max_distance\":-4.125,\"current_distance\":-3.875,\"variance\":-3.625,\"signal_quality\":-120,\"type\":63,\"h_fov\":-2.875,\"v_fov\":-2.625,\"q\":[-2.375,-2.125,-1.875,-1.625],\"orientation\":192,\"mode\":247},\"id\":\"gen-distance_sensor\"}",
+  "model": {
+    "@kind": "distance_sensor",
+    "ros2px4.distance_sensor_timestamp": "123456789013",
+    "ros2px4.distance_sensor_device_id": "2147564661",
+    "ros2px4.distance_sensor_min_distance": "-4.375",
+    "ros2px4.distance_sensor_max_distance": "-4.125",
+    "ros2px4.distance_sensor_current_distance": "-3.875",
+    "ros2px4.distance_sensor_q.#": "4",
+    "ros2px4.distance_sensor_q[0].ros2px4.distance_sensor_q_value": "-2.375",
+    "ros2px4.topic": "/gen/distance_sensor"
+  }
+}

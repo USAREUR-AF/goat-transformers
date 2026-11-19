@@ -1,0 +1,16 @@
+{
+  "name": "rt-payload",
+  "from": "ros2-rmf-scheduler-msgs",
+  "to": "ros2-rmf-scheduler-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/payload\",\"type\":\"rmf_scheduler_msgs/msg/Payload\",\"msg\":{\"type\":190,\"topic\":\"s2\",\"message_type\":\"s3\",\"data\":\"BAz/AIA=\"},\"id\":\"gen-payload\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/payload\",\"type\":\"rmf_scheduler_msgs/msg/Payload\",\"msg\":{\"type\":190,\"topic\":\"s2\",\"message_type\":\"s3\",\"data\":\"BAz/AIA=\"},\"id\":\"gen-payload\"}",
+  "model": {
+    "@kind": "payload",
+    "ros2rmfscheduler.payload_type": "190",
+    "ros2rmfscheduler.payload_topic": "s2",
+    "ros2rmfscheduler.payload_message_type": "s3",
+    "ros2rmfscheduler.payload_data": "BAz/AIA=",
+    "ros2rmfscheduler.topic": "/gen/payload"
+  }
+}

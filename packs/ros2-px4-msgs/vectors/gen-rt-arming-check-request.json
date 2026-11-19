@@ -1,0 +1,15 @@
+{
+  "name": "rt-arming_check_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/arming_check_request\",\"type\":\"px4_msgs/msg/ArmingCheckRequest\",\"msg\":{\"timestamp\":123456789013,\"request_id\":245,\"valid_registrations_mask\":2147605164},\"id\":\"gen-arming_check_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/arming_check_request\",\"type\":\"px4_msgs/msg/ArmingCheckRequest\",\"msg\":{\"timestamp\":123456789013,\"request_id\":245,\"valid_registrations_mask\":2147605164},\"id\":\"gen-arming_check_request\"}",
+  "model": {
+    "@kind": "arming_check_request",
+    "ros2px4.arming_check_request_timestamp": "123456789013",
+    "ros2px4.arming_check_request_request_id": "245",
+    "ros2px4.arming_check_request_valid_registrations_mask": "2147605164",
+    "ros2px4.topic": "/gen/arming_check_request"
+  }
+}

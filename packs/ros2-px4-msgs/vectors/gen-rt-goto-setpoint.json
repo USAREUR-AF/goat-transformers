@@ -1,0 +1,19 @@
+{
+  "name": "rt-goto_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/goto_setpoint\",\"type\":\"px4_msgs/msg/GotoSetpoint\",\"msg\":{\"timestamp\":123456789013,\"position\":[-4.625,-4.375,-4.125],\"flag_control_heading\":true,\"heading\":-3.625,\"flag_set_max_horizontal_speed\":true,\"max_horizontal_speed\":-3.125,\"flag_set_max_vertical_speed\":true,\"max_vertical_speed\":-2.625,\"flag_set_max_heading_rate\":true,\"max_heading_rate\":-2.125},\"id\":\"gen-goto_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/goto_setpoint\",\"type\":\"px4_msgs/msg/GotoSetpoint\",\"msg\":{\"timestamp\":123456789013,\"position\":[-4.625,-4.375,-4.125],\"flag_control_heading\":true,\"heading\":-3.625,\"flag_set_max_horizontal_speed\":true,\"max_horizontal_speed\":-3.125,\"flag_set_max_vertical_speed\":true,\"max_vertical_speed\":-2.625,\"flag_set_max_heading_rate\":true,\"max_heading_rate\":-2.125},\"id\":\"gen-goto_setpoint\"}",
+  "model": {
+    "@kind": "goto_setpoint",
+    "ros2px4.goto_setpoint_timestamp": "123456789013",
+    "ros2px4.goto_setpoint_position.#": "3",
+    "ros2px4.goto_setpoint_position[0].ros2px4.goto_setpoint_position_value": "-4.625",
+    "ros2px4.goto_setpoint_flag_control_heading": "1",
+    "ros2px4.goto_setpoint_heading": "-3.625",
+    "ros2px4.goto_setpoint_flag_set_max_horizontal_speed": "1",
+    "ros2px4.goto_setpoint_max_horizontal_speed": "-3.125",
+    "ros2px4.topic": "/gen/goto_setpoint"
+  }
+}

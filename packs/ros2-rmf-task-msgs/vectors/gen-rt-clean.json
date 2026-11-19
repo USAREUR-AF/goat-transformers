@@ -1,0 +1,13 @@
+{
+  "name": "rt-clean",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/clean\",\"type\":\"rmf_task_msgs/msg/Clean\",\"msg\":{\"start_waypoint\":\"s1\"},\"id\":\"gen-clean\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/clean\",\"type\":\"rmf_task_msgs/msg/Clean\",\"msg\":{\"start_waypoint\":\"s1\"},\"id\":\"gen-clean\"}",
+  "model": {
+    "@kind": "clean",
+    "ros2rmftask.clean_start_waypoint": "s1",
+    "ros2rmftask.topic": "/gen/clean"
+  }
+}

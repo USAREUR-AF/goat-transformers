@@ -1,0 +1,17 @@
+{
+  "name": "rt-fixed_wing_lateral_guidance_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_lateral_guidance_status\",\"type\":\"px4_msgs/msg/FixedWingLateralGuidanceStatus\",\"msg\":{\"timestamp\":123456789013,\"course_setpoint\":-4.625,\"lateral_acceleration_ff\":-4.375,\"bearing_feas\":-4.125,\"bearing_feas_on_track\":-3.875,\"signed_track_error\":-3.625,\"track_error_bound\":-3.375,\"switch_distance\":-3.125,\"adapted_period\":-2.875,\"wind_est_valid\":173},\"id\":\"gen-fixed_wing_lateral_guidance_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_lateral_guidance_status\",\"type\":\"px4_msgs/msg/FixedWingLateralGuidanceStatus\",\"msg\":{\"timestamp\":123456789013,\"course_setpoint\":-4.625,\"lateral_acceleration_ff\":-4.375,\"bearing_feas\":-4.125,\"bearing_feas_on_track\":-3.875,\"signed_track_error\":-3.625,\"track_error_bound\":-3.375,\"switch_distance\":-3.125,\"adapted_period\":-2.875,\"wind_est_valid\":173},\"id\":\"gen-fixed_wing_lateral_guidance_status\"}",
+  "model": {
+    "@kind": "fixed_wing_lateral_guidance_status",
+    "ros2px4.fixed_wing_lateral_guidance_status_timestamp": "123456789013",
+    "ros2px4.fixed_wing_lateral_guidance_status_course_setpoint": "-4.625",
+    "ros2px4.fixed_wing_lateral_guidance_status_lateral_acceleration_ff": "-4.375",
+    "ros2px4.fixed_wing_lateral_guidance_status_bearing_feas": "-4.125",
+    "ros2px4.fixed_wing_lateral_guidance_status_bearing_feas_on_track": "-3.875",
+    "ros2px4.topic": "/gen/fixed_wing_lateral_guidance_status"
+  }
+}

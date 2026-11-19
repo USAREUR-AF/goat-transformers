@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-ros2-px4-msgs-aux_global_position",
+  "from": "geojson",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: the kind is the first in pack order whose requires the entity holds (lat lon); op and type are its when values; uid and callsign have no line in the pack; no topic is known",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{\"callsign\":\"ROVER\"},\"id\":\"r-1\"}",
+  "expect": "{\"op\":\"publish\",\"type\":\"px4_msgs/msg/AuxGlobalPosition\",\"msg\":{\"lat\":47.0625,\"lon\":8.53125}}",
+  "model": {
+    "lat": "47.0625",
+    "uid": "r-1"
+  }
+}

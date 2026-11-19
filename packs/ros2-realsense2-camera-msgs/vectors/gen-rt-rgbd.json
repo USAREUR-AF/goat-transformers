@@ -1,0 +1,33 @@
+{
+  "name": "rt-rgbd",
+  "from": "ros2-realsense2-camera-msgs",
+  "to": "ros2-realsense2-camera-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rgbd\",\"type\":\"realsense2_camera_msgs/msg/RGBD\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rgb_camera_info\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"height\":2147767176,\"width\":2147807679,\"distortion_model\":\"s9\",\"d\":[10.07,11.077],\"k\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14],\"r\":[-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203],\"p\":[-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287],\"binning_x\":2149184781,\"binning_y\":2149225284,\"roi\":{\"x_offset\":2149265787,\"y_offset\":2149306290,\"height\":2149346793,\"width\":2149387296,\"do_rectify\":false}},\"depth_camera_info\":{\"header\":{\"stamp\":{\"sec\":1984654,\"nanosec\":2149508805},\"frame_id\":\"s51\"},\"height\":2149589811,\"width\":2149630314,\"distortion_model\":\"s54\",\"d\":[55.385,56.392],\"k\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455],\"r\":[-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518],\"p\":[-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602],\"binning_x\":2151007416,\"binning_y\":2151047919,\"roi\":{\"x_offset\":2151088422,\"y_offset\":2151128925,\"height\":2151169428,\"width\":2151209931,\"do_rectify\":true}},\"rgb\":{\"header\":{\"stamp\":{\"sec\":3807289,\"nanosec\":2151331440},\"frame_id\":\"s96\"},\"height\":2151412446,\"width\":2151452949,\"encoding\":\"s99\",\"is_bigendian\":3,\"step\":2151574458,\"data\":\"ZjL/AIA=\"},\"depth\":{\"header\":{\"stamp\":{\"sec\":4171816,\"nanosec\":2151695967},\"frame_id\":\"s105\"},\"height\":2151776973,\"width\":2151817476,\"encoding\":\"s108\",\"is_bigendian\":242,\"step\":2151938985,\"data\":\"b03/AIA=\"}},\"id\":\"gen-rgbd\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rgbd\",\"type\":\"realsense2_camera_msgs/msg/RGBD\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rgb_camera_info\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"height\":2147767176,\"width\":2147807679,\"distortion_model\":\"s9\",\"d\":[10.07,11.077],\"k\":[-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14],\"r\":[-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203],\"p\":[-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287],\"binning_x\":2149184781,\"binning_y\":2149225284,\"roi\":{\"x_offset\":2149265787,\"y_offset\":2149306290,\"height\":2149346793,\"width\":2149387296,\"do_rectify\":false}},\"depth_camera_info\":{\"header\":{\"stamp\":{\"sec\":1984654,\"nanosec\":2149508805},\"frame_id\":\"s51\"},\"height\":2149589811,\"width\":2149630314,\"distortion_model\":\"s54\",\"d\":[55.385,56.392],\"k\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455],\"r\":[-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518],\"p\":[-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602],\"binning_x\":2151007416,\"binning_y\":2151047919,\"roi\":{\"x_offset\":2151088422,\"y_offset\":2151128925,\"height\":2151169428,\"width\":2151209931,\"do_rectify\":true}},\"rgb\":{\"header\":{\"stamp\":{\"sec\":3807289,\"nanosec\":2151331440},\"frame_id\":\"s96\"},\"height\":2151412446,\"width\":2151452949,\"encoding\":\"s99\",\"is_bigendian\":3,\"step\":2151574458,\"data\":\"ZjL/AIA=\"},\"depth\":{\"header\":{\"stamp\":{\"sec\":4171816,\"nanosec\":2151695967},\"frame_id\":\"s105\"},\"height\":2151776973,\"width\":2151817476,\"encoding\":\"s108\",\"is_bigendian\":242,\"step\":2151938985,\"data\":\"b03/AIA=\"}},\"id\":\"gen-rgbd\"}",
+  "model": {
+    "@kind": "rgbd",
+    "ros2realsense2camera.rgbd_header_stamp_sec": "40510",
+    "ros2realsense2camera.rgbd_header_stamp_nanosec": "2147564661",
+    "ros2realsense2camera.rgbd_header_frame_id": "s3",
+    "ros2realsense2camera.rgbd_rgb_camera_info_header_stamp_sec": "162019",
+    "ros2realsense2camera.rgbd_rgb_camera_info_header_stamp_nanosec": "2147686170",
+    "ros2realsense2camera.rgbd_rgb_camera_info_d.#": "2",
+    "ros2realsense2camera.rgbd_rgb_camera_info_d[0].ros2realsense2camera.rgbd_rgb_camera_info_d_value": "10.07",
+    "ros2realsense2camera.rgbd_rgb_camera_info_k.#": "9",
+    "ros2realsense2camera.rgbd_rgb_camera_info_k[0].ros2realsense2camera.rgbd_rgb_camera_info_k_value": "-12.084",
+    "ros2realsense2camera.rgbd_rgb_camera_info_r.#": "9",
+    "ros2realsense2camera.rgbd_rgb_camera_info_r[0].ros2realsense2camera.rgbd_rgb_camera_info_r_value": "-21.147",
+    "ros2realsense2camera.rgbd_rgb_camera_info_p.#": "12",
+    "ros2realsense2camera.rgbd_rgb_camera_info_p[0].ros2realsense2camera.rgbd_rgb_camera_info_p_value": "-30.21",
+    "ros2realsense2camera.rgbd_depth_camera_info_d.#": "2",
+    "ros2realsense2camera.rgbd_depth_camera_info_d[0].ros2realsense2camera.rgbd_depth_camera_info_d_value": "55.385",
+    "ros2realsense2camera.rgbd_depth_camera_info_k.#": "9",
+    "ros2realsense2camera.rgbd_depth_camera_info_k[0].ros2realsense2camera.rgbd_depth_camera_info_k_value": "-57.399",
+    "ros2realsense2camera.rgbd_depth_camera_info_r.#": "9",
+    "ros2realsense2camera.rgbd_depth_camera_info_r[0].ros2realsense2camera.rgbd_depth_camera_info_r_value": "-66.462",
+    "ros2realsense2camera.rgbd_depth_camera_info_p.#": "12",
+    "ros2realsense2camera.rgbd_depth_camera_info_p[0].ros2realsense2camera.rgbd_depth_camera_info_p_value": "-75.525",
+    "ros2realsense2camera.topic": "/gen/rgbd"
+  }
+}

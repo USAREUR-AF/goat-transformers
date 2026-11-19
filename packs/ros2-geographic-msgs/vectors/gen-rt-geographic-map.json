@@ -1,0 +1,23 @@
+{
+  "name": "rt-geographic_map",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geographic_map\",\"type\":\"geographic_msgs/msg/GeographicMap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":{\"uuid\":\"BAz/AIA=\"},\"bounds\":{\"min_pt\":{\"latitude\":5.035,\"longitude\":-6.042,\"altitude\":7.049},\"max_pt\":{\"latitude\":8.056,\"longitude\":-9.063,\"altitude\":10.07}},\"points\":[{\"id\":{\"uuid\":\"CyH/AIA=\"},\"position\":{\"latitude\":-12.084,\"longitude\":13.091,\"altitude\":14.098},\"props\":[{\"key\":\"s15\",\"value\":\"s16\"}]},{\"id\":{\"uuid\":\"ETP/AIA=\"},\"position\":{\"latitude\":-18.126,\"longitude\":19.133,\"altitude\":20.14},\"props\":[{\"key\":\"s21\",\"value\":\"s22\"}]}],\"features\":[{\"id\":{\"uuid\":\"F0X/AIA=\"},\"components\":[{\"uuid\":\"GEj/AIA=\"}],\"props\":[{\"key\":\"s25\",\"value\":\"s26\"}]},{\"id\":{\"uuid\":\"G1H/AIA=\"},\"components\":[{\"uuid\":\"HFT/AIA=\"}],\"props\":[{\"key\":\"s29\",\"value\":\"s30\"}]}],\"props\":[{\"key\":\"s31\",\"value\":\"s32\"},{\"key\":\"s33\",\"value\":\"s34\"}]},\"id\":\"gen-geographic_map\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geographic_map\",\"type\":\"geographic_msgs/msg/GeographicMap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":{\"uuid\":\"BAz/AIA=\"},\"bounds\":{\"min_pt\":{\"latitude\":5.035,\"longitude\":-6.042,\"altitude\":7.049},\"max_pt\":{\"latitude\":8.056,\"longitude\":-9.063,\"altitude\":10.07}},\"points\":[{\"id\":{\"uuid\":\"CyH/AIA=\"},\"position\":{\"latitude\":-12.084,\"longitude\":13.091,\"altitude\":14.098},\"props\":[{\"key\":\"s15\",\"value\":\"s16\"}]},{\"id\":{\"uuid\":\"ETP/AIA=\"},\"position\":{\"latitude\":-18.126,\"longitude\":19.133,\"altitude\":20.14},\"props\":[{\"key\":\"s21\",\"value\":\"s22\"}]}],\"features\":[{\"id\":{\"uuid\":\"F0X/AIA=\"},\"components\":[{\"uuid\":\"GEj/AIA=\"}],\"props\":[{\"key\":\"s25\",\"value\":\"s26\"}]},{\"id\":{\"uuid\":\"G1H/AIA=\"},\"components\":[{\"uuid\":\"HFT/AIA=\"}],\"props\":[{\"key\":\"s29\",\"value\":\"s30\"}]}],\"props\":[{\"key\":\"s31\",\"value\":\"s32\"},{\"key\":\"s33\",\"value\":\"s34\"}]},\"id\":\"gen-geographic_map\"}",
+  "model": {
+    "@kind": "geographic_map",
+    "ros2geographic.geographic_map_header_stamp_sec": "40510",
+    "ros2geographic.geographic_map_header_stamp_nanosec": "2147564661",
+    "ros2geographic.geographic_map_header_frame_id": "s3",
+    "ros2geographic.geographic_map_id_uuid": "BAz/AIA=",
+    "ros2geographic.geographic_map_bounds_min_pt_latitude": "5.035",
+    "ros2geographic.geographic_map_points.#": "2",
+    "ros2geographic.geographic_map_points[0].ros2geographic.geographic_map_points_id_uuid": "CyH/AIA=",
+    "ros2geographic.geographic_map_features.#": "2",
+    "ros2geographic.geographic_map_features[0].ros2geographic.geographic_map_features_id_uuid": "F0X/AIA=",
+    "ros2geographic.geographic_map_props.#": "2",
+    "ros2geographic.geographic_map_props[0].ros2geographic.geographic_map_props_key": "s31",
+    "ros2geographic.topic": "/gen/geographic_map"
+  }
+}

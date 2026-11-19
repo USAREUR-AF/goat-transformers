@@ -1,0 +1,17 @@
+{
+  "name": "rt-behavior_tree_status_change",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_tree_status_change\",\"type\":\"nav2_msgs/msg/BehaviorTreeStatusChange\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"node_name\":\"s3\",\"uid\":63715,\"previous_status\":\"s5\",\"current_status\":\"s6\"},\"id\":\"gen-behavior_tree_status_change\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_tree_status_change\",\"type\":\"nav2_msgs/msg/BehaviorTreeStatusChange\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"node_name\":\"s3\",\"uid\":63715,\"previous_status\":\"s5\",\"current_status\":\"s6\"},\"id\":\"gen-behavior_tree_status_change\"}",
+  "model": {
+    "@kind": "behavior_tree_status_change",
+    "ros2nav2.behavior_tree_status_change_timestamp_sec": "40510",
+    "ros2nav2.behavior_tree_status_change_timestamp_nanosec": "2147564661",
+    "ros2nav2.behavior_tree_status_change_node_name": "s3",
+    "ros2nav2.behavior_tree_status_change_uid": "63715",
+    "ros2nav2.behavior_tree_status_change_previous_status": "s5",
+    "ros2nav2.topic": "/gen/behavior_tree_status_change"
+  }
+}

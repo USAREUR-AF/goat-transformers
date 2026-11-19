@@ -1,0 +1,15 @@
+{
+  "name": "rt-move_it_error_codes",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/move_it_error_codes\",\"type\":\"moveit_msgs/msg/MoveItErrorCodes\",\"msg\":{\"val\":40510,\"message\":\"s2\",\"source\":\"s3\"},\"id\":\"gen-move_it_error_codes\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/move_it_error_codes\",\"type\":\"moveit_msgs/msg/MoveItErrorCodes\",\"msg\":{\"val\":40510,\"message\":\"s2\",\"source\":\"s3\"},\"id\":\"gen-move_it_error_codes\"}",
+  "model": {
+    "@kind": "move_it_error_codes",
+    "ros2moveit.move_it_error_codes_val": "40510",
+    "ros2moveit.move_it_error_codes_message": "s2",
+    "ros2moveit.move_it_error_codes_source": "s3",
+    "ros2moveit.topic": "/gen/move_it_error_codes"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "rt-extrinsics",
+  "from": "ros2-realsense2-camera-msgs",
+  "to": "ros2-realsense2-camera-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/extrinsics\",\"type\":\"realsense2_camera_msgs/msg/Extrinsics\",\"msg\":{\"rotation\":[1.007,2.014,-3.021,4.028,5.035,-6.042,7.049,8.056,-9.063],\"translation\":[10.07,11.077,-12.084]},\"id\":\"gen-extrinsics\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/extrinsics\",\"type\":\"realsense2_camera_msgs/msg/Extrinsics\",\"msg\":{\"rotation\":[1.007,2.014,-3.021,4.028,5.035,-6.042,7.049,8.056,-9.063],\"translation\":[10.07,11.077,-12.084]},\"id\":\"gen-extrinsics\"}",
+  "model": {
+    "@kind": "extrinsics",
+    "ros2realsense2camera.extrinsics_rotation.#": "9",
+    "ros2realsense2camera.extrinsics_rotation[0].ros2realsense2camera.extrinsics_rotation_value": "1.007",
+    "ros2realsense2camera.extrinsics_translation.#": "3",
+    "ros2realsense2camera.extrinsics_translation[0].ros2realsense2camera.extrinsics_translation_value": "10.07",
+    "ros2realsense2camera.topic": "/gen/extrinsics"
+  }
+}

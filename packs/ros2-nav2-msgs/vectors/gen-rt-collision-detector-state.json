@@ -1,0 +1,16 @@
+{
+  "name": "rt-collision_detector_state",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/collision_detector_state\",\"type\":\"nav2_msgs/msg/CollisionDetectorState\",\"msg\":{\"polygons\":[\"s1\",\"s2\"],\"detections\":[true,false]},\"id\":\"gen-collision_detector_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/collision_detector_state\",\"type\":\"nav2_msgs/msg/CollisionDetectorState\",\"msg\":{\"polygons\":[\"s1\",\"s2\"],\"detections\":[true,false]},\"id\":\"gen-collision_detector_state\"}",
+  "model": {
+    "@kind": "collision_detector_state",
+    "ros2nav2.collision_detector_state_polygons.#": "2",
+    "ros2nav2.collision_detector_state_polygons[0].ros2nav2.collision_detector_state_polygons_value": "s1",
+    "ros2nav2.collision_detector_state_detections.#": "2",
+    "ros2nav2.collision_detector_state_detections[0].ros2nav2.collision_detector_state_detections_value": "1",
+    "ros2nav2.topic": "/gen/collision_detector_state"
+  }
+}

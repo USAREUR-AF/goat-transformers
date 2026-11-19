@@ -1,0 +1,14 @@
+{
+  "name": "rt-logger_level",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/logger_level\",\"type\":\"rcl_interfaces/msg/LoggerLevel\",\"msg\":{\"name\":\"s1\",\"level\":2147564661},\"id\":\"gen-logger_level\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/logger_level\",\"type\":\"rcl_interfaces/msg/LoggerLevel\",\"msg\":{\"name\":\"s1\",\"level\":2147564661},\"id\":\"gen-logger_level\"}",
+  "model": {
+    "@kind": "logger_level",
+    "ros2rcl.logger_level_name": "s1",
+    "ros2rcl.logger_level_level": "2147564661",
+    "ros2rcl.topic": "/gen/logger_level"
+  }
+}

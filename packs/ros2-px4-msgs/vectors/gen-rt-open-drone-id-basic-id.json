@@ -1,0 +1,17 @@
+{
+  "name": "rt-open_drone_id_basic_id",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_basic_id\",\"type\":\"px4_msgs/msg/OpenDroneIdBasicId\",\"msg\":{\"timestamp\":123456789013,\"id_or_mac\":\"Agb/AIA=\",\"id_type\":44,\"ua_type\":99,\"uas_id\":\"BQ//AIA=\"},\"id\":\"gen-open_drone_id_basic_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/open_drone_id_basic_id\",\"type\":\"px4_msgs/msg/OpenDroneIdBasicId\",\"msg\":{\"timestamp\":123456789013,\"id_or_mac\":\"Agb/AIA=\",\"id_type\":44,\"ua_type\":99,\"uas_id\":\"BQ//AIA=\"},\"id\":\"gen-open_drone_id_basic_id\"}",
+  "model": {
+    "@kind": "open_drone_id_basic_id",
+    "ros2px4.open_drone_id_basic_id_timestamp": "123456789013",
+    "ros2px4.open_drone_id_basic_id_id_or_mac": "Agb/AIA=",
+    "ros2px4.open_drone_id_basic_id_id_type": "44",
+    "ros2px4.open_drone_id_basic_id_ua_type": "99",
+    "ros2px4.open_drone_id_basic_id_uas_id": "BQ//AIA=",
+    "ros2px4.topic": "/gen/open_drone_id_basic_id"
+  }
+}

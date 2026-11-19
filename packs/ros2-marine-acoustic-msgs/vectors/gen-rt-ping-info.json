@@ -1,0 +1,18 @@
+{
+  "name": "rt-ping_info",
+  "from": "ros2-marine-acoustic-msgs",
+  "to": "ros2-marine-acoustic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ping_info\",\"type\":\"marine_acoustic_msgs/msg/PingInfo\",\"msg\":{\"frequency\":-4.875,\"sound_speed\":-4.625,\"tx_beamwidths\":[-4.375,-4.125],\"rx_beamwidths\":[-3.875,-3.625]},\"id\":\"gen-ping_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ping_info\",\"type\":\"marine_acoustic_msgs/msg/PingInfo\",\"msg\":{\"frequency\":-4.875,\"sound_speed\":-4.625,\"tx_beamwidths\":[-4.375,-4.125],\"rx_beamwidths\":[-3.875,-3.625]},\"id\":\"gen-ping_info\"}",
+  "model": {
+    "@kind": "ping_info",
+    "ros2marineacoustic.ping_info_frequency": "-4.875",
+    "ros2marineacoustic.ping_info_sound_speed": "-4.625",
+    "ros2marineacoustic.ping_info_tx_beamwidths.#": "2",
+    "ros2marineacoustic.ping_info_tx_beamwidths[0].ros2marineacoustic.ping_info_tx_beamwidths_value": "-4.375",
+    "ros2marineacoustic.ping_info_rx_beamwidths.#": "2",
+    "ros2marineacoustic.ping_info_rx_beamwidths[0].ros2marineacoustic.ping_info_rx_beamwidths_value": "-3.875",
+    "ros2marineacoustic.topic": "/gen/ping_info"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "x-vehicle_global_position-to-geojson",
+  "from": "ros2-px4-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"px4_msgs/msg/VehicleGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"lat\":47.0625,\"lon\":8.53125,\"alt\":-3.875,\"alt_ellipsoid\":431.5,\"lat_lon_valid\":true,\"alt_valid\":false,\"delta_alt\":-2.875,\"delta_terrain\":-2.625,\"lat_lon_reset_counter\":228,\"alt_reset_counter\":27,\"terrain_reset_counter\":82,\"eph\":-1.625,\"epv\":-1.375,\"terrain_alt\":-1.125,\"terrain_alt_valid\":true,\"dead_reckoning\":false}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "vehicle_global_position",
+    "lat": "47.0625",
+    "lon": "8.53125",
+    "hae": "431.5"
+  }
+}

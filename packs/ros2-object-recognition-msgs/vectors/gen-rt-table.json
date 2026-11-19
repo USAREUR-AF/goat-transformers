@@ -1,0 +1,19 @@
+{
+  "name": "rt-table",
+  "from": "ros2-object-recognition-msgs",
+  "to": "ros2-object-recognition-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/table\",\"type\":\"object_recognition_msgs/msg/Table\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"convex_hull\":[{\"x\":11.077,\"y\":-12.084,\"z\":13.091},{\"x\":14.098,\"y\":-15.105,\"z\":16.112}]},\"id\":\"gen-table\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/table\",\"type\":\"object_recognition_msgs/msg/Table\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"convex_hull\":[{\"x\":11.077,\"y\":-12.084,\"z\":13.091},{\"x\":14.098,\"y\":-15.105,\"z\":16.112}]},\"id\":\"gen-table\"}",
+  "model": {
+    "@kind": "table",
+    "ros2objectrecognition.table_header_stamp_sec": "40510",
+    "ros2objectrecognition.table_header_stamp_nanosec": "2147564661",
+    "ros2objectrecognition.table_header_frame_id": "s3",
+    "ros2objectrecognition.table_pose_position_x": "4.028",
+    "ros2objectrecognition.table_pose_position_y": "5.035",
+    "ros2objectrecognition.table_convex_hull.#": "2",
+    "ros2objectrecognition.table_convex_hull[0].ros2objectrecognition.table_convex_hull_x": "11.077",
+    "ros2objectrecognition.topic": "/gen/table"
+  }
+}

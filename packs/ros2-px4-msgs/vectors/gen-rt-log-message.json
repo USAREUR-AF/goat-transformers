@@ -1,0 +1,15 @@
+{
+  "name": "rt-log_message",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/log_message\",\"type\":\"px4_msgs/msg/LogMessage\",\"msg\":{\"timestamp\":123456789013,\"severity\":245,\"text\":\"Awn/AIA=\"},\"id\":\"gen-log_message\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/log_message\",\"type\":\"px4_msgs/msg/LogMessage\",\"msg\":{\"timestamp\":123456789013,\"severity\":245,\"text\":\"Awn/AIA=\"},\"id\":\"gen-log_message\"}",
+  "model": {
+    "@kind": "log_message",
+    "ros2px4.log_message_timestamp": "123456789013",
+    "ros2px4.log_message_severity": "245",
+    "ros2px4.log_message_text": "Awn/AIA=",
+    "ros2px4.topic": "/gen/log_message"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-rxm_svsi_sv",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_svsi_sv\",\"type\":\"ublox_msgs/msg/RxmSVSI_SV\",\"msg\":{\"svid\":190,\"svFlag\":245,\"azim\":-9556,\"elev\":-29,\"age\":154},\"id\":\"gen-rxm_svsi_sv\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_svsi_sv\",\"type\":\"ublox_msgs/msg/RxmSVSI_SV\",\"msg\":{\"svid\":190,\"svFlag\":245,\"azim\":-9556,\"elev\":-29,\"age\":154},\"id\":\"gen-rxm_svsi_sv\"}",
+  "model": {
+    "@kind": "rxm_svsi_sv",
+    "ros2ublox.rxm_svsi_sv_svid_2": "190",
+    "ros2ublox.rxm_svsi_sv_svFlag": "245",
+    "ros2ublox.rxm_svsi_sv_azim_2": "-9556",
+    "ros2ublox.rxm_svsi_sv_elev_2": "-29",
+    "ros2ublox.rxm_svsi_sv_age_2": "154",
+    "ros2ublox.topic": "/gen/rxm_svsi_sv"
+  }
+}

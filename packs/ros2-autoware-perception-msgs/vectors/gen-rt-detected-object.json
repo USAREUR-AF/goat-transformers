@@ -1,0 +1,25 @@
+{
+  "name": "rt-detected_object",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/detected_object\",\"type\":\"autoware_perception_msgs/msg/DetectedObject\",\"msg\":{\"existence_probability\":-4.875,\"classification\":[{\"label\":245,\"probability\":-4.375},{\"label\":99,\"probability\":-3.875}],\"kinematics\":{\"pose_with_covariance\":{\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"covariance\":[13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336]},\"has_position_covariance\":true,\"orientation_availability\":69,\"twist_with_covariance\":{\"twist\":{\"linear\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371},\"angular\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392}},\"covariance\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644]},\"has_twist\":true,\"has_twist_covariance\":false},\"shape\":{\"type\":240,\"footprint\":{\"points\":[{\"x\":6.375,\"y\":6.625,\"z\":6.875},{\"x\":7.125,\"y\":-5.125,\"z\":-4.875}]},\"dimensions\":{\"x\":-102.714,\"y\":103.721,\"z\":104.728}}},\"id\":\"gen-detected_object\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/detected_object\",\"type\":\"autoware_perception_msgs/msg/DetectedObject\",\"msg\":{\"existence_probability\":-4.875,\"classification\":[{\"label\":245,\"probability\":-4.375},{\"label\":99,\"probability\":-3.875}],\"kinematics\":{\"pose_with_covariance\":{\"pose\":{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}},\"covariance\":[13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336]},\"has_position_covariance\":true,\"orientation_availability\":69,\"twist_with_covariance\":{\"twist\":{\"linear\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371},\"angular\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392}},\"covariance\":[-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623,-90.63,91.637,92.644]},\"has_twist\":true,\"has_twist_covariance\":false},\"shape\":{\"type\":240,\"footprint\":{\"points\":[{\"x\":6.375,\"y\":6.625,\"z\":6.875},{\"x\":7.125,\"y\":-5.125,\"z\":-4.875}]},\"dimensions\":{\"x\":-102.714,\"y\":103.721,\"z\":104.728}}},\"id\":\"gen-detected_object\"}",
+  "model": {
+    "@kind": "detected_object",
+    "ros2autowareperception.detected_object_existence_probability": "-4.875",
+    "ros2autowareperception.detected_object_classification.#": "2",
+    "ros2autowareperception.detected_object_classification[0].ros2autowareperception.detected_object_classification_label": "245",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_x": "-6.042",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_y": "7.049",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_z": "8.056",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_orientation_x": "-9.063",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance.#": "36",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance[0].ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance_value": "13.091",
+    "ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance.#": "36",
+    "ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance[0].ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance_value": "-57.399",
+    "ros2autowareperception.detected_object_shape_footprint_points.#": "2",
+    "ros2autowareperception.detected_object_shape_footprint_points[0].ros2autowareperception.detected_object_shape_footprint_points_x": "6.375",
+    "ros2autowareperception.topic": "/gen/detected_object"
+  }
+}

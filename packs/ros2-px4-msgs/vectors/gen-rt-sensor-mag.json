@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_mag",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_mag\",\"type\":\"px4_msgs/msg/SensorMag\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"temperature\":-3.125,\"range\":-2.875,\"error_count\":2147888685},\"id\":\"gen-sensor_mag\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_mag\",\"type\":\"px4_msgs/msg/SensorMag\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"temperature\":-3.125,\"range\":-2.875,\"error_count\":2147888685},\"id\":\"gen-sensor_mag\"}",
+  "model": {
+    "@kind": "sensor_mag",
+    "ros2px4.sensor_mag_timestamp": "123456789013",
+    "ros2px4.sensor_mag_timestamp_sample": "246913578026",
+    "ros2px4.sensor_mag_device_id": "2147605164",
+    "ros2px4.sensor_mag_is_external": "0",
+    "ros2px4.sensor_mag_x": "-3.875",
+    "ros2px4.topic": "/gen/sensor_mag"
+  }
+}

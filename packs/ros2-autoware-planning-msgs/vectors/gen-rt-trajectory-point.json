@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory_point",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"autoware_planning_msgs/msg/TrajectoryPoint\",\"msg\":{\"time_from_start\":{\"sec\":40510,\"nanosec\":2147564661},\"pose\":{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},\"longitudinal_velocity_mps\":-2.625,\"lateral_velocity_mps\":-2.375,\"acceleration_mps2\":-2.125,\"heading_rate_rps\":-1.875,\"front_wheel_angle_rad\":-1.625,\"rear_wheel_angle_rad\":-1.375},\"id\":\"gen-trajectory_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"autoware_planning_msgs/msg/TrajectoryPoint\",\"msg\":{\"time_from_start\":{\"sec\":40510,\"nanosec\":2147564661},\"pose\":{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},\"longitudinal_velocity_mps\":-2.625,\"lateral_velocity_mps\":-2.375,\"acceleration_mps2\":-2.125,\"heading_rate_rps\":-1.875,\"front_wheel_angle_rad\":-1.625,\"rear_wheel_angle_rad\":-1.375},\"id\":\"gen-trajectory_point\"}",
+  "model": {
+    "@kind": "trajectory_point",
+    "ros2autowareplanning.trajectory_point_time_from_start_sec": "40510",
+    "ros2autowareplanning.trajectory_point_time_from_start_nanosec": "2147564661",
+    "ros2autowareplanning.trajectory_point_pose_position_x": "-3.021",
+    "ros2autowareplanning.trajectory_point_pose_position_y": "4.028",
+    "ros2autowareplanning.trajectory_point_pose_position_z": "5.035",
+    "ros2autowareplanning.topic": "/gen/trajectory_point"
+  }
+}

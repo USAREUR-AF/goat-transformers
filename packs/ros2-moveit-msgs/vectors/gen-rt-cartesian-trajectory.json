@@ -1,0 +1,18 @@
+{
+  "name": "rt-cartesian_trajectory",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cartesian_trajectory\",\"type\":\"moveit_msgs/msg/CartesianTrajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tracked_frame\":\"s4\",\"points\":[{\"point\":{\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"velocity\":{\"linear\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"angular\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119}},\"acceleration\":{\"linear\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"angular\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161}}},\"time_from_start\":{\"sec\":972079,\"nanosec\":2148496230}},{\"point\":{\"pose\":{\"position\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"orientation\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217,\"w\":32.224}},\"velocity\":{\"linear\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"angular\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266}},\"acceleration\":{\"linear\":{\"x\":-39.273,\"y\":40.28,\"z\":41.287},\"angular\":{\"x\":-42.294,\"y\":43.301,\"z\":44.308}}},\"time_from_start\":{\"sec\":1822642,\"nanosec\":2149346793}}]},\"id\":\"gen-cartesian_trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cartesian_trajectory\",\"type\":\"moveit_msgs/msg/CartesianTrajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tracked_frame\":\"s4\",\"points\":[{\"point\":{\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"velocity\":{\"linear\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"angular\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119}},\"acceleration\":{\"linear\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"angular\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161}}},\"time_from_start\":{\"sec\":972079,\"nanosec\":2148496230}},{\"point\":{\"pose\":{\"position\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"orientation\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217,\"w\":32.224}},\"velocity\":{\"linear\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"angular\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266}},\"acceleration\":{\"linear\":{\"x\":-39.273,\"y\":40.28,\"z\":41.287},\"angular\":{\"x\":-42.294,\"y\":43.301,\"z\":44.308}}},\"time_from_start\":{\"sec\":1822642,\"nanosec\":2149346793}}]},\"id\":\"gen-cartesian_trajectory\"}",
+  "model": {
+    "@kind": "cartesian_trajectory",
+    "ros2moveit.cartesian_trajectory_header_stamp_sec": "40510",
+    "ros2moveit.cartesian_trajectory_header_stamp_nanosec": "2147564661",
+    "ros2moveit.cartesian_trajectory_header_frame_id": "s3",
+    "ros2moveit.cartesian_trajectory_tracked_frame": "s4",
+    "ros2moveit.cartesian_trajectory_points.#": "2",
+    "ros2moveit.cartesian_trajectory_points[0].ros2moveit.cartesian_trajectory_points_point_pose_position_x": "5.035",
+    "ros2moveit.topic": "/gen/cartesian_trajectory"
+  }
+}

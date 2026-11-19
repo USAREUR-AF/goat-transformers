@@ -1,0 +1,19 @@
+{
+  "name": "rt-octomap_with_pose",
+  "from": "ros2-octomap-msgs",
+  "to": "ros2-octomap-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/octomap_with_pose\",\"type\":\"octomap_msgs/msg/OctomapWithPose\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"origin\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"octomap\":{\"header\":{\"stamp\":{\"sec\":445540,\"nanosec\":2147969691},\"frame_id\":\"s13\"},\"binary\":false,\"id\":\"s15\",\"resolution\":16.112,\"data\":[-82,-27]}},\"id\":\"gen-octomap_with_pose\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/octomap_with_pose\",\"type\":\"octomap_msgs/msg/OctomapWithPose\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"origin\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"octomap\":{\"header\":{\"stamp\":{\"sec\":445540,\"nanosec\":2147969691},\"frame_id\":\"s13\"},\"binary\":false,\"id\":\"s15\",\"resolution\":16.112,\"data\":[-82,-27]}},\"id\":\"gen-octomap_with_pose\"}",
+  "model": {
+    "@kind": "octomap_with_pose",
+    "ros2octomap.octomap_with_pose_header_stamp_sec": "40510",
+    "ros2octomap.octomap_with_pose_header_stamp_nanosec": "2147564661",
+    "ros2octomap.octomap_with_pose_header_frame_id": "s3",
+    "ros2octomap.octomap_with_pose_origin_position_x": "4.028",
+    "ros2octomap.octomap_with_pose_origin_position_y": "5.035",
+    "ros2octomap.octomap_with_pose_octomap_data.#": "2",
+    "ros2octomap.octomap_with_pose_octomap_data[0].ros2octomap.octomap_with_pose_octomap_data_value": "-82",
+    "ros2octomap.topic": "/gen/octomap_with_pose"
+  }
+}

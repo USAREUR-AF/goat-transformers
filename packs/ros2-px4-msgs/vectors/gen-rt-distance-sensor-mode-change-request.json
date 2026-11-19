@@ -1,0 +1,14 @@
+{
+  "name": "rt-distance_sensor_mode_change_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/distance_sensor_mode_change_request\",\"type\":\"px4_msgs/msg/DistanceSensorModeChangeRequest\",\"msg\":{\"timestamp\":123456789013,\"request_on_off\":245},\"id\":\"gen-distance_sensor_mode_change_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/distance_sensor_mode_change_request\",\"type\":\"px4_msgs/msg/DistanceSensorModeChangeRequest\",\"msg\":{\"timestamp\":123456789013,\"request_on_off\":245},\"id\":\"gen-distance_sensor_mode_change_request\"}",
+  "model": {
+    "@kind": "distance_sensor_mode_change_request",
+    "ros2px4.distance_sensor_mode_change_request_timestamp": "123456789013",
+    "ros2px4.distance_sensor_mode_change_request_request_on_off": "245",
+    "ros2px4.topic": "/gen/distance_sensor_mode_change_request"
+  }
+}

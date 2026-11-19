@@ -1,0 +1,15 @@
+{
+  "name": "rt-packed_element_field",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/packed_element_field\",\"type\":\"foxglove_msgs/msg/PackedElementField\",\"msg\":{\"name\":\"s1\",\"offset\":2147564661,\"type\":44},\"id\":\"gen-packed_element_field\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/packed_element_field\",\"type\":\"foxglove_msgs/msg/PackedElementField\",\"msg\":{\"name\":\"s1\",\"offset\":2147564661,\"type\":44},\"id\":\"gen-packed_element_field\"}",
+  "model": {
+    "@kind": "packed_element_field",
+    "ros2foxglove.packed_element_field_name": "s1",
+    "ros2foxglove.packed_element_field_offset": "2147564661",
+    "ros2foxglove.packed_element_field_type": "44",
+    "ros2foxglove.topic": "/gen/packed_element_field"
+  }
+}

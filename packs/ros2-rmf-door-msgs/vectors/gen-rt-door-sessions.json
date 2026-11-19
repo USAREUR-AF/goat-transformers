@@ -1,0 +1,15 @@
+{
+  "name": "rt-door_sessions",
+  "from": "ros2-rmf-door-msgs",
+  "to": "ros2-rmf-door-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door_sessions\",\"type\":\"rmf_door_msgs/msg/DoorSessions\",\"msg\":{\"door_name\":\"s1\",\"sessions\":[{\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"requester_id\":\"s4\"},{\"request_time\":{\"sec\":202522,\"nanosec\":2147726673},\"requester_id\":\"s7\"}]},\"id\":\"gen-door_sessions\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door_sessions\",\"type\":\"rmf_door_msgs/msg/DoorSessions\",\"msg\":{\"door_name\":\"s1\",\"sessions\":[{\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"requester_id\":\"s4\"},{\"request_time\":{\"sec\":202522,\"nanosec\":2147726673},\"requester_id\":\"s7\"}]},\"id\":\"gen-door_sessions\"}",
+  "model": {
+    "@kind": "door_sessions",
+    "ros2rmfdoor.door_sessions_door_name": "s1",
+    "ros2rmfdoor.door_sessions_sessions.#": "2",
+    "ros2rmfdoor.door_sessions_sessions[0].ros2rmfdoor.door_sessions_sessions_request_time_sec": "81013",
+    "ros2rmfdoor.topic": "/gen/door_sessions"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-trackstat",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trackstat\",\"type\":\"novatel_gps_msgs/msg/Trackstat\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"solution_status\":\"s4\",\"position_type\":\"s5\",\"cutoff\":-3.625,\"channels\":[{\"prn\":21384,\"glofreq\":-3649,\"ch_tr_status\":2147848182,\"psr\":10.07,\"doppler\":-2.375,\"c_no\":-2.125,\"locktime\":-1.875,\"psr_res\":-1.625,\"reject\":\"s15\",\"psr_weight\":-1.125},{\"prn\":-32338,\"glofreq\":8165,\"ch_tr_status\":2148253212,\"psr\":20.14,\"doppler\":0.125,\"c_no\":0.375,\"locktime\":0.625,\"psr_res\":0.875,\"reject\":\"s25\",\"psr_weight\":1.375}]},\"id\":\"gen-trackstat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trackstat\",\"type\":\"novatel_gps_msgs/msg/Trackstat\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"solution_status\":\"s4\",\"position_type\":\"s5\",\"cutoff\":-3.625,\"channels\":[{\"prn\":21384,\"glofreq\":-3649,\"ch_tr_status\":2147848182,\"psr\":10.07,\"doppler\":-2.375,\"c_no\":-2.125,\"locktime\":-1.875,\"psr_res\":-1.625,\"reject\":\"s15\",\"psr_weight\":-1.125},{\"prn\":-32338,\"glofreq\":8165,\"ch_tr_status\":2148253212,\"psr\":20.14,\"doppler\":0.125,\"c_no\":0.375,\"locktime\":0.625,\"psr_res\":0.875,\"reject\":\"s25\",\"psr_weight\":1.375}]},\"id\":\"gen-trackstat\"}",
+  "model": {
+    "@kind": "trackstat",
+    "ros2novatelgps.trackstat_header_stamp_sec": "40510",
+    "ros2novatelgps.trackstat_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.trackstat_header_frame_id": "s3",
+    "ros2novatelgps.trackstat_solution_status": "s4",
+    "ros2novatelgps.trackstat_position_type": "s5",
+    "ros2novatelgps.trackstat_channels.#": "2",
+    "ros2novatelgps.trackstat_channels[0].ros2novatelgps.trackstat_channels_prn": "21384",
+    "ros2novatelgps.topic": "/gen/trackstat"
+  }
+}

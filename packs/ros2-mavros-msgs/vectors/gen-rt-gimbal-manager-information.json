@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_information",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_information\",\"type\":\"mavros_msgs/msg/GimbalManagerInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"cap_flags\":2147645667,\"gimbal_device_id\":154,\"roll_min\":-3.625,\"roll_max\":-3.375,\"pitch_min\":-3.125,\"pitch_max\":-2.875,\"yaw_min\":-2.625,\"yaw_max\":-2.375},\"id\":\"gen-gimbal_manager_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_information\",\"type\":\"mavros_msgs/msg/GimbalManagerInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"cap_flags\":2147645667,\"gimbal_device_id\":154,\"roll_min\":-3.625,\"roll_max\":-3.375,\"pitch_min\":-3.125,\"pitch_max\":-2.875,\"yaw_min\":-2.625,\"yaw_max\":-2.375},\"id\":\"gen-gimbal_manager_information\"}",
+  "model": {
+    "@kind": "gimbal_manager_information",
+    "ros2mavros.gimbal_manager_information_header_stamp_sec": "40510",
+    "ros2mavros.gimbal_manager_information_header_stamp_nanosec": "2147564661",
+    "ros2mavros.gimbal_manager_information_header_frame_id": "s3",
+    "ros2mavros.gimbal_manager_information_cap_flags": "2147645667",
+    "ros2mavros.gimbal_manager_information_gimbal_device_id": "154",
+    "ros2mavros.topic": "/gen/gimbal_manager_information"
+  }
+}

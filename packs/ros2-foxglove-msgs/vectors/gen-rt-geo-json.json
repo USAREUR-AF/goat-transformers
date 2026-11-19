@@ -1,0 +1,13 @@
+{
+  "name": "rt-geo_json",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geo_json\",\"type\":\"foxglove_msgs/msg/GeoJSON\",\"msg\":{\"geojson\":\"s1\"},\"id\":\"gen-geo_json\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geo_json\",\"type\":\"foxglove_msgs/msg/GeoJSON\",\"msg\":{\"geojson\":\"s1\"},\"id\":\"gen-geo_json\"}",
+  "model": {
+    "@kind": "geo_json",
+    "ros2foxglove.geo_json_geojson": "s1",
+    "ros2foxglove.topic": "/gen/geo_json"
+  }
+}

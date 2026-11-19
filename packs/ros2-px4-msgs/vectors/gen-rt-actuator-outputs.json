@@ -1,0 +1,16 @@
+{
+  "name": "rt-actuator_outputs",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_outputs\",\"type\":\"px4_msgs/msg/ActuatorOutputs\",\"msg\":{\"timestamp\":123456789013,\"noutputs\":2147564661,\"output\":[-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625]},\"id\":\"gen-actuator_outputs\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_outputs\",\"type\":\"px4_msgs/msg/ActuatorOutputs\",\"msg\":{\"timestamp\":123456789013,\"noutputs\":2147564661,\"output\":[-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625]},\"id\":\"gen-actuator_outputs\"}",
+  "model": {
+    "@kind": "actuator_outputs",
+    "ros2px4.actuator_outputs_timestamp": "123456789013",
+    "ros2px4.actuator_outputs_noutputs": "2147564661",
+    "ros2px4.actuator_outputs_output.#": "16",
+    "ros2px4.actuator_outputs_output[0].ros2px4.actuator_outputs_output_value": "-4.375",
+    "ros2px4.topic": "/gen/actuator_outputs"
+  }
+}

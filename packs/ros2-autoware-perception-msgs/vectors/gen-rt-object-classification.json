@@ -1,0 +1,14 @@
+{
+  "name": "rt-object_classification",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/object_classification\",\"type\":\"autoware_perception_msgs/msg/ObjectClassification\",\"msg\":{\"label\":190,\"probability\":-4.625},\"id\":\"gen-object_classification\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/object_classification\",\"type\":\"autoware_perception_msgs/msg/ObjectClassification\",\"msg\":{\"label\":190,\"probability\":-4.625},\"id\":\"gen-object_classification\"}",
+  "model": {
+    "@kind": "object_classification",
+    "ros2autowareperception.object_classification_label": "190",
+    "ros2autowareperception.object_classification_probability": "-4.625",
+    "ros2autowareperception.topic": "/gen/object_classification"
+  }
+}

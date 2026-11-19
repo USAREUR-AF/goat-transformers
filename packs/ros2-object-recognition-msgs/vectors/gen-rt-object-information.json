@@ -1,0 +1,22 @@
+{
+  "name": "rt-object_information",
+  "from": "ros2-object-recognition-msgs",
+  "to": "ros2-object-recognition-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/object_information\",\"type\":\"object_recognition_msgs/msg/ObjectInformation\",\"msg\":{\"name\":\"s1\",\"ground_truth_mesh\":{\"triangles\":[{\"vertex_indices\":[2147564661,2147605164,2147645667]},{\"vertex_indices\":[2147686170,2147726673,2147767176]}],\"vertices\":[{\"x\":8.056,\"y\":-9.063,\"z\":10.07},{\"x\":11.077,\"y\":-12.084,\"z\":13.091}]},\"ground_truth_point_cloud\":{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"height\":2148172206,\"width\":2148212709,\"fields\":[{\"name\":\"s19\",\"offset\":2148293715,\"datatype\":10,\"count\":2148374721},{\"name\":\"s23\",\"offset\":2148455727,\"datatype\":230,\"count\":2148536733}],\"is_bigendian\":true,\"point_step\":2148617739,\"row_step\":2148658242,\"data\":\"Hlr/AIA=\",\"is_dense\":true}},\"id\":\"gen-object_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/object_information\",\"type\":\"object_recognition_msgs/msg/ObjectInformation\",\"msg\":{\"name\":\"s1\",\"ground_truth_mesh\":{\"triangles\":[{\"vertex_indices\":[2147564661,2147605164,2147645667]},{\"vertex_indices\":[2147686170,2147726673,2147767176]}],\"vertices\":[{\"x\":8.056,\"y\":-9.063,\"z\":10.07},{\"x\":11.077,\"y\":-12.084,\"z\":13.091}]},\"ground_truth_point_cloud\":{\"header\":{\"stamp\":{\"sec\":567049,\"nanosec\":2148091200},\"frame_id\":\"s16\"},\"height\":2148172206,\"width\":2148212709,\"fields\":[{\"name\":\"s19\",\"offset\":2148293715,\"datatype\":10,\"count\":2148374721},{\"name\":\"s23\",\"offset\":2148455727,\"datatype\":230,\"count\":2148536733}],\"is_bigendian\":true,\"point_step\":2148617739,\"row_step\":2148658242,\"data\":\"Hlr/AIA=\",\"is_dense\":true}},\"id\":\"gen-object_information\"}",
+  "model": {
+    "@kind": "object_information",
+    "ros2objectrecognition.object_information_name": "s1",
+    "ros2objectrecognition.object_information_ground_truth_mesh_triangles.#": "2",
+    "ros2objectrecognition.object_information_ground_truth_mesh_vertices.#": "2",
+    "ros2objectrecognition.object_information_ground_truth_mesh_vertices[0].ros2objectrecognition.object_information_ground_truth_mesh_vertices_x": "8.056",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_header_stamp_sec": "567049",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_header_stamp_nanosec": "2148091200",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_header_frame_id": "s16",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_height": "2148172206",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_fields.#": "2",
+    "ros2objectrecognition.object_information_ground_truth_point_cloud_fields[0].ros2objectrecognition.object_information_ground_truth_point_cloud_fields_name": "s19",
+    "ros2objectrecognition.topic": "/gen/object_information"
+  }
+}

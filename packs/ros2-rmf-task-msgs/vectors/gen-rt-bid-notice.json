@@ -1,0 +1,16 @@
+{
+  "name": "rt-bid_notice",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/bid_notice\",\"type\":\"rmf_task_msgs/msg/BidNotice\",\"msg\":{\"request\":\"s1\",\"task_id\":\"s2\",\"time_window\":{\"sec\":121516,\"nanosec\":2147645667}},\"id\":\"gen-bid_notice\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/bid_notice\",\"type\":\"rmf_task_msgs/msg/BidNotice\",\"msg\":{\"request\":\"s1\",\"task_id\":\"s2\",\"time_window\":{\"sec\":121516,\"nanosec\":2147645667}},\"id\":\"gen-bid_notice\"}",
+  "model": {
+    "@kind": "bid_notice",
+    "ros2rmftask.bid_notice_request": "s1",
+    "ros2rmftask.bid_notice_task_id": "s2",
+    "ros2rmftask.bid_notice_time_window_sec": "121516",
+    "ros2rmftask.bid_notice_time_window_nanosec": "2147645667",
+    "ros2rmftask.topic": "/gen/bid_notice"
+  }
+}

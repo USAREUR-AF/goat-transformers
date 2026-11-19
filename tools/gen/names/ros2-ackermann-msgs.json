@@ -1,0 +1,16 @@
+{
+ "AckermannDrive:acceleration": "ackermann_drive_acceleration",
+ "AckermannDrive:jerk": "ackermann_drive_jerk",
+ "AckermannDrive:speed": "ackermann_drive_speed",
+ "AckermannDrive:steering_angle": "ackermann_drive_steering_angle",
+ "AckermannDrive:steering_angle_velocity": "ackermann_drive_steering_angle_velocity",
+ "AckermannDriveStamped:drive.acceleration": "ackermann_drive_stamped_drive_acceleration",
+ "AckermannDriveStamped:drive.jerk": "ackermann_drive_stamped_drive_jerk",
+ "AckermannDriveStamped:drive.speed": "ackermann_drive_stamped_drive_speed",
+ "AckermannDriveStamped:drive.steering_angle": "ackermann_drive_stamped_drive_steering_angle",
+ "AckermannDriveStamped:drive.steering_angle_velocity": "ackermann_drive_stamped_drive_steering_angle_velocity",
+ "AckermannDriveStamped:header.frame_id": "ackermann_drive_stamped_header_frame_id",
+ "AckermannDriveStamped:header.stamp.nanosec": "ackermann_drive_stamped_header_stamp_nanosec",
+ "AckermannDriveStamped:header.stamp.sec": "ackermann_drive_stamped_header_stamp_sec",
+ "topic": "topic"
+}

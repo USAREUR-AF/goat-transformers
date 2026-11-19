@@ -1,0 +1,17 @@
+{
+  "name": "rt-twist2d_stamped",
+  "from": "ros2-nav-2d-msgs",
+  "to": "ros2-nav-2d-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/twist2d_stamped\",\"type\":\"nav_2d_msgs/msg/Twist2DStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042}},\"id\":\"gen-twist2d_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/twist2d_stamped\",\"type\":\"nav_2d_msgs/msg/Twist2DStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042}},\"id\":\"gen-twist2d_stamped\"}",
+  "model": {
+    "@kind": "twist2d_stamped",
+    "ros2nav2d.twist2d_stamped_header_stamp_sec": "40510",
+    "ros2nav2d.twist2d_stamped_header_stamp_nanosec": "2147564661",
+    "ros2nav2d.twist2d_stamped_header_frame_id": "s3",
+    "ros2nav2d.twist2d_stamped_velocity_x": "4.028",
+    "ros2nav2d.twist2d_stamped_velocity_y": "5.035",
+    "ros2nav2d.topic": "/gen/twist2d_stamped"
+  }
+}

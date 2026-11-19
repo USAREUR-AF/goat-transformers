@@ -1,0 +1,23 @@
+{
+  "name": "rt-autotune_attitude_control_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/autotune_attitude_control_status\",\"type\":\"px4_msgs/msg/AutotuneAttitudeControlStatus\",\"msg\":{\"timestamp\":123456789013,\"coeff\":[-4.625,-4.375,-4.125,-3.875,-3.625],\"coeff_var\":[-3.375,-3.125,-2.875,-2.625,-2.375],\"fitness\":-2.125,\"innov\":-1.875,\"dt_model\":-1.625,\"kc\":-1.375,\"ki\":-1.125,\"kd\":-0.875,\"kff\":-0.625,\"att_p\":-0.375,\"rate_sp\":[-0.125,0.125,0.375],\"u_filt\":0.625,\"y_filt\":0.875,\"state\":230},\"id\":\"gen-autotune_attitude_control_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/autotune_attitude_control_status\",\"type\":\"px4_msgs/msg/AutotuneAttitudeControlStatus\",\"msg\":{\"timestamp\":123456789013,\"coeff\":[-4.625,-4.375,-4.125,-3.875,-3.625],\"coeff_var\":[-3.375,-3.125,-2.875,-2.625,-2.375],\"fitness\":-2.125,\"innov\":-1.875,\"dt_model\":-1.625,\"kc\":-1.375,\"ki\":-1.125,\"kd\":-0.875,\"kff\":-0.625,\"att_p\":-0.375,\"rate_sp\":[-0.125,0.125,0.375],\"u_filt\":0.625,\"y_filt\":0.875,\"state\":230},\"id\":\"gen-autotune_attitude_control_status\"}",
+  "model": {
+    "@kind": "autotune_attitude_control_status",
+    "ros2px4.autotune_attitude_control_status_timestamp": "123456789013",
+    "ros2px4.autotune_attitude_control_status_coeff.#": "5",
+    "ros2px4.autotune_attitude_control_status_coeff[0].ros2px4.autotune_attitude_control_status_coeff_value": "-4.625",
+    "ros2px4.autotune_attitude_control_status_coeff_var.#": "5",
+    "ros2px4.autotune_attitude_control_status_coeff_var[0].ros2px4.autotune_attitude_control_status_coeff_var_value": "-3.375",
+    "ros2px4.autotune_attitude_control_status_fitness": "-2.125",
+    "ros2px4.autotune_attitude_control_status_innov": "-1.875",
+    "ros2px4.autotune_attitude_control_status_dt_model": "-1.625",
+    "ros2px4.autotune_attitude_control_status_kc": "-1.375",
+    "ros2px4.autotune_attitude_control_status_rate_sp.#": "3",
+    "ros2px4.autotune_attitude_control_status_rate_sp[0].ros2px4.autotune_attitude_control_status_rate_sp_value": "-0.125",
+    "ros2px4.topic": "/gen/autotune_attitude_control_status"
+  }
+}

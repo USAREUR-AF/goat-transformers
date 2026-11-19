@@ -1,0 +1,14 @@
+{
+  "name": "rt-ulog_stream_ack",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ulog_stream_ack\",\"type\":\"px4_msgs/msg/UlogStreamAck\",\"msg\":{\"timestamp\":123456789013,\"msg_sequence\":48245},\"id\":\"gen-ulog_stream_ack\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ulog_stream_ack\",\"type\":\"px4_msgs/msg/UlogStreamAck\",\"msg\":{\"timestamp\":123456789013,\"msg_sequence\":48245},\"id\":\"gen-ulog_stream_ack\"}",
+  "model": {
+    "@kind": "ulog_stream_ack",
+    "ros2px4.ulog_stream_ack_timestamp": "123456789013",
+    "ros2px4.ulog_stream_ack_msg_sequence": "48245",
+    "ros2px4.topic": "/gen/ulog_stream_ack"
+  }
+}

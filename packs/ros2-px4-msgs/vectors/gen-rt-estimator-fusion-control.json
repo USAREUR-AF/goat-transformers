@@ -1,0 +1,25 @@
+{
+  "name": "rt-estimator_fusion_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_fusion_control\",\"type\":\"px4_msgs/msg/EstimatorFusionControl\",\"msg\":{\"timestamp\":123456789013,\"gps_intended\":[false,true],\"of_intended\":false,\"ev_intended\":true,\"agp_intended\":[false,true,false,true],\"baro_intended\":false,\"rng_intended\":true,\"mag_intended\":false,\"aspd_intended\":true,\"rngbcn_intended\":false,\"gps_active\":[true,false],\"of_active\":true,\"ev_active\":false,\"agp_active\":[true,false,true,false],\"baro_active\":true,\"rng_active\":false,\"mag_active\":true,\"aspd_active\":false,\"rngbcn_active\":true},\"id\":\"gen-estimator_fusion_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_fusion_control\",\"type\":\"px4_msgs/msg/EstimatorFusionControl\",\"msg\":{\"timestamp\":123456789013,\"gps_intended\":[false,true],\"of_intended\":false,\"ev_intended\":true,\"agp_intended\":[false,true,false,true],\"baro_intended\":false,\"rng_intended\":true,\"mag_intended\":false,\"aspd_intended\":true,\"rngbcn_intended\":false,\"gps_active\":[true,false],\"of_active\":true,\"ev_active\":false,\"agp_active\":[true,false,true,false],\"baro_active\":true,\"rng_active\":false,\"mag_active\":true,\"aspd_active\":false,\"rngbcn_active\":true},\"id\":\"gen-estimator_fusion_control\"}",
+  "model": {
+    "@kind": "estimator_fusion_control",
+    "ros2px4.estimator_fusion_control_timestamp": "123456789013",
+    "ros2px4.estimator_fusion_control_gps_intended.#": "2",
+    "ros2px4.estimator_fusion_control_gps_intended[0].ros2px4.estimator_fusion_control_gps_intended_value": "0",
+    "ros2px4.estimator_fusion_control_of_intended": "0",
+    "ros2px4.estimator_fusion_control_ev_intended": "1",
+    "ros2px4.estimator_fusion_control_agp_intended.#": "4",
+    "ros2px4.estimator_fusion_control_agp_intended[0].ros2px4.estimator_fusion_control_agp_intended_value": "0",
+    "ros2px4.estimator_fusion_control_baro_intended": "0",
+    "ros2px4.estimator_fusion_control_rng_intended": "1",
+    "ros2px4.estimator_fusion_control_gps_active.#": "2",
+    "ros2px4.estimator_fusion_control_gps_active[0].ros2px4.estimator_fusion_control_gps_active_value": "1",
+    "ros2px4.estimator_fusion_control_agp_active.#": "4",
+    "ros2px4.estimator_fusion_control_agp_active[0].ros2px4.estimator_fusion_control_agp_active_value": "1",
+    "ros2px4.topic": "/gen/estimator_fusion_control"
+  }
+}

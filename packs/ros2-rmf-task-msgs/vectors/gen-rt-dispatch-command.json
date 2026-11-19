@@ -1,0 +1,17 @@
+{
+  "name": "rt-dispatch_command",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_command\",\"type\":\"rmf_task_msgs/msg/DispatchCommand\",\"msg\":{\"fleet_name\":\"s1\",\"task_id\":\"s2\",\"dispatch_id\":370370367039,\"timestamp\":{\"sec\":162019,\"nanosec\":2147686170},\"type\":209},\"id\":\"gen-dispatch_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_command\",\"type\":\"rmf_task_msgs/msg/DispatchCommand\",\"msg\":{\"fleet_name\":\"s1\",\"task_id\":\"s2\",\"dispatch_id\":370370367039,\"timestamp\":{\"sec\":162019,\"nanosec\":2147686170},\"type\":209},\"id\":\"gen-dispatch_command\"}",
+  "model": {
+    "@kind": "dispatch_command",
+    "ros2rmftask.dispatch_command_fleet_name": "s1",
+    "ros2rmftask.dispatch_command_task_id": "s2",
+    "ros2rmftask.dispatch_command_dispatch_id": "370370367039",
+    "ros2rmftask.dispatch_command_timestamp_sec": "162019",
+    "ros2rmftask.dispatch_command_timestamp_nanosec": "2147686170",
+    "ros2rmftask.topic": "/gen/dispatch_command"
+  }
+}

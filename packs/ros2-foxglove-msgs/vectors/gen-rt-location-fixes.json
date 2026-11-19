@@ -1,0 +1,14 @@
+{
+  "name": "rt-location_fixes",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/location_fixes\",\"type\":\"foxglove_msgs/msg/LocationFixes\",\"msg\":{\"fixes\":[{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042,\"position_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"position_covariance_type\":247,\"heading\":17.119,\"velocity\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"color\":{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"}]},{\"timestamp\":{\"sec\":1093588,\"nanosec\":2148617739},\"frame_id\":\"s29\",\"latitude\":-30.21,\"longitude\":31.217,\"altitude\":32.224,\"position_covariance\":[-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287],\"position_covariance_type\":141,\"heading\":43.301,\"velocity\":{\"x\":44.308,\"y\":-45.315,\"z\":46.322},\"color\":{\"r\":47.329,\"g\":-48.336,\"b\":49.343,\"a\":50.35},\"metadata\":[{\"key\":\"s51\",\"value\":\"s52\"}]}]},\"id\":\"gen-location_fixes\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/location_fixes\",\"type\":\"foxglove_msgs/msg/LocationFixes\",\"msg\":{\"fixes\":[{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042,\"position_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"position_covariance_type\":247,\"heading\":17.119,\"velocity\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"color\":{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"}]},{\"timestamp\":{\"sec\":1093588,\"nanosec\":2148617739},\"frame_id\":\"s29\",\"latitude\":-30.21,\"longitude\":31.217,\"altitude\":32.224,\"position_covariance\":[-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287],\"position_covariance_type\":141,\"heading\":43.301,\"velocity\":{\"x\":44.308,\"y\":-45.315,\"z\":46.322},\"color\":{\"r\":47.329,\"g\":-48.336,\"b\":49.343,\"a\":50.35},\"metadata\":[{\"key\":\"s51\",\"value\":\"s52\"}]}]},\"id\":\"gen-location_fixes\"}",
+  "model": {
+    "@kind": "location_fixes",
+    "ros2foxglove.location_fixes_fixes.#": "2",
+    "ros2foxglove.location_fixes_fixes[0].ros2foxglove.location_fixes_fixes_timestamp_sec": "40510",
+    "ros2foxglove.topic": "/gen/location_fixes"
+  }
+}

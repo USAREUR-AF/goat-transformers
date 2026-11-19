@@ -1,0 +1,17 @@
+{
+  "name": "rt-novatel_signal_mask",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_signal_mask\",\"type\":\"novatel_gps_msgs/msg/NovatelSignalMask\",\"msg\":{\"original_mask\":2147524158,\"gps_l1_used_in_solution\":false,\"gps_l2_used_in_solution\":true,\"gps_l3_used_in_solution\":false,\"glonass_l1_used_in_solution\":true,\"glonass_l2_used_in_solution\":false},\"id\":\"gen-novatel_signal_mask\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_signal_mask\",\"type\":\"novatel_gps_msgs/msg/NovatelSignalMask\",\"msg\":{\"original_mask\":2147524158,\"gps_l1_used_in_solution\":false,\"gps_l2_used_in_solution\":true,\"gps_l3_used_in_solution\":false,\"glonass_l1_used_in_solution\":true,\"glonass_l2_used_in_solution\":false},\"id\":\"gen-novatel_signal_mask\"}",
+  "model": {
+    "@kind": "novatel_signal_mask",
+    "ros2novatelgps.novatel_signal_mask_original_mask": "2147524158",
+    "ros2novatelgps.novatel_signal_mask_gps_l1_used_in_solution": "0",
+    "ros2novatelgps.novatel_signal_mask_gps_l2_used_in_solution": "1",
+    "ros2novatelgps.novatel_signal_mask_gps_l3_used_in_solution": "0",
+    "ros2novatelgps.novatel_signal_mask_glonass_l1_used_in_solution": "1",
+    "ros2novatelgps.topic": "/gen/novatel_signal_mask"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-vision_class",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vision_class\",\"type\":\"vision_msgs/msg/VisionClass\",\"msg\":{\"class_id\":7742,\"class_name\":\"s2\"},\"id\":\"gen-vision_class\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vision_class\",\"type\":\"vision_msgs/msg/VisionClass\",\"msg\":{\"class_id\":7742,\"class_name\":\"s2\"},\"id\":\"gen-vision_class\"}",
+  "model": {
+    "@kind": "vision_class",
+    "ros2vision.vision_class_class_id": "7742",
+    "ros2vision.vision_class_class_name": "s2",
+    "ros2vision.topic": "/gen/vision_class"
+  }
+}

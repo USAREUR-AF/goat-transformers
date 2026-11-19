@@ -1,0 +1,15 @@
+{
+  "name": "rt-parameter_reset_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_reset_request\",\"type\":\"px4_msgs/msg/ParameterResetRequest\",\"msg\":{\"timestamp\":123456789013,\"parameter_index\":48245,\"reset_all\":true},\"id\":\"gen-parameter_reset_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_reset_request\",\"type\":\"px4_msgs/msg/ParameterResetRequest\",\"msg\":{\"timestamp\":123456789013,\"parameter_index\":48245,\"reset_all\":true},\"id\":\"gen-parameter_reset_request\"}",
+  "model": {
+    "@kind": "parameter_reset_request",
+    "ros2px4.parameter_reset_request_timestamp": "123456789013",
+    "ros2px4.parameter_reset_request_parameter_index": "48245",
+    "ros2px4.parameter_reset_request_reset_all": "1",
+    "ros2px4.topic": "/gen/parameter_reset_request"
+  }
+}

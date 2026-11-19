@@ -1,0 +1,17 @@
+{
+  "name": "rt-offboard_control_mode",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/offboard_control_mode\",\"type\":\"px4_msgs/msg/OffboardControlMode\",\"msg\":{\"timestamp\":123456789013,\"position\":false,\"velocity\":true,\"acceleration\":false,\"attitude\":true,\"body_rate\":false,\"thrust_and_torque\":true,\"direct_actuator\":false},\"id\":\"gen-offboard_control_mode\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/offboard_control_mode\",\"type\":\"px4_msgs/msg/OffboardControlMode\",\"msg\":{\"timestamp\":123456789013,\"position\":false,\"velocity\":true,\"acceleration\":false,\"attitude\":true,\"body_rate\":false,\"thrust_and_torque\":true,\"direct_actuator\":false},\"id\":\"gen-offboard_control_mode\"}",
+  "model": {
+    "@kind": "offboard_control_mode",
+    "ros2px4.offboard_control_mode_timestamp": "123456789013",
+    "ros2px4.offboard_control_mode_position": "0",
+    "ros2px4.offboard_control_mode_velocity": "1",
+    "ros2px4.offboard_control_mode_acceleration": "0",
+    "ros2px4.offboard_control_mode_attitude": "1",
+    "ros2px4.topic": "/gen/offboard_control_mode"
+  }
+}

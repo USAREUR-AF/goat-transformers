@@ -1,0 +1,17 @@
+{
+  "name": "rt-orientation_constraint",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/orientation_constraint\",\"type\":\"moveit_msgs/msg/OrientationConstraint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049},\"link_name\":\"s8\",\"absolute_x_axis_tolerance\":-9.063,\"absolute_y_axis_tolerance\":10.07,\"absolute_z_axis_tolerance\":11.077,\"parameterization\":27,\"weight\":13.091},\"id\":\"gen-orientation_constraint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/orientation_constraint\",\"type\":\"moveit_msgs/msg/OrientationConstraint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049},\"link_name\":\"s8\",\"absolute_x_axis_tolerance\":-9.063,\"absolute_y_axis_tolerance\":10.07,\"absolute_z_axis_tolerance\":11.077,\"parameterization\":27,\"weight\":13.091},\"id\":\"gen-orientation_constraint\"}",
+  "model": {
+    "@kind": "orientation_constraint",
+    "ros2moveit.orientation_constraint_header_stamp_sec": "40510",
+    "ros2moveit.orientation_constraint_header_stamp_nanosec": "2147564661",
+    "ros2moveit.orientation_constraint_header_frame_id": "s3",
+    "ros2moveit.orientation_constraint_orientation_x": "4.028",
+    "ros2moveit.orientation_constraint_orientation_y": "5.035",
+    "ros2moveit.topic": "/gen/orientation_constraint"
+  }
+}

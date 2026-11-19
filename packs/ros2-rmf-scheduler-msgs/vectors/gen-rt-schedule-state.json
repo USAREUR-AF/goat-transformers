@@ -1,0 +1,17 @@
+{
+  "name": "rt-schedule_state",
+  "from": "ros2-rmf-scheduler-msgs",
+  "to": "ros2-rmf-scheduler-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_state\",\"type\":\"rmf_scheduler_msgs/msg/ScheduleState\",\"msg\":{\"name\":\"s1\",\"last_modified\":246913578026,\"last_ran\":-370370367039,\"next_run\":493827156052,\"status\":26},\"id\":\"gen-schedule_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_state\",\"type\":\"rmf_scheduler_msgs/msg/ScheduleState\",\"msg\":{\"name\":\"s1\",\"last_modified\":246913578026,\"last_ran\":-370370367039,\"next_run\":493827156052,\"status\":26},\"id\":\"gen-schedule_state\"}",
+  "model": {
+    "@kind": "schedule_state",
+    "ros2rmfscheduler.schedule_state_name": "s1",
+    "ros2rmfscheduler.schedule_state_last_modified": "246913578026",
+    "ros2rmfscheduler.schedule_state_last_ran": "-370370367039",
+    "ros2rmfscheduler.schedule_state_next_run": "493827156052",
+    "ros2rmfscheduler.schedule_state_status": "26",
+    "ros2rmfscheduler.topic": "/gen/schedule_state"
+  }
+}

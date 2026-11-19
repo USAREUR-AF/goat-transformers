@@ -1,0 +1,31 @@
+{
+  "name": "rt-collision_object",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/collision_object\",\"type\":\"moveit_msgs/msg/CollisionObject\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"id\":\"s11\",\"type\":{\"key\":\"s12\",\"db\":\"s13\"},\"primitives\":[{\"type\":137,\"dimensions\":[-15.105,16.112,17.119],\"polygon\":{\"points\":[{\"x\":-0.625,\"y\":-0.375,\"z\":-0.125}]}},{\"type\":10,\"dimensions\":[22.154,23.161,-24.168],\"polygon\":{\"points\":[{\"x\":1.125,\"y\":1.375,\"z\":1.625}]}}],\"primitive_poses\":[{\"position\":{\"x\":28.196,\"y\":29.203,\"z\":-30.21},\"orientation\":{\"x\":31.217,\"y\":32.224,\"z\":-33.231,\"w\":34.238}},{\"position\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259},\"orientation\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28,\"w\":41.287}}],\"meshes\":[{\"triangles\":[{\"vertex_indices\":[2149184781,2149225284,2149265787]}],\"vertices\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]},{\"triangles\":[{\"vertex_indices\":[2149427799,2149468302,2149508805]}],\"vertices\":[{\"x\":-51.357,\"y\":52.364,\"z\":53.371}]}],\"mesh_poses\":[{\"position\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392},\"orientation\":{\"x\":-57.399,\"y\":58.406,\"z\":59.413,\"w\":-60.42}},{\"position\":{\"x\":61.427,\"y\":62.434,\"z\":-63.441},\"orientation\":{\"x\":64.448,\"y\":65.455,\"z\":-66.462,\"w\":67.469}}],\"planes\":[{\"coef\":[68.476,-69.483,70.49,71.497]},{\"coef\":[-72.504,73.511,74.518,-75.525]}],\"plane_poses\":[{\"position\":{\"x\":76.532,\"y\":77.539,\"z\":-78.546},\"orientation\":{\"x\":79.553,\"y\":80.56,\"z\":-81.567,\"w\":82.574}},{\"position\":{\"x\":83.581,\"y\":-84.588,\"z\":85.595},\"orientation\":{\"x\":86.602,\"y\":-87.609,\"z\":88.616,\"w\":89.623}}],\"subframe_names\":[\"s90\",\"s91\"],\"subframe_poses\":[{\"position\":{\"x\":92.644,\"y\":-93.651,\"z\":94.658},\"orientation\":{\"x\":95.665,\"y\":-96.672,\"z\":97.679,\"w\":98.686}},{\"position\":{\"x\":-99.693,\"y\":100.7,\"z\":101.707},\"orientation\":{\"x\":-102.714,\"y\":103.721,\"z\":104.728,\"w\":-105.735}}],\"operation\":77},\"id\":\"gen-collision_object\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/collision_object\",\"type\":\"moveit_msgs/msg/CollisionObject\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"id\":\"s11\",\"type\":{\"key\":\"s12\",\"db\":\"s13\"},\"primitives\":[{\"type\":137,\"dimensions\":[-15.105,16.112,17.119],\"polygon\":{\"points\":[{\"x\":-0.625,\"y\":-0.375,\"z\":-0.125}]}},{\"type\":10,\"dimensions\":[22.154,23.161,-24.168],\"polygon\":{\"points\":[{\"x\":1.125,\"y\":1.375,\"z\":1.625}]}}],\"primitive_poses\":[{\"position\":{\"x\":28.196,\"y\":29.203,\"z\":-30.21},\"orientation\":{\"x\":31.217,\"y\":32.224,\"z\":-33.231,\"w\":34.238}},{\"position\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259},\"orientation\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28,\"w\":41.287}}],\"meshes\":[{\"triangles\":[{\"vertex_indices\":[2149184781,2149225284,2149265787]}],\"vertices\":[{\"x\":-45.315,\"y\":46.322,\"z\":47.329}]},{\"triangles\":[{\"vertex_indices\":[2149427799,2149468302,2149508805]}],\"vertices\":[{\"x\":-51.357,\"y\":52.364,\"z\":53.371}]}],\"mesh_poses\":[{\"position\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392},\"orientation\":{\"x\":-57.399,\"y\":58.406,\"z\":59.413,\"w\":-60.42}},{\"position\":{\"x\":61.427,\"y\":62.434,\"z\":-63.441},\"orientation\":{\"x\":64.448,\"y\":65.455,\"z\":-66.462,\"w\":67.469}}],\"planes\":[{\"coef\":[68.476,-69.483,70.49,71.497]},{\"coef\":[-72.504,73.511,74.518,-75.525]}],\"plane_poses\":[{\"position\":{\"x\":76.532,\"y\":77.539,\"z\":-78.546},\"orientation\":{\"x\":79.553,\"y\":80.56,\"z\":-81.567,\"w\":82.574}},{\"position\":{\"x\":83.581,\"y\":-84.588,\"z\":85.595},\"orientation\":{\"x\":86.602,\"y\":-87.609,\"z\":88.616,\"w\":89.623}}],\"subframe_names\":[\"s90\",\"s91\"],\"subframe_poses\":[{\"position\":{\"x\":92.644,\"y\":-93.651,\"z\":94.658},\"orientation\":{\"x\":95.665,\"y\":-96.672,\"z\":97.679,\"w\":98.686}},{\"position\":{\"x\":-99.693,\"y\":100.7,\"z\":101.707},\"orientation\":{\"x\":-102.714,\"y\":103.721,\"z\":104.728,\"w\":-105.735}}],\"operation\":77},\"id\":\"gen-collision_object\"}",
+  "model": {
+    "@kind": "collision_object",
+    "ros2moveit.collision_object_header_stamp_sec": "40510",
+    "ros2moveit.collision_object_header_stamp_nanosec": "2147564661",
+    "ros2moveit.collision_object_header_frame_id": "s3",
+    "ros2moveit.collision_object_pose_position_x": "4.028",
+    "ros2moveit.collision_object_pose_position_y": "5.035",
+    "ros2moveit.collision_object_primitives.#": "2",
+    "ros2moveit.collision_object_primitives[0].ros2moveit.collision_object_primitives_type": "137",
+    "ros2moveit.collision_object_primitive_poses.#": "2",
+    "ros2moveit.collision_object_primitive_poses[0].ros2moveit.collision_object_primitive_poses_position_x": "28.196",
+    "ros2moveit.collision_object_meshes.#": "2",
+    "ros2moveit.collision_object_mesh_poses.#": "2",
+    "ros2moveit.collision_object_mesh_poses[0].ros2moveit.collision_object_mesh_poses_position_x": "-54.378",
+    "ros2moveit.collision_object_planes.#": "2",
+    "ros2moveit.collision_object_plane_poses.#": "2",
+    "ros2moveit.collision_object_plane_poses[0].ros2moveit.collision_object_plane_poses_position_x": "76.532",
+    "ros2moveit.collision_object_subframe_names.#": "2",
+    "ros2moveit.collision_object_subframe_names[0].ros2moveit.collision_object_subframe_names_value": "s90",
+    "ros2moveit.collision_object_subframe_poses.#": "2",
+    "ros2moveit.collision_object_subframe_poses[0].ros2moveit.collision_object_subframe_poses_position_x": "92.644",
+    "ros2moveit.topic": "/gen/collision_object"
+  }
+}

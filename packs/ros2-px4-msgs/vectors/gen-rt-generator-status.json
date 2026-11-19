@@ -1,0 +1,17 @@
+{
+  "name": "rt-generator_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/generator_status\",\"type\":\"px4_msgs/msg/GeneratorStatus\",\"msg\":{\"timestamp\":123456789013,\"status\":246913578026,\"battery_current\":-4.375,\"load_current\":-4.125,\"power_generated\":-3.875,\"bus_voltage\":-3.625,\"bat_current_setpoint\":-3.375,\"runtime\":2147807679,\"time_until_maintenance\":364534,\"generator_speed\":44589,\"rectifier_temperature\":-13212,\"generator_temperature\":27291},\"id\":\"gen-generator_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/generator_status\",\"type\":\"px4_msgs/msg/GeneratorStatus\",\"msg\":{\"timestamp\":123456789013,\"status\":246913578026,\"battery_current\":-4.375,\"load_current\":-4.125,\"power_generated\":-3.875,\"bus_voltage\":-3.625,\"bat_current_setpoint\":-3.375,\"runtime\":2147807679,\"time_until_maintenance\":364534,\"generator_speed\":44589,\"rectifier_temperature\":-13212,\"generator_temperature\":27291},\"id\":\"gen-generator_status\"}",
+  "model": {
+    "@kind": "generator_status",
+    "ros2px4.generator_status_timestamp": "123456789013",
+    "ros2px4.generator_status_status": "246913578026",
+    "ros2px4.generator_status_battery_current": "-4.375",
+    "ros2px4.generator_status_load_current": "-4.125",
+    "ros2px4.generator_status_power_generated": "-3.875",
+    "ros2px4.topic": "/gen/generator_status"
+  }
+}

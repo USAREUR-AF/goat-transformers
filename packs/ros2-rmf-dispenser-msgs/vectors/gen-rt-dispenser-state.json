@@ -1,0 +1,19 @@
+{
+  "name": "rt-dispenser_state",
+  "from": "ros2-rmf-dispenser-msgs",
+  "to": "ros2-rmf-dispenser-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispenser_state\",\"type\":\"rmf_dispenser_msgs/msg/DispenserState\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"mode\":162019,\"request_guid_queue\":[\"s5\",\"s6\"],\"seconds_remaining\":-3.375},\"id\":\"gen-dispenser_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispenser_state\",\"type\":\"rmf_dispenser_msgs/msg/DispenserState\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"mode\":162019,\"request_guid_queue\":[\"s5\",\"s6\"],\"seconds_remaining\":-3.375},\"id\":\"gen-dispenser_state\"}",
+  "model": {
+    "@kind": "dispenser_state",
+    "ros2rmfdispenser.dispenser_state_time_sec": "40510",
+    "ros2rmfdispenser.dispenser_state_time_nanosec": "2147564661",
+    "ros2rmfdispenser.dispenser_state_guid": "s3",
+    "ros2rmfdispenser.dispenser_state_mode": "162019",
+    "ros2rmfdispenser.dispenser_state_request_guid_queue.#": "2",
+    "ros2rmfdispenser.dispenser_state_request_guid_queue[0].ros2rmfdispenser.dispenser_state_request_guid_queue_value": "s5",
+    "ros2rmfdispenser.dispenser_state_seconds_remaining": "-3.375",
+    "ros2rmfdispenser.topic": "/gen/dispenser_state"
+  }
+}

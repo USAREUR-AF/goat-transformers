@@ -1,0 +1,17 @@
+{
+  "name": "rt-tunnel",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tunnel\",\"type\":\"mavros_msgs/msg/Tunnel\",\"msg\":{\"target_system\":190,\"target_component\":245,\"payload_type\":23212,\"payload_length\":99,\"payload\":\"BQ//AIA=\"},\"id\":\"gen-tunnel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tunnel\",\"type\":\"mavros_msgs/msg/Tunnel\",\"msg\":{\"target_system\":190,\"target_component\":245,\"payload_type\":23212,\"payload_length\":99,\"payload\":\"BQ//AIA=\"},\"id\":\"gen-tunnel\"}",
+  "model": {
+    "@kind": "tunnel",
+    "ros2mavros.tunnel_target_system": "190",
+    "ros2mavros.tunnel_target_component": "245",
+    "ros2mavros.tunnel_payload_type": "23212",
+    "ros2mavros.tunnel_payload_length": "99",
+    "ros2mavros.tunnel_payload": "BQ//AIA=",
+    "ros2mavros.topic": "/gen/tunnel"
+  }
+}

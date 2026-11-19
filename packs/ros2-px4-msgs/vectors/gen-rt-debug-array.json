@@ -1,0 +1,17 @@
+{
+  "name": "rt-debug_array",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/debug_array\",\"type\":\"px4_msgs/msg/DebugArray\",\"msg\":{\"timestamp\":123456789013,\"id\":48245,\"name\":\"Awn/AIA=\",\"data\":[-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625,-0.375,-0.125,0.125,0.375,0.625,0.875,1.125,1.375,1.625,1.875,2.125,2.375,2.625,2.875,3.125,3.375,3.625,3.875,4.125,4.375,4.625,4.875,5.125,5.375,5.625,5.875,6.125,6.375,6.625,6.875,7.125,-5.125,-4.875,-4.625,-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375]},\"id\":\"gen-debug_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/debug_array\",\"type\":\"px4_msgs/msg/DebugArray\",\"msg\":{\"timestamp\":123456789013,\"id\":48245,\"name\":\"Awn/AIA=\",\"data\":[-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625,-0.375,-0.125,0.125,0.375,0.625,0.875,1.125,1.375,1.625,1.875,2.125,2.375,2.625,2.875,3.125,3.375,3.625,3.875,4.125,4.375,4.625,4.875,5.125,5.375,5.625,5.875,6.125,6.375,6.625,6.875,7.125,-5.125,-4.875,-4.625,-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375]},\"id\":\"gen-debug_array\"}",
+  "model": {
+    "@kind": "debug_array",
+    "ros2px4.debug_array_timestamp": "123456789013",
+    "ros2px4.debug_array_id": "48245",
+    "ros2px4.debug_array_name": "Awn/AIA=",
+    "ros2px4.debug_array_data.#": "58",
+    "ros2px4.debug_array_data[0].ros2px4.debug_array_data_value": "-4.125",
+    "ros2px4.topic": "/gen/debug_array"
+  }
+}

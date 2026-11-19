@@ -1,0 +1,15 @@
+{
+  "name": "rt-fixed_wing_lateral_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_lateral_status\",\"type\":\"px4_msgs/msg/FixedWingLateralStatus\",\"msg\":{\"timestamp\":123456789013,\"lateral_acceleration_setpoint\":-4.625,\"can_run_factor\":-4.375},\"id\":\"gen-fixed_wing_lateral_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_lateral_status\",\"type\":\"px4_msgs/msg/FixedWingLateralStatus\",\"msg\":{\"timestamp\":123456789013,\"lateral_acceleration_setpoint\":-4.625,\"can_run_factor\":-4.375},\"id\":\"gen-fixed_wing_lateral_status\"}",
+  "model": {
+    "@kind": "fixed_wing_lateral_status",
+    "ros2px4.fixed_wing_lateral_status_timestamp": "123456789013",
+    "ros2px4.fixed_wing_lateral_status_lateral_acceleration_setpoint": "-4.625",
+    "ros2px4.fixed_wing_lateral_status_can_run_factor": "-4.375",
+    "ros2px4.topic": "/gen/fixed_wing_lateral_status"
+  }
+}

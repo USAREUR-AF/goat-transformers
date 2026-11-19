@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_airflow",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_airflow\",\"type\":\"px4_msgs/msg/SensorAirflow\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"speed\":-4.375,\"direction\":-4.125,\"status\":154},\"id\":\"gen-sensor_airflow\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_airflow\",\"type\":\"px4_msgs/msg/SensorAirflow\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"speed\":-4.375,\"direction\":-4.125,\"status\":154},\"id\":\"gen-sensor_airflow\"}",
+  "model": {
+    "@kind": "sensor_airflow",
+    "ros2px4.sensor_airflow_timestamp": "123456789013",
+    "ros2px4.sensor_airflow_device_id": "2147564661",
+    "ros2px4.sensor_airflow_speed": "-4.375",
+    "ros2px4.sensor_airflow_direction": "-4.125",
+    "ros2px4.sensor_airflow_status": "154",
+    "ros2px4.topic": "/gen/sensor_airflow"
+  }
+}

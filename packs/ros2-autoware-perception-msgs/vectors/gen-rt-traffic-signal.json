@@ -1,0 +1,15 @@
+{
+  "name": "rt-traffic_signal",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_signal\",\"type\":\"autoware_perception_msgs/msg/TrafficSignal\",\"msg\":{\"traffic_signal_id\":-123456789013,\"elements\":[{\"color\":245,\"shape\":44,\"status\":99,\"confidence\":-3.875},{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-2.875}]},\"id\":\"gen-traffic_signal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_signal\",\"type\":\"autoware_perception_msgs/msg/TrafficSignal\",\"msg\":{\"traffic_signal_id\":-123456789013,\"elements\":[{\"color\":245,\"shape\":44,\"status\":99,\"confidence\":-3.875},{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-2.875}]},\"id\":\"gen-traffic_signal\"}",
+  "model": {
+    "@kind": "traffic_signal",
+    "ros2autowareperception.traffic_signal_traffic_signal_id": "-123456789013",
+    "ros2autowareperception.traffic_signal_elements.#": "2",
+    "ros2autowareperception.traffic_signal_elements[0].ros2autowareperception.traffic_signal_elements_color": "245",
+    "ros2autowareperception.topic": "/gen/traffic_signal"
+  }
+}

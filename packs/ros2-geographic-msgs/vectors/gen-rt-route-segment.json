@@ -1,0 +1,17 @@
+{
+  "name": "rt-route_segment",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_segment\",\"type\":\"geographic_msgs/msg/RouteSegment\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"start\":{\"uuid\":\"Agb/AIA=\"},\"end\":{\"uuid\":\"Awn/AIA=\"},\"props\":[{\"key\":\"s4\",\"value\":\"s5\"},{\"key\":\"s6\",\"value\":\"s7\"}]},\"id\":\"gen-route_segment\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_segment\",\"type\":\"geographic_msgs/msg/RouteSegment\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"start\":{\"uuid\":\"Agb/AIA=\"},\"end\":{\"uuid\":\"Awn/AIA=\"},\"props\":[{\"key\":\"s4\",\"value\":\"s5\"},{\"key\":\"s6\",\"value\":\"s7\"}]},\"id\":\"gen-route_segment\"}",
+  "model": {
+    "@kind": "route_segment",
+    "ros2geographic.route_segment_id_uuid": "AQP/AIA=",
+    "ros2geographic.route_segment_start_uuid": "Agb/AIA=",
+    "ros2geographic.route_segment_end_uuid": "Awn/AIA=",
+    "ros2geographic.route_segment_props.#": "2",
+    "ros2geographic.route_segment_props[0].ros2geographic.route_segment_props_key": "s4",
+    "ros2geographic.topic": "/gen/route_segment"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-vibration",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vibration\",\"type\":\"mavros_msgs/msg/Vibration\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vibration\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"clipping\":[-3.375,-3.125,-2.875]},\"id\":\"gen-vibration\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vibration\",\"type\":\"mavros_msgs/msg/Vibration\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vibration\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"clipping\":[-3.375,-3.125,-2.875]},\"id\":\"gen-vibration\"}",
+  "model": {
+    "@kind": "vibration",
+    "ros2mavros.vibration_header_stamp_sec": "40510",
+    "ros2mavros.vibration_header_stamp_nanosec": "2147564661",
+    "ros2mavros.vibration_header_frame_id": "s3",
+    "ros2mavros.vibration_vibration_x": "4.028",
+    "ros2mavros.vibration_vibration_y": "5.035",
+    "ros2mavros.vibration_clipping.#": "3",
+    "ros2mavros.vibration_clipping[0].ros2mavros.vibration_clipping_value": "-3.375",
+    "ros2mavros.topic": "/gen/vibration"
+  }
+}

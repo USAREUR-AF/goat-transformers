@@ -1,0 +1,21 @@
+{
+  "name": "rt-detected_object_kinematics",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/detected_object_kinematics\",\"type\":\"autoware_perception_msgs/msg/DetectedObjectKinematics\",\"msg\":{\"pose_with_covariance\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301]},\"has_position_covariance\":false,\"orientation_availability\":50,\"twist_with_covariance\":{\"twist\":{\"linear\":{\"x\":46.322,\"y\":47.329,\"z\":-48.336},\"angular\":{\"x\":49.343,\"y\":50.35,\"z\":-51.357}},\"covariance\":[52.364,53.371,-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609]},\"has_twist\":false,\"has_twist_covariance\":true},\"id\":\"gen-detected_object_kinematics\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/detected_object_kinematics\",\"type\":\"autoware_perception_msgs/msg/DetectedObjectKinematics\",\"msg\":{\"pose_with_covariance\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301]},\"has_position_covariance\":false,\"orientation_availability\":50,\"twist_with_covariance\":{\"twist\":{\"linear\":{\"x\":46.322,\"y\":47.329,\"z\":-48.336},\"angular\":{\"x\":49.343,\"y\":50.35,\"z\":-51.357}},\"covariance\":[52.364,53.371,-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609]},\"has_twist\":false,\"has_twist_covariance\":true},\"id\":\"gen-detected_object_kinematics\"}",
+  "model": {
+    "@kind": "detected_object_kinematics",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_x_2": "1.007",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_y_2": "2.014",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_position_z_2": "-3.021",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_orientation_x_2": "4.028",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_pose_orientation_y_2": "5.035",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance_2.#": "36",
+    "ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance_2[0].ros2autowareperception.detected_object_kinematics_pose_with_covariance_covariance_value_2": "8.056",
+    "ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance_2.#": "36",
+    "ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance_2[0].ros2autowareperception.detected_object_kinematics_twist_with_covariance_covariance_value_2": "52.364",
+    "ros2autowareperception.topic": "/gen/detected_object_kinematics"
+  }
+}

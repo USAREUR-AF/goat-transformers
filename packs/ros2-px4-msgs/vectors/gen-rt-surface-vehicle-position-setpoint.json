@@ -1,0 +1,20 @@
+{
+  "name": "rt-surface_vehicle_position_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_position_setpoint\",\"type\":\"px4_msgs/msg/SurfaceVehiclePositionSetpoint\",\"msg\":{\"timestamp\":123456789013,\"target_ned\":[-4.625,-4.375],\"start_ned\":[-4.125,-3.875],\"cruising_speed\":-3.625,\"arrival_speed\":-3.375,\"yaw\":-3.125},\"id\":\"gen-surface_vehicle_position_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_position_setpoint\",\"type\":\"px4_msgs/msg/SurfaceVehiclePositionSetpoint\",\"msg\":{\"timestamp\":123456789013,\"target_ned\":[-4.625,-4.375],\"start_ned\":[-4.125,-3.875],\"cruising_speed\":-3.625,\"arrival_speed\":-3.375,\"yaw\":-3.125},\"id\":\"gen-surface_vehicle_position_setpoint\"}",
+  "model": {
+    "@kind": "surface_vehicle_position_setpoint",
+    "ros2px4.surface_vehicle_position_setpoint_timestamp": "123456789013",
+    "ros2px4.surface_vehicle_position_setpoint_target_ned.#": "2",
+    "ros2px4.surface_vehicle_position_setpoint_target_ned[0].ros2px4.surface_vehicle_position_setpoint_target_ned_value": "-4.625",
+    "ros2px4.surface_vehicle_position_setpoint_start_ned.#": "2",
+    "ros2px4.surface_vehicle_position_setpoint_start_ned[0].ros2px4.surface_vehicle_position_setpoint_start_ned_value": "-4.125",
+    "ros2px4.surface_vehicle_position_setpoint_cruising_speed": "-3.625",
+    "ros2px4.surface_vehicle_position_setpoint_arrival_speed": "-3.375",
+    "ros2px4.surface_vehicle_position_setpoint_yaw": "-3.125",
+    "ros2px4.topic": "/gen/surface_vehicle_position_setpoint"
+  }
+}

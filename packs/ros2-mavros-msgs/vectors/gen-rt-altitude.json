@@ -1,0 +1,17 @@
+{
+  "name": "rt-altitude",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/altitude\",\"type\":\"mavros_msgs/msg/Altitude\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"monotonic\":-4.125,\"amsl\":-3.875,\"local\":-3.625,\"relative\":-3.375,\"terrain\":-3.125,\"bottom_clearance\":-2.875},\"id\":\"gen-altitude\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/altitude\",\"type\":\"mavros_msgs/msg/Altitude\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"monotonic\":-4.125,\"amsl\":-3.875,\"local\":-3.625,\"relative\":-3.375,\"terrain\":-3.125,\"bottom_clearance\":-2.875},\"id\":\"gen-altitude\"}",
+  "model": {
+    "@kind": "altitude",
+    "ros2mavros.altitude_header_stamp_sec": "40510",
+    "ros2mavros.altitude_header_stamp_nanosec": "2147564661",
+    "ros2mavros.altitude_header_frame_id": "s3",
+    "ros2mavros.altitude_monotonic": "-4.125",
+    "ros2mavros.altitude_amsl": "-3.875",
+    "ros2mavros.topic": "/gen/altitude"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-set_parameters_result",
+  "from": "ros2-rcl-interfaces",
+  "to": "ros2-rcl-interfaces",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/set_parameters_result\",\"type\":\"rcl_interfaces/msg/SetParametersResult\",\"msg\":{\"successful\":true,\"reason\":\"s2\"},\"id\":\"gen-set_parameters_result\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/set_parameters_result\",\"type\":\"rcl_interfaces/msg/SetParametersResult\",\"msg\":{\"successful\":true,\"reason\":\"s2\"},\"id\":\"gen-set_parameters_result\"}",
+  "model": {
+    "@kind": "set_parameters_result",
+    "ros2rcl.set_parameters_result_successful": "1",
+    "ros2rcl.set_parameters_result_reason": "s2",
+    "ros2rcl.topic": "/gen/set_parameters_result"
+  }
+}

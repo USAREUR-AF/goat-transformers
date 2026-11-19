@@ -1,0 +1,19 @@
+{
+  "name": "rt-lift_state",
+  "from": "ros2-rmf-lift-msgs",
+  "to": "ros2-rmf-lift-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lift_state\",\"type\":\"rmf_lift_msgs/msg/LiftState\",\"msg\":{\"lift_time\":{\"sec\":40510,\"nanosec\":2147564661},\"lift_name\":\"s3\",\"available_floors\":[\"s4\",\"s5\"],\"current_floor\":\"s6\",\"destination_floor\":\"s7\",\"door_state\":63,\"motion_state\":118,\"available_modes\":\"Ch7/AIA=\",\"current_mode\":228,\"session_id\":\"s12\"},\"id\":\"gen-lift_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lift_state\",\"type\":\"rmf_lift_msgs/msg/LiftState\",\"msg\":{\"lift_time\":{\"sec\":40510,\"nanosec\":2147564661},\"lift_name\":\"s3\",\"available_floors\":[\"s4\",\"s5\"],\"current_floor\":\"s6\",\"destination_floor\":\"s7\",\"door_state\":63,\"motion_state\":118,\"available_modes\":\"Ch7/AIA=\",\"current_mode\":228,\"session_id\":\"s12\"},\"id\":\"gen-lift_state\"}",
+  "model": {
+    "@kind": "lift_state",
+    "ros2rmflift.lift_state_lift_time_sec": "40510",
+    "ros2rmflift.lift_state_lift_time_nanosec": "2147564661",
+    "ros2rmflift.lift_state_lift_name": "s3",
+    "ros2rmflift.lift_state_available_floors.#": "2",
+    "ros2rmflift.lift_state_available_floors[0].ros2rmflift.lift_state_available_floors_value": "s4",
+    "ros2rmflift.lift_state_current_floor": "s6",
+    "ros2rmflift.lift_state_destination_floor": "s7",
+    "ros2rmflift.topic": "/gen/lift_state"
+  }
+}

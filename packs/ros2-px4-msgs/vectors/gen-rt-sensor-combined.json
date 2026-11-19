@@ -1,0 +1,21 @@
+{
+  "name": "rt-sensor_combined",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_combined\",\"type\":\"px4_msgs/msg/SensorCombined\",\"msg\":{\"timestamp\":123456789013,\"gyro_rad\":[-4.625,-4.375,-4.125],\"gyro_integral_dt\":2147686170,\"accelerometer_timestamp_relative\":243025,\"accelerometer_m_s2\":[-3.375,-3.125,-2.875],\"accelerometer_integral_dt\":2147888685,\"accelerometer_clipping\":228,\"gyro_clipping\":27,\"accel_calibration_count\":82,\"gyro_calibration_count\":137},\"id\":\"gen-sensor_combined\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_combined\",\"type\":\"px4_msgs/msg/SensorCombined\",\"msg\":{\"timestamp\":123456789013,\"gyro_rad\":[-4.625,-4.375,-4.125],\"gyro_integral_dt\":2147686170,\"accelerometer_timestamp_relative\":243025,\"accelerometer_m_s2\":[-3.375,-3.125,-2.875],\"accelerometer_integral_dt\":2147888685,\"accelerometer_clipping\":228,\"gyro_clipping\":27,\"accel_calibration_count\":82,\"gyro_calibration_count\":137},\"id\":\"gen-sensor_combined\"}",
+  "model": {
+    "@kind": "sensor_combined",
+    "ros2px4.sensor_combined_timestamp": "123456789013",
+    "ros2px4.sensor_combined_gyro_rad.#": "3",
+    "ros2px4.sensor_combined_gyro_rad[0].ros2px4.sensor_combined_gyro_rad_value": "-4.625",
+    "ros2px4.sensor_combined_gyro_integral_dt": "2147686170",
+    "ros2px4.sensor_combined_accelerometer_timestamp_relative": "243025",
+    "ros2px4.sensor_combined_accelerometer_m_s2.#": "3",
+    "ros2px4.sensor_combined_accelerometer_m_s2[0].ros2px4.sensor_combined_accelerometer_m_s2_value": "-3.375",
+    "ros2px4.sensor_combined_accelerometer_integral_dt": "2147888685",
+    "ros2px4.sensor_combined_accelerometer_clipping": "228",
+    "ros2px4.topic": "/gen/sensor_combined"
+  }
+}

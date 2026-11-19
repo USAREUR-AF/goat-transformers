@@ -1,0 +1,23 @@
+{
+ "RadarEcho:echoes[]": "radar_echo_echoes",
+ "RadarEcho:echoes[].": "radar_echo_echoes_value",
+ "RadarSector:angle_increment": "radar_sector_angle_increment",
+ "RadarSector:angle_start": "radar_sector_angle_start",
+ "RadarSector:header.frame_id": "radar_sector_header_frame_id",
+ "RadarSector:header.stamp.nanosec": "radar_sector_header_stamp_nanosec",
+ "RadarSector:header.stamp.sec": "radar_sector_header_stamp_sec",
+ "RadarSector:intensities[]": "radar_sector_intensities",
+ "RadarSector:intensities[].echoes[]": "radar_sector_intensities_echoes",
+ "RadarSector:intensities[].echoes[].": "radar_sector_intensities_echoes_value",
+ "RadarSector:range_max": "radar_sector_range_max",
+ "RadarSector:range_min": "radar_sector_range_min",
+ "RadarSector:scan_time.nanosec": "radar_sector_scan_time_nanosec",
+ "RadarSector:scan_time.sec": "radar_sector_scan_time_sec",
+ "RadarSector:time_increment.nanosec": "radar_sector_time_increment_nanosec",
+ "RadarSector:time_increment.sec": "radar_sector_time_increment_sec",
+ "TurbidityNTU:header.frame_id": "turbidity_ntu_header_frame_id",
+ "TurbidityNTU:header.stamp.nanosec": "turbidity_ntu_header_stamp_nanosec",
+ "TurbidityNTU:header.stamp.sec": "turbidity_ntu_header_stamp_sec",
+ "TurbidityNTU:ntu": "turbidity_ntu_ntu",
+ "topic": "topic"
+}

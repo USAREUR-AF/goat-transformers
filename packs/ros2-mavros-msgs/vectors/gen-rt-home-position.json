@@ -1,0 +1,17 @@
+{
+  "name": "rt-home_position",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/home_position\",\"type\":\"mavros_msgs/msg/HomePosition\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"geo\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042},\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091},\"approach\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"id\":\"gen-home_position\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/home_position\",\"type\":\"mavros_msgs/msg/HomePosition\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"geo\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042},\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091},\"approach\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"id\":\"gen-home_position\"}",
+  "model": {
+    "@kind": "home_position",
+    "ros2mavros.home_position_header_stamp_sec": "40510",
+    "ros2mavros.home_position_header_stamp_nanosec": "2147564661",
+    "ros2mavros.home_position_header_frame_id": "s3",
+    "lat": "4.028",
+    "lon": "5.035",
+    "ros2mavros.topic": "/gen/home_position"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-geo_point_stamped",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/geo_point_stamped\",\"type\":\"geographic_msgs/msg/GeoPointStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"position\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042}},\"id\":\"gen-geo_point_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/geo_point_stamped\",\"type\":\"geographic_msgs/msg/GeoPointStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"position\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042}},\"id\":\"gen-geo_point_stamped\"}",
+  "model": {
+    "@kind": "geo_point_stamped",
+    "ros2geographic.geo_point_stamped_header_stamp_sec": "40510",
+    "ros2geographic.geo_point_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geographic.geo_point_stamped_header_frame_id": "s3",
+    "lat": "4.028",
+    "lon": "5.035",
+    "ros2geographic.topic": "/gen/geo_point_stamped"
+  }
+}

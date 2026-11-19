@@ -1,0 +1,19 @@
+{
+  "name": "rt-camera_capture",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/camera_capture\",\"type\":\"px4_msgs/msg/CameraCapture\",\"msg\":{\"timestamp\":123456789013,\"timestamp_utc\":246913578026,\"seq\":2147605164,\"lat\":4.028,\"lon\":5.035,\"alt\":-3.625,\"ground_distance\":-3.375,\"q\":[-3.125,-2.875,-2.625,-2.375],\"result\":-101,\"report\":true},\"id\":\"gen-camera_capture\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/camera_capture\",\"type\":\"px4_msgs/msg/CameraCapture\",\"msg\":{\"timestamp\":123456789013,\"timestamp_utc\":246913578026,\"seq\":2147605164,\"lat\":4.028,\"lon\":5.035,\"alt\":-3.625,\"ground_distance\":-3.375,\"q\":[-3.125,-2.875,-2.625,-2.375],\"result\":-101,\"report\":true},\"id\":\"gen-camera_capture\"}",
+  "model": {
+    "@kind": "camera_capture",
+    "ros2px4.camera_capture_timestamp": "123456789013",
+    "ros2px4.camera_capture_timestamp_utc": "246913578026",
+    "ros2px4.camera_capture_seq": "2147605164",
+    "lat": "4.028",
+    "lon": "5.035",
+    "ros2px4.camera_capture_q.#": "4",
+    "ros2px4.camera_capture_q[0].ros2px4.camera_capture_q_value": "-3.125",
+    "ros2px4.topic": "/gen/camera_capture"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-schedule_change_add",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_add\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeAdd\",\"msg\":{\"plan_id\":123456789013,\"items\":[{\"route_id\":246913578026,\"storage_id\":370370367039,\"route\":{\"map\":\"s4\",\"trajectory\":{\"waypoints\":[{\"time\":-617283945065,\"position\":[-6.042,7.049,8.056],\"velocity\":[-9.063,10.07,11.077]}]},\"checkpoints\":[1481481468156],\"dependencies\":[{\"dependent_checkpoint\":1604938257169,\"on_participant\":1728395046182,\"on_plan\":1851851835195,\"on_route\":1975308624208,\"on_checkpoint\":2098765413221}]}},{\"route_id\":2222222202234,\"storage_id\":2345678991247,\"route\":{\"map\":\"s20\",\"trajectory\":{\"waypoints\":[{\"time\":-2592592569273,\"position\":[22.154,23.161,-24.168],\"velocity\":[25.175,26.182,-27.189]}]},\"checkpoints\":[3456790092364],\"dependencies\":[{\"dependent_checkpoint\":3580246881377,\"on_participant\":3703703670390,\"on_plan\":3827160459403,\"on_route\":3950617248416,\"on_checkpoint\":4074074037429}]}}]},\"id\":\"gen-schedule_change_add\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_add\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeAdd\",\"msg\":{\"plan_id\":123456789013,\"items\":[{\"route_id\":246913578026,\"storage_id\":370370367039,\"route\":{\"map\":\"s4\",\"trajectory\":{\"waypoints\":[{\"time\":-617283945065,\"position\":[-6.042,7.049,8.056],\"velocity\":[-9.063,10.07,11.077]}]},\"checkpoints\":[1481481468156],\"dependencies\":[{\"dependent_checkpoint\":1604938257169,\"on_participant\":1728395046182,\"on_plan\":1851851835195,\"on_route\":1975308624208,\"on_checkpoint\":2098765413221}]}},{\"route_id\":2222222202234,\"storage_id\":2345678991247,\"route\":{\"map\":\"s20\",\"trajectory\":{\"waypoints\":[{\"time\":-2592592569273,\"position\":[22.154,23.161,-24.168],\"velocity\":[25.175,26.182,-27.189]}]},\"checkpoints\":[3456790092364],\"dependencies\":[{\"dependent_checkpoint\":3580246881377,\"on_participant\":3703703670390,\"on_plan\":3827160459403,\"on_route\":3950617248416,\"on_checkpoint\":4074074037429}]}}]},\"id\":\"gen-schedule_change_add\"}",
+  "model": {
+    "@kind": "schedule_change_add",
+    "ros2rmftraffic.schedule_change_add_plan_id": "123456789013",
+    "ros2rmftraffic.schedule_change_add_items.#": "2",
+    "ros2rmftraffic.schedule_change_add_items[0].ros2rmftraffic.schedule_change_add_items_route_id": "246913578026",
+    "ros2rmftraffic.topic": "/gen/schedule_change_add"
+  }
+}

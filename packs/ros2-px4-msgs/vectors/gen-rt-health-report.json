@@ -1,0 +1,17 @@
+{
+  "name": "rt-health_report",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/health_report\",\"type\":\"px4_msgs/msg/HealthReport\",\"msg\":{\"timestamp\":123456789013,\"can_arm_mode_flags\":246913578026,\"can_run_mode_flags\":370370367039,\"health_is_present_flags\":493827156052,\"health_warning_flags\":617283945065,\"health_error_flags\":740740734078,\"arming_check_warning_flags\":864197523091,\"arming_check_error_flags\":987654312104},\"id\":\"gen-health_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/health_report\",\"type\":\"px4_msgs/msg/HealthReport\",\"msg\":{\"timestamp\":123456789013,\"can_arm_mode_flags\":246913578026,\"can_run_mode_flags\":370370367039,\"health_is_present_flags\":493827156052,\"health_warning_flags\":617283945065,\"health_error_flags\":740740734078,\"arming_check_warning_flags\":864197523091,\"arming_check_error_flags\":987654312104},\"id\":\"gen-health_report\"}",
+  "model": {
+    "@kind": "health_report",
+    "ros2px4.health_report_timestamp": "123456789013",
+    "ros2px4.health_report_can_arm_mode_flags": "246913578026",
+    "ros2px4.health_report_can_run_mode_flags": "370370367039",
+    "ros2px4.health_report_health_is_present_flags": "493827156052",
+    "ros2px4.health_report_health_warning_flags": "617283945065",
+    "ros2px4.topic": "/gen/health_report"
+  }
+}

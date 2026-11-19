@@ -1,0 +1,17 @@
+{
+  "name": "rt-adsb_vehicle",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/adsb_vehicle\",\"type\":\"mavros_msgs/msg/ADSBVehicle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"icao_address\":2147645667,\"callsign\":\"s5\",\"latitude\":-6.042,\"longitude\":7.049,\"altitude\":-3.125,\"heading\":-2.875,\"hor_velocity\":-2.625,\"ver_velocity\":-2.375,\"altitude_type\":27,\"emitter_type\":82,\"tslc\":{\"sec\":567049,\"nanosec\":2148091200},\"flags\":25463,\"squawk\":430},\"id\":\"gen-adsb_vehicle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/adsb_vehicle\",\"type\":\"mavros_msgs/msg/ADSBVehicle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"icao_address\":2147645667,\"callsign\":\"s5\",\"latitude\":-6.042,\"longitude\":7.049,\"altitude\":-3.125,\"heading\":-2.875,\"hor_velocity\":-2.625,\"ver_velocity\":-2.375,\"altitude_type\":27,\"emitter_type\":82,\"tslc\":{\"sec\":567049,\"nanosec\":2148091200},\"flags\":25463,\"squawk\":430},\"id\":\"gen-adsb_vehicle\"}",
+  "model": {
+    "@kind": "adsb_vehicle",
+    "ros2mavros.adsb_vehicle_header_stamp_sec": "40510",
+    "ros2mavros.adsb_vehicle_header_stamp_nanosec": "2147564661",
+    "ros2mavros.adsb_vehicle_header_frame_id": "s3",
+    "ros2mavros.adsb_vehicle_icao_address": "2147645667",
+    "ros2mavros.adsb_vehicle_callsign": "s5",
+    "ros2mavros.topic": "/gen/adsb_vehicle"
+  }
+}

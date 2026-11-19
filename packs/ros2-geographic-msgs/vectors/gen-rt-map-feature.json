@@ -1,0 +1,17 @@
+{
+  "name": "rt-map_feature",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/map_feature\",\"type\":\"geographic_msgs/msg/MapFeature\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"components\":[{\"uuid\":\"Agb/AIA=\"},{\"uuid\":\"Awn/AIA=\"}],\"props\":[{\"key\":\"s4\",\"value\":\"s5\"},{\"key\":\"s6\",\"value\":\"s7\"}]},\"id\":\"gen-map_feature\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/map_feature\",\"type\":\"geographic_msgs/msg/MapFeature\",\"msg\":{\"id\":{\"uuid\":\"AQP/AIA=\"},\"components\":[{\"uuid\":\"Agb/AIA=\"},{\"uuid\":\"Awn/AIA=\"}],\"props\":[{\"key\":\"s4\",\"value\":\"s5\"},{\"key\":\"s6\",\"value\":\"s7\"}]},\"id\":\"gen-map_feature\"}",
+  "model": {
+    "@kind": "map_feature",
+    "ros2geographic.map_feature_id_uuid": "AQP/AIA=",
+    "ros2geographic.map_feature_components.#": "2",
+    "ros2geographic.map_feature_components[0].ros2geographic.map_feature_components_uuid": "Agb/AIA=",
+    "ros2geographic.map_feature_props.#": "2",
+    "ros2geographic.map_feature_props[0].ros2geographic.map_feature_props_key": "s4",
+    "ros2geographic.topic": "/gen/map_feature"
+  }
+}

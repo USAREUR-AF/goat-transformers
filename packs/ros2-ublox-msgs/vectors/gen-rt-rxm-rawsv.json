@@ -1,0 +1,17 @@
+{
+  "name": "rt-rxm_rawsv",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawsv\",\"type\":\"ublox_msgs/msg/RxmRAWSV\",\"msg\":{\"cp_mes\":1.007,\"pr_mes\":2.014,\"do_mes\":-4.375,\"sv\":99,\"mes_qi\":26,\"cno\":81,\"lli\":8},\"id\":\"gen-rxm_rawsv\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rawsv\",\"type\":\"ublox_msgs/msg/RxmRAWSV\",\"msg\":{\"cp_mes\":1.007,\"pr_mes\":2.014,\"do_mes\":-4.375,\"sv\":99,\"mes_qi\":26,\"cno\":81,\"lli\":8},\"id\":\"gen-rxm_rawsv\"}",
+  "model": {
+    "@kind": "rxm_rawsv",
+    "ros2ublox.rxm_rawsv_cp_mes": "1.007",
+    "ros2ublox.rxm_rawsv_pr_mes": "2.014",
+    "ros2ublox.rxm_rawsv_do_mes": "-4.375",
+    "ros2ublox.rxm_rawsv_sv": "99",
+    "ros2ublox.rxm_rawsv_mes_qi": "26",
+    "ros2ublox.topic": "/gen/rxm_rawsv"
+  }
+}

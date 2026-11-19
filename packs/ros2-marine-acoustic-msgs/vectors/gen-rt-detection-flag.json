@@ -1,0 +1,13 @@
+{
+  "name": "rt-detection_flag",
+  "from": "ros2-marine-acoustic-msgs",
+  "to": "ros2-marine-acoustic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/detection_flag\",\"type\":\"marine_acoustic_msgs/msg/DetectionFlag\",\"msg\":{\"flag\":190},\"id\":\"gen-detection_flag\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/detection_flag\",\"type\":\"marine_acoustic_msgs/msg/DetectionFlag\",\"msg\":{\"flag\":190},\"id\":\"gen-detection_flag\"}",
+  "model": {
+    "@kind": "detection_flag",
+    "ros2marineacoustic.detection_flag_flag": "190",
+    "ros2marineacoustic.topic": "/gen/detection_flag"
+  }
+}

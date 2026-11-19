@@ -1,0 +1,16 @@
+{
+  "name": "rt-behavior_tree_log",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_tree_log\",\"type\":\"nav2_msgs/msg/BehaviorTreeLog\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"event_log\":[{\"timestamp\":{\"sec\":121516,\"nanosec\":2147645667},\"node_name\":\"s5\",\"uid\":13649,\"previous_status\":\"s7\",\"current_status\":\"s8\"},{\"timestamp\":{\"sec\":364534,\"nanosec\":2147888685},\"node_name\":\"s11\",\"uid\":60059,\"previous_status\":\"s13\",\"current_status\":\"s14\"}]},\"id\":\"gen-behavior_tree_log\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/behavior_tree_log\",\"type\":\"nav2_msgs/msg/BehaviorTreeLog\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"event_log\":[{\"timestamp\":{\"sec\":121516,\"nanosec\":2147645667},\"node_name\":\"s5\",\"uid\":13649,\"previous_status\":\"s7\",\"current_status\":\"s8\"},{\"timestamp\":{\"sec\":364534,\"nanosec\":2147888685},\"node_name\":\"s11\",\"uid\":60059,\"previous_status\":\"s13\",\"current_status\":\"s14\"}]},\"id\":\"gen-behavior_tree_log\"}",
+  "model": {
+    "@kind": "behavior_tree_log",
+    "ros2nav2.behavior_tree_log_timestamp_sec": "40510",
+    "ros2nav2.behavior_tree_log_timestamp_nanosec": "2147564661",
+    "ros2nav2.behavior_tree_log_event_log.#": "2",
+    "ros2nav2.behavior_tree_log_event_log[0].ros2nav2.behavior_tree_log_event_log_timestamp_sec": "121516",
+    "ros2nav2.topic": "/gen/behavior_tree_log"
+  }
+}

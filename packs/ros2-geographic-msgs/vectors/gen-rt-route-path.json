@@ -1,0 +1,20 @@
+{
+  "name": "rt-route_path",
+  "from": "ros2-geographic-msgs",
+  "to": "ros2-geographic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_path\",\"type\":\"geographic_msgs/msg/RoutePath\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"network\":{\"uuid\":\"BAz/AIA=\"},\"segments\":[{\"uuid\":\"BQ//AIA=\"},{\"uuid\":\"BhL/AIA=\"}],\"props\":[{\"key\":\"s7\",\"value\":\"s8\"},{\"key\":\"s9\",\"value\":\"s10\"}]},\"id\":\"gen-route_path\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_path\",\"type\":\"geographic_msgs/msg/RoutePath\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"network\":{\"uuid\":\"BAz/AIA=\"},\"segments\":[{\"uuid\":\"BQ//AIA=\"},{\"uuid\":\"BhL/AIA=\"}],\"props\":[{\"key\":\"s7\",\"value\":\"s8\"},{\"key\":\"s9\",\"value\":\"s10\"}]},\"id\":\"gen-route_path\"}",
+  "model": {
+    "@kind": "route_path",
+    "ros2geographic.route_path_header_stamp_sec": "40510",
+    "ros2geographic.route_path_header_stamp_nanosec": "2147564661",
+    "ros2geographic.route_path_header_frame_id": "s3",
+    "ros2geographic.route_path_network_uuid": "BAz/AIA=",
+    "ros2geographic.route_path_segments.#": "2",
+    "ros2geographic.route_path_segments[0].ros2geographic.route_path_segments_uuid": "BQ//AIA=",
+    "ros2geographic.route_path_props.#": "2",
+    "ros2geographic.route_path_props[0].ros2geographic.route_path_props_key": "s7",
+    "ros2geographic.topic": "/gen/route_path"
+  }
+}

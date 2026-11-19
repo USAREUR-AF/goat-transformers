@@ -1,0 +1,17 @@
+{
+  "name": "rt-raw_audio",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/raw_audio\",\"type\":\"foxglove_msgs/msg/RawAudio\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":\"Awn/AIA=\",\"format\":\"s4\",\"sample_rate\":2147686170,\"number_of_channels\":2147726673},\"id\":\"gen-raw_audio\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/raw_audio\",\"type\":\"foxglove_msgs/msg/RawAudio\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":\"Awn/AIA=\",\"format\":\"s4\",\"sample_rate\":2147686170,\"number_of_channels\":2147726673},\"id\":\"gen-raw_audio\"}",
+  "model": {
+    "@kind": "raw_audio",
+    "ros2foxglove.raw_audio_timestamp_sec": "40510",
+    "ros2foxglove.raw_audio_timestamp_nanosec": "2147564661",
+    "ros2foxglove.raw_audio_data": "Awn/AIA=",
+    "ros2foxglove.raw_audio_format": "s4",
+    "ros2foxglove.raw_audio_sample_rate": "2147686170",
+    "ros2foxglove.topic": "/gen/raw_audio"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-predicted_traffic_light_state",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_traffic_light_state\",\"type\":\"autoware_perception_msgs/msg/PredictedTrafficLightState\",\"msg\":{\"predicted_stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"simultaneous_elements\":[{\"color\":44,\"shape\":99,\"status\":154,\"confidence\":-3.625},{\"color\":8,\"shape\":63,\"status\":118,\"confidence\":-2.625}],\"reliability\":-2.375,\"information_source\":\"s12\"},\"id\":\"gen-predicted_traffic_light_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/predicted_traffic_light_state\",\"type\":\"autoware_perception_msgs/msg/PredictedTrafficLightState\",\"msg\":{\"predicted_stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"simultaneous_elements\":[{\"color\":44,\"shape\":99,\"status\":154,\"confidence\":-3.625},{\"color\":8,\"shape\":63,\"status\":118,\"confidence\":-2.625}],\"reliability\":-2.375,\"information_source\":\"s12\"},\"id\":\"gen-predicted_traffic_light_state\"}",
+  "model": {
+    "@kind": "predicted_traffic_light_state",
+    "ros2autowareperception.predicted_traffic_light_state_predicted_stamp_sec": "40510",
+    "ros2autowareperception.predicted_traffic_light_state_predicted_stamp_nanosec": "2147564661",
+    "ros2autowareperception.predicted_traffic_light_state_simultaneous_elements.#": "2",
+    "ros2autowareperception.predicted_traffic_light_state_simultaneous_elements[0].ros2autowareperception.predicted_traffic_light_state_simultaneous_elements_color": "44",
+    "ros2autowareperception.predicted_traffic_light_state_reliability": "-2.375",
+    "ros2autowareperception.predicted_traffic_light_state_information_source": "s12",
+    "ros2autowareperception.topic": "/gen/predicted_traffic_light_state"
+  }
+}

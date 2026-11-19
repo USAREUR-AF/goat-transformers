@@ -1,0 +1,14 @@
+{
+  "name": "rt-radar_echo",
+  "from": "ros2-marine-sensor-msgs",
+  "to": "ros2-marine-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/radar_echo\",\"type\":\"marine_sensor_msgs/msg/RadarEcho\",\"msg\":{\"echoes\":[-4.875,-4.625]},\"id\":\"gen-radar_echo\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/radar_echo\",\"type\":\"marine_sensor_msgs/msg/RadarEcho\",\"msg\":{\"echoes\":[-4.875,-4.625]},\"id\":\"gen-radar_echo\"}",
+  "model": {
+    "@kind": "radar_echo",
+    "ros2marinesensor.radar_echo_echoes.#": "2",
+    "ros2marinesensor.radar_echo_echoes[0].ros2marinesensor.radar_echo_echoes_value": "-4.875",
+    "ros2marinesensor.topic": "/gen/radar_echo"
+  }
+}

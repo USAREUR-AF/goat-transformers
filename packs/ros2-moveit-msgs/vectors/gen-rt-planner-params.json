@@ -1,0 +1,18 @@
+{
+  "name": "rt-planner_params",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/planner_params\",\"type\":\"moveit_msgs/msg/PlannerParams\",\"msg\":{\"keys\":[\"s1\",\"s2\"],\"values\":[\"s3\",\"s4\"],\"descriptions\":[\"s5\",\"s6\"]},\"id\":\"gen-planner_params\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/planner_params\",\"type\":\"moveit_msgs/msg/PlannerParams\",\"msg\":{\"keys\":[\"s1\",\"s2\"],\"values\":[\"s3\",\"s4\"],\"descriptions\":[\"s5\",\"s6\"]},\"id\":\"gen-planner_params\"}",
+  "model": {
+    "@kind": "planner_params",
+    "ros2moveit.planner_params_keys.#": "2",
+    "ros2moveit.planner_params_keys[0].ros2moveit.planner_params_keys_value": "s1",
+    "ros2moveit.planner_params_values.#": "2",
+    "ros2moveit.planner_params_values[0].ros2moveit.planner_params_values_value": "s3",
+    "ros2moveit.planner_params_descriptions.#": "2",
+    "ros2moveit.planner_params_descriptions[0].ros2moveit.planner_params_descriptions_value": "s5",
+    "ros2moveit.topic": "/gen/planner_params"
+  }
+}

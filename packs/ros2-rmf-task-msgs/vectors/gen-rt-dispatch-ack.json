@@ -1,0 +1,16 @@
+{
+  "name": "rt-dispatch_ack",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_ack\",\"type\":\"rmf_task_msgs/msg/DispatchAck\",\"msg\":{\"dispatch_id\":123456789013,\"success\":false,\"errors\":[\"s3\",\"s4\"]},\"id\":\"gen-dispatch_ack\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispatch_ack\",\"type\":\"rmf_task_msgs/msg/DispatchAck\",\"msg\":{\"dispatch_id\":123456789013,\"success\":false,\"errors\":[\"s3\",\"s4\"]},\"id\":\"gen-dispatch_ack\"}",
+  "model": {
+    "@kind": "dispatch_ack",
+    "ros2rmftask.dispatch_ack_dispatch_id": "123456789013",
+    "ros2rmftask.dispatch_ack_success": "0",
+    "ros2rmftask.dispatch_ack_errors.#": "2",
+    "ros2rmftask.dispatch_ack_errors[0].ros2rmftask.dispatch_ack_errors_value": "s3",
+    "ros2rmftask.topic": "/gen/dispatch_ack"
+  }
+}

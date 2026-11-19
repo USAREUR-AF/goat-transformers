@@ -1,0 +1,17 @@
+{
+  "name": "rt-gphdt",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gphdt\",\"type\":\"novatel_gps_msgs/msg/Gphdt\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"heading\":5.035,\"t\":\"s6\"},\"id\":\"gen-gphdt\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gphdt\",\"type\":\"novatel_gps_msgs/msg/Gphdt\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"heading\":5.035,\"t\":\"s6\"},\"id\":\"gen-gphdt\"}",
+  "model": {
+    "@kind": "gphdt",
+    "ros2novatelgps.gphdt_header_stamp_sec": "40510",
+    "ros2novatelgps.gphdt_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.gphdt_header_frame_id": "s3",
+    "ros2novatelgps.gphdt_message_id": "s4",
+    "ros2novatelgps.gphdt_heading": "5.035",
+    "ros2novatelgps.topic": "/gen/gphdt"
+  }
+}

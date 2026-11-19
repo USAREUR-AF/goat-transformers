@@ -1,0 +1,17 @@
+{
+  "name": "rt-schedule_inconsistency",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_inconsistency\",\"type\":\"rmf_traffic_msgs/msg/ScheduleInconsistency\",\"msg\":{\"participant\":123456789013,\"ranges\":[{\"lower\":246913578026,\"upper\":370370367039},{\"lower\":493827156052,\"upper\":617283945065}],\"last_known_itinerary\":740740734078,\"last_known_progress\":864197523091},\"id\":\"gen-schedule_inconsistency\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_inconsistency\",\"type\":\"rmf_traffic_msgs/msg/ScheduleInconsistency\",\"msg\":{\"participant\":123456789013,\"ranges\":[{\"lower\":246913578026,\"upper\":370370367039},{\"lower\":493827156052,\"upper\":617283945065}],\"last_known_itinerary\":740740734078,\"last_known_progress\":864197523091},\"id\":\"gen-schedule_inconsistency\"}",
+  "model": {
+    "@kind": "schedule_inconsistency",
+    "ros2rmftraffic.schedule_inconsistency_participant": "123456789013",
+    "ros2rmftraffic.schedule_inconsistency_ranges.#": "2",
+    "ros2rmftraffic.schedule_inconsistency_ranges[0].ros2rmftraffic.schedule_inconsistency_ranges_lower": "246913578026",
+    "ros2rmftraffic.schedule_inconsistency_last_known_itinerary": "740740734078",
+    "ros2rmftraffic.schedule_inconsistency_last_known_progress": "864197523091",
+    "ros2rmftraffic.topic": "/gen/schedule_inconsistency"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-novatel_receiver_status",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_receiver_status\",\"type\":\"novatel_gps_msgs/msg/NovatelReceiverStatus\",\"msg\":{\"original_status_code\":2147524158,\"error_flag\":false,\"temperature_flag\":true,\"voltage_supply_flag\":false,\"antenna_powered\":true,\"antenna_is_open\":false,\"antenna_is_shorted\":true,\"cpu_overload_flag\":false,\"com1_buffer_overrun\":true,\"com2_buffer_overrun\":false,\"com3_buffer_overrun\":true,\"usb_buffer_overrun\":false,\"rf1_agc_flag\":true,\"rf2_agc_flag\":false,\"almanac_flag\":true,\"position_solution_flag\":false,\"position_fixed_flag\":true,\"clock_steering_status_enabled\":false,\"clock_model_flag\":true,\"oemv_external_oscillator_flag\":false,\"software_resource_flag\":true,\"aux1_status_event_flag\":false,\"aux2_status_event_flag\":true,\"aux3_status_event_flag\":false},\"id\":\"gen-novatel_receiver_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_receiver_status\",\"type\":\"novatel_gps_msgs/msg/NovatelReceiverStatus\",\"msg\":{\"original_status_code\":2147524158,\"error_flag\":false,\"temperature_flag\":true,\"voltage_supply_flag\":false,\"antenna_powered\":true,\"antenna_is_open\":false,\"antenna_is_shorted\":true,\"cpu_overload_flag\":false,\"com1_buffer_overrun\":true,\"com2_buffer_overrun\":false,\"com3_buffer_overrun\":true,\"usb_buffer_overrun\":false,\"rf1_agc_flag\":true,\"rf2_agc_flag\":false,\"almanac_flag\":true,\"position_solution_flag\":false,\"position_fixed_flag\":true,\"clock_steering_status_enabled\":false,\"clock_model_flag\":true,\"oemv_external_oscillator_flag\":false,\"software_resource_flag\":true,\"aux1_status_event_flag\":false,\"aux2_status_event_flag\":true,\"aux3_status_event_flag\":false},\"id\":\"gen-novatel_receiver_status\"}",
+  "model": {
+    "@kind": "novatel_receiver_status",
+    "ros2novatelgps.novatel_receiver_status_original_status_code": "2147524158",
+    "ros2novatelgps.novatel_receiver_status_error_flag": "0",
+    "ros2novatelgps.novatel_receiver_status_temperature_flag": "1",
+    "ros2novatelgps.novatel_receiver_status_voltage_supply_flag": "0",
+    "ros2novatelgps.novatel_receiver_status_antenna_powered": "1",
+    "ros2novatelgps.topic": "/gen/novatel_receiver_status"
+  }
+}

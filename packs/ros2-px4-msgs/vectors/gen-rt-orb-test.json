@@ -1,0 +1,14 @@
+{
+  "name": "rt-orb_test",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/orb_test\",\"type\":\"px4_msgs/msg/OrbTest\",\"msg\":{\"timestamp\":123456789013,\"val\":81013},\"id\":\"gen-orb_test\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/orb_test\",\"type\":\"px4_msgs/msg/OrbTest\",\"msg\":{\"timestamp\":123456789013,\"val\":81013},\"id\":\"gen-orb_test\"}",
+  "model": {
+    "@kind": "orb_test",
+    "ros2px4.orb_test_timestamp": "123456789013",
+    "ros2px4.orb_test_val": "81013",
+    "ros2px4.topic": "/gen/orb_test"
+  }
+}

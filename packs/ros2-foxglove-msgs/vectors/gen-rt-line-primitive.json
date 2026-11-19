@@ -1,0 +1,23 @@
+{
+  "name": "rt-line_primitive",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/line_primitive\",\"type\":\"foxglove_msgs/msg/LinePrimitive\",\"msg\":{\"type\":190,\"pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"thickness\":-9.063,\"scale_invariant\":false,\"points\":[{\"x\":11.077,\"y\":-12.084,\"z\":13.091},{\"x\":14.098,\"y\":-15.105,\"z\":16.112}],\"color\":{\"r\":17.119,\"g\":-18.126,\"b\":19.133,\"a\":20.14},\"colors\":[{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},{\"r\":25.175,\"g\":26.182,\"b\":-27.189,\"a\":28.196}],\"indices\":[2148658242,2148698745]},\"id\":\"gen-line_primitive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/line_primitive\",\"type\":\"foxglove_msgs/msg/LinePrimitive\",\"msg\":{\"type\":190,\"pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"thickness\":-9.063,\"scale_invariant\":false,\"points\":[{\"x\":11.077,\"y\":-12.084,\"z\":13.091},{\"x\":14.098,\"y\":-15.105,\"z\":16.112}],\"color\":{\"r\":17.119,\"g\":-18.126,\"b\":19.133,\"a\":20.14},\"colors\":[{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},{\"r\":25.175,\"g\":26.182,\"b\":-27.189,\"a\":28.196}],\"indices\":[2148658242,2148698745]},\"id\":\"gen-line_primitive\"}",
+  "model": {
+    "@kind": "line_primitive",
+    "ros2foxglove.line_primitive_type": "190",
+    "ros2foxglove.line_primitive_pose_position_x": "2.014",
+    "ros2foxglove.line_primitive_pose_position_y": "-3.021",
+    "ros2foxglove.line_primitive_pose_position_z": "4.028",
+    "ros2foxglove.line_primitive_pose_orientation_x": "5.035",
+    "ros2foxglove.line_primitive_points.#": "2",
+    "ros2foxglove.line_primitive_points[0].ros2foxglove.line_primitive_points_x": "11.077",
+    "ros2foxglove.line_primitive_colors.#": "2",
+    "ros2foxglove.line_primitive_colors[0].ros2foxglove.line_primitive_colors_r": "-21.147",
+    "ros2foxglove.line_primitive_indices.#": "2",
+    "ros2foxglove.line_primitive_indices[0].ros2foxglove.line_primitive_indices_value": "2148658242",
+    "ros2foxglove.topic": "/gen/line_primitive"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-power_button_state",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/power_button_state\",\"type\":\"px4_msgs/msg/PowerButtonState\",\"msg\":{\"timestamp\":123456789013,\"event\":245},\"id\":\"gen-power_button_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/power_button_state\",\"type\":\"px4_msgs/msg/PowerButtonState\",\"msg\":{\"timestamp\":123456789013,\"event\":245},\"id\":\"gen-power_button_state\"}",
+  "model": {
+    "@kind": "power_button_state",
+    "ros2px4.power_button_state_timestamp": "123456789013",
+    "ros2px4.power_button_state_event": "245",
+    "ros2px4.topic": "/gen/power_button_state"
+  }
+}

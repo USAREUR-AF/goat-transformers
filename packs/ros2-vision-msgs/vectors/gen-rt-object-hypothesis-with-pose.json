@@ -1,0 +1,19 @@
+{
+  "name": "rt-object_hypothesis_with_pose",
+  "from": "ros2-vision-msgs",
+  "to": "ros2-vision-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/object_hypothesis_with_pose\",\"type\":\"vision_msgs/msg/ObjectHypothesisWithPose\",\"msg\":{\"hypothesis\":{\"class_id\":\"s1\",\"score\":2.014},\"pose\":{\"pose\":{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},\"covariance\":[10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315]}},\"id\":\"gen-object_hypothesis_with_pose\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/object_hypothesis_with_pose\",\"type\":\"vision_msgs/msg/ObjectHypothesisWithPose\",\"msg\":{\"hypothesis\":{\"class_id\":\"s1\",\"score\":2.014},\"pose\":{\"pose\":{\"position\":{\"x\":-3.021,\"y\":4.028,\"z\":5.035},\"orientation\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056,\"w\":-9.063}},\"covariance\":[10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315]}},\"id\":\"gen-object_hypothesis_with_pose\"}",
+  "model": {
+    "@kind": "object_hypothesis_with_pose",
+    "ros2vision.object_hypothesis_with_pose_hypothesis_class_id": "s1",
+    "ros2vision.object_hypothesis_with_pose_hypothesis_score": "2.014",
+    "ros2vision.object_hypothesis_with_pose_pose_pose_position_x": "-3.021",
+    "ros2vision.object_hypothesis_with_pose_pose_pose_position_y": "4.028",
+    "ros2vision.object_hypothesis_with_pose_pose_pose_position_z": "5.035",
+    "ros2vision.object_hypothesis_with_pose_pose_covariance.#": "36",
+    "ros2vision.object_hypothesis_with_pose_pose_covariance[0].ros2vision.object_hypothesis_with_pose_pose_covariance_value": "10.07",
+    "ros2vision.topic": "/gen/object_hypothesis_with_pose"
+  }
+}

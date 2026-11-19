@@ -1,0 +1,15 @@
+{
+  "name": "rt-charging_assignments",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/charging_assignments\",\"type\":\"rmf_fleet_msgs/msg/ChargingAssignments\",\"msg\":{\"fleet_name\":\"s1\",\"assignments\":[{\"robot_name\":\"s2\",\"waypoint_name\":\"s3\",\"mode\":99},{\"robot_name\":\"s5\",\"waypoint_name\":\"s6\",\"mode\":8}]},\"id\":\"gen-charging_assignments\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/charging_assignments\",\"type\":\"rmf_fleet_msgs/msg/ChargingAssignments\",\"msg\":{\"fleet_name\":\"s1\",\"assignments\":[{\"robot_name\":\"s2\",\"waypoint_name\":\"s3\",\"mode\":99},{\"robot_name\":\"s5\",\"waypoint_name\":\"s6\",\"mode\":8}]},\"id\":\"gen-charging_assignments\"}",
+  "model": {
+    "@kind": "charging_assignments",
+    "ros2rmffleet.charging_assignments_fleet_name": "s1",
+    "ros2rmffleet.charging_assignments_assignments.#": "2",
+    "ros2rmffleet.charging_assignments_assignments[0].ros2rmffleet.charging_assignments_assignments_robot_name": "s2",
+    "ros2rmffleet.topic": "/gen/charging_assignments"
+  }
+}

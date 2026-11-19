@@ -1,0 +1,17 @@
+{
+  "name": "rt-heater_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/heater_status\",\"type\":\"px4_msgs/msg/HeaterStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"heater_on\":true,\"temperature_target_met\":false,\"temperature_activation_threshold_met\":true,\"temperature_sensor\":-3.625,\"temperature_target\":-3.375,\"controller_period_usec\":2147807679,\"controller_time_on_usec\":2147848182,\"proportional_value\":-2.625,\"integrator_value\":-2.375,\"feed_forward_value\":-2.125,\"nominal_multiplier\":-1.875,\"mode\":137,\"temperature_source\":192},\"id\":\"gen-heater_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/heater_status\",\"type\":\"px4_msgs/msg/HeaterStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"heater_on\":true,\"temperature_target_met\":false,\"temperature_activation_threshold_met\":true,\"temperature_sensor\":-3.625,\"temperature_target\":-3.375,\"controller_period_usec\":2147807679,\"controller_time_on_usec\":2147848182,\"proportional_value\":-2.625,\"integrator_value\":-2.375,\"feed_forward_value\":-2.125,\"nominal_multiplier\":-1.875,\"mode\":137,\"temperature_source\":192},\"id\":\"gen-heater_status\"}",
+  "model": {
+    "@kind": "heater_status",
+    "ros2px4.heater_status_timestamp": "123456789013",
+    "ros2px4.heater_status_device_id": "2147564661",
+    "ros2px4.heater_status_heater_on": "1",
+    "ros2px4.heater_status_temperature_target_met": "0",
+    "ros2px4.heater_status_temperature_activation_threshold_met": "1",
+    "ros2px4.topic": "/gen/heater_status"
+  }
+}

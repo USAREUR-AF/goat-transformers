@@ -1,0 +1,14 @@
+{
+  "name": "rt-key_value_pair",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/key_value_pair\",\"type\":\"foxglove_msgs/msg/KeyValuePair\",\"msg\":{\"key\":\"s1\",\"value\":\"s2\"},\"id\":\"gen-key_value_pair\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/key_value_pair\",\"type\":\"foxglove_msgs/msg/KeyValuePair\",\"msg\":{\"key\":\"s1\",\"value\":\"s2\"},\"id\":\"gen-key_value_pair\"}",
+  "model": {
+    "@kind": "key_value_pair",
+    "ros2foxglove.key_value_pair_key": "s1",
+    "ros2foxglove.key_value_pair_value": "s2",
+    "ros2foxglove.topic": "/gen/key_value_pair"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "rt-joint_states",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_states\",\"type\":\"foxglove_msgs/msg/JointStates\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"joints\":[{\"name\":\"s3\",\"position\":4.028,\"velocity\":5.035,\"acceleration\":-6.042,\"effort\":7.049},{\"name\":\"s8\",\"position\":-9.063,\"velocity\":10.07,\"acceleration\":11.077,\"effort\":-12.084}]},\"id\":\"gen-joint_states\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_states\",\"type\":\"foxglove_msgs/msg/JointStates\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"joints\":[{\"name\":\"s3\",\"position\":4.028,\"velocity\":5.035,\"acceleration\":-6.042,\"effort\":7.049},{\"name\":\"s8\",\"position\":-9.063,\"velocity\":10.07,\"acceleration\":11.077,\"effort\":-12.084}]},\"id\":\"gen-joint_states\"}",
+  "model": {
+    "@kind": "joint_states",
+    "ros2foxglove.joint_states_timestamp_sec": "40510",
+    "ros2foxglove.joint_states_timestamp_nanosec": "2147564661",
+    "ros2foxglove.joint_states_joints.#": "2",
+    "ros2foxglove.joint_states_joints[0].ros2foxglove.joint_states_joints_name": "s3",
+    "ros2foxglove.topic": "/gen/joint_states"
+  }
+}

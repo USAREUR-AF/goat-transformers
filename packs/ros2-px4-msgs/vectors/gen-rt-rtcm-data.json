@@ -1,0 +1,17 @@
+{
+  "name": "rt-rtcm_data",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rtcm_data\",\"type\":\"px4_msgs/msg/RtcmData\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"len\":23212,\"flags\":99,\"data\":\"BQ//AIA=\"},\"id\":\"gen-rtcm_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rtcm_data\",\"type\":\"px4_msgs/msg/RtcmData\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"len\":23212,\"flags\":99,\"data\":\"BQ//AIA=\"},\"id\":\"gen-rtcm_data\"}",
+  "model": {
+    "@kind": "rtcm_data",
+    "ros2px4.rtcm_data_timestamp": "123456789013",
+    "ros2px4.rtcm_data_device_id": "2147564661",
+    "ros2px4.rtcm_data_len": "23212",
+    "ros2px4.rtcm_data_flags": "99",
+    "ros2px4.rtcm_data_data": "BQ//AIA=",
+    "ros2px4.topic": "/gen/rtcm_data"
+  }
+}

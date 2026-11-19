@@ -1,0 +1,17 @@
+{
+  "name": "rt-tune_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tune_control\",\"type\":\"px4_msgs/msg/TuneControl\",\"msg\":{\"timestamp\":123456789013,\"tune_id\":245,\"tune_override\":true,\"frequency\":63715,\"duration\":2147686170,\"silence\":2147726673,\"volume\":8},\"id\":\"gen-tune_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tune_control\",\"type\":\"px4_msgs/msg/TuneControl\",\"msg\":{\"timestamp\":123456789013,\"tune_id\":245,\"tune_override\":true,\"frequency\":63715,\"duration\":2147686170,\"silence\":2147726673,\"volume\":8},\"id\":\"gen-tune_control\"}",
+  "model": {
+    "@kind": "tune_control",
+    "ros2px4.tune_control_timestamp": "123456789013",
+    "ros2px4.tune_control_tune_id": "245",
+    "ros2px4.tune_control_tune_override": "1",
+    "ros2px4.tune_control_frequency": "63715",
+    "ros2px4.tune_control_duration": "2147686170",
+    "ros2px4.topic": "/gen/tune_control"
+  }
+}

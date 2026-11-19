@@ -1,0 +1,15 @@
+{
+  "name": "rt-qshell_retval",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/qshell_retval\",\"type\":\"px4_msgs/msg/QshellRetval\",\"msg\":{\"timestamp\":123456789013,\"return_value\":81013,\"return_sequence\":2147605164},\"id\":\"gen-qshell_retval\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/qshell_retval\",\"type\":\"px4_msgs/msg/QshellRetval\",\"msg\":{\"timestamp\":123456789013,\"return_value\":81013,\"return_sequence\":2147605164},\"id\":\"gen-qshell_retval\"}",
+  "model": {
+    "@kind": "qshell_retval",
+    "ros2px4.qshell_retval_timestamp": "123456789013",
+    "ros2px4.qshell_retval_return_value": "81013",
+    "ros2px4.qshell_retval_return_sequence": "2147605164",
+    "ros2px4.topic": "/gen/qshell_retval"
+  }
+}

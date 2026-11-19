@@ -1,0 +1,17 @@
+{
+  "name": "rt-schedule",
+  "from": "ros2-rmf-scheduler-msgs",
+  "to": "ros2-rmf-scheduler-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule\",\"type\":\"rmf_scheduler_msgs/msg/Schedule\",\"msg\":{\"name\":\"s1\",\"created_at\":246913578026,\"schedule\":\"s3\",\"start_at\":493827156052,\"finish_at\":-617283945065,\"group\":\"s6\",\"payload\":{\"type\":8,\"topic\":\"s8\",\"message_type\":\"s9\",\"data\":\"Ch7/AIA=\"}},\"id\":\"gen-schedule\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule\",\"type\":\"rmf_scheduler_msgs/msg/Schedule\",\"msg\":{\"name\":\"s1\",\"created_at\":246913578026,\"schedule\":\"s3\",\"start_at\":493827156052,\"finish_at\":-617283945065,\"group\":\"s6\",\"payload\":{\"type\":8,\"topic\":\"s8\",\"message_type\":\"s9\",\"data\":\"Ch7/AIA=\"}},\"id\":\"gen-schedule\"}",
+  "model": {
+    "@kind": "schedule",
+    "ros2rmfscheduler.schedule_name": "s1",
+    "ros2rmfscheduler.schedule_created_at": "246913578026",
+    "ros2rmfscheduler.schedule_schedule": "s3",
+    "ros2rmfscheduler.schedule_start_at": "493827156052",
+    "ros2rmfscheduler.schedule_finish_at": "-617283945065",
+    "ros2rmfscheduler.topic": "/gen/schedule"
+  }
+}

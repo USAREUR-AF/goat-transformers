@@ -1,0 +1,15 @@
+{
+  "name": "rt-area_info",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/area_info\",\"type\":\"autoware_map_msgs/msg/AreaInfo\",\"msg\":{\"center_x\":-4.875,\"center_y\":-4.625,\"radius\":-4.375},\"id\":\"gen-area_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/area_info\",\"type\":\"autoware_map_msgs/msg/AreaInfo\",\"msg\":{\"center_x\":-4.875,\"center_y\":-4.625,\"radius\":-4.375},\"id\":\"gen-area_info\"}",
+  "model": {
+    "@kind": "area_info",
+    "ros2autowaremap.area_info_center_x": "-4.875",
+    "ros2autowaremap.area_info_center_y": "-4.625",
+    "ros2autowaremap.area_info_radius": "-4.375",
+    "ros2autowaremap.topic": "/gen/area_info"
+  }
+}

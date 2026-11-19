@@ -1,0 +1,16 @@
+{
+  "name": "rt-schedule_change_progress",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_progress\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeProgress\",\"msg\":{\"has_progress\":true,\"version\":246913578026,\"checkpoints\":[370370367039,493827156052]},\"id\":\"gen-schedule_change_progress\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_progress\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeProgress\",\"msg\":{\"has_progress\":true,\"version\":246913578026,\"checkpoints\":[370370367039,493827156052]},\"id\":\"gen-schedule_change_progress\"}",
+  "model": {
+    "@kind": "schedule_change_progress",
+    "ros2rmftraffic.schedule_change_progress_has_progress": "1",
+    "ros2rmftraffic.schedule_change_progress_version": "246913578026",
+    "ros2rmftraffic.schedule_change_progress_checkpoints.#": "2",
+    "ros2rmftraffic.schedule_change_progress_checkpoints[0].ros2rmftraffic.schedule_change_progress_checkpoints_value": "370370367039",
+    "ros2rmftraffic.topic": "/gen/schedule_change_progress"
+  }
+}

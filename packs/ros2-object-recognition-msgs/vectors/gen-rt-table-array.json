@@ -1,0 +1,17 @@
+{
+  "name": "rt-table_array",
+  "from": "ros2-object-recognition-msgs",
+  "to": "ros2-object-recognition-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/table_array\",\"type\":\"object_recognition_msgs/msg/TableArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tables\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"convex_hull\":[{\"x\":14.098,\"y\":-15.105,\"z\":16.112}]},{\"header\":{\"stamp\":{\"sec\":688558,\"nanosec\":2148212709},\"frame_id\":\"s19\"},\"pose\":{\"position\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"orientation\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175,\"w\":26.182}},\"convex_hull\":[{\"x\":-27.189,\"y\":28.196,\"z\":29.203}]}]},\"id\":\"gen-table_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/table_array\",\"type\":\"object_recognition_msgs/msg/TableArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tables\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"convex_hull\":[{\"x\":14.098,\"y\":-15.105,\"z\":16.112}]},{\"header\":{\"stamp\":{\"sec\":688558,\"nanosec\":2148212709},\"frame_id\":\"s19\"},\"pose\":{\"position\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"orientation\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175,\"w\":26.182}},\"convex_hull\":[{\"x\":-27.189,\"y\":28.196,\"z\":29.203}]}]},\"id\":\"gen-table_array\"}",
+  "model": {
+    "@kind": "table_array",
+    "ros2objectrecognition.table_array_header_stamp_sec": "40510",
+    "ros2objectrecognition.table_array_header_stamp_nanosec": "2147564661",
+    "ros2objectrecognition.table_array_header_frame_id": "s3",
+    "ros2objectrecognition.table_array_tables.#": "2",
+    "ros2objectrecognition.table_array_tables[0].ros2objectrecognition.table_array_tables_header_stamp_sec": "162019",
+    "ros2objectrecognition.topic": "/gen/table_array"
+  }
+}

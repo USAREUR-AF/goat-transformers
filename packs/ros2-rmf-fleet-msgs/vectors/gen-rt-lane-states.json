@@ -1,0 +1,17 @@
+{
+  "name": "rt-lane_states",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lane_states\",\"type\":\"rmf_fleet_msgs/msg/LaneStates\",\"msg\":{\"fleet_name\":\"s1\",\"closed_lanes\":[246913578026,370370367039],\"speed_limits\":[{\"lane_index\":493827156052,\"speed_limit\":5.035},{\"lane_index\":740740734078,\"speed_limit\":7.049}]},\"id\":\"gen-lane_states\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lane_states\",\"type\":\"rmf_fleet_msgs/msg/LaneStates\",\"msg\":{\"fleet_name\":\"s1\",\"closed_lanes\":[246913578026,370370367039],\"speed_limits\":[{\"lane_index\":493827156052,\"speed_limit\":5.035},{\"lane_index\":740740734078,\"speed_limit\":7.049}]},\"id\":\"gen-lane_states\"}",
+  "model": {
+    "@kind": "lane_states",
+    "ros2rmffleet.lane_states_fleet_name": "s1",
+    "ros2rmffleet.lane_states_closed_lanes.#": "2",
+    "ros2rmffleet.lane_states_closed_lanes[0].ros2rmffleet.lane_states_closed_lanes_value": "246913578026",
+    "ros2rmffleet.lane_states_speed_limits.#": "2",
+    "ros2rmffleet.lane_states_speed_limits[0].ros2rmffleet.lane_states_speed_limits_lane_index": "493827156052",
+    "ros2rmffleet.topic": "/gen/lane_states"
+  }
+}

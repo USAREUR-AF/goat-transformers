@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_baro",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_baro\",\"type\":\"px4_msgs/msg/SensorBaro\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"pressure\":-3.875,\"temperature\":-3.625,\"error_count\":2147767176},\"id\":\"gen-sensor_baro\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_baro\",\"type\":\"px4_msgs/msg/SensorBaro\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"is_external\":false,\"pressure\":-3.875,\"temperature\":-3.625,\"error_count\":2147767176},\"id\":\"gen-sensor_baro\"}",
+  "model": {
+    "@kind": "sensor_baro",
+    "ros2px4.sensor_baro_timestamp": "123456789013",
+    "ros2px4.sensor_baro_timestamp_sample": "246913578026",
+    "ros2px4.sensor_baro_device_id": "2147605164",
+    "ros2px4.sensor_baro_is_external": "0",
+    "ros2px4.sensor_baro_pressure": "-3.875",
+    "ros2px4.topic": "/gen/sensor_baro"
+  }
+}

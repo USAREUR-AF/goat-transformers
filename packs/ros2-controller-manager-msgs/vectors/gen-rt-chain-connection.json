@@ -1,0 +1,15 @@
+{
+  "name": "rt-chain_connection",
+  "from": "ros2-controller-manager-msgs",
+  "to": "ros2-controller-manager-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/chain_connection\",\"type\":\"controller_manager_msgs/msg/ChainConnection\",\"msg\":{\"name\":\"s1\",\"reference_interfaces\":[\"s2\",\"s3\"]},\"id\":\"gen-chain_connection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/chain_connection\",\"type\":\"controller_manager_msgs/msg/ChainConnection\",\"msg\":{\"name\":\"s1\",\"reference_interfaces\":[\"s2\",\"s3\"]},\"id\":\"gen-chain_connection\"}",
+  "model": {
+    "@kind": "chain_connection",
+    "ros2controllermanager.chain_connection_name": "s1",
+    "ros2controllermanager.chain_connection_reference_interfaces.#": "2",
+    "ros2controllermanager.chain_connection_reference_interfaces[0].ros2controllermanager.chain_connection_reference_interfaces_value": "s2",
+    "ros2controllermanager.topic": "/gen/chain_connection"
+  }
+}

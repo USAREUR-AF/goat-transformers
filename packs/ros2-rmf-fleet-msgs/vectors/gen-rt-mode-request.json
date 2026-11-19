@@ -1,0 +1,19 @@
+{
+  "name": "rt-mode_request",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mode_request\",\"type\":\"rmf_fleet_msgs/msg/ModeRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"mode\":{\"mode\":2147605164,\"mode_request_id\":493827156052},\"task_id\":\"s5\",\"parameters\":[{\"name\":\"s6\",\"value\":\"s7\"},{\"name\":\"s8\",\"value\":\"s9\"}]},\"id\":\"gen-mode_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mode_request\",\"type\":\"rmf_fleet_msgs/msg/ModeRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"mode\":{\"mode\":2147605164,\"mode_request_id\":493827156052},\"task_id\":\"s5\",\"parameters\":[{\"name\":\"s6\",\"value\":\"s7\"},{\"name\":\"s8\",\"value\":\"s9\"}]},\"id\":\"gen-mode_request\"}",
+  "model": {
+    "@kind": "mode_request",
+    "ros2rmffleet.mode_request_fleet_name": "s1",
+    "ros2rmffleet.mode_request_robot_name": "s2",
+    "ros2rmffleet.mode_request_mode_mode": "2147605164",
+    "ros2rmffleet.mode_request_mode_mode_request_id": "493827156052",
+    "ros2rmffleet.mode_request_task_id": "s5",
+    "ros2rmffleet.mode_request_parameters.#": "2",
+    "ros2rmffleet.mode_request_parameters[0].ros2rmffleet.mode_request_parameters_name": "s6",
+    "ros2rmffleet.topic": "/gen/mode_request"
+  }
+}

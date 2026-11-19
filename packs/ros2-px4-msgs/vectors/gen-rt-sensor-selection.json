@@ -1,0 +1,15 @@
+{
+  "name": "rt-sensor_selection",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_selection\",\"type\":\"px4_msgs/msg/SensorSelection\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id\":2147564661,\"gyro_device_id\":2147605164},\"id\":\"gen-sensor_selection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_selection\",\"type\":\"px4_msgs/msg/SensorSelection\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id\":2147564661,\"gyro_device_id\":2147605164},\"id\":\"gen-sensor_selection\"}",
+  "model": {
+    "@kind": "sensor_selection",
+    "ros2px4.sensor_selection_timestamp": "123456789013",
+    "ros2px4.sensor_selection_accel_device_id": "2147564661",
+    "ros2px4.sensor_selection_gyro_device_id": "2147605164",
+    "ros2px4.topic": "/gen/sensor_selection"
+  }
+}

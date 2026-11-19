@@ -1,0 +1,17 @@
+{
+  "name": "rt-sys_status",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sys_status\",\"type\":\"mavros_msgs/msg/SysStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"sensors_present\":2147645667,\"sensors_enabled\":2147686170,\"sensors_health\":2147726673,\"load\":54152,\"voltage_battery\":29119,\"current_battery\":-28682,\"battery_remaining\":45,\"drop_rate_comm\":19556,\"errors_comm\":60059,\"errors_count1\":35026,\"errors_count2\":9993,\"errors_count3\":50496,\"errors_count4\":25463},\"id\":\"gen-sys_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sys_status\",\"type\":\"mavros_msgs/msg/SysStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"sensors_present\":2147645667,\"sensors_enabled\":2147686170,\"sensors_health\":2147726673,\"load\":54152,\"voltage_battery\":29119,\"current_battery\":-28682,\"battery_remaining\":45,\"drop_rate_comm\":19556,\"errors_comm\":60059,\"errors_count1\":35026,\"errors_count2\":9993,\"errors_count3\":50496,\"errors_count4\":25463},\"id\":\"gen-sys_status\"}",
+  "model": {
+    "@kind": "sys_status",
+    "ros2mavros.sys_status_header_stamp_sec": "40510",
+    "ros2mavros.sys_status_header_stamp_nanosec": "2147564661",
+    "ros2mavros.sys_status_header_frame_id": "s3",
+    "ros2mavros.sys_status_sensors_present": "2147645667",
+    "ros2mavros.sys_status_sensors_enabled": "2147686170",
+    "ros2mavros.topic": "/gen/sys_status"
+  }
+}

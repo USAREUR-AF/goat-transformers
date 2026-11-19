@@ -1,0 +1,14 @@
+{
+  "name": "rt-param_value",
+  "from": "ros2-mavros-msgs",
+  "to": "ros2-mavros-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/param_value\",\"type\":\"mavros_msgs/msg/ParamValue\",\"msg\":{\"integer\":-123456789013,\"real\":2.014},\"id\":\"gen-param_value\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/param_value\",\"type\":\"mavros_msgs/msg/ParamValue\",\"msg\":{\"integer\":-123456789013,\"real\":2.014},\"id\":\"gen-param_value\"}",
+  "model": {
+    "@kind": "param_value",
+    "ros2mavros.param_value_integer_2": "-123456789013",
+    "ros2mavros.param_value_real_2": "2.014",
+    "ros2mavros.topic": "/gen/param_value"
+  }
+}

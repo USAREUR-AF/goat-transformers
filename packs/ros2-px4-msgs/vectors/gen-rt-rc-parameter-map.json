@@ -1,0 +1,26 @@
+{
+  "name": "rt-rc_parameter_map",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rc_parameter_map\",\"type\":\"px4_msgs/msg/RcParameterMap\",\"msg\":{\"timestamp\":123456789013,\"valid\":[false,true,false],\"param_index\":[202522,243025,283528],\"param_id\":\"CBj/AIA=\",\"scale\":[-2.875,-2.625,-2.375],\"value0\":[-2.125,-1.875,-1.625],\"value_min\":[-1.375,-1.125,-0.875],\"value_max\":[-0.625,-0.375,-0.125]},\"id\":\"gen-rc_parameter_map\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rc_parameter_map\",\"type\":\"px4_msgs/msg/RcParameterMap\",\"msg\":{\"timestamp\":123456789013,\"valid\":[false,true,false],\"param_index\":[202522,243025,283528],\"param_id\":\"CBj/AIA=\",\"scale\":[-2.875,-2.625,-2.375],\"value0\":[-2.125,-1.875,-1.625],\"value_min\":[-1.375,-1.125,-0.875],\"value_max\":[-0.625,-0.375,-0.125]},\"id\":\"gen-rc_parameter_map\"}",
+  "model": {
+    "@kind": "rc_parameter_map",
+    "ros2px4.rc_parameter_map_timestamp": "123456789013",
+    "ros2px4.rc_parameter_map_valid.#": "3",
+    "ros2px4.rc_parameter_map_valid[0].ros2px4.rc_parameter_map_valid_value": "0",
+    "ros2px4.rc_parameter_map_param_index.#": "3",
+    "ros2px4.rc_parameter_map_param_index[0].ros2px4.rc_parameter_map_param_index_value": "202522",
+    "ros2px4.rc_parameter_map_param_id": "CBj/AIA=",
+    "ros2px4.rc_parameter_map_scale.#": "3",
+    "ros2px4.rc_parameter_map_scale[0].ros2px4.rc_parameter_map_scale_value": "-2.875",
+    "ros2px4.rc_parameter_map_value0.#": "3",
+    "ros2px4.rc_parameter_map_value0[0].ros2px4.rc_parameter_map_value0_value": "-2.125",
+    "ros2px4.rc_parameter_map_value_min.#": "3",
+    "ros2px4.rc_parameter_map_value_min[0].ros2px4.rc_parameter_map_value_min_value": "-1.375",
+    "ros2px4.rc_parameter_map_value_max.#": "3",
+    "ros2px4.rc_parameter_map_value_max[0].ros2px4.rc_parameter_map_value_max_value": "-0.625",
+    "ros2px4.topic": "/gen/rc_parameter_map"
+  }
+}
