@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-abs_autosar_networkmgt",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "960500000800000006dd2f58fcd381aa",
+  "expect": "960500000800000006dd2f58fcd381aa",
+  "model": {
+    "@kind": "abs_autosar_networkmgt"
+  }
+}

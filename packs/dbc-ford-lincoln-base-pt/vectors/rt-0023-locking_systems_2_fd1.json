@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-locking_systems_2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "3103000008000000579cbacfcd179334",
+  "expect": "3103000008000000579cbacfcd179334",
+  "model": {
+    "@kind": "locking_systems_2_fd1"
+  }
+}

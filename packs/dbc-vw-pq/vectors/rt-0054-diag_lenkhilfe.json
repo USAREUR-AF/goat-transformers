@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-diag_lenkhilfe",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "2e05000003000000dd06810000000000",
+  "expect": "2e05000003000000dd06810000000000",
+  "model": {
+    "@kind": "diag_lenkhilfe"
+  }
+}

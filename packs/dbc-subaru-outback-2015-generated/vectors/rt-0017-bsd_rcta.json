@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-bsd_rcta",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "5c020000080000000600000001440000",
+  "expect": "5c020000080000000600000001440000",
+  "model": {
+    "@kind": "bsd_rcta"
+  }
+}

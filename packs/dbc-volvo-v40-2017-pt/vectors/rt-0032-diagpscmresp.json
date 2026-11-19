@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-diagpscmresp",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "38070000080000003547a7a108cbfb78",
+  "expect": "38070000080000003547a7a108cbfb78",
+  "model": {
+    "@kind": "diagpscmresp"
+  }
+}

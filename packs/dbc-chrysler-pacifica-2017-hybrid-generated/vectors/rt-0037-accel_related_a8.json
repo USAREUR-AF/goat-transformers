@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-accel_related_a8",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "a80000000800000000006fa60000d054",
+  "expect": "a80000000800000000006fa60000d054",
+  "model": {
+    "@kind": "accel_related_a8"
+  }
+}

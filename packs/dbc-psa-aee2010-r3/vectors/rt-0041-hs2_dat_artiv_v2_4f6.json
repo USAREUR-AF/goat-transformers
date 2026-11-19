@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-hs2_dat_artiv_v2_4f6",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "f6040000050000003c1323ea90000000",
+  "expect": "f6040000050000003c1323ea90000000",
+  "model": {
+    "@kind": "hs2_dat_artiv_v2_4f6"
+  }
+}

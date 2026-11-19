@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-slow_variable_infos",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "4006000008000000000000f600cd0000",
+  "expect": "4006000008000000000000f600cd0000",
+  "model": {
+    "@kind": "slow_variable_infos"
+  }
+}

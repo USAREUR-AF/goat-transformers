@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-gw_warning_pe",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "c0050000080000000000000000001b2c",
+  "expect": "c0050000080000000000000000001b2c",
+  "model": {
+    "@kind": "gw_warning_pe"
+  }
+}

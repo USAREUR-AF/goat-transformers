@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-rear_foglampstat",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "be030000080000000000000000000000",
+  "expect": "be030000080000000000000000000000",
+  "model": {
+    "@kind": "rear_foglampstat"
+  }
+}

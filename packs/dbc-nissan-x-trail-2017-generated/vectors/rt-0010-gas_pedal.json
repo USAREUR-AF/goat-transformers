@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-gas_pedal",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "5c010000080000000000000007f78000",
+  "expect": "5c010000080000000000000007f78000",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-radar-dsu-tssp-roundtrip-object_3",
+  "from": "dbc-toyota-radar-dsu-tssp",
+  "to": "dbc-toyota-radar-dsu-tssp",
+  "input": "0703000008000000866e4fab45016239",
+  "expect": "0703000008000000866e4fab45016239",
+  "model": {
+    "@kind": "object_3"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-lfahda_mfc",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "8504000008000000eec5e2a37a60f501",
+  "expect": "8504000008000000eec5e2a37a60f501",
+  "model": {
+    "@kind": "lfahda_mfc"
+  }
+}

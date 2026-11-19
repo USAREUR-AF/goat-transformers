@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_solardata",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "46020000050000009d8b740122000000",
+  "expect": "46020000050000009d8b740122000000",
+  "model": {
+    "@kind": "ui_solardata"
+  }
+}

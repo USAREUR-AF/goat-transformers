@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-vehicle_dynamics",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "b4000000080000000001000052cfa47b",
+  "expect": "b4000000080000000001000052cfa47b",
+  "model": {
+    "@kind": "vehicle_dynamics"
+  }
+}

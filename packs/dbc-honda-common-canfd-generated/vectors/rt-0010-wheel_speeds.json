@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-wheel_speeds",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "d001000008000000f4a738a9100f5d8f",
+  "expect": "d001000008000000f4a738a9100f5d8f",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

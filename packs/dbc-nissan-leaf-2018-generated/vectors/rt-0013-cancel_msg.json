@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-cancel_msg",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "8002000008000000370000004eb56f3b",
+  "expect": "8002000008000000370000004eb56f3b",
+  "model": {
+    "@kind": "cancel_msg"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-brake_module",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "0101000008000000000000c200000019",
+  "expect": "0101000008000000000000c200000019",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

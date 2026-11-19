@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-steering_wheel_data_cg1",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "76000000080000000514b1d699002cc2",
+  "expect": "76000000080000000514b1d699002cc2",
+  "model": {
+    "@kind": "steering_wheel_data_cg1"
+  }
+}

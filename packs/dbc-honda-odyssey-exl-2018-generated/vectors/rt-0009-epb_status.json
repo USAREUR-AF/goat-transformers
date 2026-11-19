@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-epb_status",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "c2010000080000004000002000000005",
+  "expect": "c2010000080000004000002000000005",
+  "model": {
+    "@kind": "epb_status"
+  }
+}

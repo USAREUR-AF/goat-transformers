@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-steering_angle_status",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "9a030000080000003874000000000000",
+  "expect": "9a030000080000003874000000000000",
+  "model": {
+    "@kind": "steering_angle_status"
+  }
+}

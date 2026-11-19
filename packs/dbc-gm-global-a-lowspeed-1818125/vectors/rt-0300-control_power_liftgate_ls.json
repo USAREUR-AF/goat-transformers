@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-control_power_liftgate_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00005a8004000000a65d340b00000000",
+  "expect": "00005a8004000000a65d340b00000000",
+  "model": {
+    "@kind": "control_power_liftgate_ls"
+  }
+}

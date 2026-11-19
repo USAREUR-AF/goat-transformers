@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-steer",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "820000000800000000008bedc460683f",
+  "expect": "820000000800000000008bedc460683f",
+  "model": {
+    "@kind": "steer"
+  }
+}

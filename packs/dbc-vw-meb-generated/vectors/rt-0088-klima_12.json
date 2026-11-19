@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-klima_12",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "6806000008000000b853b83d14ebc225",
+  "expect": "6806000008000000b853b83d14ebc225",
+  "model": {
+    "@kind": "klima_12"
+  }
+}

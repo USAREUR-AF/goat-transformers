@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-eonv_control",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "5502000008000000f0809e4199c60000",
+  "expect": "5502000008000000f0809e4199c60000",
+  "model": {
+    "@kind": "eonv_control"
+  }
+}

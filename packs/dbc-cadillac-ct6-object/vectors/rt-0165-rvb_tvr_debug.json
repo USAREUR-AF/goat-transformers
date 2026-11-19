@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-rvb_tvr_debug",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "8205000006000000d5e86316ba0c0000",
+  "expect": "8205000006000000d5e86316ba0c0000",
+  "model": {
+    "@kind": "rvb_tvr_debug"
+  }
+}

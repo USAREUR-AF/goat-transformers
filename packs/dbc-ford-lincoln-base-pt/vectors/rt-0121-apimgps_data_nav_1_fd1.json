@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-apimgps_data_nav_1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "6204000008000000414c29ab5e1c3b94",
+  "expect": "6204000008000000414c29ab5e1c3b94",
+  "model": {
+    "@kind": "apimgps_data_nav_1_fd1"
+  }
+}

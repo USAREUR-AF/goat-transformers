@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-hs_indications_fast_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "004026800800000055aa7f5610897c60",
+  "expect": "004026800800000055aa7f5610897c60",
+  "model": {
+    "@kind": "hs_indications_fast_ls"
+  }
+}

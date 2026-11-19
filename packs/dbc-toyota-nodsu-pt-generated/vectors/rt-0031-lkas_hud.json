@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-lkas_hud",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "1204000008000000c652370000580c9e",
+  "expect": "1204000008000000c652370000580c9e",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

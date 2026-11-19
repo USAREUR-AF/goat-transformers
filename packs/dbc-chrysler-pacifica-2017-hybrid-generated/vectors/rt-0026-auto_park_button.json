@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-auto_park_button",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "c1020000080000000001000010000000",
+  "expect": "c1020000080000000001000010000000",
+  "model": {
+    "@kind": "auto_park_button"
+  }
+}

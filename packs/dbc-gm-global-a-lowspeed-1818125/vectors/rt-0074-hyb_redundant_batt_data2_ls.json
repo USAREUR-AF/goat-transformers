@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-hyb_redundant_batt_data2_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00e05880040000007d63113a00000000",
+  "expect": "00e05880040000007d63113a00000000",
+  "model": {
+    "@kind": "hyb_redundant_batt_data2_ls"
+  }
+}

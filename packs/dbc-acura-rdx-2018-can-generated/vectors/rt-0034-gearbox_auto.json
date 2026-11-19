@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2018-can-generated-roundtrip-gearbox_auto",
+  "from": "dbc-acura-rdx-2018-can-generated",
+  "to": "dbc-acura-rdx-2018-can-generated",
+  "input": "88010000060000000000000118230000",
+  "expect": "88010000060000000000000118230000",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

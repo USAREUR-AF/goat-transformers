@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-di_box13",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "8003000008000000b0875e350ce3ba0a",
+  "expect": "8003000008000000b0875e350ce3ba0a",
+  "model": {
+    "@kind": "di_box13"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-scm_feedback",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "26030000080000000000641400000029",
+  "expect": "26030000080000000000641400000029",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

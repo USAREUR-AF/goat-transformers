@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-long_range_radar_add_info_1",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "75040000080000000224de944e04be00",
+  "expect": "75040000080000000224de944e04be00",
+  "model": {
+    "@kind": "long_range_radar_add_info_1"
+  }
+}

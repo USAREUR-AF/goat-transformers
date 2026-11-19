@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tp_clu_ipod_hu",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "9a04000008000000f3caa1784f26fdd4",
+  "expect": "9a04000008000000f3caa1784f26fdd4",
+  "model": {
+    "@kind": "tp_clu_ipod_hu"
+  }
+}

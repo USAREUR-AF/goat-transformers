@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-body_info_fob",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "1003000006000000e7a7657acc000000",
+  "expect": "1003000006000000e7a7657acc000000",
+  "model": {
+    "@kind": "body_info_fob"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-hca_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "26010000080000004b92d0b7a3100500",
+  "expect": "26010000080000004b92d0b7a3100500",
+  "model": {
+    "@kind": "hca_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_waehlhebel_resp",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "bd07000008000000929df85800000080",
+  "expect": "bd07000008000000929df85800000080",
+  "model": {
+    "@kind": "iso_waehlhebel_resp"
+  }
+}

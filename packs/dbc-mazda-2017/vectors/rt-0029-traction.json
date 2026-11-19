@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-traction",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "15040000080000006d1f081000007d00",
+  "expect": "15040000080000006d1f081000007d00",
+  "model": {
+    "@kind": "traction"
+  }
+}

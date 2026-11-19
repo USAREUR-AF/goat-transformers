@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-vehicle_dynamics",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "ea01000008000000174a6b210000000f",
+  "expect": "ea01000008000000174a6b210000000f",
+  "model": {
+    "@kind": "vehicle_dynamics"
+  }
+}

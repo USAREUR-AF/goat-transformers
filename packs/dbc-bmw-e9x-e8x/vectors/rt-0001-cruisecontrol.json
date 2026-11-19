@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-cruisecontrol",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "94010000040000007ce5c34900000000",
+  "expect": "94010000040000007ce5c34900000000",
+  "model": {
+    "@kind": "cruisecontrol"
+  }
+}

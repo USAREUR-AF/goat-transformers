@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-max_motor_rpm_cmd",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "5102000005000000877edb552c000000",
+  "expect": "5102000005000000877edb552c000000",
+  "model": {
+    "@kind": "max_motor_rpm_cmd"
+  }
+}

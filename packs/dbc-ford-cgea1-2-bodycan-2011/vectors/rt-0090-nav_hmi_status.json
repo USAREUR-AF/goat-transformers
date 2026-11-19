@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-nav_hmi_status",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "ee030000080000000080240000000000",
+  "expect": "ee030000080000000080240000000000",
+  "model": {
+    "@kind": "nav_hmi_status"
+  }
+}

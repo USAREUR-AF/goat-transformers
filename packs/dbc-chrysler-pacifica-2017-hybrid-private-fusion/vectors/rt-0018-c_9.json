@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-private-fusion-roundtrip-c_9",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-private-fusion",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-private-fusion",
+  "input": "d202000008000000000007b90390703e",
+  "expect": "d202000008000000000007b90390703e",
+  "model": {
+    "@kind": "c_9"
+  }
+}

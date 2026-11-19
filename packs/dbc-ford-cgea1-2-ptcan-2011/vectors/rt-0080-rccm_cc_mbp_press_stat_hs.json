@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-rccm_cc_mbp_press_stat_hs",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "59030000080000002a0120f782000000",
+  "expect": "59030000080000002a0120f782000000",
+  "model": {
+    "@kind": "rccm_cc_mbp_press_stat_hs"
+  }
+}

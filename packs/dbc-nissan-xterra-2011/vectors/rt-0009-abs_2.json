@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-xterra-2011-roundtrip-abs_2",
+  "from": "dbc-nissan-xterra-2011",
+  "to": "dbc-nissan-xterra-2011",
+  "input": "85020000080000001d3b000000000000",
+  "expect": "85020000080000001d3b000000000000",
+  "model": {
+    "@kind": "abs_2"
+  }
+}

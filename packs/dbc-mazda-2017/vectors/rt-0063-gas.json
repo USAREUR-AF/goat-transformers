@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-gas",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "fd00000008000000000020000000d720",
+  "expect": "fd00000008000000000020000000d720",
+  "model": {
+    "@kind": "gas"
+  }
+}

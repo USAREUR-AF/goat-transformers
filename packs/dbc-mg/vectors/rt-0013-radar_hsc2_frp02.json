@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-radar_hsc2_frp02",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "460200000800000042905e9cf9e51400",
+  "expect": "460200000800000042905e9cf9e51400",
+  "model": {
+    "@kind": "radar_hsc2_frp02"
+  }
+}

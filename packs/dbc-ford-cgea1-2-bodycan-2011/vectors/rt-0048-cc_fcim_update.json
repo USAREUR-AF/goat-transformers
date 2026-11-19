@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-cc_fcim_update",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "8703000008000000aaaaaad555400000",
+  "expect": "8703000008000000aaaaaad555400000",
+  "model": {
+    "@kind": "cc_fcim_update"
+  }
+}

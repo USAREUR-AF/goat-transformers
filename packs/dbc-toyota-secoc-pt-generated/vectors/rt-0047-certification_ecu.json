@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-certification_ecu",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "23060000080000000000000000000020",
+  "expect": "23060000080000000000000000000020",
+  "model": {
+    "@kind": "certification_ecu"
+  }
+}

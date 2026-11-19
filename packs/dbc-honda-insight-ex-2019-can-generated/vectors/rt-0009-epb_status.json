@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-epb_status",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "c2010000080000004000002000000005",
+  "expect": "c2010000080000004000002000000005",
+  "model": {
+    "@kind": "epb_status"
+  }
+}

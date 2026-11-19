@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-wheel_pulses_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c07780040000002a01065800000000",
+  "expect": "00c07780040000002a01065800000000",
+  "model": {
+    "@kind": "wheel_pulses_ls"
+  }
+}

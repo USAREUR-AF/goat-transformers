@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-time",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "1304000008000000966d441bf20006f0",
+  "expect": "1304000008000000966d441bf20006f0",
+  "model": {
+    "@kind": "time"
+  }
+}

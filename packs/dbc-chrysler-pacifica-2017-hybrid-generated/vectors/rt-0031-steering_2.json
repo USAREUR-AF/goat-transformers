@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-steering_2",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "4c01000008000000a2500000a073c000",
+  "expect": "4c01000008000000a2500000a073c000",
+  "model": {
+    "@kind": "steering_2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-esp_control",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "b7030000080000000010000002000000",
+  "expect": "b7030000080000000010000002000000",
+  "model": {
+    "@kind": "esp_control"
+  }
+}

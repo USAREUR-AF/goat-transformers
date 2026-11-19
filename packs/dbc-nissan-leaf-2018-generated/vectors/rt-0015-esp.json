@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-esp",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "54030000080000000000000040000000",
+  "expect": "54030000080000000000000040000000",
+  "model": {
+    "@kind": "esp"
+  }
+}

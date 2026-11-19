@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-awd_torque_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "0c02000008000000a45780e000000000",
+  "expect": "0c02000008000000a45780e000000000",
+  "model": {
+    "@kind": "awd_torque_data"
+  }
+}

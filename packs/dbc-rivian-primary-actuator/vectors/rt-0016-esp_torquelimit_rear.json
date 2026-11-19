@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-esp_torquelimit_rear",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "c0010000080000008980dce530bc0000",
+  "expect": "c0010000080000008980dce530bc0000",
+  "model": {
+    "@kind": "esp_torquelimit_rear"
+  }
+}

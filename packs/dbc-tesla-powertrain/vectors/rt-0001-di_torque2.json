@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-powertrain-roundtrip-di_torque2",
+  "from": "dbc-tesla-powertrain",
+  "to": "dbc-tesla-powertrain",
+  "input": "160100000600000074baf9055eda0000",
+  "expect": "160100000600000074baf9055eda0000",
+  "model": {
+    "@kind": "di_torque2"
+  }
+}

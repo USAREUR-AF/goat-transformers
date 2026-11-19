@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-xterra-2011-roundtrip-engine_6",
+  "from": "dbc-nissan-xterra-2011",
+  "to": "dbc-nissan-xterra-2011",
+  "input": "800500000800000047050000dc000000",
+  "expect": "800500000800000047050000dc000000",
+  "model": {
+    "@kind": "engine_6"
+  }
+}

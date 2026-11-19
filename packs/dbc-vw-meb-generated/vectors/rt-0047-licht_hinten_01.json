@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-licht_hinten_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "d6030000080000002055555515055500",
+  "expect": "d6030000080000002055555515055500",
+  "model": {
+    "@kind": "licht_hinten_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-diagcvmreq",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "93070000080000002900d7ae855c330a",
+  "expect": "93070000080000002900d7ae855c330a",
+  "model": {
+    "@kind": "diagcvmreq"
+  }
+}

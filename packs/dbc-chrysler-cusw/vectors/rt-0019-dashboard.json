@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-dashboard",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "ea01000004000000d200000000000000",
+  "expect": "ea01000004000000d200000000000000",
+  "model": {
+    "@kind": "dashboard"
+  }
+}

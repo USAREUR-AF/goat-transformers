@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-wheel_speeds",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "8a03000008000000e30000350c000000",
+  "expect": "8a03000008000000e30000350c000000",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

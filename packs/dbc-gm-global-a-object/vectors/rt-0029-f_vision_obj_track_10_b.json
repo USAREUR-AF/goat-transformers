@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-f_vision_obj_track_10_b",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "4a0400000800000040246603870a8533",
+  "expect": "4a0400000800000040246603870a8533",
+  "model": {
+    "@kind": "f_vision_obj_track_10_b"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-obd_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "91030000080000001cf3caa186780050",
+  "expect": "91030000080000001cf3caa186780050",
+  "model": {
+    "@kind": "obd_01"
+  }
+}

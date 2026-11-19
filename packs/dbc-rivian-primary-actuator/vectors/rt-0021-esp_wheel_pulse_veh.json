@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-esp_wheel_pulse_veh",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "0b02000008000000830a3108dfb6b100",
+  "expect": "0b02000008000000830a3108dfb6b100",
+  "model": {
+    "@kind": "esp_wheel_pulse_veh"
+  }
+}

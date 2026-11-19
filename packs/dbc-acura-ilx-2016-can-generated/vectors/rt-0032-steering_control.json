@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-can-generated-roundtrip-steering_control",
+  "from": "dbc-acura-ilx-2016-can-generated",
+  "to": "dbc-acura-ilx-2016-can-generated",
+  "input": "e4000000050000003935e3ba18000000",
+  "expect": "e4000000050000003935e3ba18000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

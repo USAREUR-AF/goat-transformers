@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-hu_navi_e_00",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "3e00000008000000dc850cf000000000",
+  "expect": "3e00000008000000dc850cf000000000",
+  "model": {
+    "@kind": "hu_navi_e_00"
+  }
+}

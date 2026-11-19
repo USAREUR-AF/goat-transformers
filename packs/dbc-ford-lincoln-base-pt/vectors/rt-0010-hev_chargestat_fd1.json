@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-hev_chargestat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "52030000080000008809b10d5f360000",
+  "expect": "52030000080000008809b10d5f360000",
+  "model": {
+    "@kind": "hev_chargestat_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-cluster",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "f104000006000000004a6e4469210000",
+  "expect": "f104000006000000004a6e4469210000",
+  "model": {
+    "@kind": "cluster"
+  }
+}

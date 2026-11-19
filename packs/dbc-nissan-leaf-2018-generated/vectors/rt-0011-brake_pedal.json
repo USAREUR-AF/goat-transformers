@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-brake_pedal",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "cc010000080000004800000000000000",
+  "expect": "cc010000080000004800000000000000",
+  "model": {
+    "@kind": "brake_pedal"
+  }
+}

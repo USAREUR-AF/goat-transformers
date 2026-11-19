@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-engfrzfrm2",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "a1000000080000001bf2c9a0774ec200",
+  "expect": "a1000000080000001bf2c9a0774ec200",
+  "model": {
+    "@kind": "engfrzfrm2"
+  }
+}

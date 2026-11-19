@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-scm_buttons",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "96020000040000002000003e00000000",
+  "expect": "96020000040000002000003e00000000",
+  "model": {
+    "@kind": "scm_buttons"
+  }
+}

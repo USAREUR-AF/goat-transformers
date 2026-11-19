@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-wheel_speeds",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "d4000000080000009a9c71f048441f98",
+  "expect": "d4000000080000009a9c71f048441f98",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

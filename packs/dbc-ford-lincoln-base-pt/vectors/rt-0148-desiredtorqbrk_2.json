@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-desiredtorqbrk_2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "14020000080000001cbe00000000e754",
+  "expect": "14020000080000001cbe00000000e754",
+  "model": {
+    "@kind": "desiredtorqbrk_2"
+  }
+}

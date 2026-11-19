@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-powertrain-roundtrip-stw_actn_rq",
+  "from": "dbc-tesla-powertrain",
+  "to": "dbc-tesla-powertrain",
+  "input": "380200000800000094196c645555f0c6",
+  "expect": "380200000800000094196c645555f0c6",
+  "model": {
+    "@kind": "stw_actn_rq"
+  }
+}

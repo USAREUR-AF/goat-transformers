@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-vehicle_dynamics",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "ea01000008000000174a6b210000000f",
+  "expect": "ea01000008000000174a6b210000000f",
+  "model": {
+    "@kind": "vehicle_dynamics"
+  }
+}

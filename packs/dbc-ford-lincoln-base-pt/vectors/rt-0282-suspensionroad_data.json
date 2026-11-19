@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-suspensionroad_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d003000008000000a25b6fd011806300",
+  "expect": "d003000008000000a25b6fd011806300",
+  "model": {
+    "@kind": "suspensionroad_data"
+  }
+}

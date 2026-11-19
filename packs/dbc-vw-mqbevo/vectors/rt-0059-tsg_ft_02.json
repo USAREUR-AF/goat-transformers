@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-tsg_ft_02",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "e5030000080000004f06000000000000",
+  "expect": "e5030000080000004f06000000000000",
+  "model": {
+    "@kind": "tsg_ft_02"
+  }
+}

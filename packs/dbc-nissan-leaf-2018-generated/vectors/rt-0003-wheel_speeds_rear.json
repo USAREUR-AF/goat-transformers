@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-wheel_speeds_rear",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "850200000800000060f7b4ce00000000",
+  "expect": "850200000800000060f7b4ce00000000",
+  "model": {
+    "@kind": "wheel_speeds_rear"
+  }
+}

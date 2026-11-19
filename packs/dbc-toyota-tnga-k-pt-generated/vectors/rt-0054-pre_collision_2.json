@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-pre_collision_2",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "440300000800000082c0020010000015",
+  "expect": "440300000800000082c0020010000015",
+  "model": {
+    "@kind": "pre_collision_2"
+  }
+}

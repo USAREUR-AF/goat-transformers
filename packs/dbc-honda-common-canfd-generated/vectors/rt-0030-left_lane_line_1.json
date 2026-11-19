@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-left_lane_line_1",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "400200000800000083c346505b9c0021",
+  "expect": "400200000800000083c346505b9c0021",
+  "model": {
+    "@kind": "left_lane_line_1"
+  }
+}

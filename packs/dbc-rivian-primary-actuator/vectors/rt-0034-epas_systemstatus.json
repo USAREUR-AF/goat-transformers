@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-epas_systemstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "80030000050000003be216e0ea000000",
+  "expect": "80030000050000003be216e0ea000000",
+  "model": {
+    "@kind": "epas_systemstatus"
+  }
+}

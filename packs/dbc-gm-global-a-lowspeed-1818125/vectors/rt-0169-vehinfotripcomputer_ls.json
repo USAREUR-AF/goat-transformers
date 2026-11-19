@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-vehinfotripcomputer_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00603d8007000000215ec4ca561d1c00",
+  "expect": "00603d8007000000215ec4ca561d1c00",
+  "model": {
+    "@kind": "vehinfotripcomputer_ls"
+  }
+}

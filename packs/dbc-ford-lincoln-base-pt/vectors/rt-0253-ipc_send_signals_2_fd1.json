@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-ipc_send_signals_2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "18030000080000004b133cbf652b8e00",
+  "expect": "18030000080000004b133cbf652b8e00",
+  "model": {
+    "@kind": "ipc_send_signals_2_fd1"
+  }
+}

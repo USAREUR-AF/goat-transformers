@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-gearbox_1",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "f40100000700000000000000d6044b00",
+  "expect": "f40100000700000000000000d6044b00",
+  "model": {
+    "@kind": "gearbox_1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-stalk",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "52010000080000000020000000000014",
+  "expect": "52010000080000000020000000000014",
+  "model": {
+    "@kind": "stalk"
+  }
+}

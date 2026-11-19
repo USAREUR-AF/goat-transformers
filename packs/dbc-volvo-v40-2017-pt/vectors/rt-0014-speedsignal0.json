@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-speedsignal0",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "10010000080000000000000000000dd7",
+  "expect": "10010000080000000000000000000dd7",
+  "model": {
+    "@kind": "speedsignal0"
+  }
+}

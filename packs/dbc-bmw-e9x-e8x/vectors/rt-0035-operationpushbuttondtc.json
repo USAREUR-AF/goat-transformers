@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-operationpushbuttondtc",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "1603000002000000d847000000000000",
+  "expect": "1603000002000000d847000000000000",
+  "model": {
+    "@kind": "operationpushbuttondtc"
+  }
+}

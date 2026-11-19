@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-lkas_hud",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "1204000008000000c652370000580c9e",
+  "expect": "1204000008000000c652370000580c9e",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

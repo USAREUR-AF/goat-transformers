@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-fvcm_hsc2_frp03",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "fd01000008000000c3aa6f81c5000000",
+  "expect": "fd01000008000000c3aa6f81c5000000",
+  "model": {
+    "@kind": "fvcm_hsc2_frp03"
+  }
+}

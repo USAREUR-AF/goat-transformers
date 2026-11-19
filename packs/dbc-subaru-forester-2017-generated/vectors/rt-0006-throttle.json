@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-throttle",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "40010000080000001f5652b8d7ae8567",
+  "expect": "40010000080000001f5652b8d7ae8567",
+  "model": {
+    "@kind": "throttle"
+  }
+}

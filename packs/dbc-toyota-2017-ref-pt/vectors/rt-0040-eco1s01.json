@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-eco1s01",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "630100000500000000000d8400000000",
+  "expect": "630100000500000000000d8400000000",
+  "model": {
+    "@kind": "eco1s01"
+  }
+}

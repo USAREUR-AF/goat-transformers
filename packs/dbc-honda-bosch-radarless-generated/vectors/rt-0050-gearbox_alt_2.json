@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-gearbox_alt_2",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "dd0100000800000000000000e0000005",
+  "expect": "dd0100000800000000000000e0000005",
+  "model": {
+    "@kind": "gearbox_alt_2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-licht_anf_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "d5030000080000001a51555505020000",
+  "expect": "d5030000080000001a51555505020000",
+  "model": {
+    "@kind": "licht_anf_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-parksense_signal",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "60020000080000000000010004001058",
+  "expect": "60020000080000000000010004001058",
+  "model": {
+    "@kind": "parksense_signal"
+  }
+}

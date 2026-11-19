@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_pedestrian",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "5d020000080000000420856000000000",
+  "expect": "5d020000080000000420856000000000",
+  "model": {
+    "@kind": "cam_pedestrian"
+  }
+}

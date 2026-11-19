@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-pre_collision_2",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "440300000800000082c0020010000015",
+  "expect": "440300000800000082c0020010000015",
+  "model": {
+    "@kind": "pre_collision_2"
+  }
+}

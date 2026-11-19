@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-lh_eps_03",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "9f000000080000009fd6248509808050",
+  "expect": "9f000000080000009fd6248509808050",
+  "model": {
+    "@kind": "lh_eps_03"
+  }
+}

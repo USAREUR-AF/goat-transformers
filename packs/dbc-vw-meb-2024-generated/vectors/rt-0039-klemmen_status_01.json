@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-klemmen_status_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "c00300000400000070e7aaaa00000000",
+  "expect": "c00300000400000070e7aaaa00000000",
+  "model": {
+    "@kind": "klemmen_status_01"
+  }
+}

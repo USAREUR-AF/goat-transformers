@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-selectdrivemodedata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "20040000080000000000036403557cad",
+  "expect": "20040000080000000000036403557cad",
+  "model": {
+    "@kind": "selectdrivemodedata"
+  }
+}

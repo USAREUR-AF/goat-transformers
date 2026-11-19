@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-e-advance-2020-can-generated-roundtrip-adjacent_left_lane_line_2",
+  "from": "dbc-honda-e-advance-2020-can-generated",
+  "to": "dbc-honda-e-advance-2020-can-generated",
+  "input": "47020000080000008020fba039103536",
+  "expect": "47020000080000008020fba039103536",
+  "model": {
+    "@kind": "adjacent_left_lane_line_2"
+  }
+}

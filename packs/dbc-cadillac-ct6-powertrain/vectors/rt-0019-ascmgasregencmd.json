@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ascmgasregencmd",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "cb02000008000000c10074f005522a0f",
+  "expect": "cb02000008000000c10074f005522a0f",
+  "model": {
+    "@kind": "ascmgasregencmd"
+  }
+}

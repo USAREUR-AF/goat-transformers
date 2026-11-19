@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-terminalstatus",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "30010000080000000000800070000000",
+  "expect": "30010000080000000000800070000000",
+  "model": {
+    "@kind": "terminalstatus"
+  }
+}

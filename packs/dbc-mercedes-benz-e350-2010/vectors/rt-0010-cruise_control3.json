@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-cruise_control3",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "780300000800000000bae30c505e0035",
+  "expect": "780300000800000000bae30c505e0035",
+  "model": {
+    "@kind": "cruise_control3"
+  }
+}

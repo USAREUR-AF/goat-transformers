@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-seatbelt_sensors",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "75030000080000000000010000000000",
+  "expect": "75030000080000000000010000000000",
+  "model": {
+    "@kind": "seatbelt_sensors"
+  }
+}

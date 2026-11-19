@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-steer_status",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "8f0100000600000010b0e4e2003e0000",
+  "expect": "8f0100000600000010b0e4e2003e0000",
+  "model": {
+    "@kind": "steer_status"
+  }
+}

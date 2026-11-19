@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-dimmung_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "f005000008000000e8bf6d44e0000000",
+  "expect": "f005000008000000e8bf6d44e0000000",
+  "model": {
+    "@kind": "dimmung_01"
+  }
+}

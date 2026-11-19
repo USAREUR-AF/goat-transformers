@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-mrr_status_canversion",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "0001000008000000c89f3df100000000",
+  "expect": "0001000008000000c89f3df100000000",
+  "model": {
+    "@kind": "mrr_status_canversion"
+  }
+}

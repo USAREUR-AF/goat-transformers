@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_lkas",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "430200000800000010eb8940031c008f",
+  "expect": "430200000800000010eb8940031c008f",
+  "model": {
+    "@kind": "cam_lkas"
+  }
+}

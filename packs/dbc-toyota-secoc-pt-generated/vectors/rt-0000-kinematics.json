@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-kinematics",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "240000000800000003ac038303d50000",
+  "expect": "240000000800000003ac038303d50000",
+  "model": {
+    "@kind": "kinematics"
+  }
+}

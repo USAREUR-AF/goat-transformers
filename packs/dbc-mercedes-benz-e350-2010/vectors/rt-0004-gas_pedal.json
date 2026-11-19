@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-gas_pedal",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "050100000800000016000084ad0080ff",
+  "expect": "050100000800000016000084ad0080ff",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

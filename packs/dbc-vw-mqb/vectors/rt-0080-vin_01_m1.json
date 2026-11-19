@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-vin_01_m1",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "b40600000800000001956c431af1c89f",
+  "expect": "b40600000800000001956c431af1c89f",
+  "model": {
+    "@kind": "vin_01_m1"
+  }
+}

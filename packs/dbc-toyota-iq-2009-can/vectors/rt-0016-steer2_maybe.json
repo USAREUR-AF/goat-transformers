@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-steer2_maybe",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "a00300000800000017290000002e0000",
+  "expect": "a00300000800000017290000002e0000",
+  "model": {
+    "@kind": "steer2_maybe"
+  }
+}

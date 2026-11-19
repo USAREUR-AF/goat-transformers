@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-climate_control_basic_status_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0040818004000000a24118ef00000000",
+  "expect": "0040818004000000a24118ef00000000",
+  "model": {
+    "@kind": "climate_control_basic_status_ls"
+  }
+}

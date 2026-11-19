@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-met1s18",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "e003000008000000c4dfb68d643b12d2",
+  "expect": "e003000008000000c4dfb68d643b12d2",
+  "model": {
+    "@kind": "met1s18"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-model-x-generated-roundtrip-own",
+  "from": "dbc-model-x-generated",
+  "to": "dbc-model-x-generated",
+  "input": "21030000010000003900000000000000",
+  "expect": "21030000010000003900000000000000",
+  "model": {
+    "@kind": "own"
+  }
+}

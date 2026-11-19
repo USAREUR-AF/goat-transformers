@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-charisma_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "8503000008000000700e3c1af8d6b492",
+  "expect": "8503000008000000700e3c1af8d6b492",
+  "model": {
+    "@kind": "charisma_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-powertrain",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "c4010000080000004ccd0000000000a4",
+  "expect": "c4010000080000004ccd0000000000a4",
+  "model": {
+    "@kind": "powertrain"
+  }
+}

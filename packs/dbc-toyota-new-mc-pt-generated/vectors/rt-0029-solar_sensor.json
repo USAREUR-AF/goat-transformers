@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-solar_sensor",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "fc030000080000000000000000001c50",
+  "expect": "fc030000080000000000000000001c50",
+  "model": {
+    "@kind": "solar_sensor"
+  }
+}

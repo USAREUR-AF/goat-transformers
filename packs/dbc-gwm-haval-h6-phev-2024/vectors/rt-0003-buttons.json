@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gwm-haval-h6-phev-2024-roundtrip-buttons",
+  "from": "dbc-gwm-haval-h6-phev-2024",
+  "to": "dbc-gwm-haval-h6-phev-2024",
+  "input": "ca020000080000000000010000000000",
+  "expect": "ca020000080000000000010000000000",
+  "model": {
+    "@kind": "buttons"
+  }
+}

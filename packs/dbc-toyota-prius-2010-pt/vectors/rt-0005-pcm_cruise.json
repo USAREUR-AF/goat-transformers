@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-pcm_cruise",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "d2010000080000001000e6930000a041",
+  "expect": "d2010000080000001000e6930000a041",
+  "model": {
+    "@kind": "pcm_cruise"
+  }
+}

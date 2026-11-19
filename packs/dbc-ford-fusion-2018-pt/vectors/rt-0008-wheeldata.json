@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-wheeldata",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "1602000008000000552c4b7e4e030000",
+  "expect": "1602000008000000552c4b7e4e030000",
+  "model": {
+    "@kind": "wheeldata"
+  }
+}

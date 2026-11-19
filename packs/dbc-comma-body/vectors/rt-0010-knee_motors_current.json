@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-knee_motors_current",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "04030000080000002fdf83b6d78d2b64",
+  "expect": "04030000080000002fdf83b6d78d2b64",
+  "model": {
+    "@kind": "knee_motors_current"
+  }
+}

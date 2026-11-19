@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-acm_aebrequest",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "01010000080000000a016e0614580000",
+  "expect": "01010000080000000a016e0614580000",
+  "model": {
+    "@kind": "acm_aebrequest"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-sdm1",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "01020000050000000400000000000000",
+  "expect": "01020000050000000400000000000000",
+  "model": {
+    "@kind": "sdm1"
+  }
+}

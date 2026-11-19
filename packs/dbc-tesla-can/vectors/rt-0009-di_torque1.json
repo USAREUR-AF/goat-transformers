@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-di_torque1",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "0801000008000000ea2998f146191df4",
+  "expect": "0801000008000000ea2998f146191df4",
+  "model": {
+    "@kind": "di_torque1"
+  }
+}

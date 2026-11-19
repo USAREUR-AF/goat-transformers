@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-steer_torque",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "0e00000008000000008400000000b032",
+  "expect": "0e00000008000000008400000000b032",
+  "model": {
+    "@kind": "steer_torque"
+  }
+}

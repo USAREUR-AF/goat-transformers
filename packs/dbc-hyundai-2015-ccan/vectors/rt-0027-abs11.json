@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-abs11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "8a030000080000001500000000000000",
+  "expect": "8a030000080000001500000000000000",
+  "model": {
+    "@kind": "abs11"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-brake_related",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "1402000006000000001b000000000000",
+  "expect": "1402000006000000001b000000000000",
+  "model": {
+    "@kind": "brake_related"
+  }
+}

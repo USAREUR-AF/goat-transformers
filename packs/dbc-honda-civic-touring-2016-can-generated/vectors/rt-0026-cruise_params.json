@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-touring-2016-can-generated-roundtrip-cruise_params",
+  "from": "dbc-honda-civic-touring-2016-can-generated",
+  "to": "dbc-honda-civic-touring-2016-can-generated",
+  "input": "7c03000008000000000000f70000001e",
+  "expect": "7c03000008000000000000f70000001e",
+  "model": {
+    "@kind": "cruise_params"
+  }
+}

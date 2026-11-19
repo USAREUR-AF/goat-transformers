@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-whl_spd13_fs",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "8f030000050000006b9291c333000000",
+  "expect": "8f030000050000006b9291c333000000",
+  "model": {
+    "@kind": "whl_spd13_fs"
+  }
+}

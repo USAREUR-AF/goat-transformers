@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-engine_rpm",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "c401000008000000a51f000800000000",
+  "expect": "c401000008000000a51f000800000000",
+  "model": {
+    "@kind": "engine_rpm"
+  }
+}

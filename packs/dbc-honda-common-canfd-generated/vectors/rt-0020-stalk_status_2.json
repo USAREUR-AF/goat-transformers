@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-stalk_status_2",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "7b030000080000000000020004000025",
+  "expect": "7b030000080000000000020004000025",
+  "model": {
+    "@kind": "stalk_status_2"
+  }
+}

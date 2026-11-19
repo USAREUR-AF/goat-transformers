@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-lenkhilfe_3",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "d000000006000000a64d2b04871f0000",
+  "expect": "d000000006000000a64d2b04871f0000",
+  "model": {
+    "@kind": "lenkhilfe_3"
+  }
+}

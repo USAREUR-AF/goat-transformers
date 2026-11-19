@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-knee_torque_cmd",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "50030000060000001435680c03ba0000",
+  "expect": "50030000060000001435680c03ba0000",
+  "model": {
+    "@kind": "knee_torque_cmd"
+  }
+}

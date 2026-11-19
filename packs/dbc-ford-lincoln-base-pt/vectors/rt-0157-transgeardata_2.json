@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-transgeardata_2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "31020000080000000000c000a0000000",
+  "expect": "31020000080000000000c000a0000000",
+  "model": {
+    "@kind": "transgeardata_2"
+  }
+}

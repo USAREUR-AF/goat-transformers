@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-gear_shift_by_wire_3",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "5c000000080000009a965fda724f0000",
+  "expect": "5c000000080000009a965fda724f0000",
+  "model": {
+    "@kind": "gear_shift_by_wire_3"
+  }
+}

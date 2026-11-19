@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-performanc_mode_vis_scrn_stat_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a0468005000000080da87aa5000000",
+  "expect": "00a0468005000000080da87aa5000000",
+  "model": {
+    "@kind": "performanc_mode_vis_scrn_stat_ls"
+  }
+}

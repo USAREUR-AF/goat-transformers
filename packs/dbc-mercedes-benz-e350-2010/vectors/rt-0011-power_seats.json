@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-power_seats",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "33010000080000000200000000000000",
+  "expect": "33010000080000000200000000000000",
+  "model": {
+    "@kind": "power_seats"
+  }
+}

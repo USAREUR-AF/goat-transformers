@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-lkas_hud",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "1204000008000000c652370000580c9e",
+  "expect": "1204000008000000c652370000580c9e",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

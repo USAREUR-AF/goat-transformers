@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-cruisecontrol",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "4002000008000000686fe188d26e26d6",
+  "expect": "4002000008000000686fe188d26e26d6",
+  "model": {
+    "@kind": "cruisecontrol"
+  }
+}

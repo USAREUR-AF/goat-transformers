@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-dms_rawmeasurement_info1_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "420100000800000054fb01246c95154d",
+  "expect": "420100000800000054fb01246c95154d",
+  "model": {
+    "@kind": "dms_rawmeasurement_info1_fo"
+  }
+}

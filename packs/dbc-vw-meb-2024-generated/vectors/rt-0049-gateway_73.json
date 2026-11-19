@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-gateway_73",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "dc030000080000000080000000058003",
+  "expect": "dc030000080000000080000000058003",
+  "model": {
+    "@kind": "gateway_73"
+  }
+}

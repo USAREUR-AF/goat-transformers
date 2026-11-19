@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-passphrase_1_amm_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c09080080000000000000072cc17e7",
+  "expect": "00c09080080000000000000072cc17e7",
+  "model": {
+    "@kind": "passphrase_1_amm_ls"
+  }
+}

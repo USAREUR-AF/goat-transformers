@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dat_bsi1",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "32040000080000005300003a00206c20",
+  "expect": "32040000080000005300003a00206c20",
+  "model": {
+    "@kind": "dat_bsi1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-steer_motor_torque",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "ab010000030000000a94290000000000",
+  "expect": "ab010000030000000a94290000000000",
+  "model": {
+    "@kind": "steer_motor_torque"
+  }
+}

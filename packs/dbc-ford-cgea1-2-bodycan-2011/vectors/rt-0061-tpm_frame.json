@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-tpm_frame",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "b70300000800000070522b446dbf961b",
+  "expect": "b70300000800000070522b446dbf961b",
+  "model": {
+    "@kind": "tpm_frame"
+  }
+}

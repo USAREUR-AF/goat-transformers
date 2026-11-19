@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-rear_seat_heat_cool_switches_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c07680010000002a00000000000000",
+  "expect": "00c07680010000002a00000000000000",
+  "model": {
+    "@kind": "rear_seat_heat_cool_switches_ls"
+  }
+}

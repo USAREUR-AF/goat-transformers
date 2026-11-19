@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-pcm_cruise_4",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "4d020000080000005000000aca9fbe71",
+  "expect": "4d020000080000005000000aca9fbe71",
+  "model": {
+    "@kind": "pcm_cruise_4"
+  }
+}

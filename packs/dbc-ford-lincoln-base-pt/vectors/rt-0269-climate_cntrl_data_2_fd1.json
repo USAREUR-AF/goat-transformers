@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-climate_cntrl_data_2_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "5e03000008000000d0f85602a6547800",
+  "expect": "5e03000008000000d0f85602a6547800",
+  "model": {
+    "@kind": "climate_cntrl_data_2_fd1"
+  }
+}

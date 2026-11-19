@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-gas_pedal",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "1601000008000000b78e0000c1d43065",
+  "expect": "1601000008000000b78e0000c1d43065",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

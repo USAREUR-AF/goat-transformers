@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-acc_control",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "4303000008000000d669e8a17d54002b",
+  "expect": "4303000008000000d669e8a17d54002b",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

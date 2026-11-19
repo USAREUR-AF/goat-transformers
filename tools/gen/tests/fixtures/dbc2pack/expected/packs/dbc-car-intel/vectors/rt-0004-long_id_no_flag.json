@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-long_id_no_flag",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "00feef98010000004d00000000000000",
+  "expect": "00feef98010000004d00000000000000",
+  "model": {
+    "@kind": "long_id_no_flag"
+  }
+}

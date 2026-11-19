@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-nidec-roundtrip-track_14",
+  "from": "dbc-acura-ilx-2016-nidec",
+  "to": "dbc-acura-ilx-2016-nidec",
+  "input": "4404000008000000e762249fb0000000",
+  "expect": "4404000008000000e762249fb0000000",
+  "model": {
+    "@kind": "track_14"
+  }
+}

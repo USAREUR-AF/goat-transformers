@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-obd_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "9103000008000000350ce3ba979100a8",
+  "expect": "9103000008000000350ce3ba979100a8",
+  "model": {
+    "@kind": "obd_01"
+  }
+}

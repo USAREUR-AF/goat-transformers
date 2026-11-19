@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-vin_01_m2",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "b40600000800000002ac835a3108dfb6",
+  "expect": "b40600000800000002ac835a3108dfb6",
+  "model": {
+    "@kind": "vin_01_m2"
+  }
+}

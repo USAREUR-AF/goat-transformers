@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-cgea_urea_strategy",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4c010000080000000a235014004ce20e",
+  "expect": "4c010000080000000a235014004ce20e",
+  "model": {
+    "@kind": "cgea_urea_strategy"
+  }
+}

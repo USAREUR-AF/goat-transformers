@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-lws_kalibrierung",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "c0070000020000007e70000000000000",
+  "expect": "c0070000020000007e70000000000000",
+  "model": {
+    "@kind": "lws_kalibrierung"
+  }
+}

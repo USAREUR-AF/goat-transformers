@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-cam_0x185",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "8501000008000000e484bb0000000000",
+  "expect": "8501000008000000e484bb0000000000",
+  "model": {
+    "@kind": "cam_0x185"
+  }
+}

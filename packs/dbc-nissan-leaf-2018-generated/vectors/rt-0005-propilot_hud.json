@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-propilot_hud",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "b102000008000000a354558d1071c87f",
+  "expect": "b102000008000000a354558d1071c87f",
+  "model": {
+    "@kind": "propilot_hud"
+  }
+}

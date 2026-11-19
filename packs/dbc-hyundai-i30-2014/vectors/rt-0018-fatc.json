@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-fatc",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "50030000080000005ba514986f560079",
+  "expect": "50030000080000005ba514986f560079",
+  "model": {
+    "@kind": "fatc"
+  }
+}

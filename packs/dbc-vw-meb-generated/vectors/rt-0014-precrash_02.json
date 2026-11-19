@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-precrash_02",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "3f01000008000000386f255d29786bb4",
+  "expect": "3f01000008000000386f255d29786bb4",
+  "model": {
+    "@kind": "precrash_02"
+  }
+}

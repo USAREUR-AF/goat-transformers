@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_mos_01_resp",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "ea070000080000002bfc195300000000",
+  "expect": "ea070000080000002bfc195300000000",
+  "model": {
+    "@kind": "iso_mos_01_resp"
+  }
+}

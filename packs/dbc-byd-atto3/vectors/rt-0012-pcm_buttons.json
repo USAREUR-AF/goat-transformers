@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-pcm_buttons",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "b003000008000000488008000000d064",
+  "expect": "b003000008000000488008000000d064",
+  "model": {
+    "@kind": "pcm_buttons"
+  }
+}

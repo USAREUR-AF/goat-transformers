@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-pps_elevhdspd_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "600200000800000038c3a4718b5a93f6",
+  "expect": "600200000800000038c3a4718b5a93f6",
+  "model": {
+    "@kind": "pps_elevhdspd_fo"
+  }
+}

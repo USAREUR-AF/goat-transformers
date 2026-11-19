@@ -1,0 +1,4 @@
+CM_ "IMPORT _part.dbc";
+
+BO_ 801 OWN: 1 XXX
+ SG_ OWN_VALUE : 0|8@1+ (1,0) [0|255] "" XXX

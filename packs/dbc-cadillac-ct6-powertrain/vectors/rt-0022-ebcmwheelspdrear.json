@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ebcmwheelspdrear",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "4a030000040000006a85be5c00000000",
+  "expect": "4a030000040000006a85be5c00000000",
+  "model": {
+    "@kind": "ebcmwheelspdrear"
+  }
+}

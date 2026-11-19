@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-meb_hvem_03",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "69050000080000008000000000000002",
+  "expect": "69050000080000008000000000000002",
+  "model": {
+    "@kind": "meb_hvem_03"
+  }
+}

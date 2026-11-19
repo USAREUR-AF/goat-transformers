@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-gtw_epascontrol",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "01010000030000007e936c0000000000",
+  "expect": "01010000030000007e936c0000000000",
+  "model": {
+    "@kind": "gtw_epascontrol"
+  }
+}

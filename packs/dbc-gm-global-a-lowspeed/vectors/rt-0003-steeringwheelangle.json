@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-steeringwheelangle",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "0000249008000000000000009d4c0000",
+  "expect": "0000249008000000000000009d4c0000",
+  "model": {
+    "@kind": "steeringwheelangle"
+  }
+}

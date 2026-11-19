@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-boundaryalert_right_3",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "e604000008000000d5261d6f804b2b60",
+  "expect": "e604000008000000d5261d6f804b2b60",
+  "model": {
+    "@kind": "boundaryalert_right_3"
+  }
+}

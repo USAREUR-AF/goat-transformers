@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-extended",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "00020080040000004c7b1f4a00000000",
+  "expect": "00020080040000004c7b1f4a00000000",
+  "model": {
+    "@kind": "extended"
+  }
+}

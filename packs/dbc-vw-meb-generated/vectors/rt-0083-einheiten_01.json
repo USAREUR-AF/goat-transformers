@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-einheiten_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "4306000008000000a11b382f00000000",
+  "expect": "4306000008000000a11b382f00000000",
+  "model": {
+    "@kind": "einheiten_01"
+  }
+}

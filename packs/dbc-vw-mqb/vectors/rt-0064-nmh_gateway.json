@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-nmh_gateway",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "1000009b08000000690000eeaa0a0a00",
+  "expect": "1000009b08000000690000eeaa0a0a00",
+  "model": {
+    "@kind": "nmh_gateway"
+  }
+}

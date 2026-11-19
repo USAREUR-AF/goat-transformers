@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-cruisecontrol",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "44010000080000000820000000000200",
+  "expect": "44010000080000000820000000000200",
+  "model": {
+    "@kind": "cruisecontrol"
+  }
+}

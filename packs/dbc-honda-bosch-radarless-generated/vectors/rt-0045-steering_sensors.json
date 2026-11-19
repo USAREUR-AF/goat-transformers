@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-steering_sensors",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "4a010000080000007b6ccf43051e9f2d",
+  "expect": "4a010000080000007b6ccf43051e9f2d",
+  "model": {
+    "@kind": "steering_sensors"
+  }
+}

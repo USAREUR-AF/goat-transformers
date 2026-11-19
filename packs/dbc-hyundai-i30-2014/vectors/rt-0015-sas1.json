@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-sas1",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "b002000008000000e8bbbf964d000000",
+  "expect": "b002000008000000e8bbbf964d000000",
+  "model": {
+    "@kind": "sas1"
+  }
+}

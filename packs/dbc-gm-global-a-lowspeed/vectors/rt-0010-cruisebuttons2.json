@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-cruisebuttons2",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "00607590010000000300000000000000",
+  "expect": "00607590010000000300000000000000",
+  "model": {
+    "@kind": "cruisebuttons2"
+  }
+}

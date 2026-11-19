@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-bosch_supplemental_1",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "e5000000080000001cf3caa10000000f",
+  "expect": "e5000000080000001cf3caa10000000f",
+  "model": {
+    "@kind": "bosch_supplemental_1"
+  }
+}

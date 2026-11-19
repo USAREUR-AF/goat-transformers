@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-odometer",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "16050000080000003d01f90000000007",
+  "expect": "16050000080000003d01f90000000007",
+  "model": {
+    "@kind": "odometer"
+  }
+}

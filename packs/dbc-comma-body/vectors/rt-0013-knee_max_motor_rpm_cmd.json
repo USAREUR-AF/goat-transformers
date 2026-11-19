@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-knee_max_motor_rpm_cmd",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "51030000050000004a559e2c03000000",
+  "expect": "51030000050000004a559e2c03000000",
+  "model": {
+    "@kind": "knee_max_motor_rpm_cmd"
+  }
+}

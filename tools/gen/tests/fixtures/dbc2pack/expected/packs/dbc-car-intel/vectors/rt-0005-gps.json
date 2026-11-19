@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-gps",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "5802000008000000d634b7d58ab89309",
+  "expect": "5802000008000000d634b7d58ab89309",
+  "model": {
+    "@kind": "gps"
+  }
+}

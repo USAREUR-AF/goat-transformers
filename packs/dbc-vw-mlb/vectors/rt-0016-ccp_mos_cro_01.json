@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-ccp_mos_cro_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "e101000008000000d8d7b06400000080",
+  "expect": "e101000008000000d8d7b06400000080",
+  "model": {
+    "@kind": "ccp_mos_cro_01"
+  }
+}

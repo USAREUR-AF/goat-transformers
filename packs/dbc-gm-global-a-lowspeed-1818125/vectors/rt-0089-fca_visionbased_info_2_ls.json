@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-fca_visionbased_info_2_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c0238004000000526b99a300000000",
+  "expect": "00c0238004000000526b99a300000000",
+  "model": {
+    "@kind": "fca_visionbased_info_2_ls"
+  }
+}

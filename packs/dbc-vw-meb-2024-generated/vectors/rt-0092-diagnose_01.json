@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-diagnose_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "b20600000800000003dade1fc36f1b92",
+  "expect": "b20600000800000003dade1fc36f1b92",
+  "model": {
+    "@kind": "diagnose_01"
+  }
+}

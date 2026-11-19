@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-vsc1s29",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "280200000400000007b4008b00000000",
+  "expect": "280200000400000007b4008b00000000",
+  "model": {
+    "@kind": "vsc1s29"
+  }
+}

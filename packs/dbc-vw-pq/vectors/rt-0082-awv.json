@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-awv",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "6603000008000000253ca1565705e8d5",
+  "expect": "6603000008000000253ca1565705e8d5",
+  "model": {
+    "@kind": "awv"
+  }
+}

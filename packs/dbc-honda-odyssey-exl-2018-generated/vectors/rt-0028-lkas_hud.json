@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-lkas_hud",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "3d03000005000000812a021c16000000",
+  "expect": "3d03000005000000812a021c16000000",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

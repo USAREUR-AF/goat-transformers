@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-nmh_mo_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "7600009b08000000b6004d3b15001500",
+  "expect": "7600009b08000000b6004d3b15001500",
+  "model": {
+    "@kind": "nmh_mo_01"
+  }
+}

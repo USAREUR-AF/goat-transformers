@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-seatbelt_status",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "050300000700000080a8000000003a00",
+  "expect": "050300000700000080a8000000003a00",
+  "model": {
+    "@kind": "seatbelt_status"
+  }
+}

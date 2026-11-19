@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-massageseat_data4",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "52030000080000007f28517a00000000",
+  "expect": "52030000080000007f28517a00000000",
+  "model": {
+    "@kind": "massageseat_data4"
+  }
+}

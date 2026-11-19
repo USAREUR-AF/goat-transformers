@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hongqi-hs5-roundtrip-door_fl",
+  "from": "dbc-hongqi-hs5",
+  "to": "dbc-hongqi-hs5",
+  "input": "4a020000080000000000000000000000",
+  "expect": "4a020000080000000000000000000000",
+  "model": {
+    "@kind": "door_fl"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-lkas11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "4003000008000000c1592af346b3672e",
+  "expect": "4003000008000000c1592af346b3672e",
+  "model": {
+    "@kind": "lkas11"
+  }
+}

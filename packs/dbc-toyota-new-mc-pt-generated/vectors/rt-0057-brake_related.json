@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-brake_related",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "9a040000080000000000000000000100",
+  "expect": "9a040000080000000000000000000100",
+  "model": {
+    "@kind": "brake_related"
+  }
+}

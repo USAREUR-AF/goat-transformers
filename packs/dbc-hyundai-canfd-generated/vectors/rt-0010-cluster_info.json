@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-cluster_info",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "d8040000080000000000000000000000",
+  "expect": "d8040000080000000000000000000000",
+  "model": {
+    "@kind": "cluster_info"
+  }
+}

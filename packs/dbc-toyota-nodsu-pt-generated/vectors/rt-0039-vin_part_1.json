@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-vin_part_1",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "8005000008000000b0875e350ce3ba91",
+  "expect": "8005000008000000b0875e350ce3ba91",
+  "model": {
+    "@kind": "vin_part_1"
+  }
+}

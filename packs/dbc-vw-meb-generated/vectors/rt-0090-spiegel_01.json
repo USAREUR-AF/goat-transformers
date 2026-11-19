@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-spiegel_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "ae06000008000000aa12aa0000000000",
+  "expect": "ae06000008000000aa12aa0000000000",
+  "model": {
+    "@kind": "spiegel_01"
+  }
+}

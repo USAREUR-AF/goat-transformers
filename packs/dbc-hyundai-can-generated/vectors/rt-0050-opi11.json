@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-opi11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "7105000005000000ca8aab820b000000",
+  "expect": "7105000005000000ca8aab820b000000",
+  "model": {
+    "@kind": "opi11"
+  }
+}

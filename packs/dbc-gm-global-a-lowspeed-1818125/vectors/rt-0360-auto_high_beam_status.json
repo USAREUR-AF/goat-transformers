@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-auto_high_beam_status",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00803880010000000500000000000000",
+  "expect": "00803880010000000500000000000000",
+  "model": {
+    "@kind": "auto_high_beam_status"
+  }
+}

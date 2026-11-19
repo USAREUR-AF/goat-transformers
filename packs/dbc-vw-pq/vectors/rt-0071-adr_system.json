@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-adr_system",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "6003000008000000c6bf9637a9527ef0",
+  "expect": "6003000008000000c6bf9637a9527ef0",
+  "model": {
+    "@kind": "adr_system"
+  }
+}

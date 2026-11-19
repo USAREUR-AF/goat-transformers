@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-hud_settings",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "55030000080000000000000020000000",
+  "expect": "55030000080000000000000020000000",
+  "model": {
+    "@kind": "hud_settings"
+  }
+}

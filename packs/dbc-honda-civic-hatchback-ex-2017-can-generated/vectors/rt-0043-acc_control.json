@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-acc_control",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "df0100000800000034a541802a800070",
+  "expect": "df0100000800000034a541802a800070",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

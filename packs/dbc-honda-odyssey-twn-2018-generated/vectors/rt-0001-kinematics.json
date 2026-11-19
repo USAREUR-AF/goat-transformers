@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-kinematics",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "940000000800000085800001ed000034",
+  "expect": "940000000800000085800001ed000034",
+  "model": {
+    "@kind": "kinematics"
+  }
+}

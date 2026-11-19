@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-transimissiondata2",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "a2010000080000000000000000000097",
+  "expect": "a2010000080000000000000000000097",
+  "model": {
+    "@kind": "transimissiondata2"
+  }
+}

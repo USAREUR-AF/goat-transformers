@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-das_6",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "dc0500000400000001c0070e00000000",
+  "expect": "dc0500000400000001c0070e00000000",
+  "model": {
+    "@kind": "das_6"
+  }
+}

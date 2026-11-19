@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-otafuncgwm_ecg_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d8fc9f9b080000003cc4b0a800000000",
+  "expect": "d8fc9f9b080000003cc4b0a800000000",
+  "model": {
+    "@kind": "otafuncgwm_ecg_fd1"
+  }
+}

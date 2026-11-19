@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-whl_pul11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "87030000060000001ef5cca3c6d60000",
+  "expect": "87030000060000001ef5cca3c6d60000",
+  "model": {
+    "@kind": "whl_pul11"
+  }
+}

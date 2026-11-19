@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-tsg_ft_02",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "e503000008000000bb04000000000000",
+  "expect": "e503000008000000bb04000000000000",
+  "model": {
+    "@kind": "tsg_ft_02"
+  }
+}

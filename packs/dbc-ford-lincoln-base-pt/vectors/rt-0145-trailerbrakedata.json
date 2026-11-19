@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-trailerbrakedata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "120400000800000000763e9000000000",
+  "expect": "120400000800000000763e9000000000",
+  "model": {
+    "@kind": "trailerbrakedata"
+  }
+}

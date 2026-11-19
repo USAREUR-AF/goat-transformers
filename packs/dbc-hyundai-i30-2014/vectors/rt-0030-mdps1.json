@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-mdps1",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "e4050000080000002639000000000000",
+  "expect": "e4050000080000002639000000000000",
+  "model": {
+    "@kind": "mdps1"
+  }
+}

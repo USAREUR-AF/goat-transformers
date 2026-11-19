@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-odiaction_rearseat_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00c0b18008000000000000005a213ef0",
+  "expect": "00c0b18008000000000000005a213ef0",
+  "model": {
+    "@kind": "odiaction_rearseat_ls"
+  }
+}

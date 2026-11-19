@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-scm_feedback",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "9402000008000000400000000000003e",
+  "expect": "9402000008000000400000000000003e",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

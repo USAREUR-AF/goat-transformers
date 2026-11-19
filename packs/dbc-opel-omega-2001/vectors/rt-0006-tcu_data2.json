@@ -1,0 +1,10 @@
+{
+  "name": "dbc-opel-omega-2001-roundtrip-tcu_data2",
+  "from": "dbc-opel-omega-2001",
+  "to": "dbc-opel-omega-2001",
+  "input": "e0020000080000000000007f001d5600",
+  "expect": "e0020000080000000000007f001d5600",
+  "model": {
+    "@kind": "tcu_data2"
+  }
+}

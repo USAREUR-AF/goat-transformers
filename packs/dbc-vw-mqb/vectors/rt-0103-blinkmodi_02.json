@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-blinkmodi_02",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "66030000080000000000101500000000",
+  "expect": "66030000080000000000101500000000",
+  "model": {
+    "@kind": "blinkmodi_02"
+  }
+}

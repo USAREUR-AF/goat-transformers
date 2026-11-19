@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-diag_debug3",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "37050000080000005555555555555555",
+  "expect": "37050000080000005555555555555555",
+  "model": {
+    "@kind": "diag_debug3"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-statusdsc_kcan",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "9e01000008000000000e000000a2cb79",
+  "expect": "9e01000008000000000e000000a2cb79",
+  "model": {
+    "@kind": "statusdsc_kcan"
+  }
+}

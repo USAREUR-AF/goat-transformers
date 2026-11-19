@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-sync",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "80000000050000000000ff6800000000",
+  "expect": "80000000050000000000ff6800000000",
+  "model": {
+    "@kind": "sync"
+  }
+}

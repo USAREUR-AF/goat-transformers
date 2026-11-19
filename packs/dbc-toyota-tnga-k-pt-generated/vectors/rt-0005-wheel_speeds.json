@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-wheel_speeds",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "aa00000008000000863bade9d597fd45",
+  "expect": "aa00000008000000863bade9d597fd45",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

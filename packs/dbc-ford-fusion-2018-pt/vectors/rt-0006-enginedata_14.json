@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-enginedata_14",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "0402000008000000021b000000000000",
+  "expect": "0402000008000000021b000000000000",
+  "model": {
+    "@kind": "enginedata_14"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-steer_angle_sensor",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "0200000005000000c55017ee0c000000",
+  "expect": "0200000005000000c55017ee0c000000",
+  "model": {
+    "@kind": "steer_angle_sensor"
+  }
+}

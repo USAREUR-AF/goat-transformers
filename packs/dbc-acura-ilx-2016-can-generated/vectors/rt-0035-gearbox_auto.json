@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-can-generated-roundtrip-gearbox_auto",
+  "from": "dbc-acura-ilx-2016-can-generated",
+  "to": "dbc-acura-ilx-2016-can-generated",
+  "input": "a301000008000000197001000a000278",
+  "expect": "a301000008000000197001000a000278",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

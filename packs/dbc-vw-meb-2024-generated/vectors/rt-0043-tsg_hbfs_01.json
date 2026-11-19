@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-tsg_hbfs_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "cf03000008000000aaeaae815555450b",
+  "expect": "cf03000008000000aaeaae815555450b",
+  "model": {
+    "@kind": "tsg_hbfs_01"
+  }
+}

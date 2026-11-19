@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-pscmstatus",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "84010000080000003643026c51f10695",
+  "expect": "84010000080000003643026c51f10695",
+  "model": {
+    "@kind": "pscmstatus"
+  }
+}

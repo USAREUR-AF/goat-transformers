@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-acc_hud",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "0c03000008000000ed7d542bb29a93e5",
+  "expect": "0c03000008000000ed7d542bb29a93e5",
+  "model": {
+    "@kind": "acc_hud"
+  }
+}

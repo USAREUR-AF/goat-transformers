@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ebcmbrakepedalsensors",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "d100000007000000db99af70471e0000",
+  "expect": "d100000007000000db99af70471e0000",
+  "model": {
+    "@kind": "ebcmbrakepedalsensors"
+  }
+}

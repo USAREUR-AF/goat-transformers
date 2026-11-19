@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-is_dat_dira",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "95040000040000001ac191a900000000",
+  "expect": "95040000040000001ac191a900000000",
+  "model": {
+    "@kind": "is_dat_dira"
+  }
+}

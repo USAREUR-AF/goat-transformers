@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-gw_chassis_pe_1",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "6901000008000000c100000000000000",
+  "expect": "6901000008000000c100000000000000",
+  "model": {
+    "@kind": "gw_chassis_pe_1"
+  }
+}

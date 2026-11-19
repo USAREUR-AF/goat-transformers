@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-driveline_data_2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a20400000800000082d81c4000000000",
+  "expect": "a20400000800000082d81c4000000000",
+  "model": {
+    "@kind": "driveline_data_2"
+  }
+}

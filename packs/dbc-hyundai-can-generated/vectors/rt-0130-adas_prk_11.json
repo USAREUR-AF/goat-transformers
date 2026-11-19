@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-adas_prk_11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "6103000008000000000000110008af00",
+  "expect": "6103000008000000000000110008af00",
+  "model": {
+    "@kind": "adas_prk_11"
+  }
+}

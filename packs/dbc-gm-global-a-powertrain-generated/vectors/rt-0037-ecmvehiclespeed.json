@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ecmvehiclespeed",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "e90300000800000094d50000e8ac0000",
+  "expect": "e90300000800000094d50000e8ac0000",
+  "model": {
+    "@kind": "ecmvehiclespeed"
+  }
+}

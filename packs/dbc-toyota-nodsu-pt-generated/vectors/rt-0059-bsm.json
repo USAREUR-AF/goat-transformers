@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-bsm",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "f6030000080000008300000000000000",
+  "expect": "f6030000080000008300000000000000",
+  "model": {
+    "@kind": "bsm"
+  }
+}

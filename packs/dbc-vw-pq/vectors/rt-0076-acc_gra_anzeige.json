@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-acc_gra_anzeige",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "6a05000008000000bb4a39c50d08ee95",
+  "expect": "6a05000008000000bb4a39c50d08ee95",
+  "model": {
+    "@kind": "acc_gra_anzeige"
+  }
+}

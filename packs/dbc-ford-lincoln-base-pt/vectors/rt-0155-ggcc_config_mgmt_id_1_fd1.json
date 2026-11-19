@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-ggcc_config_mgmt_id_1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "0a040000080000008000000041b5f6ba",
+  "expect": "0a040000080000008000000041b5f6ba",
+  "model": {
+    "@kind": "ggcc_config_mgmt_id_1_fd1"
+  }
+}

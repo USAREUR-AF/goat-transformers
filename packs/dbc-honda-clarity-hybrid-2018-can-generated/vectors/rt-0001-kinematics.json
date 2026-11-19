@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-kinematics",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "940000000800000085800001ed000034",
+  "expect": "940000000800000085800001ed000034",
+  "model": {
+    "@kind": "kinematics"
+  }
+}

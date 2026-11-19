@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-scm_buttons",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "96020000040000000c00001e00000000",
+  "expect": "96020000040000000c00001e00000000",
+  "model": {
+    "@kind": "scm_buttons"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-chassis-roundtrip-ebcmregen",
+  "from": "dbc-gm-global-a-chassis",
+  "to": "dbc-gm-global-a-chassis",
+  "input": "300200000600000000ba000000000000",
+  "expect": "300200000600000000ba000000000000",
+  "model": {
+    "@kind": "ebcmregen"
+  }
+}

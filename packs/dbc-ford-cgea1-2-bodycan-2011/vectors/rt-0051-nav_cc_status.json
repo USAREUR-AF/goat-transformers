@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-nav_cc_status",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "99030000080000009ec1800000000000",
+  "expect": "99030000080000009ec1800000000000",
+  "model": {
+    "@kind": "nav_cc_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-dashlights",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "82020000080000000090000000210000",
+  "expect": "82020000080000000090000000210000",
+  "model": {
+    "@kind": "dashlights"
+  }
+}

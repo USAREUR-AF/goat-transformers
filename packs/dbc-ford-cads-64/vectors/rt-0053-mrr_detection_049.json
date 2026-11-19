@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-mrr_detection_049",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "50010000080000008df9bdaa625b0500",
+  "expect": "50010000080000008df9bdaa625b0500",
+  "model": {
+    "@kind": "mrr_detection_049"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-radar_hud",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "9f03000008000000748e3c61381fe614",
+  "expect": "9f03000008000000748e3c61381fe614",
+  "model": {
+    "@kind": "radar_hud"
+  }
+}

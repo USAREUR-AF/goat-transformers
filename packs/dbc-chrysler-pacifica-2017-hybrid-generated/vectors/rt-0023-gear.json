@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-gear",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "ea02000005000000060000406d000000",
+  "expect": "ea02000005000000060000406d000000",
+  "model": {
+    "@kind": "gear"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-doors",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "b3030000080000000000000000000210",
+  "expect": "b3030000080000000000000000000210",
+  "model": {
+    "@kind": "doors"
+  }
+}

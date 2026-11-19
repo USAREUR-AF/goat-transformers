@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-bsi_faultlog",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "6807000008000000a77e552c03dab188",
+  "expect": "6807000008000000a77e552c03dab188",
+  "model": {
+    "@kind": "bsi_faultlog"
+  }
+}

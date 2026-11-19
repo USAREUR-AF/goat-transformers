@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-eps_hsc2_frp03",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "ec0100000800000052c31e9a06484000",
+  "expect": "ec0100000800000052c31e9a06484000",
+  "model": {
+    "@kind": "eps_hsc2_frp03"
+  }
+}

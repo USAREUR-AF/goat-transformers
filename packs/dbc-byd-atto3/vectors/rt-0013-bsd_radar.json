@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-bsd_radar",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "18040000080000000006020000000000",
+  "expect": "18040000080000000006020000000000",
+  "model": {
+    "@kind": "bsd_radar"
+  }
+}

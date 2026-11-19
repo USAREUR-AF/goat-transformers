@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-cruise_buttons",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "cf01000008000000ab20890800000000",
+  "expect": "cf01000008000000ab20890800000000",
+  "model": {
+    "@kind": "cruise_buttons"
+  }
+}

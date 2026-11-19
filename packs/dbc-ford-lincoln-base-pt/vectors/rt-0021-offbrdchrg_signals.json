@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-offbrdchrg_signals",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "1202000008000000c40b409686ecbf53",
+  "expect": "1202000008000000c40b409686ecbf53",
+  "model": {
+    "@kind": "offbrdchrg_signals"
+  }
+}

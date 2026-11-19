@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-rough_wheel_speed",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "550200000800000011e8bf966d441b12",
+  "expect": "550200000800000011e8bf966d441b12",
+  "model": {
+    "@kind": "rough_wheel_speed"
+  }
+}

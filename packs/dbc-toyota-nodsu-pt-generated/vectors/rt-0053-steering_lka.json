@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-steering_lka",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "e402000005000000506216baed000000",
+  "expect": "e402000005000000506216baed000000",
+  "model": {
+    "@kind": "steering_lka"
+  }
+}

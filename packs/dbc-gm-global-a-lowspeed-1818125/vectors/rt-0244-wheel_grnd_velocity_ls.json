@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-wheel_grnd_velocity_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00806b80080000002ced00c4549b2872",
+  "expect": "00806b80080000002ced00c4549b2872",
+  "model": {
+    "@kind": "wheel_grnd_velocity_ls"
+  }
+}

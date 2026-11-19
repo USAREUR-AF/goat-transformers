@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-al_test_tool_rsp_lfsrr",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "fc06000008000000000000003aa886ef",
+  "expect": "fc06000008000000000000003aa886ef",
+  "model": {
+    "@kind": "al_test_tool_rsp_lfsrr"
+  }
+}

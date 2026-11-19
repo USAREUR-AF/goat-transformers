@@ -1,0 +1,10 @@
+{
+  "name": "dbc-fca-giorgio-roundtrip-lka_command",
+  "from": "dbc-fca-giorgio",
+  "to": "dbc-fca-giorgio",
+  "input": "f601000008000000ad08080000000b72",
+  "expect": "f601000008000000ad08080000000b72",
+  "model": {
+    "@kind": "lka_command"
+  }
+}

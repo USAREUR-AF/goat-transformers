@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-hybrid_brake_error",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "84010000080000000000000004000010",
+  "expect": "84010000080000000000000004000010",
+  "model": {
+    "@kind": "hybrid_brake_error"
+  }
+}

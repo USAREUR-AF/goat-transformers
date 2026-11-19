@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-effdrvmodedata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4a04000008000000a70922a4aa000000",
+  "expect": "4a04000008000000a70922a4aa000000",
+  "model": {
+    "@kind": "effdrvmodedata"
+  }
+}

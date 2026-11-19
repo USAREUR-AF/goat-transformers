@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-dat2_cmm",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "8805000008000000613840946be65733",
+  "expect": "8805000008000000613840946be65733",
+  "model": {
+    "@kind": "dat2_cmm"
+  }
+}

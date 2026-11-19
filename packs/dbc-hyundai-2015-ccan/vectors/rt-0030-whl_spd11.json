@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-whl_spd11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "86030000080000001162e835bfc9969d",
+  "expect": "86030000080000001162e835bfc9969d",
+  "model": {
+    "@kind": "whl_spd11"
+  }
+}

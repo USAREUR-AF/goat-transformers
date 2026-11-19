@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-steering_levers",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "18030000080000000000000000000000",
+  "expect": "18030000080000000000000000000000",
+  "model": {
+    "@kind": "steering_levers"
+  }
+}

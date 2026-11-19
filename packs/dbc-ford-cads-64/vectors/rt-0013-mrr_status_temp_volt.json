@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-mrr_status_temp_volt",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "0901000008000000fe7927a250cbf41d",
+  "expect": "0901000008000000fe7927a250cbf41d",
+  "model": {
+    "@kind": "mrr_status_temp_volt"
+  }
+}

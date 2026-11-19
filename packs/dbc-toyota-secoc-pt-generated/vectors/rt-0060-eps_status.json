@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-eps_status",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "6202000008000000035000700000008f",
+  "expect": "6202000008000000035000700000008f",
+  "model": {
+    "@kind": "eps_status"
+  }
+}

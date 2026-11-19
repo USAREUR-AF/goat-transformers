@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-canfd-generated-roundtrip-drive_mode",
+  "from": "dbc-hyundai-canfd-generated",
+  "to": "dbc-hyundai-canfd-generated",
+  "input": "7804000008000000c90d000000000000",
+  "expect": "7804000008000000c90d000000000000",
+  "model": {
+    "@kind": "drive_mode"
+  }
+}

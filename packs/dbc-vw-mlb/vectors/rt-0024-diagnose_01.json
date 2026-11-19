@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-diagnose_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "b206000008000000ffd68bd3a22d1390",
+  "expect": "b206000008000000ffd68bd3a22d1390",
+  "model": {
+    "@kind": "diagnose_01"
+  }
+}

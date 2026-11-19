@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-elect_gear",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "720300000800000000000a00e8000000",
+  "expect": "720300000800000000000a00e8000000",
+  "model": {
+    "@kind": "elect_gear"
+  }
+}

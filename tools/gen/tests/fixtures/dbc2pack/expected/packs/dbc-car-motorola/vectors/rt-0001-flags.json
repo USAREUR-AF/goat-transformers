@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-motorola-roundtrip-flags",
+  "from": "dbc-car-motorola",
+  "to": "dbc-car-motorola",
+  "input": "010200000200000041b5000000000000",
+  "expect": "010200000200000041b5000000000000",
+  "model": {
+    "@kind": "flags"
+  }
+}

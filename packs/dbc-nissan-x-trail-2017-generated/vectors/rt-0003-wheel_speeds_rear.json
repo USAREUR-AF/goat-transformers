@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-wheel_speeds_rear",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "850200000800000060f7b4ce00000000",
+  "expect": "850200000800000060f7b4ce00000000",
+  "model": {
+    "@kind": "wheel_speeds_rear"
+  }
+}

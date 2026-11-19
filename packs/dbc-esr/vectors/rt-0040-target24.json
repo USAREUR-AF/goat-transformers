@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-target24",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "17050000080000004938b80de836c85f",
+  "expect": "17050000080000004938b80de836c85f",
+  "model": {
+    "@kind": "target24"
+  }
+}

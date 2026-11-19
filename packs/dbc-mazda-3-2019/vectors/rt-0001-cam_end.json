@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-cam_end",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "6601000008000000000000d20000000b",
+  "expect": "6601000008000000000000d20000000b",
+  "model": {
+    "@kind": "cam_end"
+  }
+}

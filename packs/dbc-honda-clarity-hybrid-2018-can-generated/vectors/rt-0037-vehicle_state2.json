@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-vehicle_state2",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "010300000800000000003d14eb000029",
+  "expect": "010300000800000000003d14eb000029",
+  "model": {
+    "@kind": "vehicle_state2"
+  }
+}

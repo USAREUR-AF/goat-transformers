@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-clutch",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "61030000080000000000f3004100a160",
+  "expect": "61030000080000000000f3004100a160",
+  "model": {
+    "@kind": "clutch"
+  }
+}

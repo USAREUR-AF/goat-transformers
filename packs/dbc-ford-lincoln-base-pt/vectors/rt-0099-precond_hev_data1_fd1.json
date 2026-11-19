@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-precond_hev_data1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "400400000800000030000000001691a3",
+  "expect": "400400000800000030000000001691a3",
+  "model": {
+    "@kind": "precond_hev_data1_fd1"
+  }
+}

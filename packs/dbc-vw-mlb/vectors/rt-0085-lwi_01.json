@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-lwi_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "8600000008000000189f4b3d68a72c7e",
+  "expect": "8600000008000000189f4b3d68a72c7e",
+  "model": {
+    "@kind": "lwi_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-vsc1s08",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "2004000008000000a39bf77249200a2a",
+  "expect": "2004000008000000a39bf77249200a2a",
+  "model": {
+    "@kind": "vsc1s08"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ebcmwheelspdrear",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "4a03000005000000a520f8f72e000000",
+  "expect": "4a03000005000000a520f8f72e000000",
+  "model": {
+    "@kind": "ebcmwheelspdrear"
+  }
+}

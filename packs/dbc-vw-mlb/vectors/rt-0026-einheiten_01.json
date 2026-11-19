@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-einheiten_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "43060000030000005c06f80000000000",
+  "expect": "43060000030000005c06f80000000000",
+  "model": {
+    "@kind": "einheiten_01"
+  }
+}

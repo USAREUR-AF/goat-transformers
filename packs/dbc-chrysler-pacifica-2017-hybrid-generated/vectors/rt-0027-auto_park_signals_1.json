@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-auto_park_signals_1",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "cf0200000800000041a5000000000000",
+  "expect": "cf0200000800000041a5000000000000",
+  "model": {
+    "@kind": "auto_park_signals_1"
+  }
+}

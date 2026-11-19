@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-steering_levers",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "14060000080000000000001000000000",
+  "expect": "14060000080000000000001000000000",
+  "model": {
+    "@kind": "steering_levers"
+  }
+}

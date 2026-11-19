@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-engine_data",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "1a000000080000001e28000005c010ee",
+  "expect": "1a000000080000001e28000005c010ee",
+  "model": {
+    "@kind": "engine_data"
+  }
+}

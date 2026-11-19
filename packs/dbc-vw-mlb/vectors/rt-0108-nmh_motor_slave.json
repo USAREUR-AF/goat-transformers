@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-nmh_motor_slave",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "c8060000070000000af00000aa000200",
+  "expect": "c8060000070000000af00000aa000200",
+  "model": {
+    "@kind": "nmh_motor_slave"
+  }
+}

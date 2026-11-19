@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-ecu_data1",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "60020000080000003b12e902006e0000",
+  "expect": "60020000080000003b12e902006e0000",
+  "model": {
+    "@kind": "ecu_data1"
+  }
+}

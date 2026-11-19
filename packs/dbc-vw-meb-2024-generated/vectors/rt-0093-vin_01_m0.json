@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-vin_01_m0",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "b4060000080000000092694017eec59c",
+  "expect": "b4060000080000000092694017eec59c",
+  "model": {
+    "@kind": "vin_01_m0"
+  }
+}

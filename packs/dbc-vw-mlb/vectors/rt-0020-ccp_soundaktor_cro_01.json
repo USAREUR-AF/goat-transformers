@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-ccp_soundaktor_cro_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "00e6fc9b080000000d6ce52100000000",
+  "expect": "00e6fc9b080000000d6ce52100000000",
+  "model": {
+    "@kind": "ccp_soundaktor_cro_01"
+  }
+}

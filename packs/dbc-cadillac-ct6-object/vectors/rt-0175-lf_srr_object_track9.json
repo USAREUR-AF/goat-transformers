@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-lf_srr_object_track9",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "c904000008000000070d0ae496bbdfae",
+  "expect": "c904000008000000070d0ae496bbdfae",
+  "model": {
+    "@kind": "lf_srr_object_track9"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-acc_hud_adas",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "2d03000008000000f51058000051f8d6",
+  "expect": "2d03000008000000f51058000051f8d6",
+  "model": {
+    "@kind": "acc_hud_adas"
+  }
+}

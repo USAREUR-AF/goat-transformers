@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-yrs2",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "40010000080000001ff60000cda42b29",
+  "expect": "40010000080000001ff60000cda42b29",
+  "model": {
+    "@kind": "yrs2"
+  }
+}

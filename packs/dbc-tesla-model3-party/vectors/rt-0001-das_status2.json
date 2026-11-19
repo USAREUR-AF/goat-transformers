@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-das_status2",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "8903000008000000c10bf5244dd68f51",
+  "expect": "8903000008000000c10bf5244dd68f51",
+  "model": {
+    "@kind": "das_status2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-motor_05",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "0e0300000800000085bc55c2550ad6ad",
+  "expect": "0e0300000800000085bc55c2550ad6ad",
+  "model": {
+    "@kind": "motor_05"
+  }
+}

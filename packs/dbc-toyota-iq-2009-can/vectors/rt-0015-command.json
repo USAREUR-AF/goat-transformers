@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-command",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "c102000008000000003acce6f5a3931e",
+  "expect": "c102000008000000003acce6f5a3931e",
+  "model": {
+    "@kind": "command"
+  }
+}

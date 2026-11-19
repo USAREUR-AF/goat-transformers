@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-legacy_brake_command",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "fa010000080000000000000000fb0012",
+  "expect": "fa010000080000000000000000fb0012",
+  "model": {
+    "@kind": "legacy_brake_command"
+  }
+}

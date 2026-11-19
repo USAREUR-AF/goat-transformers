@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-rough_wheel_speed",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "550200000800000011e8bf966d441b12",
+  "expect": "550200000800000011e8bf966d441b12",
+  "model": {
+    "@kind": "rough_wheel_speed"
+  }
+}

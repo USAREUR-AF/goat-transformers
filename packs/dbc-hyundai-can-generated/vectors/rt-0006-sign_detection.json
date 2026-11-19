@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-sign_detection",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "ec040000080000000000000000b38a00",
+  "expect": "ec040000080000000000000000b38a00",
+  "model": {
+    "@kind": "sign_detection"
+  }
+}

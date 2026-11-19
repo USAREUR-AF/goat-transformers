@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-hmi_animation_initiator_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00002b80010000000000000000000000",
+  "expect": "00002b80010000000000000000000000",
+  "model": {
+    "@kind": "hmi_animation_initiator_ls"
+  }
+}

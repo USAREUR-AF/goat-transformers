@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-turnsignals",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "f6010000020000002102000000000000",
+  "expect": "f6010000020000002102000000000000",
+  "model": {
+    "@kind": "turnsignals"
+  }
+}

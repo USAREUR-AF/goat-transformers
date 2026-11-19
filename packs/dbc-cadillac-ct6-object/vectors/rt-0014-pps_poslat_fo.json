@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-pps_poslat_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "6102000006000000bead177b07cd0000",
+  "expect": "6102000006000000bead177b07cd0000",
+  "model": {
+    "@kind": "pps_poslat_fo"
+  }
+}

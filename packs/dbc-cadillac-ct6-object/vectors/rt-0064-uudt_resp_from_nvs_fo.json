@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-uudt_resp_from_nvs_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "5f050000080000008000000040bbb4aa",
+  "expect": "5f050000080000008000000040bbb4aa",
+  "model": {
+    "@kind": "uudt_resp_from_nvs_fo"
+  }
+}

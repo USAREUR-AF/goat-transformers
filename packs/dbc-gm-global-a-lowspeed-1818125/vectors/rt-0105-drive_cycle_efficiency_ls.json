@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-drive_cycle_efficiency_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a0448008000000000009004f3a45a9",
+  "expect": "00a0448008000000000009004f3a45a9",
+  "model": {
+    "@kind": "drive_cycle_efficiency_ls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-fob_status_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0080718002000000066f000000000000",
+  "expect": "0080718002000000066f000000000000",
+  "model": {
+    "@kind": "fob_status_ls"
+  }
+}

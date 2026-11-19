@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-avn1s20",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "3404000008000000035a3108dfb68dc8",
+  "expect": "3404000008000000035a3108dfb68dc8",
+  "model": {
+    "@kind": "avn1s20"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-power_liftgate_stat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "130300000800000004e0000000000000",
+  "expect": "130300000800000004e0000000000000",
+  "model": {
+    "@kind": "power_liftgate_stat_fd1"
+  }
+}

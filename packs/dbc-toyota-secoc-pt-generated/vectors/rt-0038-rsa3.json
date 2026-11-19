@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-rsa3",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "8b04000008000000a4070e0500000000",
+  "expect": "8b04000008000000a4070e0500000000",
+  "model": {
+    "@kind": "rsa3"
+  }
+}

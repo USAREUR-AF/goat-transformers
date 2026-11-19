@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-pas11",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "3604000004000000f7685c1200000000",
+  "expect": "3604000004000000f7685c1200000000",
+  "model": {
+    "@kind": "pas11"
+  }
+}

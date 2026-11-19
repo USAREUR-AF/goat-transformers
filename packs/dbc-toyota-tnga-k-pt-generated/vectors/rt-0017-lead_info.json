@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-lead_info",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "e602000008000000b31028b0000000b4",
+  "expect": "e602000008000000b31028b0000000b4",
+  "model": {
+    "@kind": "lead_info"
+  }
+}

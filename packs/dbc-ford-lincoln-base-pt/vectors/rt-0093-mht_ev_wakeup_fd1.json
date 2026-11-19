@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-mht_ev_wakeup_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "7804000008000000eb1c430331800000",
+  "expect": "7804000008000000eb1c430331800000",
+  "model": {
+    "@kind": "mht_ev_wakeup_fd1"
+  }
+}

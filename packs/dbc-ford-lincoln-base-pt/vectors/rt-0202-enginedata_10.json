@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-enginedata_10",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "630100000800000000000000580001bb",
+  "expect": "630100000800000000000000580001bb",
+  "model": {
+    "@kind": "enginedata_10"
+  }
+}

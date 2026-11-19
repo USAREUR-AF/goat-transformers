@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-es_distance",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "610100000800000045c3a4fdd405ae8c",
+  "expect": "610100000800000045c3a4fdd405ae8c",
+  "model": {
+    "@kind": "es_distance"
+  }
+}

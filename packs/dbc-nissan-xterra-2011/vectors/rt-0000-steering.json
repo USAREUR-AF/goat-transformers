@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-xterra-2011-roundtrip-steering",
+  "from": "dbc-nissan-xterra-2011",
+  "to": "dbc-nissan-xterra-2011",
+  "input": "0200000005000000eefcc50007000000",
+  "expect": "0200000005000000eefcc50007000000",
+  "model": {
+    "@kind": "steering"
+  }
+}

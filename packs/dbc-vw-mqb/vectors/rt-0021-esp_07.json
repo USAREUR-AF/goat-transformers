@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-esp_07",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "92030000080000000c133f16edb49215",
+  "expect": "92030000080000000c133f16edb49215",
+  "model": {
+    "@kind": "esp_07"
+  }
+}

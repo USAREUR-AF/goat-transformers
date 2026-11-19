@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-rsa2",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "8a04000008000000a40e0090d7195a4f",
+  "expect": "8a04000008000000a40e0090d7195a4f",
+  "model": {
+    "@kind": "rsa2"
+  }
+}

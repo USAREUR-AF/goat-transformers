@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-kn_getriebe_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "7700f097080000004000000000000000",
+  "expect": "7700f097080000004000000000000000",
+  "model": {
+    "@kind": "kn_getriebe_01"
+  }
+}

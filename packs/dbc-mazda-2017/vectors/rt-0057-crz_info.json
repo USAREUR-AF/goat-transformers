@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-crz_info",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "1b02000008000000e6271fac32805705",
+  "expect": "1b02000008000000e6271fac32805705",
+  "model": {
+    "@kind": "crz_info"
+  }
+}

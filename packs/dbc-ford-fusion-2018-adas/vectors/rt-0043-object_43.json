@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-adas-roundtrip-object_43",
+  "from": "dbc-ford-fusion-2018-adas",
+  "to": "dbc-ford-fusion-2018-adas",
+  "input": "2b050000080000000010f29902470670",
+  "expect": "2b050000080000000010f29902470670",
+  "model": {
+    "@kind": "object_43"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-mfc_4a7",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "a7040000080000000100000000000000",
+  "expect": "a7040000080000000100000000000000",
+  "model": {
+    "@kind": "mfc_4a7"
+  }
+}

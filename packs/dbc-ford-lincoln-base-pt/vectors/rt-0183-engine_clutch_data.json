@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-engine_clutch_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "2f04000008000000f80da62fa0000221",
+  "expect": "2f04000008000000f80da62fa0000221",
+  "model": {
+    "@kind": "engine_clutch_data"
+  }
+}

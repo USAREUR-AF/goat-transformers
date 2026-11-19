@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-esp_wheelspeed",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "f1010000080000000000690d1417e58e",
+  "expect": "f1010000080000000000690d1417e58e",
+  "model": {
+    "@kind": "esp_wheelspeed"
+  }
+}

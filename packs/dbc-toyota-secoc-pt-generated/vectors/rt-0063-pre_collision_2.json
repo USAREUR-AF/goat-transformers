@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-pre_collision_2",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "440300000800000000000000b7aa7d44",
+  "expect": "440300000800000000000000b7aa7d44",
+  "model": {
+    "@kind": "pre_collision_2"
+  }
+}

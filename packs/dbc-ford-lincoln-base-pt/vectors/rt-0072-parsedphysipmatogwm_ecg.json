@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-parsedphysipmatogwm_ecg",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "2160a39b08000000ad02a28000000000",
+  "expect": "2160a39b08000000ad02a28000000000",
+  "model": {
+    "@kind": "parsedphysipmatogwm_ecg"
+  }
+}

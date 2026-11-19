@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-pre_collision",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "8302000007000000492060f7b33a0100",
+  "expect": "8302000007000000492060f7b33a0100",
+  "model": {
+    "@kind": "pre_collision"
+  }
+}

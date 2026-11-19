@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-roundtrip-vehiclespeed",
+  "from": "dbc-gm-global-a-lowspeed",
+  "to": "dbc-gm-global-a-lowspeed",
+  "input": "0000219008000000fdc1000051980000",
+  "expect": "0000219008000000fdc1000051980000",
+  "model": {
+    "@kind": "vehiclespeed"
+  }
+}

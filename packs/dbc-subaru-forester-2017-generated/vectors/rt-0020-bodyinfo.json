@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-bodyinfo",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "74030000080000000000000a00000000",
+  "expect": "74030000080000000000000a00000000",
+  "model": {
+    "@kind": "bodyinfo"
+  }
+}

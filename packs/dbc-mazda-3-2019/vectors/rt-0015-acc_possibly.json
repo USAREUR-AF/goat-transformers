@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-acc_possibly",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "340100000800000000a405702b805224",
+  "expect": "340100000800000000a405702b805224",
+  "model": {
+    "@kind": "acc_possibly"
+  }
+}

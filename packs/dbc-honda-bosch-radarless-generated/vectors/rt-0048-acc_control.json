@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-acc_control",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "c8010000080000007215000002084027",
+  "expect": "c8010000080000007215000002084027",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

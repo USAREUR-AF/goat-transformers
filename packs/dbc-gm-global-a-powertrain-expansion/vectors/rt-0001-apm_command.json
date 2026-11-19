@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-expansion-roundtrip-apm_command",
+  "from": "dbc-gm-global-a-powertrain-expansion",
+  "to": "dbc-gm-global-a-powertrain-expansion",
+  "input": "d401000002000000d6ad000000000000",
+  "expect": "d401000002000000d6ad000000000000",
+  "model": {
+    "@kind": "apm_command"
+  }
+}

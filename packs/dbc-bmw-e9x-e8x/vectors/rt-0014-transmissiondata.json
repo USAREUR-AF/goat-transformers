@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-transmissiondata",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "ba000000080000001912003b68c00d00",
+  "expect": "ba000000080000001912003b68c00d00",
+  "model": {
+    "@kind": "transmissiondata"
+  }
+}

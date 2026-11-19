@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-di_box12",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "46050000080000000ce3ba91683f160a",
+  "expect": "46050000080000000ce3ba91683f160a",
+  "model": {
+    "@kind": "di_box12"
+  }
+}

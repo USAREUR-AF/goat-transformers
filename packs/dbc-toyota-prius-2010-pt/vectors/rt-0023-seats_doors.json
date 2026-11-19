@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-seats_doors",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "20060000080000000000000000140040",
+  "expect": "20060000080000000000000000140040",
+  "model": {
+    "@kind": "seats_doors"
+  }
+}

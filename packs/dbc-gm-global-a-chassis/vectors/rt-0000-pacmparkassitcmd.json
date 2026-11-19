@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-chassis-roundtrip-pacmparkassitcmd",
+  "from": "dbc-gm-global-a-chassis",
+  "to": "dbc-gm-global-a-chassis",
+  "input": "37030000070000000000a0c0084ce900",
+  "expect": "37030000070000000000a0c0084ce900",
+  "model": {
+    "@kind": "pacmparkassitcmd"
+  }
+}

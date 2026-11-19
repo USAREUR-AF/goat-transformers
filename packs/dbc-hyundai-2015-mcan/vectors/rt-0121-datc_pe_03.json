@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-datc_pe_03",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "320100000800000030061b6cc1c65e3c",
+  "expect": "320100000800000030061b6cc1c65e3c",
+  "model": {
+    "@kind": "datc_pe_03"
+  }
+}

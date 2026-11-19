@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-activefrontstrg_stat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8900000008000000119e69f0a6d40000",
+  "expect": "8900000008000000119e69f0a6d40000",
+  "model": {
+    "@kind": "activefrontstrg_stat_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-steer_assist_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "d703000008000000a947672abdcf8000",
+  "expect": "d703000008000000a947672abdcf8000",
+  "model": {
+    "@kind": "steer_assist_data"
+  }
+}

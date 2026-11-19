@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-cruise_throttle",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "0b020000060000004d71ae8aef8c0000",
+  "expect": "0b020000060000004d71ae8aef8c0000",
+  "model": {
+    "@kind": "cruise_throttle"
+  }
+}

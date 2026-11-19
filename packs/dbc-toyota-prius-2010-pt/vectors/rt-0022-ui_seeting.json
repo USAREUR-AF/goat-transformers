@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-ui_seeting",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "11060000080000000000000400000000",
+  "expect": "11060000080000000000000400000000",
+  "model": {
+    "@kind": "ui_seeting"
+  }
+}

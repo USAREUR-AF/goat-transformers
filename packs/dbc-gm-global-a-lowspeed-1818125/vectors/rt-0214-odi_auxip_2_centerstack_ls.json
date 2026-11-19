@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-odi_auxip_2_centerstack_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a0b28008000000000000001d534a2f",
+  "expect": "00a0b28008000000000000001d534a2f",
+  "model": {
+    "@kind": "odi_auxip_2_centerstack_ls"
+  }
+}

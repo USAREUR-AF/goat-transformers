@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-fourbyfourswitchdata_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "600400000800000058c0000000000000",
+  "expect": "600400000800000058c0000000000000",
+  "model": {
+    "@kind": "fourbyfourswitchdata_fd1"
+  }
+}

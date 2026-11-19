@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-cam_keep_alive_2",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "600400000800000002ec56c3aa9afe71",
+  "expect": "600400000800000002ec56c3aa9afe71",
+  "model": {
+    "@kind": "cam_keep_alive_2"
+  }
+}

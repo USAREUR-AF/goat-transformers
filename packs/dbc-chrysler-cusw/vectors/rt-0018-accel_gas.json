@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-accel_gas",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "fe0100000500000000a4001b29000000",
+  "expect": "fe0100000500000000a4001b29000000",
+  "model": {
+    "@kind": "accel_gas"
+  }
+}

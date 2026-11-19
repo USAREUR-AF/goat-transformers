@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-abs_brkbst_data",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "b004000008000000437865ca630a7cfd",
+  "expect": "b004000008000000437865ca630a7cfd",
+  "model": {
+    "@kind": "abs_brkbst_data"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-autopilotstatus",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "99030000080000001ea37fe56206665d",
+  "expect": "99030000080000001ea37fe56206665d",
+  "model": {
+    "@kind": "autopilotstatus"
+  }
+}

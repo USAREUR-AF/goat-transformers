@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cads-64-roundtrip-ford_diag_resp_phys",
+  "from": "dbc-ford-cads-64",
+  "to": "dbc-ford-cads-64",
+  "input": "6c07000008000000800000004ac01882",
+  "expect": "6c07000008000000800000004ac01882",
+  "model": {
+    "@kind": "ford_diag_resp_phys"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-keyfob_pad_stat",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "100100000800000082abd4838b300000",
+  "expect": "100100000800000082abd4838b300000",
+  "model": {
+    "@kind": "keyfob_pad_stat"
+  }
+}

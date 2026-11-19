@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ascmsteeringbutton",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "e1010000070000000000800002453100",
+  "expect": "e1010000070000000000800002453100",
+  "model": {
+    "@kind": "ascmsteeringbutton"
+  }
+}

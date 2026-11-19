@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-das_redundantbrakingcontrol",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "890400000800000061c87ca2dc6b0f22",
+  "expect": "890400000800000061c87ca2dc6b0f22",
+  "model": {
+    "@kind": "das_redundantbrakingcontrol"
+  }
+}

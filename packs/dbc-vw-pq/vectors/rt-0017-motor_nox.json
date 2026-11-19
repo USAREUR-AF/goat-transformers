@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-motor_nox",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "0407000008000000c0e96db63fb52a00",
+  "expect": "0407000008000000c0e96db63fb52a00",
+  "model": {
+    "@kind": "motor_nox"
+  }
+}

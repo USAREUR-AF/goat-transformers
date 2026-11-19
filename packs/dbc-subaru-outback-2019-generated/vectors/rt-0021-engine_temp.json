@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2019-generated-roundtrip-engine_temp",
+  "from": "dbc-subaru-outback-2019-generated",
+  "to": "dbc-subaru-outback-2019-generated",
+  "input": "600300000800000000005e35002000e3",
+  "expect": "600300000800000000005e35002000e3",
+  "model": {
+    "@kind": "engine_temp"
+  }
+}

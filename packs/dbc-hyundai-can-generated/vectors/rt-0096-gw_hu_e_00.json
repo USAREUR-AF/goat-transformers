@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-gw_hu_e_00",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "2405000008000000b1b1000000000000",
+  "expect": "2405000008000000b1b1000000000000",
+  "model": {
+    "@kind": "gw_hu_e_00"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-licht_hinten_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "71040000080000002b55550a0a054500",
+  "expect": "71040000080000002b55550a0a054500",
+  "model": {
+    "@kind": "licht_hinten_01"
+  }
+}

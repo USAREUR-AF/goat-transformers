@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-motor_flexia_m1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "80050000080000005f648da1cac3156e",
+  "expect": "80050000080000005f648da1cac3156e",
+  "model": {
+    "@kind": "motor_flexia_m1"
+  }
+}

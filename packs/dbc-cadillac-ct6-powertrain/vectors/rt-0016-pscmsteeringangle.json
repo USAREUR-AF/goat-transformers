@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-pscmsteeringangle",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "e50100000800000000c9940d6b000000",
+  "expect": "e50100000800000000c9940d6b000000",
+  "model": {
+    "@kind": "pscmsteeringangle"
+  }
+}

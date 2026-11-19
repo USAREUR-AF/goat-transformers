@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-nmh_getriebe_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "7700009b08000000c3001a482a000080",
+  "expect": "7700009b08000000c3001a482a000080",
+  "model": {
+    "@kind": "nmh_getriebe_01"
+  }
+}

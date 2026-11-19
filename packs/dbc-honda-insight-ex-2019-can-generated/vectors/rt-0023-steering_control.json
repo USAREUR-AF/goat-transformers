@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-steering_control",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "e400000005000000f1fc800178000000",
+  "expect": "e400000005000000f1fc800178000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

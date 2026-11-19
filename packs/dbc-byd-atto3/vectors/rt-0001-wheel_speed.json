@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-wheel_speed",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "2201000008000000a81f7f7356c72d1b",
+  "expect": "2201000008000000a81f7f7356c72d1b",
+  "model": {
+    "@kind": "wheel_speed"
+  }
+}

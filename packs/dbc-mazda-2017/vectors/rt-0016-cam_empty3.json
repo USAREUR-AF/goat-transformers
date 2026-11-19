@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_empty3",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "8804000008000000000000000005a241",
+  "expect": "8804000008000000000000000005a241",
+  "model": {
+    "@kind": "cam_empty3"
+  }
+}

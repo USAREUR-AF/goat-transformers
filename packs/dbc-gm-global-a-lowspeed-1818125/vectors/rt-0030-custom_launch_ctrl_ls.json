@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-custom_launch_ctrl_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00e0438008000000774e06aa171b48f0",
+  "expect": "00e0438008000000774e06aa171b48f0",
+  "model": {
+    "@kind": "custom_launch_ctrl_ls"
+  }
+}

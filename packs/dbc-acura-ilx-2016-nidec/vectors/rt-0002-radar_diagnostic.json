@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-nidec-roundtrip-radar_diagnostic",
+  "from": "dbc-acura-ilx-2016-nidec",
+  "to": "dbc-acura-ilx-2016-nidec",
+  "input": "00040000080000009b00000000000000",
+  "expect": "00040000080000009b00000000000000",
+  "model": {
+    "@kind": "radar_diagnostic"
+  }
+}

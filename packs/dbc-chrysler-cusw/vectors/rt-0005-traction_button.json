@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-traction_button",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "e0010000080000000800000000000000",
+  "expect": "e0010000080000000800000000000000",
+  "model": {
+    "@kind": "traction_button"
+  }
+}

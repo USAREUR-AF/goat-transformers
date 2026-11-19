@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-vers_cmm",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "0801000008000000c49b724920f7cea5",
+  "expect": "0801000008000000c49b724920f7cea5",
+  "model": {
+    "@kind": "vers_cmm"
+  }
+}

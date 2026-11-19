@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-ygs1s03",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "240000000800000054ed444907a57c53",
+  "expect": "240000000800000054ed444907a57c53",
+  "model": {
+    "@kind": "ygs1s03"
+  }
+}

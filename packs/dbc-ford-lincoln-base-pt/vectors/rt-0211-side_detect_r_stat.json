@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-side_detect_r_stat",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a70300000800000047b303c166980000",
+  "expect": "a70300000800000047b303c166980000",
+  "model": {
+    "@kind": "side_detect_r_stat"
+  }
+}

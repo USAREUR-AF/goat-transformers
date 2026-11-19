@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-high-voltage-management-roundtrip-battery_temp_m1",
+  "from": "dbc-gm-global-a-high-voltage-management",
+  "to": "dbc-gm-global-a-high-voltage-management",
+  "input": "0203000008000000044a21f800000000",
+  "expect": "0203000008000000044a21f800000000",
+  "model": {
+    "@kind": "battery_temp_m1"
+  }
+}

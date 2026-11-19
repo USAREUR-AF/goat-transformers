@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-gear_rpm_speed_status",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "4003000008000000040000000000e3ba",
+  "expect": "4003000008000000040000000000e3ba",
+  "model": {
+    "@kind": "gear_rpm_speed_status"
+  }
+}

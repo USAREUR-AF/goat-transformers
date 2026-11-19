@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-gear",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "ee04000008000000000d000000000000",
+  "expect": "ee04000008000000000d000000000000",
+  "model": {
+    "@kind": "gear"
+  }
+}

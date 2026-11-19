@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-doors_status",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "05040000080000000000000040010003",
+  "expect": "05040000080000000000000040010003",
+  "model": {
+    "@kind": "doors_status"
+  }
+}

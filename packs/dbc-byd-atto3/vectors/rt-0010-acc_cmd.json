@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-acc_cmd",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "2e03000008000000150ec6f846115e5c",
+  "expect": "2e03000008000000150ec6f846115e5c",
+  "model": {
+    "@kind": "acc_cmd"
+  }
+}

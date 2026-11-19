@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-passengerseatocsinfo",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "650200000800000081f2c91b44000000",
+  "expect": "650200000800000081f2c91b44000000",
+  "model": {
+    "@kind": "passengerseatocsinfo"
+  }
+}

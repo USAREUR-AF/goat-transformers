@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-lead_info",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "e602000008000000b31028b0000000b4",
+  "expect": "e602000008000000b31028b0000000b4",
+  "model": {
+    "@kind": "lead_info"
+  }
+}

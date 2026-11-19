@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-cal_sas11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "c007000002000000b42e000000000000",
+  "expect": "c007000002000000b42e000000000000",
+  "model": {
+    "@kind": "cal_sas11"
+  }
+}

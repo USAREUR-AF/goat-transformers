@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-clmtctrlseatset_cmd_v2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "24010000080000005a31000000000000",
+  "expect": "24010000080000005a31000000000000",
+  "model": {
+    "@kind": "clmtctrlseatset_cmd_v2"
+  }
+}

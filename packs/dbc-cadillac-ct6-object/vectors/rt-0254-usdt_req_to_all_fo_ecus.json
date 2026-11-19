@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-usdt_req_to_all_fo_ecus",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "0101000008000000800000005b7f1946",
+  "expect": "0101000008000000800000005b7f1946",
+  "model": {
+    "@kind": "usdt_req_to_all_fo_ecus"
+  }
+}

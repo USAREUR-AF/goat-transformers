@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-santafe-2007-roundtrip-esp_flags",
+  "from": "dbc-hyundai-santafe-2007",
+  "to": "dbc-hyundai-santafe-2007",
+  "input": "53010000080000000844694000170000",
+  "expect": "53010000080000000844694000170000",
+  "model": {
+    "@kind": "esp_flags"
+  }
+}

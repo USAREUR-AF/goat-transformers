@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_fwd_fus_obj_tracka_15",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "1f0500000800000017e845839bcaf427",
+  "expect": "1f0500000800000017e845839bcaf427",
+  "model": {
+    "@kind": "f_fwd_fus_obj_tracka_15"
+  }
+}

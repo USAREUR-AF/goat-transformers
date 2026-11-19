@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-steering_control",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "e400000005000000f1fc800178000000",
+  "expect": "e400000005000000f1fc800178000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

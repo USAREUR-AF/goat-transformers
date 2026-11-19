@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-powertrain_data",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "7c01000008000000720099499c1f0a18",
+  "expect": "7c01000008000000720099499c1f0a18",
+  "model": {
+    "@kind": "powertrain_data"
+  }
+}

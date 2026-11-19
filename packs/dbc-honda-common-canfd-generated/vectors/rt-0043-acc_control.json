@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-acc_control",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "df0100000800000034a541802a800070",
+  "expect": "df0100000800000034a541802a800070",
+  "model": {
+    "@kind": "acc_control"
+  }
+}

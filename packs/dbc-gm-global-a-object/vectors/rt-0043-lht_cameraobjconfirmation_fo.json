@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-object-roundtrip-lht_cameraobjconfirmation_fo",
+  "from": "dbc-gm-global-a-object",
+  "to": "dbc-gm-global-a-object",
+  "input": "35010000010000000100000000000000",
+  "expect": "35010000010000000100000000000000",
+  "model": {
+    "@kind": "lht_cameraobjconfirmation_fo"
+  }
+}

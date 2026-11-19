@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-csr1s01",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "9603000007000000726d4b29007a4600",
+  "expect": "9603000007000000726d4b29007a4600",
+  "model": {
+    "@kind": "csr1s01"
+  }
+}

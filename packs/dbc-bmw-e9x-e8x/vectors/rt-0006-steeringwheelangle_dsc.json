@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-steeringwheelangle_dsc",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "c90000000800000034a5605d01000000",
+  "expect": "c90000000800000034a5605d01000000",
+  "model": {
+    "@kind": "steeringwheelangle_dsc"
+  }
+}

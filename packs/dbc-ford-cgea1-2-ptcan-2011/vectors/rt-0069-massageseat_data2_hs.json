@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-massageseat_data2_hs",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "4b030000080000004f78214a73000000",
+  "expect": "4b030000080000004f78214a73000000",
+  "model": {
+    "@kind": "massageseat_data2_hs"
+  }
+}

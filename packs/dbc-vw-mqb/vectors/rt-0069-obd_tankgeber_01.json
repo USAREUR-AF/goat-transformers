@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-obd_tankgeber_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "5e06000008000000705e0c37aeba1e29",
+  "expect": "5e06000008000000705e0c37aeba1e29",
+  "model": {
+    "@kind": "obd_tankgeber_01"
+  }
+}

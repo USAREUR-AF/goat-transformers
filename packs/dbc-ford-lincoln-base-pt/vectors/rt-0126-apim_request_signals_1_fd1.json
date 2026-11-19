@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-apim_request_signals_1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "27020000080000000000002ce250423e",
+  "expect": "27020000080000000000002ce250423e",
+  "model": {
+    "@kind": "apim_request_signals_1_fd1"
+  }
+}

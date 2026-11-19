@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-engfrzfrm11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "5605000008000000b0875e4f350ce34a",
+  "expect": "5605000008000000b0875e4f350ce34a",
+  "model": {
+    "@kind": "engfrzfrm11"
+  }
+}

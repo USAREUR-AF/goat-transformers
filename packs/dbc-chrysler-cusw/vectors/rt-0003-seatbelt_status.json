@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-seatbelt_status",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "6b030000080000000000000000000000",
+  "expect": "6b030000080000000000000000000000",
+  "model": {
+    "@kind": "seatbelt_status"
+  }
+}

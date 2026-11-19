@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-accelerometer1",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "d10000000800000044f16d9d1b4560f2",
+  "expect": "d10000000800000044f16d9d1b4560f2",
+  "model": {
+    "@kind": "accelerometer1"
+  }
+}

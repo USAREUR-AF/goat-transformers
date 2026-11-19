@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-steer_angle_sensor",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "250000000800000001050000c8b30000",
+  "expect": "250000000800000001050000c8b30000",
+  "model": {
+    "@kind": "steer_angle_sensor"
+  }
+}

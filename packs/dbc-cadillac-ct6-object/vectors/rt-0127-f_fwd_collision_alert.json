@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_fwd_collision_alert",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "02030000080000008bdc94a442ba89cc",
+  "expect": "02030000080000008bdc94a442ba89cc",
+  "model": {
+    "@kind": "f_fwd_collision_alert"
+  }
+}

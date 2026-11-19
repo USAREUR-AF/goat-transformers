@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-cruise_throttle",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "3902000008000000133c07ea23fed5ac",
+  "expect": "3902000008000000133c07ea23fed5ac",
+  "model": {
+    "@kind": "cruise_throttle"
+  }
+}

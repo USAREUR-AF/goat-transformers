@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-bsm_left",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "33c02c86080000000000000000000000",
+  "expect": "33c02c86080000000000000000000000",
+  "model": {
+    "@kind": "bsm_left"
+  }
+}

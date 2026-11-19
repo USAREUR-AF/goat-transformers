@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-gateway_06",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "9f030000080000000000004000000000",
+  "expect": "9f030000080000000000004000000000",
+  "model": {
+    "@kind": "gateway_06"
+  }
+}

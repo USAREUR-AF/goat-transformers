@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-enginedata_16_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "5c010000080000007012d2ff7c247f00",
+  "expect": "5c010000080000007012d2ff7c247f00",
+  "model": {
+    "@kind": "enginedata_16_cg1"
+  }
+}

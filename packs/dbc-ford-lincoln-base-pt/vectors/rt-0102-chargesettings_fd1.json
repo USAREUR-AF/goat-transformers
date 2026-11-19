@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-chargesettings_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "f503000008000000c59adb414704d82a",
+  "expect": "f503000008000000c59adb414704d82a",
+  "model": {
+    "@kind": "chargesettings_fd1"
+  }
+}

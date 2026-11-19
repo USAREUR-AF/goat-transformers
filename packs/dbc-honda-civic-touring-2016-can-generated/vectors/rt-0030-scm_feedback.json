@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-touring-2016-can-generated-roundtrip-scm_feedback",
+  "from": "dbc-honda-civic-touring-2016-can-generated",
+  "to": "dbc-honda-civic-touring-2016-can-generated",
+  "input": "26030000080000000000641400000029",
+  "expect": "26030000080000000000641400000029",
+  "model": {
+    "@kind": "scm_feedback"
+  }
+}

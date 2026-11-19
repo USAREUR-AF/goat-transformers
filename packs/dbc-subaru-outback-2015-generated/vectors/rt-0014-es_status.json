@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-es_status",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "620100000800000000021311ea000100",
+  "expect": "620100000800000000021311ea000100",
+  "model": {
+    "@kind": "es_status"
+  }
+}

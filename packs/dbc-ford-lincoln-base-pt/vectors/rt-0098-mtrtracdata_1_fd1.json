@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-mtrtracdata_1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "4104000008000000f8e2d80b6be2ac01",
+  "expect": "4104000008000000f8e2d80b6be2ac01",
+  "model": {
+    "@kind": "mtrtracdata_1_fd1"
+  }
+}

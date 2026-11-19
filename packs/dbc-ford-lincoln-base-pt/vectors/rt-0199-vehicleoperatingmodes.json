@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-vehicleoperatingmodes",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "67010000080000001403fe010f282700",
+  "expect": "67010000080000001403fe010f282700",
+  "model": {
+    "@kind": "vehicleoperatingmodes"
+  }
+}

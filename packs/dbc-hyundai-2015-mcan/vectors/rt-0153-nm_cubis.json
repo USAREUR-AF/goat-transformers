@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-nm_cubis",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "4a040000080000001836000000000000",
+  "expect": "4a040000080000001836000000000000",
+  "model": {
+    "@kind": "nm_cubis"
+  }
+}

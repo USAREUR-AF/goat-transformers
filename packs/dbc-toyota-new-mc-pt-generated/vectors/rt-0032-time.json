@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-time",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "1304000008000000966d441bf20006f0",
+  "expect": "1304000008000000966d441bf20006f0",
+  "model": {
+    "@kind": "time"
+  }
+}

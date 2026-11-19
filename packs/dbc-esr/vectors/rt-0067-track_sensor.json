@@ -1,0 +1,10 @@
+{
+  "name": "dbc-esr-roundtrip-track_sensor",
+  "from": "dbc-esr",
+  "to": "dbc-esr",
+  "input": "40050000010000001000000000000000",
+  "expect": "40050000010000001000000000000000",
+  "model": {
+    "@kind": "track_sensor"
+  }
+}

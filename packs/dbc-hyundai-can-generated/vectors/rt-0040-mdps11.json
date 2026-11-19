@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-mdps11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "8103000008000000bc6221da6bb1880c",
+  "expect": "8103000008000000bc6221da6bb1880c",
+  "model": {
+    "@kind": "mdps11"
+  }
+}

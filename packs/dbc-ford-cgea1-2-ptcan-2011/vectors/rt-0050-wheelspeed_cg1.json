@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-wheelspeed_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "150200000800000086d6df28377a8fcc",
+  "expect": "150200000800000086d6df28377a8fcc",
+  "model": {
+    "@kind": "wheelspeed_cg1"
+  }
+}

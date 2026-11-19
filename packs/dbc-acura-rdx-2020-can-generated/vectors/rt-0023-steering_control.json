@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-steering_control",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "e400000005000000f1fc800178000000",
+  "expect": "e400000005000000f1fc800178000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

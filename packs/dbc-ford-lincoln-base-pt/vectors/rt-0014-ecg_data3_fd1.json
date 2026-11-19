@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-ecg_data3_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "7503000008000000830c9da097798000",
+  "expect": "7503000008000000830c9da097798000",
+  "model": {
+    "@kind": "ecg_data3_fd1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-es_dashstatus",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "6301000008000000200002430002400f",
+  "expect": "6301000008000000200002430002400f",
+  "model": {
+    "@kind": "es_dashstatus"
+  }
+}

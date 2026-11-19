@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-sccm_wheeltouch",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "2103000007000000e40b206940170000",
+  "expect": "2103000007000000e40b206940170000",
+  "model": {
+    "@kind": "sccm_wheeltouch"
+  }
+}

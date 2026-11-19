@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-airbag_02",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "20050000080000000090551c9b1b1b1b",
+  "expect": "20050000080000000090551c9b1b1b1b",
+  "model": {
+    "@kind": "airbag_02"
+  }
+}

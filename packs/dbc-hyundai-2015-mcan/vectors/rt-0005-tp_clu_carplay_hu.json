@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tp_clu_carplay_hu",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "f3040000080000000be2b990673e15ec",
+  "expect": "f3040000080000000be2b990673e15ec",
+  "model": {
+    "@kind": "tp_clu_carplay_hu"
+  }
+}

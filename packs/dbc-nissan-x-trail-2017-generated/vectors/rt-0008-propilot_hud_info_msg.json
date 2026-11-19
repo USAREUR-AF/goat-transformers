@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-propilot_hud_info_msg",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "cc040000080000007251d2b254cad19f",
+  "expect": "cc040000080000007251d2b254cad19f",
+  "model": {
+    "@kind": "propilot_hud_info_msg"
+  }
+}

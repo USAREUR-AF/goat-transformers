@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-lead_info",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "e6020000080000004a785780000000a1",
+  "expect": "e6020000080000004a785780000000a1",
+  "model": {
+    "@kind": "lead_info"
+  }
+}

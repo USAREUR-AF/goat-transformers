@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-pscmstatus",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "640100000800000001071cde448c0000",
+  "expect": "640100000800000001071cde448c0000",
+  "model": {
+    "@kind": "pscmstatus"
+  }
+}

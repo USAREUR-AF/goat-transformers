@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-systeminfo_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "85050000080000000a55aa2a7249b73a",
+  "expect": "85050000080000000a55aa2a7249b73a",
+  "model": {
+    "@kind": "systeminfo_01"
+  }
+}

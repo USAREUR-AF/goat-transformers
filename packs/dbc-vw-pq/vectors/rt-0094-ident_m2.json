@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-ident_m2",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "d20500000800000002451cf3caa1784f",
+  "expect": "d20500000800000002451cf3caa1784f",
+  "model": {
+    "@kind": "ident_m2"
+  }
+}

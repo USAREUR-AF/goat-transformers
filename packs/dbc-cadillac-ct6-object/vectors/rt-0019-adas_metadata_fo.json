@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-adas_metadata_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "090600000800000008576afb3d245a1f",
+  "expect": "090600000800000008576afb3d245a1f",
+  "model": {
+    "@kind": "adas_metadata_fo"
+  }
+}

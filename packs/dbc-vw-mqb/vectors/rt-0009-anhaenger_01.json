@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-anhaenger_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "6106000008000000a12a540000000000",
+  "expect": "6106000008000000a12a540000000000",
+  "model": {
+    "@kind": "anhaenger_01"
+  }
+}

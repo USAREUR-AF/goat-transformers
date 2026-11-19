@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_epb_req",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "52070000080000005959d77700000000",
+  "expect": "52070000080000005959d77700000000",
+  "model": {
+    "@kind": "iso_epb_req"
+  }
+}

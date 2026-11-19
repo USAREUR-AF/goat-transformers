@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-bosch_supplemental_1",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "e5000000080000001cf3caa10000000f",
+  "expect": "e5000000080000001cf3caa10000000f",
+  "model": {
+    "@kind": "bosch_supplemental_1"
+  }
+}

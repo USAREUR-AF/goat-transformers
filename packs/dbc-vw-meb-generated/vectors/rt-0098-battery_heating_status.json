@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-battery_heating_status",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "d254dd920800000000000000001c8e65",
+  "expect": "d254dd920800000000000000001c8e65",
+  "model": {
+    "@kind": "battery_heating_status"
+  }
+}

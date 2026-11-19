@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-epb_status",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "a0030000080000000000000000000000",
+  "expect": "a0030000080000000000000000000000",
+  "model": {
+    "@kind": "epb_status"
+  }
+}

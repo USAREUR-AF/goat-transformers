@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-bremsbooster_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "a80200000300000019b2550000000000",
+  "expect": "a80200000300000019b2550000000000",
+  "model": {
+    "@kind": "bremsbooster_1"
+  }
+}

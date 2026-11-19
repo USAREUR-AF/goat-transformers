@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-p_sts",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "7004000008000000c002000000000014",
+  "expect": "7004000008000000c002000000000014",
+  "model": {
+    "@kind": "p_sts"
+  }
+}

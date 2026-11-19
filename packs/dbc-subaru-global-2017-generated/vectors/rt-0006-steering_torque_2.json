@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-steering_torque_2",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "1801000008000000c7ae6e4c00606420",
+  "expect": "1801000008000000c7ae6e4c00606420",
+  "model": {
+    "@kind": "steering_torque_2"
+  }
+}

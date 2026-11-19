@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-gas_pedal_hybrid",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "45020000080000000000d20000000000",
+  "expect": "45020000080000000000d20000000000",
+  "model": {
+    "@kind": "gas_pedal_hybrid"
+  }
+}

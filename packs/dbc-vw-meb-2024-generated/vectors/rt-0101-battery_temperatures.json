@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-battery_temperatures",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "a654a9960800000000000008df000000",
+  "expect": "a654a9960800000000000008df000000",
+  "model": {
+    "@kind": "battery_temperatures"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-gateway_73",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "dc030000080000000080000000090007",
+  "expect": "dc030000080000000080000000090007",
+  "model": {
+    "@kind": "gateway_73"
+  }
+}

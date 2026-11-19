@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-steeringpinion_data_alt",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "85000000080000000fc3b77148f80000",
+  "expect": "85000000080000000fc3b77148f80000",
+  "model": {
+    "@kind": "steeringpinion_data_alt"
+  }
+}

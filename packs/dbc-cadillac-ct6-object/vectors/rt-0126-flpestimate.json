@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-flpestimate",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "4005000008000000e518d67e7d542bd9",
+  "expect": "4005000008000000e518d67e7d542bd9",
+  "model": {
+    "@kind": "flpestimate"
+  }
+}

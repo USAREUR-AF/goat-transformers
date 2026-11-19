@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-dummy_cgm_primaryactuatorcan",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "3105000001000000f700000000000000",
+  "expect": "3105000001000000f700000000000000",
+  "model": {
+    "@kind": "dummy_cgm_primaryactuatorcan"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-unsaved_charge_locationfd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "f303000008000000819da8622cb1e558",
+  "expect": "f303000008000000819da8622cb1e558",
+  "model": {
+    "@kind": "unsaved_charge_locationfd1"
+  }
+}

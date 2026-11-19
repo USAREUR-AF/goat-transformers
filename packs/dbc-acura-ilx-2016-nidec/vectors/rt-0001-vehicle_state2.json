@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-ilx-2016-nidec-roundtrip-vehicle_state2",
+  "from": "dbc-acura-ilx-2016-nidec",
+  "to": "dbc-acura-ilx-2016-nidec",
+  "input": "0103000008000000e24b3591a9073000",
+  "expect": "0103000008000000e24b3591a9073000",
+  "model": {
+    "@kind": "vehicle_state2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-odiaction_otim_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a0ad8008000000000000004edbf585",
+  "expect": "00a0ad8008000000000000004edbf585",
+  "model": {
+    "@kind": "odiaction_otim_ls"
+  }
+}

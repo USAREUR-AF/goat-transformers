@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-label11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "92050000080000000000000004000000",
+  "expect": "92050000080000000000000004000000",
+  "model": {
+    "@kind": "label11"
+  }
+}

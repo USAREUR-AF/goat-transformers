@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-chassis-roundtrip-ebcmregen",
+  "from": "dbc-cadillac-ct6-chassis",
+  "to": "dbc-cadillac-ct6-chassis",
+  "input": "300200000600000000ba000000000000",
+  "expect": "300200000600000000ba000000000000",
+  "model": {
+    "@kind": "ebcmregen"
+  }
+}

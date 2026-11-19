@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-powertrain-roundtrip-brakemessage",
+  "from": "dbc-tesla-powertrain",
+  "to": "dbc-tesla-powertrain",
+  "input": "f8010000080000000c00000000000000",
+  "expect": "f8010000080000000c00000000000000",
+  "model": {
+    "@kind": "brakemessage"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-standstill",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "b0010000070000000020000000000f00",
+  "expect": "b0010000070000000020000000000f00",
+  "model": {
+    "@kind": "standstill"
+  }
+}

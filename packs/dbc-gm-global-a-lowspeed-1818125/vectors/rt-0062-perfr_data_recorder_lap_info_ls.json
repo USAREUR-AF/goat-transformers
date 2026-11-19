@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-perfr_data_recorder_lap_info_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00404c800600000007691703bcee0000",
+  "expect": "00404c800600000007691703bcee0000",
+  "model": {
+    "@kind": "perfr_data_recorder_lap_info_ls"
+  }
+}

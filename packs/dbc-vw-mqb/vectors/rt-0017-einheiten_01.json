@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-einheiten_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "4306000008000000ab01bf0000000000",
+  "expect": "4306000008000000ab01bf0000000000",
+  "model": {
+    "@kind": "einheiten_01"
+  }
+}

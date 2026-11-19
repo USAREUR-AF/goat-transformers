@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-engine",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "41010000080000003fcbed02c4060000",
+  "expect": "41010000080000003fcbed02c4060000",
+  "model": {
+    "@kind": "engine"
+  }
+}

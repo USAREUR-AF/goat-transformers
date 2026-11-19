@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-lht_autohighbeamassiststatus_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "06010000050000007c624aeb03000000",
+  "expect": "06010000050000007c624aeb03000000",
+  "model": {
+    "@kind": "lht_autohighbeamassiststatus_fo"
+  }
+}

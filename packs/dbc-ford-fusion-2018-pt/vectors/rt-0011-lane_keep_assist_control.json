@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-fusion-2018-pt-roundtrip-lane_keep_assist_control",
+  "from": "dbc-ford-fusion-2018-pt",
+  "to": "dbc-ford-fusion-2018-pt",
+  "input": "ca03000008000000a1f182ef00000000",
+  "expect": "ca03000008000000a1f182ef00000000",
+  "model": {
+    "@kind": "lane_keep_assist_control"
+  }
+}

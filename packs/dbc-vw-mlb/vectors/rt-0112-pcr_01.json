@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-pcr_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "220300000800000000c0a7156137d400",
+  "expect": "220300000800000000c0a7156137d400",
+  "model": {
+    "@kind": "pcr_01"
+  }
+}

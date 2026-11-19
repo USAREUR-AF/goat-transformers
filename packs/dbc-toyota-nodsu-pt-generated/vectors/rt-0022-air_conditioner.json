@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-air_conditioner",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "82030000080000000d00000000002400",
+  "expect": "82030000080000000d00000000002400",
+  "model": {
+    "@kind": "air_conditioner"
+  }
+}

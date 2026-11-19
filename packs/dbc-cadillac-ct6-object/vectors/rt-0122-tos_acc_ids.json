@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-tos_acc_ids",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "85050000050000009b036b121f000000",
+  "expect": "85050000050000009b036b121f000000",
+  "model": {
+    "@kind": "tos_acc_ids"
+  }
+}

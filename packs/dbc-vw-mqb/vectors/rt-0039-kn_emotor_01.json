@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-kn_emotor_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "7c00f09708000000b100000000000080",
+  "expect": "7c00f09708000000b100000000000080",
+  "model": {
+    "@kind": "kn_emotor_01"
+  }
+}

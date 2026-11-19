@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-enginedata",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "d0010000080000005780e9244dd6029f",
+  "expect": "d0010000080000005780e9244dd6029f",
+  "model": {
+    "@kind": "enginedata"
+  }
+}

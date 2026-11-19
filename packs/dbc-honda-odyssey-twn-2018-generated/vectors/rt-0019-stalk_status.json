@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-stalk_status",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "740300000800000000000000a8807029",
+  "expect": "740300000800000000000000a8807029",
+  "model": {
+    "@kind": "stalk_status"
+  }
+}

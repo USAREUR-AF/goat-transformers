@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-tsk_02",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "0c01000008000000ae05000000000000",
+  "expect": "0c01000008000000ae05000000000000",
+  "model": {
+    "@kind": "tsk_02"
+  }
+}

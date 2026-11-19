@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-wheel_speeds",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "d001000008000000f4a738a9100f5d8f",
+  "expect": "d001000008000000f4a738a9100f5d8f",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

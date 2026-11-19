@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-psb11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "9a05000002000000701d000000000000",
+  "expect": "9a05000002000000701d000000000000",
+  "model": {
+    "@kind": "psb11"
+  }
+}

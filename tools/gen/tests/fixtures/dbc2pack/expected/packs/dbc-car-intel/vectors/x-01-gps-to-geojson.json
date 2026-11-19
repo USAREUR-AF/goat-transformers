@@ -1,0 +1,12 @@
+{
+  "name": "dbc-car-intel-gps-to-geojson",
+  "from": "dbc-car-intel",
+  "to": "geojson",
+  "input": "58020000080000006e3bd3a253260806",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "gps",
+    "lat": "47.397742",
+    "lon": "8.545594"
+  }
+}

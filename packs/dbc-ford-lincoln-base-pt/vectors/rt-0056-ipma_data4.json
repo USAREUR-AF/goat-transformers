@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-ipma_data4",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "af030000080000004e02fea475700000",
+  "expect": "af030000080000004e02fea475700000",
+  "model": {
+    "@kind": "ipma_data4"
+  }
+}

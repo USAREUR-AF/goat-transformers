@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mg-roundtrip-sas_hsc2_frp00",
+  "from": "dbc-mg",
+  "to": "dbc-mg",
+  "input": "e5010000080000004308aa142fb058dd",
+  "expect": "e5010000080000004308aa142fb058dd",
+  "model": {
+    "@kind": "sas_hsc2_frp00"
+  }
+}

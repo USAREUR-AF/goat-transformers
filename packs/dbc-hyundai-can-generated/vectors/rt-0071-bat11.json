@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-bat11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "4905000008000000f7d6cea53e1f2a58",
+  "expect": "4905000008000000f7d6cea53e1f2a58",
+  "model": {
+    "@kind": "bat11"
+  }
+}

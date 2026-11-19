@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-ssid_amm_1_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00609080080000000000000064b40a01",
+  "expect": "00609080080000000000000064b40a01",
+  "model": {
+    "@kind": "ssid_amm_1_ls"
+  }
+}

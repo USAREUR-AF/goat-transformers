@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-vicm_info_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "0040768008000000ad070d1c00f304ca",
+  "expect": "0040768008000000ad070d1c00f304ca",
+  "model": {
+    "@kind": "vicm_info_ls"
+  }
+}

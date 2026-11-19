@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-tcu_send_signals_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8b020000080000000800000060800000",
+  "expect": "8b020000080000000800000060800000",
+  "model": {
+    "@kind": "tcu_send_signals_fd1"
+  }
+}

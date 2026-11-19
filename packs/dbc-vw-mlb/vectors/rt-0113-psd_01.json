@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-psd_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "a10300000800000029e02e371be6714f",
+  "expect": "a10300000800000029e02e371be6714f",
+  "model": {
+    "@kind": "psd_01"
+  }
+}

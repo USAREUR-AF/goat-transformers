@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-cruise",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "2403000008000000966db9441bf2c907",
+  "expect": "2403000008000000966db9441bf2c907",
+  "model": {
+    "@kind": "cruise"
+  }
+}

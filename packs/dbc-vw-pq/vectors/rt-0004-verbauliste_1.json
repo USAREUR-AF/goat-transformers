@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-verbauliste_1",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "d805000008000000aaaa32aaaaaa5655",
+  "expect": "d805000008000000aaaa32aaaaaa5655",
+  "model": {
+    "@kind": "verbauliste_1"
+  }
+}

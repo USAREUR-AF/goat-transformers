@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-battery_traction_6_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "5804000008000000e00002000100004e",
+  "expect": "5804000008000000e00002000100004e",
+  "model": {
+    "@kind": "battery_traction_6_fd1"
+  }
+}

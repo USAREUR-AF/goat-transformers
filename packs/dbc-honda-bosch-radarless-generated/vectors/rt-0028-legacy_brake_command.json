@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-legacy_brake_command",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "fa010000080000000000000000fb0012",
+  "expect": "fa010000080000000000000000fb0012",
+  "model": {
+    "@kind": "legacy_brake_command"
+  }
+}

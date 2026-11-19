@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-powertrain_data",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "7c01000008000000720099499c1f0a18",
+  "expect": "7c01000008000000720099499c1f0a18",
+  "model": {
+    "@kind": "powertrain_data"
+  }
+}

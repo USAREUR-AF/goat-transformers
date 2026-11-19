@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-afs1s01",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "91030000080000009838000000000000",
+  "expect": "91030000080000009838000000000000",
+  "model": {
+    "@kind": "afs1s01"
+  }
+}

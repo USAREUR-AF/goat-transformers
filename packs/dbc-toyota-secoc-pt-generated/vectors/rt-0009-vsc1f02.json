@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-vsc1f02",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "aa01000006000000a2288000003c0000",
+  "expect": "aa01000006000000a2288000003c0000",
+  "model": {
+    "@kind": "vsc1f02"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ebcmwheelspdfront",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "4803000005000000b291066800000000",
+  "expect": "4803000005000000b291066800000000",
+  "model": {
+    "@kind": "ebcmwheelspdfront"
+  }
+}

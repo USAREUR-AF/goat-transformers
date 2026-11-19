@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-esp_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "0001000008000000464dfff2a2b75255",
+  "expect": "0001000008000000464dfff2a2b75255",
+  "model": {
+    "@kind": "esp_01"
+  }
+}

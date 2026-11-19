@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-lkas_hud",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "12040000080000006c20000000000000",
+  "expect": "12040000080000006c20000000000000",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

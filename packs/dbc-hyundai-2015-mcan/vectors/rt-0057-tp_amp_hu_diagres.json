@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tp_amp_hu_diagres",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "9607000008000000ac835a3108dfb68d",
+  "expect": "9607000008000000ac835a3108dfb68d",
+  "model": {
+    "@kind": "tp_amp_hu_diagres"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-bcmimmobilizer",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "60010000050000001c89d74b00000000",
+  "expect": "60010000050000001c89d74b00000000",
+  "model": {
+    "@kind": "bcmimmobilizer"
+  }
+}

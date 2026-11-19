@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-insight-ex-2019-can-generated-roundtrip-gearbox_cvt",
+  "from": "dbc-honda-insight-ex-2019-can-generated",
+  "to": "dbc-honda-insight-ex-2019-can-generated",
+  "input": "91010000080000000a0000caa1181134",
+  "expect": "91010000080000000a0000caa1181134",
+  "model": {
+    "@kind": "gearbox_cvt"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-brakesysfeatures_2",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "1604000008000000350ece2a3dee400b",
+  "expect": "1604000008000000350ece2a3dee400b",
+  "model": {
+    "@kind": "brakesysfeatures_2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-propilot_brake",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "c3010000080000003d80000000000000",
+  "expect": "c3010000080000003d80000000000000",
+  "model": {
+    "@kind": "propilot_brake"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-acu12",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "a105000008000000b684445900000080",
+  "expect": "a105000008000000b684445900000080",
+  "model": {
+    "@kind": "acu12"
+  }
+}

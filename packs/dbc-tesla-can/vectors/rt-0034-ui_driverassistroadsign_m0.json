@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_driverassistroadsign_m0",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "38020000080000000000000000031a88",
+  "expect": "38020000080000000000000000031a88",
+  "model": {
+    "@kind": "ui_driverassistroadsign_m0"
+  }
+}

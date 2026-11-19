@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-esp_wspeed_rear",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "0a02000008000000631a3bbf8f961000",
+  "expect": "0a02000008000000631a3bbf8f961000",
+  "model": {
+    "@kind": "esp_wspeed_rear"
+  }
+}

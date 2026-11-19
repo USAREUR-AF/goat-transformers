@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_vehicle_path_estimate",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "060300000800000081bf3e96526d06e8",
+  "expect": "060300000800000081bf3e96526d06e8",
+  "model": {
+    "@kind": "f_vehicle_path_estimate"
+  }
+}

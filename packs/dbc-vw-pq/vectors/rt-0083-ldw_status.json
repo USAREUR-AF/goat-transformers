@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-ldw_status",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "be050000080000000638aa3b12000000",
+  "expect": "be050000080000000638aa3b12000000",
+  "model": {
+    "@kind": "ldw_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-ev_pc10",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "ff050000080000000000000000000000",
+  "expect": "ff050000080000000000000000000000",
+  "model": {
+    "@kind": "ev_pc10"
+  }
+}

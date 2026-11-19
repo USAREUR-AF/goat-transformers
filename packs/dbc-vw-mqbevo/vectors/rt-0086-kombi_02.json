@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-kombi_02",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "b706000008000000085ff52d1b36803b",
+  "expect": "b706000008000000085ff52d1b36803b",
+  "model": {
+    "@kind": "kombi_02"
+  }
+}

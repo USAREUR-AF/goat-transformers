@@ -1,0 +1,10 @@
+{
+  "name": "dbc-acura-rdx-2020-can-generated-roundtrip-car_speed",
+  "from": "dbc-acura-rdx-2020-can-generated",
+  "to": "dbc-acura-rdx-2020-can-generated",
+  "input": "090300000800000092567f04e62dc0a9",
+  "expect": "090300000800000092567f04e62dc0a9",
+  "model": {
+    "@kind": "car_speed"
+  }
+}

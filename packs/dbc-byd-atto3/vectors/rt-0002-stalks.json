@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-stalks",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "33010000080000000000000020000600",
+  "expect": "33010000080000000000000020000600",
+  "model": {
+    "@kind": "stalks"
+  }
+}

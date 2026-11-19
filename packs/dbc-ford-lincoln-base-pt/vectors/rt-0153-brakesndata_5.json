@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-brakesndata_5",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "7600000008000000800031888a030dda",
+  "expect": "7600000008000000800031888a030dda",
+  "model": {
+    "@kind": "brakesndata_5"
+  }
+}

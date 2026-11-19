@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-steering_levers",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "f0040000070000000d80000000000000",
+  "expect": "f0040000070000000d80000000000000",
+  "model": {
+    "@kind": "steering_levers"
+  }
+}

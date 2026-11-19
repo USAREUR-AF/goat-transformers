@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-tire_pressure_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "b50300000800000052c4a69bab16feed",
+  "expect": "b50300000800000052c4a69bab16feed",
+  "model": {
+    "@kind": "tire_pressure_data_fd1"
+  }
+}

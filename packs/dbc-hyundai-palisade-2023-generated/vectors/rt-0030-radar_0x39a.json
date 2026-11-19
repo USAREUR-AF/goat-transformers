@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-radar_0x39a",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "9a03000008000000bdb44219f0c79e75",
+  "expect": "9a03000008000000bdb44219f0c79e75",
+  "model": {
+    "@kind": "radar_0x39a"
+  }
+}

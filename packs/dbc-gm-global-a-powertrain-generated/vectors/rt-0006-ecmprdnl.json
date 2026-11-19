@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ecmprdnl",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "35010000080000000200000000000000",
+  "expect": "35010000080000000200000000000000",
+  "model": {
+    "@kind": "ecmprdnl"
+  }
+}

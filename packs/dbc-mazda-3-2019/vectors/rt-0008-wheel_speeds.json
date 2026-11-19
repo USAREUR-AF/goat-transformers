@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-wheel_speeds",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "1c000000080000004193956aedbc99e5",
+  "expect": "1c000000080000004193956aedbc99e5",
+  "model": {
+    "@kind": "wheel_speeds"
+  }
+}

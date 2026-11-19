@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-parkhilfe_01",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "9704000008000000708eaa12e7c5a65e",
+  "expect": "9704000008000000708eaa12e7c5a65e",
+  "model": {
+    "@kind": "parkhilfe_01"
+  }
+}

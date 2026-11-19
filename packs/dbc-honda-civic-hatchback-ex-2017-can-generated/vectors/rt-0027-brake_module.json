@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-brake_module",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "be0100000300000010000b0000000000",
+  "expect": "be0100000300000010000b0000000000",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

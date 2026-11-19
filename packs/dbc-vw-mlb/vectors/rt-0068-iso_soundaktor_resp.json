@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-iso_soundaktor_resp",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "8607000008000000572e105d00000000",
+  "expect": "8607000008000000572e105d00000000",
+  "model": {
+    "@kind": "iso_soundaktor_resp"
+  }
+}

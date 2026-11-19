@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-rcm_imu_heaveroll",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "35010000080000000b029db9f190aa00",
+  "expect": "35010000080000000b029db9f190aa00",
+  "model": {
+    "@kind": "rcm_imu_heaveroll"
+  }
+}

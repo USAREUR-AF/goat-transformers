@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-cruise_fault_status",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "d301000008000000000000000000001e",
+  "expect": "d301000008000000000000000000001e",
+  "model": {
+    "@kind": "cruise_fault_status"
+  }
+}

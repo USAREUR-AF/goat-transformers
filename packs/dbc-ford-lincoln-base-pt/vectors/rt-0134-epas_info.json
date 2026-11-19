@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-epas_info",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8200000008000000cc55b87a479900eb",
+  "expect": "8200000008000000cc55b87a479900eb",
+  "model": {
+    "@kind": "epas_info"
+  }
+}

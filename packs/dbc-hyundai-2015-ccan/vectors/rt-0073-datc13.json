@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-datc13",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "43000000080000005b6c6cb8011b2b09",
+  "expect": "43000000080000005b6c6cb8011b2b09",
+  "model": {
+    "@kind": "datc13"
+  }
+}

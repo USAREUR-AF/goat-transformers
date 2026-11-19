@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-palisade-2023-generated-roundtrip-datc13",
+  "from": "dbc-hyundai-palisade-2023-generated",
+  "to": "dbc-hyundai-palisade-2023-generated",
+  "input": "4300000008000000510be946099873f2",
+  "expect": "4300000008000000510be946099873f2",
+  "model": {
+    "@kind": "datc13"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_status",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "380300000800000055551908dfb6f1e9",
+  "expect": "380300000800000055551908dfb6f1e9",
+  "model": {
+    "@kind": "ui_status"
+  }
+}

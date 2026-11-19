@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-dimmung_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "f00500000500000092694017e1000000",
+  "expect": "f00500000500000092694017e1000000",
+  "model": {
+    "@kind": "dimmung_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-motorola-roundtrip-steer",
+  "from": "dbc-car-motorola",
+  "to": "dbc-car-motorola",
+  "input": "00020000080000000e3908400700be09",
+  "expect": "00020000080000000e3908400700be09",
+  "model": {
+    "@kind": "steer"
+  }
+}

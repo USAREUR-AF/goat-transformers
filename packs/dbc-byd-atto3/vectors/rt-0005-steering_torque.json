@@ -1,0 +1,10 @@
+{
+  "name": "dbc-byd-atto3-roundtrip-steering_torque",
+  "from": "dbc-byd-atto3",
+  "to": "dbc-byd-atto3",
+  "input": "fc0100000800000075874ecc25e0a081",
+  "expect": "fc0100000800000075874ecc25e0a081",
+  "model": {
+    "@kind": "steering_torque"
+  }
+}

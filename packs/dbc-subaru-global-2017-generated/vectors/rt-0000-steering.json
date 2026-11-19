@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2017-generated-roundtrip-steering",
+  "from": "dbc-subaru-global-2017-generated",
+  "to": "dbc-subaru-global-2017-generated",
+  "input": "0200000008000000a917000cc5000000",
+  "expect": "0200000008000000a917000cc5000000",
+  "model": {
+    "@kind": "steering"
+  }
+}

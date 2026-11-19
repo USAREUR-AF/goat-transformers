@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-all_terrain_data",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "8004000008000000d900000000000000",
+  "expect": "8004000008000000d900000000000000",
+  "model": {
+    "@kind": "all_terrain_data"
+  }
+}

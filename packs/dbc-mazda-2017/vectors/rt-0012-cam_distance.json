@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-cam_distance",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "440200000800000001d8af865d34c70b",
+  "expect": "440200000800000001d8af865d34c70b",
+  "model": {
+    "@kind": "cam_distance"
+  }
+}

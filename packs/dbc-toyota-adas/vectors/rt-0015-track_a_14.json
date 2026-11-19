@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-adas-roundtrip-track_a_14",
+  "from": "dbc-toyota-adas",
+  "to": "dbc-toyota-adas",
+  "input": "1e020000080000009ad8900e203f60a4",
+  "expect": "1e020000080000009ad8900e203f60a4",
+  "model": {
+    "@kind": "track_a_14"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-pedals",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "65010000080000009406217400001473",
+  "expect": "65010000080000009406217400001473",
+  "model": {
+    "@kind": "pedals"
+  }
+}

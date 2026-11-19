@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ebcmvehicledynamic",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "e90100000800000008d8000000000501",
+  "expect": "e90100000800000008d8000000000501",
+  "model": {
+    "@kind": "ebcmvehicledynamic"
+  }
+}

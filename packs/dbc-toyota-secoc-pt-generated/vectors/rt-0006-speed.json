@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-speed",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "b400000008000000000000006bdc4219",
+  "expect": "b400000008000000000000006bdc4219",
+  "model": {
+    "@kind": "speed"
+  }
+}

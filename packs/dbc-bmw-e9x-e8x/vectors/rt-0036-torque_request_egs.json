@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-torque_request_egs",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "b500000008000000980000000000006f",
+  "expect": "b500000008000000980000000000006f",
+  "model": {
+    "@kind": "torque_request_egs"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-steering_sensors",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "5601000006000000a8f2fcc900070000",
+  "expect": "5601000006000000a8f2fcc900070000",
+  "model": {
+    "@kind": "steering_sensors"
+  }
+}

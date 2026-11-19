@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-new_msg_3",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "02010000080000000034a642dcde280e",
+  "expect": "02010000080000000034a642dcde280e",
+  "model": {
+    "@kind": "new_msg_3"
+  }
+}

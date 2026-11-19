@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-gear_related",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "30010000080000000000000000133c00",
+  "expect": "30010000080000000000000000133c00",
+  "model": {
+    "@kind": "gear_related"
+  }
+}

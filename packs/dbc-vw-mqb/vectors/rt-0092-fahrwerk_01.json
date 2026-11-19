@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-fahrwerk_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "0801000008000000240d000000000000",
+  "expect": "0801000008000000240d000000000000",
+  "model": {
+    "@kind": "fahrwerk_01"
+  }
+}

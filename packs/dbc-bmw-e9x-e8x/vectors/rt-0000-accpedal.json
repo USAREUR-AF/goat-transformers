@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-accpedal",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "aa00000008000000a70922f5d09c4400",
+  "expect": "aa00000008000000a70922f5d09c4400",
+  "model": {
+    "@kind": "accpedal"
+  }
+}

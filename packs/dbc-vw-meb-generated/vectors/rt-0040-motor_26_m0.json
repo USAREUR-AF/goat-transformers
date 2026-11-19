@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-motor_26_m0",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "c703000008000000ccaaab3a1a6d55f5",
+  "expect": "c703000008000000ccaaab3a1a6d55f5",
+  "model": {
+    "@kind": "motor_26_m0"
+  }
+}

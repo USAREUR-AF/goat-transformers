@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-audible_beep_339",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "39030000020000008ed4000000000000",
+  "expect": "39030000020000008ed4000000000000",
+  "model": {
+    "@kind": "audible_beep_339"
+  }
+}

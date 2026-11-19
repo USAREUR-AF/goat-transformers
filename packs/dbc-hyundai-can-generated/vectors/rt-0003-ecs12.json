@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-ecs12",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "f903000004000000431af1c800000000",
+  "expect": "f903000004000000431af1c800000000",
+  "model": {
+    "@kind": "ecs12"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-outback-2015-generated-roundtrip-brake_type",
+  "from": "dbc-subaru-outback-2015-generated",
+  "to": "dbc-subaru-outback-2015-generated",
+  "input": "d300000008000000000020005104d600",
+  "expect": "d300000008000000000020005104d600",
+  "model": {
+    "@kind": "brake_type"
+  }
+}

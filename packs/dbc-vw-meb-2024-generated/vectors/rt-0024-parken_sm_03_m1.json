@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-2024-generated-roundtrip-parken_sm_03_m1",
+  "from": "dbc-vw-meb-2024-generated",
+  "to": "dbc-vw-meb-2024-generated",
+  "input": "5203000008000000799bda1039df8500",
+  "expect": "5203000008000000799bda1039df8500",
+  "model": {
+    "@kind": "parken_sm_03_m1"
+  }
+}

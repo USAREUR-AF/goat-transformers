@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-brake_hold",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "e8000000070000005c6800202af13600",
+  "expect": "e8000000070000005c6800202af13600",
+  "model": {
+    "@kind": "brake_hold"
+  }
+}

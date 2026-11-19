@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tp_hu_phyreq",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "80070000080000004219f0c79e754c23",
+  "expect": "80070000080000004219f0c79e754c23",
+  "model": {
+    "@kind": "tp_hu_phyreq"
+  }
+}

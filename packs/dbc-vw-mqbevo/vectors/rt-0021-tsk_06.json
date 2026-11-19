@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-tsk_06",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "20010000080000009ec5044b00005611",
+  "expect": "20010000080000009ec5044b00005611",
+  "model": {
+    "@kind": "tsk_06"
+  }
+}

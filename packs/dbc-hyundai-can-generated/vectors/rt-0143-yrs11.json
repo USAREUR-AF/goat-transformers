@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-yrs11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "3001000008000000e8edbf41d6040bf2",
+  "expect": "3001000008000000e8edbf41d6040bf2",
+  "model": {
+    "@kind": "yrs11"
+  }
+}

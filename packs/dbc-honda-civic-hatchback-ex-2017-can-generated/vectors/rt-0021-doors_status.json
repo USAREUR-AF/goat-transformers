@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-doors_status",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "05040000080000000000000040010003",
+  "expect": "05040000080000000000000040010003",
+  "model": {
+    "@kind": "doors_status"
+  }
+}

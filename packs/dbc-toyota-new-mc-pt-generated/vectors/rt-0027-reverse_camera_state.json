@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-reverse_camera_state",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "ed030000020000000003000000000000",
+  "expect": "ed030000020000000003000000000000",
+  "model": {
+    "@kind": "reverse_camera_state"
+  }
+}

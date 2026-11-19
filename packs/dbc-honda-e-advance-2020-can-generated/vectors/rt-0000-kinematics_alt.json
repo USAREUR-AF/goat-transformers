@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-e-advance-2020-can-generated-roundtrip-kinematics_alt",
+  "from": "dbc-honda-e-advance-2020-can-generated",
+  "to": "dbc-honda-e-advance-2020-can-generated",
+  "input": "9100000008000000c600000000000036",
+  "expect": "9100000008000000c600000000000036",
+  "model": {
+    "@kind": "kinematics_alt"
+  }
+}

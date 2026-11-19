@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-epass_status",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "6003000004000000f9700ec000000000",
+  "expect": "6003000004000000f9700ec000000000",
+  "model": {
+    "@kind": "epass_status"
+  }
+}

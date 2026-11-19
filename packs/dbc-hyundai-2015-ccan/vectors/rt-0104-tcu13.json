@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-tcu13",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "13010000080000005e75865f72490158",
+  "expect": "13010000080000005e75865f72490158",
+  "model": {
+    "@kind": "tcu13"
+  }
+}

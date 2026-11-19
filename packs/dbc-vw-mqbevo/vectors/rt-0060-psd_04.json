@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-psd_04",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "62040000080000003300000000000000",
+  "expect": "62040000080000003300000000000000",
+  "model": {
+    "@kind": "psd_04"
+  }
+}

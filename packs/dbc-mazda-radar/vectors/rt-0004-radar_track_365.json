@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-radar-roundtrip-radar_track_365",
+  "from": "dbc-mazda-radar",
+  "to": "dbc-mazda-radar",
+  "input": "6503000008000000bc8f9f6ec0000000",
+  "expect": "6503000008000000bc8f9f6ec0000000",
+  "model": {
+    "@kind": "radar_track_365"
+  }
+}

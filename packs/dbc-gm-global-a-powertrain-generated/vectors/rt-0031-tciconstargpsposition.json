@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-tciconstargpsposition",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "2a03000008000000519677b57e1223de",
+  "expect": "2a03000008000000519677b57e1223de",
+  "model": {
+    "@kind": "tciconstargpsposition"
+  }
+}

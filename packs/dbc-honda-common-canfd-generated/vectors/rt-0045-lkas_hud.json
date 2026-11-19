@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-lkas_hud",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "3d030000080000004055b3401800001e",
+  "expect": "3d030000080000004055b3401800001e",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

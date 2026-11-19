@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_vision_obj_track_12",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "460400000800000056445e40c5398b1d",
+  "expect": "460400000800000056445e40c5398b1d",
+  "model": {
+    "@kind": "f_vision_obj_track_12"
+  }
+}

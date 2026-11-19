@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-kombi_03",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "b8060000080000008d4a020000000000",
+  "expect": "b8060000080000008d4a020000000000",
+  "model": {
+    "@kind": "kombi_03"
+  }
+}

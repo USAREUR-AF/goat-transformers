@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-tractionctrlstatus_cg1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "17040000080000000d17c2f8a61001c5",
+  "expect": "17040000080000000d17c2f8a61001c5",
+  "model": {
+    "@kind": "tractionctrlstatus_cg1"
+  }
+}

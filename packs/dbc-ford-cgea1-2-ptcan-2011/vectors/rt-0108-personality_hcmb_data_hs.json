@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-personality_hcmb_data_hs",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "e40300000800000049f4a24600000000",
+  "expect": "e40300000800000049f4a24600000000",
+  "model": {
+    "@kind": "personality_hcmb_data_hs"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-bosch-radarless-generated-roundtrip-kinematics",
+  "from": "dbc-honda-bosch-radarless-generated",
+  "to": "dbc-honda-bosch-radarless-generated",
+  "input": "940000000800000085800001ed000034",
+  "expect": "940000000800000085800001ed000034",
+  "model": {
+    "@kind": "kinematics"
+  }
+}

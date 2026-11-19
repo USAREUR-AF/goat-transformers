@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-floats",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "59020000080000000000403f00000000",
+  "expect": "59020000080000000000403f00000000",
+  "model": {
+    "@kind": "floats"
+  }
+}

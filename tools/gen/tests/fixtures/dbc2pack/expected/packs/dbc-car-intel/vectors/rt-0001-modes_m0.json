@@ -1,0 +1,10 @@
+{
+  "name": "dbc-car-intel-roundtrip-modes_m0",
+  "from": "dbc-car-intel",
+  "to": "dbc-car-intel",
+  "input": "01010000020000006430000000000000",
+  "expect": "01010000020000006430000000000000",
+  "model": {
+    "@kind": "modes_m0"
+  }
+}

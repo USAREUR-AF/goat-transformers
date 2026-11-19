@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-steer_torque_sensor",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "6002000008000000012d0f80e6d9386b",
+  "expect": "6002000008000000012d0f80e6d9386b",
+  "model": {
+    "@kind": "steer_torque_sensor"
+  }
+}

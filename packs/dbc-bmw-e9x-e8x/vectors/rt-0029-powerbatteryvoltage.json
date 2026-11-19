@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-powerbatteryvoltage",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "b403000008000000aec4520000000000",
+  "expect": "b403000008000000aec4520000000000",
+  "model": {
+    "@kind": "powerbatteryvoltage"
+  }
+}

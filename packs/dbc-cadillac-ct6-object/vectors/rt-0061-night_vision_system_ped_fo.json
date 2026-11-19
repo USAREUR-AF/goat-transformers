@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-night_vision_system_ped_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "09030000010000003b00000000000000",
+  "expect": "09030000010000003b00000000000000",
+  "model": {
+    "@kind": "night_vision_system_ped_fo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-brake_pressure",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "e701000004000000fe83d13800000000",
+  "expect": "e701000004000000fe83d13800000000",
+  "model": {
+    "@kind": "brake_pressure"
+  }
+}

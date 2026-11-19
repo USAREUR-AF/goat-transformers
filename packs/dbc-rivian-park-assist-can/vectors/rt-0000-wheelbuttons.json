@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-park-assist-can-roundtrip-wheelbuttons",
+  "from": "dbc-rivian-park-assist-can",
+  "to": "dbc-rivian-park-assist-can",
+  "input": "1a0300000700000000006c046c600000",
+  "expect": "1a0300000700000000006c046c600000",
+  "model": {
+    "@kind": "wheelbuttons"
+  }
+}

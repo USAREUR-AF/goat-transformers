@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_outputsignals",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "5201000008000000b178bdc857681830",
+  "expect": "5201000008000000b178bdc857681830",
+  "model": {
+    "@kind": "vdm_outputsignals"
+  }
+}

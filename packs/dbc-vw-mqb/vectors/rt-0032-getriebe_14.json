@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-getriebe_14",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "c8030000080000000010e85f6d005a4e",
+  "expect": "c8030000080000000010e85f6d005a4e",
+  "model": {
+    "@kind": "getriebe_14"
+  }
+}

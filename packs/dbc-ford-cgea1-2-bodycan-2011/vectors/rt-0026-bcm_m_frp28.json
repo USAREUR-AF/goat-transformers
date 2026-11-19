@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-bcm_m_frp28",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "4102000008000000006210be6c000000",
+  "expect": "4102000008000000006210be6c000000",
+  "model": {
+    "@kind": "bcm_m_frp28"
+  }
+}

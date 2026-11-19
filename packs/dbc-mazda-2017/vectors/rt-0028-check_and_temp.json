@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-2017-roundtrip-check_and_temp",
+  "from": "dbc-mazda-2017",
+  "to": "dbc-mazda-2017",
+  "input": "2004000008000000d14c23354108002d",
+  "expect": "2004000008000000d14c23354108002d",
+  "model": {
+    "@kind": "check_and_temp"
+  }
+}

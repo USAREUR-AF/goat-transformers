@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-engbrakedata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "65010000080000002f7530008000158c",
+  "expect": "65010000080000002f7530008000158c",
+  "model": {
+    "@kind": "engbrakedata"
+  }
+}

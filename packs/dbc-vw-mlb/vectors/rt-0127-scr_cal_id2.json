@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-scr_cal_id2",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "e805000008000000a0774e25fcd3aa81",
+  "expect": "e805000008000000a0774e25fcd3aa81",
+  "model": {
+    "@kind": "scr_cal_id2"
+  }
+}

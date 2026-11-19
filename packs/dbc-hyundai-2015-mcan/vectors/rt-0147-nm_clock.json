@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-nm_clock",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "44040000080000005836000000000000",
+  "expect": "44040000080000005836000000000000",
+  "model": {
+    "@kind": "nm_clock"
+  }
+}

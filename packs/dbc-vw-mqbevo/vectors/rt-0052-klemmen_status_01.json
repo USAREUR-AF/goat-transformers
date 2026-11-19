@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-klemmen_status_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "c0030000040000006d040a0000000000",
+  "expect": "c0030000040000006d040a0000000000",
+  "model": {
+    "@kind": "klemmen_status_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-esp12",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "200200000800000050b2ba69a5df24b4",
+  "expect": "200200000800000050b2ba69a5df24b4",
+  "model": {
+    "@kind": "esp12"
+  }
+}

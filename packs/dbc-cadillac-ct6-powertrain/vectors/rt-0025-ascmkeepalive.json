@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-powertrain-roundtrip-ascmkeepalive",
+  "from": "dbc-cadillac-ct6-powertrain",
+  "to": "dbc-cadillac-ct6-powertrain",
+  "input": "090400000700000000000040d26e6900",
+  "expect": "090400000700000000000040d26e6900",
+  "model": {
+    "@kind": "ascmkeepalive"
+  }
+}

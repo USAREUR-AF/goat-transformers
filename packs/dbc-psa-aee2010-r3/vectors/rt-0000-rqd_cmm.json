@@ -1,0 +1,10 @@
+{
+  "name": "dbc-psa-aee2010-r3-roundtrip-rqd_cmm",
+  "from": "dbc-psa-aee2010-r3",
+  "to": "dbc-psa-aee2010-r3",
+  "input": "7200000005000000a77e552c03000000",
+  "expect": "7200000005000000a77e552c03000000",
+  "model": {
+    "@kind": "rqd_cmm"
+  }
+}

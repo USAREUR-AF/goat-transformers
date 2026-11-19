@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-gwm_hpcm_i_frp11_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "7304000008000000ec004d3b12090004",
+  "expect": "7304000008000000ec004d3b12090004",
+  "model": {
+    "@kind": "gwm_hpcm_i_frp11_fd1"
+  }
+}

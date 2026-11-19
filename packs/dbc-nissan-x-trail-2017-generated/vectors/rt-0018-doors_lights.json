@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-doors_lights",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "54040000080000000000000000aa4000",
+  "expect": "54040000080000000000000000aa4000",
+  "model": {
+    "@kind": "doors_lights"
+  }
+}

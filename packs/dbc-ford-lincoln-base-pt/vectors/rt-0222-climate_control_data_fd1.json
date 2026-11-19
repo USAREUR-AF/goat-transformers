@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-climate_control_data_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "1a040000080000008c5c080150000000",
+  "expect": "1a040000080000008c5c080150000000",
+  "model": {
+    "@kind": "climate_control_data_fd1"
+  }
+}

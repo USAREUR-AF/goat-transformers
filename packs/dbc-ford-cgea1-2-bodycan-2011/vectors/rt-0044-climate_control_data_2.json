@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-climate_control_data_2",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "5e03000008000000fb02a0cf00000000",
+  "expect": "5e03000008000000fb02a0cf00000000",
+  "model": {
+    "@kind": "climate_control_data_2"
+  }
+}

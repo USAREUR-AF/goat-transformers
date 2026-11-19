@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-gearbox_auto",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "a301000008000000197001000a000278",
+  "expect": "a301000008000000197001000a000278",
+  "model": {
+    "@kind": "gearbox_auto"
+  }
+}

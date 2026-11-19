@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-lgt_objectdetect_info_7_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "6603000008000000764702f55ffc4e77",
+  "expect": "6603000008000000764702f55ffc4e77",
+  "model": {
+    "@kind": "lgt_objectdetect_info_7_fo"
+  }
+}

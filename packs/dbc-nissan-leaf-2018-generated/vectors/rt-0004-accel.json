@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-leaf-2018-generated-roundtrip-accel",
+  "from": "dbc-nissan-leaf-2018-generated",
+  "to": "dbc-nissan-leaf-2018-generated",
+  "input": "92020000080000006c4b000000000000",
+  "expect": "92020000080000006c4b000000000000",
+  "model": {
+    "@kind": "accel"
+  }
+}

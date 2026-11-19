@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-uudt_resp_from_6dofimu2_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "480500000800000080000000168ab1f0",
+  "expect": "480500000800000080000000168ab1f0",
+  "model": {
+    "@kind": "uudt_resp_from_6dofimu2_fo"
+  }
+}

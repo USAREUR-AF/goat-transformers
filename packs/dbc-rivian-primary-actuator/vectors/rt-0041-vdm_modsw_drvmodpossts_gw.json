@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_modsw_drvmodpossts_gw",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "a1030000080000002a004c04dc944c00",
+  "expect": "a1030000080000002a004c04dc944c00",
+  "model": {
+    "@kind": "vdm_modsw_drvmodpossts_gw"
+  }
+}

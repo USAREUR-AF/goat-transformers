@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-f_master_time_sync",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "a100000007000000239353958fbe1300",
+  "expect": "a100000007000000239353958fbe1300",
+  "model": {
+    "@kind": "f_master_time_sync"
+  }
+}

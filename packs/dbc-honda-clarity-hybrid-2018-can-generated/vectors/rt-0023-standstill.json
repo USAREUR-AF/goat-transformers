@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-standstill",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "b0010000070000000108000000000300",
+  "expect": "b0010000070000000108000000000300",
+  "model": {
+    "@kind": "standstill"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-map_retrans_request_fo",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "62010000010000001800000000000000",
+  "expect": "62010000010000001800000000000000",
+  "model": {
+    "@kind": "map_retrans_request_fo"
+  }
+}

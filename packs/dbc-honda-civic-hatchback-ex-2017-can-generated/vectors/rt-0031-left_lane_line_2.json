@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-left_lane_line_2",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "4102000008000000a020e5c02330d718",
+  "expect": "4102000008000000a020e5c02330d718",
+  "model": {
+    "@kind": "left_lane_line_2"
+  }
+}

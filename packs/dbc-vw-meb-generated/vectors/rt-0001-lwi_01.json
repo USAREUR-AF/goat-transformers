@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-lwi_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "8600000008000000045b0ec3496a9200",
+  "expect": "8600000008000000045b0ec3496a9200",
+  "model": {
+    "@kind": "lwi_01"
+  }
+}

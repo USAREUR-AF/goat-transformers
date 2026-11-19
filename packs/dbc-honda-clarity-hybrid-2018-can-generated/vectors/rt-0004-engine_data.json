@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-engine_data",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "58010000080000004c259ffcf3d3aa18",
+  "expect": "58010000080000004c259ffcf3d3aa18",
+  "model": {
+    "@kind": "engine_data"
+  }
+}

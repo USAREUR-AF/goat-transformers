@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-rx8-roundtrip-wheel_speed",
+  "from": "dbc-mazda-rx8",
+  "to": "dbc-mazda-rx8",
+  "input": "b00400000800000052afa686fa5d4e34",
+  "expect": "b00400000800000052afa686fa5d4e34",
+  "model": {
+    "@kind": "wheel_speed"
+  }
+}

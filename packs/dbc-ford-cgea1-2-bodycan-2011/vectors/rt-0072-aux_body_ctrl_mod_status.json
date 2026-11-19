@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-aux_body_ctrl_mod_status",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "c90300000800000012c0000000000000",
+  "expect": "c90300000800000012c0000000000000",
+  "model": {
+    "@kind": "aux_body_ctrl_mod_status"
+  }
+}

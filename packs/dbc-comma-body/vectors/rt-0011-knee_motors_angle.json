@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-knee_motors_angle",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "050300000800000065ffb9d60dad6184",
+  "expect": "050300000800000065ffb9d60dad6184",
+  "model": {
+    "@kind": "knee_motors_angle"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-motor_ev_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "87010000080000005b921f03ead9f08e",
+  "expect": "87010000080000005b921f03ead9f08e",
+  "model": {
+    "@kind": "motor_ev_01"
+  }
+}

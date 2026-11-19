@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-ems12_m1",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "290300000800000078764d4916b38a61",
+  "expect": "290300000800000078764d4916b38a61",
+  "model": {
+    "@kind": "ems12_m1"
+  }
+}

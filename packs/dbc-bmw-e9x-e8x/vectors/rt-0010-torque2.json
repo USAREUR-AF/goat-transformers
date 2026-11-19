@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-torque2",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "a9000000080000004b94ef81e141aa66",
+  "expect": "a9000000080000004b94ef81e141aa66",
+  "model": {
+    "@kind": "torque2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-klemmen_status_01",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "c0030000040000004108050000000000",
+  "expect": "c0030000040000004108050000000000",
+  "model": {
+    "@kind": "klemmen_status_01"
+  }
+}

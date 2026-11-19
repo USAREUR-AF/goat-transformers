@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-model3-party-roundtrip-di_state",
+  "from": "dbc-tesla-model3-party",
+  "to": "dbc-tesla-model3-party",
+  "input": "86020000080000008ac3820f40b30100",
+  "expect": "86020000080000008ac3820f40b30100",
+  "model": {
+    "@kind": "di_state"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-cc_navchassis_info_status",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "8803000008000000d4fd20b26f27b000",
+  "expect": "8803000008000000d4fd20b26f27b000",
+  "model": {
+    "@kind": "cc_navchassis_info_status"
+  }
+}

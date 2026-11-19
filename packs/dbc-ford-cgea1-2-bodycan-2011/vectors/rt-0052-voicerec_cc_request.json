@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-voicerec_cc_request",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "9a0300000800000052aac0e800000000",
+  "expect": "9a0300000800000052aac0e800000000",
+  "model": {
+    "@kind": "voicerec_cc_request"
+  }
+}

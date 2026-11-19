@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-bodycan-2011-roundtrip-acm_nav_wheel_info",
+  "from": "dbc-ford-cgea1-2-bodycan-2011",
+  "to": "dbc-ford-cgea1-2-bodycan-2011",
+  "input": "2604000008000000b1fe275079ad3100",
+  "expect": "2604000008000000b1fe275079ad3100",
+  "model": {
+    "@kind": "acm_nav_wheel_info"
+  }
+}

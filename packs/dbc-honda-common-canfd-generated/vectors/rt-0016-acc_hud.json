@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-common-canfd-generated-roundtrip-acc_hud",
+  "from": "dbc-honda-common-canfd-generated",
+  "to": "dbc-honda-common-canfd-generated",
+  "input": "0c03000008000000ed7d542bb29a93e5",
+  "expect": "0c03000008000000ed7d542bb29a93e5",
+  "model": {
+    "@kind": "acc_hud"
+  }
+}

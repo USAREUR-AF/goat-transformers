@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-phev_battery_data1_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "e4020000080000000000000000000000",
+  "expect": "e4020000080000000000000000000000",
+  "model": {
+    "@kind": "phev_battery_data1_fd1"
+  }
+}

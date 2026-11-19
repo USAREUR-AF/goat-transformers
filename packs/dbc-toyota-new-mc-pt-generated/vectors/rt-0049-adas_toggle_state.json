@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-new-mc-pt-generated-roundtrip-adas_toggle_state",
+  "from": "dbc-toyota-new-mc-pt-generated",
+  "to": "dbc-toyota-new-mc-pt-generated",
+  "input": "f3060000080000000000005344020000",
+  "expect": "f3060000080000000000005344020000",
+  "model": {
+    "@kind": "adas_toggle_state"
+  }
+}

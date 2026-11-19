@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-brakesysfeatures_2",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "16040000080000004e5300ec01c4c976",
+  "expect": "16040000080000004e5300ec01c4c976",
+  "model": {
+    "@kind": "brakesysfeatures_2"
+  }
+}

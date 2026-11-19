@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-doors",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "e2040000080000000054000000000000",
+  "expect": "e2040000080000000054000000000000",
+  "model": {
+    "@kind": "doors"
+  }
+}

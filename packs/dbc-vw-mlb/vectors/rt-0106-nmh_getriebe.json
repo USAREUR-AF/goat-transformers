@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-nmh_getriebe",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "c2060000070000000a74051555000500",
+  "expect": "c2060000070000000a74051555000500",
+  "model": {
+    "@kind": "nmh_getriebe"
+  }
+}

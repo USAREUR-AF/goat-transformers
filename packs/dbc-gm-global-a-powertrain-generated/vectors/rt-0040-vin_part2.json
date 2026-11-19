@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-vin_part2",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "e1040000080000008000000061198d70",
+  "expect": "e1040000080000008000000061198d70",
+  "model": {
+    "@kind": "vin_part2"
+  }
+}

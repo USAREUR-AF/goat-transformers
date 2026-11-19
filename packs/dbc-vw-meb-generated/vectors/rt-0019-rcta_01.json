@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-rcta_01",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "b702000008000000b50c000000000000",
+  "expect": "b702000008000000b50c000000000000",
+  "model": {
+    "@kind": "rcta_01"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-diesel_data_legacy_1",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "070400000800000000fe000000020000",
+  "expect": "070400000800000000fe000000020000",
+  "model": {
+    "@kind": "diesel_data_legacy_1"
+  }
+}

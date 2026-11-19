@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-icm_412h",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "1204000008000000400060370e255500",
+  "expect": "1204000008000000400060370e255500",
+  "model": {
+    "@kind": "icm_412h"
+  }
+}

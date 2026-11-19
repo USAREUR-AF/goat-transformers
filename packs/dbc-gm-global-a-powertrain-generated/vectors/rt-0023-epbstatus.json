@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-epbstatus",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "30020000080000000010000000000000",
+  "expect": "30020000080000000010000000000000",
+  "model": {
+    "@kind": "epbstatus"
+  }
+}

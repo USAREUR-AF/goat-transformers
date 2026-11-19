@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-epas_adasstatus",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "900300000700000051089bfcdc8a1000",
+  "expect": "900300000700000051089bfcdc8a1000",
+  "model": {
+    "@kind": "epas_adasstatus"
+  }
+}

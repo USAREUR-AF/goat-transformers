@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-cruise_buttons",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "3b0200000300000095400b0000000000",
+  "expect": "3b0200000300000095400b0000000000",
+  "model": {
+    "@kind": "cruise_buttons"
+  }
+}

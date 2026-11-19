@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ebcmbrakepedalposition",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "f1000000060000000253000000000000",
+  "expect": "f1000000060000000253000000000000",
+  "model": {
+    "@kind": "ebcmbrakepedalposition"
+  }
+}

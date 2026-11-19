@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tp_hu_phyres",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "8807000008000000481ff6cda47b5229",
+  "expect": "8807000008000000481ff6cda47b5229",
+  "model": {
+    "@kind": "tp_hu_phyres"
+  }
+}

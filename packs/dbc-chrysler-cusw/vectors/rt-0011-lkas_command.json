@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-lkas_command",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "f6010000040000008fc00c0300000000",
+  "expect": "f6010000040000008fc00c0300000000",
+  "model": {
+    "@kind": "lkas_command"
+  }
+}

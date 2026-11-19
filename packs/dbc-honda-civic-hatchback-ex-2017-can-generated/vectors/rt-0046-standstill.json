@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-standstill",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "b0010000070000000012000000003a00",
+  "expect": "b0010000070000000012000000003a00",
+  "model": {
+    "@kind": "standstill"
+  }
+}

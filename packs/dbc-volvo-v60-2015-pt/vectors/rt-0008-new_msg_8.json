@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v60-2015-pt-roundtrip-new_msg_8",
+  "from": "dbc-volvo-v60-2015-pt",
+  "to": "dbc-volvo-v60-2015-pt",
+  "input": "50010000080000000f710348071f0af6",
+  "expect": "50010000080000000f710348071f0af6",
+  "model": {
+    "@kind": "new_msg_8"
+  }
+}

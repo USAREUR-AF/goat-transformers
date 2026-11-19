@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-tmu_gw_e_01",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "4300000008000000b101000000000000",
+  "expect": "4300000008000000b101000000000000",
+  "model": {
+    "@kind": "tmu_gw_e_01"
+  }
+}

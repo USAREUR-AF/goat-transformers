@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-ocs_passseatinfo",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "6806000008000000e30af14d0000009b",
+  "expect": "6806000008000000e30af14d0000009b",
+  "model": {
+    "@kind": "ocs_passseatinfo"
+  }
+}

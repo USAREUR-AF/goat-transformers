@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-transmission_status",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "700100000800000004000000000080ff",
+  "expect": "700100000800000004000000000080ff",
+  "model": {
+    "@kind": "transmission_status"
+  }
+}

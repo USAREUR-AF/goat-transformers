@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hongqi-hs5-roundtrip-lkas",
+  "from": "dbc-hongqi-hs5",
+  "to": "dbc-hongqi-hs5",
+  "input": "12010000080000002d040900000000e0",
+  "expect": "12010000080000002d040900000000e0",
+  "model": {
+    "@kind": "lkas"
+  }
+}

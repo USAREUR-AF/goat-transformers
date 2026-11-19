@@ -1,0 +1,10 @@
+{
+  "name": "dbc-opel-omega-2001-roundtrip-abs_wheelspeed",
+  "from": "dbc-opel-omega-2001",
+  "to": "dbc-opel-omega-2001",
+  "input": "0003000008000000111038be206c081a",
+  "expect": "0003000008000000111038be206c081a",
+  "model": {
+    "@kind": "abs_wheelspeed"
+  }
+}

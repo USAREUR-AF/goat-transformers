@@ -1,0 +1,10 @@
+{
+  "name": "dbc-model-x-generated-roundtrip-shared",
+  "from": "dbc-model-x-generated",
+  "to": "dbc-model-x-generated",
+  "input": "2003000002000000190b000000000000",
+  "expect": "2003000002000000190b000000000000",
+  "model": {
+    "@kind": "shared"
+  }
+}

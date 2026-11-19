@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-mcan-roundtrip-nm_asd",
+  "from": "dbc-hyundai-2015-mcan",
+  "to": "dbc-hyundai-2015-mcan",
+  "input": "46040000080000005907000000000000",
+  "expect": "46040000080000005907000000000000",
+  "model": {
+    "@kind": "nm_asd"
+  }
+}

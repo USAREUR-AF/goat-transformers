@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-vdm_adassts",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "6201000008000000030af1b115365f21",
+  "expect": "6201000008000000030af1b115365f21",
+  "model": {
+    "@kind": "vdm_adassts"
+  }
+}

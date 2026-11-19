@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-dynamiccruisecontroltorquedemand",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "b600000008000000ce07520000000000",
+  "expect": "b600000008000000ce07520000000000",
+  "model": {
+    "@kind": "dynamiccruisecontroltorquedemand"
+  }
+}

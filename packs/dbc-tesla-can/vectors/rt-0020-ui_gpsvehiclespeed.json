@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_gpsvehiclespeed",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "f802000008000000956c6f43c39a3f00",
+  "expect": "f802000008000000956c6f43c39a3f00",
+  "model": {
+    "@kind": "ui_gpsvehiclespeed"
+  }
+}

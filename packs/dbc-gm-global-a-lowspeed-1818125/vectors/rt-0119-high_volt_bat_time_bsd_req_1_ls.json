@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-high_volt_bat_time_bsd_req_1_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00408680070000006e0c00dc0d24b300",
+  "expect": "00408680070000006e0c00dc0d24b300",
+  "model": {
+    "@kind": "high_volt_bat_time_bsd_req_1_ls"
+  }
+}

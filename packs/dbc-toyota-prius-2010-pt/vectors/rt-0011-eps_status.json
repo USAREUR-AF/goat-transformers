@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-eps_status",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "62020000050000000200002900000000",
+  "expect": "62020000050000000200002900000000",
+  "model": {
+    "@kind": "eps_status"
+  }
+}

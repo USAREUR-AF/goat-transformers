@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-dc_hybrid_01",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "b10300000800000000900d2c87150091",
+  "expect": "b10300000800000000900d2c87150091",
+  "model": {
+    "@kind": "dc_hybrid_01"
+  }
+}

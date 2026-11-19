@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-wheeldata",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "160200000800000010e7063939be0000",
+  "expect": "160200000800000010e7063939be0000",
+  "model": {
+    "@kind": "wheeldata"
+  }
+}

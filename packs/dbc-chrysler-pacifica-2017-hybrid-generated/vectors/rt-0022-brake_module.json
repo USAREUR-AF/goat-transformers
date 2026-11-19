@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-pacifica-2017-hybrid-generated-roundtrip-brake_module",
+  "from": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "to": "dbc-chrysler-pacifica-2017-hybrid-generated",
+  "input": "8d020000080000000092000000000000",
+  "expect": "8d020000080000000092000000000000",
+  "model": {
+    "@kind": "brake_module"
+  }
+}

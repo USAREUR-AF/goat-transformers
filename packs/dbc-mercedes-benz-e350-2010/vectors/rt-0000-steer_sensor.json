@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mercedes-benz-e350-2010-roundtrip-steer_sensor",
+  "from": "dbc-mercedes-benz-e350-2010",
+  "to": "dbc-mercedes-benz-e350-2010",
+  "input": "030000000800000004e20d340000605d",
+  "expect": "030000000800000004e20d340000605d",
+  "model": {
+    "@kind": "steer_sensor"
+  }
+}

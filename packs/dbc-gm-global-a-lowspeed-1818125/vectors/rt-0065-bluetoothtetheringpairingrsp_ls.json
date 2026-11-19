@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-bluetoothtetheringpairingrsp_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a02480070000000000000177762a00",
+  "expect": "00a02480070000000000000177762a00",
+  "model": {
+    "@kind": "bluetoothtetheringpairingrsp_ls"
+  }
+}

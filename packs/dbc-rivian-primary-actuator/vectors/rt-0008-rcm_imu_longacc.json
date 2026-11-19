@@ -1,0 +1,10 @@
+{
+  "name": "dbc-rivian-primary-actuator-roundtrip-rcm_imu_longacc",
+  "from": "dbc-rivian-primary-actuator",
+  "to": "dbc-rivian-primary-actuator",
+  "input": "400100000800000081080000302f0500",
+  "expect": "400100000800000081080000302f0500",
+  "model": {
+    "@kind": "rcm_imu_longacc"
+  }
+}

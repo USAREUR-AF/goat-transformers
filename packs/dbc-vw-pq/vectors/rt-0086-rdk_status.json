@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-pq-roundtrip-rdk_status",
+  "from": "dbc-vw-pq",
+  "to": "dbc-vw-pq",
+  "input": "430300000300000055950a0000000000",
+  "expect": "430300000300000055950a0000000000",
+  "model": {
+    "@kind": "rdk_status"
+  }
+}

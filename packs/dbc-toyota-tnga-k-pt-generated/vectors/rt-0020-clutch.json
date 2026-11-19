@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-tnga-k-pt-generated-roundtrip-clutch",
+  "from": "dbc-toyota-tnga-k-pt-generated",
+  "to": "dbc-toyota-tnga-k-pt-generated",
+  "input": "61030000080000000000f3004100a160",
+  "expect": "61030000080000000000f3004100a160",
+  "model": {
+    "@kind": "clutch"
+  }
+}

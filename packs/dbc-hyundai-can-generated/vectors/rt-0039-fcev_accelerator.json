@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-fcev_accelerator",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "91000000080000000000000000000f00",
+  "expect": "91000000080000000000000000000f00",
+  "model": {
+    "@kind": "fcev_accelerator"
+  }
+}

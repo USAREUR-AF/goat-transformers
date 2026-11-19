@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-global-2020-hybrid-generated-roundtrip-es_highbeamassist",
+  "from": "dbc-subaru-global-2020-hybrid-generated",
+  "to": "dbc-subaru-global-2020-hybrid-generated",
+  "input": "2a02000008000000070e000000000000",
+  "expect": "2a02000008000000070e000000000000",
+  "model": {
+    "@kind": "es_highbeamassist"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-dimming_information_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "004064800300000005b9900000000000",
+  "expect": "004064800300000005b9900000000000",
+  "model": {
+    "@kind": "dimming_information_ls"
+  }
+}

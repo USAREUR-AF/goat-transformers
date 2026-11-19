@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-cgw2",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "530500000800000095b45e012a5f4a8b",
+  "expect": "530500000800000095b45e012a5f4a8b",
+  "model": {
+    "@kind": "cgw2"
+  }
+}

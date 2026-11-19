@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-brake_pedal",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "18000000080000008100000000000000",
+  "expect": "18000000080000008100000000000000",
+  "model": {
+    "@kind": "brake_pedal"
+  }
+}

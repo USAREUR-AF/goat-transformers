@@ -1,0 +1,10 @@
+{
+  "name": "dbc-comma-body-roundtrip-body_data",
+  "from": "dbc-comma-body",
+  "to": "dbc-comma-body",
+  "input": "0302000004000000e88abf2c00000000",
+  "expect": "0302000004000000e88abf2c00000000",
+  "model": {
+    "@kind": "body_data"
+  }
+}

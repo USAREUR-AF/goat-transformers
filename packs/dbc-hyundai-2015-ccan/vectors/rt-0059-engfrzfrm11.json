@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-2015-ccan-roundtrip-engfrzfrm11",
+  "from": "dbc-hyundai-2015-ccan",
+  "to": "dbc-hyundai-2015-ccan",
+  "input": "56050000080000004e25fc5bd3aa8157",
+  "expect": "56050000080000004e25fc5bd3aa8157",
+  "model": {
+    "@kind": "engfrzfrm11"
+  }
+}

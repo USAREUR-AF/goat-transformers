@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-crv-touring-2016-can-generated-roundtrip-lkas_hud",
+  "from": "dbc-honda-crv-touring-2016-can-generated",
+  "to": "dbc-honda-crv-touring-2016-can-generated",
+  "input": "3d03000005000000812a021c16000000",
+  "expect": "3d03000005000000812a021c16000000",
+  "model": {
+    "@kind": "lkas_hud"
+  }
+}

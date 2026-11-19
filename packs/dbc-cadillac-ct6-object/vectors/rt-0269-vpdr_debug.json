@@ -1,0 +1,10 @@
+{
+  "name": "dbc-cadillac-ct6-object-roundtrip-vpdr_debug",
+  "from": "dbc-cadillac-ct6-object",
+  "to": "dbc-cadillac-ct6-object",
+  "input": "3a05000008000000aaaaaaaaaa0a0000",
+  "expect": "3a05000008000000aaaaaaaaaa0a0000",
+  "model": {
+    "@kind": "vpdr_debug"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-pscm_autosar_netwrkmgmt",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "b50500000800000051287aa3471eccf5",
+  "expect": "b50500000800000051287aa3471eccf5",
+  "model": {
+    "@kind": "pscm_autosar_netwrkmgmt"
+  }
+}

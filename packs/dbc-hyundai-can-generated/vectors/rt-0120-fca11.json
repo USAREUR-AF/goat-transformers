@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-fca11",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "8d0300000800000037b01d010ab43f16",
+  "expect": "8d0300000800000037b01d010ab43f16",
+  "model": {
+    "@kind": "fca11"
+  }
+}

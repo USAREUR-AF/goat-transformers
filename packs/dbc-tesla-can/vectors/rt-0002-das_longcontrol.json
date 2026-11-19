@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-das_longcontrol",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "09020000080000000607deb564344611",
+  "expect": "09020000080000000607deb564344611",
+  "model": {
+    "@kind": "das_longcontrol"
+  }
+}

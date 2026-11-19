@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqb-roundtrip-kn_hybrid_01",
+  "from": "dbc-vw-mqb",
+  "to": "dbc-vw-mqb",
+  "input": "7b00f09708000000e000000000000000",
+  "expect": "7b00f09708000000e000000000000000",
+  "model": {
+    "@kind": "kn_hybrid_01"
+  }
+}

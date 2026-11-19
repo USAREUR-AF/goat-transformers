@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-secoc-pt-generated-roundtrip-vin_part_2",
+  "from": "dbc-toyota-secoc-pt-generated",
+  "to": "dbc-toyota-secoc-pt-generated",
+  "input": "8105000008000000d0a77e552c03dab1",
+  "expect": "8105000008000000d0a77e552c03dab1",
+  "model": {
+    "@kind": "vin_part_2"
+  }
+}

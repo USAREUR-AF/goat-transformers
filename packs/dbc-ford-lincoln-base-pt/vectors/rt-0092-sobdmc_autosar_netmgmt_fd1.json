@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-sobdmc_autosar_netmgmt_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "a505000008000000bc93e50e6a413760",
+  "expect": "a505000008000000bc93e50e6a413760",
+  "model": {
+    "@kind": "sobdmc_autosar_netmgmt_fd1"
+  }
+}

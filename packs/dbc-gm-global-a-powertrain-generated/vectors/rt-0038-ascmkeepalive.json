@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-powertrain-generated-roundtrip-ascmkeepalive",
+  "from": "dbc-gm-global-a-powertrain-generated",
+  "to": "dbc-gm-global-a-powertrain-generated",
+  "input": "090400000700000000000049a39c6600",
+  "expect": "090400000700000000000049a39c6600",
+  "model": {
+    "@kind": "ascmkeepalive"
+  }
+}

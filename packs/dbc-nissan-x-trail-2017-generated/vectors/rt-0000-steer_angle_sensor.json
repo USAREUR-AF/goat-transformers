@@ -1,0 +1,10 @@
+{
+  "name": "dbc-nissan-x-trail-2017-generated-roundtrip-steer_angle_sensor",
+  "from": "dbc-nissan-x-trail-2017-generated",
+  "to": "dbc-nissan-x-trail-2017-generated",
+  "input": "0200000005000000c55017ee0c000000",
+  "expect": "0200000005000000c55017ee0c000000",
+  "model": {
+    "@kind": "steer_angle_sensor"
+  }
+}

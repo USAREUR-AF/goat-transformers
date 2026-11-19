@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-getriebe_04",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "4104000008000000d407070e3a4404e8",
+  "expect": "4104000008000000d407070e3a4404e8",
+  "model": {
+    "@kind": "getriebe_04"
+  }
+}

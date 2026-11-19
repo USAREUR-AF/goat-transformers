@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-hev_powertrain_data6",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "8004000008000000a0b6000000000000",
+  "expect": "8004000008000000a0b6000000000000",
+  "model": {
+    "@kind": "hev_powertrain_data6"
+  }
+}

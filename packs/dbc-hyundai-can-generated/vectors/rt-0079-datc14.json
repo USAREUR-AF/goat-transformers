@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-can-generated-roundtrip-datc14",
+  "from": "dbc-hyundai-can-generated",
+  "to": "dbc-hyundai-can-generated",
+  "input": "4000000008000000c846cd0600000000",
+  "expect": "4000000008000000c846cd0600000000",
+  "model": {
+    "@kind": "datc14"
+  }
+}

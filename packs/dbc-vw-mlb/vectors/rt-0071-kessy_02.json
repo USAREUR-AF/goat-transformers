@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mlb-roundtrip-kessy_02",
+  "from": "dbc-vw-mlb",
+  "to": "dbc-vw-mlb",
+  "input": "90050000080000006095adaf81ac0000",
+  "expect": "90050000080000006095adaf81ac0000",
+  "model": {
+    "@kind": "kessy_02"
+  }
+}

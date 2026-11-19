@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-meb-generated-roundtrip-aps_master",
+  "from": "dbc-vw-meb-generated",
+  "to": "dbc-vw-meb-generated",
+  "input": "80030000080000000000000000000009",
+  "expect": "80030000080000000000000000000009",
+  "model": {
+    "@kind": "aps_master"
+  }
+}

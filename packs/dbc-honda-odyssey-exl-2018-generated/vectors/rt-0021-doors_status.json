@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-exl-2018-generated-roundtrip-doors_status",
+  "from": "dbc-honda-odyssey-exl-2018-generated",
+  "to": "dbc-honda-odyssey-exl-2018-generated",
+  "input": "05040000080000000000000040010003",
+  "expect": "05040000080000000000000040010003",
+  "model": {
+    "@kind": "doors_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-hyundai-i30-2014-roundtrip-whl_spd",
+  "from": "dbc-hyundai-i30-2014",
+  "to": "dbc-hyundai-i30-2014",
+  "input": "b0040000080000002121f834cf08a61c",
+  "expect": "b0040000080000002121f834cf08a61c",
+  "model": {
+    "@kind": "whl_spd"
+  }
+}

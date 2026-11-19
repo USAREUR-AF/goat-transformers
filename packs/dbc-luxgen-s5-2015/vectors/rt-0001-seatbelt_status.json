@@ -1,0 +1,10 @@
+{
+  "name": "dbc-luxgen-s5-2015-roundtrip-seatbelt_status",
+  "from": "dbc-luxgen-s5-2015",
+  "to": "dbc-luxgen-s5-2015",
+  "input": "50040000080000000000200000000000",
+  "expect": "50040000080000000000200000000000",
+  "model": {
+    "@kind": "seatbelt_status"
+  }
+}

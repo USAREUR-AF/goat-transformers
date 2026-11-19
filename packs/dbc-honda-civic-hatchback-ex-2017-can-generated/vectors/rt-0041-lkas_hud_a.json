@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-civic-hatchback-ex-2017-can-generated-roundtrip-lkas_hud_a",
+  "from": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "to": "dbc-honda-civic-hatchback-ex-2017-can-generated",
+  "input": "da33008005000000812a021c16000000",
+  "expect": "da33008005000000812a021c16000000",
+  "model": {
+    "@kind": "lkas_hud_a"
+  }
+}

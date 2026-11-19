@@ -1,0 +1,10 @@
+{
+  "name": "dbc-chrysler-cusw-roundtrip-steering",
+  "from": "dbc-chrysler-cusw",
+  "to": "dbc-chrysler-cusw",
+  "input": "ee010000060000001bf30fca01780000",
+  "expect": "ee010000060000001bf30fca01780000",
+  "model": {
+    "@kind": "steering"
+  }
+}

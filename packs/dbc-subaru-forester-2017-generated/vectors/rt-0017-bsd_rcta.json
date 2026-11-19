@@ -1,0 +1,10 @@
+{
+  "name": "dbc-subaru-forester-2017-generated-roundtrip-bsd_rcta",
+  "from": "dbc-subaru-forester-2017-generated",
+  "to": "dbc-subaru-forester-2017-generated",
+  "input": "5c020000080000000600000001440000",
+  "expect": "5c020000080000000600000001440000",
+  "model": {
+    "@kind": "bsd_rcta"
+  }
+}

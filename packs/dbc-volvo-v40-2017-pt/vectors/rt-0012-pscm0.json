@@ -1,0 +1,10 @@
+{
+  "name": "dbc-volvo-v40-2017-pt-roundtrip-pscm0",
+  "from": "dbc-volvo-v40-2017-pt",
+  "to": "dbc-volvo-v40-2017-pt",
+  "input": "e00000000800000000850000182a0080",
+  "expect": "e00000000800000000850000182a0080",
+  "model": {
+    "@kind": "pscm0"
+  }
+}

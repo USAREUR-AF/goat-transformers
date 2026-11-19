@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-prius-2010-pt-roundtrip-accelerometer",
+  "from": "dbc-toyota-prius-2010-pt",
+  "to": "dbc-toyota-prius-2010-pt",
+  "input": "2802000008000000273f536800000000",
+  "expect": "2802000008000000273f536800000000",
+  "model": {
+    "@kind": "accelerometer"
+  }
+}

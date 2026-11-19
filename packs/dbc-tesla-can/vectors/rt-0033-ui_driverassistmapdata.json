@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-can-roundtrip-ui_driverassistmapdata",
+  "from": "dbc-tesla-can",
+  "to": "dbc-tesla-can",
+  "input": "c8030000080000004abecc5e5655651d",
+  "expect": "c8030000080000004abecc5e5655651d",
+  "model": {
+    "@kind": "ui_driverassistmapdata"
+  }
+}

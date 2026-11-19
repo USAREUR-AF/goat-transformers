@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-ota_electric_pwr_readiness_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00a04780010000003900000000000000",
+  "expect": "00a04780010000003900000000000000",
+  "model": {
+    "@kind": "ota_electric_pwr_readiness_ls"
+  }
+}

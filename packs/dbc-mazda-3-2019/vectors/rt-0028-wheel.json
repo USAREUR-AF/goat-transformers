@@ -1,0 +1,10 @@
+{
+  "name": "dbc-mazda-3-2019-roundtrip-wheel",
+  "from": "dbc-mazda-3-2019",
+  "to": "dbc-mazda-3-2019",
+  "input": "1d000000080000007fd6d3ad2bff925b",
+  "expect": "1d000000080000007fd6d3ad2bff925b",
+  "model": {
+    "@kind": "wheel"
+  }
+}

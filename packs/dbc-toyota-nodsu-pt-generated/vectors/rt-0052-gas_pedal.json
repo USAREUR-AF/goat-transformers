@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-nodsu-pt-generated-roundtrip-gas_pedal",
+  "from": "dbc-toyota-nodsu-pt-generated",
+  "to": "dbc-toyota-nodsu-pt-generated",
+  "input": "c1020000080000000829b37d8a61380f",
+  "expect": "c1020000080000000829b37d8a61380f",
+  "model": {
+    "@kind": "gas_pedal"
+  }
+}

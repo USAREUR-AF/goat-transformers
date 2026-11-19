@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-acc_yawrate_information_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "00002280080000009ff14f4d4ad2622e",
+  "expect": "00002280080000009ff14f4d4ad2622e",
+  "model": {
+    "@kind": "acc_yawrate_information_ls"
+  }
+}

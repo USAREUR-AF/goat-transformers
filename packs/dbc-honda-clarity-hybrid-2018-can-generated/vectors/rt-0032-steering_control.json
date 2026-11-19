@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-clarity-hybrid-2018-can-generated-roundtrip-steering_control",
+  "from": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "to": "dbc-honda-clarity-hybrid-2018-can-generated",
+  "input": "e4000000050000003935e3ba18000000",
+  "expect": "e4000000050000003935e3ba18000000",
+  "model": {
+    "@kind": "steering_control"
+  }
+}

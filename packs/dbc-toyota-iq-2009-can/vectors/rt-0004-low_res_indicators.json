@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-iq-2009-can-roundtrip-low_res_indicators",
+  "from": "dbc-toyota-iq-2009-can",
+  "to": "dbc-toyota-iq-2009-can",
+  "input": "b3030000080000007971340000000000",
+  "expect": "b3030000080000007971340000000000",
+  "model": {
+    "@kind": "low_res_indicators"
+  }
+}

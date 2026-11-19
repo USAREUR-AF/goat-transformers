@@ -1,0 +1,10 @@
+{
+  "name": "dbc-tesla-powertrain-roundtrip-di_state",
+  "from": "dbc-tesla-powertrain",
+  "to": "dbc-tesla-powertrain",
+  "input": "5602000008000000b71428fdadb83209",
+  "expect": "5602000008000000b71428fdadb83209",
+  "model": {
+    "@kind": "di_state"
+  }
+}

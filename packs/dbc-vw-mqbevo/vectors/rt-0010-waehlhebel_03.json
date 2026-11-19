@@ -1,0 +1,10 @@
+{
+  "name": "dbc-vw-mqbevo-roundtrip-waehlhebel_03",
+  "from": "dbc-vw-mqbevo",
+  "to": "dbc-vw-mqbevo",
+  "input": "af00000004000000240937cb00000000",
+  "expect": "af00000004000000240937cb00000000",
+  "model": {
+    "@kind": "waehlhebel_03"
+  }
+}

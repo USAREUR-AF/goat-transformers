@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-wheeldata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "16020000080000001ef5144793003d66",
+  "expect": "16020000080000001ef5144793003d66",
+  "model": {
+    "@kind": "wheeldata"
+  }
+}

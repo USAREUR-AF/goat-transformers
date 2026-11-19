@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-cgea1-2-ptcan-2011-roundtrip-smart_headlamp_stat",
+  "from": "dbc-ford-cgea1-2-ptcan-2011",
+  "to": "dbc-ford-cgea1-2-ptcan-2011",
+  "input": "bb030000080000003400000000000000",
+  "expect": "bb030000080000003400000000000000",
+  "model": {
+    "@kind": "smart_headlamp_stat"
+  }
+}

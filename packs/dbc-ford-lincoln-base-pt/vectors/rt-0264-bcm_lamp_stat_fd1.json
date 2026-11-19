@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-bcm_lamp_stat_fd1",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "c3030000080000004b1aee320d5f7181",
+  "expect": "c3030000080000004b1aee320d5f7181",
+  "model": {
+    "@kind": "bcm_lamp_stat_fd1"
+  }
+}

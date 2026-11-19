@@ -1,0 +1,10 @@
+{
+  "name": "dbc-ford-lincoln-base-pt-roundtrip-traffic_recognitndata",
+  "from": "dbc-ford-lincoln-base-pt",
+  "to": "dbc-ford-lincoln-base-pt",
+  "input": "cd03000008000000ed02c17fa88639b8",
+  "expect": "cd03000008000000ed02c17fa88639b8",
+  "model": {
+    "@kind": "traffic_recognitndata"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dbc-gm-global-a-lowspeed-1818125-roundtrip-ccp_command_receive_object_ls",
+  "from": "dbc-gm-global-a-lowspeed-1818125",
+  "to": "dbc-gm-global-a-lowspeed-1818125",
+  "input": "f00700000800000000000000759327af",
+  "expect": "f00700000800000000000000759327af",
+  "model": {
+    "@kind": "ccp_command_receive_object_ls"
+  }
+}

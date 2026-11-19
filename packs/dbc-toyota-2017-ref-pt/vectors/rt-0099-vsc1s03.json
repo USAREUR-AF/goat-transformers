@@ -1,0 +1,10 @@
+{
+  "name": "dbc-toyota-2017-ref-pt-roundtrip-vsc1s03",
+  "from": "dbc-toyota-2017-ref-pt",
+  "to": "dbc-toyota-2017-ref-pt",
+  "input": "b40000000800000000000000e065663d",
+  "expect": "b40000000800000000000000e065663d",
+  "model": {
+    "@kind": "vsc1s03"
+  }
+}

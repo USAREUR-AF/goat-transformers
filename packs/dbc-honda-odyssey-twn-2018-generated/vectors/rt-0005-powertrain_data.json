@@ -1,0 +1,10 @@
+{
+  "name": "dbc-honda-odyssey-twn-2018-generated-roundtrip-powertrain_data",
+  "from": "dbc-honda-odyssey-twn-2018-generated",
+  "to": "dbc-honda-odyssey-twn-2018-generated",
+  "input": "7c01000008000000720099499c1f0a18",
+  "expect": "7c01000008000000720099499c1f0a18",
+  "model": {
+    "@kind": "powertrain_data"
+  }
+}

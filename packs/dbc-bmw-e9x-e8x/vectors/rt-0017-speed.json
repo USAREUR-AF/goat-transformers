@@ -1,0 +1,10 @@
+{
+  "name": "dbc-bmw-e9x-e8x-roundtrip-speed",
+  "from": "dbc-bmw-e9x-e8x",
+  "to": "dbc-bmw-e9x-e8x",
+  "input": "a0010000080000000801b6a89531dd64",
+  "expect": "a0010000080000000801b6a89531dd64",
+  "model": {
+    "@kind": "speed"
+  }
+}
