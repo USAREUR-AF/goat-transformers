@@ -1,0 +1,15 @@
+{
+  "name": "ths-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HETHS,274.15,A*18",
+  "expect": "$HETHS,274.15,A*18",
+  "model": {
+    "@kind": "ths",
+    "nmea0183.talker": "HE",
+    "nmea0183.heading_true_deg": "274.15",
+    "nmea0183.ths_mode": "A"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): THS fields 1-2; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

@@ -12,6 +12,8 @@ version       0.1.0
 distribution  public
 source        "gpsd project, NMEA Revealed (www/NMEA.adoc, dated 12 July 2025), https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b"
 source        "gpsd COPYING at the same commit: BSD-2-Clause; the document states it is not a derivative of the NMEA 0183 standard"
+source        "pynmea2 (https://github.com/Knio/pynmea2, MIT License) at commit d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a, pynmea2/types/talker.py: the field order of GNS, HDM, HDG, THS, ROT, VHW, MWV, MWD, DBT, DPT, MTW, TTM, TLL, OSD and DTM; restated, no code copied"
+source        "gpsd drivers/driver_nmea0183.c (BSD-2-Clause) at commit c59fc6de479d06620c8b2ba395b728e10a71527b: units and meanings of GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW and DTM; restated, no code copied"
 uses          nmea0183
 wire          text
 start         "$"
@@ -143,3 +145,178 @@ field     nmea0183.month         3      int:2
 field     nmea0183.year          4      int:4
 field     nmea0183.zone_hours    5      int:2
 field     nmea0183.zone_minutes  6      int:2
+
+# ---- Added sentences (layouts from pynmea2 and the gpsd driver; pack.md,
+# "Added sentences"). Same conventions as above: the talker column, `when` on
+# columns 2-4 of the tag, positions dm with five minute decimals.
+
+# GNS: fix data for one or more constellations; field 6 is one mode letter per
+# constellation.
+kind      gns
+when      0:2:3   GNS
+requires  lat lon nmea0183.gns_mode
+field     nmea0183.utc_s         1      hms:2
+field     lat                    2+3    dm:2:5:NS
+field     lon                    4+5    dm:3:5:EW
+field     nmea0183.gns_mode      6      string
+field     nmea0183.sats_used     7      int:2
+field     nmea0183.hdop          8      dec:2
+field     nmea0183.alt_msl_m     9      dec:1
+field     nmea0183.geoid_sep_m   10     dec:1
+field     nmea0183.dgps_age_s    11     dec:1
+field     nmea0183.dgps_station  12     int:4
+
+# HDM: magnetic heading. Field 2 is the letter M.
+kind      hdm
+when      0:2:3   HDM
+requires  nmea0183.heading_mag_deg
+field     nmea0183.heading_mag_deg   1  dec:2
+const     2       M
+
+# HDG: magnetic sensor heading, deviation and variation.
+kind      hdg
+when      0:2:3   HDG
+requires  nmea0183.heading_sensor_deg
+field     nmea0183.heading_sensor_deg  1  dec:2
+field     nmea0183.deviation_deg       2  dec:2
+field     nmea0183.deviation_dir       3  string
+field     nmea0183.magvar_deg          4  dec:1
+field     nmea0183.magvar_dir          5  string
+
+# THS: true heading and its mode letter.
+kind      ths
+when      0:2:3   THS
+requires  nmea0183.heading_true_deg nmea0183.ths_mode
+field     nmea0183.heading_true_deg  1  dec:2
+field     nmea0183.ths_mode          2  string
+
+# ROT: rate of turn, negative to port, and a status letter.
+kind      rot
+when      0:2:3   ROT
+requires  nmea0183.rot_deg_min
+field     nmea0183.rot_deg_min   1      dec:2
+field     nmea0183.status        2      string
+
+# VHW: heading and speed through the water. Fields 2, 4, 6, 8 are unit letters.
+kind      vhw
+when      0:2:3   VHW
+requires  nmea0183.stw_kn
+field     nmea0183.heading_true_deg  1  dec:2
+const     2       T
+field     nmea0183.heading_mag_deg   3  dec:2
+const     4       M
+field     nmea0183.stw_kn            5  dec:2
+const     6       N
+field     nmea0183.stw_kmh           7  dec:2
+const     8       K
+
+# MWV: wind angle and speed, relative or true, in the unit of field 4.
+kind      mwv
+when      0:2:3   MWV
+requires  nmea0183.wind_angle_deg
+field     nmea0183.wind_angle_deg    1  dec:1
+field     nmea0183.wind_reference    2  string
+field     nmea0183.wind_speed        3  dec:1
+field     nmea0183.wind_speed_unit   4  string
+field     nmea0183.status            5  string
+
+# MWD: wind direction from true and magnetic north, speed in knots and m/s.
+kind      mwd
+when      0:2:3   MWD
+requires  nmea0183.wind_dir_true_deg
+field     nmea0183.wind_dir_true_deg  1  dec:1
+const     2       T
+field     nmea0183.wind_dir_mag_deg   3  dec:1
+const     4       M
+field     nmea0183.wind_speed_kn      5  dec:1
+const     6       N
+field     nmea0183.wind_speed_ms      7  dec:1
+const     8       M
+
+# DBT: depth below the transducer in feet, metres and fathoms.
+kind      dbt
+when      0:2:3   DBT
+requires  nmea0183.dbt_depth_m
+field     nmea0183.dbt_depth_ft      1  dec:1
+const     2       f
+field     nmea0183.dbt_depth_m       3  dec:1
+const     4       M
+field     nmea0183.dbt_depth_fathom  5  dec:1
+const     6       F
+
+# DPT: depth relative to the transducer, the transducer offset, and the range
+# scale (a later addition, left off when empty).
+kind      dpt
+when      0:2:3   DPT
+requires  nmea0183.dpt_depth_m
+field     nmea0183.dpt_depth_m       1  dec:1
+field     nmea0183.dpt_offset_m      2  dec:1
+field     nmea0183.dpt_range_m       3  dec:1  optional
+
+# MTW: water temperature and its unit letter.
+kind      mtw
+when      0:2:3   MTW
+requires  nmea0183.water_temp
+field     nmea0183.water_temp        1  dec:1
+field     nmea0183.water_temp_unit   2  string
+
+# TTM: a target tracked by a radar or plotter, by range and bearing from own ship.
+kind      ttm
+when      0:2:3   TTM
+requires  nmea0183.target_number nmea0183.target_bearing_deg
+field     nmea0183.target_number       1   int:2
+field     nmea0183.target_distance     2   dec:2
+field     nmea0183.target_bearing_deg  3   dec:1
+field     nmea0183.target_bearing_ref  4   string
+field     nmea0183.target_speed        5   dec:1
+field     nmea0183.target_course_deg   6   dec:1
+field     nmea0183.target_course_ref   7   string
+field     nmea0183.target_cpa_dist     8   dec:2
+field     nmea0183.target_tcpa_min     9   dec:1
+field     nmea0183.target_dist_unit    10  string
+field     callsign                     11  string
+field     nmea0183.target_status       12  string
+field     nmea0183.target_reference    13  string
+field     nmea0183.utc_s               14  hms:2
+field     nmea0183.target_acquisition  15  string
+
+# TLL: a target's position.
+kind      tll
+when      0:2:3   TLL
+requires  lat lon nmea0183.target_number
+field     nmea0183.target_number       1   int:2
+field     lat                          2+3 dm:2:5:NS
+field     lon                          4+5 dm:3:5:EW
+field     callsign                     6   string
+field     nmea0183.utc_s               7   hms:2
+field     nmea0183.target_status       8   string
+field     nmea0183.target_reference    9   string
+
+# OSD: own ship data: heading, course, speed, set and drift, each with its
+# reference or unit in another field.
+kind      osd
+when      0:2:3   OSD
+requires  nmea0183.osd_course_deg
+field     nmea0183.heading_true_deg    1   dec:2
+field     nmea0183.status              2   string
+field     nmea0183.osd_course_deg      3   dec:1
+field     nmea0183.osd_course_ref      4   string
+field     nmea0183.osd_speed           5   dec:1
+field     nmea0183.osd_speed_ref       6   string
+field     nmea0183.osd_set_deg         7   dec:1
+field     nmea0183.osd_drift           8   dec:1
+field     nmea0183.osd_speed_unit      9   string
+
+# DTM: the datum of the positions that follow. Fields 3 and 5 are offsets in
+# minutes (not degrees and minutes), kept as written.
+kind      dtm
+when      0:2:3   DTM
+requires  nmea0183.datum_local
+field     nmea0183.datum_local         1   string
+field     nmea0183.datum_subdivision   2   string
+field     nmea0183.datum_lat_offset    3   string
+field     nmea0183.datum_lat_dir       4   string
+field     nmea0183.datum_lon_offset    5   string
+field     nmea0183.datum_lon_dir       6   string
+field     nmea0183.datum_alt_offset_m  7   dec:1
+field     nmea0183.datum_reference     8   string

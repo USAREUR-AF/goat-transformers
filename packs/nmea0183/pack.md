@@ -10,8 +10,10 @@ standard itself (and IEC 61162-1) is a priced document and was not read.
 Needs engine version 0.10 (the `text` wire). Uses the modules `core` and
 `nmea0183` (`model/nmea0183.def`).
 
-Status: Built. 53 vectors (43 here, 10 from `geojson`), derived without an
-engine.
+Status: Built. 74 vectors (64 here, 10 from `geojson`), derived without an
+engine. The sentences GNS, HDM, HDG, THS, ROT, VHW, MWV, MWD, DBT, DPT, MTW,
+TTM, TLL, OSD and DTM were added later from two other sources (pynmea2 and the
+gpsd driver); section "Added sentences".
 
 ## Message convention
 
@@ -47,6 +49,7 @@ field `nmea0183.talker`.
 | `gsv` | `0:2:3 GSV` | `nmea0183.sats_in_view` | 3, then a group of 4 per satellite |
 | `hdt` | `0:2:3 HDT` | `nmea0183.heading_true_deg` | 2 (one `const`) |
 | `zda` | `0:2:3 ZDA` | `nmea0183.year` | 6 |
+| `gns` … `dtm` | `0:2:3 <id>` | a key of their own (section "Added sentences") | see there |
 
 An entity from another format becomes RMC when it has a position and a time, GGA
 when it has a position only, VTG when it has a course only. GLL, and every kind
@@ -147,12 +150,12 @@ re-encodes the same.
 | VTG, older form | Four values with no unit letters. Field 2 is not `T`, so it selects no kind (`no-kind`) rather than being misread |
 | Sentences without a checksum | The source states the checksum is mandatory; `checksum nmea` makes such a sentence `malformed-wire` |
 | Proprietary sentences (`$P...`) | Their tags are not `<talker><id>` with one of the eight ids, so they select no kind (`no-kind`). Their layouts are each vendor's |
-| Other sentence ids | Not in scope of this pack: `no-kind` |
+| Other sentence ids | Not in scope of this pack: `no-kind`. RSD (radar system data) is not added: neither added source lays it out |
 | `!` start (AIVDM, AIVDO) | A different payload (AIS); `start "$"` refuses it as `malformed-wire` |
 | Tag blocks (`\...\` before `$`) | The source does not describe them. A sentence that begins with one does not begin with `$` and is `malformed-wire`; the caller strips the tag block first |
 | Maximum length of 82 characters | Not checked on decode or encode |
 | `^` hexadecimal escapes (NMEA 3.01) | Not decoded; text fields hold them as sent |
-| Datum | Latitude and longitude are bound to WGS 84 keys. A receiver set to another datum announces it in a DTM sentence, which this pack does not read; such positions are then not WGS 84. The caller checks DTM where it matters |
+| Datum | Latitude and longitude are bound to WGS 84 keys. A receiver set to another datum announces it in a DTM sentence. The pack decodes DTM (kind `dtm`, raw keys) but does not apply it to other sentences' positions; such positions are then not WGS 84. The caller checks DTM where it matters |
 | Signed magnetic variation | RMC 10 is unsigned degrees with an E or W letter in field 11; the `dm` pair transform takes degrees and minutes, not decimal degrees, so the two stay as `magvar_deg` and `magvar_dir` |
 | GPS week rollover | A receiver may report a date one rollover period off (source, "Dates and times"). The pack decodes the date as sent |
 | GGA quality from GPSDO devices | The source notes one vendor puts a GPSDO status in GGA 6; a non-integer there is `transform-decode` |
@@ -169,3 +172,54 @@ re-encodes the same.
 
 RMC with a time and no date decodes: the pair `1+9` is absent, and the second
 line on field 1 carries the time of day in `nmea0183.utc_s`.
+
+## Added sentences
+
+Fifteen kinds, added after the first edition, laid out from two sources that
+are not the one above (`PROVENANCE.md`, "Added sentences"): the field order
+from pynmea2 (`pynmea2/types/talker.py`, MIT) and the units and meanings from
+gpsd's NMEA driver (`drivers/driver_nmea0183.c`, BSD-2-Clause) where it handles
+the sentence (GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW, DTM). For VHW,
+TTM, TLL and OSD, which the driver does not handle, the meaning rests on
+pynmea2's field names. They follow the conventions above: any talker, the
+sentence id in columns 2-4, positions with five minute decimals, unit letters as
+`const`, and the keys of the first edition where the meaning is the same
+(`utc_s`, `status`, `sats_used`, `hdop`, `alt_msl_m`, `geoid_sep_m`,
+`dgps_age_s`, `dgps_station`, `heading_true_deg`, `magvar_deg`, `magvar_dir`).
+
+| Kind | Fields | Shared keys |
+|---|---|---|
+| `gns` | time, latitude, longitude, mode letters (one per constellation), satellites used, HDOP, MSL altitude, geoid separation, DGPS age, DGPS station | `lat`, `lon` |
+| `hdm` | magnetic heading, `M` | none |
+| `hdg` | sensor heading, deviation and its side, variation and its side | none |
+| `ths` | true heading, mode letter | none |
+| `rot` | rate of turn (degrees per minute, negative to port), status | none |
+| `vhw` | true heading, `T`, magnetic heading, `M`, speed through water in knots, `N`, and in km/h, `K` | none |
+| `mwv` | wind angle, reference (relative or true), speed, unit letter, status | none |
+| `mwd` | wind direction true, `T`, magnetic, `M`, speed in knots, `N`, and in m/s, `M` | none |
+| `dbt` | depth below the transducer in feet, `f`, metres, `M`, fathoms, `F` | none |
+| `dpt` | depth relative to the transducer, transducer offset, range scale (optional) | none |
+| `mtw` | water temperature, unit letter | none |
+| `ttm` | target number, distance, bearing and its reference, speed, course and its reference, CPA distance and time, distance unit, name, status, reference flag, time, acquisition type | `callsign` (target name) |
+| `tll` | target number, latitude, longitude, name, time, status, reference flag | `lat`, `lon`, `callsign` |
+| `osd` | heading, status, course and reference, speed and reference, set, drift, speed unit | none |
+| `dtm` | local datum, subdivision, latitude and longitude offsets in minutes, altitude offset, reference datum | none |
+
+Evidence for the shared keys of these kinds: GNS and TLL positions are degrees
+and minutes with a hemisphere letter, as in GGA (gpsd driver; pynmea2 names TLL
+fields 2-5 "Target Latitude", "Target Longitude" and their directions), with the
+datum as for the first edition. TTM 11 and TLL 6 are "Target Name" in pynmea2:
+a human-readable name, `callsign`.
+
+Not bound: headings (a heading is not the course over ground); speed through
+the water (not over ground); TTM and OSD speed and course, whose unit and
+true-or-relative reference are other fields of the sentence; the target number
+(an integer, `uid` is a string). The `requires` of each added kind names one of
+its own keys, so an entity from another format still becomes RMC or GGA.
+
+Vectors 44-64 are written by `tools/gen/nmea0183-more-vectors.py` (standard
+library only, no pack read, no engine run; `--check` compares them with the
+tree): a round trip of every added kind, DPT without its optional field, GNS and
+TLL to GeoJSON, TLL to CoT, TTM to GeoJSON (no position, name as callsign), and
+60 minutes in a TLL position (`transform-decode`). Vectors 01-43 are not
+written by it.

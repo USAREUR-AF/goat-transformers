@@ -1,0 +1,9 @@
+{
+  "name": "gns-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$GNGNS,101112.00,4012.50000,N,07401.25000,W,AN,10,1.10,12.0,-33.5,,*6A",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-74.02083333333333,40.208333333333336]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): position only; the MSL altitude is not hae; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

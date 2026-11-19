@@ -1,0 +1,9 @@
+{
+  "name": "tll-to-cot-xml",
+  "from": "nmea0183",
+  "to": "cot-xml",
+  "input": "$RATLL,07,4807.50000,N,01131.00000,E,TGT07,081530.00,T,*6E",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\"><point lat=\"48.125\" lon=\"11.516666666666667\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"TGT07\"/></detail></event>",
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): the target's position and name; TLL has a time and no date, so no time_ms; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

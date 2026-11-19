@@ -55,3 +55,33 @@ Sections read: "NMEA version timeline", "Sentence Mixes and NMEA Variations",
 "NMEA Encoding Conventions", "Dates and times", "Error status indications",
 "Talker IDs", "Satellite IDs", "DTM", "GGA", "GLL", "GSA", "GSV", "HDT",
 "RMC", "VTG", "ZDA".
+
+## Added sentences
+
+The kinds GNS, HDM, HDG, THS, ROT, VHW, MWV, MWD, DBT, DPT, MTW, TTM, TLL,
+OSD and DTM were written from the two sources below, read on 2026-11-19, not
+from "NMEA Revealed".
+
+| | pynmea2 (field order and names) | gpsd NMEA driver (units and meanings) |
+|---|---|---|
+| Upstream | https://github.com/Knio/pynmea2 | https://gitlab.com/gpsd/gpsd |
+| Version | commit `d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a` | commit `c59fc6de479d06620c8b2ba395b728e10a71527b` |
+| Download | `https://codeload.github.com/Knio/pynmea2/tar.gz/d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a`, sha256 `fbd85b707a17bd9978a602fdd4340d8eee318b6075e51e9972992b14760e4c52` | `https://gitlab.com/gpsd/gpsd/-/raw/c59fc6de479d06620c8b2ba395b728e10a71527b/drivers/driver_nmea0183.c` |
+| File | `pynmea2/types/talker.py`, sha256 `dacfe523dd1ed177925066db3426f0465fe396d1431697508b3b2aec365bf668`: the `fields` tables of the fifteen classes | `drivers/driver_nmea0183.c`, sha256 `63abff66fb824f350d365b3a4c6b66effd2f7cd0c697b3e236e97a4f59a580b8`: the comments and handling of GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW, DTM |
+| License | `LICENSE`, sha256 `4736b5d379253afa45744afc79ddb475912b213e939bdf7cb97d9a8b6f700e5f`: the MIT License | the file's header: "This file is Copyright by the GPSD project", "SPDX-License-Identifier: BSD-2-clause"; `COPYING` as above |
+
+The MIT grant, quoted from pynmea2's `LICENSE`:
+
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, [...] subject to the following conditions: The above
+> copyright notice and this permission notice shall be included in all copies
+> or substantial portions of the Software.
+
+No code of either is copied. The example sentences in the gpsd driver's
+comments are not used, and pynmea2's tests, examples and its file
+`NMEA0183.pdf` (whose terms are not stated) were not read; every sentence in
+vectors 44-64 is written for this pack by `tools/gen/nmea0183-more-vectors.py`.
+

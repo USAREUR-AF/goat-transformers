@@ -1,0 +1,20 @@
+{
+  "name": "ttm-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$RATTM,07,2.35,112.4,T,8.5,245.0,T,0.40,12.5,N,TGT07,T,,081530.00,A*71",
+  "expect": "$RATTM,07,2.35,112.4,T,8.5,245.0,T,0.40,12.5,N,TGT07,T,,081530.00,A*71",
+  "model": {
+    "@kind": "ttm",
+    "nmea0183.talker": "RA",
+    "nmea0183.target_number": "7",
+    "nmea0183.target_distance": "2.35",
+    "nmea0183.target_bearing_deg": "112.4",
+    "callsign": "TGT07",
+    "nmea0183.target_status": "T",
+    "nmea0183.target_course_deg": "245",
+    "nmea0183.utc_s": "29730"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): TTM fields 1-15; the target speed and course are raw (their unit and reference are other fields); sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

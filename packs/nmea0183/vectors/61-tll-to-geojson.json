@@ -1,0 +1,9 @@
+{
+  "name": "tll-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$RATLL,07,4807.50000,N,01131.00000,E,TGT07,081530.00,T,*6E",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.516666666666667,48.125]},\"properties\":{\"callsign\":\"TGT07\"}}",
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): the target's position and name; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

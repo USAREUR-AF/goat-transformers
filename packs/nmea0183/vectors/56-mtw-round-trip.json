@@ -1,0 +1,15 @@
+{
+  "name": "mtw-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$YXMTW,14.5,C*12",
+  "expect": "$YXMTW,14.5,C*12",
+  "model": {
+    "@kind": "mtw",
+    "nmea0183.talker": "YX",
+    "nmea0183.water_temp": "14.5",
+    "nmea0183.water_temp_unit": "C"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): MTW fields 1-2; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "hdg-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$HCHDG,271.00,1.50,E,3.1,W*52",
+  "expect": "$HCHDG,271.00,1.50,E,3.1,W*52",
+  "model": {
+    "@kind": "hdg",
+    "nmea0183.talker": "HC",
+    "nmea0183.heading_sensor_deg": "271",
+    "nmea0183.deviation_deg": "1.5",
+    "nmea0183.deviation_dir": "E",
+    "nmea0183.magvar_deg": "3.1",
+    "nmea0183.magvar_dir": "W"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): HDG fields 1-5; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}

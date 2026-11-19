@@ -1,0 +1,17 @@
+{
+  "name": "tll-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$RATLL,07,4807.50000,N,01131.00000,E,TGT07,081530.00,T,*6E",
+  "expect": "$RATLL,07,4807.50000,N,01131.00000,E,TGT07,081530.00,T,*6E",
+  "model": {
+    "@kind": "tll",
+    "nmea0183.talker": "RA",
+    "lat": "48.125",
+    "lon": "11.516666666666667",
+    "callsign": "TGT07",
+    "nmea0183.target_number": "7"
+  },
+  "source": "constructed",
+  "reference": "pynmea2 talker.py (field order) and gpsd driver_nmea0183.c (meaning and units): TLL fields 1-9; sentence and checksum computed by tools/gen/nmea0183-more-vectors.py"
+}
