@@ -1,0 +1,12 @@
+{
+ "name": "gen-gbfs-roundtrip",
+ "from": "gbfs-2.2-gbfs",
+ "to": "gbfs-2.2-gbfs",
+ "input": "{\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"2.2\"}",
+ "expect": "{\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"2.2\"}",
+ "model": {
+  "gbfs22gbfs.last_updated": "1450163795",
+  "gbfs22gbfs.ttl": "18505",
+  "gbfs22gbfs.version": "2.2"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_regions-residue",
+ "from": "gbfs-2.3-system-regions",
+ "to": "gbfs-2.3-system-regions",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"2.3\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "expect": "{\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"2.3\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

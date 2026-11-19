@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "data_calendars|end_day|int": "data_calendars_end_day",
+  "data_calendars|end_month|int": "data_calendars_end_month",
+  "data_calendars|end_year|int": "data_calendars_end_year",
+  "data_calendars|start_day|int": "data_calendars_start_day",
+  "data_calendars|start_month|int": "data_calendars_start_month",
+  "data_calendars|start_year|int": "data_calendars_start_year",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.calendars": "data_calendars"
+ }
+}

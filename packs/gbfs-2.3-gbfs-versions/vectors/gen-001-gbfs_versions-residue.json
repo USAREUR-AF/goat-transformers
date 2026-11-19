@@ -1,0 +1,7 @@
+{
+ "name": "gen-gbfs_versions-residue",
+ "from": "gbfs-2.3-gbfs-versions",
+ "to": "gbfs-2.3-gbfs-versions",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1450236520,\"ttl\":44975,\"version\":\"2.3\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
+ "expect": "{\"last_updated\":1450236520,\"ttl\":44975,\"version\":\"2.3\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

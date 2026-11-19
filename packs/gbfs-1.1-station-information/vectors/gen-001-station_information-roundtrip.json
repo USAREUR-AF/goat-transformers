@@ -1,0 +1,13 @@
+{
+ "name": "gen-station_information-roundtrip",
+ "from": "gbfs-1.1-station-information",
+ "to": "gbfs-1.1-station-information",
+ "input": "{\"last_updated\":1450221863,\"ttl\":40974,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s70371\",\"name\":\"s82553\",\"short_name\":\"s87716\",\"lat\":0.75,\"lon\":7.0625,\"address\":\"s4005\",\"cross_street\":\"s84693\",\"region_id\":\"s28188\",\"post_code\":\"s3507\",\"rental_methods\":[\"APPLEPAY\"],\"capacity\":80784,\"rental_uris\":{\"android\":\"https://example.org/766\",\"ios\":\"https://example.org/50\",\"web\":\"https://example.org/105\"}},{\"station_id\":\"s11353\",\"name\":\"s41872\",\"short_name\":\"s2841\",\"lat\":1.5,\"lon\":-0.5,\"address\":\"s61668\",\"cross_street\":\"s12600\",\"region_id\":\"s6416\",\"post_code\":\"s52238\",\"rental_methods\":[\"PHONE\"],\"capacity\":9928,\"rental_uris\":{\"android\":\"https://example.org/141\",\"ios\":\"https://example.org/845\",\"web\":\"https://example.org/612\"}}]}}",
+ "expect": "{\"last_updated\":1450221863,\"ttl\":40974,\"version\":\"1.1\",\"data\":{\"stations\":[{\"station_id\":\"s70371\",\"name\":\"s82553\",\"short_name\":\"s87716\",\"lat\":0.75,\"lon\":7.0625,\"address\":\"s4005\",\"cross_street\":\"s84693\",\"region_id\":\"s28188\",\"post_code\":\"s3507\",\"rental_methods\":[\"APPLEPAY\"],\"capacity\":80784,\"rental_uris\":{\"android\":\"https://example.org/766\",\"ios\":\"https://example.org/50\",\"web\":\"https://example.org/105\"}},{\"station_id\":\"s11353\",\"name\":\"s41872\",\"short_name\":\"s2841\",\"lat\":1.5,\"lon\":-0.5,\"address\":\"s61668\",\"cross_street\":\"s12600\",\"region_id\":\"s6416\",\"post_code\":\"s52238\",\"rental_methods\":[\"PHONE\"],\"capacity\":9928,\"rental_uris\":{\"android\":\"https://example.org/141\",\"ios\":\"https://example.org/845\",\"web\":\"https://example.org/612\"}}]}}",
+ "model": {
+  "gbfs11stationinformation.last_updated": "1450221863",
+  "gbfs11stationinformation.ttl": "40974",
+  "gbfs11stationinformation.version": "1.1",
+  "gbfs11stationinformation.data_stations.#": "2"
+ }
+}

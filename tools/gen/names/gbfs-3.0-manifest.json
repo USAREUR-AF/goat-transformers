@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "data_datasets_versions|url|string": "data_datasets_versions_url",
+  "data_datasets_versions|version|string": "data_datasets_versions_version",
+  "data_datasets|system_id|string": "data_datasets_system_id",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_datasets|versions": "data_datasets_versions",
+  "|data.datasets": "data_datasets"
+ }
+}

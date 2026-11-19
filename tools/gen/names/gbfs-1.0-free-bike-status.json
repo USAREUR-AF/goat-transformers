@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "data_bikes|bike_id|string": "data_bikes_bike_id",
+  "data_bikes|lat|float": "data_bikes_lat",
+  "data_bikes|lon|float": "data_bikes_lon",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl"
+ },
+ "lists": {
+  "|data.bikes": "data_bikes"
+ }
+}

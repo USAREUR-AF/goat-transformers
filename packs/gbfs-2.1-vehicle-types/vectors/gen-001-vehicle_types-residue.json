@@ -1,0 +1,7 @@
+{
+ "name": "gen-vehicle_types-residue",
+ "from": "gbfs-2.1-vehicle-types",
+ "to": "gbfs-2.1-vehicle-types",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1450158073,\"ttl\":38650,\"version\":\"2.1\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"form_factor\":\"scooter\",\"propulsion_type\":\"electric\",\"max_range_meters\":42.375,\"name\":\"s68088\"},{\"vehicle_type_id\":\"s84173\",\"form_factor\":\"bicycle\",\"propulsion_type\":\"electric_assist\",\"max_range_meters\":42.375,\"name\":\"s16995\"}]}}",
+ "expect": "{\"last_updated\":1450158073,\"ttl\":38650,\"version\":\"2.1\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"form_factor\":\"scooter\",\"propulsion_type\":\"electric\",\"max_range_meters\":42.375,\"name\":\"s68088\"},{\"vehicle_type_id\":\"s84173\",\"form_factor\":\"bicycle\",\"propulsion_type\":\"electric_assist\",\"max_range_meters\":42.375,\"name\":\"s16995\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

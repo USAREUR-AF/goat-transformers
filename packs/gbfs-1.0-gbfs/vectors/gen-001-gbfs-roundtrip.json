@@ -1,0 +1,11 @@
+{
+ "name": "gen-gbfs-roundtrip",
+ "from": "gbfs-1.0-gbfs",
+ "to": "gbfs-1.0-gbfs",
+ "input": "{\"last_updated\":179166005,\"ttl\":18505}",
+ "expect": "{\"last_updated\":179166005,\"ttl\":18505}",
+ "model": {
+  "gbfs10gbfs.last_updated": "179166005",
+  "gbfs10gbfs.ttl": "18505"
+ }
+}

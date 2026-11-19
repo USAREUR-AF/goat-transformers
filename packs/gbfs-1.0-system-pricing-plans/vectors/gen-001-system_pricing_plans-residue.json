@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_pricing_plans-residue",
+ "from": "gbfs-1.0-system-pricing-plans",
+ "to": "gbfs-1.0-system-pricing-plans",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":455554708,\"ttl\":30483,\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"s10729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":-0.5,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"s95541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":101.125,\"description\":\"s88385\"}]}}",
+ "expect": "{\"last_updated\":455554708,\"ttl\":30483,\"data\":{\"plans\":[{\"plan_id\":\"s88578\",\"url\":\"s10729\",\"name\":\"s63024\",\"currency\":\"s69943\",\"price\":7.0625,\"is_taxable\":-0.5,\"description\":\"s26217\"},{\"plan_id\":\"s49553\",\"url\":\"s95541\",\"name\":\"s64360\",\"currency\":\"s8098\",\"price\":42.375,\"is_taxable\":101.125,\"description\":\"s88385\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

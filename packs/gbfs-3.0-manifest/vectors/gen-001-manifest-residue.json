@@ -1,0 +1,7 @@
+{
+ "name": "gen-manifest-residue",
+ "from": "gbfs-3.0-manifest",
+ "to": "gbfs-3.0-manifest",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":\"2025-09-01T21:19:16.081Z\",\"ttl\":30628,\"version\":\"3.0\",\"data\":{\"datasets\":[{\"system_id\":\"s43019\",\"versions\":[{\"version\":\"2.3\",\"url\":\"https://example.org/562\"}]},{\"system_id\":\"s44077\",\"versions\":[{\"version\":\"1.0\",\"url\":\"https://example.org/386\"}]}]}}",
+ "expect": "{\"last_updated\":\"2025-09-01T21:19:16.081Z\",\"ttl\":30628,\"version\":\"3.0\",\"data\":{\"datasets\":[{\"system_id\":\"s43019\",\"versions\":[{\"version\":\"2.3\",\"url\":\"https://example.org/562\"}]},{\"system_id\":\"s44077\",\"versions\":[{\"version\":\"1.0\",\"url\":\"https://example.org/386\"}]}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

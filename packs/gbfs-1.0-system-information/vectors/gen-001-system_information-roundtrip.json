@@ -1,0 +1,17 @@
+{
+ "name": "gen-system_information-roundtrip",
+ "from": "gbfs-1.0-system-information",
+ "to": "gbfs-1.0-system-information",
+ "input": "{\"last_updated\":1405296624,\"ttl\":30673,\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"purchase_url\":\"s13534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"timezone\":\"s98341\",\"license_url\":\"s21515\"}}",
+ "expect": "{\"last_updated\":1405296624,\"ttl\":30673,\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"s29920\",\"purchase_url\":\"s13534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"timezone\":\"s98341\",\"license_url\":\"s21515\"}}",
+ "model": {
+  "gbfs10systeminformation.last_updated": "1405296624",
+  "gbfs10systeminformation.ttl": "30673",
+  "gbfs10systeminformation.data_system_id": "s95491",
+  "gbfs10systeminformation.data_language": "s23196",
+  "gbfs10systeminformation.data_name": "s40667",
+  "gbfs10systeminformation.data_short_name": "s62031",
+  "gbfs10systeminformation.data_operator": "s8079",
+  "gbfs10systeminformation.data_url": "s29920"
+ }
+}

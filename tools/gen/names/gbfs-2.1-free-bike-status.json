@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "data_bikes|bike_id|string": "data_bikes_bike_id",
+  "data_bikes|current_range_meters|float": "data_bikes_current_range_meters",
+  "data_bikes|is_disabled|int": "data_bikes_is_disabled",
+  "data_bikes|is_reserved|int": "data_bikes_is_reserved",
+  "data_bikes|last_reported|int": "data_bikes_last_reported",
+  "data_bikes|lat|float": "data_bikes_lat",
+  "data_bikes|lon|float": "data_bikes_lon",
+  "data_bikes|rental_uris.android|string": "data_bikes_rental_uris_android",
+  "data_bikes|rental_uris.ios|string": "data_bikes_rental_uris_ios",
+  "data_bikes|rental_uris.web|string": "data_bikes_rental_uris_web",
+  "data_bikes|station_id|string": "data_bikes_station_id",
+  "data_bikes|vehicle_type_id|string": "data_bikes_vehicle_type_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.bikes": "data_bikes"
+ }
+}

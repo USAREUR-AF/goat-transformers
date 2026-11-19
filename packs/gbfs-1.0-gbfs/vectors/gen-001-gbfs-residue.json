@@ -1,0 +1,7 @@
+{
+ "name": "gen-gbfs-residue",
+ "from": "gbfs-1.0-gbfs",
+ "to": "gbfs-1.0-gbfs",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":179166005,\"ttl\":18505}",
+ "expect": "{\"last_updated\":179166005,\"ttl\":18505,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

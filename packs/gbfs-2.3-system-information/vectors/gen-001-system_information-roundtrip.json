@@ -1,0 +1,17 @@
+{
+ "name": "gen-system_information-roundtrip",
+ "from": "gbfs-2.3-system-information",
+ "to": "gbfs-2.3-system-information",
+ "input": "{\"last_updated\":1450159630,\"ttl\":30673,\"version\":\"2.3\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"Asia/Srednekolymsk\",\"license_url\":\"https://example.org/515\",\"brand_assets\":{\"brand_last_modified\":\"2024-06-22\",\"brand_terms_url\":\"https://example.org/730\",\"brand_image_url\":\"https://example.org/522\",\"brand_image_url_dark\":\"https://example.org/226\",\"color\":\"s92289\"},\"terms_url\":\"https://example.org/345\",\"terms_last_updated\":\"2024-12-08\",\"privacy_url\":\"https://example.org/691\",\"privacy_last_updated\":\"2024-09-13\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
+ "expect": "{\"last_updated\":1450159630,\"ttl\":30673,\"version\":\"2.3\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"Asia/Srednekolymsk\",\"license_url\":\"https://example.org/515\",\"brand_assets\":{\"brand_last_modified\":\"2024-06-22\",\"brand_terms_url\":\"https://example.org/730\",\"brand_image_url\":\"https://example.org/522\",\"brand_image_url_dark\":\"https://example.org/226\",\"color\":\"s92289\"},\"terms_url\":\"https://example.org/345\",\"terms_last_updated\":\"2024-12-08\",\"privacy_url\":\"https://example.org/691\",\"privacy_last_updated\":\"2024-09-13\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
+ "model": {
+  "gbfs23systeminformation.last_updated": "1450159630",
+  "gbfs23systeminformation.ttl": "30673",
+  "gbfs23systeminformation.version": "2.3",
+  "gbfs23systeminformation.data_system_id": "s95491",
+  "gbfs23systeminformation.data_language": "s23196",
+  "gbfs23systeminformation.data_name": "s40667",
+  "gbfs23systeminformation.data_short_name": "s62031",
+  "gbfs23systeminformation.data_operator": "s8079"
+ }
+}

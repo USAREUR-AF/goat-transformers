@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_regions-residue",
+ "from": "gbfs-3.0-system-regions",
+ "to": "gbfs-3.0-system-regions",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":\"2024-04-10T07:28:18.372Z\",\"ttl\":22733,\"version\":\"3.0\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":[{\"text\":\"s60542\",\"language\":\"s58846\"}]},{\"region_id\":\"s39353\",\"name\":[{\"text\":\"s98183\",\"language\":\"s59481\"}]}]}}",
+ "expect": "{\"last_updated\":\"2024-04-10T07:28:18.372Z\",\"ttl\":22733,\"version\":\"3.0\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":[{\"text\":\"s60542\",\"language\":\"s58846\"}]},{\"region_id\":\"s39353\",\"name\":[{\"text\":\"s98183\",\"language\":\"s59481\"}]}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "data_feeds|name|string": "data_feeds_name",
+  "data_feeds|url|string": "data_feeds_url",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.feeds": "data_feeds"
+ }
+}

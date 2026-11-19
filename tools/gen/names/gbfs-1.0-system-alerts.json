@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "data_alerts_region_ids|.|string": "data_alerts_region_ids_value",
+  "data_alerts_station_ids|.|string": "data_alerts_station_ids_value",
+  "data_alerts_times|end|float": "data_alerts_times_end",
+  "data_alerts_times|start|float": "data_alerts_times_start",
+  "data_alerts|alert_id|string": "data_alerts_alert_id",
+  "data_alerts|description|string": "data_alerts_description",
+  "data_alerts|last_updated|int": "data_alerts_last_updated",
+  "data_alerts|summary|string": "data_alerts_summary",
+  "data_alerts|type|string": "data_alerts_type",
+  "data_alerts|url|string": "data_alerts_url",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl"
+ },
+ "lists": {
+  "data_alerts|region_ids": "data_alerts_region_ids",
+  "data_alerts|station_ids": "data_alerts_station_ids",
+  "data_alerts|times": "data_alerts_times",
+  "|data.alerts": "data_alerts"
+ }
+}

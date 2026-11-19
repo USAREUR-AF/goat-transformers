@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "data_rental_hours_days|.|string": "data_rental_hours_days_value",
+  "data_rental_hours_user_type|.|string": "data_rental_hours_user_type_value",
+  "data_rental_hours|end_time|string": "data_rental_hours_end_time",
+  "data_rental_hours|start_time|string": "data_rental_hours_start_time",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl"
+ },
+ "lists": {
+  "data_rental_hours|days": "data_rental_hours_days",
+  "data_rental_hours|user_type": "data_rental_hours_user_type",
+  "|data.rental_hours": "data_rental_hours"
+ }
+}

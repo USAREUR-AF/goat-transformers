@@ -1,0 +1,12 @@
+{
+ "name": "gen-station_information-roundtrip",
+ "from": "gbfs-1.0-station-information",
+ "to": "gbfs-1.0-station-information",
+ "input": "{\"last_updated\":773589676,\"ttl\":40974,\"data\":{\"stations\":[{\"station_id\":\"s70371\",\"name\":\"s82553\",\"short_name\":\"s87716\",\"lat\":0.75,\"lon\":7.0625,\"address\":\"s4005\",\"cross_street\":\"s84693\",\"region_id\":\"s28188\",\"post_code\":\"s3507\",\"rental_methods\":[\"APPLEPAY\"],\"capacity\":80784},{\"station_id\":\"s11353\",\"name\":\"s41872\",\"short_name\":\"s2841\",\"lat\":1.5,\"lon\":-0.5,\"address\":\"s61668\",\"cross_street\":\"s12600\",\"region_id\":\"s6416\",\"post_code\":\"s52238\",\"rental_methods\":[\"PHONE\"],\"capacity\":9928}]}}",
+ "expect": "{\"last_updated\":773589676,\"ttl\":40974,\"data\":{\"stations\":[{\"station_id\":\"s70371\",\"name\":\"s82553\",\"short_name\":\"s87716\",\"lat\":0.75,\"lon\":7.0625,\"address\":\"s4005\",\"cross_street\":\"s84693\",\"region_id\":\"s28188\",\"post_code\":\"s3507\",\"rental_methods\":[\"APPLEPAY\"],\"capacity\":80784},{\"station_id\":\"s11353\",\"name\":\"s41872\",\"short_name\":\"s2841\",\"lat\":1.5,\"lon\":-0.5,\"address\":\"s61668\",\"cross_street\":\"s12600\",\"region_id\":\"s6416\",\"post_code\":\"s52238\",\"rental_methods\":[\"PHONE\"],\"capacity\":9928}]}}",
+ "model": {
+  "gbfs10stationinformation.last_updated": "773589676",
+  "gbfs10stationinformation.ttl": "40974",
+  "gbfs10stationinformation.data_stations.#": "2"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "data_vehicle_types|form_factor|string": "data_vehicle_types_form_factor",
+  "data_vehicle_types|max_range_meters|float": "data_vehicle_types_max_range_meters",
+  "data_vehicle_types|name|string": "data_vehicle_types_name",
+  "data_vehicle_types|propulsion_type|string": "data_vehicle_types_propulsion_type",
+  "data_vehicle_types|vehicle_type_id|string": "data_vehicle_types_vehicle_type_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.vehicle_types": "data_vehicle_types"
+ }
+}
