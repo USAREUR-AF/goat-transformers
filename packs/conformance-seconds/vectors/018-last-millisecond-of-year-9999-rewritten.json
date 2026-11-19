@@ -1,0 +1,7 @@
+{
+  "name": "last-millisecond-of-year-9999-rewritten",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds",
+  "input": "<e t=\"9999-12-31T23:59:59.999Z\"/>",
+  "expect": "<e t=\"9999-12-31T23:59:59Z\"/>"
+}

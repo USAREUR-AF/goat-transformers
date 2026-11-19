@@ -149,6 +149,7 @@ const (
 	ttInt
 	ttFloat
 	ttISO
+	ttISOS
 	ttIntW
 	ttDec
 	ttDM
@@ -206,6 +207,8 @@ func resolveTextTransform(name string) (*textTf, ErrorKind, error) {
 		return &textTf{name: name, kind: ttFloat, numeric: true}, "", nil
 	case "iso8601_ms":
 		return &textTf{name: name, kind: ttISO}, "", nil
+	case "iso8601_s":
+		return &textTf{name: name, kind: ttISOS}, "", nil
 	}
 	if name == "bool" || isBitsTransformName(name) || isPBTransformName(name) {
 		return nil, ErrBadDirective, fmt.Errorf("transform %q is not valid on wire text", name)
@@ -383,7 +386,7 @@ func (t *textTf) decode(a, b string) (Value, error) {
 			return Value{}, err
 		}
 		return Value{Kind: KindFloat, F: f}, nil
-	case ttISO:
+	case ttISO, ttISOS:
 		return decISO(a)
 	case ttDM:
 		d := t.d
@@ -470,6 +473,9 @@ func (t *textTf) encode(v Value) (string, string, error) {
 		return s, "", err
 	case ttISO:
 		s, err := encISO(v)
+		return s, "", err
+	case ttISOS:
+		s, err := encISOSeconds(v)
 		return s, "", err
 	case ttIntW:
 		n, err := valueToInt(v)

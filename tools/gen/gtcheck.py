@@ -41,7 +41,7 @@ DISTRIBUTIONS = ("public", "controlled")
 
 # The type a transform yields (engine-spec 0.4 "The type a transform yields",
 # with the additions of 0.5), by the wires it is valid on.
-TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int"}
+TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int", "iso8601_s": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string"}

@@ -1,0 +1,7 @@
+{
+  "name": "encode-one-second-before-1970",
+  "from": "conformance-seconds-json",
+  "to": "conformance-seconds",
+  "input": "{\"t\":-1000}",
+  "expect": "<e t=\"1969-12-31T23:59:59Z\"/>"
+}

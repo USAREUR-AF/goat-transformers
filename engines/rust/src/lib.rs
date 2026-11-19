@@ -86,6 +86,8 @@ pub enum Transform {
     Float,
     Int,
     Iso8601Ms,
+    /// `iso8601_ms` read; written to the whole second (Version 0.12)
+    Iso8601S,
     // bits-wire transforms (raw integer <-> model value, bit length from the locator)
     Uint,
     Twos,
@@ -175,7 +177,7 @@ impl Transform {
         // ruling 5 of 0.11: the name is the text before the first `:`
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
-            "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
+            "string", "float", "int", "iso8601_ms", "iso8601_s", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "dec", "dm", "hms", "hms_dmy",
         ];
         if !NAMES.contains(&head) {
@@ -220,6 +222,7 @@ impl Transform {
             "float" => Ok(Transform::Float),
             "int" => Ok(Transform::Int),
             "iso8601_ms" => Ok(Transform::Iso8601Ms),
+            "iso8601_s" => Ok(Transform::Iso8601S),
             "uint" => Ok(Transform::Uint),
             "twos" => Ok(Transform::Twos),
             "pstring" => Ok(Transform::Pstring),
@@ -284,6 +287,7 @@ impl Transform {
             Transform::Int
             | Transform::Bool
             | Transform::Iso8601Ms
+            | Transform::Iso8601S
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
@@ -394,7 +398,7 @@ impl Transform {
             Transform::Int => int_text(raw)
                 .map(Value::I64)
                 .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
-            Transform::Iso8601Ms => iso8601_to_ms(raw).map(Value::I64),
+            Transform::Iso8601Ms | Transform::Iso8601S => iso8601_to_ms(raw).map(Value::I64),
             t if t.is_bits() => err(format!("transform {:?} is only valid on a bits wire", self)),
             t if t.is_protobuf() => {
                 err(format!("transform {:?} is only valid on a protobuf wire", self))
@@ -409,6 +413,7 @@ impl Transform {
             (Transform::Float, Value::F64(x)) => Ok(fmt_f64(*x)),
             (Transform::Int, Value::I64(n)) => Ok(n.to_string()),
             (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
+            (Transform::Iso8601S, Value::I64(ms)) => ms_to_iso8601_s_checked(*ms),
             _ => err(format!("transform/value mismatch: {:?} with {:?}", self, v)),
         }
     }
@@ -442,7 +447,7 @@ impl Transform {
     /// The JSON kind this transform produces, so a JSON wire emits it correctly.
     fn json_kind(&self) -> JsonKind {
         match self {
-            Transform::StringT | Transform::Iso8601Ms | Transform::Pstring | Transform::Ascii => {
+            Transform::StringT | Transform::Iso8601Ms | Transform::Iso8601S | Transform::Pstring | Transform::Ascii => {
                 JsonKind::StringK
             }
             Transform::Float
@@ -2387,7 +2392,10 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     // ruling 5 of 0.11: a transform on a wire it is not valid for
     let valid = match wire {
         Wire::Xml | Wire::GeoJson => {
-            matches!(t, Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms)
+            matches!(
+                t,
+                Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms | Transform::Iso8601S
+            )
         }
         Wire::Bits => t.is_bits(),
         Wire::Protobuf => t.is_protobuf(),
@@ -2402,7 +2410,12 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         Wire::Json => {
             if !matches!(
                 t,
-                Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms | Transform::Bool
+                Transform::StringT
+                    | Transform::Float
+                    | Transform::Int
+                    | Transform::Iso8601Ms
+                    | Transform::Iso8601S
+                    | Transform::Bool
             ) {
                 return bad(f.line, format!("transform of `{}` is not valid on the json wire", f.model_key));
             }
@@ -4703,7 +4716,7 @@ pub mod jsonwire {
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
             // an integer within i64 was read as `Int`; negative zero is 0 (ruling 2d of 0.11)
             (Transform::Int, Json::Num(x)) if *x == 0.0 => Ok(Value::I64(0)),
-            (Transform::Iso8601Ms, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
+            (Transform::Iso8601Ms | Transform::Iso8601S, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
             (Transform::Bool, Json::Bool(b)) => Ok(Value::I64(*b as i64)),
             _ => err(format!("JSON value `{}` has the wrong type for the transform", json::serialize(j))),
         }
@@ -4715,6 +4728,7 @@ pub mod jsonwire {
             (Transform::Float, Value::F64(x)) if x.is_finite() => Ok(Json::Num(*x)),
             (Transform::Int, Value::I64(n)) => Ok(Json::Int(*n)),
             (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_checked(*ms)?)),
+            (Transform::Iso8601S, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_s_checked(*ms)?)),
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
@@ -6364,6 +6378,13 @@ pub fn ms_to_iso8601_checked(ms: i64) -> Result<String, Error> {
         return err(format!("{} ms is outside years 0001 to 9999", ms));
     }
     Ok(ms_to_iso8601(ms))
+}
+
+/// `iso8601_s` encode (Version 0.12): the text `ms_to_iso8601_checked` writes,
+/// with `.fff` dropped: the second that holds the instant, never rounded up.
+pub fn ms_to_iso8601_s_checked(ms: i64) -> Result<String, Error> {
+    let full = ms_to_iso8601_checked(ms)?;
+    Ok(format!("{}Z", &full[..19]))
 }
 
 pub fn ms_to_iso8601(ms: i64) -> String {

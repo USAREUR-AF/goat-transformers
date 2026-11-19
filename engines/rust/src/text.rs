@@ -116,7 +116,8 @@ pub(crate) fn two_parts(t: &Transform) -> bool {
 
 /// The transforms the text wire accepts.
 pub(crate) fn valid_on_text(t: &Transform) -> bool {
-    matches!(t, Transform::StringT | Transform::Int | Transform::Float | Transform::Iso8601Ms) || t.is_text_only()
+    matches!(t, Transform::StringT | Transform::Int | Transform::Float | Transform::Iso8601Ms | Transform::Iso8601S)
+        || t.is_text_only()
 }
 
 fn digits(s: &str) -> bool {
@@ -189,7 +190,7 @@ pub(crate) fn decode_one(t: &Transform, s: &str) -> Result<Value, Error> {
         Transform::StringT => Ok(Value::Str(s.to_string())),
         Transform::Int | Transform::IntW(_) => read_int(s).map(Value::I64),
         Transform::Float | Transform::Dec(_, _) => read_float(s).map(Value::F64),
-        Transform::Iso8601Ms => iso8601_to_ms(s).map(Value::I64),
+        Transform::Iso8601Ms | Transform::Iso8601S => iso8601_to_ms(s).map(Value::I64),
         Transform::Hms(_) => {
             let (h, m, _, secs, _) = read_hms(s)?;
             let secs = secs.parse::<f64>().or_else(|_| fail("a time `hhmmss[.s]`", s))?;
@@ -308,6 +309,7 @@ pub(crate) fn encode_one(t: &Transform, v: &Value) -> Result<String, Error> {
             Ok(zero_pad(s, *w as usize))
         }
         (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
+        (Transform::Iso8601S, Value::I64(ms)) => ms_to_iso8601_s_checked(*ms),
         (Transform::Hms(f), Value::F64(x)) => {
             let n = scaled(*x, *f)?;
             let p = POW10[*f as usize];

@@ -1,0 +1,7 @@
+{
+  "name": "one-millisecond-before-1970-rewritten",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds",
+  "input": "<e t=\"1969-12-31T23:59:59.999Z\"/>",
+  "expect": "<e t=\"1969-12-31T23:59:59Z\"/>"
+}

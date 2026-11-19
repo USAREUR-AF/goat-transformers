@@ -1,6 +1,6 @@
 # Engine specification
 
-Status: Written. Version 0.11. This is what every language's engine implements,
+Status: Written. Version 0.12. This is what every language's engine implements,
 from this document and the vectors, never from another engine's source. The
 document grows by one section per version; a later section that replaces an
 earlier sentence says so, and the later section holds.
@@ -2417,3 +2417,40 @@ a message; this ruling replaces the last sentence of ruling 38 and holds.
 - Not ruled: whether the locator form of a `bits` fixed-layout `group` line
   is a line check, and whether `layout sequential` placed after a line it
   must precede is a line check or checked after the file.
+
+# Version 0.12: whole-second time
+
+Status: Written. Version 0.12 adds one transform, `iso8601_s`, for formats
+whose schema allows a time to the whole second only (C2SIM's `IsoDateTime`,
+`YYYY-MM-DDTHH:MM:SSZ`). The vectors are written by
+`tools/gen/conformance-seconds-vectors.py`, which derives every expected value
+from this section and imports no engine.
+
+```
+field  <key>  <locator>  iso8601_s
+```
+
+| Name | Decode | Encode |
+|---|---|---|
+| `iso8601_s` | as `iso8601_ms`: ISO 8601 UTC to epoch ms | epoch ms to `YYYY-MM-DDTHH:MM:SSZ` |
+
+1. **Valid where `iso8601_ms` is valid**: the `xml`, `geojson`, `json` and
+   `text` wires, with the same JSON value (a string) on `json`. On another
+   wire it is `bad-directive`. It takes no parameter (`iso8601_s:3` is
+   `bad-directive`). It yields `int`, like `iso8601_ms`.
+2. **Decode** is the decode of `iso8601_ms` exactly, ruling 3 of 0.11
+   included: the grammar, the ranges, the fraction (its first three digits
+   are the milliseconds, the rest dropped) and every refusal as
+   `transform-decode`. A fraction on the wire is therefore read, not refused,
+   and the model value keeps its milliseconds.
+3. **Encode** writes the 24 characters `iso8601_ms` writes for the value, less
+   the four characters `.fff`: `YYYY-MM-DDTHH:MM:SSZ`, 20 characters, four year
+   digits, upper-case `T` and `Z`. The second written is the one that holds the
+   instant (the milliseconds are dropped, never rounded, as ruling 3c drops
+   fraction digits): 999 writes `1970-01-01T00:00:00Z` and -1 writes
+   `1969-12-31T23:59:59Z`. The range is that of ruling 3f: a value below
+   -62135596800000 or above 253402300799999 is `transform-encode`.
+4. **A same-format round trip** of a time with a fraction is therefore not
+   byte-exact: `2024-02-29T12:34:56.789Z` is written `2024-02-29T12:34:56Z`.
+   A pack chooses `iso8601_s` only where its format allows whole seconds and
+   nothing finer.

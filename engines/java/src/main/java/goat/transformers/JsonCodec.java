@@ -106,8 +106,9 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 }
                 throw new IllegalArgumentException("int needs a JSON number, found " + typeName(v));
             case ISO8601_MS:
+            case ISO8601_S:
                 if (v instanceof String) return Transform.parseIso((String) v);
-                throw new IllegalArgumentException("iso8601_ms needs a JSON string, found " + typeName(v));
+                throw new IllegalArgumentException(t.wireName() + " needs a JSON string, found " + typeName(v));
             case BOOL:
                 if (v instanceof Boolean) return ((Boolean) v) ? 1L : 0L;
                 throw new IllegalArgumentException("bool needs true or false, found " + typeName(v));
@@ -223,6 +224,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         switch (t) {
             case STRING:
             case ISO8601_MS:
+            case ISO8601_S:
                 return t.encode(v);
             case FLOAT:
             case INT:

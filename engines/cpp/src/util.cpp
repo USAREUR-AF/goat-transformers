@@ -341,6 +341,11 @@ bool parse_iso8601_ms(std::string_view s, std::int64_t& out) {
     return true;
 }
 
+std::string format_iso8601_s(std::int64_t ms) {
+    const std::string full = format_iso8601_ms(ms);
+    return full.substr(0, 19) + "Z";
+}
+
 std::string format_iso8601_ms(std::int64_t ms) {
     if (ms < kMinIsoMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0001 to 9999");
     // floor division so negative epochs land on the right civil second

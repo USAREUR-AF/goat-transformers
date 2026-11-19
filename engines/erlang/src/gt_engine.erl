@@ -1697,13 +1697,15 @@ typemap_encode(_, V, _) -> V.
 xml_decode(string, S) -> S;
 xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
-xml_decode(iso8601_ms, S) -> gt_iso:decode(S).
+xml_decode(iso8601_ms, S) -> gt_iso:decode(S);
+xml_decode(iso8601_s, S) -> gt_iso:decode(S).
 
 %% geojson (Version 0.1): the wire value is a JSON value; a string member is
 %% read as xml text is, a number member as ruling 2d of 0.11 states
 geojson_decode(string, V) when is_binary(V) -> V;
-geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms -> xml_decode(Tr, V);
+geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms, Tr =/= iso8601_s -> xml_decode(Tr, V);
 geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
+geojson_decode(iso8601_s, V) when is_binary(V) -> gt_iso:decode(V);
 geojson_decode(string, V) ->
     true = gt_json:is_num(V),
     list_to_binary(gt_json:number_text(V));
@@ -1714,6 +1716,7 @@ json_decode(string, V) when is_binary(V) -> V;
 json_decode(float, V) -> {ok, F} = gt_json:num_float(V), F;
 json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
 json_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
+json_decode(iso8601_s, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
 
@@ -1722,6 +1725,7 @@ text_encode(string, V) -> {str, to_str(V)};
 text_encode(float, V) when is_number(V) -> {float, float(V)};
 text_encode(int, V) when is_integer(V) -> {int, V};
 text_encode(iso8601_ms, V) when is_integer(V) -> {str, gt_iso:encode(V)};
+text_encode(iso8601_s, V) when is_integer(V) -> {str, gt_iso:encode_seconds(V)};
 text_encode(bool, 1) -> {bool, <<"true">>};
 text_encode(bool, 0) -> {bool, <<"false">>}.
 

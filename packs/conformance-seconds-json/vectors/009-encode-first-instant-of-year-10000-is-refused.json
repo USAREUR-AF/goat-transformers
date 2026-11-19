@@ -1,0 +1,7 @@
+{
+  "name": "encode-first-instant-of-year-10000-is-refused",
+  "from": "conformance-seconds-json",
+  "to": "conformance-seconds",
+  "input": "{\"t\":253402300800000}",
+  "expect_error": "transform-encode"
+}

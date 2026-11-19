@@ -1,0 +1,10 @@
+{
+  "name": "before-1970-half-second",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds-json",
+  "input": "<e t=\"1969-12-31T23:59:59.5Z\"/>",
+  "expect": "{\"t\":-500}",
+  "model": {
+    "time_ms": "-500"
+  }
+}

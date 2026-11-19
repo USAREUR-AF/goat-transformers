@@ -45,6 +45,8 @@ constexpr std::int64_t kMaxIsoMs = 253402300799999;
 // epoch ms -> YYYY-MM-DDTHH:MM:SS.fffZ. Throws std::domain_error outside
 // kMinIsoMs to kMaxIsoMs (0.11 ruling 3f).
 std::string format_iso8601_ms(std::int64_t ms);
+// `iso8601_s` (0.12): the text of format_iso8601_ms less its ".fff".
+std::string format_iso8601_s(std::int64_t ms);
 
 void append_utf8(std::string& out, std::uint32_t cp);
 

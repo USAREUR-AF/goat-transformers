@@ -13,6 +13,8 @@ public enum Transform {
     FLOAT("float"),
     INT("int"),
     ISO8601_MS("iso8601_ms"),
+    /** Version 0.12: read as {@code iso8601_ms}; written to the whole second. */
+    ISO8601_S("iso8601_s"),
     /** {@code json} wire only: JSON {@code true}/{@code false} to int 1/0. The text forms are "true" and "false". */
     BOOL("bool");
 
@@ -50,6 +52,7 @@ public enum Transform {
             case INT:
                 return parseInt(text);
             case ISO8601_MS:
+            case ISO8601_S:
                 return parseIso(text);
             case BOOL:
                 if (text.equals("true")) return 1L;
@@ -72,6 +75,11 @@ public enum Transform {
                 return Long.toString(asLong(value));
             case ISO8601_MS:
                 return formatIso(asLong(value));
+            case ISO8601_S: {
+                // the text of iso8601_ms less its ".fff": the second that holds the instant
+                String full = formatIso(asLong(value));
+                return full.substring(0, 19) + "Z";
+            }
             case BOOL: {
                 long b = asLong(value);
                 if (b == 1) return "true";

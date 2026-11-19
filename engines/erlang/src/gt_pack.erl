@@ -224,6 +224,7 @@ yields(pdouble) -> float;
 yields(pfloat)  -> float;
 yields(int)        -> int;
 yields(iso8601_ms) -> int;
+yields(iso8601_s)  -> int;
 yields(bool)       -> int;
 yields(uint)       -> int;
 yields(twos)       -> int;
@@ -1165,6 +1166,7 @@ transform(<<"string">>)     -> {text, string};
 transform(<<"float">>)      -> {text, float};
 transform(<<"int">>)        -> {text, int};
 transform(<<"iso8601_ms">>) -> {text, iso8601_ms};
+transform(<<"iso8601_s">>)  -> {text, iso8601_s};
 transform(<<"bool">>)       -> {json, bool};
 transform(<<"uint">>)       -> {bits, uint};
 transform(<<"twos">>)       -> {bits, twos};
@@ -1209,7 +1211,7 @@ transform(<<"hms_dmy:", F/binary>> = S) -> {textonly, {hms_dmy, tparam(F, 0, 3, 
 transform(T) ->
     %% a transform's name is the text before its first `:`
     [Name | _] = binary:split(T, <<":">>),
-    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"bool">>, <<"uint">>,
+    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"iso8601_s">>, <<"bool">>, <<"uint">>,
              <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
              <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
              <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>],

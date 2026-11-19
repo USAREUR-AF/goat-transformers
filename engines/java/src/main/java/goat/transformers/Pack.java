@@ -454,7 +454,7 @@ public final class Pack {
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length");
 
     /** Every transform of the specification, by the text before its first {@code :}. */
-    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
+    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_s", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
             "dec", "dm", "hms", "hms_dmy");
 

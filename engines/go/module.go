@@ -89,7 +89,7 @@ func transformYields(name string) (Kind, bool) {
 		return KindString, true
 	case "float", "pdouble", "pfloat", "f32", "f64":
 		return KindFloat, true
-	case "int", "iso8601_ms", "uint", "twos", "pvarint", "psint", "bool":
+	case "int", "iso8601_ms", "iso8601_s", "uint", "twos", "pvarint", "psint", "bool":
 		return KindInt, true
 	}
 	if strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:") {

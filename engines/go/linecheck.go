@@ -21,7 +21,7 @@ var needsWire = map[string]bool{
 
 // noParamTransforms are the transforms whose name stands alone.
 var noParamTransforms = map[string]bool{
-	"string": true, "float": true, "int": true, "iso8601_ms": true, "bool": true,
+	"string": true, "float": true, "int": true, "iso8601_ms": true, "iso8601_s": true, "bool": true,
 	"uint": true, "twos": true, "f32": true, "f64": true, "ascii": true,
 	"pstring": true, "pvarint": true, "psint": true, "pdouble": true, "pfloat": true,
 }

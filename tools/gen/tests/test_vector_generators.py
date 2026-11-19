@@ -21,6 +21,7 @@ SCRIPTS = (
     "conformance-rulings011-vectors.py",
     "conformance-rulings011b-vectors.py",
     "conformance-rulings08-vectors.py",
+    "conformance-seconds-vectors.py",
     "conformance-seq-vectors.py",
 )
 

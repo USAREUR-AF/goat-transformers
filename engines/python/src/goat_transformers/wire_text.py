@@ -18,7 +18,7 @@ import re
 from datetime import date
 
 from .errors import BadDirective, MalformedWire, TransformEncodeFailure
-from .transforms import Iso8601MsT, StringT, Transform, format_float, format_int, round_half_away
+from .transforms import Iso8601MsT, Iso8601ST, StringT, Transform, format_float, format_int, round_half_away
 
 _HEX = "0123456789abcdefABCDEF"
 _DIGITS = re.compile(r"[0-9]+\Z")
@@ -322,7 +322,12 @@ class _TextIso(Iso8601MsT):
     pair = False
 
 
-_BASE = {"string": _TextString(), "int": TextIntT("int"), "float": TextFloatT(), "iso8601_ms": _TextIso()}
+class _TextIsoS(Iso8601ST):
+    numeric = False
+    pair = False
+
+
+_BASE = {"string": _TextString(), "int": TextIntT("int"), "float": TextFloatT(), "iso8601_ms": _TextIso(), "iso8601_s": _TextIsoS()}
 _FAMILIES = ("int", "dec", "dm", "hms", "hms_dmy")
 
 

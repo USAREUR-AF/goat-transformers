@@ -105,6 +105,7 @@ KeyType transform_yields(Transform t) {
         case Transform::Bool:
         case Transform::Int:
         case Transform::Iso8601Ms:
+        case Transform::Iso8601S:
         case Transform::Uint:
         case Transform::Twos:
         case Transform::Pvarint:

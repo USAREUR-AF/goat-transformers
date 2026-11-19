@@ -213,6 +213,7 @@ decode_value({int_w, _}, T) -> int_text(T);
 decode_value(float, T) -> dec_text(T);
 decode_value({dec, _, _}, T) -> dec_text(T);
 decode_value(iso8601_ms, T) -> gt_iso:decode(T);
+decode_value(iso8601_s, T) -> gt_iso:decode(T);
 decode_value({dm, D, _F, P, N}, {A, B}) ->
     <<Deg:D/binary, Min:2/binary, Frac/binary>> = A,
     true = digits(Deg) andalso digits(Min) andalso fraction_ok(Frac),
@@ -325,6 +326,7 @@ encode_value({dec, F, W}, V) when is_number(V) ->
             end,
     signed(N < 0, Body1);
 encode_value(iso8601_ms, V) when is_integer(V) -> gt_iso:encode(V);
+encode_value(iso8601_s, V) when is_integer(V) -> gt_iso:encode_seconds(V);
 encode_value({dm, D, F, P, N}, V) when is_number(V) ->
     X = float(V),
     M = round(abs(X) * 60 * p10(F)),

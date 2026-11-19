@@ -51,7 +51,7 @@ void decode_member(Decoder& d, const FieldLine& f, const json::Value& v) {
         case Transform::Float:
         case Transform::Int: want = json::Value::Kind::Number; break;
         case Transform::Bool: want = json::Value::Kind::Bool; break;
-        default: break;  // string, iso8601_ms
+        default: break;  // string, iso8601_ms, iso8601_s
     }
     if (v.kind != want) {
         d.fail(f, std::string("the member is ") + json_kind_name(v) + ", which transform '" +

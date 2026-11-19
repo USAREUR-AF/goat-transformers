@@ -23,11 +23,12 @@ var transforms = map[string]*transform{
 	"float":      {name: "float", number: true, decode: decFloat, encode: encFloat},
 	"int":        {name: "int", number: true, decode: decInt, encode: encInt},
 	"iso8601_ms": {name: "iso8601_ms", decode: decISO, encode: encISO},
+	"iso8601_s":  {name: "iso8601_s", decode: decISO, encode: encISOSeconds},
 }
 
 // TransformNames lists the transforms this engine implements.
 func TransformNames() []string {
-	return []string{"float", "int", "iso8601_ms", "string"}
+	return []string{"float", "int", "iso8601_ms", "iso8601_s", "string"}
 }
 
 func decString(s string) (Value, error) { return Value{Kind: KindString, S: s}, nil }
@@ -300,6 +301,16 @@ func encISO(v Value) (string, error) {
 		return "", fmt.Errorf("no value")
 	}
 	return formatISO(ms)
+}
+
+// encISOSeconds is the encode of `iso8601_s` (spec 0.12): the text of
+// `iso8601_ms` less its `.fff`, so the second that holds the instant.
+func encISOSeconds(v Value) (string, error) {
+	s, err := encISO(v)
+	if err != nil {
+		return "", err
+	}
+	return s[:19] + "Z", nil
 }
 
 // --- bits wire transforms (spec/engine-spec.md, "Version 0.2: the bits wire") ---

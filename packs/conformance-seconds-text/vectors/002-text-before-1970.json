@@ -1,0 +1,10 @@
+{
+  "name": "text-before-1970",
+  "from": "conformance-seconds-text",
+  "to": "conformance-seconds-text",
+  "input": "1969-12-31T23:59:59.5Z",
+  "expect": "1969-12-31T23:59:59Z",
+  "model": {
+    "time_ms": "-500"
+  }
+}

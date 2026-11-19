@@ -190,7 +190,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Pstring, Pvarint, Psint, Pdouble, Pfloat,
                        Bool,                             // v0.5, json wire only
                        Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
-                       IntW, Dec, Dm, Hms, HmsDmy        // v0.10, text wire only
+                       IntW, Dec, Dm, Hms, HmsDmy,       // v0.10, text wire only
+                       Iso8601S                          // v0.12, the text wires and json
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text };
 

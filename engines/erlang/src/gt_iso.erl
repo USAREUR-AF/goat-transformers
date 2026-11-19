@@ -1,7 +1,7 @@
 %% gt_iso: ISO 8601 <-> epoch milliseconds (engine-spec transform
 %% `iso8601_ms`; Version 0.6 replaces ruling 8 of 0.1.1).
 -module(gt_iso).
--export([decode/1, encode/1]).
+-export([decode/1, encode/1, encode_seconds/1]).
 
 -define(EPOCH_GREGORIAN_SECONDS, 62167219200).
 %% 0001-01-01T00:00:00.000Z and 9999-12-31T23:59:59.999Z (ruling 3 of 0.11)
@@ -73,6 +73,12 @@ designator(<<Sign, H:2/binary, $:, M:2/binary>>) when Sign =:= $+; Sign =:= $- -
 int(B) ->
     true = digits(B, 0) =:= byte_size(B),
     binary_to_integer(B).
+
+%% `iso8601_s` encode (Version 0.12): the text of encode/1 less its ".fff",
+%% so the second that holds the instant.
+encode_seconds(Ms) ->
+    <<Whole:19/binary, _/binary>> = encode(Ms),
+    <<Whole/binary, "Z">>.
 
 %% epoch ms -> "YYYY-MM-DDTHH:MM:SS.fffZ"
 encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS ->
