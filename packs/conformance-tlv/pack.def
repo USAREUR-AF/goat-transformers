@@ -1,0 +1,37 @@
+# Conformance probe pack for the `tlv` wire (spec 0.13). Public. A local set
+# in the shape MISB ST 0601 uses: a 4-byte key, a BER length, BER-OID tags,
+# BER lengths and a sum16 checksum item of tag 1 at the end. Exercises every
+# value transform, a nested set, kinds chosen by an integer item, a `const`,
+# a `default`, a value table and residue in the top set and a nested set.
+format        conformance-tlv
+version       0.13.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          tlv
+key           060e2b34
+checksum      sum16 1
+
+map     levels  1  low
+map     levels  2  high
+
+field    time_ms      2:8      uint
+field    uid          3        utf8
+field    probe.n      4:2      twos
+field    lat          13:4     sscale:90/2147483647
+field    lon          14:4     sscale:180/2147483647
+field    hae          15:2     uscale:19900/65535:-900
+field    probe.s1     16:1     uint     via levels
+field    probe.x      48.2:1   uint
+field    probe.y      48.200:2 uint
+default  probe.y      7
+
+kind     plain
+when     65:1         1
+field    probe.a      20       f64
+field    course       21       f32
+
+kind     raw
+when     65:1         2
+field    probe.s2     22       hex
+const    23:1         9

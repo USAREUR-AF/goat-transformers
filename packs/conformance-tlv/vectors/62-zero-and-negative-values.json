@@ -1,0 +1,16 @@
+{
+  "name": "zero-and-negative-values",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04000000000e04000000000f020000100101300802010581480200074101011408c00200000000000015040000000001024a4a",
+  "expect": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04000000000e04000000000f020000100101300802010581480200074101011408c00200000000000015040000000001024a4a",
+  "model": {
+    "lat": "0",
+    "lon": "0",
+    "hae": "-900",
+    "probe.a": "-2.25",
+    "course": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): sscale of 0 is 0; uscale of 0 is the offset -900; f64 c002000000000000 = -2.25; f32 00000000 = 0. Derived without an engine by a standalone reference program."
+}

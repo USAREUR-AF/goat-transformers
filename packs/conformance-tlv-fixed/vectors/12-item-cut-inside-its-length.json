@@ -1,0 +1,9 @@
+{
+  "name": "item-cut-inside-its-length",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0200",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): A tag and one byte of a two-byte length. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,13 @@
+# Conformance probe pack for the `tlv` wire (spec 0.13). Public. A field and
+# two `const` lines on one path: the item is written once, with the earliest
+# `const` value (ruling 9 of 0.13).
+format        conformance-tlv-const
+version       0.13.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          tlv
+
+field    probe.n      5:1      uint
+const    5:1          1
+const    5:1          2

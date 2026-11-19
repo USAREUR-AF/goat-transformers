@@ -3,7 +3,8 @@
 // convert(from,to[,context]) = decode, fill from context, derive, encode; plus
 // a conformance harness.
 //
-// Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf, text.
+// Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf, text,
+// tlv (spec Version 0.13; on tlv also the transforms utf8 and hex).
 // Transforms: string, float, int, iso8601_ms, bool, uint, twos,
 // linscale:<maxpos>:<range>, uscale/sscale:<factor>[:<offset>], f32, f64,
 // ascii, pstring, pvarint, psint, pdouble, pfloat; on text also int:<w>,
@@ -229,7 +230,7 @@ fn bad(diag: *Diag, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []con
 // Pack model
 // ---------------------------------------------------------------------------
 
-const Wire = enum { xml, geojson, json, bits, protobuf, text };
+const Wire = enum { xml, geojson, json, bits, protobuf, text, tlv };
 const TKind = enum {
     string,
     float,
@@ -255,10 +256,14 @@ const TKind = enum {
     dm,
     hms,
     hms_dmy,
+    // the `tlv` wire only (Version 0.13)
+    utf8,
+    hex,
 };
 
-// `rec`: the transforms valid on the `text` wire only
-const KindCat = enum { text, bits, proto, rec };
+// `rec`: the transforms valid on the `text` wire only; `tlv`: on the `tlv`
+// wire only
+const KindCat = enum { text, bits, proto, rec, tlv };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
@@ -266,6 +271,7 @@ fn kindCategory(k: TKind) KindCat {
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
         .int_w, .dec, .dm, .hms, .hms_dmy => .rec,
+        .utf8, .hex => .tlv,
     };
 }
 
@@ -274,6 +280,7 @@ fn wireCategory(w: Wire) KindCat {
         .xml, .geojson, .json, .text => .text,
         .bits => .bits,
         .protobuf => .proto,
+        .tlv => .tlv,
     };
 }
 
@@ -413,6 +420,11 @@ const Line = struct {
     tj: usize = 0,
     tfrom: usize = 0,
     tlen: usize = 0,
+    // tlv: the tags of the path, and the size `:<n>` (0: none)
+    tpath: []const u32 = &.{},
+    tsize: u8 = 0,
+    // a transform that did not parse, refused after the file is read
+    t_err: ?anyerror = null,
 
     fn isField(self: *const Line) bool {
         return self.tag == .field;
@@ -487,13 +499,24 @@ const Pack = struct {
     delim: ?u8 = ',',
     start: []const u8 = "",
     nmea: bool = false,
-    text_dirs: bool = false,
     // the three directives as written, and the first line that repeats one
     // or gives one after the first `kind`
     delim_raw: ?[]const u8 = null,
     start_raw: ?[]const u8 = null,
     cksum_raw: ?[]const u8 = null,
     tdir_bad: usize = 0,
+    // Version 0.13, the `tlv` wire: `tag` and `length` (0: ber-oid, ber;
+    // else a fixed number of bytes), the key's bytes, the `sum16` tag; and
+    // the directives as written (`checksum sum16 <tag>` keeps its tag in
+    // `cksum_arg`)
+    tlv_tag: u8 = 0,
+    tlv_len: u8 = 0,
+    tlv_key: []const u8 = "",
+    tlv_sum: ?u32 = null,
+    tag_raw: ?[]const u8 = null,
+    len_raw: ?[]const u8 = null,
+    key_raw: ?[]const u8 = null,
+    cksum_arg: ?[]const u8 = null,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -630,7 +653,7 @@ const Derive = struct {
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
-        .string, .pstring, .ascii => .string,
+        .string, .pstring, .ascii, .utf8, .hex => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms => .float,
         .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy => .int,
     };
@@ -831,6 +854,7 @@ fn parseTransform(s: []const u8) !Transform {
         .{ .n = "pstring", .k = .pstring }, .{ .n = "pvarint", .k = .pvarint },
         .{ .n = "psint", .k = .psint },     .{ .n = "pdouble", .k = .pdouble },
         .{ .n = "pfloat", .k = .pfloat },
+        .{ .n = "utf8", .k = .utf8 },       .{ .n = "hex", .k = .hex },
     };
     for (simple) |e| if (std.mem.eql(u8, s, e.n)) return .{ .kind = e.k };
 
@@ -1188,6 +1212,10 @@ fn checkDerives(alloc: std.mem.Allocator, m: *Module, mods: *const ModuleMap, di
 // Resolve one line against the pack's wire: parse its locator, check its
 // transform belongs to the wire, check the bit length its transform allows.
 fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, diag: *Diag) anyerror!void {
+    if (ln.t_err) |err| {
+        const why = if (p.wire == .tlv) E.@"bad-directive" else err;
+        return bad(diag, alloc, why, "line {d}: unknown transform or parameters that do not parse", .{ln.lineno});
+    }
     // `.`: the item itself as a scalar, inside a group only
     if (std.mem.eql(u8, ln.locator, ".") and (p.wire == .json or p.wire == .geojson or p.wire == .protobuf)) {
         if (!in_group) return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator `.` outside a group", .{ln.lineno});
@@ -1196,7 +1224,15 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (ln.dot and ln.tag == .constant) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: const on the item itself (`.`)", .{ln.lineno});
     }
-    if (ln.isField() and p.wire == .text) {
+    if (ln.isField() and p.wire == .tlv) {
+        // on `tlv`: the transforms of its table only (Version 0.13)
+        switch (ln.transform.kind) {
+            .uint, .twos, .uscale, .sscale, .f32_, .f64_, .utf8, .hex => {},
+            else => return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the tlv wire", .{ ln.lineno, ln.key }),
+        }
+    } else if (ln.isField() and kindCategory(ln.transform.kind) == .tlv) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the tlv wire", .{ ln.lineno, ln.key });
+    } else if (ln.isField() and p.wire == .text) {
         // on `text`: the text transforms but `bool`, and the transforms of
         // the wire (Version 0.10)
         const kc = kindCategory(ln.transform.kind);
@@ -1307,6 +1343,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             }
         },
         .text => try textFinalizeLine(alloc, p, ln, diag),
+        .tlv => try tlvFinalizeLine(alloc, p, ln, diag),
     }
     if (ln.isField() and !ln.abs_checked) try parseAbsent(alloc, p.wire, ln, in_group, diag);
 }
@@ -1345,6 +1382,9 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     const no = ln.lineno;
     // ruling 16 of 0.10: `absent` on the text wire is not stated yet
     if (wire == .text) return lineBad(diag, alloc, bd, "line {d}: absent is not an option of the text wire", .{no});
+    // rulings 10 and 14 of 0.13: `absent` on the tlv wire is not stated yet,
+    // and is checked after the file is read
+    if (wire == .tlv) return bad(diag, alloc, bd, "line {d}: absent is not an option of the tlv wire", .{no});
     if (std.mem.indexOfScalar(u8, raw, '"') != null) {
         return lineBad(diag, alloc, bd, "line {d}: an absent value holds a double quote", .{no});
     }
@@ -1479,6 +1519,7 @@ fn finalizeLines(alloc: std.mem.Allocator, p: *Pack, lines: []Line, in_group: bo
 fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
     if (p.wire == .text) return textFinalizeGroup(alloc, p, g, nested, diag);
+    if (p.wire == .tlv) return bad(diag, alloc, bd, "line {d}: group on the tlv wire", .{g.lineno});
     if (p.wire != .bits and (g.count_txt != null or g.item_txt != null)) {
         return bad(diag, alloc, bd, "line {d}: `item` and `count` are for the bits wire, not {s}", .{ g.lineno, @tagName(p.wire) });
     }
@@ -1538,7 +1579,7 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
                 g.count_fixed = @intCast(n);
             }
         },
-        .text => unreachable,
+        .text, .tlv => unreachable,
     }
     try finalizeLines(alloc, p, g.lines, true, diag);
     if (p.wire == .protobuf) {
@@ -1585,7 +1626,7 @@ fn passesThrough(p: *const Pack, f: *const Line, g: *const Group, in_item: bool)
             for (g.ppath, 0..) |n, i| if (n != f.ppath[i]) return false;
             return true;
         },
-        .bits, .text => return false,
+        .bits, .text, .tlv => return false,
     }
 }
 
@@ -1797,7 +1838,9 @@ fn locatorFormOk(wire: Wire, sequential: bool, loc: []const u8, in_group: bool) 
             if (len_v) |l| return l != 0;
             return true;
         },
-        .text => return true,
+        // the paths of the `tlv` wire are checked after the file is read
+        // (Version 0.13: `bad-directive`)
+        .text, .tlv => return true,
     }
 }
 
@@ -1807,7 +1850,7 @@ fn groupLocatorFormOk(wire: Wire, loc: []const u8) bool {
     const sep: u8 = switch (wire) {
         .xml => '/',
         .json, .geojson, .protobuf => '.',
-        .bits, .text => return true,
+        .bits, .text, .tlv => return true,
     };
     var it = std.mem.splitScalar(u8, loc, sep);
     while (it.next()) |seg| {
@@ -1832,7 +1875,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -1859,11 +1902,17 @@ fn needsWire(d: PackDir) bool {
 fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: usize, hdr: *HeaderSeen, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
     const kw = toks[0];
-    const d = std.meta.stringToEnum(PackDir, kw) orelse
+    // `key <hex>` (one value) is the directive of the `tlv` wire (Version
+    // 0.13); a `key` line of another shape is the module's `key`, which is
+    // not a directive of a pack (ruling 5 of 0.11, load vector 445)
+    const module_key = std.mem.eql(u8, kw, "key") and toks.len != 2;
+    const d = (if (module_key) null else std.meta.stringToEnum(PackDir, kw)) orelse
         return lineBad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
     const n = toks.len - 1;
     const ok = switch (d) {
-        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .checksum => n == 1,
+        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key => n == 1,
+        // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
+        .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
         .field => n >= 3,
         .when, .@"const", .default, .typemap => n == 2,
         .map => n == 3,
@@ -2020,6 +2069,17 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             return bad(diag, alloc, E.@"bad-directive", "line {d}: layout takes `fixed` or `sequential`", .{lineno});
         }
         p.layout_set = true;
+    } else if (is(kw, "length") and toks.len == 2) {
+        // `length <ber | n>` of the `tlv` wire (Version 0.13), checked
+        // after the file is read; the `length` block of 0.8 is refused below
+        if ((p.len_raw != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
+        p.len_raw = toks[1];
+    } else if (is(kw, "tag") or is(kw, "key")) {
+        // `tag` and `key` of the `tlv` wire (Version 0.13)
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
+        const slot = if (is(kw, "tag")) &p.tag_raw else &p.key_raw;
+        if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
+        slot.* = toks[1];
     } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "if") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
     } else if (is(kw, "typemap")) {
@@ -2029,11 +2089,13 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
     } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
         // the `text` wire (Version 0.10): checked against the wire and
         // one another after the file is read
-        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
+        // `checksum sum16 <tag>` of the `tlv` wire has two values
+        const two = is(kw, "checksum") and toks.len == 3;
+        if (toks.len != 2 and !two) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
         const slot = if (is(kw, "delimiter")) &p.delim_raw else if (is(kw, "start")) &p.start_raw else &p.cksum_raw;
         if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
         slot.* = toks[1];
-        p.text_dirs = true;
+        if (is(kw, "checksum")) p.cksum_arg = if (two) toks[2] else null;
     } else if (is(kw, "kind")) {
         if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: kind takes one argument", .{lineno});
         if (p.kindIndex(toks[1]) != null) {
@@ -2087,14 +2149,24 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         try gop.value_ptr.*.entries.append(.{ .native = toks[2], .model = toks[3] });
     } else if (is(kw, "field")) {
         if (toks.len < 4) return bad(diag, alloc, E.@"bad-directive", "line {d}: field takes a key, a locator and a transform", .{lineno});
-        const t = parseTransform(toks[3]) catch |err| switch (err) {
-            error.@"unknown-transform" => return lineBad(diag, alloc, err, "line {d}: unknown transform {s}", .{ lineno, toks[3] }),
-            else => return lineBad(diag, alloc, err, "line {d}: the parameters of transform {s} are not valid", .{ lineno, toks[3] }),
+        // on `tlv` a transform that does not parse is kept and refused after
+        // the file is read (ruling 8 of 0.13: `bad-directive`); the wire is
+        // known here, since a `field` line stands after it (ruling 5b of 0.11)
+        var t_err: ?anyerror = null;
+        const t = parseTransform(toks[3]) catch |err| blk: {
+            if (p.wire == .tlv) {
+                t_err = err;
+                break :blk Transform{ .kind = .string };
+            }
+            switch (err) {
+                error.@"unknown-transform" => return lineBad(diag, alloc, err, "line {d}: unknown transform {s}", .{ lineno, toks[3] }),
+                else => return lineBad(diag, alloc, err, "line {d}: the parameters of transform {s} are not valid", .{ lineno, toks[3] }),
+            }
         };
         if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a field on the {s} wire", .{ lineno, toks[2], @tagName(p.wire) });
         }
-        var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno };
+        var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno, .t_err = t_err };
         // options, in any order
         var oi: usize = 4;
         while (oi < toks.len) : (oi += 1) {
@@ -2125,9 +2197,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             if (again) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: field option {s} is repeated", .{ lineno, o });
         }
         // the values of the `absent` option are a line check, except on a
-        // `bits` field above 64 bits (ruling 4d of 0.11)
+        // `bits` field above 64 bits (ruling 4d of 0.11) and on `tlv`, where
+        // `absent` does not fit the wire, checked after the file is read
+        // (ruling 14 of 0.13)
         if (p.wire == .bits) ln.blen = @intCast(@min(fixedLen(toks[2]) orelse 0, 1 << 20));
-        if (!(p.wire == .bits and ln.blen > 64)) {
+        if (!(p.wire == .bits and ln.blen > 64) and p.wire != .tlv) {
             try parseAbsent(alloc, p.wire, &ln, in_group, diag);
             ln.abs_checked = true;
         }
@@ -2221,6 +2295,10 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.wire == .text) {
         if (p.kinds.items.len == 0) try textCheckScope(alloc, p.common.items, &.{}, diag);
         for (p.kinds.items) |*k| try textCheckScope(alloc, p.common.items, k.lines.items, diag);
+    }
+    if (p.wire == .tlv) {
+        if (p.kinds.items.len == 0) try tlvCheckScope(alloc, p.common.items, &.{}, diag);
+        for (p.kinds.items) |*k| try tlvCheckScope(alloc, p.common.items, k.lines.items, diag);
     }
 
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
@@ -4459,6 +4537,7 @@ const Doc = union(enum) {
     bits: BitsDoc,
     protobuf: PbDoc,
     text: TextDoc,
+    tlv: []TlvItem,
 };
 
 fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Doc {
@@ -4499,6 +4578,7 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             return .{ .protobuf = .{ .entries = entries, .cache = cache } };
         },
         .text => return .{ .text = try textParse(alloc, p, bytes, diag) },
+        .tlv => return .{ .tlv = try tlvParse(alloc, p, bytes, diag) },
     }
 }
 
@@ -4542,6 +4622,7 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             if (ln.wpresent) return true;
             return std.mem.eql(u8, got, ln.wtext);
         },
+        .tlv => |items| return tlvWhenHolds(alloc, p, items, ln),
     }
 }
 
@@ -4650,6 +4731,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const raw = textRead(td, ln, ln.ti, textNumeric(t)) orelse return null;
             return try textDecode(ln.transform, raw);
         },
+        .tlv => |items| return try tlvReadField(alloc, p, items, ln),
     }
 }
 
@@ -4940,6 +5022,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return 0;
         },
+        .tlv => return 0, // no group on `tlv`
     }
 }
 
@@ -4989,6 +5072,9 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
             return bad(diag, alloc, E.@"malformed-wire", "the message is {d} bytes, the input holds {d}", .{ need, doc.bits.buf.len });
         }
     }
+
+    // tlv: every set a line of the selected scope walks into is read whole
+    if (doc == .tlv) try tlvWalkScope(alloc, p, doc.tlv, lines, diag);
 
     var e = Entity.init(alloc);
     if (kind_idx) |k| {
@@ -5062,6 +5148,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
             else => return err,
         },
         .text => |td| try textResidue(alloc, p, lines, td, &e),
+        .tlv => |items| try tlvResidue(alloc, p, lines, items, &.{}, "", &e),
         .bits, .protobuf => {},
     }
     return e;
@@ -5738,6 +5825,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             return hexEncode(alloc, buf.items);
         },
         .text => return textEncode(alloc, p, sc, e, diag),
+        .tlv => return tlvEncode(alloc, p, sc, e, diag),
     }
 }
 
@@ -5766,9 +5854,15 @@ fn parseIdx(s: []const u8) ?usize {
 // the file is read (rulings 2 and 10 of 0.10).
 fn textDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
-    if (!p.text_dirs) return;
-    if (p.wire != .text) return bad(diag, alloc, bd, "delimiter, start and checksum are directives of the text wire, not {s}", .{@tagName(p.wire)});
-    if (p.tdir_bad != 0) return bad(diag, alloc, bd, "line {d}: delimiter, start and checksum appear at most once, before the first kind", .{p.tdir_bad});
+    const text_dirs = p.delim_raw != null or p.start_raw != null;
+    const tlv_dirs = p.tag_raw != null or p.len_raw != null or p.key_raw != null;
+    if (!text_dirs and !tlv_dirs and p.cksum_raw == null) return;
+    if (text_dirs and p.wire != .text) return bad(diag, alloc, bd, "delimiter and start are directives of the text wire, not {s}", .{@tagName(p.wire)});
+    if (tlv_dirs and p.wire != .tlv) return bad(diag, alloc, bd, "tag, length and key are directives of the tlv wire, not {s}", .{@tagName(p.wire)});
+    if (p.cksum_raw != null and p.wire != .text and p.wire != .tlv) return bad(diag, alloc, bd, "checksum is a directive of the text and tlv wires, not {s}", .{@tagName(p.wire)});
+    if (p.tdir_bad != 0) return bad(diag, alloc, bd, "line {d}: a directive of the wire appears at most once, before the first kind", .{p.tdir_bad});
+    if (p.wire == .tlv) return tlvDirectives(alloc, p, diag);
+    if (p.cksum_arg != null) return bad(diag, alloc, bd, "checksum {s} {s} is not none or nmea", .{ p.cksum_raw.?, p.cksum_arg.? });
     if (p.delim_raw) |d| {
         if (std.mem.eql(u8, d, "none")) {
             p.delim = null;
@@ -6366,6 +6460,585 @@ fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *co
         try buf.writer().print("*{X:0>2}", .{x});
     }
     return buf.toOwnedSlice();
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.13: the `tlv` wire. A set of items, each a tag, a length and a
+// value; a value may itself be a set. The set may follow a fixed key and a
+// length, and may end with a `sum16` checksum item. Hex text in and out.
+// ---------------------------------------------------------------------------
+
+const tlv_max_tag: u64 = (1 << 28) - 1;
+
+// A tag of a path or of `checksum sum16 <tag>`: decimal with no leading
+// zero, at most 2^28-1, and under `tag <n>` below 2^(8n). null: not a tag.
+fn tlvTagNum(p: *const Pack, s: []const u8) ?u32 {
+    if (s.len == 0 or s.len > 9 or !allDigits(s)) return null;
+    if (s.len > 1 and s[0] == '0') return null;
+    const v = std.fmt.parseInt(u64, s, 10) catch return null;
+    if (v > tlv_max_tag) return null;
+    if (p.tlv_tag != 0 and p.tlv_tag < 4 and v >= (@as(u64, 1) << @as(u6, @intCast(8 * @as(u32, p.tlv_tag))))) return null;
+    return @intCast(v);
+}
+
+// `tag`, `length`, `key` and `checksum` on the `tlv` wire, after the file is
+// read (the wire and the repeats are checked before).
+fn tlvDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const width = struct {
+        fn f(s: []const u8, ber: []const u8) ?u8 {
+            if (std.mem.eql(u8, s, ber)) return 0;
+            if (std.mem.eql(u8, s, "1")) return 1;
+            if (std.mem.eql(u8, s, "2")) return 2;
+            if (std.mem.eql(u8, s, "4")) return 4;
+            return null;
+        }
+    }.f;
+    if (p.tag_raw) |t| p.tlv_tag = width(t, "ber-oid") orelse
+        return bad(diag, alloc, bd, "tag {s} is not ber-oid, 1, 2 or 4", .{t});
+    if (p.len_raw) |l| p.tlv_len = width(l, "ber") orelse
+        return bad(diag, alloc, bd, "length {s} is not ber, 1, 2 or 4", .{l});
+    if (p.key_raw) |k| {
+        var ok = k.len >= 2 and k.len <= 128 and k.len % 2 == 0;
+        for (k) |c| {
+            if (!((c >= '0' and c <= '9') or (c >= 'a' and c <= 'f'))) ok = false;
+        }
+        if (!ok) return bad(diag, alloc, bd, "key {s} is not 1 to 64 bytes as an even number of lowercase hex digits", .{k});
+        p.tlv_key = try hexDecode(alloc, k);
+    }
+    if (p.cksum_raw) |c| {
+        if (!std.mem.eql(u8, c, "sum16")) return bad(diag, alloc, bd, "checksum {s} on the tlv wire; it takes sum16 <tag>", .{c});
+        const a = p.cksum_arg orelse return bad(diag, alloc, bd, "checksum sum16 takes a tag", .{});
+        p.tlv_sum = tlvTagNum(p, a) orelse
+            return bad(diag, alloc, bd, "checksum sum16 {s}: not a tag from 0 to 2^28-1 with no leading zero that fits the tag size", .{a});
+    }
+}
+
+// One line's path, size and `when` or `const` value on the `tlv` wire.
+fn tlvFinalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    var loc = ln.locator;
+    if (std.mem.indexOfScalar(u8, loc, ':')) |c| {
+        const st = loc[c + 1 ..];
+        if (st.len != 1 or st[0] < '1' or st[0] > '8') return bad(diag, alloc, bd, "line {d}: the size in {s} is not one digit from 1 to 8", .{ ln.lineno, ln.locator });
+        ln.tsize = st[0] - '0';
+        loc = loc[0..c];
+    }
+    var tags = std.ArrayList(u32).init(alloc);
+    var it = std.mem.splitScalar(u8, loc, '.');
+    while (it.next()) |seg| {
+        const t = tlvTagNum(p, seg) orelse
+            return bad(diag, alloc, bd, "line {d}: {s} is not a path of tags from 0 to 2^28-1 with no leading zero that fit the tag size", .{ ln.lineno, ln.locator });
+        try tags.append(t);
+    }
+    ln.tpath = try tags.toOwnedSlice();
+    if (p.tlv_sum) |ck| {
+        if (ln.tpath[0] == ck) return bad(diag, alloc, bd, "line {d}: the path {s} begins with the checksum tag", .{ ln.lineno, ln.locator });
+    }
+    const n = ln.tsize;
+    if (ln.isField()) {
+        const ok = switch (ln.transform.kind) {
+            .uint, .twos, .uscale, .sscale => n != 0,
+            .f32_ => n == 0 or n == 4,
+            .f64_ => n == 0 or n == 8,
+            .utf8, .hex => n == 0,
+            else => false,
+        };
+        if (!ok) return bad(diag, alloc, bd, "line {d}: the size of {s} does not fit its transform", .{ ln.lineno, ln.locator });
+        return;
+    }
+    if (std.mem.eql(u8, ln.wraw, "present")) {
+        if (n != 0) return bad(diag, alloc, bd, "line {d}: present with a size", .{ln.lineno});
+        ln.wpresent = true;
+        return;
+    }
+    if (n == 0) return bad(diag, alloc, bd, "line {d}: {s} {s} {s} needs a size", .{ ln.lineno, @tagName(ln.tag), ln.locator, ln.wraw });
+    const v = parseUnsigned(ln.wraw) orelse
+        return bad(diag, alloc, bd, "line {d}: value {s} is not `present` or an unsigned decimal integer", .{ ln.lineno, ln.wraw });
+    if (n < 8 and (v >> @as(u6, @intCast(8 * @as(u32, n)))) != 0) {
+        return bad(diag, alloc, bd, "line {d}: value {d} does not fit {d} bytes", .{ ln.lineno, v, n });
+    }
+    ln.wint = v;
+}
+
+fn tlvPrefix(a: []const u32, b: []const u32) bool {
+    return a.len < b.len and std.mem.eql(u32, a, b[0..a.len]);
+}
+
+// Ruling 5 of 0.13: no line at a path and another at a path under it, in
+// one scope.
+fn tlvCheckScope(alloc: std.mem.Allocator, a: []const Line, b: []const Line, diag: *Diag) anyerror!void {
+    const both = [2][]const Line{ a, b };
+    for (both) |xs| for (xs) |*x| {
+        if (x.tag == .group) continue;
+        for (both) |ys| for (ys) |*y| {
+            if (y.tag == .group) continue;
+            if (tlvPrefix(x.tpath, y.tpath)) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a value, and line {d} reads it as a set", .{ x.lineno, x.locator, y.lineno });
+            }
+        };
+    };
+}
+
+// ---- decode
+
+const TlvItem = struct {
+    tag: u32,
+    val: []const u8,
+    // the value read as a set, once a line walks into it
+    sub: ?[]TlvItem = null,
+    sub_bad: bool = false,
+};
+
+// `n` bytes at `pos` as an unsigned big-endian integer (n at most 8).
+fn tlvBE(buf: []const u8, pos: *usize, n: usize) !u64 {
+    if (buf.len - pos.* < n) return E.@"malformed-wire";
+    var v: u64 = 0;
+    for (buf[pos.*..][0..n]) |b| v = (v << 8) | b;
+    pos.* += n;
+    return v;
+}
+
+fn beU64(b: []const u8) u64 {
+    var v: u64 = 0;
+    for (b) |c| v = (v << 8) | c;
+    return v;
+}
+
+fn tlvReadTag(p: *const Pack, buf: []const u8, pos: *usize) !u32 {
+    const mw = E.@"malformed-wire";
+    if (p.tlv_tag != 0) return @intCast(try tlvBE(buf, pos, p.tlv_tag));
+    var v: u32 = 0;
+    var k: usize = 0;
+    while (k < 4) : (k += 1) {
+        if (pos.* >= buf.len) return mw;
+        const b = buf[pos.*];
+        pos.* += 1;
+        if (k == 0 and b == 0x80) return mw; // a group of zero before others
+        v = (v << 7) | (b & 0x7f);
+        if (b & 0x80 == 0) return v;
+    }
+    return mw; // a fifth byte
+}
+
+fn tlvReadLen(p: *const Pack, buf: []const u8, pos: *usize) !u64 {
+    if (p.tlv_len != 0) return tlvBE(buf, pos, p.tlv_len);
+    if (pos.* >= buf.len) return E.@"malformed-wire";
+    const b = buf[pos.*];
+    pos.* += 1;
+    if (b < 0x80) return b;
+    if (b == 0x80 or b > 0x88) return E.@"malformed-wire";
+    return tlvBE(buf, pos, b - 0x80);
+}
+
+// A set read whole: items to its last byte. A length is compared with the
+// bytes left, never added to the offset first.
+fn tlvParseSet(alloc: std.mem.Allocator, p: *const Pack, buf: []const u8) ![]TlvItem {
+    var items = std.ArrayList(TlvItem).init(alloc);
+    errdefer items.deinit();
+    var pos: usize = 0;
+    while (pos < buf.len) {
+        const tag = try tlvReadTag(p, buf, &pos);
+        const len = try tlvReadLen(p, buf, &pos);
+        if (len > buf.len - pos) return E.@"malformed-wire";
+        const l: usize = @intCast(len);
+        try items.append(.{ .tag = tag, .val = buf[pos..][0..l] });
+        pos += l;
+    }
+    return items.toOwnedSlice();
+}
+
+fn sum16(b: []const u8) u16 {
+    var s: u16 = 0;
+    for (b, 0..) |c, i| s +%= if (i % 2 == 0) @as(u16, c) << 8 else c;
+    return s;
+}
+
+// Steps 1, 2, 4 and the top set of step 3 of "Reading a message". The
+// checksum item is left out of the items.
+fn tlvParse(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror![]TlvItem {
+    const mw = E.@"malformed-wire";
+    const buf = hexDecode(alloc, bytes) catch |err| return bad(diag, alloc, err, "the input is not hex of even length", .{});
+    var set = buf;
+    if (p.tlv_key.len > 0) {
+        if (!std.mem.startsWith(u8, buf, p.tlv_key)) return bad(diag, alloc, mw, "the input does not begin with the key", .{});
+        var pos: usize = p.tlv_key.len;
+        const len = tlvReadLen(p, buf, &pos) catch return bad(diag, alloc, mw, "the length after the key is cut short or not a length", .{});
+        if (len > buf.len - pos) return bad(diag, alloc, mw, "the set states {d} bytes, {d} follow its length", .{ len, buf.len - pos });
+        set = buf[pos..][0..@intCast(len)];
+    }
+    var items = tlvParseSet(alloc, p, set) catch |err| {
+        if (err == error.OutOfMemory) return err;
+        return bad(diag, alloc, mw, "the set is not a sequence of whole items", .{});
+    };
+    if (p.tlv_sum) |t| {
+        if (items.len == 0) return bad(diag, alloc, mw, "no checksum item", .{});
+        const last = items[items.len - 1];
+        if (last.tag != t or last.val.len != 2) return bad(diag, alloc, mw, "the last item is not the checksum item: tag {d} with a value of two bytes", .{t});
+        for (items[0 .. items.len - 1]) |it| {
+            if (it.tag == t) return bad(diag, alloc, mw, "an item of the checksum tag {d} before the last", .{t});
+        }
+        const end = @intFromPtr(last.val.ptr) - @intFromPtr(buf.ptr);
+        const got = sum16(buf[0..end]);
+        const want = beU64(last.val);
+        if (got != want) return bad(diag, alloc, mw, "the checksum is {x:0>4}, the message sums to {x:0>4}", .{ want, got });
+        items = items[0 .. items.len - 1];
+    }
+    return items;
+}
+
+// The value of an item read as a set, read whole the first time.
+fn tlvSub(alloc: std.mem.Allocator, p: *const Pack, it: *TlvItem) ![]TlvItem {
+    if (it.sub) |s| return s;
+    if (it.sub_bad) return E.@"malformed-wire";
+    const s = tlvParseSet(alloc, p, it.val) catch |err| {
+        if (err == error.OutOfMemory) return err;
+        it.sub_bad = true;
+        return E.@"malformed-wire";
+    };
+    it.sub = s;
+    return s;
+}
+
+fn tlvFirst(items: []TlvItem, tag: u32) ?*TlvItem {
+    for (items) |*it| if (it.tag == tag) return it;
+    return null;
+}
+
+// The first occurrence at a path, each set on the way read whole; null:
+// absent. A set on the way that is not well formed is `malformed-wire`.
+fn tlvAt(alloc: std.mem.Allocator, p: *const Pack, top: []TlvItem, path: []const u32) !?*TlvItem {
+    var cur = top;
+    for (path[0 .. path.len - 1]) |t| {
+        const it = tlvFirst(cur, t) orelse return null;
+        cur = try tlvSub(alloc, p, it);
+    }
+    return tlvFirst(cur, path[path.len - 1]);
+}
+
+fn tlvWhenHolds(alloc: std.mem.Allocator, p: *const Pack, items: []TlvItem, ln: *const Line) bool {
+    const it = (tlvAt(alloc, p, items, ln.tpath) catch return false) orelse return false;
+    if (ln.wpresent) return true;
+    if (it.val.len == 0 or it.val.len > 8) return false;
+    return beU64(it.val) == ln.wint;
+}
+
+// One value through its transform. null: absent (an empty value but under
+// `utf8` and `hex`).
+fn tlvDecodeValue(alloc: std.mem.Allocator, ln: *const Line, val: []const u8) !?MV {
+    const td = E.@"transform-decode";
+    const t = ln.transform;
+    switch (t.kind) {
+        .utf8 => {
+            if (!std.unicode.utf8ValidateSlice(val)) return td;
+            return MV{ .str = val };
+        },
+        .hex => return MV{ .str = try hexEncode(alloc, val) },
+        else => {},
+    }
+    if (val.len == 0) return null;
+    switch (t.kind) {
+        .uint, .twos, .uscale, .sscale => {
+            if (val.len > 8) return td;
+            const u = beU64(val);
+            const s = signExtend(u, val.len * 8);
+            return switch (t.kind) {
+                .uint => MV{ .int = @bitCast(u) },
+                .twos => MV{ .int = s },
+                .uscale => MV{ .float = t.factor.mul(@floatFromInt(u)) + t.offset },
+                else => MV{ .float = t.factor.mul(@floatFromInt(s)) + t.offset },
+            };
+        },
+        .f32_ => {
+            if (val.len != 4) return td;
+            const f: f32 = @bitCast(@as(u32, @intCast(beU64(val))));
+            if (!std.math.isFinite(f)) return td;
+            return MV{ .float = @as(f64, f) };
+        },
+        .f64_ => {
+            if (val.len != 8) return td;
+            const f: f64 = @bitCast(beU64(val));
+            if (!std.math.isFinite(f)) return td;
+            return MV{ .float = f };
+        },
+        else => return td,
+    }
+}
+
+fn tlvReadField(alloc: std.mem.Allocator, p: *const Pack, items: []TlvItem, ln: *const Line) !?MV {
+    const it = (try tlvAt(alloc, p, items, ln.tpath)) orelse return null;
+    return tlvDecodeValue(alloc, ln, it.val);
+}
+
+// Every set on the path of a line of the selected scope, read whole.
+fn tlvWalkScope(alloc: std.mem.Allocator, p: *const Pack, items: []TlvItem, lines: []const Line, diag: *Diag) anyerror!void {
+    for (lines) |*ln| {
+        if (ln.tag == .group or ln.tpath.len < 2) continue;
+        _ = tlvAt(alloc, p, items, ln.tpath) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            return bad(diag, alloc, err, "a set on the path {s} is not a sequence of whole items", .{ln.locator});
+        };
+    }
+}
+
+// Residue of one set at `prefix`: every item whose tag no line of the scope
+// names there, every occurrence; a later occurrence of a named tag is
+// dropped; a set a line walks into gives the residue of its own items.
+fn tlvResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, items: []TlvItem, prefix: []const u32, pstr: []const u8, e: *Entity) anyerror!void {
+    var seen = std.ArrayList(u32).init(alloc);
+    defer seen.deinit();
+    for (items) |*it| {
+        var names = false;
+        var walks = false;
+        for (lines) |*ln| {
+            if (ln.tag == .group) continue;
+            const tp = ln.tpath;
+            if (tp.len <= prefix.len or tp[prefix.len] != it.tag or !std.mem.eql(u32, tp[0..prefix.len], prefix)) continue;
+            if (tp.len > prefix.len + 1) {
+                walks = true;
+            } else if (ln.maps()) names = true;
+        }
+        const path = if (pstr.len == 0) try intToStr(alloc, it.tag) else try std.fmt.allocPrint(alloc, "{s}.{d}", .{ pstr, it.tag });
+        if (!names and !walks) {
+            try e.addResidue(.{ .fmt = p.format, .locator = path, .value = try hexEncode(alloc, it.val) });
+            continue;
+        }
+        if (std.mem.indexOfScalar(u32, seen.items, it.tag) != null) continue;
+        try seen.append(it.tag);
+        if (walks) {
+            const sub = try tlvSub(alloc, p, it);
+            const np = try alloc.alloc(u32, prefix.len + 1);
+            @memcpy(np[0..prefix.len], prefix);
+            np[prefix.len] = it.tag;
+            try tlvResidue(alloc, p, lines, sub, np, path, e);
+        }
+    }
+}
+
+// ---- encode
+
+const TlvNode = struct {
+    slots: std.ArrayListUnmanaged(TlvSlot) = .{},
+    residue: std.ArrayListUnmanaged(TlvRes) = .{},
+};
+
+// An item a line writes, at the position of the first line that names it:
+// a nested set, or a value (a `when` or `const` value over a field's).
+const TlvSlot = struct {
+    tag: u32,
+    set: ?*TlvNode = null,
+    fixed: ?[]const u8 = null,
+    field: ?[]const u8 = null,
+    want_empty: bool = false,
+};
+
+const TlvRes = struct { tag: u32, val: []const u8 };
+
+fn tlvSlot(alloc: std.mem.Allocator, node: *TlvNode, tag: u32) !*TlvSlot {
+    for (node.slots.items) |*s| if (s.tag == tag) return s;
+    try node.slots.append(alloc, .{ .tag = tag });
+    return &node.slots.items[node.slots.items.len - 1];
+}
+
+// The set holding the last tag of a path, its nested sets made on the way.
+fn tlvNodeFor(alloc: std.mem.Allocator, root: *TlvNode, path: []const u32) !*TlvNode {
+    var node = root;
+    for (path[0 .. path.len - 1]) |t| {
+        const s = try tlvSlot(alloc, node, t);
+        if (s.set == null) {
+            const n = try alloc.create(TlvNode);
+            n.* = .{};
+            s.set = n;
+        }
+        node = s.set.?;
+    }
+    return node;
+}
+
+fn tlvUint(alloc: std.mem.Allocator, v: u64, n: usize) ![]u8 {
+    const out = try alloc.alloc(u8, n);
+    for (0..n) |i| out[n - 1 - i] = @truncate(v >> @as(u6, @intCast(8 * i)));
+    return out;
+}
+
+// A value through its transform into its bytes.
+fn tlvEncodeValue(alloc: std.mem.Allocator, ln: *const Line, mv: MV) ![]u8 {
+    const te = E.@"transform-encode";
+    const n: usize = ln.tsize;
+    switch (ln.transform.kind) {
+        .utf8 => {
+            if (mv != .str) return te;
+            return alloc.dupe(u8, mv.str);
+        },
+        .hex => {
+            if (mv != .str or mv.str.len % 2 != 0) return te;
+            const out = try alloc.alloc(u8, mv.str.len / 2);
+            for (out, 0..) |*b, i| {
+                const hi = hexVal(mv.str[2 * i]) orelse return te;
+                const lo = hexVal(mv.str[2 * i + 1]) orelse return te;
+                b.* = hi * 16 + lo;
+            }
+            return out;
+        },
+        .uint, .twos => {
+            if (mv != .int) return te;
+            const v = mv.int;
+            if (n < 8) {
+                const bits: u6 = @intCast(8 * n);
+                if (ln.transform.kind == .uint) {
+                    if (v < 0 or v >= (@as(i64, 1) << bits)) return te;
+                } else {
+                    const half = @as(i64, 1) << (bits - 1);
+                    if (v < -half or v >= half) return te;
+                }
+            }
+            return tlvUint(alloc, @bitCast(v), n);
+        },
+        .uscale, .sscale => {
+            var tmp = ln.*;
+            tmp.blen = 8 * n;
+            return tlvUint(alloc, try bitsEncodeField(&tmp, mv), n);
+        },
+        .f32_ => return tlvUint(alloc, try bitsEncodeField(ln, mv), 4),
+        .f64_ => return tlvUint(alloc, try bitsEncodeField(ln, mv), 8),
+        else => return te,
+    }
+}
+
+fn tlvPutTag(p: *const Pack, out: *std.ArrayList(u8), tag: u32) !void {
+    if (p.tlv_tag == 0) {
+        if (tag > tlv_max_tag) return E.@"transform-encode";
+        var n: u5 = 1;
+        while (n < 4 and (tag >> (7 * n)) != 0) n += 1;
+        var i: u5 = n;
+        while (i > 0) {
+            i -= 1;
+            var b: u8 = @truncate((tag >> (7 * i)) & 0x7f);
+            if (i > 0) b |= 0x80;
+            try out.append(b);
+        }
+        return;
+    }
+    const n = p.tlv_tag;
+    if (n < 4 and tag >= (@as(u32, 1) << @as(u5, @intCast(8 * @as(u32, n))))) return E.@"transform-encode";
+    for (0..n) |i| try out.append(@truncate(tag >> @as(u5, @intCast(8 * (n - 1 - i)))));
+}
+
+fn tlvPutLen(p: *const Pack, out: *std.ArrayList(u8), len: usize) !void {
+    const v: u64 = len;
+    var n: usize = p.tlv_len;
+    if (n == 0) {
+        if (v < 128) return out.append(@intCast(v));
+        n = 1;
+        while (n < 8 and (v >> @as(u6, @intCast(8 * n))) != 0) n += 1;
+        try out.append(@intCast(0x80 + n));
+    } else if (n < 8 and (v >> @as(u6, @intCast(8 * n))) != 0) return E.@"transform-encode";
+    for (0..n) |i| try out.append(@truncate(v >> @as(u6, @intCast(8 * (n - 1 - i)))));
+}
+
+fn tlvPutItem(p: *const Pack, out: *std.ArrayList(u8), tag: u32, val: []const u8) !void {
+    try tlvPutTag(p, out, tag);
+    try tlvPutLen(p, out, val.len);
+    try out.appendSlice(val);
+}
+
+// A set: the items of the lines in their order, then the residue in input
+// order. A nested set with no items is not written.
+fn tlvWriteSet(alloc: std.mem.Allocator, p: *const Pack, node: *const TlvNode, out: *std.ArrayList(u8)) anyerror!void {
+    slots: for (node.slots.items) |s| {
+        if (s.set) |sub| {
+            var inner = std.ArrayList(u8).init(alloc);
+            try tlvWriteSet(alloc, p, sub, &inner);
+            if (inner.items.len > 0) try tlvPutItem(p, out, s.tag, inner.items);
+            continue;
+        }
+        const v: []const u8 = s.fixed orelse s.field orelse blk: {
+            if (!s.want_empty) continue;
+            // `when … present`: residue of that tag stands for the item
+            for (node.residue.items) |r| if (r.tag == s.tag) continue :slots;
+            break :blk "";
+        };
+        try tlvPutItem(p, out, s.tag, v);
+    }
+    for (node.residue.items) |r| try tlvPutItem(p, out, r.tag, r.val);
+}
+
+// The tags of a residue locator; null: not a path of tags.
+fn tlvResiduePath(alloc: std.mem.Allocator, loc: []const u8) !?[]const u32 {
+    var tags = std.ArrayList(u32).init(alloc);
+    var it = std.mem.splitScalar(u8, loc, '.');
+    while (it.next()) |seg| {
+        const v = parseUnsigned(seg) orelse return null;
+        if (v > tlv_max_tag) return null;
+        try tags.append(@intCast(v));
+    }
+    return try tags.toOwnedSlice();
+}
+
+fn tlvEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    const root = try alloc.create(TlvNode);
+    root.* = .{};
+    // the positions of the items, and the `when` and `const` values
+    for (sc.lines) |*ln| {
+        if (ln.tag == .group) continue;
+        const node = try tlvNodeFor(alloc, root, ln.tpath);
+        const s = try tlvSlot(alloc, node, ln.tpath[ln.tpath.len - 1]);
+        if (!ln.isFixed()) continue;
+        if (ln.wpresent) {
+            s.want_empty = true;
+        } else if (s.fixed == null) {
+            s.fixed = try tlvUint(alloc, ln.wint, ln.tsize);
+        }
+    }
+    // the fields: the earliest present key of a path, unless a `when` or
+    // `const` names it
+    for (sc.lines) |*ln| {
+        if (!ln.isField()) continue;
+        const node = try tlvNodeFor(alloc, root, ln.tpath);
+        const s = try tlvSlot(alloc, node, ln.tpath[ln.tpath.len - 1]);
+        if (s.fixed != null or s.field != null) continue;
+        const mv = (fieldValue(p, sc, e, ln) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
+        s.field = tlvEncodeValue(alloc, ln, mv) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
+    }
+    // residue of this format, each in its set
+    for (e.residue.items) |r| {
+        if (!std.mem.eql(u8, r.fmt, p.format)) continue;
+        const path = (try tlvResiduePath(alloc, r.locator)) orelse continue;
+        const val = hexDecode(alloc, r.value) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            return bad(diag, alloc, E.@"transform-encode", "residue {s}: the value is not hex", .{r.locator});
+        };
+        const node = try tlvNodeFor(alloc, root, path);
+        try node.residue.append(alloc, .{ .tag = path[path.len - 1], .val = val });
+    }
+    var set = std.ArrayList(u8).init(alloc);
+    tlvWriteSet(alloc, p, root, &set) catch |err| {
+        if (err == error.OutOfMemory) return err;
+        return bad(diag, alloc, err, "a tag or a length does not fit its size", .{});
+    };
+    if (p.tlv_sum) |t| {
+        try tlvPutTag(p, &set, t);
+        try tlvPutLen(p, &set, 2);
+        try set.appendSlice(&.{ 0, 0 });
+    }
+    var out = std.ArrayList(u8).init(alloc);
+    if (p.tlv_key.len > 0) {
+        try out.appendSlice(p.tlv_key);
+        tlvPutLen(p, &out, set.items.len) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            return bad(diag, alloc, err, "the length of the set, {d}, does not fit its size", .{set.items.len});
+        };
+    }
+    try out.appendSlice(set.items);
+    if (p.tlv_sum != null) {
+        const n = out.items.len;
+        const s = sum16(out.items[0 .. n - 2]);
+        out.items[n - 2] = @truncate(s >> 8);
+        out.items[n - 1] = @truncate(s);
+    }
+    return hexEncode(alloc, out.items);
 }
 
 // ---------------------------------------------------------------------------
@@ -8240,10 +8913,11 @@ const Fuzz = struct {
 
     // Once per format: text nested 200000 levels deep, and hex of one unit
     // repeated to 700000 digits, which a sequential pack reads as some
-    // hundred thousand list items.
+    // hundred thousand list items and a `tlv` pack as as many items of one
+    // tag (`0100`).
     fn deep(self: *Fuzz, from: []const u8, to: []const u8) !void {
         const alloc = self.eng.alloc;
-        const units = [_][]const u8{ "<a>", "<a b=\"c\">", "[", "{\"a\":", "{\"properties\":{\"a\":[", "ff", "82", "0a", "0b", "0aff", "22ffffffffffffffffff01" };
+        const units = [_][]const u8{ "<a>", "<a b=\"c\">", "[", "{\"a\":", "{\"properties\":{\"a\":[", "ff", "82", "0a", "0b", "0aff", "22ffffffffffffffffff01", "0100" };
         for (units, 0..) |u, n| {
             const reps: usize = if (n < 5) 200000 else 700000 / u.len;
             const big = try alloc.alloc(u8, u.len * reps);

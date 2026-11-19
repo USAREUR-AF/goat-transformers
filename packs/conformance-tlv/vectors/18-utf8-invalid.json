@@ -1,0 +1,9 @@
+{
+  "name": "utf8-invalid",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3446020800000177e5138e000302c3280402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a900000102bf2e",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): c3 28 is not UTF-8. Derived without an engine by a standalone reference program."
+}

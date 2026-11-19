@@ -1,0 +1,14 @@
+{
+  "name": "raw-round-trip",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3442020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100102300802010581480200074101021604deadbeef17010901026310",
+  "expect": "060e2b3442020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100102300802010581480200074101021604deadbeef17010901026310",
+  "model": {
+    "@kind": "raw",
+    "probe.s1": "high",
+    "probe.s2": "deadbeef"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Kind raw (65 = 2); hex value as lowercase text; const 23:1 9 written as one byte 09; via levels 2 -> high. Derived without an engine by a standalone reference program."
+}

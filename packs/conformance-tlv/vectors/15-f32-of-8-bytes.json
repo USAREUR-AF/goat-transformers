@@ -1,0 +1,9 @@
+{
+  "name": "f32-of-8-bytes",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b344d020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff800000000000015080000000042a9000001024420",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): f32 takes exactly 4 bytes. Derived without an engine by a standalone reference program."
+}

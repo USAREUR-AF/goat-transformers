@@ -283,6 +283,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             else if (t[1] == "protobuf") p.wire = Wire::Protobuf;
             else if (t[1] == "json") p.wire = Wire::Json;
             else if (t[1] == "text") p.wire = Wire::Text;
+            else if (t[1] == "tlv") p.wire = Wire::Tlv;
             else throw Error(ErrorKind::UnknownWire, p.format, "", where + ": wire '" + t[1] + "'");
         } else if (kw == "layout") {
             arity(1);
@@ -290,8 +291,12 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (t[1] != "sequential") throw bad("layout '" + t[1] + "' in a pack that also has 'layout sequential'");
         } else if (kw == "word_bytes") {
             throw bad("'word_bytes' is not used in a sequential pack");
+        } else if (kw == "checksum" && t.size() == 3 && t[1] == "sum16") {
+            throw bad("'checksum sum16' applies to wire tlv only");
         } else if (kw == "delimiter" || kw == "start" || kw == "checksum") {
             throw bad("'" + kw + "' applies to wire text only");
+        } else if (kw == "tag" || kw == "key") {
+            throw bad("'" + kw + "' applies to wire tlv only");
         } else if (kw == "root") {
             throw bad("'root' applies to wire xml only");
         } else if (kw == "bit_order") {
@@ -381,6 +386,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (tf == -1) throw bad(terr + " for field '" + f.key + "'");
             // A transform of the text wire (v0.10) is bad-directive on another wire.
             if (transform_is_text_only(f.transform)) throw bad("transform '" + t[3] + "' applies to wire text only");
+            // So is one of the tlv wire (v0.13).
+            if (transform_is_tlv_only(f.transform)) throw bad("transform '" + t[3] + "' applies to wire tlv only");
             if (!transform_is_bits(f.transform))
                 throw Error(ErrorKind::BadDirective, p.format, f.locator,
                             where + ": transform '" + std::string(transform_name(f.transform)) +

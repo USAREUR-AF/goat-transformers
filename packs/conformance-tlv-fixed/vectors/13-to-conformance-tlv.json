@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-tlv",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv",
+  "input": "0100040000002a0200054741544f520a000105090000",
+  "expect": "060e2b34150402002a3008020105814802000741010101020809",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Kind plain (first kind, no requires); probe.n 42 as twos:2 002a; 48 holds x=5 and the default y=7; when 65 written 01; callsign is not mapped by conformance-tlv; checksum over the output. Derived without an engine by a standalone reference program."
+}

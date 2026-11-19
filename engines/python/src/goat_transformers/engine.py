@@ -2,7 +2,7 @@
 
 import os
 
-from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_text, wire_xml
+from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_text, wire_tlv, wire_xml
 from .errors import (
     BadDirective, DistributionRefused, DistributionViolation, DuplicateFormat, DuplicateModule, KeyTypeMismatch,
     MalformedWire,
@@ -19,7 +19,7 @@ MAX_ITEMS = 100000  # ruling 7b of 0.11: the default limit on the list items of 
 
 _CODECS = {
     "xml": wire_xml, "geojson": wire_geojson, "json": wire_json, "bits": wire_bits, "protobuf": wire_protobuf,
-    "text": wire_text,
+    "text": wire_text, "tlv": wire_tlv,
 }
 _Num = wire_geojson.Num
 
@@ -362,7 +362,7 @@ class Engine:
         Ruling 2c and 2d of 0.11: on `xml`, and on `geojson` when the member is
         a JSON string, `int` and `float` read integer and number text; a JSON
         number is read by the JSON grammar."""
-        if wire in ("bits", "protobuf", "text"):
+        if wire in ("bits", "protobuf", "text", "tlv"):
             return transform.decode(raw)
         if wire == "xml":
             return transform.decode(raw)
@@ -420,6 +420,8 @@ class Engine:
         plan = pack.plan(kind)
         if wire == "bits":
             codec.check_length(pack, msg, plan)
+        elif wire == "tlv":
+            codec.walk(pack, msg, plan)  # the nested sets of the selected scope, after the kind (0.13)
 
         failures = []  # (key, locator, reason) of every field that could not be decoded
         budget = [limit]  # the items this decode may still hold (ruling 7 of 0.11)
@@ -431,7 +433,7 @@ class Engine:
         res = None
         if wire == "xml" or wire == "json":
             res = codec.residue(pack, msg, mapped)
-        elif wire == "text":
+        elif wire == "text" or wire == "tlv":
             res = codec.residue(pack, msg, plan)
         elif wire == "geojson":
             res = {}
@@ -672,7 +674,7 @@ class Engine:
         residue = entity.residue.get(pack.name, {})
         if wire == "json":
             return codec.encode(pack, enc, residue).encode("utf-8")
-        if wire == "text":
+        if wire == "text" or wire == "tlv":
             return codec.write(pack, enc, residue).encode("utf-8")
         if wire == "xml":
             return codec.write(pack, enc, residue.items(), plan.root).encode("utf-8")
@@ -689,7 +691,10 @@ class Engine:
         defaults = plan.defaults
         c2n = pack.cot_to_native
         values = enc.values
+        skip = wire_tlv.overridden(plan) if pack.wire == "tlv" else ()
         for i, f in plan.ifields:
+            if i in skip:
+                continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)
             key = f.key
             if key in have:
                 value = have[key]

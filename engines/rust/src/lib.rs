@@ -121,6 +121,10 @@ pub enum Transform {
     Hms(u32),
     /// text: `hms_dmy:<f>`, a time and a date `ddmmyy` in a pair, as epoch ms
     HmsDmy(u32),
+    /// tlv: the value bytes as UTF-8 text
+    Utf8,
+    /// tlv: the value bytes as lowercase hex text
+    Hex,
 }
 
 /// The scale of `uscale` / `sscale`: a decimal factor, or a fraction
@@ -176,7 +180,7 @@ impl Transform {
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
             "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
-            "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "dec", "dm", "hms", "hms_dmy",
+            "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
@@ -227,6 +231,8 @@ impl Transform {
             "psint" => Ok(Transform::Psint),
             "pdouble" => Ok(Transform::Pdouble),
             "pfloat" => Ok(Transform::Pfloat),
+            "utf8" => Ok(Transform::Utf8),
+            "hex" => Ok(Transform::Hex),
             other => err(format!("unknown-transform: `{}` is not a transform", other)),
         }
     }
@@ -270,7 +276,7 @@ impl Transform {
     /// The shared-model type this transform yields (spec/shared-model.md).
     pub fn value_type(&self) -> KeyType {
         match self {
-            Transform::StringT | Transform::Pstring | Transform::Ascii => KeyType::Str,
+            Transform::StringT | Transform::Pstring | Transform::Ascii | Transform::Utf8 | Transform::Hex => KeyType::Str,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
             Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
@@ -442,7 +448,7 @@ impl Transform {
     /// The JSON kind this transform produces, so a JSON wire emits it correctly.
     fn json_kind(&self) -> JsonKind {
         match self {
-            Transform::StringT | Transform::Iso8601Ms | Transform::Pstring | Transform::Ascii => {
+            Transform::StringT | Transform::Iso8601Ms | Transform::Pstring | Transform::Ascii | Transform::Utf8 | Transform::Hex => {
                 JsonKind::StringK
             }
             Transform::Float
@@ -1021,6 +1027,8 @@ pub enum Wire {
     Json,
     /// one record of ASCII text: delimited fields and columns (engine-spec v0.10)
     Text,
+    /// a set of tag-length-value items, sets nested in values (engine-spec v0.13)
+    Tlv,
 }
 
 #[derive(Clone, Debug)]
@@ -1136,6 +1144,10 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
     if wire == Wire::Text {
         return bad(ln, "`absent` is not valid on the text wire");
     }
+    // ruling 10 of 0.13: not stated on the tlv wire yet
+    if wire == Wire::Tlv {
+        return bad(ln, "`absent` is not valid on the tlv wire in 0.13");
+    }
     // the quoted empty token `""` is the one value "the empty text"
     let values: Vec<&str> = if arg.is_empty() { vec![""] } else { arg.split(',').collect() };
     if arg.contains('"') || (values.len() > 1 && values.iter().any(|v| v.is_empty())) {
@@ -1206,7 +1218,7 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
                 };
                 Sentinel::Text(text, json)
             }
-            Wire::Text => unreachable!("rejected above"),
+            Wire::Text | Wire::Tlv => unreachable!("rejected above"),
         });
     }
     f.absent = out;
@@ -1433,6 +1445,8 @@ pub struct Pack {
     pub seq: Option<seq::SeqBody>,
     /// text only: the delimiter, the start text and the checksum
     pub text: text::TextConf,
+    /// tlv only: the tag and length encodings, the key and the checksum
+    pub tlv: tlv::TlvConf,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -1479,6 +1493,11 @@ impl Pack {
         // text wire (engine-spec v0.10): `delimiter`, `start`, `checksum` and the line of each
         let mut text_conf = text::TextConf::default();
         let mut text_lines: [Option<usize>; 3] = [None; 3];
+        // tlv wire (engine-spec v0.13): `tag`, `length`, `key`, `checksum sum16`
+        let mut tlv_lines = tlv::TlvLines::default();
+        // a transform that does not parse, while the wire may still be `tlv`
+        // (ruling 8 of 0.13): (line, error), raised once the wire is known
+        let mut bad_transform: Option<(usize, Error)> = None;
         for (lineno, raw) in text.lines().enumerate() {
             let toks = tokenize(raw)?;
             if toks.is_empty() {
@@ -1492,6 +1511,8 @@ impl Pack {
                     return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
+                "tag" | "length" | "key" => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
+                "checksum" if toks.get(1).map(|s| s.as_str()) == Some("sum16") => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 d @ ("delimiter" | "start" | "checksum") => {
                     let slot = match d {
                         "delimiter" => 0,
@@ -1530,6 +1551,7 @@ impl Pack {
                         "protobuf" => Wire::Protobuf,
                         "json" => Wire::Json,
                         "text" => Wire::Text,
+                        "tlv" => Wire::Tlv,
                         o => return err(format!("unknown-wire: line {}: unknown wire `{}`", ln, o)),
                     })
                 }
@@ -1724,7 +1746,14 @@ impl Pack {
                     let mut f = FieldDef {
                         model_key: toks[1].clone(),
                         locator: toks[2].clone(),
-                        transform: Transform::parse(&toks[3])?,
+                        transform: match Transform::parse(&toks[3]) {
+                            Ok(t) => t,
+                            Err(e) if wire == Some(Wire::Tlv) => {
+                                bad_transform.get_or_insert((ln, e));
+                                Transform::Hex
+                            }
+                            Err(e) => return Err(e),
+                        },
                         line: ln,
                         via: None,
                         swap: false,
@@ -1756,7 +1785,7 @@ impl Pack {
                     layout_line = Some(ln);
                 }
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
-                "pad" | "align" | "presence" | "if" | "opt" | "chain" | "fx" | "length" | "also" => {
+                "pad" | "align" | "presence" | "if" | "opt" | "chain" | "fx" | "also" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
                 other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
@@ -1773,6 +1802,14 @@ impl Pack {
             return err("missing-version: the pack has no `version` line");
         }
         let wire = wire.ok_or(Error { msg: "missing-wire: the pack has no `wire` line".into() })?;
+        // ruling 8 of 0.13: on tlv a transform that does not parse is
+        // `bad-directive`, checked after the file is read
+        if let Some((ln, e)) = bad_transform {
+            return match wire {
+                Wire::Tlv => bad(ln, format!("the transform is not one of the tlv wire: {}", e.msg)),
+                _ => Err(e),
+            };
+        }
         // xml: a pack-level root, unless every kind has its own (engine-spec v0.6)
         if wire == Wire::Xml && root.is_empty() && (kinds.is_empty() || kinds.iter().any(|k| k.root.is_none())) {
             return err("missing-root: an xml pack has no `root` for the pack or for one of its kinds");
@@ -1903,6 +1940,11 @@ impl Pack {
             text::check_pack(&text_conf, &fields, &whens, &consts, &groups, &kinds)?;
         }
         let format = format.expect("checked above");
+        let tlv_conf = match (wire, tlv_lines.first_line()) {
+            (Wire::Tlv, _) => tlv::check_pack(&tlv_lines, &fields, &whens, &consts, &groups, &kinds)?,
+            (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` are valid only on the tlv wire"),
+            _ => tlv::TlvConf::default(),
+        };
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
         })?;
@@ -1930,6 +1972,7 @@ impl Pack {
             typemap_from_cot: from_cot,
             seq: None,
             text: text_conf,
+            tlv: tlv_conf,
         })
     }
 
@@ -2382,6 +2425,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         return bad(f.line, "`optional` is valid only on the bits and text wires");
     }
     // engine-spec v0.10: the text wire's own transforms, and the transforms it takes
+    // engine-spec v0.13: the tlv wire's own transforms, and the transforms it takes
+    tlv::check_transform(wire, f)?;
     if t.is_text_only() && wire != Wire::Text {
         return bad(f.line, format!("the transform of `{}` is valid only on the text wire", f.model_key));
     }
@@ -2401,7 +2446,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         }
         Wire::Bits => t.is_bits(),
         Wire::Protobuf => t.is_protobuf(),
-        Wire::Json | Wire::Text => true,
+        // text and tlv: checked above, against their own tables
+        Wire::Json | Wire::Text | Wire::Tlv => true,
     };
     if !valid {
         return bad(f.line, format!("the transform of `{}` is not valid on this wire", f.model_key));
@@ -2496,6 +2542,7 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
         }
     }
     let ok = match wire {
+        Wire::Tlv => return bad(g.line, "`group` is not valid on the tlv wire in 0.13"),
         Wire::Xml => names('/') && !g.locator.contains('@') && !g.locator.contains('#'),
         Wire::Json => names('.'),
         // engine-spec v0.10: `group <list> <i> item <n>`
@@ -2566,7 +2613,7 @@ fn check_scope(
     let sep = match wire {
         Wire::Xml => Some('/'),
         Wire::Json | Wire::GeoJson | Wire::Protobuf => Some('.'),
-        Wire::Bits | Wire::Text => None,
+        Wire::Bits | Wire::Text | Wire::Tlv => None,
     };
     if let Some(sep) = sep {
         // group path -> the first group of the scope with that path
@@ -2662,6 +2709,7 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
                 w.num = number(w)?;
             }
         }
+        Wire::Tlv => tlv::resolve_when(w)?,
         Wire::Text => {
             text::check_when_locator(w)?;
             if w.value == "present" {
@@ -3053,6 +3101,7 @@ impl Engine {
             Wire::Protobuf => protobuf::decode(p, bytes),
             Wire::Json => jsonwire::decode(p, bytes),
             Wire::Text => text::decode(p, bytes),
+            Wire::Tlv => tlv::decode(p, bytes),
         }
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
@@ -3064,6 +3113,7 @@ impl Engine {
             Wire::Protobuf => protobuf::encode(p, ent),
             Wire::Json => jsonwire::encode(p, ent),
             Wire::Text => text::encode(p, ent),
+            Wire::Tlv => tlv::encode(p, ent),
         }
     }
     /// `convert` with no context.
@@ -5481,6 +5531,7 @@ pub mod bits {
 
 pub mod seq;
 pub mod text;
+pub mod tlv;
 
 // ---------------------------------------------------------------------------
 // protobuf codec: fields by number, dot-path for nested messages. I/O as hex.
@@ -6063,7 +6114,11 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     ("length", 1, usize::MAX),
     ("delimiter", 1, 1),
     ("start", 1, 1),
-    ("checksum", 1, 1),
+    ("checksum", 1, 2),
+    // the tlv wire (engine-spec v0.13): the form of these lines is checked
+    // after the file is read, with the other checks of that version
+    ("tag", 1, usize::MAX),
+    ("key", 1, usize::MAX),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
@@ -6097,6 +6152,14 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
             None => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, d)),
         };
         let n = toks.len() - 1;
+        // ruling 5 of 0.11 makes `key` in a pack `unknown-directive` (load
+        // vector 445, `key extra string -`); 0.13 adds `key <hex>`, one
+        // argument. Read together: only the one-argument form is a directive of a pack.
+        if name == "key" && n != 1 {
+            return err(format!("unknown-directive: line {}: `key` with {} arguments is a line of a module, not of a pack", ln, n));
+        }
+        // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) two
+        let most = if name == "checksum" && toks[1] != "sum16" { 1 } else { most };
         if n < least || n > most {
             return bad(ln, format!("`{}` takes {} arguments, got {}", name, if least == most { least.to_string() } else { format!("at least {}", least) }, n));
         }
@@ -6119,6 +6182,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     "protobuf" => Wire::Protobuf,
                     "json" => Wire::Json,
                     "text" => Wire::Text,
+                    "tlv" => Wire::Tlv,
                     o => return err(format!("unknown-wire: line {}: `{}` is not a wire", ln, o)),
                 })
             }
@@ -6135,8 +6199,12 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
             }
             "field" => {
                 check_locator(wire, sequential, &toks[2], ln)?;
-                let transform = Transform::parse(&toks[3])
-                    .map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?;
+                // ruling 8 of 0.13: on tlv a transform that does not parse is
+                // `bad-directive`, checked after the file is read
+                let transform = match Transform::parse(&toks[3]) {
+                    Err(_) if wire == Some(Wire::Tlv) => Transform::Hex,
+                    t => t.map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?,
+                };
                 // the options and the values of an `absent` option are line
                 // checks too; a bit length above 64 is checked after the file (4d)
                 let mut f = FieldDef {
@@ -6160,7 +6228,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                         _ => None,
                     };
                     let decided = w != Wire::Bits || bits_len.map_or(false, |len| len <= 64);
-                    if decided && !(w == Wire::Text) {
+                    // text (ruling 16 of 0.10) and tlv (ruling 10 of 0.13):
+                    // `absent` does not fit the wire, checked after the file
+                    if decided && !matches!(w, Wire::Text | Wire::Tlv) {
                         resolve_absent(w, &mut f, bits_len)?;
                     }
                 }
@@ -6255,7 +6325,9 @@ fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> 
                 return bad_loc("a bits locator is <word>:<pos>:<len>, digits only");
             }
         }
-        Some(Wire::Text) | None => {}
+        // tlv (engine-spec v0.13): a path is checked after the file is read,
+        // and its errors are `bad-directive`
+        Some(Wire::Text) | Some(Wire::Tlv) | None => {}
     }
     Ok(())
 }

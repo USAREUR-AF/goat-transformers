@@ -1,0 +1,9 @@
+{
+  "name": "empty-input-with-key",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Empty input: the key is missing. Derived without an engine by a standalone reference program."
+}

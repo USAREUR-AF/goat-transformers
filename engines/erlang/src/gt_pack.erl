@@ -1,4 +1,4 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.11).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.13).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
 %% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
@@ -37,11 +37,15 @@
 %%     protobuf [FieldNumber]; inside a group `.` is []
 %%     text     {fld, I} | {col, I, From, Len} | {pair, I, J}; inside a group
 %%              relative to the item's first field
+%%     tlv      {[Tag], Size :: none | 1..8}
 %%   A text pack also has delimiter (binary() | none), start (binary(), <<>>
 %%   for none) and checksum (none | nmea).
+%%   A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
+%%   4), key (none | binary()) and sum16 (none | {sum16, Tag}).
 %%   Inside a group a geojson pack uses the json locators.
 %%   `when` Value: bits -> integer(); protobuf -> present | integer();
 %%                 text wires -> present | {text, binary(), Forced :: boolean()}
+%%                 tlv -> present | {uint, integer()}
 %%   `const` Value: as a `when` value, never `present`.
 %%
 %% gt_engine:load_pack/2 checks the pack against the loaded modules, types the
@@ -79,6 +83,7 @@ parse(Bin) ->
              distribution => undefined, sources => [], uses => [],
              common => [], defaults => [], kinds => [], kind_names => #{},
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
+             tag_enc => ber_oid, len_enc => ber, key => none, sum16 => none, tlv_seen => #{},
              cur => common, late => [], gstack => [], sstack => [],
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
@@ -110,6 +115,9 @@ parse(Bin) ->
       fun({bad, Fmt, Args}) -> load_error('bad-directive', Fmt, Args);
          ({raw, Kind, Msg}) -> erlang:error({load_error, Kind, Msg});
          ({text_only, _Dir}) when Wire =:= text -> ok;
+         ({tlv_only, _Dir}) when Wire =:= tlv -> ok;
+         ({tlv_only, Text}) ->
+              load_error('bad-directive', "~s is valid only on a tlv wire, not ~s", [Text, Wire]);
          ({text_only, Dir}) ->
               load_error('bad-directive', "~s is valid only on a text wire, not ~s", [Dir, Wire]);
          ({via, Table}) ->
@@ -143,13 +151,14 @@ parse(Bin) ->
     end,
     case Wire of
         text -> text_checks(P2);
+        tlv -> tlv_checks(P2);
         _ -> ok
     end,
     P3 = case Layout of
              sequential -> seq_resolve(P2);
              fixed -> check_scopes(P2), P2
          end,
-    P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen,
+    P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
                       headers, listed_seen],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
@@ -220,6 +229,8 @@ yields({uscale, _, _}) -> float;
 yields({sscale, _, _}) -> float;
 yields(f32)     -> float;
 yields(f64)     -> float;
+yields(utf8)    -> string;
+yields(hex)     -> string;
 yields(pdouble) -> float;
 yields(pfloat)  -> float;
 yields(int)        -> int;
@@ -345,7 +356,9 @@ pack_directives() ->
      <<"default">>, <<"map">>, <<"typemap">>, <<"group">>, <<"end">>, <<"word_bytes">>,
      <<"bit_order">>, <<"layout">>, <<"also">>, <<"pad">>, <<"align">>, <<"presence">>,
      <<"if">>, <<"opt">>, <<"chain">>, <<"fx">>, <<"length">>, <<"delimiter">>,
-     <<"start">>, <<"checksum">>].
+     <<"start">>, <<"checksum">>,
+     %% the `tlv` wire (Version 0.13)
+     <<"tag">>, <<"key">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -380,11 +393,20 @@ arg_count_ok(Dir, N) ->
     end.
 
 pre_line([Dir | Args], P0) ->
-    case lists:member(Dir, pack_directives()) of
+    %% only a one-argument `key` is the directive of the tlv wire; any other
+    %% `key` is the model-module form (ruling 11 of 0.13)
+    IsDirective = lists:member(Dir, pack_directives())
+        andalso not (Dir =:= <<"key">> andalso length(Args) =/= 1),
+    case IsDirective of
         true -> ok;
         false -> line_error('unknown-directive', "~s is not a directive of a pack", [Dir])
     end,
-    case arg_count_ok(Dir, length(Args)) of
+    %% `checksum sum16 <tag>` of the tlv wire takes two (ruling 12 of 0.13)
+    CountOk = case {Dir, Args} of
+                  {<<"checksum">>, [<<"sum16">>, _]} -> true;
+                  _ -> arg_count_ok(Dir, length(Args))
+              end,
+    case CountOk of
         true -> ok;
         false -> line_error('bad-directive', "~s does not take ~p argument(s)", [Dir, length(Args)])
     end,
@@ -443,7 +465,7 @@ known_directives() ->
      <<"default">>, <<"map">>, <<"group">>, <<"end">>,
      <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
      <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
-     <<"delimiter">>, <<"start">>, <<"checksum">>].
+     <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -460,6 +482,12 @@ apply_line([<<"root">>, R], #{cur := Cur} = P) ->
             end
     end;
 apply_line([<<"word_bytes">>, N], P) -> _ = word_bytes(N), P;    % read by first_arg
+apply_line([<<"checksum">> | Args], #{wire := tlv} = P) -> tlv_directive(checksum, Args, P);
+apply_line([<<"length">> | Args], #{wire := tlv} = P) -> tlv_directive(length, Args, P);
+apply_line([<<"tag">> | Args], P) -> tlv_directive(tag, Args, P);
+apply_line([<<"key">> | Args], P) -> tlv_directive(key, Args, P);
+apply_line([<<"checksum">>, <<"sum16">>, _] = Args, P) ->
+    tlv_directive(checksum, tl(Args), P);
 apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
                              Dir =:= <<"checksum">> ->
     text_directive(binary_to_atom(Dir), V, P);
@@ -532,6 +560,8 @@ apply_line([<<"default">>, Key, Val], #{cur := Cur} = P) ->
         common -> P#{defaults := [{Key, Val} | maps:get(defaults, P)]};
         #{defaults := D} -> P#{cur := Cur#{defaults := [{Key, Val} | D]}}
     end;
+apply_line([<<"group">>, List, _LocS | _], #{wire := tlv}) ->
+    load_error('bad-directive', "group ~s: groups are not allowed on a tlv wire in 0.13", [List]);
 apply_line([<<"group">>, List, LocS | Rest], #{gstack := Stack} = P) ->
     Wire = need_wire(P),
     Loc = group_loc(Wire, LocS, in_group(P), P),
@@ -576,7 +606,9 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
         [{bad, "optional on ~s: valid only on a bits or text wire", [LocS]}
          || Optional, Wire =/= bits, Wire =/= text] ++
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
-        AbsentChecks,
+        AbsentChecks ++
+        [{bad, "~s on ~s: ~s", [TrS, LocS, Why]}
+         || Wire =:= tlv, Why <- [tlv_size_check(Tr, Loc)], Why =/= ok],
     P1 = lists:foldl(fun late/2, P0, Checks),
     add_line({field, Key, Loc, Tr, LocS, Opts}, P1);
 apply_line([Dir | Args], _P) ->
@@ -631,6 +663,7 @@ wire_atom(<<"json">>) -> json;
 wire_atom(<<"bits">>) -> bits;
 wire_atom(<<"protobuf">>) -> protobuf;
 wire_atom(<<"text">>) -> text;
+wire_atom(<<"tlv">>) -> tlv;
 wire_atom(W) -> line_error('unknown-wire', "~s", [W]).
 
 word_bytes(S) ->
@@ -669,7 +702,10 @@ sentinels(Wire, Tr, Len, Opts) ->
                 Values -> {setelement(5, Opts, Values), []}
             catch
                 throw:{absent_bad, Fmt, Args} ->
-                    case Wire =:= bits andalso is_integer(Len) andalso Len > 64 of
+                    %% `absent` on tlv is whether an option fits its wire,
+                    %% checked after the file (ruling 14 of 0.13)
+                    case (Wire =:= bits andalso is_integer(Len) andalso Len > 64)
+                        orelse Wire =:= tlv of
                         true -> {setelement(5, Opts, none), [{bad, Fmt, Args}]};
                         false -> line_error('bad-directive', Fmt, Args)
                     end
@@ -705,6 +741,8 @@ absent_values(Wire, Tr, Len, Arg) ->
         xml -> [absent_text(V) || V <- Values];
         %% `absent` on `text` is bad-directive (ruling 16 of 0.10)
         text -> absent_bad("absent ~s: not a field option on a text wire", [Arg]);
+        %% `absent` on `tlv` is bad-directive (ruling 10 of 0.13)
+        tlv -> absent_bad("absent ~s: not a field option on a tlv wire", [Arg]);
         _ ->                                           % json, geojson
             Js = [absent_json(V) || V <- Values],
             %% a geojson coordinate takes only number text (ruling 25 of 0.9)
@@ -795,6 +833,7 @@ is_number_text(B) -> gt_num:num_text(B) =/= error.
 %% ===================================================================
 %% Inside a group a locator is relative to one item: the same forms, and on
 %% json, geojson and protobuf also `.` for the item itself.
+parse_loc(tlv, S, _P) -> tlv_loc(S);
 parse_loc(text, S, P) ->
     Loc = text_loc(S),
     case maps:get(gstack, P) of
@@ -966,6 +1005,7 @@ group_spec(Wire, [Tok | _], LocS, _P) ->
 %% mapped by at most one group. On bits: a group counted by a locator is the
 %% last thing in its scope, and a field of an item stays within its item.
 check_scopes(#{wire := text} = P) -> text_scopes(P);
+check_scopes(#{wire := tlv} = P) -> tlv_scopes(P);
 check_scopes(#{common := Common, kinds := Kinds, wire := Wire}) ->
     case Kinds of
         [] -> check_scope(Common, none, Wire);
@@ -1127,6 +1167,24 @@ fixed_value(_Which, protobuf, _Loc, LocS, ValS, P) ->
         error -> load_error('bad-directive',
                             "protobuf value ~s at ~s is not an unsigned integer", [ValS, LocS])
     end;
+fixed_value(wh, tlv, {_Path, Size}, LocS, <<"present">>, P) ->
+    case Size of
+        none -> {present, P};
+        _ -> {present, late({bad, "when ~s present: present takes no size", [LocS]}, P)}
+    end;
+fixed_value(const, tlv, _Loc, LocS, <<"present">>, P) ->
+    {{uint, 0}, late({bad, "const ~s present: a const needs a value", [LocS]}, P)};
+fixed_value(Which, tlv, {_Path, Size}, LocS, ValS, P) ->
+    case {uint(ValS), Size} of
+        {error, _} ->
+            {{uint, 0}, late({bad, "~s ~s: value ~s is not an unsigned decimal integer",
+                              [Which, LocS, ValS]}, P)};
+        {V, none} ->
+            {{uint, V}, late({bad, "~s ~s ~s: a numeric value needs a size", [Which, LocS, ValS]}, P)};
+        {V, N} when V >= 1 bsl (8 * N) ->
+            {{uint, V}, late({bad, "~s ~s: value ~s does not fit ~p bytes", [Which, LocS, ValS, N]}, P)};
+        {V, _} -> {{uint, V}, P}
+    end;
 fixed_value(wh, _Text, _Loc, _LocS, <<"present">>, P) -> {present, P};
 fixed_value(const, _Text, _Loc, LocS, <<"present">>, _P) ->
     load_error('bad-directive', "const ~s present: write =present for the text", [LocS]);
@@ -1139,7 +1197,19 @@ fixed_value(_Which, _Text, _Loc, _LocS, V, P) -> {{text, V, false}, P}.
 %% -> {Transform, [LateCheck]}: on the text wire, and for a transform valid
 %% only on the text wire, the wire check runs after the file is read
 %% (ruling 10 of 0.10).
-parse_transform(Wire, S) ->
+%% On tlv a transform whose name or parameters do not parse is bad-directive
+%% after the file is read (ruling 8 of 0.13); the line keeps the placeholder
+%% `invalid`, and the pack never loads.
+parse_transform(tlv, S) ->
+    try transform(S) of
+        _ -> parse_transform1(tlv, S)
+    catch error:{E, _, Msg} when E =:= load_error; E =:= line_error ->
+        %% not a line check on tlv (ruling 8 of 0.13)
+        {invalid, [{bad, "transform ~s on a tlv wire: ~s", [S, Msg]}]}
+    end;
+parse_transform(Wire, S) -> parse_transform1(Wire, S).
+
+parse_transform1(Wire, S) ->
     {Class, Tr} = transform(S),
     Ok = case {Class, Wire} of
              {text, xml} -> true;
@@ -1150,6 +1220,14 @@ parse_transform(Wire, S) ->
              {json, json} -> true;
              {bits, bits} -> true;
              {protobuf, protobuf} -> true;
+             {tlvonly, tlv} -> true;
+             {tlvonly, _} -> late;
+             {bits, tlv} ->
+                 case tlv_transform(Tr) of
+                     true -> true;
+                     false -> late
+                 end;
+             {_, tlv} -> late;
              {textonly, _} -> late;
              {_, text} -> late;
              _ -> false
@@ -1186,6 +1264,8 @@ transform(<<"linscale:", Rest/binary>> = S) ->
     end;
 transform(<<"uscale:", Rest/binary>> = S) -> {bits, scale(uscale, Rest, S)};
 transform(<<"sscale:", Rest/binary>> = S) -> {bits, scale(sscale, Rest, S)};
+transform(<<"utf8">>)       -> {tlvonly, utf8};
+transform(<<"hex">>)        -> {tlvonly, hex};
 transform(<<"pstring">>)    -> {protobuf, pstring};
 transform(<<"pvarint">>)    -> {protobuf, pvarint};
 transform(<<"psint">>)      -> {protobuf, psint};
@@ -1212,7 +1292,8 @@ transform(T) ->
     Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"bool">>, <<"uint">>,
              <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
              <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
-             <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>],
+             <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>,
+             <<"utf8">>, <<"hex">>],
     case lists:member(Name, Known) of
         true -> line_error('bad-directive', "transform ~s: its parameters are not valid", [T]);
         false -> line_error('unknown-transform', "~s", [T])
@@ -1343,7 +1424,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
-                 <<"delimiter">>, <<"start">>, <<"checksum">>,
+                 <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
     case lists:member(Dir, PackLevel) of
@@ -1882,4 +1963,159 @@ text_scopes(#{common := Common, kinds := Kinds}) ->
                         end, Lines);
                   _ -> load_error('bad-directive', "a scope holds a second group", [])
               end
+      end, Scopes).
+
+%% ===================================================================
+%% the `tlv` wire (engine-spec Version 0.13)
+%% ===================================================================
+%% A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
+%% 4), key (none | binary()) and sum16 (none | {sum16, Tag}). Its locators are
+%% {[Tag], Size :: none | 1..8}; a `when` value is present | {uint, V}, a
+%% `const` value {uint, V}.
+%%
+%% `tag`, `length`, `key` and `checksum`: another wire, a second line, a
+%% line after the first `kind` and a value of another form are refused after
+%% the file is read, before missing-distribution.
+tlv_directive(Dir, Args, #{tlv_seen := Seen, cur := Cur, kind_names := Kinds} = P0) ->
+    Text = lists:join(" ", [binary_to_list(A) || A <- Args]),
+    %% the wire is checked after the file is read: tag, key and checksum may
+    %% stand before the wire line (ruling 13 of 0.13)
+    P1 = late({tlv_only, [atom_to_list(Dir), " ", Text]}, P0),
+    P2 = case maps:is_key(Dir, Seen) of
+             true -> late({bad, "~s appears more than once", [Dir]}, P1);
+             false -> P1
+         end,
+    P3 = case Cur =:= common andalso map_size(Kinds) =:= 0 of
+             true -> P2;
+             false -> late({bad, "~s stands after the first kind", [Dir]}, P2)
+         end,
+    P = P3#{tlv_seen := Seen#{Dir => true}},
+    case tlv_value(Dir, Args) of
+        {ok, Field, V} -> P#{Field := V};
+        error -> late({bad, "~s ~s is not a form the tlv wire allows", [Dir, Text]}, P)
+    end.
+
+tlv_value(tag, [<<"ber-oid">>]) -> {ok, tag_enc, ber_oid};
+tlv_value(tag, [N]) when N =:= <<"1">>; N =:= <<"2">>; N =:= <<"4">> ->
+    {ok, tag_enc, binary_to_integer(N)};
+tlv_value(length, [<<"ber">>]) -> {ok, len_enc, ber};
+tlv_value(length, [N]) when N =:= <<"1">>; N =:= <<"2">>; N =:= <<"4">> ->
+    {ok, len_enc, binary_to_integer(N)};
+tlv_value(key, [H]) when byte_size(H) >= 2, byte_size(H) =< 128, byte_size(H) rem 2 =:= 0 ->
+    case lists:all(fun(C) -> (C >= $0 andalso C =< $9) orelse (C >= $a andalso C =< $f) end,
+                   binary_to_list(H)) of
+        true -> {ok, key, gt_bits:hex_to_bytes(H)};
+        false -> error
+    end;
+tlv_value(checksum, [<<"sum16">>, T]) ->
+    case tag_text(T) of
+        {ok, N} -> {ok, sum16, {sum16, N}};
+        error -> error
+    end;
+tlv_value(_, _) -> error.
+
+%% A tag: a decimal integer from 0 to 2^28-1 with no leading zero.
+tag_text(<<$0, _, _/binary>>) -> error;
+tag_text(S) ->
+    case uint(S) of
+        N when is_integer(N), N < 1 bsl 28 -> {ok, N};
+        _ -> error
+    end.
+
+%% `<tag>[.<tag>...][:<n>]`, n one digit from 1 to 8 (ruling 6 of 0.13). The
+%% tags are read here as digits; their form and range are checked after the
+%% file is read (tlv_checks/1).
+tlv_loc(S) ->
+    {PathS, Size} =
+        case binary:split(S, <<":">>, [global]) of
+            [A] -> {A, none};
+            [A, <<D>>] when D >= $1, D =< $8 -> {A, D - $0};
+            _ -> load_error('bad-directive', "tlv locator ~s is not <path>[:<n>], n from 1 to 8", [S])
+        end,
+    Tags = [uint(T) || T <- binary:split(PathS, <<".">>, [global])],
+    case lists:all(fun is_integer/1, Tags) of
+        true -> {Tags, Size};
+        false -> load_error('bad-directive', "tlv path ~s is not tags separated by .", [S])
+    end.
+
+%% The value transforms of the tlv wire.
+tlv_transform(uint) -> true;
+tlv_transform(twos) -> true;
+tlv_transform(f32) -> true;
+tlv_transform(f64) -> true;
+tlv_transform({uscale, _, _}) -> true;
+tlv_transform({sscale, _, _}) -> true;
+tlv_transform(_) -> false.
+
+%% A size against its transform -> ok | Why.
+tlv_size_check(Tr, {_, Size}) ->
+    Integer = lists:member(Tr, [uint, twos]) orelse
+        (is_tuple(Tr) andalso lists:member(element(1, Tr), [uscale, sscale])),
+    if
+        Integer, Size =:= none -> "the transform needs a size :<n>";
+        Integer -> ok;
+        Tr =:= f32, Size =/= none, Size =/= 4 -> "f32 takes no size or :4";
+        Tr =:= f64, Size =/= none, Size =/= 8 -> "f64 takes no size or :8";
+        (Tr =:= utf8 orelse Tr =:= hex), Size =/= none -> "the transform takes no size";
+        true -> ok
+    end.
+
+%% After the file is read: the form and range of every tag of a path and of
+%% the checksum tag, and no field, when or const on the checksum tag.
+tlv_checks(#{tag_enc := TagEnc, sum16 := Sum, common := Common, kinds := Kinds}) ->
+    Limit = case TagEnc of
+                ber_oid -> 1 bsl 28;
+                N -> 1 bsl (8 * N)
+            end,
+    case Sum of
+        {sum16, T} when T >= Limit ->
+            load_error('bad-directive', "checksum tag ~p does not fit tag ~p", [T, TagEnc]);
+        _ -> ok
+    end,
+    lists:foreach(
+      fun(L) ->
+              LocS = tlv_line_text(L),
+              [PathS | _] = binary:split(LocS, <<":">>),
+              lists:foreach(
+                fun(TS) ->
+                        case tag_text(TS) of
+                            {ok, Tag} when Tag < Limit -> ok;
+                            _ -> load_error('bad-directive',
+                                            "tag ~s of ~s is not a decimal from 0 to ~p with no leading zero",
+                                            [TS, LocS, Limit - 1])
+                        end
+                end, binary:split(PathS, <<".">>, [global])),
+              {[First | _], _} = line_loc_of(L),
+              case Sum of
+                  {sum16, First} ->
+                      load_error('bad-directive', "~s begins with the checksum tag ~p", [LocS, First]);
+                  _ -> ok
+              end
+      end, Common ++ lists:append([maps:get(lines, K) || K <- Kinds])).
+
+tlv_line_text({field, _, _, _, LocS, _}) -> LocS;
+tlv_line_text({wh, _, _, LocS}) -> LocS;
+tlv_line_text({const, _, _, LocS}) -> LocS.
+
+%% Ruling 5 of 0.13: in one scope (the common lines with one kind's), no line
+%% stands at a path under the path of another line.
+tlv_scopes(#{common := Common, kinds := Kinds}) ->
+    Scopes = case Kinds of
+                 [] -> [Common];
+                 _ -> [Common ++ maps:get(lines, K) || K <- Kinds]
+             end,
+    lists:foreach(
+      fun(Lines) ->
+              Paths = maps:from_list([{element(1, line_loc_of(L)), tlv_line_text(L)} || L <- Lines]),
+              lists:foreach(
+                fun(L) ->
+                        {Path, _} = line_loc_of(L),
+                        case [maps:get(Pre, Paths) || Pre <- prefixes(Path), maps:is_key(Pre, Paths)] of
+                            [] -> ok;
+                            [Pre | _] ->
+                                load_error('bad-directive',
+                                           "~s lies under ~s, which a line of the same scope reads as a value",
+                                           [tlv_line_text(L), Pre])
+                        end
+                end, Lines)
       end, Scopes).

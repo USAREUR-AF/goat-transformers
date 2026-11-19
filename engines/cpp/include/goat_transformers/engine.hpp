@@ -191,9 +191,10 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Pstring, Pvarint, Psint, Pdouble, Pfloat,
                        Bool,                             // v0.5, json wire only
                        Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
-                       IntW, Dec, Dm, Hms, HmsDmy        // v0.10, text wire only
+                       IntW, Dec, Dm, Hms, HmsDmy,       // v0.10, text wire only
+                       Utf8, Hex                         // v0.13, tlv wire only
 };
-enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text };
+enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 
 // A locator of the `text` wire (v0.10): a field, a column of a field, or a pair
 // of fields. Inside a group the indexes count from the item's first field.
@@ -231,6 +232,9 @@ struct FieldLine {
     char text_p = 'P';
     char text_n = 'N';
     TextLocator text_loc;       // text wire: the parsed locator
+    // tlv wire (v0.13): the path of tags, outermost first, and `:<n>` (0 when none).
+    std::vector<std::uint32_t> tlv_path;
+    std::uint32_t tlv_size = 0;
     std::size_t line = 0;       // line number in pack.def
     // v0.6 field options.
     std::string via;            // `via <table>`: the value table's name; empty when none
@@ -258,6 +262,8 @@ struct WhenLine {
     std::string text;             // text wires: the value with a leading `=` stripped
     std::uint64_t number = 0;     // bits wire, and protobuf when not `present`
     TextLocator text_loc;         // text wire: the parsed locator
+    std::vector<std::uint32_t> tlv_path;  // tlv wire: the path of tags, outermost first
+    std::uint32_t tlv_size = 0;           // tlv wire: `:<n>`, 0 when none
     std::size_t line = 0;         // line number in pack.def
 };
 
@@ -415,6 +421,13 @@ struct Pack {
     std::string start;
     bool checksum_nmea = false;
     std::vector<SeqPresence> seq_presences;
+    // v0.13, the `tlv` wire: `tag`, `length`, `key` and `checksum sum16 <tag>`.
+    std::uint32_t tlv_tag_bytes = 0;     // 0: ber-oid; else 1, 2 or 4
+    std::uint32_t tlv_length_bytes = 0;  // 0: ber; else 1, 2 or 4
+    bool tlv_has_key = false;
+    std::string tlv_key;                 // the key's bytes
+    bool tlv_checksum = false;           // `checksum sum16 <tag>`
+    std::uint32_t tlv_checksum_tag = 0;
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.

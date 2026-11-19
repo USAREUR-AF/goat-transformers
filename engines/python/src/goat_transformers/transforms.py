@@ -638,8 +638,9 @@ def build_bits_transform(name, length):
 _TEXTUAL = ("xml", "geojson", "json", "text")
 TRANSFORM_WIRES = {
     "string": _TEXTUAL, "float": _TEXTUAL, "int": _TEXTUAL, "iso8601_ms": _TEXTUAL, "bool": ("json",),
-    "uint": ("bits",), "twos": ("bits",), "linscale": ("bits",), "uscale": ("bits",), "sscale": ("bits",),
-    "f32": ("bits",), "f64": ("bits",), "ascii": ("bits",),
+    "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
+    "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),
+    "utf8": ("tlv",), "hex": ("tlv",),  # 0.13
     "pstring": ("protobuf",), "pvarint": ("protobuf",), "psint": ("protobuf",), "pdouble": ("protobuf",),
     "pfloat": ("protobuf",),
     "dec": ("text",), "dm": ("text",), "hms": ("text",), "hms_dmy": ("text",),

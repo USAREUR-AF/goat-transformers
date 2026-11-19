@@ -1,0 +1,13 @@
+{
+  "name": "uint-at-its-own-length",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "01000107020001410a00080000000000000005090000",
+  "expect": "01000400000007020001410a000105090000",
+  "model": {
+    "probe.n": "7",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): uint reads 1 byte (07) and 8 bytes (..05) at their own length and writes n bytes. Derived without an engine by a standalone reference program."
+}

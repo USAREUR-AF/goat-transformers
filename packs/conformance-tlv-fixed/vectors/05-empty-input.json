@@ -1,0 +1,12 @@
+{
+  "name": "empty-input",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "",
+  "expect": "",
+  "model": {
+    "@kind": "basic"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Without key and checksum, an empty input is an empty set: kind basic, no items; output is empty. Derived without an engine by a standalone reference program."
+}

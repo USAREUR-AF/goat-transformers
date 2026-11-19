@@ -1,7 +1,8 @@
 %% gt_engine: decode(format, bytes) -> entity, encode(format, entity) -> bytes,
 %% complete(entity), convert. Clean-room from spec/ and packs/ only
-%% (engine-spec Versions 0.1 - 0.11; a sequential
-%% bits pack is read and written by gt_seq, the `text` wire by gt_text).
+%% (engine-spec Versions 0.1 - 0.13; a sequential
+%% bits pack is read and written by gt_seq, the `text` wire by gt_text, the
+%% `tlv` wire by gt_tlv).
 %%
 %% Entity = #{model => #{Key :: binary() => binary() | integer() | float()},
 %%            lists => #{ListName :: binary() => [Item]},
@@ -664,6 +665,7 @@ record_failure(Pack, Fmt, Args) ->
     end.
 
 decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decode(Pack, Bytes);
+decode_wire(#{wire := tlv} = Pack, Bytes) -> gt_tlv:decode(Pack, Bytes);
 decode_wire(#{wire := Wire} = Pack, Bytes) ->
     Ctx = open(Wire, Pack, Bytes),
     {Kind, Lines} = select_decode(Pack, Wire, Ctx),
@@ -1253,6 +1255,7 @@ encode_wire(json, Pack, Lines, Src, Residue) ->
            end, T1, Residue),
     jt_write(T2);
 encode_wire(text, Pack, Lines, Src, Residue) -> gt_text:encode(Pack, Lines, Src, Residue);
+encode_wire(tlv, Pack, Lines, Src, Residue) -> gt_tlv:encode(Pack, Lines, Src, Residue);
 encode_wire(bits, #{word_bytes := WB} = Pack, Lines, Src, _Residue) ->
     {Writes, Overs, End} = bits_plan(Pack, Lines, Src, 0, {[], [], 0}),
     M0 = gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack)),

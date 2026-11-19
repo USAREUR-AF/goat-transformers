@@ -623,6 +623,10 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	if isTextOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire text", name)
 	}
+	// utf8 and hex are valid only on the tlv wire (spec 0.13).
+	if isTLVOnlyTransform(name) {
+		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire tlv", name)
+	}
 	switch wire {
 	case WireBits:
 		switch {

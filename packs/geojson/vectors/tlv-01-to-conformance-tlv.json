@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-tlv",
+  "from": "geojson",
+  "to": "conformance-tlv",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90,45,3080]},\"properties\":{\"time_ms\":1614456000000,\"course\":84.5,\"extra\":\"x\"},\"id\":\"G-1\"}",
+  "expect": "060e2b3433020800000177e5138e000303472d310d04400000000e04c00000000f02333330058148020007410101150442a90000010299ae",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Kind plain (first, no requires); lat 45*2147483647/90 = 1073741823.5 rounds half away to 1073741824 = 40000000; lon -90*2147483647/180 = -1073741823.5 -> -1073741824 = c0000000; hae (3080+900)*65535/19900 = 13107 exactly = 3333; course 84.5 as f32 42a90000; default probe.y 7 makes 48 = 81 48 02 00 07; geojson residue is not written; checksum last. Derived without an engine by a standalone reference program."
+}

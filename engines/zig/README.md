@@ -12,8 +12,9 @@ Version 0.7), reads and writes sequential binary layouts (`layout sequential`
 on the `bits` wire, spec Version 0.8), reads wire values that mean "no value"
 as absent keys and writes them for absent keys (the `absent` field option,
 spec Version 0.9), reads and writes one-record text formats (the `text` wire,
-spec Version 0.10), follows the strict rulings of spec Version 0.11, and
-converts between formats via the shared model.
+spec Version 0.10), follows the strict rulings of spec Version 0.11, reads and
+writes tag-length-value sets (the `tlv` wire, spec Version 0.13), and converts
+between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -54,6 +55,11 @@ An input that is not a well-formed message of its wire fails with
   reached. Field number 0, a field number above 2^29-1 and wire types 3, 4, 6
   and 7 are refused; a varint is at most ten bytes and its tenth byte at most
   1, in a packed field too.
+- `tlv`: the hex text as for `bits`; the key, the length after it, the top
+  set read whole and the `sum16` checksum item are checked before any line is
+  read; a nested set is read whole when a line of the selected kind walks
+  into it. A length is compared with the bytes left, never added to an
+  offset first.
 - `bits`, sequential: every read is checked against the end of the input, of
   the stated whole length and of the enclosing `length` extent, with
   arithmetic that cannot wrap.

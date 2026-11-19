@@ -1,0 +1,12 @@
+{
+  "name": "const-not-checked",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3442020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100102300802010581480200074101021604deadbeef17010501025f10",
+  "expect": "060e2b3442020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f023333100102300802010581480200074101021604deadbeef17010901026310",
+  "model": {
+    "@kind": "raw"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): const 23:1 9 is not checked on decode and is mapped (not residue); encode writes 09. Derived without an engine by a standalone reference program."
+}

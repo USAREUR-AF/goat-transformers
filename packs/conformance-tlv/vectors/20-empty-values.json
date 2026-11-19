@@ -1,0 +1,13 @@
+{
+  "name": "empty-values",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b34300200030004000d04400000000e04c00000000f02333310010130080201058148020007410101140015003300010264aa",
+  "expect": "060e2b342803000d04400000000e04c00000000f02333310010130080201058148020007410101330001025c7b",
+  "model": {
+    "uid": "",
+    "@kind": "plain"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): An empty value is absent for uint, twos, f64 and f32 (no transform-decode: an empty f32 is not a wrong size), the empty string for utf8 (written back as an item of length 0); residue item 51 holds \"\" and is written back with length 0. Derived without an engine by a standalone reference program."
+}

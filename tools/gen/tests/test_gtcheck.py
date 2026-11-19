@@ -511,6 +511,33 @@ class TextWireTest(Refusals):
 # (`unknown-directive`, `bad-locator`, `missing-wire`, ...), so these vectors
 # are not compared with it until it implements 0.11.
 V011_FIRST, V011_LAST = 339, 499
+# The load vectors of rulings 11 to 14 of 0.13 pin how the tlv lines meet the
+# 0.11 line checks (`unknown-directive`, `missing-wire`, and their order), so
+# they wait for gtcheck's 0.11 too.
+V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tlv-74"}
+
+class TlvWireTest(Refusals):
+    TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
+
+    def test_tlv_header_and_paths_give_tags_and_sizes(self):
+        pack = gtcheck.load_pack(self.TLV + "field probe.qty 48.2:4 uint\nfield uid 3 utf8\n"
+                                 "field lat 13 f64\nkind a\nwhen 65:1 1\n", model())
+        nested, text, double = pack.common
+        self.assertEqual((pack.tag, pack.length, pack.key, pack.sum16), ("2", "ber", "060e2b34", 1))
+        self.assertEqual((nested.path, nested.size, text.path, text.size, double.size),
+                         ((48, 2), 4, (3,), None, None))
+        self.assertEqual((pack.kinds[0].lines[0].path, pack.kinds[0].lines[0].size), ((65,), 1))
+
+    def test_tlv_rules_are_refused_with_their_line(self):
+        self.refuse_pack(self.TLV + "field probe.qty 70000:1 uint\n", "bad-directive", 10)
+        self.refuse_pack(self.TLV + "field probe.qty 4:1 uint\nfield lat 4.2 f32\n", "bad-directive", 11)
+        self.refuse_pack(self.TLV + "field probe.qty 1.4:1 uint\n", "bad-directive", 10)
+        self.refuse_pack(self.TLV + "field uid 3 utf8\nconst 5:1 256\n", "bad-directive", 11)
+        self.refuse_pack(self.TLV + "field probe.qty 4 utf8\n", "key-type-mismatch", 10)
+        # the tlv forms on another wire are refused after the file is read,
+        # before `missing-distribution`
+        no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\nwire json\n'
+        self.refuse_pack(no_distribution + "tag 1\nfield uid id string\n", "bad-directive", 6)
 
 
 class ConformanceLoadVectorsTest(unittest.TestCase):
@@ -524,6 +551,8 @@ class ConformanceLoadVectorsTest(unittest.TestCase):
         for path in paths:
             head = os.path.basename(path).split("-")[0]
             if head.isdigit() and V011_FIRST <= int(head) <= V011_LAST:
+                continue
+            if "-".join(os.path.basename(path).split("-")[:3]) in V011_TLV:
                 continue
             with open(path, encoding="utf-8") as fh:
                 vector = json.load(fh)

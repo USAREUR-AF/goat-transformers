@@ -262,4 +262,15 @@ void check_text_pack(const Pack& p);
 Entity decode_text(const Pack& p, const std::string& bytes);
 std::string encode_text(const Pack& p, const Entity& e);
 
+// ---- the `tlv` wire (Version 0.13)
+
+// A tag as a pack writes it: a decimal integer from 0 to 2^28-1 with no leading zero.
+bool parse_tlv_tag(const std::string& text, std::uint32_t& out);
+// Parse the path and size of every `field`, `when` and `const` line of a tlv
+// pack, and check them against the transforms, the directives and one another
+// (bad-directive). Run after the file is read.
+void check_tlv_pack(Pack& p);
+Entity decode_tlv(const Pack& p, const std::string& bytes);
+std::string encode_tlv(const Pack& p, const Entity& e);
+
 }  // namespace goat_transformers::detail

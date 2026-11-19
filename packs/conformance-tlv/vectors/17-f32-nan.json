@@ -1,0 +1,9 @@
+{
+  "name": "f32-nan",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff800000000000015047fc0000001027d33",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): An f32 NaN on the wire is transform-decode (ruling 23 of 0.5). Derived without an engine by a standalone reference program."
+}

@@ -11,7 +11,7 @@ import java.util.Set;
 
 /** A parsed {@code pack.def}. */
 public final class Pack {
-    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON, TEXT }
+    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON, TEXT, TLV }
 
     /** One {@code field} or {@code when} line: a locator on the wire. */
     public abstract static class Line {
@@ -37,6 +37,8 @@ public final class Pack {
         final TextTransform text;
         public final BitsTransform bits;
         public final PbTransform pb;
+        /** The tlv wire's transform; set once when the line is resolved. */
+        TlvTransform tlv;
         /** The value table named by {@code via}, or null. */
         public final String via;
         /** bits: the field's bytes are reversed before the transform reads them and after it writes them. */
@@ -89,12 +91,12 @@ public final class Pack {
 
         /** The transform's name as written in the pack. */
         public String transformName() {
-            return transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
+            return tlv != null ? tlv.name : transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
         }
 
         /** The model type the transform yields: {@code string}, {@code float} or {@code int}. */
         public String yields() {
-            return transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
+            return tlv != null ? tlv.yields() : transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
         }
     }
 
@@ -324,6 +326,15 @@ public final class Pack {
     String textStart;
     /** text wire: {@code checksum nmea}. */
     boolean textNmea;
+    /** tlv wire: bytes of a fixed tag, 0 for {@code ber-oid}. */
+    int tlvTagSize;
+    /** tlv wire: bytes of a fixed length, 0 for {@code ber}. */
+    int tlvLengthSize;
+    /** tlv wire: the {@code key} bytes, or null. */
+    byte[] tlvKey;
+    /** tlv wire: {@code checksum sum16 <tag>}. */
+    boolean tlvChecksum;
+    long tlvChecksumTag = -1;
     /** native code to CoT type token, in file order (first wins). */
     public final Map<String, String> nativeToCot;
     /** CoT type token to native code (first line wins). */
@@ -437,13 +448,13 @@ public final class Pack {
     /** Directives that are not allowed between {@code group} and its {@code end}. */
     private static final Set<String> NOT_IN_GROUP = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "word_bytes", "bit_order", "layout", "root", "map", "kind", "requires", "when", "typemap",
-            "delimiter", "start", "checksum");
+            "delimiter", "start", "checksum", "tag", "key", "length");
 
     /** The directives of a pack (ruling 5 of 0.11): any other first word is {@code unknown-directive}. */
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
             "field", "when", "const", "kind", "requires", "default", "map", "typemap", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
-            "delimiter", "start", "checksum");
+            "delimiter", "start", "checksum", "tag", "key");
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -456,7 +467,7 @@ public final class Pack {
     /** Every transform of the specification, by the text before its first {@code :}. */
     private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
-            "dec", "dm", "hms", "hms_dmy");
+            "dec", "dm", "hms", "hms_dmy", "utf8", "hex");
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -472,6 +483,8 @@ public final class Pack {
             case "requires": ok = n >= 1; break;
             case "group": ok = n >= 2; break;
             case "end": ok = n == 0; break;
+            // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e
+            case "checksum": ok = n == 1 || (n == 2 && args.get(0).equals("sum16")); break;
             default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
         }
         if (!ok) throw bad(format, null, where + ": " + kw + " has the wrong number of arguments (" + n + ")");
@@ -508,6 +521,7 @@ public final class Pack {
             case JSON: why = loc.equals(".") ? null : JsonCodec.checkLocator(loc); break;
             case GEOJSON: why = loc.equals(".") ? null : inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkFieldLocator(loc); break;
             case PROTOBUF: why = loc.equals(".") ? null : ProtobufCodec.checkFieldLocator(loc); break;
+            case TLV: return;   // 0.13: a tlv path is checked after the file, and its failures are bad-directive
             case BITS:
                 // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file)
                 why = Transform.UNSIGNED.matcher(loc).matches() ? null : BitsCodec.checkLocator(loc);
@@ -524,7 +538,7 @@ public final class Pack {
     /** The header lines a pack has once (check 5 of ruling 5b). */
     private static final Set<String> HEADERS = Set.of("format", "version", "wire", "distribution");
 
-    private static final Set<String> WIRES = Set.of("xml", "geojson", "json", "bits", "protobuf", "text");
+    private static final Set<String> WIRES = Set.of("xml", "geojson", "json", "bits", "protobuf", "text", "tlv");
 
     /** Check 8 for a {@code group} line of a fixed-layout pack: the form of its locator (ruling 5a of 0.11). */
     private static void lineCheckGroupLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
@@ -599,6 +613,12 @@ public final class Pack {
      */
     private static void lineCheckField(List<String> args, Wire wire, boolean inGroup, String format, String where) {
         String loc = args.get(1), tname = args.get(2);
+        if (wire == Wire.TLV) {
+            // 0.13: on tlv the transform (ruling 8), the path (bad-directive, not a 5a form) and absent (ruling 10)
+            // are checked after the file; only the option syntax of check 9 is a line check
+            optionSyntax(args, format, loc, where);
+            return;
+        }
         checkTransformName(tname, format, loc, where);
         lineCheckLocator(wire, loc, inGroup, format, where);
         String absent = optionSyntax(args, format, loc, where);
@@ -645,6 +665,9 @@ public final class Pack {
         int wordBytes;   // 0 when not given
         /** text wire: the fields of one item of the group being resolved; 0 outside a group. */
         int itemFields;
+        /** tlv wire: bytes of a fixed tag (0 for ber-oid), and the checksum tag (-1 for none). */
+        int tlvTagSize;
+        long tlvChecksumTag = -1;
         Map<String, List<String[]>> tables;
         final List<Field> fields = new ArrayList<>();
         final List<Line> typed = new ArrayList<>();
@@ -660,6 +683,8 @@ public final class Pack {
         int bitOrderLine = 0;
         // text wire directives: {value, line}, or null when not given
         String[] delimiterDir = null, startDir = null, checksumDir = null;
+        // tlv wire directives (tag, length, key, checksum sum16), checked once the file is read: {kw, args, line, after a kind}
+        List<Object[]> tlvDirs = new ArrayList<>();
         Distribution distribution = null;
         List<String> sources = new ArrayList<>();
         List<String> uses = new ArrayList<>();
@@ -689,6 +714,22 @@ public final class Pack {
                 break;
             }
         }
+        // On wire tlv every transform check runs after the file is read (ruling 8 of 0.13), so the parameters of a
+        // text transform are not checked as the file is read there.
+        boolean tlvWire = false;
+        for (String l : lines) {
+            if (!l.trim().startsWith("wire")) continue;
+            List<String> tok;
+            try {
+                tok = tokenize(l, source);
+            } catch (GtException ex) {
+                break;
+            }
+            if (tok.size() == 2 && tok.get(0).equals("wire")) {
+                tlvWire = tok.get(1).equals("tlv");
+                break;
+            }
+        }
         Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs) : null;
         String layout = null;
         boolean listedSeen = false;   // a line that must follow the wire line, other than layout, has been read
@@ -705,7 +746,8 @@ public final class Pack {
             if (tok.isEmpty()) continue;
             String kw = tok.get(0);
             List<String> args = tok.subList(1, tok.size());
-            if (!DIRECTIVES.contains(kw)) {
+            // ruling 11 of 0.13: a key line of any other count is the model-module form, unknown in a pack
+            if (!DIRECTIVES.contains(kw) || (kw.equals("key") && args.size() != 1)) {
                 throw new GtException(GtException.Code.UNKNOWN_DIRECTIVE, format, null, where + ": unknown directive \"" + kw + "\"");
             }
             lineArity(kw, args, where, format);
@@ -756,13 +798,19 @@ public final class Pack {
                 if (kw.equals("word_bytes")) {
                     throw badDirective(format, null, where + ": word_bytes is not used in a sequential pack");
                 }
-            } else if (Seq.SEQUENTIAL_ONLY.contains(kw)) {
+            } else if (Seq.SEQUENTIAL_ONLY.contains(kw) && !kw.equals("length")) {
                 throw badDirective(format, null, where + ": " + kw + " is a line of a pack with layout sequential");
             }
             if (!open.isEmpty() && NOT_IN_GROUP.contains(kw)) {
                 throw badDirective(format, null, where + ": " + kw + " is not allowed inside a group");
             }
             BodySpec body = open.isEmpty() ? cur : open.peek().body;
+            if (kw.equals("tag") || kw.equals("key") || kw.equals("length")
+                    || (kw.equals("checksum") && !args.isEmpty() && args.get(0).equals("sum16"))) {
+                // `length` here is the tlv directive: a pack with layout sequential reads its length lines above
+                tlvDirs.add(new Object[]{kw, new ArrayList<>(args), ln, cur != common});
+                continue;
+            }
             switch (kw) {
                 case "format":
                     arity(kw, args, 1, where, format);
@@ -828,6 +876,7 @@ public final class Pack {
                         case "protobuf": wire = Wire.PROTOBUF; break;
                         case "json": wire = Wire.JSON; break;
                         case "text": wire = Wire.TEXT; break;
+                        case "tlv": wire = Wire.TLV; break;
                         default:
                             throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": unknown wire \"" + args.get(0) + "\"");
                     }
@@ -912,7 +961,7 @@ public final class Pack {
                     if (args.size() < 3) throw bad(format, null, where + ": field takes at least 3 arguments, got " + args.size());
                     String key = args.get(0);
                     // the parameters of a text transform are checked as the file is read (ruling 2 of 0.10)
-                    if (TextTransform.isTextOnlyName(args.get(2))) TextTransform.parseTextOnly(args.get(2), format, args.get(1), where);
+                    if (!tlvWire && TextTransform.isTextOnlyName(args.get(2))) TextTransform.parseTextOnly(args.get(2), format, args.get(1), where);
                     body.lines.add(new LineSpec(key, args.get(1), args.get(2), new ArrayList<>(args.subList(3, args.size())), false, ln));
                     keyRefs.add(new String[]{key, args.get(1)});
                     break;
@@ -982,6 +1031,7 @@ public final class Pack {
                 if (d != null) throw badDirective(format, null, source + ":" + d[1] + ": delimiter, start and checksum are for the text wire only");
             }
         }
+        int[] tlvSizes = wire == null ? null : tlvDirectives(tlvDirs, wire, checksumDir, format, source);
         boolean kindRoots = false;
         for (KindSpec ks : kindSpecs) {
             if (ks.root == null) continue;
@@ -997,6 +1047,19 @@ public final class Pack {
         ctx.source = source;
         ctx.wordBytes = wb;
         ctx.tables = tables;
+        byte[] tlvKey = null;
+        if (wire == Wire.TLV) {
+            ctx.tlvTagSize = tlvSizes[0];
+            for (Object[] d : tlvDirs) {
+                @SuppressWarnings("unchecked") List<String> a = (List<String>) d[1];
+                if (d[0].equals("checksum")) ctx.tlvChecksumTag = Long.parseLong(a.get(1));
+                if (d[0].equals("key")) {
+                    String h = a.get(0);
+                    tlvKey = new byte[h.length() / 2];
+                    for (int k = 0; k < tlvKey.length; k++) tlvKey[k] = (byte) Integer.parseInt(h.substring(2 * k, 2 * k + 2), 16);
+                }
+            }
+        }
         List<Line> commonLines = new ArrayList<>();
         List<When> commonWhens = new ArrayList<>();
         List<Kind> kinds = new ArrayList<>();
@@ -1014,6 +1077,7 @@ public final class Pack {
             }
             if (!hasKinds) {
                 notThroughAGroup(commonLines, ctx);
+                if (wire == Wire.TLV) TlvCodec.checkScope(commonLines, format, source);
                 kinds.add(new Kind(null, new ArrayList<>(), commonLines, new ArrayList<>(), root, common.defaults));
             }
             for (KindSpec ks : kindSpecs) {
@@ -1031,6 +1095,7 @@ public final class Pack {
                     }
                 }
                 notThroughAGroup(all, ctx);
+                if (wire == Wire.TLV) TlvCodec.checkScope(all, format, source);
                 LinkedHashMap<String, String> defaults = new LinkedHashMap<>(common.defaults);
                 defaults.putAll(ks.defaults);
                 kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
@@ -1078,7 +1143,67 @@ public final class Pack {
             pack.textStart = startDir == null ? null : startDir[0];
             pack.textNmea = checksumDir != null && checksumDir[0].equals("nmea");
         }
+        if (wire == Wire.TLV) {
+            pack.tlvTagSize = tlvSizes[0];
+            pack.tlvLengthSize = tlvSizes[1];
+            pack.tlvKey = tlvKey;
+            pack.tlvChecksum = ctx.tlvChecksumTag >= 0;
+            pack.tlvChecksumTag = ctx.tlvChecksumTag;
+        }
         return pack;
+    }
+
+    /**
+     * Check the tlv directives once the file is read (0.13): each on the tlv wire only, at most once, before the first
+     * kind, with a valid value; {@code checksum nmea} and {@code none} are not for the tlv wire. Returns the tag and
+     * length sizes (0 for ber-oid and ber).
+     */
+    @SuppressWarnings("unchecked")
+    private static int[] tlvDirectives(List<Object[]> dirs, Wire wire, String[] checksumDir, String format, String source) {
+        if (wire == Wire.TLV && checksumDir != null) {
+            throw badDirective(format, null, source + ":" + checksumDir[1] + ": checksum on the tlv wire is checksum sum16 <tag>");
+        }
+        int[] sizes = {0, 0};
+        Set<String> seen = new HashSet<>();
+        String checksumTag = null;
+        int checksumLine = 0;
+        for (Object[] d : dirs) {
+            String kw = (String) d[0];
+            List<String> a = (List<String>) d[1];
+            String where = source + ":" + d[2];
+            String shown = kw.equals("checksum") ? "checksum sum16" : kw;
+            if (wire != Wire.TLV) throw badDirective(format, null, where + ": " + shown + " is for the tlv wire only");
+            if (!seen.add(kw)) throw badDirective(format, null, where + ": " + kw + " given twice");
+            if ((Boolean) d[3]) throw badDirective(format, null, where + ": " + kw + " after the first kind line");
+            switch (kw) {
+                case "tag":
+                case "length": {
+                    String v = a.size() == 1 ? a.get(0) : "";
+                    int n;
+                    if (v.equals(kw.equals("tag") ? "ber-oid" : "ber")) n = 0;
+                    else if (v.equals("1") || v.equals("2") || v.equals("4")) n = v.charAt(0) - '0';
+                    else throw badDirective(format, null, where + ": " + kw + " takes " + (kw.equals("tag") ? "ber-oid" : "ber") + ", 1, 2 or 4, got \"" + String.join(" ", a) + "\"");
+                    sizes[kw.equals("tag") ? 0 : 1] = n;
+                    break;
+                }
+                case "key": {
+                    String v = a.size() == 1 ? a.get(0) : "";
+                    if (!v.matches("(?:[0-9a-f]{2}){1,64}")) {
+                        throw badDirective(format, null, where + ": key takes 1 to 64 bytes as an even number of lowercase hex digits, got \"" + String.join(" ", a) + "\"");
+                    }
+                    break;
+                }
+                default:
+                    if (a.size() != 2) throw badDirective(format, null, where + ": checksum takes sum16 <tag>");
+                    checksumTag = a.get(1);
+                    checksumLine = (Integer) d[2];
+            }
+        }
+        if (checksumTag != null) {
+            String why = TlvCodec.checkTag(checksumTag, sizes[0]);
+            if (why != null) throw badDirective(format, null, source + ":" + checksumLine + ": checksum: " + why);
+        }
+        return sizes;
     }
 
     /**
@@ -1127,6 +1252,7 @@ public final class Pack {
         long countFixed = -1;
         String why;
         TextCodec.Loc textLoc = null;
+        if (ctx.wire == Wire.TLV) throw badDirective(format, s.locator, where + ": group is not allowed on the tlv wire");
         if (ctx.wire == Wire.TEXT) {
             if (inGroup) throw badDirective(format, s.locator, where + ": a group inside a group is not allowed on the text wire");
             if (s.opts.size() != 2 || !s.opts.get(0).equals("item")) {
@@ -1229,7 +1355,7 @@ public final class Pack {
         String where = ctx.source + ":" + s.line;
         if (s.body != null) return resolveGroup(s, ctx, inGroup);
         // `.` is the item itself as a scalar: a field of a group body on json, geojson and protobuf.
-        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT;
+        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT && wire != Wire.TLV;
         if (dot && (!inGroup || s.key == null)) {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
@@ -1277,9 +1403,22 @@ public final class Pack {
         if (wire != Wire.TEXT && TextTransform.isTextOnlyName(s.arg)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the text wire only");
         }
+        if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg)) {
+            throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the tlv wire only");
+        }
         String why;
         Field f;
-        if (wire == Wire.TEXT) {
+        if (wire == Wire.TLV) {
+            TlvCodec.Loc loc = tlvLocator(s, ctx, where);
+            TlvTransform tt = TlvTransform.parse(s.arg, format, where);
+            if (tt == null) throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire tlv");
+            String sizeWhy = tt.checkSize(loc.size);
+            if (sizeWhy != null) throw badDirective(format, s.locator, where + ": " + sizeWhy);
+            f = new Field(s.key, s.locator, null, null, null, null, via, false, false, false, s.line);
+            f.tlv = tt;
+            f.loc = loc;
+            why = null;
+        } else if (wire == Wire.TEXT) {
             TextTransform tt;
             if (TextTransform.isTextOnlyName(s.arg)) {
                 tt = TextTransform.parseTextOnly(s.arg, format, s.locator, where);
@@ -1381,6 +1520,9 @@ public final class Pack {
             case TEXT:
                 // `absent` on the text wire is bad-directive (ruling 16 of 0.10)
                 throw badDirective(format, f.locator, where + ": absent is not valid on the text wire (ruling 16 of 0.10)");
+            case TLV:
+                // `absent` on the tlv wire is bad-directive (ruling 10 of 0.13)
+                throw badDirective(format, f.locator, where + ": absent is not valid on the tlv wire (ruling 10 of 0.13)");
             default:
                 return Sentinels.json(arg, f.transform == Transform.BOOL, format, f.locator, where);
         }
@@ -1398,12 +1540,40 @@ public final class Pack {
         return loc;
     }
 
+    /** A tlv path: its syntax, its tags' range, and a first tag other than the checksum tag; each bad-directive. */
+    private static TlvCodec.Loc tlvLocator(LineSpec s, Ctx ctx, String where) {
+        Object parsed = TlvCodec.parseLocator(s.locator, ctx.tlvTagSize);
+        if (!(parsed instanceof TlvCodec.Loc)) throw badDirective(ctx.format, s.locator, where + ": " + parsed);
+        TlvCodec.Loc loc = (TlvCodec.Loc) parsed;
+        if (loc.tags[0] == ctx.tlvChecksumTag) {
+            throw badDirective(ctx.format, s.locator, where + ": path " + s.locator + " begins with the checksum tag " + ctx.tlvChecksumTag);
+        }
+        return loc;
+    }
+
     private static When resolveWhen(LineSpec s, Ctx ctx, String where, boolean inGroup) {
         Wire wire = ctx.wire;
         String format = ctx.format;
         String v = s.arg;
         if (s.isConst && v.equals("present")) {
             throw badDirective(format, s.locator, where + ": const takes a value; write =present for the text");
+        }
+        if (wire == Wire.TLV) {
+            TlvCodec.Loc loc = tlvLocator(s, ctx, where);
+            When w;
+            if (v.equals("present")) {
+                if (loc.size != 0) throw badDirective(format, s.locator, where + ": when <path> present takes no size");
+                w = new When(s.locator, v, true, v, false, 0, false, s.line);
+            } else {
+                if (loc.size == 0) throw badDirective(format, s.locator, where + ": a numeric " + (s.isConst ? "const" : "when") + " needs a size :<n>");
+                long n = unsigned(v, format, s.locator, where);
+                if (loc.size < 8 && Long.compareUnsigned(n, 1L << (8 * loc.size)) >= 0) {
+                    throw badDirective(format, s.locator, where + ": value " + v + " does not fit " + loc.size + " bytes");
+                }
+                w = new When(s.locator, v, false, v, false, n, s.isConst, s.line);
+            }
+            w.loc = loc;
+            return w;
         }
         if (wire == Wire.TEXT) {
             TextCodec.Loc loc = textLocator(s, ctx, where, inGroup);

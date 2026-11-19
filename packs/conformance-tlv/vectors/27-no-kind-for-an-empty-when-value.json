@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-for-an-empty-when-value",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3438020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741000102836d",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): A when value that is empty does not hold. Derived without an engine by a standalone reference program."
+}

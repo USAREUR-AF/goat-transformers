@@ -1,0 +1,16 @@
+{
+  "name": "integers-shorter-than-their-size",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b343e0201050305544c562d310401ff0d03c000000e04c00000000f010110010130070201058148010741010114083ff8000000000000150442a900000102b0de",
+  "expect": "060e2b3449020800000000000000050305544c562d310402ffff0d04ffc000000e04c00000000f0200011001013008020105814802000741010114083ff8000000000000150442a900000102465f",
+  "model": {
+    "time_ms": "5",
+    "probe.n": "-1",
+    "lat": "-0.17578125008185452",
+    "hae": "-899.6963454642557",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Decode reads an integer at its own length: 05 = 5 (time_ms), ff = -1 (twos takes the sign from the first byte), c00000 = -4194304 (sign from the first byte) -> lat -4194304*90/2147483647 = -0.17578125008185452, hae 1*19900/65535 - 900 = -899.6963454642557; encode writes n bytes: 0000000000000005, ffff, ffc00000 (-0.17578125008185452*2147483647/90 rounds back to -4194304), 0001, 0007. Derived without an engine by a standalone reference program."
+}

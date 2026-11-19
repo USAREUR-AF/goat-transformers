@@ -1,0 +1,9 @@
+{
+  "name": "malformed-nested-set-and-no-kind",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3434020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f02333310010130030205ff410103010238df",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Kinds are selected after the top set is read and before any nested set: no kind holds, so the error is no-kind and 48 is never read. Derived without an engine by a standalone reference program."
+}

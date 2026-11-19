@@ -1,0 +1,9 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-tlv",
+  "to": "geojson",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a900000102401c",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.00000004190952,45.00000002095476,3080]},\"properties\":{\"time_ms\":1614456000000,\"course\":84.5},\"id\":\"TLV-1\"}",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): lat 45.00000002095476, lon -90.00000004190952, hae 3080; time_ms and course as geojson properties in field-line order; uid as id; probe keys and residue are not written into geojson. Derived without an engine by a standalone reference program."
+}

@@ -22,12 +22,14 @@ A vector whose format is not loaded is run, and pins `unknown-format`.
 It also loads one pack alone through `gt_engine:load_packs/4` and runs that
 pack's vectors on the engine it gives (`named load: ...`).
 The malformed-input check takes the input of the first five conversion vectors
-of each pack and of every vector of the packs `conformance-malformed-*`, cuts
+of each pack and of every vector of the packs `conformance-malformed-*` and
+`conformance-tlv*`, cuts
 it short at prefixes (every length when the input has at most 16 bytes, else 8
 lengths spread evenly) and replaces single bytes (at most 8 positions spread
 evenly, each with the next byte of a fixed table), and converts each result as
 the vector converts. It then runs fixed cases of rulings 36 to 40 on the
-`conformance-malformed-*` packs and `conformance-groups-protobuf`. A case passes when `convert` returns bytes or raises
+`conformance-malformed-*` packs and `conformance-groups-protobuf`, and fixed
+cases of the `tlv` wire on `conformance-tlv` and `conformance-tlv-fixed`. A case passes when `convert` returns bytes or raises
 `error:{convert_error, Kind, Message}` with a named `Kind` and a `Message`
 beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.
@@ -110,7 +112,9 @@ raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `swap`, `trim`, `optional`), `protobuf`, `text` (Version 0.10: `delimiter`,
 `start`, `checksum none | nmea`; input and output are the record's text, never
 trimmed; residue is keyed by field index; the `absent` field option of
-Version 0.9 is `bad-directive` on it, ruling 16 of 0.10).
+Version 0.9 is `bad-directive` on it, ruling 16 of 0.10), `tlv` (Version 0.13: `tag`,
+`length`, `key`, `checksum sum16`; hex text in and out; residue is
+`{[Tag], Hex}`, every occurrence of an unnamed tag).
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
 input makes `decode` or `convert` raise anything but `convert_error`. The
@@ -165,6 +169,11 @@ implemented as the specification states them.
   the `int:<w>`, `dec`, `dm`, `hms` and `hms_dmy` transforms, residue by field
   index, groups of `item <n>` fields, and writing a record (padding, trailing
   `optional` fields, checksum).
+- `src/gt_tlv.erl`   — the `tlv` wire (Version 0.13): the key and the set's length,
+  BER-OID or fixed tags, BER or fixed lengths, the `sum16` checksum, kinds on
+  the top set, nested sets read when a line walks into them, the integer, scale,
+  float, `utf8` and `hex` transforms, residue, and writing each set in line
+  order with its residue after.
 - `src/gt_engine.erl`— engine instance and load checks, kind selection, decode /
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.

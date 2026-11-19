@@ -131,7 +131,18 @@ int main() {
     expect_error(gt::ErrorKind::UnknownDirective, [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nbogus x\n"); },
                  "unknown directive");
     expect_error(gt::ErrorKind::UnknownTransform,
-                 [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k hex\n"); }, "unknown transform");
+                 [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k nosuch\n"); }, "unknown transform");
+    // v0.13: `hex` and `utf8` are transforms of the tlv wire, bad-directive on another.
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k hex\n"); }, "hex on xml");
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_pack(HDR "format a\nwire tlv\nfield k 4:1 nosuch\n"); }, "unknown transform on tlv");
+    // 0.11 ruling 5b: a `field` before the `wire` line is missing-wire, before its transform is read.
+    expect_error(gt::ErrorKind::MissingWire,
+                 [] { gt::parse_pack(HDR "field k 4:1 nosuch\nformat a\nwire tlv\n"); }, "unknown transform before wire tlv");
+    expect_error(gt::ErrorKind::MissingWire,
+                 [] { gt::parse_pack(HDR "field k @k nosuch\nformat a\nwire xml\nroot r\n"); },
+                 "unknown transform before wire xml");
     expect_error(gt::ErrorKind::UnknownWire, [] { gt::parse_pack(HDR "format a\nwire yaml\n"); }, "unknown wire");
     expect_error(gt::ErrorKind::MissingRoot, [] { gt::parse_pack(HDR "format a\nwire xml\n"); }, "xml without root");
     expect_error(gt::ErrorKind::BadLocator,

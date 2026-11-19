@@ -47,6 +47,7 @@ add_library(goat_transformers STATIC
   src/protobuf.cpp
   src/sequential.cpp
   src/text.cpp
+  src/tlv.cpp
   src/transforms.cpp
   src/util.cpp
   src/xml.cpp)

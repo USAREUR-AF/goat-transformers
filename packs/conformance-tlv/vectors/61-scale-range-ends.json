@@ -1,0 +1,14 @@
+{
+  "name": "scale-range-ends",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3449020800000177e5138e000305544c562d310402ffd60d047fffffff0e04800000000f02ffff1001013008020105814802000741010114083ff8000000000000150442a9000001020ce6",
+  "expect": "060e2b3449020800000177e5138e000305544c562d310402ffd60d047fffffff0e04800000000f02ffff1001013008020105814802000741010114083ff8000000000000150442a9000001020ce6",
+  "model": {
+    "lat": "90",
+    "lon": "-180.00000008381903",
+    "hae": "19000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): lat 2147483647*90/2147483647 = 90 exactly; lon -2147483648*180/2147483647 = -180.00000008381903, which encodes back to -2147483648; hae 65535*19900/65535 - 900 = 19000 exactly. Derived without an engine by a standalone reference program."
+}

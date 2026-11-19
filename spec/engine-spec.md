@@ -2460,3 +2460,235 @@ with a `default` on the target in the pack.
 5. **Same-format round trip.** As for every derivation, `present` is not
    applied when `from == to` and no context is given (Version 0.6, Order
    inside `convert`), so a round trip keeps the decoded value of the target.
+
+---
+
+# Version 0.13: the `tlv` wire
+
+Status: Written. A `tlv` format is a set of items, each a tag, a length and a
+value: a local set in the sense of SMPTE ST 336 and MISB ST 0601, or any record
+of that shape. A value may itself be a set. The set may follow a fixed key and
+a length, and may end with a checksum item. Input and output are hex text, as
+for `bits` and `protobuf`.
+
+```
+wire      tlv
+tag       <ber-oid | 1 | 2 | 4>        # how a tag is written; default ber-oid
+length    <ber | 1 | 2 | 4>            # how a length is written; default ber
+key       <hex>                        # optional: the message begins with these bytes
+checksum  sum16 <tag>                  # optional: the last item of the set is a checksum
+field     <model-key> <path>[:<n>] <transform> [options]
+```
+
+`tag`, `length`, `key` and `checksum` appear at most once each, before the
+first `kind`. The forms above are `bad-directive` on another wire, more than
+once, or with another value; the `length` block of 0.8 and `checksum nmea` of
+0.10 keep their meaning on their wires and are `bad-directive` on `tlv`.
+`<hex>` is 1 to 64 bytes as an even number of lowercase hex digits. `<tag>`
+and every tag in a path is a decimal integer from 0 to 2^28-1 with no leading
+zero, and under a fixed `tag <n>` below 2^(8n). Every check in this paragraph
+and in "`when` and `const`" runs after the file is read and before
+`missing-distribution` (ruling 2 of 0.10).
+
+## Encodings
+
+- **`tag ber-oid`.** The tag in base 128, most significant group first, every
+  byte but the last with its high bit set; at most four bytes. A first byte of
+  `0x80` (a group of zero before others) and a fifth byte are
+  `malformed-wire`.
+- **`tag <n>`.** The tag as an unsigned big-endian integer of `n` bytes.
+- **`length ber`.** A first byte below `0x80` is the length. A first byte
+  `0x81` to `0x88` is followed by that many bytes (1 to 8) holding the length
+  as an unsigned big-endian integer. `0x80` and `0x89` to `0xFF` are
+  `malformed-wire`. Encode writes the short form for a length below 128 and
+  otherwise the long form with the fewest bytes; decode accepts a long form
+  with more bytes than needed.
+- **`length <n>`.** The length as an unsigned big-endian integer of `n` bytes.
+
+A length is compared with the bytes left in its set (or input), never added
+to an offset first, so a length of 2^64-1 is `malformed-wire`, not a wrapped
+offset.
+
+## Reading a message
+
+Each failure below is `malformed-wire`.
+
+1. The input is hex text (rulings 36 and 40 of 0.8 apply).
+2. With `key`, the input begins with the key's bytes, followed by a length
+   (as `length` states). The set is the next that many bytes; a set that runs
+   past the input is `malformed-wire`, and bytes after it are ignored. Without
+   `key`, the whole input is the set.
+3. A set is a sequence of items to its last byte: a tag, a length and that
+   many bytes of value. An item that runs past its set is `malformed-wire`. The
+   top set is read whole whatever the pack maps. The kind is selected next
+   (Kinds, below); then a value is read as a set only when a line of the
+   selected scope walks into it, and its items are then read whole. An empty
+   input, without `key` and `checksum`, is an empty set.
+4. With `checksum sum16 <t>`, the last item of the top set has tag `t` and a
+   value of two bytes; otherwise `malformed-wire`. Its value, big-endian, is
+   the sum of every byte of the input from the first (the first byte of the
+   key when there is one) to the last byte of the checksum item's length: a
+   byte at an even offset from the first counts `b * 256`, a byte at an odd
+   offset `b`, and the sum is taken modulo 65536. A different value is
+   `malformed-wire`. The checksum item is neither mapped nor residue. An item
+   of tag `t` before the last is `malformed-wire`.
+
+## Locators
+
+A path is one or more tags separated by `.`: `13` is the item of tag 13 in the
+top set, `48.2` the item of tag 2 in the set that is the value of the item of
+tag 48. Every nested set uses the pack's `tag` and `length` encodings. When a
+tag occurs more than once in one set, a path takes its first occurrence, at
+every level; later occurrences of a tag that a line names are neither mapped
+nor residue. `:<n>` after the path is the size of the value in bytes, from 1
+to 8, where the transform needs one (below). A `field`, `when` or `const`
+whose first tag is the checksum tag is `bad-directive`; a tag in a nested set
+may equal it.
+
+For a `field`, an item that is not in its set is absent, and so is an item
+whose value is empty, except under `utf8` and `hex`, where it is the empty
+string. A key holding the empty string writes an item of length 0.
+
+## Transforms for `tlv`
+
+| Name | Yields | Size | Decode | Encode |
+|---|---|---|---|---|
+| `uint` | int | `:<n>` required | the value bytes, 1 to 8, as an unsigned big-endian integer | `n` bytes; a value that does not fit is `transform-encode` |
+| `twos` | int | `:<n>` required | the value bytes, 1 to 8, as a big-endian two's-complement integer | `n` bytes; a value that does not fit is `transform-encode` |
+| `uscale:<factor>[:<offset>]` | float | `:<n>` required | the value as for `uint`, then as on `bits` (rulings 1 of 0.5) | as on `bits`, into `n` bytes; out of range is `transform-encode` |
+| `sscale:<factor>[:<offset>]` | float | `:<n>` required | the value as for `twos`, then as on `bits` | as on `bits`, into `n` bytes; out of range is `transform-encode` |
+| `f32` | float | none, or `:4` | exactly 4 bytes, an IEEE-754 single, big-endian, widened | as on `bits` (ruling 23 of 0.5) |
+| `f64` | float | none, or `:8` | exactly 8 bytes, an IEEE-754 double, big-endian | the double |
+| `utf8` | string | none | the value bytes as UTF-8 text; invalid UTF-8 is `transform-decode` | the text's UTF-8 bytes |
+| `hex` | string | none | the value bytes as lowercase hex text | hex text (an even number of digits, either case) to bytes; anything else is `transform-encode` |
+
+Decode reads an integer value at its own length, whatever `:<n>` states;
+`twos` and `sscale` take the sign from the value's first byte. A value longer
+than 8 bytes for `uint`, `twos`, `uscale` or `sscale`, and a value of another
+size for `f32` or `f64`, is `transform-decode`. A `uint` value of 8 bytes
+follows ruling 2 of 0.5, whatever `n` is. A size missing where it is required, given
+where it is not allowed, or out of range is `bad-directive`. `utf8` and `hex`
+are valid only on `tlv`; the text, protobuf and `bool` transforms, `linscale`
+and `ascii` are `bad-directive` on it: on `tlv`, any transform not in this
+table is `bad-directive`. The sentence of 0.2 that `uint`, `twos` and
+`linscale` are valid only on `bits` reads, from 0.13, "on `bits` and, for
+`uint` and `twos`, on `tlv`". Field options: `via`. `swap`, `trim`
+and `optional` are `bad-directive`.
+
+## `when` and `const`
+
+| Line | Decode | Encode |
+|---|---|---|
+| `when <path>:<n> <value>` | holds when the item is in its set and its value, 1 to 8 bytes read as unsigned at its own length, equals the unsigned decimal `<value>`; a value that is empty or longer than 8 bytes does not hold | the value as `n` bytes |
+| `when <path> present` | holds when the item is in its set, an empty value included | an empty item, unless a line or residue writes an item at the path |
+| `const <path>:<n> <value>` | not checked; the item is mapped | the value as `n` bytes |
+
+A numeric `when` or `const` without a size, a value that does not fit `n`
+bytes, `present` with a size, and `const <path> present` are `bad-directive`.
+A `when` whose item lies in a value that is not a well-formed set does not
+hold. As ruling 27 of 0.5 states for the text wires, `when … present` does not
+name its path: the item there is residue unless another line names it.
+
+## Writing a message
+
+1. Each set is written as its items in this order: the items of the lines of
+   the selected scope (common, then the kind's) in line order, where an item
+   holding a nested set stands at the position of the first line of the scope
+   that names its path or a path under it, `when` and `const` included; then
+   the residue of that set in input order. An absent
+   key writes no item; a key with a `default` writes the default. `when` and
+   `const` items are written at their line's position, and where a `field` and
+   a `when` or `const` name the same path, the item is written once, at the
+   first line's position, with the `when` or `const` value. Two `field` lines
+   on one path write the earliest present key (ruling 16 of 0.5). A nested set
+   with no items is not written.
+2. Every item is its tag, its length and its value in the pack's encodings. A
+   length or tag that does not fit a fixed size is `transform-encode`.
+3. With `key`, the output is the key, the length of the set, then the set.
+   With `checksum sum16 <t>`, an item of tag `t` with a two-byte value is the
+   last item of the top set and counts in the set's length. Its value is
+   computed last, as in step 4 of "Reading a message", over the output from
+   its first byte (the key's, when there is one) to the checksum item's
+   length.
+
+Output is lowercase hex. A same-format round trip is exact when the input's
+items are in the order the pack writes them, its lengths are in the shortest
+form, and its integer values have the sizes the lines state.
+
+## Residue
+
+Every item of the top set, and of each nested set a line of the selected
+scope walks into, whose tag no line of the selected scope names at that place,
+is residue, keyed by its path, holding its value as hex (the empty string for
+an empty value). Every occurrence is kept: a tag that occurs twice gives two
+residue entries, written back in input order. Residue is written back only
+into the format it was decoded from. A nested set no line of the selected
+scope walks into is one residue item.
+
+## Kinds and groups
+
+Kinds select by `when` lines as Version 0.5 states, after steps 1 and 2 of
+"Reading a message", the reading of the top set in step 3, and step 4; so a
+malformed nested set that only a kind's lines walk into gives `no-kind` when
+that kind is not selected. `group` on `tlv` is `bad-directive` in 0.13.
+
+## Vectors
+
+`input` and `expect` of a `tlv` format are lowercase hex text (ruling 7 of
+0.5).
+
+## Rulings for 0.13
+
+1. **Empty values.** An empty value is absent under every transform but
+   `utf8` and `hex`, `f32` and `f64` included.
+2. **`when … present` and residue.** When residue of the set holds an item of
+   the path's tag, no empty item is written; the residue item stands at the
+   residue position, after the mapped items.
+3. **Integers that do not fit.** On encode, a `uint` value below 0 or at or
+   above 2^(8n), and a `twos` value outside its `n` bytes, are
+   `transform-encode`; ruling 2 of 0.5 covers only an 8-byte `uint`.
+4. **Scales read unsigned.** `uscale` reads its value as unsigned whatever its
+   length; ruling 2 of 0.5 does not apply to it.
+5. **A path that is both a value and a set.** A `field`, `when` or `const` at
+   a path and another line at a path under it (`48` and `48.2`), in one scope
+   (the common lines with one kind's lines), is `bad-directive`; two kinds may
+   read the same item differently.
+6. **Sizes.** `:<n>` is one digit from 1 to 8.
+7. **What a line walks into.** Every set on the path of a `field`, `when`
+   (`present` included) or `const` line is walked into; `when … present`
+   does not name only the last tag of its path.
+8. **Malformed parameters.** On `tlv`, a `uscale` or `sscale` whose
+   parameters do not parse, and any transform name not in the table, are
+   `bad-directive`, checked after the file is read with the other checks of
+   this section.
+9. **Several `when` or `const` lines on one path.** The item holds the value
+   of the earliest of them that carries a value, as ruling 11 of 0.10 states
+   for the text wire; `when … present` carries none. A `field` on that path
+   is not encoded.
+10. **`absent` (0.9) on `tlv`** is `bad-directive` in 0.13: an empty value is
+    already absent on this wire, and the raw value of a sentinel is not
+    stated for it yet.
+11. **`key` lines in a pack.** Only a `key` line with exactly one argument is
+    the directive of this section, on any wire: on `tlv` it is checked as
+    above, and on another wire it is `bad-directive`. A `key` line with any
+    other number of arguments is the model-module form, and in a pack it
+    stays `unknown-directive` (ruling 5 of 0.11), whatever the wire.
+12. **The argument count of `checksum`.** 5e of 0.11 gives `checksum`
+    exactly one argument; this section adds one form with two, `checksum
+    sum16 <tag>`. As a line is read (step 3 of 5b), a `checksum` line with
+    one argument, or with two whose first is `sum16`, passes; any other count
+    is `bad-directive` there. Whether a passing line fits its wire (`sum16`
+    with no tag, `sum16` on another wire, a one-argument value `tlv` does not
+    name) is checked after the file is read, as the other checks of this
+    section, and is `bad-directive`.
+13. **The `tlv` lines and the `wire` line.** `length` is in the list of 0.11
+    (5b) of lines that stand after the `wire` line, so `length ber` before
+    `wire tlv` is `missing-wire`. `tag`, `key` and `checksum` are not in that
+    list: they may stand before the `wire` line, and whether their wire is
+    `tlv` is checked after the file is read.
+14. **When `absent` on `tlv` is checked.** Step 10 of 5b (0.11) checks the
+    values of an `absent` option; whether the option fits its wire is
+    checked after the file is read (5b). So `absent` on a `tlv` field
+    (ruling 10) is `bad-directive` after the file, and a later line's error
+    comes first: `field probe.n 4:1 uint absent 255` followed by a line
+    `bogus` is `unknown-directive`.

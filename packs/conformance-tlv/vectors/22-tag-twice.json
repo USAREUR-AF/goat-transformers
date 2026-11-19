@@ -1,0 +1,12 @@
+{
+  "name": "tag-twice",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3456020800000177e5138e000305544c562d3103054f544845520402ffd60d04400000000e04c00000000f0233331001013008020105814802000732010141010114083ff8000000000000150442a900003201020102342a",
+  "expect": "060e2b344f020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010114083ff8000000000000150442a9000032010132010201027a51",
+  "model": {
+    "uid": "TLV-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Tag 3 twice: the first is taken, the second is neither mapped nor residue; unnamed tag 50 twice: two residue entries, written back in input order after the lines. Derived without an engine by a standalone reference program."
+}

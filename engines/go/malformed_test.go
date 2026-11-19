@@ -2,6 +2,7 @@ package goatxf
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -75,7 +76,7 @@ func TestMalformedInputNeverPanics(t *testing.T) {
 			continue
 		}
 		in := bytesOf(t, v.Input, v.InputB64, "input")
-		hexWire := p.Wire == WireBits || p.Wire == WireProtobuf
+		hexWire := p.Wire == WireBits || p.Wire == WireProtobuf || p.Wire == WireTLV
 		jsonWire := p.Wire == WireJSON || p.Wire == WireGeoJSON
 		try := func(what string, b []byte) {
 			inputs++
@@ -273,6 +274,78 @@ func TestMalformedRulings(t *testing.T) {
 	// An error is never the bare text of a reader.
 	if _, err := eng.Decode(xmlPack, bytes.Repeat([]byte{0xff}, 8)); err == nil || !namedKind.MatchString(err.Error()) {
 		t.Errorf("xml bytes that are not UTF-8: got %v, want a named kind", err)
+	}
+}
+
+// TestTLVMalformed holds cases of the tlv wire (spec 0.13, "Reading a
+// message") that no vector pins: lengths near 2^64 in every place a length
+// stands, cut items, and bytes that only a walked-into set must parse.
+func TestTLVMalformed(t *testing.T) {
+	eng, err := Load(packsDir)
+	if err != nil {
+		t.Fatalf("loading packs from %s: %v", packsDir, err)
+	}
+	const (
+		keyed = "conformance-tlv"       // key 060e2b34, BER lengths, checksum sum16 1
+		fixed = "conformance-tlv-fixed" // tag 1, length 2, no key, no checksum
+	)
+	// msg frames the items of a conformance-tlv set: the key, a BER length,
+	// the items, and a checksum item of tag 1.
+	msg := func(items string) string {
+		set, err := hex.DecodeString(items)
+		if err != nil {
+			t.Fatal(err)
+		}
+		set = append(set, 0x01, 0x02, 0, 0)
+		out := []byte{0x06, 0x0e, 0x2b, 0x34}
+		if len(set) < 0x80 {
+			out = append(out, byte(len(set)))
+		} else {
+			out = append(out, 0x82, byte(len(set)>>8), byte(len(set)))
+		}
+		out = append(out, set...)
+		s := sum16(out[:len(out)-2])
+		out[len(out)-2], out[len(out)-1] = byte(s>>8), byte(s)
+		return hex.EncodeToString(out)
+	}
+	const plain = "410101" // kind plain
+	cases := []struct {
+		name, pack, input string
+		ok                bool
+	}{
+		{"fixed length 65535 with nothing left", fixed, "0100ffff", false},
+		{"fixed tag alone", fixed, "01", false},
+		{"fixed length cut", fixed, "0100", false},
+		{"fixed empty item", fixed, "0b0000", true},
+		{"set length of eight 0xff bytes", keyed, "060e2b3488ffffffffffffffff", false},
+		{"set length of four 0xff bytes", keyed, "060e2b3484ffffffff00", false},
+		{"set length with its bytes cut", keyed, "060e2b3484ff", false},
+		{"key alone", keyed, "060e2b34", false},
+		{"key cut", keyed, "060e2b", false},
+		{"framed message", keyed, msg(plain), true},
+		{"item length of eight 0xff bytes", keyed, msg(plain + "3288ffffffffffffffff"), false},
+		{"item length 2^63", keyed, msg(plain + "32888000000000000000"), false},
+		{"walked set with an item length of eight 0xff bytes", keyed, msg(plain + "300a0288ffffffffffffffff"), false},
+		{"walked set with a five-byte tag", keyed, msg(plain + "3007818080800100"), false},
+		{"walked set with a tag that runs past it", keyed, msg(plain + "300181"), false},
+		{"walked set with a length 0x80", keyed, msg(plain + "30020280"), false},
+		{"unwalked set with an item length of eight 0xff bytes", keyed, msg(plain + "310a0288ffffffffffffffff"), true},
+		{"later occurrence of a walked set is not read", keyed, msg(plain + "3003020105" + "300281ff"), true},
+		{"empty set with a key and a checksum", keyed, "060e2b3400", false},
+		{"checksum item alone with a wrong sum", keyed, "060e2b340401020000", false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			_, err, panicked := convertGuarded(eng, c.pack, c.pack, []byte(c.input), nil)
+			switch {
+			case panicked != "":
+				t.Fatalf("panic on %q: %s", c.input, panicked)
+			case c.ok && err != nil:
+				t.Errorf("convert %q: %v, want it to convert", c.input, err)
+			case !c.ok && !IsKind(err, ErrMalformedWire):
+				t.Errorf("convert %q: got %v, want %s", c.input, err, ErrMalformedWire)
+			}
+		})
 	}
 }
 

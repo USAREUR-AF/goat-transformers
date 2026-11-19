@@ -1,0 +1,9 @@
+{
+  "name": "no-kind-for-another-value",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3439020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f0233331001013008020105814802000741010301028471",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): 65 = 3: neither when 65:1 1 nor when 65:1 2 holds. Derived without an engine by a standalone reference program."
+}

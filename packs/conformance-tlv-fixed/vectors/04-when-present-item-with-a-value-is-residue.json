@@ -1,0 +1,13 @@
+{
+  "name": "when-present-item-with-a-value-is-residue",
+  "from": "conformance-tlv-fixed",
+  "to": "conformance-tlv-fixed",
+  "input": "0100040000002a0200054741544f520a000105090002abcd",
+  "expect": "0100040000002a0200054741544f520a000105090002abcd",
+  "model": {
+    "@kind": "marked",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): when 9 present holds on a value abcd; item 9 is residue and is written back with its value; the when writes no empty item. Derived without an engine by a standalone reference program."
+}

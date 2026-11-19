@@ -1,0 +1,9 @@
+{
+  "name": "malformed-nested-set-walked-into",
+  "from": "conformance-tlv",
+  "to": "conformance-tlv",
+  "input": "060e2b3444020800000177e5138e000305544c562d310402ffd60d04400000000e04c00000000f02333310010130030205ff41010114083ff8000000000000150442a900000102f489",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): Item 48 holds 02 05 ff: an item of length 5 with one byte left; the common lines walk into 48, so its items are read whole. Derived without an engine by a standalone reference program."
+}
