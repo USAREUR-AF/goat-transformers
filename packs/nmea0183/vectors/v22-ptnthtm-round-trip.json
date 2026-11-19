@@ -1,0 +1,21 @@
+{
+  "name": "ptnthtm-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PTNTHTM,14223,N,169,N,-43,N,13641,2454*15",
+  "expect": "$PTNTHTM,14223,N,169,N,-43,N,13641,2454*15",
+  "model": {
+    "@kind": "ptnthtm",
+    "nmea0183.proprietary_tag": "PTNTHTM",
+    "nmea0183.htm_heading": "14223",
+    "nmea0183.htm_mag_status": "N",
+    "nmea0183.htm_pitch": "169",
+    "nmea0183.htm_pitch_status": "N",
+    "nmea0183.htm_roll": "-43",
+    "nmea0183.htm_roll_status": "N",
+    "nmea0183.htm_dip": "13641",
+    "nmea0183.htm_horizontal": "2454"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PTNTHTM: angles in the compass's own integer units, kept as text"
+}

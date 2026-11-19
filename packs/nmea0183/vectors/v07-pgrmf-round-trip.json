@@ -1,0 +1,26 @@
+{
+  "name": "pgrmf-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRMF,2350,302412,140326,120012,18,5213.1439,N,02100.6511,E,A,2,36,271,2,1*1B",
+  "expect": "$PGRMF,2350,302412,140326,120012,18,5213.1439,N,02100.6511,E,A,2,36,271,2,1*1B",
+  "model": {
+    "@kind": "pgrmf",
+    "nmea0183.proprietary_tag": "PGRMF",
+    "nmea0183.gps_week": "2350",
+    "nmea0183.gps_tow_s": "302412",
+    "time_ms": "1773489612000",
+    "nmea0183.utc_s": "43212",
+    "nmea0183.leap_seconds": "18",
+    "lat": "52.219065",
+    "lon": "21.010851666666667",
+    "nmea0183.pgrmf_mode": "A",
+    "nmea0183.pgrmf_fix_type": "2",
+    "nmea0183.sog_kmh": "36",
+    "course": "271",
+    "nmea0183.pdop": "2",
+    "nmea0183.tdop": "1"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PGRMF: field 3 the UTC date ddmmyy and field 4 the UTC time; field 13 course over ground, degrees true"
+}

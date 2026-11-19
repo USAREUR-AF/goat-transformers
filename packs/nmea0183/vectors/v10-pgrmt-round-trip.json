@@ -1,0 +1,22 @@
+{
+  "name": "pgrmt-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRMT,GPS 18x 4.00,P,P,R,R,P,C,31,R*1C",
+  "expect": "$PGRMT,GPS 18x 4.00,P,P,R,R,P,C,31,R*1C",
+  "model": {
+    "@kind": "pgrmt",
+    "nmea0183.proprietary_tag": "PGRMT",
+    "nmea0183.receiver_model": "GPS 18x 4.00",
+    "nmea0183.pgrmt_rom_test": "P",
+    "nmea0183.pgrmt_receiver": "P",
+    "nmea0183.pgrmt_stored": "R",
+    "nmea0183.pgrmt_clock": "R",
+    "nmea0183.pgrmt_oscillator": "P",
+    "nmea0183.pgrmt_collecting": "C",
+    "nmea0183.pgrmt_temp_c": "31",
+    "nmea0183.pgrmt_config": "R"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PGRMT: nine status fields"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pmtk001-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PMTK001,220,3*30",
+  "expect": "$PMTK001,220,3*30",
+  "model": {
+    "@kind": "pmtk001",
+    "nmea0183.proprietary_tag": "PMTK001",
+    "nmea0183.mtk_command": "220",
+    "nmea0183.mtk_ack_flag": "3"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PMTK001: command number and result"
+}

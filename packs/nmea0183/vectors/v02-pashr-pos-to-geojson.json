@@ -1,0 +1,14 @@
+{
+  "name": "pashr-pos-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$PASHR,POS,1,09,123519.50,4807.03800,N,01131.00000,E,545.40,,84.4,36.0,-0.2,1.9,1.0,1.6,1.2*00",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.516666666666667,48.1173,545.4]},\"properties\":{\"speed_ms\":10}}",
+  "model": {
+    "lat": "48.1173",
+    "lon": "11.516666666666667",
+    "hae": "545.4"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; lat/lon/hae by hand; speed_ms = 36 km/h x 1000 / 3600 = 10 by the module's derive of nmea0183.sog_kmh"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "pashr-pos-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PASHR,POS,1,09,123519.50,4807.03800,N,01131.00000,E,545.40,,84.4,36.0,-0.2,1.9,1.0,1.6,1.2*00",
+  "expect": "$PASHR,POS,1,09,123519.50,4807.03800,N,01131.00000,E,545.40,,84.4,36.0,-0.2,1.9,1.0,1.6,1.2*00",
+  "model": {
+    "@kind": "pashr-pos",
+    "nmea0183.proprietary_tag": "PASHR",
+    "nmea0183.pashr_pos_type": "1",
+    "nmea0183.sats_used": "9",
+    "nmea0183.utc_s": "45319.5",
+    "lat": "48.1173",
+    "lon": "11.516666666666667",
+    "hae": "545.4",
+    "nmea0183.pashr_track_deg": "84.4",
+    "nmea0183.sog_kmh": "36",
+    "nmea0183.pashr_climb": "-0.2",
+    "nmea0183.pdop": "1.9",
+    "nmea0183.hdop": "1",
+    "nmea0183.vdop": "1.6",
+    "nmea0183.tdop": "1.2"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PASHR,POS: field 9 is height above the WGS 84 ellipsoid (the driver: 'altitude is already WGS 84'); field 10 has no stated meaning and is left empty"
+}

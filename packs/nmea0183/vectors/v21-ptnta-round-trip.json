@@ -1,0 +1,20 @@
+{
+  "name": "ptnta-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PTNTA,20260319081530,2,T4,120,-480,3,3,3*1E",
+  "expect": "$PTNTA,20260319081530,2,T4,120,-480,3,3,3*1E",
+  "model": {
+    "@kind": "ptnta",
+    "nmea0183.proprietary_tag": "PTNTA",
+    "nmea0183.isync_datetime": "20260319081530",
+    "nmea0183.isync_osc_quality": "2",
+    "nmea0183.isync_pps_interval_ns": "120",
+    "nmea0183.isync_fine_phase_ns": "-480",
+    "nmea0183.isync_status": "3",
+    "nmea0183.isync_gps_messages": "3",
+    "nmea0183.isync_transfer_quality": "3"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PTNTA: field 3 is always T4, a `when` of the kind"
+}

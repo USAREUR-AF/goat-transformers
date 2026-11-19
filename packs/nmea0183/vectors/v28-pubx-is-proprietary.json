@@ -1,0 +1,13 @@
+{
+  "name": "pubx-is-proprietary",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PUBX,00,081350.00,4717.11364,N,00833.91565,E,546.589,G3*5E",
+  "expect": "$PUBX,00,081350.00,4717.11364,N,00833.91565,E,546.589,G3*5E",
+  "model": {
+    "@kind": "proprietary",
+    "nmea0183.proprietary_tag": "PUBX"
+  },
+  "source": "constructed",
+  "reference": "the driver lists PUBX without a layout (pack.md): `proprietary`, the fields as residue"
+}

@@ -8,13 +8,14 @@
 # written on encode. Field 0 is the tag: two characters of talker id, then the
 # three-letter sentence id, which selects the kind.
 format        nmea0183
-version       0.1.0
+version       0.2.0
 distribution  public
 source        "gpsd project, NMEA Revealed (www/NMEA.adoc, dated 12 July 2025), https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b"
 source        "gpsd COPYING at the same commit: BSD-2-Clause; the document states it is not a derivative of the NMEA 0183 standard"
 source        "pynmea2 (https://github.com/Knio/pynmea2, MIT License) at commit d8240dca51bd3f731b3fb7af8f0f9978c9b08f1a, pynmea2/types/talker.py: the field order of GNS, HDM, HDG, THS, ROT, VHW, MWV, MWD, DBT, DPT, MTW, TTM, TLL, OSD and DTM; restated, no code copied"
 source        "gpsd drivers/driver_nmea0183.c (BSD-2-Clause) at commit c59fc6de479d06620c8b2ba395b728e10a71527b: units and meanings of GNS, HDM, HDG, THS, ROT, MWV, MWD, DBT, DPT, MTW and DTM; restated, no code copied"
 uses          nmea0183
+uses          track
 wire          text
 start         "$"
 checksum      nmea
@@ -23,6 +24,319 @@ checksum      nmea
 # an entity without one (a conversion from another format) is written as GP.
 field    nmea0183.talker   0:0:2   string
 default  nmea0183.talker   GP
+
+# ---- Proprietary sentences: "$P", a three-letter manufacturer code and the
+# vendor's sentence name, as one tag of 4 to 7 characters (pack.md,
+# "Proprietary sentences"). Each kind selects on the whole tag (`when 0 <tag>`),
+# and on field 1 where the vendor puts a sentence number or type there. These
+# kinds and the `proprietary` kind after them stand before the standard
+# kinds: a standard kind selects on columns 2-4 of the tag, which a
+# proprietary tag can also hold (PGRMC holds RMC), so a `$P` sentence must be
+# taken here first. Every one maps the whole tag to nmea0183.proprietary_tag
+# and `requires` it, so an encode from another format never selects one.
+# Layouts and meanings are restated from gpsd drivers/driver_nmea0183.c.
+
+# PASHR,POS (Ashtech): 3D position; field 9 is stated to be WGS 84 already.
+kind      pashr-pos
+when      0       PASHR
+when      1       POS
+requires  nmea0183.proprietary_tag nmea0183.pashr_pos_type
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.pashr_pos_type   2      int
+field     nmea0183.sats_used        3      int:2
+field     nmea0183.utc_s            4      hms:2
+field     lat                       5+6    dm:2:5:NS
+field     lon                       7+8    dm:3:5:EW
+field     hae                       9      dec:2
+field     nmea0183.pashr_track_deg  11     dec:1
+field     nmea0183.sog_kmh          12     dec:1
+field     nmea0183.pashr_climb      13     dec:1
+field     nmea0183.pdop             14     dec:1
+field     nmea0183.hdop             15     dec:1
+field     nmea0183.vdop             16     dec:1
+field     nmea0183.tdop             17     dec:1
+
+# PASHR,SAT (Ashtech): satellites in view, five fields per satellite.
+kind      pashr-sat
+when      0       PASHR
+when      1       SAT
+requires  nmea0183.proprietary_tag nmea0183.pashr_sat_count
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.pashr_sat_count  2      int
+group     nmea0183.pashr_satellites 3      item 5
+  field   nmea0183.sv_id            0      int
+  field   nmea0183.azimuth_deg      1      int
+  field   nmea0183.elevation_deg    2      int
+  field   nmea0183.pashr_snr        3      float
+  field   nmea0183.pashr_sat_used   4      string
+end
+
+# PASHR,RID (Ashtech): receiver type and firmware version.
+kind      pashr-rid
+when      0       PASHR
+when      1       RID
+requires  nmea0183.proprietary_tag nmea0183.receiver_model
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.receiver_model   2      string
+field     nmea0183.receiver_version 3      string
+
+# PGRME (Garmin): estimated position errors; fields 2, 4 and 6 are the unit M.
+kind      pgrme
+when      0       PGRME
+requires  nmea0183.proprietary_tag nmea0183.pgrme_hpe_m
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.pgrme_hpe_m      1      dec:1
+const     2       M
+field     nmea0183.pgrme_vpe_m      3      dec:1
+const     4       M
+field     nmea0183.pgrme_spe_m      5      dec:1
+const     6       M
+
+# PGRMF (Garmin): fix data with GPS week and seconds, UTC date and time.
+kind      pgrmf
+when      0       PGRMF
+requires  nmea0183.proprietary_tag nmea0183.gps_week
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.gps_week         1      int
+field     nmea0183.gps_tow_s        2      int
+field     time_ms                   4+3    hms_dmy:0
+field     nmea0183.utc_s            4      hms:0
+field     nmea0183.leap_seconds     5      int
+field     lat                       6+7    dm:2:4:NS
+field     lon                       8+9    dm:3:4:EW
+field     nmea0183.pgrmf_mode       10     string
+field     nmea0183.pgrmf_fix_type   11     int
+field     nmea0183.sog_kmh          12     float
+field     course                    13     float
+field     nmea0183.pdop             14     float
+field     nmea0183.tdop             15     float
+
+# PGRMM (Garmin): the map datum in use, as a name.
+kind      pgrmm
+when      0       PGRMM
+requires  nmea0183.proprietary_tag nmea0183.map_datum
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.map_datum        1      string
+
+# PGRMT (Garmin): sensor status, one letter or text per field.
+kind      pgrmt
+when      0       PGRMT
+requires  nmea0183.proprietary_tag nmea0183.receiver_model
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.receiver_model   1      string
+field     nmea0183.pgrmt_rom_test   2      string
+field     nmea0183.pgrmt_receiver   3      string
+field     nmea0183.pgrmt_stored     4      string
+field     nmea0183.pgrmt_clock      5      string
+field     nmea0183.pgrmt_oscillator 6      string
+field     nmea0183.pgrmt_collecting 7      string
+field     nmea0183.pgrmt_temp_c     8      string
+field     nmea0183.pgrmt_config     9      string
+
+# PGRMV (Garmin): velocity east, north and up, metres per second.
+kind      pgrmv
+when      0       PGRMV
+requires  nmea0183.proprietary_tag track.vel_east_ms
+field     nmea0183.proprietary_tag  0      string
+field     track.vel_east_ms         1      dec:1
+field     track.vel_north_ms        2      dec:1
+field     track.vel_up_ms           3      dec:1
+
+# PGRMZ (Garmin): altitude in feet (field 2 is the unit f) and fix mode.
+kind      pgrmz
+when      0       PGRMZ
+requires  nmea0183.proprietary_tag nmea0183.pgrmz_alt_ft
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.pgrmz_alt_ft     1      int
+const     2       f
+field     nmea0183.pgrmz_fix_mode   3      int
+
+# PMTK001 (MediaTek): acknowledgement of a command.
+kind      pmtk001
+when      0       PMTK001
+requires  nmea0183.proprietary_tag nmea0183.mtk_command
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.mtk_command      1      int
+field     nmea0183.mtk_ack_flag     2      int
+
+# PMTK424 (MediaTek): output control (TSIP, antenna detect, PPS, PPS timing,
+# PPS pulse width in the receiver's clock units).
+kind      pmtk424
+when      0       PMTK424
+requires  nmea0183.proprietary_tag nmea0183.mtk_pps_width
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.mtk_tsip         1      int
+field     nmea0183.mtk_antenna      2      int
+field     nmea0183.mtk_pps          3      int
+field     nmea0183.mtk_pps_timing   4      int
+field     nmea0183.mtk_pps_width    5      int
+
+# PSRFEPE (SiRF): estimated errors.
+kind      psrfepe
+when      0       PSRFEPE
+requires  nmea0183.proprietary_tag nmea0183.sirf_ehpe_m
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.utc_s            1      hms:3
+field     nmea0183.status           2      string
+field     nmea0183.hdop             3      float
+field     nmea0183.sirf_ehpe_m      4      float
+field     nmea0183.sirf_evpe_m      5      float
+field     nmea0183.sirf_ehve        6      float
+field     nmea0183.sirf_ehe_deg     7      float
+
+# PSTI,030 (SkyTraq): position, velocity east/north/up, date, RTK age and ratio.
+kind      psti030
+when      0       PSTI
+when      1       030
+requires  nmea0183.proprietary_tag nmea0183.rtk_ratio
+field     nmea0183.proprietary_tag  0      string
+field     time_ms                   2+12   hms_dmy:3
+field     nmea0183.utc_s            2      hms:3
+field     nmea0183.status           3      string
+field     lat                       4+5    dm:2:7:NS
+field     lon                       6+7    dm:3:7:EW
+field     nmea0183.alt_msl_m        8      float
+field     track.vel_east_ms         9      float
+field     track.vel_north_ms        10     float
+field     track.vel_up_ms           11     float
+field     nmea0183.faa_mode         13     string
+field     nmea0183.rtk_age_s        14     float
+field     nmea0183.rtk_ratio        15     float
+
+# PSTI,032 (SkyTraq): RTK baseline from a fixed base to the rover.
+kind      psti032
+when      0       PSTI
+when      1       032
+requires  nmea0183.proprietary_tag nmea0183.baseline_length_m
+field     nmea0183.proprietary_tag  0      string
+field     time_ms                   2+3    hms_dmy:3
+field     nmea0183.utc_s            2      hms:3
+field     nmea0183.status           4      string
+field     nmea0183.rtk_mode         5      string
+field     nmea0183.baseline_east_m  6      float
+field     nmea0183.baseline_north_m 7      float
+field     nmea0183.baseline_up_m    8      float
+field     nmea0183.baseline_length_m 9     float
+field     nmea0183.baseline_course_deg 10  float
+
+# PSTI,035 (SkyTraq): RTK baseline from a moving base to the rover.
+kind      psti035
+when      0       PSTI
+when      1       035
+requires  nmea0183.proprietary_tag nmea0183.baseline_length_m
+field     nmea0183.proprietary_tag  0      string
+field     time_ms                   2+3    hms_dmy:3
+field     nmea0183.utc_s            2      hms:3
+field     nmea0183.status           4      string
+field     nmea0183.rtk_mode         5      string
+field     nmea0183.baseline_east_m  6      float
+field     nmea0183.baseline_north_m 7      float
+field     nmea0183.baseline_up_m    8      float
+field     nmea0183.baseline_length_m 9     float
+field     nmea0183.baseline_course_deg 10  float
+
+# PSTI,036 (SkyTraq): heading, pitch and roll.
+kind      psti036
+when      0       PSTI
+when      1       036
+requires  nmea0183.proprietary_tag nmea0183.attitude_heading_deg
+field     nmea0183.proprietary_tag  0      string
+field     time_ms                   2+3    hms_dmy:3
+field     nmea0183.utc_s            2      hms:3
+field     nmea0183.attitude_heading_deg 4  float
+field     nmea0183.attitude_pitch_deg 5    float
+field     nmea0183.attitude_roll_deg 6     float
+field     nmea0183.faa_mode         7      string
+
+# PTNTA (iSync): clock and oscillator status; field 3 is always T4.
+kind      ptnta
+when      0       PTNTA
+when      3       T4
+requires  nmea0183.proprietary_tag nmea0183.isync_osc_quality
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.isync_datetime   1      string
+field     nmea0183.isync_osc_quality 2     int
+field     nmea0183.isync_pps_interval_ns 4 int
+field     nmea0183.isync_fine_phase_ns 5   int
+field     nmea0183.isync_status     6      int
+field     nmea0183.isync_gps_messages 7    int
+field     nmea0183.isync_transfer_quality 8 int
+
+# PTNTHTM (True North): compass heading, pitch, roll, dip and field strength,
+# each in the receiver's own integer units (pack.md), with status letters.
+kind      ptnthtm
+when      0       PTNTHTM
+requires  nmea0183.proprietary_tag nmea0183.htm_heading
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.htm_heading      1      string
+field     nmea0183.htm_mag_status   2      string
+field     nmea0183.htm_pitch        3      string
+field     nmea0183.htm_pitch_status 4      string
+field     nmea0183.htm_roll         5      string
+field     nmea0183.htm_roll_status  6      string
+field     nmea0183.htm_dip          7      string
+field     nmea0183.htm_horizontal   8      string
+
+# PQTMGPS (Quectel): position in decimal degrees, height above the ellipsoid,
+# ground speed in metres per second.
+kind      pqtmgps
+when      0       PQTMGPS
+requires  nmea0183.proprietary_tag nmea0183.uptime_ms nmea0183.quectel_tow_s
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.uptime_ms        1      int
+field     nmea0183.quectel_tow_s    2      float
+field     lat                       3      float
+field     lon                       4      float
+field     hae                       5      float
+field     nmea0183.alt_msl_m        6      float
+field     speed_ms                  7      float
+field     nmea0183.heading_2d_deg   8      float
+field     nmea0183.h_acc_m          9      float
+field     nmea0183.hdop             10     float
+field     nmea0183.pdop             11     float
+field     nmea0183.quectel_fix_type 12     int
+field     nmea0183.sats_used        13     int
+
+# PQTMINS (Quectel): dead-reckoning solution; the height and the velocities
+# are kept raw (pack.md).
+kind      pqtmins
+when      0       PQTMINS
+requires  nmea0183.proprietary_tag nmea0183.uptime_ms nmea0183.ins_solution
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.uptime_ms        1      int
+field     nmea0183.ins_solution     2      int
+field     lat                       3      float
+field     lon                       4      float
+field     nmea0183.ins_height_m     5      float
+field     nmea0183.ins_vel_north    6      float
+field     nmea0183.ins_vel_east     7      float
+field     nmea0183.ins_vel_down     8      float
+field     nmea0183.attitude_roll_deg 9     float
+field     nmea0183.attitude_pitch_deg 10   float
+field     nmea0183.attitude_heading_deg 11 float
+
+# PQTMIMU (Quectel): raw IMU: acceleration in g, angular rate in degrees per
+# second, wheel ticks.
+kind      pqtmimu
+when      0       PQTMIMU
+requires  nmea0183.proprietary_tag nmea0183.uptime_ms nmea0183.imu_acc_x_g
+field     nmea0183.proprietary_tag  0      string
+field     nmea0183.uptime_ms        1      int
+field     nmea0183.imu_acc_x_g      2      float
+field     nmea0183.imu_acc_y_g      3      float
+field     nmea0183.imu_acc_z_g      4      float
+field     nmea0183.imu_rate_x_dps   5      float
+field     nmea0183.imu_rate_y_dps   6      float
+field     nmea0183.imu_rate_z_dps   7      float
+field     nmea0183.imu_ticks        8      int
+field     nmea0183.imu_tick_ms      9      int
+
+# Any other proprietary sentence: the tag is kept whole and every other field
+# as residue, so it round-trips and never reaches a standard kind.
+kind      proprietary
+when      0:0:1   P
+requires  nmea0183.proprietary_tag
+field     nmea0183.proprietary_tag  0      string
 
 # Kinds are in the order an encoder tries their `requires` for an entity from
 # another format: a position with a date-time gives RMC, a position alone GGA.

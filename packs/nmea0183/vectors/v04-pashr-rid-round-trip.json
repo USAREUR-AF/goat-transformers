@@ -1,0 +1,15 @@
+{
+  "name": "pashr-rid-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PASHR,RID,G4,BP00*4A",
+  "expect": "$PASHR,RID,G4,BP00*4A",
+  "model": {
+    "@kind": "pashr-rid",
+    "nmea0183.proprietary_tag": "PASHR",
+    "nmea0183.receiver_model": "G4",
+    "nmea0183.receiver_version": "BP00"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PASHR,RID: receiver and version"
+}

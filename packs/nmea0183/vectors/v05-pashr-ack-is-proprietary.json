@@ -1,0 +1,13 @@
+{
+  "name": "pashr-ack-is-proprietary",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PASHR,ACK*3D",
+  "expect": "$PASHR,ACK*3D",
+  "model": {
+    "@kind": "proprietary",
+    "nmea0183.proprietary_tag": "PASHR"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PASHR,ACK carries nothing the driver reads: it decodes as `proprietary`, field 1 as residue"
+}

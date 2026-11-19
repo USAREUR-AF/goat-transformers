@@ -1,0 +1,22 @@
+{
+  "name": "pqtmimu-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PQTMIMU,42634,-0.006832,-0.022814,1.014552,0.315,-0.4025,-0.3325,0,0*65",
+  "expect": "$PQTMIMU,42634,-0.006832,-0.022814,1.014552,0.315,-0.4025,-0.3325,0,0*65",
+  "model": {
+    "@kind": "pqtmimu",
+    "nmea0183.proprietary_tag": "PQTMIMU",
+    "nmea0183.uptime_ms": "42634",
+    "nmea0183.imu_acc_x_g": "-0.006832",
+    "nmea0183.imu_acc_y_g": "-0.022814",
+    "nmea0183.imu_acc_z_g": "1.014552",
+    "nmea0183.imu_rate_x_dps": "0.315",
+    "nmea0183.imu_rate_y_dps": "-0.4025",
+    "nmea0183.imu_rate_z_dps": "-0.3325",
+    "nmea0183.imu_ticks": "0",
+    "nmea0183.imu_tick_ms": "0"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PQTMIMU: accelerations in g and angular rates in degrees per second"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "pgrmc-is-proprietary-not-rmc",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRMC,A,218.8,100,,,,,,,,2,1,2*0B",
+  "expect": "$PGRMC,A,218.8,100,,,,,,,,2,1,2*0B",
+  "model": {
+    "@kind": "proprietary",
+    "nmea0183.proprietary_tag": "PGRMC"
+  },
+  "source": "constructed",
+  "reference": "columns 2-4 of the tag PGRMC are RMC: the `proprietary` kind, before the standard kinds, takes it, keeps the tag whole and the other fields as residue"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "psti032-reserved-fields-dropped",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PSTI,032,081530.250,190326,A,R,0.603,-0.837,-0.089,1.036,144.22,,,,,*1A",
+  "expect": "$PSTI,032,081530.250,190326,A,R,0.603,-0.837,-0.089,1.036,144.22*36",
+  "model": {
+    "@kind": "psti032",
+    "nmea0183.proprietary_tag": "PSTI",
+    "time_ms": "1773908130250",
+    "nmea0183.utc_s": "29730.25",
+    "nmea0183.status": "A",
+    "nmea0183.rtk_mode": "R",
+    "nmea0183.baseline_east_m": "0.603",
+    "nmea0183.baseline_north_m": "-0.837",
+    "nmea0183.baseline_up_m": "-0.089",
+    "nmea0183.baseline_length_m": "1.036",
+    "nmea0183.baseline_course_deg": "144.22"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PSTI,032: fields 11-15 are reserved and empty; the pack writes up to field 10"
+}

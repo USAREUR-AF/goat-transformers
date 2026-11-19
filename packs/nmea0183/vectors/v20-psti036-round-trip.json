@@ -1,0 +1,19 @@
+{
+  "name": "psti036-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PSTI,036,054314.000,030521,191.69,-16.35,0,R*63",
+  "expect": "$PSTI,036,054314.000,030521,191.69,-16.35,0,R*63",
+  "model": {
+    "@kind": "psti036",
+    "nmea0183.proprietary_tag": "PSTI",
+    "time_ms": "1620020594000",
+    "nmea0183.utc_s": "20594",
+    "nmea0183.attitude_heading_deg": "191.69",
+    "nmea0183.attitude_pitch_deg": "-16.35",
+    "nmea0183.attitude_roll_deg": "0",
+    "nmea0183.faa_mode": "R"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; PSTI,036: heading, pitch and roll in degrees, and a mode letter"
+}

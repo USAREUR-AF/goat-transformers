@@ -1,0 +1,15 @@
+{
+  "name": "pgrmf-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$PGRMF,2350,302412,140326,120012,18,5213.1439,N,02100.6511,E,A,2,36,271,2,1*1B",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[21.010851666666667,52.219065]},\"properties\":{\"time_ms\":1773489612000,\"course\":271,\"speed_ms\":10}}",
+  "model": {
+    "lat": "52.219065",
+    "lon": "21.010851666666667",
+    "time_ms": "1773489612000",
+    "course": "271"
+  },
+  "source": "constructed",
+  "reference": "gpsd drivers/driver_nmea0183.c (BSD-2-Clause, commit c59fc6d): layout and meaning, restated; time_ms from 14 March 2026 12:00:12 UTC; speed_ms = 36 km/h = 10 m/s by the module's derive"
+}
