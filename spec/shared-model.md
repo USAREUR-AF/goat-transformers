@@ -98,6 +98,8 @@ pack, so a deployment entitled only to public formats cannot load anything else.
 | `uid` | string | | stable identifier of the entity |
 | `type` | string | | CoT-style type token (`a-f-G-U-C-I`), the shared type vocabulary |
 | `time_ms` | int | epoch milliseconds UTC | time the report is valid |
+| `time_error_ms` | float | milliseconds | coherence error bound of the clock that stamped `time_ms`, 0 or more: the bound, not the offset; absent when not stated |
+| `time_state` | string | | state of the clock that stamped `time_ms`: `coherent`, `drifting` or `free-running`; absent when not stated |
 | `lat` | float | degrees, WGS84 | latitude |
 | `lon` | float | degrees, WGS84 | longitude |
 | `hae` | float | metres | height above WGS84 ellipsoid |
