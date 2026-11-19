@@ -1,0 +1,9 @@
+# A core module for the xsd2pack tests: the few shared keys the fixture binds.
+module        core
+version       0.1.0
+distribution  public
+source        "synthetic module written for the xsd2pack tests"
+key  uid       string  -    "stable identifier of the entity"
+key  time_ms   int     ms   "time the report is valid, epoch milliseconds UTC"
+key  course    float   deg  "direction of travel, degrees true"
+key  speed_ms  float   m/s  "ground speed"

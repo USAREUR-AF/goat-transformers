@@ -26,6 +26,7 @@ Every CI check is a command you can run locally before you push. `.github/workfl
 | a pack, a model module, the specification | every engine below: each one runs every vector of every pack |
 | Rust (`engines/rust`) | `cd engines/rust && cargo test --release` |
 | Go (`engines/go`) | `cd engines/go && go vet ./... && go test ./...` |
+| a generator or a vector script (`tools/gen`) | `python3 -I -m unittest discover -s tools/gen/tests`; each vector script with `--check` |
 | Python (`engines/python`) | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
 | Java (`engines/java`) | `cd engines/java && ./build.sh` |
 | C++ (`engines/cpp`) | `cmake -S engines/cpp -B build/cpp && cmake --build build/cpp && ctest --test-dir build/cpp --output-on-failure` |
@@ -63,7 +64,7 @@ A pack adds a format as data. No engine changes when the format's wire type exis
 
 Only formats whose specification is public belong in this repository. A format whose specification is not public goes in a private overlay ([docs/boundary.md](docs/boundary.md)). The source files themselves (schemas, standards documents) are not committed here.
 
-A pack for a large message catalog is written by a generator in `tools/gen/` (`proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`). Change the generator and run it again; do not edit its output by hand.
+A pack for a large message catalog is written by a generator in `tools/gen/` (`proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`, `asterix2pack.py`). Change the generator and run it again; do not edit its output by hand. Every generator takes `--out <dir>` and `--check` (write nothing, exit 1 when a file under `--out` differs from what the run writes) and loads its own output with `tools/gen/gtcheck.py`.
 
 ## Adding a wire type
 

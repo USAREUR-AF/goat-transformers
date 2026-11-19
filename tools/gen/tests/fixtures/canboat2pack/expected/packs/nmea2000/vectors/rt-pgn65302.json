@@ -1,0 +1,14 @@
+{
+  "name": "pgn65302-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "16ff0081d5183390380c",
+  "expect": "16ff0081d5183390380c",
+  "model": {
+    "@kind": "pgn65302",
+    "n2k.sid": "129",
+    "n2k.pgn65302_pressure": "6357",
+    "n2k.tank_level": "-114.484",
+    "n2k.status_bits": "3128"
+  }
+}

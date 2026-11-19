@@ -1,0 +1,5 @@
+Synthetic test fixture for tools/gen/canboat2pack.py.
+
+This file stands where the license file of the PGN database repository is
+read. It was written for the test and is not the license of any database.
+The fixture database beside it holds invented definitions only.

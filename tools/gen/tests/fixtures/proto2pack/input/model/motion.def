@@ -1,0 +1,10 @@
+# A module with derived keys, for the proto2pack tests: speed and course follow
+# from the east and north velocity (engine-spec 0.6, derived keys).
+module        motion
+version       0.1.0
+distribution  public
+source        "written for the proto2pack tests"
+key  vel_east   float  m/s  "velocity toward east"
+key  vel_north  float  m/s  "velocity toward north"
+derive  speed_ms  hypot    motion.vel_east  motion.vel_north
+derive  course    bearing  motion.vel_east  motion.vel_north

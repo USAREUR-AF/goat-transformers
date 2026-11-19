@@ -1,0 +1,14 @@
+{
+  "name": "gen-tag-xml-to-depot",
+  "from": "tag-xml",
+  "to": "depot",
+  "input": "<tag schema=\"1\" id=\"parcel_id-2\" time=\"1970-01-01T00:00:00.137Z\"><place lat=\"5.5\" lon=\"7.25\" hae=\"3.25\"/></tag>",
+  "expect": "10890152280a0b70617263656c5f69642d321219090000000000001640110000000000001d401d000050402001",
+  "model": {
+    "uid": "parcel_id-2",
+    "time_ms": "137",
+    "lat": "5.5",
+    "lon": "7.25",
+    "hae": "3.25"
+  }
+}

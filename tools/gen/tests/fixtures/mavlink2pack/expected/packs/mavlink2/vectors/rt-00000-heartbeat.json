@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-heartbeat",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0900000001010000004c9da65a23fad1a87f",
+  "expect": "fd0900000001010000004c9da65a23fad1a87f",
+  "model": {
+    "@kind": "heartbeat"
+  }
+}

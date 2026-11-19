@@ -24,14 +24,30 @@ SHA-256 and license for `PROVENANCE.md`.
 |---|---|---|
 | protobuf (`.proto`, proto2 or proto3) | `tools/gen/proto2pack.py` | `tools/gen/proto2pack-run.sh` (six packs) |
 | XML Schema (`.xsd`) | `tools/gen/xsd2pack.py` | `tools/gen/xsd2pack-run.sh` (three packs) |
-| CANboat `canboat.json` | `tools/gen/canboat2pack.py` | `--out <dir> --commit <sha> --fetch`; reads `<dir>/sources/canboat.json` |
+| CANboat `canboat.json` | `tools/gen/canboat2pack.py` | `--out <dir> --commit <sha> --fetch` the first time, `--out <dir>` afterwards; reads `<dir>/sources/canboat.json` |
 | ASTERIX category definitions (the JSON of `zoranbosnjak/asterix-specs`) | `tools/gen/asterix2pack.py` | `--out <dir> --commit <sha> --fetch --cats 048,062` or `all`; reads `<dir>/sources/asterix-specs/` |
-| MAVLink message XML | `tools/gen/mavlink2pack.py` | `--root <dir> --core-def model/core.def`; reads `<dir>/sources/{common,standard,minimal}.xml` |
+| MAVLink message XML | `tools/gen/mavlink2pack.py` | `--out <dir> --core-def model/core.def` (`--root` is the same option); reads `<dir>/sources/{common,standard,minimal}.xml` and `<dir>/sources/PROVENANCE.md` |
 
 Every generator is Python standard library only. Run each with `python3 -I`
-and read its `--help`; the docstring at the top of each file states its inputs
-and outputs. The two `-run.sh` files are the record of how the packs in this
-repository were produced: copy the nearest block for a new format.
+and read its `--help`, which states the files read, the files written, the
+guarantees and the exit status. The two `-run.sh` files are the record of how
+the packs in this repository were produced: copy the nearest block for a new
+format.
+
+Every generator has the same two options:
+
+| Option | Meaning |
+|---|---|
+| `--out <dir>` | the directory to write into: a checkout, or a work directory whose `model/` and `packs/` are copied into the checkout afterwards |
+| `--check` | write nothing; compare what the run would write with the files under `--out`; exit 1 and name each file that differs, is missing or would be removed |
+
+`--fetch` (`canboat2pack.py`, `asterix2pack.py`) downloads the pinned source
+files and is a separate, explicit step; it is refused together with `--check`.
+`proto2pack-run.sh --check <checkout> <sources>` and
+`xsd2pack-run.sh --check <root> <checkout>` run every pack of the script in
+check mode. Exit status of every generator: 0 done, 1 a refused input, a failed
+check or a `--check` difference (one line on stderr naming the source file and
+line where there is one), 2 a usage error.
 
 ## 2. The arguments that matter
 
@@ -77,9 +93,17 @@ python3 -I tools/gen/proto2pack.py --help
 git status --short model packs tools/gen/names      # what changed
 ```
 
-Each generator re-reads its own output and checks it (grammar, key
-declarations, types) and stops on a problem. Then load the result in an
-engine, with only a few packs:
+Each generator re-reads its own output through `tools/gen/gtcheck.py`, the one
+loader the generators share (line grammar, blocks and kinds, locators and
+transforms of the wire, key declarations, types; written from `spec/` and
+importing no engine), decodes and encodes its vectors with its own codec, and
+stops on a problem. To check any pack by hand:
+
+```bash
+python3 -I tools/gen/gtcheck.py --model model packs/<format>/pack.def
+```
+
+Then load the result in an engine, with only a few packs:
 
 ```bash
 engines/rust/target/release/goat-xf list-formats --packs packs --packs-only <format>,geojson,cot-xml
@@ -106,8 +130,12 @@ Then run all seven engines (`AGENTS.md`, Commands) and
 ## 7. A new kind of schema
 
 For a definition language with no generator, write `tools/gen/<x>2pack.py` on
-the pattern of `canboat2pack.py`: standard library only, re-runnable, every
-output rewritten from the source, a self-check that re-reads the output, key
-names that stay the same from run to run, and vectors computed by code in the
-generator. Written from
-`spec/` only, never from an engine.
+the pattern of `canboat2pack.py`: standard library only; parse, plan and emit
+as separate functions; every file written through `tools/gen/genio.py` (which
+gives `--out` and `--check`); the output loaded with `tools/gen/gtcheck.py`;
+key names that stay the same from run to run; and vectors computed by code in
+the generator. Add `tools/gen/tests/test_<x>2pack.py` with a small fixture
+written for the test and its expected output tree
+(`tools/gen/tests/support.py` explains the layout), and run
+`python3 -I -m unittest discover -s tools/gen/tests`. Written from `spec/`
+only, never from an engine.

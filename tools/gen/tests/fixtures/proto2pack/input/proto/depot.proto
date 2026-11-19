@@ -1,0 +1,72 @@
+// The messages a depot sends. Written for the proto2pack tests.
+syntax = "proto3";
+package depot;
+
+import "depot_options.proto";
+import public "depot_types.proto";
+import "google/protobuf/timestamp.proto";
+
+message Envelope {
+  string sender = 1 [(rule) = {is_mandatory: true}];  // name of the sending depot
+  uint64 sent_ms = 2;
+  oneof body {
+    ParcelReport parcel_report = 10;
+    Receipt receipt = 11;
+    Heartbeat heartbeat = 12;
+  }
+}
+
+message ParcelReport {
+  // Outer size of the parcel.
+  message Dimensions {
+    enum Unit {
+      UNIT_MM = 0;
+      UNIT_INCH = 1;
+    }
+    uint32 length = 1;
+    uint32 width = 2;
+    Unit unit = 3;
+  }
+  message Classification {
+    string type = 1;
+    float confidence = 2;
+  }
+
+  string parcel_id = 1 [(rule) = {is_mandatory: true}];
+  Position position = 2;
+  // the handling the sender asked for
+  // (a comment of two lines)
+  Handling handling = 3;
+  repeated Stop stops = 4;
+  repeated uint32 scan_codes = 5;
+  oneof weight {
+    double weight_kg = 6;
+    sint64 weight_g = 7;
+  }
+  map<string, string> labels = 8;
+  bytes signature = 9;
+  fixed32 checksum = 13;
+  reserved 14, 15;
+  reserved "old_route";
+  ParcelReport previous = 16;
+  Dimensions dimensions = 17;
+  bool insured = 18;
+  double east_rate = 19;
+  double north_rate = 20;
+  repeated Handling past_handling = 21;
+  google.protobuf.Timestamp reported = 22;
+  repeated Classification classification = 23;
+  .depot.Position origin = 24;
+}
+
+message Receipt {
+  string parcel_id = 1;
+  string signed_by = 2;
+  repeated Stop route = 3;
+  string signedBy = 5;  // sanitizes to the name of field 2
+  int64 amount_cents = 6;
+}
+
+// Sent when there is nothing else to send.
+message Heartbeat {
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pgn65301-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "15ff00050ffa0632c524a0",
+  "expect": "15ff00050ffa0632c524a0",
+  "model": {
+    "@kind": "pgn65301",
+    "n2k.sid": "5",
+    "n2k.tank_level": "-6.084",
+    "n2k.pgn65301_pressure": "61690317.4",
+    "n2k.2nd_sensor": "32",
+    "n2k.alarm": "1"
+  }
+}

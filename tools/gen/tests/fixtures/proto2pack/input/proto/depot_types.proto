@@ -1,0 +1,42 @@
+/* Types shared by the messages of the test schema.
+   A block comment with a brace } and a semicolon ; that the parser skips. */
+syntax = "proto3";
+package depot;
+
+import "depot_options.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_package = "example.depot";
+
+// How a parcel is to be handled.
+enum Handling {
+  option allow_alias = true;
+  HANDLING_UNSPECIFIED = 0;
+  HANDLING_FRAGILE = 1;
+  HANDLING_COLD = 2;
+  HANDLING_CHILLED = 2 [deprecated = true];
+  reserved 7, 9 to 11;
+}
+
+message Position {
+  double latitude = 1 [(rule) = {is_mandatory: true}];   // degrees north
+  double longitude = 2 [(rule) = {is_mandatory: true}];  // degrees east
+  float height_m = 3;
+  // 1 means degrees on the reference ellipsoid
+  uint32 frame = 4;
+}
+
+message Scan {
+  uint32 gate = 1;  // number of the gate that read the label
+  double temperature_c = 2;
+}
+
+// One place a parcel passed.
+message Stop {
+  string depot_code = 1 [(rule) = {is_mandatory: true}];
+  google.protobuf.Timestamp arrived = 2;
+  repeated sint32 delays_s = 3 [packed = true];
+  repeated string notes = 4;
+  Position at = 5;
+  repeated Scan scans = 6;
+}

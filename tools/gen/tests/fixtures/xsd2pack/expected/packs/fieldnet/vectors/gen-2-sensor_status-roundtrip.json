@@ -1,0 +1,16 @@
+{
+  "name": "gen-sensor_status-roundtrip",
+  "from": "fieldnet",
+  "to": "fieldnet",
+  "input": "<SensorStatus schemaVersion=\"s0\" xmlns=\"urn:example:fieldnet\"><MessageHeader><Timestamp>2026-01-02T03:04:05.001Z</Timestamp><Mode>SIMULATION</Mode><Sequence>4</Sequence></MessageHeader><MessageData source=\"urn:example:4\" origin=\"s5\"><SensorID><UUID>00000000-0000-4000-8000-000000000006</UUID><Label>s7</Label></SensorID><Level>s8</Level><Site Name=\"s9\"><Name>s10</Name></Site><Codes>s11</Codes><Remark lang=\"en\"/><Tree><Name>s13</Name></Tree><Voltage>9</Voltage><OnBattery>false</OnBattery><Quality>GOOD</Quality><ExtendedDiagnosticInformationBlock><SecondaryPowerDistributionSubsystem><TemperatureCompensatedOscillatorDriftEstimate>2.5</TemperatureCompensatedOscillatorDriftEstimate></SecondaryPowerDistributionSubsystem></ExtendedDiagnosticInformationBlock><Note>s18</Note><Reading quantity=\"TEMPERATURE\" unit=\"s20\"><Value>0.5</Value><Flag>s22</Flag><Sample at=\"2026-01-02T03:04:05.023Z\" v=\"2.5\"/></Reading><Reading quantity=\"TEMPERATURE\" unit=\"s26\"><Value>0.75</Value><Flag>s28</Flag><Sample at=\"2026-01-02T03:04:05.029Z\" v=\"0.25\"/></Reading></MessageData></SensorStatus>",
+  "expect": "<SensorStatus schemaVersion=\"s0\" xmlns=\"urn:example:fieldnet\"><MessageHeader><Timestamp>2026-01-02T03:04:05.001Z</Timestamp><Mode>SIMULATION</Mode><Sequence>4</Sequence></MessageHeader><MessageData source=\"urn:example:4\" origin=\"s5\"><SensorID><UUID>00000000-0000-4000-8000-000000000006</UUID><Label>s7</Label></SensorID><Level>s8</Level><Site Name=\"s9\"><Name>s10</Name></Site><Codes>s11</Codes><Remark lang=\"en\"/><Tree><Name>s13</Name></Tree><Voltage>9</Voltage><OnBattery>false</OnBattery><Quality>GOOD</Quality><ExtendedDiagnosticInformationBlock><SecondaryPowerDistributionSubsystem><TemperatureCompensatedOscillatorDriftEstimate>2.5</TemperatureCompensatedOscillatorDriftEstimate></SecondaryPowerDistributionSubsystem></ExtendedDiagnosticInformationBlock><Note>s18</Note><Reading quantity=\"TEMPERATURE\" unit=\"s20\"><Value>0.5</Value><Flag>s22</Flag><Sample at=\"2026-01-02T03:04:05.023Z\" v=\"2.5\"/></Reading><Reading quantity=\"TEMPERATURE\" unit=\"s26\"><Value>0.75</Value><Flag>s28</Flag><Sample at=\"2026-01-02T03:04:05.029Z\" v=\"0.25\"/></Reading></MessageData></SensorStatus>",
+  "model": {
+    "@kind": "sensor_status",
+    "fieldnet.source": "urn:example:4",
+    "fieldnet.origin": "s5",
+    "fieldnet.reading[0].fieldnet.flag.#": "1",
+    "fieldnet.reading[0].fieldnet.sample.#": "1",
+    "fieldnet.reading.#": "2",
+    "fieldnet.reading[1].fieldnet.quantity": "TEMPERATURE"
+  }
+}
