@@ -23,6 +23,7 @@ Uses the modules `core`, `track` and `cat062` (`model/cat062.def`).
 | LEN, two octets | `length 16 whole` | the block length in octets, CAT and LEN included; written on encode, and on decode input beyond it is not read |
 | FSPEC | `presence fspec fx` | bit n is FRN n of the UAP (section 5.3, Table 1) |
 | FRN 1, I062/010 | two 8-bit fields | `cat062.sac`, `cat062.sic` |
+| FRN 3, I062/015 | 8 bits | `cat062.service_id`, from the caller as context; written only when the entity has it |
 | FRN 4, I062/070 | 24 bits, `uscale:1/128` | `cat062.time_of_day_s`, seconds since UTC midnight |
 | FRN 5, I062/105 | two signed 32-bit fields, `sscale:180/33554432` | `lat`, `lon`, degrees |
 | FRN 7, I062/185 | two signed 16-bit fields, `sscale:1/4` | `track.vel_east_ms` (Vx), `track.vel_north_ms` (Vy; the y-axis points to geographical north) |
@@ -73,7 +74,6 @@ decode with `malformed-wire`, and encode never sets them.
 | FRN | Item |
 |---|---|
 | 2 | spare |
-| 3 | I062/015 Service Identification |
 | 6 | I062/100 Calculated Track Position (Cartesian) |
 | 8 | I062/210 Calculated Acceleration (Cartesian) |
 | 9 | I062/060 Track Mode 3/A Code |

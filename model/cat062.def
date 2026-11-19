@@ -14,6 +14,7 @@ source        "EUROCONTROL-SPEC-0149-9, Specification for Surveillance Data Exch
 uses          track
 key  sac            int    -  "I062/010 System Area Code, 0 to 255"
 key  sic            int    -  "I062/010 System Identification Code, 0 to 255"
+key  service_id     int    -  "I062/015 Service Identification: the service of the sending system the record belongs to, 0 to 255, assigned by its operator"
 key  time_of_day_s  float  s  "I062/070 Time Of Track Information: seconds since the last UTC midnight, in steps of 1/128 s"
 key  track_number   int    -  "I062/040 Track Number, 0 to 65535"
 key  mon            int    -  "I062/080 MON: 0 = multisensor track, 1 = monosensor track"

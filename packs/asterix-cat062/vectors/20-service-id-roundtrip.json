@@ -1,0 +1,15 @@
+{
+  "name": "service-id-roundtrip",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e0020bb0d101904076a41a000b86d72fe5bd4330034000000018181010000d8",
+  "expect": "3e0020bb0d101904076a41a000b86d72fe5bd4330034000000018181010000d8",
+  "model": {
+    "@kind": "track",
+    "cat062.sac": "25",
+    "cat062.sic": "4",
+    "cat062.service_id": "7"
+  },
+  "source": "block of canonical-track-v2 vector 41",
+  "reference": "FSPEC bb 0d 10: FRN 1, 3, 4, 5, 7, 12, 13, 18; I062/015 is the octet 07 after I062/010 19 04"
+}
