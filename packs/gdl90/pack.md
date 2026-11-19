@@ -5,7 +5,7 @@ receivers and cockpit displays, together with the two ForeFlight extension
 messages that travel in the same stream. Public. Every layout is restated from
 Stratux (BSD-3-Clause, commit `36b504555408fb90dd5cf1171d4f91f99571e50c`), an
 open-source receiver that writes these messages; no other source was used
-(`PROVENANCE.md`). I/O is hex text. Needs engine version 0.6 (kinds,
+(`PROVENANCE.md`). I/O is hex text. Needs engine version 0.9 (`absent`; kinds,
 `bit_order msb`, `swap`, `trim`, `default`).
 
 Uses the modules `core` and `gdl90` (`model/gdl90.def`).
@@ -80,19 +80,44 @@ Not bound, and why:
   notes that the height above the WGS 84 ellipsoid is what the protocol
   specifies and that most displays use MSL. The reference is the sender's, so
   it is not `hae`.
-- Speed (knots) and vertical velocity: 0xFFF and 0x800 mark "no information"
-  and the pack cannot make a key absent on a sentinel ("Absent-value
-  sentinels", Designed). Track: valid only by `track_type`, and magnetic or
-  true by the same bits.
+- Speed (knots): Stratux states no "no information" code for it; it writes
+  the speed whether or not it has one and says which by `track_type` (0 = not
+  valid). A pack cannot make a key absent on another field's value, so
+  `speed_ms` stays unbound; the raw knots are `gdl90.speed_kt`.
+- Vertical velocity: with its sentinel now absent (`gdl90.vvel_fpm`, ft/min),
+  but Stratux does not state the sign of the report field (up or down
+  positive), so it is not `track.vel_up_ms`.
+- Track: valid only by `track_type`, and magnetic or true by the same bits.
 - Address: a 24-bit integer; `uid` is a string.
 
-## Defaults
+## "No value" codes (engine-spec 0.9)
 
-The `traffic` and `ownship` kinds write `gdl90.alt_raw` 4095 (invalid) and
-`gdl90.vvel_raw` -2048 (0x800, no information) when the entity has neither,
-so a position from another format does not read as -1000 ft and the lowest
-vertical rate. `traffic` is the kind an entity from another format encodes as
-(its `requires` is `lat lon`).
+Version 0.2 of the pack marks each value Stratux names as meaning "no value"
+with the field option `absent`. A field that holds it decodes to no key; an
+entity without the key writes it.
+
+| Field | Code | Stratux |
+|---|---|---|
+| pressure altitude (`gdl90.alt_raw`, `gdl90.pressure_alt_ft`) | 4095 (0xFFF) | `makeOwnshipReport`: "invalid altitude"; `makeTrafficReportMsg`: invalid or unavailable |
+| vertical velocity (`gdl90.vvel_raw`, `gdl90.vvel_fpm`) | 0x800 | `makeOwnshipReport`: no information available |
+| geometric altitude figure of merit (`gdl90.geo_fom_raw`) | 0x7FFF | `makeOwnshipGeometricAltitudeReport`: not available |
+| ForeFlight ID serial (`gdl90.ff_serial`) | all 0xFF (2^64 - 1) | `makeFFIDMessage`: invalid |
+| AHRS roll and pitch (`gdl90.ahrs_*_tenths`, `gdl90.ahrs_*_deg`) | 0x7FFF | `makeFFAHRSMessage`: values if invalid |
+| AHRS heading, indicated and true airspeed | 0xFFFF | `makeFFAHRSMessage`: values if invalid |
+
+With the codes out of the way, three values gain a scaled key on the same
+bits, after the raw key: `gdl90.pressure_alt_ft` (`uscale:25:-1000`, feet),
+`gdl90.vvel_fpm` (`sscale:64`, ft/min) and `gdl90.ahrs_roll_deg`,
+`gdl90.ahrs_pitch_deg` (`sscale:1/10`, degrees). On encode the raw key wins
+when both are present (engine-spec 0.5 ruling 5). They are raw keys of
+`gdl90`: pressure altitude is barometric, not `hae`, and the sign of the
+vertical velocity is not stated.
+
+The `default` lines of version 0.1 for the altitude and the vertical velocity
+are gone: the first sentinel is what an absent key now writes, so a position
+from another format still does not read as -1000 ft, with the same bytes.
+`traffic` is the kind an entity from another format encodes as (its `requires`
+is `lat lon`).
 
 ## Not mapped
 
@@ -105,10 +130,18 @@ vertical rate. `traffic` is the kind an entity from another format encodes as
 
 ## Vectors
 
-18 vectors (16 under `vectors/`, the two from `geojson` under `packs/geojson/vectors/to-gdl90-*`), written by `tools/gen/gdl90-vectors.py`
+22 vectors (19 under `vectors/`, the three from `geojson` under `packs/geojson/vectors/to-gdl90-*`), written by `tools/gen/gdl90-vectors.py`
 (standard library only, imports no engine) from its own layout tables:
 round trips of every kind (two heartbeats, traffic, ownship, two geometric
 altitudes, ForeFlight ID, two AHRS), the uplink with its payload dropped,
 traffic to GeoJSON and to CoT, GeoJSON to traffic, a longitude of 180 degrees
 (`transform-encode`), two unknown IDs (`no-kind`) and two cut messages
 (`malformed-wire`).
+
+Added with version 0.2 (vectors 19, 20, 22 and `to-gdl90-geojson-to-traffic-pressure-altitude-from-context`):
+an ownship whose altitude and vertical velocity are sentinels takes both from
+the convert context, which fills only absent keys; a traffic report with real
+values keeps them under the same context; a GeoJSON point with a pressure
+altitude in feet from the context encodes the altitude code 220; an AHRS roll
+of 0x7FFF takes its degrees from the context. The vectors of version 0.1 whose
+fields hold sentinels now pin no key for them.

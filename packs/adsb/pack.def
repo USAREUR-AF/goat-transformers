@@ -8,11 +8,12 @@
 # tables number message bits from 1: message bit n is offset n - 1, and bit n
 # of the 56-bit ME field is offset 31 + n.
 format        adsb
-version       0.1.0
+version       0.2.0
 distribution  public
 source        "Junzi Sun, The 1090 Megahertz Riddle, second edition, TU Delft OPEN Publishing, https://mode-s.org/1090mhz/ (CC BY-NC-SA 4.0): ADS-B chapters 1-6; the layouts documented there are from ICAO Annex 10 Volume IV, ICAO Doc 9871 and RTCA DO-260B"
 source        "pyModeS tests (https://github.com/junzis/pyModeS, GPL-3.0): published messages with decoded values, used as facts to check the type code 28 and 29 layouts; no code copied"
 source        "pyModeS (https://github.com/junzis/pyModeS, GPL-3.0) at commit 4bf083284c0d9878ca0c88f16b9b5f6514ca194a, decoder/bds/bds61.py and bds30.py: the layout of the three type code 28 subtype 2 kinds (ACAS resolution advisory), restated; no code copied"
+source        "pyModeS (https://github.com/junzis/pyModeS, GPL-3.0) at commit 4bf083284c0d9878ca0c88f16b9b5f6514ca194a, decoder/bds/bds06.py, bds09.py, bds62.py and bds30.py: the raw values each decoder reads as not available (the absent options, engine-spec 0.9); restated, no code copied"
 uses          adsb
 wire          bits
 word_bytes    1
@@ -93,7 +94,7 @@ kind      surface-position-tc5
 when      0:32:5     5
 requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
 field  adsb.tc                        0:32:5     uint
-field  adsb.movement_raw              0:37:7     uint
+field  adsb.movement_raw              0:37:7     uint  absent 0,125,126,127
 field  adsb.track_valid               0:44:1     uint
 field  adsb.track_raw                 0:45:7     uint
 field  adsb.time_flag                 0:52:1     uint
@@ -106,7 +107,7 @@ kind      surface-position-tc6
 when      0:32:5     6
 requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
 field  adsb.tc                        0:32:5     uint
-field  adsb.movement_raw              0:37:7     uint
+field  adsb.movement_raw              0:37:7     uint  absent 0,125,126,127
 field  adsb.track_valid               0:44:1     uint
 field  adsb.track_raw                 0:45:7     uint
 field  adsb.time_flag                 0:52:1     uint
@@ -119,7 +120,7 @@ kind      surface-position-tc7
 when      0:32:5     7
 requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
 field  adsb.tc                        0:32:5     uint
-field  adsb.movement_raw              0:37:7     uint
+field  adsb.movement_raw              0:37:7     uint  absent 0,125,126,127
 field  adsb.track_valid               0:44:1     uint
 field  adsb.track_raw                 0:45:7     uint
 field  adsb.time_flag                 0:52:1     uint
@@ -132,7 +133,7 @@ kind      surface-position-tc8
 when      0:32:5     8
 requires  adsb.icao adsb.movement_raw adsb.track_raw adsb.cpr_odd adsb.cpr_lat adsb.cpr_lon
 field  adsb.tc                        0:32:5     uint
-field  adsb.movement_raw              0:37:7     uint
+field  adsb.movement_raw              0:37:7     uint  absent 0,125,126,127
 field  adsb.track_valid               0:44:1     uint
 field  adsb.track_raw                 0:45:7     uint
 field  adsb.time_flag                 0:52:1     uint
@@ -280,15 +281,15 @@ field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint
 field  adsb.nac_v                     0:42:3     uint
 field  adsb.ew_sign                   0:45:1     uint
-field  adsb.ew_raw                    0:46:10    uint
+field  adsb.ew_raw                    0:46:10    uint  absent 0
 field  adsb.ns_sign                   0:56:1     uint
-field  adsb.ns_raw                    0:57:10    uint
+field  adsb.ns_raw                    0:57:10    uint  absent 0
 field  adsb.vr_source                 0:67:1     uint
 field  adsb.vr_sign                   0:68:1     uint
-field  adsb.vr_raw                    0:69:9     uint
+field  adsb.vr_raw                    0:69:9     uint  absent 0
 field  adsb.reserved                  0:78:2     uint
 field  adsb.galt_diff_sign            0:80:1     uint
-field  adsb.galt_diff_raw             0:81:7     uint
+field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 
 # Airborne velocity, type code 19, subtype 2: ground velocity components, supersonic scale.
 kind      airborne-velocity-ground-st2
@@ -300,15 +301,15 @@ field  adsb.intent_change             0:40:1     uint
 field  adsb.ifr                       0:41:1     uint
 field  adsb.nac_v                     0:42:3     uint
 field  adsb.ew_sign                   0:45:1     uint
-field  adsb.ew_raw                    0:46:10    uint
+field  adsb.ew_raw                    0:46:10    uint  absent 0
 field  adsb.ns_sign                   0:56:1     uint
-field  adsb.ns_raw                    0:57:10    uint
+field  adsb.ns_raw                    0:57:10    uint  absent 0
 field  adsb.vr_source                 0:67:1     uint
 field  adsb.vr_sign                   0:68:1     uint
-field  adsb.vr_raw                    0:69:9     uint
+field  adsb.vr_raw                    0:69:9     uint  absent 0
 field  adsb.reserved                  0:78:2     uint
 field  adsb.galt_diff_sign            0:80:1     uint
-field  adsb.galt_diff_raw             0:81:7     uint
+field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 
 # Airborne velocity, type code 19, subtype 3: airspeed and magnetic heading.
 kind      airborne-velocity-air-st3
@@ -322,13 +323,13 @@ field  adsb.nac_v                     0:42:3     uint
 field  adsb.heading_valid             0:45:1     uint
 field  adsb.heading_raw               0:46:10    uint
 field  adsb.airspeed_true             0:56:1     uint
-field  adsb.airspeed_raw              0:57:10    uint
+field  adsb.airspeed_raw              0:57:10    uint  absent 0
 field  adsb.vr_source                 0:67:1     uint
 field  adsb.vr_sign                   0:68:1     uint
-field  adsb.vr_raw                    0:69:9     uint
+field  adsb.vr_raw                    0:69:9     uint  absent 0
 field  adsb.reserved                  0:78:2     uint
 field  adsb.galt_diff_sign            0:80:1     uint
-field  adsb.galt_diff_raw             0:81:7     uint
+field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 
 # Airborne velocity, type code 19, subtype 4: airspeed and magnetic heading, supersonic scale.
 kind      airborne-velocity-air-st4
@@ -342,13 +343,13 @@ field  adsb.nac_v                     0:42:3     uint
 field  adsb.heading_valid             0:45:1     uint
 field  adsb.heading_raw               0:46:10    uint
 field  adsb.airspeed_true             0:56:1     uint
-field  adsb.airspeed_raw              0:57:10    uint
+field  adsb.airspeed_raw              0:57:10    uint  absent 0
 field  adsb.vr_source                 0:67:1     uint
 field  adsb.vr_sign                   0:68:1     uint
-field  adsb.vr_raw                    0:69:9     uint
+field  adsb.vr_raw                    0:69:9     uint  absent 0
 field  adsb.reserved                  0:78:2     uint
 field  adsb.galt_diff_sign            0:80:1     uint
-field  adsb.galt_diff_raw             0:81:7     uint
+field  adsb.galt_diff_raw             0:81:7     uint  absent 0,127
 
 # Airborne position with GNSS height, type code 20.
 kind      airborne-position-gnss-tc20
@@ -407,8 +408,8 @@ requires  adsb.icao adsb.sel_alt_raw adsb.baro_setting_raw adsb.sel_heading_raw
 field  adsb.tc                        0:32:5     uint
 field  adsb.sil_supp                  0:39:1     uint
 field  adsb.sel_alt_fms               0:40:1     uint
-field  adsb.sel_alt_raw               0:41:11    uint
-field  adsb.baro_setting_raw          0:52:9     uint
+field  adsb.sel_alt_raw               0:41:11    uint  absent 0
+field  adsb.baro_setting_raw          0:52:9     uint  absent 0
 field  adsb.sel_heading_valid         0:61:1     uint
 field  adsb.sel_heading_sign          0:62:1     uint
 field  adsb.sel_heading_raw           0:63:8     uint
@@ -534,5 +535,5 @@ field  adsb.ra_terminated             0:58:1     uint
 field  adsb.multiple_threat           0:59:1     uint
 field  adsb.tti                       0:60:2     uint
 field  adsb.threat_alt_code           0:62:13    uint
-field  adsb.threat_range_raw          0:75:7     uint
-field  adsb.threat_bearing_raw        0:82:6     uint
+field  adsb.threat_range_raw          0:75:7     uint  absent 0
+field  adsb.threat_bearing_raw        0:82:6     uint  absent 0

@@ -4,7 +4,7 @@ ADS-B on Mode S Extended Squitter: the 112-bit downlink format 17 message.
 Public. Field layouts are from "The 1090 Megahertz Riddle" (Junzi Sun, second
 edition, https://mode-s.org/1090mhz/), which documents ICAO Annex 10 Volume IV,
 ICAO Doc 9871 and RTCA DO-260B. I/O is hex text (`spec/engine-spec.md`, bits
-wire). Needs engine version 0.5 (kinds, `bit_order`, fields past their word).
+wire). Needs engine version 0.9 (`absent`; kinds, `bit_order`, fields past their word).
 
 Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is maintained
 by hand.
@@ -130,9 +130,28 @@ messages with published decoded values (vectors 41-43).
 - Type code 19 subtypes 0 and 5-7 (reserved).
 - Downlink formats other than 17 (18 is the pack `adsb-df18`).
 
+## "Not available" values (engine-spec 0.9)
+
+Version 0.2 of the pack marks the raw values pyModeS's decoders read as not
+available with the field option `absent`: decode gives no key, and an entity
+without the key writes the first value listed.
+
+| Keys | `absent` | pyModeS |
+|---|---|---|
+| `adsb.movement_raw` | 0, 125, 126, 127 | `decoder/bds/bds06.py`: movement 0 or above 124 |
+| `adsb.ew_raw`, `adsb.ns_raw`, `adsb.vr_raw`, `adsb.airspeed_raw` | 0 | `decoder/bds/bds09.py`: a magnitude of 0 |
+| `adsb.galt_diff_raw` | 0, 127 | `decoder/bds/bds09.py`: difference 0 or 127 |
+| `adsb.sel_alt_raw`, `adsb.baro_setting_raw` | 0 | `decoder/bds/bds62.py`: N/A |
+| `adsb.threat_range_raw`, `adsb.threat_bearing_raw` | 0 | `decoder/bds/bds30.py`: range or bearing 0 |
+
+A message holding 127 or 125-126 in such a field is written back with the
+first value, 0 (engine-spec 0.9 ruling 7); no vector of version 0.1 holds one.
+The keys stay raw: the sign-and-magnitude and piecewise values still need the
+transforms listed under "Kept raw".
+
 ## Vectors
 
-49 vectors under `vectors/`. Vectors 01-45 are maintained by hand; 46-49 are
+50 vectors under `vectors/`. Vectors 01-45 are maintained by hand; 46-50 are
 written by `tools/gen/adsb-vectors.py` (`--check` compares them with the tree).
 
 | Vectors | Content | Source |
@@ -143,6 +162,7 @@ written by `tools/gen/adsb-vectors.py` (`--check` compares them with the tree).
 | 45 | type code 0, `expect_error: no-kind` | constructed |
 | 46-48 | one same-format round trip per `acas-ra-*` kind, parity computed as for 01-29 | constructed |
 | 49 | threat type indicator 3, `expect_error: no-kind` | constructed |
+| 50 | airborne velocity with east-west and vertical-rate magnitude 0 and GNSS-baro difference 127: no keys for them; 127 written back as 0 | constructed |
 
 Before writing vectors 30-43 the generator decodes each published message
 with the pack and checks the raw values against the published decoded values

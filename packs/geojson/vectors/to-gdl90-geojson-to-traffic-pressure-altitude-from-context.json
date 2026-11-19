@@ -1,0 +1,12 @@
+{
+  "name": "geojson-to-traffic-pressure-altitude-from-context",
+  "from": "geojson",
+  "to": "gdl90",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90,45]},\"properties\":{}}",
+  "context": {
+    "gdl90.pressure_alt_ft": "4500"
+  },
+  "expect": "1400000000200000c000000dc0000008000000000000000000000000",
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeTrafficReportMsg; bytes computed by tools/gen/gdl90-vectors.py. 4500 ft in gdl90.pressure_alt_ft encodes as (4500 + 1000) / 25 = 220 through the second line on the altitude bits; the vertical velocity is absent and writes its sentinel 0x800"
+}

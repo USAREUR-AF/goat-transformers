@@ -22,6 +22,8 @@
     "callsign": "N123AB",
     "gdl90.priority_status": "0",
     "gdl90.report_spare": "0",
+    "gdl90.pressure_alt_ft": "4500",
+    "gdl90.vvel_fpm": "-512",
     "lat": "45.26489496231079",
     "lon": "-91.16560220718384"
   },

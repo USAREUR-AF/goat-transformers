@@ -38,3 +38,7 @@ expected bytes were not taken from pyModeS; they are those of `tools/gen/adsb-ve
 
 Not read: "The 1090 Megahertz Riddle" (CC BY-NC-SA 4.0), RTCA DO-260B and
 ICAO Annex 10 (priced).
+
+### "Not available" values (version 0.2)
+
+The `absent` options of version 0.2 restate what pyModeS's decoders at the commit above read as not available: `decoder/bds/bds06.py` (movement 0 and above 124), `bds09.py` (velocity, vertical rate and airspeed magnitude 0; GNSS-baro difference 0 and 127), `bds62.py` (selected altitude and barometric setting 0) and `bds30.py` (threat range and bearing 0). Read on 2026-11-19; no code copied.

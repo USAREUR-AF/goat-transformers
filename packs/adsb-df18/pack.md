@@ -4,7 +4,7 @@ ADS-B on Mode S Extended Squitter downlink format 18: the 112-bit message that
 equipment other than a transponder sends, and that ground stations use for
 TIS-B and ADS-R. Public. Every layout is from pyModeS (GPL-3.0, commit
 `4bf083284c0d9878ca0c88f16b9b5f6514ca194a`), restated; no other source was
-read for this pack. I/O is hex text. Needs engine version 0.5.
+read for this pack. I/O is hex text. Needs engine version 0.9 (`absent`).
 
 Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is maintained
 by hand, kind for kind with the pack `adsb`. Its vectors are written by
@@ -72,9 +72,28 @@ bits. pyModeS confirms each layout:
 - ACAS threat type indicator 3 (reserved): `no-kind`.
 - Any control-field-dependent format, for the reason above.
 
+## "Not available" values (engine-spec 0.9)
+
+Version 0.2 of the pack marks the raw values pyModeS's decoders read as not
+available with the field option `absent`: decode gives no key, and an entity
+without the key writes the first value listed.
+
+| Keys | `absent` | pyModeS |
+|---|---|---|
+| `adsb.movement_raw` | 0, 125, 126, 127 | `decoder/bds/bds06.py`: movement 0 or above 124 |
+| `adsb.ew_raw`, `adsb.ns_raw`, `adsb.vr_raw`, `adsb.airspeed_raw` | 0 | `decoder/bds/bds09.py`: a magnitude of 0 |
+| `adsb.galt_diff_raw` | 0, 127 | `decoder/bds/bds09.py`: difference 0 or 127 |
+| `adsb.sel_alt_raw`, `adsb.baro_setting_raw` | 0 | `decoder/bds/bds62.py`: N/A |
+| `adsb.threat_range_raw`, `adsb.threat_bearing_raw` | 0 | `decoder/bds/bds30.py`: range or bearing 0 |
+
+A message holding 127 or 125-126 in such a field is written back with the
+first value, 0 (engine-spec 0.9 ruling 7); no vector of version 0.1 holds one.
+The keys stay raw: the sign-and-magnitude and piecewise values still need the
+transforms listed under "Kept raw".
+
 ## Vectors
 
-39 vectors under `vectors/`, written and replayed by
+40 vectors under `vectors/`, written and replayed by
 `tools/gen/adsb-vectors.py`, which reads no pack and imports no engine
 (`--check` compares its output with the tree).
 
@@ -87,3 +106,4 @@ bits. pyModeS confirms each layout:
 | 37 | a DF17 message: `no-kind` | pyModeS `tests/test_bds08.py` |
 | 38 | type code 0: `no-kind` | constructed |
 | 39 | ACAS threat type indicator 3: `no-kind` | constructed |
+| 40 | surface position with movement code 126: no movement key, written back as 0 | constructed |
