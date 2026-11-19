@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "category|.|string": "category_value",
+  "location_bbox|.|float": "location_bbox_value",
+  "not_allowed_vehicle_type|.|string": "not_allowed_vehicle_type_value",
+  "owner|.|string": "owner_value",
+  "restriction_exceptions|.|string": "restriction_exceptions_value",
+  "security|.|string": "security_value",
+  "special_restrictions|.|string": "special_restrictions_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|regulation|string": "regulation",
+  "|restrictionValidityHours|string": "restriction_validity_hours",
+  "|source|string": "source",
+  "|type|string": "type",
+  "|validityEndDate|string": "validity_end_date",
+  "|validityStartDate|string": "validity_start_date"
+ },
+ "lists": {
+  "|category": "category",
+  "|location.bbox": "location_bbox",
+  "|notAllowedVehicleType": "not_allowed_vehicle_type",
+  "|owner": "owner",
+  "|restrictionExceptions": "restriction_exceptions",
+  "|security": "security",
+  "|specialRestrictions": "special_restrictions"
+ }
+}

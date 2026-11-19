@@ -1,0 +1,17 @@
+{
+ "name": "gen-aircraft-roundtrip",
+ "from": "sdm-aeronautics-aircraft",
+ "to": "sdm-aeronautics-aircraft",
+ "input": "{\"type\":\"Aircraft\",\"address\":{\"addressCountry\":\"s5026\",\"addressLocality\":\"s54406\",\"addressRegion\":\"s44278\",\"district\":\"s46726\",\"postOfficeBoxNumber\":\"s49866\",\"postalCode\":\"s23218\",\"streetAddress\":\"s71172\",\"streetNr\":\"s61997\"},\"alternateName\":\"s84262\",\"areaServed\":\"s24385\",\"belongsToAircraftModel\":\"https://example.org/311\",\"dataProvider\":\"s30565\",\"dateCreated\":\"2024-10-07T22:15:46.319Z\",\"dateIssued\":\"2024-09-14T01:35:20.632Z\",\"dateModified\":\"2025-11-06T10:50:52.179Z\",\"description\":\"s66943\",\"heading\":7.0625,\"id\":\"https://example.org/602\",\"isOnGround\":false,\"location\":{\"bbox\":[42.375,101.125],\"type\":\"MultiPoint\"},\"name\":\"s6560\",\"owner\":[\"https://example.org/691\",\"https://example.org/715\"],\"registration\":\"s43158\",\"source\":\"s35336\",\"speed\":1.5,\"verticalSpeed\":1.5}",
+ "expect": "{\"type\":\"Aircraft\",\"address\":{\"addressCountry\":\"s5026\",\"addressLocality\":\"s54406\",\"addressRegion\":\"s44278\",\"district\":\"s46726\",\"postOfficeBoxNumber\":\"s49866\",\"postalCode\":\"s23218\",\"streetAddress\":\"s71172\",\"streetNr\":\"s61997\"},\"alternateName\":\"s84262\",\"areaServed\":\"s24385\",\"belongsToAircraftModel\":\"https://example.org/311\",\"dataProvider\":\"s30565\",\"dateCreated\":\"2024-10-07T22:15:46.319Z\",\"dateIssued\":\"2024-09-14T01:35:20.632Z\",\"dateModified\":\"2025-11-06T10:50:52.179Z\",\"description\":\"s66943\",\"heading\":7.0625,\"id\":\"https://example.org/602\",\"isOnGround\":false,\"location\":{\"bbox\":[42.375,101.125],\"type\":\"MultiPoint\"},\"name\":\"s6560\",\"owner\":[\"https://example.org/691\",\"https://example.org/715\"],\"registration\":\"s43158\",\"source\":\"s35336\",\"speed\":1.5,\"verticalSpeed\":1.5}",
+ "model": {
+  "@kind": "aircraft",
+  "uid": "https://example.org/602",
+  "sdmaircraft.address_address_country": "s5026",
+  "sdmaircraft.address_address_locality": "s54406",
+  "sdmaircraft.address_address_region": "s44278",
+  "sdmaircraft.address_district": "s46726",
+  "sdmaircraft.address_post_office_box_number": "s49866",
+  "sdmaircraft.address_postal_code": "s23218"
+ }
+}

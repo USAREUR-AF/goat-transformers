@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|endTime|string": "end_time",
+  "|exactTimes|int": "exact_times",
+  "|hasTrip|string": "has_trip",
+  "|headwaySeconds|float": "headway_seconds",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|source|string": "source",
+  "|startTime|string": "start_time",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

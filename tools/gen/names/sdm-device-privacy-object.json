@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "category|.|string": "category_value",
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "recipient_list|.|string": "recipient_list_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|crossborderTransfer|string": "crossborder_transfer",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|floor|float": "floor",
+  "|id|string": "id",
+  "|image|string": "image",
+  "|isIndoor|int": "is_indoor",
+  "|isPersonalData|int": "is_personal_data",
+  "|legitimateInterest|string": "legitimate_interest",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|purpose|string": "purpose",
+  "|refDevice|string": "ref_device",
+  "|retentionPeriod|string": "retention_period",
+  "|source|string": "source",
+  "|type|string": "type",
+  "|user|string": "user"
+ },
+ "lists": {
+  "|category": "category",
+  "|location.bbox": "location_bbox",
+  "|owner": "owner",
+  "|recipientList": "recipient_list"
+ }
+}

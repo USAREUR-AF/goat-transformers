@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "route_segments_ref_public_transport_stops|.|string": "route_segments_ref_public_transport_stops_value",
+  "route_segments|segmentName|string": "route_segments_segment_name",
+  "schedule|closes|string": "schedule_closes",
+  "schedule|dayOfWeek|string": "schedule_day_of_week",
+  "schedule|opens|string": "schedule_opens",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|routeCode|string": "route_code",
+  "|routeColor|string": "route_color",
+  "|routeTextColor|string": "route_text_color",
+  "|shortRouteCode|string": "short_route_code",
+  "|source|string": "source",
+  "|transportationType|float": "transportation_type",
+  "|type|string": "type"
+ },
+ "lists": {
+  "route_segments|refPublicTransportStops": "route_segments_ref_public_transport_stops",
+  "|location.bbox": "location_bbox",
+  "|owner": "owner",
+  "|routeSegments": "route_segments",
+  "|schedule": "schedule"
+ }
+}

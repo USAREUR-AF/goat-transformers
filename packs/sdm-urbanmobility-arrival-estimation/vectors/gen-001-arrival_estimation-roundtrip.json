@@ -1,0 +1,17 @@
+{
+ "name": "gen-arrival_estimation-roundtrip",
+ "from": "sdm-urbanmobility-arrival-estimation",
+ "to": "sdm-urbanmobility-arrival-estimation",
+ "input": "{\"type\":\"ArrivalEstimation\",\"alternateName\":\"s73729\",\"dataProvider\":\"s97783\",\"dateCreated\":\"2025-07-03T20:07:27.511Z\",\"dateModified\":\"2026-06-04T15:56:48.380Z\",\"description\":\"s8028\",\"hasStop\":[\"https://example.org/864\",\"https://example.org/337\"],\"hasTrip\":\"https://example.org/674\",\"headSign\":\"s66310\",\"id\":\"https://example.org/531\",\"name\":\"s34556\",\"owner\":[\"https://example.org/76\",\"https://example.org/32\"],\"remainingDistance\":42.375,\"remainingTime\":\"s13567\",\"source\":\"s16526\"}",
+ "expect": "{\"type\":\"ArrivalEstimation\",\"alternateName\":\"s73729\",\"dataProvider\":\"s97783\",\"dateCreated\":\"2025-07-03T20:07:27.511Z\",\"dateModified\":\"2026-06-04T15:56:48.380Z\",\"description\":\"s8028\",\"hasStop\":[\"https://example.org/864\",\"https://example.org/337\"],\"hasTrip\":\"https://example.org/674\",\"headSign\":\"s66310\",\"id\":\"https://example.org/531\",\"name\":\"s34556\",\"owner\":[\"https://example.org/76\",\"https://example.org/32\"],\"remainingDistance\":42.375,\"remainingTime\":\"s13567\",\"source\":\"s16526\"}",
+ "model": {
+  "@kind": "arrival_estimation",
+  "uid": "https://example.org/531",
+  "sdmarrivalestimation.alternate_name": "s73729",
+  "sdmarrivalestimation.data_provider": "s97783",
+  "sdmarrivalestimation.date_created": "2025-07-03T20:07:27.511Z",
+  "sdmarrivalestimation.date_modified": "2026-06-04T15:56:48.380Z",
+  "sdmarrivalestimation.description": "s8028",
+  "sdmarrivalestimation.has_stop.#": "2"
+ }
+}

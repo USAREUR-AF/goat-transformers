@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|belongsToAircraftModel|string": "belongs_to_aircraft_model",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateIssued|string": "date_issued",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|heading|float": "heading",
+  "|id|string": "id",
+  "|isOnGround|int": "is_on_ground",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|registration|string": "registration",
+  "|source|string": "source",
+  "|speed|float": "speed",
+  "|type|string": "type",
+  "|verticalSpeed|float": "vertical_speed"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

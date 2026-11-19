@@ -1,0 +1,7 @@
+{
+ "name": "gen-gtfs_route-residue",
+ "from": "sdm-urbanmobility-gtfs-route",
+ "to": "sdm-urbanmobility-gtfs-route",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"GtfsRoute\",\"alternateName\":\"s7991\",\"dataProvider\":\"s48537\",\"dateCreated\":\"2025-10-31T12:20:49.371Z\",\"dateModified\":\"2025-08-17T05:52:07.991Z\",\"description\":\"s3420\",\"id\":\"https://example.org/958\",\"name\":\"s98620\",\"operatedBy\":\"https://example.org/645\",\"owner\":[\"https://example.org/748\",\"https://example.org/861\"],\"page\":\"https://example.org/18\",\"routeColor\":\"s80849\",\"routeSortOrder\":42.375,\"routeTextColor\":\"s3450\",\"routeType\":\"s74504\",\"shortName\":\"s29648\",\"source\":\"s54275\"}",
+ "expect": "{\"type\":\"GtfsRoute\",\"alternateName\":\"s7991\",\"dataProvider\":\"s48537\",\"dateCreated\":\"2025-10-31T12:20:49.371Z\",\"dateModified\":\"2025-08-17T05:52:07.991Z\",\"description\":\"s3420\",\"id\":\"https://example.org/958\",\"name\":\"s98620\",\"operatedBy\":\"https://example.org/645\",\"owner\":[\"https://example.org/748\",\"https://example.org/861\"],\"page\":\"https://example.org/18\",\"routeColor\":\"s80849\",\"routeSortOrder\":42.375,\"routeTextColor\":\"s3450\",\"routeType\":\"s74504\",\"shortName\":\"s29648\",\"source\":\"s54275\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

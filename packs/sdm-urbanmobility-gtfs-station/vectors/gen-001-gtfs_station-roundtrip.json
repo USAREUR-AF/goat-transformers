@@ -1,0 +1,17 @@
+{
+ "name": "gen-gtfs_station-roundtrip",
+ "from": "sdm-urbanmobility-gtfs-station",
+ "to": "sdm-urbanmobility-gtfs-station",
+ "input": "{\"type\":\"GtfsStation\",\"address\":{\"addressCountry\":\"s79706\",\"addressLocality\":\"s49326\",\"addressRegion\":\"s48176\",\"district\":\"s27852\",\"postOfficeBoxNumber\":\"s64137\",\"postalCode\":\"s88980\",\"streetAddress\":\"s76396\",\"streetNr\":\"s19702\"},\"alternateName\":\"s62305\",\"areaServed\":\"s17016\",\"code\":\"s92963\",\"dataProvider\":\"s32\",\"dateCreated\":\"2024-01-13T08:39:07.243Z\",\"dateModified\":\"2025-05-31T13:33:15.242Z\",\"description\":\"s97010\",\"hasAccessPoint\":[\"https://example.org/454\",\"https://example.org/169\"],\"hasParentStation\":\"https://example.org/37\",\"hasService\":\"https://example.org/939\",\"hasStop\":[\"https://example.org/494\",\"https://example.org/54\"],\"hasTrip\":\"https://example.org/876\",\"id\":\"https://example.org/930\",\"location\":{\"bbox\":[12.5,1.5],\"type\":\"LineString\"},\"name\":\"s90664\",\"owner\":[\"https://example.org/319\",\"https://example.org/318\"],\"page\":\"https://example.org/652\",\"source\":\"s52328\",\"stop_desc\":\"s93172\",\"wheelChairAccessible\":\"s21573\",\"zoneCode\":\"s81825\"}",
+ "expect": "{\"type\":\"GtfsStation\",\"address\":{\"addressCountry\":\"s79706\",\"addressLocality\":\"s49326\",\"addressRegion\":\"s48176\",\"district\":\"s27852\",\"postOfficeBoxNumber\":\"s64137\",\"postalCode\":\"s88980\",\"streetAddress\":\"s76396\",\"streetNr\":\"s19702\"},\"alternateName\":\"s62305\",\"areaServed\":\"s17016\",\"code\":\"s92963\",\"dataProvider\":\"s32\",\"dateCreated\":\"2024-01-13T08:39:07.243Z\",\"dateModified\":\"2025-05-31T13:33:15.242Z\",\"description\":\"s97010\",\"hasAccessPoint\":[\"https://example.org/454\",\"https://example.org/169\"],\"hasParentStation\":\"https://example.org/37\",\"hasService\":\"https://example.org/939\",\"hasStop\":[\"https://example.org/494\",\"https://example.org/54\"],\"hasTrip\":\"https://example.org/876\",\"id\":\"https://example.org/930\",\"location\":{\"bbox\":[12.5,1.5],\"type\":\"LineString\"},\"name\":\"s90664\",\"owner\":[\"https://example.org/319\",\"https://example.org/318\"],\"page\":\"https://example.org/652\",\"source\":\"s52328\",\"stop_desc\":\"s93172\",\"wheelChairAccessible\":\"s21573\",\"zoneCode\":\"s81825\"}",
+ "model": {
+  "@kind": "gtfs_station",
+  "uid": "https://example.org/930",
+  "sdmgtfsstation.address_address_country": "s79706",
+  "sdmgtfsstation.address_address_locality": "s49326",
+  "sdmgtfsstation.address_address_region": "s48176",
+  "sdmgtfsstation.address_district": "s27852",
+  "sdmgtfsstation.address_post_office_box_number": "s64137",
+  "sdmgtfsstation.address_postal_code": "s88980"
+ }
+}

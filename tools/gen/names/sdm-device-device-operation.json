@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|addressedAt|string": "addressed_at",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|device|string": "device",
+  "|endedAt|string": "ended_at",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|operationType|string": "operation_type",
+  "|operator|string": "operator",
+  "|plannedEndAt|string": "planned_end_at",
+  "|plannedStartAt|string": "planned_start_at",
+  "|reportedAt|string": "reported_at",
+  "|result|string": "result",
+  "|source|string": "source",
+  "|startedAt|string": "started_at",
+  "|status|string": "status",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

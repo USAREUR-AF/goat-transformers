@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "air_quality_observed|.|string": "air_quality_observed_value",
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "point_of_interest|.|string": "point_of_interest_value",
+  "water_quality_observed|.|string": "water_quality_observed_value",
+  "weather_observed|.|string": "weather_observed_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|airQualityObserved": "air_quality_observed",
+  "|location.bbox": "location_bbox",
+  "|owner": "owner",
+  "|pointOfInterest": "point_of_interest",
+  "|waterQualityObserved": "water_quality_observed",
+  "|weatherObserved": "weather_observed"
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|Laeq2|float": "laeq2",
+  "|Lamax2|float": "lamax2",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|buildingsType|string": "buildings_type",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|dateObservedFrom|string": "date_observed_from",
+  "|dateObservedTo|string": "date_observed_to",
+  "|description|string": "description",
+  "|groundType|string": "ground_type",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|noiseAnnoyanceIndex|float": "noise_annoyance_index",
+  "|noiseOrigin|string": "noise_origin",
+  "|source|string": "source",
+  "|type|string": "type",
+  "|wallsType|string": "walls_type"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

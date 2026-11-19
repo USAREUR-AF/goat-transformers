@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|hasDestination|string": "has_destination",
+  "|hasOrigin|string": "has_origin",
+  "|id|string": "id",
+  "|minimumTransferTime|float": "minimum_transfer_time",
+  "|name|string": "name",
+  "|source|string": "source",
+  "|transferType|string": "transfer_type",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

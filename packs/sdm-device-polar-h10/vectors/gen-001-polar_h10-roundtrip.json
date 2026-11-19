@@ -1,0 +1,17 @@
+{
+ "name": "gen-polar_h10-roundtrip",
+ "from": "sdm-device-polar-h10",
+ "to": "sdm-device-polar-h10",
+ "input": "{\"type\":\"PolarH10\",\"address\":{\"addressCountry\":\"s12983\",\"addressLocality\":\"s41210\",\"addressRegion\":\"s3695\",\"district\":\"s91437\",\"postOfficeBoxNumber\":\"s83073\",\"postalCode\":\"s89449\",\"streetAddress\":\"s14513\",\"streetNr\":\"s72762\"},\"alternateName\":\"s5797\",\"areaServed\":\"s20927\",\"clientId\":\"s26684\",\"dataProvider\":\"s84009\",\"dateCreated\":\"2024-09-29T03:24:48.839Z\",\"dateModified\":\"2024-06-29T12:26:30.618Z\",\"description\":\"s29856\",\"deviceId\":\"s43094\",\"ecg\":[50533,75558],\"hr\":7.0625,\"hrv\":101.125,\"id\":\"https://example.org/418\",\"location\":{\"bbox\":[12.5,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s88771\",\"owner\":[\"https://example.org/972\",\"https://example.org/237\"],\"rr\":[87793,5793],\"sampleRate\":0.75,\"sensorTimeStamp\":12.5,\"sessionId\":1.5,\"source\":\"s74047\",\"timeStamp\":12.5}",
+ "expect": "{\"type\":\"PolarH10\",\"address\":{\"addressCountry\":\"s12983\",\"addressLocality\":\"s41210\",\"addressRegion\":\"s3695\",\"district\":\"s91437\",\"postOfficeBoxNumber\":\"s83073\",\"postalCode\":\"s89449\",\"streetAddress\":\"s14513\",\"streetNr\":\"s72762\"},\"alternateName\":\"s5797\",\"areaServed\":\"s20927\",\"clientId\":\"s26684\",\"dataProvider\":\"s84009\",\"dateCreated\":\"2024-09-29T03:24:48.839Z\",\"dateModified\":\"2024-06-29T12:26:30.618Z\",\"description\":\"s29856\",\"deviceId\":\"s43094\",\"ecg\":[50533,75558],\"hr\":7.0625,\"hrv\":101.125,\"id\":\"https://example.org/418\",\"location\":{\"bbox\":[12.5,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s88771\",\"owner\":[\"https://example.org/972\",\"https://example.org/237\"],\"rr\":[87793,5793],\"sampleRate\":0.75,\"sensorTimeStamp\":12.5,\"sessionId\":1.5,\"source\":\"s74047\",\"timeStamp\":12.5}",
+ "model": {
+  "@kind": "polar_h10",
+  "uid": "https://example.org/418",
+  "sdmpolarh10.address_address_country": "s12983",
+  "sdmpolarh10.address_address_locality": "s41210",
+  "sdmpolarh10.address_address_region": "s3695",
+  "sdmpolarh10.address_district": "s91437",
+  "sdmpolarh10.address_post_office_box_number": "s83073",
+  "sdmpolarh10.address_postal_code": "s89449"
+ }
+}

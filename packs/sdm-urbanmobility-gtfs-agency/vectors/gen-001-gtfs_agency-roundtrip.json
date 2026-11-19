@@ -1,0 +1,17 @@
+{
+ "name": "gen-gtfs_agency-roundtrip",
+ "from": "sdm-urbanmobility-gtfs-agency",
+ "to": "sdm-urbanmobility-gtfs-agency",
+ "input": "{\"type\":\"GtfsAgency\",\"addressCountry\":\"s39859\",\"addressLocality\":\"s46670\",\"addressRegion\":\"s26704\",\"agencyName\":\"s18984\",\"alternateName\":\"s2360\",\"dataProvider\":\"s49038\",\"dateCreated\":\"2024-12-10T04:55:12.522Z\",\"dateModified\":\"2026-11-08T08:14:59.063Z\",\"description\":\"s52549\",\"district\":\"s67534\",\"entitySource\":\"https://example.org/511\",\"id\":\"https://example.org/738\",\"language\":\"s40671\",\"name\":\"s40971\",\"owner\":[\"https://example.org/721\",\"https://example.org/651\"],\"page\":\"https://example.org/23\",\"phone\":\"s66570\",\"postOfficeBoxNumber\":\"s11990\",\"postalCode\":\"s71746\",\"source\":\"s85689\",\"streetAddress\":\"s7023\",\"streetNr\":\"s8338\",\"timezone\":\"s11110\"}",
+ "expect": "{\"type\":\"GtfsAgency\",\"addressCountry\":\"s39859\",\"addressLocality\":\"s46670\",\"addressRegion\":\"s26704\",\"agencyName\":\"s18984\",\"alternateName\":\"s2360\",\"dataProvider\":\"s49038\",\"dateCreated\":\"2024-12-10T04:55:12.522Z\",\"dateModified\":\"2026-11-08T08:14:59.063Z\",\"description\":\"s52549\",\"district\":\"s67534\",\"entitySource\":\"https://example.org/511\",\"id\":\"https://example.org/738\",\"language\":\"s40671\",\"name\":\"s40971\",\"owner\":[\"https://example.org/721\",\"https://example.org/651\"],\"page\":\"https://example.org/23\",\"phone\":\"s66570\",\"postOfficeBoxNumber\":\"s11990\",\"postalCode\":\"s71746\",\"source\":\"s85689\",\"streetAddress\":\"s7023\",\"streetNr\":\"s8338\",\"timezone\":\"s11110\"}",
+ "model": {
+  "@kind": "gtfs_agency",
+  "uid": "https://example.org/738",
+  "sdmgtfsagency.address_country": "s39859",
+  "sdmgtfsagency.address_locality": "s46670",
+  "sdmgtfsagency.address_region": "s26704",
+  "sdmgtfsagency.agency_name": "s18984",
+  "sdmgtfsagency.alternate_name": "s2360",
+  "sdmgtfsagency.data_provider": "s49038"
+ }
+}

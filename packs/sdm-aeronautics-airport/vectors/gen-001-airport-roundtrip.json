@@ -1,0 +1,17 @@
+{
+ "name": "gen-airport-roundtrip",
+ "from": "sdm-aeronautics-airport",
+ "to": "sdm-aeronautics-airport",
+ "input": "{\"type\":\"Airport\",\"address\":{\"addressCountry\":\"s70998\",\"addressLocality\":\"s35725\",\"addressRegion\":\"s49723\",\"district\":\"s96138\",\"postOfficeBoxNumber\":\"s61889\",\"postalCode\":\"s3875\",\"streetAddress\":\"s72761\",\"streetNr\":\"s79233\"},\"alternateName\":\"s72321\",\"areaServed\":\"s73098\",\"codeIATA\":\"s62381\",\"codeICAO\":\"s50450\",\"dataProvider\":\"s93652\",\"dateCreated\":\"2024-11-18T08:05:23.190Z\",\"dateModified\":\"2024-10-19T05:14:18.199Z\",\"description\":\"s59000\",\"id\":\"https://example.org/487\",\"location\":{\"bbox\":[101.125,12.5],\"type\":\"LineString\"},\"name\":\"s94369\",\"owner\":[\"https://example.org/268\",\"https://example.org/990\"],\"source\":\"s70839\"}",
+ "expect": "{\"type\":\"Airport\",\"address\":{\"addressCountry\":\"s70998\",\"addressLocality\":\"s35725\",\"addressRegion\":\"s49723\",\"district\":\"s96138\",\"postOfficeBoxNumber\":\"s61889\",\"postalCode\":\"s3875\",\"streetAddress\":\"s72761\",\"streetNr\":\"s79233\"},\"alternateName\":\"s72321\",\"areaServed\":\"s73098\",\"codeIATA\":\"s62381\",\"codeICAO\":\"s50450\",\"dataProvider\":\"s93652\",\"dateCreated\":\"2024-11-18T08:05:23.190Z\",\"dateModified\":\"2024-10-19T05:14:18.199Z\",\"description\":\"s59000\",\"id\":\"https://example.org/487\",\"location\":{\"bbox\":[101.125,12.5],\"type\":\"LineString\"},\"name\":\"s94369\",\"owner\":[\"https://example.org/268\",\"https://example.org/990\"],\"source\":\"s70839\"}",
+ "model": {
+  "@kind": "airport",
+  "uid": "https://example.org/487",
+  "sdmairport.address_address_country": "s70998",
+  "sdmairport.address_address_locality": "s35725",
+  "sdmairport.address_address_region": "s49723",
+  "sdmairport.address_district": "s96138",
+  "sdmairport.address_post_office_box_number": "s61889",
+  "sdmairport.address_postal_code": "s3875"
+ }
+}

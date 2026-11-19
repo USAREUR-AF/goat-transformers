@@ -1,0 +1,17 @@
+{
+ "name": "gen-traffic_environment_impact_forecast-roundtrip",
+ "from": "sdm-environment-traffic-environment-impact-forecast",
+ "to": "sdm-environment-traffic-environment-impact-forecast",
+ "input": "{\"type\":\"TrafficEnvironmentImpactForecast\",\"address\":{\"addressCountry\":\"s8334\",\"addressLocality\":\"s58630\",\"addressRegion\":\"s40487\",\"district\":\"s27797\",\"postOfficeBoxNumber\":\"s79419\",\"postalCode\":\"s93430\",\"streetAddress\":\"s2707\",\"streetNr\":\"s83667\"},\"alternateName\":\"s98448\",\"areaServed\":\"s54902\",\"co2\":-0.5,\"dataProvider\":\"s96188\",\"dateCreated\":\"2026-06-15T12:48:38.927Z\",\"dateIssued\":\"2026-10-27T21:23:16.995Z\",\"dateModified\":\"2025-01-08T07:09:16.341Z\",\"description\":\"s84445\",\"id\":\"https://example.org/815\",\"location\":{\"bbox\":[-3.25,0.75],\"type\":\"Polygon\"},\"name\":\"s62060\",\"owner\":[\"https://example.org/720\",\"https://example.org/9\"],\"source\":\"s91491\",\"traffic\":[{\"averageVehicleSpeedExpected\":0.75,\"intensityExpected\":101.125,\"occupancyExpected\":0.75,\"vehicleClass\":\"s62895\"},{\"averageVehicleSpeedExpected\":0.75,\"intensityExpected\":0.75,\"occupancyExpected\":0.75,\"vehicleClass\":\"s90712\"}],\"validFrom\":\"2024-04-06T09:01:23.757Z\",\"validTo\":\"2024-12-29T09:33:58.007Z\",\"validity\":\"s60768\"}",
+ "expect": "{\"type\":\"TrafficEnvironmentImpactForecast\",\"address\":{\"addressCountry\":\"s8334\",\"addressLocality\":\"s58630\",\"addressRegion\":\"s40487\",\"district\":\"s27797\",\"postOfficeBoxNumber\":\"s79419\",\"postalCode\":\"s93430\",\"streetAddress\":\"s2707\",\"streetNr\":\"s83667\"},\"alternateName\":\"s98448\",\"areaServed\":\"s54902\",\"co2\":-0.5,\"dataProvider\":\"s96188\",\"dateCreated\":\"2026-06-15T12:48:38.927Z\",\"dateIssued\":\"2026-10-27T21:23:16.995Z\",\"dateModified\":\"2025-01-08T07:09:16.341Z\",\"description\":\"s84445\",\"id\":\"https://example.org/815\",\"location\":{\"bbox\":[-3.25,0.75],\"type\":\"Polygon\"},\"name\":\"s62060\",\"owner\":[\"https://example.org/720\",\"https://example.org/9\"],\"source\":\"s91491\",\"traffic\":[{\"averageVehicleSpeedExpected\":0.75,\"intensityExpected\":101.125,\"occupancyExpected\":0.75,\"vehicleClass\":\"s62895\"},{\"averageVehicleSpeedExpected\":0.75,\"intensityExpected\":0.75,\"occupancyExpected\":0.75,\"vehicleClass\":\"s90712\"}],\"validFrom\":\"2024-04-06T09:01:23.757Z\",\"validTo\":\"2024-12-29T09:33:58.007Z\",\"validity\":\"s60768\"}",
+ "model": {
+  "@kind": "traffic_environment_impact_forecast",
+  "uid": "https://example.org/815",
+  "sdmtrafficenvironmentimpactforecast.address_address_country": "s8334",
+  "sdmtrafficenvironmentimpactforecast.address_address_locality": "s58630",
+  "sdmtrafficenvironmentimpactforecast.address_address_region": "s40487",
+  "sdmtrafficenvironmentimpactforecast.address_district": "s27797",
+  "sdmtrafficenvironmentimpactforecast.address_post_office_box_number": "s79419",
+  "sdmtrafficenvironmentimpactforecast.address_postal_code": "s93430"
+ }
+}

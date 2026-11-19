@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|algorithm|string": "algorithm",
+  "|alternateName|string": "alternate_name",
+  "|anonymizedId|string": "anonymized_id",
+  "|areaServed|string": "area_served",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|date|string": "date",
+  "|description|string": "description",
+  "|dest|string": "dest",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|name|string": "name",
+  "|orig|string": "orig",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

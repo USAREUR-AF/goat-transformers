@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|endDate|string": "end_date",
+  "|friday|int": "friday",
+  "|hasService|string": "has_service",
+  "|id|string": "id",
+  "|monday|int": "monday",
+  "|name|string": "name",
+  "|saturday|int": "saturday",
+  "|source|string": "source",
+  "|startDate|string": "start_date",
+  "|sunday|int": "sunday",
+  "|thursday|int": "thursday",
+  "|tuesday|int": "tuesday",
+  "|type|string": "type",
+  "|wednesday|int": "wednesday"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

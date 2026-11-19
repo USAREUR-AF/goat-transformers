@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|arrivalTime|string": "arrival_time",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|departureTime|string": "departure_time",
+  "|description|string": "description",
+  "|distanceTravelled|float": "distance_travelled",
+  "|dropOffType|string": "drop_off_type",
+  "|hasStop|string": "has_stop",
+  "|hasTrip|string": "has_trip",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|pickupType|string": "pickup_type",
+  "|source|string": "source",
+  "|stopHeadsign|string": "stop_headsign",
+  "|stopSequence|float": "stop_sequence",
+  "|timepoint|string": "timepoint",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

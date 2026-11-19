@@ -1,0 +1,17 @@
+{
+ "name": "gen-camera-roundtrip",
+ "from": "sdm-device-camera",
+ "to": "sdm-device-camera",
+ "input": "{\"type\":\"Camera\",\"address\":{\"addressCountry\":\"s12866\",\"addressLocality\":\"s38138\",\"addressRegion\":\"s63939\",\"district\":\"s46900\",\"postOfficeBoxNumber\":\"s16499\",\"postalCode\":\"s30411\",\"streetAddress\":\"s34130\",\"streetNr\":\"s90907\"},\"alternateName\":\"s68060\",\"areaServed\":\"s2969\",\"cameraName\":\"s84862\",\"cameraNum\":7.0625,\"cameraOrientation\":{\"annotatedMap\":\"https://example.org/904\",\"comments\":\"s18059\"},\"cameraType\":\"C-MOUNT\",\"cameraUsage\":\"s97235\",\"dataProvider\":\"s58264\",\"dateCreated\":\"2025-08-31T18:45:12.067Z\",\"dateModified\":\"2027-01-14T21:25:03.190Z\",\"description\":\"s43338\",\"endDateTime\":\"2025-02-11T08:34:12.361Z\",\"id\":\"https://example.org/990\",\"imageSnapshot\":\"s13694\",\"location\":{\"bbox\":[0.75,42.375],\"type\":\"MultiPoint\"},\"mediaURL\":\"https://example.org/728\",\"name\":\"s34397\",\"on\":false,\"owner\":[\"https://example.org/273\",\"https://example.org/886\"],\"source\":\"s88184\",\"startDateTime\":\"2024-07-24T15:10:35.545Z\",\"streamName\":\"s32647\",\"streamURL\":\"s27856\"}",
+ "expect": "{\"type\":\"Camera\",\"address\":{\"addressCountry\":\"s12866\",\"addressLocality\":\"s38138\",\"addressRegion\":\"s63939\",\"district\":\"s46900\",\"postOfficeBoxNumber\":\"s16499\",\"postalCode\":\"s30411\",\"streetAddress\":\"s34130\",\"streetNr\":\"s90907\"},\"alternateName\":\"s68060\",\"areaServed\":\"s2969\",\"cameraName\":\"s84862\",\"cameraNum\":7.0625,\"cameraOrientation\":{\"annotatedMap\":\"https://example.org/904\",\"comments\":\"s18059\"},\"cameraType\":\"C-MOUNT\",\"cameraUsage\":\"s97235\",\"dataProvider\":\"s58264\",\"dateCreated\":\"2025-08-31T18:45:12.067Z\",\"dateModified\":\"2027-01-14T21:25:03.190Z\",\"description\":\"s43338\",\"endDateTime\":\"2025-02-11T08:34:12.361Z\",\"id\":\"https://example.org/990\",\"imageSnapshot\":\"s13694\",\"location\":{\"bbox\":[0.75,42.375],\"type\":\"MultiPoint\"},\"mediaURL\":\"https://example.org/728\",\"name\":\"s34397\",\"on\":false,\"owner\":[\"https://example.org/273\",\"https://example.org/886\"],\"source\":\"s88184\",\"startDateTime\":\"2024-07-24T15:10:35.545Z\",\"streamName\":\"s32647\",\"streamURL\":\"s27856\"}",
+ "model": {
+  "@kind": "camera",
+  "uid": "https://example.org/990",
+  "sdmcamera.address_address_country": "s12866",
+  "sdmcamera.address_address_locality": "s38138",
+  "sdmcamera.address_address_region": "s63939",
+  "sdmcamera.address_district": "s46900",
+  "sdmcamera.address_post_office_box_number": "s16499",
+  "sdmcamera.address_postal_code": "s30411"
+ }
+}

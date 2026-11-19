@@ -1,0 +1,17 @@
+{
+ "name": "gen-store-roundtrip",
+ "from": "sdm-pointofinterest-store",
+ "to": "sdm-pointofinterest-store",
+ "input": "{\"type\":\"Store\",\"address\":{\"addressCountry\":\"s57810\",\"addressLocality\":\"s68645\",\"addressRegion\":\"s56655\",\"district\":\"s78764\",\"postOfficeBoxNumber\":\"s1826\",\"postalCode\":\"s28674\",\"streetAddress\":\"s15082\",\"streetNr\":\"s97797\"},\"alternateName\":\"s23697\",\"areaServed\":\"s84537\",\"category\":\"HobbyShop\",\"currenciesAccepted\":[\"UYU\",\"NIO\"],\"dataProvider\":\"s17037\",\"dateCreated\":\"2024-08-26T18:05:59.271Z\",\"dateModified\":\"2025-07-14T12:37:26.128Z\",\"description\":\"s42513\",\"email\":\"s92053\",\"endDate\":\"2026-06-30T18:37:33.830Z\",\"id\":\"https://example.org/30\",\"location\":{\"bbox\":[0.75,12.5],\"type\":\"Point\"},\"logo\":\"https://example.org/239\",\"name\":\"s54591\",\"openingHours\":\"s96652\",\"openingHoursSpecification\":[{\"closes\":\"s55252\",\"dayOfWeek\":\"Wednesday\",\"opens\":\"s41622\",\"validFrom\":\"2024-03-15\",\"validThrough\":\"2024-10-14\"},{\"closes\":\"s43100\",\"dayOfWeek\":\"https://schema.org/PublicHolidays\",\"opens\":\"s51732\",\"validFrom\":\"2024-01-21\",\"validThrough\":\"2024-08-24\"}],\"owner\":[\"https://example.org/797\",\"https://example.org/41\"],\"paymentAccepted\":[\"s56052\",\"s49962\"],\"source\":\"s56095\",\"startDate\":\"2025-11-12T02:06:16.364Z\",\"telephone\":\"s31178\",\"url\":\"https://example.org/633\"}",
+ "expect": "{\"type\":\"Store\",\"address\":{\"addressCountry\":\"s57810\",\"addressLocality\":\"s68645\",\"addressRegion\":\"s56655\",\"district\":\"s78764\",\"postOfficeBoxNumber\":\"s1826\",\"postalCode\":\"s28674\",\"streetAddress\":\"s15082\",\"streetNr\":\"s97797\"},\"alternateName\":\"s23697\",\"areaServed\":\"s84537\",\"category\":\"HobbyShop\",\"currenciesAccepted\":[\"UYU\",\"NIO\"],\"dataProvider\":\"s17037\",\"dateCreated\":\"2024-08-26T18:05:59.271Z\",\"dateModified\":\"2025-07-14T12:37:26.128Z\",\"description\":\"s42513\",\"email\":\"s92053\",\"endDate\":\"2026-06-30T18:37:33.830Z\",\"id\":\"https://example.org/30\",\"location\":{\"bbox\":[0.75,12.5],\"type\":\"Point\"},\"logo\":\"https://example.org/239\",\"name\":\"s54591\",\"openingHours\":\"s96652\",\"openingHoursSpecification\":[{\"closes\":\"s55252\",\"dayOfWeek\":\"Wednesday\",\"opens\":\"s41622\",\"validFrom\":\"2024-03-15\",\"validThrough\":\"2024-10-14\"},{\"closes\":\"s43100\",\"dayOfWeek\":\"https://schema.org/PublicHolidays\",\"opens\":\"s51732\",\"validFrom\":\"2024-01-21\",\"validThrough\":\"2024-08-24\"}],\"owner\":[\"https://example.org/797\",\"https://example.org/41\"],\"paymentAccepted\":[\"s56052\",\"s49962\"],\"source\":\"s56095\",\"startDate\":\"2025-11-12T02:06:16.364Z\",\"telephone\":\"s31178\",\"url\":\"https://example.org/633\"}",
+ "model": {
+  "@kind": "store",
+  "uid": "https://example.org/30",
+  "sdmstore.address_address_country": "s57810",
+  "sdmstore.address_address_locality": "s68645",
+  "sdmstore.address_address_region": "s56655",
+  "sdmstore.address_district": "s78764",
+  "sdmstore.address_post_office_box_number": "s1826",
+  "sdmstore.address_postal_code": "s28674"
+ }
+}

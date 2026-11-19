@@ -1,0 +1,17 @@
+{
+ "name": "gen-bike_hire_docking_station-roundtrip",
+ "from": "sdm-transportation-bike-hire-docking-station",
+ "to": "sdm-transportation-bike-hire-docking-station",
+ "input": "{\"type\":\"BikeHireDockingStation\",\"address\":{\"addressCountry\":\"s20332\",\"addressLocality\":\"s82349\",\"addressRegion\":\"s94457\",\"district\":\"s11548\",\"postOfficeBoxNumber\":\"s17270\",\"postalCode\":\"s49099\",\"streetAddress\":\"s18231\",\"streetNr\":\"s62773\"},\"agency_fare_url\":\"s26553\",\"agency_name\":\"s28673\",\"agency_url\":\"https://example.org/350\",\"alternateName\":\"s32116\",\"areaServed\":\"s62724\",\"availableBikeNumber\":1.5,\"contactPoint\":{\"areaServed\":\"s2386\",\"availabilityRestriction\":[\"https://example.org/734\",\"https://example.org/197\"],\"contactType\":\"s65316\",\"email\":\"s7167\",\"faxNumber\":\"s9679\",\"name\":\"s36538\",\"productSupported\":\"s63846\",\"telephone\":\"s72887\",\"url\":\"https://example.org/532\"},\"dataProvider\":\"s29273\",\"dateCreated\":\"2024-01-17T17:58:45.632Z\",\"dateModified\":\"2026-02-24T15:59:53.025Z\",\"description\":\"s40501\",\"freeSlotNumber\":42.375,\"id\":\"https://example.org/160\",\"location\":{\"bbox\":[-3.25,1.5],\"type\":\"Polygon\"},\"mediaURL\":\"https://example.org/897\",\"name\":\"s65538\",\"observationDateTime\":\"2026-05-23T01:10:02.372Z\",\"openingHours\":\"s8645\",\"outOfServiceSlotNumber\":1.5,\"owner\":[\"https://example.org/138\",\"https://example.org/791\"],\"provider\":\"s40607\",\"source\":\"s4897\",\"stationCode\":\"s8536\",\"stationName\":\"s34707\",\"status\":\"withIncidence\",\"totalSlotNumber\":42.375}",
+ "expect": "{\"type\":\"BikeHireDockingStation\",\"address\":{\"addressCountry\":\"s20332\",\"addressLocality\":\"s82349\",\"addressRegion\":\"s94457\",\"district\":\"s11548\",\"postOfficeBoxNumber\":\"s17270\",\"postalCode\":\"s49099\",\"streetAddress\":\"s18231\",\"streetNr\":\"s62773\"},\"agency_fare_url\":\"s26553\",\"agency_name\":\"s28673\",\"agency_url\":\"https://example.org/350\",\"alternateName\":\"s32116\",\"areaServed\":\"s62724\",\"availableBikeNumber\":1.5,\"contactPoint\":{\"areaServed\":\"s2386\",\"availabilityRestriction\":[\"https://example.org/734\",\"https://example.org/197\"],\"contactType\":\"s65316\",\"email\":\"s7167\",\"faxNumber\":\"s9679\",\"name\":\"s36538\",\"productSupported\":\"s63846\",\"telephone\":\"s72887\",\"url\":\"https://example.org/532\"},\"dataProvider\":\"s29273\",\"dateCreated\":\"2024-01-17T17:58:45.632Z\",\"dateModified\":\"2026-02-24T15:59:53.025Z\",\"description\":\"s40501\",\"freeSlotNumber\":42.375,\"id\":\"https://example.org/160\",\"location\":{\"bbox\":[-3.25,1.5],\"type\":\"Polygon\"},\"mediaURL\":\"https://example.org/897\",\"name\":\"s65538\",\"observationDateTime\":\"2026-05-23T01:10:02.372Z\",\"openingHours\":\"s8645\",\"outOfServiceSlotNumber\":1.5,\"owner\":[\"https://example.org/138\",\"https://example.org/791\"],\"provider\":\"s40607\",\"source\":\"s4897\",\"stationCode\":\"s8536\",\"stationName\":\"s34707\",\"status\":\"withIncidence\",\"totalSlotNumber\":42.375}",
+ "model": {
+  "@kind": "bike_hire_docking_station",
+  "uid": "https://example.org/160",
+  "sdmbikehiredockingstation.address_address_country": "s20332",
+  "sdmbikehiredockingstation.address_address_locality": "s82349",
+  "sdmbikehiredockingstation.address_address_region": "s94457",
+  "sdmbikehiredockingstation.address_district": "s11548",
+  "sdmbikehiredockingstation.address_post_office_box_number": "s17270",
+  "sdmbikehiredockingstation.address_postal_code": "s49099"
+ }
+}

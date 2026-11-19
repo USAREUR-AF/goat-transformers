@@ -1,0 +1,17 @@
+{
+ "name": "gen-fleet_vehicle_operation-roundtrip",
+ "from": "sdm-transportation-fleet-vehicle-operation",
+ "to": "sdm-transportation-fleet-vehicle-operation",
+ "input": "{\"type\":\"FleetVehicleOperation\",\"address\":{\"addressCountry\":\"s41605\",\"addressLocality\":\"s65804\",\"addressRegion\":\"s52522\",\"district\":\"s98198\",\"postOfficeBoxNumber\":\"s50034\",\"postalCode\":\"s19402\",\"streetAddress\":\"s9857\",\"streetNr\":\"s79141\"},\"alternateName\":\"s35962\",\"areaServed\":\"s3082\",\"dataProvider\":\"s34856\",\"dateCreated\":\"2026-01-24T06:50:25.488Z\",\"dateModified\":\"2025-08-19T23:08:33.170Z\",\"description\":\"s74610\",\"endedAt\":\"2023-12-31T05:54:11.004Z\",\"fleetVehicle\":\"https://example.org/537\",\"fleetVehicleStatus\":\"https://example.org/525\",\"id\":\"https://example.org/761\",\"initiatingLocation\":{\"bbox\":[0.75,42.375],\"type\":\"Polygon\"},\"location\":{\"bbox\":[-3.25,12.5],\"type\":\"MultiPoint\"},\"name\":\"s60784\",\"operationType\":\"s86298\",\"owner\":[\"https://example.org/402\",\"https://example.org/488\"],\"responseTime\":12.5,\"result\":\"s53661\",\"source\":\"s63939\",\"startedAt\":\"2024-08-23T07:13:11.013Z\",\"transportTime\":42.375}",
+ "expect": "{\"type\":\"FleetVehicleOperation\",\"address\":{\"addressCountry\":\"s41605\",\"addressLocality\":\"s65804\",\"addressRegion\":\"s52522\",\"district\":\"s98198\",\"postOfficeBoxNumber\":\"s50034\",\"postalCode\":\"s19402\",\"streetAddress\":\"s9857\",\"streetNr\":\"s79141\"},\"alternateName\":\"s35962\",\"areaServed\":\"s3082\",\"dataProvider\":\"s34856\",\"dateCreated\":\"2026-01-24T06:50:25.488Z\",\"dateModified\":\"2025-08-19T23:08:33.170Z\",\"description\":\"s74610\",\"endedAt\":\"2023-12-31T05:54:11.004Z\",\"fleetVehicle\":\"https://example.org/537\",\"fleetVehicleStatus\":\"https://example.org/525\",\"id\":\"https://example.org/761\",\"initiatingLocation\":{\"bbox\":[0.75,42.375],\"type\":\"Polygon\"},\"location\":{\"bbox\":[-3.25,12.5],\"type\":\"MultiPoint\"},\"name\":\"s60784\",\"operationType\":\"s86298\",\"owner\":[\"https://example.org/402\",\"https://example.org/488\"],\"responseTime\":12.5,\"result\":\"s53661\",\"source\":\"s63939\",\"startedAt\":\"2024-08-23T07:13:11.013Z\",\"transportTime\":42.375}",
+ "model": {
+  "@kind": "fleet_vehicle_operation",
+  "uid": "https://example.org/761",
+  "sdmfleetvehicleoperation.address_address_country": "s41605",
+  "sdmfleetvehicleoperation.address_address_locality": "s65804",
+  "sdmfleetvehicleoperation.address_address_region": "s52522",
+  "sdmfleetvehicleoperation.address_district": "s98198",
+  "sdmfleetvehicleoperation.address_post_office_box_number": "s50034",
+  "sdmfleetvehicleoperation.address_postal_code": "s19402"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-weather_alert-roundtrip",
+ "from": "sdm-weather-weather-alert",
+ "to": "sdm-weather-weather-alert",
+ "input": "{\"type\":\"WeatherAlert\",\"address\":{\"addressCountry\":\"s5447\",\"addressLocality\":\"s46299\",\"addressRegion\":\"s20748\",\"district\":\"s86170\",\"postOfficeBoxNumber\":\"s28756\",\"postalCode\":\"s90303\",\"streetAddress\":\"s40454\",\"streetNr\":\"s6892\"},\"alertSource\":\"https://example.org/985\",\"alternateName\":\"s21193\",\"areaServed\":\"s29483\",\"category\":\"security\",\"dataProvider\":\"s18114\",\"dateCreated\":\"2024-09-18T12:46:12.488Z\",\"dateIssued\":\"2025-09-15T14:19:21.952Z\",\"dateModified\":\"2024-05-10T11:16:58.557Z\",\"description\":\"s71796\",\"id\":\"https://example.org/54\",\"location\":{\"bbox\":[1.5,0.75],\"type\":\"Polygon\"},\"name\":\"s82735\",\"owner\":[\"https://example.org/589\",\"https://example.org/478\"],\"severity\":\"low\",\"source\":\"s79017\",\"subCategory\":\"flood\",\"validFrom\":\"2026-04-20T12:02:02.295Z\",\"validTo\":\"2026-09-01T18:15:30.330Z\"}",
+ "expect": "{\"type\":\"WeatherAlert\",\"address\":{\"addressCountry\":\"s5447\",\"addressLocality\":\"s46299\",\"addressRegion\":\"s20748\",\"district\":\"s86170\",\"postOfficeBoxNumber\":\"s28756\",\"postalCode\":\"s90303\",\"streetAddress\":\"s40454\",\"streetNr\":\"s6892\"},\"alertSource\":\"https://example.org/985\",\"alternateName\":\"s21193\",\"areaServed\":\"s29483\",\"category\":\"security\",\"dataProvider\":\"s18114\",\"dateCreated\":\"2024-09-18T12:46:12.488Z\",\"dateIssued\":\"2025-09-15T14:19:21.952Z\",\"dateModified\":\"2024-05-10T11:16:58.557Z\",\"description\":\"s71796\",\"id\":\"https://example.org/54\",\"location\":{\"bbox\":[1.5,0.75],\"type\":\"Polygon\"},\"name\":\"s82735\",\"owner\":[\"https://example.org/589\",\"https://example.org/478\"],\"severity\":\"low\",\"source\":\"s79017\",\"subCategory\":\"flood\",\"validFrom\":\"2026-04-20T12:02:02.295Z\",\"validTo\":\"2026-09-01T18:15:30.330Z\"}",
+ "model": {
+  "@kind": "weather_alert",
+  "uid": "https://example.org/54",
+  "sdmweatheralert.address_address_country": "s5447",
+  "sdmweatheralert.address_address_locality": "s46299",
+  "sdmweatheralert.address_address_region": "s20748",
+  "sdmweatheralert.address_district": "s86170",
+  "sdmweatheralert.address_post_office_box_number": "s28756",
+  "sdmweatheralert.address_postal_code": "s90303"
+ }
+}

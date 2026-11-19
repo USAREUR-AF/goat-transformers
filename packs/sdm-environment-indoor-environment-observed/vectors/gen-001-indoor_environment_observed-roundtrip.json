@@ -1,0 +1,17 @@
+{
+ "name": "gen-indoor_environment_observed-roundtrip",
+ "from": "sdm-environment-indoor-environment-observed",
+ "to": "sdm-environment-indoor-environment-observed",
+ "input": "{\"type\":\"IndoorEnvironmentObserved\",\"address\":{\"addressCountry\":\"s62436\",\"addressLocality\":\"s46815\",\"addressRegion\":\"s13539\",\"district\":\"s96770\",\"postOfficeBoxNumber\":\"s90318\",\"postalCode\":\"s97805\",\"streetAddress\":\"s55141\",\"streetNr\":\"s55775\"},\"alternateName\":\"s87922\",\"areaServed\":\"s30392\",\"atmosphericPressure\":7.0625,\"co2\":1.5,\"dataProvider\":\"s64489\",\"dateCreated\":\"2025-04-23T03:30:00.154Z\",\"dateModified\":\"2024-07-09T11:58:05.248Z\",\"dateObserved\":\"s87042\",\"description\":\"s14341\",\"id\":\"https://example.org/229\",\"illuminance\":42.375,\"location\":{\"bbox\":[12.5,0.75],\"type\":\"Polygon\"},\"name\":\"s69827\",\"owner\":[\"https://example.org/184\",\"https://example.org/680\"],\"peopleCount\":12.5,\"refDevice\":\"https://example.org/450\",\"refPointOfInterest\":\"https://example.org/767\",\"relativeHumidity\":0.75,\"sensorHeight\":42.375,\"sensorPlacement\":\"floor\",\"source\":\"s83713\",\"temperature\":101.125}",
+ "expect": "{\"type\":\"IndoorEnvironmentObserved\",\"address\":{\"addressCountry\":\"s62436\",\"addressLocality\":\"s46815\",\"addressRegion\":\"s13539\",\"district\":\"s96770\",\"postOfficeBoxNumber\":\"s90318\",\"postalCode\":\"s97805\",\"streetAddress\":\"s55141\",\"streetNr\":\"s55775\"},\"alternateName\":\"s87922\",\"areaServed\":\"s30392\",\"atmosphericPressure\":7.0625,\"co2\":1.5,\"dataProvider\":\"s64489\",\"dateCreated\":\"2025-04-23T03:30:00.154Z\",\"dateModified\":\"2024-07-09T11:58:05.248Z\",\"dateObserved\":\"s87042\",\"description\":\"s14341\",\"id\":\"https://example.org/229\",\"illuminance\":42.375,\"location\":{\"bbox\":[12.5,0.75],\"type\":\"Polygon\"},\"name\":\"s69827\",\"owner\":[\"https://example.org/184\",\"https://example.org/680\"],\"peopleCount\":12.5,\"refDevice\":\"https://example.org/450\",\"refPointOfInterest\":\"https://example.org/767\",\"relativeHumidity\":0.75,\"sensorHeight\":42.375,\"sensorPlacement\":\"floor\",\"source\":\"s83713\",\"temperature\":101.125}",
+ "model": {
+  "@kind": "indoor_environment_observed",
+  "uid": "https://example.org/229",
+  "sdmindoorenvironmentobserved.address_address_country": "s62436",
+  "sdmindoorenvironmentobserved.address_address_locality": "s46815",
+  "sdmindoorenvironmentobserved.address_address_region": "s13539",
+  "sdmindoorenvironmentobserved.address_district": "s96770",
+  "sdmindoorenvironmentobserved.address_post_office_box_number": "s90318",
+  "sdmindoorenvironmentobserved.address_postal_code": "s97805"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-fleet_vehicle_status-roundtrip",
+ "from": "sdm-transportation-fleet-vehicle-status",
+ "to": "sdm-transportation-fleet-vehicle-status",
+ "input": "{\"type\":\"FleetVehicleStatus\",\"address\":{\"addressCountry\":\"s52114\",\"addressLocality\":\"s34365\",\"addressRegion\":\"s59389\",\"district\":\"s86984\",\"postOfficeBoxNumber\":\"s88510\",\"postalCode\":\"s18033\",\"streetAddress\":\"s39605\",\"streetNr\":\"s9182\"},\"alternateName\":\"s74543\",\"areaServed\":\"s44698\",\"battery\":0.75,\"bearing\":12.5,\"currentOperative\":{\"givenName\":\"s69402\",\"jobTitle\":\"s98945\"},\"currentStatus\":\"finished\",\"dataProvider\":\"s95158\",\"dateCreated\":\"2026-07-15T21:29:39.354Z\",\"dateModified\":\"2024-09-12T04:41:12.266Z\",\"description\":\"s87762\",\"fleetVehicle\":\"https://example.org/495\",\"fleetVehicleOperation\":\"https://example.org/34\",\"id\":\"https://example.org/203\",\"inRestrictedArea\":true,\"lastFuellingAmount\":0.75,\"lastKnownPosition\":{\"bbox\":[42.375,7.0625],\"type\":\"LineString\"},\"lastKnownPositionUpdatedAt\":\"2025-04-16T01:14:24.657Z\",\"location\":{\"bbox\":[101.125,0.75],\"type\":\"Polygon\"},\"mileageFromOdometer\":-0.5,\"name\":\"s5208\",\"owner\":[\"https://example.org/522\",\"https://example.org/373\"],\"restFuelAmount\":101.125,\"source\":\"s99181\",\"speed\":-0.5}",
+ "expect": "{\"type\":\"FleetVehicleStatus\",\"address\":{\"addressCountry\":\"s52114\",\"addressLocality\":\"s34365\",\"addressRegion\":\"s59389\",\"district\":\"s86984\",\"postOfficeBoxNumber\":\"s88510\",\"postalCode\":\"s18033\",\"streetAddress\":\"s39605\",\"streetNr\":\"s9182\"},\"alternateName\":\"s74543\",\"areaServed\":\"s44698\",\"battery\":0.75,\"bearing\":12.5,\"currentOperative\":{\"givenName\":\"s69402\",\"jobTitle\":\"s98945\"},\"currentStatus\":\"finished\",\"dataProvider\":\"s95158\",\"dateCreated\":\"2026-07-15T21:29:39.354Z\",\"dateModified\":\"2024-09-12T04:41:12.266Z\",\"description\":\"s87762\",\"fleetVehicle\":\"https://example.org/495\",\"fleetVehicleOperation\":\"https://example.org/34\",\"id\":\"https://example.org/203\",\"inRestrictedArea\":true,\"lastFuellingAmount\":0.75,\"lastKnownPosition\":{\"bbox\":[42.375,7.0625],\"type\":\"LineString\"},\"lastKnownPositionUpdatedAt\":\"2025-04-16T01:14:24.657Z\",\"location\":{\"bbox\":[101.125,0.75],\"type\":\"Polygon\"},\"mileageFromOdometer\":-0.5,\"name\":\"s5208\",\"owner\":[\"https://example.org/522\",\"https://example.org/373\"],\"restFuelAmount\":101.125,\"source\":\"s99181\",\"speed\":-0.5}",
+ "model": {
+  "@kind": "fleet_vehicle_status",
+  "uid": "https://example.org/203",
+  "sdmfleetvehiclestatus.address_address_country": "s52114",
+  "sdmfleetvehiclestatus.address_address_locality": "s34365",
+  "sdmfleetvehiclestatus.address_address_region": "s59389",
+  "sdmfleetvehiclestatus.address_district": "s86984",
+  "sdmfleetvehiclestatus.address_post_office_box_number": "s88510",
+  "sdmfleetvehiclestatus.address_postal_code": "s18033"
+ }
+}

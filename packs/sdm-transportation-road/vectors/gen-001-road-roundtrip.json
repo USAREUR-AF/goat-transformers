@@ -1,0 +1,17 @@
+{
+ "name": "gen-road-roundtrip",
+ "from": "sdm-transportation-road",
+ "to": "sdm-transportation-road",
+ "input": "{\"type\":\"Road\",\"address\":{\"addressCountry\":\"s18370\",\"addressLocality\":\"s54197\",\"addressRegion\":\"s63541\",\"district\":\"s21054\",\"postOfficeBoxNumber\":\"s1393\",\"postalCode\":\"s41950\",\"streetAddress\":\"s9025\",\"streetNr\":\"s81139\"},\"alternateName\":\"s39332\",\"annotations\":[\"s41174\",\"s50602\"],\"areaServed\":\"s65703\",\"color\":\"s28453\",\"dataProvider\":\"s97399\",\"dateCreated\":\"2023-12-24T13:02:30.756Z\",\"dateModified\":\"2024-10-19T04:52:56.462Z\",\"description\":\"s74672\",\"id\":\"https://example.org/148\",\"image\":\"https://example.org/955\",\"length\":0.75,\"location\":{\"bbox\":[101.125,-3.25],\"type\":\"MultiPolygon\"},\"name\":\"s57627\",\"owner\":[\"https://example.org/509\",\"https://example.org/30\"],\"refRoadSegment\":[\"https://example.org/599\",\"https://example.org/251\"],\"responsible\":\"s25402\",\"roadClass\":\"trunk\",\"source\":\"s38370\"}",
+ "expect": "{\"type\":\"Road\",\"address\":{\"addressCountry\":\"s18370\",\"addressLocality\":\"s54197\",\"addressRegion\":\"s63541\",\"district\":\"s21054\",\"postOfficeBoxNumber\":\"s1393\",\"postalCode\":\"s41950\",\"streetAddress\":\"s9025\",\"streetNr\":\"s81139\"},\"alternateName\":\"s39332\",\"annotations\":[\"s41174\",\"s50602\"],\"areaServed\":\"s65703\",\"color\":\"s28453\",\"dataProvider\":\"s97399\",\"dateCreated\":\"2023-12-24T13:02:30.756Z\",\"dateModified\":\"2024-10-19T04:52:56.462Z\",\"description\":\"s74672\",\"id\":\"https://example.org/148\",\"image\":\"https://example.org/955\",\"length\":0.75,\"location\":{\"bbox\":[101.125,-3.25],\"type\":\"MultiPolygon\"},\"name\":\"s57627\",\"owner\":[\"https://example.org/509\",\"https://example.org/30\"],\"refRoadSegment\":[\"https://example.org/599\",\"https://example.org/251\"],\"responsible\":\"s25402\",\"roadClass\":\"trunk\",\"source\":\"s38370\"}",
+ "model": {
+  "@kind": "road",
+  "uid": "https://example.org/148",
+  "sdmroad.address_address_country": "s18370",
+  "sdmroad.address_address_locality": "s54197",
+  "sdmroad.address_address_region": "s63541",
+  "sdmroad.address_district": "s21054",
+  "sdmroad.address_post_office_box_number": "s1393",
+  "sdmroad.address_postal_code": "s41950"
+ }
+}

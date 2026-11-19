@@ -1,0 +1,17 @@
+{
+ "name": "gen-port-roundtrip",
+ "from": "sdm-marinetransport-port",
+ "to": "sdm-marinetransport-port",
+ "input": "{\"type\":\"Port\",\"address\":{\"addressCountry\":\"s74346\",\"addressLocality\":\"s61558\",\"addressRegion\":\"s64566\",\"district\":\"s97490\",\"postOfficeBoxNumber\":\"s99273\",\"postalCode\":\"s9839\",\"streetAddress\":\"s43589\",\"streetNr\":\"s19541\"},\"alternateName\":\"s20982\",\"areaServed\":\"s73520\",\"contactPoint\":{\"areaServed\":\"s22356\",\"availabilityRestriction\":[\"https://example.org/600\",\"https://example.org/749\"],\"contactType\":\"s24034\",\"email\":\"s43309\",\"faxNumber\":\"s28932\",\"name\":\"s17470\",\"productSupported\":\"s80926\",\"telephone\":\"s46364\",\"url\":\"https://example.org/625\"},\"dataProvider\":\"s22\",\"dateCreated\":\"2025-02-12T12:48:35.003Z\",\"dateModified\":\"2026-11-24T09:42:54.567Z\",\"description\":\"s63326\",\"gln\":0.75,\"id\":\"https://example.org/455\",\"location\":{\"bbox\":[7.0625,-3.25],\"type\":\"MultiPolygon\"},\"name\":\"s99112\",\"owner\":[\"https://example.org/949\",\"https://example.org/65\"],\"portArea\":{\"bbox\":[42.375,7.0625],\"type\":\"MultiPolygon\"},\"portType\":\"WarmWater\",\"refPortAuthority\":\"https://example.org/311\",\"source\":\"s17514\",\"timeZone\":\"s35404\",\"unlocode\":\"s67137\"}",
+ "expect": "{\"type\":\"Port\",\"address\":{\"addressCountry\":\"s74346\",\"addressLocality\":\"s61558\",\"addressRegion\":\"s64566\",\"district\":\"s97490\",\"postOfficeBoxNumber\":\"s99273\",\"postalCode\":\"s9839\",\"streetAddress\":\"s43589\",\"streetNr\":\"s19541\"},\"alternateName\":\"s20982\",\"areaServed\":\"s73520\",\"contactPoint\":{\"areaServed\":\"s22356\",\"availabilityRestriction\":[\"https://example.org/600\",\"https://example.org/749\"],\"contactType\":\"s24034\",\"email\":\"s43309\",\"faxNumber\":\"s28932\",\"name\":\"s17470\",\"productSupported\":\"s80926\",\"telephone\":\"s46364\",\"url\":\"https://example.org/625\"},\"dataProvider\":\"s22\",\"dateCreated\":\"2025-02-12T12:48:35.003Z\",\"dateModified\":\"2026-11-24T09:42:54.567Z\",\"description\":\"s63326\",\"gln\":0.75,\"id\":\"https://example.org/455\",\"location\":{\"bbox\":[7.0625,-3.25],\"type\":\"MultiPolygon\"},\"name\":\"s99112\",\"owner\":[\"https://example.org/949\",\"https://example.org/65\"],\"portArea\":{\"bbox\":[42.375,7.0625],\"type\":\"MultiPolygon\"},\"portType\":\"WarmWater\",\"refPortAuthority\":\"https://example.org/311\",\"source\":\"s17514\",\"timeZone\":\"s35404\",\"unlocode\":\"s67137\"}",
+ "model": {
+  "@kind": "port",
+  "uid": "https://example.org/455",
+  "sdmport.address_address_country": "s74346",
+  "sdmport.address_address_locality": "s61558",
+  "sdmport.address_address_region": "s64566",
+  "sdmport.address_district": "s97490",
+  "sdmport.address_post_office_box_number": "s99273",
+  "sdmport.address_postal_code": "s9839"
+ }
+}

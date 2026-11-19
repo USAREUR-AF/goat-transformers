@@ -1,0 +1,17 @@
+{
+ "name": "gen-night_sky_quality-roundtrip",
+ "from": "sdm-environment-night-sky-quality",
+ "to": "sdm-environment-night-sky-quality",
+ "input": "{\"type\":\"NightSkyQuality\",\"address\":{\"addressCountry\":\"s29343\",\"addressLocality\":\"s13097\",\"addressRegion\":\"s53773\",\"district\":\"s87028\",\"postOfficeBoxNumber\":\"s59868\",\"postalCode\":\"s53102\",\"streetAddress\":\"s75650\",\"streetNr\":\"s30573\"},\"alternateName\":\"s60930\",\"ambientTemperature\":-0.5,\"areaServed\":\"s367\",\"battery\":-0.5,\"batteryLevel\":-1,\"clouds\":\"s3103\",\"dataProvider\":\"s64658\",\"dateCreated\":\"2024-10-25T20:29:21.038Z\",\"dateModified\":\"2024-09-03T09:11:46.283Z\",\"description\":\"s30528\",\"id\":\"https://example.org/144\",\"location\":{\"bbox\":[1.5,12.5],\"type\":\"Polygon\"},\"name\":\"s64500\",\"owner\":[\"https://example.org/467\",\"https://example.org/667\"],\"sigmaMagnitude\":0.75,\"skyMagnitude\":0.75,\"skyTemperature\":7.0625,\"source\":\"s97112\"}",
+ "expect": "{\"type\":\"NightSkyQuality\",\"address\":{\"addressCountry\":\"s29343\",\"addressLocality\":\"s13097\",\"addressRegion\":\"s53773\",\"district\":\"s87028\",\"postOfficeBoxNumber\":\"s59868\",\"postalCode\":\"s53102\",\"streetAddress\":\"s75650\",\"streetNr\":\"s30573\"},\"alternateName\":\"s60930\",\"ambientTemperature\":-0.5,\"areaServed\":\"s367\",\"battery\":-0.5,\"batteryLevel\":-1,\"clouds\":\"s3103\",\"dataProvider\":\"s64658\",\"dateCreated\":\"2024-10-25T20:29:21.038Z\",\"dateModified\":\"2024-09-03T09:11:46.283Z\",\"description\":\"s30528\",\"id\":\"https://example.org/144\",\"location\":{\"bbox\":[1.5,12.5],\"type\":\"Polygon\"},\"name\":\"s64500\",\"owner\":[\"https://example.org/467\",\"https://example.org/667\"],\"sigmaMagnitude\":0.75,\"skyMagnitude\":0.75,\"skyTemperature\":7.0625,\"source\":\"s97112\"}",
+ "model": {
+  "@kind": "night_sky_quality",
+  "uid": "https://example.org/144",
+  "sdmnightskyquality.address_address_country": "s29343",
+  "sdmnightskyquality.address_address_locality": "s13097",
+  "sdmnightskyquality.address_address_region": "s53773",
+  "sdmnightskyquality.address_district": "s87028",
+  "sdmnightskyquality.address_post_office_box_number": "s59868",
+  "sdmnightskyquality.address_postal_code": "s53102"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-gtfs_frequency-residue",
+ "from": "sdm-urbanmobility-gtfs-frequency",
+ "to": "sdm-urbanmobility-gtfs-frequency",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"GtfsFrequency\",\"alternateName\":\"s92963\",\"dataProvider\":\"s69056\",\"dateCreated\":\"2024-03-28T07:53:26.942Z\",\"dateModified\":\"2026-12-17T13:19:44.548Z\",\"description\":\"s94115\",\"endTime\":\"s24457\",\"exactTimes\":true,\"hasTrip\":\"https://example.org/718\",\"headwaySeconds\":101.125,\"id\":\"https://example.org/108\",\"name\":\"s50906\",\"owner\":[\"https://example.org/220\",\"https://example.org/778\"],\"source\":\"s46682\",\"startTime\":\"s57656\"}",
+ "expect": "{\"type\":\"GtfsFrequency\",\"alternateName\":\"s92963\",\"dataProvider\":\"s69056\",\"dateCreated\":\"2024-03-28T07:53:26.942Z\",\"dateModified\":\"2026-12-17T13:19:44.548Z\",\"description\":\"s94115\",\"endTime\":\"s24457\",\"exactTimes\":true,\"hasTrip\":\"https://example.org/718\",\"headwaySeconds\":101.125,\"id\":\"https://example.org/108\",\"name\":\"s50906\",\"owner\":[\"https://example.org/220\",\"https://example.org/778\"],\"source\":\"s46682\",\"startTime\":\"s57656\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
