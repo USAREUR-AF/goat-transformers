@@ -374,5 +374,11 @@ Pack kml; module kml
   Agreement. Not approved or adopted by the OGC.
   https://www.ogc.org/about/policies/document-license-agreement/
 
+Pack c2sim; module c2sim
+  C2SIM_SMX_LOX.xsd, OpenC2SIM/C2SIMArtifacts, commit 947d8b5. Copyright (c)
+  2022 OpenC2SIM Project, MIT License. Schema of SISO-STD-019-2020 (C2SIM).
+  https://github.com/OpenC2SIM/C2SIMArtifacts
+  Element names, types and units only.
+
 The packs named conformance*, demo-* and the module probe describe synthetic
 formats written for this project and have no external source.

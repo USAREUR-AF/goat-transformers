@@ -1,0 +1,47 @@
+# C2SIM (SISO-STD-019-2020) position report: one C2SIM Message whose body is a
+# report holding a PositionReportContent with a geodetic location and an
+# absolute time of observation. Public. XML, namespace
+# http://www.sisostds.org/schemas/C2SIM/1.1, from the schema the OpenC2SIM
+# project derives from the C2SIM ontologies (MIT License).
+# Field lines follow the element order of the schema's sequences, so an
+# encoded message has its elements in schema order.
+# The time of observation is written from c2sim.time_of_observation, the
+# sender's text, which stands before time_ms on the same locator: the schema's
+# IsoDateTime pattern allows whole seconds only, and iso8601_ms writes
+# milliseconds. pack.md states the evidence for each key and what is not mapped.
+format  c2sim
+version 0.1.0
+distribution public
+source  "C2SIM_SMX_LOX.xsd, OpenC2SIM/C2SIMArtifacts commit 947d8b521ef173a19585f60df8e566f73ebb020a, Derived products/ (MIT License); SISO-STD-019-2020"
+uses    c2sim
+wire    xml
+root    Message
+when    @xmlns  http://www.sisostds.org/schemas/C2SIM/1.1
+
+kind    position-report
+when    MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/TimeOfObservation/DateTime/IsoDateTime/#text  present
+requires uid lat lon c2sim.communicative_act c2sim.conversation_id c2sim.from_sending_system c2sim.message_id c2sim.protocol c2sim.protocol_version c2sim.to_receiving_system c2sim.from_sender c2sim.to_receiver c2sim.time_of_observation c2sim.report_id c2sim.reporting_entity
+field   c2sim.communicative_act        C2SIMHeader/CommunicativeActTypeCode/#text      string
+field   c2sim.conversation_id          C2SIMHeader/ConversationID/#text                string
+field   c2sim.from_sending_system      C2SIMHeader/FromSendingSystem/#text             string
+field   c2sim.in_reply_to_message_id   C2SIMHeader/InReplyToMessageID/#text            string
+field   c2sim.message_id               C2SIMHeader/MessageID/#text                     string
+field   c2sim.protocol                 C2SIMHeader/Protocol/#text                      string
+field   c2sim.protocol_version         C2SIMHeader/ProtocolVersion/#text               string
+field   c2sim.reply_to_system          C2SIMHeader/ReplyToSystem/#text                 string
+field   c2sim.security_classification  C2SIMHeader/SecurityClassificationCode/#text    string
+field   c2sim.sending_time             C2SIMHeader/SendingTime/IsoDateTime/#text       string
+field   c2sim.to_receiving_system      C2SIMHeader/ToReceivingSystem/#text             string
+field   c2sim.from_sender              MessageBody/DomainMessageBody/ReportBody/FromSender/#text   string
+field   c2sim.to_receiver              MessageBody/DomainMessageBody/ReportBody/ToReceiver/#text   string
+field   c2sim.time_of_observation      MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/TimeOfObservation/DateTime/IsoDateTime/#text  string
+field   time_ms                        MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/TimeOfObservation/DateTime/IsoDateTime/#text  iso8601_ms
+field   c2sim.heading_deg              MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/HeadingAngle/#text  float
+field   c2sim.altitude_agl_m           MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/Location/GeodeticCoordinate/AltitudeAGL/#text  float
+field   c2sim.altitude_msl_m           MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/Location/GeodeticCoordinate/AltitudeMSL/#text  float
+field   lat                            MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/Location/GeodeticCoordinate/Latitude/#text   float
+field   lon                            MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/Location/GeodeticCoordinate/Longitude/#text  float
+field   speed_ms                       MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/Speed/#text  float
+field   uid                            MessageBody/DomainMessageBody/ReportBody/ReportContent/PositionReportContent/SubjectEntity/#text  string
+field   c2sim.report_id                MessageBody/DomainMessageBody/ReportBody/ReportID/#text         string
+field   c2sim.reporting_entity         MessageBody/DomainMessageBody/ReportBody/ReportingEntity/#text  string

@@ -9,7 +9,7 @@ written engines read and must agree on, byte for byte. Below, the 25 bytes a
 drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
 
-**813 formats · 5,299 message kinds · 7,605 conversion vectors · 7 engines**, counted
+**814 formats · 5,300 message kinds · 7,615 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -57,11 +57,11 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 813 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 5,299 |
-| Typed keys in the shared model, in 479 modules | 94,696 |
+| Formats | 814 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 5,300 |
+| Typed keys in the shared model, in 480 modules | 94,715 |
 | Lists in the shared model (parts of a message that repeat) | 17,089 |
-| Conversion vectors (an input message and the exact expected output) | 7,605 |
+| Conversion vectors (an input message and the exact expected output) | 7,615 |
 | Load vectors (a pack that must load, or must be refused with a named error) | 505 |
 | Synthetic formats that exercise each rule of the specification | 100 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text` | 6 |
@@ -78,6 +78,7 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 | `geo-track-v1` | GeoTrackV1, the display track of [goatstuff](https://github.com/USAREUR-AF/goatstuff)'s map | `json` | 1 |
 | `sapient` | SAPIENT, BSI Flex 335 v2.0 | `protobuf` | 9 |
 | `sapient-v1` | SAPIENT, BSI Flex 335 v1.0 | `protobuf` | 9 |
+| `c2sim` | C2SIM (SISO-STD-019-2020), position report | `xml` | 1 |
 | `isa` | Integrated Sensor Architecture, IPL 3.7 `Event` | `protobuf` | 1 |
 | `isa-message` | Integrated Sensor Architecture, IPL 3.7 message union | `protobuf` | 7 |
 | `isa-ipl1` | Integrated Sensor Architecture, IPL 1.6 message union | `protobuf` | 7 |
