@@ -171,8 +171,11 @@ def classify(table, names):
     empty = [fam["name"] for i, fam in enumerate(table["families"]) if not held[i]]
     problems = []
     if unplaced:
-        problems.append("no family in tools/catalog-families.json holds the pack%s %s" % (
-            "s" if len(unplaced) > 1 else "", ", ".join(unplaced)))
+        problems.append(
+            "no family in tools/catalog-families.json holds the pack%s %s. In the same pull request, add %s to "
+            "the \"exact\" list of its family in tools/catalog-families.json (or add a family with a name, a "
+            "domain and an \"exact\" list), then run `python3 -I tools/catalog-figure.py --check-families`"
+            % ("s" if len(unplaced) > 1 else "", ", ".join(unplaced), "each" if len(unplaced) > 1 else "it"))
     if empty:
         problems.append("no pack belongs to the famil%s %s" % ("ies" if len(empty) > 1 else "y", ", ".join(empty)))
     if problems:
