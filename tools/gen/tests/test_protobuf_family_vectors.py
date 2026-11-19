@@ -38,7 +38,7 @@ class ProtobufFamilyVectorsTest(unittest.TestCase):
                                for d, _, fs in os.walk(root) for f in fs)
                 self.assertTrue(files)
                 for rel in files:
-                    self.assertRegex(rel, r"^packs/[a-z0-9-]+/vectors/[0-9]{2}-[a-z0-9-]+\.json$")
+                    self.assertRegex(rel, r"^packs/[a-z0-9-]+/vectors/[0-9]{2,3}-[a-z0-9-]+\.json$")
 
     def test_check_notices_a_changed_vector(self):
         for name in scripts():

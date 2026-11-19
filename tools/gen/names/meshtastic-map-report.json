@@ -1,0 +1,14 @@
+{
+ "1": "map_report_long_name",
+ "11": "map_report_altitude",
+ "12": "map_report_position_precision",
+ "13": "map_report_num_online_local_nodes",
+ "14": "map_report_has_opted_report_location",
+ "2": "map_report_short_name",
+ "3": "map_report_role",
+ "4": "map_report_hw_model",
+ "5": "map_report_firmware_version",
+ "6": "map_report_region",
+ "7": "map_report_modem_preset",
+ "8": "map_report_has_default_channel"
+}

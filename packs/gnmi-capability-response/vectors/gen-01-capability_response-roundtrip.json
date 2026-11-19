@@ -1,0 +1,22 @@
+{
+  "name": "gen-capability_response-roundtrip",
+  "from": "gnmi-capability-response",
+  "to": "gnmi-capability-response",
+  "input": "0a230a066e616d652d31120e6f7267616e697a6174696f6e2d321a0976657273696f6e2d330a230a066e616d652d34120e6f7267616e697a6174696f6e2d351a0976657273696f6e2d36120201011a0f675f6e6d695f76657273696f6e2d3022050a0308e70722050a0308e707",
+  "expect": "0a230a066e616d652d31120e6f7267616e697a6174696f6e2d321a0976657273696f6e2d330a230a066e616d652d34120e6f7267616e697a6174696f6e2d351a0976657273696f6e2d36120201011a0f675f6e6d695f76657273696f6e2d3022050a0308e70722050a0308e707",
+  "model": {
+    "@kind": "capability_response",
+    "gnmicapabilityresponse.capability_response_g_nmi_version": "g_nmi_version-0",
+    "gnmicapabilityresponse.capability_response_supported_models.#": "2",
+    "gnmicapabilityresponse.capability_response_supported_models[0].gnmicapabilityresponse.model_data_name": "name-1",
+    "gnmicapabilityresponse.capability_response_supported_models[0].gnmicapabilityresponse.model_data_organization": "organization-2",
+    "gnmicapabilityresponse.capability_response_supported_models[1].gnmicapabilityresponse.model_data_name": "name-4",
+    "gnmicapabilityresponse.capability_response_supported_models[1].gnmicapabilityresponse.model_data_organization": "organization-5",
+    "gnmicapabilityresponse.capability_response_supported_encodings.#": "2",
+    "gnmicapabilityresponse.capability_response_supported_encodings[0].gnmicapabilityresponse.capability_response_supported_encodings_item": "1",
+    "gnmicapabilityresponse.capability_response_supported_encodings[1].gnmicapabilityresponse.capability_response_supported_encodings_item": "1",
+    "gnmicapabilityresponse.capability_response_extension.#": "2",
+    "gnmicapabilityresponse.capability_response_extension[0].gnmicapabilityresponse.extension_registered_ext_id": "999",
+    "gnmicapabilityresponse.capability_response_extension[1].gnmicapabilityresponse.extension_registered_ext_id": "999"
+  }
+}

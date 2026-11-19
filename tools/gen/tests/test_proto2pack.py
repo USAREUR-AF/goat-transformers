@@ -1504,5 +1504,45 @@ class OnlyRepeatedFieldsTest(TempDirCase):
         self.run_ok(self.argv("--check"))
 
 
+class OneLayoutTest(TempDirCase):
+    """--one-layout: an envelope whose oneof has a scalar member (gNMI SubscribeResponse,
+    Meshtastic Routing) cannot have a kind per member; it is one kind, and every member's
+    fields are its lines, as a nested oneof's are."""
+
+    def setUp(self):
+        super().setUp()
+        shutil.copytree(os.path.join(INPUT, "model"), os.path.join(self.tmp, "model"))
+        self.proto = self.write("proto/reply.proto", 'syntax = "proto3";\n'
+                                'message Empty {}\n'
+                                'message Detail { string text = 1; }\n'
+                                'message Reply { string id = 1; oneof body { Detail detail = 2; '
+                                'uint32 code = 3; Empty nothing = 4; } }\n')
+
+    def argv(self, *extra):
+        return ["--proto", self.proto, "--envelope", "Reply", "--format", "reply", "--module", "reply",
+                "--out", self.tmp, "--source", "a test", "--no-comments"] + list(extra)
+
+    def test_without_it_a_scalar_member_is_refused(self):
+        err = self.run_refused(self.argv())
+        self.assertIn("oneof member code is not a singular message", err)
+
+    def test_with_it_the_envelope_is_one_kind_holding_every_member(self):
+        self.run_ok(self.argv("--one-layout"))
+        model = gtcheck.Model().load_dir(os.path.join(self.tmp, "model"))
+        pack = gtcheck.load_pack_file(os.path.join(self.tmp, "packs", "reply", "pack.def"), model)
+        self.assertEqual([k.name for k in pack.kinds], ["reply"])
+        locs = [f.loc for f in pack.common + [l for k in pack.kinds for l in k.lines] if f.d == "field"]
+        self.assertEqual(sorted(locs), ["1", "2.1", "3"])
+        self.assertNotIn("\nwhen ", self.read("packs/reply/pack.def"))
+
+    def test_a_second_run_with_check_finds_nothing_to_change(self):
+        self.run_ok(self.argv("--one-layout"))
+        self.run_ok(self.argv("--one-layout", "--check"))
+
+    def test_it_excludes_kinds_from_fields(self):
+        err = self.run_refused(self.argv("--one-layout", "--kinds-from-fields"))
+        self.assertIn("--one-layout and --kinds-from-fields exclude each other", err)
+
+
 if __name__ == "__main__":
     unittest.main()

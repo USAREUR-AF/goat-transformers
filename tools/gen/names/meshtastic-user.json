@@ -1,0 +1,9 @@
+{
+ "1": "user_id",
+ "2": "user_long_name",
+ "3": "user_short_name",
+ "5": "user_hw_model",
+ "6": "user_is_licensed",
+ "7": "user_role",
+ "9": "user_is_unmessagable"
+}

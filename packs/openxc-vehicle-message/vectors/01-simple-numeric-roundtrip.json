@@ -1,0 +1,11 @@
+{
+  "name": "01-simple-numeric-roundtrip",
+  "from": "openxc-vehicle-message",
+  "to": "openxc-vehicle-message",
+  "input": "08021a1c0a0d76656869636c655f7370656564120b08021900000000004045403880d095ffbc31",
+  "expect": "08021a1c0a0d76656869636c655f7370656564120b08021900000000004045403880d095ffbc31",
+  "model": {
+    "openxc.simple_message_name": "vehicle_speed",
+    "openxc.simple_message_value_numeric_value": "42.5"
+  }
+}

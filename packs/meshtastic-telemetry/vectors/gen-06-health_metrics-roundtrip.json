@@ -1,0 +1,13 @@
+{
+  "name": "gen-health_metrics-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "3a0a08641089011d0000b03f",
+  "expect": "3a0a08641089011d0000b03f",
+  "model": {
+    "@kind": "health_metrics",
+    "meshtastictelemetry.health_metrics_heart_bpm": "100",
+    "meshtastictelemetry.health_metrics_sp_o2": "137",
+    "meshtastictelemetry.health_metrics_temperature": "1.375"
+  }
+}

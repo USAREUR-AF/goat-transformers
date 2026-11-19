@@ -1,0 +1,16 @@
+{
+  "name": "gen-route_discovery-roundtrip",
+  "from": "meshtastic-route-discovery",
+  "to": "meshtastic-route-discovery",
+  "input": "12036489012204ae01d301",
+  "expect": "12036489012204ae01d301",
+  "model": {
+    "@kind": "route_discovery",
+    "meshtasticroutediscovery.route_discovery_snr_towards.#": "2",
+    "meshtasticroutediscovery.route_discovery_snr_towards[0].meshtasticroutediscovery.route_discovery_snr_towards_item": "100",
+    "meshtasticroutediscovery.route_discovery_snr_towards[1].meshtasticroutediscovery.route_discovery_snr_towards_item": "137",
+    "meshtasticroutediscovery.route_discovery_snr_back.#": "2",
+    "meshtasticroutediscovery.route_discovery_snr_back[0].meshtasticroutediscovery.route_discovery_snr_back_item": "174",
+    "meshtasticroutediscovery.route_discovery_snr_back[1].meshtasticroutediscovery.route_discovery_snr_back_item": "211"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "gen-position-roundtrip",
+  "from": "meshtastic-position",
+  "to": "meshtastic-position",
+  "input": "18642801300140d301482d503758c20260e702688c0370b10378d6038001fb038801a0049001c5049801ea04a0018f05a801b405b001d905b801fe05",
+  "expect": "18642801300140d301482d503758c20260e702688c0370b10378d6038001fb038801a0049001c5049801ea04a0018f05a801b405b001d905b801fe05",
+  "model": {
+    "@kind": "position",
+    "meshtasticposition.position_altitude": "100",
+    "meshtasticposition.position_location_source": "1",
+    "meshtasticposition.position_altitude_source": "1",
+    "meshtasticposition.position_timestamp_millis_adjust": "211",
+    "meshtasticposition.position_altitude_hae": "-23",
+    "meshtasticposition.position_altitude_geoidal_separation": "-28",
+    "meshtasticposition.position_pdop": "322",
+    "meshtasticposition.position_hdop": "359",
+    "meshtasticposition.position_vdop": "396",
+    "meshtasticposition.position_gps_accuracy": "433",
+    "meshtasticposition.position_ground_speed": "470",
+    "meshtasticposition.position_ground_track": "507",
+    "meshtasticposition.position_fix_quality": "544",
+    "meshtasticposition.position_fix_type": "581",
+    "meshtasticposition.position_sats_in_view": "618",
+    "meshtasticposition.position_sensor_id": "655",
+    "meshtasticposition.position_next_update": "692",
+    "meshtasticposition.position_seq_number": "729",
+    "meshtasticposition.position_precision_bits": "766"
+  }
+}

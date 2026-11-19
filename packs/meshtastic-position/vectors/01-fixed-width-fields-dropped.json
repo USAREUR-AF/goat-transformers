@@ -1,0 +1,11 @@
+{
+  "name": "01-fixed-width-fields-dropped",
+  "from": "meshtastic-position",
+  "to": "meshtastic-position",
+  "input": "0d40dd4a1f15f0dcf80718222500f1536548a2017805",
+  "expect": "182248a2017805",
+  "model": {
+    "meshtasticposition.position_altitude": "34",
+    "meshtasticposition.position_altitude_hae": "81"
+  }
+}

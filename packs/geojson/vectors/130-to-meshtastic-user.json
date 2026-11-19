@@ -1,0 +1,7 @@
+{
+  "name": "130-to-meshtastic-user",
+  "from": "geojson",
+  "to": "meshtastic-user",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.375,52.5]},\"properties\":{\"callsign\":\"Base Camp\"},\"id\":\"!a1b2c3d4\"}",
+  "expect": "0a092161316232633364341209426173652043616d70"
+}

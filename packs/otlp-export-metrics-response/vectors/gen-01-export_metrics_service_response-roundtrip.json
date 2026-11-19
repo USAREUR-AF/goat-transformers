@@ -1,0 +1,12 @@
+{
+  "name": "gen-export_metrics_service_response-roundtrip",
+  "from": "otlp-export-metrics-response",
+  "to": "otlp-export-metrics-response",
+  "input": "0a130864120f6572726f725f6d6573736167652d31",
+  "expect": "0a130864120f6572726f725f6d6573736167652d31",
+  "model": {
+    "@kind": "export_metrics_service_response",
+    "otlpexportmetricsresponse.partial_success_rejected_data_points": "100",
+    "otlpexportmetricsresponse.partial_success_error_message": "error_message-1"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "01-path-key-map-dropped",
+  "from": "gnmi-get-request",
+  "to": "gnmi-get-request",
+  "input": "0a0c120a6f70656e636f6e666967121c1a1a0a0a696e7465726661636573120c0a046e616d6512046574683018022804",
+  "expect": "0a0c120a6f70656e636f6e666967120e1a0c0a0a696e746572666163657318022804",
+  "model": {
+    "gnmigetrequest.prefix_origin": "openconfig",
+    "gnmigetrequest.get_request_type": "2",
+    "gnmigetrequest.get_request_path.#": "1"
+  }
+}

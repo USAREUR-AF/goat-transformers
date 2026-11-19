@@ -1778,6 +1778,10 @@ def envelope_members(env, opts):
     select a kind: every member of its oneofs, or with --kinds-from-fields every
     singular message field. `beside` are the --common-member fields among them."""
     members = [f for f in env.fields if f.oneof]
+    if opts.one_layout:
+        # the envelope is one kind; the members of its oneofs are plain lines of it, as the
+        # members of a nested oneof are
+        members = []
     if opts.kinds_from_fields:
         members = [f for f in env.fields if f.kind == "message" and f.label != "repeated"]
     beside = [f for f in members if f.name in opts.common_member]
@@ -2023,6 +2027,8 @@ def make_plan(schema, opts, budgets=DEFAULT_BUDGETS):
     """The plan of a run: walk the envelope of `schema` under the options and
     the budgets, name every key and decide every line. Reads the names files
     and --module-base; writes nothing."""
+    if opts.one_layout and opts.kinds_from_fields:
+        raise GenError("--one-layout and --kinds-from-fields exclude each other")
     if opts.common_member and not opts.kinds_from_fields:
         raise GenError("--common-member needs --kinds-from-fields")
     plan = Plan(opts, schema, find_envelope(schema, opts.envelope), budgets)
@@ -2973,6 +2979,9 @@ def argument_parser():
                          "other pack writes (the run stops and names the keys otherwise); repeatable")
     ap.add_argument("--cross-kind", default=None,
                     help="kind whose generated message --cross-text converts (default: the default kind, else the first)")
+    ap.add_argument("--one-layout", action="store_true",
+                    help="the envelope is one kind even when it has a oneof: every member's fields are lines of it "
+                         "(for a oneof with scalar or empty members, which cannot each be a kind)")
     ap.add_argument("--kinds-from-fields", action="store_true",
                     help="proto2 union envelope: every singular message field of the envelope is a kind")
     ap.add_argument("--common-member", action="append", default=[], metavar="FIELD",

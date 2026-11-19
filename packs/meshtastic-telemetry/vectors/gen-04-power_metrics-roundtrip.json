@@ -1,0 +1,26 @@
+{
+  "name": "gen-power_metrics-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "2a510d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e7d0000603f85010000c03f",
+  "expect": "2a510d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e7d0000603f85010000c03f",
+  "model": {
+    "@kind": "power_metrics",
+    "meshtastictelemetry.power_metrics_ch1_voltage": "0.125",
+    "meshtastictelemetry.power_metrics_ch1_current": "0.75",
+    "meshtastictelemetry.power_metrics_ch2_voltage": "1.375",
+    "meshtastictelemetry.power_metrics_ch2_current": "2",
+    "meshtastictelemetry.power_metrics_ch3_voltage": "2.625",
+    "meshtastictelemetry.power_metrics_ch3_current": "3.25",
+    "meshtastictelemetry.power_metrics_ch4_voltage": "3.875",
+    "meshtastictelemetry.power_metrics_ch4_current": "4.5",
+    "meshtastictelemetry.power_metrics_ch5_voltage": "5.125",
+    "meshtastictelemetry.power_metrics_ch5_current": "5.75",
+    "meshtastictelemetry.power_metrics_ch6_voltage": "6.375",
+    "meshtastictelemetry.power_metrics_ch6_current": "7",
+    "meshtastictelemetry.power_metrics_ch7_voltage": "7.625",
+    "meshtastictelemetry.power_metrics_ch7_current": "0.25",
+    "meshtastictelemetry.power_metrics_ch8_voltage": "0.875",
+    "meshtastictelemetry.power_metrics_ch8_current": "1.5"
+  }
+}

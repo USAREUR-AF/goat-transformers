@@ -1,0 +1,25 @@
+{
+  "name": "gen-soil_water_metrics-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "5a4b0d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e7d0000603f",
+  "expect": "5a4b0d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e7d0000603f",
+  "model": {
+    "@kind": "soil_water_metrics",
+    "meshtastictelemetry.soil_water_metrics_soil_ph": "0.125",
+    "meshtastictelemetry.soil_water_metrics_ph": "0.75",
+    "meshtastictelemetry.soil_water_metrics_electrical_conductivity": "1.375",
+    "meshtastictelemetry.soil_water_metrics_salinity": "2",
+    "meshtastictelemetry.soil_water_metrics_nitrogen": "2.625",
+    "meshtastictelemetry.soil_water_metrics_phosphorus": "3.25",
+    "meshtastictelemetry.soil_water_metrics_potassium": "3.875",
+    "meshtastictelemetry.soil_water_metrics_dissolved_oxygen": "4.5",
+    "meshtastictelemetry.soil_water_metrics_orp": "5.125",
+    "meshtastictelemetry.soil_water_metrics_chemical_oxygen_demand": "5.75",
+    "meshtastictelemetry.soil_water_metrics_turbidity": "6.375",
+    "meshtastictelemetry.soil_water_metrics_nitrate": "7",
+    "meshtastictelemetry.soil_water_metrics_ammonium": "7.625",
+    "meshtastictelemetry.soil_water_metrics_biochemical_oxygen_demand": "0.25",
+    "meshtastictelemetry.soil_water_metrics_solar_irradiance": "0.875"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-map_report-roundtrip",
+  "from": "meshtastic-map-report",
+  "to": "meshtastic-map-report",
+  "input": "0a0b6c6f6e675f6e616d652d30120c73686f72745f6e616d652d31180120012a126669726d776172655f76657273696f6e2d34300138014001588c0360b10368d6037001",
+  "expect": "0a0b6c6f6e675f6e616d652d30120c73686f72745f6e616d652d31180120012a126669726d776172655f76657273696f6e2d34300138014001588c0360b10368d6037001",
+  "model": {
+    "@kind": "map_report",
+    "meshtasticmapreport.map_report_long_name": "long_name-0",
+    "meshtasticmapreport.map_report_short_name": "short_name-1",
+    "meshtasticmapreport.map_report_role": "1",
+    "meshtasticmapreport.map_report_hw_model": "1",
+    "meshtasticmapreport.map_report_firmware_version": "firmware_version-4",
+    "meshtasticmapreport.map_report_region": "1",
+    "meshtasticmapreport.map_report_modem_preset": "1",
+    "meshtasticmapreport.map_report_has_default_channel": "1",
+    "meshtasticmapreport.map_report_altitude": "396",
+    "meshtasticmapreport.map_report_position_precision": "433",
+    "meshtasticmapreport.map_report_num_online_local_nodes": "470",
+    "meshtasticmapreport.map_report_has_opted_report_location": "1"
+  }
+}

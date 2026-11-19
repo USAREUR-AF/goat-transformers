@@ -1,0 +1,13 @@
+{
+  "name": "gen-capability_request-roundtrip",
+  "from": "gnmi-capability-request",
+  "to": "gnmi-capability-request",
+  "input": "0a050a0308e7070a050a0308e707",
+  "expect": "0a050a0308e7070a050a0308e707",
+  "model": {
+    "@kind": "capability_request",
+    "gnmicapabilityrequest.capability_request_extension.#": "2",
+    "gnmicapabilityrequest.capability_request_extension[0].gnmicapabilityrequest.extension_registered_ext_id": "999",
+    "gnmicapabilityrequest.capability_request_extension[1].gnmicapabilityrequest.extension_registered_ext_id": "999"
+  }
+}

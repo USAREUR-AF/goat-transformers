@@ -1,0 +1,11 @@
+{
+ "1": "waypoint_id",
+ "11": "waypoint_notify_on_enter",
+ "12": "waypoint_notify_on_exit",
+ "13": "waypoint_notify_favorites_only",
+ "4": "waypoint_expire",
+ "5": "waypoint_locked_to",
+ "6": "waypoint_name",
+ "7": "waypoint_description",
+ "9": "waypoint_geofence_radius"
+}

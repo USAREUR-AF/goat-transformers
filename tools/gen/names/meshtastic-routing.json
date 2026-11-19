@@ -1,0 +1,9 @@
+{
+ "1.2[]": "route_request_snr_towards",
+ "1.4[]": "route_request_snr_back",
+ "2.2[]": "route_reply_snr_towards",
+ "2.4[]": "route_reply_snr_back",
+ "3": "routing_error_reason",
+ "meshtastic.RouteDiscovery:2[]item": "route_discovery_snr_towards_item",
+ "meshtastic.RouteDiscovery:4[]item": "route_discovery_snr_back_item"
+}

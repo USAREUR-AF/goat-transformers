@@ -1,0 +1,13 @@
+{
+  "name": "gen-paxcount-roundtrip",
+  "from": "meshtastic-paxcount",
+  "to": "meshtastic-paxcount",
+  "input": "086410890118ae01",
+  "expect": "086410890118ae01",
+  "model": {
+    "@kind": "paxcount",
+    "meshtasticpaxcount.paxcount_wifi": "100",
+    "meshtasticpaxcount.paxcount_ble": "137",
+    "meshtasticpaxcount.paxcount_uptime": "174"
+  }
+}

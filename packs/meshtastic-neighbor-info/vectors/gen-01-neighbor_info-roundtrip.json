@@ -1,0 +1,18 @@
+{
+  "name": "gen-neighbor_info-roundtrip",
+  "from": "meshtastic-neighbor-info",
+  "to": "meshtastic-neighbor-info",
+  "input": "086410890118ae01220b08d3011500002840209d02220b08c2021500009040208c03",
+  "expect": "086410890118ae01220b08d3011500002840209d02220b08c2021500009040208c03",
+  "model": {
+    "@kind": "neighbor_info",
+    "meshtasticneighborinfo.neighbor_info_node_id": "100",
+    "meshtasticneighborinfo.neighbor_info_last_sent_by_id": "137",
+    "meshtasticneighborinfo.neighbor_info_node_broadcast_interval_secs": "174",
+    "meshtasticneighborinfo.neighbor_info_neighbors.#": "2",
+    "meshtasticneighborinfo.neighbor_info_neighbors[0].meshtasticneighborinfo.neighbor_node_id": "211",
+    "meshtasticneighborinfo.neighbor_info_neighbors[0].meshtasticneighborinfo.neighbor_snr": "2.625",
+    "meshtasticneighborinfo.neighbor_info_neighbors[1].meshtasticneighborinfo.neighbor_node_id": "322",
+    "meshtasticneighborinfo.neighbor_info_neighbors[1].meshtasticneighborinfo.neighbor_snr": "4.5"
+  }
+}
