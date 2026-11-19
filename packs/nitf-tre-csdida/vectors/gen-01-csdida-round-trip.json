@@ -1,0 +1,28 @@
+{
+  "name": "csdida-round-trip",
+  "from": "nitf-tre-csdida",
+  "to": "nitf-tre-csdida",
+  "input": "ADHKNORUXVY259CGJMNQUX147A8BEHKNQTWZ258BFILORUX0369CFIMPTW07EHKNQTWZ25",
+  "expect": "ADHKNORUXVY259CGJMNQUX147A8BEHKNQTWZ258BFILORUX0369CFIMPTW07EHKNQTWZ25",
+  "model": {
+    "nitftre.csdida_day": "AD",
+    "nitftre.csdida_month": "HKN",
+    "nitftre.csdida_year": "ORUX",
+    "nitftre.csdida_platform_code": "VY",
+    "nitftre.csdida_vehicle_id": "25",
+    "nitftre.csdida_pass": "9C",
+    "nitftre.csdida_operation": "GJM",
+    "nitftre.csdida_sensor_id": "NQ",
+    "nitftre.csdida_product_id": "UX",
+    "nitftre.csdida_reserved_0": "147A",
+    "nitftre.csdida_time": "8BEHKNQTWZ258B",
+    "nitftre.csdida_process_time": "FILORUX0369CFI",
+    "nitftre.csdida_reserved_1": "MP",
+    "nitftre.csdida_reserved_2": "TW",
+    "nitftre.csdida_reserved_3": "0",
+    "nitftre.csdida_reserved_4": "7",
+    "nitftre.csdida_software_version_number": "EHKNQTWZ25"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

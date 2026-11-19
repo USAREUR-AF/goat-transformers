@@ -1,0 +1,65 @@
+# NITF 2.1 image subheader, its fixed part: IM through ICORDS, IGEOLO when present,
+# and NICOM. Public. Maintained by hand. A message is the subheader's first bytes;
+# the pack stops at NICOM, the first count (pack.md, Not mapped).
+format        nitf-image-subheader
+version       0.1.0
+distribution  public
+source        "MIL-STD-2500C, National Imagery Transmission Format Version 2.1, 01 May 2006, appendix A tables A-1 (file header) and A-3 (image subheader); Distribution Statement A per the ASSIST listing; field order, sizes and types restated, no text copied"
+uses          nitf
+wire          text
+delimiter     none
+
+when      0:0:2  IM
+field     nitf.is_im                   0:0:2    string
+field     nitf.is_iid1                 0:2:10   string
+field     nitf.is_idatim               0:12:14  string
+field     nitf.is_tgtid                0:26:17  string
+field     nitf.is_iid2                 0:43:80  string
+field     nitf.is_isclas               0:123:1  string
+field     nitf.is_isclsy               0:124:2  string
+field     nitf.is_iscode               0:126:11  string
+field     nitf.is_isctlh               0:137:2  string
+field     nitf.is_isrel                0:139:20  string
+field     nitf.is_isdctp               0:159:2  string
+field     nitf.is_isdcdt               0:161:8  string
+field     nitf.is_isdcxm               0:169:4  string
+field     nitf.is_isdg                 0:173:1  string
+field     nitf.is_isdgdt               0:174:8  string
+field     nitf.is_iscltx               0:182:43  string
+field     nitf.is_iscatp               0:225:1  string
+field     nitf.is_iscaut               0:226:40  string
+field     nitf.is_iscrsn               0:266:1  string
+field     nitf.is_issrdt               0:267:8  string
+field     nitf.is_isctln               0:275:15  string
+field     nitf.is_encryp               0:290:1  int
+field     nitf.is_isorce               0:291:42  string
+field     nitf.is_nrows                0:333:8  int
+field     nitf.is_ncols                0:341:8  int
+field     nitf.is_pvtype               0:349:3  string
+field     nitf.is_irep                 0:352:8  string
+field     nitf.is_icat                 0:360:8  string
+field     nitf.is_abpp                 0:368:2  int
+field     nitf.is_pjust                0:370:1  string
+field     nitf.is_icords               0:371:1  string
+
+# IGEOLO (60 characters) is present unless ICORDS is a space, so NICOM moves.
+# ICORDS D: decimal degrees, the first corner (image (0,0)) gives lat and lon.
+kind      geo-decimal-degrees
+when      0:371:1  D
+requires  nitf.is_igeolo
+field     nitf.is_igeolo           0:372:60  string
+field     lat                      0:372:7   float
+field     lon                      0:379:8   float
+field     nitf.is_nicom            0:432:1   int
+
+# ICORDS G (degrees, minutes, seconds), U, N or S: IGEOLO is kept as text.
+kind      geo-other
+when      0:371:1  present
+requires  nitf.is_igeolo
+field     nitf.is_igeolo           0:372:60  string
+field     nitf.is_nicom            0:432:1   int
+
+# ICORDS a space: no IGEOLO.
+kind      no-location
+requires  nitf.is_iid1
+field     nitf.is_nicom            0:372:1   int

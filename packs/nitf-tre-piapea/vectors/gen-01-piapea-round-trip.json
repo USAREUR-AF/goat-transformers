@@ -1,0 +1,16 @@
+{
+  "name": "piapea-round-trip",
+  "from": "nitf-tre-piapea",
+  "to": "nitf-tre-piapea",
+  "input": "ADGJMPSVY147ADGJMPSVY147ADGJHKNQTWZ258BEHKNQTWZ258BEHKNQORUX0369CFILORUX0369CFILORUXVY147A25",
+  "expect": "ADGJMPSVY147ADGJMPSVY147ADGJHKNQTWZ258BEHKNQTWZ258BEHKNQORUX0369CFILORUX0369CFILORUXVY147A25",
+  "model": {
+    "nitftre.piapea_lastnme": "ADGJMPSVY147ADGJMPSVY147ADGJ",
+    "nitftre.piapea_firstnme": "HKNQTWZ258BEHKNQTWZ258BEHKNQ",
+    "nitftre.piapea_midnme": "ORUX0369CFILORUX0369CFILORUX",
+    "nitftre.piapea_dob": "VY147A",
+    "nitftre.piapea_assoctry": "25"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

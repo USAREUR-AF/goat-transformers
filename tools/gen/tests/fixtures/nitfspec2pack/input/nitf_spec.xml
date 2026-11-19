@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!-- Written for the tests of tools/gen/nitfspec2pack.py: TREs in the shape of
+     GDAL's nitf_spec.xml, with made-up tags (and BLOCKA, whose corner binding
+     the generator holds). Not a copy of any TRE definition. -->
+<root>
+  <tres>
+    <tre name="TESTAA" length="40" location="image">
+      <field name="COUNT_A" length="3" type="integer" minval="0" maxval="999"/>
+      <field name="LABEL" length="8"/>
+      <field length="2" fixed_value="00"/>
+      <field name="OFFSET" length="5" type="integer" minval="-9999" maxval="9999"/>
+      <field name="RATE" length="6" type="real"/>
+      <loop iterations="2" name="PAIR">
+        <field name="" longname="PAIR" length="4" type="real"/>
+      </loop>
+      <field length="4"/>
+      <field name="NOTE" length="4" type="string"/>
+    </tre>
+    <tre name="TESTBB" minlength="5" maxlength="999" location="image">
+      <field name="N" length="2" type="integer"/>
+      <loop counter="N" md_prefix="ITEM_%02d_">
+        <field name="V" length="3"/>
+      </loop>
+    </tre>
+    <tre name="TESTCC" length="4" location="image">
+      <field name="FLAG" length="1"/>
+      <if cond="FLAG=Y">
+        <field name="X" length="3"/>
+      </if>
+    </tre>
+    <tre name="BLOCKA" length="123" location="image">
+      <field name="BLOCK_INSTANCE" length="2" type="integer" minval="1" maxval="99"/>
+      <field name="N_GRAY" length="5" type="integer" minval="0" maxval="99999"/>
+      <field name="L_LINES" length="5" type="integer" minval="1" maxval="99999"/>
+      <field name="LAYOVER_ANGLE" length="3" type="integer" minval="0" maxval="359"/>
+      <field name="SHADOW_ANGLE" length="3" type="integer" minval="0" maxval="359"/>
+      <field length="16" fixed_value="                "/>
+      <field name="FRLC_LOC" length="21"/>
+      <field name="LRLC_LOC" length="21"/>
+      <field name="LRFC_LOC" length="21"/>
+      <field name="FRFC_LOC" length="21"/>
+      <field length="5" fixed_value="010.0"/>
+    </tre>
+  </tres>
+</root>

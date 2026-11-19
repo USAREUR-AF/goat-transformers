@@ -1,0 +1,21 @@
+{
+  "name": "csproa-round-trip",
+  "from": "nitf-tre-csproa",
+  "to": "nitf-tre-csproa",
+  "input": "ADGJMPSVY147HKNQTWZ258BEORUX0369CFILVY147ADGJMPS258BEHKNQTWZ9CFILORUX036GJMPSVY147ADNQTWZ258BEHKUX0369CFILOR147ADGJMPSVY",
+  "expect": "ADGJMPSVY147HKNQTWZ258BEORUX0369CFILVY147ADGJMPS258BEHKNQTWZ9CFILORUX036GJMPSVY147ADNQTWZ258BEHKUX0369CFILOR147ADGJMPSVY",
+  "model": {
+    "nitftre.csproa_reserved_0": "ADGJMPSVY147",
+    "nitftre.csproa_reserved_12": "HKNQTWZ258BE",
+    "nitftre.csproa_reserved_24": "ORUX0369CFIL",
+    "nitftre.csproa_reserved_36": "VY147ADGJMPS",
+    "nitftre.csproa_reserved_48": "258BEHKNQTWZ",
+    "nitftre.csproa_reserved_60": "9CFILORUX036",
+    "nitftre.csproa_reserved_72": "GJMPSVY147AD",
+    "nitftre.csproa_reserved_84": "NQTWZ258BEHK",
+    "nitftre.csproa_reserved_96": "UX0369CFILOR",
+    "nitftre.csproa_bwc": "147ADGJMPSVY"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

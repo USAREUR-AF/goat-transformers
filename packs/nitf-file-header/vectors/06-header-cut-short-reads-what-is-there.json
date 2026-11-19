@@ -1,0 +1,13 @@
+{
+  "name": "header-cut-short-reads-what-is-there",
+  "from": "nitf-file-header",
+  "to": "nitf-file-header",
+  "input": "NITF02.1003BF01GTTEST    20261119081530Example file for the goat-transformers vectors                                  U                                                                                ",
+  "expect": "NITF02.1003BF01GTTEST    20261119081530Example file for the goat-transformers vectors                                  U",
+  "model": {
+    "@kind": "nitf-2-1",
+    "nitf.fh_ostaid": "GTTEST"
+  },
+  "source": "constructed",
+  "reference": "a header cut at 200 characters: the columns past the end are absent, so encode writes the fields up to FSCLAS (engine-spec 0.10, Locators: a column the field does not reach)"
+}

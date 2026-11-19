@@ -1,0 +1,14 @@
+{
+  "name": "geographic-dms-is-text-only",
+  "from": "nitf-image-subheader",
+  "to": "nitf-image-subheader",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RG451230N1223914W451230N1223600W450300N1223554W450256N1223912W1",
+  "expect": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RG451230N1223914W451230N1223600W450300N1223554W450256N1223912W1",
+  "model": {
+    "@kind": "geo-other",
+    "nitf.is_icords": "G",
+    "nitf.is_nicom": "1"
+  },
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, ICORDS G: ddmmssXdddmmssY four times; no text transform reads degrees, minutes and seconds, so IGEOLO stays text and no position is bound; header written by tools/gen/nitf-header-vectors.py"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "patchb-round-trip",
+  "from": "nitf-tre-patchb",
+  "to": "nitf-tre-patchb",
+  "input": "0043100001170000154001919CFILGJM00302003391478BEHKNQTFILORUXMPSVY14TWZ250369C7ADGJEHKNQTWZLORUX036709Z258BE69CFILORDGJMPS",
+  "expect": "0043100001170000154001919CFILGJM00302003391478BEHKNQTFILORUXMPSVY14TWZ250369C7ADGJEHKNQTWZLORUX036709Z258BE69CFILORDGJMPS",
+  "model": {
+    "nitftre.patchb_pat_no": "43",
+    "nitftre.patchb_last_pat_flag": "1",
+    "nitftre.patchb_lnstrt": "117",
+    "nitftre.patchb_lnstop": "154",
+    "nitftre.patchb_azl": "191",
+    "nitftre.patchb_nvl": "9CFIL",
+    "nitftre.patchb_fvl": "GJM",
+    "nitftre.patchb_npixel": "302",
+    "nitftre.patchb_fvpix": "339",
+    "nitftre.patchb_frame": "147",
+    "nitftre.patchb_utc": "8BEHKNQT",
+    "nitftre.patchb_shead": "FILORUX",
+    "nitftre.patchb_gravity": "MPSVY14",
+    "nitftre.patchb_ins_v_nc": "TWZ25",
+    "nitftre.patchb_ins_v_ec": "0369C",
+    "nitftre.patchb_ins_v_dc": "7ADGJ",
+    "nitftre.patchb_offlat": "EHKNQTWZ",
+    "nitftre.patchb_offlong": "LORUX036",
+    "nitftre.patchb_track": "709",
+    "nitftre.patchb_gsweep": "Z258BE",
+    "nitftre.patchb_shear": "69CFILOR",
+    "nitftre.patchb_batch_no": "DGJMPS"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

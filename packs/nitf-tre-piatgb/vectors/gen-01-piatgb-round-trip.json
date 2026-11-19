@@ -1,0 +1,21 @@
+{
+  "name": "piatgb-round-trip",
+  "from": "nitf-tre-piatgb",
+  "to": "nitf-tre-piatgb",
+  "input": "ADGJMPSVY147ADGHKNQTWZ258BEHKNORVY147258BEHKNQTWZ2589CFGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJ302UX0369CFIL147ADGJMPSV",
+  "expect": "ADGJMPSVY147ADGHKNQTWZ258BEHKNORVY147258BEHKNQTWZ2589CFGJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJ302UX0369CFIL147ADGJMPSV",
+  "model": {
+    "nitftre.piatgb_tgtutm": "ADGJMPSVY147ADG",
+    "nitftre.piatgb_piatgaid": "HKNQTWZ258BEHKN",
+    "nitftre.piatgb_piactry": "OR",
+    "nitftre.piatgb_piacat": "VY147",
+    "nitftre.piatgb_tgtgeo": "258BEHKNQTWZ258",
+    "nitftre.piatgb_datum": "9CF",
+    "nitftre.piatgb_tgtname": "GJMPSVY147ADGJMPSVY147ADGJMPSVY147ADGJ",
+    "nitftre.piatgb_percover": "302",
+    "nitftre.piatgb_tgtlat": "UX0369CFIL",
+    "nitftre.piatgb_tgtlon": "147ADGJMPSV"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

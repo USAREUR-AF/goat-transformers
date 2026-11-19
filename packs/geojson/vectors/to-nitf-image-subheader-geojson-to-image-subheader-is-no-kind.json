@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-image-subheader-is-no-kind",
+  "from": "geojson",
+  "to": "nitf-image-subheader",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2]},\"properties\":{}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "every kind requires a raw key of the subheader; the text transforms write no + sign, so a position from another format is not written into IGEOLO"
+}

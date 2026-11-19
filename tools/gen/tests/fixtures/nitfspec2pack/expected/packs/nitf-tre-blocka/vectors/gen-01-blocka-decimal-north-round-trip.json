@@ -1,0 +1,23 @@
+{
+  "name": "blocka-decimal-north-round-trip",
+  "from": "nitf-tre-blocka",
+  "to": "nitf-tre-blocka",
+  "input": "430008000117154191                GJMPSVY147ADGJMPSVY14NQTWZ258BEHKNQTWZ258BUX0369CFILORUX0369CFI+45.123456-122.654321010.0",
+  "expect": "430008000117154191                GJMPSVY147ADGJMPSVY14NQTWZ258BEHKNQTWZ258BUX0369CFILORUX0369CFI+45.123456-122.654321010.0",
+  "model": {
+    "@kind": "frfc-loc-decimal-north",
+    "nitftre.blocka_block_instance": "43",
+    "nitftre.blocka_n_gray": "80",
+    "nitftre.blocka_l_lines": "117",
+    "nitftre.blocka_layover_angle": "154",
+    "nitftre.blocka_shadow_angle": "191",
+    "nitftre.blocka_frlc_loc": "GJMPSVY147ADGJMPSVY14",
+    "nitftre.blocka_lrlc_loc": "NQTWZ258BEHKNQTWZ258B",
+    "nitftre.blocka_lrfc_loc": "UX0369CFILORUX0369CFI",
+    "nitftre.blocka_frfc_loc": "+45.123456-122.654321",
+    "lat": "45.123456",
+    "lon": "-122.654321"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py; FRFC_LOC = +45.123456-122.654321"
+}

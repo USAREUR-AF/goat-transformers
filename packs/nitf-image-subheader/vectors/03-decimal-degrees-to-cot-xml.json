@@ -1,0 +1,9 @@
+{
+  "name": "decimal-degrees-to-cot-xml",
+  "from": "nitf-image-subheader",
+  "to": "cot-xml",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.6530",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\"><point lat=\"45.123\" lon=\"-122.654\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>",
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, the first IGEOLO corner; cot-xml canonical form by hand from its pack; header written by tools/gen/nitf-header-vectors.py"
+}

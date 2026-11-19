@@ -1,0 +1,15 @@
+{
+  "name": "geolob-round-trip",
+  "from": "nitf-tre-geolob",
+  "to": "nitf-tre-geolob",
+  "input": "ADGJMPSVYHKNQTWZ25ORUX0369CFILORUVY147ADGJMPSVY1",
+  "expect": "ADGJMPSVYHKNQTWZ25ORUX0369CFILORUVY147ADGJMPSVY1",
+  "model": {
+    "nitftre.geolob_arv": "ADGJMPSVY",
+    "nitftre.geolob_brv": "HKNQTWZ25",
+    "nitftre.geolob_lso": "ORUX0369CFILORU",
+    "nitftre.geolob_pso": "VY147ADGJMPSVY1"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

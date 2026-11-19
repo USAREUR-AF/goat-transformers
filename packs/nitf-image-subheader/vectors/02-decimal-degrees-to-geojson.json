@@ -1,0 +1,9 @@
+{
+  "name": "decimal-degrees-to-geojson",
+  "from": "nitf-image-subheader",
+  "to": "geojson",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.123-122.654+45.124-122.600+45.050-122.599+45.049-122.6530",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.654,45.123]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, the first IGEOLO corner as the point; geojson canonical form by hand; header written by tools/gen/nitf-header-vectors.py"
+}

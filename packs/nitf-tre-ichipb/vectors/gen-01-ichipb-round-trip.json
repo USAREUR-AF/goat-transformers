@@ -1,0 +1,33 @@
+{
+  "name": "ichipb-round-trip",
+  "from": "nitf-tre-ichipb",
+  "to": "nitf-tre-ichipb",
+  "input": "43HKNQTWZ2581754258BEHKNQTWZ9CFILORUX036GJMPSVY147ADNQTWZ258BEHKUX0369CFILOR147ADGJMPSVY8BEHKNQTWZ25FILORUX0369CMPSVY147ADGJTWZ258BEHKNQ0369CFILORUX7ADGJMPSVY14EHKNQTWZ258BLORUX0369CFISVY147ADGJMPZ258BEHKNQTW0000078300000820",
+  "expect": "43HKNQTWZ2581754258BEHKNQTWZ9CFILORUX036GJMPSVY147ADNQTWZ258BEHKUX0369CFILOR147ADGJMPSVY8BEHKNQTWZ25FILORUX0369CMPSVY147ADGJTWZ258BEHKNQ0369CFILORUX7ADGJMPSVY14EHKNQTWZ258BLORUX0369CFISVY147ADGJMPZ258BEHKNQTW0000078300000820",
+  "model": {
+    "nitftre.ichipb_xfrm_flag": "43",
+    "nitftre.ichipb_scale_factor": "HKNQTWZ258",
+    "nitftre.ichipb_anamrph_corr": "17",
+    "nitftre.ichipb_scanblk_num": "54",
+    "nitftre.ichipb_op_row_11": "258BEHKNQTWZ",
+    "nitftre.ichipb_op_col_11": "9CFILORUX036",
+    "nitftre.ichipb_op_row_12": "GJMPSVY147AD",
+    "nitftre.ichipb_op_col_12": "NQTWZ258BEHK",
+    "nitftre.ichipb_op_row_21": "UX0369CFILOR",
+    "nitftre.ichipb_op_col_21": "147ADGJMPSVY",
+    "nitftre.ichipb_op_row_22": "8BEHKNQTWZ25",
+    "nitftre.ichipb_op_col_22": "FILORUX0369C",
+    "nitftre.ichipb_fi_row_11": "MPSVY147ADGJ",
+    "nitftre.ichipb_fi_col_11": "TWZ258BEHKNQ",
+    "nitftre.ichipb_fi_row_12": "0369CFILORUX",
+    "nitftre.ichipb_fi_col_12": "7ADGJMPSVY14",
+    "nitftre.ichipb_fi_row_21": "EHKNQTWZ258B",
+    "nitftre.ichipb_fi_col_21": "LORUX0369CFI",
+    "nitftre.ichipb_fi_row_22": "SVY147ADGJMP",
+    "nitftre.ichipb_fi_col_22": "Z258BEHKNQTW",
+    "nitftre.ichipb_fi_row": "783",
+    "nitftre.ichipb_fi_col": "820"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

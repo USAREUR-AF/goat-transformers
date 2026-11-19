@@ -1,0 +1,14 @@
+{
+  "name": "decimal-degrees-with-blank-digits",
+  "from": "nitf-image-subheader",
+  "to": "nitf-image-subheader",
+  "input": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.1  -122.6  +45.1  -122.6  +45.1  -122.6  +45.1  -122.6  0",
+  "expect": "IMIMG000000120261119081500                 Example image                                                                   U                                                                                                                                                                      0Example sensor                            0000102400002048INTMONO    VIS     08RD+45.1  -122.6  +45.1  -122.6  +45.1  -122.6  +45.1  -122.6  0",
+  "model": {
+    "@kind": "geo-decimal-degrees",
+    "lat": "45.1",
+    "lon": "-122.6"
+  },
+  "source": "constructed",
+  "reference": "MIL-STD-2500C appendix A, digits beyond the known precision are spaces (table A-3, IGEOLO); the column's spaces are removed before the number is read; header written by tools/gen/nitf-header-vectors.py"
+}

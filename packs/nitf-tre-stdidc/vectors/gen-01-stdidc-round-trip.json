@@ -1,0 +1,29 @@
+{
+  "name": "stdidc-round-trip",
+  "from": "nitf-tre-stdidc",
+  "to": "nitf-tre-stdidc",
+  "input": "ADGJMPSVY147ADHKNQTWZ258BEHKORVY1259CGJMNUX0147AD8BFILMPSVYTW03697ADGJMPSVY1EHKNQLORUX036",
+  "expect": "ADGJMPSVY147ADHKNQTWZ258BEHKORVY1259CGJMNUX0147AD8BFILMPSVYTW03697ADGJMPSVY1EHKNQLORUX036",
+  "model": {
+    "nitftre.stdidc_acquisition_date": "ADGJMPSVY147AD",
+    "nitftre.stdidc_mission": "HKNQTWZ258BEHK",
+    "nitftre.stdidc_pass": "OR",
+    "nitftre.stdidc_op_num": "VY1",
+    "nitftre.stdidc_start_segment": "25",
+    "nitftre.stdidc_repro_num": "9C",
+    "nitftre.stdidc_replay_regen": "GJM",
+    "nitftre.stdidc_reserved_40": "N",
+    "nitftre.stdidc_start_column": "UX0",
+    "nitftre.stdidc_start_row": "147AD",
+    "nitftre.stdidc_end_segment": "8B",
+    "nitftre.stdidc_end_column": "FIL",
+    "nitftre.stdidc_end_row": "MPSVY",
+    "nitftre.stdidc_country": "TW",
+    "nitftre.stdidc_wac": "0369",
+    "nitftre.stdidc_location": "7ADGJMPSVY1",
+    "nitftre.stdidc_reserved_76": "EHKNQ",
+    "nitftre.stdidc_reserved_81": "LORUX036"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}

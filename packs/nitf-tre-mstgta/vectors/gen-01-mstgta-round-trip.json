@@ -1,0 +1,24 @@
+{
+  "name": "mstgta-round-trip",
+  "from": "nitf-tre-mstgta",
+  "to": "nitf-tre-mstgta",
+  "input": "00043HKNQTWZ258BEORUX0369CFILORU154258BEHKNQTWZ9CFILORUX0365200339147ADGJ8BEHKNFMPSVY147ADGJMPSVY147A",
+  "expect": "00043HKNQTWZ258BEORUX0369CFILORU154258BEHKNQTWZ9CFILORUX0365200339147ADGJ8BEHKNFMPSVY147ADGJMPSVY147A",
+  "model": {
+    "nitftre.mstgta_tgt_num": "43",
+    "nitftre.mstgta_tgt_id": "HKNQTWZ258BE",
+    "nitftre.mstgta_tgt_be": "ORUX0369CFILORU",
+    "nitftre.mstgta_tgt_pri": "154",
+    "nitftre.mstgta_tgt_req": "258BEHKNQTWZ",
+    "nitftre.mstgta_tgt_ltiov": "9CFILORUX036",
+    "nitftre.mstgta_tgt_type": "5",
+    "nitftre.mstgta_tgt_coll": "2",
+    "nitftre.mstgta_tgt_cat": "339",
+    "nitftre.mstgta_tgt_utc": "147ADGJ",
+    "nitftre.mstgta_tgt_elev": "8BEHKN",
+    "nitftre.mstgta_tgt_elev_unit": "F",
+    "nitftre.mstgta_tgt_loc": "MPSVY147ADGJMPSVY147A"
+  },
+  "source": "constructed",
+  "reference": "every field filled by tools/gen/nitfspec2pack.py with digits (int) or letters"
+}
