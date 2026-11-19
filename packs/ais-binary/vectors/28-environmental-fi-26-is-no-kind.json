@@ -1,0 +1,8 @@
+{
+  "name": "environmental-fi-26-is-no-kind",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@00FP000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 8 message with DAC 1 and FI 26 (environmental, whose sensor reports repeat to the end of the message): no kind selects it"
+}

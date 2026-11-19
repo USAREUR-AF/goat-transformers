@@ -1,0 +1,640 @@
+# AIS binary application messages: payloads of message types 6 (addressed)
+# and 8 (broadcast) whose application layout, chosen by the designated area
+# code (DAC) and function identifier (FI), has a fixed length. Public. Written
+# from the gpsd document "AIVDM/AIVDO protocol decoding" v1.58; pack.md states
+# what is mapped, the layouts that are not built and why.
+#
+# Same conventions as pack `ais`: the input is one whole payload, the armored
+# text of an AIVDM or AIVDO sentence with its fragments joined; word_bytes 1 and
+# bit_order msb, so 0:<bit>:<len> counts from the first bit of the payload, the
+# numbering the source uses. Each kind is selected by the type, the DAC and the
+# FI together (and by bit 56 for the two variants of DAC 1 FI 21).
+format        ais-binary
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, v1.58 (24 June 2023), www/AIVDM.adoc at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING); binary application messages of types 6 and 8"
+uses          ais
+uses          aisbin
+wire          bits
+word_bytes    1
+bit_order     msb
+armor         sixbit
+
+field  ais.msg_type        0:0:6      uint
+field  ais.repeat          0:6:2      uint
+field  ais.mmsi            0:8:30     uint
+
+# Type 6, DAC 1, FI 12: 360 bits.
+kind      dangerous-cargo-imo236
+when      0:0:6  6
+when      0:72:10  1
+when      0:82:6  12
+requires  ais.mmsi aisbin.dc236_lastport
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.dc236_lastport    0:88:30    sixbit
+field  aisbin.dc236_lmonth      0:118:4    uint
+field  aisbin.dc236_lday        0:122:5    uint
+field  aisbin.dc236_lhour       0:127:5    uint
+field  aisbin.dc236_lminute     0:132:6    uint
+field  aisbin.dc236_nextport    0:138:30   sixbit
+field  aisbin.dc236_nmonth      0:168:4    uint
+field  aisbin.dc236_nday        0:172:5    uint
+field  aisbin.dc236_nhour       0:177:5    uint
+field  aisbin.dc236_nminute     0:182:6    uint
+field  aisbin.dc236_dangerous   0:188:120  sixbit
+field  aisbin.dc236_imdcat      0:308:24   sixbit
+field  aisbin.dc236_unid        0:332:13   uint
+field  aisbin.dc236_amount      0:345:10   uint
+field  aisbin.dc236_unit        0:355:2    uint
+field  ais.spare2               0:357:3    uint
+
+# Type 6, DAC 1, FI 16: 136 bits.
+kind      persons-on-board-imo289
+when      0:0:6  6
+when      0:72:10  1
+when      0:82:6  16
+requires  ais.mmsi aisbin.pob289_persons
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.pob289_persons    0:88:13    uint
+field  ais.spare2               0:101:35   uint
+
+# Type 6, DAC 1, FI 18: 360 bits. Position bound to lat and lon (pack.md).
+kind      clearance-time
+when      0:0:6  6
+when      0:72:10  1
+when      0:82:6  18
+requires  ais.mmsi aisbin.clr_month
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.linkage           0:88:10    uint
+field  aisbin.clr_month         0:98:4     uint
+field  aisbin.clr_day           0:102:5    uint
+field  aisbin.clr_hour          0:107:5    uint
+field  aisbin.clr_minute        0:112:6    uint
+field  aisbin.clr_portname      0:118:120  sixbit
+field  aisbin.clr_destination   0:238:30   sixbit
+field  lon                      0:268:25   sscale:1/60000
+field  lat                      0:293:24   sscale:1/60000
+field  ais.spare2               0:317:43   uint
+
+# Type 6, DAC 1, FI 20: 360 bits. Position bound to lat and lon (pack.md).
+kind      berthing-data
+when      0:0:6  6
+when      0:72:10  1
+when      0:82:6  20
+requires  ais.mmsi aisbin.berth_berth_length
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.linkage           0:88:10    uint
+field  aisbin.berth_berth_length 0:98:9     uint
+field  aisbin.berth_berth_depth 0:107:8    uint
+field  aisbin.berth_position    0:115:3    uint
+field  aisbin.berth_month       0:118:4    uint
+field  aisbin.berth_day         0:122:5    uint
+field  aisbin.berth_hour        0:127:5    uint
+field  aisbin.berth_minute      0:132:6    uint
+field  aisbin.berth_availability 0:138:1    uint
+field  aisbin.berth_agent       0:139:2    uint
+field  aisbin.berth_fuel        0:141:2    uint
+field  aisbin.berth_chandler    0:143:2    uint
+field  aisbin.berth_stevedore   0:145:2    uint
+field  aisbin.berth_electrical  0:147:2    uint
+field  aisbin.berth_water       0:149:2    uint
+field  aisbin.berth_customs     0:151:2    uint
+field  aisbin.berth_cartage     0:153:2    uint
+field  aisbin.berth_crane       0:155:2    uint
+field  aisbin.berth_lift        0:157:2    uint
+field  aisbin.berth_medical     0:159:2    uint
+field  aisbin.berth_navrepair   0:161:2    uint
+field  aisbin.berth_provisions  0:163:2    uint
+field  aisbin.berth_shiprepair  0:165:2    uint
+field  aisbin.berth_surveyor    0:167:2    uint
+field  aisbin.berth_steam       0:169:2    uint
+field  aisbin.berth_tugs        0:171:2    uint
+field  aisbin.berth_solidwaste  0:173:2    uint
+field  aisbin.berth_liquidwaste 0:175:2    uint
+field  aisbin.berth_hazardouswaste 0:177:2    uint
+field  aisbin.berth_ballast     0:179:2    uint
+field  aisbin.berth_additional  0:181:2    uint
+field  aisbin.berth_regional1   0:183:2    uint
+field  aisbin.berth_regional2   0:185:2    uint
+field  aisbin.berth_future1     0:187:2    uint
+field  aisbin.berth_future2     0:189:2    uint
+field  aisbin.berth_berth_name  0:191:120  sixbit
+field  lon                      0:311:25   sscale:1/60000
+field  lat                      0:336:24   sscale:1/60000
+
+# Type 6, DAC 200, FI 21: 248 bits.
+kind      inland-eta
+when      0:0:6  6
+when      0:72:10  200
+when      0:82:6  21
+requires  ais.mmsi aisbin.ieta_country
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.ieta_country      0:88:12    sixbit
+field  aisbin.ieta_locode       0:100:18   sixbit
+field  aisbin.ieta_section      0:118:30   sixbit
+field  aisbin.ieta_terminal     0:148:30   sixbit
+field  aisbin.ieta_hectometre   0:178:30   sixbit
+field  aisbin.ieta_month        0:208:4    uint
+field  aisbin.ieta_day          0:212:5    uint
+field  aisbin.ieta_hour         0:217:5    uint
+field  aisbin.ieta_minute       0:222:6    uint
+field  aisbin.ieta_tugs         0:228:3    uint
+field  aisbin.ieta_airdraught   0:231:12   uint
+field  ais.spare2               0:243:5    uint
+
+# Type 6, DAC 200, FI 22: 232 bits.
+kind      inland-rta
+when      0:0:6  6
+when      0:72:10  200
+when      0:82:6  22
+requires  ais.mmsi aisbin.irta_country
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.irta_country      0:88:12    sixbit
+field  aisbin.irta_locode       0:100:18   sixbit
+field  aisbin.irta_section      0:118:30   sixbit
+field  aisbin.irta_terminal     0:148:30   sixbit
+field  aisbin.irta_hectometre   0:178:30   sixbit
+field  aisbin.irta_month        0:208:4    uint
+field  aisbin.irta_day          0:212:5    uint
+field  aisbin.irta_hour         0:217:5    uint
+field  aisbin.irta_minute       0:222:6    uint
+field  aisbin.irta_status       0:228:2    uint
+field  ais.spare2               0:230:2    uint
+
+# Type 6, DAC 200, FI 55: 168 bits.
+kind      inland-persons-on-board
+when      0:0:6  6
+when      0:72:10  200
+when      0:82:6  55
+requires  ais.mmsi aisbin.ipob_crew
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.ipob_crew         0:88:8     uint
+field  aisbin.ipob_passengers   0:96:13    uint
+field  aisbin.ipob_personnel    0:109:8    uint
+field  ais.spare2               0:117:51   uint
+
+# Type 6, DAC 235, FI 10: 136 bits.
+kind      aton-monitoring-uk
+when      0:0:6  6
+when      0:72:10  235
+when      0:82:6  10
+requires  ais.mmsi aisbin.aton_ana_int
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.aton_ana_int      0:88:10    uint
+field  aisbin.aton_ana_ext1     0:98:10    uint
+field  aisbin.aton_ana_ext2     0:108:10   uint
+field  aisbin.aton_racon        0:118:2    uint
+field  aisbin.aton_light        0:120:2    uint
+field  aisbin.aton_health       0:122:1    uint
+field  aisbin.aton_stat_ext     0:123:8    uint
+field  aisbin.aton_off_pos      0:131:1    uint
+field  ais.spare2               0:132:4    uint
+
+# Type 6, DAC 250, FI 10: 136 bits.
+kind      aton-monitoring-roi
+when      0:0:6  6
+when      0:72:10  250
+when      0:82:6  10
+requires  ais.mmsi aisbin.aton_ana_int
+field  aisbin.seqno             0:38:2     uint
+field  ais.dest_mmsi            0:40:30    uint
+field  aisbin.retransmit        0:70:1     uint
+field  ais.spare                0:71:1     uint
+field  aisbin.dac               0:72:10    uint
+field  aisbin.fid               0:82:6     uint
+field  aisbin.aton_ana_int      0:88:10    uint
+field  aisbin.aton_ana_ext1     0:98:10    uint
+field  aisbin.aton_ana_ext2     0:108:10   uint
+field  aisbin.aton_racon        0:118:2    uint
+field  aisbin.aton_light        0:120:2    uint
+field  aisbin.aton_health       0:122:1    uint
+field  aisbin.aton_stat_ext     0:123:8    uint
+field  aisbin.aton_off_pos      0:131:1    uint
+field  ais.spare2               0:132:4    uint
+
+# Type 8, DAC 1, FI 11: 352 bits. Position bound to lat and lon (pack.md).
+kind      met-hydro-imo236
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  11
+requires  ais.mmsi aisbin.mh236_day
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  lat                      0:56:24    sscale:1/60000
+field  lon                      0:80:25    sscale:1/60000
+field  aisbin.mh236_day         0:105:5    uint
+field  aisbin.mh236_hour        0:110:5    uint
+field  aisbin.mh236_minute      0:115:6    uint
+field  aisbin.mh236_wspeed      0:121:7    uint
+field  aisbin.mh236_wgust       0:128:7    uint
+field  aisbin.mh236_wdir        0:135:9    uint
+field  aisbin.mh236_wgustdir    0:144:9    uint
+field  aisbin.mh236_temperature 0:153:11   uint
+field  aisbin.mh236_humidity    0:164:7    uint
+field  aisbin.mh236_dewpoint    0:171:10   uint
+field  aisbin.mh236_pressure    0:181:9    uint
+field  aisbin.mh236_pressuretend 0:190:2    uint
+field  aisbin.mh236_visibility  0:192:8    uint
+field  aisbin.mh236_waterlevel  0:200:9    twos
+field  aisbin.mh236_leveltrend  0:209:2    uint
+field  aisbin.mh236_cspeed      0:211:8    uint
+field  aisbin.mh236_cdir        0:219:9    uint
+field  aisbin.mh236_cspeed2     0:228:8    uint
+field  aisbin.mh236_cdir2       0:236:9    uint
+field  aisbin.mh236_cdepth2     0:245:5    uint
+field  aisbin.mh236_cspeed3     0:250:8    uint
+field  aisbin.mh236_cdir3       0:258:9    uint
+field  aisbin.mh236_cdepth3     0:267:5    uint
+field  aisbin.mh236_waveheight  0:272:8    uint
+field  aisbin.mh236_waveperiod  0:280:6    uint
+field  aisbin.mh236_wavedir     0:286:9    uint
+field  aisbin.mh236_swellheight 0:295:8    uint
+field  aisbin.mh236_swellperiod 0:303:6    uint
+field  aisbin.mh236_swelldir    0:309:9    uint
+field  aisbin.mh236_seastate    0:318:4    uint
+field  aisbin.mh236_watertemp   0:322:10   uint
+field  aisbin.mh236_preciptype  0:332:3    uint
+field  aisbin.mh236_salinity    0:335:9    uint
+field  aisbin.mh236_ice         0:344:2    uint
+field  ais.spare2               0:346:6    uint
+
+# Type 8, DAC 1, FI 13: 472 bits.
+kind      fairway-closed
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  13
+requires  ais.mmsi aisbin.fwc_reason
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.fwc_reason        0:56:120   sixbit
+field  aisbin.fwc_closefrom     0:176:120  sixbit
+field  aisbin.fwc_closeto       0:296:120  sixbit
+field  aisbin.fwc_radius        0:416:10   uint
+field  aisbin.fwc_extunit       0:426:2    uint
+field  aisbin.fwc_fday          0:428:5    uint
+field  aisbin.fwc_fmonth        0:433:4    uint
+field  aisbin.fwc_fhour         0:437:5    uint
+field  aisbin.fwc_fminute       0:442:6    uint
+field  aisbin.fwc_tday          0:448:5    uint
+field  aisbin.fwc_tmonth        0:453:4    uint
+field  aisbin.fwc_thour         0:457:5    uint
+field  aisbin.fwc_tminute       0:462:6    uint
+field  ais.spare2               0:468:4    uint
+
+# Type 8, DAC 1, FI 15: 72 bits.
+kind      extended-static-imo236
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  15
+requires  ais.mmsi aisbin.ess236_airdraught
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.ess236_airdraught 0:56:11    uint
+field  ais.spare2               0:67:5     uint
+
+# Type 8, DAC 1, FI 19: 360 bits. Position bound to lat and lon (pack.md).
+kind      traffic-signal
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  19
+requires  ais.mmsi aisbin.sig_station
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.linkage           0:56:10    uint
+field  aisbin.sig_station       0:66:120   sixbit
+field  lon                      0:186:25   sscale:1/60000
+field  lat                      0:211:24   sscale:1/60000
+field  aisbin.sig_status        0:235:2    uint
+field  aisbin.sig_signal        0:237:5    uint
+field  aisbin.sig_hour          0:242:5    uint
+field  aisbin.sig_minute        0:247:6    uint
+field  aisbin.sig_nextsignal    0:253:5    uint
+field  ais.spare2               0:258:64   uint
+field  ais.spare3               0:322:38   uint
+
+# Type 8, DAC 1, FI 21: 360 bits. Position bound to lat and lon (pack.md).
+kind      weather-observation
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  21
+when      0:56:1  0
+requires  ais.mmsi aisbin.wx_location
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.wmo               0:56:1     uint
+field  aisbin.wx_location       0:57:120   sixbit
+field  lon                      0:177:25   sscale:1/60000
+field  lat                      0:202:24   sscale:1/60000
+field  aisbin.wx_day            0:226:5    uint
+field  aisbin.wx_hour           0:231:5    uint
+field  aisbin.wx_minute         0:236:6    uint
+field  aisbin.wx_weather        0:242:4    uint
+field  aisbin.wx_vislimit       0:246:1    uint
+field  aisbin.wx_visibility     0:247:7    uint
+field  aisbin.wx_humidity       0:254:7    uint
+field  aisbin.wx_wspeed         0:261:7    uint
+field  aisbin.wx_wdir           0:268:9    uint
+field  aisbin.wx_pressure       0:277:9    uint
+field  aisbin.wx_pressuretend   0:286:4    uint
+field  aisbin.wx_airtemp        0:290:11   twos
+field  aisbin.wx_watertemp      0:301:10   twos
+field  aisbin.wx_waveperiod     0:311:6    uint
+field  aisbin.wx_waveheight     0:317:8    uint
+field  aisbin.wx_wavedir        0:325:9    uint
+field  aisbin.wx_swellheight    0:334:8    uint
+field  aisbin.wx_swelldir       0:342:9    uint
+field  aisbin.wx_swellperiod    0:351:6    uint
+field  ais.spare2               0:357:3    uint
+
+# Type 8, DAC 1, FI 21: 360 bits.
+kind      weather-observation-wmo
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  21
+when      0:56:1  1
+requires  ais.mmsi aisbin.wxw_lon
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.wmo               0:56:1     uint
+field  aisbin.wxw_lon           0:57:16    uint
+field  aisbin.wxw_lat           0:73:15    uint
+field  aisbin.wxw_month         0:88:4     uint
+field  aisbin.wxw_day           0:92:6     uint
+field  aisbin.wxw_hour          0:98:5     uint
+field  aisbin.wxw_minute        0:103:3    uint
+field  aisbin.wxw_course        0:106:7    uint
+field  aisbin.wxw_speed         0:113:5    uint
+field  aisbin.wxw_heading       0:118:7    uint
+field  aisbin.wxw_pressure      0:125:11   uint
+field  aisbin.wxw_pdelta        0:136:10   uint
+field  aisbin.wxw_ptend         0:146:4    uint
+field  aisbin.wxw_twinddir      0:150:7    uint
+field  aisbin.wxw_twindspeed    0:157:8    uint
+field  aisbin.wxw_rwinddir      0:165:7    uint
+field  aisbin.wxw_rwindspeed    0:172:8    uint
+field  aisbin.wxw_mgustspeed    0:180:8    uint
+field  aisbin.wxw_mgustdir      0:188:7    uint
+field  aisbin.wxw_airtemp       0:195:10   uint
+field  aisbin.wxw_humidity      0:205:7    uint
+field  aisbin.wxw_surftemp      0:212:9    uint
+field  aisbin.wxw_visibility    0:221:6    uint
+field  aisbin.wxw_weather       0:227:9    uint
+field  aisbin.wxw_pweather1     0:236:5    uint
+field  aisbin.wxw_pweather2     0:241:5    uint
+field  aisbin.wxw_totalcloud    0:246:4    uint
+field  aisbin.wxw_lowclouda     0:250:4    uint
+field  aisbin.wxw_lowcloudt     0:254:6    uint
+field  aisbin.wxw_midcloudt     0:260:6    uint
+field  aisbin.wxw_highcloudt    0:266:6    uint
+field  aisbin.wxw_cloudbase     0:272:7    uint
+field  aisbin.wxw_wwperiod      0:279:5    uint
+field  aisbin.wxw_wwheight      0:284:6    uint
+field  aisbin.wxw_swelldir1     0:290:6    uint
+field  aisbin.wxw_swperiod1     0:296:5    uint
+field  aisbin.wxw_swheight1     0:301:6    uint
+field  aisbin.wxw_swelldir2     0:307:6    uint
+field  aisbin.wxw_swperiod2     0:313:5    uint
+field  aisbin.wxw_swheight2     0:318:6    uint
+field  aisbin.wxw_icedeposit    0:324:7    uint
+field  aisbin.wxw_icerate       0:331:3    uint
+field  aisbin.wxw_icecause      0:334:3    uint
+field  aisbin.wxw_seaice        0:337:5    uint
+field  aisbin.wxw_icetype       0:342:4    uint
+field  aisbin.wxw_icestate      0:346:5    uint
+field  aisbin.wxw_icedevel      0:351:5    uint
+field  aisbin.wxw_icebearing    0:356:4    uint
+
+# Type 8, DAC 1, FI 24: 360 bits.
+kind      extended-static-imo289
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  24
+requires  ais.mmsi aisbin.ess289_airdraught
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.linkage           0:56:10    uint
+field  aisbin.ess289_airdraught 0:66:13    uint
+field  aisbin.ess289_lastport   0:79:30    sixbit
+field  aisbin.ess289_nextport   0:109:30   sixbit
+field  aisbin.ess289_secondport 0:139:30   sixbit
+field  aisbin.ess289_ais_state  0:169:2    uint
+field  aisbin.ess289_ata_state  0:171:2    uint
+field  aisbin.ess289_bnwas_state 0:173:2    uint
+field  aisbin.ess289_ecdisb_state 0:175:2    uint
+field  aisbin.ess289_chart_state 0:177:2    uint
+field  aisbin.ess289_sounder_state 0:179:2    uint
+field  aisbin.ess289_epaid_state 0:181:2    uint
+field  aisbin.ess289_steer_state 0:183:2    uint
+field  aisbin.ess289_gnss_state 0:185:2    uint
+field  aisbin.ess289_gyro_state 0:187:2    uint
+field  aisbin.ess289_lrit_state 0:189:2    uint
+field  aisbin.ess289_magcomp_state 0:191:2    uint
+field  aisbin.ess289_navtex_state 0:193:2    uint
+field  aisbin.ess289_arpa_state 0:195:2    uint
+field  aisbin.ess289_sband_state 0:197:2    uint
+field  aisbin.ess289_xband_state 0:199:2    uint
+field  aisbin.ess289_hfradio_state 0:201:2    uint
+field  aisbin.ess289_inmarsat_state 0:203:2    uint
+field  aisbin.ess289_mfradio_state 0:205:2    uint
+field  aisbin.ess289_vhfradio_state 0:207:2    uint
+field  aisbin.ess289_grndlog_state 0:209:2    uint
+field  aisbin.ess289_waterlog_state 0:211:2    uint
+field  aisbin.ess289_thd_state  0:213:2    uint
+field  aisbin.ess289_tcs_state  0:215:2    uint
+field  aisbin.ess289_vdr_state  0:217:2    uint
+field  ais.spare2               0:219:2    uint
+field  aisbin.ess289_iceclass   0:221:4    uint
+field  aisbin.ess289_horsepower 0:225:18   uint
+field  aisbin.ess289_vhfchan    0:243:12   uint
+field  aisbin.ess289_lshiptype  0:255:42   sixbit
+field  aisbin.ess289_tonnage    0:297:18   uint
+field  aisbin.ess289_lading     0:315:2    uint
+field  aisbin.ess289_heavyoil   0:317:2    uint
+field  aisbin.ess289_lightoil   0:319:2    uint
+field  aisbin.ess289_dieseloil  0:321:2    uint
+field  aisbin.ess289_totaloil   0:323:14   uint
+field  aisbin.ess289_persons    0:337:13   uint
+field  ais.spare3               0:350:10   uint
+
+# Type 8, DAC 1, FI 31: 360 bits. Position bound to lat and lon (pack.md).
+kind      met-hydro-imo289
+when      0:0:6  8
+when      0:40:10  1
+when      0:50:6  31
+requires  ais.mmsi aisbin.mh289_day
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  lon                      0:56:25    sscale:1/60000
+field  lat                      0:81:24    sscale:1/60000
+field  ais.accuracy             0:105:1    uint
+field  aisbin.mh289_day         0:106:5    uint
+field  aisbin.mh289_hour        0:111:5    uint
+field  aisbin.mh289_minute      0:116:6    uint
+field  aisbin.mh289_wspeed      0:122:7    uint
+field  aisbin.mh289_wgust       0:129:7    uint
+field  aisbin.mh289_wdir        0:136:9    uint
+field  aisbin.mh289_wgustdir    0:145:9    uint
+field  aisbin.mh289_airtemp     0:154:11   twos
+field  aisbin.mh289_humidity    0:165:7    uint
+field  aisbin.mh289_dewpoint    0:172:10   twos
+field  aisbin.mh289_pressure    0:182:9    uint
+field  aisbin.mh289_pressuretend 0:191:2    uint
+field  aisbin.mh289_visgreater  0:193:1    uint
+field  aisbin.mh289_visibility  0:194:7    uint
+field  aisbin.mh289_waterlevel  0:201:12   twos
+field  aisbin.mh289_leveltrend  0:213:2    uint
+field  aisbin.mh289_cspeed      0:215:8    uint
+field  aisbin.mh289_cdir        0:223:9    uint
+field  aisbin.mh289_cspeed2     0:232:8    uint
+field  aisbin.mh289_cdir2       0:240:9    uint
+field  aisbin.mh289_cdepth2     0:249:5    uint
+field  aisbin.mh289_cspeed3     0:254:8    uint
+field  aisbin.mh289_cdir3       0:262:9    uint
+field  aisbin.mh289_cdepth3     0:271:5    uint
+field  aisbin.mh289_waveheight  0:276:8    uint
+field  aisbin.mh289_waveperiod  0:284:6    uint
+field  aisbin.mh289_wavedir     0:290:9    uint
+field  aisbin.mh289_swellheight 0:299:8    uint
+field  aisbin.mh289_swellperiod 0:307:6    uint
+field  aisbin.mh289_swelldir    0:313:9    uint
+field  aisbin.mh289_seastate    0:322:4    uint
+field  aisbin.mh289_watertemp   0:326:10   twos
+field  aisbin.mh289_preciptype  0:336:3    uint
+field  aisbin.mh289_salinity    0:339:9    uint
+field  aisbin.mh289_ice         0:348:2    uint
+field  ais.spare2               0:350:10   uint
+
+# Type 8, DAC 200, FI 10: 168 bits.
+kind      inland-static-voyage
+when      0:0:6  8
+when      0:40:10  200
+when      0:50:6  10
+requires  ais.mmsi aisbin.ist_vin
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.ist_vin           0:56:48    sixbit
+field  aisbin.ist_length        0:104:13   uint
+field  aisbin.ist_beam          0:117:10   uint
+field  aisbin.ist_shiptype      0:127:14   uint
+field  aisbin.ist_hazard        0:141:3    uint
+field  aisbin.ist_draught       0:144:11   uint
+field  aisbin.ist_loaded        0:155:2    uint
+field  aisbin.ist_speed_q       0:157:1    uint
+field  aisbin.ist_course_q      0:158:1    uint
+field  aisbin.ist_heading_q     0:159:1    uint
+field  ais.spare2               0:160:8    uint
+
+# Type 8, DAC 200, FI 23: 256 bits.
+kind      emma-warning
+when      0:0:6  8
+when      0:40:10  200
+when      0:50:6  23
+requires  ais.mmsi aisbin.emma_start_year
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.emma_start_year   0:56:8     uint
+field  aisbin.emma_start_month  0:64:4     uint
+field  aisbin.emma_start_day    0:68:5     uint
+field  aisbin.emma_end_year     0:73:8     uint
+field  aisbin.emma_end_month    0:81:4     uint
+field  aisbin.emma_end_day      0:85:5     uint
+field  aisbin.emma_start_hour   0:90:5     uint
+field  aisbin.emma_start_minute 0:95:6     uint
+field  aisbin.emma_end_hour     0:101:5    uint
+field  aisbin.emma_end_minute   0:106:6    uint
+field  aisbin.emma_start_lon    0:112:28   twos
+field  aisbin.emma_start_lat    0:140:27   twos
+field  aisbin.emma_end_lon      0:167:28   twos
+field  aisbin.emma_end_lat      0:195:27   twos
+field  aisbin.emma_type         0:222:4    uint
+field  aisbin.emma_min          0:226:9    twos
+field  aisbin.emma_max          0:235:9    twos
+field  aisbin.emma_intensity    0:244:2    uint
+field  aisbin.emma_wind         0:246:4    uint
+field  ais.spare2               0:250:6    uint
+
+# Type 8, DAC 200, FI 24: 168 bits.
+kind      water-levels
+when      0:0:6  8
+when      0:40:10  200
+when      0:50:6  24
+requires  ais.mmsi aisbin.wl_country
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  aisbin.wl_country        0:56:12    sixbit
+field  aisbin.wl_gauge1_id      0:68:11    uint
+field  aisbin.wl_gauge1_level   0:79:14    twos
+field  aisbin.wl_gauge2_id      0:93:11    uint
+field  aisbin.wl_gauge2_level   0:104:14   twos
+field  aisbin.wl_gauge3_id      0:118:11   uint
+field  aisbin.wl_gauge3_level   0:129:14   twos
+field  aisbin.wl_gauge4_id      0:143:11   uint
+field  aisbin.wl_gauge4_level   0:154:14   twos
+
+# Type 8, DAC 200, FI 40: 168 bits. Position bound to lat and lon (pack.md).
+kind      signal-status
+when      0:0:6  8
+when      0:40:10  200
+when      0:50:6  40
+requires  ais.mmsi aisbin.isig_form
+field  ais.spare                0:38:2     uint
+field  aisbin.dac               0:40:10    uint
+field  aisbin.fid               0:50:6     uint
+field  lon                      0:56:28    sscale:1/600000
+field  lat                      0:84:27    sscale:1/600000
+field  aisbin.isig_form         0:111:4    uint
+field  aisbin.isig_facing       0:115:9    uint
+field  aisbin.isig_direction    0:124:3    uint
+field  aisbin.isig_status       0:127:30   uint
+field  ais.spare2               0:157:11   uint

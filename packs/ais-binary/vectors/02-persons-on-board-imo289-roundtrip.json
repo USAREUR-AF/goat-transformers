@@ -1,0 +1,22 @@
+{
+  "name": "persons-on-board-imo289-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:051b>000000",
+  "expect": "63`l7@0001i:051b>000000",
+  "model": {
+    "@kind": "persons-on-board-imo289",
+    "ais.msg_type": "6",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "aisbin.seqno": "0",
+    "ais.dest_mmsi": "1810",
+    "aisbin.retransmit": "1",
+    "ais.spare": "0",
+    "aisbin.dac": "1",
+    "aisbin.fid": "16",
+    "aisbin.pob289_persons": "3399",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 6 message, DAC 1, FI 16, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

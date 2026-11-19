@@ -1,0 +1,30 @@
+{
+  "name": "clearance-time-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@WwKH@GTjP0000000",
+  "expect": "63`l7@0001i:0599Vbs90u9@p4lD000000000000@E=@WwKH@GTjP0000000",
+  "model": {
+    "@kind": "clearance-time",
+    "ais.msg_type": "6",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "aisbin.seqno": "0",
+    "ais.dest_mmsi": "1810",
+    "aisbin.retransmit": "1",
+    "ais.spare": "0",
+    "aisbin.dac": "1",
+    "aisbin.fid": "18",
+    "aisbin.linkage": "294",
+    "aisbin.clr_month": "6",
+    "aisbin.clr_day": "21",
+    "aisbin.clr_hour": "14",
+    "aisbin.clr_minute": "50",
+    "aisbin.clr_portname": "PORTNAME",
+    "aisbin.clr_destination": "DESTI",
+    "lon": "-1.25",
+    "lat": "51.5",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 6 message, DAC 1, FI 18, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

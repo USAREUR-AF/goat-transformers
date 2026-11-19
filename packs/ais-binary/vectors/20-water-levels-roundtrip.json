@@ -1,0 +1,26 @@
+{
+  "name": "water-levels-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@0j60klVV0erSr8hrIwBAKL",
+  "expect": "83`l7@0j60klVV0erSr8hrIwBAKL",
+  "model": {
+    "@kind": "water-levels",
+    "ais.msg_type": "8",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "ais.spare": "0",
+    "aisbin.dac": "200",
+    "aisbin.fid": "24",
+    "aisbin.wl_country": "CO",
+    "aisbin.wl_gauge1_id": "589",
+    "aisbin.wl_gauge1_level": "3077",
+    "aisbin.wl_gauge2_id": "1514",
+    "aisbin.wl_gauge2_level": "4002",
+    "aisbin.wl_gauge3_id": "391",
+    "aisbin.wl_gauge3_level": "4927",
+    "aisbin.wl_gauge4_id": "1316",
+    "aisbin.wl_gauge4_level": "5852"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 8 message, DAC 200, FI 24, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

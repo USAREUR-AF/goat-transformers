@@ -1,0 +1,13 @@
+{
+  "name": "signal-status-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "83`l7@0j:0:C;P>mo13h:P00WBP0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,51.875]},\"properties\":{},\"id\":\"244123456\"}",
+  "model": {
+    "@kind": "signal-status",
+    "lat": "51.875",
+    "lon": "4.5"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; an inland signal status at 51.875 N 4.5 E, in ten-thousandths of a minute (31125000 and 2700000 over 600000)"
+}
