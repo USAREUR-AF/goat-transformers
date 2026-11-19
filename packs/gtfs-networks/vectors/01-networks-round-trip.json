@@ -1,0 +1,13 @@
+{
+  "name": "networks-round-trip",
+  "from": "gtfs-networks",
+  "to": "gtfs-networks",
+  "input": "BUS,City buses",
+  "expect": "BUS,City buses",
+  "model": {
+    "gtfs.network_id": "BUS",
+    "gtfs.network_name": "City buses"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of networks.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

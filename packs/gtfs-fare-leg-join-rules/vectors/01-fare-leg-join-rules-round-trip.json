@@ -1,0 +1,15 @@
+{
+  "name": "fare-leg-join-rules-round-trip",
+  "from": "gtfs-fare-leg-join-rules",
+  "to": "gtfs-fare-leg-join-rules",
+  "input": "BUS,TRAM,S100,S101",
+  "expect": "BUS,TRAM,S100,S101",
+  "model": {
+    "gtfs.from_network_id": "BUS",
+    "gtfs.to_network_id": "TRAM",
+    "gtfs.from_stop_id": "S100",
+    "gtfs.to_stop_id": "S101"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_leg_join_rules.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

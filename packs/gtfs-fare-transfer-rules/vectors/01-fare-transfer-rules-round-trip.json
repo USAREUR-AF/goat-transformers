@@ -1,0 +1,17 @@
+{
+  "name": "fare-transfer-rules-round-trip",
+  "from": "gtfs-fare-transfer-rules",
+  "to": "gtfs-fare-transfer-rules",
+  "input": "LG1,LG1,-1,5400,1,0,",
+  "expect": "LG1,LG1,-1,5400,1,0,",
+  "model": {
+    "gtfs.from_leg_group_id": "LG1",
+    "gtfs.to_leg_group_id": "LG1",
+    "gtfs.transfer_count": "-1",
+    "gtfs.duration_limit": "5400",
+    "gtfs.duration_limit_type": "1",
+    "gtfs.fare_transfer_type": "0"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_transfer_rules.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

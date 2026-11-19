@@ -1,0 +1,13 @@
+{
+  "name": "areas-round-trip",
+  "from": "gtfs-areas",
+  "to": "gtfs-areas",
+  "input": "A,City centre",
+  "expect": "A,City centre",
+  "model": {
+    "gtfs.area_id": "A",
+    "gtfs.area_name": "City centre"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of areas.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

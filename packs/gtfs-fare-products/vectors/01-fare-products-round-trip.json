@@ -1,0 +1,17 @@
+{
+  "name": "fare-products-round-trip",
+  "from": "gtfs-fare-products",
+  "to": "gtfs-fare-products",
+  "input": "SINGLE,Single ride,ADULT,CARD,2.50,EUR",
+  "expect": "SINGLE,Single ride,ADULT,CARD,2.50,EUR",
+  "model": {
+    "gtfs.fare_product_id": "SINGLE",
+    "gtfs.fare_product_name": "Single ride",
+    "gtfs.rider_category_id": "ADULT",
+    "gtfs.fare_media_id": "CARD",
+    "gtfs.amount": "2.50",
+    "gtfs.currency": "EUR"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_products.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

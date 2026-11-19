@@ -49,6 +49,27 @@ COLUMNS = {
                  "feed_version feed_contact_email feed_contact_url",
     "attributions": "attribution_id agency_id route_id trip_id organization_name is_producer:i is_operator:i "
                     "is_authority:i attribution_url attribution_email attribution_phone",
+    "fare-attributes": "fare_id price:f currency_type payment_method:i transfers:i agency_id transfer_duration:i",
+    "fare-rules": "fare_id route_id origin_id destination_id contains_id",
+    "timeframes": "timeframe_group_id start_time end_time service_id",
+    "rider-categories": "rider_category_id rider_category_name is_default_fare_category:i eligibility_url",
+    "fare-media": "fare_media_id fare_media_name fare_media_type:i",
+    "fare-products": "fare_product_id fare_product_name rider_category_id fare_media_id amount currency",
+    "fare-leg-rules": "leg_group_id network_id from_area_id to_area_id from_timeframe_group_id to_timeframe_group_id "
+                      "fare_product_id rule_priority:i",
+    "fare-leg-join-rules": "from_network_id to_network_id from_stop_id to_stop_id",
+    "fare-transfer-rules": "from_leg_group_id to_leg_group_id transfer_count:i duration_limit:i duration_limit_type:i "
+                           "fare_transfer_type:i fare_product_id",
+    "areas": "area_id area_name",
+    "stop-areas": "area_id stop_id",
+    "networks": "network_id network_name",
+    "route-networks": "network_id route_id",
+    "location-groups": "location_group_id location_group_name",
+    "location-group-stops": "location_group_id stop_id",
+    "booking-rules": "booking_rule_id booking_type:i prior_notice_duration_min:i prior_notice_duration_max:i "
+                     "prior_notice_last_day:i prior_notice_last_time prior_notice_start_day:i prior_notice_start_time "
+                     "prior_notice_service_id message pickup_message drop_off_message phone_number info_url booking_url",
+    "translations": "table_name field_name language translation record_id record_sub_id field_value",
 }
 # the shared keys a pack binds, by column: core key first (engine-spec 0.5 ruling 16)
 SHARED = {"stops": {"stop_id": "uid", "stop_name": "callsign", "stop_lat": "lat", "stop_lon": "lon"},
@@ -140,6 +161,33 @@ ROWS = {
                   "feed_version": "2026.1"},
     "attributions": {"attribution_id": "A1", "agency_id": "ag1", "organization_name": "Example Data Co",
                      "is_producer": "1", "is_operator": "0", "is_authority": "0"},
+    "fare-attributes": {"fare_id": "F1", "price": "2.8", "currency_type": "EUR", "payment_method": "0",
+                        "transfers": "", "agency_id": "ag1", "transfer_duration": "5400"},
+    "fare-rules": {"fare_id": "F1", "route_id": "R1", "origin_id": "A", "destination_id": "B"},
+    "timeframes": {"timeframe_group_id": "PEAK", "start_time": "07:00:00", "end_time": "09:30:00",
+                   "service_id": "WD"},
+    "rider-categories": {"rider_category_id": "ADULT", "rider_category_name": "Adult",
+                         "is_default_fare_category": "1", "eligibility_url": "https://transit.example.org/fares"},
+    "fare-media": {"fare_media_id": "CARD", "fare_media_name": "Transit card", "fare_media_type": "2"},
+    "fare-products": {"fare_product_id": "SINGLE", "fare_product_name": "Single ride", "rider_category_id": "ADULT",
+                      "fare_media_id": "CARD", "amount": "2.50", "currency": "EUR"},
+    "fare-leg-rules": {"leg_group_id": "LG1", "network_id": "BUS", "from_area_id": "A", "to_area_id": "B",
+                       "from_timeframe_group_id": "PEAK", "fare_product_id": "SINGLE", "rule_priority": "1"},
+    "fare-leg-join-rules": {"from_network_id": "BUS", "to_network_id": "TRAM", "from_stop_id": "S100",
+                            "to_stop_id": "S101"},
+    "fare-transfer-rules": {"from_leg_group_id": "LG1", "to_leg_group_id": "LG1", "transfer_count": "-1",
+                            "duration_limit": "5400", "duration_limit_type": "1", "fare_transfer_type": "0"},
+    "areas": {"area_id": "A", "area_name": "City centre"},
+    "stop-areas": {"area_id": "A", "stop_id": "S100"},
+    "networks": {"network_id": "BUS", "network_name": "City buses"},
+    "route-networks": {"network_id": "BUS", "route_id": "R1"},
+    "location-groups": {"location_group_id": "LGR1", "location_group_name": "Old town stops"},
+    "location-group-stops": {"location_group_id": "LGR1", "stop_id": "S100"},
+    "booking-rules": {"booking_rule_id": "BR1", "booking_type": "1", "prior_notice_duration_min": "60",
+                      "prior_notice_duration_max": "10080", "message": "Call to book",
+                      "phone_number": "+49 30 7654321", "booking_url": "https://transit.example.org/book"},
+    "translations": {"table_name": "stops", "field_name": "stop_name", "language": "fr",
+                     "translation": "Gare centrale", "record_id": "S100"},
 }
 
 
