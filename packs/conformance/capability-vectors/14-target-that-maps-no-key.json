@@ -1,0 +1,14 @@
+{
+  "name": "14-target-that-maps-no-key",
+  "from": "conformance-cap-a",
+  "to": "conformance-cap-empty",
+  "grade": "none",
+  "carried": [],
+  "dropped": [
+    "uid",
+    "callsign",
+    "lat",
+    "lon",
+    "probe.n"
+  ]
+}

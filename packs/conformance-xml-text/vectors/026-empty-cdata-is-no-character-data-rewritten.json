@@ -1,0 +1,7 @@
+{
+  "name": "empty-cdata-is-no-character-data-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><name><![CDATA[]]></name></e>",
+  "expect": "<e id=\"1\"/>"
+}

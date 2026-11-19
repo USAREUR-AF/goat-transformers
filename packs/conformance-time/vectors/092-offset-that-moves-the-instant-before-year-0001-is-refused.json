@@ -1,0 +1,7 @@
+{
+  "name": "offset-that-moves-the-instant-before-year-0001-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"0001-01-01T00:00:00+00:01\"/>",
+  "expect_error": "transform-decode"
+}

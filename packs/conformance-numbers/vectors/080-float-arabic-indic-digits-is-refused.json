@@ -1,0 +1,7 @@
+{
+  "name": "float-arabic-indic-digits-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"١.٥\"/>",
+  "expect_error": "transform-decode"
+}

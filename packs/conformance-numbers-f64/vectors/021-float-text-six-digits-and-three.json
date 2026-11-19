@@ -1,0 +1,7 @@
+{
+  "name": "float-text-six-digits-and-three",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "40fe240c9fbe76c9",
+  "expect": "<e a=\"123456.789\"/>"
+}

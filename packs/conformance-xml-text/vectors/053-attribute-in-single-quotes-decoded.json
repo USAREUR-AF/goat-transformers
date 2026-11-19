@@ -1,0 +1,7 @@
+{
+  "name": "attribute-in-single-quotes-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id='a\"b'/>",
+  "expect": "{\"id\":\"a\\\"b\"}"
+}

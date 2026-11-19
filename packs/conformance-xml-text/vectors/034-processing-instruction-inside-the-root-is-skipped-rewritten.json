@@ -1,0 +1,7 @@
+{
+  "name": "processing-instruction-inside-the-root-is-skipped-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><?pi x?><name>a<?pi y?>b</name></e>",
+  "expect": "<e id=\"1\"><name>ab</name></e>"
+}

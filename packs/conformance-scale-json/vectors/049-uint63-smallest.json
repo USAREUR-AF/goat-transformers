@@ -1,0 +1,7 @@
+{
+  "name": "uint63-smallest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"x\":0}",
+  "expect": "0a0000000000000000"
+}

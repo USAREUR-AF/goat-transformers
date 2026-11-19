@@ -1,0 +1,8 @@
+{
+  "name": "13-source-that-maps-no-key",
+  "from": "conformance-cap-empty",
+  "to": "conformance-cap-a",
+  "grade": "none",
+  "carried": [],
+  "dropped": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-inf-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"inf\"/>",
+  "expect_error": "transform-decode"
+}

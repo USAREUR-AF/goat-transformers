@@ -1,0 +1,7 @@
+{
+  "name": "uint1-largest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"z\":1}",
+  "expect": "0c01"
+}

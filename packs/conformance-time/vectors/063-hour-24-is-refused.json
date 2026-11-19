@@ -1,0 +1,7 @@
+{
+  "name": "hour-24-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T24:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

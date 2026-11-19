@@ -1,0 +1,7 @@
+{
+  "name": "float-zero",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"0\"/>",
+  "expect": "<e a=\"0\"/>"
+}

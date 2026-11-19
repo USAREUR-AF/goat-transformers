@@ -1,0 +1,7 @@
+{
+  "name": "five-items-under-the-default-limit",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"nums\":[1,2,3,4,5]}",
+  "expect": "{\"nums\":[1,2,3,4,5]}"
+}

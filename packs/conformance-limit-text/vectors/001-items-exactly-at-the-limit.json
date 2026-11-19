@@ -1,0 +1,8 @@
+{
+  "name": "items-exactly-at-the-limit",
+  "from": "conformance-limit-text",
+  "to": "conformance-limit-text",
+  "input": "1,2",
+  "max_items": 2,
+  "expect": "1,2"
+}

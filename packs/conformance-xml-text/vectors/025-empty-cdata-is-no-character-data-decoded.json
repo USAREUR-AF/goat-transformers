@@ -1,0 +1,7 @@
+{
+  "name": "empty-cdata-is-no-character-data-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"1\"><name><![CDATA[]]></name></e>",
+  "expect": "{\"id\":\"1\"}"
+}

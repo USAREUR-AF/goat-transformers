@@ -1,0 +1,7 @@
+{
+  "name": "duplicate-attribute-on-a-child-no-line-maps",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a\"><other k=\"1\" k=\"2\"/></e>",
+  "expect_error": "malformed-wire"
+}

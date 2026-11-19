@@ -1,0 +1,7 @@
+{
+  "name": "comment-inside-the-root-is-skipped-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"1\"><!-- c --><name>a<!--x-->b</name><!----></e>",
+  "expect": "{\"id\":\"1\",\"name\":\"ab\"}"
+}

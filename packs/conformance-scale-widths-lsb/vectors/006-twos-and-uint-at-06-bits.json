@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-06-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0600fcbf10",
+  "expect": "0600fcbf10",
+  "model": {
+    "@kind": "w06",
+    "probe.x": "-32",
+    "probe.y": "-1",
+    "probe.z": "31",
+    "probe.w": "33"
+  }
+}

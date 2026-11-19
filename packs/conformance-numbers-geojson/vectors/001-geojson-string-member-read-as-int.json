@@ -1,0 +1,10 @@
+{
+  "name": "geojson-string-member-read-as-int",
+  "from": "conformance-numbers-geojson",
+  "to": "conformance-numbers-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":\"-007\"}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"n\":-7}}",
+  "model": {
+    "probe.n": "-7"
+  }
+}

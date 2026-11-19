@@ -1,0 +1,10 @@
+{
+  "name": "largest-offset-west",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"2023-02-28T00:01:00-23:59\"/>",
+  "expect": "{\"t\":1677628800000}",
+  "model": {
+    "time_ms": "1677628800000"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "line-ends-in-text-are-read-as-lf-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name>a\r\nb\rc\nd</name></e>",
+  "expect": "{\"name\":\"a\\nb\\nc\\nd\"}"
+}

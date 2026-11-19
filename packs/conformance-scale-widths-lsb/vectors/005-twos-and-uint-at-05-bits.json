@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-05-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0500fe1701",
+  "expect": "0500fe1701",
+  "model": {
+    "@kind": "w05",
+    "probe.x": "-16",
+    "probe.y": "-1",
+    "probe.z": "15",
+    "probe.w": "17"
+  }
+}

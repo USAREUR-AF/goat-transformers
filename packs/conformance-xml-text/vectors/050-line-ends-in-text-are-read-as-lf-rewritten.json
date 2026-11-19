@@ -1,0 +1,7 @@
+{
+  "name": "line-ends-in-text-are-read-as-lf-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>a\r\nb\rc\nd</name></e>",
+  "expect": "<e><name>a\nb\nc\nd</name></e>"
+}

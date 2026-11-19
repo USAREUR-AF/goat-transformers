@@ -1,0 +1,13 @@
+{
+  "name": "06-kinds-are-joined-and-requires-default-when-const-are-not-keys",
+  "from": "conformance-cap-kinds",
+  "to": "conformance-cap-a",
+  "grade": "full",
+  "carried": [
+    "uid",
+    "lat",
+    "lon",
+    "callsign"
+  ],
+  "dropped": []
+}

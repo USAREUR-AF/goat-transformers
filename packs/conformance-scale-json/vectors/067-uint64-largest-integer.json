@@ -1,0 +1,7 @@
+{
+  "name": "uint64-largest-integer",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"qty\":9223372036854775807}",
+  "expect": "09ffffffffffffff7f"
+}

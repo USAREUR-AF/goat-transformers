@@ -1,0 +1,7 @@
+{
+  "name": "float-rounds-to-infinity-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1.7976931348623159e308\"/>",
+  "expect_error": "transform-decode"
+}

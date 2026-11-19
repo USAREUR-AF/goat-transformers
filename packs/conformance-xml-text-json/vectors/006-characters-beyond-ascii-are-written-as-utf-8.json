@@ -1,0 +1,7 @@
+{
+  "name": "characters-beyond-ascii-are-written-as-utf-8",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"é€😀\",\"name\":\"é€😀\"}",
+  "expect": "<e id=\"é€😀\"><name>é€😀</name></e>"
+}

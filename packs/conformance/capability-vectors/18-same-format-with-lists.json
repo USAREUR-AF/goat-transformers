@@ -1,0 +1,18 @@
+{
+  "name": "18-same-format-with-lists",
+  "from": "conformance-cap-lists",
+  "to": "conformance-cap-lists",
+  "grade": "full",
+  "carried": [
+    "uid",
+    "probe.items[]",
+    "probe.items[].probe.label",
+    "probe.items[].probe.qty",
+    "probe.items[].probe.subs[]",
+    "probe.items[].probe.subs[].probe.tag",
+    "probe.items[].probe.subs[].probe.val",
+    "probe.nums[]",
+    "probe.nums[].probe.val"
+  ],
+  "dropped": []
+}

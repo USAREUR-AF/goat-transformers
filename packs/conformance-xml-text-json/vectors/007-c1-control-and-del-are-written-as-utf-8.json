@@ -1,0 +1,7 @@
+{
+  "name": "c1-control-and-del-are-written-as-utf-8",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"abc\"}",
+  "expect": "<e id=\"abc\"/>"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "thirty-fraction-digits-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:00:00.123456789012345678901234567890Z\"/>",
+  "expect": "<e t=\"2024-01-01T00:00:00.123Z\"/>"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "first-instant-of-year-0001",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"0001-01-01T00:00:00Z\"/>",
+  "expect": "{\"t\":-62135596800000}",
+  "model": {
+    "time_ms": "-62135596800000"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "float-text-1e23-whose-nearest-double-is-below-it",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "44b52d02c7e14af6",
+  "expect": "<e a=\"100000000000000000000000\"/>"
+}

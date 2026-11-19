@@ -1,0 +1,7 @@
+{
+  "name": "self-closing-element-has-no-text-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><name/></e>",
+  "expect": "<e id=\"1\"/>"
+}

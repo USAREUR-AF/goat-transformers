@@ -1,0 +1,10 @@
+{
+  "name": "393-format-name-compared-by-its-exact-bytes",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "packs": [
+    "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\n",
+    "format Probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\n"
+  ]
+}

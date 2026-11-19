@@ -1,0 +1,7 @@
+{
+  "name": "text-is-the-character-data-directly-in-the-element-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>a<b>zz</b>c<b/>d</name></e>",
+  "expect": "<e><name>acd</name></e>"
+}

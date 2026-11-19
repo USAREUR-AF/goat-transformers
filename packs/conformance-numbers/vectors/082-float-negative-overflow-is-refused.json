@@ -1,0 +1,7 @@
+{
+  "name": "float-negative-overflow-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"-1e400\"/>",
+  "expect_error": "transform-decode"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "before-1970-fraction-digits-after-the-third-are-dropped-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"1969-12-31T23:59:59.9999Z\"/>",
+  "expect": "<e t=\"1969-12-31T23:59:59.999Z\"/>"
+}

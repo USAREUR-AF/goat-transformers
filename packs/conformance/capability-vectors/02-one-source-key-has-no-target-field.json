@@ -1,0 +1,16 @@
+{
+  "name": "02-one-source-key-has-no-target-field",
+  "from": "conformance-cap-b",
+  "to": "conformance-cap-a",
+  "grade": "partial",
+  "carried": [
+    "lat",
+    "uid",
+    "lon",
+    "probe.n",
+    "callsign"
+  ],
+  "dropped": [
+    "hae"
+  ]
+}

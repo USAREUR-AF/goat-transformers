@@ -1,0 +1,8 @@
+{
+  "name": "elements-exactly-at-the-limit",
+  "from": "conformance-limit-xml",
+  "to": "conformance-limit-xml",
+  "input": "<e><tag>a</tag><tag>b</tag></e>",
+  "max_items": 2,
+  "expect": "<e><tag>a</tag><tag>b</tag></e>"
+}

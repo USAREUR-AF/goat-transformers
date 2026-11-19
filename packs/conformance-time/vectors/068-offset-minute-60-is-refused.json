@@ -1,0 +1,7 @@
+{
+  "name": "offset-minute-60-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:00:00+00:60\"/>",
+  "expect_error": "transform-decode"
+}

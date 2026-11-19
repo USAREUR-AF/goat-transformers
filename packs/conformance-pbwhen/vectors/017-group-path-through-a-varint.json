@@ -1,0 +1,7 @@
+{
+  "name": "group-path-through-a-varint",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753138024807",
+  "expect_error": "malformed-wire"
+}

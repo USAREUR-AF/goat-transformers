@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-negative-half-rounds-away-from-zero",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":-0.5}",
+  "expect": "01ffff"
+}

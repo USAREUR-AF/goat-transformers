@@ -1,0 +1,10 @@
+{
+  "name": "when-prefix-is-the-last-occurrence-and-it-does-not-parse",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a02753122020807220168",
+  "expect": "{\"id\":\"u1\",\"s1\":\"h\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

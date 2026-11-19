@@ -1,0 +1,7 @@
+{
+  "name": "unknown-named-entity-in-content-no-line-maps",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><other>&bogus;</other></e>",
+  "expect_error": "malformed-wire"
+}

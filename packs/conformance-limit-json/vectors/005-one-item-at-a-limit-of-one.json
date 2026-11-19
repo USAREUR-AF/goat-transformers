@@ -1,0 +1,8 @@
+{
+  "name": "one-item-at-a-limit-of-one",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"nums\":[7]}",
+  "max_items": 1,
+  "expect": "{\"nums\":[7]}"
+}

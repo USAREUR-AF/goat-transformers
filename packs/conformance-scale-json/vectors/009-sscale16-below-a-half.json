@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-below-a-half",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":0.4}",
+  "expect": "010000"
+}

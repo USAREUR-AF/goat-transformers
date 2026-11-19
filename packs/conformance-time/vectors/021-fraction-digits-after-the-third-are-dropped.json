@@ -1,0 +1,10 @@
+{
+  "name": "fraction-digits-after-the-third-are-dropped",
+  "from": "conformance-time",
+  "to": "conformance-time-json",
+  "input": "<e t=\"2024-01-01T00:00:00.9999Z\"/>",
+  "expect": "{\"t\":1704067200999}",
+  "model": {
+    "time_ms": "1704067200999"
+  }
+}

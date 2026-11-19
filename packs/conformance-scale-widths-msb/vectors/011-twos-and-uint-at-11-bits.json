@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-11-bits",
+  "from": "conformance-scale-widths-msb",
+  "to": "conformance-scale-widths-msb",
+  "input": "0b0400ffeffe0080",
+  "expect": "0b0400ffeffe0080",
+  "model": {
+    "@kind": "w11",
+    "probe.x": "-1024",
+    "probe.y": "-1",
+    "probe.z": "1023",
+    "probe.w": "1025"
+  }
+}

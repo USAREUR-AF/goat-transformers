@@ -1,0 +1,7 @@
+{
+  "name": "cdata-with-no-end",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name><![CDATA[a</name></e>",
+  "expect_error": "malformed-wire"
+}

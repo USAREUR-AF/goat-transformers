@@ -1,0 +1,7 @@
+{
+  "name": "json-int-one-above-the-largest-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":9223372036854775808}",
+  "expect_error": "transform-decode"
+}

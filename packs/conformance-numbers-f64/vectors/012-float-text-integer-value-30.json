@@ -1,0 +1,7 @@
+{
+  "name": "float-text-integer-value-30",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "403e000000000000",
+  "expect": "<e a=\"30\"/>"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "empty-string-text-writes-an-empty-element",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"1\",\"name\":\"\"}",
+  "expect": "<e id=\"1\"><name/></e>"
+}

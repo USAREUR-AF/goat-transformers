@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-09-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0900e0ff7f0101",
+  "expect": "0900e0ff7f0101",
+  "model": {
+    "@kind": "w09",
+    "probe.x": "-256",
+    "probe.y": "-1",
+    "probe.z": "255",
+    "probe.w": "257"
+  }
+}

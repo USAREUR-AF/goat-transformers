@@ -1,0 +1,8 @@
+{
+  "name": "counted-items-one-over-the-limit",
+  "from": "conformance-limit-bits",
+  "to": "conformance-limit-bits",
+  "input": "0504000000",
+  "max_items": 3,
+  "expect_error": "malformed-wire"
+}

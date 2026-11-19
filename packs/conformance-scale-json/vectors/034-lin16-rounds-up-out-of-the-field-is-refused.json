@@ -1,0 +1,7 @@
+{
+  "name": "lin16-rounds-up-out-of-the-field-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"hae\":179.9973}",
+  "expect_error": "transform-encode"
+}

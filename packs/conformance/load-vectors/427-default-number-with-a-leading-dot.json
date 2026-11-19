@@ -1,0 +1,8 @@
+{
+  "name": "427-default-number-with-a-leading-dot",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey time_ms int ms\n"
+  ],
+  "pack": "format probe\nversion 0.11.0\ndistribution public\nsource \"probe\"\nwire xml\nroot item\nfield lat @lat float\ndefault lat .5\n",
+  "expect_error": "key-type-mismatch"
+}

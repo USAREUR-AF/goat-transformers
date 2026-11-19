@@ -1,0 +1,7 @@
+{
+  "name": "designator-and-offset-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:00:00Z+01:00\"/>",
+  "expect_error": "transform-decode"
+}

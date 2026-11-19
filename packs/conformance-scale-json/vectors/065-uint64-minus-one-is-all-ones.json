@@ -1,0 +1,7 @@
+{
+  "name": "uint64-minus-one-is-all-ones",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"qty\":-1}",
+  "expect": "09ffffffffffffffff"
+}

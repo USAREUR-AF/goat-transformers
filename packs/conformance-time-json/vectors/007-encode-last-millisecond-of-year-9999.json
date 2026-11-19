@@ -1,0 +1,7 @@
+{
+  "name": "encode-last-millisecond-of-year-9999",
+  "from": "conformance-time-json",
+  "to": "conformance-time",
+  "input": "{\"t\":253402300799999}",
+  "expect": "<e t=\"9999-12-31T23:59:59.999Z\"/>"
+}

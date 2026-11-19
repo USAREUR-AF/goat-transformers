@@ -1,0 +1,14 @@
+{
+  "name": "01-every-source-key-has-a-target-field",
+  "from": "conformance-cap-a",
+  "to": "conformance-cap-b",
+  "grade": "full",
+  "carried": [
+    "uid",
+    "callsign",
+    "lat",
+    "lon",
+    "probe.n"
+  ],
+  "dropped": []
+}

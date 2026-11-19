@@ -1,0 +1,7 @@
+{
+  "name": "int-in-element-text-with-line-ends-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e><v>\n42\n</v></e>",
+  "expect_error": "transform-decode"
+}

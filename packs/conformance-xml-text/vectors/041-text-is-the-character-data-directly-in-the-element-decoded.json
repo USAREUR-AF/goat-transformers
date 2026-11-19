@@ -1,0 +1,7 @@
+{
+  "name": "text-is-the-character-data-directly-in-the-element-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e><name>a<b>zz</b>c<b/>d</name></e>",
+  "expect": "{\"name\":\"acd\"}"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "duplicate-attribute-no-line-maps",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"a\" z=\"1\" z=\"1\"/>",
+  "expect_error": "malformed-wire"
+}

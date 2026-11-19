@@ -1,0 +1,7 @@
+{
+  "name": "int-one-above-the-largest-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"9223372036854775808\"/>",
+  "expect_error": "transform-decode"
+}

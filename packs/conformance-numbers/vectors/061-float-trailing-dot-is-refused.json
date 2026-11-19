@@ -1,0 +1,7 @@
+{
+  "name": "float-trailing-dot-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"5.\"/>",
+  "expect_error": "transform-decode"
+}

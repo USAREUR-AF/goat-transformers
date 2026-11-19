@@ -1,0 +1,7 @@
+{
+  "name": "float-just-above-the-largest-double-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e a=\"1e309\"/>",
+  "expect_error": "transform-decode"
+}

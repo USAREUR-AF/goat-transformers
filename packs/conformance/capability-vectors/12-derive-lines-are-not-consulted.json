@@ -1,0 +1,11 @@
+{
+  "name": "12-derive-lines-are-not-consulted",
+  "from": "conformance-cap-src",
+  "to": "conformance-cap-derived",
+  "grade": "none",
+  "carried": [],
+  "dropped": [
+    "probe.a",
+    "probe.n"
+  ]
+}

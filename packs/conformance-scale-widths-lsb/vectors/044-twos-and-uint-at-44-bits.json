@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-44-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "2c000000000000ffffffffffffffffffffff020000000010",
+  "expect": "2c000000000000ffffffffffffffffffffff020000000010",
+  "model": {
+    "@kind": "w44",
+    "probe.x": "-8796093022208",
+    "probe.y": "-1",
+    "probe.z": "8796093022207",
+    "probe.w": "8796093022209"
+  }
+}

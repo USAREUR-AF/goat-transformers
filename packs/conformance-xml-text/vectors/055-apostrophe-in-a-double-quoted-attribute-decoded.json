@@ -1,0 +1,7 @@
+{
+  "name": "apostrophe-in-a-double-quoted-attribute-decoded",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text-json",
+  "input": "<e id=\"a'b\"/>",
+  "expect": "{\"id\":\"a'b\"}"
+}

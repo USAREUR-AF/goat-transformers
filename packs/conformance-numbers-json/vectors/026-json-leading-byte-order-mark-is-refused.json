@@ -1,0 +1,7 @@
+{
+  "name": "json-leading-byte-order-mark-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "﻿{\"n\":7}",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "empty-lists-hold-no-item",
+  "from": "conformance-limit-json",
+  "to": "conformance-limit-json",
+  "input": "{\"items\":[],\"nums\":[]}",
+  "max_items": 1,
+  "expect": "{\"items\":[],\"nums\":[]}"
+}

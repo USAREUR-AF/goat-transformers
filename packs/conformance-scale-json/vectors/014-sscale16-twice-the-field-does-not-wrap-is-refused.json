@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-twice-the-field-does-not-wrap-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":65536}",
+  "expect_error": "transform-encode"
+}

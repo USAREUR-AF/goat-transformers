@@ -1,0 +1,7 @@
+{
+  "name": "text-whitespace-is-kept-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e><name>  a  b\t\n </name></e>",
+  "expect": "<e><name>  a  b\t\n </name></e>"
+}

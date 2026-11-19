@@ -1,0 +1,7 @@
+{
+  "name": "int-exponent-is-refused",
+  "from": "conformance-numbers",
+  "to": "conformance-numbers",
+  "input": "<e n=\"7e0\"/>",
+  "expect_error": "transform-decode"
+}

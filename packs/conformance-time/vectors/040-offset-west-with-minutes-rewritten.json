@@ -1,0 +1,7 @@
+{
+  "name": "offset-west-with-minutes-rewritten",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2024-01-01T00:00:00.250-05:30\"/>",
+  "expect": "<e t=\"2024-01-01T05:30:00.250Z\"/>"
+}

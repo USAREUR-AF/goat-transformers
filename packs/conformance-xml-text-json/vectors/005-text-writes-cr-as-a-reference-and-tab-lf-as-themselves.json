@@ -1,0 +1,7 @@
+{
+  "name": "text-writes-cr-as-a-reference-and-tab-lf-as-themselves",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"name\":\"a\\tb\\nc\\rd\"}",
+  "expect": "<e><name>a\tb\nc&#13;d</name></e>"
+}

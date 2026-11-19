@@ -1,7 +1,9 @@
 # Engine specification
 
-Status: Written. Version 0.1. This is what every language's engine implements,
-from this document and the vectors, never from another engine's source.
+Status: Written. Version 0.11. This is what every language's engine implements,
+from this document and the vectors, never from another engine's source. The
+document grows by one section per version; a later section that replaces an
+earlier sentence says so, and the later section holds.
 
 ## What an engine does
 
@@ -94,8 +96,14 @@ detail, and the vector for that case states the expected behaviour.
 A vector is defined in `spec/vector-format.md`. An engine passes a pack when it
 reproduces every vector: the decoded model value, the re-encoded bytes (modulo
 documented canonicalisation), and each `convert` result. An engine release
-requires every loaded pack's vectors to pass, and the engines are run against
-each other on generated inputs.
+requires every loaded pack's vectors to pass.
+
+What compares the engines today is the vectors: every engine runs every vector
+and must give the stated bytes, so two engines that pass agree on those inputs
+(built: the `conformance` workflow runs each engine's vector runner). Some
+engines also run their own malformed-input tests, each against itself. A
+harness that feeds generated inputs to all engines and compares their outputs
+with one another is Designed, not built.
 
 ## Canonicalisation
 
@@ -1826,3 +1834,545 @@ string; a line terminator in `input` is written `\r\n` or `\n`.
     is already absent on this wire, and the raw value of a sentinel, column
     padding and the removal of trailing `optional` fields with it are not
     stated yet.
+
+---
+
+# Version 0.11: strict rulings
+
+Status: Written. Version 0.11 adds no directive to the pack language. It rules
+on the places where the earlier sections were silent, so that seven engines
+written apart give the same bytes and the same named error. The direction of
+every ruling is strict: a value that is not exactly what a rule accepts fails
+with a named error. Nothing is trimmed, clamped, wrapped or skipped silently.
+Where a ruling replaces an earlier sentence, it says so. Each ruling names the
+packs or vectors that pin it; the generators
+`tools/gen/conformance-rulings011-vectors.py` (rulings 1 to 5) and
+`tools/gen/conformance-rulings011b-vectors.py` (rulings 6, 7 and 9) derive every
+expected value from the rule text and import no engine.
+
+Version 0.9 (absent-value sentinels) and Version 0.10 (the `text` wire) stand
+before this section. Where a ruling below names wires, it names them; a ruling
+that does not name the `text` wire does not change it, and the readings of
+Version 0.10 hold there. Each place where a ruling meets the `absent` option of
+0.9 or the `text` wire of 0.10 is stated in the ruling, and the vectors of 0.9
+and 0.10 keep their expected bytes and errors.
+
+## Rulings for 0.11
+
+### Ruling 1: XML text
+
+Pinned by `conformance-xml-text`, `conformance-xml-text-json` and, for a
+`when` and a `const` of `""` (1m; `""` is the token of ruling 11 of 0.9),
+`conformance-xml-empty`.
+
+Output:
+
+- **1a. Attribute values** are written between double quotes. Inside one,
+  `&` is `&amp;`, `<` is `&lt;`, `>` is `&gt;`, `"` is `&quot;`, a tab is
+  `&#9;`, a line feed is `&#10;` and a carriage return is `&#13;`.
+- **1b. Text content** writes `&` as `&amp;`, `<` as `&lt;`, `>` as `&gt;`
+  and a carriage return as `&#13;`. A tab, a line feed, `"` and `'` are
+  written as themselves.
+- **1c. Nothing else is escaped.** The apostrophe is never escaped. Every
+  other character is written as UTF-8, never as a reference. An engine writes
+  no CDATA section, no XML declaration and no byte order mark.
+- **1d. A character XML 1.0 cannot hold** in a string that is to be written
+  (below U+0020 other than tab, line feed and carriage return; U+FFFE;
+  U+FFFF) is `transform-encode`.
+- **1e. The empty string** as text content writes the element with no content
+  (`<name/>`); as an attribute value it writes `name=""`.
+- **1f. Residue** attribute values are held decoded and are written by 1a.
+  A sentinel of the `absent` option (0.9) that is written on `xml` is written
+  by 1a and 1b as well, and 1d holds for it: `absent "a&b"` on element text
+  writes `a&amp;b`.
+
+Input:
+
+- **1g. Byte order mark.** One U+FEFF at the very start of the input is
+  skipped. Anywhere else it is a character like any other, so a second one,
+  or one after the root element, is `malformed-wire` by the rules for content
+  outside the root.
+- **1h. Line ends.** Before anything else is read, each carriage return
+  followed by a line feed, and each carriage return that stands alone, is
+  read as one line feed (XML 1.0, section 2.11). A carriage return reaches a
+  value only as the reference `&#13;`.
+- **1i. Attribute values** may stand between double quotes or between
+  apostrophes. A tab or line feed written literally inside one is read as a
+  space (XML 1.0, section 3.3.3); one written as a reference is kept. A `<`
+  inside an attribute value is `malformed-wire`. An attribute with no
+  characters is the empty string, present.
+- **1j. References.** The five predefined entities (`&amp;`, `&lt;`, `&gt;`,
+  `&quot;`, `&apos;`, in lower case) and numeric character references (ruling
+  40 of 0.8) are decoded in attribute values and in text. The text a
+  reference gives is not read again. Every other `&` is `malformed-wire`: an
+  unknown name, a name with no `;`, a `&` with nothing after it. This holds
+  anywhere in the document, whether or not a line maps the place.
+- **1k. CDATA.** A CDATA section inside the root element is character data
+  exactly as written; references inside it are not decoded. One with no end,
+  or one outside the root element, is `malformed-wire`.
+- **1l. Comments and processing instructions** inside the root element are
+  skipped, and their content is not read. The text on both sides of one is
+  one text. One with no end is `malformed-wire`.
+- **1m. `#text`** of an element is all character data directly inside it,
+  text and CDATA sections joined in document order, without the character
+  data of its child elements. It is kept exactly: no trimming, no collapsing
+  of whitespace, and text that is only whitespace is text. An element with no
+  character data has no text: `#text` is absent, not the empty string. `when
+  <locator> present` is unchanged (the element exists). A `when` with a
+  value on such a text does not hold, the empty text `""` included, and a
+  `const` of `""` on an element's `#text` writes the element with no content
+  (`<e/>`, as 1e). For the `absent` option (0.9) such an element's text is a
+  wire place that is not present, so no sentinel is compared with it. This
+  replaces the reading of Version 0.9 for element text: `absent ""` can no
+  longer match the text of an element, and the key is absent either way. It
+  still matches an attribute with no characters (1i).
+- **1n. No transform trims.** `string` hands the text on as it is; `int`,
+  `float` and `iso8601_ms` refuse text with whitespace before or after the
+  value (rulings 2 and 3). The field option `trim` (0.6) is unchanged: it is
+  valid on `bits` with `ascii` only. Ruling 14 of 0.9 (a sentinel is compared
+  with the text before any trimming) holds, and since no engine trims XML text
+  its clause about an engine that trims has no case left.
+- **1o. An attribute name twice on one element** is `malformed-wire`, on any
+  element, mapped or not.
+
+### Ruling 2: numbers in text
+
+Pinned by `conformance-numbers`, `conformance-numbers-json`,
+`conformance-numbers-geojson` and `conformance-numbers-f64`, and by load
+vectors 425 to 428 and 436 to 441. `conformance-numbers-absent` pins a
+sentinel written with leading zeros (2c).
+
+- **2a. Integer text** is an optional `-` and then one or more of the ASCII
+  digits `0` to `9`, and nothing else: no `+`, no whitespace, no fraction, no
+  exponent, no digit separator, no digit of another script. Leading zeros are
+  allowed and `-0` is 0. The value must lie within a signed 64-bit integer.
+- **2b. Number text** is an optional `-`, one or more ASCII digits, then
+  optionally `.` and one or more digits, then optionally `e` or `E`, an
+  optional `+` or `-`, and one or more digits; and nothing else. So `+1`,
+  `.5`, `5.`, `0x10`, `Infinity`, `NaN` and text with whitespace are refused.
+  The value is the double nearest to the exact decimal value, a tie going to
+  the double whose last bit is 0. A text whose nearest double is infinite
+  (`1e400`, `1.7976931348623159e308`) is refused. A text nearer to zero than
+  to the smallest subnormal reads as 0. A text that begins with `-` and reads
+  as zero (`-0`, `-0.0`, `-1e-400`) is negative zero, -0.0: a `bits` `f64`
+  field written from it holds `8000000000000000`.
+- **2c. Where the grammars apply.** The list below is complete: a number in a
+  file or a call that it does not name is read by the rule of the version
+  that states it, or by the unsigned grammar at the end of this ruling.
+  The `int` and `float` transforms on the `xml` wire, and on the `geojson`
+  wire when the member is a JSON string: text that 2a or 2b refuses is
+  `transform-decode`. The same two grammars read every other number this
+  specification says is read as a key's type or as a parameter: a `default`
+  value and a context value (`key-type-mismatch` when refused), a vector's
+  `model` value (below), the entries of a value table (an entry is an integer
+  when 2a accepts it and a number when 2b does), and these parameters
+  (`bad-directive` when refused): the `<range>` of `linscale`, a factor or
+  offset of `uscale` and `sscale` written as number text, the parameter of
+  the `scale` and `offset` derive functions (number text, or `<num>/<den>`
+  for `scale` as ruling 1 of 0.5 states), and the `<n>` of `plus <n>` on a
+  `length` line, which is integer text (2a).
+
+  **An unsigned decimal integer** is one or more ASCII digits `0` to `9` and
+  nothing else: leading zeros are allowed (`007` is 7); a sign, whitespace, a
+  fraction and an exponent are not. Its value must lie below the width it is
+  written for. It is the form of a sentinel of the `absent` option on `bits`
+  and on the integer forms of `protobuf` (0.9), of a `when` and a `const`
+  value on `bits` and on `protobuf`, and of every other integer in a pack
+  that the list above does not name: bit lengths and positions, `word_bytes`,
+  `count`, `item`, `pad`, `align`, `presence` sizes, `length` sizes, the
+  `<maxpos>` of `linscale`, the `<num>` and `<den>` of a `uscale` or `sscale`
+  factor, and the numeric parameters of `int:<w>`, `dec`, `dm`, `hms` and
+  `hms_dmy`.
+  Anything else in its place is `bad-directive`: `absent +7`, `absent 0256`
+  on 8 bits, `when 0:0:8 +1` and `dec:+2` are refused, and `word_bytes 01`
+  loads.
+
+  **A vector's `model` value** is read by 2a or 2b only where the member is
+  named by a model key or an item path `<list>[<i>].<key>`: it is read as
+  that key's declared type. A `"<list>.#"` value is an unsigned decimal
+  integer or the text `absent`. `"@kind"`, `"@complete"`, `"@absent"` and
+  `"<list>[<i>].@kind"` are not numbers. A `model` value its grammar refuses
+  makes the vector invalid, and an invalid vector fails the run.
+
+  Two kinds of number text keep the grammar of the version that states them.
+  On the `text` wire the `int`, `float` and `dec` transforms read the grammar
+  of Version 0.10, "Transforms for `text`" (an optional `+` or `-`; for `float`
+  and `dec`, `5.` and `.5` are numbers and an exponent is refused), after the
+  spaces that Version 0.10 removes from a column; 2a and 2b do not apply to
+  them. A sentinel of the `absent` option is read as Version 0.9 states it:
+  an unsigned decimal integer (above) on `bits` and on the integer forms of
+  `protobuf`, and JSON number text on `json` and `geojson` (ruling 9 of 0.9).
+  On `text` the `absent` option is `bad-directive` (ruling 16 of 0.10).
+- **2d. JSON numbers** (the `json` wire, and number members on `geojson`)
+  follow the JSON grammar (ruling 39 of 0.8). Through `float` the value is the
+  nearest double as in 2b; one whose nearest double is infinite is
+  `transform-decode`. Through `int` the exact value of the number text must be
+  an integer within a signed 64-bit integer, else `transform-decode`: `1.0`,
+  `1e3` and `9.223372036854775807e18` are integers, and an integer above 2^53
+  keeps every digit, with or without a fraction of zero. This states ruling 12
+  of 0.5 exactly. On the `json` wire a number held as residue (a member no
+  line maps) whose nearest double is infinite has no canonical text and is
+  `malformed-wire`; this applies to residue members only.
+
+  The `absent` option (0.9) compares a sentinel with a number's canonical
+  text, which ruling 19 of 0.9 forms through a double; that comparison is
+  unchanged, and the value `int` gives when no sentinel matches is the exact
+  integer above. A mapped number whose nearest double is infinite has no
+  canonical text, so it matches no sentinel (ruling 18 of 0.9 refuses such a
+  sentinel at load), and the field fails as this ruling states for its
+  transform.
+- **2e. A byte order mark** at the start of a `json` or `geojson` input is
+  `malformed-wire`.
+- **2f. Float text written.** The digits are the shortest decimal digit
+  string that 2b reads back as the same double; of several of that length,
+  the one nearest to the double's exact value. They are laid out with no
+  exponent, whatever the magnitude: the integer digits, then, only when the
+  fraction is not zero, `.` and the fraction digits. One `0` stands before a
+  `.` that would otherwise come first; there is no other leading zero, no
+  trailing zero after the `.`, and no `+`. Negative zero is `0`. So 1e21 is
+  `1` and 21 zeros, 1e-7 is `0.0000001`, and the smallest subnormal is `0.`,
+  323 zeros and `5`. This is ruling 3 of 0.1.1, stated exactly; it holds for
+  XML text, for JSON numbers, and for the `float` transform on the `text` wire
+  (`int:<w>`, `dec`, `dm`, `hms` and `hms_dmy` write as Version 0.10 states).
+- **2g. Integer text written** is the decimal digits, with `-` before a
+  negative value, no leading zero and no `+`. On `text`, `int:<w>` adds the
+  zeros of Version 0.10.
+
+### Ruling 3: `iso8601_ms`
+
+Pinned by `conformance-time` and `conformance-time-json`. This ruling states
+the grammar that ruling 8 of 0.1.1 and its correction in 0.6 left open. It
+holds on every wire `iso8601_ms` is valid on, the `text` wire included (ruling
+13 of 0.10). A sentinel of the `absent` option is compared before the
+transform (0.9) and is not read by this grammar.
+
+- **3a. Grammar.** `YYYY-MM-DD`, then `T` or `t`, then `hh:mm:ss`, then
+  optionally `.` and one or more digits, then `Z`, `z`, or an offset
+  `+hh:mm` or `-hh:mm`. Each field has exactly the digits shown, ASCII digits
+  only, and nothing stands before or after. A date alone, a time without
+  seconds, a space in place of `T`, `,` in place of `.`, a `.` with no digit,
+  an offset without its colon or its minutes, no designator, a year of other
+  than four digits or with a sign, the basic format, week dates and ordinal
+  dates are refused.
+- **3b. Ranges.** Year 0001 to 9999; month 01 to 12; day 01 to the last day
+  of that month in the proleptic Gregorian calendar (a year is a leap year
+  when it is divisible by 4 and not by 100, or divisible by 400); hour 00 to
+  23; minute 00 to 59; second 00 to 59, so a leap second (`:60`) is refused
+  and `24:00:00` is refused; offset hour 00 to 23 and offset minute 00 to 59.
+  `-00:00` is UTC.
+- **3c. Fraction.** Any number of digits. The first three, with zeros added
+  on the right when there are fewer, are the milliseconds; the digits after
+  the third are dropped, not rounded, in every year. So
+  `1969-12-31T23:59:59.9999Z` is -1.
+- **3d. The value** is the count of milliseconds from `1970-01-01T00:00:00Z`
+  to the written time less its offset, every day 86,400,000 ms long, negative
+  before 1970. The instant must lie from `0001-01-01T00:00:00.000Z` to
+  `9999-12-31T23:59:59.999Z`: an offset that moves it outside is refused.
+- **3e. Every refusal on decode is `transform-decode`.**
+- **3f. Encode** writes `YYYY-MM-DDTHH:MM:SS.fffZ`: 24 characters, four year
+  digits, three fraction digits, upper-case `T` and `Z`. A value below
+  -62135596800000 or above 253402300799999 is `transform-encode`.
+
+### Ruling 4: scaled and integer transforms of the `bits` wire
+
+Pinned by `conformance-scale`, `conformance-scale-json`,
+`conformance-scale-widths-lsb`, `conformance-scale-widths-msb` and load
+vectors 371 to 375, 404 to 424 and 448 to 449.
+
+- **4a. Rounding.** `round(q)` is the integer nearest to the double `q`; when
+  `q` lies exactly halfway between two integers it is the one further from
+  zero, at both signs: 0.5 gives 1, -0.5 gives -1, 2.5 gives 3, -2.5 gives -3.
+  The result is exact for every `q`: the largest double below 0.5 gives 0,
+  and an odd integer above 2^52 gives itself. An engine that adds 0.5 and
+  truncates does not conform. This is also the `round` of `dec`, `dm` and
+  `hms` on the `text` wire, which Version 0.10 (rule 2 of its transforms)
+  defines as the rounding of `linscale`.
+- **4b. A value that does not fit is `transform-encode`.** The rounded value
+  is compared with the field's range as an integer of any size, before it is
+  narrowed to any machine type. An engine never writes the low bits of a
+  value that does not fit, and never writes the nearest value that does. A
+  quotient `q` that is not finite (an infinity or NaN, as `1e300` through
+  `sscale:1e-10` gives) is `transform-encode`.
+
+  | Transform | Range of the integer written |
+  |---|---|
+  | `uint`, `len` below 64 | 0 to 2^len - 1 |
+  | `uint`, `len` 64 | every model integer; the bits are its two's-complement pattern (ruling 2 of 0.5) |
+  | `twos` | -2^(len-1) to 2^(len-1) - 1 |
+  | `uscale` | 0 to 2^len - 1, after rounding |
+  | `sscale`, `linscale` | -2^(len-1) to 2^(len-1) - 1, after rounding |
+
+  This replaces "low `len` bits" in the tables of 0.2 and 0.5, and the
+  sentence of 0.5 that `linscale` keeps its 0.2 behaviour. A value that rounds
+  to an integer inside the range fits (-0.4 through `uscale:1` writes 0).
+  A sentinel of the `absent` option (0.9) is not a value through the
+  transform: it is written as the raw integer that 0.9 checks at load, and
+  this table does not apply to it.
+- **4c. Decode.** `uint` reads the bits as an unsigned integer. `twos`
+  extends the sign from the field's highest bit at every `len` from 1 to 64:
+  a 1-bit `twos` field is 0 or -1. For the scaled transforms the integer
+  becomes the nearest double (a tie to the double whose last bit is 0) before
+  the arithmetic of ruling 1 of 0.5. `linscale` computes `v / maxpos * range`
+  on decode and `x / range * maxpos` on encode, in doubles, in that order.
+- **4d. Parameters are checked at load;** each failure is `bad-directive`.
+  `linscale:<maxpos>:<range>` takes exactly two: `<maxpos>` is an unsigned
+  decimal integer (2c) and at least 1, `<range>` is number text (2b) and not
+  zero. `uscale` and `sscale` take a factor and an optional offset: the
+  factor is number text and not zero, or `<num>/<den>` of two unsigned
+  decimal integers (2c), neither zero; the offset is number text. "Zero"
+  means the double that 2b reads: `uscale:1e-400` and `linscale:32768:1e-400`
+  are `bad-directive`. A `len` above 64 on `uint`, `twos`, `uscale`,
+  `sscale` or `linscale` is `bad-directive`, with or without the `absent`
+  option (0.9 refuses `absent` on any `bits` field longer than 64 bits). That
+  `bad-directive` is raised by the check after the file of ruling 25 of 0.5
+  (a length a transform does not allow), not as the line is read (ruling 5b).
+  On such a field the values of its `absent` option are not checked as the
+  line is read: the after-file length check raises the `bad-directive`, so
+  `field time_ms 0:0:65 uint absent 7` followed by `bogus` is
+  `unknown-directive`, while `absent +7` on an 8-bit field followed by
+  `bogus` is `bad-directive`.
+- **4e. Placement.** A field of any `len` from 1 to 64 may start at any bit
+  and cross byte boundaries and the multiples of 64 bits of the message, in
+  both bit orders and with any `word_bytes`.
+
+### Ruling 5: load and call failures that had no kind
+
+Pinned by load vectors 339 to 424, 429 to 447 and 450 to 454, and by the vectors
+`packs/conformance/vectors/unknown-*-format*.json`.
+
+Every load failure and every call failure has a kind from this table, and its
+message begins with the kind and a colon. The table lists every kind of the
+specification up to and including 0.11; the kinds of versions 0.4 to 0.10 keep
+their meaning. Version 0.9 and Version 0.10 add no kind: every load error they
+name is `bad-directive` or a kind of 0.4 to 0.8.
+
+| Kind | Raised by | When |
+|---|---|---|
+| `unterminated-quote` | load of a pack or a module | a value that begins with `"` has no closing `"` on its line; a `#` after the opening quote is part of the value |
+| `unknown-directive` | load of a pack or a module | the first word of a line is not a directive of this file type. A pack's directives are `format`, `version`, `distribution`, `source`, `uses`, `wire`, `root`, `field`, `when`, `const`, `kind`, `requires`, `default`, `map`, `typemap`, `group`, `end`, `word_bytes`, `bit_order`, `layout`, `also`, `pad`, `align`, `presence`, `if`, `opt`, `chain`, `fx`, `length`, `delimiter`, `start` and `checksum`; a module's are `module`, `version`, `distribution`, `source`, `uses`, `key`, `list` and `derive`. So `key` or `derive` in a pack and `wire` in a module are `unknown-directive` |
+| `bad-directive` | load of a pack or a module | a directive this specification has, used wrongly: the causes named in 0.5 to 0.10 (among them the load errors of the `absent` option, 0.9, and every `bad-directive` of the `text` wire, 0.10, its locator syntax included), and from 0.11: the wrong number of arguments; a `distribution` other than `public` or `controlled`; a key type other than `string`, `float` or `int`; a key name holding `.`; a second `format`, `version`, `wire`, `distribution` or `module` line; a transform on a wire it is not valid for; transform parameters 4d refuses; a fixed-layout `bits` pack with no `word_bytes` line |
+| `unknown-wire` | load of a pack | the `wire` value is not exactly `xml`, `geojson`, `json`, `bits`, `protobuf` or `text` |
+| `unknown-transform` | load of a pack | the transform's name, the text before its first `:`, is not a transform of this specification |
+| `bad-locator` | load of a pack | the locator does not have the form its line takes on the pack's wire (below) |
+| `missing-format`, `missing-version`, `missing-wire` | load of a pack | the pack has no such line; `missing-wire` also when a line that needs the wire stands before the `wire` line |
+| `missing-module`, `missing-version` | load of a module | the module has no such line |
+| `missing-root` | load of a pack; decode | load: an `xml` pack with no `root` for the pack or for one of its kinds. Decode: the document's root element has another name, in a pack without kinds |
+| `missing-distribution`, `missing-source`, `unknown-module`, `module-not-used`, `undeclared-key`, `key-type-mismatch`, `distribution-violation`, `distribution-refused`, `duplicate-module`, `duplicate-key`, `duplicate-kind` | load | as in 0.4 to 0.10 |
+| `duplicate-format` | load of a pack | a pack with the same `format` name, compared byte for byte, is already loaded. The second pack is refused and the first stays loaded |
+| `unknown-format` | `convert`, `decode`, `encode`, `model_keys`, the capability report | a format name that is not loaded. `convert` checks `from`, then `to`, before it reads the input |
+| `undeclared-key`, `key-type-mismatch` | `convert` with context | as in 0.6 |
+| `no-kind`, `malformed-wire`, `transform-decode`, `transform-encode` | `decode`, `encode`, `convert` | as in 0.1.1 to 0.10 and rulings 1 to 4, 7 and 9 |
+
+- **5a. Locator forms.** `bad-locator` is raised for:
+  - `xml`: an empty step (`a//b`, a leading or trailing `/`); an empty
+    attribute name (`@`); a step after `@name` or `#text`; on a `field`,
+    `when` or `const` line, a locator that does not end in `@name` or
+    `#text`.
+  - `json`: an empty member name (`a..b`, a leading or trailing `.`), other
+    than the locator `.` itself.
+  - `geojson`: `geometry.` followed by anything but `lon`, `lat` or `alt`; an
+    empty member name.
+  - `protobuf`: a step that is not digits only, or a field number of 0 or
+    above 536870911 (2^29 - 1); an empty step.
+  - `bits`, fixed layout: on a `field`, `when` or `const` line, text with a
+    `:` that is not three digit-only parts joined by `:` (two parts, four
+    parts, a letter, a sign); a bit length of 0.
+  - `bits`, sequential layout: text with no `:` that is not digits only; a
+    bit length of 0.
+
+  The cases earlier versions name stay `bad-directive`: `.` outside a group,
+  a `<word>:<pos>:<len>` locator in a sequential pack, a bit length as the
+  locator in a fixed-layout pack. On the `text` wire `bad-locator` is not
+  raised: a locator that is not one of the three forms of Version 0.10
+  (ruling 14 of 0.10), a pair whose two indexes are equal (Version 0.10,
+  Locators), and an index of a group's body at or beyond its item length
+  (Version 0.10, Groups) stay `bad-directive`.
+- **5b. Order.** As a file is read, each line is checked in this order, and
+  the first failure is the error of the load:
+  1. `unterminated-quote`;
+  2. `unknown-directive`;
+  3. the number of arguments (`bad-directive`; 5e);
+  4. `missing-wire` (below);
+  5. a repeated header line (`format`, `version`, `wire`, `distribution`,
+     `module`: `bad-directive`);
+  6. the `wire` value (`unknown-wire`) and the `distribution` value
+     (`bad-directive`);
+  7. the transform's name (`unknown-transform`) and its parameters
+     (`bad-directive`: 4d, and the parameters of the `text` transforms);
+  8. the locator form (`bad-locator`, 5a; on `text`, `bad-directive`);
+  9. the field options (`bad-directive`);
+  10. the values of an `absent` option (`bad-directive`), except on a
+      field whose bit length is above 64 (4d).
+
+  Every other cause is checked after the file is read, among them a group's
+  options, the names of a presence, a `when` value that does not fit its
+  bits, and a bit length against its transform (ruling 25 of 0.5). So
+  `field time_ms 0:0:65 uint` followed by a line `bogus` is
+  `unknown-directive`, and so is a `group` line with an option its wire does
+  not have followed by `bogus`.
+
+  The `wire` line stands before every `root`, `field`, `when`, `const`,
+  `group`, `end`, `word_bytes`, `bit_order`, `layout`, `also`, `pad`, `align`,
+  `presence`, `if`, `opt`, `chain`, `fx` and `length` line; such a line before
+  it is `missing-wire`, `layout fixed` included. This check is reported before
+  a later line's error, before `missing-format`, and before an unknown
+  transform on the same line. `kind`, `requires`, `default`, `map`,
+  `typemap`, `uses`, `format`, `version`, `distribution` and `source` may
+  stand before the `wire` line. `layout sequential` stands before every line
+  of that list; such a line before it is `bad-directive`.
+  `layout fixed`, the default, may stand after such a line (load vector 206).
+  The `text` directives `delimiter`, `start` and `checksum` are not in that
+  list: they may stand before the `wire` line, and whether their wire is
+  `text` is checked after the file is read (ruling 10 of 0.10, "wherever the
+  `wire` line stands").
+
+  After the file is read: `missing-format`, `missing-version`,
+  `missing-wire`; then the checks that need the whole file (ruling 25 of 0.5;
+  the load-time `missing-root`; the missing `word_bytes`; the checks that need
+  the wire, ruling 10 of 0.10, among them a transform on a wire it is not
+  valid for and a directive of another wire; and the checks of ruling 2 of
+  0.10); then the order of 0.4 from `missing-distribution` on; and last
+  `duplicate-format`, so a second pack with a taken name that fails a check
+  of its own reports that check. For a module: the line checks 1 to 3, 5 and
+  6 (`distribution`); then `missing-module`, `missing-version`; then the
+  order of ruling 29 of 0.8.
+- **5c. This pins ruling 3 of 0.4,** which left the kind of a malformed value
+  open: each case there is `bad-directive`.
+- **5d. Load vectors with several packs.** A load vector may carry `packs`,
+  an array of pack texts loaded in order, in place of `pack`
+  (`spec/vector-format.md`).
+- **5e. Argument counts.** In a pack, `format`, `version`, `distribution`,
+  `source`, `uses`, `wire`, `root`, `kind`, `word_bytes`, `bit_order`,
+  `layout`, `pad`, `align`, `delimiter`, `start` and `checksum` take exactly
+  one argument. In a module, `module`, `version`, `distribution`, `source` and
+  `uses` take exactly one. A quoted value is one argument, so `source "a b"`
+  loads and `source a b` is `bad-directive`.
+
+### Ruling 6: the capability report
+
+Pinned by `packs/conformance/capability-vectors/*.json` over the packs
+`conformance-cap-*`.
+
+`capability(from, to)` is computed from the two packs alone, never from a
+message. It gives a grade and two lists.
+
+- **6a. Mapped keys.** `model_keys(format)` is the list of the keys the pack
+  maps, each once, in the order of first appearance reading the file top to
+  bottom, common lines and every kind alike. A key is mapped by a `field`
+  line and by an `also` line, in a fixed or a sequential layout, inside or
+  outside `if`, `opt`, `chain` and `length` blocks. The entry is the key as
+  the pack writes it (`lat`, `probe.n`).
+- **6b. Lists.** A `group` line adds the entry `<list>[]` at its place. A key
+  mapped inside the group is the entry `<list>[].<key>`, and a nested group
+  `<list>[].<inner>[]` with its keys `<list>[].<inner>[].<key>`. An item key
+  and an entity key of one name are two entries. A list mapped by groups in
+  several kinds is one entry, and its item keys are joined the same way.
+- **6c. What is not a mapped key.** A key named only by `requires` or
+  `default`; a place named by `when` or `const`; a count locator, a presence
+  or a length; a `typemap` or `map` line. `derive` lines and caller context
+  are not consulted: a key the target maps that `convert` could derive from
+  keys the source maps is not carried by the report. The `absent` option does
+  not change the list (ruling 8 of 0.9). On the `text` wire a pair (`<i>+<j>`)
+  maps its one key, and a column maps its key as a field does.
+- **6d. The lists.** `carried` is the entries of `model_keys(from)` that are
+  also entries of `model_keys(to)`, compared as exact text; `dropped` is the
+  other entries of `model_keys(from)`. Both keep the order of
+  `model_keys(from)`.
+- **6e. The grade,** in lower case: `none` when `carried` is empty (also when
+  the source maps no key); else `full` when `dropped` is empty; else
+  `partial`. A format against itself is graded by the same rule.
+- **6f.** A format that is not loaded is `unknown-format`.
+
+### Ruling 7: the limit on list items
+
+Pinned by `conformance-limit-json`, `conformance-limit-bits`,
+`conformance-limit-protobuf` and `conformance-limit-xml`
+(`conformance-limit-n` holds the small target of two of the vectors), and by
+`conformance-limit-text`, `conformance-limit-bits-fail` and
+`conformance-limit-seq` (rulings 7d, 7f and 7g).
+
+- **7a.** One decode holds at most `max_items` list items, counted over every
+  list of the message at every nesting level: each item of a list is one, and
+  each item of a list inside an item is one more. An item with no keys is
+  counted, also one whose every field holds a sentinel (ruling 5 of 0.9) and a
+  `text` item that the record cuts short (Version 0.10, Groups). The decode
+  that would hold one item more fails with `malformed-wire`.
+- **7b.** The limit is 100,000 unless the caller sets another: an engine
+  option in the API (a command-line tool takes it as `--max-items <n>`), the
+  member `max_items` in a vector. The value is an integer of 0 or more; with 0
+  any item is refused.
+- **7c.** Only items of lists a `group` of the common lines or the selected
+  kind maps are counted. A JSON array no group maps is not counted.
+- **7d.** A count read from the wire (`count` on `bits`, in either layout) is
+  compared with what the limit still allows before any item is read or any
+  memory is taken for the items. On the `text` wire the number of items of
+  the group is compared with the limit after step 5 of "Reading a record"
+  (Version 0.10) and before any field is read.
+- **7e.** The limit is on decode, and so on `convert`. `encode` of an entity
+  a program built is not limited.
+- **7f.** Going over the limit is a failure of the wire: it is
+  `malformed-wire` also when a field of the same decode would fail, and it
+  wins over that field's `transform-decode` (ruling 9 of 0.1.1).
+- **7g.** The limit counts the items the decoded entity holds, not the items
+  read. Where two groups of one list are both on the wire and decode keeps
+  the later group's items (ruling 33 of 0.8), the earlier group's items are
+  not counted once the later group replaces them, and a count is compared
+  with the limit less the items the entity holds outside the list it
+  replaces.
+
+### Ruling 8: reserved
+
+A command-line contract is not part of 0.11, and no vector runs a tool.
+
+### Ruling 9: `when` paths on the `protobuf` wire
+
+Pinned by `conformance-pbwhen` and `conformance-pbwhen-json`. Rulings 31 and
+38 of 0.8 read against each other for a `when` path whose prefix bytes are not
+a message; this ruling replaces the last sentence of ruling 38 and holds.
+
+- **9a. The top level** of the message is checked whole by ruling 38,
+  whatever the pack maps.
+- **9b. A `when` path never fails a decode.** It does not hold when a field
+  of its prefix is absent, is not length-delimited, or holds bytes that do
+  not parse as a message by ruling 38; it holds or not by its value
+  otherwise. Kind selection then goes on to the next kind.
+- **9c. A `field` or `group` path** of the common lines or of the selected
+  kind whose prefix is present and is not length-delimited, or holds bytes
+  that do not parse as a message, is `malformed-wire`. So is an item of a
+  group whose body addresses into it and whose bytes do not parse. Lines of
+  kinds that were not selected are not read.
+- **9d. Which occurrence.** Where a field number of a prefix repeats, the
+  last occurrence is the one walked into (ruling 15 of 0.5), for `when`,
+  `field` and `group` alike; earlier occurrences are not parsed.
+- **9e. A submessage no line walks into is not parsed.** The bytes of a
+  length-delimited field are read as a message only when a `when` path, or a
+  `field` or `group` path of the common lines or the selected kind, walks
+  into it. Otherwise they are opaque: bytes that would not parse there are
+  not an error.
+
+### Not ruled in 0.11
+
+- Not ruled: whether a residue integer on `json` above 2^53 is written back
+  with every digit or through a double.
+- Not ruled: how a value-table entry on a `string` side is read when it looks
+  like a number.
+- Not ruled: what `pstring` gives for bytes that are not UTF-8.
+- Not ruled: the locator forms an `xml` group line may end in (`@name`,
+  `#text`), `geometry` with no dot, `properties` alone and `properties.a.b`
+  on `geojson`, `protobuf` steps with leading zeros, and `bits` positions or
+  lengths at or above 2^32.
+- Not ruled: XML namespaces, an XML declaration after the start or naming an
+  encoding, `]]>` in text, `--` inside a comment, references inside comments,
+  processing instructions and CDATA against 1j, and `&#;`.
+- Not ruled: an upper bound for the `<maxpos>` of `linscale`.
+- Not ruled: the form of the `max_items` member of a vector beyond "an
+  integer of 0 or more" (a JSON number with a fraction or exponent, a
+  string).
+- Not ruled: where `unknown-format` stands in the order of the capability
+  report's checks when both formats are not loaded.
+- Not ruled: quotes inside a token and a quote that is not the first
+  character of a token.
+- Not ruled: a raw control character in a `const` or `when` value on `xml`.
+- Not ruled: which of two shortest digit strings 2f writes when they are
+  equally near the double.
+- Not ruled: the form of a `version` value.

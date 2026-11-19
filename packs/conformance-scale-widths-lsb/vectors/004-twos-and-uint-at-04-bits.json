@@ -1,0 +1,14 @@
+{
+  "name": "twos-and-uint-at-04-bits",
+  "from": "conformance-scale-widths-lsb",
+  "to": "conformance-scale-widths-lsb",
+  "input": "0400ff12",
+  "expect": "0400ff12",
+  "model": {
+    "@kind": "w04",
+    "probe.x": "-8",
+    "probe.y": "-1",
+    "probe.z": "7",
+    "probe.w": "9"
+  }
+}

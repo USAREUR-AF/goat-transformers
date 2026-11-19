@@ -1,0 +1,8 @@
+{
+  "name": "packed-values-exactly-at-the-limit",
+  "from": "conformance-limit-protobuf",
+  "to": "conformance-limit-protobuf",
+  "input": "0a03010203",
+  "max_items": 3,
+  "expect": "0a03010203"
+}

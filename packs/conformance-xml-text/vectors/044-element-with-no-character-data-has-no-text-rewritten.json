@@ -1,0 +1,7 @@
+{
+  "name": "element-with-no-character-data-has-no-text-rewritten",
+  "from": "conformance-xml-text",
+  "to": "conformance-xml-text",
+  "input": "<e id=\"1\"><name></name></e>",
+  "expect": "<e id=\"1\"/>"
+}

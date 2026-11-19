@@ -1,0 +1,7 @@
+{
+  "name": "float-text-negative-fraction",
+  "from": "conformance-numbers-f64",
+  "to": "conformance-numbers",
+  "input": "bff8000000000000",
+  "expect": "<e a=\"-1.5\"/>"
+}

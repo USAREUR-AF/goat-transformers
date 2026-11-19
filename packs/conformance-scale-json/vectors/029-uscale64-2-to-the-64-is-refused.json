@@ -1,0 +1,7 @@
+{
+  "name": "uscale64-2-to-the-64-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lon\":18446744073709551616}",
+  "expect_error": "transform-encode"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "context-number-trailing-dot-is-refused",
+  "from": "conformance-numbers-json",
+  "to": "conformance-numbers-json",
+  "input": "{\"n\":1}",
+  "expect_error": "key-type-mismatch",
+  "context": {
+    "probe.a": "5."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "sscale64-smallest",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"lat\":-9223372036854775808}",
+  "expect": "030000000000000080"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "15-same-format-that-maps-no-key",
+  "from": "conformance-cap-empty",
+  "to": "conformance-cap-empty",
+  "grade": "none",
+  "carried": [],
+  "dropped": []
+}

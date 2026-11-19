@@ -1,0 +1,7 @@
+{
+  "name": "attribute-writes-tab-lf-cr-as-references",
+  "from": "conformance-xml-text-json",
+  "to": "conformance-xml-text",
+  "input": "{\"id\":\"a\\tb\\nc\\rd\"}",
+  "expect": "<e id=\"a&#9;b&#10;c&#13;d\"/>"
+}

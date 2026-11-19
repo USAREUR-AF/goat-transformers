@@ -1,0 +1,10 @@
+{
+  "name": "when-prefix-that-does-not-parse-does-not-hold",
+  "from": "conformance-pbwhen",
+  "to": "conformance-pbwhen-json",
+  "input": "0a027531220168",
+  "expect": "{\"id\":\"u1\",\"s1\":\"h\"}",
+  "model": {
+    "@kind": "plain"
+  }
+}

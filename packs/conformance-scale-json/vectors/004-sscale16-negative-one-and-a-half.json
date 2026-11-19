@@ -1,0 +1,7 @@
+{
+  "name": "sscale16-negative-one-and-a-half",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"a\":-1.5}",
+  "expect": "01feff"
+}

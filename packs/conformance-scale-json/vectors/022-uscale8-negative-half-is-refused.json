@@ -1,0 +1,7 @@
+{
+  "name": "uscale8-negative-half-is-refused",
+  "from": "conformance-scale-json",
+  "to": "conformance-scale",
+  "input": "{\"ratio\":-0.5}",
+  "expect_error": "transform-encode"
+}

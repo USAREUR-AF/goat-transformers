@@ -1,0 +1,7 @@
+{
+  "name": "february-29-of-a-common-year-is-refused",
+  "from": "conformance-time",
+  "to": "conformance-time",
+  "input": "<e t=\"2023-02-29T00:00:00Z\"/>",
+  "expect_error": "transform-decode"
+}

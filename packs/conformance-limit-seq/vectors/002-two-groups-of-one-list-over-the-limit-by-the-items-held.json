@@ -1,0 +1,8 @@
+{
+  "name": "two-groups-of-one-list-over-the-limit-by-the-items-held",
+  "from": "conformance-limit-seq",
+  "to": "conformance-seq-json",
+  "input": "8100814080c100",
+  "max_items": 1,
+  "expect_error": "malformed-wire"
+}
