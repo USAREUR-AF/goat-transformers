@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gsm_link_status",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd0e00000e0fb84e1f001e78730200000080f5cca37a5128",
+  "expect": "fd0e00000e0fb84e1f001e78730200000080f5cca37a5128",
+  "model": {
+    "@kind": "gsm_link_status"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "test_fix-to-geojson",
+  "from": "mavlink2-testdialect",
+  "to": "geojson",
+  "input": "fd100000050101c4ea00e80300004c52401c44f41705000048412003",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "test_fix",
+    "lat": "47.397742",
+    "lon": "8.545594",
+    "mavlink.seq": "5",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-autopilot_state_for_gimbal_device_ext",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd16000000011b60ea00ecbcca1100000080000080c0000010c0000000bf481f",
+  "expect": "fd16000000011b60ea00ecbcca1100000080000080c0000010c0000000bf481f",
+  "model": {
+    "@kind": "autopilot_state_for_gimbal_device_ext"
+  }
+}

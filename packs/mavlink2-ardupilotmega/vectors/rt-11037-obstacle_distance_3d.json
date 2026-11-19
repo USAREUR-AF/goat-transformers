@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-obstacle_distance_3d",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1c00004026971d2b00df9a1d54000000c0000080be0000c03f000050400000a040e991c097",
+  "expect": "fd1c00004026971d2b00df9a1d54000000c0000080be0000c03f000050400000a040e991c097",
+  "model": {
+    "@kind": "obstacle_distance_3d"
+  }
+}

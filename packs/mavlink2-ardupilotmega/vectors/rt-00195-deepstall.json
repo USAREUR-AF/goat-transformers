@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-deepstall",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd25000026c405c3000067d399cee8269ece697aa2ceeacda6ce6b21abceec74afce0000003f000010400000804068",
+  "expect": "fd25000026c405c3000067d399cee8269ece697aa2ceeacda6ce6b21abceec74afce0000003f000010400000804068",
+  "model": {
+    "@kind": "deepstall"
+  }
+}

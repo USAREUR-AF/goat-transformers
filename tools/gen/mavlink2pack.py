@@ -24,7 +24,21 @@ passed, 1 for a refused input or a failed check, 2 for a usage error.
 
 Python 3 standard library only.
 
+With --dialect NAME (a dialect file name without `.xml`) the run writes the
+pack `mavlink2-<name in lower case>` instead: the messages NAME.xml itself
+defines, payload keys in module `mavlink<name>`, the frame-header keys of
+module `mavlink` (so model/mavlink.def must exist). Every message id and name
+of the whole include closure must be unique. Sources come from --src (default
+<out>/sources) and the SHA-256 table from --provenance (default
+<src>/PROVENANCE.md; with --dialect <out>/packs/<format>/PROVENANCE.md).
+
+--max-array N maps non-char arrays of up to N elements, one key per element
+(default 8, as version 0.1.0); --compat-flags maps the INCOMPAT and COMPAT
+bytes (default: not mapped).
+
 Usage: mavlink2pack.py [--out DIR] [--check] [--core-def PATH/model/core.def]
+                       [--dialect NAME] [--src DIR] [--provenance FILE]
+                       [--max-array N] [--compat-flags]
 """
 import argparse
 import collections
@@ -69,11 +83,24 @@ LOC_SEQ = (32, 8)
 LOC_SYSID = (40, 8)
 LOC_COMPID = (48, 8)
 LOC_MSGID = (56, 24)
+LOC_INCOMPAT = (16, 8)
+LOC_COMPAT = (24, 8)
 COMMON_KEYS = [("seq", LOC_SEQ, "frame sequence number of the sending component, 0..255"),
                ("sysid", LOC_SYSID, "system id of the sender"),
                ("compid", LOC_COMPID, "component id of the sender")]
+# The flag bytes, mapped with --compat-flags after the three keys above.
+FLAG_KEYS = [("incompat_flags", LOC_INCOMPAT, "incompatibility flags; bit 0x01 means the frame is signed"),
+             ("compat_flags", LOC_COMPAT, "compatibility flags")]
+# The frame-header names a payload key may not take (the rule that named the
+# keys of version 0.1.0).
+NAMING_RESERVED = ("seq", "sysid", "compid")
+HEADER_MODULE = "mavlink"     # module of the frame-header keys, in every MAVLink pack
+DIALECT = None                # --dialect
 
-MAX_ARRAY_ELEMENTS = 8        # longer non-char arrays are not mapped
+MAX_ARRAY_ELEMENTS = 8        # longer non-char arrays are named in a pass of their own
+MAX_ARRAY = 8                 # --max-array: longer non-char arrays are not mapped
+FLAGS = False                 # --compat-flags
+LEGACY = True                 # neither option: the output of version 0.1.0
 MAX_REQUIRES = 6
 DEGE7 = "1/10000000"         # engine-spec 0.5 ruling 1: a power-of-ten scale is a fraction
 
@@ -101,6 +128,106 @@ CODEC_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "f32", "f64", "ascii")
 KIND_NAME_RE = re.compile(r"^[a-z0-9_]+$")
 
 
+
+# Dialects: CRC_EXTRA and full payload length of every message a dialect file
+# defines, by message id, as the C library that the MAVLink project generates
+# from the same definitions states them (github.com/mavlink/c_library_v2,
+# <dialect>/<dialect>.h, MAVLINK_MESSAGE_CRCS; commit in each PROVENANCE.md).
+# The generator computes both from the XML and stops when one differs.
+KNOWN_DIALECT = {
+    "ardupilotmega": {150: (134, 42), 151: (219, 8), 152: (208, 8), 153: (188, 12),
+        154: (84, 15), 155: (22, 13), 156: (19, 6), 157: (21, 15), 158: (134, 15),
+        160: (78, 12), 161: (68, 3), 163: (127, 28), 164: (154, 44), 165: (21, 3),
+        166: (21, 9), 167: (144, 22), 168: (1, 12), 169: (234, 18), 170: (73, 34),
+        171: (181, 66), 172: (22, 98), 173: (83, 8), 174: (167, 48), 175: (138, 19),
+        176: (234, 3), 177: (240, 20), 178: (47, 24), 179: (189, 29), 180: (52, 47),
+        181: (174, 4), 182: (229, 40), 183: (85, 2), 184: (159, 206), 185: (186, 7),
+        186: (72, 29), 191: (92, 27), 193: (71, 26), 194: (98, 33), 195: (120, 37),
+        200: (134, 42), 201: (205, 14), 214: (69, 8), 215: (101, 3), 216: (50, 3),
+        217: (202, 6), 218: (17, 7), 219: (162, 2), 226: (207, 8), 11000: (134, 52),
+        11001: (15, 136), 11002: (234, 180), 11003: (64, 5), 11004: (11, 232),
+        11005: (93, 230), 11010: (46, 49), 11011: (106, 44), 11020: (205, 16),
+        11030: (144, 44), 11031: (133, 44), 11032: (85, 44), 11033: (195, 37),
+        11034: (79, 5), 11035: (128, 8), 11036: (177, 34), 11037: (130, 28),
+        11038: (47, 38), 11039: (142, 9), 11040: (132, 44), 11041: (208, 44),
+        11042: (201, 44), 11043: (193, 44), 11044: (189, 44), 11060: (162, 78)},
+    "ASLUAV": {223: (119, 47), 224: (102, 45), 8002: (218, 16), 8003: (231, 41),
+        8004: (172, 98), 8005: (251, 38), 8006: (97, 14), 8007: (64, 32), 8008: (234, 33),
+        8009: (144, 16), 8010: (155, 41), 8011: (20, 102), 8012: (54, 16), 8013: (222, 46),
+        8014: (200, 14), 8015: (23, 24), 8016: (149, 18)},
+    "AVSSUAS": {60050: (220, 14), 60051: (245, 24), 60052: (101, 44), 60053: (45, 6)},
+    "csAirLink": {52000: (13, 100), 52001: (239, 1)},
+    "cubepilot": {50001: (246, 32), 50002: (181, 246), 50003: (62, 19), 50004: (240, 10),
+        50005: (152, 6)},
+    "development": {354: (210, 14), 355: (6, 12), 369: (145, 27), 414: (109, 16),
+        415: (161, 16), 421: (149, 70), 441: (169, 17), 510: (245, 106), 511: (28, 71),
+        512: (21, 12), 292: (227, 223), 513: (99, 45), 514: (197, 54), 515: (128, 3),
+        442: (189, 49), 516: (125, 35), 517: (126, 10)},
+    "icarous": {42000: (227, 1), 42001: (239, 46)},
+    "loweheiser": {10151: (195, 85)},
+    "marsh": {52501: (240, 17), 52502: (88, 78), 52503: (96, 85), 52504: (177, 28),
+        52505: (215, 50)},
+    "paparazzi": {180: (231, 54), 181: (129, 4), 182: (115, 2), 183: (186, 4),
+        184: (40, 2)},
+    "stemstudios": {52600: (181, 38), 52601: (102, 36)},
+    "storm32": {60010: (208, 33), 60011: (183, 7), 60012: (99, 36), 60013: (129, 24),
+        60014: (134, 8), 60020: (202, 4), 60000: (4, 22), 60040: (156, 245),
+        60041: (191, 255), 60045: (14, 23), 60046: (171, 28), 60047: (55, 7)},
+    "uAvionix": {10001: (209, 20), 10002: (186, 41), 10003: (4, 1), 10004: (133, 9),
+        10005: (103, 9), 10006: (193, 4), 10007: (71, 17), 10008: (240, 14)},
+}
+
+# What the position of each message that binds core lat/lon is, in this
+# project's words, from the message's description in the dialect file.
+POSITION_NOTES = {
+    "SIMSTATE": "the vehicle in the simulation environment (simulator state, not a measurement)",
+    "RALLY_POINT": "a rally point sent to or read from the vehicle, not the vehicle",
+    "AHRS2": "the vehicle, as the secondary attitude and heading filter estimates it",
+    "CAMERA_FEEDBACK": "the vehicle when the camera captured an image",
+    "AHRS3": "the vehicle, as the third attitude and heading filter estimates it",
+    "WATER_DEPTH": "the vehicle when the water depth was measured",
+    "AVSS_DRONE_POSITION": "the drone",
+    "TARGET_ABSOLUTE": "a target observed by the vehicle's sensors, not the vehicle (WGS84 stated)",
+}
+
+# Cross-format cases per dialect, as CROSS below. `expect` is written by hand
+# from the field values: degrees = value / 10^7, GeoJSON coordinates are
+# [lon, lat], `properties` empty.
+CROSS_DIALECT = {
+    "ardupilotmega": [
+        ("AHRS2", 21, 1, 1,
+         {"roll": 0.5, "pitch": -0.25, "yaw": 1.5, "altitude": 120.5,
+          "lat": 473977420, "lng": 85455940},
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[8.545594,47.397742]},"properties":{}}'),
+        ("WATER_DEPTH", 22, 2, 194,
+         {"time_boot_ms": 60000, "id": 1, "healthy": 1, "lat": -338568000, "lng": 1512153000,
+          "alt": -2.5, "roll": 0.0, "pitch": 0.0, "yaw": 0.75, "distance": 12.25,
+          "temperature": 18.5},
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[151.2153,-33.8568]},"properties":{}}'),
+        ("RALLY_POINT", 23, 255, 190,
+         {"target_system": 1, "target_component": 1, "idx": 0, "count": 1,
+          "lat": -900000000, "lng": 1800000000, "alt": 80, "break_alt": 40,
+          "land_dir": 27000, "flags": 0},
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[180,-90]},"properties":{}}'),
+    ],
+    "AVSSUAS": [
+        ("AVSS_DRONE_POSITION", 31, 1, 1,
+         {"time_boot_ms": 5000, "lat": 515007000, "lon": -1246000, "alt": 35000,
+          "ground_alt": 30.5, "barometer_alt": 31.25},
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[-0.1246,51.5007]},"properties":{}}'),
+    ],
+    "development": [
+        ("TARGET_ABSOLUTE", 41, 1, 1,
+         {"timestamp": 1700000000000000, "id": 3, "sensor_capabilities": 1,
+          "lat": 356762000, "lon": 1396503000, "alt": 40.0,
+          "vel": [1.0, 0.5, 0.0], "acc": [0.0, 0.0, 0.0], "q_target": [1.0, 0.0, 0.0, 0.0],
+          "rates": [0.0, 0.0, 0.0], "position_std": [2.5, 2.5], "vel_std": [0.5, 0.5, 0.5],
+          "acc_std": [0.25, 0.25, 0.25]},
+         '{"type":"Feature","geometry":{"type":"Point","coordinates":[139.6503,35.6762]},"properties":{}}'),
+    ],
+}
+
+
 class GenError(Exception):
     """A refused input or a failed check. `file` and `line` say where, when the
     error belongs to a place in a source file or in a generated file."""
@@ -121,6 +248,17 @@ class CodecError(Exception):
     """A message the codec cannot decode or an entity it cannot encode; the
     text is the error kind of the specification (`no-kind`, `malformed-wire`,
     `transform-decode`, `transform-encode`)."""
+
+
+def set_names(fmt, module):
+    """Point the format, module and output paths at one pack."""
+    global FORMAT, MODULE, MODEL_PATH, PACK_DIR, PACK_PATH, PACK_MD_PATH, VECTOR_DIR
+    FORMAT, MODULE = fmt, module
+    MODEL_PATH = "model/%s.def" % MODULE
+    PACK_DIR = "packs/%s" % FORMAT
+    PACK_PATH = PACK_DIR + "/pack.def"
+    PACK_MD_PATH = PACK_DIR + "/pack.md"
+    VECTOR_DIR = PACK_DIR + "/vectors"
 
 
 def source_label(name):
@@ -152,16 +290,19 @@ class SourceField(collections.namedtuple("SourceField", "name base n units enum 
         return self.n is not None and self.base != "char"
 
 
-SourceMessage = collections.namedtuple("SourceMessage", "name id fields file line")
+SourceMessage = collections.namedtuple("SourceMessage", "name id fields file line marks",
+                                       defaults=((),))
 SourceMessage.__doc__ = """One <message>: its name, id, fields in declaration order, the name of the
-file that declares it and the line of the element."""
+file that declares it, the line of the element, and `marks`: the names of
+its <wip/> and <deprecated> children."""
 
 
-def read_provenance(src):
+def read_provenance(src, path=None):
     """The commit PROVENANCE.md states, after checking that every XML file has
-    the SHA-256 its table row states."""
-    label = source_label("PROVENANCE.md")
-    with open(os.path.join(src, "PROVENANCE.md"), encoding="utf-8") as fh:
+    the SHA-256 its table row states. `path` is the PROVENANCE.md to read
+    (default: the one in `src`)."""
+    label = path or source_label("PROVENANCE.md")
+    with open(path or os.path.join(src, "PROVENANCE.md"), encoding="utf-8") as fh:
         text = fh.read()
     m = re.search(r"Commit: `([0-9a-f]{40})`", text)
     if not m:
@@ -205,11 +346,11 @@ class _OpenElement:
 
 class _MessageDraft:
     """A <message> while its children are read."""
-    __slots__ = ("name", "id", "fields", "line", "in_extensions")
+    __slots__ = ("name", "id", "fields", "line", "in_extensions", "marks")
 
     def __init__(self, name, msgid, line):
         self.name, self.id, self.line = name, msgid, line
-        self.fields, self.in_extensions = [], False
+        self.fields, self.in_extensions, self.marks = [], False, []
 
 
 class _DialectReader:
@@ -238,6 +379,8 @@ class _DialectReader:
             message = parent.message
             if tag == "extensions":
                 message.in_extensions = True
+            elif tag in ("wip", "deprecated"):
+                message.marks.append(tag)
             elif tag == "field":
                 message.fields.append(parse_field(attrs, message.name, message.in_extensions, self.label, line))
         self.stack.append(element)
@@ -289,14 +432,14 @@ def parse_dialect(data, file_name):
     except expat.ExpatError as e:
         raise GenError("not well-formed XML: %s (column %d)" % (expat.ErrorString(e.code), e.offset),
                        label, e.lineno) from None
-    return reader.includes, [SourceMessage(m.name, m.id, tuple(m.fields), file_name, m.line)
+    return reader.includes, [SourceMessage(m.name, m.id, tuple(m.fields), file_name, m.line, tuple(m.marks))
                              for m in reader.messages]
 
 
 def load_messages(src):
-    """Every message of common.xml and of the files it includes, in id order.
-    Refuses an include chain that is not exactly the three known files, and
-    two messages with one id or one name."""
+    """Every message of ROOT_XML and of the files it includes, in id order
+    (with --dialect: only the messages of ROOT_XML). Refuses an include chain
+    that is not exactly XML_FILES, and two messages with one id or one name."""
     messages, seen = [], []
 
     def read(name):
@@ -322,7 +465,26 @@ def load_messages(src):
                                % (what, value, source_label(first.file), first.line),
                                source_label(m.file), m.line)
             known[value] = m
+    if DIALECT:
+        # a dialect pack holds only the messages its own file defines
+        messages = [m for m in messages if m.file == ROOT_XML]
     return sorted(messages, key=lambda m: m.id)
+
+
+def include_closure(src, top):
+    """Every file `top` includes, directly or not, `top` first."""
+    out = []
+
+    def walk(name):
+        if name in out:
+            return
+        out.append(name)
+        with open(os.path.join(src, name), "rb") as fh:
+            includes, _ = parse_dialect(fh.read(), name)
+        for included in includes:
+            walk(included)
+    walk(top)
+    return out
 
 
 # ------------------------------------------------------------------- plan ---
@@ -457,15 +619,36 @@ def transform_for(f):
     return "uint" if f.base.startswith("u") else "twos"
 
 
+LAT_NAMES = ("lat",)
+LON_NAMES = ("lon", "lng")    # `lng` is the spelling of the ardupilotmega dialect
+
+
 def is_core_latlon(f):
     """True for a position this pack can state as core `lat` or `lon`: an
     int32_t in degE7 with that name and no value that means unknown."""
-    return (f.name in ("lat", "lon") and f.units == "degE7" and f.base == "int32_t"
+    return (f.name in LAT_NAMES + LON_NAMES and f.units == "degE7" and f.base == "int32_t"
             and f.n is None and f.invalid is None)
+
+
+def core_name(f):
+    """The core key of a field is_core_latlon accepts."""
+    return "lat" if f.name in LAT_NAMES else "lon"
+
+
+def core_pair(layout):
+    """A message maps core lat/lon only when it has exactly one qualifying
+    latitude field and one qualifying longitude field."""
+    c = collections.Counter(core_name(p.field) for p in layout.wire if is_core_latlon(p.field))
+    return c["lat"] == 1 and c["lon"] == 1
 
 
 def is_long_array(f):
     return f.is_array and f.n > MAX_ARRAY_ELEMENTS
+
+
+def long_mapped(f):
+    """An array longer than MAX_ARRAY_ELEMENTS that --max-array still maps."""
+    return f.is_array and MAX_ARRAY_ELEMENTS < f.n <= MAX_ARRAY
 
 
 def classify(layout):
@@ -474,12 +657,13 @@ def classify(layout):
     A kind needs a raw key of its own for `requires`, so a message whose only
     mappable fields are lat and lon keeps them raw (core_ok is false)."""
     core_ok = any(not is_core_latlon(p.field) and not is_long_array(p.field) for p in layout.wire)
+    pair = core_pair(layout)
     statuses = []
     for p in layout.wire:
         f = p.field
         if is_long_array(f):
-            statuses.append("unmapped")
-        elif is_core_latlon(f) and core_ok:
+            statuses.append("long" if long_mapped(f) else "unmapped")
+        elif is_core_latlon(f) and core_ok and pair:
             statuses.append("core")
         elif f.is_array:
             statuses.append("elements")
@@ -527,7 +711,7 @@ def assign_keys(layouts):
                 proposals.setdefault(base_key(f), []).append((layout.message, f))
 
     # pass 2: the fields whose proposed name cannot be shared
-    reserved = {k for k, _, _ in COMMON_KEYS}
+    reserved = set(NAMING_RESERVED)
     qualified = collections.OrderedDict()         # (message name, field name) -> reason
     for name, uses in proposals.items():
         reason = _clash_reason(name, uses, reserved)
@@ -537,9 +721,11 @@ def assign_keys(layouts):
 
     # pass 3: declare the keys and write the lines
     keys = collections.OrderedDict()
+    sig_of = {}                                   # key name -> (type class, units, enum)
 
     def declare(name, typ, unit, m, f):
         label = source_label(m.file)
+        sig_of.setdefault(name, (type_class(f), f.units, f.enum))
         if name not in keys:
             keys[name] = KeyDecl(typ, unit, [])
         elif keys[name].type != typ or keys[name].unit != unit:
@@ -558,8 +744,8 @@ def assign_keys(layouts):
             f, lines = placed.field, []
             pos = PAYLOAD_BIT0 + 8 * placed.offset
             if status == "core":
-                lines.append(Line(f.name, pos, 32, "sscale:" + DEGE7))
-            elif status != "unmapped":
+                lines.append(Line(core_name(f), pos, 32, "sscale:" + DEGE7))
+            elif status not in ("unmapped", "long"):
                 stem = base_key(f)
                 if (m.name, f.name) in qualified:
                     stem = kind_name(m) + "_" + stem
@@ -574,9 +760,51 @@ def assign_keys(layouts):
                     declare(stem, type_class(f), unit, m, f)
                     lines.append(Line(MODULE + "." + stem, pos, 8 * f.bytes, transform_for(f)))
             mapped.append(MappedField(f, placed.offset, status, tuple(lines)))
-        fields.append(tuple(mapped))
+        fields.append(mapped)
+
+    # pass 4: arrays of more than MAX_ARRAY_ELEMENTS elements (--max-array),
+    # named after every other key so that no key the earlier passes give
+    # changes. A field's element names are shared only when every long use
+    # agrees on type class, units and enum, no message has the stem twice and
+    # every name that already exists has the same signature; otherwise the
+    # field takes its message name as a prefix. Their keys come last.
+    longs = collections.OrderedDict()             # stem -> [(message, field)]
+    for layout, mapped in zip(layouts, fields):
+        for mf in mapped:
+            if mf.status == "long":
+                longs.setdefault(base_key(mf.field), []).append((layout.message, mf.field))
+    for stem, uses in longs.items():
+        sigs = {(type_class(f), f.units, f.enum) for _, f in uses}
+        names = {"%s_%d" % (stem, i) for _, f in uses for i in range(f.n)}
+        reason = _clash_reason(stem, uses, ())
+        if not reason and names & set(NAMING_RESERVED):
+            reason = "same name as a frame-header key"
+        if not reason and any(n in sig_of and sig_of[n] != next(iter(sigs)) for n in names):
+            reason = "an existing key of that name differs"
+        if reason:
+            for m, f in uses:
+                qualified[(m.name, f.name)] = reason
+    for layout, mapped in zip(layouts, fields):
+        m = layout.message
+        for i, mf in enumerate(mapped):
+            if mf.status != "long":
+                continue
+            f, pos, lines = mf.field, PAYLOAD_BIT0 + 8 * mf.offset, []
+            stem = base_key(f)
+            if (m.name, f.name) in qualified:
+                stem = kind_name(m) + "_" + stem
+            for j in range(f.n):
+                key = "%s_%d" % (stem, j)
+                if key in sig_of and sig_of[key] != (type_class(f), f.units, f.enum):
+                    raise GenError("%s.%s: key %s is already declared with another meaning"
+                                   % (m.name, f.name, key), source_label(m.file), f.line)
+                declare(key, type_class(f), f.units or "-", m, f)
+                lines.append(Line(MODULE + "." + key, pos + 8 * f.size * j, 8 * f.size, transform_for(f)))
+            mapped[i] = MappedField(f, mf.offset, "elements_long", tuple(lines))
+    fields = [tuple(mapped) for mapped in fields]
+
     for k, _, _ in COMMON_KEYS:
-        if k in keys:
+        if k in keys and (MODULE == HEADER_MODULE or k in NAMING_RESERVED):
             raise GenError("payload key collides with common key %s" % k)
     return Assignment(fields, [core_ok for core_ok, _ in classes], keys, qualified)
 
@@ -651,6 +879,8 @@ def collect_stats(plan):
         "per_file": collections.Counter(k.message.file for k in kinds), "fields": len(fields),
         "scalar": count("scalar"), "ascii": count("ascii"), "elements": count("elements"),
         "element_lines": sum(len(f.lines) for f in fields if f.status == "elements"),
+        "long": count("elements_long"),
+        "long_lines": sum(len(f.lines) for f in fields if f.status == "elements_long"),
         "core": count("core"), "unmapped": count("unmapped"),
         "field_lines": len(COMMON_KEYS) + sum(len(f.lines) for f in fields),
     }
@@ -674,8 +904,13 @@ def _source_lines(sha):
 
 
 def emit_model(keys, sha):
-    """The text of model/mavlink.def."""
-    out = ["# The mavlink module: MAVLink fields in their wire units, as raw values.",
+    """The text of model/<module>.def."""
+    if DIALECT:
+        first = ["# The %s module: fields of the messages that the MAVLink dialect" % MODULE,
+                 "# %s defines itself, in their wire units, as raw values." % ROOT_XML]
+    else:
+        first = ["# The mavlink module: MAVLink fields in their wire units, as raw values."]
+    out = first + [
            "# Generated by tools/gen/mavlink2pack.py; do not edit by hand.",
            "# A key is shared by every message whose field has that name, type class,",
            "# units and enum; otherwise the key carries its message name.",
@@ -683,8 +918,9 @@ def emit_model(keys, sha):
            "version       %s" % PACK_VERSION,
            "distribution  public"]
     out += _source_lines(sha)
-    for k, _, meaning in COMMON_KEYS:
-        out.append('key  %s  int  -  "MAVLink 2 frame header: %s"' % (k, meaning))
+    if MODULE == HEADER_MODULE:
+        for k, _, meaning in COMMON_KEYS:
+            out.append('key  %s  int  -  "MAVLink 2 frame header: %s"' % (k, meaning))
     for k, decl in keys.items():
         names = [m for m, _ in decl.uses]
         fname = decl.uses[0][1]
@@ -697,22 +933,30 @@ def emit_pack(kinds, sha):
     """The text of packs/mavlink2/pack.def: the header, the common `when` on
     STX and the three frame-header fields, then one kind per message selected
     by a `when` on the message id and a `when` on the payload length."""
-    out = ["# MAVLink 2 frames, message set common.xml (with standard.xml, minimal.xml).",
+    if DIALECT:
+        first = ["# MAVLink 2 frames, the messages the dialect %s defines itself." % ROOT_XML,
+                 "# The included files are read only to check that ids and names are unique."]
+    else:
+        first = ["# MAVLink 2 frames, message set common.xml (with standard.xml, minimal.xml)."]
+    out = first + [
            "# Generated by tools/gen/mavlink2pack.py; do not edit by hand.",
            "# One byte-aligned frame addressed by bit offset from the STX byte:",
            "# STX(8) LEN(8) INCOMPAT(8) COMPAT(8) SEQ(8) SYSID(8) COMPID(8) MSGID(24) PAYLOAD CRC(16).",
-           "# Payload starts at bit %d. CRC, INCOMPAT and COMPAT are not mapped." % PAYLOAD_BIT0,
+           ("# Payload starts at bit %d. The CRC and a signature are not mapped." if FLAGS else
+            "# Payload starts at bit %d. CRC, INCOMPAT and COMPAT are not mapped.") % PAYLOAD_BIT0,
            "format        %s" % FORMAT,
            "version       %s" % PACK_VERSION,
            "distribution  public"]
     out += _source_lines(sha)
+    if MODULE != HEADER_MODULE:
+        out.append("uses          %s" % HEADER_MODULE)
     out += ["uses          %s" % MODULE,
             "wire          bits",
             "bit_order     lsb",
             "word_bytes    1",
             "when   %s %d" % (loc(*LOC_STX), STX)]
     for k, location, _ in COMMON_KEYS:
-        out.append("field  %s.%s %s uint" % (MODULE, k, loc(*location)))
+        out.append("field  %s.%s %s uint" % (HEADER_MODULE, k, loc(*location)))
     for kind in kinds:
         out.append("")
         out.append("kind      %s" % kind.name)
@@ -784,11 +1028,11 @@ def build_payload(kind, values):
     return out
 
 
-def frame(kind, payload, seq, sysid, compid, with_crc):
-    """A MAVLink 2 frame with both flag bytes zero. LEN is the kind's full
+def frame(kind, payload, seq, sysid, compid, with_crc, compat=0):
+    """A MAVLink 2 frame with INCOMPAT zero and COMPAT `compat`. LEN is the kind's full
     payload length even when `payload` is cut short. The CRC covers every byte
     after STX and then CRC_EXTRA, and is written little-endian."""
-    head = bytes([STX, kind.length, 0, 0, seq, sysid, compid]) + kind.message.id.to_bytes(3, "little")
+    head = bytes([STX, kind.length, 0, compat, seq, sysid, compid]) + kind.message.id.to_bytes(3, "little")
     body = head + payload
     if with_crc:
         crc = x25(body[1:] + bytes([kind.crc_extra]))
@@ -808,13 +1052,16 @@ def roundtrip_vector(kind, index):
         if mapped.status == "unmapped":
             continue                       # bits no field maps stay zero
         if mapped.status == "core":
-            values[f.name] = {"lat": 1, "lon": -1}[f.name] * (100000000 + 1250000 * (msgid % 37))
-        elif mapped.status == "elements":
+            values[f.name] = {"lat": 1, "lon": -1}[core_name(f)] * (100000000 + 1250000 * (msgid % 37))
+        elif mapped.status in ("elements", "elements_long"):
             values[f.name] = [sample_value(f, salt + i) for i in range(f.n)]
         else:
             values[f.name] = sample_value(f, salt)
     payload = build_payload(kind, values)
-    return frame(kind, payload[:kind.mapped_len], index % 256, 1 + msgid % 250, 1 + msgid % 191, False)
+    # with --compat-flags every other frame sets COMPAT (it changes no layout);
+    # INCOMPAT stays 0, its bit 0x01 would announce a signature
+    return frame(kind, payload[:kind.mapped_len], index % 256, 1 + msgid % 250, 1 + msgid % 191, False,
+                 index % 2 if FLAGS else 0)
 
 
 # Five cross-format cases. `expect` is written by hand from the field values:
@@ -864,12 +1111,13 @@ def vector_files(kinds):
             raise GenError("the source has no message %s, which a vector to geojson is written from" % name)
         kind = by_name[name]
         data = frame(kind, build_payload(kind, values), seq, sysid, compid, True)
+        pos = {core_name(f.field): values[f.field.name] for f in kind.fields if f.status == "core"}
         model = collections.OrderedDict([("@kind", kind.name),
-                                         ("lat", fmt_float(values["lat"] * 1.0 / 10000000.0)),
-                                         ("lon", fmt_float(values["lon"] * 1.0 / 10000000.0)),
-                                         (MODULE + ".seq", str(seq)),
-                                         (MODULE + ".sysid", str(sysid)),
-                                         (MODULE + ".compid", str(compid))])
+                                         ("lat", fmt_float(pos["lat"] * 1.0 / 10000000.0)),
+                                         ("lon", fmt_float(pos["lon"] * 1.0 / 10000000.0)),
+                                         (HEADER_MODULE + ".seq", str(seq)),
+                                         (HEADER_MODULE + ".sysid", str(sysid)),
+                                         (HEADER_MODULE + ".compid", str(compid))])
         files.append(("x-%02d-%s-to-geojson.json" % (n, kind.name), _vector_text([
             ("name", "%s-to-geojson" % kind.name), ("from", FORMAT), ("to", "geojson"),
             ("input", data.hex()), ("expect", expect), ("model", model)])))
@@ -915,8 +1163,12 @@ def _md_layout(sha):
     a("|---|---|---|---|")
     a("| STX | 1 | `0:0:8` | common `when` = 253 (0xFD) |")
     a("| LEN | 1 | `0:8:8` | per-kind `when` = full payload length |")
-    a("| INCOMPAT | 1 | `0:16:8` | not mapped |")
-    a("| COMPAT | 1 | `0:24:8` | not mapped |")
+    if FLAGS:
+        a("| INCOMPAT | 1 | `0:16:8` | `mavlink.incompat_flags` |")
+        a("| COMPAT | 1 | `0:24:8` | `mavlink.compat_flags` |")
+    else:
+        a("| INCOMPAT | 1 | `0:16:8` | not mapped |")
+        a("| COMPAT | 1 | `0:24:8` | not mapped |")
     a("| SEQ | 1 | `0:32:8` | `mavlink.seq` |")
     a("| SYSID | 1 | `0:40:8` | `mavlink.sysid` |")
     a("| COMPID | 1 | `0:48:8` | `mavlink.compid` |")
@@ -951,11 +1203,12 @@ def _md_numbers(plan, stats):
     a("| ... `char[n]` to a string key (`ascii`) | %d |" % stats["ascii"])
     a("| ... array of 2 to %d elements, one key per element | %d (%d element lines) |" % (
         MAX_ARRAY_ELEMENTS, stats["elements"], stats["element_lines"]))
+    md_long_rows(a, stats)
     a("| ... `lat` / `lon` in degE7 to core `lat` / `lon` | %d |" % stats["core"])
-    a("| Payload fields not mapped (arrays of more than %d elements) | %d |" % (
-        MAX_ARRAY_ELEMENTS, stats["unmapped"]))
-    a("| `field` lines in `pack.def` (3 common + per kind) | %d |" % stats["field_lines"])
-    a("| Keys in module `mavlink` (3 frame-header + payload) | %d |" % (len(plan.keys) + 3))
+    md_unmapped_row(a, stats)
+    a("| `field` lines in `pack.def` (%d common + per kind) | %d |" % (len(COMMON_KEYS), stats["field_lines"]))
+    a("| Keys in module `mavlink` (%d frame-header + payload) | %d |" % (
+        len(COMMON_KEYS), len(plan.keys) + len(COMMON_KEYS)))
     a("| Vectors (%d same-format round trips + %d to geojson) | %d |" % (
         n_kinds, len(CROSS), n_kinds + len(CROSS)))
     a("")
@@ -980,6 +1233,7 @@ def _md_mapped(plan):
     a("")
     a("Every other value is raw: the integer or float on the wire, in the unit the")
     a("definition states, which `model/mavlink.def` records in the key's unit column.")
+    md_long_text(a, md_messages(plan))
     a("")
     a("### Key names")
     a("")
@@ -1061,15 +1315,15 @@ def _md_not_mapped(plan):
     a = o.append
     a("## What is not mapped")
     a("")
-    a("- CRC (2 bytes after the payload), INCOMPAT and COMPAT flags, and the 13-byte")
-    a("  signature of a signed frame.")
-    a("- %d array fields of more than %d elements (%d bytes of payload in total):" % (
-        len(unmapped), MAX_ARRAY_ELEMENTS, sum(f.bytes for _, f in unmapped)))
-    a("")
-    a("| Message | Field | Type |")
-    a("|---|---|---|")
-    for k, f in unmapped:
-        a("| %s | %s | `%s[%d]` |" % (k.message.name, f.name, f.base, f.n))
+    md_signature(a)
+    if unmapped or LEGACY:
+        a("- %d array fields of more than %d elements (%d bytes of payload in total):" % (
+            len(unmapped), MAX_ARRAY, sum(f.bytes for _, f in unmapped)))
+        a("")
+        a("| Message | Field | Type |")
+        a("|---|---|---|")
+        for k, f in unmapped:
+            a("| %s | %s | `%s[%d]` |" % (k.message.name, f.name, f.base, f.n))
     a("")
     return o
 
@@ -1089,10 +1343,18 @@ def _md_limits(plan):
     a("  a transmittable frame until a framer adds truncation and the CRC (with the")
     a("  message's CRC_EXTRA). Input that carries the CRC or a signature decodes: bytes")
     a("  after the last mapped bit are ignored.")
-    a("- **Short output.** In %d kinds the payload ends in unmapped array fields, so" % len(short))
-    a("  encode output is shorter than `10 + LEN` bytes: %s." % _ticked(k.name for k in short))
-    a("- **Unmapped bits do not round-trip.** The bits wire has no residue: INCOMPAT,")
-    a("  COMPAT and unmapped arrays are written as zero.")
+    if short or LEGACY:
+        a("- **Short output.** In %d kinds the payload ends in unmapped array fields, so" % len(short))
+        a("  encode output is shorter than `10 + LEN` bytes: %s." % _ticked(k.name for k in short))
+        if FLAGS:
+            a("- **Unmapped bits do not round-trip.** The bits wire has no residue: unmapped")
+            a("  arrays are written as zero.")
+        else:
+            a("- **Unmapped bits do not round-trip.** The bits wire has no residue: INCOMPAT,")
+            a("  COMPAT and unmapped arrays are written as zero.")
+    else:
+        a("- **Output length.** Every payload byte is mapped, so encode output is the")
+        a("  `10 + LEN` bytes of header and payload, without the CRC.")
     a("- **`invalid` values.** A field's `invalid` attribute (a value that means")
     a("  unknown) is not interpreted; the key holds the number.")
     a("- **Text.** `ascii` refuses bytes outside 0x20..0x7E, so a `char[n]` field that")
@@ -1111,16 +1373,332 @@ def _md_vectors():
     a("## Vectors")
     a("")
     a("`vectors/rt-<id>-<kind>.json`: one same-format round trip per kind. The input")
-    a("is the frame as the encoder writes it (no CRC, unmapped arrays absent or zero),")
-    a("so input and expected output are identical. Values are inside each field's")
-    a("range; floats are multiples of 0.25 or 0.125; every other `uint64_t` sample has")
-    a("its top bit set.")
+    if LEGACY:
+        a("is the frame as the encoder writes it (no CRC, unmapped arrays absent or zero),")
+        a("so input and expected output are identical. Values are inside each field's")
+        a("range; floats are multiples of 0.25 or 0.125; every other `uint64_t` sample has")
+        a("its top bit set.")
+    else:
+        a("is the frame as the encoder writes it (no CRC), so input and expected output")
+        a("are identical. Values are inside each field's range; floats are multiples of")
+        a("0.25 or 0.125; every other `uint64_t` sample has its top bit set%s." % (
+            "; every other\nframe has COMPAT = 1, and INCOMPAT is 0" if FLAGS else ""))
     a("")
     a("`vectors/x-NN-<kind>-to-geojson.json`: %d full frames with a correct CRC," % len(CROSS))
     a("converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees")
     a("(wire value / 10^7), `properties` empty because `geojson` carries no other key")
     a("this pack maps.")
     return o
+
+
+
+class _MdField:
+    """A mapped field as the pack.md text reads it."""
+
+    def __init__(self, field, status, lines):
+        self.field, self.status, self.lines = field, status, lines
+        for attr in ("name", "base", "n", "units", "enum", "bytes"):
+            setattr(self, attr, getattr(field, attr))
+
+
+class _MdMessage:
+    """A kind (or a message with no kind) as the pack.md text reads it."""
+
+    def __init__(self, message, kind, wire, mapped_len, length, shadowed_by):
+        self.name, self.id = message.name, message.id
+        self.kind = kind or kind_name(message)
+        self.wire, self.mapped_len, self.length, self.shadowed_by = wire, mapped_len, length, shadowed_by
+        self.wip, self.deprecated = "wip" in message.marks, "deprecated" in message.marks
+
+
+def md_messages(plan):
+    return [_MdMessage(k.message, k.name, [_MdField(f.field, f.status, f.lines) for f in k.fields],
+                       k.mapped_len, k.length, k.shadowed_by) for k in plan.kinds]
+
+
+def md_unmapped_row(a, stats):
+    if LEGACY:
+        a("| Payload fields not mapped (arrays of more than %d elements) | %d |" % (
+            MAX_ARRAY_ELEMENTS, stats["unmapped"]))
+    else:
+        a("| Payload fields not mapped | %d |" % stats["unmapped"])
+
+
+SIGNATURE_TEXT = [
+    "- CRC (2 bytes after the payload) and the 13-byte signature of a signed frame.",
+    "  A field line with the `optional` option could read them, but encode writes",
+    "  every field line of the kind whether its key is present or not (vector",
+    "  `06-optional-truncated-roundtrip-writes-whole-message` of",
+    "  `conformance-rules-bits`), so every unsigned frame would gain 13 zero bytes",
+    "  and every frame from another format a CRC of zero. Mapping them needs a rule",
+    "  that computes the checksum and one that writes a part only when a flag is set.",
+]
+
+
+def md_signature(a):
+    if FLAGS:
+        for line in SIGNATURE_TEXT:
+            a(line)
+    else:
+        a("- CRC (2 bytes after the payload), INCOMPAT and COMPAT flags, and the 13-byte")
+        a("  signature of a signed frame.")
+
+
+def md_long_rows(a, stats):
+    if stats["long"]:
+        a("| ... array of more than %d elements, one key per element | %d (%d element lines) |" % (
+            MAX_ARRAY_ELEMENTS, stats["long"], stats["long_lines"]))
+
+
+def md_long_text(a, msgs):
+    longs = [(m, f) for m in msgs for f in m.wire if f.status == "elements_long"]
+    if not longs:
+        return
+    a("")
+    a("### Arrays of more than %d elements" % MAX_ARRAY_ELEMENTS)
+    a("")
+    a("%d array fields (%d bytes of payload) are mapped one key per element as the" % (
+        len(longs), sum(f.bytes for _, f in longs)))
+    a("shorter arrays are, keys `<name>_0` to `<name>_<n-1>`. Their keys are named in")
+    a("a pass after every other key, so they never change a key the shorter-array rule")
+    a("gives: a field's element keys are shared with other messages only when every")
+    a("long use agrees on type class, units and enum and every key name that already")
+    a("exists has the same meaning; otherwise the field takes its message name as a")
+    a("prefix. Byte blobs (`uint8_t[n]` holding a file chunk, RTCM data, a URI) are")
+    a("carried byte by byte as integers 0..255; the model has no byte-string type a")
+    a("`bits` transform yields.")
+    a("")
+    a("| Message | Field | Type | Keys |")
+    a("|---|---|---|---|")
+    for m, f in longs:
+        k0 = f.lines[0][0]
+        a("| %s | %s | `%s[%d]` | `%s` … `_%d` |" % (m.name, f.name, f.base, f.n, k0, f.n - 1))
+
+
+def emit_dialect_md(plan, skipped_layouts, stats, sha):
+    """The text of pack.md of a dialect pack, section by section."""
+    msgs = md_messages(plan)
+    skipped = [_MdMessage(layout.message, None, [_MdField(p.field, "unmapped", ()) for p in layout.wire],
+                          layout.length, layout.length, []) for layout in skipped_layouts]
+    keys, qualified = plan.keys, plan.qualified
+    core = [m for m in msgs if any(f.status == "core" for f in m.wire)]
+    unmapped = [(m, f) for m in msgs for f in m.wire if f.status == "unmapped"]
+    short = [m for m in msgs if m.mapped_len < m.length]
+    shadow = [m for m in msgs if m.shadowed_by]
+    raw_deg = [(m, f) for m in msgs for f in m.wire if f.units == "degE7" and f.status != "core"]
+    reasons = collections.Counter(qualified.values())
+    included = [x for x in XML_FILES if x != ROOT_XML]
+    o = []
+    a = o.append
+    a("# Pack: %s" % FORMAT)
+    a("")
+    a("MAVLink 2 frames carrying the messages that the dialect file `%s` defines" % ROOT_XML)
+    a("itself. Public. Generated by `tools/gen/mavlink2pack.py --dialect %s` from" % DIALECT)
+    a("`%s` (`%s/%s`) at commit `%s`;" % (REPO, XML_DIR, ROOT_XML, sha))
+    a("do not edit `pack.def`, `model/%s.def`, this file or the vectors by hand." % MODULE)
+    a("I/O is hex text (`spec/engine-spec.md`, bits wire). Source, hashes and license:")
+    a("`PROVENANCE.md`.")
+    a("")
+    a("Status: Built. Generated and checked by the generator's own reader; every engine")
+    a("runs every vector in `vectors/` in the conformance suite.")
+    a("")
+    a("## Scope: the dialect's own messages")
+    a("")
+    if included:
+        a("`%s` includes %s. The pack holds only the messages `%s`" % (
+            ROOT_XML, ", ".join("`%s`" % x for x in included), ROOT_XML))
+        a("itself defines; the messages of the included files are in the pack of the file")
+        a("that defines them (`mavlink2` for `common.xml`, `standard.xml` and `minimal.xml`,")
+        a("`mavlink2-<dialect>` for a dialect). The included files are read only to check")
+        a("that every message id and every message name of the whole set is unique.")
+    else:
+        a("`%s` includes no other file. The pack holds the messages it defines." % ROOT_XML)
+    a("")
+    a("So no message id occurs twice inside the pack, and a message is described by")
+    a("exactly one pack in the repository. A system that speaks the dialect loads")
+    a("`mavlink2` and the packs of every file the dialect includes, and names the pack")
+    a("of the message when it converts. A frame of an included message is `no-kind` in")
+    a("this pack.")
+    a("")
+    a("## Layout")
+    a("")
+    a("The frame is the one `packs/mavlink2/pack.md` describes: `wire bits`, `bit_order lsb`,")
+    a("`word_bytes 1`, locators `0:<bit offset>:<len>` from the STX byte, a common `when`")
+    a("on STX = 253, and per kind a `when` on MSGID (`0:56:24`) and on LEN (`0:8:8`) = the")
+    if FLAGS:
+        a("full payload length. The frame-header keys `mavlink.seq`, `mavlink.sysid`,")
+        a("`mavlink.compid`, `mavlink.incompat_flags` and `mavlink.compat_flags` are those of")
+        a("module `mavlink`, so they carry over between every")
+    else:
+        a("full payload length. The frame-header keys `mavlink.seq`, `mavlink.sysid` and")
+        a("`mavlink.compid` are those of module `mavlink`, so they carry over between every")
+    a("MAVLink pack. Payload keys are in this pack's own module `%s`." % MODULE)
+    a("Payload fields sit at their MAVLink 2 wire offsets: base fields in descending")
+    a("type-size order (stable), then extension fields in declaration order. The")
+    a("generator confirms the order by computing CRC_EXTRA and the payload length of")
+    a("%d messages and comparing them with the values in the C library that the" % len(KNOWN_DIALECT.get(DIALECT, {})))
+    a("MAVLink project generates from the same definitions (`PROVENANCE.md`).")
+    a("")
+    a("## Numbers")
+    a("")
+    a("| | Count |")
+    a("|---|---|")
+    a("| Messages `%s` defines | %d |" % (ROOT_XML, len(msgs) + len(skipped)))
+    a("| Kinds | %d |" % len(msgs))
+    a("| Messages with no field the pack can map (no kind) | %d |" % len(skipped))
+    a("| Payload fields of the kinds | %d |" % stats["fields"])
+    a("| Payload fields mapped | %d |" % stats["mapped"])
+    a("| ... scalar to a raw `%s.` key | %d |" % (MODULE, stats["scalar"]))
+    a("| ... `char[n]` to a string key (`ascii`) | %d |" % stats["ascii"])
+    a("| ... array of 2 to %d elements, one key per element | %d (%d element lines) |" % (
+        MAX_ARRAY_ELEMENTS, stats["elements"], stats["element_lines"]))
+    md_long_rows(a, stats)
+    a("| ... latitude / longitude in degE7 to core `lat` / `lon` | %d |" % stats["core"])
+    md_unmapped_row(a, stats)
+    a("| `field` lines in `pack.def` (%d common + per kind) | %d |" % (len(COMMON_KEYS), stats["field_lines"]))
+    a("| Keys in module `%s` | %d |" % (MODULE, len(keys)))
+    a("| Vectors (%d same-format round trips + %d to geojson) | %d |" % (
+        len(msgs), len(CROSS), len(msgs) + len(CROSS)))
+    a("")
+    a("## What is mapped")
+    a("")
+    a("| MAVLink type | Transform | Model type |")
+    a("|---|---|---|")
+    a("| `uint8_t` `uint16_t` `uint32_t` `uint64_t` | `uint` | int |")
+    a("| `int8_t` `int16_t` `int32_t` `int64_t` | `twos` | int |")
+    a("| `float` | `f32` | float |")
+    a("| `double` | `f64` | float |")
+    a("| `char[n]` | `ascii` over `8n` bits | string |")
+    a("| other `type[n]`, n of 2 to %d | one line per element, keys `…_0`, `…_1`, … | as the element |" % MAX_ARRAY_ELEMENTS)
+    a("| `int32_t` degE7 named `lat`, and `lon` or `lng`, both in one message, with no `invalid` value declared | `sscale:%s` | float, core `lat` / `lon` |" % DEGE7)
+    a("")
+    a("Every other value is raw: the integer or float on the wire, in the unit the")
+    a("definition states, which `model/%s.def` records in the key's unit column." % MODULE)
+    md_long_text(a, msgs)
+    a("")
+    a("### Key names")
+    a("")
+    a("The rules of `packs/mavlink2/pack.md` (Key names), within this dialect: a key is")
+    a("`%s.<field name>` with the unit appended when the field declares one and" % MODULE)
+    a("the name does not already end with it; one key is shared by every message of the")
+    a("dialect whose field has that name, type class, units and enum; otherwise every use")
+    a("takes the message name as a prefix. %d fields are named that way%s" % (
+        len(qualified), ":" if reasons else "."))
+    if reasons:
+        a("")
+        a("| Reason | Fields |")
+        a("|---|---|")
+        for r, c in sorted(reasons.items(), key=lambda x: -x[1]):
+            a("| %s | %d |" % (r, c))
+    a("")
+    a("### Core keys")
+    a("")
+    if core:
+        a("The binding is the one `mavlink2` makes, for the same field semantics: an")
+        a("`int32_t` field in degE7 that the definition names and describes as the")
+        a("latitude or longitude, with no `invalid` value. A message binds only when it has")
+        a("one latitude and one longitude field that qualify.")
+        if any(f.name == "lng" for m in core for f in m.wire if f.status == "core"):
+            a("This dialect spells the longitude `lng`; it is treated as `lon`.")
+        a("The position is the one the message reports:")
+        a("")
+        a("| Kind | Fields | Position |")
+        a("|---|---|---|")
+        for m in core:
+            fs = " / ".join("`%s`" % f.name for f in m.wire if f.status == "core")
+            a("| `%s` | %s | %s |" % (m.kind, fs, POSITION_NOTES[m.name]))
+    else:
+        a("No message of `%s` has a latitude and a longitude field that bind core keys," % ROOT_XML)
+        a("so no kind maps a shared key and the pack converts to no other format.")
+    if raw_deg:
+        a("")
+        a("Left raw: %s. A field stays raw when its name is not `lat`, `lon` or `lng`," % ", ".join(
+            "`%s.%s`" % (m.name, f.name) for m, f in raw_deg))
+        a("when it declares an `invalid` value (INT32_MAX would decode to 214.7483647")
+        a("degrees), or when its message has no qualifying partner field.")
+    a("")
+    a("Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:")
+    a("altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is")
+    a("above the ellipsoid), epoch times in microseconds, and speed, course and velocity")
+    a("(the frame is stated in description text, not in the units).")
+    a("")
+    a("### `requires`")
+    a("")
+    a("Each kind requires up to %d of its own raw keys, the ones used by the fewest" % MAX_REQUIRES)
+    a("kinds of this pack. No kind requires a core key, so a GeoJSON or CoT entity, or an")
+    a("entity decoded by another MAVLink pack, selects no kind here (`no-kind`).")
+    if shadow:
+        a("For %d kinds the required keys are all mapped by another kind too; an entity" % len(shadow))
+        a("built from such a kind's keys with its kind cleared selects the first")
+        a("qualifying kind in id order: %s." % ", ".join("`%s`" % m.kind for m in shadow))
+    a("")
+    a("## What is not mapped")
+    a("")
+    md_signature(a)
+    if skipped:
+        a("- Messages with no kind: every payload field is an array of more than %d" % MAX_ARRAY_ELEMENTS)
+        a("  elements, so the kind would have no key to map or to require (a kind with no")
+        a("  `requires` would be chosen for any entity). A frame of one is `no-kind`:")
+        a("")
+        a("| Message | Id | Fields |")
+        a("|---|---|---|")
+        for m in skipped:
+            a("| %s | %d | %s |" % (m.name, m.id, ", ".join("`%s` `%s[%d]`" % (f.name, f.base, f.n) for f in m.wire)))
+        a("")
+    if unmapped:
+        a("- %d array fields of more than %d elements (%d bytes of payload in total):" % (
+            len(unmapped), MAX_ARRAY_ELEMENTS, sum(f.bytes for _, f in unmapped)))
+        a("")
+        a("| Message | Field | Type |")
+        a("|---|---|---|")
+        for m, f in unmapped:
+            a("| %s | %s | `%s[%d]` |" % (m.name, f.name, f.base, f.n))
+        a("")
+    a("- Enum and bitmask values are carried as their integer; enum names are not")
+    a("  taken into the model.")
+    a("")
+    a("## Known limits")
+    a("")
+    a("Those of `packs/mavlink2/pack.md` (Known limits) hold here unchanged: truncated")
+    a("payloads (LEN shorter than the full length) are `no-kind`; the CRC is neither")
+    a("checked nor written; unmapped bits are written as zero; an `invalid` value is"
+      if LEGACY else "checked nor written; an `invalid` value is")
+    a("carried as its number; `ascii` refuses bytes outside 0x20..0x7E; `uint64_t` values")
+    a("of 2^63 or above are the negative model integer with the same bits.")
+    if short:
+        a("In %d kinds the payload ends in unmapped array fields, so encode output is" % len(short))
+        a("shorter than `10 + LEN` bytes: %s." % ", ".join("`%s`" % m.kind for m in short))
+    wip = [m for m in msgs + skipped if m.wip]
+    dep = [m for m in msgs + skipped if m.deprecated]
+    if wip or dep:
+        a("")
+        a("## Message status in the source")
+        a("")
+        if wip:
+            a("The definition marks %d messages as work in progress, liable to change in a" % len(wip))
+            a("later commit: %s." % ", ".join("`%s`" % m.kind for m in wip))
+        if dep:
+            a("The definition marks %d messages as deprecated: %s." % (len(dep), ", ".join("`%s`" % m.kind for m in dep)))
+        a("The pack maps them as the pinned commit defines them.")
+    a("")
+    a("## Vectors")
+    a("")
+    a("`vectors/rt-<id>-<kind>.json`: one same-format round trip per kind, computed by")
+    if LEGACY:
+        a("the generator's own encoder (no CRC, unmapped arrays absent or zero), so input and")
+        a("expected output are identical.")
+    else:
+        a("the generator's own encoder (no CRC%s), so input" % (
+            "; every other frame has COMPAT = 1" if FLAGS else ""))
+        a("and expected output are identical.")
+    if CROSS:
+        a("")
+        a("`vectors/x-NN-<kind>-to-geojson.json`: %d full frames with a correct CRC" % len(CROSS))
+        a("(computed with the message's CRC_EXTRA), converted to GeoJSON. The expected")
+        a("output is written by hand in the generator from the field values: `coordinates`")
+        a("= `[lon, lat]` in degrees (wire value / 10^7), `properties` empty because")
+        a("`geojson` carries no other key this pack maps.")
+    return "\n".join(o) + "\n"
 
 
 def emit_pack_md(plan, stats, sha):
@@ -1408,6 +1986,14 @@ def load_output(out, core_text, core_label):
     written (or, with --check, the bytes that would be written)."""
     model = gtcheck.Model()
     model.add(core_text, core_label)
+    if MODULE != HEADER_MODULE:
+        header_path = "model/%s.def" % HEADER_MODULE
+        model.add(out.read(header_path), header_path)
+        header = model.modules[HEADER_MODULE]
+        for k, _, _ in COMMON_KEYS:
+            if k not in header.keys:
+                raise GenError("module %s declares no key %s; generate mavlink2 first" % (HEADER_MODULE, k),
+                               header_path)
     model.add(out.read(MODEL_PATH), MODEL_PATH)
     return model, gtcheck.load_pack(out.read(PACK_PATH), model, PACK_PATH)
 
@@ -1445,13 +2031,45 @@ def summary(plan, stats, sha, pack, module, written, checked):
     ]
 
 
-def generate(out, core_text, core_label):
+def check_known_dialect(messages):
+    """Every message of the dialect has the CRC_EXTRA and full payload length
+    KNOWN_DIALECT states; refuses one that differs or is missing."""
+    table = KNOWN_DIALECT[DIALECT]
+    if set(table) != {m.id for m in messages}:
+        raise GenError("the CRC_EXTRA table and the messages of %s differ" % ROOT_XML, source_label(ROOT_XML))
+    for m in messages:
+        layout = lay_out(m)
+        if (layout.crc_extra, layout.length) != table[m.id]:
+            raise GenError("%s: CRC_EXTRA, length %s; the C library states %s"
+                           % (m.name, (layout.crc_extra, layout.length), table[m.id]),
+                           source_label(m.file), m.line)
+
+
+def mappable(f):
+    """A field --max-array lets the pack state."""
+    return not (f.is_array and f.n > MAX_ARRAY)
+
+
+def generate(out, core_text, core_label, src=None, provenance=None):
     """One run over the directory of `out`: parse, plan, emit, check. Returns
     the summary lines; raises GenError or gtcheck.CheckError."""
-    src = out.path(SOURCE_DIR)
-    sha = read_provenance(src)
-    plan = make_plan(load_messages(src))
-    check_known_crc_extra(plan.kinds)
+    src = src or out.path(SOURCE_DIR)
+    sha = read_provenance(src, provenance)
+    messages = load_messages(src)
+    skipped = []
+    if DIALECT:
+        check_known_dialect(messages)
+        # a message none of whose fields the pack can map gets no kind: it
+        # would have no key to require
+        skipped = [m for m in messages if not any(mappable(f) for f in m.fields)]
+        messages = [m for m in messages if m not in skipped]
+    plan = make_plan(messages)
+    if DIALECT:
+        for k in plan.kinds:
+            if any(f.status == "core" for f in k.fields) and k.message.name not in POSITION_NOTES:
+                raise GenError("%s binds core lat/lon but has no POSITION_NOTES entry" % k.message.name)
+    else:
+        check_known_crc_extra(plan.kinds)
 
     out.write(MODEL_PATH, emit_model(plan.keys, sha))
     out.write(PACK_PATH, emit_pack(plan.kinds, sha))
@@ -1467,8 +2085,19 @@ def generate(out, core_text, core_label):
         raise GenError("%d vectors written, %d checked" % (len(vectors), checked), VECTOR_DIR)
 
     stats = collect_stats(plan)
-    out.write(PACK_MD_PATH, emit_pack_md(plan, stats, sha))
-    return summary(plan, stats, sha, pack, module, len(vectors), checked)
+    if DIALECT:
+        out.write(PACK_MD_PATH, emit_dialect_md(plan, [lay_out(m) for m in skipped], stats, sha))
+    else:
+        out.write(PACK_MD_PATH, emit_pack_md(plan, stats, sha))
+    lines = summary(plan, stats, sha, pack, module, len(vectors), checked)
+    if skipped:
+        lines.insert(2, "no kind           %d (no field the pack can map): %s"
+                     % (len(skipped), ", ".join(m.name for m in skipped)))
+    return lines
+
+
+# The module-level choices as imported; `configure` returns to them first.
+_BASE = (tuple(COMMON_KEYS), ROOT_XML, tuple(XML_FILES), tuple(CROSS), FORMAT, MODULE)
 
 
 def build_parser():
@@ -1490,7 +2119,38 @@ def build_parser():
     ap.add_argument("--core-def", metavar="PATH",
                     help="model/core.def to check the pack against; without it the check uses a stand-in "
                          "that declares only `lat` and `lon`")
+    ap.add_argument("--dialect", metavar="NAME",
+                    help="write the pack mavlink2-<name> of the dialect NAME.xml (its own messages only)")
+    ap.add_argument("--src", metavar="DIR", help="the directory of the XML files (default DIR/sources)")
+    ap.add_argument("--provenance", metavar="FILE",
+                    help="the PROVENANCE.md with the commit and SHA-256 table (default SRC/PROVENANCE.md; "
+                         "with --dialect DIR/packs/<format>/PROVENANCE.md)")
+    ap.add_argument("--max-array", type=int, default=8, metavar="N",
+                    help="map non-char arrays of up to N elements, one key per element (default 8)")
+    ap.add_argument("--compat-flags", action="store_true",
+                    help="map the INCOMPAT and COMPAT bytes as mavlink.incompat_flags, mavlink.compat_flags")
     return ap
+
+
+def configure(args):
+    """Set the module-level choices of one run from the parsed arguments."""
+    global DIALECT, ROOT_XML, XML_FILES, CROSS, MAX_ARRAY, FLAGS, LEGACY, COMMON_KEYS
+    if args.max_array < MAX_ARRAY_ELEMENTS or args.max_array > 255:
+        raise GenError("--max-array is %d to 255" % MAX_ARRAY_ELEMENTS)
+    MAX_ARRAY, FLAGS = args.max_array, args.compat_flags
+    LEGACY = MAX_ARRAY == MAX_ARRAY_ELEMENTS and not FLAGS
+    # every run starts from the defaults (main can be called more than once)
+    COMMON_KEYS = list(_BASE[0]) + (FLAG_KEYS if FLAGS else [])
+    DIALECT, ROOT_XML, XML_FILES, CROSS = None, _BASE[1], list(_BASE[2]), list(_BASE[3])
+    set_names(_BASE[4], _BASE[5])
+    if args.dialect:
+        if args.dialect not in KNOWN_DIALECT:
+            raise GenError("no CRC_EXTRA table for dialect %s" % args.dialect)
+        DIALECT = args.dialect
+        ROOT_XML = DIALECT + ".xml"
+        set_names("mavlink2-" + DIALECT.lower(), "mavlink" + re.sub(r"[^a-z0-9]", "", DIALECT.lower()))
+        XML_FILES = include_closure(args.src or os.path.join(args.out, SOURCE_DIR), ROOT_XML)
+        CROSS = CROSS_DIALECT.get(DIALECT, [])
 
 
 def main(argv=None):
@@ -1502,7 +2162,11 @@ def main(argv=None):
                 core_text, core_label = fh.read(), args.core_def
         else:
             core_text, core_label = CORE_STAND_IN, "<core stand-in>"
-        lines = generate(out, core_text, core_label)
+        configure(args)
+        provenance = args.provenance
+        if DIALECT and not provenance:
+            provenance = out.path(PACK_DIR + "/PROVENANCE.md")
+        lines = generate(out, core_text, core_label, args.src, provenance)
     except (GenError, gtcheck.CheckError) as e:
         print("%s: %s" % (NAME, e), file=sys.stderr)
         return 1

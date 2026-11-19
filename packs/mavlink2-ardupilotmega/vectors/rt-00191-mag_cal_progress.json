@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mag_cal_progress",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1b000023c001bf0000000000000000e03f00006040a2795027fe",
+  "expect": "fd1b000023c001bf0000000000000000e03f00006040a2795027fe",
+  "model": {
+    "@kind": "mag_cal_progress"
+  }
+}

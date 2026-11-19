@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sensorpod_status",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd1000000c0db64c1f0040ff0331000000801753eec59c734a21",
+  "expect": "fd1000000c0db64c1f0040ff0331000000801753eec59c734a21",
+  "model": {
+    "@kind": "sensorpod_status"
+  }
+}

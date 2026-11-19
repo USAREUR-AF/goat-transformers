@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-param_value_array",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fdff0000082a4489ea00b3ea8a3e619238",
+  "expect": "fdff0000082a4489ea00b3ea8a3e619238",
+  "model": {
+    "@kind": "param_value_array"
+  }
+}

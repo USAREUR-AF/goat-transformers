@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-rally_point",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd13000017b0b0af0000f0dcf807102307f835cdb62089bc60370ee5bc",
+  "expect": "fd13000017b0b0af0000f0dcf807102307f835cdb62089bc60370ee5bc",
+  "model": {
+    "@kind": "rally_point"
+  }
+}

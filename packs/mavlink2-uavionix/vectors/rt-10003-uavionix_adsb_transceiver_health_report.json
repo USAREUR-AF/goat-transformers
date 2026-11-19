@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-uavionix_adsb_transceiver_health_report",
+  "from": "mavlink2-uavionix",
+  "to": "mavlink2-uavionix",
+  "input": "fd01000002044813270089",
+  "expect": "fd01000002044813270089",
+  "model": {
+    "@kind": "uavionix_adsb_transceiver_health_report"
+  }
+}

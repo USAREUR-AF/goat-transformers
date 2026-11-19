@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-control_loading_axis",
+  "from": "mavlink2-marsh",
+  "to": "mavlink2-marsh",
+  "input": "fd1100000002a815cd0067f59d53000070c0000000c0000080bec3",
+  "expect": "fd1100000002a815cd0067f59d53000070c0000000c0000080bec3",
+  "model": {
+    "@kind": "control_loading_axis"
+  }
+}

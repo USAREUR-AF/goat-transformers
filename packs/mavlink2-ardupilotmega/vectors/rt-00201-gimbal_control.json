@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gimbal_control",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0e000028ca0bc90000000090c0000030c0000080bff8cf",
+  "expect": "fd0e000028ca0bc90000000090c0000030c0000080bff8cf",
+  "model": {
+    "@kind": "gimbal_control"
+  }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- A dialect written for the tests of tools/gen/mavlink2pack.py -->
+<mavlink>
+  <include>common.xml</include>
+  <messages>
+    <message id="60100" name="TEST_FIX">
+      <description>A position with the longitude spelt lng.</description>
+      <field type="uint32_t" name="time_boot_ms" units="ms">Time.</field>
+      <field type="int32_t" name="lat" units="degE7">Latitude.</field>
+      <field type="int32_t" name="lng" units="degE7">Longitude.</field>
+      <field type="float" name="alt" units="m">Altitude.</field>
+    </message>
+    <message id="60101" name="TEST_BLOB">
+      <description>Only an array of more than eight elements.</description>
+      <field type="uint8_t[16]" name="data">Bytes.</field>
+    </message>
+    <message id="60102" name="TEST_DRAFT">
+      <wip/>
+      <description>A message in progress, with an extension field.</description>
+      <field type="uint16_t" name="count">Count.</field>
+      <field type="char[4]" name="tag">Tag.</field>
+      <field type="int16_t[3]" name="vec" units="cm">Vector.</field>
+      <extensions/>
+      <field type="uint8_t" name="mode">Mode.</field>
+    </message>
+    <message id="60103" name="TEST_HALF">
+      <deprecated since="2020-01" replaced_by="TEST_FIX"/>
+      <description>A latitude with no longitude: it stays raw.</description>
+      <field type="int32_t" name="lat" units="degE7">Latitude.</field>
+      <field type="uint8_t" name="seq">A field named like a frame-header key.</field>
+    </message>
+  </messages>
+</mavlink>

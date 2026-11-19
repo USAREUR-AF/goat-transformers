@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-test_half",
+  "from": "mavlink2-testdialect",
+  "to": "mavlink2-testdialect",
+  "input": "fd050000026882c7ea000bf010d26c",
+  "expect": "fd050000026882c7ea000bf010d26c",
+  "model": {
+    "@kind": "test_half"
+  }
+}

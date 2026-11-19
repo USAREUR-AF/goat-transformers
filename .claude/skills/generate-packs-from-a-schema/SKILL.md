@@ -26,7 +26,7 @@ SHA-256 and license for `PROVENANCE.md`.
 | XML Schema (`.xsd`) | `tools/gen/xsd2pack.py` | `tools/gen/xsd2pack-run.sh` (three packs) |
 | CANboat `canboat.json` | `tools/gen/canboat2pack.py` | `--out <dir> --commit <sha> --fetch` the first time, `--out <dir>` afterwards; reads `<dir>/sources/canboat.json` |
 | ASTERIX category definitions (the JSON of `zoranbosnjak/asterix-specs`) | `tools/gen/asterix2pack.py` | `--out <dir> --commit <sha> --fetch --cats 048,062` or `all`; reads `<dir>/sources/asterix-specs/` |
-| MAVLink message XML | `tools/gen/mavlink2pack.py` | `--out <dir> --core-def model/core.def` (`--root` is the same option); reads `<dir>/sources/{common,standard,minimal}.xml` and `<dir>/sources/PROVENANCE.md` |
+| MAVLink message XML | `tools/gen/mavlink2pack.py` | `tools/gen/mavlink2pack-run.sh <checkout> <sources> [--fetch]` writes `mavlink2` and one pack per dialect (`--dialect <name>`); alone, `--out <dir> --core-def model/core.def` (`--root` is the same option) reads `<dir>/sources/{common,standard,minimal}.xml` and `<dir>/sources/PROVENANCE.md` |
 
 Every generator is Python standard library only. Run each with `python3 -I`
 and read its `--help`, which states the files read, the files written, the

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-secure_command_reply",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fde60000350677fd2a00ff0c263dd660aa10ad84",
+  "expect": "fde60000350677fd2a00ff0c263dd660aa10ad84",
+  "model": {
+    "@kind": "secure_command_reply"
+  }
+}

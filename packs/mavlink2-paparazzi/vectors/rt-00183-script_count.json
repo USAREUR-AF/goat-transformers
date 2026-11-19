@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-script_count",
+  "from": "mavlink2-paparazzi",
+  "to": "mavlink2-paparazzi",
+  "input": "fd04000003b8b8b70000a5507c53",
+  "expect": "fd04000003b8b8b70000a5507c53",
+  "model": {
+    "@kind": "script_count"
+  }
+}

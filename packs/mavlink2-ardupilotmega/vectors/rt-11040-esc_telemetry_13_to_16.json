@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-esc_telemetry_13_to_16",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd2c000043299a202b002cd0dd498ec33f3d0324b49d65171691da778bf13c6bede4b1cb624513bfc438881f3999ea129b8c5f10c172",
+  "expect": "fd2c000043299a202b002cd0dd498ec33f3d0324b49d65171691da778bf13c6bede4b1cb624513bfc438881f3999ea129b8c5f10c172",
+  "model": {
+    "@kind": "esc_telemetry_13_to_16"
+  }
+}

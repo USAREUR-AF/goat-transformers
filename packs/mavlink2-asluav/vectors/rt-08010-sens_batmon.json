@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sens_batmon",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd2900000a0bb44a1f006286945f000000800000803f102e9d06e781215abed50b346c7d43d11a25f178c8cc9f2076744dc824",
+  "expect": "fd2900000a0bb44a1f006286945f000000800000803f102e9d06e781215abed50b346c7d43d11a25f178c8cc9f2076744dc824",
+  "model": {
+    "@kind": "sens_batmon"
+  }
+}

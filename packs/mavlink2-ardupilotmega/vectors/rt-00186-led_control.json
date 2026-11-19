@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-led_control",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1d000022bbbbba0000f2c9a0774e",
+  "expect": "fd1d000022bbbbba0000f2c9a0774e",
+  "model": {
+    "@kind": "led_control"
+  }
+}

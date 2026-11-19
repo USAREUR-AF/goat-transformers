@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-motion_cue_extra",
+  "from": "mavlink2-marsh",
+  "to": "mavlink2-marsh",
+  "input": "fd1c00000305ab18cd00b42ac54d000080bf0000403f0000204000008840000088c0000020c0",
+  "expect": "fd1c00000305ab18cd00b42ac54d000080bf0000403f0000204000008840000088c0000020c0",
+  "model": {
+    "@kind": "motion_cue_extra"
+  }
+}

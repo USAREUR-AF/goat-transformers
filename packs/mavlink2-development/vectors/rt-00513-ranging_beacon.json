@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-ranging_beacon",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd2d00000c0e84010200bb37d77200000000928b5b4657fc6ee6d84f73e60000c03feeda6c14c52ef1679c82753b73d64a2a21f8cfa67d",
+  "expect": "fd2d00000c0e84010200bb37d77200000000928b5b4657fc6ee6d84f73e60000c03feeda6c14c52ef1679c82753b73d64a2a21f8cfa67d",
+  "model": {
+    "@kind": "ranging_beacon"
+  }
+}

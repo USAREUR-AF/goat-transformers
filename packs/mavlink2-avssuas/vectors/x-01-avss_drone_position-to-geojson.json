@@ -1,0 +1,15 @@
+{
+  "name": "avss_drone_position-to-geojson",
+  "from": "mavlink2-avssuas",
+  "to": "geojson",
+  "input": "fd1800001f010193ea00881300001862b21ed0fcecffb88800000000f4410000fa413525",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1246,51.5007]},\"properties\":{}}",
+  "model": {
+    "@kind": "avss_drone_position",
+    "lat": "51.5007",
+    "lon": "-0.1246",
+    "mavlink.seq": "31",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

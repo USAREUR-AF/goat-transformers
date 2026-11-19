@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sens_power",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd1000000203ac421f000000a0bf0000003f0000104000008040",
+  "expect": "fd1000000203ac421f000000a0bf0000003f0000104000008040",
+  "model": {
+    "@kind": "sens_power"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-test_fix",
+  "from": "mavlink2-testdialect",
+  "to": "mavlink2-testdialect",
+  "input": "fd10000000657fc4ea0048589079c0c2da06403d25f9000090c0",
+  "expect": "fd10000000657fc4ea0048589079c0c2da06403d25f9000090c0",
+  "model": {
+    "@kind": "test_fix"
+  }
+}

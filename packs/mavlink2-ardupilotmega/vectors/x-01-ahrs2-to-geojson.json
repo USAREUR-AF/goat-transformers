@@ -1,0 +1,15 @@
+{
+  "name": "ahrs2-to-geojson",
+  "from": "mavlink2-ardupilotmega",
+  "to": "geojson",
+  "input": "fd180000150101b200000000003f000080be0000c03f0000f1424c52401c44f4170598e2",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "ahrs2",
+    "lat": "47.397742",
+    "lon": "8.545594",
+    "mavlink.seq": "21",
+    "mavlink.sysid": "1",
+    "mavlink.compid": "1"
+  }
+}

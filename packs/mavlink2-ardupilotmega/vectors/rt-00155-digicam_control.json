@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-digicam_control",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0d0000059c9c9b0000000010c0582f06dd048b623910",
+  "expect": "fd0d0000059c9c9b0000000010c0582f06dd048b623910",
+  "model": {
+    "@kind": "digicam_control"
+  }
+}

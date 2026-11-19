@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mount_status",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0f0000089f9f9e0000faf2d4cb7b46d9cbfc99ddcb532a01",
+  "expect": "fd0f0000089f9f9e0000faf2d4cb7b46d9cbfc99ddcb532a01",
+  "model": {
+    "@kind": "mount_status"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-asl_obctrl",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd2100000809b2481f00840d250e00000080000088c0000020c0000040bf0000803f000030400000904065",
+  "expect": "fd2100000809b2481f00840d250e00000080000088c0000020c0000040bf0000803f000030400000904065",
+  "model": {
+    "@kind": "asl_obctrl"
+  }
+}

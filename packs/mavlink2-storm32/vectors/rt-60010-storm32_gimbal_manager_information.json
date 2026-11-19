@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-storm32_gimbal_manager_information",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd210000010b256aea004219f828196d7c7c000060400000a0c0000050c00000c0bf0000803e00000040fa",
+  "expect": "fd210000010b256aea004219f828196d7c7c000060400000a0c0000050c00000c0bf0000803e00000040fa",
+  "model": {
+    "@kind": "storm32_gimbal_manager_information"
+  }
+}

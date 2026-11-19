@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-osd_param_show_config",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0800003e24951b2b000122ae02d8af865d",
+  "expect": "fd0800003e24951b2b000122ae02d8af865d",
+  "model": {
+    "@kind": "osd_param_show_config"
+  }
+}

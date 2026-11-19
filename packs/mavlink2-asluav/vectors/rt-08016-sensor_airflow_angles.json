@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-sensor_airflow_angles",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd1200001011ba501f00fcf0e25300000080000070c0000000c08158",
+  "expect": "fd1200001011ba501f00fcf0e25300000080000070c0000000c08158",
+  "model": {
+    "@kind": "sensor_airflow_angles"
+  }
+}

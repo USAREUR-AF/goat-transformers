@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-frsky_passthrough_array",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fdf5000007294388ea00442e806e1b",
+  "expect": "fdf5000007294388ea00442e806e1b",
+  "model": {
+    "@kind": "frsky_passthrough_array"
+  }
+}

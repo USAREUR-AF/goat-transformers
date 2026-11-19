@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-test_draft",
+  "from": "mavlink2-testdialect",
+  "to": "mavlink2-testdialect",
+  "input": "fd0d0000016781c6ea0026d1e39a1a3951d74d330000ab",
+  "expect": "fd0d0000016781c6ea0026d1e39a1a3951d74d330000ab",
+  "model": {
+    "@kind": "test_draft"
+  }
+}

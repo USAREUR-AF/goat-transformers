@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gopro_heartbeat",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd0300002ad819d70000855c33",
+  "expect": "fd0300002ad819d70000855c33",
+  "model": {
+    "@kind": "gopro_heartbeat"
+  }
+}

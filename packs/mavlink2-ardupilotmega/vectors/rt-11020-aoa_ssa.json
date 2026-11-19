@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-aoa_ssa",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fd1000003815860c2b008017ea1f00000080000000bf0000a03f",
+  "expect": "fd1000003815860c2b008017ea1f00000080000000bf0000a03f",
+  "model": {
+    "@kind": "aoa_ssa"
+  }
+}

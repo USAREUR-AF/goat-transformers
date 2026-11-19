@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-icarous_kinematic_bands",
+  "from": "mavlink2-icarous",
+  "to": "mavlink2-icarous",
+  "input": "fd2e00000102ad11a40000009040000080c0000010c0000000bf0000a03f0000404000009840000070c0000000c0000080be6fe8bf966d44",
+  "expect": "fd2e00000102ad11a40000009040000080c0000010c0000000bf0000a03f0000404000009840000070c0000000c0000080be6fe8bf966d44",
+  "model": {
+    "@kind": "icarous_kinematic_bands"
+  }
+}

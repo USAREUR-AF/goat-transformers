@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-satcom_link_status",
+  "from": "mavlink2-asluav",
+  "to": "mavlink2-asluav",
+  "input": "fd1800000f10b94f1f008d342b2b000000006488af7e000000803bdc1230e9c0976e",
+  "expect": "fd1800000f10b94f1f008d342b2b000000006488af7e000000803bdc1230e9c0976e",
+  "model": {
+    "@kind": "satcom_link_status"
+  }
+}

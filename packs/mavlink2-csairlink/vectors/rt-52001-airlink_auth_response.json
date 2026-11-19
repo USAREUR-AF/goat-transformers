@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-airlink_auth_response",
+  "from": "mavlink2-csairlink",
+  "to": "mavlink2-csairlink",
+  "input": "fd01000001023221cb009b",
+  "expect": "fd01000001023221cb009b",
+  "model": {
+    "@kind": "airlink_auth_response"
+  }
+}

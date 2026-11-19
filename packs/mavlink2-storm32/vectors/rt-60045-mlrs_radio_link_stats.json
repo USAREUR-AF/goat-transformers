@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-mlrs_radio_link_stats",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd170000092e488dea006fdc461df4cba2475027cad5cc83ce0000c0bf0000803e",
+  "expect": "fd170000092e488dea006fdc461df4cba2475027cad5cc83ce0000c0bf0000803e",
+  "model": {
+    "@kind": "mlrs_radio_link_stats"
+  }
+}

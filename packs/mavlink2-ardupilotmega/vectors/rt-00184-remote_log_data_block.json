@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-remote_log_data_block",
+  "from": "mavlink2-ardupilotmega",
+  "to": "mavlink2-ardupilotmega",
+  "input": "fdce000020b9b9b80000140db61eebc2",
+  "expect": "fdce000020b9b9b80000140db61eebc2",
+  "model": {
+    "@kind": "remote_log_data_block"
+  }
+}

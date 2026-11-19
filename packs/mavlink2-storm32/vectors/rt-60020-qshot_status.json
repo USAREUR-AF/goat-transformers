@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-qshot_status",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd04000006152f74ea0098756fc9",
+  "expect": "fd04000006152f74ea0098756fc9",
+  "model": {
+    "@kind": "qshot_status"
+  }
+}
