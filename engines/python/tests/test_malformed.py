@@ -391,6 +391,34 @@ class TestJsonGrammar(_Rulings):
                       "1" + "0" * 400, "1e400"):
                 self.assertIsNone(outcome(engine(), fmt, fmt, wrap % v), v[:20])
 
+    def test_huge_exponent_on_an_int_field_ends(self):
+        """`2e47686170` on an `int` field is a 47-million-digit integer. The
+        field's transform refuses it at once instead of building it, and the
+        decode then fails as the wire states for a number outside the double
+        range (ruling 39 of 0.8). Below that range the transform's own limit
+        is 4300 digits."""
+        import time
+
+        eng = Engine()
+        eng.load_model("module core\nversion 1\ndistribution public\nsource s\nkey uid string -\nkey n int -\n")
+        eng.load("format x\nversion 1\ndistribution public\nsource s\nwire json\nfield n n int\n")
+        for v in ("2e47686170", "-1e999999999", "1.5e4400", "1e4300"):
+            start = time.monotonic()
+            with self.assertRaises(GTError, msg=v) as cm:
+                eng.decode("x", '{"n":%s}' % v)
+            self.assertEqual(cm.exception.code, "malformed-wire", v)
+            self.assertLess(time.monotonic() - start, 1.0, v)
+        self.assertEqual(eng.decode("x", '{"n":1e3}').fields, {"n": 1000})
+        self.assertEqual(len(str(eng.decode("x", '{"n":1e300}').fields["n"])), 301)
+        from goat_transformers.transforms import IntT
+
+        for v in ("1e4300", "2e47686170"):
+            start = time.monotonic()
+            with self.assertRaises(ValueError, msg=v):
+                IntT().decode(v)
+            self.assertLess(time.monotonic() - start, 1.0, v)
+        self.assertEqual(len(str(IntT().decode("1e4299"))), 4300)
+
     def test_strings(self):
         self.each(('"a"', '"\\n\\t\\r\\b\\f\\/\\\\\\""', '"\\u0041"', '"\\ud83d\\udc10"', '"\x7f"', '"é"',
                    '"\U0001f410"', '""'), self.converts)
