@@ -1,0 +1,17 @@
+{
+  "name": "rt-polygon_stamped",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_stamped\",\"type\":\"geometry_msgs/msg/PolygonStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"polygon\":{\"points\":[{\"x\":-4.125,\"y\":-3.875,\"z\":-3.625},{\"x\":-3.375,\"y\":-3.125,\"z\":-2.875}]}},\"id\":\"gen-polygon_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_stamped\",\"type\":\"geometry_msgs/msg/PolygonStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"polygon\":{\"points\":[{\"x\":-4.125,\"y\":-3.875,\"z\":-3.625},{\"x\":-3.375,\"y\":-3.125,\"z\":-2.875}]}},\"id\":\"gen-polygon_stamped\"}",
+  "model": {
+    "@kind": "polygon_stamped",
+    "ros2geometry.polygon_stamped_header_stamp_sec": "40510",
+    "ros2geometry.polygon_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geometry.polygon_stamped_header_frame_id": "s3",
+    "ros2geometry.polygon_stamped_polygon_points.#": "2",
+    "ros2geometry.polygon_stamped_polygon_points[0].ros2geometry.polygon_stamped_polygon_points_x": "-4.125",
+    "ros2geometry.topic": "/gen/polygon_stamped"
+  }
+}

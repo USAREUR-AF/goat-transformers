@@ -1,0 +1,21 @@
+{
+  "name": "rt-battery_state",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/battery_state\",\"type\":\"sensor_msgs/msg/BatteryState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"voltage\":-4.125,\"temperature\":-3.875,\"current\":-3.625,\"charge\":-3.375,\"capacity\":-3.125,\"design_capacity\":-2.875,\"percentage\":-2.625,\"power_supply_status\":228,\"power_supply_health\":27,\"power_supply_technology\":82,\"present\":false,\"cell_voltage\":[-1.375,-1.125],\"cell_temperature\":[-0.875,-0.625],\"location\":\"s19\",\"serial_number\":\"s20\"},\"id\":\"gen-battery_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/battery_state\",\"type\":\"sensor_msgs/msg/BatteryState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"voltage\":-4.125,\"temperature\":-3.875,\"current\":-3.625,\"charge\":-3.375,\"capacity\":-3.125,\"design_capacity\":-2.875,\"percentage\":-2.625,\"power_supply_status\":228,\"power_supply_health\":27,\"power_supply_technology\":82,\"present\":false,\"cell_voltage\":[-1.375,-1.125],\"cell_temperature\":[-0.875,-0.625],\"location\":\"s19\",\"serial_number\":\"s20\"},\"id\":\"gen-battery_state\"}",
+  "model": {
+    "@kind": "battery_state",
+    "ros2sensor.battery_state_header_stamp_sec": "40510",
+    "ros2sensor.battery_state_header_stamp_nanosec": "2147564661",
+    "ros2sensor.battery_state_header_frame_id": "s3",
+    "ros2sensor.battery_state_voltage": "-4.125",
+    "ros2sensor.battery_state_temperature": "-3.875",
+    "ros2sensor.battery_state_cell_voltage.#": "2",
+    "ros2sensor.battery_state_cell_voltage[0].ros2sensor.battery_state_cell_voltage_value": "-1.375",
+    "ros2sensor.battery_state_cell_temperature.#": "2",
+    "ros2sensor.battery_state_cell_temperature[0].ros2sensor.battery_state_cell_temperature_value": "-0.875",
+    "ros2sensor.topic": "/gen/battery_state"
+  }
+}

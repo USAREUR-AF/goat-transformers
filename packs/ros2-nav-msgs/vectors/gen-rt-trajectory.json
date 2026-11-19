@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory",
+  "from": "ros2-nav-msgs",
+  "to": "ros2-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"nav_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"velocity\":{\"linear\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"angular\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}},\"acceleration\":{\"linear\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"angular\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175}},\"effort\":{\"force\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"torque\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217}}},{\"header\":{\"stamp\":{\"sec\":1296103,\"nanosec\":2148820254},\"frame_id\":\"s34\"},\"pose\":{\"position\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259},\"orientation\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28,\"w\":41.287}},\"velocity\":{\"linear\":{\"x\":-42.294,\"y\":43.301,\"z\":44.308},\"angular\":{\"x\":-45.315,\"y\":46.322,\"z\":47.329}},\"acceleration\":{\"linear\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"angular\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371}},\"effort\":{\"force\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392},\"torque\":{\"x\":-57.399,\"y\":58.406,\"z\":59.413}}}]},\"id\":\"gen-trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"nav_msgs/msg/Trajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"points\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"velocity\":{\"linear\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"angular\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}},\"acceleration\":{\"linear\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154},\"angular\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175}},\"effort\":{\"force\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196},\"torque\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217}}},{\"header\":{\"stamp\":{\"sec\":1296103,\"nanosec\":2148820254},\"frame_id\":\"s34\"},\"pose\":{\"position\":{\"x\":35.245,\"y\":-36.252,\"z\":37.259},\"orientation\":{\"x\":38.266,\"y\":-39.273,\"z\":40.28,\"w\":41.287}},\"velocity\":{\"linear\":{\"x\":-42.294,\"y\":43.301,\"z\":44.308},\"angular\":{\"x\":-45.315,\"y\":46.322,\"z\":47.329}},\"acceleration\":{\"linear\":{\"x\":-48.336,\"y\":49.343,\"z\":50.35},\"angular\":{\"x\":-51.357,\"y\":52.364,\"z\":53.371}},\"effort\":{\"force\":{\"x\":-54.378,\"y\":55.385,\"z\":56.392},\"torque\":{\"x\":-57.399,\"y\":58.406,\"z\":59.413}}}]},\"id\":\"gen-trajectory\"}",
+  "model": {
+    "@kind": "trajectory",
+    "ros2nav.trajectory_header_stamp_sec": "40510",
+    "ros2nav.trajectory_header_stamp_nanosec": "2147564661",
+    "ros2nav.trajectory_header_frame_id": "s3",
+    "ros2nav.trajectory_points.#": "2",
+    "ros2nav.trajectory_points[0].ros2nav.trajectory_points_header_stamp_sec": "162019",
+    "ros2nav.topic": "/gen/trajectory"
+  }
+}

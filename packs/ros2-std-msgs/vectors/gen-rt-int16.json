@@ -1,0 +1,13 @@
+{
+  "name": "rt-int16",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/int16\",\"type\":\"std_msgs/msg/Int16\",\"msg\":{\"data\":-25026},\"id\":\"gen-int16\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/int16\",\"type\":\"std_msgs/msg/Int16\",\"msg\":{\"data\":-25026},\"id\":\"gen-int16\"}",
+  "model": {
+    "@kind": "int16",
+    "ros2std.int16_data": "-25026",
+    "ros2std.topic": "/gen/int16"
+  }
+}

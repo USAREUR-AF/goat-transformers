@@ -1,0 +1,17 @@
+{
+  "name": "rt-transform",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/transform\",\"type\":\"geometry_msgs/msg/Transform\",\"msg\":{\"translation\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"rotation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"id\":\"gen-transform\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/transform\",\"type\":\"geometry_msgs/msg/Transform\",\"msg\":{\"translation\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"rotation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"id\":\"gen-transform\"}",
+  "model": {
+    "@kind": "transform",
+    "ros2geometry.transform_translation_x": "1.007",
+    "ros2geometry.transform_translation_y": "2.014",
+    "ros2geometry.transform_translation_z": "-3.021",
+    "ros2geometry.transform_rotation_x": "4.028",
+    "ros2geometry.transform_rotation_y": "5.035",
+    "ros2geometry.topic": "/gen/transform"
+  }
+}

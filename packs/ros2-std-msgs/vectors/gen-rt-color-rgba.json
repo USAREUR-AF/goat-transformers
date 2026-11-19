@@ -1,0 +1,16 @@
+{
+  "name": "rt-color_rgba",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/color_rgba\",\"type\":\"std_msgs/msg/ColorRGBA\",\"msg\":{\"r\":-4.875,\"g\":-4.625,\"b\":-4.375,\"a\":-4.125},\"id\":\"gen-color_rgba\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/color_rgba\",\"type\":\"std_msgs/msg/ColorRGBA\",\"msg\":{\"r\":-4.875,\"g\":-4.625,\"b\":-4.375,\"a\":-4.125},\"id\":\"gen-color_rgba\"}",
+  "model": {
+    "@kind": "color_rgba",
+    "ros2std.color_rgba_r": "-4.875",
+    "ros2std.color_rgba_g": "-4.625",
+    "ros2std.color_rgba_b": "-4.375",
+    "ros2std.color_rgba_a": "-4.125",
+    "ros2std.topic": "/gen/color_rgba"
+  }
+}

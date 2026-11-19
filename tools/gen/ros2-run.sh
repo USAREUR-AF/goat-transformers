@@ -1,0 +1,223 @@
+#!/bin/bash
+# Regenerate the eleven ROS 2 packs: ros2-builtin-interfaces, ros2-std-msgs,
+# ros2-geometry-msgs, ros2-sensor-msgs, ros2-nav-msgs, ros2-diagnostic-msgs,
+# ros2-shape-msgs, ros2-trajectory-msgs, ros2-visualization-msgs, ros2-stereo-msgs,
+# ros2-actionlib-msgs.
+#
+# Usage: tools/gen/ros2-run.sh <checkout> <sources>
+#
+# <checkout> is a goat-transformers checkout. It is read (model/core.def,
+# model/track.def, packs/geojson/pack.def, tools/gen/names/ros2-*.json,
+# tools/gen/notes/ros2-*.md) and written: model/ros2*.def, packs/ros2-*/, the
+# gen-geojson-to-ros2-*.json vectors under packs/geojson/vectors, and
+# tools/gen/names/ros2-*.json.
+#
+# <sources> holds three git checkouts, made by this script when absent. They are
+# not kept in the repository; every file read is listed below with its SHA-256,
+# and the run stops when one differs.
+#
+#   <sources>/common_interfaces   https://github.com/ros2/common_interfaces
+#       tag 5.3.8 (head of branch jazzy), commit a941f14bb318d8d904505ed935ccbb97f24a70a4
+#       Apache License 2.0 (<package>/LICENSE, <package>/package.xml)
+#   <sources>/rcl_interfaces      https://github.com/ros2/rcl_interfaces
+#       tag 2.0.4 (head of branch jazzy), commit 7aa3caf43377ea6ad615bc1040832e2c7566bfbe
+#       Apache License 2.0 (LICENSE, builtin_interfaces/package.xml); package builtin_interfaces
+#   <sources>/rosbridge_suite     https://github.com/RobotWebTools/rosbridge_suite
+#       branch jazzy, commit cb33a16b890e4b8d9def531326409f3ee6c12537
+#       BSD 3-Clause License (LICENSE); ROSBRIDGE_PROTOCOL.md (protocol v2.1.0) and
+#       rosbridge_library/.../message_conversion.py, read for the JSON form only
+#
+# Each file is also at https://raw.githubusercontent.com/<owner>/<repository>/<commit>/<path>.
+set -euo pipefail
+ROOT="$(cd "$1" && pwd)"
+mkdir -p "$2"
+SRC="$(cd "$2" && pwd)"
+GEN="$(cd "$(dirname "$0")" && pwd)"
+
+fetch() {   # <directory> <url> <ref> <commit>
+  if [ ! -d "$SRC/$1" ]; then
+    git -c advice.detachedHead=false clone -q --depth 1 -b "$3" "$2" "$SRC/$1"
+  fi
+  got="$(git -C "$SRC/$1" rev-parse HEAD)"
+  if [ "$got" != "$4" ]; then
+    echo "ros2-run: $1 is at $got, want $4" >&2
+    exit 1
+  fi
+}
+fetch common_interfaces https://github.com/ros2/common_interfaces 5.3.8 a941f14bb318d8d904505ed935ccbb97f24a70a4
+fetch rcl_interfaces https://github.com/ros2/rcl_interfaces 2.0.4 7aa3caf43377ea6ad615bc1040832e2c7566bfbe
+fetch rosbridge_suite https://github.com/RobotWebTools/rosbridge_suite jazzy cb33a16b890e4b8d9def531326409f3ee6c12537
+
+(cd "$SRC" && sha256sum --quiet -c -) <<'SUMS'
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/std_msgs/LICENSE
+a34587c4319cab814f6e092a4f2d30f96e8de0325c81f69c2701a9545383da23  common_interfaces/std_msgs/package.xml
+d989b95f2ba14d15eff5b274b5d1f379b938aaea2157d8bd707f942457ae18bf  common_interfaces/std_msgs/msg/Bool.msg
+448fd1e2fba020e0e297156875162512d9f9cab89e45f7793cb48f5999bdb287  common_interfaces/std_msgs/msg/Byte.msg
+b1f5112522ff33249f4391e4bf8b02535acd99ef447dbd20f04cd7115f18cdfc  common_interfaces/std_msgs/msg/ByteMultiArray.msg
+b39e71ef965c29b1d121af0c0104b4167b9f972836b160c2c18b8f76f959d793  common_interfaces/std_msgs/msg/Char.msg
+6a2ce596d968f23d8456ff1e0b1218dec75ce2542614e004c99d29aceb3be697  common_interfaces/std_msgs/msg/ColorRGBA.msg
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  common_interfaces/std_msgs/msg/Empty.msg
+fb905efdb5c7902255cad5a6e4953158384238d4652d9e7ed68d134da052f3af  common_interfaces/std_msgs/msg/Float32.msg
+06fdd671e03917b05d2f8be67ce6b1ed5934990c9361b2ec6ab24637f9ec5aef  common_interfaces/std_msgs/msg/Float32MultiArray.msg
+b319b310779a5bc2e1f16a47a204236d5c231f2e9a9bf1555d6d098ae5aba625  common_interfaces/std_msgs/msg/Float64.msg
+344f5d8e6215a6e994659fb272de97c47a02b435db94a6d0f983b1fb467e0775  common_interfaces/std_msgs/msg/Float64MultiArray.msg
+d2cea14630e39ed0fa5b432ba9160a7c38855b9427d3344f99e83e83facb53c2  common_interfaces/std_msgs/msg/Header.msg
+2ad86a195e6c5d3415b5b48f4c248c45bfe05d636735f88d821c44ab660c7f6f  common_interfaces/std_msgs/msg/Int8.msg
+8b4b59b15a32fb25353425041c33874f6667376df2f4e5c08f9af2d56d11e403  common_interfaces/std_msgs/msg/Int8MultiArray.msg
+ea0ed16cdc7adc6b93ed503f21391832bbad3968d39881d117184bf298f9c5f0  common_interfaces/std_msgs/msg/Int16.msg
+82c59adccac841bdcb69c9030866972f1008c894c7e4245a2c24a78f8379e3de  common_interfaces/std_msgs/msg/Int16MultiArray.msg
+4614a6d0154436fb9ff12b0b7637816f42a550e4f5e0c4705bedf11293b4f7a7  common_interfaces/std_msgs/msg/Int32.msg
+70dd821b52c083f05963b02d49a59214baaba0fc17a56eba7c30346a26183a4a  common_interfaces/std_msgs/msg/Int32MultiArray.msg
+117752e7d1f0e4709749c04a9251dcece8545c0dac7bbb6fb8f31262d6ace238  common_interfaces/std_msgs/msg/Int64.msg
+423483a9473b3e6f8e00170a4c16591d801fd61d987d38b46def6ec2cf3b05d1  common_interfaces/std_msgs/msg/Int64MultiArray.msg
+94927d0ee40f1a1d9bf7bdddbca803e8b6e6d315d70c7295a9b0d2d6c380abed  common_interfaces/std_msgs/msg/MultiArrayDimension.msg
+8f059b66610c5fe0532e3f12ff1022a10671caebf773f00816fd4c9303626914  common_interfaces/std_msgs/msg/MultiArrayLayout.msg
+2022b3f1c32b578ff8d54a9948a51a10778761e0ad4ba60e50ae51292ca16884  common_interfaces/std_msgs/msg/String.msg
+4f3a2f4948339ff1b3bdb947c1f5124d6da4766a36f0f7a7bdad63fbbac41b76  common_interfaces/std_msgs/msg/UInt8.msg
+5c042755bdeaa442d6bab5755790cef6a3f9434162dab9028fd8dc1b794d6bd4  common_interfaces/std_msgs/msg/UInt8MultiArray.msg
+1e221bc3043d630d8f0e9db8c6d50f3f47a19db3c0908a290e95e58e2d3a225b  common_interfaces/std_msgs/msg/UInt16.msg
+288489782bda9287b6f7045ea5b039126280f84acf3a5ca2fa0710f8a916d3d5  common_interfaces/std_msgs/msg/UInt16MultiArray.msg
+4db7deaede98bebcc6ddfa951cf4d55aaad57909f38a8c346a12ae25df2e58ae  common_interfaces/std_msgs/msg/UInt32.msg
+3a25d8463602c0f3eff61a14c3c17c10ef819aadf7ef19179e95cfdaea07b3ce  common_interfaces/std_msgs/msg/UInt32MultiArray.msg
+3c2e946558706bf4afa6fca53dac6e19865c19629bf43b28a5e7bb5a9109eb58  common_interfaces/std_msgs/msg/UInt64.msg
+2e9c7e85a430eb66905eea278c7de39fb16baeda225ced6b78d15e06cd426e4d  common_interfaces/std_msgs/msg/UInt64MultiArray.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/geometry_msgs/LICENSE
+879da7003d6d2952701aa23146f0d78096143d5107dd6e775a23e591c2c376a0  common_interfaces/geometry_msgs/package.xml
+67f371aabfc8ec1bd58bbb01a1709222e685c549462984c9958cc89fcd9f6abb  common_interfaces/geometry_msgs/msg/Accel.msg
+c46e9fcf5551d2330b63b1efe0626f747bcda24ddcc9e281597a9354b3bd9eea  common_interfaces/geometry_msgs/msg/AccelStamped.msg
+59512bab4004aefda7a9dea2a6fdbeb625c66a3a5359aae33b4561cf4a41263b  common_interfaces/geometry_msgs/msg/AccelWithCovariance.msg
+04d5dbf78d814f58f4a01b1e9a63b5a5fdd24f5164cf021908d05fb079e63de8  common_interfaces/geometry_msgs/msg/AccelWithCovarianceStamped.msg
+33bc8db637874153ba5261bb5e7c23ca12754e15e5a2e58a86533c1f5bd66dd4  common_interfaces/geometry_msgs/msg/Inertia.msg
+456743836340c5d638dba1fcae3211acfe61f0690dcc9fe5b7ae9af8991591f1  common_interfaces/geometry_msgs/msg/InertiaStamped.msg
+eb4c07e591cf0269ccb17245dcd4f998162feb09cc8add85fa082c8a30bfc91d  common_interfaces/geometry_msgs/msg/Point.msg
+acade2dacb4f1f7988f34e8221079eb1c757f51e8ef48adb5651f7dc478fed59  common_interfaces/geometry_msgs/msg/Point32.msg
+c58b03c27604f45e9b0fd2f1b327dcbada7d6a389beb8c060d448abc25e76bfc  common_interfaces/geometry_msgs/msg/PointStamped.msg
+43679118501e3b294349c9ad73af9f03b476ef77c7096cd79b4ce46646823056  common_interfaces/geometry_msgs/msg/Polygon.msg
+2ba1b905a10593821b1f8f4c05ad27cf2d1a9bd1e9c2643b01297583993f7bd4  common_interfaces/geometry_msgs/msg/PolygonInstance.msg
+0dd863a4fb199e8833d13df9802064884a8be7a7f439f2b6e378aebcf121a506  common_interfaces/geometry_msgs/msg/PolygonInstanceStamped.msg
+ff0812e3cae3e92947ba4abe3f9ea6ad31e04af0f2d97399027786ad27d39f0a  common_interfaces/geometry_msgs/msg/PolygonStamped.msg
+3eceb77c63ebbb544c11d7f991e475e9819e0cf534deb1a879392c1b3dc997de  common_interfaces/geometry_msgs/msg/Pose.msg
+48bbdb9e593b50b3e4b4e4494ca6ce076f59937c1b4ad80bc7ea09e87891a899  common_interfaces/geometry_msgs/msg/Pose2D.msg
+3f58a91730c78dbc5ec5092131945ccdfeeb775aa0f02df7ff09f6c979b1d398  common_interfaces/geometry_msgs/msg/PoseArray.msg
+31898ab0eb64a6c44c27ab4959819a32ec3bc3ee847c8fe1b01c897d48e311e5  common_interfaces/geometry_msgs/msg/PoseStamped.msg
+a22f234e91b9fcd4ba0c5b533496b43c62d7f6ade39082212ac9835679d29f94  common_interfaces/geometry_msgs/msg/PoseWithCovariance.msg
+87b6851480902effb5232f87bf68e76f19bf7b26affa11001be9e515542c21fb  common_interfaces/geometry_msgs/msg/PoseWithCovarianceStamped.msg
+298495eb67a139642ffd37cc9029eae085e6c39a8789828b7517868a487939ed  common_interfaces/geometry_msgs/msg/Quaternion.msg
+855d4fd0cecb74ed55477a8c1f19fc9498207e7833a4f923b56fd68a9ba99ec9  common_interfaces/geometry_msgs/msg/QuaternionStamped.msg
+c8916279f0a429dd9561158bd2133bc4e2d780277c3c594116b240a27e7a2993  common_interfaces/geometry_msgs/msg/Transform.msg
+f6e137c205e9187ac1dafdfbace7435de58bb3779a55e9c6b52c2cb513785c42  common_interfaces/geometry_msgs/msg/TransformStamped.msg
+ed471ef861f65af991b1f64d66ef941dd41dd4c0702f6222512b1a16c62d58b0  common_interfaces/geometry_msgs/msg/Twist.msg
+ffc9d5925412410b28d601c55cf386a0b3e4d5dba00920fbafb98d7201f582ca  common_interfaces/geometry_msgs/msg/TwistStamped.msg
+5690a1f109d4962c73b5ca7f3673c48052d02f37b6a38fe2fb37c899cf555c45  common_interfaces/geometry_msgs/msg/TwistWithCovariance.msg
+af369aea38a14e57ff350a3f2c63c2c66335a367822d134fecdef60789e49682  common_interfaces/geometry_msgs/msg/TwistWithCovarianceStamped.msg
+d8b9ea9aad1f424faf4d2b94dae1e1368af1e5d59de11aeed019399cff7f9e1d  common_interfaces/geometry_msgs/msg/Vector3.msg
+bfe690d1b7d907c039c9c1580cf8de557d546c8aeb3280c1bd5e0a60d84356cd  common_interfaces/geometry_msgs/msg/Vector3Stamped.msg
+48517d22e2485d0d018300aba815569d05614f7e0eb9c2959719081d8ca0bd5b  common_interfaces/geometry_msgs/msg/VelocityStamped.msg
+d04d9a70bba11e70baa146d05b02804f43c835c2caa733d8ddacc4b09528f43f  common_interfaces/geometry_msgs/msg/VelocityWithCovarianceStamped.msg
+d9667abd3d2a67d5624113fa07a647b0d4806bf89d21c8a5cf914905a036bf25  common_interfaces/geometry_msgs/msg/Wrench.msg
+853a8534230b795b6c1afcb8483002f5d1cf14e967ffa0da2cba8da5453b2162  common_interfaces/geometry_msgs/msg/WrenchStamped.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/sensor_msgs/LICENSE
+00cc932b8a1d2a9064c621bfacab56428a5175afe37269da38ba09361e8a4a5a  common_interfaces/sensor_msgs/package.xml
+ce13430f3c107274fb7123a6d1e79a9f83974d78cb0be1721695129e49240b25  common_interfaces/sensor_msgs/msg/BatteryState.msg
+1fced83678f5f2708aff8540987594692452de9f0b43905ce3bfba689226f3aa  common_interfaces/sensor_msgs/msg/CameraInfo.msg
+6cf885a09a7f499ce2348bc3099e146a6273bb1e7ff875824ecbe05abaf0d086  common_interfaces/sensor_msgs/msg/ChannelFloat32.msg
+75ca1003981c407148ff94a3470760985dd69233b8287a5d52848d45a312f144  common_interfaces/sensor_msgs/msg/CompressedImage.msg
+a2a96aa57e9957549dbf5c739c3dba3fb4303f0dd8426c9178b7333b656bb0d9  common_interfaces/sensor_msgs/msg/FluidPressure.msg
+b55f46c55588f7d729feb7dd84b60b1796dcfdb2351a26982ff2505129702182  common_interfaces/sensor_msgs/msg/Illuminance.msg
+575cd3434771916c2b551db8ac484522ecef1d6105196e043a305887d2730704  common_interfaces/sensor_msgs/msg/Image.msg
+5800b7c2e6d3afed966ae229b1559f6e762c792ad34a88e55ad4288d8bbbd34b  common_interfaces/sensor_msgs/msg/Imu.msg
+711d1771a002c7190e5bbe746a163a67477c1e2a45482a64f1fe339815ca6f5d  common_interfaces/sensor_msgs/msg/JointState.msg
+5a7d133e7dc82f531e03bd4ff92c9240a828bb6ceb6f19d5cd767d5372adb757  common_interfaces/sensor_msgs/msg/Joy.msg
+47f62324e13743dd7a14bb71d64dc4cc034f4ff7885688c235bc121e224e06c3  common_interfaces/sensor_msgs/msg/JoyFeedback.msg
+6930a74a9e38918bb6f872c3e30ee3bb172c3b71cb3daf5d07c6ea76ee44f0ab  common_interfaces/sensor_msgs/msg/JoyFeedbackArray.msg
+57511740458bf605dd609aab1b43312ec0e884d702196993a29ea32cb67d4f5f  common_interfaces/sensor_msgs/msg/LaserEcho.msg
+bb688599d8787fa1b48393e50064013e58449055eb60e501eb01a07e8bc03357  common_interfaces/sensor_msgs/msg/LaserScan.msg
+b1bf534a4175055d85ee4630788c67a960733c383a458b86f6dfdfa27786be64  common_interfaces/sensor_msgs/msg/MagneticField.msg
+bb707259b63ea52101697daf624ff7ad73a1f9977117ce3798a36cc1858d99fd  common_interfaces/sensor_msgs/msg/MultiDOFJointState.msg
+8e96fd2ff5e685bfed326fecd90797fade8485be7c02f54250e5ea535c42b5e3  common_interfaces/sensor_msgs/msg/MultiEchoLaserScan.msg
+7457a0d5afd253a69a9996288192fb9bf10fdd053989204d5aca8d56d95b65ac  common_interfaces/sensor_msgs/msg/NavSatFix.msg
+f41663c70f192cfb8af118403ced55171b9c42af40a4ef798536d8af23b3d4f9  common_interfaces/sensor_msgs/msg/NavSatStatus.msg
+8bdec27b9f1b688448410d1c6de34b42af6ef56ad4e496a214793e9ec88db993  common_interfaces/sensor_msgs/msg/PointCloud.msg
+22699bfd6c68be148363a2e889408833a5a37d3464ea20032d1c757336b80f2a  common_interfaces/sensor_msgs/msg/PointCloud2.msg
+6e6d5d51d2e464d3074b44b112f219e67fcdc0b280260d93f8cefd9710ec972e  common_interfaces/sensor_msgs/msg/PointField.msg
+6aac2960a3702cad5c5a6b5eda68e252a97d199bd9b7385c975332edbbc170cf  common_interfaces/sensor_msgs/msg/Range.msg
+9c07010ab5ffddd1202876a778b44c99cafa780bc0503041c3fd935870a14c6a  common_interfaces/sensor_msgs/msg/RegionOfInterest.msg
+bd9cff7bdebac733030ec1de6a66f004bf4f31924078a3170984d338352e649a  common_interfaces/sensor_msgs/msg/RelativeHumidity.msg
+20a8580f84dbc063d87c3e1b902494149428272749844fa1dbf24fa80575be82  common_interfaces/sensor_msgs/msg/Temperature.msg
+4fdb6fb81fc2e910c560d80dd21b161a72d7f09b2f0ea9bdfcb75d71ab342491  common_interfaces/sensor_msgs/msg/TimeReference.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/nav_msgs/LICENSE
+0d61b26dbf9ccfd2e993713d5d5cea913f0ab789d1a28bdb42eac2ef47c4a0a5  common_interfaces/nav_msgs/package.xml
+37006ffd5763454ccb2a9630eda00501e5cb9b874a6cb38deec7398c2abb919f  common_interfaces/nav_msgs/msg/Goals.msg
+4bc9802947dcd2bbfafcbcffbce165ce6ff87e5132b9511ab2994ef4b23ff2b3  common_interfaces/nav_msgs/msg/GridCells.msg
+6868a7d604c6cc033dd0adfac8a0adb0a6dedae1b7b140dbb47c83f3bcc6f140  common_interfaces/nav_msgs/msg/MapMetaData.msg
+3e54ec7e662bdd6d5528efab99c6e34ce3eed27ce628721fcdb4e5e1bbf8188b  common_interfaces/nav_msgs/msg/OccupancyGrid.msg
+bb00547ddf498cdbae46fd991d9d85a59f507e12e7cf01fb18a86f1111524f4f  common_interfaces/nav_msgs/msg/Odometry.msg
+fc1e2eff6c2bd63fb92b6cf29bad29873b026d7abe00d3a68965b40668bfdd5b  common_interfaces/nav_msgs/msg/Path.msg
+66345fad009bc64a3c313020ec78d33a0f6424698ca37a020e33038cc19511b1  common_interfaces/nav_msgs/msg/Trajectory.msg
+aec0753c683e369c16253d018f6e97c4230e4f4ba0135d52050b333793f39796  common_interfaces/nav_msgs/msg/TrajectoryPoint.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/diagnostic_msgs/LICENSE
+2cf6cc6283772afe696afa04241b7f3bdde51cd42545f57d8ec383d4b4de712c  common_interfaces/diagnostic_msgs/package.xml
+019690e73d166237243a14998c4a9183c829dcc052ce7d190120d3892bf12c59  common_interfaces/diagnostic_msgs/msg/DiagnosticArray.msg
+04b13e5ea9dd8559ef3f691bab371ec05ed227f1045f4fcd3b0b30338f9a15bd  common_interfaces/diagnostic_msgs/msg/DiagnosticStatus.msg
+89f6d92c75fbf2d5381e8c3e3b5bf92bbf6dbdb9683a5a5a4433a79f59fe0d74  common_interfaces/diagnostic_msgs/msg/KeyValue.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/shape_msgs/LICENSE
+6c815efae68e089af95fd6e224292275808eaaea6bd85e3cfb1071fc6b7cd8dc  common_interfaces/shape_msgs/package.xml
+29507f9817d335be2f43addd1997e032f73aeeff156d13931b92db62715dfe01  common_interfaces/shape_msgs/msg/Mesh.msg
+2beff414354278b465ec50b0526756317a641c2165ca1d6938028ed630445b96  common_interfaces/shape_msgs/msg/MeshTriangle.msg
+b3d30ea44df5e4cdd40eda15239e19e6b18d5bccdb227d8cea45c7875b8c6fd0  common_interfaces/shape_msgs/msg/Plane.msg
+b3ec61569b2b4e2c37428e0625d4a360c00c95fc9ad4c94f9c8399225b98b2d8  common_interfaces/shape_msgs/msg/SolidPrimitive.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/trajectory_msgs/LICENSE
+c0d9fd1b3f17b2d3811086b67414d519850a75e8ce08e609e40d1b9fee821575  common_interfaces/trajectory_msgs/package.xml
+d63cda4a5ec81824ed4acd737e6b5903449fb1a7e2f5cdcdcc4c49285f01117c  common_interfaces/trajectory_msgs/msg/JointTrajectory.msg
+2358055d26d27c0c302e921f90d5aa59cb5feb3e22937f8ac98314b0c52ba8f4  common_interfaces/trajectory_msgs/msg/JointTrajectoryPoint.msg
+070af6b4c9f4238d9de36621105d78c999dbad2045d0cb2a633f86a17f73f6b7  common_interfaces/trajectory_msgs/msg/MultiDOFJointTrajectory.msg
+7e3a4b150ff7ce8d7d897a480d8d324a244a0afb4a07fdf6241074071170ac7a  common_interfaces/trajectory_msgs/msg/MultiDOFJointTrajectoryPoint.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/visualization_msgs/LICENSE
+19ed838dc5a99735e2dd9b45e308d1227f6ba7c411ce3675cca480620993750d  common_interfaces/visualization_msgs/package.xml
+d9c80f1109ceb8764ca5c9198fb2dbad4e3c5bc073d94c2be2cbcd6ea0eccdc6  common_interfaces/visualization_msgs/msg/ImageMarker.msg
+95fd14ff8172ac01847378ab836ae387f54ab458b715e93dc1a049a10daa4326  common_interfaces/visualization_msgs/msg/InteractiveMarker.msg
+d73f1e212bcbab4d191cc3254c9f6de0b9de4f420ab2d87ba122ef0a2683acc6  common_interfaces/visualization_msgs/msg/InteractiveMarkerControl.msg
+27b820cb63c165a9966bdb5eed516eecc25d9d15bb66192f14e930eff7446915  common_interfaces/visualization_msgs/msg/InteractiveMarkerFeedback.msg
+facc8236619cef328d291555f6bdc784e34fa3a1700d6d2390bab73c45d121fa  common_interfaces/visualization_msgs/msg/InteractiveMarkerInit.msg
+b6e3a8d40bf9c99ea7837eb08b0e8e8189f3fc5d7bb370ce501141cc1966582c  common_interfaces/visualization_msgs/msg/InteractiveMarkerPose.msg
+6d75ca37561c3497ee1991cb6e61e55b59ebf2e1d458bdce30ad023d36762bdb  common_interfaces/visualization_msgs/msg/InteractiveMarkerUpdate.msg
+136042d6ddb4589159f23fe1d7a469420c556c0a37fa712d4fff9c2dd74e9239  common_interfaces/visualization_msgs/msg/Marker.msg
+38a122bed2014534668ad143f6b57a831b6edb3d4453b2feeef8669930f234cc  common_interfaces/visualization_msgs/msg/MarkerArray.msg
+47056d0f57316473249d619dbe51d26680c56c329be668afab9b5fd7a1f2a0a5  common_interfaces/visualization_msgs/msg/MenuEntry.msg
+6c5393590d3765a6da1bc815f0dba8962b55efad40ab4fb1346673cf89c294ed  common_interfaces/visualization_msgs/msg/MeshFile.msg
+544f2580cfb42e1e28dcb27856572abd52ad348d8f6197526f51f6d15acec1f0  common_interfaces/visualization_msgs/msg/UVCoordinate.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/stereo_msgs/LICENSE
+ab1466941cd3d84bcfbc2ae1b3d2be3f26141b6460da3a2020e272d2eefd6eac  common_interfaces/stereo_msgs/package.xml
+1de99ffa01af2533798eefadff5e86ec47719fb0faa778b8b7f9f740f4d443be  common_interfaces/stereo_msgs/msg/DisparityImage.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  common_interfaces/actionlib_msgs/LICENSE
+a8b43d9e07d819377af4212695ea3123ce416d97b249f25074f903cdcd9eed69  common_interfaces/actionlib_msgs/package.xml
+183cf5b37bd357c512873fd31b2d924daf8e2d520a550316af92c92811b680d8  common_interfaces/actionlib_msgs/msg/GoalID.msg
+254bdde810325588eb9e88076b058884f60d2e42fd3ca548090f5c8156f37031  common_interfaces/actionlib_msgs/msg/GoalStatus.msg
+3906898d785c5bab551545d5d38d37c4d85b9f4ca6724caedf3e2b72d7110301  common_interfaces/actionlib_msgs/msg/GoalStatusArray.msg
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  rcl_interfaces/LICENSE
+0f709bdbc4742e9040e788adcc2df710542d9a095080cbcda2dcb4174461de51  rcl_interfaces/builtin_interfaces/package.xml
+57da13a4201e7d258a2931323145b953e47e46967494e62ba66c2faca4fbade2  rcl_interfaces/builtin_interfaces/msg/Duration.msg
+dc5a01ddde3aecffee21eb24974fe77cc969f873218a2b1811aa0ac8a456b8bd  rcl_interfaces/builtin_interfaces/msg/Time.msg
+b10f4b9ba6d2b0de1caf35fb0f5f5c33027518be9dc0de0192b31f3728c62087  rosbridge_suite/LICENSE
+ec715a96d9940cb9fe453331ac3021dbff768df244f2f46de7b08b390894bd93  rosbridge_suite/ROSBRIDGE_PROTOCOL.md
+c54f8e421650946571c42f7b74577d14f8be5e1f8d3b0171cdc83da79933eecc  rosbridge_suite/rosbridge_library/src/rosbridge_library/internal/message_conversion.py
+SUMS
+
+PACKAGES=(builtin_interfaces std_msgs geometry_msgs sensor_msgs nav_msgs diagnostic_msgs
+          shape_msgs trajectory_msgs visualization_msgs stereo_msgs actionlib_msgs)
+ARGS=()
+for p in "${PACKAGES[@]}"; do ARGS+=(--package "$p"); done
+
+# sensor_msgs/NavSatFix: latitude, longitude and altitude are WGS 84 degrees and
+# metres above the WGS 84 ellipsoid (the evidence is in notes/ros2-sensor-msgs.md).
+python3 -I "$GEN/ros2msg2pack.py" --src "$SRC" --out "$ROOT" \
+  --ref common_interfaces=5.3.8 --commit common_interfaces=a941f14bb318d8d904505ed935ccbb97f24a70a4 \
+  --ref rcl_interfaces=2.0.4 --commit rcl_interfaces=7aa3caf43377ea6ad615bc1040832e2c7566bfbe \
+  --ref rosbridge_suite=jazzy --commit rosbridge_suite=cb33a16b890e4b8d9def531326409f3ee6c12537 \
+  --map sensor_msgs/NavSatFix:latitude=lat \
+  --map sensor_msgs/NavSatFix:longitude=lon \
+  --map sensor_msgs/NavSatFix:altitude=hae \
+  --requires sensor_msgs/NavSatFix=lat,lon \
+  --names-dir "$GEN/names" --notes-dir "$GEN/notes" \
+  --date-read 2026-11-19 \
+  "${ARGS[@]}"

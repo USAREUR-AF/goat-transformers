@@ -1,0 +1,14 @@
+{
+  "name": "gen-geojson-to-ros2-sensor-msgs-navsatfix",
+  "from": "geojson",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: the kind is chosen by requires lat lon (the first kind whose requires the entity holds); op and type are its when values; uid and callsign have no line in the pack and are not written; no topic is known",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5756,48.1372,519.25]},\"properties\":{\"callsign\":\"ROVER\"},\"id\":\"r-1\"}",
+  "expect": "{\"op\":\"publish\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"latitude\":48.1372,\"longitude\":11.5756,\"altitude\":519.25}}",
+  "model": {
+    "lat": "48.1372",
+    "lon": "11.5756",
+    "hae": "519.25",
+    "uid": "r-1"
+  }
+}

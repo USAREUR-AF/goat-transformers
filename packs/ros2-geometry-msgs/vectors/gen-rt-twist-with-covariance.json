@@ -1,0 +1,19 @@
+{
+  "name": "rt-twist_with_covariance",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/twist_with_covariance\",\"type\":\"geometry_msgs/msg/TwistWithCovariance\",\"msg\":{\"twist\":{\"linear\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"angular\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294]},\"id\":\"gen-twist_with_covariance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/twist_with_covariance\",\"type\":\"geometry_msgs/msg/TwistWithCovariance\",\"msg\":{\"twist\":{\"linear\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"angular\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294]},\"id\":\"gen-twist_with_covariance\"}",
+  "model": {
+    "@kind": "twist_with_covariance",
+    "ros2geometry.twist_with_covariance_twist_linear_x": "1.007",
+    "ros2geometry.twist_with_covariance_twist_linear_y": "2.014",
+    "ros2geometry.twist_with_covariance_twist_linear_z": "-3.021",
+    "ros2geometry.twist_with_covariance_twist_angular_x": "4.028",
+    "ros2geometry.twist_with_covariance_twist_angular_y": "5.035",
+    "ros2geometry.twist_with_covariance_covariance.#": "36",
+    "ros2geometry.twist_with_covariance_covariance[0].ros2geometry.twist_with_covariance_covariance_value": "7.049",
+    "ros2geometry.topic": "/gen/twist_with_covariance"
+  }
+}

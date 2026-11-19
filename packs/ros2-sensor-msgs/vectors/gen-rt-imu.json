@@ -1,0 +1,23 @@
+{
+  "name": "rt-imu",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/imu\",\"type\":\"sensor_msgs/msg/Imu\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049},\"orientation_covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112],\"angular_velocity\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular_velocity_covariance\":[20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196],\"linear_acceleration\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217},\"linear_acceleration_covariance\":[32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28]},\"id\":\"gen-imu\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/imu\",\"type\":\"sensor_msgs/msg/Imu\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049},\"orientation_covariance\":[8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112],\"angular_velocity\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular_velocity_covariance\":[20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196],\"linear_acceleration\":{\"x\":29.203,\"y\":-30.21,\"z\":31.217},\"linear_acceleration_covariance\":[32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28]},\"id\":\"gen-imu\"}",
+  "model": {
+    "@kind": "imu",
+    "ros2sensor.imu_header_stamp_sec": "40510",
+    "ros2sensor.imu_header_stamp_nanosec": "2147564661",
+    "ros2sensor.imu_header_frame_id": "s3",
+    "ros2sensor.imu_orientation_x": "4.028",
+    "ros2sensor.imu_orientation_y": "5.035",
+    "ros2sensor.imu_orientation_covariance.#": "9",
+    "ros2sensor.imu_orientation_covariance[0].ros2sensor.imu_orientation_covariance_value": "8.056",
+    "ros2sensor.imu_angular_velocity_covariance.#": "9",
+    "ros2sensor.imu_angular_velocity_covariance[0].ros2sensor.imu_angular_velocity_covariance_value": "20.14",
+    "ros2sensor.imu_linear_acceleration_covariance.#": "9",
+    "ros2sensor.imu_linear_acceleration_covariance[0].ros2sensor.imu_linear_acceleration_covariance_value": "32.224",
+    "ros2sensor.topic": "/gen/imu"
+  }
+}

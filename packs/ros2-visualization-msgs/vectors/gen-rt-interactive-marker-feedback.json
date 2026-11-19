@@ -1,0 +1,17 @@
+{
+  "name": "rt-interactive_marker_feedback",
+  "from": "ros2-visualization-msgs",
+  "to": "ros2-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/interactive_marker_feedback\",\"type\":\"visualization_msgs/msg/InteractiveMarkerFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"client_id\":\"s4\",\"marker_name\":\"s5\",\"control_name\":\"s6\",\"event_type\":8,\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"menu_entry_id\":2148091200,\"mouse_point\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"mouse_point_valid\":true},\"id\":\"gen-interactive_marker_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/interactive_marker_feedback\",\"type\":\"visualization_msgs/msg/InteractiveMarkerFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"client_id\":\"s4\",\"marker_name\":\"s5\",\"control_name\":\"s6\",\"event_type\":8,\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"menu_entry_id\":2148091200,\"mouse_point\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"mouse_point_valid\":true},\"id\":\"gen-interactive_marker_feedback\"}",
+  "model": {
+    "@kind": "interactive_marker_feedback",
+    "ros2visualization.interactive_marker_feedback_header_stamp_sec": "40510",
+    "ros2visualization.interactive_marker_feedback_header_stamp_nanosec": "2147564661",
+    "ros2visualization.interactive_marker_feedback_header_frame_id": "s3",
+    "ros2visualization.interactive_marker_feedback_client_id": "s4",
+    "ros2visualization.interactive_marker_feedback_marker_name": "s5",
+    "ros2visualization.topic": "/gen/interactive_marker_feedback"
+  }
+}

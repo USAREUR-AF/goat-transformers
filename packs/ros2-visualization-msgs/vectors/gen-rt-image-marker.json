@@ -1,0 +1,21 @@
+{
+  "name": "rt-image_marker",
+  "from": "ros2-visualization-msgs",
+  "to": "ros2-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/image_marker\",\"type\":\"visualization_msgs/msg/ImageMarker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"type\":243025,\"action\":283528,\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"scale\":-2.375,\"outline_color\":{\"r\":-2.125,\"g\":-1.875,\"b\":-1.625,\"a\":-1.375},\"filled\":247,\"fill_color\":{\"r\":-0.875,\"g\":-0.625,\"b\":-0.375,\"a\":-0.125},\"lifetime\":{\"sec\":850570,\"nanosec\":2148374721},\"points\":[{\"x\":23.161,\"y\":-24.168,\"z\":25.175},{\"x\":26.182,\"y\":-27.189,\"z\":28.196}],\"outline_colors\":[{\"r\":2.125,\"g\":2.375,\"b\":2.625,\"a\":2.875},{\"r\":3.125,\"g\":3.375,\"b\":3.625,\"a\":3.875}]},\"id\":\"gen-image_marker\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/image_marker\",\"type\":\"visualization_msgs/msg/ImageMarker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"type\":243025,\"action\":283528,\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"scale\":-2.375,\"outline_color\":{\"r\":-2.125,\"g\":-1.875,\"b\":-1.625,\"a\":-1.375},\"filled\":247,\"fill_color\":{\"r\":-0.875,\"g\":-0.625,\"b\":-0.375,\"a\":-0.125},\"lifetime\":{\"sec\":850570,\"nanosec\":2148374721},\"points\":[{\"x\":23.161,\"y\":-24.168,\"z\":25.175},{\"x\":26.182,\"y\":-27.189,\"z\":28.196}],\"outline_colors\":[{\"r\":2.125,\"g\":2.375,\"b\":2.625,\"a\":2.875},{\"r\":3.125,\"g\":3.375,\"b\":3.625,\"a\":3.875}]},\"id\":\"gen-image_marker\"}",
+  "model": {
+    "@kind": "image_marker",
+    "ros2visualization.image_marker_header_stamp_sec": "40510",
+    "ros2visualization.image_marker_header_stamp_nanosec": "2147564661",
+    "ros2visualization.image_marker_header_frame_id": "s3",
+    "ros2visualization.image_marker_ns": "s4",
+    "ros2visualization.image_marker_id": "202522",
+    "ros2visualization.image_marker_points.#": "2",
+    "ros2visualization.image_marker_points[0].ros2visualization.image_marker_points_x": "23.161",
+    "ros2visualization.image_marker_outline_colors.#": "2",
+    "ros2visualization.image_marker_outline_colors[0].ros2visualization.image_marker_outline_colors_r": "2.125",
+    "ros2visualization.topic": "/gen/image_marker"
+  }
+}

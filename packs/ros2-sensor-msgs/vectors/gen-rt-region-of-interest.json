@@ -1,0 +1,17 @@
+{
+  "name": "rt-region_of_interest",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/region_of_interest\",\"type\":\"sensor_msgs/msg/RegionOfInterest\",\"msg\":{\"x_offset\":2147524158,\"y_offset\":2147564661,\"height\":2147605164,\"width\":2147645667,\"do_rectify\":true},\"id\":\"gen-region_of_interest\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/region_of_interest\",\"type\":\"sensor_msgs/msg/RegionOfInterest\",\"msg\":{\"x_offset\":2147524158,\"y_offset\":2147564661,\"height\":2147605164,\"width\":2147645667,\"do_rectify\":true},\"id\":\"gen-region_of_interest\"}",
+  "model": {
+    "@kind": "region_of_interest",
+    "ros2sensor.region_of_interest_x_offset": "2147524158",
+    "ros2sensor.region_of_interest_y_offset": "2147564661",
+    "ros2sensor.region_of_interest_height": "2147605164",
+    "ros2sensor.region_of_interest_width": "2147645667",
+    "ros2sensor.region_of_interest_do_rectify": "1",
+    "ros2sensor.topic": "/gen/region_of_interest"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-diagnostic_status",
+  "from": "ros2-diagnostic-msgs",
+  "to": "ros2-diagnostic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/diagnostic_status\",\"type\":\"diagnostic_msgs/msg/DiagnosticStatus\",\"msg\":{\"level\":190,\"name\":\"s2\",\"message\":\"s3\",\"hardware_id\":\"s4\",\"values\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-diagnostic_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/diagnostic_status\",\"type\":\"diagnostic_msgs/msg/DiagnosticStatus\",\"msg\":{\"level\":190,\"name\":\"s2\",\"message\":\"s3\",\"hardware_id\":\"s4\",\"values\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-diagnostic_status\"}",
+  "model": {
+    "@kind": "diagnostic_status",
+    "ros2diagnostic.diagnostic_status_level": "190",
+    "ros2diagnostic.diagnostic_status_name": "s2",
+    "ros2diagnostic.diagnostic_status_message": "s3",
+    "ros2diagnostic.diagnostic_status_hardware_id": "s4",
+    "ros2diagnostic.diagnostic_status_values.#": "2",
+    "ros2diagnostic.diagnostic_status_values[0].ros2diagnostic.diagnostic_status_values_key": "s5",
+    "ros2diagnostic.topic": "/gen/diagnostic_status"
+  }
+}

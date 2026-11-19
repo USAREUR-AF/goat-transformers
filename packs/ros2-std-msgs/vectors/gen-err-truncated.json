@@ -1,0 +1,8 @@
+{
+  "name": "err-truncated",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "vector-format, malformed input: the input ends inside an object",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/String\",\"msg\":{\"data\":\"x\"",
+  "expect_error": "malformed-wire"
+}

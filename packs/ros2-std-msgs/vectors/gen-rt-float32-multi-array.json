@@ -1,0 +1,17 @@
+{
+  "name": "rt-float32_multi_array",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/float32_multi_array\",\"type\":\"std_msgs/msg/Float32MultiArray\",\"msg\":{\"layout\":{\"dim\":[{\"label\":\"s1\",\"size\":2147564661,\"stride\":2147605164},{\"label\":\"s4\",\"size\":2147686170,\"stride\":2147726673}],\"data_offset\":2147767176},\"data\":[-3.125,-2.875]},\"id\":\"gen-float32_multi_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/float32_multi_array\",\"type\":\"std_msgs/msg/Float32MultiArray\",\"msg\":{\"layout\":{\"dim\":[{\"label\":\"s1\",\"size\":2147564661,\"stride\":2147605164},{\"label\":\"s4\",\"size\":2147686170,\"stride\":2147726673}],\"data_offset\":2147767176},\"data\":[-3.125,-2.875]},\"id\":\"gen-float32_multi_array\"}",
+  "model": {
+    "@kind": "float32_multi_array",
+    "ros2std.float32_multi_array_layout_dim.#": "2",
+    "ros2std.float32_multi_array_layout_dim[0].ros2std.float32_multi_array_layout_dim_label": "s1",
+    "ros2std.float32_multi_array_layout_data_offset": "2147767176",
+    "ros2std.float32_multi_array_data.#": "2",
+    "ros2std.float32_multi_array_data[0].ros2std.float32_multi_array_data_value": "-3.125",
+    "ros2std.topic": "/gen/float32_multi_array"
+  }
+}

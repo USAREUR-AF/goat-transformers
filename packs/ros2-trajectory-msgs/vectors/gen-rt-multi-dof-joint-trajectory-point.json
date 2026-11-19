@@ -1,0 +1,20 @@
+{
+  "name": "rt-multi_dof_joint_trajectory_point",
+  "from": "ros2-trajectory-msgs",
+  "to": "ros2-trajectory-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_joint_trajectory_point\",\"type\":\"trajectory_msgs/msg/MultiDOFJointTrajectoryPoint\",\"msg\":{\"transforms\":[{\"translation\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"rotation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},{\"translation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"rotation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}],\"velocities\":[{\"linear\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"angular\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},{\"linear\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"angular\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}],\"accelerations\":[{\"linear\":{\"x\":-27.189,\"y\":28.196,\"z\":29.203},\"angular\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224}},{\"linear\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"angular\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266}}],\"time_from_start\":{\"sec\":1579624,\"nanosec\":2149103775}},\"id\":\"gen-multi_dof_joint_trajectory_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/multi_dof_joint_trajectory_point\",\"type\":\"trajectory_msgs/msg/MultiDOFJointTrajectoryPoint\",\"msg\":{\"transforms\":[{\"translation\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"rotation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},{\"translation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"rotation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}],\"velocities\":[{\"linear\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"angular\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},{\"linear\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"angular\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}],\"accelerations\":[{\"linear\":{\"x\":-27.189,\"y\":28.196,\"z\":29.203},\"angular\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224}},{\"linear\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245},\"angular\":{\"x\":-36.252,\"y\":37.259,\"z\":38.266}}],\"time_from_start\":{\"sec\":1579624,\"nanosec\":2149103775}},\"id\":\"gen-multi_dof_joint_trajectory_point\"}",
+  "model": {
+    "@kind": "multi_dof_joint_trajectory_point",
+    "ros2trajectory.multi_dof_joint_trajectory_point_transforms.#": "2",
+    "ros2trajectory.multi_dof_joint_trajectory_point_transforms[0].ros2trajectory.multi_dof_joint_trajectory_point_transforms_translation_x": "1.007",
+    "ros2trajectory.multi_dof_joint_trajectory_point_velocities.#": "2",
+    "ros2trajectory.multi_dof_joint_trajectory_point_velocities[0].ros2trajectory.multi_dof_joint_trajectory_point_velocities_linear_x": "-15.105",
+    "ros2trajectory.multi_dof_joint_trajectory_point_accelerations.#": "2",
+    "ros2trajectory.multi_dof_joint_trajectory_point_accelerations[0].ros2trajectory.multi_dof_joint_trajectory_point_accelerations_linear_x": "-27.189",
+    "ros2trajectory.multi_dof_joint_trajectory_point_time_from_start_sec": "1579624",
+    "ros2trajectory.multi_dof_joint_trajectory_point_time_from_start_nanosec": "2149103775",
+    "ros2trajectory.topic": "/gen/multi_dof_joint_trajectory_point"
+  }
+}

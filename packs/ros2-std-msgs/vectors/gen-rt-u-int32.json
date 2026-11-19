@@ -1,0 +1,13 @@
+{
+  "name": "rt-u_int32",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/u_int32\",\"type\":\"std_msgs/msg/UInt32\",\"msg\":{\"data\":2147524158},\"id\":\"gen-u_int32\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/u_int32\",\"type\":\"std_msgs/msg/UInt32\",\"msg\":{\"data\":2147524158},\"id\":\"gen-u_int32\"}",
+  "model": {
+    "@kind": "u_int32",
+    "ros2std.u_int32_data": "2147524158",
+    "ros2std.topic": "/gen/u_int32"
+  }
+}

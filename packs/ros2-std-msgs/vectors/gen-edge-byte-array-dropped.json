@@ -1,0 +1,12 @@
+{
+  "name": "edge-byte-array-dropped",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "byte[] is not mapped (pack.md); arrays are not residue (engine-spec 0.5)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/ByteMultiArray\",\"msg\":{\"layout\":{\"dim\":[],\"data_offset\":3},\"data\":[1,2]}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/ByteMultiArray\",\"msg\":{\"layout\":{\"dim\":[],\"data_offset\":3}}}",
+  "model": {
+    "@kind": "byte_multi_array",
+    "ros2std.byte_multi_array_layout_data_offset": "3"
+  }
+}

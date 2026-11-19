@@ -1,0 +1,21 @@
+{
+ "Mesh:triangles[]": "mesh_triangles",
+ "Mesh:triangles[].vertex_indices[]": "mesh_triangles_vertex_indices",
+ "Mesh:triangles[].vertex_indices[].": "mesh_triangles_vertex_indices_value",
+ "Mesh:vertices[]": "mesh_vertices",
+ "Mesh:vertices[].x": "mesh_vertices_x",
+ "Mesh:vertices[].y": "mesh_vertices_y",
+ "Mesh:vertices[].z": "mesh_vertices_z",
+ "MeshTriangle:vertex_indices[]": "mesh_triangle_vertex_indices",
+ "MeshTriangle:vertex_indices[].": "mesh_triangle_vertex_indices_value",
+ "Plane:coef[]": "plane_coef",
+ "Plane:coef[].": "plane_coef_value",
+ "SolidPrimitive:dimensions[]": "solid_primitive_dimensions",
+ "SolidPrimitive:dimensions[].": "solid_primitive_dimensions_value",
+ "SolidPrimitive:polygon.points[]": "solid_primitive_polygon_points",
+ "SolidPrimitive:polygon.points[].x": "solid_primitive_polygon_points_x",
+ "SolidPrimitive:polygon.points[].y": "solid_primitive_polygon_points_y",
+ "SolidPrimitive:polygon.points[].z": "solid_primitive_polygon_points_z",
+ "SolidPrimitive:type": "solid_primitive_type",
+ "topic": "topic"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-int-with-fraction",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5: int needs an integral number",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Int8\",\"msg\":{\"data\":1.5}}",
+  "expect_error": "transform-decode"
+}

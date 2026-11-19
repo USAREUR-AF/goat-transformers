@@ -1,0 +1,17 @@
+{
+  "name": "rt-illuminance",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/illuminance\",\"type\":\"sensor_msgs/msg/Illuminance\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"illuminance\":4.028,\"variance\":5.035},\"id\":\"gen-illuminance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/illuminance\",\"type\":\"sensor_msgs/msg/Illuminance\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"illuminance\":4.028,\"variance\":5.035},\"id\":\"gen-illuminance\"}",
+  "model": {
+    "@kind": "illuminance",
+    "ros2sensor.illuminance_header_stamp_sec": "40510",
+    "ros2sensor.illuminance_header_stamp_nanosec": "2147564661",
+    "ros2sensor.illuminance_header_frame_id": "s3",
+    "ros2sensor.illuminance_illuminance": "4.028",
+    "ros2sensor.illuminance_variance": "5.035",
+    "ros2sensor.topic": "/gen/illuminance"
+  }
+}

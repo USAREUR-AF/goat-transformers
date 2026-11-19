@@ -1,0 +1,12 @@
+{
+  "name": "edge-string-escapes",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5, json canonical output: escape quote, backslash and controls; other characters as UTF-8; \\/ and \\u00e9 on input are read as / and e-acute",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/String\",\"msg\":{\"data\":\"q\\\"b\\\\n\\nt\\tc\\u0001e\\u00e9s\\/\"}}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/String\",\"msg\":{\"data\":\"q\\\"b\\\\n\\nt\\tc\\u0001eés/\"}}",
+  "model": {
+    "@kind": "string",
+    "ros2std.string_data": "q\"b\\n\nt\tc\u0001eés/"
+  }
+}

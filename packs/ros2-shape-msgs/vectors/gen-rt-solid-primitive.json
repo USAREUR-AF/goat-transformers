@@ -1,0 +1,17 @@
+{
+  "name": "rt-solid_primitive",
+  "from": "ros2-shape-msgs",
+  "to": "ros2-shape-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/solid_primitive\",\"type\":\"shape_msgs/msg/SolidPrimitive\",\"msg\":{\"type\":190,\"dimensions\":[2.014,-3.021,4.028],\"polygon\":{\"points\":[{\"x\":-3.875,\"y\":-3.625,\"z\":-3.375},{\"x\":-3.125,\"y\":-2.875,\"z\":-2.625}]}},\"id\":\"gen-solid_primitive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/solid_primitive\",\"type\":\"shape_msgs/msg/SolidPrimitive\",\"msg\":{\"type\":190,\"dimensions\":[2.014,-3.021,4.028],\"polygon\":{\"points\":[{\"x\":-3.875,\"y\":-3.625,\"z\":-3.375},{\"x\":-3.125,\"y\":-2.875,\"z\":-2.625}]}},\"id\":\"gen-solid_primitive\"}",
+  "model": {
+    "@kind": "solid_primitive",
+    "ros2shape.solid_primitive_type": "190",
+    "ros2shape.solid_primitive_dimensions.#": "3",
+    "ros2shape.solid_primitive_dimensions[0].ros2shape.solid_primitive_dimensions_value": "2.014",
+    "ros2shape.solid_primitive_polygon_points.#": "2",
+    "ros2shape.solid_primitive_polygon_points[0].ros2shape.solid_primitive_polygon_points_x": "-3.875",
+    "ros2shape.topic": "/gen/solid_primitive"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-duplicate-member",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5 ruling 22: one member name twice",
+  "input": "{\"op\":\"publish\",\"op\":\"publish\",\"type\":\"std_msgs/msg/String\",\"msg\":{\"data\":\"x\"}}",
+  "expect_error": "malformed-wire"
+}

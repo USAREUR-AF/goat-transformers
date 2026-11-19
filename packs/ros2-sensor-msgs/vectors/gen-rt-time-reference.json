@@ -1,0 +1,17 @@
+{
+  "name": "rt-time_reference",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/time_reference\",\"type\":\"sensor_msgs/msg/TimeReference\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_ref\":{\"sec\":162019,\"nanosec\":2147686170},\"source\":\"s6\"},\"id\":\"gen-time_reference\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/time_reference\",\"type\":\"sensor_msgs/msg/TimeReference\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_ref\":{\"sec\":162019,\"nanosec\":2147686170},\"source\":\"s6\"},\"id\":\"gen-time_reference\"}",
+  "model": {
+    "@kind": "time_reference",
+    "ros2sensor.time_reference_header_stamp_sec": "40510",
+    "ros2sensor.time_reference_header_stamp_nanosec": "2147564661",
+    "ros2sensor.time_reference_header_frame_id": "s3",
+    "ros2sensor.time_reference_time_ref_sec": "162019",
+    "ros2sensor.time_reference_time_ref_nanosec": "2147686170",
+    "ros2sensor.topic": "/gen/time_reference"
+  }
+}

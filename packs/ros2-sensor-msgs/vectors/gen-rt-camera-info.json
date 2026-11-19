@@ -1,0 +1,25 @@
+{
+  "name": "rt-camera_info",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/camera_info\",\"type\":\"sensor_msgs/msg/CameraInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"distortion_model\":\"s6\",\"d\":[7.049,8.056],\"k\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"r\":[-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182],\"p\":[-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266],\"binning_x\":2149063272,\"binning_y\":2149103775,\"roi\":{\"x_offset\":2149144278,\"y_offset\":2149184781,\"height\":2149225284,\"width\":2149265787,\"do_rectify\":true}},\"id\":\"gen-camera_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/camera_info\",\"type\":\"sensor_msgs/msg/CameraInfo\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"height\":2147645667,\"width\":2147686170,\"distortion_model\":\"s6\",\"d\":[7.049,8.056],\"k\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"r\":[-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182],\"p\":[-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266],\"binning_x\":2149063272,\"binning_y\":2149103775,\"roi\":{\"x_offset\":2149144278,\"y_offset\":2149184781,\"height\":2149225284,\"width\":2149265787,\"do_rectify\":true}},\"id\":\"gen-camera_info\"}",
+  "model": {
+    "@kind": "camera_info",
+    "ros2sensor.camera_info_header_stamp_sec": "40510",
+    "ros2sensor.camera_info_header_stamp_nanosec": "2147564661",
+    "ros2sensor.camera_info_header_frame_id": "s3",
+    "ros2sensor.camera_info_height": "2147645667",
+    "ros2sensor.camera_info_width": "2147686170",
+    "ros2sensor.camera_info_d.#": "2",
+    "ros2sensor.camera_info_d[0].ros2sensor.camera_info_d_value": "7.049",
+    "ros2sensor.camera_info_k.#": "9",
+    "ros2sensor.camera_info_k[0].ros2sensor.camera_info_k_value": "-9.063",
+    "ros2sensor.camera_info_r.#": "9",
+    "ros2sensor.camera_info_r[0].ros2sensor.camera_info_r_value": "-18.126",
+    "ros2sensor.camera_info_p.#": "12",
+    "ros2sensor.camera_info_p[0].ros2sensor.camera_info_p_value": "-27.189",
+    "ros2sensor.topic": "/gen/camera_info"
+  }
+}

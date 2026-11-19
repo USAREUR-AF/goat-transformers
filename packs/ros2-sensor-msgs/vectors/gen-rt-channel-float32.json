@@ -1,0 +1,15 @@
+{
+  "name": "rt-channel_float32",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/channel_float32\",\"type\":\"sensor_msgs/msg/ChannelFloat32\",\"msg\":{\"name\":\"s1\",\"values\":[-4.625,-4.375]},\"id\":\"gen-channel_float32\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/channel_float32\",\"type\":\"sensor_msgs/msg/ChannelFloat32\",\"msg\":{\"name\":\"s1\",\"values\":[-4.625,-4.375]},\"id\":\"gen-channel_float32\"}",
+  "model": {
+    "@kind": "channel_float32",
+    "ros2sensor.channel_float32_name": "s1",
+    "ros2sensor.channel_float32_values.#": "2",
+    "ros2sensor.channel_float32_values[0].ros2sensor.channel_float32_values_value": "-4.625",
+    "ros2sensor.topic": "/gen/channel_float32"
+  }
+}

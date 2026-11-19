@@ -1,0 +1,14 @@
+{
+  "name": "rt-mesh_file",
+  "from": "ros2-visualization-msgs",
+  "to": "ros2-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mesh_file\",\"type\":\"visualization_msgs/msg/MeshFile\",\"msg\":{\"filename\":\"s1\",\"data\":\"Agb/AIA=\"},\"id\":\"gen-mesh_file\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mesh_file\",\"type\":\"visualization_msgs/msg/MeshFile\",\"msg\":{\"filename\":\"s1\",\"data\":\"Agb/AIA=\"},\"id\":\"gen-mesh_file\"}",
+  "model": {
+    "@kind": "mesh_file",
+    "ros2visualization.mesh_file_filename": "s1",
+    "ros2visualization.mesh_file_data": "Agb/AIA=",
+    "ros2visualization.topic": "/gen/mesh_file"
+  }
+}

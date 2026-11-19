@@ -1,0 +1,17 @@
+{
+  "name": "rt-wrench",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wrench\",\"type\":\"geometry_msgs/msg/Wrench\",\"msg\":{\"force\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"torque\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"id\":\"gen-wrench\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wrench\",\"type\":\"geometry_msgs/msg/Wrench\",\"msg\":{\"force\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"torque\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"id\":\"gen-wrench\"}",
+  "model": {
+    "@kind": "wrench",
+    "ros2geometry.wrench_force_x": "1.007",
+    "ros2geometry.wrench_force_y": "2.014",
+    "ros2geometry.wrench_force_z": "-3.021",
+    "ros2geometry.wrench_torque_x": "4.028",
+    "ros2geometry.wrench_torque_y": "5.035",
+    "ros2geometry.topic": "/gen/wrench"
+  }
+}

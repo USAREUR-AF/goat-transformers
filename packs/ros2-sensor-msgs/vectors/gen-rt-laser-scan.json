@@ -1,0 +1,21 @@
+{
+  "name": "rt-laser_scan",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/laser_scan\",\"type\":\"sensor_msgs/msg/LaserScan\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"angle_min\":-4.125,\"angle_max\":-3.875,\"angle_increment\":-3.625,\"time_increment\":-3.375,\"scan_time\":-3.125,\"range_min\":-2.875,\"range_max\":-2.625,\"ranges\":[-2.375,-2.125],\"intensities\":[-1.875,-1.625]},\"id\":\"gen-laser_scan\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/laser_scan\",\"type\":\"sensor_msgs/msg/LaserScan\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"angle_min\":-4.125,\"angle_max\":-3.875,\"angle_increment\":-3.625,\"time_increment\":-3.375,\"scan_time\":-3.125,\"range_min\":-2.875,\"range_max\":-2.625,\"ranges\":[-2.375,-2.125],\"intensities\":[-1.875,-1.625]},\"id\":\"gen-laser_scan\"}",
+  "model": {
+    "@kind": "laser_scan",
+    "ros2sensor.laser_scan_header_stamp_sec": "40510",
+    "ros2sensor.laser_scan_header_stamp_nanosec": "2147564661",
+    "ros2sensor.laser_scan_header_frame_id": "s3",
+    "ros2sensor.laser_scan_angle_min": "-4.125",
+    "ros2sensor.laser_scan_angle_max": "-3.875",
+    "ros2sensor.laser_scan_ranges.#": "2",
+    "ros2sensor.laser_scan_ranges[0].ros2sensor.laser_scan_ranges_value": "-2.375",
+    "ros2sensor.laser_scan_intensities.#": "2",
+    "ros2sensor.laser_scan_intensities[0].ros2sensor.laser_scan_intensities_value": "-1.875",
+    "ros2sensor.topic": "/gen/laser_scan"
+  }
+}

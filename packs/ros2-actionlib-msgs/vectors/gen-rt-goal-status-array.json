@@ -1,0 +1,17 @@
+{
+  "name": "rt-goal_status_array",
+  "from": "ros2-actionlib-msgs",
+  "to": "ros2-actionlib-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/goal_status_array\",\"type\":\"actionlib_msgs/msg/GoalStatusArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status_list\":[{\"goal_id\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"id\":\"s6\"},\"status\":8,\"text\":\"s8\"},{\"goal_id\":{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"id\":\"s11\"},\"status\":27,\"text\":\"s13\"}]},\"id\":\"gen-goal_status_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/goal_status_array\",\"type\":\"actionlib_msgs/msg/GoalStatusArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status_list\":[{\"goal_id\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"id\":\"s6\"},\"status\":8,\"text\":\"s8\"},{\"goal_id\":{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"id\":\"s11\"},\"status\":27,\"text\":\"s13\"}]},\"id\":\"gen-goal_status_array\"}",
+  "model": {
+    "@kind": "goal_status_array",
+    "ros2actionlib.goal_status_array_header_stamp_sec": "40510",
+    "ros2actionlib.goal_status_array_header_stamp_nanosec": "2147564661",
+    "ros2actionlib.goal_status_array_header_frame_id": "s3",
+    "ros2actionlib.goal_status_array_status_list.#": "2",
+    "ros2actionlib.goal_status_array_status_list[0].ros2actionlib.goal_status_array_status_list_goal_id_stamp_sec": "162019",
+    "ros2actionlib.topic": "/gen/goal_status_array"
+  }
+}

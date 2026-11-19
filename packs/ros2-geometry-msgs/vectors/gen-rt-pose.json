@@ -1,0 +1,17 @@
+{
+  "name": "rt-pose",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pose\",\"type\":\"geometry_msgs/msg/Pose\",\"msg\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"id\":\"gen-pose\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pose\",\"type\":\"geometry_msgs/msg/Pose\",\"msg\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"id\":\"gen-pose\"}",
+  "model": {
+    "@kind": "pose",
+    "ros2geometry.pose_position_x": "1.007",
+    "ros2geometry.pose_position_y": "2.014",
+    "ros2geometry.pose_position_z": "-3.021",
+    "ros2geometry.pose_orientation_x": "4.028",
+    "ros2geometry.pose_orientation_y": "5.035",
+    "ros2geometry.topic": "/gen/pose"
+  }
+}

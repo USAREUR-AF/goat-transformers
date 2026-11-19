@@ -1,0 +1,18 @@
+{
+  "name": "rt-joint_trajectory",
+  "from": "ros2-trajectory-msgs",
+  "to": "ros2-trajectory-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_trajectory\",\"type\":\"trajectory_msgs/msg/JointTrajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"points\":[{\"positions\":[-6.042],\"velocities\":[7.049],\"accelerations\":[8.056],\"effort\":[-9.063],\"time_from_start\":{\"sec\":405037,\"nanosec\":2147929188}},{\"positions\":[-12.084],\"velocities\":[13.091],\"accelerations\":[14.098],\"effort\":[-15.105],\"time_from_start\":{\"sec\":648055,\"nanosec\":2148172206}}]},\"id\":\"gen-joint_trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_trajectory\",\"type\":\"trajectory_msgs/msg/JointTrajectory\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"points\":[{\"positions\":[-6.042],\"velocities\":[7.049],\"accelerations\":[8.056],\"effort\":[-9.063],\"time_from_start\":{\"sec\":405037,\"nanosec\":2147929188}},{\"positions\":[-12.084],\"velocities\":[13.091],\"accelerations\":[14.098],\"effort\":[-15.105],\"time_from_start\":{\"sec\":648055,\"nanosec\":2148172206}}]},\"id\":\"gen-joint_trajectory\"}",
+  "model": {
+    "@kind": "joint_trajectory",
+    "ros2trajectory.joint_trajectory_header_stamp_sec": "40510",
+    "ros2trajectory.joint_trajectory_header_stamp_nanosec": "2147564661",
+    "ros2trajectory.joint_trajectory_header_frame_id": "s3",
+    "ros2trajectory.joint_trajectory_joint_names.#": "2",
+    "ros2trajectory.joint_trajectory_joint_names[0].ros2trajectory.joint_trajectory_joint_names_value": "s4",
+    "ros2trajectory.joint_trajectory_points.#": "2",
+    "ros2trajectory.topic": "/gen/joint_trajectory"
+  }
+}

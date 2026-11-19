@@ -1,0 +1,17 @@
+{
+  "name": "rt-pose_stamped",
+  "from": "ros2-geometry-msgs",
+  "to": "ros2-geometry-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pose_stamped\",\"type\":\"geometry_msgs/msg/PoseStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}}},\"id\":\"gen-pose_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pose_stamped\",\"type\":\"geometry_msgs/msg/PoseStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}}},\"id\":\"gen-pose_stamped\"}",
+  "model": {
+    "@kind": "pose_stamped",
+    "ros2geometry.pose_stamped_header_stamp_sec": "40510",
+    "ros2geometry.pose_stamped_header_stamp_nanosec": "2147564661",
+    "ros2geometry.pose_stamped_header_frame_id": "s3",
+    "ros2geometry.pose_stamped_pose_position_x": "4.028",
+    "ros2geometry.pose_stamped_pose_position_y": "5.035",
+    "ros2geometry.topic": "/gen/pose_stamped"
+  }
+}

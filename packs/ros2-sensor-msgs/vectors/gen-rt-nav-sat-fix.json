@@ -1,0 +1,19 @@
+{
+  "name": "rt-nav_sat_fix",
+  "from": "ros2-sensor-msgs",
+  "to": "ros2-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat_fix\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"status\":-29,\"service\":38682},\"latitude\":-6.042,\"longitude\":7.049,\"altitude\":8.056,\"position_covariance\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"position_covariance_type\":101},\"id\":\"gen-nav_sat_fix\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_sat_fix\",\"type\":\"sensor_msgs/msg/NavSatFix\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"status\":{\"status\":-29,\"service\":38682},\"latitude\":-6.042,\"longitude\":7.049,\"altitude\":8.056,\"position_covariance\":[-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119],\"position_covariance_type\":101},\"id\":\"gen-nav_sat_fix\"}",
+  "model": {
+    "@kind": "nav_sat_fix",
+    "ros2sensor.nav_sat_fix_header_stamp_sec": "40510",
+    "ros2sensor.nav_sat_fix_header_stamp_nanosec": "2147564661",
+    "ros2sensor.nav_sat_fix_header_frame_id": "s3",
+    "ros2sensor.nav_sat_fix_status_status": "-29",
+    "ros2sensor.nav_sat_fix_status_service": "38682",
+    "ros2sensor.nav_sat_fix_position_covariance.#": "9",
+    "ros2sensor.nav_sat_fix_position_covariance[0].ros2sensor.nav_sat_fix_position_covariance_value": "-9.063",
+    "ros2sensor.topic": "/gen/nav_sat_fix"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-array-not-an-array",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.7, decode: a group member that is not an array",
+  "input": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/Float32MultiArray\",\"msg\":{\"data\":\"x\"}}",
+  "expect_error": "malformed-wire"
+}

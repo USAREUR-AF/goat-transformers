@@ -1,0 +1,13 @@
+{
+  "name": "edge-unknown-member-is-residue",
+  "from": "ros2-std-msgs",
+  "to": "ros2-std-msgs",
+  "source": "engine-spec 0.5, json residue and canonical order: mapped and when members in line order, then residue of each object in input order",
+  "input": "{ \"msg\" : {\"data\":\"x\",\"note\":\"kept\"}, \"type\":\"std_msgs/msg/String\", \"op\":\"publish\", \"id\":\"a1\", \"qos\":{\"depth\":10,\"reliability\":\"reliable\"}, \"topic\":\"/t\" }",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/t\",\"type\":\"std_msgs/msg/String\",\"msg\":{\"data\":\"x\",\"note\":\"kept\"},\"id\":\"a1\",\"qos\":{\"depth\":10,\"reliability\":\"reliable\"}}",
+  "model": {
+    "@kind": "string",
+    "ros2std.string_data": "x",
+    "ros2std.topic": "/t"
+  }
+}

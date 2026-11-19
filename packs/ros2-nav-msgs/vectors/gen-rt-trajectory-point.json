@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory_point",
+  "from": "ros2-nav-msgs",
+  "to": "ros2-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"nav_msgs/msg/TrajectoryPoint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"velocity\":{\"linear\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"angular\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"acceleration\":{\"linear\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154}},\"effort\":{\"force\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"torque\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196}}},\"id\":\"gen-trajectory_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"nav_msgs/msg/TrajectoryPoint\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"velocity\":{\"linear\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"angular\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112}},\"acceleration\":{\"linear\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"angular\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154}},\"effort\":{\"force\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"torque\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196}}},\"id\":\"gen-trajectory_point\"}",
+  "model": {
+    "@kind": "trajectory_point",
+    "ros2nav.trajectory_point_header_stamp_sec": "40510",
+    "ros2nav.trajectory_point_header_stamp_nanosec": "2147564661",
+    "ros2nav.trajectory_point_header_frame_id": "s3",
+    "ros2nav.trajectory_point_pose_position_x": "4.028",
+    "ros2nav.trajectory_point_pose_position_y": "5.035",
+    "ros2nav.topic": "/gen/trajectory_point"
+  }
+}
