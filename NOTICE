@@ -62,7 +62,7 @@ Pack canonical-track-v2; module track
   Canonical Track v2 schema, https://github.com/USAREUR-AF/open-billie
   Apache License, Version 2.0.
 
-Packs nmea2000, nmea2000-seq; module n2k
+Pack nmea2000; module n2k
   CANboat database (docs/canboat.json), version 9.2.0.
   https://github.com/canboat/canboat
   (C) 2009-2026, Kees Verruijt, Harlingen, The Netherlands. Apache License,
