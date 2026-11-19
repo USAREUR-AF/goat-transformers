@@ -11,7 +11,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "src"))
 
 from goat_transformers import (  # noqa: E402
-    BadDirective, DuplicateField, DuplicateKind, Engine, Entity, GTError, InvalidPack, MalformedWire, NoKind,
+    BadDirective, DuplicateField, DuplicateKind, Engine, Entity, GTError, InvalidPack, MalformedWire, MissingWire,
+    NoKind,
     TransformDecodeFailure, TransformEncodeFailure, parse_model_text, parse_pack_text,
 )
 from goat_transformers.transforms import build_bits_transform, format_float, round_half_away  # noqa: E402
@@ -62,7 +63,7 @@ class TestKindGrammar(unittest.TestCase):
             (x + "requires uid\nkind a\n", BadDirective, "bad-directive"),
             (x + "when @k a\n", BadDirective, "bad-directive"),
             (x + "bit_order msb\n", BadDirective, "bad-directive"),
-            (HEAD % "k" + "bit_order msb\nwire json\n", BadDirective, "bad-directive"),
+            (HEAD % "k" + "bit_order msb\nwire json\n", MissingWire, "missing-wire"),  # ruling 5b of 0.11
         ]
         b = HEAD % "k" + "wire bits\nword_bytes 1\n"
         cases += [

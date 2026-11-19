@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "src"))
 PACKS = os.path.normpath(os.path.join(HERE, "..", "..", "..", "packs"))
 
 from goat_transformers import (  # noqa: E402
-    Engine, InvalidPack, MalformedWire, UnknownTransform, parse_model_text, parse_pack_text,
+    BadDirective, Engine, InvalidPack, MalformedWire, UnknownTransform, parse_model_text, parse_pack_text,
 )
 from goat_transformers.transforms import build_bits_transform, round_half_away  # noqa: E402
 
@@ -91,7 +91,10 @@ class TestBitsParse(unittest.TestCase):
                 parse_pack_text("format x\nversion 1\ndistribution public\nsource t\nwire bits\nword_bytes 1\nfield a %s uint\n" % bad)
 
     def test_bad_linscale_name(self):
-        with self.assertRaises(UnknownTransform):
+        with self.assertRaises(UnknownTransform):  # ruling 5 of 0.11: the name is the text before the first ':'
+            parse_pack_text("format x\nversion 1\ndistribution public\nsource t\nwire bits\nword_bytes 2\n"
+                            "field a 0:0:8 linscaled:1:1\n")
+        with self.assertRaises(BadDirective):  # ruling 4d of 0.11: its parameters
             parse_pack_text("format x\nversion 1\ndistribution public\nsource t\nwire bits\nword_bytes 2\nfield a 0:0:8 linscale:0\n")
 
 
@@ -127,7 +130,9 @@ class TestBitsTransforms(unittest.TestCase):
                          [3, -3, 1, -1, 2, 3])
 
     def test_build_bits_transform_direct(self):
-        self.assertEqual(build_bits_transform("uint", 4).encode(255), 15)   # masked to 4 bits
+        self.assertEqual(build_bits_transform("uint", 4).encode(15), 15)
+        with self.assertRaises(ValueError):  # ruling 4b of 0.11: never the low bits of a value that does not fit
+            build_bits_transform("uint", 4).encode(255)
         self.assertEqual(build_bits_transform("twos", 8).encode(-1), 0xFF)
         self.assertEqual(build_bits_transform("linscale:100:10", 8).encode(5.0), 50)
 

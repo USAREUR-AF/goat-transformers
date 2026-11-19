@@ -1,7 +1,7 @@
-"""Run every conversion vector of every pack under ../../packs and every load
-vector (spec/vector-format.md). The packs are loaded once. Each vector is run,
-every failure is reported with its pack and vector name, the counts are
-printed, and only then does the run fail."""
+"""Run every conversion vector of every pack under ../../packs, every load
+vector and every capability vector (spec/vector-format.md). The packs are
+loaded once. Each vector is run, every failure is reported with its pack and
+vector name, the counts are printed, and only then does the run fail."""
 
 import base64
 import glob
@@ -15,8 +15,10 @@ sys.path.insert(0, os.path.join(HERE, "..", "src"))
 PACKS = os.path.normpath(os.path.join(HERE, "..", "..", "..", "packs"))
 
 from goat_transformers import Engine, GTError  # noqa: E402
+from goat_transformers.transforms import read_int_text, read_number_text, read_uint_text  # noqa: E402
 
 LOAD_VECTORS = os.path.join(PACKS, "conformance", "load-vectors")
+CAPABILITY_VECTORS = os.path.join(PACKS, "conformance", "capability-vectors")
 
 
 def _vectors():
@@ -109,6 +111,30 @@ def _check_absent(ent, model, listed):
     return out
 
 
+def _key_of(path):
+    """The model key a `model` member names: the member itself, or the text
+    after the last `[<i>].` of an item path."""
+    cut = path.rfind("].")
+    return path[cut + 2:] if cut >= 0 else path
+
+
+def _read_want(engine, key, want):
+    """Ruling 2c of 0.11: a `model` value named by a model key or an item path
+    is read as that key's declared type (2a for `int`, 2b for `float`). ->
+    (value, None), or (None, why the vector is invalid)."""
+    if not isinstance(want, str):
+        return None, "invalid vector: the model value of %r is not a string: %r" % (key, want)
+    kind = engine._key_type(_key_of(key))
+    try:
+        if kind == "int":
+            return read_int_text(want), None
+        if kind == "float":
+            return read_number_text(want), None
+    except ValueError as e:
+        return None, "invalid vector: the model value of %r is not %s text: %s" % (key, kind, e)
+    return want, None
+
+
 def _check_model(engine, rel, vec, data):
     """-> list of failure texts for the vector's `model` object. With
     `"@complete": true` the checks run on the completed entity: the decode, then
@@ -117,7 +143,7 @@ def _check_model(engine, rel, vec, data):
     `"<list>[<i>].<key>"` check a list of the decoded entity, and
     `"<list>[<i>].@kind"` the kind an item selected (0.8)."""
     out = []
-    ent = engine.decode(vec["from"], data)
+    ent = engine.decode(vec["from"], data, _max_items(vec))
     complete = vec["model"].get("@complete") is True
     if complete:
         ent = engine.complete(ent, vec.get("context"))
@@ -136,6 +162,20 @@ def _check_model(engine, rel, vec, data):
             if have != want:
                 out.append("@kind: decode selected %r, expected %r" % (have, want))
             continue
+        if key.endswith(".#"):  # a count is an unsigned decimal integer or `absent`
+            if want != "absent":
+                try:
+                    want = read_uint_text(want) if isinstance(want, str) else None
+                except ValueError:
+                    want = None
+                if want is None:
+                    out.append("invalid vector: %s must be an unsigned decimal integer or 'absent'" % key)
+                    continue
+        elif not key.endswith("@kind"):
+            want, why = _read_want(engine, key, want)
+            if why is not None:
+                out.append(why)
+                continue
         what, have = _resolve(ent, key)
         if what == "missing":
             out.append("%s: %s" % (key, have) if "[" in key else have)
@@ -144,24 +184,26 @@ def _check_model(engine, rel, vec, data):
             if want == "absent":
                 ok = have is None
             else:
-                ok = have is not None and have == int(want)
+                ok = have is not None and have == want
             if not ok:
                 out.append(
                     "%s: decoded %s, expected %s" % (key, "absent" if have is None else "%d item(s)" % have, want)
                 )
             continue
-        if isinstance(have, float) and complete:
-            w = float(want)
-            ok = have == w or abs(have - w) < 1e-9 * max(abs(have), abs(w))
-        elif isinstance(have, float):
-            ok = abs(have - float(want)) <= 1e-9
-        elif isinstance(have, int):
-            ok = have == int(want)
+        if isinstance(have, float) and isinstance(want, float) and complete:
+            ok = have == want or abs(have - want) < 1e-9 * max(abs(have), abs(want))
+        elif isinstance(have, float) and isinstance(want, float):
+            ok = abs(have - want) <= 1e-9
         else:
-            ok = have == want
+            ok = type(have) is type(want) and have == want
         if not ok:
             out.append("model key %r: decoded %r, expected %r" % (key, have, want))
     return out
+
+
+def _max_items(vec):
+    """The vector's `max_items` (ruling 7b of 0.11), or None for the default."""
+    return vec.get("max_items")
 
 
 def run_conversion_vector(engine, rel, vec):
@@ -170,10 +212,13 @@ def run_conversion_vector(engine, rel, vec):
     data = _bytes(vec, "input")
     context = vec.get("context")  # caller-supplied keys, values in string form (spec 0.6)
     out = []
+    limit = _max_items(vec)
+    if "max_items" in vec and (isinstance(limit, bool) or not isinstance(limit, int) or limit < 0):
+        return ["invalid vector: max_items must be an integer of 0 or more, got %r" % (limit,)]
     if "expect_error" in vec:
         want = vec["expect_error"]
         try:
-            got = engine.convert(src, dst, data, context)
+            got = engine.convert(src, dst, data, context, max_items=limit)
         except GTError as e:
             if e.code != want or not str(e).startswith(want + ":"):
                 out.append("convert(%s -> %s) must fail with %s, failed with: %s" % (src, dst, want, e))
@@ -186,7 +231,7 @@ def run_conversion_vector(engine, rel, vec):
     else:
         expect = _bytes(vec, "expect")
         try:
-            got = engine.convert(src, dst, data, context)
+            got = engine.convert(src, dst, data, context, max_items=limit)
         except GTError as e:
             out.append("convert(%s -> %s) failed: %s" % (src, dst, e))
         else:
@@ -278,7 +323,8 @@ class TestLoadVectors(unittest.TestCase):
         try:
             for text in vec["models"]:
                 eng.load_model(text)
-            eng.load(vec["pack"])
+            for text in vec["packs"] if "packs" in vec else [vec["pack"]]:  # `packs`: 0.11, ruling 5d
+                eng.load(text)
         except GTError as e:
             return e
         return None
@@ -305,6 +351,44 @@ class TestLoadVectors(unittest.TestCase):
         _report("load vectors", len(self.vectors), failures)
         self.assertEqual(
             failures, [], "%d of %d load vectors failed (listed above)" % (len(failures), len(self.vectors))
+        )
+
+
+class TestCapabilityVectors(unittest.TestCase):
+    """spec/vector-format.md, "Capability vectors" (ruling 6 of 0.11): the
+    model modules and the two packs loaded, `capability(from, to)` equal to
+    the vector's grade and lists, entry for entry."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.vectors = []
+        for path in sorted(glob.glob(os.path.join(CAPABILITY_VECTORS, "*.json"))):
+            with open(path, "r", encoding="utf-8") as fh:
+                cls.vectors.append(
+                    (os.path.join("conformance", "capability-vectors", os.path.basename(path)), json.load(fh))
+                )
+
+    def test_capability_vectors_exist(self):
+        self.assertGreater(len(self.vectors), 0, "no capability vectors found under %s" % CAPABILITY_VECTORS)
+
+    def test_all_capability_vectors(self):
+        failures = []
+        for rel, vec in self.vectors:
+            problems = []
+            try:
+                eng = Engine.from_dir(PACKS, packs_only=sorted({vec["from"], vec["to"]}))
+                got = eng.capability(vec["from"], vec["to"])
+            except Exception as e:
+                problems.append("unexpected %s: %s" % (type(e).__name__, e))
+            else:
+                for member in ("grade", "carried", "dropped"):
+                    if got[member] != vec[member]:
+                        problems.append("%s: got %r, expected %r" % (member, got[member], vec[member]))
+            if problems:
+                failures.append((rel, vec.get("name"), problems))
+        _report("capability vectors", len(self.vectors), failures)
+        self.assertEqual(
+            failures, [], "%d of %d capability vectors failed (listed above)" % (len(failures), len(self.vectors))
         )
 
 

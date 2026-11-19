@@ -13,7 +13,7 @@ SRC = os.path.normpath(os.path.join(HERE, "..", "src"))
 sys.path.insert(0, SRC)
 
 from goat_transformers import (  # noqa: E402
-    BadDirective, DistributionRefused, DistributionViolation, DuplicateModule, Engine, Entity, MalformedWire,
+    BadDirective, DistributionRefused, DistributionViolation, DuplicateModule, Engine, Entity, GTError, MalformedWire,
     MissingDistribution, MissingSource, UnknownFormat, UnknownModule,
 )
 
@@ -149,14 +149,19 @@ class TestModuleCheckOrder(unittest.TestCase):  # ruling 29
 
 
 class TestRulings31To34(unittest.TestCase):
-    def test_derive_refused_on_its_own_text_is_a_line_error(self):  # ruling 32
+    def test_derive_refused_on_its_own_text_is_a_line_error(self):  # ruling 32; ruling 5b of 0.11
         head = "module o\nversion 1\n"  # no distribution, no source
         for line in ("derive o.k nosuch o.a", "derive o.k copy:1 o.a", "derive o.k scale o.a", "derive o.k scale:x o.a",
                      "derive o.k copy o.a o.b", "derive o.k hypot o.a", "derive o.k join:-"):
             eng = Engine()
             eng.load_model(CORE)
-            with self.assertRaises(BadDirective, msg=line):
-                eng.load_model(head + line + "\nbogus 1\n")  # before the later line and the whole-file checks
+            with self.assertRaises(BadDirective, msg=line):  # right after the file, before missing-distribution
+                eng.load_model(head + line + "\n")
+            eng = Engine()
+            eng.load_model(CORE)
+            with self.assertRaises(GTError, msg=line) as cm:  # 0.11: a later unknown directive comes first
+                eng.load_model(head + line + "\nbogus 1\n")
+            self.assertEqual(cm.exception.code, "unknown-directive", line)
         eng = Engine()
         eng.load_model(CORE)
         with self.assertRaises(MissingDistribution):  # an undeclared key waits for its place in ruling 29
