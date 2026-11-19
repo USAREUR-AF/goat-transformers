@@ -103,8 +103,11 @@ Messages with no kind:
 | TesterPhysicalResSODL | 1996 | CAN FD: 64 data bytes (struct canfd_frame) |
 | TesterPhysicalReqSODL | 1988 | CAN FD: 64 data bytes (struct canfd_frame) |
 
-The value tables of `Cluster_HEV_Data7_FD1.PreCondStat_D_Dsply` are left out by the run (`--no-table`): their label
-text is not taken into the pack, and those signals carry the number.
+Value tables left out by the run; those signals carry the number:
+
+| Message | Signal | Value table left out: |
+|---|---|---|
+| Cluster_HEV_Data7_FD1 | PreCondStat_D_Dsply | named by `--no-table` |
 
 276 `VAL_` tables are not applied (they do not name every raw value, or the
 signal is scaled or wider than 8 bits): those signals carry the number.

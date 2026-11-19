@@ -50,7 +50,7 @@ Keys are `dbcvwmeb2024generated.<message>_<signal>` in lower case, in the unit t
 | messages in the file | 132 |
 | kinds | 108 |
 | `field` lines | 1620 |
-| value tables applied | 944 |
+| value tables applied | 911 |
 | messages with no kind | 37 |
 | signals not mapped | 0 |
 | vectors | 108 |
@@ -106,6 +106,44 @@ Messages with no kind:
 | ACC_19 | 768 | CAN FD: 48 data bytes (struct canfd_frame) |
 | ESC_51 | 252 | CAN FD: 64 data bytes (struct canfd_frame) |
 | Motor_51 | 267 | CAN FD: 48 data bytes (struct canfd_frame) |
+
+Value tables left out by the run; those signals carry the number:
+
+| Message | Signal | Value table left out: |
+|---|---|---|
+| LWI_01 | LWI_QBit_Lenkradwinkel | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Getriebe_11 | GE_MMom_Status | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Motor_41 | MO_Fehler_MSpG | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| NVEM_05 | BEM_Anf_KL | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Motor_26 | OLEV_Systemstoerung | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Motor_26 | OLEV_Oelstand_nicht_vorhanden | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Motor_26 | WIV_Oelstand_nicht_vorhanden | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| TSG_HFS_01 | HFS_Lock_Taster_inv | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| TSG_HBFS_01 | HBFS_Lock_Taster_inv | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Licht_hinten_01 | LH_Rueckf_li_def | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Licht_hinten_01 | LH_Rueckf_re_def | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Licht_hinten_01 | LH_Rueckf_mi_def | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| PSD_06 | PSD_Ges_Geschwindigkeit_Witter | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| PSD_06 | PSD_Ges_Ueberholverbot | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Parkhilfe_01 | PH_Abschaltursache | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Parkhilfe_01 | PH_Tongeber_H_verfuegbar | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_FA | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_BF | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe2_FA | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe2_MI | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe2_BF | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe3_FA | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe3_MI | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Gurtschloss_Reihe3_BF | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Sitzpos_Sens_FA | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_02 | AB_Sitzpos_Sens_BF | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Airbag_04 | WarnBrems_Charisma_Status | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Klima_Sensor_04 | DS_Status | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Motor_07 | MO_Kennfeldk | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Einheiten_01 | KBI_Einheit_Temp | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Rear_View_01 | RV_HMI_Mode | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Rear_View_01 | RV_GL_Trailer_connect | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
+| Rear_View_01 | RV_GL_Trunk_open | non-ASCII labels; the embedded profile does not yet carry them (`--ascii-tables-only`) |
 
 368 `VAL_` tables are not applied (they do not name every raw value, or the
 signal is scaled or wider than 8 bits): those signals carry the number.

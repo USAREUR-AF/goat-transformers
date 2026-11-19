@@ -306,8 +306,9 @@ def core_of(sig, msg):
 
 
 class FilePlan:
-    def __init__(self, dbc, sources, no_table=()):
+    def __init__(self, dbc, sources, no_table=(), ascii_tables_only=False):
         self.dbc, self.sources = dbc, sources
+        self.ascii_tables_only = ascii_tables_only
         # (message, signal) whose value table the run leaves out (--no-table)
         self.no_table = {(m, sg) for f, m, sg in no_table if f == dbc.name}
         self.tables_left_out = []
@@ -372,14 +373,22 @@ class FilePlan:
         via = None
         table = self.dbc.values.get((msg.id, sig.name))
         if table and (msg.name, sig.name) in self.no_table:
-            if (msg.name, sig.name) not in self.tables_left_out:
-                self.tables_left_out.append((msg.name, sig.name))
+            self.leave_out(msg, sig, "named by `--no-table`")
+            table = None
+        if (table and self.ascii_tables_only and self.complete(table, sig)
+                and not all(lab.isascii() for _, lab in table)):
+            self.leave_out(msg, sig, "non-ASCII labels; the embedded profile does not yet carry them "
+                                     "(`--ascii-tables-only`)")
             table = None
         if table and typ == "int" and not core and self.complete(table, sig):
             via = "t_" + self.key_of(msg, sig)
             self.tables[via] = table
             typ = "string"
         return (Line(key, DATA_BIT0 + pos, sig.length, tr, swap, via), typ, bits), None
+
+    def leave_out(self, msg, sig, why):
+        if (msg.name, sig.name, why) not in self.tables_left_out:
+            self.tables_left_out.append((msg.name, sig.name, why))
 
     @staticmethod
     def complete(table, sig):
@@ -962,11 +971,14 @@ def pack_md(fp, sha, nvec):
             a("| %s | %s | %s |" % (msg.name, sig.name, why))
         a("")
     if fp.tables_left_out:
-        a("The value tables of %s are left out by the run (`--no-table`): their label" % ", ".join(
-            "`%s.%s`" % x for x in fp.tables_left_out))
-        a("text is not taken into the pack, and those signals carry the number.")
+        a("Value tables left out by the run; those signals carry the number:")
         a("")
-    left = {(m.id, sg) for m in d.messages for mn, sg in fp.tables_left_out if m.name == mn}
+        a("| Message | Signal | Value table left out: |")
+        a("|---|---|---|")
+        for mn, sg, why in fp.tables_left_out:
+            a("| %s | %s | %s |" % (mn, sg, why))
+        a("")
+    left = {(m.id, sg) for m in d.messages for mn, sg, _ in fp.tables_left_out if m.name == mn}
     partial = [key for key in d.values if key not in left and key not in {
         (k.msg.id, s.name) for k in fp.kinds for s, line in zip(k.signals, k.lines) if line.via}]
     if partial:
@@ -1067,7 +1079,7 @@ def run(args, out):
     for name, text, sources in load_sources(src):
         if args.files and name not in args.files.split(","):
             continue
-        plans.append(FilePlan(parse_dbc(text, name, sources), sources, no_table))
+        plans.append(FilePlan(parse_dbc(text, name, sources), sources, no_table, args.ascii_tables_only))
     core_text = read_text(args.core_def) if args.core_def else out.read("model/core.def")
     total = 0
     for fp in plans:
@@ -1117,6 +1129,9 @@ def build_parser():
     ap.add_argument("--commit", help="write %s for this commit" % PROV)
     ap.add_argument("--files", help="only these DBC files (names without .dbc), comma-separated")
     ap.add_argument("--core-def", help="model/core.def (default <out>/model/core.def)")
+    ap.add_argument("--ascii-tables-only", action="store_true",
+                    help="leave out every value table with a label that is not plain ASCII; the "
+                         "signal keeps its number")
     ap.add_argument("--no-table", action="append", metavar="FILE:MESSAGE.SIGNAL",
                     help="leave out the value table of this signal: the signal keeps its number "
                          "(repeatable; FILE is the DBC file name without .dbc)")

@@ -128,8 +128,12 @@ Signals not mapped:
 |---|---|---|
 | HS2_DYN_ABR_38D | ACCEL_LONGI_ROUES | overlaps another signal of the message |
 
-The value tables of `HS2_DYN1_MDD_ETAT_2B6.MDD_DECEL_CONTROL_REQ`, `HS2_DYN_MDD_ETAT_2F6.MDD_DECEL_CONTROL_REQ` are left out by the run (`--no-table`): their label
-text is not taken into the pack, and those signals carry the number.
+Value tables left out by the run; those signals carry the number:
+
+| Message | Signal | Value table left out: |
+|---|---|---|
+| HS2_DYN1_MDD_ETAT_2B6 | MDD_DECEL_CONTROL_REQ | named by `--no-table` |
+| HS2_DYN_MDD_ETAT_2F6 | MDD_DECEL_CONTROL_REQ | named by `--no-table` |
 
 10 `VAL_` tables are not applied (they do not name every raw value, or the
 signal is scaled or wider than 8 bits): those signals carry the number.

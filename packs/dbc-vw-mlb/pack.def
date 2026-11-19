@@ -88,46 +88,6 @@ map   t_airbag_02_ab_belegung_vb  0  "nicht_verfuegbar"
 map   t_airbag_02_ab_belegung_vb  1  "Fehler"
 map   t_airbag_02_ab_belegung_vb  2  "nicht_belegt"
 map   t_airbag_02_ab_belegung_vb  3  "belegt"
-map   t_airbag_02_ab_gurtschloss_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_fa  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_bf  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_bf  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  1  "nicht_verf�gbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  3  "gesteckt"
-map   t_airbag_02_ab_sitzpos_sens_fa  0  "nicht verf�gbar"
-map   t_airbag_02_ab_sitzpos_sens_fa  1  "Fehler"
-map   t_airbag_02_ab_sitzpos_sens_fa  2  "Sitz nicht vorne"
-map   t_airbag_02_ab_sitzpos_sens_fa  3  "Sitz vorne"
-map   t_airbag_02_ab_sitzpos_sens_bf  0  "nicht verf�gbar"
-map   t_airbag_02_ab_sitzpos_sens_bf  1  "Fehler"
-map   t_airbag_02_ab_sitzpos_sens_bf  2  "Sitz nicht vorne"
-map   t_airbag_02_ab_sitzpos_sens_bf  3  "Sitz vorne"
 map   t_anhaenger_01_aag_bremsl_durch_ecd  0  "Bremslicht_ist_aus"
 map   t_anhaenger_01_aag_bremsl_durch_ecd  1  "Bremslicht_durch_ECD_aktiv"
 map   t_anhaenger_01_aag_anhaenger_erkannt  0  "kein_Anhaenger_erkannt"
@@ -146,8 +106,6 @@ map   t_bem_01_bem_n_lla  0  "keine_Erhoehung"
 map   t_bem_01_bem_n_lla  1  "Stufe_1"
 map   t_bem_01_bem_n_lla  2  "Stufe_2"
 map   t_bem_01_bem_n_lla  3  "Stufe_3"
-map   t_bem_01_bem_anf_kl  0  "keine Anforderung"
-map   t_bem_01_bem_anf_kl  1  "Anforderung K�hlerl�fter Ansteuerung"
 map   t_bem_01_bem_startstopp_info  0  "Motorlauf_nicht_notwendig_(Stoppfreigabe)"
 map   t_bem_01_bem_startstopp_info  1  "Motoranlauf_nicht_zwingend_notwendig_(Stoppverbot,keine_Startanforderung)"
 map   t_bem_01_bem_startstopp_info  2  "Motoranlauf_zwingend_notwendig_(Startanforderung)"
@@ -258,8 +216,6 @@ map   t_einheiten_01_kbi_einheit_streckenanz  0  "Kilometer"
 map   t_einheiten_01_kbi_einheit_streckenanz  1  "Meilen"
 map   t_einheiten_01_kbi_mfa_v_einheit_02  0  "kmh"
 map   t_einheiten_01_kbi_mfa_v_einheit_02  1  "mph"
-map   t_einheiten_01_kbi_einheit_temp  0  "Grad Celsius �C"
-map   t_einheiten_01_kbi_einheit_temp  1  "Grad Fahrenheit �F"
 map   t_einheiten_01_kbi_einheit_verbrauch  0  "mpg UK"
 map   t_einheiten_01_kbi_einheit_verbrauch  1  "mpg USA"
 map   t_einheiten_01_kbi_einheit_verbrauch  2  "Liter/100km"
@@ -268,10 +224,6 @@ map   t_einheiten_01_kbi_einheit_volumen  0  "Liter"
 map   t_einheiten_01_kbi_einheit_volumen  1  "Gallonen UK"
 map   t_einheiten_01_kbi_einheit_volumen  2  "Gallonen USA"
 map   t_einheiten_01_kbi_einheit_volumen  3  "reserviert"
-map   t_epb_01_epb_qbit_laengsbeschleunigung  0  "g�ltiger Wert"
-map   t_epb_01_epb_qbit_laengsbeschleunigung  1  "Ersatz-, Init- oder Fehlerwert"
-map   t_epb_01_epb_qbit_pedalweg_kuppl  0  "g�ltiger Wert"
-map   t_epb_01_epb_qbit_pedalweg_kuppl  1  "Ersatz-, Init- oder Fehlerwert"
 map   t_epb_01_epb_bcm2_motor_wakeup  0  "keine Anforderung"
 map   t_epb_01_epb_bcm2_motor_wakeup  1  "Anforderung an BCM2 Wakeupleitung zum Motor hochzuziehen aufgrund von Car-Wakeup"
 map   t_epb_01_epb_freig_verzoeg_anf  0  "nicht freigegeben"
@@ -280,14 +232,6 @@ map   t_epb_01_epb_anfahrwunsch_erkannt  0  "kein Anfahrwunsch erkannt"
 map   t_epb_01_epb_anfahrwunsch_erkannt  1  "Anfahrwunsch erkannt"
 map   t_epb_01_epb_daa_randbed_erf  0  "Randbed_nicht_erfuellt"
 map   t_epb_01_epb_daa_randbed_erf  1  "Randbed_erfuellt"
-map   t_epb_01_epb_fehlerstatus  0  "kein Fehler in EPB - AVH darf von ESP ausgef�hrt werden"
-map   t_epb_01_epb_fehlerstatus  1  "nur VW526: tempor�rer Fehler"
-map   t_epb_01_epb_fehlerstatus  2  "nur VW526: EPB in Diagnose"
-map   t_epb_01_epb_fehlerstatus  3  "Fehler in EPB - AVH darf von ESP nicht ausgef�hrt werden"
-map   t_epb_01_epb_schalterposition  0  "keine Fahreranforderung"
-map   t_epb_01_epb_schalterposition  1  "Fahreranforderung �ffnen"
-map   t_epb_01_epb_schalterposition  2  "Fahreranforderung Schlie�en"
-map   t_epb_01_epb_schalterposition  3  "Fehler"
 map   t_epb_01_epb_konsistenz_acc  0  "kein Fehler erkannt"
 map   t_epb_01_epb_konsistenz_acc  1  "Fehler erkannt"
 map   t_epb_01_epb_status  0  "offen"
@@ -314,10 +258,6 @@ map   t_esp_01_esp_tastung_passiv  0  "ESP_aktiviert"
 map   t_esp_01_esp_tastung_passiv  1  "ESP_passiv_getastet_oder_Schwellen_geaendert"
 map   t_esp_01_esp_systemstatus  0  "iO"
 map   t_esp_01_esp_systemstatus  1  "Fehler"
-map   t_esp_01_asr_schalteingriff  0  "keine Anforderung"
-map   t_esp_01_asr_schalteingriff  1  "ASR_Schaltkennfeld"
-map   t_esp_01_asr_schalteingriff  2  "R�ckschaltung"
-map   t_esp_01_asr_schalteingriff  3  "Schaltverbot"
 map   t_esp_01_obd_schlechtweg  0  "kein Schlechtweg erkannt"
 map   t_esp_01_obd_schlechtweg  1  "Schlechtweg erkannt"
 map   t_esp_01_obd_qbit_schlechtweg  0  "gueltiger_Wert"
@@ -380,8 +320,6 @@ map   t_esp_04_esp_asr_lampe  0  "ESP_ASR_Lampe_aus"
 map   t_esp_04_esp_asr_lampe  1  "ESP_ASR_Lampe_an"
 map   t_esp_04_esp_fehlerstatus_wegimp  0  "Wegimpulse_iO"
 map   t_esp_04_esp_fehlerstatus_wegimp  1  "Fehler"
-map   t_esp_04_esp_wegimp_ueberlauf  0  "Reset und kein �berlauf"
-map   t_esp_04_esp_wegimp_ueberlauf  1  "mindestens 1x �berlauf"
 map   t_esp_04_esp_qbit_wegimp_va  0  "gueltiger_Wert"
 map   t_esp_04_esp_qbit_wegimp_va  1  "Ersatz_Init_oder_Fehlerwert"
 map   t_esp_04_esp_bkv_warnung  0  "keine_Anzeige_kein_Gong"
@@ -410,8 +348,6 @@ map   t_esp_05_ecd_fehler  0  "ECD_iO"
 map   t_esp_05_ecd_fehler  1  "ECD_Fehler"
 map   t_esp_05_ecd_nicht_verfuegbar  0  "ECD_Funktion_verfuegbar"
 map   t_esp_05_ecd_nicht_verfuegbar  1  "ECD_Funktion_nicht_verfuegbar"
-map   t_esp_05_esp_status_bremsentemp  0  "Bremse nicht �berhitzt"
-map   t_esp_05_esp_status_bremsentemp  1  "Bremse �berhitzt"
 map   t_esp_05_esp_autohold_standby  0  "Autohold_nicht_im_Standby"
 map   t_esp_05_esp_autohold_standby  1  "Autohold_im_Standby"
 map   t_esp_05_esp_hdc_standby  0  "HDC_Funktion_nicht_im_Standby"
@@ -458,10 +394,6 @@ map   t_esp_06_esp_06_kd_fehler  0  "kein_KD_Fehler"
 map   t_esp_06_esp_06_kd_fehler  1  "KD_Fehler"
 map   t_esp_06_esp_vz_teilsollwinkel  0  "positiv"
 map   t_esp_06_esp_vz_teilsollwinkel  1  "negativ"
-map   t_esp_06_esp_winkeleingriff  0  "kein Eingriff"
-map   t_esp_06_esp_winkeleingriff  1  "Eingriff mit langsamer R�ckf�hrung"
-map   t_esp_06_esp_winkeleingriff  2  "Eingriff mit mittlerer R�ckf�hrung"
-map   t_esp_06_esp_winkeleingriff  3  "Eingriff mit schneller R�ckf�hrung"
 map   t_esp_07_fr_esp_acc_lde  0  "Lebensdauerende_nicht_erreicht"
 map   t_esp_07_fr_esp_acc_lde  1  "Lebensdauerende_erreicht"
 map   t_esp_07_fr_esp_quattro_antrieb  0  "Front"
@@ -622,22 +554,12 @@ map   t_gateway_11_esp_diagnose  0  "ESP_nicht_in_Diagnose"
 map   t_gateway_11_esp_diagnose  1  "ESP_in_Diagnose"
 map   t_getriebe_01_ge_schaltvorgang  0  "keine Schaltung"
 map   t_getriebe_01_ge_schaltvorgang  1  "Schaltung aktiv"
-map   t_getriebe_01_ge_status_kupplung  0  "Kupplung ge�ffnet"
-map   t_getriebe_01_ge_status_kupplung  1  "Kupplung geregelt"
-map   t_getriebe_01_ge_status_kupplung  2  "Kupplung geschlossen"
-map   t_getriebe_01_ge_status_kupplung  3  "Fehler"
 map   t_getriebe_01_ge_verbot_ausblendung  0  "kein_Verbot"
 map   t_getriebe_01_ge_verbot_ausblendung  1  "Verbot"
-map   t_getriebe_01_ge_mmom_status  0  "keine Anforderung"
-map   t_getriebe_01_ge_mmom_status  1  "reduzierender Getriebeeingriff"
-map   t_getriebe_01_ge_mmom_status  2  "erh�hender Getriebeeingriff"
-map   t_getriebe_01_ge_mmom_status  3  "�nderung mit Sprung"
 map   t_getriebe_01_ge_freig_mmom_vorhalt  0  "nicht_freigegeben"
 map   t_getriebe_01_ge_freig_mmom_vorhalt  1  "freigegeben"
 map   t_getriebe_01_ge_kd_fehler  0  "kein_KD_Fehler"
 map   t_getriebe_01_ge_kd_fehler  1  "KD_Fehler"
-map   t_getriebe_02_ge_drehzahlmesser_daempfung  0  "normale D�mpfung"
-map   t_getriebe_02_ge_drehzahlmesser_daempfung  1  "dynamische D�mpfung"
 map   t_getriebe_02_ge_schubabschalt_unt  0  "inaktiv"
 map   t_getriebe_02_ge_schubabschalt_unt  1  "aktiv"
 map   t_getriebe_02_ge_freigabe_synchro  0  "inaktiv"
@@ -800,10 +722,6 @@ map   t_kombi_01_kbi_mfa_v_einheit_01  0  "kmh"
 map   t_kombi_01_kbi_mfa_v_einheit_01  1  "mph"
 map   t_kombi_01_kbi_im_stellgliedtest  0  "kein Stellgliedtest"
 map   t_kombi_01_kbi_im_stellgliedtest  1  "Kombi im Stellgliedtest"
-map   t_kombi_01_kbi_anzeigefehler_ldw  0  "nicht vorhanden bzw. unterst�tzt"
-map   t_kombi_01_kbi_anzeigefehler_ldw  1  "Anzeige iO"
-map   t_kombi_01_kbi_anzeigefehler_ldw  2  "Anzeigefehler"
-map   t_kombi_01_kbi_anzeigefehler_ldw  3  "nicht definiert"
 map   t_kombi_01_kbi_variante_usa  0  "keine USA-Variante"
 map   t_kombi_01_kbi_variante_usa  1  "USA-Variante"
 map   t_kombi_01_kbi_oeldruckwarnung  0  "inaktiv"
@@ -816,16 +734,10 @@ map   t_kombi_01_kbi_anzeigefehler_nv  0  "kein_Anzeigefehler"
 map   t_kombi_01_kbi_anzeigefehler_nv  1  "Anzeigefehler"
 map   t_kombi_01_kbi_einheit_tacho  0  "km/h"
 map   t_kombi_01_kbi_einheit_tacho  1  "mph"
-map   t_kombi_01_kbi_anzeigefehler_swa  0  "nicht vorhanden bzw. unterst�tzt"
-map   t_kombi_01_kbi_anzeigefehler_swa  1  "Anzeige iO"
-map   t_kombi_01_kbi_anzeigefehler_swa  2  "Anzeigefehler"
-map   t_kombi_01_kbi_anzeigefehler_swa  3  "nicht definiert"
 map   t_kombi_01_kbi_kd_fehler  0  "kein_KD_Fehler"
 map   t_kombi_01_kbi_kd_fehler  1  "KD_Fehler"
 map   t_kombi_02_kbi_reset_standzeit  0  "Standzeit iO"
 map   t_kombi_02_kbi_reset_standzeit  1  "KL30 war weg"
-map   t_kombi_02_kbi_fstatus_tank  0  "Tankf�llstand i.O."
-map   t_kombi_02_kbi_fstatus_tank  1  "Tankf�llstand n.i.O"
 map   t_kombi_02_kbi_qbit_aussen_temp_gef  0  "gueltiger_Wert"
 map   t_kombi_02_kbi_qbit_aussen_temp_gef  1  "Ersatz_Init_oder_Fehlerwert"
 map   t_kombi_03_kbi_bcme_aktiv  0  "Anzeige_nicht_aktiv"
@@ -854,8 +766,6 @@ map   t_licht_hinten_01_lh_bremsl_li_def  0  "OK"
 map   t_licht_hinten_01_lh_bremsl_li_def  1  "mindestens ein Bremslicht hinten links defekt"
 map   t_licht_hinten_01_lh_schlusslicht_li_def  0  "OK"
 map   t_licht_hinten_01_lh_schlusslicht_li_def  1  "mindestens ein Schlusslicht hinten links defekt"
-map   t_licht_hinten_01_lh_rueckf_li_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_li_def  1  "R�ckfahrlicht hinten links defekt"
 map   t_licht_hinten_01_lh_schluss_brems_nebel_li_def  0  "iO"
 map   t_licht_hinten_01_lh_schluss_brems_nebel_li_def  1  "defekt"
 map   t_licht_hinten_01_lh_schluss_brems_nebel_re_def  0  "iO"
@@ -874,8 +784,6 @@ map   t_licht_hinten_01_lh_bremsl_re_def  0  "OK"
 map   t_licht_hinten_01_lh_bremsl_re_def  1  "mindestens ein Bremslicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_schlusslicht_re_def  0  "OK"
 map   t_licht_hinten_01_lh_schlusslicht_re_def  1  "mindestens ein Schlusslicht hinten rechts defekt"
-map   t_licht_hinten_01_lh_rueckf_re_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_re_def  1  "R�ckfahrlicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_nebel_re_def  0  "OK"
 map   t_licht_hinten_01_lh_nebel_re_def  1  "Nebelschlusslicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_schluss_brems_re_def  0  "OK"
@@ -890,8 +798,6 @@ map   t_licht_hinten_01_lh_kennzl_def  0  "OK"
 map   t_licht_hinten_01_lh_kennzl_def  1  "Kennzeichenbeleuchtung hinten defekt"
 map   t_licht_hinten_01_lh_3_bremsl_def  0  "OK"
 map   t_licht_hinten_01_lh_3_bremsl_def  1  "hochgesetzte  Bremsleuchte defekt"
-map   t_licht_hinten_01_lh_rueckf_mi_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_mi_def  1  "R�ckfahllicht Mitte defekt"
 map   t_licht_hinten_01_lh_bremsl_li_ges_def  0  "OK"
 map   t_licht_hinten_01_lh_bremsl_li_ges_def  1  "Alle Bremslichter hinten links defekt"
 map   t_licht_hinten_01_lh_bremsl_re_ges_def  0  "OK"
@@ -928,8 +834,6 @@ map   t_ls_01_mfl_m_taste  0  "nicht_betaetigt"
 map   t_ls_01_mfl_m_taste  1  "betaetigt"
 map   t_lwi_01_lwi_sensorstatus  0  "iO"
 map   t_lwi_01_lwi_sensorstatus  1  "nicht kalibriert"
-map   t_lwi_01_lwi_qbit_lenkradwinkel  0  "g�ltiger Wert"
-map   t_lwi_01_lwi_qbit_lenkradwinkel  1  "ausserhalb der Spezifikation"
 map   t_lwi_01_lwi_vz_lenkradwinkel  0  "positiv_links_von_der_Nullstellung"
 map   t_lwi_01_lwi_vz_lenkradwinkel  1  "negativ"
 map   t_lwi_01_lwi_vz_lenkradw_geschw  0  "positiv_links_von_der_Nullstellung"
@@ -964,28 +868,16 @@ map   t_motor_03_mo_qbit_drehzahl_01  0  "gueltiger_Wert"
 map   t_motor_03_mo_qbit_drehzahl_01  1  "Ersatz_Init_oder_Fehlerwert"
 map   t_motor_03_mo_moment_im_leerlauf  0  "kein_Leergas"
 map   t_motor_03_mo_moment_im_leerlauf  1  "Leergas"
-map   t_motor_03_mo_interlock  0  "Interlockschalter nicht bet�tigt"
-map   t_motor_03_mo_interlock  1  "Interlockschalter bet�tigt"
-map   t_motor_03_mo_bls  0  "kein Bremsen"
-map   t_motor_03_mo_bls  1  "Bremse bet�tigt"
-map   t_motor_03_mo_fahrer_bremst  0  "kein Bremsen"
-map   t_motor_03_mo_fahrer_bremst  1  "Bremse bet�tigt"
 map   t_motor_03_mo_konsistenz_bremsped  0  "Bremspedalinformation_plausibel"
 map   t_motor_03_mo_konsistenz_bremsped  1  "Bremspedalinformation_unplausibel"
-map   t_motor_03_mo_kuppl_schalter  0  "Schalter sagt nicht bet�tigt (Eingekuppelt)"
-map   t_motor_03_mo_kuppl_schalter  1  "Schalter sagt bet�tigt (Ausgekuppelt)"
 map   t_motor_03_mo_timeout_esp  0  "Empfang i.O."
 map   t_motor_03_mo_timeout_esp  1  "Timeout"
-map   t_motor_03_mo_motor_laeuft  0  "Motor l�uft nicht"
-map   t_motor_03_mo_motor_laeuft  1  "Motor l�uft autark und stabil und darf mechanisch belastet werden"
 map   t_motor_03_mo_erste_ungenauschwelle  0  "genau"
 map   t_motor_03_mo_erste_ungenauschwelle  1  "Momente ungenauer >8%"
 map   t_motor_03_mo_qbit_stressfaktor  0  "gueltiger_Wert"
 map   t_motor_03_mo_qbit_stressfaktor  1  "Ersatz_Init_oder_Fehlerwert"
 map   t_motor_04_mo_schaltempf_verfbar  0  "nicht_verfuegbar"
 map   t_motor_04_mo_schaltempf_verfbar  1  "verfuegbar"
-map   t_motor_04_mo_kvs_ueberlauf  0  "kein Ueberlauf"
-map   t_motor_04_mo_kvs_ueberlauf  1  "Kraftstoffverbrauchsignale mindestens 1x �bergelaufen"
 map   t_motor_05_mo_eklkomleired  0  "keine_Leistungsbegr"
 map   t_motor_05_mo_eklkomleired  1  "Leistungsbegr_75"
 map   t_motor_05_mo_eklkomleired  2  "Leistungsbegr_50"
@@ -1002,18 +894,10 @@ map   t_motor_05_mo_status_normalbetrieb_02  0  "kein Normalbetrieb"
 map   t_motor_05_mo_status_normalbetrieb_02  1  "Normalbetrieb erreicht"
 map   t_motor_05_mo_prio_min_wunschdrehzahl  0  "Wunsch"
 map   t_motor_05_mo_prio_min_wunschdrehzahl  1  "Zwang"
-map   t_motor_05_mo_freig_anlass  0  "Start nicht zul�ssig"
-map   t_motor_05_mo_freig_anlass  1  "Startfreigabe"
-map   t_motor_05_mo_aussp_anlass  0  "Motor l�uft nicht stabil"
-map   t_motor_05_mo_aussp_anlass  1  "Anlasser ausspuren (Motor l�uft stabil)"
 map   t_motor_05_mo_prio_max_wunschdrehzahl  0  "Wunsch"
 map   t_motor_05_mo_prio_max_wunschdrehzahl  1  "Zwang"
-map   t_motor_05_mo_luftpfad_aktiv  0  "kein Eingriff oder nur Eingriff �ber Z�ndpfad"
-map   t_motor_05_mo_luftpfad_aktiv  1  "Eingriff �ber Luftpfad"
 map   t_motor_05_mo_v_begrenz_aktiv  0  "inaktiv"
 map   t_motor_05_mo_v_begrenz_aktiv  1  "aktiv"
-map   t_motor_05_mo_v_begrenz_aktivierbar  0  "V-Begrenzung nicht m�glich"
-map   t_motor_05_mo_v_begrenz_aktivierbar  1  "V-Begrenzung m�glich"
 map   t_motor_05_mo_verbot_ekp  0  "Ansteuerung zugelassen"
 map   t_motor_05_mo_verbot_ekp  1  "Ansteuerung verboten"
 map   t_motor_05_mo_anf_pruefimpuls  0  "keine Anforderung"
@@ -1082,8 +966,6 @@ map   t_motor_06_mo_heissleuchte  0  "Lampe aus"
 map   t_motor_06_mo_heissleuchte  1  "Lampe ein"
 map   t_motor_06_mo_partikel_lampe  0  "Lampe aus"
 map   t_motor_06_mo_partikel_lampe  1  "Lampe ein"
-map   t_motor_06_wiv_oelstand_nicht_vorhanden  0  "�lstand vorhanden"
-map   t_motor_06_wiv_oelstand_nicht_vorhanden  1  "�lstand nicht vorhanden"
 map   t_motor_06_wiv_nachfuellanzeige_ein  0  "keine_Nachfuellanzeige"
 map   t_motor_06_wiv_nachfuellanzeige_ein  1  "Nachfuellanzeige"
 map   t_motor_06_wiv_ueberfuell_deaktiv  0  "Ueberfuellwarnung_am_Kombi_aktiv"
@@ -1118,8 +1000,6 @@ map   t_motor_07_mo_absperrventil_oeffnen  0  "nicht_verfuegbar"
 map   t_motor_07_mo_absperrventil_oeffnen  1  "Ansteuerung_Ventil_zulaessig"
 map   t_motor_07_mo_absperrventil_oeffnen  2  "Ventil_oeffnen_oder_geoeffnet"
 map   t_motor_07_mo_absperrventil_oeffnen  3  "Ventil_schliessen_oder_geschlossen"
-map   t_motor_07_mo_kennfeldk  0  "keine Kennfeldk�hlung vorhanden"
-map   t_motor_07_mo_kennfeldk  1  "Kennfeldk�hlung vorhanden"
 map   t_motor_07_mo_getriebe_kuehlen  0  "nicht_kuehlen"
 map   t_motor_07_mo_getriebe_kuehlen  1  "kuehlen"
 map   t_motor_07_mo_spannungsanf  0  "keine_Anforderung"
@@ -1250,8 +1130,6 @@ map   t_obd_01_obd_driving_cycle  0  "kein Driving Cycle erkannt"
 map   t_obd_01_obd_driving_cycle  1  "DC erkannt"
 map   t_obd_01_obd_warm_up_cycle  0  "kein Warm Up Cycle erkannt"
 map   t_obd_01_obd_warm_up_cycle  1  "Warm Up Cycle erkannt"
-map   t_obd_01_obd_normed_trip  0  "kein Normed Trip"
-map   t_obd_01_obd_normed_trip  1  "Normed Trip erf�llt"
 map   t_pcf_01_pcf_fahrer_aktiv_erkannt  0  "Fahrer_nicht_aktiv"
 map   t_pcf_01_pcf_fahrer_aktiv_erkannt  1  "Fahrer_aktiv"
 map   t_pcr_01_pcr_sensorstatus  0  "Sensor_ok"
@@ -1278,10 +1156,6 @@ map   t_psd_01_psd_fahrspuren  2  "zwei_Fahrspuren"
 map   t_psd_01_psd_fahrspuren  3  "drei_Fahrspuren"
 map   t_psd_01_psd_wahrscheinlichster_pfad  0  "Pfad_mit_geringer_Wahrscheinlichkeit"
 map   t_psd_01_psd_wahrscheinlichster_pfad  1  "wahrscheinlichster_Pfad"
-map   t_psd_02_psd_multiplex  0  "f�r System Informationen, die sich nur langsam �ndern"
-map   t_psd_02_psd_multiplex  1  "Informationen �ber ein Streckensegment"
-map   t_psd_02_psd_multiplex  2  "f�r Informationen �ber Geschwindigkeitsbegrenzungen und m�gliche Einschr�nkungen der Geschwindigkeitsbegrenzungen"
-map   t_psd_02_psd_multiplex  3  "Fahrzeugposition aus der Koppelortung"
 map   t_psd_02_psd_sys_geschwindigkeit_einheit  0  "km/h"
 map   t_psd_02_psd_sys_geschwindigkeit_einheit  1  "mph"
 map   t_psd_02_psd_sys_verkehrsrichtung  0  "Rechtsverkehr"
@@ -1298,54 +1172,16 @@ map   t_psd_02_psd_sys_tmc_baustelle  0  "keine Baustelle oder keine Information
 map   t_psd_02_psd_sys_tmc_baustelle  1  "Baustelle"
 map   t_psd_02_psd_sys_tmc_stau  0  "kein Stau oder keine Information verfuegbar"
 map   t_psd_02_psd_sys_tmc_stau  1  "Stau"
-map   t_psd_02_psd_sys_anfangskruemmung_vorz  0  "Kr�mmung positiv"
-map   t_psd_02_psd_sys_anfangskruemmung_vorz  1  "Kr�mmung negativ"
-map   t_psd_02_psd_sys_ortschaft  0  "au�erhalb der Ortschaft"
-map   t_psd_02_psd_sys_ortschaft  1  "innerhalb der Ortschaft"
 map   t_psd_02_psd_sys_digitalisierung  0  "teildigitalisiert"
 map   t_psd_02_psd_sys_digitalisierung  1  "volldigitalisiert"
 map   t_psd_02_psd_sys_zielfuehrung  0  "Zielfuehrung nicht aktiv"
 map   t_psd_02_psd_sys_zielfuehrung  1  "Zielfuehrung aktiv"
 map   t_psd_02_psd_abz_geschwindigkeit_typ  0  "Der Wert im Attribut Geschwindigkeitsbegrenzung entspricht der Geschwindigkeitsklasse von Navteq."
 map   t_psd_02_psd_abz_geschwindigkeit_typ  1  "Der Wert im Attribut Geschwindigkeitsbegrenzung entspricht einer explizit angegebenen Begrenzung der Geschwindigkeit"
-map   t_psd_02_psd_abz_adas_qualitaet  0  "keine ADAS Qualit�t"
-map   t_psd_02_psd_abz_adas_qualitaet  1  "ADAS Qualit�t"
-map   t_psd_02_psd_abz_abzweigerichtung  0  "rechts abzweigende Stra�e"
-map   t_psd_02_psd_abz_abzweigerichtung  1  "links abzweigende Stra�e"
-map   t_psd_02_psd_abz_abzweigewinkel  0  "0�: Stra�e verl�uft gerade aus"
-map   t_psd_02_psd_abz_abzweigewinkel  1  "0� < Winkel � 12�"
-map   t_psd_02_psd_abz_abzweigewinkel  2  "12� < Winkel � 24�"
-map   t_psd_02_psd_abz_abzweigewinkel  3  "24� < Winkel � 36�"
-map   t_psd_02_psd_abz_abzweigewinkel  4  "36� < Winkel � 48�"
-map   t_psd_02_psd_abz_abzweigewinkel  5  "48� < Winkel � 60�"
-map   t_psd_02_psd_abz_abzweigewinkel  6  "60� < Winkel � 72�"
-map   t_psd_02_psd_abz_abzweigewinkel  7  "72� < Winkel � 84�"
-map   t_psd_02_psd_abz_abzweigewinkel  8  "84� < Winkel � 96�"
-map   t_psd_02_psd_abz_abzweigewinkel  9  "96� < Winkel � 108�"
-map   t_psd_02_psd_abz_abzweigewinkel  10  "108� < Winkel � 120�"
-map   t_psd_02_psd_abz_abzweigewinkel  11  "120� < Winkel � 132�"
-map   t_psd_02_psd_abz_abzweigewinkel  12  "132� < Winkel � 144�"
-map   t_psd_02_psd_abz_abzweigewinkel  13  "144� < Winkel � 156�"
-map   t_psd_02_psd_abz_abzweigewinkel  14  "156� < Winkel � 168�"
-map   t_psd_02_psd_abz_abzweigewinkel  15  "168� < Winkel � 180�"
-map   t_psd_02_psd_abz_anfangskruemmung_vorz  0  "Kr�mmung positiv"
-map   t_psd_02_psd_abz_anfangskruemmung_vorz  1  "Kr�mmung negativ"
-map   t_psd_02_psd_abz_endkruemmung_vorz  0  "Kr�mmung positiv"
-map   t_psd_02_psd_abz_endkruemmung_vorz  1  "Kr�mmung negativ"
-map   t_psd_02_psd_abz_endsteigung_vorz  0  "Gef�lle"
-map   t_psd_02_psd_abz_endsteigung_vorz  1  "Steigung"
-map   t_psd_02_psd_abz_fahrspuren  0  "Einbahnstra�e in falscher Richtung"
-map   t_psd_02_psd_abz_fahrspuren  1  "eine Fahrspur"
-map   t_psd_02_psd_abz_fahrspuren  2  "zwei Fahrspuren"
-map   t_psd_02_psd_abz_fahrspuren  3  "mehr als 2 Fahrspuren"
 map   t_psd_02_psd_abz_wahrscheinlichster_pfad  0  "Pfad mit geringer Wahrscheinlichkeit"
 map   t_psd_02_psd_abz_wahrscheinlichster_pfad  1  "wahrscheinlichster Pfad"
 map   t_psd_02_psd_ges_geschwindigkeit_typ  0  "Der Wert im Attribut Geschwindigkeitsbegrenzung entspricht der Geschwindigkeitsklasse von Navteq."
 map   t_psd_02_psd_ges_geschwindigkeit_typ  1  "Der Wert im Attribut Geschwindigkeitsbegrenzung entspricht einer explizit angegebenen Begrenzung der Geschwindigkeit."
-map   t_psd_02_psd_ges_geschwindigkeit_witter  0  "Witterungsunabh�ngig"
-map   t_psd_02_psd_ges_geschwindigkeit_witter  1  "N�sse, Regen, Niederschlag"
-map   t_psd_02_psd_ges_geschwindigkeit_witter  2  "Gl�tte"
-map   t_psd_02_psd_ges_geschwindigkeit_witter  3  "Nebel"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_anf  0  "kein Beginn definiert"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_anf  1  "Montag"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_anf  2  "Dienstag"
@@ -1362,10 +1198,6 @@ map   t_psd_02_psd_ges_geschwindigkeit_tag_ende  4  "Donnerstag"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_ende  5  "Freitag"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_ende  6  "Samstag"
 map   t_psd_02_psd_ges_geschwindigkeit_tag_ende  7  "Sonntag"
-map   t_psd_02_psd_ges_alter_geschw_witter  0  "Witterungsunabh�ngig"
-map   t_psd_02_psd_ges_alter_geschw_witter  1  "N�sse, Regen, Niederschlag"
-map   t_psd_02_psd_ges_alter_geschw_witter  2  "Gl�tte"
-map   t_psd_02_psd_ges_alter_geschw_witter  3  "Nebel"
 map   t_psd_02_psd_ges_alter_geschw_tag_anf  0  "kein Beginn definiert"
 map   t_psd_02_psd_ges_alter_geschw_tag_anf  1  "Montag"
 map   t_psd_02_psd_ges_alter_geschw_tag_anf  2  "Dienstag"
@@ -1382,10 +1214,6 @@ map   t_psd_02_psd_ges_alter_geschw_tag_ende  4  "Donnerstag"
 map   t_psd_02_psd_ges_alter_geschw_tag_ende  5  "Freitag"
 map   t_psd_02_psd_ges_alter_geschw_tag_ende  6  "Samstag"
 map   t_psd_02_psd_ges_alter_geschw_tag_ende  7  "Sonntag"
-map   t_psd_02_psd_ges_ueberholverbot  0  "kein �berholverbot"
-map   t_psd_02_psd_ges_ueberholverbot  1  "alle Fahrzeuge"
-map   t_psd_02_psd_ges_ueberholverbot  2  "�berholverbot f�r PKW mit Gespann"
-map   t_psd_02_psd_ges_ueberholverbot  3  "�berholverbot f�r LKW, Busse, etc."
 map   t_psd_02_psd_ort_laenge_vz  0  "Ost"
 map   t_psd_02_psd_ort_laenge_vz  1  "West"
 map   t_psd_02_psd_ort_breite_vz  0  "Nord"
@@ -1496,22 +1324,14 @@ map   t_sth_01_sth_funk_aus  0  "kein Funkbefehl"
 map   t_sth_01_sth_funk_aus  1  "Funkbefehl zum Ausschalten erhalten"
 map   t_sth_01_sth_zusatzheizung  0  "Zuheizer aus"
 map   t_sth_01_sth_zusatzheizung  1  "Zuheizer ein"
-map   t_sth_01_sth_led  0  "keine R�ckmeldung"
-map   t_sth_01_sth_led  1  "Rueckmeldung Standheizung in Betrieb"
-map   t_sth_01_sth_geblaese  0  "kein Einschaltbefehl an die Klimaanlage, Gebl�se"
-map   t_sth_01_sth_geblaese  1  "Einschaltbefehl an die Klimaanlage, Gebl�se"
 map   t_sth_01_sth_ekp_anst  0  "EKP nicht ansteuern"
 map   t_sth_01_sth_ekp_anst  1  "EKP ansteuern"
 map   t_sth_01_sth_start_folgt  0  "kein_Start_folgt"
 map   t_sth_01_sth_start_folgt  1  "Start_folgt"
 map   t_sth_01_sth_ventil_status  0  "Ventil_offen__grosser_Kreislauf"
 map   t_sth_01_sth_ventil_status  1  "Ventil_geschlossen__kleiner_Kreislauf"
-map   t_sth_01_sth_motorvorwaermung  0  "keine Motorvorw�rmung erfolgt"
-map   t_sth_01_sth_motorvorwaermung  1  "Aufheizung mit Motorvorw�rmung erfolgt"
 map   t_sth_01_sth_war_aktiv  0  "war inaktiv"
 map   t_sth_01_sth_war_aktiv  1  "Standheizung war letzte halbe Stunde aktiv"
-map   t_sth_01_sth_kvs_ueberlauf  0  "kein �berlauf"
-map   t_sth_01_sth_kvs_ueberlauf  1  "Kraftstoffverbrauchssignal, mindestens ein �berlauf hat stattgefunden"
 map   t_sth_01_sth_kd_fehler  0  "kein_KD_Fehler"
 map   t_sth_01_sth_kd_fehler  1  "KD_Fehler"
 map   t_sts_01_sts_car_not_under_theft  0  "false"
@@ -1586,18 +1406,6 @@ map   t_systeminfo_01_si_most_status  0  "MOST_sleep_(Licht_AUS)"
 map   t_systeminfo_01_si_most_status  1  "MOST_aktiv_(Kommunikation_moeglich)"
 map   t_systeminfo_01_si_mo_wu  0  "kein Wakeup angefordert"
 map   t_systeminfo_01_si_mo_wu  1  "Wakeup MED9 angefordert"
-map   t_tsk_03_fas_status_prim_anz  0  "Symbol nicht beleuchtet"
-map   t_tsk_03_fas_status_prim_anz  1  "Farbe 1 (typisch 'gr�n')"
-map   t_tsk_03_fas_status_prim_anz  2  "Farbe 2 (typisch 'rot')"
-map   t_tsk_03_fas_status_prim_anz  3  "Farbe 3 (typisch 'gelb')"
-map   t_tsk_03_fas_status_anzeige  0  "ACC/GRA Hauptschalter aus"
-map   t_tsk_03_fas_status_anzeige  1  "ACC in Init (nicht bei GRA)"
-map   t_tsk_03_fas_status_anzeige  2  "ACC/GRA passiv"
-map   t_tsk_03_fas_status_anzeige  3  "ACCGRA aktiv"
-map   t_tsk_03_fas_status_anzeige  4  "ACC/GRA im Hintergrund (�bertreten)"
-map   t_tsk_03_fas_status_anzeige  5  "frei"
-map   t_tsk_03_fas_status_anzeige  6  "ACC reversibel aus (nicht bei GRA)"
-map   t_tsk_03_fas_status_anzeige  7  "ACC/GRA irreversibel aus"
 map   t_tsk_04_tsk_freig_wu  0  "TSK_Uebersetzungswunsch nicht freigegeben"
 map   t_tsk_04_tsk_freig_wu  1  "TSK_Uebersetzungswunsch freigegeben"
 map   t_tsk_04_tsk_limiter_aktiv  0  "Speed Limiter ist nicht aktiv"
@@ -1761,16 +1569,16 @@ when      0:0:32 1312
 when      0:32:8 8
 requires  dbcvwmlb.airbag_02_ab_belegung_vb dbcvwmlb.airbag_02_ab_gurtschloss_fa dbcvwmlb.airbag_02_ab_gurtschloss_bf
 field     dbcvwmlb.airbag_02_ab_belegung_vb 0:90:2 uint via t_airbag_02_ab_belegung_vb
-field     dbcvwmlb.airbag_02_ab_gurtschloss_fa 0:104:2 uint via t_airbag_02_ab_gurtschloss_fa
-field     dbcvwmlb.airbag_02_ab_gurtschloss_bf 0:106:2 uint via t_airbag_02_ab_gurtschloss_bf
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_fa 0:108:2 uint via t_airbag_02_ab_gurtschloss_reihe2_fa
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_mi 0:110:2 uint via t_airbag_02_ab_gurtschloss_reihe2_mi
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_bf 0:112:2 uint via t_airbag_02_ab_gurtschloss_reihe2_bf
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_fa 0:114:2 uint via t_airbag_02_ab_gurtschloss_reihe3_fa
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_mi 0:116:2 uint via t_airbag_02_ab_gurtschloss_reihe3_mi
-field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_bf 0:118:2 uint via t_airbag_02_ab_gurtschloss_reihe3_bf
-field     dbcvwmlb.airbag_02_ab_sitzpos_sens_fa 0:120:2 uint via t_airbag_02_ab_sitzpos_sens_fa
-field     dbcvwmlb.airbag_02_ab_sitzpos_sens_bf 0:122:2 uint via t_airbag_02_ab_sitzpos_sens_bf
+field     dbcvwmlb.airbag_02_ab_gurtschloss_fa 0:104:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_bf 0:106:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_fa 0:108:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_mi 0:110:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe2_bf 0:112:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_fa 0:114:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_mi 0:116:2 uint
+field     dbcvwmlb.airbag_02_ab_gurtschloss_reihe3_bf 0:118:2 uint
+field     dbcvwmlb.airbag_02_ab_sitzpos_sens_fa 0:120:2 uint
+field     dbcvwmlb.airbag_02_ab_sitzpos_sens_bf 0:122:2 uint
 
 kind      anhaenger_01
 when      0:0:32 1633
@@ -1802,7 +1610,7 @@ field     dbcvwmlb.bem_01_bem_segel_info 0:76:2 uint via t_bem_01_bem_segel_info
 field     dbcvwmlb.bem_01_bem_p_generator 0:80:8 uscale:50
 field     dbcvwmlb.bem_01_bem_n_lla 0:88:2 uint via t_bem_01_bem_n_lla
 field     dbcvwmlb.bem_01_bem_01_abschaltstufen 0:90:3 uint
-field     dbcvwmlb.bem_01_bem_anf_kl 0:93:1 uint via t_bem_01_bem_anf_kl
+field     dbcvwmlb.bem_01_bem_anf_kl 0:93:1 uint
 field     dbcvwmlb.bem_01_bem_startstopp_info 0:94:2 uint via t_bem_01_bem_startstopp_info
 const     0:120:8 0
 
@@ -1967,7 +1775,7 @@ field     dbcvwmlb.einheiten_01_kbi_einheit_datum 0:64:2 uint via t_einheiten_01
 field     dbcvwmlb.einheiten_01_kbi_einheit_druck 0:66:2 uint via t_einheiten_01_kbi_einheit_druck
 field     dbcvwmlb.einheiten_01_kbi_einheit_streckenanz 0:68:1 uint via t_einheiten_01_kbi_einheit_streckenanz
 field     dbcvwmlb.einheiten_01_kbi_mfa_v_einheit_02 0:69:1 uint via t_einheiten_01_kbi_mfa_v_einheit_02
-field     dbcvwmlb.einheiten_01_kbi_einheit_temp 0:70:1 uint via t_einheiten_01_kbi_einheit_temp
+field     dbcvwmlb.einheiten_01_kbi_einheit_temp 0:70:1 uint
 field     dbcvwmlb.einheiten_01_kbi_einheit_uhrzeit 0:71:1 uint
 field     dbcvwmlb.einheiten_01_kbi_einheit_verbrauch 0:72:2 uint via t_einheiten_01_kbi_einheit_verbrauch
 field     dbcvwmlb.einheiten_01_kbi_einheit_volumen 0:74:2 uint via t_einheiten_01_kbi_einheit_volumen
@@ -1980,8 +1788,8 @@ when      0:32:8 8
 requires  dbcvwmlb.epb_01_epb_01_chk dbcvwmlb.epb_01_epb_01_bz dbcvwmlb.epb_01_epb_qbit_laengsbeschleunigung
 field     dbcvwmlb.epb_01_epb_01_chk 0:64:8 uint
 field     dbcvwmlb.epb_01_epb_01_bz 0:72:4 uint
-field     dbcvwmlb.epb_01_epb_qbit_laengsbeschleunigung 0:76:1 uint via t_epb_01_epb_qbit_laengsbeschleunigung
-field     dbcvwmlb.epb_01_epb_qbit_pedalweg_kuppl 0:77:1 uint via t_epb_01_epb_qbit_pedalweg_kuppl
+field     dbcvwmlb.epb_01_epb_qbit_laengsbeschleunigung 0:76:1 uint
+field     dbcvwmlb.epb_01_epb_qbit_pedalweg_kuppl 0:77:1 uint
 field     dbcvwmlb.epb_01_epb_bcm2_motor_wakeup 0:78:1 uint via t_epb_01_epb_bcm2_motor_wakeup
 field     dbcvwmlb.epb_01_epb_freig_verzoeg_anf 0:79:1 uint via t_epb_01_epb_freig_verzoeg_anf
 field     dbcvwmlb.epb_01_epb_verzoeg_anf 0:80:8 uscale:6/125:-7.968
@@ -1989,8 +1797,8 @@ field     dbcvwmlb.epb_01_epb_laengsbeschleunigung 0:88:8 uscale:1:-128
 field     dbcvwmlb.epb_01_epb_pedalweg_kuppl 0:96:8 uscale:2/5
 field     dbcvwmlb.epb_01_epb_anfahrwunsch_erkannt 0:112:1 uint via t_epb_01_epb_anfahrwunsch_erkannt
 field     dbcvwmlb.epb_01_epb_daa_randbed_erf 0:113:1 uint via t_epb_01_epb_daa_randbed_erf
-field     dbcvwmlb.epb_01_epb_fehlerstatus 0:114:2 uint via t_epb_01_epb_fehlerstatus
-field     dbcvwmlb.epb_01_epb_schalterposition 0:116:2 uint via t_epb_01_epb_schalterposition
+field     dbcvwmlb.epb_01_epb_fehlerstatus 0:114:2 uint
+field     dbcvwmlb.epb_01_epb_schalterposition 0:116:2 uint
 field     dbcvwmlb.epb_01_epb_qbit_schalterpos 0:118:1 uint
 field     dbcvwmlb.epb_01_epb_konsistenz_acc 0:119:1 uint via t_epb_01_epb_konsistenz_acc
 field     dbcvwmlb.epb_01_epb_spannkraft 0:120:5 uint
@@ -2022,7 +1830,7 @@ field     dbcvwmlb.esp_01_esp_v_signal 0:96:16 uscale:1/100
 field     dbcvwmlb.esp_01_asr_tastung_passiv 0:112:1 uint via t_esp_01_asr_tastung_passiv
 field     dbcvwmlb.esp_01_esp_tastung_passiv 0:113:1 uint via t_esp_01_esp_tastung_passiv
 field     dbcvwmlb.esp_01_esp_systemstatus 0:114:1 uint via t_esp_01_esp_systemstatus
-field     dbcvwmlb.esp_01_asr_schalteingriff 0:115:2 uint via t_esp_01_asr_schalteingriff
+field     dbcvwmlb.esp_01_asr_schalteingriff 0:115:2 uint
 field     dbcvwmlb.esp_01_obd_schlechtweg 0:117:1 uint via t_esp_01_obd_schlechtweg
 field     dbcvwmlb.esp_01_obd_qbit_schlechtweg 0:118:1 uint via t_esp_01_obd_qbit_schlechtweg
 field     dbcvwmlb.esp_01_esp_qbit_v_signal 0:119:1 uint via t_esp_01_esp_qbit_v_signal
@@ -2088,7 +1896,7 @@ field     dbcvwmlb.esp_04_esp_m_raddrehz 0:80:15 uscale:1/500
 field     dbcvwmlb.esp_04_esp_asr_lampe 0:95:1 uint via t_esp_04_esp_asr_lampe
 field     dbcvwmlb.esp_04_esp_wegimp_va 0:96:11 uint
 field     dbcvwmlb.esp_04_esp_fehlerstatus_wegimp 0:107:1 uint via t_esp_04_esp_fehlerstatus_wegimp
-field     dbcvwmlb.esp_04_esp_wegimp_ueberlauf 0:108:1 uint via t_esp_04_esp_wegimp_ueberlauf
+field     dbcvwmlb.esp_04_esp_wegimp_ueberlauf 0:108:1 uint
 field     dbcvwmlb.esp_04_esp_qbit_wegimp_va 0:109:1 uint via t_esp_04_esp_qbit_wegimp_va
 field     dbcvwmlb.esp_04_esp_displaywarnungen 0:110:2 uint
 field     dbcvwmlb.esp_04_esp_hdc_regelgeschw 0:112:7 uscale:8/25
@@ -2113,7 +1921,7 @@ field     dbcvwmlb.esp_05_esp_bremsruck_awv2 0:94:1 uint via t_esp_05_esp_bremsr
 field     dbcvwmlb.esp_05_esp_konsistenz_awv2 0:95:1 uint via t_esp_05_esp_konsistenz_awv2
 field     dbcvwmlb.esp_05_ecd_fehler 0:96:1 uint via t_esp_05_ecd_fehler
 field     dbcvwmlb.esp_05_ecd_nicht_verfuegbar 0:97:1 uint via t_esp_05_ecd_nicht_verfuegbar
-field     dbcvwmlb.esp_05_esp_status_bremsentemp 0:98:1 uint via t_esp_05_esp_status_bremsentemp
+field     dbcvwmlb.esp_05_esp_status_bremsentemp 0:98:1 uint
 field     dbcvwmlb.esp_05_esp_autohold_standby 0:99:1 uint via t_esp_05_esp_autohold_standby
 field     dbcvwmlb.esp_05_esp_hdc_standby 0:100:1 uint via t_esp_05_esp_hdc_standby
 field     dbcvwmlb.esp_05_esp_hba_aktiv 0:101:1 uint via t_esp_05_esp_hba_aktiv
@@ -2144,7 +1952,7 @@ field     dbcvwmlb.esp_06_esp_06_bz 0:72:4 uint
 field     dbcvwmlb.esp_06_esp_06_kd_fehler 0:76:1 uint via t_esp_06_esp_06_kd_fehler
 field     dbcvwmlb.esp_06_esp_teilsollwinkel 0:80:11 uscale:1/10
 field     dbcvwmlb.esp_06_esp_vz_teilsollwinkel 0:91:1 uint via t_esp_06_esp_vz_teilsollwinkel
-field     dbcvwmlb.esp_06_esp_winkeleingriff 0:92:2 uint via t_esp_06_esp_winkeleingriff
+field     dbcvwmlb.esp_06_esp_winkeleingriff 0:92:2 uint
 field     dbcvwmlb.esp_06_esp_status_ads 0:94:2 uint
 field     dbcvwmlb.esp_06_esp_v_ref 0:96:12 uscale:1/8
 field     dbcvwmlb.esp_06_void_byte_10 0:112:8 uint
@@ -2306,10 +2114,10 @@ requires  dbcvwmlb.getriebe_01_getriebe_01_chk dbcvwmlb.getriebe_01_getriebe_01_
 field     dbcvwmlb.getriebe_01_getriebe_01_chk 0:64:8 uint
 field     dbcvwmlb.getriebe_01_getriebe_01_bz 0:72:4 uint
 field     dbcvwmlb.getriebe_01_ge_schaltvorgang 0:76:1 uint via t_getriebe_01_ge_schaltvorgang
-field     dbcvwmlb.getriebe_01_ge_status_kupplung 0:77:2 uint via t_getriebe_01_ge_status_kupplung
+field     dbcvwmlb.getriebe_01_ge_status_kupplung 0:77:2 uint
 field     dbcvwmlb.getriebe_01_ge_verbot_ausblendung 0:79:1 uint via t_getriebe_01_ge_verbot_ausblendung
 field     dbcvwmlb.getriebe_01_ge_mmom_soll 0:80:10 uint
-field     dbcvwmlb.getriebe_01_ge_mmom_status 0:90:2 uint via t_getriebe_01_ge_mmom_status
+field     dbcvwmlb.getriebe_01_ge_mmom_status 0:90:2 uint
 field     dbcvwmlb.getriebe_01_ge_freig_mmom_soll 0:92:1 uint
 field     dbcvwmlb.getriebe_01_ge_status_schaltablauf 0:93:3 uint
 field     dbcvwmlb.getriebe_01_ge_mmom_vorhalt 0:96:10 uint
@@ -2328,7 +2136,7 @@ field     dbcvwmlb.getriebe_02_ge_synchro_zeit 0:88:8 uscale:20
 field     dbcvwmlb.getriebe_02_ge_mom_begr_gradient 0:96:8 uscale:10
 field     dbcvwmlb.getriebe_02_ge_anheb_solldrehz_leerlauf 0:104:8 uscale:10
 field     dbcvwmlb.getriebe_02_ge_vorsteuermoment 0:112:9 uint
-field     dbcvwmlb.getriebe_02_ge_drehzahlmesser_daempfung 0:122:1 uint via t_getriebe_02_ge_drehzahlmesser_daempfung
+field     dbcvwmlb.getriebe_02_ge_drehzahlmesser_daempfung 0:122:1 uint
 field     dbcvwmlb.getriebe_02_ge_schubabschalt_unt 0:123:1 uint via t_getriebe_02_ge_schubabschalt_unt
 field     dbcvwmlb.getriebe_02_ge_freigabe_synchro 0:124:1 uint via t_getriebe_02_ge_freigabe_synchro
 field     dbcvwmlb.getriebe_02_ge_hyb_dz_eingriff 0:125:2 uint
@@ -2632,7 +2440,7 @@ field     dbcvwmlb.kombi_01_kbi_oeldruck_schalter 0:79:1 uint
 field     dbcvwmlb.kombi_01_kbi_tankwarnung 0:80:1 uint via t_kombi_01_kbi_tankwarnung
 field     dbcvwmlb.kombi_01_kbi_mfa_v_einheit_01 0:81:1 uint via t_kombi_01_kbi_mfa_v_einheit_01
 field     dbcvwmlb.kombi_01_kbi_im_stellgliedtest 0:82:1 uint via t_kombi_01_kbi_im_stellgliedtest
-field     dbcvwmlb.kombi_01_kbi_anzeigefehler_ldw 0:83:2 uint via t_kombi_01_kbi_anzeigefehler_ldw
+field     dbcvwmlb.kombi_01_kbi_anzeigefehler_ldw 0:83:2 uint
 field     dbcvwmlb.kombi_01_kbi_variante_usa 0:85:1 uint via t_kombi_01_kbi_variante_usa
 field     dbcvwmlb.kombi_01_kbi_oeldruckwarnung 0:86:1 uint via t_kombi_01_kbi_oeldruckwarnung
 field     dbcvwmlb.kombi_01_kbi_handbremse 0:87:1 uint via t_kombi_01_kbi_handbremse
@@ -2643,7 +2451,7 @@ field     dbcvwmlb.kombi_01_kbi_angez_geschw 0:112:10 uscale:8/25
 field     dbcvwmlb.kombi_01_kbi_einheit_tacho 0:122:1 uint via t_kombi_01_kbi_einheit_tacho
 field     dbcvwmlb.kombi_01_kbi_konsistenz_acc 0:123:1 uint
 field     dbcvwmlb.kombi_01_kbi_fehler_anzeige_acc 0:124:1 uint
-field     dbcvwmlb.kombi_01_kbi_anzeigefehler_swa 0:125:2 uint via t_kombi_01_kbi_anzeigefehler_swa
+field     dbcvwmlb.kombi_01_kbi_anzeigefehler_swa 0:125:2 uint
 field     dbcvwmlb.kombi_01_kbi_kd_fehler 0:127:1 uint via t_kombi_01_kbi_kd_fehler
 
 kind      kombi_02
@@ -2654,7 +2462,7 @@ field     dbcvwmlb.kombi_02_kbi_kilometerstand 0:64:20 uint
 field     dbcvwmlb.kombi_02_kbi_standzeit 0:84:15 uscale:4
 field     dbcvwmlb.kombi_02_kbi_reset_standzeit 0:99:1 uint via t_kombi_02_kbi_reset_standzeit
 field     dbcvwmlb.kombi_02_kbi_inhalt_tank 0:104:7 uint
-field     dbcvwmlb.kombi_02_kbi_fstatus_tank 0:111:1 uint via t_kombi_02_kbi_fstatus_tank
+field     dbcvwmlb.kombi_02_kbi_fstatus_tank 0:111:1 uint
 field     dbcvwmlb.kombi_02_kbi_qbit_aussen_temp_gef 0:119:1 uint via t_kombi_02_kbi_qbit_aussen_temp_gef
 field     dbcvwmlb.kombi_02_kbi_aussen_temp_gef 0:120:8 uscale:1/2:-50
 
@@ -2773,7 +2581,7 @@ field     dbcvwmlb.licht_hinten_01_lh_blinker_hr_akt 0:79:1 uint
 field     dbcvwmlb.licht_hinten_01_lh_blinker_li_def 0:80:1 uint via t_licht_hinten_01_lh_blinker_li_def
 field     dbcvwmlb.licht_hinten_01_lh_bremsl_li_def 0:81:1 uint via t_licht_hinten_01_lh_bremsl_li_def
 field     dbcvwmlb.licht_hinten_01_lh_schlusslicht_li_def 0:82:1 uint via t_licht_hinten_01_lh_schlusslicht_li_def
-field     dbcvwmlb.licht_hinten_01_lh_rueckf_li_def 0:83:1 uint via t_licht_hinten_01_lh_rueckf_li_def
+field     dbcvwmlb.licht_hinten_01_lh_rueckf_li_def 0:83:1 uint
 field     dbcvwmlb.licht_hinten_01_lh_nebel_li_def 0:84:1 uint
 field     dbcvwmlb.licht_hinten_01_lh_schluss_brems_nebel_li_def 0:85:1 uint via t_licht_hinten_01_lh_schluss_brems_nebel_li_def
 field     dbcvwmlb.licht_hinten_01_lh_schluss_brems_nebel_re_def 0:86:1 uint via t_licht_hinten_01_lh_schluss_brems_nebel_re_def
@@ -2784,7 +2592,7 @@ field     dbcvwmlb.licht_hinten_01_lh_brems_blk_li_def 0:91:1 uint via t_licht_h
 field     dbcvwmlb.licht_hinten_01_lh_blinker_re_def 0:96:1 uint via t_licht_hinten_01_lh_blinker_re_def
 field     dbcvwmlb.licht_hinten_01_lh_bremsl_re_def 0:97:1 uint via t_licht_hinten_01_lh_bremsl_re_def
 field     dbcvwmlb.licht_hinten_01_lh_schlusslicht_re_def 0:98:1 uint via t_licht_hinten_01_lh_schlusslicht_re_def
-field     dbcvwmlb.licht_hinten_01_lh_rueckf_re_def 0:99:1 uint via t_licht_hinten_01_lh_rueckf_re_def
+field     dbcvwmlb.licht_hinten_01_lh_rueckf_re_def 0:99:1 uint
 field     dbcvwmlb.licht_hinten_01_lh_nebel_re_def 0:100:1 uint via t_licht_hinten_01_lh_nebel_re_def
 field     dbcvwmlb.licht_hinten_01_lh_schluss_brems_re_def 0:104:1 uint via t_licht_hinten_01_lh_schluss_brems_re_def
 field     dbcvwmlb.licht_hinten_01_lh_schluss_nebel_re_def 0:105:1 uint via t_licht_hinten_01_lh_schluss_nebel_re_def
@@ -2793,7 +2601,7 @@ field     dbcvwmlb.licht_hinten_01_lh_brems_blk_re_def 0:107:1 uint via t_licht_
 field     dbcvwmlb.licht_hinten_01_lh_kennzl_def 0:112:1 uint via t_licht_hinten_01_lh_kennzl_def
 field     dbcvwmlb.licht_hinten_01_lh_3_bremsl_def 0:113:1 uint via t_licht_hinten_01_lh_3_bremsl_def
 field     dbcvwmlb.licht_hinten_01_lh_nebel_mi_def 0:114:1 uint
-field     dbcvwmlb.licht_hinten_01_lh_rueckf_mi_def 0:115:1 uint via t_licht_hinten_01_lh_rueckf_mi_def
+field     dbcvwmlb.licht_hinten_01_lh_rueckf_mi_def 0:115:1 uint
 field     dbcvwmlb.licht_hinten_01_lh_bremsl_li_ges_def 0:118:1 uint via t_licht_hinten_01_lh_bremsl_li_ges_def
 field     dbcvwmlb.licht_hinten_01_lh_bremsl_re_ges_def 0:119:1 uint via t_licht_hinten_01_lh_bremsl_re_ges_def
 const     0:120:8 0
@@ -2831,7 +2639,7 @@ field     dbcvwmlb.lwi_01_lwi_01_chk 0:64:8 uint
 field     dbcvwmlb.lwi_01_counter 0:72:4 uint
 field     dbcvwmlb.lwi_01_lwi_sensorstatus 0:76:1 uint via t_lwi_01_lwi_sensorstatus
 field     dbcvwmlb.lwi_01_lwi_qbit_sub_daten 0:77:1 uint
-field     dbcvwmlb.lwi_01_lwi_qbit_lenkradwinkel 0:79:1 uint via t_lwi_01_lwi_qbit_lenkradwinkel
+field     dbcvwmlb.lwi_01_lwi_qbit_lenkradwinkel 0:79:1 uint
 field     dbcvwmlb.lwi_01_lwi_lenkradwinkel 0:80:13 uscale:1/10
 field     dbcvwmlb.lwi_01_lwi_vz_lenkradwinkel 0:93:1 uint via t_lwi_01_lwi_vz_lenkradwinkel
 field     dbcvwmlb.lwi_01_lwi_vz_lenkradw_geschw 0:94:1 uint via t_lwi_01_lwi_vz_lenkradw_geschw
@@ -2884,13 +2692,13 @@ field     dbcvwmlb.motor_03_mo_qbit_fahrer_bremst 0:78:1 uint via t_motor_03_mo_
 field     dbcvwmlb.motor_03_mo_qbit_drehzahl_01 0:79:1 uint via t_motor_03_mo_qbit_drehzahl_01
 field     dbcvwmlb.motor_03_mo_drehzahl_01 0:80:16 uscale:1/4
 field     dbcvwmlb.motor_03_mo_moment_im_leerlauf 0:96:1 uint via t_motor_03_mo_moment_im_leerlauf
-field     dbcvwmlb.motor_03_mo_interlock 0:97:1 uint via t_motor_03_mo_interlock
-field     dbcvwmlb.motor_03_mo_bls 0:98:1 uint via t_motor_03_mo_bls
-field     dbcvwmlb.motor_03_mo_fahrer_bremst 0:99:1 uint via t_motor_03_mo_fahrer_bremst
+field     dbcvwmlb.motor_03_mo_interlock 0:97:1 uint
+field     dbcvwmlb.motor_03_mo_bls 0:98:1 uint
+field     dbcvwmlb.motor_03_mo_fahrer_bremst 0:99:1 uint
 field     dbcvwmlb.motor_03_mo_konsistenz_bremsped 0:100:1 uint via t_motor_03_mo_konsistenz_bremsped
-field     dbcvwmlb.motor_03_mo_kuppl_schalter 0:101:1 uint via t_motor_03_mo_kuppl_schalter
+field     dbcvwmlb.motor_03_mo_kuppl_schalter 0:101:1 uint
 field     dbcvwmlb.motor_03_mo_timeout_esp 0:102:1 uint via t_motor_03_mo_timeout_esp
-field     dbcvwmlb.motor_03_mo_motor_laeuft 0:103:1 uint via t_motor_03_mo_motor_laeuft
+field     dbcvwmlb.motor_03_mo_motor_laeuft 0:103:1 uint
 field     dbcvwmlb.motor_03_mo_solldrehz_leerlauf 0:104:8 uscale:10
 field     dbcvwmlb.motor_03_mo_fahrpedalrohwert_01 0:112:8 uscale:2/5
 field     dbcvwmlb.motor_03_mo_erste_ungenauschwelle 0:120:1 uint via t_motor_03_mo_erste_ungenauschwelle
@@ -2908,7 +2716,7 @@ field     dbcvwmlb.motor_04_mo_anzeigedrehz 0:88:12 uscale:3
 field     dbcvwmlb.motor_04_mo_schaltempf_verfbar 0:102:1 uint via t_motor_04_mo_schaltempf_verfbar
 field     dbcvwmlb.motor_04_mo_ladedruck 0:103:9 uscale:1/100
 field     dbcvwmlb.motor_04_mo_kvs 0:112:15 uint
-field     dbcvwmlb.motor_04_mo_kvs_ueberlauf 0:127:1 uint via t_motor_04_mo_kvs_ueberlauf
+field     dbcvwmlb.motor_04_mo_kvs_ueberlauf 0:127:1 uint
 
 kind      motor_05
 when      0:0:32 782
@@ -2923,13 +2731,13 @@ field     dbcvwmlb.motor_05_mo_status_normalbetrieb_02 0:82:1 uint via t_motor_0
 field     dbcvwmlb.motor_05_mo_schaltbeeinfl_leistungsbegr 0:83:1 uint
 field     dbcvwmlb.motor_05_mo_schaltbeeinfl_partikelfilter 0:84:1 uint
 field     dbcvwmlb.motor_05_mo_prio_min_wunschdrehzahl 0:85:1 uint via t_motor_05_mo_prio_min_wunschdrehzahl
-field     dbcvwmlb.motor_05_mo_freig_anlass 0:86:1 uint via t_motor_05_mo_freig_anlass
-field     dbcvwmlb.motor_05_mo_aussp_anlass 0:87:1 uint via t_motor_05_mo_aussp_anlass
+field     dbcvwmlb.motor_05_mo_freig_anlass 0:86:1 uint
+field     dbcvwmlb.motor_05_mo_aussp_anlass 0:87:1 uint
 field     dbcvwmlb.motor_05_mo_max_wunschdrehzahl 0:88:9 uscale:25
 field     dbcvwmlb.motor_05_mo_prio_max_wunschdrehzahl 0:97:1 uint via t_motor_05_mo_prio_max_wunschdrehzahl
-field     dbcvwmlb.motor_05_mo_luftpfad_aktiv 0:98:1 uint via t_motor_05_mo_luftpfad_aktiv
+field     dbcvwmlb.motor_05_mo_luftpfad_aktiv 0:98:1 uint
 field     dbcvwmlb.motor_05_mo_v_begrenz_aktiv 0:99:1 uint via t_motor_05_mo_v_begrenz_aktiv
-field     dbcvwmlb.motor_05_mo_v_begrenz_aktivierbar 0:100:1 uint via t_motor_05_mo_v_begrenz_aktivierbar
+field     dbcvwmlb.motor_05_mo_v_begrenz_aktivierbar 0:100:1 uint
 field     dbcvwmlb.motor_05_mo_verbot_ekp 0:101:1 uint via t_motor_05_mo_verbot_ekp
 field     dbcvwmlb.motor_05_mo_anf_pruefimpuls 0:102:1 uint via t_motor_05_mo_anf_pruefimpuls
 field     dbcvwmlb.motor_05_mo_anf_kl75 0:103:1 uint via t_motor_05_mo_anf_kl75
@@ -2973,7 +2781,7 @@ field     dbcvwmlb.motor_06_mo_obd2_lampe 0:113:1 uint via t_motor_06_mo_obd2_la
 field     dbcvwmlb.motor_06_mo_heissleuchte 0:114:1 uint via t_motor_06_mo_heissleuchte
 field     dbcvwmlb.motor_06_mo_partikel_lampe 0:115:1 uint via t_motor_06_mo_partikel_lampe
 field     dbcvwmlb.motor_06_mo_winterfahrprog 0:116:1 uint
-field     dbcvwmlb.motor_06_wiv_oelstand_nicht_vorhanden 0:117:1 uint via t_motor_06_wiv_oelstand_nicht_vorhanden
+field     dbcvwmlb.motor_06_wiv_oelstand_nicht_vorhanden 0:117:1 uint
 field     dbcvwmlb.motor_06_wiv_nachfuellanzeige_ein 0:118:1 uint via t_motor_06_wiv_nachfuellanzeige_ein
 field     dbcvwmlb.motor_06_wiv_ueberfuell_deaktiv 0:119:1 uint via t_motor_06_wiv_ueberfuell_deaktiv
 field     dbcvwmlb.motor_06_wiv_unterfuell_warn 0:120:1 uint via t_motor_06_wiv_unterfuell_warn
@@ -3018,7 +2826,7 @@ field     dbcvwmlb.motor_06_mo_obd2_lampe 0:113:1 uint via t_motor_06_mo_obd2_la
 field     dbcvwmlb.motor_06_mo_heissleuchte 0:114:1 uint via t_motor_06_mo_heissleuchte
 field     dbcvwmlb.motor_06_mo_partikel_lampe 0:115:1 uint via t_motor_06_mo_partikel_lampe
 field     dbcvwmlb.motor_06_mo_winterfahrprog 0:116:1 uint
-field     dbcvwmlb.motor_06_wiv_oelstand_nicht_vorhanden 0:117:1 uint via t_motor_06_wiv_oelstand_nicht_vorhanden
+field     dbcvwmlb.motor_06_wiv_oelstand_nicht_vorhanden 0:117:1 uint
 field     dbcvwmlb.motor_06_wiv_nachfuellanzeige_ein 0:118:1 uint via t_motor_06_wiv_nachfuellanzeige_ein
 field     dbcvwmlb.motor_06_wiv_ueberfuell_deaktiv 0:119:1 uint via t_motor_06_wiv_ueberfuell_deaktiv
 field     dbcvwmlb.motor_06_wiv_unterfuell_warn 0:120:1 uint via t_motor_06_wiv_unterfuell_warn
@@ -3045,7 +2853,7 @@ field     dbcvwmlb.motor_07_mo_ansaugluft_temp 0:72:8 uscale:3/4:-48
 field     dbcvwmlb.motor_07_mo_oel_temp 0:80:8 uscale:1:-60
 field     dbcvwmlb.motor_07_mo_kuehlmittel_temp 0:88:8 uscale:3/4:-48
 field     dbcvwmlb.motor_07_mo_hoeheninfo 0:96:8 uscale:781/100000
-field     dbcvwmlb.motor_07_mo_kennfeldk 0:104:1 uint via t_motor_07_mo_kennfeldk
+field     dbcvwmlb.motor_07_mo_kennfeldk 0:104:1 uint
 field     dbcvwmlb.motor_07_mo_versionsinfo 0:105:6 uint
 field     dbcvwmlb.motor_07_mo_getriebe_kuehlen 0:111:1 uint via t_motor_07_mo_getriebe_kuehlen
 field     dbcvwmlb.motor_07_mo_mom_traegheit_02 0:112:5 uscale:1/100
@@ -3408,7 +3216,7 @@ field     dbcvwmlb.obd_01_obd_kaltstart_denominator 0:123:1 uint via t_obd_01_ob
 field     dbcvwmlb.obd_01_obd_minimum_trip 0:124:1 uint via t_obd_01_obd_minimum_trip
 field     dbcvwmlb.obd_01_obd_driving_cycle 0:125:1 uint via t_obd_01_obd_driving_cycle
 field     dbcvwmlb.obd_01_obd_warm_up_cycle 0:126:1 uint via t_obd_01_obd_warm_up_cycle
-field     dbcvwmlb.obd_01_obd_normed_trip 0:127:1 uint via t_obd_01_obd_normed_trip
+field     dbcvwmlb.obd_01_obd_normed_trip 0:127:1 uint
 
 kind      pcf_01
 when      0:0:32 803
@@ -3473,10 +3281,10 @@ field     dbcvwmlb.psd_02_psd_sys_fahrsp_gegenr 0:93:2 uint via t_psd_02_psd_sys
 field     dbcvwmlb.psd_02_psd_sys_tmc_baustelle 0:95:1 uint via t_psd_02_psd_sys_tmc_baustelle
 field     dbcvwmlb.psd_02_psd_sys_tmc_stau 0:96:1 uint via t_psd_02_psd_sys_tmc_stau
 field     dbcvwmlb.psd_02_psd_sys_anfangskruemmung 0:110:8 uint
-field     dbcvwmlb.psd_02_psd_sys_anfangskruemmung_vorz 0:118:1 uint via t_psd_02_psd_sys_anfangskruemmung_vorz
+field     dbcvwmlb.psd_02_psd_sys_anfangskruemmung_vorz 0:118:1 uint
 field     dbcvwmlb.psd_02_psd_sys_anfangssteigung 0:119:5 uscale:1/2
 field     dbcvwmlb.psd_02_psd_sys_anfangssteigung_vorz 0:124:1 uint
-field     dbcvwmlb.psd_02_psd_sys_ortschaft 0:125:1 uint via t_psd_02_psd_sys_ortschaft
+field     dbcvwmlb.psd_02_psd_sys_ortschaft 0:125:1 uint
 field     dbcvwmlb.psd_02_psd_sys_digitalisierung 0:126:1 uint via t_psd_02_psd_sys_digitalisierung
 field     dbcvwmlb.psd_02_psd_sys_zielfuehrung 0:127:1 uint via t_psd_02_psd_sys_zielfuehrung
 
@@ -3491,17 +3299,17 @@ field     dbcvwmlb.psd_02_psd_abz_vorgaenger_segment_id 0:79:6 uint
 field     dbcvwmlb.psd_02_psd_abz_geschwindigkeit 0:85:5 uint
 field     dbcvwmlb.psd_02_psd_abz_geschwindigkeit_typ 0:90:1 uint via t_psd_02_psd_abz_geschwindigkeit_typ
 field     dbcvwmlb.psd_02_psd_abz_strassenklasse 0:91:2 uint
-field     dbcvwmlb.psd_02_psd_abz_adas_qualitaet 0:93:1 uint via t_psd_02_psd_abz_adas_qualitaet
-field     dbcvwmlb.psd_02_psd_abz_abzweigerichtung 0:94:1 uint via t_psd_02_psd_abz_abzweigerichtung
-field     dbcvwmlb.psd_02_psd_abz_abzweigewinkel 0:95:4 uint via t_psd_02_psd_abz_abzweigewinkel
+field     dbcvwmlb.psd_02_psd_abz_adas_qualitaet 0:93:1 uint
+field     dbcvwmlb.psd_02_psd_abz_abzweigerichtung 0:94:1 uint
+field     dbcvwmlb.psd_02_psd_abz_abzweigewinkel 0:95:4 uint
 field     dbcvwmlb.psd_02_psd_abz_rampe 0:99:2 uint
 field     dbcvwmlb.psd_02_psd_abz_anfangskruemmung 0:101:8 uint
-field     dbcvwmlb.psd_02_psd_abz_anfangskruemmung_vorz 0:109:1 uint via t_psd_02_psd_abz_anfangskruemmung_vorz
+field     dbcvwmlb.psd_02_psd_abz_anfangskruemmung_vorz 0:109:1 uint
 field     dbcvwmlb.psd_02_psd_abz_endkruemmung 0:110:8 uint
-field     dbcvwmlb.psd_02_psd_abz_endkruemmung_vorz 0:118:1 uint via t_psd_02_psd_abz_endkruemmung_vorz
+field     dbcvwmlb.psd_02_psd_abz_endkruemmung_vorz 0:118:1 uint
 field     dbcvwmlb.psd_02_psd_abz_endsteigung 0:119:5 uscale:1/2
-field     dbcvwmlb.psd_02_psd_abz_endsteigung_vorz 0:124:1 uint via t_psd_02_psd_abz_endsteigung_vorz
-field     dbcvwmlb.psd_02_psd_abz_fahrspuren 0:125:2 uint via t_psd_02_psd_abz_fahrspuren
+field     dbcvwmlb.psd_02_psd_abz_endsteigung_vorz 0:124:1 uint
+field     dbcvwmlb.psd_02_psd_abz_fahrspuren 0:125:2 uint
 field     dbcvwmlb.psd_02_psd_abz_wahrscheinlichster_pfad 0:127:1 uint via t_psd_02_psd_abz_wahrscheinlichster_pfad
 
 kind      psd_02_m2
@@ -3513,19 +3321,19 @@ field     dbcvwmlb.psd_02_psd_ges_segment_id 0:66:6 uint
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit 0:72:5 uint
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_typ 0:77:1 uint via t_psd_02_psd_ges_geschwindigkeit_typ
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_gespann 0:78:2 uint
-field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_witter 0:80:2 uint via t_psd_02_psd_ges_geschwindigkeit_witter
+field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_witter 0:80:2 uint
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_tag_anf 0:82:3 uint via t_psd_02_psd_ges_geschwindigkeit_tag_anf
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_tag_ende 0:85:3 uint via t_psd_02_psd_ges_geschwindigkeit_tag_ende
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_std_anf 0:88:5 uint
 field     dbcvwmlb.psd_02_psd_ges_geschwindigkeit_std_ende 0:93:5 uint
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw 0:98:5 uint
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw_gespann 0:103:2 uint
-field     dbcvwmlb.psd_02_psd_ges_alter_geschw_witter 0:105:2 uint via t_psd_02_psd_ges_alter_geschw_witter
+field     dbcvwmlb.psd_02_psd_ges_alter_geschw_witter 0:105:2 uint
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw_tag_anf 0:107:3 uint via t_psd_02_psd_ges_alter_geschw_tag_anf
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw_tag_ende 0:110:3 uint via t_psd_02_psd_ges_alter_geschw_tag_ende
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw_std_anf 0:113:5 uint
 field     dbcvwmlb.psd_02_psd_ges_alter_geschw_std_ende 0:118:5 uint
-field     dbcvwmlb.psd_02_psd_ges_ueberholverbot 0:123:2 uint via t_psd_02_psd_ges_ueberholverbot
+field     dbcvwmlb.psd_02_psd_ges_ueberholverbot 0:123:2 uint
 field     dbcvwmlb.psd_02_psd_ges_wechselverkehrszeichen 0:125:3 uint
 
 kind      psd_02_m3
@@ -3688,9 +3496,9 @@ requires  dbcvwmlb.sth_01_sth_funk_ein dbcvwmlb.sth_01_sth_funk_aus dbcvwmlb.sth
 field     dbcvwmlb.sth_01_sth_funk_ein 0:64:1 uint via t_sth_01_sth_funk_ein
 field     dbcvwmlb.sth_01_sth_funk_aus 0:65:1 uint via t_sth_01_sth_funk_aus
 field     dbcvwmlb.sth_01_sth_zusatzheizung 0:66:1 uint via t_sth_01_sth_zusatzheizung
-field     dbcvwmlb.sth_01_sth_led 0:67:1 uint via t_sth_01_sth_led
+field     dbcvwmlb.sth_01_sth_led 0:67:1 uint
 field     dbcvwmlb.sth_01_sth_pumpe_ein 0:68:1 uint
-field     dbcvwmlb.sth_01_sth_geblaese 0:69:1 uint via t_sth_01_sth_geblaese
+field     dbcvwmlb.sth_01_sth_geblaese 0:69:1 uint
 field     dbcvwmlb.sth_01_sth_ekp_anst 0:70:1 uint via t_sth_01_sth_ekp_anst
 field     dbcvwmlb.sth_01_sth_start_folgt 0:71:1 uint via t_sth_01_sth_start_folgt
 field     dbcvwmlb.sth_01_sth_ventiloeffnungszeit 0:72:6 uint
@@ -3700,10 +3508,10 @@ field     dbcvwmlb.sth_01_sth_kvs 0:88:13 uint
 field     dbcvwmlb.sth_01_sth_fehlerstatus 0:101:3 uint
 field     dbcvwmlb.sth_01_sth_heizleistung 0:104:8 uint
 field     dbcvwmlb.sth_01_sth_wassertemp 0:112:8 uscale:3/4:-40
-field     dbcvwmlb.sth_01_sth_motorvorwaermung 0:123:1 uint via t_sth_01_sth_motorvorwaermung
+field     dbcvwmlb.sth_01_sth_motorvorwaermung 0:123:1 uint
 field     dbcvwmlb.sth_01_sth_servicemode 0:124:1 uint
 field     dbcvwmlb.sth_01_sth_war_aktiv 0:125:1 uint via t_sth_01_sth_war_aktiv
-field     dbcvwmlb.sth_01_sth_kvs_ueberlauf 0:126:1 uint via t_sth_01_sth_kvs_ueberlauf
+field     dbcvwmlb.sth_01_sth_kvs_ueberlauf 0:126:1 uint
 field     dbcvwmlb.sth_01_sth_kd_fehler 0:127:1 uint via t_sth_01_sth_kd_fehler
 
 kind      sts_01
@@ -3859,9 +3667,9 @@ requires  dbcvwmlb.tsk_03_tsk_03_chk dbcvwmlb.tsk_03_tsk_03_bz dbcvwmlb.tsk_03_f
 field     dbcvwmlb.tsk_03_tsk_03_chk 0:64:8 uint
 field     dbcvwmlb.tsk_03_tsk_03_bz 0:72:4 uint
 field     dbcvwmlb.tsk_03_fas_wunschgeschw 0:76:10 uscale:8/25
-field     dbcvwmlb.tsk_03_fas_status_prim_anz 0:86:2 uint via t_tsk_03_fas_status_prim_anz
+field     dbcvwmlb.tsk_03_fas_status_prim_anz 0:86:2 uint
 field     dbcvwmlb.tsk_03_fas_texte_primaeranz 0:112:7 uint
-field     dbcvwmlb.tsk_03_fas_status_anzeige 0:125:3 uint via t_tsk_03_fas_status_anzeige
+field     dbcvwmlb.tsk_03_fas_status_anzeige 0:125:3 uint
 
 kind      tsk_04
 when      0:0:32 270

@@ -75,8 +75,6 @@ map   t_lwi_01_lwi_qbit_sub_daten  0  "LWS-Subinfo real (Lenkradwinkelinformatio
 map   t_lwi_01_lwi_qbit_sub_daten  1  "LWS-Subinfo simuliert (Lenkradwinkelinformation nicht ADS-tauglich )"
 map   t_lwi_01_lwi_mfl_abschaltung  0  "inaktiv"
 map   t_lwi_01_lwi_mfl_abschaltung  1  "aktiv"
-map   t_lwi_01_lwi_qbit_lenkradwinkel  0  "gültiger Wert"
-map   t_lwi_01_lwi_qbit_lenkradwinkel  1  "ausserhalb der Spezifikation"
 map   t_lwi_01_lwi_vz_lenkradwinkel  0  "positiv_links_von_der_Nullstellung"
 map   t_lwi_01_lwi_vz_lenkradwinkel  1  "negativ"
 map   t_lwi_01_lwi_vz_lenkradw_geschw  0  "positiv_links_von_der_Nullstellung"
@@ -111,10 +109,6 @@ map   t_getriebe_11_ge_status_kraftschluss  4  "geschlossen_mit_Mikroschlupf"
 map   t_getriebe_11_ge_status_kraftschluss  5  "geschlossen_mit_Ueberanpressung"
 map   t_getriebe_11_ge_status_kraftschluss  6  "sonstige_Fehler"
 map   t_getriebe_11_ge_status_kraftschluss  7  "fehlerhaft_geschlossen"
-map   t_getriebe_11_ge_mmom_status  0  "keine Anforderung"
-map   t_getriebe_11_ge_mmom_status  1  "reduzierender Getriebeeingriff"
-map   t_getriebe_11_ge_mmom_status  2  "erhöhender Getriebeeingriff"
-map   t_getriebe_11_ge_mmom_status  3  "Įderung mit Sprung"
 map   t_getriebe_11_ge_freig_mmom_vorhalt  0  "nicht_freigegeben"
 map   t_getriebe_11_ge_freig_mmom_vorhalt  1  "freigegeben"
 map   t_getriebe_11_ge_verbot_ausblendung  0  "kein_Verbot"
@@ -301,8 +295,6 @@ map   t_motor_41_mo_adr_status  2  "ADR_aktiv"
 map   t_motor_41_mo_adr_status  3  "ADR_Fehler"
 map   t_motor_41_mo_anzeige_fmaus_text  0  "keine_Anzeige"
 map   t_motor_41_mo_anzeige_fmaus_text  1  "FMAus_Systemfehler"
-map   t_motor_41_mo_fehler_mspg  0  "i.O."
-map   t_motor_41_mo_fehler_mspg  1  "Gebl䳥 defekt oder Motorraumtemp. zu hoch"
 map   t_motor_41_mo_avus_motorschutz  0  "keine Warnung"
 map   t_motor_41_mo_avus_motorschutz  1  "Drehzahlwarnung Stufe 1"
 map   t_motor_41_mo_avus_motorschutz  2  "Drehzahlwarnung Stufe 2"
@@ -515,8 +507,6 @@ map   t_nvem_05_bem_n_lla  0  "keine_Erhoehung"
 map   t_nvem_05_bem_n_lla  1  "Stufe_1"
 map   t_nvem_05_bem_n_lla  2  "Stufe_2"
 map   t_nvem_05_bem_n_lla  3  "Stufe_3"
-map   t_nvem_05_bem_anf_kl  0  "keine Anforderung"
-map   t_nvem_05_bem_anf_kl  1  "Anforderung Kühlerlüfter Ansteuerung"
 map   t_nvem_05_bem_startstopp_info  0  "Motorlauf_nicht_notwendig_(Stoppfreigabe)"
 map   t_nvem_05_bem_startstopp_info  1  "Motoranlauf_nicht_zwingend_notwendig_(Stoppverbot,keine_Startanforderung)"
 map   t_nvem_05_bem_startstopp_info  2  "Motoranlauf_zwingend_notwendig_(Startanforderung)"
@@ -847,8 +837,6 @@ map   t_motor_26_mo_zustand_hwp  0  "HWP_nicht_schaltbar"
 map   t_motor_26_mo_zustand_hwp  1  "HWP_foerdert_nicht"
 map   t_motor_26_mo_zustand_hwp  2  "HWP_foerdert"
 map   t_motor_26_mo_zustand_hwp  3  "reserviert"
-map   t_motor_26_olev_systemstoerung  0  "֬system i.O."
-map   t_motor_26_olev_systemstoerung  1  "Systemstörung ֬system"
 map   t_motor_26_mo_oelwarnung_max  0  "keine_Warnung"
 map   t_motor_26_mo_oelwarnung_max  1  "Warnfall_aktiv"
 map   t_motor_26_wiv_oelsystem_aktiv  0  "Anzeige_aus"
@@ -877,8 +865,6 @@ map   t_motor_26_mo_e_texte  14  "kein_Start_Batterietemperatur"
 map   t_motor_26_mo_e_texte  15  "Ende_elektrische_Reichweite_erreicht"
 map   t_motor_26_wiv_oeldyn_avl  0  "Oeldyn_nicht_vorhanden"
 map   t_motor_26_wiv_oeldyn_avl  1  "Oeldyn_vorhanden"
-map   t_motor_26_olev_oelstand_nicht_vorhanden  0  "֬stand vorhanden"
-map   t_motor_26_olev_oelstand_nicht_vorhanden  1  "֬stand nicht vorhanden"
 map   t_motor_26_mo_systemlampe  0  "Lampe aus"
 map   t_motor_26_mo_systemlampe  1  "Lampe ein"
 map   t_motor_26_mo_obd2_lampe  0  "Lampe aus"
@@ -889,8 +875,6 @@ map   t_motor_26_mo_partikel_lampe  0  "Lampe aus"
 map   t_motor_26_mo_partikel_lampe  1  "Lampe ein"
 map   t_motor_26_mo_redfahrleistung_lampe  0  "Lampe_aus"
 map   t_motor_26_mo_redfahrleistung_lampe  1  "Lampe_ein"
-map   t_motor_26_wiv_oelstand_nicht_vorhanden  0  "֬stand vorhanden"
-map   t_motor_26_wiv_oelstand_nicht_vorhanden  1  "֬stand nicht vorhanden"
 map   t_motor_26_wiv_nachfuellanzeige_ein  0  "keine_Nachfuellanzeige"
 map   t_motor_26_wiv_nachfuellanzeige_ein  1  "Nachfuellanzeige"
 map   t_motor_26_wiv_ueberfuell_deaktiv  0  "Ueberfuellwarnung_am_Kombi_aktiv"
@@ -989,8 +973,6 @@ map   t_tsg_hfs_01_hfs_mrollo_schalter  4  "AUF_automatik"
 map   t_tsg_hfs_01_hfs_mrollo_schalter  5  "nicht_verfuegbar"
 map   t_tsg_hfs_01_hfs_mrollo_schalter  6  "Init"
 map   t_tsg_hfs_01_hfs_mrollo_schalter  7  "Fehler"
-map   t_tsg_hfs_01_hfs_lock_taster_inv  0  "Lock Taster bet䴧it"
-map   t_tsg_hfs_01_hfs_lock_taster_inv  1  "Lock Taster nicht bet䴩gt"
 map   t_tsg_hfs_01_hfs_status_etag  0  "Init"
 map   t_tsg_hfs_01_hfs_status_etag  1  "Griff_ausgefahren"
 map   t_tsg_hfs_01_hfs_status_etag  2  "Griff_eingefahren"
@@ -1083,8 +1065,6 @@ map   t_tsg_hbfs_01_hbfs_mrollo_schalter  4  "AUF_automatik"
 map   t_tsg_hbfs_01_hbfs_mrollo_schalter  5  "nicht_verfuegbar"
 map   t_tsg_hbfs_01_hbfs_mrollo_schalter  6  "Init"
 map   t_tsg_hbfs_01_hbfs_mrollo_schalter  7  "Fehler"
-map   t_tsg_hbfs_01_hbfs_lock_taster_inv  0  "Lock Taster bet䴧it"
-map   t_tsg_hbfs_01_hbfs_lock_taster_inv  1  "Lock Taster nicht bet䴩gt"
 map   t_tsg_hbfs_01_hbfs_status_kisi_inv  0  "aktiv"
 map   t_tsg_hbfs_01_hbfs_status_kisi_inv  1  "inaktiv"
 map   t_tsg_hbfs_01_hbfs_status_etag  0  "Init"
@@ -1327,8 +1307,6 @@ map   t_licht_hinten_01_lh_bremsl_li_def  0  "OK"
 map   t_licht_hinten_01_lh_bremsl_li_def  1  "mindestens ein Bremslicht hinten links defekt"
 map   t_licht_hinten_01_lh_schlusslicht_li_def  0  "OK"
 map   t_licht_hinten_01_lh_schlusslicht_li_def  1  "mindestens ein Schlusslicht hinten links defekt"
-map   t_licht_hinten_01_lh_rueckf_li_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_li_def  1  "Rückfahrlicht hinten links defekt"
 map   t_licht_hinten_01_lh_nebel_li_def  0  "OK"
 map   t_licht_hinten_01_lh_nebel_li_def  1  "Nebelschlusslicht hinten links defekt"
 map   t_licht_hinten_01_lh_schluss_brems_nebel_li_def  0  "iO"
@@ -1359,8 +1337,6 @@ map   t_licht_hinten_01_lh_bremsl_re_def  0  "OK"
 map   t_licht_hinten_01_lh_bremsl_re_def  1  "mindestens ein Bremslicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_schlusslicht_re_def  0  "OK"
 map   t_licht_hinten_01_lh_schlusslicht_re_def  1  "mindestens ein Schlusslicht hinten rechts defekt"
-map   t_licht_hinten_01_lh_rueckf_re_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_re_def  1  "Rückfahrlicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_nebel_re_def  0  "OK"
 map   t_licht_hinten_01_lh_nebel_re_def  1  "Nebelschlusslicht hinten rechts defekt"
 map   t_licht_hinten_01_lh_schluss_brems_mi_def  0  "OK"
@@ -1379,8 +1355,6 @@ map   t_licht_hinten_01_lh_3_bremsl_def  0  "OK"
 map   t_licht_hinten_01_lh_3_bremsl_def  1  "hochgesetzte  Bremsleuchte defekt"
 map   t_licht_hinten_01_lh_nebel_mi_def  0  "OK"
 map   t_licht_hinten_01_lh_nebel_mi_def  1  "Nebelschlusslicht hinten Mitte defekt"
-map   t_licht_hinten_01_lh_rueckf_mi_def  0  "OK"
-map   t_licht_hinten_01_lh_rueckf_mi_def  1  "Rückfahllicht Mitte defekt"
 map   t_licht_hinten_01_lh_schlusslicht_mi_def  0  "OK"
 map   t_licht_hinten_01_lh_schlusslicht_mi_def  1  "defekt"
 map   t_licht_hinten_01_lh_bremsl_mi_def  0  "OK"
@@ -1515,10 +1489,6 @@ map   t_psd_06_psd_ges_typ  0  "Geschw_Klasse_des_Kartendatensuppliers"
 map   t_psd_06_psd_ges_typ  1  "Explizit_abgeleiteten_Begrenzung"
 map   t_psd_06_psd_ges_typ  2  "Durch_Gesetzg_vorgeg_allgem_Gebot_fuer_uebertr_Rahmenbed"
 map   t_psd_06_psd_ges_typ  3  "Init"
-map   t_psd_06_psd_ges_geschwindigkeit_witter  0  "Witterungsunabh䮧ig"
-map   t_psd_06_psd_ges_geschwindigkeit_witter  1  "N䳳e, Regen, Niederschlag"
-map   t_psd_06_psd_ges_geschwindigkeit_witter  2  "Gl䴴e"
-map   t_psd_06_psd_ges_geschwindigkeit_witter  3  "Nebel"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_anf  0  "kein Beginn definiert"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_anf  1  "Montag"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_anf  2  "Dienstag"
@@ -1535,10 +1505,6 @@ map   t_psd_06_psd_ges_geschwindigkeit_tag_ende  4  "Donnerstag"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_ende  5  "Freitag"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_ende  6  "Samstag"
 map   t_psd_06_psd_ges_geschwindigkeit_tag_ende  7  "Sonntag"
-map   t_psd_06_psd_ges_ueberholverbot  0  "kein ܢerholverbot"
-map   t_psd_06_psd_ges_ueberholverbot  1  "alle Fahrzeuge"
-map   t_psd_06_psd_ges_ueberholverbot  2  "ܢerholverbot für PKW mit Gespann"
-map   t_psd_06_psd_ges_ueberholverbot  3  "ܢerholverbot für LKW, Busse, etc."
 map   t_psd_06_psd_ges_verkehrszeichen_quelle  0  "VZA_kein_Onlinedienst"
 map   t_psd_06_psd_ges_verkehrszeichen_quelle  1  "nur_VZA"
 map   t_psd_06_psd_ges_verkehrszeichen_quelle  2  "nur_VZO"
@@ -1587,14 +1553,6 @@ map   t_motor_hybrid_06_mo_powermeter_inszenierung_aktiv  0  "keine_Anzeige"
 map   t_motor_hybrid_06_mo_powermeter_inszenierung_aktiv  1  "Inszenierung_aktiv"
 map   t_parkhilfe_01_ph_nachtr_stopp_anf  0  "nicht_angefordert"
 map   t_parkhilfe_01_ph_nachtr_stopp_anf  1  "angefordert"
-map   t_parkhilfe_01_ph_abschaltursache  0  "keine, bzw. System aktiv"
-map   t_parkhilfe_01_ph_abschaltursache  1  "Abschaltung durch Herausnahme R-Gang"
-map   t_parkhilfe_01_ph_abschaltursache  2  "Abschaltung ueber Geschwindigkeit"
-map   t_parkhilfe_01_ph_abschaltursache  3  "Abschaltung ueber PDC-Taster"
-map   t_parkhilfe_01_ph_abschaltursache  4  "Abschaltung wegen PLA"
-map   t_parkhilfe_01_ph_abschaltursache  5  "Abschaltung durch KL 15 Bit = 0"
-map   t_parkhilfe_01_ph_abschaltursache  6  "tbd."
-map   t_parkhilfe_01_ph_abschaltursache  7  "Fehler-/gestört Zustand, System noch aktiv"
 map   t_parkhilfe_01_ph_opt_anzeige_v_ein  0  "optische Anzeige vorne nicht aktiv"
 map   t_parkhilfe_01_ph_opt_anzeige_v_ein  1  "optische Anzeige vorne aktiviert"
 map   t_parkhilfe_01_ph_opt_anzeige_h_ein  0  "Optische Anzeige aus"
@@ -1611,8 +1569,6 @@ map   t_parkhilfe_01_ph_tongeber_mute  0  "Tongeber nicht stummgeschaltet"
 map   t_parkhilfe_01_ph_tongeber_mute  1  "Tongeber stummgeschaltet"
 map   t_parkhilfe_01_ph_anf_audioabsenkung  0  "Keine_Audioabsenkung"
 map   t_parkhilfe_01_ph_anf_audioabsenkung  1  "Anforderung_Audioabsenkung"
-map   t_parkhilfe_01_ph_tongeber_h_verfuegbar  0  "nicht verfügbar"
-map   t_parkhilfe_01_ph_tongeber_h_verfuegbar  1  "verfügbar"
 map   t_parkhilfe_01_pla_anf_aufschaltung_rvc  0  "Keine_RVC_Aufschalteanf"
 map   t_parkhilfe_01_pla_anf_aufschaltung_rvc  1  "RVC_Aufschalteanforderung"
 map   t_parkhilfe_01_ph_taster  0  "Taster_nicht_gedrueckt"
@@ -1705,46 +1661,6 @@ map   t_airbag_02_ab_crashschwere  6  "Crashschwere_2_bis_5"
 map   t_airbag_02_ab_crashschwere  7  "Fehler"
 map   t_airbag_02_ab_anforderung_usm  0  "keine_Anforderung"
 map   t_airbag_02_ab_anforderung_usm  1  "Anforderung"
-map   t_airbag_02_ab_gurtschloss_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_fa  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_bf  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_bf  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_mi  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe2_bf  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_fa  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_mi  3  "gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  0  "nicht_verbaut"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  1  "nicht_verfügbar (Fehler oder Init)"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  2  "nicht_gesteckt"
-map   t_airbag_02_ab_gurtschloss_reihe3_bf  3  "gesteckt"
-map   t_airbag_02_ab_sitzpos_sens_fa  0  "nicht verfügbar"
-map   t_airbag_02_ab_sitzpos_sens_fa  1  "Fehler"
-map   t_airbag_02_ab_sitzpos_sens_fa  2  "Sitz nicht vorne"
-map   t_airbag_02_ab_sitzpos_sens_fa  3  "Sitz vorne"
-map   t_airbag_02_ab_sitzpos_sens_bf  0  "nicht verfügbar"
-map   t_airbag_02_ab_sitzpos_sens_bf  1  "Fehler"
-map   t_airbag_02_ab_sitzpos_sens_bf  2  "Sitz nicht vorne"
-map   t_airbag_02_ab_sitzpos_sens_bf  3  "Sitz vorne"
 map   t_airbag_02_ab_wickelklappung_reihe2_bf  0  "nicht_verbaut"
 map   t_airbag_02_ab_wickelklappung_reihe2_bf  1  "nicht_verfuegbar__Fehler_oder_Init"
 map   t_airbag_02_ab_wickelklappung_reihe2_bf  2  "nicht_verriegelt"
@@ -1765,10 +1681,6 @@ map   t_airbag_04_abstwarn_mv_fas_fkt_status  0  "Init"
 map   t_airbag_04_abstwarn_mv_fas_fkt_status  1  "Funktion_Ist_Ein"
 map   t_airbag_04_abstwarn_mv_fas_fkt_status  2  "Funktion_Ist_Aus"
 map   t_airbag_04_abstwarn_mv_fas_fkt_status  3  "Fehler"
-map   t_airbag_04_warnbrems_charisma_status  0  "Init"
-map   t_airbag_04_warnbrems_charisma_status  1  "verfügbar"
-map   t_airbag_04_warnbrems_charisma_status  2  "nicht verfügbar"
-map   t_airbag_04_warnbrems_charisma_status  3  "asynchron durch Fahrerwunsch"
 map   t_airbag_04_warnbrems_charisma_fahrpr  0  "keine_Funktion"
 map   t_airbag_04_warnbrems_charisma_fahrpr  1  "Programm_1"
 map   t_airbag_04_warnbrems_charisma_fahrpr  2  "Programm_2"
@@ -2137,10 +2049,6 @@ map   t_klima_sensor_02_bcm_kompressorkupplung_status  2  "Init_oder_nicht_verba
 map   t_klima_sensor_02_bcm_kompressorkupplung_status  3  "Fehler"
 map   t_klima_sensor_02_bcm1_fstatus_aussentemp_ungef  0  "iO"
 map   t_klima_sensor_02_bcm1_fstatus_aussentemp_ungef  1  "niO"
-map   t_klima_sensor_04_ds_status  0  "i.O."
-map   t_klima_sensor_04_ds_status  1  "t.b.d."
-map   t_klima_sensor_04_ds_status  2  "Init bzw. nicht verfügbar"
-map   t_klima_sensor_04_ds_status  3  "Fehler"
 map   t_klima_sensor_04_ion_status_led  0  "Aus"
 map   t_klima_sensor_04_ion_status_led  1  "Ein"
 map   t_klima_sensor_04_ion_status_taster  0  "nicht_betaetigt"
@@ -2213,8 +2121,6 @@ map   t_motor_07_mo_absperrventil_oeffnen  0  "nicht_verfuegbar"
 map   t_motor_07_mo_absperrventil_oeffnen  1  "Ansteuerung_Ventil_zulaessig"
 map   t_motor_07_mo_absperrventil_oeffnen  2  "Ventil_oeffnen_oder_geoeffnet"
 map   t_motor_07_mo_absperrventil_oeffnen  3  "Ventil_schliessen_oder_geschlossen"
-map   t_motor_07_mo_kennfeldk  0  "keine Kennfeldkühlung vorhanden"
-map   t_motor_07_mo_kennfeldk  1  "Kennfeldkühlung vorhanden"
 map   t_motor_07_mo_getriebe_kuehlen  0  "nicht_kuehlen"
 map   t_motor_07_mo_getriebe_kuehlen  1  "kuehlen"
 map   t_motor_07_mo_spannungsanf  0  "keine_Anforderung"
@@ -2257,8 +2163,6 @@ map   t_einheiten_01_kbi_einheit_streckenanz  0  "Kilometer"
 map   t_einheiten_01_kbi_einheit_streckenanz  1  "Meilen"
 map   t_einheiten_01_kbi_mfa_v_einheit_02  0  "kmh"
 map   t_einheiten_01_kbi_mfa_v_einheit_02  1  "mph"
-map   t_einheiten_01_kbi_einheit_temp  0  "Grad Celsius °C"
-map   t_einheiten_01_kbi_einheit_temp  1  "Grad Fahrenheit °F"
 map   t_einheiten_01_kbi_einheit_uhrzeit  0  "24h"
 map   t_einheiten_01_kbi_einheit_uhrzeit  1  "12h AM/PM"
 map   t_einheiten_01_kbi_einheit_verbrauch  0  "mpg UK"
@@ -2597,10 +2501,6 @@ map   t_rear_view_01_rv_video_on  0  "Kamerabild wird nicht angezeigt"
 map   t_rear_view_01_rv_video_on  1  "Kamerabild wird angezeigt"
 map   t_rear_view_01_rv_dark_screen  0  "Kamerabild nicht verdunkeln"
 map   t_rear_view_01_rv_dark_screen  1  "Kamerabild verdunkeln"
-map   t_rear_view_01_rv_hmi_mode  0  "Parkluecke  (Modus 1)"
-map   t_rear_view_01_rv_hmi_mode  1  "Parallel zur Straߥ (Modus 2)"
-map   t_rear_view_01_rv_hmi_mode  2  "reserviert"
-map   t_rear_view_01_rv_hmi_mode  3  "Kalibrierung (nur Diagnose)"
 map   t_rear_view_01_rv_gl_side  0  "Guidelines_abgeschaltet"
 map   t_rear_view_01_rv_gl_side  1  "Guidelines_Anzeige_rechte_Seite"
 map   t_rear_view_01_rv_gl_side  2  "Guiedelines_Anzeige_linke_Seite"
@@ -2619,10 +2519,6 @@ map   t_rear_view_01_sv_video_on  0  "SideView_aus_/_nicht_verbaut"
 map   t_rear_view_01_sv_video_on  1  "SideView_an"
 map   t_rear_view_01_rv_calib_fehler  0  "Kalibrierung_i.O."
 map   t_rear_view_01_rv_calib_fehler  1  "RearView_nicht_kalibriert"
-map   t_rear_view_01_rv_gl_trailer_connect  0  "Guidelines_werden_angezeigt"
-map   t_rear_view_01_rv_gl_trailer_connect  1  "Guidelines_wegen_angekoppeltem_Anh䮧er_deaktiviert"
-map   t_rear_view_01_rv_gl_trunk_open  0  "Guidelines_werden_angezeigt"
-map   t_rear_view_01_rv_gl_trunk_open  1  "Guidelines_wegen_geöffneter_Heckklappe_deaktiviert"
 map   t_rear_view_01_rv_gl_lws_fehler  0  "Guidelines_werden_angezeigt"
 map   t_rear_view_01_rv_gl_lws_fehler  1  "Guidelines_wegen_nicht_kalibriertem_Lenkwinkelsensor_deaktiviert"
 map   t_rear_view_01_zfas_umfeldbeleuchtung_anf  0  "nicht_angefordert"
@@ -2691,7 +2587,7 @@ field     dbcvwmebgenerated.lwi_01_counter 0:72:4 uint
 field     dbcvwmebgenerated.lwi_01_lwi_sensorstatus 0:76:1 uint via t_lwi_01_lwi_sensorstatus
 field     dbcvwmebgenerated.lwi_01_lwi_qbit_sub_daten 0:77:1 uint via t_lwi_01_lwi_qbit_sub_daten
 field     dbcvwmebgenerated.lwi_01_lwi_mfl_abschaltung 0:78:1 uint via t_lwi_01_lwi_mfl_abschaltung
-field     dbcvwmebgenerated.lwi_01_lwi_qbit_lenkradwinkel 0:79:1 uint via t_lwi_01_lwi_qbit_lenkradwinkel
+field     dbcvwmebgenerated.lwi_01_lwi_qbit_lenkradwinkel 0:79:1 uint
 field     dbcvwmebgenerated.lwi_01_lwi_lenkradwinkel 0:80:13 uscale:843/10000
 field     dbcvwmebgenerated.lwi_01_lwi_vz_lenkradwinkel 0:93:1 uint via t_lwi_01_lwi_vz_lenkradwinkel
 field     dbcvwmebgenerated.lwi_01_lwi_vz_lenkradw_geschw 0:94:1 uint via t_lwi_01_lwi_vz_lenkradw_geschw
@@ -2758,7 +2654,7 @@ field     dbcvwmebgenerated.getriebe_11_ge_schaltablauf 0:111:2 uint via t_getri
 field     dbcvwmebgenerated.getriebe_11_ge_uefkt_unplausibel 0:113:1 uint via t_getriebe_11_ge_uefkt_unplausibel
 field     dbcvwmebgenerated.getriebe_11_ge_mmom_status_02 0:114:3 uint via t_getriebe_11_ge_mmom_status_02
 field     dbcvwmebgenerated.getriebe_11_ge_status_kraftschluss 0:117:3 uint via t_getriebe_11_ge_status_kraftschluss
-field     dbcvwmebgenerated.getriebe_11_ge_mmom_status 0:120:2 uint via t_getriebe_11_ge_mmom_status
+field     dbcvwmebgenerated.getriebe_11_ge_mmom_status 0:120:2 uint
 field     dbcvwmebgenerated.getriebe_11_ge_freig_mmom_vorhalt 0:122:1 uint via t_getriebe_11_ge_freig_mmom_vorhalt
 field     dbcvwmebgenerated.getriebe_11_ge_verbot_ausblendung 0:123:1 uint via t_getriebe_11_ge_verbot_ausblendung
 field     dbcvwmebgenerated.getriebe_11_ge_zielgang 0:124:4 uint
@@ -3007,7 +2903,7 @@ field     dbcvwmebgenerated.motor_41_mo_anzeige_stst_symbol 0:80:3 uint
 field     dbcvwmebgenerated.motor_41_mo_adr_status 0:83:2 uint via t_motor_41_mo_adr_status
 field     dbcvwmebgenerated.motor_41_mo_aga_sound_texte 0:85:2 uint
 field     dbcvwmebgenerated.motor_41_mo_anzeige_fmaus_text 0:87:1 uint via t_motor_41_mo_anzeige_fmaus_text
-field     dbcvwmebgenerated.motor_41_mo_fehler_mspg 0:88:1 uint via t_motor_41_mo_fehler_mspg
+field     dbcvwmebgenerated.motor_41_mo_fehler_mspg 0:88:1 uint
 field     dbcvwmebgenerated.motor_41_pea_texte 0:89:3 uint
 field     dbcvwmebgenerated.motor_41_tsk_ueberstimmt_vmax_fahrerinfo 0:92:2 uint
 field     dbcvwmebgenerated.motor_41_mo_avus_motorschutz 0:94:2 uint via t_motor_41_mo_avus_motorschutz
@@ -3167,7 +3063,7 @@ field     dbcvwmebgenerated.nvem_05_nvem_pilot_info 0:76:2 uint via t_nvem_05_nv
 field     dbcvwmebgenerated.nvem_05_nvem_p_generator_status 0:79:1 uint via t_nvem_05_nvem_p_generator_status
 field     dbcvwmebgenerated.nvem_05_bem_p_generator 0:80:8 uscale:50
 field     dbcvwmebgenerated.nvem_05_bem_n_lla 0:88:2 uint via t_nvem_05_bem_n_lla
-field     dbcvwmebgenerated.nvem_05_bem_anf_kl 0:93:1 uint via t_nvem_05_bem_anf_kl
+field     dbcvwmebgenerated.nvem_05_bem_anf_kl 0:93:1 uint
 field     dbcvwmebgenerated.nvem_05_bem_startstopp_info 0:94:2 uint via t_nvem_05_bem_startstopp_info
 field     dbcvwmebgenerated.nvem_05_bem_dfm 0:96:5 uscale:129/40:0.025
 field     dbcvwmebgenerated.nvem_05_bem_batt_ab 0:102:1 uint via t_nvem_05_bem_batt_ab
@@ -3404,7 +3300,7 @@ field     dbcvwmebgenerated.motor_26_wiv_sensorfehler 0:78:1 uint via t_motor_26
 field     dbcvwmebgenerated.motor_26_wiv_schieflage 0:79:1 uint via t_motor_26_wiv_schieflage
 field     dbcvwmebgenerated.motor_26_wiv_oelstand 0:80:4 uscale:25/2
 field     dbcvwmebgenerated.motor_26_mo_zustand_hwp 0:84:2 uint via t_motor_26_mo_zustand_hwp
-field     dbcvwmebgenerated.motor_26_olev_systemstoerung 0:86:1 uint via t_motor_26_olev_systemstoerung
+field     dbcvwmebgenerated.motor_26_olev_systemstoerung 0:86:1 uint
 field     dbcvwmebgenerated.motor_26_mo_oelwarnung_max 0:87:1 uint via t_motor_26_mo_oelwarnung_max
 field     dbcvwmebgenerated.motor_26_wiv_oelsystem_aktiv 0:88:1 uint via t_motor_26_wiv_oelsystem_aktiv
 field     dbcvwmebgenerated.motor_26_wiv_nicht_betriebswarm 0:89:1 uint via t_motor_26_wiv_nicht_betriebswarm
@@ -3415,14 +3311,14 @@ field     dbcvwmebgenerated.motor_26_mo_text_motorstart 0:96:4 uint
 field     dbcvwmebgenerated.motor_26_mo_e_texte 0:100:4 uint via t_motor_26_mo_e_texte
 field     dbcvwmebgenerated.motor_26_wiv_oeldyn_avl 0:104:1 uint via t_motor_26_wiv_oeldyn_avl
 field     dbcvwmebgenerated.motor_26_mo_text_partikelfil_reg 0:105:1 uint
-field     dbcvwmebgenerated.motor_26_olev_oelstand_nicht_vorhanden 0:106:1 uint via t_motor_26_olev_oelstand_nicht_vorhanden
+field     dbcvwmebgenerated.motor_26_olev_oelstand_nicht_vorhanden 0:106:1 uint
 field     dbcvwmebgenerated.motor_26_wiv_oelmenge 0:107:5 uscale:125
 field     dbcvwmebgenerated.motor_26_mo_systemlampe 0:112:1 uint via t_motor_26_mo_systemlampe
 field     dbcvwmebgenerated.motor_26_mo_obd2_lampe 0:113:1 uint via t_motor_26_mo_obd2_lampe
 field     dbcvwmebgenerated.motor_26_mo_heissleuchte 0:114:1 uint via t_motor_26_mo_heissleuchte
 field     dbcvwmebgenerated.motor_26_mo_partikel_lampe 0:115:1 uint via t_motor_26_mo_partikel_lampe
 field     dbcvwmebgenerated.motor_26_mo_redfahrleistung_lampe 0:116:1 uint via t_motor_26_mo_redfahrleistung_lampe
-field     dbcvwmebgenerated.motor_26_wiv_oelstand_nicht_vorhanden 0:117:1 uint via t_motor_26_wiv_oelstand_nicht_vorhanden
+field     dbcvwmebgenerated.motor_26_wiv_oelstand_nicht_vorhanden 0:117:1 uint
 field     dbcvwmebgenerated.motor_26_wiv_nachfuellanzeige_ein 0:118:1 uint via t_motor_26_wiv_nachfuellanzeige_ein
 field     dbcvwmebgenerated.motor_26_wiv_ueberfuell_deaktiv 0:119:1 uint via t_motor_26_wiv_ueberfuell_deaktiv
 field     dbcvwmebgenerated.motor_26_wiv_unterfuell_warn 0:120:1 uint via t_motor_26_wiv_unterfuell_warn
@@ -3447,7 +3343,7 @@ field     dbcvwmebgenerated.motor_26_wiv_sensorfehler 0:78:1 uint via t_motor_26
 field     dbcvwmebgenerated.motor_26_wiv_schieflage 0:79:1 uint via t_motor_26_wiv_schieflage
 field     dbcvwmebgenerated.motor_26_wiv_oelstand 0:80:4 uscale:25/2
 field     dbcvwmebgenerated.motor_26_mo_zustand_hwp 0:84:2 uint via t_motor_26_mo_zustand_hwp
-field     dbcvwmebgenerated.motor_26_olev_systemstoerung 0:86:1 uint via t_motor_26_olev_systemstoerung
+field     dbcvwmebgenerated.motor_26_olev_systemstoerung 0:86:1 uint
 field     dbcvwmebgenerated.motor_26_mo_oelwarnung_max 0:87:1 uint via t_motor_26_mo_oelwarnung_max
 field     dbcvwmebgenerated.motor_26_wiv_oelsystem_aktiv 0:88:1 uint via t_motor_26_wiv_oelsystem_aktiv
 field     dbcvwmebgenerated.motor_26_wiv_nicht_betriebswarm 0:89:1 uint via t_motor_26_wiv_nicht_betriebswarm
@@ -3458,14 +3354,14 @@ field     dbcvwmebgenerated.motor_26_mo_text_motorstart 0:96:4 uint
 field     dbcvwmebgenerated.motor_26_mo_e_texte 0:100:4 uint via t_motor_26_mo_e_texte
 field     dbcvwmebgenerated.motor_26_wiv_oeldyn_avl 0:104:1 uint via t_motor_26_wiv_oeldyn_avl
 field     dbcvwmebgenerated.motor_26_mo_text_partikelfil_reg 0:105:1 uint
-field     dbcvwmebgenerated.motor_26_olev_oelstand_nicht_vorhanden 0:106:1 uint via t_motor_26_olev_oelstand_nicht_vorhanden
+field     dbcvwmebgenerated.motor_26_olev_oelstand_nicht_vorhanden 0:106:1 uint
 field     dbcvwmebgenerated.motor_26_wiv_oelmenge 0:107:5 uscale:125
 field     dbcvwmebgenerated.motor_26_mo_systemlampe 0:112:1 uint via t_motor_26_mo_systemlampe
 field     dbcvwmebgenerated.motor_26_mo_obd2_lampe 0:113:1 uint via t_motor_26_mo_obd2_lampe
 field     dbcvwmebgenerated.motor_26_mo_heissleuchte 0:114:1 uint via t_motor_26_mo_heissleuchte
 field     dbcvwmebgenerated.motor_26_mo_partikel_lampe 0:115:1 uint via t_motor_26_mo_partikel_lampe
 field     dbcvwmebgenerated.motor_26_mo_redfahrleistung_lampe 0:116:1 uint via t_motor_26_mo_redfahrleistung_lampe
-field     dbcvwmebgenerated.motor_26_wiv_oelstand_nicht_vorhanden 0:117:1 uint via t_motor_26_wiv_oelstand_nicht_vorhanden
+field     dbcvwmebgenerated.motor_26_wiv_oelstand_nicht_vorhanden 0:117:1 uint
 field     dbcvwmebgenerated.motor_26_wiv_nachfuellanzeige_ein 0:118:1 uint via t_motor_26_wiv_nachfuellanzeige_ein
 field     dbcvwmebgenerated.motor_26_wiv_ueberfuell_deaktiv 0:119:1 uint via t_motor_26_wiv_ueberfuell_deaktiv
 field     dbcvwmebgenerated.motor_26_wiv_unterfuell_warn 0:120:1 uint via t_motor_26_wiv_unterfuell_warn
@@ -3522,7 +3418,7 @@ field     dbcvwmebgenerated.tsg_hfs_01_mthfs_pos1 0:113:1 uint via t_tsg_hfs_01_
 field     dbcvwmebgenerated.tsg_hfs_01_mthfs_pos2 0:114:1 uint via t_tsg_hfs_01_mthfs_pos2
 field     dbcvwmebgenerated.tsg_hfs_01_mthfs_pos3 0:115:1 uint via t_tsg_hfs_01_mthfs_pos3
 field     dbcvwmebgenerated.tsg_hfs_01_hfs_mrollo_schalter 0:116:3 uint via t_tsg_hfs_01_hfs_mrollo_schalter
-field     dbcvwmebgenerated.tsg_hfs_01_hfs_lock_taster_inv 0:119:1 uint via t_tsg_hfs_01_hfs_lock_taster_inv
+field     dbcvwmebgenerated.tsg_hfs_01_hfs_lock_taster_inv 0:119:1 uint
 field     dbcvwmebgenerated.tsg_hfs_01_hfs_status_etag 0:120:2 uint via t_tsg_hfs_01_hfs_status_etag
 field     dbcvwmebgenerated.tsg_hfs_01_hfs_tuer_status_qbit 0:122:1 uint via t_tsg_hfs_01_hfs_tuer_status_qbit
 field     dbcvwmebgenerated.tsg_hfs_01_hfs_tcr_mode_aktiv 0:123:1 uint via t_tsg_hfs_01_hfs_tcr_mode_aktiv
@@ -3573,7 +3469,7 @@ field     dbcvwmebgenerated.tsg_hbfs_01_mthbfs_pos1 0:113:1 uint via t_tsg_hbfs_
 field     dbcvwmebgenerated.tsg_hbfs_01_mthbfs_pos2 0:114:1 uint via t_tsg_hbfs_01_mthbfs_pos2
 field     dbcvwmebgenerated.tsg_hbfs_01_mthbfs_pos3 0:115:1 uint via t_tsg_hbfs_01_mthbfs_pos3
 field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_mrollo_schalter 0:116:3 uint via t_tsg_hbfs_01_hbfs_mrollo_schalter
-field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_lock_taster_inv 0:119:1 uint via t_tsg_hbfs_01_hbfs_lock_taster_inv
+field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_lock_taster_inv 0:119:1 uint
 field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_status_kisi_inv 0:120:1 uint via t_tsg_hbfs_01_hbfs_status_kisi_inv
 field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_status_etag 0:121:2 uint via t_tsg_hbfs_01_hbfs_status_etag
 field     dbcvwmebgenerated.tsg_hbfs_01_hbfs_tuer_status_qbit 0:123:1 uint via t_tsg_hbfs_01_hbfs_tuer_status_qbit
@@ -3722,7 +3618,7 @@ field     dbcvwmebgenerated.licht_hinten_01_lh_blinker_hr_akt 0:79:1 uint
 field     dbcvwmebgenerated.licht_hinten_01_lh_blinker_li_def 0:80:1 uint via t_licht_hinten_01_lh_blinker_li_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_bremsl_li_def 0:81:1 uint via t_licht_hinten_01_lh_bremsl_li_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schlusslicht_li_def 0:82:1 uint via t_licht_hinten_01_lh_schlusslicht_li_def
-field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_li_def 0:83:1 uint via t_licht_hinten_01_lh_rueckf_li_def
+field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_li_def 0:83:1 uint
 field     dbcvwmebgenerated.licht_hinten_01_lh_nebel_li_def 0:84:1 uint via t_licht_hinten_01_lh_nebel_li_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schluss_brems_nebel_li_def 0:85:1 uint via t_licht_hinten_01_lh_schluss_brems_nebel_li_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schluss_brems_nebel_re_def 0:86:1 uint via t_licht_hinten_01_lh_schluss_brems_nebel_re_def
@@ -3738,7 +3634,7 @@ field     dbcvwmebgenerated.licht_hinten_01_lh_diag_led_re_def 0:95:1 uint via t
 field     dbcvwmebgenerated.licht_hinten_01_lh_blinker_re_def 0:96:1 uint via t_licht_hinten_01_lh_blinker_re_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_bremsl_re_def 0:97:1 uint via t_licht_hinten_01_lh_bremsl_re_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schlusslicht_re_def 0:98:1 uint via t_licht_hinten_01_lh_schlusslicht_re_def
-field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_re_def 0:99:1 uint via t_licht_hinten_01_lh_rueckf_re_def
+field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_re_def 0:99:1 uint
 field     dbcvwmebgenerated.licht_hinten_01_lh_nebel_re_def 0:100:1 uint via t_licht_hinten_01_lh_nebel_re_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schluss_brems_mi_def 0:101:1 uint via t_licht_hinten_01_lh_schluss_brems_mi_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_schluss_brems_re_def 0:104:1 uint via t_licht_hinten_01_lh_schluss_brems_re_def
@@ -3748,7 +3644,7 @@ field     dbcvwmebgenerated.licht_hinten_01_lh_brems_blk_re_def 0:107:1 uint via
 field     dbcvwmebgenerated.licht_hinten_01_lh_kennzl_def 0:112:1 uint via t_licht_hinten_01_lh_kennzl_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_3_bremsl_def 0:113:1 uint via t_licht_hinten_01_lh_3_bremsl_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_nebel_mi_def 0:114:1 uint via t_licht_hinten_01_lh_nebel_mi_def
-field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_mi_def 0:115:1 uint via t_licht_hinten_01_lh_rueckf_mi_def
+field     dbcvwmebgenerated.licht_hinten_01_lh_rueckf_mi_def 0:115:1 uint
 field     dbcvwmebgenerated.licht_hinten_01_lh_schlusslicht_mi_def 0:116:1 uint via t_licht_hinten_01_lh_schlusslicht_mi_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_bremsl_mi_def 0:117:1 uint via t_licht_hinten_01_lh_bremsl_mi_def
 field     dbcvwmebgenerated.licht_hinten_01_lh_bremsl_li_ges_def 0:118:1 uint via t_licht_hinten_01_lh_bremsl_li_ges_def
@@ -3924,12 +3820,12 @@ field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit 0:80:5 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_typ 0:85:2 uint via t_psd_06_psd_ges_typ
 field     dbcvwmebgenerated.psd_06_psd_ges_spur_geschw_begrenzung 0:87:6 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_gespann 0:93:2 uint
-field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_witter 0:95:2 uint via t_psd_06_psd_ges_geschwindigkeit_witter
+field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_witter 0:95:2 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_tag_anf 0:97:3 uint via t_psd_06_psd_ges_geschwindigkeit_tag_anf
 field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_tag_ende 0:100:3 uint via t_psd_06_psd_ges_geschwindigkeit_tag_ende
 field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_std_anf 0:103:5 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_geschwindigkeit_std_ende 0:108:5 uint
-field     dbcvwmebgenerated.psd_06_psd_ges_ueberholverbot 0:113:2 uint via t_psd_06_psd_ges_ueberholverbot
+field     dbcvwmebgenerated.psd_06_psd_ges_ueberholverbot 0:113:2 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_wechselverkehrszeichen 0:115:3 uint
 field     dbcvwmebgenerated.psd_06_psd_wechselverkehrszeichen_typ 0:118:2 uint
 field     dbcvwmebgenerated.psd_06_psd_ges_gesetzlich_kategorie 0:120:3 uint
@@ -4020,7 +3916,7 @@ field     dbcvwmebgenerated.parkhilfe_01_ph_visualisierung 0:64:3 uint
 field     dbcvwmebgenerated.parkhilfe_01_pdc_tonausgabe_front 0:68:4 uint
 field     dbcvwmebgenerated.parkhilfe_01_pdc_tonausgabe_heck 0:72:4 uint
 field     dbcvwmebgenerated.parkhilfe_01_ph_nachtr_stopp_anf 0:76:1 uint via t_parkhilfe_01_ph_nachtr_stopp_anf
-field     dbcvwmebgenerated.parkhilfe_01_ph_abschaltursache 0:77:3 uint via t_parkhilfe_01_ph_abschaltursache
+field     dbcvwmebgenerated.parkhilfe_01_ph_abschaltursache 0:77:3 uint
 field     dbcvwmebgenerated.parkhilfe_01_ph_opt_anzeige_v_ein 0:80:1 uint via t_parkhilfe_01_ph_opt_anzeige_v_ein
 field     dbcvwmebgenerated.parkhilfe_01_ph_opt_anzeige_h_ein 0:81:1 uint via t_parkhilfe_01_ph_opt_anzeige_h_ein
 field     dbcvwmebgenerated.parkhilfe_01_ph_opt_anz_v_hindernis 0:82:1 uint via t_parkhilfe_01_ph_opt_anz_v_hindernis
@@ -4029,7 +3925,7 @@ field     dbcvwmebgenerated.parkhilfe_01_ph_tongeber_v_aktiv 0:84:1 uint via t_p
 field     dbcvwmebgenerated.parkhilfe_01_ph_tongeber_h_aktiv 0:85:1 uint via t_parkhilfe_01_ph_tongeber_h_aktiv
 field     dbcvwmebgenerated.parkhilfe_01_ph_tongeber_mute 0:86:1 uint via t_parkhilfe_01_ph_tongeber_mute
 field     dbcvwmebgenerated.parkhilfe_01_ph_anf_audioabsenkung 0:87:1 uint via t_parkhilfe_01_ph_anf_audioabsenkung
-field     dbcvwmebgenerated.parkhilfe_01_ph_tongeber_h_verfuegbar 0:88:1 uint via t_parkhilfe_01_ph_tongeber_h_verfuegbar
+field     dbcvwmebgenerated.parkhilfe_01_ph_tongeber_h_verfuegbar 0:88:1 uint
 field     dbcvwmebgenerated.parkhilfe_01_pla_anf_aufschaltung_rvc 0:89:1 uint via t_parkhilfe_01_pla_anf_aufschaltung_rvc
 field     dbcvwmebgenerated.parkhilfe_01_ph_taster 0:92:2 uint via t_parkhilfe_01_ph_taster
 field     dbcvwmebgenerated.parkhilfe_01_ph_anf_verdeck 0:94:2 uint
@@ -4088,16 +3984,16 @@ field     dbcvwmebgenerated.airbag_02_sc_pao_on_anf 0:96:2 uint via t_airbag_02_
 field     dbcvwmebgenerated.airbag_02_sc_pao_off_anf 0:98:2 uint via t_airbag_02_sc_pao_off_anf
 field     dbcvwmebgenerated.airbag_02_ab_crashschwere 0:100:3 uint via t_airbag_02_ab_crashschwere
 field     dbcvwmebgenerated.airbag_02_ab_anforderung_usm 0:103:1 uint via t_airbag_02_ab_anforderung_usm
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_fa 0:104:2 uint via t_airbag_02_ab_gurtschloss_fa
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_bf 0:106:2 uint via t_airbag_02_ab_gurtschloss_bf
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_fa 0:108:2 uint via t_airbag_02_ab_gurtschloss_reihe2_fa
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_mi 0:110:2 uint via t_airbag_02_ab_gurtschloss_reihe2_mi
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_bf 0:112:2 uint via t_airbag_02_ab_gurtschloss_reihe2_bf
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_fa 0:114:2 uint via t_airbag_02_ab_gurtschloss_reihe3_fa
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_mi 0:116:2 uint via t_airbag_02_ab_gurtschloss_reihe3_mi
-field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_bf 0:118:2 uint via t_airbag_02_ab_gurtschloss_reihe3_bf
-field     dbcvwmebgenerated.airbag_02_ab_sitzpos_sens_fa 0:120:2 uint via t_airbag_02_ab_sitzpos_sens_fa
-field     dbcvwmebgenerated.airbag_02_ab_sitzpos_sens_bf 0:122:2 uint via t_airbag_02_ab_sitzpos_sens_bf
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_fa 0:104:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_bf 0:106:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_fa 0:108:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_mi 0:110:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe2_bf 0:112:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_fa 0:114:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_mi 0:116:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_gurtschloss_reihe3_bf 0:118:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_sitzpos_sens_fa 0:120:2 uint
+field     dbcvwmebgenerated.airbag_02_ab_sitzpos_sens_bf 0:122:2 uint
 field     dbcvwmebgenerated.airbag_02_ab_wickelklappung_reihe2_bf 0:124:2 uint via t_airbag_02_ab_wickelklappung_reihe2_bf
 field     dbcvwmebgenerated.airbag_02_ab_wickelklappung_reihe2_fa 0:126:2 uint via t_airbag_02_ab_wickelklappung_reihe2_fa
 
@@ -4108,7 +4004,7 @@ requires  dbcvwmebgenerated.airbag_04_ab_gurtwarn_reihe2_fa dbcvwmebgenerated.ai
 field     dbcvwmebgenerated.airbag_04_ab_gurtwarn_reihe2_fa 0:84:2 uint via t_airbag_04_ab_gurtwarn_reihe2_fa
 field     dbcvwmebgenerated.airbag_04_ab_gurtwarn_reihe2_bf 0:86:2 uint via t_airbag_04_ab_gurtwarn_reihe2_bf
 field     dbcvwmebgenerated.airbag_04_abstwarn_mv_fas_fkt_status 0:88:2 uint via t_airbag_04_abstwarn_mv_fas_fkt_status
-field     dbcvwmebgenerated.airbag_04_warnbrems_charisma_status 0:90:2 uint via t_airbag_04_warnbrems_charisma_status
+field     dbcvwmebgenerated.airbag_04_warnbrems_charisma_status 0:90:2 uint
 field     dbcvwmebgenerated.airbag_04_warnbrems_charisma_fahrpr 0:92:4 uint via t_airbag_04_warnbrems_charisma_fahrpr
 field     dbcvwmebgenerated.airbag_04_ab_gurtwarn_reihe2_mi 0:96:2 uint via t_airbag_04_ab_gurtwarn_reihe2_mi
 field     dbcvwmebgenerated.airbag_04_ab_gurtwarn_reihe3_fa 0:98:2 uint via t_airbag_04_ab_gurtwarn_reihe3_fa
@@ -4352,7 +4248,7 @@ when      0:0:32 1513
 when      0:32:8 8
 requires  dbcvwmebgenerated.klima_sensor_04_ds_kaeltemittel_p dbcvwmebgenerated.klima_sensor_04_ds_status dbcvwmebgenerated.klima_sensor_04_ion_status
 field     dbcvwmebgenerated.klima_sensor_04_ds_kaeltemittel_p 0:72:11 uscale:161/10000
-field     dbcvwmebgenerated.klima_sensor_04_ds_status 0:83:2 uint via t_klima_sensor_04_ds_status
+field     dbcvwmebgenerated.klima_sensor_04_ds_status 0:83:2 uint
 field     dbcvwmebgenerated.klima_sensor_04_ion_status 0:85:2 uint
 field     dbcvwmebgenerated.klima_sensor_04_ion_status_led 0:87:1 uint via t_klima_sensor_04_ion_status_led
 field     dbcvwmebgenerated.klima_sensor_04_aau_geblaese 0:88:7 uint
@@ -4414,7 +4310,7 @@ field     dbcvwmebgenerated.motor_07_mo_ansaugluft_temp 0:72:8 uscale:3/4:-48
 field     dbcvwmebgenerated.motor_07_mo_oel_temp 0:80:8 uscale:1:-60
 field     dbcvwmebgenerated.motor_07_mo_kuehlmittel_temp 0:88:8 uscale:3/4:-48
 field     dbcvwmebgenerated.motor_07_mo_hoeheninfo 0:96:8 uscale:781/100000
-field     dbcvwmebgenerated.motor_07_mo_kennfeldk 0:104:1 uint via t_motor_07_mo_kennfeldk
+field     dbcvwmebgenerated.motor_07_mo_kennfeldk 0:104:1 uint
 field     dbcvwmebgenerated.motor_07_mo_versionsinfo 0:105:6 uint
 field     dbcvwmebgenerated.motor_07_mo_getriebe_kuehlen 0:111:1 uint via t_motor_07_mo_getriebe_kuehlen
 field     dbcvwmebgenerated.motor_07_mo_mom_traegheit_02 0:112:5 uscale:1/100
@@ -4452,7 +4348,7 @@ field     dbcvwmebgenerated.einheiten_01_kbi_einheit_datum 0:64:2 uint via t_ein
 field     dbcvwmebgenerated.einheiten_01_kbi_einheit_druck 0:66:2 uint via t_einheiten_01_kbi_einheit_druck
 field     dbcvwmebgenerated.einheiten_01_kbi_einheit_streckenanz 0:68:1 uint via t_einheiten_01_kbi_einheit_streckenanz
 field     dbcvwmebgenerated.einheiten_01_kbi_mfa_v_einheit_02 0:69:1 uint via t_einheiten_01_kbi_mfa_v_einheit_02
-field     dbcvwmebgenerated.einheiten_01_kbi_einheit_temp 0:70:1 uint via t_einheiten_01_kbi_einheit_temp
+field     dbcvwmebgenerated.einheiten_01_kbi_einheit_temp 0:70:1 uint
 field     dbcvwmebgenerated.einheiten_01_kbi_einheit_uhrzeit 0:71:1 uint via t_einheiten_01_kbi_einheit_uhrzeit
 field     dbcvwmebgenerated.einheiten_01_kbi_einheit_verbrauch 0:72:2 uint via t_einheiten_01_kbi_einheit_verbrauch
 field     dbcvwmebgenerated.einheiten_01_kbi_einheit_volumen 0:74:2 uint via t_einheiten_01_kbi_einheit_volumen
@@ -4672,7 +4568,7 @@ when      0:32:8 8
 requires  dbcvwmebgenerated.rear_view_01_rv_video_on dbcvwmebgenerated.rear_view_01_rv_dark_screen dbcvwmebgenerated.rear_view_01_rv_hmi_mode
 field     dbcvwmebgenerated.rear_view_01_rv_video_on 0:64:1 uint via t_rear_view_01_rv_video_on
 field     dbcvwmebgenerated.rear_view_01_rv_dark_screen 0:65:1 uint via t_rear_view_01_rv_dark_screen
-field     dbcvwmebgenerated.rear_view_01_rv_hmi_mode 0:66:2 uint via t_rear_view_01_rv_hmi_mode
+field     dbcvwmebgenerated.rear_view_01_rv_hmi_mode 0:66:2 uint
 field     dbcvwmebgenerated.rear_view_01_rv_gl_side 0:68:2 uint via t_rear_view_01_rv_gl_side
 field     dbcvwmebgenerated.rear_view_01_rv_system_aktiv 0:70:1 uint via t_rear_view_01_rv_system_aktiv
 field     dbcvwmebgenerated.rear_view_01_rv_reinigung_anf 0:71:1 uint via t_rear_view_01_rv_reinigung_anf
@@ -4680,8 +4576,8 @@ field     dbcvwmebgenerated.rear_view_01_rv_settings_enabled 0:72:1 uint via t_r
 field     dbcvwmebgenerated.rear_view_01_rv_menu_item 0:73:2 uint via t_rear_view_01_rv_menu_item
 field     dbcvwmebgenerated.rear_view_01_sv_video_on 0:75:1 uint via t_rear_view_01_sv_video_on
 field     dbcvwmebgenerated.rear_view_01_rv_calib_fehler 0:76:1 uint via t_rear_view_01_rv_calib_fehler
-field     dbcvwmebgenerated.rear_view_01_rv_gl_trailer_connect 0:77:1 uint via t_rear_view_01_rv_gl_trailer_connect
-field     dbcvwmebgenerated.rear_view_01_rv_gl_trunk_open 0:78:1 uint via t_rear_view_01_rv_gl_trunk_open
+field     dbcvwmebgenerated.rear_view_01_rv_gl_trailer_connect 0:77:1 uint
+field     dbcvwmebgenerated.rear_view_01_rv_gl_trunk_open 0:78:1 uint
 field     dbcvwmebgenerated.rear_view_01_rv_gl_lws_fehler 0:79:1 uint via t_rear_view_01_rv_gl_lws_fehler
 field     dbcvwmebgenerated.rear_view_01_rv_helligkeit 0:80:7 uint
 field     dbcvwmebgenerated.rear_view_01_zfas_umfeldbeleuchtung_anf 0:87:1 uint via t_rear_view_01_zfas_umfeldbeleuchtung_anf

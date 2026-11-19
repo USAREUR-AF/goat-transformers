@@ -43,12 +43,14 @@ if [ "${1:-}" != "--check" ]; then
     fi
   done
 fi
-# Value tables whose label text the repository's boundary gate does not admit:
-# the signals keep their numbers, and each pack.md says so.
+# Value tables whose label text the repository's boundary gate does not admit,
+# and (--ascii-tables-only) every table with a label that is not plain ASCII,
+# which the embedded device profile does not yet carry: the signals keep their
+# numbers, and each pack.md says so.
 NO_TABLE=(
   --no-table psa_aee2010_r3:HS2_DYN1_MDD_ETAT_2B6.MDD_DECEL_CONTROL_REQ
   --no-table psa_aee2010_r3:HS2_DYN_MDD_ETAT_2F6.MDD_DECEL_CONTROL_REQ
   --no-table ford_lincoln_base_pt:Cluster_HEV_Data7_FD1.PreCondStat_D_Dsply
 )
 python3 -I "$GEN/dbc2pack.py" --src "$SRC/opendbc-$COMMIT" --out "$ROOT" --core-def "$ROOT/model/core.def" \
-  "${NO_TABLE[@]}" "$@"
+  --ascii-tables-only "${NO_TABLE[@]}" "$@"

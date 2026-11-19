@@ -180,7 +180,21 @@ class NoTable(DbcCase):
         intel = self.text(root, "dbc-car-intel")
         self.assertNotIn("t_speed_gear", intel)
         self.assertIn("field     dbccarintel.speed_gear 0:80:3 uint\n", intel)
-        self.assertIn("are left out by the run (`--no-table`)", self.text(root, "dbc-car-intel", "pack.md"))
+        self.assertIn("| SPEED | GEAR | named by `--no-table` |", self.text(root, "dbc-car-intel", "pack.md"))
+
+    def test_ascii_tables_only_leaves_out_a_table_with_a_non_ascii_label(self):
+        path = os.path.join(self.src, "opendbc", "dbc", "car_intel.dbc")
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read().replace('1 "open"', '1 "ge\u00f6ffnet"')
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        root = self.make_root()
+        status, _, err = self.run_gen(root, "--ascii-tables-only",
+                                      "--commit", "0123456789abcdef0123456789abcdef01234567")
+        self.assertEqual((status, err), (0, ""))
+        self.assertNotIn("t_speed_door_open", self.text(root, "dbc-car-intel"))
+        self.assertIn("t_speed_gear", self.text(root, "dbc-car-intel"))
+        self.assertIn("| SPEED | DOOR_OPEN | non-ASCII labels", self.text(root, "dbc-car-intel", "pack.md"))
 
     def test_a_malformed_no_table_is_a_refusal(self):
         root = self.make_root()
