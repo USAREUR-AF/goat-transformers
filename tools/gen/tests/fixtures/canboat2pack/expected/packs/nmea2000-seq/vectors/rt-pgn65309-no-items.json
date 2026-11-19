@@ -1,0 +1,11 @@
+{
+  "name": "pgn65309-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "1dff00e79b00",
+  "expect": "1dff00e79b00",
+  "model": {
+    "@kind": "pgn65309",
+    "n2k.pgn65309_pairs.#": "0"
+  }
+}

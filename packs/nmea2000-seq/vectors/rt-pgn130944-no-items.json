@@ -1,0 +1,12 @@
+{
+  "name": "pgn130944-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "80ff018798ff00",
+  "expect": "80ff018798ff00",
+  "model": {
+    "@kind": "pgn130944",
+    "n2k.control": "1",
+    "n2k.pgn130944_number_of_id_test_result_pairs_to_follow.#": "0"
+  }
+}

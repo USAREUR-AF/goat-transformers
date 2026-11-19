@@ -1,0 +1,15 @@
+{
+  "name": "pgn126720_airmar_calibrate_speed-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "00ef01879829026fa181230ed4db50",
+  "expect": "00ef01879829026fa181230ed4db50",
+  "model": {
+    "@kind": "pgn126720_airmar_calibrate_speed",
+    "n2k.pgn126720_number_of_pairs_of_data_points.#": "2",
+    "n2k.pgn126720_number_of_pairs_of_data_points[0].n2k.input_frequency": "4132.7",
+    "n2k.pgn126720_number_of_pairs_of_data_points[0].n2k.output_speed": "90.89",
+    "n2k.pgn126720_number_of_pairs_of_data_points[1].n2k.input_frequency": "5428.6",
+    "n2k.pgn126720_number_of_pairs_of_data_points[1].n2k.output_speed": "206.99"
+  }
+}

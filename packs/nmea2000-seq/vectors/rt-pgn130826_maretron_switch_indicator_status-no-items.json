@@ -1,0 +1,12 @@
+{
+  "name": "pgn130826_maretron_switch_indicator_status-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "0aff0189983d00",
+  "expect": "0aff0189983d00",
+  "model": {
+    "@kind": "pgn130826_maretron_switch_indicator_status",
+    "n2k.indicator_bank_instance": "61",
+    "n2k.pgn130826_number_of_status_fields.#": "0"
+  }
+}

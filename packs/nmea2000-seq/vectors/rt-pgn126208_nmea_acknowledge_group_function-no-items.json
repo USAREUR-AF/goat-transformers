@@ -1,0 +1,14 @@
+{
+  "name": "pgn126208_nmea_acknowledge_group_function-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "00ed010235e9027600",
+  "expect": "00ed010235e9027600",
+  "model": {
+    "@kind": "pgn126208_nmea_acknowledge_group_function",
+    "n2k.pgn": "190773",
+    "n2k.pgn_error_code": "6",
+    "n2k.transmission_interval_priority_error_code": "7",
+    "n2k.pgn126208_number_of_parameters.#": "0"
+  }
+}

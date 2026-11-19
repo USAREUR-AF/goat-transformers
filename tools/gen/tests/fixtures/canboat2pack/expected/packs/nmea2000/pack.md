@@ -25,15 +25,16 @@ payload field sits at CANboat's `BitOffset` + 24. Input and output are hex text.
 
 | | Count |
 |---|---|
-| PGN definitions in the source | 15 |
+| PGN definitions in the source | 18 |
 | kinds in `pack.def` | 9 |
 | distinct PGNs with at least one kind | 8 |
+| mapped by pack `nmea2000-seq` (a repeating field set with a count) | 3 |
 | not mapped: repeating field sets | 1 |
 | not mapped: variable-length or conditionally placed fields | 1 |
 | not mapped: catch-all definitions for a range of PGNs | 1 |
 | not mapped: not distinguishable from another definition of the same PGN | 2 |
 | not mapped: no field the pack language can carry | 1 |
-| keys in module `n2k` | 21 |
+| keys in module `n2k` that this pack maps | 21 |
 | vectors | 14 (9 same-format round trips, 5 to `geojson`) |
 
 One kind per fixed-layout PGN definition, named `pgn<number>`, with the CANboat definition id
@@ -87,7 +88,8 @@ for those, an encode from another format selects the first in pack order.
   database, so it stays `n2k.cog` in radians. The generator maps `course` with the factor
   resolution x 180/pi when a definition states a true-north reference and has no selector.
 - `hae`: no kind maps it. No fixed-layout altitude field is stated to be above the WGS84
-  ellipsoid (PGN 129029 says "referenced to WGS-84" and is not fixed-layout).
+  ellipsoid (PGN 129029, in pack `nmea2000-seq`, says "referenced to WGS-84" and does not name
+  the ellipsoid).
 
 ## What the pack language cannot express yet
 
@@ -100,9 +102,10 @@ for those, an encode from another format selects the first in pack order.
 - **Trailing bytes.** The message ends at the last mapped or `when` bit, rounded up to a
   byte. A definition that ends in reserved fields encodes shorter than its NMEA 2000 length
   (PGN 129026 encodes 3 + 6 bytes, not 3 + 8). Decode accepts the full length.
-- **Repeating field sets and variable-length fields** (STRING_LAU, STRING_LZ, VARIABLE,
-  BINARY of variable size, key/length/value fields, fields placed after any of these). These
-  need the future groups addition; the definitions are listed below.
+- **Repeating field sets and variable-length fields.** The layout of this pack is fixed
+  (`layout` is pack-wide). A definition with one repeating field set whose count field stands
+  directly before the set is in pack `nmea2000-seq` (spec 0.8 sequential layout). The others,
+  listed below with the reason, need an addition named in `packs/nmea2000-seq/pack.md`.
 - **PGN ranges.** A `when` compares for equality, so CANboat's catch-all definitions for a
   range of PGNs (proprietary ranges) have no kind.
 - **CAN framing**: identifier, priority, addresses, fast-packet and ISO transport reassembly.
@@ -134,7 +137,8 @@ in the comment above the kind in `pack.def`.
   `@kind` and every decoded key.
 - `x01-pgn129025-to-geojson.json`, `x02-pgn129025-south-west-to-geojson.json`, `x03-pgn129026-to-geojson.json`, `x04-pgn129026-magnetic-cog-to-geojson.json`, `x05-pgn129038-ais-class-a-to-geojson.json`: conversions to `geojson`, with the expected text
   written by hand from the canonical GeoJSON rules and checked by the generator against its
-  own codec. PGN 129029 has no vector: it has a repeating field set and no kind.
+  own codec. PGN 129029 (GNSS Position Data) is in pack `nmea2000-seq`, with its own vector to
+  `geojson`.
 
 Vectors hold lowercase hex text in `input` / `expect`.
 
@@ -142,15 +146,17 @@ Vectors hold lowercase hex text in `input` / `expect`.
 
 ### Repeating field sets (1)
 
-These need the future groups addition.
+The Detail column names what the pack language cannot state; `packs/nmea2000-seq/pack.md`
+names the addition each needs.
 
 | PGN | CANboat id | Description | Detail |
 |---|---|---|---|
-| 65304 | `labLogEntries` | Lab: log entries | repeating field set |
+| 65310 | `labRouteLimits` | Lab: route limits | repeating field set whose count (field 2) is not directly before the set (field 4) |
 
 ### Variable-length or conditionally placed fields (1)
 
-These need the future groups addition.
+The Detail column names what the pack language cannot state; `packs/nmea2000-seq/pack.md`
+names the addition each needs.
 
 | PGN | CANboat id | Description | Detail |
 |---|---|---|---|

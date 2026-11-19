@@ -1,0 +1,7 @@
+{
+  "name": "pgn129029-count-beyond-the-input",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "05f80103008014ebb72c49070080e4f642df9f0020bcbe000000000002a0029600",
+  "expect_error": "malformed-wire"
+}

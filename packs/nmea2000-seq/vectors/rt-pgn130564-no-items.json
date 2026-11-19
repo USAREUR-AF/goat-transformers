@@ -1,0 +1,13 @@
+{
+  "name": "pgn130564-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04fe0111c58d870000",
+  "expect": "04fe0111c58d870000",
+  "model": {
+    "@kind": "pgn130564",
+    "n2k.index_of_first_device": "50449",
+    "n2k.total_number_of_devices": "34701",
+    "n2k.pgn130564_number_of_devices.#": "0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "pgn65309-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "1dff00e79b02e11361244abfed73",
+  "expect": "1dff00e79b02e11361244abfed73",
+  "model": {
+    "@kind": "pgn65309",
+    "n2k.pgn65309_pairs.#": "2",
+    "n2k.pgn65309_pairs[0].n2k.input_frequency": "508.9",
+    "n2k.pgn65309_pairs[0].n2k.output_speed": "93.13",
+    "n2k.pgn65309_pairs[1].n2k.input_frequency": "4897",
+    "n2k.pgn65309_pairs[1].n2k.output_speed": "296.77"
+  }
+}

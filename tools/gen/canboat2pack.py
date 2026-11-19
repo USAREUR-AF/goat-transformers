@@ -9,6 +9,11 @@ Writes  <out>/sources/PROVENANCE.md  (only with --commit)
         <out>/packs/nmea2000/pack.def
         <out>/packs/nmea2000/pack.md
         <out>/packs/nmea2000/vectors/*.json   (a *.json there that is not a vector of this run is removed)
+        <out>/packs/nmea2000-seq/pack.def, pack.md, vectors/*.json
+                                     definitions with one counted repeating field set, in a
+                                     second pack of layout sequential (spec 0.8); module n2k
+                                     gains their keys and lists after the existing ones.
+                                     Not written when no definition qualifies.
 
 Usage:
   canboat2pack.py --out <dir> [--check] [--commit <sha> [--fetch]] [--core-def <path to model/core.def>]
@@ -54,9 +59,10 @@ import gtcheck    # noqa: E402
 
 NAME = "canboat2pack"
 FORMAT = "nmea2000"
+SEQ_FORMAT = "nmea2000-seq"
 MODULE = "n2k"
 PACK_VERSION = "0.1.0"
-MODULE_VERSION = "0.1.0"
+MODULE_VERSION = "0.2.0"
 REPO = "canboat/canboat"
 DB_PATH = "docs/canboat.json"
 LICENSE_PATH = "LICENSE"
@@ -68,6 +74,9 @@ MODULE_DEF = "model/%s.def" % MODULE
 PACK_DEF = "packs/%s/pack.def" % FORMAT
 PACK_MD = "packs/%s/pack.md" % FORMAT
 VECTORS = "packs/%s/vectors" % FORMAT
+SEQ_PACK_DEF = "packs/%s/pack.def" % SEQ_FORMAT
+SEQ_PACK_MD = "packs/%s/pack.md" % SEQ_FORMAT
+SEQ_VECTORS = "packs/%s/vectors" % SEQ_FORMAT
 
 # model/core.def of goat-transformers, version 0.1.0 (checked against --core-def when given)
 CORE_KEYS = OrderedDict([
@@ -188,7 +197,7 @@ class Definition:
     """One entry of `PGNs`. `index` is its position in the file; `repeating` is true when
     it declares a repeating field set; `where` names it in an error message."""
     __slots__ = ("where", "index", "pgn", "id", "description", "complete", "fallback",
-                 "repeating", "length", "fields")
+                 "repeating", "repeat", "repeat2", "length", "fields")
 
 
 Database = namedtuple("Database", "label version schema_version license comment copyright definitions")
@@ -286,6 +295,13 @@ def _parse_definition(label, raw, index):
     d.complete = bool(raw.get("Complete"))
     d.fallback = bool(raw.get("Fallback"))
     d.repeating = "RepeatingFieldSet1Size" in raw or "RepeatingFieldSet2Size" in raw
+    # the first repeating field set: (size, start field, count field), 1-based field
+    # numbers; the count field is None when the set repeats to the end of the message
+    d.repeat = None
+    if "RepeatingFieldSet1Size" in raw:
+        d.repeat = tuple(r.get("RepeatingFieldSet1%s" % m, _is_int, "an integer", null_ok=True)
+                         for m in ("Size", "StartField", "CountField"))
+    d.repeat2 = "RepeatingFieldSet2Size" in raw
     d.length = r.get("Length", _is_int, "an integer", null_ok=True)
     # A catch-all definition has no kind and its fields are not read.
     fields = r.get("Fields", lambda v: isinstance(v, list), "an array", required=not d.fallback)
@@ -445,7 +461,7 @@ Unmapped = namedtuple("Unmapped", "pgn id description reason detail")
 # One key of module n2k. `pgns` lists the PGNs that use it, in pack order.
 KeyDecl = namedtuple("KeyDecl", "type unit sig label field_type pgns")
 
-Plan = namedtuple("Plan", "kinds unmapped keys")
+Plan = namedtuple("Plan", "kinds unmapped keys seq seq_keys seq_lists")
 
 
 def variable_reason(d):
@@ -775,15 +791,300 @@ def assign_keys(kinds):
     return keys
 
 
+# ---------------------------------------------------------------- sequential pack (spec 0.8)
+#
+# A definition with one repeating field set whose count field stands directly before the
+# set can be stated with `layout sequential` and `group <list> count <len>`. `layout` holds
+# for a whole pack, so these definitions go to a second pack, SEQ_FORMAT, and the
+# fixed-layout pack stays as it is.
+
+class SeqKind:
+    """A definition stated as sequential lines: `when` lines, the top-level lines, then one
+    counted group. `lines` and `items` hold ("field", Field), ("const", bits, value) and
+    ("pad", bits) in wire order."""
+
+    def __init__(self, definition):
+        self.definition = definition
+        self.pgn = definition.pgn
+        self.id = definition.id
+        self.name = None
+        self.whens = [(0, PGN_BITS, definition.pgn, "PGN")]   # (pos, len, value, id)
+        self.lines = []
+        self.fields = []
+        self.count_len = None
+        self.count_id = None
+        self.items = []
+        self.item_fields = []
+        self.list = None
+        self.unexpressed = []
+        self.requires = []
+
+    def match_set(self):
+        """The match fields only; a reserved `when` narrows the kind further."""
+        return {(p, l): v for p, l, v, i in self.whens[1:] if not i.startswith("reserved:")}
+
+
+# One list of module n2k: its meaning and its PGN.
+ListDecl = namedtuple("ListDecl", "label pgn")
+
+
+def skip_lines(f):
+    """RESERVED bits shall be 1 and SPARE bits 0 (CANboat FieldTypes); a `const` is 1 to
+    64 bits, so a longer reserved field is several."""
+    n = f.bit_length
+    if f.field_type == "SPARE":
+        return [("pad", n)]
+    out = []
+    while n > 0:
+        c = min(n, 64)
+        out.append(("const", c, (1 << c) - 1))
+        n -= c
+    return out
+
+
+def seq_plan(d):
+    """(SeqKind, None), or (None, detail) naming what the pack language cannot state;
+    (None, None) for a definition with no repeating field set."""
+    fl = d.fields
+    if d.repeat is None:
+        return None, None
+    size, start, count = d.repeat
+    for f in fl:
+        if f.field_type in VARIABLE_TYPES or f.variable_length or f.bit_length is None:
+            return None, "repeating field set, and a %s field" % (
+                f.field_type + (" of variable size" if f.field_type == "BINARY" else ""))
+    if count is None:
+        return None, "repeating field set with no count field: it repeats to the end of the message"
+    if d.repeat2:
+        return None, "two repeating field sets"
+    if size is None or start is None:
+        raise GenError("%s: a repeating field set without its size or start field" % d.where)
+    if count != start - 1:
+        return None, ("repeating field set whose count (field %d) is not directly before the set (field %d)"
+                      % (count, start))
+    if start + size - 1 != len(fl):
+        return None, "fields follow the repeating field set"
+    if any(f.bit_offset is None for f in fl):
+        raise GenError("%s: a field without a position and no variable field before it" % d.where)
+    end = 0
+    for f in fl[:start]:
+        if f.bit_offset != end:
+            return None, "repeating field set; fields overlap or leave a gap"
+        end += f.bit_length
+    if any(f.has_match for f in fl[start - 1:]):
+        return None, "a match value inside the repeating field set"
+    cf = fl[count - 1]
+    if (cf.field_type != "NUMBER" or cf.signed or (cf.resolution or 1) != 1 or cf.offset
+            or cf.has_match or not 1 <= cf.bit_length <= 64):
+        return None, "repeating field set whose count field is not an unsigned integer"
+    k = SeqKind(d)
+    head = fl[:count - 1]
+    # The leading run of match and reserved fields becomes the kind's `when` lines (spec
+    # 0.8: `when` lines are a kind's first lines). A reserved field inside the run is a
+    # `when` of its all-ones value, which NMEA 2000 requires on the wire.
+    run = 0
+    while run < len(head) and (head[run].has_match or head[run].field_type in SKIP_TYPES):
+        run += 1
+    while run > 0 and not head[run - 1].has_match:
+        run -= 1
+    if any(f.has_match for f in head[run:]):
+        return None, "a match value follows a data field (a kind's `when` lines come first)"
+    for f in head[:run]:
+        pos = f.bit_offset + PGN_BITS
+        if f.has_match:
+            k.whens.append((pos, f.bit_length, map_field(f)[1], f.id))
+        else:
+            if f.bit_length > 64:
+                return None, "a reserved field of more than 64 bits between match values"
+            v = (1 << f.bit_length) - 1 if f.field_type == "RESERVED" else 0
+            k.whens.append((pos, f.bit_length, v, "reserved:" + f.id))
+
+    def body(fields, lines, mapped):
+        for f in fields:
+            m = map_field(f)
+            if m[0] == "skip":
+                lines.extend(skip_lines(f))
+            elif m[0] == "no":
+                k.unexpressed.append((f.id, m[1]))
+                lines.append(("pad", f.bit_length))
+            else:
+                fo = Field(f, m[1], m[2], m[3])
+                lines.append(("field", fo))
+                mapped.append(fo)
+    body(head[run:], k.lines, k.fields)
+    k.count_len, k.count_id = cf.bit_length, cf.id
+    body(fl[start - 1:], k.items, k.item_fields)
+    if not k.item_fields:
+        return None, "repeating field set with no field the pack language can carry"
+    return k, None
+
+
+def _seq_match_sets(definitions, fixed, plans):
+    """{pgn: [(definition id, match set or None)]} over every definition but the
+    catch-all ones, with the match set each one has in either pack."""
+    sets = defaultdict(list)
+    for d in definitions:
+        if d.fallback:
+            continue
+        if d.id in fixed:
+            ms = fixed[d.id].match_set()
+        elif d.id in plans:
+            ms = plans[d.id].match_set()
+        else:
+            ms = _match_set_of_unmapped(d)
+        sets[d.pgn].append((d.id, ms))
+    return sets
+
+
+def _seq_indistinguishable(k, others, fixed, mapped):
+    """Why a sequential kind cannot be told apart, or None. Against a kind of the fixed
+    pack the match sets must conflict, so the two packs accept disjoint messages and
+    either can be tried first; against the rest, the rule of _indistinguishable."""
+    a = k.match_set()
+    for oid, b in others:
+        if oid == k.id:
+            continue
+        if b is None:
+            return "definition %s of the same PGN has a match field at a variable position" % oid
+        r = relation(a, b)
+        if oid in fixed and r != "conflict":
+            return "a message can satisfy its match values and those of kind %s of pack %s" % (fixed[oid].name, FORMAT)
+        if r == "equal":
+            return "same match values as definition %s" % oid
+        if r == "incomparable":
+            return ("a message can satisfy its match values and those of definition %s, "
+                    "and neither set contains the other" % oid)
+        if r == "sub" and oid not in mapped:
+            return "its match values also hold for the unmapped, more specific definition %s" % oid
+    return None
+
+
+def classify_seq(definitions, kinds, unmapped):
+    """-> (sequential kinds in pack order, the unmapped list for the record). `kinds`,
+    the fixed pack, is not changed."""
+    fixed = {k.id: k for k in kinds}
+    by_id = {d.id: d for d in definitions}
+    plans, rest = OrderedDict(), []
+    for u in unmapped:
+        if u.reason not in ("repeating", "variable"):
+            rest.append(u)
+            continue
+        k, why = seq_plan(by_id[u.id])
+        if k is None:
+            rest.append(u._replace(detail=why or u.detail))
+        else:
+            plans[u.id] = k
+    sets = _seq_match_sets(definitions, fixed, plans)
+    mapped = OrderedDict(plans)
+    dropped = []
+    changed = True
+    while changed:
+        changed = False
+        for k in list(mapped.values()):
+            why = _seq_indistinguishable(k, sets[k.pgn], fixed, mapped)
+            if why:
+                del mapped[k.id]
+                dropped.append(_unmapped(k.definition, "indistinguishable", why))
+                changed = True
+    per_pgn = Counter(d.pgn for d in definitions if not d.fallback)
+    seq = [k for i, k in plans.items() if i in mapped]
+    for k in seq:
+        k.name = "pgn%d" % k.pgn if per_pgn[k.pgn] == 1 else "pgn%d_%s" % (k.pgn, snake(k.id))
+        k.list = "pgn%d_%s" % (k.pgn, snake(k.count_id))
+    clash = Counter(k.list for k in seq)
+    for k in seq:
+        if clash[k.list] > 1:
+            k.list = "%s_%s" % (k.name, snake(k.count_id))
+    seq.sort(key=lambda k: (k.pgn, -sum(l for _, l, _, i in k.whens if not i.startswith("reserved:")),
+                            k.definition.index))
+    names = {k.name for k in seq} | {k.name for k in kinds}
+    if len(names) != len(seq) + len(kinds):
+        raise GenError("a kind name in both packs")
+    # A fixed-layout definition left out because a more specific one had no kind: say
+    # where that one is now, and why the fixed one still has none.
+    out = []
+    for u in rest:
+        m = re.match(r"its match values also hold for the unmapped, more specific definition (\w+)$", u.detail)
+        if u.reason == "indistinguishable" and m and m.group(1) in mapped:
+            u = u._replace(detail="its match values also hold for the more specific definition %s, which pack %s "
+                                  "maps; the two packs accept disjoint messages" % (m.group(1), SEQ_FORMAT))
+        out.append(u)
+    return seq, out + dropped
+
+
+def assign_seq_keys(seq, keys):
+    """Keys of the sequential pack. A key of `keys` (the fixed pack's) is reused where its
+    signature agrees; a new key follows the naming rule of declare_module_keys, and no
+    existing key changes (AGENTS.md rule 7). -> ({new key: KeyDecl}, {list: ListDecl})."""
+    new, lists, raw = OrderedDict(), OrderedDict(), []
+    for k in seq:
+        cm = core_mapping(k)
+        used = set()
+        for f in k.fields:
+            if f in cm and cm[f][0] not in used:
+                f.key, f.transform = cm[f]
+                f.type, f.core = "float", True
+                used.add(f.key)
+            else:
+                raw.append((k, f))
+        raw.extend((k, f) for f in k.item_fields)
+        if k.list in keys:
+            raise GenError("%s: list %s has the name of a key" % (k.definition.where, k.list))
+        lists[k.list] = ListDecl("%s: one item per %s" % (k.definition.description, k.count_id), k.pgn)
+
+    def take(name, k, f):
+        old = keys.get(name) or new.get(name)
+        if old is not None and old.sig != f.signature():
+            return False
+        if old is None:
+            old = new[name] = KeyDecl(f.type, f.unit, f.signature(), f.src.label, f.src.field_type, [])
+        if name in new and k.pgn not in old.pgns:
+            old.pgns.append(k.pgn)
+        f.key = "%s.%s" % (MODULE, name)
+        return True
+
+    by_id = OrderedDict()
+    for k, f in raw:
+        by_id.setdefault(snake(f.id), []).append((k, f))
+    for base, uses in by_id.items():
+        agree = len({f.signature() for _, f in uses}) == 1
+        for k, f in uses:
+            if base in keys and keys[base].sig == f.signature():
+                take(base, k, f)
+            elif base not in keys and base not in lists and agree and take(base, k, f):
+                pass
+            elif take("pgn%d_%s" % (k.pgn, base), k, f):
+                pass
+            elif not take("%s_%s" % (k.name, base), k, f):
+                raise GenError("%s: no free key name for %s" % (k.definition.where, f.id))
+    for name in list(new) + list(lists):
+        if not re.fullmatch(r"[a-z0-9_]+", name):
+            raise GenError("bad key name %r" % name)
+    if set(new) & set(lists):
+        raise GenError("a list and a key share a name")
+    use_count = Counter(f.key for k in seq for f in k.fields)
+    for k in seq:
+        for scope in (k.fields, k.item_fields):
+            ks = [f.key for f in scope]
+            if len(set(ks)) != len(ks):
+                raise GenError("%s: kind %s maps a key twice in one scope" % (k.definition.where, k.name))
+        rawk = [f for f in k.fields if not f.core]
+        order = sorted(range(len(rawk)), key=lambda i: (use_count[rawk[i].key], i))[:5]
+        k.requires = [rawk[i].key for i in sorted(order)] + ["%s.%s" % (MODULE, k.list)]
+    return new, lists
+
+
 def make_plan(db):
     """Every decision about the output, from the parsed database."""
     kinds, unmapped = classify(db.definitions)
     keys = assign_keys(kinds)
-    if len(kinds) + len(unmapped) != len(db.definitions):
+    seq, unmapped = classify_seq(db.definitions, kinds, unmapped)
+    seq_keys, seq_lists = assign_seq_keys(seq, keys)
+    if len(kinds) + len(seq) + len(unmapped) != len(db.definitions):
         raise GenError("definitions unaccounted for")
     if not kinds:
         raise GenError("no definition can be mapped to a kind", db.label)
-    return Plan(kinds, unmapped, keys)
+    return Plan(kinds, unmapped, keys, seq, seq_keys, seq_lists)
 
 
 # ---------------------------------------------------------------- emit
@@ -802,8 +1103,9 @@ def _source_line(sha, db):
     return "source        " + q("%s %s at commit %s (CANboat %s, Apache License 2.0)" % (REPO, DB_PATH, sha, db.version))
 
 
-def emit_module(keys, sha, db):
-    """The text of model/n2k.def."""
+def emit_module(keys, sha, db, seq_keys=None, seq_lists=None):
+    """The text of model/n2k.def: the keys of the fixed pack, then those the sequential
+    pack adds and its lists. The lines of the first part do not depend on the second."""
     out = [
         "# The n2k module: NMEA 2000 field values as the CANboat PGN database describes them,",
         "# in CANboat's units (rad, m/s, K, Pa, ...). Lookup and bit-lookup fields are the wire",
@@ -823,6 +1125,62 @@ def emit_module(keys, sha, db):
         kind = e.field_type + (" " + lookup if lookup else "")
         out.append("key  %-*s  %-6s  %-8s  %s" % (w, name, e.type, unit_token(e.unit),
                                               q("%s; CANboat %s; %s" % (e.label, kind, where))))
+    if seq_keys or seq_lists:
+        out += ["",
+                "# Keys and lists first used by pack %s (PGNs with a repeating field set). Keys" % SEQ_FORMAT,
+                "# above are reused there where the field agrees; the PGNs named above are those of",
+                "# pack %s." % FORMAT]
+        w = max(len(n) for n in seq_keys) if seq_keys else 1
+        for name, e in seq_keys.items():
+            lookup = e.sig[4]
+            kind = e.field_type + (" " + lookup if lookup else "")
+            out.append("key  %-*s  %-6s  %-8s  %s" % (w, name, e.type, unit_token(e.unit),
+                                                  q("%s; CANboat %s; PGN %s" % (e.label, kind, ", ".join(str(p) for p in e.pgns)))))
+        w = max(len(n) for n in seq_lists) if seq_lists else 1
+        for name, e in seq_lists.items():
+            out.append("list  %-*s  %s" % (w, name, q("%s; PGN %d" % (e.label, e.pgn))))
+    return "\n".join(out) + "\n"
+
+
+def emit_seq_pack(seq, sha, db):
+    """The text of packs/nmea2000-seq/pack.def."""
+    out = [
+        "# NMEA 2000 parameter groups with a repeating field set, from the CANboat PGN database.",
+        "# Public. Message = 3 bytes PGN (little-endian), then the reassembled payload, read in",
+        "# order (spec 0.8 sequential layout). The fixed-layout PGNs are in pack nmea2000.",
+        "# GENERATED by tools/gen/canboat2pack.py. Do not edit.",
+        "format        %s" % SEQ_FORMAT,
+        "version       %s" % PACK_VERSION,
+        "distribution  public",
+        _source_line(sha, db),
+        "source        " + q("https://github.com/%s/blob/%s/%s" % (REPO, sha, DB_PATH)),
+        "uses          %s" % MODULE,
+        "wire          bits",
+        "layout        sequential",
+        "bit_order     lsb",
+    ]
+
+    def lines(ls, ind):
+        w = max([len(x[1].key) for x in ls if x[0] == "field"] or [1])
+        for x in ls:
+            if x[0] == "field":
+                out.append("%sfield     %-*s  %-3d %s" % (ind, w, x[1].key, x[1].len, x[1].transform))
+            elif x[0] == "const":
+                out.append("%sconst     %d %d" % (ind, x[1], x[2]))
+            else:
+                out.append("%spad       %d" % (ind, x[1]))
+    for k in seq:
+        out.append("")
+        out.append("# PGN %d %s: %s%s" % (k.pgn, k.id, k.definition.description.replace("\n", " "),
+                                       "" if k.definition.complete else " [CANboat: incomplete]"))
+        out.append("kind      %s" % k.name)
+        for _, l, v, _ in k.whens:
+            out.append("when      %d %d" % (l, v))
+        out.append("requires  " + " ".join(k.requires))
+        lines(k.lines, "")
+        out.append("group     %s.%s count %d" % (MODULE, k.list, k.count_len))
+        lines(k.items, "  ")
+        out.append("end")
     return "\n".join(out) + "\n"
 
 
@@ -901,7 +1259,7 @@ def _md_header(db, sha):
     ]
 
 
-def _md_counts(kinds, unmapped, keys, db, n_vectors, xnames):
+def _md_counts(kinds, unmapped, keys, db, n_vectors, xnames, seq=()):
     by_reason = _by_reason(unmapped)
     L = [
         "## What is mapped",
@@ -912,10 +1270,12 @@ def _md_counts(kinds, unmapped, keys, db, n_vectors, xnames):
         "| kinds in `pack.def` | %d |" % len(kinds),
         "| distinct PGNs with at least one kind | %d |" % len({k.pgn for k in kinds}),
     ]
+    if seq:
+        L.append("| mapped by pack `%s` (a repeating field set with a count) | %d |" % (SEQ_FORMAT, len(seq)))
     for code, title in REASON_TITLES.items():
         L.append("| not mapped: %s | %d |" % (title[0].lower() + title[1:], len(by_reason.get(code, []))))
     L += [
-        "| keys in module `%s` | %d |" % (MODULE, len(keys)),
+        "| keys in module `%s`%s | %d |" % (MODULE, " that this pack maps" if seq else "", len(keys)),
         "| vectors | %d (%d same-format round trips, %d to `geojson`) |" % (n_vectors, len(kinds), len(xnames)),
         "",
         "One kind per fixed-layout PGN definition, named `pgn<number>`, with the CANboat definition id",
@@ -961,7 +1321,7 @@ def _md_field_rules(kinds):
     ]
 
 
-def _md_core_keys(kinds):
+def _md_core_keys(kinds, seq=()):
     L = [
         "## Core keys",
         "",
@@ -985,13 +1345,17 @@ def _md_core_keys(kinds):
         "  database, so it stays `n2k.cog` in radians. The generator maps `course` with the factor",
         "  resolution x 180/pi when a definition states a true-north reference and has no selector.",
         "- `hae`: no kind maps it. No fixed-layout altitude field is stated to be above the WGS84",
-        "  ellipsoid (PGN 129029 says \"referenced to WGS-84\" and is not fixed-layout).",
-        "",
     ]
+    if seq:
+        L += ["  ellipsoid (PGN 129029, in pack `%s`, says \"referenced to WGS-84\" and does not name" % SEQ_FORMAT,
+              "  the ellipsoid)."]
+    else:
+        L.append("  ellipsoid (PGN 129029 says \"referenced to WGS-84\" and is not fixed-layout).")
+    L.append("")
     return L
 
 
-def _md_limits(kinds):
+def _md_limits(kinds, seq=()):
     partial = [(k, k.unexpressed) for k in kinds if k.unexpressed]
     L = [
         "## What the pack language cannot express yet",
@@ -1005,9 +1369,16 @@ def _md_limits(kinds):
         "- **Trailing bytes.** The message ends at the last mapped or `when` bit, rounded up to a",
         "  byte. A definition that ends in reserved fields encodes shorter than its NMEA 2000 length",
         "  (PGN 129026 encodes 3 + 6 bytes, not 3 + 8). Decode accepts the full length.",
+    ] + ([
+        "- **Repeating field sets and variable-length fields.** The layout of this pack is fixed",
+        "  (`layout` is pack-wide). A definition with one repeating field set whose count field stands",
+        "  directly before the set is in pack `%s` (spec 0.8 sequential layout). The others," % SEQ_FORMAT,
+        "  listed below with the reason, need an addition named in `packs/%s/pack.md`." % SEQ_FORMAT,
+    ] if seq else [
         "- **Repeating field sets and variable-length fields** (STRING_LAU, STRING_LZ, VARIABLE,",
         "  BINARY of variable size, key/length/value fields, fields placed after any of these). These",
         "  need the future groups addition; the definitions are listed below.",
+    ]) + [
         "- **PGN ranges.** A `when` compares for equality, so CANboat's catch-all definitions for a",
         "  range of PGNs (proprietary ranges) have no kind.",
         "- **CAN framing**: identifier, priority, addresses, fast-packet and ISO transport reassembly.",
@@ -1044,7 +1415,7 @@ def _md_incomplete(kinds):
     ]
 
 
-def _md_vectors(xnames):
+def _md_vectors(xnames, seq=()):
     return [
         "## Vectors",
         "",
@@ -1054,21 +1425,27 @@ def _md_vectors(xnames):
         "  `@kind` and every decoded key.",
         "- %s: conversions to `geojson`, with the expected text" % ", ".join("`%s.json`" % n for n in xnames),
         "  written by hand from the canonical GeoJSON rules and checked by the generator against its",
+    ] + ([
+        "  own codec. PGN 129029 (GNSS Position Data) is in pack `%s`, with its own vector to" % SEQ_FORMAT,
+        "  `geojson`.",
+    ] if seq else [
         "  own codec. PGN 129029 has no vector: it has a repeating field set and no kind.",
+    ]) + [
         "",
         "Vectors hold lowercase hex text in `input` / `expect`.",
         "",
     ]
 
 
-def _md_unmapped(unmapped):
+def _md_unmapped(unmapped, seq=()):
     by_reason = _by_reason(unmapped)
     L = ["## Definitions not mapped", ""]
     for code, title in REASON_TITLES.items():
         rows = by_reason.get(code, [])
         L += ["### %s (%d)" % (title, len(rows)), ""]
         if code in ("repeating", "variable"):
-            L += ["These need the future groups addition.", ""]
+            L += (["The Detail column names what the pack language cannot state; `packs/%s/pack.md`" % SEQ_FORMAT,
+                   "names the addition each needs.", ""] if seq else ["These need the future groups addition.", ""])
         if not rows:
             L += ["None.", ""]
             continue
@@ -1079,12 +1456,161 @@ def _md_unmapped(unmapped):
     return L
 
 
-def emit_pack_md(kinds, unmapped, keys, db, sha, n_vectors, xnames):
+def emit_pack_md(kinds, unmapped, keys, db, sha, n_vectors, xnames, seq=()):
     """The text of packs/nmea2000/pack.md."""
-    lines = (_md_header(db, sha) + _md_counts(kinds, unmapped, keys, db, n_vectors, xnames)
-             + _md_field_rules(kinds) + _md_core_keys(kinds) + _md_limits(kinds)
-             + _md_incomplete(kinds) + _md_vectors(xnames) + _md_unmapped(unmapped))
+    lines = (_md_header(db, sha) + _md_counts(kinds, unmapped, keys, db, n_vectors, xnames, seq)
+             + _md_field_rules(kinds) + _md_core_keys(kinds, seq) + _md_limits(kinds, seq)
+             + _md_incomplete(kinds) + _md_vectors(xnames, seq) + _md_unmapped(unmapped, seq))
     return "\n".join(lines)
+
+
+SEQ_ADDITIONS = [
+    ("repeating field set, and a STRING_LAU", "text whose length a preceding byte states, counting itself and the encoding byte (a counted `ascii`, with an offset)"),
+    ("repeating field set, and a STRING_LZ", "text whose length a preceding byte states, followed by a zero byte (a counted `ascii`)"),
+    ("repeating field set, and a VARIABLE", "a field laid out as a field of the PGN another field names: an indirect layout"),
+    ("repeating field set, and a DYNAMIC_FIELD_VALUE", "a value whose type and length follow from an earlier key field"),
+    ("repeating field set, and a BINARY of variable size", "an opaque field whose bit length an earlier field states"),
+    ("repeating field set with no count field", "a group that repeats to the end of the message (or of a `length` extent)"),
+    ("repeating field set whose count", "a `count` taken from a field read earlier, not from the bits at the cursor"),
+    ("two repeating field sets", "a `count` taken from a field read earlier"),
+    ("STRING_LAU", "text whose length a preceding byte states, counting itself and the encoding byte (a counted `ascii`, with an offset)"),
+    ("STRING_LZ", "text whose length a preceding byte states, followed by a zero byte (a counted `ascii`)"),
+    ("BINARY of variable size", "an opaque field whose bit length an earlier field states"),
+    ("DYNAMIC_FIELD_VALUE", "a value whose type and length follow from an earlier key field"),
+    ("catch-all definition", "a `when` that holds for a range of values"),
+]
+
+
+def seq_addition(detail):
+    for head, need in SEQ_ADDITIONS:
+        if detail.startswith(head):
+            return need
+    return None
+
+
+def emit_seq_pack_md(seq, unmapped, seq_keys, seq_lists, db, sha, vec_names):
+    L = []
+    A = L.append
+    A("# Pack: %s" % SEQ_FORMAT)
+    A("")
+    A("NMEA 2000 parameter groups (PGNs) that hold a repeating field set, generated from the CANboat")
+    A("PGN database (`%s` `%s` at commit `%s`, CANboat %s, Apache License 2.0) by" % (REPO, DB_PATH, sha, db.version))
+    A("`tools/gen/canboat2pack.py`, the generator of pack `%s`. Do not edit `pack.def`, `model/%s.def`" % (FORMAT, MODULE))
+    A("or the vectors by hand; change the generator and run it again.")
+    A("")
+    A("Status: Built. Generated from the database; the generator checks every vector with its own")
+    A("codec, written from `spec/engine-spec.md` and not from an engine.")
+    A("")
+    A("## Why a second pack")
+    A("")
+    A("A repeating field set needs `group <list> count <len>` of the sequential layout (spec 0.8),")
+    A("and `layout` holds for a whole pack. Pack `%s` stays fixed-layout and byte-identical; this" % FORMAT)
+    A("pack holds the definitions the sequential layout can state. Both use module `%s`." % MODULE)
+    A("The two packs accept disjoint messages: a kind here is generated only when its match")
+    A("values conflict with those of every kind of the same PGN in `%s`, so a reader may try" % FORMAT)
+    A("either pack first. A fixed-layout PGN is `no-kind` here (vector `e02`).")
+    A("")
+    A("## Message convention")
+    A("")
+    A("As pack `%s`: 3 bytes of PGN, little-endian, then the payload after fast-packet" % FORMAT)
+    A("reassembly. The lines are read in order from the first bit, least significant bit first")
+    A("(`bit_order lsb`). The message ends after the last item; it is as long as CANboat's fields")
+    A("make it, trailing reserved bits included.")
+    A("")
+    A("## What is mapped")
+    A("")
+    A("| | Count |")
+    A("|---|---|")
+    A("| kinds | %d |" % len(seq))
+    A("| distinct PGNs | %d |" % len({k.pgn for k in seq}))
+    A("| lists in module `%s` | %d |" % (MODULE, len(seq_lists)))
+    A("| keys added to module `%s` by this pack | %d |" % (MODULE, len(seq_keys)))
+    A("| vectors | %d |" % len(vec_names))
+    A("")
+    A("| Kind | PGN | CANboat id | Description | List (one item per) |")
+    A("|---|---|---|---|---|")
+    for k in seq:
+        A("| `%s` | %d | `%s` | %s%s | `%s.%s` (%s) |" % (k.name, k.pgn, k.id, k.definition.description,
+                                                   "" if k.definition.complete else " [CANboat: incomplete]",
+                                                   MODULE, k.list, k.count_id))
+    A("")
+    A("Each kind is:")
+    A("")
+    A("1. `when 24 <pgn>`, then a `when` for every leading CANboat field with a fixed `Match` value.")
+    A("   A reserved field between two match fields is a `when` of all ones: CANboat states that")
+    A("   reserved bits shall be 1, and spec 0.8 lets only `when` lines come before a kind's other")
+    A("   lines. A message whose reserved bits there are not all ones is `no-kind`.")
+    A("2. The fields before the repeating set, in order. A RESERVED field is `const <len> <all ones>`")
+    A("   and a SPARE field `pad <len>`, so encode writes what NMEA 2000 requires (pack `%s`" % FORMAT)
+    A("   writes zeros there).")
+    A("3. `group %s.<list> count <len>`: the CANboat count field is the group's count. It is not a" % MODULE)
+    A("   model key; encode writes the number of items.")
+    A("")
+    A("Field transforms, key naming and `when` ordering follow pack `%s` (its `pack.md`). An item" % FORMAT)
+    A("field reuses a key of module `%s` where the key's type, unit, resolution, offset and lookup" % MODULE)
+    A("agree; otherwise it gets a new key under the same naming rule. No existing key is renamed or")
+    A("retyped. `requires` lists up to five rare top-level keys and the kind's list.")
+    A("")
+    A("## Core keys")
+    A("")
+    A("| Kind | Core keys | Evidence |")
+    A("|---|---|---|")
+    for k in seq:
+        ck = [f for f in k.fields if f.core]
+        if ck:
+            A("| `%s` | %s | the rule and evidence of pack `%s`: CANboat fields `latitude` and `longitude`, unit `deg`, signed, resolution 1e-16; NMEA 2000 states the datum in PGN 129044, which neither pack reads |" % (
+                k.name, ", ".join("`%s` `%s`" % (f.key, f.transform) for f in ck), FORMAT))
+    A("")
+    A("- `hae`: not mapped. PGN 129029 describes its altitude as \"referenced to WGS-84\" and carries")
+    A("  a separate geoidal separation; the database does not say the height is above the")
+    A("  ellipsoid, so it stays a key of module `%s`." % MODULE)
+    A("")
+    A("## Not mapped, and what each needs")
+    A("")
+    A("Every definition with a repeating field set or a variable-length field that has no kind in")
+    A("either pack, with the addition to the pack language that would state it. Fast-packet and ISO")
+    A("transport reassembly stay outside both packs (layered wires and framing: designed, not built).")
+    A("")
+    rows = [u for u in unmapped if u[3] in ("repeating", "variable", "pgn-range")
+            or (u[3] == "indistinguishable" and any(k.pgn == u[0] for k in seq))]
+    need = Counter()
+    A("| PGN | CANboat id | Description | Reason | Needs |")
+    A("|---|---|---|---|---|")
+    for pgn, ident, desc, code, detail in sorted(rows, key=lambda r: (r[0], r[1])):
+        n = seq_addition(detail)
+        if n is None and code == "indistinguishable" and SEQ_FORMAT in detail:
+            n = "fixed-layout and sequential kinds in one pack (a `layout` per kind), so one kind order covers both"
+        if n is None:
+            raise GenError("no addition named for: %s" % detail)
+        need[n] += 1
+        A("| %d | `%s` | %s | %s | %s |" % (pgn, ident, desc.replace("|", "/").replace("\n", " "), detail, n))
+    A("")
+    A("By addition:")
+    A("")
+    A("| Addition | Definitions |")
+    A("|---|---|")
+    for n, c in need.most_common():
+        A("| %s | %d |" % (n, c))
+    A("")
+    A("Pack `%s` also lists definitions with no field the pack language can carry, and the" % FORMAT)
+    A("limits both packs share (\"not available\" values, lookup names, 64-bit unsigned values).")
+    A("")
+    A("## Vectors")
+    A("")
+    A("- `rt-<kind>.json`: a round trip with two items; `rt-<kind>-no-items.json`: the list present")
+    A("  and empty. The generator packs the bytes from CANboat's field list, not from `pack.def`,")
+    A("  with values inside each field's range that survive scaling exactly, and decodes them with")
+    A("  its own codec of the `pack.def` text. `model` holds `@kind`, every key, `<list>.#` and every")
+    A("  item value.")
+    A("- `x01-pgn129029-to-geojson.json`: GNSS Position Data at 52.5 N, 4.5 E; `expect` written by")
+    A("  hand (raw / 10^16, exact in doubles) and checked against the codec.")
+    A("- `e01-pgn129029-count-beyond-the-input.json`: the count states one item more than the input")
+    A("  holds: `malformed-wire` (spec 0.8 ruling 14 and Errors).")
+    A("- `e02-fixed-layout-pgn-is-no-kind.json`: a PGN 129025 message is `no-kind` here.")
+    A("")
+    A("Vectors hold lowercase hex text in `input` / `expect`.")
+    A("")
+    return "\n".join(L)
 
 
 # ---------------------------------------------------------------- codec (from spec/engine-spec.md)
@@ -1444,6 +1970,311 @@ def build_vectors(kinds, codec):
     return [(fn, json.dumps(vec, indent=2) + "\n") for fn, vec in files], xnames
 
 
+# ---------------------------------------------------------------- sequential codec (spec 0.8)
+#
+# The part of `layout sequential` the second pack uses: `when`, `field`, `const`, `pad` and
+# `group <list> count <len>` with no nesting, bit order lsb (bit i of the message is bit
+# i mod 8 of byte i div 8; a field's first bit is its least significant). It reads the Pack
+# that gtcheck loaded, never the pack text.
+
+SeqCodecKind = namedtuple("SeqCodecKind", "name whens lines requires")   # whens: [(bits, value)]
+
+
+def seq_codec_kinds(pack):
+    """The kinds of a gtcheck Pack as the sequential codec reads them."""
+    def refuse(what, line=None):
+        raise GenError("the sequential codec of %s does not read %s" % (NAME, what), pack.label, line)
+
+    if pack.wire != "bits" or not pack.sequential or pack.bit_order != "lsb":
+        refuse("a pack that is not `wire bits`, `layout sequential`, `bit_order lsb`")
+    if pack.common or not pack.kinds:
+        refuse("common lines, or a pack with no kind")
+
+    def lines_of(nodes, in_group):
+        out = []
+        for node in nodes:
+            if node.d == "field":
+                if node.tr not in CODEC_TRANSFORMS or node.opts or node.via or node.also:
+                    refuse("this field (transform `%s`, or an option)" % node.tr, node.line)
+                factor = parse_factor(node.targs[0]) if node.targs else None
+                offset = float(node.targs[1]) if len(node.targs) > 1 else 0.0
+                out.append(("field", CodecField(node.key, None, node.bits, node.tr, factor, offset)))
+            elif node.d == "const":
+                out.append(("const", node.bits, int(node.value)))
+            elif node.d == "pad":
+                out.append(("pad", node.bits))
+            elif node.d == "group" and not in_group and node.mode == "count" and not node.kinds:
+                out.append(("group", node.key, node.count, lines_of(node.body, True)))
+            else:
+                refuse("a `%s` line" % node.d, node.line)
+        return out
+    kinds = []
+    for kind in pack.kinds:
+        whens = [(n.bits, int(n.value)) for n in kind.lines if n.d == "when"]
+        kinds.append(SeqCodecKind(kind.name, whens, lines_of([n for n in kind.lines if n.d != "when"], False),
+                                  list(kind.requires)))
+    return kinds
+
+
+class _Bits:
+    """Reads a message from its first bit, least significant bit first."""
+
+    def __init__(self, data):
+        self.v, self.n, self.pos = int.from_bytes(data, "little"), len(data) * 8, 0
+
+    def take(self, n):
+        if self.pos + n > self.n:
+            raise GenError("malformed-wire")
+        x = (self.v >> self.pos) & ((1 << n) - 1)
+        self.pos += n
+        return x
+
+
+def seq_decode(kinds, data):
+    """-> (the first kind whose `when` lines hold, {key: value or [item dict]}). A `when`
+    beyond the input does not hold (ruling 21 of 0.5); a line or an item beyond it, and a
+    count larger than the bits left (ruling 14 of 0.8), are `malformed-wire`."""
+    for k in kinds:
+        r = _Bits(data)
+        if all(r.pos + n <= r.n and r.take(n) == v for n, v in k.whens):
+            break
+    else:
+        raise GenError("no-kind")
+
+    def run(lines, ent):
+        for x in lines:
+            if x[0] == "field":
+                ent[x[1].key] = decode_field(x[1], r.take(x[1].len))
+            elif x[0] in ("const", "pad"):
+                r.take(x[1])
+            else:
+                cnt = r.take(x[2])
+                if cnt > r.n - r.pos:
+                    raise GenError("malformed-wire")
+                items = []
+                for _ in range(cnt):
+                    items.append(OrderedDict())
+                    run(x[3], items[-1])
+                ent[x[1]] = items
+    ent = OrderedDict()
+    run(k.lines, ent)
+    return k, ent
+
+
+def seq_encode(k, ent):
+    """The message of kind `k`: its `when` values, then its lines; an absent key writes
+    zero bits, a group writes its count then its items; ends at a whole byte."""
+    acc, pos = 0, 0
+
+    def put(n, v):
+        nonlocal acc, pos
+        acc |= (v & ((1 << n) - 1)) << pos
+        pos += n
+
+    def run(lines, e):
+        for x in lines:
+            if x[0] == "field":
+                put(x[1].len, encode_field(x[1], e[x[1].key]) if x[1].key in e else 0)
+            elif x[0] == "const":
+                put(x[1], x[2])
+            elif x[0] == "pad":
+                put(x[1], 0)
+            else:
+                items = e.get(x[1], [])
+                if len(items) >= 1 << x[2]:
+                    raise GenError("transform-encode: count")
+                put(x[2], len(items))
+                for it in items:
+                    run(x[3], it)
+    for n, v in k.whens:
+        put(n, v)
+    run(k.lines, ent)
+    return acc.to_bytes((pos + 7) // 8, "little")
+
+
+def seq_model(ent):
+    """The vector `model` of an entity: keys, `<list>.#` and `<list>[i].<key>`."""
+    out = OrderedDict()
+    for key, x in ent.items():
+        if isinstance(x, list):
+            out["%s.#" % key] = str(len(x))
+            for i, it in enumerate(x):
+                for ik, iv in it.items():
+                    out["%s[%d].%s" % (key, i, ik)] = model_text(iv)
+        else:
+            out[key] = model_text(x)
+    return out
+
+
+# ---------------------------------------------------------------- sequential vectors
+
+def seq_message(k, top, items):
+    """Bytes of a message of SeqKind k from raw wire integers by Field, packed from the
+    CANboat field list and not from the pack: the `when` values, the top-level lines, the
+    count, then each item's lines."""
+    acc, pos = 0, 0
+
+    def put(n, v):
+        nonlocal acc, pos
+        acc |= (v & ((1 << n) - 1)) << pos
+        pos += n
+    for _, l, v, _ in k.whens:
+        put(l, v)
+
+    def run(lines, vals):
+        for x in lines:
+            if x[0] == "field":
+                put(x[1].len, vals.get(x[1], 0))
+            elif x[0] == "const":
+                put(x[1], x[2])
+            else:
+                put(x[1], 0)
+    run(k.lines, top)
+    put(k.count_len, len(items))
+    for it in items:
+        run(k.items, it)
+    return acc.to_bytes((pos + 7) // 8, "little")
+
+
+class _Named:
+    """What pick_values needs of a kind: a name (the seed of the values) and fields."""
+
+    def __init__(self, name, fields):
+        self.name, self.fields, self.whens = name, fields, []
+
+
+# GNSS position in PGN 129029 at 1e-16 degree: 52.5 N, 4.5 E. `expect` written by hand:
+# lat = 525000000000000000 / 10^16 = 52.5 and lon = 45000000000000000 / 10^16 = 4.5, exact in
+# doubles; no hae (the altitude is not stated to be above the ellipsoid); n2k keys do not cross.
+SEQ_CROSS = [
+    ("x01-pgn129029-to-geojson", "gnssPositionData",
+     {"sid": 3, "latitude": 525000000000000000, "longitude": 45000000000000000, "altitude": 12500000},
+     [{"referenceStationType": 0, "referenceStationId": 42, "ageOfDgnssCorrections": 150}],
+     '{"type":"Feature","geometry":{"type":"Point","coordinates":[4.5,52.5]},"properties":{}}'),
+]
+
+# A message of PGN 129025 (Position, Rapid Update, fixed layout): no kind of the second pack.
+FIXED_LAYOUT_MESSAGE = (129025).to_bytes(3, "little") + bytes.fromhex("5047f41f40a9ae02")
+
+
+def _seq_vector(name, data, **rest):
+    v = OrderedDict([("name", name), ("from", SEQ_FORMAT), ("to", rest.pop("to", SEQ_FORMAT)),
+                     ("input", data.hex())])
+    v.update(rest)
+    return v
+
+
+def _expect_error(codec, data, kind):
+    try:
+        seq_decode(codec, data)
+    except GenError as e:
+        if str(e) != kind:
+            raise
+        return
+    raise GenError("an error vector of %s decodes" % SEQ_FORMAT)
+
+
+def build_seq_vectors(seq, codec):
+    """-> [(file name, text)]: per kind a round trip with two items and one with none; the
+    position of PGN 129029 to geojson; a count beyond the input; a fixed-layout PGN."""
+    by_name = {ck.name: ck for ck in codec}
+    files = []
+    for k in seq:
+        top = pick_values(_Named(k.name, k.fields))
+        items = [pick_values(_Named("%s[%d]" % (k.name, i), k.item_fields)) for i in range(2)]
+        for suffix, its in (("", items), ("-no-items", [])):
+            data = seq_message(k, top, its)
+            sel, ent = seq_decode(codec, data)
+            if sel.name != k.name:
+                raise GenError("vector for %s decodes as %s" % (k.name, sel.name))
+            if seq_encode(by_name[k.name], ent) != data:
+                raise GenError("vector for %s does not round-trip" % k.name)
+            model = OrderedDict([("@kind", k.name)])
+            model.update(seq_model(ent))
+            files.append(("rt-%s%s.json" % (k.name, suffix),
+                          _seq_vector("%s%s-roundtrip" % (k.name, suffix), data, expect=data.hex(), model=model)))
+    by_id = {k.id: k for k in seq}
+    for name, ident, topraw, itemraw, expect in SEQ_CROSS:
+        k = by_id.get(ident)
+        if k is None:
+            raise GenError("cross-format vector %s: definition %s has no kind of %s" % (name, ident, SEQ_FORMAT))
+        tf = {f.id: f for f in k.fields}
+        itf = {f.id: f for f in k.item_fields}
+        try:
+            top = {tf[i]: v & ((1 << tf[i].len) - 1) for i, v in topraw.items()}
+            items = [{itf[i]: v & ((1 << itf[i].len) - 1) for i, v in it.items()} for it in itemraw]
+        except KeyError as e:
+            raise GenError("cross-format vector %s: no field %s" % (name, e.args[0]))
+        data = seq_message(k, top, items)
+        sel, ent = seq_decode(codec, data)
+        got = geojson_text(ent)
+        if sel.name != k.name or got != expect:
+            raise GenError("cross-format vector %s: hand-written expect differs from the codec\n  hand:  %s\n  codec: %s"
+                           % (name, expect, got))
+        model = OrderedDict([("@kind", k.name)] + [(key, model_text(ent[key])) for key in ("lat", "lon")])
+        files.append(("%s.json" % name, _seq_vector(name, data, to="geojson", expect=expect, model=model)))
+        # the count states one item more than the input holds (ruling 14 of 0.8)
+        bits = sum(l for _, l, _, _ in k.whens) + sum(x[1].len if x[0] == "field" else x[1] for x in k.lines)
+        if bits % 8:
+            raise GenError("cross-format vector %s: the count does not start at a byte" % name)
+        bad = bytearray(data)
+        bad[bits // 8] += 1
+        _expect_error(codec, bytes(bad), "malformed-wire")
+        files.append(("e01-%s-count-beyond-the-input.json" % k.name,
+                      _seq_vector("%s-count-beyond-the-input" % k.name, bytes(bad), expect_error="malformed-wire")))
+    _expect_error(codec, FIXED_LAYOUT_MESSAGE, "no-kind")
+    files.append(("e02-fixed-layout-pgn-is-no-kind.json",
+                  _seq_vector("fixed-layout-pgn-is-no-kind", FIXED_LAYOUT_MESSAGE, expect_error="no-kind")))
+    return [(fn, json.dumps(vec, indent=2) + "\n") for fn, vec in files]
+
+
+def check_seq_vectors(codec, kinds, vectors):
+    """Every vector of the second pack ([(file name, parsed JSON)]) decodes to its model
+    and encodes back, or fails with its error; every kind has a round trip; the counted
+    part of each kind matches the CANboat field list."""
+    by_name = {ck.name: ck for ck in codec}
+    src = {k.name: k for k in kinds}
+    for ck in codec:
+        d = src[ck.name].definition
+        bits = sum(n for n, _ in ck.whens) + sum(x[1].len if x[0] == "field" else (x[2] if x[0] == "group" else x[1])
+                                                  for x in ck.lines)
+        want = PGN_BITS + sum(f.bit_length for f in d.fields[:d.repeat[1] - 1])
+        if bits != want:
+            raise GenError("kind %s: %d bits before the items, CANboat states %d" % (ck.name, bits, want))
+    names, seen = set(), set()
+    for fn, v in vectors:
+        if v["name"] in names:
+            raise GenError("duplicate vector name %s" % v["name"])
+        names.add(v["name"])
+        data = bytes.fromhex(v["input"])
+        if "expect_error" in v:
+            _expect_error(codec, data, v["expect_error"])
+            continue
+        sel, ent = seq_decode(codec, data)
+        if sel.name != v["model"]["@kind"]:
+            raise GenError("vector %s: kind" % fn)
+        got = seq_model(ent)
+        for key, want in v["model"].items():
+            if key == "@kind":
+                continue
+            if key not in got:
+                raise GenError("vector %s: %s missing" % (fn, key))
+            if got[key] != want and not (re.search(r"\d", want) and abs(float(got[key]) - float(want)) <= 1e-9):
+                raise GenError("vector %s: %s" % (fn, key))
+        if v["to"] == SEQ_FORMAT:
+            seen.add(sel.name)
+            if seq_encode(by_name[sel.name], ent).hex() != v["expect"] or v["expect"] != v["input"]:
+                raise GenError("vector %s: round trip" % fn)
+        elif v["to"] == "geojson":
+            if geojson_text(ent) != v["expect"]:
+                raise GenError("vector %s: geojson" % fn)
+        else:
+            raise GenError("vector %s: target" % fn)
+    missing = set(by_name) - seen
+    if missing:
+        raise GenError("kinds of %s without a round-trip vector: %s" % (SEQ_FORMAT, sorted(missing)[:5]))
+
+
 # ---------------------------------------------------------------- checks of the written files
 
 def core_module_text():
@@ -1514,9 +2345,29 @@ def check_kind_order(codec):
                     raise GenError("kinds %s and %s cannot be told apart in this order" % (ks[i].name, ks[j].name))
 
 
-def check_module_keys_used(module, codec):
-    """Every key the module declares is mapped by a kind."""
-    used = {f.key for ck in codec for f in ck.fields}
+def seq_keys_used(seq_codec):
+    """The module keys and lists the kinds of the second pack map."""
+    used = set()
+
+    def walk_lines(lines):
+        for x in lines:
+            if x[0] == "field":
+                used.add(x[1].key)
+            elif x[0] == "group":
+                used.add(x[1])
+                walk_lines(x[3])
+    for ck in seq_codec:
+        walk_lines(ck.lines)
+    return used
+
+
+def check_module_keys_used(module, codec, seq_codec=()):
+    """Every key and list the module declares is mapped by a kind of either pack."""
+    used = {f.key for ck in codec for f in ck.fields} | seq_keys_used(seq_codec)
+    lists = getattr(module, "lists", {})
+    unused_lists = {"%s.%s" % (MODULE, n) for n in lists} - used
+    if unused_lists:
+        raise GenError("module lists no kind maps: %s" % sorted(unused_lists)[:5])
     unused = {"%s.%s" % (MODULE, n) for n in module.keys} - used
     if unused:
         raise GenError("module keys no kind maps: %s" % sorted(unused)[:5])
@@ -1569,11 +2420,22 @@ def check_vectors(codec, vectors):
         raise GenError("kinds without a round-trip vector: %s" % sorted(missing)[:5])
 
 
-def self_check(files, kinds):
+def load_seq_output(module_text, pack_text):
+    """Load the module and the second pack as an engine does (gtcheck). -> Pack."""
+    try:
+        model = gtcheck.Model()
+        model.add(core_module_text(), "core")
+        model.add(module_text, MODULE_DEF)
+        return gtcheck.load_pack(pack_text, model, SEQ_PACK_DEF)
+    except gtcheck.CheckError as e:
+        raise GenError("generated file does not load: %s" % e)
+
+
+def self_check(files, kinds, seq=()):
     """Check the texts of a run before any is written: `files` maps each output path
-    to its text. The module and the pack are loaded from their text and every vector is
+    to its text. The module and the packs are loaded from their text and every vector is
     parsed from its text, so what is checked is what is written.
-    -> (vector files, module keys)."""
+    -> (vector files, module keys, vector files of the second pack)."""
     module, pack = load_output(files[MODULE_DEF], files[PACK_DEF])
     if module.name != MODULE:
         raise GenError("module name")
@@ -1582,11 +2444,23 @@ def self_check(files, kinds):
         raise GenError("pack: kind count")
     check_kind_shapes(codec, kinds)
     check_kind_order(codec)
-    check_module_keys_used(module, codec)
+    seq_codec, n_seq = [], 0
+    if seq:
+        seq_pack = load_seq_output(files[MODULE_DEF], files[SEQ_PACK_DEF])
+        seq_codec = seq_codec_kinds(seq_pack)
+        if seq_pack.format != SEQ_FORMAT or [ck.name for ck in seq_codec] != [k.name for k in seq]:
+            raise GenError("%s: kinds" % SEQ_PACK_DEF)
+        prefix = SEQ_VECTORS + "/"
+        seq_vectors = sorted((rel[len(prefix):], json.loads(text)) for rel, text in files.items() if rel.startswith(prefix))
+        check_seq_vectors(seq_codec, seq, seq_vectors)
+        n_seq = len(seq_vectors)
+    elif any(rel.startswith("packs/%s/" % SEQ_FORMAT) for rel in files):
+        raise GenError("files of %s with no kind" % SEQ_FORMAT)
+    check_module_keys_used(module, codec, seq_codec)
     prefix = VECTORS + "/"
     vectors = sorted((rel[len(prefix):], json.loads(text)) for rel, text in files.items() if rel.startswith(prefix))
     check_vectors(codec, vectors)
-    return len(vectors), len(module.keys)
+    return len(vectors), len(module.keys), n_seq
 
 
 # ---------------------------------------------------------------- main
@@ -1596,27 +2470,36 @@ def build_outputs(db, sha):
     names). Nothing is written and nothing is read."""
     plan = make_plan(db)
     files = OrderedDict()
-    files[MODULE_DEF] = emit_module(plan.keys, sha, db)
+    files[MODULE_DEF] = emit_module(plan.keys, sha, db, plan.seq_keys, plan.seq_lists)
     files[PACK_DEF] = emit_pack(plan.kinds, sha, db)
     codec = codec_kinds(load_output(files[MODULE_DEF], files[PACK_DEF])[1])
     vectors, xnames = build_vectors(plan.kinds, codec)
     for fn, text in vectors:
         files["%s/%s" % (VECTORS, fn)] = text
-    files[PACK_MD] = emit_pack_md(plan.kinds, plan.unmapped, plan.keys, db, sha, len(vectors), xnames)
+    files[PACK_MD] = emit_pack_md(plan.kinds, plan.unmapped, plan.keys, db, sha, len(vectors), xnames, plan.seq)
+    if plan.seq:
+        files[SEQ_PACK_DEF] = emit_seq_pack(plan.seq, sha, db)
+        seq_codec = seq_codec_kinds(load_seq_output(files[MODULE_DEF], files[SEQ_PACK_DEF]))
+        seq_vectors = build_seq_vectors(plan.seq, seq_codec)
+        for fn, text in seq_vectors:
+            files["%s/%s" % (SEQ_VECTORS, fn)] = text
+        files[SEQ_PACK_MD] = emit_seq_pack_md(plan.seq, plan.unmapped, plan.seq_keys, plan.seq_lists, db, sha,
+                                              [fn[:-5] for fn, _ in seq_vectors])
     return plan, files, xnames
 
 
 def write_outputs(out, files):
     """Write the checked texts and remove every *.json of the vectors directory that
     is not a vector of this run."""
-    for fn in out.listdir(VECTORS):
-        if fn.endswith(".json") and "%s/%s" % (VECTORS, fn) not in files:
-            out.remove("%s/%s" % (VECTORS, fn))
+    for vdir in (VECTORS, SEQ_VECTORS):
+        for fn in out.listdir(vdir):
+            if fn.endswith(".json") and "%s/%s" % (vdir, fn) not in files:
+                out.remove("%s/%s" % (vdir, fn))
     for rel, text in files.items():
         out.write(rel, text)
 
 
-def print_summary(db, sha, plan, xnames, n_files, n_keys):
+def print_summary(db, sha, plan, xnames, n_files, n_keys, n_seq=0):
     kinds, definitions = plan.kinds, db.definitions
     reasons = Counter(u.reason for u in plan.unmapped)
     print("source: %s %s @ %s (CANboat %s)" % (REPO, DB_PATH, sha, db.version))
@@ -1630,6 +2513,9 @@ def print_summary(db, sha, plan, xnames, n_files, n_keys):
     print("kinds with an unmapped inexpressible field: %d" % sum(1 for k in kinds if k.unexpressed))
     print("kinds from definitions CANboat marks incomplete: %d" % sum(1 for k in kinds if not k.definition.complete))
     print("vectors: %d (%d round trips, %d to geojson)" % (n_files, len(kinds), len(xnames)))
+    print("%s kinds: %d (%d distinct PGNs); new module keys %d, lists %d; vectors %d" % (
+        SEQ_FORMAT, len(plan.seq), len({k.pgn for k in plan.seq}), len(plan.seq_keys), len(plan.seq_lists), n_seq))
+    print("%s core mappings: %s" % (SEQ_FORMAT, dict(Counter(f.key for k in plan.seq for f in k.fields if f.core))))
     print("self-check: passed")
 
 
@@ -1657,12 +2543,12 @@ def run(args, out):
         _decode(license_bytes, license_path)
         provenance = provenance_text(sha, db, {"canboat.json": db_bytes, "LICENSE": license_bytes})
     plan, files, xnames = build_outputs(db, sha)
-    n_files, n_keys = self_check(files, plan.kinds)
+    n_files, n_keys, n_seq = self_check(files, plan.kinds, plan.seq)
     # Everything is checked: only now does the run touch the output tree.
     if provenance is not None:
         out.write(PROVENANCE, provenance)
     write_outputs(out, files)
-    print_summary(db, sha, plan, xnames, n_files, n_keys)
+    print_summary(db, sha, plan, xnames, n_files, n_keys, n_seq)
 
 
 def main(argv=None):

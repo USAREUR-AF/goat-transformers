@@ -1,0 +1,12 @@
+{
+  "name": "pgn130817_maretron_annunciator_capabilities-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "01ff018998c000",
+  "expect": "01ff018998c000",
+  "model": {
+    "@kind": "pgn130817_maretron_annunciator_capabilities",
+    "n2k.annunciator_instance": "192",
+    "n2k.pgn130817_number_of_tones.#": "0"
+  }
+}

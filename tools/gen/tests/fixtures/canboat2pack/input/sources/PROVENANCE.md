@@ -5,7 +5,7 @@
 | repository | https://github.com/canboat/canboat |
 | commit: | `1111111111111111111111111111111111111111` |
 | database version stated in the file | CANboat 0.0.1, schema 2.8.0 |
-| `canboat.json` | repository path `docs/canboat.json`, 13316 bytes, sha256 `34399421f97e83d3f0f201c29e306333f0862ad7821a441308b58b249c391898` |
+| `canboat.json` | repository path `docs/canboat.json`, 17160 bytes, sha256 `40ed1fc402e43bfb671cef19150fad7cc1c2b46d50020e1c0e4588f0d17f2b25` |
 | `canboat.json` download URL | https://raw.githubusercontent.com/canboat/canboat/1111111111111111111111111111111111111111/docs/canboat.json |
 | `LICENSE` | repository path `LICENSE`, 267 bytes, sha256 `834979d010c329b6bcab64dea944d4b25add5622c4c2c21ecb41148304773c1b` |
 | `LICENSE` download URL | https://raw.githubusercontent.com/canboat/canboat/1111111111111111111111111111111111111111/LICENSE |

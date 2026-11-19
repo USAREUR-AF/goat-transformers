@@ -1,0 +1,11 @@
+{
+  "name": "pgn126720_airmar_calibrate_speed-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "00ef0187982900",
+  "expect": "00ef0187982900",
+  "model": {
+    "@kind": "pgn126720_airmar_calibrate_speed",
+    "n2k.pgn126720_number_of_pairs_of_data_points.#": "0"
+  }
+}

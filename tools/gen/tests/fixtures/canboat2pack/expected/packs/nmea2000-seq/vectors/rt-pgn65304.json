@@ -1,0 +1,15 @@
+{
+  "name": "pgn65304-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "18ff0002ca2d15c36e59",
+  "expect": "18ff0002ca2d15c36e59",
+  "model": {
+    "@kind": "pgn65304",
+    "n2k.pgn65304_entries.#": "2",
+    "n2k.pgn65304_entries[0].n2k.entry_code": "202",
+    "n2k.pgn65304_entries[0].n2k.entry_value": "54.21",
+    "n2k.pgn65304_entries[1].n2k.entry_code": "195",
+    "n2k.pgn65304_entries[1].n2k.entry_value": "228.94"
+  }
+}

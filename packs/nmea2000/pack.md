@@ -28,12 +28,13 @@ payload field sits at CANboat's `BitOffset` + 24. Input and output are hex text.
 | PGN definitions in the source | 647 |
 | kinds in `pack.def` | 473 |
 | distinct PGNs with at least one kind | 268 |
-| not mapped: repeating field sets | 60 |
+| mapped by pack `nmea2000-seq` (a repeating field set with a count) | 15 |
+| not mapped: repeating field sets | 45 |
 | not mapped: variable-length or conditionally placed fields | 63 |
 | not mapped: catch-all definitions for a range of PGNs | 8 |
 | not mapped: not distinguishable from another definition of the same PGN | 1 |
 | not mapped: no field the pack language can carry | 42 |
-| keys in module `n2k` | 1564 |
+| keys in module `n2k` that this pack maps | 1564 |
 | vectors | 478 (473 same-format round trips, 5 to `geojson`) |
 
 One kind per fixed-layout PGN definition, named `pgn<number>`, with the CANboat definition id
@@ -93,7 +94,8 @@ for those, an encode from another format selects the first in pack order.
   database, so it stays `n2k.cog` in radians. The generator maps `course` with the factor
   resolution x 180/pi when a definition states a true-north reference and has no selector.
 - `hae`: no kind maps it. No fixed-layout altitude field is stated to be above the WGS84
-  ellipsoid (PGN 129029 says "referenced to WGS-84" and is not fixed-layout).
+  ellipsoid (PGN 129029, in pack `nmea2000-seq`, says "referenced to WGS-84" and does not name
+  the ellipsoid).
 
 ## What the pack language cannot express yet
 
@@ -106,9 +108,10 @@ for those, an encode from another format selects the first in pack order.
 - **Trailing bytes.** The message ends at the last mapped or `when` bit, rounded up to a
   byte. A definition that ends in reserved fields encodes shorter than its NMEA 2000 length
   (PGN 129026 encodes 3 + 6 bytes, not 3 + 8). Decode accepts the full length.
-- **Repeating field sets and variable-length fields** (STRING_LAU, STRING_LZ, VARIABLE,
-  BINARY of variable size, key/length/value fields, fields placed after any of these). These
-  need the future groups addition; the definitions are listed below.
+- **Repeating field sets and variable-length fields.** The layout of this pack is fixed
+  (`layout` is pack-wide). A definition with one repeating field set whose count field stands
+  directly before the set is in pack `nmea2000-seq` (spec 0.8 sequential layout). The others,
+  listed below with the reason, need an addition named in `packs/nmea2000-seq/pack.md`.
 - **PGN ranges.** A `when` compares for equality, so CANboat's catch-all definitions for a
   range of PGNs (proprietary ranges) have no kind.
 - **CAN framing**: identifier, priority, addresses, fast-packet and ISO transport reassembly.
@@ -153,82 +156,70 @@ in the comment above the kind in `pack.def`.
   `@kind` and every decoded key.
 - `x01-pgn129025-to-geojson.json`, `x02-pgn129025-south-west-to-geojson.json`, `x03-pgn129026-to-geojson.json`, `x04-pgn129026-magnetic-cog-to-geojson.json`, `x05-pgn129038-ais-class-a-to-geojson.json`: conversions to `geojson`, with the expected text
   written by hand from the canonical GeoJSON rules and checked by the generator against its
-  own codec. PGN 129029 has no vector: it has a repeating field set and no kind.
+  own codec. PGN 129029 (GNSS Position Data) is in pack `nmea2000-seq`, with its own vector to
+  `geojson`.
 
 Vectors hold lowercase hex text in `input` / `expect`.
 
 ## Definitions not mapped
 
-### Repeating field sets (60)
+### Repeating field sets (45)
 
-These need the future groups addition.
+The Detail column names what the pack language cannot state; `packs/nmea2000-seq/pack.md`
+names the addition each needs.
 
 | PGN | CANboat id | Description | Detail |
 |---|---|---|---|
-| 126208 | `nmeaAcknowledgeGroupFunction` | NMEA - Acknowledge group function | repeating field set |
-| 126208 | `nmeaCommandGroupFunction` | NMEA - Command group function | repeating field set |
-| 126208 | `nmeaReadFieldsGroupFunction` | NMEA - Read Fields group function | repeating field set |
-| 126208 | `nmeaReadFieldsReplyGroupFunction` | NMEA - Read Fields reply group function | repeating field set |
-| 126208 | `nmeaRequestGroupFunction` | NMEA - Request group function | repeating field set |
-| 126208 | `nmeaWriteFieldsGroupFunction` | NMEA - Write Fields group function | repeating field set |
-| 126208 | `nmeaWriteFieldsReplyGroupFunction` | NMEA - Write Fields reply group function | repeating field set |
-| 126464 | `pgnListTransmitAndReceive` | PGN List (Transmit and Receive) | repeating field set |
-| 126720 | `airmarCalibrateSpeed` | Airmar: Calibrate Speed | repeating field set |
-| 126987 | `alertThreshold` | Alert Threshold | repeating field set |
-| 126988 | `alertValue` | Alert Value | repeating field set |
-| 127503 | `acInputStatus` | AC Input Status | repeating field set |
-| 127504 | `acOutputStatus` | AC Output Status | repeating field set |
-| 129029 | `gnssPositionData` | GNSS Position Data | repeating field set |
-| 129285 | `navigationRouteWpInformation` | Navigation - Route/WP Information | repeating field set |
-| 129540 | `gnssSatsInView` | GNSS Sats in View | repeating field set |
-| 129796 | `aisAcknowledge` | AIS Acknowledge | repeating field set |
-| 129805 | `aisDataLinkManagementMessage` | AIS Data Link Management Message | repeating field set |
-| 129808 | `dscCallInformation` | DSC Call Information | repeating field set |
-| 129808 | `dscDistressAcknowledgementOrRelay` | DSC Distress Acknowledgement or Relay | repeating field set |
-| 129808 | `dscDistressCallInformation` | DSC Distress Call Information | repeating field set |
-| 129812 | `aisMultiSlotBinaryMessageDeprecated` | AIS Multi Slot Binary Message (Deprecated) | repeating field set |
-| 129816 | `aisAcknowledgeBinary` | AIS Acknowledge (Binary) | repeating field set |
-| 130064 | `routeAndWpServiceDatabaseList` | Route and WP Service - Database List | repeating field set |
-| 130065 | `routeAndWpServiceRouteList` | Route and WP Service - Route List | repeating field set |
-| 130067 | `routeAndWpServiceRouteWpNamePosition` | Route and WP Service - Route - WP Name & Position | repeating field set |
-| 130068 | `routeAndWpServiceRouteWpName` | Route and WP Service - Route - WP Name | repeating field set |
-| 130069 | `routeAndWpServiceXteLimitNavigationMethod` | Route and WP Service - XTE Limit & Navigation Method | repeating field set |
-| 130070 | `routeAndWpServiceWpComment` | Route and WP Service - WP Comment | repeating field set |
-| 130071 | `routeAndWpServiceRouteComment` | Route and WP Service - Route Comment | repeating field set |
-| 130072 | `routeAndWpServiceDatabaseComment` | Route and WP Service - Database Comment | repeating field set |
-| 130073 | `routeAndWpServiceRadiusOfTurn` | Route and WP Service - Radius of Turn | repeating field set |
-| 130074 | `routeAndWpServiceWpListWpNamePosition` | Route and WP Service - WP List - WP Name & Position | repeating field set |
-| 130562 | `lightingScene` | Lighting Scene | repeating field set |
-| 130564 | `lightingDeviceEnumeration` | Lighting Device Enumeration | repeating field set |
-| 130565 | `lightingColorSequence` | Lighting Color Sequence | repeating field set |
-| 130571 | `libraryDataGroup` | Library Data Group | repeating field set |
-| 130573 | `supportedSourceData` | Supported Source Data | repeating field set |
-| 130574 | `supportedZoneData` | Supported Zone Data | repeating field set |
-| 130581 | `zoneConfigurationDeprecated` | Zone Configuration (deprecated) | repeating field set |
-| 130583 | `availableAudioEqPresets` | Available Audio EQ presets | repeating field set |
-| 130584 | `availableBluetoothAddresses` | Available Bluetooth addresses | repeating field set |
-| 130817 | `maretronAnnunciatorCapabilities` | Maretron: Annunciator Capabilities | repeating field set |
-| 130820 | `fusionSettings` | Fusion: Settings | repeating field set |
-| 130822 | `navicoUdbDatabaseObjectDump` | Navico: UDB Database, Object Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseSettingsDump` | Navico: UDB Database, Settings Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump11` | Navico: UDB Database, Table Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump12` | Navico: UDB Database, Table Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump13` | Navico: UDB Database, Table Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump14` | Navico: UDB Database, Table Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump15` | Navico: UDB Database, Table Dump | repeating field set |
-| 130822 | `navicoUdbDatabaseTableDump18` | Navico: UDB Database, Table Dump | repeating field set |
-| 130823 | `navicoDataTypeSourceDirectory` | Navico: Data Type Source Directory | repeating field set |
-| 130823 | `navicoDataTypeSourceDirectoryFullReport` | Navico: Data Type Source Directory, Full Report | repeating field set |
-| 130824 | `bGKeyValueData` | B&G: key-value data | repeating field set |
-| 130824 | `mercuryEngineKeyValueData` | Mercury: Engine Key-Value Data | repeating field set |
-| 130826 | `maretronSwitchIndicatorStatus` | Maretron: Switch Indicator Status | repeating field set |
-| 130845 | `furunoMultiSatsInViewExtended` | Furuno: Multi Sats In View Extended | repeating field set |
-| 130852 | `navicoDiagnosticData` | Navico: Diagnostic Data | repeating field set |
-| 130944 | `airmarPost` | Airmar: POST | repeating field set |
+| 126208 | `nmeaCommandGroupFunction` | NMEA - Command group function | repeating field set, and a VARIABLE field |
+| 126208 | `nmeaReadFieldsGroupFunction` | NMEA - Read Fields group function | repeating field set, and a VARIABLE field |
+| 126208 | `nmeaReadFieldsReplyGroupFunction` | NMEA - Read Fields reply group function | repeating field set, and a VARIABLE field |
+| 126208 | `nmeaRequestGroupFunction` | NMEA - Request group function | repeating field set, and a VARIABLE field |
+| 126208 | `nmeaWriteFieldsGroupFunction` | NMEA - Write Fields group function | repeating field set, and a VARIABLE field |
+| 126208 | `nmeaWriteFieldsReplyGroupFunction` | NMEA - Write Fields reply group function | repeating field set, and a VARIABLE field |
+| 126464 | `pgnListTransmitAndReceive` | PGN List (Transmit and Receive) | repeating field set with no count field: it repeats to the end of the message |
+| 129285 | `navigationRouteWpInformation` | Navigation - Route/WP Information | repeating field set, and a STRING_LAU field |
+| 129796 | `aisAcknowledge` | AIS Acknowledge | repeating field set with no count field: it repeats to the end of the message |
+| 129805 | `aisDataLinkManagementMessage` | AIS Data Link Management Message | repeating field set with no count field: it repeats to the end of the message |
+| 129808 | `dscCallInformation` | DSC Call Information | repeating field set, and a STRING_LAU field |
+| 129808 | `dscDistressAcknowledgementOrRelay` | DSC Distress Acknowledgement or Relay | repeating field set, and a STRING_LAU field |
+| 129808 | `dscDistressCallInformation` | DSC Distress Call Information | repeating field set, and a STRING_LAU field |
+| 129812 | `aisMultiSlotBinaryMessageDeprecated` | AIS Multi Slot Binary Message (Deprecated) | repeating field set, and a BINARY of variable size field |
+| 130064 | `routeAndWpServiceDatabaseList` | Route and WP Service - Database List | repeating field set, and a STRING_LAU field |
+| 130065 | `routeAndWpServiceRouteList` | Route and WP Service - Route List | repeating field set, and a STRING_LAU field |
+| 130067 | `routeAndWpServiceRouteWpNamePosition` | Route and WP Service - Route - WP Name & Position | repeating field set, and a STRING_LAU field |
+| 130068 | `routeAndWpServiceRouteWpName` | Route and WP Service - Route - WP Name | repeating field set, and a STRING_LAU field |
+| 130069 | `routeAndWpServiceXteLimitNavigationMethod` | Route and WP Service - XTE Limit & Navigation Method | repeating field set whose count (field 2) is not directly before the set (field 4) |
+| 130070 | `routeAndWpServiceWpComment` | Route and WP Service - WP Comment | repeating field set, and a STRING_LAU field |
+| 130071 | `routeAndWpServiceRouteComment` | Route and WP Service - Route Comment | repeating field set, and a STRING_LAU field |
+| 130072 | `routeAndWpServiceDatabaseComment` | Route and WP Service - Database Comment | repeating field set, and a STRING_LAU field |
+| 130073 | `routeAndWpServiceRadiusOfTurn` | Route and WP Service - Radius of Turn | repeating field set whose count (field 2) is not directly before the set (field 6) |
+| 130074 | `routeAndWpServiceWpListWpNamePosition` | Route and WP Service - WP List - WP Name & Position | repeating field set, and a STRING_LAU field |
+| 130562 | `lightingScene` | Lighting Scene | repeating field set, and a STRING_LAU field |
+| 130571 | `libraryDataGroup` | Library Data Group | repeating field set, and a STRING_LAU field |
+| 130573 | `supportedSourceData` | Supported Source Data | repeating field set, and a STRING_LAU field |
+| 130574 | `supportedZoneData` | Supported Zone Data | repeating field set, and a STRING_LAU field |
+| 130581 | `zoneConfigurationDeprecated` | Zone Configuration (deprecated) | repeating field set, and a STRING_LAU field |
+| 130583 | `availableAudioEqPresets` | Available Audio EQ presets | repeating field set, and a STRING_LAU field |
+| 130584 | `availableBluetoothAddresses` | Available Bluetooth addresses | repeating field set, and a STRING_LAU field |
+| 130822 | `navicoUdbDatabaseObjectDump` | Navico: UDB Database, Object Dump | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130822 | `navicoUdbDatabaseSettingsDump` | Navico: UDB Database, Settings Dump | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130822 | `navicoUdbDatabaseTableDump11` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130822 | `navicoUdbDatabaseTableDump12` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130822 | `navicoUdbDatabaseTableDump13` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130822 | `navicoUdbDatabaseTableDump14` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130822 | `navicoUdbDatabaseTableDump15` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130822 | `navicoUdbDatabaseTableDump18` | Navico: UDB Database, Table Dump | repeating field set with no count field: it repeats to the end of the message |
+| 130823 | `navicoDataTypeSourceDirectory` | Navico: Data Type Source Directory | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130823 | `navicoDataTypeSourceDirectoryFullReport` | Navico: Data Type Source Directory, Full Report | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130824 | `bGKeyValueData` | B&G: key-value data | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130824 | `mercuryEngineKeyValueData` | Mercury: Engine Key-Value Data | repeating field set, and a DYNAMIC_FIELD_VALUE field |
+| 130845 | `furunoMultiSatsInViewExtended` | Furuno: Multi Sats In View Extended | repeating field set with no count field: it repeats to the end of the message |
+| 130852 | `navicoDiagnosticData` | Navico: Diagnostic Data | repeating field set, and a DYNAMIC_FIELD_VALUE field |
 
 ### Variable-length or conditionally placed fields (63)
 
-These need the future groups addition.
+The Detail column names what the pack language cannot state; `packs/nmea2000-seq/pack.md`
+names the addition each needs.
 
 | PGN | CANboat id | Description | Detail |
 |---|---|---|---|
@@ -313,7 +304,7 @@ These need the future groups addition.
 
 | PGN | CANboat id | Description | Detail |
 |---|---|---|---|
-| 126720 | `airmarAddressableMultiFrame` | Airmar: Addressable Multi-Frame | its match values also hold for the unmapped, more specific definition airmarCalibrateSpeed |
+| 126720 | `airmarAddressableMultiFrame` | Airmar: Addressable Multi-Frame | its match values also hold for the more specific definition airmarCalibrateSpeed, which pack nmea2000-seq maps; the two packs accept disjoint messages |
 
 ### No field the pack language can carry (42)
 

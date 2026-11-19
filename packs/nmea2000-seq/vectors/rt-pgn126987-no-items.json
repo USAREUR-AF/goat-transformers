@@ -1,0 +1,20 @@
+{
+  "name": "pgn126987-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "0bf0017cadf0c4ed8cde512d000000001fe66600",
+  "expect": "0bf0017cadf0c4ed8cde512d000000001fe66600",
+  "model": {
+    "@kind": "pgn126987",
+    "n2k.alert_type": "12",
+    "n2k.alert_category": "7",
+    "n2k.alert_system": "173",
+    "n2k.alert_sub_system": "240",
+    "n2k.alert_id": "60868",
+    "n2k.data_source_network_id_name": "760340108",
+    "n2k.data_source_instance": "31",
+    "n2k.data_source_index_source": "230",
+    "n2k.alert_occurrence_number": "102",
+    "n2k.pgn126987_number_of_parameters.#": "0"
+  }
+}

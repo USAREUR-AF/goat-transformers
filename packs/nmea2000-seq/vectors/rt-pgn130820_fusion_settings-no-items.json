@@ -1,0 +1,11 @@
+{
+  "name": "pgn130820_fusion_settings-no-items-roundtrip",
+  "from": "nmea2000-seq",
+  "to": "nmea2000-seq",
+  "input": "04ff01a399158000000000",
+  "expect": "04ff01a399158000000000",
+  "model": {
+    "@kind": "pgn130820_fusion_settings",
+    "n2k.pgn130820_count.#": "0"
+  }
+}

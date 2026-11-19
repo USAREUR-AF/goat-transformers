@@ -293,7 +293,7 @@ class LoadedOutputTest(unittest.TestCase):
     def test_pack_md_lists_each_unmapped_definition_under_its_reason(self):
         with open(os.path.join(EXPECTED, "packs", "nmea2000", "pack.md"), encoding="utf-8") as fh:
             md = fh.read()
-        for row in ("| 65304 | `labLogEntries` | Lab: log entries | repeating field set |",
+        for row in ("| 65310 | `labRouteLimits` | Lab: route limits | repeating field set whose count (field 2) is not directly before the set (field 4) |",
                     "| 65305 | `labDeviceName` | Lab: device name | STRING_LAU |",
                     "| 65280 | `labProprietaryRange` | Lab: catch-all for a proprietary range | catch-all definition for a range of PGNs |",
                     "| 65307 | `labAlphaReport` | Lab: report, first reading of the layout | same match values as definition labBetaReport |",
@@ -318,7 +318,32 @@ class RepositoryPackTest(unittest.TestCase):
         self.assertEqual(len([v for _, v in vectors if v["to"] == "nmea2000"]), len(pack.kinds))
         c.check_vectors(codec, vectors)
         c.check_kind_order(codec)
-        c.check_module_keys_used(module, codec)
+        seq_codec = c.seq_codec_kinds(load(text("model", "n2k.def"), text("packs", "nmea2000-seq", "pack.def"))[1])
+        c.check_module_keys_used(module, codec, seq_codec)
+
+    def test_committed_sequential_pack_loads_and_every_committed_vector_holds(self):
+        def text(*rel):
+            with open(os.path.join(support.REPO, *rel), encoding="utf-8") as fh:
+                return fh.read()
+        _, pack = load(text("model", "n2k.def"), text("packs", "nmea2000-seq", "pack.def"))
+        codec = c.seq_codec_kinds(pack)
+        vdir = os.path.join(support.REPO, "packs", "nmea2000-seq", "vectors")
+        vectors = [(n, json.loads(text("packs", "nmea2000-seq", "vectors", n)))
+                   for n in sorted(os.listdir(vdir)) if n.endswith(".json")]
+        for fn, v in vectors:
+            data = bytes.fromhex(v["input"])
+            if "expect_error" in v:
+                with self.assertRaisesRegex(c.GenError, "^%s$" % v["expect_error"]):
+                    c.seq_decode(codec, data)
+                continue
+            sel, ent = c.seq_decode(codec, data)
+            self.assertEqual(sel.name, v["model"]["@kind"], fn)
+            if v["to"] == "nmea2000-seq":
+                self.assertEqual(c.seq_encode(sel, ent).hex(), v["expect"], fn)
+            else:
+                self.assertEqual(c.geojson_text(ent), v["expect"], fn)
+        self.assertEqual({v["model"]["@kind"] for _, v in vectors if v["to"] == "nmea2000-seq" and "model" in v},
+                         {k.name for k in pack.kinds})
 
     def test_built_in_core_key_table_is_that_of_the_repository_core_module(self):
         path = os.path.join(support.REPO, "model", "core.def")
@@ -769,7 +794,7 @@ class ClassifyTest(unittest.TestCase):
         with open(os.path.join(INPUT, "sources", "canboat.json"), encoding="utf-8") as fh:
             db = c.parse_database(fh.read(), "canboat.json")
         plan = c.make_plan(db)
-        self.assertEqual(sorted([k.id for k in plan.kinds] + [u.id for u in plan.unmapped]),
+        self.assertEqual(sorted([k.id for k in plan.kinds] + [k.id for k in plan.seq] + [u.id for u in plan.unmapped]),
                          sorted(d.id for d in db.definitions))
 
 
@@ -931,7 +956,8 @@ class EmitTest(unittest.TestCase):
                       definition(65002, "b", [field("x")], Description="one | two", RepeatingFieldSet1Size=1))
         plan = c.make_plan(db)
         md = c.emit_pack_md(plan.kinds, plan.unmapped, plan.keys, db, COMMIT, 1, [])
-        self.assertIn("| 65002 | `b` | one / two | repeating field set |", md)
+        self.assertIn("| 65002 | `b` | one / two | repeating field set with no count field: "
+                      "it repeats to the end of the message |", md)
         self.assertIn("### Catch-all definitions for a range of PGNs (0)\n\nNone.\n", md)
 
 
@@ -1210,3 +1236,179 @@ class OutputInvariantTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------- the sequential pack nmea2000-seq
+
+SEQ_PACK = "packs/nmea2000-seq/pack.def"
+
+
+def repeating(pgn, ident, fields, start, count, size=None, **members):
+    """A definition with one repeating field set from field `start` to the last field."""
+    members.update(RepeatingFieldSet1Size=size if size is not None else len(fields) - start + 1,
+                   RepeatingFieldSet1StartField=start)
+    if count is not None:
+        members["RepeatingFieldSet1CountField"] = count
+    return definition(pgn, ident, fields, **members)
+
+
+def seq_plan_of(*definitions):
+    """The plan of these definitions and one plain fixed-layout definition (a plan needs a
+    kind of the fixed pack)."""
+    return c.make_plan(database(definition(65019, "anchor", [field("x")]), *definitions))
+
+
+class SeqPlanTest(unittest.TestCase):
+    def detail(self, d):
+        return c.seq_plan(database(d).definitions[0])[1]
+
+    def test_count_directly_before_the_set_gives_a_kind_with_one_counted_group(self):
+        plan = seq_plan_of(repeating(65020, "log", [field("n", offset=0), field("code", offset=8),
+                                                     field("value", length=16, offset=16)], start=2, count=1))
+        self.assertEqual([k.name for k in plan.seq], ["pgn65020"])
+        k = plan.seq[0]
+        self.assertEqual((k.count_len, k.count_id, k.list), (8, "n", "pgn65020_n"))
+        self.assertEqual([f.id for f in k.item_fields], ["code", "value"])
+        self.assertEqual(plan.unmapped, [])
+
+    def test_what_the_language_cannot_state_is_named(self):
+        cases = [
+            (repeating(65021, "a", [field("x", offset=0), field("y", offset=8)], start=2, count=None),
+             "repeating field set with no count field: it repeats to the end of the message"),
+            (repeating(65022, "b", [field("n", offset=0), field("r", offset=8), field("y", offset=16)], start=3, count=1),
+             "repeating field set whose count (field 1) is not directly before the set (field 3)"),
+            (repeating(65023, "c", [field("n", offset=0), field("t", "STRING_LAU", None, 8)], start=2, count=1),
+             "repeating field set, and a STRING_LAU field"),
+            (repeating(65024, "d", [field("n", offset=0), field("y", offset=8), field("z", offset=16)], start=2, count=1, size=1),
+             "fields follow the repeating field set"),
+            (repeating(65025, "e", [field("n", offset=0, Signed=True), field("y", offset=8)], start=2, count=1),
+             "repeating field set whose count field is not an unsigned integer"),
+            (repeating(65026, "f", [field("n", offset=0), field("y", offset=8)], start=2, count=1,
+                       RepeatingFieldSet2Size=1, RepeatingFieldSet2StartField=2),
+             "two repeating field sets"),
+        ]
+        for d, want in cases:
+            self.assertEqual(self.detail(d), want)
+
+    def test_reserved_between_match_values_is_a_when_of_all_ones_and_after_them_a_const(self):
+        fields = [field("manufacturerCode", "LOOKUP", 11, 0, Match=999), field("reserved", "RESERVED", 2, 11),
+                  field("industryCode", "LOOKUP", 3, 13, Match=4), field("reserved4", "RESERVED", 70, 16),
+                  field("spare5", "SPARE", 2, 86), field("n", offset=88), field("y", offset=96)]
+        k = c.seq_plan(database(repeating(65027, "g", fields, start=7, count=6)).definitions[0])[0]
+        self.assertEqual([(l, v) for _, l, v, _ in k.whens], [(24, 65027), (11, 999), (2, 3), (3, 4)])
+        self.assertEqual(k.lines, [("const", 64, (1 << 64) - 1), ("const", 6, 63), ("pad", 2)])
+
+    def test_match_value_after_a_data_field_is_not_a_kind(self):
+        fields = [field("x", offset=0), field("code", "LOOKUP", 8, 8, Match=3), field("n", offset=16), field("y", offset=24)]
+        self.assertEqual(self.detail(repeating(65028, "h", fields, start=4, count=3)),
+                         "a match value follows a data field (a kind's `when` lines come first)")
+
+    def test_kind_whose_messages_a_fixed_kind_also_accepts_is_not_mapped(self):
+        # the fixed kind is the more specific one, so it keeps its kind in nmea2000; the
+        # repeating definition would also accept its messages, so it gets none in nmea2000-seq
+        fixed = definition(65029, "plain", [field("code", "LOOKUP", 8, 0, Match=1),
+                                            field("sub", "LOOKUP", 8, 8, Match=2), field("x", offset=16)])
+        rep = repeating(65029, "rep", [field("code", "LOOKUP", 8, 0, Match=1), field("n", offset=8), field("y", offset=16)],
+                        start=3, count=2)
+        plan = seq_plan_of(fixed, rep)
+        self.assertEqual(plan.seq, [])
+        why = next(u for u in plan.unmapped if u.id == "rep")
+        self.assertEqual((why.reason, why.detail), ("indistinguishable",
+                         "a message can satisfy its match values and those of kind pgn65029_plain of pack nmea2000"))
+
+    def test_conflicting_match_values_keep_both_packs(self):
+        fixed = definition(65030, "plain", [field("code", "LOOKUP", 8, 0, Match=1), field("x", offset=8)])
+        rep = repeating(65030, "rep", [field("code", "LOOKUP", 8, 0, Match=2), field("n", offset=8), field("y", offset=16)],
+                        start=3, count=2)
+        plan = seq_plan_of(fixed, rep)
+        self.assertEqual(([k.name for k in plan.kinds], [k.name for k in plan.seq]),
+                         (["pgn65019", "pgn65030_plain"], ["pgn65030_rep"]))
+
+    def test_item_field_reuses_an_agreeing_key_and_never_changes_one_of_the_fixed_pack(self):
+        fixed = definition(65031, "plain", [field("level", offset=0, Resolution=0.5), field("mode", "LOOKUP", 8, 8)])
+        rep = repeating(65032, "rep", [field("n", offset=0), field("level", offset=8, Resolution=0.5),
+                                        field("mode", "LOOKUP", 16, 16, LookupEnumeration="OTHER")], start=2, count=1)
+        db = database(fixed, rep)
+        plan = c.make_plan(db)
+        self.assertEqual([f.key for f in plan.seq[0].item_fields], ["n2k.level", "n2k.pgn65032_mode"])
+        alone = c.make_plan(database(fixed))
+        text = c.emit_module(plan.keys, COMMIT, db, plan.seq_keys, plan.seq_lists)
+        self.assertTrue(text.startswith(c.emit_module(alone.keys, COMMIT, db).rstrip("\n")))
+        self.assertIn("\nlist  pgn65032_n  ", text)
+
+
+class SeqCodecTest(unittest.TestCase):
+    """The expected sequential pack of the fixture, read by the codec."""
+
+    @classmethod
+    def setUpClass(cls):
+        def text(rel):
+            with open(os.path.join(EXPECTED, *rel.split("/")), encoding="utf-8") as fh:
+                return fh.read()
+        cls.pack = load(text(MODULE), text(SEQ_PACK))[1]
+        cls.codec = c.seq_codec_kinds(cls.pack)
+
+    def test_pack_header_is_the_bits_wire_lsb_sequential(self):
+        self.assertEqual((self.pack.format, self.pack.wire, self.pack.layout, self.pack.bit_order),
+                         ("nmea2000-seq", "bits", "sequential", "lsb"))
+
+    def test_hand_packed_message_with_two_items(self):
+        # PGN 65304 = 0x00ff18, little-endian; count 2; item 1: code 5, value -1.50 (raw -150 =
+        # 0xff6a); item 2: code 7, value 2.50 (raw 250 = 0x00fa); 16-bit values little-endian
+        data = bytes.fromhex("18ff00" "02" "05" "6aff" "07" "fa00")
+        kind, ent = c.seq_decode(self.codec, data)
+        self.assertEqual(kind.name, "pgn65304")
+        items = ent["n2k.pgn65304_entries"]
+        self.assertEqual([(i["n2k.entry_code"], i["n2k.entry_value"]) for i in items], [(5, -1.5), (7, 2.5)])
+        self.assertEqual(c.seq_encode(kind, ent), data)
+
+    def test_present_empty_list_is_a_count_of_zero(self):
+        kind, ent = c.seq_decode(self.codec, bytes.fromhex("18ff0000"))
+        self.assertEqual(ent["n2k.pgn65304_entries"], [])
+        self.assertEqual(c.seq_encode(kind, ent).hex(), "18ff0000")
+
+    def test_count_beyond_the_input_is_malformed_and_a_when_beyond_it_is_no_kind(self):
+        with self.assertRaisesRegex(c.GenError, "^malformed-wire$"):
+            c.seq_decode(self.codec, bytes.fromhex("18ff0002056aff"))
+        with self.assertRaisesRegex(c.GenError, "^no-kind$"):
+            c.seq_decode(self.codec, bytes.fromhex("18ff"))
+
+    def test_reserved_bits_between_match_values_must_be_ones(self):
+        # PGN 65309 = 0x00ff1d; manufacturer 999 in 11 bits, reserved 0b11, industry 4:
+        # 999 | 3 << 11 | 4 << 13 = 0x9be7, little-endian e7 9b; count 0
+        kind, _ = c.seq_decode(self.codec, bytes.fromhex("1dff00e79b00"))
+        self.assertEqual(kind.name, "pgn65309")
+        with self.assertRaisesRegex(c.GenError, "^no-kind$"):
+            c.seq_decode(self.codec, bytes.fromhex("1dff00e78300"))        # reserved bits 0b00
+
+    def test_fixed_layout_message_is_no_kind(self):
+        with self.assertRaisesRegex(c.GenError, "^no-kind$"):
+            c.seq_decode(self.codec, c.FIXED_LAYOUT_MESSAGE)
+
+
+class SeqOutputTest(Workdir):
+    def test_database_without_a_counted_repeating_set_writes_no_sequential_pack(self):
+        self.rewrite_database(lambda db: db.update(PGNs=[d for d in db["PGNs"] if d["Id"] not in
+                                                         ("labLogEntries", "labCalibrationPairs", "gnssPositionData")]))
+        status, stdout, stderr = self.run_gen()
+        self.assertEqual((status, stderr), (0, ""))
+        self.assertFalse(os.path.exists(self.path("packs/nmea2000-seq")))
+        self.assertIn("nmea2000-seq kinds: 0", stdout)
+        self.assertIn("These need the future groups addition.", self.read("packs/nmea2000/pack.md"))
+        self.assertNotIn("\nlist ", self.read("model/n2k.def"))
+
+    def test_check_reports_a_stale_vector_of_the_sequential_pack(self):
+        self.assertEqual(self.run_gen()[0], 0)
+        self.write("packs/nmea2000-seq/vectors/rt-pgn1.json", "{}\n")
+        status, _, stderr = self.run_gen("--check")
+        self.assertEqual(status, 1)
+        self.assertIn("packs/nmea2000-seq/vectors/rt-pgn1.json is not written by the generator", stderr)
+
+    def test_hand_written_position_vector_and_the_error_vectors(self):
+        self.assertEqual(self.run_gen()[0], 0)
+        v = json.loads(self.read("packs/nmea2000-seq/vectors/x01-pgn129029-to-geojson.json"))
+        self.assertEqual(v["expect"], '{"type":"Feature","geometry":{"type":"Point","coordinates":[4.5,52.5]},"properties":{}}')
+        e = json.loads(self.read("packs/nmea2000-seq/vectors/e01-pgn129029-count-beyond-the-input.json"))
+        self.assertEqual(e["expect_error"], "malformed-wire")
+        e = json.loads(self.read("packs/nmea2000-seq/vectors/e02-fixed-layout-pgn-is-no-kind.json"))
+        self.assertEqual((e["input"], e["expect_error"]), (c.FIXED_LAYOUT_MESSAGE.hex(), "no-kind"))
