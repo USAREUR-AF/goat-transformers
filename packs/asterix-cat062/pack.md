@@ -57,14 +57,13 @@ flag's default.
 A key with a default counts as present, so encode always writes the first
 part and three extents.
 
-MRH is written as `cat062.mrh` gives it, 0 when the entity does not have it.
-The caller sets it as context (vector 39 of `canonical-track-v2`). SRC, the
-source of the I062/130 altitude, is `cat062.src`, also from the caller
-(vector 40).
-open-entity-gateway writes MRH 1 whenever it sends I062/130; the pack follows
-that rule once a derive function can set an integer key from the presence of
-`hae` ("Conditional output and flag tokens" in `docs/roadmap.md`, Designed). The fourth, fifth and sixth extents hold no mapped
-bit; they are read, and not written.
+MRH is 1 when the record carries I062/130: `model/cat062.def` derives
+`cat062.mrh` from the presence of `hae` (`present`, spec 0.12), as
+open-entity-gateway does; without an altitude it is 0, the default. A value
+the entity already holds, decoded or from context (vector 39 of
+`canonical-track-v2`), is kept. SRC, the source of the I062/130 altitude, is
+`cat062.src`, from the caller (vector 40). The fourth, fifth and sixth extents
+hold no mapped bit; they are read, and not written.
 
 ## Items not mapped
 
@@ -128,7 +127,8 @@ The derive lines are in `model/cat062.def`, which uses the module `track`.
 
 Vectors 24 to 29 of `canonical-track-v2` convert the track of the encoder's
 tests, and variants of it, to this pack, with SAC and SIC as the only context.
-Each gives the block the encoder writes, byte for byte.
+Each gives the block the encoder writes, byte for byte, except MRH on the
+tracks with an altitude (24, 25, 27, 28): the encoder writes 0, the pack 1.
 
 | Track | Octets |
 |---|---|
@@ -141,6 +141,7 @@ Each gives the block the encoder writes, byte for byte.
 
 Where the two differ:
 
+- MRH: 1 from the pack when I062/130 is written, 0 from the encoder.
 - The encoder refuses a track number above 4095, a longitude of 180 and an
   altitude outside -1500 to 150000 ft. The pack writes any value its field
   holds: a track number to 65535, a longitude of 180 as 2^25, an altitude to
