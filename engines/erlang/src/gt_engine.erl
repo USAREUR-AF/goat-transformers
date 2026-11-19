@@ -1413,17 +1413,31 @@ text_plan(Lines, {Value, Lists}, Pack, RenderField, RenderFixed, RenderGroup) ->
                           {[{Loc, {value, R}} | Acc], Placed#{Loc => true}}
                   end
           end, {[], #{}}, Lines),
-    %% a locator is written at the position of the first line that names
-    %% it, whichever line's value is written there (ruling 23 of 0.9)
+    %% a member or attribute that several lines name is written at the
+    %% position of the first `field`, `const` or valued `when` line naming
+    %% it, whichever line's value is written there (ruling 23 of 0.9). A
+    %% `when <locator> present` holds no position, and groups and elements
+    %% are not moved.
     InOrder = lists:reverse(Ops),
-    Written = maps:from_list([{Loc, V} || {Loc, {value, _} = V} <- InOrder]),
+    Names = fun({field, _, _, _, _, _}) -> true;
+               ({const, _, _, _}) -> true;
+               ({wh, _, {text, _, _}, _}) -> true;
+               (_) -> false
+            end,
+    Written = maps:from_list([{Loc, V} || {Line, {Loc, {value, _} = V}} <- lists:zip(Lines, InOrder),
+                                          Names(Line)]),
     {Placed, _} = lists:mapfoldl(
-                    fun({Loc, _}, Seen) ->
-                            case maps:is_key(Loc, Seen) of
-                                true -> {{Loc, none}, Seen};
-                                false -> {{Loc, maps:get(Loc, Written, none)}, Seen#{Loc => true}}
+                    fun({Line, {Loc, _} = Op}, Seen) ->
+                            case Names(Line) of
+                                false -> {Op, Seen};
+                                true ->
+                                    case maps:is_key(Loc, Seen) of
+                                        true -> {{Loc, none}, Seen};
+                                        false -> {{Loc, maps:get(Loc, Written, none)},
+                                                  Seen#{Loc => true}}
+                                    end
                             end
-                    end, #{}, InOrder),
+                    end, #{}, lists:zip(Lines, InOrder)),
     Placed.
 
 %% ===================================================================

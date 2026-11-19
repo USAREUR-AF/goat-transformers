@@ -1527,6 +1527,9 @@ equals a sentinel.
     locator, whichever line's value or sentinel is written there (ruling 26
     of 0.5 for `when`). Pinned by `conformance-absent-place-json` and
     `conformance-absent-place-xml`.
+    The ruling places one member or attribute that several lines name; it
+    does not move elements, nested objects or groups, whose order stays that
+    of ruling 10 of 0.5 and Version 0.7.
 24. **`also` (ruling 13 of 0.8).** The keys of `also` lines share their
     `field` line's sentinels: a sentinel on the bits leaves every key of the
     line absent, and when no key of the line has a value or a `default`, the
