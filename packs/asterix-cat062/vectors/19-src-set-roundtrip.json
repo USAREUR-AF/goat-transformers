@@ -1,0 +1,15 @@
+{
+  "name": "src-set-roundtrip",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a581010000d8",
+  "expect": "3e001f9b0d1019046a41a000b86d72fe5bd433003400000001a581010000d8",
+  "model": {
+    "@kind": "track",
+    "cat062.mrh": "1",
+    "cat062.src": "1",
+    "cat062.cnf": "0"
+  },
+  "source": "block of canonical-track-v2 vector 40",
+  "reference": "I062/080 first part a5 = MON 1, SPI 0, MRH 1, SRC 001 (GNSS), CNF 0, FX 1"
+}

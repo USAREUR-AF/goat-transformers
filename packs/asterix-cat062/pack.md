@@ -46,6 +46,7 @@ flag's default.
 |---|---|---|---|
 | MON, first part | `cat062.mon` (1 = monosensor track) | none | 1 |
 | MRH, first part | `cat062.mrh` (1 = geometric height more reliable) | none | 0 |
+| SRC, first part | `cat062.src` (0 none, 1 GNSS, 2 3D radar, 3 triangulation, 4 height from coverage, 5 speed look-up table, 6 default height, 7 multilateration) | none | 0 |
 | CNF, first part | `cat062.cnf` (0 = confirmed, 1 = tentative) | `track.confirmed`, through the table `cnf`, which turns the value over | none: the kind requires `track.confirmed` |
 | SIM, first extent | `cat062.sim` | `track.simulated` | 0 |
 | TSE, first extent | `cat062.tse` | `track.final_update` | 0 |
@@ -56,7 +57,9 @@ A key with a default counts as present, so encode always writes the first
 part and three extents.
 
 MRH is written as `cat062.mrh` gives it, 0 when the entity does not have it.
-The caller sets it as context (vector 39 of `canonical-track-v2`).
+The caller sets it as context (vector 39 of `canonical-track-v2`). SRC, the
+source of the I062/130 altitude, is `cat062.src`, also from the caller
+(vector 40).
 open-entity-gateway writes MRH 1 whenever it sends I062/130; the pack follows
 that rule once a derive function can set an integer key from the presence of
 `hae` ("Conditional output and flag tokens" in `docs/roadmap.md`, Designed). The fourth, fifth and sixth extents hold no mapped
