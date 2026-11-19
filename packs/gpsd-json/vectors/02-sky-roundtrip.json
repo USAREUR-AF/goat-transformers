@@ -1,0 +1,33 @@
+{
+  "name": "sky-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"SKY\",\"device\":\"/dev/ttyACM0\",\"time\":\"2026-03-04T05:06:07Z\",\"nSat\":3,\"uSat\":2,\"hdop\":0.85,\"vdop\":1.25,\"pdop\":1.5,\"gdop\":1.75,\"tdop\":0.75,\"xdop\":0.5,\"ydop\":0.625,\"satellites\":[{\"PRN\":5,\"gnssid\":0,\"svid\":5,\"az\":120.5,\"el\":45.25,\"ss\":42.5,\"used\":true,\"health\":1},{\"PRN\":72,\"gnssid\":6,\"svid\":8,\"freqid\":9,\"sigid\":0,\"az\":300,\"el\":12.5,\"ss\":31,\"used\":false},{\"PRN\":133,\"gnssid\":1,\"svid\":133,\"az\":210.75,\"el\":33,\"ss\":38.5,\"used\":true}]}",
+  "expect": "{\"class\":\"SKY\",\"device\":\"/dev/ttyACM0\",\"nSat\":3,\"gdop\":1.75,\"hdop\":0.85,\"pdop\":1.5,\"satellites\":[{\"PRN\":5,\"az\":120.5,\"el\":45.25,\"gnssid\":0,\"health\":1,\"ss\":42.5,\"svid\":5,\"used\":true},{\"PRN\":72,\"az\":300,\"el\":12.5,\"freqid\":9,\"gnssid\":6,\"ss\":31,\"sigid\":0,\"svid\":8,\"used\":false},{\"PRN\":133,\"az\":210.75,\"el\":33,\"gnssid\":1,\"ss\":38.5,\"svid\":133,\"used\":true}],\"tdop\":0.75,\"time\":\"2026-03-04T05:06:07.000Z\",\"uSat\":2,\"vdop\":1.25,\"xdop\":0.5,\"ydop\":0.625}",
+  "model": {
+    "gpsd.device": "/dev/ttyACM0",
+    "gpsd.n_sat": "3",
+    "gpsd.gdop": "1.75",
+    "gpsd.hdop": "0.85",
+    "gpsd.pdop": "1.5",
+    "gpsd.satellites.#": "3",
+    "gpsd.satellites[0].gpsd.prn": "5",
+    "gpsd.satellites[0].gpsd.az": "120.5",
+    "gpsd.satellites[0].gpsd.el": "45.25",
+    "gpsd.satellites[0].gpsd.gnssid": "0",
+    "gpsd.satellites[0].gpsd.health": "1",
+    "gpsd.satellites[0].gpsd.ss": "42.5",
+    "gpsd.satellites[0].gpsd.svid": "5",
+    "gpsd.satellites[0].gpsd.used": "1",
+    "gpsd.tdop": "0.75",
+    "time_ms": "1772600767000",
+    "gpsd.u_sat": "2",
+    "gpsd.vdop": "1.25",
+    "gpsd.xdop": "0.5",
+    "gpsd.ydop": "0.625",
+    "@kind": "sky",
+    "gpsd.satellites[2].gpsd.prn": "133"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; satellites is a group; each satellite item's members are written in the pack's order; used is a JSON boolean"
+}

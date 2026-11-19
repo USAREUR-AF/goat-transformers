@@ -1,0 +1,9 @@
+{
+  "name": "tpv-to-cot-xml",
+  "from": "gpsd-json",
+  "to": "cot-xml",
+  "input": "{\"class\":\"TPV\",\"device\":\"/dev/ttyACM0\",\"mode\":3,\"time\":\"2026-03-04T05:06:07.123Z\",\"lat\":47.9123456,\"lon\":11.4567891,\"altHAE\":559.5,\"altMSL\":512.25,\"speed\":12.5,\"track\":95.75,\"eph\":3.5}",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\" time=\"2026-03-04T05:06:07.123Z\" start=\"2026-03-04T05:06:07.123Z\"><point lat=\"47.9123456\" lon=\"11.4567891\" hae=\"559.5\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"95.75\" speed=\"12.5\"/></detail></event>",
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; cot-xml writes its defaults for type, ce and le; eph is not bound to ce (its confidence is not stated)"
+}

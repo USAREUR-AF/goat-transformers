@@ -1,0 +1,17 @@
+{
+  "name": "toff-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"TOFF\",\"device\":\"/dev/ttyACM0\",\"real_sec\":1772600767,\"real_nsec\":125000000,\"clock_sec\":1772600767,\"clock_nsec\":131072000,\"precision\":-1}",
+  "expect": "{\"class\":\"TOFF\",\"device\":\"/dev/ttyACM0\",\"real_sec\":1772600767,\"real_nsec\":125000000,\"clock_sec\":1772600767,\"clock_nsec\":131072000,\"precision\":-1}",
+  "model": {
+    "gpsd.device": "/dev/ttyACM0",
+    "gpsd.real_sec": "1772600767",
+    "gpsd.real_nsec": "125000000",
+    "gpsd.clock_sec": "1772600767",
+    "gpsd.clock_nsec": "131072000",
+    "@kind": "toff"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; precision is not in the TOFF table and is residue, written after the mapped members"
+}

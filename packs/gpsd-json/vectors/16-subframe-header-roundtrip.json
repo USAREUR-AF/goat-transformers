@@ -1,0 +1,18 @@
+{
+  "name": "subframe-header-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"SUBFRAME\",\"device\":\"/dev/ttyACM0\",\"tSV\":7,\"TOW17\":102345,\"frame\":4,\"gnssId\":0,\"scaled\":true}",
+  "expect": "{\"class\":\"SUBFRAME\",\"device\":\"/dev/ttyACM0\",\"frame\":4,\"gnssId\":0,\"scaled\":true,\"tSV\":7,\"TOW17\":102345}",
+  "model": {
+    "gpsd.device": "/dev/ttyACM0",
+    "gpsd.frame": "4",
+    "gpsd.gnss_id": "0",
+    "gpsd.scaled": "1",
+    "gpsd.t_sv": "7",
+    "gpsd.tow17": "102345",
+    "@kind": "subframe"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; the SUBFRAME header members; the page sub-object is not mapped"
+}

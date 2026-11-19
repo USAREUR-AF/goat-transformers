@@ -1,0 +1,22 @@
+{
+  "name": "device-roundtrip",
+  "from": "gpsd-json",
+  "to": "gpsd-json",
+  "input": "{\"class\":\"DEVICE\",\"path\":\"/dev/ttyUSB0\",\"activated\":\"2026-03-04T05:00:00.000Z\",\"driver\":\"NMEA0183\",\"bps\":9600,\"parity\":\"N\",\"stopbits\":1,\"native\":0,\"cycle\":1,\"sernum\":\"SN-1042\",\"subtype1\":\"PROTVER=18.00\",\"hexdata\":\"b5620a0400000e34\"}",
+  "expect": "{\"class\":\"DEVICE\",\"bps\":9600,\"cycle\":1,\"driver\":\"NMEA0183\",\"hexdata\":\"b5620a0400000e34\",\"native\":0,\"parity\":\"N\",\"path\":\"/dev/ttyUSB0\",\"sernum\":\"SN-1042\",\"stopbits\":1,\"subtype1\":\"PROTVER=18.00\",\"activated\":\"2026-03-04T05:00:00.000Z\"}",
+  "model": {
+    "gpsd.bps": "9600",
+    "gpsd.cycle": "1",
+    "gpsd.driver": "NMEA0183",
+    "gpsd.hexdata": "b5620a0400000e34",
+    "gpsd.native": "0",
+    "gpsd.parity": "N",
+    "gpsd.path": "/dev/ttyUSB0",
+    "gpsd.sernum": "SN-1042",
+    "gpsd.stopbits": "1",
+    "gpsd.subtype1": "PROTVER=18.00",
+    "@kind": "device"
+  },
+  "source": "derived by tools/gen/gpsd-json-vectors.py from the member tables of gpsd_json(5) and spec/engine-spec.md; no engine run",
+  "reference": "gpsd_json(5), gitlab.com/gpsd/gpsd commit a9266948f59b3785ad93bb28f487f0308ed03cfe, man/gpsd_json.adoc; activated is not mapped: the table says a time stamp string, gpsd also sends 0 for a deactivated device; as residue it round-trips either way"
+}
