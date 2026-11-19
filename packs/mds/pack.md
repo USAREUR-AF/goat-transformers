@@ -134,7 +134,7 @@ key first, so encode writes the shared value when the entity has it.
   2.0.2, `general-information.md`) states that geographic data in MDS are WGS 84
   (EPSG:4326) coordinates in decimal degrees, and the telemetry model of mds-openapi says
   the same of its latitude and longitude. That is `lat`/`lon` (WGS 84, degrees).
-- `speed_ms` (`location.speed`): the GPS data type gives the speed in metres per second as
+- `speed_ms` (`location.speed`): the GPS type gives the speed in metres per second as
   the GPS or GNSS receiver estimates it: a ground speed, as `speed_ms` is.
 - `time_ms` (`timestamp`, `last_telemetry.timestamp`): the timestamp data type is an
   integer count of milliseconds since the Unix epoch, and the member is the time the
