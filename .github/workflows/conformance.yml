@@ -198,3 +198,20 @@ jobs:
                 --from-format remote-id --in stdin: --in-frame newline,hex \
                 --out stdout: --to-format geojson --out-frame newline)
           test "$out" = '{"type":"Feature","geometry":null,"properties":{},"id":"12345678901234567890"}'
+
+  embedded:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: gt-core against the reference engine on every bits vector, fuzz and slicing
+        run: cargo test
+        working-directory: embedded
+      - name: The image for thumbv7em-none-eabihf, its sizes and its stack bound
+        run: |
+          rustup target add thumbv7em-none-eabihf
+          rustup component add llvm-tools
+          embedded/measure.sh
+          embedded/measure.sh thumbv7em-none-eabihf "gt-core/sqrt gt-core/trig"
+      - name: The linked image holds no panic machinery
+        run: "! grep -qi panic embedded/target/firmware.map"
