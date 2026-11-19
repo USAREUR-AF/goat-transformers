@@ -3,7 +3,7 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.8) and imports no engine, so a generator
+spec/engine-spec.md (Versions 0.1 to 0.10) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -47,12 +47,19 @@ BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": 
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string"}
 PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
                        "pdouble": "float", "pfloat": "float"}
+# 0.10 "Transforms for `text`": `int:<w>` is `int` with a parameter; `dec`,
+# `dm`, `hms` and `hms_dmy` are valid on this wire only.
+RECORD_TRANSFORMS = dict(TEXT_TRANSFORMS, dec="float", dm="float", hms="float", hms_dmy="int")
+PAIR_TRANSFORMS = ("dm", "hms_dmy")
+NUMERIC_TEXT = ("int", "float", "dec")
 TRANSFORMS = {"xml": TEXT_TRANSFORMS, "geojson": TEXT_TRANSFORMS, "json": JSON_TRANSFORMS,
-              "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS}
+              "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS}
 WIRES = tuple(TRANSFORMS)
 
+# the directives of the text wire (0.10): at most once, before the first `kind`
+TEXT_HEADER = ("delimiter", "start", "checksum")
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
-          "bit_order", "word_bytes")
+          "bit_order", "word_bytes") + TEXT_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length")
 SEQUENTIAL_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
@@ -67,6 +74,13 @@ _BITS_LOCATOR = re.compile(r"([0-9]+):([0-9]+):([0-9]+)\Z")
 _BITS_START = re.compile(r"([0-9]+):([0-9]+)\Z")
 _PROTOBUF_PATH = re.compile(r"[1-9][0-9]*(?:\.[1-9][0-9]*)*\Z")
 _CONDITION = re.compile(r"(!?)([^.!]+)\.([0-9]+)\Z")
+_TEXT_COLUMN = re.compile(r"([0-9]+):([0-9]+):([0-9]+)\Z")
+_TEXT_PAIR = re.compile(r"([0-9]+)\+([0-9]+)\Z")
+
+
+def printable(text, low=0x20):
+    """True when every character of `text` is from `low` to 0x7E."""
+    return all(low <= ord(c) <= 0x7E for c in text)
 
 
 class CheckError(Exception):
@@ -420,17 +434,20 @@ class Node:
     On the bits wire a locator is also given as numbers: `start` is the first
     bit (from the message start on a fixed layout, from the item start inside a
     group) and `bits` the length; on a sequential layout only `bits` is set.
-    On the protobuf wire `path` is the tuple of field numbers, `()` for `.`."""
+    On the protobuf wire `path` is the tuple of field numbers, `()` for `.`.
+    On the text wire `fields` is the tuple of field indexes (one, or two for a
+    pair) and `col` is (from, len) for a column, None otherwise; a group's
+    `start` is its first field and `item` the fields of one item."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = self.absent = None
+        self.start = self.path = self.absent = self.fields = self.col = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -457,6 +474,7 @@ class Pack:
         self.label = label
         self.format = self.version = self.wire = self.distribution = self.root = None
         self.layout, self.bit_order, self.word_bytes = "fixed", "lsb", None
+        self.delimiter = self.start = self.checksum = None      # text wire, as written
         self.sources, self.uses = [], ["core"]
         self.tables, self.typemap = {}, []
         self.common, self.kinds = [], []
@@ -464,6 +482,13 @@ class Pack:
     @property
     def sequential(self):
         return self.layout == "sequential"
+
+    @property
+    def separator(self):
+        """The delimiter of a text pack, None for `delimiter none`."""
+        if self.delimiter == "none":
+            return None
+        return self.delimiter or ","
 
     def scopes(self):
         """[(kind or None, lines)]: for each kind the common lines followed by
@@ -607,6 +632,14 @@ class _Loader:
             if not _UINT.match(value) or int(value) < 1:
                 self.bad(no, "word_bytes `%s` is not a positive integer" % value)
             pack.word_bytes = int(value)
+        elif d in TEXT_HEADER:
+            if pack.kinds:
+                self.bad(no, "`%s` after the first `kind`" % d)
+            if d == "delimiter" and value != "none" and (len(value) != 1 or value == '"' or not printable(value, 0x21)):
+                self.bad(no, "delimiter `%s` is not one character from 0x21 to 0x7E other than `\"`, or `none`" % value)
+            if d == "checksum" and value not in ("none", "nmea"):
+                self.bad(no, "checksum `%s` is not none or nmea" % value)
+            setattr(pack, d, value)
         else:
             setattr(pack, d, value)
         self._header_lines = getattr(self, "_header_lines", {})
@@ -651,6 +684,17 @@ class _Loader:
                 self.bad(where["word_bytes"], "`word_bytes` in a sequential pack")
         elif pack.word_bytes is None:
             self.fail("bad-directive", "a fixed-layout bits pack has no `word_bytes` line")
+        if pack.wire != "text":
+            for d in TEXT_HEADER:
+                if d in where:
+                    self.bad(where[d], "`%s` on the %s wire" % (d, pack.wire))
+        else:
+            if pack.delimiter == "*" and pack.checksum == "nmea":
+                self.bad(where["delimiter"], "`delimiter \"*\"` with `checksum nmea`")
+            if pack.start is not None and (not pack.start or not printable(pack.start, 0x21)
+                                           or (pack.separator is not None and pack.separator in pack.start)):
+                self.bad(where["start"], "start `%s` is not one or more characters from 0x21 to 0x7E "
+                                         "without the delimiter" % pack.start)
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -674,6 +718,9 @@ class _Loader:
         for lines in ([common + kind.lines for kind in kinds] if kinds else [common]):
             if sequential:
                 self._sequential_lists(lines)
+            elif self.pack.wire == "text":
+                self._one_group_per_list(lines)
+                self._text_group_last(lines)
             else:
                 self._one_group_per_list(lines)
                 self._paths_through_groups(lines)
@@ -759,6 +806,8 @@ class _Loader:
         elif name == "linscale":
             if len(targs) != 2 or not all(_NUMBER.match(t) for t in targs) or float(targs[0]) == 0:
                 self.bad(node, "`linscale` takes a maximum and a range")
+        elif self.pack.wire == "text":
+            self._text_parameters(node, name, targs)
         elif targs:
             self.bad(node, "transform `%s` takes no argument" % name)
         if bits is not None:
@@ -772,11 +821,73 @@ class _Loader:
                 self.bad(node, "transform `%s` does not allow a length of %d bits" % (name, bits))
         node.tr, node.targs = name, tuple(targs)
 
+    def _text_parameters(self, node, name, targs):
+        """Rule 1 of 0.10 "Transforms for `text`": the parameters and their ranges."""
+        def number(text, low, high):
+            return bool(_UINT.match(text)) and low <= int(text) <= high
+
+        if name == "int":
+            ok = not targs or (len(targs) == 1 and number(targs[0], 1, 20))
+        elif name == "dec":
+            ok = len(targs) in (1, 2) and number(targs[0], 0, 9) and (len(targs) == 1 or number(targs[1], 1, 20))
+        elif name == "dm":
+            ok = (len(targs) == 3 and number(targs[0], 1, 3) and number(targs[1], 0, 9)
+                  and len(targs[2]) == 2 and all("A" <= c <= "Z" for c in targs[2])
+                  and targs[2][0] != targs[2][1])
+        elif name in ("hms", "hms_dmy"):
+            ok = len(targs) == 1 and number(targs[0], 0, 3)
+        else:
+            ok = not targs
+        if not ok:
+            self.bad(node, "transform `%s` has parameters out of shape or range: `%s`"
+                     % (name, ":".join([name] + targs)))
+
+    def _text_locator(self, node, text, group, what):
+        """A locator of the text wire (0.10 "Locators"; ruling 14): `<i>`,
+        `<i>:<from>:<len>` or `<i>+<j>`, relative to the item inside a group."""
+        pack = self.pack
+        column, pair = _TEXT_COLUMN.match(text), _TEXT_PAIR.match(text)
+        if _UINT.match(text):
+            node.fields = (int(text),)
+        elif column:
+            index, start, length = (int(x) for x in column.groups())
+            if length < 1:
+                self.bad(node, "the column `%s` has a length of 0" % text)
+            node.fields, node.col = (index,), (start, length)
+        elif pair:
+            node.fields = (int(pair.group(1)), int(pair.group(2)))
+            if node.fields[0] == node.fields[1]:
+                self.bad(node, "the pair `%s` names one field twice" % text)
+            if what != "field":
+                self.bad(node, "a `%s` takes a field or a column, not the pair `%s`" % (what, text))
+        else:
+            self.bad(node, "`%s` is not a text locator (`<i>`, `<i>:<from>:<len>` or `<i>+<j>`)" % text)
+        if pack.separator is None and any(node.fields):
+            self.bad(node, "`%s` names a field other than 0 under `delimiter none`" % text)
+        if group is not None and max(node.fields) >= group.item:
+            self.bad(node, "`%s` reaches beyond `item %d`" % (text, group.item))
+
+    def _text_value(self, node, what):
+        """A `when` or `const` value of the text wire (0.10 "Locators")."""
+        pack = self.pack
+        if what == "when" and node.value == "present":
+            return
+        text = node.value[1:] if node.value.startswith("=") else node.value
+        if (not text or not printable(text) or text != text.strip(" ")
+                or (pack.separator is not None and pack.separator in text)
+                or (pack.checksum == "nmea" and "*" in text)):
+            self.bad(node, "the `%s` value `%s` is empty, holds the delimiter, a `*` under nmea, a "
+                           "character outside 0x20 to 0x7E, or a space at its start or end" % (what, node.value))
+        if node.col is not None and len(text) > node.col[1]:
+            self.bad(node, "the `%s` value `%s` is longer than its column" % (what, node.value))
+
     def _locator(self, node, text, group, what):
         """Set `loc` and, by wire, `start`/`bits` or `path`."""
         pack = self.pack
         node.loc = text
-        if pack.wire == "bits":
+        if pack.wire == "text":
+            self._text_locator(node, text, group, what)
+        elif pack.wire == "bits":
             if pack.sequential:
                 if not _UINT.match(text):
                     self.bad(node, "a %s of a sequential pack takes a bit length, not `%s`" % (what, text))
@@ -827,14 +938,22 @@ class _Loader:
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
         if "trim" in node.opts and not (bits_wire and node.tr == "ascii"):
             self.bad(node, "`trim` needs the bits wire and the `ascii` transform")
-        if "optional" in node.opts and not (bits_wire and not self.pack.sequential):
-            self.bad(node, "`optional` needs a fixed-layout bits pack")
+        text_wire = self.pack.wire == "text"
+        if "optional" in node.opts and not ((bits_wire and not self.pack.sequential) or text_wire):
+            self.bad(node, "`optional` needs a fixed-layout bits pack or the text wire")
+        if "optional" in node.opts and text_wire and group is not None:
+            self.bad(node, "`optional` inside a group of the text wire")
+        if text_wire and (node.tr in PAIR_TRANSFORMS) != (len(node.fields) == 2):
+            self.bad(node, "transform `%s` %s" % (node.tr, "takes a pair `<i>+<j>`" if node.tr in PAIR_TRANSFORMS
+                                                  else "does not take a pair"))
         self._via(node, node.via)
         self.key_uses.append((node, node.key, "field"))
 
     def _absent(self, node, group):
         """The load checks of `absent <value>[,<value>...]` (spec 0.9)."""
         arg, wire = node.absent, self.pack.wire
+        if wire == "text":
+            self.bad(node, "`absent` is not valid on the text wire (ruling 16 of 0.10)")
         values = [""] if arg == "" else arg.split(",")
         for v in values:
             if '"' in v or (v == "" and arg != ""):
@@ -904,6 +1023,8 @@ class _Loader:
             self._unsigned(node, node.value, "when")
         elif self.pack.wire == "protobuf" and node.value != "present" and not _UINT.match(node.value):
             self.bad(node, "a protobuf `when` value is `present` or an unsigned integer")
+        elif self.pack.wire == "text":
+            self._text_value(node, "when")
 
     def _const(self, node, group):
         if len(node.args) != 2:
@@ -914,6 +1035,8 @@ class _Loader:
             self.bad(node, "`const <locator> present`; write `=present` for the text")
         if self.pack.wire == "bits":
             self._unsigned(node, node.value, "const")
+        elif self.pack.wire == "text":
+            self._text_value(node, "const")
 
     def _presence(self, node, visible, declared):
         a = node.args
@@ -979,6 +1102,16 @@ class _Loader:
                 self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `while`, `more` or `fx`")
             return
         node.loc = rest[0]
+        if pack.wire == "text":
+            if group is not None:
+                self.bad(node, "a group inside a group of the text wire")
+            if pack.separator is None:
+                self.bad(node, "a group in a pack with `delimiter none`")
+            if len(rest) != 3 or rest[1] != "item" or not _UINT.match(rest[0]) or not _UINT.match(rest[2]) \
+                    or int(rest[2]) < 1:
+                self.bad(node, "a text group is `group <list> <i> item <n>` with n from 1")
+            node.start, node.item = int(rest[0]), int(rest[2])
+            return
         if pack.wire != "bits":
             if len(rest) != 1:
                 self.bad(node, "`%s` after the locator of a group on the %s wire" % (rest[1], pack.wire))
@@ -1021,6 +1154,19 @@ class _Loader:
                     self.bad(node, "list `%s` is mapped by two groups of one scope" % node.key)
                 seen.add(node.key)
 
+    def _text_group_last(self, lines):
+        """0.10 "Groups": the group is the last thing in its scope; no other
+        group, and no `field`, `when` or `const` at its index or beyond."""
+        groups = [n for n in lines if n.d == "group"]
+        if not groups:
+            return
+        if len(groups) > 1:
+            self.bad(groups[1], "a second group in one scope of the text wire")
+        first = groups[0].start
+        for node in lines:
+            if node.d in ("field", "when", "const") and max(node.fields) >= first:
+                self.bad(node, "the %s at `%s` lies at or beyond the group's field %d" % (node.d, node.loc, first))
+
     def _sequential_lists(self, lines):
         """0.8 rulings 23 and 33: two groups of one list in a sequential scope
         are allowed only when each sits in an `if` or `opt` block and neither
@@ -1047,7 +1193,7 @@ class _Loader:
         the group's path is refused on xml only."""
         wire = self.pack.wire
         groups = [n for n in lines if n.d == "group"]
-        if wire == "bits" or not groups:
+        if wire in ("bits", "text") or not groups:
             return
         xml = wire == "xml"
         below = tuple(g.loc + ("/" if xml else ".") for g in groups)
