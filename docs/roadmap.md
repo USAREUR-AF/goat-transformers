@@ -86,7 +86,7 @@ has a pack:
 | Per-wire feature gates in each engine, so that a package for `xml` formats only does not compile the binary codecs | Designed |
 | The capability matrix as a checked CI artifact | Designed |
 | Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
-| An HTTP front end over the package planner | Designed |
+| An HTTP front end over the package planner (`tools/goat-pkg serve`) | Built |
 | Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
 | A Zenoh adapter, its own crate outside the adapters workspace | Built; not built in CI |
 | A README for each engine: build, library use, the command-line tool, the tests and their counts | Built |
