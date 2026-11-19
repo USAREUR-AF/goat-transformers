@@ -9,7 +9,7 @@ written engines read and must agree on, byte for byte. Below, the 25 bytes a
 drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
 
-**814 formats · 5,300 message kinds · 7,615 conversion vectors · 7 engines**, counted
+**1,237 formats · 10,548 message kinds · 12,910 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -57,11 +57,11 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 814 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 5,300 |
-| Typed keys in the shared model, in 480 modules | 94,715 |
-| Lists in the shared model (parts of a message that repeat) | 17,089 |
-| Conversion vectors (an input message and the exact expected output) | 7,615 |
+| Formats | 1,237 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 10,548 |
+| Typed keys in the shared model, in 603 modules | 138,090 |
+| Lists in the shared model (parts of a message that repeat) | 17,325 |
+| Conversion vectors (an input message and the exact expected output) | 12,910 |
 | Load vectors (a pack that must load, or must be refused with a named error) | 505 |
 | Synthetic formats that exercise each rule of the specification | 100 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text` | 6 |
