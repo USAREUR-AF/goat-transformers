@@ -10,6 +10,7 @@ generator writes for it.
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -1310,6 +1311,89 @@ class SchemaReaderTest(unittest.TestCase):
         self.assertEqual(x.header_statement(head), "distribution statement a. Approved for public release")
         self.assertIsNone(x.header_statement(b"<xs:schema/>"))
         self.assertIsNone(x.header_statement(b" " * x.STATEMENT_BYTES + b"Distribution Statement A."))
+
+
+# A set of the shape CCSDS NDM/XML has: a types file in a namespace with
+# unqualified local elements, and a "master" file with no targetNamespace that
+# imports it and declares the message root. Neither header states Distribution
+# Statement A.
+NS_TYPES = ('<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n="urn:example:n" '
+            'targetNamespace="urn:example:n" elementFormDefault="unqualified">\n'
+            '<xs:complexType name="Body"><xs:sequence><xs:element name="NAME" type="xs:string"/>'
+            '<xs:element name="LEVEL" type="xs:int"/></xs:sequence></xs:complexType>\n</xs:schema>\n')
+MASTER = ('<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:n="urn:example:n" '
+          'elementFormDefault="unqualified">\n'
+          '%s'
+          '<xs:element name="msg" type="n:Body"/>\n</xs:schema>\n')
+PUBLIC = "The publisher states that  this set is public\nand may be reused."
+
+
+class PublicSetOptionsTest(Workspace):
+    """--public-statement, --notes-file and a master file with no targetNamespace."""
+
+    def run_master(self, *extra, imports=("urn:example:n",)):
+        with open(self.path("types.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(NS_TYPES)
+        with open(self.path("master.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(MASTER % "".join('<xs:import namespace="%s" schemaLocation="types.xsd"/>\n' % ns
+                                      for ns in imports))
+        return support.run_main(x.main, [
+            "--xsd", self.path("master.xsd"), self.path("types.xsd"), "--format", "demo", "--module", "demo",
+            "--out", self.out, "--model-dir", self.path("in", "model"), "--title", "Demo set",
+            "--message", "msg", "--names-file", self.path("out", "names", "demo.json")] + list(extra))
+
+    def test_set_without_a_header_statement_is_refused_without_the_option(self):
+        status, _, err = self.run_master()
+        self.assertEqual(status, 1)
+        self.assertIn("master.xsd: the file header does not state Distribution Statement A, and no "
+                      "--public-statement is given", err)
+        self.assertFalse(os.path.exists(self.path("out", "packs")))
+
+    def test_public_statement_is_recorded_once_in_the_sources_and_per_file_in_pack_md(self):
+        status, _, err = self.run_master("--public-statement", PUBLIC)
+        self.assertEqual((status, err), (0, ""))
+        pack = self.read_out("packs", "demo", "pack.def")
+        said = "The publisher states that this set is public and may be reused."
+        self.assertIn('source        "No file of the set carries a statement in its header (master.xsd, types.xsd); '
+                      "publisher's statement: %s\"\n" % said, pack)
+        self.assertNotIn("File header of", pack)
+        md = self.read_out("packs", "demo", "pack.md")
+        for base in ("master.xsd", "types.xsd"):
+            self.assertRegex(md, r"\| `%s` \| \d+ \| `[0-9a-f]{64}` \| \(no statement in the file; "
+                                 r"publisher's statement\) %s \|" % (re.escape(base), re.escape(said)))
+
+    def test_master_file_with_no_namespace_declares_the_roots_and_refers_to_imported_types(self):
+        self.assertEqual(self.run_master("--public-statement", PUBLIC)[0], 0)
+        pack = gtcheck.load_pack_file(self.path("out", "packs", "demo", "pack.def"),
+                                      gtcheck.Model().load_dir(self.path("out", "model")))
+        self.assertEqual([(k.name, k.root) for k in pack.kinds], [("msg", "msg")])
+        self.assertEqual([(n.key, n.loc) for n in pack.common + pack.kinds[0].lines],
+                         [("demo.name", "NAME/#text"), ("demo.level", "LEVEL/#text")])
+        # no element of such a document is in a namespace: the vectors declare none
+        vec = json.loads(self.read_out("packs", "demo", "vectors", "gen-1-msg-roundtrip.json"))
+        self.assertTrue(vec["input"].startswith("<msg>"), vec["input"])
+        md = self.read_out("packs", "demo", "pack.md")
+        self.assertIn("The message roots are declared in `master.xsd`, which has no targetNamespace and imports", md)
+        self.assertIn("- targetNamespace `urn:example:n`;", md)
+
+    def test_master_file_that_imports_a_second_namespace_is_refused(self):
+        status, _, err = self.run_master("--public-statement", PUBLIC, imports=("urn:example:n", "urn:example:other"))
+        self.assertEqual(status, 1)
+        self.assertIn("master.xsd: has no targetNamespace and imports ['urn:example:n', 'urn:example:other']; "
+                      "the set's namespace is 'urn:example:n'", err)
+
+    def test_notes_file_stands_after_the_shared_keys_and_before_requires(self):
+        notes = self.path("notes.md")
+        with open(notes, "w", encoding="utf-8") as fh:
+            fh.write("## Notes\n\nA paragraph written by hand.\n\n\n")
+        self.assertEqual(self.run_master("--public-statement", PUBLIC, "--notes-file", notes)[0], 0)
+        md = self.read_out("packs", "demo", "pack.md")
+        shared, mine, req = (md.index("## Mapped to shared keys"), md.index("## Notes\n\nA paragraph written by hand.\n\n## `requires`"),
+                             md.index("## `requires`"))
+        self.assertTrue(shared < mine < req)
+        # without the option there is no such section, and --check still holds on the output
+        self.assertEqual(self.run_master("--public-statement", PUBLIC, "--notes-file", notes, "--check")[0], 0)
+        self.assertEqual(self.run_master("--public-statement", PUBLIC, "--check")[0], 1)
 
 
 if __name__ == "__main__":
