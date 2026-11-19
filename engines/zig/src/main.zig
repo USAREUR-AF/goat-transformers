@@ -17,7 +17,9 @@
 // wire, lists in the entity. Sequential binary layouts (spec Version 0.8):
 // `layout sequential` on the bits wire, `uses` lines and five more derive
 // functions in model modules. Absent-value sentinels (spec Version 0.9): the
-// `absent` field option on every wire. Stdlib only.
+// `absent` field option on every wire. The strict rulings of spec Version
+// 0.11: named load errors, strict number and time grammars, XML text, the
+// capability report and the limit on list items. Stdlib only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
 // (`error.@"no-kind"`); `Engine.last_error` holds `<kind>: <detail>`.
@@ -130,17 +132,19 @@ pub const Entity = struct {
 // ---------------------------------------------------------------------------
 
 const EngineError = error{
-    UnknownDirective,
-    UnknownTransform,
-    UnknownWire,
-    UnknownFormat,
-    WrongTransformKind,
-    MalformedBitsLocator,
+    // Version 0.11 (ruling 5): every load and call failure has a kind
+    @"unterminated-quote",
+    @"unknown-directive",
+    @"unknown-transform",
+    @"unknown-wire",
+    @"unknown-format",
+    @"bad-locator",
+    @"missing-format",
+    @"missing-version",
+    @"missing-wire",
+    @"missing-module",
+    @"duplicate-format",
     @"missing-root",
-    MalformedDirective,
-    MalformedModule,
-    UnknownDistribution,
-    UnknownKeyType,
     // Version 0.4 load errors: the error name IS the spec's kind token.
     @"missing-distribution",
     @"missing-source",
@@ -165,7 +169,56 @@ const E = EngineError;
 // Detail text of a failure, filled where the failure is raised.
 const Diag = struct {
     msg: []const u8 = "",
+    // ruling 7 of 0.11: the limit on the list items one decode holds, the
+    // items held so far, and whether the limit was what failed
+    max_items: usize = default_max_items,
+    held: usize = 0,
+    limit_hit: bool = false,
+    // a decode run again that reads no field: it only counts the items
+    count_only: bool = false,
+    // the failure is a line check of a load (ruling 5b of 0.11)
+    line_err: bool = false,
 };
+
+// A load failure kept until the file has been read (ruling 5b of 0.11).
+const Deferred = struct { err: anyerror, msg: []const u8 };
+
+// Keep the first failure of a cause that is checked after the file is read.
+fn deferBad(deferred: *?Deferred, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []const u8, args: anytype) !void {
+    if (deferred.* != null) return;
+    const msg = try std.fmt.allocPrint(alloc, fmt, args);
+    deferred.* = .{ .err = err, .msg = msg };
+}
+
+// A failure of a line check, steps 1 to 10 of ruling 5b of 0.11: reported
+// as the line is read.
+fn lineBad(diag: *Diag, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
+    diag.line_err = true;
+    return bad(diag, alloc, err, fmt, args);
+}
+
+// The limit on list items when the caller sets none (ruling 7b of 0.11).
+pub const default_max_items: usize = 100_000;
+
+// Hold `n` more list items, or fail with `malformed-wire` when the decode
+// would then hold more than the limit (ruling 7 of 0.11).
+fn takeItems(diag: *Diag, alloc: std.mem.Allocator, n: u64, list: []const u8) anyerror!void {
+    const room = diag.max_items - diag.held;
+    if (n > room) {
+        diag.limit_hit = true;
+        return bad(diag, alloc, E.@"malformed-wire", "list {s}: {d} more items would pass the limit of {d} list items", .{ list, n, diag.max_items });
+    }
+    diag.held += @intCast(n);
+}
+
+// The list items an entity holds, at every nesting level.
+fn itemsHeld(items: []const Entity) usize {
+    var n: usize = items.len;
+    for (items) |*it| {
+        for (it.lists.ptr[0..it.lists.len]) |en| n += itemsHeld(en.value);
+    }
+    return n;
+}
 
 fn bad(diag: *Diag, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
     diag.msg = std.fmt.allocPrint(alloc, fmt, args) catch "";
@@ -330,6 +383,8 @@ const Line = struct {
     // then, once the line is resolved against its wire, the sentinels
     absent_raw: ?[]const u8 = null,
     abs_set: bool = false,
+    // the `absent` values were checked as the line was read
+    abs_checked: bool = false,
     abs_ints: []const u64 = &.{}, // bits, and the integer forms of protobuf
     abs_texts: []const []const u8 = &.{}, // text wires and pstring: the text compared
     abs_json: []const u8 = "", // json, geojson: the JSON text the first sentinel is written as
@@ -503,7 +558,7 @@ pub const Dist = enum { public, controlled };
 fn parseDist(s: []const u8) !Dist {
     if (std.mem.eql(u8, s, "public")) return .public;
     if (std.mem.eql(u8, s, "controlled")) return .controlled;
-    return E.UnknownDistribution;
+    return E.@"bad-directive";
 }
 
 const KeyType = enum { string, float, int };
@@ -610,8 +665,10 @@ fn tokenizeInto(toks: *std.ArrayList([]const u8), line: []const u8) !void {
             i += 1;
             const start = i;
             while (i < line.len and line[i] != '"') i += 1;
+            // a value that begins with `"` closes on its own line (ruling 5)
+            if (i >= line.len) return E.@"unterminated-quote";
             try toks.append(line[start..i]);
-            if (i < line.len) i += 1;
+            i += 1;
         } else {
             const start = i;
             while (i < line.len and line[i] != ' ' and line[i] != '\t' and line[i] != '\r') i += 1;
@@ -630,32 +687,39 @@ fn allDigits(s: []const u8) bool {
     return true;
 }
 
-// Decimal number text: [sign] digits [. digits] [e [sign] digits].
+// Number text (ruling 2b of 0.11): an optional `-`, one or more digits,
+// optionally `.` and one or more digits, optionally `e` or `E`, an optional
+// sign and one or more digits; nothing else.
 fn isDecimalText(s: []const u8) bool {
     var i: usize = 0;
-    if (i < s.len and (s[i] == '-' or s[i] == '+')) i += 1;
-    var nd: usize = 0;
-    while (i < s.len and isDigit(s[i])) : (i += 1) nd += 1;
+    if (i < s.len and s[i] == '-') i += 1;
+    const d0 = i;
+    while (i < s.len and isDigit(s[i])) i += 1;
+    if (i == d0) return false;
     if (i < s.len and s[i] == '.') {
         i += 1;
-        while (i < s.len and isDigit(s[i])) : (i += 1) nd += 1;
+        const f0 = i;
+        while (i < s.len and isDigit(s[i])) i += 1;
+        if (i == f0) return false;
     }
-    if (nd == 0) return false;
     if (i < s.len and (s[i] == 'e' or s[i] == 'E')) {
         i += 1;
         if (i < s.len and (s[i] == '-' or s[i] == '+')) i += 1;
-        var ne: usize = 0;
-        while (i < s.len and isDigit(s[i])) : (i += 1) ne += 1;
-        if (ne == 0) return false;
+        const e0 = i;
+        while (i < s.len and isDigit(s[i])) i += 1;
+        if (i == e0) return false;
     }
     return i == s.len;
 }
 
-// Decimal text to the nearest IEEE-754 double.
+// Number text to the nearest double (ruling 2b of 0.11); a text whose nearest
+// double is infinite is refused. A text that begins with `-` and reads as
+// zero is -0.0.
 fn parseDecimal(s: []const u8) !f64 {
     if (!isDecimalText(s)) return E.@"transform-decode";
-    const f = std.fmt.parseFloat(f64, s) catch return E.@"transform-decode";
+    var f = std.fmt.parseFloat(f64, s) catch return E.@"transform-decode";
     if (!std.math.isFinite(f)) return E.@"transform-decode"; // a model float is always finite
+    if (f == 0 and s[0] == '-') f = -0.0;
     return f;
 }
 
@@ -706,9 +770,17 @@ fn tableEncode(t: *const Table, mv: MV, wire_ty: KeyType) !MV {
     return E.@"transform-encode";
 }
 
+// Integer text (ruling 2a of 0.11): an optional `-` and one or more ASCII
+// digits, within a signed 64-bit integer.
 fn parseDecimalInt(s: []const u8) !i64 {
-    var body = s;
-    if (body.len > 0 and (body[0] == '-' or body[0] == '+')) body = body[1..];
+    const body = if (s.len > 0 and s[0] == '-') s[1..] else s;
+    if (!allDigits(body)) return E.@"transform-decode";
+    return std.fmt.parseInt(i64, s, 10) catch E.@"transform-decode";
+}
+
+// The integer text of the `text` wire (Version 0.10): an optional `+` or `-`.
+fn parseTextInt(s: []const u8) !i64 {
+    const body = if (s.len > 0 and (s[0] == '-' or s[0] == '+')) s[1..] else s;
     if (!allDigits(body)) return E.@"transform-decode";
     return std.fmt.parseInt(i64, s, 10) catch E.@"transform-decode";
 }
@@ -726,20 +798,27 @@ fn parseUnsigned(s: []const u8) ?u64 {
     return std.fmt.parseInt(u64, s, 10) catch null;
 }
 
-fn parseFactor(fac: []const u8) ?Factor {
+// A scale factor: number text, or `<num>/<den>`. For `uscale` and `sscale`
+// (`transform`, ruling 4d of 0.11) the two are unsigned decimal integers, and
+// neither the factor nor either part is zero; for the `scale` derive function
+// `<num>` may carry a `-`.
+fn parseFactor(fac: []const u8, transform: bool) ?Factor {
     if (std.mem.indexOfScalar(u8, fac, '/')) |slash| {
-        // a fraction <num>/<den> of two decimal integers
         const ns = fac[0..slash];
         const ds = fac[slash + 1 ..];
-        const nbody = if (ns.len > 0 and ns[0] == '-') ns[1..] else ns;
+        const nbody = if (!transform and ns.len > 0 and ns[0] == '-') ns[1..] else ns;
         if (!allDigits(nbody) or !allDigits(ds)) return null;
-        return .{
+        const f = Factor{
             .is_frac = true,
             .num = std.fmt.parseFloat(f64, ns) catch return null,
             .den = std.fmt.parseFloat(f64, ds) catch return null,
         };
+        if (f.den == 0 or (transform and f.num == 0)) return null;
+        return f;
     }
-    return .{ .factor = parseDecimal(fac) catch return null };
+    const v = parseDecimal(fac) catch return null;
+    if (transform and v == 0) return null;
+    return .{ .factor = v };
 }
 
 fn parseTransform(s: []const u8) !Transform {
@@ -756,24 +835,28 @@ fn parseTransform(s: []const u8) !Transform {
     for (simple) |e| if (std.mem.eql(u8, s, e.n)) return .{ .kind = e.k };
 
     var it = std.mem.splitScalar(u8, s, ':');
-    const head = it.next() orelse return E.UnknownTransform;
+    const head = it.next() orelse return E.@"unknown-transform";
+    // the parameters of the scaled transforms (ruling 4d of 0.11): each
+    // failure is `bad-directive`
     if (std.mem.eql(u8, head, "linscale")) {
-        const mp = it.next() orelse return E.UnknownTransform;
-        const rg = it.next() orelse return E.UnknownTransform;
-        if (it.next() != null) return E.UnknownTransform;
-        return .{
-            .kind = .linscale,
-            .maxpos = parseDecimal(mp) catch return E.UnknownTransform,
-            .range = parseDecimal(rg) catch return E.UnknownTransform,
-        };
+        const bdl = E.@"bad-directive";
+        const mp = it.next() orelse return bdl;
+        const rg = it.next() orelse return bdl;
+        if (it.next() != null) return bdl;
+        const maxpos = parseUnsigned(mp) orelse return bdl;
+        if (maxpos < 1) return bdl;
+        const range = parseDecimal(rg) catch return bdl;
+        if (range == 0) return bdl;
+        return .{ .kind = .linscale, .maxpos = @floatFromInt(maxpos), .range = range };
     }
     if (std.mem.eql(u8, head, "uscale") or std.mem.eql(u8, head, "sscale")) {
+        const bds = E.@"bad-directive";
         var t = Transform{ .kind = if (head[0] == 'u') .uscale else .sscale };
-        const fac = it.next() orelse return E.UnknownTransform;
-        t.factor = parseFactor(fac) orelse return E.UnknownTransform;
+        const fac = it.next() orelse return bds;
+        t.factor = parseFactor(fac, true) orelse return bds;
         if (it.next()) |off| {
-            t.offset = parseDecimal(off) catch return E.UnknownTransform;
-            if (it.next() != null) return E.UnknownTransform;
+            t.offset = parseDecimal(off) catch return bds;
+            if (it.next() != null) return bds;
         }
         return t;
     }
@@ -781,7 +864,7 @@ fn parseTransform(s: []const u8) !Transform {
     // or extra is `bad-directive` (Version 0.10, rule 1)
     const bd = E.@"bad-directive";
     const TextHead = enum { int, dec, dm, hms, hms_dmy };
-    const th = std.meta.stringToEnum(TextHead, head) orelse return E.UnknownTransform;
+    const th = std.meta.stringToEnum(TextHead, head) orelse return E.@"unknown-transform";
     var ps: [4][]const u8 = undefined;
     var np: usize = 0;
     while (it.next()) |part| {
@@ -874,7 +957,7 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const Module
     } else if (eq(u8, head, "scale")) {
         if (d.args.len != 1 or !all_float) return null;
         d.f = .scale;
-        d.factor = parseFactor(param orelse return null) orelse return null;
+        d.factor = parseFactor(param orelse return null, false) orelse return null;
     } else if (eq(u8, head, "offset")) {
         if (d.args.len != 1) return null;
         d.f = .offset;
@@ -943,7 +1026,7 @@ fn deriveShapeOk(toks: []const []const u8) bool {
         if (sh.param != (colon != null) or nargs < sh.min or nargs > sh.max) return false;
         // a parameter no key type could accept
         const param = if (colon) |c| fname[c + 1 ..] else "";
-        if (std.mem.eql(u8, head, "scale")) return parseFactor(param) != null;
+        if (std.mem.eql(u8, head, "scale")) return parseFactor(param, false) != null;
         if (std.mem.eql(u8, head, "offset")) return !std.meta.isError(parseDecimal(param));
         return true;
     }
@@ -970,66 +1053,112 @@ fn parseModule(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anye
     };
     var lines = std.mem.splitScalar(u8, def_text, '\n');
     var tokbuf = std.ArrayList([]const u8).init(alloc);
+    var lineno: usize = 0;
+    var have_version = false;
+    // the causes of a module line that are not line checks, reported once
+    // the file is read (ruling 5b of 0.11)
+    var deferred: ?Deferred = null;
+    const bd = E.@"bad-directive";
     while (lines.next()) |line| {
-        try tokenizeInto(&tokbuf, line);
+        lineno += 1;
+        // the line checks of ruling 5b of 0.11: the quote, the directive, the
+        // argument count, a repeated header line, the distribution value
+        tokenizeInto(&tokbuf, line) catch |err|
+            return lineBad(diag, alloc, err, "line {d}: a quoted value has no closing quote", .{lineno});
         const toks = tokbuf.items;
         if (toks.len == 0) continue;
         const kw = toks[0];
-        if (std.mem.eql(u8, kw, "module")) {
-            if (toks.len < 2) return E.MalformedDirective;
-            m.name = toks[1];
-        } else if (std.mem.eql(u8, kw, "version")) {
-            if (toks.len < 2) return E.MalformedDirective;
-            m.version = toks[1];
-        } else if (std.mem.eql(u8, kw, "distribution")) {
-            if (toks.len < 2) return E.MalformedDirective;
-            m.distribution = try parseDist(toks[1]);
-        } else if (std.mem.eql(u8, kw, "source")) {
-            if (toks.len < 2) return E.MalformedDirective;
-            try m.sources.append(toks[1]);
-        } else if (std.mem.eql(u8, kw, "key")) {
-            if (toks.len < 4) return E.MalformedDirective;
-            const name = toks[1];
-            if (name.len == 0 or std.mem.indexOfScalar(u8, name, '.') != null) return E.MalformedModule;
-            const ty: KeyType = if (std.mem.eql(u8, toks[2], "string"))
-                .string
-            else if (std.mem.eql(u8, toks[2], "float"))
-                .float
-            else if (std.mem.eql(u8, toks[2], "int"))
-                .int
-            else
-                return E.UnknownKeyType;
-            if (m.index.contains(name) or m.lists.contains(name)) return bad(diag, alloc, E.@"duplicate-key", "key {s} appears twice", .{name});
-            try m.index.put(name, m.keys.items.len);
-            try m.keys.append(.{
-                .name = name,
-                .ty = ty,
-                .unit = toks[3],
-                .meaning = if (toks.len > 4) toks[4] else "",
-            });
-        } else if (std.mem.eql(u8, kw, "list")) {
-            // list <name> ["meaning"]
-            if (toks.len < 2 or toks.len > 3) return E.MalformedDirective;
-            const name = toks[1];
-            if (name.len == 0 or std.mem.indexOfScalar(u8, name, '.') != null) return E.MalformedModule;
-            if (m.index.contains(name) or m.lists.contains(name)) return bad(diag, alloc, E.@"duplicate-key", "list {s}: the name appears twice", .{name});
-            try m.lists.put(name, {});
-        } else if (std.mem.eql(u8, kw, "derive")) {
-            // refused on its own text: a line error (ruling 32 of 0.8)
-            if (!deriveShapeOk(toks)) {
-                return bad(diag, alloc, E.@"bad-directive", "derive {s}: the function, its parameter or its argument count does not fit", .{if (toks.len > 1) toks[1] else ""});
-            }
-            try m.derive_lines.append(try alloc.dupe([]const u8, toks));
-        } else if (std.mem.eql(u8, kw, "uses")) {
-            if (toks.len != 2) return E.MalformedDirective;
-            try m.uses.append(toks[1]);
-        } else {
-            return bad(diag, alloc, E.UnknownDirective, "unknown directive {s}", .{kw});
+        const Dir = enum { module, version, distribution, source, uses, key, list, derive };
+        const dir = std.meta.stringToEnum(Dir, kw) orelse
+            return bad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
+        const nargs = toks.len - 1;
+        const args_ok = switch (dir) {
+            .module, .version, .distribution, .source, .uses => nargs == 1,
+            .key => nargs == 3 or nargs == 4,
+            .list => nargs == 1 or nargs == 2,
+            .derive => true, // its own checks below (ruling 32 of 0.8)
+        };
+        if (!args_ok) return bad(diag, alloc, bd, "line {d}: {s} takes another number of arguments", .{ lineno, kw });
+        switch (dir) {
+            .module => {
+                if (m.name.len > 0) return bad(diag, alloc, bd, "line {d}: a second module line", .{lineno});
+                m.name = toks[1];
+                if (m.name.len == 0) {
+                    try deferBad(&deferred, alloc, bd, "line {d}: an empty module name", .{lineno});
+                    continue;
+                }
+            },
+            .version => {
+                if (have_version) return bad(diag, alloc, bd, "line {d}: a second version line", .{lineno});
+                have_version = true;
+                m.version = toks[1];
+            },
+            .distribution => {
+                if (m.distribution != null) return bad(diag, alloc, bd, "line {d}: a second distribution line", .{lineno});
+                m.distribution = parseDist(toks[1]) catch |err|
+                    return bad(diag, alloc, err, "line {d}: distribution {s} is not public or controlled", .{ lineno, toks[1] });
+            },
+            .source => try m.sources.append(toks[1]),
+            .uses => try m.uses.append(toks[1]),
+            .key => {
+                const name = toks[1];
+                if (name.len == 0 or std.mem.indexOfScalar(u8, name, '.') != null) {
+                    try deferBad(&deferred, alloc, bd, "line {d}: key name {s} is empty or holds a dot", .{ lineno, name });
+                    continue;
+                }
+                const ty: KeyType = if (std.mem.eql(u8, toks[2], "string"))
+                    .string
+                else if (std.mem.eql(u8, toks[2], "float"))
+                    .float
+                else if (std.mem.eql(u8, toks[2], "int"))
+                    .int
+                else {
+                    try deferBad(&deferred, alloc, bd, "line {d}: key type {s} is not string, float or int", .{ lineno, toks[2] });
+                    continue;
+                };
+                if (m.index.contains(name) or m.lists.contains(name)) {
+                    try deferBad(&deferred, alloc, E.@"duplicate-key", "key {s} appears twice", .{name});
+                    continue;
+                }
+                try m.index.put(name, m.keys.items.len);
+                try m.keys.append(.{
+                    .name = name,
+                    .ty = ty,
+                    .unit = toks[3],
+                    .meaning = if (toks.len > 4) toks[4] else "",
+                });
+            },
+            .list => {
+                // list <name> ["meaning"]
+                const name = toks[1];
+                if (name.len == 0 or std.mem.indexOfScalar(u8, name, '.') != null) {
+                    try deferBad(&deferred, alloc, bd, "line {d}: list name {s} is empty or holds a dot", .{ lineno, name });
+                    continue;
+                }
+                if (m.index.contains(name) or m.lists.contains(name)) {
+                    try deferBad(&deferred, alloc, E.@"duplicate-key", "list {s}: the name appears twice", .{name});
+                    continue;
+                }
+                try m.lists.put(name, {});
+            },
+            .derive => {
+                // refused on its own text: a line error (ruling 32 of 0.8)
+                if (!deriveShapeOk(toks)) {
+                    try deferBad(&deferred, alloc, bd, "derive {s}: the function, its parameter or its argument count does not fit", .{if (toks.len > 1) toks[1] else ""});
+                    continue;
+                }
+                try m.derive_lines.append(try alloc.dupe([]const u8, toks));
+            },
         }
     }
-    if (m.name.len == 0) return E.MalformedModule;
-    if (m.distribution == null) return E.@"missing-distribution";
-    if (m.sources.items.len == 0) return E.@"missing-source";
+    if (deferred) |d| {
+        diag.msg = d.msg;
+        return d.err;
+    }
+    if (m.name.len == 0) return bad(diag, alloc, E.@"missing-module", "the module has no module line", .{});
+    if (!have_version) return bad(diag, alloc, E.@"missing-version", "module {s} has no version line", .{m.name});
+    if (m.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "module {s} has no distribution line", .{m.name});
+    if (m.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "module {s} has no source line", .{m.name});
     return m;
 }
 
@@ -1072,10 +1201,10 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     } else if (ln.isField() and kindCategory(ln.transform.kind) == .rec) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the text wire", .{ ln.lineno, ln.key });
     } else if (ln.isField() and wireCategory(p.wire) != kindCategory(ln.transform.kind)) {
-        return bad(diag, alloc, E.WrongTransformKind, "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
     }
     if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json) {
-        return bad(diag, alloc, E.WrongTransformKind, "line {d}: bool is valid only on the json wire", .{ln.lineno});
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: bool is valid only on the json wire", .{ln.lineno});
     }
     // `const <locator> present` writes nothing: refused; `=present` is the text
     if (ln.tag == .constant and std.mem.eql(u8, ln.wraw, "present")) {
@@ -1111,7 +1240,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a bit length; a fixed-layout pack takes <word>:<pos>:<len>", .{ ln.lineno, ln.locator });
             }
             if (w == null or ps_v == null or l == null or it.next() != null) {
-                return bad(diag, alloc, E.MalformedBitsLocator, "line {d}: bits locator {s} is not <word>:<pos>:<len>", .{ ln.lineno, ln.locator });
+                return bad(diag, alloc, E.@"bad-locator", "line {d}: bits locator {s} is not <word>:<pos>:<len>", .{ ln.lineno, ln.locator });
             }
             ln.bstart = @as(usize, @intCast(w.?)) * p.word_bytes * 8 + @as(usize, @intCast(ps_v.?));
             ln.blen = @intCast(l.?);
@@ -1144,7 +1273,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             if (!ln.dot) {
                 ln.ppath = parsePbPath(alloc, ln.locator) catch |err| switch (err) {
                     error.OutOfMemory => return err,
-                    else => return bad(diag, alloc, E.MalformedDirective, "line {d}: protobuf path {s} is not field numbers separated by dots", .{ ln.lineno, ln.locator }),
+                    else => return bad(diag, alloc, E.@"bad-directive", "line {d}: protobuf path {s} is not field numbers separated by dots", .{ ln.lineno, ln.locator }),
                 };
             }
             if (ln.isFixed()) {
@@ -1174,7 +1303,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         },
         .text => try textFinalizeLine(alloc, p, ln, diag),
     }
-    if (ln.isField()) try parseAbsent(alloc, p.wire, ln, in_group, diag);
+    if (ln.isField() and !ln.abs_checked) try parseAbsent(alloc, p.wire, ln, in_group, diag);
 }
 
 // Is the text a JSON number (RFC 8259): -?(0|[1-9][0-9]*)(.[0-9]+)?([eE][+-]?[0-9]+)?
@@ -1210,9 +1339,9 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     const bd = E.@"bad-directive";
     const no = ln.lineno;
     // ruling 16 of 0.10: `absent` on the text wire is not stated yet
-    if (wire == .text) return bad(diag, alloc, bd, "line {d}: absent is not an option of the text wire", .{no});
+    if (wire == .text) return lineBad(diag, alloc, bd, "line {d}: absent is not an option of the text wire", .{no});
     if (std.mem.indexOfScalar(u8, raw, '"') != null) {
-        return bad(diag, alloc, bd, "line {d}: an absent value holds a double quote", .{no});
+        return lineBad(diag, alloc, bd, "line {d}: an absent value holds a double quote", .{no});
     }
     // the quoted empty token `""` is the one value "the empty text"
     var vals = std.ArrayList([]const u8).init(alloc);
@@ -1221,7 +1350,7 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     } else {
         var it = std.mem.splitScalar(u8, raw, ',');
         while (it.next()) |v| {
-            if (v.len == 0) return bad(diag, alloc, bd, "line {d}: absent {s} holds an empty value", .{ no, raw });
+            if (v.len == 0) return lineBad(diag, alloc, bd, "line {d}: absent {s} holds an empty value", .{ no, raw });
             try vals.append(v);
         }
     }
@@ -1229,14 +1358,14 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     if (wire == .bits or (wire == .protobuf and k != .pstring)) {
         // the raw value is an unsigned integer of the field's width
         if (wire == .bits and ln.blen > 64) {
-            return bad(diag, alloc, bd, "line {d}: absent on a bits field of {d} bits; at most 64", .{ no, ln.blen });
+            return lineBad(diag, alloc, bd, "line {d}: absent on a bits field of {d} bits; at most 64", .{ no, ln.blen });
         }
         const width: usize = if (wire == .bits) ln.blen else if (k == .pfloat) 32 else 64;
         const ints = try alloc.alloc(u64, vals.items.len);
         for (vals.items, 0..) |v, i| {
             const x = parseUnsigned(v) orelse
-                return bad(diag, alloc, bd, "line {d}: absent value `{s}` is not an unsigned decimal integer", .{ no, v });
-            if (!fitsBits(x, width)) return bad(diag, alloc, bd, "line {d}: absent value {s} does not fit {d} bits", .{ no, v, width });
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}` is not an unsigned decimal integer", .{ no, v });
+            if (!fitsBits(x, width)) return lineBad(diag, alloc, bd, "line {d}: absent value {s} does not fit {d} bits", .{ no, v, width });
             ints[i] = x;
         }
         ln.abs_ints = ints;
@@ -1251,7 +1380,7 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
             const forced = v.len > 0 and v[0] == '=';
             const t = if (forced) v[1..] else v;
             if (t.len == 0 and raw.len != 0) {
-                return bad(diag, alloc, bd, "line {d}: absent value `{s}` is empty after its `=`; the empty text is `\"\"`", .{ no, v });
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}` is empty after its `=`; the empty text is `\"\"`", .{ no, v });
             }
             if (wire == .xml) {
                 texts[i] = t;
@@ -1261,15 +1390,15 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
             var jtext: []const u8 = undefined;
             var is_bool = false;
             if (!forced and std.mem.eql(u8, t, "null")) {
-                return bad(diag, alloc, bd, "line {d}: absent null; a member whose value is null is absent already", .{no});
+                return lineBad(diag, alloc, bd, "line {d}: absent null; a member whose value is null is absent already", .{no});
             } else if (!forced and (std.mem.eql(u8, t, "true") or std.mem.eql(u8, t, "false"))) {
                 is_bool = true;
                 texts[i] = t;
                 jtext = t;
             } else if (!forced and isJsonNumber(t)) {
                 const f = std.fmt.parseFloat(f64, t) catch
-                    return bad(diag, alloc, bd, "line {d}: absent value {s} is not a number", .{ no, t });
-                if (!std.math.isFinite(f)) return bad(diag, alloc, bd, "line {d}: absent value {s} does not fit a double", .{ no, t });
+                    return lineBad(diag, alloc, bd, "line {d}: absent value {s} is not a number", .{ no, t });
+                if (!std.math.isFinite(f)) return lineBad(diag, alloc, bd, "line {d}: absent value {s} does not fit a double", .{ no, t });
                 texts[i] = try floatToStr(alloc, f);
                 jtext = texts[i];
             } else {
@@ -1277,10 +1406,10 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
                 jtext = try jsonStr(alloc, t);
             }
             if (coord and !(!forced and isJsonNumber(t))) {
-                return bad(diag, alloc, bd, "line {d}: absent value `{s}` on the coordinate {s} is not number text", .{ no, v, ln.locator });
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}` on the coordinate {s} is not number text", .{ no, v, ln.locator });
             }
             if (k == .bool_ and !is_bool) {
-                return bad(diag, alloc, bd, "line {d}: absent value `{s}` on the bool transform is not true or false", .{ no, v });
+                return lineBad(diag, alloc, bd, "line {d}: absent value `{s}` on the bool transform is not true or false", .{ no, v });
             }
             if (i == 0) ln.abs_json = jtext;
         }
@@ -1310,8 +1439,8 @@ fn parsePbPath(alloc: std.mem.Allocator, text: []const u8) ![]const usize {
     var nums = std.ArrayList(usize).init(alloc);
     var it = std.mem.splitScalar(u8, text, '.');
     while (it.next()) |seg| {
-        const n = parseUnsigned(seg) orelse return E.MalformedDirective;
-        if (n == 0 or n > 0x1fffffff) return E.MalformedDirective;
+        const n = parseUnsigned(seg) orelse return E.@"bad-directive";
+        if (n == 0 or n > 0x1fffffff) return E.@"bad-directive";
         try nums.append(@intCast(n));
     }
     return nums.toOwnedSlice();
@@ -1600,220 +1729,454 @@ fn setTableTypes(p: *Pack) void {
     }
 }
 
+// Ruling 5a of 0.11: does a `field`, `when` or `const` locator have the form
+// its line takes on the wire? false: `bad-locator`. The cases earlier versions
+// name (`.` outside a group, a bit length in a fixed-layout pack, a
+// `<word>:<pos>:<len>` locator in a sequential pack) pass here and stay
+// `bad-directive`; the `text` wire has no `bad-locator`.
+fn locatorFormOk(wire: Wire, sequential: bool, loc: []const u8, in_group: bool) bool {
+    switch (wire) {
+        .xml => {
+            var it = std.mem.splitScalar(u8, loc, '/');
+            var last: []const u8 = "";
+            var after_leaf = false;
+            while (it.next()) |seg| {
+                if (seg.len == 0 or after_leaf) return false;
+                if (seg[0] == '@') {
+                    if (seg.len == 1) return false;
+                    after_leaf = true;
+                } else if (std.mem.eql(u8, seg, "#text")) after_leaf = true;
+                last = seg;
+            }
+            return after_leaf;
+        },
+        .json, .geojson => {
+            if (std.mem.eql(u8, loc, ".")) return true;
+            var it = std.mem.splitScalar(u8, loc, '.');
+            while (it.next()) |seg| if (seg.len == 0) return false;
+            if (wire == .geojson and !in_group and std.mem.startsWith(u8, loc, "geometry.")) {
+                const slot = loc["geometry.".len..];
+                return std.mem.eql(u8, slot, "lon") or std.mem.eql(u8, slot, "lat") or std.mem.eql(u8, slot, "alt");
+            }
+            return true;
+        },
+        .protobuf => {
+            if (std.mem.eql(u8, loc, ".")) return true;
+            var it = std.mem.splitScalar(u8, loc, '.');
+            while (it.next()) |seg| {
+                const v = parseUnsigned(seg) orelse return false;
+                if (v == 0 or v > 536870911) return false;
+            }
+            return true;
+        },
+        .bits => {
+            if (sequential) {
+                if (std.mem.indexOfScalar(u8, loc, ':') != null) return true;
+                if (!allDigits(loc)) return false;
+                const v = parseUnsigned(loc) orelse return true;
+                return v != 0;
+            }
+            // text with no `:` is a bit length (`bad-directive` later) or
+            // not a locator at all
+            if (std.mem.indexOfScalar(u8, loc, ':') == null) return allDigits(loc);
+            var it = std.mem.splitScalar(u8, loc, ':');
+            var parts: usize = 0;
+            var len_v: ?u64 = null;
+            while (it.next()) |seg| {
+                parts += 1;
+                if (!allDigits(seg)) return false;
+                len_v = parseUnsigned(seg);
+            }
+            if (parts != 3) return false;
+            // digits too many for 64 bits: a length far above any transform's
+            if (len_v) |l| return l != 0;
+            return true;
+        },
+        .text => return true,
+    }
+}
+
+// Ruling 5a of 0.11 on a `group` line: an empty step or member name, and on
+// `protobuf` a step that is not a field number, are `bad-locator`.
+fn groupLocatorFormOk(wire: Wire, loc: []const u8) bool {
+    const sep: u8 = switch (wire) {
+        .xml => '/',
+        .json, .geojson, .protobuf => '.',
+        .bits, .text => return true,
+    };
+    var it = std.mem.splitScalar(u8, loc, sep);
+    while (it.next()) |seg| {
+        if (seg.len == 0) return false;
+        if (wire == .protobuf) {
+            const v = parseUnsigned(seg) orelse return false;
+            if (v == 0 or v > 536870911) return false;
+        }
+    }
+    return true;
+}
+
+// The bit length of a fixed-layout locator `<word>:<pos>:<len>`, null when it
+// has another form.
+fn fixedLen(loc: []const u8) ?u64 {
+    var it = std.mem.splitScalar(u8, loc, ':');
+    _ = it.next() orelse return null;
+    _ = it.next() orelse return null;
+    const l = parseUnsigned(it.next() orelse return null) orelse return null;
+    if (it.next() != null) return null;
+    return l;
+}
+
+// The directives of a pack (ruling 5 of 0.11).
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum };
+
+// The header lines a pack has given so far, for the line checks.
+const HeaderSeen = struct {
+    format: bool = false,
+    version: bool = false,
+    wire: bool = false,
+    distribution: bool = false,
+    // a line of the list that must follow `layout sequential` has been read
+    wire_line: bool = false,
+};
+
+// Does the directive stand after the `wire` line (ruling 5b of 0.11)?
+fn needsWire(d: PackDir) bool {
+    return switch (d) {
+        .root, .field, .when, .@"const", .group, .end, .word_bytes, .bit_order, .layout, .also, .pad, .@"align", .presence, .@"if", .opt, .chain, .fx, .length => true,
+        else => false,
+    };
+}
+
+// The line checks of a pack that do not depend on the layout, in the order of
+// ruling 5b of 0.11: the directive (`unknown-directive`), the number of
+// arguments (5e), `missing-wire`, a repeated header line, the `wire` and
+// `distribution` values.
+fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: usize, hdr: *HeaderSeen, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const kw = toks[0];
+    const d = std.meta.stringToEnum(PackDir, kw) orelse
+        return lineBad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
+    const n = toks.len - 1;
+    const ok = switch (d) {
+        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .checksum => n == 1,
+        .field => n >= 3,
+        .when, .@"const", .default, .typemap => n == 2,
+        .map => n == 3,
+        .requires, .@"if", .length => n >= 1,
+        .group => n >= 2,
+        .presence => n == 2,
+        .also => n == 1 or n == 3,
+        .end, .opt, .chain, .fx => n == 0,
+    };
+    if (!ok) return lineBad(diag, alloc, bd, "line {d}: {s} takes another number of arguments", .{ lineno, kw });
+    if (needsWire(d) and !hdr.wire) {
+        return lineBad(diag, alloc, E.@"missing-wire", "line {d}: {s} stands before the wire line", .{ lineno, kw });
+    }
+    const slot: ?*bool = switch (d) {
+        .format => &hdr.format,
+        .version => &hdr.version,
+        .wire => &hdr.wire,
+        .distribution => &hdr.distribution,
+        else => null,
+    };
+    if (slot) |sl| {
+        if (sl.*) return lineBad(diag, alloc, bd, "line {d}: a second {s} line", .{ lineno, kw });
+        sl.* = true;
+    }
+    if (d == .wire and std.meta.stringToEnum(Wire, toks[1]) == null) {
+        return lineBad(diag, alloc, E.@"unknown-wire", "line {d}: unknown wire {s}", .{ lineno, toks[1] });
+    }
+    if (d == .distribution) _ = parseDist(toks[1]) catch |err|
+        return lineBad(diag, alloc, err, "line {d}: distribution {s} is not public or controlled", .{ lineno, toks[1] });
+}
+
+// After the file is read: `missing-format`, `missing-version`, `missing-wire`
+// (ruling 5b of 0.11).
+fn headerChecks(alloc: std.mem.Allocator, hdr: HeaderSeen, diag: *Diag) anyerror!void {
+    if (!hdr.format) return bad(diag, alloc, E.@"missing-format", "the pack has no format line", .{});
+    if (!hdr.version) return bad(diag, alloc, E.@"missing-version", "the pack has no version line", .{});
+    if (!hdr.wire) return bad(diag, alloc, E.@"missing-wire", "the pack has no wire line", .{});
+}
+
+// The state of a fixed-layout pack while its lines are read.
+const FState = struct {
+    alloc: std.mem.Allocator,
+    diag: *Diag,
+    p: *Pack,
+    any_when: bool = false,
+    kind_root: bool = false,
+    gstack: std.ArrayList(*Group),
+    gtmp: std.ArrayList(Line),
+    gfrom: std.ArrayList(usize),
+    gline: std.ArrayList(Line),
+    lineno: usize = 0,
+};
+
+// One line of a fixed-layout pack, after the line checks of steps 1 to 6.
+fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
+    const alloc = st.alloc;
+    const diag = st.diag;
+    const p = st.p;
+    const gstack = &st.gstack;
+    const gtmp = &st.gtmp;
+    const gfrom = &st.gfrom;
+    const gline = &st.gline;
+    const lineno = st.lineno;
+    const kw = toks[0];
+    const is = struct {
+        fn f(x: []const u8, y: []const u8) bool {
+            return std.mem.eql(u8, x, y);
+        }
+    }.f;
+    const in_group = gstack.items.len > 0;
+    // inside a group: `field`, `const`, `default`, `group` and `end` only
+    if (in_group and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "group") or is(kw, "end"))) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} inside a group", .{ lineno, kw });
+    }
+    if (is(kw, "group")) {
+        // group <list> <locator> [item <bits>] [count <count-locator | n>]
+        if (toks.len < 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: group takes a list and a locator", .{lineno});
+        if (!groupLocatorFormOk(p.wire, toks[2])) {
+            return lineBad(diag, alloc, E.@"bad-locator", "line {d}: group locator {s} has an empty step or a step that is not a field number", .{ lineno, toks[2] });
+        }
+        const g = try alloc.create(Group);
+        g.* = .{
+            .list = toks[1],
+            .locator = toks[2],
+            .lineno = lineno,
+            .parent = if (in_group) gstack.items[gstack.items.len - 1] else null,
+            .defaults = std.ArrayList(Default).init(alloc),
+        };
+        var oi: usize = 3;
+        while (oi < toks.len) : (oi += 2) {
+            const is_item = is(toks[oi], "item");
+            if (!is_item and !is(toks[oi], "count")) return bad(diag, alloc, E.@"bad-directive", "line {d}: unknown group option {s}", .{ lineno, toks[oi] });
+            const slot = if (is_item) &g.item_txt else &g.count_txt;
+            if (oi + 1 >= toks.len or slot.* != null) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value, once", .{ lineno, toks[oi] });
+            slot.* = toks[oi + 1];
+        }
+        try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .group, .grp = g.parent });
+        try gline.append(.{ .tag = .group, .key = toks[1], .locator = toks[2], .grp = g, .lineno = lineno });
+        try gfrom.append(gtmp.items.len);
+        try gstack.append(g);
+    } else if (is(kw, "end")) {
+        if (toks.len != 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: end takes no argument", .{lineno});
+        if (!in_group) return bad(diag, alloc, E.@"bad-directive", "line {d}: end with no open group", .{lineno});
+        const g = gstack.pop();
+        const from = gfrom.pop();
+        g.lines = try alloc.dupe(Line, gtmp.items[from..]);
+        gtmp.shrinkRetainingCapacity(from);
+        try curLines(p, gstack.items.len > 0, gtmp).append(gline.pop());
+    } else if (is(kw, "format")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: format takes one argument", .{lineno});
+        p.format = toks[1];
+    } else if (is(kw, "version")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: version takes one argument", .{lineno});
+        p.version = toks[1];
+    } else if (is(kw, "wire")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: wire takes one argument", .{lineno});
+        p.wire = std.meta.stringToEnum(Wire, toks[1]) orelse
+            return bad(diag, alloc, E.@"unknown-wire", "line {d}: unknown wire {s}", .{ lineno, toks[1] });
+    } else if (is(kw, "distribution")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: distribution takes one argument", .{lineno});
+        p.distribution = parseDist(toks[1]) catch |err|
+            return bad(diag, alloc, err, "line {d}: distribution {s} is not public or controlled", .{ lineno, toks[1] });
+    } else if (is(kw, "source")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: source takes one argument", .{lineno});
+        try p.sources.append(toks[1]);
+    } else if (is(kw, "uses")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: uses takes one argument", .{lineno});
+        try p.uses.append(toks[1]);
+    } else if (is(kw, "root")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: root takes one argument", .{lineno});
+        if (p.kinds.items.len == 0) {
+            p.root = toks[1];
+        } else {
+            // inside a kind: that kind's root element (xml)
+            p.kinds.items[p.kinds.items.len - 1].root = toks[1];
+            st.kind_root = true;
+        }
+    } else if (is(kw, "word_bytes")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: word_bytes takes one argument", .{lineno});
+        const n = parseUnsigned(toks[1]) orelse 0;
+        if (n == 0 or n > 1 << 20) return bad(diag, alloc, E.@"bad-directive", "line {d}: word_bytes {s} is not a positive integer", .{ lineno, toks[1] });
+        p.word_bytes = @intCast(n);
+    } else if (is(kw, "bit_order")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order takes one argument", .{lineno});
+        if (is(toks[1], "msb")) {
+            p.msb = true;
+        } else if (is(toks[1], "lsb")) {
+            p.msb = false;
+        } else return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order {s} is not lsb or msb", .{ lineno, toks[1] });
+        p.bit_order_set = true;
+    } else if (is(kw, "layout")) {
+        // layout <fixed | sequential>, bits wire only; default fixed
+        if (toks.len != 2 or !(is(toks[1], "fixed") or is(toks[1], "sequential"))) {
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: layout takes `fixed` or `sequential`", .{lineno});
+        }
+        p.layout_set = true;
+    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "if") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
+    } else if (is(kw, "typemap")) {
+        if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: typemap takes two arguments", .{lineno});
+        try p.tm_nat2cot.put(toks[1], toks[2]);
+        try p.tm_cot2nat.put(toks[2], toks[1]);
+    } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
+        // the `text` wire (Version 0.10): checked against the wire and
+        // one another after the file is read
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
+        const slot = if (is(kw, "delimiter")) &p.delim_raw else if (is(kw, "start")) &p.start_raw else &p.cksum_raw;
+        if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
+        slot.* = toks[1];
+        p.text_dirs = true;
+    } else if (is(kw, "kind")) {
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: kind takes one argument", .{lineno});
+        if (p.kindIndex(toks[1]) != null) {
+            return bad(diag, alloc, E.@"duplicate-kind", "line {d}: kind {s} is declared twice", .{ lineno, toks[1] });
+        }
+        try p.kinds.append(.{
+            .name = toks[1],
+            .lines = std.ArrayList(Line).init(alloc),
+            .requires = std.ArrayList([]const u8).init(alloc),
+            .defaults = std.ArrayList(Default).init(alloc),
+        });
+    } else if (is(kw, "requires")) {
+        if (p.kinds.items.len == 0) {
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: requires before the first kind", .{lineno});
+        }
+        if (toks.len < 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: requires takes at least one key", .{lineno});
+        const k = &p.kinds.items[p.kinds.items.len - 1];
+        for (toks[1..]) |key| {
+            try k.requires.append(key);
+            try p.key_uses.append(.{ .key = key, .tkind = null, .use = .requires });
+        }
+    } else if (is(kw, "when") or is(kw, "const")) {
+        const is_when = is(kw, "when");
+        if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
+        if (is_when) st.any_when = true;
+        if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
+            return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a {s} on the {s} wire", .{ lineno, toks[1], kw, @tagName(p.wire) });
+        }
+        const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno };
+        try curLines(p, in_group, gtmp).append(ln);
+    } else if (is(kw, "default")) {
+        if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: default takes a key and a value", .{lineno});
+        const d = Default{ .key = toks[1], .text = toks[2] };
+        if (in_group) {
+            // a `default` inside a group applies to items
+            try gstack.items[gstack.items.len - 1].defaults.append(d);
+        } else if (p.kinds.items.len == 0) {
+            try p.common_defaults.append(d);
+        } else {
+            try p.kinds.items[p.kinds.items.len - 1].defaults.append(d);
+        }
+        try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .default });
+    } else if (is(kw, "map")) {
+        if (toks.len != 4) return bad(diag, alloc, E.@"bad-directive", "line {d}: map takes a table, a native value and a model value", .{lineno});
+        const gop = try p.tables.getOrPut(toks[1]);
+        if (!gop.found_existing) {
+            const t = try alloc.create(Table);
+            t.* = .{ .name = toks[1], .entries = std.ArrayList(TableEntry).init(alloc) };
+            gop.value_ptr.* = t;
+        }
+        try gop.value_ptr.*.entries.append(.{ .native = toks[2], .model = toks[3] });
+    } else if (is(kw, "field")) {
+        if (toks.len < 4) return bad(diag, alloc, E.@"bad-directive", "line {d}: field takes a key, a locator and a transform", .{lineno});
+        const t = parseTransform(toks[3]) catch |err| switch (err) {
+            error.@"unknown-transform" => return lineBad(diag, alloc, err, "line {d}: unknown transform {s}", .{ lineno, toks[3] }),
+            else => return lineBad(diag, alloc, err, "line {d}: the parameters of transform {s} are not valid", .{ lineno, toks[3] }),
+        };
+        if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
+            return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a field on the {s} wire", .{ lineno, toks[2], @tagName(p.wire) });
+        }
+        var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno };
+        // options, in any order
+        var oi: usize = 4;
+        while (oi < toks.len) : (oi += 1) {
+            const o = toks[oi];
+            // an unknown or repeated option is `bad-directive`
+            var again = false;
+            if (is(o, "via")) {
+                oi += 1;
+                if (oi >= toks.len or toks[oi].len == 0) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: via takes a table name", .{lineno});
+                again = ln.via_name.len > 0;
+                ln.via_name = toks[oi];
+            } else if (is(o, "swap")) {
+                again = ln.swap;
+                ln.swap = true;
+            } else if (is(o, "trim")) {
+                again = ln.trim;
+                ln.trim = true;
+            } else if (is(o, "optional")) {
+                again = ln.optional;
+                ln.optional = true;
+            } else if (is(o, "absent")) {
+                // the next token is the argument, whatever it is (ruling 11 of 0.9)
+                oi += 1;
+                if (oi >= toks.len) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: absent takes one or more values", .{lineno});
+                again = ln.absent_raw != null;
+                ln.absent_raw = toks[oi];
+            } else return lineBad(diag, alloc, E.@"bad-directive", "line {d}: unknown field option {s}", .{ lineno, o });
+            if (again) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: field option {s} is repeated", .{ lineno, o });
+        }
+        // the values of the `absent` option are a line check, except on a
+        // `bits` field above 64 bits (ruling 4d of 0.11)
+        if (p.wire == .bits) ln.blen = @intCast(@min(fixedLen(toks[2]) orelse 0, 1 << 20));
+        if (!(p.wire == .bits and ln.blen > 64)) {
+            try parseAbsent(alloc, p.wire, &ln, in_group, diag);
+            ln.abs_checked = true;
+        }
+        try curLines(p, in_group, gtmp).append(ln);
+        try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
+    } else {
+        return bad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
+    }
+}
+
 fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
     // `layout sequential` on the bits wire: lines read in order from a cursor
     if (try isSequentialPack(alloc, def_text)) return parseSeqPack(alloc, def_text, diag);
     const p = try newPack(alloc);
-    var any_when = false;
-    var kind_root = false;
     // The open groups, innermost last. The body lines of every open group
     // collect in `gtmp`; `gfrom` is where each group's begin, `gline` the
     // group's own line, which joins the enclosing lines at its `end`.
-    var gstack = std.ArrayList(*Group).init(alloc);
-    var gtmp = std.ArrayList(Line).init(alloc);
-    var gfrom = std.ArrayList(usize).init(alloc);
-    var gline = std.ArrayList(Line).init(alloc);
+    var st = FState{
+        .alloc = alloc,
+        .diag = diag,
+        .p = p,
+        .gstack = std.ArrayList(*Group).init(alloc),
+        .gtmp = std.ArrayList(Line).init(alloc),
+        .gfrom = std.ArrayList(usize).init(alloc),
+        .gline = std.ArrayList(Line).init(alloc),
+    };
+    const gstack = &st.gstack;
+    var deferred: ?Deferred = null;
     var lineno: usize = 0;
     var lines = std.mem.splitScalar(u8, def_text, '\n');
     var tokbuf = std.ArrayList([]const u8).init(alloc);
+    var hdr = HeaderSeen{};
     while (lines.next()) |line| {
         lineno += 1;
-        try tokenizeInto(&tokbuf, line);
+        tokenizeInto(&tokbuf, line) catch |err|
+            return lineBad(diag, alloc, err, "line {d}: a quoted value has no closing quote", .{lineno});
         const toks = tokbuf.items;
         if (toks.len == 0) continue;
-        const kw = toks[0];
-        const is = struct {
-            fn f(a: []const u8, b: []const u8) bool {
-                return std.mem.eql(u8, a, b);
-            }
-        }.f;
-        const in_group = gstack.items.len > 0;
-        // inside a group: `field`, `const`, `default`, `group` and `end` only
-        if (in_group and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "group") or is(kw, "end"))) {
-            return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} inside a group", .{ lineno, kw });
-        }
-        if (is(kw, "group")) {
-            // group <list> <locator> [item <bits>] [count <count-locator | n>]
-            if (toks.len < 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: group takes a list and a locator", .{lineno});
-            const g = try alloc.create(Group);
-            g.* = .{
-                .list = toks[1],
-                .locator = toks[2],
-                .lineno = lineno,
-                .parent = if (in_group) gstack.items[gstack.items.len - 1] else null,
-                .defaults = std.ArrayList(Default).init(alloc),
-            };
-            var oi: usize = 3;
-            while (oi < toks.len) : (oi += 2) {
-                const is_item = is(toks[oi], "item");
-                if (!is_item and !is(toks[oi], "count")) return bad(diag, alloc, E.@"bad-directive", "line {d}: unknown group option {s}", .{ lineno, toks[oi] });
-                const slot = if (is_item) &g.item_txt else &g.count_txt;
-                if (oi + 1 >= toks.len or slot.* != null) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value, once", .{ lineno, toks[oi] });
-                slot.* = toks[oi + 1];
-            }
-            try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .group, .grp = g.parent });
-            try gline.append(.{ .tag = .group, .key = toks[1], .locator = toks[2], .grp = g, .lineno = lineno });
-            try gfrom.append(gtmp.items.len);
-            try gstack.append(g);
-        } else if (is(kw, "end")) {
-            if (toks.len != 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: end takes no argument", .{lineno});
-            if (!in_group) return bad(diag, alloc, E.@"bad-directive", "line {d}: end with no open group", .{lineno});
-            const g = gstack.pop();
-            const from = gfrom.pop();
-            g.lines = try alloc.dupe(Line, gtmp.items[from..]);
-            gtmp.shrinkRetainingCapacity(from);
-            try curLines(p, gstack.items.len > 0, &gtmp).append(gline.pop());
-        } else if (is(kw, "format")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: format takes one argument", .{lineno});
-            p.format = toks[1];
-        } else if (is(kw, "version")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: version takes one argument", .{lineno});
-            p.version = toks[1];
-        } else if (is(kw, "wire")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: wire takes one argument", .{lineno});
-            p.wire = std.meta.stringToEnum(Wire, toks[1]) orelse
-                return bad(diag, alloc, E.UnknownWire, "line {d}: unknown wire {s}", .{ lineno, toks[1] });
-        } else if (is(kw, "distribution")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: distribution takes one argument", .{lineno});
-            p.distribution = parseDist(toks[1]) catch |err|
-                return bad(diag, alloc, err, "line {d}: distribution {s} is not public or controlled", .{ lineno, toks[1] });
-        } else if (is(kw, "source")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: source takes one argument", .{lineno});
-            try p.sources.append(toks[1]);
-        } else if (is(kw, "uses")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: uses takes one argument", .{lineno});
-            try p.uses.append(toks[1]);
-        } else if (is(kw, "root")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: root takes one argument", .{lineno});
-            if (p.kinds.items.len == 0) {
-                p.root = toks[1];
-            } else {
-                // inside a kind: that kind's root element (xml)
-                p.kinds.items[p.kinds.items.len - 1].root = toks[1];
-                kind_root = true;
-            }
-        } else if (is(kw, "word_bytes")) {
-            if (toks.len != 2) return bad(diag, alloc, E.MalformedDirective, "line {d}: word_bytes takes one argument", .{lineno});
-            const n = parseUnsigned(toks[1]) orelse 0;
-            if (n == 0 or n > 1 << 20) return bad(diag, alloc, E.MalformedDirective, "line {d}: word_bytes {s} is not a positive integer", .{ lineno, toks[1] });
-            p.word_bytes = @intCast(n);
-        } else if (is(kw, "bit_order")) {
-            if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order takes one argument", .{lineno});
-            if (is(toks[1], "msb")) {
-                p.msb = true;
-            } else if (is(toks[1], "lsb")) {
-                p.msb = false;
-            } else return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order {s} is not lsb or msb", .{ lineno, toks[1] });
-            p.bit_order_set = true;
-        } else if (is(kw, "layout")) {
-            // layout <fixed | sequential>, bits wire only; default fixed
-            if (toks.len != 2 or !(is(toks[1], "fixed") or is(toks[1], "sequential"))) {
-                return bad(diag, alloc, E.@"bad-directive", "line {d}: layout takes `fixed` or `sequential`", .{lineno});
-            }
-            p.layout_set = true;
-        } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "if") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
-            return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
-        } else if (is(kw, "typemap")) {
-            if (toks.len != 3) return bad(diag, alloc, E.MalformedDirective, "line {d}: typemap takes two arguments", .{lineno});
-            try p.tm_nat2cot.put(toks[1], toks[2]);
-            try p.tm_cot2nat.put(toks[2], toks[1]);
-        } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
-            // the `text` wire (Version 0.10): checked against the wire and
-            // one another after the file is read
-            if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
-            const slot = if (is(kw, "delimiter")) &p.delim_raw else if (is(kw, "start")) &p.start_raw else &p.cksum_raw;
-            if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
-            slot.* = toks[1];
-            p.text_dirs = true;
-        } else if (is(kw, "kind")) {
-            if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: kind takes one argument", .{lineno});
-            if (p.kindIndex(toks[1]) != null) {
-                return bad(diag, alloc, E.@"duplicate-kind", "line {d}: kind {s} is declared twice", .{ lineno, toks[1] });
-            }
-            try p.kinds.append(.{
-                .name = toks[1],
-                .lines = std.ArrayList(Line).init(alloc),
-                .requires = std.ArrayList([]const u8).init(alloc),
-                .defaults = std.ArrayList(Default).init(alloc),
-            });
-        } else if (is(kw, "requires")) {
-            if (p.kinds.items.len == 0) {
-                return bad(diag, alloc, E.@"bad-directive", "line {d}: requires before the first kind", .{lineno});
-            }
-            if (toks.len < 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: requires takes at least one key", .{lineno});
-            const k = &p.kinds.items[p.kinds.items.len - 1];
-            for (toks[1..]) |key| {
-                try k.requires.append(key);
-                try p.key_uses.append(.{ .key = key, .tkind = null, .use = .requires });
-            }
-        } else if (is(kw, "when") or is(kw, "const")) {
-            const is_when = is(kw, "when");
-            if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
-            if (is_when) any_when = true;
-            const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno };
-            try curLines(p, in_group, &gtmp).append(ln);
-        } else if (is(kw, "default")) {
-            if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: default takes a key and a value", .{lineno});
-            const d = Default{ .key = toks[1], .text = toks[2] };
-            if (in_group) {
-                // a `default` inside a group applies to items
-                try gstack.items[gstack.items.len - 1].defaults.append(d);
-            } else if (p.kinds.items.len == 0) {
-                try p.common_defaults.append(d);
-            } else {
-                try p.kinds.items[p.kinds.items.len - 1].defaults.append(d);
-            }
-            try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .default });
-        } else if (is(kw, "map")) {
-            if (toks.len != 4) return bad(diag, alloc, E.@"bad-directive", "line {d}: map takes a table, a native value and a model value", .{lineno});
-            const gop = try p.tables.getOrPut(toks[1]);
-            if (!gop.found_existing) {
-                const t = try alloc.create(Table);
-                t.* = .{ .name = toks[1], .entries = std.ArrayList(TableEntry).init(alloc) };
-                gop.value_ptr.* = t;
-            }
-            try gop.value_ptr.*.entries.append(.{ .native = toks[2], .model = toks[3] });
-        } else if (is(kw, "field")) {
-            if (toks.len < 4) return bad(diag, alloc, E.MalformedDirective, "line {d}: field takes a key, a locator and a transform", .{lineno});
-            const t = parseTransform(toks[3]) catch |err|
-                return bad(diag, alloc, err, "line {d}: unknown transform {s}", .{ lineno, toks[3] });
-            var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno };
-            // options, in any order
-            var oi: usize = 4;
-            while (oi < toks.len) : (oi += 1) {
-                const o = toks[oi];
-                // an unknown or repeated option is `bad-directive`
-                var again = false;
-                if (is(o, "via")) {
-                    oi += 1;
-                    if (oi >= toks.len or toks[oi].len == 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: via takes a table name", .{lineno});
-                    again = ln.via_name.len > 0;
-                    ln.via_name = toks[oi];
-                } else if (is(o, "swap")) {
-                    again = ln.swap;
-                    ln.swap = true;
-                } else if (is(o, "trim")) {
-                    again = ln.trim;
-                    ln.trim = true;
-                } else if (is(o, "optional")) {
-                    again = ln.optional;
-                    ln.optional = true;
-                } else if (is(o, "absent")) {
-                    // the next token is the argument, whatever it is (ruling 11 of 0.9)
-                    oi += 1;
-                    if (oi >= toks.len) return bad(diag, alloc, E.@"bad-directive", "line {d}: absent takes one or more values", .{lineno});
-                    again = ln.absent_raw != null;
-                    ln.absent_raw = toks[oi];
-                } else return bad(diag, alloc, E.@"bad-directive", "line {d}: unknown field option {s}", .{ lineno, o });
-                if (again) return bad(diag, alloc, E.@"bad-directive", "line {d}: field option {s} is repeated", .{ lineno, o });
-            }
-            try curLines(p, in_group, &gtmp).append(ln);
-            try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
-        } else {
-            return bad(diag, alloc, E.UnknownDirective, "line {d}: unknown directive {s}", .{ lineno, kw });
-        }
+        // ruling 5b of 0.11, steps 2 to 6
+        try packLineChecks(alloc, toks, lineno, &hdr, diag);
+        st.lineno = lineno;
+        // every cause not in steps 1 to 10 of ruling 5b is reported after
+        // the file is read: the first such failure is kept and the file read on
+        fixedLine(&st, toks) catch |err| {
+            if (err == error.OutOfMemory or diag.line_err) return err;
+            if (deferred == null) deferred = .{ .err = err, .msg = diag.msg };
+        };
     }
 
+    try headerChecks(alloc, hdr, diag);
+    if (deferred) |d| {
+        diag.msg = d.msg;
+        return d.err;
+    }
     if (gstack.items.len > 0) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a `group` with no `end`", .{gstack.items[gstack.items.len - 1].lineno});
     }
@@ -1825,14 +2188,21 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.layout_set and p.wire != .bits) {
         return bad(diag, alloc, E.@"bad-directive", "layout on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
     }
-    if (any_when and p.kinds.items.len == 0) {
+    if (st.any_when and p.kinds.items.len == 0) {
         return bad(diag, alloc, E.@"bad-directive", "a `when` line in a pack with no `kind` line", .{});
     }
-    if (kind_root and p.wire != .xml) {
+    if (st.kind_root and p.wire != .xml) {
         return bad(diag, alloc, E.@"bad-directive", "a `root` line inside a kind on wire {s}; it is for the xml wire only", .{@tagName(p.wire)});
     }
     if (p.wire == .bits and p.word_bytes == 0) {
-        return bad(diag, alloc, E.MalformedDirective, "a bits pack needs word_bytes", .{});
+        return bad(diag, alloc, E.@"bad-directive", "a fixed-layout bits pack needs word_bytes", .{});
+    }
+    // an `xml` pack has a root for the pack or for each of its kinds
+    if (p.wire == .xml and p.root.len == 0) {
+        if (p.kinds.items.len == 0) return bad(diag, alloc, E.@"missing-root", "the xml pack has no root line", .{});
+        for (p.kinds.items) |k| {
+            if (k.root == null) return bad(diag, alloc, E.@"missing-root", "kind {s} of the xml pack has no root", .{k.name});
+        }
     }
     try textDirectives(alloc, p, diag);
     setTableTypes(p);
@@ -1934,6 +2304,13 @@ const ModelFiles = struct {
 // names of the packs.
 const Loaded = struct { modules: usize, packs: []const []const u8 };
 
+// The capability report of one ordered pair of formats (ruling 6 of 0.11).
+pub const Capability = struct {
+    grade: []const u8, // `full`, `partial` or `none`
+    carried: []const []const u8,
+    dropped: []const []const u8,
+};
+
 pub const Engine = struct {
     alloc: std.mem.Allocator,
     // Where decode, encode and convert allocate their results and the failure
@@ -1946,6 +2323,8 @@ pub const Engine = struct {
     packs: std.ArrayList(*Pack),
     pack_index: std.StringHashMap(*Pack),
     max_distribution: Dist = .controlled,
+    // The limit on the list items one decode holds (ruling 7 of 0.11).
+    max_items: usize = default_max_items,
     // Message of the last failure: "<kind>: <detail>".
     last_error: []const u8 = "",
 
@@ -2124,8 +2503,15 @@ pub const Engine = struct {
         for (p.common_defaults.items) |*d| try self.readDefault(p, d);
         if (p.seq) |b| try self.resolveSeqBody(p, b);
         try finishPack(self.alloc, p);
+        // last: a format name already loaded (ruling 5 of 0.11); the first
+        // pack stays loaded
+        if (self.pack_index.contains(p.format)) {
+            const err = E.@"duplicate-format";
+            self.fail(err, "a pack of format {s} is already loaded", .{p.format});
+            return err;
+        }
         try self.packs.append(p);
-        if (!self.pack_index.contains(p.format)) try self.pack_index.put(p.format, p);
+        try self.pack_index.put(p.format, p);
         return p;
     }
 
@@ -2171,7 +2557,10 @@ pub const Engine = struct {
             var uses = std.ArrayList([]const u8).init(self.alloc);
             var lines = std.mem.splitScalar(u8, mf.texts[i], '\n');
             while (lines.next()) |line| {
-                try tokenizeInto(&tokbuf, line);
+                tokenizeInto(&tokbuf, line) catch |err| switch (err) {
+                    error.OutOfMemory => return err,
+                    else => continue,
+                };
                 if (tokbuf.items.len < 2) continue;
                 if (std.mem.eql(u8, tokbuf.items[0], "module")) mf.mod_names[i] = tokbuf.items[1];
                 if (std.mem.eql(u8, tokbuf.items[0], "uses")) try uses.append(tokbuf.items[1]);
@@ -2245,7 +2634,10 @@ pub const Engine = struct {
             const mf = mf_opt orelse continue;
             var lines = std.mem.splitScalar(u8, texts[i], '\n');
             while (lines.next()) |line| {
-                try tokenizeInto(&tokbuf, line);
+                tokenizeInto(&tokbuf, line) catch |err| switch (err) {
+                    error.OutOfMemory => return err,
+                    else => continue,
+                };
                 if (tokbuf.items.len != 2 or !std.mem.eql(u8, tokbuf.items[0], "uses")) continue;
                 for (mf.mod_names, 0..) |mn, j| {
                     if (std.mem.eql(u8, mn, tokbuf.items[1])) try self.loadModelOrdered(mf, j);
@@ -2335,15 +2727,15 @@ pub const Engine = struct {
 
     fn pack(self: *Engine, fmt: []const u8) !*Pack {
         return self.findPack(fmt) orelse {
-            self.fail(E.UnknownFormat, "no loaded pack has format {s}", .{fmt});
-            return E.UnknownFormat;
+            self.fail(E.@"unknown-format", "no loaded pack has format {s}", .{fmt});
+            return E.@"unknown-format";
         };
     }
 
     // decode(format, bytes) -> Entity
     pub fn decode(self: *Engine, fmt: []const u8, bytes: []const u8) !Entity {
         const p = try self.pack(fmt);
-        var diag = Diag{};
+        var diag = Diag{ .max_items = self.max_items };
         return decodePack(self.scratch, p, bytes, &diag) catch |err| {
             self.fail(err, "decode {s}: {s}", .{ fmt, diag.msg });
             return err;
@@ -2405,7 +2797,40 @@ pub const Engine = struct {
     // convert(from, to, bytes, context): decode; clear Entity.kind unless
     // from == to; fill absent keys from the context; derive; encode. With
     // from == to and no context the entity goes to the encoder as decoded.
+    // model_keys(format) (ruling 6a of 0.11).
+    pub fn modelKeysOf(self: *Engine, fmt: []const u8) ![]const []const u8 {
+        return modelKeys(self.scratch, try self.pack(fmt));
+    }
+
+    // capability(from, to): computed from the two packs alone (ruling 6 of
+    // 0.11). `from` is checked, then `to`.
+    pub fn capability(self: *Engine, from: []const u8, to: []const u8) !Capability {
+        const src = try self.modelKeysOf(from);
+        const dst = try self.modelKeysOf(to);
+        var carried = std.ArrayList([]const u8).init(self.scratch);
+        var dropped = std.ArrayList([]const u8).init(self.scratch);
+        for (src) |k| {
+            var found = false;
+            for (dst) |d| {
+                if (std.mem.eql(u8, k, d)) {
+                    found = true;
+                    break;
+                }
+            }
+            try (if (found) &carried else &dropped).append(k);
+        }
+        const grade: []const u8 = if (carried.items.len == 0) "none" else if (dropped.items.len == 0) "full" else "partial";
+        return .{ .grade = grade, .carried = carried.items, .dropped = dropped.items };
+    }
+
+    pub fn setMaxItems(self: *Engine, n: usize) void {
+        self.max_items = n;
+    }
+
     pub fn convert(self: *Engine, from: []const u8, to: []const u8, bytes: []const u8, context: ?[]const KV) ![]u8 {
+        // `from`, then `to`, before the input is read (ruling 5 of 0.11)
+        _ = try self.pack(from);
+        _ = try self.pack(to);
         const same = std.mem.eql(u8, from, to);
         var e = try self.decode(from, bytes);
         if (!same) e.clearKind();
@@ -2575,7 +3000,8 @@ fn isoToMs(s: []const u8) !i64 {
     const hh = try digitsToInt(s[11..13]);
     const mm = try digitsToInt(s[14..16]);
     const ss = try digitsToInt(s[17..19]);
-    if (mo < 1 or mo > 12 or d < 1 or d > 31 or hh > 23 or mm > 59 or ss > 60) return E.@"transform-decode";
+    // ruling 3b of 0.11: year 0001 to 9999, a day of that month, no leap second
+    if (y < 1 or mo < 1 or mo > 12 or d < 1 or d > daysInMonth(y, mo) or hh > 23 or mm > 59 or ss > 59) return E.@"transform-decode";
     var i: usize = 19;
     var frac: i64 = 0;
     if (i < s.len and s[i] == '.') {
@@ -2605,10 +3031,17 @@ fn isoToMs(s: []const u8) !i64 {
     } else return E.@"transform-decode";
     const days = daysFromCivil(y, mo, d);
     const secs = days * 86400 + hh * 3600 + mm * 60 + ss - offset_s;
-    return secs * 1000 + frac;
+    const ms = secs * 1000 + frac;
+    // the instant lies from 0001-01-01T00:00:00.000Z to 9999-12-31T23:59:59.999Z (3d)
+    if (ms < iso_min_ms or ms > iso_max_ms) return E.@"transform-decode";
+    return ms;
 }
 
+const iso_min_ms: i64 = -62135596800000;
+const iso_max_ms: i64 = 253402300799999;
+
 fn msToIso(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
+    if (ms < iso_min_ms or ms > iso_max_ms) return E.@"transform-encode"; // ruling 3f of 0.11
     const total_secs = @divFloor(ms, 1000);
     const msec = @mod(ms, 1000);
     const days = @divFloor(total_secs, 86400);
@@ -2641,6 +3074,9 @@ const XmlNode = struct {
     text: []const u8 = "",
     text_set: bool = false,
     text_weak: bool = false, // the text was written by a sentinel
+    // a parsed element holds character data (ruling 1m of 0.11): without
+    // it, `#text` is absent
+    has_text: bool = false,
 
     fn attr(self: *const XmlNode, name: []const u8) ?[]const u8 {
         for (self.attrs.items) |a| if (std.mem.eql(u8, a.name, name)) return a.value;
@@ -2667,64 +3103,60 @@ fn xmlCharOk(c: u21) bool {
     return c == 0x9 or c == 0xa or c == 0xd or (c >= 0x20 and c <= 0xd7ff) or (c >= 0xe000 and c <= 0xfffd) or (c >= 0x10000 and c <= 0x10ffff);
 }
 
-// Replace the five predefined entities and numeric character references. A
-// numeric reference is `&#` decimal digits `;` or `&#x` hexadecimal digits
-// `;` and names a character XML 1.0 allows; any other text after `&#` is
-// malformed (ruling 40 of 0.8). No other entity is expanded: its text stays.
-fn xmlUnescape(alloc: std.mem.Allocator, s: []const u8) ![]const u8 {
-    if (std.mem.indexOfScalar(u8, s, '&') == null) return s;
+// One reference at `s[i]` (an `&`), decoded into `out` (ruling 1j of 0.11):
+// the five predefined entities, in lower case, and numeric character
+// references, decimal or `x` and hexadecimal digits naming a character XML
+// 1.0 allows (ruling 40 of 0.8). Any other `&` is `malformed-wire`. Returns
+// the index after the `;`.
+fn xmlRef(s: []const u8, i: usize, out: *std.ArrayList(u8)) !usize {
     const mw = E.@"malformed-wire";
-    var out = std.ArrayList(u8).init(alloc);
-    var i: usize = 0;
-    while (i < s.len) {
-        if (s[i] == '&') {
-            if (s.len - i >= 2 and s[i + 1] == '#') {
-                const semi = std.mem.indexOfScalarPos(u8, s, i, ';') orelse return mw;
-                var digits = s[i + 2 .. semi];
-                var base: u8 = 10;
-                if (digits.len > 0 and digits[0] == 'x') {
-                    digits = digits[1..];
-                    base = 16;
-                }
-                if (digits.len == 0) return mw;
-                var cp: u32 = 0;
-                for (digits) |c| {
-                    const d = std.fmt.charToDigit(c, base) catch return mw;
-                    cp = cp * base + d;
-                    if (cp > 0x10ffff) return mw;
-                }
-                if (!xmlCharOk(@intCast(cp))) return mw;
-                var ubuf: [4]u8 = undefined;
-                const n = std.unicode.utf8Encode(@intCast(cp), &ubuf) catch return mw;
-                try out.appendSlice(ubuf[0..n]);
-                i = semi + 1;
-                continue;
-            }
-            if (std.mem.indexOfScalarPos(u8, s, i, ';')) |semi| {
-                const ent = s[i + 1 .. semi];
-                const ch: ?u8 = if (std.mem.eql(u8, ent, "amp"))
-                    '&'
-                else if (std.mem.eql(u8, ent, "lt"))
-                    '<'
-                else if (std.mem.eql(u8, ent, "gt"))
-                    '>'
-                else if (std.mem.eql(u8, ent, "quot"))
-                    '"'
-                else if (std.mem.eql(u8, ent, "apos"))
-                    '\''
-                else
-                    null;
-                if (ch) |c| {
-                    try out.append(c);
-                    i = semi + 1;
-                    continue;
-                }
-            }
+    var j = i + 1;
+    while (j < s.len and (std.ascii.isAlphanumeric(s[j]) or s[j] == '#')) j += 1;
+    if (j >= s.len or s[j] != ';') return mw;
+    const ent = s[i + 1 .. j];
+    if (ent.len > 0 and ent[0] == '#') {
+        var digits = ent[1..];
+        var base: u8 = 10;
+        if (digits.len > 0 and digits[0] == 'x') {
+            digits = digits[1..];
+            base = 16;
         }
-        try out.append(s[i]);
-        i += 1;
+        if (digits.len == 0) return mw;
+        var cp: u32 = 0;
+        for (digits) |c| {
+            const d = std.fmt.charToDigit(c, base) catch return mw;
+            cp = cp * base + d;
+            if (cp > 0x10ffff) return mw;
+        }
+        if (!xmlCharOk(@intCast(cp))) return mw;
+        var ubuf: [4]u8 = undefined;
+        const n = std.unicode.utf8Encode(@intCast(cp), &ubuf) catch return mw;
+        try out.appendSlice(ubuf[0..n]);
+        return j + 1;
     }
-    return out.toOwnedSlice();
+    const names = [_]struct { n: []const u8, c: u8 }{
+        .{ .n = "amp", .c = '&' },  .{ .n = "lt", .c = '<' },    .{ .n = "gt", .c = '>' },
+        .{ .n = "quot", .c = '"' }, .{ .n = "apos", .c = '\'' },
+    };
+    for (names) |nm| {
+        if (std.mem.eql(u8, ent, nm.n)) {
+            try out.append(nm.c);
+            return j + 1;
+        }
+    }
+    return mw;
+}
+
+// Can the text be written on `xml` (ruling 1d of 0.11)? Not below U+0020
+// other than tab, line feed and carriage return; not U+FFFE or U+FFFF.
+fn xmlWritable(s: []const u8) bool {
+    var i: usize = 0;
+    while (i < s.len) : (i += 1) {
+        const c = s[i];
+        if (c < 0x20 and c != 0x9 and c != 0xa and c != 0xd) return false;
+        if (c == 0xef and i + 2 < s.len and s[i + 1] == 0xbf and (s[i + 2] == 0xbe or s[i + 2] == 0xbf)) return false;
+    }
+    return true;
 }
 
 // The deepest nesting a message may have on `xml` (elements, the root is
@@ -2780,6 +3212,8 @@ const XmlParser = struct {
         if (depth > max_nesting) return mw;
         if (self.i >= self.s.len or self.s[self.i] != '<') return mw;
         self.i += 1;
+        // `<!`: a declaration or CDATA section where an element must stand
+        if (self.i < self.s.len and self.s[self.i] == '!') return mw;
         const node = try xmlNewNode(self.alloc, try self.readName());
         // attributes
         while (true) {
@@ -2794,12 +3228,24 @@ const XmlParser = struct {
             if (self.i >= self.s.len or (self.s[self.i] != '"' and self.s[self.i] != '\'')) return mw;
             const q = self.s[self.i];
             self.i += 1;
-            const vstart = self.i;
-            while (self.i < self.s.len and self.s[self.i] != q) self.i += 1;
+            // ruling 1i of 0.11: a literal tab or line feed reads as a space,
+            // one written as a reference is kept; a `<` is malformed
+            var vbuf = std.ArrayList(u8).init(self.alloc);
+            while (self.i < self.s.len and self.s[self.i] != q) {
+                const c = self.s[self.i];
+                if (c == '<') return mw;
+                if (c == '&') {
+                    self.i = try xmlRef(self.s, self.i, &vbuf);
+                    continue;
+                }
+                try vbuf.append(if (c == '\t' or c == '\n') ' ' else c);
+                self.i += 1;
+            }
             if (self.i >= self.s.len) return mw;
-            const val = try xmlUnescape(self.alloc, self.s[vstart..self.i]);
             self.i += 1; // closing quote
-            try node.attrs.append(.{ .name = an, .value = val });
+            // an attribute name twice on one element (ruling 1o)
+            if (node.attr(an) != null) return mw;
+            try node.attrs.append(.{ .name = an, .value = try vbuf.toOwnedSlice() });
         }
         if (self.s[self.i] == '/') {
             // self-closing "/>"
@@ -2828,25 +3274,25 @@ const XmlParser = struct {
             } else if (self.starts("<?")) {
                 try self.skipPast(2, "?>");
             } else if (self.starts("<![CDATA[")) {
-                // character data as written: kept escaped until the text is
-                // unescaped as a whole
+                // character data exactly as written (ruling 1k of 0.11)
                 const from = self.i + 9;
                 try self.skipPast(9, "]]>");
-                for (self.s[from .. self.i - 3]) |c| {
-                    if (c == '&') try textbuf.appendSlice("&amp;") else try textbuf.append(c);
-                }
+                try textbuf.appendSlice(self.s[from .. self.i - 3]);
             } else if (self.starts("<!")) {
                 return mw;
             } else if (self.s[self.i] == '<') {
                 const c = try self.parseElement(depth + 1);
                 try node.children.append(c);
+            } else if (self.s[self.i] == '&') {
+                self.i = try xmlRef(self.s, self.i, &textbuf);
             } else {
                 try textbuf.append(self.s[self.i]);
                 self.i += 1;
             }
         }
         if (!closed) return mw;
-        node.text = try xmlUnescape(self.alloc, try textbuf.toOwnedSlice());
+        node.has_text = textbuf.items.len > 0;
+        node.text = try textbuf.toOwnedSlice();
         return node;
     }
 };
@@ -2854,7 +3300,24 @@ const XmlParser = struct {
 // One well-formed document: the root element, and after it only whitespace,
 // comments and processing instructions. An input with no element is
 // malformed (ruling 37 of 0.8).
-fn parseXml(alloc: std.mem.Allocator, s: []const u8) !*XmlNode {
+fn parseXml(alloc: std.mem.Allocator, s_in: []const u8) !*XmlNode {
+    var s = s_in;
+    // one byte order mark at the very start is skipped (ruling 1g of 0.11)
+    if (std.mem.startsWith(u8, s, "\xef\xbb\xbf")) s = s[3..];
+    // each CR LF, and each CR alone, is read as one LF (ruling 1h)
+    if (std.mem.indexOfScalar(u8, s, '\r') != null) {
+        const n = try alloc.alloc(u8, s.len);
+        var k: usize = 0;
+        var i: usize = 0;
+        while (i < s.len) : (i += 1) {
+            if (s[i] == '\r') {
+                n[k] = '\n';
+                if (i + 1 < s.len and s[i + 1] == '\n') i += 1;
+            } else n[k] = s[i];
+            k += 1;
+        }
+        s = n[0..k];
+    }
     var p = XmlParser{ .s = s, .alloc = alloc };
     try p.skipMisc();
     const root = try p.parseElement(1);
@@ -2881,7 +3344,7 @@ fn xmlTarget(root: *XmlNode, locator: []const u8) ?XmlTarget {
 fn xmlGet(root: *XmlNode, locator: []const u8) ?[]const u8 {
     const t = xmlTarget(root, locator) orelse return null;
     if (t.last.len > 0 and t.last[0] == '@') return t.node.attr(t.last[1..]);
-    if (std.mem.eql(u8, t.last, "#text")) return t.node.text;
+    if (std.mem.eql(u8, t.last, "#text")) return if (t.node.has_text) t.node.text else null;
     return null;
 }
 
@@ -3252,7 +3715,8 @@ fn jsonToMV(t: TKind, val: JValue) !MV {
             const f: f64 = switch (val) {
                 .integer => |i| return MV{ .int = i },
                 .float => |x| x,
-                .number_string => |s| std.fmt.parseFloat(f64, s) catch return E.@"transform-decode",
+                // the exact value of the number text (ruling 2d of 0.11)
+                .number_string => |s| return MV{ .int = exactJsonInt(s) orelse return E.@"transform-decode" },
                 else => return E.@"transform-decode",
             };
             // any number whose value is integral (1.0, 1e3)
@@ -3269,6 +3733,70 @@ fn jsonToMV(t: TKind, val: JValue) !MV {
         },
         else => return E.@"transform-decode",
     }
+}
+
+// The exact value of JSON number text when it is an integer within a signed
+// 64-bit integer (ruling 2d of 0.11): `1.0`, `1e3` and
+// `9.223372036854775807e18` are integers; `1.5` and `1e19` are not. null
+// otherwise.
+fn exactJsonInt(s: []const u8) ?i64 {
+    var i: usize = 0;
+    const neg = i < s.len and s[i] == '-';
+    if (neg) i += 1;
+    const int_from = i;
+    while (i < s.len and isDigit(s[i])) i += 1;
+    const int_digits = s[int_from..i];
+    var frac_digits: []const u8 = "";
+    if (i < s.len and s[i] == '.') {
+        i += 1;
+        const f0 = i;
+        while (i < s.len and isDigit(s[i])) i += 1;
+        frac_digits = s[f0..i];
+    }
+    var exp: i64 = 0;
+    if (i < s.len and (s[i] == 'e' or s[i] == 'E')) {
+        i += 1;
+        var eneg = false;
+        if (i < s.len and (s[i] == '+' or s[i] == '-')) {
+            eneg = s[i] == '-';
+            i += 1;
+        }
+        while (i < s.len and isDigit(s[i])) : (i += 1) {
+            if (exp < 1 << 40) exp = exp * 10 + (s[i] - '0');
+        }
+        if (eneg) exp = -exp;
+    }
+    if (i != s.len or int_digits.len == 0) return null;
+    // the significant digits, and the power of ten they are scaled by
+    var digits_buf: [64]u8 = undefined;
+    var nd: usize = 0;
+    var scale: i64 = exp;
+    var started = false;
+    for ([_][]const u8{ int_digits, frac_digits }, 0..) |part, pi| {
+        for (part) |c| {
+            if (pi == 1) scale -= 1;
+            if (!started and c == '0') continue;
+            started = true;
+            if (nd == digits_buf.len) return null; // far more digits than 64 bits hold
+            digits_buf[nd] = c;
+            nd += 1;
+        }
+    }
+    if (nd == 0) return 0; // zero, `-0` included
+    // trailing zeros of the digits move into the scale
+    while (nd > 0 and digits_buf[nd - 1] == '0') {
+        nd -= 1;
+        scale += 1;
+    }
+    if (scale < 0) return null; // a fraction is left
+    if (@as(i64, @intCast(nd)) + scale > 19) return null;
+    var v: i128 = 0;
+    for (digits_buf[0..nd]) |c| v = v * 10 + (c - '0');
+    var k: i64 = 0;
+    while (k < scale) : (k += 1) v *= 10;
+    if (neg) v = -v;
+    if (v < std.math.minInt(i64) or v > std.math.maxInt(i64)) return null;
+    return @intCast(v);
 }
 
 // The JSON text a model value is written as, through a text transform.
@@ -3543,13 +4071,24 @@ fn narrowF32(x: f64) !f32 {
 fn bitsEncodeField(ln: *const Line, mv: MV) !u64 {
     const t = ln.transform;
     switch (t.kind) {
+        // a value that does not fit the field is `transform-encode`; no
+        // low bits are written (ruling 4b of 0.11)
         .uint, .twos => {
             if (mv != .int) return E.@"transform-encode";
+            const v: i128 = mv.int;
+            const len: u7 = @intCast(ln.blen);
+            if (t.kind == .uint) {
+                if (len < 64 and (v < 0 or v >= (@as(i128, 1) << len))) return E.@"transform-encode";
+            } else {
+                const half = @as(i128, 1) << (len - 1);
+                if (v < -half or v >= half) return E.@"transform-encode";
+            }
             return @bitCast(mv.int);
         },
         .linscale => {
             const r = @round(try mvFloat(mv) / t.range * t.maxpos);
-            if (!(r >= -9223372036854775808.0 and r < 9223372036854775808.0)) return E.@"transform-encode";
+            const hi = std.math.ldexp(@as(f64, 1.0), @as(i32, @intCast(ln.blen - 1)));
+            if (!(r >= -hi and r < hi)) return E.@"transform-encode";
             return @bitCast(@as(i64, @intFromFloat(r)));
         },
         .uscale, .sscale => {
@@ -3937,7 +4476,7 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             return .{ .geojson = d };
         },
         .json => {
-            const obj = parseJsonObject(alloc, bytes, false) catch |err| return bad(diag, alloc, err, "the input is not one JSON object", .{});
+            const obj = parseJsonObject(alloc, bytes, true) catch |err| return bad(diag, alloc, err, "the input is not one JSON object", .{});
             jsonCheckNoDuplicates(alloc, bytes) catch |err| return bad(diag, alloc, err, "a member name appears twice in one object", .{});
             return .{ .json = .{ .v = .{ .object = obj } } };
         },
@@ -3969,6 +4508,11 @@ fn jitemLookup(it: JItem, ln: *const Line) ?JValue {
 fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line) bool {
     switch (doc) {
         .xml => |root| {
+            // `present` on `#text`: the element exists (ruling 1m of 0.11)
+            if (ln.wpresent and std.mem.endsWith(u8, ln.locator, "#text")) {
+                const t = xmlTarget(root, ln.locator) orelse return false;
+                return std.mem.eql(u8, t.last, "#text");
+            }
             const got = xmlGet(root, ln.locator) orelse return false;
             if (ln.wpresent) return true;
             return std.mem.eql(u8, got, ln.wtext);
@@ -4129,6 +4673,12 @@ fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, ob
             .array, .null => {}, // not carried
             else => {
                 if (lineMaps(lines, path)) continue;
+                // a residue number whose nearest double is infinite has no
+                // canonical text (ruling 2d of 0.11)
+                if (en.value_ptr.* == .number_string) {
+                    const f = std.fmt.parseFloat(f64, en.value_ptr.*.number_string) catch return E.@"malformed-wire";
+                    if (!std.math.isFinite(f)) return E.@"malformed-wire";
+                }
                 try e.addResidue(.{ .fmt = p.format, .locator = path, .value = try jsonCanonText(alloc, en.value_ptr.*, false) });
             },
         }
@@ -4149,6 +4699,7 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
             continue;
         }
         if (ln.tag != .field) continue;
+        if (diag.count_only) continue;
         if (e.fields.contains(ln.key)) continue;
         var ok = true;
         const got: ?MV = readField(alloc, p, doc, ln) catch |err| switch (err) {
@@ -4238,6 +4789,7 @@ const ItemList = struct {
 
 // One protobuf occurrence as an item.
 fn pbItem(alloc: std.mem.Allocator, p: *const Pack, body: *const Scope, cache: *PbCache, items: *ItemList, self: PbEntry, sub: []const PbEntry, diag: *Diag) anyerror!void {
+    try takeItems(diag, alloc, 1, "");
     var it = Entity.init(alloc);
     _ = try decodeScope(alloc, p, body, .{ .protobuf = .{ .entries = sub, .cache = cache, .self = self } }, &it, diag);
     try items.append(it);
@@ -4259,6 +4811,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
                 if (std.mem.eql(u8, c.name, g.xname)) n += 1;
             }
             if (n == 0) return 0; // no item occurs: the list is absent
+            try takeItems(diag, alloc, n, g.list);
             const items = try alloc.alloc(Entity, n);
             var i: usize = 0;
             for (cont.children.items) |c| {
@@ -4279,6 +4832,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             const v = found orelse return 0;
             if (v == .null) return 0; // `null` is absent
             if (v != .array) return bad(diag, alloc, mw, "group {s}: the member at {s} is not an array", .{ g.list, g.locator });
+            try takeItems(diag, alloc, v.array.items.len, g.list);
             const items = try alloc.alloc(Entity, v.array.items.len);
             for (v.array.items, 0..) |el, i| {
                 items[i] = Entity.init(alloc);
@@ -4346,6 +4900,8 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             // the count locator is inside the bits the scope requires
             const count: u64 = if (g.count_fixed) |n| n else getBits(bd.buf, p.msb, bd.base + g.cstart, g.clen);
             var pos = bd.base + g.gstart;
+            // the count against the limit, before any item is read (7d)
+            try takeItems(diag, alloc, count, g.list);
             if (count > 0 and (pos > total or count > (total - pos) / g.item_bits)) {
                 return bad(diag, alloc, mw, "group {s}: the input ends before its {d} items", .{ g.list, count });
             }
@@ -4368,6 +4924,7 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             const nf = td.fields.len;
             if (nf <= g.tstart) return 0;
             const count = (nf - g.tstart + g.titem - 1) / g.titem;
+            try takeItems(diag, alloc, count, g.list);
             const items = try alloc.alloc(Entity, count);
             for (items, 0..) |*it, k| {
                 it.* = Entity.init(alloc);
@@ -4432,7 +4989,21 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
         e.kind_name = p.kinds.items[k].name;
     }
 
-    const end = try decodeScope(alloc, p, sc, doc, &e, diag);
+    const end = decodeScope(alloc, p, sc, doc, &e, diag) catch |err| {
+        // Going over the limit wins over a field that fails (ruling 7f of
+        // 0.11): the scope is read again for its items alone.
+        if (err == error.OutOfMemory or err == E.@"malformed-wire") return err;
+        const msg = diag.msg;
+        diag.count_only = true;
+        diag.held = 0;
+        var scratch_e = Entity.init(alloc);
+        _ = decodeScope(alloc, p, sc, doc, &scratch_e, diag) catch |err2| {
+            if (err2 == error.OutOfMemory) return err2;
+            if (diag.limit_hit) return err2;
+        };
+        diag.msg = msg;
+        return err;
+    };
     if (doc == .bits) {
         // the message length is extended by the items, to whole words
         const need = p.wordBytes(@max(sc.nbits_req, end));
@@ -4479,7 +5050,10 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 }
             }
         },
-        .json => |it| try jsonResidue(alloc, p, lines, it.v.object, "", &e),
+        .json => |it| jsonResidue(alloc, p, lines, it.v.object, "", &e) catch |err| switch (err) {
+            E.@"malformed-wire" => return bad(diag, alloc, err, "a number no line maps lies beyond the range of a double", .{}),
+            else => return err,
+        },
         .text => |td| try textResidue(alloc, p, lines, td, &e),
         .bits, .protobuf => {},
     }
@@ -4596,7 +5170,7 @@ fn xmlWrite(buf: *std.ArrayList(u8), node: *XmlNode) anyerror!void {
         try buf.append(' ');
         try buf.appendSlice(a.name);
         try buf.appendSlice("=\"");
-        try xmlEscape(buf, a.value);
+        try xmlEscape(buf, a.value, true);
         try buf.append('"');
     }
     if (node.children.items.len == 0 and node.text.len == 0) {
@@ -4604,20 +5178,26 @@ fn xmlWrite(buf: *std.ArrayList(u8), node: *XmlNode) anyerror!void {
         return;
     }
     try buf.append('>');
-    if (node.text.len > 0) try xmlEscape(buf, node.text);
+    if (node.text.len > 0) try xmlEscape(buf, node.text, false);
     for (node.children.items) |c| try xmlWrite(buf, c);
     try buf.appendSlice("</");
     try buf.appendSlice(node.name);
     try buf.append('>');
 }
 
-fn xmlEscape(buf: *std.ArrayList(u8), s: []const u8) !void {
+// Ruling 1a and 1b of 0.11: an attribute value escapes `&`, `<`, `>`, `"`,
+// tab, line feed and carriage return; text content escapes `&`, `<`, `>` and
+// carriage return. Nothing else is escaped.
+fn xmlEscape(buf: *std.ArrayList(u8), s: []const u8, attr: bool) !void {
     for (s) |c| {
         switch (c) {
             '&' => try buf.appendSlice("&amp;"),
             '<' => try buf.appendSlice("&lt;"),
             '>' => try buf.appendSlice("&gt;"),
-            '"' => try buf.appendSlice("&quot;"),
+            '\r' => try buf.appendSlice("&#13;"),
+            '"' => if (attr) try buf.appendSlice("&quot;") else try buf.append(c),
+            '\t' => if (attr) try buf.appendSlice("&#9;") else try buf.append(c),
+            '\n' => if (attr) try buf.appendSlice("&#10;") else try buf.append(c),
             else => try buf.append(c),
         }
     }
@@ -4739,11 +5319,16 @@ fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, no
                 const mv = (fieldValue(p, sc, e, ln) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse {
                     // an absent key writes its first sentinel (Version 0.9)
-                    if (ln.abs_set) try xmlSet(alloc, node, ln.locator, ln.abs_texts[0], .sentinel);
+                    if (ln.abs_set) {
+                        if (!xmlWritable(ln.abs_texts[0])) return bad(diag, alloc, E.@"transform-encode", "field {s} at {s}: the sentinel holds a character xml cannot hold", .{ ln.key, ln.locator });
+                        try xmlSet(alloc, node, ln.locator, ln.abs_texts[0], .sentinel);
+                    }
                     continue;
                 };
                 const vs = xmlText(alloc, ln.transform.kind, mv) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
+                // ruling 1d of 0.11
+                if (!xmlWritable(vs)) return bad(diag, alloc, E.@"transform-encode", "field {s} at {s}: the value holds a character xml cannot hold", .{ ln.key, ln.locator });
                 try xmlSet(alloc, node, ln.locator, vs, .field);
             },
             .group => {
@@ -5402,7 +5987,7 @@ fn parseHms(s: []const u8) !Hms {
 fn textDecode(t: Transform, raw: []const u8) !MV {
     return switch (t.kind) {
         .string => MV{ .str = raw },
-        .int, .int_w => MV{ .int = try parseDecimalInt(raw) },
+        .int, .int_w => MV{ .int = try parseTextInt(raw) },
         .float, .dec => MV{ .float = try textDecimal(raw) },
         .iso8601_ms => MV{ .int = try isoToMs(raw) },
         .hms => blk: {
@@ -5866,7 +6451,10 @@ fn isSequentialPack(alloc: std.mem.Allocator, def_text: []const u8) !bool {
     defer tokbuf.deinit();
     var lines = std.mem.splitScalar(u8, def_text, '\n');
     while (lines.next()) |line| {
-        try tokenizeInto(&tokbuf, line);
+        tokenizeInto(&tokbuf, line) catch |err| switch (err) {
+            error.OutOfMemory => return err,
+            else => continue, // reported by the parser, in its place
+        };
         const t = tokbuf.items;
         if (t.len != 2) continue;
         if (std.mem.eql(u8, t[0], "wire") and std.mem.eql(u8, t[1], "bits")) bits = true;
@@ -5905,6 +6493,7 @@ const SParser = struct {
     frames: std.ArrayListUnmanaged(SFrame) = .{},
     names: std.ArrayListUnmanaged(SName) = .{},
     lineno: usize = 0,
+    hdr: HeaderSeen = .{},
 
     const bd = E.@"bad-directive";
 
@@ -5920,6 +6509,12 @@ const SParser = struct {
             if (self.frames.items[i].tag == .body) return &self.frames.items[i];
         }
         unreachable;
+    }
+
+    // A failure of a line check (ruling 5b of 0.11, steps 1 to 10).
+    fn lineErr(self: *SParser, e: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
+        self.diag.line_err = true;
+        return self.err(e, fmt, args);
     }
 
     fn err(self: *SParser, e: anyerror, comptime fmt: []const u8, args: anytype) anyerror {
@@ -5977,6 +6572,14 @@ const SParser = struct {
                 return std.mem.eql(u8, a, b);
             }
         }.f;
+        // ruling 5b of 0.11, steps 2 to 6
+        try packLineChecks(alloc, toks, self.lineno, &self.hdr, self.diag);
+        if (std.meta.stringToEnum(PackDir, kw)) |d| {
+            if (d == .layout) {
+                // `layout sequential` stands before every line that needs the wire
+                if (self.hdr.wire_line) return self.err(bd, "layout sequential after a line it governs", .{});
+            } else if (needsWire(d)) self.hdr.wire_line = true;
+        }
         // header and table directives belong to the pack, not to a block
         // (ruling 24 of 0.8)
         if (self.frames.items.len > 1) {
@@ -5985,23 +6588,23 @@ const SParser = struct {
             }
         }
         if (is(kw, "format")) {
-            if (toks.len != 2) return self.err(E.MalformedDirective, "format takes one argument", .{});
+            if (toks.len != 2) return self.err(E.@"bad-directive", "format takes one argument", .{});
             p.format = toks[1];
         } else if (is(kw, "version")) {
-            if (toks.len != 2) return self.err(E.MalformedDirective, "version takes one argument", .{});
+            if (toks.len != 2) return self.err(E.@"bad-directive", "version takes one argument", .{});
             p.version = toks[1];
         } else if (is(kw, "wire")) {
             if (toks.len != 2 or !is(toks[1], "bits")) return self.err(bd, "a sequential pack is on the bits wire", .{});
         } else if (is(kw, "layout")) {
             if (toks.len != 2 or !is(toks[1], "sequential")) return self.err(bd, "layout is given twice, as sequential and as something else", .{});
         } else if (is(kw, "distribution")) {
-            if (toks.len != 2) return self.err(E.MalformedDirective, "distribution takes one argument", .{});
+            if (toks.len != 2) return self.err(E.@"bad-directive", "distribution takes one argument", .{});
             p.distribution = parseDist(toks[1]) catch |e| return self.err(e, "distribution {s} is not public or controlled", .{toks[1]});
         } else if (is(kw, "source")) {
-            if (toks.len != 2) return self.err(E.MalformedDirective, "source takes one argument", .{});
+            if (toks.len != 2) return self.err(E.@"bad-directive", "source takes one argument", .{});
             try p.sources.append(toks[1]);
         } else if (is(kw, "uses")) {
-            if (toks.len != 2) return self.err(E.MalformedDirective, "uses takes one argument", .{});
+            if (toks.len != 2) return self.err(E.@"bad-directive", "uses takes one argument", .{});
             try p.uses.append(toks[1]);
         } else if (is(kw, "bit_order")) {
             if (toks.len != 2) return self.err(bd, "bit_order takes one argument", .{});
@@ -6015,7 +6618,7 @@ const SParser = struct {
         } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
             return self.err(bd, "{s} is a directive of the text wire", .{kw});
         } else if (is(kw, "typemap")) {
-            if (toks.len != 3) return self.err(E.MalformedDirective, "typemap takes two arguments", .{});
+            if (toks.len != 3) return self.err(E.@"bad-directive", "typemap takes two arguments", .{});
             try p.tm_nat2cot.put(toks[1], toks[2]);
             try p.tm_cot2nat.put(toks[2], toks[1]);
         } else if (is(kw, "map")) {
@@ -6068,6 +6671,7 @@ const SParser = struct {
         } else if (is(kw, "when") or is(kw, "const")) {
             const is_when = is(kw, "when");
             if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
+            if (!locatorFormOk(.bits, true, toks[1], false)) return self.lineErr(E.@"bad-locator", "{s}: {s} is not a bit length", .{ kw, toks[1] });
             const len = try self.bitLen(toks[1], kw, 64);
             const v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
             if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
@@ -6083,12 +6687,16 @@ const SParser = struct {
             if (!f.in_whens) return self.err(bd, "when after another line of its kind", .{});
             try f.whens.append(alloc, n);
         } else if (is(kw, "field")) {
-            if (toks.len < 4) return self.err(E.MalformedDirective, "field takes a key, a bit length and a transform", .{});
-            const t = parseTransform(toks[3]) catch |e| return self.err(e, "unknown transform {s}", .{toks[3]});
+            if (toks.len < 4) return self.err(E.@"bad-directive", "field takes a key, a bit length and a transform", .{});
+            const t = parseTransform(toks[3]) catch |e| switch (e) {
+                error.@"unknown-transform" => return self.lineErr(e, "unknown transform {s}", .{toks[3]}),
+                else => return self.lineErr(e, "the parameters of transform {s} are not valid", .{toks[3]}),
+            };
+            if (!locatorFormOk(.bits, true, toks[2], false)) return self.lineErr(E.@"bad-locator", "field {s}: {s} is not a bit length", .{ toks[1], toks[2] });
             if (!allDigits(toks[2])) return self.err(bd, "field {s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ toks[1], toks[2] });
-            if (kindCategory(t.kind) != .bits) return self.err(E.WrongTransformKind, "transform of {s} does not belong to wire bits", .{toks[1]});
-            const blen: usize = @intCast(@min(parseUnsigned(toks[2]) orelse 0, 1 << 20));
-            if (!bitsLenOk(t.kind, blen)) return self.err(bd, "bit length {d} is not allowed for the transform of {s}", .{ blen, toks[1] });
+            // the transform against the wire and the bit length against the
+            // transform are checked after the file (ruling 5b of 0.11)
+            const blen: usize = @intCast(@min(parseUnsigned(toks[2]) orelse (1 << 20), 1 << 20));
             var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = self.lineno, .blen = blen };
             var oi: usize = 4;
             while (oi < toks.len) : (oi += 1) {
@@ -6096,7 +6704,7 @@ const SParser = struct {
                 var again = false;
                 if (is(o, "via")) {
                     oi += 1;
-                    if (oi >= toks.len or toks[oi].len == 0) return self.err(bd, "via takes a table name", .{});
+                    if (oi >= toks.len or toks[oi].len == 0) return self.lineErr(bd, "via takes a table name", .{});
                     again = ln.via_name.len > 0;
                     ln.via_name = toks[oi];
                 } else if (is(o, "swap")) {
@@ -6109,15 +6717,16 @@ const SParser = struct {
                     return self.err(bd, "the field option optional is not for a sequential pack", .{});
                 } else if (is(o, "absent")) {
                     oi += 1;
-                    if (oi >= toks.len) return self.err(bd, "absent takes one or more values", .{});
+                    if (oi >= toks.len) return self.lineErr(bd, "absent takes one or more values", .{});
                     again = ln.absent_raw != null;
                     ln.absent_raw = toks[oi];
-                } else return self.err(bd, "unknown field option {s}", .{o});
-                if (again) return self.err(bd, "field option {s} is repeated", .{o});
+                } else return self.lineErr(bd, "unknown field option {s}", .{o});
+                if (again) return self.lineErr(bd, "field option {s} is repeated", .{o});
             }
-            if (ln.trim and t.kind != .ascii) return self.err(bd, "trim is for the ascii transform", .{});
-            if (ln.swap and blen % 8 != 0) return self.err(bd, "swap needs a bit length that is a multiple of 8, not {d}", .{blen});
-            try parseAbsent(alloc, .bits, &ln, false, self.diag);
+            if (blen <= 64) {
+                try parseAbsent(alloc, .bits, &ln, false, self.diag);
+                ln.abs_checked = true;
+            }
             try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
             try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln });
         } else if (is(kw, "also")) {
@@ -6251,7 +6860,7 @@ const SParser = struct {
             }
             try self.add(n);
         } else {
-            return self.err(E.UnknownDirective, "unknown directive {s}", .{kw});
+            return self.err(E.@"unknown-directive", "unknown directive {s}", .{kw});
         }
     }
 };
@@ -6262,6 +6871,12 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
     const bd = E.@"bad-directive";
     for (nodes) |*n| {
         if (n.tag == .field) {
+            const t = n.ln.transform;
+            if (kindCategory(t.kind) != .bits) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
+            if (!bitsLenOk(t.kind, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
+            if (n.ln.trim and t.kind != .ascii) return bad(diag, alloc, bd, "line {d}: trim is for the ascii transform", .{n.lineno});
+            if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
+            if (!n.ln.abs_checked) try parseAbsent(alloc, .bits, &n.ln, false, diag);
             if (n.ln.via_name.len > 0) {
                 n.ln.via = p.tables.get(n.ln.via_name) orelse
                     return bad(diag, alloc, bd, "line {d}: via {s} names a table with no map line", .{ n.lineno, n.ln.via_name });
@@ -6339,14 +6954,26 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     const root = try alloc.create(SBody);
     root.* = .{};
     var sp = SParser{ .alloc = alloc, .p = p, .diag = diag };
+    var deferred: ?Deferred = null;
     try sp.frames.append(alloc, .{ .tag = .body, .node = .{ .tag = .group }, .sbody = root });
     var lines = std.mem.splitScalar(u8, def_text, '\n');
     var tokbuf = std.ArrayList([]const u8).init(alloc);
     while (lines.next()) |line| {
         sp.lineno += 1;
-        try tokenizeInto(&tokbuf, line);
+        tokenizeInto(&tokbuf, line) catch |err|
+            return lineBad(diag, alloc, err, "line {d}: a quoted value has no closing quote", .{sp.lineno});
         if (tokbuf.items.len == 0) continue;
-        try sp.line(tokbuf.items);
+        // every cause not in steps 1 to 10 of ruling 5b of 0.11 is reported
+        // after the file is read
+        sp.line(tokbuf.items) catch |err| {
+            if (err == error.OutOfMemory or diag.line_err) return err;
+            if (deferred == null) deferred = .{ .err = err, .msg = diag.msg };
+        };
+    }
+    try headerChecks(alloc, sp.hdr, diag);
+    if (deferred) |d| {
+        diag.msg = d.msg;
+        return d.err;
     }
     if (sp.frames.items.len > 1) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a block with no `end`", .{sp.top().node.lineno});
@@ -6412,6 +7039,8 @@ const SDec = struct {
     // inside a `length` block: the end of its extent
     soft_end: usize,
     in_extent: bool = false,
+    // the first field that failed (`transform-decode`), reported at the end
+    failed_msg: ?[]const u8 = null,
 
     const mw = E.@"malformed-wire";
     const Avail = enum { ok, absent };
@@ -6474,7 +7103,7 @@ const SDec = struct {
         var mv = raw;
         if (via) |t| {
             mv = tableDecode(t, mv, kty) catch
-                return bad(self.diag, self.alloc, E.@"transform-decode", "field {s}: the table {s} has no entry for the value", .{ key, via_name });
+                return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "field {s}: the table {s} has no entry for the value", .{ key, via_name }));
         }
         if (mv == .str and std.mem.eql(u8, key, "type")) {
             if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
@@ -6615,6 +7244,10 @@ const SDec = struct {
             .count => {
                 if (try self.avail(n.len, n.list) == .absent) return;
                 const cnt = self.take(n.len);
+                // the count against the limit, less the items of the list it
+                // replaces (rulings 7d and 7g of 0.11), before any item is read
+                try self.replaceList(se, n.list);
+                try takeItems(self.diag, self.alloc, cnt, n.list);
                 // a count larger than the bits left, before any item is read
                 if (cnt > self.left()) {
                     return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
@@ -6623,6 +7256,7 @@ const SDec = struct {
             },
             .while_ => {
                 if (try self.avail(1, n.list) == .absent) return;
+                try self.replaceList(se, n.list);
                 while (true) {
                     if (try self.indicator(n.list) == 0) break;
                     try self.item(n, &items, env);
@@ -6630,6 +7264,7 @@ const SDec = struct {
             },
             .more => {
                 if (try self.avail(1, n.list) == .absent) return;
+                try self.replaceList(se, n.list);
                 while (true) {
                     const more = try self.indicator(n.list);
                     try self.item(n, &items, env);
@@ -6638,6 +7273,7 @@ const SDec = struct {
             },
             .fx => {
                 if (self.in_extent and self.pos >= self.soft_end) return;
+                try self.replaceList(se, n.list);
                 while (true) {
                     try self.item(n, &items, env);
                     if (try self.indicator(n.list) == 0) break;
@@ -6649,7 +7285,15 @@ const SDec = struct {
         try se.e.putList(n.list, try items.finish());
     }
 
+    // A later group of a list the entity holds replaces its items (ruling 33
+    // of 0.8): they are no longer counted (ruling 7g of 0.11).
+    fn replaceList(self: *SDec, se: *SEnt, list: []const u8) !void {
+        if (se.e.lists.get(list)) |old| self.diag.held -= itemsHeld(old);
+    }
+
     fn item(self: *SDec, n: *const SNode, items: *ItemList, env: ?*const PEnv) anyerror!void {
+        // a counted group took its items before the first was read
+        if (n.mode != .count) try takeItems(self.diag, self.alloc, 1, n.list);
         var it = Entity.init(self.alloc);
         var sit = SEnt{ .e = &it };
         try self.body(n.gbody.?, &sit, env);
@@ -6686,8 +7330,15 @@ const SDec = struct {
             try self.nodes(k.lines, se, &env);
         }
         for (se.failed.items) |key| {
-            if (!se.e.fields.contains(key)) return bad(self.diag, self.alloc, E.@"transform-decode", "failed fields: {s}", .{key});
+            if (!se.e.fields.contains(key)) return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "failed fields: {s}", .{key}));
         }
+    }
+
+    // A field that fails is reported when the message has been read: going
+    // over the limit on list items, later in the message too, wins over it
+    // (ruling 7f of 0.11). The first such failure is kept.
+    fn fieldFailed(self: *SDec, msg: []const u8) void {
+        if (self.failed_msg == null) self.failed_msg = msg;
     }
 };
 
@@ -6697,6 +7348,7 @@ fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: 
     var e = Entity.init(alloc);
     var se = SEnt{ .e = &e };
     try d.body(p.seq.?, &se, null);
+    if (d.failed_msg) |m| return bad(diag, alloc, E.@"transform-decode", "{s}", .{m});
     return e;
 }
 
@@ -7074,14 +7726,57 @@ fn beginsWithKind(msg: []const u8, kind: []const u8) bool {
 
 // Are the `from` and `to` formats of a vector both loaded? A vector that does
 // not parse counts as loaded, so that `runVector` reports it.
-fn vectorFormatsLoaded(eng: *Engine, text: []const u8) bool {
+// A format that is not a directory under the packs directory is not left
+// out: the vector pins `unknown-format` and is run.
+fn vectorFormatsLoaded(eng: *Engine, packs_dir: []const u8, text: []const u8) bool {
     const parsed = std.json.parseFromSliceLeaky(JValue, eng.scratch, text, .{}) catch return true;
     if (parsed != .object) return true;
     for ([_][]const u8{ "from", "to" }) |k| {
         const fmt = getStr(parsed.object, k) orelse return true;
-        if (eng.findPack(fmt) == null) return false;
+        if (eng.findPack(fmt) != null) continue;
+        const path = std.fmt.allocPrint(eng.scratch, "{s}/{s}", .{ packs_dir, fmt }) catch return true;
+        var d = std.fs.cwd().openDir(path, .{}) catch continue;
+        d.close();
+        return false;
     }
     return true;
+}
+
+// Run one capability vector (ruling 6 of 0.11). null: it passes.
+fn runCapabilityVector(eng: *Engine, text: []const u8) !?[]const u8 {
+    const alloc = eng.scratch;
+    const parsed = std.json.parseFromSliceLeaky(JValue, alloc, text, .{}) catch return "the vector is not JSON";
+    if (parsed != .object) return "the vector is not a JSON object";
+    const obj = parsed.object;
+    const from = getStr(obj, "from") orelse return "no `from`";
+    const to = getStr(obj, "to") orelse return "no `to`";
+    const grade = getStr(obj, "grade") orelse return "no `grade`";
+    const cap = eng.capability(from, to) catch |err| {
+        if (err == error.OutOfMemory) return err;
+        return try std.fmt.allocPrint(alloc, "capability failed: {s}", .{eng.last_error});
+    };
+    if (!std.mem.eql(u8, cap.grade, grade)) return try std.fmt.allocPrint(alloc, "grade: expected {s}, got {s}", .{ grade, cap.grade });
+    const pairs = [_]struct { name: []const u8, got: []const []const u8 }{
+        .{ .name = "carried", .got = cap.carried },
+        .{ .name = "dropped", .got = cap.dropped },
+    };
+    for (pairs) |pr| {
+        const want = obj.get(pr.name) orelse return try std.fmt.allocPrint(alloc, "no `{s}`", .{pr.name});
+        if (want != .array) return try std.fmt.allocPrint(alloc, "`{s}` is not an array", .{pr.name});
+        var same = want.array.items.len == pr.got.len;
+        if (same) for (want.array.items, pr.got) |w, g| {
+            if (w != .string or !std.mem.eql(u8, w.string, g)) same = false;
+        };
+        if (!same) {
+            var buf = std.ArrayList(u8).init(alloc);
+            for (pr.got, 0..) |g, i| {
+                if (i > 0) try buf.appendSlice(", ");
+                try buf.appendSlice(g);
+            }
+            return try std.fmt.allocPrint(alloc, "{s}: got [{s}]", .{ pr.name, buf.items });
+        }
+    }
+    return null;
 }
 
 // Run one conversion vector. Returns null on pass, else why it failed.
@@ -7098,8 +7793,24 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
     const expect_error = getStr(vobj, "expect_error");
     if (expect == null and expect_error == null) return "neither `expect` nor `expect_error`";
     if (expect != null and expect_error != null) return "both `expect` and `expect_error`";
-    if (eng.findPack(from_fmt) == null) return try std.fmt.allocPrint(alloc, "unknown from format {s}", .{from_fmt});
-    if (eng.findPack(to_fmt) == null) return try std.fmt.allocPrint(alloc, "unknown to format {s}", .{to_fmt});
+    // `max_items` (Version 0.11): the limit on list items for this vector
+    eng.max_items = default_max_items;
+    if (vobj.get("max_items")) |mi| {
+        if (mi != .integer or mi.integer < 0) return "invalid vector: `max_items` is not an integer of 0 or more";
+        eng.max_items = @intCast(mi.integer);
+    }
+    defer eng.max_items = default_max_items;
+    // a `model` value its grammar refuses makes the vector invalid (ruling
+    // 2c of 0.11)
+    if (vobj.get("model")) |mv0| {
+        if (mv0 == .object) {
+            var vit = mv0.object.iterator();
+            while (vit.next()) |me| {
+                if (me.value_ptr.* != .string) continue;
+                if (try modelValueInvalid(eng, me.key_ptr.*, me.value_ptr.*.string)) |why| return why;
+            }
+        }
+    }
 
     // the caller-supplied keys, values in string form
     var context: ?[]const KV = null;
@@ -7185,6 +7896,33 @@ fn runVector(eng: *Engine, text: []const u8) !?[]const u8 {
         if (try checkModelKey(alloc, &ent, key, exp, completed)) |why| return why;
     }
     return null;
+}
+
+// Ruling 2c of 0.11: a `model` member named by a model key or an item path
+// `<list>[<i>].<key>` is read as that key's declared type; `"<list>.#"` is an
+// unsigned decimal integer or `absent`; the `@` members are not numbers.
+// null: the value is valid.
+fn modelValueInvalid(eng: *const Engine, key: []const u8, val: []const u8) !?[]const u8 {
+    const alloc = eng.scratch;
+    var rest = key;
+    while (std.mem.indexOfScalar(u8, rest, '[')) |open| {
+        const close = std.mem.indexOfScalarPos(u8, rest, open, ']') orelse return null;
+        if (close + 2 > rest.len) return null;
+        rest = rest[close + 2 ..];
+    }
+    if (rest.len > 0 and rest[0] == '@') return null;
+    if (std.mem.endsWith(u8, rest, ".#")) {
+        if (std.mem.eql(u8, val, "absent") or parseUnsigned(val) != null) return null;
+        return try std.fmt.allocPrint(alloc, "invalid vector: model {s}: {s} is not a count or `absent`", .{ key, clip(val) });
+    }
+    const ty = eng.keyType(rest) orelse return null;
+    const ok = switch (ty) {
+        .string => true,
+        .int => !std.meta.isError(parseDecimalInt(val)),
+        .float => !std.meta.isError(parseDecimal(val)),
+    };
+    if (ok) return null;
+    return try std.fmt.allocPrint(alloc, "invalid vector: model {s}: {s} is not {s} text", .{ key, clip(val), @tagName(ty) });
 }
 
 // One `model` entry against the decoded entity: a key, `"<list>.#"` (a count
@@ -7296,11 +8034,11 @@ fn modelMatch(actual: MV, expected: []const u8, relative: bool) bool {
     switch (actual) {
         .str => |s| return std.mem.eql(u8, s, expected),
         .int => |i| {
-            const e = std.fmt.parseInt(i64, expected, 10) catch return false;
+            const e = parseDecimalInt(expected) catch return false;
             return i == e;
         },
         .float => |f| {
-            const e = std.fmt.parseFloat(f64, expected) catch return false;
+            const e = parseDecimal(expected) catch return false;
             if (f == e) return true;
             if (relative) return @abs(f - e) < 1e-9 * @max(@abs(f), @abs(e));
             return @abs(f - e) <= 1e-9;
@@ -7316,7 +8054,17 @@ fn runLoadVector(alloc: std.mem.Allocator, text: []const u8) !?[]const u8 {
     const obj = parsed.object;
     const models = obj.get("models") orelse return "no models";
     if (models != .array) return "models is not an array";
-    const pack_text = getStr(obj, "pack") orelse return "no pack";
+    // `pack`, or `packs` (Version 0.11): pack texts loaded in order
+    var pack_texts = std.ArrayList([]const u8).init(alloc);
+    if (getStr(obj, "pack")) |pt| {
+        try pack_texts.append(pt);
+    } else if (obj.get("packs")) |pv| {
+        if (pv != .array) return "packs is not an array";
+        for (pv.array.items) |x| {
+            if (x != .string) return "a pack is not a string";
+            try pack_texts.append(x.string);
+        }
+    } else return "no pack";
     const expect_error = getStr(obj, "expect_error");
 
     var eng = Engine.init(alloc);
@@ -7334,9 +8082,12 @@ fn runLoadVector(alloc: std.mem.Allocator, text: []const u8) !?[]const u8 {
         };
     }
     if (got == null) {
-        _ = eng.loadPack(pack_text) catch |err| {
-            got = @errorName(err);
-        };
+        for (pack_texts.items) |pt| {
+            _ = eng.loadPack(pt) catch |err| {
+                got = @errorName(err);
+                break;
+            };
+        }
     }
 
     if (expect_error) |want| {
@@ -7516,6 +8267,11 @@ fn listMemory(eng: *Engine) !?usize {
     defer arena.deinit();
     eng.scratch = arena.allocator();
     defer eng.scratch = eng.alloc;
+    // the run measures memory per item: the limit on list items (ruling 7
+    // of 0.11) is raised to the items it decodes
+    const limit = eng.max_items;
+    eng.max_items = list_items;
+    defer eng.max_items = limit;
     const e = try eng.decode(fmt, input);
     const items = e.lists.get("probe.items") orelse return error.Unexpected;
     if (items.len != list_items) return error.Unexpected;
@@ -7582,7 +8338,7 @@ pub fn main() !void {
     while (ai < args.len) : (ai += 1) {
         const a = args[ai];
         const eq = std.mem.eql;
-        if (eq(u8, a, "--models") or eq(u8, a, "--max-distribution") or eq(u8, a, "--packs") or eq(u8, a, "--packs-only") or eq(u8, a, "--model-keys") or eq(u8, a, "--set") or eq(u8, a, "--convert")) {
+        if (eq(u8, a, "--models") or eq(u8, a, "--max-distribution") or eq(u8, a, "--packs") or eq(u8, a, "--packs-only") or eq(u8, a, "--model-keys") or eq(u8, a, "--set") or eq(u8, a, "--convert") or eq(u8, a, "--max-items")) {
             ai += 1;
             if (ai >= args.len or (eq(u8, a, "--convert") and ai + 1 >= args.len)) {
                 try stdout.print("error: {s} needs a value\n", .{a});
@@ -7601,6 +8357,12 @@ pub fn main() !void {
                 conv_from = args[ai];
                 ai += 1;
                 conv_to = args[ai];
+            } else if (eq(u8, a, "--max-items")) {
+                eng.setMaxItems(@intCast(parseUnsigned(args[ai]) orelse {
+                    try stdout.print("error: --max-items takes an integer of 0 or more\n", .{});
+                    try bw.flush();
+                    std.process.exit(2);
+                }));
             } else if (eq(u8, a, "--set")) {
                 const at = std.mem.indexOfScalar(u8, args[ai], '=') orelse {
                     try stdout.print("error: --set takes <key>=<value>\n", .{});
@@ -7731,7 +8493,7 @@ pub fn main() !void {
             const vtext = try std.fs.cwd().readFileAlloc(eng.scratch, vpath, max_file);
             // with --packs-only, a vector that names a pack left out is
             // not run, and is counted
-            if (only_opt != null and !vectorFormatsLoaded(&eng, vtext)) {
+            if (only_opt != null and !vectorFormatsLoaded(&eng, packs_dir, vtext)) {
                 skipped += 1;
                 continue;
             }
@@ -7769,12 +8531,38 @@ pub fn main() !void {
         }
     }
 
+    // capability vectors: <packs>/conformance/capability-vectors/*.json
+    var ctotal: usize = 0;
+    var cpassed: usize = 0;
+    const cdir_path = try std.fmt.allocPrint(alloc, "{s}/conformance/capability-vectors", .{packs_dir});
+    if (try sortedNames(alloc, cdir_path, .file, ".json")) |cnames| {
+        for (cnames) |cn| {
+            var carena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+            defer carena.deinit();
+            eng.scratch = carena.allocator();
+            defer eng.scratch = alloc;
+            const cpath = try std.fmt.allocPrint(eng.scratch, "{s}/{s}", .{ cdir_path, cn });
+            const ctext = try std.fs.cwd().readFileAlloc(eng.scratch, cpath, max_file);
+            if (only_opt != null and !vectorFormatsLoaded(&eng, packs_dir, ctext)) {
+                skipped += 1;
+                continue;
+            }
+            ctotal += 1;
+            if (try runCapabilityVector(&eng, ctext)) |detail| {
+                try failures.append(try std.fmt.allocPrint(alloc, "capability-vectors/{s}: {s}", .{ cn, detail }));
+            } else {
+                cpassed += 1;
+            }
+        }
+    }
+
     for (failures.items) |fmsg| {
         try stdout.print("FAIL {s}\n", .{fmsg});
     }
     try stdout.print("vectors: {d}/{d} passed\n", .{ passed, total });
     try stdout.print("load vectors: {d}/{d} passed\n", .{ lpassed, ltotal });
+    try stdout.print("capability vectors: {d}/{d} passed\n", .{ cpassed, ctotal });
     if (skipped > 0) try stdout.print("skipped: {d} vectors that name a pack not loaded\n", .{skipped});
     try bw.flush();
-    if (passed != total or lpassed != ltotal) std.process.exit(1);
+    if (passed != total or lpassed != ltotal or cpassed != ctotal) std.process.exit(1);
 }
