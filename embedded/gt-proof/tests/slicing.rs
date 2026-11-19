@@ -42,11 +42,20 @@ fn a_plan_for_one_kind_refuses_the_others() {
     p.compile(&specs);
     let mut scratch = Box::new(Scratch::new());
     let mut out = vec![0u8; 1 << 16];
-    let (mut plans, mut converted, mut refused) = (0usize, 0usize, 0usize);
+    let (mut plans, mut converted, mut refused, mut unsupported) = (0usize, 0usize, 0usize, 0usize);
     for (format, list) in &kinds {
         for kind in list {
             let side = format!("{}:{}", format, kind);
-            let blob = p.plan(Some(&side), Some(&side), &[]).unwrap_or_else(|e| panic!("{}: {}", side, e));
+            // A kind the device profile refuses (as fuzz.rs and equivalence.rs do)
+            // has no plan to slice; the refusal itself is tested by packc.
+            let blob = match p.plan(Some(&side), Some(&side), &[]) {
+                Ok(b) => b,
+                Err(e) if e.contains("refused: unsupported-feature:") => {
+                    unsupported += 1;
+                    continue;
+                }
+                Err(e) => panic!("{}: {}", side, e),
+            };
             let plan = Plan::parse(&blob).expect("plan");
             plans += 1;
             for v in vectors.iter().filter(|v| v.from == *format && v.to == *format && v.context.is_none()) {
@@ -67,9 +76,10 @@ fn a_plan_for_one_kind_refuses_the_others() {
         }
     }
     eprintln!(
-        "slicing: {} one-kind plans over {} formats: {} messages of the compiled kind converted to the vector's bytes, {} messages of other kinds refused with no-kind",
+        "slicing: {} one-kind plans over {} formats ({} kinds the device profile refuses): {} messages of the compiled kind converted to the vector's bytes, {} messages of other kinds refused with no-kind",
         plans,
         kinds.len(),
+        unsupported,
         converted,
         refused
     );
