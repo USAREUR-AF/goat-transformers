@@ -1,0 +1,10 @@
+{
+  "name": "empty-options-area",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "",
+  "expect": "",
+  "model": {},
+  "source": "constructed",
+  "reference": "an empty input is an empty set; it encodes to nothing (engine-spec 0.13, step 3)"
+}

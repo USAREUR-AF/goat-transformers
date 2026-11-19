@@ -1,0 +1,12 @@
+{
+  "name": "unregistered-code-kept-as-residue",
+  "from": "edns0-options",
+  "to": "edns0-options",
+  "input": "000800080001180020010db8fde90001aa",
+  "expect": "000800080001180020010db8fde90001aa",
+  "model": {
+    "edns0.opt8_edns_client_subnet": "0001180020010db8"
+  },
+  "source": "constructed",
+  "reference": "RFC 6891 section 6.1.2 (option format); a client-subnet option as hex, and an unassigned code kept as residue; written by tools/gen/ietf-options-vectors.py"
+}

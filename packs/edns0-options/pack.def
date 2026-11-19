@@ -1,0 +1,40 @@
+# EDNS(0) options: the RDATA of an OPT pseudo-RR (RFC 6891 section 6.1.2). Public. Maintained by hand.
+# A message is the options area only: one option after another, each a 2-octet
+# code, a 2-octet length and that many octets. pack.md states what is mapped.
+format        edns0-options
+version       0.1.0
+distribution  public
+source        "RFC 6891, Extension Mechanisms for DNS (EDNS(0)), section 6.1.2 (option format); IETF Trust, BCP 78; layout restated, no text copied"
+source        "IANA registry Domain Name System (DNS) Parameters, DNS EDNS0 Option Codes (OPT) (https://www.iana.org/assignments/dns-parameters), CC0 1.0 per the IANA and IETF joint statement of 10 November 2021: option codes and names"
+uses          edns0
+wire          tlv
+tag           2
+length        2
+
+field  edns0.opt1_llq                                     1        hex
+field  edns0.opt2_update_lease                            2        hex
+field  edns0.opt3_nsid                                    3        hex
+field  edns0.opt5_dau                                     5        hex
+field  edns0.opt6_dhu                                     6        hex
+field  edns0.opt7_n3u                                     7        hex
+field  edns0.opt8_edns_client_subnet                      8        hex
+field  edns0.opt9_edns_expire                             9        hex
+field  edns0.opt10_cookie                                 10       hex
+field  edns0.opt11_edns_tcp_keepalive                     11       hex
+field  edns0.opt12_padding                                12       hex
+field  edns0.opt13_chain                                  13       hex
+field  edns0.opt14_edns_key_tag                           14       hex
+field  edns0.opt15_extended_dns_error                     15       hex
+field  edns0.opt16_edns_client_tag                        16       hex
+field  edns0.opt17_edns_server_tag                        17       hex
+field  edns0.opt18_report_channel                         18       hex
+field  edns0.opt19_zoneversion                            19       hex
+field  edns0.opt20_mqtype_query                           20       hex
+field  edns0.opt21_mqtype_response                        21       hex
+field  edns0.opt22_ede_extra_text_language                22       hex
+field  edns0.opt23_filtering_contact                      23       hex
+field  edns0.opt24_filtering_organization                 24       hex
+field  edns0.opt25_filtering_db                           25       hex
+field  edns0.opt26_structured_dns_error                   26       hex
+field  edns0.opt20292_umbrella_ident                      20292    hex
+field  edns0.opt26946_deviceid                            26946    hex

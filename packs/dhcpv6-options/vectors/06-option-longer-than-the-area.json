@@ -1,0 +1,9 @@
+{
+  "name": "option-longer-than-the-area",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0001000e000100012f1e2d3c00112233",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the client identifier states 14 octets and the input ends two octets early (engine-spec 0.13, Reading a message, step 3)"
+}

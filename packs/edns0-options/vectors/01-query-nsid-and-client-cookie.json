@@ -1,0 +1,13 @@
+{
+  "name": "query-nsid-and-client-cookie",
+  "from": "edns0-options",
+  "to": "edns0-options",
+  "input": "00030000000a000824a1c4d5e6f70809",
+  "expect": "00030000000a000824a1c4d5e6f70809",
+  "model": {
+    "edns0.opt3_nsid": "",
+    "edns0.opt10_cookie": "24a1c4d5e6f70809"
+  },
+  "source": "constructed",
+  "reference": "RFC 6891 section 6.1.2 (option format); a query asking for the name server identifier (empty value) and carrying an 8-octet client cookie (code 10); written by tools/gen/ietf-options-vectors.py"
+}

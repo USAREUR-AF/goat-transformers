@@ -1,0 +1,9 @@
+{
+  "name": "option-longer-than-the-rdata",
+  "from": "edns0-options",
+  "to": "edns0-options",
+  "input": "000a000824a1c4d5e6f708",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the cookie states 8 octets and the input holds 7 (engine-spec 0.13, step 3)"
+}
