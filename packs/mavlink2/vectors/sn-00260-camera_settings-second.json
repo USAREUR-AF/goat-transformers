@@ -1,0 +1,14 @@
+{
+  "name": "second-sentinels-camera_settings",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0e0000920b4604010008fe4135df0000c0ff0000c0ff64",
+  "expect": "fd0e0000920b4604010008fe4135df0000c07f0000c07f64",
+  "model": {
+    "@kind": "camera_settings",
+    "@absent": [
+      "mavlink.zoomlevel",
+      "mavlink.focuslevel"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "sentinels-battery_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd360000749494930000ffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffff3c13eaff000000006f00000000000000001df412e079",
+  "expect": "fd360000749494930000ffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffff3c13eaff000000006f00000000000000001df412e079",
+  "model": {
+    "@kind": "battery_status",
+    "@absent": [
+      "mavlink.current_consumed_mah",
+      "mavlink.energy_consumed_hj",
+      "mavlink.temperature_cdegc",
+      "mavlink.voltages_mv_0",
+      "mavlink.voltages_mv_1",
+      "mavlink.voltages_mv_2",
+      "mavlink.voltages_mv_3",
+      "mavlink.voltages_mv_4",
+      "mavlink.voltages_mv_5",
+      "mavlink.voltages_mv_6",
+      "mavlink.voltages_mv_7",
+      "mavlink.voltages_mv_8",
+      "mavlink.voltages_mv_9",
+      "mavlink.current_battery_ca",
+      "mavlink.battery_remaining_pct",
+      "mavlink.time_remaining_s",
+      "mavlink.voltages_ext_mv_0",
+      "mavlink.voltages_ext_mv_1",
+      "mavlink.voltages_ext_mv_2",
+      "mavlink.voltages_ext_mv_3"
+    ]
+  }
+}

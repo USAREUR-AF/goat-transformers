@@ -1,0 +1,25 @@
+{
+  "name": "sentinels-follow_target",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd5d0000729191900000bc9b00420000008093ef841500000000d04d6b0830b294f70000c03f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803e0000003f22",
+  "expect": "fd5d0000729191900000bc9b00420000008093ef841500000000d04d6b0830b294f70000c03f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000803e0000003f22",
+  "model": {
+    "@kind": "follow_target",
+    "@absent": [
+      "mavlink.vel_m_per_s_0",
+      "mavlink.vel_m_per_s_1",
+      "mavlink.vel_m_per_s_2",
+      "mavlink.acc_m_per_s_per_s_0",
+      "mavlink.acc_m_per_s_per_s_1",
+      "mavlink.acc_m_per_s_per_s_2",
+      "mavlink.attitude_q_0",
+      "mavlink.attitude_q_1",
+      "mavlink.attitude_q_2",
+      "mavlink.attitude_q_3",
+      "mavlink.rates_rad_per_s_0",
+      "mavlink.rates_rad_per_s_1",
+      "mavlink.rates_rad_per_s_2"
+    ]
+  }
+}

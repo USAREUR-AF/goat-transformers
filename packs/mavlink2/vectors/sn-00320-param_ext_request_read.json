@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-param_ext_request_read",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd140001b34782400100ffffe3ba4d353000000000000000000000000000",
+  "expect": "fd140001b34782400100ffffe3ba4d353000000000000000000000000000",
+  "model": {
+    "@kind": "param_ext_request_read",
+    "@absent": [
+      "mavlink.param_index"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-memory_vect",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd24000088fa3bf9000043e500f110477eb5ec235a91c8ff366da4db124980b7ee255c93ca01386fa6dd144b82b9",
+  "expect": "fd24000088fa3bf9000043e500f110477eb5ec235a91c8ff366da4db124980b7ee255c93ca01386fa6dd144b82b9",
+  "model": {
+    "@kind": "memory_vect",
+    "@absent": [
+      "mavlink.ver"
+    ]
+  }
+}

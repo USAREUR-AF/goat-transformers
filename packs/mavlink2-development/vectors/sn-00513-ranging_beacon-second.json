@@ -1,0 +1,13 @@
+{
+  "name": "second-sentinels-ranging_beacon",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd2d00000c0e84010200bb37d77200000000ffffffffffffff7fffffff7f0000c0ffffffffffffffffffffffffff73d6000021f8cfa67d",
+  "expect": "fd2d00000c0e84010200bb37d77200000000ffffffffffffff7fffffff7f0000c07fffffffffffffffffffffffff73d6000021f8cfa67d",
+  "model": {
+    "@kind": "ranging_beacon",
+    "@absent": [
+      "mavlinkdevelopment.alt_m"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "sentinels-command_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd230000364c4c4b00000000c07f0000c07f0000c07f0000c07fffffff7fffffff7f0000c07fb21c8960370ee5",
+  "expect": "fd230000364c4c4b00000000c07f0000c07f0000c07f0000c07fffffff7fffffff7f0000c07fb21c8960370ee5",
+  "model": {
+    "@kind": "command_int",
+    "@absent": [
+      "mavlink.param1",
+      "mavlink.param2",
+      "mavlink.param3",
+      "mavlink.param4",
+      "mavlink.command_int_x",
+      "mavlink.command_int_y",
+      "mavlink.command_int_z"
+    ]
+  }
+}

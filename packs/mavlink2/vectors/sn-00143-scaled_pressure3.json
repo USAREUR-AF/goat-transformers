@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-scaled_pressure3",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1000017190908f00004ddf48190000a0bf0000003f960b0000",
+  "expect": "fd1000017190908f00004ddf48190000a0bf0000003f960b0000",
+  "model": {
+    "@kind": "scaled_pressure3",
+    "@absent": [
+      "mavlink.temperature_press_diff_cdegc"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "second-sentinels-autopilot_state_for_gimbal_device_ext",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd16000000011b60ea00ecbcca11000000800000c0ff0000c0ff0000c0ff481f",
+  "expect": "fd16000000011b60ea00ecbcca11000000800000c07f0000c07f0000c07f481f",
+  "model": {
+    "@kind": "autopilot_state_for_gimbal_device_ext",
+    "@absent": [
+      "mavlinkstorm32.wind_x_m_per_s",
+      "mavlinkstorm32.wind_y_m_per_s",
+      "mavlinkstorm32.wind_correction_angle_rad"
+    ]
+  }
+}

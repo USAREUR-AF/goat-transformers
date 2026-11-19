@@ -1,0 +1,17 @@
+{
+  "name": "second-sentinels-gimbal_device_attitude_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd310000a6245f1d0100df64332f000020400000304000004040000050400000c0ff0000c0ff0000c0ff1208c950e95bc0970000c0ff0000c0ff00",
+  "expect": "fd310000a6245f1d0100df64332f000020400000304000004040000050400000c07f0000c07f0000c07f1208c950e95bc0970000c07f0000c07f00",
+  "model": {
+    "@kind": "gimbal_device_attitude_status",
+    "@absent": [
+      "mavlink.angular_velocity_x_rad_per_s",
+      "mavlink.angular_velocity_y_rad_per_s",
+      "mavlink.angular_velocity_z_rad_per_s",
+      "mavlink.delta_yaw_rad",
+      "mavlink.delta_yaw_velocity_rad_per_s"
+    ]
+  }
+}

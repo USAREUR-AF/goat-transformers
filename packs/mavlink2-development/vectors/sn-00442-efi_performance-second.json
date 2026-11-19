@@ -1,0 +1,16 @@
+{
+  "name": "second-sentinels-efi_performance",
+  "from": "mavlink2-development",
+  "to": "mavlink2-development",
+  "input": "fd31000008c13dba0100f2f4e127000000800000c0ff0000c0ffffffffff0000c0ff0000c0ffffffffffffffffffff7fffffff7fddffffffffffff",
+  "expect": "fd31000008c13dba0100f2f4e127000000800000c07f0000c07fffffffff0000c07f0000c07fffffffffffffffffff7fffffff7fddffffffffffff",
+  "model": {
+    "@kind": "efi_performance",
+    "@absent": [
+      "mavlinkdevelopment.fuel_mass_rate_g_per_min",
+      "mavlinkdevelopment.commanded_rpm",
+      "mavlinkdevelopment.boost_pressure_kpa",
+      "mavlinkdevelopment.coolant_pressure_kpa"
+    ]
+  }
+}

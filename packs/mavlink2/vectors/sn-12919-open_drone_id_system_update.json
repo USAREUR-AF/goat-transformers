@@ -1,0 +1,15 @@
+{
+  "name": "sentinels-open_drone_id_system_update",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd120001e9aa7b773200000000000000000000007ac46ade69254118",
+  "expect": "fd120001e9aa7b773200000000000000000000007ac46ade69254118",
+  "model": {
+    "@kind": "open_drone_id_system_update",
+    "@absent": [
+      "mavlink.operator_latitude_dege7",
+      "mavlink.operator_longitude_dege7",
+      "mavlink.operator_altitude_geo_m"
+    ]
+  }
+}

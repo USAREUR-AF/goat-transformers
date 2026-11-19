@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-mission_count",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd090001212d2d2c00006000370ee500000000",
+  "expect": "fd090001212d2d2c00006000370ee500000000",
+  "model": {
+    "@kind": "mission_count",
+    "@absent": [
+      "mavlink.opaque_id"
+    ]
+  }
+}

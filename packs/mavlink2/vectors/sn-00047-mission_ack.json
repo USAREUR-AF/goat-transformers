@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-mission_ack",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0800002430302f0000ad845b3200000000",
+  "expect": "fd0800002430302f0000ad845b3200000000",
+  "model": {
+    "@kind": "mission_ack",
+    "@absent": [
+      "mavlink.opaque_id"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "sentinels-mlrs_radio_link_information",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd1c00000a2f498eea0000000000000000003a1100ff7f7f4d36390000004d37360000000000",
+  "expect": "fd1c00000a2f498eea0000000000000000003a1100ff7f7f4d36390000004d37360000000000",
+  "model": {
+    "@kind": "mlrs_radio_link_information",
+    "@absent": [
+      "mavlinkstorm32.tx_frame_rate_hz",
+      "mavlinkstorm32.rx_frame_rate_hz",
+      "mavlinkstorm32.tx_ser_data_rate",
+      "mavlinkstorm32.rx_ser_data_rate",
+      "mavlinkstorm32.type",
+      "mavlinkstorm32.mlrs_radio_link_information_mode",
+      "mavlinkstorm32.tx_power_dbm",
+      "mavlinkstorm32.rx_power_dbm",
+      "mavlinkstorm32.tx_receive_sensitivity",
+      "mavlinkstorm32.rx_receive_sensitivity"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-video_stream_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1600009c15500e0100000030c035aef31f0c02e355baa991fd68513f160000",
+  "expect": "fd1600009c15500e0100000030c035aef31f0c02e355baa991fd68513f160000",
+  "model": {
+    "@kind": "video_stream_status",
+    "@absent": [
+      "mavlink.vfov_cdeg"
+    ]
+  }
+}

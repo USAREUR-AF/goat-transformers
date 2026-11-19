@@ -1,0 +1,22 @@
+{
+  "name": "sentinels-ais_vessel",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3a0000b0346f2d0100cf2baf3affffff7fffffff7fffffffffffffffffffff87ca5e1e7f0ce3ffff4d3330000000004d33370000000000000000000000000000000000",
+  "expect": "fd3a0000b0346f2d0100cf2baf3affffff7fffffff7fffffffffffffffffffff87ca5e1e7f0ce3ffff4d3330000000004d33370000000000000000000000000000000000",
+  "model": {
+    "@kind": "ais_vessel",
+    "@absent": [
+      "lat",
+      "lon",
+      "mavlink.cog_cdeg",
+      "mavlink.heading_cdeg",
+      "mavlink.velocity_cm_per_s",
+      "mavlink.dimension_bow_m",
+      "mavlink.dimension_stern_m",
+      "mavlink.turn_rate_ddeg_per_s",
+      "mavlink.dimension_port_m",
+      "mavlink.dimension_starboard_m"
+    ]
+  }
+}

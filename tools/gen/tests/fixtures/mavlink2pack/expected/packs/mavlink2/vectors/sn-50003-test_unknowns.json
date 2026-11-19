@@ -1,0 +1,25 @@
+{
+  "name": "sentinels-test_unknowns",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3300000e049953c3000000c07f00ff7f470000c07f0000c07f0000c07f0000c07fffffffffffffff002d07000000004d383500000000000000000001",
+  "expect": "fd3300000e049953c3000000c07f00ff7f470000c07f0000c07f0000c07f0000c07fffffffffffffff002d07000000004d383500000000000000000001",
+  "model": {
+    "@kind": "test_unknowns",
+    "@absent": [
+      "mavlink.speed_m_per_s",
+      "mavlink.dop",
+      "mavlink.cov_0",
+      "mavlink.cov_1",
+      "mavlink.cov_2",
+      "mavlink.cov_3",
+      "mavlink.cells_mv_0",
+      "mavlink.cells_mv_1",
+      "mavlink.cells_mv_2",
+      "mavlink.charge_pct",
+      "mavlink.slots_0",
+      "mavlink.slots_2",
+      "mavlink.code"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "sentinels-generator_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2a0000c87cb7750100072b5c2e000000000000c07f0000c07f0000c07f000040400000c07fffffffffffffff7fffffff7fff7f",
+  "expect": "fd2a0000c87cb7750100072b5c2e000000000000c07f0000c07f0000c07f000040400000c07fffffffffffffff7fffffff7fff7f",
+  "model": {
+    "@kind": "generator_status",
+    "@absent": [
+      "mavlink.battery_current_a",
+      "mavlink.load_current_a",
+      "mavlink.power_generated_w",
+      "mavlink.bat_current_setpoint_a",
+      "mavlink.runtime_s",
+      "mavlink.time_until_maintenance_s",
+      "mavlink.generator_speed_rpm",
+      "mavlink.rectifier_temperature_degc",
+      "mavlink.generator_temperature_degc"
+    ]
+  }
+}

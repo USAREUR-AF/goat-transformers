@@ -1,0 +1,19 @@
+{
+  "name": "second-sentinels-command_long",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd210001374d4d4c00000000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff0000c0ff21d9f8cfa6",
+  "expect": "fd210001374d4d4c00000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f21d9f8cfa6",
+  "model": {
+    "@kind": "command_long",
+    "@absent": [
+      "mavlink.param1",
+      "mavlink.param2",
+      "mavlink.param3",
+      "mavlink.param4",
+      "mavlink.param5",
+      "mavlink.param6",
+      "mavlink.param7"
+    ]
+  }
+}

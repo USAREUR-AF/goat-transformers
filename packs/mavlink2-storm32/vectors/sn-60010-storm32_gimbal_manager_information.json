@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-storm32_gimbal_manager_information",
+  "from": "mavlink2-storm32",
+  "to": "mavlink2-storm32",
+  "input": "fd210001010b256aea004219f828196d7c7c0000c07f0000c07f0000c07f0000c07f0000c07f0000c07ffa",
+  "expect": "fd210001010b256aea004219f828196d7c7c0000c07f0000c07f0000c07f0000c07f0000c07f0000c07ffa",
+  "model": {
+    "@kind": "storm32_gimbal_manager_information",
+    "@absent": [
+      "mavlinkstorm32.roll_min_rad",
+      "mavlinkstorm32.roll_max_rad",
+      "mavlinkstorm32.pitch_min_rad",
+      "mavlinkstorm32.pitch_max_rad",
+      "mavlinkstorm32.yaw_min_rad",
+      "mavlinkstorm32.yaw_max_rad"
+    ]
+  }
+}

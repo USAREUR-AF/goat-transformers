@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-global_position_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd1c00001622222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce0ffff",
+  "expect": "fd1c00001622222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce0ffff",
+  "model": {
+    "@kind": "global_position_int",
+    "@absent": [
+      "mavlink.hdg_cdeg"
+    ]
+  }
+}

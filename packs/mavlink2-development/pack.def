@@ -256,13 +256,13 @@ kind      battery_status_v2
 when      0:56:24 369
 when      0:8:8 27
 requires  mavlinkdevelopment.voltage_v mavlinkdevelopment.current_a mavlinkdevelopment.capacity_consumed_ah mavlinkdevelopment.capacity_remaining_ah mavlinkdevelopment.state_of_charge_pct mavlinkdevelopment.battery_status_v2_status_flags
-field     mavlinkdevelopment.voltage_v 0:80:32 f32
-field     mavlinkdevelopment.current_a 0:112:32 f32
-field     mavlinkdevelopment.capacity_consumed_ah 0:144:32 f32
-field     mavlinkdevelopment.capacity_remaining_ah 0:176:32 f32
-field     mavlinkdevelopment.state_of_charge_pct 0:208:32 f32
+field     mavlinkdevelopment.voltage_v 0:80:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.current_a 0:112:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.capacity_consumed_ah 0:144:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.capacity_remaining_ah 0:176:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.state_of_charge_pct 0:208:32 f32 absent 2143289344,4290772992
 field     mavlinkdevelopment.battery_status_v2_status_flags 0:240:32 uint
-field     mavlinkdevelopment.temperature_cdegc 0:272:16 twos
+field     mavlinkdevelopment.temperature_cdegc 0:272:16 twos absent 32767
 field     mavlinkdevelopment.id 0:288:8 uint
 
 kind      group_start
@@ -326,42 +326,42 @@ when      0:56:24 441
 when      0:8:8 17
 requires  mavlinkdevelopment.system_errors mavlinkdevelopment.raim_hfom_cm mavlinkdevelopment.raim_vfom_cm mavlinkdevelopment.authentication_state mavlinkdevelopment.jamming_state mavlinkdevelopment.spoofing_state
 field     mavlinkdevelopment.system_errors 0:80:32 uint
-field     mavlinkdevelopment.raim_hfom_cm 0:112:16 uint
-field     mavlinkdevelopment.raim_vfom_cm 0:128:16 uint
+field     mavlinkdevelopment.raim_hfom_cm 0:112:16 uint absent 65535
+field     mavlinkdevelopment.raim_vfom_cm 0:128:16 uint absent 65535
 field     mavlinkdevelopment.id 0:144:8 uint
 field     mavlinkdevelopment.authentication_state 0:152:8 uint
 field     mavlinkdevelopment.jamming_state 0:160:8 uint
 field     mavlinkdevelopment.spoofing_state 0:168:8 uint
 field     mavlinkdevelopment.raim_state 0:176:8 uint
-field     mavlinkdevelopment.corrections_quality 0:184:8 uint
-field     mavlinkdevelopment.system_status_summary 0:192:8 uint
-field     mavlinkdevelopment.gnss_signal_quality 0:200:8 uint
-field     mavlinkdevelopment.post_processing_quality 0:208:8 uint
+field     mavlinkdevelopment.corrections_quality 0:184:8 uint absent 255
+field     mavlinkdevelopment.system_status_summary 0:192:8 uint absent 255
+field     mavlinkdevelopment.gnss_signal_quality 0:200:8 uint absent 255
+field     mavlinkdevelopment.post_processing_quality 0:208:8 uint absent 255
 
 kind      efi_performance
 when      0:56:24 442
 when      0:8:8 49
 requires  mavlinkdevelopment.efi_performance_status_flags mavlinkdevelopment.fuel_mass_rate_g_per_min mavlinkdevelopment.commanded_rpm mavlinkdevelopment.engine_runtime_s mavlinkdevelopment.boost_pressure_kpa mavlinkdevelopment.coolant_pressure_kpa
 field     mavlinkdevelopment.efi_performance_status_flags 0:80:64 uint
-field     mavlinkdevelopment.fuel_mass_rate_g_per_min 0:144:32 f32
-field     mavlinkdevelopment.commanded_rpm 0:176:32 f32
-field     mavlinkdevelopment.engine_runtime_s 0:208:32 uint
-field     mavlinkdevelopment.boost_pressure_kpa 0:240:32 f32
-field     mavlinkdevelopment.coolant_pressure_kpa 0:272:32 f32
-field     mavlinkdevelopment.fuel_pump_voltage_mv 0:304:16 uint
-field     mavlinkdevelopment.fuel_pump_current_ca 0:320:16 uint
-field     mavlinkdevelopment.ecu_supply_voltage_mv 0:336:16 uint
-field     mavlinkdevelopment.ecu_current_ca 0:352:16 uint
-field     mavlinkdevelopment.ecu_temperature_cdegc 0:368:16 twos
-field     mavlinkdevelopment.servo_supply_voltage_mv 0:384:16 uint
-field     mavlinkdevelopment.engine_torque_pct 0:400:16 twos
+field     mavlinkdevelopment.fuel_mass_rate_g_per_min 0:144:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.commanded_rpm 0:176:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.engine_runtime_s 0:208:32 uint absent 4294967295
+field     mavlinkdevelopment.boost_pressure_kpa 0:240:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.coolant_pressure_kpa 0:272:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.fuel_pump_voltage_mv 0:304:16 uint absent 65535
+field     mavlinkdevelopment.fuel_pump_current_ca 0:320:16 uint absent 65535
+field     mavlinkdevelopment.ecu_supply_voltage_mv 0:336:16 uint absent 65535
+field     mavlinkdevelopment.ecu_current_ca 0:352:16 uint absent 65535
+field     mavlinkdevelopment.ecu_temperature_cdegc 0:368:16 twos absent 32767
+field     mavlinkdevelopment.servo_supply_voltage_mv 0:384:16 uint absent 65535
+field     mavlinkdevelopment.engine_torque_pct 0:400:16 twos absent 32767
 field     mavlinkdevelopment.ecu_index 0:416:8 uint
-field     mavlinkdevelopment.fuel_pump_duty_cycle_pct 0:424:8 uint
-field     mavlinkdevelopment.ecu_cpu_load_pct 0:432:8 uint
-field     mavlinkdevelopment.servo_output_level_pct 0:440:8 uint
-field     mavlinkdevelopment.water_pump_duty_cycle_pct 0:448:8 uint
-field     mavlinkdevelopment.injector_duty_cycle_pct 0:456:8 uint
-field     mavlinkdevelopment.error_memory_count 0:464:8 uint
+field     mavlinkdevelopment.fuel_pump_duty_cycle_pct 0:424:8 uint absent 255
+field     mavlinkdevelopment.ecu_cpu_load_pct 0:432:8 uint absent 255
+field     mavlinkdevelopment.servo_output_level_pct 0:440:8 uint absent 255
+field     mavlinkdevelopment.water_pump_duty_cycle_pct 0:448:8 uint absent 255
+field     mavlinkdevelopment.injector_duty_cycle_pct 0:456:8 uint absent 255
+field     mavlinkdevelopment.error_memory_count 0:464:8 uint absent 255
 
 kind      target_absolute
 when      0:56:24 510
@@ -371,19 +371,19 @@ field     mavlinkdevelopment.timestamp_us 0:80:64 uint
 field     lat 0:144:32 sscale:1/10000000
 field     lon 0:176:32 sscale:1/10000000
 field     mavlinkdevelopment.alt_m 0:208:32 f32
-field     mavlinkdevelopment.vel_m_per_s_0 0:240:32 f32
-field     mavlinkdevelopment.vel_m_per_s_1 0:272:32 f32
-field     mavlinkdevelopment.vel_m_per_s_2 0:304:32 f32
-field     mavlinkdevelopment.acc_m_per_s_per_s_0 0:336:32 f32
-field     mavlinkdevelopment.acc_m_per_s_per_s_1 0:368:32 f32
-field     mavlinkdevelopment.acc_m_per_s_per_s_2 0:400:32 f32
-field     mavlinkdevelopment.q_target_0 0:432:32 f32
-field     mavlinkdevelopment.q_target_1 0:464:32 f32
-field     mavlinkdevelopment.q_target_2 0:496:32 f32
-field     mavlinkdevelopment.q_target_3 0:528:32 f32
-field     mavlinkdevelopment.rates_rad_per_s_0 0:560:32 f32
-field     mavlinkdevelopment.rates_rad_per_s_1 0:592:32 f32
-field     mavlinkdevelopment.rates_rad_per_s_2 0:624:32 f32
+field     mavlinkdevelopment.vel_m_per_s_0 0:240:32 f32 absent 0
+field     mavlinkdevelopment.vel_m_per_s_1 0:272:32 f32 absent 0
+field     mavlinkdevelopment.vel_m_per_s_2 0:304:32 f32 absent 0
+field     mavlinkdevelopment.acc_m_per_s_per_s_0 0:336:32 f32 absent 0
+field     mavlinkdevelopment.acc_m_per_s_per_s_1 0:368:32 f32 absent 0
+field     mavlinkdevelopment.acc_m_per_s_per_s_2 0:400:32 f32 absent 0
+field     mavlinkdevelopment.q_target_0 0:432:32 f32 absent 0
+field     mavlinkdevelopment.q_target_1 0:464:32 f32 absent 0
+field     mavlinkdevelopment.q_target_2 0:496:32 f32 absent 0
+field     mavlinkdevelopment.q_target_3 0:528:32 f32 absent 0
+field     mavlinkdevelopment.rates_rad_per_s_0 0:560:32 f32 absent 0
+field     mavlinkdevelopment.rates_rad_per_s_1 0:592:32 f32 absent 0
+field     mavlinkdevelopment.rates_rad_per_s_2 0:624:32 f32 absent 0
 field     mavlinkdevelopment.position_std_m_0 0:656:32 f32
 field     mavlinkdevelopment.position_std_m_1 0:688:32 f32
 field     mavlinkdevelopment.vel_std_m_per_s_0 0:720:32 f32
@@ -424,8 +424,8 @@ when      0:56:24 512
 when      0:8:8 12
 requires  mavlinkdevelopment.flags mavlinkdevelopment.gcs_main mavlinkdevelopment.gcs_secondary_0 mavlinkdevelopment.gcs_secondary_1 mavlinkdevelopment.gcs_secondary_2 mavlinkdevelopment.gcs_secondary_3
 field     mavlinkdevelopment.flags 0:80:8 uint
-field     mavlinkdevelopment.gcs_main 0:88:8 uint
-field     mavlinkdevelopment.gcs_secondary_0 0:96:8 uint
+field     mavlinkdevelopment.gcs_main 0:88:8 uint absent 0
+field     mavlinkdevelopment.gcs_secondary_0 0:96:8 uint absent 0
 field     mavlinkdevelopment.gcs_secondary_1 0:104:8 uint
 field     mavlinkdevelopment.gcs_secondary_2 0:112:8 uint
 field     mavlinkdevelopment.gcs_secondary_3 0:120:8 uint
@@ -439,17 +439,17 @@ field     mavlinkdevelopment.gcs_secondary_9 0:168:8 uint
 kind      ranging_beacon
 when      0:56:24 513
 when      0:8:8 45
-requires  mavlinkdevelopment.range_mm mavlinkdevelopment.lat_dege7 mavlinkdevelopment.lon_dege7 mavlinkdevelopment.hacc_est_mm mavlinkdevelopment.vacc_est_mm mavlinkdevelopment.range_accuracy_mm
+requires  mavlinkdevelopment.range_mm mavlinkdevelopment.hacc_est_mm mavlinkdevelopment.vacc_est_mm mavlinkdevelopment.range_accuracy_mm mavlinkdevelopment.beacon_id mavlinkdevelopment.carrier_freq_mhz
 field     mavlinkdevelopment.time_usec_us 0:80:64 uint
-field     mavlinkdevelopment.range_mm 0:144:32 uint
-field     mavlinkdevelopment.lat_dege7 0:176:32 twos
-field     mavlinkdevelopment.lon_dege7 0:208:32 twos
-field     mavlinkdevelopment.alt_m 0:240:32 f32
-field     mavlinkdevelopment.hacc_est_mm 0:272:32 uint
-field     mavlinkdevelopment.vacc_est_mm 0:304:32 uint
-field     mavlinkdevelopment.range_accuracy_mm 0:336:32 uint
+field     mavlinkdevelopment.range_mm 0:144:32 uint absent 4294967295
+field     lat 0:176:32 sscale:1/10000000 absent 2147483647
+field     lon 0:208:32 sscale:1/10000000 absent 2147483647
+field     mavlinkdevelopment.alt_m 0:240:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.hacc_est_mm 0:272:32 uint absent 4294967295
+field     mavlinkdevelopment.vacc_est_mm 0:304:32 uint absent 4294967295
+field     mavlinkdevelopment.range_accuracy_mm 0:336:32 uint absent 4294967295
 field     mavlinkdevelopment.beacon_id 0:368:16 uint
-field     mavlinkdevelopment.carrier_freq_mhz 0:384:16 uint
+field     mavlinkdevelopment.carrier_freq_mhz 0:384:16 uint absent 0
 field     mavlinkdevelopment.target_system 0:400:8 uint
 field     mavlinkdevelopment.target_component 0:408:8 uint
 field     mavlinkdevelopment.alt_type 0:416:8 uint
@@ -460,15 +460,15 @@ kind      estimator_sensor_fusion_status
 when      0:56:24 514
 when      0:8:8 54
 requires  mavlinkdevelopment.test_ratio_0 mavlinkdevelopment.test_ratio_1 mavlinkdevelopment.test_ratio_2 mavlinkdevelopment.test_ratio_3 mavlinkdevelopment.test_ratio_4 mavlinkdevelopment.test_ratio_5
-field     mavlinkdevelopment.test_ratio_0 0:80:32 f32
-field     mavlinkdevelopment.test_ratio_1 0:112:32 f32
-field     mavlinkdevelopment.test_ratio_2 0:144:32 f32
-field     mavlinkdevelopment.test_ratio_3 0:176:32 f32
-field     mavlinkdevelopment.test_ratio_4 0:208:32 f32
-field     mavlinkdevelopment.test_ratio_5 0:240:32 f32
-field     mavlinkdevelopment.test_ratio_6 0:272:32 f32
-field     mavlinkdevelopment.test_ratio_7 0:304:32 f32
-field     mavlinkdevelopment.test_ratio_8 0:336:32 f32
+field     mavlinkdevelopment.test_ratio_0 0:80:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_1 0:112:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_2 0:144:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_3 0:176:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_4 0:208:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_5 0:240:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_6 0:272:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_7 0:304:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.test_ratio_8 0:336:32 f32 absent 2143289344,4290772992
 field     mavlinkdevelopment.intended_0 0:368:8 uint
 field     mavlinkdevelopment.intended_1 0:376:8 uint
 field     mavlinkdevelopment.intended_2 0:384:8 uint
@@ -500,23 +500,23 @@ kind      distance_sensor_info
 when      0:56:24 516
 when      0:8:8 35
 requires  mavlinkdevelopment.min_distance_m mavlinkdevelopment.max_distance_m mavlinkdevelopment.horizontal_fov_rad mavlinkdevelopment.vertical_fov_rad mavlinkdevelopment.distance_sensor_info_type mavlinkdevelopment.orientation
-field     mavlinkdevelopment.min_distance_m 0:80:32 f32
-field     mavlinkdevelopment.max_distance_m 0:112:32 f32
-field     mavlinkdevelopment.horizontal_fov_rad 0:144:32 f32
-field     mavlinkdevelopment.vertical_fov_rad 0:176:32 f32
+field     mavlinkdevelopment.min_distance_m 0:80:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.max_distance_m 0:112:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.horizontal_fov_rad 0:144:32 f32 absent 2143289344,4290772992
+field     mavlinkdevelopment.vertical_fov_rad 0:176:32 f32 absent 2143289344,4290772992
 field     mavlinkdevelopment.id 0:208:8 uint
 field     mavlinkdevelopment.distance_sensor_info_type 0:216:8 uint
 field     mavlinkdevelopment.orientation 0:224:8 uint
-field     mavlinkdevelopment.quaternion_0 0:232:32 f32
-field     mavlinkdevelopment.quaternion_1 0:264:32 f32
-field     mavlinkdevelopment.quaternion_2 0:296:32 f32
-field     mavlinkdevelopment.quaternion_3 0:328:32 f32
+field     mavlinkdevelopment.quaternion_0 0:232:32 f32 absent 0
+field     mavlinkdevelopment.quaternion_1 0:264:32 f32 absent 0
+field     mavlinkdevelopment.quaternion_2 0:296:32 f32 absent 0
+field     mavlinkdevelopment.quaternion_3 0:328:32 f32 absent 0
 
 kind      distance_sensor_v2
 when      0:56:24 517
 when      0:8:8 10
 requires  mavlinkdevelopment.time_boot_ms mavlinkdevelopment.distance_m mavlinkdevelopment.id mavlinkdevelopment.signal_quality_pct
 field     mavlinkdevelopment.time_boot_ms 0:80:32 uint
-field     mavlinkdevelopment.distance_m 0:112:32 f32
+field     mavlinkdevelopment.distance_m 0:112:32 f32 absent 2143289344,4290772992
 field     mavlinkdevelopment.id 0:144:8 uint
-field     mavlinkdevelopment.signal_quality_pct 0:152:8 twos
+field     mavlinkdevelopment.signal_quality_pct 0:152:8 twos absent 127

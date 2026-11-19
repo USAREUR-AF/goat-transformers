@@ -1,0 +1,14 @@
+{
+  "name": "sentinels-airspeed",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd0c0000ac2e69270100000070c00000c07fff7fba91",
+  "expect": "fd0c0000ac2e69270100000070c00000c07fff7fba91",
+  "model": {
+    "@kind": "airspeed",
+    "@absent": [
+      "mavlink.raw_press_hpa",
+      "mavlink.temperature_cdegc"
+    ]
+  }
+}

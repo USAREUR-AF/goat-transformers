@@ -136,6 +136,24 @@ field     mavlink.gps2_raw_alt_mm 0:208:32 twos
 field     mavlink.fix_type 0:240:8 uint
 field     mavlink.satellites_visible 0:248:8 uint
 
+kind      adsb_vehicle
+when      0:56:24 246
+when      0:8:8 38
+requires  mavlink.icao_address mavlink.altitude_mm mavlink.heading_cdeg mavlink.hor_velocity_cm_per_s mavlink.ver_velocity_cm_per_s mavlink.flags
+field     mavlink.icao_address 0:80:32 uint
+field     lat 0:112:32 sscale:1/10000000 absent 2147483647
+field     lon 0:144:32 sscale:1/10000000 absent 2147483647
+field     mavlink.altitude_mm 0:176:32 twos absent 2147483647
+field     mavlink.heading_cdeg 0:208:16 uint absent 65535
+field     mavlink.hor_velocity_cm_per_s 0:224:16 uint absent 65535
+field     mavlink.ver_velocity_cm_per_s 0:240:16 twos absent 32767
+field     mavlink.flags 0:256:16 uint
+field     mavlink.squawk 0:272:16 uint
+field     mavlink.altitude_type 0:288:8 uint
+field     mavlink.callsign 0:296:72 ascii
+field     mavlink.emitter_type 0:368:8 uint
+field     mavlink.tslc_s 0:376:8 uint
+
 kind      test_point
 when      0:56:24 300
 when      0:8:8 8
@@ -147,8 +165,8 @@ kind      test_survey
 when      0:56:24 301
 when      0:8:8 29
 requires  mavlink.latitude_dege7 mavlink.longitude_dege7 mavlink.test_survey_level_cm mavlink.test_survey_alt_mm mavlink.test_survey_seq mavlink.test_survey_mode
-field     mavlink.lat_dege7 0:80:32 twos
-field     mavlink.lon_dege7 0:112:32 twos
+field     lat 0:80:32 sscale:1/10000000 absent 2147483647
+field     lon 0:112:32 sscale:1/10000000 absent 2147483647
 field     mavlink.latitude_dege7 0:144:32 twos
 field     mavlink.longitude_dege7 0:176:32 twos
 field     mavlink.test_survey_level_cm 0:208:32 f32
@@ -206,3 +224,24 @@ field     mavlink.window_5 0:240:32 f32
 field     mavlink.window_6 0:272:32 f32
 field     mavlink.window_7 0:304:32 f32
 field     mavlink.count 0:336:16 uint
+
+kind      test_unknowns
+when      0:56:24 50003
+when      0:8:8 51
+requires  mavlink.speed_m_per_s mavlink.dop mavlink.cov_0 mavlink.cov_1 mavlink.cov_2 mavlink.cov_3
+field     mavlink.speed_m_per_s 0:80:32 f32 absent 2143289344,4290772992
+field     mavlink.dop 0:112:32 f32 absent 1199570688
+field     mavlink.cov_0 0:144:32 f32 absent 2143289344,4290772992
+field     mavlink.cov_1 0:176:32 f32 absent 2143289344,4290772992
+field     mavlink.cov_2 0:208:32 f32 absent 2143289344,4290772992
+field     mavlink.cov_3 0:240:32 f32 absent 2143289344,4290772992
+field     mavlink.cells_mv_0 0:272:16 uint absent 65535
+field     mavlink.cells_mv_1 0:288:16 uint absent 65535
+field     mavlink.cells_mv_2 0:304:16 uint absent 65535
+field     mavlink.charge_pct 0:320:8 twos absent 255
+field     mavlink.slots_0 0:328:8 uint absent 0
+field     mavlink.slots_1 0:336:8 uint
+field     mavlink.slots_2 0:344:8 uint absent 7
+field     mavlink.code 0:352:32 ascii absent 0
+field     mavlink.label 0:384:96 ascii
+field     mavlink.state 0:480:8 uint

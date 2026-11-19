@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-current_mode",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd090000dcbb37b40100588a93330000000006",
+  "expect": "fd090000dcbb37b40100588a93330000000006",
+  "model": {
+    "@kind": "current_mode",
+    "@absent": [
+      "mavlink.intended_custom_mode"
+    ]
+  }
+}

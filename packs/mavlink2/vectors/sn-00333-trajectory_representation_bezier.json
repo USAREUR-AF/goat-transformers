@@ -1,0 +1,37 @@
+{
+  "name": "sentinels-trajectory_representation_bezier",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd6d0001bb548f4d0100afb9a651000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07fb9",
+  "expect": "fd6d0001bb548f4d0100afb9a651000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000c07fb9",
+  "model": {
+    "@kind": "trajectory_representation_bezier",
+    "@absent": [
+      "mavlink.pos_x_m_0",
+      "mavlink.pos_x_m_1",
+      "mavlink.pos_x_m_2",
+      "mavlink.pos_x_m_3",
+      "mavlink.pos_x_m_4",
+      "mavlink.pos_y_m_0",
+      "mavlink.pos_y_m_1",
+      "mavlink.pos_y_m_2",
+      "mavlink.pos_y_m_3",
+      "mavlink.pos_y_m_4",
+      "mavlink.pos_z_m_0",
+      "mavlink.pos_z_m_1",
+      "mavlink.pos_z_m_2",
+      "mavlink.pos_z_m_3",
+      "mavlink.pos_z_m_4",
+      "mavlink.delta_s_0",
+      "mavlink.delta_s_1",
+      "mavlink.delta_s_2",
+      "mavlink.delta_s_3",
+      "mavlink.delta_s_4",
+      "mavlink.pos_yaw_rad_0",
+      "mavlink.pos_yaw_rad_1",
+      "mavlink.pos_yaw_rad_2",
+      "mavlink.pos_yaw_rad_3",
+      "mavlink.pos_yaw_rad_4"
+    ]
+  }
+}

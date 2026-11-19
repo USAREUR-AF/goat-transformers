@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-global_position_sensor",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd290001ad2f6a280100a47d186f000000807bd19c42ffffff7fffffff7f0000c07f0000c07f0000c07f0000c07f5c330ae1b8",
+  "expect": "fd290001ad2f6a280100a47d186f000000807bd19c42ffffff7fffffff7f0000c07f0000c07f0000c07f0000c07f5c330ae1b8",
+  "model": {
+    "@kind": "global_position_sensor",
+    "@absent": [
+      "lat",
+      "lon",
+      "mavlink.alt_ellipsoid_m",
+      "mavlink.alt_m",
+      "mavlink.eph_m",
+      "mavlink.epv_m"
+    ]
+  }
+}

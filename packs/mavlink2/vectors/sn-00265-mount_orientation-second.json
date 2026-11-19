@@ -1,0 +1,16 @@
+{
+  "name": "second-sentinels-mount_orientation",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd14000197104b09010033acd8000000c0ff0000c0ff0000c0ff0000c0ff",
+  "expect": "fd14000197104b09010033acd8000000c07f0000c07f0000c07f0000c07f",
+  "model": {
+    "@kind": "mount_orientation",
+    "@absent": [
+      "mavlink.roll_deg",
+      "mavlink.pitch_deg",
+      "mavlink.yaw_deg",
+      "mavlink.yaw_absolute_deg"
+    ]
+  }
+}

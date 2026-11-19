@@ -1,0 +1,13 @@
+{
+  "name": "sentinels-high_latency2",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2a00017fec2deb00003197503b50819cd1d1d4a0d1b692d3fb544f3b8e12e2e935c0976e451cf3caa1784f26fde465ff67e869",
+  "expect": "fd2a00017fec2deb00003197503b50819cd1d1d4a0d1b692d3fb544f3b8e12e2e935c0976e451cf3caa1784f26fde465ff67e869",
+  "model": {
+    "@kind": "high_latency2",
+    "@absent": [
+      "mavlink.battery_pct"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "sentinels-wind_cov",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2800017be829e7000075a57118000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000000000000000",
+  "expect": "fd2800017be829e7000075a57118000000000000c07f0000c07f0000c07f0000c07f0000c07f0000c07f0000000000000000",
+  "model": {
+    "@kind": "wind_cov",
+    "@absent": [
+      "mavlink.wind_x_m_per_s",
+      "mavlink.wind_y_m_per_s",
+      "mavlink.wind_z_m_per_s",
+      "mavlink.var_horiz_m_per_s",
+      "mavlink.var_vert_m_per_s",
+      "mavlink.wind_alt_m",
+      "mavlink.horiz_accuracy_m_per_s",
+      "mavlink.vert_accuracy_m_per_s"
+    ]
+  }
+}

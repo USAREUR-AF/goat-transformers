@@ -1,0 +1,18 @@
+{
+  "name": "sentinels-gps_raw_int",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd3400010d1919180000b447e02b0000008080a4bf07805b40f807a5dac1ffffffffffffffff6cff8eedf8c1f1e18f42c83514169f89986976dd1c3d0000",
+  "expect": "fd3400010d1919180000b447e02b0000008080a4bf07805b40f807a5dac1ffffffffffffffff6cff8eedf8c1f1e18f42c83514169f89986976dd1c3d0000",
+  "model": {
+    "@kind": "gps_raw_int",
+    "@absent": [
+      "mavlink.eph",
+      "mavlink.epv",
+      "mavlink.vel_cm_per_s",
+      "mavlink.cog_cdeg",
+      "mavlink.satellites_visible",
+      "mavlink.yaw_cdeg"
+    ]
+  }
+}

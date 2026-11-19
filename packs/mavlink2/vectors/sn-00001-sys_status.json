@@ -1,0 +1,15 @@
+{
+  "name": "sentinels-sys_status",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd2b0001010202010000bb595e0392ade2566901672a4055ffffffffc5509ca473f84a4c21a0f8f3ffa69b16417def9a1454431f68",
+  "expect": "fd2b0001010202010000bb595e0392ade2566901672a4055ffffffffc5509ca473f84a4c21a0f8f3ffa69b16417def9a1454431f68",
+  "model": {
+    "@kind": "sys_status",
+    "@absent": [
+      "mavlink.voltage_battery_mv",
+      "mavlink.current_battery_ca",
+      "mavlink.battery_remaining_pct"
+    ]
+  }
+}
