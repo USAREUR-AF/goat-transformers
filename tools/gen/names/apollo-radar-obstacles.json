@@ -1,0 +1,13 @@
+{
+ "2.1": "header_timestamp_sec",
+ "2.2": "header_module_name",
+ "2.3": "header_sequence_num",
+ "2.4": "header_lidar_timestamp",
+ "2.5": "header_camera_timestamp",
+ "2.6": "header_radar_timestamp",
+ "2.7": "header_version",
+ "2.8.1": "header_status_error_code",
+ "2.8.2": "header_status_msg",
+ "2.9": "header_frame_id",
+ "3": "radar_obstacles_error_code"
+}

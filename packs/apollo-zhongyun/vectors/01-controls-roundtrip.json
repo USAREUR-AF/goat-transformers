@@ -1,0 +1,12 @@
+{
+  "name": "01-controls-roundtrip",
+  "from": "apollo-zhongyun",
+  "to": "apollo-zhongyun",
+  "input": "0a040804100112090900000000000029401a09090000000000000ec0",
+  "expect": "0a040804100112090900000000000029401a09090000000000000ec0",
+  "model": {
+    "apollozhongyun.gear_control_a1_gear_state_target": "4",
+    "apollozhongyun.torque_control_a3_driven_torque": "12.5",
+    "apollozhongyun.steering_control_a2_steering_target": "-3.75"
+  }
+}

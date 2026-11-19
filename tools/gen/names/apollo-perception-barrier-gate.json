@@ -1,0 +1,18 @@
+{
+ "1.1": "header_timestamp_sec",
+ "1.2": "header_module_name",
+ "1.3": "header_sequence_num",
+ "1.4": "header_lidar_timestamp",
+ "1.5": "header_camera_timestamp",
+ "1.6": "header_radar_timestamp",
+ "1.7": "header_version",
+ "1.8.1": "header_status_error_code",
+ "1.8.2": "header_status_msg",
+ "1.9": "header_frame_id",
+ "2[]": "perception_barrier_gate_barrier_gates",
+ "apollo.perception.BarrierGate:1": "barrier_gate_status",
+ "apollo.perception.BarrierGate:2": "barrier_gate_id",
+ "apollo.perception.BarrierGate:3": "barrier_gate_type",
+ "apollo.perception.BarrierGate:4": "barrier_gate_is_useable",
+ "apollo.perception.BarrierGate:5": "barrier_gate_open_percent"
+}

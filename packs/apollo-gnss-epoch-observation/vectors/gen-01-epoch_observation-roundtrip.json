@@ -1,0 +1,30 @@
+{
+  "name": "gen-epoch_observation-roundtrip",
+  "from": "apollo-gnss-epoch-observation",
+  "to": "apollo-gnss-epoch-observation",
+  "input": "0864100118ae01210000000000001640290000000000001d4031000000000000224039000000000080254040e702488c03523a08b103100118fb03223008011100000000000037401801210000000000803a40290000000000403c4030d905390000000000c03f404500008040523a08c8061001189207223008011100000000000002401801210000000000001740290000000000001e4030f0083900000000000026404500003840",
+  "expect": "0864100118ae01210000000000001640290000000000001d4031000000000000224039000000000080254040e702488c03523a08b103100118fb03223008011100000000000037401801210000000000803a40290000000000403c4030d905390000000000c03f404500008040523a08c8061001189207223008011100000000000002401801210000000000001740290000000000001e4030f0083900000000000026404500003840",
+  "model": {
+    "@kind": "epoch_observation",
+    "apollognssepochobservation.epoch_observation_receiver_id": "100",
+    "apollognssepochobservation.epoch_observation_gnss_time_type": "1",
+    "apollognssepochobservation.epoch_observation_gnss_week": "174",
+    "apollognssepochobservation.epoch_observation_gnss_second_s": "5.5",
+    "apollognssepochobservation.epoch_observation_position_x": "7.25",
+    "apollognssepochobservation.epoch_observation_position_y": "9",
+    "apollognssepochobservation.epoch_observation_position_z": "10.75",
+    "apollognssepochobservation.epoch_observation_health_flag": "359",
+    "apollognssepochobservation.epoch_observation_sat_obs_num": "396",
+    "apollognssepochobservation.epoch_observation_sat_obs.#": "2",
+    "apollognssepochobservation.epoch_observation_sat_obs[0].apollognssepochobservation.satellite_observation_sat_prn": "433",
+    "apollognssepochobservation.epoch_observation_sat_obs[0].apollognssepochobservation.satellite_observation_sat_sys": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[0].apollognssepochobservation.satellite_observation_band_obs.#": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[0].apollognssepochobservation.satellite_observation_band_obs[0].apollognssepochobservation.band_observation_band_id": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[0].apollognssepochobservation.satellite_observation_band_obs[0].apollognssepochobservation.band_observation_frequency_value": "23",
+    "apollognssepochobservation.epoch_observation_sat_obs[1].apollognssepochobservation.satellite_observation_sat_prn": "840",
+    "apollognssepochobservation.epoch_observation_sat_obs[1].apollognssepochobservation.satellite_observation_sat_sys": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[1].apollognssepochobservation.satellite_observation_band_obs.#": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[1].apollognssepochobservation.satellite_observation_band_obs[0].apollognssepochobservation.band_observation_band_id": "1",
+    "apollognssepochobservation.epoch_observation_sat_obs[1].apollognssepochobservation.satellite_observation_band_obs[0].apollognssepochobservation.band_observation_frequency_value": "2.25"
+  }
+}

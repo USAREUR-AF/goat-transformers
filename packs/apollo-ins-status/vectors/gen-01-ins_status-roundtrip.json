@@ -1,0 +1,21 @@
+{
+  "name": "gen-ins_status-roundtrip",
+  "from": "apollo-ins-status",
+  "to": "apollo-ins-status",
+  "input": "0a3f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d391001",
+  "expect": "0a3f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d391001",
+  "model": {
+    "@kind": "ins_status",
+    "apolloinsstatus.header_timestamp_sec": "0.25",
+    "apolloinsstatus.header_module_name": "module_name-1",
+    "apolloinsstatus.header_sequence_num": "174",
+    "apolloinsstatus.header_lidar_timestamp": "211",
+    "apolloinsstatus.header_camera_timestamp": "248",
+    "apolloinsstatus.header_radar_timestamp": "285",
+    "apolloinsstatus.header_version": "322",
+    "apolloinsstatus.header_status_error_code": "1000",
+    "apolloinsstatus.header_status_msg": "msg-8",
+    "apolloinsstatus.header_frame_id": "frame_id-9",
+    "apolloinsstatus.ins_status_type": "1"
+  }
+}
