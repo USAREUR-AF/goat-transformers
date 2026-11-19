@@ -472,7 +472,7 @@ class Helpers(unittest.TestCase):
         self.assertEqual(a2p.fx_octets({7}), "00000010")
         self.assertEqual(a2p.fx_octets({8}), "00000001" "10000000")      # bit 8 is the first of octet 2
         self.assertEqual(a2p.fx_octets({1, 15}), "10000001" "00000001" "10000000")
-        self.assertEqual(a2p.fx_octets({14}), "00000001" "00000010")     # no all-zero third octet
+        self.assertEqual(a2p.fx_octets({14}), "00000001" "00000010")     # no all-zero octet after the second
 
 
 class PlanOfADefinition(unittest.TestCase):
