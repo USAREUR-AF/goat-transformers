@@ -24,9 +24,16 @@ That pack reads the CCSDS NDM/XML schema; these read the Space Data Standards JS
 whose member names, nesting and additions are its own. The two are separate formats and no
 conversion between them is claimed.
 
-Of the 299 standards at the pinned commit, 298 have a pack. XTC is not generated: it
+Of the 299 standards at the pinned commit, 297 have a pack. XTC is not generated: it
 restates XTCE (a telemetry and command database, not a message), which this project does
-not build because of the reuse terms of the XTCE document.
+not build because of the reuse terms of the XTCE document. REC is not generated: it is a
+collection whose records are a union of every other standard, so its keys would repeat
+the other packs.
+
+Five standards (SCC, CQR, SCN, LAM, REM) nest other standards deeply; at the generator's
+default depth each pack would be 1.5 to 9.5 MB. They have a lower depth limit, stated
+under "How a schema is read" with the reason, and every place it cuts is listed under
+"Not mapped". Every other pack has the default limit.
 
 ## Evidence for the shared keys
 

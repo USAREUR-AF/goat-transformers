@@ -10,7 +10,8 @@
 #   git -C spacedatastandards.org checkout 0a61c131bc8a849360a0bba57855cc6dd8dde70a
 # tools/gen/sources/sds-sha256.txt lists LICENSE, NOTICE and the 299 schema files with
 # their SHA-256; every one is checked before the generator runs.
-# XTC is listed and checked but not generated (SKIPPED in tools/gen/sds-run.py).
+# XTC and REC are listed and checked but not generated (SKIPPED in tools/gen/sds-run.py);
+# SCC, CQR, SCN, LAM and REM have a lower --max-depth (DEPTH there).
 #
 # Writes model/sds<name>.def, packs/sds-<name>/ (pack.def, pack.md, PROVENANCE.md,
 # vectors/gen-*), packs/geojson/vectors/gen-geojson-to-sds-{gnp,omm,sen,tms}.json and

@@ -80,7 +80,16 @@ POSITION = {
 #        not a message. This project does not build XTCE: the OMG document notice
 #        restricts reuse (docs/coverage-roadmap.md). A person decides whether the
 #        Apache-2.0 restatement changes that.
-SKIPPED = {"XTC": "restates XTCE; not built, see docs/coverage-roadmap.md"}
+#   REC  a collection whose records are a union of every other standard: its keys
+#        repeat the other packs (19,000 keys, 12.7 MB at depth 8).
+SKIPPED = {"XTC": "restates XTCE; not built, see docs/coverage-roadmap.md",
+           "REC": "a union of every other standard; repeats their packs"}
+
+# Size limits. A standard whose pack, module and names file come to more than 1 MB at
+# the generator's default depth (8) gets the deepest --max-depth at which they stay
+# within 1 MB. NAME: (depth, MB at depth 8). pack.md states the limit and the reason,
+# and lists every place it cuts under Not mapped.
+DEPTH = {"SCC": (5, 9.5), "CQR": (4, 6.2), "SCN": (4, 4.2), "LAM": (4, 1.9), "REM": (5, 1.5)}
 
 # Conversion vectors from the hand-written geojson vector (its `id` is `uid`).
 CROSS = {"GNP", "OMM", "SEN", "TMS"}
@@ -209,6 +218,11 @@ def main(argv=None):
             argv2 += ["--cross", "%s=%s:input" % (os.path.join(gt, "packs", "geojson", "pack.def"),
                                                  os.path.join(gt, "packs", "geojson", "vectors",
                                                               "01-geojson-to-cot.json"))]
+        if name in DEPTH:
+            d, mb = DEPTH[name]
+            argv2 += ["--max-depth", str(d), "--limit-reason",
+                      "set so that the pack, its module and its names file stay within 1 MB; at the "
+                      "default depth 8 they come to %.1f MB" % mb]
         if args.check:
             argv2.append("--check")
         # the generator in this process: its summary goes to /dev/null, its report to stderr

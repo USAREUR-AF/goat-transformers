@@ -16,7 +16,7 @@ License: Apache-2.0, Edgesource Corporation (DigitalArsenal/spacedatastandards.o
 
 | Kind | Schema | `when` | Lines | Not mapped |
 |---|---|---|---|---|
-| `rem` | `main.fb.schema.json#/definitions/REM` | - | 2468 | 20 |
+| `rem` | `main.fb.schema.json#/definitions/REM` | - | 1689 | 57 |
 
 One message, no `when`: the pack has no `kind` lines.
 
@@ -32,6 +32,9 @@ string is kept as text in its raw key, so it round-trips as written.
 
 Residue (engine-spec 0.5): a scalar member no line maps, at any depth of nested objects, is
 carried back; arrays no group maps, and anything inside them, are not.
+
+Limits of this pack: objects nested deeper than 5 levels (an array counts as a level) are not mapped (set so that the pack, its module and its names file stay within 1 MB; at the default depth 8 they come to 1.5 MB). Such a place is in the table under Not mapped;
+outside an array its scalars are residue and round-trip, inside an array they are dropped.
 
 ## Mapped to shared keys
 
@@ -63,9 +66,16 @@ That pack reads the CCSDS NDM/XML schema; these read the Space Data Standards JS
 whose member names, nesting and additions are its own. The two are separate formats and no
 conversion between them is claimed.
 
-Of the 299 standards at the pinned commit, 298 have a pack. XTC is not generated: it
+Of the 299 standards at the pinned commit, 297 have a pack. XTC is not generated: it
 restates XTCE (a telemetry and command database, not a message), which this project does
-not build because of the reuse terms of the XTCE document.
+not build because of the reuse terms of the XTCE document. REC is not generated: it is a
+collection whose records are a union of every other standard, so its keys would repeat
+the other packs.
+
+Five standards (SCC, CQR, SCN, LAM, REM) nest other standards deeply; at the generator's
+default depth each pack would be 1.5 to 9.5 MB. They have a lower depth limit, stated
+under "How a schema is read" with the reason, and every place it cuts is listed under
+"Not mapped". Every other pack has the default limit.
 
 ## Evidence for the shared keys
 
@@ -113,35 +123,72 @@ Not bound:
 
 | Reason | Places |
 |---|---|
-| below depth 8 | 16 |
-| array of objects in which nothing can be mapped | 4 |
+| below depth 5 | 37 |
+| array of objects in which nothing can be mapped | 20 |
 
 | Kind | Place | Reason |
 |---|---|---|
-| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].UPLINK` | below depth 8 |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].DOWNLINK` | below depth 8 |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BEACON` | below depth 8 |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BAND[]` | below depth 8 |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BAND[]` | array of objects in which nothing can be mapped |
-| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].STOKES_PARAMETERS` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PRODUCTS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PRODUCTS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OCM.PERTURBATIONS.SPACE_WEATHER[].PROVENANCE` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.COV_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.COV_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.COV_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | below depth 5 |
+| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | array of objects in which nothing can be mapped |
+| `rem` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].ORBIT_DETERMINATION` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.PERTURBATIONS.SPACE_WEATHER[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.PERTURBATIONS.SPACE_WEATHER[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COV_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | below depth 5 |
+| `rem` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | array of objects in which nothing can be mapped |
 
 ## Keys and lists
 
-Module `sdsrem`: 2153 keys, 315 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
+Module `sdsrem`: 1461 keys, 228 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
 list name comes first). Names are pinned in `tools/gen/names/sds-rem.json`: a later run keeps every
 existing name and only adds new ones.
 

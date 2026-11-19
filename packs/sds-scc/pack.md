@@ -16,7 +16,7 @@ License: Apache-2.0, Edgesource Corporation (DigitalArsenal/spacedatastandards.o
 
 | Kind | Schema | `when` | Lines | Not mapped |
 |---|---|---|---|---|
-| `scc` | `main.fb.schema.json#/definitions/SCC` | - | 14522 | 922 |
+| `scc` | `main.fb.schema.json#/definitions/SCC` | - | 1122 | 271 |
 
 One message, no `when`: the pack has no `kind` lines.
 
@@ -32,6 +32,9 @@ string is kept as text in its raw key, so it round-trips as written.
 
 Residue (engine-spec 0.5): a scalar member no line maps, at any depth of nested objects, is
 carried back; arrays no group maps, and anything inside them, are not.
+
+Limits of this pack: objects nested deeper than 5 levels (an array counts as a level) are not mapped (set so that the pack, its module and its names file stay within 1 MB; at the default depth 8 they come to 9.5 MB). Such a place is in the table under Not mapped;
+outside an array its scalars are residue and round-trip, inside an array they are dropped.
 
 ## Mapped to shared keys
 
@@ -63,9 +66,16 @@ That pack reads the CCSDS NDM/XML schema; these read the Space Data Standards JS
 whose member names, nesting and additions are its own. The two are separate formats and no
 conversion between them is claimed.
 
-Of the 299 standards at the pinned commit, 298 have a pack. XTC is not generated: it
+Of the 299 standards at the pinned commit, 297 have a pack. XTC is not generated: it
 restates XTCE (a telemetry and command database, not a message), which this project does
-not build because of the reuse terms of the XTCE document.
+not build because of the reuse terms of the XTCE document. REC is not generated: it is a
+collection whose records are a union of every other standard, so its keys would repeat
+the other packs.
+
+Five standards (SCC, CQR, SCN, LAM, REM) nest other standards deeply; at the generator's
+default depth each pack would be 1.5 to 9.5 MB. They have a lower depth limit, stated
+under "How a schema is read" with the reason, and every place it cuts is listed under
+"Not mapped". Every other pack has the default limit.
 
 ## Evidence for the shared keys
 
@@ -113,938 +123,286 @@ Not bound:
 
 | Reason | Places |
 |---|---|
-| below depth 8 | 643 |
-| array of objects in which nothing can be mapped | 277 |
-| recursive schema | 2 |
+| below depth 5 | 186 |
+| array of objects in which nothing can be mapped | 85 |
 
 | Kind | Place | Reason |
 |---|---|---|
-| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].SITE.STATUS_EVIDENCE[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].SITE.PARTIES[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.QUANTITIES[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[].POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[].POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[].RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[].RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POINT` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].(message).GEOMETRIES` | recursive schema |
-| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].BBOX` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].UPLINK` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].DOWNLINK` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].BEACON` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[].STOKES_PARAMETERS` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.STATUS_EVIDENCE[].CITATION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.PARTIES[].CITATION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.QUANTITIES[].CITATION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[].COV_REALISM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MANEUVERS[].PRE_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MANEUVERS[].POST_EVENT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].MANEUVERS[].PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.STATUS_EVIDENCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.POSITION_CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.QUANTITIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.MAINTENANCE[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.PLANS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.STATISTICS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].POINTS[].POSITION` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].MEAN_ELEMENTS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].MEAN_ELEMENTS[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.INTEGRATED_DEVICES[].BAND[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.STATUS_EVIDENCE[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PARTIES[].EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PARTIES[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.QUANTITIES[].CITATION.PROVENANCE` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[].POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[].POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[].RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[].RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POINT` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POSITIONS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POSITIONS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POLYGON_RINGS[]` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].POLYGON_RINGS[]` | array of objects in which nothing can be mapped |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].(message).GEOMETRIES` | recursive schema |
-| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY.GEOMETRIES[].BBOX` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
+| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].REFERENCES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].REFERENCES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].REFERENCES[].SITE` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].REFERENCES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIOS[].REFERENCES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIOS[].EVENT.MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].EVENT.MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].EVENT.STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].EVENT.STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].EVENT.EO_OBSERVATIONS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].EVENT.EO_OBSERVATIONS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].EVENT.RADAR_OBSERVATIONS[]` | below depth 5 |
+| `scc` | `SCENARIOS[].EVENT.RADAR_OBSERVATIONS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 5 |
+| `scc` | `SCENARIOS[].VIEW_STATE.CAMERA.ROTATION` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.ADDED_GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REMOVED_GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[]` | below depth 5 |
+| `scc` | `SCENARIOS[].ASSETS_CHANGED.REFERENCES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.GEOMETRY` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.STATUS_EVIDENCE[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.DESCRIPTION_CITATION` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.POSITION_CITATION` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.PARTIES[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.QUANTITIES[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SITE.PROVENANCE` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SITE.REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.MAINTENANCE[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.PLANS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.STATISTICS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.REFERENCES[].EXCLUSION_ZONE.BOUNDARY` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].PROVENANCE` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.MEAN_ELEMENTS[].COV_REALISM` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.EVENT.EO_OBSERVATIONS[].SEN_REFERENCE_FRAME` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 5 |
+| `scc` | `SCENARIO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.SATELLITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.GROUND_SITES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SENSOR` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SITE_POSITION` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].POINTS[]` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].VIEW_CONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `SCENARIO.ASSETS_CHANGED.REFERENCES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SENSOR` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SITE_POSITION` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].POINTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].VIEW_CONE` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].SUN_ADVANTAGE_TARGET` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].EXCLUSION_ZONE` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].OBSERVATION_EO` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCES[].OBSERVATION_RADAR` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.STATE_VECTORS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.EO_OBSERVATIONS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.EO_OBSERVATIONS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.RADAR_OBSERVATIONS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.EVENT.RADAR_OBSERVATIONS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.VIEW_STATE.CAMERA.ROTATION` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.ADDED_GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REMOVED_GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.SATELLITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.GROUND_SITES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.SCENARIO.ASSETS_CHANGED.REFERENCES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].MEAN_ELEMENTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].MEAN_ELEMENTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].STATE_VECTORS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].STATE_VECTORS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].MANEUVERS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].MANEUVERS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.GEOMETRY` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.STATUS_EVIDENCE[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.DESCRIPTION_CITATION` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.POSITION_CITATION` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PARTIES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PARTIES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.QUANTITIES[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.PROVENANCE` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SITE.REFERENCE_FRAME` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.MAINTENANCE[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.MAINTENANCE[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.PLANS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.PLANS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.STATISTICS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].SENSOR.STATISTICS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].POINTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.POINTS[]` | array of objects in which nothing can be mapped |
+| `scc` | `STATE_RESPONSE.REFERENCES[].EXCLUSION_ZONE.BOUNDARY` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.REFERENCE_FRAME` | below depth 5 |
+| `scc` | `STATE_RESPONSE.REFERENCES[].OBSERVATION_EO.SEN_REFERENCE_FRAME` | below depth 5 |
 
 ## Keys and lists
 
-Module `sdsscc`: 13897 keys, 625 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
+Module `sdsscc`: 1067 keys, 55 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
 list name comes first). Names are pinned in `tools/gen/names/sds-scc.json`: a later run keeps every
 existing name and only adds new ones.
 

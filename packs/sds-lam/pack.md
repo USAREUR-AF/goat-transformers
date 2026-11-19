@@ -16,7 +16,7 @@ License: Apache-2.0, Edgesource Corporation (DigitalArsenal/spacedatastandards.o
 
 | Kind | Schema | `when` | Lines | Not mapped |
 |---|---|---|---|---|
-| `lam` | `main.fb.schema.json#/definitions/LAM` | - | 3247 | 35 |
+| `lam` | `main.fb.schema.json#/definitions/LAM` | - | 1535 | 110 |
 
 One message, no `when`: the pack has no `kind` lines.
 
@@ -32,6 +32,9 @@ string is kept as text in its raw key, so it round-trips as written.
 
 Residue (engine-spec 0.5): a scalar member no line maps, at any depth of nested objects, is
 carried back; arrays no group maps, and anything inside them, are not.
+
+Limits of this pack: objects nested deeper than 4 levels (an array counts as a level) are not mapped (set so that the pack, its module and its names file stay within 1 MB; at the default depth 8 they come to 1.9 MB). Such a place is in the table under Not mapped;
+outside an array its scalars are residue and round-trip, inside an array they are dropped.
 
 ## Mapped to shared keys
 
@@ -63,9 +66,16 @@ That pack reads the CCSDS NDM/XML schema; these read the Space Data Standards JS
 whose member names, nesting and additions are its own. The two are separate formats and no
 conversion between them is claimed.
 
-Of the 299 standards at the pinned commit, 298 have a pack. XTC is not generated: it
+Of the 299 standards at the pinned commit, 297 have a pack. XTC is not generated: it
 restates XTCE (a telemetry and command database, not a message), which this project does
-not build because of the reuse terms of the XTCE document.
+not build because of the reuse terms of the XTCE document. REC is not generated: it is a
+collection whose records are a union of every other standard, so its keys would repeat
+the other packs.
+
+Five standards (SCC, CQR, SCN, LAM, REM) nest other standards deeply; at the generator's
+default depth each pack would be 1.5 to 9.5 MB. They have a lower depth limit, stated
+under "How a schema is read" with the reason, and every place it cuts is listed under
+"Not mapped". Every other pack has the default limit.
 
 ## Evidence for the shared keys
 
@@ -113,50 +123,125 @@ Not bound:
 
 | Reason | Places |
 |---|---|
-| below depth 8 | 29 |
-| array of objects in which nothing can be mapped | 6 |
+| below depth 4 | 66 |
+| array of objects in which nothing can be mapped | 44 |
 
 | Kind | Place | Reason |
 |---|---|---|
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].UPLINK` | below depth 8 |
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].DOWNLINK` | below depth 8 |
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].BEACON` | below depth 8 |
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].BAND[]` | below depth 8 |
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].BAND[]` | array of objects in which nothing can be mapped |
-| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[].INSTRUMENTS[].STOKES_PARAMETERS` | below depth 8 |
-| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 8 |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].UPLINK` | below depth 8 |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].DOWNLINK` | below depth 8 |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BEACON` | below depth 8 |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BAND[]` | below depth 8 |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].BAND[]` | array of objects in which nothing can be mapped |
-| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[].STOKES_PARAMETERS` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].OBJECT.PAYLOADS[].INSTRUMENTS[]` | array of objects in which nothing can be mapped |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.ORIGIN` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.OBJECT_REFERENCED_AXES` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM.LOCAL_ALIGNED_CONSTRAINED_AXES` | below depth 8 |
-| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[].COV_REFERENCE_FRAME.REFERENCE_FRAME` | below depth 8 |
+| `lam` | `LAUNCH_DATA.SITE.INTEGRATED_DEVICES[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.INTEGRATED_DEVICES[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.SITE.STATUS_EVIDENCE[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.STATUS_EVIDENCE[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.SITE.DESCRIPTION_CITATION.PROVENANCE` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.POSITION_CITATION.PROVENANCE` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.EXTERNAL_REFERENCES[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.EXTERNAL_REFERENCES[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.SITE.PARTIES[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.PARTIES[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.SITE.QUANTITIES[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.SITE.QUANTITIES[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.SITE.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 4 |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].ADDRESS` | below depth 4 |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].KEYS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].KEYS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].ADDRESS` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].KEYS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].KEYS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OPERATIONS_POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.ROCKET_CONFIGURATION.STAGES[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.ROCKET_CONFIGURATION.STAGES[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.ROCKET_CONFIGURATION.SUSTAINERS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.ROCKET_CONFIGURATION.SUSTAINERS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OBJECTS[].PAYLOADS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.OBJECTS[].PRODUCTS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.OBJECTS[].PRODUCTS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].ADDRESS` | below depth 4 |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].KEYS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].KEYS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].CHAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | below depth 4 |
+| `lam` | `LAUNCH_DATA.COLA_POINTS_OF_CONTACT[].DOMAIN_PROOFS[]` | array of objects in which nothing can be mapped |
+| `lam` | `ROCKET_CONFIGURATION.STAGES[].ENGINES[]` | below depth 4 |
+| `lam` | `ROCKET_CONFIGURATION.STAGES[].ENGINES[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].OBJECT` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].REFERENCE_FRAME` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COV_REFERENCE_FRAME` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].EPHEMERIS_DATA_LINES[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].COVARIANCE_MATRIX_LINES[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].POLYNOMIAL_POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OEM.EPHEMERIS_DATA_BLOCK[].ORBIT_DETERMINATION` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.PERTURBATIONS.SPACE_WEATHER[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.PERTURBATIONS.SPACE_WEATHER[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.ORBIT_DETERMINATION.FIT_STATISTICS.HELD_OUT_DAYS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.COV_REF_FRAME.REFERENCE_FRAME.COORDINATE_SYSTEM` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.COVARIANCE_BLOCKS[].COV_REALISM[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PAYLOADS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.OBJECT.PRODUCTS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.REFERENCE_FRAME.REFERENCE_FRAME` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | below depth 4 |
+| `lam` | `TRAJECTORY_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OEM.EPHEMERIS_DATA_BLOCK[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.POLYNOMIAL_POSITION_RECORDS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.POLYNOMIAL_POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.POLYNOMIAL_OE_RECORDS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.POLYNOMIAL_OE_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.MANEUVER_DATA[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.MANEUVER_DATA[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.PERTURBATIONS.ATMOSPHERIC_MODEL` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.PERTURBATIONS.SPACE_WEATHER[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.PERTURBATIONS.SPACE_WEATHER[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.OD_DYNAMIC_PARAMETERS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.ORBIT_DETERMINATION.FIT_STATISTICS` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.USER_DEFINED_PARAMETERS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.USER_DEFINED_PARAMETERS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.TRAJ_REF_FRAME.REFERENCE_FRAME` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COV_REF_FRAME.REFERENCE_FRAME` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.TRAJECTORY_BLOCKS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.TRAJECTORY_BLOCKS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COVARIANCE_BLOCKS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COVARIANCE_BLOCKS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COV_REALISM[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.COV_REALISM[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.SEED_SETS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.SEED_SETS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.RPO_INSPECTION.RADAR` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.OBJECT` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.REFERENCE_FRAME` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.POSITION_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.ORBITAL_ELEMENT_RECORDS[]` | array of objects in which nothing can be mapped |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.PROVENANCE` | below depth 4 |
+| `lam` | `HYPERSONIC_CONDITIONS.SOURCE_OCM.DERIVED_EPHEMERIS.BUILD` | below depth 4 |
+| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[]` | below depth 4 |
+| `lam` | `TARGET_ORBIT.PLANE_REFERENCE.EPHEMERIS_DATA_BLOCK[]` | array of objects in which nothing can be mapped |
 
 ## Keys and lists
 
-Module `sdslam`: 2840 keys, 407 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
+Module `sdslam`: 1312 keys, 223 lists. A key is named by its path (`a.b` is `a_b`; inside a list, the
 list name comes first). Names are pinned in `tools/gen/names/sds-lam.json`: a later run keeps every
 existing name and only adds new ones.
 

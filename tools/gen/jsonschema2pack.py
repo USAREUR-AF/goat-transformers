@@ -54,6 +54,9 @@ import genio      # noqa: E402  (the directory of this file is put on the path a
 NAME = "jsonschema2pack"
 
 MAX_DEPTH = 8
+# --max-depth and --max-nest of the current run (set by run(); the defaults are the
+# limits every pack had before the options existed)
+LIMITS = {"depth": MAX_DEPTH, "nest": None}
 MAX_KEY_LEN = 96
 KEY_BUDGET = 60000
 VECTOR_BUDGET = 12 * 1000 * 1000
@@ -547,7 +550,7 @@ class Group:
         self.list = None
 
 
-def walk_json(entries, reg, path, required, out, notmapped, depth, stack):
+def walk_json(entries, reg, path, required, out, notmapped, depth, stack, nest=0):
     n = merged(entries, reg)
     t, why = kind_of(n)
     loc = ".".join(path) or "(message)"
@@ -555,8 +558,8 @@ def walk_json(entries, reg, path, required, out, notmapped, depth, stack):
         notmapped.append((loc, why))
         return
     if t == "object":
-        if depth >= MAX_DEPTH:
-            notmapped.append((loc, "below depth %d" % MAX_DEPTH))
+        if depth >= LIMITS["depth"]:
+            notmapped.append((loc, "below depth %d" % LIMITS["depth"]))
             return
         if n.free_members and not n.props:
             notmapped.append((loc, "object whose member names are data (additionalProperties / patternProperties)"))
@@ -572,7 +575,7 @@ def walk_json(entries, reg, path, required, out, notmapped, depth, stack):
                 notmapped.append((loc + "." + name, "recursive schema"))
                 continue
             walk_json(subs, reg, path + [name], required and name in n.required, out, notmapped,
-                      depth + 1, stack | {sig})
+                      depth + 1, stack | {sig}, nest)
         return
     if t == "array":
         if not path:
@@ -589,9 +592,13 @@ def walk_json(entries, reg, path, required, out, notmapped, depth, stack):
         if it == "array":
             notmapped.append((loc + "[]", "array of arrays (an item is not an object or a scalar)"))
             return
+        if LIMITS["nest"] is not None and nest >= LIMITS["nest"]:
+            notmapped.append((loc, "array inside %d arrays (--max-nest %d)" % (nest, LIMITS["nest"])))
+            return
         g = Group(path, it != "object")
         if it == "object":
-            walk_json(n.items, reg, [], True, g.lines, notmapped_inner(notmapped, loc + "[]"), depth + 1, stack)
+            walk_json(n.items, reg, [], True, g.lines, notmapped_inner(notmapped, loc + "[]"), depth + 1, stack,
+                      nest + 1)
             if not g.lines:
                 notmapped.append((loc + "[]", "array of objects in which nothing can be mapped"))
                 return
@@ -1404,7 +1411,20 @@ def run(argv=None):
     ap.add_argument("--cross", action="append", default=[], metavar="PACKDEF=VECTOR:FIELD[@KEY=VALUE,...]",
                     help="also write a vector from that pack's vector text into this pack, with optional context")
     ap.add_argument("--version", default="0.1.0")
+    ap.add_argument("--max-depth", type=int, metavar="N",
+                    help="json: objects nested deeper than N levels (arrays count as a level) are not "
+                         "mapped; default %d" % MAX_DEPTH)
+    ap.add_argument("--max-nest", type=int, metavar="N",
+                    help="json: an array inside N arrays is not mapped; default no limit")
+    ap.add_argument("--limit-reason", metavar="TEXT",
+                    help="why --max-depth or --max-nest is set, for pack.md")
     a = ap.parse_args(argv)
+    for opt in ("max_depth", "max_nest"):
+        v = getattr(a, opt)
+        if v is not None and v < 1:
+            raise GenError("--%s must be at least 1" % opt.replace("_", "-"))
+    LIMITS["depth"] = a.max_depth if a.max_depth is not None else MAX_DEPTH
+    LIMITS["nest"] = a.max_nest
 
     reg = Registry(a.schema, dict(parse_kv(x, "--alias") for x in a.alias), a.opaque)
     names = Names(a.names_file)
@@ -1872,6 +1892,16 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
         w.append("string is kept as text in its raw key, so it round-trips as written.\n")
         w.append("Residue (engine-spec 0.5): a scalar member no line maps, at any depth of nested objects, is")
         w.append("carried back; arrays no group maps, and anything inside them, are not.\n")
+        if a.max_depth is not None or a.max_nest is not None:
+            lim = []
+            if a.max_depth is not None:
+                lim.append("objects nested deeper than %d levels (an array counts as a level) are not mapped"
+                           % a.max_depth)
+            if a.max_nest is not None:
+                lim.append("an array inside %d arrays is not mapped" % a.max_nest)
+            w.append("Limits of this pack: %s%s. Such a place is in the table under Not mapped;" % (
+                "; ".join(lim), (" (%s)" % a.limit_reason.rstrip(".")) if a.limit_reason else ""))
+            w.append("outside an array its scalars are residue and round-trip, inside an array they are dropped.\n")
     else:
         w.append("The message is one GeoJSON Feature. The wire addresses the Point coordinates, top-level")
         w.append("members and one level of `properties`; so scalar members there are `field` lines and")
