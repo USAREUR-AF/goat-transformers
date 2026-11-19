@@ -22,8 +22,8 @@ reference's order, all of them. A row of a file whose header is exactly
     shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled
 
 decodes and encodes as is. A row of a file with the same columns ending
-earlier decodes (the missing trailing columns are absent) and encodes with all
-5. A row of a file whose columns are in another order, or that leaves out a
+earlier decodes (the missing trailing columns are absent) and encodes with all 5
+columns. A row of a file whose columns are in another order, or that leaves out a
 column before its last one, or adds a column, does not decode correctly: the
 caller reorders it first. The header row itself is not a message (where a
 column is numeric it fails with `transform-decode`).
