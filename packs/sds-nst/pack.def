@@ -45,6 +45,7 @@ group  sdsnst.nodes  NODES
     field  sdsnst.nodes_standards_value  .  string
   end
 end
+field  time_ms  GENERATED_AT  int
 field  sdsnst.generated_at  GENERATED_AT  int
 field  sdsnst.source_peer_id  SOURCE_PEER_ID  string
 field  sdsnst.etag  ETAG  string

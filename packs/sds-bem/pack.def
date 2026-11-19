@@ -69,6 +69,7 @@ field  sdsbem.provenance_module_id  PROVENANCE.MODULE_ID  string
 field  sdsbem.provenance_module_version  PROVENANCE.MODULE_VERSION  string
 field  sdsbem.provenance_module_content_hash  PROVENANCE.MODULE_CONTENT_HASH  string
 field  sdsbem.provenance_computed_at  PROVENANCE.COMPUTED_AT  int
+field  time_ms  COMPUTED_AT  int
 field  sdsbem.computed_at  COMPUTED_AT  int
 field  sdsbem.producer_id  PRODUCER_ID  string
 group  sdsbem.signature  SIGNATURE

@@ -58,6 +58,7 @@ field  sdsagr.stored  STORED  int
 field  sdsagr.partial  PARTIAL  bool
 field  sdsagr.truncated  TRUNCATED  bool
 field  sdsagr.elapsed_ms  ELAPSED_MS  int
+field  time_ms  AS_OF_MS  int
 field  sdsagr.as_of_ms  AS_OF_MS  int
 field  sdsagr.provider_id  PROVIDER_ID  string
 field  sdsagr.source_name  SOURCE_NAME  string

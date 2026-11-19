@@ -14,6 +14,7 @@ field  sdswxf.model_id  MODEL_ID  string
 field  sdswxf.model_version  MODEL_VERSION  string
 field  sdswxf.init_time_ms  INIT_TIME_MS  int
 field  sdswxf.lead_hours  LEAD_HOURS  float
+field  time_ms  VALID_TIME_MS  int
 field  sdswxf.valid_time_ms  VALID_TIME_MS  int
 field  sdswxf.horizon_hours  HORIZON_HOURS  int
 field  sdswxf.member_kind  MEMBER_KIND  string

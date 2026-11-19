@@ -1,0 +1,10 @@
+{
+ "name": "gen-geojson-to-sds-wxf",
+ "from": "geojson",
+ "to": "sds-wxf",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"ce\":45.3,\"le\":99.5,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+ "expect": "{\"VALID_TIME_MS\":1614456000000}",
+ "model": {
+  "time_ms": "1614456000000"
+ }
+}

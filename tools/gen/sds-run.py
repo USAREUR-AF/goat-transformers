@@ -31,6 +31,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genio              # noqa: E402  (the directory of this file is put on the path above)
@@ -92,7 +93,24 @@ SKIPPED = {"XTC": "restates XTCE; not built, see docs/coverage-roadmap.md",
 DEPTH = {"SCC": (5, 9.5), "CQR": (4, 6.2), "SCN": (4, 4.2), "LAM": (4, 1.9), "REM": (5, 1.5)}
 
 # Conversion vectors from the hand-written geojson vector (its `id` is `uid`).
-CROSS = {"GNP", "OMM", "SEN", "TMS"}
+CROSS = {"GNP", "OMM", "SEN", "TMS", "WXF"}
+
+# `time_ms` as a plain `int`: a member of the root table that the schema describes as
+# Unix milliseconds (an integer) and as the time the record is valid at, or the time the
+# record (or the set, snapshot, page, report or frame it is) was produced, serialized,
+# generated or read; at most one per standard, the valid time first. Not bound: creation
+# and update times of registry entries, request, expiry, signing and window times, and
+# members whose description gives 0 a meaning (`0 = not stated`, `0 in a request`), which
+# a plain `int` would read as 1970-01-01. The description is quoted in each pack.md;
+# tools/gen/notes/sds-time.md is added to the notes of these packs only.
+TIME = {
+    "GCT": "VALID_TIME_MS", "WXF": "VALID_TIME_MS", "AGR": "AS_OF_MS",
+    "ACI": "COMPUTED_AT", "BEM": "COMPUTED_AT", "CVP": "COMPUTED_AT", "RFE": "COMPUTED_AT",
+    "RFL": "COMPUTED_AT", "RFS": "COMPUTED_AT", "CVG": "COMPUTED_AT",
+    "DCL": "CREATED_AT_MS", "TBP": "CREATED_AT_MS", "NST": "GENERATED_AT", "PNV": "GENERATED_AT_MS",
+    "NEV": "GENERATED_AT_MS", "NHS": "GENERATED_AT_MS", "QRP": "GENERATED_AT_MS",
+    "RPT": "GENERATED_AT", "SCM": "GENERATED_AT_MS",
+}
 
 LICENSE_STATEMENT = (
     "The repository's `README.md`, section License: \"Copyright 2026 Edgesource Corporation. "
@@ -162,6 +180,22 @@ def provenance(name, rel, h, fmt, rows):
     return "\n".join(out)
 
 
+def notes_for(name, gen, tmp):
+    """The notes file of a standard: notes/sds.md, followed by notes/sds-time.md when
+    TIME binds a member of it (written once into `tmp`; only its text reaches pack.md)."""
+    base = os.path.join(gen, "notes", "sds.md")
+    if name not in TIME:
+        return base
+    path = os.path.join(tmp, "sds-with-time.md")
+    if not os.path.exists(path):
+        with open(base, encoding="utf-8") as a, open(os.path.join(gen, "notes", "sds-time.md"),
+                                                     encoding="utf-8") as b:
+            text = a.read().rstrip() + "\n\n" + b.read()
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+    return path
+
+
 def git_head(path):
     return subprocess.run(["git", "-C", path, "rev-parse", "HEAD"],
                           capture_output=True, text=True, check=True).stdout.strip()
@@ -192,6 +226,12 @@ def main(argv=None):
             print("sds-run: %s: missing or SHA-256 is not %s" % (rel, h), file=sys.stderr)
             return 1
     out = genio.Output(gt, check=args.check)
+    with tempfile.TemporaryDirectory(prefix="sds-run-") as tmp:
+        status = run_all(args, src, gt, gen, rows, out, tmp)
+    return max(status, out.report("sds-run (PROVENANCE.md)"))
+
+
+def run_all(args, src, gt, gen, rows, out, tmp):
     status = 0
     only = set(args.only.split(",")) if args.only else None
     todo = [s for s in standards(rows) if (only is None or s[0] in only) and s[0] not in SKIPPED]
@@ -209,9 +249,11 @@ def main(argv=None):
                  "--source", "%s at commit %s, %s" % (REPO_URL, COMMIT, rel),
                  "--out", gt, "--model-dir", os.path.join(gt, "model"),
                  "--names-file", os.path.join(gen, "names", fmt + ".json"),
-                 "--notes-file", os.path.join(gen, "notes", "sds.md")]
+                 "--notes-file", notes_for(name, gen, tmp)]
         if name in UID:
             argv2 += ["--map", "%s:%s=uid" % (name, UID[name])]
+        if name in TIME:
+            argv2 += ["--map", "%s:%s=time_ms" % (name, TIME[name])]
         for m in POSITION.get(name, []):
             argv2 += ["--map", "%s:%s" % (name, m)]
         if name in CROSS:
@@ -236,7 +278,7 @@ def main(argv=None):
         out.write("packs/%s/PROVENANCE.md" % fmt, provenance(name, rel, h, fmt, rows))
         if not args.check:
             print(fmt)
-    return max(status, out.report("sds-run (PROVENANCE.md)"))
+    return status
 
 
 if __name__ == "__main__":
