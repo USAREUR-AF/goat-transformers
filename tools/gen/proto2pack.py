@@ -2116,9 +2116,10 @@ def emit_pack(plan):
     opts, env = plan.opts, plan.env
     all_leaves = plan.all_leaves
     used_mods = sorted({k.split(".")[0] for k in [k for l in all_leaves for k in [l.key] + l.cores] + plan.bound_keys
+                        + [g.list for g in plan.all_groups]      # an envelope may hold only repeated fields
                         if k and "." in k})
-    kw = max(len(l.key) for l in all_leaves)
-    pw = max(len(dotted(l.nums)) for l in all_leaves)
+    kw = max((len(l.key) for l in all_leaves), default=0)      # an envelope may hold only repeated fields
+    pw = max((len(dotted(l.nums)) for l in all_leaves), default=0)
 
     def field_line(l):
         # shared keys and the raw key on one path (0.5 ruling 16): shared lines first,

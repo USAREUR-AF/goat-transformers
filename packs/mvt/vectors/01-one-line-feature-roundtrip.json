@@ -1,0 +1,12 @@
+{
+  "name": "01-one-line-feature-roundtrip",
+  "from": "mvt",
+  "to": "mvt",
+  "input": "1a300a05726f6164731210080112020000180222060932220a02041a05636c61737322090a077072696d6172792880207802",
+  "expect": "1a300a05726f6164731210080112020000180222060932220a02041a05636c61737322090a077072696d6172792880207802",
+  "model": {
+    "mvt.tile_layers.#": "1",
+    "mvt.tile_layers[0].mvt.layer_name": "roads",
+    "mvt.tile_layers[0].mvt.layer_features[0].mvt.feature_geometry.#": "6"
+  }
+}

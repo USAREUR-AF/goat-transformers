@@ -1,0 +1,12 @@
+{
+  "name": "93-to-foxglove-location-fix",
+  "from": "geojson",
+  "to": "foxglove-location-fix",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.375,52.5]},\"properties\":{\"course\":0,\"speed_ms\":5},\"id\":\"fix-1\"}",
+  "expect": "090000000000404a40110000000000c02a405a12090000000000000000110000000000001440",
+  "model": {
+    "@complete": true,
+    "track.vel_east_ms": "0",
+    "track.vel_north_ms": "5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "01-indexdata-dropped",
+  "from": "osm-pbf-blob-header",
+  "to": "osm-pbf-blob-header",
+  "input": "0a074f534d446174611202000118d209",
+  "expect": "0a074f534d4461746118d209",
+  "model": {
+    "osmpbf.blob_header_type": "OSMData",
+    "osmpbf.blob_header_datasize": "1234"
+  }
+}

@@ -1459,5 +1459,43 @@ class SeveralKeysOnOnePathTest(TempDirCase):
         self.run_ok(self.argv("--check"))
 
 
+
+class OnlyRepeatedFieldsTest(TempDirCase):
+    """An envelope whose every field is repeated (a Mapbox vector tile is one
+    `repeated Layer`): no `field` line stands outside a group, and the pack
+    still names the module of its lists."""
+
+    def setUp(self):
+        super().setUp()
+        shutil.copytree(os.path.join(INPUT, "model"), os.path.join(self.tmp, "model"))
+        self.proto = self.write("proto/tile.proto", 'syntax = "proto2";\n'
+                                'message Tile { repeated Layer layers = 3; }\n'
+                                'message Layer { optional string name = 1; repeated uint32 ids = 2 [packed = true]; }\n')
+
+    def argv(self, *extra):
+        return ["--proto", self.proto, "--envelope", "Tile", "--format", "tile", "--module", "tile",
+                "--out", self.tmp, "--source", "a test", "--no-comments"] + list(extra)
+
+    def test_the_run_writes_a_pack_that_loads_and_uses_the_module_of_its_lists(self):
+        self.run_ok(self.argv())
+        model = gtcheck.Model().load_dir(os.path.join(self.tmp, "model"))
+        pack = gtcheck.load_pack_file(os.path.join(self.tmp, "packs", "tile", "pack.def"), model)
+        self.assertEqual(pack.uses, ["core", "tile"])
+        self.assertNotIn("\nfield ", self.read("packs/tile/pack.def"))
+        self.assertIn("group  tile.tile_layers  3", self.read("packs/tile/pack.def"))
+
+    def test_the_round_trip_vector_holds_the_items(self):
+        self.run_ok(self.argv())
+        with open(os.path.join(self.tmp, "packs", "tile", "vectors", "gen-01-tile-roundtrip.json"),
+                  encoding="utf-8") as fh:
+            vec = json.load(fh)
+        self.assertEqual(vec["model"]["tile.tile_layers.#"], "2")
+        self.assertEqual(vec["input"], vec["expect"])
+
+    def test_a_second_run_with_check_finds_nothing_to_change(self):
+        self.run_ok(self.argv())
+        self.run_ok(self.argv("--check"))
+
+
 if __name__ == "__main__":
     unittest.main()

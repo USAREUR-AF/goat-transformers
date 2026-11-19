@@ -1,0 +1,22 @@
+{
+ "1": "location_fix_latitude",
+ "10": "location_fix_heading",
+ "11.1": "velocity_x",
+ "11.2": "velocity_y",
+ "11.3": "velocity_z",
+ "2": "location_fix_longitude",
+ "3": "location_fix_altitude",
+ "4[]": "location_fix_position_covariance",
+ "5": "location_fix_position_covariance_type",
+ "6.1": "timestamp_seconds",
+ "6.2": "timestamp_nanos",
+ "7": "location_fix_frame_id",
+ "8.1": "color_r",
+ "8.2": "color_g",
+ "8.3": "color_b",
+ "8.4": "color_a",
+ "9[]": "location_fix_metadata",
+ "foxglove.KeyValuePair:1": "key_value_pair_key",
+ "foxglove.KeyValuePair:2": "key_value_pair_value",
+ "foxglove.LocationFix:4[]item": "location_fix_position_covariance_item"
+}

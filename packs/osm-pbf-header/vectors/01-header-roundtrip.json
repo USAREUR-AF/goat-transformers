@@ -1,0 +1,13 @@
+{
+  "name": "01-header-roundtrip",
+  "from": "osm-pbf-header",
+  "to": "osm-pbf-header",
+  "input": "0a1a088088e2ed6010809ccdca641880fea88289032080eabda58503220e4f736d536368656d612d56302e36220a44656e73654e6f64657382010e6578616d706c652d777269746572",
+  "expect": "0a1a088088e2ed6010809ccdca641880fea88289032080eabda58503220e4f736d536368656d612d56302e36220a44656e73654e6f64657382010e6578616d706c652d777269746572",
+  "model": {
+    "osmpbf.bbox_left": "13000000000",
+    "osmpbf.bbox_top": "52750000000",
+    "osmpbf.header_block_required_features.#": "2",
+    "osmpbf.header_block_required_features[1].osmpbf.header_block_required_features_item": "DenseNodes"
+  }
+}
