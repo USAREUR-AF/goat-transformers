@@ -431,9 +431,9 @@ class Checks(GateCase):
             found[0][2], "text matches the needle on line 1 of the needle file (9 characters); 2 more needles match here")
 
     def test_no_output_holds_the_text_of_a_needle(self):
-        secret = "zorblat quuxfrob"
+        made_up_needle = "zorblat quuxfrob"
         self.tree.write("docs/notes.md", "the Zorblat_Quuxfrob value, twice: zorblat quuxfrob\n")
-        _, _, lines = self.run_gate(*self.needles(secret, "zq", "zorblat quuxfrob extra"))
+        _, _, lines = self.run_gate(*self.needles(made_up_needle, "zq", "zorblat quuxfrob extra"))
         printed = "\n".join(lines).lower()
         for piece in ("zorblat", "quuxfrob", "zor", "zq"):
             self.assertNotIn(piece, printed)
