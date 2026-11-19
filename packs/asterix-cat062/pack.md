@@ -45,6 +45,7 @@ flag's default.
 | Bit | Raw key | Flag | Default |
 |---|---|---|---|
 | MON, first part | `cat062.mon` (1 = monosensor track) | none | 1 |
+| MRH, first part | `cat062.mrh` (1 = geometric height more reliable) | none | 0 |
 | CNF, first part | `cat062.cnf` (0 = confirmed, 1 = tentative) | `track.confirmed`, through the table `cnf`, which turns the value over | none: the kind requires `track.confirmed` |
 | SIM, first extent | `cat062.sim` | `track.simulated` | 0 |
 | TSE, first extent | `cat062.tse` | `track.final_update` | 0 |
@@ -52,7 +53,13 @@ flag's default.
 | every other bit | `pad`: dropped on decode, written 0 | | |
 
 A key with a default counts as present, so encode always writes the first
-part and three extents. The fourth, fifth and sixth extents hold no mapped
+part and three extents.
+
+MRH is written as `cat062.mrh` gives it, 0 when the entity does not have it.
+The caller sets it as context (vector 39 of `canonical-track-v2`).
+open-entity-gateway writes MRH 1 whenever it sends I062/130; the pack follows
+that rule once a derive function can set an integer key from the presence of
+`hae` ("Conditional output and flag tokens" in `docs/roadmap.md`, Designed). The fourth, fifth and sixth extents hold no mapped
 bit; they are read, and not written.
 
 ## Items not mapped
