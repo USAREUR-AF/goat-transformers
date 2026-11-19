@@ -2,8 +2,8 @@
   "name": "roundtrip-fence_status",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd09000077a3a3a200008adbeb1e612f380fe6",
-  "expect": "fd09000077a3a3a200008adbeb1e612f380fe6",
+  "input": "fd09000177a3a3a200008adbeb1e612f380fe6",
+  "expect": "fd09000177a3a3a200008adbeb1e612f380fe6",
   "model": {
     "@kind": "fence_status"
   }

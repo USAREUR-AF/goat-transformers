@@ -2,8 +2,8 @@
   "name": "roundtrip-battery_status_v2",
   "from": "mavlink2-development",
   "to": "mavlink2-development",
-  "input": "fd1b00000378b3710100000088c0000020c0000040bf0000803f000030407edc122d4beb2c",
-  "expect": "fd1b00000378b3710100000088c0000020c0000040bf0000803f000030407edc122d4beb2c",
+  "input": "fd1b00010378b3710100000088c0000020c0000040bf0000803f000030407edc122d4beb2c",
+  "expect": "fd1b00010378b3710100000088c0000020c0000040bf0000803f000030407edc122d4beb2c",
   "model": {
     "@kind": "battery_status_v2"
   }

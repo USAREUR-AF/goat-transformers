@@ -2,8 +2,8 @@
   "name": "roundtrip-hwstatus",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd0300000da6a6a50000d710ae",
-  "expect": "fd0300000da6a6a50000d710ae",
+  "input": "fd0300010da6a6a50000d710ae",
+  "expect": "fd0300010da6a6a50000d710ae",
   "model": {
     "@kind": "hwstatus"
   }

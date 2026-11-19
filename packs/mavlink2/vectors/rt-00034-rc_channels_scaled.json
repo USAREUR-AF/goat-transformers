@@ -2,8 +2,8 @@
   "name": "roundtrip-rc_channels_scaled",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1600001723232200000aa40d439f142068a1bb220fa36224b6a509265d9970",
-  "expect": "fd1600001723232200000aa40d439f142068a1bb220fa36224b6a509265d9970",
+  "input": "fd1600011723232200000aa40d439f142068a1bb220fa36224b6a509265d9970",
+  "expect": "fd1600011723232200000aa40d439f142068a1bb220fa36224b6a509265d9970",
   "model": {
     "@kind": "rc_channels_scaled"
   }

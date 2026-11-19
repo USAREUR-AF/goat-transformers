@@ -2,8 +2,8 @@
   "name": "roundtrip-log_request_data",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0c0000597878770000e5340f48bc88931b93dc6a41",
-  "expect": "fd0c0000597878770000e5340f48bc88931b93dc6a41",
+  "input": "fd0c0001597878770000e5340f48bc88931b93dc6a41",
+  "expect": "fd0c0001597878770000e5340f48bc88931b93dc6a41",
   "model": {
     "@kind": "log_request_data"
   }

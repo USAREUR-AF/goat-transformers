@@ -2,8 +2,8 @@
   "name": "roundtrip-set_mag_offsets",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd0800000198989700005b56dca95dfd4a21",
-  "expect": "fd0800000198989700005b56dca95dfd4a21",
+  "input": "fd0800010198989700005b56dca95dfd4a21",
+  "expect": "fd0800010198989700005b56dca95dfd4a21",
   "model": {
     "@kind": "set_mag_offsets"
   }

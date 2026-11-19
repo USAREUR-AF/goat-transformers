@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-cubepilot_raw_rc",
+  "from": "mavlink2-cubepilot",
+  "to": "mavlink2-cubepilot",
+  "input": "fd20000000029751c3006b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da",
+  "expect": "fd20000000029751c3006b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da",
+  "model": {
+    "@kind": "cubepilot_raw_rc"
+  }
+}

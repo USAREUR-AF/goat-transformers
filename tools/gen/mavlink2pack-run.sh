@@ -4,10 +4,9 @@
 #
 # Usage: tools/gen/mavlink2pack-run.sh <checkout> <sources> [--fetch] [generator options]
 #
-# Generator options are passed to every run. With none the packs are written
-# as version 0.1.0 of the generator wrote them: arrays of more than 8 elements
-# and the INCOMPAT/COMPAT bytes are not mapped. `--max-array 255 --compat-flags`
-# maps every payload array and both flag bytes.
+# Every run maps every payload array, one key per element, and both flag bytes
+# (`--max-array 255 --compat-flags`); the packs in the tree are written so.
+# Further generator options (`--check`) are passed to every run.
 #
 # <checkout> is a goat-transformers checkout. It is read (model/core.def, each
 # pack's PROVENANCE.md) and written: model/mavlink.def, model/mavlink<dialect>.def,
@@ -69,8 +68,9 @@ if [ "$FETCH" = 1 ]; then
 fi
 
 python3 -I "$GEN/mavlink2pack.py" --root "$ROOT" --src "$SRC" \
-  --provenance "$ROOT/packs/mavlink2/PROVENANCE.md" --core-def "$ROOT/model/core.def" "$@"
+  --provenance "$ROOT/packs/mavlink2/PROVENANCE.md" --core-def "$ROOT/model/core.def" \
+  --max-array 255 --compat-flags "$@"
 for d in $DIALECTS; do
   python3 -I "$GEN/mavlink2pack.py" --root "$ROOT" --src "$SRC" --dialect "$d" \
-    --core-def "$ROOT/model/core.def" "$@"
+    --core-def "$ROOT/model/core.def" --max-array 255 --compat-flags "$@"
 done

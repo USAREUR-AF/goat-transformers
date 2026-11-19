@@ -2,8 +2,8 @@
   "name": "roundtrip-rc_channels_override_v2",
   "from": "mavlink2-development",
   "to": "mavlink2-development",
-  "input": "fd46000006ac28a50100d77fcf50ae85",
-  "expect": "fd46000006ac28a50100d77fcf50ae85",
+  "input": "fd46000006ac28a50100d77fcf50ae851c3353d18a6fc10df8ab2f4a66e89d86d4240bc3426179ffb09de73b1eda55788c16c3b4fa5231f1688f9f2dd6cb0d6a44087ba6b244e9e22081571f8ebdc55b",
+  "expect": "fd46000006ac28a50100d77fcf50ae851c3353d18a6fc10df8ab2f4a66e89d86d4240bc3426179ffb09de73b1eda55788c16c3b4fa5231f1688f9f2dd6cb0d6a44087ba6b244e9e22081571f8ebdc55b",
   "model": {
     "@kind": "rc_channels_override_v2"
   }

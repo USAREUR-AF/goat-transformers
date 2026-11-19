@@ -2,8 +2,8 @@
   "name": "roundtrip-mlrs_radio_link_flow_control",
   "from": "mavlink2-storm32",
   "to": "mavlink2-storm32",
-  "input": "fd0700000b304a8fea004d5524a9fbd2a9",
-  "expect": "fd0700000b304a8fea004d5524a9fbd2a9",
+  "input": "fd0700010b304a8fea004d5524a9fbd2a9",
+  "expect": "fd0700010b304a8fea004d5524a9fbd2a9",
   "model": {
     "@kind": "mlrs_radio_link_flow_control"
   }

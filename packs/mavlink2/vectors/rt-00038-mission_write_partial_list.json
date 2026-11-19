@@ -2,8 +2,8 @@
   "name": "roundtrip-mission_write_partial_list",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0700001b2727260000c26343b7744b22",
-  "expect": "fd0700001b2727260000c26343b7744b22",
+  "input": "fd0700011b2727260000c26343b7744b22",
+  "expect": "fd0700011b2727260000c26343b7744b22",
   "model": {
     "@kind": "mission_write_partial_list"
   }

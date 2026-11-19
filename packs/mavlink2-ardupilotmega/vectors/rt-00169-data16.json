@@ -2,8 +2,8 @@
   "name": "roundtrip-data16",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd12000011aaaaa90000936a",
-  "expect": "fd12000011aaaaa90000936a",
+  "input": "fd12000111aaaaa90000936a41f2a35405b66718c97a2bdc8d3eefa0",
+  "expect": "fd12000111aaaaa90000936a41f2a35405b66718c97a2bdc8d3eefa0",
   "model": {
     "@kind": "data16"
   }

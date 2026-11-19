@@ -2,8 +2,8 @@
   "name": "roundtrip-gimbal_torque_cmd_report",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd08000029d718d60000f25773abf4fe9b72",
-  "expect": "fd08000029d718d60000f25773abf4fe9b72",
+  "input": "fd08000129d718d60000f25773abf4fe9b72",
+  "expect": "fd08000129d718d60000f25773abf4fe9b72",
   "model": {
     "@kind": "gimbal_torque_cmd_report"
   }

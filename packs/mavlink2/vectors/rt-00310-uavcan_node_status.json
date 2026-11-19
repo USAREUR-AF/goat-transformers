@@ -2,8 +2,8 @@
   "name": "roundtrip-uavcan_node_status",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd110000b13d78360100b6cb2429000000808d1fa97c64733b12e9",
-  "expect": "fd110000b13d78360100b6cb2429000000808d1fa97c64733b12e9",
+  "input": "fd110001b13d78360100b6cb2429000000808d1fa97c64733b12e9",
+  "expect": "fd110001b13d78360100b6cb2429000000808d1fa97c64733b12e9",
   "model": {
     "@kind": "uavcan_node_status"
   }

@@ -2,8 +2,8 @@
   "name": "roundtrip-command_cancel",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd040000395151500000fc7fd3aa",
-  "expect": "fd040000395151500000fc7fd3aa",
+  "input": "fd040001395151500000fc7fd3aa",
+  "expect": "fd040001395151500000fc7fd3aa",
   "model": {
     "@kind": "command_cancel"
   }

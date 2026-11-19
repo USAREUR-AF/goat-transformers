@@ -2,8 +2,8 @@
   "name": "roundtrip-scaled_pressure2",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1000006b8a8a890000b374fa24000060400000a0c0a017216b",
-  "expect": "fd1000006b8a8a890000b374fa24000060400000a0c0a017216b",
+  "input": "fd1000016b8a8a890000b374fa24000060400000a0c0a017216b",
+  "expect": "fd1000016b8a8a890000b374fa24000060400000a0c0a017216b",
   "model": {
     "@kind": "scaled_pressure2"
   }

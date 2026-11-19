@@ -2,8 +2,8 @@
   "name": "roundtrip-limits_status",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd1600000fa8a8a70000b589826a8cdd063e63318b113a850f6511d9e8bf966d",
-  "expect": "fd1600000fa8a8a70000b589826a8cdd063e63318b113a850f6511d9e8bf966d",
+  "input": "fd1600010fa8a8a70000b589826a8cdd063e63318b113a850f6511d9e8bf966d",
+  "expect": "fd1600010fa8a8a70000b589826a8cdd063e63318b113a850f6511d9e8bf966d",
   "model": {
     "@kind": "limits_status"
   }

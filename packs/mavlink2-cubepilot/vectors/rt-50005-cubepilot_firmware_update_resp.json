@@ -2,8 +2,8 @@
   "name": "roundtrip-cubepilot_firmware_update_resp",
   "from": "mavlink2-cubepilot",
   "to": "mavlink2-cubepilot",
-  "input": "fd06000003069b55c30027bb3054fed5",
-  "expect": "fd06000003069b55c30027bb3054fed5",
+  "input": "fd06000004069b55c30027bb3054fed5",
+  "expect": "fd06000004069b55c30027bb3054fed5",
   "model": {
     "@kind": "cubepilot_firmware_update_resp"
   }

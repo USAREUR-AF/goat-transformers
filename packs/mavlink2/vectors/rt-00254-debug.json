@@ -2,8 +2,8 @@
   "name": "roundtrip-debug",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0900008d0540fe00006e93f340000000c01c",
-  "expect": "fd0900008d0540fe00006e93f340000000c01c",
+  "input": "fd0900018d0540fe00006e93f340000000c01c",
+  "expect": "fd0900018d0540fe00006e93f340000000c01c",
   "model": {
     "@kind": "debug"
   }

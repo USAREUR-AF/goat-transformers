@@ -2,8 +2,8 @@
   "name": "roundtrip-avss_drone_position",
   "from": "mavlink2-avssuas",
   "to": "mavlink2-avssuas",
-  "input": "fd18000001344e93ea000947652e00e1f505001f0afa3aa839ce000050c00000c0bf",
-  "expect": "fd18000001344e93ea000947652e00e1f505001f0afa3aa839ce000050c00000c0bf",
+  "input": "fd18000101344e93ea000947652e00e1f505001f0afa3aa839ce000050c00000c0bf",
+  "expect": "fd18000101344e93ea000947652e00e1f505001f0afa3aa839ce000050c00000c0bf",
   "model": {
     "@kind": "avss_drone_position"
   }

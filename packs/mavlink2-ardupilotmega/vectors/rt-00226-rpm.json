@@ -2,8 +2,8 @@
   "name": "roundtrip-rpm",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd0800002fe324e2000000009840000070c0",
-  "expect": "fd0800002fe324e2000000009840000070c0",
+  "input": "fd0800012fe324e2000000009840000070c0",
+  "expect": "fd0800012fe324e2000000009840000070c0",
   "model": {
     "@kind": "rpm"
   }

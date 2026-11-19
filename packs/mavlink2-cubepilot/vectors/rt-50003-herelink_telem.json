@@ -2,8 +2,8 @@
   "name": "roundtrip-herelink_telem",
   "from": "mavlink2-cubepilot",
   "to": "mavlink2-cubepilot",
-  "input": "fd13000001049953c3004942c10220964556f7e9c929fa3e7b92fce553",
-  "expect": "fd13000001049953c3004942c10220964556f7e9c929fa3e7b92fce553",
+  "input": "fd13000002049953c3004942c10220964556f7e9c929fa3e7b92fce553",
+  "expect": "fd13000002049953c3004942c10220964556f7e9c929fa3e7b92fce553",
   "model": {
     "@kind": "herelink_telem"
   }

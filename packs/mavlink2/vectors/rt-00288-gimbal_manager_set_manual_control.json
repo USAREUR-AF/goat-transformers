@@ -2,8 +2,8 @@
   "name": "roundtrip-gimbal_manager_set_manual_control",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd170000a927622001002c9a5a290000a0c0000050c00000c0bf0000803e5f360d",
-  "expect": "fd170000a927622001002c9a5a290000a0c0000050c00000c0bf0000803e5f360d",
+  "input": "fd170001a927622001002c9a5a290000a0c0000050c00000c0bf0000803e5f360d",
+  "expect": "fd170001a927622001002c9a5a290000a0c0000050c00000c0bf0000803e5f360d",
   "model": {
     "@kind": "gimbal_manager_set_manual_control"
   }

@@ -2,8 +2,8 @@
   "name": "roundtrip-vfr_hud",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd140000354b4b4a0000000098c0000040c00000a0bf0000003f8a6995b8",
-  "expect": "fd140000354b4b4a0000000098c0000040c00000a0bf0000003f8a6995b8",
+  "input": "fd140001354b4b4a0000000098c0000040c00000a0bf0000003f8a6995b8",
+  "expect": "fd140001354b4b4a0000000098c0000040c00000a0bf0000003f8a6995b8",
   "model": {
     "@kind": "vfr_hud"
   }

@@ -2,8 +2,8 @@
   "name": "roundtrip-terrain_check",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd080000698888870000cb4b1cca4c9f20ca",
-  "expect": "fd080000698888870000cb4b1cca4c9f20ca",
+  "input": "fd080001698888870000cb4b1cca4c9f20ca",
+  "expect": "fd080001698888870000cb4b1cca4c9f20ca",
   "model": {
     "@kind": "terrain_check"
   }

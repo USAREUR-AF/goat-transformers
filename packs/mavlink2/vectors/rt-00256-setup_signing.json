@@ -2,8 +2,8 @@
   "name": "roundtrip-setup_signing",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd2a00008e07420001004c0c63120000008023fa",
-  "expect": "fd2a00008e07420001004c0c63120000008023fa",
+  "input": "fd2a00008e07420001004c0c63120000008023fad18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40",
+  "expect": "fd2a00008e07420001004c0c63120000008023fad18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40",
   "model": {
     "@kind": "setup_signing"
   }

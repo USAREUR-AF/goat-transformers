@@ -2,8 +2,8 @@
   "name": "roundtrip-set_gps_global_origin",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1500002531313000005c7a99c3ddcd9dc35e21a2c3a178412b4b00000080",
-  "expect": "fd1500002531313000005c7a99c3ddcd9dc35e21a2c3a178412b4b00000080",
+  "input": "fd1500012531313000005c7a99c3ddcd9dc35e21a2c3a178412b4b00000080",
+  "expect": "fd1500012531313000005c7a99c3ddcd9dc35e21a2c3a178412b4b00000080",
   "model": {
     "@kind": "set_gps_global_origin"
   }

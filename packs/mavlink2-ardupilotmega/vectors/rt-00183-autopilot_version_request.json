@@ -2,8 +2,8 @@
   "name": "roundtrip-autopilot_version_request",
   "from": "mavlink2-ardupilotmega",
   "to": "mavlink2-ardupilotmega",
-  "input": "fd0200001fb8b8b70000a57c",
-  "expect": "fd0200001fb8b8b70000a57c",
+  "input": "fd0200011fb8b8b70000a57c",
+  "expect": "fd0200011fb8b8b70000a57c",
   "model": {
     "@kind": "autopilot_version_request"
   }

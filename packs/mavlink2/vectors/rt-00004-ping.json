@@ -2,8 +2,8 @@
   "name": "roundtrip-ping",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd0e0000030505040000088f857d00000080dfe20951b68d",
-  "expect": "fd0e0000030505040000088f857d00000080dfe20951b68d",
+  "input": "fd0e0001030505040000088f857d00000080dfe20951b68d",
+  "expect": "fd0e0001030505040000088f857d00000080dfe20951b68d",
   "model": {
     "@kind": "ping"
   }
