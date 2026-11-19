@@ -1,0 +1,9 @@
+{
+  "name": "identification-character-outside-the-set",
+  "from": "adsb-df18",
+  "to": "adsb-df18",
+  "input": "90abc00109607da5503ca1dc9a60",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "pyModeS _callsign.py (the 6-bit alphabet: 1-26 A-Z, 32 space, 48-57 0-9) and engine-spec 0.15 `chars:icao6`; the round trip of version 0.2 of the pack, whose characters were chosen before the callsign was bound: codes such as 0, 27-31, 33-47 and 58-63 are outside the set"
+}

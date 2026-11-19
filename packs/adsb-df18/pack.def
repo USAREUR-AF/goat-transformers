@@ -6,7 +6,7 @@
 # Addressing as in packs/adsb: word_bytes 1, bit_order msb, locator 0:<bit offset>:<len>,
 # ME bit n (numbered from 1) at offset 31 + n.
 format        adsb-df18
-version       0.2.0
+version       0.3.0
 distribution  public
 source        "pyModeS (https://github.com/junzis/pyModeS, GPL-3.0) at commit 4bf083284c0d9878ca0c88f16b9b5f6514ca194a: decoder/adsb.py (DF17 and DF18 share the frame and the ME layouts), decoder/bds/bds05.py, bds06.py, bds08.py, bds09.py, bds30.py, bds61.py, bds62.py, bds65.py; layouts restated, no code copied; test messages from tests/test_adsb.py, test_bds06.py, test_cpr.py"
 uses          adsb
@@ -28,6 +28,7 @@ when      0:32:5     1
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -43,6 +44,7 @@ when      0:32:5     2
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -58,6 +60,7 @@ when      0:32:5     3
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -70,9 +73,10 @@ field  adsb.cs_c8                     0:82:6     uint
 # Aircraft identification, type code 4.
 kind      identification-tc4
 when      0:32:5     4
-requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+requires  adsb.icao callsign
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint

@@ -107,6 +107,7 @@ item that stands directly in the UAP. The text quoted is the definition's.
 
 | Shared key | Bits | How | Text of the definition |
 |---|---|---|---|
+| `callsign` | I048/240 | `field callsign … chars:icao6` (engine-spec 0.15): the characters as text, trailing spaces removed on decode; a code outside the ICAO set is `transform-decode`. The field's raw integer key stays declared in the module and is not on the line, as `also` keeps the transform | I048/240 "Aircraft Identification", definition: "Aircraft identification (in 8 characters) obtained from an aircraft equipped with a Mode S transponder."; 8 characters of 6 bits in the ICAO character set (StringICAO) |
 | `speed_ms` | I048/200/GSP | `field speed_ms … uscale:463/4096`: factor 1852 folded into the scale; the field has no raw key | I048/200 "Calculated Track Velocity in Polar Co-ordinates", subitem GSP "Calculated Groundspeed"; LSB 1/16384 NM/s |
 | `cat048.i140` (the module's own key) | I048/140 | `derive cat048.i140 day_seconds time_ms` in the module: on a conversion from another format the time of day follows from `time_ms` | I048/140 "Time of Day", definition: "Absolute time stamping expressed as Co-ordinated Universal Time (UTC)."; note: "Notes: 1. The time of day value is reset to 0 each day at midnight. 2. Every radar station using ASTERIX should be equipped with at least one synchronised time source" |
 

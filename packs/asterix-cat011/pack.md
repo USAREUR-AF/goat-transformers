@@ -108,6 +108,7 @@ item that stands directly in the UAP. The text quoted is the definition's.
 
 | Shared key | Bits | How | Text of the definition |
 |---|---|---|---|
+| `callsign` | I011/245/TID | `field callsign … chars:icao6` (engine-spec 0.15): the characters as text, trailing spaces removed on decode; a code outside the ICAO set is `transform-decode`. The field's raw integer key stays declared in the module and is not on the line, as `also` keeps the transform | I011/245 "Target Identification", definition: "Target (aircraft or vehicle) identification in 8 characters.", subitem TID "Target Identification"; 8 characters of 6 bits in the ICAO character set (StringICAO) |
 | `lat` | I011/041/LAT | `field lat … sscale:45/536870912`, then `also cat011.i041_lat`: same unit, both keys hold the value | I011/041 "Position in WGS-84 Coordinates", definition: "Position of a target in WGS-84 Coordinates."; subitems LAT and LON in degrees, two's complement |
 | `lon` | I011/041/LON | `field lon … sscale:45/536870912`, then `also cat011.i041_lon`: same unit, both keys hold the value | I011/041 "Position in WGS-84 Coordinates", definition: "Position of a target in WGS-84 Coordinates."; subitems LAT and LON in degrees, two's complement |
 | `cat011.i140` (the module's own key) | I011/140 | `derive cat011.i140 day_seconds time_ms` in the module: on a conversion from another format the time of day follows from `time_ms` | I011/140 "Time of Track Information", definition: "Absolute time stamping expressed as UTC."; note: "Note: The Time of Track Information value is reset to zero each day at midnight." |
@@ -148,5 +149,5 @@ the generator then reloads the pack and replays every vector through a second co
 | `04-explicit-items-are-read-over-and-not-written.json` | the same record with FRN 28 (SP) and FRN 29 (RE) present, each a length octet of 4 and three octets of content: decode passes over them, encode does not write them |
 | `05-category-is-not-11.json` | the first octet is 12 |
 | `06-block-shorter-than-len.json` | LEN states 6 octets and the input holds 5 |
-| `07-to-geojson.json` | a record with I011/041: the shared keys `lat`, `lon` reach the Feature |
+| `07-to-geojson.json` | a record with I011/041, I011/245: the shared keys `callsign`, `lat`, `lon` reach the Feature |
 | `packs/canonical-track-v2/vectors/gen-to-asterix-cat011.json` | from `canonical-track-v2` to this pack: a track at 47.5 N 122.25 W, 1524 m, velocity 3 m/s east and 4 m/s north, at 12:00:00.125 UTC: the record holds I011/140, I011/041; the fields of those items that no key fills are zero |

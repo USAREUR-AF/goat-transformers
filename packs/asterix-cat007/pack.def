@@ -128,7 +128,7 @@ if f.11                                  # FRN 11, I007/220 Aircraft Address
   field  cat007.i220  24  uint
 end
 if f.12                                  # FRN 12, I007/240 Aircraft Identification
-  field  cat007.i240  48  uint
+  field  callsign  48  chars:icao6
 end
 if f.13                                  # FRN 13, I007/250 Mode S MB Data
   group  cat007.i250  count 8

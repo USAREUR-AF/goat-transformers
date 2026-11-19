@@ -117,7 +117,7 @@ if f.8                                   # FRN 8, I048/220 Aircraft Address
   field  cat048.i220  24  uint
 end
 if f.9                                   # FRN 9, I048/240 Aircraft Identification
-  field  cat048.i240  48  uint
+  field  callsign  48  chars:icao6
 end
 if f.10                                  # FRN 10, I048/250 BDS Register Data
   group  cat048.i250  count 8
