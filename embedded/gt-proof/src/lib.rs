@@ -34,6 +34,9 @@ pub struct Vector {
     /// `Some` when the vector has a `context` member, also an empty one
     pub context: Option<Vec<(String, String)>>,
     pub model: Vec<(String, String)>,
+    /// `"@absent"` of `model` (engine-spec 0.9, Vector additions): keys, item
+    /// paths `<list>[<i>].<key>` and list names the decoded entity lacks
+    pub absent: Vec<String>,
     pub complete: bool,
     /// the limit on list items (`max_items`, engine-spec ruling 7 of 0.11);
     /// absent: the default
@@ -191,7 +194,7 @@ impl Proof {
                 let pairs = |k: &str| match v.get(k) {
                     Some(Json::Obj(m)) => Some(
                         m.iter()
-                            .filter(|(k, _)| k != "@complete")
+                            .filter(|(k, _)| k != "@complete" && k != "@absent")
                             .map(|(k, v)| {
                                 let text = match v {
                                     Json::Str(s) => s.clone(),
@@ -205,6 +208,17 @@ impl Proof {
                     ),
                     _ => None,
                 };
+                let absent = match v.get("model").and_then(|m| m.get("@absent")) {
+                    Some(Json::Arr(a)) => a
+                        .iter()
+                        .map(|e| match e {
+                            Json::Str(s) => s.clone(),
+                            _ => panic!("{}: an `@absent` entry is a string", dir.display()),
+                        })
+                        .collect(),
+                    None => Vec::new(),
+                    Some(_) => panic!("{}: `@absent` is an array", dir.display()),
+                };
                 let complete = matches!(v.get("model").and_then(|m| m.get("@complete")), Some(Json::Bool(true)));
                 out.push(Vector {
                     pack: dir.file_name().unwrap().to_string_lossy().to_string(),
@@ -216,6 +230,7 @@ impl Proof {
                     expect_error: s("expect_error"),
                     context: pairs("context"),
                     model: pairs("model").unwrap_or_default(),
+                    absent,
                     complete,
                     max_items: match v.get("max_items") {
                         Some(Json::Int(n)) if *n >= 0 => *n as usize,

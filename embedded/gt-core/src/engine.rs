@@ -545,6 +545,50 @@ impl<'a, 's> Session<'a, 's> {
         ))
     }
 
+    /// The pool index of a field's first sentinel: after its scale, when it
+    /// has one (FORMAT.md, FIELD).
+    fn sentinels(o: &Op) -> u32 {
+        o.b as u32 + if matches!(o.xf, XF_LINSCALE | XF_USCALE | XF_SSCALE) { 3 } else { 0 }
+    }
+
+    /// Do the field's bits at `start` hold one of its sentinels? The bits
+    /// read as `uint` reads them, after `swap`, before `trim`, the table and
+    /// the transform (engine-spec 0.9, ruling 2). The caller has checked the
+    /// bits are in the input.
+    fn is_sentinel(&self, o: &Op, start: u64) -> Result<bool, Error> {
+        let len = o.len as u32;
+        if o.nabsent == 0 || len == 0 || len > 64 {
+            return Ok(false);
+        }
+        let mut raw = get_bits(self.input, start, len, self.src_msb).unwrap_or(0);
+        if o.flags & F_SWAP != 0 {
+            raw = swap_bytes(raw, len);
+        }
+        let first = Self::sentinels(o);
+        for k in 0..o.nabsent as u32 {
+            if self.plan.pool(first + k)? == raw {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+
+    /// Write the first sentinel of a field into its bits at `start`: the low
+    /// `len` bits, then `swap` (engine-spec 0.9, Encode). Nothing when the
+    /// field has none.
+    fn write_sentinel(&self, o: &Op, start: u64, out: &mut [u8], msb: bool) -> Result<(), Error> {
+        let len = o.len as u32;
+        if o.nabsent == 0 || len == 0 || len > 64 {
+            return Ok(());
+        }
+        let mut raw = self.plan.pool(Self::sentinels(o))? & mask(len);
+        if o.flags & F_SWAP != 0 {
+            raw = swap_bytes(raw, len);
+        }
+        set_bits(out, start, len, raw, msb);
+        Ok(())
+    }
+
     /// The value of a field whose bits start at `start`. None: the transform
     /// refuses the bits. The caller has checked the bits are in the input.
     fn read_field(&self, o: &Op, start: u64) -> Result<Option<Val>, Error> {
@@ -911,8 +955,11 @@ impl<'a, 's> Session<'a, 's> {
                     let at = base + o.a as u64;
                     // an `optional` field beyond the input is absent
                     if at + o.len as u64 <= total {
-                        let v = self.read_field(&o, at)?;
-                        self.put(scope, o.key, o.c, v)?;
+                        // a sentinel: the line yields no value (engine-spec 0.9)
+                        if !self.is_sentinel(&o, at)? {
+                            let v = self.read_field(&o, at)?;
+                            self.put(scope, o.key, o.c, v)?;
+                        }
                     } else if o.flags & F_OPTIONAL == 0 {
                         return Err(Error::MalformedWire);
                     }
@@ -1064,10 +1111,10 @@ impl<'a, 's> Session<'a, 's> {
             return Err(Error::BadPlan);
         }
         let plan = self.plan;
-        // later lines first: where two fields cover the same bits the earlier
-        // line's value is the one left on the wire (ruling 5 of 0.5). The
-        // compiler puts the fields of a part first, one operation each.
-        for (start, end) in [parts[1], parts[0]] {
+        // The compiler puts the fields of a part first, one operation each.
+        // (first, last) of the fields of each part, the kind's part first;
+        // no indexing, so no bounds check reaches the image
+        let span = |(start, end): (u32, u32)| -> Result<(u32, u32), Error> {
             let mut first = start;
             while first < end && matches!(plan.op(first)?.op, OP_WHEN | OP_REQ | OP_DEFAULT) {
                 first += 1;
@@ -1076,6 +1123,25 @@ impl<'a, 's> Session<'a, 's> {
             while last < end && plan.op(last)?.op == OP_FIELD {
                 last += 1;
             }
+            Ok((first, last))
+        };
+        let fields = [span(parts[1])?, span(parts[0])?];
+        // an absent key whose field has `absent` writes its first sentinel,
+        // first: a line with a value wins over it whatever their order
+        // (ruling 16 of 0.9); of two sentinels the earlier line's stays
+        for (first, last) in fields {
+            let mut i = last;
+            while i > first {
+                i -= 1;
+                let o = plan.op(i)?;
+                if o.nabsent != 0 && self.value_of(scope, o.key, defs)?.is_none() {
+                    self.write_sentinel(&o, base + o.a as u64, msg, msb)?;
+                }
+            }
+        }
+        // later lines first: where two fields cover the same bits the earlier
+        // line's value is the one left on the wire (ruling 5 of 0.5)
+        for (first, last) in fields {
             let mut i = last;
             while i > first {
                 i -= 1;
@@ -1264,6 +1330,13 @@ impl<'a, 's> Session<'a, 's> {
             match o.op {
                 OP_FIELD => {
                     self.need(o.len as u64)?;
+                    // a sentinel: neither the field's key nor an `also` key
+                    // gets a value (engine-spec 0.9, ruling 24)
+                    if self.is_sentinel(&o, self.pos)? {
+                        self.pos += o.len as u64;
+                        i = next;
+                        continue;
+                    }
                     let v = self.read_field(&o, self.pos)?;
                     self.pos += o.len as u64;
                     // an `also` key takes the same value through its own table
@@ -1642,9 +1715,13 @@ impl<'a, 's> Session<'a, 's> {
                     let at = w.pos;
                     // an absent key writes zero bits
                     w.zeros(o.len as u64)?;
-                    if let Some((v, table)) = value {
-                        let wire = self.through(table, v, false)?.ok_or(fail)?;
-                        self.write_field(&o, wire, at, w.out, w.msb)?;
+                    match value {
+                        Some((v, table)) => {
+                            let wire = self.through(table, v, false)?.ok_or(fail)?;
+                            self.write_field(&o, wire, at, w.out, w.msb)?;
+                        }
+                        // with `absent`, the first sentinel in place of the zero bits (engine-spec 0.9)
+                        None => self.write_sentinel(&o, at, w.out, w.msb)?,
                     }
                 }
                 OP_ALSO | OP_DEFAULT | OP_REQ => {}

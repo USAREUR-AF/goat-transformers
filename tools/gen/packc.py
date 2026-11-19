@@ -37,7 +37,7 @@ import re
 import struct
 import sys
 
-VERSION = 1
+VERSION = 2
 MAGIC = b"GTP1"
 
 # section ids
@@ -67,6 +67,7 @@ NONE16 = 0xFFFF
 NONE32 = 0xFFFFFFFF
 
 # limits the device engine is built with (embedded/gt-core/src/lib.rs)
+MAX_SENTINELS = 255
 MAX_DEPTH = 12
 MAX_PRESENCE = 16
 MAX_WHOLES = 4
@@ -308,8 +309,9 @@ class Pack:
     def _field(self, t, length, off):
         xf, params, yields = parse_transform(t[3])
         f = {"t": "field", "keys": [[t[1], None]], "len": length, "off": off, "xf": xf, "params": params,
-             "yields": yields, "swap": False, "trim": False, "optional": False}
+             "yields": yields, "swap": False, "trim": False, "optional": False, "absent": []}
         i = 4
+        seen_absent = False
         while i < len(t):
             if t[i] == "via" and i + 1 < len(t):
                 f["keys"][0][1] = t[i + 1]
@@ -320,14 +322,35 @@ class Pack:
                 i += 1
                 continue
             if t[i] == "absent":
-                refuse("unsupported-feature", "%s: the `absent` field option (absent-value sentinels, spec 0.9) "
-                       "is not in the device profile" % self.format)
+                # engine-spec 0.9: the token after `absent` is always its argument (ruling 11)
+                if i + 1 >= len(t) or seen_absent:
+                    refuse("bad-pack", "%s: `absent` with no argument, or twice on one line" % self.format)
+                seen_absent = True
+                f["absent"] = self._sentinels(t[i + 1], length)
+                i += 2
+                continue
             refuse("bad-pack", "%s: unknown field option `%s`" % (self.format, t[i]))
         ok = {"f32": length == 32, "f64": length == 64, "ascii": length % 8 == 0 and 8 <= length <= 2040}.get(
             xf, 1 <= length <= 64)
         if not ok or (f["swap"] and length % 8 != 0):
             refuse("bad-pack", "%s: bit length %d is not allowed for `%s`" % (self.format, length, t[3]))
         return f
+
+    def _sentinels(self, arg, length):
+        """The values of `absent` on `bits` (engine-spec 0.9): unsigned decimal
+        integers below 2^len, compared with the raw bits as `uint` reads them."""
+        if length > 64:
+            refuse("bad-pack", "%s: `absent` on a field of %d bits; 0.9 allows 64 at most" % (self.format, length))
+        out = []
+        for v in arg.split(","):
+            if not _DIGITS.match(v) or int(v) >= 1 << length:
+                refuse("bad-pack", "%s: `absent %s`: `%s` is not an unsigned decimal integer below 2^%d"
+                       % (self.format, arg, v, length))
+            out.append(int(v))
+        if len(out) > MAX_SENTINELS:
+            refuse("value-range", "%s: `absent` with %d values; the compiled form holds %d"
+                   % (self.format, len(out), MAX_SENTINELS))
+        return out
 
     # -- fixed layout -------------------------------------------------------
 
@@ -756,9 +779,9 @@ class Compiler:
     # -- ops ----------------------------------------------------------------
 
     @staticmethod
-    def node(op, xf=0, flags=0, key=NONE16, length=0, a=0, b=0, c=NONE16, kids=None):
+    def node(op, xf=0, flags=0, key=NONE16, length=0, a=0, b=0, c=NONE16, kids=None, nabsent=0):
         return {"op": op, "xf": xf, "flags": flags, "key": key, "len": length, "a": a, "b": b, "c": c,
-                "kids": kids if kids is not None else []}
+                "nabsent": nabsent, "kids": kids if kids is not None else []}
 
     def flatten(self, node, out):
         at = len(out)
@@ -950,17 +973,27 @@ class Compiler:
             keep = (dec and view.src_keep(path, key)) or (enc and view.tgt_keep(path, key))
             if keep:
                 keys.append((key, via))
+        always_absent = False
+        if not keys and enc and l["absent"]:
+            # a target field the conversion never gives a value still writes
+            # its first sentinel (engine-spec 0.9, Encode): it stays, on its
+            # first key, which the plan never sets
+            keys, always_absent = [l["keys"][0]], True
         if not keys:
             # nothing the plan carries: a sequential field still takes its bits
             return [self.node(OP_PAD, a=l["len"])] if pack.seq else []
         flags = (F_SWAP if l["swap"] else 0) | (F_TRIM if l["trim"] else 0) | (F_OPTIONAL if l["optional"] else 0)
-        b = self.pool_of([f64_bits(x) for x in l["params"]]) if l["params"] else 0
+        # the pool run of a field: its scale (three words), then its sentinels
+        words = [f64_bits(x) for x in l["params"]] if l["params"] else []
+        words += l["absent"]
+        b = self.pool_of(words) if words else 0
         out = []
         for i, (key, via) in enumerate(keys):
-            table = self.field_table(pack, key, via, l["yields"])
+            table = NONE16 if always_absent else self.field_table(pack, key, via, l["yields"])
             if i == 0:
-                out.append(self.node(OP_FIELD, xf=XF[l["xf"]], flags=flags, key=self.key(key), length=l["len"],
-                                     a=self.u32(l["off"], "a bit offset"), b=b, c=table))
+                out.append(self.node(OP_FIELD, xf=XF[l["xf"]], flags=flags,
+                                     key=self.key(key, 0 if always_absent else K_LIVE), length=l["len"],
+                                     a=self.u32(l["off"], "a bit offset"), b=b, c=table, nabsent=len(l["absent"])))
             else:
                 out.append(self.node(OP_ALSO, key=self.key(key), c=table))
         return out
@@ -1074,7 +1107,7 @@ class Compiler:
             struct.pack("<BBHIHHI", f["flags"], 0, f["word_bytes"], f["body"], f["name"], f["npresence"], 0)
             for f in self.formats))
         add(S_OPS, 16, len(self.ops), b"".join(
-            struct.pack("<BBBBHHIHH", o["op"], o["xf"], o["flags"], 0, o["key"], o["len"], o["a"], o["b"], o["c"])
+            struct.pack("<BBBBHHIHH", o["op"], o["xf"], o["flags"], o["nabsent"], o["key"], o["len"], o["a"], o["b"], o["c"])
             for o in self.ops))
         add(S_POOL, 8, len(self.pool), b"".join(struct.pack("<Q", w) for w in self.pool))
         add(S_CONDS, 4, len(self.conds), b"".join(struct.pack("<HBB", *c) for c in self.conds))
