@@ -445,3 +445,85 @@ class CommandLine(PkgCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ServeTest(PkgCase):
+    """`serve`: the planner over HTTP, on the invented tree, on a free port."""
+
+    def setUp(self):
+        super().setUp()
+        import threading
+        self.server = pkg.make_server(self.tree.root, "127.0.0.1", 0, log_requests=False)
+        self.addCleanup(self.server.server_close)
+        thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(self.server.shutdown)
+        self.base = "http://127.0.0.1:%d" % self.server.server_address[1]
+
+    def get(self, path):
+        """-> (status, content type, body as text)"""
+        import urllib.error
+        import urllib.request
+        try:
+            with urllib.request.urlopen(self.base + path, timeout=10) as r:
+                return r.status, r.headers["Content-Type"], r.read().decode()
+        except urllib.error.HTTPError as e:
+            with e:
+                return e.code, e.headers["Content-Type"], e.read().decode()
+
+    def test_a_plan_is_the_json_of_plan_json(self):
+        status, kind, body = self.get("/plan?formats=alpha,beta%232&language=go&os=darwin&linkage=dynamic")
+        self.assertEqual((status, kind), (200, "application/json; charset=utf-8"))
+        self.assertEqual(json.loads(body), self.plan("--language", "go", "--os", "darwin", "--linkage", "dynamic",
+                                                     formats="alpha,beta#2"))
+
+    def test_the_defaults_are_those_of_plan(self):
+        self.assertEqual(json.loads(self.get("/plan?formats=alpha")[2]), self.plan())
+
+    def test_formats_lists_each_format_its_wire_and_keys(self):
+        status, _, body = self.get("/formats")
+        self.assertEqual(status, 200)
+        listed = {f["format"]: f for f in json.loads(body)}
+        self.assertEqual(sorted(listed), ["alpha", "beta#2"])
+        self.assertEqual(listed["beta#2"]["keys"], BETA_KEYS)
+        self.assertEqual(listed["alpha"]["wire"], "json")
+
+    def test_a_request_that_cannot_be_met_is_422_and_says_why(self):
+        status, _, body = self.get("/plan?formats=gamma")
+        self.assertEqual(status, 422)
+        self.assertIn("formats not available: gamma", json.loads(body)["error"])
+        status, _, body = self.get("/plan?formats=alpha&language=java&runtime=wasm")
+        self.assertEqual(status, 422)
+        self.assertIn("java has no wasm runtime target", json.loads(body)["error"])
+
+    def test_a_wrong_field_is_400(self):
+        for query, why in (
+            ("language=go", "field formats is required"),
+            ("formats=alpha&colour=red", "unknown field: colour"),
+            ("formats=alpha&formats=beta%232", "field formats is given 2 times"),
+            ("formats=alpha&language=cobol", "language cobol is not one of"),
+            ("formats=alpha&linkage=partial", "linkage partial is not static or dynamic"),
+        ):
+            with self.subTest(query):
+                status, _, body = self.get("/plan?" + query)
+                self.assertEqual(status, 400)
+                self.assertIn(why, json.loads(body)["error"])
+
+    def test_a_long_query_is_refused(self):
+        self.assertEqual(self.get("/plan?formats=" + "a" * (pkg.MAX_QUERY + 1))[0], 414)
+
+    def test_the_form_and_an_unknown_path(self):
+        status, kind, body = self.get("/")
+        self.assertEqual((status, kind), (200, "text/html; charset=utf-8"))
+        self.assertIn("<option>zig</option>", body)
+        self.assertEqual(self.get("/nothing")[0], 404)
+
+    def test_the_tree_is_read_once_at_start(self):
+        self.tree.write("packs/late/pack.def", "format late\n" + HEAD + "wire json\nfield uid id string\n")
+        self.assertEqual(self.get("/plan?formats=late")[0], 422)
+
+    def test_a_tree_with_no_pack_is_refused_at_start(self):
+        empty = TempTree()
+        self.addCleanup(empty.cleanup)
+        with self.assertRaises(pkg.Unmet):
+            pkg.make_server(empty.root, "127.0.0.1", 0)

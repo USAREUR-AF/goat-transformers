@@ -17,6 +17,11 @@ linkage. This tool answers with the smallest package that meets them.
             file; --embed adds a source file that compiles them into a program
   archive   writes every model module and every pack as one .tar.gz, the same
             bytes for the same tree
+  serve     answers plan requests over HTTP: GET /formats, GET /plan with the
+            fields of `plan` as a query (the JSON of `plan --json`; 400 for a
+            wrong field, 422 for a request that cannot be met), and a form at
+            /. The packs are read once, at start. It listens on 127.0.0.1 by
+            default and has no authentication: put it behind a proxy to share it
 
 What it guarantees:
   - Packs and model modules are read by the Python engine of this repository
@@ -39,6 +44,7 @@ Usage:
   tools/goat-pkg formats
   tools/goat-pkg bundle --formats cot-xml,geojson --out vendor/goat [--embed rust|go|python]
   tools/goat-pkg archive --out packs.tar.gz [--vectors] [--prefix NAME]
+  tools/goat-pkg serve [--host 127.0.0.1] [--port 8765]
 
 Exit status: 0 done, 1 the request cannot be met, 2 a wrong command line.
 """
@@ -161,11 +167,13 @@ def named_formats(text):
     return list(dict.fromkeys(f.strip() for f in text.split(",") if f.strip()))
 
 
-def select(root, formats_arg):
+def select(root, formats_arg, packs=None):
     """The packs of the named formats. -> (formats, [Pack]); raises Unmet
-    when none is named or one is not in the tree."""
-    packs, broken = read_packs(root)
-    warn_broken(broken)
+    when none is named or one is not in the tree. `packs` is the result of
+    `read_packs` when the caller has read the tree already."""
+    if packs is None:
+        packs, broken = read_packs(root)
+        warn_broken(broken)
     want = named_formats(formats_arg)
     missing = [f for f in want if f not in packs]
     if missing or not want:
@@ -227,9 +235,10 @@ def build_command(language, runtime, linkage, os_name, arch):
     return linkage, builds[linkage].format(target=target, os=os_name, arch=arch, goarch=GOARCH.get(arch, arch))
 
 
-def plan(root, args):
-    """The manifest of the smallest package for the constraints in `args`."""
-    want, packs = select(root, args.formats)
+def plan(root, args, packs=None):
+    """The manifest of the smallest package for the constraints in `args`.
+    `packs` is the result of `read_packs` when the caller has read the tree."""
+    want, packs = select(root, args.formats, packs)
     linkage, command = build_command(args.language, args.runtime, args.linkage, args.os, args.arch)
     engine = load_engine(root, packs)
     return {
@@ -476,6 +485,174 @@ def cmd_archive(args, root):
 # The command line
 # --------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------
+# serve: the planner over HTTP
+# --------------------------------------------------------------------------
+
+# The fields of a plan request, with the default of each. The same names and
+# defaults as the options of `plan`.
+PLAN_FIELDS = {"formats": None, "language": "rust", "runtime": "native", "linkage": "static",
+               "os": "linux", "arch": "x86_64"}
+MAX_QUERY = 8192  # bytes of a request line's query; a longer one is refused
+
+PAGE = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>goat-pkg</title>
+<style>
+:root{color-scheme:light dark;--fg:#1b1b1b;--bg:#fff;--muted:#5c5c5c;--line:#d0d0d0}
+@media (prefers-color-scheme:dark){:root{--fg:#e8e8e8;--bg:#161616;--muted:#a8a8a8;--line:#3a3a3a}}
+body{font:15px/1.45 system-ui,sans-serif;color:var(--fg);background:var(--bg);margin:0 auto;max-width:56rem;padding:16px}
+fieldset{border:1px solid var(--line);margin:0 0 12px}label{display:inline-block;margin:2px 12px 2px 0}
+#formats{max-height:16rem;overflow:auto}pre{white-space:pre-wrap;border:1px solid var(--line);padding:8px}
+small{color:var(--muted)}
+</style></head><body>
+<h1>goat-pkg plan</h1>
+<p><small>The smallest package for a set of constraints. The same answers as <code>tools/goat-pkg plan --json</code>.</small></p>
+<form id="f">
+<fieldset><legend>Formats</legend><div id="formats">loading</div></fieldset>
+<fieldset><legend>Build</legend>
+<label>language <select name="language">LANGUAGE_OPTIONS</select></label>
+<label>runtime <select name="runtime"><option>native</option><option>wasm</option><option>js</option><option>jvm</option></select></label>
+<label>linkage <select name="linkage"><option>static</option><option>dynamic</option></select></label>
+<label>os <select name="os"><option>linux</option><option>darwin</option><option>windows</option></select></label>
+<label>arch <select name="arch"><option>x86_64</option><option>aarch64</option></select></label>
+</fieldset>
+<button>Plan</button></form>
+<pre id="out"></pre>
+<script>
+const box = document.getElementById("formats"), out = document.getElementById("out");
+fetch("formats").then(r => r.json()).then(list => {
+  box.textContent = "";
+  for (const f of list) {
+    const l = document.createElement("label"), c = document.createElement("input");
+    c.type = "checkbox"; c.name = "formats"; c.value = f.format;
+    l.append(c, " " + f.format + " (" + f.wire + ")"); box.append(l);
+  }
+});
+document.getElementById("f").addEventListener("submit", e => {
+  e.preventDefault();
+  const d = new FormData(e.target), q = new URLSearchParams();
+  q.set("formats", d.getAll("formats").join(","));
+  for (const k of ["language", "runtime", "linkage", "os", "arch"]) q.set(k, d.get(k));
+  fetch("plan?" + q).then(r => r.json()).then(j => { out.textContent = JSON.stringify(j, null, 2); });
+});
+</script></body></html>
+"""
+
+
+def plan_request(query):
+    """The constraints of a plan request from its query string.
+    -> argparse.Namespace like the options of `plan`; raises ValueError for a
+    field that is unknown, repeated or not allowed."""
+    import urllib.parse
+    fields = urllib.parse.parse_qs(query, keep_blank_values=True, strict_parsing=False, max_num_fields=len(PLAN_FIELDS))
+    unknown = sorted(set(fields) - set(PLAN_FIELDS))
+    if unknown:
+        raise ValueError("unknown field: %s; the fields are %s" % (", ".join(unknown), ", ".join(PLAN_FIELDS)))
+    values = {}
+    for name, default in PLAN_FIELDS.items():
+        given = fields.get(name)
+        if given is not None and len(given) != 1:
+            raise ValueError("field %s is given %d times" % (name, len(given)))
+        values[name] = given[0] if given else default
+    if values["formats"] is None:
+        raise ValueError("field formats is required")
+    if values["language"] not in LANGUAGES:
+        raise ValueError("language %s is not one of %s" % (values["language"], ", ".join(LANGUAGES)))
+    if values["linkage"] not in ("static", "dynamic"):
+        raise ValueError("linkage %s is not static or dynamic" % values["linkage"])
+    return argparse.Namespace(**values)
+
+
+def format_list(packs):
+    """The answer of GET /formats: each format, its wire type and its keys."""
+    return [{"format": name, "wire": pack.wire, "keys": list(pack.model_keys())} for name, pack in packs.items()]
+
+
+def make_handler(root, packs):
+    """The request handler of `serve`, over the packs read once at start."""
+    import http.server
+
+    page = PAGE.replace("LANGUAGE_OPTIONS", "".join("<option>%s</option>" % lang for lang in LANGUAGES)).encode()
+    formats_body = json.dumps(format_list(packs), indent=2).encode()
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        server_version = "goat-pkg"
+        sys_version = ""
+
+        def reply(self, status, body, content_type="application/json"):
+            self.send_response(status)
+            self.send_header("Content-Type", content_type + "; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            if self.command != "HEAD":
+                try:
+                    self.wfile.write(body)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass  # the client went away; there is no one to tell
+
+        def error(self, status, message):
+            self.reply(status, json.dumps({"error": message}).encode())
+
+        def do_GET(self):
+            path, _, query = self.path.partition("?")
+            if len(query) > MAX_QUERY:
+                return self.error(414, "the query is longer than %d bytes" % MAX_QUERY)
+            if path == "/":
+                return self.reply(200, page, "text/html")
+            if path == "/formats":
+                return self.reply(200, formats_body)
+            if path == "/plan":
+                try:
+                    args = plan_request(query)
+                except ValueError as e:
+                    return self.error(400, str(e))
+                try:
+                    manifest = plan(root, args, packs)
+                except Unmet as e:
+                    return self.error(422, str(e))
+                return self.reply(200, json.dumps(manifest, indent=2).encode())
+            return self.error(404, "no such path; the paths are /, /formats and /plan")
+
+        do_HEAD = do_GET
+
+        def log_message(self, fmt, *a):
+            if not getattr(self.server, "log_requests", True):
+                return
+            sys.stderr.write("goat-pkg serve: %s %s\n" % (self.address_string(), fmt % a))
+
+    return Handler
+
+
+def make_server(root, host, port, log_requests=True):
+    """A server for the tree at `root`, bound and not yet serving. Each request
+    is logged on stderr unless `log_requests` is false."""
+    import http.server
+    packs, broken = read_packs(root)
+    warn_broken(broken)
+    if not packs:
+        raise Unmet("no packs found under %s" % os.path.join(root, "packs"))
+    server = http.server.ThreadingHTTPServer((host, port), make_handler(root, packs))
+    server.daemon_threads = True
+    server.log_requests = log_requests
+    return server
+
+
+def cmd_serve(args, root):
+    server = make_server(root, args.host, args.port)
+    host, port = server.server_address[:2]
+    print(f"goat-pkg serve: http://{host}:{port}/  (/formats, /plan?formats=a,b&language=...)", flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+    return 0
+
+
 def parser():
     ap = argparse.ArgumentParser(
         prog="goat-pkg",
@@ -514,10 +691,16 @@ def parser():
     a.add_argument("--out", required=True, help="the .tar.gz to write")
     a.add_argument("--vectors", action="store_true", help="include the conformance vectors (left out by default)")
     a.add_argument("--prefix", default="", help="a directory name every member is placed under")
+    s = sub.add_parser(
+        "serve",
+        help="answer plan requests over HTTP: GET /formats, GET /plan?formats=a,b&language=... (the fields and "
+             "defaults of plan; the JSON of plan --json), and a form at /")
+    s.add_argument("--host", default="127.0.0.1", help="the address to listen on (default 127.0.0.1)")
+    s.add_argument("--port", type=int, default=8765, help="the port to listen on; 0 picks a free one (default 8765)")
     return ap
 
 
-COMMANDS = {"formats": cmd_formats, "plan": cmd_plan, "bundle": cmd_bundle, "archive": cmd_archive}
+COMMANDS = {"formats": cmd_formats, "plan": cmd_plan, "bundle": cmd_bundle, "archive": cmd_archive, "serve": cmd_serve}
 
 
 def main(argv=None, root=REPO):

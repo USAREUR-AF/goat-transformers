@@ -159,9 +159,9 @@ systems are kept in private stores (`docs/private-store.md`).
 `tools/goat-pkg plan` takes constraints (formats, language, runtime, linkage,
 OS, architecture) and returns the smallest package that meets them: the engine,
 only the named packs, the wire codecs those packs use, and the build command
-(`docs/package-configurator.md`). Built: the planner. Designed: per-wire feature
-gates in each engine so an unused codec is not compiled in; an HTTP front end
-over the planner.
+(`docs/package-configurator.md`). Built: the planner, and an HTTP front end
+over it (`tools/goat-pkg serve`). Designed: per-wire feature gates in each
+engine so an unused codec is not compiled in.
 
 ## Consumers
 

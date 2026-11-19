@@ -41,6 +41,30 @@ packs into the program. `tools/goat-pkg archive --out <file>.tar.gz
 [--vectors]` writes every module and pack as one archive, the same bytes for
 the same tree. [using.md](using.md) shows each from the consuming side.
 
+## Over HTTP
+
+`tools/goat-pkg serve` answers the same requests over HTTP. It reads the packs
+of the tree once, at start, and plans each request against them.
+
+```
+tools/goat-pkg serve --port 8765
+curl 'http://127.0.0.1:8765/plan?formats=cot-xml,sapient&language=go&linkage=dynamic'
+```
+
+| Request | Answer |
+|---|---|
+| `GET /plan?formats=a,b&language=...&runtime=...&linkage=...&os=...&arch=...` | the JSON of `plan --json`; each field has the default of the option of the same name, and `formats` is required |
+| `GET /formats` | each format, its wire type and the model keys it maps, as JSON |
+| `GET /` | a form that calls `/formats` and `/plan` |
+
+A field that `plan` does not have, a field given twice, a `language` or
+`linkage` outside its values, or a missing `formats` is status 400. A request
+that cannot be met (a format not in the tree, a build this tool does not
+state) is status 422. Each error is `{"error": "<why>"}`, the text `plan`
+prints. The server listens on 127.0.0.1 unless `--host` says otherwise and has
+no authentication; to share it, put it behind a proxy that has. It never
+writes a file: `bundle` and `archive` stay on the command line.
+
 ## Why it is computable here
 
 - **Atomic packs.** A format is a directory of data files, loaded on its own. A
@@ -93,4 +117,3 @@ overlay tree, it plans packages that include that overlay's formats.
 - Wire-codec feature-gating in each engine, so a package that uses only `xml`
   formats compiles without the `bits`/`protobuf` codecs (the "wires used" line
   already reports what a minimal build would keep).
-- An HTTP front end over the planner; today it is the `tools/goat-pkg` CLI.
