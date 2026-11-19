@@ -22,7 +22,9 @@ Writes, under --out:
 Category 062 is written as the pack `asterix-cat062-full` with the module `cat062full`, because
 the library holds a hand-written pack `asterix-cat062` and module `cat062`.
 
-One record per data block; the first UAP of a category that has several.
+One record per data block; the first UAP of a category that has several. Besides the newest
+edition of each category, the editions in OTHER_EDITIONS are written as packs
+asterix-cat<NNN>-ed<major><minor> with modules cat<NNN>ed<major><minor> (CAT021 0.23 and 0.26).
 
 Guarantees:
   - The same input gives the same bytes. Every output is rewritten from the sources; a key keeps
@@ -76,6 +78,18 @@ MODULE_VERSION = "0.1.0"
 PRIORITY = [48, 62, 21, 34, 10]
 # the library holds a hand-written pack and module of these names
 RENAME = {62: ("asterix-cat062-full", "cat062full")}
+# Editions written beside the newest one, as packs asterix-cat<NNN>-ed<major><minor>, because
+# they are in operational use and their records differ in layout from the newest edition's.
+# CAT021 0.23 and 0.26 (ADS-B ground stations of the DO-260 era): a different UAP from 2.x,
+# and I021/130 of 24-bit angles in 0.23 against 32-bit in 0.26. A data block does not state
+# its edition, so a reader chooses the pack by configuration.
+OTHER_EDITIONS = {21: ["0.23", "0.26"]}
+
+
+def edition_tag(ed):
+    """`ed` and the edition's digits, the minor number in two: 0.23 -> ed023, 1.2 -> ed102."""
+    major, minor = ed.split(".")
+    return "ed%s%s" % (major, minor.rjust(2, "0"))
 
 # model/core.def and model/track.def of goat-transformers: the keys, lists and derive lines the
 # generator needs to load its packs and to work out the cross-format vectors. --lib checks these
@@ -292,6 +306,26 @@ def definition_files(manifest):
     return out
 
 
+def other_edition_files(manifest):
+    """{category number: [(local file name, repository path)]} of OTHER_EDITIONS; an edition the
+    manifest does not list is a GenError."""
+    out = {}
+    try:
+        listed = {int(e["category"]): (e["category"], e["cats"]) for e in manifest}
+    except (KeyError, TypeError, ValueError) as x:
+        raise GenError("not a manifest of categories and editions (%s: %s)" % (type(x).__name__, x),
+                       file=SOURCES_DIR + "/manifest.json")
+    for n, eds in sorted(OTHER_EDITIONS.items()):
+        if n not in listed:
+            continue
+        cc, cats = listed[n]
+        for ed in eds:
+            if ed not in cats:
+                raise GenError("lists no edition %s of category %s" % (ed, cc), file=SOURCES_DIR + "/manifest.json")
+            out.setdefault(n, []).append(("cat%s-%s.json" % (cc, ed), "specs/cat%s/cats/cat%s/definition.json" % (cc, ed)))
+    return out
+
+
 def curl(url, dest):
     """Download one file. The only place the generator reaches the network."""
     os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -327,8 +361,12 @@ def source_list(root, sha, download=None):
     get("gitrev.txt", "gitrev.txt", sha)
     master = master_commit(root)
     get("LICENSE", "LICENSE", master)
-    for _, name, rel in definition_files(read_json(root, SOURCES_DIR + "/manifest.json")):
+    manifest = read_json(root, SOURCES_DIR + "/manifest.json")
+    others = other_edition_files(manifest)
+    for n, name, rel in definition_files(manifest):
         get(name, rel, sha)
+        for oname, orel in others.get(n, []):
+            get(oname, orel, sha)
     return got, master
 
 
@@ -344,7 +382,8 @@ def emit_sources_provenance(root, sha, got, master):
          "| commit of the published JSON (branch `gh-pages`): | `%s` |" % sha,
          "| commit of the sources the JSON was built from (branch `master`, stated by `gitrev.txt` at the commit above) | `%s` |" % master,
          "| licence | BSD 3-Clause, copyright (c) 2019 KZPS: the file `LICENSE` at the root of the `master` commit, verbatim below |",
-         "| edition taken | for each category the newest edition `manifest.json` lists |",
+         "| edition taken | for each category the newest edition `manifest.json` lists; also %s |" % "; ".join(
+             "category %03d edition %s" % (c, ", ".join(eds)) for c, eds in sorted(OTHER_EDITIONS.items())),
          "", "## Files", "",
          "Every file is downloaded from `https://raw.githubusercontent.com/%s/<commit>/<repository path>`." % REPO, "",
          "| File | Repository path | Commit | Bytes | SHA-256 |", "|---|---|---|---|---|"]
@@ -444,8 +483,9 @@ class Cat:
     """One category as its definition states it. Nothing here is decided by the generator but the
     pack and module names. `label` is the definition file as error messages name it."""
 
-    def __init__(self, d, src_name, rel):
+    def __init__(self, d, src_name, rel, other=False):
         self.src_name, self.rel = src_name, rel
+        self.other = other              # an edition of OTHER_EDITIONS, not the newest
         self.label = SOURCES_DIR + "/" + src_name
         if not isinstance(d, dict) or d.get("tag") != "AsterixBasic":
             raise GenError("not a category definition (the tag is %s)"
@@ -463,6 +503,9 @@ class Cat:
             raise GenError("the definition lacks a member the generator reads (%s: %s)" % (type(x).__name__, x),
                            file=self.label)
         self.format, self.module = RENAME.get(self.num, ("asterix-cat" + self.nnn, "cat" + self.nnn))
+        if other:
+            tag = edition_tag(self.edition)
+            self.format, self.module = "asterix-cat%s-%s" % (self.nnn, tag), "cat%s%s" % (self.nnn, tag)
 
     def _first_uap(self, u):
         """(the UAP the pack holds, a note for pack.md when the category has several)."""
@@ -480,9 +523,9 @@ class Cat:
         return cases[0][1], note
 
 
-def load_category(root, src_name, rel):
+def load_category(root, src_name, rel, other=False):
     """Read one definition file of the source directory."""
-    return Cat(read_json(root, SOURCES_DIR + "/" + src_name), src_name, rel)
+    return Cat(read_json(root, SOURCES_DIR + "/" + src_name), src_name, rel, other)
 
 
 # ---------------------------------------------------------------- plan: Cat -> what the pack holds
@@ -1561,7 +1604,7 @@ class VectorSet:
         the stated values, or that does not encode back to the expected bytes, is refused."""
         plan, cat = self.plan, self.plan.cat
         for s in SAMPLES:
-            if s["cat"] != cat.num:
+            if s["cat"] != cat.num or cat.other:          # the samples are of the newest edition
                 continue
             ent, lists = seq_decode(pack, s["hex"])
             for path, want in s["stated"].items():
@@ -2181,6 +2224,13 @@ def md_intro(a, plan, sha):
     a("")
     a("Uses the modules `core`%s and `%s` (`model/%s.def`, generated with the pack)." % (
         "".join(", `%s`" % m for m in plan.uses), cat.module, cat.module))
+    if cat.other:
+        a("")
+        a("This is an older edition of the category, written beside the pack `asterix-cat%s` of the newest" % cat.nnn)
+        a("edition because it is in operational use and its records are laid out differently. A data block")
+        a("does not state its edition: both packs select CAT %d, and the reader chooses the pack by what the" % cat.num)
+        a("sending system is configured to send. A record of one edition decoded with the other edition's pack")
+        a("is read wrongly or fails.")
     if cat.num in RENAME:
         a("")
         a("The pack and its module carry these names because the library also holds the hand-written pack")
@@ -2646,8 +2696,9 @@ def run(args, out):
     the others are still written."""
     root = out.root
     sha, master = sources_and_commits(args, out)
-    avail = OrderedDict((n, (name, rel)) for n, name, rel in
-                        definition_files(read_json(root, SOURCES_DIR + "/manifest.json")))
+    manifest = read_json(root, SOURCES_DIR + "/manifest.json")
+    avail = OrderedDict((n, (name, rel)) for n, name, rel in definition_files(manifest))
+    others = other_edition_files(manifest)
     try:
         want = sorted(avail) if args.cats == "all" else [int(x) for x in args.cats.split(",")]
     except ValueError:
@@ -2659,20 +2710,20 @@ def run(args, out):
         if n not in avail:
             failed.append((n, GenError("holds no category %03d" % n, file=SOURCES_DIR + "/manifest.json")))
             continue
-        name, rel = avail[n]
-        cat = None
-        try:
-            cat = load_category(root, name, rel)
-            definition_sha256 = hashlib.sha256(read_bytes(root, cat.label)).hexdigest()
-            g = generate(cat, read_names(out, cat), sha, master, definition_sha256)
-            write_category(out, g)
-            done.append(g)
-        except (GenError, WireError) as x:
-            if cat is not None:
-                remove_outputs(out, cat)
-            label = SOURCES_DIR + "/" + name
-            failed.append((n, GenError(x.message, file=x.file or label, line=x.line) if isinstance(x, GenError)
-                           else GenError(str(x), file=label)))
+        for name, rel, other in [avail[n] + (False,)] + [(on, orl, True) for on, orl in others.get(n, [])]:
+            cat = None
+            try:
+                cat = load_category(root, name, rel, other)
+                definition_sha256 = hashlib.sha256(read_bytes(root, cat.label)).hexdigest()
+                g = generate(cat, read_names(out, cat), sha, master, definition_sha256)
+                write_category(out, g)
+                done.append(g)
+            except (GenError, WireError) as x:
+                if cat is not None:
+                    remove_outputs(out, cat)
+                label = SOURCES_DIR + "/" + name
+                failed.append((n, GenError(x.message, file=x.file or label, line=x.line) if isinstance(x, GenError)
+                               else GenError(str(x), file=label)))
     n_vec = self_check(out, done)
     for g in done:
         print(summary_line(g, len(g.vectors)))
