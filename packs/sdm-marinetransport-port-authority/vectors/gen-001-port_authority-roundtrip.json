@@ -1,0 +1,17 @@
+{
+ "name": "gen-port_authority-roundtrip",
+ "from": "sdm-marinetransport-port-authority",
+ "to": "sdm-marinetransport-port-authority",
+ "input": "{\"type\":\"PortAuthority\",\"address\":{\"addressCountry\":\"s71268\",\"addressLocality\":\"s35540\",\"addressRegion\":\"s34359\",\"district\":\"s72846\",\"postOfficeBoxNumber\":\"s65562\",\"postalCode\":\"s91489\",\"streetAddress\":\"s70996\",\"streetNr\":\"s31566\"},\"alternateName\":\"s7270\",\"areaServed\":\"s79209\",\"contactPoint\":{\"areaServed\":\"s84897\",\"availabilityRestriction\":[\"https://example.org/114\",\"https://example.org/950\"],\"contactType\":\"s75366\",\"email\":\"s11435\",\"faxNumber\":\"s57023\",\"name\":\"s22782\",\"productSupported\":\"s22885\",\"telephone\":\"s22151\",\"url\":\"https://example.org/836\"},\"dataProvider\":\"s63616\",\"dateCreated\":\"2025-07-05T17:27:55.747Z\",\"dateModified\":\"2027-01-04T10:30:34.309Z\",\"description\":\"s11232\",\"id\":\"https://example.org/623\",\"location\":{\"bbox\":[0.75,1.5],\"type\":\"MultiPolygon\"},\"name\":\"s58330\",\"owner\":[\"https://example.org/556\",\"https://example.org/867\"],\"source\":\"s60156\",\"timezone\":\"s18639\",\"unlocode\":\"s69682\"}",
+ "expect": "{\"type\":\"PortAuthority\",\"address\":{\"addressCountry\":\"s71268\",\"addressLocality\":\"s35540\",\"addressRegion\":\"s34359\",\"district\":\"s72846\",\"postOfficeBoxNumber\":\"s65562\",\"postalCode\":\"s91489\",\"streetAddress\":\"s70996\",\"streetNr\":\"s31566\"},\"alternateName\":\"s7270\",\"areaServed\":\"s79209\",\"contactPoint\":{\"areaServed\":\"s84897\",\"availabilityRestriction\":[\"https://example.org/114\",\"https://example.org/950\"],\"contactType\":\"s75366\",\"email\":\"s11435\",\"faxNumber\":\"s57023\",\"name\":\"s22782\",\"productSupported\":\"s22885\",\"telephone\":\"s22151\",\"url\":\"https://example.org/836\"},\"dataProvider\":\"s63616\",\"dateCreated\":\"2025-07-05T17:27:55.747Z\",\"dateModified\":\"2027-01-04T10:30:34.309Z\",\"description\":\"s11232\",\"id\":\"https://example.org/623\",\"location\":{\"bbox\":[0.75,1.5],\"type\":\"MultiPolygon\"},\"name\":\"s58330\",\"owner\":[\"https://example.org/556\",\"https://example.org/867\"],\"source\":\"s60156\",\"timezone\":\"s18639\",\"unlocode\":\"s69682\"}",
+ "model": {
+  "@kind": "port_authority",
+  "uid": "https://example.org/623",
+  "sdmportauthority.address_address_country": "s71268",
+  "sdmportauthority.address_address_locality": "s35540",
+  "sdmportauthority.address_address_region": "s34359",
+  "sdmportauthority.address_district": "s72846",
+  "sdmportauthority.address_post_office_box_number": "s65562",
+  "sdmportauthority.address_postal_code": "s91489"
+ }
+}

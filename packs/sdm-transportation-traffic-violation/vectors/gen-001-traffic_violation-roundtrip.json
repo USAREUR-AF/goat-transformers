@@ -1,0 +1,17 @@
+{
+ "name": "gen-traffic_violation-roundtrip",
+ "from": "sdm-transportation-traffic-violation",
+ "to": "sdm-transportation-traffic-violation",
+ "input": "{\"type\":\"TrafficViolation\",\"address\":{\"addressCountry\":\"s27129\",\"addressLocality\":\"s32019\",\"addressRegion\":\"s25371\",\"district\":\"s27221\",\"postOfficeBoxNumber\":\"s12785\",\"postalCode\":\"s94243\",\"streetAddress\":\"s94186\",\"streetNr\":\"s48317\"},\"alternateName\":\"s7813\",\"amountCollected\":0.75,\"areaServed\":\"s84600\",\"dataProvider\":\"s19946\",\"dateCreated\":\"2026-06-08T17:45:33.450Z\",\"dateModified\":\"2026-08-17T03:19:16.645Z\",\"description\":\"s69302\",\"equipmentId\":\"s32253\",\"equipmentType\":\"s63667\",\"id\":\"https://example.org/257\",\"location\":{\"bbox\":[-3.25,-0.5],\"type\":\"MultiPolygon\"},\"mediaURL\":\"s85793\",\"name\":\"s20427\",\"observationDateTime\":\"2024-07-09T09:10:27.007Z\",\"owner\":[\"https://example.org/904\",\"https://example.org/36\"],\"paymentStatus\":\"Paid\",\"reportId\":\"s31935\",\"source\":\"s71039\",\"titleCode\":\"s56749\"}",
+ "expect": "{\"type\":\"TrafficViolation\",\"address\":{\"addressCountry\":\"s27129\",\"addressLocality\":\"s32019\",\"addressRegion\":\"s25371\",\"district\":\"s27221\",\"postOfficeBoxNumber\":\"s12785\",\"postalCode\":\"s94243\",\"streetAddress\":\"s94186\",\"streetNr\":\"s48317\"},\"alternateName\":\"s7813\",\"amountCollected\":0.75,\"areaServed\":\"s84600\",\"dataProvider\":\"s19946\",\"dateCreated\":\"2026-06-08T17:45:33.450Z\",\"dateModified\":\"2026-08-17T03:19:16.645Z\",\"description\":\"s69302\",\"equipmentId\":\"s32253\",\"equipmentType\":\"s63667\",\"id\":\"https://example.org/257\",\"location\":{\"bbox\":[-3.25,-0.5],\"type\":\"MultiPolygon\"},\"mediaURL\":\"s85793\",\"name\":\"s20427\",\"observationDateTime\":\"2024-07-09T09:10:27.007Z\",\"owner\":[\"https://example.org/904\",\"https://example.org/36\"],\"paymentStatus\":\"Paid\",\"reportId\":\"s31935\",\"source\":\"s71039\",\"titleCode\":\"s56749\"}",
+ "model": {
+  "@kind": "traffic_violation",
+  "uid": "https://example.org/257",
+  "sdmtrafficviolation.address_address_country": "s27129",
+  "sdmtrafficviolation.address_address_locality": "s32019",
+  "sdmtrafficviolation.address_address_region": "s25371",
+  "sdmtrafficviolation.address_district": "s27221",
+  "sdmtrafficviolation.address_post_office_box_number": "s12785",
+  "sdmtrafficviolation.address_postal_code": "s94243"
+ }
+}

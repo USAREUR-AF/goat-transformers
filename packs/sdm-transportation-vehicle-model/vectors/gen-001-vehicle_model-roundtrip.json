@@ -1,0 +1,17 @@
+{
+ "name": "gen-vehicle_model-roundtrip",
+ "from": "sdm-transportation-vehicle-model",
+ "to": "sdm-transportation-vehicle-model",
+ "input": "{\"type\":\"VehicleModel\",\"address\":{\"addressCountry\":\"s91143\",\"addressLocality\":\"s92891\",\"addressRegion\":\"s52068\",\"district\":\"s88778\",\"postOfficeBoxNumber\":\"s41788\",\"postalCode\":\"s60370\",\"streetAddress\":\"s83941\",\"streetNr\":\"s62921\"},\"alternateName\":\"s26258\",\"annotations\":[\"s12544\",\"s60750\"],\"areaServed\":\"s49468\",\"brandName\":\"s31965\",\"cargoVolume\":42.375,\"color\":\"s11494\",\"dataProvider\":\"s38350\",\"dateCreated\":\"2026-06-03T11:21:24.404Z\",\"dateModified\":\"2026-06-21T09:19:05.457Z\",\"depth\":42.375,\"description\":\"s6777\",\"fuelConsumption\":0.75,\"fuelType\":\"other\",\"height\":0.75,\"id\":\"https://example.org/688\",\"image\":\"https://example.org/638\",\"location\":{\"bbox\":[7.0625,-0.5],\"type\":\"Polygon\"},\"manufacturerName\":\"s15142\",\"modelName\":\"s161\",\"name\":\"s29969\",\"owner\":[\"https://example.org/712\",\"https://example.org/364\"],\"source\":\"s32297\",\"tractionBatteryCapacity\":42.375,\"url\":\"https://example.org/274\",\"vehicleEngine\":\"s12222\",\"vehicleModelDate\":\"2024-02-26T07:20:58.522Z\",\"vehicleType\":\"minibus\",\"weight\":42.375,\"width\":42.375}",
+ "expect": "{\"type\":\"VehicleModel\",\"address\":{\"addressCountry\":\"s91143\",\"addressLocality\":\"s92891\",\"addressRegion\":\"s52068\",\"district\":\"s88778\",\"postOfficeBoxNumber\":\"s41788\",\"postalCode\":\"s60370\",\"streetAddress\":\"s83941\",\"streetNr\":\"s62921\"},\"alternateName\":\"s26258\",\"annotations\":[\"s12544\",\"s60750\"],\"areaServed\":\"s49468\",\"brandName\":\"s31965\",\"cargoVolume\":42.375,\"color\":\"s11494\",\"dataProvider\":\"s38350\",\"dateCreated\":\"2026-06-03T11:21:24.404Z\",\"dateModified\":\"2026-06-21T09:19:05.457Z\",\"depth\":42.375,\"description\":\"s6777\",\"fuelConsumption\":0.75,\"fuelType\":\"other\",\"height\":0.75,\"id\":\"https://example.org/688\",\"image\":\"https://example.org/638\",\"location\":{\"bbox\":[7.0625,-0.5],\"type\":\"Polygon\"},\"manufacturerName\":\"s15142\",\"modelName\":\"s161\",\"name\":\"s29969\",\"owner\":[\"https://example.org/712\",\"https://example.org/364\"],\"source\":\"s32297\",\"tractionBatteryCapacity\":42.375,\"url\":\"https://example.org/274\",\"vehicleEngine\":\"s12222\",\"vehicleModelDate\":\"2024-02-26T07:20:58.522Z\",\"vehicleType\":\"minibus\",\"weight\":42.375,\"width\":42.375}",
+ "model": {
+  "@kind": "vehicle_model",
+  "uid": "https://example.org/688",
+  "sdmvehiclemodel.address_address_country": "s91143",
+  "sdmvehiclemodel.address_address_locality": "s92891",
+  "sdmvehiclemodel.address_address_region": "s52068",
+  "sdmvehiclemodel.address_district": "s88778",
+  "sdmvehiclemodel.address_post_office_box_number": "s41788",
+  "sdmvehiclemodel.address_postal_code": "s60370"
+ }
+}

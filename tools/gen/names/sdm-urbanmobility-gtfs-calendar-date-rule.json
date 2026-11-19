@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|appliesOn|string": "applies_on",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|exceptionType|string": "exception_type",
+  "|hasService|string": "has_service",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

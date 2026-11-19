@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|bikesAllowed|float": "bikes_allowed",
+  "|block|string": "block",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|direction|float": "direction",
+  "|hasRoute|string": "has_route",
+  "|hasService|string": "has_service",
+  "|hasShape|string": "has_shape",
+  "|headSign|string": "head_sign",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|shortName|string": "short_name",
+  "|source|string": "source",
+  "|type|string": "type",
+  "|wheelChairAccessible|float": "wheel_chair_accessible"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

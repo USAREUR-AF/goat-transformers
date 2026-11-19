@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|cameraName|string": "camera_name",
+  "|cameraNum|float": "camera_num",
+  "|cameraOrientation.annotatedMap|string": "camera_orientation_annotated_map",
+  "|cameraOrientation.comments|string": "camera_orientation_comments",
+  "|cameraType|string": "camera_type",
+  "|cameraUsage|string": "camera_usage",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|endDateTime|string": "end_date_time",
+  "|id|string": "id",
+  "|imageSnapshot|string": "image_snapshot",
+  "|location.type|string": "location_type",
+  "|mediaURL|string": "media_url",
+  "|name|string": "name",
+  "|on|int": "on",
+  "|source|string": "source",
+  "|startDateTime|string": "start_date_time",
+  "|streamName|string": "stream_name",
+  "|streamURL|string": "stream_url",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

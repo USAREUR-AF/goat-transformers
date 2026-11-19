@@ -1,0 +1,7 @@
+{
+ "name": "gen-gtfs_trip-residue",
+ "from": "sdm-urbanmobility-gtfs-trip",
+ "to": "sdm-urbanmobility-gtfs-trip",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"GtfsTrip\",\"alternateName\":\"s88856\",\"bikesAllowed\":1,\"block\":\"s59968\",\"dataProvider\":\"s82737\",\"dateCreated\":\"2024-11-08T15:51:48.413Z\",\"dateModified\":\"2024-01-11T20:14:47.080Z\",\"description\":\"s30197\",\"direction\":1,\"hasRoute\":\"https://example.org/16\",\"hasService\":\"https://example.org/81\",\"hasShape\":\"https://example.org/752\",\"headSign\":\"s96933\",\"id\":\"https://example.org/585\",\"name\":\"s31906\",\"owner\":[\"https://example.org/762\",\"https://example.org/260\"],\"shortName\":\"s31131\",\"source\":\"s74679\",\"wheelChairAccessible\":1}",
+ "expect": "{\"type\":\"GtfsTrip\",\"alternateName\":\"s88856\",\"bikesAllowed\":1,\"block\":\"s59968\",\"dataProvider\":\"s82737\",\"dateCreated\":\"2024-11-08T15:51:48.413Z\",\"dateModified\":\"2024-01-11T20:14:47.080Z\",\"description\":\"s30197\",\"direction\":1,\"hasRoute\":\"https://example.org/16\",\"hasService\":\"https://example.org/81\",\"hasShape\":\"https://example.org/752\",\"headSign\":\"s96933\",\"id\":\"https://example.org/585\",\"name\":\"s31906\",\"owner\":[\"https://example.org/762\",\"https://example.org/260\"],\"shortName\":\"s31131\",\"source\":\"s74679\",\"wheelChairAccessible\":1,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

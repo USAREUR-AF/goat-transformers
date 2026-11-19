@@ -1,0 +1,17 @@
+{
+ "name": "gen-aircraft_model-roundtrip",
+ "from": "sdm-aeronautics-aircraft-model",
+ "to": "sdm-aeronautics-aircraft-model",
+ "input": "{\"type\":\"AircraftModel\",\"address\":{\"addressCountry\":\"s26836\",\"addressLocality\":\"s29764\",\"addressRegion\":\"s60181\",\"district\":\"s73007\",\"postOfficeBoxNumber\":\"s42381\",\"postalCode\":\"s71645\",\"streetAddress\":\"s49891\",\"streetNr\":\"s53221\"},\"alternateName\":\"s52996\",\"areaServed\":\"s62911\",\"capacity\":0.75,\"ceiling\":0.75,\"codeIATA\":\"s75228\",\"codeICAO\":\"s48883\",\"dataProvider\":\"s36122\",\"dateCreated\":\"2023-12-02T20:41:47.573Z\",\"dateModified\":\"2024-08-08T03:21:22.164Z\",\"description\":\"s19747\",\"height\":0.75,\"id\":\"https://example.org/492\",\"length\":0.75,\"location\":{\"bbox\":[12.5,1.5],\"type\":\"MultiLineString\"},\"maximumAllowedFuel\":0.75,\"maximumAllowedSpeed\":0.75,\"mtow\":101.125,\"name\":\"s89313\",\"numberOfEngines\":0.75,\"owner\":[\"https://example.org/165\",\"https://example.org/236\"],\"source\":\"s89821\",\"wingSpan\":0.75}",
+ "expect": "{\"type\":\"AircraftModel\",\"address\":{\"addressCountry\":\"s26836\",\"addressLocality\":\"s29764\",\"addressRegion\":\"s60181\",\"district\":\"s73007\",\"postOfficeBoxNumber\":\"s42381\",\"postalCode\":\"s71645\",\"streetAddress\":\"s49891\",\"streetNr\":\"s53221\"},\"alternateName\":\"s52996\",\"areaServed\":\"s62911\",\"capacity\":0.75,\"ceiling\":0.75,\"codeIATA\":\"s75228\",\"codeICAO\":\"s48883\",\"dataProvider\":\"s36122\",\"dateCreated\":\"2023-12-02T20:41:47.573Z\",\"dateModified\":\"2024-08-08T03:21:22.164Z\",\"description\":\"s19747\",\"height\":0.75,\"id\":\"https://example.org/492\",\"length\":0.75,\"location\":{\"bbox\":[12.5,1.5],\"type\":\"MultiLineString\"},\"maximumAllowedFuel\":0.75,\"maximumAllowedSpeed\":0.75,\"mtow\":101.125,\"name\":\"s89313\",\"numberOfEngines\":0.75,\"owner\":[\"https://example.org/165\",\"https://example.org/236\"],\"source\":\"s89821\",\"wingSpan\":0.75}",
+ "model": {
+  "@kind": "aircraft_model",
+  "uid": "https://example.org/492",
+  "sdmaircraftmodel.address_address_country": "s26836",
+  "sdmaircraftmodel.address_address_locality": "s29764",
+  "sdmaircraftmodel.address_address_region": "s60181",
+  "sdmaircraftmodel.address_district": "s73007",
+  "sdmaircraftmodel.address_post_office_box_number": "s42381",
+  "sdmaircraftmodel.address_postal_code": "s71645"
+ }
+}

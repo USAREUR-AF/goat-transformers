@@ -1,0 +1,17 @@
+{
+ "name": "gen-smart_metering_observation-roundtrip",
+ "from": "sdm-device-smart-metering-observation",
+ "to": "sdm-device-smart-metering-observation",
+ "input": "{\"type\":\"SmartMeteringObservation\",\"address\":{\"addressCountry\":\"s26215\",\"addressLocality\":\"s62103\",\"addressRegion\":\"s43072\",\"district\":\"s52836\",\"postOfficeBoxNumber\":\"s54616\",\"postalCode\":\"s74316\",\"streetAddress\":\"s28639\",\"streetNr\":\"s13731\"},\"alternateName\":\"s54911\",\"areaServed\":\"s75521\",\"dataProvider\":\"s93830\",\"dateCreated\":\"2026-11-22T20:36:35.064Z\",\"dateModified\":\"2025-12-07T00:08:18.555Z\",\"description\":\"s36482\",\"entityVersion\":\"LD\",\"id\":\"https://example.org/542\",\"image\":\"https://example.org/154\",\"location\":{\"bbox\":[0.75,101.125],\"type\":\"Polygon\"},\"meterType\":\"s99558\",\"name\":\"s58912\",\"offPeakConsumption\":101.125,\"owner\":[\"https://example.org/243\",\"https://example.org/184\"],\"peakConsumption\":12.5,\"powerFactor\":1.5,\"refDevice\":\"https://example.org/767\",\"source\":\"s27263\",\"totalConsumption\":42.375}",
+ "expect": "{\"type\":\"SmartMeteringObservation\",\"address\":{\"addressCountry\":\"s26215\",\"addressLocality\":\"s62103\",\"addressRegion\":\"s43072\",\"district\":\"s52836\",\"postOfficeBoxNumber\":\"s54616\",\"postalCode\":\"s74316\",\"streetAddress\":\"s28639\",\"streetNr\":\"s13731\"},\"alternateName\":\"s54911\",\"areaServed\":\"s75521\",\"dataProvider\":\"s93830\",\"dateCreated\":\"2026-11-22T20:36:35.064Z\",\"dateModified\":\"2025-12-07T00:08:18.555Z\",\"description\":\"s36482\",\"entityVersion\":\"LD\",\"id\":\"https://example.org/542\",\"image\":\"https://example.org/154\",\"location\":{\"bbox\":[0.75,101.125],\"type\":\"Polygon\"},\"meterType\":\"s99558\",\"name\":\"s58912\",\"offPeakConsumption\":101.125,\"owner\":[\"https://example.org/243\",\"https://example.org/184\"],\"peakConsumption\":12.5,\"powerFactor\":1.5,\"refDevice\":\"https://example.org/767\",\"source\":\"s27263\",\"totalConsumption\":42.375}",
+ "model": {
+  "@kind": "smart_metering_observation",
+  "uid": "https://example.org/542",
+  "sdmsmartmeteringobservation.address_address_country": "s26215",
+  "sdmsmartmeteringobservation.address_address_locality": "s62103",
+  "sdmsmartmeteringobservation.address_address_region": "s43072",
+  "sdmsmartmeteringobservation.address_district": "s52836",
+  "sdmsmartmeteringobservation.address_post_office_box_number": "s54616",
+  "sdmsmartmeteringobservation.address_postal_code": "s74316"
+ }
+}

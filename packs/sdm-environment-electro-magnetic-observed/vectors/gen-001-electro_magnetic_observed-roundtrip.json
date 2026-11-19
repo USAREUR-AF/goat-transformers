@@ -1,0 +1,17 @@
+{
+ "name": "gen-electro_magnetic_observed-roundtrip",
+ "from": "sdm-environment-electro-magnetic-observed",
+ "to": "sdm-environment-electro-magnetic-observed",
+ "input": "{\"type\":\"ElectroMagneticObserved\",\"address\":{\"addressCountry\":\"s59015\",\"addressLocality\":\"s83545\",\"addressRegion\":\"s2073\",\"district\":\"s14315\",\"postOfficeBoxNumber\":\"s29485\",\"postalCode\":\"s24431\",\"streetAddress\":\"s19247\",\"streetNr\":\"s78277\"},\"alternateName\":\"s94910\",\"areaServed\":\"s46573\",\"dataProvider\":\"s83345\",\"dateCreated\":\"2025-11-08T01:01:01.700Z\",\"dateModified\":\"2024-03-26T11:47:07.099Z\",\"dateObserved\":\"2024-02-09T08:06:37.214Z\",\"dateObservedFrom\":\"2024-10-20T11:38:02.968Z\",\"dateObservedTo\":\"2026-06-29T11:12:09.808Z\",\"description\":\"s38606\",\"eMF\":0.75,\"id\":\"https://example.org/160\",\"location\":{\"bbox\":[12.5,101.125],\"type\":\"Polygon\"},\"name\":\"s93976\",\"owner\":[\"https://example.org/348\",\"https://example.org/944\"],\"refDevice\":\"https://example.org/996\",\"refPointOfInterest\":\"https://example.org/466\",\"reliability\":0.75,\"source\":\"s49280\"}",
+ "expect": "{\"type\":\"ElectroMagneticObserved\",\"address\":{\"addressCountry\":\"s59015\",\"addressLocality\":\"s83545\",\"addressRegion\":\"s2073\",\"district\":\"s14315\",\"postOfficeBoxNumber\":\"s29485\",\"postalCode\":\"s24431\",\"streetAddress\":\"s19247\",\"streetNr\":\"s78277\"},\"alternateName\":\"s94910\",\"areaServed\":\"s46573\",\"dataProvider\":\"s83345\",\"dateCreated\":\"2025-11-08T01:01:01.700Z\",\"dateModified\":\"2024-03-26T11:47:07.099Z\",\"dateObserved\":\"2024-02-09T08:06:37.214Z\",\"dateObservedFrom\":\"2024-10-20T11:38:02.968Z\",\"dateObservedTo\":\"2026-06-29T11:12:09.808Z\",\"description\":\"s38606\",\"eMF\":0.75,\"id\":\"https://example.org/160\",\"location\":{\"bbox\":[12.5,101.125],\"type\":\"Polygon\"},\"name\":\"s93976\",\"owner\":[\"https://example.org/348\",\"https://example.org/944\"],\"refDevice\":\"https://example.org/996\",\"refPointOfInterest\":\"https://example.org/466\",\"reliability\":0.75,\"source\":\"s49280\"}",
+ "model": {
+  "@kind": "electro_magnetic_observed",
+  "uid": "https://example.org/160",
+  "sdmelectromagneticobserved.address_address_country": "s59015",
+  "sdmelectromagneticobserved.address_address_locality": "s83545",
+  "sdmelectromagneticobserved.address_address_region": "s2073",
+  "sdmelectromagneticobserved.address_district": "s14315",
+  "sdmelectromagneticobserved.address_post_office_box_number": "s29485",
+  "sdmelectromagneticobserved.address_postal_code": "s24431"
+ }
+}

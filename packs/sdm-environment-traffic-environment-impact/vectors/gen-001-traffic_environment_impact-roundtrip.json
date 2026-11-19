@@ -1,0 +1,17 @@
+{
+ "name": "gen-traffic_environment_impact-roundtrip",
+ "from": "sdm-environment-traffic-environment-impact",
+ "to": "sdm-environment-traffic-environment-impact",
+ "input": "{\"type\":\"TrafficEnvironmentImpact\",\"address\":{\"addressCountry\":\"s60219\",\"addressLocality\":\"s99026\",\"addressRegion\":\"s25392\",\"district\":\"s48601\",\"postOfficeBoxNumber\":\"s39816\",\"postalCode\":\"s46875\",\"streetAddress\":\"s23587\",\"streetNr\":\"s54447\"},\"alternateName\":\"s10302\",\"areaServed\":\"s87083\",\"co2\":101.125,\"dataProvider\":\"s54325\",\"dateCreated\":\"2026-09-26T03:39:27.188Z\",\"dateModified\":\"2026-02-05T08:08:49.771Z\",\"dateObservedFrom\":\"2025-06-13T16:13:11.988Z\",\"dateObservedTo\":\"2025-12-09T16:37:38.605Z\",\"description\":\"s18813\",\"id\":\"https://example.org/985\",\"location\":{\"bbox\":[0.75,42.375],\"type\":\"Point\"},\"name\":\"s29102\",\"owner\":[\"https://example.org/193\",\"https://example.org/270\"],\"source\":\"s85715\",\"traffic\":[{\"refTrafficFlowObserved\":\"https://example.org/891\",\"vehicleClass\":\"s92234\"},{\"refTrafficFlowObserved\":\"https://example.org/199\",\"vehicleClass\":\"s20835\"}]}",
+ "expect": "{\"type\":\"TrafficEnvironmentImpact\",\"address\":{\"addressCountry\":\"s60219\",\"addressLocality\":\"s99026\",\"addressRegion\":\"s25392\",\"district\":\"s48601\",\"postOfficeBoxNumber\":\"s39816\",\"postalCode\":\"s46875\",\"streetAddress\":\"s23587\",\"streetNr\":\"s54447\"},\"alternateName\":\"s10302\",\"areaServed\":\"s87083\",\"co2\":101.125,\"dataProvider\":\"s54325\",\"dateCreated\":\"2026-09-26T03:39:27.188Z\",\"dateModified\":\"2026-02-05T08:08:49.771Z\",\"dateObservedFrom\":\"2025-06-13T16:13:11.988Z\",\"dateObservedTo\":\"2025-12-09T16:37:38.605Z\",\"description\":\"s18813\",\"id\":\"https://example.org/985\",\"location\":{\"bbox\":[0.75,42.375],\"type\":\"Point\"},\"name\":\"s29102\",\"owner\":[\"https://example.org/193\",\"https://example.org/270\"],\"source\":\"s85715\",\"traffic\":[{\"refTrafficFlowObserved\":\"https://example.org/891\",\"vehicleClass\":\"s92234\"},{\"refTrafficFlowObserved\":\"https://example.org/199\",\"vehicleClass\":\"s20835\"}]}",
+ "model": {
+  "@kind": "traffic_environment_impact",
+  "uid": "https://example.org/985",
+  "sdmtrafficenvironmentimpact.address_address_country": "s60219",
+  "sdmtrafficenvironmentimpact.address_address_locality": "s99026",
+  "sdmtrafficenvironmentimpact.address_address_region": "s25392",
+  "sdmtrafficenvironmentimpact.address_district": "s48601",
+  "sdmtrafficenvironmentimpact.address_post_office_box_number": "s39816",
+  "sdmtrafficenvironmentimpact.address_postal_code": "s46875"
+ }
+}

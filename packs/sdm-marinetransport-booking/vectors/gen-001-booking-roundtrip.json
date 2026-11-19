@@ -1,0 +1,17 @@
+{
+ "name": "gen-booking-roundtrip",
+ "from": "sdm-marinetransport-booking",
+ "to": "sdm-marinetransport-booking",
+ "input": "{\"type\":\"Booking\",\"actualWindowFrom\":101.125,\"actualWindowTo\":12.5,\"address\":{\"addressCountry\":\"s74888\",\"addressLocality\":\"s69790\",\"addressRegion\":\"s58051\",\"district\":\"s72738\",\"postOfficeBoxNumber\":\"s71944\",\"postalCode\":\"s88061\",\"streetAddress\":\"s33011\",\"streetNr\":\"s79734\"},\"alternateName\":\"s48716\",\"areaServed\":\"s1156\",\"bookingDate\":12.5,\"bookingNumber\":42.375,\"bookingStatus\":\"No show\",\"company\":\"s12972\",\"containersExport\":1.5,\"containersImport\":0.75,\"dataProvider\":\"s73624\",\"dateCreated\":\"2025-05-04T16:35:12.181Z\",\"dateModified\":\"2026-03-30T14:20:00.087Z\",\"description\":\"s10670\",\"enterDate\":-3.25,\"exportContainer1\":\"s22010\",\"exportContainer2\":\"s87121\",\"id\":\"https://example.org/688\",\"importContainer1\":\"s35641\",\"importContainer2\":\"s85750\",\"location\":{\"bbox\":[12.5,0.75],\"type\":\"LineString\"},\"name\":\"s74796\",\"originalWindowFrom\":7.0625,\"originalWindowTo\":0.75,\"owner\":[\"https://example.org/8\",\"https://example.org/935\"],\"source\":\"s25446\",\"windowDate\":101.125}",
+ "expect": "{\"type\":\"Booking\",\"actualWindowFrom\":101.125,\"actualWindowTo\":12.5,\"address\":{\"addressCountry\":\"s74888\",\"addressLocality\":\"s69790\",\"addressRegion\":\"s58051\",\"district\":\"s72738\",\"postOfficeBoxNumber\":\"s71944\",\"postalCode\":\"s88061\",\"streetAddress\":\"s33011\",\"streetNr\":\"s79734\"},\"alternateName\":\"s48716\",\"areaServed\":\"s1156\",\"bookingDate\":12.5,\"bookingNumber\":42.375,\"bookingStatus\":\"No show\",\"company\":\"s12972\",\"containersExport\":1.5,\"containersImport\":0.75,\"dataProvider\":\"s73624\",\"dateCreated\":\"2025-05-04T16:35:12.181Z\",\"dateModified\":\"2026-03-30T14:20:00.087Z\",\"description\":\"s10670\",\"enterDate\":-3.25,\"exportContainer1\":\"s22010\",\"exportContainer2\":\"s87121\",\"id\":\"https://example.org/688\",\"importContainer1\":\"s35641\",\"importContainer2\":\"s85750\",\"location\":{\"bbox\":[12.5,0.75],\"type\":\"LineString\"},\"name\":\"s74796\",\"originalWindowFrom\":7.0625,\"originalWindowTo\":0.75,\"owner\":[\"https://example.org/8\",\"https://example.org/935\"],\"source\":\"s25446\",\"windowDate\":101.125}",
+ "model": {
+  "@kind": "booking",
+  "uid": "https://example.org/688",
+  "sdmbooking.actual_window_from": "101.125",
+  "sdmbooking.actual_window_to": "12.5",
+  "sdmbooking.address_address_country": "s74888",
+  "sdmbooking.address_address_locality": "s69790",
+  "sdmbooking.address_address_region": "s58051",
+  "sdmbooking.address_district": "s72738"
+ }
+}

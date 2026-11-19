@@ -1,0 +1,7 @@
+{
+ "name": "gen-gtfs_transfer_rule-residue",
+ "from": "sdm-urbanmobility-gtfs-transfer-rule",
+ "to": "sdm-urbanmobility-gtfs-transfer-rule",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"GtfsTransferRule\",\"alternateName\":\"s17242\",\"dataProvider\":\"s28642\",\"dateCreated\":\"2025-02-07T09:30:00.781Z\",\"dateModified\":\"2025-12-17T02:28:35.466Z\",\"description\":\"s47847\",\"hasDestination\":\"https://example.org/590\",\"hasOrigin\":\"https://example.org/57\",\"id\":\"https://example.org/169\",\"minimumTransferTime\":101.125,\"name\":\"s34546\",\"owner\":[\"https://example.org/323\",\"https://example.org/525\"],\"source\":\"s5729\",\"transferType\":\"s33960\"}",
+ "expect": "{\"type\":\"GtfsTransferRule\",\"alternateName\":\"s17242\",\"dataProvider\":\"s28642\",\"dateCreated\":\"2025-02-07T09:30:00.781Z\",\"dateModified\":\"2025-12-17T02:28:35.466Z\",\"description\":\"s47847\",\"hasDestination\":\"https://example.org/590\",\"hasOrigin\":\"https://example.org/57\",\"id\":\"https://example.org/169\",\"minimumTransferTime\":101.125,\"name\":\"s34546\",\"owner\":[\"https://example.org/323\",\"https://example.org/525\"],\"source\":\"s5729\",\"transferType\":\"s33960\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

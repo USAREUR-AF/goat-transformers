@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "annotations|.|string": "annotations_value",
+  "category|.|string": "category_value",
+  "controlled_property|.|string": "controlled_property_value",
+  "device_category|.|string": "device_category_value",
+  "function|.|string": "function_value",
+  "owner|.|string": "owner_value",
+  "supported_protocol|.|string": "supported_protocol_value",
+  "supported_units|.|string": "supported_units_value",
+  "|alternateName|string": "alternate_name",
+  "|brandName|string": "brand_name",
+  "|color|string": "color",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|deviceClass|string": "device_class",
+  "|documentation|string": "documentation",
+  "|energyLimitationClass|string": "energy_limitation_class",
+  "|id|string": "id",
+  "|image|string": "image",
+  "|macAddress|string": "mac_address",
+  "|manufacturerName|string": "manufacturer_name",
+  "|modelName|string": "model_name",
+  "|name|string": "name",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|annotations": "annotations",
+  "|category": "category",
+  "|controlledProperty": "controlled_property",
+  "|deviceCategory": "device_category",
+  "|function": "function",
+  "|owner": "owner",
+  "|supportedProtocol": "supported_protocol",
+  "|supportedUnits": "supported_units"
+ }
+}

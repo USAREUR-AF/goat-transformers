@@ -1,0 +1,17 @@
+{
+ "name": "gen-restricted_traffic_area-roundtrip",
+ "from": "sdm-transportation-restricted-traffic-area",
+ "to": "sdm-transportation-restricted-traffic-area",
+ "input": "{\"type\":\"RestrictedTrafficArea\",\"address\":{\"addressCountry\":\"s89727\",\"addressLocality\":\"s67261\",\"addressRegion\":\"s56413\",\"district\":\"s70568\",\"postOfficeBoxNumber\":\"s98621\",\"postalCode\":\"s88248\",\"streetAddress\":\"s59585\",\"streetNr\":\"s67759\"},\"alternateName\":\"s57795\",\"areaServed\":\"s33659\",\"category\":[\"onlyPedestrian\",\"forDisabled\"],\"dataProvider\":\"s82462\",\"dateCreated\":\"2025-04-14T17:33:09.665Z\",\"dateModified\":\"2025-08-02T11:55:32.608Z\",\"description\":\"s48186\",\"id\":\"https://example.org/566\",\"location\":{\"bbox\":[0.75,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s54613\",\"notAllowedVehicleType\":[\"carWithCaravan\",\"dieselCarEuro5a\"],\"owner\":[\"https://example.org/347\",\"https://example.org/275\"],\"regulation\":\"https://example.org/964\",\"restrictionExceptions\":[\"https://example.org/153\",\"https://example.org/562\"],\"restrictionValidityHours\":\"s46170\",\"security\":[\"patrolled\",\"fencesareaSeperatedFromSurroundings\"],\"source\":\"s47067\",\"specialRestrictions\":[\"https://example.org/658\",\"https://example.org/884\"],\"validityEndDate\":\"2026-10-13T04:18:32.870Z\",\"validityStartDate\":\"2024-06-13T10:49:08.647Z\"}",
+ "expect": "{\"type\":\"RestrictedTrafficArea\",\"address\":{\"addressCountry\":\"s89727\",\"addressLocality\":\"s67261\",\"addressRegion\":\"s56413\",\"district\":\"s70568\",\"postOfficeBoxNumber\":\"s98621\",\"postalCode\":\"s88248\",\"streetAddress\":\"s59585\",\"streetNr\":\"s67759\"},\"alternateName\":\"s57795\",\"areaServed\":\"s33659\",\"category\":[\"onlyPedestrian\",\"forDisabled\"],\"dataProvider\":\"s82462\",\"dateCreated\":\"2025-04-14T17:33:09.665Z\",\"dateModified\":\"2025-08-02T11:55:32.608Z\",\"description\":\"s48186\",\"id\":\"https://example.org/566\",\"location\":{\"bbox\":[0.75,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s54613\",\"notAllowedVehicleType\":[\"carWithCaravan\",\"dieselCarEuro5a\"],\"owner\":[\"https://example.org/347\",\"https://example.org/275\"],\"regulation\":\"https://example.org/964\",\"restrictionExceptions\":[\"https://example.org/153\",\"https://example.org/562\"],\"restrictionValidityHours\":\"s46170\",\"security\":[\"patrolled\",\"fencesareaSeperatedFromSurroundings\"],\"source\":\"s47067\",\"specialRestrictions\":[\"https://example.org/658\",\"https://example.org/884\"],\"validityEndDate\":\"2026-10-13T04:18:32.870Z\",\"validityStartDate\":\"2024-06-13T10:49:08.647Z\"}",
+ "model": {
+  "@kind": "restricted_traffic_area",
+  "uid": "https://example.org/566",
+  "sdmrestrictedtrafficarea.address_address_country": "s89727",
+  "sdmrestrictedtrafficarea.address_address_locality": "s67261",
+  "sdmrestrictedtrafficarea.address_address_region": "s56413",
+  "sdmrestrictedtrafficarea.address_district": "s70568",
+  "sdmrestrictedtrafficarea.address_post_office_box_number": "s98621",
+  "sdmrestrictedtrafficarea.address_postal_code": "s88248"
+ }
+}

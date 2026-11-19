@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|operatedBy|string": "operated_by",
+  "|page|string": "page",
+  "|routeColor|string": "route_color",
+  "|routeSortOrder|float": "route_sort_order",
+  "|routeTextColor|string": "route_text_color",
+  "|routeType|string": "route_type",
+  "|shortName|string": "short_name",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}

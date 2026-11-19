@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "has_stop|.|string": "has_stop_value",
+  "owner|.|string": "owner_value",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|hasTrip|string": "has_trip",
+  "|headSign|string": "head_sign",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|remainingDistance|float": "remaining_distance",
+  "|remainingTime|string": "remaining_time",
+  "|source|string": "source",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|hasStop": "has_stop",
+  "|owner": "owner"
+ }
+}

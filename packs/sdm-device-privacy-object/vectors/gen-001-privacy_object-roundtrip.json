@@ -1,0 +1,17 @@
+{
+ "name": "gen-privacy_object-roundtrip",
+ "from": "sdm-device-privacy-object",
+ "to": "sdm-device-privacy-object",
+ "input": "{\"type\":\"PrivacyObject\",\"address\":{\"addressCountry\":\"s41716\",\"addressLocality\":\"s35443\",\"addressRegion\":\"s43211\",\"district\":\"s69791\",\"postOfficeBoxNumber\":\"s8769\",\"postalCode\":\"s26496\",\"streetAddress\":\"s58773\",\"streetNr\":\"s49742\"},\"alternateName\":\"s85958\",\"areaServed\":\"s65847\",\"category\":[\"sensor\",\"network\"],\"crossborderTransfer\":\"s29616\",\"dataProvider\":\"s50865\",\"dateCreated\":\"2025-12-15T16:25:46.816Z\",\"dateModified\":\"2025-09-09T14:25:00.751Z\",\"description\":\"s33145\",\"floor\":0.75,\"id\":\"https://example.org/876\",\"image\":\"https://example.org/340\",\"isIndoor\":true,\"isPersonalData\":true,\"legitimateInterest\":\"s97196\",\"location\":{\"bbox\":[101.125,1.5],\"type\":\"LineString\"},\"name\":\"s79766\",\"owner\":[\"https://example.org/283\",\"https://example.org/822\"],\"purpose\":\"s5314\",\"recipientList\":[\"https://example.org/518\",\"https://example.org/342\"],\"refDevice\":\"https://example.org/78\",\"retentionPeriod\":\"s5545\",\"source\":\"s39329\",\"user\":\"https://example.org/404\"}",
+ "expect": "{\"type\":\"PrivacyObject\",\"address\":{\"addressCountry\":\"s41716\",\"addressLocality\":\"s35443\",\"addressRegion\":\"s43211\",\"district\":\"s69791\",\"postOfficeBoxNumber\":\"s8769\",\"postalCode\":\"s26496\",\"streetAddress\":\"s58773\",\"streetNr\":\"s49742\"},\"alternateName\":\"s85958\",\"areaServed\":\"s65847\",\"category\":[\"sensor\",\"network\"],\"crossborderTransfer\":\"s29616\",\"dataProvider\":\"s50865\",\"dateCreated\":\"2025-12-15T16:25:46.816Z\",\"dateModified\":\"2025-09-09T14:25:00.751Z\",\"description\":\"s33145\",\"floor\":0.75,\"id\":\"https://example.org/876\",\"image\":\"https://example.org/340\",\"isIndoor\":true,\"isPersonalData\":true,\"legitimateInterest\":\"s97196\",\"location\":{\"bbox\":[101.125,1.5],\"type\":\"LineString\"},\"name\":\"s79766\",\"owner\":[\"https://example.org/283\",\"https://example.org/822\"],\"purpose\":\"s5314\",\"recipientList\":[\"https://example.org/518\",\"https://example.org/342\"],\"refDevice\":\"https://example.org/78\",\"retentionPeriod\":\"s5545\",\"source\":\"s39329\",\"user\":\"https://example.org/404\"}",
+ "model": {
+  "@kind": "privacy_object",
+  "uid": "https://example.org/876",
+  "sdmprivacyobject.address_address_country": "s41716",
+  "sdmprivacyobject.address_address_locality": "s35443",
+  "sdmprivacyobject.address_address_region": "s43211",
+  "sdmprivacyobject.address_district": "s69791",
+  "sdmprivacyobject.address_post_office_box_number": "s8769",
+  "sdmprivacyobject.address_postal_code": "s26496"
+ }
+}

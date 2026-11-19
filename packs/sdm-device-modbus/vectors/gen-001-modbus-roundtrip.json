@@ -1,0 +1,17 @@
+{
+ "name": "gen-modbus-roundtrip",
+ "from": "sdm-device-modbus",
+ "to": "sdm-device-modbus",
+ "input": "{\"type\":\"Modbus\",\"address\":{\"addressCountry\":\"s51903\",\"addressLocality\":\"s94721\",\"addressRegion\":\"s36556\",\"district\":\"s28460\",\"postOfficeBoxNumber\":\"s6885\",\"postalCode\":\"s94377\",\"streetAddress\":\"s7828\",\"streetNr\":\"s77147\"},\"alternateName\":\"s91159\",\"areaServed\":\"s47743\",\"dataProvider\":\"s34041\",\"dateCreated\":\"2025-07-28T11:55:57.428Z\",\"dateModified\":\"2026-05-17T13:24:48.066Z\",\"description\":\"s87786\",\"id\":\"https://example.org/597\",\"location\":{\"bbox\":[-3.25,0.75],\"type\":\"MultiPolygon\"},\"memoryAddress\":\"s98069\",\"name\":\"s79199\",\"owner\":[\"https://example.org/96\",\"https://example.org/831\"],\"primaryTable\":\"holdingRegister\",\"protocolId\":\"s96552\",\"source\":\"s34960\",\"transactionId\":\"s44353\",\"unitId\":\"s47640\",\"value\":\"s60174\"}",
+ "expect": "{\"type\":\"Modbus\",\"address\":{\"addressCountry\":\"s51903\",\"addressLocality\":\"s94721\",\"addressRegion\":\"s36556\",\"district\":\"s28460\",\"postOfficeBoxNumber\":\"s6885\",\"postalCode\":\"s94377\",\"streetAddress\":\"s7828\",\"streetNr\":\"s77147\"},\"alternateName\":\"s91159\",\"areaServed\":\"s47743\",\"dataProvider\":\"s34041\",\"dateCreated\":\"2025-07-28T11:55:57.428Z\",\"dateModified\":\"2026-05-17T13:24:48.066Z\",\"description\":\"s87786\",\"id\":\"https://example.org/597\",\"location\":{\"bbox\":[-3.25,0.75],\"type\":\"MultiPolygon\"},\"memoryAddress\":\"s98069\",\"name\":\"s79199\",\"owner\":[\"https://example.org/96\",\"https://example.org/831\"],\"primaryTable\":\"holdingRegister\",\"protocolId\":\"s96552\",\"source\":\"s34960\",\"transactionId\":\"s44353\",\"unitId\":\"s47640\",\"value\":\"s60174\"}",
+ "model": {
+  "@kind": "modbus",
+  "uid": "https://example.org/597",
+  "sdmmodbus.address_address_country": "s51903",
+  "sdmmodbus.address_address_locality": "s94721",
+  "sdmmodbus.address_address_region": "s36556",
+  "sdmmodbus.address_district": "s28460",
+  "sdmmodbus.address_post_office_box_number": "s6885",
+  "sdmmodbus.address_postal_code": "s94377"
+ }
+}

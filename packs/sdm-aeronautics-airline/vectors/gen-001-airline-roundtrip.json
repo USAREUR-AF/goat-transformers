@@ -1,0 +1,17 @@
+{
+ "name": "gen-airline-roundtrip",
+ "from": "sdm-aeronautics-airline",
+ "to": "sdm-aeronautics-airline",
+ "input": "{\"type\":\"Airline\",\"address\":{\"addressCountry\":\"s10178\",\"addressLocality\":\"s22395\",\"addressRegion\":\"s23724\",\"district\":\"s89174\",\"postOfficeBoxNumber\":\"s42726\",\"postalCode\":\"s30506\",\"streetAddress\":\"s19809\",\"streetNr\":\"s74350\"},\"alternateName\":\"s20887\",\"areaServed\":\"s28118\",\"callSign\":\"s29029\",\"codeIATA\":\"s11492\",\"codeICAO\":\"s26888\",\"dataProvider\":\"s67883\",\"dateCreated\":\"2026-09-30T17:59:51.560Z\",\"dateModified\":\"2024-11-01T01:27:03.302Z\",\"description\":\"s96398\",\"id\":\"https://example.org/328\",\"location\":{\"bbox\":[7.0625,101.125],\"type\":\"MultiLineString\"},\"name\":\"s65533\",\"owner\":[\"https://example.org/917\",\"https://example.org/735\"],\"source\":\"s27297\"}",
+ "expect": "{\"type\":\"Airline\",\"address\":{\"addressCountry\":\"s10178\",\"addressLocality\":\"s22395\",\"addressRegion\":\"s23724\",\"district\":\"s89174\",\"postOfficeBoxNumber\":\"s42726\",\"postalCode\":\"s30506\",\"streetAddress\":\"s19809\",\"streetNr\":\"s74350\"},\"alternateName\":\"s20887\",\"areaServed\":\"s28118\",\"callSign\":\"s29029\",\"codeIATA\":\"s11492\",\"codeICAO\":\"s26888\",\"dataProvider\":\"s67883\",\"dateCreated\":\"2026-09-30T17:59:51.560Z\",\"dateModified\":\"2024-11-01T01:27:03.302Z\",\"description\":\"s96398\",\"id\":\"https://example.org/328\",\"location\":{\"bbox\":[7.0625,101.125],\"type\":\"MultiLineString\"},\"name\":\"s65533\",\"owner\":[\"https://example.org/917\",\"https://example.org/735\"],\"source\":\"s27297\"}",
+ "model": {
+  "@kind": "airline",
+  "uid": "https://example.org/328",
+  "sdmairline.address_address_country": "s10178",
+  "sdmairline.address_address_locality": "s22395",
+  "sdmairline.address_address_region": "s23724",
+  "sdmairline.address_district": "s89174",
+  "sdmairline.address_post_office_box_number": "s42726",
+  "sdmairline.address_postal_code": "s30506"
+ }
+}

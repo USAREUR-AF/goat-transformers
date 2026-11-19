@@ -1,0 +1,17 @@
+{
+ "name": "gen-flight_notification-roundtrip",
+ "from": "sdm-aeronautics-flight-notification",
+ "to": "sdm-aeronautics-flight-notification",
+ "input": "{\"type\":\"FlightNotification\",\"address\":{\"addressCountry\":\"s8527\",\"addressLocality\":\"s85827\",\"addressRegion\":\"s40569\",\"district\":\"s16989\",\"postOfficeBoxNumber\":\"s27969\",\"postalCode\":\"s27490\",\"streetAddress\":\"s36899\",\"streetNr\":\"s68156\"},\"alternateName\":\"s21968\",\"areaServed\":\"s30375\",\"belongsToFlight\":\"https://example.org/260\",\"dataProvider\":\"s49348\",\"dateCreated\":\"2026-04-22T00:06:13.346Z\",\"dateIssued\":\"2025-04-16T09:09:58.540Z\",\"dateModified\":\"2024-06-06T16:36:51.186Z\",\"description\":\"s73786\",\"id\":\"https://example.org/771\",\"location\":{\"bbox\":[101.125,0.75],\"type\":\"MultiPoint\"},\"name\":\"s50370\",\"owner\":[\"https://example.org/564\",\"https://example.org/397\"],\"source\":\"s96501\",\"state\":\"unknown\"}",
+ "expect": "{\"type\":\"FlightNotification\",\"address\":{\"addressCountry\":\"s8527\",\"addressLocality\":\"s85827\",\"addressRegion\":\"s40569\",\"district\":\"s16989\",\"postOfficeBoxNumber\":\"s27969\",\"postalCode\":\"s27490\",\"streetAddress\":\"s36899\",\"streetNr\":\"s68156\"},\"alternateName\":\"s21968\",\"areaServed\":\"s30375\",\"belongsToFlight\":\"https://example.org/260\",\"dataProvider\":\"s49348\",\"dateCreated\":\"2026-04-22T00:06:13.346Z\",\"dateIssued\":\"2025-04-16T09:09:58.540Z\",\"dateModified\":\"2024-06-06T16:36:51.186Z\",\"description\":\"s73786\",\"id\":\"https://example.org/771\",\"location\":{\"bbox\":[101.125,0.75],\"type\":\"MultiPoint\"},\"name\":\"s50370\",\"owner\":[\"https://example.org/564\",\"https://example.org/397\"],\"source\":\"s96501\",\"state\":\"unknown\"}",
+ "model": {
+  "@kind": "flight_notification",
+  "uid": "https://example.org/771",
+  "sdmflightnotification.address_address_country": "s8527",
+  "sdmflightnotification.address_address_locality": "s85827",
+  "sdmflightnotification.address_address_region": "s40569",
+  "sdmflightnotification.address_district": "s16989",
+  "sdmflightnotification.address_post_office_box_number": "s27969",
+  "sdmflightnotification.address_postal_code": "s27490"
+ }
+}

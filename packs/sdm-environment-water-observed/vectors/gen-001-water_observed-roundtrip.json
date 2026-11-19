@@ -1,0 +1,17 @@
+{
+ "name": "gen-water_observed-roundtrip",
+ "from": "sdm-environment-water-observed",
+ "to": "sdm-environment-water-observed",
+ "input": "{\"type\":\"WaterObserved\",\"address\":{\"addressCountry\":\"s27150\",\"addressLocality\":\"s74233\",\"addressRegion\":\"s81525\",\"district\":\"s21047\",\"postOfficeBoxNumber\":\"s63964\",\"postalCode\":\"s35230\",\"streetAddress\":\"s74141\",\"streetNr\":\"s37093\"},\"alternateName\":\"s74577\",\"areaServed\":\"s20384\",\"dataProvider\":\"s31580\",\"dateCreated\":\"2024-05-28T10:07:37.059Z\",\"dateModified\":\"2026-01-17T12:11:46.257Z\",\"dateObserved\":\"2024-05-04T23:06:57.970Z\",\"dateObservedFrom\":\"2025-06-17T04:31:31.181Z\",\"dateObservedTo\":\"2024-10-31T18:25:51.824Z\",\"description\":\"s10596\",\"flow\":0.75,\"height\":0.75,\"id\":\"https://example.org/503\",\"location\":{\"bbox\":[7.0625,0.75],\"type\":\"LineString\"},\"measuredArea\":101.125,\"name\":\"s14255\",\"objectArea\":7.0625,\"objectHeightAverage\":7.0625,\"objectHeightMax\":101.125,\"objectVolume\":42.375,\"owner\":[\"https://example.org/593\",\"https://example.org/978\"],\"refDevice\":\"https://example.org/958\",\"source\":\"s81152\",\"swellDirection\":42.375,\"swellHeight\":7.0625,\"swellPeriod\":7.0625,\"waterDischarge\":42.375,\"waterLevel\":0.75,\"waveLength\":42.375}",
+ "expect": "{\"type\":\"WaterObserved\",\"address\":{\"addressCountry\":\"s27150\",\"addressLocality\":\"s74233\",\"addressRegion\":\"s81525\",\"district\":\"s21047\",\"postOfficeBoxNumber\":\"s63964\",\"postalCode\":\"s35230\",\"streetAddress\":\"s74141\",\"streetNr\":\"s37093\"},\"alternateName\":\"s74577\",\"areaServed\":\"s20384\",\"dataProvider\":\"s31580\",\"dateCreated\":\"2024-05-28T10:07:37.059Z\",\"dateModified\":\"2026-01-17T12:11:46.257Z\",\"dateObserved\":\"2024-05-04T23:06:57.970Z\",\"dateObservedFrom\":\"2025-06-17T04:31:31.181Z\",\"dateObservedTo\":\"2024-10-31T18:25:51.824Z\",\"description\":\"s10596\",\"flow\":0.75,\"height\":0.75,\"id\":\"https://example.org/503\",\"location\":{\"bbox\":[7.0625,0.75],\"type\":\"LineString\"},\"measuredArea\":101.125,\"name\":\"s14255\",\"objectArea\":7.0625,\"objectHeightAverage\":7.0625,\"objectHeightMax\":101.125,\"objectVolume\":42.375,\"owner\":[\"https://example.org/593\",\"https://example.org/978\"],\"refDevice\":\"https://example.org/958\",\"source\":\"s81152\",\"swellDirection\":42.375,\"swellHeight\":7.0625,\"swellPeriod\":7.0625,\"waterDischarge\":42.375,\"waterLevel\":0.75,\"waveLength\":42.375}",
+ "model": {
+  "@kind": "water_observed",
+  "uid": "https://example.org/503",
+  "time_ms": "1714864017970",
+  "sdmwaterobserved.address_address_country": "s27150",
+  "sdmwaterobserved.address_address_locality": "s74233",
+  "sdmwaterobserved.address_address_region": "s81525",
+  "sdmwaterobserved.address_district": "s21047",
+  "sdmwaterobserved.address_post_office_box_number": "s63964"
+ }
+}

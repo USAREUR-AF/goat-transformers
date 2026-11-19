@@ -1,0 +1,17 @@
+{
+ "name": "gen-gtfs_stop_time-roundtrip",
+ "from": "sdm-urbanmobility-gtfs-stop-time",
+ "to": "sdm-urbanmobility-gtfs-stop-time",
+ "input": "{\"type\":\"GtfsStopTime\",\"alternateName\":\"s4243\",\"arrivalTime\":\"s89794\",\"dataProvider\":\"s83580\",\"dateCreated\":\"2024-06-09T01:01:38.259Z\",\"dateModified\":\"2026-03-28T07:16:20.952Z\",\"departureTime\":\"s29378\",\"description\":\"s76403\",\"distanceTravelled\":0.75,\"dropOffType\":\"s92509\",\"hasStop\":\"https://example.org/157\",\"hasTrip\":\"https://example.org/335\",\"id\":\"https://example.org/650\",\"name\":\"s67726\",\"owner\":[\"https://example.org/924\",\"https://example.org/436\"],\"pickupType\":\"s73001\",\"source\":\"s31535\",\"stopHeadsign\":\"s30417\",\"stopSequence\":101.125,\"timepoint\":\"s98038\"}",
+ "expect": "{\"type\":\"GtfsStopTime\",\"alternateName\":\"s4243\",\"arrivalTime\":\"s89794\",\"dataProvider\":\"s83580\",\"dateCreated\":\"2024-06-09T01:01:38.259Z\",\"dateModified\":\"2026-03-28T07:16:20.952Z\",\"departureTime\":\"s29378\",\"description\":\"s76403\",\"distanceTravelled\":0.75,\"dropOffType\":\"s92509\",\"hasStop\":\"https://example.org/157\",\"hasTrip\":\"https://example.org/335\",\"id\":\"https://example.org/650\",\"name\":\"s67726\",\"owner\":[\"https://example.org/924\",\"https://example.org/436\"],\"pickupType\":\"s73001\",\"source\":\"s31535\",\"stopHeadsign\":\"s30417\",\"stopSequence\":101.125,\"timepoint\":\"s98038\"}",
+ "model": {
+  "@kind": "gtfs_stop_time",
+  "uid": "https://example.org/650",
+  "sdmgtfsstoptime.alternate_name": "s4243",
+  "sdmgtfsstoptime.arrival_time": "s89794",
+  "sdmgtfsstoptime.data_provider": "s83580",
+  "sdmgtfsstoptime.date_created": "2024-06-09T01:01:38.259Z",
+  "sdmgtfsstoptime.date_modified": "2026-03-28T07:16:20.952Z",
+  "sdmgtfsstoptime.departure_time": "s29378"
+ }
+}

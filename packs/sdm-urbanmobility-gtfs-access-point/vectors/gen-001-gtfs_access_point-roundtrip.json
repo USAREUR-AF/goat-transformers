@@ -1,0 +1,17 @@
+{
+ "name": "gen-gtfs_access_point-roundtrip",
+ "from": "sdm-urbanmobility-gtfs-access-point",
+ "to": "sdm-urbanmobility-gtfs-access-point",
+ "input": "{\"type\":\"GtfsAccessPoint\",\"address\":{\"addressCountry\":\"s23140\",\"addressLocality\":\"s34086\",\"addressRegion\":\"s50562\",\"district\":\"s39111\",\"postOfficeBoxNumber\":\"s25505\",\"postalCode\":\"s48869\",\"streetAddress\":\"s55059\",\"streetNr\":\"s21486\"},\"alternateName\":\"s97014\",\"areaServed\":\"s35998\",\"code\":\"s10191\",\"dataProvider\":\"s64968\",\"dateCreated\":\"2026-10-05T16:38:20.302Z\",\"dateModified\":\"2025-10-21T15:21:44.046Z\",\"description\":\"s52053\",\"hasParentStation\":\"https://example.org/389\",\"hasService\":\"https://example.org/706\",\"hasStop\":[\"https://example.org/343\",\"https://example.org/472\"],\"hasTrip\":\"https://example.org/891\",\"id\":\"https://example.org/901\",\"location\":{\"bbox\":[12.5,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s53730\",\"owner\":[\"https://example.org/124\",\"https://example.org/768\"],\"page\":\"https://example.org/925\",\"source\":\"s7008\",\"stop_desc\":\"s69000\",\"wheelChairAccessible\":\"s4398\",\"zoneCode\":\"s22207\"}",
+ "expect": "{\"type\":\"GtfsAccessPoint\",\"address\":{\"addressCountry\":\"s23140\",\"addressLocality\":\"s34086\",\"addressRegion\":\"s50562\",\"district\":\"s39111\",\"postOfficeBoxNumber\":\"s25505\",\"postalCode\":\"s48869\",\"streetAddress\":\"s55059\",\"streetNr\":\"s21486\"},\"alternateName\":\"s97014\",\"areaServed\":\"s35998\",\"code\":\"s10191\",\"dataProvider\":\"s64968\",\"dateCreated\":\"2026-10-05T16:38:20.302Z\",\"dateModified\":\"2025-10-21T15:21:44.046Z\",\"description\":\"s52053\",\"hasParentStation\":\"https://example.org/389\",\"hasService\":\"https://example.org/706\",\"hasStop\":[\"https://example.org/343\",\"https://example.org/472\"],\"hasTrip\":\"https://example.org/891\",\"id\":\"https://example.org/901\",\"location\":{\"bbox\":[12.5,7.0625],\"type\":\"MultiPoint\"},\"name\":\"s53730\",\"owner\":[\"https://example.org/124\",\"https://example.org/768\"],\"page\":\"https://example.org/925\",\"source\":\"s7008\",\"stop_desc\":\"s69000\",\"wheelChairAccessible\":\"s4398\",\"zoneCode\":\"s22207\"}",
+ "model": {
+  "@kind": "gtfs_access_point",
+  "uid": "https://example.org/901",
+  "sdmgtfsaccesspoint.address_address_country": "s23140",
+  "sdmgtfsaccesspoint.address_address_locality": "s34086",
+  "sdmgtfsaccesspoint.address_address_region": "s50562",
+  "sdmgtfsaccesspoint.address_district": "s39111",
+  "sdmgtfsaccesspoint.address_post_office_box_number": "s25505",
+  "sdmgtfsaccesspoint.address_postal_code": "s48869"
+ }
+}

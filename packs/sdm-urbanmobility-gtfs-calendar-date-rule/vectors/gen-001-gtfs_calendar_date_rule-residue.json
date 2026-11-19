@@ -1,0 +1,7 @@
+{
+ "name": "gen-gtfs_calendar_date_rule-residue",
+ "from": "sdm-urbanmobility-gtfs-calendar-date-rule",
+ "to": "sdm-urbanmobility-gtfs-calendar-date-rule",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"GtfsCalendarDateRule\",\"alternateName\":\"s91990\",\"appliesOn\":\"2024-05-17\",\"dataProvider\":\"s21593\",\"dateCreated\":\"2026-06-17T03:56:28.752Z\",\"dateModified\":\"2025-05-05T09:53:26.796Z\",\"description\":\"s51695\",\"exceptionType\":\"s19177\",\"hasService\":\"https://example.org/981\",\"id\":\"https://example.org/350\",\"name\":\"s3680\",\"owner\":[\"https://example.org/953\",\"https://example.org/82\"],\"source\":\"s66427\"}",
+ "expect": "{\"type\":\"GtfsCalendarDateRule\",\"alternateName\":\"s91990\",\"appliesOn\":\"2024-05-17\",\"dataProvider\":\"s21593\",\"dateCreated\":\"2026-06-17T03:56:28.752Z\",\"dateModified\":\"2025-05-05T09:53:26.796Z\",\"description\":\"s51695\",\"exceptionType\":\"s19177\",\"hasService\":\"https://example.org/981\",\"id\":\"https://example.org/350\",\"name\":\"s3680\",\"owner\":[\"https://example.org/953\",\"https://example.org/82\"],\"source\":\"s66427\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

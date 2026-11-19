@@ -1,0 +1,17 @@
+{
+ "name": "gen-air_quality_observed-roundtrip",
+ "from": "sdm-environment-air-quality-observed",
+ "to": "sdm-environment-air-quality-observed",
+ "input": "{\"type\":\"AirQualityObserved\",\"address\":{\"addressCountry\":\"s42666\",\"addressLocality\":\"s42625\",\"addressRegion\":\"s5934\",\"district\":\"s38365\",\"postOfficeBoxNumber\":\"s9764\",\"postalCode\":\"s23581\",\"streetAddress\":\"s74068\",\"streetNr\":\"s96201\"},\"airQualityIndex\":42.375,\"airQualityLevel\":\"s87572\",\"alternateName\":\"s16031\",\"areaServed\":\"s55370\",\"as\":42.375,\"c6h6\":42.375,\"cd\":1.5,\"charge\":0.75,\"co\":0.75,\"co2\":42.375,\"coLevel\":\"s11931\",\"dataProvider\":\"s30820\",\"dateCreated\":\"2025-08-07T19:31:00.775Z\",\"dateModified\":\"2024-05-08T00:48:16.837Z\",\"dateObserved\":\"2024-06-02T21:30:26.424Z\",\"description\":\"s24669\",\"id\":\"https://example.org/154\",\"location\":{\"bbox\":[-0.5,-0.5],\"type\":\"Point\"},\"name\":\"s56912\",\"ni\":0.75,\"no\":42.375,\"no2\":7.0625,\"nox\":42.375,\"o3\":1.5,\"owner\":[\"https://example.org/295\",\"https://example.org/775\"],\"pb\":1.5,\"pm1\":0.75,\"pm10\":0.75,\"pm25\":42.375,\"pm4\":42.375,\"precipitation\":0.75,\"pressure\":7.0625,\"refDevice\":\"https://example.org/194\",\"refPointOfInterest\":\"https://example.org/983\",\"refWeatherObserved\":\"https://example.org/211\",\"relativeHumidity\":0.75,\"reliability\":0.75,\"sh2\":1.5,\"so2\":101.125,\"source\":\"s57275\",\"temperature\":-3.25,\"tpc\":1.5,\"tsp\":42.375,\"typeofLocation\":\"indoor\",\"volatileOrganicCompoundsTotal\":42.375,\"windDirection\":-0.5,\"windSpeed\":42.375}",
+ "expect": "{\"type\":\"AirQualityObserved\",\"address\":{\"addressCountry\":\"s42666\",\"addressLocality\":\"s42625\",\"addressRegion\":\"s5934\",\"district\":\"s38365\",\"postOfficeBoxNumber\":\"s9764\",\"postalCode\":\"s23581\",\"streetAddress\":\"s74068\",\"streetNr\":\"s96201\"},\"airQualityIndex\":42.375,\"airQualityLevel\":\"s87572\",\"alternateName\":\"s16031\",\"areaServed\":\"s55370\",\"as\":42.375,\"c6h6\":42.375,\"cd\":1.5,\"charge\":0.75,\"co\":0.75,\"co2\":42.375,\"coLevel\":\"s11931\",\"dataProvider\":\"s30820\",\"dateCreated\":\"2025-08-07T19:31:00.775Z\",\"dateModified\":\"2024-05-08T00:48:16.837Z\",\"dateObserved\":\"2024-06-02T21:30:26.424Z\",\"description\":\"s24669\",\"id\":\"https://example.org/154\",\"location\":{\"bbox\":[-0.5,-0.5],\"type\":\"Point\"},\"name\":\"s56912\",\"ni\":0.75,\"no\":42.375,\"no2\":7.0625,\"nox\":42.375,\"o3\":1.5,\"owner\":[\"https://example.org/295\",\"https://example.org/775\"],\"pb\":1.5,\"pm1\":0.75,\"pm10\":0.75,\"pm25\":42.375,\"pm4\":42.375,\"precipitation\":0.75,\"pressure\":7.0625,\"refDevice\":\"https://example.org/194\",\"refPointOfInterest\":\"https://example.org/983\",\"refWeatherObserved\":\"https://example.org/211\",\"relativeHumidity\":0.75,\"reliability\":0.75,\"sh2\":1.5,\"so2\":101.125,\"source\":\"s57275\",\"temperature\":-3.25,\"tpc\":1.5,\"tsp\":42.375,\"typeofLocation\":\"indoor\",\"volatileOrganicCompoundsTotal\":42.375,\"windDirection\":-0.5,\"windSpeed\":42.375}",
+ "model": {
+  "@kind": "air_quality_observed",
+  "uid": "https://example.org/154",
+  "time_ms": "1717363826424",
+  "sdmairqualityobserved.address_address_country": "s42666",
+  "sdmairqualityobserved.address_address_locality": "s42625",
+  "sdmairqualityobserved.address_address_region": "s5934",
+  "sdmairqualityobserved.address_district": "s38365",
+  "sdmairqualityobserved.address_post_office_box_number": "s9764"
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "location_bbox|.|float": "location_bbox_value",
+  "owner|.|string": "owner_value",
+  "|address.addressCountry|string": "address_address_country",
+  "|address.addressLocality|string": "address_address_locality",
+  "|address.addressRegion|string": "address_address_region",
+  "|address.district|string": "address_district",
+  "|address.postOfficeBoxNumber|string": "address_post_office_box_number",
+  "|address.postalCode|string": "address_postal_code",
+  "|address.streetAddress|string": "address_street_address",
+  "|address.streetNr|string": "address_street_nr",
+  "|alertLevel|float": "alert_level",
+  "|alternateName|string": "alternate_name",
+  "|areaServed|string": "area_served",
+  "|currentLevel|float": "current_level",
+  "|dangerLevel|float": "danger_level",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|floodLevelStatus|string": "flood_level_status",
+  "|id|string": "id",
+  "|location.type|string": "location_type",
+  "|measuredDistance|float": "measured_distance",
+  "|name|string": "name",
+  "|observationDateTime|string": "observation_date_time",
+  "|referenceLevel|float": "reference_level",
+  "|source|string": "source",
+  "|stationID|string": "station_id",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|location.bbox": "location_bbox",
+  "|owner": "owner"
+ }
+}

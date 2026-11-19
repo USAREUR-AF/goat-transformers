@@ -1,0 +1,17 @@
+{
+ "name": "gen-gtfs_service-roundtrip",
+ "from": "sdm-urbanmobility-gtfs-service",
+ "to": "sdm-urbanmobility-gtfs-service",
+ "input": "{\"type\":\"GtfsService\",\"alternateName\":\"s66759\",\"dataProvider\":\"s28796\",\"dateCreated\":\"2024-12-25T18:55:06.948Z\",\"dateModified\":\"2026-01-12T15:01:54.907Z\",\"description\":\"s19772\",\"id\":\"https://example.org/343\",\"name\":\"s69862\",\"operatedBy\":\"https://example.org/702\",\"owner\":[\"https://example.org/371\",\"https://example.org/643\"],\"source\":\"s68211\"}",
+ "expect": "{\"type\":\"GtfsService\",\"alternateName\":\"s66759\",\"dataProvider\":\"s28796\",\"dateCreated\":\"2024-12-25T18:55:06.948Z\",\"dateModified\":\"2026-01-12T15:01:54.907Z\",\"description\":\"s19772\",\"id\":\"https://example.org/343\",\"name\":\"s69862\",\"operatedBy\":\"https://example.org/702\",\"owner\":[\"https://example.org/371\",\"https://example.org/643\"],\"source\":\"s68211\"}",
+ "model": {
+  "@kind": "gtfs_service",
+  "uid": "https://example.org/343",
+  "sdmgtfsservice.alternate_name": "s66759",
+  "sdmgtfsservice.data_provider": "s28796",
+  "sdmgtfsservice.date_created": "2024-12-25T18:55:06.948Z",
+  "sdmgtfsservice.date_modified": "2026-01-12T15:01:54.907Z",
+  "sdmgtfsservice.description": "s19772",
+  "sdmgtfsservice.id": "https://example.org/343"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-noise_pollution-roundtrip",
+ "from": "sdm-environment-noise-pollution",
+ "to": "sdm-environment-noise-pollution",
+ "input": "{\"type\":\"NoisePollution\",\"Laeq2\":7.0625,\"Lamax2\":-0.5,\"address\":{\"addressCountry\":\"s48621\",\"addressLocality\":\"s46976\",\"addressRegion\":\"s1210\",\"district\":\"s82299\",\"postOfficeBoxNumber\":\"s30665\",\"postalCode\":\"s78907\",\"streetAddress\":\"s60088\",\"streetNr\":\"s42014\"},\"alternateName\":\"s64964\",\"areaServed\":\"s68072\",\"buildingsType\":\"s19086\",\"dataProvider\":\"s75751\",\"dateCreated\":\"2025-11-27T00:14:44.089Z\",\"dateModified\":\"2024-06-27T00:42:32.467Z\",\"dateObservedFrom\":\"2024-08-31T05:47:36.606Z\",\"dateObservedTo\":\"2025-03-07T06:25:25.651Z\",\"description\":\"s40848\",\"groundType\":\"s96313\",\"id\":\"https://example.org/627\",\"location\":{\"bbox\":[101.125,1.5],\"type\":\"Point\"},\"name\":\"s53275\",\"noiseAnnoyanceIndex\":1.5,\"noiseOrigin\":\"s86828\",\"owner\":[\"https://example.org/34\",\"https://example.org/368\"],\"source\":\"s27169\",\"wallsType\":\"s57559\"}",
+ "expect": "{\"type\":\"NoisePollution\",\"Laeq2\":7.0625,\"Lamax2\":-0.5,\"address\":{\"addressCountry\":\"s48621\",\"addressLocality\":\"s46976\",\"addressRegion\":\"s1210\",\"district\":\"s82299\",\"postOfficeBoxNumber\":\"s30665\",\"postalCode\":\"s78907\",\"streetAddress\":\"s60088\",\"streetNr\":\"s42014\"},\"alternateName\":\"s64964\",\"areaServed\":\"s68072\",\"buildingsType\":\"s19086\",\"dataProvider\":\"s75751\",\"dateCreated\":\"2025-11-27T00:14:44.089Z\",\"dateModified\":\"2024-06-27T00:42:32.467Z\",\"dateObservedFrom\":\"2024-08-31T05:47:36.606Z\",\"dateObservedTo\":\"2025-03-07T06:25:25.651Z\",\"description\":\"s40848\",\"groundType\":\"s96313\",\"id\":\"https://example.org/627\",\"location\":{\"bbox\":[101.125,1.5],\"type\":\"Point\"},\"name\":\"s53275\",\"noiseAnnoyanceIndex\":1.5,\"noiseOrigin\":\"s86828\",\"owner\":[\"https://example.org/34\",\"https://example.org/368\"],\"source\":\"s27169\",\"wallsType\":\"s57559\"}",
+ "model": {
+  "@kind": "noise_pollution",
+  "uid": "https://example.org/627",
+  "sdmnoisepollution.laeq2": "7.0625",
+  "sdmnoisepollution.lamax2": "-0.5",
+  "sdmnoisepollution.address_address_country": "s48621",
+  "sdmnoisepollution.address_address_locality": "s46976",
+  "sdmnoisepollution.address_address_region": "s1210",
+  "sdmnoisepollution.address_district": "s82299"
+ }
+}

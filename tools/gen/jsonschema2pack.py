@@ -183,21 +183,64 @@ def _split_key(content):
         if rest.startswith(":") and (len(rest) == 1 or rest[1] == " "):
             return str(key), rest[1:].strip()
         return None
-    m = re.match(r"([^\s:#\[\]{},][^:]*?|\S*?):(?: (.*)|$)", content)
+    m = re.match(r"([^\s:#\[\]{},][^:]*?|\S*?):(?: (.*)|$)", content, re.S)
     if not m or content.startswith(("- ", "-\t")) or content == "-":
         return None
     return m.group(1).strip(), (m.group(2) or "").strip()
 
 
+def _open_quote(line):
+    """The quote character of a quoted scalar that starts on this line (as a mapping
+    value or a sequence item) and is not closed on it; else None."""
+    t = line.strip()
+    kv = _split_key(t) if t and t[0] not in "\"'" else None
+    if kv is not None:
+        rest = kv[1]
+    elif t.startswith("- "):
+        rest = t[2:].strip()
+    else:
+        rest = t
+    if not rest or rest[0] not in "\"'":
+        return None
+    q = rest[0]
+    j = 1
+    while j < len(rest):
+        c = rest[j]
+        if q == '"' and c == "\\":
+            j += 2
+            continue
+        if c == q:
+            if q == "'" and j + 1 < len(rest) and rest[j + 1] == "'":
+                j += 2
+                continue
+            return None
+        j += 1
+    return q
+
+
 def yaml_load(text):
-    raw = text.replace("\t", "    ").split("\n")
+    # tabs are not YAML indentation; expand only leading ones, keep those in text
+    raw = [re.sub(r"^\t+", lambda m: "    " * len(m.group(0)), l) for l in text.split("\n")]
     lines = []  # (indent, content, raw line index)
-    for i, l in enumerate(raw):
+    i = 0
+    while i < len(raw):
+        l = raw[i]
         if l.strip() in ("---", "..."):
+            i += 1
             continue
         c = _strip_comment(l)
+        start = i
+        q = _open_quote(c)
+        while q and i + 1 < len(raw):
+            # a quoted scalar over several lines: each line break folds to a space,
+            # an empty line to a line feed (YAML 1.2, 7.3)
+            i += 1
+            nxt = raw[i].strip()
+            c = c.rstrip() + ("\n" if nxt == "" else " ") + nxt if not c.endswith("\n") else c + nxt
+            q = _open_quote(c)
         if c.strip():
-            lines.append((len(c) - len(c.lstrip(" ")), c.strip(), i))
+            lines.append((len(c) - len(c.lstrip(" ")), c.strip(), start))
+        i += 1
     pos = [0]
 
     def block_scalar(style, parent_indent, start_raw):
@@ -1045,6 +1088,14 @@ def decode(pack, text):
     return kind, ent, res
 
 
+def set_path(obj, path, v):
+    parts = path.split(".")
+    cur = obj
+    for p in parts[:-1]:
+        cur = cur.setdefault(p, collections.OrderedDict())
+    cur[parts[-1]] = v
+
+
 def put_path(obj, path, v):
     parts = path.split(".")
     cur = obj
@@ -1205,6 +1256,9 @@ def sample(leaf, seed, shared=None):
     r = rnd(seed, ".".join(leaf.path))
     if n.enum:
         vals = [v for v in n.enum if v is not None]
+        if leaf.jtype == "string":
+            # an enum value a YAML reader typed as a number (`08`) is no sample for a string
+            vals = [v for v in vals if isinstance(v, str)]
         if vals:
             v = vals[r % len(vals)]
             if leaf.jtype == "number" and isinstance(v, int):
@@ -1402,11 +1456,12 @@ def main(argv=None):
                 name = ln.key.split(".", 1)[1]
                 rec = module_keys.setdefault(name, {"type": MODEL_TYPE[ln.jtype], "where": [], "jtype": ln.jtype,
                                                     "format": ln.node.format})
-                rec["where"].append("%s %s" % (kind_label, where + (".".join(ln.path) or ".")))
+                # the path in backticks, then "of" and the message: never two bare names side by side
+                rec["where"].append("`%s` of %s" % (where + (".".join(ln.path) or "."), kind_label))
             else:
                 name = ln.list.split(".", 1)[1]
                 rec = module_lists.setdefault(name, {"where": []})
-                rec["where"].append("%s %s" % (kind_label, where + ".".join(ln.path)))
+                rec["where"].append("`%s` of %s" % (where + ".".join(ln.path), kind_label))
                 declare(ln.lines, kind_label, where + ".".join(ln.path) + "[].")
     for k in kinds:
         declare(k["lines"], k["label"], "")
@@ -1438,11 +1493,12 @@ def main(argv=None):
     for idx, k in enumerate(kinds, 1):
         shared_of = {id(l): key for kk, path, key, l in bound if kk is k and l is not None}
         inst = build_instance(k["lines"], k["name"], 0, shared_of)
+        # a `when` value holds in the sample whatever value the sampler chose there
         for path, val in k["when"]:
             if val != "present":
-                put_path(inst, path, when_value(val))
+                set_path(inst, path, when_value(val))
         for path, val in [parse_kv(x, "--when") for x in a.when]:
-            put_path(inst, path, when_value(val))
+            set_path(inst, path, when_value(val))
         geo = None
         if a.wire == "geojson":
             gm = {p: key for kk, p, key, l in bound if kk is k and l is None}

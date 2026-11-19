@@ -1,0 +1,17 @@
+{
+ "name": "gen-phreatic_observed-roundtrip",
+ "from": "sdm-environment-phreatic-observed",
+ "to": "sdm-environment-phreatic-observed",
+ "input": "{\"type\":\"PhreaticObserved\",\"address\":{\"addressCountry\":\"s64945\",\"addressLocality\":\"s36865\",\"addressRegion\":\"s76346\",\"district\":\"s953\",\"postOfficeBoxNumber\":\"s39520\",\"postalCode\":\"s33545\",\"streetAddress\":\"s63877\",\"streetNr\":\"s25305\"},\"alternateName\":\"s19944\",\"areaServed\":\"s82359\",\"dataProvider\":\"s6317\",\"dateCreated\":\"2024-02-16T03:55:48.068Z\",\"dateModified\":\"2024-01-12T12:19:08.692Z\",\"dateObserved\":\"2023-11-25T10:23:57.846Z\",\"dateObservedFrom\":\"2027-01-15T03:25:15.748Z\",\"dateObservedTo\":\"2024-04-11T23:34:37.788Z\",\"depth\":1.5,\"description\":\"s60675\",\"id\":\"https://example.org/458\",\"investigationDepth\":-3.25,\"isMobile\":true,\"location\":{\"bbox\":[101.125,42.375],\"type\":\"LineString\"},\"measurementType\":[\"depth\",\"other\"],\"name\":\"s51291\",\"owner\":[\"https://example.org/618\",\"https://example.org/793\"],\"pollutionRate\":0.75,\"pressure\":0.75,\"refDevice\":[\"https://example.org/381\",\"https://example.org/982\"],\"residueLevel\":0.75,\"source\":\"s73155\",\"waterTable\":42.375}",
+ "expect": "{\"type\":\"PhreaticObserved\",\"address\":{\"addressCountry\":\"s64945\",\"addressLocality\":\"s36865\",\"addressRegion\":\"s76346\",\"district\":\"s953\",\"postOfficeBoxNumber\":\"s39520\",\"postalCode\":\"s33545\",\"streetAddress\":\"s63877\",\"streetNr\":\"s25305\"},\"alternateName\":\"s19944\",\"areaServed\":\"s82359\",\"dataProvider\":\"s6317\",\"dateCreated\":\"2024-02-16T03:55:48.068Z\",\"dateModified\":\"2024-01-12T12:19:08.692Z\",\"dateObserved\":\"2023-11-25T10:23:57.846Z\",\"dateObservedFrom\":\"2027-01-15T03:25:15.748Z\",\"dateObservedTo\":\"2024-04-11T23:34:37.788Z\",\"depth\":1.5,\"description\":\"s60675\",\"id\":\"https://example.org/458\",\"investigationDepth\":-3.25,\"isMobile\":true,\"location\":{\"bbox\":[101.125,42.375],\"type\":\"LineString\"},\"measurementType\":[\"depth\",\"other\"],\"name\":\"s51291\",\"owner\":[\"https://example.org/618\",\"https://example.org/793\"],\"pollutionRate\":0.75,\"pressure\":0.75,\"refDevice\":[\"https://example.org/381\",\"https://example.org/982\"],\"residueLevel\":0.75,\"source\":\"s73155\",\"waterTable\":42.375}",
+ "model": {
+  "@kind": "phreatic_observed",
+  "uid": "https://example.org/458",
+  "time_ms": "1700907837846",
+  "sdmphreaticobserved.address_address_country": "s64945",
+  "sdmphreaticobserved.address_address_locality": "s36865",
+  "sdmphreaticobserved.address_address_region": "s76346",
+  "sdmphreaticobserved.address_district": "s953",
+  "sdmphreaticobserved.address_post_office_box_number": "s39520"
+ }
+}

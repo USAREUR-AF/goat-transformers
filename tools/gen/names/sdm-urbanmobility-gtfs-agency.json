@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "owner|.|string": "owner_value",
+  "|addressCountry|string": "address_country",
+  "|addressLocality|string": "address_locality",
+  "|addressRegion|string": "address_region",
+  "|agencyName|string": "agency_name",
+  "|alternateName|string": "alternate_name",
+  "|dataProvider|string": "data_provider",
+  "|dateCreated|string": "date_created",
+  "|dateModified|string": "date_modified",
+  "|description|string": "description",
+  "|district|string": "district",
+  "|entitySource|string": "entity_source",
+  "|id|string": "id",
+  "|language|string": "language",
+  "|name|string": "name",
+  "|page|string": "page",
+  "|phone|string": "phone",
+  "|postOfficeBoxNumber|string": "post_office_box_number",
+  "|postalCode|string": "postal_code",
+  "|source|string": "source",
+  "|streetAddress|string": "street_address",
+  "|streetNr|string": "street_nr",
+  "|timezone|string": "timezone",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|owner": "owner"
+ }
+}
