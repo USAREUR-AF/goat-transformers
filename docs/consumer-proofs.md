@@ -11,7 +11,7 @@ field by field and fail when the result moves.
 | first-bite | Rust | `flow`: a transform `xf` beside `cot`; its dictionaries generated into packs by `tools/bite2pack` | cargo feature `goat-transformers` and `subtype: "xf"` in a subpub | Rust crate by git `rev`; target packs copied, `UPSTREAM` names the commit | Built, merged (first-bite#72); both tests run in its CI |
 | goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE=library` | `ops/xf/goat-transformers.ref`; bundles checked against a manifest | Built, merged (goatstuff#106); not deployed |
 | octo-pod | Rust | `gateway/translate`, a separate gateway beside the capture arms | a pod's `50-translate.yml`; none means no gateway | Rust crate by git `rev`; packs copied with a manifest | Built, open for review (octo-pod#31) |
-| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, merged (open-entity-gateway#18 to #21); the compare test runs in its CI |
+| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination `encoder: native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums, checked in CI | Built, merged (open-entity-gateway#18 to #21, #30); the compare test runs in its CI |
 
 ## open-billie: Canonical Track v2 to CoT, CAT062 and SAPIENT
 
@@ -131,7 +131,7 @@ Each destination takes `encoder: native` (the default) or `goat-transformers`
 (`docs/goat-transformers-encoder.md` in that repository). The track is written
 as Canonical Track v2 and converted by the Python engine; the gateway passes
 what it decides as context: the CoT `track.scoped_id`, type, stale, `how`,
-callsign and `access`; the CAT062 SAC, SIC, track number, confirmed, MRH, SRC
+callsign and `access`; the CAT062 SAC, SIC, track number, confirmed, SRC
 and service identification; the SAPIENT object and report identifiers and
 class. The SAPIENT session stays the gateway's. With `goat-transformers`, a
 pack that does not load, or the one destination key only the native encoder
@@ -143,7 +143,7 @@ field by field against a committed baseline. Equal on every input: the CoT
 `uid`, type, position, errors, `how`, stale instant, course, speed, callsign
 and `access`; the CAT062 data source, time of day, position, track number,
 velocity, altitude, MRH and SRC; the SAPIENT object id, report id, location,
-datum, class and velocity. Measured in its CI at library commit `2d4c784`:
+datum, class and velocity. Measured in its CI at library commit `0bece65`:
 
 | Format | Field | Inputs | Closed by |
 |---|---|---|---|
@@ -151,8 +151,9 @@ datum, class and velocity. Measured in its CI at library commit `2d4c784`:
 | CAT062 | I062/080 second and third extents written, all zero | 4 | a chain extent written only when it holds a non-zero bit (not yet claimed) |
 | SAPIENT | `track_info[]` | 4 | context for the items of a list key (not yet claimed) |
 
-The gateway passes MRH as context today; with spec 0.12 (`present`) the pack
-sets it from the altitude itself.
+MRH is not context: the pack sets it to 1 when I062/130 is written
+(`derive cat062.mrh present hae`, spec 0.12), and the result is the
+gateway's own MRH on every input (open-entity-gateway#30).
 
 The gateway's destination suites run once per encoder. Three library runs are
 strict expected failures, each naming its cause: a longitude of 180 written
