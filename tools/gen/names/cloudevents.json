@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|data_base64|string": "data_base64",
+  "|datacontenttype|string": "datacontenttype",
+  "|dataschema|string": "dataschema",
+  "|id|string": "id",
+  "|source|string": "source",
+  "|specversion|string": "specversion",
+  "|subject|string": "subject",
+  "|time|string": "time",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

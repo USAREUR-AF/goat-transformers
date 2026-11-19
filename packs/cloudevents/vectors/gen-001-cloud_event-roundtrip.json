@@ -1,0 +1,17 @@
+{
+ "name": "gen-cloud_event-roundtrip",
+ "from": "cloudevents",
+ "to": "cloudevents",
+ "input": "{\"id\":\"s22284\",\"source\":\"https://example.org/851\",\"specversion\":\"s42320\",\"type\":\"s12665\",\"datacontenttype\":\"s19582\",\"dataschema\":\"https://example.org/96\",\"subject\":\"s95177\",\"time\":\"2025-04-15T15:32:26.330Z\",\"data_base64\":\"s88794\"}",
+ "expect": "{\"id\":\"s22284\",\"source\":\"https://example.org/851\",\"specversion\":\"s42320\",\"type\":\"s12665\",\"datacontenttype\":\"s19582\",\"dataschema\":\"https://example.org/96\",\"subject\":\"s95177\",\"time\":\"2025-04-15T15:32:26.330Z\",\"data_base64\":\"s88794\"}",
+ "model": {
+  "time_ms": "1744731146330",
+  "cloudevents.id": "s22284",
+  "cloudevents.source": "https://example.org/851",
+  "cloudevents.specversion": "s42320",
+  "cloudevents.type": "s12665",
+  "cloudevents.datacontenttype": "s19582",
+  "cloudevents.dataschema": "https://example.org/96",
+  "cloudevents.subject": "s95177"
+ }
+}

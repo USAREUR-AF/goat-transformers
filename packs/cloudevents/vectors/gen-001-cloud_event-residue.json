@@ -1,0 +1,7 @@
+{
+ "name": "gen-cloud_event-residue",
+ "from": "cloudevents",
+ "to": "cloudevents",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s22284\",\"source\":\"https://example.org/851\",\"specversion\":\"s42320\",\"type\":\"s12665\",\"datacontenttype\":\"s19582\",\"dataschema\":\"https://example.org/96\",\"subject\":\"s95177\",\"time\":\"2025-04-15T15:32:26.330Z\",\"data_base64\":\"s88794\"}",
+ "expect": "{\"id\":\"s22284\",\"source\":\"https://example.org/851\",\"specversion\":\"s42320\",\"type\":\"s12665\",\"datacontenttype\":\"s19582\",\"dataschema\":\"https://example.org/96\",\"subject\":\"s95177\",\"time\":\"2025-04-15T15:32:26.330Z\",\"data_base64\":\"s88794\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
