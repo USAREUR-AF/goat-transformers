@@ -126,8 +126,10 @@ def build(sink):
     # encode ends the item there. LEN goes from 27 to 24.
     vec(CAT, 7, "status-extents-four-to-six-read-and-not-written", CAT, CAT,
         hx("3e 001b 990c 0107 546010 00000000 00000000 0137 81010101010100"), OB_BARE, model={"track.coasting": "0"})
-    # FSPEC a0: FRN 1 and FRN 3 (I062/015). No `if` block names fspec.3
-    vec(CAT, 8, "item-the-pack-does-not-map", CAT, CAT, hx("3e 0007 a0 0107 05"), error="malformed-wire")
+    # FSPEC 84: FRN 1 and FRN 6 (I062/100 Calculated Track Position (Cartesian)).
+    # No `if` block names fspec.6 (ruling 1 of engine-spec 0.8). Before I062/015
+    # was mapped this vector used FRN 3 (FSPEC a0).
+    vec(CAT, 8, "item-the-pack-does-not-map", CAT, CAT, hx("3e 0007 84 0107 05"), error="malformed-wire")
     vec(CAT, 9, "category-is-not-62", CAT, CAT, "30" + OB_SAMPLE[2:], error="no-kind")
     # LEN says 31 octets and 30 are given
     vec(CAT, 10, "block-shorter-than-len", CAT, CAT, OB_SAMPLE[:-2], error="malformed-wire")
