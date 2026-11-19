@@ -1,0 +1,16 @@
+{
+  "name": "coordinates-compared-by-canonical-text",
+  "from": "conformance-absent-geojson",
+  "to": "conformance-absent-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181.0,9.1e1,9999999.0]},\"properties\":{\"name\":\"N\"},\"id\":\"u2\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181,91,9999999]},\"properties\":{\"name\":\"N\"},\"id\":\"u2\"}",
+  "model": {
+    "uid": "u2",
+    "callsign": "N",
+    "@absent": [
+      "lon",
+      "lat",
+      "hae"
+    ]
+  }
+}

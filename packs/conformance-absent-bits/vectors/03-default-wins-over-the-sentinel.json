@@ -1,0 +1,13 @@
+{
+  "name": "default-wins-over-the-sentinel",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-bits",
+  "input": "010001002a2a414212000000000000000103",
+  "expect": "010001072a2a414212000000000000000103",
+  "model": {
+    "probe.y": "1",
+    "@absent": [
+      "probe.z"
+    ]
+  }
+}

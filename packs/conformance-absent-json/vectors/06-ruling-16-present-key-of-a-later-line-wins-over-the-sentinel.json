@@ -1,0 +1,17 @@
+{
+  "name": "ruling-16-present-key-of-a-later-line-wins-over-the-sentinel",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"id\":\"u7\"}",
+  "context": {
+    "probe.s2": "Z"
+  },
+  "expect": "{\"id\":\"u7\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"Z\",\"q\":7}",
+  "model": {
+    "@complete": true,
+    "probe.s2": "Z",
+    "@absent": [
+      "probe.s1"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "nan-that-is-not-the-fields-sentinel",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-protobuf",
+  "input": "19000000000000f8ff",
+  "expect_error": "transform-decode"
+}

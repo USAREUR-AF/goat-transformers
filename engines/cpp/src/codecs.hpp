@@ -162,6 +162,22 @@ struct EncodeSource {
     const std::vector<Item>* list(const GroupLine& g) const;
 };
 
+// ---- absent-value sentinels (Version 0.9)
+
+// Checks a field's `absent` argument against the wire and the transform and
+// fills the sentinels (bad-directive). `bits_len` is the field's length on the
+// bits wire. A transform that does not belong to the wire is left for the
+// invalid_pack check. `coordinate`: a geojson `geometry.*` slot, which takes
+// only number text (0.9 ruling 25).
+void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_len, bool coordinate = false);
+// Does the raw value equal one of the field's sentinels?
+bool sentinel_num(const FieldLine& f, std::uint64_t raw);
+bool sentinel_text(const FieldLine& f, const std::string& raw);
+// json and geojson: the raw text of a scalar member (a string's text, a
+// number's canonical text through a double, a boolean's word); false for null,
+// an array or an object.
+bool json_raw_text(const json::Value& v, std::string& out);
+
 // Wire text for one field's value on a text wire. Throws transform-encode.
 std::string field_text(const Pack& p, const FieldLine& f, const Value& v);
 // The reverse type mapping applied to the key `type`.

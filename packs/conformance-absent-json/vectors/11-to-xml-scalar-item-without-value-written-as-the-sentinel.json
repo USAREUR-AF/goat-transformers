@@ -1,0 +1,7 @@
+{
+  "name": "to-xml-scalar-item-without-value-written-as-the-sentinel",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-xml",
+  "input": "{\"id\":\"u3\",\"nums\":[1,null]}",
+  "expect": "<msg id=\"u3\" mark=\"N/A\" t=\"optional\" s=\"-\"><pos alt=\"9999999\"/><name>a&amp;b</name><list><v>1</v><v>-1</v></list></msg>"
+}

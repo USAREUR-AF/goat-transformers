@@ -1,0 +1,16 @@
+{
+  "name": "to-msb-bits-every-absent-key-writes-its-sentinel",
+  "from": "conformance-absent-bits-lsb",
+  "to": "conformance-absent-bits",
+  "input": "1234ffaf0000c07fffc00000",
+  "expect": "ff800007ff000000ffffffffffffffffffff",
+  "model": {
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "probe.z",
+      "probe.ratio",
+      "ce"
+    ]
+  }
+}

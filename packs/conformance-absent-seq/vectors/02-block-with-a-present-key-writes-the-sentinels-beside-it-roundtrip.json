@@ -1,0 +1,24 @@
+{
+  "name": "block-with-a-present-key-writes-the-sentinels-beside-it-roundtrip",
+  "from": "conformance-absent-seq",
+  "to": "conformance-absent-seq",
+  "input": "01c007ff2a01ff00ff1200a0a17fc00000c0",
+  "expect": "01c007ff2a01ff00ff1200a0a17fc00000c0",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "7",
+    "probe.w": "42",
+    "probe.n": "255",
+    "probe.c2": "9",
+    "probe.val": "0",
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.label": "AB",
+    "probe.recs[1].probe.qty": "3",
+    "@absent": [
+      "probe.z",
+      "probe.c1",
+      "probe.recs[0].probe.qty",
+      "probe.recs[1].probe.label"
+    ]
+  }
+}

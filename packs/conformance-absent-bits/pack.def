@@ -1,0 +1,38 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) on the fixed
+# `bits` wire, most-significant-bit-first. Public. No kinds. One byte per
+# word, so a locator is `0:<bit offset>:<len>`. Exercises: all bits set as a
+# sentinel; two sentinels on a `twos` field (the raw value is the unsigned
+# bits, and the second re-encodes as the first); a `default` that wins over
+# the sentinel; two lines for one key, the first with a sentinel (ruling 1);
+# an `ascii` field that is all NUL bytes matching `absent 0` (ruling 2); two
+# overlapping lines, the earlier one writing a sentinel and the later one a
+# present value (ruling 16); a 64-bit field whose sentinel is 2^64-1; and
+# `optional` beyond the end of the input (ruling 3).
+#
+#   byte 0       x, absent 255
+#   bytes 1-2    y, two's complement, absent 0x8000 or 0xffff
+#   byte 3       z, absent 0, default 7
+#   byte 4       w, absent 255; byte 5, w again, no sentinel
+#   bytes 6-7    callsign, two ASCII characters, absent 0
+#   byte 8       c1, absent 255; its high four bits are also c2
+#   bytes 9-16   n, absent 2^64-1
+#   byte 17      val, optional, absent 255
+format     conformance-absent-bits
+version    0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.x    0:0:8     uint   absent 255
+field   probe.y    0:8:16    twos   absent 32768,65535
+field   probe.z    0:24:8    uint   absent 0
+default probe.z    7
+field   probe.w    0:32:8    uint   absent 255
+field   probe.w    0:40:8    uint
+field   callsign   0:48:16   ascii  absent 0
+field   probe.c1   0:64:8    uint   absent 255
+field   probe.c2   0:64:4    uint
+field   probe.n    0:72:64   uint   absent 18446744073709551615
+field   probe.val  0:136:8   uint   optional  absent 255

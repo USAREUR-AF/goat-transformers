@@ -54,7 +54,41 @@ func bytesOf(t *testing.T, text, b64 *string, what string) []byte {
 const (
 	kindKey     = "@kind"
 	completeKey = "@complete"
+	absentKey   = "@absent"
 )
+
+// checkAbsent checks one entry of a vector's `"@absent"` list (spec 0.9,
+// "Vector additions") and returns what is wrong, "" when the check passes. An
+// entry `<list>[<i>].<key>` needs item i to exist and lack the key; any other
+// entry is a model key or a list name, and the entity must have neither.
+func checkAbsent(rec *Item, k string) string {
+	if i := strings.IndexByte(k, '['); i >= 0 {
+		list := k[:i]
+		j := strings.IndexByte(k[i:], ']')
+		if j < 0 || !strings.HasPrefix(k[i+j:], "].") {
+			return "malformed list key"
+		}
+		idx, err := strconv.Atoi(k[i+1 : i+j])
+		if err != nil || idx < 0 {
+			return "malformed item index"
+		}
+		items, present := rec.Lists[list]
+		if !present {
+			return fmt.Sprintf("list %s is absent", list)
+		}
+		if idx >= len(items) {
+			return fmt.Sprintf("list %s has %d item(s), no item %d", list, len(items), idx)
+		}
+		return checkAbsent(items[idx], k[i+j+2:])
+	}
+	if v, has := rec.Fields[k]; has {
+		return fmt.Sprintf("present with %q, want absent", v.String())
+	}
+	if items, has := rec.Lists[k]; has {
+		return fmt.Sprintf("list %s is present with %d item(s), want absent", k, len(items))
+	}
+	return ""
+}
 
 // floatsMatch compares a model float with its expected value: within 1e-9
 // absolute on a decoded entity, within 1e-9 relative on a completed one.
@@ -246,6 +280,30 @@ func runConversionVectors(t *testing.T, packsDir string) {
 			sort.Strings(keys)
 			for _, k := range keys {
 				if k == completeKey {
+					continue
+				}
+				if k == absentKey {
+					list, isList := v.Model[k].([]any)
+					if !isList {
+						t.Errorf("model[%s] must be an array of keys", absentKey)
+						continue
+					}
+					for _, e := range list {
+						key, isString := e.(string)
+						if !isString {
+							t.Errorf("model[%s]: an entry must be a string, got %v", absentKey, e)
+							continue
+						}
+						// A listed key that is also a member of model makes
+						// the vector invalid (0.9 ruling 21).
+						if _, clash := v.Model[key]; clash {
+							t.Errorf("model[%s]: %q is also a member of model; the vector is invalid", absentKey, key)
+							continue
+						}
+						if msg := checkAbsent(ent.item(), key); msg != "" {
+							t.Errorf("model[%s] %s: %s", absentKey, key, msg)
+						}
+					}
 					continue
 				}
 				wantS, isString := v.Model[k].(string)

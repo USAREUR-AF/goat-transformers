@@ -68,6 +68,47 @@ def _resolve(scope, key):
     return ("value", scope.fields[key])
 
 
+def _check_absent(ent, model, listed):
+    """-> failure texts for `"@absent"` (0.9): each entry is a model key, an
+    item path `"<list>[<i>].<key>"` (the item exists and lacks the key) or a
+    list name (the entity has no such list). An entry that is also a member
+    of `model` makes the vector invalid (ruling 21)."""
+    if not isinstance(listed, list) or not all(isinstance(k, str) for k in listed):
+        return ["@absent must be an array of model keys, got %r" % (listed,)]
+    out = []
+    for key in listed:
+        if key in model:
+            out.append("invalid vector: %r is in @absent and is also a member of model" % key)
+            continue
+        scope = ent
+        rest = key
+        problem = None
+        while True:  # follow the item steps, as `_resolve` does
+            cut = rest.find("[")
+            if cut < 0:
+                break
+            close = rest.find("]", cut)
+            name, index = rest[:cut], rest[cut + 1:close]
+            if close < 0 or not index.isdigit() or rest[close + 1:close + 2] != ".":
+                problem = "not a list step: %r" % key
+                break
+            items = scope.lists.get(name)
+            if items is None or int(index) >= len(items):
+                problem = "the item does not exist: list %r has %s" % (
+                    name, "no items (absent)" if items is None else "%d item(s)" % len(items))
+                break
+            scope = items[int(index)]
+            rest = rest[close + 2:]
+        if problem is not None:
+            out.append("@absent %s: %s" % (key, problem))
+            continue
+        if rest in scope.fields:
+            out.append("@absent: model key %r decoded %r, expected absent" % (key, scope.fields[rest]))
+        elif rest in scope.lists:
+            out.append("@absent: list %r decoded with %d item(s), expected absent" % (key, len(scope.lists[rest])))
+    return out
+
+
 def _check_model(engine, rel, vec, data):
     """-> list of failure texts for the vector's `model` object. With
     `"@complete": true` the checks run on the completed entity: the decode, then
@@ -81,6 +122,9 @@ def _check_model(engine, rel, vec, data):
     if complete:
         ent = engine.complete(ent, vec.get("context"))
     for key, want in vec["model"].items():
+        if key == "@absent":  # not a model key: keys the entity must not have (0.9)
+            out.extend(_check_absent(ent, vec["model"], want))
+            continue
         if key == "@complete":  # not a model key
             if want is not True:
                 out.append("@complete must be true, got %r" % (want,))

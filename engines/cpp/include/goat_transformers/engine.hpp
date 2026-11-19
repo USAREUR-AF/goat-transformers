@@ -210,6 +210,12 @@ struct FieldLine {
     bool swap = false;          // bits: the field's bytes are taken in reverse order
     bool trim = false;          // bits + ascii: decode also removes trailing spaces
     bool optional = false;      // bits: absent when any of its bits lies beyond the input
+    // v0.9 `absent <value>[,<value>…]`: the raw wire values that mean "no value".
+    bool has_absent = false;
+    std::string absent_arg;                 // the argument as written ("" for the quoted empty token)
+    std::vector<std::uint64_t> absent_num;  // bits and the integer forms of protobuf: the raw integers
+    std::vector<std::string> absent_text;   // text wires and pstring: the texts compared (json: canonical)
+    std::string absent_json;                // json and geojson: the JSON text the first sentinel is written as
     // The key's declared type. Engine::add_pack fills it from the loaded modules.
     KeyType key_type = KeyType::String;
 };

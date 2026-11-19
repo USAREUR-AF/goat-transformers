@@ -1,0 +1,16 @@
+{
+  "name": "every-field-holds-its-sentinel-roundtrip",
+  "from": "conformance-absent-bits-lsb",
+  "to": "conformance-absent-bits-lsb",
+  "input": "1234ffaf0000c07fffc00000",
+  "expect": "1234ffaf0000c07fffc00000",
+  "model": {
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "probe.z",
+      "probe.ratio",
+      "ce"
+    ]
+  }
+}

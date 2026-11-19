@@ -191,6 +191,9 @@ void decode_leaf(Decoder& d, const FieldLine& f, const WireField& wf) {
                       "'");
         return;
     }
+    // After the wire type, before the transform (0.9 rulings 2 and 15).
+    if (f.has_absent && (f.transform == Transform::Pstring ? sentinel_text(f, wf.bytes) : sentinel_num(f, wf.scalar)))
+        return;
     try {
         d.put(f, decode_protobuf_value(f.transform, wf.scalar, wf.bytes));
     } catch (const std::invalid_argument& ex) {
@@ -288,21 +291,26 @@ struct Node {
     Transform transform = Transform::Pstring;  // leaf only
     Value value;                               // leaf only
     const FieldLine* field = nullptr;          // leaf only: the line it was written from
+    bool is_sentinel = false;                  // leaf only: the field's first sentinel, written raw (0.9)
     bool is_raw = false;                       // a group: every occurrence, already serialised with its tag
     std::string raw;
     std::map<std::uint32_t, Node> children;    // submessage: ascending field number
 };
 
+// `sentinel`: the line's key is absent and the leaf is its first sentinel (0.9).
 void insert_field(const Pack& p, Node& node, const std::vector<std::uint32_t>& path, std::size_t seg,
-                  const FieldLine& f, const Value& v) {
+                  const FieldLine& f, const Value& v, bool sentinel) {
     Node& child = node.children[path[seg]];
     if (seg + 1 == path.size()) {
         if (child.is_raw) return;  // a group writes this field number
         if (!child.children.empty())
             throw Error(ErrorKind::InvalidPack, p.format, locator_str(path),
                         "field is used both as a leaf and as a submessage");
-        if (child.is_leaf) return;  // lines on one locator: the earliest present key is written
+        // Lines on one locator: the earliest present key is written, and a
+        // present key wins over a sentinel whatever their order (0.9 ruling 16).
+        if (child.is_leaf && (sentinel || !child.is_sentinel)) return;
         child.is_leaf = true;
+        child.is_sentinel = sentinel;
         child.transform = f.transform;
         child.value = v;
         child.field = &f;
@@ -311,8 +319,15 @@ void insert_field(const Pack& p, Node& node, const std::vector<std::uint32_t>& p
         if (child.is_leaf)
             throw Error(ErrorKind::InvalidPack, p.format, locator_str(path),
                         "field is used both as a leaf and as a submessage");
-        insert_field(p, child, path, seg + 1, f, v);
+        insert_field(p, child, path, seg + 1, f, v, sentinel);
     }
+}
+
+// The raw wire value of a field's first sentinel: the integer for a varint or
+// a fixed-width transform (no zig-zag), the text for `pstring`.
+void sentinel_value(const FieldLine& f, std::uint64_t& scalar, std::string& bytes) {
+    if (f.transform == Transform::Pstring) bytes = f.absent_text.front();
+    else scalar = f.absent_num.front();
 }
 
 void write_varint(std::string& out, std::uint64_t v) {
@@ -356,7 +371,8 @@ std::string serialize(const Pack& p, const Node& node) {
         const int wt = protobuf_wire_type(c.transform);
         std::uint64_t scalar = 0;
         std::string payload;
-        try {
+        if (c.is_sentinel) sentinel_value(*c.field, scalar, payload);
+        else try {
             encode_protobuf_value(c.transform, c.value, scalar, payload);
         } catch (const std::invalid_argument& ex) {
             throw Error(ErrorKind::TransformEncode, p.format, c.field ? c.field->locator : std::to_string(num),
@@ -413,6 +429,8 @@ std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, co
             } catch (const std::invalid_argument& ex) {
                 throw Error(ErrorKind::TransformEncode, p.format, g.locator, f.key + ": " + ex.what());
             }
+        } else if (f.has_absent) {
+            sentinel_value(f, scalar, bytes);  // in place of 0.7 ruling 11 (0.9 ruling 5)
         } else if (packed) {
             continue;  // an item with no value adds nothing to the packed form
         }
@@ -458,9 +476,12 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
     for (const auto& line : lines) {
         if (!line.field) continue;
         const FieldLine& f = *line.field;
-        if (f.locator == "." || !src.value(f, v)) continue;  // only mapped fields that have a value are written
+        if (f.locator == ".") continue;
+        // Only mapped fields that have a value are written, and the sentinel of an absent key (0.9).
+        const bool present = src.value(f, v);
+        if (!present && !f.has_absent) continue;
         parse_protobuf_locator(f.locator, loc);  // validated at pack load
-        insert_field(p, root, loc.path, 0, f, v);
+        insert_field(p, root, loc.path, 0, f, present ? v : Value(), !present);
     }
     // `when` and `const` values, so the output decodes as the same kind: an integer
     // is written as a varint over any field; `present` writes an empty

@@ -250,12 +250,13 @@ func (d *decodeState) xmlScope(lay *layout, node *xnode) {
 				continue
 			}
 			if f.loc.kind == locAttr {
-				if v, ok := n.attr(f.loc.name); ok {
+				if v, ok := n.attr(f.loc.name); ok && !f.sentinelText(v) {
 					d.field(f, v)
 				}
 				continue
 			}
-			if text := n.text.String(); strings.TrimSpace(text) != "" {
+			// The text is compared untrimmed (0.9 ruling 14).
+			if text := n.text.String(); !f.sentinelText(text) && strings.TrimSpace(text) != "" {
 				d.field(f, text)
 			}
 		case ln.g != nil:
@@ -347,6 +348,7 @@ func encodeXML(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error) {
 // or the element of one item. A group writes one element per item at its
 // position in line order; an empty or absent list writes nothing.
 func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[string]bool) error {
+	weak := map[string]bool{} // the locators that hold a sentinel, which a value replaces (0.9 ruling 16)
 	for _, ln := range lay.lines {
 		if g := ln.g; g != nil {
 			items := rec.Lists[g.List]
@@ -385,9 +387,15 @@ func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[st
 			continue
 		}
 		if !ok {
+			// A sentinel is written where no line has written (0.9).
+			if f.absent != nil && !written[f.Locator] {
+				place(root, f.loc, f.absent.texts[0], false)
+				written[f.Locator], weak[f.Locator] = true, true
+			}
 			continue
 		}
-		place(root, f.loc, s, false)
+		place(root, f.loc, s, weak[f.Locator])
+		delete(weak, f.Locator)
 		written[f.Locator] = true
 	}
 	return nil

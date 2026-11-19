@@ -1,0 +1,18 @@
+{
+  "name": "ruling-7-missing-places-gain-the-sentinels",
+  "from": "conformance-absent-xml",
+  "to": "conformance-absent-xml",
+  "input": "<msg id=\"u2\"/>",
+  "expect": "<msg id=\"u2\" mark=\"N/A\" t=\"optional\" s=\"-\"><pos alt=\"9999999\"/><name>a&amp;b</name></msg>",
+  "model": {
+    "uid": "u2",
+    "@absent": [
+      "probe.label",
+      "probe.tag",
+      "probe.s1",
+      "hae",
+      "callsign",
+      "probe.nums"
+    ]
+  }
+}

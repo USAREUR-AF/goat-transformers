@@ -1,0 +1,12 @@
+{
+  "name": "to-msb-bits-present-values-equal-to-sentinels-are-written",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-bits",
+  "input": "{\"x\":255,\"y\":-32768,\"on\":true}",
+  "expect": "ff80000701010000ffffffffffffffffffff",
+  "model": {
+    "probe.x": "255",
+    "probe.y": "-32768",
+    "probe.w": "1"
+  }
+}

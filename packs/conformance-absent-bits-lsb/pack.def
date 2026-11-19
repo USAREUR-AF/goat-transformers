@@ -1,0 +1,24 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) on the fixed
+# `bits` wire, least-significant-bit-first. Public. No kinds. Exercises the
+# order of `swap` and the sentinel check (ruling 2: the raw value is read
+# after `swap`), sentinels on fields that are not byte aligned, and NaN and
+# infinity bit patterns of `f32` as sentinels, where without the sentinel the
+# value would be `transform-decode` (ruling 23 of 0.5).
+#
+#   bytes 0-1    x, 16 bits with `swap` (big-endian in this lsb pack), absent 0x1234
+#   bytes 2-3    y, 12 bits from bit 16, absent 0xfff; z, 4 bits from bit 28, absent 10
+#   bytes 4-7    ratio, little-endian single, absent 0x7fc00000 (a quiet NaN)
+#   bytes 8-11   ce, big-endian single (`swap`), absent 0xffc00000 (a negative quiet NaN)
+format     conformance-absent-bits-lsb
+version    0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  lsb
+field   probe.x      0:0:16   uint  swap  absent 4660
+field   probe.y      0:16:12  uint  absent 4095
+field   probe.z      0:28:4   uint  absent 10
+field   probe.ratio  0:32:32  f32   absent 2143289344
+field   ce           0:64:32  f32   swap  absent 4290772992

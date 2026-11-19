@@ -176,6 +176,11 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                     + " expects wire type " + f.pb.wireType(), e);
             return;
         }
+        // after the wire type check (ruling 15 of 0.9), before zig-zag and the transform: a sentinel yields no value
+        if (f.absent != null && (wt == 2 ? f.absent.matches(new String(bytes, java.nio.charset.StandardCharsets.UTF_8))
+                                         : f.absent.matches(num))) {
+            return;
+        }
         Object v;
         try {
             v = f.pb.decode(num, bytes);
@@ -348,16 +353,36 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         }
     }
 
+    /** The payload of a field's first sentinel: the integer as a varint (no zig-zag) or fixed bytes, or the text. */
+    static byte[] sentinelPayload(Pack.Field f) {
+        switch (f.pb.wireType()) {
+            case 2: return f.absent.firstText().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            case 1: return PbTransform.fixed64(f.absent.firstNum());
+            case 5: return PbTransform.fixed32((int) f.absent.firstNum());
+            default: return PbTransform.varint(f.absent.firstNum());
+        }
+    }
+
     /** Write the lines of one scope into a message: the top message, or one item's submessage. */
     private void encodeScope(TreeMap<Integer, Node> root, Pack.Scope scope, Entity e) {
+        // Values first, then the sentinels of absent keys where no value was written (ruling 16 of 0.9).
+        List<Pack.Field> sentinels = new ArrayList<>();
         for (Pack.Line l : scope.lines) {
             if (!(l instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) l;
-            int[] path = (int[]) f.loc;
-            if (path.length == 0) continue;                        // `.`: written by encodeItems
+            if (((int[]) f.loc).length == 0) continue;            // `.`: written by encodeItems
             Object v = valueToEncode(f, e, scope);
-            if (v == null) continue;                               // absent key and no default: protobuf omits it
-            byte[] payload = encodeValue(f, v);
+            if (v != null) writeField(root, f, encodeValue(f, v));
+            else if (f.absent != null) sentinels.add(f);          // absent key and no default: protobuf omits it
+        }
+        for (Pack.Field f : sentinels) writeField(root, f, sentinelPayload(f));
+        encodeRest(root, scope, e);
+    }
+
+    /** Write one field's payload at its locator, unless an earlier write holds the place. */
+    private void writeField(TreeMap<Integer, Node> root, Pack.Field f, byte[] payload) {
+        {
+            int[] path = (int[]) f.loc;
             TreeMap<Integer, Node> cur = parent(root, path, f);
             int last = path[path.length - 1];
             Node have = cur.get(last);
@@ -366,13 +391,17 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                     throw new GtException(GtException.Code.BAD_PACK, pack.format, f.locator,
                             "field number " + last + " is used both as a value and as a submessage");
                 }
-                continue;                                          // an earlier line on this locator already wrote it
+                return;                                            // an earlier line on this locator already wrote it
             }
             Node leaf = new Node();
             leaf.wt = f.pb.wireType();
             leaf.payload = payload;
             cur.put(last, leaf);
         }
+    }
+
+    /** The groups, then the when and const values, of one scope. */
+    private void encodeRest(TreeMap<Integer, Node> root, Pack.Scope scope, Entity e) {
         // groups: one occurrence per item; an absent or empty list writes nothing.
         for (Pack.Group g : scope.groups) {
             List<Entity> items = e.list(g.list);
@@ -419,6 +448,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             for (Entity item : items) {
                 Object v = valueToEncode(body.itself, item, g.body);
                 if (v != null) writeBytes(packed, encodeValue(body.itself, v));
+                else if (body.itself.absent != null) writeBytes(packed, sentinelPayload(body.itself));   // ruling 5 of 0.9
             }
             if (packed.size() == 0) return null;
             out.wt = 2;
@@ -434,7 +464,8 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             } else {
                 Object v = body.itself == null ? null : valueToEncode(body.itself, item, g.body);
                 n.wt = 2;
-                n.payload = v == null ? new byte[0] : encodeValue(body.itself, v);
+                n.payload = v != null ? encodeValue(body.itself, v)
+                        : body.itself != null && body.itself.absent != null ? sentinelPayload(body.itself) : new byte[0];
             }
             out.items.add(n);
         }

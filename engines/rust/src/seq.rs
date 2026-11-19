@@ -2,7 +2,7 @@
 //! `layout sequential`. The lines of a message are read, and written, in file
 //! order from a cursor; the place of a field depends on what came before it.
 
-use super::bits::{get_bits, read_field, set_bits, write_field};
+use super::bits::{get_bits, is_sentinel, read_field, set_bits, write_field, write_sentinel};
 use super::*;
 
 // ---------------------------------------------------------------------------
@@ -481,31 +481,11 @@ impl<'a> Parser<'a> {
                     trim: false,
                     optional: false,
                     key_type: None,
+                    absent_arg: None,
+                    absent: Vec::new(),
                 };
-                let mut i = 4;
-                while i < toks.len() {
-                    let flag = match toks[i].as_str() {
-                        "via" => {
-                            i += 1;
-                            match toks.get(i) {
-                                Some(t) if f.via.is_none() => f.via = Some(t.clone()),
-                                Some(_) => return bad(ln, "`via` given twice"),
-                                None => return bad(ln, "`via` needs <table>"),
-                            }
-                            self.vias.push((toks[i].clone(), ln));
-                            i += 1;
-                            continue;
-                        }
-                        "swap" => &mut f.swap,
-                        "trim" => &mut f.trim,
-                        "optional" => return bad(ln, "`optional` is not valid in a `layout sequential` pack"),
-                        o => return bad(ln, format!("unknown field option `{}`", o)),
-                    };
-                    if *flag {
-                        return bad(ln, format!("field option `{}` given twice", toks[i]));
-                    }
-                    *flag = true;
-                    i += 1;
+                for table in field_options(&mut f, toks, ln, false)? {
+                    self.vias.push((table, ln));
                 }
                 let t = &f.transform;
                 if !t.is_bits() {
@@ -526,6 +506,7 @@ impl<'a> Parser<'a> {
                 if f.trim && *t != Transform::Ascii {
                     return bad(ln, "`trim` is valid only with `ascii`");
                 }
+                resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
                 // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)
                 let mut also = Vec::new();
                 while let Some((l, t)) = self.peek() {
@@ -959,6 +940,11 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
         match line {
             SeqLine::Field { f, len, also } => {
                 r.need(*len as u64, &format!("`{}`", f.model_key))?;
+                // a sentinel: neither the field's key nor an `also` key gets a value (engine-spec v0.9)
+                if is_sentinel(r.p, f, r.raw, r.pos, *len) {
+                    r.pos += *len as u64;
+                    continue;
+                }
                 let v = read_field(r.p, f, r.raw, r.pos, *len);
                 r.pos += *len as u64;
                 // an `also` key takes the same value through its own table
@@ -1281,9 +1267,15 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 let at = w.pos;
                 // an absent key writes zero bits
                 w.zeros(*len as u64);
-                if let Some((k, v)) = value {
-                    let v = p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?;
-                    write_field(p, k, &v, at, *len, &mut w.buf)?;
+                match value {
+                    Some((k, v)) => {
+                        let v = p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?;
+                        write_field(p, k, &v, at, *len, &mut w.buf)?;
+                    }
+                    // with `absent`, the first sentinel in place of the zero bits (engine-spec v0.9)
+                    None => {
+                        write_sentinel(p, f, at, *len, &mut w.buf);
+                    }
                 }
             }
             SeqLine::Const { len, value } | SeqLine::When { len, value } => w.put(*len, *value),

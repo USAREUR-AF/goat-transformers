@@ -1,0 +1,14 @@
+{
+  "name": "swap-before-the-comparison-little-endian-reading-is-not-the-sentinel",
+  "from": "conformance-absent-bits-lsb",
+  "to": "conformance-absent-bits-lsb",
+  "input": "341223510000c03f40200000",
+  "expect": "341223510000c03f40200000",
+  "model": {
+    "probe.x": "13330",
+    "probe.y": "291",
+    "probe.z": "5",
+    "probe.ratio": "1.5",
+    "ce": "2.5"
+  }
+}

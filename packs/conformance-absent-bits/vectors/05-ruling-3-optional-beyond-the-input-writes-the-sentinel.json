@@ -1,0 +1,13 @@
+{
+  "name": "ruling-3-optional-beyond-the-input-writes-the-sentinel",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-bits",
+  "input": "010001052a2a4142120000000000000001",
+  "expect": "010001052a2a4142120000000000000001ff",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.val"
+    ]
+  }
+}

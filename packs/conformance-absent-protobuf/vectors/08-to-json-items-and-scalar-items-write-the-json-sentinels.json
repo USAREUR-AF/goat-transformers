@@ -1,0 +1,7 @@
+{
+  "name": "to-json-items-and-scalar-items-write-the-json-sentinels",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-json",
+  "input": "08ffffffffffffffffff01100119000000000000f87f250000807f2a043d4e2f4132003a03000500420608ff0112012d",
+  "expect": "{\"id\":\"\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":7,\"nums\":[-1,5,-1],\"items\":[{\"q\":0,\"name\":\"\"}]}"
+}

@@ -252,6 +252,11 @@ final class BitsCodec extends Codec<byte[]> {
                 if (f.optional) continue;                // beyond the input: absent
                 throw malformed("the input ends before " + f.key + " at " + f.locator);
             }
+            if (f.absent != null) {
+                // the raw value, as uint reads it, after swap: a sentinel is a line whose locator is absent
+                long raw = readBits(msg, start, loc.len);
+                if (f.absent.matches(f.swap ? swapBytes(raw, loc.len) : raw)) continue;
+            }
             Object v;
             try {
                 if (f.bits.isAscii()) {
@@ -306,11 +311,24 @@ final class BitsCodec extends Codec<byte[]> {
         buf.ensure(base + ((Info) scope.info).end);
         // Fields last line first, so that where two present fields cover the same bits the earlier line's value stays.
         List<Pack.Line> lines = scope.lines;
+        Object[] values = new Object[lines.size()];
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i) instanceof Pack.Field) values[i] = valueToEncode((Pack.Field) lines.get(i), e, scope);
+        }
+        // The sentinels of absent keys first: a line that writes a value wins over them whatever the order (ruling 16 of 0.9).
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            if (!(lines.get(i) instanceof Pack.Field) || values[i] != null) continue;
+            Pack.Field f = (Pack.Field) lines.get(i);
+            if (f.absent == null) continue; // absent key and no default: its bits stay zero
+            Loc loc = (Loc) f.loc;
+            long raw = f.absent.firstNum();
+            writeBits(buf.b, base + loc.start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
+        }
         for (int i = lines.size() - 1; i >= 0; i--) {
             if (!(lines.get(i) instanceof Pack.Field)) continue;
             Pack.Field f = (Pack.Field) lines.get(i);
-            Object v = valueToEncode(f, e, scope);
-            if (v == null) continue; // absent key and no default: its bits stay zero
+            Object v = values[i];
+            if (v == null) continue;
             Loc loc = (Loc) f.loc;
             long start = base + loc.start;
             try {

@@ -721,6 +721,11 @@ func (r *seqReader) node(n *seqNode) error {
 		if err != nil || !ok {
 			return err
 		}
+		// A sentinel leaves the key of the line, and those of its `also`
+		// lines, absent.
+		if f.bitsSentinel(r.data, at, p.msb) {
+			return nil
+		}
 		var v Value
 		if f.btf.ascii {
 			v, err = decodeASCII(r.data, f, at, p.msb)
@@ -1239,6 +1244,10 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			}
 			at := w.alloc(f.loc.blen)
 			if !ok {
+				// An absent key writes the sentinel in place of zero bits.
+				if f.absent != nil {
+					w.put(at, f.loc.blen, f.sentinelBits())
+				}
 				continue
 			}
 			if err := putBitsField(p, from, v, w.buf.data, at); err != nil {

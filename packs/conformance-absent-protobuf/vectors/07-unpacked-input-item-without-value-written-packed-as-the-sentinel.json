@@ -1,0 +1,14 @@
+{
+  "name": "unpacked-input-item-without-value-written-packed-as-the-sentinel",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-protobuf",
+  "input": "38003805",
+  "expect": "08ffffffffffffffffff01100119000000000000f87f250000807f2a043d4e2f4132003a020005",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "5",
+    "@absent": [
+      "probe.nums[0].probe.val"
+    ]
+  }
+}

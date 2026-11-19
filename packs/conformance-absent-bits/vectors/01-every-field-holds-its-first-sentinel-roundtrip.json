@@ -1,0 +1,20 @@
+{
+  "name": "every-field-holds-its-first-sentinel-roundtrip",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-bits",
+  "input": "ff8000052a2a0000ffffffffffffffffffff",
+  "expect": "ff8000052a2a0000ffffffffffffffffffff",
+  "model": {
+    "probe.z": "5",
+    "probe.w": "42",
+    "probe.c2": "15",
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "callsign",
+      "probe.c1",
+      "probe.n",
+      "probe.val"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "nan-that-is-not-the-fields-sentinel",
+  "from": "conformance-absent-bits-lsb",
+  "to": "conformance-absent-bits-lsb",
+  "input": "341223510000c0ff40200000",
+  "expect_error": "transform-decode"
+}

@@ -26,6 +26,40 @@ final class UnitTests {
         rulingsOfSequential();
         modelAdditions();
         malformedInput(packs);
+        sentinels();
+    }
+
+    /** Version 0.9: the rulings on absent-value sentinels that no shared vector pins (17 to 22) and a few beside them. */
+    static void sentinels() {
+        String bd = "bad-directive";
+        String json = "format j\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire json\n";
+        String seq = "format s\nversion 0.1.0\ndistribution public\nsource t\nuses probe\nwire bits\nlayout sequential\nbit_order msb\n";
+        // 17: =true and =false are strings, so not a bool sentinel; =null is the string null
+        errorKind("absent =true on bool", bd, () -> Pack.parse(json + "field probe.x on bool absent =true\n", "t"));
+        check("absent =null loads", Pack.parse(json + "field probe.label l string absent =null\n", "t") != null, "");
+        // 18: number text that does not fit a finite double
+        errorKind("absent 1e400 on json", bd, () -> Pack.parse(json + "field probe.f f float absent 1e400\n", "t"));
+        // 11: a value cannot hold a double quote
+        errorKind("absent value with a double quote", bd, () -> Pack.parse(json + "field probe.label l string absent a\"b\n", "t"));
+        // 19: a wire integer is compared through a double
+        Engine e = probeEngine(json + "field probe.x x int absent 9007199254740993\nfield probe.y y int\n");
+        Entity big = e.decode("j", "{\"x\":9007199254740992,\"y\":1}");
+        check("json integer compared through a double", big.get("probe.x") == null, "got " + big.get("probe.x"));
+        // 20 and 16: two lines on one locator; the present key wins over the sentinel of the earlier line
+        Engine t = probeEngine(json + "field probe.label s string absent -\nfield probe.s s string\n");
+        Entity en = new Entity();
+        en.put("probe.s", "Z");
+        eq("present key of a later line wins", "{\"s\":\"Z\"}", t.encode("j", en));
+        eq("absent keys write the first line's sentinel", "{\"s\":\"-\"}", t.encode("j", new Entity()));
+        // 22: a wire sentinel decodes as absent, so a round trip writes the default
+        Engine d = probeEngine(json + "field probe.x x int absent 0\ndefault probe.x 3\n");
+        eq("sentinel then default", "{\"x\":3}", d.convert("j", "j", "{\"x\":0}", null));
+        // sequential: also binds another key to the same bits, and the field line's sentinel holds for it
+        Engine s = probeEngine(seq + "field probe.x 8 uint absent 255\nalso probe.y\n");
+        Entity sd = s.decode("s", "ff");
+        check("also: the field line's sentinel", sd.get("probe.x") == null && sd.get("probe.y") == null, "");
+        eq("also: no key writes the sentinel", "ff", s.encode("s", new Entity()));
+        errorKind("absent on a sequential field over 64 bits", bd, () -> Pack.parse(seq + "field probe.label 72 ascii absent 0\n", "t"));
     }
 
     /** Version 0.8, rulings 35 to 39: the cases of malformed input no shared vector pins. */

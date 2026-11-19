@@ -73,12 +73,13 @@ class _Enc:
     encoded scope of each item of its list (absent when the entity has no such
     list)."""
 
-    __slots__ = ("plan", "values", "groups")
+    __slots__ = ("plan", "values", "groups", "sentinels")
 
     def __init__(self, plan):
         self.plan = plan
         self.values = {}
         self.groups = {}
+        self.sentinels = set()  # the indices in `values` that hold a sentinel (0.9), not a value
 
 
 class Engine:
@@ -454,6 +455,8 @@ class Engine:
             raw = get(pack, ctx, f)
             if raw is None:
                 continue
+            if f.absent is not None and codec.is_absent(pack, f, raw):
+                continue  # a sentinel: the line yields no value, as if its locator were absent (0.9)
             try:
                 value = self._decode_value(wire, f.transform, raw)
             except ValueError as e:
@@ -646,6 +649,9 @@ class Engine:
             elif key in defaults:
                 value = defaults[key]
             else:
+                if f.absent_out is not None:  # the first sentinel, in place of every option (0.9)
+                    values[i] = f.absent_out
+                    enc.sentinels.add(i)
                 continue
             try:
                 if c2n and key == "type" and value in c2n:

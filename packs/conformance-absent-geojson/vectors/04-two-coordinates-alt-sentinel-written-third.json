@@ -1,0 +1,14 @@
+{
+  "name": "two-coordinates-alt-sentinel-written-third",
+  "from": "conformance-absent-geojson",
+  "to": "conformance-absent-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1.5,2.5]},\"properties\":{\"name\":\"N\"},\"id\":\"u8\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1.5,2.5,9999999]},\"properties\":{\"name\":\"N\"},\"id\":\"u8\"}",
+  "model": {
+    "lon": "1.5",
+    "lat": "2.5",
+    "@absent": [
+      "hae"
+    ]
+  }
+}

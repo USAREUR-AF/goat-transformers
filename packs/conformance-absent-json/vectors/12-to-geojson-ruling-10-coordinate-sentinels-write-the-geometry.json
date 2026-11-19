@@ -1,0 +1,13 @@
+{
+  "name": "to-geojson-ruling-10-coordinate-sentinels-write-the-geometry",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-geojson",
+  "input": "{\"id\":\"u5\",\"lat\":0}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181,91,9999999]},\"properties\":{\"name\":\"\"},\"id\":\"u5\"}",
+  "model": {
+    "uid": "u5",
+    "@absent": [
+      "lat"
+    ]
+  }
+}

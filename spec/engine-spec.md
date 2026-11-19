@@ -1350,3 +1350,204 @@ the packs `conformance-malformed-*` pin them.
 
     Not ruled: invalid UTF-8 inside a text input. A vector input is JSON
     text and cannot carry it.
+
+---
+
+# Version 0.9: absent-value sentinels
+
+Status: Written. Many formats reserve a wire value to mean "no value": all
+bits set in a binary field, `0` for a latitude that is not known, `9999999.0`
+for an altitude, an empty text. Before 0.9 such a value decoded as a number.
+A field option names the wire values that mean absent.
+
+```
+field  <model-key> <locator> <transform> [options] absent <value>[,<value>…]
+```
+
+`absent` is a field option (Version 0.6, Field options) and takes one
+argument: one or more values separated by commas. It is valid on every wire,
+in fixed and sequential `bits` layouts, in kinds and inside groups. It is not
+a `default`, and it does not change `when`, `requires` or `const`.
+
+## The raw value
+
+A sentinel is compared with the raw wire value of the field, before `via`,
+`typemap` and the transform, in the way a `when` value is (Version 0.5):
+
+| Wire | Raw value | A sentinel is written as | Matches when |
+|---|---|---|---|
+| `bits` (fixed and sequential) | the field's `len` bits read as an unsigned integer, as `uint` reads them, after `swap` | an unsigned decimal integer below `2^len` | the integers are equal |
+| `protobuf`, `pvarint` and `psint` | the varint as an unsigned 64-bit integer, before zig-zag | an unsigned decimal integer below `2^64` | the integers are equal |
+| `protobuf`, `pdouble` and `pfloat` | the 8 or 4 bytes as an unsigned little-endian integer | an unsigned decimal integer below `2^64` or `2^32` | the integers are equal |
+| `protobuf`, `pstring` | the bytes as text | text | the texts are equal |
+| `xml` | the attribute value or element text after character references are resolved, not trimmed | text | the texts are equal |
+| `json`, `geojson` | a string member's text, or a number's or boolean's canonical text (ruling 11 of 0.5 for the reverse) | text | the texts are equal |
+
+On a text wire a leading `=` is stripped from each value, as for `when`
+(`=present` is the text `present`). The quoted empty token `""` is the one
+value "the empty text". A value cannot hold a comma.
+
+## Decode
+
+For each field whose wire place is present, the raw value is compared with
+the field's sentinels before the transform runs. When it equals one, the field
+yields no value: the key is not set by this line, the transform is not run, and
+the line is not a failed field (ruling 9 of 0.1.1). Otherwise decode is
+unchanged.
+
+A wire place that holds a sentinel is mapped: it is not residue.
+
+## Encode
+
+When the entity has no value for the key and no `default` applies (Version
+0.6, Defaults), a field with `absent` writes its first sentinel as the raw
+value at its locator:
+
+- `bits`: the integer into the field's bits, low `len` bits, then `swap`.
+  In a sequential layout this replaces the zero bits an absent key writes.
+- `protobuf`: the integer as a varint for `pvarint` and `psint` (no zig-zag
+  is applied to it), as 8 or 4 little-endian bytes for `pdouble` and
+  `pfloat`, the text for `pstring`.
+- `xml`: the text at the attribute or element.
+- `json`, `geojson`: the text, typed as a `when` value is written (ruling 11
+  of 0.5): canonical JSON number text is a number, `true` and `false` are
+  booleans, anything else a string; `=` forces a string.
+
+When the entity has a value, it is written as before, even when the result
+equals a sentinel.
+
+## Load errors
+
+`bad-directive`:
+
+- `absent` with no argument, or given twice on one line (ruling 12 of 0.6);
+- an empty value in the list (`1,,2`), except the single value `""`;
+- on `bits` and on the integer forms of `protobuf`, a value that is not an
+  unsigned decimal integer or does not fit the raw value's width;
+- on a `bits` field longer than 64 bits;
+- on `protobuf`, a value that is `""` on a transform other than `pstring`.
+
+## Rulings for 0.9
+
+1. **Several lines for one key.** A line whose raw value is a sentinel counts
+   as a line whose locator is absent (Version 0.6, One key at several
+   locators): decode goes on to the next line of the key. Encode writes the
+   first sentinel at every line of an absent key that has `absent`; a line of
+   that key without `absent` writes what an absent key wrote before 0.9:
+   nothing on text wires and `protobuf`, zero bits on `bits`.
+2. **Order with other options.** On decode the sentinel check comes after
+   `swap` and before `trim`, `via`, `typemap` and the transform; on encode the
+   sentinel is written in place of all of them. On `bits` a sentinel is an
+   integer, so an `ascii` field that is all NUL bytes matches `absent 0`.
+3. **`optional`.** A field beyond the end of the input is absent by `optional`
+   and the sentinel is not consulted. Encode writes the sentinel as for any
+   absent key.
+4. **Presence.** In a sequential layout, a sentinel written for an absent key
+   is never content: not for a presence bit, an `opt` bit, an `fx` extension
+   bit of a chain, or a repeat indicator (Version 0.8). A block that would
+   write only sentinels is not written and its bit is 0.
+5. **Groups.** Inside a group the option applies per item: an item whose
+   field holds a sentinel lacks the key, and an item that lacks the key writes
+   the sentinel. An item whose every field holds a sentinel is still an item.
+   A scalar item field (`.`) with `absent` writes the sentinel for an item
+   that lacks the value, on every wire, in place of ruling 11 of 0.7 (no
+   `null`, no empty element, not left out of a packed field). On decode a
+   `null` array element is an item without the value, before any sentinel
+   check.
+6. **Context and derivations.** A key left absent by a sentinel is absent for
+   `convert` step 2 and 3 (Version 0.6, Order inside `convert`): context may
+   supply it and a derivation may set it.
+7. **Same-format round trip.** A field holding a sentinel other than the first
+   re-encodes as the first. A wire place missing from the input gains the
+   sentinel on re-encode (`<e/>` becomes `<e alt="9999999"/>`), and a block
+   left out by ruling 4 is dropped. A pack with one sentinel per field
+   round-trips byte-exact when every field with `absent` is on the input
+   wire and no presence block holds only sentinels.
+8. **Capability.** `absent` does not change `model_keys(format)`.
+
+9. **Numbers on `json` and `geojson`.** A sentinel that is JSON number text
+   (RFC 8259 grammar) is read as a double at load and held as its canonical
+   text (ruling 3 of 0.1.1): `9999999.0` is held as `9999999`. It is compared
+   with the canonical text of the wire number and written as that number. A
+   sentinel that is not number text is compared and written as a string,
+   except `true` and `false`, which are booleans.
+10. **`geojson` coordinates.** A `geometry.lon`, `geometry.lat` or
+    `geometry.alt` slot compares the canonical text of its number. On encode
+    a sentinel written for `lon` or `lat` counts as a value for ruling 5 of
+    0.1.1, so `geometry` is written; a sentinel for `alt` is written as the
+    third element.
+11. **Tokens.** The token after `absent` is always its argument, even when it
+    is the name of an option (`absent optional` names the text `optional`).
+    The quoted empty token `""` is a token whose value is the empty text, on
+    every directive. The argument is split on commas; a value cannot contain
+    a comma or a double quote, so `"",0` is `bad-directive`.
+12. **`=`.** A leading `=` is stripped on `xml`, `json` and `geojson` only;
+    on `pstring` it is part of the text. A value empty after stripping is
+    `bad-directive`; only `""` names the empty text.
+13. **Values a transform cannot hold.** On `json` and `geojson`, `null` is
+    `bad-directive` as a sentinel. On the `json` `bool` transform a sentinel
+    other than `true` or `false` is `bad-directive`.
+14. **XML text.** The raw value is the text after the predefined entity
+    references and the character references are resolved: `absent "a&b"`
+    matches `a="a&amp;b"`. It is not trimmed, also where an engine trims
+    element text before the transform: `<e> 0 </e>` does not match
+    `absent 0`.
+15. **Protobuf wire type.** A field whose wire type is not the one its
+    transform fixes is `transform-decode`, before any sentinel check.
+16. **Precedence on one place.** A sentinel is written only where no line
+    whose key is present, or has a `default`, writes: on `bits` such a line
+    wins over a sentinel whatever their order (ruling 5 of 0.5), and on a
+    text wire it is the value of ruling 16 of 0.5. A sentinel write is a
+    field write for the order of ruling 15 of 0.7, and a written field for
+    ruling 14 of 0.5 (`when <path> present` on `protobuf`).
+
+### Stated, not yet pinned by a vector
+
+17. **Forced strings on `json`.** On the `bool` transform `=true` and
+    `=false` are strings, so they are `bad-directive` (ruling 13). `=null`
+    is the string `null` and loads.
+18. **Number text out of range.** A `json` or `geojson` sentinel that is
+    number text but does not fit a finite double (`1e400`) is
+    `bad-directive`.
+19. **Wire integers on `json`.** A wire number is put in canonical text
+    through a double, also when it is an integer; this differs from its
+    written digits only above 2^53.
+20. **Same place.** On text wires and `protobuf`, two lines write the same
+    place when their locators are the same text.
+21. **`"@absent"` clash.** Only a listed entry that is, as text, a member of
+    `model` makes the vector invalid; a list name beside `"<list>.#"` is not
+    a clash.
+22. **A sentinel and a `default` on one key.** A wire sentinel decodes as
+    absent, so a round trip writes the default in its place.
+
+### Rulings from the seven implementations
+
+23. **Position on a text wire.** A member or attribute that several lines
+    name is written once, at the position of the first line that names its
+    locator, whichever line's value or sentinel is written there (ruling 26
+    of 0.5 for `when`). Pinned by `conformance-absent-place-json` and
+    `conformance-absent-place-xml`.
+24. **`also` (ruling 13 of 0.8).** The keys of `also` lines share their
+    `field` line's sentinels: a sentinel on the bits leaves every key of the
+    line absent, and when no key of the line has a value or a `default`, the
+    field's first sentinel is written. Pinned by `conformance-absent-seq-also` and vector 13 of `conformance-absent-json`.
+25. **`geojson` coordinates** take only number text as a sentinel; any other
+    value on a `geometry.*` locator outside a group is `bad-directive`. Inside
+    a group the locator is a member path, as on `json`.
+26. **`=` and `null` on `bool`.** Ruling 13 holds before ruling 17: on the
+    `bool` transform every value other than the bare `true` and `false` is
+    `bad-directive`, `=null` included.
+27. **One `=`.** Only one leading `=` is stripped: `absent ==` on `xml` is
+    the text `=`.
+28. **`""` on `json` and `geojson`** is the empty string, compared with a
+    string member and written as `""`.
+
+## Vector additions
+
+A conversion vector's `model` may hold `"@absent": ["<key>", …]`: each listed
+key must be absent from the decoded entity (from the completed entity under
+`"@complete": true`). `"@absent"` is not a model key. An entry may be an
+item path `"<list>[<i>].<key>"` (the item exists and lacks the key) or a list
+name (the entity has no such list, as `"<list>.#": "absent"`). A listed key
+that is also a member of `model` makes the vector invalid, and an invalid
+vector fails the run.

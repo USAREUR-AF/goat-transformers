@@ -391,6 +391,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     f.via = t[++k];
                     continue;
                 }
+                // v0.9: `absent <value>[,<value>...]`; the next token is always its argument.
+                if (t[k] == "absent") {
+                    if (k + 1 >= t.size() || f.has_absent) throw bad("'absent' takes one argument, once");
+                    f.has_absent = true;
+                    f.absent_arg = t[++k];
+                    continue;
+                }
                 bool* flag = t[k] == "swap" ? &f.swap : t[k] == "trim" ? &f.trim : nullptr;
                 if (t[k] == "optional") throw bad("the field option 'optional' is not allowed in a sequential pack");
                 if (!flag || *flag) throw bad("'" + t[k] + "' is not a field option, or is given twice");
@@ -588,7 +595,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     auto resolve_node = [&](SeqNode& n) {
         if (n.type != Type::Field) return;
         resolve(n.field);
-        for (auto& a : n.also) resolve(a);
+        resolve_absent(p, Wire::Bits, n.field, n.len);
+        for (auto& a : n.also) {
+            resolve(a);
+            resolve_absent(p, Wire::Bits, a, n.len);
+        }
     };
     each_node(p.seq.lines, resolve_node);
     for (auto& k : p.seq.kinds) each_node(k.lines, resolve_node);
@@ -773,6 +784,12 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             const FieldLine& f = n.field;
             const std::uint64_t start = in.cur;
             in.cur += n.len;
+            if (f.has_absent) {
+                // The raw value after `swap` (0.9 ruling 2); every key bound to the bits is absent.
+                std::uint64_t raw = read_bits(in.data, start, n.len, in.msb);
+                if (f.swap) raw = swap_bytes(raw, n.len);
+                if (sentinel_num(f, raw)) return;
+            }
             // Every key bound to the bits takes the value, each through its own table.
             try {
                 Value v;
@@ -1132,7 +1149,15 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
         if (f) break;
     }
     if (!f) {
-        out.zeros(n.len);
+        // The first sentinel in place of the zero bits (0.9); it is never
+        // content for a presence, `opt` or `fx` bit (ruling 4).
+        if (n.field.has_absent) {
+            std::uint64_t raw = n.field.absent_num.front();
+            if (n.field.swap) raw = swap_bytes(raw, n.len);
+            out.put(raw, n.len);
+        } else {
+            out.zeros(n.len);
+        }
         return;
     }
     try {

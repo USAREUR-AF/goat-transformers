@@ -9,6 +9,9 @@
 //! is the number of items of a list (`"absent"`: the list is absent) and
 //! `"<list>[<i>].<key>"` a value of one item, nested lists likewise;
 //! `"<list>[<i>].@kind"` is the kind an item selected (engine-spec 0.8).
+//! `"@absent"` is an array of keys, item paths `<list>[<i>].<key>` and list
+//! names the entity must not have (engine-spec 0.9); a listed key that is also
+//! a member of `model` makes the vector invalid, and it fails.
 
 use goat_transformers::json::Json;
 use goat_transformers::{json, Distribution, Engine, Entity, Value};
@@ -56,6 +59,22 @@ fn model_lookup<'a>(ent: &'a Entity, key: &str) -> Result<Got<'a>, String> {
         return Ok(Got::Count(ent.lists.get(list).map(|l| l.len())));
     }
     ent.fields.get(key).map(Got::Value).ok_or(format!("model key `{}` absent after decode", key))
+}
+
+/// Resolve one `"@absent"` entry: a key or a list name of the entity, or
+/// `<list>[<i>].<rest>` inside an item that must exist. Ok(true) when the
+/// entity has no such key and no such list.
+fn absent_lookup(ent: &Entity, entry: &str) -> Result<bool, String> {
+    if let Some(open) = entry.find('[') {
+        let close = entry[open..].find(']').map(|c| open + c).ok_or(format!("`{}`: no `]`", entry))?;
+        let index: usize = entry[open + 1..close].parse().map_err(|_| format!("`{}`: bad item index", entry))?;
+        let rest = entry[close + 1..].strip_prefix('.').ok_or(format!("`{}`: `].` expected", entry))?;
+        let list = &entry[..open];
+        let items = ent.lists.get(list).ok_or(format!("list `{}` absent after decode", list))?;
+        let item = items.get(index).ok_or(format!("list `{}` has {} items, no item {}", list, items.len(), index))?;
+        return absent_lookup(item, rest).map_err(|e| format!("{}[{}]: {}", list, index, e));
+    }
+    Ok(!ent.fields.contains_key(entry) && !ent.lists.contains_key(entry))
 }
 
 fn jstr<'a>(o: &'a Json, k: &str) -> Option<&'a str> {
@@ -117,8 +136,31 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
             engine.fill(&mut ent, &context).map_err(|e| format!("context: {}", e))?;
             engine.complete(&mut ent);
         }
+        // "@absent": keys, item paths and list names the entity must not have
+        if let Some((_, listed)) = model.iter().find(|(k, _)| k == "@absent") {
+            let entries = match listed {
+                Json::Arr(a) => a,
+                _ => return Err("invalid vector: `@absent` must be an array".into()),
+            };
+            for e in entries {
+                let entry = match e {
+                    Json::Str(s) => s.as_str(),
+                    _ => return Err("invalid vector: an `@absent` entry must be a string".into()),
+                };
+                if entry.starts_with('@') {
+                    return Err(format!("invalid vector: `@absent` lists `{}`, which is not a key", entry));
+                }
+                if model.iter().any(|(k, _)| k == entry) {
+                    return Err(format!("invalid vector: `{}` is in `@absent` and is a member of `model`", entry));
+                }
+                if !absent_lookup(&ent, entry)? {
+                    let got = ent.fields.get(entry).map(|v| v.as_display()).unwrap_or_else(|| "present".into());
+                    return Err(format!("`{}` must be absent, got `{}`", entry, got));
+                }
+            }
+        }
         for (k, mv) in model {
-            if k == "@complete" {
+            if k == "@complete" || k == "@absent" {
                 continue;
             }
             let want = match mv {

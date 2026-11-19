@@ -7,7 +7,9 @@
 %%     "<kind>:"); and, when `model` is present, decode(from, input) has each
 %%     listed key (floats within 1e-9) and selects the kind named by "@kind".
 %%     With "@complete": true the keys are checked on the completed entity
-%%     (decode, context, derivations), floats within 1e-9 relative;
+%%     (decode, context, derivations), floats within 1e-9 relative.
+%%     "@absent" lists keys, item paths and list names the entity must not
+%%     have; an entry that is also a member of `model` makes the vector fail;
 %%   - every load vector under PacksDir/conformance/load-vectors/*.json.
 %%   - the named loader: one pack loaded alone with the modules it needs.
 %%   - malformed inputs: every vector input cut short and with single bytes
@@ -184,7 +186,29 @@ check_convert_error(Convert, Kind) ->
 check_model(_Engine, _From, _Input, _Context, undefined) -> ok;
 check_model(Engine, From, Input, Context, {object, Pairs0}) ->
     Complete = lists:keyfind(<<"@complete">>, 1, Pairs0) =:= {<<"@complete">>, true},
-    Pairs = lists:keydelete(<<"@complete">>, 1, Pairs0),
+    Pairs1 = lists:keydelete(<<"@complete">>, 1, Pairs0),
+    %% "@absent" (Version 0.9): keys the entity must not have
+    {AbsentKeys, Pairs} =
+        case lists:keyfind(<<"@absent">>, 1, Pairs1) of
+            false -> {[], Pairs1};
+            {_, {array, Listed}} -> {Listed, lists:keydelete(<<"@absent">>, 1, Pairs1)};
+            {_, Other} -> {{invalid, Other}, Pairs1}
+        end,
+    case absent_valid(AbsentKeys, Pairs) of
+        ok -> check_model(Engine, From, Input, Context, Complete, AbsentKeys, Pairs);
+        Invalid -> Invalid
+    end.
+
+%% A listed entry must be a string, and must not be, as text, a member of
+%% `model` (ruling 21 of 0.9); an invalid vector fails the run.
+absent_valid({invalid, Other}, _Pairs) -> {error, {invalid_vector, '@absent', Other}};
+absent_valid(Listed, Pairs) ->
+    case [E || E <- Listed, not is_binary(E) orelse lists:keymember(E, 1, Pairs)] of
+        [] -> ok;
+        Bad -> {error, {invalid_vector, '@absent_clash', Bad}}
+    end.
+
+check_model(Engine, From, Input, Context, Complete, AbsentKeys, Pairs) ->
     Decoded = gt_engine:decode(Engine, From, Input),
     %% "@complete": the entity as convert hands it to the encoder
     Entity = case Complete of
@@ -209,10 +233,32 @@ check_model(Engine, From, Input, Context, {object, Pairs0}) ->
                               false -> {true, {Key, Expected, Actual}}
                           end
                   end
-          end, Pairs),
+          end, Pairs)
+        ++ [{present, K} || K <- AbsentKeys, not absent_in(K, Entity)],
     case Mismatches of
         [] -> ok;
         _ -> {error, {model, Mismatches}}
+    end.
+
+%% Is a "@absent" entry absent from an entity or an item? "<list>[<i>].<key>"
+%% needs the item and its lack of the key; a key or a list name needs that
+%% the scope has neither.
+absent_in(Key, #{model := Model, lists := Lists}) ->
+    case binary:match(Key, <<"[">>) of
+        {Pos, 1} ->
+            List = binary:part(Key, 0, Pos),
+            Rest = binary:part(Key, Pos + 1, byte_size(Key) - Pos - 1),
+            case binary:split(Rest, <<"].">>) of
+                [Index, Inner] ->
+                    I = try binary_to_integer(Index) catch _:_ -> -1 end,
+                    case maps:find(List, Lists) of
+                        {ok, Items} when I >= 0, I < length(Items) ->
+                            absent_in(Inner, lists:nth(I + 1, Items));
+                        _ -> false
+                    end;
+                _ -> false
+            end;
+        nomatch -> not maps:is_key(Key, Model) andalso not maps:is_key(Key, Lists)
     end.
 
 %% A `model` key read in an entity or an item (spec/vector-format.md, Lists

@@ -164,6 +164,8 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 v = obj == null ? null : member(obj, path);
             }
             if (v == null) continue;                    // absent or null: the key is absent
+            // a string's text, or a number's or boolean's canonical text: a sentinel yields no value (Version 0.9)
+            if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
             Object d;
             try {
                 d = geo ? f.transform.decode(GeoJsonCodec.rawText(v, f.transform)) : decodeValue(f.transform, v);
@@ -265,8 +267,25 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             Object have = obj.get(last);
             if (have == null) obj.put(last, new Json.Raw(r.getValue()));
         }
+        unplace(top);
         prune(top);
         return Json.write(top);
+    }
+
+    /** A sentinel written for an absent key: a later line whose key is present writes over it (ruling 16 of 0.9). */
+    static final class Placed {
+        final Object v;
+        Placed(Object v) { this.v = v; }
+    }
+
+    /** Replace every {@link Placed} in the object, and in the objects nested in it, by the value it holds. */
+    @SuppressWarnings("unchecked")
+    static void unplace(Map<String, Object> obj) {
+        for (Map.Entry<String, Object> m : obj.entrySet()) {
+            Object v = m.getValue();
+            if (v instanceof Placed) m.setValue(((Placed) v).v);
+            else if (v instanceof Map) unplace((Map<String, Object>) v);
+        }
     }
 
     /**
@@ -279,8 +298,10 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             String[] path = (String[]) l.loc;
             if (path.length == 0) {                      // `.`: the item itself as a scalar
                 Pack.Field f = (Pack.Field) l;
-                if (itself != null) continue;
-                itself = encodeOne(f, e, scope, geo);
+                if (itself != null && !(itself instanceof Placed)) continue;
+                Object jv = encodeOne(f, e, scope, geo);
+                if (jv != null) itself = jv;
+                else if (itself == null && f.absent != null) itself = new Placed(f.absent.firstJson());
                 continue;
             }
             Map<String, Object> obj = parent(top, path);
@@ -304,11 +325,13 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             Pack.Field f = (Pack.Field) l;
             if (obj == null) continue;
             Object have = obj.get(last);
-            if (have != null && !isEmptyObject(have)) continue; // an earlier line on this locator already wrote it
+            boolean over = have instanceof Placed;
+            if (have != null && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
             Object jv = encodeOne(f, e, scope, geo);
             if (jv != null) obj.put(last, jv);
+            else if (f.absent != null && !over) obj.put(last, new Placed(f.absent.firstJson()));
         }
-        return itself;
+        return itself instanceof Placed ? ((Placed) itself).v : itself;
     }
 
     /** The JSON value one field writes, or null when the entity lacks the key and the scope has no default. */
@@ -332,6 +355,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         for (Entity item : items) {
             LinkedHashMap<String, Object> obj = new LinkedHashMap<>();
             Object itself = encodeScope(obj, g.body, item, geo);
+            unplace(obj);
             if (itself != null) {
                 arr.add(itself);
             } else {

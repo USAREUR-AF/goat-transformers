@@ -1,0 +1,33 @@
+{
+  "name": "every-field-holds-its-first-sentinel",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"id\":\"\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":5,\"nums\":[1,null,-1],\"items\":[{\"q\":0,\"name\":\"\"},{}]}",
+  "expect": "{\"id\":\"\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":7,\"nums\":[1,-1,-1],\"items\":[{\"q\":0,\"name\":\"\"},{\"q\":0,\"name\":\"\"}]}",
+  "model": {
+    "probe.s2": "-",
+    "probe.nums.#": "3",
+    "probe.nums[0].probe.val": "1",
+    "probe.items.#": "2",
+    "@absent": [
+      "uid",
+      "hae",
+      "lat",
+      "probe.label",
+      "probe.ratio",
+      "probe.tag",
+      "probe.w",
+      "callsign",
+      "probe.a",
+      "probe.neg_a",
+      "probe.s1",
+      "probe.qty",
+      "probe.nums[1].probe.val",
+      "probe.nums[2].probe.val",
+      "probe.items[0].probe.qty",
+      "probe.items[0].probe.label",
+      "probe.items[1].probe.qty",
+      "probe.items[1].probe.label"
+    ]
+  }
+}
