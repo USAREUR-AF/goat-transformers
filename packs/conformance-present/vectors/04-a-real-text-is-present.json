@@ -1,0 +1,13 @@
+{
+  "name": "a-real-text-is-present",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"t\":\"OK\"}",
+  "context": {},
+  "expect": "{\"t\":\"OK\",\"d\":7,\"has_t\":1}",
+  "model": {
+    "@complete": true,
+    "probe.has_t": "1"
+  },
+  "reference": "t holds a value that is not its sentinel"
+}

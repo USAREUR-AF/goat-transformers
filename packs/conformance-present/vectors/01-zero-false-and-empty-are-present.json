@@ -1,0 +1,20 @@
+{
+  "name": "zero-false-and-empty-are-present",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"s\":\"\",\"f\":0.0,\"i\":0}",
+  "context": {},
+  "expect": "{\"s\":\"\",\"f\":0,\"i\":0,\"t\":\"NA\",\"d\":7,\"has_s\":1,\"has_f\":1,\"has_i\":1,\"has_c\":1}",
+  "model": {
+    "@complete": true,
+    "probe.has_s": "1",
+    "probe.has_f": "1",
+    "probe.has_i": "1",
+    "@absent": [
+      "probe.has_t",
+      "probe.has_d"
+    ],
+    "probe.has_c": "1"
+  },
+  "reference": "ruling 1 of 0.12: presence, not value. t is absent and is written as its sentinel NA (0.9); d is absent and written as its default 7 (ruling 2: neither is present for derivation)"
+}

@@ -131,7 +131,8 @@ struct ModelKey {
 
 // The fixed set of functions a `derive` line may name (v0.6, Derived keys).
 enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset, Join,
-                      DaySeconds, Any, Not, ParseInt, TextOf  // v0.8
+                      DaySeconds, Any, Not, ParseInt, TextOf,  // v0.8
+                      Present  // v0.12
 };
 
 // `derive <model-key> <function> <argument-key> [<argument-key>...]` (v0.6).

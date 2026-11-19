@@ -613,7 +613,7 @@ const Factor = struct {
     }
 };
 
-const DFn = enum { copy, hypot, bearing, east_of, north_of, neg, scale, offset, join, day_seconds, any, not, parse_int, text_of };
+const DFn = enum { copy, hypot, bearing, east_of, north_of, neg, scale, offset, join, day_seconds, any, not, parse_int, text_of, present };
 
 // One `derive <model-key> <function> <argument-key>…` line of a module.
 const Derive = struct {
@@ -989,6 +989,10 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const Module
     } else if (eq(u8, head, "text_of") and param == null) {
         if (d.args.len != 1 or at[0] != .int or tt != .string) return null;
         d.f = .text_of;
+    } else if (eq(u8, head, "present") and param == null) {
+        // any scalar argument; the result is an int (Version 0.12)
+        if (d.args.len != 1 or tt != .int) return null;
+        d.f = .present;
     } else return null;
     return d;
 }
@@ -1020,6 +1024,7 @@ fn deriveShapeOk(toks: []const []const u8) bool {
         .{ .name = "not", .param = false, .min = 1, .max = 1 },
         .{ .name = "parse_int", .param = false, .min = 1, .max = 1 },
         .{ .name = "text_of", .param = false, .min = 1, .max = 1 },
+        .{ .name = "present", .param = false, .min = 1, .max = 1 },
     };
     for (shapes) |sh| {
         if (!std.mem.eql(u8, sh.name, head)) continue;
@@ -2887,6 +2892,8 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
             if (a0 != .int) return false;
             out = MV{ .str = try intToStr(alloc, a0.int) };
         },
+        // held by the entity, whatever the value: 1 (Version 0.12)
+        .present => out = MV{ .int = 1 },
         .join => {
             var buf = std.ArrayList(u8).init(alloc);
             for (d.args, 0..) |a, i| {

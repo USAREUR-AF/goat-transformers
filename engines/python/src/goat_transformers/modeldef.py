@@ -89,7 +89,7 @@ def _parse_int(text):
 
 
 _NO_PARAM = ("copy", "hypot", "bearing", "east_of", "north_of", "neg", "day_seconds", "any", "not", "parse_int",
-             "text_of")
+             "text_of", "present")
 # 0.8: function -> (argument count or None for one or more, argument type, result type)
 _TYPED = {
     "day_seconds": (1, "int", "float"),
@@ -109,7 +109,7 @@ _TYPED_FN = {
 
 # function -> argument count, None for one or more
 _ARG_COUNT = {"copy": 1, "hypot": 2, "bearing": 2, "east_of": 2, "north_of": 2, "neg": 1, "day_seconds": 1,
-              "any": None, "not": 1, "parse_int": 1, "text_of": 1, "scale": 1, "offset": 1, "join": None}
+              "any": None, "not": 1, "parse_int": 1, "text_of": 1, "present": 1, "scale": 1, "offset": 1, "join": None}
 
 
 def _check_derive_text(function, n):
@@ -158,6 +158,12 @@ def _build_derive(function, target_type, arg_types):
         if target_type != result_type or any(t != arg_type for t in arg_types):
             raise ValueError("%s needs %s argument(s) and a %s target" % (name, arg_type, result_type))
         return _TYPED_FN[name]
+    if name == "present":  # 0.12: 1 when the argument, of any scalar type, is held by the entity
+        if n != 1:
+            raise ValueError("present takes 1 argument(s), got %d" % n)
+        if target_type != "int":
+            raise ValueError("present needs an int target")
+        return lambda a: 1
     if name == "copy":
         if n != 1:
             raise ValueError("copy takes 1 argument(s), got %d" % n)

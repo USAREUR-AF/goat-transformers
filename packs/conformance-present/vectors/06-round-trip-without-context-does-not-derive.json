@@ -1,0 +1,8 @@
+{
+  "name": "round-trip-without-context-does-not-derive",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"s\":\"x\"}",
+  "expect": "{\"s\":\"x\",\"t\":\"NA\",\"d\":7}",
+  "reference": "ruling 5 of 0.12: from == to with no context skips derivation"
+}

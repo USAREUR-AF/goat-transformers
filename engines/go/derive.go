@@ -37,6 +37,8 @@ var deriveArity = map[string]int{
 	"neg": 1, "scale": 1, "offset": 1, "join": -1,
 	// spec 0.8, "Model additions".
 	"day_seconds": 1, "any": -1, "not": 1, "parse_int": 1, "text_of": 1,
+	// spec 0.12.
+	"present": 1,
 }
 
 // parseDerive reads the function of a `derive` line and checks what the line
@@ -45,7 +47,7 @@ func parseDerive(d *Derive) error {
 	name, param, hasParam := strings.Cut(d.Function, ":")
 	arity, known := deriveArity[name]
 	if !known {
-		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>, day_seconds, any, not, parse_int, text_of)", d.Function)
+		return fmt.Errorf("unknown derive function %q (copy, hypot, bearing, east_of, north_of, neg, scale:<factor>, offset:<n>, join:<sep>, day_seconds, any, not, parse_int, text_of, present)", d.Function)
 	}
 	d.name, d.param = name, param
 	switch name {
@@ -193,6 +195,12 @@ func (e *Engine) checkDerives(m *Module) error {
 			if target != KindString || args[0] != KindInt {
 				return bad("text_of needs a string target and an int argument")
 			}
+		case "present":
+			// The argument is any scalar key (0.12 ruling 3); a list is no key
+			// and fails in typeOf.
+			if target != KindInt {
+				return bad("present needs an int target")
+			}
 		default:
 			if !all(KindFloat) {
 				return bad("%s needs a float target and float arguments", d.name)
@@ -289,6 +297,10 @@ func (d *Derive) apply(args []Value) (Value, bool) {
 		return Value{Kind: KindInt, I: i}, true
 	case "text_of":
 		return Value{Kind: KindString, S: strconv.FormatInt(args[0].I, 10)}, true
+	case "present":
+		// The argument handed in is held by the entity, whatever its value
+		// (spec 0.12 ruling 1).
+		return Value{Kind: KindInt, I: 1}, true
 	case "join":
 		parts := make([]string, len(args))
 		for i, a := range args {

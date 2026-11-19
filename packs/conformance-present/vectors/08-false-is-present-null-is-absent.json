@@ -1,0 +1,18 @@
+{
+  "name": "false-is-present-null-is-absent",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"b\":false,\"s\":null}",
+  "context": {},
+  "expect": "{\"t\":\"NA\",\"d\":7,\"b\":false,\"has_b\":1}",
+  "model": {
+    "@complete": true,
+    "probe.has_b": "1",
+    "probe.pr_b": "0",
+    "@absent": [
+      "probe.pr_s",
+      "probe.has_s"
+    ]
+  },
+  "reference": "ruling 1 of 0.12: false decoded by bool is the value 0 and gives 1; a null member is absent (0.5)"
+}
