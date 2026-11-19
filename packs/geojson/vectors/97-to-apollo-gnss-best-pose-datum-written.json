@@ -1,0 +1,12 @@
+{
+  "name": "97-to-apollo-gnss-best-pose-datum-written",
+  "from": "geojson",
+  "to": "apollo-gnss-best-pose",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.375,52.5,41.25]},\"properties\":{}}",
+  "expect": "290000000000404a40310000000000c02a40483d",
+  "model": {
+    "lat": "52.5",
+    "lon": "13.375",
+    "hae": "41.25"
+  }
+}

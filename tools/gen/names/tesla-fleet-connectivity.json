@@ -1,0 +1,8 @@
+{
+ "1": "vehicle_connectivity_vin",
+ "2": "vehicle_connectivity_connection_id",
+ "3": "vehicle_connectivity_status",
+ "4.1": "created_at_seconds",
+ "4.2": "created_at_nanos",
+ "5": "vehicle_connectivity_network_interface"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "gen-imu-roundtrip",
+  "from": "apollo-imu",
+  "to": "apollo-imu",
+  "input": "0a3f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d39110000000000c031401d0000e040221b090000000000403540110000000000003740190000000000c038402a1b090000000000803a40110000000000403c40190000000000003e40",
+  "expect": "0a3f09000000000000d03f120d6d6f64756c655f6e616d652d3118ae0120d30128f801309d0238c202420a08e80712056d73672d384a0a6672616d655f69642d39110000000000c031401d0000e040221b090000000000403540110000000000003740190000000000c038402a1b090000000000803a40110000000000403c40190000000000003e40",
+  "model": {
+    "@kind": "imu",
+    "apolloimu.header_timestamp_sec": "0.25",
+    "apolloimu.header_module_name": "module_name-1",
+    "apolloimu.header_sequence_num": "174",
+    "apolloimu.header_lidar_timestamp": "211",
+    "apolloimu.header_camera_timestamp": "248",
+    "apolloimu.header_radar_timestamp": "285",
+    "apolloimu.header_version": "322",
+    "apolloimu.header_status_error_code": "1000",
+    "apolloimu.header_status_msg": "msg-8",
+    "apolloimu.header_frame_id": "frame_id-9",
+    "apolloimu.imu_measurement_time": "17.75",
+    "apolloimu.imu_measurement_span": "7",
+    "apolloimu.linear_acceleration_x": "21.25",
+    "apolloimu.linear_acceleration_y": "23",
+    "apolloimu.linear_acceleration_z": "24.75",
+    "apolloimu.angular_velocity_x": "26.5",
+    "apolloimu.angular_velocity_y": "28.25",
+    "apolloimu.angular_velocity_z": "30"
+  }
+}

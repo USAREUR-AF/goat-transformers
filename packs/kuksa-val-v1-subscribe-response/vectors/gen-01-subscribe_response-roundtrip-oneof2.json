@@ -1,0 +1,23 @@
+{
+  "name": "gen-subscribe_response-roundtrip-oneof2",
+  "from": "kuksa-val-v1-subscribe-response",
+  "to": "kuksa-val-v1-subscribe-response",
+  "input": "0a720a6d0a06706174682d30120a0a0608890110ae0168371a0b0a0608fb0310a004689b01524a580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a010dba010a08950910ba091a02a90a1201010a740a6f0a07706174682d3335120b0a0608980b10bd0b6895031a0b0a06088a0e10af0e68f903524a580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a010dba010a08a41310c9131a02b814120101",
+  "expect": "0a720a6d0a06706174682d30120a0a0608890110ae0168371a0b0a0608fb0310a004689b01524a580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a010dba010a08950910ba091a02a90a1201010a740a6f0a07706174682d3335120b0a0608980b10bd0b6895031a0b0a06088a0e10af0e68f903524a580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a010dba010a08a41310c9131a02b814120101",
+  "model": {
+    "@kind": "subscribe_response",
+    "kuksavalv1subscriberesponse.subscribe_response_updates.#": "2",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_path": "path-0",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "137",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_unsigned_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_unsigned_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_uint_allowed_values_item": "1321",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_path": "path-35",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "1432",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_unsigned_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_unsigned_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_uint_allowed_values_item": "2616",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1"
+  }
+}

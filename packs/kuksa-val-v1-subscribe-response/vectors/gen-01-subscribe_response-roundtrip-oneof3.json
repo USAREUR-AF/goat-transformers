@@ -1,0 +1,23 @@
+{
+  "name": "gen-subscribe_response-roundtrip-oneof3",
+  "from": "kuksa-val-v1-subscribe-response",
+  "to": "kuksa-val-v1-subscribe-response",
+  "input": "0a84010a7f0a06706174682d30120a0a0608890110ae0170411a0b0a0608fb0310a00470a501525c580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a011fc2011c090000000000002d401100000000004030401a0800000000000032401201010a87010a81010a07706174682d3335120b0a0608980b10bd0b709f031a0b0a06088a0e10af0e708304525c580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a011fc2011c090000000000e04140110000000000c042401a080000000000a04340120101",
+  "expect": "0a84010a7f0a06706174682d30120a0a0608890110ae0170411a0b0a0608fb0310a00470a501525c580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a011fc2011c090000000000002d401100000000004030401a0800000000000032401201010a87010a81010a07706174682d3335120b0a0608980b10bd0b709f031a0b0a06088a0e10af0e708304525c580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a011fc2011c090000000000e04140110000000000c042401a080000000000a04340120101",
+  "model": {
+    "@kind": "subscribe_response",
+    "kuksavalv1subscriberesponse.subscribe_response_updates.#": "2",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_path": "path-0",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "137",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_floating_point_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_floating_point_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_float_allowed_values_item": "18",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_path": "path-35",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "1432",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_floating_point_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_floating_point_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_float_allowed_values_item": "39.25",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1"
+  }
+}

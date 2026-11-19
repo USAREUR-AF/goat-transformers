@@ -1,0 +1,12 @@
+{
+  "name": "98-to-apollo-ins-position-and-velocity",
+  "from": "geojson",
+  "to": "apollo-ins",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.375,52.5,41.25]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "expect": "221b090000000000c02a40110000000000404a40190000000000a044403212090000000000000000110000000000001440",
+  "model": {
+    "@complete": true,
+    "track.vel_east_ms": "0",
+    "track.vel_north_ms": "5"
+  }
+}

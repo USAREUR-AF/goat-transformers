@@ -1,0 +1,10 @@
+{
+  "name": "02-negative-int32-zigzag",
+  "from": "kuksa-val-v2-get-value-response",
+  "to": "kuksa-val-v2-get-value-response",
+  "input": "0a041202684f",
+  "expect": "0a041202684f",
+  "model": {
+    "kuksavalv2getvalueresponse.data_point_value_int32": "-40"
+  }
+}

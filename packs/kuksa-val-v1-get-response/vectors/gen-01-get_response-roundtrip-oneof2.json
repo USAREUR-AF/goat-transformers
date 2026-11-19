@@ -1,0 +1,27 @@
+{
+  "name": "gen-get_response-roundtrip-oneof2",
+  "from": "kuksa-val-v1-get-response",
+  "to": "kuksa-val-v1-get-response",
+  "input": "0a6d0a06706174682d33120a0a0608f801109d0268551a0b0a0608ea04108f0568b901524a580160016a0e6465736372697074696f6e2d3236720a636f6d6d656e742d32377a0e6465707265636174696f6e2d3238820107756e69742d32398a010dba010a08840a10a90a1a02980b0a6f0a07706174682d3337120b0a0608e20b10870c68a9031a0b0a0608d40e10f90e688d04524a580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a010dba010a08ee131093141a02821512250a07706174682d3731121a08cc151209726561736f6e2d37331a0a6d6573736167652d373412250a07706174682d3735121a08e0161209726561736f6e2d37371a0a6d6573736167652d37381a1708641208726561736f6e2d311a096d6573736167652d32",
+  "expect": "0a6d0a06706174682d33120a0a0608f801109d0268551a0b0a0608ea04108f0568b901524a580160016a0e6465736372697074696f6e2d3236720a636f6d6d656e742d32377a0e6465707265636174696f6e2d3238820107756e69742d32398a010dba010a08840a10a90a1a02980b0a6f0a07706174682d3337120b0a0608e20b10870c68a9031a0b0a0608d40e10f90e688d04524a580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a010dba010a08ee131093141a02821512250a07706174682d3731121a08cc151209726561736f6e2d37331a0a6d6573736167652d373412250a07706174682d3735121a08e0161209726561736f6e2d37371a0a6d6573736167652d37381a1708641208726561736f6e2d311a096d6573736167652d32",
+  "model": {
+    "@kind": "get_response",
+    "kuksavalv1getresponse.error_code": "100",
+    "kuksavalv1getresponse.error_reason": "reason-1",
+    "kuksavalv1getresponse.error_message": "message-2",
+    "kuksavalv1getresponse.get_response_entries.#": "2",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_path": "path-3",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_value_timestamp_seconds": "248",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_metadata_value_restriction_unsigned_allowed_values.#": "1",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_metadata_value_restriction_unsigned_allowed_values[0].kuksavalv1getresponse.value_restriction_uint_allowed_values_item": "1432",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_path": "path-37",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_value_timestamp_seconds": "1506",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_metadata_value_restriction_unsigned_allowed_values.#": "1",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_metadata_value_restriction_unsigned_allowed_values[0].kuksavalv1getresponse.value_restriction_uint_allowed_values_item": "2690",
+    "kuksavalv1getresponse.get_response_errors.#": "2",
+    "kuksavalv1getresponse.get_response_errors[0].kuksavalv1getresponse.data_entry_error_path": "path-71",
+    "kuksavalv1getresponse.get_response_errors[0].kuksavalv1getresponse.data_entry_error_error_code": "2764",
+    "kuksavalv1getresponse.get_response_errors[1].kuksavalv1getresponse.data_entry_error_path": "path-75",
+    "kuksavalv1getresponse.get_response_errors[1].kuksavalv1getresponse.data_entry_error_error_code": "2912"
+  }
+}

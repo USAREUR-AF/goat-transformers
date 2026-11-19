@@ -72,6 +72,14 @@ message Timestamp {
   int32 nanos = 2; // non-negative fractions of a second, in nanoseconds
 }
 """,
+    "google/protobuf/any.proto": """
+syntax = "proto3";
+package google.protobuf;
+message Any {
+  string type_url = 1; // names the type of the message serialized in value
+  bytes value = 2; // a serialized message of that type
+}
+""",
     "google/protobuf/duration.proto": """
 syntax = "proto3";
 package google.protobuf;

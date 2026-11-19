@@ -1,0 +1,23 @@
+{
+ "1[]": "location_fixes_fixes",
+ "foxglove.KeyValuePair:1": "key_value_pair_key_at_1",
+ "foxglove.KeyValuePair:2": "key_value_pair_value_at_2",
+ "foxglove.LocationFix:1": "location_fix_latitude_at_1",
+ "foxglove.LocationFix:10": "location_fix_heading_at_10",
+ "foxglove.LocationFix:11.1": "location_fix_velocity_x",
+ "foxglove.LocationFix:11.2": "location_fix_velocity_y",
+ "foxglove.LocationFix:11.3": "location_fix_velocity_z",
+ "foxglove.LocationFix:2": "location_fix_longitude_at_2",
+ "foxglove.LocationFix:3": "location_fix_altitude_at_3",
+ "foxglove.LocationFix:4[]": "location_fix_position_covariance_at_4",
+ "foxglove.LocationFix:4[]item": "location_fix_position_covariance_item_at_4",
+ "foxglove.LocationFix:5": "location_fix_position_covariance_type_at_5",
+ "foxglove.LocationFix:6.1": "location_fix_timestamp_seconds",
+ "foxglove.LocationFix:6.2": "location_fix_timestamp_nanos",
+ "foxglove.LocationFix:7": "location_fix_frame_id_at_7",
+ "foxglove.LocationFix:8.1": "location_fix_color_r",
+ "foxglove.LocationFix:8.2": "location_fix_color_g",
+ "foxglove.LocationFix:8.3": "location_fix_color_b",
+ "foxglove.LocationFix:8.4": "location_fix_color_a",
+ "foxglove.LocationFix:9[]": "location_fix_metadata_at_9"
+}

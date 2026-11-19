@@ -1,0 +1,14 @@
+{
+  "name": "gen-publish_value_request-roundtrip",
+  "from": "kuksa-val-v2-publish-value-request",
+  "to": "kuksa-val-v2-publish-value-request",
+  "input": "0a02086412140a0608ae0110d301120a5a08737472696e672d34",
+  "expect": "0a02086412140a0608ae0110d301120a5a08737472696e672d34",
+  "model": {
+    "@kind": "publish_value_request",
+    "kuksavalv2publishvaluerequest.signal_id_id": "100",
+    "kuksavalv2publishvaluerequest.data_point_timestamp_seconds": "174",
+    "kuksavalv2publishvaluerequest.data_point_timestamp_nanos": "211",
+    "kuksavalv2publishvaluerequest.data_point_value_string": "string-4"
+  }
+}

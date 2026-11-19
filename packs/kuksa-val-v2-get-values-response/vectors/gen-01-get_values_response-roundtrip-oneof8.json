@@ -1,0 +1,19 @@
+{
+  "name": "gen-get_values_response-roundtrip-oneof8",
+  "from": "kuksa-val-v2-get-values-response",
+  "to": "kuksa-val-v2-get-values-response",
+  "input": "0a170a050864108901120eaa010b0a0976616c7565732d31300a180a0608fb0310a004120eaa010b0a0976616c7565732d3231",
+  "expect": "0a170a050864108901120eaa010b0a0976616c7565732d31300a180a0608fb0310a004120eaa010b0a0976616c7565732d3231",
+  "model": {
+    "@kind": "get_values_response",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points.#": "2",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[0].kuksavalv2getvaluesresponse.datapoint_timestamp_seconds": "100",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[0].kuksavalv2getvaluesresponse.datapoint_timestamp_nanos": "137",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[0].kuksavalv2getvaluesresponse.datapoint_value_string_array_values.#": "1",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[0].kuksavalv2getvaluesresponse.datapoint_value_string_array_values[0].kuksavalv2getvaluesresponse.string_array_values_item": "values-10",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[1].kuksavalv2getvaluesresponse.datapoint_timestamp_seconds": "507",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[1].kuksavalv2getvaluesresponse.datapoint_timestamp_nanos": "544",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[1].kuksavalv2getvaluesresponse.datapoint_value_string_array_values.#": "1",
+    "kuksavalv2getvaluesresponse.get_values_response_data_points[1].kuksavalv2getvaluesresponse.datapoint_value_string_array_values[0].kuksavalv2getvaluesresponse.string_array_values_item": "values-21"
+  }
+}

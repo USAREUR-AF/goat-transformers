@@ -1,0 +1,27 @@
+{
+  "name": "gen-list_metadata_response-roundtrip-oneof8",
+  "from": "kuksa-val-v2-list-metadata-response",
+  "to": "kuksa-val-v2-list-metadata-response",
+  "input": "0a7a4a06706174682d30508901580160016a0d6465736372697074696f6e2d347209636f6d6d656e742d357a0d6465707265636174696f6e2d36820106756e69742d378a010eaa010b0a0976616c7565732d333392010eaa010b0a0976616c7565732d33349a010eaa010b0a0976616c7565732d3335a2010308840a0a7f4a07706174682d333650bd0b580160016a0e6465736372697074696f6e2d3430720a636f6d6d656e742d34317a0e6465707265636174696f6e2d3432820107756e69742d34338a010eaa010b0a0976616c7565732d363992010eaa010b0a0976616c7565732d37309a010eaa010b0a0976616c7565732d3731a2010308b814",
+  "expect": "0a7a4a06706174682d30508901580160016a0d6465736372697074696f6e2d347209636f6d6d656e742d357a0d6465707265636174696f6e2d36820106756e69742d378a010eaa010b0a0976616c7565732d333392010eaa010b0a0976616c7565732d33349a010eaa010b0a0976616c7565732d3335a2010308840a0a7f4a07706174682d333650bd0b580160016a0e6465736372697074696f6e2d3430720a636f6d6d656e742d34317a0e6465707265636174696f6e2d3432820107756e69742d34338a010eaa010b0a0976616c7565732d363992010eaa010b0a0976616c7565732d37309a010eaa010b0a0976616c7565732d3731a2010308b814",
+  "model": {
+    "@kind": "list_metadata_response",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata.#": "2",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_path": "path-0",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_id": "137",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_allowed_values_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_allowed_values_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-33",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_min_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_min_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-34",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_max_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[0].kuksavalv2listmetadataresponse.metadata_max_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-35",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_path": "path-36",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_id": "1469",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_allowed_values_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_allowed_values_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-69",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_min_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_min_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-70",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_max_string_array_values.#": "1",
+    "kuksavalv2listmetadataresponse.list_metadata_response_metadata[1].kuksavalv2listmetadataresponse.metadata_max_string_array_values[0].kuksavalv2listmetadataresponse.string_array_values_item": "values-71"
+  }
+}

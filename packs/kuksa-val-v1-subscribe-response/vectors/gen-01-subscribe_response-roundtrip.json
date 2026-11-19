@@ -1,0 +1,23 @@
+{
+  "name": "gen-subscribe_response-roundtrip",
+  "from": "kuksa-val-v1-subscribe-response",
+  "to": "kuksa-val-v1-subscribe-response",
+  "input": "0a8c010a86010a06706174682d3012120a0608890110ae015a08737472696e672d331a130a0608fb0310a0045a09737472696e672d31335253580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a0116aa01131a11616c6c6f7765645f76616c7565732d33331201010a8e010a88010a07706174682d333512130a0608980b10bd0b5a09737472696e672d33381a130a06088a0e10af0e5a09737472696e672d34385253580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a0116aa01131a11616c6c6f7765645f76616c7565732d3638120101",
+  "expect": "0a8c010a86010a06706174682d3012120a0608890110ae015a08737472696e672d331a130a0608fb0310a0045a09737472696e672d31335253580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a0116aa01131a11616c6c6f7765645f76616c7565732d33331201010a8e010a88010a07706174682d333512130a0608980b10bd0b5a09737472696e672d33381a130a06088a0e10af0e5a09737472696e672d34385253580160016a0e6465736372697074696f6e2d3538720a636f6d6d656e742d35397a0e6465707265636174696f6e2d3630820107756e69742d36318a0116aa01131a11616c6c6f7765645f76616c7565732d3638120101",
+  "model": {
+    "@kind": "subscribe_response",
+    "kuksavalv1subscriberesponse.subscribe_response_updates.#": "2",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_path": "path-0",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "137",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_string_allowed_values_item": "allowed_values-33",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[0].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_path": "path-35",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_value_timestamp_seconds": "1432",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1subscriberesponse.value_restriction_string_allowed_values_item": "allowed_values-68",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields.#": "1",
+    "kuksavalv1subscriberesponse.subscribe_response_updates[1].kuksavalv1subscriberesponse.entry_update_fields[0].kuksavalv1subscriberesponse.entry_update_fields_item": "1"
+  }
+}

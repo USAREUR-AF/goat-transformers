@@ -1,0 +1,10 @@
+{
+ "1[]": "vehicle_errors_errors",
+ "2.1": "created_at_seconds",
+ "2.2": "created_at_nanos",
+ "3": "vehicle_errors_vin",
+ "telemetry.vehicle_error.VehicleError:1.1": "vehicle_error_created_at_seconds",
+ "telemetry.vehicle_error.VehicleError:1.2": "vehicle_error_created_at_nanos",
+ "telemetry.vehicle_error.VehicleError:2": "vehicle_error_name",
+ "telemetry.vehicle_error.VehicleError:4": "vehicle_error_body"
+}

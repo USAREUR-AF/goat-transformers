@@ -1,0 +1,14 @@
+{
+  "name": "01-base-station-id-dropped",
+  "from": "apollo-gnss-best-pose",
+  "to": "apollo-gnss-best-pose",
+  "input": "290000000000404a40310000000000c02a403900000000000041404500003d42483d55000080405d00004040650000c03f6a020102",
+  "expect": "290000000000404a40310000000000c02a403900000000000041404500003d42483d55000080405d00004040650000c03f",
+  "model": {
+    "lat": "52.5",
+    "lon": "13.375",
+    "track.sigma_north_m": "4",
+    "track.sigma_east_m": "3",
+    "apollognssbestpose.gnss_best_pose_height_msl": "34"
+  }
+}

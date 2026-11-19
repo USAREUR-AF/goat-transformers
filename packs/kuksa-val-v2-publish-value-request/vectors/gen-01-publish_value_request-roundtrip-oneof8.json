@@ -1,0 +1,16 @@
+{
+  "name": "gen-publish_value_request-roundtrip-oneof8",
+  "from": "kuksa-val-v2-publish-value-request",
+  "to": "kuksa-val-v2-publish-value-request",
+  "input": "0a02086412230a0608ae0110d3011219aa01160a0976616c7565732d31320a0976616c7565732d3133",
+  "expect": "0a02086412230a0608ae0110d3011219aa01160a0976616c7565732d31320a0976616c7565732d3133",
+  "model": {
+    "@kind": "publish_value_request",
+    "kuksavalv2publishvaluerequest.signal_id_id": "100",
+    "kuksavalv2publishvaluerequest.data_point_timestamp_seconds": "174",
+    "kuksavalv2publishvaluerequest.data_point_timestamp_nanos": "211",
+    "kuksavalv2publishvaluerequest.data_point_string_array_values.#": "2",
+    "kuksavalv2publishvaluerequest.data_point_string_array_values[0].kuksavalv2publishvaluerequest.string_array_values_item": "values-12",
+    "kuksavalv2publishvaluerequest.data_point_string_array_values[1].kuksavalv2publishvaluerequest.string_array_values_item": "values-13"
+  }
+}
