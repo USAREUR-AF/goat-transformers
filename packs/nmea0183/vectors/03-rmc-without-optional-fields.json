@@ -1,0 +1,14 @@
+{
+  "name": "rmc-without-optional-fields",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W*78",
+  "expect": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W*78",
+  "model": {
+    "@kind": "rmc",
+    "nmea0183.magvar_dir": "W",
+    "time_ms": "1773567912500"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Writing a record step 5: fields 13 and 12 are empty and addressed only by optional lines, so they are removed; field 11 (magvar_dir, not optional) stops the removal. Pre-2.3 RMC form. Derived without an engine by a standalone reference program (Python standard library)."
+}

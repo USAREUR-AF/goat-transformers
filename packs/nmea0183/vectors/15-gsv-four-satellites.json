@@ -1,0 +1,24 @@
+{
+  "name": "gsv-four-satellites",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGSV,3,1,11,03,07,045,38,08,62,301,,14,25,118,41,22,-02,200,17*5F",
+  "expect": "$GPGSV,3,1,11,03,07,045,38,08,62,301,,14,25,118,41,22,-02,200,17*5F",
+  "model": {
+    "@kind": "gsv",
+    "nmea0183.gsv_total": "3",
+    "nmea0183.gsv_number": "1",
+    "nmea0183.sats_in_view": "11",
+    "nmea0183.satellites.#": "4",
+    "nmea0183.satellites[0].nmea0183.sv_id": "3",
+    "nmea0183.satellites[0].nmea0183.elevation_deg": "7",
+    "nmea0183.satellites[0].nmea0183.azimuth_deg": "45",
+    "nmea0183.satellites[0].nmea0183.snr_db": "38",
+    "nmea0183.satellites[1].nmea0183.sv_id": "8",
+    "nmea0183.satellites[1].nmea0183.azimuth_deg": "301",
+    "nmea0183.satellites[3].nmea0183.elevation_deg": "-2",
+    "nmea0183.satellites[3].nmea0183.snr_db": "17"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Groups: 16 fields from field 4 are 4 items of 4; item 1 has no snr (empty field 11) and writes it empty; int:2 of -2 = -02 (zeros after the '-'). Derived without an engine by a standalone reference program (Python standard library)."
+}

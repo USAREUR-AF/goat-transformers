@@ -1,0 +1,14 @@
+{
+  "name": "to-nmea0183-vtg-course-only",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"course\":54.7,\"speed_ms\":28.9375}}",
+  "expect": "$GPVTG,54.70,T,,M,56.250,N,104.175,K*54",
+  "model": {
+    "@complete": true,
+    "nmea0183.sog_kn": "56.25",
+    "nmea0183.sog_kmh": "104.175"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5 Encode step 2: no position, so vtg (requires course). sog_kn = 28.9375*3600/1852 = 56.25 exactly; sog_kmh = 28.9375*3600/1000 = 104.175, dec:3 n = round(104175.0) = 104175, '104.175' (not near a half); field 3 empty, consts M N K, when T; field 9 optional and removed. Derived without an engine by a standalone reference program (Python standard library)."
+}

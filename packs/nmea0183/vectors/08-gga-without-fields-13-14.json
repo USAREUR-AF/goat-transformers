@@ -1,0 +1,13 @@
+{
+  "name": "gga-without-fields-13-14",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGGA,094512.50,4807.50000,N,01107.50000,E,1,10,1.20,12.3,M,-2.5,M*76",
+  "expect": "$GPGGA,094512.50,4807.50000,N,01107.50000,E,1,10,1.20,12.3,M,-2.5,M,,*76",
+  "model": {
+    "@kind": "gga",
+    "nmea0183.geoid_sep_m": "-2.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Writing a record steps 4 and 5: the record has fields up to 14, the highest index the gga scope addresses, and 13 and 14 are not optional, so two empty fields are written (pack.md, Raw keys). Derived without an engine by a standalone reference program (Python standard library)."
+}

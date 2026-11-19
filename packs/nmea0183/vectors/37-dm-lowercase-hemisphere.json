@@ -1,0 +1,9 @@
+{
+  "name": "dm-lowercase-hemisphere",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4807.50000,n,01107.50000,E,094512.50,A,A*4B",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Transforms rule 3: 'a dm letter other than P or N (case counts)'. Derived without an engine by a standalone reference program (Python standard library)."
+}

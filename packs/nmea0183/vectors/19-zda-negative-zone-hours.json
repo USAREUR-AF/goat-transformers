@@ -1,0 +1,18 @@
+{
+  "name": "zda-negative-zone-hours",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPZDA,094512.50,15,03,2026,-05,00*41",
+  "expect": "$GPZDA,094512.50,15,03,2026,-05,00*41",
+  "model": {
+    "@kind": "zda",
+    "nmea0183.utc_s": "35112.5",
+    "nmea0183.day": "15",
+    "nmea0183.month": "3",
+    "nmea0183.year": "2026",
+    "nmea0183.zone_hours": "-5",
+    "nmea0183.zone_minutes": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), int decodes '-05' (sign, leading zeros allowed); int:2 encodes -5 as '-05' (zero-padded to w digits after any '-'). Derived without an engine by a standalone reference program (Python standard library)."
+}

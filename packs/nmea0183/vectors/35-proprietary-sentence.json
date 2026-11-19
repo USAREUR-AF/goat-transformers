@@ -1,0 +1,9 @@
+{
+  "name": "proprietary-sentence",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$PGRME,15.0,M,45.0,M,25.0,M*1C",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "pack.md 'Not mapped': $P... selects no kind; columns 0:2:3 of PGRME are RME. Derived without an engine by a standalone reference program (Python standard library)."
+}

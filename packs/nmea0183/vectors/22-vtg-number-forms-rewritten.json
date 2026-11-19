@@ -1,0 +1,14 @@
+{
+  "name": "vtg-number-forms-rewritten",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPVTG,054.7,T,34.4,M,56.25,N,104.17,K,A*21",
+  "expect": "$GPVTG,54.70,T,34.40,M,56.250,N,104.170,K,A*11",
+  "model": {
+    "@kind": "vtg",
+    "course": "54.7",
+    "nmea0183.sog_kn": "56.25"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), float/dec decode accepts leading zeros and any fraction digits; dec:2 and dec:3 rewrite 054.7 as 54.70, 56.25 as 56.250, 104.17 as 104.170. Derived without an engine by a standalone reference program (Python standard library)."
+}

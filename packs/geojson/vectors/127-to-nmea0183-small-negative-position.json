@@ -1,0 +1,13 @@
+{
+  "name": "to-nmea0183-small-negative-position",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.00000001,-0.00000001]},\"properties\":{}}",
+  "expect": "$GPGGA,,0000.00000,N,00000.00000,E,,,,,M,,M,,*6D",
+  "model": {
+    "lat": "-0.00000001",
+    "lon": "-0.00000001"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm encode: m = round(1e-8*60*1e5) = round(0.06) = 0, so the letter is the positive one (N, E): 'N when x < 0 and m > 0, else P'. Derived without an engine by a standalone reference program (Python standard library)."
+}

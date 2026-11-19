@@ -1,0 +1,16 @@
+{
+  "name": "rmc-talker-gn-with-nav-status",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GNRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,D,S*71",
+  "expect": "$GNRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,D,S*71",
+  "model": {
+    "@kind": "rmc",
+    "nmea0183.talker": "GN",
+    "time_ms": "1773567912500",
+    "nmea0183.faa_mode": "D",
+    "nmea0183.nav_status": "S"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; packs/nmea0183/pack.def: the talker is column 0:0:2 and the kind column 0:2:3, so GNRMC selects rmc and writes GN back; fields 12 and 13 (NMEA 4.1) both present. Derived without an engine by a standalone reference program (Python standard library)."
+}

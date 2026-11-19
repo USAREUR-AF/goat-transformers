@@ -1,0 +1,14 @@
+{
+  "name": "gsv-no-satellites",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGSV,3,3,08*71",
+  "expect": "$GPGSV,3,3,08*71",
+  "model": {
+    "@kind": "gsv",
+    "nmea0183.sats_in_view": "8",
+    "nmea0183.satellites.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Groups: 'The list is present when the record has a field at index i or beyond, and absent otherwise'; an absent list writes no fields, so the record ends at field 3. Derived without an engine by a standalone reference program (Python standard library)."
+}

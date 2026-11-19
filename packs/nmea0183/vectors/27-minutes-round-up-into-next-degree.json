@@ -1,0 +1,14 @@
+{
+  "name": "minutes-round-up-into-next-degree",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGLL,4859.999999,N,01159.9999951,E,094512.50,A,A*56",
+  "expect": "$GPGLL,4900.00000,N,01200.00000,E,094512.50,A,A*69",
+  "model": {
+    "@kind": "gll",
+    "lat": "48.99999998333333",
+    "lon": "11.999999918333334"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm encode: m = round(|x|*60*1e5); lat 48.99999998333333*60*1e5 = 293999999.90000004 -> m = 294000000 = 49*6000000 + 0, so 4900.00000; lon 11.999999918333334*60*1e5 = 71999999.50999999 -> m = 72000000 = 12*6000000, so 01200.00000. The carry goes into the degrees. Derived without an engine by a standalone reference program (Python standard library)."
+}

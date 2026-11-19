@@ -1,0 +1,12 @@
+{
+  "name": "to-nmea0183-time-truncated",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.125,48.125]},\"properties\":{\"time_ms\":3471292799999}}",
+  "expect": "$GPRMC,235959.99,,4807.50000,N,01107.50000,E,,,311279,,*70",
+  "model": {
+    "time_ms": "3471292799999"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), hms_dmy encode: 'the time as for hms with f fraction digits, truncated from the milliseconds': .999 s writes .99, not 1.00; 2079 is inside the range, yy 79. Derived without an engine by a standalone reference program (Python standard library)."
+}

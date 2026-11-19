@@ -1,0 +1,16 @@
+{
+  "name": "rmc-time-without-date",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPRMC,094512.50,V,,,,,,,,,,N*73",
+  "expect": "$GPRMC,094512.50,V,,,,,,,,,,N*73",
+  "model": {
+    "@kind": "rmc",
+    "nmea0183.talker": "GP",
+    "nmea0183.status": "V",
+    "nmea0183.faa_mode": "N",
+    "nmea0183.utc_s": "35112.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Locators: 'A pair is absent when either of its fields is absent'. Field 9 is empty, so the pair 1+9 (time_ms) is absent and the sentence decodes; the second line on field 1 (nmea0183.utc_s, hms:2) carries the time of day: 9*3600+45*60+12.5 = 35112.5, written back as 094512.50 (Writing a record, step 1: the pair writes nothing, so the later line's text stands). Derived without an engine."
+}

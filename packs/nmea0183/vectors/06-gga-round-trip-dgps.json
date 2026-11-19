@@ -1,0 +1,22 @@
+{
+  "name": "gga-round-trip-dgps",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGGA,094512.50,4807.50000,N,01107.50000,E,2,08,0.90,545.4,M,47.0,M,3.0,0042*74",
+  "expect": "$GPGGA,094512.50,4807.50000,N,01107.50000,E,2,08,0.90,545.4,M,47.0,M,3.0,0042*74",
+  "model": {
+    "@kind": "gga",
+    "nmea0183.utc_s": "35112.5",
+    "lat": "48.125",
+    "lon": "11.125",
+    "nmea0183.quality": "2",
+    "nmea0183.sats_used": "8",
+    "nmea0183.hdop": "0.9",
+    "nmea0183.alt_msl_m": "545.4",
+    "nmea0183.geoid_sep_m": "47",
+    "nmea0183.dgps_age_s": "3",
+    "nmea0183.dgps_station": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; hms 094512.50 = 9*3600+45*60 + 12.5 = 35112.5; int:4 42 = 0042; dec:1 47 = 47.0; dec:2 0.9 = 0.90; consts M at 10 and 12. Derived without an engine by a standalone reference program (Python standard library)."
+}

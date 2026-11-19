@@ -1,0 +1,16 @@
+{
+  "name": "gsv-short-last-item",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGSV,3,3,10,22,41,210,40,25,12,095*5E",
+  "expect": "$GPGSV,3,3,10,22,41,210,40,25,12,095,*72",
+  "model": {
+    "@kind": "gsv",
+    "nmea0183.satellites.#": "2",
+    "nmea0183.satellites[1].nmea0183.sv_id": "25",
+    "nmea0183.satellites[1].nmea0183.elevation_deg": "12",
+    "nmea0183.satellites[1].nmea0183.azimuth_deg": "95"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Groups: 7 fields from field 4, ceil(7/4) = 2 items, the second cut short (snr absent); encode writes each item 4 fields long, so the record ends at field 4+2*4-1 = 11, one empty field more than the input. Derived without an engine by a standalone reference program (Python standard library)."
+}

@@ -42,7 +42,7 @@ on this page lists.
 | MAVLink 2, common message set | `bits` | Built: pack `mavlink2`, 235 message kinds at full payload length. Trimmed payloads and the checksum need framing | pymavlink |
 | ASTM F3411 Remote ID | `bits` | Built: pack `remote-id`, 8 message kinds including the Message Pack | opendroneid-core-c |
 | AIS / AIVDM | six-bit armor | Not built. Needs the six-bit armor wire | pyais, libais, gpsd |
-| NMEA 0183 | text grammar | Not built. Needs the text-grammar wire | pynmea2 |
+| NMEA 0183 | text grammar | Built: pack `nmea0183`, sentences GGA, RMC, GLL, VTG, GSA, GSV, HDT, ZDA. `packs/nmea0183/pack.md` lists what is unmapped | gpsd NMEA Revealed |
 | KLV / MISB ST 0601 | type-length-value | Not built. Needs the type-length-value wire | klvdata |
 | NITF / NSIF | type-length-value | Not built. Needs the type-length-value wire | GDAL, NITRO |
 | GPX 1.1 | `xml` | Built: pack `gpx`, 3 message kinds (waypoint, route point, track point), the first point of a document | GDAL/OGR, gpxpy |

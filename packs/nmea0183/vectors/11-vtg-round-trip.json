@@ -1,0 +1,17 @@
+{
+  "name": "vtg-round-trip",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPVTG,54.70,T,34.40,M,56.250,N,104.170,K,A*11",
+  "expect": "$GPVTG,54.70,T,34.40,M,56.250,N,104.170,K,A*11",
+  "model": {
+    "@kind": "vtg",
+    "course": "54.7",
+    "nmea0183.course_mag_deg": "34.4",
+    "nmea0183.sog_kn": "56.25",
+    "nmea0183.sog_kmh": "104.17",
+    "nmea0183.faa_mode": "A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), ruling 1; when 2 T and consts M, N, K written over; dec:2 54.7 = 54.70 (no leading zero: at least f+1 digits). Derived without an engine by a standalone reference program (Python standard library)."
+}

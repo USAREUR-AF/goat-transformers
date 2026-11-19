@@ -1,0 +1,13 @@
+{
+  "name": "to-nmea0183-longitude-180",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[180,-90]},\"properties\":{}}",
+  "expect": "$GPGGA,,9000.00000,S,18000.00000,E,,,,,M,,M,,*70",
+  "model": {
+    "lat": "-90",
+    "lon": "180"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm encode: 180*60*1e5 = 1080000000 = 180*6000000, degrees 180 in 3 digits; -90 gives 90 in 2 digits with S. Derived without an engine by a standalone reference program (Python standard library)."
+}

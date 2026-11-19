@@ -1,0 +1,9 @@
+{
+  "name": "to-nmea0183-year-1979",
+  "from": "geojson",
+  "to": "nmea0183",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.125,48.125]},\"properties\":{\"time_ms\":315532799999}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), hms_dmy encode: year outside 1980 to 2079; time_ms 315532799999 is 1979-12-31T23:59:59.999Z, one millisecond before the range. Derived without an engine by a standalone reference program (Python standard library)."
+}

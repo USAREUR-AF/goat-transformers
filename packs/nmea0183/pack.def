@@ -1,0 +1,145 @@
+# NMEA 0183 sentences, one sentence per message. Public. Written from the gpsd
+# document "NMEA Revealed", which states it was written without the NMEA
+# standard. pack.md states what is mapped, the evidence for each core key, and
+# what is not mapped.
+#
+# A message is one sentence: "$", the fields separated by ",", "*" and the
+# two-digit checksum; a trailing CR LF or LF is accepted on decode and not
+# written on encode. Field 0 is the tag: two characters of talker id, then the
+# three-letter sentence id, which selects the kind.
+format        nmea0183
+version       0.1.0
+distribution  public
+source        "gpsd project, NMEA Revealed (www/NMEA.adoc, dated 12 July 2025), https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b"
+source        "gpsd COPYING at the same commit: BSD-2-Clause; the document states it is not a derivative of the NMEA 0183 standard"
+uses          nmea0183
+wire          text
+start         "$"
+checksum      nmea
+
+# Talker id: columns 0-1 of the tag. Any talker decodes and is written back;
+# an entity without one (a conversion from another format) is written as GP.
+field    nmea0183.talker   0:0:2   string
+default  nmea0183.talker   GP
+
+# Kinds are in the order an encoder tries their `requires` for an entity from
+# another format: a position with a date-time gives RMC, a position alone GGA.
+# GLL is reached by a same-format round trip only.
+
+# RMC: recommended minimum data. Fields 12 (NMEA 2.3) and 13 (NMEA 4.1) are
+# later additions and are left off when empty.
+kind      rmc
+when      0:2:3   RMC
+requires  lat lon time_ms
+field     time_ms                1+9    hms_dmy:2
+field     nmea0183.utc_s         1      hms:2      # the time alone, kept when field 9 is empty
+field     nmea0183.status        2      string
+field     lat                    3+4    dm:2:5:NS
+field     lon                    5+6    dm:3:5:EW
+field     nmea0183.sog_kn        7      dec:3
+field     course                 8      dec:2
+field     nmea0183.magvar_deg    10     dec:1
+field     nmea0183.magvar_dir    11     string
+field     nmea0183.faa_mode      12     string   optional
+field     nmea0183.nav_status    13     string   optional
+
+# GGA: fix data. Field 9 is above mean sea level, so it is not `hae`. Fields 10
+# and 12 are the unit letter of fields 9 and 11, always M (metres).
+kind      gga
+when      0:2:3   GGA
+requires  lat lon
+field     nmea0183.utc_s         1      hms:2
+field     lat                    2+3    dm:2:5:NS
+field     lon                    4+5    dm:3:5:EW
+field     nmea0183.quality       6      int
+field     nmea0183.sats_used     7      int:2
+field     nmea0183.hdop          8      dec:2
+field     nmea0183.alt_msl_m     9      dec:1
+const     10      M
+field     nmea0183.geoid_sep_m   11     dec:1
+const     12      M
+field     nmea0183.dgps_age_s    13     dec:1
+field     nmea0183.dgps_station  14     int:4
+
+# GLL: position and time of day. Field 7 is the NMEA 2.3 addition.
+kind      gll
+when      0:2:3   GLL
+requires  lat lon
+field     lat                    1+2    dm:2:5:NS
+field     lon                    3+4    dm:3:5:EW
+field     nmea0183.utc_s         5      hms:2
+field     nmea0183.status        6      string
+field     nmea0183.faa_mode      7      string   optional
+
+# VTG: course and speed over ground, the form with unit letters. Field 2 is T
+# in this form and not in the older one, which therefore selects no kind.
+# Field 9 is the NMEA 2.3 addition.
+kind      vtg
+when      0:2:3   VTG
+when      2       T
+requires  course
+field     course                   1    dec:2
+field     nmea0183.course_mag_deg  3    dec:2
+const     4       M
+field     nmea0183.sog_kn          5    dec:3
+const     6       N
+field     nmea0183.sog_kmh         7    dec:3
+const     8       K
+field     nmea0183.faa_mode        9    string   optional
+
+# GSA: fix mode, the satellites used (fields 3 to 14) and the dilutions of
+# precision. Field 18 is the NMEA 4.11 addition.
+kind      gsa
+when      0:2:3   GSA
+requires  nmea0183.fix_mode
+field     nmea0183.sel_mode      1      string
+field     nmea0183.fix_mode      2      int
+field     nmea0183.sat_used_01   3      int:2
+field     nmea0183.sat_used_02   4      int:2
+field     nmea0183.sat_used_03   5      int:2
+field     nmea0183.sat_used_04   6      int:2
+field     nmea0183.sat_used_05   7      int:2
+field     nmea0183.sat_used_06   8      int:2
+field     nmea0183.sat_used_07   9      int:2
+field     nmea0183.sat_used_08   10     int:2
+field     nmea0183.sat_used_09   11     int:2
+field     nmea0183.sat_used_10   12     int:2
+field     nmea0183.sat_used_11   13     int:2
+field     nmea0183.sat_used_12   14     int:2
+field     nmea0183.pdop          15     dec:2
+field     nmea0183.hdop          16     dec:2
+field     nmea0183.vdop          17     dec:2
+field     nmea0183.system_id     18     int      optional
+
+# GSV: one sentence of a group. From field 4 to the end, four fields per
+# satellite. Sentences of a group are not assembled (pack.md).
+kind      gsv
+when      0:2:3   GSV
+requires  nmea0183.sats_in_view
+field     nmea0183.gsv_total     1      int
+field     nmea0183.gsv_number    2      int
+field     nmea0183.sats_in_view  3      int:2
+group     nmea0183.satellites    4      item 4
+  field   nmea0183.sv_id          0     int:2
+  field   nmea0183.elevation_deg  1     int:2
+  field   nmea0183.azimuth_deg    2     int:3
+  field   nmea0183.snr_db         3     int:2
+end
+
+# HDT: true heading of the vessel. Field 2 is the letter T.
+kind      hdt
+when      0:2:3   HDT
+requires  nmea0183.heading_true_deg
+field     nmea0183.heading_true_deg  1  dec:2
+const     2       T
+
+# ZDA: time of day, day, month, four-digit year, local zone offset.
+kind      zda
+when      0:2:3   ZDA
+requires  nmea0183.year
+field     nmea0183.utc_s         1      hms:2
+field     nmea0183.day           2      int:2
+field     nmea0183.month         3      int:2
+field     nmea0183.year          4      int:4
+field     nmea0183.zone_hours    5      int:2
+field     nmea0183.zone_minutes  6      int:2

@@ -1,0 +1,16 @@
+{
+  "name": "small-negative-rounds-to-zero",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGGA,094512.50,0000.000001,S,00000.000001,W,1,05,1.00,-0.04,M,-0.04,M,,*69",
+  "expect": "$GPGGA,094512.50,0000.00000,N,00000.00000,E,1,05,1.00,0.0,M,0.0,M,,*66",
+  "model": {
+    "@kind": "gga",
+    "lat": "-0.000000016666666666666667",
+    "lon": "-0.000000016666666666666667",
+    "nmea0183.alt_msl_m": "-0.04",
+    "nmea0183.geoid_sep_m": "-0.04"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), dm: 0.000001/60 = 0.000000016666666666666667, negated for S; encode m = round(1.6666666666666667e-08*60*1e5) = 0, so the letter is P ('N when x < 0 and m > 0, else P'); dec:1 of -0.04: n = round(-0.4) = 0, not < 0, so no '-'. Derived without an engine by a standalone reference program (Python standard library)."
+}

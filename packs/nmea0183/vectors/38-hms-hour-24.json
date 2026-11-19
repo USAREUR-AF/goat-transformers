@@ -1,0 +1,9 @@
+{
+  "name": "hms-hour-24",
+  "from": "nmea0183",
+  "to": "nmea0183",
+  "input": "$GPGGA,240000.00,4807.50000,N,01107.50000,E,1,05,1.00,545.4,M,47.0,M,,*51",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire), Transforms rule 3: hms hours of 24 or more. Derived without an engine by a standalone reference program (Python standard library)."
+}

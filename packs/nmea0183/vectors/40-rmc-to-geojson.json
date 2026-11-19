@@ -1,0 +1,18 @@
+{
+  "name": "rmc-to-geojson",
+  "from": "nmea0183",
+  "to": "geojson",
+  "input": "$GPRMC,094512.50,A,4807.50000,N,01107.50000,E,28.125,84.40,150326,2.5,W,A*15",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.125,48.125]},\"properties\":{\"time_ms\":1773567912500,\"course\":84.4,\"speed_ms\":14.46875}}",
+  "model": {
+    "@complete": true,
+    "time_ms": "1773567912500",
+    "lat": "48.125",
+    "lon": "11.125",
+    "course": "84.4",
+    "nmea0183.sog_kn": "28.125",
+    "speed_ms": "14.46875"
+  },
+  "source": "constructed",
+  "reference": "spec 0.6 Derived keys and Order inside convert; model/nmea0183.def 'derive speed_ms scale:1852/3600 nmea0183.sog_kn': 28.125*1852 = 52087.5, /3600 = 14.46875 (exact in doubles, so it is also in expect). geojson members in field-line order: time_ms, course, speed_ms; no alt, no id; nmea0183 keys dropped. Derived without an engine by a standalone reference program (Python standard library)."
+}
