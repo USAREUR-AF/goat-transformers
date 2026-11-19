@@ -86,12 +86,13 @@ jobs:
         working-directory: engines/java
   cpp:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      # -O2 without NDEBUG: the malformed-input test runs optimized, with assertions kept.
       - run: |
-          cmake -S engines/cpp -B "$RUNNER_TEMP/cpp"
-          cmake --build "$RUNNER_TEMP/cpp"
+          cmake -S engines/cpp -B "$RUNNER_TEMP/cpp" -DCMAKE_CXX_FLAGS=-O2
+          cmake --build "$RUNNER_TEMP/cpp" --parallel
           ctest --test-dir "$RUNNER_TEMP/cpp" --output-on-failure
   erlang:
     runs-on: ubuntu-latest
