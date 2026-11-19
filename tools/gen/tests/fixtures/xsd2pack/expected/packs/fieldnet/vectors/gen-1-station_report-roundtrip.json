@@ -1,0 +1,24 @@
+{
+  "name": "gen-station_report-roundtrip",
+  "from": "fieldnet",
+  "to": "fieldnet",
+  "input": "<StationReport schemaVersion=\"s0\" xmlns=\"urn:example:fieldnet\"><MessageHeader><Timestamp>2026-01-02T03:04:05.001Z</Timestamp><Mode>SIMULATION</Mode><Sequence>4</Sequence></MessageHeader><MessageData revision=\"5\"><StationID><UUID>00000000-0000-4000-8000-000000000005</UUID><Label>s6</Label></StationID><ObservedAt>2026-01-02T03:04:05.007Z</ObservedAt><Position><Latitude>1.5</Latitude><Longitude>0.25</Longitude><Altitude datum=\"s10\">0.125</Altitude></Position><Kinematics><NorthSpeed>3.5</NorthSpeed><EastSpeed>0.75</EastSpeed><Heading>0.5</Heading><Bearing>1.5</Bearing></Kinematics><Level>8</Level><Priority>1</Priority><Channel>11</Channel><Counter>2</Counter><Active>true</Active><Commissioned>2026-01-02</Commissioned><LastContact>2026-01-02T03:04:05Z</LastContact><Plate>v23</Plate><Callsign>s24</Callsign><Reading quantity=\"TEMPERATURE\" unit=\"s28\"><Value>1.5</Value><Flag>s30</Flag><Sample at=\"2026-01-02T03:04:05.031Z\" v=\"0.125\"/></Reading><Reading quantity=\"TEMPERATURE\" unit=\"s34\"><Value>0.5</Value><Flag>s36</Flag><Sample at=\"2026-01-02T03:04:05.037Z\" v=\"2.5\"/></Reading><Tag>s39</Tag><Tag>s40</Tag><Comment>s26</Comment></MessageData></StationReport>",
+  "expect": "<StationReport schemaVersion=\"s0\" xmlns=\"urn:example:fieldnet\"><MessageHeader><Timestamp>2026-01-02T03:04:05.001Z</Timestamp><Mode>SIMULATION</Mode><Sequence>4</Sequence></MessageHeader><MessageData revision=\"5\"><StationID><UUID>00000000-0000-4000-8000-000000000005</UUID><Label>s6</Label></StationID><ObservedAt>2026-01-02T03:04:05.007Z</ObservedAt><Position><Latitude>1.5</Latitude><Longitude>0.25</Longitude><Altitude datum=\"s10\">0.125</Altitude></Position><Kinematics><NorthSpeed>3.5</NorthSpeed><EastSpeed>0.75</EastSpeed><Heading>0.5</Heading><Bearing>1.5</Bearing></Kinematics><Level>8</Level><Priority>1</Priority><Channel>11</Channel><Counter>2</Counter><Active>true</Active><Commissioned>2026-01-02</Commissioned><LastContact>2026-01-02T03:04:05Z</LastContact><Plate>v23</Plate><Callsign>s24</Callsign><Reading quantity=\"TEMPERATURE\" unit=\"s28\"><Value>1.5</Value><Flag>s30</Flag><Sample at=\"2026-01-02T03:04:05.031Z\" v=\"0.125\"/></Reading><Reading quantity=\"TEMPERATURE\" unit=\"s34\"><Value>0.5</Value><Flag>s36</Flag><Sample at=\"2026-01-02T03:04:05.037Z\" v=\"2.5\"/></Reading><Tag>s39</Tag><Tag>s40</Tag><Comment>s26</Comment></MessageData></StationReport>",
+  "model": {
+    "@kind": "station_report",
+    "fieldnet.revision": "5",
+    "uid": "00000000-0000-4000-8000-000000000005",
+    "fieldnet.station_id_uuid": "00000000-0000-4000-8000-000000000005",
+    "fieldnet.station_id_label": "s6",
+    "time_ms": "1767323045007",
+    "fieldnet.observed_at": "1767323045007",
+    "track.vel_north_ms": "3.5",
+    "fieldnet.kinematics_north_speed": "3.5",
+    "fieldnet.reading[0].fieldnet.flag.#": "1",
+    "fieldnet.reading[0].fieldnet.sample.#": "1",
+    "fieldnet.reading.#": "2",
+    "fieldnet.reading[1].fieldnet.quantity": "TEMPERATURE",
+    "fieldnet.tag.#": "2",
+    "fieldnet.tag[1].fieldnet.item": "s40"
+  }
+}

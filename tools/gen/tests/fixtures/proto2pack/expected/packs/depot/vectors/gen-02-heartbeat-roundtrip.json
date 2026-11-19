@@ -1,0 +1,10 @@
+{
+  "name": "gen-heartbeat-roundtrip",
+  "from": "depot",
+  "to": "depot",
+  "input": "6200",
+  "expect": "6200",
+  "model": {
+    "@kind": "heartbeat"
+  }
+}

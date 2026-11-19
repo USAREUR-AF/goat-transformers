@@ -1,0 +1,14 @@
+{
+  "name": "pgn129026-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "02f8016402205a8b89",
+  "expect": "02f8016402205a8b89",
+  "model": {
+    "@kind": "pgn129026",
+    "n2k.sid": "100",
+    "n2k.cog_reference": "2",
+    "n2k.cog": "2.3072",
+    "speed_ms": "352.11"
+  }
+}

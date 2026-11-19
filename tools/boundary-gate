@@ -44,6 +44,10 @@ ALLOWED_EXT = {
     "yml", "yaml", "mjs", "ts", "ref", "gitignore", "gitattributes", "cmake", "cfg", "ini", "src", "svg", "config",
     "rec", "site",
 }
+# Inputs of the generator tests (tools/gen/tests) keep the extension of the
+# format they are written in. Allowed under this path only.
+FIXTURE_DIR = "tools/gen/tests/fixtures/"
+FIXTURE_EXT = {"proto", "xsd", "xml"}
 ALLOWED_BARE = {
     "LICENSE", "NOTICE", "README", "Makefile", "CMakeLists.txt", "goat-pkg", "goat-options",
     "boundary-gate", "repo-stats", "run_tests", "pre-push", "CODEOWNERS", "CODE_OF_CONDUCT",
@@ -232,6 +236,8 @@ def main():
         if base.startswith(".") and "." not in base[1:]:
             ext = base[1:]
         if base in ALLOWED_BARE or ext in ALLOWED_EXT:
+            continue
+        if ext in FIXTURE_EXT and p.startswith(FIXTURE_DIR):
             continue
         find("filetype", p, 0, "file type not on the allowlist (%s)" % (ext or "no extension"))
 

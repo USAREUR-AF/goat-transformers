@@ -5,6 +5,7 @@
   "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
   "expect": "125f0a09612d662d472d552d432a074a2d303133333430809ccea8fe2e38809ccea8fe2e4a036d2d675161133e004e023e4059df20b5e44c7d55c061cdcccccccc4c45c0696666666666a64640710000000000e058407a09120712054741544f52",
   "model": {
+    "track.scoped_id": "J-01334",
     "uid": "J-01334",
     "type": "a-f-G-U-C",
     "time_ms": "1614456000000",

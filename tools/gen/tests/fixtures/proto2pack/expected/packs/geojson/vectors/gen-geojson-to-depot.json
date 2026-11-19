@@ -1,0 +1,15 @@
+{
+  "name": "gen-geojson-to-depot",
+  "from": "geojson",
+  "to": "depot",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410]},\"properties\":{\"type\":\"a-box\",\"time_ms\":1700000000000},\"id\":\"P-17\"}",
+  "expect": "1080d095ffbc3152290a04502d31371219090000000000a047401100000000000021401d0000cd432001ba01050a03424f58",
+  "model": {
+    "uid": "P-17",
+    "type": "a-box",
+    "time_ms": "1700000000000",
+    "lat": "47.25",
+    "lon": "8.5",
+    "hae": "410"
+  }
+}

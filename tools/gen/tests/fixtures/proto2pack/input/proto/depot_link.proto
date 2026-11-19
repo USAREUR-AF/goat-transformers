@@ -1,0 +1,28 @@
+// A proto2 union envelope: each singular message field is one kind of frame.
+// Written for the proto2pack tests.
+syntax = "proto2";
+package depot.link;
+
+import "depot.proto";
+
+message Control {
+  optional uint32 min_version = 1;
+  optional uint32 max_version = 2;
+}
+
+message Ack {
+  required uint32 sequence = 1;
+  optional string note = 2 [default = "ok"];
+}
+
+message Frame {
+  optional Control control = 1;
+  optional depot.Envelope event = 2;
+  optional Ack ack = 3;
+  repeated string hops = 4;
+  optional uint32 sequence = 5;
+  optional group Legacy = 6 {
+    optional string text = 1;
+  }
+  extensions 100 to 199;
+}

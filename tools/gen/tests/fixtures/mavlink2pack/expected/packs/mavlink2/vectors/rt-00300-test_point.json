@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-test_point",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd08000008336e2c0100b88075d639d479d6",
+  "expect": "fd08000008336e2c0100b88075d639d479d6",
+  "model": {
+    "@kind": "test_point"
+  }
+}

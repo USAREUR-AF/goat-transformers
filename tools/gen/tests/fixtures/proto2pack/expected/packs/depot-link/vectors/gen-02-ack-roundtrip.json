@@ -1,0 +1,18 @@
+{
+  "name": "gen-ack-roundtrip",
+  "from": "depot-link",
+  "to": "depot-link",
+  "input": "0a0508641089011a0b08d30112066e6f74652d342206686f70732d352206686f70732d3628ae01",
+  "expect": "0a0508641089011a0b08d30112066e6f74652d342206686f70732d352206686f70732d3628ae01",
+  "model": {
+    "@kind": "ack",
+    "depot.control_min_version": "100",
+    "depot.control_max_version": "137",
+    "depot.sequence": "174",
+    "depot.ack_sequence": "211",
+    "depot.ack_note": "note-4",
+    "depot.hops.#": "2",
+    "depot.hops[0].depot.frame_hops_item": "hops-5",
+    "depot.hops[1].depot.frame_hops_item": "hops-6"
+  }
+}

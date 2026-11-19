@@ -1,0 +1,16 @@
+{
+  "name": "waypoint-to-geojson",
+  "from": "gpx",
+  "to": "geojson",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"survey-tool\"><wpt lat=\"48.137154\" lon=\"11.576124\"><ele>519.5</ele><time>2024-05-01T12:30:00.000Z</time><name>POINT A</name><sym>Flag, Blue</sym></wpt></gpx>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.576124,48.137154]},\"properties\":{\"time_ms\":1714566600000,\"callsign\":\"POINT A\"}}",
+  "model": {
+    "lat": "48.137154",
+    "lon": "11.576124",
+    "time_ms": "1714566600000",
+    "callsign": "POINT A",
+    "gpx.ele": "519.5"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; ele has no stated height reference and is not hae, so the Point has two coordinates"
+}

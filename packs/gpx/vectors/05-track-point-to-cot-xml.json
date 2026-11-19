@@ -1,0 +1,15 @@
+{
+  "name": "track-point-to-cot-xml",
+  "from": "gpx",
+  "to": "cot-xml",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"logger\"><trk><trkseg><trkpt lat=\"47.5\" lon=\"-122.25\"><ele>312.25</ele><time>2024-05-01T12:30:00.500Z</time><name>TP1</name></trkpt></trkseg></trk></gpx>",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\" time=\"2024-05-01T12:30:00.500Z\" start=\"2024-05-01T12:30:00.500Z\"><point lat=\"47.5\" lon=\"-122.25\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"TP1\"/></detail></event>",
+  "model": {
+    "@kind": "track-point",
+    "lat": "47.5",
+    "lon": "-122.25",
+    "time_ms": "1714566600500"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; packs/cot-xml/pack.def; cot-xml writes its defaults for type, hae, ce and le; ele is not carried"
+}

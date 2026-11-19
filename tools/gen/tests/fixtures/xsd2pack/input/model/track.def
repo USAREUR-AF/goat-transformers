@@ -1,0 +1,10 @@
+# A track module for the xsd2pack tests: two velocity keys and the lines that
+# derive course and speed from them.
+module        track
+version       0.1.0
+distribution  public
+source        "synthetic module written for the xsd2pack tests"
+key  vel_north_ms  float  m/s  "velocity toward true north"
+key  vel_east_ms   float  m/s  "velocity toward true east"
+derive  course    bearing  track.vel_east_ms  track.vel_north_ms
+derive  speed_ms  hypot    track.vel_east_ms  track.vel_north_ms

@@ -1,0 +1,9 @@
+{
+  "name": "to-gpx-waypoint",
+  "from": "cot-xml",
+  "to": "gpx",
+  "input": "<event uid=\"J-01334\" type=\"a-f-G-U-C\" time=\"2021-02-27T20:00:00.000Z\" how=\"m-g\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"-42.6\" ce=\"45.3\" le=\"99.5\"/><detail><contact callsign=\"GATOR\"/></detail></event>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"goat-transformers\"><wpt lat=\"30.0090027\" lon=\"-85.9578182\"><time>2021-02-27T20:00:00.000Z</time><name>GATOR</name></wpt></gpx>",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; packs/gpx/pack.def; the input is that of 02-cot-roundtrip; lat, lon, time and callsign carry; hae, ce, le, uid, type and how have no gpx line"
+}

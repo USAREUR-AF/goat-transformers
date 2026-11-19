@@ -45,7 +45,11 @@ on this page lists.
 | NMEA 0183 | text grammar | Not built. Needs the text-grammar wire | pynmea2 |
 | KLV / MISB ST 0601 | type-length-value | Not built. Needs the type-length-value wire | klvdata |
 | NITF / NSIF | type-length-value | Not built. Needs the type-length-value wire | GDAL, NITRO |
-| KML, GPX, GML | `xml` | Not built | GDAL/OGR |
+| GPX 1.1 | `xml` | Built: pack `gpx`, 3 message kinds (waypoint, route point, track point), the first point of a document | GDAL/OGR, gpxpy |
+| KML 2.2 Placemark | `xml` | Built: pack `kml`, 2 message kinds; the coordinate text is carried whole until a text-split transform exists | GDAL/OGR |
+| GML | `xml` | Not built. Needs XML namespaces and prefixes, and a text-split transform for `pos` | GDAL/OGR |
+| FIXM Core 4.3 | `xml` | Not built. Needs XML namespaces and prefixes (two namespaces in one document), and a text-split transform for `pos` | |
+| AIXM 5.1.1 | `xml` | Not built. Needs XML namespaces and prefixes, including namespaced attributes (`gml:id`, `xlink:href`) | |
 
 ## Formats whose specification is not public
 

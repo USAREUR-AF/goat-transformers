@@ -1,0 +1,12 @@
+{
+  "name": "time-offset-to-utc",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"1\" lon=\"2\"><time>2024-05-01T14:30:00+02:00</time></wpt></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"1\" lon=\"2\"><time>2024-05-01T12:30:00.000Z</time></wpt></gpx>",
+  "model": {
+    "time_ms": "1714566600000"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; xsd:dateTime may carry an offset; the instant is converted to UTC (0.6 correction to ruling 8)"
+}

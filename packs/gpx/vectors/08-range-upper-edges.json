@@ -1,0 +1,13 @@
+{
+  "name": "range-upper-edges",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"90\" lon=\"179.999999999\"/></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><wpt lat=\"90\" lon=\"179.999999999\"/></gpx>",
+  "model": {
+    "lat": "90",
+    "lon": "179.999999999"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType"
+}

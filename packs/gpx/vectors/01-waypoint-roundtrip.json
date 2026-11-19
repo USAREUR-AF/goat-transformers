@@ -1,0 +1,32 @@
+{
+  "name": "waypoint-roundtrip",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx version=\"1.1\" creator=\"survey-tool\" xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"><wpt lat=\"48.137154\" lon=\"11.576124\"><ele>519.50</ele><time>2024-05-01T12:30:00Z</time><magvar>2.5</magvar><geoidheight>47.3</geoidheight><name>POINT A</name><cmt>north gate</cmt><desc>meeting point at the north gate</desc><src>survey 2024</src><sym>Flag, Blue</sym><type>rally</type><fix>3d</fix><sat>8</sat><hdop>1.2</hdop><vdop>1.8</vdop><pdop>2.1</pdop><ageofdgpsdata>3.0</ageofdgpsdata><dgpsid>17</dgpsid></wpt></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"survey-tool\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"><wpt lat=\"48.137154\" lon=\"11.576124\"><ele>519.5</ele><time>2024-05-01T12:30:00.000Z</time><magvar>2.5</magvar><geoidheight>47.3</geoidheight><name>POINT A</name><cmt>north gate</cmt><desc>meeting point at the north gate</desc><src>survey 2024</src><sym>Flag, Blue</sym><type>rally</type><fix>3d</fix><sat>8</sat><hdop>1.2</hdop><vdop>1.8</vdop><pdop>2.1</pdop><ageofdgpsdata>3</ageofdgpsdata><dgpsid>17</dgpsid></wpt></gpx>",
+  "model": {
+    "lat": "48.137154",
+    "lon": "11.576124",
+    "gpx.ele": "519.5",
+    "time_ms": "1714566600000",
+    "gpx.magvar": "2.5",
+    "gpx.geoidheight": "47.3",
+    "callsign": "POINT A",
+    "gpx.cmt": "north gate",
+    "gpx.desc": "meeting point at the north gate",
+    "gpx.src": "survey 2024",
+    "gpx.sym": "Flag, Blue",
+    "gpx.type": "rally",
+    "gpx.fix": "3d",
+    "gpx.sat": "8",
+    "gpx.hdop": "1.2",
+    "gpx.vdop": "1.8",
+    "gpx.pdop": "2.1",
+    "gpx.ageofdgpsdata": "3",
+    "gpx.dgpsid": "17",
+    "@kind": "waypoint",
+    "gpx.creator": "survey-tool"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; every element of wptType that the pack maps; root attributes the pack does not map are residue and are written back after the mapped ones; decimals are written in shortest form (519.50 is 519.5, 3.0 is 3); the time gains milliseconds"
+}

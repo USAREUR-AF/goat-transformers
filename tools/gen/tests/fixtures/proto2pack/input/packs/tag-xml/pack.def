@@ -1,0 +1,14 @@
+# An XML tag with attribute locators, for the proto2pack tests.
+format  tag-xml
+version 0.1.0
+distribution public
+source  "written for the proto2pack tests"
+wire    xml
+root    tag
+const   @schema  1
+field   uid      @id          string
+field   time_ms  @time        iso8601_ms
+field   lat      place/@lat   float
+field   lon      place/@lon   float
+field   hae      place/@hae   float
+default hae      0

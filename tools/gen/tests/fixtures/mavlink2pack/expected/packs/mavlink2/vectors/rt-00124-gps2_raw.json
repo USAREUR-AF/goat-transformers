@@ -1,0 +1,10 @@
+{
+  "name": "roundtrip-gps2_raw",
+  "from": "mavlink2",
+  "to": "mavlink2",
+  "input": "fd160000077d7d7c000010e3a5130000008090d5ed06702a12f90b8756c96c43",
+  "expect": "fd160000077d7d7c000010e3a5130000008090d5ed06702a12f90b8756c96c43",
+  "model": {
+    "@kind": "gps2_raw"
+  }
+}

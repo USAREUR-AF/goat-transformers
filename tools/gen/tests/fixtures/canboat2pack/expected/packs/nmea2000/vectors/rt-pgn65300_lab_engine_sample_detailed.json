@@ -1,0 +1,14 @@
+{
+  "name": "pgn65300_lab_engine_sample_detailed-roundtrip",
+  "from": "nmea2000",
+  "to": "nmea2000",
+  "input": "14ff00cf87723907107879",
+  "expect": "14ff00cf87723907107879",
+  "model": {
+    "@kind": "pgn65300_lab_engine_sample_detailed",
+    "n2k.engine_instance": "14",
+    "n2k.trim_angle": "0.1849",
+    "n2k.coolant_temperature": "-32",
+    "n2k.pgn65300_lab_engine_sample_detailed_fuel_rate": "3109.6"
+  }
+}

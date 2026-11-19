@@ -1,0 +1,14 @@
+// A field option of the test schema: `is_mandatory: true` marks a field that
+// every message must carry. Written for the proto2pack tests.
+syntax = "proto3";
+package depot;
+
+import "google/protobuf/descriptor.proto";
+
+message FieldRule {
+  bool is_mandatory = 1;
+}
+
+extend google.protobuf.FieldOptions {
+  FieldRule rule = 50001;
+}

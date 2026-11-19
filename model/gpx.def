@@ -1,0 +1,28 @@
+# The gpx module: the values of a GPX 1.1 point (waypoint, route point or
+# track point) and of its document that have no shared-model key. Units are
+# those the GPX 1.1 schema states. packs/gpx/pack.md says why each one is not
+# bound to a core key.
+module        gpx
+version       0.1.0
+distribution  public
+source        "GPX 1.1 schema, TopoGrafix, https://www.topografix.com/GPX/1/1/gpx.xsd; GPX is published as an open standard (https://www.topografix.com/gpx.asp)"
+# Document
+key  creator        string  -    "name of the program or device that wrote the file (root attribute, required by the schema)"
+key  route_name     string  -    "name of the route that holds the point"
+key  track_name     string  -    "name of the track that holds the point"
+# Point
+key  ele            float   m    "elevation of the point in metres; the schema states no height reference, so it is not height above the ellipsoid"
+key  magvar         float   deg  "magnetic variation at the point, degrees"
+key  geoidheight    float   m    "height of the geoid (mean sea level) above the WGS 84 ellipsoid at the point, metres"
+key  cmt            string  -    "comment meant for the GPS receiver"
+key  desc           string  -    "description meant for the user"
+key  src            string  -    "source of the data, as free text"
+key  sym            string  -    "symbol name as the GPS receiver shows it"
+key  type           string  -    "classification of the point, free text (not a CoT type token)"
+key  fix            string  -    "kind of fix: none, 2d, 3d, dgps or pps"
+key  sat            int     -    "number of satellites used for the fix"
+key  hdop           float   -    "horizontal dilution of precision"
+key  vdop           float   -    "vertical dilution of precision"
+key  pdop           float   -    "position dilution of precision"
+key  ageofdgpsdata  float   s    "seconds since the last differential correction"
+key  dgpsid         int     -    "identifier of the differential station, 0 to 1023"
