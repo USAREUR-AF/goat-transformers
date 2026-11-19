@@ -1,0 +1,9 @@
+{
+  "name": "tim-to-geojson",
+  "from": "conformance-text",
+  "to": "geojson",
+  "input": "$GPTIM,123519.000,270221,5.5,A,V*45",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1614429319000,\"speed_ms\":5.5}}",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy decode as in tim-round-trip; geojson ruling 5 of 0.1.1 (no position: geometry null). Derived without an engine by a standalone reference program."
+}

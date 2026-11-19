@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-callsign-holds-delimiter",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"A,B\"}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: text holding the delimiter is transform-encode. Derived without an engine by a standalone reference program."
+}

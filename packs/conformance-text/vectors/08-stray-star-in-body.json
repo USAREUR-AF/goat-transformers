@@ -1,0 +1,9 @@
+{
+  "name": "stray-star-in-body",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,R*S,GATOR,3*32",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Reading a record, step 4: a `*` left in the text (checksum digits are the true XOR of the body, star included). Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "code-column-cut-short",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "C;A",
+  "expect": "C;A",
+  "model": {
+    "probe.s1": "A",
+    "probe.s2": "A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: the field ends inside column 1:0:2, which reads A; column 1:2:3 is absent. Derived without an engine by a standalone reference program."
+}

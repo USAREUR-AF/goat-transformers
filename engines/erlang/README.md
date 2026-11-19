@@ -95,7 +95,10 @@ raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 `'undeclared-key'`, `'key-type-mismatch'` (the last two for a context key) and
 `Message` beginning with the kind and a colon. Wires: `xml` (a root per kind),
 `geojson`, `json`, `bits` (`bit_order lsb | msb`, fields past their word,
-`swap`, `trim`, `optional`), `protobuf`.
+`swap`, `trim`, `optional`), `protobuf`, `text` (Version 0.10: `delimiter`,
+`start`, `checksum none | nmea`; input and output are the record's text, never
+trimmed; residue is keyed by field index; the `absent` field option of
+Version 0.9 is `bad-directive` on it, ruling 16 of 0.10).
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
 input makes `decode` or `convert` raise anything but `convert_error`. The
@@ -145,6 +148,11 @@ implemented as the specification states them.
 - `src/gt_bits.erl`  — hex text and bit-range access, both bit orders.
 - `src/gt_protobuf.erl` — protobuf wire reader and canonical writer.
 - `src/gt_seq.erl`   — decode and encode of a `layout sequential` pack.
+- `src/gt_text.erl`  — the `text` wire (Version 0.10): reading a record (terminator,
+  printable check, start, `nmea` checksum, split), field, column and pair locators,
+  the `int:<w>`, `dec`, `dm`, `hms` and `hms_dmy` transforms, residue by field
+  index, groups of `item <n>` fields, and writing a record (padding, trailing
+  `optional` fields, checksum).
 - `src/gt_engine.erl`— engine instance and load checks, kind selection, decode /
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.

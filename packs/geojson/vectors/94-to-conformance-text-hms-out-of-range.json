@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-hms-out-of-range",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"ce\":86400}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Rules for these transforms, 5: n = 8640000 is not below 86400*10^2. Derived without an engine by a standalone reference program."
+}

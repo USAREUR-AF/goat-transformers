@@ -109,6 +109,18 @@ pub enum Transform {
     F64,
     /// bits: bytes in wire order as text, trailing NULs removed
     Ascii,
+    /// text: `int:<w>`, an integer zero-padded to at least `w` digits
+    IntW(u32),
+    /// text: `dec:<f>[:<w>]`, a number with `f` fraction digits, zero-padded
+    /// to at least `w` characters (0: no width)
+    Dec(u32, u32),
+    /// text: `dm:<d>:<f>:<PN>`, degrees and minutes in a pair, with the
+    /// letters of the positive and the negative hemisphere
+    Dm(u32, u32, u8, u8),
+    /// text: `hms:<f>`, `hhmmss[.s]` as seconds since midnight
+    Hms(u32),
+    /// text: `hms_dmy:<f>`, a time and a date `ddmmyy` in a pair, as epoch ms
+    HmsDmy(u32),
 }
 
 /// The scale of `uscale` / `sscale`: a decimal factor, or a fraction
@@ -171,6 +183,9 @@ impl Transform {
                 _ => err(format!("linscale needs <maxpos>:<range>, got `{}`", name)),
             };
         }
+        if let Some(t) = Transform::parse_text(name) {
+            return t;
+        }
         for (prefix, signed) in [("uscale:", false), ("sscale:", true)] {
             if let Some(args) = name.strip_prefix(prefix) {
                 return match Scale::parse(args) {
@@ -199,10 +214,48 @@ impl Transform {
         }
     }
 
+    /// The transforms of the text wire (engine-spec v0.10), with their
+    /// parameters. None when `name` is none of them.
+    fn parse_text(name: &str) -> Option<Result<Transform, Error>> {
+        let (head, args) = name.split_once(':').unwrap_or((name, ""));
+        if !matches!(head, "int" | "dec" | "dm" | "hms" | "hms_dmy") || (head == "int" && !name.contains(':')) {
+            return None;
+        }
+        let args: Vec<&str> = if name.contains(':') { args.split(':').collect() } else { Vec::new() };
+        // a parameter: decimal digits within its range
+        let n = |s: &str, lo: u32, hi: u32| -> Option<u32> {
+            if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) {
+                return None;
+            }
+            s.parse::<u32>().ok().filter(|v| (lo..=hi).contains(v))
+        };
+        let t = match (head, args.as_slice()) {
+            ("int", [w]) => n(w, 1, 20).map(Transform::IntW),
+            ("dec", [f]) => n(f, 0, 9).map(|f| Transform::Dec(f, 0)),
+            ("dec", [f, w]) => n(f, 0, 9).zip(n(w, 1, 20)).map(|(f, w)| Transform::Dec(f, w)),
+            ("dm", [d, f, pn]) => {
+                let pn = pn.as_bytes();
+                let letters = pn.len() == 2 && pn[0] != pn[1] && pn.iter().all(|c| c.is_ascii_uppercase());
+                n(d, 1, 3).zip(n(f, 0, 9)).filter(|_| letters).map(|(d, f)| Transform::Dm(d, f, pn[0], pn[1]))
+            }
+            ("hms", [f]) => n(f, 0, 3).map(Transform::Hms),
+            ("hms_dmy", [f]) => n(f, 0, 3).map(Transform::HmsDmy),
+            _ => None,
+        };
+        Some(t.ok_or(Error { msg: format!("bad-directive: the parameters of transform `{}` are not valid", name) }))
+    }
+
+    /// True for the transforms only the text wire accepts.
+    fn is_text_only(&self) -> bool {
+        matches!(self, Transform::IntW(_) | Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) | Transform::HmsDmy(_))
+    }
+
     /// The shared-model type this transform yields (spec/shared-model.md).
     pub fn value_type(&self) -> KeyType {
         match self {
             Transform::StringT | Transform::Pstring | Transform::Ascii => KeyType::Str,
+            Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
+            Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
             | Transform::Linscale(_, _)
             | Transform::Uscale(_)
@@ -380,6 +433,8 @@ impl Transform {
             | Transform::Twos
             | Transform::Pvarint
             | Transform::Psint => JsonKind::IntK,
+            Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => JsonKind::NumK,
+            Transform::IntW(_) | Transform::HmsDmy(_) => JsonKind::IntK,
         }
     }
 }
@@ -803,6 +858,8 @@ pub enum Wire {
     Protobuf,
     /// any JSON object; members addressed by dot-path
     Json,
+    /// one record of ASCII text: delimited fields and columns (engine-spec v0.10)
+    Text,
 }
 
 #[derive(Clone, Debug)]
@@ -914,6 +971,10 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
         None => return Ok(()),
     };
     let ln = f.line;
+    // ruling 16 of 0.10: not stated on the text wire yet
+    if wire == Wire::Text {
+        return bad(ln, "`absent` is not valid on the text wire");
+    }
     // the quoted empty token `""` is the one value "the empty text"
     let values: Vec<&str> = if arg.is_empty() { vec![""] } else { arg.split(',').collect() };
     if arg.contains('"') || (values.len() > 1 && values.iter().any(|v| v.is_empty())) {
@@ -984,6 +1045,7 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
                 };
                 Sentinel::Text(text, json)
             }
+            Wire::Text => unreachable!("rejected above"),
         });
     }
     f.absent = out;
@@ -1208,6 +1270,8 @@ pub struct Pack {
     /// message, read in order from a cursor. `fields`, `kinds` and `groups`
     /// are then empty.
     pub seq: Option<seq::SeqBody>,
+    /// text only: the delimiter, the start text and the checksum
+    pub text: text::TextConf,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -1250,6 +1314,9 @@ impl Pack {
         let mut kind_root_line: Option<usize> = None;
         let mut to_cot = BTreeMap::new();
         let mut from_cot = BTreeMap::new();
+        // text wire (engine-spec v0.10): `delimiter`, `start`, `checksum` and the line of each
+        let mut text_conf = text::TextConf::default();
+        let mut text_lines: [Option<usize>; 3] = [None; 3];
         for (lineno, raw) in text.lines().enumerate() {
             let toks = tokenize(raw)?;
             if toks.is_empty() {
@@ -1263,6 +1330,35 @@ impl Pack {
                     return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
+                d @ ("delimiter" | "start" | "checksum") => {
+                    let slot = match d {
+                        "delimiter" => 0,
+                        "start" => 1,
+                        _ => 2,
+                    };
+                    if !kinds.is_empty() {
+                        return bad(ln, format!("`{}` stands before the first `kind`", d));
+                    }
+                    if text_lines[slot].is_some() {
+                        return bad(ln, format!("`{}` given twice", d));
+                    }
+                    text_lines[slot] = Some(ln);
+                    if toks.len() != 2 {
+                        return bad(ln, format!("`{}` takes one value", d));
+                    }
+                    let v = toks[1].as_bytes();
+                    let printable = |c: &u8| (0x21..=0x7e).contains(c);
+                    match (d, toks[1].as_str()) {
+                        ("delimiter", "none") => text_conf.delimiter = None,
+                        ("delimiter", _) if v.len() == 1 && printable(&v[0]) && v[0] != b'"' => {
+                            text_conf.delimiter = Some(v[0])
+                        }
+                        ("start", _) if !v.is_empty() && v.iter().all(printable) => text_conf.start = toks[1].clone(),
+                        ("checksum", "none") => text_conf.nmea = false,
+                        ("checksum", "nmea") => text_conf.nmea = true,
+                        _ => return bad(ln, format!("`{} {}` is not a valid value", d, toks[1])),
+                    }
+                }
                 "version" => version = Some(req_arg(&toks, 1, ln)?),
                 "wire" => {
                     wire = Some(match req_arg(&toks, 1, ln)?.as_str() {
@@ -1271,6 +1367,7 @@ impl Pack {
                         "bits" => Wire::Bits,
                         "protobuf" => Wire::Protobuf,
                         "json" => Wire::Json,
+                        "text" => Wire::Text,
                         o => return err(format!("line {}: unknown wire `{}`", ln, o)),
                     })
                 }
@@ -1525,6 +1622,18 @@ impl Pack {
                 return bad(ln, "`bit_order` is valid only on a bits wire");
             }
         }
+        if wire == Wire::Text {
+            if let (Some(ln), Some(d)) = (text_lines[1], text_conf.delimiter) {
+                if text_conf.start.as_bytes().contains(&d) {
+                    return bad(ln, "the `start` text holds the delimiter");
+                }
+            }
+            if text_conf.nmea && text_conf.delimiter == Some(b'*') {
+                return bad(text_lines[0].or(text_lines[2]).unwrap_or(0), "`delimiter \"*\"` with `checksum nmea`");
+            }
+        } else if let Some(ln) = text_lines.iter().flatten().min() {
+            return bad(*ln, "`delimiter`, `start` and `checksum` are valid only on the text wire");
+        }
         if let Some(ln) = layout_line {
             if wire != Wire::Bits {
                 return bad(ln, "`layout` is valid only on a bits wire");
@@ -1622,6 +1731,9 @@ impl Pack {
                 )?;
             }
         }
+        if wire == Wire::Text {
+            text::check_pack(&text_conf, &fields, &whens, &consts, &groups, &kinds)?;
+        }
         let format = format.ok_or(Error { msg: "pack missing `format`".into() })?;
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
@@ -1649,6 +1761,7 @@ impl Pack {
             typemap_to_cot: to_cot,
             typemap_from_cot: from_cot,
             seq: None,
+            text: text_conf,
         })
     }
 
@@ -2012,8 +2125,18 @@ fn fixed_bits_len(wire: Wire, f: &FieldDef) -> Option<u32> {
 /// Load checks a `field` line owes its wire (engine-spec v0.5).
 fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), Error> {
     let t = &f.transform;
-    if (f.swap || f.trim || f.optional) && wire != Wire::Bits {
-        return bad(f.line, "`swap`, `trim` and `optional` are valid only on a bits wire");
+    if (f.swap || f.trim) && wire != Wire::Bits {
+        return bad(f.line, "`swap` and `trim` are valid only on a bits wire");
+    }
+    if f.optional && !matches!(wire, Wire::Bits | Wire::Text) {
+        return bad(f.line, "`optional` is valid only on the bits and text wires");
+    }
+    // engine-spec v0.10: the text wire's own transforms, and the transforms it takes
+    if t.is_text_only() && wire != Wire::Text {
+        return bad(f.line, format!("the transform of `{}` is valid only on the text wire", f.model_key));
+    }
+    if wire == Wire::Text && !text::valid_on_text(t) {
+        return bad(f.line, format!("the transform of `{}` is not valid on the text wire", f.model_key));
     }
     if f.trim && *t != Transform::Ascii {
         return bad(f.line, "`trim` is valid only with `ascii`");
@@ -2106,13 +2229,21 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
         if g.count.is_some() {
             return bad(g.line, "`count` is valid only on a bits wire");
         }
-        if g.item_bits.is_some() {
+        if g.item_bits.is_some() && wire != Wire::Text {
             return bad(g.line, "`item` is valid only on a bits wire");
         }
     }
     let ok = match wire {
         Wire::Xml => names('/') && !g.locator.contains('@') && !g.locator.contains('#'),
         Wire::Json => names('.'),
+        // engine-spec v0.10: `group <list> <i> item <n>`
+        Wire::Text => {
+            if g.item_bits.is_none() {
+                return bad(g.line, "a group on the text wire needs `item <n>`");
+            }
+            text::check_group_locator(g)?;
+            true
+        }
         Wire::GeoJson => {
             names('.') && !g.locator.starts_with("geometry.") && (!g.locator.contains('.') || g.locator.starts_with("properties."))
         }
@@ -2173,7 +2304,7 @@ fn check_scope(
     let sep = match wire {
         Wire::Xml => Some('/'),
         Wire::Json | Wire::GeoJson | Wire::Protobuf => Some('.'),
-        Wire::Bits => None,
+        Wire::Bits | Wire::Text => None,
     };
     if let Some(sep) = sep {
         // group path -> the first group of the scope with that path
@@ -2267,6 +2398,15 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
                 w.present = true;
             } else {
                 w.num = number(w)?;
+            }
+        }
+        Wire::Text => {
+            text::check_when_locator(w)?;
+            if w.value == "present" {
+                w.present = true;
+            } else {
+                w.text = w.value.strip_prefix('=').unwrap_or(&w.value).to_string();
+                w.forced = w.value.starts_with('=');
             }
         }
         Wire::Xml | Wire::GeoJson | Wire::Json => {
@@ -2621,6 +2761,7 @@ impl Engine {
             Wire::Bits => bits::decode(p, bytes),
             Wire::Protobuf => protobuf::decode(p, bytes),
             Wire::Json => jsonwire::decode(p, bytes),
+            Wire::Text => text::decode(p, bytes),
         }
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
@@ -2631,6 +2772,7 @@ impl Engine {
             Wire::Bits => bits::encode(p, ent),
             Wire::Protobuf => protobuf::encode(p, ent),
             Wire::Json => jsonwire::encode(p, ent),
+            Wire::Text => text::encode(p, ent),
         }
     }
     /// `convert` with no context.
@@ -2766,6 +2908,11 @@ impl Engine {
                 break;
             }
         }
+    }
+
+    /// The wire of a loaded format.
+    pub fn wire(&self, format: &str) -> Option<Wire> {
+        self.packs.get(format).map(|p| p.wire)
     }
 
     /// All loaded format names, sorted.
@@ -4871,6 +5018,7 @@ pub mod bits {
 }
 
 pub mod seq;
+pub mod text;
 
 // ---------------------------------------------------------------------------
 // protobuf codec: fields by number, dot-path for nested messages. I/O as hex.

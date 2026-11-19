@@ -1,0 +1,9 @@
+{
+  "name": "to-plain",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-plain",
+  "input": "ABC   00042048.1173 WXYZ007",
+  "expect": "P;ABC;48.1173;;;",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): plain pos: lon and time_ms absent, fields 3 to 5 empty. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,47 @@
+# Conformance probe pack for the `text` wire (spec 0.10). Public. A record
+# framed like an NMEA 0183 sentence: a start text, `,` between fields and an
+# `nmea` checksum. Exercises kinds chosen by a column, a column with a default,
+# pairs (`dm`, `hms_dmy`), `hms`, `int:<w>`, `dec`, a value table, a `const`,
+# residue, trailing `optional` fields and a group that runs to the end.
+format        conformance-text
+version       0.10.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          text
+start         "$"
+checksum      nmea
+
+map     modes  A  1
+map     modes  D  2
+
+field    probe.s2     0:0:2   string
+default  probe.s2     XX
+
+kind     fix
+when     0:2:3        FIX
+field    ce           1       hms:2
+field    lat          2+3     dm:2:4:NS
+field    lon          4+5     dm:3:4:EW
+field    probe.n      6       int
+field    probe.x      7       int:2
+field    hae          8       dec:1
+field    course       9       dec:1:5
+field    callsign     11      string   optional
+field    probe.y      12      int      optional
+
+kind     tim
+when     0:2:3        TIM
+field    time_ms      1+2     hms_dmy:3
+field    speed_ms     3       float
+field    probe.z      4       string   via modes
+const    5            V
+
+kind     sat
+when     0:2:3        SAT
+field    probe.w      1       int
+group    probe.items  2       item 3
+  field  probe.label  0       string
+  field  probe.qty    1       int
+  field  probe.ratio  2       dec:1
+end

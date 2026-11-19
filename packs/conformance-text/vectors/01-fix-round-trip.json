@@ -1,0 +1,22 @@
+{
+  "name": "fix-round-trip",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3*5D",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3*5D",
+  "model": {
+    "@kind": "fix",
+    "probe.s2": "GP",
+    "ce": "45319.5",
+    "lat": "48.1173",
+    "lon": "11.516666666666667",
+    "probe.n": "7",
+    "probe.x": "5",
+    "hae": "545.4",
+    "course": "84.4",
+    "callsign": "GATOR",
+    "probe.y": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 1; hms 123519.50 = 12*3600+35*60+19.5 = 45319.5; dm 4807.0380 N = 7.038/60+48 = 48.1173 (the double printed 48.1173), 01131.0000 E = 31/60+11 = 11.516666666666667; field 10 is residue. Derived without an engine by a standalone reference program."
+}

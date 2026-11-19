@@ -1,0 +1,9 @@
+{
+  "name": "dm-dot-without-digit",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.,N,01131.0000,E,7,05,545.4,084.4,*6E",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Rules for these transforms, 3: a . in dm text is followed by at least one digit. Derived without an engine by a standalone reference program."
+}

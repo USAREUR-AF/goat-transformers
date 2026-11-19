@@ -95,7 +95,7 @@ func transformYields(name string) (Kind, bool) {
 	if strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:") {
 		return KindFloat, true
 	}
-	return 0, false
+	return textTransformYields(name)
 }
 
 // splitModelKey splits a pack's model key into module and key name: a key

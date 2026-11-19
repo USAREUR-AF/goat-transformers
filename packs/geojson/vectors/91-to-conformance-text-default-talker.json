@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-default-talker",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-70.75,-33.5,-42.6]},\"properties\":{\"ce\":45319.5,\"callsign\":\"GATOR\",\"course\":12.3},\"id\":\"g1\"}",
+  "expect": "$XXFIX,123519.50,3330.0000,S,07045.0000,W,,,-42.6,012.3,,GATOR*3E",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): default probe.s2 XX; hms:2 45319.5*100 = 4531950; dm -33.5 -> 33.5*60*10000 = 20100000 -> 3330.0000 S; dec:1:5 12.3*10 = 123 -> 012.3; step 5 removes empty optional field 12. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-plain",
+  "from": "geojson",
+  "to": "conformance-text-plain",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,0.1]},\"properties\":{\"time_ms\":1614456000123},\"id\":\"g1\"}",
+  "expect": "P;g1;0.1;2.5;;2021-02-27T20:00:00.123Z",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): float shortest form 0.1; iso8601_ms encode writes .fffZ. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-dm-carry-and-dec-rounding",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.25,89.99999999,2.25]},\"properties\":{\"course\":-1.5}}",
+  "expect": "$XXFIX,,9000.0000,N,01115.0000,E,,,2.3,-001.5,*49",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): dm: 89.99999999*60*10000 = 53999999.994 -> 54000000 = 90 degrees 0 minutes; dec:1 2.25*10 = 22.5 -> 23 -> 2.3; dec:1:5 -1.5 -> -001.5. Derived without an engine by a standalone reference program."
+}

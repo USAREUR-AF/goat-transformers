@@ -1,0 +1,9 @@
+{
+  "name": "empty-body-is-one-empty-field",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$*00",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Reading a record, step 5: an empty body is one empty field (XOR of no bytes is 00); ruling 6: the when column does not hold. Derived without an engine by a standalone reference program."
+}

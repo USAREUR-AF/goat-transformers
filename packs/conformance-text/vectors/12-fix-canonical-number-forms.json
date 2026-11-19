@@ -1,0 +1,19 @@
+{
+  "name": "fix-canonical-number-forms",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.5,4807.038,N,01131,E,+007,5,545.40,84.4,,GATOR,-0*02",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,,GATOR,0*1A",
+  "model": {
+    "ce": "45319.5",
+    "lat": "48.1173",
+    "lon": "11.516666666666667",
+    "probe.n": "7",
+    "probe.x": "5",
+    "hae": "545.4",
+    "course": "84.4",
+    "probe.y": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms:2 pads the fraction to 2 digits; dm writes f=4 digits; int drops + and leading zeros; int:2 pads 5 to 05; dec:1 545.40 -> 545.4; dec:1:5 84.4 -> 084.4. Derived without an engine by a standalone reference program."
+}

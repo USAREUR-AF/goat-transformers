@@ -1,0 +1,9 @@
+{
+  "name": "tim-date-does-not-exist",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPTIM,123519.000,290221,5.5,A,V*4B",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Rules for these transforms, 3: a date that does not exist (2021 is not a leap year). Derived without an engine by a standalone reference program."
+}

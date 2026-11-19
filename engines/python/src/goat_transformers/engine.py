@@ -2,7 +2,7 @@
 
 import os
 
-from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_xml
+from . import wire_bits, wire_geojson, wire_json, wire_protobuf, wire_seq, wire_text, wire_xml
 from .errors import (
     BadDirective, DistributionRefused, DistributionViolation, DuplicateModule, InvalidPack, KeyTypeMismatch, MalformedWire,
     ModuleNotUsed, NoKind, TransformDecodeFailure, TransformEncodeFailure, UndeclaredKey, UnknownFormat,
@@ -17,6 +17,7 @@ DERIVE_PASSES = 8  # spec 0.6: the pass repeats until it sets nothing, at most 8
 
 _CODECS = {
     "xml": wire_xml, "geojson": wire_geojson, "json": wire_json, "bits": wire_bits, "protobuf": wire_protobuf,
+    "text": wire_text,
 }
 _Num = wire_geojson.Num
 
@@ -344,7 +345,7 @@ class Engine:
     @staticmethod
     def _decode_value(wire, transform, raw):
         """Run one field's transform over its raw wire value. Raises ValueError."""
-        if wire in ("bits", "protobuf"):
+        if wire in ("bits", "protobuf", "text"):
             return transform.decode(raw)
         if wire == "xml":
             return transform.decode(raw)
@@ -405,6 +406,8 @@ class Engine:
         res = None
         if wire == "xml" or wire == "json":
             res = codec.residue(pack, msg, mapped)
+        elif wire == "text":
+            res = codec.residue(pack, msg, plan)
         elif wire == "geojson":
             res = {}
             for loc, val in obs:
@@ -627,6 +630,8 @@ class Engine:
         residue = entity.residue.get(pack.name, {})
         if wire == "json":
             return codec.encode(pack, enc, residue).encode("utf-8")
+        if wire == "text":
+            return codec.write(pack, enc, residue).encode("utf-8")
         if wire == "xml":
             return codec.write(pack, enc, residue.items(), plan.root).encode("utf-8")
         return codec.encode(pack, enc, residue, wire_json.item_text).encode("utf-8")

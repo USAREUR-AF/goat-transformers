@@ -1,0 +1,13 @@
+{
+  "name": "dm-minute-digits-compared-as-integer",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4859.99999999999999999,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3*64",
+  "expect": "$GPFIX,123519.50,4900.0000,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3*50",
+  "model": {
+    "@kind": "fix",
+    "lat": "49"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.10 rule 3 of the transforms: the minute digits 59 are below 60, so the text is accepted; the minutes text is read as its nearest double, 60.0; 60/60 + 48 = 49; encode m = round(49*60*10^4) = 29400000, 49 degrees 0 minutes, 4900.0000. Checksums by a standalone XOR."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "record-cut-short-inside-a-column",
+  "from": "conformance-text-fixed",
+  "to": "conformance-text-fixed",
+  "input": "ABC   00042048.1173 WX",
+  "expect": "ABC   00042048.1173 WX  ",
+  "model": {
+    "probe.s1": "WX"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: the column is the characters the field has; 0:24:3 is absent; step 2 pads WX to 4 and stops at the furthest column written. Derived without an engine by a standalone reference program."
+}

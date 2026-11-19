@@ -1,0 +1,9 @@
+{
+  "name": "unaddressed-field-written-empty",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4*49",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,*65",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Writing a record, step 4: 13 fields (highest addressed index 12); step 5 removes 12 and 11 and stops at 10. Derived without an engine by a standalone reference program."
+}

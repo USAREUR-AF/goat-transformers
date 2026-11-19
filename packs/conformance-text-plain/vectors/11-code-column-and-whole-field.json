@@ -1,0 +1,15 @@
+{
+  "name": "code-column-and-whole-field",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "C;AB042",
+  "expect": "C;AB042",
+  "model": {
+    "@kind": "code",
+    "probe.s1": "AB042",
+    "probe.s2": "AB",
+    "probe.n": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 3: decode reads each; encode writes the whole-field line's text (probe.s1 present). Derived without an engine by a standalone reference program."
+}

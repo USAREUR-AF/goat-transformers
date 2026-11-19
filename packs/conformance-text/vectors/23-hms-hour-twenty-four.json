@@ -1,0 +1,9 @@
+{
+  "name": "hms-hour-twenty-four",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIX,240000.00,4807.0380,N,01131.0000,E,7,05,545.4,084.4,*6B",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Rules for these transforms, 3: hms hours of 24 or more. Derived without an engine by a standalone reference program."
+}

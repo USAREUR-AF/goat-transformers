@@ -1,0 +1,14 @@
+{
+  "name": "code-numeric-column-leading-space",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "C;AB 42",
+  "expect": "C;AB 42",
+  "model": {
+    "probe.s1": "AB 42",
+    "probe.s2": "AB",
+    "probe.n": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: for the numeric transforms a column's leading spaces are removed too. Derived without an engine by a standalone reference program."
+}

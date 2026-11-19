@@ -1,0 +1,13 @@
+{
+  "name": "float-plain-notation-and-negative-zero",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "P;u1;0.0000001;-0.0;;",
+  "expect": "P;u1;0.0000001;0;;",
+  "model": {
+    "lat": "0.0000001",
+    "lon": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Ruling 3 of 0.1.1: plain notation, never an exponent; negative zero is written 0. Derived without an engine by a standalone reference program."
+}

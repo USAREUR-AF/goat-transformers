@@ -1,4 +1,4 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.9).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.10).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
 %% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
@@ -22,6 +22,7 @@
 %%     json     [MemberName]
 %%     protobuf [FieldNumber]
 %%     bits     BitOffset of the first item in its scope
+%%     text     the index of the item's first field; Spec {text_item, N}
 %%   Key, LocText :: binary()
 %%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent}
 %%   Absent = none | [Sentinel] (Version 0.9), the first is the one written:
@@ -34,6 +35,10 @@
 %%     json     [MemberName :: binary()]; inside a group `.` is []
 %%     bits     {BitOffsetInScope, Len}
 %%     protobuf [FieldNumber]; inside a group `.` is []
+%%     text     {fld, I} | {col, I, From, Len} | {pair, I, J}; inside a group
+%%              relative to the item's first field
+%%   A text pack also has delimiter (binary() | none), start (binary(), <<>>
+%%   for none) and checksum (none | nmea).
 %%   Inside a group a geojson pack uses the json locators.
 %%   `when` Value: bits -> integer(); protobuf -> present | integer();
 %%                 text wires -> present | {text, binary(), Forced :: boolean()}
@@ -71,6 +76,7 @@ parse(Bin) ->
              typemap => [], tables => #{}, table_names => [],
              distribution => undefined, sources => [], uses => [],
              common => [], defaults => [], kinds => [], kind_names => #{},
+             delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
              cur => common, late => [], gstack => [], sstack => []},
     P0 = lists:foldl(fun line/2, Base, Lines),
     case maps:get(gstack, P0) of
@@ -97,11 +103,15 @@ parse(Bin) ->
       end, lists:reverse(maps:get(late, P1))),
     P2 = P1#{common := lists:reverse(maps:get(common, P1)),
              kinds := lists:reverse(maps:get(kinds, P1))},
+    case maps:get(wire, P2) of
+        text -> text_checks(P2);
+        _ -> ok
+    end,
     P3 = case Layout of
              sequential -> seq_resolve(P2);
              fixed -> check_scopes(P2), P2
          end,
-    P = maps:without([cur, late, kind_names, table_names, gstack, sstack],
+    P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
@@ -185,7 +195,12 @@ yields(bool)       -> int;
 yields(uint)       -> int;
 yields(twos)       -> int;
 yields(pvarint)    -> int;
-yields(psint)      -> int.
+yields(psint)      -> int;
+yields({int_w, _})    -> int;
+yields({dec, _, _})   -> float;
+yields({dm, _, _, _, _}) -> float;
+yields({hms, _})      -> float;
+yields({hms_dmy, _})  -> int.
 
 %% Every model name the pack uses, for the load checks -> [{Name, How}]:
 %%   {field, Transform, Via}   a `field` line, also inside a group
@@ -286,7 +301,8 @@ known_directives() ->
      <<"kind">>, <<"requires">>, <<"when">>, <<"field">>, <<"const">>,
      <<"default">>, <<"map">>, <<"group">>, <<"end">>,
      <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
-     <<"chain">>, <<"fx">>, <<"length">>, <<"also">>].
+     <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
+     <<"delimiter">>, <<"start">>, <<"checksum">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -303,6 +319,9 @@ apply_line([<<"root">>, R], #{cur := Cur} = P) ->
             end
     end;
 apply_line([<<"word_bytes">>, N], P) -> _ = word_bytes(N), P;    % read by first_arg
+apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
+                             Dir =:= <<"checksum">> ->
+    text_directive(binary_to_atom(Dir), V, P);
 apply_line([<<"layout">>, L], #{wire := Wire} = P) ->
     case {Wire, L} of
         {bits, <<"sequential">>} -> P;                            % read by first_arg
@@ -352,6 +371,7 @@ apply_line([<<"when">>, LocS, ValS], #{has_kinds := HasKinds} = P0) ->
          end,
     Wire = need_wire(P1),
     Loc = parse_loc(Wire, LocS, P1),
+    no_pair(Loc, "when", LocS),
     {Val, P2} = fixed_value(wh, Wire, Loc, LocS, ValS, P1),
     add_line({wh, Loc, Val, LocS}, P2);
 apply_line([<<"const">>, LocS, ValS], P0) ->
@@ -361,6 +381,7 @@ apply_line([<<"const">>, LocS, ValS], P0) ->
         [] -> load_error('bad-directive', "const . names the item itself", []);
         _ -> ok
     end,
+    no_pair(Loc, "const", LocS),
     {Val, P1} = fixed_value(const, Wire, Loc, LocS, ValS, P0),
     add_line({const, Loc, Val, LocS}, P1);
 apply_line([<<"default">>, Key, Val], #{gstack := [#{defaults := D} = G | Rest]} = P) ->
@@ -386,7 +407,7 @@ apply_line([<<"end">>], #{gstack := Stack} = P) ->
     end;
 apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
     Wire = need_wire(P0),
-    Tr = parse_transform(Wire, TrS),
+    {Tr, TrChecks} = parse_transform(Wire, TrS),
     Loc = parse_loc(Wire, LocS, P0),
     {_Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
     Len = case Wire of
@@ -394,15 +415,21 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
               _ -> Loc                            % a geojson coordinate (ruling 25 of 0.9)
           end,
     {Opts, AbsentChecks} = sentinels(Wire, Tr, Len, Opts0),
-    Checks =
+    IsPair = case Loc of {pair, _, _} -> true; _ -> false end,
+    Checks = TrChecks ++
+        [{bad, "~s on ~s: a pair is only for dm and hms_dmy, and they only take a pair",
+          [TrS, LocS]}
+         || Wire =:= text, IsPair =/= gt_text:pair_transform(Tr)] ++
+        [{bad, "optional on ~s: not allowed inside a group", [LocS]}
+         || Optional, Wire =:= text, in_group(P0)] ++
         [{bad, "~s does not allow the bit length of ~s", [TrS, LocS]}
          || not len_ok(Wire, Tr, Loc)] ++
         [{bad, "swap on ~s: valid only on a bits wire, with a length that is a multiple of 8", [LocS]}
          || Swap, not (Wire =:= bits andalso element(2, Loc) rem 8 =:= 0)] ++
         [{bad, "trim on ~s: valid only on a bits wire, with ascii", [LocS]}
          || Trim, not (Wire =:= bits andalso Tr =:= ascii)] ++
-        [{bad, "optional on ~s: valid only on a bits wire", [LocS]}
-         || Optional, Wire =/= bits] ++
+        [{bad, "optional on ~s: valid only on a bits or text wire", [LocS]}
+         || Optional, Wire =/= bits, Wire =/= text] ++
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
         AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
@@ -458,6 +485,7 @@ wire_atom(<<"geojson">>) -> geojson;
 wire_atom(<<"json">>) -> json;
 wire_atom(<<"bits">>) -> bits;
 wire_atom(<<"protobuf">>) -> protobuf;
+wire_atom(<<"text">>) -> text;
 wire_atom(W) -> load_error('bad-directive', "unknown wire ~s", [W]).
 
 word_bytes(S) ->
@@ -523,6 +551,8 @@ absent_values(Wire, Tr, Len, Arg) ->
                 _ -> [absent_int(V, 64) || V <- Values]
             end;
         xml -> [absent_text(V) || V <- Values];
+        %% `absent` on `text` is bad-directive (ruling 16 of 0.10)
+        text -> absent_bad("absent ~s: not a field option on a text wire", [Arg]);
         _ ->                                           % json, geojson
             Js = [absent_json(V) || V <- Values],
             %% a geojson coordinate takes only number text (ruling 25 of 0.9)
@@ -619,6 +649,18 @@ is_number_text(B) ->
 %% ===================================================================
 %% Inside a group a locator is relative to one item: the same forms, and on
 %% json, geojson and protobuf also `.` for the item itself.
+parse_loc(text, S, P) ->
+    Loc = text_loc(S),
+    case maps:get(gstack, P) of
+        [#{spec := {text_item, N}} | _] ->
+            case lists:all(fun(K) -> K < N end, gt_text:loc_indexes(Loc)) of
+                true -> ok;
+                false -> load_error('bad-directive', "locator ~s lies beyond an item of ~p fields",
+                                    [S, N])
+            end;
+        _ -> ok
+    end,
+    Loc;
 parse_loc(Wire, S, P) ->
     case in_group(P) of
         false -> top_loc(Wire, S, P);
@@ -669,6 +711,13 @@ top_loc(protobuf, S, _P) ->
     end.
 
 %% The locator of a `group` line.
+group_loc(text, S, true, _P) ->
+    load_error('bad-directive', "group at ~s is inside a group: text groups do not nest", [S]);
+group_loc(text, S, false, _P) ->
+    case uint(S) of
+        I when is_integer(I) -> I;
+        error -> load_error('bad-directive', "text group index ~s is not a field index", [S])
+    end;
 group_loc(xml, S, _InGroup, _P) ->
     Parts = binary:split(S, <<"/">>, [global]),
     Ok = lists:all(fun(<<>>) -> false;
@@ -716,6 +765,13 @@ group_spec(bits, [<<"item">>, BitsS, <<"count">>, CountS], LocS, P) ->
     {Bits, Count};
 group_spec(bits, _Other, LocS, _P) ->
     load_error('bad-directive', "bits group at ~s is not `<word>:<pos> item <bits> count <count-locator | n>`", [LocS]);
+group_spec(text, [<<"item">>, NS], LocS, _P) ->
+    case uint(NS) of
+        N when is_integer(N), N >= 1 -> {text_item, N};
+        _ -> load_error('bad-directive', "group at ~s: item ~s is not a positive integer", [LocS, NS])
+    end;
+group_spec(text, _Other, LocS, _P) ->
+    load_error('bad-directive', "text group at ~s is not `<list> <i> item <n>`", [LocS]);
 group_spec(_Wire, [], _LocS, _P) -> none;
 group_spec(Wire, [Tok | _], LocS, _P) ->
     load_error('bad-directive', "group at ~s: ~s is not allowed on a ~s wire", [LocS, Tok, Wire]).
@@ -726,6 +782,7 @@ group_spec(Wire, [Tok | _], LocS, _P) ->
 %% Within one scope (common plus one kind, or one group body) a list is
 %% mapped by at most one group. On bits: a group counted by a locator is the
 %% last thing in its scope, and a field of an item stays within its item.
+check_scopes(#{wire := text} = P) -> text_scopes(P);
 check_scopes(#{common := Common, kinds := Kinds, wire := Wire}) ->
     case Kinds of
         [] -> check_scope(Common, none, Wire);
@@ -896,19 +953,27 @@ fixed_value(_Which, _Text, _Loc, _LocS, V, P) -> {{text, V, false}, P}.
 %% ===================================================================
 %% transforms: each is valid on one kind of wire
 %% ===================================================================
+%% -> {Transform, [LateCheck]}: on the text wire, and for a transform valid
+%% only on the text wire, the wire check runs after the file is read
+%% (ruling 10 of 0.10).
 parse_transform(Wire, S) ->
     {Class, Tr} = transform(S),
     Ok = case {Class, Wire} of
              {text, xml} -> true;
              {text, geojson} -> true;
              {text, json} -> true;
+             {text, text} -> true;
+             {textonly, text} -> true;
              {json, json} -> true;
              {bits, bits} -> true;
              {protobuf, protobuf} -> true;
+             {textonly, _} -> late;
+             {_, text} -> late;
              _ -> false
          end,
     case Ok of
-        true -> Tr;
+        true -> {Tr, []};
+        late -> {Tr, [{bad, "transform ~s is not valid on a ~s wire", [S, Wire]}]};
         false -> load_error('bad-transform', "transform ~s is not valid on a ~s wire", [S, Wire])
     end.
 
@@ -934,6 +999,23 @@ transform(<<"pvarint">>)    -> {protobuf, pvarint};
 transform(<<"psint">>)      -> {protobuf, psint};
 transform(<<"pdouble">>)    -> {protobuf, pdouble};
 transform(<<"pfloat">>)     -> {protobuf, pfloat};
+transform(<<"int:", W/binary>> = S) -> {textonly, {int_w, tparam(W, 1, 20, S)}};
+transform(<<"dec:", Rest/binary>> = S) ->
+    case binary:split(Rest, <<":">>, [global]) of
+        [F] -> {textonly, {dec, tparam(F, 0, 9, S), none}};
+        [F, W] -> {textonly, {dec, tparam(F, 0, 9, S), tparam(W, 1, 20, S)}};
+        _ -> load_error('bad-directive', "~s is not dec:<f>[:<w>]", [S])
+    end;
+transform(<<"dm:", Rest/binary>> = S) ->
+    case binary:split(Rest, <<":">>, [global]) of
+        [D, F, <<Pos, Neg>>] when Pos >= $A, Pos =< $Z, Neg >= $A, Neg =< $Z, Pos =/= Neg ->
+            {textonly, {dm, tparam(D, 1, 3, S), tparam(F, 0, 9, S), Pos, Neg}};
+        _ -> load_error('bad-directive', "~s is not dm:<d>:<f>:<PN>, two different letters A to Z", [S])
+    end;
+transform(<<"hms:", F/binary>> = S) -> {textonly, {hms, tparam(F, 0, 3, S)}};
+transform(<<"hms_dmy:", F/binary>> = S) -> {textonly, {hms_dmy, tparam(F, 0, 3, S)}};
+transform(T) when T =:= <<"dec">>; T =:= <<"dm">>; T =:= <<"hms">>; T =:= <<"hms_dmy">> ->
+    load_error('bad-directive', "transform ~s needs its parameters", [T]);
 transform(T) -> load_error('unknown-transform', "~s", [T]).
 
 %% <factor>[:<offset>]
@@ -1025,6 +1107,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
+                 <<"delimiter">>, <<"start">>, <<"checksum">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
     case lists:member(Dir, PackLevel) of
@@ -1037,7 +1120,7 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     end.
 
 seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
-    Tr = parse_transform(bits, TrS),
+    {Tr, TrChecks} = parse_transform(bits, TrS),
     Len = seq_len(LenS, 1, infinity),
     {Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
@@ -1046,7 +1129,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
         true -> load_error('bad-directive', "optional is not a field option of a sequential pack", []);
         false -> ok
     end,
-    Checks =
+    Checks = TrChecks ++
         [{bad, "~s does not allow the bit length ~s", [TrS, LenS]}
          || not len_ok(bits, Tr, {0, Len})] ++
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
@@ -1389,3 +1472,161 @@ seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc
 seq_res_block(Body, Env, St) ->
     {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),
     {Body1, St1}.
+
+%% ===================================================================
+%% the `text` wire (engine-spec Version 0.10)
+%% ===================================================================
+%% `delimiter`, `start` and `checksum`: the value is checked as the line is
+%% read; another wire, a second line and a line after the first `kind` are
+%% refused after the file is read (rulings 2 and 10 of 0.10).
+text_directive(Dir, V, #{text_seen := Seen, cur := Cur, kind_names := Kinds} = P0) ->
+    P1 = case maps:get(wire, P0) of
+             text -> P0;
+             W -> late({bad, "~s is valid only on a text wire, not ~s", [Dir, W]}, P0)
+         end,
+    P2 = case maps:is_key(Dir, Seen) of
+             true -> late({bad, "~s appears more than once", [Dir]}, P1);
+             false -> P1
+         end,
+    P3 = case Cur =:= common andalso map_size(Kinds) =:= 0 of
+             true -> P2;
+             false -> late({bad, "~s stands after the first kind", [Dir]}, P2)
+         end,
+    P = P3#{text_seen := Seen#{Dir => true}},
+    case Dir of
+        delimiter ->
+            case V of
+                <<"none">> -> P#{delimiter := none};
+                <<C>> when C >= 16#21, C =< 16#7E, C =/= $" -> P#{delimiter := V};
+                _ -> load_error('bad-directive',
+                                "delimiter ~s is not one character from 0x21 to 0x7E other than \", nor none", [V])
+            end;
+        start ->
+            case V =/= <<>> andalso lists:all(fun(C) -> C >= 16#21 andalso C =< 16#7E end,
+                                              binary_to_list(V)) of
+                true -> P#{start := V};
+                false -> load_error('bad-directive',
+                                    "start ~s is not one or more characters from 0x21 to 0x7E", [V])
+            end;
+        checksum ->
+            case V of
+                <<"none">> -> P#{checksum := none};
+                <<"nmea">> -> P#{checksum := nmea};
+                _ -> load_error('bad-directive', "checksum ~s is neither none nor nmea", [V])
+            end
+    end.
+
+%% `<i>`, `<i>:<from>:<len>` (len from 1), `<i>+<j>` (i and j different).
+text_loc(S) ->
+    case binary:split(S, <<"+">>) of
+        [A, B] ->
+            case {uint(A), uint(B)} of
+                {I, J} when is_integer(I), is_integer(J), I =/= J -> {pair, I, J};
+                {I, I} when is_integer(I) ->
+                    load_error('bad-directive', "pair ~s names one field twice", [S]);
+                _ -> load_error('bad-directive', "text locator ~s is not <i>+<j>", [S])
+            end;
+        [_] ->
+            case [uint(X) || X <- binary:split(S, <<":">>, [global])] of
+                [I] when is_integer(I) -> {fld, I};
+                [I, From, Len] when is_integer(I), is_integer(From), is_integer(Len), Len >= 1 ->
+                    {col, I, From, Len};
+                _ -> load_error('bad-directive',
+                                "text locator ~s is not <i>, <i>:<from>:<len> or <i>+<j>", [S])
+            end
+    end.
+
+no_pair({pair, _, _}, What, S) ->
+    load_error('bad-directive', "~s takes a field or a column, not the pair ~s", [What, S]);
+no_pair(_, _, _) -> ok.
+
+%% A transform parameter: an unsigned integer from Min to Max.
+tparam(T, Min, Max, S) ->
+    case uint(T) of
+        N when is_integer(N), N >= Min, N =< Max -> N;
+        _ -> load_error('bad-directive', "transform ~s: parameter ~s is not from ~p to ~p",
+                        [S, T, Min, Max])
+    end.
+
+%% After the file is read: the directives against one another and against
+%% the locators, and the `when` and `const` values.
+text_checks(#{delimiter := Delim, start := Start, checksum := Sum,
+              common := Common, kinds := Kinds}) ->
+    case Delim =/= none andalso binary:match(Start, Delim) =/= nomatch of
+        true -> load_error('bad-directive', "start ~s holds the delimiter ~s", [Start, Delim]);
+        false -> ok
+    end,
+    case {Delim, Sum} of
+        {<<"*">>, nmea} -> load_error('bad-directive', "delimiter * with checksum nmea", []);
+        _ -> ok
+    end,
+    All = all_lines(Common ++ lists:append([maps:get(lines, K) || K <- Kinds])),
+    lists:foreach(
+      fun({group, List, _, _, _, _}) when Delim =:= none ->
+              load_error('bad-directive', "group ~s under delimiter none", [List]);
+         ({group, _, _, _, _, _}) -> ok;
+         (L) ->
+              Loc = line_loc_of(L),
+              case Delim =:= none andalso gt_text:loc_indexes(Loc) =/= [0] of
+                  true -> load_error('bad-directive', "a locator of a field other than 0 under delimiter none", []);
+                  false -> ok
+              end,
+              case L of
+                  {wh, _, present, _} -> ok;
+                  {W, _, {text, V, _}, LocS} when W =:= wh; W =:= const ->
+                      text_value_ok(V, Loc, Delim, Sum) orelse
+                          load_error('bad-directive', "the value ~s at ~s cannot be written on this wire",
+                                     [V, LocS]);
+                  _ -> ok
+              end
+      end, All).
+
+%% The lines of a scope and of its group bodies.
+all_lines(Lines) ->
+    lists:append([case L of
+                      {group, _, _, _, #{lines := Ls}, _} -> [L | all_lines(Ls)];
+                      _ -> [L]
+                  end || L <- Lines]).
+
+line_loc_of({field, _, Loc, _, _, _}) -> Loc;
+line_loc_of({wh, Loc, _, _}) -> Loc;
+line_loc_of({const, Loc, _, _}) -> Loc.
+
+text_value_ok(V, Loc, Delim, Sum) ->
+    Chars = binary_to_list(V),
+    V =/= <<>>
+        andalso lists:all(fun(C) -> C >= 16#20 andalso C =< 16#7E end, Chars)
+        andalso (Delim =:= none orelse binary:match(V, Delim) =:= nomatch)
+        andalso (Sum =/= nmea orelse binary:match(V, <<"*">>) =:= nomatch)
+        andalso hd(Chars) =/= $\s andalso lists:last(Chars) =/= $\s
+        andalso case Loc of
+                    {col, _, _, Len} -> byte_size(V) =< Len;
+                    _ -> true
+                end.
+
+%% A group is the last thing in its scope (common lines and one kind): one
+%% group, and no field, when or const at its index or beyond.
+text_scopes(#{common := Common, kinds := Kinds}) ->
+    Scopes = case Kinds of
+                 [] -> [Common];
+                 _ -> [Common ++ maps:get(lines, K) || K <- Kinds]
+             end,
+    lists:foreach(
+      fun(Lines) ->
+              case [G || {group, _, _, _, _, _} = G <- Lines] of
+                  [] -> ok;
+                  [{group, List, Start, _, _, _}] ->
+                      lists:foreach(
+                        fun({group, _, _, _, _, _}) -> ok;
+                           (L) ->
+                                case lists:any(fun(I) -> I >= Start end,
+                                               gt_text:loc_indexes(line_loc_of(L))) of
+                                    true -> load_error('bad-directive',
+                                                       "a line of the scope lies at or beyond the index of group ~s",
+                                                       [List]);
+                                    false -> ok
+                                end
+                        end, Lines);
+                  _ -> load_error('bad-directive', "a scope holds a second group", [])
+              end
+      end, Scopes).

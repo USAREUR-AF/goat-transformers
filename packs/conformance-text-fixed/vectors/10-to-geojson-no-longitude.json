@@ -1,0 +1,9 @@
+{
+  "name": "to-geojson-no-longitude",
+  "from": "conformance-text-fixed",
+  "to": "geojson",
+  "input": "ABC   00042048.1173 WXYZ007",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"ABC\"}",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): geojson ruling 5 of 0.1.1: lon absent writes geometry null. Derived without an engine by a standalone reference program."
+}

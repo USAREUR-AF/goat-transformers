@@ -1,0 +1,9 @@
+{
+  "name": "flag-when-present-on-empty-field",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "F;5;",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Locators: an empty field is absent, so when 2 present does not hold. Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-dm-degrees-too-large",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1000,0]},\"properties\":{}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Rules for these transforms, 4: 1000 degrees do not fit 3 digits. Derived without an engine by a standalone reference program."
+}

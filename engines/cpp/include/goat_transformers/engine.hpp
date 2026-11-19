@@ -182,9 +182,21 @@ Module parse_model(const std::string& text, const std::string& origin = "model.d
 enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Pstring, Pvarint, Psint, Pdouble, Pfloat,
                        Bool,                             // v0.5, json wire only
-                       Uscale, Sscale, F32, F64, Ascii   // v0.5, bits wire
+                       Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
+                       IntW, Dec, Dm, Hms, HmsDmy        // v0.10, text wire only
 };
-enum class Wire { Xml, GeoJson, Bits, Protobuf, Json };
+enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text };
+
+// A locator of the `text` wire (v0.10): a field, a column of a field, or a pair
+// of fields. Inside a group the indexes count from the item's first field.
+struct TextLocator {
+    enum class Kind { Field, Column, Pair };
+    Kind kind = Kind::Field;
+    std::uint32_t i = 0;     // the field; the first field of a pair
+    std::uint32_t j = 0;     // pair: the second field
+    std::uint32_t from = 0;  // column: the first character, from 0
+    std::uint32_t len = 0;   // column: the number of characters, from 1
+};
 enum class BitOrder { Lsb, Msb };
 
 const char* transform_name(Transform t);
@@ -203,6 +215,14 @@ struct FieldLine {
     double scale_num = 1.0;
     double scale_den = 1.0;
     double scale_offset = 0.0;
+    // v0.10 text transforms: `int:<w>`, `dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`,
+    // `hms:<f>`, `hms_dmy:<f>`. `text_w` is 0 when no width is given.
+    int text_w = 0;
+    int text_f = 0;
+    int text_d = 0;
+    char text_p = 'P';
+    char text_n = 'N';
+    TextLocator text_loc;       // text wire: the parsed locator
     std::size_t line = 0;       // line number in pack.def
     // v0.6 field options.
     std::string via;            // `via <table>`: the value table's name; empty when none
@@ -229,6 +249,7 @@ struct WhenLine {
     bool forced_string = false;   // text wires: the value was written with a leading `=`
     std::string text;             // text wires: the value with a leading `=` stripped
     std::uint64_t number = 0;     // bits wire, and protobuf when not `present`
+    TextLocator text_loc;         // text wire: the parsed locator
     std::size_t line = 0;         // line number in pack.def
 };
 
@@ -267,6 +288,9 @@ struct GroupLine {
     std::uint64_t count_start = 0;   // that locator as a bit offset in the enclosing scope
     std::uint32_t count_len = 0;
     std::uint64_t bits_start = 0;    // the first item's bit offset in the enclosing scope
+    // text only (v0.10): `group <list> <i> item <n>`.
+    std::uint32_t text_index = 0;    // <i>, the first item's first field
+    std::uint32_t text_item = 0;     // <n>, the fields of one item
     // True when a `field` of the body has the locator `.`: an item is a scalar.
     bool scalar = false;
     std::vector<FieldLine> fields;
@@ -377,6 +401,11 @@ struct Pack {
     // above are then empty.
     bool sequential = false;
     SeqBody seq;
+    // v0.10, the `text` wire: `delimiter`, `start` and `checksum`.
+    char delimiter = ',';
+    bool delimiter_none = false;
+    std::string start;
+    bool checksum_nmea = false;
     std::vector<SeqPresence> seq_presences;
 };
 

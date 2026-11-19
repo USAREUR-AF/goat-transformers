@@ -11,7 +11,8 @@ message to lists (`list` lines in model modules and `group … end` blocks, spec
 Version 0.7), reads and writes sequential binary layouts (`layout sequential`
 on the `bits` wire, spec Version 0.8), reads wire values that mean "no value"
 as absent keys and writes them for absent keys (the `absent` field option,
-spec Version 0.9), and converts between formats via the shared model.
+spec Version 0.9), reads and writes one-record text formats (the `text` wire,
+spec Version 0.10), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -182,6 +183,21 @@ prefix is not a submessage does not hold; two groups of one list are allowed
 only when neither group's block encloses the other's, and decode keeps the
 later group's items; a group whose first indicator bit lies at or after the
 end of the extent gives an absent list.
+
+## The `text` wire (spec Version 0.10)
+
+`delimiter`, `start` and `checksum` are checked against the wire and one
+another after the file is read, before `missing-distribution`. Decode removes
+one line terminator, checks every byte is 0x20 to 0x7E, removes the start text
+and the `nmea` checksum (`malformed-wire` for each failure, before any `when`),
+then splits the body into fields. Locators `<i>`, `<i>:<from>:<len>` and
+`<i>+<j>`; transforms `string`, `int`, `float`, `iso8601_ms`, `int:<w>`,
+`dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`, `hms:<f>`, `hms_dmy:<f>`. A pair is absent
+when either field is absent. Encode writes field lines, then `when` and
+`const` over them (the earlier line's characters stand), residue at fields no
+line addresses, drops trailing empty fields only `optional` lines address, and
+appends the checksum in uppercase. `group <list> <i> item <n>` reads items to
+the end of the record. `--convert` does not trim the input of a `text` format.
 
 ## Readings where the specification leaves a choice
 

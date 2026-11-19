@@ -498,6 +498,10 @@ func isTextTransformName(name string) bool { return transforms[name] != nil || n
 // refuses is unknown-transform.
 func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	name := f.Transform
+	// The transforms of the text wire are valid only on it (spec 0.10).
+	if isTextOnlyTransform(name) {
+		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire text", name)
+	}
 	switch wire {
 	case WireBits:
 		switch {

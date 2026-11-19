@@ -3,10 +3,11 @@
 // convert(from,to[,context]) = decode, fill from context, derive, encode; plus
 // a conformance harness.
 //
-// Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf.
+// Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf, text.
 // Transforms: string, float, int, iso8601_ms, bool, uint, twos,
 // linscale:<maxpos>:<range>, uscale/sscale:<factor>[:<offset>], f32, f64,
-// ascii, pstring, pvarint, psint, pdouble, pfloat.
+// ascii, pstring, pvarint, psint, pdouble, pfloat; on text also int:<w>,
+// dec:<f>[:<w>], dm:<d>:<f>:<PN>, hms:<f>, hms_dmy:<f> (spec Version 0.10).
 // Model modules and distribution (spec Version 0.4), message kinds
 // (`kind` / `when` / `requires`, spec Version 0.5) and the mapping rules of
 // spec Version 0.6 (`const`, `default`, `map` / `via`, the field options
@@ -175,7 +176,7 @@ fn bad(diag: *Diag, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []con
 // Pack model
 // ---------------------------------------------------------------------------
 
-const Wire = enum { xml, geojson, json, bits, protobuf };
+const Wire = enum { xml, geojson, json, bits, protobuf, text };
 const TKind = enum {
     string,
     float,
@@ -195,21 +196,29 @@ const TKind = enum {
     psint,
     pdouble,
     pfloat,
+    // the `text` wire only (Version 0.10)
+    int_w,
+    dec,
+    dm,
+    hms,
+    hms_dmy,
 };
 
-const KindCat = enum { text, bits, proto };
+// `rec`: the transforms valid on the `text` wire only
+const KindCat = enum { text, bits, proto, rec };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
         .string, .float, .int, .iso8601_ms, .bool_ => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
+        .int_w, .dec, .dm, .hms, .hms_dmy => .rec,
     };
 }
 
 fn wireCategory(w: Wire) KindCat {
     return switch (w) {
-        .xml, .geojson, .json => .text,
+        .xml, .geojson, .json, .text => .text,
         .bits => .bits,
         .protobuf => .proto,
     };
@@ -223,6 +232,13 @@ const Transform = struct {
     // uscale / sscale
     factor: Factor = .{},
     offset: f64 = 0,
+    // text: `int:<w>`, `dec:<f>[:<w>]` (w 0: none), `dm:<d>:<f>:<PN>`,
+    // `hms:<f>`, `hms_dmy:<f>`
+    w: usize = 0,
+    f: usize = 0,
+    d: usize = 0,
+    letp: u8 = 0,
+    letn: u8 = 0,
 };
 
 const LineTag = enum { field, when, constant, group };
@@ -272,6 +288,9 @@ const Group = struct {
     count_fixed: ?usize = null,
     cstart: usize = 0,
     clen: usize = 0,
+    // text: the index of the first item's first field, and the fields of an item
+    tstart: usize = 0,
+    titem: usize = 0,
 };
 
 // The lines that apply together: common lines plus one kind's, or one group
@@ -333,6 +352,12 @@ const Line = struct {
     wpresent: bool = false,
     wforced: bool = false, // written with a leading `=`
     wint: u64 = 0, // bits / protobuf integer value
+    // text: a field `<i>`, a column `<i>:<from>:<len>` or a pair `<i>+<j>`
+    tloc: TLoc = .whole,
+    ti: usize = 0,
+    tj: usize = 0,
+    tfrom: usize = 0,
+    tlen: usize = 0,
 
     fn isField(self: *const Line) bool {
         return self.tag == .field;
@@ -350,6 +375,8 @@ const Line = struct {
         return !(self.tag == .when and self.wpresent);
     }
 };
+
+const TLoc = enum { whole, column, pair };
 
 const Kind = struct {
     name: []const u8,
@@ -400,6 +427,18 @@ const Pack = struct {
     // Version 0.8: `layout` as written, and the lines of a sequential pack
     layout_set: bool = false,
     seq: ?*SBody = null,
+    // Version 0.10, the `text` wire: the delimiter (null: `none`), the start
+    // text, the `nmea` checksum; and whether each directive was given
+    delim: ?u8 = ',',
+    start: []const u8 = "",
+    nmea: bool = false,
+    text_dirs: bool = false,
+    // the three directives as written, and the first line that repeats one
+    // or gives one after the first `kind`
+    delim_raw: ?[]const u8 = null,
+    start_raw: ?[]const u8 = null,
+    cksum_raw: ?[]const u8 = null,
+    tdir_bad: usize = 0,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -537,8 +576,8 @@ const Derive = struct {
 fn yields(k: TKind) KeyType {
     return switch (k) {
         .string, .pstring, .ascii => .string,
-        .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat => .float,
-        .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint => .int,
+        .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms => .float,
+        .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy => .int,
     };
 }
 
@@ -738,7 +777,45 @@ fn parseTransform(s: []const u8) !Transform {
         }
         return t;
     }
-    return E.UnknownTransform;
+    // the transforms of the `text` wire: a parameter out of range, missing
+    // or extra is `bad-directive` (Version 0.10, rule 1)
+    const bd = E.@"bad-directive";
+    const TextHead = enum { int, dec, dm, hms, hms_dmy };
+    const th = std.meta.stringToEnum(TextHead, head) orelse return E.UnknownTransform;
+    var ps: [4][]const u8 = undefined;
+    var np: usize = 0;
+    while (it.next()) |part| {
+        if (np == ps.len) return bd;
+        ps[np] = part;
+        np += 1;
+    }
+    const num = struct {
+        fn f(txt: []const u8, lo: usize, hi: usize) !usize {
+            const v = parseUnsigned(txt) orelse return E.@"bad-directive";
+            if (v < lo or v > hi) return E.@"bad-directive";
+            return @intCast(v);
+        }
+    }.f;
+    switch (th) {
+        .int => {
+            if (np != 1) return bd;
+            return .{ .kind = .int_w, .w = try num(ps[0], 1, 20) };
+        },
+        .dec => {
+            if (np != 1 and np != 2) return bd;
+            return .{ .kind = .dec, .f = try num(ps[0], 0, 9), .w = if (np == 2) try num(ps[1], 1, 20) else 0 };
+        },
+        .dm => {
+            if (np != 3) return bd;
+            const l = ps[2];
+            if (l.len != 2 or l[0] < 'A' or l[0] > 'Z' or l[1] < 'A' or l[1] > 'Z' or l[0] == l[1]) return bd;
+            return .{ .kind = .dm, .d = try num(ps[0], 1, 3), .f = try num(ps[1], 0, 9), .letp = l[0], .letn = l[1] };
+        },
+        .hms, .hms_dmy => {
+            if (np != 1) return bd;
+            return .{ .kind = if (th == .hms) .hms else .hms_dmy, .f = try num(ps[0], 0, 3) };
+        },
+    }
 }
 
 // The declared type of a key a `derive` line names: a key of `core` or of the
@@ -985,7 +1062,16 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (ln.dot and ln.tag == .constant) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: const on the item itself (`.`)", .{ln.lineno});
     }
-    if (ln.isField() and wireCategory(p.wire) != kindCategory(ln.transform.kind)) {
+    if (ln.isField() and p.wire == .text) {
+        // on `text`: the text transforms but `bool`, and the transforms of
+        // the wire (Version 0.10)
+        const kc = kindCategory(ln.transform.kind);
+        if ((kc != .text and kc != .rec) or ln.transform.kind == .bool_) {
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the text wire", .{ ln.lineno, ln.key });
+        }
+    } else if (ln.isField() and kindCategory(ln.transform.kind) == .rec) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the text wire", .{ ln.lineno, ln.key });
+    } else if (ln.isField() and wireCategory(p.wire) != kindCategory(ln.transform.kind)) {
         return bad(diag, alloc, E.WrongTransformKind, "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
     }
     if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json) {
@@ -996,7 +1082,13 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         return bad(diag, alloc, E.@"bad-directive", "line {d}: const {s} present", .{ ln.lineno, ln.locator });
     }
     // field options: an option on a wire or transform it does not apply to
-    if (p.wire != .bits and (ln.swap or ln.trim or ln.optional)) {
+    if (p.wire == .text and (ln.swap or ln.trim)) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: swap and trim are not options of the text wire", .{ln.lineno});
+    }
+    if (p.wire == .text and ln.optional and in_group) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: optional inside a group of the text wire", .{ln.lineno});
+    }
+    if (p.wire != .bits and p.wire != .text and (ln.swap or ln.trim or ln.optional)) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: swap, trim and optional are for the bits wire", .{ln.lineno});
     }
     if (ln.trim and ln.transform.kind != .ascii) {
@@ -1080,6 +1172,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 ln.segs = try splitSegs(alloc, ln.locator, '.');
             }
         },
+        .text => try textFinalizeLine(alloc, p, ln, diag),
     }
     if (ln.isField()) try parseAbsent(alloc, p.wire, ln, in_group, diag);
 }
@@ -1116,6 +1209,8 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     const raw = ln.absent_raw orelse return;
     const bd = E.@"bad-directive";
     const no = ln.lineno;
+    // ruling 16 of 0.10: `absent` on the text wire is not stated yet
+    if (wire == .text) return bad(diag, alloc, bd, "line {d}: absent is not an option of the text wire", .{no});
     if (std.mem.indexOfScalar(u8, raw, '"') != null) {
         return bad(diag, alloc, bd, "line {d}: an absent value holds a double quote", .{no});
     }
@@ -1249,6 +1344,7 @@ fn finalizeLines(alloc: std.mem.Allocator, p: *Pack, lines: []Line, in_group: bo
 // then the lines of its body.
 fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
+    if (p.wire == .text) return textFinalizeGroup(alloc, p, g, nested, diag);
     if (p.wire != .bits and (g.count_txt != null or g.item_txt != null)) {
         return bad(diag, alloc, bd, "line {d}: `item` and `count` are for the bits wire, not {s}", .{ g.lineno, @tagName(p.wire) });
     }
@@ -1308,6 +1404,7 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
                 g.count_fixed = @intCast(n);
             }
         },
+        .text => unreachable,
     }
     try finalizeLines(alloc, p, g.lines, true, diag);
     if (p.wire == .protobuf) {
@@ -1354,7 +1451,7 @@ fn passesThrough(p: *const Pack, f: *const Line, g: *const Group, in_item: bool)
             for (g.ppath, 0..) |n, i| if (n != f.ppath[i]) return false;
             return true;
         },
-        .bits => return false,
+        .bits, .text => return false,
     }
 }
 
@@ -1620,6 +1717,14 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
             if (toks.len != 3) return bad(diag, alloc, E.MalformedDirective, "line {d}: typemap takes two arguments", .{lineno});
             try p.tm_nat2cot.put(toks[1], toks[2]);
             try p.tm_cot2nat.put(toks[2], toks[1]);
+        } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
+            // the `text` wire (Version 0.10): checked against the wire and
+            // one another after the file is read
+            if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes one value", .{ lineno, kw });
+            const slot = if (is(kw, "delimiter")) &p.delim_raw else if (is(kw, "start")) &p.start_raw else &p.cksum_raw;
+            if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
+            slot.* = toks[1];
+            p.text_dirs = true;
         } else if (is(kw, "kind")) {
             if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: kind takes one argument", .{lineno});
             if (p.kindIndex(toks[1]) != null) {
@@ -1729,6 +1834,7 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     if (p.wire == .bits and p.word_bytes == 0) {
         return bad(diag, alloc, E.MalformedDirective, "a bits pack needs word_bytes", .{});
     }
+    try textDirectives(alloc, p, diag);
     setTableTypes(p);
     try finalizeLines(alloc, p, p.common.items, false, diag);
     for (p.kinds.items) |*k| try finalizeLines(alloc, p, k.lines.items, false, diag);
@@ -1737,6 +1843,10 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, null, false, diag);
     try checkGroupBodies(alloc, p, p.common.items, diag);
     for (p.kinds.items) |*k| try checkGroupBodies(alloc, p, k.lines.items, diag);
+    if (p.wire == .text) {
+        if (p.kinds.items.len == 0) try textCheckScope(alloc, p.common.items, &.{}, diag);
+        for (p.kinds.items) |*k| try textCheckScope(alloc, p.common.items, k.lines.items, diag);
+    }
 
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
     if (p.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "the pack has no source line", .{});
@@ -3802,6 +3912,7 @@ const Doc = union(enum) {
     json: JItem,
     bits: BitsDoc,
     protobuf: PbDoc,
+    text: TextDoc,
 };
 
 fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Doc {
@@ -3841,6 +3952,7 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             cache.* = PbCache.init(alloc);
             return .{ .protobuf = .{ .entries = entries, .cache = cache } };
         },
+        .text => return .{ .text = try textParse(alloc, p, bytes, diag) },
     }
 }
 
@@ -3872,6 +3984,12 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const leaf = (resolvePb(alloc, pd, ln.ppath) catch return false) orelse return false;
             if (ln.wpresent) return true;
             return leaf.wt == 0 and leaf.uval == ln.wint;
+        },
+        .text => |td| {
+            // a `when` on a column its field does not reach does not hold
+            const got = textRead(td, ln, ln.ti, false) orelse return false;
+            if (ln.wpresent) return true;
+            return std.mem.eql(u8, got, ln.wtext);
         },
     }
 }
@@ -3970,6 +4088,16 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
                 } else if (absentInt(ln, leaf.uval)) return null;
             }
             return try decodeProtoTransform(t, leaf);
+        },
+        .text => |td| {
+            if (ln.tloc == .pair) {
+                // absent when either field is absent
+                const a = textRead(td, ln, ln.ti, false) orelse return null;
+                const b = textRead(td, ln, ln.tj, false) orelse return null;
+                return try textDecodePair(ln.transform, a, b);
+            }
+            const raw = textRead(td, ln, ln.ti, textNumeric(t)) orelse return null;
+            return try textDecode(ln.transform, raw);
         },
     }
 }
@@ -4234,6 +4362,20 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             try e.putList(g.list, items);
             return if (count == 0) 0 else pos;
         },
+        .text => |td| {
+            // items from field `tstart` to the end of the record, the last
+            // one possibly cut short; no field there: the list is absent
+            const nf = td.fields.len;
+            if (nf <= g.tstart) return 0;
+            const count = (nf - g.tstart + g.titem - 1) / g.titem;
+            const items = try alloc.alloc(Entity, count);
+            for (items, 0..) |*it, k| {
+                it.* = Entity.init(alloc);
+                _ = try decodeScope(alloc, p, body, .{ .text = .{ .fields = td.fields, .base = g.tstart + k * g.titem } }, it, diag);
+            }
+            try e.putList(g.list, items);
+            return 0;
+        },
     }
 }
 
@@ -4338,6 +4480,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
             }
         },
         .json => |it| try jsonResidue(alloc, p, lines, it.v.object, "", &e),
+        .text => |td| try textResidue(alloc, p, lines, td, &e),
         .bits, .protobuf => {},
     }
     return e;
@@ -5002,7 +5145,635 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             try encodeProtoNode(alloc, root, &buf);
             return hexEncode(alloc, buf.items);
         },
+        .text => return textEncode(alloc, p, sc, e, diag),
     }
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.10: the `text` wire. One record of ASCII text: fields between
+// delimiters, optionally framed by a start text and an `nmea` checksum; a
+// field may be read as character columns.
+// ---------------------------------------------------------------------------
+
+// The fields of a record; inside a group item, `base` is the index of the
+// item's first field.
+const TextDoc = struct { fields: []const []const u8, base: usize = 0 };
+
+fn printable(s: []const u8) bool {
+    for (s) |c| if (c < 0x20 or c > 0x7e) return false;
+    return true;
+}
+
+fn parseIdx(s: []const u8) ?usize {
+    const v = parseUnsigned(s) orelse return null;
+    if (v > 1 << 40) return null;
+    return @intCast(v);
+}
+
+// The checks that relate `wire`, `delimiter`, `start` and `checksum`, after
+// the file is read (rulings 2 and 10 of 0.10).
+fn textDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    if (!p.text_dirs) return;
+    if (p.wire != .text) return bad(diag, alloc, bd, "delimiter, start and checksum are directives of the text wire, not {s}", .{@tagName(p.wire)});
+    if (p.tdir_bad != 0) return bad(diag, alloc, bd, "line {d}: delimiter, start and checksum appear at most once, before the first kind", .{p.tdir_bad});
+    if (p.delim_raw) |d| {
+        if (std.mem.eql(u8, d, "none")) {
+            p.delim = null;
+        } else if (d.len == 1 and d[0] >= 0x21 and d[0] <= 0x7e and d[0] != '"') {
+            p.delim = d[0];
+        } else return bad(diag, alloc, bd, "delimiter {s} is not one character from 0x21 to 0x7E other than a quote, or none", .{d});
+    }
+    if (p.cksum_raw) |c| {
+        if (std.mem.eql(u8, c, "nmea")) {
+            p.nmea = true;
+        } else if (!std.mem.eql(u8, c, "none")) return bad(diag, alloc, bd, "checksum {s} is not none or nmea", .{c});
+    }
+    if (p.start_raw) |st| {
+        if (st.len == 0) return bad(diag, alloc, bd, "an empty start", .{});
+        for (st) |ch| {
+            if (ch < 0x21 or ch > 0x7e) return bad(diag, alloc, bd, "start {s} holds a character outside 0x21 to 0x7E", .{st});
+            if (p.delim != null and ch == p.delim.?) return bad(diag, alloc, bd, "start {s} holds the delimiter", .{st});
+        }
+        p.start = st;
+    }
+    if (p.nmea and p.delim != null and p.delim.? == '*') return bad(diag, alloc, bd, "delimiter \"*\" with checksum nmea", .{});
+}
+
+// One line's locator, and a `when` or `const` value, on the text wire.
+fn textFinalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const loc = ln.locator;
+    if (std.mem.indexOfScalar(u8, loc, '+')) |plus| {
+        ln.ti = parseIdx(loc[0..plus]) orelse return bad(diag, alloc, bd, "line {d}: locator {s} is not <i>+<j>", .{ ln.lineno, loc });
+        ln.tj = parseIdx(loc[plus + 1 ..]) orelse return bad(diag, alloc, bd, "line {d}: locator {s} is not <i>+<j>", .{ ln.lineno, loc });
+        ln.tloc = .pair;
+        if (ln.ti == ln.tj) return bad(diag, alloc, bd, "line {d}: the pair {s} names one field twice", .{ ln.lineno, loc });
+    } else if (std.mem.indexOfScalar(u8, loc, ':') != null) {
+        const c = parseColons(loc, 3) orelse return bad(diag, alloc, bd, "line {d}: locator {s} is not <i>:<from>:<len>", .{ ln.lineno, loc });
+        if (c[2] < 1) return bad(diag, alloc, bd, "line {d}: column {s} has length 0", .{ ln.lineno, loc });
+        ln.tloc = .column;
+        ln.ti = c[0];
+        ln.tfrom = c[1];
+        ln.tlen = c[2];
+    } else {
+        ln.ti = parseIdx(loc) orelse return bad(diag, alloc, bd, "line {d}: locator {s} is not a field index", .{ ln.lineno, loc });
+    }
+    if (ln.tloc == .pair and !ln.isField()) return bad(diag, alloc, bd, "line {d}: {s} on a pair", .{ ln.lineno, @tagName(ln.tag) });
+    if (ln.isField()) {
+        const two = ln.transform.kind == .dm or ln.transform.kind == .hms_dmy;
+        if (two and ln.tloc != .pair) return bad(diag, alloc, bd, "line {d}: the transform of {s} takes a pair", .{ ln.lineno, ln.key });
+        if (!two and ln.tloc == .pair) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not take a pair", .{ ln.lineno, ln.key });
+    }
+    if (p.delim == null and (ln.ti != 0 or (ln.tloc == .pair and ln.tj != 0))) {
+        return bad(diag, alloc, bd, "line {d}: under delimiter none the record is field 0, not {s}", .{ ln.lineno, loc });
+    }
+    if (!ln.isFixed()) return;
+    if (ln.tag == .when and std.mem.eql(u8, ln.wraw, "present")) {
+        ln.wpresent = true;
+        return;
+    }
+    var v = ln.wraw;
+    if (v.len > 0 and v[0] == '=') {
+        ln.wforced = true;
+        v = v[1..];
+    }
+    ln.wtext = v;
+    const why: ?[]const u8 = blk: {
+        if (v.len == 0) break :blk "is empty";
+        if (!printable(v)) break :blk "holds a character outside 0x20 to 0x7E";
+        if (v[0] == ' ' or v[v.len - 1] == ' ') break :blk "has a space at its start or end";
+        if (p.delim) |d| if (std.mem.indexOfScalar(u8, v, d) != null) break :blk "holds the delimiter";
+        if (p.nmea and std.mem.indexOfScalar(u8, v, '*') != null) break :blk "holds a * under checksum nmea";
+        if (ln.tloc == .column and v.len > ln.tlen) break :blk "is longer than its column";
+        break :blk null;
+    };
+    if (why) |w| return bad(diag, alloc, bd, "line {d}: the value of {s} {s} {s}", .{ ln.lineno, @tagName(ln.tag), ln.locator, w });
+}
+
+// `group <list> <i> item <n>` on the text wire.
+fn textFinalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    if (nested) return bad(diag, alloc, bd, "line {d}: a group inside a group on the text wire", .{g.lineno});
+    if (p.delim == null) return bad(diag, alloc, bd, "line {d}: a group under delimiter none", .{g.lineno});
+    if (g.count_txt != null) return bad(diag, alloc, bd, "line {d}: count on a text group", .{g.lineno});
+    const it = g.item_txt orelse return bad(diag, alloc, bd, "line {d}: a text group needs `item <n>`", .{g.lineno});
+    g.titem = parseIdx(it) orelse 0;
+    if (g.titem == 0) return bad(diag, alloc, bd, "line {d}: item {s} is not a number of fields from 1", .{ g.lineno, it });
+    g.tstart = parseIdx(g.locator) orelse return bad(diag, alloc, bd, "line {d}: group locator {s} is not a field index", .{ g.lineno, g.locator });
+    try finalizeLines(alloc, p, g.lines, true, diag);
+    for (g.lines) |*ln| {
+        if (ln.tag == .group) continue;
+        if (ln.ti >= g.titem or (ln.tloc == .pair and ln.tj >= g.titem)) {
+            return bad(diag, alloc, bd, "line {d}: locator {s} is beyond an item of {d} fields", .{ ln.lineno, ln.locator, g.titem });
+        }
+    }
+}
+
+// A group is the last thing in its scope: one group, and no other line at
+// its index or beyond.
+fn textCheckScope(alloc: std.mem.Allocator, a: []const Line, b: []const Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const both = [2][]const Line{ a, b };
+    var grp: ?*const Group = null;
+    for (both) |lines| for (lines) |*ln| {
+        if (ln.tag != .group) continue;
+        if (grp != null) return bad(diag, alloc, bd, "line {d}: a second group in one scope", .{ln.lineno});
+        grp = ln.grp.?;
+    };
+    const g = grp orelse return;
+    for (both) |lines| for (lines) |*ln| {
+        if (ln.tag == .group) continue;
+        if (ln.ti >= g.tstart or (ln.tloc == .pair and ln.tj >= g.tstart)) {
+            return bad(diag, alloc, bd, "line {d}: locator {s} at or beyond the group at field {d}", .{ ln.lineno, ln.locator, g.tstart });
+        }
+    };
+}
+
+fn hexVal(c: u8) ?u8 {
+    return switch (c) {
+        '0'...'9' => c - '0',
+        'A'...'F' => c - 'A' + 10,
+        'a'...'f' => c - 'a' + 10,
+        else => null,
+    };
+}
+
+// Steps 1 to 5 of "Reading a record"; each failure is `malformed-wire`.
+fn textParse(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!TextDoc {
+    const mw = E.@"malformed-wire";
+    var t = bytes;
+    if (std.mem.endsWith(u8, t, "\r\n")) {
+        t = t[0 .. t.len - 2];
+    } else if (std.mem.endsWith(u8, t, "\n")) {
+        t = t[0 .. t.len - 1];
+    }
+    for (t, 0..) |c, i| {
+        if (c < 0x20 or c > 0x7e) return bad(diag, alloc, mw, "byte {d} of the record is 0x{x:0>2}, outside 0x20 to 0x7E", .{ i, c });
+    }
+    if (p.start.len > 0) {
+        if (!std.mem.startsWith(u8, t, p.start)) return bad(diag, alloc, mw, "the record does not begin with {s}", .{p.start});
+        t = t[p.start.len..];
+    }
+    if (p.nmea) {
+        if (t.len < 3 or t[t.len - 3] != '*') return bad(diag, alloc, mw, "the record does not end with * and two hexadecimal digits", .{});
+        const hi = hexVal(t[t.len - 2]) orelse return bad(diag, alloc, mw, "the checksum is not two hexadecimal digits", .{});
+        const lo = hexVal(t[t.len - 1]) orelse return bad(diag, alloc, mw, "the checksum is not two hexadecimal digits", .{});
+        t = t[0 .. t.len - 3];
+        var x: u8 = 0;
+        for (t) |c| x ^= c;
+        if (x != hi * 16 + lo) return bad(diag, alloc, mw, "the checksum is {X:0>2}, the record's is {X:0>2}", .{ hi * 16 + lo, x });
+        if (std.mem.indexOfScalar(u8, t, '*') != null) return bad(diag, alloc, mw, "a * in the body of the record", .{});
+    }
+    const d = p.delim orelse {
+        const one = try alloc.alloc([]const u8, 1);
+        one[0] = t;
+        return .{ .fields = one };
+    };
+    const n = std.mem.count(u8, t, &[_]u8{d}) + 1;
+    const fields = try alloc.alloc([]const u8, n);
+    var it = std.mem.splitScalar(u8, t, d);
+    var i: usize = 0;
+    while (it.next()) |f| : (i += 1) fields[i] = f;
+    return .{ .fields = fields };
+}
+
+// The numeric transforms: a column's leading spaces are removed for them,
+// and they pad a column with zeros on encode.
+fn textNumeric(k: TKind) bool {
+    return k == .int or k == .int_w or k == .float or k == .dec;
+}
+
+// The text of field `idx` (of the item) as a line reads it; null: absent.
+fn textRead(d: TextDoc, ln: *const Line, idx: usize, numeric: bool) ?[]const u8 {
+    const at = d.base + idx;
+    if (at >= d.fields.len) return null;
+    const f = d.fields[at];
+    if (ln.tloc != .column) return if (f.len == 0) null else f;
+    if (f.len <= ln.tfrom) return null;
+    var c = f[ln.tfrom..@min(f.len, ln.tfrom + ln.tlen)];
+    c = std.mem.trimRight(u8, c, " ");
+    if (numeric) c = std.mem.trimLeft(u8, c, " ");
+    return if (c.len == 0) null else c;
+}
+
+// `float` and `dec` text: a sign, then digits with at most one `.`, at least
+// one digit; no exponent.
+fn textDecimal(s: []const u8) !f64 {
+    const td = E.@"transform-decode";
+    var i: usize = 0;
+    if (i < s.len and (s[i] == '+' or s[i] == '-')) i += 1;
+    var nd: usize = 0;
+    var dots: usize = 0;
+    while (i < s.len) : (i += 1) {
+        if (isDigit(s[i])) {
+            nd += 1;
+        } else if (s[i] == '.') {
+            dots += 1;
+        } else return td;
+    }
+    if (nd == 0 or dots > 1) return td;
+    const v = std.fmt.parseFloat(f64, s) catch return td;
+    if (!std.math.isFinite(v)) return td;
+    return v;
+}
+
+const Hms = struct { h: i64, m: i64, s: i64, secs: []const u8, frac: []const u8 };
+
+// `hhmmss` then optionally `.` and digits.
+fn parseHms(s: []const u8) !Hms {
+    const td = E.@"transform-decode";
+    if (s.len < 6 or !allDigits(s[0..6])) return td;
+    const frac = if (s.len > 6) blk: {
+        if (s[6] != '.' or !allDigits(s[7..])) return td;
+        break :blk s[7..];
+    } else "";
+    const r = Hms{
+        .h = try digitsToInt(s[0..2]),
+        .m = try digitsToInt(s[2..4]),
+        .s = try digitsToInt(s[4..6]),
+        .secs = s[4..],
+        .frac = frac,
+    };
+    if (r.h >= 24 or r.m >= 60 or r.s >= 60) return td;
+    return r;
+}
+
+fn textDecode(t: Transform, raw: []const u8) !MV {
+    return switch (t.kind) {
+        .string => MV{ .str = raw },
+        .int, .int_w => MV{ .int = try parseDecimalInt(raw) },
+        .float, .dec => MV{ .float = try textDecimal(raw) },
+        .iso8601_ms => MV{ .int = try isoToMs(raw) },
+        .hms => blk: {
+            const h = try parseHms(raw);
+            const secs = std.fmt.parseFloat(f64, h.secs) catch return E.@"transform-decode";
+            break :blk MV{ .float = @as(f64, @floatFromInt(h.h * 3600 + h.m * 60)) + secs };
+        },
+        else => E.@"transform-decode",
+    };
+}
+
+fn daysInMonth(y: i64, m: i64) i64 {
+    return switch (m) {
+        1, 3, 5, 7, 8, 10, 12 => 31,
+        4, 6, 9, 11 => 30,
+        else => if ((@mod(y, 4) == 0 and @mod(y, 100) != 0) or @mod(y, 400) == 0) 29 else 28,
+    };
+}
+
+fn textDecodePair(t: Transform, a: []const u8, b: []const u8) !MV {
+    const td = E.@"transform-decode";
+    switch (t.kind) {
+        .dm => {
+            const d = t.d;
+            if (a.len < d + 2 or !allDigits(a[0 .. d + 2])) return td;
+            if (a.len > d + 2 and (a[d + 2] != '.' or !allDigits(a[d + 3 ..]))) return td;
+            if (try digitsToInt(a[d .. d + 2]) >= 60) return td;
+            const deg: f64 = @floatFromInt(try digitsToInt(a[0..d]));
+            const mins = std.fmt.parseFloat(f64, a[d..]) catch return td;
+            const v = deg + mins / 60.0;
+            if (b.len != 1) return td;
+            if (b[0] == t.letp) return MV{ .float = v };
+            if (b[0] == t.letn) return MV{ .float = -v };
+            return td;
+        },
+        .hms_dmy => {
+            const h = try parseHms(a);
+            var ms: i64 = 0;
+            for (0..3) |k| ms = ms * 10 + (if (k < h.frac.len) @as(i64, h.frac[k] - '0') else 0);
+            if (b.len != 6 or !allDigits(b)) return td;
+            const dd = try digitsToInt(b[0..2]);
+            const mo = try digitsToInt(b[2..4]);
+            const yy = try digitsToInt(b[4..6]);
+            const y = if (yy >= 80) 1900 + yy else 2000 + yy;
+            if (mo < 1 or mo > 12 or dd < 1 or dd > daysInMonth(y, mo)) return td;
+            const days = daysFromCivil(y, mo, dd);
+            return MV{ .int = days * 86400000 + (h.h * 3600 + h.m * 60 + h.s) * 1000 + ms };
+        },
+        else => return td,
+    }
+}
+
+// Does a line of the scope address field `idx` (Residue: `when … present`
+// does not)?
+fn textAddresses(ln: *const Line, idx: usize) bool {
+    if (ln.tag == .group or !ln.maps()) return false;
+    return ln.ti == idx or (ln.tloc == .pair and ln.tj == idx);
+}
+
+fn textGroup(lines: []const Line) ?*const Group {
+    for (lines) |*ln| if (ln.tag == .group) return ln.grp.?;
+    return null;
+}
+
+fn textResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, td: TextDoc, e: *Entity) anyerror!void {
+    const g = textGroup(lines);
+    for (td.fields, 0..) |f, idx| {
+        if (f.len == 0) continue;
+        if (g) |gr| if (idx >= gr.tstart) break;
+        var addressed = false;
+        for (lines) |*ln| {
+            if (textAddresses(ln, idx)) {
+                addressed = true;
+                break;
+            }
+        }
+        if (addressed) continue;
+        try e.addResidue(.{ .fmt = p.format, .locator = try intToStr(alloc, @intCast(idx)), .value = f });
+    }
+}
+
+// ---- encode
+
+const pow10 = [_]f64{ 1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9 };
+const two53: f64 = 9007199254740992.0;
+
+// round half away from zero; a value not finite or of 2^53 or more is
+// `transform-encode`
+fn roundExact(v: f64) !i64 {
+    if (!std.math.isFinite(v)) return E.@"transform-encode";
+    const r = @round(v);
+    if (@abs(r) >= two53) return E.@"transform-encode";
+    return @intFromFloat(r);
+}
+
+// The digits of `n`, zero-padded to at least `min` digits, with a `.`
+// before the last `f`.
+fn fixedDigits(buf: *std.ArrayList(u8), n: u64, min: usize, f: usize) !void {
+    var tmp: [24]u8 = undefined;
+    const ds = std.fmt.bufPrint(&tmp, "{d}", .{n}) catch unreachable;
+    const width = @max(min, ds.len);
+    var digits: [48]u8 = undefined;
+    @memset(digits[0 .. width - ds.len], '0');
+    @memcpy(digits[width - ds.len .. width], ds);
+    if (f == 0) {
+        try buf.appendSlice(digits[0..width]);
+        return;
+    }
+    try buf.appendSlice(digits[0 .. width - f]);
+    try buf.append('.');
+    try buf.appendSlice(digits[width - f .. width]);
+}
+
+const TextOut = struct { a: []const u8, b: []const u8 = "" };
+
+fn textEncodeValue(alloc: std.mem.Allocator, t: Transform, mv: MV) !TextOut {
+    const te = E.@"transform-encode";
+    var buf = std.ArrayList(u8).init(alloc);
+    switch (t.kind) {
+        .string, .float, .int, .iso8601_ms => return .{ .a = try xmlText(alloc, t.kind, mv) },
+        .int_w => {
+            if (mv != .int) return te;
+            if (mv.int < 0) try buf.append('-');
+            try fixedDigits(&buf, @abs(mv.int), t.w, 0);
+        },
+        .dec => {
+            const n = try roundExact((try mvFloat(mv)) * pow10[t.f]);
+            var body = std.ArrayList(u8).init(alloc);
+            try fixedDigits(&body, @abs(n), t.f + 1, t.f);
+            if (n < 0) try buf.append('-');
+            if (body.items.len < t.w) try buf.appendNTimes('0', t.w - body.items.len);
+            try buf.appendSlice(body.items);
+        },
+        .dm => {
+            const x = try mvFloat(mv);
+            const m = try roundExact(@abs(x) * 60.0 * pow10[t.f]);
+            const unit: u64 = 60 * @as(u64, @intFromFloat(pow10[t.f]));
+            const um: u64 = @intCast(m);
+            const deg = um / unit;
+            var tmp: [24]u8 = undefined;
+            const ds = std.fmt.bufPrint(&tmp, "{d}", .{deg}) catch unreachable;
+            if (ds.len > t.d) return te; // the degrees do not fit `d` digits
+            try fixedDigits(&buf, deg, t.d, 0);
+            try fixedDigits(&buf, um % unit, 2 + t.f, t.f);
+            const letter: u8 = if (x < 0 and m > 0) t.letn else t.letp;
+            return .{ .a = buf.items, .b = try alloc.dupe(u8, &[_]u8{letter}) };
+        },
+        .hms => {
+            const n = try roundExact((try mvFloat(mv)) * pow10[t.f]);
+            const p10: i64 = @intFromFloat(pow10[t.f]);
+            if (n < 0 or n >= 86400 * p10) return te;
+            try hmsText(&buf, @intCast(@divTrunc(n, p10)), @intCast(@mod(n, p10)), t.f);
+        },
+        .hms_dmy => {
+            if (mv != .int) return te;
+            const day = @divFloor(mv.int, 86400000);
+            const msd = @mod(mv.int, 86400000);
+            const c = civilFromDays(day);
+            if (c.y < 1980 or c.y > 2079) return te;
+            const div: i64 = @intFromFloat(pow10[3 - t.f]);
+            try hmsText(&buf, @intCast(@divTrunc(msd, 1000)), @intCast(@divTrunc(@mod(msd, 1000), div)), t.f);
+            const date = try std.fmt.allocPrint(alloc, "{d:0>2}{d:0>2}{d:0>2}", .{ @as(u64, @intCast(c.d)), @as(u64, @intCast(c.m)), @as(u64, @intCast(@mod(c.y, 100))) });
+            return .{ .a = buf.items, .b = date };
+        },
+        else => return te,
+    }
+    return .{ .a = buf.items };
+}
+
+// `hhmmss` of a second of the day, then `.` and `f` digits of `frac`.
+fn hmsText(buf: *std.ArrayList(u8), secs: u64, frac: u64, f: usize) !void {
+    try buf.writer().print("{d:0>2}{d:0>2}{d:0>2}", .{ secs / 3600, secs / 60 % 60, secs % 60 });
+    if (f > 0) {
+        try buf.append('.');
+        try fixedDigits(buf, frac, f, 0);
+    }
+}
+
+// One field of the record being written: the text of the first whole-field
+// line that writes it, the columns field lines write (the earlier line's
+// characters stand), then `when` and `const` values over both.
+const TField = struct {
+    whole: ?[]const u8 = null,
+    cols: std.ArrayListUnmanaged(u8) = .{},
+    cmask: std.ArrayListUnmanaged(bool) = .{},
+    text: std.ArrayListUnmanaged(u8) = .{},
+    fmask: std.ArrayListUnmanaged(bool) = .{},
+    fixed_whole: bool = false,
+};
+
+const TextEnc = struct {
+    alloc: std.mem.Allocator,
+    p: *const Pack,
+    diag: *Diag,
+    fields: std.ArrayListUnmanaged(TField) = .{},
+    // `when` and `const` lines, with the index of their item's first field
+    fixed: std.ArrayListUnmanaged(struct { ln: *const Line, base: usize }) = .{},
+
+    fn field(self: *TextEnc, idx: usize) !*TField {
+        while (self.fields.items.len <= idx) try self.fields.append(self.alloc, .{});
+        return &self.fields.items[idx];
+    }
+
+    // Text a transform wrote: no delimiter, no `*` under nmea, 0x20 to 0x7E.
+    fn check(self: *TextEnc, ln: *const Line, s: []const u8) !void {
+        const te = E.@"transform-encode";
+        if (!printable(s)) return bad(self.diag, self.alloc, te, "field {s} at {s}: the text holds a character outside 0x20 to 0x7E", .{ ln.key, ln.locator });
+        if (self.p.delim) |d| if (std.mem.indexOfScalar(u8, s, d) != null) return bad(self.diag, self.alloc, te, "field {s} at {s}: the text holds the delimiter", .{ ln.key, ln.locator });
+        if (self.p.nmea and std.mem.indexOfScalar(u8, s, '*') != null) return bad(self.diag, self.alloc, te, "field {s} at {s}: the text holds a *", .{ ln.key, ln.locator });
+    }
+
+    fn whole(self: *TextEnc, idx: usize, s: []const u8) !void {
+        const f = try self.field(idx);
+        if (f.whole == null) f.whole = s;
+    }
+
+    fn column(self: *TextEnc, ln: *const Line, idx: usize, s: []const u8) !void {
+        if (s.len > ln.tlen) return bad(self.diag, self.alloc, E.@"transform-encode", "field {s} at {s}: {d} characters do not fit the column", .{ ln.key, ln.locator, s.len });
+        // padded to `len`: zeros after any `-` for the numeric transforms,
+        // else spaces on the right
+        var padded = std.ArrayList(u8).init(self.alloc);
+        if (textNumeric(ln.transform.kind)) {
+            const neg = s.len > 0 and s[0] == '-';
+            if (neg) try padded.append('-');
+            try padded.appendNTimes('0', ln.tlen - s.len);
+            try padded.appendSlice(if (neg) s[1..] else s);
+        } else {
+            try padded.appendSlice(s);
+            try padded.appendNTimes(' ', ln.tlen - s.len);
+        }
+        const f = try self.field(idx);
+        const end = ln.tfrom + ln.tlen;
+        while (f.cols.items.len < end) {
+            try f.cols.append(self.alloc, ' ');
+            try f.cmask.append(self.alloc, false);
+        }
+        for (padded.items, ln.tfrom..) |c, at| {
+            if (f.cmask.items[at]) continue;
+            f.cols.items[at] = c;
+            f.cmask.items[at] = true;
+        }
+    }
+
+    // The field lines of one scope, at `base`; `when` and `const` are kept
+    // for the end.
+    fn scope(self: *TextEnc, sc: *const Scope, e: *const Entity, base: usize) anyerror!void {
+        for (sc.lines) |*ln| {
+            switch (ln.tag) {
+                .when, .constant => try self.fixed.append(self.alloc, .{ .ln = ln, .base = base }),
+                .group => {
+                    const g = ln.grp.?;
+                    const items = e.lists.get(g.list) orelse continue;
+                    for (items, 0..) |*it, k| {
+                        // each item `n` fields long whether or not its keys are present
+                        if (g.titem > 0) _ = try self.field(base + g.tstart + (k + 1) * g.titem - 1);
+                        try self.scope(&g.body, it, base + g.tstart + k * g.titem);
+                    }
+                },
+                .field => {
+                    const mv = (fieldValue(self.p, sc, e, ln) catch |err|
+                        return bad(self.diag, self.alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
+                    const out = textEncodeValue(self.alloc, ln.transform, mv) catch |err| switch (err) {
+                        error.OutOfMemory => return err,
+                        else => return bad(self.diag, self.alloc, err, "field {s} at {s}: the value does not encode", .{ ln.key, ln.locator }),
+                    };
+                    try self.check(ln, out.a);
+                    switch (ln.tloc) {
+                        .whole => try self.whole(base + ln.ti, out.a),
+                        .column => try self.column(ln, base + ln.ti, out.a),
+                        .pair => {
+                            try self.check(ln, out.b);
+                            try self.whole(base + ln.ti, out.a);
+                            try self.whole(base + ln.tj, out.b);
+                        },
+                    }
+                },
+            }
+        }
+    }
+
+    // The text of each field from its lines, then the `when` and `const`
+    // values over it.
+    fn compose(self: *TextEnc) !void {
+        for (self.fields.items) |*f| {
+            try f.text.appendSlice(self.alloc, f.whole orelse f.cols.items);
+            try f.fmask.appendNTimes(self.alloc, false, f.text.items.len);
+        }
+        for (self.fixed.items) |fx| {
+            const ln = fx.ln;
+            if (ln.wpresent) continue;
+            const f = try self.field(fx.base + ln.ti);
+            if (f.fixed_whole) continue; // the earlier line's characters stand
+            if (ln.tloc == .whole) {
+                if (std.mem.indexOfScalar(bool, f.fmask.items, true) != null) continue;
+                f.text.clearRetainingCapacity();
+                try f.text.appendSlice(self.alloc, ln.wtext);
+                f.fmask.clearRetainingCapacity();
+                try f.fmask.appendNTimes(self.alloc, true, ln.wtext.len);
+                f.fixed_whole = true;
+                continue;
+            }
+            const end = ln.tfrom + ln.tlen;
+            while (f.text.items.len < end) {
+                try f.text.append(self.alloc, ' ');
+                try f.fmask.append(self.alloc, false);
+            }
+            for (0..ln.tlen) |k| {
+                const at = ln.tfrom + k;
+                if (f.fmask.items[at]) continue;
+                f.text.items[at] = if (k < ln.wtext.len) ln.wtext[k] else ' ';
+                f.fmask.items[at] = true;
+            }
+        }
+    }
+};
+
+fn textEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    var enc = TextEnc{ .alloc = alloc, .p = p, .diag = diag };
+    try enc.scope(sc, e, 0);
+    const g = textGroup(sc.lines);
+    // the record's length: the fields the lines address, the items wrote,
+    // and the residue written
+    var n: usize = enc.fields.items.len;
+    for (sc.lines) |*ln| {
+        if (ln.tag == .group or !ln.maps()) continue;
+        n = @max(n, ln.ti + 1);
+        if (ln.tloc == .pair) n = @max(n, ln.tj + 1);
+    }
+    for (e.residue.items) |r| {
+        if (!std.mem.eql(u8, r.fmt, p.format)) continue;
+        const idx = parseIdx(r.locator) orelse continue;
+        if (g) |gr| if (idx >= gr.tstart) continue;
+        var addressed = false;
+        for (sc.lines) |*ln| {
+            if (textAddresses(ln, idx)) addressed = true;
+        }
+        if (addressed) continue;
+        try enc.whole(idx, r.value);
+        n = @max(n, idx + 1);
+    }
+    _ = try enc.field(if (n > 0) n - 1 else 0);
+    try enc.compose();
+    // trailing empty fields that only `optional` lines address are removed
+    while (n > 0) {
+        const last = n - 1;
+        if (enc.fields.items[last].text.items.len > 0) break;
+        if (g) |gr| if (last >= gr.tstart) break;
+        var any = false;
+        var all_optional = true;
+        for (sc.lines) |*ln| {
+            if (!textAddresses(ln, last)) continue;
+            any = true;
+            if (!(ln.isField() and ln.optional)) all_optional = false;
+        }
+        if (!any or !all_optional) break;
+        n -= 1;
+    }
+    var buf = std.ArrayList(u8).init(alloc);
+    try buf.appendSlice(p.start);
+    const body_at = buf.items.len;
+    const count = if (p.delim == null) @min(n, 1) else n;
+    for (enc.fields.items[0..count], 0..) |*f, i| {
+        if (i > 0) try buf.append(p.delim.?);
+        try buf.appendSlice(f.text.items);
+    }
+    if (p.nmea) {
+        var x: u8 = 0;
+        for (buf.items[body_at..]) |c| x ^= c;
+        try buf.writer().print("*{X:0>2}", .{x});
+    }
+    return buf.toOwnedSlice();
 }
 
 // ---------------------------------------------------------------------------
@@ -5241,6 +6012,8 @@ const SParser = struct {
             } else return self.err(bd, "bit_order {s} is not lsb or msb", .{toks[1]});
         } else if (is(kw, "word_bytes") or is(kw, "root")) {
             return self.err(bd, "{s} is not used in a sequential pack", .{kw});
+        } else if (is(kw, "delimiter") or is(kw, "start") or is(kw, "checksum")) {
+            return self.err(bd, "{s} is a directive of the text wire", .{kw});
         } else if (is(kw, "typemap")) {
             if (toks.len != 3) return self.err(E.MalformedDirective, "typemap takes two arguments", .{});
             try p.tm_nat2cot.put(toks[1], toks[2]);
@@ -6894,7 +7667,10 @@ pub fn main() !void {
     // standard output; --set supplies the context.
     if (conv_from) |from| {
         const input = try std.io.getStdIn().readToEndAlloc(alloc, max_file);
-        const msg = std.mem.trim(u8, input, " \t\r\n");
+        // the input of a `text` format is the record as it is: decode removes
+        // one line terminator and nothing else
+        const from_text = if (eng.findPack(from)) |fp| fp.wire == .text else false;
+        const msg = if (from_text) input else std.mem.trim(u8, input, " \t\r\n");
         if (peak) {
             // --peak: the bytes the decode alone holds at its highest, on
             // standard error

@@ -19,20 +19,24 @@ const (
 	WireBits     = "bits"
 	WireProtobuf = "protobuf"
 	WireJSON     = "json"
+	WireText     = "text"
 )
 
 type locKind int
 
 const (
-	locAttr  locKind = iota + 1 // xml @name, path/@name
-	locText                     // xml path/#text
-	locElem                     // xml path (residue only: an empty element)
-	locCoord                    // geojson geometry.lon|lat|alt
-	locProp                     // geojson properties.<name>
-	locTop                      // geojson <name>
-	locBits                     // bits word:pos:len
-	locProto                    // protobuf dot-path of field numbers
-	locJSON                     // json dot-path of member names
+	locAttr   locKind = iota + 1 // xml @name, path/@name
+	locText                      // xml path/#text
+	locElem                      // xml path (residue only: an empty element)
+	locCoord                     // geojson geometry.lon|lat|alt
+	locProp                      // geojson properties.<name>
+	locTop                       // geojson <name>
+	locBits                      // bits word:pos:len
+	locProto                     // protobuf dot-path of field numbers
+	locJSON                      // json dot-path of member names
+	locTField                    // text <i>: a whole field
+	locTCol                      // text <i>:<from>:<len>: a column of a field
+	locTPair                     // text <i>+<j>: two fields as one value
 )
 
 // maxBitsLen is the longest bits field: an `ascii` field of 255 bytes.
@@ -49,6 +53,9 @@ type locator struct {
 	blen   int      // bits field length
 	bit    int      // bits: absolute start bit in the message
 	pbPath []int    // protobuf field-number path
+	ti, tj int      // text: the field index; the second field of a pair
+	from   int      // text: the first character of a column
+	clen   int      // text: the length of a column
 }
 
 // Field is one `field` line: a model key bound to a wire locator through a
@@ -71,6 +78,7 @@ type Field struct {
 	dot     bool     // the locator is `.`: the item itself, as a scalar
 	also    []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
 	tf      *transform
+	ttf     *textTf // text wire transform
 	btf     *bitsTransform
 	pbf     *pbTransform
 	jbool   bool // json `bool`
@@ -154,6 +162,8 @@ type Group struct {
 	dots      []*Field // the `.` fields of the body, in line order
 	packed    bool     // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
 	needsMsg  bool     // protobuf: the body has a line that reads into the item as a submessage
+	tstart    int      // text: the index of the first field of the first item
+	titem     int      // text: the number of fields of an item
 }
 
 // KindDef is one `kind` of a pack: its `when`, `requires`, `field`, `const`
@@ -186,6 +196,7 @@ type layout struct {
 	needBit  int                 // bits: the same, over the lines that are not optional
 	bytes    int                 // bits: the length an encode writes before any counted items, in bytes
 	decBytes int                 // bits: the shortest input a decode accepts, in bytes
+	text     *textScope          // text: the fields the scope addresses
 }
 
 // maps reports whether a field, a const or a when line of the layout maps loc.
@@ -235,6 +246,13 @@ type Pack struct {
 	msb            bool
 	seq            bool     // bits: `layout sequential` (spec 0.8)
 	sbody          *seqBody // sequential layouts: the lines of a message
+
+	// text wire (spec 0.10)
+	delim     byte           // the delimiter, ',' by default
+	delimNone bool           // `delimiter none`: the record is one field
+	start     string         // the start text, "" for none
+	nmea      bool           // `checksum nmea`
+	textSeen  map[string]int // the line of each text directive the pack has
 }
 
 // HasKinds reports whether the pack declares message kinds.
@@ -385,7 +403,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
-		"layout": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
+		"layout": 1, "delimiter": 1, "start": 1, "checksum": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -459,6 +477,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 		}
 		switch kw {
+		case "delimiter", "start", "checksum":
+			if err := p.textDirective(kw, args[0], n); err != nil {
+				return nil, perr(ErrBadDirective, n, "", "%v", err)
+			}
 		case "group":
 			// group <list> <locator> [item <bits>] [count <count-locator> | count <n>]
 			g := &Group{List: args[0], Locator: args[1], Line: n, parent: inner()}
@@ -513,9 +535,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				p.Version = args[0]
 			case "wire":
 				switch args[0] {
-				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON:
+				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON, WireText:
 				default:
-					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits or protobuf)", args[0])
+					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf or text)", args[0])
 				}
 				p.Wire = args[0]
 			case "layout":
@@ -665,6 +687,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		return err
 	}
+	// The text directives on another wire, and their relations to one
+	// another (0.10 rulings 2 and 10).
+	if ln, err := p.checkTextDirectives(); err != nil {
+		return nil, perr(ErrBadDirective, ln, "", "%v", err)
+	}
 	if firstWhen != nil && !p.HasKinds() {
 		return nil, perr(ErrBadDirective, firstWhen.Line, firstWhen.Locator, "a when line needs a pack with a kind line")
 	}
@@ -687,132 +714,143 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 			}
 		}
-		for _, g := range p.Groups {
-			if kind, err := p.resolveGroup(g); err != nil {
-				if err := note(perr(kind, g.Line, g.Locator, "%v", err)); err != nil {
-					return nil, err
+		if p.Wire == WireText {
+			if err := p.resolveText(whens, perr, note); err != nil {
+				return nil, err
+			}
+			for _, f := range p.Fields {
+				if f.Key == "type" {
+					hasType = true
 				}
 			}
-		}
-		// Inside a group of a geojson pack the locators are those of the json
-		// wire; `.` is the item itself, on json, geojson and protobuf.
-		innerWire := func(g *Group) string {
-			if g != nil && p.Wire == WireGeoJSON {
-				return WireJSON
-			}
-			return p.Wire
-		}
-		dotWire := p.Wire == WireJSON || p.Wire == WireGeoJSON || p.Wire == WireProtobuf
-		for _, f := range p.Fields {
-			if f.Key == "type" {
-				hasType = true
-			}
-			var loc locator
-			var err error
-			if p.seq {
-				// A sequential locator is a bit length; a positional locator
-				// is bad-directive.
-				if strings.Contains(f.Locator, ":") {
-					return nil, perr(ErrBadDirective, f.Line, f.Locator, "a locator in a sequential pack is a bit length, not <word>:<pos>:<len>")
+		} else {
+			for _, g := range p.Groups {
+				if kind, err := p.resolveGroup(g); err != nil {
+					if err := note(perr(kind, g.Line, g.Locator, "%v", err)); err != nil {
+						return nil, err
+					}
 				}
-				n, aerr := strconv.Atoi(f.Locator)
-				if aerr != nil || n < 1 || n > maxBitsLen {
-					err = fmt.Errorf("a sequential locator is a bit length 1..%d, got %q", maxBitsLen, f.Locator)
-				}
-				loc = locator{raw: f.Locator, kind: locBits, blen: n}
-			} else if p.Wire == WireBits && isDigits(f.Locator) {
-				return nil, perr(ErrBadDirective, f.Line, f.Locator, "a bit length for a locator is valid only in a pack with `layout sequential`")
-			} else if f.Locator == "." && dotWire {
-				if f.group == nil {
-					return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator `.` names an item and is valid only inside a group")
-				}
-				f.dot = true
-				loc = locator{raw: ".", kind: locJSON}
-				if p.Wire == WireProtobuf {
-					loc.kind = locProto
-				}
-			} else {
-				loc, err = parseLocator(innerWire(f.group), f.Locator, false)
 			}
-			if err != nil {
-				if err := note(perr(ErrBadLocator, f.Line, f.Locator, "%v", err)); err != nil {
-					return nil, err
+			// Inside a group of a geojson pack the locators are those of the json
+			// wire; `.` is the item itself, on json, geojson and protobuf.
+			innerWire := func(g *Group) string {
+				if g != nil && p.Wire == WireGeoJSON {
+					return WireJSON
 				}
-				continue
+				return p.Wire
 			}
-			loc.bit = loc.word*p.WordBytes*8 + loc.pos
-			f.loc = loc
-			if kind, err := resolveFieldTransform(p.Wire, f); err != nil {
-				if err := note(perr(kind, f.Line, f.Locator, "%v", err)); err != nil {
-					return nil, err
+			dotWire := p.Wire == WireJSON || p.Wire == WireGeoJSON || p.Wire == WireProtobuf
+			for _, f := range p.Fields {
+				if f.Key == "type" {
+					hasType = true
 				}
-				continue
-			}
-			f.yields, _ = transformYields(f.Transform)
-			if err := checkFieldOptions(p.Wire, f); err != nil {
-				return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
-			}
-			if p.seq && f.Optional {
-				return nil, perr(ErrBadDirective, f.Line, f.Locator, "field option `optional` is not valid in a sequential pack")
-			}
-			if f.Absent != nil {
-				if err := resolveSentinels(innerWire(f.group), f); err != nil {
+				var loc locator
+				var err error
+				if p.seq {
+					// A sequential locator is a bit length; a positional locator
+					// is bad-directive.
+					if strings.Contains(f.Locator, ":") {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "a locator in a sequential pack is a bit length, not <word>:<pos>:<len>")
+					}
+					n, aerr := strconv.Atoi(f.Locator)
+					if aerr != nil || n < 1 || n > maxBitsLen {
+						err = fmt.Errorf("a sequential locator is a bit length 1..%d, got %q", maxBitsLen, f.Locator)
+					}
+					loc = locator{raw: f.Locator, kind: locBits, blen: n}
+				} else if p.Wire == WireBits && isDigits(f.Locator) {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "a bit length for a locator is valid only in a pack with `layout sequential`")
+				} else if f.Locator == "." && dotWire {
+					if f.group == nil {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator `.` names an item and is valid only inside a group")
+					}
+					f.dot = true
+					loc = locator{raw: ".", kind: locJSON}
+					if p.Wire == WireProtobuf {
+						loc.kind = locProto
+					}
+				} else {
+					loc, err = parseLocator(innerWire(f.group), f.Locator, false)
+				}
+				if err != nil {
+					if err := note(perr(ErrBadLocator, f.Line, f.Locator, "%v", err)); err != nil {
+						return nil, err
+					}
+					continue
+				}
+				loc.bit = loc.word*p.WordBytes*8 + loc.pos
+				f.loc = loc
+				if kind, err := resolveFieldTransform(p.Wire, f); err != nil {
+					if err := note(perr(kind, f.Line, f.Locator, "%v", err)); err != nil {
+						return nil, err
+					}
+					continue
+				}
+				f.yields, _ = transformYields(f.Transform)
+				if err := checkFieldOptions(p.Wire, f); err != nil {
 					return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
 				}
-			}
-			if f.Via != "" {
-				f.table = p.tables[f.Via]
-				if f.table == nil {
-					return nil, perr(ErrBadDirective, f.Line, f.Locator, "`via %s` names a table with no map line", f.Via)
+				if p.seq && f.Optional {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "field option `optional` is not valid in a sequential pack")
+				}
+				if f.Absent != nil {
+					if err := resolveSentinels(innerWire(f.group), f); err != nil {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
+					}
+				}
+				if f.Via != "" {
+					f.table = p.tables[f.Via]
+					if f.table == nil {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "`via %s` names a table with no map line", f.Via)
+					}
 				}
 			}
-		}
-		for _, w := range whens {
-			// `const <locator> present` is refused; `=present` writes the text
-			// (0.6 ruling 3).
-			// `const .` is refused: the item itself is not a place a constant is
-			// written (0.7 ruling 18).
-			if w.Const && w.Locator == "." {
-				return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot name the item itself")
-			}
-			if w.Const && w.Value == "present" {
-				return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot be `present`; write `=present` for the text")
-			}
-			loc, err := parseLocator(innerWire(w.group), w.Locator, false)
-			if err != nil {
-				if err := note(perr(ErrBadLocator, w.Line, w.Locator, "%v", err)); err != nil {
-					return nil, err
+			for _, w := range whens {
+				// `const <locator> present` is refused; `=present` writes the text
+				// (0.6 ruling 3).
+				// `const .` is refused: the item itself is not a place a constant is
+				// written (0.7 ruling 18).
+				if w.Const && w.Locator == "." {
+					return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot name the item itself")
 				}
-				continue
-			}
-			loc.bit = loc.word*p.WordBytes*8 + loc.pos
-			w.loc = loc
-			if err := resolveWhen(innerWire(w.group), w); err != nil {
-				return nil, perr(ErrBadDirective, w.Line, w.Locator, "%v", err)
-			}
-		}
-		for _, g := range p.Groups {
-			for _, ln := range g.lines {
-				switch {
-				case ln.f != nil && ln.f.dot:
-					g.dots = append(g.dots, ln.f)
-				default:
-					g.needsMsg = true
+				if w.Const && w.Value == "present" {
+					return nil, perr(ErrBadDirective, w.Line, w.Locator, "a const cannot be `present`; write `=present` for the text")
+				}
+				loc, err := parseLocator(innerWire(w.group), w.Locator, false)
+				if err != nil {
+					if err := note(perr(ErrBadLocator, w.Line, w.Locator, "%v", err)); err != nil {
+						return nil, err
+					}
+					continue
+				}
+				loc.bit = loc.word*p.WordBytes*8 + loc.pos
+				w.loc = loc
+				if err := resolveWhen(innerWire(w.group), w); err != nil {
+					return nil, perr(ErrBadDirective, w.Line, w.Locator, "%v", err)
 				}
 			}
-			g.packed = p.Wire == WireProtobuf && len(g.dots) > 0 && g.dots[0].pbf != nil && g.dots[0].pbf.wire != pbLenDelim
-			// A protobuf group body is scalar only when every line is `.`
-			// (0.7 ruling 13).
-			if p.Wire == WireProtobuf && len(g.dots) > 0 && g.needsMsg {
-				return nil, perr(ErrBadDirective, g.Line, g.Locator, "the body of group %s mixes `.` with other lines", g.List)
+			for _, g := range p.Groups {
+				for _, ln := range g.lines {
+					switch {
+					case ln.f != nil && ln.f.dot:
+						g.dots = append(g.dots, ln.f)
+					default:
+						g.needsMsg = true
+					}
+				}
+				g.packed = p.Wire == WireProtobuf && len(g.dots) > 0 && g.dots[0].pbf != nil && g.dots[0].pbf.wire != pbLenDelim
+				// A protobuf group body is scalar only when every line is `.`
+				// (0.7 ruling 13).
+				if p.Wire == WireProtobuf && len(g.dots) > 0 && g.needsMsg {
+					return nil, perr(ErrBadDirective, g.Line, g.Locator, "the body of group %s mixes `.` with other lines", g.List)
+				}
 			}
-		}
-		if f, g := p.fieldThroughGroup(); f != nil {
-			return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator passes through the path of the group on line %d of the same scope", g.Line)
-		}
-		if p.Wire == WireBits {
-			if ln, loc, err := p.checkBitsGroups(); err != nil {
-				return nil, perr(ErrBadDirective, ln, loc, "%v", err)
+			if f, g := p.fieldThroughGroup(); f != nil {
+				return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator passes through the path of the group on line %d of the same scope", g.Line)
+			}
+			if p.Wire == WireBits {
+				if ln, loc, err := p.checkBitsGroups(); err != nil {
+					return nil, perr(ErrBadDirective, ln, loc, "%v", err)
+				}
 			}
 		}
 	}
@@ -887,6 +925,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 	} else {
 		p.layouts = []*layout{p.newLayout(nil, p.common, p.commonDefaults)}
+	}
+	if p.Wire == WireText {
+		for _, l := range p.layouts {
+			l.text = newTextScope(l.lines)
+		}
+		for _, g := range p.Groups {
+			g.body.text = newTextScope(g.lines)
+		}
 	}
 	return p, nil
 }

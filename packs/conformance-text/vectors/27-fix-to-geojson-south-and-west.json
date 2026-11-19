@@ -1,0 +1,14 @@
+{
+  "name": "fix-to-geojson-south-and-west",
+  "from": "conformance-text",
+  "to": "geojson",
+  "input": "$GPFIX,123519.50,3330.0000,S,07045.0000,W,7,05,-42.6,084.4,RES,GATOR,3*48",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-70.75,-33.5,-42.6]},\"properties\":{\"ce\":45319.5,\"callsign\":\"GATOR\",\"course\":84.4}}",
+  "model": {
+    "lat": "-33.5",
+    "lon": "-70.75",
+    "hae": "-42.6"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): dm: 30/60+33 = 33.5 negated for S; 45/60+70 = 70.75 negated for W; geojson ruling 4 of 0.1.1; residue is not written into geojson. Derived without an engine by a standalone reference program."
+}

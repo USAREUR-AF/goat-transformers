@@ -1,0 +1,13 @@
+{
+  "name": "pair-in-descending-order",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "R;270221;123519",
+  "expect": "R;270221;123519",
+  "model": {
+    "@kind": "rev",
+    "time_ms": "1614429319000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.10 Locators: the first index named is the transform's first part; 2+1 reads the time 123519 from field 2 and the date 270221 from field 1: 2021-02-27T12:35:19Z. Computed with Python datetime, no engine."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "empty-record",
+  "from": "conformance-text-plain",
+  "to": "conformance-text-plain",
+  "input": "\n",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Reading a record, steps 1 and 5: an empty body is one empty field; when 0 P does not hold. Derived without an engine by a standalone reference program."
+}

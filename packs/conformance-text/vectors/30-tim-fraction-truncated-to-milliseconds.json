@@ -1,0 +1,14 @@
+{
+  "name": "tim-fraction-truncated-to-milliseconds",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPTIM,123519.9999,270221,5.50,D,V*40",
+  "expect": "$GPTIM,123519.999,270221,5.5,D,V*49",
+  "model": {
+    "time_ms": "1614429319999",
+    "speed_ms": "5.5",
+    "probe.z": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): hms_dmy: fraction digits beyond milliseconds are truncated (.9999 -> 999 ms). Derived without an engine by a standalone reference program."
+}

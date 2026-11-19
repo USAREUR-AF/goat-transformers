@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstring>
 #include <stdexcept>
+#include <vector>
 
 #include "util.hpp"
 
@@ -29,6 +30,11 @@ const char* transform_name(Transform t) {
         case Transform::F32: return "f32";
         case Transform::F64: return "f64";
         case Transform::Ascii: return "ascii";
+        case Transform::IntW: return "int:<w>";
+        case Transform::Dec: return "dec";
+        case Transform::Dm: return "dm";
+        case Transform::Hms: return "hms";
+        case Transform::HmsDmy: return "hms_dmy";
     }
     return "?";
 }
@@ -161,6 +167,75 @@ bool parse_transform(std::string_view token, FieldLine& f, std::string& err) {
     }
     err = "unknown transform '" + std::string(token) + "'";
     return false;
+}
+
+namespace {
+// A parameter of a text transform: decimal digits whose value lies in [lo, hi].
+bool text_param(std::string_view s, int lo, int hi, int& out) {
+    if (s.empty() || s.size() > 3) return false;
+    int v = 0;
+    for (char c : s) {
+        if (c < '0' || c > '9') return false;
+        v = v * 10 + (c - '0');
+    }
+    if (v < lo || v > hi) return false;
+    out = v;
+    return true;
+}
+
+std::vector<std::string_view> split_colons(std::string_view s) {
+    std::vector<std::string_view> out;
+    std::size_t at = 0;
+    for (;;) {
+        const std::size_t c = s.find(':', at);
+        out.push_back(s.substr(at, c == std::string_view::npos ? std::string_view::npos : c - at));
+        if (c == std::string_view::npos) break;
+        at = c + 1;
+    }
+    return out;
+}
+}  // namespace
+
+int parse_text_transform(std::string_view token, FieldLine& f, std::string& err) {
+    const std::vector<std::string_view> parts = split_colons(token);
+    const std::string_view name = parts[0];
+    const bool is_int = name == "int" && parts.size() > 1;
+    if (!is_int && name != "dec" && name != "dm" && name != "hms" && name != "hms_dmy") return 0;
+    const std::size_t nparams = parts.size() - 1;
+    bool ok = false;
+    f.text_w = 0;
+    f.text_f = 0;
+    f.text_d = 0;
+    if (is_int) {
+        f.transform = Transform::IntW;
+        ok = nparams == 1 && text_param(parts[1], 1, 20, f.text_w);
+    } else if (name == "dec") {
+        f.transform = Transform::Dec;
+        ok = (nparams == 1 || nparams == 2) && text_param(parts[1], 0, 9, f.text_f) &&
+             (nparams == 1 || text_param(parts[2], 1, 20, f.text_w));
+    } else if (name == "dm") {
+        f.transform = Transform::Dm;
+        ok = nparams == 3 && text_param(parts[1], 1, 3, f.text_d) && text_param(parts[2], 0, 9, f.text_f) &&
+             parts[3].size() == 2 && parts[3][0] >= 'A' && parts[3][0] <= 'Z' && parts[3][1] >= 'A' &&
+             parts[3][1] <= 'Z' && parts[3][0] != parts[3][1];
+        if (ok) {
+            f.text_p = parts[3][0];
+            f.text_n = parts[3][1];
+        }
+    } else {
+        f.transform = name == "hms" ? Transform::Hms : Transform::HmsDmy;
+        ok = nparams == 1 && text_param(parts[1], 0, 3, f.text_f);
+    }
+    if (!ok) {
+        err = "transform '" + std::string(token) + "' has parameters that are not valid";
+        return -1;
+    }
+    return 1;
+}
+
+bool transform_is_text_only(Transform t) {
+    return t == Transform::IntW || t == Transform::Dec || t == Transform::Dm || t == Transform::Hms ||
+           t == Transform::HmsDmy;
 }
 
 bool transform_is_textual(Transform t) { return t == Transform::String || t == Transform::Iso8601Ms; }

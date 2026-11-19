@@ -1,0 +1,13 @@
+{
+  "name": "field-zero-longer-than-its-columns",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPFIXX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,*3D",
+  "expect": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,*65",
+  "model": {
+    "@kind": "fix",
+    "probe.s2": "GP"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Residue: a field a line addresses by columns is mapped whole; the sixth character is not carried. Derived without an engine by a standalone reference program."
+}

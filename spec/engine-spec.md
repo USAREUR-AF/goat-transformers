@@ -1557,3 +1557,272 @@ item path `"<list>[<i>].<key>"` (the item exists and lacks the key) or a list
 name (the entity has no such list, as `"<list>.#": "absent"`). A listed key
 that is also a member of `model` makes the vector invalid, and an invalid
 vector fails the run.
+---
+
+# Version 0.10: the `text` wire
+
+Status: Written. A `text` format is one record of ASCII text: fields separated
+by a delimiter, optionally framed by a start marker and a checksum. A field may
+also be read as character columns, which covers fixed-width records. Input and
+output are the record's text.
+
+```
+wire       text
+delimiter  <character | none>     # default ","
+start      <text>                 # optional: every record begins with this text
+checksum   <none | nmea>          # default none
+field      <model-key> <locator> <transform> [options]
+```
+
+`delimiter` takes one character from 0x21 to 0x7E other than `"` (quoted
+where `#` would otherwise begin a comment), or `none`: the record is then one
+field. `start` is one or more characters from 0x21 to 0x7E that do not include
+the delimiter. Each of the three directives appears at most once, before the
+first `kind`. On another wire, more than once, or with another value they are
+`bad-directive`; so is `delimiter "*"` with `checksum nmea`, and a locator of a
+field other than 0 under `delimiter none`.
+
+Every rule that Versions 0.5 to 0.8 state for "text wires" (`xml`, `geojson`,
+`json`) holds for `text` as well, unless this section states otherwise: the
+leading `=` of a `when` or `const` value, ruling 26 of 0.5 (a `when` and a
+`field` on one locator), ruling 27 of 0.5 (`when … present` does not map), and
+nothing written for `present`.
+
+## Reading a record
+
+Decode takes the input text through these steps, in order. Each failure is
+`malformed-wire`.
+
+1. One line terminator at the end, `\r\n` or `\n`, is removed. No other
+   character is removed.
+2. Every remaining character is from 0x20 to 0x7E.
+3. With `start`, the text begins with it; the start text is removed.
+4. With `checksum nmea`, the text ends with `*` and two hexadecimal digits
+   (`0-9`, `A-F`, `a-f`). Those digits are the XOR of every byte of the text
+   before the `*`, as an 8-bit value. The `*` and the digits are removed. A
+   `*` left in the text is `malformed-wire`.
+5. The text that remains is the body. It splits at every delimiter into fields,
+   numbered from 0. A body with no delimiter is one field; an empty body is one
+   empty field. With `delimiter none` the body is field 0.
+
+## Locators
+
+| Locator | Addresses |
+|---|---|
+| `<i>` | field `i`, its whole text |
+| `<i>:<from>:<len>` | a column: `len` characters of field `i` from character `from` (both from 0; `len` from 1) |
+| `<i>+<j>` | a pair: fields `i` and `j` as one value, for the transforms that take two parts (`dm`, `hms_dmy`) and only for them |
+
+A field that is empty, or that the record does not have, is absent. A column
+is absent when its field has no character at `from`; when the field ends
+inside the column, the column is the characters the field has from `from` on
+(a fixed-width record whose trailing spaces were cut reads as it would with
+them). A column's text has its trailing spaces removed, and for the numeric
+transforms its leading spaces too; a column that is then empty is absent. The
+numeric transforms are exactly `int`, `int:<w>`, `float`, `dec:<f>` and
+`dec:<f>:<w>`, here and in "Writing a record". A pair is absent when either
+of its fields is absent (a receiver that has a time and no date yet sends one
+half). The two fields of a pair may be in either order; the first index
+named is always the transform's first part (`2+1` reads the `dm` digits or
+the `hms_dmy` time from field 2). A pair whose two indexes are equal, a
+pair on a transform that does not take two parts, and a field or column on one
+that does, are `bad-directive`.
+
+`when` and `const` take a field or a column, not a pair (`bad-directive`). A
+`when` compares the field's or the column's text, as read above (the column's
+trailing spaces removed), with its value; `present` holds when the field or
+column is not absent. A `when` or `const` value is not empty, holds no
+delimiter, no `*` under `checksum nmea`, only characters from 0x20 to 0x7E,
+and no space at its start or end; on a column it is at most `len` characters.
+Anything else is `bad-directive`.
+
+## Transforms for `text`
+
+`string`, `int`, `float` and `iso8601_ms` apply, with these readings on this
+wire:
+
+- `string` decodes the text as it is.
+- `int` decodes an optional `+` or `-` and one or more digits, leading zeros
+  allowed, from -2^63 to 2^63-1; anything else is `transform-decode`.
+- `float` and `dec` decode an optional `+` or `-`, then digits with at most
+  one `.`, at least one digit in all (`5.`, `.5` and `05.50` are numbers). An
+  exponent is not accepted. The value is the double nearest the decimal; a
+  decimal whose nearest double is not finite is `transform-decode`.
+- On encode, text from any transform that holds the delimiter, a `*` under
+  `checksum nmea`, or a character outside 0x20 to 0x7E is `transform-encode`.
+
+The transforms below are valid only on the `text` wire (`bad-directive`
+elsewhere), and the bits, protobuf and `bool` transforms are `bad-directive`
+on it.
+
+| Name | Yields | Decode | Encode |
+|---|---|---|---|
+| `int:<w>` | int | as `int` | the decimal digits, zero-padded to at least `w` digits after any `-` |
+| `dec:<f>` | float | as `float` | `n = round(x * 10^f)`; the digits of `|n|`, zero-padded on the left to at least `f + 1` digits, with a `.` before the last `f` (none when `f` is 0); `-` first when `n < 0` |
+| `dec:<f>:<w>` | float | as `float` | as `dec:<f>`, then zeros after any `-` until the text without the sign is at least `w` characters, the `.` counted |
+| `dm:<d>:<f>:<PN>` | float | a pair: the first field is exactly `d` digits of degrees and two digits of minutes, then optionally `.` and digits; the second is the letter `P` or `N`. The value is `degrees + minutes / 60`, negated for `N` | `m = round(|x| * 60 * 10^f)`; the degrees `m div (60 * 10^f)` as `d` digits, the minutes `m mod (60 * 10^f)` as two digits, `.` and `f` digits (no `.` when `f` is 0); the second field `N` when `x < 0` and `m > 0`, else `P` |
+| `hms:<f>` | float | `hhmmss` then optionally `.` and digits: seconds since midnight, `h * 3600 + m * 60 + s` | `n = round(x * 10^f)`, `0 <= n < 86400 * 10^f`; `hh`, `mm`, `ss` of `n div 10^f`, then `.` and the `f` digits of `n mod 10^f` (no `.` when `f` is 0) |
+| `hms_dmy:<f>` | int | a pair: a time as for `hms` and a date `ddmmyy`, as epoch milliseconds UTC. `yy` from 80 to 99 is 19yy, from 00 to 79 is 20yy. Fraction digits beyond milliseconds are truncated | the time as for `hms` with `f` fraction digits, truncated from the milliseconds; the date as `ddmmyy`. A year outside 1980 to 2079 is `transform-encode` |
+
+Rules for these transforms:
+
+1. **Parameters.** `w` is 1 to 20; `f` is 0 to 9 for `dec` and `dm`, 0 to 3
+   for `hms` and `hms_dmy`; `d` is 1 to 3; `P` and `N` are two different
+   letters `A` to `Z`. Anything else, bare `dec` included, is
+   `bad-directive`. An empty quoted value (`""`) is a token, and is refused
+   wherever a value must not be empty.
+2. **Arithmetic.** `10^f` is the exact double. Products are computed in
+   doubles from left to right; `round` is half away from zero, as for
+   `linscale`. A rounded `|n|` or `m` of 2^53 or more, or a value that is not
+   finite, is `transform-encode`.
+3. **Decode ranges.** `dm` minutes of 60 or more, `hms` hours of 24 or more,
+   minutes or seconds of 60 or more, a date that does not exist, a `dm` letter
+   other than `P` or `N` (case counts), and text not of the stated shape are
+   `transform-decode`. A `.` in `dm`, `hms` and `hms_dmy` text is followed by
+   at least one digit. `dm` decode reads the minutes, fraction included, as
+   the double nearest their decimal, divides by 60 and then adds the degrees;
+   `hms` decode computes `h * 3600 + m * 60` as an integer and then adds the
+   seconds as the double nearest their decimal.
+4. **Out of range on encode.** An `hms` value whose rounded `n` falls outside
+   `0 <= n < 86400 * 10^f` is `transform-encode`.
+5. **Degrees too large.** A `dm` value whose degrees do not fit `d` digits is
+   `transform-encode`.
+
+## Writing a record
+
+Encode builds the fields of the selected scope (common lines, then the kind's)
+and then the record.
+
+1. Every `field` whose key is present (or has a `default`), every `const` and
+   every `when` writes its text at its locator; `when` and `const` are written
+   last, over any field (ruling 5 of 0.5). A pair writes its two fields. Where
+   two lines write the same field or overlapping columns, the earlier line's
+   characters stand, and `when` and `const` are written over both.
+2. A column writes into its field at `from`. Text shorter than `len` is padded
+   to `len`: on the left with `0` (after any `-`) for the numeric transforms,
+   on the right with spaces for the others. Text longer than `len` is
+   `transform-encode`. Characters of a field that no column writes are spaces,
+   up to the end of the furthest column written; a field no column writes is
+   empty.
+3. Residue of this format (below) is written at its field, unless a line of
+   the selected scope addresses that field. Here and below, a line addresses
+   a field as the Residue section states: `when … present` does not.
+4. The record has as many fields as one more than the highest field index that
+   a line of the selected scope other than a group addresses, that a group's
+   items write, or that residue written in step 3 names, whichever is highest.
+   Fields not written are empty.
+5. While the last field is empty, at least one line addresses it, and every
+   line that addresses it carries the `optional` option, that field is
+   removed. A field no line addresses stops the removal. So a pack reads a
+   record with or without trailing fields that later versions of a format
+   added, and writes the shorter form when the entity lacks their values.
+6. The fields are joined by the delimiter; the `start` text is put first.
+   With `checksum nmea`, `*` and the XOR of every byte after the start text,
+   as two uppercase hexadecimal digits, are put last. No line terminator is
+   written.
+
+Field options on `text`: `via`, and `optional` with the meaning of step 5
+only (it does not change decode). `swap` and `trim` are `bad-directive`.
+
+## Residue
+
+Every field of the record that is not empty and that no line of the common
+scope or the selected kind addresses (a field, a column, a part of a pair, a
+`when` other than `when … present`, a `const`, a group's fields) is residue of
+the format, keyed by its index in decimal, with its text. A field that a line
+addresses by columns is mapped whole: characters no column covers are not
+carried. No field at a group's index `i` or beyond is residue.
+
+## Groups
+
+```
+group  <list> <i> item <n>
+  field  <model-key> <k> <transform>        # k from 0 to n-1: relative to the item
+  …
+end
+```
+
+Items start at field `i`; each is `n` fields long (`n` from 1). Inside the
+group the locators `<k>`, `<k>:<from>:<len>` and `<k>+<m>` count from the
+item's first field, and `k` (and `m`) is below `n` (`bad-directive`
+otherwise). The items run to the end of the record: their number is the number
+of fields from `i` on, divided by `n` and rounded up, so a last item that the
+record cuts short has its missing fields absent. The list is present when the
+record has a field at index `i` or beyond, and absent otherwise. On encode the
+items are written back to back from field `i`, each item `n` fields long
+whether or not its keys are present, so the record ends at field
+`i + items * n - 1`; an empty or absent list writes no fields.
+
+The group is the last thing in its scope: a `field`, `when` or `const` of the
+scope at index `i` or beyond, a second group in the scope, a nested group,
+`count`, and `optional` inside the group are `bad-directive`. Rulings of 0.7 on
+lists apply otherwise.
+
+## Kinds
+
+Kinds select by `when` lines as on the other text wires (Version 0.5). The
+record is read through steps 1 to 5 of "Reading a record" before any `when` is
+checked, so a record that fails its checksum is `malformed-wire`, not
+`no-kind`.
+
+## Vectors
+
+`input` and `expect` of a `text` format are the record's text in a JSON
+string; a line terminator in `input` is written `\r\n` or `\n`.
+
+## Rulings for 0.10
+
+1. **Same-format round trip.** A record converts to itself unchanged when its
+   numbers are in the form the transforms write, its checksum digits are
+   uppercase, it has no line terminator, and it has exactly the fields the
+   selected scope writes (step 5 removes trailing `optional` fields that are
+   empty).
+2. **Load order.** Locator syntax and transform parameters are checked as the
+   file is read. The checks that relate `wire`, `delimiter`, `start` and
+   `checksum` to one another and to the locators, the `when` and `const`
+   value checks, and the group and scope checks run after the file is read and
+   before `missing-distribution`, as ruling 25 of 0.5 states for the other
+   whole-file checks.
+3. **A column and a whole-field line on one field** are allowed. Decode reads
+   each. Encode writes the whole-field line's text when its key is present or
+   has a `default`, and the columns only otherwise; `when` and `const` columns
+   are written over the field's text in either case, the text first padded
+   with spaces to reach them.
+4. **Terminator.** Step 1 removes `\r\n` when the text ends with it, and
+   otherwise `\n`.
+5. **Which error.** When one record has several failing fields, decode fails
+   with `transform-decode` (ruling 9 of 0.1.1); `malformed-wire` is decided
+   by steps 1 to 5 of "Reading a record" before any field is read.
+6. **A `when` on a column** that its field does not reach does not hold.
+7. **Empty items.** A record whose field `i` is empty and last decodes to a
+   list of one item with no keys, and that list writes `n` empty fields from
+   field `i`. A list of no items writes no field, so the record ends before
+   field `i`.
+8. **Earlier sections.** On `text`, `item` is part of the group line (ruling
+   18 of 0.7 is about the other wires), `optional` has the meaning of step 5
+   (the table of field options in 0.6 is about `bits`), and residue is written
+   only into the format it was decoded from, as on every wire (the
+   per-format rule of Residue in 0.1).
+9. **`when` values on `text`** are compared with the field's text, or the
+   column's text with its trailing spaces removed, before any transform: a
+   row of the table in "`when` values, by wire" of 0.5.
+10. **Checks that need the wire.** A check that depends on the wire (a pair
+    against its transform, a transform valid on another wire, a directive of
+    another wire) runs after the file is read, wherever the `wire` line stands.
+11. **Overlap among `when` and `const`.** Where two `when` or `const` lines
+    write the same characters, the earlier line's stand.
+12. **`delimiter none` and groups.** A `group` in a pack with `delimiter none`
+    is `bad-directive`.
+13. **`iso8601_ms` on `text`** reads as on the other text wires (0.6).
+14. **Locator syntax.** A `text` locator that is not one of the three forms
+    of "Locators" (`1:x`, `1:0:0`, `+2`, an index with a sign) is
+    `bad-directive`.
+15. **Minutes and seconds of 60.** The range checks of rule 3 of the
+    transforms compare the two digits of `dm` minutes and of `hms` hours,
+    minutes and seconds as integers, before any fraction: `59.99999999999999999`
+    minutes are accepted, and read as the double nearest them (60.0).
+
+16. **`absent` (0.9) on `text`** is `bad-directive` in 0.10: an empty field
+    is already absent on this wire, and the raw value of a sentinel, column
+    padding and the removal of trailing `optional` fields with it are not
+    stated yet.

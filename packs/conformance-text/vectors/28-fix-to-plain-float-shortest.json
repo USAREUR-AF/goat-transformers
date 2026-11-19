@@ -1,0 +1,9 @@
+{
+  "name": "fix-to-plain-float-shortest",
+  "from": "conformance-text",
+  "to": "conformance-text-plain",
+  "input": "$GPFIX,123519.50,4807.0380,N,01131.0000,E,7,05,545.4,084.4,RES,GATOR,3*5D",
+  "expect": "P;;48.1173;11.516666666666667;;",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): pos is the first kind and has no requires; float writes the shortest round-trip decimal of 31/60+11. Derived without an engine by a standalone reference program."
+}

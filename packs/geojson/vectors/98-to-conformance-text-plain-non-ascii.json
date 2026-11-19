@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-plain-non-ascii",
+  "from": "geojson",
+  "to": "conformance-text-plain",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.5,0.1]},\"properties\":{},\"id\":\"g\\u00e9\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Transforms for text: text holding a character outside 0x20 to 0x7E is transform-encode. Derived without an engine by a standalone reference program."
+}

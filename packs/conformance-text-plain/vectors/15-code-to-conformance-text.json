@@ -1,0 +1,13 @@
+{
+  "name": "code-to-conformance-text",
+  "from": "conformance-text-plain",
+  "to": "conformance-text",
+  "input": "C;AB042",
+  "expect": "$ABFIX,,,,,,42,,,,*52",
+  "model": {
+    "probe.s2": "AB",
+    "probe.n": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): fix is the first kind with no requires; probe.s2 AB from the column replaces the default; checksum 52 = XOR of ABFIX,,,,,,42,,,,. Derived without an engine by a standalone reference program."
+}

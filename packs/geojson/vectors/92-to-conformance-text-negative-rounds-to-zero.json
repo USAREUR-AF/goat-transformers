@@ -1,0 +1,9 @@
+{
+  "name": "to-conformance-text-negative-rounds-to-zero",
+  "from": "geojson",
+  "to": "conformance-text",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.00000001,-0.00000001]},\"properties\":{}}",
+  "expect": "$XXFIX,,0000.0000,N,00000.0000,E,,,,,*6C",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): dm: m = round(1e-8*60*10000) = round(0.006) = 0; the letter is N only when x < 0 and m > 0, else P (N for NS, E for EW). Derived without an engine by a standalone reference program."
+}

@@ -1,0 +1,20 @@
+{
+  "name": "sat-several-items",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPSAT,5,a,1,0.5,b,2,1.5*49",
+  "expect": "$GPSAT,5,a,1,0.5,b,2,1.5*49",
+  "model": {
+    "@kind": "sat",
+    "probe.w": "5",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "a",
+    "probe.items[0].probe.qty": "1",
+    "probe.items[0].probe.ratio": "0.5",
+    "probe.items[1].probe.label": "b",
+    "probe.items[1].probe.qty": "2",
+    "probe.items[1].probe.ratio": "1.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Groups: items of 3 fields from field 2; (8-2)/3 = 2 items. Derived without an engine by a standalone reference program."
+}

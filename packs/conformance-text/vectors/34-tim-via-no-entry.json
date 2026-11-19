@@ -1,0 +1,9 @@
+{
+  "name": "tim-via-no-entry",
+  "from": "conformance-text",
+  "to": "conformance-text",
+  "input": "$GPTIM,123519.000,270221,5.5,X,V*5C",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.10 (the text wire): Value tables (0.6): no entry for X, string transform to int key. Derived without an engine by a standalone reference program."
+}
