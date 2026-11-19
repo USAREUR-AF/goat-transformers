@@ -1,0 +1,24 @@
+{
+  "name": "fragment-edge-values-roundtrip",
+  "from": "ipv4-header",
+  "to": "ipv4-header",
+  "input": "45b805dcffff3fffff063865cb0071ffffffffff",
+  "expect": "45b805dcffff3fffff063865cb0071ffffffffff",
+  "model": {
+    "@kind": "ipv4",
+    "inet.ipv4_version": "4",
+    "inet.ipv4_ihl": "5",
+    "inet.ipv4_tos": "184",
+    "inet.ipv4_total_length": "1500",
+    "inet.ipv4_identification": "65535",
+    "inet.ipv4_flag_reserved": "0",
+    "inet.ipv4_more_fragments": "1",
+    "inet.ipv4_fragment_offset": "8191",
+    "inet.ipv4_ttl": "255",
+    "inet.ip_protocol": "6",
+    "inet.ipv4_src_addr": "3405804031",
+    "inet.ipv4_dst_addr": "4294967295",
+    "inet.ipv4_header_checksum": "14437"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a fragment with more fragments set, the largest fragment offset (8191), TTL 255, identification 65535 and the broadcast destination 255.255.255.255 (top bit set)"
+}

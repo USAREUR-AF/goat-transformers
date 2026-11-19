@@ -1,0 +1,16 @@
+# UDP header (RFC 768): the 8 octets. Public. The data after it is not mapped.
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        udp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 768, User Datagram Protocol, August 1980, https://www.rfc-editor.org/rfc/rfc768.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.src_port                0:0:16     uint
+field  inet.dst_port                0:16:16    uint
+field  inet.udp_length              0:32:16    uint
+field  inet.udp_checksum            0:48:16    uint

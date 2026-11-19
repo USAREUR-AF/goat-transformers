@@ -1,0 +1,27 @@
+{
+  "name": "every-bit-edge-roundtrip",
+  "from": "tcp-header",
+  "to": "tcp-header",
+  "input": "ffff0001ffffffff80000000ffffffffabcdffff",
+  "expect": "ffff0001ffffffff80000000ffffffffabcdffff",
+  "model": {
+    "inet.src_port": "65535",
+    "inet.dst_port": "1",
+    "inet.tcp_seq": "4294967295",
+    "inet.tcp_ack": "2147483648",
+    "inet.tcp_data_offset": "15",
+    "inet.tcp_reserved": "15",
+    "inet.tcp_cwr": "1",
+    "inet.tcp_ece": "1",
+    "inet.tcp_urg": "1",
+    "inet.tcp_ack_flag": "1",
+    "inet.tcp_psh": "1",
+    "inet.tcp_rst": "1",
+    "inet.tcp_syn": "1",
+    "inet.tcp_fin": "1",
+    "inet.tcp_window": "65535",
+    "inet.tcp_checksum": "43981",
+    "inet.tcp_urgent_pointer": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; every control bit and the reserved bits set, data offset 15, the largest sequence number, window and urgent pointer; the checksum is a chosen value, not computed"
+}

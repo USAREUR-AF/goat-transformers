@@ -1,0 +1,19 @@
+{
+  "name": "timestamp-reply-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0e0032350007000202b32c9502b32ca105265bff",
+  "expect": "0e0032350007000202b32c9502b32ca105265bff",
+  "model": {
+    "@kind": "timestamp-reply",
+    "inet.icmp_type": "14",
+    "inet.icmp_code": "0",
+    "inet.icmp_identifier": "7",
+    "inet.icmp_sequence": "2",
+    "inet.icmp_originate_ms": "45296789",
+    "inet.icmp_receive_ms": "45296801",
+    "inet.icmp_transmit_ms": "86399999",
+    "inet.icmp_checksum": "12853"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; its reply, received 12 ms later and sent at the last millisecond of the day (86399999)"
+}

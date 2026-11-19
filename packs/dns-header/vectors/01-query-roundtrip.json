@@ -1,0 +1,23 @@
+{
+  "name": "query-roundtrip",
+  "from": "dns-header",
+  "to": "dns-header",
+  "input": "1a2b01000001000000000000076578616d706c6503636f6d0000010001",
+  "expect": "1a2b01000001000000000000",
+  "model": {
+    "inet.dns_id": "6699",
+    "inet.dns_qr": "0",
+    "inet.dns_opcode": "0",
+    "inet.dns_aa": "0",
+    "inet.dns_tc": "0",
+    "inet.dns_rd": "1",
+    "inet.dns_ra": "0",
+    "inet.dns_z": "0",
+    "inet.dns_rcode": "0",
+    "inet.dns_qdcount": "1",
+    "inet.dns_ancount": "0",
+    "inet.dns_nscount": "0",
+    "inet.dns_arcount": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a standard query with recursion desired and one question (example.com, type A, class IN), which the pack reads over"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "version-6-is-no-kind",
+  "from": "ipv4-header",
+  "to": "ipv4-header",
+  "input": "6500001c1c4640004011324fc0000201c6336407",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first datagram with its version nibble set to 6"
+}

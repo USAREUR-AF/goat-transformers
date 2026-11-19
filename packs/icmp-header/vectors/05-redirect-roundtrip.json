@@ -1,0 +1,15 @@
+{
+  "name": "redirect-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "05013800c00002fe",
+  "expect": "05013800c00002fe",
+  "model": {
+    "@kind": "redirect",
+    "inet.icmp_type": "5",
+    "inet.icmp_code": "1",
+    "inet.icmp_gateway_addr": "3221226238",
+    "inet.icmp_checksum": "14336"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a redirect for the host (code 1) to gateway 192.0.2.254"
+}

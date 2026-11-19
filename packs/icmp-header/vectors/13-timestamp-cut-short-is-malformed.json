@@ -1,0 +1,8 @@
+{
+  "name": "timestamp-cut-short-is-malformed",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0d00c3ae00070002",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the timestamp request cut to 8 octets: its kind maps 20"
+}

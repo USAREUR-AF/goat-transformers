@@ -1,0 +1,28 @@
+{
+  "name": "secondary-edge-values-roundtrip",
+  "from": "ntp-header",
+  "to": "ntp-header",
+  "input": "e402807fffffffff00010000c000027bffffffffffffffff00000000000000000000000000000000eea8ba8000000001",
+  "expect": "e402807fffffffff00010000c000027bffffffffffffffff00000000000000000000000000000000eea8ba8000000001",
+  "model": {
+    "@kind": "secondary",
+    "inet.ntp_leap": "3",
+    "inet.ntp_version": "4",
+    "inet.ntp_mode": "4",
+    "inet.ntp_stratum": "2",
+    "inet.ntp_poll": "-128",
+    "inet.ntp_precision": "127",
+    "inet.ntp_ref_ts_sec": "4294967295",
+    "inet.ntp_ref_ts_frac": "4294967295",
+    "inet.ntp_org_ts_sec": "0",
+    "inet.ntp_org_ts_frac": "0",
+    "inet.ntp_rec_ts_sec": "0",
+    "inet.ntp_rec_ts_frac": "0",
+    "inet.ntp_xmt_ts_sec": "4004035200",
+    "inet.ntp_xmt_ts_frac": "1",
+    "inet.ntp_root_delay": "65535.99998474121",
+    "inet.ntp_root_dispersion": "1",
+    "inet.ntp_ref_id": "3221226107"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a stratum 2 server reply whose reference ID is the IPv4 address 192.0.2.123, leap indicator 3, the smallest poll (-128) and largest precision (127), the largest root delay (65535.9999847412109375 s), root dispersion 1 s, the last instant of NTP era 0 as reference timestamp"
+}

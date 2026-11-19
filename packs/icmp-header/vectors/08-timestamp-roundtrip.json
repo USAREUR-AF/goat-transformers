@@ -1,0 +1,19 @@
+{
+  "name": "timestamp-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0d00c3ae0007000202b32c950000000000000000",
+  "expect": "0d00c3ae0007000202b32c950000000000000000",
+  "model": {
+    "@kind": "timestamp",
+    "inet.icmp_type": "13",
+    "inet.icmp_code": "0",
+    "inet.icmp_identifier": "7",
+    "inet.icmp_sequence": "2",
+    "inet.icmp_originate_ms": "45296789",
+    "inet.icmp_receive_ms": "0",
+    "inet.icmp_transmit_ms": "0",
+    "inet.icmp_checksum": "50094"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a timestamp request sent at 12:34:56.789 UT (45296789 ms after midnight)"
+}

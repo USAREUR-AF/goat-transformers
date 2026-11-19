@@ -1,0 +1,33 @@
+{
+  "name": "tcp-segment-header-roundtrip",
+  "from": "ipv6-header",
+  "to": "ipv6-header",
+  "input": "600123450014064020010db800000000000000000000000120010db8000000010000000000000053",
+  "expect": "600123450014064020010db800000000000000000000000120010db8000000010000000000000053",
+  "model": {
+    "@kind": "ipv6",
+    "inet.ipv6_version": "6",
+    "inet.ipv6_traffic_class": "0",
+    "inet.ipv6_flow_label": "74565",
+    "inet.ipv6_payload_length": "20",
+    "inet.ip_protocol": "6",
+    "inet.ipv6_hop_limit": "64",
+    "inet.ipv6_src_g0": "8193",
+    "inet.ipv6_src_g1": "3512",
+    "inet.ipv6_src_g2": "0",
+    "inet.ipv6_src_g3": "0",
+    "inet.ipv6_src_g4": "0",
+    "inet.ipv6_src_g5": "0",
+    "inet.ipv6_src_g6": "0",
+    "inet.ipv6_src_g7": "1",
+    "inet.ipv6_dst_g0": "8193",
+    "inet.ipv6_dst_g1": "3512",
+    "inet.ipv6_dst_g2": "0",
+    "inet.ipv6_dst_g3": "1",
+    "inet.ipv6_dst_g4": "0",
+    "inet.ipv6_dst_g5": "0",
+    "inet.ipv6_dst_g6": "0",
+    "inet.ipv6_dst_g7": "83"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a header for a 20-octet TCP segment from 2001:db8::1 to 2001:db8:0:1::53, flow label 0x12345, hop limit 64"
+}

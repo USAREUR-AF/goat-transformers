@@ -1,0 +1,16 @@
+{
+  "name": "parameter-problem-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0c00ebff08000000",
+  "expect": "0c00ebff08000000",
+  "model": {
+    "@kind": "parameter-problem",
+    "inet.icmp_type": "12",
+    "inet.icmp_code": "0",
+    "inet.icmp_pointer": "8",
+    "inet.icmp_unused": "0",
+    "inet.icmp_checksum": "60415"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a parameter problem pointing at octet 8 of the original header"
+}

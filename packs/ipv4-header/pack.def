@@ -1,0 +1,33 @@
+# IPv4 header (RFC 791 section 3.1): the fixed 20 octets. Public.
+# Options and the data after the header are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb, so a locator is 0:<bit>:<len>
+# with bit 0 the most significant bit of the first octet, as in the RFC's figure,
+# and a multi-octet field is a big-endian (network order) integer.
+format        ipv4-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 791, Internet Protocol, September 1981, section 3.1, https://www.rfc-editor.org/rfc/rfc791.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# One kind, so that the version nibble selects it: a version-6 packet is no-kind.
+kind      ipv4
+when      0:0:4  4
+requires  inet.ipv4_src_addr inet.ipv4_dst_addr
+field  inet.ipv4_version            0:0:4      uint
+field  inet.ipv4_ihl                0:4:4      uint
+field  inet.ipv4_tos                0:8:8      uint
+field  inet.ipv4_total_length       0:16:16    uint
+field  inet.ipv4_identification     0:32:16    uint
+field  inet.ipv4_flag_reserved      0:48:1     uint
+field  inet.ipv4_dont_fragment      0:49:1     uint
+field  inet.ipv4_more_fragments     0:50:1     uint
+field  inet.ipv4_fragment_offset    0:51:13    uint
+field  inet.ipv4_ttl                0:64:8     uint
+field  inet.ip_protocol             0:72:8     uint
+field  inet.ipv4_header_checksum    0:80:16    uint
+field  inet.ipv4_src_addr           0:96:32    uint
+field  inet.ipv4_dst_addr           0:128:32   uint

@@ -1,0 +1,26 @@
+# DNS message header (RFC 1035 section 4.1.1): the 12 octets. Public.
+# The question, answer, authority and additional sections are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        dns-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 1035, Domain Names - Implementation and Specification, November 1987, section 4.1.1, https://www.rfc-editor.org/rfc/rfc1035.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.dns_id                  0:0:16     uint
+field  inet.dns_qr                  0:16:1     uint
+field  inet.dns_opcode              0:17:4     uint
+field  inet.dns_aa                  0:21:1     uint
+field  inet.dns_tc                  0:22:1     uint
+field  inet.dns_rd                  0:23:1     uint
+field  inet.dns_ra                  0:24:1     uint
+field  inet.dns_z                   0:25:3     uint
+field  inet.dns_rcode               0:28:4     uint
+field  inet.dns_qdcount             0:32:16    uint
+field  inet.dns_ancount             0:48:16    uint
+field  inet.dns_nscount             0:64:16    uint
+field  inet.dns_arcount             0:80:16    uint

@@ -1,0 +1,8 @@
+{
+  "name": "seven-octets-is-malformed",
+  "from": "udp-header",
+  "to": "udp-header",
+  "input": "cf080035000844",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the first header cut to 7 octets"
+}

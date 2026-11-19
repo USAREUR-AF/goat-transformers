@@ -1,0 +1,28 @@
+{
+  "name": "client-request-roundtrip",
+  "from": "ntp-header",
+  "to": "ntp-header",
+  "input": "230006ec000000000000000000000000000000000000000000000000000000000000000000000000eea8c89080000000",
+  "expect": "230006ec000000000000000000000000000000000000000000000000000000000000000000000000eea8c89080000000",
+  "model": {
+    "@kind": "kiss-code",
+    "inet.ntp_leap": "0",
+    "inet.ntp_version": "4",
+    "inet.ntp_mode": "3",
+    "inet.ntp_stratum": "0",
+    "inet.ntp_poll": "6",
+    "inet.ntp_precision": "-20",
+    "inet.ntp_ref_ts_sec": "0",
+    "inet.ntp_ref_ts_frac": "0",
+    "inet.ntp_org_ts_sec": "0",
+    "inet.ntp_org_ts_frac": "0",
+    "inet.ntp_rec_ts_sec": "0",
+    "inet.ntp_rec_ts_frac": "0",
+    "inet.ntp_xmt_ts_sec": "4004038800",
+    "inet.ntp_xmt_ts_frac": "2147483648",
+    "inet.ntp_root_delay": "0",
+    "inet.ntp_root_dispersion": "0",
+    "inet.ntp_kiss_code": ""
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a version 4 client request, stratum 0 with a zero reference ID (the empty kiss code), poll 2^6 s, precision 2^-20 s, transmit timestamp 2026-11-19 01:00:00.5 UTC"
+}

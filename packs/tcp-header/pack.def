@@ -1,0 +1,30 @@
+# TCP header (RFC 9293 section 3.1): the fixed 20 octets. Public.
+# Options and the data after the header are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        tcp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 9293, Transmission Control Protocol (TCP), August 2022, section 3.1, https://www.rfc-editor.org/rfc/rfc9293.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.src_port                0:0:16     uint
+field  inet.dst_port                0:16:16    uint
+field  inet.tcp_seq                 0:32:32    uint
+field  inet.tcp_ack                 0:64:32    uint
+field  inet.tcp_data_offset         0:96:4     uint
+field  inet.tcp_reserved            0:100:4    uint
+field  inet.tcp_cwr                 0:104:1    uint
+field  inet.tcp_ece                 0:105:1    uint
+field  inet.tcp_urg                 0:106:1    uint
+field  inet.tcp_ack_flag            0:107:1    uint
+field  inet.tcp_psh                 0:108:1    uint
+field  inet.tcp_rst                 0:109:1    uint
+field  inet.tcp_syn                 0:110:1    uint
+field  inet.tcp_fin                 0:111:1    uint
+field  inet.tcp_window              0:112:16   uint
+field  inet.tcp_checksum            0:128:16   uint
+field  inet.tcp_urgent_pointer      0:144:16   uint

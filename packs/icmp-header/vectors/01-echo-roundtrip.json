@@ -1,0 +1,16 @@
+{
+  "name": "echo-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0800f32c04d20001",
+  "expect": "0800f32c04d20001",
+  "model": {
+    "@kind": "echo",
+    "inet.icmp_type": "8",
+    "inet.icmp_code": "0",
+    "inet.icmp_identifier": "1234",
+    "inet.icmp_sequence": "1",
+    "inet.icmp_checksum": "62252"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; an echo request with identifier 1234 and sequence 1 and no data"
+}

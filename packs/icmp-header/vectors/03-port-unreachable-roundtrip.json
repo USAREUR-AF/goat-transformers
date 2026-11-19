@@ -1,0 +1,15 @@
+{
+  "name": "port-unreachable-roundtrip",
+  "from": "icmp-header",
+  "to": "icmp-header",
+  "input": "0303ab480000000045000024000000000111cd8dc0000201c6336407cf08829b00100000",
+  "expect": "0303ab4800000000",
+  "model": {
+    "@kind": "destination-unreachable",
+    "inet.icmp_type": "3",
+    "inet.icmp_code": "3",
+    "inet.icmp_unused": "0",
+    "inet.icmp_checksum": "43848"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a port unreachable (code 3) carrying an original IPv4 header and 64 bits of its data, which the pack reads over; the checksum covers them"
+}

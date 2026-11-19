@@ -1,0 +1,92 @@
+# ICMP message header (RFC 792): type, code, checksum and the type's fixed fields,
+# 8 octets (20 for timestamp messages). Public. The original datagram that error
+# messages carry, and the data of echo messages, are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# The type is a common field and a `when` of each kind over the same bits; on
+# encode the kind's `when` value is written last and so decides the type.
+format        icmp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 792, Internet Control Message Protocol, September 1981, https://www.rfc-editor.org/rfc/rfc792.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.icmp_type               0:0:8      uint
+field  inet.icmp_code               0:8:8      uint
+field  inet.icmp_checksum           0:16:16    uint
+
+kind      echo-reply
+when      0:0:8  0
+requires  inet.icmp_identifier inet.icmp_sequence
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+
+kind      destination-unreachable
+when      0:0:8  3
+requires  inet.icmp_unused
+field  inet.icmp_unused             0:32:32    uint
+
+kind      source-quench
+when      0:0:8  4
+requires  inet.icmp_unused
+field  inet.icmp_unused             0:32:32    uint
+
+kind      redirect
+when      0:0:8  5
+requires  inet.icmp_gateway_addr
+field  inet.icmp_gateway_addr       0:32:32    uint
+
+kind      echo
+when      0:0:8  8
+requires  inet.icmp_identifier inet.icmp_sequence
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+
+kind      time-exceeded
+when      0:0:8  11
+requires  inet.icmp_unused
+field  inet.icmp_unused             0:32:32    uint
+
+kind      parameter-problem
+when      0:0:8  12
+requires  inet.icmp_pointer
+field  inet.icmp_pointer            0:32:8     uint
+field  inet.icmp_unused             0:40:24    uint
+
+kind      timestamp
+when      0:0:8  13
+requires  inet.icmp_identifier inet.icmp_sequence inet.icmp_originate_ms
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+field  inet.icmp_originate_ms       0:64:32    uint
+field  inet.icmp_receive_ms         0:96:32    uint
+field  inet.icmp_transmit_ms        0:128:32   uint
+
+kind      timestamp-reply
+when      0:0:8  14
+requires  inet.icmp_identifier inet.icmp_sequence inet.icmp_originate_ms
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+field  inet.icmp_originate_ms       0:64:32    uint
+field  inet.icmp_receive_ms         0:96:32    uint
+field  inet.icmp_transmit_ms        0:128:32   uint
+
+kind      information-request
+when      0:0:8  15
+requires  inet.icmp_identifier inet.icmp_sequence
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+
+kind      information-reply
+when      0:0:8  16
+requires  inet.icmp_identifier inet.icmp_sequence
+field  inet.icmp_identifier         0:32:16    uint
+field  inet.icmp_sequence           0:48:16    uint
+
+# Any other type: the 32 bits after the checksum as one integer.
+kind      other
+requires  inet.icmp_rest
+field  inet.icmp_rest               0:32:32    uint

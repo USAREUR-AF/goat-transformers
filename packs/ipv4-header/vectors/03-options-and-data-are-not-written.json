@@ -1,0 +1,22 @@
+{
+  "name": "options-and-data-are-not-written",
+  "from": "ipv4-header",
+  "to": "ipv4-header",
+  "input": "460000201c46400040119d46c0000201c6336407940400000001020304050607",
+  "expect": "460000201c46400040119d46c0000201c6336407",
+  "model": {
+    "@kind": "ipv4",
+    "inet.ipv4_version": "4",
+    "inet.ipv4_ihl": "6",
+    "inet.ipv4_tos": "0",
+    "inet.ipv4_total_length": "32",
+    "inet.ipv4_identification": "7238",
+    "inet.ipv4_dont_fragment": "1",
+    "inet.ipv4_ttl": "64",
+    "inet.ip_protocol": "17",
+    "inet.ipv4_src_addr": "3221225985",
+    "inet.ipv4_dst_addr": "3325256711",
+    "inet.ipv4_header_checksum": "40262"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a header of IHL 6 with one 4-octet option, followed by 8 octets of data; the pack maps the first 20 octets, so the option and data are read over and not written"
+}
