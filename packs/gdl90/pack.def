@@ -7,7 +7,7 @@ format     gdl90
 version    0.1.0
 distribution public
 source     "Stratux (https://github.com/cyoung/stratux, BSD-3-Clause) at commit 36b504555408fb90dd5cf1171d4f91f99571e50c: main/gen_gdl90.go (makeHeartbeat, makeOwnshipReport, makeOwnshipGeometricAltitudeReport, relayMessage, makeFFIDMessage, makeLatLng, prepareMessage), main/traffic.go (makeTrafficReportMsg), main/gps.go (makeFFAHRSMessage); layouts restated, no code copied"
-source     "Not used: GDL 90 Data Interface Specification 560-1058-00 Rev A (Garmin, on faa.gov), all rights reserved, no license; ForeFlight GDL 90 Extended Specification (foreflight.com/connect/spec), no terms stated"
+source     "Not used: GDL 90 public ICD 560-1058-00 Rev A (Garmin, on faa.gov), all rights reserved, no license; ForeFlight GDL 90 Extended Specification (foreflight.com/connect/spec), no terms stated"
 uses       gdl90
 wire       bits
 word_bytes 1

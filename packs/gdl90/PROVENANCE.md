@@ -42,7 +42,7 @@ Files and functions read:
 
 | Document | Why |
 |---|---|
-| GDL 90 Data Interface Specification, 560-1058-00 Rev A, June 5, 2007, Garmin, as hosted at https://www.faa.gov/sites/faa.gov/files/air_traffic/technology/adsb/archival/GDL90_Public_ICD_RevA.PDF (SHA-256 `81904b5cc7f0a3b66317e5bd285c4e96976577bd089d238a5271269ba131c738`) | not used: "© 2004-2007 Garmin Ltd. or its subsidiaries. All rights reserved."; no license, and a condition on display makers that use its information. Nothing in this pack is taken from it |
+| GDL 90 public ICD 560-1058-00 Rev A, June 5, 2007, Garmin, as hosted at https://www.faa.gov/sites/faa.gov/files/air_traffic/technology/adsb/archival/GDL90_Public_ICD_RevA.PDF (SHA-256 `81904b5cc7f0a3b66317e5bd285c4e96976577bd089d238a5271269ba131c738`) | not used: "© 2004-2007 Garmin Ltd. or its subsidiaries. All rights reserved."; no license, and a condition on display makers that use its information. Nothing in this pack is taken from it |
 | ForeFlight GDL 90 Extended Specification, https://www.foreflight.com/connect/spec/ | not used: no terms stated on the page |
 
 Stratux's comments name the ICD's page numbers; those references were not
