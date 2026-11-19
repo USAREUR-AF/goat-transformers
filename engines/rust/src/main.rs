@@ -8,7 +8,9 @@
 //! Model modules are read from `--models <dir>` (default: `model/` beside the
 //! packs directory). `--max-distribution public` refuses controlled modules and
 //! packs. `--set` supplies a model key the input does not carry (engine-spec
-//! v0.6, caller-supplied keys); it is repeatable.
+//! v0.6, caller-supplied keys); it is repeatable. `--max-items <n>` sets the
+//! limit on list items one decode holds (engine-spec ruling 7 of 0.11; the
+//! default is 100000, and 0 refuses any item).
 //!
 //! `--packs-only <name>[,<name>...]` loads only the named packs of the packs
 //! directory (a name is the directory of a pack, which is its format name)
@@ -37,6 +39,15 @@ fn main() {
             Some(d) => engine.set_max_distribution(d),
             None => {
                 eprintln!("--max-distribution is `public` or `controlled`");
+                std::process::exit(2);
+            }
+        }
+    }
+    if let Some(n) = opt(&args, "--max-items") {
+        match goat_transformers::unsigned_text(&n).and_then(|n| usize::try_from(n).ok()) {
+            Some(n) => engine.set_max_items(n),
+            None => {
+                eprintln!("--max-items is an integer of 0 or more");
                 std::process::exit(2);
             }
         }

@@ -35,6 +35,9 @@ pub struct Vector {
     pub context: Option<Vec<(String, String)>>,
     pub model: Vec<(String, String)>,
     pub complete: bool,
+    /// the limit on list items (`max_items`, engine-spec ruling 7 of 0.11);
+    /// absent: the default
+    pub max_items: usize,
 }
 
 pub struct Proof {
@@ -214,6 +217,11 @@ impl Proof {
                     context: pairs("context"),
                     model: pairs("model").unwrap_or_default(),
                     complete,
+                    max_items: match v.get("max_items") {
+                        Some(Json::Int(n)) if *n >= 0 => *n as usize,
+                        None => goat_transformers::DEFAULT_MAX_ITEMS,
+                        Some(_) => panic!("{}: `max_items` is an integer of 0 or more", dir.display()),
+                    },
                 });
             }
         }

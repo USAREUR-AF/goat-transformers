@@ -244,6 +244,29 @@ pub unsafe extern "C" fn gt_engine_set_max_distribution(
     }
 }
 
+/// Set the limit on list items one decode holds (engine-spec ruling 7 of
+/// 0.11; the default is 100000). A conversion whose decode would hold one
+/// item more fails with `malformed-wire`. 0 refuses any item.
+///
+/// # Safety
+/// `engine` is null or a live handle from `gt_engine_new` that no other call
+/// uses during this one; `out` is null or points to a `gt_buf` this call may
+/// overwrite.
+#[no_mangle]
+pub unsafe extern "C" fn gt_engine_set_max_items(
+    engine: *mut GtEngine,
+    max_items: u64,
+    out: *mut GtBuf,
+) -> i32 {
+    // SAFETY: passed on under this function's own contract.
+    unsafe {
+        change(engine, out, |engine| {
+            glue::set_max_items(engine, max_items);
+            Ok(())
+        })
+    }
+}
+
 /// Load one model module from the text of a `model/<module>.def`. Load `core`
 /// first, and every module before the packs that use it.
 ///

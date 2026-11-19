@@ -135,24 +135,22 @@ pub struct Scale {
 }
 
 impl Scale {
+    /// Ruling 4d of 0.11: the factor is number text and not zero, or
+    /// `<num>/<den>` of two unsigned decimal integers, neither zero; the
+    /// offset is number text.
     fn parse(args: &str) -> Option<Scale> {
         let parts: Vec<&str> = args.split(':').collect();
         if parts.is_empty() || parts.len() > 2 {
             return None;
         }
         let offset = match parts.get(1) {
-            Some(s) => s.parse::<f64>().ok()?,
+            Some(s) => number_text(s)?,
             None => 0.0,
         };
-        let int = |s: &str| -> Option<f64> {
-            if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) {
-                return None;
-            }
-            s.parse::<f64>().ok().filter(|x| *x != 0.0)
-        };
+        let int = |s: &str| -> Option<f64> { unsigned_text(s).filter(|n| *n != 0).map(|_| s.parse::<f64>().ok()).flatten() };
         let (num, den) = match parts[0].split_once('/') {
             Some((n, d)) => (int(n)?, Some(int(d)?)),
-            None => (parts[0].parse::<f64>().ok().filter(|x| *x != 0.0 && x.is_finite())?, None),
+            None => (number_text(parts[0]).filter(|x| *x != 0.0)?, None),
         };
         Some(Scale { num, den, offset })
     }
@@ -163,36 +161,55 @@ impl Scale {
             None => v * self.num + self.offset,
         }
     }
-    /// `(x - offset) / factor` (or `(x - offset) * den / num`), rounded half away from zero
-    fn encode(&self, x: f64) -> f64 {
+    /// `(x - offset) / factor` (or `(x - offset) * den / num`), before rounding
+    fn quotient(&self, x: f64) -> f64 {
         match self.den {
-            Some(den) => ((x - self.offset) * den / self.num).round(),
-            None => ((x - self.offset) / self.num).round(),
+            Some(den) => (x - self.offset) * den / self.num,
+            None => (x - self.offset) / self.num,
         }
     }
 }
 
 impl Transform {
     fn parse(name: &str) -> Result<Transform, Error> {
-        if let Some(args) = name.strip_prefix("linscale:") {
-            let mut it = args.split(':');
-            let maxpos = it.next().and_then(|s| s.parse::<f64>().ok());
-            let range = it.next().and_then(|s| s.parse::<f64>().ok());
-            return match (maxpos, range, it.next()) {
-                (Some(m), Some(r), None) => Ok(Transform::Linscale(m, r)),
-                _ => err(format!("linscale needs <maxpos>:<range>, got `{}`", name)),
+        // ruling 5 of 0.11: the name is the text before the first `:`
+        let head = name.split(':').next().unwrap_or("");
+        const NAMES: &[&str] = &[
+            "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
+            "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "dec", "dm", "hms", "hms_dmy",
+        ];
+        if !NAMES.contains(&head) {
+            return err(format!("unknown-transform: `{}` is not a transform", head));
+        }
+        let params = |what: &str| err(format!("bad-directive: the parameters of transform `{}` are not valid: {}", name, what));
+        if head == "linscale" {
+            // ruling 4d of 0.11: exactly <maxpos>:<range>
+            let args: Vec<&str> = name.split(':').skip(1).collect();
+            if args.len() != 2 {
+                return params("`linscale:<maxpos>:<range>` takes two");
+            }
+            let maxpos = match unsigned_text(args[0]) {
+                Some(m) if m >= 1 => m as f64,
+                _ => return params("<maxpos> is an unsigned decimal integer of at least 1"),
+            };
+            return match number_text(args[1]) {
+                Some(r) if r != 0.0 => Ok(Transform::Linscale(maxpos, r)),
+                _ => params("<range> is number text and not zero"),
             };
         }
         if let Some(t) = Transform::parse_text(name) {
             return t;
         }
-        for (prefix, signed) in [("uscale:", false), ("sscale:", true)] {
-            if let Some(args) = name.strip_prefix(prefix) {
-                return match Scale::parse(args) {
+        for (prefix, signed) in [("uscale", false), ("sscale", true)] {
+            if head == prefix {
+                return match name.strip_prefix(prefix).and_then(|a| a.strip_prefix(':')).and_then(Scale::parse) {
                     Some(sc) => Ok(if signed { Transform::Sscale(sc) } else { Transform::Uscale(sc) }),
-                    None => err(format!("bad-directive: {}<factor>[:<offset>] expected, got `{}`", prefix, name)),
+                    None => params("<factor>[:<offset>]: the factor is number text and not zero, or <num>/<den>"),
                 };
             }
+        }
+        if name.contains(':') {
+            return params("this transform takes none");
         }
         match name {
             "bool" => Ok(Transform::Bool),
@@ -210,7 +227,7 @@ impl Transform {
             "psint" => Ok(Transform::Psint),
             "pdouble" => Ok(Transform::Pdouble),
             "pfloat" => Ok(Transform::Pfloat),
-            other => err(format!("unknown transform `{}`", other)),
+            other => err(format!("unknown-transform: `{}` is not a transform", other)),
         }
     }
 
@@ -299,14 +316,8 @@ impl Transform {
     /// bits wire: raw unsigned field value + bit length -> model value
     /// (every bits transform but `ascii`, which the codec reads byte by byte)
     fn decode_bits(&self, raw: u64, len: u32) -> Result<Value, Error> {
-        let signed = |raw: u64, len: u32| -> i64 {
-            let sign_bit = 1u64 << (len - 1);
-            if len < 64 && raw & sign_bit != 0 {
-                (raw as i64) - (1i64 << len)
-            } else {
-                raw as i64
-            }
-        };
+        // the sign extended from the field's highest bit, at every len from 1 to 64 (4c)
+        let signed = |raw: u64, len: u32| -> i64 { ((raw << (64 - len)) as i64) >> (64 - len) };
         match self {
             Transform::Uint => Ok(Value::I64(raw as i64)),
             Transform::Twos => Ok(Value::I64(signed(raw, len))),
@@ -322,31 +333,51 @@ impl Transform {
     }
 
     /// bits wire: model value -> raw unsigned field value masked to bit length
+    /// Ruling 4b of 0.11: a value outside the field's range is refused, never
+    /// wrapped or clamped; the range is compared before any narrowing.
     fn encode_bits(&self, v: &Value, len: u32) -> Result<u64, Error> {
         let mask = if len >= 64 { u64::MAX } else { (1u64 << len) - 1 };
         // 2^len and 2^(len-1) are exact in f64 for every len in 1..=64
         let two = |n: u32| (2.0f64).powi(n as i32);
+        let unsigned_fits = |n: i128| n >= 0 && n <= mask as i128;
+        let signed_fits = |n: i128| n >= -(1i128 << (len - 1)) && n < (1i128 << (len - 1));
+        // a rounded quotient: finite, and within the range (as a double, exactly)
+        let rounded = |q: f64, signed: bool| -> Result<u64, Error> {
+            if !q.is_finite() {
+                return err(format!("the quotient {} is not finite", q));
+            }
+            // f64::round: the nearest integer, halfway away from zero, exact (4a)
+            let r = q.round();
+            let ok = if signed { r >= -two(len - 1) && r < two(len - 1) } else { r >= 0.0 && r < two(len) };
+            if !ok {
+                return err(format!(
+                    "{} rounds to {}, outside the {}-bit {} range of the field",
+                    q,
+                    r,
+                    len,
+                    if signed { "signed" } else { "unsigned" }
+                ));
+            }
+            Ok(if signed { (r as i64 as u64) & mask } else { r as u64 })
+        };
         match (self, v) {
-            (Transform::Uint, Value::I64(n)) => Ok((*n as u64) & mask),
-            (Transform::Twos, Value::I64(n)) => Ok((*n as u64) & mask),
-            (Transform::Linscale(maxpos, range), Value::F64(x)) => {
-                let raw = (x / range * maxpos).round() as i64;
-                Ok((raw as u64) & mask)
-            }
-            (Transform::Uscale(sc), Value::F64(x)) => {
-                let r = sc.encode(*x);
-                if !(r >= 0.0 && r < two(len)) {
-                    return err(format!("{} is outside the {}-bit unsigned range of the field", x, len));
+            // `uint` of 64 bits: every model integer, as its two's-complement pattern
+            (Transform::Uint, Value::I64(n)) if len == 64 => Ok(*n as u64),
+            (Transform::Uint, Value::I64(n)) => {
+                if !unsigned_fits(*n as i128) {
+                    return err(format!("{} is outside the {}-bit unsigned range of the field", n, len));
                 }
-                Ok(r as u64)
+                Ok(*n as u64)
             }
-            (Transform::Sscale(sc), Value::F64(x)) => {
-                let r = sc.encode(*x);
-                if !(r >= -two(len - 1) && r < two(len - 1)) {
-                    return err(format!("{} is outside the {}-bit signed range of the field", x, len));
+            (Transform::Twos, Value::I64(n)) => {
+                if !signed_fits(*n as i128) {
+                    return err(format!("{} is outside the {}-bit signed range of the field", n, len));
                 }
-                Ok((r as i64 as u64) & mask)
+                Ok((*n as u64) & mask)
             }
+            (Transform::Linscale(maxpos, range), Value::F64(x)) => rounded(x / range * maxpos, true),
+            (Transform::Uscale(sc), Value::F64(x)) => rounded(sc.quotient(*x), false),
+            (Transform::Sscale(sc), Value::F64(x)) => rounded(sc.quotient(*x), true),
             (Transform::F32, Value::F64(x)) => Ok(single(*x)?.to_bits() as u64),
             (Transform::F64, Value::F64(x)) => Ok(finite(*x)?.as_f64().to_bits()),
             _ => err(format!("transform/value mismatch on bits: {:?} with {:?}", self, v)),
@@ -356,18 +387,13 @@ impl Transform {
     fn decode(&self, raw: &str) -> Result<Value, Error> {
         match self {
             Transform::StringT => Ok(Value::Str(raw.to_string())),
-            Transform::Float => raw
-                .trim()
-                .parse::<f64>()
-                .ok()
-                .filter(|x| x.is_finite())
+            // rulings 2a, 2b and 1n of 0.11: no trimming, the grammars exactly
+            Transform::Float => number_text(raw)
                 .map(Value::F64)
-                .ok_or(Error { msg: format!("float decode failed: `{}`", raw) }),
-            Transform::Int => raw
-                .trim()
-                .parse::<i64>()
+                .ok_or(Error { msg: format!("float decode failed: `{}` is not number text", raw) }),
+            Transform::Int => int_text(raw)
                 .map(Value::I64)
-                .map_err(|_| Error { msg: format!("int decode failed: `{}`", raw) }),
+                .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
             Transform::Iso8601Ms => iso8601_to_ms(raw).map(Value::I64),
             t if t.is_bits() => err(format!("transform {:?} is only valid on a bits wire", self)),
             t if t.is_protobuf() => {
@@ -382,7 +408,7 @@ impl Transform {
             (Transform::StringT, Value::Str(s)) => Ok(s.clone()),
             (Transform::Float, Value::F64(x)) => Ok(fmt_f64(*x)),
             (Transform::Int, Value::I64(n)) => Ok(n.to_string()),
-            (Transform::Iso8601Ms, Value::I64(ms)) => Ok(ms_to_iso8601(*ms)),
+            (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
             _ => err(format!("transform/value mismatch: {:?} with {:?}", self, v)),
         }
     }
@@ -437,6 +463,68 @@ impl Transform {
             Transform::IntW(_) | Transform::HmsDmy(_) => JsonKind::IntK,
         }
     }
+}
+
+/// Integer text (ruling 2a of 0.11): an optional `-`, then one or more ASCII
+/// digits, within a signed 64-bit integer. Leading zeros are allowed.
+pub fn int_text(s: &str) -> Option<i64> {
+    let digits = s.strip_prefix('-').unwrap_or(s);
+    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    s.parse::<i64>().ok()
+}
+
+/// Number text (ruling 2b of 0.11): an optional `-`, digits, optionally `.`
+/// and digits, optionally `e` or `E`, an optional sign and digits. The value
+/// is the nearest double, a tie to even; a text whose nearest double is
+/// infinite is refused; `-0` is negative zero.
+pub fn number_text(s: &str) -> Option<f64> {
+    let b = s.as_bytes();
+    let mut i = 0;
+    if b.first() == Some(&b'-') {
+        i += 1;
+    }
+    let digits = |i: &mut usize| {
+        let at = *i;
+        while *i < b.len() && b[*i].is_ascii_digit() {
+            *i += 1;
+        }
+        *i > at
+    };
+    if !digits(&mut i) {
+        return None;
+    }
+    if b.get(i) == Some(&b'.') {
+        i += 1;
+        if !digits(&mut i) {
+            return None;
+        }
+    }
+    if matches!(b.get(i), Some(b'e') | Some(b'E')) {
+        i += 1;
+        if matches!(b.get(i), Some(b'+') | Some(b'-')) {
+            i += 1;
+        }
+        if !digits(&mut i) {
+            return None;
+        }
+    }
+    if i != b.len() {
+        return None;
+    }
+    // the standard library's reading is correctly rounded, ties to even
+    s.parse::<f64>().ok().filter(|x| x.is_finite())
+}
+
+/// An unsigned decimal integer (ruling 2c of 0.11): one or more ASCII digits
+/// and nothing else, leading zeros allowed.
+pub fn unsigned_text(s: &str) -> Option<u64> {
+    if s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    // more digits than fit: a value beyond every width
+    Some(s.parse::<u64>().unwrap_or(u64::MAX))
 }
 
 /// A float read from the wire: not-a-number and infinity are refused
@@ -574,11 +662,23 @@ pub struct DeriveDef {
 impl DeriveFn {
     fn parse(name: &str) -> Option<DeriveFn> {
         if let Some(a) = name.strip_prefix("scale:") {
-            return Scale::parse(a).filter(|_| !a.contains(':')).map(DeriveFn::Scale);
+            if a.contains(':') {
+                return None;
+            }
+            // ruling 2c of 0.11: number text, or <num>/<den> with <num> integer
+            // text and <den> an unsigned decimal integer that is not zero
+            return match a.split_once('/') {
+                Some((n, d)) => {
+                    let num = int_text(n)? as f64;
+                    let den = unsigned_text(d).filter(|v| *v != 0).and_then(|_| d.parse::<f64>().ok())?;
+                    Some(DeriveFn::Scale(Scale { num, den: Some(den), offset: 0.0 }))
+                }
+                None => Scale::parse(a).map(DeriveFn::Scale),
+            };
         }
         if let Some(a) = name.strip_prefix("offset:") {
             return match read_as(KeyType::Float, a) {
-                Some(Value::F64(x)) => Some(DeriveFn::Offset(x, a.parse::<i64>().ok())),
+                Some(Value::F64(x)) => Some(DeriveFn::Offset(x, int_text(a))),
                 _ => None,
             };
         }
@@ -700,6 +800,7 @@ impl Module {
     /// `distribution-refused`, `unknown-module`, `distribution-violation`,
     /// the `derive` checks. `duplicate-module` is the engine's, and last.
     fn parse_within(text: &str, loaded: &BTreeMap<String, Module>, max: Distribution) -> Result<Module, Error> {
+        module_line_checks(text)?;
         let core = loaded.get("core");
         let mut uses: Vec<String> = Vec::new();
         let mut derives: Vec<DeriveDef> = Vec::new();
@@ -712,11 +813,29 @@ impl Module {
         // the names declared so far, keys and lists together
         let mut declared: HashSet<String> = HashSet::new();
         for (lineno, raw) in text.lines().enumerate() {
-            let toks = tokenize(raw)?;
+            let ln = lineno + 1;
+            let toks = tokenize_at(raw, ln)?;
             if toks.is_empty() {
                 continue;
             }
-            let ln = lineno + 1;
+            // the number of arguments, then a repeated header line (ruling 5 of 0.11)
+            let args = toks.len() - 1;
+            let count_ok = match toks[0].as_str() {
+                "module" | "version" | "distribution" | "source" | "uses" => args == 1,
+                _ => true,
+            };
+            if !count_ok {
+                return bad(ln, format!("`{}` takes one argument, got {}", toks[0], args));
+            }
+            let repeated = match toks[0].as_str() {
+                "module" => name.is_some(),
+                "version" => version.is_some(),
+                "distribution" => distribution.is_some(),
+                _ => false,
+            };
+            if repeated {
+                return bad(ln, format!("a second `{}` line", toks[0]));
+            }
             match toks[0].as_str() {
                 "list" => {
                     if toks.len() < 2 || toks.len() > 3 {
@@ -782,7 +901,10 @@ impl Module {
                 other => return err(format!("unknown-directive: line {}: `{}` in a model module", ln, other)),
             }
         }
-        let name = name.ok_or(Error { msg: "bad-directive: model module missing `module`".into() })?;
+        let name = name.ok_or(Error { msg: "missing-module: the model module has no `module` line".into() })?;
+        if version.is_none() {
+            return err(format!("missing-version: model module `{}` has no `version` line", name));
+        }
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: model module `{}` has no `distribution`", name),
         })?;
@@ -832,8 +954,37 @@ impl Module {
                 return bad(d.line, format!("the arguments or types of `derive {}` do not fit its function", d.target));
             }
         }
-        Ok(Module { name, version: version.unwrap_or_else(|| "0".into()), distribution, sources, keys, lists, derives, uses })
+        Ok(Module { name, version: version.expect("checked above"), distribution, sources, keys, lists, derives, uses })
     }
+}
+
+/// The line checks of a module (ruling 5b of 0.11): `unterminated-quote`,
+/// `unknown-directive`, the number of arguments (5e), a repeated header line
+/// and the `distribution` value, each line in order. Every other cause is
+/// checked after the file is read.
+fn module_line_checks(text: &str) -> Result<(), Error> {
+    let mut seen: HashSet<String> = HashSet::new();
+    for (lineno, raw) in text.lines().enumerate() {
+        let ln = lineno + 1;
+        let toks = tokenize_at(raw, ln)?;
+        if toks.is_empty() {
+            continue;
+        }
+        let d = toks[0].as_str();
+        if !matches!(d, "module" | "version" | "distribution" | "source" | "uses" | "key" | "list" | "derive") {
+            return err(format!("unknown-directive: line {}: `{}` is not a directive of a model module", ln, d));
+        }
+        if matches!(d, "module" | "version" | "distribution" | "source" | "uses") && toks.len() != 2 {
+            return bad(ln, format!("`{}` takes one argument, got {}", d, toks.len() - 1));
+        }
+        if matches!(d, "module" | "version" | "distribution") && !seen.insert(d.to_string()) {
+            return bad(ln, format!("a second `{}` line", d));
+        }
+        if d == "distribution" && Distribution::parse(&toks[1]).is_none() {
+            return bad(ln, format!("distribution is `public` or `controlled`, got `{}`", toks[1]));
+        }
+    }
+    Ok(())
 }
 
 /// Split a pack's model key into (module, key name). A bare key is in `core`.
@@ -1280,6 +1431,7 @@ fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
 
 impl Pack {
     pub fn parse(text: &str) -> Result<Pack, Error> {
+        pack_line_checks(text)?;
         // `layout sequential` (engine-spec v0.8) changes how every line is read
         // (only a line that holds both words can be that line: the rest are not tokenized twice)
         let sequential = text.lines().filter(|l| l.contains("layout") && l.contains("sequential")).any(|l| match tokenize(l) {
@@ -1368,7 +1520,7 @@ impl Pack {
                         "protobuf" => Wire::Protobuf,
                         "json" => Wire::Json,
                         "text" => Wire::Text,
-                        o => return err(format!("line {}: unknown wire `{}`", ln, o)),
+                        o => return err(format!("unknown-wire: line {}: unknown wire `{}`", ln, o)),
                     })
                 }
                 "group" => {
@@ -1491,9 +1643,11 @@ impl Pack {
                     }
                 }
                 "word_bytes" => {
-                    word_bytes = req_arg(&toks, 1, ln)?
-                        .parse::<usize>()
-                        .map_err(|_| Error { msg: format!("line {}: word_bytes needs a number", ln) })?
+                    // an unsigned decimal integer (ruling 2c of 0.11): `01` loads
+                    word_bytes = match unsigned_text(&toks[1]).and_then(|n| usize::try_from(n).ok()) {
+                        Some(n) => n,
+                        None => return bad(ln, format!("word_bytes needs an unsigned decimal integer, got `{}`", toks[1])),
+                    }
                 }
                 "bit_order" => {
                     if toks.len() != 2 {
@@ -1555,10 +1709,7 @@ impl Pack {
                 }
                 "field" => {
                     if toks.len() < 4 {
-                        return err(format!(
-                            "line {}: field needs <model-key> <locator> <transform> [options]",
-                            ln
-                        ));
+                        return bad(ln, "field needs <model-key> <locator> <transform> [options]");
                     }
                     let mut f = FieldDef {
                         model_key: toks[1].clone(),
@@ -1583,7 +1734,7 @@ impl Pack {
                 }
                 "typemap" => {
                     if toks.len() != 3 {
-                        return err(format!("line {}: typemap needs <native> <cot>", ln));
+                        return bad(ln, "typemap needs <native> <cot>");
                     }
                     to_cot.insert(toks[1].clone(), toks[2].clone());
                     from_cot.insert(toks[2].clone(), toks[1].clone());
@@ -1598,16 +1749,23 @@ impl Pack {
                 "pad" | "align" | "presence" | "if" | "opt" | "chain" | "fx" | "length" | "also" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
-                other => return err(format!("line {}: unknown directive `{}`", ln, other)),
+                other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
             }
         }
         if let Some(g) = open.first() {
             return bad(g.line, format!("group `{}` has no `end`", g.list));
         }
-        let wire = wire.ok_or(Error { msg: "pack missing `wire`".into() })?;
+        // after the file is read (ruling 5b of 0.11): the missing header lines first
+        if format.is_none() {
+            return err("missing-format: the pack has no `format` line");
+        }
+        if version.is_none() {
+            return err("missing-version: the pack has no `version` line");
+        }
+        let wire = wire.ok_or(Error { msg: "missing-wire: the pack has no `wire` line".into() })?;
         // xml: a pack-level root, unless every kind has its own (engine-spec v0.6)
         if wire == Wire::Xml && root.is_empty() && (kinds.is_empty() || kinds.iter().any(|k| k.root.is_none())) {
-            return err("xml pack missing `root`");
+            return err("missing-root: an xml pack has no `root` for the pack or for one of its kinds");
         }
         if let Some(ln) = kind_root_line {
             if wire != Wire::Xml {
@@ -1615,7 +1773,7 @@ impl Pack {
             }
         }
         if wire == Wire::Bits && word_bytes == 0 {
-            return err("bits pack missing `word_bytes`");
+            return err("bad-directive: a fixed-layout bits pack has no `word_bytes` line");
         }
         if let Some((_, ln)) = bit_order {
             if wire != Wire::Bits {
@@ -1734,7 +1892,7 @@ impl Pack {
         if wire == Wire::Text {
             text::check_pack(&text_conf, &fields, &whens, &consts, &groups, &kinds)?;
         }
-        let format = format.ok_or(Error { msg: "pack missing `format`".into() })?;
+        let format = format.expect("checked above");
         let distribution = distribution.ok_or(Error {
             msg: format!("missing-distribution: pack `{}` has no `distribution`", format),
         })?;
@@ -1743,7 +1901,7 @@ impl Pack {
         }
         Ok(Pack {
             format,
-            version: version.unwrap_or_else(|| "0".into()),
+            version: version.expect("checked above"),
             wire,
             root,
             word_bytes,
@@ -2030,12 +2188,12 @@ fn transform_encode_err(p: &Pack, f: &FieldDef, e: Error) -> Error {
 }
 
 /// Read table or pack text as a value of the given type. None when it is not one.
+/// Integers and numbers by the grammars of ruling 2 of 0.11.
 fn read_as(ty: KeyType, text: &str) -> Option<Value> {
-    let plain = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit() || matches!(b, b'-' | b'+' | b'.' | b'e' | b'E'));
     match ty {
         KeyType::Str => Some(Value::Str(text.to_string())),
-        KeyType::Int => text.parse::<i64>().ok().map(Value::I64),
-        KeyType::Float => text.parse::<f64>().ok().filter(|x| x.is_finite() && plain(text)).map(Value::F64),
+        KeyType::Int => int_text(text).map(Value::I64),
+        KeyType::Float => number_text(text).map(Value::F64),
     }
 }
 
@@ -2044,6 +2202,81 @@ fn canon_text(ty: KeyType, text: &str) -> String {
     match ty {
         KeyType::Str => text.to_string(),
         _ => read_as(ty, text).map(|v| v.as_display()).unwrap_or_else(|| text.to_string()),
+    }
+}
+
+/// The limit on list items of one decode (ruling 7 of 0.11): every item of
+/// every list the decoded entity holds, at every nesting level, counts one.
+pub const DEFAULT_MAX_ITEMS: usize = 100_000;
+
+pub(crate) mod limit {
+    use super::{err, Entity, Error};
+    use std::cell::Cell;
+
+    thread_local! {
+        /// (items held, the limit), while a decode runs on this thread
+        static STATE: Cell<Option<(u64, u64)>> = const { Cell::new(None) };
+    }
+
+    /// Ends the decode's count when dropped, if it began it.
+    pub struct Scope(bool);
+    impl Drop for Scope {
+        fn drop(&mut self) {
+            if self.0 {
+                STATE.with(|s| s.set(None));
+            }
+        }
+    }
+
+    /// Begin counting the items of one decode with this limit. Inside a
+    /// decode already counting (a wire decoder called by the engine), the
+    /// count of that decode goes on.
+    pub fn begin(max: usize) -> Scope {
+        STATE.with(|s| {
+            if s.get().is_some() {
+                Scope(false)
+            } else {
+                s.set(Some((0, max as u64)));
+                Scope(true)
+            }
+        })
+    }
+
+    /// A decode called without the engine: the default limit.
+    pub fn scope() -> Scope {
+        begin(super::DEFAULT_MAX_ITEMS)
+    }
+
+    /// Hold `n` more items: past the limit is `malformed-wire` (7a, 7f).
+    pub fn take(format: &str, list: &str, n: u64) -> Result<(), Error> {
+        STATE.with(|s| match s.get() {
+            None => Ok(()),
+            Some((held, max)) => {
+                if n > max.saturating_sub(held) {
+                    return err(format!(
+                        "malformed-wire: format `{}`: list `{}` would take the decode beyond its limit of {} list items",
+                        format, list, max
+                    ));
+                }
+                s.set(Some((held + n, max)));
+                Ok(())
+            }
+        })
+    }
+
+    /// The items of every list of an entity, at every nesting level.
+    pub fn items_of(lists: &std::collections::BTreeMap<String, Vec<Entity>>) -> u64 {
+        lists.values().map(|items| items.len() as u64 + items.iter().map(|i| items_of(&i.lists)).sum::<u64>()).sum()
+    }
+
+    /// The entity no longer holds `n` items: a later group replaces the
+    /// list they were in (7g).
+    pub fn release(n: u64) {
+        STATE.with(|s| {
+            if let Some((held, max)) = s.get() {
+                s.set(Some((held.saturating_sub(n), max)));
+            }
+        });
     }
 }
 
@@ -2063,6 +2296,13 @@ struct Decoded {
 impl Decoded {
     fn new() -> Decoded {
         Decoded { ent: Entity::default(), soft: Vec::new(), hard: Vec::new(), hard_keys: Vec::new() }
+    }
+    /// Before the items of a group are read: the items of a list the group
+    /// will replace are no longer held (ruling 7g of 0.11).
+    fn replacing(&self, list: &str) {
+        if let Some(old) = self.ent.lists.get(list) {
+            limit::release(old.len() as u64 + old.iter().map(|i| limit::items_of(&i.lists)).sum::<u64>());
+        }
     }
     fn has(&self, f: &FieldDef) -> bool {
         self.ent.fields.contains_key(&f.model_key)
@@ -2143,6 +2383,18 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     }
     if *t == Transform::Bool && wire != Wire::Json {
         return bad(f.line, "`bool` is valid only on the json wire");
+    }
+    // ruling 5 of 0.11: a transform on a wire it is not valid for
+    let valid = match wire {
+        Wire::Xml | Wire::GeoJson => {
+            matches!(t, Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms)
+        }
+        Wire::Bits => t.is_bits(),
+        Wire::Protobuf => t.is_protobuf(),
+        Wire::Json | Wire::Text => true,
+    };
+    if !valid {
+        return bad(f.line, format!("the transform of `{}` is not valid on this wire", f.model_key));
     }
     // inside a group `.` is the item itself (json, geojson, protobuf)
     let item_itself = in_group && f.locator == ".";
@@ -2413,7 +2665,8 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
             let ok = match wire {
                 Wire::Xml => {
                     let last = w.locator.rsplit('/').next().unwrap_or("");
-                    (last.starts_with('@') && last.len() > 1) || (last == "#text" && (in_group || w.locator.contains('/')))
+                    let _ = in_group;
+                    (last.starts_with('@') && last.len() > 1) || last == "#text"
                 }
                 Wire::GeoJson if !in_group => {
                     !w.locator.is_empty()
@@ -2449,6 +2702,8 @@ pub struct Engine {
     list_index: HashMap<String, HashSet<String>>,
     /// the most restricted distribution this engine instance may load
     max_distribution: Distribution,
+    /// the limit on list items of one decode (ruling 7 of 0.11)
+    max_items: usize,
 }
 
 impl Default for Engine {
@@ -2459,6 +2714,7 @@ impl Default for Engine {
             key_index: HashMap::new(),
             list_index: HashMap::new(),
             max_distribution: Distribution::Controlled,
+            max_items: DEFAULT_MAX_ITEMS,
         }
     }
 }
@@ -2640,6 +2896,10 @@ impl Engine {
 
     pub fn load(&mut self, mut pack: Pack) -> Result<(), Error> {
         self.check_pack(&pack)?;
+        // last of the load checks (ruling 5 of 0.11): the first pack stays loaded
+        if self.packs.contains_key(&pack.format) {
+            return err(format!("duplicate-format: a pack with format `{}` is already loaded", pack.format));
+        }
         // record each key's declared type, and read each default as it
         let set_field = |f: &mut FieldDef| f.key_type = self.key_def(&f.model_key).map(|d| d.ty);
         let set_default = |d: &mut DefaultDef| d.value = self.key_def(&d.model_key).and_then(|k| read_as(k.ty, &d.text));
@@ -2750,11 +3010,32 @@ impl Engine {
     fn pack(&self, format: &str) -> Result<&Pack, Error> {
         self.packs
             .get(format)
-            .ok_or(Error { msg: format!("no pack loaded for format `{}`", format) })
+            .ok_or(Error { msg: format!("unknown-format: no pack loaded for format `{}`", format) })
+    }
+
+    /// The declared type of a model key written as in a pack (`lat`,
+    /// `track.class`); None when no loaded module declares it.
+    pub fn key_type(&self, key: &str) -> Option<KeyType> {
+        self.key_def(key).map(|d| d.ty)
+    }
+
+    /// The limit on list items each decode holds (ruling 7 of 0.11); 0
+    /// refuses any item. The default is `DEFAULT_MAX_ITEMS`.
+    pub fn set_max_items(&mut self, n: usize) {
+        self.max_items = n;
+    }
+    pub fn max_items(&self) -> usize {
+        self.max_items
     }
 
     pub fn decode(&self, format: &str, bytes: &str) -> Result<Entity, Error> {
+        self.decode_limited(format, bytes, self.max_items)
+    }
+
+    /// `decode` with the limit on list items given for this call.
+    pub fn decode_limited(&self, format: &str, bytes: &str, max_items: usize) -> Result<Entity, Error> {
         let p = self.pack(format)?;
+        let _scope = limit::begin(max_items);
         match p.wire {
             Wire::Xml => xml::decode(p, bytes),
             Wire::GeoJson => geojson::decode(p, bytes),
@@ -2791,6 +3072,9 @@ impl Engine {
         bytes: &str,
         context: Option<&[(String, Value)]>,
     ) -> Result<String, Error> {
+        // `from`, then `to`, before the input is read (ruling 5 of 0.11)
+        self.pack(from)?;
+        self.pack(to)?;
         let mut ent = self.decode(from, bytes)?;
         if from != to {
             ent.kind = None;
@@ -2811,7 +3095,22 @@ impl Engine {
         bytes: &str,
         context: Option<&[(String, String)]>,
     ) -> Result<String, Error> {
-        let mut ent = self.decode(from, bytes)?;
+        self.convert_text_limited(from, to, bytes, context, self.max_items)
+    }
+
+    /// `convert_text` with the limit on list items given for this call.
+    pub fn convert_text_limited(
+        &self,
+        from: &str,
+        to: &str,
+        bytes: &str,
+        context: Option<&[(String, String)]>,
+        max_items: usize,
+    ) -> Result<String, Error> {
+        // `from`, then `to`, before the input is read (ruling 5 of 0.11)
+        self.pack(from)?;
+        self.pack(to)?;
+        let mut ent = self.decode_limited(from, bytes, max_items)?;
         if from != to {
             ent.kind = None;
         }
@@ -2930,6 +3229,19 @@ impl Engine {
     /// which model keys carry across (translatable) and which A holds that B has
     /// no field for (dropped, with the reason). This answers "every type to every
     /// other, or clearly noted why not" without running a single conversion.
+    /// `model_keys` of a loaded format; `unknown-format` otherwise.
+    pub fn try_model_keys(&self, format: &str) -> Result<Vec<String>, Error> {
+        self.pack(format).map(|p| p.model_keys())
+    }
+
+    /// `capability` (ruling 6 of 0.11); `unknown-format` when `from`, then
+    /// `to`, is not loaded.
+    pub fn try_capability(&self, from: &str, to: &str) -> Result<Capability, Error> {
+        self.pack(from)?;
+        self.pack(to)?;
+        Ok(self.capability(from, to))
+    }
+
     pub fn capability(&self, from: &str, to: &str) -> Capability {
         let ak = self.model_keys(from);
         let bk = self.model_keys(to);
@@ -3050,7 +3362,8 @@ pub mod xml {
                 None => false,
                 Some(v) => w.present || v == w.text,
             },
-            Some((node, Loc::Text)) => w.present || node.text.as_deref().unwrap_or("") == w.text,
+            // an element with no character data has no text: no value holds (1m)
+            Some((node, Loc::Text)) => w.present || node.text.as_deref() == Some(w.text.as_str()),
         }
     }
 
@@ -3072,16 +3385,13 @@ pub mod xml {
     }
 
     /// Decode the fields and groups of one scope: the root, or one item element.
-    fn decode_scope(p: &Pack, sel: &Sel, node: &Node, item: bool, d: &mut Decoded) {
+    fn decode_scope(p: &Pack, sel: &Sel, node: &Node, d: &mut Decoded) -> Result<(), Error> {
         for f in &sel.fields {
-            if f.locator == "#text" && !item {
-                continue;
-            }
             if let Some((n, loc)) = resolve(node, &f.locator) {
                 // a sentinel at the place: the line yields no value (engine-spec v0.9)
                 let sentinel = match &loc {
                     Loc::Attr(a) => n.attr(a).map_or(false, |v| f.absent_text(v)),
-                    Loc::Text => n.raw_text.as_deref().map_or(false, |v| f.absent_text(v)),
+                    Loc::Text => n.text.as_deref().map_or(false, |v| f.absent_text(v)),
                 };
                 if sentinel {
                     continue;
@@ -3102,19 +3412,21 @@ pub mod xml {
                 continue;
             }
             let body = g.body();
-            let decoded = found
-                .into_iter()
-                .map(|n| {
-                    let mut di = Decoded::new();
-                    decode_scope(p, &body, n, true, &mut di);
-                    di
-                })
-                .collect();
+            d.replacing(&g.list);
+            let mut decoded = Vec::new();
+            for n in found {
+                limit::take(&p.format, &g.list, 1)?;
+                let mut di = Decoded::new();
+                decode_scope(p, &body, n, &mut di)?;
+                decoded.push(di);
+            }
             d.put_list(&g.list, decoded);
         }
+        Ok(())
     }
 
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
+        let _scope = limit::scope();
         let root = parse(bytes)?;
         if p.kinds.is_empty() && root.name != p.root {
             return err(format!("missing-root: format `{}`: expected root <{}>, found <{}>", p.format, p.root, root.name));
@@ -3122,7 +3434,7 @@ pub mod xml {
         // a kind is considered only when the document's root is its root
         let sel = p.select_decode(Some(&root.name), |w| when_holds(&root, w))?;
         let mut d = Decoded::new();
-        decode_scope(p, &sel, &root, false, &mut d);
+        decode_scope(p, &sel, &root, &mut d)?;
         // residue: root attributes no field, `when` value or `const` maps
         let mapped_root_attrs: Vec<&str> = sel.mapped().into_iter().filter_map(|l| l.strip_prefix('@')).collect();
         for (k, v) in &root.attrs {
@@ -3181,7 +3493,12 @@ pub mod xml {
         lines.sort_by_key(|(n, l)| (firsts[match l { Line::Value(loc, _, _) => *loc, Line::Group(g, _) => g.locator.as_str() }], *n));
         for (_, line) in &lines {
             match line {
-                Line::Value(locator, raw, is_when) => place(node, locator, raw, *is_when)?,
+                Line::Value(locator, raw, is_when) => {
+                    writable(raw).map_err(|e| Error {
+                        msg: format!("transform-encode: format `{}`: `{}`: {}", p.format, locator, e.msg),
+                    })?;
+                    place(node, locator, raw, *is_when)?
+                }
                 Line::Group(g, items) => {
                     let (path, name) = match g.locator.rsplit_once('/') {
                         Some((p, n)) => (Some(p), n),
@@ -3224,6 +3541,10 @@ pub mod xml {
         for (fmt, loc, raw) in &ent.residue {
             if fmt == &p.format {
                 if let Some(attr) = loc.strip_prefix('@') {
+                    // 1d holds for residue too (1f)
+                    writable(raw).map_err(|e| Error {
+                        msg: format!("transform-encode: format `{}`: residue `{}`: {}", p.format, loc, e.msg),
+                    })?;
                     if !root.attrs.iter().any(|(k, _)| k == attr) {
                         root.attrs.push((attr.to_string(), raw.clone()));
                     }
@@ -3314,36 +3635,75 @@ pub mod xml {
         out.push_str(&n.name);
         out.push('>');
     }
+    /// 1a: an attribute value between double quotes.
     fn escape_attr(s: &str) -> String {
-        s.replace('&', "&amp;").replace('<', "&lt;").replace('"', "&quot;")
+        let mut out = String::with_capacity(s.len());
+        for c in s.chars() {
+            match c {
+                '&' => out.push_str("&amp;"),
+                '<' => out.push_str("&lt;"),
+                '>' => out.push_str("&gt;"),
+                '"' => out.push_str("&quot;"),
+                '\t' => out.push_str("&#9;"),
+                '\n' => out.push_str("&#10;"),
+                '\r' => out.push_str("&#13;"),
+                c => out.push(c),
+            }
+        }
+        out
     }
+    /// 1b: text content.
     fn escape_text(s: &str) -> String {
-        s.replace('&', "&amp;").replace('<', "&lt;")
+        let mut out = String::with_capacity(s.len());
+        for c in s.chars() {
+            match c {
+                '&' => out.push_str("&amp;"),
+                '<' => out.push_str("&lt;"),
+                '>' => out.push_str("&gt;"),
+                '\r' => out.push_str("&#13;"),
+                c => out.push(c),
+            }
+        }
+        out
     }
 
-    // --- minimal parser ---
+    // --- parser (ruling 1 of 0.11) ---
 
     /// The deepest nesting of elements a document may have; the root element
     /// is level 1. A document nested deeper is `malformed-wire`, so the
     /// parser's recursion is bounded whatever the input.
     pub const MAX_DEPTH: usize = 64;
 
-    /// Parse one document: an optional prolog, one root element, then only
-    /// whitespace, comments and processing instructions. Every failure is
-    /// `malformed-wire`; no input makes the parser read out of bounds.
+    /// Parse one document: an optional byte order mark (1g), an optional
+    /// prolog, one root element, then only whitespace, comments and processing
+    /// instructions. Line ends are read as line feeds first (1h). Every
+    /// failure is `malformed-wire`; no input makes the parser read out of
+    /// bounds.
     pub fn parse(input: &str) -> Result<Node, Error> {
-        let mut p = XmlParser { b: input.as_bytes(), i: 0 };
+        let input = input.strip_prefix('\u{feff}').unwrap_or(input);
+        let normalised;
+        let input = if input.contains('\r') {
+            normalised = input.replace("\r\n", "\n").replace('\r', "\n");
+            normalised.as_str()
+        } else {
+            input
+        };
+        let mut p = XmlParser { s: input, b: input.as_bytes(), i: 0 };
         let root = p.document().map_err(|e| Error { msg: format!("malformed-wire: xml: {}", e.msg) })?;
         Ok(root)
     }
     struct XmlParser<'a> {
+        s: &'a str,
         b: &'a [u8],
-        /// the cursor; never beyond `b.len()`
+        /// the cursor; never beyond `b.len()`, always at a character boundary
         i: usize,
     }
     impl<'a> XmlParser<'a> {
         fn document(&mut self) -> Result<Node, Error> {
             self.skip_misc()?;
+            if self.starts_with("<![CDATA[") {
+                return err("a CDATA section outside the root element");
+            }
             let root = self.parse_element(1)?;
             self.skip_misc()?;
             if self.i < self.b.len() {
@@ -3352,7 +3712,7 @@ pub mod xml {
             Ok(root)
         }
         fn ws(&mut self) {
-            // XML whitespace: space, tab, line feed, carriage return
+            // XML whitespace: space, tab, line feed (a carriage return is a line feed by now)
             while self.i < self.b.len() && matches!(self.b[self.i], b' ' | b'\t' | b'\n' | b'\r') {
                 self.i += 1;
             }
@@ -3363,24 +3723,27 @@ pub mod xml {
         fn starts_with(&self, s: &str) -> bool {
             self.b.get(self.i..).map_or(false, |rest| rest.starts_with(s.as_bytes()))
         }
-        /// Move past the next `end`, from the cursor. The input ending first
-        /// is an error naming `what`.
-        fn skip_past(&mut self, end: &str, what: &str) -> Result<(), Error> {
-            let rest = self.b.get(self.i..).unwrap_or(&[]);
-            match rest.windows(end.len()).position(|w| w == end.as_bytes()) {
+        /// The text from the cursor to the next `end`, and the cursor moved
+        /// past `end`. The input ending first is an error naming `what`.
+        fn take_until(&mut self, end: &str, what: &str) -> Result<&'a str, Error> {
+            let rest = &self.s[self.i..];
+            match rest.find(end) {
                 Some(at) => {
                     self.i += at + end.len();
-                    Ok(())
+                    Ok(&rest[..at])
                 }
                 None => err(format!("unexpected end in {}", what)),
             }
         }
-        /// A comment or a processing instruction at the cursor, skipped.
+        /// A comment or a processing instruction at the cursor, skipped; its
+        /// content is not read (1l).
         fn skip_comment_or_pi(&mut self) -> Result<bool, Error> {
             if self.starts_with("<?") {
-                self.skip_past("?>", "a processing instruction")?;
+                self.i += 2;
+                self.take_until("?>", "a processing instruction")?;
             } else if self.starts_with("<!--") {
-                self.skip_past("-->", "a comment")?;
+                self.i += 4;
+                self.take_until("-->", "a comment")?;
             } else {
                 return Ok(false);
             }
@@ -3452,16 +3815,25 @@ pub mod xml {
                 self.i += 1;
                 let start = self.i;
                 while self.i < self.b.len() && self.b[self.i] != q {
+                    if self.b[self.i] == b'<' {
+                        return err(format!("`<` in the value of attribute `{}`", an));
+                    }
                     self.i += 1;
                 }
                 if self.i >= self.b.len() {
                     return err(format!("unexpected end in the value of attribute `{}`", an));
                 }
-                let val = unescape(&String::from_utf8_lossy(&self.b[start..self.i]))?;
+                // a literal tab or line feed is a space; one written as a reference is kept (1i)
+                let literal = self.s[start..self.i].replace(['\t', '\n'], " ");
+                let val = unescape(&literal)?;
                 self.i += 1;
+                // 1o: an attribute name twice on one element
+                if node.attrs.iter().any(|(k, _)| *k == an) {
+                    return err(format!("attribute `{}` given twice on <{}>", an, node.name));
+                }
                 node.attrs.push((an, val));
             }
-            // content
+            // content: text and CDATA sections joined in document order (1m)
             let mut text = String::new();
             loop {
                 if self.starts_with("</") {
@@ -3476,6 +3848,9 @@ pub mod xml {
                     }
                     self.i += 1;
                     break;
+                } else if self.starts_with("<![CDATA[") {
+                    self.i += 9;
+                    text.push_str(self.take_until("]]>", "a CDATA section")?);
                 } else if self.skip_comment_or_pi()? {
                     continue;
                 } else if self.peek() == Some(b'<') {
@@ -3488,15 +3863,13 @@ pub mod xml {
                     while self.i < self.b.len() && self.b[self.i] != b'<' {
                         self.i += 1;
                     }
-                    text.push_str(&String::from_utf8_lossy(&self.b[start..self.i]));
+                    text.push_str(&unescape(&self.s[start..self.i])?);
                 }
             }
-            let t = unescape(text.trim())?;
-            if !t.is_empty() {
-                node.text = Some(t);
-            }
+            // no character data: no text, not the empty text
             if !text.is_empty() {
-                node.raw_text = Some(unescape(&text)?);
+                node.raw_text = Some(text.clone());
+                node.text = Some(text);
             }
             Ok(node)
         }
@@ -3512,13 +3885,13 @@ pub mod xml {
                     break;
                 }
             }
-            String::from_utf8_lossy(&self.b[start..self.i]).to_string()
+            self.s[start..self.i].to_string()
         }
     }
-    /// Replace the five predefined entities and numeric character
-    /// references. A numeric reference takes decimal or hexadecimal digits
-    /// only and must name a character XML 1.0 allows; any other is an error.
-    /// Text after `&` that is none of these is kept as it is.
+    /// Replace the five predefined entities and numeric character references
+    /// (1j). A numeric reference takes decimal or hexadecimal digits only and
+    /// must name a character XML 1.0 allows. Every other `&` is an error. The
+    /// text a reference gives is not read again.
     fn unescape(s: &str) -> Result<String, Error> {
         if !s.contains('&') {
             return Ok(s.to_string());
@@ -3554,12 +3927,20 @@ pub mod xml {
                 }
                 rest = &rest[end + 1..];
             } else {
-                out.push('&');
-                rest = &rest[1..];
+                let shown: String = rest.chars().take(12).collect();
+                return err(format!("`&` that begins no predefined entity or character reference: `{}`", shown));
             }
         }
         out.push_str(rest);
         Ok(out)
+    }
+
+    /// 1d: a character XML 1.0 cannot hold, in a string that is to be written.
+    pub(crate) fn writable(s: &str) -> Result<(), Error> {
+        match s.chars().find(|c| matches!(*c as u32, 0..=0x8 | 0xB | 0xC | 0xE..=0x1F | 0xFFFE | 0xFFFF)) {
+            Some(c) => err(format!("U+{:04X} cannot be written in XML 1.0", c as u32)),
+            None => Ok(()),
+        }
     }
 }
 
@@ -3886,7 +4267,16 @@ pub mod json {
             if let Some(raws) = &mut self.raws {
                 raws.push(tok.to_string());
             }
+            // `-0`: negative zero (ruling 2b of 0.11)
+            if tok.starts_with('-') && tok.bytes().take_while(|b| *b != b'e' && *b != b'E').all(|b| matches!(b, b'-' | b'0' | b'.')) {
+                return Ok(Json::Num(-0.0));
+            }
             if is_float {
+                // a fraction or exponent whose exact value is an integer
+                // within i64 keeps every digit (ruling 2d of 0.11)
+                if let Some(n) = exact_integer(tok) {
+                    return Ok(Json::Int(n));
+                }
                 tok.parse::<f64>().map(Json::Num).map_err(|_| Error {
                     msg: format!("json: bad number `{}`", tok),
                 })
@@ -3900,6 +4290,45 @@ pub mod json {
                 }
             }
         }
+    }
+
+    /// The exact value of JSON number text, when it is an integer within a
+    /// signed 64-bit integer: `1.0`, `1e3`, `9.223372036854775807e18`.
+    pub fn exact_integer(tok: &str) -> Option<i64> {
+        let (neg, t) = match tok.strip_prefix('-') {
+            Some(t) => (true, t),
+            None => (false, tok),
+        };
+        let (mant, exp) = match t.find(['e', 'E']) {
+            Some(i) => (&t[..i], &t[i + 1..]),
+            None => (t, "0"),
+        };
+        let (int, frac) = mant.split_once('.').unwrap_or((mant, ""));
+        let exp_digits = exp.trim_start_matches(['+', '-']);
+        // an exponent of more digits than this is far beyond i64 either way
+        let e: i64 = if exp_digits.trim_start_matches('0').len() > 6 {
+            if exp.starts_with('-') { -10_000_000 } else { 10_000_000 }
+        } else {
+            let v: i64 = exp_digits.parse().ok()?;
+            if exp.starts_with('-') { -v } else { v }
+        };
+        let digits: String = format!("{}{}", int, frac);
+        let digits = digits.trim_start_matches('0');
+        if digits.is_empty() {
+            return Some(0);
+        }
+        let mut scale = e - frac.len() as i64;
+        let trimmed = digits.trim_end_matches('0');
+        scale += (digits.len() - trimmed.len()) as i64;
+        if scale < 0 || trimmed.len() as i64 + scale > 19 {
+            return None;
+        }
+        let mut v: i128 = trimmed.parse().ok()?;
+        for _ in 0..scale {
+            v *= 10;
+        }
+        let v = if neg { -v } else { v };
+        i64::try_from(v).ok()
     }
 
     pub fn serialize(j: &Json) -> String {
@@ -4034,6 +4463,7 @@ pub mod geojson {
 
     // locator forms: "id", "geometry.lon|lat|alt", "properties.<name>"
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
+        let _scope = limit::scope();
         let (root, raws) = json::parse_raw(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
         let sel = p.select_decode(None, |w| json_when_holds(when_member(&root, &w.locator), w))?;
         let coords = root
@@ -4271,7 +4701,8 @@ pub mod jsonwire {
             (Transform::Float, Json::Int(n)) => Ok(Value::F64(*n as f64)),
             (Transform::Float, Json::Num(x)) => finite(*x),
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
-            (Transform::Int, Json::Num(x)) if x.fract() == 0.0 && x.abs() < 9.0e18 => Ok(Value::I64(*x as i64)),
+            // an integer within i64 was read as `Int`; negative zero is 0 (ruling 2d of 0.11)
+            (Transform::Int, Json::Num(x)) if *x == 0.0 => Ok(Value::I64(0)),
             (Transform::Iso8601Ms, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
             (Transform::Bool, Json::Bool(b)) => Ok(Value::I64(*b as i64)),
             _ => err(format!("JSON value `{}` has the wrong type for the transform", json::serialize(j))),
@@ -4283,7 +4714,7 @@ pub mod jsonwire {
             (Transform::StringT, Value::Str(s)) => Ok(Json::Str(s.clone())),
             (Transform::Float, Value::F64(x)) if x.is_finite() => Ok(Json::Num(*x)),
             (Transform::Int, Value::I64(n)) => Ok(Json::Int(*n)),
-            (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601(*ms))),
+            (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_checked(*ms)?)),
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
@@ -4337,8 +4768,10 @@ pub mod jsonwire {
                 }
             };
             let body = g.body();
+            d.replacing(&g.list);
             let mut items = Vec::new();
             for e in elements {
+                limit::take(&p.format, &g.list, 1)?;
                 let mut di = Decoded::new();
                 decode_scope(p, &body, e, true, dec, &mut di)?;
                 items.push(di);
@@ -4349,6 +4782,7 @@ pub mod jsonwire {
     }
 
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
+        let _scope = limit::scope();
         let root = json::parse(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
         if !matches!(root, Json::Obj(_)) {
             return err(format!("malformed-wire: format `{}`: the message is not a JSON object", p.format));
@@ -4381,7 +4815,7 @@ pub mod jsonwire {
         decode_scope(p, &sel, &root, false, decode_value, &mut d)?;
         // residue: every scalar member, at any depth, that no line maps
         let mapped: Vec<&str> = sel.mapped();
-        fn walk(obj: &Json, prefix: &str, mapped: &[&str], format: &str, out: &mut Vec<(String, String, String)>) {
+        fn walk(obj: &Json, prefix: &str, mapped: &[&str], format: &str, out: &mut Vec<(String, String, String)>) -> Result<(), Error> {
             if let Json::Obj(members) = obj {
                 for (k, v) in members {
                     // a member name with `.` has no path in 0.5: not carried
@@ -4390,18 +4824,26 @@ pub mod jsonwire {
                     }
                     let path = if prefix.is_empty() { k.clone() } else { format!("{}.{}", prefix, k) };
                     match v {
-                        Json::Obj(_) => walk(v, &path, mapped, format, out),
+                        Json::Obj(_) => walk(v, &path, mapped, format, out)?,
                         Json::Arr(_) | Json::Null => {}
                         scalar => {
                             if !mapped.contains(&path.as_str()) {
+                                // a residue number whose nearest double is infinite has no canonical text (2d)
+                                if matches!(scalar, Json::Num(x) if !x.is_finite()) {
+                                    return err(format!(
+                                        "malformed-wire: format `{}`: the number at `{}` is beyond the range of a double",
+                                        format, path
+                                    ));
+                                }
                                 out.push((format.to_string(), path, json::serialize(scalar)));
                             }
                         }
                     }
                 }
             }
+            Ok(())
         }
-        walk(&root, "", &mapped, &p.format, &mut d.ent.residue);
+        walk(&root, "", &mapped, &p.format, &mut d.ent.residue)?;
         d.finish(p, &sel)
     }
 
@@ -4571,9 +5013,11 @@ pub mod bits {
         if p.len() != 3 {
             return err(format!("bits locator must be word:pos:len, got `{}`", loc));
         }
-        let word = p[0].parse::<usize>().map_err(|_| Error { msg: format!("bad word in `{}`", loc) })?;
-        let pos = p[1].parse::<u32>().map_err(|_| Error { msg: format!("bad pos in `{}`", loc) })?;
-        let len = p[2].parse::<u32>().map_err(|_| Error { msg: format!("bad len in `{}`", loc) })?;
+        // unsigned decimal integers (ruling 2c of 0.11): no sign
+        let digits = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit());
+        let word = Some(p[0]).filter(|s| digits(s)).and_then(|s| s.parse::<usize>().ok()).ok_or(Error { msg: format!("bad word in `{}`", loc) })?;
+        let pos = Some(p[1]).filter(|s| digits(s)).and_then(|s| s.parse::<u32>().ok()).ok_or(Error { msg: format!("bad pos in `{}`", loc) })?;
+        let len = Some(p[2]).filter(|s| digits(s)).and_then(|s| s.parse::<u32>().ok()).ok_or(Error { msg: format!("bad len in `{}`", loc) })?;
         if len == 0 {
             return err(format!("bits len must be at least 1 in `{}`", loc));
         }
@@ -4584,6 +5028,10 @@ pub mod bits {
     pub(crate) fn parse_group_locator(loc: &str) -> Result<(usize, u32), Error> {
         let bad = || Error { msg: format!("bits group locator must be word:pos, got `{}`", loc) };
         let (w, p) = loc.split_once(':').ok_or_else(bad)?;
+        let digits = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit());
+        if !digits(w) || !digits(p) {
+            return Err(bad());
+        }
         Ok((w.parse::<usize>().map_err(|_| bad())?, p.parse::<u32>().map_err(|_| bad())?))
     }
 
@@ -4804,6 +5252,9 @@ pub mod bits {
                 }
                 None => 0,
             };
+            // the count against what the limit still allows, before any item is read (7d)
+            d.replacing(&g.list);
+            limit::take(&p.format, &g.list, n)?;
             let (off, item_bits) = group_span(p, g)?;
             let start = base + off;
             let end = n.checked_mul(item_bits).and_then(|b| b.checked_add(start)).filter(|e| *e <= total).ok_or_else(|| {
@@ -4832,6 +5283,7 @@ pub mod bits {
     }
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
+        let _scope = limit::scope();
         let raw = from_hex(hex)?;
         if let Some(body) = &p.seq {
             return super::seq::decode(p, body, &raw);
@@ -5155,7 +5607,12 @@ pub mod protobuf {
     pub(crate) fn parse_path(locator: &str) -> Result<Vec<u32>, Error> {
         locator
             .split('.')
-            .map(|s| s.parse::<u32>().map_err(|_| Error { msg: format!("bad protobuf path `{}`", locator) }))
+            .map(|s| {
+                Some(s)
+                    .filter(|s| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit()))
+                    .and_then(|s| s.parse::<u32>().ok())
+                    .ok_or(Error { msg: format!("bad protobuf path `{}`", locator) })
+            })
             .collect()
     }
 
@@ -5307,8 +5764,10 @@ pub mod protobuf {
                 continue;
             }
             let into = body.fields.iter().any(|f| f.locator != ".") || !body.groups.is_empty();
+            d.replacing(&g.list);
             let mut items = Vec::new();
             for v in &occurrences {
+                limit::take(&p.format, &g.list, 1)?;
                 let mut di = Decoded::new();
                 // `.`: the occurrence itself as a scalar
                 for f in body.fields.iter().filter(|f| f.locator == ".") {
@@ -5334,6 +5793,7 @@ pub mod protobuf {
     }
 
     pub fn decode(p: &Pack, hex: &str) -> Result<Entity, Error> {
+        let _scope = limit::scope();
         let raw = super::bits::from_hex(hex)?;
         // a malformed message is an error, not a kind mismatch, and is one
         // whether or not a line of the pack reads it
@@ -5537,7 +5997,7 @@ fn tokenize(line: &str) -> Result<Vec<String>, Error> {
         }
     }
     if in_q {
-        return err("unterminated quote in pack line");
+        return err("unterminated-quote: a value that begins with `\"` has no closing `\"` on its line");
     }
     if started {
         toks.push(cur);
@@ -5548,7 +6008,246 @@ fn tokenize(line: &str) -> Result<Vec<String>, Error> {
 fn req_arg(toks: &[String], i: usize, ln: usize) -> Result<String, Error> {
     toks.get(i)
         .cloned()
-        .ok_or(Error { msg: format!("line {}: missing argument", ln) })
+        .ok_or(Error { msg: format!("bad-directive: line {}: missing argument", ln) })
+}
+
+/// Tokenize one line of a pack or module, the line number in a failure.
+fn tokenize_at(line: &str, ln: usize) -> Result<Vec<String>, Error> {
+    tokenize(line).map_err(|e| match e.msg.split_once(": ") {
+        Some((kind, rest)) => Error { msg: format!("{}: line {}: {}", kind, ln, rest) },
+        None => e,
+    })
+}
+
+/// The directives of a pack, each with the number of arguments it takes:
+/// (name, least, most). `usize::MAX`: any number more.
+const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
+    ("format", 1, 1),
+    ("version", 1, 1),
+    ("distribution", 1, 1),
+    ("source", 1, 1),
+    ("uses", 1, 1),
+    ("wire", 1, 1),
+    ("root", 1, 1),
+    ("field", 3, usize::MAX),
+    ("when", 2, 2),
+    ("const", 2, 2),
+    ("kind", 1, 1),
+    ("requires", 1, usize::MAX),
+    ("default", 2, 2),
+    ("map", 3, 3),
+    ("typemap", 2, 2),
+    ("group", 2, usize::MAX),
+    ("end", 0, 0),
+    ("word_bytes", 1, 1),
+    ("bit_order", 1, 1),
+    ("layout", 1, 1),
+    ("also", 1, 3),
+    ("pad", 1, 1),
+    ("align", 1, 1),
+    ("presence", 2, 2),
+    ("if", 1, usize::MAX),
+    ("opt", 0, 0),
+    ("chain", 0, 0),
+    ("fx", 0, 0),
+    ("length", 1, usize::MAX),
+    ("delimiter", 1, 1),
+    ("start", 1, 1),
+    ("checksum", 1, 1),
+];
+
+/// The lines that stand after the `wire` line (ruling 5b of 0.11).
+const AFTER_WIRE: &[&str] = &[
+    "root", "field", "when", "const", "group", "end", "word_bytes", "bit_order", "layout", "also", "pad", "align",
+    "presence", "if", "opt", "chain", "fx", "length",
+];
+
+/// The checks of ruling 5 of 0.11 that each line of a pack owes as it is
+/// read, in order: `unterminated-quote`, `unknown-directive`, the number of
+/// arguments, `missing-wire`, then the line's own content that the line and
+/// the lines before it decide (a repeated header line, the `distribution`
+/// and `wire` values, `layout sequential` after a line it must precede, the
+/// transform's name and parameters, the form of a locator). The parsers
+/// check the rest of each line after this pass.
+fn pack_line_checks(text: &str) -> Result<(), Error> {
+    let mut wire: Option<Wire> = None;
+    let mut seen_header: HashSet<&'static str> = HashSet::new();
+    // the first line that must stand after `layout sequential`
+    let mut first_after_wire: Option<usize> = None;
+    let mut sequential = false;
+    for (lineno, raw) in text.lines().enumerate() {
+        let ln = lineno + 1;
+        let toks = tokenize_at(raw, ln)?;
+        if toks.is_empty() {
+            continue;
+        }
+        let d = toks[0].as_str();
+        let (name, least, most) = match PACK_DIRECTIVES.iter().find(|(n, _, _)| *n == d) {
+            Some(e) => *e,
+            None => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, d)),
+        };
+        let n = toks.len() - 1;
+        if n < least || n > most {
+            return bad(ln, format!("`{}` takes {} arguments, got {}", name, if least == most { least.to_string() } else { format!("at least {}", least) }, n));
+        }
+        if AFTER_WIRE.contains(&name) {
+            if wire.is_none() {
+                return err(format!("missing-wire: line {}: `{}` stands before the `wire` line", ln, name));
+            }
+            first_after_wire.get_or_insert(ln);
+        }
+        // the line's own content
+        if matches!(name, "format" | "version" | "wire" | "distribution") && !seen_header.insert(name) {
+            return bad(ln, format!("a second `{}` line", name));
+        }
+        match name {
+            "wire" => {
+                wire = Some(match toks[1].as_str() {
+                    "xml" => Wire::Xml,
+                    "geojson" => Wire::GeoJson,
+                    "bits" => Wire::Bits,
+                    "protobuf" => Wire::Protobuf,
+                    "json" => Wire::Json,
+                    "text" => Wire::Text,
+                    o => return err(format!("unknown-wire: line {}: `{}` is not a wire", ln, o)),
+                })
+            }
+            "distribution" => {
+                if Distribution::parse(&toks[1]).is_none() {
+                    return bad(ln, format!("distribution is `public` or `controlled`, got `{}`", toks[1]));
+                }
+            }
+            "layout" if toks[1] == "sequential" => {
+                if let Some(at) = first_after_wire.filter(|at| *at < ln) {
+                    return bad(ln, format!("`layout sequential` stands after line {}, which it must precede", at));
+                }
+                sequential = true;
+            }
+            "field" => {
+                check_locator(wire, sequential, &toks[2], ln)?;
+                let transform = Transform::parse(&toks[3])
+                    .map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?;
+                // the options and the values of an `absent` option are line
+                // checks too; a bit length above 64 is checked after the file (4d)
+                let mut f = FieldDef {
+                    model_key: toks[1].clone(),
+                    locator: toks[2].clone(),
+                    transform,
+                    line: ln,
+                    via: None,
+                    swap: false,
+                    trim: false,
+                    optional: false,
+                    key_type: None,
+                    absent_arg: None,
+                    absent: Vec::new(),
+                };
+                field_options(&mut f, &toks, ln, true)?;
+                if let Some(w) = wire {
+                    let bits_len = match (w, sequential) {
+                        (Wire::Bits, true) => toks[2].parse::<u32>().ok(),
+                        (Wire::Bits, false) => bits::parse_locator(&toks[2]).ok().map(|(_, _, len)| len),
+                        _ => None,
+                    };
+                    let decided = w != Wire::Bits || bits_len.map_or(false, |len| len <= 64);
+                    if decided && !(w == Wire::Text) {
+                        resolve_absent(w, &mut f, bits_len)?;
+                    }
+                }
+            }
+            "when" | "const" => check_locator(wire, sequential, &toks[1], ln)?,
+            // 5a: an empty step of an `xml` group locator is a line check too
+            "group" if wire == Some(Wire::Xml) && toks[2].split('/').any(|s| s.is_empty()) => {
+                return err(format!("bad-locator: line {}: `{}`: an empty step", ln, toks[2]));
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+/// Ruling 5a of 0.11: the form of the locator of a `field`, `when` or
+/// `const` line on its wire; `bad-locator` when it does not have it.
+fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> Result<(), Error> {
+    let bad_loc = |why: &str| err(format!("bad-locator: line {}: `{}`: {}", ln, loc, why));
+    let digits = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit());
+    match wire {
+        Some(Wire::Xml) => {
+            let steps: Vec<&str> = loc.split('/').collect();
+            if steps.iter().any(|s| s.is_empty()) {
+                return bad_loc("an empty step");
+            }
+            let last = steps[steps.len() - 1];
+            for s in &steps[..steps.len() - 1] {
+                if s.starts_with('@') || *s == "#text" {
+                    return bad_loc("a step after `@name` or `#text`");
+                }
+            }
+            if last == "@" {
+                return bad_loc("an empty attribute name");
+            }
+            if !(last.starts_with('@') || last == "#text") {
+                return bad_loc("the locator does not end in `@name` or `#text`");
+            }
+        }
+        Some(Wire::Json) => {
+            if loc != "." && loc.split('.').any(|s| s.is_empty()) {
+                return bad_loc("an empty member name");
+            }
+        }
+        Some(Wire::GeoJson) => {
+            if loc != "." && loc.split('.').any(|s| s.is_empty()) {
+                return bad_loc("an empty member name");
+            }
+            if let Some(slot) = loc.strip_prefix("geometry.") {
+                if !matches!(slot, "lon" | "lat" | "alt") {
+                    return bad_loc("`geometry.` is followed by `lon`, `lat` or `alt`");
+                }
+            }
+        }
+        Some(Wire::Protobuf) => {
+            if loc != "." {
+                for step in loc.split('.') {
+                    if step.is_empty() {
+                        return bad_loc("an empty step");
+                    }
+                    if !digits(step) {
+                        return bad_loc("a step is a field number, digits only");
+                    }
+                    match step.parse::<u64>() {
+                        Ok(n) if (1..=536_870_911).contains(&n) => {}
+                        _ => return bad_loc("a field number is 1 to 536870911"),
+                    }
+                }
+            }
+        }
+        Some(Wire::Bits) if sequential => {
+            if !loc.contains(':') {
+                if !digits(loc) {
+                    return bad_loc("a bit length is digits only");
+                }
+                if loc.bytes().all(|b| b == b'0') {
+                    return bad_loc("a bit length of 0");
+                }
+            }
+        }
+        Some(Wire::Bits) => {
+            if loc.contains(':') {
+                let parts: Vec<&str> = loc.split(':').collect();
+                if parts.len() != 3 || !parts.iter().all(|p| digits(p)) {
+                    return bad_loc("a bits locator is <word>:<pos>:<len>, digits only");
+                }
+                if parts[2].bytes().all(|b| b == b'0') {
+                    return bad_loc("a bit length of 0");
+                }
+            } else if !digits(loc) {
+                // a bit length alone stays `bad-directive`; other text is no locator
+                return bad_loc("a bits locator is <word>:<pos>:<len>, digits only");
+            }
+        }
+        Some(Wire::Text) | None => {}
+    }
+    Ok(())
 }
 
 // --- civil date <-> days (Howard Hinnant's algorithms) ---
@@ -5578,7 +6277,7 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
 /// may be lowercase (engine-spec v0.6). The instant is converted to UTC.
 /// Fraction digits beyond milliseconds are truncated.
 pub fn iso8601_to_ms(s: &str) -> Result<i64, Error> {
-    let s = s.trim();
+    // ruling 3 of 0.11: nothing stands before or after
     let bytes = s.as_bytes();
     if bytes.len() < 20 || !s.is_ascii() {
         return err(format!("iso8601 too short: `{}`", s));
@@ -5629,9 +6328,42 @@ pub fn iso8601_to_ms(s: &str) -> Result<i64, Error> {
         }
         _ => return err(format!("iso8601 needs `Z` or an offset `+hh:mm`: `{}`", s)),
     };
+    // ruling 3b of 0.11: the ranges
+    let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+    let last_day = match mon {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 if leap => 29,
+        2 => 28,
+        _ => 0,
+    };
+    if !(1..=9999).contains(&year) || !(1..=last_day).contains(&day) || hh > 23 || mm > 59 || ss > 59 {
+        return err(format!("iso8601 date or time out of range: `{}`", s));
+    }
+    if rest.len() == 6 && (num(i + 1, i + 3)? > 23 || num(i + 4, i + 6)? > 59) {
+        return err(format!("iso8601 offset out of range: `{}`", s));
+    }
     let days = days_from_civil(year, mon, day);
     let secs = days * 86400 + hh * 3600 + mm * 60 + ss - offset_min * 60;
-    Ok(secs * 1000 + frac_ms)
+    let ms = secs * 1000 + frac_ms;
+    // ruling 3d of 0.11: the instant lies in years 0001 to 9999
+    if !(MIN_ISO_MS..=MAX_ISO_MS).contains(&ms) {
+        return err(format!("iso8601 instant outside years 0001 to 9999: `{}`", s));
+    }
+    Ok(ms)
+}
+
+/// `0001-01-01T00:00:00.000Z` and `9999-12-31T23:59:59.999Z` in epoch ms.
+const MIN_ISO_MS: i64 = -62_135_596_800_000;
+const MAX_ISO_MS: i64 = 253_402_300_799_999;
+
+/// `ms_to_iso8601` for a transform: an instant outside years 0001 to 9999 is
+/// refused (ruling 3f of 0.11).
+pub fn ms_to_iso8601_checked(ms: i64) -> Result<String, Error> {
+    if !(MIN_ISO_MS..=MAX_ISO_MS).contains(&ms) {
+        return err(format!("{} ms is outside years 0001 to 9999", ms));
+    }
+    Ok(ms_to_iso8601(ms))
 }
 
 pub fn ms_to_iso8601(ms: i64) -> String {

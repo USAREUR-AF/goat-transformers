@@ -307,7 +307,7 @@ pub(crate) fn encode_one(t: &Transform, v: &Value) -> Result<String, Error> {
             let s = if n < 0.0 { format!("-{}", s) } else { s };
             Ok(zero_pad(s, *w as usize))
         }
-        (Transform::Iso8601Ms, Value::I64(ms)) => Ok(ms_to_iso8601(*ms)),
+        (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
         (Transform::Hms(f), Value::F64(x)) => {
             let n = scaled(*x, *f)?;
             let p = POW10[*f as usize];
@@ -635,6 +635,7 @@ fn decode_fields(p: &Pack, fields: &[&FieldDef], rec: &[&str], base: usize, d: &
 }
 
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
+    let _scope = limit::scope();
     let rec = record(p, input)?;
     let sel = p.select_decode(None, |w| when_holds(&rec, w))?;
     let mut d = Decoded::new();
@@ -647,6 +648,9 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
         if rec.len() > start {
             let body = g.body();
             let count = (rec.len() - start + n - 1) / n;
+            // the number of items against the limit, before any field is read (7d)
+            d.replacing(&g.list);
+            limit::take(&p.format, &g.list, count as u64)?;
             let mut items = Vec::with_capacity(count);
             for j in 0..count {
                 let mut di = Decoded::new();

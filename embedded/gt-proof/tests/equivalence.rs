@@ -90,18 +90,31 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
         };
         let plan = Plan::parse(&blob).map_err(|e| format!("plan: {:?}", e))?;
         let ctx = device_context(&plan, &typed);
-        let got = gt_core::convert_with(&plan, &input, &mut out, scratch, v.context.as_ref().map(|_| ctx.as_slice()));
+        let got = gt_core::convert_limited(
+            &plan,
+            &input,
+            &mut out,
+            scratch,
+            v.context.as_ref().map(|_| ctx.as_slice()),
+            v.max_items as u64,
+        );
         match (&v.expect, &v.expect_error, got) {
             (Some(want), _, Ok(n)) if hex(&out[..n]) == *want => {}
             (Some(want), _, Ok(n)) => return Err(format!("got {} want {}", hex(&out[..n]), want)),
             (_, Some(kind), Err(e)) if e.name() == kind => {}
+            // a device limit docs/embedded.md states: the proof's scratch
+            // holds fewer items than the message
+            (_, _, Err(gt_core::Error::ScratchFull)) => {
+                return skip("scratch-full: the message holds more values or list items than the proof's scratch".into())
+            }
             (_, _, got) => return Err(format!("got {:?}, want {:?}{:?}", got.map(|n| hex(&out[..n])), v.expect, v.expect_error)),
         }
         // the decoded values, against the reference engine's and the vector's
-        if let Ok(ent) = p.engine.decode(&v.from, &v.input) {
+        if let Ok(ent) = p.engine.decode_limited(&v.from, &v.input, v.max_items) {
             let dblob = p.plan(Some(&v.from), None, &[]).map_err(|e| format!("decode-only plan: {}", e))?;
             let dplan = Plan::parse(&dblob).map_err(|e| format!("plan: {:?}", e))?;
             let mut s = Session::new(&dplan, scratch);
+            s.set_max_items(v.max_items as u64);
             s.decode(&input).map_err(|e| format!("device decode: {:?}", e))?;
             same_entity(&s, &dplan, ROOT, &ent, 0.0)?;
             let want = ent.kind.as_ref().map(|(_, n)| n.as_str());
@@ -126,7 +139,8 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
         };
         let plan = Plan::parse(&blob).map_err(|e| format!("plan: {:?}", e))?;
         let mut s = Session::new(&plan, scratch);
-        return match (p.engine.decode(&v.from, &v.input), s.decode(&input)) {
+        s.set_max_items(v.max_items as u64);
+        return match (p.engine.decode_limited(&v.from, &v.input, v.max_items), s.decode(&input)) {
             (Ok(ent), Ok(())) => {
                 same_entity(&s, &plan, ROOT, &ent, 0.0)?;
                 let want = ent.kind.as_ref().map(|(_, n)| n.as_str());
@@ -139,11 +153,14 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
                 Ok(true)
             }
             (Err(e), Err(d)) if kind_of(&e) == d.name() => Ok(true),
+            // a device limit docs/embedded.md states: the proof's scratch
+            // holds fewer items than the message
+            (_, Err(gt_core::Error::ScratchFull)) => skip("scratch-full: the message holds more values or list items than the proof's scratch".into()),
             (r, d) => Err(format!("decode: reference {:?}, device {:?}", r.map(|_| "ok").map_err(|e| e.msg), d)),
         };
     }
     // text to bits: the encode side, from the reference engine's model values
-    let mut ent = match p.engine.decode(&v.from, &v.input) {
+    let mut ent = match p.engine.decode_limited(&v.from, &v.input, v.max_items) {
         Ok(e) => e,
         Err(e) => return skip(format!("the text side fails to decode ({}); the bits side does not run", kind_of(&e))),
     };
@@ -240,7 +257,7 @@ fn vectors() {
     // does not have, an input that is not hex text, or a context the reference
     // engine refuses. Any other refusal of the compiler is a failure.
     let stated = |s: &String| {
-        s.contains("refused: unsupported-feature:") || s.contains("the input is not hex text")
+        s.contains("refused: unsupported-feature:") || s.contains("the input is not hex text") || s.contains("): scratch-full: ")
             || s.contains("the context is refused before the bits side runs")
     };
     let unstated: Vec<&String> = skipped.iter().filter(|s| !stated(s)).collect();
