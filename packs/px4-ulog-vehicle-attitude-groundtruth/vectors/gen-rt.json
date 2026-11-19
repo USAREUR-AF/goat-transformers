@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_attitude_groundtruth",
+  "from": "px4-ulog-vehicle-attitude-groundtruth",
+  "to": "px4-ulog-vehicle-attitude-groundtruth",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0d4",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c0d4",
+  "model": {
+    "px4ulog.vehicle_attitude_timestamp": "1700000001000003",
+    "px4ulog.vehicle_attitude_timestamp_sample": "1700000002000006",
+    "px4ulog.vehicle_attitude_q_0": "-6.875",
+    "px4ulog.vehicle_attitude_q_1": "-6.625"
+  }
+}

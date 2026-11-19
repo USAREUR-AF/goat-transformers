@@ -1,0 +1,14 @@
+{
+  "name": "rt-telemetry_status",
+  "from": "px4-ulog-telemetry-status",
+  "to": "px4-ulog-telemetry-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc05f0a4db5108484530000b4c07277f38f23f12a2ed46a62cc85e4996a365ed108000084c0984901000100be0001000100010001000100010001000100",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc05f0a4db5108484530000b4c07277f38f23f12a2ed46a62cc85e4996a365ed108000084c0984901000100be0001000100010001000100010001000100",
+  "model": {
+    "px4ulog.telemetry_status_timestamp": "1700000001000003",
+    "px4ulog.telemetry_status_data_rate": "-7.125",
+    "px4ulog.telemetry_status_rate_multiplier": "-6.875",
+    "px4ulog.telemetry_status_tx_rate_avg": "-6.625"
+  }
+}

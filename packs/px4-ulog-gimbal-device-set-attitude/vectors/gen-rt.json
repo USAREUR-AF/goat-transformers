@@ -1,0 +1,14 @@
+{
+  "name": "rt-gimbal_device_set_attitude",
+  "from": "px4-ulog-gimbal-device-set-attitude",
+  "to": "px4-ulog-gimbal-device-set-attitude",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0727723d4",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0727723d4",
+  "model": {
+    "px4ulog.gimbal_device_set_attitude_timestamp": "1700000001000003",
+    "px4ulog.gimbal_device_set_attitude_q_0": "-7.125",
+    "px4ulog.gimbal_device_set_attitude_q_1": "-6.875",
+    "px4ulog.gimbal_device_set_attitude_q_2": "-6.625"
+  }
+}

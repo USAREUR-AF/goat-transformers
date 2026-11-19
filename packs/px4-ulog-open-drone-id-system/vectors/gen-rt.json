@@ -1,0 +1,14 @@
+{
+  "name": "rt-open_drone_id_system",
+  "from": "px4-ulog-open-drone-id-system",
+  "to": "px4-ulog-open-drone-id-system",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c0180acda01800000d4c00000ccc00000c4c01084c1fd7223d48536e79849faab5c0dbe6f20d18233e49546f7a859",
+  "expect": "43822d18240a0600753c0180acda01800000d4c00000ccc00000c4c01084c1fd7223d48536e79849faab5c0dbe6f20d18233e49546f7a859",
+  "model": {
+    "px4ulog.open_drone_id_system_timestamp": "1700000001000003",
+    "px4ulog.open_drone_id_system_operator_latitude": "-2147402635",
+    "px4ulog.open_drone_id_system_operator_longitude": "-2147362132",
+    "px4ulog.open_drone_id_system_area_ceiling": "-6.625"
+  }
+}

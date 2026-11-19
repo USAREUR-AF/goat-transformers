@@ -1,0 +1,14 @@
+{
+  "name": "rt-holder",
+  "from": "px4-ulog-holder",
+  "to": "px4-ulog-holder",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600e9263108ac1c00404c9dfd74350000000000005f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b2631400010000000000adb2d31c240a0600000038c06e8feb00b9bb101d240a06000000f0bf4a08af00c5c44d1d240a0600000060bf26817300",
+  "expect": "43822d18240a0600e9263108ac1c00404c9dfd74350000000000005f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b2631400010000000000adb2d31c240a0600000038c06e8feb00b9bb101d240a06000000f0bf4a08af00c5c44d1d240a0600000060bf26817300",
+  "model": {
+    "px4ulog.holder_timestamp": "1700000001000003",
+    "px4ulog.holder_total": "2.014",
+    "px4ulog.holder_code": "40268",
+    "px4ulog.holder_count": "253"
+  }
+}

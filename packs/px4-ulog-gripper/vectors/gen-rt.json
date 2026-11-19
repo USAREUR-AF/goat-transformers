@@ -1,0 +1,12 @@
+{
+  "name": "rt-gripper",
+  "from": "px4-ulog-gripper",
+  "to": "px4-ulog-gripper",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600f5",
+  "expect": "43822d18240a0600f5",
+  "model": {
+    "px4ulog.gripper_timestamp": "1700000001000003",
+    "px4ulog.gripper_command": "-11"
+  }
+}

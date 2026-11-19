@@ -1,0 +1,14 @@
+{
+  "name": "rt-follow_target_status",
+  "from": "px4-ulog-follow-target-status",
+  "to": "px4-ulog-follow-target-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc000",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc000",
+  "model": {
+    "px4ulog.follow_target_status_timestamp": "1700000001000003",
+    "px4ulog.follow_target_status_tracked_target_course": "-7.125",
+    "px4ulog.follow_target_status_follow_angle": "-6.875",
+    "px4ulog.follow_target_status_orbit_angle_setpoint": "-6.625"
+  }
+}

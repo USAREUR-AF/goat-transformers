@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_accel",
+  "from": "px4-ulog-sensor-accel",
+  "to": "px4-ulog-sensor-accel",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc0c1fdbbf17223d485",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc0c1fdbbf17223d485",
+  "model": {
+    "px4ulog.sensor_accel_timestamp": "1700000001000003",
+    "px4ulog.sensor_accel_timestamp_sample": "1700000002000006",
+    "px4ulog.sensor_accel_device_id": "3668352332",
+    "px4ulog.sensor_accel_x": "-6.625"
+  }
+}

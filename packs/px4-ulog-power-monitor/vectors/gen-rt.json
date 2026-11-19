@@ -1,0 +1,14 @@
+{
+  "name": "rt-power_monitor",
+  "from": "px4-ulog-power-monitor",
+  "to": "px4-ulog-power-monitor",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c01a97513588d3bf71f60f2dae644c9bea",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c01a97513588d3bf71f60f2dae644c9bea",
+  "model": {
+    "px4ulog.power_monitor_timestamp": "1700000001000003",
+    "px4ulog.power_monitor_voltage_v": "-7.125",
+    "px4ulog.power_monitor_current_a": "-6.875",
+    "px4ulog.power_monitor_power_w": "-6.625"
+  }
+}

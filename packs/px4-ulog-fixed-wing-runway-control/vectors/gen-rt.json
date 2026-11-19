@@ -1,0 +1,13 @@
+{
+  "name": "rt-fixed_wing_runway_control",
+  "from": "px4-ulog-fixed-wing-runway-control",
+  "to": "px4-ulog-fixed-wing-runway-control",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c001",
+  "expect": "43822d18240a06000000e4c001",
+  "model": {
+    "px4ulog.fixed_wing_runway_control_timestamp": "1700000001000003",
+    "px4ulog.fixed_wing_runway_control_wheel_steering_nudging_rate": "-7.125",
+    "px4ulog.fixed_wing_runway_control_wheel_steering_enabled": "1"
+  }
+}

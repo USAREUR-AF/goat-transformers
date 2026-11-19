@@ -1,0 +1,14 @@
+{
+  "name": "rt-actuator_armed",
+  "from": "px4-ulog-actuator-armed",
+  "to": "px4-ulog-actuator-armed",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060000010001000100",
+  "expect": "43822d18240a060000010001000100",
+  "model": {
+    "px4ulog.actuator_armed_timestamp": "1700000001000003",
+    "px4ulog.actuator_armed_armed": "0",
+    "px4ulog.actuator_armed_prearmed": "1",
+    "px4ulog.actuator_armed_ready_to_arm": "0"
+  }
+}

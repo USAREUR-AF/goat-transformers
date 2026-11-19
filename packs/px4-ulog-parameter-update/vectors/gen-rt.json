@@ -1,0 +1,14 @@
+{
+  "name": "rt-parameter_update",
+  "from": "px4-ulog-parameter-update",
+  "to": "px4-ulog-parameter-update",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db51084c1fd7277",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db51084c1fd7277",
+  "model": {
+    "px4ulog.parameter_update_timestamp": "1700000001000003",
+    "px4ulog.parameter_update_instance": "1013916571",
+    "px4ulog.parameter_update_get_count": "3668352332",
+    "px4ulog.parameter_update_set_count": "2027820797"
+  }
+}

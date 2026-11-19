@@ -1,0 +1,14 @@
+{
+  "name": "rt-geofence_result",
+  "from": "px4-ulog-geofence-result",
+  "to": "px4-ulog-geofence-result",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600000100ae",
+  "expect": "43822d18240a0600000100ae",
+  "model": {
+    "px4ulog.geofence_result_timestamp": "1700000001000003",
+    "px4ulog.geofence_result_geofence_max_dist_triggered": "0",
+    "px4ulog.geofence_result_geofence_max_alt_triggered": "1",
+    "px4ulog.geofence_result_geofence_custom_fence_triggered": "0"
+  }
+}

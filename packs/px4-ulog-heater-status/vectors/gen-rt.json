@@ -1,0 +1,14 @@
+{
+  "name": "rt-heater_status",
+  "from": "px4-ulog-heater-status",
+  "to": "px4-ulog-heater-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c0ae9015175f0a4db50000bcc00000b4c00000acc0000185",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c0ae9015175f0a4db50000bcc00000b4c00000acc0000185",
+  "model": {
+    "px4ulog.heater_status_timestamp": "1700000001000003",
+    "px4ulog.heater_status_device_id": "1013916571",
+    "px4ulog.heater_status_temperature_sensor": "-6.875",
+    "px4ulog.heater_status_temperature_target": "-6.625"
+  }
+}

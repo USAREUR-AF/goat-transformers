@@ -1,0 +1,14 @@
+{
+  "name": "rt-manual_control_switches",
+  "from": "px4-ulog-manual-control-switches",
+  "to": "px4-ulog-manual-control-switches",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6dafdae5f10c17223d48536e79849",
+  "expect": "43822d18240a060086c43c18240a06004c9da6dafdae5f10c17223d48536e79849",
+  "model": {
+    "px4ulog.manual_control_switches_timestamp": "1700000001000003",
+    "px4ulog.manual_control_switches_timestamp_sample": "1700000002000006",
+    "px4ulog.manual_control_switches_switch_changes": "3668352332",
+    "px4ulog.manual_control_switches_mode_slot": "253"
+  }
+}

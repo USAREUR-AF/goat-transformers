@@ -1,0 +1,12 @@
+{
+  "name": "rt-distance_sensor_mode_change_request",
+  "from": "px4-ulog-distance-sensor-mode-change-request",
+  "to": "px4-ulog-distance-sensor-mode-change-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b",
+  "expect": "43822d18240a06009b",
+  "model": {
+    "px4ulog.distance_sensor_mode_change_request_timestamp": "1700000001000003",
+    "px4ulog.distance_sensor_mode_change_request_request_on_off": "155"
+  }
+}

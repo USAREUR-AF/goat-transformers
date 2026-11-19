@@ -1,0 +1,12 @@
+{
+  "name": "rt-flaps_setpoint",
+  "from": "px4-ulog-flaps-setpoint",
+  "to": "px4-ulog-flaps-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c0",
+  "expect": "43822d18240a06000000e4c0",
+  "model": {
+    "px4ulog.normalized_unsigned_setpoint_timestamp": "1700000001000003",
+    "px4ulog.normalized_unsigned_setpoint_normalized_setpoint": "-7.125"
+  }
+}

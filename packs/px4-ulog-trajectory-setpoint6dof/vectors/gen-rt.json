@@ -1,0 +1,14 @@
+{
+  "name": "rt-trajectory_setpoint6dof",
+  "from": "px4-ulog-trajectory-setpoint6dof",
+  "to": "px4-ulog-trajectory-setpoint6dof",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0",
+  "model": {
+    "px4ulog.trajectory_setpoint6dof_timestamp": "1700000001000003",
+    "px4ulog.trajectory_setpoint6dof_position_0": "-7.125",
+    "px4ulog.trajectory_setpoint6dof_position_1": "-6.875",
+    "px4ulog.trajectory_setpoint6dof_position_2": "-6.625"
+  }
+}

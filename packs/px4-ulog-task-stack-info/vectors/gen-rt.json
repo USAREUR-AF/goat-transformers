@@ -1,0 +1,13 @@
+{
+  "name": "rt-task_stack_info",
+  "from": "px4-ulog-task-stack-info",
+  "to": "px4-ulog-task-stack-info",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b23743300000000000000000000000000000000000000000000",
+  "expect": "43822d18240a06009b23743300000000000000000000000000000000000000000000",
+  "model": {
+    "px4ulog.task_stack_info_timestamp": "1700000001000003",
+    "px4ulog.task_stack_info_stack_free": "9115",
+    "px4ulog.task_stack_info_task_name": "t3"
+  }
+}

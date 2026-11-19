@@ -1,0 +1,9 @@
+# Fused global position in WGS84 (test copy).
+uint32 MESSAGE_VERSION = 0
+uint64 timestamp
+float64 lat
+float64 lon
+float32 alt
+bool lat_lon_valid
+uint8 reset_counter
+# TOPICS vehicle_global_position estimator_global_position

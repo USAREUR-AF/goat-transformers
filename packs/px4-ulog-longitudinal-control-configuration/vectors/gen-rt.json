@@ -1,0 +1,14 @@
+{
+  "name": "rt-longitudinal_control_configuration",
+  "from": "px4-ulog-longitudinal-control-configuration",
+  "to": "px4-ulog-longitudinal-control-configuration",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00100",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00100",
+  "model": {
+    "px4ulog.longitudinal_control_configuration_timestamp": "1700000001000003",
+    "px4ulog.longitudinal_control_configuration_pitch_min": "-7.125",
+    "px4ulog.longitudinal_control_configuration_pitch_max": "-6.875",
+    "px4ulog.longitudinal_control_configuration_throttle_min": "-6.625"
+  }
+}

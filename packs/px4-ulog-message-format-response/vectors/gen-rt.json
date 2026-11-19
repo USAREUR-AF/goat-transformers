@@ -1,0 +1,14 @@
+{
+  "name": "rt-message_format_response",
+  "from": "px4-ulog-message-format-response",
+  "to": "px4-ulog-message-format-response",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9d743400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+  "expect": "43822d18240a06009b236f3c4c9d743400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+  "model": {
+    "px4ulog.message_format_response_timestamp": "1700000001000003",
+    "px4ulog.message_format_response_message_hash": "1013916571",
+    "px4ulog.message_format_response_protocol_version": "40268",
+    "px4ulog.message_format_response_topic_name": "t4"
+  }
+}

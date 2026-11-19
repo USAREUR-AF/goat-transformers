@@ -1,0 +1,14 @@
+{
+  "name": "rt-ulog_stream",
+  "from": "px4-ulog-ulog-stream",
+  "to": "px4-ulog-ulog-stream",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b234cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbac5d0ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2edf9041f2a35405b66718c97a2bdc8d3eefa05102b36415c67728d98a3bec9d4effb06112c37425d68738e99a4bfcad5e0fc07122d38435e69748f9aa5b0cbd6e1fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d7",
+  "expect": "43822d18240a06009b234cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbac5d0ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2edf9041f2a35405b66718c97a2bdc8d3eefa05102b36415c67728d98a3bec9d4effb06112c37425d68738e99a4bfcad5e0fc07122d38435e69748f9aa5b0cbd6e1fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d7",
+  "model": {
+    "px4ulog.ulog_stream_timestamp": "1700000001000003",
+    "px4ulog.ulog_stream_msg_sequence": "9115",
+    "px4ulog.ulog_stream_length": "76",
+    "px4ulog.ulog_stream_first_message_offset": "253"
+  }
+}

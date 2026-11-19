@@ -1,0 +1,14 @@
+{
+  "name": "rt-rtl_status",
+  "from": "px4-ulog-rtl-status",
+  "to": "px4-ulog-rtl-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0100ae5f",
+  "expect": "43822d18240a06009b236f3c0100ae5f",
+  "model": {
+    "px4ulog.rtl_status_timestamp": "1700000001000003",
+    "px4ulog.rtl_status_safe_points_id": "1013916571",
+    "px4ulog.rtl_status_is_evaluation_pending": "1",
+    "px4ulog.rtl_status_has_vtol_approach": "0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-radio_status",
+  "from": "px4-ulog-radio-status",
+  "to": "px4-ulog-radio-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b234c9dfdae5f10c1",
+  "expect": "43822d18240a06009b234c9dfdae5f10c1",
+  "model": {
+    "px4ulog.radio_status_timestamp": "1700000001000003",
+    "px4ulog.radio_status_rxerrors": "9115",
+    "px4ulog.radio_status_fix": "40268",
+    "px4ulog.radio_status_rssi": "253"
+  }
+}

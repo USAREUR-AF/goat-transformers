@@ -1,0 +1,14 @@
+{
+  "name": "rt-internal_combustion_engine_control",
+  "from": "px4-ulog-internal-combustion-engine-control",
+  "to": "px4-ulog-internal-combustion-engine-control",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c0015f",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c0015f",
+  "model": {
+    "px4ulog.internal_combustion_engine_control_timestamp": "1700000001000003",
+    "px4ulog.internal_combustion_engine_control_throttle_control": "-7.125",
+    "px4ulog.internal_combustion_engine_control_choke_control": "-6.875",
+    "px4ulog.internal_combustion_engine_control_starter_engine_control": "-6.625"
+  }
+}

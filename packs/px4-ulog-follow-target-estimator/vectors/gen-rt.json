@@ -1,0 +1,14 @@
+{
+  "name": "rt-follow_target_estimator",
+  "from": "px4-ulog-follow-target-estimator",
+  "to": "px4-ulog-follow-target-estimator",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06005eba490c022b08c0e9263108ac1c10404f8b6a18240a060092cd7918240a06000000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c00100",
+  "expect": "43822d18240a060086c43c18240a06005eba490c022b08c0e9263108ac1c10404f8b6a18240a060092cd7918240a06000000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c00100",
+  "model": {
+    "px4ulog.follow_target_estimator_timestamp": "1700000001000003",
+    "px4ulog.follow_target_estimator_last_filter_reset_timestamp": "1700000002000006",
+    "px4ulog.follow_target_estimator_lat_est": "-3.021",
+    "px4ulog.follow_target_estimator_lon_est": "4.028"
+  }
+}

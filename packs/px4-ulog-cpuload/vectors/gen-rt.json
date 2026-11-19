@@ -1,0 +1,13 @@
+{
+  "name": "rt-cpuload",
+  "from": "px4-ulog-cpuload",
+  "to": "px4-ulog-cpuload",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc0",
+  "expect": "43822d18240a06000000e4c00000dcc0",
+  "model": {
+    "px4ulog.cpuload_timestamp": "1700000001000003",
+    "px4ulog.cpuload_load": "-7.125",
+    "px4ulog.cpuload_ram_usage": "-6.875"
+  }
+}

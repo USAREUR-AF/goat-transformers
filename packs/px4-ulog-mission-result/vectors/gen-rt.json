@@ -1,0 +1,14 @@
+{
+  "name": "rt-mission_result",
+  "from": "px4-ulog-mission-result",
+  "to": "px4-ulog-mission-result",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16de781a1703805f0a1084c1fd7277000100010098",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16de781a1703805f0a1084c1fd7277000100010098",
+  "model": {
+    "px4ulog.mission_result_timestamp": "1700000001000003",
+    "px4ulog.mission_result_mission_id": "1013916571",
+    "px4ulog.mission_result_geofence_id": "3668352332",
+    "px4ulog.mission_result_home_position_counter": "2027820797"
+  }
+}

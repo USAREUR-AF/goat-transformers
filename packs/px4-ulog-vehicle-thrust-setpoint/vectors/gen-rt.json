@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_thrust_setpoint",
+  "from": "px4-ulog-vehicle-thrust-setpoint",
+  "to": "px4-ulog-vehicle-thrust-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc0",
+  "expect": "43822d18240a060086c43c18240a06000000dcc00000d4c00000ccc0",
+  "model": {
+    "px4ulog.vehicle_thrust_setpoint_timestamp": "1700000001000003",
+    "px4ulog.vehicle_thrust_setpoint_timestamp_sample": "1700000002000006",
+    "px4ulog.vehicle_thrust_setpoint_xyz_0": "-6.875",
+    "px4ulog.vehicle_thrust_setpoint_xyz_1": "-6.625"
+  }
+}

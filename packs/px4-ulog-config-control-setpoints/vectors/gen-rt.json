@@ -1,0 +1,14 @@
+{
+  "name": "rt-config_control_setpoints",
+  "from": "px4-ulog-config-control-setpoints",
+  "to": "px4-ulog-config-control-setpoints",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600000100010001000100010001000149",
+  "expect": "43822d18240a0600000100010001000100010001000149",
+  "model": {
+    "px4ulog.vehicle_control_mode_timestamp": "1700000001000003",
+    "px4ulog.vehicle_control_mode_flag_armed": "0",
+    "px4ulog.vehicle_control_mode_flag_multicopter_position_control_enabled": "1",
+    "px4ulog.vehicle_control_mode_flag_control_manual_enabled": "0"
+  }
+}

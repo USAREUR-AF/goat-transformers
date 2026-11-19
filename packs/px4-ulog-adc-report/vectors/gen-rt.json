@@ -1,0 +1,14 @@
+{
+  "name": "rt-adc_report",
+  "from": "px4-ulog-adc-report",
+  "to": "px4-ulog-adc-report",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3cacda0180e37802801a17038051b5038088530480bff10480f68f05802d2e068064cc06809b6a0780d208088009a7088098514045000068c0ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce",
+  "expect": "43822d18240a06009b236f3cacda0180e37802801a17038051b5038088530480bff10480f68f05802d2e068064cc06809b6a0780d208088009a7088098514045000068c0ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce",
+  "model": {
+    "px4ulog.adc_report_timestamp": "1700000001000003",
+    "px4ulog.adc_report_device_id": "1013916571",
+    "px4ulog.adc_report_raw_data_0": "-2147362132",
+    "px4ulog.adc_report_raw_data_1": "-2147321629"
+  }
+}

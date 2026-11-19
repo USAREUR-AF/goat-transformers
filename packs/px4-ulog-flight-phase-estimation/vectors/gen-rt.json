@@ -1,0 +1,12 @@
+{
+  "name": "rt-flight_phase_estimation",
+  "from": "px4-ulog-flight-phase-estimation",
+  "to": "px4-ulog-flight-phase-estimation",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b",
+  "expect": "43822d18240a06009b",
+  "model": {
+    "px4ulog.flight_phase_estimation_timestamp": "1700000001000003",
+    "px4ulog.flight_phase_estimation_flight_phase": "155"
+  }
+}

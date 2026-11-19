@@ -1,0 +1,13 @@
+{
+  "name": "rt-mode_completed",
+  "from": "px4-ulog-mode-completed",
+  "to": "px4-ulog-mode-completed",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b4c",
+  "expect": "43822d18240a06009b4c",
+  "model": {
+    "px4ulog.mode_completed_timestamp": "1700000001000003",
+    "px4ulog.mode_completed_result": "155",
+    "px4ulog.mode_completed_nav_state": "76"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-debug_key_value",
+  "from": "px4-ulog-debug-key-value",
+  "to": "px4-ulog-debug-key-value",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c074330000000000000000",
+  "expect": "43822d18240a06000000e4c074330000000000000000",
+  "model": {
+    "px4ulog.debug_key_value_timestamp": "1700000001000003",
+    "px4ulog.debug_key_value_value": "-7.125",
+    "px4ulog.debug_key_value_key": "t3"
+  }
+}

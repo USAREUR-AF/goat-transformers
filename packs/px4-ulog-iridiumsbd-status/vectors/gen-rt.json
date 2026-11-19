@@ -1,0 +1,14 @@
+{
+  "name": "rt-iridiumsbd_status",
+  "from": "px4-ulog-iridiumsbd-status",
+  "to": "px4-ulog-iridiumsbd-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9dfd16ae905f0a1084c1fd72230100010001",
+  "expect": "43822d18240a060086c43c18240a06004c9dfd16ae905f0a1084c1fd72230100010001",
+  "model": {
+    "px4ulog.iridiumsbd_status_timestamp": "1700000001000003",
+    "px4ulog.iridiumsbd_status_last_at_ok_timestamp": "1700000002000006",
+    "px4ulog.iridiumsbd_status_tx_buf_write_index": "40268",
+    "px4ulog.iridiumsbd_status_rx_buf_read_index": "5885"
+  }
+}

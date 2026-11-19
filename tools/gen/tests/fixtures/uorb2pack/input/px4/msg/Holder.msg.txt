@@ -1,0 +1,10 @@
+# A topic with a nested array, a long array, a char array and a nested type last.
+uint64 timestamp
+uint8 count
+Item[2] items
+char[8] label
+uint16 code
+uint8[70] blob
+bool[3] flags
+float64 total
+Item last

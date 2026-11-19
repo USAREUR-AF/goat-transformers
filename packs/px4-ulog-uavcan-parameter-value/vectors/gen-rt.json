@@ -1,0 +1,14 @@
+{
+  "name": "rt-uavcan_parameter_value",
+  "from": "px4-ulog-uavcan-parameter-value",
+  "to": "px4-ulog-uavcan-parameter-value",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06007a7be1ffffffffff0000dcc0e3f8ae905f7437000000000000000000000000000000c1",
+  "expect": "43822d18240a06007a7be1ffffffffff0000dcc0e3f8ae905f7437000000000000000000000000000000c1",
+  "model": {
+    "px4ulog.uavcan_parameter_value_timestamp": "1700000001000003",
+    "px4ulog.uavcan_parameter_value_int_value": "-2000006",
+    "px4ulog.uavcan_parameter_value_real_value": "-6.875",
+    "px4ulog.uavcan_parameter_value_param_index": "-1821"
+  }
+}

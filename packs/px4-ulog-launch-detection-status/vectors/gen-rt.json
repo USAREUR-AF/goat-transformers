@@ -1,0 +1,12 @@
+{
+  "name": "rt-launch_detection_status",
+  "from": "px4-ulog-launch-detection-status",
+  "to": "px4-ulog-launch-detection-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b",
+  "expect": "43822d18240a06009b",
+  "model": {
+    "px4ulog.launch_detection_status_timestamp": "1700000001000003",
+    "px4ulog.launch_detection_status_launch_detection_state": "155"
+  }
+}

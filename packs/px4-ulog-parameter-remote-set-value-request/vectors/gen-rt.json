@@ -1,0 +1,14 @@
+{
+  "name": "rt-parameter_remote_set_value_request",
+  "from": "px4-ulog-parameter-remote-set-value-request",
+  "to": "px4-ulog-parameter-remote-set-value-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c01800000dcc0fd16",
+  "expect": "43822d18240a0600753c01800000dcc0fd16",
+  "model": {
+    "px4ulog.parameter_set_value_request_timestamp": "1700000001000003",
+    "px4ulog.parameter_set_value_request_int_value": "-2147402635",
+    "px4ulog.parameter_set_value_request_float_value": "-6.875",
+    "px4ulog.parameter_set_value_request_parameter_index": "5885"
+  }
+}

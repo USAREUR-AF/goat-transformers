@@ -1,0 +1,14 @@
+{
+  "name": "rt-orb_test_medium_multi",
+  "from": "px4-ulog-orb-test-medium-multi",
+  "to": "px4-ulog-orb-test-medium-multi",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c01804cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb",
+  "expect": "43822d18240a0600753c01804cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e19243f4a55607b8691acb7c2dde8f40f1a25304b56617c8792adb",
+  "model": {
+    "px4ulog.orb_test_medium_timestamp": "1700000001000003",
+    "px4ulog.orb_test_medium_val": "-2147402635",
+    "px4ulog.orb_test_medium_junk_0": "76",
+    "px4ulog.orb_test_medium_junk_1": "253"
+  }
+}

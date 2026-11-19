@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_status",
+  "from": "px4-ulog-vehicle-status",
+  "to": "px4-ulog-vehicle-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a0600ae9015175f0a4db51084c17223d48536e7980001ab010d010001000133e4950100010001000100010001",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a06000c495b18240a0600ae9015175f0a4db51084c17223d48536e7980001ab010d010001000133e4950100010001000100010001",
+  "model": {
+    "px4ulog.vehicle_status_timestamp": "1700000001000003",
+    "px4ulog.vehicle_status_armed_time": "1700000002000006",
+    "px4ulog.vehicle_status_takeoff_time": "1700000003000009",
+    "px4ulog.vehicle_status_nav_state_timestamp": "1700000004000012"
+  }
+}

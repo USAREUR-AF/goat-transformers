@@ -1,0 +1,14 @@
+{
+  "name": "rt-onboard_computer_status",
+  "from": "px4-ulog-onboard-computer-status",
+  "to": "px4-ulog-onboard-computer-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed46a62cc85e4996a365ed108e7d708a79851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe2b8dfa6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade25643271af5f4a05193a51a89315694c0cf070ef86d208c572a8ec8c5667c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c93ca01386fa6dd144b",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed46a62cc85e4996a365ed108e7d708a79851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe2b8dfa6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade25643271af5f4a05193a51a89315694c0cf070ef86d208c572a8ec8c5667c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c93ca01386fa6dd144b",
+  "model": {
+    "px4ulog.onboard_computer_status_timestamp": "1700000001000003",
+    "px4ulog.onboard_computer_status_uptime": "1013916571",
+    "px4ulog.onboard_computer_status_ram_usage": "3668352332",
+    "px4ulog.onboard_computer_status_ram_total": "2027820797"
+  }
+}

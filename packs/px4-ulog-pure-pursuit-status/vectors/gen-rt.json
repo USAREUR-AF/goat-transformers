@@ -1,0 +1,14 @@
+{
+  "name": "rt-pure_pursuit_status",
+  "from": "px4-ulog-pure-pursuit-status",
+  "to": "px4-ulog-pure-pursuit-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c0",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c0",
+  "model": {
+    "px4ulog.pure_pursuit_status_timestamp": "1700000001000003",
+    "px4ulog.pure_pursuit_status_lookahead_distance": "-7.125",
+    "px4ulog.pure_pursuit_status_target_bearing": "-6.875",
+    "px4ulog.pure_pursuit_status_crosstrack_error": "-6.625"
+  }
+}

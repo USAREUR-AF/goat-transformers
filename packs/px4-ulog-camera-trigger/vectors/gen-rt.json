@@ -1,0 +1,14 @@
+{
+  "name": "rt-camera_trigger",
+  "from": "px4-ulog-camera-trigger",
+  "to": "px4-ulog-camera-trigger",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da00",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da00",
+  "model": {
+    "px4ulog.camera_trigger_timestamp": "1700000001000003",
+    "px4ulog.camera_trigger_timestamp_utc": "1700000002000006",
+    "px4ulog.camera_trigger_seq": "3668352332",
+    "px4ulog.camera_trigger_feedback": "0"
+  }
+}

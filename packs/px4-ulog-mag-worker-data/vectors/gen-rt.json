@@ -1,0 +1,14 @@
+{
+  "name": "rt-mag_worker_data",
+  "from": "px4-ulog-mag-worker-data",
+  "to": "px4-ulog-mag-worker-data",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de78ae9015175f0a4db510848453c1fdbbf17277f38f0000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c000010001",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a0600fd16de78ae9015175f0a4db510848453c1fdbbf17277f38f0000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c000010001",
+  "model": {
+    "px4ulog.mag_worker_data_timestamp": "1700000001000003",
+    "px4ulog.mag_worker_data_timestamp_sample": "1700000002000006",
+    "px4ulog.mag_worker_data_calibration_interval_perside_us": "1700000003000009",
+    "px4ulog.mag_worker_data_done_count": "2027820797"
+  }
+}

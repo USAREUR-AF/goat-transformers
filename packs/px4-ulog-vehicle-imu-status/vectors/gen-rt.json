@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_imu_status",
+  "from": "px4-ulog-vehicle-imu-status",
+  "to": "px4-ulog-vehicle-imu-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed46a62cc000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e",
+  "expect": "43822d18240a06009b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed46a62cc000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e",
+  "model": {
+    "px4ulog.vehicle_imu_status_timestamp": "1700000001000003",
+    "px4ulog.vehicle_imu_status_accel_device_id": "1013916571",
+    "px4ulog.vehicle_imu_status_gyro_device_id": "3668352332",
+    "px4ulog.vehicle_imu_status_accel_clipping_0": "2027820797"
+  }
+}

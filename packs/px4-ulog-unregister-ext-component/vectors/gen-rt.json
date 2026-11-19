@@ -1,0 +1,14 @@
+{
+  "name": "rt-unregister_ext_component",
+  "from": "px4-ulog-unregister-ext-component",
+  "to": "px4-ulog-unregister-ext-component",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600743200000000000000000000000000000000000000000000002c639a",
+  "expect": "43822d18240a0600743200000000000000000000000000000000000000000000002c639a",
+  "model": {
+    "px4ulog.unregister_ext_component_timestamp": "1700000001000003",
+    "px4ulog.unregister_ext_component_name": "t2",
+    "px4ulog.unregister_ext_component_arming_check_id": "44",
+    "px4ulog.unregister_ext_component_mode_id": "99"
+  }
+}

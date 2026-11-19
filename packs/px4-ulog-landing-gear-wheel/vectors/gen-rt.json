@@ -1,0 +1,12 @@
+{
+  "name": "rt-landing_gear_wheel",
+  "from": "px4-ulog-landing-gear-wheel",
+  "to": "px4-ulog-landing-gear-wheel",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c0",
+  "expect": "43822d18240a06000000e4c0",
+  "model": {
+    "px4ulog.landing_gear_wheel_timestamp": "1700000001000003",
+    "px4ulog.landing_gear_wheel_normalized_wheel_setpoint": "-7.125"
+  }
+}

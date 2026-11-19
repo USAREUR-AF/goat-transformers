@@ -1,0 +1,13 @@
+{
+  "name": "rt-arming_check_request",
+  "from": "px4-ulog-arming-check-request",
+  "to": "px4-ulog-arming-check-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4c",
+  "expect": "43822d18240a06009b236f3c4c",
+  "model": {
+    "px4ulog.arming_check_request_timestamp": "1700000001000003",
+    "px4ulog.arming_check_request_valid_registrations_mask": "1013916571",
+    "px4ulog.arming_check_request_request_id": "76"
+  }
+}

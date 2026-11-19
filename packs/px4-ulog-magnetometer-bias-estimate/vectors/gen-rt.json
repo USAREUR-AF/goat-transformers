@@ -1,0 +1,14 @@
+{
+  "name": "rt-magnetometer_bias_estimate",
+  "from": "px4-ulog-magnetometer-bias-estimate",
+  "to": "px4-ulog-magnetometer-bias-estimate",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc00001000100010001",
+  "expect": "43822d18240a06000000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc00001000100010001",
+  "model": {
+    "px4ulog.magnetometer_bias_estimate_timestamp": "1700000001000003",
+    "px4ulog.magnetometer_bias_estimate_bias_x_0": "-7.125",
+    "px4ulog.magnetometer_bias_estimate_bias_x_1": "-6.875",
+    "px4ulog.magnetometer_bias_estimate_bias_x_2": "-6.625"
+  }
+}

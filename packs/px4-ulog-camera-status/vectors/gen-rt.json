@@ -1,0 +1,13 @@
+{
+  "name": "rt-camera_status",
+  "from": "px4-ulog-camera-status",
+  "to": "px4-ulog-camera-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b4c",
+  "expect": "43822d18240a06009b4c",
+  "model": {
+    "px4ulog.camera_status_timestamp": "1700000001000003",
+    "px4ulog.camera_status_active_sys_id": "155",
+    "px4ulog.camera_status_active_comp_id": "76"
+  }
+}

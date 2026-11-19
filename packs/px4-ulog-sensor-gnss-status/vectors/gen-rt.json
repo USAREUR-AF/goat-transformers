@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_gnss_status",
+  "from": "px4-ulog-sensor-gnss-status",
+  "to": "px4-ulog-sensor-gnss-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c01fdae5f10",
+  "expect": "43822d18240a06009b236f3c01fdae5f10",
+  "model": {
+    "px4ulog.sensor_gnss_status_timestamp": "1700000001000003",
+    "px4ulog.sensor_gnss_status_device_id": "1013916571",
+    "px4ulog.sensor_gnss_status_quality_available": "1",
+    "px4ulog.sensor_gnss_status_quality_corrections": "253"
+  }
+}

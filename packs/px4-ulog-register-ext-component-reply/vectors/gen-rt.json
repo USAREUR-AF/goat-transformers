@@ -1,0 +1,14 @@
+{
+  "name": "rt-register_ext_component_reply",
+  "from": "px4-ulog-register-ext-component-reply",
+  "to": "px4-ulog-register-ext-component-reply",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9d7434000000000000000000000000000000000000000000000001d1083f",
+  "expect": "43822d18240a060086c43c18240a06004c9d7434000000000000000000000000000000000000000000000001d1083f",
+  "model": {
+    "px4ulog.register_ext_component_reply_timestamp": "1700000001000003",
+    "px4ulog.register_ext_component_reply_request_id": "1700000002000006",
+    "px4ulog.register_ext_component_reply_px4_ros2_api_version": "40268",
+    "px4ulog.register_ext_component_reply_name": "t4"
+  }
+}

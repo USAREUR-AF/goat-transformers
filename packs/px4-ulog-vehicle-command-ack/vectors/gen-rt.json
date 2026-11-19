@@ -1,0 +1,14 @@
+{
+  "name": "rt-vehicle_command_ack",
+  "from": "px4-ulog-vehicle-command-ack",
+  "to": "px4-ulog-vehicle-command-ack",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3cacda0180fd16ae5f1000",
+  "expect": "43822d18240a06009b236f3cacda0180fd16ae5f1000",
+  "model": {
+    "px4ulog.vehicle_command_ack_timestamp": "1700000001000003",
+    "px4ulog.vehicle_command_ack_command": "1013916571",
+    "px4ulog.vehicle_command_ack_result_param2": "-2147362132",
+    "px4ulog.vehicle_command_ack_target_component": "5885"
+  }
+}

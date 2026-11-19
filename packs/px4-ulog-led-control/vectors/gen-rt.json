@@ -1,0 +1,14 @@
+{
+  "name": "rt-led_control",
+  "from": "px4-ulog-led-control",
+  "to": "px4-ulog-led-control",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b4cfdae5f",
+  "expect": "43822d18240a06009b4cfdae5f",
+  "model": {
+    "px4ulog.led_control_timestamp": "1700000001000003",
+    "px4ulog.led_control_led_mask": "155",
+    "px4ulog.led_control_color": "76",
+    "px4ulog.led_control_mode": "253"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-transponder_report",
+  "from": "px4-ulog-transponder-report",
+  "to": "px4-ulog-transponder-report",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c0fd16de780000ccc00000c4c00000bcc00000b4c0727723f1d474313200000000000036e79849faab5c0dbe6f20d18233e49546f7a859",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c0fd16de780000ccc00000c4c00000bcc00000b4c0727723f1d474313200000000000036e79849faab5c0dbe6f20d18233e49546f7a859",
+  "model": {
+    "px4ulog.transponder_report_timestamp": "1700000001000003",
+    "px4ulog.transponder_report_lat": "2.014",
+    "px4ulog.transponder_report_lon": "-3.021",
+    "px4ulog.transponder_report_icao_address": "2027820797"
+  }
+}

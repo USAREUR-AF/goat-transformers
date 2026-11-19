@@ -1,0 +1,14 @@
+{
+  "name": "rt-sensor_airflow",
+  "from": "px4-ulog-sensor-airflow",
+  "to": "px4-ulog-sensor-airflow",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c0ae",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c0ae",
+  "model": {
+    "px4ulog.sensor_airflow_timestamp": "1700000001000003",
+    "px4ulog.sensor_airflow_device_id": "1013916571",
+    "px4ulog.sensor_airflow_speed": "-6.875",
+    "px4ulog.sensor_airflow_direction": "-6.625"
+  }
+}

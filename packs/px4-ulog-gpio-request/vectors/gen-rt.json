@@ -1,0 +1,12 @@
+{
+  "name": "rt-gpio_request",
+  "from": "px4-ulog-gpio-request",
+  "to": "px4-ulog-gpio-request",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c",
+  "expect": "43822d18240a06009b236f3c",
+  "model": {
+    "px4ulog.gpio_request_timestamp": "1700000001000003",
+    "px4ulog.gpio_request_device_id": "1013916571"
+  }
+}

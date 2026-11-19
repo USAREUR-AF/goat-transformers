@@ -1,0 +1,14 @@
+{
+  "name": "rt-mission",
+  "from": "px4-ulog-mission",
+  "to": "px4-ulog-mission",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c0180acda0180e3780280ae9015175f0a4db510848453c1fd7223d4",
+  "expect": "43822d18240a0600753c0180acda0180e3780280ae9015175f0a4db510848453c1fd7223d4",
+  "model": {
+    "px4ulog.mission_timestamp": "1700000001000003",
+    "px4ulog.mission_current_seq": "-2147402635",
+    "px4ulog.mission_land_start_index": "-2147362132",
+    "px4ulog.mission_land_index": "-2147321629"
+  }
+}

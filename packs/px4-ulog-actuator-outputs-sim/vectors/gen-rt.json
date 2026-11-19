@@ -1,0 +1,14 @@
+{
+  "name": "rt-actuator_outputs_sim",
+  "from": "px4-ulog-actuator-outputs-sim",
+  "to": "px4-ulog-actuator-outputs-sim",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0",
+  "expect": "43822d18240a06009b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0",
+  "model": {
+    "px4ulog.actuator_outputs_timestamp": "1700000001000003",
+    "px4ulog.actuator_outputs_noutputs": "1013916571",
+    "px4ulog.actuator_outputs_output_0": "-6.875",
+    "px4ulog.actuator_outputs_output_1": "-6.625"
+  }
+}

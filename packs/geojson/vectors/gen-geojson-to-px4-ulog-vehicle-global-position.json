@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-px4-ulog-vehicle-global-position",
+  "from": "geojson",
+  "to": "px4-ulog-vehicle-global-position",
+  "source": "tools/gen/uorb2pack.py: only lat and lon have a line; every other byte is zero (absent fields write nothing); hae, uid and callsign have no line",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
+  "expect": "000000000000000000000000000000000000000000a0474000000000000021400000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "lat": "47.25",
+    "lon": "8.5"
+  }
+}

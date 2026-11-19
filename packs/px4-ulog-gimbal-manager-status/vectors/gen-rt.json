@@ -1,0 +1,14 @@
+{
+  "name": "rt-gimbal_manager_status",
+  "from": "px4-ulog-gimbal-manager-status",
+  "to": "px4-ulog-gimbal-manager-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06009b236f3c4cfdae5f10",
+  "expect": "43822d18240a06009b236f3c4cfdae5f10",
+  "model": {
+    "px4ulog.gimbal_manager_status_timestamp": "1700000001000003",
+    "px4ulog.gimbal_manager_status_flags": "1013916571",
+    "px4ulog.gimbal_manager_status_gimbal_device_id": "76",
+    "px4ulog.gimbal_manager_status_primary_control_sysid": "253"
+  }
+}

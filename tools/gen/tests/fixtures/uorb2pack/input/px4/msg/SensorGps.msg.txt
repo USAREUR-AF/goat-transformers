@@ -1,0 +1,6 @@
+# GPS position in WGS84 coordinates (test copy).
+uint64 timestamp
+float64 latitude_deg		# Latitude in degrees
+float64 longitude_deg		# Longitude in degrees
+float32 altitude_msl_m
+uint8 fix_type

@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_status",
+  "from": "px4-ulog-estimator-status",
+  "to": "px4-ulog-estimator-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a0600c9064c18240a06000000d4c00000ccc00000c4c0108484530000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0abbee61f5c381ebe0db2555cbe2b8dfa000008c00000f0bf0000d0bf0000b0bf338ce4059546f7a85901000100010030e1",
+  "expect": "43822d18240a060086c43c18240a0600c9064c18240a06000000d4c00000ccc00000c4c0108484530000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0abbee61f5c381ebe0db2555cbe2b8dfa000008c00000f0bf0000d0bf0000b0bf338ce4059546f7a85901000100010030e1",
+  "model": {
+    "px4ulog.estimator_status_timestamp": "1700000001000003",
+    "px4ulog.estimator_status_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_status_control_mode_flags": "1700000003000009",
+    "px4ulog.estimator_status_output_tracking_error_0": "-6.625"
+  }
+}

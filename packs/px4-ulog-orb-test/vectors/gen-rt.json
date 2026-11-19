@@ -1,0 +1,12 @@
+{
+  "name": "rt-orb_test",
+  "from": "px4-ulog-orb-test",
+  "to": "px4-ulog-orb-test",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600753c0180",
+  "expect": "43822d18240a0600753c0180",
+  "model": {
+    "px4ulog.orb_test_timestamp": "1700000001000003",
+    "px4ulog.orb_test_val": "-2147402635"
+  }
+}

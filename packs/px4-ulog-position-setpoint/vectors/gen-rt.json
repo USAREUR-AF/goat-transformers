@@ -1,0 +1,14 @@
+{
+  "name": "rt-position_setpoint",
+  "from": "px4-ulog-position-setpoint",
+  "to": "px4-ulog-position-setpoint",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c000fa005c00",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c000fa005c00",
+  "model": {
+    "px4ulog.position_setpoint_timestamp": "1700000001000003",
+    "px4ulog.position_setpoint_lat": "2.014",
+    "px4ulog.position_setpoint_lon": "-3.021",
+    "px4ulog.position_setpoint_vx": "-6.625"
+  }
+}

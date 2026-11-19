@@ -1,0 +1,14 @@
+{
+  "name": "rt-position_controller_landing_status",
+  "from": "px4-ulog-position-controller-landing-status",
+  "to": "px4-ulog-position-controller-landing-status",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c001fd",
+  "expect": "43822d18240a06000000e4c001fd",
+  "model": {
+    "px4ulog.position_controller_landing_status_timestamp": "1700000001000003",
+    "px4ulog.position_controller_landing_status_lateral_touchdown_offset": "-7.125",
+    "px4ulog.position_controller_landing_status_flaring": "1",
+    "px4ulog.position_controller_landing_status_abort_status": "253"
+  }
+}

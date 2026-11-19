@@ -1,0 +1,12 @@
+{
+  "name": "rt-sensor_preflight_mag",
+  "from": "px4-ulog-sensor-preflight-mag",
+  "to": "px4-ulog-sensor-preflight-mag",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a06000000e4c0",
+  "expect": "43822d18240a06000000e4c0",
+  "model": {
+    "px4ulog.sensor_preflight_mag_timestamp": "1700000001000003",
+    "px4ulog.sensor_preflight_mag_mag_inconsistency_angle": "-7.125"
+  }
+}

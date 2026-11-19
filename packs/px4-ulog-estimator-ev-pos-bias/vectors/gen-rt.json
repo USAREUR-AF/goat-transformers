@@ -1,0 +1,14 @@
+{
+  "name": "rt-estimator_ev_pos_bias",
+  "from": "px4-ulog-estimator-ev-pos-bias",
+  "to": "px4-ulog-estimator-ev-pos-bias",
+  "source": "tools/gen/uorb2pack.py: values chosen by the generator, written by its serializer at the offsets of the layout rule; padding zero",
+  "input": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0",
+  "expect": "43822d18240a060086c43c18240a06004c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0",
+  "model": {
+    "px4ulog.estimator_bias3d_timestamp": "1700000001000003",
+    "px4ulog.estimator_bias3d_timestamp_sample": "1700000002000006",
+    "px4ulog.estimator_bias3d_device_id": "3668352332",
+    "px4ulog.estimator_bias3d_bias_0": "-6.625"
+  }
+}
