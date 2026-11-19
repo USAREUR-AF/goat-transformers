@@ -8,10 +8,10 @@
   "model": {
     "@kind": "nav_posllh",
     "ros2ublox.nav_posllh_i_tow": "2147524158",
+    "lon": "0.0081013",
     "ros2ublox.nav_posllh_lon": "81013",
+    "lat": "0.0121516",
     "ros2ublox.nav_posllh_lat": "121516",
-    "ros2ublox.nav_posllh_height": "162019",
-    "ros2ublox.nav_posllh_h_msl": "202522",
     "ros2ublox.topic": "/gen/nav_posllh"
   }
 }

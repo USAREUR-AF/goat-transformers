@@ -391,7 +391,7 @@ field  ros2ublox.esf_status_sens_2_faults  msg.faults  int
 
 kind      hnr_pvt
 when      type  ublox_msgs/msg/HnrPVT
-requires  ros2ublox.hnr_pvt_i_tow
+requires  lat lon ros2ublox.hnr_pvt_i_tow
 field  ros2ublox.hnr_pvt_i_tow  msg.i_tow  int
 field  ros2ublox.hnr_pvt_year  msg.year  int
 field  ros2ublox.hnr_pvt_month  msg.month  int
@@ -403,8 +403,11 @@ field  ros2ublox.hnr_pvt_valid  msg.valid  int
 field  ros2ublox.hnr_pvt_nano  msg.nano  int
 field  ros2ublox.hnr_pvt_gps_fix  msg.gps_fix  int
 field  ros2ublox.hnr_pvt_flags  msg.flags  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2ublox.hnr_pvt_lon  msg.lon  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2ublox.hnr_pvt_lat  msg.lat  int
+field  hae  msg.height  scale:1/1000
 field  ros2ublox.hnr_pvt_height  msg.height  int
 field  ros2ublox.hnr_pvt_h_msl  msg.h_msl  int
 field  ros2ublox.hnr_pvt_g_speed  msg.g_speed  int
@@ -606,10 +609,13 @@ field  ros2ublox.nav_posecef_p_acc  msg.p_acc  int
 
 kind      nav_posllh
 when      type  ublox_msgs/msg/NavPOSLLH
-requires  ros2ublox.nav_posllh_i_tow
+requires  lat lon ros2ublox.nav_posllh_i_tow
 field  ros2ublox.nav_posllh_i_tow  msg.i_tow  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2ublox.nav_posllh_lon  msg.lon  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2ublox.nav_posllh_lat  msg.lat  int
+field  hae  msg.height  scale:1/1000
 field  ros2ublox.nav_posllh_height  msg.height  int
 field  ros2ublox.nav_posllh_h_msl  msg.h_msl  int
 field  ros2ublox.nav_posllh_h_acc  msg.h_acc  int
@@ -617,7 +623,7 @@ field  ros2ublox.nav_posllh_v_acc  msg.v_acc  int
 
 kind      nav_pvt
 when      type  ublox_msgs/msg/NavPVT
-requires  ros2ublox.nav_pvt_i_tow
+requires  lat lon
 field  ros2ublox.nav_pvt_i_tow  msg.i_tow  int
 field  ros2ublox.nav_pvt_year  msg.year  int
 field  ros2ublox.nav_pvt_month  msg.month  int
@@ -632,8 +638,11 @@ field  ros2ublox.nav_pvt_fix_type  msg.fix_type  int
 field  ros2ublox.nav_pvt_flags  msg.flags  int
 field  ros2ublox.nav_pvt_flags2  msg.flags2  int
 field  ros2ublox.nav_pvt_num_sv  msg.num_sv  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2ublox.nav_pvt_lon  msg.lon  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2ublox.nav_pvt_lat  msg.lat  int
+field  hae  msg.height  scale:1/1000
 field  ros2ublox.nav_pvt_height  msg.height  int
 field  ros2ublox.nav_pvt_h_msl  msg.h_msl  int
 field  ros2ublox.nav_pvt_h_acc  msg.h_acc  int
@@ -652,7 +661,7 @@ field  ros2ublox.nav_pvt_mag_acc  msg.mag_acc  int
 
 kind      nav_pvt7
 when      type  ublox_msgs/msg/NavPVT7
-requires  ros2ublox.nav_pvt7_i_tow
+requires  lat lon ros2ublox.nav_pvt7_i_tow
 field  ros2ublox.nav_pvt7_i_tow  msg.i_tow  int
 field  ros2ublox.nav_pvt7_year  msg.year  int
 field  ros2ublox.nav_pvt7_month  msg.month  int
@@ -667,8 +676,11 @@ field  ros2ublox.nav_pvt7_fix_type  msg.fix_type  int
 field  ros2ublox.nav_pvt7_flags  msg.flags  int
 field  ros2ublox.nav_pvt7_flags2  msg.flags2  int
 field  ros2ublox.nav_pvt7_num_sv  msg.num_sv  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2ublox.nav_pvt7_lon  msg.lon  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2ublox.nav_pvt7_lat  msg.lat  int
+field  hae  msg.height  scale:1/1000
 field  ros2ublox.nav_pvt7_height  msg.height  int
 field  ros2ublox.nav_pvt7_h_msl  msg.h_msl  int
 field  ros2ublox.nav_pvt7_h_acc  msg.h_acc  int

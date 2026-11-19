@@ -1,0 +1,14 @@
+{
+  "name": "x-nav_posllh-to-geojson",
+  "from": "ros2-ublox-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"ublox_msgs/msg/NavPOSLLH\",\"msg\":{\"i_tow\":2147524158,\"lon\":85312500,\"lat\":470625000,\"height\":431500,\"h_msl\":202522,\"h_acc\":2147726673,\"v_acc\":2147767176}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "nav_posllh",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}

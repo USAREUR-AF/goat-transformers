@@ -1,0 +1,14 @@
+{
+  "name": "x-nav_pvt-to-geojson",
+  "from": "ros2-ublox-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"ublox_msgs/msg/NavPVT\",\"msg\":{\"i_tow\":2147524158,\"year\":48245,\"month\":44,\"day\":99,\"hour\":154,\"min\":209,\"sec\":8,\"valid\":63,\"t_acc\":2147848182,\"nano\":405037,\"fix_type\":228,\"flags\":27,\"flags2\":82,\"num_sv\":137,\"lon\":85312500,\"lat\":470625000,\"height\":431500,\"h_msl\":729061,\"h_acc\":2148253212,\"v_acc\":2148293715,\"vel_n\":850570,\"vel_e\":891073,\"vel_d\":931576,\"g_speed\":972079,\"heading\":1012582,\"s_acc\":2148536733,\"head_acc\":2148577236,\"p_dop\":52747,\"head_veh\":1174594,\"mag_dec\":-30087,\"mag_acc\":43184}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "nav_pvt",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}
