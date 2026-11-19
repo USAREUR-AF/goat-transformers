@@ -6,6 +6,7 @@
   "expect": "{\"now\":1714566600.5,\"messages\":912345,\"aircraft\":[{\"hex\":\"3c6586\",\"type\":\"adsb_icao\",\"flight\":\"DLH4AB  \",\"alt_geom\":37950,\"gs\":450.5,\"track\":92.25,\"lat\":50.12345,\"lon\":8.54321,\"seen_pos\":0.2,\"messages\":5123,\"seen\":0.1,\"rssi\":-12.4},{\"hex\":\"~1a2b3c\",\"type\":\"tisb_other\",\"gs\":12,\"lat\":50,\"lon\":8.5,\"seen\":3.5}]}",
   "model": {
     "readsb.now": "1714566600.5",
+    "time_ms": "1714566600500",
     "readsb.messages": "912345",
     "readsb.aircraft.#": "2",
     "readsb.aircraft[0].uid": "3c6586",

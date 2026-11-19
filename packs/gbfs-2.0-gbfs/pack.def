@@ -9,6 +9,7 @@ source        "https://github.com/MobilityData/gbfs-json-schema at commit bae2d2
 source        "GBFS specification: https://github.com/MobilityData/gbfs (CC BY 3.0)"
 uses          gbfs20gbfs
 wire          json
+field  time_ms  last_updated  iscale:1000
 field  gbfs20gbfs.last_updated  last_updated  int
 field  gbfs20gbfs.ttl  ttl  int
 field  gbfs20gbfs.version  version  string

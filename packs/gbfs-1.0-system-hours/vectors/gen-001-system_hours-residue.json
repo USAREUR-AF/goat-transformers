@@ -2,6 +2,6 @@
  "name": "gen-system_hours-residue",
  "from": "gbfs-1.0-system-hours",
  "to": "gbfs-1.0-system-hours",
- "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":682184663,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
- "expect": "{\"last_updated\":682184663,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1731369075,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
+ "expect": "{\"last_updated\":1731369075,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
 }

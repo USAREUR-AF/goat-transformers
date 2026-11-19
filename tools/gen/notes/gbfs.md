@@ -4,8 +4,11 @@
   time the data in the feed was updated, as an RFC 3339 `date-time`. The `iso8601_ms`
   transform reads it (an offset is converted to UTC) and writes it with milliseconds and
   `Z`; the raw key keeps the text as written.
-- Before 3.0, `last_updated` is the same instant as an integer count of POSIX seconds. The
-  json wire has no transform that scales seconds to milliseconds, so it is a raw key only.
+- `time_ms` (`last_updated`), before 3.0: the schema states it is the last time the data in
+  the feed was updated, in POSIX time, an integer: seconds since 1970-01-01 UTC. The
+  `iscale:1000` transform (engine-spec 0.15) reads it as milliseconds and writes
+  milliseconds divided by 1000 exactly, so a whole second comes back as written; the raw
+  key keeps the integer as written.
 
 ## What is not bound
 

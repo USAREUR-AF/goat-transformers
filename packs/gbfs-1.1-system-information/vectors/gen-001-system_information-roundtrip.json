@@ -2,16 +2,16 @@
  "name": "gen-system_information-roundtrip",
  "from": "gbfs-1.1-system-information",
  "to": "gbfs-1.1-system-information",
- "input": "{\"last_updated\":1450159630,\"ttl\":30673,\"version\":\"1.1\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"s98341\",\"license_url\":\"https://example.org/515\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
- "expect": "{\"last_updated\":1450159630,\"ttl\":30673,\"version\":\"1.1\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"s98341\",\"license_url\":\"https://example.org/515\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
+ "input": "{\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.1\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"s98341\",\"license_url\":\"https://example.org/515\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
+ "expect": "{\"last_updated\":1756334944,\"ttl\":30673,\"version\":\"1.1\",\"data\":{\"system_id\":\"s95491\",\"language\":\"s23196\",\"name\":\"s40667\",\"short_name\":\"s62031\",\"operator\":\"s8079\",\"url\":\"https://example.org/920\",\"purchase_url\":\"https://example.org/534\",\"start_date\":\"2024-09-21\",\"phone_number\":\"s12554\",\"email\":\"s24878\",\"feed_contact_email\":\"s70265\",\"timezone\":\"s98341\",\"license_url\":\"https://example.org/515\",\"rental_apps\":{\"android\":{\"store_uri\":\"https://example.org/397\",\"discovery_uri\":\"https://example.org/105\"},\"ios\":{\"store_uri\":\"https://example.org/317\",\"discovery_uri\":\"https://example.org/241\"}}}}",
  "model": {
-  "gbfs11systeminformation.last_updated": "1450159630",
+  "time_ms": "1756334944000",
+  "gbfs11systeminformation.last_updated": "1756334944",
   "gbfs11systeminformation.ttl": "30673",
   "gbfs11systeminformation.version": "1.1",
   "gbfs11systeminformation.data_system_id": "s95491",
   "gbfs11systeminformation.data_language": "s23196",
   "gbfs11systeminformation.data_name": "s40667",
-  "gbfs11systeminformation.data_short_name": "s62031",
-  "gbfs11systeminformation.data_operator": "s8079"
+  "gbfs11systeminformation.data_short_name": "s62031"
  }
 }

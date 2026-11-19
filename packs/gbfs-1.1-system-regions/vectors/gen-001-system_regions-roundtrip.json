@@ -2,10 +2,11 @@
  "name": "gen-system_regions-roundtrip",
  "from": "gbfs-1.1-system-regions",
  "to": "gbfs-1.1-system-regions",
- "input": "{\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"1.1\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
- "expect": "{\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"1.1\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "input": "{\"last_updated\":1712734098,\"ttl\":22733,\"version\":\"1.1\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "expect": "{\"last_updated\":1712734098,\"ttl\":22733,\"version\":\"1.1\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
  "model": {
-  "gbfs11systemregions.last_updated": "1450244353",
+  "time_ms": "1712734098000",
+  "gbfs11systemregions.last_updated": "1712734098",
   "gbfs11systemregions.ttl": "22733",
   "gbfs11systemregions.version": "1.1",
   "gbfs11systemregions.data_regions.#": "2"

@@ -8,13 +8,13 @@
 # Versions v1.0, v1.1, v2.0, v2.1, v2.2, v2.3 and v3.0 are read whole. Of the release
 # candidate v3.1-RC3 only vehicle_availability.json is read: no released version has that file.
 #
-# Shared keys: `last_updated` is bound to time_ms where it is an RFC 3339 date-time (v3.0
-# and v3.1-RC3); before v3.0 it is POSIX seconds, which the json wire cannot scale to
-# milliseconds, so it stays a raw key. Positions are inside the `data` arrays (stations,
+# Shared keys: `last_updated` is bound to time_ms: where it is an RFC 3339 date-time (v3.0
+# and v3.1-RC3) through iso8601_ms; before v3.0 it is an integer of POSIX seconds, read
+# with iscale:1000 (engine-spec 0.15). Positions are inside the `data` arrays (stations,
 # bikes, vehicles): list items, so they stay raw keys (tools/gen/notes/gbfs.md).
 #
 # Writes model/gbfs*.def, packs/gbfs-*/ (pack.def, pack.md, vectors/gen-*),
-# packs/geojson/vectors/gen-geojson-to-gbfs-3.0-vehicle-status.json and
+# packs/geojson/vectors/gen-geojson-to-gbfs-{3.0-vehicle-status,2.3-free-bike-status}.json and
 # tools/gen/names/gbfs-*.json. PROVENANCE.md files are not generated.
 #
 # With --check nothing is written: every run compares what it would write with the
@@ -54,8 +54,9 @@ gbfs_pack() {
     --notes-file "$GEN/notes/gbfs.md")
   case "$ver" in
     3.*) args+=(--map "$base:last_updated=time_ms") ;;
+    1.*|2.*) args+=(--map "$base:last_updated=time_ms" --scale "$base:last_updated=iscale:1000") ;;
   esac
-  if [ "$fmt" = "gbfs-3.0-vehicle-status" ]; then
+  if [ "$fmt" = "gbfs-3.0-vehicle-status" ] || [ "$fmt" = "gbfs-2.3-free-bike-status" ]; then
     args+=(--cross "$W/packs/geojson/pack.def=$W/packs/geojson/vectors/01-geojson-to-cot.json:input")
   fi
   if ! python3 -I "$GEN/jsonschema2pack.py" "${args[@]}" ${CHECK:+"$CHECK"} > /dev/null; then

@@ -2,10 +2,11 @@
  "name": "gen-free_bike_status-roundtrip",
  "from": "gbfs-1.0-free-bike-status",
  "to": "gbfs-1.0-free-bike-status",
- "input": "{\"last_updated\":792360670,\"ttl\":2142,\"data\":{\"bikes\":[{\"bike_id\":\"s34624\",\"lat\":0.75,\"lon\":0.75},{\"bike_id\":\"s42557\",\"lat\":0.75,\"lon\":12.5}]}}",
- "expect": "{\"last_updated\":792360670,\"ttl\":2142,\"data\":{\"bikes\":[{\"bike_id\":\"s34624\",\"lat\":0.75,\"lon\":0.75},{\"bike_id\":\"s42557\",\"lat\":0.75,\"lon\":12.5}]}}",
+ "input": "{\"last_updated\":1757434898,\"ttl\":2142,\"data\":{\"bikes\":[{\"bike_id\":\"s34624\",\"lat\":0.75,\"lon\":0.75},{\"bike_id\":\"s42557\",\"lat\":0.75,\"lon\":12.5}]}}",
+ "expect": "{\"last_updated\":1757434898,\"ttl\":2142,\"data\":{\"bikes\":[{\"bike_id\":\"s34624\",\"lat\":0.75,\"lon\":0.75},{\"bike_id\":\"s42557\",\"lat\":0.75,\"lon\":12.5}]}}",
  "model": {
-  "gbfs10freebikestatus.last_updated": "792360670",
+  "time_ms": "1757434898000",
+  "gbfs10freebikestatus.last_updated": "1757434898",
   "gbfs10freebikestatus.ttl": "2142",
   "gbfs10freebikestatus.data_bikes.#": "2"
  }

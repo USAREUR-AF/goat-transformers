@@ -17,6 +17,9 @@ spec/engine-spec.md:
 - derive scale:<num>/<den>: v * num / den in doubles (ruling 1 of 0.5, 0.6
   Derived keys); applied by convert when from != to.
 - geojson and cot-xml: the lines and defaults of their pack.def files.
+- iscale:1000 (0.15, text wires): the number's text as an exact decimal times
+  1000, rounded half away from zero; encode writes ms / 1000 as an exact plain
+  decimal (an integer without a point). Done with decimal.Decimal, not floats.
 
 Usage: python3 -I tools/gen/alerts-adsbjson-vectors.py <goat-transformers checkout>
 """
@@ -47,6 +50,24 @@ def iso_to_ms(t):
     off = sign * datetime.timedelta(hours=int(t[-5:-3]), minutes=int(t[-2:]))
     d = datetime.datetime.strptime(t[:-6], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=datetime.timezone.utc) - off
     return int(d.timestamp()) * 1000
+
+
+def secs_to_ms(text):
+    """iscale:1000 decode of a JSON number's text."""
+    from decimal import Decimal, ROUND_HALF_UP
+    return int((Decimal(text) * 1000).to_integral_value(rounding=ROUND_HALF_UP))
+
+
+def ms_to_secs(ms):
+    """iscale:1000 encode: ms / 1000 as exact plain decimal text."""
+    from decimal import Decimal
+    s = format(Decimal(ms) / 1000, "f")
+    return s.rstrip("0").rstrip(".") if "." in s else s
+
+
+def ms_to_iso(ms):
+    d = datetime.datetime.fromtimestamp(ms // 1000, tz=datetime.timezone.utc)
+    return d.strftime("%Y-%m-%dT%H:%M:%S") + ".%03dZ" % (ms % 1000)
 
 
 def scale(v, num, den):
@@ -220,6 +241,10 @@ def rsb_canon(obj, with_now=True, residue=True):
     for k, kind in order:
         if k in obj:
             v = obj[k]
+            if k == "now":
+                # two lines on now: time_ms (iscale:1000) is first, so encode writes it (ruling 16 of 0.5)
+                parts.append('"now":%s' % ms_to_secs(secs_to_ms(js(v))))
+                continue
             parts.append('"%s":%s' % (k, json.dumps(v, ensure_ascii=False) if kind == "s" else num_text(v, kind)))
     if residue:
         for k, v in obj.items():
@@ -251,27 +276,30 @@ def rsb_vectors():
     inp = js(FULL)
     out["01-aircraft-roundtrip"] = vec("aircraft-roundtrip", "readsb-aircraft", "readsb-aircraft", inp, rsb_canon(FULL),
         {"uid": "3c6586", "callsign": "DLH4AB  ", "lat": "50.12345", "lon": "8.54321", "course": "92.25",
-         "readsb.alt_geom": "37950", "readsb.gs": "450", "readsb.now": "1714566600.5"},
+         "readsb.alt_geom": "37950", "readsb.gs": "450", "readsb.now": "1714566600.5",
+         "time_ms": str(secs_to_ms("1714566600.5"))},
         REF_RSB, "every documented member the pack maps; alt_baro, alert, spi, wd, ws, oat, tat and the scalars of lastPosition are residue and come back after the mapped members; the arrays mlat, tisb and nav_modes are not carried; 450.0 is written 450, 90.0 is written 90; the trailing spaces of flight are kept")
 
     a = {"now": 1714566600.5, "hex": "a1b2c3", "flight": "TEST01", "alt_geom": 1000, "gs": 360,
          "track": 45.5, "lat": 47.25, "lon": -122.5}
     hae = scale(1000, 3048, 10000)
     spd = scale(360, 1852, 3600)
-    exp = '{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.5,47.25,%s]},"properties":{"callsign":"TEST01","course":45.5,"speed_ms":%s},"id":"a1b2c3"}' % (canon_float(hae), canon_float(spd))
+    ms = secs_to_ms(js(a["now"]))
+    exp = '{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.5,47.25,%s]},"properties":{"time_ms":%d,"callsign":"TEST01","course":45.5,"speed_ms":%s},"id":"a1b2c3"}' % (canon_float(hae), ms, canon_float(spd))
     out["02-aircraft-to-geojson"] = vec("aircraft-to-geojson", "readsb-aircraft", "geojson", js(a), exp,
-        {"@complete": True, "hae": canon_float(hae), "speed_ms": canon_float(spd), "uid": "a1b2c3"},
-        REF_RSB, "alt_geom (feet above the WGS 84 ellipsoid) gives hae = 1000 * 3048 / 10000 = 304.8 m; gs (knots) gives speed_ms = 360 * 1852 / 3600 = 185.2 m/s; track is course")
+        {"@complete": True, "hae": canon_float(hae), "speed_ms": canon_float(spd), "uid": "a1b2c3", "time_ms": str(ms)},
+        REF_RSB, "alt_geom (feet above the WGS 84 ellipsoid) gives hae = 1000 * 3048 / 10000 = 304.8 m; gs (knots) gives speed_ms = 360 * 1852 / 3600 = 185.2 m/s; track is course; now 1714566600.5 s gives time_ms 1714566600500 (iscale:1000)")
 
-    exp = ('<event version="2.0" uid="a1b2c3" type="a-u-X"><point lat="47.25" lon="-122.5" hae="%s" ce="9999999" le="9999999"/>'
-           '<detail><contact callsign="TEST01"/><track course="45.5" speed="%s"/></detail></event>') % (canon_float(hae), canon_float(spd))
+    exp = ('<event version="2.0" uid="a1b2c3" type="a-u-X" time="%s" start="%s"><point lat="47.25" lon="-122.5" hae="%s" ce="9999999" le="9999999"/>'
+           '<detail><contact callsign="TEST01"/><track course="45.5" speed="%s"/></detail></event>') % (
+        ms_to_iso(ms), ms_to_iso(ms), canon_float(hae), canon_float(spd))
     out["03-aircraft-to-cot-xml"] = vec("aircraft-to-cot-xml", "readsb-aircraft", "cot-xml", js(a), exp,
-        ref=REF_RSB + "; packs/cot-xml/pack.def", note="now is seconds as a float and does not carry to time_ms (no scale yields an integer); cot-xml writes its defaults for type, ce and le")
+        ref=REF_RSB + "; packs/cot-xml/pack.def", note="now 1714566600.5 s is time_ms 1714566600500 (iscale:1000), which cot-xml writes as time and start (iso8601_ms); no stale is derived; cot-xml writes its defaults for type, ce and le")
 
     ground = {"now": 1714566601, "hex": "~1a2b3c", "type": "tisb_other", "alt_baro": "ground", "gs": 12.5,
               "lat": 50.0, "lon": 8.5}
     out["04-ground-and-non-icao"] = vec("ground-and-non-icao", "readsb-aircraft", "readsb-aircraft", js(ground),
-        rsb_canon(ground), {"uid": "~1a2b3c", "lat": "50"},
+        rsb_canon(ground), {"uid": "~1a2b3c", "lat": "50", "time_ms": "1714566601000"},
         REF_RSB, "alt_baro is the text ground here, so no line maps it and residue keeps it; a non-ICAO address keeps its ~; now 1714566601 is written as an integer value")
 
     out["05-latitude-as-text"] = vec("latitude-as-text", "readsb-aircraft", "readsb-aircraft",
@@ -290,6 +318,15 @@ def geojson_to_rsb():
                REF_RSB + "; model/readsb.def", "hae 304.8 m gives alt_geom 304.8 * 10000 / 3048 = 1000 ft; speed_ms 185.2 gives gs 185.2 * 3600 / 1852 = 360 kt")
 
 
+def geojson_time_to_rsb():
+    inp = '{"type":"Feature","geometry":{"type":"Point","coordinates":[-122.5,47.25]},"properties":{"time_ms":1714566601250},"id":"a1b2c3"}'
+    exp = '{"now":%s,"hex":"a1b2c3","lat":47.25,"lon":-122.5}' % ms_to_secs(1714566601250)
+    return vec("to-readsb-aircraft-with-time", "geojson", "readsb-aircraft", inp, exp,
+               {"@complete": True, "uid": "a1b2c3", "time_ms": "1714566601250", "lat": "47.25", "lon": "-122.5"},
+               REF_RSB + "; spec/engine-spec.md 0.15 (iscale)",
+               "time_ms 1714566601250 is written as now = 1714566601250 / 1000 = 1714566601.25 seconds, exactly; now is the first member of the object")
+
+
 def file_vectors():
     out = {}
     a1 = {"hex": "3c6586", "type": "adsb_icao", "flight": "DLH4AB  ", "alt_geom": 37950, "gs": 450.5,
@@ -299,7 +336,7 @@ def file_vectors():
     exp = '{"now":1714566600.5,"messages":912345,"aircraft":[%s,%s]}' % (
         rsb_canon(a1, with_now=False, residue=False), rsb_canon(a2, with_now=False, residue=False))
     out["01-file-roundtrip"] = vec("file-roundtrip", "readsb-aircraft-json", "readsb-aircraft-json", js(doc), exp,
-        {"readsb.now": "1714566600.5", "readsb.messages": "912345", "readsb.aircraft.#": "2",
+        {"readsb.now": "1714566600.5", "time_ms": "1714566600500", "readsb.messages": "912345", "readsb.aircraft.#": "2",
          "readsb.aircraft[0].uid": "3c6586", "readsb.aircraft[1].lat": "50", "readsb.aircraft[1].readsb.gs": "12"},
         REF_RSB, "two aircraft objects, every member mapped, so the round trip is exact; 50.0 is written 50")
 
@@ -309,12 +346,12 @@ def file_vectors():
     doc = {"now": 1714566601, "messages": 7, "aircraft": [b]}
     exp = '{"now":1714566601,"messages":7,"aircraft":[%s]}' % rsb_canon(a2, with_now=False, residue=False)
     out["02-item-members-unmapped-are-dropped"] = vec("item-members-unmapped-are-dropped", "readsb-aircraft-json",
-        "readsb-aircraft-json", js(doc), exp, {"readsb.aircraft.#": "1"},
+        "readsb-aircraft-json", js(doc), exp, {"readsb.aircraft.#": "1", "time_ms": "1714566601000"},
         REF_RSB, "items carry no residue (0.7 Decode): alt_baro and nav_modes of an aircraft object are dropped")
 
     doc = {"now": 1714566602, "messages": 0, "aircraft": []}
     out["03-no-aircraft"] = vec("no-aircraft", "readsb-aircraft-json", "readsb-aircraft-json", js(doc), js(doc),
-        {"readsb.aircraft.#": "0"}, REF_RSB, "an empty aircraft array is a present, empty list and is written as []")
+        {"readsb.aircraft.#": "0", "time_ms": "1714566602000"}, REF_RSB, "an empty aircraft array is a present, empty list and is written as []")
     return out
 
 
@@ -336,6 +373,7 @@ def main():
     for fn, v in rv.items():
         write(P("readsb-aircraft", "vectors", fn + ".json"), v)
     write(P("geojson", "vectors", "95-to-readsb-aircraft.json"), geojson_to_rsb())
+    write(P("geojson", "vectors", "96-to-readsb-aircraft-with-time.json"), geojson_time_to_rsb())
     for fn, v in file_vectors().items():
         write(P("readsb-aircraft-json", "vectors", fn + ".json"), v)
 

@@ -2,10 +2,11 @@
  "name": "gen-system_hours-roundtrip",
  "from": "gbfs-1.0-system-hours",
  "to": "gbfs-1.0-system-hours",
- "input": "{\"last_updated\":682184663,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
- "expect": "{\"last_updated\":682184663,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
+ "input": "{\"last_updated\":1731369075,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
+ "expect": "{\"last_updated\":1731369075,\"ttl\":14033,\"data\":{\"rental_hours\":[{\"user_type\":[\"member\"],\"days\":[\"sun\"],\"start_time\":\"s15598\",\"end_time\":\"s47753\"},{\"user_type\":[\"member\"],\"days\":[\"wed\"],\"start_time\":\"s48964\",\"end_time\":\"s51935\"}]}}",
  "model": {
-  "gbfs10systemhours.last_updated": "682184663",
+  "time_ms": "1731369075000",
+  "gbfs10systemhours.last_updated": "1731369075",
   "gbfs10systemhours.ttl": "14033",
   "gbfs10systemhours.data_rental_hours.#": "2"
  }

@@ -2,10 +2,11 @@
  "name": "gen-system_calendar-roundtrip",
  "from": "gbfs-1.0-system-calendar",
  "to": "gbfs-1.0-system-calendar",
- "input": "{\"last_updated\":374140498,\"ttl\":1504,\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]}}",
- "expect": "{\"last_updated\":374140498,\"ttl\":1504,\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]}}",
+ "input": "{\"last_updated\":1769530946,\"ttl\":1504,\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]}}",
+ "expect": "{\"last_updated\":1769530946,\"ttl\":1504,\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]}}",
  "model": {
-  "gbfs10systemcalendar.last_updated": "374140498",
+  "time_ms": "1769530946000",
+  "gbfs10systemcalendar.last_updated": "1769530946",
   "gbfs10systemcalendar.ttl": "1504",
   "gbfs10systemcalendar.data_calendars.#": "2"
  }
