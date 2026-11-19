@@ -99,7 +99,7 @@ CORE_KEYS = OrderedDict([
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
     ("callsign", "string"), ("course", "float"), ("speed_ms", "float"), ("how", "string"),
     ("stale_ms", "int"), ("time_text", "string"), ("stale_text", "string"),
-    ("display_name", "string"),
+    ("access", "string"), ("display_name", "string"),
 ])
 TRACK_KEYS = OrderedDict([
     ("source_id", "string"), ("generation", "string"), ("scoped_id", "string"), ("vel_east_ms", "float"),
