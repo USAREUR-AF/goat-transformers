@@ -1,0 +1,55 @@
+title: StationReport
+description: A report of a synthetic station, written for the jsonschema2pack tests.
+type: object
+required:
+  - stationId
+  - observedAt
+allOf:
+  - properties:
+      stationId:
+        $ref: https://example.org/fieldnet/common.json#/$defs/StationRef
+        description: The station's own identifier.
+      observedAt:
+        type: string
+        format: date-time
+        description: 'The instant of the report, in UTC,
+          as RFC 3339 text.'
+      speed:
+        type: number
+        description: Ground speed in metres per second.
+      position:
+        $ref: https://example.org/fieldnet/common.json#/$defs/Position
+  - oneOf:
+      - properties:
+          status:
+            type: string
+            enum: [ok, fault]
+      - properties:
+          status:
+            type: "null"
+properties:
+  tags:
+    type: array
+    items:
+      type: string
+  readings:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: number
+        samples:
+          type: array
+          items:
+            type: integer
+  online:
+    type: boolean
+  extra:
+    type: object
+    additionalProperties:
+      type: string
+  mixed:
+    type: [string, number]

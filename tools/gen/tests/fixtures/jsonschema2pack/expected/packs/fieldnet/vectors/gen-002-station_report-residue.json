@@ -1,0 +1,7 @@
+{
+ "name": "gen-station_report-residue",
+ "from": "fieldnet",
+ "to": "fieldnet",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"tags\":[\"s95571\",\"s70786\"],\"readings\":[{\"name\":\"s61808\",\"value\":42.375,\"samples\":[47300]},{\"name\":\"s71466\",\"value\":42.375,\"samples\":[81958]}],\"online\":false,\"stationId\":\"974b4a6c-1fb1-441e-848b-6b8090eb63b4\",\"observedAt\":\"2026-09-20T08:09:53.529Z\",\"speed\":7.0625,\"position\":{\"lat\":21.3069,\"lon\":-157.8583,\"alt\":12.5},\"status\":\"ok\"}",
+ "expect": "{\"tags\":[\"s95571\",\"s70786\"],\"readings\":[{\"name\":\"s61808\",\"value\":42.375,\"samples\":[47300]},{\"name\":\"s71466\",\"value\":42.375,\"samples\":[81958]}],\"online\":false,\"stationId\":\"974b4a6c-1fb1-441e-848b-6b8090eb63b4\",\"observedAt\":\"2026-09-20T08:09:53.529Z\",\"speed\":7.0625,\"position\":{\"lat\":21.3069,\"lon\":-157.8583,\"alt\":12.5},\"status\":\"ok\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

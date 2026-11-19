@@ -1,0 +1,17 @@
+{
+ "name": "gen-thing-roundtrip",
+ "from": "sdm-test-thing",
+ "to": "sdm-test-thing",
+ "input": "{\"type\":\"Thing\",\"id\":\"s79123\",\"dateObserved\":\"2026-06-03T05:18:42.622Z\",\"level\":7.0625,\"location\":{\"type\":\"Point\"}}",
+ "expect": "{\"type\":\"Thing\",\"id\":\"s79123\",\"dateObserved\":\"2026-06-03T05:18:42.622Z\",\"level\":7.0625,\"location\":{\"type\":\"Point\"}}",
+ "model": {
+  "@kind": "thing",
+  "uid": "s79123",
+  "time_ms": "1780463922622",
+  "sdmthing.id": "s79123",
+  "sdmthing.type": "Thing",
+  "sdmthing.date_observed": "2026-06-03T05:18:42.622Z",
+  "sdmthing.level": "7.0625",
+  "sdmthing.location_type": "Point"
+ }
+}

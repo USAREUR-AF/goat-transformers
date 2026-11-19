@@ -1,0 +1,11 @@
+# A geojson format for the jsonschema2pack tests: the source of the vectors that
+# cross into the generated packs. No kinds.
+format        note-geo
+version       0.1.0
+distribution  public
+source        "synthetic format written for the jsonschema2pack tests"
+wire          geojson
+field   uid       id                     string
+field   time_ms   properties.time_ms     int
+field   lat       geometry.lat           float
+field   lon       geometry.lon           float

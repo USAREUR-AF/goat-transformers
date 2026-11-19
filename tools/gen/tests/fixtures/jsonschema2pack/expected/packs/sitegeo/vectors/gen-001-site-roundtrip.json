@@ -1,0 +1,15 @@
+{
+ "name": "gen-site-roundtrip",
+ "from": "sitegeo",
+ "to": "sitegeo",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"name\":\"s67052\",\"height\":-3.25},\"id\":\"s38184\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"name\":\"s67052\",\"height\":-3.25},\"id\":\"s38184\"}",
+ "model": {
+  "uid": "s38184",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "sitegeo.id": "s38184",
+  "sitegeo.properties_name": "s67052",
+  "sitegeo.properties_height": "-3.25"
+ }
+}

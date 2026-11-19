@@ -1,0 +1,46 @@
+Thing:
+  description: A synthetic data model written for the sdm-run tests.
+  properties:
+    id:
+      description: Unique identifier of the entity
+      type: string
+    type:
+      description: 'It must be equal to
+        Thing'
+      enum:
+        - Thing
+      type: string
+    dateObserved:
+      description: The date and time of this observation in ISO8601 UTC format
+      format: date-time
+      type: string
+    level:
+      type: number
+    location:
+      oneOf:
+        - properties:
+            type:
+              enum:
+                - Point
+              type: string
+            coordinates:
+              items:
+                type: number
+              type: array
+          type: object
+        - properties:
+            type:
+              enum:
+                - LineString
+              type: string
+            coordinates:
+              items:
+                items:
+                  type: number
+                type: array
+              type: array
+          type: object
+  required:
+    - id
+    - type
+  type: object

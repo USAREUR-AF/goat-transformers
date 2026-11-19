@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """sdm-run: regenerate the FIWARE Smart Data Models packs, one pack per data model.
 
-Usage: python3 -I tools/gen/sdm-run.py <sources> <goat-transformers checkout>
+Usage: python3 -I tools/gen/sdm-run.py [--check] <sources> <goat-transformers checkout>
+
+With --check nothing is written: every run compares what it would write with the
+checkout, all runs are made, and the exit status is 1 when any file differs.
 
 <sources> holds one shallow git checkout per subject repository of
 https://github.com/smart-data-models, each at the commit in COMMITS (checked).
@@ -15,12 +18,18 @@ Form: NGSI key-values (NGSI-v2 `keyValues`, NGSI-LD concise key-values without
 @context), the shape `model.yaml` and `schema.json` describe. Wire `json`.
 Python 3 standard library only.
 """
+import argparse
+import contextlib
 import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio              # noqa: E402  (the directory of this file is put on the path above)
+import jsonschema2pack    # noqa: E402
 
 COMMITS = {
     "dataModel.Aeronautics": "58682c9d9d53ee76140b0b2563ece65c9b0a3cfa",
@@ -175,13 +184,15 @@ def subject_short(repo):
 
 
 def sha256(path):
-    return hashlib.sha256(open(path, "rb").read()).hexdigest()
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
 
 
 def first_line(path):
-    for l in open(path, encoding="utf-8"):
-        if l.strip():
-            return l.strip().lstrip("# ").strip()
+    with open(path, encoding="utf-8") as fh:
+        for l in fh:
+            if l.strip():
+                return l.strip().lstrip("# ").strip()
     return ""
 
 
@@ -201,7 +212,8 @@ def provenance(src, repo, model, how, fmt):
                     % model)
         else:
             # the MIT form asks that its notice go with copies: quoted in full
-            text = open(lic_path, encoding="utf-8").read().strip()
+            with open(lic_path, encoding="utf-8") as fh:
+                text = fh.read().strip()
             stmt = ("`%s/LICENSE.md` is a permissive license of the MIT form. Its copyright and permission "
                     "notice, which it asks to be included with copies, in full:\n\n%s"
                     % (model, "\n".join("> " + l if l.strip() else ">" for l in text.split("\n"))))
@@ -211,7 +223,8 @@ def provenance(src, repo, model, how, fmt):
         stmt = ("The model has no LICENSE.md. The subject repository's `LICENSE` covers every model of "
                 "the subject:\n\n> %s" % first_line(lic_path))
     else:
-        lic = json.load(open(os.path.join(d, "schema.json"), encoding="utf-8")).get("license")
+        with open(os.path.join(d, "schema.json"), encoding="utf-8") as fh:
+            lic = json.load(fh).get("license")
         stmt = ("The model has no LICENSE.md and the subject repository has no LICENSE. The model's "
                 "`schema.json` states its license in its `license` member: `%s` (CC BY 4.0)." % lic)
     out = ["# Provenance of the %s pack\n" % fmt,
@@ -233,49 +246,63 @@ def provenance(src, repo, model, how, fmt):
     return "\n".join(out)
 
 
-def main():
-    if len(sys.argv) != 3:
-        sys.exit("usage: sdm-run.py <sources> <goat-transformers checkout>")
-    src, gt = (os.path.abspath(x) for x in sys.argv[1:])
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="sdm-run", description=__doc__.split("\n\n")[0])
+    ap.add_argument("sources", help="the directory of the subject checkouts")
+    ap.add_argument("checkout", help="the goat-transformers checkout to write into")
+    ap.add_argument("--check", action="store_true",
+                    help="write nothing; compare every pack, module, names file and PROVENANCE.md "
+                         "with the checkout and exit 1 when any file differs")
+    args = ap.parse_args(argv)
+    src, gt = os.path.abspath(args.sources), os.path.abspath(args.checkout)
     gen = os.path.join(gt, "tools", "gen")
     for repo, commit in COMMITS.items():
         got = subprocess.run(["git", "-C", os.path.join(src, repo), "rev-parse", "HEAD"],
                              capture_output=True, text=True, check=True).stdout.strip()
         if got != commit:
-            sys.exit("%s is at %s, not %s" % (repo, got, commit))
-    os.chdir(gt)
+            print("sdm-run: %s is at %s, not %s" % (repo, got, commit), file=sys.stderr)
+            return 1
+    out = genio.Output(gt, check=args.check)
+    status = 0
     for repo, model, how in MODELS:
         fmt = "sdm-%s-%s" % (subject_short(repo), kebab(model))
         module = "sdm" + model.lower()
         my = os.path.join(src, repo, model, "model.yaml")
         lic = "MIT-style (APDS)" if how == "model" and "APDS" in first_line(
             os.path.join(src, repo, model, "LICENSE.md")) else "CC-BY-4.0"
-        args = [sys.executable, "-I", os.path.join(gen, "jsonschema2pack.py"),
-                "--schema", my, "--message", "%s=%s#/%s" % (model, my, model),
-                "--when", "type=%s" % model, "--map", "%s:id=uid" % model,
-                "--format", fmt, "--module", module,
-                "--title", "FIWARE Smart Data Model %s / %s (NGSI key-values)" % (repo, model),
-                "--license", "%s, smart-data-models/%s %s/" % (lic, repo, model),
-                "--source", "https://github.com/smart-data-models/%s at commit %s, %s/model.yaml"
-                % (repo, COMMITS[repo], model),
-                "--out", gt, "--model-dir", os.path.join(gt, "model"),
-                "--names-file", os.path.join(gen, "names", fmt + ".json"),
-                "--notes-file", os.path.join(gen, "notes", "sdm.md")]
+        argv2 = ["--schema", my, "--message", "%s=%s#/%s" % (model, my, model),
+                 "--when", "type=%s" % model, "--map", "%s:id=uid" % model,
+                 "--format", fmt, "--module", module,
+                 "--title", "FIWARE Smart Data Model %s / %s (NGSI key-values)" % (repo, model),
+                 "--license", "%s, smart-data-models/%s %s/" % (lic, repo, model),
+                 "--source", "https://github.com/smart-data-models/%s at commit %s, %s/model.yaml"
+                 % (repo, COMMITS[repo], model),
+                 "--out", gt, "--model-dir", os.path.join(gt, "model"),
+                 "--names-file", os.path.join(gen, "names", fmt + ".json"),
+                 "--notes-file", os.path.join(gen, "notes", "sdm.md")]
         if model in TIME_OBSERVED:
-            args += ["--map", "%s:dateObserved=time_ms" % model]
+            argv2 += ["--map", "%s:dateObserved=time_ms" % model]
         for m in EXTRA_MAPS.get(model, []):
-            args += ["--map", "%s:%s" % (model, m)]
+            argv2 += ["--map", "%s:%s" % (model, m)]
         if model in CROSS:
-            args += ["--cross", "%s=%s:input" % (os.path.join(gt, "packs", "geojson", "pack.def"),
-                                                os.path.join(gt, "packs", "geojson", "vectors",
-                                                             "01-geojson-to-cot.json"))]
-        r = subprocess.run(args, capture_output=True, text=True)
-        if r.returncode:
-            sys.exit("%s: %s" % (fmt, r.stderr.strip()))
-        with open(os.path.join(gt, "packs", fmt, "PROVENANCE.md"), "w", encoding="utf-8") as fh:
-            fh.write(provenance(src, repo, model, how, fmt))
-        print(fmt)
+            argv2 += ["--cross", "%s=%s:input" % (os.path.join(gt, "packs", "geojson", "pack.def"),
+                                                 os.path.join(gt, "packs", "geojson", "vectors",
+                                                              "01-geojson-to-cot.json"))]
+        if args.check:
+            argv2.append("--check")
+        # the generator in this process: its summary goes to /dev/null, its report to stderr
+        with open(os.devnull, "w") as null, contextlib.redirect_stdout(null):
+            run = jsonschema2pack.main(argv2)
+        if run:
+            status = 1
+            if not args.check:
+                print("sdm-run: %s failed" % fmt, file=sys.stderr)
+                return 1
+        out.write("packs/%s/PROVENANCE.md" % fmt, provenance(src, repo, model, how, fmt))
+        if not args.check:
+            print(fmt)
+    return max(status, out.report("sdm-run (PROVENANCE.md)"))
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
