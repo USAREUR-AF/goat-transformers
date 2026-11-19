@@ -1,0 +1,17 @@
+{
+  "name": "absent-argument-leaves-the-target-absent",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"i\":5}",
+  "context": {},
+  "expect": "{\"i\":5,\"t\":\"NA\",\"d\":7,\"has_i\":1}",
+  "model": {
+    "@complete": true,
+    "probe.has_i": "1",
+    "@absent": [
+      "probe.has_s",
+      "probe.has_f"
+    ]
+  },
+  "reference": "present sets its target only when its argument is present; it never gives 0"
+}

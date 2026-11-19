@@ -1,0 +1,20 @@
+# Conformance probe pack for the derive function `present` (engine-spec 0.12).
+# Public. Synthetic. The five `pr_*` members are inputs; the `has_*` members are
+# the targets of the `derive ... present` lines of model/probe.def.
+format  conformance-present
+version 0.12.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.pr_s   s      string
+field   probe.pr_f   f      float
+field   probe.pr_i   i      int
+field   probe.pr_t   t      string  absent NA
+field   probe.pr_d   d      int
+field   probe.has_s  has_s  int
+field   probe.has_f  has_f  int
+field   probe.has_i  has_i  int
+field   probe.has_t  has_t  int
+field   probe.has_d  has_d  int
+default probe.pr_d   7

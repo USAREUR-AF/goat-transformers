@@ -1,0 +1,11 @@
+{
+  "name": "context-value-is-present",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{}",
+  "context": {
+    "probe.pr_d": "3"
+  },
+  "expect": "{\"t\":\"NA\",\"d\":3,\"has_d\":1}",
+  "reference": "ruling 2 of 0.12: a key set by context is present. The vector's context sets pr_d"
+}

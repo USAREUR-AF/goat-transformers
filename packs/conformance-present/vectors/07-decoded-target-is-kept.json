@@ -1,0 +1,9 @@
+{
+  "name": "decoded-target-is-kept",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"s\":\"x\",\"has_s\":0}",
+  "context": {},
+  "expect": "{\"s\":\"x\",\"t\":\"NA\",\"d\":7,\"has_s\":0}",
+  "reference": "a derivation sets its target only while the target is absent (0.6); has_s decoded as 0 stays 0"
+}

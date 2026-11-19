@@ -84,3 +84,21 @@ derive  probe.k4  copy  probe.k3
 derive  probe.k3  copy  probe.k2
 derive  probe.k2  copy  probe.k1
 derive  probe.k1  copy  probe.k0
+
+# Arguments and targets of `present` (engine-spec 0.12), used by the pack
+# conformance-present.
+key  pr_s     string  -  "input of present: a text"
+key  pr_f     float   -  "input of present: a number"
+key  pr_i     int     -  "input of present: an integer"
+key  pr_t     string  -  "input of present: a text whose wire value NA means absent"
+key  pr_d     int     -  "input of present: an integer the pack gives a default"
+key  has_s    int     -  "derived: 1 when pr_s is present"
+key  has_f    int     -  "derived: 1 when pr_f is present"
+key  has_i    int     -  "derived: 1 when pr_i is present"
+key  has_t    int     -  "derived: 1 when pr_t is present"
+key  has_d    int     -  "derived: 1 when pr_d is present"
+derive  probe.has_s  present  probe.pr_s
+derive  probe.has_f  present  probe.pr_f
+derive  probe.has_i  present  probe.pr_i
+derive  probe.has_t  present  probe.pr_t
+derive  probe.has_d  present  probe.pr_d

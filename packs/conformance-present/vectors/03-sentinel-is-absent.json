@@ -1,0 +1,16 @@
+{
+  "name": "sentinel-is-absent",
+  "from": "conformance-present",
+  "to": "conformance-present",
+  "input": "{\"t\":\"NA\",\"s\":\"x\"}",
+  "context": {},
+  "expect": "{\"s\":\"x\",\"t\":\"NA\",\"d\":7,\"has_s\":1}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.pr_t",
+      "probe.has_t"
+    ]
+  },
+  "reference": "ruling 2 of 0.12: a key left absent by a sentinel (0.9) is absent"
+}
