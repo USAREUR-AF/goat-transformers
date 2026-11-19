@@ -1456,11 +1456,12 @@ def main(argv=None):
                 name = ln.key.split(".", 1)[1]
                 rec = module_keys.setdefault(name, {"type": MODEL_TYPE[ln.jtype], "where": [], "jtype": ln.jtype,
                                                     "format": ln.node.format})
-                rec["where"].append("%s %s" % (kind_label, where + (".".join(ln.path) or ".")))
+                # the path in backticks, then "of" and the message: never two bare names side by side
+                rec["where"].append("`%s` of %s" % (where + (".".join(ln.path) or "."), kind_label))
             else:
                 name = ln.list.split(".", 1)[1]
                 rec = module_lists.setdefault(name, {"where": []})
-                rec["where"].append("%s %s" % (kind_label, where + ".".join(ln.path)))
+                rec["where"].append("`%s` of %s" % (where + ".".join(ln.path), kind_label))
                 declare(ln.lines, kind_label, where + ".".join(ln.path) + "[].")
     for k in kinds:
         declare(k["lines"], k["label"], "")

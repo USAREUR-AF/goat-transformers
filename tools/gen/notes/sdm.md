@@ -8,7 +8,7 @@ an object (`{"type": "Property", "value": ...}`, `GeoProperty`, `Relationship`);
 files do not describe that wrapping, so a pack of it would be this project's invention, not
 the model's.
 
-`type` is the entity type: the pack's common `when type <Model>` checks it on decode and
+`type` names the model the entity follows: the pack's common `when type <Model>` checks it on decode and
 writes it on encode. Generated from the model's `model.yaml`, in which every reference of
 `schema.json` is already resolved.
 
