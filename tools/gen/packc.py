@@ -59,7 +59,8 @@ TYPES = {"int": T_INT, "float": T_FLOAT, "string": T_STR}
 F_SWAP, F_TRIM, F_OPTIONAL = 1, 2, 4
 REP = {"count": 0, "while": 1, "more": 2, "fx": 3}
 DERIVE = {"copy": 0, "hypot": 1, "bearing": 2, "east_of": 3, "north_of": 4, "neg": 5, "scale": 6,
-          "offset_f": 7, "offset_i": 8, "day_seconds": 9, "any": 10, "not": 11, "parse_int": 12}
+          "offset_f": 7, "offset_i": 8, "day_seconds": 9, "any": 10, "not": 11, "parse_int": 12,
+          "present": 13}
 # what gt-core must be built with for a function
 DERIVE_FEATURE = {"hypot": "sqrt", "bearing": "trig", "east_of": "trig", "north_of": "trig"}
 K_CONTEXT, K_LIVE = 1, 2

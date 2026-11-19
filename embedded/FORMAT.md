@@ -272,6 +272,7 @@ Derivations (section 7):
 | `any` | 10 | |
 | `not` | 11 | |
 | `parse_int` | 12 | |
+| `present` | 13 | |
 
 The compiler prints which features a plan needs. An engine built without a
 feature refuses a plan that uses it (`bad-plan`).

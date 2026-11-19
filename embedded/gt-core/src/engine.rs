@@ -1954,6 +1954,9 @@ impl<'a, 's> Session<'a, 's> {
                 Some(Val::Str(t)) => return Ok(self.parse_int(*t).map(Val::Int)),
                 _ => return Ok(None),
             },
+            // present (spec 0.12): 1 when the argument is held, whatever its
+            // value; an absent argument returned above and left the target absent
+            13 => return Ok(Some(Val::Int(1))),
             // a function this build of the engine leaves out, or does not know
             _ => return Err(Error::BadPlan),
         };
