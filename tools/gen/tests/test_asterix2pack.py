@@ -888,6 +888,72 @@ class ShapeCheck(unittest.TestCase):
         self.assertEqual(str(c.exception), "%s:26: undeclared-key: `cat250.nothing`: module `cat250` does not declare `nothing`" % PACK)
 
 
+class OtherEditions(Workdir):
+    """OTHER_EDITIONS: an older edition written beside the newest as asterix-cat<NNN>-ed<edition>.
+    The fixture's category 250 stands in for CAT021: edition 1.9 is made an other edition, with a
+    definition whose I250/010 differs from that of 1.10."""
+
+    OLDER = "sources/asterix-specs/cat250-1.9.json"
+
+    def setUp(self):
+        super().setUp()
+        self.addCleanup(setattr, a2p, "OTHER_EDITIONS", a2p.OTHER_EDITIONS)
+        a2p.OTHER_EDITIONS = {250: ["1.9"]}
+        d = json.loads(self.read(DEFINITION))
+        d["contents"]["edition"] = {"major": 1, "minor": 9}
+        self.write(self.OLDER, json.dumps(d))
+
+    def test_edition_tag_has_the_minor_number_in_two_digits(self):
+        self.assertEqual([a2p.edition_tag(e) for e in ("0.23", "0.26", "1.9", "2.10")],
+                         ["ed023", "ed026", "ed109", "ed210"])
+
+    def test_other_edition_is_its_own_pack_and_module_and_the_newest_is_unchanged(self):
+        status, stdout, stderr = self.run_gen()
+        self.assertEqual(status, 0, stderr)
+        support.assert_same_tree(self, EXPECTED, self.out,
+                                 ignore=("sources/", "packs/asterix-cat250-ed109/", "model/cat250ed109.def",
+                                         "tools/gen/names/asterix-cat250-ed109.json",
+                                         "packs/canonical-track-v2/vectors/gen-to-asterix-cat250-ed109.json"))
+        track = json.loads(self.read("packs/canonical-track-v2/vectors/gen-to-asterix-cat250-ed109.json"))
+        self.assertEqual((track["from"], track["to"]), ("canonical-track-v2", "asterix-cat250-ed109"))
+        self.assertIn("asterix-cat250-ed109  edition 1.9", stdout)
+        pack = self.read("packs/asterix-cat250-ed109/pack.def")
+        self.assertIn("format     asterix-cat250-ed109\n", pack)
+        self.assertIn("uses       cat250ed109\n", pack)
+        self.assertIn("cat250ed109.i010_sac", pack)
+        self.assertIn("module", self.read("model/cat250ed109.def"))
+        md = self.read("packs/asterix-cat250-ed109/pack.md")
+        self.assertIn("This is an older edition of the category, written beside the pack `asterix-cat250` of the newest", md)
+        prov = self.read("packs/asterix-cat250-ed109/PROVENANCE.md")
+        with open(self.path(self.OLDER), "rb") as fh:
+            self.assertIn(hashlib.sha256(fh.read()).hexdigest(), prov)
+        self.assertTrue(os.path.exists(self.path("tools/gen/names/asterix-cat250-ed109.json")))
+
+    def test_check_covers_the_other_edition(self):
+        self.assertEqual(self.run_gen()[0], 0)
+        rel = "packs/asterix-cat250-ed109/pack.md"
+        self.write(rel, self.read(rel) + "edited\n")
+        status, _, stderr = self.run_gen("--check")
+        self.assertEqual(status, 1)
+        self.assertIn(rel, stderr)
+
+    def test_fetch_downloads_the_other_edition_after_the_newest_and_provenance_lists_it(self):
+        calls = []
+        a2p.curl = lambda url, dest: calls.append(os.path.relpath(dest, self.out).replace(os.sep, "/"))
+        status, _, stderr = self.run_gen("--commit", "c" * 40, "--fetch")
+        self.assertEqual(status, 0, stderr)
+        self.assertEqual(calls[-2:], [DEFINITION, self.OLDER])
+        text = self.read("sources/PROVENANCE.md")
+        self.assertIn("| edition taken | for each category the newest edition `manifest.json` lists; also category 250 edition 1.9 |", text)
+        self.assertIn("| `cat250-1.9.json` | `specs/cat250/cats/cat1.9/definition.json` | `cccccccccccc` |", text)
+
+    def test_an_edition_the_manifest_does_not_list_is_refused(self):
+        a2p.OTHER_EDITIONS = {250: ["0.1"]}
+        status, _, stderr = self.run_gen()
+        self.assertEqual(status, 1)
+        self.assertIn("asterix2pack: sources/asterix-specs/manifest.json: lists no edition 0.1 of category 250", stderr)
+
+
 class CommittedPacks(unittest.TestCase):
     """The generated ASTERIX packs of the repository, read without regenerating them: all of them
     load in gtcheck with the shape the codec reads, and every one of their vectors replays."""
@@ -905,7 +971,8 @@ class CommittedPacks(unittest.TestCase):
                 return fh.read()
         modules = {}
         for fmt in formats:
-            name = "cat062full" if fmt == "asterix-cat062-full" else fmt.replace("asterix-", "")
+            # asterix-cat021-ed023 -> cat021ed023 (OTHER_EDITIONS)
+            name = "cat062full" if fmt == "asterix-cat062-full" else fmt.replace("asterix-", "").replace("-", "")
             modules[fmt] = a2p.load_module(model, text("model", name + ".def"), "model/%s.def" % name)
         for fmt in formats:
             packs[fmt] = a2p.load_pack(model, text("packs", fmt, "pack.def"), "packs/%s/pack.def" % fmt)
