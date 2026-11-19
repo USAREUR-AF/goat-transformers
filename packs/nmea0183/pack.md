@@ -271,7 +271,7 @@ Vector 35 decoded `$PGRME` as `no-kind` before 0.2.0; it now decodes as
 | `pgrmv` | `0 PGRMV` | velocity east, north, up | `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` |
 | `pgrmz` | `0 PGRMZ` | altitude in feet, the unit `f`, fix mode | none |
 | `pmtk001` | `0 PMTK001` | command number, result flag | none |
-| `pmtk424` | `0 PMTK424` | TSIP, antenna detect, PPS, PPS timing, PPS pulse width | none |
+| `pmtk424` | `0 PMTK424` | TSIP, antenna detect, PPS, PPS timing, duration of the PPS pulse | none |
 | `psrfepe` | `0 PSRFEPE` | time, status, HDOP, four error estimates | none |
 | `psti030` | `0 PSTI`, `1 030` | time, status, position, altitude above mean sea level, velocity east/north/up, date, mode, RTK age and ratio | `time_ms`, `lat`, `lon`, `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` |
 | `psti032`, `psti035` | `0 PSTI`, `1 032` or `035` | time, date, status, RTK mode, baseline east/north/up, length, course; fields 11-15 are reserved and not mapped | `time_ms` |
@@ -290,7 +290,7 @@ Vector 35 decoded `$PGRME` as `no-kind` before 0.2.0; it now decodes as
 | `lat`, `lon` | PASHR,POS 5-8; PGRMF 6-9; PSTI,030 4-7 | read with the driver's common latitude/longitude reading of degrees, minutes and hemisphere letter, as for GGA and RMC (the datum note of "Not mapped" applies) |
 | `lat`, `lon` | PQTMGPS 3-4; PQTMINS 3-4 | the comments name them "Latitude. Degrees" and "Longitude. Degrees": decimal degrees, `float` |
 | `hae` | PASHR,POS 9 | the driver stores it as the height above the ellipsoid, with the comment "altitude is already WGS 84" |
-| `hae` | PQTMGPS 5 | "Height above ellipsoid, Meters" |
+| `hae` | PQTMGPS 5 | the comment gives field 5 as the height relative to the ellipsoid, in metres |
 | `time_ms` | PGRMF 4+3; PSTI,030 2+12; PSTI,032/035/036 2+3 | the comments name UTC time hhmmss and UTC date ddmmyy; the driver joins them into the fix time |
 | `course` | PGRMF 13 | "Course over ground, 0 to 359 degrees true" |
 | `speed_ms` | PQTMGPS 7 | "Ground speed (2D). Meters / sec" |

@@ -160,7 +160,7 @@ field     nmea0183.mtk_command      1      int
 field     nmea0183.mtk_ack_flag     2      int
 
 # PMTK424 (MediaTek): output control (TSIP, antenna detect, PPS, PPS timing,
-# PPS pulse width in the receiver's clock units).
+# duration of the PPS pulse in the receiver's clock units).
 kind      pmtk424
 when      0       PMTK424
 requires  nmea0183.proprietary_tag nmea0183.mtk_pps_width
