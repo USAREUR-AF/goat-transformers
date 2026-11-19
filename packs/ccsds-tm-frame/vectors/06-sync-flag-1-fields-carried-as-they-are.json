@@ -1,0 +1,22 @@
+{
+  "name": "sync-flag-1-fields-carried-as-they-are",
+  "from": "ccsds-tm-frame",
+  "to": "ccsds-tm-frame",
+  "input": "2a5bc8116555",
+  "expect": "2a5bc8116555",
+  "model": {
+    "@kind": "primary-header",
+    "ccsdstm.spacecraft_id": "677",
+    "ccsdstm.virtual_channel_id": "5",
+    "ccsdstm.ocf_flag": "1",
+    "ccsdstm.mc_frame_count": "200",
+    "ccsdstm.vc_frame_count": "17",
+    "ccsdstm.secondary_header_flag": "0",
+    "ccsdstm.sync_flag": "1",
+    "ccsdstm.packet_order_flag": "1",
+    "ccsdstm.segment_length_id": "0",
+    "ccsdstm.first_header_pointer": "1365"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 132.0-B-3 4.1.2 and 4.1.3.2; bytes computed by tools/gen/ccsds-vectors.py. Sync flag 1 (a VCA_SDU in the data field): the packet order flag, segment length identifier and first header pointer are undefined (4.1.2.7.4, 4.1.2.7.5, 4.1.2.7.6) and are carried as the wire holds them."
+}

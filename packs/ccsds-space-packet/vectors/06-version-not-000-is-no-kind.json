@@ -1,0 +1,9 @@
+{
+  "name": "version-not-000-is-no-kind",
+  "from": "ccsds-space-packet",
+  "to": "ccsds-space-packet",
+  "input": "2864c4d20009",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "CCSDS 133.0-B-2 4.1.3; bytes computed by tools/gen/ccsds-vectors.py. Packet version number 001: not a packet of this standard (4.1.3.2.2)."
+}

@@ -1,0 +1,18 @@
+{
+  "name": "type-ad-header-roundtrip",
+  "from": "ccsds-tc-frame",
+  "to": "ccsds-tc-frame",
+  "input": "01ab241a2a",
+  "expect": "01ab241a2a",
+  "model": {
+    "@kind": "frame",
+    "ccsdstc.bypass_flag": "0",
+    "ccsdstc.control_command_flag": "0",
+    "ccsdstc.spacecraft_id": "427",
+    "ccsdstc.virtual_channel_id": "9",
+    "ccsdstc.frame_length": "26",
+    "ccsdstc.frame_sequence_number": "42"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 232.0-B-4 4.1.2; bytes computed by tools/gen/ccsds-vectors.py. Bypass 0, control command 0: a type-AD frame (table 4-1). Frame length 26: a 27-octet frame."
+}

@@ -1,0 +1,22 @@
+{
+  "name": "only-idle-data-frame",
+  "from": "ccsds-tm-frame",
+  "to": "ccsds-tm-frame",
+  "input": "2a5fc8111ffe",
+  "expect": "2a5fc8111ffe",
+  "model": {
+    "@kind": "primary-header",
+    "ccsdstm.spacecraft_id": "677",
+    "ccsdstm.virtual_channel_id": "7",
+    "ccsdstm.ocf_flag": "1",
+    "ccsdstm.mc_frame_count": "200",
+    "ccsdstm.vc_frame_count": "17",
+    "ccsdstm.secondary_header_flag": "0",
+    "ccsdstm.sync_flag": "0",
+    "ccsdstm.packet_order_flag": "0",
+    "ccsdstm.segment_length_id": "3",
+    "ccsdstm.first_header_pointer": "2046"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 132.0-B-3 4.1.2 and 4.1.3.2; bytes computed by tools/gen/ccsds-vectors.py. First header pointer 11111111110: only idle data in the data field (4.1.2.7.6.5)."
+}

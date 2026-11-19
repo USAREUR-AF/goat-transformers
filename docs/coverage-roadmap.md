@@ -51,6 +51,15 @@ on this page lists.
 | FIXM Core 4.3 | `xml` | Not built. Needs XML namespaces and prefixes (two namespaces in one document), and a text-split transform for `pos` | |
 | AIXM 5.1.1 | `xml` | Not built. Needs XML namespaces and prefixes, including namespaced attributes (`gml:id`, `xlink:href`) | |
 
+## Space
+
+| Format | Wire type | Status | Open-source codecs to compare with |
+|---|---|---|---|
+| CCSDS Space Packet (133.0-B-2) | `bits` | Built: pack `ccsds-space-packet`, the primary header, 2 message kinds; the data field needs layered framing | |
+| CCSDS TM, TC and AOS transfer frames (132.0-B-3, 232.0-B-4, 732.0-B-4) and the CLCW | `bits` | Built: packs `ccsds-tm-frame`, `ccsds-tc-frame`, `ccsds-aos-frame` (primary headers) and `ccsds-clcw`; data fields and error control need layered framing and checksums | |
+| CCSDS Navigation Data Messages, XML (505.0-B-3) | `xml` | Built: pack `ccsds-ndm-xml`, 10 messages generated from the unqualified schemas. The qualified schemas need XML namespaces. States are in the message's reference frame, not WGS 84, so no position is bound | |
+| XTCE (CCSDS 660.0-B-2, OMG XTCE 1.2) | | Not built. XTCE describes a mission's telemetry and command database, not a message; the OMG document notice restricts reuse | |
+
 ## Formats whose specification is not public
 
 A format whose specification is not public is supported in the same way: as a

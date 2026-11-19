@@ -1,0 +1,29 @@
+# CCSDS Space Packet, the 6-octet primary header. Public (CCSDS Blue Book).
+# A message of this pack is a whole packet: the primary header, then the packet
+# data field. Only the header is mapped; decode ignores the data field and encode
+# writes the 6 header octets (pack.md, "Not mapped").
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-space-packet
+version    0.1.0
+distribution public
+source     "CCSDS 133.0-B-2 Space Packet Protocol, Blue Book, June 2020 (Editorial Change 2), https://ccsds.org/Pubs/133x0b2e2.pdf, section 4.1.3; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdssp
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:3  0                                       # packet version number: 000 (version 1)
+field  ccsdssp.packet_type            0:3:1    uint
+field  ccsdssp.secondary_header_flag  0:4:1    uint
+field  ccsdssp.apid                   0:5:11   uint
+field  ccsdssp.sequence_flags         0:16:2   uint
+field  ccsdssp.data_length            0:32:16  uint
+
+kind     telemetry                                    # packet type 0
+when     0:3:1  0
+requires ccsdssp.sequence_count
+field    ccsdssp.sequence_count          0:18:14  uint
+
+kind     telecommand                                  # packet type 1
+when     0:3:1  1
+requires ccsdssp.sequence_count_or_name
+field    ccsdssp.sequence_count_or_name  0:18:14  uint

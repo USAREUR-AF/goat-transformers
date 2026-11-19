@@ -77,6 +77,22 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Packs ccsds-space-packet, ccsds-tm-frame, ccsds-tc-frame, ccsds-aos-frame,
+ccsds-clcw; modules ccsdssp, ccsdstm, ccsdstc, ccsdsaos, ccsdsclcw
+  CCSDS 133.0-B-2 Space Packet Protocol; CCSDS 132.0-B-3 TM Space Data Link
+  Protocol; CCSDS 232.0-B-4 TC Space Data Link Protocol; CCSDS 732.0-B-4 AOS
+  Space Data Link Protocol. Consultative Committee for Space Data Systems,
+  https://ccsds.org/publications/ Reused with attribution under the CCSDS
+  Reproduction Permission Statement for Publications. Field positions, widths
+  and values only; no text, table or figure.
+
+Pack ccsds-ndm-xml; module ccsdsndm
+  CCSDS Navigation Data Messages XML schema set 4.0.0 (CCSDS 505.0-B-3),
+  https://sanaregistry.org/r/ndmxml_unqualified; keyword meanings from CCSDS
+  502.0-B-3 and 504.0-B-2. Reused with attribution under the CCSDS
+  Reproduction Permission Statement for Publications. Element and attribute
+  names and types only.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c

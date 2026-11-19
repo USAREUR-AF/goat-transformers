@@ -1,0 +1,18 @@
+{
+  "name": "idle-packet",
+  "from": "ccsds-space-packet",
+  "to": "ccsds-space-packet",
+  "input": "07ffc000000355555555",
+  "expect": "07ffc0000003",
+  "model": {
+    "@kind": "telemetry",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.secondary_header_flag": "0",
+    "ccsdssp.apid": "2047",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "3",
+    "ccsdssp.sequence_count": "0"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 133.0-B-2 4.1.3; bytes computed by tools/gen/ccsds-vectors.py. Idle packet: APID all ones (4.1.3.3.4.4), no secondary header (4.1.3.3.3.4); a 4-octet idle pattern the mission would choose."
+}

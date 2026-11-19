@@ -1,0 +1,34 @@
+# CCSDS TM Transfer Frame, the 6-octet primary header and, when the frame has one,
+# the identification octet of the secondary header. Public (CCSDS Blue Book).
+# A message of this pack is a whole frame. Decode ignores everything after the
+# mapped octets (secondary header data, data field, trailer); encode writes the
+# mapped octets only (pack.md, "Not mapped").
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-tm-frame
+version    0.1.0
+distribution public
+source     "CCSDS 132.0-B-3 TM Space Data Link Protocol, Blue Book, October 2021, https://ccsds.org/Pubs/132x0b3.pdf, sections 4.1.2 and 4.1.3.2; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdstm
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:2  0                                       # transfer frame version number: 00 (version 1)
+field  ccsdstm.spacecraft_id          0:2:10   uint
+field  ccsdstm.virtual_channel_id     0:12:3   uint
+field  ccsdstm.ocf_flag               0:15:1   uint
+field  ccsdstm.mc_frame_count         0:16:8   uint
+field  ccsdstm.vc_frame_count         0:24:8   uint
+field  ccsdstm.secondary_header_flag  0:32:1   uint
+field  ccsdstm.sync_flag              0:33:1   uint
+field  ccsdstm.packet_order_flag      0:34:1   uint
+field  ccsdstm.segment_length_id      0:35:2   uint
+field  ccsdstm.first_header_pointer   0:37:11  uint
+
+kind     with-secondary-header                        # 7 octets mapped
+when     0:32:1  1
+requires ccsdstm.secondary_header_length
+field    ccsdstm.secondary_header_version  0:48:2  uint
+field    ccsdstm.secondary_header_length   0:50:6  uint
+
+kind     primary-header                               # 6 octets mapped
+when     0:32:1  0

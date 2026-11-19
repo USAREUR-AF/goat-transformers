@@ -1,0 +1,17 @@
+{
+  "name": "opm-to-geojson",
+  "from": "ccsds-ndm-xml",
+  "to": "geojson",
+  "input": "<opm id=\"CCSDS_OPM_VERS\" version=\"3.0\"><header><CREATION_DATE>2026-11-19T00:00:00</CREATION_DATE><ORIGINATOR>EXAMPLE ORIGINATOR</ORIGINATOR></header><body><segment><metadata><OBJECT_NAME>SAT ONE</OBJECT_NAME><OBJECT_ID>2026-001A</OBJECT_ID><CENTER_NAME>EARTH</CENTER_NAME><REF_FRAME>GCRF</REF_FRAME><TIME_SYSTEM>UTC</TIME_SYSTEM></metadata><data><stateVector><EPOCH>2026-11-19T12:00:00</EPOCH><X>7000.5</X><Y>-1200.25</Y><Z>350</Z><X_DOT>0.5</X_DOT><Y_DOT>7.25</Y_DOT><Z_DOT>-0.125</Z_DOT></stateVector></data></segment></body></opm>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"SAT ONE\"},\"id\":\"2026-001A\"}",
+  "model": {
+    "@kind": "opm",
+    "uid": "2026-001A",
+    "callsign": "SAT ONE",
+    "ccsdsndm.body_segment_metadata_ref_frame": "GCRF",
+    "ccsdsndm.body_segment_data_state_vector_x": "7000.5",
+    "ccsdsndm.body_segment_data_state_vector_z_dot": "-0.125"
+  },
+  "source": "constructed",
+  "reference": "an OPM written for this vector (CCSDS 502.0-B-3 table 3-2 and 3-3 keywords, NDM/XML 4.0.0 unqualified element names); OBJECT_ID is uid and OBJECT_NAME is callsign (pack.md, Evidence for the shared keys); geojson canonical form by hand from the 0.1.1 rulings 4 and 5: no lat or lon, so geometry null; the state vector is in GCRF, not WGS 84, and is not carried"
+}

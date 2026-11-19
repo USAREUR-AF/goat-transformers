@@ -1,0 +1,24 @@
+{
+  "name": "whole-frame-only-headers-carried",
+  "from": "ccsds-tm-frame",
+  "to": "ccsds-tm-frame",
+  "input": "2a5bc811980c03a1b2c3303132333435363738393a3b3c3d3e3f4041424301020304beef",
+  "expect": "2a5bc811980c03",
+  "model": {
+    "@kind": "with-secondary-header",
+    "ccsdstm.spacecraft_id": "677",
+    "ccsdstm.virtual_channel_id": "5",
+    "ccsdstm.ocf_flag": "1",
+    "ccsdstm.mc_frame_count": "200",
+    "ccsdstm.vc_frame_count": "17",
+    "ccsdstm.secondary_header_flag": "1",
+    "ccsdstm.sync_flag": "0",
+    "ccsdstm.packet_order_flag": "0",
+    "ccsdstm.segment_length_id": "3",
+    "ccsdstm.first_header_pointer": "12",
+    "ccsdstm.secondary_header_version": "0",
+    "ccsdstm.secondary_header_length": "3"
+  },
+  "source": "constructed",
+  "reference": "CCSDS 132.0-B-3 4.1.2 and 4.1.3.2; bytes computed by tools/gen/ccsds-vectors.py. A whole frame (4.1.1.1): the secondary header data, the data field, the operational control field and the frame error control field are not mapped; encode writes the 7 mapped octets. The error control value here is not a computed CRC: the pack does not read it."
+}
