@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "data_versions|url|string": "data_versions_url",
+  "data_versions|version|string": "data_versions_version",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.versions": "data_versions"
+ }
+}

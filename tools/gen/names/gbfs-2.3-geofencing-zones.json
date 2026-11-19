@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "data_geofencing_zones_features_properties_rules_vehicle_type_id|.|string": "data_geofencing_zones_features_properties_rules_vehicle_type_id_value",
+  "data_geofencing_zones_features_properties_rules|maximum_speed_kph|int": "data_geofencing_zones_features_properties_rules_maximum_speed_kph",
+  "data_geofencing_zones_features_properties_rules|ride_allowed|int": "data_geofencing_zones_features_properties_rules_ride_allowed",
+  "data_geofencing_zones_features_properties_rules|ride_through_allowed|int": "data_geofencing_zones_features_properties_rules_ride_through_allowed",
+  "data_geofencing_zones_features_properties_rules|station_parking|int": "data_geofencing_zones_features_properties_rules_station_parking",
+  "data_geofencing_zones_features|geometry.type|string": "data_geofencing_zones_features_geometry_type",
+  "data_geofencing_zones_features|properties.end|int": "data_geofencing_zones_features_properties_end",
+  "data_geofencing_zones_features|properties.name|string": "data_geofencing_zones_features_properties_name",
+  "data_geofencing_zones_features|properties.start|int": "data_geofencing_zones_features_properties_start",
+  "data_geofencing_zones_features|type|string": "data_geofencing_zones_features_type",
+  "|data.geofencing_zones.type|string": "data_geofencing_zones_type",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_geofencing_zones_features_properties_rules|vehicle_type_id": "data_geofencing_zones_features_properties_rules_vehicle_type_id",
+  "data_geofencing_zones_features|properties.rules": "data_geofencing_zones_features_properties_rules",
+  "|data.geofencing_zones.features": "data_geofencing_zones_features"
+ }
+}

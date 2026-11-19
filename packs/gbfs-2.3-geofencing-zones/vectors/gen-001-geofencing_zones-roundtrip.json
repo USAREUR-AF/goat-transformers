@@ -1,0 +1,14 @@
+{
+ "name": "gen-geofencing_zones-roundtrip",
+ "from": "gbfs-2.3-geofencing-zones",
+ "to": "gbfs-2.3-geofencing-zones",
+ "input": "{\"last_updated\":1450254847,\"ttl\":96543,\"version\":\"2.3\",\"data\":{\"geofencing_zones\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"name\":\"s63759\",\"start\":1450184053,\"end\":1450200261,\"rules\":[{\"vehicle_type_id\":[\"s55718\"],\"ride_allowed\":false,\"ride_through_allowed\":true,\"maximum_speed_kph\":77351,\"station_parking\":false}]},\"geometry\":{\"type\":\"MultiPolygon\"}},{\"type\":\"Feature\",\"properties\":{\"name\":\"s27291\",\"start\":1450196841,\"end\":1450251547,\"rules\":[{\"vehicle_type_id\":[\"s98179\"],\"ride_allowed\":false,\"ride_through_allowed\":false,\"maximum_speed_kph\":77525,\"station_parking\":true}]},\"geometry\":{\"type\":\"MultiPolygon\"}}]}}}",
+ "expect": "{\"last_updated\":1450254847,\"ttl\":96543,\"version\":\"2.3\",\"data\":{\"geofencing_zones\":{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"name\":\"s63759\",\"start\":1450184053,\"end\":1450200261,\"rules\":[{\"vehicle_type_id\":[\"s55718\"],\"ride_allowed\":false,\"ride_through_allowed\":true,\"maximum_speed_kph\":77351,\"station_parking\":false}]},\"geometry\":{\"type\":\"MultiPolygon\"}},{\"type\":\"Feature\",\"properties\":{\"name\":\"s27291\",\"start\":1450196841,\"end\":1450251547,\"rules\":[{\"vehicle_type_id\":[\"s98179\"],\"ride_allowed\":false,\"ride_through_allowed\":false,\"maximum_speed_kph\":77525,\"station_parking\":true}]},\"geometry\":{\"type\":\"MultiPolygon\"}}]}}}",
+ "model": {
+  "gbfs23geofencingzones.last_updated": "1450254847",
+  "gbfs23geofencingzones.ttl": "96543",
+  "gbfs23geofencingzones.version": "2.3",
+  "gbfs23geofencingzones.data_geofencing_zones_type": "FeatureCollection",
+  "gbfs23geofencingzones.data_geofencing_zones_features.#": "2"
+ }
+}

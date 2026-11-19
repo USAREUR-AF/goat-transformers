@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "data_stations|is_installed|float": "data_stations_is_installed",
+  "data_stations|is_renting|float": "data_stations_is_renting",
+  "data_stations|is_returning|float": "data_stations_is_returning",
+  "data_stations|last_reported|float": "data_stations_last_reported",
+  "data_stations|num_bikes_available|int": "data_stations_num_bikes_available",
+  "data_stations|num_bikes_disabled|int": "data_stations_num_bikes_disabled",
+  "data_stations|num_docks_available|int": "data_stations_num_docks_available",
+  "data_stations|num_docks_disabled|int": "data_stations_num_docks_disabled",
+  "data_stations|station_id|string": "data_stations_station_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.stations": "data_stations"
+ }
+}

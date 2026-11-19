@@ -1,0 +1,14 @@
+{
+ "name": "gen-gbfs_versions-roundtrip",
+ "from": "gbfs-3.0-gbfs-versions",
+ "to": "gbfs-3.0-gbfs-versions",
+ "input": "{\"last_updated\":\"2025-11-21T20:56:41.489Z\",\"ttl\":44975,\"version\":\"3.0\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
+ "expect": "{\"last_updated\":\"2025-11-21T20:56:41.489Z\",\"ttl\":44975,\"version\":\"3.0\",\"data\":{\"versions\":[{\"version\":\"3.0\",\"url\":\"https://example.org/193\"},{\"version\":\"2.2\",\"url\":\"https://example.org/669\"}]}}",
+ "model": {
+  "time_ms": "1763758601489",
+  "gbfs30gbfsversions.last_updated": "2025-11-21T20:56:41.489Z",
+  "gbfs30gbfsversions.ttl": "44975",
+  "gbfs30gbfsversions.version": "3.0",
+  "gbfs30gbfsversions.data_versions.#": "2"
+ }
+}

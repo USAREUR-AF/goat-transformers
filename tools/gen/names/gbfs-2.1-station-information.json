@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "data_stations_rental_methods|.|string": "data_stations_rental_methods_value",
+  "data_stations|address|string": "data_stations_address",
+  "data_stations|capacity|int": "data_stations_capacity",
+  "data_stations|cross_street|string": "data_stations_cross_street",
+  "data_stations|is_valet_station|int": "data_stations_is_valet_station",
+  "data_stations|is_virtual_station|int": "data_stations_is_virtual_station",
+  "data_stations|lat|float": "data_stations_lat",
+  "data_stations|lon|float": "data_stations_lon",
+  "data_stations|name|string": "data_stations_name",
+  "data_stations|post_code|string": "data_stations_post_code",
+  "data_stations|region_id|string": "data_stations_region_id",
+  "data_stations|rental_uris.android|string": "data_stations_rental_uris_android",
+  "data_stations|rental_uris.ios|string": "data_stations_rental_uris_ios",
+  "data_stations|rental_uris.web|string": "data_stations_rental_uris_web",
+  "data_stations|short_name|string": "data_stations_short_name",
+  "data_stations|station_area.type|string": "data_stations_station_area_type",
+  "data_stations|station_id|string": "data_stations_station_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_stations|rental_methods": "data_stations_rental_methods",
+  "|data.stations": "data_stations"
+ }
+}

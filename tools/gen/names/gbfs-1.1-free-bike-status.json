@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "data_bikes|bike_id|string": "data_bikes_bike_id",
+  "data_bikes|is_disabled|float": "data_bikes_is_disabled",
+  "data_bikes|is_reserved|float": "data_bikes_is_reserved",
+  "data_bikes|lat|float": "data_bikes_lat",
+  "data_bikes|lon|float": "data_bikes_lon",
+  "data_bikes|rental_uris.android|string": "data_bikes_rental_uris_android",
+  "data_bikes|rental_uris.ios|string": "data_bikes_rental_uris_ios",
+  "data_bikes|rental_uris.web|string": "data_bikes_rental_uris_web",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.bikes": "data_bikes"
+ }
+}

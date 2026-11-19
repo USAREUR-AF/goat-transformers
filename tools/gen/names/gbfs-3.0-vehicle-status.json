@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "data_vehicles_vehicle_equipment|.|string": "data_vehicles_vehicle_equipment_value",
+  "data_vehicles|available_until|string": "data_vehicles_available_until",
+  "data_vehicles|current_fuel_percent|float": "data_vehicles_current_fuel_percent",
+  "data_vehicles|current_range_meters|float": "data_vehicles_current_range_meters",
+  "data_vehicles|home_station_id|string": "data_vehicles_home_station_id",
+  "data_vehicles|is_disabled|int": "data_vehicles_is_disabled",
+  "data_vehicles|is_reserved|int": "data_vehicles_is_reserved",
+  "data_vehicles|last_reported|string": "data_vehicles_last_reported",
+  "data_vehicles|lat|float": "data_vehicles_lat",
+  "data_vehicles|lon|float": "data_vehicles_lon",
+  "data_vehicles|pricing_plan_id|string": "data_vehicles_pricing_plan_id",
+  "data_vehicles|rental_uris.android|string": "data_vehicles_rental_uris_android",
+  "data_vehicles|rental_uris.ios|string": "data_vehicles_rental_uris_ios",
+  "data_vehicles|rental_uris.web|string": "data_vehicles_rental_uris_web",
+  "data_vehicles|station_id|string": "data_vehicles_station_id",
+  "data_vehicles|vehicle_id|string": "data_vehicles_vehicle_id",
+  "data_vehicles|vehicle_type_id|string": "data_vehicles_vehicle_type_id",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_vehicles|vehicle_equipment": "data_vehicles_vehicle_equipment",
+  "|data.vehicles": "data_vehicles"
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-vehicle_types-roundtrip",
+ "from": "gbfs-2.2-vehicle-types",
+ "to": "gbfs-2.2-vehicle-types",
+ "input": "{\"last_updated\":1450158073,\"ttl\":38650,\"version\":\"2.2\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"form_factor\":\"scooter\",\"propulsion_type\":\"electric\",\"max_range_meters\":42.375,\"name\":\"s68088\"},{\"vehicle_type_id\":\"s84173\",\"form_factor\":\"bicycle\",\"propulsion_type\":\"electric_assist\",\"max_range_meters\":42.375,\"name\":\"s16995\"}]}}",
+ "expect": "{\"last_updated\":1450158073,\"ttl\":38650,\"version\":\"2.2\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"form_factor\":\"scooter\",\"propulsion_type\":\"electric\",\"max_range_meters\":42.375,\"name\":\"s68088\"},{\"vehicle_type_id\":\"s84173\",\"form_factor\":\"bicycle\",\"propulsion_type\":\"electric_assist\",\"max_range_meters\":42.375,\"name\":\"s16995\"}]}}",
+ "model": {
+  "gbfs22vehicletypes.last_updated": "1450158073",
+  "gbfs22vehicletypes.ttl": "38650",
+  "gbfs22vehicletypes.version": "2.2",
+  "gbfs22vehicletypes.data_vehicle_types.#": "2"
+ }
+}

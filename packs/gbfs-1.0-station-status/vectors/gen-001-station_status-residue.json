@@ -1,0 +1,7 @@
+{
+ "name": "gen-station_status-residue",
+ "from": "gbfs-1.0-station-status",
+ "to": "gbfs-1.0-station-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1694046054,\"ttl\":72081,\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"last_reported\":42.375},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"last_reported\":101.125}]}}",
+ "expect": "{\"last_updated\":1694046054,\"ttl\":72081,\"data\":{\"stations\":[{\"station_id\":\"s12059\",\"num_bikes_available\":62367,\"num_bikes_disabled\":33985,\"num_docks_available\":67641,\"num_docks_disabled\":40580,\"last_reported\":42.375},{\"station_id\":\"s20420\",\"num_bikes_available\":2881,\"num_bikes_disabled\":73197,\"num_docks_available\":18203,\"num_docks_disabled\":3298,\"last_reported\":101.125}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

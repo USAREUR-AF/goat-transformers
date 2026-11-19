@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_calendar-residue",
+ "from": "gbfs-2.3-system-calendar",
+ "to": "gbfs-2.3-system-calendar",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1450222856,\"ttl\":1504,\"version\":\"2.3\",\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]}}",
+ "expect": "{\"last_updated\":1450222856,\"ttl\":1504,\"version\":\"2.3\",\"data\":{\"calendars\":[{\"start_month\":6,\"start_day\":10,\"start_year\":2249,\"end_month\":2,\"end_day\":26,\"end_year\":39335},{\"start_month\":1,\"start_day\":3,\"start_year\":50924,\"end_month\":12,\"end_day\":26,\"end_year\":86435}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "data_stations_vehicle_docks_available_vehicle_type_ids|.|string": "data_stations_vehicle_docks_available_vehicle_type_ids_value",
+  "data_stations_vehicle_docks_available|count|int": "data_stations_vehicle_docks_available_count",
+  "data_stations_vehicle_types_available|count|int": "data_stations_vehicle_types_available_count",
+  "data_stations_vehicle_types_available|vehicle_type_id|string": "data_stations_vehicle_types_available_vehicle_type_id",
+  "data_stations|is_installed|int": "data_stations_is_installed",
+  "data_stations|is_renting|int": "data_stations_is_renting",
+  "data_stations|is_returning|int": "data_stations_is_returning",
+  "data_stations|last_reported|int": "data_stations_last_reported",
+  "data_stations|num_bikes_available|int": "data_stations_num_bikes_available",
+  "data_stations|num_bikes_disabled|int": "data_stations_num_bikes_disabled",
+  "data_stations|num_docks_available|int": "data_stations_num_docks_available",
+  "data_stations|num_docks_disabled|int": "data_stations_num_docks_disabled",
+  "data_stations|station_id|string": "data_stations_station_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_stations_vehicle_docks_available|vehicle_type_ids": "data_stations_vehicle_docks_available_vehicle_type_ids",
+  "data_stations|vehicle_docks_available": "data_stations_vehicle_docks_available",
+  "data_stations|vehicle_types_available": "data_stations_vehicle_types_available",
+  "|data.stations": "data_stations"
+ }
+}

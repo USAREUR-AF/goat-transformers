@@ -1,0 +1,14 @@
+{
+ "name": "gen-gbfs-roundtrip",
+ "from": "gbfs-3.0-gbfs",
+ "to": "gbfs-3.0-gbfs",
+ "input": "{\"last_updated\":\"2026-09-26T18:38:16.805Z\",\"ttl\":18505,\"version\":\"3.0\",\"data\":{\"feeds\":[{\"name\":\"vehicle_status\",\"url\":\"https://example.org/360\"},{\"name\":\"geofencing_zones\",\"url\":\"https://example.org/191\"}]}}",
+ "expect": "{\"last_updated\":\"2026-09-26T18:38:16.805Z\",\"ttl\":18505,\"version\":\"3.0\",\"data\":{\"feeds\":[{\"name\":\"vehicle_status\",\"url\":\"https://example.org/360\"},{\"name\":\"geofencing_zones\",\"url\":\"https://example.org/191\"}]}}",
+ "model": {
+  "time_ms": "1790447896805",
+  "gbfs30gbfs.last_updated": "2026-09-26T18:38:16.805Z",
+  "gbfs30gbfs.ttl": "18505",
+  "gbfs30gbfs.version": "3.0",
+  "gbfs30gbfs.data_feeds.#": "2"
+ }
+}

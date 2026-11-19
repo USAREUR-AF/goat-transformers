@@ -1,0 +1,13 @@
+{
+ "name": "gen-system_regions-roundtrip",
+ "from": "gbfs-2.0-system-regions",
+ "to": "gbfs-2.0-system-regions",
+ "input": "{\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"2.0\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "expect": "{\"last_updated\":1450244353,\"ttl\":22733,\"version\":\"2.0\",\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "model": {
+  "gbfs20systemregions.last_updated": "1450244353",
+  "gbfs20systemregions.ttl": "22733",
+  "gbfs20systemregions.version": "2.0",
+  "gbfs20systemregions.data_regions.#": "2"
+ }
+}

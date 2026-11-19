@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "data_regions|name|string": "data_regions_name",
+  "data_regions|region_id|string": "data_regions_region_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|data.regions": "data_regions"
+ }
+}

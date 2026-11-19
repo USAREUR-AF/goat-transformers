@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "data_alerts_description|language|string": "data_alerts_description_language",
+  "data_alerts_description|text|string": "data_alerts_description_text",
+  "data_alerts_region_ids|.|string": "data_alerts_region_ids_value",
+  "data_alerts_station_ids|.|string": "data_alerts_station_ids_value",
+  "data_alerts_summary|language|string": "data_alerts_summary_language",
+  "data_alerts_summary|text|string": "data_alerts_summary_text",
+  "data_alerts_times|end|string": "data_alerts_times_end",
+  "data_alerts_times|start|string": "data_alerts_times_start",
+  "data_alerts_url|language|string": "data_alerts_url_language",
+  "data_alerts_url|text|string": "data_alerts_url_text",
+  "data_alerts|alert_id|string": "data_alerts_alert_id",
+  "data_alerts|last_updated|string": "data_alerts_last_updated",
+  "data_alerts|type|string": "data_alerts_type",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_alerts|description": "data_alerts_description",
+  "data_alerts|region_ids": "data_alerts_region_ids",
+  "data_alerts|station_ids": "data_alerts_station_ids",
+  "data_alerts|summary": "data_alerts_summary",
+  "data_alerts|times": "data_alerts_times",
+  "data_alerts|url": "data_alerts_url",
+  "|data.alerts": "data_alerts"
+ }
+}

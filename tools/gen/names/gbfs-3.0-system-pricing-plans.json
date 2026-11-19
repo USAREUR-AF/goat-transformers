@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "data_plans_description|language|string": "data_plans_description_language",
+  "data_plans_description|text|string": "data_plans_description_text",
+  "data_plans_name|language|string": "data_plans_name_language",
+  "data_plans_name|text|string": "data_plans_name_text",
+  "data_plans_per_km_pricing|end|int": "data_plans_per_km_pricing_end",
+  "data_plans_per_km_pricing|interval|int": "data_plans_per_km_pricing_interval",
+  "data_plans_per_km_pricing|rate|float": "data_plans_per_km_pricing_rate",
+  "data_plans_per_km_pricing|start|int": "data_plans_per_km_pricing_start",
+  "data_plans_per_min_pricing|end|int": "data_plans_per_min_pricing_end",
+  "data_plans_per_min_pricing|interval|int": "data_plans_per_min_pricing_interval",
+  "data_plans_per_min_pricing|rate|float": "data_plans_per_min_pricing_rate",
+  "data_plans_per_min_pricing|start|int": "data_plans_per_min_pricing_start",
+  "data_plans|currency|string": "data_plans_currency",
+  "data_plans|is_taxable|int": "data_plans_is_taxable",
+  "data_plans|plan_id|string": "data_plans_plan_id",
+  "data_plans|price|float": "data_plans_price",
+  "data_plans|surge_pricing|int": "data_plans_surge_pricing",
+  "data_plans|url|string": "data_plans_url",
+  "|last_updated|string": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_plans|description": "data_plans_description",
+  "data_plans|name": "data_plans_name",
+  "data_plans|per_km_pricing": "data_plans_per_km_pricing",
+  "data_plans|per_min_pricing": "data_plans_per_min_pricing",
+  "|data.plans": "data_plans"
+ }
+}
