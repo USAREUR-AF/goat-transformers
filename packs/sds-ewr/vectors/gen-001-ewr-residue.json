@@ -1,0 +1,7 @@
+{
+ "name": "gen-ewr-residue",
+ "from": "sds-ewr",
+ "to": "sds-ewr",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"SYSTEM_ID\":3440644259,\"ENTITY_ID\":3319744928,\"ESM_ACTIVE\":false,\"ECM_ACTIVE\":true,\"RWR_ACTIVE\":false,\"ESM_CONTACTS\":[\"s14389\",\"s63404\"],\"ACTIVE_JAMMING\":[\"s14736\",\"s98206\"],\"COUNTERMEASURES\":\"s42354\",\"THREAT_WARNINGS\":[\"s95518\",\"s56452\"],\"EMCON_LEVEL\":178,\"LAST_UPDATE_MS\":-9223322668154360831}",
+ "expect": "{\"SYSTEM_ID\":3440644259,\"ENTITY_ID\":3319744928,\"ESM_ACTIVE\":false,\"ECM_ACTIVE\":true,\"RWR_ACTIVE\":false,\"ESM_CONTACTS\":[\"s14389\",\"s63404\"],\"ACTIVE_JAMMING\":[\"s14736\",\"s98206\"],\"COUNTERMEASURES\":\"s42354\",\"THREAT_WARNINGS\":[\"s95518\",\"s56452\"],\"EMCON_LEVEL\":178,\"LAST_UPDATE_MS\":-9223322668154360831,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

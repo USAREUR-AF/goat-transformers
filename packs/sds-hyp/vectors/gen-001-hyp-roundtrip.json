@@ -1,0 +1,17 @@
+{
+ "name": "gen-hyp-roundtrip",
+ "from": "sds-hyp",
+ "to": "sds-hyp",
+ "input": "{\"CAT_IDS\":[\"s90305\",\"s90169\"],\"SIT_IDS\":[\"s91375\",\"s89182\"],\"NAME\":\"s5481\",\"CATEGORY\":\"s29041\",\"ROW_INDICATORS\":[\"s30728\",\"s6613\"],\"COL_INDICATORS\":[\"s741\",\"s8253\"],\"MATRIX\":[false,false],\"SCORE\":[{\"NORAD_CAT_ID\":\"s3409\",\"TYPE\":\"OUTLIER\",\"TAG\":\"s21128\",\"SCORE\":-3.25},{\"NORAD_CAT_ID\":\"s13186\",\"TYPE\":\"OUTLIER\",\"TAG\":\"s75724\",\"SCORE\":101.125}],\"ANALYSIS_METHOD\":\"s29677\",\"EVENT_START_TIME\":\"s78941\",\"EVENT_END_TIME\":\"s69349\"}",
+ "expect": "{\"CAT_IDS\":[\"s90305\",\"s90169\"],\"SIT_IDS\":[\"s91375\",\"s89182\"],\"NAME\":\"s5481\",\"CATEGORY\":\"s29041\",\"ROW_INDICATORS\":[\"s30728\",\"s6613\"],\"COL_INDICATORS\":[\"s741\",\"s8253\"],\"MATRIX\":[false,false],\"SCORE\":[{\"NORAD_CAT_ID\":\"s3409\",\"TYPE\":\"OUTLIER\",\"TAG\":\"s21128\",\"SCORE\":-3.25},{\"NORAD_CAT_ID\":\"s13186\",\"TYPE\":\"OUTLIER\",\"TAG\":\"s75724\",\"SCORE\":101.125}],\"ANALYSIS_METHOD\":\"s29677\",\"EVENT_START_TIME\":\"s78941\",\"EVENT_END_TIME\":\"s69349\"}",
+ "model": {
+  "sdshyp.cat_ids.#": "2",
+  "sdshyp.sit_ids.#": "2",
+  "sdshyp.name": "s5481",
+  "sdshyp.category": "s29041",
+  "sdshyp.row_indicators.#": "2",
+  "sdshyp.col_indicators.#": "2",
+  "sdshyp.matrix.#": "2",
+  "sdshyp.score.#": "2"
+ }
+}

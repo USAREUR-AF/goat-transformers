@@ -1,0 +1,17 @@
+{
+ "name": "gen-doa-roundtrip",
+ "from": "sds-doa",
+ "to": "sds-doa",
+ "input": "{\"ID\":\"s48936\",\"OB_TIME\":\"s59507\",\"SAT_NO\":4231057623,\"ORIG_OBJECT_ID\":\"s35296\",\"ON_ORBIT\":\"s45298\",\"UCT\":true,\"TASK_ID\":\"s54833\",\"TRANSACTION_ID\":\"s89429\",\"COLLECTION_MODE\":\"UNKNOWN\",\"ID_SENSOR1\":\"s24712\",\"ORIG_SENSOR_ID1\":\"s54401\",\"SENLAT\":42.375,\"SENLON\":1.5,\"SENALT\":12.5,\"SENSOR1_DELAY\":101.125,\"ID_SENSOR2\":\"s34508\",\"ORIG_SENSOR_ID2\":\"s35691\",\"SEN2LAT\":42.375,\"SEN2LON\":12.5,\"SEN2ALT\":0.75,\"SENSOR2_DELAY\":0.75,\"FREQUENCY\":-3.25,\"BANDWIDTH\":42.375,\"SNR\":-0.5,\"DELTA_RANGE\":12.5,\"DELTA_RANGE_UNC\":7.0625,\"DELTA_RANGE_RATE\":12.5,\"DELTA_RANGE_RATE_UNC\":-0.5,\"TDOA\":-0.5,\"TDOA_UNC\":-3.25,\"FDOA\":12.5,\"FDOA_UNC\":0.75,\"RAW_FILE_URI\":\"s12661\",\"DESCRIPTOR\":\"s29359\",\"TAGS\":[\"s4138\",\"s10604\"]}",
+ "expect": "{\"ID\":\"s48936\",\"OB_TIME\":\"s59507\",\"SAT_NO\":4231057623,\"ORIG_OBJECT_ID\":\"s35296\",\"ON_ORBIT\":\"s45298\",\"UCT\":true,\"TASK_ID\":\"s54833\",\"TRANSACTION_ID\":\"s89429\",\"COLLECTION_MODE\":\"UNKNOWN\",\"ID_SENSOR1\":\"s24712\",\"ORIG_SENSOR_ID1\":\"s54401\",\"SENLAT\":42.375,\"SENLON\":1.5,\"SENALT\":12.5,\"SENSOR1_DELAY\":101.125,\"ID_SENSOR2\":\"s34508\",\"ORIG_SENSOR_ID2\":\"s35691\",\"SEN2LAT\":42.375,\"SEN2LON\":12.5,\"SEN2ALT\":0.75,\"SENSOR2_DELAY\":0.75,\"FREQUENCY\":-3.25,\"BANDWIDTH\":42.375,\"SNR\":-0.5,\"DELTA_RANGE\":12.5,\"DELTA_RANGE_UNC\":7.0625,\"DELTA_RANGE_RATE\":12.5,\"DELTA_RANGE_RATE_UNC\":-0.5,\"TDOA\":-0.5,\"TDOA_UNC\":-3.25,\"FDOA\":12.5,\"FDOA_UNC\":0.75,\"RAW_FILE_URI\":\"s12661\",\"DESCRIPTOR\":\"s29359\",\"TAGS\":[\"s4138\",\"s10604\"]}",
+ "model": {
+  "uid": "s48936",
+  "sdsdoa.id": "s48936",
+  "sdsdoa.ob_time": "s59507",
+  "sdsdoa.sat_no": "4231057623",
+  "sdsdoa.orig_object_id": "s35296",
+  "sdsdoa.on_orbit": "s45298",
+  "sdsdoa.uct": "1",
+  "sdsdoa.task_id": "s54833"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "|APID|int": "apid",
+  "|DATA_LENGTH|int": "data_length",
+  "|PACKET_TYPE|string": "packet_type",
+  "|SEC_HDR_FLAG|int": "sec_hdr_flag",
+  "|SEQUENCE_COUNT|int": "sequence_count",
+  "|SEQUENCE_FLAGS|int": "sequence_flags",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|DATA": "data"
+ }
+}

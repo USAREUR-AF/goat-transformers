@@ -1,0 +1,7 @@
+{
+ "name": "gen-fcs-residue",
+ "from": "sds-fcs",
+ "to": "sds-fcs",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MODE\":118,\"LEAD_METHOD\":86,\"RANGEFINDER_TYPE\":99,\"AMMO_SELECTED\":100,\"TARGET\":\"s7880\",\"SOLUTION\":\"s91366\",\"LAST_RANGE\":0.75,\"RANGE_RATE\":7.0625,\"ROUNDS_REMAINING\":700,\"TEMPERATURE\":7.0625,\"RESERVED\":[185,182]}",
+ "expect": "{\"MODE\":118,\"LEAD_METHOD\":86,\"RANGEFINDER_TYPE\":99,\"AMMO_SELECTED\":100,\"TARGET\":\"s7880\",\"SOLUTION\":\"s91366\",\"LAST_RANGE\":0.75,\"RANGE_RATE\":7.0625,\"ROUNDS_REMAINING\":700,\"TEMPERATURE\":7.0625,\"RESERVED\":[185,182],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

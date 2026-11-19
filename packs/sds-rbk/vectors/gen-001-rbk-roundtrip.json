@@ -1,0 +1,17 @@
+{
+ "name": "gen-rbk-roundtrip",
+ "from": "sds-rbk",
+ "to": "sds-rbk",
+ "input": "{\"RIGID_BODY_REQUEST\":{\"OPERATION\":\"B_DOT_MATRIX_MRP\",\"VECTOR_A\":{\"X\":-0.5,\"Y\":1.5,\"Z\":101.125},\"VECTOR_B\":{\"X\":101.125,\"Y\":0.75,\"Z\":-0.5},\"QUATERNION_A\":{\"Q0\":42.375,\"Q1\":101.125,\"Q2\":7.0625,\"Q3\":7.0625},\"MATRIX_A\":{\"M11\":0.75,\"M12\":-3.25,\"M13\":12.5,\"M21\":0.75,\"M22\":7.0625,\"M23\":42.375,\"M31\":0.75,\"M32\":101.125,\"M33\":101.125},\"SWITCH_THRESHOLD\":42.375,\"TRACE_ID\":\"s30341\",\"VECTOR_C\":{\"X\":7.0625,\"Y\":101.125,\"Z\":7.0625},\"VECTOR_D\":{\"X\":-0.5,\"Y\":1.5,\"Z\":42.375},\"EULER_SEQUENCE\":\"EULER_121\",\"ANGLE_RAD\":0.75},\"RIGID_BODY_RESULT\":{\"STATUS\":\"UNSUPPORTED_OPERATION\",\"ERROR_MESSAGE\":\"s29396\",\"VECTOR\":{\"X\":0.75,\"Y\":0.75,\"Z\":-3.25},\"QUATERNION\":{\"Q0\":42.375,\"Q1\":12.5,\"Q2\":0.75,\"Q3\":-0.5},\"MATRIX\":{\"M11\":7.0625,\"M12\":-0.5,\"M13\":101.125,\"M21\":12.5,\"M22\":7.0625,\"M23\":7.0625,\"M31\":42.375,\"M32\":1.5,\"M33\":1.5},\"TRACE_ID\":\"s55436\"}}",
+ "expect": "{\"RIGID_BODY_REQUEST\":{\"OPERATION\":\"B_DOT_MATRIX_MRP\",\"VECTOR_A\":{\"X\":-0.5,\"Y\":1.5,\"Z\":101.125},\"VECTOR_B\":{\"X\":101.125,\"Y\":0.75,\"Z\":-0.5},\"QUATERNION_A\":{\"Q0\":42.375,\"Q1\":101.125,\"Q2\":7.0625,\"Q3\":7.0625},\"MATRIX_A\":{\"M11\":0.75,\"M12\":-3.25,\"M13\":12.5,\"M21\":0.75,\"M22\":7.0625,\"M23\":42.375,\"M31\":0.75,\"M32\":101.125,\"M33\":101.125},\"SWITCH_THRESHOLD\":42.375,\"TRACE_ID\":\"s30341\",\"VECTOR_C\":{\"X\":7.0625,\"Y\":101.125,\"Z\":7.0625},\"VECTOR_D\":{\"X\":-0.5,\"Y\":1.5,\"Z\":42.375},\"EULER_SEQUENCE\":\"EULER_121\",\"ANGLE_RAD\":0.75},\"RIGID_BODY_RESULT\":{\"STATUS\":\"UNSUPPORTED_OPERATION\",\"ERROR_MESSAGE\":\"s29396\",\"VECTOR\":{\"X\":0.75,\"Y\":0.75,\"Z\":-3.25},\"QUATERNION\":{\"Q0\":42.375,\"Q1\":12.5,\"Q2\":0.75,\"Q3\":-0.5},\"MATRIX\":{\"M11\":7.0625,\"M12\":-0.5,\"M13\":101.125,\"M21\":12.5,\"M22\":7.0625,\"M23\":7.0625,\"M31\":42.375,\"M32\":1.5,\"M33\":1.5},\"TRACE_ID\":\"s55436\"}}",
+ "model": {
+  "sdsrbk.rigid_body_request_operation": "B_DOT_MATRIX_MRP",
+  "sdsrbk.rigid_body_request_vector_a_x": "-0.5",
+  "sdsrbk.rigid_body_request_vector_a_y": "1.5",
+  "sdsrbk.rigid_body_request_vector_a_z": "101.125",
+  "sdsrbk.rigid_body_request_vector_b_x": "101.125",
+  "sdsrbk.rigid_body_request_vector_b_y": "0.75",
+  "sdsrbk.rigid_body_request_vector_b_z": "-0.5",
+  "sdsrbk.rigid_body_request_quaternion_a_q0": "42.375"
+ }
+}

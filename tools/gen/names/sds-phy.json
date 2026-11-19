@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|AERO_QUERY|string": "aero_query",
+  "|COLLISION_QUERY_A|string": "collision_query_a",
+  "|COLLISION_QUERY_B|string": "collision_query_b",
+  "|COMMAND|string": "command",
+  "|DRAG_MODEL|string": "drag_model",
+  "|FLUID|string": "fluid",
+  "|INTEGRATION_CONFIG|string": "integration_config",
+  "|POSITION_A|string": "position_a",
+  "|POSITION_B|string": "position_b",
+  "|RIGID_BODY|string": "rigid_body",
+  "|SIMULATION_STEP|string": "simulation_step",
+  "|THERMAL_STATE|string": "thermal_state",
+  "|TRANSFORM_A|string": "transform_a",
+  "|TRANSFORM_B|string": "transform_b"
+ },
+ "lists": {}
+}

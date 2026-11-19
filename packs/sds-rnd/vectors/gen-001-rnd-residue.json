@@ -1,0 +1,7 @@
+{
+ "name": "gen-rnd-residue",
+ "from": "sds-rnd",
+ "to": "sds-rnd",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"LENGTH\":2290065451,\"BYTES\":[220,27],\"SOURCE\":\"Deterministic\",\"GENERATED_AT_MS\":-9223241964728603476,\"GENERATOR_ID\":\"s83898\",\"SEQUENCE\":76720705364040,\"SEED\":[140,106]}",
+ "expect": "{\"LENGTH\":2290065451,\"BYTES\":[220,27],\"SOURCE\":\"Deterministic\",\"GENERATED_AT_MS\":-9223241964728603476,\"GENERATOR_ID\":\"s83898\",\"SEQUENCE\":76720705364040,\"SEED\":[140,106],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

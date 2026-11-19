@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "ob_array|.|string": "ob_array_value",
+  "|OB_BOOL|int": "ob_bool",
+  "|OB_DESCRIPTION|string": "ob_description",
+  "|OB_QUALITY|string": "ob_quality",
+  "|OB_STRING|string": "ob_string",
+  "|OB_TYPE|string": "ob_type",
+  "|OB_UO_M|string": "ob_uo_m",
+  "|OB_VALUE|float": "ob_value"
+ },
+ "lists": {
+  "|OB_ARRAY": "ob_array"
+ }
+}

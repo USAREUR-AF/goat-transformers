@@ -1,0 +1,17 @@
+{
+ "name": "gen-crd-roundtrip",
+ "from": "sds-crd",
+ "to": "sds-crd",
+ "input": "{\"X\":7.0625,\"Y\":0.75,\"Z\":0.75,\"VX\":101.125,\"VY\":42.375,\"VZ\":7.0625,\"FRAME\":10,\"ELLIPSOID\":175,\"RESERVED\":[68,189]}",
+ "expect": "{\"X\":7.0625,\"Y\":0.75,\"Z\":0.75,\"VX\":101.125,\"VY\":42.375,\"VZ\":7.0625,\"FRAME\":10,\"ELLIPSOID\":175,\"RESERVED\":[68,189]}",
+ "model": {
+  "sdscrd.x": "7.0625",
+  "sdscrd.y": "0.75",
+  "sdscrd.z": "0.75",
+  "sdscrd.vx": "101.125",
+  "sdscrd.vy": "42.375",
+  "sdscrd.vz": "7.0625",
+  "sdscrd.frame": "10",
+  "sdscrd.ellipsoid": "175"
+ }
+}

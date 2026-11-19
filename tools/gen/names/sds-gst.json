@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "receive_bands|.|string": "receive_bands_value",
+  "transmit_bands|.|string": "transmit_bands_value",
+  "|ANTENNA_AXIS_TYPE|string": "antenna_axis_type",
+  "|AXIS_OFFSET_M|float": "axis_offset_m",
+  "|CDP_NUMBER|string": "cdp_number",
+  "|CLOCK_OFFSET_S|float": "clock_offset_s",
+  "|CLOCK_RATE_S_PER_S|float": "clock_rate_s_per_s",
+  "|CLOCK_TIME_SCALE|string": "clock_time_scale",
+  "|DOMES_NUMBER|string": "domes_number",
+  "|ECCENTRICITY_FRAME|string": "eccentricity_frame",
+  "|ECCENTRICITY_X|float": "eccentricity_x",
+  "|ECCENTRICITY_Y|float": "eccentricity_y",
+  "|ECCENTRICITY_Z|float": "eccentricity_z",
+  "|FRAME_REALIZATION_NAME|string": "frame_realization_name",
+  "|FRAME_REALIZATION|string": "frame_realization",
+  "|NAME|string": "name",
+  "|NETWORK|string": "network",
+  "|POSITION_SIGMA_X|float": "position_sigma_x",
+  "|POSITION_SIGMA_Y|float": "position_sigma_y",
+  "|POSITION_SIGMA_Z|float": "position_sigma_z",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|REFERENCE_EPOCH|string": "reference_epoch",
+  "|SOURCE|string": "source",
+  "|STATION_ID|string": "station_id",
+  "|VALID_FROM|string": "valid_from",
+  "|VALID_TO|string": "valid_to",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z"
+ },
+ "lists": {
+  "|RECEIVE_BANDS": "receive_bands",
+  "|TRANSMIT_BANDS": "transmit_bands"
+ }
+}

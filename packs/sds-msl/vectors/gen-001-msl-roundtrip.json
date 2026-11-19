@@ -1,0 +1,17 @@
+{
+ "name": "gen-msl-roundtrip",
+ "from": "sds-msl",
+ "to": "sds-msl",
+ "input": "{\"POSITION_X\":-3.25,\"POSITION_Y\":-0.5,\"POSITION_Z\":101.125,\"VELOCITY_X\":101.125,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"ATTITUDE_X\":1.5,\"ATTITUDE_Y\":101.125,\"ATTITUDE_Z\":42.375,\"ATTITUDE_W\":101.125,\"OMEGA_X\":-0.5,\"OMEGA_Y\":7.0625,\"OMEGA_Z\":-3.25,\"MASS\":-3.25,\"MASS_INITIAL\":-0.5,\"TARGET_POSITION_X\":101.125,\"TARGET_POSITION_Y\":-0.5,\"TARGET_POSITION_Z\":42.375,\"TARGET_VELOCITY_X\":101.125,\"TARGET_VELOCITY_Y\":-3.25,\"TARGET_VELOCITY_Z\":42.375,\"MISS_DISTANCE\":42.375,\"SEEKER\":\"s72806\",\"MOTOR\":\"s81708\",\"GUIDANCE_CMD\":\"s52808\",\"PHASE\":75,\"GUIDANCE_LAW\":250,\"TYPE\":248,\"ARMED\":176,\"TIME_OF_FLIGHT\":12.5,\"MAX_G\":101.125,\"RESERVED\":[197,14]}",
+ "expect": "{\"POSITION_X\":-3.25,\"POSITION_Y\":-0.5,\"POSITION_Z\":101.125,\"VELOCITY_X\":101.125,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"ATTITUDE_X\":1.5,\"ATTITUDE_Y\":101.125,\"ATTITUDE_Z\":42.375,\"ATTITUDE_W\":101.125,\"OMEGA_X\":-0.5,\"OMEGA_Y\":7.0625,\"OMEGA_Z\":-3.25,\"MASS\":-3.25,\"MASS_INITIAL\":-0.5,\"TARGET_POSITION_X\":101.125,\"TARGET_POSITION_Y\":-0.5,\"TARGET_POSITION_Z\":42.375,\"TARGET_VELOCITY_X\":101.125,\"TARGET_VELOCITY_Y\":-3.25,\"TARGET_VELOCITY_Z\":42.375,\"MISS_DISTANCE\":42.375,\"SEEKER\":\"s72806\",\"MOTOR\":\"s81708\",\"GUIDANCE_CMD\":\"s52808\",\"PHASE\":75,\"GUIDANCE_LAW\":250,\"TYPE\":248,\"ARMED\":176,\"TIME_OF_FLIGHT\":12.5,\"MAX_G\":101.125,\"RESERVED\":[197,14]}",
+ "model": {
+  "sdsmsl.position_x": "-3.25",
+  "sdsmsl.position_y": "-0.5",
+  "sdsmsl.position_z": "101.125",
+  "sdsmsl.velocity_x": "101.125",
+  "sdsmsl.velocity_y": "12.5",
+  "sdsmsl.velocity_z": "7.0625",
+  "sdsmsl.attitude_x": "1.5",
+  "sdsmsl.attitude_y": "101.125"
+ }
+}

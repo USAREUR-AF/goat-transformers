@@ -1,0 +1,17 @@
+{
+ "name": "gen-env-roundtrip",
+ "from": "sds-env",
+ "to": "sds-env",
+ "input": "{\"ATMOSPHERE\":\"s13876\",\"WEATHER\":\"s95476\",\"TIME_UTC\":12.5,\"LATITUDE\":0.75,\"LONGITUDE\":1.5,\"SUN_AZIMUTH\":-3.25,\"SUN_ELEVATION\":42.375,\"MOON_PHASE\":1.5,\"ILLUMINATION\":101.125,\"MAGNETIC_DECLINATION\":42.375,\"MAGNETIC_INCLINATION\":7.0625,\"RESERVED\":[32,121]}",
+ "expect": "{\"ATMOSPHERE\":\"s13876\",\"WEATHER\":\"s95476\",\"TIME_UTC\":12.5,\"LATITUDE\":0.75,\"LONGITUDE\":1.5,\"SUN_AZIMUTH\":-3.25,\"SUN_ELEVATION\":42.375,\"MOON_PHASE\":1.5,\"ILLUMINATION\":101.125,\"MAGNETIC_DECLINATION\":42.375,\"MAGNETIC_INCLINATION\":7.0625,\"RESERVED\":[32,121]}",
+ "model": {
+  "sdsenv.atmosphere": "s13876",
+  "sdsenv.weather": "s95476",
+  "sdsenv.time_utc": "12.5",
+  "sdsenv.latitude": "0.75",
+  "sdsenv.longitude": "1.5",
+  "sdsenv.sun_azimuth": "-3.25",
+  "sdsenv.sun_elevation": "42.375",
+  "sdsenv.moon_phase": "1.5"
+ }
+}

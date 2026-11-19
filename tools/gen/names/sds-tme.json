@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "sunrise_sunset_query|.|float": "sunrise_sunset_query_value",
+  "|CLOCK_PROPAGATION|string": "clock_propagation",
+  "|COMMAND|string": "command",
+  "|CONVERSION_REQUEST|string": "conversion_request",
+  "|EOP_QUERY|string": "eop_query",
+  "|INTERVAL_REQUEST|string": "interval_request",
+  "|LEAP_SECOND_QUERY|string": "leap_second_query",
+  "|LUNAR_POSITION_QUERY|string": "lunar_position_query",
+  "|SIDEREAL_QUERY|string": "sidereal_query",
+  "|SOLAR_POSITION_QUERY|string": "solar_position_query"
+ },
+ "lists": {
+  "|SUNRISE_SUNSET_QUERY": "sunrise_sunset_query"
+ }
+}

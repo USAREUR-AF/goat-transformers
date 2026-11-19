@@ -1,0 +1,17 @@
+{
+ "name": "gen-lmo-roundtrip",
+ "from": "sds-lmo",
+ "to": "sds-lmo",
+ "input": "{\"REQUEST_ID\":\"s63063\",\"STATUS\":\"ERROR\",\"ERROR_CODE\":\"s24797\",\"ERROR_MESSAGE\":\"s39498\",\"SINGLE\":{\"BRANCH_KIND\":\"MULTI_SHORT_PERIOD\",\"N_REVS\":10443,\"V1\":{\"X\":0.75,\"Y\":1.5,\"Z\":42.375},\"V2\":{\"X\":0.75,\"Y\":7.0625,\"Z\":101.125},\"ITERATIONS\":2004948512},\"MULTI\":[{\"BRANCH_KIND\":\"MULTI_SHORT_PERIOD\",\"N_REVS\":24946,\"V1\":{\"X\":7.0625,\"Y\":101.125,\"Z\":101.125},\"V2\":{\"X\":12.5,\"Y\":42.375,\"Z\":12.5},\"ITERATIONS\":2742187632},{\"BRANCH_KIND\":\"MULTI_LONG_PERIOD\",\"N_REVS\":40757,\"V1\":{\"X\":7.0625,\"Y\":7.0625,\"Z\":1.5},\"V2\":{\"X\":101.125,\"Y\":42.375,\"Z\":42.375},\"ITERATIONS\":2676308309}],\"MAX_FEASIBLE_REVS\":22414,\"FLAGS\":24466}",
+ "expect": "{\"REQUEST_ID\":\"s63063\",\"STATUS\":\"ERROR\",\"ERROR_CODE\":\"s24797\",\"ERROR_MESSAGE\":\"s39498\",\"SINGLE\":{\"BRANCH_KIND\":\"MULTI_SHORT_PERIOD\",\"N_REVS\":10443,\"V1\":{\"X\":0.75,\"Y\":1.5,\"Z\":42.375},\"V2\":{\"X\":0.75,\"Y\":7.0625,\"Z\":101.125},\"ITERATIONS\":2004948512},\"MULTI\":[{\"BRANCH_KIND\":\"MULTI_SHORT_PERIOD\",\"N_REVS\":24946,\"V1\":{\"X\":7.0625,\"Y\":101.125,\"Z\":101.125},\"V2\":{\"X\":12.5,\"Y\":42.375,\"Z\":12.5},\"ITERATIONS\":2742187632},{\"BRANCH_KIND\":\"MULTI_LONG_PERIOD\",\"N_REVS\":40757,\"V1\":{\"X\":7.0625,\"Y\":7.0625,\"Z\":1.5},\"V2\":{\"X\":101.125,\"Y\":42.375,\"Z\":42.375},\"ITERATIONS\":2676308309}],\"MAX_FEASIBLE_REVS\":22414,\"FLAGS\":24466}",
+ "model": {
+  "sdslmo.request_id": "s63063",
+  "sdslmo.status": "ERROR",
+  "sdslmo.error_code": "s24797",
+  "sdslmo.error_message": "s39498",
+  "sdslmo.single_branch_kind": "MULTI_SHORT_PERIOD",
+  "sdslmo.single_n_revs": "10443",
+  "sdslmo.single_v1_x": "0.75",
+  "sdslmo.single_v1_y": "1.5"
+ }
+}

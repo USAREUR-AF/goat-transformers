@@ -1,0 +1,17 @@
+{
+ "name": "gen-chn-roundtrip",
+ "from": "sds-chn",
+ "to": "sds-chn",
+ "input": "{\"ID\":\"s70040\",\"NAME\":\"s52487\",\"TYPE\":\"s12042\",\"BEAM_NAME\":\"s62008\",\"ID_RFBAND\":\"s89466\",\"ENCRYPTION\":\"s72308\",\"PKG\":\"s51216\",\"RES\":\"s98711\",\"COMPRESSION\":\"s80803\",\"VPID\":\"s72942\",\"APID\":\"s8806\",\"SID\":\"s93267\",\"OWNER\":\"s36603\"}",
+ "expect": "{\"ID\":\"s70040\",\"NAME\":\"s52487\",\"TYPE\":\"s12042\",\"BEAM_NAME\":\"s62008\",\"ID_RFBAND\":\"s89466\",\"ENCRYPTION\":\"s72308\",\"PKG\":\"s51216\",\"RES\":\"s98711\",\"COMPRESSION\":\"s80803\",\"VPID\":\"s72942\",\"APID\":\"s8806\",\"SID\":\"s93267\",\"OWNER\":\"s36603\"}",
+ "model": {
+  "sdschn.id": "s70040",
+  "sdschn.name": "s52487",
+  "sdschn.type": "s12042",
+  "sdschn.beam_name": "s62008",
+  "sdschn.id_rfband": "s89466",
+  "sdschn.encryption": "s72308",
+  "sdschn.pkg": "s51216",
+  "sdschn.res": "s98711"
+ }
+}

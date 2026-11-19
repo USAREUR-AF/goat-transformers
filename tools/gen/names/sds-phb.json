@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "response_wavelength_nm|.|float": "response_wavelength_nm_value",
+  "response|.|float": "response_value",
+  "|BAND_ID|string": "band_id",
+  "|CITATION|string": "citation",
+  "|DEFINITION_URL|string": "definition_url",
+  "|MAGNITUDE_SYSTEM|string": "magnitude_system",
+  "|NAME|string": "name",
+  "|RESPONSE_IS_ENERGY|int": "response_is_energy",
+  "|SPECTRAL_REGIME|string": "spectral_regime",
+  "|SYSTEM_NAME|string": "system_name",
+  "|WAVELENGTH_EFF_NM|float": "wavelength_eff_nm",
+  "|WAVELENGTH_MAX_NM|float": "wavelength_max_nm",
+  "|WAVELENGTH_MIN_NM|float": "wavelength_min_nm",
+  "|ZERO_POINT_JY|float": "zero_point_jy"
+ },
+ "lists": {
+  "|RESPONSE": "response",
+  "|RESPONSE_WAVELENGTH_NM": "response_wavelength_nm"
+ }
+}

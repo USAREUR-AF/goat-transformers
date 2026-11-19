@@ -1,0 +1,7 @@
+{
+ "name": "gen-aof-residue",
+ "from": "sds-aof",
+ "to": "sds-aof",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"VERSION\":33,\"SPACECRAFT_ID\":9491,\"VIRTUAL_CHANNEL_ID\":7,\"VIRTUAL_FRAME_COUNT\":4293392042,\"REPLAY_FLAG\":false,\"VC_FRAME_COUNT_USAGE\":true,\"VC_FRAME_COUNT_CYCLE\":137,\"INSERT_ZONE\":[238,55],\"DATA\":[184,13],\"OCF\":[80,85],\"FECF\":56725}",
+ "expect": "{\"VERSION\":33,\"SPACECRAFT_ID\":9491,\"VIRTUAL_CHANNEL_ID\":7,\"VIRTUAL_FRAME_COUNT\":4293392042,\"REPLAY_FLAG\":false,\"VC_FRAME_COUNT_USAGE\":true,\"VC_FRAME_COUNT_CYCLE\":137,\"INSERT_ZONE\":[238,55],\"DATA\":[184,13],\"OCF\":[80,85],\"FECF\":56725,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

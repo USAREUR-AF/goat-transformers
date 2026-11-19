@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "broker_public_key|.|int": "broker_public_key_value",
+  "multiformat_addresses|.|string": "multiformat_addresses_value",
+  "signature|.|int": "signature_value",
+  "|BROKER_ID|string": "broker_id",
+  "|BROKER_KIND|string": "broker_kind",
+  "|FIRST_SEEN_AT|int": "first_seen_at",
+  "|HEARTBEAT_INTERVAL_MS|int": "heartbeat_interval_ms",
+  "|LAST_HEARTBEAT_AT|int": "last_heartbeat_at",
+  "|LIVENESS|string": "liveness",
+  "|PROTOCOL_ID|string": "protocol_id",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|PUBLISHER_EPM_CID|string": "publisher_epm_cid",
+  "|UPDATED_AT|int": "updated_at"
+ },
+ "lists": {
+  "|BROKER_PUBLIC_KEY": "broker_public_key",
+  "|MULTIFORMAT_ADDRESSES": "multiformat_addresses",
+  "|SIGNATURE": "signature"
+ }
+}

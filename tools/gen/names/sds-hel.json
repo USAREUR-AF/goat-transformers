@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|ENGINE_N1|float": "engine_n1",
+  "|ENGINE_TORQUE|float": "engine_torque",
+  "|FLAGS|int": "flags",
+  "|FUEL_REMAINING|float": "fuel_remaining",
+  "|MAIN_ROTOR|string": "main_rotor",
+  "|OMEGA_BODY_X|float": "omega_body_x",
+  "|OMEGA_BODY_Y|float": "omega_body_y",
+  "|OMEGA_BODY_Z|float": "omega_body_z",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|QUAT_W|float": "quat_w",
+  "|QUAT_X|float": "quat_x",
+  "|QUAT_Y|float": "quat_y",
+  "|QUAT_Z|float": "quat_z",
+  "|TAIL_ROTOR|string": "tail_rotor",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z"
+ },
+ "lists": {}
+}

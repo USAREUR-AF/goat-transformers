@@ -1,0 +1,17 @@
+{
+ "name": "gen-lne-roundtrip",
+ "from": "sds-lne",
+ "to": "sds-lne",
+ "input": "{\"ID\":\"s27443\",\"SAT_NO\":1234148742,\"ORIG_OBJECT_ID\":\"s8965\",\"DERIVED_FROM\":\"s46206\",\"DECLASSIFICATION_DATE\":\"s27505\",\"DECLASSIFICATION_STRING\":\"s24524\",\"MSG_CREATE_DATE\":\"s2811\",\"LAUNCH_DATE\":\"s51660\",\"OUTCOME\":\"IN_PROGRESS\",\"LAUNCH_FAILURE_CODE\":\"s56716\",\"BE_NUMBER\":\"s34763\",\"O_SUFFIX\":\"s35027\",\"LAUNCH_FACILITY_NAME\":\"s62904\",\"LAUNCH_FACILITY_CODE\":\"s3234\",\"LAUNCH_VEHICLE\":\"s36556\",\"LAUNCH_VEHICLE_CONFIG\":\"s48431\",\"TARGET_ORBIT\":\"s54460\",\"OBJECTS_ON_ORBIT\":1222,\"ON_ORBIT\":\"s52601\",\"LAUNCH_COUNTRY\":\"s10735\",\"MISSION_NAME\":\"s6328\",\"REMARKS\":\"s93735\"}",
+ "expect": "{\"ID\":\"s27443\",\"SAT_NO\":1234148742,\"ORIG_OBJECT_ID\":\"s8965\",\"DERIVED_FROM\":\"s46206\",\"DECLASSIFICATION_DATE\":\"s27505\",\"DECLASSIFICATION_STRING\":\"s24524\",\"MSG_CREATE_DATE\":\"s2811\",\"LAUNCH_DATE\":\"s51660\",\"OUTCOME\":\"IN_PROGRESS\",\"LAUNCH_FAILURE_CODE\":\"s56716\",\"BE_NUMBER\":\"s34763\",\"O_SUFFIX\":\"s35027\",\"LAUNCH_FACILITY_NAME\":\"s62904\",\"LAUNCH_FACILITY_CODE\":\"s3234\",\"LAUNCH_VEHICLE\":\"s36556\",\"LAUNCH_VEHICLE_CONFIG\":\"s48431\",\"TARGET_ORBIT\":\"s54460\",\"OBJECTS_ON_ORBIT\":1222,\"ON_ORBIT\":\"s52601\",\"LAUNCH_COUNTRY\":\"s10735\",\"MISSION_NAME\":\"s6328\",\"REMARKS\":\"s93735\"}",
+ "model": {
+  "uid": "s27443",
+  "sdslne.id": "s27443",
+  "sdslne.sat_no": "1234148742",
+  "sdslne.orig_object_id": "s8965",
+  "sdslne.derived_from": "s46206",
+  "sdslne.declassification_date": "s27505",
+  "sdslne.declassification_string": "s24524",
+  "sdslne.msg_create_date": "s2811"
+ }
+}

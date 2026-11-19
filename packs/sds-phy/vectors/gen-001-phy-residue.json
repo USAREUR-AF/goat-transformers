@@ -1,0 +1,7 @@
+{
+ "name": "gen-phy-residue",
+ "from": "sds-phy",
+ "to": "sds-phy",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s29577\",\"SIMULATION_STEP\":\"s37824\",\"RIGID_BODY\":\"s74218\",\"INTEGRATION_CONFIG\":\"s37126\",\"COLLISION_QUERY_A\":\"s70198\",\"COLLISION_QUERY_B\":\"s77605\",\"TRANSFORM_A\":\"s29505\",\"TRANSFORM_B\":\"s4987\",\"POSITION_A\":\"s10095\",\"POSITION_B\":\"s65694\",\"FLUID\":\"s65093\",\"AERO_QUERY\":\"s6089\",\"DRAG_MODEL\":\"s37644\",\"THERMAL_STATE\":\"s88960\"}",
+ "expect": "{\"COMMAND\":\"s29577\",\"SIMULATION_STEP\":\"s37824\",\"RIGID_BODY\":\"s74218\",\"INTEGRATION_CONFIG\":\"s37126\",\"COLLISION_QUERY_A\":\"s70198\",\"COLLISION_QUERY_B\":\"s77605\",\"TRANSFORM_A\":\"s29505\",\"TRANSFORM_B\":\"s4987\",\"POSITION_A\":\"s10095\",\"POSITION_B\":\"s65694\",\"FLUID\":\"s65093\",\"AERO_QUERY\":\"s6089\",\"DRAG_MODEL\":\"s37644\",\"THERMAL_STATE\":\"s88960\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

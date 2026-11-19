@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "constellation_aliases|.|string": "constellation_aliases_value",
+  "operator_aliases|.|string": "operator_aliases_value",
+  "provenance|ATTRIBUTION|string": "provenance_attribution",
+  "provenance|LICENSE|string": "provenance_license",
+  "provenance|NOTES|string": "provenance_notes",
+  "provenance|RETRIEVED_AT|string": "provenance_retrieved_at",
+  "provenance|ROLE|string": "provenance_role",
+  "provenance|SOURCE_DATASET|string": "provenance_source_dataset",
+  "provenance|SOURCE_RECORD_ID|string": "provenance_source_record_id",
+  "provenance|SOURCE_SHA256|string": "provenance_source_sha256",
+  "provenance|SOURCE_URL|string": "provenance_source_url",
+  "provenance|SOURCE_VERSION|string": "provenance_source_version",
+  "provenance|SOURCE|string": "provenance_source",
+  "|CONSTELLATION_ID|string": "constellation_id",
+  "|CONSTELLATION_NAME|string": "constellation_name",
+  "|MEMBERSHIP_ID|string": "membership_id",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|OBJECT_ID|string": "object_id",
+  "|OPERATOR_ID|string": "operator_id",
+  "|OPERATOR_NAME|string": "operator_name",
+  "|STATE|string": "state",
+  "|UPDATED_AT|string": "updated_at"
+ },
+ "lists": {
+  "|CONSTELLATION_ALIASES": "constellation_aliases",
+  "|OPERATOR_ALIASES": "operator_aliases",
+  "|PROVENANCE": "provenance"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "name": "gen-nev-roundtrip",
+ "from": "sds-nev",
+ "to": "sds-nev",
+ "input": "{\"NODE_ID\":\"s76537\",\"GENERATED_AT_MS\":-9223359616165210955,\"EVENTS\":[{\"TIME_MS\":-9223274168306918920,\"KIND\":\"ServiceStarted\",\"PEER_ID\":\"s95436\",\"SUBJECT\":\"s51658\",\"COUNT\":43864840997201,\"DETAIL\":\"s74623\"},{\"TIME_MS\":-9223170657996783615,\"KIND\":\"GrantIssued\",\"PEER_ID\":\"s13249\",\"SUBJECT\":\"s21156\",\"COUNT\":128872475750621,\"DETAIL\":\"s93782\"}],\"TOTAL_EVENTS\":178653033957715,\"OLDEST_TIME_MS\":-9223338734279163591}",
+ "expect": "{\"NODE_ID\":\"s76537\",\"GENERATED_AT_MS\":-9223359616165210955,\"EVENTS\":[{\"TIME_MS\":-9223274168306918920,\"KIND\":\"ServiceStarted\",\"PEER_ID\":\"s95436\",\"SUBJECT\":\"s51658\",\"COUNT\":43864840997201,\"DETAIL\":\"s74623\"},{\"TIME_MS\":-9223170657996783615,\"KIND\":\"GrantIssued\",\"PEER_ID\":\"s13249\",\"SUBJECT\":\"s21156\",\"COUNT\":128872475750621,\"DETAIL\":\"s93782\"}],\"TOTAL_EVENTS\":178653033957715,\"OLDEST_TIME_MS\":-9223338734279163591}",
+ "model": {
+  "sdsnev.node_id": "s76537",
+  "sdsnev.generated_at_ms": "-9223359616165210955",
+  "sdsnev.events.#": "2",
+  "sdsnev.total_events": "178653033957715",
+  "sdsnev.oldest_time_ms": "-9223338734279163591"
+ }
+}

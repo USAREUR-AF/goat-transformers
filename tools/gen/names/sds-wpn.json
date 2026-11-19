@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|AMMO_CAPACITY|int": "ammo_capacity",
+  "|BURST_LENGTH|int": "burst_length",
+  "|CALIBER|float": "caliber",
+  "|COOLDOWN_RATE|float": "cooldown_rate",
+  "|DISPERSION|float": "dispersion",
+  "|ELEVATION_MAX|float": "elevation_max",
+  "|ELEVATION_MIN|float": "elevation_min",
+  "|FUZE_TYPE|int": "fuze_type",
+  "|MUZZLE_VELOCITY|float": "muzzle_velocity",
+  "|OVERHEAT_ROUNDS|int": "overheat_rounds",
+  "|RATE_OF_FIRE|float": "rate_of_fire",
+  "|RELOAD_TIME|float": "reload_time",
+  "|SLEW_RATE|float": "slew_rate",
+  "|TRAVERSE_MAX|float": "traverse_max",
+  "|TRAVERSE_MIN|float": "traverse_min",
+  "|WEAPON_TYPE|int": "weapon_type"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

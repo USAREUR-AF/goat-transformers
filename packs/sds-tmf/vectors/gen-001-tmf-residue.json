@@ -1,0 +1,7 @@
+{
+ "name": "gen-tmf-residue",
+ "from": "sds-tmf",
+ "to": "sds-tmf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"VERSION\":33,\"SPACECRAFT_ID\":1937,\"VIRTUAL_CHANNEL_ID\":65,\"OCF_FLAG\":true,\"MASTER_FRAME_COUNT\":208,\"VIRTUAL_FRAME_COUNT\":126,\"SEC_HDR_FLAG\":true,\"SYNCH_FLAG\":true,\"PACKET_ORDER_FLAG\":false,\"SEGMENT_LENGTH_ID\":210,\"FIRST_HDR_POINTER\":4605,\"DATA\":[32,207],\"OCF\":[186,132],\"FECF\":55429}",
+ "expect": "{\"VERSION\":33,\"SPACECRAFT_ID\":1937,\"VIRTUAL_CHANNEL_ID\":65,\"OCF_FLAG\":true,\"MASTER_FRAME_COUNT\":208,\"VIRTUAL_FRAME_COUNT\":126,\"SEC_HDR_FLAG\":true,\"SYNCH_FLAG\":true,\"PACKET_ORDER_FLAG\":false,\"SEGMENT_LENGTH_ID\":210,\"FIRST_HDR_POINTER\":4605,\"DATA\":[32,207],\"OCF\":[186,132],\"FECF\":55429,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-clt-residue",
+ "from": "sds-clt",
+ "to": "sds-clt",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"PDU_TYPE\":\"START_INVOCATION\",\"INITIATOR_ID\":\"s40043\",\"RESPONDER_PORT_ID\":\"s68799\",\"SERVICE_TYPE\":35,\"VERSION\":43473,\"INVOKE_ID\":3601509553,\"DATA\":[205,125]}",
+ "expect": "{\"PDU_TYPE\":\"START_INVOCATION\",\"INITIATOR_ID\":\"s40043\",\"RESPONDER_PORT_ID\":\"s68799\",\"SERVICE_TYPE\":35,\"VERSION\":43473,\"INVOKE_ID\":3601509553,\"DATA\":[205,125],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

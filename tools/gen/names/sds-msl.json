@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ARMED|int": "armed",
+  "|ATTITUDE_W|float": "attitude_w",
+  "|ATTITUDE_X|float": "attitude_x",
+  "|ATTITUDE_Y|float": "attitude_y",
+  "|ATTITUDE_Z|float": "attitude_z",
+  "|GUIDANCE_CMD|string": "guidance_cmd",
+  "|GUIDANCE_LAW|int": "guidance_law",
+  "|MASS_INITIAL|float": "mass_initial",
+  "|MASS|float": "mass",
+  "|MAX_G|float": "max_g",
+  "|MISS_DISTANCE|float": "miss_distance",
+  "|MOTOR|string": "motor",
+  "|OMEGA_X|float": "omega_x",
+  "|OMEGA_Y|float": "omega_y",
+  "|OMEGA_Z|float": "omega_z",
+  "|PHASE|int": "phase",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|SEEKER|string": "seeker",
+  "|TARGET_POSITION_X|float": "target_position_x",
+  "|TARGET_POSITION_Y|float": "target_position_y",
+  "|TARGET_POSITION_Z|float": "target_position_z",
+  "|TARGET_VELOCITY_X|float": "target_velocity_x",
+  "|TARGET_VELOCITY_Y|float": "target_velocity_y",
+  "|TARGET_VELOCITY_Z|float": "target_velocity_z",
+  "|TIME_OF_FLIGHT|float": "time_of_flight",
+  "|TYPE|int": "type",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

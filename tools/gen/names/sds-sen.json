@@ -1,0 +1,41 @@
+{
+ "keys": {
+  "maintenance_components|.|string": "maintenance_components_value",
+  "maintenance|DESCRIPTION|string": "maintenance_description",
+  "maintenance|END_TIME|string": "maintenance_end_time",
+  "maintenance|START_TIME|string": "maintenance_start_time",
+  "maintenance|TYPE|string": "maintenance_type",
+  "plans|END_TIME|string": "plans_end_time",
+  "plans|MAX_RANGE|float": "plans_max_range",
+  "plans|MIN_ELEVATION|float": "plans_min_elevation",
+  "plans|MODE|string": "plans_mode",
+  "plans|PRIORITY|int": "plans_priority",
+  "plans|START_TIME|string": "plans_start_time",
+  "plans|TARGET_ID|string": "plans_target_id",
+  "statistics|AVG_ACCURACY|float": "statistics_avg_accuracy",
+  "statistics|DETECTIONS|int": "statistics_detections",
+  "statistics|OBS_ATTEMPTED|int": "statistics_obs_attempted",
+  "statistics|OBS_FAILED|int": "statistics_obs_failed",
+  "statistics|OBS_SUCCESSFUL|int": "statistics_obs_successful",
+  "statistics|PERIOD_END|string": "statistics_period_end",
+  "statistics|PERIOD_START|string": "statistics_period_start",
+  "statistics|UCT_COUNT|int": "statistics_uct_count",
+  "statistics|UPTIME|float": "statistics_uptime",
+  "|ALTITUDE|float": "altitude",
+  "|ID|string": "id",
+  "|LATITUDE|float": "latitude",
+  "|LONGITUDE|float": "longitude",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|SITE_ID|string": "site_id",
+  "|STATUS_TIME|string": "status_time",
+  "|STATUS|string": "status",
+  "|TYPE|string": "type"
+ },
+ "lists": {
+  "maintenance|COMPONENTS": "maintenance_components",
+  "|MAINTENANCE": "maintenance",
+  "|PLANS": "plans",
+  "|STATISTICS": "statistics"
+ }
+}

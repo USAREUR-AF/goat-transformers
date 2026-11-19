@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|AMMO_MAIN|int": "ammo_main",
+  "|ATTITUDE_W|float": "attitude_w",
+  "|ATTITUDE_X|float": "attitude_x",
+  "|ATTITUDE_Y|float": "attitude_y",
+  "|ATTITUDE_Z|float": "attitude_z",
+  "|COURSE|float": "course",
+  "|CREW_CASUALTIES|int": "crew_casualties",
+  "|DC_STATE|int": "dc_state",
+  "|FIRES_ACTIVE|int": "fires_active",
+  "|FLOODING_ACTIVE|int": "flooding_active",
+  "|FUEL_REMAINING|float": "fuel_remaining",
+  "|HEADING|float": "heading",
+  "|HULL_INTEGRITY|float": "hull_integrity",
+  "|HULL|string": "hull",
+  "|MISSILES_REMAINING|int": "missiles_remaining",
+  "|OMEGA_X|float": "omega_x",
+  "|OMEGA_Y|float": "omega_y",
+  "|OMEGA_Z|float": "omega_z",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|POWER_AVAILABLE|float": "power_available",
+  "|PROPULSION_TYPE|int": "propulsion_type",
+  "|PROPULSION|string": "propulsion",
+  "|RESERVED1|int": "reserved1",
+  "|RUDDER_ANGLE|float": "rudder_angle",
+  "|SENSORS_ONLINE|int": "sensors_online",
+  "|SPEED_KNOTS|float": "speed_knots",
+  "|TORPEDOES_REMAINING|int": "torpedoes_remaining",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z",
+  "|VESSEL_TYPE|int": "vessel_type",
+  "|WEAPONS_ONLINE|int": "weapons_online"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

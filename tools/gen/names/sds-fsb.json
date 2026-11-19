@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "sha256|.|int": "sha256_value",
+  "|CHUNK_SEQUENCE|int": "chunk_sequence",
+  "|COLUMN_COUNT|int": "column_count",
+  "|FILE_IDENTIFIER|string": "file_identifier",
+  "|FINAL|int": "final",
+  "|KIND|string": "kind",
+  "|RECORD_COUNT|int": "record_count",
+  "|REQUEST_ID|int": "request_id",
+  "|SCHEMA_NAME|string": "schema_name",
+  "|TOTAL_BYTES|int": "total_bytes"
+ },
+ "lists": {
+  "|DATA": "data",
+  "|SHA256": "sha256"
+ }
+}

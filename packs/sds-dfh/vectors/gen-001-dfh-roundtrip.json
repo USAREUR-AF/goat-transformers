@@ -1,0 +1,17 @@
+{
+ "name": "gen-dfh-roundtrip",
+ "from": "sds-dfh",
+ "to": "sds-dfh",
+ "input": "{\"ID\":\"s15713\",\"SAT_NO\":1590025414,\"OBJECT_DESIGNATOR\":\"s19298\",\"OBJECT_NAME\":\"s73246\",\"START_TIME\":\"s63662\",\"END_TIME\":\"s28498\",\"EFFECTIVE_UNTIL\":\"s47970\",\"DRIFT_RATE\":7.0625,\"MEAN_LONGITUDE\":-3.25,\"SLOT_CENTER\":12.5,\"SLOT_HALF_WIDTH\":-0.5,\"STATION_KEEPING\":true,\"RECORDS\":[{\"EPOCH\":\"s96577\",\"DRIFT_RATE\":0.75,\"MEAN_LONGITUDE\":12.5,\"LONGITUDE_AMPLITUDE\":42.375,\"ECCENTRICITY\":42.375,\"INCLINATION\":7.0625},{\"EPOCH\":\"s10658\",\"DRIFT_RATE\":1.5,\"MEAN_LONGITUDE\":-3.25,\"LONGITUDE_AMPLITUDE\":-0.5,\"ECCENTRICITY\":12.5,\"INCLINATION\":-3.25}],\"NUM_RECORDS\":3477255466,\"NOTES\":\"s38512\"}",
+ "expect": "{\"ID\":\"s15713\",\"SAT_NO\":1590025414,\"OBJECT_DESIGNATOR\":\"s19298\",\"OBJECT_NAME\":\"s73246\",\"START_TIME\":\"s63662\",\"END_TIME\":\"s28498\",\"EFFECTIVE_UNTIL\":\"s47970\",\"DRIFT_RATE\":7.0625,\"MEAN_LONGITUDE\":-3.25,\"SLOT_CENTER\":12.5,\"SLOT_HALF_WIDTH\":-0.5,\"STATION_KEEPING\":true,\"RECORDS\":[{\"EPOCH\":\"s96577\",\"DRIFT_RATE\":0.75,\"MEAN_LONGITUDE\":12.5,\"LONGITUDE_AMPLITUDE\":42.375,\"ECCENTRICITY\":42.375,\"INCLINATION\":7.0625},{\"EPOCH\":\"s10658\",\"DRIFT_RATE\":1.5,\"MEAN_LONGITUDE\":-3.25,\"LONGITUDE_AMPLITUDE\":-0.5,\"ECCENTRICITY\":12.5,\"INCLINATION\":-3.25}],\"NUM_RECORDS\":3477255466,\"NOTES\":\"s38512\"}",
+ "model": {
+  "uid": "s15713",
+  "sdsdfh.id": "s15713",
+  "sdsdfh.sat_no": "1590025414",
+  "sdsdfh.object_designator": "s19298",
+  "sdsdfh.object_name": "s73246",
+  "sdsdfh.start_time": "s63662",
+  "sdsdfh.end_time": "s28498",
+  "sdsdfh.effective_until": "s47970"
+ }
+}

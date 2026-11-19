@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "members|.|string": "members_value",
+  "metadata|KEY|string": "metadata_key",
+  "metadata|VALUE|string": "metadata_value",
+  "provider_signature|.|int": "provider_signature_value",
+  "|CREATED_AT|int": "created_at",
+  "|DEFAULT_TRUST_LEVEL|string": "default_trust_level",
+  "|DELETED|int": "deleted",
+  "|DESCRIPTION|string": "description",
+  "|GROUP_NAME|string": "group_name",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|UPDATED_AT|int": "updated_at"
+ },
+ "lists": {
+  "|MEMBERS": "members",
+  "|METADATA": "metadata",
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

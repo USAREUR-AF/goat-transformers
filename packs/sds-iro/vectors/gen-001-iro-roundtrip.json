@@ -1,0 +1,17 @@
+{
+ "name": "gen-iro-roundtrip",
+ "from": "sds-iro",
+ "to": "sds-iro",
+ "input": "{\"ID\":\"s29468\",\"ID_ENTITY\":\"s9130\",\"NAME\":\"s26231\",\"DESCRIPTION\":\"s54765\",\"ENTITY\":\"s36822\",\"EPOCH\":\"s19327\",\"SENSOR_ID\":\"s6721\",\"SAT_NO\":1636889832,\"OBJECT_DESIGNATOR\":\"s43100\",\"BAND\":\"LWIR\",\"DETECTION_TYPE\":\"POINT_SOURCE\",\"RA\":-0.5,\"DEC\":7.0625,\"RA_UNC\":101.125,\"DEC_UNC\":42.375,\"AZIMUTH\":12.5,\"ELEVATION\":12.5,\"RANGE\":42.375,\"IRRADIANCE\":101.125,\"IRRADIANCE_UNC\":-0.5,\"IR_MAG\":101.125,\"MAG_UNC\":12.5,\"TEMPERATURE\":12.5,\"INTEGRATION_TIME\":1.5,\"BACKGROUND\":101.125,\"SNR\":12.5,\"WAVELENGTHS\":[12.5,42.375],\"SPECTRAL_VALUES\":[1.5,101.125],\"QUALITY\":60,\"NOTES\":\"s85103\"}",
+ "expect": "{\"ID\":\"s29468\",\"ID_ENTITY\":\"s9130\",\"NAME\":\"s26231\",\"DESCRIPTION\":\"s54765\",\"ENTITY\":\"s36822\",\"EPOCH\":\"s19327\",\"SENSOR_ID\":\"s6721\",\"SAT_NO\":1636889832,\"OBJECT_DESIGNATOR\":\"s43100\",\"BAND\":\"LWIR\",\"DETECTION_TYPE\":\"POINT_SOURCE\",\"RA\":-0.5,\"DEC\":7.0625,\"RA_UNC\":101.125,\"DEC_UNC\":42.375,\"AZIMUTH\":12.5,\"ELEVATION\":12.5,\"RANGE\":42.375,\"IRRADIANCE\":101.125,\"IRRADIANCE_UNC\":-0.5,\"IR_MAG\":101.125,\"MAG_UNC\":12.5,\"TEMPERATURE\":12.5,\"INTEGRATION_TIME\":1.5,\"BACKGROUND\":101.125,\"SNR\":12.5,\"WAVELENGTHS\":[12.5,42.375],\"SPECTRAL_VALUES\":[1.5,101.125],\"QUALITY\":60,\"NOTES\":\"s85103\"}",
+ "model": {
+  "uid": "s29468",
+  "sdsiro.id": "s29468",
+  "sdsiro.id_entity": "s9130",
+  "sdsiro.name": "s26231",
+  "sdsiro.description": "s54765",
+  "sdsiro.entity": "s36822",
+  "sdsiro.epoch": "s19327",
+  "sdsiro.sensor_id": "s6721"
+ }
+}

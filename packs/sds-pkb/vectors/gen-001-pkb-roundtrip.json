@@ -1,0 +1,17 @@
+{
+ "name": "gen-pkb-roundtrip",
+ "from": "sds-pkb",
+ "to": "sds-pkb",
+ "input": "{\"BROKER_ID\":\"s1133\",\"PUBLISHER_EPM_CID\":\"s98681\",\"PROVIDER_PEER_ID\":\"s80125\",\"PROTOCOL_ID\":\"s9567\",\"MULTIFORMAT_ADDRESSES\":[\"s31919\",\"s49003\"],\"BROKER_PUBLIC_KEY\":[7,159],\"BROKER_KIND\":\"EscrowFallback\",\"LIVENESS\":\"Unknown\",\"LAST_HEARTBEAT_AT\":281180378400649,\"HEARTBEAT_INTERVAL_MS\":269666304567290,\"FIRST_SEEN_AT\":93538888558864,\"UPDATED_AT\":239822387067501,\"SIGNATURE\":[68,208]}",
+ "expect": "{\"BROKER_ID\":\"s1133\",\"PUBLISHER_EPM_CID\":\"s98681\",\"PROVIDER_PEER_ID\":\"s80125\",\"PROTOCOL_ID\":\"s9567\",\"MULTIFORMAT_ADDRESSES\":[\"s31919\",\"s49003\"],\"BROKER_PUBLIC_KEY\":[7,159],\"BROKER_KIND\":\"EscrowFallback\",\"LIVENESS\":\"Unknown\",\"LAST_HEARTBEAT_AT\":281180378400649,\"HEARTBEAT_INTERVAL_MS\":269666304567290,\"FIRST_SEEN_AT\":93538888558864,\"UPDATED_AT\":239822387067501,\"SIGNATURE\":[68,208]}",
+ "model": {
+  "sdspkb.broker_id": "s1133",
+  "sdspkb.publisher_epm_cid": "s98681",
+  "sdspkb.provider_peer_id": "s80125",
+  "sdspkb.protocol_id": "s9567",
+  "sdspkb.multiformat_addresses.#": "2",
+  "sdspkb.broker_public_key.#": "2",
+  "sdspkb.broker_kind": "EscrowFallback",
+  "sdspkb.liveness": "Unknown"
+ }
+}

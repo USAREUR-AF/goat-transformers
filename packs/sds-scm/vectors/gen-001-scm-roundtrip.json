@@ -1,0 +1,13 @@
+{
+ "name": "gen-scm-roundtrip",
+ "from": "sds-scm",
+ "to": "sds-scm",
+ "input": "{\"version\":\"s43200\",\"RECORDS\":[{\"key\":\"s81313\",\"idl\":\"s41109\",\"files\":[\"s34457\"],\"NAME\":\"s17061\",\"DESCRIPTION\":\"s40503\",\"FILE_IDENTIFIER\":\"s45362\",\"SCHEMA_HASH\":\"s69734\",\"ROUTED\":true,\"RECORD_TYPE_ORDINAL\":20642},{\"key\":\"s32211\",\"idl\":\"s23121\",\"files\":[\"s13471\"],\"NAME\":\"s67596\",\"DESCRIPTION\":\"s90736\",\"FILE_IDENTIFIER\":\"s92238\",\"SCHEMA_HASH\":\"s73913\",\"ROUTED\":true,\"RECORD_TYPE_ORDINAL\":1720}],\"STANDARDS_VERSION\":\"s89156\",\"GENERATED_AT_MS\":-9223363680758778360}",
+ "expect": "{\"version\":\"s43200\",\"RECORDS\":[{\"key\":\"s81313\",\"idl\":\"s41109\",\"files\":[\"s34457\"],\"NAME\":\"s17061\",\"DESCRIPTION\":\"s40503\",\"FILE_IDENTIFIER\":\"s45362\",\"SCHEMA_HASH\":\"s69734\",\"ROUTED\":true,\"RECORD_TYPE_ORDINAL\":20642},{\"key\":\"s32211\",\"idl\":\"s23121\",\"files\":[\"s13471\"],\"NAME\":\"s67596\",\"DESCRIPTION\":\"s90736\",\"FILE_IDENTIFIER\":\"s92238\",\"SCHEMA_HASH\":\"s73913\",\"ROUTED\":true,\"RECORD_TYPE_ORDINAL\":1720}],\"STANDARDS_VERSION\":\"s89156\",\"GENERATED_AT_MS\":-9223363680758778360}",
+ "model": {
+  "sdsscm.version": "s43200",
+  "sdsscm.records.#": "2",
+  "sdsscm.standards_version": "s89156",
+  "sdsscm.generated_at_ms": "-9223363680758778360"
+ }
+}

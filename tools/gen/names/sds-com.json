@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "active_links|.|string": "active_links_value",
+  "connected_nodes|.|int": "connected_nodes_value",
+  "|BYTES_RECEIVED|int": "bytes_received",
+  "|BYTES_SENT|int": "bytes_sent",
+  "|CURRENT_DATA_RATE_BPS|float": "current_data_rate_bps",
+  "|CURRENT_FREQUENCY_HZ|float": "current_frequency_hz",
+  "|CURRENT_POWER_WATTS|float": "current_power_watts",
+  "|ENTITY_ID|int": "entity_id",
+  "|IS_RECEIVING|int": "is_receiving",
+  "|IS_TRANSMITTING|int": "is_transmitting",
+  "|LAST_UPDATE_MS|int": "last_update_ms",
+  "|MESSAGES_RECEIVED|int": "messages_received",
+  "|MESSAGES_SENT|int": "messages_sent",
+  "|SYSTEM_ID|int": "system_id"
+ },
+ "lists": {
+  "|ACTIVE_LINKS": "active_links",
+  "|CONNECTED_NODES": "connected_nodes"
+ }
+}

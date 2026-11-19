@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "panels|ABSORPTIVITY|float": "panels_absorptivity",
+  "panels|AREA_M2|float": "panels_area_m2",
+  "panels|DIFFUSE_REFLECTIVITY|float": "panels_diffuse_reflectivity",
+  "panels|DRAG_COEFFICIENT|float": "panels_drag_coefficient",
+  "panels|EMISSIVITY|float": "panels_emissivity",
+  "panels|INSTANTANEOUS_RERADIATION|int": "panels_instantaneous_reradiation",
+  "panels|MATERIAL_NAME|string": "panels_material_name",
+  "panels|NORMAL_X|float": "panels_normal_x",
+  "panels|NORMAL_Y|float": "panels_normal_y",
+  "panels|NORMAL_Z|float": "panels_normal_z",
+  "panels|PANEL_ID|string": "panels_panel_id",
+  "panels|SPECULAR_REFLECTIVITY|float": "panels_specular_reflectivity",
+  "panels|TRACKING_MODE|string": "panels_tracking_mode",
+  "|BODY_FRAME|string": "body_frame",
+  "|EPOCH|string": "epoch",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|OBJECT_ID|string": "object_id",
+  "|OBJECT_NAME|string": "object_name",
+  "|REFERENCE_AREA_M2|float": "reference_area_m2",
+  "|SOURCE|string": "source",
+  "|TOTAL_MASS_KG|float": "total_mass_kg"
+ },
+ "lists": {
+  "|PANELS": "panels"
+ }
+}

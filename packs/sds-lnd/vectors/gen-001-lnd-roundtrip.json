@@ -1,0 +1,17 @@
+{
+ "name": "gen-lnd-roundtrip",
+ "from": "sds-lnd",
+ "to": "sds-lnd",
+ "input": "{\"ID\":\"s9157\",\"EVENT_ID\":\"s95875\",\"DETECTION_TYPE\":\"UNKNOWN\",\"MESSAGE_TYPE\":\"s83018\",\"LAUNCH_TIME\":\"s71888\",\"LAUNCH_LATITUDE\":101.125,\"LAUNCH_LONGITUDE\":12.5,\"LAUNCH_AZIMUTH\":1.5,\"RAAN\":0.75,\"INCLINATION\":7.0625,\"OBSERVATION_TIME\":\"s72324\",\"OBSERVATION_LATITUDE\":0.75,\"OBSERVATION_LONGITUDE\":42.375,\"OBSERVATION_ALTITUDE\":1.5,\"STEREO_FLAG\":true,\"HIGH_ZENITH_AZIMUTH\":false,\"SEQUENCE_NUMBER\":44100,\"LAUNCH_SITE_ID\":\"s30403\",\"LAUNCH_VEHICLE\":\"s18765\",\"TRAJECTORY_TYPE\":\"s28602\",\"CONFIDENCE\":0.75,\"DESCRIPTOR\":\"s80506\",\"TAGS\":[\"s12560\",\"s95413\"]}",
+ "expect": "{\"ID\":\"s9157\",\"EVENT_ID\":\"s95875\",\"DETECTION_TYPE\":\"UNKNOWN\",\"MESSAGE_TYPE\":\"s83018\",\"LAUNCH_TIME\":\"s71888\",\"LAUNCH_LATITUDE\":101.125,\"LAUNCH_LONGITUDE\":12.5,\"LAUNCH_AZIMUTH\":1.5,\"RAAN\":0.75,\"INCLINATION\":7.0625,\"OBSERVATION_TIME\":\"s72324\",\"OBSERVATION_LATITUDE\":0.75,\"OBSERVATION_LONGITUDE\":42.375,\"OBSERVATION_ALTITUDE\":1.5,\"STEREO_FLAG\":true,\"HIGH_ZENITH_AZIMUTH\":false,\"SEQUENCE_NUMBER\":44100,\"LAUNCH_SITE_ID\":\"s30403\",\"LAUNCH_VEHICLE\":\"s18765\",\"TRAJECTORY_TYPE\":\"s28602\",\"CONFIDENCE\":0.75,\"DESCRIPTOR\":\"s80506\",\"TAGS\":[\"s12560\",\"s95413\"]}",
+ "model": {
+  "uid": "s9157",
+  "sdslnd.id": "s9157",
+  "sdslnd.event_id": "s95875",
+  "sdslnd.detection_type": "UNKNOWN",
+  "sdslnd.message_type": "s83018",
+  "sdslnd.launch_time": "s71888",
+  "sdslnd.launch_latitude": "101.125",
+  "sdslnd.launch_longitude": "12.5"
+ }
+}

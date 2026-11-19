@@ -1,0 +1,7 @@
+{
+ "name": "gen-pnm-residue",
+ "from": "sds-pnm",
+ "to": "sds-pnm",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MULTIFORMAT_ADDRESS\":\"s98720\",\"PUBLISH_TIMESTAMP\":\"s63389\",\"CID\":\"s55829\",\"FILE_NAME\":\"s69454\",\"FILE_ID\":\"s5251\",\"SIGNATURE\":\"s93461\",\"TIMESTAMP_SIGNATURE\":\"s12913\",\"SIGNATURE_TYPE\":\"s50568\",\"TIMESTAMP_SIGNATURE_TYPE\":\"s85295\"}",
+ "expect": "{\"MULTIFORMAT_ADDRESS\":\"s98720\",\"PUBLISH_TIMESTAMP\":\"s63389\",\"CID\":\"s55829\",\"FILE_NAME\":\"s69454\",\"FILE_ID\":\"s5251\",\"SIGNATURE\":\"s93461\",\"TIMESTAMP_SIGNATURE\":\"s12913\",\"SIGNATURE_TYPE\":\"s50568\",\"TIMESTAMP_SIGNATURE_TYPE\":\"s85295\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

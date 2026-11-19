@@ -1,0 +1,33 @@
+{
+ "keys": {
+  "|ATTITUDE_W|float": "attitude_w",
+  "|ATTITUDE_X|float": "attitude_x",
+  "|ATTITUDE_Y|float": "attitude_y",
+  "|ATTITUDE_Z|float": "attitude_z",
+  "|DRIVETRAIN|string": "drivetrain",
+  "|DRIVE_TYPE|int": "drive_type",
+  "|ENGINE_RUNNING|int": "engine_running",
+  "|FUEL_LEVEL|float": "fuel_level",
+  "|HEADING|float": "heading",
+  "|LATERAL_G|float": "lateral_g",
+  "|LIGHTS|int": "lights",
+  "|LONGITUDINAL_G|float": "longitudinal_g",
+  "|OMEGA_X|float": "omega_x",
+  "|OMEGA_Y|float": "omega_y",
+  "|OMEGA_Z|float": "omega_z",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|SPEED|float": "speed",
+  "|SUSPENSION_LF|string": "suspension_lf",
+  "|SUSPENSION_LR|string": "suspension_lr",
+  "|SUSPENSION_RF|string": "suspension_rf",
+  "|SUSPENSION_RR|string": "suspension_rr",
+  "|TURRET|string": "turret",
+  "|VEHICLE_TYPE|int": "vehicle_type",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z"
+ },
+ "lists": {}
+}

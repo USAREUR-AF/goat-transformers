@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "contracts_split_recipients|ADDRESS|string": "contracts_split_recipients_address",
+  "contracts_split_recipients|CHAIN|string": "contracts_split_recipients_chain",
+  "contracts_split_recipients|EPM_CID|string": "contracts_split_recipients_epm_cid",
+  "contracts_split_recipients|XPUB|string": "contracts_split_recipients_xpub",
+  "contracts|CHAIN_ID|int": "contracts_chain_id",
+  "contracts|CHAIN|string": "contracts_chain",
+  "contracts|MEMO_SCHEME|string": "contracts_memo_scheme",
+  "contracts|MIN_CONFIRMATIONS|int": "contracts_min_confirmations",
+  "contracts|SETTLEMENT_KIND|string": "contracts_settlement_kind",
+  "contracts|SPLITTER_ADDRESS|string": "contracts_splitter_address",
+  "contracts|SPLITTER_STANDARD|string": "contracts_splitter_standard",
+  "contracts|SPLIT_CONFIG_ID|string": "contracts_split_config_id",
+  "contracts|TOKEN_ADDRESS|string": "contracts_token_address",
+  "contracts|TOKEN_DECIMALS|int": "contracts_token_decimals",
+  "contracts|TOKEN_SYMBOL|string": "contracts_token_symbol",
+  "signature|.|int": "signature_value",
+  "splits|BPS|int": "splits_bps",
+  "splits|RECIPIENT.ADDRESS|string": "splits_recipient_address",
+  "splits|RECIPIENT.CHAIN|string": "splits_recipient_chain",
+  "splits|RECIPIENT.EPM_CID|string": "splits_recipient_epm_cid",
+  "splits|RECIPIENT.XPUB|string": "splits_recipient_xpub",
+  "splits|ROLE|string": "splits_role",
+  "|COMMISSION_BPS|int": "commission_bps",
+  "|EFFECTIVE_AT|int": "effective_at",
+  "|ENFORCEMENT|string": "enforcement",
+  "|EXPIRES_AT|int": "expires_at",
+  "|PLATFORM_RECIPIENT.ADDRESS|string": "platform_recipient_address",
+  "|PLATFORM_RECIPIENT.CHAIN|string": "platform_recipient_chain",
+  "|PLATFORM_RECIPIENT.EPM_CID|string": "platform_recipient_epm_cid",
+  "|PLATFORM_RECIPIENT.XPUB|string": "platform_recipient_xpub",
+  "|SCOPE|string": "scope",
+  "|TARGET_ID|string": "target_id",
+  "|TERMS_ID|string": "terms_id"
+ },
+ "lists": {
+  "contracts|SPLIT_RECIPIENTS": "contracts_split_recipients",
+  "|CONTRACTS": "contracts",
+  "|SIGNATURE": "signature",
+  "|SPLITS": "splits"
+ }
+}

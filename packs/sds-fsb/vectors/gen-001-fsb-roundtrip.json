@@ -1,0 +1,17 @@
+{
+ "name": "gen-fsb-roundtrip",
+ "from": "sds-fsb",
+ "to": "sds-fsb",
+ "input": "{\"REQUEST_ID\":81303421305893,\"KIND\":\"QUERY_RESULT\",\"CHUNK_SEQUENCE\":2803868491,\"FINAL\":false,\"TOTAL_BYTES\":276628291665765,\"RECORD_COUNT\":66994046979170,\"COLUMN_COUNT\":658519171,\"SCHEMA_NAME\":\"s50811\",\"FILE_IDENTIFIER\":\"s92957\",\"DATA\":[138,9],\"SHA256\":[28,56]}",
+ "expect": "{\"REQUEST_ID\":81303421305893,\"KIND\":\"QUERY_RESULT\",\"CHUNK_SEQUENCE\":2803868491,\"FINAL\":false,\"TOTAL_BYTES\":276628291665765,\"RECORD_COUNT\":66994046979170,\"COLUMN_COUNT\":658519171,\"SCHEMA_NAME\":\"s50811\",\"FILE_IDENTIFIER\":\"s92957\",\"DATA\":[138,9],\"SHA256\":[28,56]}",
+ "model": {
+  "sdsfsb.request_id": "81303421305893",
+  "sdsfsb.kind": "QUERY_RESULT",
+  "sdsfsb.chunk_sequence": "2803868491",
+  "sdsfsb.final": "0",
+  "sdsfsb.total_bytes": "276628291665765",
+  "sdsfsb.record_count": "66994046979170",
+  "sdsfsb.column_count": "658519171",
+  "sdsfsb.schema_name": "s50811"
+ }
+}

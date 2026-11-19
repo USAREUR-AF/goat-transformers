@@ -1,0 +1,7 @@
+{
+ "name": "gen-atm-residue",
+ "from": "sds-atm",
+ "to": "sds-atm",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MODEL\":\"TIECGM\",\"YEAR\":1956114731}",
+ "expect": "{\"MODEL\":\"TIECGM\",\"YEAR\":1956114731,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

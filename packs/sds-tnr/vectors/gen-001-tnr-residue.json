@@ -1,0 +1,7 @@
+{
+ "name": "gen-tnr-residue",
+ "from": "sds-tnr",
+ "to": "sds-tnr",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"NODE_ID\":\"s41325\",\"CREATED_AT\":267966837778753,\"UPDATED_AT\":107154013361354,\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s82721\",\"PROVIDER_SIGNATURE\":[160,142]}",
+ "expect": "{\"NODE_ID\":\"s41325\",\"CREATED_AT\":267966837778753,\"UPDATED_AT\":107154013361354,\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s82721\",\"PROVIDER_SIGNATURE\":[160,142],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

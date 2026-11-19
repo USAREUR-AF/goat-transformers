@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "channels|.|string": "channels_value",
+  "|FEC|int": "fec",
+  "|FORMAT|string": "format",
+  "|ID|string": "id",
+  "|MODULATION|string": "modulation",
+  "|NAME|string": "name",
+  "|NID|string": "nid",
+  "|SYMBOL_RATE|float": "symbol_rate",
+  "|SYSTEM|string": "system",
+  "|TID|string": "tid",
+  "|TTF|float": "ttf"
+ },
+ "lists": {
+  "|CHANNELS": "channels"
+ }
+}

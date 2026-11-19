@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "ephemeral_public_key|.|int": "ephemeral_public_key_value",
+  "nonce_start|.|int": "nonce_start_value",
+  "recipient_key_id|.|int": "recipient_key_id_value",
+  "schema_hash|.|int": "schema_hash_value",
+  "|CONTEXT|string": "context",
+  "|KEY_DERIVATION|string": "key_derivation",
+  "|KEY_EXCHANGE|string": "key_exchange",
+  "|ROOT_TYPE|string": "root_type",
+  "|SYMMETRIC|string": "symmetric",
+  "|TIMESTAMP|int": "timestamp",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|EPHEMERAL_PUBLIC_KEY": "ephemeral_public_key",
+  "|NONCE_START": "nonce_start",
+  "|RECIPIENT_KEY_ID": "recipient_key_id",
+  "|SCHEMA_HASH": "schema_hash"
+ }
+}

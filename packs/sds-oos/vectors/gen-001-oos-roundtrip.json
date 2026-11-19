@@ -1,0 +1,17 @@
+{
+ "name": "gen-oos-roundtrip",
+ "from": "sds-oos",
+ "to": "sds-oos",
+ "input": "{\"ID\":\"s51545\",\"ID_ON_ORBIT\":\"s32254\",\"ID_SOLAR_ARRAY\":\"s6716\",\"NAME\":\"s53311\",\"CELL_TYPE\":\"s15823\",\"QUANTITY\":23439092,\"AREA\":0.75,\"POWER_BOL\":-3.25,\"POWER_EOL\":7.0625,\"EFFICIENCY\":7.0625,\"DEGRADATION_RATE\":-3.25,\"NUM_PANELS\":2827413522,\"DEPLOYABLE\":false,\"TRACKING\":false,\"MASS\":1.5,\"NOTES\":\"s58005\"}",
+ "expect": "{\"ID\":\"s51545\",\"ID_ON_ORBIT\":\"s32254\",\"ID_SOLAR_ARRAY\":\"s6716\",\"NAME\":\"s53311\",\"CELL_TYPE\":\"s15823\",\"QUANTITY\":23439092,\"AREA\":0.75,\"POWER_BOL\":-3.25,\"POWER_EOL\":7.0625,\"EFFICIENCY\":7.0625,\"DEGRADATION_RATE\":-3.25,\"NUM_PANELS\":2827413522,\"DEPLOYABLE\":false,\"TRACKING\":false,\"MASS\":1.5,\"NOTES\":\"s58005\"}",
+ "model": {
+  "uid": "s51545",
+  "sdsoos.id": "s51545",
+  "sdsoos.id_on_orbit": "s32254",
+  "sdsoos.id_solar_array": "s6716",
+  "sdsoos.name": "s53311",
+  "sdsoos.cell_type": "s15823",
+  "sdsoos.quantity": "23439092",
+  "sdsoos.area": "0.75"
+ }
+}

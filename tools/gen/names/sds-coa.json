@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "steps|DURATION_SECONDS|float": "steps_duration_seconds",
+  "steps|NAME|string": "steps_name",
+  "|CHECKOUT_SECONDS|float": "checkout_seconds",
+  "|DELTA_V_BUDGET_M_S_PER_YEAR|float": "delta_v_budget_m_s_per_year",
+  "|EVENT_EPOCH|string": "event_epoch",
+  "|EVENT_ID|string": "event_id",
+  "|EVENT_STANDARD|string": "event_standard",
+  "|GROUP_ID|string": "group_id",
+  "|ID|string": "id",
+  "|KIND|string": "kind",
+  "|LEAD_SECONDS|float": "lead_seconds",
+  "|NAME|string": "name",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|PLAN_ID|string": "plan_id",
+  "|PREPARATION_SECONDS|float": "preparation_seconds",
+  "|RETURN_WITHIN_SECONDS|float": "return_within_seconds"
+ },
+ "lists": {
+  "|STEPS": "steps"
+ }
+}

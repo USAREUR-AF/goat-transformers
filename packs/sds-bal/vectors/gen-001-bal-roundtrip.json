@@ -1,0 +1,17 @@
+{
+ "name": "gen-bal-roundtrip",
+ "from": "sds-bal",
+ "to": "sds-bal",
+ "input": "{\"COMMAND\":\"s61730\",\"TRAJECTORY_REQUEST\":\"s75596\",\"TABLE_REQUEST\":\"s78565\",\"FIRE_CONTROL\":\"s48878\",\"PENETRATION_PROJECTILE\":\"s13184\",\"PENETRATION_ARMOR\":\"s77635\",\"IMPACT_VELOCITY_MPS\":101.125,\"IMPACT_ANGLE_DEG\":-3.25}",
+ "expect": "{\"COMMAND\":\"s61730\",\"TRAJECTORY_REQUEST\":\"s75596\",\"TABLE_REQUEST\":\"s78565\",\"FIRE_CONTROL\":\"s48878\",\"PENETRATION_PROJECTILE\":\"s13184\",\"PENETRATION_ARMOR\":\"s77635\",\"IMPACT_VELOCITY_MPS\":101.125,\"IMPACT_ANGLE_DEG\":-3.25}",
+ "model": {
+  "sdsbal.command": "s61730",
+  "sdsbal.trajectory_request": "s75596",
+  "sdsbal.table_request": "s78565",
+  "sdsbal.fire_control": "s48878",
+  "sdsbal.penetration_projectile": "s13184",
+  "sdsbal.penetration_armor": "s77635",
+  "sdsbal.impact_velocity_mps": "101.125",
+  "sdsbal.impact_angle_deg": "-3.25"
+ }
+}

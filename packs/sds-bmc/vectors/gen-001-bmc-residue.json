@@ -1,0 +1,7 @@
+{
+ "name": "gen-bmc-residue",
+ "from": "sds-bmc",
+ "to": "sds-bmc",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s83974\",\"TYPE\":\"s70679\",\"CONTOUR_IDX\":1794021709,\"GAIN\":-0.5,\"REGION_NAME\":\"s8846\",\"GEOGRAPHY\":\"s77859\",\"GEOGRAPHY_TEXT\":\"s61244\",\"GEOGRAPHY_JSON\":\"s66096\",\"GEOGRAPHY_TYPE\":\"s88181\",\"GEOGRAPHY_NDIMS\":1854980730,\"GEOGRAPHY_SRID\":384773775}",
+ "expect": "{\"ID\":\"s83974\",\"TYPE\":\"s70679\",\"CONTOUR_IDX\":1794021709,\"GAIN\":-0.5,\"REGION_NAME\":\"s8846\",\"GEOGRAPHY\":\"s77859\",\"GEOGRAPHY_TEXT\":\"s61244\",\"GEOGRAPHY_JSON\":\"s66096\",\"GEOGRAPHY_TYPE\":\"s88181\",\"GEOGRAPHY_NDIMS\":1854980730,\"GEOGRAPHY_SRID\":384773775,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

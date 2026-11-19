@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "outcomes|OUTCOME|string": "outcomes_outcome",
+  "outcomes|RECORD_INDEX|int": "outcomes_record_index",
+  "receiver_artifact_sha256|.|int": "receiver_artifact_sha256_value",
+  "|POSITION_ONLY|int": "position_only",
+  "|START_UNIX_US|int": "start_unix_us",
+  "|WIDE_RECORDS|int": "wide_records",
+  "|WINDOW_COUNT|int": "window_count"
+ },
+ "lists": {
+  "|OUTCOMES": "outcomes",
+  "|RECEIVER_ARTIFACT_SHA256": "receiver_artifact_sha256"
+ }
+}

@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "multi|BRANCH_KIND|string": "multi_branch_kind",
+  "multi|ITERATIONS|int": "multi_iterations",
+  "multi|N_REVS|int": "multi_n_revs",
+  "multi|V1.X|float": "multi_v1_x",
+  "multi|V1.Y|float": "multi_v1_y",
+  "multi|V1.Z|float": "multi_v1_z",
+  "multi|V2.X|float": "multi_v2_x",
+  "multi|V2.Y|float": "multi_v2_y",
+  "multi|V2.Z|float": "multi_v2_z",
+  "|ERROR_CODE|string": "error_code",
+  "|ERROR_MESSAGE|string": "error_message",
+  "|FLAGS|int": "flags",
+  "|MAX_FEASIBLE_REVS|int": "max_feasible_revs",
+  "|REQUEST_ID|string": "request_id",
+  "|SINGLE.BRANCH_KIND|string": "single_branch_kind",
+  "|SINGLE.ITERATIONS|int": "single_iterations",
+  "|SINGLE.N_REVS|int": "single_n_revs",
+  "|SINGLE.V1.X|float": "single_v1_x",
+  "|SINGLE.V1.Y|float": "single_v1_y",
+  "|SINGLE.V1.Z|float": "single_v1_z",
+  "|SINGLE.V2.X|float": "single_v2_x",
+  "|SINGLE.V2.Y|float": "single_v2_y",
+  "|SINGLE.V2.Z|float": "single_v2_z",
+  "|STATUS|string": "status"
+ },
+ "lists": {
+  "|MULTI": "multi"
+ }
+}

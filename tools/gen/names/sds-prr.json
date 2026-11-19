@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "epm_data|.|int": "epm_data_value",
+  "groups|.|string": "groups_value",
+  "metadata|KEY|string": "metadata_key",
+  "metadata|VALUE|string": "metadata_value",
+  "multiformat_address|.|string": "multiformat_address_value",
+  "provider_signature|.|int": "provider_signature_value",
+  "|ADDED_AT|int": "added_at",
+  "|BYTES_RECEIVED|int": "bytes_received",
+  "|BYTES_SENT|int": "bytes_sent",
+  "|CONNECTION_COUNT|int": "connection_count",
+  "|DELETED|int": "deleted",
+  "|LAST_CONNECTED|int": "last_connected",
+  "|LAST_SEEN|int": "last_seen",
+  "|MESSAGES_RECEIVED|int": "messages_received",
+  "|MESSAGES_SENT|int": "messages_sent",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|ORGANIZATION|string": "organization",
+  "|PEER_ID|string": "peer_id",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|TRUST_LEVEL|string": "trust_level",
+  "|UPDATED_AT|int": "updated_at",
+  "|VCARD_DATA|string": "vcard_data"
+ },
+ "lists": {
+  "|EPM_DATA": "epm_data",
+  "|GROUPS": "groups",
+  "|METADATA": "metadata",
+  "|MULTIFORMAT_ADDRESS": "multiformat_address",
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

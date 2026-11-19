@@ -1,0 +1,17 @@
+{
+ "name": "gen-trk-roundtrip",
+ "from": "sds-trk",
+ "to": "sds-trk",
+ "input": "{\"ID\":\"s37439\",\"CNTCT\":\"s45932\",\"MSG_TS\":\"s2200\",\"MSN_ID\":\"s57179\",\"ASSET_NAT\":\"s22093\",\"ASSET\":\"s65385\",\"SENSOR_ID\":\"s39086\",\"SEN_QUAL\":\"s38637\",\"TRK_ID\":\"s94115\",\"TRK_NUM\":\"s4930\",\"TRK_STAT\":\"DROPPED\",\"OBJ_NAT\":\"s16570\",\"OBJ_ID\":\"s6836\",\"OBJ_TYPE\":\"s34396\",\"OBJ_SPEC\":\"s83583\",\"OBJ_PLAT\":\"s34429\",\"OBJ_ACT\":\"s12385\",\"MOD_TYPE\":\"s49238\",\"TRK_ITM_ID\":\"s29195\",\"TS\":\"s14499\",\"TRK_QUAL\":185,\"TRK_PT_TYPE\":\"s57089\",\"OBJ_IDENT\":\"s64181\",\"IDENT_CRED\":243,\"IDENT_REL\":155,\"IDENT_AMP\":\"s67067\",\"ENVIRONMENT\":\"SUBSURFACE\",\"ENVIRONMENT_CONF\":12.5,\"TRK_CONF\":12.5,\"LAT\":42.375,\"LON\":42.375,\"ALT\":-0.5,\"SPD\":-0.5,\"HDNG\":12.5,\"COURSE\":101.125,\"SRC_TYPS\":[\"s39547\",\"s19365\"],\"SRC_IDS\":[\"s38036\",\"s66893\"],\"CALL_SIGN\":\"s34999\",\"MULTI_SOURCE\":true,\"J_SERIES\":\"s48509\",\"STRENGTH\":64999,\"M1\":55859,\"M1V\":216,\"M2\":24275,\"M2V\":88,\"M3A\":59817,\"M3AV\":226,\"TAGS\":[\"s35568\",\"s79185\"],\"TRACK_START_TIME\":\"s99754\",\"TRACK_STEP_SIZE\":7.0625,\"TRACK_COMPONENTS\":250,\"ECEF_POS\":[42.375,-0.5],\"ECEF_VEL\":[0.75,12.5],\"ECEF_ACC\":[-0.5,12.5],\"LC_POS\":[101.125,-0.5],\"LC_VEL\":[7.0625,12.5],\"LC_ACC\":[-3.25,-0.5],\"COV\":[0.75,0.75],\"ERR_ELLP\":[7.0625,12.5]}",
+ "expect": "{\"ID\":\"s37439\",\"CNTCT\":\"s45932\",\"MSG_TS\":\"s2200\",\"MSN_ID\":\"s57179\",\"ASSET_NAT\":\"s22093\",\"ASSET\":\"s65385\",\"SENSOR_ID\":\"s39086\",\"SEN_QUAL\":\"s38637\",\"TRK_ID\":\"s94115\",\"TRK_NUM\":\"s4930\",\"TRK_STAT\":\"DROPPED\",\"OBJ_NAT\":\"s16570\",\"OBJ_ID\":\"s6836\",\"OBJ_TYPE\":\"s34396\",\"OBJ_SPEC\":\"s83583\",\"OBJ_PLAT\":\"s34429\",\"OBJ_ACT\":\"s12385\",\"MOD_TYPE\":\"s49238\",\"TRK_ITM_ID\":\"s29195\",\"TS\":\"s14499\",\"TRK_QUAL\":185,\"TRK_PT_TYPE\":\"s57089\",\"OBJ_IDENT\":\"s64181\",\"IDENT_CRED\":243,\"IDENT_REL\":155,\"IDENT_AMP\":\"s67067\",\"ENVIRONMENT\":\"SUBSURFACE\",\"ENVIRONMENT_CONF\":12.5,\"TRK_CONF\":12.5,\"LAT\":42.375,\"LON\":42.375,\"ALT\":-0.5,\"SPD\":-0.5,\"HDNG\":12.5,\"COURSE\":101.125,\"SRC_TYPS\":[\"s39547\",\"s19365\"],\"SRC_IDS\":[\"s38036\",\"s66893\"],\"CALL_SIGN\":\"s34999\",\"MULTI_SOURCE\":true,\"J_SERIES\":\"s48509\",\"STRENGTH\":64999,\"M1\":55859,\"M1V\":216,\"M2\":24275,\"M2V\":88,\"M3A\":59817,\"M3AV\":226,\"TAGS\":[\"s35568\",\"s79185\"],\"TRACK_START_TIME\":\"s99754\",\"TRACK_STEP_SIZE\":7.0625,\"TRACK_COMPONENTS\":250,\"ECEF_POS\":[42.375,-0.5],\"ECEF_VEL\":[0.75,12.5],\"ECEF_ACC\":[-0.5,12.5],\"LC_POS\":[101.125,-0.5],\"LC_VEL\":[7.0625,12.5],\"LC_ACC\":[-3.25,-0.5],\"COV\":[0.75,0.75],\"ERR_ELLP\":[7.0625,12.5]}",
+ "model": {
+  "uid": "s37439",
+  "sdstrk.id": "s37439",
+  "sdstrk.cntct": "s45932",
+  "sdstrk.msg_ts": "s2200",
+  "sdstrk.msn_id": "s57179",
+  "sdstrk.asset_nat": "s22093",
+  "sdstrk.asset": "s65385",
+  "sdstrk.sensor_id": "s39086"
+ }
+}

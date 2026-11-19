@@ -1,0 +1,17 @@
+{
+ "name": "gen-esl-roundtrip",
+ "from": "sds-esl",
+ "to": "sds-esl",
+ "input": "{\"LINK_KEY\":\"s39413\",\"ENTITY_ID\":\"s42979\",\"ENTITY_RECORD_KEY\":\"s35847\",\"ENTITY_ROWID\":-0.5,\"RECORD_KEY\":\"s35022\",\"SCHEMA_NAME\":\"s66562\",\"RECORD_ROWID\":1.5,\"CASCADE_DELETE\":true,\"UPDATED_AT_MS\":7.0625,\"RESERVED\":[175,230]}",
+ "expect": "{\"LINK_KEY\":\"s39413\",\"ENTITY_ID\":\"s42979\",\"ENTITY_RECORD_KEY\":\"s35847\",\"ENTITY_ROWID\":-0.5,\"RECORD_KEY\":\"s35022\",\"SCHEMA_NAME\":\"s66562\",\"RECORD_ROWID\":1.5,\"CASCADE_DELETE\":true,\"UPDATED_AT_MS\":7.0625,\"RESERVED\":[175,230]}",
+ "model": {
+  "sdsesl.link_key": "s39413",
+  "sdsesl.entity_id": "s42979",
+  "sdsesl.entity_record_key": "s35847",
+  "sdsesl.entity_rowid": "-0.5",
+  "sdsesl.record_key": "s35022",
+  "sdsesl.schema_name": "s66562",
+  "sdsesl.record_rowid": "1.5",
+  "sdsesl.cascade_delete": "1"
+ }
+}

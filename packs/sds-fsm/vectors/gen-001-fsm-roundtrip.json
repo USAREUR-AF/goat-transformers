@@ -1,0 +1,17 @@
+{
+ "name": "gen-fsm-roundtrip",
+ "from": "sds-fsm",
+ "to": "sds-fsm",
+ "input": "{\"MESSAGE_ID\":\"s72239\",\"PROVIDER_PEER_ID\":\"s21853\",\"LISTING_ID\":\"s89382\",\"STREAM_ID\":\"s33264\",\"SCHEMA_CODE\":\"s35291\",\"SCHEMA_HASH\":[91,57],\"POLICY_ID\":\"s21681\",\"POLICY_VERSION\":1782427620,\"KEY_EPOCH\":\"s21879\",\"SEQUENCE\":166474354292661,\"PRODUCED_AT\":270311318831756,\"EXPIRES_AT\":101683119279867,\"SUBJECT_ID\":\"s70625\",\"FIELDS\":[{\"FIELD_PATH\":\"s23290\",\"FIELD_ID_PATH\":[2440865008],\"STATE\":\"Public\",\"ENCODING\":\"TextUtf8\",\"VALUE\":[28],\"CIPHERTEXT\":[36],\"NONCE\":[248],\"TAG\":[150],\"KEY_ID\":\"s16683\",\"AAD_HASH\":[14],\"RELEASE_TAGS\":[\"s81563\"],\"DECISION\":\"s38057\"},{\"FIELD_PATH\":\"s12109\",\"FIELD_ID_PATH\":[2617789527],\"STATE\":\"Encrypted\",\"ENCODING\":\"JsonUtf8\",\"VALUE\":[219],\"CIPHERTEXT\":[43],\"NONCE\":[249],\"TAG\":[28],\"KEY_ID\":\"s59075\",\"AAD_HASH\":[181],\"RELEASE_TAGS\":[\"s11943\"],\"DECISION\":\"s9847\"}],\"PAYLOAD_HASH\":[27,128],\"PREVIOUS_MESSAGE_HASH\":[229,59],\"PROVIDER_SIGNATURE\":[147,209]}",
+ "expect": "{\"MESSAGE_ID\":\"s72239\",\"PROVIDER_PEER_ID\":\"s21853\",\"LISTING_ID\":\"s89382\",\"STREAM_ID\":\"s33264\",\"SCHEMA_CODE\":\"s35291\",\"SCHEMA_HASH\":[91,57],\"POLICY_ID\":\"s21681\",\"POLICY_VERSION\":1782427620,\"KEY_EPOCH\":\"s21879\",\"SEQUENCE\":166474354292661,\"PRODUCED_AT\":270311318831756,\"EXPIRES_AT\":101683119279867,\"SUBJECT_ID\":\"s70625\",\"FIELDS\":[{\"FIELD_PATH\":\"s23290\",\"FIELD_ID_PATH\":[2440865008],\"STATE\":\"Public\",\"ENCODING\":\"TextUtf8\",\"VALUE\":[28],\"CIPHERTEXT\":[36],\"NONCE\":[248],\"TAG\":[150],\"KEY_ID\":\"s16683\",\"AAD_HASH\":[14],\"RELEASE_TAGS\":[\"s81563\"],\"DECISION\":\"s38057\"},{\"FIELD_PATH\":\"s12109\",\"FIELD_ID_PATH\":[2617789527],\"STATE\":\"Encrypted\",\"ENCODING\":\"JsonUtf8\",\"VALUE\":[219],\"CIPHERTEXT\":[43],\"NONCE\":[249],\"TAG\":[28],\"KEY_ID\":\"s59075\",\"AAD_HASH\":[181],\"RELEASE_TAGS\":[\"s11943\"],\"DECISION\":\"s9847\"}],\"PAYLOAD_HASH\":[27,128],\"PREVIOUS_MESSAGE_HASH\":[229,59],\"PROVIDER_SIGNATURE\":[147,209]}",
+ "model": {
+  "sdsfsm.message_id": "s72239",
+  "sdsfsm.provider_peer_id": "s21853",
+  "sdsfsm.listing_id": "s89382",
+  "sdsfsm.stream_id": "s33264",
+  "sdsfsm.schema_code": "s35291",
+  "sdsfsm.schema_hash.#": "2",
+  "sdsfsm.policy_id": "s21681",
+  "sdsfsm.policy_version": "1782427620"
+ }
+}

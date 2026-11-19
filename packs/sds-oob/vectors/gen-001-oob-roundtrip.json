@@ -1,0 +1,17 @@
+{
+ "name": "gen-oob-roundtrip",
+ "from": "sds-oob",
+ "to": "sds-oob",
+ "input": "{\"ID\":\"s91126\",\"ID_ON_ORBIT\":\"s21912\",\"ID_BATTERY\":\"s60732\",\"NAME\":\"s34517\",\"CHEMISTRY\":\"s81318\",\"QUANTITY\":273673090,\"VOLTAGE\":42.375,\"CAPACITY_AH\":101.125,\"ENERGY_WH\":1.5,\"MAX_DOD\":101.125,\"CYCLE_LIFE\":1092748562,\"MASS\":-3.25,\"STATE_OF_HEALTH\":1.5,\"NOTES\":\"s69697\"}",
+ "expect": "{\"ID\":\"s91126\",\"ID_ON_ORBIT\":\"s21912\",\"ID_BATTERY\":\"s60732\",\"NAME\":\"s34517\",\"CHEMISTRY\":\"s81318\",\"QUANTITY\":273673090,\"VOLTAGE\":42.375,\"CAPACITY_AH\":101.125,\"ENERGY_WH\":1.5,\"MAX_DOD\":101.125,\"CYCLE_LIFE\":1092748562,\"MASS\":-3.25,\"STATE_OF_HEALTH\":1.5,\"NOTES\":\"s69697\"}",
+ "model": {
+  "uid": "s91126",
+  "sdsoob.id": "s91126",
+  "sdsoob.id_on_orbit": "s21912",
+  "sdsoob.id_battery": "s60732",
+  "sdsoob.name": "s34517",
+  "sdsoob.chemistry": "s81318",
+  "sdsoob.quantity": "273673090",
+  "sdsoob.voltage": "42.375"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-cmr-roundtrip",
+ "from": "sds-cmr",
+ "to": "sds-cmr",
+ "input": "{\"MEMBERSHIP_ID\":\"s40343\",\"NORAD_CAT_ID\":2947489462,\"OBJECT_ID\":\"s69203\",\"CONSTELLATION_ID\":\"s51084\",\"CONSTELLATION_NAME\":\"s88166\",\"CONSTELLATION_ALIASES\":[\"s50306\",\"s43158\"],\"OPERATOR_ID\":\"s49488\",\"OPERATOR_NAME\":\"s33958\",\"OPERATOR_ALIASES\":[\"s66657\",\"s31606\"],\"STATE\":\"FORMER\",\"UPDATED_AT\":\"s9327\",\"PROVENANCE\":[{\"ROLE\":\"UNSPECIFIED\",\"SOURCE\":\"s61694\",\"SOURCE_DATASET\":\"s91779\",\"SOURCE_RECORD_ID\":\"s52185\",\"SOURCE_URL\":\"s1903\",\"SOURCE_VERSION\":\"s57499\",\"RETRIEVED_AT\":\"s97805\",\"SOURCE_SHA256\":\"s26501\",\"LICENSE\":\"s46450\",\"ATTRIBUTION\":\"s10368\",\"NOTES\":\"s18375\"},{\"ROLE\":\"OPERATOR\",\"SOURCE\":\"s28918\",\"SOURCE_DATASET\":\"s17091\",\"SOURCE_RECORD_ID\":\"s29282\",\"SOURCE_URL\":\"s48678\",\"SOURCE_VERSION\":\"s7710\",\"RETRIEVED_AT\":\"s85027\",\"SOURCE_SHA256\":\"s56137\",\"LICENSE\":\"s2251\",\"ATTRIBUTION\":\"s88372\",\"NOTES\":\"s51516\"}]}",
+ "expect": "{\"MEMBERSHIP_ID\":\"s40343\",\"NORAD_CAT_ID\":2947489462,\"OBJECT_ID\":\"s69203\",\"CONSTELLATION_ID\":\"s51084\",\"CONSTELLATION_NAME\":\"s88166\",\"CONSTELLATION_ALIASES\":[\"s50306\",\"s43158\"],\"OPERATOR_ID\":\"s49488\",\"OPERATOR_NAME\":\"s33958\",\"OPERATOR_ALIASES\":[\"s66657\",\"s31606\"],\"STATE\":\"FORMER\",\"UPDATED_AT\":\"s9327\",\"PROVENANCE\":[{\"ROLE\":\"UNSPECIFIED\",\"SOURCE\":\"s61694\",\"SOURCE_DATASET\":\"s91779\",\"SOURCE_RECORD_ID\":\"s52185\",\"SOURCE_URL\":\"s1903\",\"SOURCE_VERSION\":\"s57499\",\"RETRIEVED_AT\":\"s97805\",\"SOURCE_SHA256\":\"s26501\",\"LICENSE\":\"s46450\",\"ATTRIBUTION\":\"s10368\",\"NOTES\":\"s18375\"},{\"ROLE\":\"OPERATOR\",\"SOURCE\":\"s28918\",\"SOURCE_DATASET\":\"s17091\",\"SOURCE_RECORD_ID\":\"s29282\",\"SOURCE_URL\":\"s48678\",\"SOURCE_VERSION\":\"s7710\",\"RETRIEVED_AT\":\"s85027\",\"SOURCE_SHA256\":\"s56137\",\"LICENSE\":\"s2251\",\"ATTRIBUTION\":\"s88372\",\"NOTES\":\"s51516\"}]}",
+ "model": {
+  "sdscmr.membership_id": "s40343",
+  "sdscmr.norad_cat_id": "2947489462",
+  "sdscmr.object_id": "s69203",
+  "sdscmr.constellation_id": "s51084",
+  "sdscmr.constellation_name": "s88166",
+  "sdscmr.constellation_aliases.#": "2",
+  "sdscmr.operator_id": "s49488",
+  "sdscmr.operator_name": "s33958"
+ }
+}

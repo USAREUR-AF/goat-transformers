@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "sources|.|string": "sources_value",
+  "|CACHE_ENABLED|int": "cache_enabled",
+  "|INTERPOLATION|string": "interpolation",
+  "|MAX_CACHE_TILES|int": "max_cache_tiles",
+  "|VERTICAL_EXAGGERATION|float": "vertical_exaggeration"
+ },
+ "lists": {
+  "|SOURCES": "sources"
+ }
+}

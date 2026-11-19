@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "dwells|.|string": "dwells_value",
+  "free_texts|.|string": "free_texts_value",
+  "hrrs|.|string": "hrrs_value",
+  "job_defs|.|string": "job_defs_value",
+  "job_requests|.|string": "job_requests_value",
+  "missions|.|string": "missions_value",
+  "platform_locs|.|string": "platform_locs_value",
+  "|ID|string": "id",
+  "|P10|int": "p10",
+  "|P3|string": "p3",
+  "|P6|string": "p6",
+  "|P7|string": "p7",
+  "|P8|string": "p8",
+  "|P9|int": "p9",
+  "|STANDARD|string": "standard"
+ },
+ "lists": {
+  "|DWELLS": "dwells",
+  "|FREE_TEXTS": "free_texts",
+  "|HRRS": "hrrs",
+  "|JOB_DEFS": "job_defs",
+  "|JOB_REQUESTS": "job_requests",
+  "|MISSIONS": "missions",
+  "|PLATFORM_LOCS": "platform_locs"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-sev-roundtrip",
+ "from": "sds-sev",
+ "to": "sds-sev",
+ "input": "{\"OB_TYPE\":\"s41417\",\"OB_UO_M\":\"s36184\",\"OB_VALUE\":-3.25,\"OB_STRING\":\"s86707\",\"OB_ARRAY\":[\"s47508\",\"s40605\"],\"OB_BOOL\":true,\"OB_QUALITY\":\"s73697\",\"OB_DESCRIPTION\":\"s643\"}",
+ "expect": "{\"OB_TYPE\":\"s41417\",\"OB_UO_M\":\"s36184\",\"OB_VALUE\":-3.25,\"OB_STRING\":\"s86707\",\"OB_ARRAY\":[\"s47508\",\"s40605\"],\"OB_BOOL\":true,\"OB_QUALITY\":\"s73697\",\"OB_DESCRIPTION\":\"s643\"}",
+ "model": {
+  "sdssev.ob_type": "s41417",
+  "sdssev.ob_uo_m": "s36184",
+  "sdssev.ob_value": "-3.25",
+  "sdssev.ob_string": "s86707",
+  "sdssev.ob_array.#": "2",
+  "sdssev.ob_bool": "1",
+  "sdssev.ob_quality": "s73697",
+  "sdssev.ob_description": "s643"
+ }
+}

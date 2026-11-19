@@ -1,0 +1,17 @@
+{
+ "name": "gen-tpn-roundtrip",
+ "from": "sds-tpn",
+ "to": "sds-tpn",
+ "input": "{\"ID\":\"s39219\",\"NAME\":\"s50808\",\"NID\":\"s345\",\"TID\":\"s44650\",\"TTF\":0.75,\"SYMBOL_RATE\":-0.5,\"FEC\":-360570158,\"MODULATION\":\"s80208\",\"FORMAT\":\"s82685\",\"SYSTEM\":\"s46857\",\"CHANNELS\":[\"s70877\",\"s42676\"]}",
+ "expect": "{\"ID\":\"s39219\",\"NAME\":\"s50808\",\"NID\":\"s345\",\"TID\":\"s44650\",\"TTF\":0.75,\"SYMBOL_RATE\":-0.5,\"FEC\":-360570158,\"MODULATION\":\"s80208\",\"FORMAT\":\"s82685\",\"SYSTEM\":\"s46857\",\"CHANNELS\":[\"s70877\",\"s42676\"]}",
+ "model": {
+  "sdstpn.id": "s39219",
+  "sdstpn.name": "s50808",
+  "sdstpn.nid": "s345",
+  "sdstpn.tid": "s44650",
+  "sdstpn.ttf": "0.75",
+  "sdstpn.symbol_rate": "-0.5",
+  "sdstpn.fec": "-360570158",
+  "sdstpn.modulation": "s80208"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-drb-roundtrip",
+ "from": "sds-drb",
+ "to": "sds-drb",
+ "input": "{\"RECEIVER_ARTIFACT_SHA256\":[129,64],\"START_UNIX_US\":-9223141742992226095,\"WINDOW_COUNT\":48,\"POSITION_ONLY\":true,\"WIDE_RECORDS\":true,\"OUTCOMES\":[{\"RECORD_INDEX\":3760716066,\"OUTCOME\":\"EXCLUDED\"},{\"RECORD_INDEX\":4028920589,\"OUTCOME\":\"SOURCE_REFUSED\"}]}",
+ "expect": "{\"RECEIVER_ARTIFACT_SHA256\":[129,64],\"START_UNIX_US\":-9223141742992226095,\"WINDOW_COUNT\":48,\"POSITION_ONLY\":true,\"WIDE_RECORDS\":true,\"OUTCOMES\":[{\"RECORD_INDEX\":3760716066,\"OUTCOME\":\"EXCLUDED\"},{\"RECORD_INDEX\":4028920589,\"OUTCOME\":\"SOURCE_REFUSED\"}]}",
+ "model": {
+  "sdsdrb.receiver_artifact_sha256.#": "2",
+  "sdsdrb.start_unix_us": "-9223141742992226095",
+  "sdsdrb.window_count": "48",
+  "sdsdrb.position_only": "1",
+  "sdsdrb.wide_records": "1",
+  "sdsdrb.outcomes.#": "2"
+ }
+}

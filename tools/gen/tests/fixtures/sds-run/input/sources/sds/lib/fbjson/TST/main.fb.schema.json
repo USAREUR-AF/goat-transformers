@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "definitions": {
+    "kindEnum": {
+      "type": "string",
+      "enum": ["ALPHA", "BETA"],
+      "x-flatbuffer-type": "enum",
+      "x-flatbuffer-enum-type": "byte",
+      "x-flatbuffer-enum-values": {"ALPHA": {"value": 0}, "BETA": {"value": 1}}
+    },
+    "BranchA": {
+      "type": "object",
+      "properties": {
+        "A_VALUE": {"type": "number", "description": "A value of branch A", "x-flatbuffer-type": "double"}
+      },
+      "additionalProperties": false
+    },
+    "BranchB": {
+      "type": "object",
+      "properties": {
+        "B_NAME": {"type": "string", "x-flatbuffer-type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "ChoiceType": {
+      "type": "string",
+      "enum": ["NONE", "BranchA", "BranchB"],
+      "x-flatbuffer-type": "enum"
+    },
+    "TST": {
+      "type": "object",
+      "description": "Test Standard Record. Written for the tests.",
+      "properties": {
+        "ID": {"type": "string", "description": "Unique identifier", "x-flatbuffer-type": "string"},
+        "EPOCH": {"type": "string", "description": "Epoch, ISO 8601 UTC", "x-flatbuffer-type": "string"},
+        "COUNT": {"type": "integer", "minimum": 0, "maximum": 4294967295, "x-flatbuffer-type": "uint32",
+                  "x-flatbuffer-default": 0},
+        "KIND": {"$ref": "#/definitions/kindEnum"},
+        "VALUES": {"type": "array", "items": {"type": "number"}, "x-flatbuffer-type": "[double]"},
+        "CHOICE_type": {"$ref": "#/definitions/ChoiceType"},
+        "CHOICE": {"anyOf": [{"$ref": "#/definitions/BranchA"}, {"$ref": "#/definitions/BranchB"}],
+                   "x-flatbuffer-type": "Choice"}
+      },
+      "required": ["ID"],
+      "additionalProperties": false,
+      "x-flatbuffer-required": ["ID"]
+    }
+  },
+  "$ref": "#/definitions/TST",
+  "x-flatbuffer-root-type": "TST",
+  "x-flatbuffer-file-identifier": "$TST"
+}

@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|ACTIVE|int": "active",
+  "|DESCRIPTION|string": "description",
+  "|NAME|string": "name",
+  "|OWNER|string": "owner",
+  "|RETRIEVED_AT|string": "retrieved_at",
+  "|SOURCE_URL|string": "source_url"
+ },
+ "lists": {}
+}

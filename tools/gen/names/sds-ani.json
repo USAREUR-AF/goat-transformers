@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "confidence|.|float": "confidence_value",
+  "features|.|float": "features_value",
+  "labels|.|string": "labels_value",
+  "|ALGORITHM_VERSION|string": "algorithm_version",
+  "|ALGORITHM|string": "algorithm",
+  "|ANALYTIC_TYPE|string": "analytic_type",
+  "|DEC|float": "dec",
+  "|FOV|float": "fov",
+  "|ID|string": "id",
+  "|MAG_UNCERTAINTY|float": "mag_uncertainty",
+  "|NOTES|string": "notes",
+  "|OBJECT_COUNT|int": "object_count",
+  "|OBJECT_DESIGNATOR|string": "object_designator",
+  "|OBS_TIME|string": "obs_time",
+  "|PROCESSING_TIME|string": "processing_time",
+  "|QUALITY|float": "quality",
+  "|RA|float": "ra",
+  "|SAT_NO|int": "sat_no",
+  "|SOURCE_ID|string": "source_id",
+  "|SOURCE_TYPE|string": "source_type",
+  "|VISUAL_MAG|float": "visual_mag"
+ },
+ "lists": {
+  "|CONFIDENCE": "confidence",
+  "|FEATURES": "features",
+  "|LABELS": "labels"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-eme-roundtrip",
+ "from": "sds-eme",
+ "to": "sds-eme",
+ "input": "{\"ENCRYPTED_BLOB\":[137,250],\"EPHEMERAL_PUBLIC_KEY\":\"s23460\",\"MAC\":\"s51734\",\"NONCE_START\":[109,190],\"TAG\":\"s3974\",\"IV\":\"s69921\",\"SALT\":\"s39831\",\"PUBLIC_KEY_IDENTIFIER\":\"s25055\",\"CIPHER_SUITE\":\"s11564\",\"KDF_PARAMETERS\":\"s77030\",\"ENCRYPTION_ALGORITHM_PARAMETERS\":\"s89345\"}",
+ "expect": "{\"ENCRYPTED_BLOB\":[137,250],\"EPHEMERAL_PUBLIC_KEY\":\"s23460\",\"MAC\":\"s51734\",\"NONCE_START\":[109,190],\"TAG\":\"s3974\",\"IV\":\"s69921\",\"SALT\":\"s39831\",\"PUBLIC_KEY_IDENTIFIER\":\"s25055\",\"CIPHER_SUITE\":\"s11564\",\"KDF_PARAMETERS\":\"s77030\",\"ENCRYPTION_ALGORITHM_PARAMETERS\":\"s89345\"}",
+ "model": {
+  "sdseme.encrypted_blob.#": "2",
+  "sdseme.ephemeral_public_key": "s23460",
+  "sdseme.mac": "s51734",
+  "sdseme.nonce_start.#": "2",
+  "sdseme.tag": "s3974",
+  "sdseme.iv": "s69921",
+  "sdseme.salt": "s39831",
+  "sdseme.public_key_identifier": "s25055"
+ }
+}

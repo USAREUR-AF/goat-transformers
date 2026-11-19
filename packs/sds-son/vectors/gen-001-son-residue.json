@@ -1,0 +1,7 @@
+{
+ "name": "gen-son-residue",
+ "from": "sds-son",
+ "to": "sds-son",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s85024\",\"ACTIVE_CONFIG\":\"s34958\",\"PASSIVE_CONFIG\":\"s89523\",\"TL_REQUEST\":\"s21184\",\"ENVIRONMENT\":\"s46766\",\"TARGET_SIGNATURE\":\"s42527\",\"TMA_INPUT\":\"s34317\",\"TORPEDO_SEEKER\":\"s84563\"}",
+ "expect": "{\"COMMAND\":\"s85024\",\"ACTIVE_CONFIG\":\"s34958\",\"PASSIVE_CONFIG\":\"s89523\",\"TL_REQUEST\":\"s21184\",\"ENVIRONMENT\":\"s46766\",\"TARGET_SIGNATURE\":\"s42527\",\"TMA_INPUT\":\"s34317\",\"TORPEDO_SEEKER\":\"s84563\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

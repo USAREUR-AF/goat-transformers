@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "index_expression|.|int": "index_expression_value",
+  "message|.|int": "message_value",
+  "parameters|.|int": "parameters_value",
+  "query|.|int": "query_value",
+  "schema_idl|.|int": "schema_idl_value",
+  "table_bindings|FILE_IDENTIFIER|string": "table_bindings_file_identifier",
+  "table_bindings|TABLE_NAME|string": "table_bindings_table_name",
+  "upsert_key_expression|.|int": "upsert_key_expression_value",
+  "|AFFECTED_RECORDS|int": "affected_records",
+  "|COMPACTION_TARGET_BYTES|int": "compaction_target_bytes",
+  "|DATABASE_NAME|string": "database_name",
+  "|ERROR_CODE|string": "error_code",
+  "|INDEX_NAME|string": "index_name",
+  "|OPERATION|string": "operation",
+  "|PARAMETER_COUNT|int": "parameter_count",
+  "|REQUEST_ID|int": "request_id",
+  "|RESULT_BYTES|int": "result_bytes",
+  "|RETENTION_MAX_AGE_MILLIS|int": "retention_max_age_millis",
+  "|RETENTION_MAX_RECORDS|int": "retention_max_records",
+  "|STATUS|string": "status",
+  "|TABLE_NAME|string": "table_name",
+  "|VIEW_NAME|string": "view_name"
+ },
+ "lists": {
+  "|INDEX_EXPRESSION": "index_expression",
+  "|MESSAGE": "message",
+  "|PARAMETERS": "parameters",
+  "|QUERY": "query",
+  "|SCHEMA_IDL": "schema_idl",
+  "|TABLE_BINDINGS": "table_bindings",
+  "|UPSERT_KEY_EXPRESSION": "upsert_key_expression"
+ }
+}

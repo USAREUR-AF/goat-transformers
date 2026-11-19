@@ -1,0 +1,7 @@
+{
+ "name": "gen-tkg-residue",
+ "from": "sds-tkg",
+ "to": "sds-tkg",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s39876\",\"FILTER_CONFIG\":\"s35895\",\"IMM_CONFIG\":\"s84826\",\"MHT_CONFIG\":\"s92234\",\"JPDA_CONFIG\":\"s61331\",\"FUSION_CONFIG\":\"s68901\",\"MEASUREMENTS\":\"s9311\",\"INITIAL_STATE\":\"s15858\",\"TRACK_TO_UPDATE\":\"s55066\",\"TRACKS_TO_CORRELATE\":[\"s1255\",\"s63496\"]}",
+ "expect": "{\"COMMAND\":\"s39876\",\"FILTER_CONFIG\":\"s35895\",\"IMM_CONFIG\":\"s84826\",\"MHT_CONFIG\":\"s92234\",\"JPDA_CONFIG\":\"s61331\",\"FUSION_CONFIG\":\"s68901\",\"MEASUREMENTS\":\"s9311\",\"INITIAL_STATE\":\"s15858\",\"TRACK_TO_UPDATE\":\"s55066\",\"TRACKS_TO_CORRELATE\":[\"s1255\",\"s63496\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

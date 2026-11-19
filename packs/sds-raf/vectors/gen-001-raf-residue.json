@@ -1,0 +1,7 @@
+{
+ "name": "gen-raf-residue",
+ "from": "sds-raf",
+ "to": "sds-raf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"PDU_TYPE\":\"START_RETURN\",\"INITIATOR_ID\":\"s24467\",\"RESPONDER_PORT_ID\":\"s18102\",\"SERVICE_TYPE\":9,\"VERSION\":51638,\"INVOKE_ID\":368172386,\"FRAME_QUALITY\":241,\"DATA\":[210,72]}",
+ "expect": "{\"PDU_TYPE\":\"START_RETURN\",\"INITIATOR_ID\":\"s24467\",\"RESPONDER_PORT_ID\":\"s18102\",\"SERVICE_TYPE\":9,\"VERSION\":51638,\"INVOKE_ID\":368172386,\"FRAME_QUALITY\":241,\"DATA\":[210,72],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

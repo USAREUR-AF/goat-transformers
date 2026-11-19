@@ -1,0 +1,7 @@
+{
+ "name": "gen-bov-residue",
+ "from": "sds-bov",
+ "to": "sds-bov",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"E_COORDINATE\":7.0625,\"F_COORDINATE\":1.5,\"G_COORDINATE\":7.0625,\"E_DOT\":12.5,\"F_DOT\":101.125,\"G_DOT\":-0.5,\"EPOCH\":\"s65187\",\"TIME_FROM_LAUNCH\":-0.5}",
+ "expect": "{\"E_COORDINATE\":7.0625,\"F_COORDINATE\":1.5,\"G_COORDINATE\":7.0625,\"E_DOT\":12.5,\"F_DOT\":101.125,\"G_DOT\":-0.5,\"EPOCH\":\"s65187\",\"TIME_FROM_LAUNCH\":-0.5,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

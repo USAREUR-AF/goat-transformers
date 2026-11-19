@@ -1,0 +1,15 @@
+{
+ "name": "gen-lcc-roundtrip",
+ "from": "sds-lcc",
+ "to": "sds-lcc",
+ "input": "{\"OWNER\":\"IT\",\"NAME\":\"s46854\",\"DESCRIPTION\":\"s81990\",\"ACTIVE\":true,\"SOURCE_URL\":\"s38649\",\"RETRIEVED_AT\":\"s27335\"}",
+ "expect": "{\"OWNER\":\"IT\",\"NAME\":\"s46854\",\"DESCRIPTION\":\"s81990\",\"ACTIVE\":true,\"SOURCE_URL\":\"s38649\",\"RETRIEVED_AT\":\"s27335\"}",
+ "model": {
+  "sdslcc.owner": "IT",
+  "sdslcc.name": "s46854",
+  "sdslcc.description": "s81990",
+  "sdslcc.active": "1",
+  "sdslcc.source_url": "s38649",
+  "sdslcc.retrieved_at": "s27335"
+ }
+}

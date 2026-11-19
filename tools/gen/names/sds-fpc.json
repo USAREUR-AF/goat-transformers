@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "csr_destinations|.|int": "csr_destinations_value",
+  "csr_offsets|.|int": "csr_offsets_value",
+  "csr_weights|.|float": "csr_weights_value",
+  "edges_edges|DST|int": "edges_edges_dst",
+  "edges_edges|SRC|int": "edges_edges_src",
+  "edges_edges|WEIGHT|float": "edges_edges_weight",
+  "path_result_path|.|int": "path_result_path_value",
+  "shortest_path_result_distances|.|float": "shortest_path_result_distances_value",
+  "shortest_path_result_predecessors|.|int": "shortest_path_result_predecessors_value",
+  "|CSR.VERTEX_COUNT|int": "csr_vertex_count",
+  "|EDGES.BUILD_GRAPH|int": "edges_build_graph",
+  "|EDGES.VERTEX_COUNT|int": "edges_vertex_count",
+  "|GRAPH_DEFINITION.VERTEX_COUNT|int": "graph_definition_vertex_count",
+  "|PATH_REQUEST.TARGET|int": "path_request_target",
+  "|PATH_RESULT.DISTANCE|float": "path_result_distance",
+  "|PATH_RESULT.REACHABLE|int": "path_result_reachable",
+  "|PATH_RESULT.SOURCE|int": "path_result_source",
+  "|PATH_RESULT.TARGET|int": "path_result_target",
+  "|SHORTEST_PATH_REQUEST.ALGORITHM|string": "shortest_path_request_algorithm",
+  "|SHORTEST_PATH_REQUEST.SOURCE|int": "shortest_path_request_source",
+  "|SHORTEST_PATH_RESULT.REACHABLE_COUNT|int": "shortest_path_result_reachable_count",
+  "|SHORTEST_PATH_RESULT.SOURCE|int": "shortest_path_result_source",
+  "|SHORTEST_PATH_RESULT.VERTEX_COUNT|int": "shortest_path_result_vertex_count"
+ },
+ "lists": {
+  "|CSR.DESTINATIONS": "csr_destinations",
+  "|CSR.OFFSETS": "csr_offsets",
+  "|CSR.WEIGHTS": "csr_weights",
+  "|EDGES.EDGES": "edges_edges",
+  "|PATH_RESULT.PATH": "path_result_path",
+  "|SHORTEST_PATH_RESULT.DISTANCES": "shortest_path_result_distances",
+  "|SHORTEST_PATH_RESULT.PREDECESSORS": "shortest_path_result_predecessors"
+ }
+}

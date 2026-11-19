@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "categories_keywords|.|string": "categories_keywords_value",
+  "categories|CODE|string": "categories_code",
+  "categories|DESCRIPTION|string": "categories_description",
+  "categories|DISPLAY_NAME|string": "categories_display_name",
+  "categories|ICON_KEY|string": "categories_icon_key",
+  "categories|PARENT|string": "categories_parent",
+  "categories|SLUG|string": "categories_slug",
+  "categories|SORT_ORDER|int": "categories_sort_order",
+  "categories|SUMMARY|string": "categories_summary",
+  "rollups|CODE|string": "rollups_code",
+  "rollups|COUNTED_AT|int": "rollups_counted_at",
+  "rollups|ITEM_COUNT|int": "rollups_item_count",
+  "rollups|SOURCE_CATALOG_ID|string": "rollups_source_catalog_id",
+  "signature|.|int": "signature_value",
+  "|ISSUED_AT|int": "issued_at",
+  "|TAXONOMY_ID|string": "taxonomy_id",
+  "|TITLE|string": "title",
+  "|VERSION|string": "version"
+ },
+ "lists": {
+  "categories|KEYWORDS": "categories_keywords",
+  "|CATEGORIES": "categories",
+  "|ROLLUPS": "rollups",
+  "|SIGNATURE": "signature"
+ }
+}

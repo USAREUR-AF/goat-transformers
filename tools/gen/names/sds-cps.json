@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "compressed_data|.|int": "compressed_data_value",
+  "|ALGORITHM|string": "algorithm",
+  "|APID|int": "apid",
+  "|MASK_SEND_PERIOD|int": "mask_send_period",
+  "|MASK_UPDATE_PERIOD|int": "mask_update_period",
+  "|PACKET_COUNT|int": "packet_count",
+  "|PACKET_LENGTH|int": "packet_length",
+  "|REFERENCE_PERIOD|int": "reference_period",
+  "|ROBUSTNESS|int": "robustness",
+  "|SEGMENT_INDEX|int": "segment_index",
+  "|SELF_SYNCHRONIZING|int": "self_synchronizing",
+  "|SPACECRAFT_ID|int": "spacecraft_id",
+  "|START_EPOCH|string": "start_epoch",
+  "|STOP_EPOCH|string": "stop_epoch",
+  "|STREAM_ID|string": "stream_id",
+  "|UNCOMPRESSED_CRC32|int": "uncompressed_crc32",
+  "|UNCOMPRESSED_LENGTH|int": "uncompressed_length"
+ },
+ "lists": {
+  "|COMPRESSED_DATA": "compressed_data"
+ }
+}

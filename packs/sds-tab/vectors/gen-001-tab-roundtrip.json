@@ -1,0 +1,17 @@
+{
+ "name": "gen-tab-roundtrip",
+ "from": "sds-tab",
+ "to": "sds-tab",
+ "input": "{\"OFFSET\":2693493112,\"SIZE\":2448662462,\"ALIGNMENT\":1085392092,\"WIRE_FORMAT\":\"ALIGNED_BINARY\",\"TYPE_REF\":{\"SCHEMA_NAME\":\"s26047\",\"FILE_IDENTIFIER\":\"s99408\",\"SCHEMA_VERSION\":\"s76861\",\"ROOT_TYPE\":\"s80243\",\"SCHEMA_HASH\":[142,94],\"ACCEPTS_ANY_FLATBUFFER\":true,\"WIRE_FORMAT\":\"ALIGNED_BINARY\",\"FIXED_STRING_LENGTH\":34212,\"BYTE_LENGTH\":2833786552,\"REQUIRED_ALIGNMENT\":38738},\"MUTABILITY\":\"APPEND_ONLY\",\"OWNERSHIP\":\"TRANSFERRED\",\"FRAME_ID\":65691939441282,\"PORT_ID\":\"s2169\"}",
+ "expect": "{\"OFFSET\":2693493112,\"SIZE\":2448662462,\"ALIGNMENT\":1085392092,\"WIRE_FORMAT\":\"ALIGNED_BINARY\",\"TYPE_REF\":{\"SCHEMA_NAME\":\"s26047\",\"FILE_IDENTIFIER\":\"s99408\",\"SCHEMA_VERSION\":\"s76861\",\"ROOT_TYPE\":\"s80243\",\"SCHEMA_HASH\":[142,94],\"ACCEPTS_ANY_FLATBUFFER\":true,\"WIRE_FORMAT\":\"ALIGNED_BINARY\",\"FIXED_STRING_LENGTH\":34212,\"BYTE_LENGTH\":2833786552,\"REQUIRED_ALIGNMENT\":38738},\"MUTABILITY\":\"APPEND_ONLY\",\"OWNERSHIP\":\"TRANSFERRED\",\"FRAME_ID\":65691939441282,\"PORT_ID\":\"s2169\"}",
+ "model": {
+  "sdstab.offset": "2693493112",
+  "sdstab.size": "2448662462",
+  "sdstab.alignment": "1085392092",
+  "sdstab.wire_format": "ALIGNED_BINARY",
+  "sdstab.type_ref_schema_name": "s26047",
+  "sdstab.type_ref_file_identifier": "s99408",
+  "sdstab.type_ref_schema_version": "s76861",
+  "sdstab.type_ref_root_type": "s80243"
+ }
+}

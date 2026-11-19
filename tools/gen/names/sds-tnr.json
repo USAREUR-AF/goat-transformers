@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "provider_signature|.|int": "provider_signature_value",
+  "|CREATED_AT|int": "created_at",
+  "|DELETED|int": "deleted",
+  "|NODE_ID|string": "node_id",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|UPDATED_AT|int": "updated_at"
+ },
+ "lists": {
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

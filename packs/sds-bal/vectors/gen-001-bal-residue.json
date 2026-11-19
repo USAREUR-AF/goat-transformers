@@ -1,0 +1,7 @@
+{
+ "name": "gen-bal-residue",
+ "from": "sds-bal",
+ "to": "sds-bal",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s61730\",\"TRAJECTORY_REQUEST\":\"s75596\",\"TABLE_REQUEST\":\"s78565\",\"FIRE_CONTROL\":\"s48878\",\"PENETRATION_PROJECTILE\":\"s13184\",\"PENETRATION_ARMOR\":\"s77635\",\"IMPACT_VELOCITY_MPS\":101.125,\"IMPACT_ANGLE_DEG\":-3.25}",
+ "expect": "{\"COMMAND\":\"s61730\",\"TRAJECTORY_REQUEST\":\"s75596\",\"TABLE_REQUEST\":\"s78565\",\"FIRE_CONTROL\":\"s48878\",\"PENETRATION_PROJECTILE\":\"s13184\",\"PENETRATION_ARMOR\":\"s77635\",\"IMPACT_VELOCITY_MPS\":101.125,\"IMPACT_ANGLE_DEG\":-3.25,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

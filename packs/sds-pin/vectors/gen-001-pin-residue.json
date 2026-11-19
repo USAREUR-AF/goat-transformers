@@ -1,0 +1,7 @@
+{
+ "name": "gen-pin-residue",
+ "from": "sds-pin",
+ "to": "sds-pin",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"RULES\":[{\"CLASS\":\"SHARE\",\"FEED\":\"s97825\",\"ENABLED\":true,\"LOCKED\":true,\"PINNED_ROOTS\":68116833051404,\"PINNED_BYTES\":264742747039081},{\"CLASS\":\"ASSET_MODEL\",\"FEED\":\"s13729\",\"ENABLED\":true,\"LOCKED\":true,\"PINNED_ROOTS\":129327154065386,\"PINNED_BYTES\":77858616864079}],\"UPDATED_AT\":93181552116191}",
+ "expect": "{\"RULES\":[{\"CLASS\":\"SHARE\",\"FEED\":\"s97825\",\"ENABLED\":true,\"LOCKED\":true,\"PINNED_ROOTS\":68116833051404,\"PINNED_BYTES\":264742747039081},{\"CLASS\":\"ASSET_MODEL\",\"FEED\":\"s13729\",\"ENABLED\":true,\"LOCKED\":true,\"PINNED_ROOTS\":129327154065386,\"PINNED_BYTES\":77858616864079}],\"UPDATED_AT\":93181552116191,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

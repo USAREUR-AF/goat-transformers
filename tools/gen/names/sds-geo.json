@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "|CONFIDENCE|string": "confidence",
+  "|ECCENTRICITY|float": "eccentricity",
+  "|EPOCH|string": "epoch",
+  "|ID|string": "id",
+  "|INCLINATION|float": "inclination",
+  "|LONGITUDE_MAX|float": "longitude_max",
+  "|LONGITUDE_MIN|float": "longitude_min",
+  "|LONGITUDE_RATE|float": "longitude_rate",
+  "|LOST_FLAG|int": "lost_flag",
+  "|OBJECT_STATUS|string": "object_status",
+  "|ON_ORBIT|string": "on_orbit",
+  "|ORIG_OBJECT_ID|string": "orig_object_id",
+  "|PLANE_CHANGE_STATUS|string": "plane_change_status",
+  "|RAW_FILE_URI|string": "raw_file_uri",
+  "|RELATIVE_ENERGY|float": "relative_energy",
+  "|SAT_NO|int": "sat_no",
+  "|SC|float": "sc",
+  "|SEMI_ANNUAL_CORR_FLAG|int": "semi_annual_corr_flag",
+  "|SS|float": "ss",
+  "|STATION_KEEPING|string": "station_keeping",
+  "|TROUGH|string": "trough"
+ },
+ "lists": {}
+}

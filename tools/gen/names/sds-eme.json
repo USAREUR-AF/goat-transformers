@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "encrypted_blob|.|int": "encrypted_blob_value",
+  "nonce_start|.|int": "nonce_start_value",
+  "|CIPHER_SUITE|string": "cipher_suite",
+  "|ENCRYPTION_ALGORITHM_PARAMETERS|string": "encryption_algorithm_parameters",
+  "|EPHEMERAL_PUBLIC_KEY|string": "ephemeral_public_key",
+  "|IV|string": "iv",
+  "|KDF_PARAMETERS|string": "kdf_parameters",
+  "|MAC|string": "mac",
+  "|PUBLIC_KEY_IDENTIFIER|string": "public_key_identifier",
+  "|SALT|string": "salt",
+  "|TAG|string": "tag"
+ },
+ "lists": {
+  "|ENCRYPTED_BLOB": "encrypted_blob",
+  "|NONCE_START": "nonce_start"
+ }
+}

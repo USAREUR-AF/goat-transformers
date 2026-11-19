@@ -1,0 +1,7 @@
+{
+ "name": "gen-sev-residue",
+ "from": "sds-sev",
+ "to": "sds-sev",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"OB_TYPE\":\"s41417\",\"OB_UO_M\":\"s36184\",\"OB_VALUE\":-3.25,\"OB_STRING\":\"s86707\",\"OB_ARRAY\":[\"s47508\",\"s40605\"],\"OB_BOOL\":true,\"OB_QUALITY\":\"s73697\",\"OB_DESCRIPTION\":\"s643\"}",
+ "expect": "{\"OB_TYPE\":\"s41417\",\"OB_UO_M\":\"s36184\",\"OB_VALUE\":-3.25,\"OB_STRING\":\"s86707\",\"OB_ARRAY\":[\"s47508\",\"s40605\"],\"OB_BOOL\":true,\"OB_QUALITY\":\"s73697\",\"OB_DESCRIPTION\":\"s643\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

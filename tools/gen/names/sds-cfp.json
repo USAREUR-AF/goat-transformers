@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "|CHECKSUM_TYPE|int": "checksum_type",
+  "|CRC_FLAG|int": "crc_flag",
+  "|DATA_FIELD_LENGTH|int": "data_field_length",
+  "|DESTINATION_ENTITY_ID|int": "destination_entity_id",
+  "|DESTINATION_FILENAME|string": "destination_filename",
+  "|DIRECTION|int": "direction",
+  "|FILE_SIZE|int": "file_size",
+  "|LARGE_FILE_FLAG|int": "large_file_flag",
+  "|PDU_TYPE|string": "pdu_type",
+  "|SOURCE_ENTITY_ID|int": "source_entity_id",
+  "|SOURCE_FILENAME|string": "source_filename",
+  "|TRANSACTION_SEQ_NUM|int": "transaction_seq_num",
+  "|TRANSMISSION_MODE|string": "transmission_mode",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|DATA": "data"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-gdi-roundtrip",
+ "from": "sds-gdi",
+ "to": "sds-gdi",
+ "input": "{\"ID\":\"s42029\",\"ID_SENSOR\":\"s37401\",\"ORIG_SENSOR_ID\":\"s67275\",\"IMAGE_TIME\":\"s31952\",\"FILENAME\":\"s45484\",\"FORMAT\":\"OTHER\",\"FILESIZE\":-9223159860052170393,\"CHECKSUM_VALUE\":\"s8641\",\"REGION_GEO_JSON\":\"s86841\",\"REGION_TEXT\":\"s48224\",\"REGION\":\"s37877\",\"REGION_TYPE\":\"s44118\",\"REGION_NDIMS\":231,\"REGION_SRID\":36161,\"SUBJECT_ID\":\"s7962\",\"NAME\":\"s12084\",\"TRANSACTION_ID\":\"s60219\",\"TAGS\":[\"s32515\",\"s50609\"],\"KEYWORDS\":[\"s41797\",\"s77288\"],\"NOTES\":\"s445\"}",
+ "expect": "{\"ID\":\"s42029\",\"ID_SENSOR\":\"s37401\",\"ORIG_SENSOR_ID\":\"s67275\",\"IMAGE_TIME\":\"s31952\",\"FILENAME\":\"s45484\",\"FORMAT\":\"OTHER\",\"FILESIZE\":-9223159860052170393,\"CHECKSUM_VALUE\":\"s8641\",\"REGION_GEO_JSON\":\"s86841\",\"REGION_TEXT\":\"s48224\",\"REGION\":\"s37877\",\"REGION_TYPE\":\"s44118\",\"REGION_NDIMS\":231,\"REGION_SRID\":36161,\"SUBJECT_ID\":\"s7962\",\"NAME\":\"s12084\",\"TRANSACTION_ID\":\"s60219\",\"TAGS\":[\"s32515\",\"s50609\"],\"KEYWORDS\":[\"s41797\",\"s77288\"],\"NOTES\":\"s445\"}",
+ "model": {
+  "uid": "s42029",
+  "sdsgdi.id": "s42029",
+  "sdsgdi.id_sensor": "s37401",
+  "sdsgdi.orig_sensor_id": "s67275",
+  "sdsgdi.image_time": "s31952",
+  "sdsgdi.filename": "s45484",
+  "sdsgdi.format": "OTHER",
+  "sdsgdi.filesize": "-9223159860052170393"
+ }
+}

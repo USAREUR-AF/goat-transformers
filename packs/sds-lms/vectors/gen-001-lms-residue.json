@@ -1,0 +1,7 @@
+{
+ "name": "gen-lms-residue",
+ "from": "sds-lms",
+ "to": "sds-lms",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"REQUEST_ID\":\"s20832\",\"R1_X\":12.5,\"R1_Y\":0.75,\"R1_Z\":7.0625,\"R2_X\":-3.25,\"R2_Y\":7.0625,\"R2_Z\":101.125,\"TOF_SEC\":12.5,\"MU_KM3_S2\":42.375,\"TRANSFER_WAY\":\"LONG\",\"MAX_REVS\":53196,\"REF_FRAME\":\"s32980\",\"EPOCH\":\"s5789\",\"FLAGS\":18563}",
+ "expect": "{\"REQUEST_ID\":\"s20832\",\"R1_X\":12.5,\"R1_Y\":0.75,\"R1_Z\":7.0625,\"R2_X\":-3.25,\"R2_Y\":7.0625,\"R2_Z\":101.125,\"TOF_SEC\":12.5,\"MU_KM3_S2\":42.375,\"TRANSFER_WAY\":\"LONG\",\"MAX_REVS\":53196,\"REF_FRAME\":\"s32980\",\"EPOCH\":\"s5789\",\"FLAGS\":18563,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

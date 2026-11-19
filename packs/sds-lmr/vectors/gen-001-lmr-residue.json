@@ -1,0 +1,7 @@
+{
+ "name": "gen-lmr-residue",
+ "from": "sds-lmr",
+ "to": "sds-lmr",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ACTION\":\"Error\",\"REQUEST_ID\":\"s50592\",\"MODULE_ID\":\"s11233\",\"MODULE_VERSION\":\"s94098\",\"WASM_CID\":\"s68595\",\"MODULE_HASH\":[61,143],\"STATUS\":\"s57140\",\"ERROR_CODE\":\"s2093\",\"ERROR_MESSAGE\":\"s77691\"}",
+ "expect": "{\"ACTION\":\"Error\",\"REQUEST_ID\":\"s50592\",\"MODULE_ID\":\"s11233\",\"MODULE_VERSION\":\"s94098\",\"WASM_CID\":\"s68595\",\"MODULE_HASH\":[61,143],\"STATUS\":\"s57140\",\"ERROR_CODE\":\"s2093\",\"ERROR_MESSAGE\":\"s77691\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

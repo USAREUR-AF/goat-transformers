@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "access_counts|.|int": "access_counts_value",
+  "access_total_s|.|float": "access_total_s_value",
+  "asset_ids|.|string": "asset_ids_value",
+  "cell_indexes|.|int": "cell_indexes_value",
+  "coverage_fraction|.|float": "coverage_fraction_value",
+  "gap_max_s|.|float": "gap_max_s_value",
+  "response_max_s|.|float": "response_max_s_value",
+  "response_mean_s|.|float": "response_mean_s_value",
+  "revisit_max_s|.|float": "revisit_max_s_value",
+  "revisit_mean_s|.|float": "revisit_mean_s_value",
+  "sensor_ids|.|string": "sensor_ids_value",
+  "signature|.|int": "signature_value",
+  "|COMPUTED_AT|int": "computed_at",
+  "|COVERAGE_ID|string": "coverage_id",
+  "|GRID_RESOLUTION|int": "grid_resolution",
+  "|GRID_SCHEME|string": "grid_scheme",
+  "|NAME|string": "name",
+  "|STEP_SIZE|float": "step_size",
+  "|WINDOW_START|float": "window_start",
+  "|WINDOW_STOP|float": "window_stop"
+ },
+ "lists": {
+  "|ACCESS_COUNTS": "access_counts",
+  "|ACCESS_TOTAL_S": "access_total_s",
+  "|ASSET_IDS": "asset_ids",
+  "|CELL_INDEXES": "cell_indexes",
+  "|COVERAGE_FRACTION": "coverage_fraction",
+  "|GAP_MAX_S": "gap_max_s",
+  "|RESPONSE_MAX_S": "response_max_s",
+  "|RESPONSE_MEAN_S": "response_mean_s",
+  "|REVISIT_MAX_S": "revisit_max_s",
+  "|REVISIT_MEAN_S": "revisit_mean_s",
+  "|SENSOR_IDS": "sensor_ids",
+  "|SIGNATURE": "signature"
+ }
+}

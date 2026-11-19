@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "evaluator_signature|.|int": "evaluator_signature_value",
+  "results_bond_evidence|ADDRESS|string": "results_bond_evidence_address",
+  "results_bond_evidence|BALANCE|int": "results_bond_evidence_balance",
+  "results_bond_evidence|BLOCK_REFERENCE|string": "results_bond_evidence_block_reference",
+  "results_bond_evidence|CHAIN_ID|string": "results_bond_evidence_chain_id",
+  "results_bond_evidence|DECIMALS|int": "results_bond_evidence_decimals",
+  "results_bond_evidence|HELD_SINCE|int": "results_bond_evidence_held_since",
+  "results_bond_evidence|NORMALIZED_VALUE|float": "results_bond_evidence_normalized_value",
+  "results_bond_evidence|OBSERVED_AT|int": "results_bond_evidence_observed_at",
+  "results_bond_evidence|SOURCE_QUERY|string": "results_bond_evidence_source_query",
+  "results_bond_evidence|TOKEN_ADDRESS|string": "results_bond_evidence_token_address",
+  "results_bond_evidence|VALUE_CURRENCY|string": "results_bond_evidence_value_currency",
+  "results_truster_ids_matched|.|string": "results_truster_ids_matched_value",
+  "results|EVIDENCE_TEXT|string": "results_evidence_text",
+  "results|KIND|string": "results_kind",
+  "results|MEASURED_VALUE|float": "results_measured_value",
+  "results|PASSED|int": "results_passed",
+  "results|PREDICATE_ID|string": "results_predicate_id",
+  "results|REQUIRED_VALUE|float": "results_required_value",
+  "|EVALUATED_AT|int": "evaluated_at",
+  "|EVALUATOR_PEER_ID|string": "evaluator_peer_id",
+  "|PASSED|int": "passed",
+  "|POLICY_ID|string": "policy_id",
+  "|PREVIOUS_PASSED|int": "previous_passed",
+  "|PREVIOUS_SCORE|float": "previous_score",
+  "|SCORE|float": "score",
+  "|SUBJECT_ID|string": "subject_id",
+  "|TRIGGER|string": "trigger",
+  "|VERDICT_ID|string": "verdict_id"
+ },
+ "lists": {
+  "results|BOND_EVIDENCE": "results_bond_evidence",
+  "results|TRUSTER_IDS_MATCHED": "results_truster_ids_matched",
+  "|EVALUATOR_SIGNATURE": "evaluator_signature",
+  "|RESULTS": "results"
+ }
+}

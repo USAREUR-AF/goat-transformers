@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|ALPHA_2_CODE|string": "alpha_2_code",
+  "|ALPHA_3_CODE|string": "alpha_3_code",
+  "|COMMENT|string": "comment",
+  "|GENC_CODE|string": "genc_code",
+  "|ID|string": "id",
+  "|INTERNET_CCTLD|string": "internet_cctld",
+  "|NAME|string": "name",
+  "|STANAG_CODE|string": "stanag_code"
+ },
+ "lists": {}
+}

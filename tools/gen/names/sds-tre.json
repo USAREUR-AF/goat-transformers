@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "provider_signature|.|int": "provider_signature_value",
+  "|DELETED|int": "deleted",
+  "|EDGE_ID|string": "edge_id",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|TRUSTEE_ID|string": "trustee_id",
+  "|TRUSTER_ID|string": "truster_id",
+  "|UPDATED_AT|int": "updated_at",
+  "|WEIGHT|float": "weight"
+ },
+ "lists": {
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

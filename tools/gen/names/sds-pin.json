@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "rules|CLASS|string": "rules_class",
+  "rules|ENABLED|int": "rules_enabled",
+  "rules|FEED|string": "rules_feed",
+  "rules|LOCKED|int": "rules_locked",
+  "rules|PINNED_BYTES|int": "rules_pinned_bytes",
+  "rules|PINNED_ROOTS|int": "rules_pinned_roots",
+  "|UPDATED_AT|int": "updated_at"
+ },
+ "lists": {
+  "|RULES": "rules"
+ }
+}

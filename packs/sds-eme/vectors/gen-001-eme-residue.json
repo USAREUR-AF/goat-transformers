@@ -1,0 +1,7 @@
+{
+ "name": "gen-eme-residue",
+ "from": "sds-eme",
+ "to": "sds-eme",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ENCRYPTED_BLOB\":[137,250],\"EPHEMERAL_PUBLIC_KEY\":\"s23460\",\"MAC\":\"s51734\",\"NONCE_START\":[109,190],\"TAG\":\"s3974\",\"IV\":\"s69921\",\"SALT\":\"s39831\",\"PUBLIC_KEY_IDENTIFIER\":\"s25055\",\"CIPHER_SUITE\":\"s11564\",\"KDF_PARAMETERS\":\"s77030\",\"ENCRYPTION_ALGORITHM_PARAMETERS\":\"s89345\"}",
+ "expect": "{\"ENCRYPTED_BLOB\":[137,250],\"EPHEMERAL_PUBLIC_KEY\":\"s23460\",\"MAC\":\"s51734\",\"NONCE_START\":[109,190],\"TAG\":\"s3974\",\"IV\":\"s69921\",\"SALT\":\"s39831\",\"PUBLIC_KEY_IDENTIFIER\":\"s25055\",\"CIPHER_SUITE\":\"s11564\",\"KDF_PARAMETERS\":\"s77030\",\"ENCRYPTION_ALGORITHM_PARAMETERS\":\"s89345\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

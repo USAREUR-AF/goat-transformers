@@ -1,0 +1,17 @@
+{
+ "name": "gen-cfp-roundtrip",
+ "from": "sds-cfp",
+ "to": "sds-cfp",
+ "input": "{\"VERSION\":222,\"PDU_TYPE\":\"FILE_DIRECTIVE\",\"DIRECTION\":28,\"TRANSMISSION_MODE\":\"UNACKNOWLEDGED\",\"CRC_FLAG\":false,\"LARGE_FILE_FLAG\":false,\"DATA_FIELD_LENGTH\":43396,\"SOURCE_ENTITY_ID\":151926184896519,\"TRANSACTION_SEQ_NUM\":280258685401753,\"DESTINATION_ENTITY_ID\":43843498254481,\"CHECKSUM_TYPE\":188,\"FILE_SIZE\":193385285784793,\"SOURCE_FILENAME\":\"s87143\",\"DESTINATION_FILENAME\":\"s14109\",\"DATA\":[95,0]}",
+ "expect": "{\"VERSION\":222,\"PDU_TYPE\":\"FILE_DIRECTIVE\",\"DIRECTION\":28,\"TRANSMISSION_MODE\":\"UNACKNOWLEDGED\",\"CRC_FLAG\":false,\"LARGE_FILE_FLAG\":false,\"DATA_FIELD_LENGTH\":43396,\"SOURCE_ENTITY_ID\":151926184896519,\"TRANSACTION_SEQ_NUM\":280258685401753,\"DESTINATION_ENTITY_ID\":43843498254481,\"CHECKSUM_TYPE\":188,\"FILE_SIZE\":193385285784793,\"SOURCE_FILENAME\":\"s87143\",\"DESTINATION_FILENAME\":\"s14109\",\"DATA\":[95,0]}",
+ "model": {
+  "sdscfp.version": "222",
+  "sdscfp.pdu_type": "FILE_DIRECTIVE",
+  "sdscfp.direction": "28",
+  "sdscfp.transmission_mode": "UNACKNOWLEDGED",
+  "sdscfp.crc_flag": "0",
+  "sdscfp.large_file_flag": "0",
+  "sdscfp.data_field_length": "43396",
+  "sdscfp.source_entity_id": "151926184896519"
+ }
+}

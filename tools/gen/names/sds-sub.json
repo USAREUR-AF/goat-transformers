@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "chain_settlement_split_recipients|ADDRESS|string": "chain_settlement_split_recipients_address",
+  "chain_settlement_split_recipients|CHAIN|string": "chain_settlement_split_recipients_chain",
+  "chain_settlement_split_recipients|EPM_CID|string": "chain_settlement_split_recipients_epm_cid",
+  "chain_settlement_split_recipients|XPUB|string": "chain_settlement_split_recipients_xpub",
+  "signature|.|int": "signature_value",
+  "|AMOUNT_PER_PERIOD|int": "amount_per_period",
+  "|AUTH_KIND|string": "auth_kind",
+  "|CHAIN_SETTLEMENT.CHAIN_ID|int": "chain_settlement_chain_id",
+  "|CHAIN_SETTLEMENT.CHAIN|string": "chain_settlement_chain",
+  "|CHAIN_SETTLEMENT.MEMO_SCHEME|string": "chain_settlement_memo_scheme",
+  "|CHAIN_SETTLEMENT.MIN_CONFIRMATIONS|int": "chain_settlement_min_confirmations",
+  "|CHAIN_SETTLEMENT.SETTLEMENT_KIND|string": "chain_settlement_settlement_kind",
+  "|CHAIN_SETTLEMENT.SPLITTER_ADDRESS|string": "chain_settlement_splitter_address",
+  "|CHAIN_SETTLEMENT.SPLITTER_STANDARD|string": "chain_settlement_splitter_standard",
+  "|CHAIN_SETTLEMENT.SPLIT_CONFIG_ID|string": "chain_settlement_split_config_id",
+  "|CHAIN_SETTLEMENT.TOKEN_ADDRESS|string": "chain_settlement_token_address",
+  "|CHAIN_SETTLEMENT.TOKEN_DECIMALS|int": "chain_settlement_token_decimals",
+  "|CHAIN_SETTLEMENT.TOKEN_SYMBOL|string": "chain_settlement_token_symbol",
+  "|CURRENCY|string": "currency",
+  "|ENTITLEMENT_ID|string": "entitlement_id",
+  "|LISTING_ID|string": "listing_id",
+  "|MAX_PERIODS|int": "max_periods",
+  "|NEXT_CHARGE_AT|int": "next_charge_at",
+  "|PERIOD_DAYS|int": "period_days",
+  "|STATUS|string": "status",
+  "|SUBSCRIPTION_ID|string": "subscription_id"
+ },
+ "lists": {
+  "|CHAIN_SETTLEMENT.SPLIT_RECIPIENTS": "chain_settlement_split_recipients",
+  "|SIGNATURE": "signature"
+ }
+}

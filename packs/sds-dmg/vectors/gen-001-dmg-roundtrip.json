@@ -1,0 +1,17 @@
+{
+ "name": "gen-dmg-roundtrip",
+ "from": "sds-dmg",
+ "to": "sds-dmg",
+ "input": "{\"OVERALL_HEALTH\":101.125,\"MOBILITY\":-3.25,\"FIREPOWER\":0.75,\"MODULE_COUNT\":247,\"CREW_COUNT\":70,\"FIRE_COUNT\":243,\"FLOOD_COUNT\":71,\"IS_DESTROYED\":202,\"DESTRUCTION_CAUSE\":133,\"EXTINGUISHERS\":12,\"REPAIR_ACTIVE\":213,\"RELOAD_MULTIPLIER\":1.5,\"ACCURACY_MULTIPLIER\":101.125,\"CREW_ALIVE\":227,\"CREW_WOUNDED\":100,\"RESERVED\":[67,200]}",
+ "expect": "{\"OVERALL_HEALTH\":101.125,\"MOBILITY\":-3.25,\"FIREPOWER\":0.75,\"MODULE_COUNT\":247,\"CREW_COUNT\":70,\"FIRE_COUNT\":243,\"FLOOD_COUNT\":71,\"IS_DESTROYED\":202,\"DESTRUCTION_CAUSE\":133,\"EXTINGUISHERS\":12,\"REPAIR_ACTIVE\":213,\"RELOAD_MULTIPLIER\":1.5,\"ACCURACY_MULTIPLIER\":101.125,\"CREW_ALIVE\":227,\"CREW_WOUNDED\":100,\"RESERVED\":[67,200]}",
+ "model": {
+  "sdsdmg.overall_health": "101.125",
+  "sdsdmg.mobility": "-3.25",
+  "sdsdmg.firepower": "0.75",
+  "sdsdmg.module_count": "247",
+  "sdsdmg.crew_count": "70",
+  "sdsdmg.fire_count": "243",
+  "sdsdmg.flood_count": "71",
+  "sdsdmg.is_destroyed": "202"
+ }
+}

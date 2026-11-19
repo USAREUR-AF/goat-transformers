@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "cat_ids|.|string": "cat_ids_value",
+  "col_indicators|.|string": "col_indicators_value",
+  "matrix|.|int": "matrix_value",
+  "row_indicators|.|string": "row_indicators_value",
+  "score|NORAD_CAT_ID|string": "score_norad_cat_id",
+  "score|SCORE|float": "score_score",
+  "score|TAG|string": "score_tag",
+  "score|TYPE|string": "score_type",
+  "sit_ids|.|string": "sit_ids_value",
+  "|ANALYSIS_METHOD|string": "analysis_method",
+  "|CATEGORY|string": "category",
+  "|EVENT_END_TIME|string": "event_end_time",
+  "|EVENT_START_TIME|string": "event_start_time",
+  "|NAME|string": "name"
+ },
+ "lists": {
+  "|CAT_IDS": "cat_ids",
+  "|COL_INDICATORS": "col_indicators",
+  "|MATRIX": "matrix",
+  "|ROW_INDICATORS": "row_indicators",
+  "|SCORE": "score",
+  "|SIT_IDS": "sit_ids"
+ }
+}

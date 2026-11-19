@@ -1,0 +1,17 @@
+{
+ "name": "gen-mfe-roundtrip",
+ "from": "sds-mfe",
+ "to": "sds-mfe",
+ "input": "{\"ID\":\"s51081\",\"TMP_SAT_NO\":2003023000,\"EPOCH\":\"s41211\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":7.0625,\"INCLINATION\":0.75,\"RAAN\":-3.25,\"ARG_OF_PERIGEE\":7.0625,\"MEAN_ANOMALY\":101.125,\"REV_NO\":1326940151,\"B_STAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":0.75,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":0.75,\"APOGEE\":-0.5,\"PERIGEE\":7.0625,\"LINE1\":\"s62150\",\"LINE2\":\"s20505\"}",
+ "expect": "{\"ID\":\"s51081\",\"TMP_SAT_NO\":2003023000,\"EPOCH\":\"s41211\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":7.0625,\"INCLINATION\":0.75,\"RAAN\":-3.25,\"ARG_OF_PERIGEE\":7.0625,\"MEAN_ANOMALY\":101.125,\"REV_NO\":1326940151,\"B_STAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":0.75,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":0.75,\"APOGEE\":-0.5,\"PERIGEE\":7.0625,\"LINE1\":\"s62150\",\"LINE2\":\"s20505\"}",
+ "model": {
+  "sdsmfe.id": "s51081",
+  "sdsmfe.tmp_sat_no": "2003023000",
+  "sdsmfe.epoch": "s41211",
+  "sdsmfe.mean_motion": "0.75",
+  "sdsmfe.eccentricity": "7.0625",
+  "sdsmfe.inclination": "0.75",
+  "sdsmfe.raan": "-3.25",
+  "sdsmfe.arg_of_perigee": "7.0625"
+ }
+}

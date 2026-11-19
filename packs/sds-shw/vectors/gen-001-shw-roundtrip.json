@@ -1,0 +1,17 @@
+{
+ "name": "gen-shw-roundtrip",
+ "from": "sds-shw",
+ "to": "sds-shw",
+ "input": "{\"COMPILE_REQUEST\":{\"SHADER_NAME\":\"s42471\",\"SHADER_STAGE\":\"COMPUTE\",\"SHADER_INJECTION_POINT\":\"POSTPROCESS\",\"SHADER_SOURCE\":\"s65927\",\"GLSL_VERSION\":\"s7700\",\"SHADER_UNIFORMS\":[{\"UNIFORM_NAME\":\"s30396\",\"UNIFORM_TYPE\":\"BVEC3\",\"UNIFORM_DESCRIPTION\":\"s47117\",\"UNIFORM_DEFAULT_VALUE\":[237]},{\"UNIFORM_NAME\":\"s10225\",\"UNIFORM_TYPE\":\"BOOL\",\"UNIFORM_DESCRIPTION\":\"s53\",\"UNIFORM_DEFAULT_VALUE\":[143]}]},\"COMPILE_RESPONSE\":{\"SHADER_NAME\":\"s5710\",\"COMPILE_SUCCESS\":false,\"INFO_LOG\":\"s1189\",\"COMPILED_BINARY\":[119,218],\"LINKED_UNIFORMS\":[{\"UNIFORM_NAME\":\"s1694\",\"UNIFORM_TYPE\":\"MAT4\",\"UNIFORM_DESCRIPTION\":\"s68515\",\"UNIFORM_DEFAULT_VALUE\":[237]},{\"UNIFORM_NAME\":\"s71349\",\"UNIFORM_TYPE\":\"MAT4\",\"UNIFORM_DESCRIPTION\":\"s85279\",\"UNIFORM_DEFAULT_VALUE\":[45]}]}}",
+ "expect": "{\"COMPILE_REQUEST\":{\"SHADER_NAME\":\"s42471\",\"SHADER_STAGE\":\"COMPUTE\",\"SHADER_INJECTION_POINT\":\"POSTPROCESS\",\"SHADER_SOURCE\":\"s65927\",\"GLSL_VERSION\":\"s7700\",\"SHADER_UNIFORMS\":[{\"UNIFORM_NAME\":\"s30396\",\"UNIFORM_TYPE\":\"BVEC3\",\"UNIFORM_DESCRIPTION\":\"s47117\",\"UNIFORM_DEFAULT_VALUE\":[237]},{\"UNIFORM_NAME\":\"s10225\",\"UNIFORM_TYPE\":\"BOOL\",\"UNIFORM_DESCRIPTION\":\"s53\",\"UNIFORM_DEFAULT_VALUE\":[143]}]},\"COMPILE_RESPONSE\":{\"SHADER_NAME\":\"s5710\",\"COMPILE_SUCCESS\":false,\"INFO_LOG\":\"s1189\",\"COMPILED_BINARY\":[119,218],\"LINKED_UNIFORMS\":[{\"UNIFORM_NAME\":\"s1694\",\"UNIFORM_TYPE\":\"MAT4\",\"UNIFORM_DESCRIPTION\":\"s68515\",\"UNIFORM_DEFAULT_VALUE\":[237]},{\"UNIFORM_NAME\":\"s71349\",\"UNIFORM_TYPE\":\"MAT4\",\"UNIFORM_DESCRIPTION\":\"s85279\",\"UNIFORM_DEFAULT_VALUE\":[45]}]}}",
+ "model": {
+  "sdsshw.compile_request_shader_name": "s42471",
+  "sdsshw.compile_request_shader_stage": "COMPUTE",
+  "sdsshw.compile_request_shader_injection_point": "POSTPROCESS",
+  "sdsshw.compile_request_shader_source": "s65927",
+  "sdsshw.compile_request_glsl_version": "s7700",
+  "sdsshw.compile_request_shader_uniforms.#": "2",
+  "sdsshw.compile_response_shader_name": "s5710",
+  "sdsshw.compile_response_compile_success": "0"
+ }
+}

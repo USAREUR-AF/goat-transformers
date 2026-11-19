@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "targeter_constraints|ACHIEVED_VALUE|float": "targeter_constraints_achieved_value",
+  "targeter_constraints|EPOCH|float": "targeter_constraints_epoch",
+  "targeter_constraints|EVENT|string": "targeter_constraints_event",
+  "targeter_constraints|FRAME|string": "targeter_constraints_frame",
+  "targeter_constraints|NAME|string": "targeter_constraints_name",
+  "targeter_constraints|TARGET_VALUE|float": "targeter_constraints_target_value",
+  "targeter_constraints|TOLERANCE|float": "targeter_constraints_tolerance",
+  "targeter_constraints|WEIGHT|float": "targeter_constraints_weight",
+  "targeter_residuals|.|float": "targeter_residuals_value",
+  "|AGOM|float": "agom",
+  "|ARG_OF_PERICENTER|float": "arg_of_pericenter",
+  "|BSTAR|float": "bstar",
+  "|BTERM|float": "bterm",
+  "|ECCENTRICITY|float": "eccentricity",
+  "|ENTITY_ID|string": "entity_id",
+  "|EPOCH|float": "epoch",
+  "|INCLINATION|float": "inclination",
+  "|MEAN_ANOMALY|float": "mean_anomaly",
+  "|MEAN_ELEMENT_THEORY|string": "mean_element_theory",
+  "|MEAN_MOTION|float": "mean_motion",
+  "|RA_OF_ASC_NODE|float": "ra_of_asc_node",
+  "|TARGETER.CONVERGED|int": "targeter_converged",
+  "|TARGETER.DYNAMICS|string": "targeter_dynamics",
+  "|TARGETER.ITERATIONS|int": "targeter_iterations",
+  "|TARGETER.RESIDUAL_RMS|float": "targeter_residual_rms",
+  "|TARGETER.SOLVED_AT|int": "targeter_solved_at",
+  "|TARGETER.SOLVER|string": "targeter_solver",
+  "|TARGETER.TOTAL_DELTA_V|float": "targeter_total_delta_v"
+ },
+ "lists": {
+  "|TARGETER.CONSTRAINTS": "targeter_constraints",
+  "|TARGETER.RESIDUALS": "targeter_residuals"
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "challenge_nonce|.|int": "challenge_nonce_value",
+  "requester_ephemeral_pubkey|.|int": "requester_ephemeral_pubkey_value",
+  "requester_epm|.|int": "requester_epm_value",
+  "requester_signing_pubkey|.|int": "requester_signing_pubkey_value",
+  "|ERROR_CODE|string": "error_code",
+  "|ERROR_MESSAGE|string": "error_message",
+  "|EXPIRES_AT|int": "expires_at",
+  "|MESSAGE_TYPE|string": "message_type",
+  "|MODULE_ID|string": "module_id",
+  "|MODULE_VERSION|string": "module_version",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|REQUESTED_AT|int": "requested_at",
+  "|REQUESTED_DOMAIN|string": "requested_domain",
+  "|REQUESTED_TIMEOUT_MS|int": "requested_timeout_ms",
+  "|REQUESTER_PEER_ID|string": "requester_peer_id",
+  "|REQUESTER_XPUB|string": "requester_xpub",
+  "|REQUEST_ID|string": "request_id",
+  "|ROLE|string": "role"
+ },
+ "lists": {
+  "|CHALLENGE_NONCE": "challenge_nonce",
+  "|REQUESTER_EPHEMERAL_PUBKEY": "requester_ephemeral_pubkey",
+  "|REQUESTER_EPM": "requester_epm",
+  "|REQUESTER_SIGNING_PUBKEY": "requester_signing_pubkey"
+ }
+}

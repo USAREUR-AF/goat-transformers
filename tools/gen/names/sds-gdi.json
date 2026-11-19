@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "keywords|.|string": "keywords_value",
+  "tags|.|string": "tags_value",
+  "|CHECKSUM_VALUE|string": "checksum_value",
+  "|FILENAME|string": "filename",
+  "|FILESIZE|int": "filesize",
+  "|FORMAT|string": "format",
+  "|ID_SENSOR|string": "id_sensor",
+  "|ID|string": "id",
+  "|IMAGE_TIME|string": "image_time",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|ORIG_SENSOR_ID|string": "orig_sensor_id",
+  "|REGION_GEO_JSON|string": "region_geo_json",
+  "|REGION_NDIMS|int": "region_ndims",
+  "|REGION_SRID|int": "region_srid",
+  "|REGION_TEXT|string": "region_text",
+  "|REGION_TYPE|string": "region_type",
+  "|REGION|string": "region",
+  "|SUBJECT_ID|string": "subject_id",
+  "|TRANSACTION_ID|string": "transaction_id"
+ },
+ "lists": {
+  "|KEYWORDS": "keywords",
+  "|TAGS": "tags"
+ }
+}

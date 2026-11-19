@@ -1,0 +1,17 @@
+{
+ "name": "gen-fcs-roundtrip",
+ "from": "sds-fcs",
+ "to": "sds-fcs",
+ "input": "{\"MODE\":118,\"LEAD_METHOD\":86,\"RANGEFINDER_TYPE\":99,\"AMMO_SELECTED\":100,\"TARGET\":\"s7880\",\"SOLUTION\":\"s91366\",\"LAST_RANGE\":0.75,\"RANGE_RATE\":7.0625,\"ROUNDS_REMAINING\":700,\"TEMPERATURE\":7.0625,\"RESERVED\":[185,182]}",
+ "expect": "{\"MODE\":118,\"LEAD_METHOD\":86,\"RANGEFINDER_TYPE\":99,\"AMMO_SELECTED\":100,\"TARGET\":\"s7880\",\"SOLUTION\":\"s91366\",\"LAST_RANGE\":0.75,\"RANGE_RATE\":7.0625,\"ROUNDS_REMAINING\":700,\"TEMPERATURE\":7.0625,\"RESERVED\":[185,182]}",
+ "model": {
+  "sdsfcs.mode": "118",
+  "sdsfcs.lead_method": "86",
+  "sdsfcs.rangefinder_type": "99",
+  "sdsfcs.ammo_selected": "100",
+  "sdsfcs.target": "s7880",
+  "sdsfcs.solution": "s91366",
+  "sdsfcs.last_range": "0.75",
+  "sdsfcs.range_rate": "7.0625"
+ }
+}

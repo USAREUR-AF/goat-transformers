@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "|AREA|float": "area",
+  "|CELL_TYPE|string": "cell_type",
+  "|DEGRADATION_RATE|float": "degradation_rate",
+  "|DEPLOYABLE|int": "deployable",
+  "|EFFICIENCY|float": "efficiency",
+  "|ID_ON_ORBIT|string": "id_on_orbit",
+  "|ID_SOLAR_ARRAY|string": "id_solar_array",
+  "|ID|string": "id",
+  "|MASS|float": "mass",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|NUM_PANELS|int": "num_panels",
+  "|POWER_BOL|float": "power_bol",
+  "|POWER_EOL|float": "power_eol",
+  "|QUANTITY|int": "quantity",
+  "|TRACKING|int": "tracking"
+ },
+ "lists": {}
+}

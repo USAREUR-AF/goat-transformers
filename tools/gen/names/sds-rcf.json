@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "|INITIATOR_ID|string": "initiator_id",
+  "|INVOKE_ID|int": "invoke_id",
+  "|PDU_TYPE|string": "pdu_type",
+  "|RESPONDER_PORT_ID|string": "responder_port_id",
+  "|SERVICE_TYPE|int": "service_type",
+  "|SPACECRAFT_ID|int": "spacecraft_id",
+  "|VERSION|int": "version",
+  "|VIRTUAL_CHANNEL_ID|int": "virtual_channel_id"
+ },
+ "lists": {
+  "|DATA": "data"
+ }
+}

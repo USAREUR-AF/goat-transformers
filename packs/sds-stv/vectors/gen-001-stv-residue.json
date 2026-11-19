@@ -1,0 +1,7 @@
+{
+ "name": "gen-stv-residue",
+ "from": "sds-stv",
+ "to": "sds-stv",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"EPOCH\":1.5,\"POS_X\":12.5,\"POS_Y\":101.125,\"POS_Z\":12.5,\"VEL_X\":101.125,\"VEL_Y\":7.0625,\"VEL_Z\":-0.5,\"REF_FRAME\":99,\"FLAGS\":167,\"RESERVED\":[15,27]}",
+ "expect": "{\"EPOCH\":1.5,\"POS_X\":12.5,\"POS_Y\":101.125,\"POS_Z\":12.5,\"VEL_X\":101.125,\"VEL_Y\":7.0625,\"VEL_Z\":-0.5,\"REF_FRAME\":99,\"FLAGS\":167,\"RESERVED\":[15,27],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

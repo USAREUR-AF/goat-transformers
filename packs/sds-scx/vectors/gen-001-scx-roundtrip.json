@@ -1,0 +1,17 @@
+{
+ "name": "gen-scx-roundtrip",
+ "from": "sds-scx",
+ "to": "sds-scx",
+ "input": "{\"CHAIN\":\"s4439\",\"CHAIN_ID\":162434292476923,\"SETTLEMENT_KIND\":\"DirectAddress\",\"SPLITTER_STANDARD\":\"s17882\",\"SPLITTER_ADDRESS\":\"s32399\",\"SPLIT_CONFIG_ID\":\"s14\",\"TOKEN_ADDRESS\":\"s49859\",\"TOKEN_SYMBOL\":\"s34632\",\"TOKEN_DECIMALS\":213,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s91894\",\"CHAIN\":\"s75567\",\"ADDRESS\":\"s65483\",\"XPUB\":\"s62806\"},{\"EPM_CID\":\"s19419\",\"CHAIN\":\"s86037\",\"ADDRESS\":\"s26847\",\"XPUB\":\"s54938\"}],\"MIN_CONFIRMATIONS\":1569320416,\"MEMO_SCHEME\":\"TxData\"}",
+ "expect": "{\"CHAIN\":\"s4439\",\"CHAIN_ID\":162434292476923,\"SETTLEMENT_KIND\":\"DirectAddress\",\"SPLITTER_STANDARD\":\"s17882\",\"SPLITTER_ADDRESS\":\"s32399\",\"SPLIT_CONFIG_ID\":\"s14\",\"TOKEN_ADDRESS\":\"s49859\",\"TOKEN_SYMBOL\":\"s34632\",\"TOKEN_DECIMALS\":213,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s91894\",\"CHAIN\":\"s75567\",\"ADDRESS\":\"s65483\",\"XPUB\":\"s62806\"},{\"EPM_CID\":\"s19419\",\"CHAIN\":\"s86037\",\"ADDRESS\":\"s26847\",\"XPUB\":\"s54938\"}],\"MIN_CONFIRMATIONS\":1569320416,\"MEMO_SCHEME\":\"TxData\"}",
+ "model": {
+  "sdsscx.chain": "s4439",
+  "sdsscx.chain_id": "162434292476923",
+  "sdsscx.settlement_kind": "DirectAddress",
+  "sdsscx.splitter_standard": "s17882",
+  "sdsscx.splitter_address": "s32399",
+  "sdsscx.split_config_id": "s14",
+  "sdsscx.token_address": "s49859",
+  "sdsscx.token_symbol": "s34632"
+ }
+}

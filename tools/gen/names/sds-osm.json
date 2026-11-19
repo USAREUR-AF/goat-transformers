@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|ID_SENSOR|string": "id_sensor",
+  "|IS_STABLE|int": "is_stable",
+  "|NUM_OBS|int": "num_obs",
+  "|OBJECT_ID|string": "object_id",
+  "|PASS_DURATION|int": "pass_duration",
+  "|PASS_START|string": "pass_start"
+ },
+ "lists": {}
+}

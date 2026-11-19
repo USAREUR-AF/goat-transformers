@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "canonical_json_signature|.|int": "canonical_json_signature_value",
+  "ciphertext|.|int": "ciphertext_value",
+  "encryption_ephemeral_public_key|.|int": "encryption_ephemeral_public_key_value",
+  "encryption_nonce_start|.|int": "encryption_nonce_start_value",
+  "encryption_recipient_key_id|.|int": "encryption_recipient_key_id_value",
+  "encryption_schema_hash|.|int": "encryption_schema_hash_value",
+  "nonce|.|int": "nonce_value",
+  "sender_key_id|.|int": "sender_key_id_value",
+  "signature|.|int": "signature_value",
+  "signer_public_key|.|int": "signer_public_key_value",
+  "|DIRECTION|string": "direction",
+  "|ENCRYPTION.CONTEXT|string": "encryption_context",
+  "|ENCRYPTION.KEY_DERIVATION|string": "encryption_key_derivation",
+  "|ENCRYPTION.KEY_EXCHANGE|string": "encryption_key_exchange",
+  "|ENCRYPTION.ROOT_TYPE|string": "encryption_root_type",
+  "|ENCRYPTION.SYMMETRIC|string": "encryption_symmetric",
+  "|ENCRYPTION.TIMESTAMP|int": "encryption_timestamp",
+  "|ENCRYPTION.VERSION|int": "encryption_version",
+  "|SESSION_ID|string": "session_id",
+  "|SIGNATURE_TYPE|string": "signature_type",
+  "|TIMESTAMP|int": "timestamp",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|CANONICAL_JSON_SIGNATURE": "canonical_json_signature",
+  "|CIPHERTEXT": "ciphertext",
+  "|ENCRYPTION.EPHEMERAL_PUBLIC_KEY": "encryption_ephemeral_public_key",
+  "|ENCRYPTION.NONCE_START": "encryption_nonce_start",
+  "|ENCRYPTION.RECIPIENT_KEY_ID": "encryption_recipient_key_id",
+  "|ENCRYPTION.SCHEMA_HASH": "encryption_schema_hash",
+  "|NONCE": "nonce",
+  "|SENDER_KEY_ID": "sender_key_id",
+  "|SIGNATURE": "signature",
+  "|SIGNER_PUBLIC_KEY": "signer_public_key"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-chn-residue",
+ "from": "sds-chn",
+ "to": "sds-chn",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s70040\",\"NAME\":\"s52487\",\"TYPE\":\"s12042\",\"BEAM_NAME\":\"s62008\",\"ID_RFBAND\":\"s89466\",\"ENCRYPTION\":\"s72308\",\"PKG\":\"s51216\",\"RES\":\"s98711\",\"COMPRESSION\":\"s80803\",\"VPID\":\"s72942\",\"APID\":\"s8806\",\"SID\":\"s93267\",\"OWNER\":\"s36603\"}",
+ "expect": "{\"ID\":\"s70040\",\"NAME\":\"s52487\",\"TYPE\":\"s12042\",\"BEAM_NAME\":\"s62008\",\"ID_RFBAND\":\"s89466\",\"ENCRYPTION\":\"s72308\",\"PKG\":\"s51216\",\"RES\":\"s98711\",\"COMPRESSION\":\"s80803\",\"VPID\":\"s72942\",\"APID\":\"s8806\",\"SID\":\"s93267\",\"OWNER\":\"s36603\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

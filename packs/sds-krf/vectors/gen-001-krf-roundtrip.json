@@ -1,0 +1,17 @@
+{
+ "name": "gen-krf-roundtrip",
+ "from": "sds-krf",
+ "to": "sds-krf",
+ "input": "{\"KEY_ID\":\"s56582\",\"SLOT_ID\":\"s57183\",\"ROLE\":\"VerificationKey\",\"ALGORITHM\":\"Ed25519Public\",\"PUBLIC_KEY\":[53,0],\"VERSION\":3261430089,\"EXPIRES_AT\":126654160871862,\"HOST_MANAGED\":true}",
+ "expect": "{\"KEY_ID\":\"s56582\",\"SLOT_ID\":\"s57183\",\"ROLE\":\"VerificationKey\",\"ALGORITHM\":\"Ed25519Public\",\"PUBLIC_KEY\":[53,0],\"VERSION\":3261430089,\"EXPIRES_AT\":126654160871862,\"HOST_MANAGED\":true}",
+ "model": {
+  "sdskrf.key_id": "s56582",
+  "sdskrf.slot_id": "s57183",
+  "sdskrf.role": "VerificationKey",
+  "sdskrf.algorithm": "Ed25519Public",
+  "sdskrf.public_key.#": "2",
+  "sdskrf.version": "3261430089",
+  "sdskrf.expires_at": "126654160871862",
+  "sdskrf.host_managed": "1"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-lpf-roundtrip",
+ "from": "sds-lpf",
+ "to": "sds-lpf",
+ "input": "{\"MESSAGE_TYPE\":\"ProofRequest\",\"REQUEST_ID\":\"s20071\",\"MODULE_ID\":\"s21747\",\"MODULE_VERSION\":\"s80914\",\"REQUESTER_PEER_ID\":\"s42693\",\"REQUESTER_XPUB\":\"s22202\",\"REQUESTED_DOMAIN\":\"s49245\",\"REQUESTED_TIMEOUT_MS\":127258368091981,\"REQUESTER_EPHEMERAL_PUBKEY\":[184,204],\"CHALLENGE_NONCE\":[236,19],\"CHALLENGE_EXPIRES_AT\":64093360820111,\"PROVIDER_PEER_ID\":\"s64656\",\"SIGNATURE\":[43,104],\"SIGNING_PUBKEY\":[5,15],\"TIMESTAMP_MS\":268133858603802,\"REJECTION_CODE\":\"s77347\",\"REJECTION_MESSAGE\":\"s68243\"}",
+ "expect": "{\"MESSAGE_TYPE\":\"ProofRequest\",\"REQUEST_ID\":\"s20071\",\"MODULE_ID\":\"s21747\",\"MODULE_VERSION\":\"s80914\",\"REQUESTER_PEER_ID\":\"s42693\",\"REQUESTER_XPUB\":\"s22202\",\"REQUESTED_DOMAIN\":\"s49245\",\"REQUESTED_TIMEOUT_MS\":127258368091981,\"REQUESTER_EPHEMERAL_PUBKEY\":[184,204],\"CHALLENGE_NONCE\":[236,19],\"CHALLENGE_EXPIRES_AT\":64093360820111,\"PROVIDER_PEER_ID\":\"s64656\",\"SIGNATURE\":[43,104],\"SIGNING_PUBKEY\":[5,15],\"TIMESTAMP_MS\":268133858603802,\"REJECTION_CODE\":\"s77347\",\"REJECTION_MESSAGE\":\"s68243\"}",
+ "model": {
+  "sdslpf.message_type": "ProofRequest",
+  "sdslpf.request_id": "s20071",
+  "sdslpf.module_id": "s21747",
+  "sdslpf.module_version": "s80914",
+  "sdslpf.requester_peer_id": "s42693",
+  "sdslpf.requester_xpub": "s22202",
+  "sdslpf.requested_domain": "s49245",
+  "sdslpf.requested_timeout_ms": "127258368091981"
+ }
+}

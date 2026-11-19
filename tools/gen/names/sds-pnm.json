@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|CID|string": "cid",
+  "|FILE_ID|string": "file_id",
+  "|FILE_NAME|string": "file_name",
+  "|MULTIFORMAT_ADDRESS|string": "multiformat_address",
+  "|PUBLISH_TIMESTAMP|string": "publish_timestamp",
+  "|SIGNATURE_TYPE|string": "signature_type",
+  "|SIGNATURE|string": "signature",
+  "|TIMESTAMP_SIGNATURE_TYPE|string": "timestamp_signature_type",
+  "|TIMESTAMP_SIGNATURE|string": "timestamp_signature"
+ },
+ "lists": {}
+}

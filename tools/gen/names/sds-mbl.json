@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "canonical_module_hash|.|int": "canonical_module_hash_value",
+  "entries_payload|.|int": "entries_payload_value",
+  "entries_sha256|.|int": "entries_sha256_value",
+  "entries|description|string": "entries_description",
+  "entries|entry_id|string": "entries_entry_id",
+  "entries|flags|int": "entries_flags",
+  "entries|media_type|string": "entries_media_type",
+  "entries|payload_encoding|string": "entries_payload_encoding",
+  "entries|role|string": "entries_role",
+  "entries|section_name|string": "entries_section_name",
+  "entries|type_ref|string": "entries_type_ref",
+  "manifest_hash|.|int": "manifest_hash_value",
+  "|bundle_version|int": "bundle_version",
+  "|canonicalization.bundle_section_name|string": "canonicalization_bundle_section_name",
+  "|canonicalization.hash_algorithm|string": "canonicalization_hash_algorithm",
+  "|canonicalization.stripped_custom_section_prefix|string": "canonicalization_stripped_custom_section_prefix",
+  "|canonicalization.version|int": "canonicalization_version",
+  "|manifest_export_symbol|string": "manifest_export_symbol",
+  "|manifest_size_symbol|string": "manifest_size_symbol",
+  "|module_format|string": "module_format"
+ },
+ "lists": {
+  "entries|payload": "entries_payload",
+  "entries|sha256": "entries_sha256",
+  "|canonical_module_hash": "canonical_module_hash",
+  "|entries": "entries",
+  "|manifest_hash": "manifest_hash"
+ }
+}

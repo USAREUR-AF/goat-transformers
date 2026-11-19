@@ -1,0 +1,17 @@
+{
+ "name": "gen-ctr-roundtrip",
+ "from": "sds-ctr",
+ "to": "sds-ctr",
+ "input": "{\"ID\":\"s86863\",\"NAME\":\"s67933\",\"GENC_CODE\":\"s86394\",\"ALPHA_2_CODE\":\"s41107\",\"ALPHA_3_CODE\":\"s10412\",\"STANAG_CODE\":\"s30508\",\"INTERNET_CCTLD\":\"s96331\",\"COMMENT\":\"s93263\"}",
+ "expect": "{\"ID\":\"s86863\",\"NAME\":\"s67933\",\"GENC_CODE\":\"s86394\",\"ALPHA_2_CODE\":\"s41107\",\"ALPHA_3_CODE\":\"s10412\",\"STANAG_CODE\":\"s30508\",\"INTERNET_CCTLD\":\"s96331\",\"COMMENT\":\"s93263\"}",
+ "model": {
+  "sdsctr.id": "s86863",
+  "sdsctr.name": "s67933",
+  "sdsctr.genc_code": "s86394",
+  "sdsctr.alpha_2_code": "s41107",
+  "sdsctr.alpha_3_code": "s10412",
+  "sdsctr.stanag_code": "s30508",
+  "sdsctr.internet_cctld": "s96331",
+  "sdsctr.comment": "s93263"
+ }
+}

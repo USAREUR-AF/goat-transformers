@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|APOGEE|float": "apogee",
+  "|BSTAR|float": "bstar",
+  "|CAT_OBJECT_ID|string": "cat_object_id",
+  "|CAT_OBJECT_NAME|string": "cat_object_name",
+  "|ECCENTRICITY|float": "eccentricity",
+  "|ENTITY_ID|string": "entity_id",
+  "|FACILITY_TYPE|string": "facility_type",
+  "|HAS_GP|int": "has_gp",
+  "|INCLINATION|float": "inclination",
+  "|KIND|string": "kind",
+  "|LAUNCH_DATE|string": "launch_date",
+  "|LAUNCH_YEAR|string": "launch_year",
+  "|MEAN_MOTION|float": "mean_motion",
+  "|NAME|string": "name",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|OBJECT_ID|string": "object_id",
+  "|OBJECT_NAME|string": "object_name",
+  "|ORBIT_REGIME|string": "orbit_regime",
+  "|OWNER|string": "owner",
+  "|PARENT_ENTITY_ID|string": "parent_entity_id",
+  "|PERIGEE|float": "perigee",
+  "|PERIOD|float": "period",
+  "|SEARCH_TEXT|string": "search_text",
+  "|STATUS_CODE|string": "status_code",
+  "|SUBTYPE|string": "subtype",
+  "|WASM_HANDLE|int": "wasm_handle"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

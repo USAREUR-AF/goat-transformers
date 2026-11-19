@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "notes|.|string": "notes_value",
+  "throughput_history|RATE_IN_BPS|float": "throughput_history_rate_in_bps",
+  "throughput_history|RATE_OUT_BPS|float": "throughput_history_rate_out_bps",
+  "throughput_history|TIME_MS|int": "throughput_history_time_ms",
+  "throughput_history|TOTAL_IN_BYTES|int": "throughput_history_total_in_bytes",
+  "throughput_history|TOTAL_OUT_BYTES|int": "throughput_history_total_out_bytes",
+  "|CONNECTION_COUNT|int": "connection_count",
+  "|CPU_CORES|int": "cpu_cores",
+  "|CPU_LOAD|float": "cpu_load",
+  "|DISK_AVAILABLE_BYTES|int": "disk_available_bytes",
+  "|DISK_CAPACITY_BYTES|int": "disk_capacity_bytes",
+  "|DISK_FREE_BYTES|int": "disk_free_bytes",
+  "|GENERATED_AT_MS|int": "generated_at_ms",
+  "|HAS_COMPUTE|int": "has_compute",
+  "|HAS_DISK|int": "has_disk",
+  "|HAS_NETWORK|int": "has_network",
+  "|MEMORY_TOTAL_BYTES|int": "memory_total_bytes",
+  "|MEMORY_USED_BYTES|int": "memory_used_bytes",
+  "|NODE_ID|string": "node_id",
+  "|RATE_IN_BPS|float": "rate_in_bps",
+  "|RATE_OUT_BPS|float": "rate_out_bps",
+  "|SERVICE_MODE|string": "service_mode",
+  "|SERVICE_STATE|string": "service_state",
+  "|SOFTWARE_VERSION|string": "software_version",
+  "|STARTED_AT_MS|int": "started_at_ms",
+  "|STORAGE_PATH|string": "storage_path",
+  "|STORE_TOTAL_BYTES|int": "store_total_bytes",
+  "|STORE_TOTAL_RECORDS|int": "store_total_records",
+  "|TOTAL_IN_BYTES|int": "total_in_bytes",
+  "|TOTAL_OUT_BYTES|int": "total_out_bytes",
+  "|UPTIME_S|int": "uptime_s"
+ },
+ "lists": {
+  "|NOTES": "notes",
+  "|THROUGHPUT_HISTORY": "throughput_history"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-son-roundtrip",
+ "from": "sds-son",
+ "to": "sds-son",
+ "input": "{\"COMMAND\":\"s85024\",\"ACTIVE_CONFIG\":\"s34958\",\"PASSIVE_CONFIG\":\"s89523\",\"TL_REQUEST\":\"s21184\",\"ENVIRONMENT\":\"s46766\",\"TARGET_SIGNATURE\":\"s42527\",\"TMA_INPUT\":\"s34317\",\"TORPEDO_SEEKER\":\"s84563\"}",
+ "expect": "{\"COMMAND\":\"s85024\",\"ACTIVE_CONFIG\":\"s34958\",\"PASSIVE_CONFIG\":\"s89523\",\"TL_REQUEST\":\"s21184\",\"ENVIRONMENT\":\"s46766\",\"TARGET_SIGNATURE\":\"s42527\",\"TMA_INPUT\":\"s34317\",\"TORPEDO_SEEKER\":\"s84563\"}",
+ "model": {
+  "sdsson.command": "s85024",
+  "sdsson.active_config": "s34958",
+  "sdsson.passive_config": "s89523",
+  "sdsson.tl_request": "s21184",
+  "sdsson.environment": "s46766",
+  "sdsson.target_signature": "s42527",
+  "sdsson.tma_input": "s34317",
+  "sdsson.torpedo_seeker": "s84563"
+ }
+}

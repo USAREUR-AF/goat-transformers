@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|DELTA_V_REMAINING|float": "delta_v_remaining",
+  "|DELTA_V_TOTAL|float": "delta_v_total",
+  "|ID_ON_ORBIT|string": "id_on_orbit",
+  "|ID_THRUSTER|string": "id_thruster",
+  "|ID|string": "id",
+  "|ISP|float": "isp",
+  "|MASS|float": "mass",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|PROPELLANT_MASS|float": "propellant_mass",
+  "|PROPELLANT_REMAINING|float": "propellant_remaining",
+  "|PROPELLANT|string": "propellant",
+  "|PURPOSE|string": "purpose",
+  "|QUANTITY|int": "quantity",
+  "|THRUST|float": "thrust",
+  "|TOTAL_IMPULSE|float": "total_impulse",
+  "|TYPE|string": "type"
+ },
+ "lists": {}
+}

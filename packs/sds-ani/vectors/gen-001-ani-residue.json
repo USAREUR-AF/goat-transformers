@@ -1,0 +1,7 @@
+{
+ "name": "gen-ani-residue",
+ "from": "sds-ani",
+ "to": "sds-ani",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s9920\",\"SOURCE_ID\":\"s76129\",\"SOURCE_TYPE\":\"s50723\",\"ANALYTIC_TYPE\":\"SPECTRAL\",\"ALGORITHM\":\"s23005\",\"ALGORITHM_VERSION\":\"s43840\",\"PROCESSING_TIME\":\"s85053\",\"OBS_TIME\":\"s62298\",\"SAT_NO\":823712870,\"OBJECT_DESIGNATOR\":\"s70576\",\"RA\":-3.25,\"DEC\":101.125,\"FOV\":-3.25,\"VISUAL_MAG\":101.125,\"MAG_UNCERTAINTY\":12.5,\"OBJECT_COUNT\":1265591676,\"LABELS\":[\"s2477\",\"s24995\"],\"CONFIDENCE\":[12.5,101.125],\"FEATURES\":[-0.5,42.375],\"QUALITY\":1.5,\"NOTES\":\"s19897\"}",
+ "expect": "{\"ID\":\"s9920\",\"SOURCE_ID\":\"s76129\",\"SOURCE_TYPE\":\"s50723\",\"ANALYTIC_TYPE\":\"SPECTRAL\",\"ALGORITHM\":\"s23005\",\"ALGORITHM_VERSION\":\"s43840\",\"PROCESSING_TIME\":\"s85053\",\"OBS_TIME\":\"s62298\",\"SAT_NO\":823712870,\"OBJECT_DESIGNATOR\":\"s70576\",\"RA\":-3.25,\"DEC\":101.125,\"FOV\":-3.25,\"VISUAL_MAG\":101.125,\"MAG_UNCERTAINTY\":12.5,\"OBJECT_COUNT\":1265591676,\"LABELS\":[\"s2477\",\"s24995\"],\"CONFIDENCE\":[12.5,101.125],\"FEATURES\":[-0.5,42.375],\"QUALITY\":1.5,\"NOTES\":\"s19897\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

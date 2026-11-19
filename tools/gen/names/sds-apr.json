@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "body|.|int": "body_value",
+  "parameters|NAME|string": "parameters_name",
+  "parameters|VALUE|string": "parameters_value",
+  "response_headers|NAME|string": "response_headers_name",
+  "response_headers|VALUE|string": "response_headers_value",
+  "|ACCEPT|string": "accept",
+  "|CALLER_ID|string": "caller_id",
+  "|CONTENT_TYPE|string": "content_type",
+  "|ERROR_CODE|string": "error_code",
+  "|ERROR_MESSAGE|string": "error_message",
+  "|IF_MODIFIED_SINCE_MS|int": "if_modified_since_ms",
+  "|IF_NONE_MATCH|string": "if_none_match",
+  "|METHOD|string": "method",
+  "|PATH|string": "path",
+  "|RECEIVED_AT_MS|int": "received_at_ms",
+  "|REQUEST_ID|string": "request_id",
+  "|ROUTE|string": "route",
+  "|SCHEMA_NAME|string": "schema_name",
+  "|SELECTION|string": "selection",
+  "|STATUS|int": "status"
+ },
+ "lists": {
+  "|BODY": "body",
+  "|PARAMETERS": "parameters",
+  "|RESPONSE_HEADERS": "response_headers"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|EPOCH|string": "epoch",
+  "|FLAGS|int": "flags",
+  "|MAX_REVS|int": "max_revs",
+  "|MU_KM3_S2|float": "mu_km3_s2",
+  "|R1_X|float": "r1_x",
+  "|R1_Y|float": "r1_y",
+  "|R1_Z|float": "r1_z",
+  "|R2_X|float": "r2_x",
+  "|R2_Y|float": "r2_y",
+  "|R2_Z|float": "r2_z",
+  "|REF_FRAME|string": "ref_frame",
+  "|REQUEST_ID|string": "request_id",
+  "|TOF_SEC|float": "tof_sec",
+  "|TRANSFER_WAY|string": "transfer_way"
+ },
+ "lists": {}
+}

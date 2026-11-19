@@ -1,0 +1,7 @@
+{
+ "name": "gen-aba-residue",
+ "from": "sds-aba",
+ "to": "sds-aba",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ENTRY_ID\":\"s33490\",\"NODE_PEER_ID\":\"s21030\",\"PUBLIC_KEY\":[111,215],\"SIGNATURE_ALGORITHM\":\"s46448\",\"PROFILE_BYTES\":[88,65],\"PROFILE_SHA256\":[218,4],\"VISIBILITY\":\"PRIVATE\",\"CREATED_AT\":230145551825445,\"UPDATED_AT\":81299626285118,\"DELETED\":false,\"NOTE\":\"s23129\",\"SIGNATURE\":[77,192]}",
+ "expect": "{\"ENTRY_ID\":\"s33490\",\"NODE_PEER_ID\":\"s21030\",\"PUBLIC_KEY\":[111,215],\"SIGNATURE_ALGORITHM\":\"s46448\",\"PROFILE_BYTES\":[88,65],\"PROFILE_SHA256\":[218,4],\"VISIBILITY\":\"PRIVATE\",\"CREATED_AT\":230145551825445,\"UPDATED_AT\":81299626285118,\"DELETED\":false,\"NOTE\":\"s23129\",\"SIGNATURE\":[77,192],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

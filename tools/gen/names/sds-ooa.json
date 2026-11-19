@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|ANTENNA_TYPE|string": "antenna_type",
+  "|APERTURE|float": "aperture",
+  "|BAND|string": "band",
+  "|BEAMWIDTH|float": "beamwidth",
+  "|FREQ_MAX|float": "freq_max",
+  "|FREQ_MIN|float": "freq_min",
+  "|GAIN|float": "gain",
+  "|ID_ANTENNA|string": "id_antenna",
+  "|ID_ON_ORBIT|string": "id_on_orbit",
+  "|ID|string": "id",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|POLARIZATION|string": "polarization",
+  "|PURPOSE|string": "purpose",
+  "|QUANTITY|int": "quantity",
+  "|SLEW_RATE|float": "slew_rate",
+  "|STEERABLE|int": "steerable"
+ },
+ "lists": {}
+}

@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "tags|.|string": "tags_value",
+  "|CONFIDENCE|float": "confidence",
+  "|DESCRIPTOR|string": "descriptor",
+  "|DETECTION_TYPE|string": "detection_type",
+  "|EVENT_ID|string": "event_id",
+  "|HIGH_ZENITH_AZIMUTH|int": "high_zenith_azimuth",
+  "|ID|string": "id",
+  "|INCLINATION|float": "inclination",
+  "|LAUNCH_AZIMUTH|float": "launch_azimuth",
+  "|LAUNCH_LATITUDE|float": "launch_latitude",
+  "|LAUNCH_LONGITUDE|float": "launch_longitude",
+  "|LAUNCH_SITE_ID|string": "launch_site_id",
+  "|LAUNCH_TIME|string": "launch_time",
+  "|LAUNCH_VEHICLE|string": "launch_vehicle",
+  "|MESSAGE_TYPE|string": "message_type",
+  "|OBSERVATION_ALTITUDE|float": "observation_altitude",
+  "|OBSERVATION_LATITUDE|float": "observation_latitude",
+  "|OBSERVATION_LONGITUDE|float": "observation_longitude",
+  "|OBSERVATION_TIME|string": "observation_time",
+  "|RAAN|float": "raan",
+  "|SEQUENCE_NUMBER|int": "sequence_number",
+  "|STEREO_FLAG|int": "stereo_flag",
+  "|TRAJECTORY_TYPE|string": "trajectory_type"
+ },
+ "lists": {
+  "|TAGS": "tags"
+ }
+}

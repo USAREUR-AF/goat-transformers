@@ -1,0 +1,16 @@
+{
+ "name": "gen-rnd-roundtrip",
+ "from": "sds-rnd",
+ "to": "sds-rnd",
+ "input": "{\"LENGTH\":2290065451,\"BYTES\":[220,27],\"SOURCE\":\"Deterministic\",\"GENERATED_AT_MS\":-9223241964728603476,\"GENERATOR_ID\":\"s83898\",\"SEQUENCE\":76720705364040,\"SEED\":[140,106]}",
+ "expect": "{\"LENGTH\":2290065451,\"BYTES\":[220,27],\"SOURCE\":\"Deterministic\",\"GENERATED_AT_MS\":-9223241964728603476,\"GENERATOR_ID\":\"s83898\",\"SEQUENCE\":76720705364040,\"SEED\":[140,106]}",
+ "model": {
+  "sdsrnd.length": "2290065451",
+  "sdsrnd.bytes.#": "2",
+  "sdsrnd.source": "Deterministic",
+  "sdsrnd.generated_at_ms": "-9223241964728603476",
+  "sdsrnd.generator_id": "s83898",
+  "sdsrnd.sequence": "76720705364040",
+  "sdsrnd.seed.#": "2"
+ }
+}

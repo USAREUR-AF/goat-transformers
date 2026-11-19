@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|CAMERA.CAMERA_FRAME_MODE|string": "camera_camera_frame_mode",
+  "|CAMERA.DISTANCE_FROM_TARGET|float": "camera_distance_from_target",
+  "|CAMERA.ROTATION.PITCH|float": "camera_rotation_pitch",
+  "|CAMERA.ROTATION.QUATERNION_W|float": "camera_rotation_quaternion_w",
+  "|CAMERA.ROTATION.QUATERNION_X|float": "camera_rotation_quaternion_x",
+  "|CAMERA.ROTATION.QUATERNION_Y|float": "camera_rotation_quaternion_y",
+  "|CAMERA.ROTATION.QUATERNION_Z|float": "camera_rotation_quaternion_z",
+  "|CAMERA.ROTATION.ROLL|float": "camera_rotation_roll",
+  "|CAMERA.ROTATION.USES_QUATERNION|int": "camera_rotation_uses_quaternion",
+  "|CAMERA.ROTATION.YAW|float": "camera_rotation_yaw",
+  "|CAMERA.SATELLITE_ALIGNMENT|string": "camera_satellite_alignment",
+  "|DISPLAY_SETTINGS.MAP_MODE|string": "display_settings_map_mode",
+  "|DISPLAY_SETTINGS.SHOW_ATMOSPHERE|int": "display_settings_show_atmosphere",
+  "|DISPLAY_SETTINGS.SHOW_CIS_LUNAR|int": "display_settings_show_cis_lunar",
+  "|DISPLAY_SETTINGS.SHOW_EQUATOR|int": "display_settings_show_equator",
+  "|DISPLAY_SETTINGS.SHOW_GEO_BELT_MARKERS|int": "display_settings_show_geo_belt_markers",
+  "|DISPLAY_SETTINGS.SHOW_GIF_CONTROLS|int": "display_settings_show_gif_controls",
+  "|DISPLAY_SETTINGS.SHOW_LATITUDE|int": "display_settings_show_latitude",
+  "|DISPLAY_SETTINGS.SHOW_LONGITUDE|int": "display_settings_show_longitude",
+  "|DISPLAY_SETTINGS.SHOW_SHADOW_CONES|int": "display_settings_show_shadow_cones",
+  "|DISPLAY_SETTINGS.SHOW_SUN_DIRECTION_INDICATOR|int": "display_settings_show_sun_direction_indicator",
+  "|DISPLAY_SETTINGS.USE_STARFIELD|int": "display_settings_use_starfield",
+  "|DISPLAY_SETTINGS.USE_STITCHED_ORBIT|int": "display_settings_use_stitched_orbit",
+  "|FOCUSED_REFERENCE_ID|string": "focused_reference_id",
+  "|FOCUSED_REFERENCE_INDEX|int": "focused_reference_index"
+ },
+ "lists": {}
+}

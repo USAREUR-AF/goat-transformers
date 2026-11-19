@@ -1,0 +1,17 @@
+{
+ "name": "gen-aof-roundtrip",
+ "from": "sds-aof",
+ "to": "sds-aof",
+ "input": "{\"VERSION\":33,\"SPACECRAFT_ID\":9491,\"VIRTUAL_CHANNEL_ID\":7,\"VIRTUAL_FRAME_COUNT\":4293392042,\"REPLAY_FLAG\":false,\"VC_FRAME_COUNT_USAGE\":true,\"VC_FRAME_COUNT_CYCLE\":137,\"INSERT_ZONE\":[238,55],\"DATA\":[184,13],\"OCF\":[80,85],\"FECF\":56725}",
+ "expect": "{\"VERSION\":33,\"SPACECRAFT_ID\":9491,\"VIRTUAL_CHANNEL_ID\":7,\"VIRTUAL_FRAME_COUNT\":4293392042,\"REPLAY_FLAG\":false,\"VC_FRAME_COUNT_USAGE\":true,\"VC_FRAME_COUNT_CYCLE\":137,\"INSERT_ZONE\":[238,55],\"DATA\":[184,13],\"OCF\":[80,85],\"FECF\":56725}",
+ "model": {
+  "sdsaof.version": "33",
+  "sdsaof.spacecraft_id": "9491",
+  "sdsaof.virtual_channel_id": "7",
+  "sdsaof.virtual_frame_count": "4293392042",
+  "sdsaof.replay_flag": "0",
+  "sdsaof.vc_frame_count_usage": "1",
+  "sdsaof.vc_frame_count_cycle": "137",
+  "sdsaof.insert_zone.#": "2"
+ }
+}

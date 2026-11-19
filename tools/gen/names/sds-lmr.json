@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "module_hash|.|int": "module_hash_value",
+  "|ACTION|string": "action",
+  "|ERROR_CODE|string": "error_code",
+  "|ERROR_MESSAGE|string": "error_message",
+  "|MODULE_ID|string": "module_id",
+  "|MODULE_VERSION|string": "module_version",
+  "|REQUEST_ID|string": "request_id",
+  "|STATUS|string": "status",
+  "|WASM_CID|string": "wasm_cid"
+ },
+ "lists": {
+  "|MODULE_HASH": "module_hash"
+ }
+}

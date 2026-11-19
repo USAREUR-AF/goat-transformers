@@ -1,0 +1,17 @@
+{
+ "name": "gen-cmt-roundtrip",
+ "from": "sds-cmt",
+ "to": "sds-cmt",
+ "input": "{\"TERMS_ID\":\"s34569\",\"SCOPE\":\"Store\",\"TARGET_ID\":\"s45277\",\"COMMISSION_BPS\":41255,\"SPLITS\":[{\"RECIPIENT\":{\"EPM_CID\":\"s25644\",\"CHAIN\":\"s32682\",\"ADDRESS\":\"s82248\",\"XPUB\":\"s36096\"},\"BPS\":11508,\"ROLE\":\"Charity\"},{\"RECIPIENT\":{\"EPM_CID\":\"s41788\",\"CHAIN\":\"s46598\",\"ADDRESS\":\"s2939\",\"XPUB\":\"s57224\"},\"BPS\":49376,\"ROLE\":\"Platform\"}],\"PLATFORM_RECIPIENT\":{\"EPM_CID\":\"s36154\",\"CHAIN\":\"s51460\",\"ADDRESS\":\"s23916\",\"XPUB\":\"s65430\"},\"ENFORCEMENT\":\"SplitterContract\",\"CONTRACTS\":[{\"CHAIN\":\"s95027\",\"CHAIN_ID\":215163575704044,\"SETTLEMENT_KIND\":\"EthSplitter\",\"SPLITTER_STANDARD\":\"s95867\",\"SPLITTER_ADDRESS\":\"s54400\",\"SPLIT_CONFIG_ID\":\"s54498\",\"TOKEN_ADDRESS\":\"s87865\",\"TOKEN_SYMBOL\":\"s35880\",\"TOKEN_DECIMALS\":37,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s59511\",\"CHAIN\":\"s42197\",\"ADDRESS\":\"s92462\",\"XPUB\":\"s95855\"}],\"MIN_CONFIRMATIONS\":414558368,\"MEMO_SCHEME\":\"NoMemo\"},{\"CHAIN\":\"s82710\",\"CHAIN_ID\":271695186693272,\"SETTLEMENT_KIND\":\"DirectAddress\",\"SPLITTER_STANDARD\":\"s8325\",\"SPLITTER_ADDRESS\":\"s29699\",\"SPLIT_CONFIG_ID\":\"s12299\",\"TOKEN_ADDRESS\":\"s69219\",\"TOKEN_SYMBOL\":\"s25754\",\"TOKEN_DECIMALS\":137,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s13808\",\"CHAIN\":\"s25351\",\"ADDRESS\":\"s22454\",\"XPUB\":\"s56247\"}],\"MIN_CONFIRMATIONS\":675067861,\"MEMO_SCHEME\":\"SolMemo\"}],\"EFFECTIVE_AT\":269720008934146,\"EXPIRES_AT\":274971097356397,\"SIGNATURE\":[135,126]}",
+ "expect": "{\"TERMS_ID\":\"s34569\",\"SCOPE\":\"Store\",\"TARGET_ID\":\"s45277\",\"COMMISSION_BPS\":41255,\"SPLITS\":[{\"RECIPIENT\":{\"EPM_CID\":\"s25644\",\"CHAIN\":\"s32682\",\"ADDRESS\":\"s82248\",\"XPUB\":\"s36096\"},\"BPS\":11508,\"ROLE\":\"Charity\"},{\"RECIPIENT\":{\"EPM_CID\":\"s41788\",\"CHAIN\":\"s46598\",\"ADDRESS\":\"s2939\",\"XPUB\":\"s57224\"},\"BPS\":49376,\"ROLE\":\"Platform\"}],\"PLATFORM_RECIPIENT\":{\"EPM_CID\":\"s36154\",\"CHAIN\":\"s51460\",\"ADDRESS\":\"s23916\",\"XPUB\":\"s65430\"},\"ENFORCEMENT\":\"SplitterContract\",\"CONTRACTS\":[{\"CHAIN\":\"s95027\",\"CHAIN_ID\":215163575704044,\"SETTLEMENT_KIND\":\"EthSplitter\",\"SPLITTER_STANDARD\":\"s95867\",\"SPLITTER_ADDRESS\":\"s54400\",\"SPLIT_CONFIG_ID\":\"s54498\",\"TOKEN_ADDRESS\":\"s87865\",\"TOKEN_SYMBOL\":\"s35880\",\"TOKEN_DECIMALS\":37,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s59511\",\"CHAIN\":\"s42197\",\"ADDRESS\":\"s92462\",\"XPUB\":\"s95855\"}],\"MIN_CONFIRMATIONS\":414558368,\"MEMO_SCHEME\":\"NoMemo\"},{\"CHAIN\":\"s82710\",\"CHAIN_ID\":271695186693272,\"SETTLEMENT_KIND\":\"DirectAddress\",\"SPLITTER_STANDARD\":\"s8325\",\"SPLITTER_ADDRESS\":\"s29699\",\"SPLIT_CONFIG_ID\":\"s12299\",\"TOKEN_ADDRESS\":\"s69219\",\"TOKEN_SYMBOL\":\"s25754\",\"TOKEN_DECIMALS\":137,\"SPLIT_RECIPIENTS\":[{\"EPM_CID\":\"s13808\",\"CHAIN\":\"s25351\",\"ADDRESS\":\"s22454\",\"XPUB\":\"s56247\"}],\"MIN_CONFIRMATIONS\":675067861,\"MEMO_SCHEME\":\"SolMemo\"}],\"EFFECTIVE_AT\":269720008934146,\"EXPIRES_AT\":274971097356397,\"SIGNATURE\":[135,126]}",
+ "model": {
+  "sdscmt.terms_id": "s34569",
+  "sdscmt.scope": "Store",
+  "sdscmt.target_id": "s45277",
+  "sdscmt.commission_bps": "41255",
+  "sdscmt.splits.#": "2",
+  "sdscmt.platform_recipient_epm_cid": "s36154",
+  "sdscmt.platform_recipient_chain": "s51460",
+  "sdscmt.platform_recipient_address": "s23916"
+ }
+}

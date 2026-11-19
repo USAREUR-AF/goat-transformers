@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|EPOCH|string": "epoch",
+  "|E_COORDINATE|float": "e_coordinate",
+  "|E_DOT|float": "e_dot",
+  "|F_COORDINATE|float": "f_coordinate",
+  "|F_DOT|float": "f_dot",
+  "|G_COORDINATE|float": "g_coordinate",
+  "|G_DOT|float": "g_dot",
+  "|TIME_FROM_LAUNCH|float": "time_from_launch"
+ },
+ "lists": {}
+}

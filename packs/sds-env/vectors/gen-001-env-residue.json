@@ -1,0 +1,7 @@
+{
+ "name": "gen-env-residue",
+ "from": "sds-env",
+ "to": "sds-env",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ATMOSPHERE\":\"s13876\",\"WEATHER\":\"s95476\",\"TIME_UTC\":12.5,\"LATITUDE\":0.75,\"LONGITUDE\":1.5,\"SUN_AZIMUTH\":-3.25,\"SUN_ELEVATION\":42.375,\"MOON_PHASE\":1.5,\"ILLUMINATION\":101.125,\"MAGNETIC_DECLINATION\":42.375,\"MAGNETIC_INCLINATION\":7.0625,\"RESERVED\":[32,121]}",
+ "expect": "{\"ATMOSPHERE\":\"s13876\",\"WEATHER\":\"s95476\",\"TIME_UTC\":12.5,\"LATITUDE\":0.75,\"LONGITUDE\":1.5,\"SUN_AZIMUTH\":-3.25,\"SUN_ELEVATION\":42.375,\"MOON_PHASE\":1.5,\"ILLUMINATION\":101.125,\"MAGNETIC_DECLINATION\":42.375,\"MAGNETIC_INCLINATION\":7.0625,\"RESERVED\":[32,121],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-ent-residue",
+ "from": "sds-ent",
+ "to": "sds-ent",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ENTITLEMENT_ID\":\"s16137\",\"XPUB\":\"s61985\",\"PEER_ID\":\"s43435\",\"PLAN\":\"s54526\",\"STATUS\":\"Suspended\",\"STATUS_TEXT\":\"s86526\",\"STRIPE_CUSTOMER_ID\":\"s92591\",\"STRIPE_SUBSCRIPTION_ID\":\"s7953\",\"EXPIRES_AT\":206354330243613,\"CREATED_AT\":122071493679654,\"UPDATED_AT\":53301550440710,\"PROVIDER_PEER_ID\":\"s87793\",\"PROVIDER_SIGNATURE\":[145,67]}",
+ "expect": "{\"ENTITLEMENT_ID\":\"s16137\",\"XPUB\":\"s61985\",\"PEER_ID\":\"s43435\",\"PLAN\":\"s54526\",\"STATUS\":\"Suspended\",\"STATUS_TEXT\":\"s86526\",\"STRIPE_CUSTOMER_ID\":\"s92591\",\"STRIPE_SUBSCRIPTION_ID\":\"s7953\",\"EXPIRES_AT\":206354330243613,\"CREATED_AT\":122071493679654,\"UPDATED_AT\":53301550440710,\"PROVIDER_PEER_ID\":\"s87793\",\"PROVIDER_SIGNATURE\":[145,67],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

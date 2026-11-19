@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "|AERO|string": "aero",
+  "|ATTITUDE_W|float": "attitude_w",
+  "|ATTITUDE_X|float": "attitude_x",
+  "|ATTITUDE_Y|float": "attitude_y",
+  "|ATTITUDE_Z|float": "attitude_z",
+  "|AUTOPILOT_MODE|int": "autopilot_mode",
+  "|CG_X|float": "cg_x",
+  "|CG_Z|float": "cg_z",
+  "|CONTROLS|string": "controls",
+  "|ENGINE|string": "engine",
+  "|FLAP_POSITION|int": "flap_position",
+  "|FLIGHT_PHASE|int": "flight_phase",
+  "|GEAR_POSITION|int": "gear_position",
+  "|GEAR_STATE|int": "gear_state",
+  "|MASS|float": "mass",
+  "|OMEGA_X|float": "omega_x",
+  "|OMEGA_Y|float": "omega_y",
+  "|OMEGA_Z|float": "omega_z",
+  "|POSITION_X|float": "position_x",
+  "|POSITION_Y|float": "position_y",
+  "|POSITION_Z|float": "position_z",
+  "|RESERVED|int": "reserved",
+  "|SPEEDBRAKE_POS|int": "speedbrake_pos",
+  "|VELOCITY_X|float": "velocity_x",
+  "|VELOCITY_Y|float": "velocity_y",
+  "|VELOCITY_Z|float": "velocity_z",
+  "|WEIGHT_ON_WHEELS|int": "weight_on_wheels"
+ },
+ "lists": {}
+}

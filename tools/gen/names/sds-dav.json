@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "|AVAILABLE|int": "available",
+  "|BATCH_ID|string": "batch_id",
+  "|BODY_REF_SIZE|int": "body_ref_size",
+  "|BODY_REF_TOKEN|int": "body_ref_token",
+  "|BYTE_COUNT|int": "byte_count",
+  "|ETAG|string": "etag",
+  "|FRESH|int": "fresh",
+  "|KNOWN|int": "known",
+  "|PARTS|int": "parts",
+  "|PINNED|int": "pinned",
+  "|PNM_CID|string": "pnm_cid",
+  "|PNM_FILE_ID|string": "pnm_file_id",
+  "|PNM_PUBLISHED_AT_MS|int": "pnm_published_at_ms",
+  "|PNM_SIGNATURE_VERIFIED|int": "pnm_signature_verified",
+  "|PROVIDER_ID|string": "provider_id",
+  "|PUBLISHED_AT_MS|int": "published_at_ms",
+  "|PUBLISHER_PEER_ID|string": "publisher_peer_id",
+  "|RECORD_COUNT|int": "record_count",
+  "|SCHEMA_NAME|string": "schema_name",
+  "|SELF_PUBLISHED|int": "self_published",
+  "|SOURCE_NAME|string": "source_name",
+  "|STANDARD|string": "standard",
+  "|UNAVAILABLE_REASON|string": "unavailable_reason"
+ },
+ "lists": {}
+}
