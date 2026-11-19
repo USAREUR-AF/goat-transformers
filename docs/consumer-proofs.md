@@ -1,70 +1,138 @@
 # Consumer proofs
 
-Status: Measured. Each proof runs the library beside a project's own
-conversion code, on that project's own test inputs, and compares the results
-field by field. The harnesses are not part of either project and are not in
-this repository.
+Each project below runs the library in its own conversion path, beside its
+own conversion code, chosen by a setting that defaults to the project's own
+code. Each project's tests compare the two paths on that project's own inputs
+field by field and fail when the result moves.
 
-## open-billie: Canonical Track v2 to CoT and to SAPIENT
+| Project | Language | Where the library runs | How it is chosen | Library pinned | Status |
+|---|---|---|---|---|---|
+| open-billie | Rust | the translator's CoT, ASTERIX CAT062 and SAPIENT encoders (`runtime/rust/translator`) | cargo feature `goat-transformers`, then `BILLIE_COT_ENCODER`, `BILLIE_CAT062_ENCODER`, `BILLIE_SAPIENT_ENCODER` = `goat-transformers` | Rust crate by git `rev`; packs copied with SHA-256 sums | Built, merged (open-billie#28); the compare test runs in its CI |
+| first-bite | Rust | `flow`: a transform `xf` beside `cot`; its dictionaries generated into packs by `tools/bite2pack` | cargo feature `goat-transformers` and `subtype: "xf"` in a subpub | Rust crate by git `rev`; target packs copied, `UPSTREAM` names the commit | Built, merged (first-bite#72); both tests run in its CI |
+| goatstuff | Rust and Python | `ops/zenoh-shims/transform-shim`, a fabric peer that converts by route; goat-map's CoT to GeoTrackV1 on the Python engine | the shim's route table; `GOATMAP_COT_ENGINE=library` | `ops/xf/goat-transformers.ref`; bundles checked against a manifest | Built, merged (goatstuff#106); not deployed |
+| octo-pod | Rust | `gateway/translate`, a separate gateway beside the capture arms | a pod's `50-translate.yml`; none means no gateway | Rust crate by git `rev`; packs copied with a manifest | Built, open for review (octo-pod#31) |
+| open-entity-gateway | Python | the CoT, SAPIENT and CAT062 adapters, on the Python engine | per destination, `native` or `goat-transformers` | engine and packs copied at one commit with SHA-256 sums | Designed (open-entity-gateway#8); its example tracks are vectors 33 to 39 of `canonical-track-v2` |
 
-`USAREUR-AF/open-billie` has a Rust translator with hand-written encoders
-(`runtime/rust/translator/src/cot.rs`, `sapient.rs`). The proof adds the Rust
-engine as an optional dependency and converts the same 33 inputs (schema
-examples, the tracks in the translator's unit tests, and ten tracks from its
-decoder vectors) through both paths.
+## open-billie: Canonical Track v2 to CoT, CAT062 and SAPIENT
 
-| Target | Packs at spec 0.5 | Packs and rules at spec 0.6 |
+The translator (`runtime/rust/translator`) encodes each validated Canonical
+Track v2 record through its own encoder or through the library, per format.
+The values the node owns are computed by the translator's own code and passed
+as context: the scoped track identity, the CoT stale time and `how`, the
+CAT062 SAC and SIC, and the SAPIENT node identifier, timestamp, report and
+object identifiers.
+
+`runtime/rust/translator/tests/goat_transformers_compare.rs` encodes 33 inputs
+(schema examples, the runtime-contract request, the tracks of the translator's
+unit tests, ten tracks from its decoder vectors) through both paths, parses
+both outputs and compares them field by field against a committed baseline.
+Measured in open-billie's CI at library commit `0be9fc9`:
+
+| Format | Encoded by both | Refused by both | One path refuses | Byte-identical | Fields equal |
+|---|---|---|---|---|---|
+| ASTERIX CAT062 | 25 | 7 | 1 | 25 of 25 | 397 of 397 |
+| CoT | 33 | 0 | 0 | 17 of 33 | 547 of 594 |
+| SAPIENT | 33 | 0 | 0 | 0 of 33 | 579 of 717 |
+
+Earlier measurements outside the project, with the identities not yet
+supplied as context: CoT 161 of 594 at spec 0.5 and 514 at spec 0.6; SAPIENT
+130 of 717 and 416.
+
+What still differs, and the row of `docs/roadmap.md` that closes it:
+
+| Format | Field | Inputs | Closed by |
+|---|---|---|---|
+| SAPIENT | `location.x_error`, `location.y_error` (meters to degrees at the track latitude) | 31 each | Further value functions (meters to degrees) |
+| SAPIENT | `classification[].confidence`, written only when a class is | 31 | Conditional output |
+| SAPIENT | `object_info[]` from the identifiers of one scheme, with a constant type | 16 | Conditional output (items selected by value, a constant per item) |
+| SAPIENT | `state` from the status flags | 13 | Conditional output and flag tokens |
+| CoT | `opex="s"` from three flags | 13 | Conditional output and flag tokens |
+| CoT | `detail/remarks` from the status flags | 13 | Conditional output and flag tokens |
+| CoT | time text with no fraction on a whole second | 2 | a time transform that omits a zero fraction (not yet a row) |
+| CoT | an empty `detail` element always written | 2 | an `xml` directive that always writes an element (not yet a row) |
+| CAT062 | a longitude of 180, a track number above 4095, an altitude outside -1500 to 150000 ft refused | 1 | a field option that refuses a value outside a range (not yet a row) |
+
+A SAPIENT report identifier is new for every message on both paths; the test
+counts two valid ULIDs as equal.
+
+## first-bite: decoding its dictionaries, CoT out
+
+`flow` has a transform `xf` beside its own `cot`. `tools/bite2pack` turns
+first-bite's JSON dictionaries into `bits` packs, one per interface; the four
+public dictionaries' packs are compiled in. The join point is
+`flow/src/xf.rs`.
+
+Measured in first-bite's CI at library commit `0be9fc9`:
+
+| Comparison | Test | Result |
 |---|---|---|
-| CoT, fields equal | 161 of 594 | 514 of 594 |
-| SAPIENT, fields equal | 130 of 717 | 416 of 717 |
+| decode of every fixture (27 dictionary vectors, 5 weather-station records, 10 NTP packets), message type chosen | `flow/tests/xf_packs.rs` | 42 of 42 |
+| the same fields, same value in the form first-bite writes | `flow/tests/xf_packs.rs` | 443 of 462 |
+| the same fields, same bytes in another form (hex text against an integer) | | 18 of 462 |
+| the same field, a scaled value differing in the last digits of the double | | 1 of 462 |
+| `xf` against `cot` on 502 weather-station Position records: `version`, `uid`, `type`, `how`, `point` `ce` and `le` | `flow/tests/xf_cot.rs` | 502 of 502 |
+| `lat`, `lon`, `hae` | | 473, 449, 500 of 502 equal; the rest neighbouring doubles from first-bite's JSON text |
 
-The caller supplies three values as context: the stale time, the CoT `how`
-token and the SAPIENT node identifier.
+At spec 0.5 the fixture comparison was 406 of 462: `optional`, `swap` and
+`trim` (spec 0.6) and generated value tables for every 8-bit labelled field
+closed the rest but the 19 below. On 40,000 generated valid payloads both
+decoders chose the same message type for all.
 
-What still differs, and what would close it:
+What still differs, and what closes it:
 
-| Difference | Inputs | Needs |
+| Difference | Fields | Closed by |
 |---|---|---|
-| Scoped track identity (four identifiers joined and escaped) in CoT `uid` and SAPIENT `id` | 33 | the host to supply it as context, or a join with escaping |
-| SAPIENT `report_id` and `object_id` (identifiers the host allocates) | 33 | context |
-| SAPIENT timestamp as seconds and nanoseconds | 33 | a function that splits an instant |
-| SAPIENT horizontal error in degrees | 31 | meters to degrees at a latitude |
-| SAPIENT class confidence, written only when a class exists | 31 | conditional output |
-| CoT `opex` and `remarks`, SAPIENT `state`, built from status flags | 13 | flags to tokens |
-| SAPIENT `object_info` | 16 | groups |
-| CoT time text without a zero fraction; an always-present empty `detail` | 2 | agreement on the canonical form |
+| a `bytes` field of 2 to 8 bytes is an integer where first-bite writes hex text | 18 | a `hex` transform on the `bits` wire (not yet a row) |
+| a scaled field with an offset, rounded by first-bite to the decimal places of its scale | 1 | a rounding argument of `uscale` and `sscale` (Further value functions) |
+| CoT `time`, `start`, `stale` text: `.000Z` against `+00:00` | 502 | none: both are valid `xs:dateTime` |
+| `<detail/>` written by `cot` when empty | 502 | none needed; an `xml` directive that always writes an element would make them equal |
 
-ASTERIX CAT062, the translator's third target: the `asterix-cat062` pack
-reproduces the hand-written encoder byte for byte on six test tracks, with the
-two site codes supplied by the caller as context.
+## goatstuff: a fabric peer and goat-map
 
-## first-bite: decoding its dictionaries
+`ops/zenoh-shims/transform-shim` subscribes to keys that carry one format,
+converts each message with the Rust engine and republishes it under another
+key, by a route table read at start; a route's `set` supplies context from the
+key, the sample and its timestamp. goat-map's CoT to GeoTrackV1 runs on the
+Python engine with `GOATMAP_COT_ENGINE=library`; the default is its own
+`goatmap/cot.py`.
 
-`USAREUR-AF/first-bite` decodes fixed-layout binary messages from JSON
-dictionaries. The proof converts its four public dictionaries into five packs
-and compares decoded values with first-bite's own decoder.
+Measured by `ops/serve/goat-map/tools/cot_parity.py` over 26 CoT inputs,
+against `tests-public/cot_parity_baseline.json` in goatstuff's CI. Both paths
+accept 16 and refuse 9; the 16 give 368 members.
 
-| Measure | Result |
-|---|---|
-| Dictionary fields mapped | 233 of 234 |
-| Fixture fields equal (42 messages) | 406 of 462 |
-| Generated valid payloads, same message type chosen | 40,000 of 40,000 |
-| Generated valid payloads, fields equal | 463,394 of 468,000 |
+| Stage | Equal | Same number, other form | No member where goat-map writes `null` | Different |
+|---|---|---|---|---|
+| the packs alone | 271 | 15 | 19 | 63 |
+| goat-map's library path | 353 | 15 | 0 | 0 |
 
-Measured at spec 0.5. The causes of the 56 differing fixture fields, and the
-spec 0.6 option that addresses each:
+goat-map completes the packs' output with three named steps. Each is closed
+in the library by:
 
-| Cause | Fields | Addressed by |
-|---|---|---|
-| A truncated message is refused whole | 52 | `optional` |
-| One little-endian field in a big-endian interface | 2 | `swap` |
-| Trailing spaces kept in text | 1 | `trim` |
-| A decimal offset differs in the last digits | 1 | open |
+| Members | Count | Step in goat-map | Closed by |
+|---|---|---|---|
+| `affiliation`, `dimension` from the CoT type | 32 | `complete_type_letters` | a derive function that takes a token of a string, and a value-table entry for an unlisted value (not yet rows) |
+| `ce_m`, `le_m` | 31 | `complete_error_sentinel` | Absent-value sentinels |
+| `org`, and `course_deg`, `speed_mps`, `descriptor` when absent | 19 | `complete_null_members` | a `json` directive that writes `null` for an absent member (not yet a row) |
 
-Of the equal fields, 87 are equal in value and different in form: first-bite
-writes a label, `true` or `false`, or hex text where the library yields the
-integer. Value tables (`map`, `via`) state the labels.
+The two paths differ on one input, an event with no `uid`: goat-map publishes
+an id its schema does not allow, and the packs refuse the event.
 
-The join point is `Transform::apply` in `flow/src/subpub.rs`: a transformer
-subtype that reads the record's payload, dictionary and subsystem and calls
-`convert`.
+## octo-pod: a translation gateway beside the arms
+
+`gateway/translate` is a separate unit, not an arm: it subscribes to declared
+capture keys under its own certificate, converts each sample with the Rust
+engine and publishes the result on its own key with the source key, timestamp
+and SHA-256 attached; the captured sample is never changed. It is off unless a
+pod declares it. Built, in review as octo-pod#31 with its ADR 0004.
+
+## open-entity-gateway: CoT, SAPIENT and CAT062 adapters
+
+Its two example tracks are vectors 33 to 39 of `canonical-track-v2`, passing
+on all seven engines. What differs from the gateway's own encoders:
+
+| Format | Gateway writes | Pack writes | Closed by |
+|---|---|---|---|
+| CoT | `uid` = `<sourceId>_<trackId>` | `uid` = `trackId` | the gateway supplies `uid` as context |
+| CoT | fraction trimmed (`.25Z`, none on a whole second) | milliseconds always | none: equivalent `xs:dateTime` |
+| CoT | `access="Undefined"`, `<contact callsign>` | neither | keys the pack does not take |
+| CAT062 | MRH 1 when an altitude is sent | MRH from `cat062.mrh`, 0 when absent | the gateway supplies `cat062.mrh`; the rule itself needs Conditional output |
