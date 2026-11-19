@@ -4,6 +4,7 @@
 %% argument keys through one function of a fixed set.
 %% Function = copy | hypot | bearing | east_of | north_of | neg
 %%          | day_seconds | any | 'not' | parse_int | text_of   (Version 0.8)
+%%          | present                                        (Version 0.12)
 %%          | {scale, Factor} | {offset, Text | Number} | {join, Sep}
 -module(gt_derive).
 -export([parse_function/2, check_types/3, apply_all/2]).
@@ -30,6 +31,7 @@ function(<<"any">>) -> {any, any};
 function(<<"not">>) -> {'not', 1};
 function(<<"parse_int">>) -> {parse_int, 1};
 function(<<"text_of">>) -> {text_of, 1};
+function(<<"present">>) -> {present, 1};
 function(<<"scale:", F/binary>>) -> {{scale, gt_pack:factor(F)}, 1};
 function(<<"offset:", N/binary>>) -> _ = gt_pack:number(N), {{offset, N}, 1};
 function(<<"join:", Sep/binary>>) -> {{join, Sep}, any}.
@@ -46,6 +48,9 @@ check_types(any, int, Args) ->
 check_types('not', int, [int]) -> {ok, 'not'};
 check_types(parse_int, int, [string]) -> {ok, parse_int};
 check_types(text_of, string, [int]) -> {ok, text_of};
+%% `present` takes an argument of any scalar type (a list is refused where the
+%% argument key is resolved) and gives an int.
+check_types(present, int, [_]) -> {ok, present};
 %% the parameter is integer text (2a of 0.11) on an int key, number text
 %% (2b) on a float key
 check_types({offset, Text}, int, [int]) ->
@@ -150,6 +155,8 @@ eval(parse_int, [Text]) ->
         false -> absent
     end;
 eval(text_of, [N]) -> integer_to_binary(N);
+%% 1 when the argument is held, whatever its value (Version 0.12)
+eval(present, [_]) -> 1;
 eval({scale, {dec, F}}, [A]) -> A * F;
 eval({scale, {frac, Num, Den}}, [A]) -> A * Num / Den;
 eval({offset, N}, [A]) when is_integer(N), is_integer(A) ->
