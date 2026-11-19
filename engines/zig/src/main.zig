@@ -839,6 +839,11 @@ fn parseTransform(s: []const u8) !Transform {
 
     var it = std.mem.splitScalar(u8, s, ':');
     const head = it.next() orelse return E.@"unknown-transform";
+    // a transform of the specification that takes no parameter, given one
+    // (ruling 5 of 0.11): `bad-directive`
+    for (simple) |e| if (std.mem.eql(u8, head, e.n)) {
+        if (!std.mem.eql(u8, head, "int")) return E.@"bad-directive";
+    };
     // the parameters of the scaled transforms (ruling 4d of 0.11): each
     // failure is `bad-directive`
     if (std.mem.eql(u8, head, "linscale")) {
