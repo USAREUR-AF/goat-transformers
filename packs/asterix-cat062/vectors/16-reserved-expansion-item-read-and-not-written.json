@@ -1,0 +1,14 @@
+{
+  "name": "reserved-expansion-item-read-and-not-written",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e00259b0d11010401075460100000000000000000ffce0011013781010100005004010203",
+  "expect": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "model": {
+    "@kind": "track",
+    "cat062.track_number": "311",
+    "hae": "152.4"
+  },
+  "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, UAP (FRN 34 RE, FRN 35 SP) and the RE/SP item structure; built by hand from vector 01",
+  "reference": "FRN 34 (I062/RE) set in the fifth FSPEC octet (0x04); RE is a length octet that counts itself (04) and three octets of content, not mapped. LEN recomputed: CAT, LEN, FSPEC and items."
+}
