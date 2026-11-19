@@ -1011,12 +1011,17 @@ class Compiler:
             return text, ()
         return None, "unknown function `%s`" % text
 
-    def compile_derives(self, possible, needed, strict):
+    def compile_derives(self, possible, needed, strict, produced=()):
         """The derive lines the plan can use, in the order the reference applies them.
 
         `possible`: keys that may be present before derivation. `needed`: keys the
-        encoder reads. Both are extended. Returns the lines kept."""
-        lines = self.model.derives
+        encoder reads. Both are extended. `produced`: keys the source decode itself
+        gives; a line whose target is one of them is not needed, because a derive
+        line only sets a key the entity lacks (the `uid` <-> `mmsi` pair of a model
+        module, say, never derives `uid` from a source that decodes `uid`).
+        Returns the lines kept."""
+        produced = set(produced)
+        lines = [l for l in self.model.derives if l[1] not in produced] if produced else self.model.derives
         changed = True
         while changed:
             changed = False
@@ -1210,7 +1215,8 @@ def compile_plan(model_dir, packs_dir, src, dst, context, keep_names):
         for k in dpack.body["kinds"]:
             # an earlier kind left out still selects by its required keys
             needed.update(k["requires"])
-        kept = c.compile_derives(possible, needed, True)
+        produced = set(view.src_keys.get((), ())) | set(view.src_lists.get((), ()))
+        kept = c.compile_derives(possible, needed, True, produced)
         view.possible_top, view.needed_top = possible, needed
 
         # keys whose decode can fail stay checked, so a bad message is refused as the reference refuses it
