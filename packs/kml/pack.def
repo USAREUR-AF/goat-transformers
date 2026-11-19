@@ -1,0 +1,40 @@
+# OGC KML 2.2 Placemark with a Point, XML. Public OGC standard (OGC 07-147r2).
+# One message is one KML document whose feature is a Placemark, either the
+# root's own feature or the first Placemark of a Document. The Point's
+# coordinates are one text value "lon,lat[,alt]" and the pack language has no
+# transform that splits it, so they are carried as text (kml.coordinates) and
+# not bound to lat and lon. pack.md states the evidence and what is not mapped.
+format  kml
+version 0.1.0
+distribution public
+source  "OGC KML 2.2.0, OGC 07-147r2 (2008-04-14), https://docs.ogc.org/is/07-147r2/07-147r2.pdf; schema https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd (OGC Document License Agreement)"
+uses    kml
+wire    xml
+root    kml
+# The default namespace of KML 2.2; the encoder writes it.
+when    @xmlns  http://www.opengis.net/kml/2.2
+
+kind    placemark
+when    Placemark/Point/coordinates/#text  present
+requires kml.coordinates
+field   kml.placemark_id   Placemark/@id                         string
+field   callsign           Placemark/name/#text                  string
+field   kml.description    Placemark/description/#text           string
+field   kml.when           Placemark/TimeStamp/when/#text        string
+field   kml.style_url      Placemark/styleUrl/#text              string
+field   kml.extrude        Placemark/Point/extrude/#text         string
+field   kml.altitude_mode  Placemark/Point/altitudeMode/#text    string
+field   kml.coordinates    Placemark/Point/coordinates/#text     string
+
+kind    document-placemark
+when    Document/Placemark/Point/coordinates/#text  present
+requires kml.coordinates
+field   kml.document_name  Document/name/#text                            string
+field   kml.placemark_id   Document/Placemark/@id                         string
+field   callsign           Document/Placemark/name/#text                  string
+field   kml.description    Document/Placemark/description/#text           string
+field   kml.when           Document/Placemark/TimeStamp/when/#text        string
+field   kml.style_url      Document/Placemark/styleUrl/#text              string
+field   kml.extrude        Document/Placemark/Point/extrude/#text         string
+field   kml.altitude_mode  Document/Placemark/Point/altitudeMode/#text    string
+field   kml.coordinates    Document/Placemark/Point/coordinates/#text     string

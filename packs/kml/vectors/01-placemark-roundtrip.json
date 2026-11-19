@@ -1,0 +1,20 @@
+{
+  "name": "placemark-roundtrip",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\"><Placemark id=\"p1\"><name>ALPHA</name><description>observation post</description><TimeStamp><when>2024-05-01T12:30:00Z</when></TimeStamp><styleUrl>#red</styleUrl><Point><extrude>1</extrude><altitudeMode>absolute</altitudeMode><coordinates>11.576124,48.137154,519.5</coordinates></Point></Placemark></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\"><Placemark id=\"p1\"><name>ALPHA</name><description>observation post</description><TimeStamp><when>2024-05-01T12:30:00Z</when></TimeStamp><styleUrl>#red</styleUrl><Point><extrude>1</extrude><altitudeMode>absolute</altitudeMode><coordinates>11.576124,48.137154,519.5</coordinates></Point></Placemark></kml>",
+  "model": {
+    "@kind": "placemark",
+    "callsign": "ALPHA",
+    "kml.placemark_id": "p1",
+    "kml.description": "observation post",
+    "kml.when": "2024-05-01T12:30:00Z",
+    "kml.style_url": "#red",
+    "kml.extrude": "1",
+    "kml.altitude_mode": "absolute",
+    "kml.coordinates": "11.576124,48.137154,519.5"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; a Placemark as the root's feature; elements in the order of AbstractFeatureGroup and Point; the root attribute xmlns:gx is residue; the coordinates are carried as their text"
+}

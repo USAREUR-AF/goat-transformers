@@ -1,0 +1,9 @@
+{
+  "name": "no-point-is-no-kind",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"x\"><metadata><name>EMPTY</name></metadata></gpx>",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; no wpt, rtept or trkpt: no kind holds"
+}

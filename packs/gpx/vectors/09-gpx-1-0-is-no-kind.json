@@ -1,0 +1,9 @@
+{
+  "name": "gpx-1-0-is-no-kind",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/0\" version=\"1.0\" creator=\"x\"><wpt lat=\"1\" lon=\"2\"/></gpx>",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; a GPX 1.0 document has another namespace and version; the common when lines do not hold"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "route-point-roundtrip",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"planner\"><rte><name>ROUTE NORTH</name><rtept lat=\"50.5\" lon=\"8.25\"><ele>100.0</ele><name>TURN 1</name></rtept></rte></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"planner\"><rte><name>ROUTE NORTH</name><rtept lat=\"50.5\" lon=\"8.25\"><ele>100</ele><name>TURN 1</name></rtept></rte></gpx>",
+  "model": {
+    "lat": "50.5",
+    "lon": "8.25",
+    "gpx.ele": "100",
+    "callsign": "TURN 1",
+    "@kind": "route-point",
+    "gpx.route_name": "ROUTE NORTH"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; a document with only a route: the first point of the route; rte/name before rtept as rteType orders them"
+}

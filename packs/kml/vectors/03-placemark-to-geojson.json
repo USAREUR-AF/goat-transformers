@@ -1,0 +1,13 @@
+{
+  "name": "placemark-to-geojson",
+  "from": "kml",
+  "to": "geojson",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Placemark><name>ALPHA</name><Point><coordinates>11.576124,48.137154</coordinates></Point></Placemark></kml>",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"ALPHA\"}}",
+  "model": {
+    "callsign": "ALPHA",
+    "kml.coordinates": "11.576124,48.137154"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; the coordinate tuple is one text value and no transform splits it, so lat and lon are absent and geometry is null (ruling 5 of 0.1.1)"
+}
