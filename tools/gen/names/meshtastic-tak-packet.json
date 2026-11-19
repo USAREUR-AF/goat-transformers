@@ -1,0 +1,19 @@
+{
+ "1": "takpacket_is_compressed",
+ "2.1": "contact_callsign",
+ "2.2": "contact_device_callsign",
+ "3.1": "group_role",
+ "3.2": "group_team",
+ "4.1": "status_battery",
+ "5.3": "pli_altitude",
+ "5.4": "pli_speed",
+ "5.5": "pli_course",
+ "6.1": "chat_message",
+ "6.2": "chat_to",
+ "6.3": "chat_to_callsign",
+ "6.4": "chat_receipt_for_uid",
+ "6.5": "chat_receipt_type",
+ "6.6": "chat_lang",
+ "6.7": "chat_room_id",
+ "6.8": "chat_voice_profile_id"
+}

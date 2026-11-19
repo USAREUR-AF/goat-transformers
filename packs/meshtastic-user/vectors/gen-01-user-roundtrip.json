@@ -1,0 +1,19 @@
+{
+  "name": "gen-user-roundtrip",
+  "from": "meshtastic-user",
+  "to": "meshtastic-user",
+  "input": "0a0469642d30120b6c6f6e675f6e616d652d311a0c73686f72745f6e616d652d322801300138014801",
+  "expect": "0a0469642d30120b6c6f6e675f6e616d652d311a0c73686f72745f6e616d652d322801300138014801",
+  "model": {
+    "@kind": "user",
+    "meshtasticuser.user_id": "id-0",
+    "uid": "id-0",
+    "meshtasticuser.user_long_name": "long_name-1",
+    "callsign": "long_name-1",
+    "meshtasticuser.user_short_name": "short_name-2",
+    "meshtasticuser.user_hw_model": "1",
+    "meshtasticuser.user_is_licensed": "1",
+    "meshtasticuser.user_role": "1",
+    "meshtasticuser.user_is_unmessagable": "1"
+  }
+}

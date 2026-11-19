@@ -1,0 +1,9 @@
+{
+ "1": "neighbor_info_node_id",
+ "2": "neighbor_info_last_sent_by_id",
+ "3": "neighbor_info_node_broadcast_interval_secs",
+ "4[]": "neighbor_info_neighbors",
+ "meshtastic.Neighbor:1": "neighbor_node_id",
+ "meshtastic.Neighbor:2": "neighbor_snr",
+ "meshtastic.Neighbor:4": "neighbor_node_broadcast_interval_secs"
+}

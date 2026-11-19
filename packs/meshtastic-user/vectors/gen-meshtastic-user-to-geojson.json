@@ -1,0 +1,12 @@
+{
+  "name": "gen-meshtastic-user-to-geojson",
+  "from": "meshtastic-user",
+  "to": "geojson",
+  "input": "0a0469642d30120b6c6f6e675f6e616d652d311a0c73686f72745f6e616d652d322801300138014801",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"long_name-1\"},\"id\":\"id-0\"}",
+  "model": {
+    "@kind": "user",
+    "uid": "id-0",
+    "callsign": "long_name-1"
+  }
+}

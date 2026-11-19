@@ -1,0 +1,19 @@
+{
+  "name": "gen-host_metrics-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "4226086410890118ae0120d30128f801309d0238c20240e7024a0d757365725f737472696e672d38",
+  "expect": "4226086410890118ae0120d30128f801309d0238c20240e7024a0d757365725f737472696e672d38",
+  "model": {
+    "@kind": "host_metrics",
+    "meshtastictelemetry.host_metrics_uptime_seconds": "100",
+    "meshtastictelemetry.host_metrics_freemem_bytes": "137",
+    "meshtastictelemetry.host_metrics_diskfree1_bytes": "174",
+    "meshtastictelemetry.host_metrics_diskfree2_bytes": "211",
+    "meshtastictelemetry.host_metrics_diskfree3_bytes": "248",
+    "meshtastictelemetry.host_metrics_load1": "285",
+    "meshtastictelemetry.host_metrics_load5": "322",
+    "meshtastictelemetry.host_metrics_load15": "359",
+    "meshtastictelemetry.host_metrics_user_string": "user_string-8"
+  }
+}

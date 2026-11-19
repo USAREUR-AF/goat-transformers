@@ -1,0 +1,6 @@
+{
+ "2[]": "route_discovery_snr_towards",
+ "4[]": "route_discovery_snr_back",
+ "meshtastic.RouteDiscovery:2[]item": "route_discovery_snr_towards_item",
+ "meshtastic.RouteDiscovery:4[]item": "route_discovery_snr_back_item"
+}

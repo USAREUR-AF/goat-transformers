@@ -1,0 +1,10 @@
+{
+  "name": "01-error-reason-roundtrip",
+  "from": "meshtastic-routing",
+  "to": "meshtastic-routing",
+  "input": "1808",
+  "expect": "1808",
+  "model": {
+    "meshtasticrouting.routing_error_reason": "8"
+  }
+}

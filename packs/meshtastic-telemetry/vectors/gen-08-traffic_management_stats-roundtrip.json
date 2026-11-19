@@ -1,0 +1,17 @@
+{
+  "name": "gen-traffic_management_stats-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "4a14086410890118ae0120d30128f801309d0238c202",
+  "expect": "4a14086410890118ae0120d30128f801309d0238c202",
+  "model": {
+    "@kind": "traffic_management_stats",
+    "meshtastictelemetry.traffic_management_stats_packets_inspected": "100",
+    "meshtastictelemetry.traffic_management_stats_position_dedup_drops": "137",
+    "meshtastictelemetry.traffic_management_stats_nodeinfo_cache_hits": "174",
+    "meshtastictelemetry.traffic_management_stats_rate_limit_drops": "211",
+    "meshtastictelemetry.traffic_management_stats_unknown_packet_drops": "248",
+    "meshtastictelemetry.traffic_management_stats_hop_exhausted_packets": "285",
+    "meshtastictelemetry.traffic_management_stats_router_hops_preserved": "322"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-export_trace_service_response-roundtrip",
+  "from": "otlp-export-trace-response",
+  "to": "otlp-export-trace-response",
+  "input": "0a130864120f6572726f725f6d6573736167652d31",
+  "expect": "0a130864120f6572726f725f6d6573736167652d31",
+  "model": {
+    "@kind": "export_trace_service_response",
+    "otlpexporttraceresponse.partial_success_rejected_spans": "100",
+    "otlpexporttraceresponse.partial_success_error_message": "error_message-1"
+  }
+}

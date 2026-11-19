@@ -1,0 +1,15 @@
+{
+  "name": "gen-device_metrics-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "12140864150000403f1d0000b03f250000004028f801",
+  "expect": "12140864150000403f1d0000b03f250000004028f801",
+  "model": {
+    "@kind": "device_metrics",
+    "meshtastictelemetry.device_metrics_battery_level": "100",
+    "meshtastictelemetry.device_metrics_voltage": "0.75",
+    "meshtastictelemetry.device_metrics_channel_utilization": "1.375",
+    "meshtastictelemetry.device_metrics_air_util_tx": "2",
+    "meshtastictelemetry.device_metrics_uptime_seconds": "248"
+  }
+}

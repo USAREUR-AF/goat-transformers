@@ -1,0 +1,28 @@
+{
+  "name": "gen-geometry-roundtrip",
+  "from": "geobuf",
+  "to": "geobuf",
+  "input": "0a066b6579732d330a066b6579732d3410641889013237080112049d02c2021a024b556a100a0e737472696e675f76616c75652d396a110a0f737472696e675f76616c75652d31357a04ed069207",
+  "expect": "0a066b6579732d330a066b6579732d3410641889013237080112049d02c2021a024b556a100a0e737472696e675f76616c75652d396a110a0f737472696e675f76616c75652d31357a04ed069207",
+  "model": {
+    "@kind": "geometry",
+    "geobuf.dimensions": "100",
+    "geobuf.precision": "137",
+    "geobuf.geometry_type": "1",
+    "geobuf.keys.#": "2",
+    "geobuf.keys[0].geobuf.data_keys_item": "keys-3",
+    "geobuf.keys[1].geobuf.data_keys_item": "keys-4",
+    "geobuf.geometry_lengths.#": "2",
+    "geobuf.geometry_lengths[0].geobuf.geometry_lengths_item": "285",
+    "geobuf.geometry_lengths[1].geobuf.geometry_lengths_item": "322",
+    "geobuf.geometry_coords.#": "2",
+    "geobuf.geometry_coords[0].geobuf.geometry_coords_item": "-38",
+    "geobuf.geometry_coords[1].geobuf.geometry_coords_item": "-43",
+    "geobuf.geometry_values.#": "2",
+    "geobuf.geometry_values[0].geobuf.value_string_value": "string_value-9",
+    "geobuf.geometry_values[1].geobuf.value_string_value": "string_value-15",
+    "geobuf.geometry_custom_properties.#": "2",
+    "geobuf.geometry_custom_properties[0].geobuf.geometry_custom_properties_item": "877",
+    "geobuf.geometry_custom_properties[1].geobuf.geometry_custom_properties_item": "914"
+  }
+}

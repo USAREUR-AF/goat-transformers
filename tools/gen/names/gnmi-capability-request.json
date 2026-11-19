@@ -1,0 +1,19 @@
+{
+ "1[]": "capability_request_extension",
+ "gnmi_ext.Extension:1.1": "extension_registered_ext_id",
+ "gnmi_ext.Extension:2.1.1": "extension_master_arbitration_role_id",
+ "gnmi_ext.Extension:2.2.1": "extension_master_arbitration_election_id_high",
+ "gnmi_ext.Extension:2.2.2": "extension_master_arbitration_election_id_low",
+ "gnmi_ext.Extension:3.1": "extension_history_snapshot_time",
+ "gnmi_ext.Extension:3.2.1": "extension_history_range_start",
+ "gnmi_ext.Extension:3.2.2": "extension_history_range_end",
+ "gnmi_ext.Extension:4.1": "extension_commit_id",
+ "gnmi_ext.Extension:4.2.1.1": "extension_commit_commit_rollback_duration_seconds",
+ "gnmi_ext.Extension:4.2.1.2": "extension_commit_commit_rollback_duration_nanos",
+ "gnmi_ext.Extension:4.5.1.1": "extension_commit_set_rollback_duration_rollback_duration_seconds",
+ "gnmi_ext.Extension:4.5.1.2": "extension_commit_set_rollback_duration_rollback_duration_nanos",
+ "gnmi_ext.Extension:5.1": "extension_depth_level",
+ "gnmi_ext.Extension:6.2.1": "extension_config_subscription_sync_done_commit_confirm_id",
+ "gnmi_ext.Extension:6.2.2": "extension_config_subscription_sync_done_server_commit_id",
+ "gnmi_ext.Extension:6.2.3": "extension_config_subscription_sync_done_done"
+}

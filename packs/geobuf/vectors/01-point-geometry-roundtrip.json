@@ -1,0 +1,13 @@
+{
+  "name": "01-point-geometry-roundtrip",
+  "from": "geobuf",
+  "to": "geobuf",
+  "input": "0a046e616d6510021806320c08001a08b0d8e00cc0d88832",
+  "expect": "0a046e616d6510021806320c08001a08b0d8e00cc0d88832",
+  "model": {
+    "@kind": "geometry",
+    "geobuf.precision": "6",
+    "geobuf.geometry_coords.#": "2",
+    "geobuf.geometry_coords[1].geobuf.geometry_coords_item": "52500000"
+  }
+}

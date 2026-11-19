@@ -1,0 +1,19 @@
+{
+  "name": "gen-waypoint-roundtrip",
+  "from": "meshtastic-waypoint",
+  "to": "meshtastic-waypoint",
+  "input": "086420890128ae0132066e616d652d333a0d6465736372697074696f6e2d34489d02580160016801",
+  "expect": "086420890128ae0132066e616d652d333a0d6465736372697074696f6e2d34489d02580160016801",
+  "model": {
+    "@kind": "waypoint",
+    "meshtasticwaypoint.waypoint_id": "100",
+    "meshtasticwaypoint.waypoint_expire": "137",
+    "meshtasticwaypoint.waypoint_locked_to": "174",
+    "meshtasticwaypoint.waypoint_name": "name-3",
+    "meshtasticwaypoint.waypoint_description": "description-4",
+    "meshtasticwaypoint.waypoint_geofence_radius": "285",
+    "meshtasticwaypoint.waypoint_notify_on_enter": "1",
+    "meshtasticwaypoint.waypoint_notify_on_exit": "1",
+    "meshtasticwaypoint.waypoint_notify_favorites_only": "1"
+  }
+}

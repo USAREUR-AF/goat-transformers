@@ -1,0 +1,7 @@
+{
+  "name": "02-to-geojson-no-geometry",
+  "from": "meshtastic-user",
+  "to": "geojson",
+  "input": "0a092161316232633364341209426173652043616d701a0242432206010203040506282b",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"Base Camp\"},\"id\":\"!a1b2c3d4\"}"
+}

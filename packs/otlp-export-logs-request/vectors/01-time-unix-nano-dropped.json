@@ -1,0 +1,10 @@
+{
+  "name": "01-time-unix-nano-dropped",
+  "from": "otlp-export-logs-request",
+  "to": "otlp-export-logs-request",
+  "input": "0a221220121e0900002a36fe9c971710092a110a0f736572766963652073746172746564",
+  "expect": "0a191217121510092a110a0f736572766963652073746172746564",
+  "model": {
+    "otlpexportlogsrequest.export_logs_service_request_resource_logs.#": "1"
+  }
+}

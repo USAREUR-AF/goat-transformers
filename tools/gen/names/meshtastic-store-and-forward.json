@@ -1,0 +1,18 @@
+{
+ "1": "store_and_forward_rr",
+ "2.1": "stats_messages_total",
+ "2.2": "stats_messages_saved",
+ "2.3": "stats_messages_max",
+ "2.4": "stats_up_time",
+ "2.5": "stats_requests",
+ "2.6": "stats_requests_history",
+ "2.7": "stats_heartbeat",
+ "2.8": "stats_return_max",
+ "2.9": "stats_return_window",
+ "3.1": "history_history_messages",
+ "3.2": "history_window",
+ "3.3": "history_last_request",
+ "4.1": "heartbeat_period",
+ "4.2": "heartbeat_secondary",
+ "6": "store_and_forward_original_id"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gen-routing-roundtrip-oneof1",
+  "from": "meshtastic-routing",
+  "to": "meshtastic-routing",
+  "input": "120c12048901ae012204d301f801",
+  "expect": "120c12048901ae012204d301f801",
+  "model": {
+    "@kind": "routing",
+    "meshtasticrouting.route_reply_snr_towards.#": "2",
+    "meshtasticrouting.route_reply_snr_towards[0].meshtasticrouting.route_discovery_snr_towards_item": "137",
+    "meshtasticrouting.route_reply_snr_towards[1].meshtasticrouting.route_discovery_snr_towards_item": "174",
+    "meshtasticrouting.route_reply_snr_back.#": "2",
+    "meshtasticrouting.route_reply_snr_back[0].meshtasticrouting.route_discovery_snr_back_item": "211",
+    "meshtasticrouting.route_reply_snr_back[1].meshtasticrouting.route_discovery_snr_back_item": "248"
+  }
+}

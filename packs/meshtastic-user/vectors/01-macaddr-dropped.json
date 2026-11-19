@@ -1,0 +1,12 @@
+{
+  "name": "01-macaddr-dropped",
+  "from": "meshtastic-user",
+  "to": "meshtastic-user",
+  "input": "0a092161316232633364341209426173652043616d701a0242432206010203040506282b",
+  "expect": "0a092161316232633364341209426173652043616d701a024243282b",
+  "model": {
+    "uid": "!a1b2c3d4",
+    "callsign": "Base Camp",
+    "meshtasticuser.user_short_name": "BC"
+  }
+}

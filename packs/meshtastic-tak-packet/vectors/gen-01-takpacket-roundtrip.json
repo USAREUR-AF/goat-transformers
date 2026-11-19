@@ -1,0 +1,19 @@
+{
+  "name": "gen-takpacket-roundtrip",
+  "from": "meshtastic-tak-packet",
+  "to": "meshtastic-tak-packet",
+  "input": "0801121f0a0a63616c6c7369676e2d3112116465766963655f63616c6c7369676e2d321a04080110012203089d022a0918c20220e702288c03",
+  "expect": "0801121f0a0a63616c6c7369676e2d3112116465766963655f63616c6c7369676e2d321a04080110012203089d022a0918c20220e702288c03",
+  "model": {
+    "@kind": "takpacket",
+    "meshtastictakpacket.takpacket_is_compressed": "1",
+    "meshtastictakpacket.contact_callsign": "callsign-1",
+    "meshtastictakpacket.contact_device_callsign": "device_callsign-2",
+    "meshtastictakpacket.group_role": "1",
+    "meshtastictakpacket.group_team": "1",
+    "meshtastictakpacket.status_battery": "285",
+    "meshtastictakpacket.pli_altitude": "322",
+    "meshtastictakpacket.pli_speed": "359",
+    "meshtastictakpacket.pli_course": "396"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gen-local_stats-roundtrip",
+  "from": "meshtastic-telemetry",
+  "to": "meshtastic-telemetry",
+  "input": "32300864150000403f1d0000b03f20d30128f801309d0238c20240e702488c0350b10358d60360fb0368a00470c50478ea04",
+  "expect": "32300864150000403f1d0000b03f20d30128f801309d0238c20240e702488c0350b10358d60360fb0368a00470c50478ea04",
+  "model": {
+    "@kind": "local_stats",
+    "meshtastictelemetry.local_stats_uptime_seconds": "100",
+    "meshtastictelemetry.local_stats_channel_utilization": "0.75",
+    "meshtastictelemetry.local_stats_air_util_tx": "1.375",
+    "meshtastictelemetry.local_stats_num_packets_tx": "211",
+    "meshtastictelemetry.local_stats_num_packets_rx": "248",
+    "meshtastictelemetry.local_stats_num_packets_rx_bad": "285",
+    "meshtastictelemetry.local_stats_num_online_nodes": "322",
+    "meshtastictelemetry.local_stats_num_total_nodes": "359",
+    "meshtastictelemetry.local_stats_num_rx_dupe": "396",
+    "meshtastictelemetry.local_stats_num_tx_relay": "433",
+    "meshtastictelemetry.local_stats_num_tx_relay_canceled": "470",
+    "meshtastictelemetry.local_stats_heap_total_bytes": "507",
+    "meshtastictelemetry.local_stats_heap_free_bytes": "544",
+    "meshtastictelemetry.local_stats_num_tx_dropped": "581",
+    "meshtastictelemetry.local_stats_noise_floor": "618"
+  }
+}
