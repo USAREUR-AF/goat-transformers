@@ -1,0 +1,31 @@
+{
+  "name": "gen-set_request-roundtrip-oneof8",
+  "from": "kuksa-val-v1-set-request",
+  "to": "kuksa-val-v1-set-request",
+  "input": "0a93010a8d010a06706174682d3012160a0608890110ae01aa010b0a0976616c7565732d33331a160a0608fb0310a004aa010b0a0976616c7565732d33345253580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a0116aa01131a11616c6c6f7765645f76616c7565732d33351201010a94010a8e010a07706174682d333712160a0608e20b10870caa010b0a0976616c7565732d37301a160a0608d40e10f90eaa010b0a0976616c7565732d37315253580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a0116aa01131a11616c6c6f7765645f76616c7565732d3732120101",
+  "expect": "0a93010a8d010a06706174682d3012160a0608890110ae01aa010b0a0976616c7565732d33331a160a0608fb0310a004aa010b0a0976616c7565732d33345253580160016a0e6465736372697074696f6e2d3233720a636f6d6d656e742d32347a0e6465707265636174696f6e2d3235820107756e69742d32368a0116aa01131a11616c6c6f7765645f76616c7565732d33351201010a94010a8e010a07706174682d333712160a0608e20b10870caa010b0a0976616c7565732d37301a160a0608d40e10f90eaa010b0a0976616c7565732d37315253580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a0116aa01131a11616c6c6f7765645f76616c7565732d3732120101",
+  "model": {
+    "@kind": "set_request",
+    "kuksavalv1setrequest.set_request_updates.#": "2",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_path": "path-0",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_value_timestamp_seconds": "137",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_value_string_array_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_value_string_array_values[0].kuksavalv1setrequest.string_array_values_item": "values-33",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_actuator_target_string_array_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_actuator_target_string_array_values[0].kuksavalv1setrequest.string_array_values_item": "values-34",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1setrequest.value_restriction_string_allowed_values_item": "allowed_values-35",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_fields.#": "1",
+    "kuksavalv1setrequest.set_request_updates[0].kuksavalv1setrequest.entry_update_fields[0].kuksavalv1setrequest.entry_update_fields_item": "1",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_path": "path-37",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_value_timestamp_seconds": "1506",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_value_string_array_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_value_string_array_values[0].kuksavalv1setrequest.string_array_values_item": "values-70",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_actuator_target_string_array_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_actuator_target_string_array_values[0].kuksavalv1setrequest.string_array_values_item": "values-71",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1setrequest.value_restriction_string_allowed_values_item": "allowed_values-72",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_fields.#": "1",
+    "kuksavalv1setrequest.set_request_updates[1].kuksavalv1setrequest.entry_update_fields[0].kuksavalv1setrequest.entry_update_fields_item": "1"
+  }
+}

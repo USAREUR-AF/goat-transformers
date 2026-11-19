@@ -1,0 +1,12 @@
+{
+  "name": "01-one-alert-roundtrip",
+  "from": "tesla-fleet-alerts",
+  "to": "tesla-fleet-alerts",
+  "input": "0a1c0a0f436861726765506f72744661756c741201011a060880e2cfaa0612060881e2cfaa061a115445535456494e30303030303030303031",
+  "expect": "0a1c0a0f436861726765506f72744661756c741201011a060880e2cfaa0612060881e2cfaa061a115445535456494e30303030303030303031",
+  "model": {
+    "teslafleetalerts.vehicle_alerts_vin": "TESTVIN0000000001",
+    "teslafleetalerts.vehicle_alerts_alerts.#": "1",
+    "teslafleetalerts.vehicle_alerts_alerts[0].teslafleetalerts.vehicle_alert_name": "ChargePortFault"
+  }
+}

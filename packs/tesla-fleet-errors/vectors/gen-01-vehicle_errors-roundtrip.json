@@ -1,0 +1,18 @@
+{
+  "name": "gen-vehicle_errors-roundtrip",
+  "from": "tesla-fleet-errors",
+  "to": "tesla-fleet-errors",
+  "input": "0a180a0608d30110f80112066e616d652d352206626f64792d360a190a0608e702108c0312066e616d652d392207626f64792d3130120508641089011a0576696e2d32",
+  "expect": "0a180a0608d30110f80112066e616d652d352206626f64792d360a190a0608e702108c0312066e616d652d392207626f64792d3130120508641089011a0576696e2d32",
+  "model": {
+    "@kind": "vehicle_errors",
+    "teslafleeterrors.created_at_seconds": "100",
+    "teslafleeterrors.created_at_nanos": "137",
+    "teslafleeterrors.vehicle_errors_vin": "vin-2",
+    "teslafleeterrors.vehicle_errors_errors.#": "2",
+    "teslafleeterrors.vehicle_errors_errors[0].teslafleeterrors.vehicle_error_created_at_seconds": "211",
+    "teslafleeterrors.vehicle_errors_errors[0].teslafleeterrors.vehicle_error_created_at_nanos": "248",
+    "teslafleeterrors.vehicle_errors_errors[1].teslafleeterrors.vehicle_error_created_at_seconds": "359",
+    "teslafleeterrors.vehicle_errors_errors[1].teslafleeterrors.vehicle_error_created_at_nanos": "396"
+  }
+}

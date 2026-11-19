@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-apollo-ins",
+  "from": "geojson",
+  "to": "apollo-ins",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[21.25,23,24.75]},\"properties\":{}}",
+  "expect": "221b090000000000403540110000000000003740190000000000c03840",
+  "model": {
+    "lat": "23",
+    "lon": "21.25",
+    "hae": "24.75"
+  }
+}

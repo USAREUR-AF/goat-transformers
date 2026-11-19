@@ -1,0 +1,22 @@
+{
+  "name": "gen-vehicle_alerts-roundtrip",
+  "from": "tesla-fleet-alerts",
+  "to": "tesla-fleet-alerts",
+  "input": "0a1b0a066e616d652d331201011a0608f801109d02220608c20210e7020a1b0a066e616d652d391201011a0608d60310fb03220608a00410c504120508641089011a0576696e2d32",
+  "expect": "0a1b0a066e616d652d331201011a0608f801109d02220608c20210e7020a1b0a066e616d652d391201011a0608d60310fb03220608a00410c504120508641089011a0576696e2d32",
+  "model": {
+    "@kind": "vehicle_alerts",
+    "teslafleetalerts.created_at_seconds": "100",
+    "teslafleetalerts.created_at_nanos": "137",
+    "teslafleetalerts.vehicle_alerts_vin": "vin-2",
+    "teslafleetalerts.vehicle_alerts_alerts.#": "2",
+    "teslafleetalerts.vehicle_alerts_alerts[0].teslafleetalerts.vehicle_alert_name": "name-3",
+    "teslafleetalerts.vehicle_alerts_alerts[0].teslafleetalerts.vehicle_alert_started_at_seconds": "248",
+    "teslafleetalerts.vehicle_alerts_alerts[0].teslafleetalerts.vehicle_alert_audiences.#": "1",
+    "teslafleetalerts.vehicle_alerts_alerts[0].teslafleetalerts.vehicle_alert_audiences[0].teslafleetalerts.vehicle_alert_audiences_item": "1",
+    "teslafleetalerts.vehicle_alerts_alerts[1].teslafleetalerts.vehicle_alert_name": "name-9",
+    "teslafleetalerts.vehicle_alerts_alerts[1].teslafleetalerts.vehicle_alert_started_at_seconds": "470",
+    "teslafleetalerts.vehicle_alerts_alerts[1].teslafleetalerts.vehicle_alert_audiences.#": "1",
+    "teslafleetalerts.vehicle_alerts_alerts[1].teslafleetalerts.vehicle_alert_audiences[0].teslafleetalerts.vehicle_alert_audiences_item": "1"
+  }
+}

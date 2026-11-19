@@ -1,0 +1,12 @@
+{
+  "name": "gen-actuate_request-roundtrip",
+  "from": "kuksa-val-v2-actuate-request",
+  "to": "kuksa-val-v2-actuate-request",
+  "input": "0a020864120a5a08737472696e672d32",
+  "expect": "0a020864120a5a08737472696e672d32",
+  "model": {
+    "@kind": "actuate_request",
+    "kuksavalv2actuaterequest.signal_id_id": "100",
+    "kuksavalv2actuaterequest.value_string": "string-2"
+  }
+}

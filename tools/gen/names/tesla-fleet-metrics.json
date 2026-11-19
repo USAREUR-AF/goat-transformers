@@ -1,0 +1,8 @@
+{
+ "1[]": "vehicle_metrics_metrics",
+ "2.1": "created_at_seconds",
+ "2.2": "created_at_nanos",
+ "3": "vehicle_metrics_vin",
+ "telemetry.vehicle_metrics.Metric:1": "metric_name",
+ "telemetry.vehicle_metrics.Metric:3": "metric_value"
+}

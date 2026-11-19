@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-apollo-gnss-best-pose",
+  "from": "geojson",
+  "to": "apollo-gnss-best-pose",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[24.75,23]},\"properties\":{}}",
+  "expect": "290000000000003740310000000000c03840483d",
+  "model": {
+    "lat": "23",
+    "lon": "24.75"
+  }
+}

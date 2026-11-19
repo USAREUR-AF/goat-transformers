@@ -1,0 +1,27 @@
+{
+  "name": "gen-get_response-roundtrip",
+  "from": "kuksa-val-v1-get-response",
+  "to": "kuksa-val-v1-get-response",
+  "input": "0a86010a06706174682d3312120a0608f801109d025a08737472696e672d361a130a0608ea04108f055a09737472696e672d31365253580160016a0e6465736372697074696f6e2d3236720a636f6d6d656e742d32377a0e6465707265636174696f6e2d3238820107756e69742d32398a0116aa01131a11616c6c6f7765645f76616c7565732d33360a88010a07706174682d333712130a0608e20b10870c5a09737472696e672d34301a130a0608d40e10f90e5a09737472696e672d35305253580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a0116aa01131a11616c6c6f7765645f76616c7565732d373012250a07706174682d3731121a08cc151209726561736f6e2d37331a0a6d6573736167652d373412250a07706174682d3735121a08e0161209726561736f6e2d37371a0a6d6573736167652d37381a1708641208726561736f6e2d311a096d6573736167652d32",
+  "expect": "0a86010a06706174682d3312120a0608f801109d025a08737472696e672d361a130a0608ea04108f055a09737472696e672d31365253580160016a0e6465736372697074696f6e2d3236720a636f6d6d656e742d32377a0e6465707265636174696f6e2d3238820107756e69742d32398a0116aa01131a11616c6c6f7765645f76616c7565732d33360a88010a07706174682d333712130a0608e20b10870c5a09737472696e672d34301a130a0608d40e10f90e5a09737472696e672d35305253580160016a0e6465736372697074696f6e2d3630720a636f6d6d656e742d36317a0e6465707265636174696f6e2d3632820107756e69742d36338a0116aa01131a11616c6c6f7765645f76616c7565732d373012250a07706174682d3731121a08cc151209726561736f6e2d37331a0a6d6573736167652d373412250a07706174682d3735121a08e0161209726561736f6e2d37371a0a6d6573736167652d37381a1708641208726561736f6e2d311a096d6573736167652d32",
+  "model": {
+    "@kind": "get_response",
+    "kuksavalv1getresponse.error_code": "100",
+    "kuksavalv1getresponse.error_reason": "reason-1",
+    "kuksavalv1getresponse.error_message": "message-2",
+    "kuksavalv1getresponse.get_response_entries.#": "2",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_path": "path-3",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_value_timestamp_seconds": "248",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1getresponse.get_response_entries[0].kuksavalv1getresponse.data_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1getresponse.value_restriction_string_allowed_values_item": "allowed_values-36",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_path": "path-37",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_value_timestamp_seconds": "1506",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_metadata_value_restriction_string_allowed_values.#": "1",
+    "kuksavalv1getresponse.get_response_entries[1].kuksavalv1getresponse.data_entry_metadata_value_restriction_string_allowed_values[0].kuksavalv1getresponse.value_restriction_string_allowed_values_item": "allowed_values-70",
+    "kuksavalv1getresponse.get_response_errors.#": "2",
+    "kuksavalv1getresponse.get_response_errors[0].kuksavalv1getresponse.data_entry_error_path": "path-71",
+    "kuksavalv1getresponse.get_response_errors[0].kuksavalv1getresponse.data_entry_error_error_code": "2764",
+    "kuksavalv1getresponse.get_response_errors[1].kuksavalv1getresponse.data_entry_error_path": "path-75",
+    "kuksavalv1getresponse.get_response_errors[1].kuksavalv1getresponse.data_entry_error_error_code": "2912"
+  }
+}

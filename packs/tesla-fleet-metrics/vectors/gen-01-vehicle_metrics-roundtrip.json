@@ -1,0 +1,18 @@
+{
+  "name": "gen-vehicle_metrics-roundtrip",
+  "from": "tesla-fleet-metrics",
+  "to": "tesla-fleet-metrics",
+  "input": "0a110a066e616d652d33190000000000001d400a110a066e616d652d35190000000000802540120508641089011a0576696e2d32",
+  "expect": "0a110a066e616d652d33190000000000001d400a110a066e616d652d35190000000000802540120508641089011a0576696e2d32",
+  "model": {
+    "@kind": "vehicle_metrics",
+    "teslafleetmetrics.created_at_seconds": "100",
+    "teslafleetmetrics.created_at_nanos": "137",
+    "teslafleetmetrics.vehicle_metrics_vin": "vin-2",
+    "teslafleetmetrics.vehicle_metrics_metrics.#": "2",
+    "teslafleetmetrics.vehicle_metrics_metrics[0].teslafleetmetrics.metric_name": "name-3",
+    "teslafleetmetrics.vehicle_metrics_metrics[0].teslafleetmetrics.metric_value": "7.25",
+    "teslafleetmetrics.vehicle_metrics_metrics[1].teslafleetmetrics.metric_name": "name-5",
+    "teslafleetmetrics.vehicle_metrics_metrics[1].teslafleetmetrics.metric_value": "10.75"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "01-double-value-roundtrip",
+  "from": "kuksa-val-v2-get-value-response",
+  "to": "kuksa-val-v2-get-value-response",
+  "input": "0a160a080880e2cfaa061005120a91010000000000002940",
+  "expect": "0a160a080880e2cfaa061005120a91010000000000002940",
+  "model": {
+    "kuksavalv2getvalueresponse.data_point_value_double": "12.5",
+    "kuksavalv2getvalueresponse.data_point_timestamp_seconds": "1700000000"
+  }
+}

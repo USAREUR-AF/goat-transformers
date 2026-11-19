@@ -586,6 +586,13 @@ message Note {
         at = s.messages["Note"].fields[0]
         self.assertEqual([(f.name, f.type) for f in at.ref.fields], [("seconds", "int64"), ("nanos", "int32")])
 
+    def test_the_well_known_any_needs_no_file_and_its_value_is_not_mapped(self):
+        s = self.schema('syntax = "proto3";\nimport "google/protobuf/any.proto";\n'
+                        'message Note { google.protobuf.Any custom = 1; }\n')
+        custom = s.messages["Note"].fields[0]
+        self.assertEqual(custom.ref.full, "google.protobuf.Any")
+        self.assertEqual([(f.name, f.type) for f in custom.ref.fields], [("type_url", "string"), ("value", "bytes")])
+
     def test_an_import_is_resolved_among_the_given_files_by_file_name(self):
         a = self.write("dir/a.proto", 'syntax = "proto3";\npackage p;\nimport "some/where/b.proto";\nmessage A { B b = 1; }\n')
         b = self.write("b.proto", 'syntax = "proto3";\npackage p;\nmessage B { string x = 1; }\n')

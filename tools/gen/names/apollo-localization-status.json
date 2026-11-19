@@ -1,0 +1,17 @@
+{
+ "1.1": "header_timestamp_sec",
+ "1.2": "header_module_name",
+ "1.3": "header_sequence_num",
+ "1.4": "header_lidar_timestamp",
+ "1.5": "header_camera_timestamp",
+ "1.6": "header_radar_timestamp",
+ "1.7": "header_version",
+ "1.8.1": "header_status_error_code",
+ "1.8.2": "header_status_msg",
+ "1.9": "header_frame_id",
+ "2": "localization_status_fusion_status",
+ "3": "localization_status_gnss_status",
+ "4": "localization_status_lidar_status",
+ "5": "localization_status_measurement_time",
+ "6": "localization_status_state_message"
+}

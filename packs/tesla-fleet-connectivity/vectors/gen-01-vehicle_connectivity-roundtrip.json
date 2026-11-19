@@ -1,0 +1,16 @@
+{
+  "name": "gen-vehicle_connectivity-roundtrip",
+  "from": "tesla-fleet-connectivity",
+  "to": "tesla-fleet-connectivity",
+  "input": "0a0576696e2d30120f636f6e6e656374696f6e5f69642d311801220608d30110f8012a136e6574776f726b5f696e746572666163652d35",
+  "expect": "0a0576696e2d30120f636f6e6e656374696f6e5f69642d311801220608d30110f8012a136e6574776f726b5f696e746572666163652d35",
+  "model": {
+    "@kind": "vehicle_connectivity",
+    "teslafleetconnectivity.vehicle_connectivity_vin": "vin-0",
+    "teslafleetconnectivity.vehicle_connectivity_connection_id": "connection_id-1",
+    "teslafleetconnectivity.vehicle_connectivity_status": "1",
+    "teslafleetconnectivity.created_at_seconds": "211",
+    "teslafleetconnectivity.created_at_nanos": "248",
+    "teslafleetconnectivity.vehicle_connectivity_network_interface": "network_interface-5"
+  }
+}

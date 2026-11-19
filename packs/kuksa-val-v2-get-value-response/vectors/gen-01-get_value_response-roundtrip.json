@@ -1,0 +1,13 @@
+{
+  "name": "gen-get_value_response-roundtrip",
+  "from": "kuksa-val-v2-get-value-response",
+  "to": "kuksa-val-v2-get-value-response",
+  "input": "0a130a050864108901120a5a08737472696e672d32",
+  "expect": "0a130a050864108901120a5a08737472696e672d32",
+  "model": {
+    "@kind": "get_value_response",
+    "kuksavalv2getvalueresponse.data_point_timestamp_seconds": "100",
+    "kuksavalv2getvalueresponse.data_point_timestamp_nanos": "137",
+    "kuksavalv2getvalueresponse.data_point_value_string": "string-2"
+  }
+}

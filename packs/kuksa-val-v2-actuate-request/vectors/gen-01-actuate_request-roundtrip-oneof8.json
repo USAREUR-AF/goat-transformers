@@ -1,0 +1,14 @@
+{
+  "name": "gen-actuate_request-roundtrip-oneof8",
+  "from": "kuksa-val-v2-actuate-request",
+  "to": "kuksa-val-v2-actuate-request",
+  "input": "0a0208641219aa01160a0976616c7565732d31300a0976616c7565732d3131",
+  "expect": "0a0208641219aa01160a0976616c7565732d31300a0976616c7565732d3131",
+  "model": {
+    "@kind": "actuate_request",
+    "kuksavalv2actuaterequest.signal_id_id": "100",
+    "kuksavalv2actuaterequest.value_string_array_values.#": "2",
+    "kuksavalv2actuaterequest.value_string_array_values[0].kuksavalv2actuaterequest.string_array_values_item": "values-10",
+    "kuksavalv2actuaterequest.value_string_array_values[1].kuksavalv2actuaterequest.string_array_values_item": "values-11"
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "1[]": "vehicle_alerts_alerts",
+ "2.1": "created_at_seconds",
+ "2.2": "created_at_nanos",
+ "3": "vehicle_alerts_vin",
+ "telemetry.vehicle_alerts.VehicleAlert:1": "vehicle_alert_name",
+ "telemetry.vehicle_alerts.VehicleAlert:2[]": "vehicle_alert_audiences",
+ "telemetry.vehicle_alerts.VehicleAlert:2[]item": "vehicle_alert_audiences_item",
+ "telemetry.vehicle_alerts.VehicleAlert:3.1": "vehicle_alert_started_at_seconds",
+ "telemetry.vehicle_alerts.VehicleAlert:3.2": "vehicle_alert_started_at_nanos",
+ "telemetry.vehicle_alerts.VehicleAlert:4.1": "vehicle_alert_ended_at_seconds",
+ "telemetry.vehicle_alerts.VehicleAlert:4.2": "vehicle_alert_ended_at_nanos"
+}

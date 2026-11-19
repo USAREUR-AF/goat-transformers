@@ -1,0 +1,15 @@
+{
+  "name": "gen-get_value_response-roundtrip-oneof8",
+  "from": "kuksa-val-v2-get-value-response",
+  "to": "kuksa-val-v2-get-value-response",
+  "input": "0a220a0508641089011219aa01160a0976616c7565732d31300a0976616c7565732d3131",
+  "expect": "0a220a0508641089011219aa01160a0976616c7565732d31300a0976616c7565732d3131",
+  "model": {
+    "@kind": "get_value_response",
+    "kuksavalv2getvalueresponse.data_point_timestamp_seconds": "100",
+    "kuksavalv2getvalueresponse.data_point_timestamp_nanos": "137",
+    "kuksavalv2getvalueresponse.data_point_string_array_values.#": "2",
+    "kuksavalv2getvalueresponse.data_point_string_array_values[0].kuksavalv2getvalueresponse.string_array_values_item": "values-10",
+    "kuksavalv2getvalueresponse.data_point_string_array_values[1].kuksavalv2getvalueresponse.string_array_values_item": "values-11"
+  }
+}
