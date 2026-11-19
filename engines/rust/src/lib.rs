@@ -648,6 +648,8 @@ pub enum DeriveFn {
     Not,
     ParseInt,
     TextOf,
+    /// 1 when its one argument is held by the entity, whatever its value (engine-spec 0.12)
+    Present,
 }
 
 /// One `derive` line: the target key follows from the argument keys.
@@ -697,6 +699,7 @@ impl DeriveFn {
             "not" => DeriveFn::Not,
             "parse_int" => DeriveFn::ParseInt,
             "text_of" => DeriveFn::TextOf,
+            "present" => DeriveFn::Present,
             _ => return None,
         })
     }
@@ -717,6 +720,8 @@ impl DeriveFn {
             DeriveFn::Not => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Int,
             DeriveFn::ParseInt => args.len() == 1 && args[0] == KeyType::Str && target == KeyType::Int,
             DeriveFn::TextOf => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Str,
+            // any scalar argument
+            DeriveFn::Present => args.len() == 1 && target == KeyType::Int,
         }
     }
 
@@ -746,6 +751,7 @@ impl DeriveFn {
                 _ => return None,
             },
             DeriveFn::TextOf => return Some(Value::Str(a[0].as_display())),
+            DeriveFn::Present => return Some(Value::I64(1)),
             DeriveFn::Offset(_, Some(n)) if matches!(a[0], Value::I64(_)) => match a[0] {
                 Value::I64(k) => return k.checked_add(*n).map(Value::I64),
                 _ => return None,
@@ -896,6 +902,10 @@ impl Module {
                     }
                     let func = DeriveFn::parse(&toks[2])
                         .ok_or(Error { msg: format!("bad-directive: line {}: unknown derive function `{}`", ln, toks[2]) })?;
+                    // the count of `present` is a line error (ruling 3 of 0.12)
+                    if func == DeriveFn::Present && toks.len() != 4 {
+                        return bad(ln, "derive present takes exactly one argument key");
+                    }
                     derives.push(DeriveDef { target: toks[1].clone(), func, args: toks[3..].to_vec(), line: ln });
                 }
                 other => return err(format!("unknown-directive: line {}: `{}` in a model module", ln, other)),
