@@ -91,8 +91,16 @@ decode with `malformed-wire`, and encode never sets them.
 | 27 | I062/500 Estimated Accuracies |
 | 28 | I062/340 Measured Information |
 | 29 to 33 | spare |
-| 34 | RE, Reserved Expansion Field |
-| 35 | SP, Reserved For Special Purpose Indicator |
+
+## Items read and not carried
+
+FRN 34 (RE, Reserved Expansion Field) and FRN 35 (SP, Special Purpose Field)
+are each a length octet that counts itself, then content whose layout the
+specification leaves to the user. A record that carries either
+item decodes: the length is read and the content is skipped. The content is
+not mapped, so encode never sets either bit, and a same-format round trip
+drops the item. Vectors 15 to 18 pin this, including an SP length that runs
+past the block (`malformed-wire`).
 
 A data block that holds more than one record: the first record is read and
 the rest of the block is not.
