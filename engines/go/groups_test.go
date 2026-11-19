@@ -151,16 +151,16 @@ func TestGroupsConvertAcrossWires(t *testing.T) {
 		from, to, in string
 		kind         ErrorKind
 	}{
-		{"gj", "gj", `{"items":{}}`, ErrMalformedWire},             // the member is not an array
-		{"gj", "gj", `{"items":[{"n":"x"}]}`, ErrTransformDecode},  // an item field fails
-		{"gj", "gj", `{"nums":[1,{}]}`, ErrTransformDecode},        // `.` on an object
-		{"gp", "gp", "1a020180", ErrMalformedWire},                 // packed varints cut short
-		{"gp", "gp", "1005", ErrMalformedWire},                     // an item that is not a submessage
-		{"gb", "gb", "0101", ErrMalformedWire},                     // input ends inside the items
-		{"gb", "gb", "01010201", ErrMalformedWire},                 // input ends inside the nested items
-		{"gj", "gb", `{"items":[{"n":1,"subs":[{"v":300}]}]}`, ""}, // uint keeps the low bits
-		{"gj", "gb", `{"nums":[1]}`, ""},                           // a list the target does not map
-		{"gj", "gb", bigItems(256), ErrTransformEncode},            // the count does not fit
+		{"gj", "gj", `{"items":{}}`, ErrMalformedWire},                             // the member is not an array
+		{"gj", "gj", `{"items":[{"n":"x"}]}`, ErrTransformDecode},                  // an item field fails
+		{"gj", "gj", `{"nums":[1,{}]}`, ErrTransformDecode},                        // `.` on an object
+		{"gp", "gp", "1a020180", ErrMalformedWire},                                 // packed varints cut short
+		{"gp", "gp", "1005", ErrMalformedWire},                                     // an item that is not a submessage
+		{"gb", "gb", "0101", ErrMalformedWire},                                     // input ends inside the items
+		{"gb", "gb", "01010201", ErrMalformedWire},                                 // input ends inside the nested items
+		{"gj", "gb", `{"items":[{"n":1,"subs":[{"v":300}]}]}`, ErrTransformEncode}, // a value that does not fit (ruling 4b of 0.11)
+		{"gj", "gb", `{"nums":[1]}`, ""},                                           // a list the target does not map
+		{"gj", "gb", bigItems(256), ErrTransformEncode},                            // the count does not fit
 	}
 	for _, c := range errs {
 		_, err := eng.Convert(c.from, c.to, []byte(c.in))

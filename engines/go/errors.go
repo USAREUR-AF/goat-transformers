@@ -21,6 +21,13 @@ const (
 	ErrUnknownFormat    ErrorKind = "unknown-format"
 	ErrDuplicateFormat  ErrorKind = "duplicate-format"
 
+	// Version 0.11 (ruling 5): load failures that had no kind.
+	ErrUnterminatedQuote ErrorKind = "unterminated-quote"
+	ErrMissingFormat     ErrorKind = "missing-format"
+	ErrMissingVersion    ErrorKind = "missing-version"
+	ErrMissingWire       ErrorKind = "missing-wire"
+	ErrMissingModule     ErrorKind = "missing-module"
+
 	// Load checks of spec/engine-spec.md "Version 0.4: model modules and
 	// distribution". The message of these begins with the kind and a colon.
 	ErrMissingDistribution   ErrorKind = "missing-distribution"

@@ -218,6 +218,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 			if count > 0 && (pos > bits || count > uint64(bits-pos)) {
 				return 0, bad(fmt.Sprintf("holds no %d item(s) from bit %d", count, pos))
 			}
+			if err := d.room(g.List, count); err != nil {
+				return 0, err
+			}
 			items := []*Item{}
 			for i := uint64(0); i < count; i++ {
 				if pos+g.itemBits > bits {

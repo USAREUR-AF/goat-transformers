@@ -42,6 +42,9 @@ const (
 // maxBitsLen is the longest bits field: an `ascii` field of 255 bytes.
 const maxBitsLen = 2040
 
+// maxFieldNumber is the largest protobuf field number, 2^29 - 1.
+const maxFieldNumber = 536870911
+
 type locator struct {
 	raw    string
 	kind   locKind
@@ -376,7 +379,7 @@ func checkFieldOptions(wire string, f *Field) error {
 
 // isIntText reports whether s is a decimal integer that fits 64 bits.
 func isIntText(s string) bool {
-	_, err := strconv.ParseInt(s, 10, 64)
+	_, err := parseIntText(s)
 	return err == nil
 }
 
@@ -400,6 +403,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	var open []*Group // the group blocks not yet closed, outermost first
 	kindNames := map[string]int{}
 	seen := map[string]int{}
+	firstNeedsWire := 0 // the first line that must follow the wire line
+	// late holds the first failure a line shows that is not a line check;
+	// it is reported after the file (ruling 5b of 0.11).
+	var late error
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
@@ -433,9 +440,12 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	n := 0
 	for sc.Scan() {
 		n++
+		// The line checks of ruling 5b of 0.11, in order: the quote, the
+		// directive, the number of arguments, the wire line before the lines
+		// that need it; the others as each directive is read below.
 		toks, err := tokenize(sc.Text())
 		if err != nil {
-			return nil, perr(ErrBadDirective, n, "", "%v", err)
+			return nil, perr(ErrUnterminatedQuote, n, "", "%v", err)
 		}
 		if len(toks) == 0 {
 			continue
@@ -450,6 +460,17 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		}
 		if w >= 0 && len(args) != w {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
+		}
+		if needsWire[kw] {
+			if _, has := seen["wire"]; !has {
+				return nil, perr(ErrMissingWire, n, "", "%s stands before the wire line", kw)
+			}
+			if kw == "layout" && args[0] == "sequential" && firstNeedsWire != 0 {
+				return nil, perr(ErrBadDirective, n, "", "layout sequential stands after line %d, which it must precede", firstNeedsWire)
+			}
+			if firstNeedsWire == 0 {
+				firstNeedsWire = n
+			}
 		}
 		if p.seq {
 			if seqStructural[kw] {
@@ -497,13 +518,19 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					return nil, perr(ErrBadDirective, n, g.Locator, "group: unknown or repeated word %q (item <bits>, count <count-locator | n>)", args[i])
 				}
 			}
+			if err := p.checkGroupLocator(g.Locator, g.parent != nil); err != nil {
+				return nil, perr(ErrBadLocator, n, g.Locator, "%v", err)
+			}
 			p.Groups = append(p.Groups, g)
 			p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
 			addLine(line{g: g})
 			open = append(open, g)
 		case "end":
 			if len(open) == 0 {
-				return nil, perr(ErrBadDirective, n, "", "end with no open group")
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "end with no open group")
+				}
+				continue
 			}
 			open = open[:len(open)-1]
 		case "root":
@@ -545,7 +572,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					return nil, perr(ErrBadDirective, n, "", "layout must be fixed or sequential, got %q", args[0])
 				}
 			case "word_bytes":
-				wb, err := strconv.Atoi(args[0])
+				wb, err := parseSmallUint(args[0])
 				if err != nil || wb <= 0 {
 					return nil, perr(ErrBadDirective, n, "", "word_bytes must be a positive integer, got %q", args[0])
 				}
@@ -569,8 +596,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 			p.Uses = append(p.Uses, args[0])
 		case "kind":
-			if prev, dup := kindNames[args[0]]; dup {
-				return nil, perr(ErrDuplicateKind, n, "", "kind %q already declared on line %d", args[0], prev)
+			if prev, dup := kindNames[args[0]]; dup && late == nil {
+				late = perr(ErrDuplicateKind, n, "", "kind %q already declared on line %d", args[0], prev)
 			}
 			kindNames[args[0]] = n
 			cur = &KindDef{Name: args[0], Line: n}
@@ -585,14 +612,17 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 		case "field":
 			f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n, group: inner()}
-			if err := parseFieldOptions(f, args[3:]); err != nil {
-				return nil, perr(ErrBadDirective, n, f.Locator, "%v", err)
+			if kind, err := p.checkFieldLine(f, args[3:], f.group != nil); err != nil {
+				return nil, perr(kind, n, f.Locator, "%v", err)
 			}
 			p.Fields = append(p.Fields, f)
 			p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
 			addLine(line{f: f})
 		case "when", "const":
 			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner()}
+			if kind, err := p.checkWhenLine(w.Locator, w.group != nil); err != nil {
+				return nil, perr(kind, n, w.Locator, "%v", err)
+			}
 			whens = append(whens, w)
 			if !w.Const && firstWhen == nil {
 				firstWhen = w
@@ -630,6 +660,24 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	if err := sc.Err(); err != nil {
 		return nil, perr(ErrBadDirective, n, "", "%v", err)
+	}
+	// After the file: missing-format, missing-version, missing-wire, then the
+	// checks that need the whole file, then the order of 0.4 from
+	// missing-distribution on (ruling 5b of 0.11).
+	if p.Format == "" {
+		return nil, perr(ErrMissingFormat, 0, "", "pack has no format line")
+	}
+	if p.Version == "" {
+		return nil, perr(ErrMissingVersion, 0, "", "pack has no version line")
+	}
+	if p.Wire == "" {
+		return nil, perr(ErrMissingWire, 0, "", "pack has no wire line")
+	}
+	if late == nil {
+		late = sp.late
+	}
+	if late != nil {
+		return nil, late
 	}
 	if g := inner(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "group %s has no end", g.List)
@@ -677,16 +725,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// `root` on a wire other than xml). A failure of another kind found on the
 	// way (a bad locator, an unknown transform) is reported in its 0.4 place,
 	// after the missing-distribution and missing-source checks.
-	var deferred error
-	note := func(err error) error {
-		if e, ok := err.(*Error); ok && e.Kind != ErrBadDirective {
-			if deferred == nil {
-				deferred = err
-			}
-			return nil
-		}
-		return err
-	}
+	// Every failure after the file is reported as it is found: the line
+	// checks have refused the unknown transforms and the locator forms
+	// (ruling 5b of 0.11).
+	note := func(err error) error { return err }
 	// The text directives on another wire, and their relations to one
 	// another (0.10 rulings 2 and 10).
 	if ln, err := p.checkTextDirectives(); err != nil {
@@ -861,12 +903,6 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if len(p.Sources) == 0 {
 		return nil, perr(ErrMissingSource, 0, "", "pack has no source line")
 	}
-	if p.Format == "" {
-		return nil, perr(ErrBadDirective, 0, "", "missing format directive")
-	}
-	if p.Wire == "" {
-		return nil, perr(ErrBadDirective, 0, "", "missing wire directive")
-	}
 	if p.Wire == WireXML {
 		// A pack whose every kind has a root needs no pack-level root.
 		if p.Root == "" && !p.HasKinds() {
@@ -888,9 +924,6 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	if p.Wire != WireBits && p.WordBytes != 0 {
 		return nil, perr(ErrBadDirective, seen["word_bytes"], "", "word_bytes is valid only on wire bits")
-	}
-	if deferred != nil {
-		return nil, deferred
 	}
 	if len(tms) > 0 && !hasType {
 		return nil, perr(ErrBadDirective, tms[0].line, "", "typemap needs a field bound to model key type")
@@ -1130,14 +1163,14 @@ func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 		if len(parts) != 2 {
 			return ErrBadLocator, fmt.Errorf("a bits group locator is word:pos, got %q", g.Locator)
 		}
-		word, e1 := strconv.Atoi(parts[0])
-		pos, e2 := strconv.Atoi(parts[1])
-		if e1 != nil || e2 != nil || word < 0 || pos < 0 {
+		word, e1 := parseSmallUint(parts[0])
+		pos, e2 := parseSmallUint(parts[1])
+		if e1 != nil || e2 != nil {
 			return ErrBadLocator, fmt.Errorf("a bits group locator is two non-negative integers word:pos, got %q", g.Locator)
 		}
 		g.start = word*p.WordBytes*8 + pos
 		g.loc = locator{raw: g.Locator, kind: locBits, word: word, pos: pos, bit: g.start}
-		bits, err := strconv.Atoi(g.itemText)
+		bits, err := parseSmallUint(g.itemText)
 		if err != nil || bits < 1 {
 			return ErrBadDirective, fmt.Errorf("group: `item` takes a number of bits >= 1, got %q", g.itemText)
 		}
@@ -1153,7 +1186,7 @@ func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 			loc.bit = loc.word*p.WordBytes*8 + loc.pos
 			g.countLoc = &loc
 		} else {
-			n, err := strconv.Atoi(g.countText)
+			n, err := parseSmallUint(g.countText)
 			if err != nil || n < 0 {
 				return ErrBadDirective, fmt.Errorf("group: `count` takes a count locator word:pos:len or a number >= 0, got %q", g.countText)
 			}
@@ -1337,7 +1370,7 @@ func resolveWhen(wire string, w *When) error {
 		if w.loc.blen > 64 {
 			return fmt.Errorf("a when covers at most 64 bits, got %d", w.loc.blen)
 		}
-		v, err := strconv.ParseUint(w.Value, 10, 64)
+		v, err := parseUintText(w.Value, 1<<64-1)
 		if err != nil {
 			return fmt.Errorf("a bits when value is an unsigned decimal integer, got %q", w.Value)
 		}
@@ -1350,7 +1383,7 @@ func resolveWhen(wire string, w *When) error {
 			w.present = true
 			return nil
 		}
-		v, err := strconv.ParseUint(w.Value, 10, 64)
+		v, err := parseUintText(w.Value, 1<<64-1)
 		if err != nil {
 			return fmt.Errorf("a protobuf when value is `present` or an unsigned decimal integer, got %q", w.Value)
 		}
@@ -1480,26 +1513,25 @@ func parseLocator(wire, s string, residue bool) (locator, error) {
 		if len(parts) != 3 {
 			return l, fmt.Errorf("bits locator must be word:pos:len")
 		}
-		word, e1 := strconv.Atoi(parts[0])
-		pos, e2 := strconv.Atoi(parts[1])
-		ln, e3 := strconv.Atoi(parts[2])
+		// Three unsigned decimal integers (ruling 5a of 0.11). A length
+		// above what a transform allows is refused after the file.
+		word, e1 := parseSmallUint(parts[0])
+		pos, e2 := parseSmallUint(parts[1])
+		ln, e3 := parseSmallUint(parts[2])
 		if e1 != nil || e2 != nil || e3 != nil {
-			return l, fmt.Errorf("bits locator fields must be integers (word:pos:len)")
+			return l, fmt.Errorf("bits locator fields must be unsigned decimal integers (word:pos:len), got %q", s)
 		}
-		if word < 0 || pos < 0 {
-			return l, fmt.Errorf("bits word and pos must be non-negative")
-		}
-		if ln < 1 || ln > maxBitsLen {
-			return l, fmt.Errorf("bits len must be 1..%d, got %d", maxBitsLen, ln)
+		if ln < 1 {
+			return l, fmt.Errorf("bits len must be 1 or more, got %d", ln)
 		}
 		l.kind, l.word, l.pos, l.blen = locBits, word, pos, ln
 	case WireProtobuf:
 		parts := strings.Split(s, ".")
 		nums := make([]int, 0, len(parts))
 		for _, part := range parts {
-			fn, err := strconv.Atoi(part)
-			if err != nil || fn < 1 {
-				return l, fmt.Errorf("protobuf locator must be dot-separated field numbers >= 1, got %q", s)
+			fn, err := parseSmallUint(part)
+			if err != nil || fn < 1 || fn > maxFieldNumber {
+				return l, fmt.Errorf("protobuf locator must be dot-separated field numbers from 1 to %d, got %q", maxFieldNumber, s)
 			}
 			nums = append(nums, fn)
 		}

@@ -5,7 +5,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"time"
 	"unicode/utf8"
 )
 
@@ -45,25 +44,8 @@ func encString(v Value) (string, error) {
 	return "", fmt.Errorf("no value")
 }
 
-func parseFloat(s string) (float64, error) {
-	t := strings.TrimSpace(s)
-	if t == "" {
-		return 0, fmt.Errorf("empty number")
-	}
-	for _, c := range t {
-		if !(c >= '0' && c <= '9') && c != '+' && c != '-' && c != '.' && c != 'e' && c != 'E' {
-			return 0, fmt.Errorf("not a decimal number: %q", s)
-		}
-	}
-	f, err := strconv.ParseFloat(t, 64)
-	if err != nil {
-		return 0, fmt.Errorf("not a decimal number: %q", s)
-	}
-	if math.IsInf(f, 0) || math.IsNaN(f) {
-		return 0, fmt.Errorf("number out of range: %q", s)
-	}
-	return f, nil
-}
+// parseFloat reads number text by ruling 2b of 0.11: nothing is trimmed.
+func parseFloat(s string) (float64, error) { return parseNumberText(s) }
 
 // formatFloat writes the shortest decimal that round-trips, with no exponent;
 // an integer-valued float has no decimal point (30.0 -> "30").
@@ -101,17 +83,9 @@ func encFloat(v Value) (string, error) {
 	return "", fmt.Errorf("no value")
 }
 
-func parseInt(s string) (int64, error) {
-	t := strings.TrimSpace(s)
-	if i, err := strconv.ParseInt(t, 10, 64); err == nil {
-		return i, nil
-	}
-	f, err := parseFloat(t)
-	if err != nil {
-		return 0, fmt.Errorf("not a decimal integer: %q", s)
-	}
-	return floatToInt(f)
-}
+// parseInt reads integer text by ruling 2a of 0.11: nothing is trimmed, and
+// a fraction or an exponent is refused.
+func parseInt(s string) (int64, error) { return parseIntText(s) }
 
 func floatToInt(f float64) (int64, error) {
 	if f != math.Trunc(f) || f < -9.223372036854775e18 || f > 9.223372036854775e18 {
@@ -148,32 +122,149 @@ func encInt(v Value) (string, error) {
 	return "", fmt.Errorf("no value")
 }
 
-const isoOut = "2006-01-02T15:04:05.000Z"
+// minISOms and maxISOms are the instants 0001-01-01T00:00:00.000Z and
+// 9999-12-31T23:59:59.999Z (ruling 3 of 0.11).
+const (
+	minISOms = -62135596800000
+	maxISOms = 253402300799999
+)
 
-// parseISO reads an ISO 8601 instant to epoch milliseconds. The designator
-// is `Z`, `z` or an offset `+hh:mm` / `-hh:mm`, and the `T` may be lowercase
-// (spec 0.6, replacing 0.1.1 ruling 8); the instant is converted to UTC.
-// Fraction digits beyond milliseconds are truncated.
+// daysFromCivil is the number of days from 1970-01-01 to a date of the
+// proleptic Gregorian calendar.
+func daysFromCivil(y, m, d int64) int64 {
+	if m <= 2 {
+		y--
+	}
+	era := y / 400
+	if y < 0 && y%400 != 0 {
+		era--
+	}
+	yoe := y - era*400
+	mp := (m + 9) % 12
+	doy := (153*mp+2)/5 + d - 1
+	doe := yoe*365 + yoe/4 - yoe/100 + doy
+	return era*146097 + doe - 719468
+}
+
+// civilFromDays is the inverse of daysFromCivil.
+func civilFromDays(z int64) (y, m, d int64) {
+	z += 719468
+	era := z / 146097
+	if z < 0 && z%146097 != 0 {
+		era--
+	}
+	doe := z - era*146097
+	yoe := (doe - doe/1460 + doe/36524 - doe/146096) / 365
+	y = yoe + era*400
+	doy := doe - (365*yoe + yoe/4 - yoe/100)
+	mp := (5*doy + 2) / 153
+	d = doy - (153*mp+2)/5 + 1
+	m = mp + 3
+	if m > 12 {
+		m -= 12
+	}
+	if m <= 2 {
+		y++
+	}
+	return y, m, d
+}
+
+// parseISO reads an instant by the grammar of ruling 3 of 0.11:
+// YYYY-MM-DD, `T` or `t`, hh:mm:ss, optionally `.` and one or more digits,
+// then `Z`, `z` or `+hh:mm` / `-hh:mm`; every field of exactly its digits,
+// nothing before or after. The first three fraction digits are the
+// milliseconds; the others are dropped.
 func parseISO(s string) (int64, error) {
-	t := strings.TrimSpace(s)
-	bad := func() (int64, error) {
-		return 0, fmt.Errorf("not ISO 8601 (YYYY-MM-DDTHH:MM:SS[.fff] then Z or +hh:mm / -hh:mm): %q", s)
+	bad := func(why string) (int64, error) {
+		return 0, fmt.Errorf("not an instant YYYY-MM-DDThh:mm:ss[.f…] then Z or +hh:mm / -hh:mm (%s): %q", why, s)
 	}
-	// YYYY-MM-DDTHH:MM:SS is 19 bytes; the designator follows the fraction.
-	if len(t) < 20 || (t[10] != 'T' && t[10] != 't') {
-		return bad()
+	num := func(at, n int) (int64, bool) {
+		if at+n > len(s) {
+			return 0, false
+		}
+		var v int64
+		for i := at; i < at+n; i++ {
+			c := s[i]
+			if c < '0' || c > '9' {
+				return 0, false
+			}
+			v = v*10 + int64(c-'0')
+		}
+		return v, true
 	}
-	b := []byte(t)
-	b[10] = 'T'
-	if b[len(b)-1] == 'z' {
-		b[len(b)-1] = 'Z'
+	lit := func(at int, cs ...byte) bool {
+		if at >= len(s) {
+			return false
+		}
+		for _, c := range cs {
+			if s[at] == c {
+				return true
+			}
+		}
+		return false
 	}
-	// The layout accepts exactly Z or a signed hh:mm offset.
-	tm, err := time.Parse("2006-01-02T15:04:05.999999999Z07:00", string(b))
-	if err != nil {
-		return bad()
+	y, ok1 := num(0, 4)
+	mo, ok2 := num(5, 2)
+	d, ok3 := num(8, 2)
+	h, ok4 := num(11, 2)
+	mi, ok5 := num(14, 2)
+	sec, ok6 := num(17, 2)
+	if !ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6 || !lit(4, '-') || !lit(7, '-') || !lit(10, 'T', 't') || !lit(13, ':') || !lit(16, ':') {
+		return bad("form")
 	}
-	return tm.UnixMilli(), nil
+	i := 19
+	var ms int64
+	if lit(i, '.') {
+		i++
+		j := i
+		for i < len(s) && s[i] >= '0' && s[i] <= '9' {
+			i++
+		}
+		if i == j {
+			return bad("a `.` with no digit")
+		}
+		frac := s[j:i] + "00"
+		ms = int64(frac[0]-'0')*100 + int64(frac[1]-'0')*10 + int64(frac[2]-'0')
+	}
+	var off int64
+	switch {
+	case i == len(s)-1 && (s[i] == 'Z' || s[i] == 'z'):
+	case i == len(s)-6 && (s[i] == '+' || s[i] == '-'):
+		oh, ok1 := num(i+1, 2)
+		om, ok2 := num(i+4, 2)
+		if !ok1 || !ok2 || !lit(i+3, ':') || oh > 23 || om > 59 {
+			return bad("offset")
+		}
+		off = oh*60 + om
+		if s[i] == '-' {
+			off = -off
+		}
+	default:
+		return bad("designator")
+	}
+	if y < 1 || mo < 1 || mo > 12 || d < 1 || d > int64(daysIn(int(y), int(mo))) || h > 23 || mi > 59 || sec > 59 {
+		return bad("range")
+	}
+	v := (daysFromCivil(y, mo, d)*86400+h*3600+mi*60+sec-off*60)*1000 + ms
+	if v < minISOms || v > maxISOms {
+		return bad("the instant lies outside years 0001 to 9999")
+	}
+	return v, nil
+}
+
+// formatISO writes YYYY-MM-DDTHH:MM:SS.fffZ (ruling 3f of 0.11).
+func formatISO(ms int64) (string, error) {
+	if ms < minISOms || ms > maxISOms {
+		return "", fmt.Errorf("%d ms lies outside years 0001 to 9999", ms)
+	}
+	days := ms / 86400000
+	rem := ms % 86400000
+	if rem < 0 {
+		rem += 86400000
+		days--
+	}
+	y, m, d := civilFromDays(days)
+	return fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", y, m, d, rem/3600000, rem/60000%60, rem/1000%60, rem%1000), nil
 }
 
 func decISO(s string) (Value, error) {
@@ -196,7 +287,7 @@ func encISO(v Value) (string, error) {
 		}
 		ms = i
 	case KindString:
-		if i, err := strconv.ParseInt(strings.TrimSpace(v.S), 10, 64); err == nil {
+		if i, err := parseIntText(v.S); err == nil {
 			ms = i
 		} else {
 			i, err := parseISO(v.S)
@@ -208,7 +299,7 @@ func encISO(v Value) (string, error) {
 	default:
 		return "", fmt.Errorf("no value")
 	}
-	return time.UnixMilli(ms).UTC().Format(isoOut), nil
+	return formatISO(ms)
 }
 
 // --- bits wire transforms (spec/engine-spec.md, "Version 0.2: the bits wire") ---
@@ -275,8 +366,23 @@ var bitsUint = &bitsTransform{
 		if err != nil {
 			return 0, err
 		}
+		// Below 64 bits the value must lie from 0 to 2^len - 1; at 64 every
+		// model integer is written as its two's-complement pattern (ruling
+		// 4b of 0.11).
+		if length < 64 && (i < 0 || uint64(i)>>uint(length) != 0) {
+			return 0, fmt.Errorf("value %d does not fit an unsigned %d-bit field", i, length)
+		}
 		return maskBits(uint64(i), length), nil
 	},
+}
+
+// fitsSigned reports whether i lies from -2^(len-1) to 2^(len-1) - 1.
+func fitsSigned(i int64, length int) bool {
+	if length >= 64 {
+		return true
+	}
+	half := int64(1) << uint(length-1)
+	return i >= -half && i < half
 }
 
 var bitsTwos = &bitsTransform{
@@ -289,8 +395,33 @@ var bitsTwos = &bitsTransform{
 		if err != nil {
 			return 0, err
 		}
+		if !fitsSigned(i, length) {
+			return 0, fmt.Errorf("value %d does not fit a signed %d-bit field", i, length)
+		}
 		return maskBits(uint64(i), length), nil
 	},
+}
+
+// roundedFits checks a quotient q of a scaled transform against the range
+// of its field (rulings 4a and 4b of 0.11): q must be finite; round(q), half
+// away from zero and exact, must lie within the range, compared before it
+// is narrowed. It returns the bits to write.
+func roundedFits(x, q float64, length int, signed bool) (uint64, error) {
+	if math.IsNaN(q) || math.IsInf(q, 0) {
+		return 0, fmt.Errorf("value %v does not scale to a finite number", x)
+	}
+	r := math.Round(q)
+	if signed {
+		half := math.Ldexp(1, length-1)
+		if r < -half || r >= half {
+			return 0, fmt.Errorf("value %v scales to %v, outside a signed %d-bit field", x, r, length)
+		}
+		return maskBits(uint64(int64(r)), length), nil
+	}
+	if r < 0 || r >= math.Ldexp(1, length) {
+		return 0, fmt.Errorf("value %v scales to %v, outside an unsigned %d-bit field", x, r, length)
+	}
+	return uint64(r), nil
 }
 
 // newLinscale builds a linscale:<maxpos>:<range> transform: decode is the signed
@@ -301,11 +432,13 @@ func newLinscale(spec string) (*bitsTransform, error) {
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("linscale needs <maxpos>:<range>, got %q", spec)
 	}
-	maxpos, err := strconv.ParseInt(parts[0], 10, 64)
-	if err != nil || maxpos <= 0 {
-		return nil, fmt.Errorf("linscale maxpos must be a positive integer, got %q", parts[0])
+	// <maxpos> is an unsigned decimal integer of 1 or more; <range> is number
+	// text that does not read as zero (ruling 4d of 0.11).
+	maxpos, err := parseUintText(parts[0], math.MaxUint64)
+	if err != nil || maxpos == 0 {
+		return nil, fmt.Errorf("linscale maxpos must be an unsigned decimal integer of 1 or more, got %q", parts[0])
 	}
-	rng, err := parseFloat(parts[1])
+	rng, err := parseNumberText(parts[1])
 	if err != nil || rng == 0 {
 		return nil, fmt.Errorf("linscale range must be a non-zero number, got %q", parts[1])
 	}
@@ -320,8 +453,7 @@ func newLinscale(spec string) (*bitsTransform, error) {
 			if err != nil {
 				return 0, err
 			}
-			n := int64(math.Round(x / rng * float64(maxpos)))
-			return maskBits(uint64(n), length), nil
+			return roundedFits(x, x/rng*float64(maxpos), length, true)
 		},
 	}, nil
 }
@@ -342,22 +474,25 @@ func parseScale(spec string) (*scale, error) {
 		return nil, fmt.Errorf("%s needs <factor>[:<offset>], got %q", parts[0], spec)
 	}
 	sc := &scale{}
+	// The factor is number text that does not read as zero, or <num>/<den>
+	// of two unsigned decimal integers, neither zero; the offset is number
+	// text (ruling 4d of 0.11).
 	if i := strings.IndexByte(parts[1], '/'); i >= 0 {
-		num, e1 := strconv.ParseInt(parts[1][:i], 10, 64)
-		den, e2 := strconv.ParseInt(parts[1][i+1:], 10, 64)
+		num, e1 := parseUintText(parts[1][:i], math.MaxUint64)
+		den, e2 := parseUintText(parts[1][i+1:], math.MaxUint64)
 		if e1 != nil || e2 != nil || num == 0 || den == 0 {
 			return nil, fmt.Errorf("%s fraction must be <num>/<den> of two non-zero decimal integers, got %q", parts[0], parts[1])
 		}
 		sc.frac, sc.num, sc.den = true, float64(num), float64(den)
 	} else {
-		f, err := parseFloat(parts[1])
+		f, err := parseNumberText(parts[1])
 		if err != nil || f == 0 {
 			return nil, fmt.Errorf("%s factor must be a non-zero decimal number, got %q", parts[0], parts[1])
 		}
 		sc.factor = f
 	}
 	if len(parts) == 3 {
-		o, err := parseFloat(parts[2])
+		o, err := parseNumberText(parts[2])
 		if err != nil {
 			return nil, fmt.Errorf("%s offset must be a decimal number, got %q", parts[0], parts[2])
 		}
@@ -374,13 +509,13 @@ func (sc *scale) up(v float64) float64 {
 	return v*sc.factor + sc.offset
 }
 
-// down is the encode direction: (x - offset) / factor (or * den / num),
-// rounded half away from zero.
+// down is the encode direction, before rounding: (x - offset) / factor (or
+// * den / num).
 func (sc *scale) down(x float64) float64 {
 	if sc.frac {
-		return math.Round((x - sc.offset) * sc.den / sc.num)
+		return (x - sc.offset) * sc.den / sc.num
 	}
-	return math.Round((x - sc.offset) / sc.factor)
+	return (x - sc.offset) / sc.factor
 }
 
 // newScale builds uscale (signed=false) or sscale (signed=true).
@@ -402,21 +537,7 @@ func newScale(spec string, signed bool) (*bitsTransform, error) {
 			if err != nil {
 				return 0, err
 			}
-			r := sc.down(x)
-			if math.IsNaN(r) || math.IsInf(r, 0) {
-				return 0, fmt.Errorf("value %v does not scale to a number", x)
-			}
-			if signed {
-				half := math.Ldexp(1, length-1)
-				if r < -half || r >= half {
-					return 0, fmt.Errorf("value %v scales to %v, outside a signed %d-bit field", x, r, length)
-				}
-				return maskBits(uint64(int64(r)), length), nil
-			}
-			if r < 0 || r >= math.Ldexp(1, length) {
-				return 0, fmt.Errorf("value %v scales to %v, outside an unsigned %d-bit field", x, r, length)
-			}
-			return maskBits(uint64(r), length), nil
+			return roundedFits(x, sc.down(x), length, signed)
 		},
 	}, nil
 }
@@ -528,9 +649,9 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			}
 			f.btf = bt
 		case isTextTransformName(name):
-			return ErrUnknownTransform, fmt.Errorf("transform %q is valid only on a text wire, not bits", name)
+			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a text wire, not bits", name)
 		case isPBTransformName(name):
-			return ErrUnknownTransform, fmt.Errorf("transform %q is valid only on a protobuf wire, not bits", name)
+			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a protobuf wire, not bits", name)
 		default:
 			return ErrUnknownTransform, fmt.Errorf("unknown transform %q (bits: uint, twos, linscale, uscale, sscale, f32, f64, ascii)", name)
 		}
@@ -552,7 +673,7 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			return "", nil
 		}
 		if isTextTransformName(name) || isBitsTransformName(name) {
-			return ErrUnknownTransform, fmt.Errorf("transform %q is not a protobuf transform (protobuf: %s)", name, strings.Join(ProtoTransformNames(), ", "))
+			return ErrBadDirective, fmt.Errorf("transform %q is not a protobuf transform (protobuf: %s)", name, strings.Join(ProtoTransformNames(), ", "))
 		}
 		return ErrUnknownTransform, fmt.Errorf("unknown transform %q (protobuf: %s)", name, strings.Join(ProtoTransformNames(), ", "))
 	default:
@@ -565,13 +686,13 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 				f.jbool = true
 				return "", nil
 			}
-			return ErrUnknownTransform, fmt.Errorf("transform %q is valid only on a json wire", name)
+			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a json wire", name)
 		}
 		if isBitsTransformName(name) {
-			return ErrUnknownTransform, fmt.Errorf("transform %q is valid only on a bits wire", name)
+			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a bits wire", name)
 		}
 		if isPBTransformName(name) {
-			return ErrUnknownTransform, fmt.Errorf("transform %q is valid only on a protobuf wire", name)
+			return ErrBadDirective, fmt.Errorf("transform %q is valid only on a protobuf wire", name)
 		}
 		return ErrUnknownTransform, fmt.Errorf("unknown transform %q (implemented: %s)", name, strings.Join(TransformNames(), ", "))
 	}

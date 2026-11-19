@@ -53,6 +53,11 @@ message lacks; `Engine.Decode` and `Engine.Encode` work with an `*Entity`;
 `Engine.LoadFS(fsys, packs)` loads from an `fs.FS` such as an `embed.FS`, so a
 program can carry its packs and read no file; `IsKind(err, kind)` tests a named
 error. `goatxf.DistPublic` refuses every module and pack marked `controlled`.
+`Engine.SetMaxItems(n)` sets the limit on list items one decode holds
+(default 100000; going over it is `malformed-wire`), and
+`Engine.Capability(from, to)` gives the capability report of a pair of
+formats: its grade and the carried and dropped keys (spec 0.11, rulings 6
+and 7).
 
 ## Command-line tool
 
@@ -73,6 +78,7 @@ cd engines/go && go build -o goat-xf ./cmd/goat-xf
 | `--packs-only A,B` | load only the named packs of `--packs` and the modules they need |
 | `--max-distribution public\|controlled` | refuse modules and packs above this marking (default `controlled`) |
 | `--set KEY=VALUE` | `convert` only, repeatable: a model key the message does not carry |
+| `--max-items N` | `convert` only: the limit on list items one decode holds (default 100000) |
 
 The exit status is 0 on success, 1 for a load or conversion error (printed on
 stderr with its named kind) and 2 for a usage error. Run from `engines/go`,

@@ -3,7 +3,6 @@ package goatxf
 import (
 	"encoding/hex"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -208,6 +207,14 @@ type seqParser struct {
 	perr   func(kind ErrorKind, line int, loc, format string, a ...any) error
 	stack  []*seqFrame
 	bodies []*seqBody
+	late   error // the first failure checked after the file (ruling 5b of 0.11)
+}
+
+// lateErr records a failure that is reported after the file.
+func (sp *seqParser) lateErr(err error) {
+	if sp.late == nil {
+		sp.late = err
+	}
 }
 
 func (sp *seqParser) init() {
@@ -249,7 +256,7 @@ func (sp *seqParser) bitLen(kw, text string, max, line int) (int, error) {
 	if strings.Contains(text, ":") {
 		return 0, sp.bad(line, text, "%s: a locator in a sequential pack is a bit length, not <word>:<pos>:<len>", kw)
 	}
-	n, err := strconv.Atoi(text)
+	n, err := parseSmallUint(text)
 	if err != nil || n < 1 || n > max {
 		return 0, sp.bad(line, text, "%s takes a bit length of 1 to %d, got %q", kw, max, text)
 	}
@@ -258,7 +265,7 @@ func (sp *seqParser) bitLen(kw, text string, max, line int) (int, error) {
 
 // value reads the unsigned value of a `const` or `when` of n bits.
 func (sp *seqParser) value(kw, text string, n, line int) (uint64, error) {
-	v, err := strconv.ParseUint(text, 10, 64)
+	v, err := parseUintText(text, 1<<64-1)
 	if err != nil {
 		return 0, sp.bad(line, "", "a %s value is an unsigned decimal integer, got %q", kw, text)
 	}
@@ -309,8 +316,8 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 	switch kw {
 	case "field":
 		f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n}
-		if err := parseFieldOptions(f, args[3:]); err != nil {
-			return sp.bad(n, f.Locator, "%v", err)
+		if kind, err := p.checkFieldLine(f, args[3:], false); err != nil {
+			return sp.perr(kind, n, f.Locator, "%v", err)
 		}
 		p.Fields = append(p.Fields, f)
 		p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
@@ -338,9 +345,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if err != nil {
 			return err
 		}
+		// The form of the value is checked after the file (ruling 5b of
+		// 0.11).
 		v, err := sp.value(kw, args[1], ln, n)
 		if err != nil {
-			return err
+			sp.lateErr(err)
 		}
 		add(&seqNode{op: seqConst, n: ln, num: v})
 	case "pad":
@@ -350,7 +359,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		add(&seqNode{op: seqPad, n: ln})
 	case "align":
-		m, err := strconv.Atoi(args[0])
+		m, err := parseSmallUint(args[0])
 		if err != nil || m < 1 {
 			return sp.bad(n, "", "align takes a number of bits >= 1, got %q", args[0])
 		}
@@ -365,9 +374,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if err != nil {
 			return err
 		}
+		// The form of the value is checked after the file (ruling 5b of
+		// 0.11).
 		v, err := sp.value(kw, args[1], ln, n)
 		if err != nil {
-			return err
+			sp.lateErr(err)
 		}
 		node := &seqNode{op: seqWhen, n: ln, num: v, line: n}
 		if k := top.kind; k != nil {
@@ -384,7 +395,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			return sp.bad(n, "", "a kind line is not allowed inside a block")
 		}
 		if prev, dup := top.kindNames[args[0]]; dup {
-			return sp.perr(ErrDuplicateKind, n, "", "kind %q already declared on line %d", args[0], prev)
+			sp.lateErr(sp.perr(ErrDuplicateKind, n, "", "kind %q already declared on line %d", args[0], prev))
 		}
 		top.kindNames[args[0]] = n
 		k := &seqKind{name: args[0], line: n}
@@ -457,7 +468,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			if i <= 0 {
 				return sp.bad(n, "", "if names presence bits as <name>.<i>, got %q", a)
 			}
-			bit, err := strconv.Atoi(text[i+1:])
+			bit, err := parseSmallUint(text[i+1:])
 			if err != nil || bit < 1 {
 				return sp.bad(n, "", "if names presence bits as <name>.<i> with i >= 1, got %q", a)
 			}
@@ -504,7 +515,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 				unit = a
 			case a == "plus" && !plus && i+1 < len(args):
 				i++
-				v, err := strconv.ParseInt(args[i], 10, 64)
+				v, err := parseIntText(args[i])
 				if err != nil {
 					return sp.bad(n, "", "length: `plus` takes an integer, got %q", args[i])
 				}
@@ -580,7 +591,8 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			return err
 		}
 		if len(sp.stack) == 1 {
-			return sp.bad(n, "", "end with no open block")
+			sp.lateErr(sp.bad(n, "", "end with no open block"))
+			return nil
 		}
 		if top.op == seqGroup && top.body.whens > 0 && len(top.body.kinds) == 0 {
 			return sp.bad(top.line, "", "a when line needs a body with a kind line")
@@ -915,6 +927,7 @@ func (r *seqReader) group(g *Group) error {
 	if r.beyond() {
 		return nil
 	}
+	d.replacing(g.List)
 	items := []*Item{}
 	item := func() error {
 		it, err := d.item(func() error {
@@ -949,6 +962,9 @@ func (r *seqReader) group(g *Group) error {
 		// read (0.8 ruling 14).
 		if count > uint64(r.limit-r.pos) {
 			return r.malformed("list %s: a count of %d and %d bit(s) left", g.List, count, r.limit-r.pos)
+		}
+		if err := d.room(g.List, count); err != nil {
+			return err
 		}
 		for i := uint64(0); i < count; i++ {
 			if err := item(); err != nil {
