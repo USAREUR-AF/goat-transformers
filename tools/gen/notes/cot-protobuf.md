@@ -32,6 +32,7 @@ key leaves one pack and enters the other at the same place in the event.
 | Key | Field | cot-xml locator | Unit |
 |---|---|---|---|
 | `type`, `uid`, `how` | `CotEvent.type`, `uid`, `how` | `@type`, `@uid`, `@how` | text |
+| `track.scoped_id` | `CotEvent.uid`, a line before `uid` | `@uid`, a line before `uid` | text |
 | `time_ms` | `CotEvent.sendTime`, then `startTime` | `@time`, then `@start` | uint64, milliseconds since 1970-01-01 00:00:00 UTC |
 | `stale_ms` | `CotEvent.staleTime` | `@stale` | the same |
 | `lat`, `lon`, `hae`, `ce`, `le` | `CotEvent.lat`, `lon`, `hae`, `ce`, `le` | `point/@lat` … `point/@le` | double; degrees and metres as in the XML |
@@ -40,6 +41,13 @@ key leaves one pack and enters the other at the same place in the event.
 
 The three times are integers of milliseconds since the Unix epoch in the schema, which is the unit
 of `time_ms` and `stale_ms`: the transform is `pvarint` with no scaling.
+
+## `track.scoped_id` and `uid`
+
+`CotEvent.uid` has two shared lines, `track.scoped_id` first and `uid` second, as `@uid` has in
+`cot-xml`. Decode fills both with the event's uid. Encode writes `track.scoped_id` when the entity
+has it, else `uid`: a host that supplies its own scoped identity of a track (by context, or from a
+format that maps it) sees that identity in the event, in this pack as in `cot-xml`.
 
 ## `sendTime` and `startTime`
 
@@ -70,13 +78,13 @@ Encode writes every key the entity has, a 0 included.
 
 ## To and from `cot-xml`
 
-`cot-xml` maps 13 keys and this pack maps the same 13, so every shared key of an event crosses in
+`cot-xml` maps 14 keys and this pack maps the same 14, so every shared key of an event crosses in
 both directions.
 
 | Direction | Carried | Not carried |
 |---|---|---|
-| `cot-protobuf` to `cot-xml` | `uid`, `type`, `time_ms` (to `@time` and `@start`), `stale_ms`, `how`, `lat`, `lon`, `hae`, `ce`, `le`, `callsign`, `course`, `speed_ms` | every raw key: `takControl`, `access`, `qos`, `opex`, a `startTime` that differs from `sendTime`, `xmlDetail`, `Contact.endpoint`, `Group`, `PrecisionLocation`, `Status`, `Takv` |
-| `cot-xml` to `cot-protobuf` | the same 13 keys; `time_ms` to `sendTime` and `startTime` | attributes of `<event>` that `cot-xml` does not map (`access`, `qos`, `opex`: residue of that format), and every child of `<detail>` other than `contact/@callsign` and `track`, which `cot-xml` does not read; `xmlDetail` is not written |
+| `cot-protobuf` to `cot-xml` | `track.scoped_id`, `uid`, `type`, `time_ms` (to `@time` and `@start`), `stale_ms`, `how`, `lat`, `lon`, `hae`, `ce`, `le`, `callsign`, `course`, `speed_ms` | every raw key: `takControl`, `access`, `qos`, `opex`, a `startTime` that differs from `sendTime`, `xmlDetail`, `Contact.endpoint`, `Group`, `PrecisionLocation`, `Status`, `Takv` |
+| `cot-xml` to `cot-protobuf` | the same 14 keys; `time_ms` to `sendTime` and `startTime` | attributes of `<event>` that `cot-xml` does not map (`access`, `qos`, `opex`: residue of that format), and every child of `<detail>` other than `contact/@callsign` and `track`, which `cot-xml` does not read; `xmlDetail` is not written |
 
 `cot-xml` writes `version="2.0"` on every event, and `type="a-u-X"` and `hae`, `ce`, `le`
 `9999999` when the entity has no value: an event that left a proto3 writer with `hae` 0 (not on

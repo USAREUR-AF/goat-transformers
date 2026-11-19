@@ -183,7 +183,8 @@ python3 -I "$GEN/proto2pack.py" \
   --cross-omit 7.6.6 --cross-omit 7.19.1 --cross-omit 7.19.2 \
   --notes-file "$GEN/notes/sapient-v1.md"
 
-# cot-protobuf: TAK protocol version 1, the bare TakMessage (no framing). takControl may
+# cot-protobuf: TAK protocol version 1, the bare TakMessage (no framing). CotEvent.uid carries
+# track.scoped_id and then uid, as packs/cot-xml binds @uid. takControl may
 # stand beside cotEvent, so its fields are common lines (--common-member) and the kind
 # `cot_event` is first. The bindings are those of packs/cot-xml, field for field; sendTime
 # and startTime both hold time_ms, as @time and @start do there. --cross writes
@@ -197,7 +198,7 @@ python3 -I "$GEN/proto2pack.py" \
   --pack-version 0.1.0 \
   --source "TAK protocol version 1 protobuf definitions: github.com/deptofdefense/AndroidTacticalAssaultKit-CIV commit $TAKSHA, directory takproto (10 .proto files); field numbers, names and types only" \
   --source "LICENSE.md at that commit: GNU General Public License, Version 3; INTENT.md at that commit on work of U.S. Federal government employees; the .proto files carry no header (packs/cot-protobuf/PROVENANCE.md)" \
-  --map 2.1=type --map 2.5=uid --map 2.6=time_ms --map 2.7=time_ms --map 2.8=stale_ms --map 2.9=how \
+  --map 2.1=type --map 2.5=track.scoped_id --map 2.5=uid --map 2.6=time_ms --map 2.7=time_ms --map 2.8=stale_ms --map 2.9=how \
   --map 2.10=lat --map 2.11=lon --map 2.12=hae --map 2.13=ce --map 2.14=le \
   --map 2.15.2.2=callsign --map 2.15.7.1=speed_ms --map 2.15.7.2=course \
   --default-kind cot_event --default-requires lat lon \

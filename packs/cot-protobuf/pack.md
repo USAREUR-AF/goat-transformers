@@ -20,7 +20,7 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | messages reachable from `TakMessage` (through repeated fields too) | 10 |
 | message types on the walked paths | 9 |
 | kinds | 2 |
-| `field` lines | 45 |
+| `field` lines | 46 |
 | of those, inside a `group` | 0 |
 | `group` blocks | 0 |
 | of those, inside another group | 0 |
@@ -70,6 +70,7 @@ inside a block start at the item.
 | Key | Path | Schema field |
 |---|---|---|
 | `type` | `2.1` | `CotEvent.type` (string) |
+| `track.scoped_id` | `2.5` | `CotEvent.uid` (string) |
 | `uid` | `2.5` | `CotEvent.uid` (string) |
 | `time_ms` | `2.6` | `CotEvent.sendTime` (uint64) |
 | `time_ms` | `2.7` | `CotEvent.startTime` (uint64) |
@@ -91,6 +92,10 @@ when the entity has it, the raw key only when the shared key is absent. So a con
 that changes the shared key and encodes back to this format gets the new value, and an
 entity from another format, which has only the shared key, writes it.
 
+`2.5` carries more than one shared key: one line per key, in the order given, before the
+raw key. Decode fills every key with the value; encode writes the value of the first
+key the entity has.
+
 ## Encoding from another format
 
 Kinds are tried in pack order and the first whose `requires` keys are all present is used.
@@ -101,7 +106,7 @@ context) supplies; an entity that has the keys of no kind ends in `no-kind`.
 
 | From | Encodes as | Keys carried | Keys the pack has no place for | Vector |
 |---|---|---|---|---|
-| `cot-xml` | `cot_event` | `callsign` `ce` `hae` `how` `lat` `le` `lon` `time_ms` `type` `uid` | `track.scoped_id` | `packs/cot-xml/vectors/gen-cot-xml-to-cot-protobuf.json` |
+| `cot-xml` | `cot_event` | `callsign` `ce` `hae` `how` `lat` `le` `lon` `time_ms` `track.scoped_id` `type` `uid` | none | `packs/cot-xml/vectors/gen-cot-xml-to-cot-protobuf.json` |
 | `geojson` | `cot_event` | `callsign` `ce` `course` `hae` `how` `lat` `le` `lon` `speed_ms` `time_ms` `type` `uid` | none | `packs/geojson/vectors/gen-geojson-to-cot-protobuf.json` |
 
 ## Encoding into another format
@@ -112,7 +117,7 @@ only into a pack that also uses that module.
 | To | From kind | Keys carried | Vector |
 |---|---|---|---|
 | `geojson` | `cot_event` | `callsign` `ce` `course` `hae` `how` `lat` `le` `lon` `speed_ms` `time_ms` `type` `uid` | `packs/cot-protobuf/vectors/gen-cot-protobuf-to-geojson.json` |
-| `cot-xml` | `cot_event` | `callsign` `ce` `course` `hae` `how` `lat` `le` `lon` `speed_ms` `stale_ms` `time_ms` `type` `uid` | `packs/cot-protobuf/vectors/gen-cot-protobuf-to-cot-xml.json` |
+| `cot-xml` | `cot_event` | `callsign` `ce` `course` `hae` `how` `lat` `le` `lon` `speed_ms` `stale_ms` `time_ms` `type` `uid` and 1 keys of other modules | `packs/cot-protobuf/vectors/gen-cot-protobuf-to-cot-xml.json` |
 
 ## What the message is
 
@@ -148,6 +153,7 @@ key leaves one pack and enters the other at the same place in the event.
 | Key | Field | cot-xml locator | Unit |
 |---|---|---|---|
 | `type`, `uid`, `how` | `CotEvent.type`, `uid`, `how` | `@type`, `@uid`, `@how` | text |
+| `track.scoped_id` | `CotEvent.uid`, a line before `uid` | `@uid`, a line before `uid` | text |
 | `time_ms` | `CotEvent.sendTime`, then `startTime` | `@time`, then `@start` | uint64, milliseconds since 1970-01-01 00:00:00 UTC |
 | `stale_ms` | `CotEvent.staleTime` | `@stale` | the same |
 | `lat`, `lon`, `hae`, `ce`, `le` | `CotEvent.lat`, `lon`, `hae`, `ce`, `le` | `point/@lat` … `point/@le` | double; degrees and metres as in the XML |
@@ -156,6 +162,13 @@ key leaves one pack and enters the other at the same place in the event.
 
 The three times are integers of milliseconds since the Unix epoch in the schema, which is the unit
 of `time_ms` and `stale_ms`: the transform is `pvarint` with no scaling.
+
+## `track.scoped_id` and `uid`
+
+`CotEvent.uid` has two shared lines, `track.scoped_id` first and `uid` second, as `@uid` has in
+`cot-xml`. Decode fills both with the event's uid. Encode writes `track.scoped_id` when the entity
+has it, else `uid`: a host that supplies its own scoped identity of a track (by context, or from a
+format that maps it) sees that identity in the event, in this pack as in `cot-xml`.
 
 ## `sendTime` and `startTime`
 
@@ -186,13 +199,13 @@ Encode writes every key the entity has, a 0 included.
 
 ## To and from `cot-xml`
 
-`cot-xml` maps 13 keys and this pack maps the same 13, so every shared key of an event crosses in
+`cot-xml` maps 14 keys and this pack maps the same 14, so every shared key of an event crosses in
 both directions.
 
 | Direction | Carried | Not carried |
 |---|---|---|
-| `cot-protobuf` to `cot-xml` | `uid`, `type`, `time_ms` (to `@time` and `@start`), `stale_ms`, `how`, `lat`, `lon`, `hae`, `ce`, `le`, `callsign`, `course`, `speed_ms` | every raw key: `takControl`, `access`, `qos`, `opex`, a `startTime` that differs from `sendTime`, `xmlDetail`, `Contact.endpoint`, `Group`, `PrecisionLocation`, `Status`, `Takv` |
-| `cot-xml` to `cot-protobuf` | the same 13 keys; `time_ms` to `sendTime` and `startTime` | attributes of `<event>` that `cot-xml` does not map (`access`, `qos`, `opex`: residue of that format), and every child of `<detail>` other than `contact/@callsign` and `track`, which `cot-xml` does not read; `xmlDetail` is not written |
+| `cot-protobuf` to `cot-xml` | `track.scoped_id`, `uid`, `type`, `time_ms` (to `@time` and `@start`), `stale_ms`, `how`, `lat`, `lon`, `hae`, `ce`, `le`, `callsign`, `course`, `speed_ms` | every raw key: `takControl`, `access`, `qos`, `opex`, a `startTime` that differs from `sendTime`, `xmlDetail`, `Contact.endpoint`, `Group`, `PrecisionLocation`, `Status`, `Takv` |
+| `cot-xml` to `cot-protobuf` | the same 14 keys; `time_ms` to `sendTime` and `startTime` | attributes of `<event>` that `cot-xml` does not map (`access`, `qos`, `opex`: residue of that format), and every child of `<detail>` other than `contact/@callsign` and `track`, which `cot-xml` does not read; `xmlDetail` is not written |
 
 `cot-xml` writes `version="2.0"` on every event, and `type="a-u-X"` and `hae`, `ce`, `le`
 `9999999` when the entity has no value: an event that left a proto3 writer with `hae` 0 (not on
