@@ -69,6 +69,13 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/catalog-dark.svg">
+  <img src="docs/figures/catalog-light.svg" width="760" alt="Every public format, grouped into 62 families in 11 domains: air, land vehicles, sea, space, uncrewed systems and robots, C2 and tactical, sensors, transport, IoT, networks, and maps, weather and alerts. Each family is a tile with its number of packs, from ArduPilot DataFlash log, PX4 ULog, Space Data Standards and Cyphal with hundreds each, to single-pack formats such as GDL 90, AIS and CAP. Synthetic conformance and demo packs are not shown.">
+</picture>
+
+The figure is drawn from `packs/` by `python3 -I tools/catalog-figure.py`; `tools/catalog-families.json` names the family and domain of each pack.
+
 | Pack | Format | Wire | Message kinds |
 |---|---|---|---:|
 | `cot-xml` | Cursor on Target event XML | `xml` | 1 |
