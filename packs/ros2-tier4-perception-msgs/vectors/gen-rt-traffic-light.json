@@ -1,0 +1,16 @@
+{
+  "name": "rt-traffic_light",
+  "from": "ros2-tier4-perception-msgs",
+  "to": "ros2-tier4-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light\",\"type\":\"tier4_perception_msgs/msg/TrafficLight\",\"msg\":{\"traffic_light_id\":-123456789013,\"traffic_light_type\":245,\"elements\":[{\"color\":44,\"shape\":99,\"status\":154,\"confidence\":-6.042},{\"color\":8,\"shape\":63,\"status\":118,\"confidence\":10.07}]},\"id\":\"gen-traffic_light\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light\",\"type\":\"tier4_perception_msgs/msg/TrafficLight\",\"msg\":{\"traffic_light_id\":-123456789013,\"traffic_light_type\":245,\"elements\":[{\"color\":44,\"shape\":99,\"status\":154,\"confidence\":-6.042},{\"color\":8,\"shape\":63,\"status\":118,\"confidence\":10.07}]},\"id\":\"gen-traffic_light\"}",
+  "model": {
+    "@kind": "traffic_light",
+    "ros2tier4perception.traffic_light_traffic_light_id": "-123456789013",
+    "ros2tier4perception.traffic_light_traffic_light_type": "245",
+    "ros2tier4perception.traffic_light_elements.#": "2",
+    "ros2tier4perception.traffic_light_elements[0].ros2tier4perception.traffic_light_elements_color": "44",
+    "ros2tier4perception.topic": "/gen/traffic_light"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_status\",\"type\":\"tier4_external_api_msgs/msg/VehicleStatus\",\"msg\":{\"twist\":{\"linear\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"angular\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"steering\":{\"data\":-3.375},\"turn_signal\":{\"data\":63},\"gear_shift\":{\"data\":118}},\"id\":\"gen-vehicle_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_status\",\"type\":\"tier4_external_api_msgs/msg/VehicleStatus\",\"msg\":{\"twist\":{\"linear\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"angular\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"steering\":{\"data\":-3.375},\"turn_signal\":{\"data\":63},\"gear_shift\":{\"data\":118}},\"id\":\"gen-vehicle_status\"}",
+  "model": {
+    "@kind": "vehicle_status",
+    "ros2tier4externalapi.vehicle_status_twist_linear_x": "1.007",
+    "ros2tier4externalapi.vehicle_status_twist_linear_y": "2.014",
+    "ros2tier4externalapi.vehicle_status_twist_linear_z": "-3.021",
+    "ros2tier4externalapi.vehicle_status_twist_angular_x": "4.028",
+    "ros2tier4externalapi.vehicle_status_twist_angular_y": "5.035",
+    "ros2tier4externalapi.topic": "/gen/vehicle_status"
+  }
+}

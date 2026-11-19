@@ -181,9 +181,22 @@ def pkg_dir(pkg):
     return REPO_OF.get(pkg, "common_interfaces"), PKG_DIR.get(pkg, pkg)
 
 
+def msg_dirs(pkg):
+    """The directories of a package's .msg files under the package: `msg` unless
+    --package-at names others, several joined by `+` (rosidl lets a package keep
+    its messages in subdirectories of msg/; the type name has no directory)."""
+    return MSG_SUB.get(pkg, "msg").split("+")
+
+
 def msg_files(src, pkg):
     repo, d = pkg_dir(pkg)
-    return repo, sorted(glob.glob(os.path.join(src, repo, d, MSG_SUB.get(pkg, "msg"), "*.msg")))
+    files = []
+    for sub in msg_dirs(pkg):
+        files.extend(glob.glob(os.path.join(src, repo, d, sub, "*.msg")))
+    names = [os.path.basename(f) for f in files]
+    if len(set(names)) != len(names):
+        fail("package %s has two .msg files of one name under %s" % (pkg, "+".join(msg_dirs(pkg))))
+    return repo, sorted(files, key=os.path.basename)
 
 
 class Catalog:
@@ -195,7 +208,11 @@ class Catalog:
         k = (pkg, name)
         if k not in self.msgs:
             repo, d = pkg_dir(pkg)
-            path = os.path.join(self.src, repo, d, MSG_SUB.get(pkg, "msg"), name + ".msg")
+            path = None
+            for sub in msg_dirs(pkg):
+                path = os.path.join(self.src, repo, d, sub, name + ".msg")
+                if os.path.isfile(path):
+                    break
             if not os.path.isfile(path):
                 fail("message %s/%s not found at %s" % (pkg, name, path))
             self.msgs[k] = parse_msg(pkg, name, path)
@@ -579,6 +596,20 @@ class Sampler:
         return obj
 
 
+def mappable(msg, cat):
+    """Whether the walker maps any line for a message: a field other than byte[], or a
+    nested message (single or array) that is itself mappable."""
+    for f in msg.fields:
+        if skipped(msg, f):
+            continue
+        if f.pkg_ref is None:
+            if not (f.array is not None and f.base == "byte"):
+                return True
+        elif mappable(cat.get(f.pkg_ref, f.base), cat):
+            return True
+    return False
+
+
 def carried(msg, obj, cat):
     """The message object as the pack carries it: byte[] dropped, empty objects dropped."""
     out = collections.OrderedDict()
@@ -594,6 +625,8 @@ def carried(msg, obj, cat):
             continue
         elif f.array is not None and f.pkg_ref:
             sub = cat.get(f.pkg_ref, f.base)
+            if not mappable(sub, cat):
+                continue        # the walker maps no line for it (not mapped)
             out[f.name] = [carried(sub, x, cat) for x in v]
         else:
             out[f.name] = v
@@ -1785,7 +1818,7 @@ def run_package(args, cat, pkg, maps, reqs):
     repo, pdir = pkg_dir(pkg)
     msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s; field names, types and array forms only" % (
         pkg, REPO_URL[repo], args.ref[repo], REPO_LICENSE[repo], args.commit[repo],
-        "/".join(x for x in (pdir, MSG_SUB.get(pkg, "msg")) if x))
+        " and ".join("/".join(x for x in (pdir, sub) if x) for sub in msg_dirs(pkg)))
     deps = sorted({(m.pkg) for k in kinds for (p, _), m in cat.closure(k.msg).items() if p != pkg})
     sources = [msg_src]
     for d in deps:
@@ -1919,7 +1952,8 @@ def main():
     ap.add_argument("--repo", action="append", default=[], help="<repository>=<address>")
     ap.add_argument("--package-at", action="append", default=[],
                     help="<package>=<repository>:<directory>[:<msg directory>] ('.' when the package "
-                         "is the root; the .msg files are under msg/ unless named)")
+                         "is the root; the .msg files are under msg/ unless named; several directories "
+                         "are joined by +)")
     ap.add_argument("--module", action="append", default=[], help="<package>=<module name>")
     ap.add_argument("--license", action="append", default=[], help="<repository>=<licence name>")
     ap.add_argument("--license-file", action="append", default=[],

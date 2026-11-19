@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpu_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpu_status\",\"type\":\"tier4_external_api_msgs/msg/GpuStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"gpus\":[{\"name\":\"s4\",\"usage\":-3.875,\"clock\":2147726673,\"temperature\":2147767176,\"thermal_throttling\":63},{\"name\":\"s9\",\"usage\":-2.625,\"clock\":2147929188,\"temperature\":2147969691,\"thermal_throttling\":82}]},\"id\":\"gen-gpu_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpu_status\",\"type\":\"tier4_external_api_msgs/msg/GpuStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"gpus\":[{\"name\":\"s4\",\"usage\":-3.875,\"clock\":2147726673,\"temperature\":2147767176,\"thermal_throttling\":63},{\"name\":\"s9\",\"usage\":-2.625,\"clock\":2147929188,\"temperature\":2147969691,\"thermal_throttling\":82}]},\"id\":\"gen-gpu_status\"}",
+  "model": {
+    "@kind": "gpu_status",
+    "ros2tier4externalapi.gpu_status_stamp_sec": "40510",
+    "ros2tier4externalapi.gpu_status_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.gpu_status_hostname": "s3",
+    "ros2tier4externalapi.gpu_status_gpus.#": "2",
+    "ros2tier4externalapi.gpu_status_gpus[0].ros2tier4externalapi.gpu_status_gpus_name": "s4",
+    "ros2tier4externalapi.topic": "/gen/gpu_status"
+  }
+}

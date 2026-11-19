@@ -1,0 +1,17 @@
+{
+  "name": "rt-wheel_linear_speed_report",
+  "from": "ros2-tier4-vehicle-msgs",
+  "to": "ros2-tier4-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_linear_speed_report\",\"type\":\"tier4_vehicle_msgs/msg/WheelLinearSpeedReport\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"front_left_wheel_speed\":-4.375,\"front_right_wheel_speed\":-4.125,\"rear_left_wheel_speed\":-3.875,\"rear_right_wheel_speed\":-3.625},\"id\":\"gen-wheel_linear_speed_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_linear_speed_report\",\"type\":\"tier4_vehicle_msgs/msg/WheelLinearSpeedReport\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"front_left_wheel_speed\":-4.375,\"front_right_wheel_speed\":-4.125,\"rear_left_wheel_speed\":-3.875,\"rear_right_wheel_speed\":-3.625},\"id\":\"gen-wheel_linear_speed_report\"}",
+  "model": {
+    "@kind": "wheel_linear_speed_report",
+    "ros2tier4vehicle.wheel_linear_speed_report_stamp_sec": "40510",
+    "ros2tier4vehicle.wheel_linear_speed_report_stamp_nanosec": "2147564661",
+    "ros2tier4vehicle.wheel_linear_speed_report_front_left_wheel_speed": "-4.375",
+    "ros2tier4vehicle.wheel_linear_speed_report_front_right_wheel_speed": "-4.125",
+    "ros2tier4vehicle.wheel_linear_speed_report_rear_left_wheel_speed": "-3.875",
+    "ros2tier4vehicle.topic": "/gen/wheel_linear_speed_report"
+  }
+}

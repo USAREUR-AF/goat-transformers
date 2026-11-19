@@ -1,0 +1,17 @@
+{
+  "name": "rt-is_stopped",
+  "from": "ros2-tier4-control-msgs",
+  "to": "ros2-tier4-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/is_stopped\",\"type\":\"tier4_control_msgs/msg/IsStopped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":true,\"requested_sources\":[\"s4\",\"s5\"]},\"id\":\"gen-is_stopped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/is_stopped\",\"type\":\"tier4_control_msgs/msg/IsStopped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":true,\"requested_sources\":[\"s4\",\"s5\"]},\"id\":\"gen-is_stopped\"}",
+  "model": {
+    "@kind": "is_stopped",
+    "ros2tier4control.is_stopped_stamp_sec": "40510",
+    "ros2tier4control.is_stopped_stamp_nanosec": "2147564661",
+    "ros2tier4control.is_stopped_data": "1",
+    "ros2tier4control.is_stopped_requested_sources.#": "2",
+    "ros2tier4control.is_stopped_requested_sources[0].ros2tier4control.is_stopped_requested_sources_value": "s4",
+    "ros2tier4control.topic": "/gen/is_stopped"
+  }
+}

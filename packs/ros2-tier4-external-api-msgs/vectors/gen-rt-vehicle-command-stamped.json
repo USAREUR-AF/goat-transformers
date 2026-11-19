@@ -1,0 +1,16 @@
+{
+  "name": "rt-vehicle_command_stamped",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command_stamped\",\"type\":\"tier4_external_api_msgs/msg/VehicleCommandStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"command\":{\"velocity\":-3.021,\"acceleration\":4.028}},\"id\":\"gen-vehicle_command_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command_stamped\",\"type\":\"tier4_external_api_msgs/msg/VehicleCommandStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"command\":{\"velocity\":-3.021,\"acceleration\":4.028}},\"id\":\"gen-vehicle_command_stamped\"}",
+  "model": {
+    "@kind": "vehicle_command_stamped",
+    "ros2tier4externalapi.vehicle_command_stamped_stamp_sec": "40510",
+    "ros2tier4externalapi.vehicle_command_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.vehicle_command_stamped_command_velocity": "-3.021",
+    "ros2tier4externalapi.vehicle_command_stamped_command_acceleration": "4.028",
+    "ros2tier4externalapi.topic": "/gen/vehicle_command_stamped"
+  }
+}

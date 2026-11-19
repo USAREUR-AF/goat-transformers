@@ -1,0 +1,16 @@
+{
+  "name": "rt-virtual_traffic_light_state_array",
+  "from": "ros2-tier4-v2x-msgs",
+  "to": "ros2-tier4-v2x-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_traffic_light_state_array\",\"type\":\"tier4_v2x_msgs/msg/VirtualTrafficLightStateArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"states\":[{\"stamp\":{\"sec\":121516,\"nanosec\":2147645667},\"type\":\"s5\",\"id\":\"s6\",\"approval\":true,\"is_finalized\":false},{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"type\":\"s11\",\"id\":\"s12\",\"approval\":true,\"is_finalized\":false}]},\"id\":\"gen-virtual_traffic_light_state_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_traffic_light_state_array\",\"type\":\"tier4_v2x_msgs/msg/VirtualTrafficLightStateArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"states\":[{\"stamp\":{\"sec\":121516,\"nanosec\":2147645667},\"type\":\"s5\",\"id\":\"s6\",\"approval\":true,\"is_finalized\":false},{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"type\":\"s11\",\"id\":\"s12\",\"approval\":true,\"is_finalized\":false}]},\"id\":\"gen-virtual_traffic_light_state_array\"}",
+  "model": {
+    "@kind": "virtual_traffic_light_state_array",
+    "ros2tier4v2x.virtual_traffic_light_state_array_stamp_sec": "40510",
+    "ros2tier4v2x.virtual_traffic_light_state_array_stamp_nanosec": "2147564661",
+    "ros2tier4v2x.virtual_traffic_light_state_array_states.#": "2",
+    "ros2tier4v2x.virtual_traffic_light_state_array_states[0].ros2tier4v2x.virtual_traffic_light_state_array_states_stamp_sec": "121516",
+    "ros2tier4v2x.topic": "/gen/virtual_traffic_light_state_array"
+  }
+}

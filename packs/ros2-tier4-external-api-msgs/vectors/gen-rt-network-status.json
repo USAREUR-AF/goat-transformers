@@ -1,0 +1,19 @@
+{
+  "name": "rt-network_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/network_status\",\"type\":\"tier4_external_api_msgs/msg/NetworkStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"interfaces\":[{\"name\":\"s4\",\"rx_traffic\":-3.875,\"tx_traffic\":-3.625,\"capacity\":-3.375,\"rx_errors\":2147807679,\"tx_errors\":2147848182,\"collisions\":2147888685},{\"name\":\"s11\",\"rx_traffic\":-2.125,\"tx_traffic\":-1.875,\"capacity\":-1.625,\"rx_errors\":2148091200,\"tx_errors\":2148131703,\"collisions\":2148172206}],\"error_ip_packet_reassembles_failed\":2148212709,\"error_udp_buf_rx\":2148253212,\"error_udp_buf_tx\":2148293715},\"id\":\"gen-network_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/network_status\",\"type\":\"tier4_external_api_msgs/msg/NetworkStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"hostname\":\"s3\",\"interfaces\":[{\"name\":\"s4\",\"rx_traffic\":-3.875,\"tx_traffic\":-3.625,\"capacity\":-3.375,\"rx_errors\":2147807679,\"tx_errors\":2147848182,\"collisions\":2147888685},{\"name\":\"s11\",\"rx_traffic\":-2.125,\"tx_traffic\":-1.875,\"capacity\":-1.625,\"rx_errors\":2148091200,\"tx_errors\":2148131703,\"collisions\":2148172206}],\"error_ip_packet_reassembles_failed\":2148212709,\"error_udp_buf_rx\":2148253212,\"error_udp_buf_tx\":2148293715},\"id\":\"gen-network_status\"}",
+  "model": {
+    "@kind": "network_status",
+    "ros2tier4externalapi.network_status_stamp_sec": "40510",
+    "ros2tier4externalapi.network_status_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.network_status_hostname": "s3",
+    "ros2tier4externalapi.network_status_interfaces.#": "2",
+    "ros2tier4externalapi.network_status_interfaces[0].ros2tier4externalapi.network_status_interfaces_name": "s4",
+    "ros2tier4externalapi.network_status_error_ip_packet_reassembles_failed": "2148212709",
+    "ros2tier4externalapi.network_status_error_udp_buf_rx": "2148253212",
+    "ros2tier4externalapi.topic": "/gen/network_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-stop_reason_array",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/stop_reason_array\",\"type\":\"tier4_planning_msgs/msg/StopReasonArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"stop_reasons\":[{\"reason\":\"s4\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"dist_to_stop_pose\":-12.084,\"stop_factor_points\":[{\"x\":13.091,\"y\":14.098,\"z\":-15.105}]}]},{\"reason\":\"s16\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"orientation\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154,\"w\":23.161}},\"dist_to_stop_pose\":-24.168,\"stop_factor_points\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189}]}]}]},\"id\":\"gen-stop_reason_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/stop_reason_array\",\"type\":\"tier4_planning_msgs/msg/StopReasonArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"stop_reasons\":[{\"reason\":\"s4\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"dist_to_stop_pose\":-12.084,\"stop_factor_points\":[{\"x\":13.091,\"y\":14.098,\"z\":-15.105}]}]},{\"reason\":\"s16\",\"stop_factors\":[{\"stop_pose\":{\"position\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133},\"orientation\":{\"x\":20.14,\"y\":-21.147,\"z\":22.154,\"w\":23.161}},\"dist_to_stop_pose\":-24.168,\"stop_factor_points\":[{\"x\":25.175,\"y\":26.182,\"z\":-27.189}]}]}]},\"id\":\"gen-stop_reason_array\"}",
+  "model": {
+    "@kind": "stop_reason_array",
+    "ros2tier4planning.stop_reason_array_header_stamp_sec": "40510",
+    "ros2tier4planning.stop_reason_array_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.stop_reason_array_header_frame_id": "s3",
+    "ros2tier4planning.stop_reason_array_stop_reasons.#": "2",
+    "ros2tier4planning.stop_reason_array_stop_reasons[0].ros2tier4planning.stop_reason_array_stop_reasons_reason": "s4",
+    "ros2tier4planning.topic": "/gen/stop_reason_array"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-shift",
+  "from": "ros2-tier4-vehicle-msgs",
+  "to": "ros2-tier4-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/shift\",\"type\":\"tier4_vehicle_msgs/msg/Shift\",\"msg\":{\"data\":40510},\"id\":\"gen-shift\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/shift\",\"type\":\"tier4_vehicle_msgs/msg/Shift\",\"msg\":{\"data\":40510},\"id\":\"gen-shift\"}",
+  "model": {
+    "@kind": "shift",
+    "ros2tier4vehicle.shift_data": "40510",
+    "ros2tier4vehicle.topic": "/gen/shift"
+  }
+}

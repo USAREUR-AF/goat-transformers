@@ -1,0 +1,17 @@
+{
+  "name": "rt-awapi_vehicle_status",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/awapi_vehicle_status\",\"type\":\"tier4_api_msgs/msg/AwapiVehicleStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"eulerangle\":{\"roll\":11.077,\"pitch\":-12.084,\"yaw\":13.091},\"geo_point\":{\"latitude\":14.098,\"longitude\":-15.105,\"altitude\":16.112},\"velocity\":17.119,\"acceleration\":-18.126,\"steering\":19.133,\"steering_velocity\":20.14,\"angular_velocity\":-21.147,\"gear\":891073,\"energy_level\":0.625,\"turn_signal\":972079,\"target_velocity\":25.175,\"target_acceleration\":26.182,\"target_steering\":-27.189,\"target_steering_velocity\":28.196},\"id\":\"gen-awapi_vehicle_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/awapi_vehicle_status\",\"type\":\"tier4_api_msgs/msg/AwapiVehicleStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"eulerangle\":{\"roll\":11.077,\"pitch\":-12.084,\"yaw\":13.091},\"geo_point\":{\"latitude\":14.098,\"longitude\":-15.105,\"altitude\":16.112},\"velocity\":17.119,\"acceleration\":-18.126,\"steering\":19.133,\"steering_velocity\":20.14,\"angular_velocity\":-21.147,\"gear\":891073,\"energy_level\":0.625,\"turn_signal\":972079,\"target_velocity\":25.175,\"target_acceleration\":26.182,\"target_steering\":-27.189,\"target_steering_velocity\":28.196},\"id\":\"gen-awapi_vehicle_status\"}",
+  "model": {
+    "@kind": "awapi_vehicle_status",
+    "ros2tier4api.awapi_vehicle_status_header_stamp_sec": "40510",
+    "ros2tier4api.awapi_vehicle_status_header_stamp_nanosec": "2147564661",
+    "ros2tier4api.awapi_vehicle_status_header_frame_id": "s3",
+    "ros2tier4api.awapi_vehicle_status_pose_position_x": "4.028",
+    "ros2tier4api.awapi_vehicle_status_pose_position_y": "5.035",
+    "ros2tier4api.topic": "/gen/awapi_vehicle_status"
+  }
+}

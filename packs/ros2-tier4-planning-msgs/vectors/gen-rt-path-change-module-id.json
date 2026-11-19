@@ -1,0 +1,13 @@
+{
+  "name": "rt-path_change_module_id",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_change_module_id\",\"type\":\"tier4_planning_msgs/msg/PathChangeModuleId\",\"msg\":{\"type\":40510},\"id\":\"gen-path_change_module_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_change_module_id\",\"type\":\"tier4_planning_msgs/msg/PathChangeModuleId\",\"msg\":{\"type\":40510},\"id\":\"gen-path_change_module_id\"}",
+  "model": {
+    "@kind": "path_change_module_id",
+    "ros2tier4planning.path_change_module_id_type": "40510",
+    "ros2tier4planning.topic": "/gen/path_change_module_id"
+  }
+}

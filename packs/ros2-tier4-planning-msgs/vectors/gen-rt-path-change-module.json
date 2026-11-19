@@ -1,0 +1,16 @@
+{
+  "name": "rt-path_change_module",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_change_module\",\"type\":\"tier4_planning_msgs/msg/PathChangeModule\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"module\":{\"type\":162019}},\"id\":\"gen-path_change_module\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_change_module\",\"type\":\"tier4_planning_msgs/msg/PathChangeModule\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"module\":{\"type\":162019}},\"id\":\"gen-path_change_module\"}",
+  "model": {
+    "@kind": "path_change_module",
+    "ros2tier4planning.path_change_module_header_stamp_sec": "40510",
+    "ros2tier4planning.path_change_module_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.path_change_module_header_frame_id": "s3",
+    "ros2tier4planning.path_change_module_module_type": "162019",
+    "ros2tier4planning.topic": "/gen/path_change_module"
+  }
+}

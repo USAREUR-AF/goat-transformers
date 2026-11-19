@@ -1,0 +1,19 @@
+{
+  "name": "rt-path_point_with_lane_id",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_point_with_lane_id\",\"type\":\"tier4_planning_msgs/msg/PathPointWithLaneId\",\"msg\":{\"point\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"longitudinal_velocity_mps\":-3.125,\"lateral_velocity_mps\":-2.875,\"heading_rate_rps\":-2.625,\"is_final\":true},\"lane_ids\":[1481481468156,-1604938257169]},\"id\":\"gen-path_point_with_lane_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_point_with_lane_id\",\"type\":\"tier4_planning_msgs/msg/PathPointWithLaneId\",\"msg\":{\"point\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"longitudinal_velocity_mps\":-3.125,\"lateral_velocity_mps\":-2.875,\"heading_rate_rps\":-2.625,\"is_final\":true},\"lane_ids\":[1481481468156,-1604938257169]},\"id\":\"gen-path_point_with_lane_id\"}",
+  "model": {
+    "@kind": "path_point_with_lane_id",
+    "ros2tier4planning.path_point_with_lane_id_point_pose_position_x": "1.007",
+    "ros2tier4planning.path_point_with_lane_id_point_pose_position_y": "2.014",
+    "ros2tier4planning.path_point_with_lane_id_point_pose_position_z": "-3.021",
+    "ros2tier4planning.path_point_with_lane_id_point_pose_orientation_x": "4.028",
+    "ros2tier4planning.path_point_with_lane_id_point_pose_orientation_y": "5.035",
+    "ros2tier4planning.path_point_with_lane_id_lane_ids.#": "2",
+    "ros2tier4planning.path_point_with_lane_id_lane_ids[0].ros2tier4planning.path_point_with_lane_id_lane_ids_value": "1481481468156",
+    "ros2tier4planning.topic": "/gen/path_point_with_lane_id"
+  }
+}

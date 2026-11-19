@@ -1,0 +1,14 @@
+{
+  "name": "rt-localization_score",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/localization_score\",\"type\":\"tier4_external_api_msgs/msg/LocalizationScore\",\"msg\":{\"name\":\"s1\",\"value\":-4.625},\"id\":\"gen-localization_score\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/localization_score\",\"type\":\"tier4_external_api_msgs/msg/LocalizationScore\",\"msg\":{\"name\":\"s1\",\"value\":-4.625},\"id\":\"gen-localization_score\"}",
+  "model": {
+    "@kind": "localization_score",
+    "ros2tier4externalapi.localization_score_name": "s1",
+    "ros2tier4externalapi.localization_score_value": "-4.625",
+    "ros2tier4externalapi.topic": "/gen/localization_score"
+  }
+}

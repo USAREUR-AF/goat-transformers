@@ -1,0 +1,12 @@
+{
+  "name": "rt-avoidance_debug_factor",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/avoidance_debug_factor\",\"type\":\"tier4_planning_msgs/msg/AvoidanceDebugFactor\",\"id\":\"gen-avoidance_debug_factor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/avoidance_debug_factor\",\"type\":\"tier4_planning_msgs/msg/AvoidanceDebugFactor\",\"id\":\"gen-avoidance_debug_factor\"}",
+  "model": {
+    "@kind": "avoidance_debug_factor",
+    "ros2tier4planning.topic": "/gen/avoidance_debug_factor"
+  }
+}

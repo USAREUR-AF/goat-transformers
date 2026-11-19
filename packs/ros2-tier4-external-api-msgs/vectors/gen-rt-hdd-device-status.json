@@ -1,0 +1,17 @@
+{
+  "name": "rt-hdd_device_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_device_status\",\"type\":\"tier4_external_api_msgs/msg/HddDeviceStatus\",\"msg\":{\"name\":\"s1\",\"read_data_rate\":-4.625,\"write_data_rate\":-4.375,\"read_iops\":-4.125,\"write_iops\":-3.875},\"id\":\"gen-hdd_device_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hdd_device_status\",\"type\":\"tier4_external_api_msgs/msg/HddDeviceStatus\",\"msg\":{\"name\":\"s1\",\"read_data_rate\":-4.625,\"write_data_rate\":-4.375,\"read_iops\":-4.125,\"write_iops\":-3.875},\"id\":\"gen-hdd_device_status\"}",
+  "model": {
+    "@kind": "hdd_device_status",
+    "ros2tier4externalapi.hdd_device_status_name": "s1",
+    "ros2tier4externalapi.hdd_device_status_read_data_rate": "-4.625",
+    "ros2tier4externalapi.hdd_device_status_write_data_rate": "-4.375",
+    "ros2tier4externalapi.hdd_device_status_read_iops": "-4.125",
+    "ros2tier4externalapi.hdd_device_status_write_iops": "-3.875",
+    "ros2tier4externalapi.topic": "/gen/hdd_device_status"
+  }
+}

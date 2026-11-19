@@ -1,0 +1,17 @@
+{
+  "name": "rt-planning_factor_control_point",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/planning_factor_control_point\",\"type\":\"tier4_external_api_msgs/msg/PlanningFactorControlPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"distance\":-3.125},\"id\":\"gen-planning_factor_control_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/planning_factor_control_point\",\"type\":\"tier4_external_api_msgs/msg/PlanningFactorControlPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"distance\":-3.125},\"id\":\"gen-planning_factor_control_point\"}",
+  "model": {
+    "@kind": "planning_factor_control_point",
+    "ros2tier4externalapi.planning_factor_control_point_pose_position_x": "1.007",
+    "ros2tier4externalapi.planning_factor_control_point_pose_position_y": "2.014",
+    "ros2tier4externalapi.planning_factor_control_point_pose_position_z": "-3.021",
+    "ros2tier4externalapi.planning_factor_control_point_pose_orientation_x": "4.028",
+    "ros2tier4externalapi.planning_factor_control_point_pose_orientation_y": "5.035",
+    "ros2tier4externalapi.topic": "/gen/planning_factor_control_point"
+  }
+}

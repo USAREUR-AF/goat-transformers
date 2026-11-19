@@ -1,0 +1,16 @@
+{
+  "name": "rt-auto_mode_status_array",
+  "from": "ros2-tier4-rtc-msgs",
+  "to": "ros2-tier4-rtc-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/auto_mode_status_array\",\"type\":\"tier4_rtc_msgs/msg/AutoModeStatusArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"statuses\":[{\"module\":{\"type\":44},\"is_auto_mode\":false},{\"module\":{\"type\":154},\"is_auto_mode\":false}]},\"id\":\"gen-auto_mode_status_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/auto_mode_status_array\",\"type\":\"tier4_rtc_msgs/msg/AutoModeStatusArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"statuses\":[{\"module\":{\"type\":44},\"is_auto_mode\":false},{\"module\":{\"type\":154},\"is_auto_mode\":false}]},\"id\":\"gen-auto_mode_status_array\"}",
+  "model": {
+    "@kind": "auto_mode_status_array",
+    "ros2tier4rtc.auto_mode_status_array_stamp_sec": "40510",
+    "ros2tier4rtc.auto_mode_status_array_stamp_nanosec": "2147564661",
+    "ros2tier4rtc.auto_mode_status_array_statuses.#": "2",
+    "ros2tier4rtc.auto_mode_status_array_statuses[0].ros2tier4rtc.auto_mode_status_array_statuses_module_type": "44",
+    "ros2tier4rtc.topic": "/gen/auto_mode_status_array"
+  }
+}

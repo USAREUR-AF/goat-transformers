@@ -1,0 +1,16 @@
+{
+  "name": "rt-system_usage_array",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/system_usage_array\",\"type\":\"tier4_debug_msgs/msg/SystemUsageArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"system_usage\":[{\"name\":\"s3\",\"pid\":493827156052,\"cpu_usage\":5.035,\"memory_usage\":-6.042},{\"name\":\"s7\",\"pid\":987654312104,\"cpu_usage\":-9.063,\"memory_usage\":10.07}]},\"id\":\"gen-system_usage_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/system_usage_array\",\"type\":\"tier4_debug_msgs/msg/SystemUsageArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"system_usage\":[{\"name\":\"s3\",\"pid\":493827156052,\"cpu_usage\":5.035,\"memory_usage\":-6.042},{\"name\":\"s7\",\"pid\":987654312104,\"cpu_usage\":-9.063,\"memory_usage\":10.07}]},\"id\":\"gen-system_usage_array\"}",
+  "model": {
+    "@kind": "system_usage_array",
+    "ros2tier4debug.system_usage_array_stamp_sec": "40510",
+    "ros2tier4debug.system_usage_array_stamp_nanosec": "2147564661",
+    "ros2tier4debug.system_usage_array_system_usage.#": "2",
+    "ros2tier4debug.system_usage_array_system_usage[0].ros2tier4debug.system_usage_array_system_usage_name": "s3",
+    "ros2tier4debug.topic": "/gen/system_usage_array"
+  }
+}

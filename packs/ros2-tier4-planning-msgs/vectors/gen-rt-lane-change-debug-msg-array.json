@@ -1,0 +1,17 @@
+{
+  "name": "rt-lane_change_debug_msg_array",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_debug_msg_array\",\"type\":\"tier4_planning_msgs/msg/LaneChangeDebugMsgArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"lane_change_info\":[{\"object_id\":\"s4\",\"allow_lane_change\":true,\"is_front\":false,\"relative_distance\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"velocity\":14.098,\"failed_reason\":\"s15\"},{\"object_id\":\"s16\",\"allow_lane_change\":true,\"is_front\":false,\"relative_distance\":{\"position\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147},\"orientation\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168,\"w\":25.175}},\"velocity\":26.182,\"failed_reason\":\"s27\"}]},\"id\":\"gen-lane_change_debug_msg_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lane_change_debug_msg_array\",\"type\":\"tier4_planning_msgs/msg/LaneChangeDebugMsgArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"lane_change_info\":[{\"object_id\":\"s4\",\"allow_lane_change\":true,\"is_front\":false,\"relative_distance\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"velocity\":14.098,\"failed_reason\":\"s15\"},{\"object_id\":\"s16\",\"allow_lane_change\":true,\"is_front\":false,\"relative_distance\":{\"position\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147},\"orientation\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168,\"w\":25.175}},\"velocity\":26.182,\"failed_reason\":\"s27\"}]},\"id\":\"gen-lane_change_debug_msg_array\"}",
+  "model": {
+    "@kind": "lane_change_debug_msg_array",
+    "ros2tier4planning.lane_change_debug_msg_array_header_stamp_sec": "40510",
+    "ros2tier4planning.lane_change_debug_msg_array_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.lane_change_debug_msg_array_header_frame_id": "s3",
+    "ros2tier4planning.lane_change_debug_msg_array_lane_change_info.#": "2",
+    "ros2tier4planning.lane_change_debug_msg_array_lane_change_info[0].ros2tier4planning.lane_change_debug_msg_array_lane_change_info_object_id": "s4",
+    "ros2tier4planning.topic": "/gen/lane_change_debug_msg_array"
+  }
+}

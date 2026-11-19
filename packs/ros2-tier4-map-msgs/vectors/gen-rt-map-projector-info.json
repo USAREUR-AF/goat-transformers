@@ -1,0 +1,17 @@
+{
+  "name": "rt-map_projector_info",
+  "from": "ros2-tier4-map-msgs",
+  "to": "ros2-tier4-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/map_projector_info\",\"type\":\"tier4_map_msgs/msg/MapProjectorInfo\",\"msg\":{\"projector_type\":\"s1\",\"vertical_datum\":\"s2\",\"mgrs_grid\":\"s3\",\"map_origin\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042}},\"id\":\"gen-map_projector_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/map_projector_info\",\"type\":\"tier4_map_msgs/msg/MapProjectorInfo\",\"msg\":{\"projector_type\":\"s1\",\"vertical_datum\":\"s2\",\"mgrs_grid\":\"s3\",\"map_origin\":{\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042}},\"id\":\"gen-map_projector_info\"}",
+  "model": {
+    "@kind": "map_projector_info",
+    "ros2tier4map.map_projector_info_projector_type": "s1",
+    "ros2tier4map.map_projector_info_vertical_datum": "s2",
+    "ros2tier4map.map_projector_info_mgrs_grid": "s3",
+    "ros2tier4map.map_projector_info_map_origin_latitude": "4.028",
+    "ros2tier4map.map_projector_info_map_origin_longitude": "5.035",
+    "ros2tier4map.topic": "/gen/map_projector_info"
+  }
+}

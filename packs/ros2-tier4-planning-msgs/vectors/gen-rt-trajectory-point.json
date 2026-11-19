@@ -1,0 +1,17 @@
+{
+  "name": "rt-trajectory_point",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"tier4_planning_msgs/msg/TrajectoryPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"twist\":{\"linear\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"angular\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091}},\"accel\":{\"linear\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"angular\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}}},\"id\":\"gen-trajectory_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_point\",\"type\":\"tier4_planning_msgs/msg/TrajectoryPoint\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"twist\":{\"linear\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"angular\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091}},\"accel\":{\"linear\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"angular\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}}},\"id\":\"gen-trajectory_point\"}",
+  "model": {
+    "@kind": "trajectory_point",
+    "ros2tier4planning.trajectory_point_pose_position_x": "1.007",
+    "ros2tier4planning.trajectory_point_pose_position_y": "2.014",
+    "ros2tier4planning.trajectory_point_pose_position_z": "-3.021",
+    "ros2tier4planning.trajectory_point_pose_orientation_x": "4.028",
+    "ros2tier4planning.trajectory_point_pose_orientation_y": "5.035",
+    "ros2tier4planning.topic": "/gen/trajectory_point"
+  }
+}

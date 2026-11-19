@@ -1,0 +1,19 @@
+{
+  "name": "rt-obstacle_avoidance_status",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_avoidance_status\",\"type\":\"tier4_api_msgs/msg/ObstacleAvoidanceStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacle_avoidance_ready\":false,\"candidate_path\":{\"header\":{\"stamp\":{\"sec\":202522,\"nanosec\":2147726673},\"frame_id\":\"s7\"},\"points\":[{\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"twist\":{\"linear\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"angular\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},\"accel\":{\"linear\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"angular\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}},{\"pose\":{\"position\":{\"x\":-27.189,\"y\":28.196,\"z\":29.203},\"orientation\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224,\"w\":-33.231}},\"twist\":{\"linear\":{\"x\":34.238,\"y\":35.245,\"z\":-36.252},\"angular\":{\"x\":37.259,\"y\":38.266,\"z\":-39.273}},\"accel\":{\"linear\":{\"x\":40.28,\"y\":41.287,\"z\":-42.294},\"angular\":{\"x\":43.301,\"y\":44.308,\"z\":-45.315}}}]}},\"id\":\"gen-obstacle_avoidance_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_avoidance_status\",\"type\":\"tier4_api_msgs/msg/ObstacleAvoidanceStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacle_avoidance_ready\":false,\"candidate_path\":{\"header\":{\"stamp\":{\"sec\":202522,\"nanosec\":2147726673},\"frame_id\":\"s7\"},\"points\":[{\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}},\"twist\":{\"linear\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"angular\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14}},\"accel\":{\"linear\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"angular\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}},{\"pose\":{\"position\":{\"x\":-27.189,\"y\":28.196,\"z\":29.203},\"orientation\":{\"x\":-30.21,\"y\":31.217,\"z\":32.224,\"w\":-33.231}},\"twist\":{\"linear\":{\"x\":34.238,\"y\":35.245,\"z\":-36.252},\"angular\":{\"x\":37.259,\"y\":38.266,\"z\":-39.273}},\"accel\":{\"linear\":{\"x\":40.28,\"y\":41.287,\"z\":-42.294},\"angular\":{\"x\":43.301,\"y\":44.308,\"z\":-45.315}}}]}},\"id\":\"gen-obstacle_avoidance_status\"}",
+  "model": {
+    "@kind": "obstacle_avoidance_status",
+    "ros2tier4api.obstacle_avoidance_status_header_stamp_sec": "40510",
+    "ros2tier4api.obstacle_avoidance_status_header_stamp_nanosec": "2147564661",
+    "ros2tier4api.obstacle_avoidance_status_header_frame_id": "s3",
+    "ros2tier4api.obstacle_avoidance_status_obstacle_avoidance_ready": "0",
+    "ros2tier4api.obstacle_avoidance_status_candidate_path_header_stamp_sec": "202522",
+    "ros2tier4api.obstacle_avoidance_status_candidate_path_points.#": "2",
+    "ros2tier4api.obstacle_avoidance_status_candidate_path_points[0].ros2tier4api.obstacle_avoidance_status_candidate_path_points_pose_position_x": "8.056",
+    "ros2tier4api.topic": "/gen/obstacle_avoidance_status"
+  }
+}

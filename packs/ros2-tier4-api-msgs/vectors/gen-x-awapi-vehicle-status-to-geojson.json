@@ -1,0 +1,13 @@
+{
+  "name": "x-awapi_vehicle_status-to-geojson",
+  "from": "ros2-tier4-api-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"tier4_api_msgs/msg/AwapiVehicleStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"eulerangle\":{\"roll\":11.077,\"pitch\":-12.084,\"yaw\":13.091},\"geo_point\":{\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":16.112},\"velocity\":17.119,\"acceleration\":-18.126,\"steering\":19.133,\"steering_velocity\":20.14,\"angular_velocity\":-21.147,\"gear\":891073,\"energy_level\":0.625,\"turn_signal\":972079,\"target_velocity\":25.175,\"target_acceleration\":26.182,\"target_steering\":-27.189,\"target_steering_velocity\":28.196}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "awapi_vehicle_status",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

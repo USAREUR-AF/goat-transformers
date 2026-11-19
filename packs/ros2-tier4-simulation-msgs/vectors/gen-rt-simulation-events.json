@@ -1,0 +1,16 @@
+{
+  "name": "rt-simulation_events",
+  "from": "ros2-tier4-simulation-msgs",
+  "to": "ros2-tier4-simulation-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/simulation_events\",\"type\":\"tier4_simulation_msgs/msg/SimulationEvents\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"fault_injection_events\":[{\"level\":-84,\"name\":\"s4\"},{\"level\":26,\"name\":\"s6\"}]},\"id\":\"gen-simulation_events\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/simulation_events\",\"type\":\"tier4_simulation_msgs/msg/SimulationEvents\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"fault_injection_events\":[{\"level\":-84,\"name\":\"s4\"},{\"level\":26,\"name\":\"s6\"}]},\"id\":\"gen-simulation_events\"}",
+  "model": {
+    "@kind": "simulation_events",
+    "ros2tier4simulation.simulation_events_stamp_sec": "40510",
+    "ros2tier4simulation.simulation_events_stamp_nanosec": "2147564661",
+    "ros2tier4simulation.simulation_events_fault_injection_events.#": "2",
+    "ros2tier4simulation.simulation_events_fault_injection_events[0].ros2tier4simulation.simulation_events_fault_injection_events_level": "-84",
+    "ros2tier4simulation.topic": "/gen/simulation_events"
+  }
+}

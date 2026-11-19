@@ -1,0 +1,12 @@
+{
+ "Metric:name": "metric_name",
+ "Metric:unit": "metric_unit",
+ "Metric:value": "metric_value",
+ "MetricArray:metric_array[]": "metric_array_metric_array",
+ "MetricArray:metric_array[].name": "metric_array_metric_array_name",
+ "MetricArray:metric_array[].unit": "metric_array_metric_array_unit",
+ "MetricArray:metric_array[].value": "metric_array_metric_array_value",
+ "MetricArray:stamp.nanosec": "metric_array_stamp_nanosec",
+ "MetricArray:stamp.sec": "metric_array_stamp_sec",
+ "topic": "topic"
+}

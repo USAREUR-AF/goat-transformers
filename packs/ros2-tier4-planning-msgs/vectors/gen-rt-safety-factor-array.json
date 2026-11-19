@@ -1,0 +1,19 @@
+{
+  "name": "rt-safety_factor_array",
+  "from": "ros2-tier4-planning-msgs",
+  "to": "ros2-tier4-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/safety_factor_array\",\"type\":\"tier4_planning_msgs/msg/SafetyFactorArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"factors\":[{\"type\":63715,\"object_id\":{\"uuid\":\"BQ//AIA=\"},\"predicted_path\":{\"path\":[{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}}],\"time_step\":{\"sec\":526546,\"nanosec\":2148050697},\"confidence\":-1.375},\"ttc_begin\":-1.125,\"ttc_end\":-0.875,\"points\":[{\"x\":-18.126,\"y\":19.133,\"z\":20.14}],\"is_safe\":true,\"detail\":\"s22\"},{\"type\":46840,\"object_id\":{\"uuid\":\"GEj/AIA=\"},\"predicted_path\":{\"path\":[{\"position\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189},\"orientation\":{\"x\":28.196,\"y\":29.203,\"z\":-30.21,\"w\":31.217}}],\"time_step\":{\"sec\":1296103,\"nanosec\":2148820254},\"confidence\":3.375},\"ttc_begin\":3.625,\"ttc_end\":3.875,\"points\":[{\"x\":37.259,\"y\":38.266,\"z\":-39.273}],\"is_safe\":false,\"detail\":\"s41\"}],\"is_safe\":false,\"detail\":\"s43\"},\"id\":\"gen-safety_factor_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/safety_factor_array\",\"type\":\"tier4_planning_msgs/msg/SafetyFactorArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"factors\":[{\"type\":63715,\"object_id\":{\"uuid\":\"BQ//AIA=\"},\"predicted_path\":{\"path\":[{\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056},\"orientation\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077,\"w\":-12.084}}],\"time_step\":{\"sec\":526546,\"nanosec\":2148050697},\"confidence\":-1.375},\"ttc_begin\":-1.125,\"ttc_end\":-0.875,\"points\":[{\"x\":-18.126,\"y\":19.133,\"z\":20.14}],\"is_safe\":true,\"detail\":\"s22\"},{\"type\":46840,\"object_id\":{\"uuid\":\"GEj/AIA=\"},\"predicted_path\":{\"path\":[{\"position\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189},\"orientation\":{\"x\":28.196,\"y\":29.203,\"z\":-30.21,\"w\":31.217}}],\"time_step\":{\"sec\":1296103,\"nanosec\":2148820254},\"confidence\":3.375},\"ttc_begin\":3.625,\"ttc_end\":3.875,\"points\":[{\"x\":37.259,\"y\":38.266,\"z\":-39.273}],\"is_safe\":false,\"detail\":\"s41\"}],\"is_safe\":false,\"detail\":\"s43\"},\"id\":\"gen-safety_factor_array\"}",
+  "model": {
+    "@kind": "safety_factor_array",
+    "ros2tier4planning.safety_factor_array_header_stamp_sec": "40510",
+    "ros2tier4planning.safety_factor_array_header_stamp_nanosec": "2147564661",
+    "ros2tier4planning.safety_factor_array_header_frame_id": "s3",
+    "ros2tier4planning.safety_factor_array_factors.#": "2",
+    "ros2tier4planning.safety_factor_array_factors[0].ros2tier4planning.safety_factor_array_factors_type": "63715",
+    "ros2tier4planning.safety_factor_array_is_safe": "0",
+    "ros2tier4planning.safety_factor_array_detail": "s43",
+    "ros2tier4planning.topic": "/gen/safety_factor_array"
+  }
+}

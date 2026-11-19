@@ -1,0 +1,17 @@
+{
+  "name": "rt-traffic_light_array",
+  "from": "ros2-tier4-perception-msgs",
+  "to": "ros2-tier4-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_array\",\"type\":\"tier4_perception_msgs/msg/TrafficLightArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"signals\":[{\"traffic_light_id\":493827156052,\"traffic_light_type\":154,\"elements\":[{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-9.063}]},{\"traffic_light_id\":1234567890130,\"traffic_light_type\":228,\"elements\":[{\"color\":27,\"shape\":82,\"status\":137,\"confidence\":-15.105}]}]},\"id\":\"gen-traffic_light_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_array\",\"type\":\"tier4_perception_msgs/msg/TrafficLightArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"signals\":[{\"traffic_light_id\":493827156052,\"traffic_light_type\":154,\"elements\":[{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-9.063}]},{\"traffic_light_id\":1234567890130,\"traffic_light_type\":228,\"elements\":[{\"color\":27,\"shape\":82,\"status\":137,\"confidence\":-15.105}]}]},\"id\":\"gen-traffic_light_array\"}",
+  "model": {
+    "@kind": "traffic_light_array",
+    "ros2tier4perception.traffic_light_array_header_stamp_sec": "40510",
+    "ros2tier4perception.traffic_light_array_header_stamp_nanosec": "2147564661",
+    "ros2tier4perception.traffic_light_array_header_frame_id": "s3",
+    "ros2tier4perception.traffic_light_array_signals.#": "2",
+    "ros2tier4perception.traffic_light_array_signals[0].ros2tier4perception.traffic_light_array_signals_traffic_light_id": "493827156052",
+    "ros2tier4perception.topic": "/gen/traffic_light_array"
+  }
+}

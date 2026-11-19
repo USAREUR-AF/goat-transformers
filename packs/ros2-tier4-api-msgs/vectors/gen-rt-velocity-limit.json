@@ -1,0 +1,15 @@
+{
+  "name": "rt-velocity_limit",
+  "from": "ros2-tier4-api-msgs",
+  "to": "ros2-tier4-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_limit\",\"type\":\"tier4_api_msgs/msg/VelocityLimit\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"max_velocity\":-4.375},\"id\":\"gen-velocity_limit\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/velocity_limit\",\"type\":\"tier4_api_msgs/msg/VelocityLimit\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"max_velocity\":-4.375},\"id\":\"gen-velocity_limit\"}",
+  "model": {
+    "@kind": "velocity_limit",
+    "ros2tier4api.velocity_limit_stamp_sec": "40510",
+    "ros2tier4api.velocity_limit_stamp_nanosec": "2147564661",
+    "ros2tier4api.velocity_limit_max_velocity": "-4.375",
+    "ros2tier4api.topic": "/gen/velocity_limit"
+  }
+}

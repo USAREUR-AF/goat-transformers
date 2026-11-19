@@ -1,0 +1,19 @@
+{
+  "name": "rt-int32_multi_array_stamped",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/int32_multi_array_stamped\",\"type\":\"tier4_debug_msgs/msg/Int32MultiArrayStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"layout\":{\"dim\":[{\"label\":\"s3\",\"size\":2147645667,\"stride\":2147686170},{\"label\":\"s6\",\"size\":2147767176,\"stride\":2147807679}],\"data_offset\":2147848182},\"data\":[405037,445540]},\"id\":\"gen-int32_multi_array_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/int32_multi_array_stamped\",\"type\":\"tier4_debug_msgs/msg/Int32MultiArrayStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"layout\":{\"dim\":[{\"label\":\"s3\",\"size\":2147645667,\"stride\":2147686170},{\"label\":\"s6\",\"size\":2147767176,\"stride\":2147807679}],\"data_offset\":2147848182},\"data\":[405037,445540]},\"id\":\"gen-int32_multi_array_stamped\"}",
+  "model": {
+    "@kind": "int32_multi_array_stamped",
+    "ros2tier4debug.int32_multi_array_stamped_stamp_sec": "40510",
+    "ros2tier4debug.int32_multi_array_stamped_stamp_nanosec": "2147564661",
+    "ros2tier4debug.int32_multi_array_stamped_layout_dim.#": "2",
+    "ros2tier4debug.int32_multi_array_stamped_layout_dim[0].ros2tier4debug.int32_multi_array_stamped_layout_dim_label": "s3",
+    "ros2tier4debug.int32_multi_array_stamped_layout_data_offset": "2147848182",
+    "ros2tier4debug.int32_multi_array_stamped_data.#": "2",
+    "ros2tier4debug.int32_multi_array_stamped_data[0].ros2tier4debug.int32_multi_array_stamped_data_value": "405037",
+    "ros2tier4debug.topic": "/gen/int32_multi_array_stamped"
+  }
+}

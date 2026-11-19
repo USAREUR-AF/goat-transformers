@@ -1,0 +1,12 @@
+{
+  "name": "rt-diag_link_status",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/diag_link_status\",\"type\":\"tier4_system_msgs/msg/DiagLinkStatus\",\"id\":\"gen-diag_link_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/diag_link_status\",\"type\":\"tier4_system_msgs/msg/DiagLinkStatus\",\"id\":\"gen-diag_link_status\"}",
+  "model": {
+    "@kind": "diag_link_status",
+    "ros2tier4system.topic": "/gen/diag_link_status"
+  }
+}

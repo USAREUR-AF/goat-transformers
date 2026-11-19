@@ -1,0 +1,16 @@
+{
+  "name": "rt-system_usage",
+  "from": "ros2-tier4-debug-msgs",
+  "to": "ros2-tier4-debug-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/system_usage\",\"type\":\"tier4_debug_msgs/msg/SystemUsage\",\"msg\":{\"name\":\"s1\",\"pid\":246913578026,\"cpu_usage\":-3.021,\"memory_usage\":4.028},\"id\":\"gen-system_usage\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/system_usage\",\"type\":\"tier4_debug_msgs/msg/SystemUsage\",\"msg\":{\"name\":\"s1\",\"pid\":246913578026,\"cpu_usage\":-3.021,\"memory_usage\":4.028},\"id\":\"gen-system_usage\"}",
+  "model": {
+    "@kind": "system_usage",
+    "ros2tier4debug.system_usage_name": "s1",
+    "ros2tier4debug.system_usage_pid": "246913578026",
+    "ros2tier4debug.system_usage_cpu_usage": "-3.021",
+    "ros2tier4debug.system_usage_memory_usage": "4.028",
+    "ros2tier4debug.topic": "/gen/system_usage"
+  }
+}

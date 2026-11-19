@@ -1,0 +1,13 @@
+{
+  "name": "rt-steering",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/steering\",\"type\":\"tier4_external_api_msgs/msg/Steering\",\"msg\":{\"data\":-4.875},\"id\":\"gen-steering\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/steering\",\"type\":\"tier4_external_api_msgs/msg/Steering\",\"msg\":{\"data\":-4.875},\"id\":\"gen-steering\"}",
+  "model": {
+    "@kind": "steering",
+    "ros2tier4externalapi.steering_data": "-4.875",
+    "ros2tier4externalapi.topic": "/gen/steering"
+  }
+}

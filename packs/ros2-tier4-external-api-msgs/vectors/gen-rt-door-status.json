@@ -1,0 +1,15 @@
+{
+  "name": "rt-door_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door_status\",\"type\":\"tier4_external_api_msgs/msg/DoorStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":-84},\"id\":\"gen-door_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door_status\",\"type\":\"tier4_external_api_msgs/msg/DoorStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":-84},\"id\":\"gen-door_status\"}",
+  "model": {
+    "@kind": "door_status",
+    "ros2tier4externalapi.door_status_stamp_sec": "40510",
+    "ros2tier4externalapi.door_status_stamp_nanosec": "2147564661",
+    "ros2tier4externalapi.door_status_status": "-84",
+    "ros2tier4externalapi.topic": "/gen/door_status"
+  }
+}

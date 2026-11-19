@@ -1,0 +1,17 @@
+{
+  "name": "rt-traffic_light_roi",
+  "from": "ros2-tier4-perception-msgs",
+  "to": "ros2-tier4-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_roi\",\"type\":\"tier4_perception_msgs/msg/TrafficLightRoi\",\"msg\":{\"roi\":{\"x_offset\":2147524158,\"y_offset\":2147564661,\"height\":2147605164,\"width\":2147645667,\"do_rectify\":true},\"traffic_light_id\":740740734078,\"traffic_light_type\":8},\"id\":\"gen-traffic_light_roi\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_roi\",\"type\":\"tier4_perception_msgs/msg/TrafficLightRoi\",\"msg\":{\"roi\":{\"x_offset\":2147524158,\"y_offset\":2147564661,\"height\":2147605164,\"width\":2147645667,\"do_rectify\":true},\"traffic_light_id\":740740734078,\"traffic_light_type\":8},\"id\":\"gen-traffic_light_roi\"}",
+  "model": {
+    "@kind": "traffic_light_roi",
+    "ros2tier4perception.traffic_light_roi_roi_x_offset": "2147524158",
+    "ros2tier4perception.traffic_light_roi_roi_y_offset": "2147564661",
+    "ros2tier4perception.traffic_light_roi_roi_height": "2147605164",
+    "ros2tier4perception.traffic_light_roi_roi_width": "2147645667",
+    "ros2tier4perception.traffic_light_roi_roi_do_rectify": "1",
+    "ros2tier4perception.topic": "/gen/traffic_light_roi"
+  }
+}

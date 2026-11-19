@@ -1,0 +1,14 @@
+{
+  "name": "rt-localization_score_array",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/localization_score_array\",\"type\":\"tier4_external_api_msgs/msg/LocalizationScoreArray\",\"msg\":{\"values\":[{\"name\":\"s1\",\"value\":-4.625},{\"name\":\"s3\",\"value\":-4.125}]},\"id\":\"gen-localization_score_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/localization_score_array\",\"type\":\"tier4_external_api_msgs/msg/LocalizationScoreArray\",\"msg\":{\"values\":[{\"name\":\"s1\",\"value\":-4.625},{\"name\":\"s3\",\"value\":-4.125}]},\"id\":\"gen-localization_score_array\"}",
+  "model": {
+    "@kind": "localization_score_array",
+    "ros2tier4externalapi.localization_score_array_values.#": "2",
+    "ros2tier4externalapi.localization_score_array_values[0].ros2tier4externalapi.localization_score_array_values_name": "s1",
+    "ros2tier4externalapi.topic": "/gen/localization_score_array"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-failure_notification",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/failure_notification\",\"type\":\"tier4_external_api_msgs/msg/FailureNotification\",\"msg\":{\"code\":\"s1\",\"is_resolved\":false},\"id\":\"gen-failure_notification\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/failure_notification\",\"type\":\"tier4_external_api_msgs/msg/FailureNotification\",\"msg\":{\"code\":\"s1\",\"is_resolved\":false},\"id\":\"gen-failure_notification\"}",
+  "model": {
+    "@kind": "failure_notification",
+    "ros2tier4externalapi.failure_notification_code": "s1",
+    "ros2tier4externalapi.failure_notification_is_resolved": "0",
+    "ros2tier4externalapi.topic": "/gen/failure_notification"
+  }
+}

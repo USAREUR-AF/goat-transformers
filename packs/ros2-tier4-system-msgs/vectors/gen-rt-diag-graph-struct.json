@@ -1,0 +1,21 @@
+{
+  "name": "rt-diag_graph_struct",
+  "from": "ros2-tier4-system-msgs",
+  "to": "ros2-tier4-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/diag_graph_struct\",\"type\":\"tier4_system_msgs/msg/DiagGraphStruct\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"s3\",\"nodes\":[{\"path\":\"s4\",\"type\":\"s5\"},{\"path\":\"s6\",\"type\":\"s7\"}],\"diags\":[{\"parent\":2147807679,\"name\":\"s9\"},{\"parent\":2147888685,\"name\":\"s11\"}],\"links\":[{\"parent\":2147969691,\"child\":2148010194},{\"parent\":2148050697,\"child\":2148091200}]},\"id\":\"gen-diag_graph_struct\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/diag_graph_struct\",\"type\":\"tier4_system_msgs/msg/DiagGraphStruct\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"id\":\"s3\",\"nodes\":[{\"path\":\"s4\",\"type\":\"s5\"},{\"path\":\"s6\",\"type\":\"s7\"}],\"diags\":[{\"parent\":2147807679,\"name\":\"s9\"},{\"parent\":2147888685,\"name\":\"s11\"}],\"links\":[{\"parent\":2147969691,\"child\":2148010194},{\"parent\":2148050697,\"child\":2148091200}]},\"id\":\"gen-diag_graph_struct\"}",
+  "model": {
+    "@kind": "diag_graph_struct",
+    "ros2tier4system.diag_graph_struct_stamp_sec": "40510",
+    "ros2tier4system.diag_graph_struct_stamp_nanosec": "2147564661",
+    "ros2tier4system.diag_graph_struct_id": "s3",
+    "ros2tier4system.diag_graph_struct_nodes.#": "2",
+    "ros2tier4system.diag_graph_struct_nodes[0].ros2tier4system.diag_graph_struct_nodes_path": "s4",
+    "ros2tier4system.diag_graph_struct_diags.#": "2",
+    "ros2tier4system.diag_graph_struct_diags[0].ros2tier4system.diag_graph_struct_diags_parent": "2147807679",
+    "ros2tier4system.diag_graph_struct_links.#": "2",
+    "ros2tier4system.diag_graph_struct_links[0].ros2tier4system.diag_graph_struct_links_parent": "2147969691",
+    "ros2tier4system.topic": "/gen/diag_graph_struct"
+  }
+}

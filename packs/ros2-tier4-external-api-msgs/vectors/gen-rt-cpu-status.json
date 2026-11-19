@@ -1,0 +1,17 @@
+{
+  "name": "rt-cpu_status",
+  "from": "ros2-tier4-external-api-msgs",
+  "to": "ros2-tier4-external-api-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cpu_status\",\"type\":\"tier4_external_api_msgs/msg/CpuStatus\",\"msg\":{\"status\":190,\"total\":-4.625,\"usr\":-4.375,\"nice\":-4.125,\"sys\":-3.875,\"idle\":-3.625},\"id\":\"gen-cpu_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cpu_status\",\"type\":\"tier4_external_api_msgs/msg/CpuStatus\",\"msg\":{\"status\":190,\"total\":-4.625,\"usr\":-4.375,\"nice\":-4.125,\"sys\":-3.875,\"idle\":-3.625},\"id\":\"gen-cpu_status\"}",
+  "model": {
+    "@kind": "cpu_status",
+    "ros2tier4externalapi.cpu_status_status": "190",
+    "ros2tier4externalapi.cpu_status_total": "-4.625",
+    "ros2tier4externalapi.cpu_status_usr": "-4.375",
+    "ros2tier4externalapi.cpu_status_nice": "-4.125",
+    "ros2tier4externalapi.cpu_status_sys": "-3.875",
+    "ros2tier4externalapi.topic": "/gen/cpu_status"
+  }
+}

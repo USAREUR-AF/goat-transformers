@@ -1,0 +1,15 @@
+{
+  "name": "rt-is_start_requested",
+  "from": "ros2-tier4-control-msgs",
+  "to": "ros2-tier4-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/is_start_requested\",\"type\":\"tier4_control_msgs/msg/IsStartRequested\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":true},\"id\":\"gen-is_start_requested\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/is_start_requested\",\"type\":\"tier4_control_msgs/msg/IsStartRequested\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"data\":true},\"id\":\"gen-is_start_requested\"}",
+  "model": {
+    "@kind": "is_start_requested",
+    "ros2tier4control.is_start_requested_stamp_sec": "40510",
+    "ros2tier4control.is_start_requested_stamp_nanosec": "2147564661",
+    "ros2tier4control.is_start_requested_data": "1",
+    "ros2tier4control.topic": "/gen/is_start_requested"
+  }
+}
