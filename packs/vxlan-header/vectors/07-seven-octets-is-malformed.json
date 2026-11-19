@@ -1,0 +1,8 @@
+{
+  "name": "seven-octets-is-malformed",
+  "from": "vxlan-header",
+  "to": "vxlan-header",
+  "input": "08000000123456",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header cut to 7 octets"
+}

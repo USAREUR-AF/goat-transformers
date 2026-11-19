@@ -1,0 +1,14 @@
+{
+  "name": "i-flag-clear-roundtrip",
+  "from": "vxlan-header",
+  "to": "vxlan-header",
+  "input": "0000000000000000",
+  "expect": "0000000000000000",
+  "model": {
+    "inet.vxlan_i_flag": "0",
+    "inet.vxlan_reserved1": "0",
+    "inet.vxlan_vni": "0",
+    "inet.vxlan_reserved2": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; all eight octets zero: I flag clear, the pack does not check it"
+}

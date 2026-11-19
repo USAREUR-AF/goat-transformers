@@ -1,0 +1,14 @@
+{
+  "name": "wrong-checksum-is-carried",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "1600fffde9fc0001",
+  "expect": "1600fffde9fc0001",
+  "model": {
+    "@kind": "v2-membership-report",
+    "inet.igmp_max_resp_time": "0",
+    "inet.igmp_checksum": "65533",
+    "inet.igmp_group_addr": "3925606401"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the version 2 report with its checksum inverted: the pack carries the checksum and does not check it"
+}

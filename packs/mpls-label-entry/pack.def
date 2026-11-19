@@ -1,0 +1,18 @@
+# MPLS label stack entry (RFC 3032 section 2.1; the TC field named by RFC 5462):
+# one 4-octet entry, the first of the stack. Public. The rest of the stack is
+# not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        mpls-label-entry
+version       0.1.0
+distribution  public
+source        "IETF RFC 3032, MPLS Label Stack Encoding, January 2001, section 2.1, https://www.rfc-editor.org/rfc/rfc3032.txt; IETF RFC 5462, MPLS Label Stack Entry: EXP Field Renamed to Traffic Class Field, February 2009, https://www.rfc-editor.org/rfc/rfc5462.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.mpls_label              0:0:20     uint
+field  inet.mpls_tc                 0:20:3     uint
+field  inet.mpls_bottom_of_stack    0:23:1     uint
+field  inet.mpls_ttl                0:24:8     uint

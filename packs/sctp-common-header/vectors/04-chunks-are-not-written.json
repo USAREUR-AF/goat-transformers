@@ -1,0 +1,14 @@
+{
+  "name": "chunks-are-not-written",
+  "from": "sctp-common-header",
+  "to": "sctp-common-header",
+  "input": "13888e3c2f6b19a00a0b0c0d0003001400000000000000000000000000000000",
+  "expect": "13888e3c2f6b19a00a0b0c0d",
+  "model": {
+    "inet.src_port": "5000",
+    "inet.dst_port": "36412",
+    "inet.sctp_verification_tag": "795548064",
+    "inet.sctp_checksum": "168496141"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header followed by a 20-octet DATA chunk header and payload (type 0, flags 3, length 20, the rest zero)"
+}

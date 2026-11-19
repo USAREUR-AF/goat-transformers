@@ -1,16 +1,17 @@
-# The inet module: the fixed header fields of seven IETF protocols (IPv4, IPv6,
-# UDP, TCP, ICMP, NTP, the DNS message header), as the wire integer unless the
-# description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
+# The inet module: the fixed header fields of IETF protocols (IPv4, IPv6, UDP,
+# TCP, ICMP, NTP, the DNS message header; RTP and RTCP, ARP, GRE, VXLAN, the
+# MPLS label stack entry, IGMPv2, the SCTP common header, BFD), as the wire
+# integer unless the description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
 # name; the three keys without a protocol name hold the same quantity in more than
 # one header (pack.md of each pack gives the evidence).
 module        inet
-version       0.1.0
+version       0.2.0
 distribution  public
-source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905 and RFC 1035, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260 and RFC 5880, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
 
 # Shared between headers
-key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP and TCP)"
-key  dst_port                  int     -     "transport port of the receiving process, 0-65535 (UDP and TCP)"
+key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP, TCP and SCTP)"
+key  dst_port                  int     -     "transport port of the receiving process, 0-65535 (UDP, TCP and SCTP)"
 key  ip_protocol               int     -     "number of the header or protocol that follows the IP header, from the IANA protocol numbers registry (IPv4 protocol, IPv6 next header)"
 
 # IPv4, RFC 791 section 3.1
@@ -121,3 +122,82 @@ key  dns_qdcount               int     -     "number of entries in the question 
 key  dns_ancount               int     -     "number of resource records in the answer section"
 key  dns_nscount               int     -     "number of name server resource records in the authority section"
 key  dns_arcount               int     -     "number of resource records in the additional records section"
+
+# RTP fixed header, RFC 3550 section 5.1
+key  rtp_version               int     -     "RTP version, 2"
+key  rtp_padding               int     -     "flag: 1 = padding octets end the packet, the last one counting them"
+key  rtp_extension             int     -     "flag: 1 = one header extension follows the fixed header"
+key  rtp_csrc_count            int     -     "number of contributing source identifiers after the fixed header, 0-15"
+key  rtp_marker                int     -     "marker bit, its meaning set by the profile"
+key  rtp_payload_type          int     -     "payload type, 0-127, its meaning set by the profile"
+key  rtp_sequence              int     -     "sequence number, 16 bits, one more for each data packet sent"
+key  rtp_timestamp             int     -     "sampling instant of the first payload octet, in units of the payload's clock, 32 bits"
+key  rtp_ssrc                  int     -     "synchronization source identifier, 32 bits"
+
+# RTCP sender and receiver reports, RFC 3550 sections 6.4.1 and 6.4.2
+key  rtcp_version              int     -     "RTP version, 2"
+key  rtcp_padding              int     -     "flag: 1 = padding octets end this RTCP packet"
+key  rtcp_report_count         int     -     "number of reception report blocks in the packet, 0-31"
+key  rtcp_length               int     -     "length of the RTCP packet in 32-bit words, less one, header and padding included"
+key  rtcp_ssrc                 int     -     "synchronization source identifier of the sender of the report"
+key  rtcp_ntp_ts_sec           int     s     "sender report: whole seconds of the NTP-format time the report was sent (may be relative, or 0)"
+key  rtcp_ntp_ts_frac          int     -     "sender report: fraction of a second of that time, in units of 2^-32 s"
+key  rtcp_rtp_timestamp        int     -     "sender report: the same instant in the units and offset of the RTP timestamps"
+key  rtcp_packet_count         int     -     "sender report: RTP data packets sent since the start of transmission"
+key  rtcp_octet_count          int     -     "sender report: payload octets sent since the start of transmission"
+
+# ARP for IPv4 over Ethernet, RFC 826 (and RFC 894 for the IPv4 type)
+key  arp_sender_hw_addr        int     -     "Ethernet address of the sender, the 48-bit integer"
+key  arp_sender_ip_addr        int     -     "IPv4 address of the sender, the 32-bit integer"
+key  arp_target_hw_addr        int     -     "Ethernet address of the target, the 48-bit integer (0 when not known)"
+key  arp_target_ip_addr        int     -     "IPv4 address of the target, the 32-bit integer"
+
+# GRE, RFC 2784 with the key and sequence number of RFC 2890
+key  gre_bit1                  int     -     "bit 1 of the first word: routing present in RFC 1701, reserved (0) in RFC 2784"
+key  gre_reserved0             int     -     "bits 4-12 of the first word, 0"
+key  gre_version               int     -     "GRE version, 0"
+key  gre_protocol_type         int     -     "EtherType of the payload packet"
+key  gre_checksum              int     -     "present when the C bit is 1: ones' complement checksum of the GRE header and payload"
+key  gre_reserved1             int     -     "present when the C bit is 1: 16 bits after the checksum, 0"
+key  gre_key                   int     -     "present when the K bit is 1: 32-bit key set by the encapsulator, naming a traffic flow"
+key  gre_sequence              int     -     "present when the S bit is 1: 32-bit sequence number"
+
+# VXLAN, RFC 7348 section 5
+key  vxlan_i_flag              int     -     "flag: 1 = the VNI is valid"
+key  vxlan_reserved1           int     -     "the 24 reserved bits after the flags, 0"
+key  vxlan_vni                 int     -     "VXLAN network identifier, 24 bits"
+key  vxlan_reserved2           int     -     "the 8 reserved bits after the VNI, 0"
+
+# MPLS label stack entry, RFC 3032 section 2.1 (TC named by RFC 5462)
+key  mpls_label                int     -     "label value, 20 bits (0-15 reserved)"
+key  mpls_tc                   int     -     "traffic class, 3 bits (named experimental use in RFC 3032)"
+key  mpls_bottom_of_stack      int     -     "flag: 1 = the last entry of the label stack"
+key  mpls_ttl                  int     -     "time to live"
+
+# IGMPv2, RFC 2236 section 2
+key  igmp_type                 int     -     "message type, when it is not one of the four RFC 2236 types"
+key  igmp_max_resp_time        int     -     "membership query: longest time before a report is sent, in tenths of a second; 0 in other messages"
+key  igmp_checksum             int     -     "ones' complement checksum of the IGMP message"
+key  igmp_group_addr           int     -     "multicast group address, the 32-bit integer (0 in a general query)"
+
+# SCTP common header, RFC 9260 section 3.1
+key  sctp_verification_tag     int     -     "verification tag, 32 bits, set from the peer's initiate tag"
+key  sctp_checksum             int     -     "CRC32c checksum of the SCTP packet"
+
+# BFD control packet, mandatory section, RFC 5880 section 4.1
+key  bfd_version               int     -     "BFD version, 1"
+key  bfd_diag                  int     -     "diagnostic code: reason for the last change of session state (0 none, 1-8 defined)"
+key  bfd_state                 int     -     "session state as the sender sees it (0 AdminDown, 1 Down, 2 Init, 3 Up)"
+key  bfd_poll                  int     -     "flag: poll, the sender asks for verification"
+key  bfd_final                 int     -     "flag: final, the reply to a poll"
+key  bfd_cpi                   int     -     "flag: control plane independent"
+key  bfd_auth_present          int     -     "flag: an authentication section follows"
+key  bfd_demand                int     -     "flag: demand mode"
+key  bfd_multipoint            int     -     "flag: multipoint, reserved, 0"
+key  bfd_detect_mult           int     -     "detection time multiplier"
+key  bfd_length                int     -     "length of the control packet in octets"
+key  bfd_my_disc               int     -     "my discriminator: nonzero, chosen by the sender for the session"
+key  bfd_your_disc             int     -     "your discriminator: the peer's my discriminator, or 0 when not known"
+key  bfd_desired_min_tx        int     us    "desired minimum transmit interval, microseconds"
+key  bfd_required_min_rx       int     us    "required minimum receive interval, microseconds"
+key  bfd_required_min_echo_rx  int     us    "required minimum echo receive interval, microseconds (0: no echo)"

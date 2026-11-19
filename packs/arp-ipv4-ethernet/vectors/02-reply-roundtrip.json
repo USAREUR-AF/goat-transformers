@@ -1,0 +1,15 @@
+{
+  "name": "reply-roundtrip",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "000108000604000200005e005302c000020200005e005301c0000201",
+  "expect": "000108000604000200005e005302c000020200005e005301c0000201",
+  "model": {
+    "@kind": "reply",
+    "inet.arp_sender_hw_addr": "1577079554",
+    "inet.arp_sender_ip_addr": "3221225986",
+    "inet.arp_target_hw_addr": "1577079553",
+    "inet.arp_target_ip_addr": "3221225985"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the reply to that request from 00-00-5E-00-53-02"
+}

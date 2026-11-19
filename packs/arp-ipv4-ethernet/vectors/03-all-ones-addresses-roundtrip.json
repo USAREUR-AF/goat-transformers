@@ -1,0 +1,15 @@
+{
+  "name": "all-ones-addresses-roundtrip",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "0001080006040002ffffffffffffffffffffffffffffffffffffffff",
+  "expect": "0001080006040002ffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "reply",
+    "inet.arp_sender_hw_addr": "281474976710655",
+    "inet.arp_sender_ip_addr": "4294967295",
+    "inet.arp_target_hw_addr": "281474976710655",
+    "inet.arp_target_ip_addr": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a reply whose four addresses are all ones (the 48-bit integer 281474976710655)"
+}

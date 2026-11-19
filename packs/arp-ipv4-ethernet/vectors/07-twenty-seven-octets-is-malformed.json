@@ -1,0 +1,8 @@
+{
+  "name": "twenty-seven-octets-is-malformed",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "000108000604000100005e005301c0000201000000000000c00002",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the request cut to 27 octets"
+}

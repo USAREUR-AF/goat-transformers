@@ -1,0 +1,15 @@
+{
+  "name": "key-only-roundtrip",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "200086dd0000beef",
+  "expect": "200086dd0000beef",
+  "model": {
+    "inet.gre_bit1": "0",
+    "inet.gre_reserved0": "0",
+    "inet.gre_version": "0",
+    "inet.gre_protocol_type": "34525",
+    "inet.gre_key": "48879"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; K set, key 48879, carrying IPv6 (EtherType 0x86DD): 8 octets"
+}

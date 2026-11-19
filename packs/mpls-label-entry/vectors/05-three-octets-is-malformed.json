@@ -1,0 +1,8 @@
+{
+  "name": "three-octets-is-malformed",
+  "from": "mpls-label-entry",
+  "to": "mpls-label-entry",
+  "input": "00010b",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first entry cut to 3 octets"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "common-header-roundtrip",
+  "from": "sctp-common-header",
+  "to": "sctp-common-header",
+  "input": "13888e3c2f6b19a00a0b0c0d",
+  "expect": "13888e3c2f6b19a00a0b0c0d",
+  "model": {
+    "inet.src_port": "5000",
+    "inet.dst_port": "36412",
+    "inet.sctp_verification_tag": "795548064",
+    "inet.sctp_checksum": "168496141"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; source port 5000, destination port 36412, a verification tag, checksum 0x0a0b0c0d (a chosen value)"
+}

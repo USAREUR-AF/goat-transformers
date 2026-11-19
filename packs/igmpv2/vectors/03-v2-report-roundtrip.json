@@ -1,0 +1,14 @@
+{
+  "name": "v2-report-roundtrip",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "16000002e9fc0001",
+  "expect": "16000002e9fc0001",
+  "model": {
+    "@kind": "v2-membership-report",
+    "inet.igmp_max_resp_time": "0",
+    "inet.igmp_checksum": "2",
+    "inet.igmp_group_addr": "3925606401"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a version 2 report for 233.252.0.1; checksum 0x0002 computed here"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ports-to-udp-header",
+  "from": "sctp-common-header",
+  "to": "udp-header",
+  "input": "13888e3c2f6b19a00a0b0c0d",
+  "expect": "13888e3c00000000",
+  "model": {
+    "inet.src_port": "5000",
+    "inet.dst_port": "36412",
+    "inet.sctp_verification_tag": "795548064",
+    "inet.sctp_checksum": "168496141"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header to udp-header: the shared keys inet.src_port and inet.dst_port carry; UDP length and checksum are absent and written 0"
+}

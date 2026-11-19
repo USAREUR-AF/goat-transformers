@@ -1,0 +1,14 @@
+{
+  "name": "group-specific-query-roundtrip",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "110a04f8e9fc0001",
+  "expect": "110a04f8e9fc0001",
+  "model": {
+    "@kind": "membership-query",
+    "inet.igmp_max_resp_time": "10",
+    "inet.igmp_checksum": "1272",
+    "inet.igmp_group_addr": "3925606401"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a query for group 233.252.0.1, max response time 10 (1 s); checksum 0x04f8 computed here"
+}

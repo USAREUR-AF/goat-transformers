@@ -1,0 +1,8 @@
+{
+  "name": "eleven-octets-is-malformed",
+  "from": "rtp-header",
+  "to": "rtp-header",
+  "input": "80e01234000271005eed12",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first vector's header cut to 11 octets"
+}

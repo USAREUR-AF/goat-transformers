@@ -1,0 +1,14 @@
+{
+  "name": "largest-vni-roundtrip",
+  "from": "vxlan-header",
+  "to": "vxlan-header",
+  "input": "08000000ffffff00",
+  "expect": "08000000ffffff00",
+  "model": {
+    "inet.vxlan_i_flag": "1",
+    "inet.vxlan_reserved1": "0",
+    "inet.vxlan_vni": "16777215",
+    "inet.vxlan_reserved2": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; I flag set, the largest VNI 16777215"
+}

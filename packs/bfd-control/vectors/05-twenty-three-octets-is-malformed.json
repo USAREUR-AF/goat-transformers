@@ -1,0 +1,8 @@
+{
+  "name": "twenty-three-octets-is-malformed",
+  "from": "bfd-control",
+  "to": "bfd-control",
+  "input": "20c003181122334455667788000493e0000493e0000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the Up packet cut to 23 octets"
+}

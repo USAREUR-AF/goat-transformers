@@ -1,0 +1,26 @@
+{
+  "name": "down-with-poll-roundtrip",
+  "from": "bfd-control",
+  "to": "bfd-control",
+  "input": "216003180000000100000000000f4240000f42400000c350",
+  "expect": "216003180000000100000000000f4240000f42400000c350",
+  "model": {
+    "inet.bfd_version": "1",
+    "inet.bfd_diag": "1",
+    "inet.bfd_state": "1",
+    "inet.bfd_poll": "1",
+    "inet.bfd_final": "0",
+    "inet.bfd_cpi": "0",
+    "inet.bfd_auth_present": "0",
+    "inet.bfd_demand": "0",
+    "inet.bfd_multipoint": "0",
+    "inet.bfd_detect_mult": "3",
+    "inet.bfd_length": "24",
+    "inet.bfd_my_disc": "1",
+    "inet.bfd_your_disc": "0",
+    "inet.bfd_desired_min_tx": "1000000",
+    "inet.bfd_required_min_rx": "1000000",
+    "inet.bfd_required_min_echo_rx": "50000"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a Down session after detection time expired (diagnostic 1), poll set, your discriminator 0 (not yet known), slow rate of 1 s, echo 50000 us"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "key-bit-without-the-key-is-malformed",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "200086dd0000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the K header cut to 6 octets: the key does not fit"
+}

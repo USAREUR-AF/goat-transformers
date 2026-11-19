@@ -1,0 +1,14 @@
+{
+  "name": "leave-group-roundtrip",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "1700ff01e9fc0001",
+  "expect": "1700ff01e9fc0001",
+  "model": {
+    "@kind": "leave-group",
+    "inet.igmp_max_resp_time": "0",
+    "inet.igmp_checksum": "65281",
+    "inet.igmp_group_addr": "3925606401"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a leave for 233.252.0.1; checksum 0xff01 computed here"
+}

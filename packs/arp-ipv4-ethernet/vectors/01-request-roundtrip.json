@@ -1,0 +1,15 @@
+{
+  "name": "request-roundtrip",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "000108000604000100005e005301c0000201000000000000c0000202",
+  "expect": "000108000604000100005e005301c0000201000000000000c0000202",
+  "model": {
+    "@kind": "request",
+    "inet.arp_sender_hw_addr": "1577079553",
+    "inet.arp_sender_ip_addr": "3221225985",
+    "inet.arp_target_hw_addr": "0",
+    "inet.arp_target_ip_addr": "3221225986"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a request from 00-00-5E-00-53-01 at 192.0.2.1 for 192.0.2.2, target hardware address 0"
+}

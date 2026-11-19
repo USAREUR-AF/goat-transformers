@@ -1,0 +1,19 @@
+{
+  "name": "dynamic-payload-roundtrip",
+  "from": "rtp-header",
+  "to": "rtp-header",
+  "input": "80e01234000271005eed1234",
+  "expect": "80e01234000271005eed1234",
+  "model": {
+    "inet.rtp_version": "2",
+    "inet.rtp_padding": "0",
+    "inet.rtp_extension": "0",
+    "inet.rtp_csrc_count": "0",
+    "inet.rtp_marker": "1",
+    "inet.rtp_payload_type": "96",
+    "inet.rtp_sequence": "4660",
+    "inet.rtp_timestamp": "160000",
+    "inet.rtp_ssrc": "1592594996"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; version 2, marker set, dynamic payload type 96, sequence 4660, timestamp 160000, no CSRC"
+}

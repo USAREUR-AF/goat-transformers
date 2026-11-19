@@ -1,0 +1,14 @@
+{
+  "name": "second-entry-is-not-written",
+  "from": "mpls-label-entry",
+  "to": "mpls-label-entry",
+  "input": "003e80ff00010b40",
+  "expect": "003e80ff",
+  "model": {
+    "inet.mpls_label": "1000",
+    "inet.mpls_tc": "0",
+    "inet.mpls_bottom_of_stack": "0",
+    "inet.mpls_ttl": "255"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a stack of two entries, label 1000 above the first vector's entry: the pack maps the top entry only"
+}

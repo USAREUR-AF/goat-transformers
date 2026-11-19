@@ -1,0 +1,14 @@
+{
+  "name": "reserved-words-are-carried",
+  "from": "vxlan-header",
+  "to": "vxlan-header",
+  "input": "08ffffff123456ff",
+  "expect": "08ffffff123456ff",
+  "model": {
+    "inet.vxlan_i_flag": "1",
+    "inet.vxlan_reserved1": "16777215",
+    "inet.vxlan_vni": "1193046",
+    "inet.vxlan_reserved2": "255"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header with the 24 and 8 reserved bits after the flags and the VNI set: fields, so they come back"
+}

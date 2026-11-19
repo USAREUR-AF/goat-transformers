@@ -1,0 +1,31 @@
+# ARP for IPv4 addresses over Ethernet (RFC 826; the IPv4 type from RFC 894):
+# the 28-octet packet with 6-octet hardware and 4-octet protocol addresses.
+# Public. Other hardware or protocol types are no-kind (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        arp-ipv4-ethernet
+version       0.1.0
+distribution  public
+source        "IETF RFC 826, An Ethernet Address Resolution Protocol, November 1982, https://www.rfc-editor.org/rfc/rfc826.txt; IETF RFC 894, A Standard for the Transmission of IP Datagrams over Ethernet Networks, April 1984, https://www.rfc-editor.org/rfc/rfc894.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# Hardware type 1 (Ethernet), protocol type 0x0800 (IPv4), lengths 6 and 4.
+when   0:0:16   1
+when   0:16:16  2048
+when   0:32:8   6
+when   0:40:8   4
+
+field  inet.arp_sender_hw_addr      0:64:48    uint
+field  inet.arp_sender_ip_addr      0:112:32   uint
+field  inet.arp_target_hw_addr      0:144:48   uint
+field  inet.arp_target_ip_addr      0:192:32   uint
+
+# The opcode (octets 6-7).
+kind      request
+when      0:48:16  1
+
+kind      reply
+when      0:48:16  2
