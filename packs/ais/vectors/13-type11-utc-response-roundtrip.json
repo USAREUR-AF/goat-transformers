@@ -1,0 +1,21 @@
+{
+  "name": "type11-utc-response-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": ";4R33:1uUK2F`q?mOt@@GoQ00000",
+  "expect": ";4R33:1uUK2F`q?mOt@@GoQ00000",
+  "model": {
+    "@kind": "utc-response",
+    "ais.msg_type": "11",
+    "ais.year": "2009",
+    "ais.month": "5",
+    "ais.day": "22",
+    "ais.hour": "2",
+    "ais.minute": "22",
+    "ais.second": "40",
+    "lat": "28.409116666666666",
+    "lon": "-94.40768333333334"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 526",
+  "reference": "Type 11 has the layout of type 4 and its own kind. gpsd: 2009-05-22T02:22:40Z, lon -94.4076833, lat 28.4091167."
+}

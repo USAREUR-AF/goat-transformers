@@ -1,0 +1,9 @@
+{
+  "name": "type24-part-2-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42LQi8puB04hhuLD@0000000000",
+  "expect_error": "no-kind",
+  "source": "values chosen for this vector",
+  "reference": "Type 24 with part number 2 at bits 38-39: neither static-a (part 0) nor static-b (part 1) holds (pack.md, Kinds)."
+}

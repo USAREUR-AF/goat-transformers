@@ -1,0 +1,15 @@
+{
+  "name": "type24-part-a-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42O55i18tMET00000000000000",
+  "expect": "H42O55i18tMET00000000000000",
+  "model": {
+    "@kind": "static-a",
+    "ais.mmsi": "271041815",
+    "ais.part_no": "0",
+    "ais.shipname": "PROGUY"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 904",
+  "reference": "Part A without the optional spare byte: 27 characters = 162 bits, the spare at 160-167 is absent and L = 160. gpsd (merged with part B): shipname PROGUY."
+}

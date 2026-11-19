@@ -1,0 +1,15 @@
+{
+  "name": "type7-one-acknowledged-mmsi",
+  "from": "ais",
+  "to": "ais",
+  "input": "702R5`hwCjq8",
+  "expect": "702R5`hwCjq8",
+  "model": {
+    "@kind": "binary-ack",
+    "ais.mmsi": "2655651",
+    "ais.mmsi1": "265538450",
+    "ais.mmsiseq1": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 221",
+  "reference": "72-bit binary acknowledge, 12 characters: the optional second to fourth MMSI lie beyond the input and are absent; L = 72. gpsd mmsi1 265538450."
+}

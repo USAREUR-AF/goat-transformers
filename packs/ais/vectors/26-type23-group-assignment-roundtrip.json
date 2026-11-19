@@ -1,0 +1,18 @@
+{
+  "name": "type23-group-assignment-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "G02:Kn01R`sn@291nj600000900",
+  "expect": "G02:Kn01R`sn@291nj600000900",
+  "model": {
+    "@kind": "group-assignment",
+    "ais.ne_lon": "1578",
+    "ais.ne_lat": "30642",
+    "ais.sw_lon": "1096",
+    "ais.sw_lat": "30408",
+    "ais.station_type": "6",
+    "ais.interval": "9"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 886",
+  "reference": "27 characters = 162 bits, L = 160. Corners 1578, 30642, 1096, 30408 in 1/10 minute (gpsd 2.63, 51.07, 1.826667, 50.68), station type 6, interval 9."
+}

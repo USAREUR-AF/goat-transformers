@@ -1,0 +1,13 @@
+{
+  "name": "ais-02-speed-course-and-rounding",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-58.375,-34.6]},\"properties\":{\"course\":271.25,\"speed_ms\":5},\"id\":\"701000002\"}",
+  "expect": "1:LQa@gP1QKlitid<r@:VOwp0000",
+  "model": {
+    "@complete": true,
+    "ais.mmsi": "701000002"
+  },
+  "source": "values chosen for this vector",
+  "reference": "speed 5 x 36000/1852 = 97.19..., rounded 97; course 271.25 x 10 = 2712.5 exactly, rounded half away from zero to 2713; lon -58.375 x 600000 = -35025000, lat -34.6 x 600000 = -20760000, two's complement. Other fields as ais-01. Kind: `convert` clears the kind; position-a1 is the first whose requires (ais.mmsi, lat, lon) are present, ais.mmsi derived by parse_int(uid)."
+}

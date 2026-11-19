@@ -1,0 +1,29 @@
+{
+  "name": "type5-space-padded-names-come-back-with-at",
+  "from": "ais",
+  "to": "ais",
+  "input": "55?MbV02;H;s<HtKR20EHE:0@T4@Dn2222222216L961O5Gf0NSQEp6ClRp888888888880",
+  "expect": "55?MbV02;H;s<HtKP00EHE:0@T4@Dl0000000016L961O5Gf0NSQEp6ClRh000000000000",
+  "model": {
+    "@kind": "static-voyage",
+    "ais.mmsi": "351759000",
+    "ais.imo": "9134270",
+    "callsign": "3FOF8",
+    "ais.shipname": "EVER DIADEM",
+    "ais.shiptype": "70",
+    "ais.to_bow": "225",
+    "ais.to_stern": "70",
+    "ais.to_port": "1",
+    "ais.to_starboard": "31",
+    "ais.epfd": "1",
+    "ais.eta_month": "5",
+    "ais.eta_day": "15",
+    "ais.eta_hour": "14",
+    "ais.eta_minute": "0",
+    "ais.draught": "12.2",
+    "ais.destination": "NEW YORK",
+    "ais.dte": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 124 and 125",
+  "reference": "Two fragments joined in order (71 characters, 426 bits; fill 2). Raw six-bit fields: call sign '3FOF8  ', ship name 'EVER DIADEM' + 9 spaces, destination 'NEW YORK' + 12 spaces; `trim` removes the trailing spaces. Draught 122 x 1/10 = 12.2. gpsd agrees (callsign 3FOF8, shipname EVER DIADEM, destination NEW YORK, eta 05-15T14:00Z, draught 12.2, dte 0). Expect differs from input: sixbit encode pads with @ (value 0), so the trailing spaces (value 32) come back as @ (engine-spec 0.14, The sixbit transform; pack.md, Behaviour to know). L = 424, 71 characters, 2 zero fill bits."
+}

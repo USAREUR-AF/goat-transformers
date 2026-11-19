@@ -1,0 +1,20 @@
+{
+  "name": "type5-fill-bit-set-and-empty-destination",
+  "from": "ais",
+  "to": "ais",
+  "input": "542M92h00001@<7;?G0PD4i@R0<tqA8tj37>220o0h:2240Ht5000000000000000000002",
+  "expect": "542M92h00001@<7;?G0PD4i@R0<tqA8tj37<000o0h:2240Ht5000000000000000000000",
+  "model": {
+    "@kind": "static-voyage",
+    "ais.mmsi": "271010059",
+    "callsign": "TCA2350",
+    "ais.shipname": "HEALTH CONTROL 13",
+    "ais.eta_hour": "24",
+    "ais.eta_minute": "60",
+    "ais.draught": "2",
+    "ais.destination": "",
+    "ais.dte": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 1017 and 1018 (fragments of sequential id 2 on channel A, joined in order)",
+  "reference": "Destination all @ decodes to the empty string, present (ruling 6 of 0.14). Ship name 'HEALTH CONTROL 13' + 3 spaces, trimmed. ETA hour 24 and minute 60 are the not-available codes. gpsd: destination \"\", eta 00-00T24:60Z, draught 2.0. Expect differs from input: the ship name's trailing spaces come back as @, and the last character '2' (000010) has bit 424 set, a fill bit past L = 424, which decode ignores (ruling 2 of 0.14) and encode writes as zero."
+}

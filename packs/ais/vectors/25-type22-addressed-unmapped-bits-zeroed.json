@@ -1,0 +1,20 @@
+{
+  "name": "type22-addressed-unmapped-bits-zeroed",
+  "from": "ais",
+  "to": "ais",
+  "input": "F@@W>gOP00PH=JrN9l000?wB2HH;",
+  "expect": "F@@W>gOP00PH=JrN84000?hB2HH;",
+  "model": {
+    "@kind": "channel-addressed",
+    "ais.channel_a": "3584",
+    "ais.channel_b": "8",
+    "ais.txrx": "1",
+    "ais.power": "1",
+    "ais.dest1": "28144881",
+    "ais.dest2": "268435519",
+    "ais.addressed": "1",
+    "ais.spare2": "624139"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 881",
+  "reference": "Bit 139 = 1 selects channel-addressed. gpsd: dest1 28144881, dest2 268435519, channel_a 3584, channel_b 8. Expect differs from input: bits 99-103 and 134-138, which no line maps (pack.md, Not mapped), are set in the input and come back zero."
+}

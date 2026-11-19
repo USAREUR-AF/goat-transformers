@@ -1,0 +1,14 @@
+{
+  "name": "ais-03-callsign-only-to-type5",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"PBXY\"},\"id\":\"244123457\"}",
+  "expect": "53`l7@@0000109QT0000000000000000000000000000000Ht0000000000000000000008",
+  "model": {
+    "@complete": true,
+    "ais.mmsi": "244123457",
+    "callsign": "PBXY"
+  },
+  "source": "values chosen for this vector",
+  "reference": "No lat or lon, so position-a1 and every other kind before static-voyage fail their requires; static-voyage requires ais.mmsi and callsign. Call sign 'PBXY' + 3 x @ at bits 70-111; ship name and destination absent, zero bits (20 x @); ETA hour 24, minute 60 and dte 1 from the defaults; everything else zero. L = 424, 71 characters with 2 zero fill bits."
+}

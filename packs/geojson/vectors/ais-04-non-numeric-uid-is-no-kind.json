@@ -1,0 +1,9 @@
+{
+  "name": "ais-04-non-numeric-uid-is-no-kind",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{},\"id\":\"SHIP-1\"}",
+  "expect_error": "no-kind",
+  "source": "values chosen for this vector",
+  "reference": "parse_int('SHIP-1') leaves ais.mmsi absent (ruling 28 of 0.8); every kind requires ais.mmsi, so encode is no-kind (pack.md, MMSI from uid)."
+}

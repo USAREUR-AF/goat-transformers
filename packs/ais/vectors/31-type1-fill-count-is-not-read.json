@@ -1,0 +1,17 @@
+{
+  "name": "type1-fill-count-is-not-read",
+  "from": "ais",
+  "to": "ais",
+  "input": "13aIkM@P00PJ@qPNL=e@0?wJ28JO",
+  "expect": "13aIkM@P00PJ@qPNL=e@0?wJ28JO",
+  "model": {
+    "@kind": "position-a1",
+    "ais.mmsi": "244740981",
+    "lat": "53.199235",
+    "lon": "5.737466666666666",
+    "ais.raim": "1",
+    "ais.radio": "34463"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 1122",
+  "reference": "The sentence states 5 fill bits, so only 163 bits are meant; the pack reads the payload text alone (ruling 1 of 0.14), as 168 bits: radio 34463. gpsd uses the fill count and reports radio 1076 for this sentence and 34463 for the same payload with fill 0 at line 1126."
+}

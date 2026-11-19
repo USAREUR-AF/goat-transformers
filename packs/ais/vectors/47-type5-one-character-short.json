@@ -1,0 +1,9 @@
+{
+  "name": "type5-one-character-short",
+  "from": "ais",
+  "to": "ais",
+  "input": "55?MbV02;H;s<HtKR20EHE:0@T4@Dn2222222216L961O5Gf0NSQEp6ClRp88888888888",
+  "expect_error": "malformed-wire",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 124 and 125, first 70 of the 71 joined characters",
+  "reference": "420 bits: the destination ends at bit 422 and dte and spare at 424 (pack.md, Short type 5)."
+}

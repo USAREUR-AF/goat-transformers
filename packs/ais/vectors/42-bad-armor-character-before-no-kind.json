@@ -1,0 +1,9 @@
+{
+  "name": "bad-armor-character-before-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "63u?;TP0`QJ<06P000x",
+  "expect_error": "malformed-wire",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 196, with 'x' appended",
+  "reference": "A type 6 payload, which alone is no-kind, with 'x' (0x78, past 'w') appended: every character is checked before any `when`, so the error is malformed-wire (engine-spec 0.14)."
+}

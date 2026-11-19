@@ -1,0 +1,19 @@
+{
+  "name": "type2-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "25Cjtd0Oj;Jp7ilG7=UkKBoB0<06",
+  "expect": "25Cjtd0Oj;Jp7ilG7=UkKBoB0<06",
+  "model": {
+    "@kind": "position-a2",
+    "ais.mmsi": "356302000",
+    "lat": "40.392358333333334",
+    "lon": "-71.62614333333333",
+    "speed_ms": "7.150777777777778",
+    "course": "87.7",
+    "ais.msg_type": "2",
+    "ais.turn": "127"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 56",
+  "reference": "Type 2 selects position-a2 and keeps the type on re-encode. Turn code 127 (gpsd \"fastright\"), SOG 139 tenths, course 877 tenths, heading 91; gpsd agrees."
+}

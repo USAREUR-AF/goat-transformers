@@ -1,0 +1,15 @@
+{
+  "name": "type24-part-a-with-spare-byte",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42LQiA<D60@tL00000000000000",
+  "expect": "H42LQiA<D60@tL00000000000000",
+  "model": {
+    "@kind": "static-a",
+    "ais.mmsi": "271000005",
+    "ais.shipname": "SEA DOG",
+    "ais.spare": "0"
+  },
+  "source": "values chosen for this vector",
+  "reference": "168-bit part A: the optional spare byte is in the input, so it is present (0) and counts toward L = 168, 28 characters."
+}

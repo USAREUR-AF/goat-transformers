@@ -1,0 +1,9 @@
+{
+  "name": "type12-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "<5?SIj1;GbD07??4",
+  "expect_error": "no-kind",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 557",
+  "reference": "Message type 12 (addressed safety text) has no kind."
+}

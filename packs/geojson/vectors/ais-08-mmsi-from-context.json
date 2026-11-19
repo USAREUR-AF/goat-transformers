@@ -1,0 +1,17 @@
+{
+  "name": "ais-08-mmsi-from-context",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{}}",
+  "expect": "13`l7@gP?w0DVG0MqLt>4?wp0000",
+  "context": {
+    "ais.mmsi": "244123458"
+  },
+  "model": {
+    "@complete": true,
+    "ais.mmsi": "244123458",
+    "uid": "244123458"
+  },
+  "source": "values chosen for this vector",
+  "reference": "No id; the caller supplies ais.mmsi through context (engine-spec 0.6, Caller-supplied keys), so position-a1's requires hold. uid is then derived from it and not written by ais. Otherwise as ais-01."
+}

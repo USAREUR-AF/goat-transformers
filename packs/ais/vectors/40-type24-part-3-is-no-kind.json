@@ -1,0 +1,9 @@
+{
+  "name": "type24-part-3-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42LQi<000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "values chosen for this vector",
+  "reference": "Type 24 with part number 3."
+}

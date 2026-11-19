@@ -1,0 +1,9 @@
+{
+  "name": "ais-05-uid-wider-than-30-bits",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{},\"id\":\"1234567890\"}",
+  "expect_error": "transform-encode",
+  "source": "values chosen for this vector",
+  "reference": "ais.mmsi = parse_int(uid) = 1234567890, which does not fit the 30-bit uint at 0:8:30: transform-encode (ruling 4b of 0.11: an engine never writes the low bits of a value that does not fit)."
+}

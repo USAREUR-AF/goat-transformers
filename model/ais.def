@@ -1,0 +1,143 @@
+# The ais module: values of an AIS message payload (AIVDM/AIVDO) that the core
+# module has no key for. Used by the pack `ais`. Every key holds the wire value
+# in the wire's own unit unless its description names another; an enumeration
+# holds the wire code. packs/ais/pack.md states which message types fill which
+# keys, and the not-available codes.
+#
+# The derive lines connect the MMSI with `uid`: a decoded MMSI gives `uid` as
+# its decimal text, and a `uid` that is a decimal integer gives the MMSI.
+module        ais
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, v1.58 (24 June 2023), www/AIVDM.adoc at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause"
+
+# Every message
+key  msg_type        int     -      "message type, the first six bits of the payload, 1 to 27"
+key  repeat          int     -      "repeat indicator, 0 to 3; 3 = do not repeat"
+key  mmsi            int     -      "MMSI of the sending station, up to 9 decimal digits"
+
+# Position reports and their status
+key  nav_status      int     -      "navigation status code, 0 to 15; 15 = undefined"
+key  turn            int     -      "rate-of-turn code as on the wire, signed, -128 to 127; -128 = not available, 127 and -127 = turning faster than 5 degrees in 30 s with no indicator; other values are 4.733 times the square root of the turn rate in degrees per minute, sign kept"
+key  accuracy        int     -      "flag: 1 = position accuracy better than 10 m (DGNSS), 0 = worse"
+key  heading         int     deg    "true heading in whole degrees, 0 to 359; 511 = not available"
+key  second          int     s      "UTC second of the report, 0 to 59; 60 = not available, 61 manual input, 62 dead reckoning, 63 positioning system inoperative"
+key  maneuver        int     -      "maneuver indicator (blue sign on inland waters): 0 not available, 1 no, 2 yes"
+key  raim            int     -      "flag: 1 = RAIM in use"
+key  radio           int     -      "radio status bits as on the wire (19 bits in types 1 to 4 and 11, 20 bits in types 9, 18 and 19)"
+key  spare           int     -      "first spare or unused bit range of the message, as on the wire"
+key  spare2          int     -      "second spare bit range of the message, as on the wire"
+key  spare3          int     -      "third spare bit range of the message, as on the wire"
+key  reserved        int     -      "regional reserved bits 38 to 45 of types 18 and 19, as on the wire"
+key  regional        int     -      "regional reserved bits of the message, as on the wire"
+key  epfd            int     -      "type of position fixing device: 0 undefined, 1 GPS, 2 GLONASS, 3 GPS and GLONASS, 4 Loran-C, 5 Chayka, 6 integrated navigation system, 7 surveyed, 8 Galileo, 15 internal GNSS"
+key  assigned        int     -      "flag: 1 = station in assigned mode, 0 = autonomous mode"
+key  dte             int     -      "flag: 0 = data terminal ready, 1 = not ready"
+
+# Base station report and UTC response (types 4 and 11)
+key  year            int     -      "UTC year, 1 to 9999; 0 = not available"
+key  month           int     -      "UTC month, 1 to 12; 0 = not available"
+key  day             int     -      "UTC day of month, 1 to 31; 0 = not available"
+key  hour            int     h      "UTC hour, 0 to 23; 24 = not available"
+key  minute          int     min    "UTC minute, 0 to 59; 60 = not available"
+
+# Static and voyage data (types 5, 19, 24)
+key  ais_version     int     -      "AIS version indicator of the station, 0 to 3"
+key  imo             int     -      "IMO ship identification number; 0 for inland vessels"
+key  shipname        string  -      "vessel name, up to 20 six-bit characters, trailing @ and spaces removed"
+key  shiptype        int     -      "ship and cargo type code, 0 to 99; 0 = not available"
+key  to_bow          int     m      "distance from the position reference to the bow; 511 = 511 m or more"
+key  to_stern        int     m      "distance from the position reference to the stern; 511 = 511 m or more"
+key  to_port         int     m      "distance from the position reference to port; 63 = 63 m or more"
+key  to_starboard    int     m      "distance from the position reference to starboard; 63 = 63 m or more"
+key  eta_month       int     -      "estimated time of arrival, UTC month, 1 to 12; 0 = not available"
+key  eta_day         int     -      "estimated time of arrival, UTC day, 1 to 31; 0 = not available"
+key  eta_hour        int     h      "estimated time of arrival, UTC hour, 0 to 23; 24 = not available"
+key  eta_minute      int     min    "estimated time of arrival, UTC minute, 0 to 59; 60 = not available"
+key  draught         float   m      "draught, in steps of 0.1 m"
+key  destination     string  -      "destination, up to 20 six-bit characters, trailing @ and spaces removed"
+
+# Addressed and acknowledgement messages (types 7, 10, 13, 15, 16)
+key  dest_mmsi       int     -      "MMSI of the destination station"
+key  mmsi1           int     -      "first MMSI the message names (acknowledged, interrogated or assigned)"
+key  mmsi2           int     -      "second MMSI the message names"
+key  mmsi3           int     -      "third MMSI the message names"
+key  mmsi4           int     -      "fourth MMSI the message names"
+key  mmsiseq1        int     -      "sequence number of the acknowledged message from mmsi1, 0 to 3"
+key  mmsiseq2        int     -      "sequence number of the acknowledged message from mmsi2, 0 to 3"
+key  mmsiseq3        int     -      "sequence number of the acknowledged message from mmsi3, 0 to 3"
+key  mmsiseq4        int     -      "sequence number of the acknowledged message from mmsi4, 0 to 3"
+key  type1_1         int     -      "type 15: first message type requested of mmsi1"
+key  offset1_1       int     -      "type 15: slot offset for the first reply of mmsi1"
+key  type1_2         int     -      "type 15: second message type requested of mmsi1"
+key  offset1_2       int     -      "type 15: slot offset for the second reply of mmsi1"
+key  type2_1         int     -      "type 15: message type requested of mmsi2"
+key  offset2_1       int     -      "type 15: slot offset for the reply of mmsi2"
+
+# Slot assignment and reservation (types 16 and 20)
+key  offset1         int     -      "type 16: slot offset or reporting rate for mmsi1; type 20: first reserved offset number"
+key  offset2         int     -      "type 16: slot offset or reporting rate for mmsi2; type 20: second reserved offset number"
+key  offset3         int     -      "type 20: third reserved offset number"
+key  offset4         int     -      "type 20: fourth reserved offset number"
+key  increment1      int     -      "type 16: slot increment for mmsi1 (0 = offset is a rate per 10 minutes); type 20: first repeat increment"
+key  increment2      int     -      "type 16: slot increment for mmsi2; type 20: second repeat increment"
+key  increment3      int     -      "type 20: third repeat increment"
+key  increment4      int     -      "type 20: fourth repeat increment"
+key  number1         int     -      "type 20: number of consecutive slots of the first reservation"
+key  number2         int     -      "type 20: number of consecutive slots of the second reservation"
+key  number3         int     -      "type 20: number of consecutive slots of the third reservation"
+key  number4         int     -      "type 20: number of consecutive slots of the fourth reservation"
+key  timeout1        int     min    "type 20: allocation timeout of the first reservation"
+key  timeout2        int     min    "type 20: allocation timeout of the second reservation"
+key  timeout3        int     min    "type 20: allocation timeout of the third reservation"
+key  timeout4        int     min    "type 20: allocation timeout of the fourth reservation"
+
+# SAR aircraft (type 9)
+key  altitude        int     m      "type 9: altitude, whole metres, reference not stated by the source; 4095 = not available, 4094 = 4094 m or more"
+
+# Class B (types 18 and 19)
+key  cs              int     -      "flag: 0 = Class B SOTDMA unit, 1 = Class B carrier-sense unit"
+key  display         int     -      "flag: 1 = unit has a visual display"
+key  dsc             int     -      "flag: 1 = unit is attached to a VHF radio with DSC"
+key  band            int     -      "flag: 1 = unit can use any part of the marine band"
+key  msg22           int     -      "flag: 1 = unit accepts channel assignment by message type 22"
+
+# Aid to navigation (type 21)
+key  aid_type        int     -      "type of aid to navigation, 0 to 31; 0 = not specified, 1 to 15 fixed, 16 to 31 floating"
+key  name            string  -      "name of the aid to navigation, the first 20 six-bit characters, trailing @ and spaces removed; the name extension is not read"
+key  off_position    int     -      "flag: 1 = floating aid is off its position"
+key  virtual_aid     int     -      "flag: 1 = virtual aid simulated by a nearby station"
+
+# Channel management and group assignment (types 22 and 23)
+key  channel_a       int     -      "type 22: channel number of channel A"
+key  channel_b       int     -      "type 22: channel number of channel B"
+key  txrx            int     -      "transmit and receive mode: 0 TxA/TxB RxA/RxB, 1 TxA RxA/RxB, 2 TxB RxA/RxB"
+key  power           int     -      "type 22: flag, 0 = low power, 1 = high power"
+key  ne_lon          int     -      "north-east corner of the area, longitude in 1/10 minute, east positive"
+key  ne_lat          int     -      "north-east corner of the area, latitude in 1/10 minute, north positive"
+key  sw_lon          int     -      "south-west corner of the area, longitude in 1/10 minute, east positive"
+key  sw_lat          int     -      "south-west corner of the area, latitude in 1/10 minute, north positive"
+key  dest1           int     -      "type 22 addressed: MMSI of destination 1"
+key  dest2           int     -      "type 22 addressed: MMSI of destination 2"
+key  addressed       int     -      "type 22: flag, 0 = broadcast to an area, 1 = addressed to two stations"
+key  band_a          int     -      "type 22: flag, 1 = channel A uses 12.5 kHz bandwidth"
+key  band_b          int     -      "type 22: flag, 1 = channel B uses 12.5 kHz bandwidth"
+key  zonesize        int     -      "type 22: size of the transitional zone, code"
+key  station_type    int     -      "type 23: station type addressed, 0 to 15; 0 = all mobiles"
+key  interval        int     -      "type 23: reporting interval code, 0 to 15"
+key  quiet           int     min    "type 23: quiet time; 0 = none"
+
+# Static data report (type 24)
+key  part_no         int     -      "type 24: part number, 0 = part A, 1 = part B"
+key  vendor_id       string  -      "type 24 part B: manufacturer ID, 3 six-bit characters, trailing @ removed"
+key  unit_model      int     -      "type 24 part B: unit model code"
+key  serial          int     -      "type 24 part B: unit serial number"
+key  vendor_text     string  -      "type 24 part B: bits 48 to 89 read as one 7-character six-bit string, the vendor ID of editions before the model and serial fields; trailing @ removed"
+key  mothership_mmsi int     -      "type 24 part B: bits 132 to 161 read as the MMSI of the mother ship; meaningful only when mmsi is of the form 98xxxxxxx (auxiliary craft), else those bits are the dimensions"
+
+# Long-range position (type 27)
+key  course_lr       int     deg    "type 27: course over ground in whole degrees, 0 to 359; 511 = not available; reference direction not stated by the source"
+key  gnss            int     -      "type 27: flag, 0 = current GNSS position, 1 = not a GNSS position"
+
+derive  uid       text_of    ais.mmsi
+derive  ais.mmsi  parse_int  uid

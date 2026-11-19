@@ -1,0 +1,24 @@
+{
+  "name": "type19-extended-class-b-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "C5N3SRgPEnJGEBT>NhWAwwo862PaLELTBJ:V00000000S0D:R220",
+  "expect": "C5N3SRgPEnJGEBT>NhWAwwo862PaLELTBJ:V00000000S0D:R220",
+  "model": {
+    "@kind": "position-b-ext",
+    "ais.mmsi": "367059850",
+    "lat": "29.543695",
+    "lon": "-88.81039166666666",
+    "speed_ms": "4.475666666666666",
+    "course": "335.9",
+    "ais.reserved": "248",
+    "ais.regional": "4",
+    "ais.shipname": "CAPT.J.RIMES",
+    "ais.shiptype": "70",
+    "ais.to_bow": "5",
+    "ais.to_stern": "21",
+    "ais.epfd": "1"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 772",
+  "reference": "312 bits, 52 characters. Ship name CAPT.J.RIMES, reserved 248, regional 4, SOG 87 tenths. gpsd agrees."
+}

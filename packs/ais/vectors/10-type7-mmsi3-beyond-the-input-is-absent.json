@@ -1,0 +1,18 @@
+{
+  "name": "type7-mmsi3-beyond-the-input-is-absent",
+  "from": "ais",
+  "to": "ais",
+  "input": "7IiQ4T`UjA9lC;b:M<MWE@",
+  "expect": "7IiQ4T`UjA9lC;b:M0",
+  "model": {
+    "@kind": "binary-ack",
+    "ais.mmsi": "655901842",
+    "ais.spare": "2",
+    "ais.mmsi1": "158483613",
+    "ais.mmsiseq1": "0",
+    "ais.mmsi2": "321823389",
+    "ais.mmsiseq2": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 230",
+  "reference": "22 characters = 132 bits (fill 4). mmsi3 at bits 104-133 needs 134 bits, so it and mmsiseq3 are absent (`optional`, engine-spec 0.6). gpsd reports mmsi3 836359488 for this sentence, a value that needs bits past the 128 the sentence carries (132 less 4 fill bits); the pack leaves mmsi3 absent. Expect differs from input: L = 104 (mmsiseq2 ends at bit 104), 18 characters with 4 zero fill bits; the input's characters past bit 107 are dropped."
+}

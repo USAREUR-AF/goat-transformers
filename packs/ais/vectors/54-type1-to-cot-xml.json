@@ -1,0 +1,17 @@
+{
+  "name": "type1-to-cot-xml",
+  "from": "ais",
+  "to": "cot-xml",
+  "input": "15RTgt0PAso;90TKcjM8h6g208CQ",
+  "expect": "<event version=\"2.0\" uid=\"371798000\" type=\"a-u-X\"><point lat=\"48.38163333333333\" lon=\"-123.39538333333333\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"224\" speed=\"6.3276666666666666\"/></detail></event>",
+  "model": {
+    "@complete": true,
+    "uid": "371798000",
+    "lat": "48.38163333333333",
+    "lon": "-123.39538333333333",
+    "speed_ms": "6.3276666666666666",
+    "course": "224"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10",
+  "reference": "Type 1 to CoT. cot-xml: version const, uid (derived text_of(ais.mmsi)), type default a-u-X, point with the hae/ce/le defaults 9999999, detail/contact then detail/track in field-line order; no time, start, stale or how, since the entity has none."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "type5-to-geojson-no-geometry",
+  "from": "ais",
+  "to": "geojson",
+  "input": "55?MbV02;H;s<HtKR20EHE:0@T4@Dn2222222216L961O5Gf0NSQEp6ClRp888888888880",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"3FOF8\"},\"id\":\"351759000\"}",
+  "model": {
+    "@complete": true,
+    "uid": "351759000",
+    "callsign": "3FOF8"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 124 and 125",
+  "reference": "Type 5: no position, so geometry is null (ruling 5 of 0.1.1); the call sign is the only shared key. geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
+}
