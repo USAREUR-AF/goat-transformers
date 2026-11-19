@@ -1,0 +1,14 @@
+{
+  "name": "ruling-23-value-written-at-the-first-line-position",
+  "from": "conformance-absent-place-json",
+  "to": "conformance-absent-place-json",
+  "input": "{\"s\":\"-\",\"x\":1}",
+  "expect": "{\"s\":\"-\",\"x\":1}",
+  "model": {
+    "probe.s2": "-",
+    "probe.x": "1",
+    "@absent": [
+      "probe.s1"
+    ]
+  }
+}

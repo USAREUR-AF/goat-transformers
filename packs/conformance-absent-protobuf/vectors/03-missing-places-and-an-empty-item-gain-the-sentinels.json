@@ -1,0 +1,22 @@
+{
+  "name": "missing-places-and-an-empty-item-gain-the-sentinels",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-protobuf",
+  "input": "3a01054200",
+  "expect": "08ffffffffffffffffff01100119000000000000f87f250000807f2a043d4e2f4132003a0105420608ff0112012d",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "5",
+    "probe.items.#": "1",
+    "@absent": [
+      "probe.n",
+      "probe.x",
+      "hae",
+      "probe.ratio",
+      "probe.label",
+      "uid",
+      "probe.items[0].probe.qty",
+      "probe.items[0].probe.label"
+    ]
+  }
+}

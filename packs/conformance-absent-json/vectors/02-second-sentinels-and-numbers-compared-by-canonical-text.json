@@ -1,0 +1,24 @@
+{
+  "name": "second-sentinels-and-numbers-compared-by-canonical-text",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"alt\":9.999999e6,\"lat\":-999,\"label\":\"-\",\"r\":0.5,\"id\":\"u1\",\"code\":0,\"on\":true,\"cs\":\"C\",\"a\":1,\"na\":-1,\"s\":\"x\",\"q\":3}",
+  "expect": "{\"id\":\"u1\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":0.5,\"code\":\"0\",\"on\":true,\"cs\":\"C\",\"a\":1,\"na\":-1,\"s\":\"x\",\"q\":3}",
+  "model": {
+    "uid": "u1",
+    "probe.ratio": "0.5",
+    "probe.w": "1",
+    "callsign": "C",
+    "probe.a": "1",
+    "probe.neg_a": "-1",
+    "probe.s1": "x",
+    "probe.s2": "x",
+    "probe.qty": "3",
+    "@absent": [
+      "hae",
+      "lat",
+      "probe.label",
+      "probe.tag"
+    ]
+  }
+}

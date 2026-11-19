@@ -822,6 +822,220 @@ pub struct FieldDef {
     pub optional: bool,
     /// the declared type of the model key, set when the pack is loaded
     pub key_type: Option<KeyType>,
+    /// `absent <value>[,<value>…]` (engine-spec v0.9): the argument as written
+    pub absent_arg: Option<String>,
+    /// the sentinels of `absent`, resolved for the wire when the pack is read
+    pub absent: Vec<Sentinel>,
+}
+
+/// One wire value of an `absent` option that means "no value" (engine-spec v0.9).
+#[derive(Clone, Debug, PartialEq)]
+pub enum Sentinel {
+    /// `bits`, and the integer forms of `protobuf`: the raw unsigned integer
+    Num(u64),
+    /// `xml`, `json`, `geojson` and `pstring`: the text compared, and how a
+    /// `json` or `geojson` wire writes it
+    Text(String, SentinelJson),
+}
+
+/// How a sentinel is written on `json` and `geojson` (ruling 9 of 0.9).
+#[derive(Clone, Debug, PartialEq)]
+pub enum SentinelJson {
+    Str,
+    Num(f64),
+    Bool(bool),
+}
+
+impl FieldDef {
+    /// Is the raw unsigned integer of this field one of its sentinels?
+    pub(crate) fn absent_num(&self, raw: u64) -> bool {
+        self.absent.iter().any(|s| *s == Sentinel::Num(raw))
+    }
+    /// Is the raw text of this field one of its sentinels?
+    pub(crate) fn absent_text(&self, raw: &str) -> bool {
+        self.absent.iter().any(|s| matches!(s, Sentinel::Text(t, _) if t == raw))
+    }
+    /// The sentinel encode writes for an absent key: the first.
+    pub(crate) fn sentinel(&self) -> Option<&Sentinel> {
+        self.absent.first()
+    }
+}
+
+/// Read the option list of a `field` line, from the token after the
+/// transform. `optional` is refused where `allow_optional` is false (a
+/// sequential pack). The token after `absent` is always its argument (ruling
+/// 11 of 0.9).
+fn field_options(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: bool) -> Result<Vec<String>, Error> {
+    let mut vias = Vec::new();
+    let mut i = 4;
+    while i < toks.len() {
+        let flag = match toks[i].as_str() {
+            "via" => {
+                i += 1;
+                match toks.get(i) {
+                    Some(t) if f.via.is_none() => f.via = Some(t.clone()),
+                    Some(_) => return bad(ln, "`via` given twice"),
+                    None => return bad(ln, "`via` needs <table>"),
+                }
+                vias.push(toks[i].clone());
+                i += 1;
+                continue;
+            }
+            "absent" => {
+                i += 1;
+                match toks.get(i) {
+                    Some(t) if f.absent_arg.is_none() => f.absent_arg = Some(t.clone()),
+                    Some(_) => return bad(ln, "`absent` given twice"),
+                    None => return bad(ln, "`absent` needs <value>[,<value>…]"),
+                }
+                i += 1;
+                continue;
+            }
+            "swap" => &mut f.swap,
+            "trim" => &mut f.trim,
+            "optional" if allow_optional => &mut f.optional,
+            "optional" => return bad(ln, "`optional` is not valid in a `layout sequential` pack"),
+            o => return bad(ln, format!("unknown field option `{}`", o)),
+        };
+        if *flag {
+            return bad(ln, format!("field option `{}` given twice", toks[i]));
+        }
+        *flag = true;
+        i += 1;
+    }
+    Ok(vias)
+}
+
+/// Resolve the `absent` argument of a field for its wire (engine-spec v0.9,
+/// Load errors). `bits_len`: the bit length of a `bits` field.
+fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result<(), Error> {
+    let arg = match &f.absent_arg {
+        Some(a) => a.clone(),
+        None => return Ok(()),
+    };
+    let ln = f.line;
+    // the quoted empty token `""` is the one value "the empty text"
+    let values: Vec<&str> = if arg.is_empty() { vec![""] } else { arg.split(',').collect() };
+    if arg.contains('"') || (values.len() > 1 && values.iter().any(|v| v.is_empty())) {
+        return bad(ln, format!("`absent {}`: an empty value in the list", arg));
+    }
+    let number = |v: &str, max_bits: u32| -> Result<u64, Error> {
+        if v.is_empty() || !v.bytes().all(|b| b.is_ascii_digit()) {
+            return bad(ln, format!("`absent` value `{}` is not an unsigned decimal integer", v));
+        }
+        let n = v.parse::<u64>().or_else(|_| bad(ln, format!("`absent` value `{}` is too large", v)))?;
+        if max_bits < 64 && n >> max_bits != 0 {
+            return bad(ln, format!("`absent` value {} does not fit {} bits", n, max_bits));
+        }
+        Ok(n)
+    };
+    let mut out = Vec::new();
+    for v in values {
+        out.push(match wire {
+            Wire::Bits => {
+                let len = bits_len.unwrap_or(0);
+                if len > 64 {
+                    return bad(ln, format!("`absent` on a field of {} bits; at most 64", len));
+                }
+                Sentinel::Num(number(v, len)?)
+            }
+            Wire::Protobuf => match f.transform {
+                // `=` is part of the text on `pstring` (ruling 12 of 0.9)
+                Transform::Pstring => Sentinel::Text(v.to_string(), SentinelJson::Str),
+                Transform::Pfloat => Sentinel::Num(number(v, 32)?),
+                _ => Sentinel::Num(number(v, 64)?),
+            },
+            Wire::Xml | Wire::Json | Wire::GeoJson => {
+                let forced = v.starts_with('=');
+                let text = if forced { &v[1..] } else { v };
+                if v != "" && text.is_empty() {
+                    return bad(ln, "an `absent` value empty after `=`; only `\"\"` names the empty text");
+                }
+                let json = if wire == Wire::Xml || forced {
+                    SentinelJson::Str
+                } else {
+                    match text {
+                        "null" => return bad(ln, "`null` cannot be an `absent` value"),
+                        "true" => SentinelJson::Bool(true),
+                        "false" => SentinelJson::Bool(false),
+                        // JSON number text (RFC 8259) is held as its canonical text (ruling 9 of 0.9)
+                        _ => match json::parse(text) {
+                            _ if text.trim() != text => SentinelJson::Str,
+                            Ok(json::Json::Int(n)) => SentinelJson::Num(n as f64),
+                            Ok(json::Json::Num(x)) if x.is_finite() => SentinelJson::Num(x),
+                            Ok(json::Json::Num(_)) => {
+                                return bad(ln, format!("`absent` value `{}` is not a finite number", text))
+                            }
+                            _ => SentinelJson::Str,
+                        },
+                    }
+                };
+                // ruling 25 of 0.9: a `geojson` coordinate takes number text only
+                if wire == Wire::GeoJson && f.locator.starts_with("geometry.") && !matches!(json, SentinelJson::Num(_)) {
+                    return bad(ln, format!("`absent` value `{}` on a coordinate is not number text", v));
+                }
+                // ruling 13 of 0.9: the `bool` transform holds `true` and `false` only
+                if f.transform == Transform::Bool && !matches!(json, SentinelJson::Bool(_)) {
+                    return bad(ln, format!("`absent` value `{}` on `bool` is not `true` or `false`", v));
+                }
+                let text = match json {
+                    SentinelJson::Num(x) => fmt_f64(x),
+                    _ => text.to_string(),
+                };
+                Sentinel::Text(text, json)
+            }
+        });
+    }
+    f.absent = out;
+    Ok(())
+}
+
+/// The text a sentinel compares a JSON wire value with (ruling 9 of 0.9): a
+/// string as it is, a number's canonical text, `true` or `false`. None for
+/// `null`, arrays and objects.
+fn json_absent_text(j: &json::Json) -> Option<String> {
+    match j {
+        json::Json::Int(n) => Some(fmt_f64(*n as f64)),
+        other => json_when_text(other),
+    }
+}
+
+/// Does a JSON wire value hold one of the field's sentinels?
+fn json_absent(f: &FieldDef, j: &json::Json) -> bool {
+    !f.absent.is_empty() && json_absent_text(j).map_or(false, |t| f.absent_text(&t))
+}
+
+/// The JSON value of a sentinel (ruling 11 of 0.5, ruling 9 of 0.9).
+fn sentinel_json(s: &Sentinel) -> json::Json {
+    match s {
+        Sentinel::Text(_, SentinelJson::Num(x)) => json::Json::Num(*x),
+        Sentinel::Text(_, SentinelJson::Bool(b)) => json::Json::Bool(*b),
+        Sentinel::Text(t, SentinelJson::Str) => json::Json::Str(t.clone()),
+        Sentinel::Num(n) => json::Json::Num(*n as f64),
+    }
+}
+
+/// The first line that names each locator of a scope (ruling 23 of 0.9).
+fn first_lines<'a>(lines: impl Iterator<Item = (usize, &'a str)>) -> HashMap<&'a str, usize> {
+    let mut out: HashMap<&str, usize> = HashMap::new();
+    for (n, loc) in lines {
+        let e = out.entry(loc).or_insert(n);
+        *e = (*e).min(n);
+    }
+    out
+}
+
+/// The sentinel lines of one scope that encode may write: those of an absent
+/// key whose place no line with a value (the entity's or a `default`) writes
+/// (ruling 16 of 0.9). Each with its sentinel.
+fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> bool) -> Vec<(&'a FieldDef, &'a Sentinel)> {
+    let written: Vec<&str> =
+        sel.fields.iter().filter(|f| !skip(f) && sel.value_of(ent, f).is_some()).map(|f| f.locator.as_str()).collect();
+    sel.fields
+        .iter()
+        .filter(|f| !skip(f) && sel.value_of(ent, f).is_none() && !written.contains(&f.locator.as_str()))
+        .filter_map(|f| f.sentinel().map(|s| (*f, s)))
+        .collect()
 }
 
 /// One `default` line: the value encode uses for a key the entity lacks.
@@ -1259,32 +1473,11 @@ impl Pack {
                         trim: false,
                         optional: false,
                         key_type: None,
+                        absent_arg: None,
+                        absent: Vec::new(),
                     };
                     // options after the transform, in any order (engine-spec v0.6)
-                    let mut i = 4;
-                    while i < toks.len() {
-                        let flag = match toks[i].as_str() {
-                            "via" => {
-                                i += 1;
-                                match toks.get(i) {
-                                    Some(t) if f.via.is_none() => f.via = Some(t.clone()),
-                                    Some(_) => return bad(ln, "`via` given twice"),
-                                    None => return bad(ln, "`via` needs <table>"),
-                                }
-                                i += 1;
-                                continue;
-                            }
-                            "swap" => &mut f.swap,
-                            "trim" => &mut f.trim,
-                            "optional" => &mut f.optional,
-                            o => return bad(ln, format!("unknown field option `{}`", o)),
-                        };
-                        if *flag {
-                            return bad(ln, format!("field option `{}` given twice", toks[i]));
-                        }
-                        *flag = true;
-                        i += 1;
-                    }
+                    field_options(&mut f, &toks, ln, true)?;
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.fields.push(f),
                         (None, Some(k)) => k.fields.push(f),
@@ -1351,9 +1544,10 @@ impl Pack {
                 _ => Ok(()),
             }
         };
-        for f in fields.iter().chain(kinds.iter().flat_map(|k| k.fields.iter())) {
+        for f in fields.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.fields.iter_mut())) {
             check_field_for_wire(wire, f, false)?;
             via_ok(f)?;
+            resolve_absent(wire, f, fixed_bits_len(wire, f))?;
         }
         for w in whens.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.whens.iter_mut())) {
             resolve_when(wire, w, false)?;
@@ -1380,9 +1574,10 @@ impl Pack {
                     if wire == Wire::Bits {
                         check_item_bounds(word_bytes, g)?;
                     }
-                    for f in &g.fields {
+                    for f in g.fields.iter_mut() {
                         check_field_for_wire(wire, f, true)?;
                         via_ok(f)?;
+                        resolve_absent(wire, f, fixed_bits_len(wire, f))?;
                     }
                     for c in g.consts.iter_mut() {
                         resolve_when(wire, c, true)?;
@@ -1803,6 +1998,14 @@ impl Decoded {
         }
         ent.kind = sel.kind.map(|k| (p.format.clone(), k.name.clone()));
         Ok(ent)
+    }
+}
+
+/// The bit length of a field of a fixed-layout `bits` pack; None on other wires.
+fn fixed_bits_len(wire: Wire, f: &FieldDef) -> Option<u32> {
+    match wire {
+        Wire::Bits => bits::parse_locator(&f.locator).ok().map(|(_, _, len)| len),
+        _ => None,
     }
 }
 
@@ -2645,6 +2848,9 @@ pub mod xml {
         pub attrs: Vec<(String, String)>,
         pub children: Vec<Node>,
         pub text: Option<String>,
+        /// the element text with references resolved, not trimmed, when the
+        /// element holds any (the raw value a sentinel is compared with, v0.9)
+        pub raw_text: Option<String>,
     }
 
     impl Node {
@@ -2725,6 +2931,14 @@ pub mod xml {
                 continue;
             }
             if let Some((n, loc)) = resolve(node, &f.locator) {
+                // a sentinel at the place: the line yields no value (engine-spec v0.9)
+                let sentinel = match &loc {
+                    Loc::Attr(a) => n.attr(a).map_or(false, |v| f.absent_text(v)),
+                    Loc::Text => n.raw_text.as_deref().map_or(false, |v| f.absent_text(v)),
+                };
+                if sentinel {
+                    continue;
+                }
                 let raw = match loc {
                     Loc::Attr(a) => n.attr(&a).map(|s| s.to_string()),
                     Loc::Text => n.text.clone(),
@@ -2793,6 +3007,12 @@ pub mod xml {
                 .map_err(|e| transform_encode_err(p, f, e))?;
             lines.push((f.line, Line::Value(&f.locator, raw, false)));
         }
+        // an absent key whose field has `absent` writes its first sentinel (engine-spec v0.9)
+        for (f, s) in sentinel_lines(sel, ent, |_| false) {
+            if let Sentinel::Text(t, _) = s {
+                lines.push((f.line, Line::Value(&f.locator, t.clone(), false)));
+            }
+        }
         for w in sel.fixed() {
             lines.push((w.line, Line::Value(&w.locator, w.text.clone(), true)));
         }
@@ -2803,7 +3023,15 @@ pub mod xml {
                 _ => {}
             }
         }
-        lines.sort_by_key(|l| l.0);
+        // a place several lines name is written at the position of the first
+        // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
+        let firsts = first_lines(
+            sel.fields
+                .iter()
+                .map(|f| (f.line, f.locator.as_str()))
+                .chain(lines.iter().map(|(n, l)| (*n, match l { Line::Value(loc, _, _) => *loc, Line::Group(g, _) => g.locator.as_str() }))),
+        );
+        lines.sort_by_key(|(n, l)| (firsts[match l { Line::Value(loc, _, _) => *loc, Line::Group(g, _) => g.locator.as_str() }], *n));
         for (_, line) in &lines {
             match line {
                 Line::Value(locator, raw, is_when) => place(node, locator, raw, *is_when)?,
@@ -3119,6 +3347,9 @@ pub mod xml {
             let t = unescape(text.trim())?;
             if !t.is_empty() {
                 node.text = Some(t);
+            }
+            if !text.is_empty() {
+                node.raw_text = Some(unescape(&text)?);
             }
             Ok(node)
         }
@@ -3665,8 +3896,8 @@ pub mod geojson {
         let mut d = Decoded::new();
         let mapped_props: Vec<&str> = sel.mapped().into_iter().filter_map(|l| l.strip_prefix("properties.")).collect();
         for f in &sel.fields {
-            let raw: Option<String> = if f.locator == "id" {
-                root.get("id").map(json_scalar_string)
+            let member: Option<&Json> = if f.locator == "id" {
+                root.get("id")
             } else if let Some(slot) = f.locator.strip_prefix("geometry.") {
                 let idx = match slot {
                     "lon" => 0,
@@ -3674,13 +3905,17 @@ pub mod geojson {
                     "alt" => 2,
                     o => return err(format!("bad geojson geometry slot `{}`", o)),
                 };
-                coords.and_then(|a| a.get(idx)).map(json_scalar_string)
+                coords.and_then(|a| a.get(idx))
             } else if let Some(name) = f.locator.strip_prefix("properties.") {
-                root.get("properties").and_then(|pp| pp.get(name)).map(json_scalar_string)
+                root.get("properties").and_then(|pp| pp.get(name))
             } else {
                 return err(format!("bad geojson locator `{}`", f.locator));
             };
-            if let Some(r) = raw {
+            // a sentinel: the line yields no value (engine-spec v0.9)
+            if member.map_or(false, |j| json_absent(f, j)) {
+                continue;
+            }
+            if let Some(r) = member.map(json_scalar_string) {
                 d.put(p, f, f.transform.decode(&r));
             }
         }
@@ -3768,6 +4003,11 @@ pub mod geojson {
                 .map_err(|e| transform_encode_err(p, f, e))?;
             lines.push((f.line, &f.locator, jv, false));
         }
+        // an absent key whose field has `absent` writes its first sentinel
+        // where no line with a value writes (engine-spec v0.9, rulings 10 and 16)
+        for (f, sn) in sentinel_lines(&sel, ent, |_| false) {
+            lines.push((f.line, &f.locator, sentinel_json(sn), false));
+        }
         for w in sel.fixed() {
             lines.push((w.line, &w.locator, json_when_value(w), true));
         }
@@ -3777,7 +4017,10 @@ pub mod geojson {
                 lines.push((g.line, &g.locator, jsonwire::list_json(p, g, items, value_to_json)?, false));
             }
         }
-        lines.sort_by_key(|l| l.0);
+        // a place several lines name is written at the position of the first
+        // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
+        let firsts = first_lines(sel.fields.iter().map(|f| (f.line, f.locator.as_str())).chain(lines.iter().map(|l| (l.0, l.1))));
+        lines.sort_by_key(|l| (firsts[l.1], l.0));
         for (_, locator, jv, is_when) in lines {
             if let Some(slot) = locator.strip_prefix("geometry.") {
                 let target = match slot {
@@ -3922,7 +4165,10 @@ pub mod jsonwire {
                 lookup(obj, &f.locator)
             };
             match found {
+                // `null` is no value, before any sentinel check (ruling 5 of 0.9)
                 None | Some(Json::Null) => {}
+                // a sentinel: the line yields no value (engine-spec v0.9)
+                Some(j) if json_absent(f, j) => {}
                 Some(j) => d.put(p, f, dec(&f.transform, j)),
             }
         }
@@ -4059,9 +4305,13 @@ pub mod jsonwire {
                     // an item with no members written is `{}`
                     let mut members = build(p, &body, item, enc)?;
                     prune(&mut members);
-                    // a scalar (`.`) item with no value is `null` (ruling 11 of 0.7)
+                    // a scalar (`.`) item with no value is `null` (ruling 11 of 0.7),
+                    // or the sentinel of its field (ruling 5 of 0.9)
                     if members.is_empty() && g.scalar().is_some() {
-                        Json::Null
+                        match body.fields.iter().filter(|f| f.locator == ".").find_map(|f| f.sentinel()) {
+                            Some(s) => sentinel_json(s),
+                            None => Json::Null,
+                        }
                     } else {
                         Json::Obj(members)
                     }
@@ -4087,6 +4337,13 @@ pub mod jsonwire {
             };
             lines.push((f.line, &f.locator, jv, false));
         }
+        // an absent key whose field has `absent` writes its first sentinel
+        // where no line with a value writes (engine-spec v0.9)
+        for (f, sn) in sentinel_lines(sel, ent, |f| f.locator == ".") {
+            if let Some(l) = lines.iter_mut().find(|l| l.0 == f.line) {
+                l.2 = Some(sentinel_json(sn));
+            }
+        }
         // a `present` line writes nothing, but its nested objects take its position
         for w in sel.whens.iter().filter(|w| w.present) {
             lines.push((w.line, &w.locator, None, true));
@@ -4102,7 +4359,11 @@ pub mod jsonwire {
             };
             lines.push((g.line, &g.locator, jv, false));
         }
-        lines.sort_by_key(|l| l.0);
+        // a place several lines name is written at the position of the first
+        // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
+        // a `when <locator> present` line names no position
+        let firsts = first_lines(lines.iter().filter(|l| !(l.3 && l.2.is_none())).map(|l| (l.0, l.1)));
+        lines.sort_by_key(|l| (firsts.get(l.1).copied().unwrap_or(l.0).min(l.0), l.0));
         let mut top: Vec<(String, Json)> = Vec::new();
         for (_, path, value, is_when) in lines {
             let names: Vec<&str> = path.split('.').collect();
@@ -4323,6 +4584,37 @@ pub mod bits {
         Ok(())
     }
 
+    /// Does the field's `len` bits at `start` hold one of its sentinels? The
+    /// bits read as `uint` reads them, after `swap` (engine-spec v0.9). The
+    /// caller has checked the bits are in the input.
+    pub(crate) fn is_sentinel(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> bool {
+        if f.absent.is_empty() || len > 64 {
+            return false;
+        }
+        let mut v = get_bits(raw, start, len, p.msb).unwrap_or(0);
+        if f.swap {
+            v = swap_bytes(v, len);
+        }
+        f.absent_num(v)
+    }
+
+    /// Write the first sentinel of a field into its `len` bits at `start`:
+    /// the low `len` bits, then `swap`. False when the field has none.
+    pub(crate) fn write_sentinel(p: &Pack, f: &FieldDef, start: u64, len: u32, msg: &mut [u8]) -> bool {
+        match f.sentinel() {
+            Some(Sentinel::Num(n)) if len <= 64 => {
+                let mask = if len >= 64 { u64::MAX } else { (1u64 << len) - 1 };
+                let mut v = n & mask;
+                if f.swap {
+                    v = swap_bytes(v, len);
+                }
+                set_bits(msg, start, len, v, p.msb);
+                true
+            }
+            _ => false,
+        }
+    }
+
     fn short(p: &Pack, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", p.format, what.as_ref()) }
     }
@@ -4346,6 +4638,10 @@ pub mod bits {
             }
             if !f.optional {
                 *reach = (*reach).max(start + len as u64);
+            }
+            // a sentinel: the line yields no value (engine-spec v0.9)
+            if is_sentinel(p, f, raw, start, len) {
+                continue;
             }
             d.put(p, f, read_field(p, f, raw, start, len));
         }
@@ -4448,6 +4744,13 @@ pub mod bits {
     /// Write the lines of one scope: the message (`base` 0), or one item,
     /// whose first bit is `base`.
     fn write_scope(p: &Pack, sel: &Sel, ent: &Entity, base: u64, msg: &mut [u8]) -> Result<(), Error> {
+        // an absent key whose field has `absent` writes its first sentinel,
+        // first: a line with a value wins over it whatever their order (ruling
+        // 16 of 0.9); of two sentinels the earlier line's stays
+        for f in sel.fields.iter().rev().filter(|f| sel.value_of(ent, f).is_none()) {
+            let (off, len) = span(p, &f.locator)?;
+            write_sentinel(p, f, base + off, len, msg);
+        }
         // later lines first: where two fields cover the same bits the earlier
         // line's value is the one left on the wire (ruling 5 of 0.5)
         for f in sel.fields.iter().rev() {
@@ -4750,6 +5053,34 @@ pub mod protobuf {
         }
     }
 
+    /// Does a leaf value hold one of the field's sentinels? A value whose wire
+    /// type is not the one the transform fixes holds none: it is
+    /// `transform-decode` (ruling 15 of 0.9).
+    fn is_sentinel(f: &FieldDef, v: &WireVal) -> bool {
+        if f.absent.is_empty() {
+            return false;
+        }
+        match (&f.transform, v) {
+            (Transform::Pvarint | Transform::Psint, WireVal::Varint(u)) | (Transform::Pdouble, WireVal::Fixed64(u)) => {
+                f.absent_num(*u)
+            }
+            (Transform::Pfloat, WireVal::Fixed32(u)) => f.absent_num(*u as u64),
+            (Transform::Pstring, WireVal::LenDelim(b)) => std::str::from_utf8(b).map_or(false, |t| f.absent_text(t)),
+            _ => false,
+        }
+    }
+
+    /// The leaf value a sentinel is written as: no zig-zag on `psint`.
+    fn sentinel_wire(f: &FieldDef, s: &Sentinel) -> Result<WireVal, Error> {
+        match (&f.transform, s) {
+            (Transform::Pvarint | Transform::Psint, Sentinel::Num(n)) => Ok(WireVal::Varint(*n)),
+            (Transform::Pdouble, Sentinel::Num(n)) => Ok(WireVal::Fixed64(*n)),
+            (Transform::Pfloat, Sentinel::Num(n)) => Ok(WireVal::Fixed32(*n as u32)),
+            (Transform::Pstring, Sentinel::Text(t, _)) => Ok(WireVal::LenDelim(t.clone().into_bytes())),
+            _ => err(format!("transform-encode: protobuf: `{}` has no sentinel its transform writes", f.model_key)),
+        }
+    }
+
     fn numeric(t: &Transform) -> bool {
         matches!(t, Transform::Pvarint | Transform::Psint | Transform::Pdouble | Transform::Pfloat)
     }
@@ -4796,7 +5127,10 @@ pub mod protobuf {
         for f in sel.fields.iter().filter(|f| f.locator != ".") {
             let path = parse_path(&f.locator)?;
             if let Some(wv) = msg.resolve(&path)? {
-                d.put(p, f, f.transform.decode_pb(&wv));
+                // a sentinel: the line yields no value (engine-spec v0.9)
+                if !is_sentinel(f, &wv) {
+                    d.put(p, f, f.transform.decode_pb(&wv));
+                }
             }
         }
         for g in &sel.groups {
@@ -4830,7 +5164,9 @@ pub mod protobuf {
                 let mut di = Decoded::new();
                 // `.`: the occurrence itself as a scalar
                 for f in body.fields.iter().filter(|f| f.locator == ".") {
-                    di.put(p, f, f.transform.decode_pb(v));
+                    if !is_sentinel(f, v) {
+                        di.put(p, f, f.transform.decode_pb(v));
+                    }
                 }
                 match v {
                     WireVal::LenDelim(sub) if into => decode_scope(p, &body, &mut Parsed::new(sub)?, &mut di)?,
@@ -4917,6 +5253,12 @@ pub mod protobuf {
     /// The tree one scope writes: the message, or one submessage item.
     fn build(p: &Pack, sel: &Sel, ent: &Entity) -> Result<BTreeMap<u32, Node>, Error> {
         let mut tree: BTreeMap<u32, Node> = BTreeMap::new();
+        // an absent key whose field has `absent` writes its first sentinel where
+        // no line with a value writes (engine-spec v0.9): later lines first, so
+        // of two sentinels on one path the earlier line's stays
+        for (f, s) in sentinel_lines(sel, ent, |f| f.locator == ".").into_iter().rev() {
+            insert(&mut tree, &parse_path(&f.locator)?, sentinel_wire(f, s)?)?;
+        }
         // later lines first: of two fields on one path the earlier line's value stays
         for f in sel.fields.iter().rev().filter(|f| f.locator != ".") {
             if let Some(v) = sel.value_of(ent, f) {
@@ -4940,8 +5282,10 @@ pub mod protobuf {
             for item in items {
                 // a `.` line: the occurrence is the scalar itself
                 let scalar = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| body.value_of(item, f).map(|v| (f, v)));
-                match scalar {
-                    Some((f, v)) => {
+                // an item that lacks the value: the sentinel of a `.` line (ruling 5 of 0.9)
+                let sentinel = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| f.sentinel().map(|s| (*f, s)));
+                match (scalar, sentinel) {
+                    (Some((f, v)), _) => {
                         let wv = p
                             .to_wire(f, v)
                             .and_then(|w| f.transform.encode_pb(&w))
@@ -4949,8 +5293,13 @@ pub mod protobuf {
                         wv.write(&mut packed);
                         nodes.push(Node::Leaf(wv));
                     }
+                    (None, Some((f, s))) => {
+                        let wv = sentinel_wire(f, s)?;
+                        wv.write(&mut packed);
+                        nodes.push(Node::Leaf(wv));
+                    }
                     // an item with nothing written is an empty length-delimited occurrence
-                    None => nodes.push(Node::Msg(build(p, &body, item)?)),
+                    (None, None) => nodes.push(Node::Msg(build(p, &body, item)?)),
                 }
             }
             // a `.` line with a numeric transform: the packed form

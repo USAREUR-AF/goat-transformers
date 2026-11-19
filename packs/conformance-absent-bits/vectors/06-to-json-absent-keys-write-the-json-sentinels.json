@@ -1,0 +1,20 @@
+{
+  "name": "to-json-absent-keys-write-the-json-sentinels",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-json",
+  "input": "ff800005ff010000ffffffffffffffffffff",
+  "expect": "{\"id\":\"\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":true,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":7,\"c2\":15}",
+  "model": {
+    "probe.w": "1",
+    "probe.c2": "15",
+    "probe.z": "5",
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "callsign",
+      "probe.c1",
+      "probe.n",
+      "probe.val"
+    ]
+  }
+}

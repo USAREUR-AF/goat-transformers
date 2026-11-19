@@ -1,0 +1,19 @@
+{
+  "name": "psint-raw-before-zigzag-and-pstring-keeps-the-equals-sign",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-protobuf",
+  "input": "10022a034e2f41",
+  "expect": "08ffffffffffffffffff01100219000000000000f87f250000807f2a034e2f413200",
+  "model": {
+    "probe.x": "1",
+    "probe.label": "N/A",
+    "@absent": [
+      "probe.n",
+      "hae",
+      "probe.ratio",
+      "uid",
+      "probe.nums",
+      "probe.items"
+    ]
+  }
+}

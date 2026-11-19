@@ -9,8 +9,9 @@ field options `swap` / `trim` / `optional`, an xml `root` per kind, `derive`
 lines in model modules, caller-supplied keys), maps the repeating parts of a
 message to lists (`list` lines in model modules and `group … end` blocks, spec
 Version 0.7), reads and writes sequential binary layouts (`layout sequential`
-on the `bits` wire, spec Version 0.8), and converts between formats via the
-shared model.
+on the `bits` wire, spec Version 0.8), reads wire values that mean "no value"
+as absent keys and writes them for absent keys (the `absent` field option,
+spec Version 0.9), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 

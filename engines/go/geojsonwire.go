@@ -281,6 +281,9 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 		}
 		if fs := lay.fieldsAt[loc]; len(fs) > 0 {
 			for _, f := range fs {
+				if v.k != jNull && f.sentinelJSON(v) {
+					continue
+				}
 				switch v.k {
 				case jNull:
 				case jStr, jNum:
@@ -369,10 +372,11 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 	var coords [3]*string
 	var props, top []jmember
 	written := map[string]bool{}
+	weak := map[string]bool{} // the locators that hold a sentinel, which a value replaces (0.9 ruling 16)
 	put := func(l locator, raw string, force bool) {
 		switch l.kind {
 		case locCoord:
-			if coords[l.idx] == nil {
+			if coords[l.idx] == nil || force {
 				s := raw
 				coords[l.idx] = &s
 			}
@@ -413,6 +417,12 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 			continue
 		}
 		if !ok {
+			// A sentinel is written where no line has written; one for lon or
+			// lat counts as a value, so geometry is written (0.9 ruling 10).
+			if f.absent != nil && !written[f.Locator] {
+				put(f.loc, f.sentinelJSONText(true), false)
+				written[f.Locator], weak[f.Locator] = true, true
+			}
 			continue
 		}
 		raw := s
@@ -422,7 +432,8 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 		if f.loc.kind == locCoord && !f.tf.number {
 			return nil, &Error{Kind: ErrTransformEncode, Format: p.Format, Locator: f.Locator, Detail: "coordinate needs a numeric transform"}
 		}
-		put(f.loc, raw, false)
+		put(f.loc, raw, weak[f.Locator])
+		delete(weak, f.Locator)
 		written[f.Locator] = true
 	}
 	for _, r := range residueFor(p, ent, written) {

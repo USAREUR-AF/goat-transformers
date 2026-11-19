@@ -233,6 +233,9 @@ func (d *decodeState) jsonScope(lay *layout, v *jval, geo bool) error {
 			if m == nil || m.k == jNull {
 				continue
 			}
+			if f.sentinelJSON(m) {
+				continue
+			}
 			if geo {
 				if m.k == jStr || m.k == jNum {
 					d.field(f, m.s)
@@ -285,6 +288,7 @@ type jnode struct {
 	name     string
 	raw      string
 	set      bool
+	weak     bool // raw is a sentinel, which a value replaces (0.9 ruling 16)
 	children []*jnode
 }
 
@@ -468,7 +472,7 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 				continue
 			}
 			n := root.at(w.loc.path)
-			n.raw, n.set = whenJSONText(w), true
+			n.raw, n.set, n.weak = whenJSONText(w), true, false
 			continue
 		}
 		f := ln.f
@@ -478,14 +482,19 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 			return err
 		}
 		if !ok {
+			// An absent key writes the sentinel where nothing is written; a
+			// scalar item writes it in place of null (0.9 ruling 5).
+			if f.absent != nil && !n.set {
+				n.raw, n.set, n.weak = f.sentinelJSONText(geo), true, true
+			}
 			continue
 		}
 		raw, err := jsonFieldRaw(p, f, v, geo)
 		if err != nil {
 			return err
 		}
-		if !n.set {
-			n.raw, n.set = raw, true
+		if !n.set || n.weak {
+			n.raw, n.set, n.weak = raw, true, false
 		}
 	}
 	return nil

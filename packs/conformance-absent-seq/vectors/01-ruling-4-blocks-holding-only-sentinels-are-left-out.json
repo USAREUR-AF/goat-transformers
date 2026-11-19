@@ -1,0 +1,22 @@
+{
+  "name": "ruling-4-blocks-holding-only-sentinels-are-left-out",
+  "from": "conformance-absent-seq",
+  "to": "conformance-absent-seq",
+  "input": "ff8000ff0100ffff000580007f80",
+  "expect": "ff0000fe0580007f80",
+  "model": {
+    "probe.val": "5",
+    "probe.recs.#": "1",
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "probe.z",
+      "probe.w",
+      "probe.n",
+      "probe.c1",
+      "probe.c2",
+      "probe.recs[0].probe.label",
+      "probe.recs[0].probe.qty"
+    ]
+  }
+}

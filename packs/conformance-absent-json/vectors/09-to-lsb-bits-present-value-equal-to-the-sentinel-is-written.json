@@ -1,0 +1,10 @@
+{
+  "name": "to-lsb-bits-present-value-equal-to-the-sentinel-is-written",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-bits-lsb",
+  "input": "{\"x\":4660}",
+  "expect": "1234ffaf0000c07fffc00000",
+  "model": {
+    "probe.x": "4660"
+  }
+}

@@ -42,6 +42,8 @@ public final class Pack {
         public final boolean optional;
         /** The key's declared type; set when the pack is checked against the loaded modules. */
         String keyType;
+        /** The values of the {@code absent} option (engine-spec 0.9), or null. */
+        Sentinels absent;
         /** {@code via}: canonical native text to model value, and canonical model text to native value. */
         Map<String, Object> viaDecode;
         Map<String, Object> viaEncode;
@@ -885,11 +887,17 @@ public final class Pack {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
         if (s.key == null) return resolveWhen(s, wire, format, where, inGroup);
-        String via = null;
+        String via = null, absent = null;
         boolean swap = false, trim = false, optional = false;
         for (int i = 0; i < s.opts.size(); i++) {
             String o = s.opts.get(i);
             switch (o) {
+                case "absent":
+                    // the token after `absent` is always its argument, even an option name (ruling 11 of 0.9)
+                    if (absent != null) throw badDirective(format, s.locator, where + ": absent given twice");
+                    if (i + 1 >= s.opts.size()) throw badDirective(format, s.locator, where + ": absent takes one or more values");
+                    absent = s.opts.get(++i);
+                    break;
                 case "via":
                     if (via != null || i + 1 >= s.opts.size()) throw badDirective(format, s.locator, where + ": via takes one table name, once");
                     via = s.opts.get(++i);
@@ -965,9 +973,35 @@ public final class Pack {
             else why = JsonCodec.checkLocator(s.locator);
         }
         if (why != null) throw bad(format, s.locator, where + ": " + why);
+        if (absent != null) {
+            f.absent = sentinels(f, absent, wire, format, where);
+            if (wire == Wire.GEOJSON && !inGroup && GeoJsonCodec.coordIndex(s.locator) >= 0) {
+                // a coordinate takes only number text as a sentinel (ruling 25 of 0.9)
+                for (Object v : f.absent.json) {
+                    if (!(v instanceof Json.Num)) {
+                        throw badDirective(format, s.locator, where + ": absent: a coordinate takes only number text as a sentinel");
+                    }
+                }
+            }
+        }
         ctx.fields.add(f);
         ctx.typed.add(f);
         return f;
+    }
+
+    /** The {@code absent} values of a field, read as its wire's raw value (Version 0.9, The raw value). */
+    static Sentinels sentinels(Field f, String arg, Wire wire, String format, String where) {
+        switch (wire) {
+            case BITS:
+                return Sentinels.integers(arg, BitsCodec.parseLoc(f.locator)[2], format, f.locator, where);
+            case PROTOBUF:
+                if (f.pb.wireType() == 2) return Sentinels.texts(arg, false, format, f.locator, where);
+                return Sentinels.integers(arg, f.pb.wireType() == 5 ? 32 : 64, format, f.locator, where);
+            case XML:
+                return Sentinels.texts(arg, true, format, f.locator, where);
+            default:
+                return Sentinels.json(arg, f.transform == Transform.BOOL, format, f.locator, where);
+        }
     }
 
     private static When resolveWhen(LineSpec s, Wire wire, String format, String where, boolean inGroup) {
@@ -1041,7 +1075,8 @@ public final class Pack {
                 out.add(line.substring(i + 1, close));
                 i = close + 1;
                 if (i < n && !Character.isWhitespace(line.charAt(i))) {
-                    throw bad(null, null, where + ": text directly after closing quote");
+                    // a quoted token is a whole token: `"",0` is not a value list (ruling 11 of 0.9)
+                    throw badDirective(null, null, where + ": text directly after closing quote");
                 }
             } else {
                 int start = i;

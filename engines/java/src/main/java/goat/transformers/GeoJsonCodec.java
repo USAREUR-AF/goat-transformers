@@ -142,6 +142,8 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             if (e.get(f.key) != null) continue;         // an earlier line already gave the key its value
             Object v = member(d, f.locator);
             if (v == null) continue;
+            // a string's text, or a number's (also a coordinate's) or boolean's canonical text (rulings 9 and 10 of 0.9)
+            if (f.absent != null && f.absent.matches(Sentinels.jsonRaw(v))) continue;
             String raw;
             try {
                 raw = rawText(v, f.transform);
@@ -187,6 +189,12 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             e.putResidue(pack.format, loc, Json.write(v));
             if (v instanceof Map || v instanceof List) e.markRawResidue(pack.format, loc);
         }
+    }
+
+    /** Write {@code v} unless the member holds a value; a sentinel there is replaced in its place. */
+    private static void putOver(Map<String, Object> m, String name, Object v) {
+        Object have = m.get(name);
+        if (have == null || have instanceof JsonCodec.Placed) m.put(name, v);
     }
 
     static Object jsonValue(Transform t, String s) {
@@ -235,11 +243,28 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
             }
             Pack.Field f = (Pack.Field) l;
             String s = encodeField(f, e, kind.scope);
-            if (s == null) continue;
+            if (s == null) {
+                // the first sentinel of an absent key, in place until a line whose key is present writes (ruling 16 of 0.9)
+                if (f.absent == null) continue;
+                Object jv = f.absent.firstJson();
+                if (ci >= 0) {
+                    if (coord[ci] != null) continue;
+                    if (!(jv instanceof Json.Num)) {
+                        throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, l.locator,
+                                "sentinel " + f.absent.firstText() + " is not a number, and a coordinate must be one");
+                    }
+                    coord[ci] = new JsonCodec.Placed(jv);   // counts as a value for ruling 5 of 0.1.1 (ruling 10 of 0.9)
+                } else if (l.locator.startsWith("properties.")) {
+                    props.putIfAbsent(l.locator.substring("properties.".length()), new JsonCodec.Placed(jv));
+                } else {
+                    top.putIfAbsent(l.locator, new JsonCodec.Placed(jv));
+                }
+                continue;
+            }
             Object jv = jsonValue(f.transform, s);
-            // putIfAbsent: an earlier line on the same locator has precedence
+            // putIfAbsent: an earlier line on the same locator has precedence, a sentinel does not
             if (ci >= 0) {
-                if (coord[ci] != null) continue;
+                if (coord[ci] != null && !(coord[ci] instanceof JsonCodec.Placed)) continue;
                 if (f.transform == Transform.FLOAT || f.transform == Transform.INT) coord[ci] = jv;
                 else {
                     try {
@@ -249,9 +274,9 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                     }
                 }
             } else if (l.locator.startsWith("properties.")) {
-                props.putIfAbsent(l.locator.substring("properties.".length()), jv);
+                putOver(props, l.locator.substring("properties.".length()), jv);
             } else {
-                top.putIfAbsent(l.locator, jv);
+                putOver(top, l.locator, jv);
             }
         }
         for (Map.Entry<String, String> r : e.residue(pack.format).entrySet()) {
@@ -265,6 +290,9 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 else top.putIfAbsent(loc, v);
             }
         }
+        JsonCodec.unplace(props);
+        JsonCodec.unplace(top);
+        for (int i = 0; i < 3; i++) if (coord[i] instanceof JsonCodec.Placed) coord[i] = ((JsonCodec.Placed) coord[i]).v;
         LinkedHashMap<String, Object> out = new LinkedHashMap<>();
         out.put("type", "Feature");
         if (coord[0] != null && coord[1] != null) {

@@ -1,0 +1,9 @@
+{
+  "name": "330-absent-value-too-wide-for-pfloat",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey qty int -\nkey x int -\nkey y int -\nkey a float -\nlist items \"a list\"\nlist subs \"a nested list\"\n"
+  ],
+  "pack": "format probe\nversion 0.9.0\ndistribution public\nsource \"probe\"\nuses probe\nwire protobuf\nfield probe.a 1 pfloat absent 4294967296\n",
+  "expect_error": "bad-directive"
+}

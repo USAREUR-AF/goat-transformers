@@ -1,0 +1,19 @@
+{
+  "name": "second-sentinel-reencodes-as-the-first",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-bits",
+  "input": "01ffff052a2a414212000000000000000103",
+  "expect": "018000052a2a414212000000000000000103",
+  "model": {
+    "probe.x": "1",
+    "probe.z": "5",
+    "callsign": "AB",
+    "probe.c1": "18",
+    "probe.c2": "1",
+    "probe.n": "1",
+    "probe.val": "3",
+    "@absent": [
+      "probe.y"
+    ]
+  }
+}

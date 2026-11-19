@@ -1,0 +1,16 @@
+{
+  "name": "null-geometry-gains-the-coordinate-sentinels",
+  "from": "conformance-absent-geojson",
+  "to": "conformance-absent-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u7\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181,91,9999999]},\"properties\":{\"name\":\"\"},\"id\":\"u7\"}",
+  "model": {
+    "uid": "u7",
+    "@absent": [
+      "lon",
+      "lat",
+      "hae",
+      "callsign"
+    ]
+  }
+}

@@ -20,7 +20,7 @@ is the pack that owns the input. Fields:
 | `input` | yes | source message as a UTF-8 string; for a `bits` or `protobuf` format, hex text |
 | `expect` | unless `expect_error` | expected canonical target message as a UTF-8 string; for a `bits` or `protobuf` format, lowercase hex text |
 | `expect_error` | in place of `expect` | the error kind `convert(from, to, input)` must fail with (`no-kind`, `missing-root`, `malformed-wire`, `transform-decode`, `transform-encode`, and with `context` `undeclared-key`, `key-type-mismatch`) |
-| `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below) |
+| `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9) |
 | `context` | optional | map of shared-model key to value in string form: the caller-supplied keys of `convert(from, to, input, context)` (`spec/engine-spec.md`, Version 0.6). Each value is read as its key's declared type. A `context` member that is present is a context given, also when it is `{}` (ruling 10 of 0.6) |
 
 ## What the engine checks per vector
@@ -37,6 +37,8 @@ is the pack that owns the input. Fields:
 2. If `model` is present, `decode(from, input)` has each listed key equal to the
    listed value. Float values compare within 1e-9. `"@kind"` is not a model
    key: its value must equal the kind name in `Entity.kind`.
+   `"@absent"` (Version 0.9) is not a model key either: its value is an array
+   of model keys, and each must be absent from the entity.
 3. If `model` holds `"@complete": true`, the checks of step 2 run on the entity
    as `convert` hands it to the encoder: `decode(from, input)`, then the absent
    keys filled from `context`, then the derivations applied (`complete`). This

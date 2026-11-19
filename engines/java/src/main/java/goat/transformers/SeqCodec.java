@@ -141,6 +141,14 @@ final class SeqCodec extends Codec<byte[]> {
                 case FIELD: {
                     Pack.Field f = n.keys.get(0);
                     if (!r.line(n.len, f.key)) break;
+                    if (f.absent != null) {
+                        // the raw value after swap; a sentinel gives no key of the line a value (Version 0.9)
+                        long raw = BitsCodec.readBits(r.msg, r.pos, n.len, msb);
+                        if (f.absent.matches(f.swap ? BitsCodec.swapBytes(raw, n.len) : raw)) {
+                            r.pos += n.len;
+                            break;
+                        }
+                    }
                     Object v;
                     try {
                         if (f.bits.isAscii()) {
@@ -593,6 +601,13 @@ final class SeqCodec extends Codec<byte[]> {
             } catch (IllegalArgumentException ex) {
                 throw encodeFailure(f, ex);
             }
+            return;
+        }
+        // No key has a value: the field's first sentinel, else zero bits. A sentinel is never content (ruling 4 of 0.9).
+        Pack.Field first = n.keys.get(0);
+        if (first.absent != null) {
+            long raw = first.absent.firstNum();
+            w.put(n.len, first.swap ? BitsCodec.swapBytes(raw, n.len) : raw);
             return;
         }
         w.skip(n.len);

@@ -1,0 +1,25 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) on the `xml`
+# wire. Public. No kinds. Exercises: the empty text `""`; `=N/A`, which is
+# the text `N/A` on this wire (ruling 12); `absent optional`, whose argument
+# is the text `optional` and not the field option (ruling 11); a sentinel
+# compared as text, not trimmed and not as a number (`9999999.0` is not
+# `9999999` here); a sentinel holding `&`, compared after entity and
+# character references are resolved (ruling 14); a wire place missing from the
+# input that gains the sentinel on re-encode (ruling 7); and scalar group
+# items (`#text`) written as the sentinel when they lack the value (ruling 5).
+format  conformance-absent-xml
+version 0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid          @id          string  absent ""
+field   probe.label  @mark        string  absent =N/A
+field   probe.tag    @t           string  absent optional
+field   probe.s1     @s           string  absent -
+field   hae          pos/@alt     float   absent 9999999
+field   callsign     name/#text   string  absent "a&b"
+group   probe.nums   list/v
+  field  probe.val  "#text"  int  absent -1
+end

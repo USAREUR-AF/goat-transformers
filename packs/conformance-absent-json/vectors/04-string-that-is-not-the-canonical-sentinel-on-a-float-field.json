@@ -1,0 +1,7 @@
+{
+  "name": "string-that-is-not-the-canonical-sentinel-on-a-float-field",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"alt\":\"9999999.0\"}",
+  "expect_error": "transform-decode"
+}

@@ -178,6 +178,9 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 				}
 				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: f.Locator, Detail: fmt.Sprintf("message is %d byte(s) and does not reach field %s", len(data), f.Key)}
 			}
+			if f.bitsSentinel(data, at, p.msb) {
+				continue
+			}
 			if f.btf.ascii {
 				v, err := decodeASCII(data, f, base, p.msb)
 				if err != nil {
@@ -352,6 +355,13 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 		}
 	}
 	data := buf.data
+	// A sentinel is a field write that any line whose key is present, or has
+	// a default, writes over whatever their order (0.9 ruling 16).
+	for i := len(lay.lines) - 1; i >= 0; i-- {
+		if f := lay.lines[i].f; f != nil && f.writesSentinel(rec, lay.defaults) {
+			putBits(data, base+f.loc.bit, f.loc.blen, f.sentinelBits(), p.msb)
+		}
+	}
 	for i := len(lay.lines) - 1; i >= 0; i-- {
 		f := lay.lines[i].f
 		if f == nil {
@@ -388,4 +398,18 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 		}
 	}
 	return end, nil
+}
+
+// bitsSentinel reports whether the field at message bit at holds one of its
+// sentinels: its len bits read as an unsigned integer, after `swap`, before
+// `trim` and the transform (0.9 ruling 2).
+func (f *Field) bitsSentinel(data []byte, at int, msb bool) bool {
+	if f.absent == nil {
+		return false
+	}
+	raw := getBits(data, at, f.loc.blen, msb)
+	if f.Swap {
+		raw = swapBytes(raw, f.loc.blen/8)
+	}
+	return f.sentinelNum(raw)
 }

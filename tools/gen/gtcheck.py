@@ -31,6 +31,7 @@ Use from a shell, to check files of a checkout:
 Python 3 standard library only.
 """
 import argparse
+import math
 import os
 import re
 import sys
@@ -394,6 +395,9 @@ class Model:
 # packs
 # --------------------------------------------------------------------------
 
+_JSON_NUMBER = re.compile(r"-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?\Z")
+
+
 class Node:
     """One line of a pack below the header. `d` is the directive, `line` its
     line number, `args` the tokens after the directive. The other slots are
@@ -419,14 +423,14 @@ class Node:
     On the protobuf wire `path` is the tuple of field numbers, `()` for `.`."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path")
+                 "unit", "plus", "whole", "start", "path", "absent")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = None
+        self.start = self.path = self.absent = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -809,9 +813,15 @@ class _Loader:
                 i += 1
             elif opt in ("swap", "trim", "optional") and opt not in node.opts:
                 node.opts.add(opt)
+            elif opt == "absent" and node.absent is None and i + 1 < len(a):
+                # spec 0.9: the token after `absent` is always its argument
+                node.absent = a[i + 1]
+                i += 1
             else:
                 self.bad(node, "field option `%s` is unknown, repeated or incomplete" % opt)
             i += 1
+        if node.absent is not None:
+            self._absent(node, group)
         bits_wire = self.pack.wire == "bits"
         if "swap" in node.opts and not (bits_wire and node.bits % 8 == 0):
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
@@ -821,6 +831,48 @@ class _Loader:
             self.bad(node, "`optional` needs a fixed-layout bits pack")
         self._via(node, node.via)
         self.key_uses.append((node, node.key, "field"))
+
+    def _absent(self, node, group):
+        """The load checks of `absent <value>[,<value>...]` (spec 0.9)."""
+        arg, wire = node.absent, self.pack.wire
+        values = [""] if arg == "" else arg.split(",")
+        for v in values:
+            if '"' in v or (v == "" and arg != ""):
+                self.bad(node, "`absent %s`: an empty value or a double quote" % arg)
+        def unsigned(limit):
+            for v in values:
+                if not v.isdigit() or not v.isascii() or int(v) >= limit:
+                    self.bad(node, "`absent %s`: each value is an unsigned integer below %d" % (arg, limit))
+        if wire == "bits":
+            if node.bits is None or node.bits > 64:
+                self.bad(node, "`absent` on a bits field longer than 64 bits")
+            unsigned(1 << node.bits)
+        elif wire == "protobuf":
+            if node.tr == "pstring":
+                return
+            unsigned(1 << 32 if node.tr == "pfloat" else 1 << 64)
+        else:
+            stripped = [v[1:] if v.startswith("=") else v for v in values]
+            for v, t in zip(values, stripped):
+                if t == "" and arg != "":
+                    self.bad(node, "`absent %s`: a value empty after `=`" % arg)
+            if wire in ("json", "geojson"):
+                for v in values:
+                    if v == "null":
+                        self.bad(node, "`absent null` on %s" % wire)
+                    if _JSON_NUMBER.match(v):
+                        try:
+                            ok = math.isfinite(float(v))
+                        except OverflowError:
+                            ok = False
+                        if not ok:
+                            self.bad(node, "`absent %s`: number text outside a finite double" % v)
+                if node.tr == "bool" and any(v not in ("true", "false") for v in values):
+                    self.bad(node, "`absent` on `bool` takes only `true` and `false`")
+                if wire == "geojson" and group is None and node.loc is not None \
+                        and str(node.loc).startswith("geometry.") \
+                        and not all(_JSON_NUMBER.match(v) for v in values):
+                    self.bad(node, "`absent` on a geojson coordinate takes only number text")
 
     def _via(self, node, table):
         if table is not None and table not in self.pack.tables:

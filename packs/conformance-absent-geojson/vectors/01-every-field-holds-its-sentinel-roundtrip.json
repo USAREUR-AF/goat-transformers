@@ -1,0 +1,16 @@
+{
+  "name": "every-field-holds-its-sentinel-roundtrip",
+  "from": "conformance-absent-geojson",
+  "to": "conformance-absent-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181,91,9999999]},\"properties\":{\"name\":\"\"},\"id\":\"\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[181,91,9999999]},\"properties\":{\"name\":\"\"},\"id\":\"\"}",
+  "model": {
+    "@absent": [
+      "uid",
+      "callsign",
+      "lon",
+      "lat",
+      "hae"
+    ]
+  }
+}

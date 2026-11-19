@@ -1,0 +1,12 @@
+{
+  "name": "ruling-24-value-fills-both-keys",
+  "from": "conformance-absent-seq-also",
+  "to": "conformance-absent-seq-also",
+  "input": "0705",
+  "expect": "0705",
+  "model": {
+    "probe.x": "7",
+    "probe.y": "7",
+    "probe.z": "5"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "text-compared-as-written-references-resolved",
+  "from": "conformance-absent-xml",
+  "to": "conformance-absent-xml",
+  "input": "<msg id=\"u1\" mark=\"=N/A\" t=\"Optional\" s=\" -\"><pos alt=\"9999999.0\"/><name>a&#38;b</name></msg>",
+  "expect": "<msg id=\"u1\" mark=\"=N/A\" t=\"Optional\" s=\" -\"><pos alt=\"9999999\"/><name>a&amp;b</name></msg>",
+  "model": {
+    "uid": "u1",
+    "probe.label": "=N/A",
+    "probe.tag": "Optional",
+    "probe.s1": " -",
+    "hae": "9999999",
+    "@absent": [
+      "callsign",
+      "probe.nums"
+    ]
+  }
+}

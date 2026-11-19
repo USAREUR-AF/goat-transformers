@@ -179,8 +179,24 @@ public final class TestRunner {
                 if (!from.equals(to)) e.clearKind();
                 engine.complete(e, context);
             }
+            // "@absent" (Version 0.9): keys, item paths and list names the entity must not have. An entry that is
+            // also a member of "model", as text, makes the vector invalid (ruling 21 of 0.9).
+            List<String> absent = new ArrayList<>();
+            if (model.containsKey("@absent")) {
+                if (!(model.get("@absent") instanceof List)) return "model.@absent is not an array";
+                for (Object a : (List<Object>) model.get("@absent")) {
+                    if (!(a instanceof String)) return "model.@absent holds an entry that is not a string";
+                    String k = (String) a;
+                    if (model.containsKey(k)) return "invalid vector: model.@absent lists " + k + ", which is also a member of model";
+                    absent.add(k);
+                }
+            }
+            for (String k : absent) {
+                String why = absentCheck(e, k);
+                if (why != null) return "model.@absent " + k + ": " + why;
+            }
             for (Map.Entry<String, Object> m : model.entrySet()) {
-                if (m.getKey().equals("@complete")) continue;
+                if (m.getKey().equals("@complete") || m.getKey().equals("@absent")) continue;
                 if (!(m.getValue() instanceof String)) return "model." + m.getKey() + " is not in string form";
                 String want = (String) m.getValue();
                 if (m.getKey().equals("@kind")) {
@@ -272,6 +288,33 @@ public final class TestRunner {
             return e.kindName() != null && want.equals(e.kindName()) ? null : "want kind " + want + " got " + e.kindName();
         }
         return modelMismatch(want, e.get(key), relative);
+    }
+
+    /**
+     * One {@code "@absent"} entry: {@code "<list>[<i>].<entry>"} needs item {@code i} to exist and to lack the rest;
+     * anything else is a model key or a list name, and the entity has neither a value nor a list by that name.
+     */
+    static String absentCheck(Entity e, String key) {
+        int open = key.indexOf('[');
+        if (open >= 0) {
+            int close = key.indexOf(']', open);
+            if (close < 0 || close + 1 >= key.length() || key.charAt(close + 1) != '.') return "not <list>[<i>].<key>";
+            int i;
+            try {
+                i = Integer.parseInt(key.substring(open + 1, close));
+            } catch (NumberFormatException ex) {
+                return "not <list>[<i>].<key>";
+            }
+            String list = key.substring(0, open);
+            List<Entity> items = e.list(list);
+            if (items == null) return "list " + list + " is absent";
+            if (i < 0 || i >= items.size()) return "list " + list + " has " + items.size() + " items, no item " + i;
+            return absentCheck(items.get(i), key.substring(close + 2));
+        }
+        if (e.get(key) != null) return "present, value " + e.get(key);
+        List<Entity> items = e.list(key);
+        if (items != null) return "a list of " + items.size() + " items";
+        return null;
     }
 
     /** {@code relative}: floats compare within 1e-9 relative (a completed entity), else within 1e-9. */

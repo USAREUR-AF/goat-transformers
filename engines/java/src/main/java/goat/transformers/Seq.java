@@ -248,11 +248,16 @@ final class Seq {
                         throw new GtException(GtException.Code.UNKNOWN_TRANSFORM, format, locator, where + ": " + w);
                     }
                     BitsTransform bt = BitsTransform.parse(tname, format, where);
-                    String via = null;
+                    String via = null, absent = null;
                     boolean swap = false, trim = false;
                     for (int i = 3; i < args.size(); i++) {
                         String o = args.get(i);
-                        if (o.equals("via") && via == null && i + 1 < args.size()) via = args.get(++i);
+                        if (o.equals("absent")) {
+                            // the token after `absent` is always its argument (ruling 11 of 0.9)
+                            if (absent != null) throw bad(format, locator, where + ": absent given twice");
+                            if (i + 1 >= args.size()) throw bad(format, locator, where + ": absent takes one or more values");
+                            absent = args.get(++i);
+                        } else if (o.equals("via") && via == null && i + 1 < args.size()) via = args.get(++i);
                         else if (o.equals("swap") && !swap) swap = true;
                         else if (o.equals("trim") && !trim) trim = true;
                         else if (o.equals("optional")) throw bad(format, locator, where + ": optional is not a field option of a sequential pack");
@@ -264,6 +269,7 @@ final class Seq {
                     if (swap && len % 8 != 0) throw bad(format, locator, where + ": swap needs a length that is a multiple of 8, got " + len);
                     if (via != null) vias.add(new String[]{via, locator, where});
                     Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, swap, trim, false, ln);
+                    if (absent != null) fl.absent = Sentinels.integers(absent, len, format, locator, where);
                     fields.add(fl);
                     typed.add(fl);
                     keyRefs.add(new String[]{key, locator});
@@ -284,6 +290,7 @@ final class Seq {
                     String via = args.size() == 3 ? args.get(2) : null;
                     if (via != null) vias.add(new String[]{via, first.locator, where});
                     Pack.Field fl = new Pack.Field(args.get(0), first.locator, null, first.bits, null, via, first.swap, first.trim, false, ln);
+                    fl.absent = first.absent;   // the same bits: the field line's sentinels hold for every key on them
                     fields.add(fl);
                     typed.add(fl);
                     keyRefs.add(new String[]{args.get(0), first.locator});

@@ -1,0 +1,42 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) on the `json`
+# wire. Public. No kinds. Exercises: the empty text `""`; a number sentinel
+# held as its canonical text (`9999999.0` is `9999999`, ruling 9), matched by
+# any number of that value and by a string holding that text; two sentinels
+# on a number and on a string; a sentinel `N/A` on a `float` field, where the
+# string would otherwise fail the transform; `=0`, written as a string; `false`
+# on a `bool` field; context and a derivation filling keys a sentinel left
+# absent (ruling 6); two lines on one member, the first with a sentinel
+# (ruling 16); a `default` that wins over the sentinel; a scalar group item
+# (`.`) without a value written as the sentinel and not as `null`, and object
+# items (ruling 5). The lines for x, y and c2 carry no sentinel: they are
+# there for conversions to the `bits` packs.
+format  conformance-absent-json
+version 0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   uid          id     string  absent ""
+field   hae          alt    float   absent 9999999.0
+field   lat          lat    float   absent 0,-999
+field   probe.label  label  string  absent N/A,-
+field   probe.ratio  r      float   absent N/A
+field   probe.tag    code   string  absent =0
+field   probe.w      on     bool    absent false
+field   callsign     cs     string  absent NONE
+field   probe.a      a      float   absent 0
+field   probe.neg_a  na     float   absent 0
+field   probe.s1     s      string  absent -
+field   probe.s2     s      string
+field   probe.qty    q      int     absent 5
+default probe.qty    7
+field   probe.x      x      int
+field   probe.y      y      int
+field   probe.c2     c2     int
+group   probe.nums   nums
+  field  probe.val  .  int  absent -1
+end
+group   probe.items  items
+  field  probe.qty    q     int     absent 0
+  field  probe.label  name  string  absent ""
+end

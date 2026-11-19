@@ -1,0 +1,13 @@
+{
+  "name": "to-json-present-value-equal-to-a-sentinel-is-written",
+  "from": "conformance-absent-geojson",
+  "to": "conformance-absent-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0,10]},\"properties\":{\"name\":\"N\"},\"id\":\"u6\"}",
+  "expect": "{\"id\":\"u6\",\"alt\":10,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"N\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":7}",
+  "model": {
+    "lat": "0",
+    "lon": "0",
+    "hae": "10",
+    "callsign": "N"
+  }
+}

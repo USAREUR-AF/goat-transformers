@@ -1,4 +1,4 @@
-%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.8).
+%% gt_pack: parse a pack.def into a pack map (engine-spec Versions 0.1 - 0.9).
 %% Clean-room implementation from spec/engine-spec.md and the packs only.
 %%
 %% Pack = #{name, version, wire, root, word_bytes, layout, bit_order, typemap,
@@ -23,7 +23,11 @@
 %%     protobuf [FieldNumber]
 %%     bits     BitOffset of the first item in its scope
 %%   Key, LocText :: binary()
-%%   Opts = {Via :: none | TableName, Swap, Trim, Optional}
+%%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent}
+%%   Absent = none | [Sentinel] (Version 0.9), the first is the one written:
+%%     bits, and protobuf pvarint psint pdouble pfloat: the raw unsigned integer
+%%     protobuf pstring, xml: the text
+%%     json, geojson: {num, CanonicalText} | {bool, Text} | {str, Text}
 %%   Loc, by wire:
 %%     xml      {[ElementName :: binary()], {attr, binary()} | text}
 %%     geojson  {geom, 1 | 2 | 3} | {prop, binary()} | {top, binary()}
@@ -199,7 +203,7 @@ named_scope(Lines, Defaults) ->
            {field, K, _, Tr, _, Opts} -> [{K, {field, Tr, element(1, Opts)}}];
            {group, List, _, _, #{lines := Ls, defaults := Ds}, _} ->
                [{List, list} | named_scope(Ls, Ds)];
-           {sfield, Keys, _, Tr, _, _, _} -> [{K, {field, Tr, Via}} || {K, Via} <- Keys];
+           {sfield, Keys, _, Tr, _, _, _, _} -> [{K, {field, Tr, Via}} || {K, Via} <- Keys];
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -240,7 +244,7 @@ key_names(Lines, Prefix) ->
            {group, List, _, _, #{lines := Ls}, _} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls, <<Name/binary, ".">>)];
-           {sfield, Keys, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
+           {sfield, Keys, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -384,7 +388,12 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
     Wire = need_wire(P0),
     Tr = parse_transform(Wire, TrS),
     Loc = parse_loc(Wire, LocS, P0),
-    {_Via, Swap, Trim, Optional} = Opts = parse_opts(OptToks, {none, false, false, false}),
+    {_Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
+    Len = case Wire of
+              bits -> element(2, Loc);
+              _ -> Loc                            % a geojson coordinate (ruling 25 of 0.9)
+          end,
+    {Opts, AbsentChecks} = sentinels(Wire, Tr, Len, Opts0),
     Checks =
         [{bad, "~s does not allow the bit length of ~s", [TrS, LocS]}
          || not len_ok(Wire, Tr, Loc)] ++
@@ -394,7 +403,8 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
          || Trim, not (Wire =:= bits andalso Tr =:= ascii)] ++
         [{bad, "optional on ~s: valid only on a bits wire", [LocS]}
          || Optional, Wire =/= bits] ++
-        [{via, T} || T <- [element(1, Opts)], T =/= none],
+        [{via, T} || T <- [element(1, Opts)], T =/= none] ++
+        AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
     add_line({field, Key, Loc, Tr, LocS, Opts}, P1);
 apply_line([Dir | Args], _P) ->
@@ -416,6 +426,10 @@ parse_opts([<<"swap">> | Rest], Opts) -> parse_opts(Rest, set_opt(2, false, true
 parse_opts([<<"trim">> | Rest], Opts) -> parse_opts(Rest, set_opt(3, false, true, <<"trim">>, Opts));
 parse_opts([<<"optional">> | Rest], Opts) ->
     parse_opts(Rest, set_opt(4, false, true, <<"optional">>, Opts));
+%% the token after `absent` is always its argument (ruling 11 of 0.9)
+parse_opts([<<"absent">>, Arg | Rest], Opts) ->
+    parse_opts(Rest, set_opt(5, none, {arg, Arg}, <<"absent">>, Opts));
+parse_opts([<<"absent">>], _) -> load_error('bad-directive', "absent names no value", []);
 parse_opts([<<"via">>], _) -> load_error('bad-directive', "via names no table", []);
 parse_opts([Other | _], _) -> load_error('bad-directive', "unknown field option ~s", [Other]).
 
@@ -463,6 +477,95 @@ uint(B) ->
 all_digits(<<>>) -> true;
 all_digits(<<C, R/binary>>) when C >= $0, C =< $9 -> all_digits(R);
 all_digits(_) -> false.
+
+%% ===================================================================
+%% absent-value sentinels (Version 0.9)
+%% ===================================================================
+%% The `absent` argument of a field line, read for its wire and transform
+%% -> {Opts with Absent = none | [Sentinel], LateChecks}. A value the wire
+%% cannot hold is bad-directive, checked in file order with the other
+%% checks of the line.
+sentinels(Wire, Tr, Len, Opts) ->
+    case element(5, Opts) of
+        none -> {Opts, []};
+        {arg, Arg} ->
+            try absent_values(Wire, Tr, Len, Arg) of
+                Values -> {setelement(5, Opts, Values), []}
+            catch
+                throw:{absent_bad, Fmt, Args} -> {setelement(5, Opts, none), [{bad, Fmt, Args}]}
+            end
+    end.
+
+absent_bad(Fmt, Args) -> throw({absent_bad, Fmt, Args}).
+
+%% Len: on bits the field's bit length, on the other wires its locator.
+absent_values(Wire, Tr, Len, Arg) ->
+    %% the quoted empty token is the one value "the empty text"
+    Values = case Arg of
+                 <<>> -> [<<>>];
+                 _ ->
+                     Vs = binary:split(Arg, <<",">>, [global]),
+                     case lists:member(<<>>, Vs) of
+                         true -> absent_bad("absent ~s: an empty value in the list", [Arg]);
+                         false -> Vs
+                     end
+             end,
+    [absent_bad("absent ~s: a value holds a double quote", [Arg])
+     || V <- Values, binary:match(V, <<"\"">>) =/= nomatch],
+    case Wire of
+        bits when Len > 64 ->
+            absent_bad("absent on a bits field of ~p bits, longer than 64", [Len]);
+        bits -> [absent_int(V, Len) || V <- Values];
+        protobuf ->
+            case Tr of
+                pstring -> Values;                     % `=` is part of the text
+                pfloat -> [absent_int(V, 32) || V <- Values];
+                _ -> [absent_int(V, 64) || V <- Values]
+            end;
+        xml -> [absent_text(V) || V <- Values];
+        _ ->                                           % json, geojson
+            Js = [absent_json(V) || V <- Values],
+            %% a geojson coordinate takes only number text (ruling 25 of 0.9)
+            case Wire =:= geojson andalso element(1, Len) =:= geom
+                andalso [J || {T, _} = J <- Js, T =/= num] =/= [] of
+                true -> absent_bad("absent ~s: a geojson coordinate takes only numbers", [Arg]);
+                false -> ok
+            end,
+            case Tr =:= bool andalso [J || {T, _} = J <- Js, T =/= bool] =/= [] of
+                true -> absent_bad("absent ~s: a bool field holds only true or false", [Arg]);
+                false -> Js
+            end
+    end.
+
+%% an unsigned decimal integer below 2^Bits
+absent_int(V, Bits) ->
+    case uint(V) of
+        N when is_integer(N), N < (1 bsl Bits) -> N;
+        N when is_integer(N) -> absent_bad("absent ~s does not fit ~p bits", [V, Bits]);
+        error -> absent_bad("absent ~s is not an unsigned decimal integer", [V])
+    end.
+
+%% text, a leading `=` stripped; only `""` names the empty text
+absent_text(<<>>) -> <<>>;
+absent_text(<<$=>>) -> absent_bad("absent =: the value is empty after the =", []);
+absent_text(<<$=, T/binary>>) -> T;
+absent_text(V) -> V.
+
+%% json and geojson: number text is held as its canonical text, `true` and
+%% `false` are booleans, `=` forces a string; `null` is no sentinel
+absent_json(<<>>) -> {str, <<>>};
+absent_json(<<$=, _/binary>> = V) -> {str, absent_text(V)};
+absent_json(<<"null">>) -> absent_bad("absent null: null is not a value", []);
+absent_json(V) when V =:= <<"true">>; V =:= <<"false">> -> {bool, V};
+absent_json(V) ->
+    case gt_json:read_number(V) of
+        {ok, N} ->
+            try {num, list_to_binary(gt_num:fmt_float(float(N)))}
+            catch error:badarg -> absent_bad("absent ~s does not fit a double", [V])
+            end;
+        out_of_range -> absent_bad("absent ~s does not fit a double", [V]);
+        not_number -> {str, V}
+    end.
 
 %% ===================================================================
 %% value tables
@@ -905,7 +1008,7 @@ scan_bare(Bin, 0) ->
 %% ===================================================================
 %% In a `layout sequential` pack a locator is a bit length and the lines are
 %% read in file order from a cursor. Lines:
-%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim}
+%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim, Absent}
 %%        the first key is the `field` line's, the others those of the `also`
 %%        lines after it
 %%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value}
@@ -936,7 +1039,9 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
 seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
     Tr = parse_transform(bits, TrS),
     Len = seq_len(LenS, 1, infinity),
-    {Via, Swap, Trim, Optional} = parse_opts(OptToks, {none, false, false, false}),
+    {Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
+    {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
+    Absent = element(5, Opts),
     case Optional of
         true -> load_error('bad-directive', "optional is not a field option of a sequential pack", []);
         false -> ok
@@ -948,9 +1053,10 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
          || Swap, Len rem 8 =/= 0] ++
         [{bad, "trim on a field of ~s bits: valid only with ascii", [LenS]}
          || Trim, Tr =/= ascii] ++
-        [{via, Via} || Via =/= none],
+        [{via, Via} || Via =/= none] ++
+        AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
-    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim}, P1);
+    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent}, P1);
 seq_apply([<<"also">>, Key | Rest], P0) ->
     Via = case Rest of
               [] -> none;
@@ -962,8 +1068,8 @@ seq_apply([<<"also">>, Key | Rest], P0) ->
             _ -> late({via, Via}, P0)
         end,
     case seq_lines(P) of
-        [{sfield, Keys, Len, Tr, LenS, Swap, Trim} | Before] ->
-            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim} | Before], P);
+        [{sfield, Keys, Len, Tr, LenS, Swap, Trim, Absent} | Before] ->
+            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent} | Before], P);
         _ -> load_error('bad-directive', "also ~s does not follow a field line", [Key])
     end;
 seq_apply([<<"const">>, LenS, ValS], P) ->

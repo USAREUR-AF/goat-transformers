@@ -1,0 +1,14 @@
+{
+  "name": "ruling-24-sentinel-leaves-the-also-key-absent",
+  "from": "conformance-absent-seq-also",
+  "to": "conformance-absent-seq-also",
+  "input": "ff05",
+  "expect": "ff05",
+  "model": {
+    "probe.z": "5",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  }
+}

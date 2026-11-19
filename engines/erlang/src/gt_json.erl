@@ -6,7 +6,7 @@
 %%   true/false/null -> 'true' | 'false' | 'null'
 -module(gt_json).
 -export([parse/1, parse_raw/1, get/2, escape/1, encode/1, number_text/1, is_number_text/1,
-         has_duplicate_member/1]).
+         has_duplicate_member/1, read_number/1, canonical_text/1]).
 
 %% Arrays and objects nest at most this deep; the outermost is level 1.
 -define(MAX_DEPTH, 64).
@@ -198,6 +198,30 @@ ws(Bin) -> Bin.
 %% Canonical JSON text of a number (ruling 3 of 0.1.1).
 number_text(I) when is_integer(I) -> integer_to_list(I);
 number_text(F) when is_float(F) -> gt_num:fmt_float(F).
+
+%% Text that is wholly one JSON number (RFC 8259 grammar)
+%% -> {ok, Number} | out_of_range | not_number.
+read_number(Bin) when is_binary(Bin) ->
+    try number_lit(Bin) of
+        {N, <<>>} -> {ok, N};
+        _ -> not_number
+    catch
+        error:{json_malformed, number_out_of_range} -> out_of_range;
+        error:{json_malformed, _} -> not_number
+    end.
+
+%% The canonical text of a parsed scalar, as a sentinel compares it
+%% (Version 0.9): a string as it is, a number through a double, a boolean
+%% as `true` or `false` -> binary() | none.
+canonical_text(V) when is_binary(V) -> V;
+canonical_text(true) -> <<"true">>;
+canonical_text(false) -> <<"false">>;
+canonical_text(V) when is_integer(V) ->
+    try list_to_binary(gt_num:fmt_float(float(V)))
+    catch error:badarg -> integer_to_binary(V)
+    end;
+canonical_text(V) when is_float(V) -> list_to_binary(gt_num:fmt_float(V));
+canonical_text(_) -> none.
 
 %% Is this text canonical JSON number text: a number whose canonical text is
 %% the text itself?

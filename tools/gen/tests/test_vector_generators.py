@@ -13,6 +13,7 @@ import unittest
 import support
 
 SCRIPTS = (
+    "conformance-absent-vectors.py",
     "conformance-cat062-vectors.py",
     "conformance-groups-vectors.py",
     "conformance-malformed-vectors.py",

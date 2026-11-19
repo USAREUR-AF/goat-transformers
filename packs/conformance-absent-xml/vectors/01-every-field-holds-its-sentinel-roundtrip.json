@@ -1,0 +1,20 @@
+{
+  "name": "every-field-holds-its-sentinel-roundtrip",
+  "from": "conformance-absent-xml",
+  "to": "conformance-absent-xml",
+  "input": "<msg id=\"\" mark=\"N/A\" t=\"optional\" s=\"-\"><pos alt=\"9999999\"/><name>a&amp;b</name><list><v>-1</v><v>4</v></list></msg>",
+  "expect": "<msg id=\"\" mark=\"N/A\" t=\"optional\" s=\"-\"><pos alt=\"9999999\"/><name>a&amp;b</name><list><v>-1</v><v>4</v></list></msg>",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "4",
+    "@absent": [
+      "uid",
+      "probe.label",
+      "probe.tag",
+      "probe.s1",
+      "hae",
+      "callsign",
+      "probe.nums[0].probe.val"
+    ]
+  }
+}

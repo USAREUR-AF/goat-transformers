@@ -63,7 +63,9 @@ type Field struct {
 	Swap      bool
 	Trim      bool
 	Optional  bool
+	Absent    []string // `absent <value>[,<value>…]`: the values as written, nil when the line has none
 
+	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc     locator
 	group   *Group   // the innermost group the line is in, nil outside a group
 	dot     bool     // the locator is `.`: the item itself, as a scalar
@@ -307,6 +309,17 @@ func parseFieldOptions(f *Field, opts []string) error {
 				return fmt.Errorf("`via` needs a table name")
 			}
 			f.Via = opts[i]
+		case "absent":
+			// The token after `absent` is always its argument (0.9 ruling 11).
+			i++
+			if i >= len(opts) {
+				return fmt.Errorf("`absent` needs one or more values separated by commas")
+			}
+			vals, err := splitAbsent(opts[i])
+			if err != nil {
+				return err
+			}
+			f.Absent = vals
 		case "swap":
 			f.Swap = true
 		case "trim":
@@ -314,7 +327,7 @@ func parseFieldOptions(f *Field, opts []string) error {
 		case "optional":
 			f.Optional = true
 		default:
-			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional)", o)
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>)", o)
 		}
 	}
 	return nil
@@ -741,6 +754,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 			if p.seq && f.Optional {
 				return nil, perr(ErrBadDirective, f.Line, f.Locator, "field option `optional` is not valid in a sequential pack")
+			}
+			if f.Absent != nil {
+				if err := resolveSentinels(innerWire(f.group), f); err != nil {
+					return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
+				}
 			}
 			if f.Via != "" {
 				f.table = p.tables[f.Via]

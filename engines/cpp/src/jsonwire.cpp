@@ -42,6 +42,9 @@ const char* json_kind_name(const json::Value& v) {
 
 // A value of the wrong JSON type for its transform is a transform decode failure.
 void decode_member(Decoder& d, const FieldLine& f, const json::Value& v) {
+    // A sentinel is compared before the transform reads the member's type (0.9).
+    std::string raw;
+    if (f.has_absent && json_raw_text(v, raw) && sentinel_text(f, raw)) return;
     json::Value::Kind want = json::Value::Kind::String;
     switch (f.transform) {
         case Transform::Float:
@@ -98,6 +101,7 @@ struct OutNode {
     std::string name;
     bool is_object = false;
     bool has_value = false;
+    bool sentinel = false;       // the text is a field's sentinel: a line whose key is present writes over it
     std::string text;            // JSON text of a scalar member
     std::vector<OutNode> kids;   // members of an object, output order
 };
@@ -169,6 +173,23 @@ std::string member_text(const Pack& p, const FieldLine& f, const Value& v) {
     return transform_is_textual(f.transform) ? json::quote(text) : text;
 }
 
+// One field line at its member: the value when the key is present, else its
+// first sentinel (0.9). A line whose key is present writes over a sentinel an
+// earlier line wrote (ruling 16).
+void write_field(const Pack& p, const EncodeSource& src, const FieldLine& f, OutNode& slot) {
+    if (slot.has_value && !slot.sentinel) return;
+    Value v;
+    if (src.value(f, v)) {
+        slot.text = member_text(p, f, v);
+        slot.has_value = true;
+        slot.sentinel = false;
+    } else if (f.has_absent && !slot.has_value) {
+        slot.text = f.absent_json;
+        slot.has_value = true;
+        slot.sentinel = true;
+    }
+}
+
 // The value of one member of an item, by the wire's value types: `json` reads
 // each transform from its own JSON type; `geojson` keeps its 0.1 types, where a
 // scalar is read from its text (0.7 ruling 7).
@@ -177,6 +198,8 @@ void decode_item_value(Decoder& d, const FieldLine& f, const json::Value& v, boo
         decode_member(d, f, v);
         return;
     }
+    std::string raw;
+    if (f.has_absent && json_raw_text(v, raw) && sentinel_text(f, raw)) return;
     switch (v.kind) {
         case json::Value::Kind::Null: break;
         case json::Value::Kind::String:
@@ -193,16 +216,12 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
     const EncodeSource src(p, g, item);
     OutNode root;
     root.is_object = true;
-    std::string scalar;
-    bool has_scalar = false;
+    OutNode scalar;
     std::vector<std::string> path;
-    Value v;
     for (const auto& line : lines) {
         if (line.field && line.field->locator == ".") {
-            if (!has_scalar && src.value(*line.field, v)) {
-                scalar = member_text(p, *line.field, v);
-                has_scalar = true;
-            }
+            // An item without the value writes the sentinel, not `null` (0.9 ruling 5).
+            write_field(p, src, *line.field, scalar);
             continue;
         }
         parse_json_locator(line.locator(), path);  // validated at pack load
@@ -210,21 +229,21 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
         if (!slot || slot->is_object) continue;  // the path is also used as an object
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
-            if (slot->has_value || !items) continue;
+            if ((slot->has_value && !slot->sentinel) || !items) continue;
+            slot->sentinel = false;
             slot->text = json_encode_items(p, *line.group, *items, geo);
             slot->has_value = true;
             continue;
         }
         if (const WhenLine* w = line.fixed()) {
             slot->has_value = true;
+            slot->sentinel = false;
             slot->text = json_when_text(*w);
             continue;
         }
-        if (slot->has_value || !src.value(*line.field, v)) continue;
-        slot->text = member_text(p, *line.field, v);
-        slot->has_value = true;
+        write_field(p, src, *line.field, *slot);
     }
-    if (has_scalar) return scalar;
+    if (scalar.has_value) return scalar.text;
     std::string out;
     out_write(out, root);
     // A scalar (`.`) item with no value is written `null` (0.7 ruling 11).
@@ -351,7 +370,8 @@ std::string encode_json(const Pack& p, const Entity& e) {
         if (!slot || slot->is_object) continue;  // the path is also used as an object
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
-            if (slot->has_value || !items) continue;
+            if ((slot->has_value && !slot->sentinel) || !items) continue;
+            slot->sentinel = false;
             slot->text = json_encode_items(p, *line.group, *items, false);
             slot->has_value = true;
             continue;
@@ -359,12 +379,11 @@ std::string encode_json(const Pack& p, const Entity& e) {
         if (const WhenLine* w = line.fixed()) {
             if (w->present) continue;
             slot->has_value = true;
+            slot->sentinel = false;
             slot->text = json_when_text(*w);
             continue;
         }
-        if (slot->has_value || !src.value(*line.field, v)) continue;
-        slot->text = member_text(p, *line.field, v);
-        slot->has_value = true;
+        write_field(p, src, *line.field, *slot);
     }
     // Then the residue members of each object, in input order.
     for (const auto& r : e.residue) {

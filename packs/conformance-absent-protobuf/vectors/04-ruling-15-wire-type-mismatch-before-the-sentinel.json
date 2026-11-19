@@ -1,0 +1,7 @@
+{
+  "name": "ruling-15-wire-type-mismatch-before-the-sentinel",
+  "from": "conformance-absent-protobuf",
+  "to": "conformance-absent-protobuf",
+  "input": "090000000000000000",
+  "expect_error": "transform-decode"
+}

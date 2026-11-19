@@ -180,6 +180,18 @@ func (d *decodeState) pbScope(lay *layout, msg map[int][]pbVal, occ *pbVal) erro
 				d.fail(f, fmt.Sprintf("field is wire type %d, %s needs wire type %d", pv.wire, f.Transform, f.pbf.wire))
 				continue
 			}
+			// The sentinel check comes after the wire type check (0.9 ruling
+			// 15): the varint before zig-zag, the fixed bytes as an integer,
+			// a pstring's bytes as text.
+			if f.absent != nil {
+				if f.pbf.wire == pbLenDelim {
+					if f.sentinelText(string(pv.b)) {
+						continue
+					}
+				} else if f.sentinelNum(pv.u) {
+					continue
+				}
+			}
 			v, err := f.pbf.decode(*pv)
 			if err != nil {
 				d.fail(f, err.Error())
@@ -334,10 +346,11 @@ type pbTree struct {
 	leaves map[int]pbVal
 	subs   map[int]*pbTree
 	reps   map[int][]pbVal
+	weak   map[int]bool // leaves that hold a sentinel, which a value replaces (0.9 ruling 16)
 }
 
 func newPBTree() *pbTree {
-	return &pbTree{leaves: map[int]pbVal{}, subs: map[int]*pbTree{}, reps: map[int][]pbVal{}}
+	return &pbTree{leaves: map[int]pbVal{}, subs: map[int]*pbTree{}, reps: map[int][]pbVal{}, weak: map[int]bool{}}
 }
 
 // at returns the submessage that holds the last number of path, creating the
@@ -359,8 +372,19 @@ func (t *pbTree) at(path []int) *pbTree {
 // at a path stays unless force is set.
 func (t *pbTree) set(path []int, v pbVal, force bool) {
 	cur, fn := t.at(path), path[len(path)-1]
-	if _, has := cur.leaves[fn]; !has || force {
+	if _, has := cur.leaves[fn]; !has || force || cur.weak[fn] {
 		cur.leaves[fn] = v
+		delete(cur.weak, fn)
+	}
+}
+
+// setSentinel places a sentinel at path where nothing is written yet; a value
+// written there later replaces it.
+func (t *pbTree) setSentinel(path []int, v pbVal) {
+	cur, fn := t.at(path), path[len(path)-1]
+	if _, has := cur.leaves[fn]; !has {
+		cur.leaves[fn] = v
+		cur.weak[fn] = true
 	}
 }
 
@@ -489,6 +513,9 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 				return err
 			}
 			if !ok {
+				if f.absent != nil {
+					tree.setSentinel(f.loc.pbPath, f.sentinelPB())
+				}
 				continue
 			}
 			pv, err := f.pbf.encode(v)
@@ -533,7 +560,8 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 // length-delimited occurrence.
 func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 	// dot returns the value an item writes as itself: that of the earliest
-	// `.` line whose key the item has, or has a default for.
+	// `.` line whose key the item has, or has a default for, else the first
+	// sentinel of the earliest `.` line with `absent` (0.9 ruling 5).
 	dot := func(it *Item) (pbVal, bool, error) {
 		for _, f := range g.dots {
 			v, ok, err := fieldValue(p, g.body, f, it)
@@ -548,6 +576,11 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 				return pbVal{}, false, encodeErr(p, f, err)
 			}
 			return pv, true, nil
+		}
+		for _, f := range g.dots {
+			if f.absent != nil {
+				return f.sentinelPB(), true, nil
+			}
 		}
 		return pbVal{}, false, nil
 	}

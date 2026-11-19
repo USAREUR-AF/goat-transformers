@@ -1,0 +1,14 @@
+# Conformance probe pack for ruling 24 of spec 0.9: an `also` line in a
+# sequential `bits` layout shares its `field` line's sentinels. Public.
+#   x 8 (also y) | z 8
+format     conformance-absent-seq-also
+version    0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  8  uint  absent 255
+also    probe.y
+field   probe.z  8  uint

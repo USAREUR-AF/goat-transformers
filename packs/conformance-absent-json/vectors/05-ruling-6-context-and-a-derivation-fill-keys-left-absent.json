@@ -1,0 +1,16 @@
+{
+  "name": "ruling-6-context-and-a-derivation-fill-keys-left-absent",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"id\":\"u1\",\"alt\":10,\"lat\":1,\"label\":\"L\",\"r\":2,\"code\":\"c\",\"on\":true,\"cs\":\"NONE\",\"a\":2,\"na\":0,\"s\":\"x\",\"q\":3}",
+  "context": {
+    "callsign": "CTX"
+  },
+  "expect": "{\"id\":\"u1\",\"alt\":10,\"lat\":1,\"label\":\"L\",\"r\":2,\"code\":\"c\",\"on\":true,\"cs\":\"CTX\",\"a\":2,\"na\":-2,\"s\":\"x\",\"q\":3}",
+  "model": {
+    "@complete": true,
+    "callsign": "CTX",
+    "probe.neg_a": "-2",
+    "probe.a": "2"
+  }
+}

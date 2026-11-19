@@ -1,0 +1,10 @@
+{
+  "name": "ruling-1-first-line-holds-the-sentinel-second-line-read",
+  "from": "conformance-absent-bits",
+  "to": "conformance-absent-bits",
+  "input": "01000105ff2a414212000000000000000103",
+  "expect": "010001052a2a414212000000000000000103",
+  "model": {
+    "probe.w": "42"
+  }
+}

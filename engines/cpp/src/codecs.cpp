@@ -411,6 +411,167 @@ std::string field_text(const Pack& p, const FieldLine& f, const Value& v) {
     }
 }
 
+// ---- absent-value sentinels (Version 0.9)
+
+namespace {
+
+bool absent_u64(const std::string& s, std::uint64_t& out) {
+    if (s.empty()) return false;
+    std::uint64_t v = 0;
+    for (char c : s) {
+        if (c < '0' || c > '9') return false;
+        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');
+        if (v > (~std::uint64_t{0} - d) / 10) return false;
+        v = v * 10 + d;
+    }
+    out = v;
+    return true;
+}
+
+// RFC 8259 number grammar: -?(0|[1-9][0-9]*)(.[0-9]+)?([eE][+-]?[0-9]+)?
+bool json_number_text(const std::string& s) {
+    std::size_t i = 0, n = s.size();
+    auto digits = [&]() {
+        const std::size_t from = i;
+        while (i < n && s[i] >= '0' && s[i] <= '9') ++i;
+        return i > from;
+    };
+    if (i < n && s[i] == '-') ++i;
+    if (i >= n) return false;
+    if (s[i] == '0') ++i;
+    else if (!digits()) return false;
+    if (i < n && s[i] == '.') {
+        ++i;
+        if (!digits()) return false;
+    }
+    if (i < n && (s[i] == 'e' || s[i] == 'E')) {
+        ++i;
+        if (i < n && (s[i] == '+' || s[i] == '-')) ++i;
+        if (!digits()) return false;
+    }
+    return i == n;
+}
+
+}  // namespace
+
+void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_len, bool coordinate) {
+    if (!f.has_absent) return;
+    f.absent_num.clear();
+    f.absent_text.clear();
+    f.absent_json.clear();
+    const std::string where = p.source + ":" + std::to_string(f.line) + ": ";
+    auto bad = [&](const std::string& why) {
+        throw Error(ErrorKind::BadDirective, p.format, f.locator, where + "'absent " + f.absent_arg + "': " + why);
+    };
+    // The values: the quoted empty token is the one value "the empty text".
+    std::vector<std::string> values;
+    const bool empty_text = f.absent_arg.empty();
+    if (empty_text) {
+        values.emplace_back();
+    } else {
+        std::size_t st = 0;
+        for (;;) {
+            const std::size_t e = f.absent_arg.find(',', st);
+            values.push_back(f.absent_arg.substr(st, e == std::string::npos ? std::string::npos : e - st));
+            if (values.back().empty()) bad("an empty value in the list");
+            if (e == std::string::npos) break;
+            st = e + 1;
+        }
+    }
+    for (const auto& v : values)
+        if (v.find('"') != std::string::npos) bad("a value cannot hold a double quote");
+
+    const bool is_bits = transform_is_bits(f.transform), is_pb = transform_is_protobuf(f.transform);
+    if (wire == Wire::Bits) {
+        if (!is_bits) return;  // invalid_pack later
+        if (bits_len > 64) bad("a sentinel applies to a bits field of at most 64 bits, not " + std::to_string(bits_len));
+        for (const auto& v : values) {
+            std::uint64_t n = 0;
+            if (!absent_u64(v, n)) bad("'" + v + "' is not an unsigned decimal integer");
+            if (bits_len < 64 && (n >> bits_len) != 0)
+                bad(v + " does not fit " + std::to_string(bits_len) + " bits");
+            f.absent_num.push_back(n);
+        }
+        return;
+    }
+    if (wire == Wire::Protobuf) {
+        if (!is_pb) return;
+        if (f.transform == Transform::Pstring) {
+            f.absent_text = values;  // `=` is part of the text on this wire (ruling 12)
+            return;
+        }
+        for (const auto& v : values) {
+            std::uint64_t n = 0;
+            if (!absent_u64(v, n)) bad("'" + v + "' is not an unsigned decimal integer");
+            if (f.transform == Transform::Pfloat && (n >> 32) != 0) bad(v + " does not fit 32 bits");
+            f.absent_num.push_back(n);
+        }
+        return;
+    }
+    if (is_bits || is_pb) return;
+    // xml, json, geojson: a leading `=` is stripped.
+    const bool json_wire = wire == Wire::Json || wire == Wire::GeoJson;
+    for (std::size_t k = 0; k < values.size(); ++k) {
+        std::string v = values[k];
+        bool forced = false;
+        if (!empty_text && !v.empty() && v[0] == '=') {
+            forced = true;
+            v.erase(0, 1);
+            if (v.empty()) bad("a value empty after its '=' is stripped; write \"\" for the empty text");
+        }
+        std::string json_text;
+        if (json_wire) {
+            if (!forced && json_number_text(v)) {
+                double d = 0;
+                if (!parse_double(v, d)) bad("'" + v + "' is number text that does not fit a finite double");
+                v = format_double(d);
+                json_text = v;
+            } else if (coordinate) {
+                bad("a coordinate takes only number text as a sentinel");
+            } else if (!forced && (v == "true" || v == "false")) {
+                json_text = v;
+            } else if (!forced && v == "null") {
+                bad("'null' is not a value a transform can hold");
+            } else {
+                json_text = json::quote(v);
+            }
+            if (f.transform == Transform::Bool && (forced || (v != "true" && v != "false")))
+                bad("a sentinel on transform bool is true or false");
+        }
+        if (k == 0) f.absent_json = json_text;
+        f.absent_text.push_back(std::move(v));
+    }
+}
+
+bool sentinel_num(const FieldLine& f, std::uint64_t raw) {
+    for (std::uint64_t n : f.absent_num)
+        if (n == raw) return true;
+    return false;
+}
+
+bool sentinel_text(const FieldLine& f, const std::string& raw) {
+    for (const auto& t : f.absent_text)
+        if (t == raw) return true;
+    return false;
+}
+
+bool json_raw_text(const json::Value& v, std::string& out) {
+    switch (v.kind) {
+        case json::Value::Kind::String: out = v.text; return true;
+        case json::Value::Kind::Bool: out = v.b ? "true" : "false"; return true;
+        case json::Value::Kind::Number: {
+            double d = 0;
+            if (parse_double(v.text, d)) {
+                out = format_double(d);
+            } else {
+                out = v.text;  // beyond a finite double: compared as written
+            }
+            return true;
+        }
+        default: return false;
+    }
+}
+
 bool json_when_matches(const WhenLine& w, const json::Value& v) {
     switch (v.kind) {
         case json::Value::Kind::String: return v.text == w.text;
@@ -482,6 +643,7 @@ struct TextSlots {
         const std::string* locator = nullptr;
         std::string value;
         bool has = false;
+        bool sentinel = false;  // the value is a field's sentinel: a line whose key is present writes over it
         // xml: a `group` line with a list to write, one element per item.
         const GroupLine* group = nullptr;
         const std::vector<Item>* items = nullptr;
@@ -588,7 +750,10 @@ void xml_decode_scope(const Pack& p, const std::vector<LineRef>& lines, const xm
         if (!d.wants(f)) continue;
         XmlLocator loc;
         parse_xml_locator(f.locator, loc);
-        if (xml_value(node, loc, text)) d.set(f, text);
+        if (!xml_value(node, loc, text)) continue;
+        // A sentinel is compared with the text as resolved, not trimmed (0.9 ruling 14).
+        if (f.has_absent && sentinel_text(f, text)) continue;
+        d.set(f, text);
     }
     d.finish();
 }
@@ -697,13 +862,22 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
             auto& slot = out.at(w->locator);
             slot.value = w->text;
             slot.has = true;
+            slot.sentinel = false;
             continue;
         }
         const FieldLine& f = *line.field;
         auto& slot = out.at(f.locator);
-        if (slot.has || !src.value(f, v)) continue;
-        slot.value = field_text(p, f, v);
-        slot.has = true;
+        if (slot.has && !slot.sentinel) continue;
+        if (src.value(f, v)) {
+            slot.value = field_text(p, f, v);
+            slot.has = true;
+            slot.sentinel = false;
+        } else if (f.has_absent && !slot.has) {
+            // An absent key writes its first sentinel (0.9); a later line whose key is present wins (ruling 16).
+            slot.value = f.absent_text.front();
+            slot.has = true;
+            slot.sentinel = true;
+        }
     }
     for (const auto& slot : out.slots) {
         if (slot.group) {
@@ -836,6 +1010,7 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
         if (!line.field) continue;
         const json::Value* v = lookup(loc);
         std::string text;
+        if (v && line.field->has_absent && json_raw_text(*v, text) && sentinel_text(*line.field, text)) continue;
         if (v && json_text(*v, text)) d.set(*line.field, text);
     }
     // Residue keeps its 0.1 form (0.5 ruling 28, 0.6 ruling 13): a string or a
@@ -871,6 +1046,8 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
     const EncodeSource src(p, kind, e);
     std::string lon, lat, alt;
     bool has_lon = false, has_lat = false, has_alt = false;
+    // A coordinate holding a sentinel: a later line whose key is present writes over it.
+    bool sen_lon = false, sen_lat = false, sen_alt = false;
     TextSlots props, members;  // locator -> JSON text
     Value v;
 
@@ -882,37 +1059,51 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
             auto& slot = (loc.kind == GeoLocator::Kind::Property ? props : members).at(w->locator);
             slot.value = json_when_text(*w);
             slot.has = true;
+            slot.sentinel = false;
             continue;
         }
         if (line.group) {
             // An array at the member; an empty list writes `[]`, an absent one nothing.
             auto& slot = (loc.kind == GeoLocator::Kind::Property ? props : members).at(line.group->locator);
             const std::vector<Item>* items = src.list(*line.group);
-            if (slot.has || !items) continue;
+            if ((slot.has && !slot.sentinel) || !items) continue;
             slot.value = json_encode_items(p, *line.group, *items, true);
             slot.has = true;
+            slot.sentinel = false;
             continue;
         }
         const FieldLine& f = *line.field;
         TextSlots::Slot* slot = nullptr;
-        bool taken = false;
+        bool taken = false, sentinel = false;
         switch (loc.kind) {
-            case GeoLocator::Kind::Lon: taken = has_lon; break;
-            case GeoLocator::Kind::Lat: taken = has_lat; break;
-            case GeoLocator::Kind::Alt: taken = has_alt; break;
-            case GeoLocator::Kind::Property: slot = &props.at(f.locator); taken = slot->has; break;
-            case GeoLocator::Kind::Member: slot = &members.at(f.locator); taken = slot->has; break;
+            case GeoLocator::Kind::Lon: taken = has_lon; sentinel = sen_lon; break;
+            case GeoLocator::Kind::Lat: taken = has_lat; sentinel = sen_lat; break;
+            case GeoLocator::Kind::Alt: taken = has_alt; sentinel = sen_alt; break;
+            case GeoLocator::Kind::Property: slot = &props.at(f.locator); taken = slot->has; sentinel = slot->sentinel; break;
+            case GeoLocator::Kind::Member: slot = &members.at(f.locator); taken = slot->has; sentinel = slot->sentinel; break;
         }
-        if (taken || !src.value(f, v)) continue;
-        std::string text = field_text(p, f, v);
-        std::string jv = transform_is_textual(f.transform) ? json::quote(text) : text;
+        if (taken && !sentinel) continue;
+        std::string jv;
+        bool writes_sentinel = false;
+        if (src.value(f, v)) {
+            std::string text = field_text(p, f, v);
+            jv = transform_is_textual(f.transform) ? json::quote(text) : text;
+        } else if (f.has_absent && !taken) {
+            // The first sentinel, typed as a `when` value is (0.9). On `lon` and
+            // `lat` it counts as a value, so `geometry` is written (ruling 10).
+            jv = f.absent_json;
+            writes_sentinel = true;
+        } else {
+            continue;
+        }
         switch (loc.kind) {
-            case GeoLocator::Kind::Lon: lon = jv; has_lon = true; break;
-            case GeoLocator::Kind::Lat: lat = jv; has_lat = true; break;
-            case GeoLocator::Kind::Alt: alt = jv; has_alt = true; break;
+            case GeoLocator::Kind::Lon: lon = jv; has_lon = true; sen_lon = writes_sentinel; break;
+            case GeoLocator::Kind::Lat: lat = jv; has_lat = true; sen_lat = writes_sentinel; break;
+            case GeoLocator::Kind::Alt: alt = jv; has_alt = true; sen_alt = writes_sentinel; break;
             default:
                 slot->value = std::move(jv);
                 slot->has = true;
+                slot->sentinel = writes_sentinel;
                 break;
         }
     }
@@ -1078,6 +1269,12 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, s
         BitRange r = bit_range(p, f.locator);
         r.start += base;
         if (r.end() > in.have) continue;  // an `optional` field beyond the input is absent
+        if (f.has_absent) {
+            // The raw value after `swap`, before `trim`, a table and the transform (0.9 ruling 2).
+            std::uint64_t raw = read_bits(in.data, r.start, r.len, in.msb);
+            if (f.swap) raw = swap_bytes(raw, r.len);
+            if (sentinel_num(f, raw)) continue;
+        }
         try {
             if (f.transform == Transform::Ascii) {
                 std::string text;
@@ -1146,9 +1343,23 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
     std::uint64_t end = base + fixed_extent(p, lines, false);
     out.reach(end);
 
-    // Where two present fields cover the same bits the earlier line's value holds
-    // (0.5 ruling 5): write the lines last to first. Absent fields leave zero bits.
+    // An absent key with `absent` writes its first sentinel; a line whose key is
+    // present wins over a sentinel whatever their order (0.9 ruling 16), so the
+    // sentinels are written first.
     Value mv;
+    for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
+        if (!it->field || !it->field->has_absent) continue;
+        const FieldLine& f = *it->field;
+        if (src.value(f, mv)) continue;
+        BitRange r = bit_range(p, f.locator);
+        r.start += base;
+        std::uint64_t raw = f.absent_num.front();
+        if (f.swap) raw = swap_bytes(raw, r.len);
+        write_bits(out.data, r.start, r.len, raw, out.msb);
+    }
+    // Where two present fields cover the same bits the earlier line's value holds
+    // (0.5 ruling 5): write the lines last to first. Absent fields without
+    // `absent` leave zero bits.
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
         if (!it->field) continue;
         const FieldLine& f = *it->field;

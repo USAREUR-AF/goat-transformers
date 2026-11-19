@@ -1,0 +1,42 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) on the
+# `protobuf` wire. Public. Two kinds. Exercises: a varint sentinel of 2^64-1
+# (ten bytes); a `psint` sentinel compared with the varint before zig-zag; NaN
+# and infinity bit patterns of `pdouble` and `pfloat` as sentinels; a
+# `pstring` sentinel that begins with `=`, which is part of the text on this
+# wire (ruling 12); the empty text `""`; a packed repeated scalar whose items
+# without a value are written as the sentinel (ruling 5); submessage items;
+# and a kind selected by `when 9 present` whose only field under 9 is
+# absent, where the sentinel counts as a written field for ruling 14 of 0.5
+# (ruling 16).
+#
+#   1 n pvarint, absent 2^64-1        5 label pstring, absent the text "=N/A"
+#   2 x psint, absent the varint 1    6 uid pstring, absent ""
+#   3 hae pdouble, absent 0x7ff8000000000000 (a quiet NaN)
+#   4 ratio pfloat, absent 0x7f800000 (infinity)
+#   7 nums: val, packed pvarint, absent 0
+#   8 items: 1 qty pvarint absent 255, 2 label pstring absent "-"
+#   kind sub (field 9 present): 9.1 y pvarint, absent 0
+format  conformance-absent-protobuf
+version 0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    protobuf
+field   probe.n      1  pvarint  absent 18446744073709551615
+field   probe.x      2  psint    absent 1
+field   hae          3  pdouble  absent 9221120237041090560
+field   probe.ratio  4  pfloat   absent 2139095040
+field   probe.label  5  pstring  absent =N/A
+field   uid          6  pstring  absent ""
+group   probe.nums   7
+  field  probe.val  .  pvarint  absent 0
+end
+group   probe.items  8
+  field  probe.qty    1  pvarint  absent 255
+  field  probe.label  2  pstring  absent -
+end
+kind     sub
+when     9  present
+requires probe.y
+field    probe.y  9.1  pvarint  absent 0
+kind     plain

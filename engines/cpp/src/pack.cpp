@@ -992,6 +992,15 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     f.via = t[++k];
                     continue;
                 }
+                // v0.9: `absent <value>[,<value>...]`; the next token is always its argument.
+                if (t[k] == "absent") {
+                    if (k + 1 >= t.size() || f.has_absent)
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    where + ": 'absent' takes one argument, once");
+                    f.has_absent = true;
+                    f.absent_arg = t[++k];
+                    continue;
+                }
                 if (t[k] == "swap") flag = &f.swap;
                 else if (t[k] == "trim") flag = &f.trim;
                 else if (t[k] == "optional") flag = &f.optional;
@@ -1052,6 +1061,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                                     ": a field with a bit length for a locator is a line of a sequential layout");
                 if (p.wire == Wire::Bits && detail::transform_is_bits(f.transform)) check_bits_field_len(p, f);
                 check_field_options(p, table_index, f);
+                if (f.has_absent) {
+                    detail::BitsLocator loc;
+                    std::uint32_t len = 0;
+                    if (p.wire == Wire::Bits && detail::parse_bits_locator(f.locator, loc)) len = loc.len;
+                    const bool coordinate =
+                        p.wire == Wire::GeoJson && !in_group && f.locator.compare(0, 9, "geometry.") == 0;
+                    detail::resolve_absent(p, p.wire, f, len, coordinate);
+                }
             }
             for (auto& w : consts) {
                 if (w.locator == "." && scalar_item_wire(p.wire))

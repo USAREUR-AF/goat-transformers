@@ -1,0 +1,46 @@
+# Conformance probe pack for absent-value sentinels (spec 0.9) in a sequential
+# `bits` layout, most-significant-bit-first. Public. No kinds. Exercises
+# ruling 4: a sentinel written for an absent key is not content for a
+# presence bit, an `opt` bit or a chain's `fx` bit, so a block that would
+# write only sentinels is left out and its bit is 0; an item of a `while`
+# group whose every field holds a sentinel is still an item (ruling 5); a
+# sentinel compared after `swap`; and a field without `absent` that writes
+# zero bits as before.
+#
+#   x 8 | p.1 p.2, 6 zero bits | p.1: y 8, z 8 | p.2: w 8 |
+#   7 zero bits, opt bit | opt: n 16 (little-endian) |
+#   chain: c1 7, fx, c2 7, fx | val 8 |
+#   recs while: 1, label 16 (ASCII), qty 8 ... 0 | zero bits to the byte
+format     conformance-absent-seq
+version    0.9.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  8  uint  absent 255
+presence p 2
+pad 6
+if p.1
+  field  probe.y  8  uint  absent 0
+  field  probe.z  8  uint  absent 255
+end
+if p.2
+  field  probe.w  8  uint
+end
+pad 7
+opt
+  field  probe.n  16  uint  swap  absent 65280
+end
+chain
+  field  probe.c1  7  uint  absent 127
+  fx
+  field  probe.c2  7  uint  absent 0
+  fx
+end
+field   probe.val  8  uint
+group   probe.recs while
+  field  probe.label  16  ascii  absent 0
+  field  probe.qty    8   uint   absent 255
+end

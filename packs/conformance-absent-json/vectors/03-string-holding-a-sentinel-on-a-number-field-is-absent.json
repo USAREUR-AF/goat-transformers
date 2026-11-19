@@ -1,0 +1,17 @@
+{
+  "name": "string-holding-a-sentinel-on-a-number-field-is-absent",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-json",
+  "input": "{\"alt\":\"9999999\",\"lat\":null,\"r\":\"N/A\",\"code\":\"0\"}",
+  "expect": "{\"id\":\"\",\"alt\":9999999,\"lat\":0,\"label\":\"N/A\",\"r\":\"N/A\",\"code\":\"0\",\"on\":false,\"cs\":\"NONE\",\"a\":0,\"na\":0,\"s\":\"-\",\"q\":7}",
+  "model": {
+    "@absent": [
+      "uid",
+      "hae",
+      "lat",
+      "probe.ratio",
+      "probe.tag",
+      "probe.qty"
+    ]
+  }
+}

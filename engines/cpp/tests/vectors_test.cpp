@@ -154,6 +154,36 @@ std::string check_model_key(const goat_transformers::Item& entity, const std::st
     return "";
 }
 
+// One "@absent" entry (0.9): a model key the entity lacks, "<list>[<i>].<key>"
+// for an item that exists and lacks the key, or a list name the entity lacks
+// (as "<list>.#": "absent"). Returns an empty string on a pass.
+std::string check_absent_key(const goat_transformers::Item& entity, const std::string& key) {
+    const goat_transformers::Item* cur = &entity;
+    std::string rest = key;
+    for (;;) {
+        const std::size_t open = rest.find('[');
+        if (open == std::string::npos) break;
+        const std::size_t close = rest.find(']', open);
+        std::int64_t index = -1;
+        if (close == std::string::npos || !detail::parse_int(rest.substr(open + 1, close - open - 1), index) ||
+            index < 0 || rest.compare(close, 2, "].") != 0)
+            return "@absent " + key + ": not an entry this runner understands";
+        auto list = cur->lists.find(rest.substr(0, open));
+        if (list == cur->lists.end()) return "@absent " + key + ": the list " + rest.substr(0, open) + " is absent";
+        if (static_cast<std::size_t>(index) >= list->second.size())
+            return "@absent " + key + ": the list " + rest.substr(0, open) + " has " +
+                   std::to_string(list->second.size()) + " items";
+        cur = &list->second[static_cast<std::size_t>(index)];
+        rest = rest.substr(close + 2);
+    }
+    auto it = cur->fields.find(rest);
+    if (it != cur->fields.end()) return "@absent " + key + ": present with the value " + show(it->second);
+    auto list = cur->lists.find(rest);
+    if (list != cur->lists.end())
+        return "@absent " + key + ": the list is present with " + std::to_string(list->second.size()) + " items";
+    return "";
+}
+
 // One load vector: a fresh engine, the limit, the modules in order, then the pack,
 // stopping at the first failure. Returns an empty string on a pass.
 std::string run_load_vector(const json::Value& v) {
@@ -203,7 +233,7 @@ std::string run_load_vector(const json::Value& v) {
 int main() {
     const fs::path packs = GT_PACKS_DIR;
     int ran = 0, failed = 0, error_vectors = 0, kind_checks = 0, context_vectors = 0, complete_checks = 0,
-        list_checks = 0;
+        list_checks = 0, absent_checks = 0;
 
     Engine eng;
     try {
@@ -298,6 +328,28 @@ int main() {
                     const json::Value& want = model->items[k];
                     std::string wtext = want.is(json::Value::Kind::String) ? want.text : json::write(want);
                     if (key == "@complete") continue;  // not a model key
+                    if (key == "@absent") {
+                        // Not a model key: keys the entity must not have (0.9). A listed
+                        // key that is also a member of `model` makes the vector invalid.
+                        ++absent_checks;
+                        if (!want.is(json::Value::Kind::Array)) {
+                            errs.push_back("invalid vector: @absent is not an array");
+                            continue;
+                        }
+                        for (const auto& entry : want.items) {
+                            if (!entry.is(json::Value::Kind::String)) {
+                                errs.push_back("invalid vector: an @absent entry is not a string");
+                                continue;
+                            }
+                            if (model->find(entry.text)) {
+                                errs.push_back("invalid vector: " + entry.text + " is in @absent and in model");
+                                continue;
+                            }
+                            const std::string err = check_absent_key(e, entry.text);
+                            if (!err.empty()) errs.push_back(err);
+                        }
+                        continue;
+                    }
                     if (key == "@kind") {
                         // Not a model key: the kind name decode must select.
                         ++kind_checks;
@@ -349,7 +401,8 @@ int main() {
 
     std::cout << "conversion vectors: " << ran << " run, " << (ran - failed) << " passed, " << failed << " failed ("
               << error_vectors << " expect_error, " << kind_checks << " @kind checks, " << context_vectors
-              << " with context, " << complete_checks << " @complete, " << list_checks << " list checks)\n";
+              << " with context, " << complete_checks << " @complete, " << list_checks << " list checks, "
+              << absent_checks << " @absent)\n";
     std::cout << "load vectors: " << load_ran << " run, " << (load_ran - load_failed) << " passed, " << load_failed
               << " failed\n";
     if (ran == 0) {

@@ -1,0 +1,14 @@
+{
+  "name": "ruling-23-xml-value-written-at-the-first-line-position",
+  "from": "conformance-absent-place-xml",
+  "to": "conformance-absent-place-xml",
+  "input": "<msg x=\"1\" s=\"-\"/>",
+  "expect": "<msg s=\"-\" x=\"1\"/>",
+  "model": {
+    "probe.s2": "-",
+    "probe.x": "1",
+    "@absent": [
+      "probe.s1"
+    ]
+  }
+}

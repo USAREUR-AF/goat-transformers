@@ -1,0 +1,14 @@
+{
+  "name": "to-msb-bits-ruling-16-overlap-and-ruling-1-second-line",
+  "from": "conformance-absent-json",
+  "to": "conformance-absent-bits",
+  "input": "{\"c2\":3}",
+  "expect": "ff800007ff0000003fffffffffffffffffff",
+  "model": {
+    "probe.c2": "3",
+    "@absent": [
+      "probe.c1",
+      "probe.w"
+    ]
+  }
+}

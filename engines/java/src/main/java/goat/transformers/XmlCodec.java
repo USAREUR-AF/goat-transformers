@@ -156,6 +156,8 @@ final class XmlCodec extends Codec<Xml.Element> {
             if (e.get(((Pack.Field) l).key) != null) continue;   // an earlier line already gave the key its value
             String raw = raw(el, (Loc) l.loc);
             if (raw == null) continue;
+            // the text with references resolved, not trimmed (ruling 14 of 0.9): a sentinel yields no value
+            if (((Pack.Field) l).absent != null && ((Pack.Field) l).absent.matches(raw)) continue;
             decodeField((Pack.Field) l, raw, e, fails);
         }
     }
@@ -190,6 +192,8 @@ final class XmlCodec extends Codec<Xml.Element> {
 
     /** Write the lines of one scope under {@code root}: the document root, or one item element. */
     private void encodeScope(Xml.Element root, Pack.Scope scope, Entity e, Set<String> written) {
+        // Locators that hold only a sentinel so far: a later line whose key is present writes over it (ruling 16 of 0.9).
+        Set<String> sentinel = new HashSet<>();
         for (Pack.Line l : scope.lines) {
             Loc loc = (Loc) l.loc;
             if (l instanceof Pack.Group) {
@@ -220,9 +224,28 @@ final class XmlCodec extends Codec<Xml.Element> {
                 continue;
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`
-            if (written.contains(l.locator)) continue;   // an earlier line on this locator already wrote it
-            String s = encodeField((Pack.Field) l, e, scope);
-            if (s == null) continue;
+            boolean over = sentinel.contains(l.locator);
+            if (written.contains(l.locator) && !over) continue;   // an earlier line on this locator already wrote it
+            Pack.Field f = (Pack.Field) l;
+            String s = encodeField(f, e, scope);
+            if (s == null) {
+                if (f.absent == null || written.contains(l.locator)) continue;
+                put(root, loc, f.absent.firstText());
+                written.add(l.locator);
+                sentinel.add(l.locator);
+                continue;
+            }
+            if (over) {
+                // replace the sentinel in its place
+                Xml.Element el = ensure(root, loc.path);
+                if (loc.attr != null) el.attrs.put(loc.attr, s);
+                else if (loc.text) {
+                    el.text.setLength(0);
+                    el.text.append(s);
+                }
+                sentinel.remove(l.locator);
+                continue;
+            }
             put(root, loc, s);
             written.add(l.locator);
         }
