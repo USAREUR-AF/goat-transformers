@@ -41,6 +41,7 @@ add_library(goat_transformers STATIC
   src/derive.cpp
   src/engine.cpp
   src/json.cpp
+  src/linecheck.cpp
   src/jsonwire.cpp
   src/pack.cpp
   src/protobuf.cpp

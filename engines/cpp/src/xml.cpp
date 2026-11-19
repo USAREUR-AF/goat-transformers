@@ -141,6 +141,10 @@ private:
             if (e == std::string::npos) fail("unterminated attribute value");
             std::string raw = s_.substr(i_, e - i_);
             if (raw.find('<') != std::string::npos) fail("'<' in attribute value");
+            // 0.11 ruling 1i: a tab or line feed written literally is read as a
+            // space; one written as a reference is kept (decode comes after).
+            for (char& c : raw)
+                if (c == '\t' || c == '\n') c = ' ';
             i_ = e + 1;
             for (const auto& a : n.attrs)
                 if (a.first == an) fail("duplicate attribute " + an);
@@ -177,12 +181,12 @@ private:
                 i_ = e;
             }
         }
-        for (char c : text)
-            if (!is_ws(c)) {
-                n.has_text = true;
-                n.text = text;
-                break;
-            }
+        // 0.11 ruling 1m: all character data directly inside the element, kept
+        // exactly; whitespace is text. No character data is no text.
+        if (!text.empty()) {
+            n.has_text = true;
+            n.text = std::move(text);
+        }
         return n;
     }
 };
@@ -221,7 +225,8 @@ void write_to(std::string& out, const Node& n) {
         escape(out, a.second, true);
         out += '"';
     }
-    if (!n.has_text && n.children.empty()) {
+    // 0.11 ruling 1e: the empty text writes the element with no content.
+    if ((!n.has_text || n.text.empty()) && n.children.empty()) {
         out += "/>";
         return;
     }
@@ -235,9 +240,47 @@ void write_to(std::string& out, const Node& n) {
 
 }  // namespace
 
-Node parse(const std::string& src) { return Parser(src).document(); }
+Node parse(const std::string& src) {
+    // 0.11 ruling 1h: before anything else is read, a carriage return followed
+    // by a line feed, and one that stands alone, is one line feed.
+    if (src.find('\r') == std::string::npos) return Parser(src).document();
+    std::string norm;
+    norm.reserve(src.size());
+    for (std::size_t k = 0; k < src.size(); ++k) {
+        if (src[k] != '\r') {
+            norm += src[k];
+            continue;
+        }
+        norm += '\n';
+        if (k + 1 < src.size() && src[k + 1] == '\n') ++k;
+    }
+    return Parser(norm).document();
+}
+
+namespace {
+// 0.11 ruling 1d: a character XML 1.0 cannot hold.
+bool writable(const std::string& s) {
+    for (std::size_t k = 0; k < s.size(); ++k) {
+        const unsigned char c = static_cast<unsigned char>(s[k]);
+        if (c < 0x20 && c != '\t' && c != '\n' && c != '\r') return false;
+        // U+FFFE and U+FFFF are EF BF BE and EF BF BF in UTF-8.
+        if (c == 0xEF && k + 2 < s.size() && static_cast<unsigned char>(s[k + 1]) == 0xBF &&
+            (static_cast<unsigned char>(s[k + 2]) == 0xBE || static_cast<unsigned char>(s[k + 2]) == 0xBF))
+            return false;
+    }
+    return true;
+}
+void check_writable(const Node& n) {
+    for (const auto& a : n.attrs)
+        if (!writable(a.second)) throw WriteError("the attribute " + a.first + " holds a character XML 1.0 cannot hold");
+    if (n.has_text && !writable(n.text))
+        throw WriteError("the text of <" + n.name + "> holds a character XML 1.0 cannot hold");
+    for (const auto& c : n.children) check_writable(c);
+}
+}  // namespace
 
 std::string write(const Node& root) {
+    check_writable(root);
     std::string out;
     write_to(out, root);
     return out;

@@ -60,7 +60,7 @@ cd build && ctest --output-on-failure
 
 | ctest name | Program | What it checks |
 |---|---|---|
-| `vectors` | `goat_transformers_vectors` | every conversion vector under `packs/*/vectors` and every load vector under `packs/conformance/load-vectors` (`spec/vector-format.md`) |
+| `vectors` | `goat_transformers_vectors` | every conversion vector under `packs/*/vectors` (each with its `max_items`; a `model` value its grammar refuses makes the vector invalid), every load vector under `packs/conformance/load-vectors` (with `pack` or `packs`) and every capability vector under `packs/conformance/capability-vectors` (`spec/vector-format.md`) |
 | `unit` | `goat_transformers_unit` | number formatting, dates, pack grammar errors, residue, and the malformed-input rulings no vector reaches |
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
@@ -111,5 +111,6 @@ nothing else.
 ```
 
 `convert` reads the message from standard input and writes the result to
-standard output. On an error it prints the message, which begins with the
+standard output. `--max-items <n>` sets the limit on list items one decode
+holds (`spec/engine-spec.md`, ruling 7 of 0.11; 100000 by default). On an error it prints the message, which begins with the
 error kind, to standard error and exits with status 1.

@@ -7,6 +7,7 @@
 
 #include "codecs.hpp"
 #include "derive.hpp"
+#include "linecheck.hpp"
 #include "sequential.hpp"
 #include "goat_transformers/engine.hpp"
 #include "transforms.hpp"
@@ -15,18 +16,22 @@ namespace goat_transformers {
 
 const char* error_kind_name(ErrorKind kind) {
     switch (kind) {
-        case ErrorKind::UnknownDirective: return "unknown_directive";
-        case ErrorKind::UnknownTransform: return "unknown_transform";
-        case ErrorKind::UnknownWire: return "unknown_wire";
-        case ErrorKind::InvalidPack: return "invalid_pack";
-        case ErrorKind::InvalidLocator: return "invalid_locator";
-        case ErrorKind::UnknownFormat: return "unknown_format";
+        case ErrorKind::UnterminatedQuote: return "unterminated-quote";
+        case ErrorKind::UnknownDirective: return "unknown-directive";
+        case ErrorKind::UnknownTransform: return "unknown-transform";
+        case ErrorKind::UnknownWire: return "unknown-wire";
+        case ErrorKind::BadLocator: return "bad-locator";
+        case ErrorKind::MissingFormat: return "missing-format";
+        case ErrorKind::MissingVersion: return "missing-version";
+        case ErrorKind::MissingWire: return "missing-wire";
+        case ErrorKind::MissingModule: return "missing-module";
+        case ErrorKind::DuplicateFormat: return "duplicate-format";
+        case ErrorKind::UnknownFormat: return "unknown-format";
         case ErrorKind::MalformedWire: return "malformed-wire";
         case ErrorKind::MissingRoot: return "missing-root";
         case ErrorKind::TransformDecode: return "transform-decode";
         case ErrorKind::TransformEncode: return "transform-encode";
         case ErrorKind::Io: return "io";
-        case ErrorKind::InvalidModel: return "invalid_model";
         case ErrorKind::MissingDistribution: return "missing-distribution";
         case ErrorKind::MissingSource: return "missing-source";
         case ErrorKind::DistributionRefused: return "distribution-refused";
@@ -222,6 +227,11 @@ namespace {
 // are checked after the other checks of the module (0.8 ruling 29), by
 // detail::check_derives.
 Module parse_model_impl(const std::string& text, const std::string& origin) {
+    // 0.11 ruling 5b: the line checks of every line; then, as the file is read
+    // again, every other cause of a module line (key type, `.` in a key name,
+    // duplicate-key, a derive function or parameter); then missing-module,
+    // missing-version; then missing-distribution, missing-source.
+    detail::check_module_lines(text, origin);
     Module m;
     m.origin = origin;
     bool have_module = false, have_version = false, have_distribution = false;
@@ -236,18 +246,18 @@ Module parse_model_impl(const std::string& text, const std::string& origin) {
         const std::string where = origin + ":" + std::to_string(lineno);
         std::vector<std::string> t;
         std::string err;
-        if (!tokenize(line, t, err)) throw Error(ErrorKind::InvalidModel, "", "", where + ": " + err);
+        if (!tokenize(line, t, err)) throw Error(detail::tokenize_kind(err), "", "", where + ": " + err);
         if (t.empty()) continue;
 
         const std::string& kw = t[0];
         auto arity = [&](std::size_t n) {
             if (t.size() != n + 1)
-                throw Error(ErrorKind::InvalidModel, "", "",
+                throw Error(ErrorKind::BadDirective, "", "",
                             where + ": '" + kw + "' takes " + std::to_string(n) + " argument(s), got " +
                                 std::to_string(t.size() - 1));
         };
         auto once = [&](bool& seen) {
-            if (seen) throw Error(ErrorKind::InvalidModel, "", "", where + ": duplicate '" + kw + "'");
+            if (seen) throw Error(ErrorKind::BadDirective, "", "", where + ": duplicate '" + kw + "'");
             seen = true;
         };
 
@@ -263,7 +273,7 @@ Module parse_model_impl(const std::string& text, const std::string& origin) {
             arity(1);
             once(have_distribution);
             if (!parse_distribution(t[1], m.distribution))
-                throw Error(ErrorKind::InvalidModel, "", "", where + ": distribution '" + t[1] + "'");
+                throw Error(ErrorKind::BadDirective, "", "", where + ": distribution '" + t[1] + "'");
         } else if (kw == "source") {
             arity(1);
             m.sources.push_back(t[1]);
@@ -273,16 +283,16 @@ Module parse_model_impl(const std::string& text, const std::string& origin) {
             if (std::find(m.uses.begin(), m.uses.end(), t[1]) == m.uses.end()) m.uses.push_back(t[1]);
         } else if (kw == "key") {
             if (t.size() != 4 && t.size() != 5)
-                throw Error(ErrorKind::InvalidModel, "", "",
+                throw Error(ErrorKind::BadDirective, "", "",
                             where + ": 'key' takes 3 or 4 argument(s), got " + std::to_string(t.size() - 1));
             ModelKey k;
             k.name = t[1];
             if (k.name.empty() || k.name.find('.') != std::string::npos)
-                throw Error(ErrorKind::InvalidModel, "", "", where + ": key name '" + k.name + "' contains '.'");
+                throw Error(ErrorKind::BadDirective, "", "", where + ": key name '" + k.name + "' contains '.'");
             if (t[2] == "string") k.type = KeyType::String;
             else if (t[2] == "float") k.type = KeyType::Float;
             else if (t[2] == "int") k.type = KeyType::Int;
-            else throw Error(ErrorKind::InvalidModel, "", "", where + ": key type '" + t[2] + "'");
+            else throw Error(ErrorKind::BadDirective, "", "", where + ": key type '" + t[2] + "'");
             k.unit = t[3];
             if (t.size() == 5) k.meaning = t[4];
             if (m.list_index.count(k.name) || !m.index.emplace(k.name, m.keys.size()).second)
@@ -292,12 +302,12 @@ Module parse_model_impl(const std::string& text, const std::string& origin) {
         } else if (kw == "list") {
             // v0.7: a list is named like a key and shares the key namespace of its module.
             if (t.size() != 2 && t.size() != 3)
-                throw Error(ErrorKind::InvalidModel, "", "",
+                throw Error(ErrorKind::BadDirective, "", "",
                             where + ": 'list' takes 1 or 2 argument(s), got " + std::to_string(t.size() - 1));
             ModelList l;
             l.name = t[1];
             if (l.name.empty() || l.name.find('.') != std::string::npos)
-                throw Error(ErrorKind::InvalidModel, "", "", where + ": list name '" + l.name + "' contains '.'");
+                throw Error(ErrorKind::BadDirective, "", "", where + ": list name '" + l.name + "' contains '.'");
             if (t.size() == 3) l.meaning = t[2];
             if (m.index.count(l.name) || !m.list_index.emplace(l.name, m.lists.size()).second)
                 throw Error(ErrorKind::DuplicateKey, "", "",
@@ -312,11 +322,12 @@ Module parse_model_impl(const std::string& text, const std::string& origin) {
         }
     }
 
+    if (!have_module || m.name.empty()) throw Error(ErrorKind::MissingModule, "", "", origin + ": missing 'module'");
+    if (!have_version) throw Error(ErrorKind::MissingVersion, "", "", origin + ": the module has no 'version' line");
     if (!have_distribution) throw Error(ErrorKind::MissingDistribution, "", "", origin + ": module has no 'distribution'");
     if (m.sources.empty()) throw Error(ErrorKind::MissingSource, "", "", origin + ": module has no 'source'");
-    if (!have_module || m.name.empty()) throw Error(ErrorKind::InvalidModel, "", "", origin + ": missing 'module'");
     if (m.name.find('.') != std::string::npos)
-        throw Error(ErrorKind::InvalidModel, "", "", origin + ": module name '" + m.name + "' contains '.'");
+        throw Error(ErrorKind::BadDirective, "", "", origin + ": module name '" + m.name + "' contains '.'");
     return m;
 }
 }  // namespace
@@ -730,17 +741,22 @@ void check_field(const Pack& p, const FieldLine& f, bool in_group) {
     else if (p.wire == Wire::Bits) matches = is_bits;
     else matches = !is_bits && !is_pb && (f.transform != Transform::Bool || p.wire == Wire::Json);
     if (!matches)
-        throw Error(ErrorKind::InvalidPack, p.format, f.locator,
+        throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     p.source + ": transform '" + std::string(transform_name(f.transform)) +
                         "' is not valid on wire " + wire_name(p.wire));
     if (in_group && f.locator == "." && scalar_item_wire(p.wire)) return;  // the item itself, a scalar
     if (!detail::valid_locator(locator_wire(p, in_group), f.locator))
-        throw Error(ErrorKind::InvalidLocator, p.format, f.locator,
+        throw Error(ErrorKind::BadLocator, p.format, f.locator,
                     p.source + ": not a " + wire_name(p.wire) + " field locator");
 }
 
 void check_when(const Pack& p, const WhenLine& w, bool in_group) {
     if (p.wire == Wire::Text) return;  // checked by detail::check_text_pack
+    // `.` is the item itself: outside a group it is bad-directive, as earlier
+    // versions state, not bad-locator (0.11 ruling 5a).
+    if (w.locator == "." && scalar_item_wire(p.wire))
+        throw Error(ErrorKind::BadDirective, p.format, w.locator,
+                    p.source + ":" + std::to_string(w.line) + ": the locator '.' outside a group");
     const Wire wire = locator_wire(p, in_group);
     bool ok = detail::valid_locator(wire, w.locator);
     if (ok && wire == Wire::GeoJson) {
@@ -749,7 +765,7 @@ void check_when(const Pack& p, const WhenLine& w, bool in_group) {
         ok = g.kind == detail::GeoLocator::Kind::Property || g.kind == detail::GeoLocator::Kind::Member;
     }
     if (!ok)
-        throw Error(ErrorKind::InvalidLocator, p.format, w.locator,
+        throw Error(ErrorKind::BadLocator, p.format, w.locator,
                     p.source + ": not a " + wire_name(p.wire) + " 'when' or 'const' locator");
 }
 
@@ -779,7 +795,7 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
         case Wire::Text: ok = true; break;
     }
     if (!ok)
-        throw Error(ErrorKind::InvalidLocator, p.format, g.locator,
+        throw Error(ErrorKind::BadLocator, p.format, g.locator,
                     p.source + ":" + std::to_string(g.line) + ": not a " + wire_name(p.wire) + " group locator");
     for (const auto& f : g.fields) check_field(p, f, true);
     for (const auto& c : g.consts) check_when(p, c, true);
@@ -789,6 +805,9 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
 }  // namespace
 
 Pack parse_pack(const std::string& text, const std::string& source) {
+    // 0.11 ruling 5b: the line checks of every line, then missing-format,
+    // missing-version and missing-wire, before any other check of the file.
+    detail::check_pack_lines(text, source);
     // v0.8: a pack with `layout sequential` is lines read from a cursor.
     if (detail::is_sequential_pack(text)) return detail::parse_seq_pack(text, source);
     Pack p;
@@ -826,19 +845,19 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         std::vector<std::string> t;
         std::string err;
         if (!tokenize(line, t, err))
-            throw Error(ErrorKind::InvalidPack, p.format, "", source + ":" + std::to_string(lineno) + ": " + err);
+            throw Error(detail::tokenize_kind(err), p.format, "", source + ":" + std::to_string(lineno) + ": " + err);
         if (t.empty()) continue;
 
         const std::string where = source + ":" + std::to_string(lineno);
         const std::string& kw = t[0];
         auto arity = [&](std::size_t n) {
             if (t.size() != n + 1)
-                throw Error(ErrorKind::InvalidPack, p.format, "",
+                throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": '" + kw + "' takes " + std::to_string(n) + " argument(s), got " +
                                 std::to_string(t.size() - 1));
         };
         auto once = [&](bool& seen) {
-            if (seen) throw Error(ErrorKind::InvalidPack, p.format, "", where + ": duplicate '" + kw + "'");
+            if (seen) throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate '" + kw + "'");
             seen = true;
         };
         // `when`, `requires`, `root`, `kind`, `map` and `typemap` are not allowed in a group.
@@ -865,7 +884,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             arity(1);
             once(have_distribution);
             if (!parse_distribution(t[1], p.distribution))
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": distribution '" + t[1] + "'");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": distribution '" + t[1] + "'");
         } else if (kw == "source") {
             arity(1);
             p.sources.push_back(t[1]);
@@ -891,9 +910,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             } else {
                 // v0.6: a root per kind (xml only; checked once the wire is known).
                 if (!p.kinds.back().root.empty())
-                    throw Error(ErrorKind::InvalidPack, p.format, "",
+                    throw Error(ErrorKind::BadDirective, p.format, "",
                                 where + ": duplicate 'root' in kind '" + p.kinds.back().name + "'");
-                if (t[1].empty()) throw Error(ErrorKind::InvalidPack, p.format, "", where + ": empty 'root'");
+                if (t[1].empty()) throw Error(ErrorKind::BadDirective, p.format, "", where + ": empty 'root'");
                 p.kinds.back().root = t[1];
                 if (kind_root_line == 0) kind_root_line = lineno;
             }
@@ -901,7 +920,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             arity(1);
             once(have_word_bytes);
             if (!parse_u32(t[1], p.word_bytes) || p.word_bytes == 0)
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": word_bytes must be a positive integer");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": word_bytes must be a positive integer");
         } else if (kw == "layout") {
             // v0.8: `layout fixed` is the default, the addressing of Version 0.2.
             arity(1);
@@ -959,7 +978,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         } else if (kw == "group") {
             // v0.7: `group <list> <locator> [item <bits>] [count <count-locator> | count <n>]`.
             if (t.size() < 3)
-                throw Error(ErrorKind::InvalidPack, p.format, "",
+                throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": 'group' takes a list and a locator, got " + std::to_string(t.size() - 1) +
                                 " argument(s)");
             GroupLine g;
@@ -1021,11 +1040,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (p.kinds.empty())
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' before the first 'kind'");
             if (t.size() < 2)
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": 'requires' takes at least 1 argument");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' takes at least 1 argument");
             for (std::size_t k = 1; k < t.size(); ++k) p.kinds.back().requires_keys.push_back(t[k]);
         } else if (kw == "field") {
             if (t.size() < 4)
-                throw Error(ErrorKind::InvalidPack, p.format, "",
+                throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": 'field' takes a key, a locator and a transform, got " +
                                 std::to_string(t.size() - 1) + " argument(s)");
             FieldLine f;
@@ -1033,11 +1052,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             f.locator = t[2];
             f.line = lineno;
             std::string terr;
-            // v0.10: a text transform with parameters that are not valid is bad-directive.
-            const int text_tf = detail::parse_text_transform(t[3], f, terr);
-            if (text_tf < 0)
+            const int tf = detail::parse_any_transform(t[3], f, terr);
+            if (tf == -1)
                 throw Error(ErrorKind::BadDirective, p.format, f.locator, where + ": " + terr + " for field '" + f.key + "'");
-            if (text_tf == 0 && !detail::parse_transform(t[3], f, terr))
+            if (tf == -2)
                 throw Error(ErrorKind::UnknownTransform, p.format, f.locator,
                             where + ": " + terr + " for field '" + f.key + "'");
             // v0.6 options after the transform, in any order.
@@ -1073,7 +1091,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             not_in_group();
             arity(2);
             if (!natives.insert(t[1]).second)
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
             p.typemap.emplace_back(t[1], t[2]);
         } else {
             throw Error(ErrorKind::UnknownDirective, p.format, "", where + ": directive '" + kw + "'");
@@ -1160,24 +1178,23 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         check_fields_through_groups(p);
     }
 
-    if (!have_distribution)
-        throw Error(ErrorKind::MissingDistribution, p.format, "", source + ": pack has no 'distribution'");
-    if (p.sources.empty()) throw Error(ErrorKind::MissingSource, p.format, "", source + ": pack has no 'source'");
-    if (!have_format || p.format.empty()) throw Error(ErrorKind::InvalidPack, "", "", source + ": missing 'format'");
-    if (!have_wire) throw Error(ErrorKind::InvalidPack, p.format, "", source + ": missing 'wire'");
+    // The checks that need the whole file come before the order of 0.4 (0.11
+    // ruling 5b): the load-time missing-root, the missing `word_bytes`, a
+    // directive of another wire, and a transform or locator on its wire.
+    if (!have_format || p.format.empty()) throw Error(ErrorKind::MissingFormat, "", "", source + ": missing 'format'");
+    if (!have_wire) throw Error(ErrorKind::MissingWire, p.format, "", source + ": missing 'wire'");
     if (p.wire == Wire::Xml && !have_root) {
         // A pack whose every kind has a `root` needs no pack-level `root` (0.6).
         bool every_kind = !p.kinds.empty();
         for (const auto& k : p.kinds) every_kind = every_kind && !k.root.empty();
-        if (!every_kind) throw Error(ErrorKind::InvalidPack, p.format, "", source + ": wire xml requires 'root'");
+        if (!every_kind) throw Error(ErrorKind::MissingRoot, p.format, "", source + ": wire xml requires 'root'");
     }
     if (p.wire != Wire::Xml && have_root)
-        throw Error(ErrorKind::InvalidPack, p.format, "", source + ": 'root' applies to wire xml only");
+        throw Error(ErrorKind::BadDirective, p.format, "", source + ": 'root' applies to wire xml only");
     if (p.wire == Wire::Bits && !have_word_bytes)
-        throw Error(ErrorKind::InvalidPack, p.format, "", source + ": wire bits requires 'word_bytes'");
+        throw Error(ErrorKind::BadDirective, p.format, "", source + ": wire bits requires 'word_bytes'");
     if (p.wire != Wire::Bits && have_word_bytes)
-        throw Error(ErrorKind::InvalidPack, p.format, "", source + ": 'word_bytes' applies to wire bits only");
-
+        throw Error(ErrorKind::BadDirective, p.format, "", source + ": 'word_bytes' applies to wire bits only");
     for (const auto& f : p.fields) check_field(p, f, false);
     for (const auto& w : p.whens) check_when(p, w, false);
     for (const auto& w : p.consts) check_when(p, w, false);
@@ -1188,6 +1205,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         for (const auto& w : k.consts) check_when(p, w, false);
         for (const auto& g : k.groups) check_group_locators(p, g, false);
     }
+
+    if (!have_distribution)
+        throw Error(ErrorKind::MissingDistribution, p.format, "", source + ": pack has no 'distribution'");
+    if (p.sources.empty()) throw Error(ErrorKind::MissingSource, p.format, "", source + ": pack has no 'source'");
+
     return p;
 }
 

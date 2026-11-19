@@ -209,12 +209,10 @@ const Kind* select_encode_kind(const Pack& p, const Entity& e) {
 
 namespace {
 
+// 0.11 ruling 2c: a table entry is an integer when 2a accepts it.
 bool integer_text(const std::string& s) {
-    std::size_t i = !s.empty() && (s[0] == '-' || s[0] == '+') ? 1 : 0;
-    if (i >= s.size()) return false;
-    for (; i < s.size(); ++i)
-        if (s[i] < '0' || s[i] > '9') return false;
-    return true;
+    std::int64_t n = 0;
+    return parse_int_text(s, n);
 }
 
 // Canonical text of a model value: an integer as decimal digits, a float as in
@@ -238,10 +236,10 @@ std::string canonical_text(const Value& v) {
 std::string canonical_entry(const std::string& text, KeyType type) {
     if (type == KeyType::Int) {
         std::int64_t n;
-        if (integer_text(text) && parse_int(text, n)) return std::to_string(n);
+        if (parse_int_text(text, n)) return std::to_string(n);
     } else if (type == KeyType::Float) {
         double d;
-        if (parse_double(text, d)) return format_double(d);
+        if (parse_number_text(text, d)) return format_double(d);
     }
     return text;
 }
@@ -251,14 +249,15 @@ std::string canonical_entry(const std::string& text, KeyType type) {
 Value read_as(const std::string& text, KeyType type) {
     switch (type) {
         case KeyType::String: return Value::of_string(text);
+        // 0.11 ruling 2c: integer text (2a) and number text (2b).
         case KeyType::Int: {
             std::int64_t n;
-            if (!parse_int(text, n)) throw std::invalid_argument("not an integer: \"" + text + "\"");
+            if (!parse_int_text(text, n)) throw std::invalid_argument("not integer text: \"" + text + "\"");
             return Value::of_int(n);
         }
         case KeyType::Float: {
             double d;
-            if (!parse_double(text, d)) throw std::invalid_argument("not a decimal number: \"" + text + "\"");
+            if (!parse_number_text(text, d)) throw std::invalid_argument("not number text: \"" + text + "\"");
             return Value::of_float(d);
         }
     }
@@ -270,7 +269,7 @@ KeyType table_model_type(const MapTable& table) {
     for (const auto& entry : table.entries) {
         double d;
         if (!integer_text(entry.second)) all_int = false;
-        if (!parse_double(entry.second, d)) all_num = false;
+        if (!parse_number_text(entry.second, d)) all_num = false;
     }
     return all_int ? KeyType::Int : all_num ? KeyType::Float : KeyType::String;
 }
@@ -295,6 +294,41 @@ Value table_encode(const Pack& p, const FieldLine& f, const Value& model) {
     throw std::invalid_argument("table '" + table.name + "' has no entry for the model value " + text);
 }
 
+// ---- one decode
+
+namespace {
+thread_local DecodeScope* current_scope = nullptr;
+}  // namespace
+
+DecodeScope::DecodeScope(std::uint64_t max_items) : limit(max_items), outer_(current_scope) { current_scope = this; }
+
+DecodeScope::~DecodeScope() { current_scope = outer_; }
+
+void DecodeScope::raise_failure() const {
+    if (has_failure_) throw Error(ErrorKind::TransformDecode, fail_format, fail_locator, fail_detail);
+}
+
+void take_items(const Pack& p, const std::string& list, std::uint64_t n) {
+    DecodeScope* s = current_scope;
+    if (!s) return;
+    if (n > s->limit || s->held > s->limit - n)
+        throw Error(ErrorKind::MalformedWire, p.format, "",
+                    "the list '" + list + "' takes the items of the message beyond the limit of " +
+                        std::to_string(s->limit));
+    s->held += n;
+}
+
+void give_back_items(std::uint64_t n) {
+    if (DecodeScope* s = current_scope) s->held = n > s->held ? 0 : s->held - n;
+}
+
+std::uint64_t count_items(const std::vector<Item>& items) {
+    std::uint64_t n = items.size();
+    for (const auto& item : items)
+        for (const auto& kv : item.lists) n += count_items(kv.second);
+    return n;
+}
+
 // ---- decode bookkeeping
 
 bool Decoder::wants(const FieldLine& f) const {
@@ -309,6 +343,18 @@ void Decoder::set(const FieldLine& f, const std::string& text) {
     Value v;
     try {
         v = decode_value(f.transform, text);
+    } catch (const std::invalid_argument& ex) {
+        fail(f, ex.what());
+        return;
+    }
+    put(f, std::move(v));
+}
+
+void Decoder::set_json_number(const FieldLine& f, const std::string& text) {
+    if (!wants(f)) return;
+    Value v;
+    try {
+        v = decode_json_number(f.transform, text);
     } catch (const std::invalid_argument& ex) {
         fail(f, ex.what());
         return;
@@ -348,7 +394,19 @@ void Decoder::finish() {
         }
         d += " [" + f.key + " (" + f.locator + "): " + f.why + "]";
     }
-    if (!d.empty()) throw Error(ErrorKind::TransformDecode, p.format, first_locator, d);
+    if (!d.empty()) {
+        // Inside a decode the first failure is kept and the decode goes on (0.11 ruling 7f).
+        if (DecodeScope* s = current_scope) {
+            if (!s->has_failure_) {
+                s->has_failure_ = true;
+                s->fail_format = p.format;
+                s->fail_locator = first_locator;
+                s->fail_detail = d;
+            }
+            return;
+        }
+        throw Error(ErrorKind::TransformDecode, p.format, first_locator, d);
+    }
     // Type mapping: native code -> CoT token; an unmapped code passes through.
     if (!p.typemap.empty()) {
         auto it = out.fields.find("type");
@@ -525,7 +583,7 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
         if (json_wire) {
             if (!forced && json_number_text(v)) {
                 double d = 0;
-                if (!parse_double(v, d)) bad("'" + v + "' is number text that does not fit a finite double");
+                if (!parse_number_text(v, d)) bad("'" + v + "' is number text that does not fit a finite double");
                 v = format_double(d);
                 json_text = v;
             } else if (coordinate) {
@@ -563,7 +621,7 @@ bool json_raw_text(const json::Value& v, std::string& out) {
         case json::Value::Kind::Bool: out = v.b ? "true" : "false"; return true;
         case json::Value::Kind::Number: {
             double d = 0;
-            if (parse_double(v.text, d)) {
+            if (parse_number_text(v.text, d)) {
                 out = format_double(d);
             } else {
                 out = v.text;  // beyond a finite double: compared as written
@@ -736,6 +794,9 @@ void xml_decode_scope(const Pack& p, const std::vector<LineRef>& lines, const xm
             loc.path.pop_back();
             const xml::Node* parent = xml_find(node, loc.path);
             if (!parent) continue;
+            std::uint64_t count = 0;
+            for (const auto& c : parent->children) count += c.name == name ? 1 : 0;
+            take_items(p, g.list, count);  // 0.11 ruling 7a
             std::vector<Item> items;
             std::vector<LineRef> body;
             for (const auto& c : parent->children) {
@@ -924,7 +985,11 @@ std::string encode_xml(const Pack& p, const Entity& e) {
         if (!parse_xml_locator(r.locator, loc)) continue;
         place_xml(root, loc, r.value);
     }
-    return xml::write(root);
+    try {
+        return xml::write(root);
+    } catch (const xml::WriteError& ex) {
+        throw Error(ErrorKind::TransformEncode, p.format, "", ex.what());
+    }
 }
 
 // ---------------------------------------------------------------- geojson
@@ -1013,7 +1078,8 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
         const json::Value* v = lookup(loc);
         std::string text;
         if (v && line.field->has_absent && json_raw_text(*v, text) && sentinel_text(*line.field, text)) continue;
-        if (v && json_text(*v, text)) d.set(*line.field, text);
+        if (v && v->is(json::Value::Kind::Number)) d.set_json_number(*line.field, v->text);
+        else if (v && json_text(*v, text)) d.set(*line.field, text);
     }
     // Residue keeps its 0.1 form (0.5 ruling 28, 0.6 ruling 13): a string or a
     // number keeps its text as written and encode writes it back as a string;
@@ -1301,7 +1367,10 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, s
         const std::uint64_t count =
             g.count_fixed ? g.count_n : read_bits(in.data, base + g.count_start, g.count_len, in.msb);
         std::vector<Item>& items = out.lists[g.list];
+        give_back_items(count_items(items));
         items.clear();
+        // 0.11 ruling 7d: the count is compared with the limit before any item is read.
+        take_items(p, g.list, count);
         const std::vector<LineRef> body = group_lines(g);
         const std::string item_what = "an item of the group '" + g.list + "'";
         std::uint64_t at = base + g.bits_start;

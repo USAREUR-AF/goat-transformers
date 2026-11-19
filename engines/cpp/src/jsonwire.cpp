@@ -11,6 +11,7 @@
 
 #include "codecs.hpp"
 #include "transforms.hpp"
+#include "util.hpp"
 
 namespace goat_transformers::detail {
 
@@ -58,6 +59,7 @@ void decode_member(Decoder& d, const FieldLine& f, const json::Value& v) {
         return;
     }
     if (f.transform == Transform::Bool) d.put(f, Value::of_int(v.b ? 1 : 0));
+    else if (v.kind == json::Value::Kind::Number) d.set_json_number(f, v.text);
     else d.set(f, v.text);
 }
 
@@ -84,8 +86,16 @@ void collect_residue(Entity& d, const std::string& format, const json::Value& ob
             case json::Value::Kind::Object:
                 if (seen.insert(path).second) collect_residue(d, format, v, path, mapped, seen);
                 break;
+            case json::Value::Kind::Number: {
+                // A residue number whose nearest double is infinite has no
+                // canonical text (0.11 ruling 2d).
+                double x = 0;
+                if (!mapped.count(path) && !parse_number_text(v.text, x))
+                    throw Error(ErrorKind::MalformedWire, format, path,
+                                "the residue number " + v.text + " has no finite nearest double");
+            }
+                [[fallthrough]];
             case json::Value::Kind::String:
-            case json::Value::Kind::Number:
             case json::Value::Kind::Bool:
                 if (!mapped.count(path) && seen.insert(path).second)
                     d.residue.push_back({format, path, json::write(v)});
@@ -202,8 +212,8 @@ void decode_item_value(Decoder& d, const FieldLine& f, const json::Value& v, boo
     if (f.has_absent && json_raw_text(v, raw) && sentinel_text(f, raw)) return;
     switch (v.kind) {
         case json::Value::Kind::Null: break;
-        case json::Value::Kind::String:
-        case json::Value::Kind::Number: d.set(f, v.text); break;
+        case json::Value::Kind::String: d.set(f, v.text); break;
+        case json::Value::Kind::Number: d.set_json_number(f, v.text); break;
         case json::Value::Kind::Bool: d.set(f, v.b ? "true" : "false"); break;
         default: d.set(f, json::write(v)); break;
     }
@@ -258,6 +268,7 @@ std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const jso
         throw Error(ErrorKind::MalformedWire, p.format, g.locator,
                     std::string("the member of the group '") + g.list + "' is " + json_kind_name(arr) +
                         ", not an array");
+    take_items(p, g.list, arr.items.size());  // 0.11 ruling 7a
     std::vector<Item> items;
     items.reserve(arr.items.size());
     const std::vector<LineRef> lines = group_lines(g);

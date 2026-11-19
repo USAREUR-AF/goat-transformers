@@ -4,6 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <cstdint>
 #include <system_error>
 
 namespace goat_transformers::detail {
@@ -74,6 +75,153 @@ std::string format_double(double d) {
         if (!out.empty() && out.back() == '.') out.pop_back();
     }
     return neg ? "-" + out : out;
+}
+
+namespace {
+bool ascii_digit(char c) { return c >= '0' && c <= '9'; }
+}  // namespace
+
+bool parse_unsigned_text(std::string_view s, std::uint64_t& out) {
+    if (s.empty()) return false;
+    std::uint64_t v = 0;
+    for (char c : s) {
+        if (!ascii_digit(c)) return false;
+        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');
+        if (v > (~std::uint64_t{0} - d) / 10) return false;
+        v = v * 10 + d;
+    }
+    out = v;
+    return true;
+}
+
+bool parse_int_text(std::string_view s, std::int64_t& out) {
+    const bool neg = !s.empty() && s.front() == '-';
+    if (neg) s.remove_prefix(1);
+    if (s.empty()) return false;
+    const std::uint64_t limit = neg ? (std::uint64_t{1} << 63) : (std::uint64_t{1} << 63) - 1;
+    std::uint64_t v = 0;
+    for (char c : s) {
+        if (!ascii_digit(c)) return false;
+        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');
+        if (v > (limit - d) / 10) return false;
+        v = v * 10 + d;
+    }
+    if (neg) out = v == (std::uint64_t{1} << 63) ? INT64_MIN : -static_cast<std::int64_t>(v);
+    else out = static_cast<std::int64_t>(v);
+    return true;
+}
+
+namespace {
+// The parts of number text (0.11 ruling 2b): the digits before and after the
+// point and the exponent's text. False when the text is not of that grammar.
+struct NumberParts {
+    bool neg = false;
+    std::string_view whole, frac, exp;  // exp: with its sign, without the `e`
+};
+bool number_parts(std::string_view s, NumberParts& n) {
+    std::size_t i = 0;
+    if (i < s.size() && s[i] == '-') {
+        n.neg = true;
+        ++i;
+    }
+    std::size_t st = i;
+    while (i < s.size() && ascii_digit(s[i])) ++i;
+    if (i == st) return false;
+    n.whole = s.substr(st, i - st);
+    if (i < s.size() && s[i] == '.') {
+        st = ++i;
+        while (i < s.size() && ascii_digit(s[i])) ++i;
+        if (i == st) return false;
+        n.frac = s.substr(st, i - st);
+    }
+    if (i < s.size() && (s[i] == 'e' || s[i] == 'E')) {
+        st = ++i;
+        if (i < s.size() && (s[i] == '+' || s[i] == '-')) ++i;
+        const std::size_t d = i;
+        while (i < s.size() && ascii_digit(s[i])) ++i;
+        if (i == d) return false;
+        n.exp = s.substr(st, i - st);
+    }
+    return i == s.size();
+}
+
+// The exponent as an integer, clamped far beyond any double.
+std::int64_t clamped_exponent(std::string_view e) {
+    bool neg = false;
+    if (!e.empty() && (e.front() == '+' || e.front() == '-')) {
+        neg = e.front() == '-';
+        e.remove_prefix(1);
+    }
+    std::int64_t v = 0;
+    for (char c : e) {
+        v = v * 10 + (c - '0');
+        if (v > 100000000) {
+            v = 100000000;
+            break;
+        }
+    }
+    return neg ? -v : v;
+}
+}  // namespace
+
+bool parse_number_text(std::string_view s, double& out) {
+    NumberParts n;
+    if (!number_parts(s, n)) return false;
+    double v = 0;
+    const auto r = std::from_chars(s.data(), s.data() + s.size(), v, std::chars_format::general);
+    if (r.ec == std::errc() && r.ptr == s.data() + s.size()) {
+        if (!std::isfinite(v)) return false;
+        out = v;
+        return true;
+    }
+    if (r.ec != std::errc::result_out_of_range) return false;
+    // Out of range: zero or infinite. The decimal exponent of the first
+    // significant digit says which (0.11 ruling 2b).
+    std::int64_t pos = 0;  // the power of ten of the first significant digit
+    bool found = false;
+    for (std::size_t k = 0; k < n.whole.size() && !found; ++k)
+        if (n.whole[k] != '0') {
+            pos = static_cast<std::int64_t>(n.whole.size() - k) - 1;
+            found = true;
+        }
+    for (std::size_t k = 0; k < n.frac.size() && !found; ++k)
+        if (n.frac[k] != '0') {
+            pos = -static_cast<std::int64_t>(k) - 1;
+            found = true;
+        }
+    if (!found) {
+        out = n.neg ? -0.0 : 0.0;
+        return true;
+    }
+    pos += clamped_exponent(n.exp);
+    if (pos >= 0) return false;  // its nearest double is infinite
+    out = n.neg ? -0.0 : 0.0;    // nearer to zero than to the smallest subnormal
+    return true;
+}
+
+bool json_exact_int(std::string_view s, std::int64_t& out) {
+    NumberParts n;
+    if (!number_parts(s, n)) return false;
+    // value = digits * 10^e, digits without leading zeros.
+    std::string digits(n.whole);
+    digits += n.frac;
+    std::int64_t e = clamped_exponent(n.exp) - static_cast<std::int64_t>(n.frac.size());
+    std::size_t lead = 0;
+    while (lead < digits.size() && digits[lead] == '0') ++lead;
+    digits.erase(0, lead);
+    if (digits.empty()) {
+        out = 0;
+        return true;
+    }
+    while (!digits.empty() && digits.back() == '0' && e < 0) {
+        digits.pop_back();
+        ++e;
+    }
+    if (e < 0) return false;  // a fraction that is not zero
+    if (static_cast<std::int64_t>(digits.size()) + e > 19) return false;
+    digits.append(static_cast<std::size_t>(e), '0');
+    std::string text = n.neg ? "-" + digits : digits;
+    return parse_int_text(text, out);
 }
 
 bool parse_double(std::string_view s, double& out) {
@@ -151,19 +299,20 @@ unsigned days_in_month(std::int64_t y, unsigned m) {
 }  // namespace
 
 bool parse_iso8601_ms(std::string_view s, std::int64_t& out) {
-    s = trim(s);
+    // 0.11 ruling 3a: exactly the grammar, nothing before or after.
     unsigned Y, M, D, h, mi, sec;
-    if (!fixed_digits(s, 0, 4, Y) || s.size() < 19 || s[4] != '-' || !fixed_digits(s, 5, 2, M) ||
-        s[7] != '-' || !fixed_digits(s, 8, 2, D) || (s[10] != 'T' && s[10] != 't') || !fixed_digits(s, 11, 2, h) ||
-        s[13] != ':' || !fixed_digits(s, 14, 2, mi) || s[16] != ':' || !fixed_digits(s, 17, 2, sec))
+    if (s.size() < 20 || !fixed_digits(s, 0, 4, Y) || s[4] != '-' || !fixed_digits(s, 5, 2, M) || s[7] != '-' ||
+        !fixed_digits(s, 8, 2, D) || (s[10] != 'T' && s[10] != 't') || !fixed_digits(s, 11, 2, h) || s[13] != ':' ||
+        !fixed_digits(s, 14, 2, mi) || s[16] != ':' || !fixed_digits(s, 17, 2, sec))
         return false;
-    if (M < 1 || M > 12 || D < 1 || D > days_in_month(Y, M) || h > 23 || mi > 59 || sec > 59)
-        return false;
+    // 3b: the ranges; a leap second and 24:00:00 are refused.
+    if (Y < 1 || M < 1 || M > 12 || D < 1 || D > days_in_month(Y, M) || h > 23 || mi > 59 || sec > 59) return false;
     std::size_t p = 19;
     unsigned ms = 0;
-    if (p < s.size() && s[p] == '.') {
+    if (s[p] == '.') {
+        // 3c: any number of digits; the first three are the milliseconds, the rest dropped.
         ++p;
-        std::size_t start = p;
+        const std::size_t start = p;
         unsigned scale = 100;
         while (p < s.size() && s[p] >= '0' && s[p] <= '9') {
             ms += static_cast<unsigned>(s[p] - '0') * scale;
@@ -172,8 +321,8 @@ bool parse_iso8601_ms(std::string_view s, std::int64_t& out) {
         }
         if (p == start) return false;
     }
-    // 0.6: the designator is Z, z, +hh:mm or -hh:mm; the instant is converted to UTC.
-    std::string_view zone = s.substr(p);
+    // The designator is Z, z, +hh:mm or -hh:mm; the instant is converted to UTC.
+    const std::string_view zone = s.substr(p);
     std::int64_t offset_min = 0;
     if (zone != "Z" && zone != "z") {
         unsigned oh, om;
@@ -183,12 +332,17 @@ bool parse_iso8601_ms(std::string_view s, std::int64_t& out) {
         offset_min = static_cast<std::int64_t>(oh) * 60 + om;
         if (zone[0] == '-') offset_min = -offset_min;
     }
-    std::int64_t days = days_from_civil(Y, M, D);
-    out = ((days * 24 + h) * 60 + mi - offset_min) * 60000 + static_cast<std::int64_t>(sec) * 1000 + ms;
+    const std::int64_t days = days_from_civil(Y, M, D);
+    const std::int64_t v =
+        ((days * 24 + h) * 60 + mi - offset_min) * 60000 + static_cast<std::int64_t>(sec) * 1000 + ms;
+    // 3d: an offset that moves the instant outside years 0001 to 9999 is refused.
+    if (v < kMinIsoMs || v > kMaxIsoMs) return false;
+    out = v;
     return true;
 }
 
 std::string format_iso8601_ms(std::int64_t ms) {
+    if (ms < kMinIsoMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0001 to 9999");
     // floor division so negative epochs land on the right civil second
     std::int64_t days = ms / 86400000;
     std::int64_t rem = ms % 86400000;
@@ -199,7 +353,6 @@ std::string format_iso8601_ms(std::int64_t ms) {
     std::int64_t y;
     unsigned m, d;
     civil_from_days(days, y, m, d);
-    if (y < 0 || y > 9999) throw std::domain_error("year outside 0000-9999");
     unsigned msec = static_cast<unsigned>(rem % 1000);
     std::int64_t secs = rem / 1000;
     unsigned hh = static_cast<unsigned>(secs / 3600), mm = static_cast<unsigned>((secs / 60) % 60),

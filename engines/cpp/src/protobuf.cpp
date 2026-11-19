@@ -156,7 +156,21 @@ Message* find_message(const Pack& p, Message& msg, const std::vector<std::uint32
                         "field " + std::to_string(path[seg]) + " is not a submessage");
         }
         auto& sub = m->subs[index];
-        if (!sub) sub = std::make_unique<Message>(parse_tree(p, f.bytes));
+        if (!sub) {
+            if (lenient) {
+                // 0.11 ruling 9b: a `when` path never fails a decode. Bytes that
+                // do not parse as a message make it not hold; the failure is not
+                // kept, so a `field` or `group` path that walks into them fails (9c).
+                try {
+                    sub = std::make_unique<Message>(parse_tree(p, f.bytes));
+                } catch (const Error&) {
+                    m->subs.erase(index);
+                    return nullptr;
+                }
+            } else {
+                sub = std::make_unique<Message>(parse_tree(p, f.bytes));
+            }
+        }
         m = sub.get();
     }
     return m;
@@ -211,6 +225,7 @@ void decode_scalar_items(const Pack& p, const GroupLine& g, const Message& m, co
     const bool packable = numeric_transform(first.transform);
     const int wt = protobuf_wire_type(first.transform);
     auto one = [&](const WireField& wf) {
+        take_items(p, g.list, 1);  // 0.11 ruling 7a
         items.emplace_back();
         Decoder d(p, items.back());
         for (const auto& f : g.fields)
@@ -259,6 +274,7 @@ void decode_scope(const Pack& p, const std::vector<LineRef>& lines, Message& msg
                 decode_scalar_items(p, g, *m, it->second, items);
             } else {
                 const std::vector<LineRef> body = group_lines(g);
+                take_items(p, g.list, it->second.size());  // 0.11 ruling 7a
                 items.reserve(it->second.size());
                 for (std::size_t index : it->second) {
                     const WireField& wf = m->fields[index];
@@ -304,7 +320,7 @@ void insert_field(const Pack& p, Node& node, const std::vector<std::uint32_t>& p
     if (seg + 1 == path.size()) {
         if (child.is_raw) return;  // a group writes this field number
         if (!child.children.empty())
-            throw Error(ErrorKind::InvalidPack, p.format, locator_str(path),
+            throw Error(ErrorKind::TransformEncode, p.format, locator_str(path),
                         "field is used both as a leaf and as a submessage");
         // Lines on one locator: the earliest present key is written, and a
         // present key wins over a sentinel whatever their order (0.9 ruling 16).
@@ -317,7 +333,7 @@ void insert_field(const Pack& p, Node& node, const std::vector<std::uint32_t>& p
     } else {
         if (child.is_raw) return;
         if (child.is_leaf)
-            throw Error(ErrorKind::InvalidPack, p.format, locator_str(path),
+            throw Error(ErrorKind::TransformEncode, p.format, locator_str(path),
                         "field is used both as a leaf and as a submessage");
         insert_field(p, child, path, seg + 1, f, v, sentinel);
     }

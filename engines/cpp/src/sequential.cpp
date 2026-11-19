@@ -10,7 +10,9 @@
 #include <unordered_map>
 
 #include "codecs.hpp"
+#include "linecheck.hpp"
 #include "transforms.hpp"
+#include "util.hpp"
 
 namespace goat_transformers::detail {
 
@@ -44,16 +46,8 @@ bool parse_u64(const std::string& s, std::uint64_t& out) {
     return true;
 }
 
-// A signed decimal integer: `plus <n>`.
-bool parse_i64(const std::string& s, std::int64_t& out) {
-    const bool neg = !s.empty() && s[0] == '-';
-    const std::size_t from = !s.empty() && (s[0] == '-' || s[0] == '+') ? 1 : 0;
-    std::uint64_t v = 0;
-    if (!parse_u64(s.substr(from), v)) return false;
-    if (v > static_cast<std::uint64_t>(INT64_MAX)) return false;
-    out = neg ? -static_cast<std::int64_t>(v) : static_cast<std::int64_t>(v);
-    return true;
-}
+// `plus <n>`: integer text (0.11 ruling 2c, by 2a): an optional `-`, no `+`.
+bool parse_i64(const std::string& s, std::int64_t& out) { return parse_int_text(s, out); }
 
 template <class Lines, class Fn>
 void each_node(Lines& lines, Fn&& fn) {
@@ -206,7 +200,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         std::vector<std::string> t;
         std::string err;
         if (!tokenize_line(line, t, err))
-            throw Error(ErrorKind::InvalidPack, p.format, "", source + ":" + std::to_string(lineno) + ": " + err);
+            throw Error(tokenize_kind(err), p.format, "", source + ":" + std::to_string(lineno) + ": " + err);
         if (t.empty()) continue;
 
         const std::string where = source + ":" + std::to_string(lineno);
@@ -216,12 +210,12 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         };
         auto arity = [&](std::size_t n) {
             if (t.size() != n + 1)
-                throw Error(ErrorKind::InvalidPack, p.format, "",
+                throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": '" + kw + "' takes " + std::to_string(n) + " argument(s), got " +
                                 std::to_string(t.size() - 1));
         };
         auto once = [&](bool& seen) {
-            if (seen) throw Error(ErrorKind::InvalidPack, p.format, "", where + ": duplicate '" + kw + "'");
+            if (seen) throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate '" + kw + "'");
             seen = true;
         };
         // A bit length of 1 to 64 (0.8 ruling 14).
@@ -273,7 +267,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             once(have_distribution);
             if (t[1] == "public") p.distribution = Distribution::Public;
             else if (t[1] == "controlled") p.distribution = Distribution::Controlled;
-            else throw Error(ErrorKind::InvalidPack, p.format, "", where + ": distribution '" + t[1] + "'");
+            else throw Error(ErrorKind::BadDirective, p.format, "", where + ": distribution '" + t[1] + "'");
         } else if (kw == "source") {
             arity(1);
             p.sources.push_back(t[1]);
@@ -318,7 +312,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         } else if (kw == "typemap") {
             arity(2);
             if (!natives.insert(t[1]).second)
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
             p.typemap.emplace_back(t[1], t[2]);
         } else if (kw == "kind") {
             // A kind of the message, or of a group's items (Items by kind).
@@ -354,7 +348,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (!f.is_body) throw bad("'requires' inside " + f.what);
             if (f.body->kinds.empty()) throw bad("'requires' before the first 'kind'");
             if (t.size() < 2)
-                throw Error(ErrorKind::InvalidPack, p.format, "", where + ": 'requires' takes at least 1 argument");
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' takes at least 1 argument");
             for (std::size_t k = 1; k < t.size(); ++k) f.body->kinds.back().requires_keys.push_back(t[k]);
         } else if (kw == "default") {
             // A `default` inside a block belongs to the message or item that holds the block.
@@ -367,7 +361,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             (f.body->kinds.empty() ? f.body->defaults : f.body->kinds.back().defaults).push_back(std::move(d));
         } else if (kw == "field") {
             if (t.size() < 4)
-                throw Error(ErrorKind::InvalidPack, p.format, "",
+                throw Error(ErrorKind::BadDirective, p.format, "",
                             where + ": 'field' takes a key, a bit length and a transform, got " +
                                 std::to_string(t.size() - 1) + " argument(s)");
             SeqNode n;
@@ -380,14 +374,15 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 throw bad("a positional <word>:<pos>:<len> locator in a sequential pack: '" + f.locator + "'");
             if (!parse_u32(f.locator, n.len)) throw bad("the locator of a sequential field is a bit length, not '" + f.locator + "'");
             std::string terr;
-            // A transform of the text wire (v0.10) is bad-directive on another wire.
-            if (parse_text_transform(t[3], f, terr) != 0)
-                throw bad("transform '" + t[3] + "' applies to wire text only");
-            if (!parse_transform(t[3], f, terr))
+            const int tf = parse_any_transform(t[3], f, terr);
+            if (tf == -2)
                 throw Error(ErrorKind::UnknownTransform, p.format, f.locator,
                             where + ": " + terr + " for field '" + f.key + "'");
+            if (tf == -1) throw bad(terr + " for field '" + f.key + "'");
+            // A transform of the text wire (v0.10) is bad-directive on another wire.
+            if (transform_is_text_only(f.transform)) throw bad("transform '" + t[3] + "' applies to wire text only");
             if (!transform_is_bits(f.transform))
-                throw Error(ErrorKind::InvalidPack, p.format, f.locator,
+                throw Error(ErrorKind::BadDirective, p.format, f.locator,
                             where + ": transform '" + std::string(transform_name(f.transform)) +
                                 "' is not valid on wire bits");
             for (std::size_t k = 4; k < t.size(); ++k) {
@@ -582,6 +577,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     }
 
     // Checks that need the whole file, before `missing-distribution`.
+    if (!have_format || p.format.empty()) throw Error(ErrorKind::MissingFormat, "", "", source + ": missing 'format'");
+    if (!have_wire) throw Error(ErrorKind::MissingWire, p.format, "", source + ": missing 'wire'");
     if (stack.size() > 1)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(stack.back().line) + ": " + stack.back().what + " has no 'end'");
@@ -613,8 +610,6 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     if (!have_distribution)
         throw Error(ErrorKind::MissingDistribution, p.format, "", source + ": pack has no 'distribution'");
     if (p.sources.empty()) throw Error(ErrorKind::MissingSource, p.format, "", source + ": pack has no 'source'");
-    if (!have_format || p.format.empty()) throw Error(ErrorKind::InvalidPack, "", "", source + ": missing 'format'");
-    if (!have_wire) throw Error(ErrorKind::InvalidPack, p.format, "", source + ": missing 'wire'");
     return p;
 }
 
@@ -734,8 +729,17 @@ bool stated_units(std::uint64_t field, std::int64_t plus, std::uint64_t& units) 
 
 void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
     auto item = [&](std::vector<Item>& items) {
+        take_items(in.p, n.list, 1);  // 0.11 ruling 7a
         items.emplace_back();
         decode_body(in, n.inner, items.back());
+    };
+    // The list the group fills: a later group of one list replaces the items
+    // of an earlier one, which are then no longer held (0.11 ruling 7g).
+    auto list = [&]() -> std::vector<Item>& {
+        std::vector<Item>& items = out.lists[n.list];
+        give_back_items(count_items(items));
+        items.clear();
+        return items;
     };
     switch (n.repeat) {
         case Repeat::Count: {
@@ -746,22 +750,25 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             if (count > end - in.cur)
                 in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
                              "' is larger than the bits left");
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
-            for (std::uint64_t k = 0; k < count; ++k) item(items);
+            std::vector<Item>& items = list();
+            // The count is compared with what the limit still allows before
+            // any item is read (0.11 ruling 7d).
+            take_items(in.p, n.list, count);
+            for (std::uint64_t k = 0; k < count; ++k) {
+                items.emplace_back();
+                decode_body(in, n.inner, items.back());
+            }
             return;
         }
         case Repeat::While: {
             if (!in.need(1, "the bit before an item")) return;
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             while (in.need(1, "the bit before an item") && in.take(1) == 1) item(items);
             return;
         }
         case Repeat::More: {
             if (!in.need(1, "the bit before an item")) return;
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             for (;;) {
                 // An indicator bit at or after the end of the extent reads as
                 // 0: the item it precedes is the last (0.8 ruling 21).
@@ -772,8 +779,7 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
         }
         case Repeat::Fx: {
             if (in.ext != kNoExtent && in.cur >= in.ext) return;
-            std::vector<Item>& items = out.lists[n.list];
-            items.clear();
+            std::vector<Item>& items = list();
             for (;;) {
                 item(items);
                 if (!in.need(1, "the bit after an item") || in.take(1) == 0) return;

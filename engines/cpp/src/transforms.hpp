@@ -9,9 +9,11 @@
 
 namespace goat_transformers::detail {
 
-// Parse a field's transform token into `f.transform` and its scale arguments.
-// Returns false with `err` set on an unknown transform or bad arguments.
-bool parse_transform(std::string_view token, FieldLine& f, std::string& err);
+// Parse a field's transform token into `f.transform` and its parameters
+// (0.11 ruling 4d, and the text transforms of 0.10). Returns 0, -1 with `err`
+// set when the parameters are not valid (bad-directive), or -2 when the name,
+// the text before the first `:`, is not a transform (unknown-transform).
+int parse_any_transform(std::string_view token, FieldLine& f, std::string& err);
 
 // v0.10: the transforms of the text wire that take parameters: `int:<w>`,
 // `dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`, `hms:<f>`, `hms_dmy:<f>`, and the bare
@@ -23,13 +25,20 @@ int parse_text_transform(std::string_view token, FieldLine& f, std::string& err)
 // True for the transforms valid only on the text wire.
 bool transform_is_text_only(Transform t);
 
-// A scale factor: a decimal number, or the fraction <num>/<den> of two decimal
-// integers (ruling 1 of 0.5). Returns false with `err` set.
+// A scale factor: number text, or the fraction <num>/<den> (ruling 1 of 0.5).
+// With `transform` (uscale, sscale: 0.11 ruling 4d) the fraction is of two
+// unsigned decimal integers, neither zero, and a factor that reads as zero is
+// refused; otherwise (the `scale` derive function, 2c) <num> is integer text
+// and <den> an unsigned decimal integer other than zero. Returns false with `err` set.
 bool parse_scale_factor(std::string_view text, bool& fraction, double& factor, double& num, double& den,
-                        std::string& err);
+                        std::string& err, bool transform = false);
 
 // Wire text -> typed model value (text wires). Throws std::invalid_argument on failure.
 Value decode_value(Transform t, const std::string& text);
+// A JSON number's text through a transform (0.11 ruling 2d): `float` the
+// nearest double, finite; `int` the exact value, an integer within 64 bits.
+// Other transforms read the text as decode_value does. Throws std::invalid_argument.
+Value decode_json_number(Transform t, const std::string& text);
 // Model value -> wire text (text wires). Coerces between model kinds where lossless.
 // Throws std::invalid_argument on failure.
 std::string encode_value(Transform t, const Value& v);

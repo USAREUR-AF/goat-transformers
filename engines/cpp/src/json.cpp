@@ -271,7 +271,7 @@ std::string quote(const std::string& s) {
 std::string canonical_number(const std::string& lexeme) {
     if (lexeme.find_first_of(".eE") == std::string::npos) return lexeme;  // integer: exact
     double d = 0;
-    if (!detail::parse_double(lexeme, d)) return lexeme;
+    if (!detail::parse_number_text(lexeme, d)) return lexeme;
     return detail::format_double(d);
 }
 

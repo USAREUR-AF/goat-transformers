@@ -1,6 +1,7 @@
 // Unit checks for the parts the vectors exercise only partly: number formatting,
 // civil-date arithmetic, pack grammar errors, residue and parsing tolerance.
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -43,7 +44,7 @@ void expect_error(gt::ErrorKind kind, F&& f, const std::string& what) {
 }
 
 // Every pack states its distribution and a source (engine-spec.md v0.4).
-#define HDR "distribution public\nsource \"unit test\"\n"
+#define HDR "version 0.1.0\ndistribution public\nsource \"unit test\"\n"
 
 // The keys the packs below map, declared so the packs pass the v0.4 load checks.
 const char* kCoreModel =
@@ -52,12 +53,12 @@ const char* kCoreModel =
     "key callsign string -\nkey remarks string -\nkey a int -\nkey b int -\nkey v float deg \"scaled\"\n";
 
 const char* kXmlPack =
-    HDR "format t-xml\nversion 0.1.0\nwire xml\nroot event\n"
+    HDR "format t-xml\nwire xml\nroot event\n"
     "field uid @uid string\nfield time_ms @time iso8601_ms\nfield lat point/@lat float\n"
     "field callsign detail/contact/@callsign string\nfield remarks detail/remarks/#text string\n";
 
 const char* kGeoPack =
-    HDR "format t-geo\nversion 0.1.0\nwire geojson\n"
+    HDR "format t-geo\nwire geojson\n"
     "field uid id string\nfield time_ms properties.time_ms int\nfield lat geometry.lat float\n"
     "field lon geometry.lon float\n";
 
@@ -99,14 +100,41 @@ int main() {
         check(detail::days_from_civil(y, m, d) == z, "civil round trip day " + std::to_string(z));
     }
 
+    // 0.11 rulings 2 and 3: the number and time grammars.
+    {
+        std::int64_t i = 0;
+        double d = 0;
+        std::uint64_t u = 0;
+        check(detail::parse_int_text("-007", i) && i == -7, "2a: leading zeros");
+        check(detail::parse_int_text("-9223372036854775808", i) && i == INT64_MIN, "2a: the smallest integer");
+        check(!detail::parse_int_text("9223372036854775808", i), "2a: above the largest integer");
+        check(!detail::parse_int_text("+1", i) && !detail::parse_int_text(" 1", i) && !detail::parse_int_text("1.0", i),
+              "2a: sign, space, fraction");
+        check(detail::parse_number_text("-1e-400", d) && d == 0.0 && std::signbit(d), "2b: negative zero");
+        check(detail::parse_number_text("1e-400", d) && d == 0.0 && !std::signbit(d), "2b: below the smallest subnormal");
+        check(!detail::parse_number_text("1.7976931348623159e308", d), "2b: nearest double infinite");
+        check(!detail::parse_number_text(".5", d) && !detail::parse_number_text("5.", d) &&
+                  !detail::parse_number_text("Infinity", d) && !detail::parse_number_text("0x10", d),
+              "2b: forms refused");
+        check(detail::parse_unsigned_text("007", u) && u == 7 && !detail::parse_unsigned_text("+7", u), "2c: unsigned");
+        check(detail::json_exact_int("9.223372036854775807e18", i) && i == INT64_MAX, "2d: exact with an exponent");
+        check(detail::json_exact_int("9007199254740993.0", i) && i == 9007199254740993, "2d: above 2^53 with a zero fraction");
+        check(!detail::json_exact_int("1.5", i) && !detail::json_exact_int("1e19", i), "2d: fraction and overflow");
+        check(detail::parse_iso8601_ms("1969-12-31T23:59:59.9999Z", i) && i == -1, "3c: digits dropped, not rounded");
+        check(!detail::parse_iso8601_ms("0000-01-01T00:00:00Z", i), "3b: year 0000");
+        check(!detail::parse_iso8601_ms("0001-01-01T00:00:00+00:01", i), "3d: an offset before year 0001");
+        check(!detail::parse_iso8601_ms(" 2020-01-01T00:00:00Z", i), "3a: a leading space");
+        eq(detail::format_iso8601_ms(detail::kMinIsoMs), "0001-01-01T00:00:00.000Z", "3f: the first instant");
+    }
+
     // pack grammar
     expect_error(gt::ErrorKind::UnknownDirective, [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nbogus x\n"); },
                  "unknown directive");
     expect_error(gt::ErrorKind::UnknownTransform,
                  [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k hex\n"); }, "unknown transform");
     expect_error(gt::ErrorKind::UnknownWire, [] { gt::parse_pack(HDR "format a\nwire yaml\n"); }, "unknown wire");
-    expect_error(gt::ErrorKind::InvalidPack, [] { gt::parse_pack(HDR "format a\nwire xml\n"); }, "xml without root");
-    expect_error(gt::ErrorKind::InvalidLocator,
+    expect_error(gt::ErrorKind::MissingRoot, [] { gt::parse_pack(HDR "format a\nwire xml\n"); }, "xml without root");
+    expect_error(gt::ErrorKind::BadLocator,
                  [] { gt::parse_pack(HDR "format a\nwire geojson\nfield k geometry.x float\n"); }, "bad geo locator");
     {
         gt::Pack p = gt::parse_pack(HDR "format a # c\nwire xml\nroot r\nfield k \"x y/@z\" string\n");
@@ -186,14 +214,14 @@ int main() {
     expect_error(gt::ErrorKind::MalformedWire, [&] { eng.decode("t-bits", "c8"); }, "bits short message");
 
     // bits/text transform-kind and locator validation at pack load
-    expect_error(gt::ErrorKind::InvalidPack,
+    expect_error(gt::ErrorKind::BadDirective,
                  [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 2\nfield k 0:0:8 string\n"); },
                  "text transform on bits wire");
-    expect_error(gt::ErrorKind::InvalidPack, [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k uint\n"); },
+    expect_error(gt::ErrorKind::BadDirective, [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k uint\n"); },
                  "bits transform on text wire");
-    expect_error(gt::ErrorKind::InvalidPack, [] { gt::parse_pack(HDR "format a\nwire bits\nfield k 0:0:8 uint\n"); },
+    expect_error(gt::ErrorKind::BadDirective, [] { gt::parse_pack(HDR "format a\nwire bits\nfield k 0:0:8 uint\n"); },
                  "bits without word_bytes");
-    expect_error(gt::ErrorKind::InvalidPack,
+    expect_error(gt::ErrorKind::BadDirective,
                  [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nword_bytes 2\nfield k @k string\n"); },
                  "word_bytes on non-bits wire");
     {
@@ -201,13 +229,15 @@ int main() {
         gt::Pack rp = gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nfield k 0:4:8 uint\n");
         check(rp.fields.size() == 1, "bits field may run past its word");
     }
-    expect_error(gt::ErrorKind::BadDirective,
+    // 0.11 ruling 5a: a bit length of 0 is bad-locator.
+    expect_error(gt::ErrorKind::BadLocator,
                  [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 2\nfield k 0:0:0 uint\n"); },
                  "bits len zero");
     expect_error(gt::ErrorKind::BadDirective,
                  [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 2\nfield k 0:0:65 uint\n"); },
                  "bits len 65 on uint");
-    expect_error(gt::ErrorKind::UnknownTransform,
+    // 0.11 ruling 4d: a transform's parameters that are not valid are bad-directive.
+    expect_error(gt::ErrorKind::BadDirective,
                  [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 2\nfield k 0:0:8 linscale\n"); },
                  "linscale without arguments");
     {
@@ -226,17 +256,17 @@ int main() {
     }
     expect_error(gt::ErrorKind::UnknownDirective,
                  [] { gt::parse_model("module m\ndistribution public\nsource s\nbogus x\n"); }, "module directive");
-    expect_error(gt::ErrorKind::InvalidModel,
-                 [] { gt::parse_model("module m\ndistribution public\nsource s\nkey a.b int -\n"); },
+    expect_error(gt::ErrorKind::BadDirective,
+                 [] { gt::parse_model("module m\nversion 1\ndistribution public\nsource s\nkey a.b int -\n"); },
                  "dot in key name");
-    expect_error(gt::ErrorKind::MissingDistribution, [] { gt::parse_model("module m\nsource s\n"); },
+    expect_error(gt::ErrorKind::MissingDistribution, [] { gt::parse_model("module m\nversion 1\nsource s\n"); },
                  "module without distribution");
-    expect_error(gt::ErrorKind::MissingSource, [] { gt::parse_model("module m\ndistribution public\n"); },
+    expect_error(gt::ErrorKind::MissingSource, [] { gt::parse_model("module m\nversion 1\ndistribution public\n"); },
                  "module without source");
     expect_error(gt::ErrorKind::DuplicateKey,
-                 [] { gt::parse_model("module m\ndistribution public\nsource s\nkey a int -\nkey a int -\n"); },
+                 [] { gt::parse_model("module m\nversion 1\ndistribution public\nsource s\nkey a int -\nkey a int -\n"); },
                  "duplicate key");
-    expect_error(gt::ErrorKind::MissingDistribution, [] { gt::parse_pack("format a\nwire geojson\n"); },
+    expect_error(gt::ErrorKind::MissingDistribution, [] { gt::parse_pack("format a\nversion 1\nwire geojson\n"); },
                  "missing-distribution precedes missing-source");
     expect_error(gt::ErrorKind::DuplicateModule, [&] { eng.load_model(kCoreModel); }, "duplicate module");
     expect_error(gt::ErrorKind::UndeclaredKey,
@@ -252,7 +282,7 @@ int main() {
                  [&] { eng.add_pack(gt::parse_pack(HDR "format u\nwire geojson\nuses x\nfield x.y id string\n")); },
                  "unknown module");
     try {
-        gt::parse_pack("format a\nwire geojson\n");
+        gt::parse_pack("format a\nversion 1\nwire geojson\n");
     } catch (const gt::Error& e) {
         check(std::string(e.what()).rfind("missing-distribution:", 0) == 0, "message begins with kind and colon");
     }
@@ -260,13 +290,13 @@ int main() {
         gt::Engine pub;
         pub.set_max_distribution(gt::Distribution::Public);
         expect_error(gt::ErrorKind::DistributionRefused,
-                     [&] { pub.load_model("module core\ndistribution controlled\nsource s\n"); },
+                     [&] { pub.load_model("module core\nversion 1\ndistribution controlled\nsource s\n"); },
                      "public engine refuses controlled module");
         pub.load_model(kCoreModel);
         expect_error(gt::ErrorKind::DistributionRefused,
                      [&] {
                          pub.add_pack(gt::parse_pack(
-                             "distribution controlled\nsource s\nformat c\nwire geojson\nfield uid id string\n"));
+                             "distribution controlled\nsource s\nformat c\nversion 1\nwire geojson\nfield uid id string\n"));
                      },
                      "public engine refuses controlled pack");
     }
@@ -311,7 +341,7 @@ int main() {
         expect_error(gt::ErrorKind::BadDirective,
                      [] { gt::parse_pack(HDR "format a\nwire bits\nword_bytes 1\nfield k 0:0:2048 ascii\n"); },
                      "ascii longer than 2040 bits");
-        expect_error(gt::ErrorKind::InvalidPack,
+        expect_error(gt::ErrorKind::BadDirective,
                      [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k bool\n"); }, "bool off the json wire");
         check(begins(error_text([] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nkind a\nkind a\n"); }),
                      "duplicate-kind"),
@@ -447,7 +477,7 @@ int main() {
             check(kept.fields["speed_ms"].f == 9.0, "a present target is kept");
 
             // derive load checks
-            const std::string mh = "module x\ndistribution public\nsource s\nkey a float -\nkey i int -\nkey t string -\n";
+            const std::string mh = "module x\nversion 1\ndistribution public\nsource s\nkey a float -\nkey i int -\nkey t string -\n";
             auto derive_error = [&](const std::string& line) {
                 gt::Engine e2;
                 e2.load_model(core6);
@@ -464,7 +494,7 @@ int main() {
             check(begins(derive_error("derive x.a copy nope"), "bad-directive"), "derive: undeclared core key");
             check(derive_error("derive lat neg x.a\nkey late float -\nderive x.late neg lat").empty(),
                   "derive: core target, and a key declared after the line that names it");
-            check(begins(error_text([&] { gt::parse_model("module x\nsource s\nkey a float -\nderive x.a cube x.a\n"); }),
+            check(begins(error_text([&] { gt::parse_model("module x\nversion 1\nsource s\nkey a float -\nderive x.a cube x.a\n"); }),
                          "bad-directive"),
                   "derive line errors precede missing-distribution");
 
@@ -516,7 +546,7 @@ int main() {
             check(begins(error_text([] { gt::parse_pack(HDR "format a\nwire json\nfield uid id string via\nmap t a b\n"); }),
                          "bad-directive"),
                   "via without a table name");
-            check(begins(error_text([] { gt::parse_pack("format a\nwire json\nfield uid id string via t\n"); }),
+            check(begins(error_text([] { gt::parse_pack("format a\nversion 1\nwire json\nfield uid id string via t\n"); }),
                          "bad-directive"),
                   "via with no map line precedes missing-distribution");
 
@@ -536,7 +566,7 @@ int main() {
                   "a const maps its locator: only the unmapped attribute is residue");
             check(begins(error_text([&] { r.decode("kx", "<gamma/>"); }), "no-kind"), "root of no kind");
             check(begins(error_text([] { gt::parse_pack(HDR "format a\nwire xml\nkind a\nroot x\nkind b\n"); }),
-                         "invalid_pack"),
+                         "missing-root"),
                   "xml without a pack root needs a root in every kind");
 
             // one key at several locators, text order on xml
@@ -1095,8 +1125,8 @@ int main() {
             // The file name is not the module name: a module is found by its `module` line.
             put("model/zz-file.def", "module top\n" + mh + "uses base\nkey m int -\nderive top.m copy base.n\n");
             put("model/side.def", "module side\nversion 0.1.0\ndistribution controlled\nsource s\nkey k int -\n");
-            put("packs/a/pack.def", HDR "format fmt-a\nversion 1\nwire json\nfield uid id string\n");
-            put("packs/b/pack.def", HDR "format fmt-b\nversion 1\nuses top\nwire json\nfield uid id string\nfield top.m m int\n");
+            put("packs/a/pack.def", HDR "format fmt-a\nwire json\nfield uid id string\n");
+            put("packs/b/pack.def", HDR "format fmt-b\nuses top\nwire json\nfield uid id string\nfield top.m m int\n");
             put("packs/c/pack.def", "distribution controlled\nsource s\nformat fmt-c\nversion 1\nuses side\nwire json\nfield side.k k int\n");
             const std::string packs = (dir / "packs").string();
 
@@ -1144,11 +1174,11 @@ int main() {
                      "key n int -\nkey t int -\nlist nums\n",
                      "m40");
         m.add_pack(gt::parse_pack(kXmlPack, "t-xml"));
-        m.add_pack(gt::parse_pack(HDR "format r40-json\nversion 1\nwire json\nfield uid id string\n", "r40-json"));
-        m.add_pack(gt::parse_pack(HDR "format r40-pb\nversion 1\nuses m40\nwire protobuf\nfield uid 1 pstring\n"
+        m.add_pack(gt::parse_pack(HDR "format r40-json\nwire json\nfield uid id string\n", "r40-json"));
+        m.add_pack(gt::parse_pack(HDR "format r40-pb\nuses m40\nwire protobuf\nfield uid 1 pstring\n"
                                       "group m40.nums 3\n  field m40.n . pvarint\nend\n",
                                   "r40-pb"));
-        m.add_pack(gt::parse_pack(HDR "format r40-bits\nversion 1\nuses m40\nwire bits\nword_bytes 8\n"
+        m.add_pack(gt::parse_pack(HDR "format r40-bits\nuses m40\nwire bits\nword_bytes 8\n"
                                       "field m40.n 0:0:63 twos\nfield m40.t 1:0:64 twos\n",
                                   "r40-bits"));
         const auto malformed = [&](const char* format, const std::string& input, const std::string& what) {
