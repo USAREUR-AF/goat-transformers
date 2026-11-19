@@ -1,0 +1,8 @@
+{
+  "name": "515-transforms-uiscale-len-1-and-smag-len-2-and-64-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\nkey n int -\nkey a float -\nkey s1 string -\n"
+  ],
+  "pack": "format probe\nversion 0.15.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.x 0:0:1 uiscale:1\nfield probe.n 0:1:2 smag\nfield probe.x 0:8:64 smag\n"
+}

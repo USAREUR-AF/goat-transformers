@@ -1,0 +1,11 @@
+{
+  "name": "uiscale-offset-roundtrip-near-the-top",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "11fffffffffffffffe",
+  "expect": "11fffffffffffffffe",
+  "model": {
+    "probe.n": "9223372036854775806"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ruling-7-exact-digits-above-2-to-the-53",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":9007199254740993}",
+  "expect": "{\"big\":9007199254740993}",
+  "model": {
+    "probe.big": "9007199254740993"
+  },
+  "source": "constructed"
+}

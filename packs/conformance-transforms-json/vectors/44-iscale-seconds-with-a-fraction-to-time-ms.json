@@ -1,0 +1,12 @@
+{
+  "name": "iscale-seconds-with-a-fraction-to-time-ms",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":1614456000.0005}",
+  "expect": "{\"sec\":1614456000.001}",
+  "model": {
+    "time_ms": "1614456000001"
+  },
+  "source": "constructed",
+  "reference": "1614456000.0005 x 1000 = 1614456000000.5 exactly, rounds to 1614456000001; encode /1000 exactly"
+}

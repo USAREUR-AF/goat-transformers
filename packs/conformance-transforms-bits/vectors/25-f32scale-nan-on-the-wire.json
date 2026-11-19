@@ -1,0 +1,8 @@
+{
+  "name": "f32scale-nan-on-the-wire",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "167fc00000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

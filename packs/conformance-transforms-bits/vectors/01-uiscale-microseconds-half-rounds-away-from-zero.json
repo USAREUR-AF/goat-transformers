@@ -1,0 +1,13 @@
+{
+  "name": "uiscale-microseconds-half-rounds-away-from-zero",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "100005bc56d462b1f4",
+  "expect": "100005bc56d462b3e8",
+  "model": {
+    "@kind": "us",
+    "time_ms": "1614456000001"
+  },
+  "source": "constructed",
+  "reference": "1614456000000500 us x 1/1000 = 1614456000000.5, round half away from zero 1614456000001; encode 1614456000001 / (1/1000) = 1614456000001000"
+}

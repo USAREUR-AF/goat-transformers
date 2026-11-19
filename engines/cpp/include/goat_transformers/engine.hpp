@@ -193,7 +193,11 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Uscale, Sscale, F32, F64, Ascii,  // v0.5, bits wire
                        IntW, Dec, Dm, Hms, HmsDmy,       // v0.10, text wire only
                        Utf8, Hex,                        // v0.13, tlv wire only
-                       Sixbit                            // v0.14, bits wire
+                       Sixbit,                           // v0.14, bits wire
+                       // v0.15, bits wire
+                       Uiscale, Siscale, Smag, Smscale, F32scale, F64scale,
+                       CharsIcao6, CharsAis6, CharsAscii7, Octal,
+                       Scale, Iscale                     // v0.15, xml, json and geojson
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 
@@ -236,6 +240,11 @@ struct FieldLine {
     // tlv wire (v0.13): the path of tags, outermost first, and `:<n>` (0 when none).
     std::vector<std::uint32_t> tlv_path;
     std::uint32_t tlv_size = 0;
+    // uiscale, siscale, iscale (v0.15): the exact factor exact_num/exact_den in
+    // lowest terms (den positive) and the integer offset.
+    std::int64_t exact_num = 1;
+    std::int64_t exact_den = 1;
+    std::int64_t exact_offset = 0;
     std::size_t line = 0;       // line number in pack.def
     // v0.6 field options.
     std::string via;            // `via <table>`: the value table's name; empty when none

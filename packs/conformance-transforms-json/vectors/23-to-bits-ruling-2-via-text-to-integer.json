@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-2-via-text-to-integer",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"label\":\"low\"}",
+  "expect": "1802",
+  "source": "constructed",
+  "reference": "low -> 1 -> 1/(1/2) = 2"
+}

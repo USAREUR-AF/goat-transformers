@@ -1,0 +1,9 @@
+{
+  "name": "iscale-exponent-400-beyond-int64",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":1e400}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "10^400 x 1000 is beyond int64"
+}

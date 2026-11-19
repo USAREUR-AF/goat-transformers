@@ -259,7 +259,7 @@ void text_encode(const FieldLine& f, const Value& v, std::string& a, std::string
         case Transform::String:
         case Transform::Int:
         case Transform::Float:
-        case Transform::Iso8601Ms: a = encode_value(f.transform, v); return;
+        case Transform::Iso8601Ms: a = encode_value(f, v); return;
         case Transform::IntW: {
             const std::int64_t n = model_int(v);
             const std::uint64_t mag = n < 0 ? 0 - static_cast<std::uint64_t>(n) : static_cast<std::uint64_t>(n);

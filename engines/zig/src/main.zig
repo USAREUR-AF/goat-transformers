@@ -20,7 +20,11 @@
 // functions in model modules. Absent-value sentinels (spec Version 0.9): the
 // `absent` field option on every wire. The strict rulings of spec Version
 // 0.11: named load errors, strict number and time grammars, XML text, the
-// capability report and the limit on list items. Stdlib only.
+// capability report and the limit on list items. Value transforms (spec
+// Version 0.15): uiscale, siscale, smag, smscale, f32scale, f64scale,
+// chars:<set> and octal on bits, scale and iscale on the text wires, in exact
+// integer arithmetic (big integers where a text number needs them). Stdlib
+// only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
 // (`error.@"no-kind"`); `Engine.last_error` holds `<kind>: <detail>`.
@@ -260,7 +264,28 @@ const TKind = enum {
     // the `tlv` wire only (Version 0.13)
     utf8,
     hex,
+    // Version 0.15: value transforms
+    uiscale,
+    siscale,
+    smag,
+    smscale,
+    f32scale,
+    f64scale,
+    chars,
+    octal,
+    tscale, // `scale` on the text wires
+    iscale,
 };
+
+// A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
+fn isValueTransform(k: TKind) bool {
+    return switch (k) {
+        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .tscale, .iscale => true,
+        else => false,
+    };
+}
+
+const CharSet = enum { icao6, ais6, ascii7 };
 
 // `rec`: the transforms valid on the `text` wire only; `tlv`: on the `tlv`
 // wire only
@@ -268,8 +293,9 @@ const KindCat = enum { text, bits, proto, rec, tlv };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
-        .string, .float, .int, .iso8601_ms, .bool_ => .text,
+        .string, .float, .int, .iso8601_ms, .bool_, .tscale, .iscale => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
+        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
         .int_w, .dec, .dm, .hms, .hms_dmy => .rec,
         .utf8, .hex => .tlv,
@@ -290,7 +316,7 @@ const Transform = struct {
     // linscale
     maxpos: f64 = 0,
     range: f64 = 0,
-    // uscale / sscale
+    // uscale / sscale, and the float scales of 0.15
     factor: Factor = .{},
     offset: f64 = 0,
     // text: `int:<w>`, `dec:<f>[:<w>]` (w 0: none), `dm:<d>:<f>:<PN>`,
@@ -300,6 +326,13 @@ const Transform = struct {
     d: usize = 0,
     letp: u8 = 0,
     letn: u8 = 0,
+    // the exact scales of 0.15 (uiscale, siscale, iscale): the factor in
+    // lowest terms (den > 0) and the integer offset
+    num: i64 = 1,
+    den: i64 = 1,
+    ioff: i64 = 0,
+    // chars
+    cset: CharSet = .ascii7,
 };
 
 const LineTag = enum { field, when, constant, group };
@@ -660,9 +693,9 @@ const Derive = struct {
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
-        .string, .pstring, .ascii, .sixbit, .utf8, .hex => .string,
-        .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms => .float,
-        .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy => .int,
+        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal => .string,
+        .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
+        .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
     };
 }
 
@@ -830,8 +863,10 @@ fn parseUnsigned(s: []const u8) ?u64 {
 
 // A scale factor: number text, or `<num>/<den>`. For `uscale` and `sscale`
 // (`transform`, ruling 4d of 0.11) the two are unsigned decimal integers, and
-// neither the factor nor either part is zero; for the `scale` derive function
-// `<num>` may carry a `-`.
+// neither the factor nor either part is zero, and the fraction of every float
+// scale transform has an unsigned `num` (ruling 25 of 0.15: a negative factor
+// is written as a decimal); for the `scale` derive function, which is not a
+// transform, `<num>` may carry a `-` (ruling 2c of 0.11).
 fn parseFactor(fac: []const u8, transform: bool) ?Factor {
     if (std.mem.indexOfScalar(u8, fac, '/')) |slash| {
         const ns = fac[0..slash];
@@ -851,7 +886,70 @@ fn parseFactor(fac: []const u8, transform: bool) ?Factor {
     return .{ .factor = v };
 }
 
-fn parseTransform(s: []const u8) !Transform {
+// Version 0.15, Exact factors: `[-]digits[.digits]` or `[-]num/den`, the
+// exact value in lowest terms, numerator and denominator at most 2^32, not 0.
+fn parseExactFactor(alloc: std.mem.Allocator, s: []const u8) !?[2]i64 {
+    const neg = s.len > 0 and s[0] == '-';
+    const body = if (neg) s[1..] else s;
+    var nstr: []const u8 = undefined;
+    var dstr: ?[]const u8 = null; // the denominator's digits, for a fraction
+    var frac_digits: usize = 0;
+    if (std.mem.indexOfScalar(u8, body, '/')) |slash| {
+        nstr = body[0..slash];
+        dstr = body[slash + 1 ..];
+        if (!allDigits(nstr) or !allDigits(dstr.?)) return null;
+    } else if (std.mem.indexOfScalar(u8, body, '.')) |dot| {
+        const ip = body[0..dot];
+        const fp = body[dot + 1 ..];
+        if (!allDigits(ip) or !allDigits(fp)) return null;
+        nstr = try std.mem.concat(alloc, u8, &.{ ip, fp });
+        frac_digits = fp.len;
+    } else {
+        if (!allDigits(body)) return null;
+        nstr = body;
+    }
+    var n = try std.math.big.int.Managed.init(alloc);
+    defer n.deinit();
+    var d = try std.math.big.int.Managed.init(alloc);
+    defer d.deinit();
+    try n.setString(10, nstr);
+    if (dstr) |ds| {
+        try d.setString(10, ds);
+    } else {
+        var ten = try std.math.big.int.Managed.initSet(alloc, 10);
+        defer ten.deinit();
+        try d.pow(&ten, @intCast(frac_digits));
+    }
+    if (n.eqlZero() or d.eqlZero()) return null;
+    var g = try std.math.big.int.Managed.init(alloc);
+    defer g.deinit();
+    try g.gcd(&n, &d);
+    var q = try std.math.big.int.Managed.init(alloc);
+    defer q.deinit();
+    var r = try std.math.big.int.Managed.init(alloc);
+    defer r.deinit();
+    try q.divTrunc(&r, &n, &g);
+    try n.copy(q.toConst());
+    try q.divTrunc(&r, &d, &g);
+    try d.copy(q.toConst());
+    const lim: u64 = 1 << 32;
+    const nv = n.to(u64) catch return null;
+    const dv = d.to(u64) catch return null;
+    if (nv > lim or dv > lim) return null;
+    const ni: i64 = @intCast(nv);
+    return .{ if (neg) -ni else ni, @intCast(dv) };
+}
+
+// Version 0.15: an integer offset, `[-]digits`, absolute value below 2^63.
+fn parseExactOffset(s: []const u8) ?i64 {
+    const body = if (s.len > 0 and s[0] == '-') s[1..] else s;
+    if (!allDigits(body)) return null;
+    const v = std.fmt.parseInt(i64, s, 10) catch return null;
+    if (v == std.math.minInt(i64)) return null;
+    return v;
+}
+
+fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
     const simple = [_]struct { n: []const u8, k: TKind }{
         .{ .n = "string", .k = .string },   .{ .n = "float", .k = .float },
         .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms },
@@ -896,7 +994,7 @@ fn parseTransform(s: []const u8) !Transform {
     // or extra is `bad-directive` (Version 0.10, rule 1)
     const bd = E.@"bad-directive";
     const TextHead = enum { int, dec, dm, hms, hms_dmy };
-    const th = std.meta.stringToEnum(TextHead, head) orelse return E.@"unknown-transform";
+    const th = std.meta.stringToEnum(TextHead, head) orelse return parseValueTransform(alloc, head, s[head.len..]);
     var ps: [4][]const u8 = undefined;
     var np: usize = 0;
     while (it.next()) |part| {
@@ -931,6 +1029,58 @@ fn parseTransform(s: []const u8) !Transform {
             return .{ .kind = if (th == .hms) .hms else .hms_dmy, .f = try num(ps[0], 0, 3) };
         },
     }
+}
+
+// The transforms of Version 0.15. `rest` is the text after the name: empty,
+// or `:` and the parameters. A parameter that does not parse is
+// `bad-directive`; a name that is not one of them is an unknown transform.
+fn parseValueTransform(alloc: std.mem.Allocator, head: []const u8, rest: []const u8) !Transform {
+    const bd = E.@"bad-directive";
+    const Shape = enum { exact, float, none, chars };
+    const names = [_]struct { n: []const u8, k: TKind, shape: Shape }{
+        .{ .n = "uiscale", .k = .uiscale, .shape = .exact },
+        .{ .n = "siscale", .k = .siscale, .shape = .exact },
+        .{ .n = "iscale", .k = .iscale, .shape = .exact },
+        .{ .n = "smag", .k = .smag, .shape = .none },
+        .{ .n = "octal", .k = .octal, .shape = .none },
+        .{ .n = "smscale", .k = .smscale, .shape = .float },
+        .{ .n = "f32scale", .k = .f32scale, .shape = .float },
+        .{ .n = "f64scale", .k = .f64scale, .shape = .float },
+        .{ .n = "scale", .k = .tscale, .shape = .float },
+        .{ .n = "chars", .k = .chars, .shape = .chars },
+    };
+    for (names) |en| {
+        if (!std.mem.eql(u8, head, en.n)) continue;
+        var t = Transform{ .kind = en.k };
+        if (en.shape == .none) {
+            if (rest.len != 0) return bd;
+            return t;
+        }
+        if (rest.len == 0) return bd; // the parameter is missing
+        var it = std.mem.splitScalar(u8, rest[1..], ':');
+        const a = it.next().?;
+        const b = it.next();
+        if (it.next() != null) return bd;
+        switch (en.shape) {
+            .chars => {
+                if (b != null) return bd;
+                t.cset = std.meta.stringToEnum(CharSet, a) orelse return bd;
+            },
+            .exact => {
+                const f = (try parseExactFactor(alloc, a)) orelse return bd;
+                t.num = f[0];
+                t.den = f[1];
+                if (b) |off| t.ioff = parseExactOffset(off) orelse return bd;
+            },
+            .float => {
+                t.factor = parseFactor(a, true) orelse return bd;
+                if (b) |off| t.offset = parseDecimal(off) catch return bd;
+            },
+            .none => unreachable,
+        }
+        return t;
+    }
+    return E.@"unknown-transform";
 }
 
 // The declared type of a key a `derive` line names: a key of `core` or of the
@@ -1244,7 +1394,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         // on `text`: the text transforms but `bool`, and the transforms of
         // the wire (Version 0.10)
         const kc = kindCategory(ln.transform.kind);
-        if ((kc != .text and kc != .rec) or ln.transform.kind == .bool_) {
+        // `scale` and `iscale` are for xml, json and geojson (Version 0.15)
+        if ((kc != .text and kc != .rec) or ln.transform.kind == .bool_ or isValueTransform(ln.transform.kind)) {
             return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the text wire", .{ ln.lineno, ln.key });
         }
     } else if (ln.isField() and kindCategory(ln.transform.kind) == .rec) {
@@ -1253,6 +1404,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         // `sixbit` is valid on the bits wire only (Version 0.14)
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform sixbit of {s} is valid only on the bits wire", .{ ln.lineno, ln.key });
     } else if (ln.isField() and wireCategory(p.wire) != kindCategory(ln.transform.kind)) {
+        // a transform of 0.15 on a wire it does not list, as every transform
+        // off its wire (ruling 26 of 0.15)
         return bad(diag, alloc, E.@"bad-directive", "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
     }
     if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json) {
@@ -1310,18 +1463,14 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 }
                 ln.wint = v;
             } else {
-                const ok = switch (ln.transform.kind) {
-                    .f32_ => ln.blen == 32,
-                    .f64_ => ln.blen == 64,
-                    .ascii => ln.blen >= 8 and ln.blen <= 2040 and ln.blen % 8 == 0,
-                    .sixbit => ln.blen >= 6 and ln.blen <= 1530 and ln.blen % 6 == 0,
-                    else => ln.blen >= 1 and ln.blen <= 64,
-                };
-                if (!ok) {
+                if (!bitsLenOk(ln.transform, ln.blen)) {
                     return bad(diag, alloc, E.@"bad-directive", "line {d}: bit length {d} is not allowed for the transform of {s}", .{ ln.lineno, ln.blen, ln.key });
                 }
                 if (ln.swap and ln.blen % 8 != 0) {
                     return bad(diag, alloc, E.@"bad-directive", "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ ln.lineno, ln.blen });
+                }
+                if (ln.swap and (ln.transform.kind == .chars or ln.transform.kind == .octal)) {
+                    return bad(diag, alloc, E.@"bad-directive", "line {d}: swap with {s}", .{ ln.lineno, @tagName(ln.transform.kind) });
                 }
             }
         },
@@ -2174,7 +2323,8 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // the file is read (ruling 8 of 0.13: `bad-directive`); the wire is
         // known here, since a `field` line stands after it (ruling 5b of 0.11)
         var t_err: ?anyerror = null;
-        const t = parseTransform(toks[3]) catch |err| blk: {
+        const t = parseTransform(alloc, toks[3]) catch |err| blk: {
+            if (err == error.OutOfMemory) return err;
             if (p.wire == .tlv) {
                 t_err = err;
                 break :blk Transform{ .kind = .string };
@@ -3462,7 +3612,10 @@ fn xmlTarget(root: *XmlNode, locator: []const u8) ?XmlTarget {
 }
 
 // The text at a locator: an attribute value, or an element's text content.
-// null when the attribute or element does not exist.
+// null when the attribute or element does not exist. This is what a `when`
+// compares (`present`: the element exists, whatever its text) and what a
+// field decodes: text that is only whitespace is text (ruling 1m of 0.11,
+// ruling 24 of 0.15).
 fn xmlGet(root: *XmlNode, locator: []const u8) ?[]const u8 {
     const t = xmlTarget(root, locator) orelse return null;
     if (t.last.len > 0 and t.last[0] == '@') return t.node.attr(t.last[1..]);
@@ -3922,8 +4075,9 @@ fn exactJsonInt(s: []const u8) ?i64 {
 }
 
 // The JSON text a model value is written as, through a text transform.
-fn jsonRaw(alloc: std.mem.Allocator, t: TKind, mv: MV) ![]const u8 {
-    switch (t) {
+fn jsonRaw(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
+    switch (tr.kind) {
+        .tscale, .iscale => return textScaleEncode(alloc, tr, mv),
         .string => {
             if (mv != .str) return E.@"transform-encode";
             return jsonStr(alloc, mv.str);
@@ -4163,6 +4317,7 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
         start = 0;
     }
     const t = ln.transform;
+    if (t.kind == .chars) return MV{ .str = try charsDecode(alloc, t.cset, buf, p.msb, start, ln.blen) };
     if (t.kind == .ascii) {
         const n = ln.blen / 8;
         const bytes = try alloc.alloc(u8, n);
@@ -4213,8 +4368,138 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
             if (!std.math.isFinite(f)) return E.@"transform-decode";
             return MV{ .float = f };
         },
+        .uiscale, .siscale => {
+            const v: i128 = if (t.kind == .uiscale) bits else signExtend(bits, ln.blen);
+            return MV{ .int = try exactBitsDecode(t, v) };
+        },
+        .smag => return MV{ .int = smagValue(bits, ln.blen) },
+        .smscale => {
+            const v: f64 = @floatFromInt(smagValue(bits, ln.blen));
+            return MV{ .float = t.factor.mul(v) + t.offset };
+        },
+        .f32scale, .f64scale => {
+            const v: f64 = if (t.kind == .f32scale) @as(f32, @bitCast(@as(u32, @intCast(bits)))) else @bitCast(bits);
+            const r = t.factor.mul(v) + t.offset;
+            if (!std.math.isFinite(r)) return E.@"transform-decode";
+            return MV{ .float = r };
+        },
+        .octal => {
+            const nd = ln.blen / 3;
+            const out = try alloc.alloc(u8, nd);
+            for (0..nd) |j| out[nd - 1 - j] = '0' + @as(u8, @intCast((bits >> @as(u6, @intCast(3 * j))) & 7));
+            return MV{ .str = out };
+        },
         else => return E.@"transform-decode",
     }
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.15: value transforms on `bits`
+// ---------------------------------------------------------------------------
+
+fn charWidth(c: CharSet) usize {
+    return if (c == .ascii7) 7 else 6;
+}
+
+// The code a set writes as padding.
+fn charPadCode(c: CharSet) u8 {
+    return switch (c) {
+        .icao6 => 32,
+        .ais6, .ascii7 => 0,
+    };
+}
+
+// The character of a code; null: the set does not hold the code.
+fn charOf(c: CharSet, code: u8) ?u8 {
+    return switch (c) {
+        .icao6 => if (code >= 1 and code <= 26) 'A' + code - 1 else if (code == 32) ' ' else if (code >= 48 and code <= 57) code else null,
+        .ais6 => if (code < 32) code + 64 else code,
+        .ascii7 => if (code == 0 or (code >= 32 and code <= 126)) code else null,
+    };
+}
+
+// The code of a character; null: the set cannot hold it (NUL in `ascii7`
+// text included, ruling 17).
+fn codeOf(c: CharSet, ch: u8) ?u8 {
+    return switch (c) {
+        .icao6 => if (ch >= 'A' and ch <= 'Z') ch - 'A' + 1 else if (ch == ' ' or (ch >= '0' and ch <= '9')) ch else null,
+        .ais6 => if (ch >= 64 and ch <= 95) ch - 64 else if (ch >= 32 and ch <= 63) ch else null,
+        .ascii7 => if (ch >= 32 and ch <= 126) ch else null,
+    };
+}
+
+// `chars:<set>` decode: character i is the `w` bits at bit `i * w` of the
+// field, read as `uint` reads them; trailing padding (and with `icao6` and
+// `ais6` trailing spaces) removed.
+fn charsDecode(alloc: std.mem.Allocator, c: CharSet, buf: []const u8, msb: bool, start: usize, blen: usize) ![]const u8 {
+    const w = charWidth(c);
+    const n = blen / w;
+    const out = try alloc.alloc(u8, n);
+    for (0..n) |i| {
+        const code: u8 = @intCast(getBits(buf, msb, start + i * w, w));
+        out[i] = charOf(c, code) orelse return E.@"transform-decode";
+    }
+    const pad: u8 = charOf(c, charPadCode(c)).?;
+    var end = n;
+    while (end > 0 and (out[end - 1] == pad or (c != .ascii7 and out[end - 1] == ' '))) end -= 1;
+    // ascii7: a NUL before a character that is not NUL
+    if (c == .ascii7) {
+        for (out[0..end]) |ch| if (ch == 0) return E.@"transform-decode";
+    }
+    return out[0..end];
+}
+
+fn charsEncode(c: CharSet, out: []u8, msb: bool, start: usize, blen: usize, mv: MV) !void {
+    const w = charWidth(c);
+    const n = blen / w;
+    if (mv != .str or mv.str.len > n) return E.@"transform-encode";
+    for (mv.str) |ch| _ = codeOf(c, ch) orelse return E.@"transform-encode";
+    for (0..n) |i| {
+        const code = if (i < mv.str.len) codeOf(c, mv.str[i]).? else charPadCode(c);
+        setBits(out, msb, start + i * w, w, code);
+    }
+}
+
+// round-half-away-from-zero of n / d, d not 0
+fn roundDiv(n: i128, d: i128) i128 {
+    const neg = (n < 0) != (d < 0);
+    const an: u128 = @abs(n);
+    const ad: u128 = @abs(d);
+    var q = an / ad;
+    const r = an % ad;
+    if (r >= ad - r) q += 1; // 2r >= d
+    const qi: i128 = @intCast(q);
+    return if (neg) -qi else qi;
+}
+
+// `round(v * factor) + offset`, within the signed 64-bit range.
+fn exactBitsDecode(t: Transform, v: i128) !i64 {
+    const r = roundDiv(v * t.num, t.den) + t.ioff;
+    if (r < std.math.minInt(i64) or r > std.math.maxInt(i64)) return E.@"transform-decode";
+    return @intCast(r);
+}
+
+// `round((x - offset) / factor)`
+fn exactBitsEncode(t: Transform, mv: MV) !i128 {
+    if (mv != .int) return E.@"transform-encode";
+    const n: i128 = (@as(i128, mv.int) - t.ioff) * t.den;
+    return roundDiv(n, t.num);
+}
+
+// `smag`: the top bit of the field the sign, the other bits the magnitude.
+fn smagValue(bits: u64, len: usize) i64 {
+    const sh: u6 = @intCast(len - 1);
+    const mag: i64 = @intCast(bits & ((@as(u64, 1) << sh) - 1));
+    return if ((bits >> sh) & 1 == 1) -mag else mag;
+}
+
+// An integer as `smag` writes it in `len` bits.
+fn smagBits(v: i128, len: usize) !u64 {
+    const sh: u7 = @intCast(len - 1);
+    const mag: u128 = @abs(v);
+    if (mag >= (@as(u128, 1) << sh)) return E.@"transform-encode";
+    const sign: u64 = if (v < 0) 1 else 0;
+    return (sign << @as(u6, @intCast(sh))) | @as(u64, @intCast(mag));
 }
 
 // The raw value of a field of at most 64 bits (Version 0.9): its `len` bits as
@@ -4297,12 +4582,54 @@ fn bitsEncodeField(ln: *const Line, mv: MV) !u64 {
             if (!std.math.isFinite(x)) return E.@"transform-encode";
             return @bitCast(x);
         },
+        .uiscale => {
+            const q = try exactBitsEncode(t, mv);
+            if (q < 0 or q >= (@as(i128, 1) << @as(u7, @intCast(ln.blen)))) return E.@"transform-encode";
+            return @intCast(q);
+        },
+        .siscale => {
+            const q = try exactBitsEncode(t, mv);
+            const hi = @as(i128, 1) << @as(u7, @intCast(ln.blen - 1));
+            if (q < -hi or q >= hi) return E.@"transform-encode";
+            return @truncate(@as(u128, @bitCast(q)));
+        },
+        .smag => {
+            if (mv != .int) return E.@"transform-encode";
+            return smagBits(mv.int, ln.blen);
+        },
+        .smscale => {
+            const x = try mvFloat(mv);
+            const r = @round(t.factor.div(x - t.offset)); // as sscale computes it
+            const hi = std.math.ldexp(@as(f64, 1.0), @as(i32, @intCast(ln.blen - 1)));
+            if (!(@abs(r) < hi)) return E.@"transform-encode"; // NaN and infinities too
+            // the sign of the rounded integer: -0.0 writes sign 0 (ruling 15)
+            return smagBits(@as(i64, @intFromFloat(r)), ln.blen);
+        },
+        .f32scale => {
+            const y = t.factor.div(try mvFloat(mv) - t.offset);
+            return @as(u64, @as(u32, @bitCast(try narrowF32(y))));
+        },
+        .f64scale => {
+            const y = t.factor.div(try mvFloat(mv) - t.offset);
+            if (!std.math.isFinite(y)) return E.@"transform-encode";
+            return @bitCast(y);
+        },
+        .octal => {
+            if (mv != .str or mv.str.len != ln.blen / 3) return E.@"transform-encode";
+            var v: u64 = 0;
+            for (mv.str) |ch| {
+                if (ch < '0' or ch > '7') return E.@"transform-encode";
+                v = (v << 3) | (ch - '0');
+            }
+            return v;
+        },
         else => return E.@"transform-encode",
     }
 }
 
 // Write one field's `blen` bits at absolute bit `start` of `out`.
 fn bitsPutField(out: []u8, msb: bool, start: usize, ln: *const Line, mv: MV) !void {
+    if (ln.transform.kind == .chars) return charsEncode(ln.transform.cset, out, msb, start, ln.blen, mv);
     if (ln.transform.kind == .ascii) {
         const n = ln.blen / 8;
         if (mv != .str or mv.str.len > n) return E.@"transform-encode"; // longer text
@@ -4640,7 +4967,15 @@ const BitsDoc = struct { buf: []const u8, nbits: usize, base: usize = 0 };
 
 // A JSON message or one element of an array. `geo`: read with the `geojson`
 // value types.
-const JItem = struct { v: JValue, geo: bool = false };
+const JItem = struct {
+    v: JValue,
+    geo: bool = false,
+    // json: the numbers a field line has read, by the address of their text
+    // (ruling 27 of 0.15)
+    reads: ?*NumReads = null,
+};
+
+const NumReads = std.AutoHashMapUnmanaged(usize, void);
 
 // The parsed wire message, or one item of a group.
 const Doc = union(enum) {
@@ -4675,9 +5010,12 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
             return .{ .geojson = d };
         },
         .json => {
+            // numbers as written: `iscale` reads the digits (ruling 7 of 0.15)
             const obj = parseJsonObject(alloc, bytes, true) catch |err| return bad(diag, alloc, err, "the input is not one JSON object", .{});
             jsonCheckNoDuplicates(alloc, bytes) catch |err| return bad(diag, alloc, err, "a member name appears twice in one object", .{});
-            return .{ .json = .{ .v = .{ .object = obj } } };
+            const reads = try alloc.create(NumReads);
+            reads.* = .{};
+            return .{ .json = .{ .v = .{ .object = obj }, .reads = reads } };
         },
         .bits => {
             const in = bitsInput(alloc, p, bytes) catch |err| return bad(diag, alloc, err, "{s}", .{if (p.armor) "the input is not six-bit armored text" else "the input is not hex of even length"});
@@ -4739,6 +5077,193 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
     }
 }
 
+// ---------------------------------------------------------------------------
+// Version 0.15: `scale` and `iscale` on the text wires
+// ---------------------------------------------------------------------------
+
+const BigInt = std.math.big.int.Managed;
+
+// The number text a JSON member holds; null when the member is not a number.
+fn jsonNumberRaw(alloc: std.mem.Allocator, v: JValue) !?[]const u8 {
+    return switch (v) {
+        .number_string => |s| s,
+        .integer => |i| try intToStr(alloc, i),
+        .float => |f| try floatToStr(alloc, f),
+        else => null,
+    };
+}
+
+// json, geojson: the member must be a number (rulings 7 and 23).
+fn jsonScaleDecode(alloc: std.mem.Allocator, t: Transform, v: JValue) !MV {
+    const text = (try jsonNumberRaw(alloc, v)) orelse return E.@"transform-decode";
+    return textScaleDecode(alloc, t, text);
+}
+
+// Decode a number's text through `scale` or `iscale`.
+fn textScaleDecode(alloc: std.mem.Allocator, t: Transform, text: []const u8) !MV {
+    if (t.kind == .tscale) {
+        const v = try parseDecimal(text);
+        const r = t.factor.mul(v) + t.offset;
+        if (!std.math.isFinite(r)) return E.@"transform-decode"; // ruling 14
+        return MV{ .float = r };
+    }
+    return MV{ .int = try iscaleDecode(alloc, t, text) };
+}
+
+fn bigPow10(alloc: std.mem.Allocator, e: usize) !BigInt {
+    var r = try BigInt.initSet(alloc, 1);
+    if (e == 0) return r;
+    var ten = try BigInt.initSet(alloc, 10);
+    defer ten.deinit();
+    try r.pow(&ten, @intCast(e));
+    return r;
+}
+
+// `iscale` decode: the text `-?digits(.digits)?([eE][+-]?digits)?` as an
+// exact decimal r, then round(r * factor) + offset, within 64 bits. An
+// exponent above 400 in absolute value is `transform-decode`.
+fn iscaleDecode(alloc: std.mem.Allocator, t: Transform, text: []const u8) !i64 {
+    const td = E.@"transform-decode";
+    var i: usize = 0;
+    const neg = text.len > 0 and text[0] == '-';
+    if (neg) i += 1;
+    const ip_from = i;
+    while (i < text.len and isDigit(text[i])) i += 1;
+    const ip = text[ip_from..i];
+    if (ip.len == 0) return td;
+    var fp: []const u8 = "";
+    if (i < text.len and text[i] == '.') {
+        i += 1;
+        const from = i;
+        while (i < text.len and isDigit(text[i])) i += 1;
+        fp = text[from..i];
+        if (fp.len == 0) return td;
+    }
+    var exp: i64 = 0;
+    if (i < text.len and (text[i] == 'e' or text[i] == 'E')) {
+        i += 1;
+        var eneg = false;
+        if (i < text.len and (text[i] == '+' or text[i] == '-')) {
+            eneg = text[i] == '-';
+            i += 1;
+        }
+        const from = i;
+        while (i < text.len and isDigit(text[i])) i += 1;
+        if (i == from) return td;
+        var ed = text[from..i];
+        while (ed.len > 1 and ed[0] == '0') ed = ed[1..];
+        if (ed.len > 3) return td;
+        exp = std.fmt.parseInt(i64, ed, 10) catch return td;
+        if (exp > 400) return td;
+        if (eneg) exp = -exp;
+    }
+    if (i != text.len) return td;
+
+    // r = M * 10^(exp - len(fp))
+    const digits = try std.mem.concat(alloc, u8, &.{ ip, fp });
+    var m = try BigInt.init(alloc);
+    defer m.deinit();
+    try m.setString(10, digits);
+    var rounded: i128 = 0;
+    if (!m.eqlZero()) {
+        const e10: i64 = exp - @as(i64, @intCast(fp.len));
+        var num = try BigInt.initSet(alloc, t.num);
+        defer num.deinit();
+        var n = try BigInt.init(alloc);
+        defer n.deinit();
+        try n.mul(&m, &num);
+        var d = try BigInt.initSet(alloc, t.den);
+        defer d.deinit();
+        var p10 = try bigPow10(alloc, @intCast(@abs(e10)));
+        defer p10.deinit();
+        var tmp = try BigInt.init(alloc);
+        defer tmp.deinit();
+        if (e10 >= 0) {
+            try tmp.mul(&n, &p10);
+            try n.copy(tmp.toConst());
+        } else {
+            try tmp.mul(&d, &p10);
+            try d.copy(tmp.toConst());
+        }
+        if (neg) n.negate();
+        // round half away from zero: q = trunc(n / d), then |r| * 2 >= d
+        var q = try BigInt.init(alloc);
+        defer q.deinit();
+        var r = try BigInt.init(alloc);
+        defer r.deinit();
+        try q.divTrunc(&r, &n, &d);
+        r.abs();
+        var r2 = try BigInt.init(alloc);
+        defer r2.deinit();
+        try r2.add(&r, &r);
+        if (r2.order(d) != .lt) {
+            var one = try BigInt.initSet(alloc, 1);
+            defer one.deinit();
+            if (n.isPositive()) try tmp.add(&q, &one) else try tmp.sub(&q, &one);
+            try q.copy(tmp.toConst());
+        }
+        rounded = q.to(i128) catch return td;
+    }
+    const res = std.math.add(i128, rounded, t.ioff) catch return td;
+    if (res < std.math.minInt(i64) or res > std.math.maxInt(i64)) return td;
+    return @intCast(res);
+}
+
+// `iscale` encode: (x - offset) / factor exactly, in plain decimal notation
+// with at most 18 fraction digits.
+fn iscaleEncode(alloc: std.mem.Allocator, t: Transform, mv: MV) ![]const u8 {
+    const te = E.@"transform-encode";
+    if (mv != .int) return te;
+    // (x - offset) * den / num, as p / q with q > 0
+    var p: i128 = (@as(i128, mv.int) - t.ioff) * t.den;
+    var q: i128 = t.num;
+    if (q < 0) {
+        q = -q;
+        p = -p;
+    }
+    const g: i128 = @intCast(std.math.gcd(@as(u128, @abs(p)), @as(u128, @intCast(q))));
+    if (g > 1) {
+        p = @divExact(p, g);
+        q = @divExact(q, g);
+    }
+    // q = 2^a 5^b: the quotient has max(a, b) fraction digits
+    var rest: i128 = q;
+    var a: usize = 0;
+    var b: usize = 0;
+    while (@rem(rest, 2) == 0) : (a += 1) rest = @divExact(rest, 2);
+    while (@rem(rest, 5) == 0) : (b += 1) rest = @divExact(rest, 5);
+    if (rest != 1) return te; // does not terminate
+    const k = @max(a, b);
+    if (k > 18) return te; // ruling 21
+    const ap: u128 = @abs(p);
+    const uq: u128 = @intCast(q);
+    const ipart = ap / uq;
+    var buf = std.ArrayList(u8).init(alloc);
+    if (p < 0) try buf.append('-');
+    try buf.writer().print("{d}", .{ipart});
+    if (k > 0) {
+        // the fraction digits: (rem / q) * 10^k, an integer below 10^k
+        const fr = (ap % uq) * std.math.pow(u128, 10, k) / uq;
+        var digs: [18]u8 = undefined;
+        _ = std.fmt.formatIntBuf(digs[0..k], fr, 10, .lower, .{ .width = k, .fill = '0' });
+        var end = k;
+        while (end > 0 and digs[end - 1] == '0') end -= 1;
+        try buf.append('.');
+        try buf.appendSlice(digs[0..end]);
+    }
+    return buf.toOwnedSlice();
+}
+
+// Encode a model value through `scale` or `iscale`: the text of the number.
+fn textScaleEncode(alloc: std.mem.Allocator, t: Transform, mv: MV) ![]const u8 {
+    if (t.kind == .tscale) {
+        const y = t.factor.div(try mvFloat(mv) - t.offset);
+        if (!std.math.isFinite(y)) return E.@"transform-encode"; // ruling 14
+        return floatToStr(alloc, y);
+    }
+    return iscaleEncode(alloc, t, mv);
+}
+
 // Text through a text transform (xml, geojson).
 fn textToMV(t: TKind, raw: []const u8) !MV {
     return switch (t) {
@@ -4791,6 +5316,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
         .xml => |root| {
             const raw = xmlGet(root, ln.locator) orelse return null;
             if (ln.abs_set and absentText(ln, raw)) return null; // not trimmed (ruling 14)
+            if (t == .tscale or t == .iscale) return try textScaleDecode(alloc, ln.transform, raw);
             return try textToMV(t, raw);
         },
         .geojson => |d| {
@@ -4799,13 +5325,18 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             const v = geoLookup(d, ln.locator) orelse return null;
             if (v == .null) return null;
             if (try jsonIsSentinel(alloc, ln, v)) return null;
+            if (t == .tscale or t == .iscale) return try jsonScaleDecode(alloc, ln.transform, v);
             const raw = (try geoText(alloc, v)) orelse return E.@"transform-decode";
             return try textToMV(t, raw);
         },
         .json => |it| {
             const v = jitemLookup(it, ln) orelse return null;
+            if (it.reads) |r| {
+                if (v == .number_string) try r.put(alloc, @intFromPtr(v.number_string.ptr), {});
+            }
             if (v == .null) return null; // a member whose value is null is absent
             if (try jsonIsSentinel(alloc, ln, v)) return null;
+            if (t == .tscale or t == .iscale) return try jsonScaleDecode(alloc, ln.transform, v);
             if (it.geo) {
                 // an item of a geojson group: the json locators and null
                 // rule, the geojson value types (ruling 7 of 0.7)
@@ -4864,6 +5395,28 @@ fn kindHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, k: *const Kind)
 
 // json residue: every scalar member at any depth of nested objects that no
 // `field` or `when` maps, keyed by its path, with its canonical JSON text.
+// json: the first number outside the double range that no field line read
+// (ruling 27 of 0.15); null when there is none.
+fn jsonUnreadOverflow(v: JValue, reads: *const NumReads) ?[]const u8 {
+    switch (v) {
+        .number_string => |s| {
+            const f = std.fmt.parseFloat(f64, s) catch return null;
+            if (std.math.isInf(f) and !reads.contains(@intFromPtr(s.ptr))) return s;
+            return null;
+        },
+        .array => |arr| {
+            for (arr.items) |it| if (jsonUnreadOverflow(it, reads)) |s| return s;
+            return null;
+        },
+        .object => |obj| {
+            var it = obj.iterator();
+            while (it.next()) |en| if (jsonUnreadOverflow(en.value_ptr.*, reads)) |s| return s;
+            return null;
+        },
+        else => return null,
+    }
+}
+
 fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, obj: std.json.ObjectMap, prefix: []const u8, e: *Entity) anyerror!void {
     var it = obj.iterator();
     while (it.next()) |en| {
@@ -5038,7 +5591,11 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             const items = try alloc.alloc(Entity, v.array.items.len);
             for (v.array.items, 0..) |el, i| {
                 items[i] = Entity.init(alloc);
-                _ = try decodeScope(alloc, p, body, .{ .json = .{ .v = el, .geo = p.wire == .geojson } }, &items[i], diag);
+                const reads: ?*NumReads = switch (doc) {
+                    .json => |it| it.reads,
+                    else => null,
+                };
+                _ = try decodeScope(alloc, p, body, .{ .json = .{ .v = el, .geo = p.wire == .geojson, .reads = reads } }, &items[i], diag);
             }
             try e.putList(g.list, items);
             return 0;
@@ -5266,9 +5823,16 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
                 }
             }
         },
-        .json => |it| jsonResidue(alloc, p, lines, it.v.object, "", &e) catch |err| switch (err) {
-            E.@"malformed-wire" => return bad(diag, alloc, err, "a number no line maps lies beyond the range of a double", .{}),
-            else => return err,
+        .json => |it| {
+            // a number outside the double range that no field read, anywhere
+            // in the document (ruling 27 of 0.15)
+            if (jsonUnreadOverflow(it.v, it.reads.?)) |num| {
+                return bad(diag, alloc, E.@"malformed-wire", "the number {s} is outside the double range and no field reads it", .{clip(num)});
+            }
+            jsonResidue(alloc, p, lines, it.v.object, "", &e) catch |err| switch (err) {
+                E.@"malformed-wire" => return bad(diag, alloc, err, "a number no line maps lies beyond the range of a double", .{}),
+                else => return err,
+            };
         },
         .text => |td| try textResidue(alloc, p, lines, td, &e),
         .tlv => |items| try tlvResidue(alloc, p, lines, items, &.{}, "", &e),
@@ -5318,8 +5882,9 @@ fn fieldValue(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Lin
     return mv;
 }
 
-fn xmlText(alloc: std.mem.Allocator, t: TKind, mv: MV) ![]const u8 {
-    switch (t) {
+fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
+    switch (tr.kind) {
+        .tscale, .iscale => return textScaleEncode(alloc, tr, mv),
         .string => {
             if (mv != .str) return E.@"transform-encode";
             return mv.str;
@@ -5542,7 +6107,7 @@ fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, no
                     }
                     continue;
                 };
-                const vs = xmlText(alloc, ln.transform.kind, mv) catch |err|
+                const vs = xmlText(alloc, ln.transform, mv) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
                 // ruling 1d of 0.11
                 if (!xmlWritable(vs)) return bad(diag, alloc, E.@"transform-encode", "field {s} at {s}: the value holds a character xml cannot hold", .{ ln.key, ln.locator });
@@ -5588,7 +6153,7 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
                 const got = fieldValue(p, sc, e, ln) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
                 if (got) |mv| {
-                    raw = jsonRaw(alloc, ln.transform.kind, mv) catch |err|
+                    raw = jsonRaw(alloc, ln.transform, mv) catch |err|
                         return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
                 } else if (ln.abs_set) {
                     // an absent key writes its first sentinel (Version 0.9)
@@ -5879,7 +6444,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
                 } else if (fieldValue(p, sc, e, ln) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) |mv|
                 {
-                    raw = jsonRaw(alloc, ln.transform.kind, mv) catch |err|
+                    raw = jsonRaw(alloc, ln.transform, mv) catch |err|
                         return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
                 } else if (ln.abs_set) {
                     // an absent key writes its first sentinel; for `lon` and
@@ -6351,7 +6916,7 @@ fn textEncodeValue(alloc: std.mem.Allocator, t: Transform, mv: MV) !TextOut {
     const te = E.@"transform-encode";
     var buf = std.ArrayList(u8).init(alloc);
     switch (t.kind) {
-        .string, .float, .int, .iso8601_ms => return .{ .a = try xmlText(alloc, t.kind, mv) },
+        .string, .float, .int, .iso8601_ms => return .{ .a = try xmlText(alloc, t, mv) },
         .int_w => {
             if (mv != .int) return te;
             if (mv.int < 0) try buf.append('-');
@@ -7253,12 +7818,18 @@ const SBody = struct {
 };
 
 // Is the bit length one the transform allows?
-fn bitsLenOk(k: TKind, blen: usize) bool {
-    return switch (k) {
-        .f32_ => blen == 32,
-        .f64_ => blen == 64,
+fn bitsLenOk(t: Transform, blen: usize) bool {
+    return switch (t.kind) {
+        .f32_, .f32scale => blen == 32,
+        .f64_, .f64scale => blen == 64,
         .ascii => blen >= 8 and blen <= 2040 and blen % 8 == 0,
         .sixbit => blen >= 6 and blen <= 1530 and blen % 6 == 0,
+        .smag, .smscale => blen >= 2 and blen <= 64,
+        .chars => blk: {
+            const w = charWidth(t.cset);
+            break :blk blen >= w and blen <= 2040 and blen % w == 0;
+        },
+        .octal => blen >= 3 and blen <= 63 and blen % 3 == 0,
         else => blen >= 1 and blen <= 64,
     };
 }
@@ -7522,7 +8093,8 @@ const SParser = struct {
             try f.whens.append(alloc, n);
         } else if (is(kw, "field")) {
             if (toks.len < 4) return self.err(E.@"bad-directive", "field takes a key, a bit length and a transform", .{});
-            const t = parseTransform(toks[3]) catch |e| switch (e) {
+            const t = parseTransform(alloc, toks[3]) catch |e| switch (e) {
+                error.OutOfMemory => return e,
                 error.@"unknown-transform" => return self.lineErr(e, "unknown transform {s}", .{toks[3]}),
                 else => return self.lineErr(e, "the parameters of transform {s} are not valid", .{toks[3]}),
             };
@@ -7708,10 +8280,11 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
         if (n.tag == .field) {
             const t = n.ln.transform;
             if (kindCategory(t.kind) != .bits) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
-            if (!bitsLenOk(t.kind, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
+            if (!bitsLenOk(t, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
             if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
             if (n.ln.swap and t.kind == .sixbit) return bad(diag, alloc, bd, "line {d}: swap on sixbit", .{n.lineno});
             if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
+            if (n.ln.swap and (t.kind == .chars or t.kind == .octal)) return bad(diag, alloc, bd, "line {d}: swap with {s}", .{ n.lineno, @tagName(t.kind) });
             if (!n.ln.abs_checked) try parseAbsent(alloc, .bits, &n.ln, false, diag);
             if (n.ln.via_name.len > 0) {
                 n.ln.via = p.tables.get(n.ln.via_name) orelse

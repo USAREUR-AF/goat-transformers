@@ -1,0 +1,16 @@
+{
+  "name": "ruling-3-transforms-in-a-sequential-layout",
+  "from": "conformance-transforms-seq",
+  "to": "conformance-transforms-seq",
+  "input": "00000f42409410b1b0cffc",
+  "expect": "00000f42409410b1b0cffc",
+  "model": {
+    "time_ms": "1000",
+    "probe.c1": "-5",
+    "callsign": "AB1",
+    "probe.s1": "XY",
+    "probe.s2": "777"
+  },
+  "source": "constructed",
+  "reference": "40 bits 1000000 us, c1 100101, callsign 000001 000010 110001, opt 1, s1 011000 011001, s2 111111111, 2 zero bits"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-octal-text",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s2\":\"1234\"}",
+  "expect": "1929c00000000000000000",
+  "source": "constructed",
+  "reference": "0o1234 = 668 = 0x29c; tag absent writes zero bits"
+}

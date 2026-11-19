@@ -1,0 +1,14 @@
+{
+  "name": "ruling-5-ais6-trailing-at-signs-and-spaces-in-any-mix",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a0428008000000600a08208208280000000",
+  "expect": "1a0420000000000600a08208208280000000",
+  "model": {
+    "probe.s1": "AB",
+    "callsign": "A B",
+    "uid": "A "
+  },
+  "source": "constructed",
+  "reference": "ruling 5: ais6 A B space @ space @ @ @ decodes AB; icao6 keeps the inner space; ascii7 removes only NULs, so its trailing space stays"
+}

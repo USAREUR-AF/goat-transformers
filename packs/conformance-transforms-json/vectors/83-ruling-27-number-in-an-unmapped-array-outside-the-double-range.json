@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-number-in-an-unmapped-array-outside-the-double-range",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"n\":1,\"arr\":[1,1e400]}",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "ruling 27: arrays no field reads are included"
+}

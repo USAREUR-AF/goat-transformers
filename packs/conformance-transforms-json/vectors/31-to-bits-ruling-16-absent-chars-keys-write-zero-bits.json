@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-16-absent-chars-keys-write-zero-bits",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"AB\"}",
+  "expect": "1a0420000000000000000000000000000000",
+  "source": "constructed",
+  "reference": "ruling 16: callsign and uid absent write zero bits, not padding (icao6 code 0 is not a character)"
+}

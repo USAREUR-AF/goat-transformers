@@ -1,0 +1,12 @@
+{
+  "name": "ruling-7-exponent-form-on-a-coordinate-slot",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2,9.007199254740993e15]},\"properties\":{\"t\":0},\"id\":\"u2\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2,9007199254740993]},\"properties\":{\"t\":0},\"id\":\"u2\"}",
+  "model": {
+    "probe.big": "9007199254740993",
+    "lon": "0.0000001"
+  },
+  "source": "constructed"
+}

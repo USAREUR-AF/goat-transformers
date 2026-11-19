@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-4-siscale-encode-negative-half",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":1,\"y\":-6,\"z\":10}",
+  "expect": "1302fe00",
+  "source": "constructed",
+  "reference": "y: (-6+3)/2 = -1.5 -> -2 (fe)"
+}

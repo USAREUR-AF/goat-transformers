@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-ruling-2-via-text-with-no-entry",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"label\":\"mid\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

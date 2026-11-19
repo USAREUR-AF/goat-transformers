@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-chars-ruling-17-ascii7-nul",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"A\",\"id\":\"A\\u0000\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

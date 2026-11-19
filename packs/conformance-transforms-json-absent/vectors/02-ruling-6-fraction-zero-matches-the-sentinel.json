@@ -1,0 +1,13 @@
+{
+  "name": "ruling-6-fraction-zero-matches-the-sentinel",
+  "from": "conformance-transforms-json-absent",
+  "to": "conformance-transforms-json-absent",
+  "input": "{\"cnt\":100.0}",
+  "expect": "{\"cnt\":100}",
+  "model": {
+    "@absent": [
+      "probe.cnt"
+    ]
+  },
+  "source": "constructed"
+}

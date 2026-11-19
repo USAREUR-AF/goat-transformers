@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "exact.hpp"
 #include "util.hpp"
 
 namespace goat_transformers {
@@ -38,6 +39,18 @@ const char* transform_name(Transform t) {
         case Transform::HmsDmy: return "hms_dmy";
         case Transform::Utf8: return "utf8";
         case Transform::Hex: return "hex";
+        case Transform::Uiscale: return "uiscale";
+        case Transform::Siscale: return "siscale";
+        case Transform::Smag: return "smag";
+        case Transform::Smscale: return "smscale";
+        case Transform::F32scale: return "f32scale";
+        case Transform::F64scale: return "f64scale";
+        case Transform::CharsIcao6: return "chars:icao6";
+        case Transform::CharsAis6: return "chars:ais6";
+        case Transform::CharsAscii7: return "chars:ascii7";
+        case Transform::Octal: return "octal";
+        case Transform::Scale: return "scale";
+        case Transform::Iscale: return "iscale";
     }
     return "?";
 }
@@ -82,7 +95,8 @@ bool parse_scale_factor(std::string_view factor, bool& fraction, double& value, 
             den = static_cast<double>(d);
         } else {
             // The `scale` derive function (0.11 ruling 2c): <num> integer text
-            // (2a), <den> an unsigned decimal integer that is not zero.
+            // (2a), <den> an unsigned decimal integer that is not zero. It is
+            // not a transform, so 0.15 ruling 25 leaves it signed.
             std::int64_t n = 0;
             std::uint64_t d = 0;
             if (!parse_int_text(factor.substr(0, slash), n) || !parse_unsigned_text(factor.substr(slash + 1), d)) {
@@ -131,6 +145,24 @@ bool parse_scale_args(std::string_view args, FieldLine& f, std::string& err) {
         return false;
     }
     return true;
+}
+
+// uiscale / siscale / iscale arguments (v0.15, Exact factors): exactly
+// <factor> or <factor>:<offset>.
+bool parse_exact_args(std::string_view args, FieldLine& f, std::string& err) {
+    std::string_view factor = args, offset;
+    const std::size_t colon = args.find(':');
+    f.exact_offset = 0;
+    if (colon != std::string_view::npos) {
+        factor = args.substr(0, colon);
+        offset = args.substr(colon + 1);
+        if (offset.find(':') != std::string_view::npos) {
+            err = "an integer scale takes <factor>[:<offset>], not '" + std::string(args) + "'";
+            return false;
+        }
+        if (!parse_exact_offset(offset, f.exact_offset, err)) return false;
+    }
+    return parse_exact_factor(factor, f.exact_num, f.exact_den, err);
 }
 }  // namespace
 
@@ -201,6 +233,67 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
             return -1;
         }
         return parse_scale_args(args, f, err) ? 0 : -1;
+    }
+    // v0.15. A known name with parameters that do not parse is bad-directive.
+    {
+        const std::string_view args = has_params ? token.substr(colon + 1) : std::string_view();
+        static const struct {
+            const char* name;
+            Transform t;
+            int params;  // 0 none, 1 exact factor, 2 float factor, 3 character set
+        } kNew[] = {{"uiscale", Transform::Uiscale, 1}, {"siscale", Transform::Siscale, 1},
+                    {"iscale", Transform::Iscale, 1},   {"smag", Transform::Smag, 0},
+                    {"octal", Transform::Octal, 0},     {"smscale", Transform::Smscale, 2},
+                    {"f32scale", Transform::F32scale, 2}, {"f64scale", Transform::F64scale, 2},
+                    {"scale", Transform::Scale, 2},     {"chars", Transform::CharsIcao6, 3}};
+        for (const auto& e : kNew) {
+            if (name != e.name) continue;
+            bool ok = true;
+            f.transform = e.t;
+            switch (e.params) {
+                case 0:
+                    if (has_params) {
+                        err = "transform '" + std::string(name) + "' takes no parameter";
+                        ok = false;
+                    }
+                    break;
+                case 1:
+                    if (!has_params) {
+                        err = "transform '" + std::string(name) + "' needs <factor>[:<offset>]";
+                        ok = false;
+                    } else {
+                        ok = parse_exact_args(args, f, err);
+                    }
+                    break;
+                case 2:
+                    if (!has_params) {
+                        err = "transform '" + std::string(name) + "' needs <factor>[:<offset>]";
+                        ok = false;
+                    } else if (args.find(':') != std::string_view::npos &&
+                               args.find(':', args.find(':') + 1) != std::string_view::npos) {
+                        err = "transform '" + std::string(name) + "' takes a factor and an optional offset";
+                        ok = false;
+                    } else {
+                        ok = parse_scale_args(args, f, err);
+                    }
+                    break;
+                case 3:
+                    if (args == "icao6") f.transform = Transform::CharsIcao6;
+                    else if (args == "ais6") f.transform = Transform::CharsAis6;
+                    else if (args == "ascii7") f.transform = Transform::CharsAscii7;
+                    else {
+                        err = "transform 'chars' needs a character set icao6, ais6 or ascii7, not '" +
+                              std::string(args) + "'";
+                        ok = false;
+                    }
+                    break;
+            }
+            if (!ok) {
+                err += " ('" + std::string(token) + "')";
+                return -1;
+            }
+            return 0;
+        }
     }
     err = "unknown transform '" + std::string(token) + "'";
     return -2;
@@ -289,8 +382,63 @@ bool transform_is_bits(Transform t) {
         case Transform::F32:
         case Transform::F64:
         case Transform::Ascii:
-        case Transform::Sixbit: return true;
+        case Transform::Sixbit:
+        case Transform::Uiscale:
+        case Transform::Siscale:
+        case Transform::Smag:
+        case Transform::Smscale:
+        case Transform::F32scale:
+        case Transform::F64scale:
+        case Transform::CharsIcao6:
+        case Transform::CharsAis6:
+        case Transform::CharsAscii7:
+        case Transform::Octal: return true;
         default: return false;
+    }
+}
+
+bool transform_is_v015(Transform t) {
+    switch (t) {
+        case Transform::Uiscale:
+        case Transform::Siscale:
+        case Transform::Smag:
+        case Transform::Smscale:
+        case Transform::F32scale:
+        case Transform::F64scale:
+        case Transform::CharsIcao6:
+        case Transform::CharsAis6:
+        case Transform::CharsAscii7:
+        case Transform::Octal:
+        case Transform::Scale:
+        case Transform::Iscale: return true;
+        default: return false;
+    }
+}
+
+bool transform_is_text_scale(Transform t) { return t == Transform::Scale || t == Transform::Iscale; }
+
+unsigned chars_width(Transform t) {
+    switch (t) {
+        case Transform::CharsIcao6:
+        case Transform::CharsAis6: return 6;
+        case Transform::CharsAscii7: return 7;
+        default: return 0;
+    }
+}
+
+bool bits_len_allowed(Transform t, std::uint32_t len) {
+    if (const unsigned w = chars_width(t)) return len >= w && len <= 2040 && len % w == 0;
+    switch (t) {
+        case Transform::F32:
+        case Transform::F32scale: return len == 32;
+        case Transform::F64:
+        case Transform::F64scale: return len == 64;
+        case Transform::Ascii: return len >= 8 && len <= 2040 && len % 8 == 0;
+        case Transform::Sixbit: return len >= 6 && len <= 1530 && len % 6 == 0;  // v0.14
+        case Transform::Smag:
+        case Transform::Smscale: return len >= 2 && len <= 64;
+        case Transform::Octal: return len >= 3 && len <= 63 && len % 3 == 0;
+        default: return len >= 1 && len <= 64;
     }
 }
 
@@ -310,8 +458,13 @@ int protobuf_wire_type(Transform t) {
     }
 }
 
-Value decode_json_number(Transform t, const std::string& text) {
-    switch (t) {
+namespace {
+Value decode_text_scale(const FieldLine& f, const std::string& text);
+std::string encode_text_scale(const FieldLine& f, const Value& v);
+}  // namespace
+
+Value decode_json_number(const FieldLine& f, const std::string& text) {
+    switch (f.transform) {
         case Transform::Float: {
             double d;
             if (!parse_number_text(text, d))
@@ -324,11 +477,13 @@ Value decode_json_number(Transform t, const std::string& text) {
                 throw std::invalid_argument("the number " + text + " is not an integer within 64 bits");
             return Value::of_int(v);
         }
-        default: return decode_value(t, text);
+        default: return decode_value(f, text);
     }
 }
 
-Value decode_value(Transform t, const std::string& text) {
+Value decode_value(const FieldLine& f, const std::string& text) {
+    const Transform t = f.transform;
+    if (transform_is_text_scale(t)) return decode_text_scale(f, text);
     switch (t) {
         case Transform::String: return Value::of_string(text);
         // 0.11 ruling 2c: number text (2b) and integer text (2a), nothing trimmed.
@@ -415,7 +570,8 @@ double scale_decode(const FieldLine& f, double v) {
     double x = f.scale_fraction ? v * f.scale_num / f.scale_den : v * f.scale_factor;
     return x + f.scale_offset;
 }
-// The quotient before rounding (0.11 ruling 4).
+// The quotient before rounding (0.11 ruling 4); the float scales of 0.15 take
+// it unrounded (0.15 ruling 8).
 double scale_encode(const FieldLine& f, double x) {
     double d = x - f.scale_offset;
     return f.scale_fraction ? d * f.scale_den / f.scale_num : d / f.scale_factor;
@@ -433,7 +589,135 @@ float narrow_single(double d) {
         throw std::invalid_argument("value outside the range of a single: " + (std::isfinite(d) ? format_double(d) : std::string("not finite")));
     return static_cast<float>(d);
 }
+
+double finite_result(double d) {
+    if (!std::isfinite(d)) throw std::invalid_argument("the scaled value is not finite");
+    return d;
+}
+
+Value decode_text_scale(const FieldLine& f, const std::string& text) {
+    if (f.transform == Transform::Scale) {
+        double d;
+        // The number as `float` decodes it: number text (0.11 ruling 2b).
+        if (!parse_number_text(text, d)) throw std::invalid_argument("not number text: \"" + text + "\"");
+        return Value::of_float(finite_result(scale_decode(f, d)));
+    }
+    std::int64_t out = 0;
+    std::string why;
+    if (!iscale_decode(text, f.exact_num, f.exact_den, f.exact_offset, out, why)) throw std::invalid_argument(why);
+    return Value::of_int(out);
+}
+
+std::string encode_text_scale(const FieldLine& f, const Value& v) {
+    if (f.transform == Transform::Scale) return format_double(finite_result(scale_encode(f, model_double(v))));
+    std::string out, why;
+    if (!iscale_encode(model_int(v), f.exact_num, f.exact_den, f.exact_offset, out, why))
+        throw std::invalid_argument(why);
+    return out;
+}
+
+// smag: the top bit of the `len` bits is the sign, the others the magnitude.
+std::uint64_t smag_bits(bool neg, std::uint64_t mag, std::uint32_t len) {
+    if (mag >= (std::uint64_t{1} << (len - 1)))
+        throw std::invalid_argument("magnitude " + std::to_string(mag) + " does not fit the " +
+                                    std::to_string(len - 1) + " magnitude bits");
+    return (neg && mag != 0 ? std::uint64_t{1} << (len - 1) : 0) | mag;
+}
+
+std::int64_t smag_value(std::uint64_t raw, std::uint32_t len) {
+    const std::uint64_t mag = raw & low_mask(len - 1);
+    const bool neg = (raw >> (len - 1)) & 1u;
+    return neg ? -static_cast<std::int64_t>(mag) : static_cast<std::int64_t>(mag);
+}
+
+// Text of a model value for the string transforms (chars, octal).
+std::string model_text(const Value& v) {
+    switch (v.kind) {
+        case Value::Kind::String: return v.s;
+        case Value::Kind::Int: return std::to_string(v.i);
+        case Value::Kind::Float:
+            try {
+                return format_double(v.f);
+            } catch (const std::domain_error& e) {
+                throw std::invalid_argument(e.what());
+            }
+    }
+    return std::string();
+}
 }  // namespace
+
+Value decode_chars(Transform t, const std::vector<std::uint8_t>& codes) {
+    std::string text;
+    text.reserve(codes.size());
+    for (std::size_t k = 0; k < codes.size(); ++k) {
+        const unsigned c = codes[k];
+        char ch = 0;
+        bool ok = true;
+        switch (t) {
+            case Transform::CharsIcao6:
+                if (c >= 1 && c <= 26) ch = static_cast<char>('A' + c - 1);
+                else if (c == 32 || (c >= 48 && c <= 57)) ch = static_cast<char>(c);
+                else ok = false;
+                break;
+            case Transform::CharsAis6: ch = static_cast<char>(c < 32 ? c + 64 : c); break;
+            case Transform::CharsAscii7:
+                if (c == 0 || (c >= 32 && c <= 126)) ch = static_cast<char>(c);
+                else ok = false;
+                break;
+            default: ok = false; break;
+        }
+        if (!ok)
+            throw std::invalid_argument("character " + std::to_string(k) + " has the code " + std::to_string(c) +
+                                        ", which " + transform_name(t) + " does not define");
+        text += ch;
+    }
+    std::size_t n = text.size();
+    if (t == Transform::CharsAscii7) {
+        const std::size_t nul = text.find('\0');
+        if (nul != std::string::npos) {
+            if (text.find_first_not_of('\0', nul) != std::string::npos)
+                throw std::invalid_argument("a NUL is followed by a character that is not NUL");
+            n = nul;
+        }
+    } else {
+        while (n > 0 && (text[n - 1] == ' ' || (t == Transform::CharsAis6 && text[n - 1] == '@'))) --n;
+    }
+    text.resize(n);
+    return Value::of_string(std::move(text));
+}
+
+std::vector<std::uint8_t> encode_chars(Transform t, const Value& v, std::size_t count) {
+    const std::string text = model_text(v);
+    if (text.size() > count)
+        throw std::invalid_argument("text of " + std::to_string(text.size()) + " characters does not fit " +
+                                    std::to_string(count));
+    std::vector<std::uint8_t> codes;
+    codes.reserve(count);
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        const unsigned c = static_cast<unsigned char>(text[k]);
+        int code = -1;
+        switch (t) {
+            case Transform::CharsIcao6:
+                if (c >= 'A' && c <= 'Z') code = static_cast<int>(c - 'A' + 1);
+                else if (c == ' ' || (c >= '0' && c <= '9')) code = static_cast<int>(c);
+                break;
+            case Transform::CharsAis6:
+                if (c >= 32 && c <= 63) code = static_cast<int>(c);
+                else if (c >= 64 && c <= 95) code = static_cast<int>(c - 64);
+                break;
+            case Transform::CharsAscii7:
+                if (c >= 32 && c <= 126) code = static_cast<int>(c);
+                break;
+            default: break;
+        }
+        if (code < 0)
+            throw std::invalid_argument("character " + std::to_string(k) + " (byte " + std::to_string(c) +
+                                        ") is not in " + transform_name(t));
+        codes.push_back(static_cast<std::uint8_t>(code));
+    }
+    codes.resize(count, t == Transform::CharsIcao6 ? 32 : 0);
+    return codes;
+}
 
 Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len) {
     raw &= low_mask(len);
@@ -460,6 +744,33 @@ Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len
             double d;
             std::memcpy(&d, &raw, sizeof(d));
             return Value::of_float(finite_wire(d));
+        }
+        case Transform::Uiscale:
+        case Transform::Siscale: {
+            const Big v = f.transform == Transform::Uiscale ? Big::of_u64(raw) : Big::of_i64(sign_extend(raw, len));
+            std::int64_t out = 0;
+            if (!exact_scale(v, f.exact_num, f.exact_den, f.exact_offset, out))
+                throw std::invalid_argument("the scaled value is outside the signed 64-bit range");
+            return Value::of_int(out);
+        }
+        case Transform::Smag: return Value::of_int(smag_value(raw, len));
+        case Transform::Smscale:
+            return Value::of_float(finite_result(scale_decode(f, static_cast<double>(smag_value(raw, len)))));
+        case Transform::F32scale: {
+            std::uint32_t u = static_cast<std::uint32_t>(raw);
+            float fl;
+            std::memcpy(&fl, &u, sizeof(fl));
+            return Value::of_float(finite_result(scale_decode(f, static_cast<double>(fl))));
+        }
+        case Transform::F64scale: {
+            double d;
+            std::memcpy(&d, &raw, sizeof(d));
+            return Value::of_float(finite_result(scale_decode(f, d)));
+        }
+        case Transform::Octal: {
+            std::string s(len / 3, '0');
+            for (std::size_t k = s.size(); k-- > 0; raw >>= 3) s[k] = static_cast<char>('0' + (raw & 7u));
+            return Value::of_string(std::move(s));
         }
         default:
             break;
@@ -527,6 +838,62 @@ std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_
             if (!std::isfinite(d)) throw std::invalid_argument("a model float is finite");
             std::uint64_t u = 0;
             std::memcpy(&u, &d, sizeof(d));
+            return u;
+        }
+        case Transform::Uiscale:
+        case Transform::Siscale: {
+            const Big r = exact_unscale(model_int(v), f.exact_num, f.exact_den, f.exact_offset);
+            if (f.transform == Transform::Uiscale) {
+                std::uint64_t u = 0;
+                if (!big_to_u64(r, u) || (len < 64 && (u >> len) != 0))
+                    throw std::invalid_argument("value outside the range of an unsigned " + std::to_string(len) +
+                                                "-bit field");
+                return u;
+            }
+            std::int64_t n = 0;
+            const std::int64_t half = len == 64 ? 0 : std::int64_t{1} << (len - 1);
+            if (!big_to_i64(r, n) || (len < 64 && (n < -half || n >= half)))
+                throw std::invalid_argument("value outside the range of a signed " + std::to_string(len) +
+                                            "-bit field");
+            return static_cast<std::uint64_t>(n) & mask;
+        }
+        case Transform::Smag: {
+            const std::int64_t x = model_int(v);
+            const std::uint64_t mag = x < 0 ? ~static_cast<std::uint64_t>(x) + 1 : static_cast<std::uint64_t>(x);
+            return smag_bits(x < 0, mag, len);
+        }
+        case Transform::Smscale: {
+            // round((x - offset) / factor) as sscale computes it; the sign of the rounded integer.
+            const double q = scale_encode(f, model_double(v));
+            if (!std::isfinite(q)) throw std::invalid_argument("the scaled value is not finite");
+            const double r = std::round(q);  // half away from zero (0.11 ruling 4a)
+            if (std::fabs(r) >= std::ldexp(1.0, static_cast<int>(len) - 1))
+                throw std::invalid_argument("value outside the range of a " + std::to_string(len) +
+                                            "-bit sign and magnitude");
+            return smag_bits(r < 0, static_cast<std::uint64_t>(std::fabs(r)), len);
+        }
+        case Transform::F32scale: {
+            float fl = narrow_single(finite_result(scale_encode(f, model_double(v))));
+            std::uint32_t u = 0;
+            std::memcpy(&u, &fl, sizeof(fl));
+            return u;
+        }
+        case Transform::F64scale: {
+            double d = finite_result(scale_encode(f, model_double(v)));
+            std::uint64_t u = 0;
+            std::memcpy(&u, &d, sizeof(d));
+            return u;
+        }
+        case Transform::Octal: {
+            const std::string text = model_text(v);
+            if (text.size() != len / 3)
+                throw std::invalid_argument("octal text \"" + text + "\" is not exactly " + std::to_string(len / 3) +
+                                            " digits");
+            std::uint64_t u = 0;
+            for (char c : text) {
+                if (c < '0' || c > '7') throw std::invalid_argument("octal text \"" + text + "\" has a digit not 0-7");
+                u = (u << 3) | static_cast<std::uint64_t>(c - '0');
+            }
             return u;
         }
         default:
@@ -618,8 +985,10 @@ std::string encode_ascii(const Value& v, std::size_t nbytes) {
     return text;
 }
 
-std::string encode_value(Transform t, const Value& v) {
+std::string encode_value(const FieldLine& f, const Value& v) {
+    const Transform t = f.transform;
     try {
+        if (transform_is_text_scale(t)) return encode_text_scale(f, v);
         switch (t) {
             case Transform::String:
                 switch (v.kind) {

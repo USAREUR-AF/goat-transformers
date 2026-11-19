@@ -1,0 +1,14 @@
+{
+  "name": "ruling-4-siscale-negative-half-and-minimums",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "13fb8001",
+  "expect": "13fa8001",
+  "model": {
+    "probe.x": "-3",
+    "probe.y": "-259",
+    "probe.z": "12"
+  },
+  "source": "constructed",
+  "reference": "ruling 4: x: -5/2 = -2.5 -> -3, encode -6 (fa); y: -128*2-3 = -259; z: 1*3/2 = 1.5 -> 2, +10 = 12"
+}

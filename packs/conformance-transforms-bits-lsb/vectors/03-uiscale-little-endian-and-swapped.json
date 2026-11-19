@@ -1,0 +1,14 @@
+{
+  "name": "uiscale-little-endian-and-swapped",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "11e8030000000000000102",
+  "expect": "11e8030000000000000102",
+  "model": {
+    "@kind": "uis",
+    "time_ms": "1",
+    "probe.n": "253"
+  },
+  "source": "constructed",
+  "reference": "time_ms: e8 03 is 1000 us; n: swap reverses 01 02 to 02 01, read low bit first 0x0102 = 258, -5"
+}

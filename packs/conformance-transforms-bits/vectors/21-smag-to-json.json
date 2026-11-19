@@ -1,0 +1,8 @@
+{
+  "name": "smag-to-json",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-json",
+  "input": "15817ff870",
+  "expect": "{\"c1\":-1,\"c2\":2047,\"ratio\":-1.75}",
+  "source": "constructed"
+}

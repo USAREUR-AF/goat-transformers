@@ -40,7 +40,17 @@ func checkTransformName(name string) (ErrorKind, error) {
 			return ErrBadDirective, err
 		}
 	case "uscale", "sscale":
+		// A fraction factor is unsigned (ruling 25 of 0.15).
+		if err := checkUnsignedFraction(name); err != nil {
+			return ErrBadDirective, err
+		}
 		if _, err := newScale(name, base == "sscale"); err != nil {
+			return ErrBadDirective, err
+		}
+	case "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale":
+		// The value transforms of 0.15: a parameter that does not parse and
+		// an unknown character set are bad-directive.
+		if err := checkV015Params(base, name); err != nil {
 			return ErrBadDirective, err
 		}
 	case "dec", "dm", "hms", "hms_dmy":

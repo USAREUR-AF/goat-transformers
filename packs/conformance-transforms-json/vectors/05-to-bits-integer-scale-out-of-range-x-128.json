@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-integer-scale-out-of-range-x-128",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":64}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "64*2 = 128 > 127"
+}

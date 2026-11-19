@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-group-item-member-read-by-its-field",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"items\":[{\"q\":1e400}]}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 27: a number outside the double range that a field maps, here an item's int, is transform-decode"
+}

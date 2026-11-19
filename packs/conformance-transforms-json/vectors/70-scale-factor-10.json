@@ -1,0 +1,11 @@
+{
+  "name": "scale-factor-10",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"ce\":2.5}",
+  "expect": "{\"ce\":2.5}",
+  "model": {
+    "ce": "25"
+  },
+  "source": "constructed"
+}

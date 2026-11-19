@@ -11,7 +11,12 @@ import java.nio.charset.StandardCharsets;
  * A bits transform is valid only on a bits wire.
  */
 public final class BitsTransform {
-    enum Kind { UINT, TWOS, LINSCALE, USCALE, SSCALE, F32, F64, ASCII, SIXBIT }
+    enum Kind { UINT, TWOS, LINSCALE, USCALE, SSCALE, F32, F64, ASCII, SIXBIT,
+        // engine-spec 0.15
+        UISCALE, SISCALE, SMAG, SMSCALE, F32SCALE, F64SCALE, CHARS, OCTAL }
+
+    /** The character sets of {@code chars:<set>}. */
+    enum CharSet { ICAO6, AIS6, ASCII7 }
 
     private final Kind kind;
     private final String name;
@@ -23,6 +28,9 @@ public final class BitsTransform {
     private double num;
     private double den;
     private double offset;
+    private Scales.Exact exact;       // uiscale, siscale
+    private Scales.Floating floating; // smscale, f32scale, f64scale
+    private CharSet set;              // chars
 
     private BitsTransform(Kind kind, String name) {
         this.kind = kind;
@@ -35,9 +43,14 @@ public final class BitsTransform {
     public String yields() {
         switch (kind) {
             case UINT:
-            case TWOS: return "int";
+            case TWOS:
+            case UISCALE:
+            case SISCALE:
+            case SMAG: return "int";
             case ASCII:
-            case SIXBIT: return "string";
+            case SIXBIT:
+            case CHARS:
+            case OCTAL: return "string";
             default: return "float";
         }
     }
@@ -50,6 +63,33 @@ public final class BitsTransform {
     /** {@code ascii} or {@code sixbit}: the transforms that take the field option {@code trim}. */
     boolean takesTrim() { return kind == Kind.ASCII || kind == Kind.SIXBIT; }
 
+    /** {@code chars:<set>}: read and written as characters of {@link #charWidth} bits. */
+    boolean isChars() { return kind == Kind.CHARS; }
+
+    /** {@code chars} and {@code octal} take no {@code swap} (engine-spec 0.15, Load errors). */
+    boolean refusesSwap() { return kind == Kind.CHARS || kind == Kind.OCTAL; }
+
+    int charWidth() { return set == CharSet.ASCII7 ? 7 : 6; }
+
+    /** True when {@code head} is the name of a {@code bits} transform of engine-spec 0.15. */
+    static boolean isV015(String head) {
+        switch (head) {
+            case "uiscale":
+            case "siscale":
+            case "smag":
+            case "smscale":
+            case "f32scale":
+            case "f64scale":
+            case "chars":
+            case "octal":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static String headOf(String n) { return head(n); }
+
     private static String head(String n) {
         int c = n.indexOf(':');
         return c < 0 ? n : n.substring(0, c);
@@ -61,6 +101,15 @@ public final class BitsTransform {
             case "linscale":
             case "uscale":
             case "sscale":
+                return true;
+            case "uiscale":
+            case "siscale":
+            case "smag":
+            case "smscale":
+            case "f32scale":
+            case "f64scale":
+            case "chars":
+            case "octal":
                 return true;
             case "uint":
             case "twos":
@@ -97,6 +146,13 @@ public final class BitsTransform {
     /** Parse a bits transform token, checking its parameters (ruling 4d of 0.11). The caller has checked the name. */
     static BitsTransform parse(String name, String format, String where) {
         String[] p = name.split(":", -1);
+        if (isV015(p[0])) {
+            try {
+                return parseV015(name, p);
+            } catch (IllegalArgumentException ex) {
+                throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": " + name + ": " + ex.getMessage());
+            }
+        }
         switch (p[0]) {
             case "uint": return new BitsTransform(Kind.UINT, name);
             case "twos": return new BitsTransform(Kind.TWOS, name);
@@ -121,6 +177,7 @@ public final class BitsTransform {
                 int slash = p[1].indexOf('/');
                 if (slash >= 0) {
                     String a = p[1].substring(0, slash), b = p[1].substring(slash + 1);
+                    // a fraction has unsigned num and den (ruling 25 of 0.15)
                     if (!Transform.UNSIGNED.matcher(a).matches() || !Transform.UNSIGNED.matcher(b).matches()) {
                         throw bad(format, where, "a fraction factor is <num>/<den> of two unsigned decimal integers, got \"" + p[1] + "\"");
                     }
@@ -138,9 +195,58 @@ public final class BitsTransform {
         }
     }
 
+    private static BitsTransform parseV015(String name, String[] p) {
+        String[] params = java.util.Arrays.copyOfRange(p, 1, p.length);
+        BitsTransform t;
+        switch (p[0]) {
+            case "uiscale":
+            case "siscale":
+                t = new BitsTransform(p[0].equals("uiscale") ? Kind.UISCALE : Kind.SISCALE, name);
+                t.exact = Scales.Exact.parse(params);
+                return t;
+            case "smscale":
+            case "f32scale":
+            case "f64scale":
+                t = new BitsTransform(p[0].equals("smscale") ? Kind.SMSCALE : p[0].equals("f32scale") ? Kind.F32SCALE : Kind.F64SCALE, name);
+                t.floating = Scales.Floating.parse(params);
+                return t;
+            case "smag":
+            case "octal":
+                if (params.length != 0) throw new IllegalArgumentException("takes no parameter");
+                return new BitsTransform(p[0].equals("smag") ? Kind.SMAG : Kind.OCTAL, name);
+            default: { // chars
+                if (params.length != 1) throw new IllegalArgumentException("is chars:<icao6|ais6|ascii7>");
+                t = new BitsTransform(Kind.CHARS, name);
+                switch (params[0]) {
+                    case "icao6": t.set = CharSet.ICAO6; break;
+                    case "ais6": t.set = CharSet.AIS6; break;
+                    case "ascii7": t.set = CharSet.ASCII7; break;
+                    default: throw new IllegalArgumentException("unknown character set \"" + params[0] + "\"");
+                }
+                return t;
+            }
+        }
+    }
+
     /** Null when a field of {@code len} bits may carry this transform, else the reason. */
     String checkLen(int len) {
         switch (kind) {
+            case UISCALE:
+            case SISCALE:
+                return (len >= 1 && len <= 64) ? null : name + " needs a length of 1 to 64 bits, got " + len;
+            case SMAG:
+            case SMSCALE:
+                return (len >= 2 && len <= 64) ? null : name + " needs a length of 2 to 64 bits, got " + len;
+            case F32SCALE: return len == 32 ? null : "f32scale needs a 32-bit field, got " + len;
+            case F64SCALE: return len == 64 ? null : "f64scale needs a 64-bit field, got " + len;
+            case CHARS: {
+                int w = charWidth();
+                return (len % w == 0 && len >= w && len <= 2040) ? null
+                        : name + " needs a length that is a multiple of " + w + " from " + w + " to 2040, got " + len;
+            }
+            case OCTAL:
+                return (len % 3 == 0 && len >= 3 && len <= 63) ? null
+                        : "octal needs a length that is a multiple of 3 from 3 to 63, got " + len;
             case F32: return len == 32 ? null : "f32 needs a 32-bit field, got " + len;
             case F64: return len == 64 ? null : "f64 needs a 64-bit field, got " + len;
             case ASCII:
@@ -189,9 +295,53 @@ public final class BitsTransform {
                 return finite((double) Float.intBitsToFloat((int) raw));
             case F64:
                 return finite(Double.longBitsToDouble(raw));
+            case UISCALE:
+                return exact.decode(new BigInteger(Long.toUnsignedString(raw)), BigInteger.ONE);
+            case SISCALE:
+                return exact.decode(BigInteger.valueOf(twosValue(raw, len)), BigInteger.ONE);
+            case SMAG:
+                return smagValue(raw, len);
+            case SMSCALE:
+                return finite(floating.apply((double) smagValue(raw, len)));
+            case F32SCALE:
+                return finite(floating.apply(finite((double) Float.intBitsToFloat((int) raw))));
+            case F64SCALE:
+                return finite(floating.apply(finite(Double.longBitsToDouble(raw))));
+            case OCTAL: {
+                StringBuilder b = new StringBuilder(Long.toOctalString(raw));
+                while (b.length() < len / 3) b.insert(0, '0');
+                return b.toString();
+            }
             default:
                 throw new IllegalStateException(kind.name());
         }
+    }
+
+    /** The sign-and-magnitude value of a {@code len}-bit field: the top bit is the sign, the rest the magnitude. */
+    static long smagValue(long raw, int len) {
+        long mag = raw & mask(len - 1);
+        return ((raw >>> (len - 1)) & 1) != 0 ? -mag : mag;
+    }
+
+    /** {@code smag} encode of the integer {@code r}: sign 1 when negative, magnitude below {@code 2^(len-1)}. */
+    static long smagBits(BigInteger r, int len) {
+        BigInteger mag = r.abs();
+        if (mag.bitLength() > len - 1) {
+            throw new IllegalArgumentException("magnitude " + mag + " does not fit the " + (len - 1) + " magnitude bits");
+        }
+        long bits = mag.longValue();
+        if (r.signum() < 0) bits |= 1L << (len - 1);
+        return bits;
+    }
+
+    /** {@code value} fits {@code len} bits as unsigned ({@code signed} false) or two's complement. */
+    private static long fit(BigInteger r, int len, boolean signed) {
+        boolean ok = signed ? r.bitLength() <= len - 1 : r.signum() >= 0 && r.bitLength() <= len;
+        if (!ok) {
+            throw new IllegalArgumentException("value " + r + " does not fit a " + len + "-bit "
+                    + (signed ? "two's-complement" : "unsigned") + " field");
+        }
+        return r.longValue() & mask(len);
     }
 
     /** A model float is always finite: infinity and not-a-number on the wire are a decode failure. */
@@ -247,6 +397,33 @@ public final class BitsTransform {
                 double d = Transform.asDouble(value);
                 if (!Double.isFinite(d)) throw new IllegalArgumentException("value is not finite");
                 return Double.doubleToLongBits(d);
+            }
+            case UISCALE:
+            case SISCALE:
+                return fit(exact.encodeRounded(value), len, kind == Kind.SISCALE);
+            case SMAG:
+                return smagBits(BigInteger.valueOf(Transform.asLong(value)), len);
+            case SMSCALE: {
+                double q = Transform.roundHalfAway(floating.invert(Transform.asDouble(value)));
+                if (!Double.isFinite(q)) throw new IllegalArgumentException("the quotient is not finite");
+                return smagBits(new BigDecimal(q).toBigIntegerExact(), len);
+            }
+            case F32SCALE: {
+                double q = floating.invert(Transform.asDouble(value));
+                if (!Double.isFinite(q)) throw new IllegalArgumentException("the quotient is not finite");
+                return Float.floatToIntBits(narrow(q)) & 0xFFFFFFFFL;
+            }
+            case F64SCALE: {
+                double q = floating.invert(Transform.asDouble(value));
+                if (!Double.isFinite(q)) throw new IllegalArgumentException("the quotient is not finite");
+                return Double.doubleToLongBits(q);
+            }
+            case OCTAL: {
+                String s = String.valueOf(value);
+                if (s.length() != len / 3 || !s.matches("[0-7]*")) {
+                    throw new IllegalArgumentException("octal needs exactly " + (len / 3) + " digits 0-7, got \"" + s + "\"");
+                }
+                return s.isEmpty() ? 0 : Long.parseLong(s, 8);
             }
             default:
                 throw new IllegalStateException(kind.name());
@@ -350,5 +527,82 @@ public final class BitsTransform {
         byte[] out = new byte[size];
         System.arraycopy(b, 0, out, 0, b.length);
         return out;
+    }
+
+    /** {@code chars}: the codes of the field's characters, first character first, to text. */
+    String decodeChars(int[] codes) {
+        char[] out = new char[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            int c = codes[i];
+            char ch;
+            switch (set) {
+                case ICAO6:
+                    if (c >= 1 && c <= 26) ch = (char) ('A' + c - 1);
+                    else if (c == 32) ch = ' ';
+                    else if (c >= 48 && c <= 57) ch = (char) c;
+                    else throw new IllegalArgumentException("code " + c + " of character " + i + " is not in icao6");
+                    break;
+                case AIS6:
+                    ch = (char) (c < 32 ? c + 64 : c);
+                    break;
+                default:
+                    if (c == 0) ch = 0;
+                    else if (c >= 32 && c <= 126) ch = (char) c;
+                    else throw new IllegalArgumentException("code " + c + " of character " + i + " is not in ascii7");
+                    if (c != 0 && i > 0 && out[i - 1] == 0) {
+                        throw new IllegalArgumentException("a NUL is followed by a character that is not NUL at character " + i);
+                    }
+            }
+            out[i] = ch;
+        }
+        int n = out.length;
+        switch (set) {
+            case ICAO6:
+                while (n > 0 && out[n - 1] == ' ') n--;
+                break;
+            case AIS6:
+                while (n > 0 && (out[n - 1] == ' ' || out[n - 1] == '@')) n--;
+                break;
+            default:
+                while (n > 0 && out[n - 1] == 0) n--;
+        }
+        return new String(out, 0, n);
+    }
+
+    /** {@code chars}: text to the codes of {@code count} characters, padded with the set's padding. */
+    int[] encodeChars(Object value, int count) {
+        String s = value instanceof Double ? Transform.formatDouble((Double) value) : String.valueOf(value);
+        if (s.length() > count) {
+            throw new IllegalArgumentException("text of " + s.length() + " characters does not fit " + count + " characters");
+        }
+        int[] codes = new int[count];
+        int pad = set == CharSet.ICAO6 ? 32 : 0;
+        for (int i = 0; i < count; i++) {
+            if (i >= s.length()) {
+                codes[i] = pad;
+                continue;
+            }
+            char ch = s.charAt(i);
+            int c;
+            switch (set) {
+                case ICAO6:
+                    if (ch >= 'A' && ch <= 'Z') c = ch - 'A' + 1;
+                    else if (ch == ' ' || (ch >= '0' && ch <= '9')) c = ch;
+                    else c = -1;
+                    break;
+                case AIS6:
+                    if (ch >= 64 && ch <= 95) c = ch - 64;
+                    else if (ch >= 32 && ch <= 63) c = ch;
+                    else c = -1;
+                    break;
+                default:
+                    c = (ch >= 32 && ch <= 126) ? ch : -1;
+            }
+            if (c < 0) {
+                throw new IllegalArgumentException(String.format("character U+%04X at %d is not in %s", (int) ch, i, set.name().toLowerCase()));
+            }
+            codes[i] = c;
+        }
+        return codes;
     }
 }

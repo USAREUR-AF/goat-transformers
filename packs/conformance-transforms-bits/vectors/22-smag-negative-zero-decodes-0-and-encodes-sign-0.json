@@ -1,0 +1,16 @@
+{
+  "name": "smag-negative-zero-decodes-0-and-encodes-sign-0",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1580800800",
+  "expect": "1500800000",
+  "model": {
+    "probe.c1": "0",
+    "probe.ratio": "0",
+    "@absent": [
+      "probe.c2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "c1 80 and ratio 80: sign 1, magnitude 0, decode 0, encode with sign 0; c2 800 is its sentinel, the raw bits (ruling 1), and is written back as the sentinel"
+}

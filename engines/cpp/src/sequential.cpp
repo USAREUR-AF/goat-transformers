@@ -430,20 +430,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 *flag = true;
             }
             // The bit lengths a transform allows, and what `swap` and `trim` need.
-            bool ok = false;
-            switch (f.transform) {
-                case Transform::F32: ok = n.len == 32; break;
-                case Transform::F64: ok = n.len == 64; break;
-                case Transform::Ascii: ok = n.len >= 8 && n.len <= 2040 && n.len % 8 == 0; break;
-                case Transform::Sixbit: ok = n.len >= 6 && n.len <= 1530 && n.len % 6 == 0; break;
-                default: ok = n.len >= 1 && n.len <= 64; break;
-            }
-            if (!ok)
+            if (!bits_len_allowed(f.transform, n.len))
                 throw bad("transform '" + std::string(transform_name(f.transform)) + "' does not allow a length of " +
                           std::to_string(n.len) + " bits");
             if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
                 throw bad("option 'trim' applies to transforms ascii and sixbit only");
-            if (f.swap && f.transform == Transform::Sixbit) throw bad("option 'swap' does not apply to transform sixbit");
+            if (f.swap && (f.transform == Transform::Sixbit || chars_width(f.transform) || f.transform == Transform::Octal))
+                throw bad("option 'swap' does not apply to transform " + std::string(transform_name(f.transform)));
             if (f.swap && n.len % 8 != 0)
                 throw bad("option 'swap' needs a length that is a multiple of 8 bits, not " + std::to_string(n.len));
             also_target = &add(std::move(n));

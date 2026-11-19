@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-f32scale-negative-quotient",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"a\":9}",
+  "expect": "16c0000000",
+  "source": "constructed",
+  "reference": "(9-10)/0.5 = -2"
+}

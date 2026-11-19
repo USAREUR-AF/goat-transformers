@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-iscale-seconds-to-uiscale-microseconds",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"sec\":1614456000.0005}",
+  "expect": "100005bc56d462b3e8",
+  "source": "constructed",
+  "reference": "1614456000001 ms, then / (1/1000)"
+}

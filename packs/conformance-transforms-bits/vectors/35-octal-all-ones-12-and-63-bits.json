@@ -1,0 +1,13 @@
+{
+  "name": "octal-all-ones-12-and-63-bits",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "19fff0fffffffffffffffe",
+  "expect": "19fff0fffffffffffffffe",
+  "model": {
+    "@kind": "octal",
+    "probe.s2": "7777",
+    "probe.tag": "777777777777777777777"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-23-scale-refuses-a-string-property",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":0,\"ce\":\"2.5\"},\"id\":\"u5\"}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "ruling 23: scale refuses a string member on geojson, although float there keeps its 0.1 typing"
+}

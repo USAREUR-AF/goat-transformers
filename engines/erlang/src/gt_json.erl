@@ -179,6 +179,7 @@ number_lit(Bin) ->
     %% reads it exactly (ruling 2d of 0.11), and one whose nearest double is
     %% infinite fails only where it is read
     N = case N3 =:= N1 of
+            true when Text =:= <<"-0">> -> {dnum, Text};   % the double -0 through float
             true -> binary_to_integer(Text);
             false -> {dnum, Text}
         end,

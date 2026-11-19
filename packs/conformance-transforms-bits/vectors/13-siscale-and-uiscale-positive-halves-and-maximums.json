@@ -1,0 +1,15 @@
+{
+  "name": "siscale-and-uiscale-positive-halves-and-maximums",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "13057fff",
+  "expect": "13067fff",
+  "model": {
+    "@kind": "si",
+    "probe.x": "3",
+    "probe.y": "251",
+    "probe.z": "393"
+  },
+  "source": "constructed",
+  "reference": "x: 5/2 = 2.5 -> 3, encode 6; y: 127*2-3 = 251; z: 255*3/2 = 382.5 -> 383, +10 = 393, encode 383*2/3 = 255.33 -> 255"
+}

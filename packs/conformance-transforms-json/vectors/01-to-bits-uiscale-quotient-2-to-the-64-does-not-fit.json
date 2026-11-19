@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-uiscale-quotient-2-to-the-64-does-not-fit",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"n\":9223372036854775807}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(2^63-1+1) / (1/2) = 2^64, which does not fit 64 bits unsigned"
+}

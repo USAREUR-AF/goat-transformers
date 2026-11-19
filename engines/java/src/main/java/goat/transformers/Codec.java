@@ -147,6 +147,8 @@ abstract class Codec<W> {
         final List<Entity> into = new ArrayList<>();
         /** True for a failure no other line of the key makes good (a table with no entry, ruling 10 of 0.7). */
         final List<Boolean> hard = new ArrayList<>();
+        /** json: the numbers a field maps, by identity (ruling 27 of 0.15). */
+        final java.util.Map<Object, Boolean> read = new java.util.IdentityHashMap<>();
         void add(Pack.Field f, String why, Entity e) { add(f, why, e, false); }
         void add(Pack.Field f, String why, Entity e, boolean isHard) {
             fields.add(f);
@@ -216,7 +218,7 @@ abstract class Codec<W> {
     void decodeField(Pack.Field f, String raw, Entity e, Failures fails) {
         Object v;
         try {
-            v = f.transform.decode(raw);
+            v = f.scale != null ? f.scale.decode(raw) : f.transform.decode(raw);
         } catch (IllegalArgumentException ex) {
             fails.add(f, ex.getMessage(), e);
             return;
@@ -252,7 +254,7 @@ abstract class Codec<W> {
         Object v = valueToEncode(f, e, scope);
         if (v == null) return null;
         try {
-            return f.transform.encode(v);
+            return f.scale != null ? f.scale.encode(v) : f.transform.encode(v);
         } catch (IllegalArgumentException ex) {
             throw encodeFailure(f, ex);
         }

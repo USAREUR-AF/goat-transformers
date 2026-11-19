@@ -1,0 +1,9 @@
+{
+  "name": "to-seq-ruling-16-absent-icao6-key-writes-zero-bits",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-seq",
+  "input": "{\"c1\":3,\"s2\":\"001\"}",
+  "expect": "00000000000c00000040",
+  "source": "constructed",
+  "reference": "ruling 16 and Version 0.8: absent time_ms and callsign write zero bits; absent s1 leaves the opt block out"
+}

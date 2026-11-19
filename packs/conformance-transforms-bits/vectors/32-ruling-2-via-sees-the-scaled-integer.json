@@ -1,0 +1,13 @@
+{
+  "name": "ruling-2-via-sees-the-scaled-integer",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1805",
+  "expect": "1806",
+  "model": {
+    "@kind": "via",
+    "probe.label": "high"
+  },
+  "source": "constructed",
+  "reference": "ruling 2: 5/2 = 2.5 -> 3, the table maps 3 to high; encode high -> 3 -> 6"
+}

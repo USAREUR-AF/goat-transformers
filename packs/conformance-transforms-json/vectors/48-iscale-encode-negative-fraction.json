@@ -1,0 +1,12 @@
+{
+  "name": "iscale-encode-negative-fraction",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":-0.5}",
+  "expect": "{\"sec\":-0.5}",
+  "model": {
+    "time_ms": "-500"
+  },
+  "source": "constructed",
+  "reference": "-500/1000 = -0.5: a sign, the integer digit 0, the fraction"
+}

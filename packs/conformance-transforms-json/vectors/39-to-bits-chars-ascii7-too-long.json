@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-chars-ascii7-too-long",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"A\",\"id\":\"ABCDEF\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

@@ -111,7 +111,7 @@ class HelperTest(unittest.TestCase):
     def test_parse_factor_reads_a_decimal_or_an_exact_fraction(self):
         self.assertEqual(gtcheck.parse_factor("0.25"), 0.25)
         self.assertEqual(gtcheck.parse_factor("1/10000000"), (1, 10000000))
-        self.assertEqual(gtcheck.parse_factor("-3/8"), (-3, 8))
+        self.assertIsNone(gtcheck.parse_factor("-3/8"))  # spec 0.15 ruling 25: fractions are unsigned
         for refused in ("0", "0/5", "5/0", "1/-2", "abc", "", "1/2/3"):
             self.assertIsNone(gtcheck.parse_factor(refused), refused)
 
@@ -517,6 +517,8 @@ V011_FIRST, V011_LAST = 339, 499
 V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tlv-74"}
 # Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
+# Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
+V011_ORDER = {"580"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
@@ -588,6 +590,8 @@ class ConformanceLoadVectorsTest(unittest.TestCase):
             if head.isdigit() and V011_FIRST <= int(head) <= V011_LAST:
                 continue
             if "-".join(os.path.basename(path).split("-")[:3]) in V011_TLV:
+                continue
+            if head in V011_ORDER:
                 continue
             with open(path, encoding="utf-8") as fh:
                 vector = json.load(fh)

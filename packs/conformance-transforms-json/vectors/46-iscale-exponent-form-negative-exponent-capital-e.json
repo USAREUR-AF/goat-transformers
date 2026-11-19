@@ -1,0 +1,11 @@
+{
+  "name": "iscale-exponent-form-negative-exponent-capital-e",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":16144560000005E-4}",
+  "expect": "{\"sec\":1614456000.001}",
+  "model": {
+    "time_ms": "1614456000001"
+  },
+  "source": "constructed"
+}

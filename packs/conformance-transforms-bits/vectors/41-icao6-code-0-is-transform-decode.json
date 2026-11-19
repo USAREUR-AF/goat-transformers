@@ -1,0 +1,9 @@
+{
+  "name": "icao6-code-0-is-transform-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a0000000000000000000000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "icao6 code 0 is not in the set"
+}

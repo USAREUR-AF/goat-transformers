@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-uiscale-negative-quotient-does-not-fit",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"n\":-2}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(-2+1) / (1/2) = -2, below 0"
+}

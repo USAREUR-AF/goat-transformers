@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-4-smscale-negative-half",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"c1\":0,\"ratio\":-0.375}",
+  "expect": "1500800820",
+  "source": "constructed",
+  "reference": "-0.375/0.25 = -1.5 rounds to -2: sign 1, magnitude 2 (82)"
+}

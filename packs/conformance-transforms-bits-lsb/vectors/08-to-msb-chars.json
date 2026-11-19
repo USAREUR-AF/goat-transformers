@@ -1,0 +1,9 @@
+{
+  "name": "to-msb-chars",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits",
+  "input": "130bd3c4b03c8341614c1608",
+  "expect": "1a0420000000002cc371c32ce083098b2000",
+  "source": "constructed",
+  "reference": "the kind chars of the msb pack, selected by requires probe.s1; one padding character each"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-siscale-encode-halves-both-signs",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":-64,\"y\":0,\"z\":11}",
+  "expect": "13800201",
+  "source": "constructed",
+  "reference": "x: -64*2 = -128 (80); y: (0+3)/2 = 1.5 -> 2; z: (11-10)*2/3 = 0.67 -> 1"
+}

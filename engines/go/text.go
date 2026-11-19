@@ -210,7 +210,7 @@ func resolveTextTransform(name string) (*textTf, ErrorKind, error) {
 	case "iso8601_ms":
 		return &textTf{name: name, kind: ttISO}, "", nil
 	}
-	if name == "bool" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) {
+	if name == "bool" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) || v015Base(name) != "" {
 		return nil, ErrBadDirective, fmt.Errorf("transform %q is not valid on wire text", name)
 	}
 	if !isTextOnlyTransform(name) {

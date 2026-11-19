@@ -445,6 +445,13 @@ bool hex_text(const std::string& s, std::string& out) {
     return true;
 }
 
+// A model value as text, as the `string` transform writes it.
+std::string string_text(const Value& v) {
+    FieldLine as_string;
+    as_string.transform = Transform::String;
+    return encode_value(as_string, v);
+}
+
 // A field's model value as its item's bytes. Throws std::invalid_argument (transform-encode).
 std::string encode_item(const FieldLine& f, const Value& v) {
     const std::uint32_t n = f.tlv_size;
@@ -472,12 +479,12 @@ std::string encode_item(const FieldLine& f, const Value& v) {
         case Transform::F32: return be_bytes(encode_bits_value(f, v, 32), 4);
         case Transform::F64: return be_bytes(encode_bits_value(f, v, 64), 8);
         case Transform::Utf8: {
-            std::string s = encode_value(Transform::String, v);
+            std::string s = string_text(v);
             if (!valid_utf8(s)) throw std::invalid_argument("the text is not valid UTF-8");
             return s;
         }
         case Transform::Hex: {
-            const std::string s = encode_value(Transform::String, v);
+            const std::string s = string_text(v);
             std::string out;
             if (!hex_text(s, out))
                 throw std::invalid_argument("\"" + s + "\" is not hex text of an even number of digits");

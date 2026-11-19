@@ -1,0 +1,42 @@
+# Conformance probe pack for value transforms (spec 0.15) on the `json` wire.
+# Public. No kinds. `iscale` reads a number's text as an exact decimal and
+# writes the exact quotient: seconds with a fraction to `time_ms`
+# (iscale:1000), digits beyond 2^53 kept as written (ruling 7), thirds of a
+# unit with an offset, whose quotient may not terminate. `scale` computes in
+# doubles and never rounds (ruling 8): an integer of 1e-7 degrees to degrees,
+# a factor of 10 that overflows, an offset. The plain members name the keys
+# of the `bits` packs of this version, for conversions to and from them. The
+# group `items` is there for ruling 27: a number no field reads, in a group
+# item or anywhere else, outside the double range is `malformed-wire`.
+format  conformance-transforms-json
+version 0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   time_ms       sec    iscale:1000
+field   probe.big     big    iscale:1
+field   probe.thirds  th     iscale:3:1
+field   lat           lat    scale:1/10000000
+field   ce            ce     scale:10
+field   course        crs    scale:1/100:180
+field   probe.n       n      int
+field   probe.x       x      int
+field   probe.y       y      int
+field   probe.z       z      int
+field   probe.w       w      int
+field   probe.c1      c1     int
+field   probe.c2      c2     int
+field   probe.ratio   ratio  float
+field   probe.a       a      float
+field   hae           hae    float
+field   probe.label   label  string
+field   probe.s2      s2     string
+field   probe.tag     tag    string
+field   probe.s1      s1     string
+field   callsign      cs     string
+field   uid           id     string
+field   probe.val     val    int
+group   probe.items   items
+  field  probe.qty  q  int
+end

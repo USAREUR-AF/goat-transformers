@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-f32scale-quotient-beyond-single-range",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"a\":1e300}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(1e300-10)/0.5 = 2e300, outside single range (ruling 23 of 0.5)"
+}

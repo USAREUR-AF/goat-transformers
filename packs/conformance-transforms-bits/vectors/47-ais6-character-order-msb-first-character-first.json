@@ -1,0 +1,13 @@
+{
+  "name": "ais6-character-order-msb-first-character-first",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "0420",
+  "expect": "0420",
+  "model": {
+    "@kind": "plain",
+    "probe.s1": "AB"
+  },
+  "source": "constructed",
+  "reference": "0:0:12 msb: bits 000001 000010, character 0 is the first six bits, A (1), then B (2)"
+}

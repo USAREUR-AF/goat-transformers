@@ -1,0 +1,11 @@
+{
+  "name": "scale-on-a-property",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":0,\"ce\":2.5},\"id\":\"u6\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":0,\"ce\":2.5},\"id\":\"u6\"}",
+  "model": {
+    "ce": "25"
+  },
+  "source": "constructed"
+}

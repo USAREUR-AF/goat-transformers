@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-smag-negative-zero-float-and-zero-value",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"c1\":5,\"c2\":0,\"ratio\":-0}",
+  "expect": "1505000000",
+  "source": "constructed",
+  "reference": "ratio -0: -0/0.25 = -0 rounds to the integer 0, sign 0; c2 0 is a value and is written as 0"
+}

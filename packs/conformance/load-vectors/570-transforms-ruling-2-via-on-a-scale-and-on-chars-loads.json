@@ -1,0 +1,8 @@
+{
+  "name": "570-transforms-ruling-2-via-on-a-scale-and-on-chars-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\nkey n int -\nkey a float -\nkey s1 string -\n"
+  ],
+  "pack": "format probe\nversion 0.15.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nmap lvl 1 low\nmap cs AB alpha\nfield probe.label 0:0:8 uiscale:1/2 via lvl\nfield probe.s1 0:8:12 chars:ais6 via cs\n"
+}

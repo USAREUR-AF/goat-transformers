@@ -1,0 +1,93 @@
+# Conformance probe pack for value transforms (spec 0.15) on the fixed `bits`
+# wire, most-significant-bit-first. Public. One byte per word, so a locator is
+# `0:<bit offset>:<len>`. One kind per transform, selected by the first byte;
+# the kind `adsb` is the layout of an ADS-B identification message (DF 17,
+# type code 4), and the last kind has no `when` and takes any other message.
+# Every kind but the last names in `requires` a key no earlier kind requires,
+# so a conversion from another format selects it by the keys it holds.
+#
+#   us      0x10  time_ms 64 bits, microseconds (uiscale:1/1000)
+#   uihalf  0x11  n 64 bits, uiscale:1/2:-1 (ruling 10: all ones fits)
+#   uione   0x12  qty 64 bits, uiscale:1 (all ones is beyond int64)
+#   si      0x13  x siscale:1/2, y siscale:2:-3, z uiscale:3/2:10, 8 bits each
+#   si64    0x14  w 64 bits, siscale:2
+#   smag    0x15  c1 8 bits smag; c2 12 bits smag, absent 2048 (the raw
+#                 bits of a negative zero); ratio 8 bits smscale:0.25
+#   f32s    0x16  a f32scale:0.5:10
+#   f64s    0x17  hae f64scale:10
+#   via     0x18  label uiscale:1/2 through the table lvl (ruling 2)
+#   octal   0x19  s2 12 bits (4 digits), tag 63 bits (21 digits)
+#   chars   0x1a  s1 8 ais6 characters, callsign 8 icao6 characters,
+#                 uid 5 ascii7 characters (35 bits)
+#   adsb    DF 17 (bits 0-4), TC 4 (bits 32-36): val the ICAO address
+#                 (bits 8-31), callsign 8 icao6 characters (bits 40-87)
+#   plain   any   s1 2 ais6 characters at bit 0 (12 bits)
+format     conformance-transforms-bits
+version    0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard; the kind adsb follows the ADS-B identification message)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+map     lvl  1  low
+map     lvl  3  high
+kind    us
+when    0:0:8  16
+requires time_ms
+field   time_ms      0:8:64   uiscale:1/1000
+kind    uihalf
+when    0:0:8  17
+requires probe.n
+field   probe.n      0:8:64   uiscale:1/2:-1
+kind    uione
+when    0:0:8  18
+requires probe.qty
+field   probe.qty    0:8:64   uiscale:1
+kind    si
+when    0:0:8  19
+requires probe.x
+field   probe.x      0:8:8    siscale:1/2
+field   probe.y      0:16:8   siscale:2:-3
+field   probe.z      0:24:8   uiscale:3/2:10
+kind    si64
+when    0:0:8  20
+requires probe.w
+field   probe.w      0:8:64   siscale:2
+kind    smag
+when    0:0:8  21
+requires probe.c1
+field   probe.c1     0:8:8    smag
+field   probe.c2     0:16:12  smag  absent 2048
+field   probe.ratio  0:28:8   smscale:0.25
+kind    f32s
+when    0:0:8  22
+requires probe.a
+field   probe.a      0:8:32   f32scale:0.5:10
+kind    f64s
+when    0:0:8  23
+requires hae
+field   hae          0:8:64   f64scale:10
+kind    via
+when    0:0:8  24
+requires probe.label
+field   probe.label  0:8:8    uiscale:1/2  via lvl
+kind    octal
+when    0:0:8  25
+requires probe.s2
+field   probe.s2     0:8:12   octal
+field   probe.tag    0:24:63  octal
+kind    chars
+when    0:0:8  26
+requires probe.s1
+field   probe.s1     0:8:48   chars:ais6
+field   callsign     0:56:48  chars:icao6
+field   uid          0:104:35 chars:ascii7
+kind    adsb
+when    0:0:5  17
+when    0:32:5 4
+requires probe.val
+field   probe.val    0:8:24   uint
+field   callsign     0:40:48  chars:icao6
+kind    plain
+field   probe.s1     0:0:12   chars:ais6

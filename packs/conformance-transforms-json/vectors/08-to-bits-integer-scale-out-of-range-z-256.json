@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-integer-scale-out-of-range-z-256",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"x\":0,\"z\":394}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "(394-10)*2/3 = 256 > 255"
+}

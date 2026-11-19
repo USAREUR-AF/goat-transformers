@@ -1,0 +1,14 @@
+{
+  "name": "siscale-minus-one-half-rounds-to-minus-one",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "13ff0000",
+  "expect": "13fe0000",
+  "model": {
+    "probe.x": "-1",
+    "probe.y": "-3",
+    "probe.z": "10"
+  },
+  "source": "constructed",
+  "reference": "ruling 4: -1/2 = -0.5 -> -1; y and z are their offsets"
+}

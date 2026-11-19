@@ -1,0 +1,11 @@
+{
+  "name": "iscale-text-form-exponent-with-plus",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg big=\"1E+2\"/>",
+  "expect": "<msg big=\"100\"/>",
+  "model": {
+    "probe.big": "100"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "siscale-result-2-to-the-63-is-transform-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "144000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "2^62 * 2 = 2^63, beyond int64"
+}

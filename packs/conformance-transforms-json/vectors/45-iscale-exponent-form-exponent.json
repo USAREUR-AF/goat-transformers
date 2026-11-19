@@ -1,0 +1,11 @@
+{
+  "name": "iscale-exponent-form-exponent",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":1.6144560000005e9}",
+  "expect": "{\"sec\":1614456000.001}",
+  "model": {
+    "time_ms": "1614456000001"
+  },
+  "source": "constructed"
+}

@@ -557,6 +557,7 @@ final class Seq {
                 if (fl.bits == null) throw bad(format, fl.locator, where + ": transform \"" + tname + "\" is not valid on wire bits");
                 if (fl.trim && !fl.bits.takesTrim()) throw bad(format, fl.locator, where + ": trim is for the ascii and sixbit transforms only");
                 if (fl.swap && fl.bits.isSixbit()) throw bad(format, fl.locator, where + ": swap is not an option of sixbit");
+                if (fl.swap && fl.bits.refusesSwap()) throw bad(format, fl.locator, where + ": swap is not allowed with " + tname);
                 String lenWhy = fl.bits.checkLen(len);
                 if (lenWhy != null) throw bad(format, fl.locator, where + ": " + lenWhy);
                 if (fl.swap && len % 8 != 0) throw bad(format, fl.locator, where + ": swap needs a length that is a multiple of 8, got " + len);

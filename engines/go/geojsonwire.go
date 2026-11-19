@@ -28,6 +28,8 @@ type jval struct {
 	s    string
 	keys []string
 	vals []*jval
+	// mapped is set when a field line reads this value (0.15 ruling 27).
+	mapped bool
 }
 
 func (v *jval) member(key string) *jval {
@@ -287,6 +289,11 @@ func decodeGeoJSON(d *decodeState, b []byte) error {
 				switch v.k {
 				case jNull:
 				case jStr, jNum:
+					if v.k == jStr && f.tf != nil && f.tf.numOnly {
+						// scale and iscale refuse a string member (0.15 ruling 23).
+						d.fail(f, "wire value is not a JSON number")
+						continue
+					}
 					d.fieldJSON(f, v)
 				default:
 					d.fail(f, "wire value is not a JSON string or number")

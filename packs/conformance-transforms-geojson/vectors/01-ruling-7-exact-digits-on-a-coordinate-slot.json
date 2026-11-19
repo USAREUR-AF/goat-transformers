@@ -1,0 +1,15 @@
+{
+  "name": "ruling-7-exact-digits-on-a-coordinate-slot",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-859578182,30.0090027,9007199254740993]},\"properties\":{\"t\":1614456000.0005},\"id\":\"u1\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-859578182,30.0090027,9007199254740993]},\"properties\":{\"t\":1614456000.001},\"id\":\"u1\"}",
+  "model": {
+    "lon": "-85.9578182",
+    "lat": "30.0090027",
+    "probe.big": "9007199254740993",
+    "time_ms": "1614456000001"
+  },
+  "source": "constructed",
+  "reference": "ruling 7: alt iscale:1 keeps 9007199254740993; lon -859578182 x 1 / 10000000 and back in doubles"
+}

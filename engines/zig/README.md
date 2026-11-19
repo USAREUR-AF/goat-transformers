@@ -15,8 +15,11 @@ spec Version 0.9), reads and writes one-record text formats (the `text` wire,
 spec Version 0.10), follows the strict rulings of spec Version 0.11, reads and
 writes tag-length-value sets (the `tlv` wire, spec Version 0.13), reads and
 writes `bits` messages as six-bit armored text (`armor sixbit` and the
-`sixbit` transform, spec Version 0.14), and converts
-between formats via the shared model.
+`sixbit` transform, spec Version 0.14), converts values through the
+transforms of spec Version 0.15 (exact integer scales, sign and magnitude,
+scaled floats, 6- and 7-bit character sets, octal digits on `bits`; `scale`
+and `iscale` on the text wires), and converts between formats via the shared
+model.
 
 ## Build and run the conformance harness
 

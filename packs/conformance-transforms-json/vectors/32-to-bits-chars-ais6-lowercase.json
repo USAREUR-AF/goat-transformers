@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-chars-ais6-lowercase",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"a\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

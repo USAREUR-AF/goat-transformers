@@ -1,0 +1,11 @@
+{
+  "name": "iscale-factor-and-offset-negative",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"th\":-1}",
+  "expect": "{\"th\":-1}",
+  "model": {
+    "probe.thirds": "-2"
+  },
+  "source": "constructed"
+}

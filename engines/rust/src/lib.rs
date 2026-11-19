@@ -8,6 +8,9 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 
+mod exact;
+pub use exact::Exact;
+
 // ---------------------------------------------------------------------------
 // Shared model
 // ---------------------------------------------------------------------------
@@ -127,6 +130,92 @@ pub enum Transform {
     Utf8,
     /// tlv: the value bytes as lowercase hex text
     Hex,
+    // engine-spec v0.15: value transforms
+    /// bits: unsigned v, then `round(v × factor) + offset`, exactly
+    Uiscale(Exact),
+    /// bits: two's-complement v, then `round(v × factor) + offset`, exactly
+    Siscale(Exact),
+    /// bits: sign and magnitude
+    Smag,
+    /// bits: the `smag` value scaled as `sscale` scales
+    Smscale(Scale),
+    /// bits: an IEEE-754 single, scaled
+    F32scale(Scale),
+    /// bits: an IEEE-754 double, scaled
+    F64scale(Scale),
+    /// bits: text in a 6-bit or 7-bit character set
+    Chars(CharSet),
+    /// bits: the unsigned value as `len / 3` octal digits
+    Octal,
+    /// xml, json, geojson: `scale:<factor>[:<offset>]`, a float scaled in doubles
+    TextScale(Scale),
+    /// xml, json, geojson: `iscale:<factor>[:<offset>]`, an exact decimal scaled to an int
+    TextIscale(Exact),
+}
+
+/// The character set of `chars:<set>` (engine-spec v0.15).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum CharSet {
+    Icao6,
+    Ais6,
+    Ascii7,
+}
+
+impl CharSet {
+    /// bits per character
+    pub fn width(&self) -> u32 {
+        match self {
+            CharSet::Icao6 | CharSet::Ais6 => 6,
+            CharSet::Ascii7 => 7,
+        }
+    }
+    /// the code of the padding character
+    fn pad(&self) -> u32 {
+        match self {
+            CharSet::Icao6 => 32,
+            CharSet::Ais6 | CharSet::Ascii7 => 0,
+        }
+    }
+    /// code -> character; None for a code the set does not define. `ascii7`
+    /// code 0 is NUL.
+    fn char_of(&self, c: u32) -> Option<char> {
+        match self {
+            CharSet::Icao6 => match c {
+                1..=26 => Some((b'A' + (c - 1) as u8) as char),
+                32 => Some(' '),
+                48..=57 => Some((b'0' + (c - 48) as u8) as char),
+                _ => None,
+            },
+            CharSet::Ais6 => Some(if c < 32 { (c + 64) as u8 as char } else { c as u8 as char }),
+            CharSet::Ascii7 => match c {
+                0 => Some('\0'),
+                32..=126 => Some(c as u8 as char),
+                _ => None,
+            },
+        }
+    }
+    /// character -> code; None for a character the set cannot hold (NUL
+    /// included, ruling 17 of 0.15)
+    fn code_of(&self, ch: char) -> Option<u32> {
+        let c = ch as u32;
+        match self {
+            CharSet::Icao6 => match ch {
+                'A'..='Z' => Some(c - 'A' as u32 + 1),
+                ' ' => Some(32),
+                '0'..='9' => Some(c),
+                _ => None,
+            },
+            CharSet::Ais6 => match c {
+                64..=95 => Some(c - 64),
+                32..=63 => Some(c),
+                _ => None,
+            },
+            CharSet::Ascii7 => match c {
+                32..=126 => Some(c),
+                _ => None,
+            },
+        }
+    }
 }
 
 /// The scale of `uscale` / `sscale`: a decimal factor, or a fraction
@@ -183,6 +272,8 @@ impl Transform {
         const NAMES: &[&str] = &[
             "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
+            // engine-spec v0.15
+            "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
@@ -206,18 +297,53 @@ impl Transform {
         if let Some(t) = Transform::parse_text(name) {
             return t;
         }
-        for (prefix, signed) in [("uscale", false), ("sscale", true)] {
+        // factor and offset read as `sscale` reads them
+        type Float = fn(Scale) -> Transform;
+        let floats: [(&str, Float); 6] = [
+            ("uscale", Transform::Uscale),
+            ("sscale", Transform::Sscale),
+            ("smscale", Transform::Smscale),
+            ("f32scale", Transform::F32scale),
+            ("f64scale", Transform::F64scale),
+            ("scale", Transform::TextScale),
+        ];
+        for (prefix, make) in floats {
             if head == prefix {
                 return match name.strip_prefix(prefix).and_then(|a| a.strip_prefix(':')).and_then(Scale::parse) {
-                    Some(sc) => Ok(if signed { Transform::Sscale(sc) } else { Transform::Uscale(sc) }),
+                    Some(sc) => Ok(make(sc)),
                     None => params("<factor>[:<offset>]: the factor is number text and not zero, or <num>/<den>"),
                 };
             }
+        }
+        // exact factor and offset (engine-spec v0.15, Exact factors)
+        type Int = fn(Exact) -> Transform;
+        let ints: [(&str, Int); 3] =
+            [("uiscale", Transform::Uiscale), ("siscale", Transform::Siscale), ("iscale", Transform::TextIscale)];
+        for (prefix, make) in ints {
+            if head == prefix {
+                return match name.strip_prefix(prefix).and_then(|a| a.strip_prefix(':')).and_then(Exact::parse) {
+                    Some(ex) => Ok(make(ex)),
+                    None => params(
+                        "<factor>[:<offset>]: an exact factor in lowest terms of at most 2^32 over 2^32 and an integer offset below 2^63",
+                    ),
+                };
+            }
+        }
+        if head == "chars" {
+            return match name.strip_prefix("chars:") {
+                Some("icao6") => Ok(Transform::Chars(CharSet::Icao6)),
+                Some("ais6") => Ok(Transform::Chars(CharSet::Ais6)),
+                Some("ascii7") => Ok(Transform::Chars(CharSet::Ascii7)),
+                Some(other) => err(format!("bad-directive: unknown character set `{}`", other)),
+                None => err(format!("bad-directive: `{}` needs a parameter", name)),
+            };
         }
         if name.contains(':') {
             return params("this transform takes none");
         }
         match name {
+            "smag" => Ok(Transform::Smag),
+            "octal" => Ok(Transform::Octal),
             "bool" => Ok(Transform::Bool),
             "f32" => Ok(Transform::F32),
             "f64" => Ok(Transform::F64),
@@ -279,12 +405,21 @@ impl Transform {
     /// The shared-model type this transform yields (spec/shared-model.md).
     pub fn value_type(&self) -> KeyType {
         match self {
-            Transform::StringT | Transform::Pstring | Transform::Ascii | Transform::Sixbit | Transform::Utf8 | Transform::Hex => {
-                KeyType::Str
-            }
+            Transform::StringT
+            | Transform::Pstring
+            | Transform::Ascii
+            | Transform::Sixbit
+            | Transform::Utf8
+            | Transform::Hex
+            | Transform::Chars(_)
+            | Transform::Octal => KeyType::Str,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
             Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
+            | Transform::Smscale(_)
+            | Transform::F32scale(_)
+            | Transform::F64scale(_)
+            | Transform::TextScale(_)
             | Transform::Linscale(_, _)
             | Transform::Uscale(_)
             | Transform::Sscale(_)
@@ -298,7 +433,11 @@ impl Transform {
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
-            | Transform::Psint => KeyType::Int,
+            | Transform::Psint
+            | Transform::Uiscale(_)
+            | Transform::Siscale(_)
+            | Transform::Smag
+            | Transform::TextIscale(_) => KeyType::Int,
         }
     }
 
@@ -315,7 +454,39 @@ impl Transform {
                 | Transform::F64
                 | Transform::Ascii
                 | Transform::Sixbit
+                | Transform::Uiscale(_)
+                | Transform::Siscale(_)
+                | Transform::Smag
+                | Transform::Smscale(_)
+                | Transform::F32scale(_)
+                | Transform::F64scale(_)
+                | Transform::Chars(_)
+                | Transform::Octal
         )
+    }
+
+    /// True for the scales of the text wires (engine-spec v0.15).
+    fn is_text_scale(&self) -> bool {
+        matches!(self, Transform::TextScale(_) | Transform::TextIscale(_))
+    }
+
+    /// The bit lengths a `bits` transform allows (engine-spec v0.5, v0.15).
+    fn bits_len_ok(&self, len: u32) -> bool {
+        match self {
+            Transform::F32 | Transform::F32scale(_) => len == 32,
+            Transform::F64 | Transform::F64scale(_) => len == 64,
+            Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
+            Transform::Sixbit => armor::sixbit_len_ok(len as u64),
+            Transform::Chars(set) => len % set.width() == 0 && (set.width()..=2040).contains(&len),
+            Transform::Octal => len % 3 == 0 && (3..=63).contains(&len),
+            Transform::Smag | Transform::Smscale(_) => (2..=64).contains(&len),
+            _ => (1..=64).contains(&len),
+        }
+    }
+
+    /// True for the transforms that take no `swap` (ruling 0.15).
+    fn refuses_swap(&self) -> bool {
+        matches!(self, Transform::Chars(_) | Transform::Octal)
     }
 
     fn is_protobuf(&self) -> bool {
@@ -340,6 +511,19 @@ impl Transform {
             Transform::Sscale(sc) => Ok(Value::F64(sc.decode(signed(raw, len) as f64))),
             Transform::F32 => finite(f32::from_bits(raw as u32) as f64),
             Transform::F64 => finite(f64::from_bits(raw)),
+            Transform::Uiscale(ex) => ex
+                .decode(raw as i128)
+                .map(Value::I64)
+                .ok_or(Error { msg: format!("{} scaled is outside the signed 64-bit range", raw) }),
+            Transform::Siscale(ex) => ex
+                .decode(signed(raw, len) as i128)
+                .map(Value::I64)
+                .ok_or(Error { msg: format!("{} scaled is outside the signed 64-bit range", signed(raw, len)) }),
+            Transform::Smag => Ok(Value::I64(smag(raw, len))),
+            Transform::Smscale(sc) => finite(sc.decode(smag(raw, len) as f64)),
+            Transform::F32scale(sc) => finite(sc.decode(f32::from_bits(raw as u32) as f64)),
+            Transform::F64scale(sc) => finite(sc.decode(f64::from_bits(raw))),
+            Transform::Octal => Ok(Value::Str(format!("{:0w$o}", raw, w = (len / 3) as usize))),
             _ => err(format!("transform {:?} is not valid on a bits wire", self)),
         }
     }
@@ -392,6 +576,38 @@ impl Transform {
             (Transform::Sscale(sc), Value::F64(x)) => rounded(sc.quotient(*x), true),
             (Transform::F32, Value::F64(x)) => Ok(single(*x)?.to_bits() as u64),
             (Transform::F64, Value::F64(x)) => Ok(finite(*x)?.as_f64().to_bits()),
+            (Transform::Uiscale(ex), Value::I64(x)) => {
+                let r = ex.encode(*x);
+                if !(r >= 0 && r < 1i128 << len) {
+                    return err(format!("{} scales to {}, outside the {}-bit unsigned range of the field", x, r, len));
+                }
+                Ok(r as u64)
+            }
+            (Transform::Siscale(ex), Value::I64(x)) => {
+                let r = ex.encode(*x);
+                let half = 1i128 << (len - 1);
+                if !(r >= -half && r < half) {
+                    return err(format!("{} scales to {}, outside the {}-bit signed range of the field", x, r, len));
+                }
+                Ok((r as i64 as u64) & mask)
+            }
+            (Transform::Smag, Value::I64(x)) => to_smag(*x < 0, x.unsigned_abs() as f64, x.unsigned_abs(), len),
+            (Transform::Smscale(sc), Value::F64(x)) => {
+                let r = sc.quotient(*x).round();
+                if !r.is_finite() || r.abs() >= two(len - 1) {
+                    return err(format!("{} scales to a magnitude outside the {} bits of the field", x, len - 1));
+                }
+                // the sign of the integer after rounding: -0 writes sign 0 (ruling 15)
+                to_smag(r < 0.0, r.abs(), r.abs() as u64, len)
+            }
+            (Transform::F32scale(sc), Value::F64(x)) => Ok(single(sc.quotient(*x))?.to_bits() as u64),
+            (Transform::F64scale(sc), Value::F64(x)) => Ok(finite(sc.quotient(*x))?.as_f64().to_bits()),
+            (Transform::Octal, Value::Str(s)) => {
+                if s.len() != (len / 3) as usize || !s.bytes().all(|b| (b'0'..=b'7').contains(&b)) {
+                    return err(format!("`{}` is not {} octal digits", s, len / 3));
+                }
+                u64::from_str_radix(s, 8).map_err(|_| Error { msg: format!("`{}` is not octal", s) })
+            }
             _ => err(format!("transform/value mismatch on bits: {:?} with {:?}", self, v)),
         }
     }
@@ -407,6 +623,13 @@ impl Transform {
                 .map(Value::I64)
                 .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
             Transform::Iso8601Ms => iso8601_to_ms(raw).map(Value::I64),
+            Transform::TextScale(sc) => match Transform::Float.decode(raw)? {
+                Value::F64(v) => finite(sc.decode(v)),
+                other => err(format!("scale decode failed: {:?}", other)),
+            },
+            Transform::TextIscale(ex) => ex.decode_text(raw).map(Value::I64).ok_or(Error {
+                msg: format!("`{}` is not a number text with an exponent of at most 400 that scales into the signed 64-bit range", raw),
+            }),
             t if t.is_bits() => err(format!("transform {:?} is only valid on a bits wire", self)),
             t if t.is_protobuf() => {
                 err(format!("transform {:?} is only valid on a protobuf wire", self))
@@ -421,6 +644,10 @@ impl Transform {
             (Transform::Float, Value::F64(x)) => Ok(fmt_f64(*x)),
             (Transform::Int, Value::I64(n)) => Ok(n.to_string()),
             (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
+            (Transform::TextScale(sc), Value::F64(x)) => Ok(fmt_f64(text_unscale(sc, *x)?)),
+            (Transform::TextIscale(ex), Value::I64(x)) => ex
+                .encode_decimal(*x)
+                .ok_or(Error { msg: format!("{} unscaled does not terminate within 18 fraction digits", x) }),
             _ => err(format!("transform/value mismatch: {:?} with {:?}", self, v)),
         }
     }
@@ -460,10 +687,15 @@ impl Transform {
             | Transform::Ascii
             | Transform::Sixbit
             | Transform::Utf8
-            | Transform::Hex => {
-                JsonKind::StringK
-            }
+            | Transform::Hex
+            | Transform::Chars(_)
+            | Transform::Octal => JsonKind::StringK,
+            Transform::TextIscale(_) => JsonKind::ExactK,
             Transform::Float
+            | Transform::TextScale(_)
+            | Transform::Smscale(_)
+            | Transform::F32scale(_)
+            | Transform::F64scale(_)
             | Transform::Linscale(_, _)
             | Transform::Uscale(_)
             | Transform::Sscale(_)
@@ -476,7 +708,10 @@ impl Transform {
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
-            | Transform::Psint => JsonKind::IntK,
+            | Transform::Psint
+            | Transform::Uiscale(_)
+            | Transform::Siscale(_)
+            | Transform::Smag => JsonKind::IntK,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => JsonKind::NumK,
             Transform::IntW(_) | Transform::HmsDmy(_) => JsonKind::IntK,
         }
@@ -545,6 +780,38 @@ pub fn unsigned_text(s: &str) -> Option<u64> {
     Some(s.parse::<u64>().unwrap_or(u64::MAX))
 }
 
+/// The `smag` value of the low `len` bits of `raw`: the top bit the sign,
+/// 1 negative; sign 1 with magnitude 0 is 0.
+fn smag(raw: u64, len: u32) -> i64 {
+    let mag = (raw & ((1u64 << (len - 1)) - 1)) as i64;
+    if (raw >> (len - 1)) & 1 == 1 {
+        -mag
+    } else {
+        mag
+    }
+}
+
+/// Sign and magnitude in `len` bits; the magnitude must be below 2^(len-1).
+fn to_smag(neg: bool, mag_f: f64, mag: u64, len: u32) -> Result<u64, Error> {
+    let room = 1u64 << (len - 1);
+    if mag_f >= room as f64 || mag >= room {
+        return err(format!("magnitude {} does not fit {} bits", mag, len - 1));
+    }
+    // 0 is written with sign 0
+    Ok(if neg && mag != 0 { room | mag } else { mag })
+}
+
+/// `scale` encode on a text wire: `(x - offset) / factor`, not rounded, and
+/// finite (ruling 14 of 0.15).
+fn text_unscale(sc: &Scale, x: f64) -> Result<f64, Error> {
+    let y = sc.quotient(x);
+    if y.is_finite() {
+        Ok(y)
+    } else {
+        err(format!("{} unscaled is not a finite number", x))
+    }
+}
+
 /// A float read from the wire: not-a-number and infinity are refused
 /// (ruling 23 of 0.5, extended in 0.6).
 fn finite(x: f64) -> Result<Value, Error> {
@@ -569,6 +836,8 @@ enum JsonKind {
     StringK,
     NumK,
     IntK,
+    /// the text is an exact decimal, written as a number as it is
+    ExactK,
 }
 
 // ---------------------------------------------------------------------------
@@ -2462,10 +2731,41 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if *t == Transform::Bool && wire != Wire::Json {
         return bad(f.line, "`bool` is valid only on the json wire");
     }
+    // engine-spec v0.15: each value transform on the wires it lists
+    let v015_bits = t.is_bits()
+        && !matches!(
+            t,
+            Transform::Uint
+                | Transform::Twos
+                | Transform::Linscale(_, _)
+                | Transform::Uscale(_)
+                | Transform::Sscale(_)
+                | Transform::F32
+                | Transform::F64
+                | Transform::Ascii
+                | Transform::Sixbit
+        );
+    if v015_bits && wire != Wire::Bits {
+        return bad(f.line, format!("the transform of `{}` is valid only on a bits wire", f.model_key));
+    }
+    if t.is_text_scale() && !matches!(wire, Wire::Xml | Wire::Json | Wire::GeoJson) {
+        return bad(f.line, format!("the transform of `{}` is valid only on xml, json and geojson", f.model_key));
+    }
+    if f.swap && t.refuses_swap() {
+        return bad(f.line, "`swap` is not valid with `chars` or `octal`");
+    }
     // ruling 5 of 0.11: a transform on a wire it is not valid for
     let valid = match wire {
         Wire::Xml | Wire::GeoJson => {
-            matches!(t, Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms)
+            matches!(
+                t,
+                Transform::StringT
+                    | Transform::Float
+                    | Transform::Int
+                    | Transform::Iso8601Ms
+                    | Transform::TextScale(_)
+                    | Transform::TextIscale(_)
+            )
         }
         Wire::Bits => t.is_bits(),
         Wire::Protobuf => t.is_protobuf(),
@@ -2481,7 +2781,13 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         Wire::Json => {
             if !matches!(
                 t,
-                Transform::StringT | Transform::Float | Transform::Int | Transform::Iso8601Ms | Transform::Bool
+                Transform::StringT
+                    | Transform::Float
+                    | Transform::Int
+                    | Transform::Iso8601Ms
+                    | Transform::Bool
+                    | Transform::TextScale(_)
+                    | Transform::TextIscale(_)
             ) {
                 return bad(f.line, format!("transform of `{}` is not valid on the json wire", f.model_key));
             }
@@ -2503,14 +2809,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         Wire::Bits => {
             let (_, _, len) = bits::parse_locator(&f.locator)
                 .map_err(|e| Error { msg: format!("bad-directive: line {}: {}", f.line, e.msg) })?;
-            let ok = match t {
-                Transform::F32 => len == 32,
-                Transform::F64 => len == 64,
-                Transform::Ascii => len % 8 == 0 && (8..=2040).contains(&len),
-                Transform::Sixbit => armor::sixbit_len_ok(len as u64),
-                _ => (1..=64).contains(&len),
-            };
-            if !ok {
+            if !t.bits_len_ok(len) {
                 return bad(f.line, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
             }
             if f.swap && *t == Transform::Sixbit {
@@ -3485,6 +3784,9 @@ pub mod xml {
                 }
                 let raw = match loc {
                     Loc::Attr(a) => n.attr(&a).map(|s| s.to_string()),
+                    // the text untrimmed (ruling 1m of 0.11), so `iscale` reads it
+                    // exactly: `<v>  </v>` and `<v> 1</v>` are `transform-decode`
+                    // (ruling 24 of 0.15)
                     Loc::Text => n.text.clone(),
                 };
                 if let Some(r) = raw {
@@ -4081,6 +4383,84 @@ pub mod json {
         Ok((v, p.raws.unwrap_or_default()))
     }
 
+    /// The text of each number of a document as written, by the address of
+    /// its value in the parsed tree (`raws` from `parse_raw`), and the values
+    /// a field has read.
+    pub struct NumTexts {
+        texts: HashMap<*const Json, String>,
+        read: std::cell::RefCell<HashSet<*const Json>>,
+    }
+
+    impl NumTexts {
+        fn get(&self, j: &Json) -> Option<&String> {
+            self.texts.get(&(j as *const Json))
+        }
+        /// A field reads this value.
+        pub fn mark(&self, j: &Json) {
+            self.read.borrow_mut().insert(j as *const Json);
+        }
+        /// Is there a number outside the double range that no field read?
+        /// (ruling 27 of 0.15: `malformed-wire`)
+        pub fn unread_out_of_range(&self, root: &Json) -> bool {
+            let read = self.read.borrow();
+            fn walk(j: &Json, read: &HashSet<*const Json>) -> bool {
+                match j {
+                    Json::Num(x) => !x.is_finite() && !read.contains(&(j as *const Json)),
+                    Json::Arr(a) => a.iter().any(|v| walk(v, read)),
+                    Json::Obj(m) => m.iter().any(|(_, v)| walk(v, read)),
+                    _ => false,
+                }
+            }
+            walk(root, &read)
+        }
+    }
+
+    pub fn number_texts(root: &Json, raws: &[String]) -> NumTexts {
+        fn walk(j: &Json, raws: &[String], at: &mut usize, out: &mut HashMap<*const Json, String>) {
+            match j {
+                Json::Int(_) | Json::Num(_) => {
+                    if let Some(t) = raws.get(*at) {
+                        out.insert(j as *const Json, t.clone());
+                    }
+                    *at += 1;
+                }
+                Json::Arr(a) => a.iter().for_each(|v| walk(v, raws, at, out)),
+                Json::Obj(m) => m.iter().for_each(|(_, v)| walk(v, raws, at, out)),
+                _ => {}
+            }
+        }
+        let mut out = HashMap::new();
+        walk(root, raws, &mut 0, &mut out);
+        NumTexts { texts: out, read: std::cell::RefCell::new(HashSet::new()) }
+    }
+
+    /// The text of a number as written, else as the value prints.
+    pub fn number_text(j: &Json, texts: &NumTexts) -> Option<String> {
+        match j {
+            Json::Int(n) => Some(texts.get(j).cloned().unwrap_or_else(|| n.to_string())),
+            Json::Num(x) => Some(texts.get(j).cloned().unwrap_or_else(|| fmt_f64(*x))),
+            _ => None,
+        }
+    }
+
+    /// `scale` and `iscale` decode on `json` and `geojson` (engine-spec
+    /// v0.15): the member must be a number; `iscale` reads its digits as
+    /// written. None for another transform.
+    pub(crate) fn decode_scale(t: &Transform, j: &Json, texts: &NumTexts) -> Option<Result<Value, Error>> {
+        let not_number = || err(format!("JSON value `{}` is not a number", serialize(j)));
+        Some(match t {
+            Transform::TextScale(_) => match j {
+                Json::Int(_) | Json::Num(_) => t.decode(&number_text(j, texts)?),
+                _ => not_number(),
+            },
+            Transform::TextIscale(_) => match number_text(j, texts) {
+                Some(text) => t.decode(&text),
+                None => not_number(),
+            },
+            _ => return None,
+        })
+    }
+
     /// How many numbers a value holds, in document order.
     pub fn count_numbers(j: &Json) -> usize {
         match j {
@@ -4368,6 +4748,10 @@ pub mod json {
                     msg: format!("json: bad number `{}`", tok),
                 })
             } else {
+                // `-0` is the double -0: parsed as an integer it would lose its sign
+                if tok == "-0" {
+                    return Ok(Json::Num(-0.0));
+                }
                 // an integer too large for i64 is still a number
                 match tok.parse::<i64>() {
                     Ok(n) => Ok(Json::Int(n)),
@@ -4541,7 +4925,10 @@ pub mod geojson {
     }
 
     /// An item value of a group: geojson value types, json locators.
-    fn item_dec(t: &Transform, j: &Json) -> Result<Value, Error> {
+    fn item_dec(t: &Transform, j: &Json, texts: &json::NumTexts) -> Result<Value, Error> {
+        if let Some(r) = json::decode_scale(t, j, texts) {
+            return r;
+        }
         match j {
             Json::Obj(_) | Json::Arr(_) => err("the value is not a scalar"),
             _ => t.decode(&json_scalar_string(j)),
@@ -4552,6 +4939,7 @@ pub mod geojson {
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
         let (root, raws) = json::parse_raw(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
+        let texts = json::number_texts(&root, &raws);
         let sel = p.select_decode(None, |w| json_when_holds(when_member(&root, &w.locator), w))?;
         let coords = root
             .get("geometry")
@@ -4579,12 +4967,20 @@ pub mod geojson {
             if member.map_or(false, |j| json_absent(f, j)) {
                 continue;
             }
+            if let Some(j) = member {
+                if let Some(r) = json::decode_scale(&f.transform, j, &texts) {
+                    d.put(p, f, r);
+                    continue;
+                }
+            }
             if let Some(r) = member.map(json_scalar_string) {
                 d.put(p, f, f.transform.decode(&r));
             }
         }
         // groups: a `properties.<name>` or top-level member whose value is an array
-        jsonwire::decode_groups(p, &sel, &root, item_dec, &mut d)?;
+        // an unmapped number outside the double range stays residue with its
+        // text as written (ruling 27 of 0.15 limits malformed-wire to `json`)
+        jsonwire::decode_groups(p, &sel, &root, item_dec, &texts, &mut d)?;
         // residue: unmapped properties (ruling 13 of 0.6). A number keeps its
         // text as written; an array or object is kept as it was; `null` is
         // dropped; of two members with one name the last value is used at the
@@ -4750,6 +5146,8 @@ pub mod geojson {
             JsonKind::NumK => Json::Num(s.parse::<f64>().map_err(|_| Error {
                 msg: format!("geojson num encode `{}`", s),
             })?),
+            // the exact digits, never through a double (ruling 7 of 0.15)
+            JsonKind::ExactK => Json::Raw(s),
         })
     }
 
@@ -4782,7 +5180,10 @@ pub mod jsonwire {
         Some(cur)
     }
 
-    fn decode_value(t: &Transform, j: &Json) -> Result<Value, Error> {
+    fn decode_value(t: &Transform, j: &Json, texts: &json::NumTexts) -> Result<Value, Error> {
+        if let Some(r) = json::decode_scale(t, j, texts) {
+            return r;
+        }
         match (t, j) {
             (Transform::StringT, Json::Str(s)) => Ok(Value::Str(s.clone())),
             (Transform::Float, Json::Int(n)) => Ok(Value::F64(*n as f64)),
@@ -4805,17 +5206,28 @@ pub mod jsonwire {
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
+            (Transform::TextScale(sc), Value::F64(x)) => Ok(Json::Num(text_unscale(sc, *x)?)),
+            // the exact digits, never through a double (ruling 7 of 0.15)
+            (Transform::TextIscale(_), Value::I64(_)) => Ok(Json::Raw(t.encode(v)?)),
             _ => err(format!("transform/value mismatch: {:?} with {:?}", t, v)),
         }
     }
 
     /// How a wire turns a JSON value into a model value, and back.
-    pub(crate) type Dec = fn(&Transform, &Json) -> Result<Value, Error>;
+    pub(crate) type Dec = fn(&Transform, &Json, &json::NumTexts) -> Result<Value, Error>;
     pub(crate) type Enc = fn(&Transform, &Value) -> Result<Json, Error>;
 
     /// Decode the fields and groups of one scope: the message object, or one
     /// array element of a group.
-    fn decode_scope(p: &Pack, sel: &Sel, obj: &Json, item: bool, dec: Dec, d: &mut Decoded) -> Result<(), Error> {
+    fn decode_scope(
+        p: &Pack,
+        sel: &Sel,
+        obj: &Json,
+        item: bool,
+        dec: Dec,
+        texts: &json::NumTexts,
+        d: &mut Decoded,
+    ) -> Result<(), Error> {
         for f in &sel.fields {
             // `.`: the element itself, when it is a scalar
             let found = if item && f.locator == "." {
@@ -4833,16 +5245,26 @@ pub mod jsonwire {
                 // `null` is no value, before any sentinel check (ruling 5 of 0.9)
                 None | Some(Json::Null) => {}
                 // a sentinel: the line yields no value (engine-spec v0.9)
-                Some(j) if json_absent(f, j) => {}
-                Some(j) => d.put(p, f, dec(&f.transform, j)),
+                Some(j) if json_absent(f, j) => texts.mark(j),
+                Some(j) => {
+                    texts.mark(j);
+                    d.put(p, f, dec(&f.transform, j, texts))
+                }
             }
         }
-        decode_groups(p, sel, obj, dec, d)
+        decode_groups(p, sel, obj, dec, texts, d)
     }
 
     /// The groups of one scope: the member at the group's path is an array,
     /// each element one item. `null` and a missing member: the list is absent.
-    pub(crate) fn decode_groups(p: &Pack, sel: &Sel, obj: &Json, dec: Dec, d: &mut Decoded) -> Result<(), Error> {
+    pub(crate) fn decode_groups(
+        p: &Pack,
+        sel: &Sel,
+        obj: &Json,
+        dec: Dec,
+        texts: &json::NumTexts,
+        d: &mut Decoded,
+    ) -> Result<(), Error> {
         for g in &sel.groups {
             let elements = match lookup(obj, &g.locator) {
                 None | Some(Json::Null) => continue,
@@ -4860,7 +5282,7 @@ pub mod jsonwire {
             for e in elements {
                 limit::take(&p.format, &g.list, 1)?;
                 let mut di = Decoded::new();
-                decode_scope(p, &body, e, true, dec, &mut di)?;
+                decode_scope(p, &body, e, true, dec, texts, &mut di)?;
                 items.push(di);
             }
             d.put_list(&g.list, items);
@@ -4870,7 +5292,8 @@ pub mod jsonwire {
 
     pub fn decode(p: &Pack, bytes: &str) -> Result<Entity, Error> {
         let _scope = limit::scope();
-        let root = json::parse(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
+        let (root, raws) = json::parse_raw(bytes).map_err(|e| Error { msg: format!("malformed-wire: {}", e.msg) })?;
+        let texts = json::number_texts(&root, &raws);
         if !matches!(root, Json::Obj(_)) {
             return err(format!("malformed-wire: format `{}`: the message is not a JSON object", p.format));
         }
@@ -4899,7 +5322,10 @@ pub mod jsonwire {
         }
         let sel = p.select_decode(None, |w| json_when_holds(lookup(&root, &w.locator), w))?;
         let mut d = Decoded::new();
-        decode_scope(p, &sel, &root, false, decode_value, &mut d)?;
+        decode_scope(p, &sel, &root, false, decode_value, &texts, &mut d)?;
+        if texts.unread_out_of_range(&root) {
+            return err(format!("malformed-wire: format `{}`: a number no field maps is outside the double range", p.format));
+        }
         // residue: every scalar member, at any depth, that no line maps
         let mapped: Vec<&str> = sel.mapped();
         fn walk(obj: &Json, prefix: &str, mapped: &[&str], format: &str, out: &mut Vec<(String, String, String)>) -> Result<(), Error> {
@@ -5233,6 +5659,39 @@ pub mod bits {
                 Some(b) => err(format!("byte 0x{:02x} is not printable ASCII", b)),
                 None => Ok(Value::Str(bytes.iter().map(|b| *b as char).collect())),
             }
+        } else if let Transform::Chars(set) = f.transform {
+            // character i: the w bits from bit i × w of the field, as `uint` reads them (engine-spec v0.15)
+            let w = set.width();
+            let mut text: Vec<char> = Vec::new();
+            for i in 0..(len / w) as u64 {
+                let c = get_bits(raw, start + i * w as u64, w, p.msb).unwrap_or(0) as u32;
+                match set.char_of(c) {
+                    Some(ch) => text.push(ch),
+                    None => return err(format!("code {} is not in the character set {:?}", c, set)),
+                }
+            }
+            match set {
+                CharSet::Ascii7 => {
+                    // NUL is padding: a NUL followed by a character that is not NUL fails
+                    if let Some(i) = text.iter().position(|c| *c == '\0') {
+                        if text[i..].iter().any(|c| *c != '\0') {
+                            return err("a NUL is followed by a character that is not NUL");
+                        }
+                        text.truncate(i);
+                    }
+                }
+                CharSet::Icao6 => {
+                    while text.last() == Some(&' ') {
+                        text.pop();
+                    }
+                }
+                CharSet::Ais6 => {
+                    while matches!(text.last(), Some('@') | Some(' ')) {
+                        text.pop();
+                    }
+                }
+            }
+            Ok(Value::Str(text.into_iter().collect()))
         } else {
             let mut rawv = get_bits(raw, start, len, p.msb).unwrap_or(0);
             if f.swap {
@@ -5267,6 +5726,29 @@ pub mod bits {
             }
             for (k, b) in bytes.iter().enumerate() {
                 set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.msb);
+            }
+        } else if let Transform::Chars(set) = f.transform {
+            let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
+            let text = match v {
+                Value::Str(s) => s,
+                other => return Err(fail(format!("chars encodes text, got {:?}", other))),
+            };
+            let w = set.width();
+            let room = (len / w) as usize;
+            let n = text.chars().count();
+            if n > room {
+                return Err(fail(format!("text is {} characters, the field holds {}", n, room)));
+            }
+            let mut codes = Vec::with_capacity(room);
+            for ch in text.chars() {
+                match set.code_of(ch) {
+                    Some(c) => codes.push(c),
+                    None => return Err(fail(format!("character {:?} is not in the character set {:?}", ch, set))),
+                }
+            }
+            codes.resize(room, set.pad());
+            for (i, c) in codes.iter().enumerate() {
+                set_bits(msg, start + i as u64 * w as u64, w, *c as u64, p.msb);
             }
         } else {
             let mut rawv = f.transform.encode_bits(v, len).map_err(|e| transform_encode_err(p, f, e))?;

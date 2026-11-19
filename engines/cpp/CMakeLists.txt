@@ -40,6 +40,7 @@ add_library(goat_transformers STATIC
   src/codecs.cpp
   src/derive.cpp
   src/engine.cpp
+  src/exact.cpp
   src/json.cpp
   src/linecheck.cpp
   src/jsonwire.cpp

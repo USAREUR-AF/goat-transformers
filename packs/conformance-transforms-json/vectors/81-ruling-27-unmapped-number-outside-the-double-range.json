@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-unmapped-number-outside-the-double-range",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"zz\":1e400,\"n\":1}",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "ruling 27: a number outside the double range that no field maps stays malformed-wire (ruling 39 of 0.8)"
+}

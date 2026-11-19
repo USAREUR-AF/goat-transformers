@@ -49,6 +49,8 @@ void decode_member(Decoder& d, const FieldLine& f, const json::Value& v) {
     json::Value::Kind want = json::Value::Kind::String;
     switch (f.transform) {
         case Transform::Float:
+        case Transform::Scale:
+        case Transform::Iscale:
         case Transform::Int: want = json::Value::Kind::Number; break;
         case Transform::Bool: want = json::Value::Kind::Bool; break;
         default: break;  // string, iso8601_ms
@@ -210,6 +212,13 @@ void decode_item_value(Decoder& d, const FieldLine& f, const json::Value& v, boo
     }
     std::string raw;
     if (f.has_absent && json_raw_text(v, raw) && sentinel_text(f, raw)) return;
+    if (transform_is_text_scale(f.transform) && !v.is(json::Value::Kind::Null) &&
+        !v.is(json::Value::Kind::Number)) {
+        // scale and iscale read a number, on geojson as on json (0.15 ruling 23).
+        d.fail(f, std::string("the member is ") + json_kind_name(v) + ", which transform '" +
+                      transform_name(f.transform) + "' does not read");
+        return;
+    }
     switch (v.kind) {
         case json::Value::Kind::Null: break;
         case json::Value::Kind::String: d.set(f, v.text); break;
@@ -314,6 +323,46 @@ std::string json_encode_items(const Pack& p, const GroupLine& g, const std::vect
     return out;
 }
 
+namespace {
+
+// The members the field lines of a scope read, through its groups' items
+// (any field line, whether or not decode then wants its key).
+void mark_field_reads(const std::vector<LineRef>& lines, const json::Value& obj,
+                      std::unordered_set<const json::Value*>& read) {
+    std::vector<std::string> path;
+    for (const auto& line : lines) {
+        if (line.field) {
+            if (line.field->locator == ".") {
+                read.insert(&obj);
+                continue;
+            }
+            parse_json_locator(line.field->locator, path);
+            if (const json::Value* v = json_lookup(obj, path)) read.insert(v);
+        } else if (line.group) {
+            parse_json_locator(line.group->locator, path);
+            const json::Value* v = json_lookup(obj, path);
+            if (!v || !v->is(json::Value::Kind::Array)) continue;
+            const std::vector<LineRef> body = group_lines(*line.group);
+            for (const auto& el : v->items) mark_field_reads(body, el, read);
+        }
+    }
+}
+
+// A number outside the double range that no field reads, anywhere in the
+// document, is malformed-wire (0.15 ruling 27, extending ruling 39 of 0.8).
+void check_unread_overflow(const Pack& p, const json::Value& v, const std::unordered_set<const json::Value*>& read) {
+    if (v.is(json::Value::Kind::Number)) {
+        double d = 0;
+        if (!parse_number_text(v.text, d) && !read.count(&v))
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        "the number " + v.text + " is outside the double range and no field reads it");
+        return;
+    }
+    for (const auto& item : v.items) check_unread_overflow(p, item, read);
+}
+
+}  // namespace
+
 Entity decode_json(const Pack& p, const std::string& bytes) {
     json::Value doc;
     try {
@@ -333,11 +382,18 @@ Entity decode_json(const Pack& p, const std::string& bytes) {
         return w.present || json_when_matches(w, *v);
     });
 
+    const std::vector<LineRef> lines = active_lines(p, kind);
+    {
+        std::unordered_set<const json::Value*> read;
+        mark_field_reads(lines, doc, read);
+        check_unread_overflow(p, doc, read);
+    }
+
     Entity e;
     Decoder d(p, e);
     std::unordered_set<std::string> mapped;
     std::vector<std::string> path;
-    for (const auto& line : active_lines(p, kind)) {
+    for (const auto& line : lines) {
         // `when <locator> present` does not map the member (0.5 ruling 27).
         if (line.maps()) mapped.insert(line.locator());
         if (line.group) {

@@ -1,0 +1,18 @@
+# Conformance probe pack for value transforms (spec 0.15) on the `geojson`
+# wire. Public. No kinds. `scale` on a coordinate slot (an integer of 1e-7
+# degrees), `iscale:1` on the altitude slot, whose digits are read and written
+# exactly (ruling 7: 9007199254740993 stays itself), and `iscale:1000` on a
+# property (seconds with a fraction to `time_ms`); `scale:10` on a property,
+# which refuses a string member (ruling 23).
+format  conformance-transforms-geojson
+version 0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    geojson
+field   uid        id            string
+field   lon        geometry.lon  scale:1/10000000
+field   lat        geometry.lat  float
+field   probe.big  geometry.alt  iscale:1
+field   time_ms    properties.t  iscale:1000
+field   ce         properties.ce scale:10

@@ -153,7 +153,12 @@ final class SeqCodec extends Codec<byte[]> {
                     }
                     Object v;
                     try {
-                        if (f.bits.isAscii()) {
+                        if (f.bits.isChars()) {
+                            int cw = f.bits.charWidth();
+                            int[] codes = new int[n.len / cw];
+                            for (int i = 0; i < codes.length; i++) codes[i] = (int) r.take(cw);
+                            v = f.bits.decodeChars(codes);
+                        } else if (f.bits.isAscii()) {
                             byte[] bytes = new byte[n.len / 8];
                             for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) r.take(8);
                             if (f.swap) BitsCodec.reverseBytes(bytes);
@@ -606,7 +611,10 @@ final class SeqCodec extends Codec<byte[]> {
         Object v = f == null ? null : valueToEncode(f, e, scope);
         if (v != null) {
             try {
-                if (f.bits.isAscii()) {
+                if (f.bits.isChars()) {
+                    int cw = f.bits.charWidth();
+                    for (int c : f.bits.encodeChars(v, n.len / cw)) w.put(cw, c);
+                } else if (f.bits.isAscii()) {
                     byte[] bytes = f.bits.encodeAscii(v, n.len / 8);
                     if (f.swap) BitsCodec.reverseBytes(bytes);
                     for (byte b : bytes) w.put(8, b & 0xffL);

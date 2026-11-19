@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-siscale-64-encode-rounds-negative-halves",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"w\":-3}",
+  "expect": "14fffffffffffffffe",
+  "source": "constructed",
+  "reference": "-3/2 = -1.5 -> -2"
+}

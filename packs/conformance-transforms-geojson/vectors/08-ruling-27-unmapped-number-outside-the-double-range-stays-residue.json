@@ -1,0 +1,9 @@
+{
+  "name": "ruling-27-unmapped-number-outside-the-double-range-stays-residue",
+  "from": "conformance-transforms-geojson",
+  "to": "conformance-transforms-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":0,\"zz\":1e400},\"id\":\"u7\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":0,\"zz\":\"1e400\"},\"id\":\"u7\"}",
+  "source": "constructed",
+  "reference": "ruling 27 and ruling 13 of 0.6: on geojson an unmapped number is residue with its text as written, and comes back as a string"
+}

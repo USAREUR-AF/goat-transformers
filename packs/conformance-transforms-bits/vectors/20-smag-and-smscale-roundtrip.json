@@ -1,0 +1,15 @@
+{
+  "name": "smag-and-smscale-roundtrip",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "15817ff870",
+  "expect": "15817ff870",
+  "model": {
+    "@kind": "smag",
+    "probe.c1": "-1",
+    "probe.c2": "2047",
+    "probe.ratio": "-1.75"
+  },
+  "source": "constructed",
+  "reference": "c1 81: sign 1, magnitude 1; c2 7ff: sign 0, 2047; ratio 87: -7 x 0.25"
+}

@@ -477,8 +477,9 @@ public final class ModelModule {
                 int slash = param.indexOf('/');
                 if (slash >= 0) {
                     String a = param.substring(0, slash), b = param.substring(slash + 1);
+                    // <num> integer text, <den> an unsigned decimal integer (ruling 2c of 0.11); the derive function
+                    // is not a transform, so ruling 25 of 0.15 (unsigned fractions) does not apply to it
                     if (!Transform.INT_TEXT.matcher(a).matches() || !Transform.UNSIGNED.matcher(b).matches()) {
-                        // <num> integer text, <den> an unsigned decimal integer (ruling 2c of 0.11)
                         throw badDerive(module, where, "a fraction factor is <num>/<den>: integer text over an unsigned decimal integer, got \"" + param + "\"");
                     }
                     out.fraction = true;

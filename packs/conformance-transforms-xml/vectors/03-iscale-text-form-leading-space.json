@@ -1,0 +1,9 @@
+{
+  "name": "iscale-text-form-leading-space",
+  "from": "conformance-transforms-xml",
+  "to": "conformance-transforms-xml",
+  "input": "<msg big=\" 5\"/>",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "on xml the text must have the number form exactly, without surrounding whitespace"
+}

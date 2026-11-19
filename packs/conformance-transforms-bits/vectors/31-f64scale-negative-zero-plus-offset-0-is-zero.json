@@ -1,0 +1,12 @@
+{
+  "name": "f64scale-negative-zero-plus-offset-0-is-zero",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "178000000000000000",
+  "expect": "170000000000000000",
+  "model": {
+    "hae": "0"
+  },
+  "source": "constructed",
+  "reference": "v x factor + offset in doubles: -0 x 10 = -0, then -0 + 0 = +0 (offset defaults to 0); encode (0 - 0)/10 = +0"
+}

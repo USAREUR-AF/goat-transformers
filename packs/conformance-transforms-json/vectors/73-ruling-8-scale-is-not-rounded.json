@@ -1,0 +1,12 @@
+{
+  "name": "ruling-8-scale-is-not-rounded",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"crs\":1}",
+  "expect": "{\"crs\":0.9999999999990905}",
+  "model": {
+    "course": "180.01"
+  },
+  "source": "constructed",
+  "reference": "ruling 8 and ruling 1 of 0.5: 1 x 1 / 100 = 0.01, + 180 = 180.01 (the double nearest); encode (180.01 - 180) x 100 / 1 = 0.9999999999990905 in doubles, written as float writes it"
+}

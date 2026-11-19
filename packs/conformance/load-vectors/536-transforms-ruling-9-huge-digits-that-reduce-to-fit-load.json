@@ -1,0 +1,8 @@
+{
+  "name": "536-transforms-ruling-9-huge-digits-that-reduce-to-fit-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey x int -\nkey n int -\nkey a float -\nkey s1 string -\n"
+  ],
+  "pack": "format probe\nversion 0.15.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.x 0:0:8 uiscale:8589934592/2\nfield probe.n 0:8:8 siscale:100000000000000000000000000000/100000000000000000000000000000\nfield probe.x 0:16:8 uiscale:2.500000000000000000000000000000\n"
+}

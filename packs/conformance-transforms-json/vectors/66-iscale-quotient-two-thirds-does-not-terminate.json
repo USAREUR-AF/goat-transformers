@@ -1,0 +1,9 @@
+{
+  "name": "iscale-quotient-two-thirds-does-not-terminate",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"th\":0.5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "0.5 x 3 = 1.5 rounds to 2, +1 = 3; encode (3-1)/3 = 2/3 has no finite decimal"
+}

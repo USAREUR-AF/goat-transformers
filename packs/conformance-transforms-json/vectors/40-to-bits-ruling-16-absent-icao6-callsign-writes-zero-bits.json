@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-16-absent-icao6-callsign-writes-zero-bits",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"val\":4735190}",
+  "expect": "884840d620000000000000",
+  "source": "constructed",
+  "reference": "ruling 16: the kind adsb is selected by requires probe.val; the absent callsign writes 48 zero bits"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "iscale-exponent-above-400",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":1e401}",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

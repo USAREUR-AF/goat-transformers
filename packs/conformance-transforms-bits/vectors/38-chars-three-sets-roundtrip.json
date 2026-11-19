@@ -1,0 +1,15 @@
+{
+  "name": "chars-three-sets-roundtrip",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "1a801002fdf0002cc371c32ce083098b2000",
+  "expect": "1a801002fdf0002cc371c32ce083098b2000",
+  "model": {
+    "@kind": "chars",
+    "probe.s1": " A@B?_",
+    "callsign": "KLM1023",
+    "uid": "AB12"
+  },
+  "source": "constructed",
+  "reference": "ais6 codes 32 1 0 2 63 31 then padding 0 0: a leading space and an inner @ are kept; icao6 K L M 1 0 2 3 and one padding space; ascii7 A B 1 2 and one NUL. Character 0 is the most significant 6 or 7 bits"
+}

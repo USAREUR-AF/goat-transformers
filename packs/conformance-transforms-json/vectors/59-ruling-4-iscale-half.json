@@ -1,0 +1,11 @@
+{
+  "name": "ruling-4-iscale-half",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":2.5}",
+  "expect": "{\"big\":3}",
+  "model": {
+    "probe.big": "3"
+  },
+  "source": "constructed"
+}

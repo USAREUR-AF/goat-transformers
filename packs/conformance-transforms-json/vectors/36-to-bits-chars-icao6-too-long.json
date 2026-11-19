@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-chars-icao6-too-long",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"A\",\"cs\":\"ABCDEFGHI\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

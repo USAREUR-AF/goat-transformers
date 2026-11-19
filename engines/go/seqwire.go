@@ -744,6 +744,8 @@ func (r *seqReader) node(n *seqNode) error {
 		var v Value
 		if f.btf.sixbit {
 			v = decodeSixbit(r.data, f, at, p.msb)
+		} else if f.btf.decodeAt != nil {
+			v, err = f.btf.decodeAt(r.data, at, f.loc.blen, p.msb)
 		} else if f.btf.ascii {
 			v, err = decodeASCII(r.data, f, at, p.msb)
 		} else {

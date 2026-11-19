@@ -1,0 +1,8 @@
+{
+  "name": "to-bits-chars-icao6-at-sign",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"s1\":\"A\",\"cs\":\"@\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+# Conformance probe pack for `absent` with `iscale` on the `json` wire
+# (spec 0.15, ruling 6). Public. No kinds. One member. The sentinels are
+# compared as canonical text (ruling 9 of 0.9), through a double (ruling 19
+# of 0.9), whatever the transform: `1e2` and `100.0` match `100`, and
+# 9007199254740993 is held as 9007199254740992, so the wire number
+# 9007199254740992 matches it. An absent key writes the first sentinel, 100.
+format  conformance-transforms-json-absent
+version 0.15.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.cnt  cnt  iscale:1/2  absent 100,9007199254740993

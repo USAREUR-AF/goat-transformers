@@ -39,6 +39,8 @@ public final class Pack {
         public final PbTransform pb;
         /** The tlv wire's transform; set once when the line is resolved. */
         TlvTransform tlv;
+        /** Text wires: {@code scale} or {@code iscale} (engine-spec 0.15), or null; {@code transform} is then float or int. */
+        TextScale scale;
         /** The value table named by {@code via}, or null. */
         public final String via;
         /** bits: the field's bytes are reversed before the transform reads them and after it writes them. */
@@ -91,11 +93,13 @@ public final class Pack {
 
         /** The transform's name as written in the pack. */
         public String transformName() {
+            if (scale != null) return scale.wireName();
             return tlv != null ? tlv.name : transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
         }
 
         /** The model type the transform yields: {@code string}, {@code float} or {@code int}. */
         public String yields() {
+            if (scale != null) return scale.yields();
             return tlv != null ? tlv.yields() : transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
         }
     }
@@ -470,7 +474,9 @@ public final class Pack {
     /** Every transform of the specification, by the text before its first {@code :}. */
     private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
-            "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit");
+            "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit",
+            // engine-spec 0.15
+            "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale");
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -506,8 +512,10 @@ public final class Pack {
         }
         if (TextTransform.isTextOnlyName(name)) {
             TextTransform.parseTextOnly(name, format, locator, where);
-        } else if (head.equals("linscale") || head.equals("uscale") || head.equals("sscale")) {
+        } else if (head.equals("linscale") || head.equals("uscale") || head.equals("sscale") || BitsTransform.isV015(head)) {
             BitsTransform.parse(name, format, where);
+        } else if (TextScale.isName(head)) {
+            TextScale.parse(name, format, locator, where);
         } else if (c >= 0) {
             throw badDirective(format, locator, where + ": transform " + head + " takes no parameters, got \"" + name + "\"");
         }
@@ -1444,6 +1452,12 @@ public final class Pack {
         }
         String why;
         Field f;
+        // The transforms of 0.15 on a wire they do not list are bad-directive (engine-spec 0.15, Load errors).
+        String head = BitsTransform.headOf(s.arg);
+        boolean textWire = wire == Wire.XML || wire == Wire.JSON || wire == Wire.GEOJSON;
+        if ((BitsTransform.isV015(head) && wire != Wire.BITS) || (TextScale.isName(head) && !textWire)) {
+            throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase());
+        }
         if (wire == Wire.TLV) {
             TlvCodec.Loc loc = tlvLocator(s, ctx, where);
             TlvTransform tt = TlvTransform.parse(s.arg, format, where);
@@ -1495,6 +1509,7 @@ public final class Pack {
             why = BitsCodec.checkLocator(s.locator);
             if (trim && !bt.takesTrim()) throw badDirective(format, s.locator, where + ": trim is for the ascii and sixbit transforms only");
             if (swap && bt.isSixbit()) throw badDirective(format, s.locator, where + ": swap is not an option of sixbit");
+            if (swap && bt.refusesSwap()) throw badDirective(format, s.locator, where + ": swap is not allowed with " + s.arg);
             if (why == null) {
                 int len = BitsCodec.parseLoc(s.locator)[2];
                 String lenWhy = bt.checkLen(len);
@@ -1513,6 +1528,14 @@ public final class Pack {
             }
             f = new Field(s.key, s.locator, null, null, pb, via, false, false, false, s.line);
             why = dot ? null : ProtobufCodec.checkFieldLocator(s.locator);
+        } else if (TextScale.isName(head)) {
+            TextScale ts = TextScale.parse(s.arg, format, s.locator, where);
+            f = new Field(s.key, s.locator, ts.isExact() ? Transform.INT : Transform.FLOAT, null, null, via, false, false, false, s.line);
+            f.scale = ts;
+            if (dot) why = null;
+            else if (wire == Wire.XML) why = XmlCodec.checkFieldLocator(s.locator);
+            else if (wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkFieldLocator(s.locator);
+            else why = JsonCodec.checkLocator(s.locator);
         } else {
             Transform t = Transform.byName(s.arg);
             if (t == null || (t == Transform.BOOL && wire != Wire.JSON)) {

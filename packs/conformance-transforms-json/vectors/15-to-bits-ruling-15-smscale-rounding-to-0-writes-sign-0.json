@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-ruling-15-smscale-rounding-to-0-writes-sign-0",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-bits",
+  "input": "{\"c1\":-127,\"ratio\":-0.1}",
+  "expect": "15ff800000",
+  "source": "constructed",
+  "reference": "ruling 15: -0.1/0.25 = -0.4 rounds to 0, written with sign 0; c2 absent writes its sentinel"
+}

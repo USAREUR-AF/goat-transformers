@@ -1,0 +1,12 @@
+{
+  "name": "uiscale-half-rounds-up-then-offset",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "110000000000000003",
+  "expect": "110000000000000004",
+  "model": {
+    "probe.n": "1"
+  },
+  "source": "constructed",
+  "reference": "3/2 = 1.5 rounds to 2, -1 gives 1; encode (1+1)/(1/2) = 4"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "iscale-negative-zero",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"big\":-0}",
+  "expect": "{\"big\":0}",
+  "model": {
+    "probe.big": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ais6-character-order-lsb-first-character-first",
+  "from": "conformance-transforms-bits-lsb",
+  "to": "conformance-transforms-bits-lsb",
+  "input": "8100",
+  "expect": "8100",
+  "model": {
+    "@kind": "plain",
+    "probe.s1": "AB"
+  },
+  "source": "constructed",
+  "reference": "0:0:12 lsb: bits 0-5 of byte 81 are 000001 (A), bits 6-11 are 0 1 then four 0 read low bit first, 2 (B)"
+}

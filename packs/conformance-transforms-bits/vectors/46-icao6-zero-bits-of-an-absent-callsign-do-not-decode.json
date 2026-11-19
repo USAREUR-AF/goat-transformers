@@ -1,0 +1,8 @@
+{
+  "name": "icao6-zero-bits-of-an-absent-callsign-do-not-decode",
+  "from": "conformance-transforms-bits",
+  "to": "conformance-transforms-bits",
+  "input": "884840d620000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}

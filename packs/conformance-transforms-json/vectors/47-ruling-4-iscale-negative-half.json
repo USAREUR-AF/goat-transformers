@@ -1,0 +1,12 @@
+{
+  "name": "ruling-4-iscale-negative-half",
+  "from": "conformance-transforms-json",
+  "to": "conformance-transforms-json",
+  "input": "{\"sec\":-0.0005}",
+  "expect": "{\"sec\":-0.001}",
+  "model": {
+    "time_ms": "-1"
+  },
+  "source": "constructed",
+  "reference": "-0.0005 x 1000 = -0.5 rounds to -1"
+}

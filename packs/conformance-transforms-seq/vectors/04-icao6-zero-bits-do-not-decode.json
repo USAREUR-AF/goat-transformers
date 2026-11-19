@@ -1,0 +1,8 @@
+{
+  "name": "icao6-zero-bits-do-not-decode",
+  "from": "conformance-transforms-seq",
+  "to": "conformance-transforms-seq",
+  "input": "00000000000c00000040",
+  "expect_error": "transform-decode",
+  "source": "constructed"
+}
