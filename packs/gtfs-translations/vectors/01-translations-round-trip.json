@@ -1,0 +1,16 @@
+{
+  "name": "translations-round-trip",
+  "from": "gtfs-translations",
+  "to": "gtfs-translations",
+  "input": "stops,stop_name,fr,Gare centrale,S100,,",
+  "expect": "stops,stop_name,fr,Gare centrale,S100,,",
+  "model": {
+    "gtfs.table_name": "stops",
+    "gtfs.field_name": "stop_name",
+    "gtfs.language": "fr",
+    "gtfs.translation": "Gare centrale",
+    "gtfs.record_id": "S100"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of translations.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "fare-attributes-round-trip",
+  "from": "gtfs-fare-attributes",
+  "to": "gtfs-fare-attributes",
+  "input": "F1,2.8,EUR,0,,ag1,5400",
+  "expect": "F1,2.8,EUR,0,,ag1,5400",
+  "model": {
+    "gtfs.fare_id": "F1",
+    "gtfs.price": "2.8",
+    "gtfs.currency_type": "EUR",
+    "gtfs.payment_method": "0",
+    "gtfs.agency_id": "ag1",
+    "gtfs.transfer_duration": "5400"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_attributes.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

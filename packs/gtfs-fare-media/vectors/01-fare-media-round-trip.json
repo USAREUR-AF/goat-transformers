@@ -1,0 +1,14 @@
+{
+  "name": "fare-media-round-trip",
+  "from": "gtfs-fare-media",
+  "to": "gtfs-fare-media",
+  "input": "CARD,Transit card,2",
+  "expect": "CARD,Transit card,2",
+  "model": {
+    "gtfs.fare_media_id": "CARD",
+    "gtfs.fare_media_name": "Transit card",
+    "gtfs.fare_media_type": "2"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_media.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

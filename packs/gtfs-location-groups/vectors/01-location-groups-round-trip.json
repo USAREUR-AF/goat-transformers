@@ -1,0 +1,13 @@
+{
+  "name": "location-groups-round-trip",
+  "from": "gtfs-location-groups",
+  "to": "gtfs-location-groups",
+  "input": "LGR1,Old town stops",
+  "expect": "LGR1,Old town stops",
+  "model": {
+    "gtfs.location_group_id": "LGR1",
+    "gtfs.location_group_name": "Old town stops"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of location_groups.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

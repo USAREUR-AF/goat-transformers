@@ -1,0 +1,15 @@
+{
+  "name": "rider-categories-round-trip",
+  "from": "gtfs-rider-categories",
+  "to": "gtfs-rider-categories",
+  "input": "ADULT,Adult,1,https://transit.example.org/fares",
+  "expect": "ADULT,Adult,1,https://transit.example.org/fares",
+  "model": {
+    "gtfs.rider_category_id": "ADULT",
+    "gtfs.rider_category_name": "Adult",
+    "gtfs.is_default_fare_category": "1",
+    "gtfs.eligibility_url": "https://transit.example.org/fares"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of rider_categories.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}

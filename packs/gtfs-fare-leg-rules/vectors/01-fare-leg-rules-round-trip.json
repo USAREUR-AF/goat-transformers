@@ -1,0 +1,18 @@
+{
+  "name": "fare-leg-rules-round-trip",
+  "from": "gtfs-fare-leg-rules",
+  "to": "gtfs-fare-leg-rules",
+  "input": "LG1,BUS,A,B,PEAK,,SINGLE,1",
+  "expect": "LG1,BUS,A,B,PEAK,,SINGLE,1",
+  "model": {
+    "gtfs.leg_group_id": "LG1",
+    "gtfs.network_id": "BUS",
+    "gtfs.from_area_id": "A",
+    "gtfs.to_area_id": "B",
+    "gtfs.from_timeframe_group_id": "PEAK",
+    "gtfs.fare_product_id": "SINGLE",
+    "gtfs.rule_priority": "1"
+  },
+  "source": "constructed",
+  "reference": "GTFS Schedule Reference (google/transit, commit 2ce6aa7), columns of fare_leg_rules.txt in the reference's order; row written by tools/gen/gtfs-vectors.py"
+}
