@@ -1,0 +1,21 @@
+{
+  "name": "type9-sar-aircraft-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "91b55wi;hbOS@OdQAC062Ch2089h",
+  "expect": "91b55wi;hbOS@OdQAC062Ch2089h",
+  "model": {
+    "@kind": "sar-aircraft",
+    "ais.mmsi": "111232511",
+    "lat": "58.144",
+    "lon": "-6.2788433333333336",
+    "speed_ms": "21.606666666666666",
+    "course": "154.5",
+    "ais.altitude": "303",
+    "ais.second": "15",
+    "ais.dte": "1",
+    "ais.radio": "33392"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 488",
+  "reference": "Type 9 speed in whole knots: 42 x 1852/3600 = 21.606666666666666 m/s. Altitude 303, course 1545 tenths, dte 1. gpsd: alt 303, speed 42, lon -6.2788433, lat 58.144, course 154.5, radio 33392."
+}

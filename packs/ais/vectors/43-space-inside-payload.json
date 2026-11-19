@@ -1,0 +1,9 @@
+{
+  "name": "space-inside-payload",
+  "from": "ais",
+  "to": "ais",
+  "input": "15RTgt0PAso;90 TKcjM8h6g208CQ",
+  "expect_error": "malformed-wire",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10, a space inserted after character 14",
+  "reference": "Whitespace is not an armor character (engine-spec 0.14)."
+}

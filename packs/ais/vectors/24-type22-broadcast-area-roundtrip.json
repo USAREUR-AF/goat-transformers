@@ -1,0 +1,20 @@
+{
+  "name": "type22-broadcast-area-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "F030ot22N2P6aoQbhe4736L20000",
+  "expect": "F030ot22N2P6aoQbhe4736L20000",
+  "model": {
+    "@kind": "channel-area",
+    "ais.channel_a": "2087",
+    "ais.channel_b": "2088",
+    "ais.ne_lon": "-44100",
+    "ais.ne_lat": "27330",
+    "ais.sw_lon": "-48100",
+    "ais.sw_lat": "25400",
+    "ais.addressed": "0",
+    "ais.zonesize": "4"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 861",
+  "reference": "Bit 139 = 0 selects channel-area. Corners in 1/10 minute as signed codes: ne_lon -44100 (gpsd -73.5 degrees), ne_lat 27330 (45.55), sw_lon -48100 (-80.166667), sw_lat 25400 (42.333333)."
+}

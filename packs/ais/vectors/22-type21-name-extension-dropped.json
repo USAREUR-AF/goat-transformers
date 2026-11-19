@@ -1,0 +1,19 @@
+{
+  "name": "type21-name-extension-dropped",
+  "from": "ais",
+  "to": "ais",
+  "input": "E1mg=5J1T4W0h97aRh6ba84<h2d;W:Te=eLvH50```q:D44QDlp0C1DU00",
+  "expect": "E1mg=5J1T4W0h97aRh6ba84<h2d;W:Te=eLvH50```q:D0",
+  "model": {
+    "@kind": "aid-to-nav",
+    "ais.mmsi": "123456789",
+    "ais.aid_type": "20",
+    "ais.name": "CHINA ROSE MURPHY EX",
+    "lat": "47.92061833333333",
+    "lon": "-122.69859166666667",
+    "ais.second": "50",
+    "ais.regional": "165"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 831 and 832",
+  "reference": "58 characters = 348 bits. The pack reads the fixed 272 bits: name 'CHINA ROSE MURPHY EX' (20 characters). gpsd joins the name extension: 'CHINA ROSE MURPHY EXPRESS ALERT' (pack.md, Not mapped). Expect differs from input: L = 272, 46 characters with 4 zero fill bits; the name extension is not written."
+}

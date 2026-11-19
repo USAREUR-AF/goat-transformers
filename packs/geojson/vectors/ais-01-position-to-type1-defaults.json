@@ -1,0 +1,15 @@
+{
+  "name": "ais-01-position-to-type1-defaults",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{},\"id\":\"244123456\"}",
+  "expect": "13`l7@?P?w0DVG0MqLt>4?wp0000",
+  "model": {
+    "@complete": true,
+    "ais.mmsi": "244123456",
+    "lat": "52.25",
+    "lon": "4.5"
+  },
+  "source": "values chosen for this vector",
+  "reference": "lon 4.5 x 600000 = 2700000, lat 52.25 x 600000 = 31350000. Kind: `convert` clears the kind; position-a1 is the first whose requires (ais.mmsi, lat, lon) are present, ais.mmsi derived by parse_int(uid). Absent fields: nav status 15, turn -128 (0x80), SOG default 52.62766666666667 x 36000/1852 = 1023.0000000000001, rounded 1023, course default 3600, heading 511, second 60 (pack defaults); repeat, accuracy, maneuver, spare, raim, radio zero. L = 168, 28 characters."
+}

@@ -1,0 +1,466 @@
+# AIS message payloads, the six-bit armored text of an AIVDM/AIVDO sentence.
+# Public. Written from the gpsd document "AIVDM/AIVDO protocol decoding"
+# v1.58. pack.md states what is mapped and what is not.
+#
+# The input is one whole payload: the armored text of field 6 of an AIVDM or
+# AIVDO sentence, with a payload split over several sentences already joined.
+# The sentence around it, the fill-bit count and the joining of fragments are
+# not part of this pack (engine-spec 0.14, ruling 1).
+#
+# Addressing: word_bytes 1 and bit_order msb, so a locator is
+# 0:<bit>:<len> with bit 0 the first bit of the payload, the bit numbering
+# the source uses. The first six bits are the message type: a common field,
+# and a `when` in each kind.
+format        ais
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, v1.58 (24 June 2023), www/AIVDM.adoc at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING)"
+uses          ais
+wire          bits
+word_bytes    1
+bit_order     msb
+armor         sixbit
+
+field  ais.msg_type       0:0:6      uint
+field  ais.repeat         0:6:2      uint
+field  ais.mmsi           0:8:30     uint
+
+# Types 1, 2 and 3: position report, Class A. 168 bits. One kind per type so
+# that a round trip keeps the type; encode from another format takes the
+# first kind, type 1.
+kind      position-a1
+when      0:0:6  1
+requires  ais.mmsi lat lon
+default   speed_ms        52.62766666666667
+default   course          360
+default   ais.turn        -128
+default   ais.nav_status  15
+default   ais.heading     511
+default   ais.second      60
+field  ais.nav_status     0:38:4     uint
+field  ais.turn           0:42:8     twos
+field  speed_ms           0:50:10    uscale:1852/36000
+field  ais.accuracy       0:60:1     uint
+field  lon                0:61:28    sscale:1/600000
+field  lat                0:89:27    sscale:1/600000
+field  course             0:116:12   uscale:1/10
+field  ais.heading        0:128:9    uint
+field  ais.second         0:137:6    uint
+field  ais.maneuver       0:143:2    uint
+field  ais.spare          0:145:3    uint
+field  ais.raim           0:148:1    uint
+field  ais.radio          0:149:19   uint
+
+kind      position-a2
+when      0:0:6  2
+requires  ais.mmsi lat lon
+default   speed_ms        52.62766666666667
+default   course          360
+default   ais.turn        -128
+default   ais.nav_status  15
+default   ais.heading     511
+default   ais.second      60
+field  ais.nav_status     0:38:4     uint
+field  ais.turn           0:42:8     twos
+field  speed_ms           0:50:10    uscale:1852/36000
+field  ais.accuracy       0:60:1     uint
+field  lon                0:61:28    sscale:1/600000
+field  lat                0:89:27    sscale:1/600000
+field  course             0:116:12   uscale:1/10
+field  ais.heading        0:128:9    uint
+field  ais.second         0:137:6    uint
+field  ais.maneuver       0:143:2    uint
+field  ais.spare          0:145:3    uint
+field  ais.raim           0:148:1    uint
+field  ais.radio          0:149:19   uint
+
+kind      position-a3
+when      0:0:6  3
+requires  ais.mmsi lat lon
+default   speed_ms        52.62766666666667
+default   course          360
+default   ais.turn        -128
+default   ais.nav_status  15
+default   ais.heading     511
+default   ais.second      60
+field  ais.nav_status     0:38:4     uint
+field  ais.turn           0:42:8     twos
+field  speed_ms           0:50:10    uscale:1852/36000
+field  ais.accuracy       0:60:1     uint
+field  lon                0:61:28    sscale:1/600000
+field  lat                0:89:27    sscale:1/600000
+field  course             0:116:12   uscale:1/10
+field  ais.heading        0:128:9    uint
+field  ais.second         0:137:6    uint
+field  ais.maneuver       0:143:2    uint
+field  ais.spare          0:145:3    uint
+field  ais.raim           0:148:1    uint
+field  ais.radio          0:149:19   uint
+
+# Type 4: base station report. 168 bits.
+kind      base-station
+when      0:0:6  4
+requires  ais.mmsi ais.year lat lon
+default   ais.hour        24
+default   ais.minute      60
+default   ais.second      60
+field  ais.year           0:38:14    uint
+field  ais.month          0:52:4     uint
+field  ais.day            0:56:5     uint
+field  ais.hour           0:61:5     uint
+field  ais.minute         0:66:6     uint
+field  ais.second         0:72:6     uint
+field  ais.accuracy       0:78:1     uint
+field  lon                0:79:28    sscale:1/600000
+field  lat                0:107:27   sscale:1/600000
+field  ais.epfd           0:134:4    uint
+field  ais.spare          0:138:10   uint
+field  ais.raim           0:148:1    uint
+field  ais.radio          0:149:19   uint
+
+# Type 5: static and voyage related data. 424 bits (71 characters).
+kind      static-voyage
+when      0:0:6  5
+requires  ais.mmsi callsign
+default   ais.eta_hour    24
+default   ais.eta_minute  60
+default   ais.dte         1
+field  ais.ais_version    0:38:2     uint
+field  ais.imo            0:40:30    uint
+field  callsign           0:70:42    sixbit    trim
+field  ais.shipname       0:112:120  sixbit    trim
+field  ais.shiptype       0:232:8    uint
+field  ais.to_bow         0:240:9    uint
+field  ais.to_stern       0:249:9    uint
+field  ais.to_port        0:258:6    uint
+field  ais.to_starboard   0:264:6    uint
+field  ais.epfd           0:270:4    uint
+field  ais.eta_month      0:274:4    uint
+field  ais.eta_day        0:278:5    uint
+field  ais.eta_hour       0:283:5    uint
+field  ais.eta_minute     0:288:6    uint
+field  ais.draught        0:294:8    uscale:1/10
+field  ais.destination    0:302:120  sixbit    trim
+field  ais.dte            0:422:1    uint
+field  ais.spare          0:423:1    uint
+
+# Type 7: binary acknowledge. 72 to 168 bits: one to four acknowledged
+# MMSIs, each with its sequence number; the second to fourth are optional.
+kind      binary-ack
+when      0:0:6  7
+requires  ais.mmsi ais.mmsi1
+field  ais.spare          0:38:2     uint
+field  ais.mmsi1          0:40:30    uint
+field  ais.mmsiseq1       0:70:2     uint
+field  ais.mmsi2          0:72:30    uint      optional
+field  ais.mmsiseq2       0:102:2    uint      optional
+field  ais.mmsi3          0:104:30   uint      optional
+field  ais.mmsiseq3       0:134:2    uint      optional
+field  ais.mmsi4          0:136:30   uint      optional
+field  ais.mmsiseq4       0:166:2    uint      optional
+
+# Type 9: standard SAR aircraft position report. 168 bits. Speed in whole
+# knots, not tenths.
+kind      sar-aircraft
+when      0:0:6  9
+requires  ais.mmsi ais.altitude lat lon
+default   ais.altitude    4095
+default   speed_ms        526.2766666666666
+default   course          360
+default   ais.second      60
+default   ais.dte         1
+field  ais.altitude       0:38:12    uint
+field  speed_ms           0:50:10    uscale:1852/3600
+field  ais.accuracy       0:60:1     uint
+field  lon                0:61:28    sscale:1/600000
+field  lat                0:89:27    sscale:1/600000
+field  course             0:116:12   uscale:1/10
+field  ais.second         0:128:6    uint
+field  ais.regional       0:134:8    uint
+field  ais.dte            0:142:1    uint
+field  ais.spare          0:143:3    uint
+field  ais.assigned       0:146:1    uint
+field  ais.raim           0:147:1    uint
+field  ais.radio          0:148:20   uint
+
+# Type 10: UTC and date inquiry. 72 bits.
+kind      utc-inquiry
+when      0:0:6  10
+requires  ais.mmsi ais.dest_mmsi
+field  ais.spare          0:38:2     uint
+field  ais.dest_mmsi      0:40:30    uint
+field  ais.spare2         0:70:2     uint
+
+# Type 11: UTC and date response. The layout of type 4.
+kind      utc-response
+when      0:0:6  11
+requires  ais.mmsi ais.year lat lon
+default   ais.hour        24
+default   ais.minute      60
+default   ais.second      60
+field  ais.year           0:38:14    uint
+field  ais.month          0:52:4     uint
+field  ais.day            0:56:5     uint
+field  ais.hour           0:61:5     uint
+field  ais.minute         0:66:6     uint
+field  ais.second         0:72:6     uint
+field  ais.accuracy       0:78:1     uint
+field  lon                0:79:28    sscale:1/600000
+field  lat                0:107:27   sscale:1/600000
+field  ais.epfd           0:134:4    uint
+field  ais.spare          0:138:10   uint
+field  ais.raim           0:148:1    uint
+field  ais.radio          0:149:19   uint
+
+# Type 13: safety related acknowledgement. The layout of type 7.
+kind      safety-ack
+when      0:0:6  13
+requires  ais.mmsi ais.mmsi1
+field  ais.spare          0:38:2     uint
+field  ais.mmsi1          0:40:30    uint
+field  ais.mmsiseq1       0:70:2     uint
+field  ais.mmsi2          0:72:30    uint      optional
+field  ais.mmsiseq2       0:102:2    uint      optional
+field  ais.mmsi3          0:104:30   uint      optional
+field  ais.mmsiseq3       0:134:2    uint      optional
+field  ais.mmsi4          0:136:30   uint      optional
+field  ais.mmsiseq4       0:166:2    uint      optional
+
+# Type 15: interrogation. 88, 110 (or 112) or 160 bits: the second request
+# to the first station, and the request to a second station, are optional.
+# The spare bits 88-89, 108-109 and 158-159 are not mapped.
+kind      interrogation
+when      0:0:6  15
+requires  ais.mmsi ais.mmsi1 ais.type1_1
+field  ais.spare          0:38:2     uint
+field  ais.mmsi1          0:40:30    uint
+field  ais.type1_1        0:70:6     uint
+field  ais.offset1_1      0:76:12    uint
+field  ais.type1_2        0:90:6     uint      optional
+field  ais.offset1_2      0:96:12    uint      optional
+field  ais.mmsi2          0:110:30   uint      optional
+field  ais.type2_1        0:140:6    uint      optional
+field  ais.offset2_1      0:146:12   uint      optional
+
+# Type 16: assignment mode command. 96 bits (one station, bits 92-95 not
+# mapped) or 144 bits (two stations).
+kind      assignment
+when      0:0:6  16
+requires  ais.mmsi ais.mmsi1 ais.offset1
+field  ais.spare          0:38:2     uint
+field  ais.mmsi1          0:40:30    uint
+field  ais.offset1        0:70:12    uint
+field  ais.increment1     0:82:10    uint
+field  ais.mmsi2          0:92:30    uint      optional
+field  ais.offset2        0:122:12   uint      optional
+field  ais.increment2     0:134:10   uint      optional
+
+# Type 18: standard Class B position report. 168 bits.
+kind      position-b
+when      0:0:6  18
+requires  ais.mmsi ais.cs lat lon
+default   speed_ms        52.62766666666667
+default   course          360
+default   ais.heading     511
+default   ais.second      60
+field  ais.reserved       0:38:8     uint
+field  speed_ms           0:46:10    uscale:1852/36000
+field  ais.accuracy       0:56:1     uint
+field  lon                0:57:28    sscale:1/600000
+field  lat                0:85:27    sscale:1/600000
+field  course             0:112:12   uscale:1/10
+field  ais.heading        0:124:9    uint
+field  ais.second         0:133:6    uint
+field  ais.regional       0:139:2    uint
+field  ais.cs             0:141:1    uint
+field  ais.display        0:142:1    uint
+field  ais.dsc            0:143:1    uint
+field  ais.band           0:144:1    uint
+field  ais.msg22          0:145:1    uint
+field  ais.assigned       0:146:1    uint
+field  ais.raim           0:147:1    uint
+field  ais.radio          0:148:20   uint
+
+# Type 19: extended Class B position report. 312 bits (52 characters).
+kind      position-b-ext
+when      0:0:6  19
+requires  ais.mmsi ais.shipname lat lon
+default   speed_ms        52.62766666666667
+default   course          360
+default   ais.heading     511
+default   ais.second      60
+default   ais.dte         1
+field  ais.reserved       0:38:8     uint
+field  speed_ms           0:46:10    uscale:1852/36000
+field  ais.accuracy       0:56:1     uint
+field  lon                0:57:28    sscale:1/600000
+field  lat                0:85:27    sscale:1/600000
+field  course             0:112:12   uscale:1/10
+field  ais.heading        0:124:9    uint
+field  ais.second         0:133:6    uint
+field  ais.regional       0:139:4    uint
+field  ais.shipname       0:143:120  sixbit    trim
+field  ais.shiptype       0:263:8    uint
+field  ais.to_bow         0:271:9    uint
+field  ais.to_stern       0:280:9    uint
+field  ais.to_port        0:289:6    uint
+field  ais.to_starboard   0:295:6    uint
+field  ais.epfd           0:301:4    uint
+field  ais.raim           0:305:1    uint
+field  ais.dte            0:306:1    uint
+field  ais.assigned       0:307:1    uint
+field  ais.spare          0:308:4    uint
+
+# Type 20: data link management. 72 to 160 bits: one to four slot
+# reservations; the second to fourth are optional.
+kind      link-management
+when      0:0:6  20
+requires  ais.mmsi ais.offset1 ais.number1
+field  ais.spare          0:38:2     uint
+field  ais.offset1        0:40:12    uint
+field  ais.number1        0:52:4     uint
+field  ais.timeout1       0:56:3     uint
+field  ais.increment1     0:59:11    uint
+field  ais.offset2        0:70:12    uint      optional
+field  ais.number2        0:82:4     uint      optional
+field  ais.timeout2       0:86:3     uint      optional
+field  ais.increment2     0:89:11    uint      optional
+field  ais.offset3        0:100:12   uint      optional
+field  ais.number3        0:112:4    uint      optional
+field  ais.timeout3       0:116:3    uint      optional
+field  ais.increment3     0:119:11   uint      optional
+field  ais.offset4        0:130:12   uint      optional
+field  ais.number4        0:142:4    uint      optional
+field  ais.timeout4       0:146:3    uint      optional
+field  ais.increment4     0:149:11   uint      optional
+
+# Type 21: aid-to-navigation report. The fixed 272 bits (46 characters).
+# The name extension after bit 271 is not read (pack.md, not mapped).
+kind      aid-to-nav
+when      0:0:6  21
+requires  ais.mmsi ais.aid_type lat lon
+default   ais.second      60
+field  ais.aid_type       0:38:5     uint
+field  ais.name           0:43:120   sixbit    trim
+field  ais.accuracy       0:163:1    uint
+field  lon                0:164:28   sscale:1/600000
+field  lat                0:192:27   sscale:1/600000
+field  ais.to_bow         0:219:9    uint
+field  ais.to_stern       0:228:9    uint
+field  ais.to_port        0:237:6    uint
+field  ais.to_starboard   0:243:6    uint
+field  ais.epfd           0:249:4    uint
+field  ais.second         0:253:6    uint
+field  ais.off_position   0:259:1    uint
+field  ais.regional       0:260:8    uint
+field  ais.raim           0:268:1    uint
+field  ais.virtual_aid    0:269:1    uint
+field  ais.assigned       0:270:1    uint
+field  ais.spare          0:271:1    uint
+
+# Type 22: channel management. 168 bits. Bit 139 decides how bits 69-138
+# read: 0, the corners of an area; 1, two destination MMSIs.
+kind      channel-area
+when      0:0:6  22
+when      0:139:1  0
+requires  ais.mmsi ais.channel_a ais.ne_lon
+field  ais.spare          0:38:2     uint
+field  ais.channel_a      0:40:12    uint
+field  ais.channel_b      0:52:12    uint
+field  ais.txrx           0:64:4     uint
+field  ais.power          0:68:1     uint
+field  ais.ne_lon         0:69:18    twos
+field  ais.ne_lat         0:87:17    twos
+field  ais.sw_lon         0:104:18   twos
+field  ais.sw_lat         0:122:17   twos
+field  ais.addressed      0:139:1    uint
+field  ais.band_a         0:140:1    uint
+field  ais.band_b         0:141:1    uint
+field  ais.zonesize       0:142:3    uint
+field  ais.spare2         0:145:23   uint
+
+kind      channel-addressed
+when      0:0:6  22
+when      0:139:1  1
+requires  ais.mmsi ais.channel_a ais.dest1
+field  ais.spare          0:38:2     uint
+field  ais.channel_a      0:40:12    uint
+field  ais.channel_b      0:52:12    uint
+field  ais.txrx           0:64:4     uint
+field  ais.power          0:68:1     uint
+field  ais.dest1          0:69:30    uint
+field  ais.dest2          0:104:30   uint
+field  ais.addressed      0:139:1    uint
+field  ais.band_a         0:140:1    uint
+field  ais.band_b         0:141:1    uint
+field  ais.zonesize       0:142:3    uint
+field  ais.spare2         0:145:23   uint
+
+# Type 23: group assignment command. 160 bits.
+kind      group-assignment
+when      0:0:6  23
+requires  ais.mmsi ais.station_type ais.ne_lon
+field  ais.spare          0:38:2     uint
+field  ais.ne_lon         0:40:18    twos
+field  ais.ne_lat         0:58:17    twos
+field  ais.sw_lon         0:75:18    twos
+field  ais.sw_lat         0:93:17    twos
+field  ais.station_type   0:110:4    uint
+field  ais.shiptype       0:114:8    uint
+field  ais.spare2         0:122:22   uint
+field  ais.txrx           0:144:2    uint
+field  ais.interval       0:146:4    uint
+field  ais.quiet          0:150:4    uint
+field  ais.spare3         0:154:6    uint
+
+# Type 24: static data report. The part number at bits 38-39 selects the
+# kind; parts 2 and 3 are not allowed and select none.
+# Part A: 160 bits, or 168 with a trailing spare byte, which is optional.
+kind      static-a
+when      0:0:6   24
+when      0:38:2  0
+requires  ais.mmsi ais.part_no ais.shipname
+field  ais.part_no        0:38:2     uint
+field  ais.shipname       0:40:120   sixbit    trim
+field  ais.spare          0:160:8    uint      optional
+
+# Part B: 168 bits. Bits 48-89 are read both as the vendor ID, model and
+# serial, and as one 7-character vendor string; bits 132-161 both as the
+# dimensions and as a mother-ship MMSI. On encode the earlier line wins.
+kind      static-b
+when      0:0:6   24
+when      0:38:2  1
+requires  ais.mmsi ais.part_no callsign
+field  ais.part_no        0:38:2     uint
+field  ais.shiptype       0:40:8     uint
+field  ais.vendor_id      0:48:18    sixbit
+field  ais.unit_model     0:66:4     uint
+field  ais.serial         0:70:20    uint
+field  ais.vendor_text    0:48:42    sixbit
+field  callsign           0:90:42    sixbit    trim
+field  ais.to_bow         0:132:9    uint
+field  ais.to_stern       0:141:9    uint
+field  ais.to_port        0:150:6    uint
+field  ais.to_starboard   0:156:6    uint
+field  ais.mothership_mmsi 0:132:30  uint
+field  ais.spare          0:162:6    uint
+
+# Type 27: long-range position report. 96 bits (16 characters); a longer
+# payload is read for its first 96 bits. Position in 1/10 minute, speed in
+# whole knots, course in whole degrees.
+kind      long-range
+when      0:0:6  27
+requires  ais.mmsi ais.gnss lat lon
+default   ais.nav_status  15
+default   speed_ms        32.41
+default   ais.course_lr   511
+default   ais.gnss        1
+field  ais.accuracy       0:38:1     uint
+field  ais.raim           0:39:1     uint
+field  ais.nav_status     0:40:4     uint
+field  lon                0:44:18    sscale:1/600
+field  lat                0:62:17    sscale:1/600
+field  speed_ms           0:79:6     uscale:1852/3600
+field  ais.course_lr      0:85:9     uint
+field  ais.gnss           0:94:1     uint
+field  ais.spare          0:95:1     uint

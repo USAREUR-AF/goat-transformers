@@ -1,0 +1,20 @@
+{
+  "name": "type20-three-reservations",
+  "from": "ais",
+  "to": "ais",
+  "input": "D030p8@2tN?b<`O6DmQO6D0",
+  "expect": "D030p8@2tN?b<`O6DmQO6D",
+  "model": {
+    "@kind": "link-management",
+    "ais.offset1": "47",
+    "ais.increment1": "250",
+    "ais.offset2": "2250",
+    "ais.number2": "1",
+    "ais.increment2": "1125",
+    "ais.offset3": "856",
+    "ais.number3": "5",
+    "ais.increment3": "1125"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 809",
+  "reference": "23 characters = 138 bits: the fourth reservation (bits 130-159) lies beyond and is absent. gpsd agrees on the three reservations. Expect differs from input: L = 130, 22 characters with 2 zero fill bits."
+}

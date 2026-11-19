@@ -1,0 +1,9 @@
+{
+  "name": "ais-07-position-and-callsign-is-type1",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{\"callsign\":\"PBXY\"},\"id\":\"244123456\"}",
+  "expect": "13`l7@?P?w0DVG0MqLt>4?wp0000",
+  "source": "values chosen for this vector",
+  "reference": "position-a1 comes first in pack order and its requires hold; the call sign has no field in that kind and is not written. Same output as ais-01."
+}

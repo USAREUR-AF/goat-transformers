@@ -1,0 +1,20 @@
+{
+  "name": "type3-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "38Id705000rRVJhE7cl9n;160000",
+  "expect": "38Id705000rRVJhE7cl9n;160000",
+  "model": {
+    "@kind": "position-a3",
+    "ais.mmsi": "563808000",
+    "lat": "36.91",
+    "lon": "-76.32753333333334",
+    "speed_ms": "0",
+    "course": "252",
+    "ais.msg_type": "3",
+    "ais.nav_status": "5",
+    "ais.heading": "352"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 78",
+  "reference": "Type 3, nav status 5 (moored), lat 22146000/600000 = 36.91 exactly as a decimal; gpsd agrees."
+}

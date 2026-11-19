@@ -1,0 +1,20 @@
+{
+  "name": "type4-date-time-and-position-not-available",
+  "from": "ais",
+  "to": "ais",
+  "input": "402Fha0000Htt<tSF0l4Q@000d20",
+  "expect": "402Fha0000Htt<tSF0l4Q@000d20",
+  "model": {
+    "@kind": "base-station",
+    "ais.year": "0",
+    "ais.month": "0",
+    "ais.day": "0",
+    "ais.hour": "24",
+    "ais.minute": "60",
+    "ais.second": "60",
+    "lat": "91",
+    "lon": "181"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 1026",
+  "reference": "All date and time parts at their not-available codes (0, 0, 0, 24, 60, 60) and the position at 181 and 91 degrees (108600000 and 54600000 in 1/10000 minute). The pack decodes these as values (pack.md, Not-available codes). gpsd: 0000-00-00T24:60:60Z, lon 181.0, lat 91.0."
+}

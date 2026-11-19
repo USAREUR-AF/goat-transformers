@@ -1,0 +1,18 @@
+{
+  "name": "type16-assignment-two-stations",
+  "from": "ais",
+  "to": "ais",
+  "input": "@6STUk004lQ206bCKNOBAb6SJ@5s",
+  "expect": "@6STUk004lQ206bCKNOBAb6S",
+  "model": {
+    "@kind": "assignment",
+    "ais.mmsi1": "315920",
+    "ais.offset1": "2049",
+    "ais.increment1": "681",
+    "ais.mmsi2": "230137673",
+    "ais.offset2": "424",
+    "ais.increment2": "419"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 1109",
+  "reference": "168 bits sent; the second station is present. gpsd: 315920/2049/681 and 230137673/424/419. Expect differs from input: L = 144, 24 characters; bits 144-167 of the input are past every line and are dropped."
+}

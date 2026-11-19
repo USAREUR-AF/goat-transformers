@@ -1,0 +1,16 @@
+{
+  "name": "type27-to-geojson-course-not-shared",
+  "from": "ais",
+  "to": "geojson",
+  "input": "KCQ9r=hrFUnH7P00",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-154.20166666666665,87.065]},\"properties\":{\"speed_ms\":0},\"id\":\"236091959\"}",
+  "model": {
+    "@complete": true,
+    "uid": "236091959",
+    "lat": "87.065",
+    "lon": "-154.20166666666665",
+    "speed_ms": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 971",
+  "reference": "Type 27: the course is the raw key ais.course_lr, not course (pack.md), so properties holds speed_ms only. geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ais-06-speed-out-of-range",
+  "from": "geojson",
+  "to": "ais",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.5,52.25]},\"properties\":{\"speed_ms\":60},\"id\":\"244123456\"}",
+  "expect_error": "transform-encode",
+  "source": "values chosen for this vector",
+  "reference": "60 x 36000/1852 = 1166.3, rounded 1166, does not fit 10 bits unsigned (max 1023): uscale out of range is transform-encode (engine-spec 0.5, more transforms)."
+}

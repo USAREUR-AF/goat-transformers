@@ -1,0 +1,17 @@
+{
+  "name": "type1-to-geojson",
+  "from": "ais",
+  "to": "geojson",
+  "input": "15RTgt0PAso;90TKcjM8h6g208CQ",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-123.39538333333333,48.38163333333333]},\"properties\":{\"course\":224,\"speed_ms\":6.3276666666666666},\"id\":\"371798000\"}",
+  "model": {
+    "@complete": true,
+    "uid": "371798000",
+    "lat": "48.38163333333333",
+    "lon": "-123.39538333333333",
+    "speed_ms": "6.3276666666666666",
+    "course": "224"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10",
+  "reference": "Type 1: lat, lon, course, speed_ms reach the Feature. geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "type15-interrogation-88-bits",
+  "from": "ais",
+  "to": "ais",
+  "input": "?5OP=l00052HD00",
+  "expect": "?5OP=l00052HD00",
+  "model": {
+    "@kind": "interrogation",
+    "ais.mmsi": "368578000",
+    "ais.mmsi1": "5158",
+    "ais.type1_1": "5",
+    "ais.offset1_1": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 638",
+  "reference": "15 characters = 90 bits: type1_2 at bits 90-95 lies beyond the input and is absent. L = 88, 15 characters with 2 zero fill bits. gpsd: mmsi1 5158, type1_1 5, offset1_1 0."
+}

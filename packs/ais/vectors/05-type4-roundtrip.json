@@ -1,0 +1,23 @@
+{
+  "name": "type4-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "403OviQuMGCqWrRO9>E6fE700@GO",
+  "expect": "403OviQuMGCqWrRO9>E6fE700@GO",
+  "model": {
+    "@kind": "base-station",
+    "ais.mmsi": "3669702",
+    "ais.year": "2007",
+    "ais.month": "5",
+    "ais.day": "14",
+    "ais.hour": "19",
+    "ais.minute": "57",
+    "ais.second": "39",
+    "lat": "36.883766666666666",
+    "lon": "-76.35236166666667",
+    "ais.epfd": "7",
+    "ais.radio": "67039"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 101",
+  "reference": "Base station report: 2007-05-14 19:57:39, epfd 7; gpsd timestamp 2007-05-14T19:57:39Z, lon -76.3523617, lat 36.8837667, radio 67039."
+}

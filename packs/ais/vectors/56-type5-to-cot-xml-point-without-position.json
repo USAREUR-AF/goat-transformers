@@ -1,0 +1,14 @@
+{
+  "name": "type5-to-cot-xml-point-without-position",
+  "from": "ais",
+  "to": "cot-xml",
+  "input": "55?MbV02;H;s<HtKR20EHE:0@T4@Dn2222222216L961O5Gf0NSQEp6ClRp888888888880",
+  "expect": "<event version=\"2.0\" uid=\"351759000\" type=\"a-u-X\"><point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"3FOF8\"/></detail></event>",
+  "model": {
+    "@complete": true,
+    "uid": "351759000",
+    "callsign": "3FOF8"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 124 and 125",
+  "reference": "Type 5: no lat or lon, yet the point element is written for its hae, ce and le defaults (engine-spec 0.6, Defaults: a default is used for every field of the key). cot-xml: version const, uid (derived text_of(ais.mmsi)), type default a-u-X, point with the hae/ce/le defaults 9999999, detail/contact then detail/track in field-line order; no time, start, stale or how, since the entity has none."
+}

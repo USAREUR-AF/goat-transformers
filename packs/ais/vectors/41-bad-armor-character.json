@@ -1,0 +1,9 @@
+{
+  "name": "bad-armor-character",
+  "from": "ais",
+  "to": "ais",
+  "input": "15RTgt0PAsX;90TKcjM8h6g208CQ",
+  "expect_error": "malformed-wire",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10, character 11 replaced by X",
+  "reference": "'X' (0x58) lies between 'W' (0x57) and '`' (0x60) and stands for no six-bit value (engine-spec 0.14, Reading the armored text)."
+}

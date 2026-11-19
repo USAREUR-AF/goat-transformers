@@ -1,0 +1,9 @@
+{
+  "name": "type1-single-character",
+  "from": "ais",
+  "to": "ais",
+  "input": "1",
+  "expect_error": "malformed-wire",
+  "source": "values chosen for this vector",
+  "reference": "6 bits: the type 1 `when` holds, then the input is too short for the selected kind (ruling 4 of 0.14)."
+}

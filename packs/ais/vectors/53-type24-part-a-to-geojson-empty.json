@@ -1,0 +1,13 @@
+{
+  "name": "type24-part-a-to-geojson-empty",
+  "from": "ais",
+  "to": "geojson",
+  "input": "H42O55i18tMET00000000000000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"271041815\"}",
+  "model": {
+    "@complete": true,
+    "uid": "271041815"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 904",
+  "reference": "Part A maps no shared key but the derived uid: geometry null, properties empty. geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
+}

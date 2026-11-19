@@ -1,0 +1,22 @@
+{
+  "name": "type1-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "15RTgt0PAso;90TKcjM8h6g208CQ",
+  "expect": "15RTgt0PAso;90TKcjM8h6g208CQ",
+  "model": {
+    "@kind": "position-a1",
+    "ais.mmsi": "371798000",
+    "lat": "48.38163333333333",
+    "lon": "-123.39538333333333",
+    "speed_ms": "6.3276666666666666",
+    "course": "224",
+    "ais.nav_status": "0",
+    "ais.turn": "-127",
+    "ais.heading": "215",
+    "ais.second": "33",
+    "ais.radio": "34017"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10",
+  "reference": "Decoded by the pack's lines: SOG 123 x 1852/36000 m/s, lon -74037230/600000, lat 29028980/600000, course 2240/10. gpsd's comment block and sample.aivdm.js.chk agree (SOG 12.3 kn, lon -123.3953833, lat 48.3816333, course 224, heading 215, second 33, radio 34017); the rate of turn code is -127 where gpsd prints \"fastleft\". 168 bits, 28 characters, no fill: re-encodes to the input."
+}

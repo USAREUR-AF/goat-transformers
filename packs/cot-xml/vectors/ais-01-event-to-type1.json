@@ -1,0 +1,13 @@
+{
+  "name": "ais-01-event-to-type1",
+  "from": "cot-xml",
+  "to": "ais",
+  "input": "<event version=\"2.0\" uid=\"235009876\" type=\"a-n-S\" how=\"m-g\"><point lat=\"50.5\" lon=\"-1.25\" hae=\"0\" ce=\"10\" le=\"10\"/><detail><track course=\"90\" speed=\"5.144444444444445\"/></detail></event>",
+  "expect": "13P7oE?P1TOrAjPLqGH3Q?wp0000",
+  "model": {
+    "@complete": true,
+    "ais.mmsi": "235009876"
+  },
+  "source": "values chosen for this vector",
+  "reference": "uid 235009876 gives ais.mmsi by parse_int; lat 50.5 x 600000 = 30300000, lon -1.25 x 600000 = -750000; speed 5.144444444444445 x 36000/1852 = 100 (10.0 kn); course 900. type, how, hae, ce and le have no AIS field. Other fields as the geojson vector ais-01. L = 168."
+}

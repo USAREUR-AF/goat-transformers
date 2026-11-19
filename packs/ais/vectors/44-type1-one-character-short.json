@@ -1,0 +1,9 @@
+{
+  "name": "type1-one-character-short",
+  "from": "ais",
+  "to": "ais",
+  "input": "15RTgt0PAso;90TKcjM8h6g208C",
+  "expect_error": "malformed-wire",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 10, first 27 characters",
+  "reference": "162 bits: position-a1 is selected (bits 0-5 = 1) and its radio field ends at bit 168 (ruling 4 of 0.14; rule Fixed layout)."
+}

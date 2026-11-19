@@ -1,0 +1,15 @@
+{
+  "name": "type24-part-a-all-at-name-is-empty",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42LQhh00000000000000000000",
+  "expect": "H42LQhh00000000000000000000",
+  "model": {
+    "@kind": "static-a",
+    "ais.mmsi": "271000003",
+    "ais.part_no": "0",
+    "ais.shipname": ""
+  },
+  "source": "values chosen for this vector",
+  "reference": "Ship name field all zero bits, 20 x @: decodes to the empty string, present (ruling 6 of 0.14); encodes back to 20 x @. 160 bits, 27 characters with 2 zero fill bits."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "empty-input-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "",
+  "expect_error": "no-kind",
+  "source": "values chosen for this vector",
+  "reference": "An empty input is a message of no bits (engine-spec 0.14); every kind's `when 0:0:6` lies beyond it and does not hold (ruling 21 of 0.5, ruling 4 of 0.14)."
+}

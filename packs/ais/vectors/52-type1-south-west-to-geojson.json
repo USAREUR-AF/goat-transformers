@@ -1,0 +1,17 @@
+{
+  "name": "type1-south-west-to-geojson",
+  "from": "ais",
+  "to": "geojson",
+  "input": "1:LQa@@00jslitid<r@725`t0000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-58.375,-34.6]},\"properties\":{\"course\":180,\"speed_ms\":2.5722222222222224},\"id\":\"701000001\"}",
+  "model": {
+    "@complete": true,
+    "uid": "701000001",
+    "lat": "-34.6",
+    "lon": "-58.375",
+    "speed_ms": "2.5722222222222224",
+    "course": "180"
+  },
+  "source": "values chosen for this vector (as type1-south-west-position)",
+  "reference": "Negative coordinates. geojson writes coordinates [lon, lat], properties in field-line order (callsign, course, speed_ms), then id (ruling 4 of 0.1.1); uid is derived as text_of(ais.mmsi) (model/ais.def), so it is checked with @complete."
+}

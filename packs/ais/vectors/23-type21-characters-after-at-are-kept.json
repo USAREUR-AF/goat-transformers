@@ -1,0 +1,17 @@
+{
+  "name": "type21-characters-after-at-are-kept",
+  "from": "ais",
+  "to": "ais",
+  "input": "E03l90w4Q1h3h1:WdPOwwwwwwwwlQdn`:e55020@@@gP000000000000000000",
+  "expect": "E03l90w4Q1h3h1:WdPOwwwwwwwwlQdn`:e55020@@@gP00",
+  "model": {
+    "@kind": "aid-to-nav",
+    "ais.mmsi": "4000003",
+    "ais.aid_type": "30",
+    "ais.name": "IBC G BUOY@?????????",
+    "lat": "37.41446666666667",
+    "lon": "126.57222666666667"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentences at lines 1104 and 1105",
+  "reference": "Raw name field 'IBC G BUOY@?????????': only a trailing run of @ and spaces is removed, so the name keeps the @ and the ? after it (pack.md, Six-bit text). gpsd reports 'IBC G BUOY', cutting at the first @. Expect differs from input: L = 272, 46 characters; the input's bits 272-371 are dropped."
+}

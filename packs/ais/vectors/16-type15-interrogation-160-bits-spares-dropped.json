@@ -1,0 +1,19 @@
+{
+  "name": "type15-interrogation-160-bits-spares-dropped",
+  "from": "ais",
+  "to": "ais",
+  "input": "?39a?2PjKFFPD01o:Gq1igvp2<3w",
+  "expect": "?39a?2PjKFFPD00o:G91igvp2<0",
+  "model": {
+    "@kind": "interrogation",
+    "ais.mmsi1": "211507560",
+    "ais.type1_1": "5",
+    "ais.type1_2": "55",
+    "ais.offset1_2": "663",
+    "ais.mmsi2": "605843451",
+    "ais.type2_1": "32",
+    "ais.offset2_1": "560"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 665",
+  "reference": "Two stations, 168 bits sent. gpsd: mmsi1 211507560, type1_2 55, offset1_2 663, mmsi2 605843451, type2_1 32, offset2_1 560. Expect differs from input: the spare bits 88-89 and 108-109, set in the input, are not mapped and come back zero (pack.md, Not mapped); L = 158, 27 characters, the trailing bits 158-167 dropped."
+}

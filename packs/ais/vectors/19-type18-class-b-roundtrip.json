@@ -1,0 +1,25 @@
+{
+  "name": "type18-class-b-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "B5O6hr00<veEKmUaMFdEow`UWP06",
+  "expect": "B5O6hr00<veEKmUaMFdEow`UWP06",
+  "model": {
+    "@kind": "position-b",
+    "ais.mmsi": "368161000",
+    "lat": "39.480925",
+    "lon": "-72.23384833333333",
+    "speed_ms": "2.623666666666667",
+    "course": "34.9",
+    "ais.heading": "511",
+    "ais.second": "17",
+    "ais.cs": "1",
+    "ais.dsc": "1",
+    "ais.band": "1",
+    "ais.msg22": "0",
+    "ais.raim": "1",
+    "ais.radio": "917510"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 747",
+  "reference": "SOG 51 x 1852/36000 = 2.623666666666667 m/s (gpsd 5.1 kn), course 34.9, heading 511, radio 917510."
+}

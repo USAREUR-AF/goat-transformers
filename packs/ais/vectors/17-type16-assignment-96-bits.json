@@ -1,0 +1,16 @@
+{
+  "name": "type16-assignment-96-bits",
+  "from": "ais",
+  "to": "ais",
+  "input": "@01uEO@mMk7P<P00",
+  "expect": "@01uEO@mMk7P<P00",
+  "model": {
+    "@kind": "assignment",
+    "ais.mmsi": "2053501",
+    "ais.mmsi1": "224251000",
+    "ais.offset1": "200",
+    "ais.increment1": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 673",
+  "reference": "One station. L = 92, 16 characters with 4 zero fill bits; the input's bits 92-95 are zero. gpsd: mmsi1 224251000, offset1 200, increment1 0."
+}

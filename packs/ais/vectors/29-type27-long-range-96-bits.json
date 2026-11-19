@@ -1,0 +1,19 @@
+{
+  "name": "type27-long-range-96-bits",
+  "from": "ais",
+  "to": "ais",
+  "input": "KCQ9r=hrFUnH7P00",
+  "expect": "KCQ9r=hrFUnH7P00",
+  "model": {
+    "@kind": "long-range",
+    "ais.mmsi": "236091959",
+    "ais.nav_status": "3",
+    "lat": "87.065",
+    "lon": "-154.20166666666665",
+    "speed_ms": "0",
+    "ais.course_lr": "0",
+    "ais.gnss": "0"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 971",
+  "reference": "Position in 1/10 minute: lon -92521/600 = -154.20166666666665, lat 52239/600 = 87.065. gpsd: lon -154.2017, lat 87.065, status 3, speed 0, course 0."
+}

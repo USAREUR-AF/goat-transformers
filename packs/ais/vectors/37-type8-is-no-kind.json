@@ -1,0 +1,9 @@
+{
+  "name": "type8-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "83aDChPj2d<dL<uM=hhhI?a@6HP0",
+  "expect_error": "no-kind",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 433",
+  "reference": "Message type 8 (binary broadcast) has no kind."
+}

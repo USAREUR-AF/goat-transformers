@@ -1,0 +1,19 @@
+{
+  "name": "type1-turn-and-heading-not-available",
+  "from": "ais",
+  "to": "ais",
+  "input": "16SteH0P00Jt63hHaa6SagvJ087r",
+  "expect": "16SteH0P00Jt63hHaa6SagvJ087r",
+  "model": {
+    "@kind": "position-a1",
+    "ais.mmsi": "440348000",
+    "lat": "43.08015",
+    "lon": "-70.7582",
+    "speed_ms": "0",
+    "course": "93.4",
+    "ais.turn": "-128",
+    "ais.heading": "511"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 32",
+  "reference": "Rate of turn code -128 and heading 511, the source's not-available codes, held as raw codes. gpsd: turn \"n/a\", heading 511, lon -70.7582, lat 43.08015, course 93.4, speed 0."
+}

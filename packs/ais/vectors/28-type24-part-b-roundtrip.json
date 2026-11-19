@@ -1,0 +1,25 @@
+{
+  "name": "type24-part-b-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "H42O55lti4hhhilD3nink000?050",
+  "expect": "H42O55lti4hhhilD3nink000?050",
+  "model": {
+    "@kind": "static-b",
+    "ais.mmsi": "271041815",
+    "ais.part_no": "1",
+    "ais.shiptype": "60",
+    "ais.vendor_id": "1D0",
+    "ais.unit_model": "12",
+    "ais.serial": "199796",
+    "ais.vendor_text": "1D00014",
+    "callsign": "TC6163",
+    "ais.to_bow": "0",
+    "ais.to_stern": "15",
+    "ais.to_port": "0",
+    "ais.to_starboard": "5",
+    "ais.mothership_mmsi": "61445"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 910",
+  "reference": "Bits 48-89 read twice: vendor_id '1D0', model 12, serial 199796, and vendor_text '1D00014'; bits 132-161 read as dimensions 0/15/0/5 and as mothership_mmsi 61445 (15 x 4096 + 5). gpsd (merged record): vendorid 1D00014, model 12, serial 199796, callsign TC6163, to_stern 15, to_starboard 5. Re-encode: the earlier lines win, which hold the same bits."
+}

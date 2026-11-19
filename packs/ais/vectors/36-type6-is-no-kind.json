@@ -1,0 +1,9 @@
+{
+  "name": "type6-is-no-kind",
+  "from": "ais",
+  "to": "ais",
+  "input": "63u?;TP0`QJ<06P000",
+  "expect_error": "no-kind",
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 196",
+  "reference": "Message type 6 (binary addressed) has no kind (pack.md, Not mapped); the common fields read, no kind's `when 0:0:6` holds."
+}

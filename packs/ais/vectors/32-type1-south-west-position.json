@@ -1,0 +1,19 @@
+{
+  "name": "type1-south-west-position",
+  "from": "ais",
+  "to": "ais",
+  "input": "1:LQa@@00jslitid<r@725`t0000",
+  "expect": "1:LQa@@00jslitid<r@725`t0000",
+  "model": {
+    "@kind": "position-a1",
+    "ais.mmsi": "701000001",
+    "lat": "-34.6",
+    "lon": "-58.375",
+    "speed_ms": "2.5722222222222224",
+    "course": "180",
+    "ais.heading": "180",
+    "ais.second": "30"
+  },
+  "source": "values chosen for this vector, armored by a standalone program (scratchpad aisvec/gen.py)",
+  "reference": "MMSI 701000001, lon -35025000 and lat -20760000 in 1/10000 minute (two's complement), SOG 50 tenths, course 1800 tenths, heading 180, second 30, accuracy 1. Decode: lon -35025000/600000 = -58.375 exactly, lat -20760000/600000 = -34.6 (the nearest double), speed 50 x 1852/36000 = 2.5722222222222224, course 180."
+}

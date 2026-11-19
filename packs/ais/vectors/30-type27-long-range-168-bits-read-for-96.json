@@ -1,0 +1,19 @@
+{
+  "name": "type27-long-range-168-bits-read-for-96",
+  "from": "ais",
+  "to": "ais",
+  "input": "KC5E2b@U19PFdLbMuc5=ROv62<7m",
+  "expect": "KC5E2b@U19PFdLbM",
+  "model": {
+    "@kind": "long-range",
+    "ais.mmsi": "206914217",
+    "ais.nav_status": "2",
+    "lat": "4.84",
+    "lon": "137.02333333333334",
+    "speed_ms": "29.323333333333334",
+    "ais.course_lr": "167",
+    "ais.spare": "1"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 976",
+  "reference": "168 bits sent (pack.md: decodes from the first 96). Speed 57 x 1852/3600 = 29.323333333333334 m/s, course_lr 167. gpsd: lon 137.0233, lat 4.84, speed 57, course 167. Expect differs from input: L = 96, 16 characters; the 72 trailing bits are dropped."
+}

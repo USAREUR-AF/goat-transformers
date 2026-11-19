@@ -1,0 +1,14 @@
+{
+  "name": "type10-utc-inquiry-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": ":5MlU41GMK6@",
+  "expect": ":5MlU41GMK6@",
+  "model": {
+    "@kind": "utc-inquiry",
+    "ais.mmsi": "366814480",
+    "ais.dest_mmsi": "366832740"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 507",
+  "reference": "72 bits. gpsd: mmsi 366814480, dest_mmsi 366832740."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "type13-safety-ack-roundtrip",
+  "from": "ais",
+  "to": "ais",
+  "input": "=39UOj0jFs9R",
+  "expect": "=39UOj0jFs9R",
+  "model": {
+    "@kind": "safety-ack",
+    "ais.mmsi": "211378120",
+    "ais.mmsi1": "211217560",
+    "ais.mmsiseq1": "2"
+  },
+  "source": "gpsd test/sample.aivdm (BSD-2-Clause), sentence at line 610",
+  "reference": "72 bits, one MMSI; mmsiseq1 2. gpsd: mmsi1 211217560."
+}
