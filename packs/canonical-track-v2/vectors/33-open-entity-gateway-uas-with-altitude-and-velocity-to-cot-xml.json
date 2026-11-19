@@ -2,12 +2,12 @@
   "name": "open-entity-gateway-uas-with-altitude-and-velocity-to-cot-xml",
   "from": "canonical-track-v2",
   "to": "cot-xml",
-  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0007\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"3\",\"observedAt\":\"2025-06-15T15:06:43.250Z\",\"position\":{\"latitudeDeg\":64.8378,\"longitudeDeg\":-147.7164,\"altitudeM\":412.0},\"velocity\":{\"eastMps\":12.0,\"northMps\":5.0,\"upMps\":0.0},\"classification\":\"uas\",\"confidence\":0.82,\"simulated\":true,\"testData\":true,\"identifiers\":[]}",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"T-0007\",\"sourceId\":\"example-radar-1\",\"trackGeneration\":\"3\",\"observedAt\":\"2025-06-15T15:06:43.250Z\",\"position\":{\"latitudeDeg\":64.8378,\"longitudeDeg\":-147.7164,\"altitudeM\":412.0},\"velocity\":{\"eastMps\":13.0,\"northMps\":0.0,\"upMps\":0.0},\"classification\":\"uas\",\"confidence\":0.82,\"simulated\":true,\"testData\":true,\"identifiers\":[]}",
   "context": {
     "stale_ms": "1750000123250",
     "how": "m-g"
   },
-  "expect": "<event version=\"2.0\" uid=\"T-0007\" type=\"a-u-A-M-F-Q\" time=\"2025-06-15T15:06:43.250Z\" start=\"2025-06-15T15:06:43.250Z\" stale=\"2025-06-15T15:08:43.250Z\" how=\"m-g\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"412\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"67.38013505195957\" speed=\"13\"/></detail></event>",
+  "expect": "<event version=\"2.0\" uid=\"T-0007\" type=\"a-u-A-M-F-Q\" time=\"2025-06-15T15:06:43.250Z\" start=\"2025-06-15T15:06:43.250Z\" stale=\"2025-06-15T15:08:43.250Z\" how=\"m-g\"><point lat=\"64.8378\" lon=\"-147.7164\" hae=\"412\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"90\" speed=\"13\"/></detail></event>",
   "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen"
 }
