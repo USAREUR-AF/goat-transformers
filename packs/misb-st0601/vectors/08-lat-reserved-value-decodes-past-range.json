@@ -1,0 +1,14 @@
+{
+  "name": "lat-reserved-value-decodes-past-range",
+  "from": "misb-st0601",
+  "to": "misb-st0601",
+  "input": "060e2b34020b01010e0103010100000017020800060a24181e40000d04800000004101130102b497",
+  "expect": "060e2b34020b01010e0103010100000017020800060a24181e40000d04800000004101130102b497",
+  "model": {
+    "misb0601.precision_time_us": "1700000000000000",
+    "lat": "-90.00000004190952",
+    "misb0601.ls_version": "19"
+  },
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); 80000000 = -2147483648: -2147483648*180/4294967294 in doubles; no sentinel in the pack language, re-encodes to 80000000"
+}

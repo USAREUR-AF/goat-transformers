@@ -1,0 +1,13 @@
+{
+  "name": "zero-length-lat-to-geojson",
+  "from": "misb-st0601",
+  "to": "geojson",
+  "input": "060e2b34020b01010e0103010100000021020800060a24181e40000d000e04a697d1003b064841574b323141011301021aa8",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"HAWK21\"}}",
+  "model": {
+    "lon": "-125.72854763163652",
+    "callsign": "HAWK21"
+  },
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); item 13 of length 0 is absent, so geometry is null (ruling 5 of 0.1.1)"
+}

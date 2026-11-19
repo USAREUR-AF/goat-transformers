@@ -1,0 +1,14 @@
+{
+  "name": "residue-written-after-mapped-items",
+  "from": "misb-st0601",
+  "to": "misb-st0601",
+  "input": "060e2b34020b01010e0103010100000024020800060a24181e400030060101010201070d043ccbf700810f02abcd4101130102ac79",
+  "expect": "060e2b34020b01010e0103010100000024020800060a24181e40000d043ccbf7004101133006010101020107810f02abcd01021213",
+  "model": {
+    "misb0601.precision_time_us": "1700000000000000",
+    "lat": "42.74770619475642",
+    "misb0601.ls_version": "19"
+  },
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); residue 48 and 143 stand between mapped items in the input and are written after the mapped items, in input order; checksum recomputed"
+}

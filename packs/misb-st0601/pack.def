@@ -1,0 +1,51 @@
+# MISB ST 0601 UAS Datalink Local Set: the 16-byte key, a BER length, items
+# with BER-OID tags and BER lengths, and the checksum item 1 last. Public.
+# Scales are written as the document's range over its integer range.
+format        misb-st0601
+version       0.1.0
+distribution  public
+source        "MISB ST 0601.19 UAS Datalink Local Set (02 March 2023, revised 06/11/2025), Motion Imagery Standards Board"
+source        "NSG Registry public document store, doc/view?i=5471; the registry states its public portions are public domain, released for public use, or fair use"
+uses          misb0601
+uses          track
+wire          tlv
+tag           ber-oid
+length        ber
+key           060e2b34020b01010e01030101000000
+checksum      sum16 1
+
+default  misb0601.ls_version  19
+
+field    misb0601.precision_time_us       2:8    uint
+field    misb0601.mission_id              3      utf8
+field    misb0601.platform_tail_number    4      utf8
+field    misb0601.platform_heading        5:2    uscale:360/65535
+field    misb0601.platform_pitch          6:2    sscale:40/65534
+field    misb0601.platform_roll           7:2    sscale:100/65534
+field    misb0601.platform_true_airspeed  8:1    uint
+field    misb0601.platform_indicated_airspeed  9:1  uint
+field    misb0601.platform_designation    10     utf8
+field    misb0601.image_source_sensor     11     utf8
+field    misb0601.image_coordinate_system 12     utf8
+field    lat                              13:4   sscale:180/4294967294
+field    lon                              14:4   sscale:360/4294967294
+field    misb0601.sensor_true_altitude    15:2   uscale:19900/65535:-900
+field    misb0601.sensor_hfov             16:2   uscale:180/65535
+field    misb0601.sensor_vfov             17:2   uscale:180/65535
+field    misb0601.sensor_rel_azimuth      18:4   uscale:360/4294967295
+field    misb0601.sensor_rel_elevation    19:4   sscale:360/4294967294
+field    misb0601.sensor_rel_roll         20:4   uscale:360/4294967295
+field    misb0601.slant_range             21:4   uscale:5000000/4294967295
+field    misb0601.target_width            22:2   uscale:10000/65535
+field    misb0601.frame_center_lat        23:4   sscale:180/4294967294
+field    misb0601.frame_center_lon        24:4   sscale:360/4294967294
+field    misb0601.frame_center_elevation  25:2   uscale:19900/65535:-900
+field    speed_ms                         56:1   uscale:1
+field    callsign                         59     utf8
+field    misb0601.ls_version              65:1   uint
+field    hae                              75:2   uscale:19900/65535:-900
+field    misb0601.frame_center_hae        78:2   uscale:19900/65535:-900
+field    track.vel_north_ms               79:2   sscale:654/65534
+field    track.vel_east_ms                80:2   sscale:654/65534
+field    misb0601.platform_pitch_full     90:4   sscale:180/4294967294
+field    misb0601.platform_roll_full      91:4   sscale:180/4294967294

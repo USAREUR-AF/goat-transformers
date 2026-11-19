@@ -1,0 +1,9 @@
+{
+  "name": "checksum-of-three-bytes",
+  "from": "misb-st0601",
+  "to": "misb-st0601",
+  "input": "060e2b34020b01010e0103010100000012020800060a24181e4000410113010300ab0b",
+  "expect_error": "malformed-wire",
+  "source": "constructed: values chosen for this vector, packet built from the item layouts of packs/misb-st0601/pack.def; no ST 0601 example used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire, rulings 1-9), ruling 1 of 0.5 (scale arithmetic); derived without an engine by a standalone program (Python standard library); item 1 last but with length 3"
+}
