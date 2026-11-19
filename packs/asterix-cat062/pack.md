@@ -91,8 +91,13 @@ decode with `malformed-wire`, and encode never sets them.
 | 27 | I062/500 Estimated Accuracies |
 | 28 | I062/340 Measured Information |
 | 29 to 33 | spare |
-| 34 | RE, Reserved Expansion Field |
-| 35 | SP, Reserved For Special Purpose Indicator |
+
+I062/RE (FRN 34) and I062/SP (FRN 35) are explicit-length items: the first
+octet is the length of the item, itself included. The pack reads them over by
+that length, so a record that carries them decodes; their content is not
+mapped and encode does not write them (vectors 15 and 16). A record that sets
+any FRN of the table above still fails; `asterix-cat062-full` decodes every
+item of the category and is the pack to read such records with.
 
 A data block that holds more than one record: the first record is read and
 the rest of the block is not.

@@ -1,0 +1,30 @@
+{
+  "name": "special-purpose-field-is-read-over",
+  "from": "asterix-cat062",
+  "to": "asterix-cat062",
+  "input": "3e00249b0d11010201075460100000000000000000ffce0011013781010100005003aabb",
+  "expect": "3e001f9b0d1001075460100000000000000000ffce00110137810101000050",
+  "model": {
+    "@kind": "track",
+    "cat062.sac": "1",
+    "cat062.sic": "7",
+    "cat062.time_of_day_s": "43200.125",
+    "lat": "0",
+    "lon": "0",
+    "track.vel_east_ms": "-12.5",
+    "track.vel_north_ms": "4.25",
+    "cat062.track_number": "311",
+    "cat062.mon": "1",
+    "cat062.cnf": "0",
+    "cat062.sim": "0",
+    "cat062.tse": "0",
+    "cat062.cst": "0",
+    "track.confirmed": "1",
+    "track.simulated": "0",
+    "track.final_update": "0",
+    "track.coasting": "0",
+    "hae": "152.4"
+  },
+  "source": "EUROCONTROL-SPEC-0149-9 Edition 1.21, I062/RE and I062/SP: explicit-length items whose first octet is the length of the item, itself included",
+  "reference": "FSPEC 9b 0d 11 01 02 sets FRN 35 (octet 5, bit 7); the SP item is its length octet 03, which counts itself, and two octets. LEN 0x24 = 36. The items of vector 01 decode unchanged and encode writes vector 01's block: SP is not written."
+}

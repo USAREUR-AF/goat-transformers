@@ -10,7 +10,9 @@
 #
 # An FRN this pack does not map has no `if` block: a record with that FSPEC
 # bit set fails with `malformed-wire` (ruling 1 of engine-spec 0.8), and
-# encode never sets the bit.
+# encode never sets the bit. The two explicit-length items, I062/RE (FRN 34)
+# and I062/SP (FRN 35), are read over by their length octet: a record that
+# carries them decodes, and encode does not write them.
 #
 # I062/130 is the height above the WGS-84 ellipsoid in steps of 6.25 ft.
 # 6.25 ft is 1.905 m exactly, written here as the fraction 381/200, so `hae`
@@ -24,7 +26,7 @@
 # CST 0, so the item always has its first part and three extents. The other
 # status bits are `pad`: dropped on decode, written 0.
 format     asterix-cat062
-version    0.2.0
+version    0.3.0
 distribution public
 source  "EUROCONTROL-SPEC-0149-9, Specification for Surveillance Data Exchange ASTERIX Part 9 Category 062, SDPS Track Messages, Edition 1.21, 5 June 2025, https://www.eurocontrol.int/sites/default/files/2025-06/asterix-cat062-system-track-data-p9-ed1-21.pdf"
 source  "USAREUR-AF/open-billie runtime/rust/translator/src/cat062.rs (Apache-2.0): which items its encoder writes, and the blocks it produces, used as vectors"
@@ -97,4 +99,12 @@ if fspec.13                                  # FRN 13, I062/080 Track Status
 end
 if fspec.18                                  # FRN 18, I062/130 Calculated Track Geometric Altitude, 6.25 ft
   field  hae  16  sscale:381/200
+end
+if fspec.34                                  # FRN 34, I062/RE Reserved Expansion Field
+  length 8 bytes plus 1                      # the length octet counts itself; the content is not mapped
+  end
+end
+if fspec.35                                  # FRN 35, I062/SP Special Purpose Field
+  length 8 bytes plus 1                      # the length octet counts itself; the content is not mapped
+  end
 end
