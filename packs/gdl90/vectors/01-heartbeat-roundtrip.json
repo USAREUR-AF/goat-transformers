@@ -1,0 +1,23 @@
+{
+  "name": "heartbeat-roundtrip",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "00918170110000",
+  "expect": "00918170110000",
+  "model": {
+    "@kind": "heartbeat",
+    "gdl90.hb_gps_valid": "1",
+    "gdl90.hb_maint_required": "0",
+    "gdl90.hb_status1_bit5": "0",
+    "gdl90.hb_addr_talkback": "1",
+    "gdl90.hb_status1_bits3_1": "0",
+    "gdl90.hb_uat_initialized": "1",
+    "gdl90.hb_time_bit16": "1",
+    "gdl90.hb_status2_bits6_1": "0",
+    "gdl90.hb_utc_ok": "1",
+    "gdl90.hb_time_low16": "4464",
+    "gdl90.hb_msg_counts_raw": "0"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeHeartbeat; bytes computed by tools/gen/gdl90-vectors.py. GPS valid, address talkback, UAT initialized, UTC OK; 70000 s after 0000Z: bit 16 in byte 2, the low 16 bits 0x1170 least significant byte first. Framed: 7e0091817011000008b67e"
+}

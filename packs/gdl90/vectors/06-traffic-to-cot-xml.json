@@ -1,0 +1,9 @@
+{
+  "name": "traffic-to-cot-xml",
+  "from": "gdl90",
+  "to": "cot-xml",
+  "input": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\"><point lat=\"45.26489496231079\" lon=\"-91.16560220718384\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"N123AB\"/></detail></event>",
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeTrafficReportMsg; bytes computed by tools/gen/gdl90-vectors.py. cot-xml canonical form by hand from its pack: the constant version, the type and point defaults, the callsign; no uid (the 24-bit address is an integer, not bound to uid), no time."
+}

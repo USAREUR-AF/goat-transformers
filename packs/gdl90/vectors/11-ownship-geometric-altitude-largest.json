@@ -1,0 +1,14 @@
+{
+  "name": "ownship-geometric-altitude-largest",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "0b7fff7fff",
+  "expect": "0b7fff7fff",
+  "model": {
+    "@kind": "ownship-geometric-altitude",
+    "gdl90.geo_alt_ft": "163835",
+    "gdl90.geo_fom_raw": "32767"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeOwnshipGeometricAltitudeReport; bytes computed by tools/gen/gdl90-vectors.py. The largest altitude count and the figure of merit 0x7FFF, which Stratux names not available."
+}

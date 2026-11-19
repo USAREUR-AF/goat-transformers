@@ -1,0 +1,54 @@
+# The gdl90 module: fields of GDL 90 message payloads (and the ForeFlight
+# extension messages carried in the same stream) as Stratux writes them, each as
+# the wire integer unless the line says otherwise. Byte n is the n-th byte of the
+# payload, from 0 (the message ID), after the framing is removed. The pack gdl90
+# maps them; its pack.md states the layout and what Stratux leaves unstated.
+module        gdl90
+version       0.1.0
+distribution  public
+source        "Stratux (https://github.com/cyoung/stratux, BSD-3-Clause) at commit 36b504555408fb90dd5cf1171d4f91f99571e50c: main/gen_gdl90.go (makeHeartbeat, makeOwnshipReport, makeOwnshipGeometricAltitudeReport, relayMessage, makeFFIDMessage, makeLatLng, prepareMessage), main/traffic.go (makeTrafficReportMsg), main/gps.go (makeFFAHRSMessage); layouts restated, no code copied"
+# Heartbeat (ID 0)
+key  hb_gps_valid          int  -   "byte 1 bit 7 (most significant): Stratux sets it when its GPS position is valid"
+key  hb_maint_required     int  -   "byte 1 bit 6: Stratux sets it when it has a critical system error"
+key  hb_status1_bit5       int  -   "byte 1 bit 5: not written by Stratux; carried as received"
+key  hb_addr_talkback      int  -   "byte 1 bit 4: Stratux always sets it (its source marks it FIXME, 'Addr talkback')"
+key  hb_status1_bits3_1    int  -   "byte 1 bits 3-1: not written by Stratux; carried as received"
+key  hb_uat_initialized    int  -   "byte 1 bit 0: 'UAT initialized', always set by Stratux"
+key  hb_time_bit16         int  -   "byte 2 bit 7: bit 16 of the seconds since 0000Z"
+key  hb_status2_bits6_1    int  -   "byte 2 bits 6-1: not written by Stratux; carried as received"
+key  hb_utc_ok             int  -   "byte 2 bit 0: 'UTC OK', always set by Stratux"
+key  hb_time_low16         int  s   "bytes 3-4, least significant byte first: the low 16 bits of the seconds since 0000Z UTC"
+key  hb_msg_counts_raw     int  -   "bytes 5-6: message counts; Stratux leaves them zero (TODO in its source), so no layout is stated"
+# Uplink data (ID 7)
+key  uplink_tor_raw        int  -   "bytes 1-3: time of reception; Stratux writes zero (TODO), so no unit or byte order is stated"
+# Ownship (ID 10) and traffic (ID 20) reports: one layout
+key  alert_status          int  -   "byte 1 high nibble: Stratux sets 1 (bit 0x10) when the traffic is alertable, 0 for ownship"
+key  address_type          int  -   "byte 1 low nibble: address type; Stratux writes 0 for an ICAO address and 1 for a self-assigned ownship address"
+key  address               int  -   "bytes 2-4: the 24-bit participant address"
+key  alt_raw               int  -   "bytes 11 and the high nibble of 12: 12-bit pressure altitude code, feet = 25 x raw - 1000; 4095 (0xFFF) = invalid or unavailable"
+key  airborne              int  -   "byte 12 bit 3: 1 airborne, 0 on ground"
+key  extrapolated          int  -   "byte 12 bit 2: 1 = the report is extrapolated, 0 = updated"
+key  track_type            int  -   "byte 12 bits 1-0: 0 track not valid, 1 true track, 2 magnetic heading, 3 true heading"
+key  nic                   int  -   "byte 13 high nibble: navigation integrity category"
+key  nacp                  int  -   "byte 13 low nibble: navigation accuracy category for position"
+key  speed_kt              int  kt  "bytes 14 and the high nibble of 15: 12-bit horizontal speed, 1 knot per count"
+key  vvel_raw              int  -   "low nibble of 15 and byte 16: 12-bit signed vertical velocity, 64 ft/min per count; -2048 (0x800) = no information (Stratux, ownship)"
+key  track_raw             int  -   "byte 17: track or heading as track_type says, 360/256 degrees per count"
+key  emitter_category      int  -   "byte 18: emitter category code"
+key  priority_status       int  -   "byte 27 high nibble: priority or emergency status code"
+key  report_spare          int  -   "byte 27 low nibble: not written by Stratux; carried as received"
+# Ownship geometric altitude (ID 11)
+key  geo_alt_ft            float ft "bytes 1-2: signed altitude, 5 ft per count. Stratux writes GPS altitude above mean sea level here and says so in the ForeFlight ID capability bit 0; the reference is the sender's"
+key  geo_fom_raw           int  -   "bytes 3-4: figure of merit; Stratux writes 10 and names 0x7FFF 'not available'"
+# ForeFlight extension (ID 0x65)
+key  ff_version            int  -   "ForeFlight ID message byte 2: message version, 1"
+key  ff_serial             int  -   "ForeFlight ID bytes 3-10: device serial number; all 0xFF = invalid (Stratux); read as a 64-bit integer"
+key  ff_short_name         string -  "ForeFlight ID bytes 11-18: device short name, ASCII"
+key  ff_long_name          string -  "ForeFlight ID bytes 19-34: device long name, ASCII"
+key  ff_reserved           int  -   "ForeFlight ID bytes 35-37: zero in Stratux"
+key  ff_capabilities       int  -   "ForeFlight ID byte 38: capabilities mask; bit 0 (least significant) = the ownship geometric altitude is MSL"
+key  ahrs_roll_tenths      int  -   "ForeFlight AHRS bytes 2-3: signed roll, 0.1 degree per count; 32767 (0x7FFF) = invalid"
+key  ahrs_pitch_tenths     int  -   "ForeFlight AHRS bytes 4-5: signed pitch, 0.1 degree per count; 32767 (0x7FFF) = invalid"
+key  ahrs_heading_raw      int  -   "ForeFlight AHRS bytes 6-7: heading; Stratux always writes 65535 (0xFFFF, invalid), so no scale is stated"
+key  ahrs_ias_raw          int  -   "ForeFlight AHRS bytes 8-9: indicated airspeed; Stratux always writes 65535 (invalid), no unit stated"
+key  ahrs_tas_raw          int  -   "ForeFlight AHRS bytes 10-11: true airspeed; Stratux always writes 65535 (invalid), no unit stated"

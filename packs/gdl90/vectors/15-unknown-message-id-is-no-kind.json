@@ -1,0 +1,9 @@
+{
+  "name": "unknown-message-id-is-no-kind",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "1e000000000000000000000000000000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "ID 0x1E (a pass-through basic report in Stratux, MSGTYPE_BASIC_REPORT) has no kind here"
+}

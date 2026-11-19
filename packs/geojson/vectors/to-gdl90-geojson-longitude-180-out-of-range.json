@@ -1,0 +1,9 @@
+{
+  "name": "geojson-longitude-180-out-of-range",
+  "from": "geojson",
+  "to": "gdl90",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[180,0]},\"properties\":{}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "180 degrees is 8388608 counts, one more than a 24-bit two's complement field holds (engine-spec 0.5, sscale range check)"
+}
