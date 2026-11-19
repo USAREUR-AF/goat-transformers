@@ -1,0 +1,21 @@
+{
+  "name": "rt-region",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/region\",\"type\":\"rmf_traffic_msgs/msg/Region\",\"msg\":{\"map\":\"s1\",\"spaces\":[{\"shape\":{\"type\":245,\"index\":44},\"pose\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042}},{\"shape\":{\"type\":8,\"index\":63},\"pose\":{\"x\":-9.063,\"y\":10.07,\"theta\":11.077}}],\"timespan\":{\"maps\":[\"s12\",\"s13\"],\"has_lower_bound\":false,\"lower_bound\":-1851851835195,\"has_upper_bound\":false,\"upper_bound\":-2098765413221}},\"id\":\"gen-region\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/region\",\"type\":\"rmf_traffic_msgs/msg/Region\",\"msg\":{\"map\":\"s1\",\"spaces\":[{\"shape\":{\"type\":245,\"index\":44},\"pose\":{\"x\":4.028,\"y\":5.035,\"theta\":-6.042}},{\"shape\":{\"type\":8,\"index\":63},\"pose\":{\"x\":-9.063,\"y\":10.07,\"theta\":11.077}}],\"timespan\":{\"maps\":[\"s12\",\"s13\"],\"has_lower_bound\":false,\"lower_bound\":-1851851835195,\"has_upper_bound\":false,\"upper_bound\":-2098765413221}},\"id\":\"gen-region\"}",
+  "model": {
+    "@kind": "region",
+    "ros2rmftraffic.region_map": "s1",
+    "ros2rmftraffic.region_spaces.#": "2",
+    "ros2rmftraffic.region_spaces[0].ros2rmftraffic.region_spaces_shape_type": "245",
+    "ros2rmftraffic.region_timespan_maps.#": "2",
+    "ros2rmftraffic.region_timespan_maps[0].ros2rmftraffic.region_timespan_maps_value": "s12",
+    "ros2rmftraffic.region_timespan_has_lower_bound": "0",
+    "ros2rmftraffic.region_timespan_lower_bound": "-1851851835195",
+    "ros2rmftraffic.region_timespan_has_upper_bound": "0",
+    "ros2rmftraffic.region_timespan_upper_bound": "-2098765413221",
+    "ros2rmftraffic.topic": "/gen/region"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "rt-control_allocator_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/control_allocator_status\",\"type\":\"px4_msgs/msg/ControlAllocatorStatus\",\"msg\":{\"timestamp\":123456789013,\"torque_setpoint_achieved\":false,\"unallocated_torque\":[-4.375,-4.125,-3.875],\"thrust_setpoint_achieved\":false,\"unallocated_thrust\":[-3.375,-3.125,-2.875],\"actuator_saturation\":[45,100,-101,-46,9,64,119,-82,-27,28,83,-118,-63,-8,47,102],\"handled_motor_failure_mask\":37277,\"motor_stop_mask\":12244,\"actuator_group_preflight_check_active\":false},\"id\":\"gen-control_allocator_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/control_allocator_status\",\"type\":\"px4_msgs/msg/ControlAllocatorStatus\",\"msg\":{\"timestamp\":123456789013,\"torque_setpoint_achieved\":false,\"unallocated_torque\":[-4.375,-4.125,-3.875],\"thrust_setpoint_achieved\":false,\"unallocated_thrust\":[-3.375,-3.125,-2.875],\"actuator_saturation\":[45,100,-101,-46,9,64,119,-82,-27,28,83,-118,-63,-8,47,102],\"handled_motor_failure_mask\":37277,\"motor_stop_mask\":12244,\"actuator_group_preflight_check_active\":false},\"id\":\"gen-control_allocator_status\"}",
+  "model": {
+    "@kind": "control_allocator_status",
+    "ros2px4.control_allocator_status_timestamp": "123456789013",
+    "ros2px4.control_allocator_status_torque_setpoint_achieved": "0",
+    "ros2px4.control_allocator_status_unallocated_torque.#": "3",
+    "ros2px4.control_allocator_status_unallocated_torque[0].ros2px4.control_allocator_status_unallocated_torque_value": "-4.375",
+    "ros2px4.control_allocator_status_thrust_setpoint_achieved": "0",
+    "ros2px4.control_allocator_status_unallocated_thrust.#": "3",
+    "ros2px4.control_allocator_status_unallocated_thrust[0].ros2px4.control_allocator_status_unallocated_thrust_value": "-3.375",
+    "ros2px4.control_allocator_status_actuator_saturation.#": "16",
+    "ros2px4.control_allocator_status_actuator_saturation[0].ros2px4.control_allocator_status_actuator_saturation_value": "45",
+    "ros2px4.control_allocator_status_handled_motor_failure_mask": "37277",
+    "ros2px4.control_allocator_status_motor_stop_mask": "12244",
+    "ros2px4.topic": "/gen/control_allocator_status"
+  }
+}

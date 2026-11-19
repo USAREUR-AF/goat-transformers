@@ -1,0 +1,17 @@
+{
+  "name": "rt-home_position",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/home_position\",\"type\":\"px4_msgs/msg/HomePosition\",\"msg\":{\"timestamp\":123456789013,\"lat\":2.014,\"lon\":-3.021,\"alt\":-4.125,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"roll\":-3.125,\"pitch\":-2.875,\"yaw\":-2.625,\"valid_alt\":true,\"valid_hpos\":false,\"valid_lpos\":true,\"valid_attitude\":false,\"manual_home\":true,\"update_count\":2148131703},\"id\":\"gen-home_position\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/home_position\",\"type\":\"px4_msgs/msg/HomePosition\",\"msg\":{\"timestamp\":123456789013,\"lat\":2.014,\"lon\":-3.021,\"alt\":-4.125,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"roll\":-3.125,\"pitch\":-2.875,\"yaw\":-2.625,\"valid_alt\":true,\"valid_hpos\":false,\"valid_lpos\":true,\"valid_attitude\":false,\"manual_home\":true,\"update_count\":2148131703},\"id\":\"gen-home_position\"}",
+  "model": {
+    "@kind": "home_position",
+    "ros2px4.home_position_timestamp": "123456789013",
+    "lat": "2.014",
+    "lon": "-3.021",
+    "ros2px4.home_position_alt": "-4.125",
+    "ros2px4.home_position_x": "-3.875",
+    "ros2px4.topic": "/gen/home_position"
+  }
+}

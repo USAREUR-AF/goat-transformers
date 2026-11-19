@@ -1,0 +1,17 @@
+{
+  "name": "rt-actuation_report_stamped",
+  "from": "ros2-autoware-vehicle-msgs",
+  "to": "ros2-autoware-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_report_stamped\",\"type\":\"autoware_vehicle_msgs/msg/ActuationReportStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"actuation_report\":{\"accel_report\":4.028,\"brake_report\":5.035,\"steer_report\":-6.042}},\"id\":\"gen-actuation_report_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_report_stamped\",\"type\":\"autoware_vehicle_msgs/msg/ActuationReportStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"actuation_report\":{\"accel_report\":4.028,\"brake_report\":5.035,\"steer_report\":-6.042}},\"id\":\"gen-actuation_report_stamped\"}",
+  "model": {
+    "@kind": "actuation_report_stamped",
+    "ros2autowarevehicle.actuation_report_stamped_header_stamp_sec": "40510",
+    "ros2autowarevehicle.actuation_report_stamped_header_stamp_nanosec": "2147564661",
+    "ros2autowarevehicle.actuation_report_stamped_header_frame_id": "s3",
+    "ros2autowarevehicle.actuation_report_stamped_actuation_report_accel_report": "4.028",
+    "ros2autowarevehicle.actuation_report_stamped_actuation_report_brake_report": "5.035",
+    "ros2autowarevehicle.topic": "/gen/actuation_report_stamped"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-register_ext_component_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/register_ext_component_request\",\"type\":\"px4_msgs/msg/RegisterExtComponentRequest\",\"msg\":{\"timestamp\":123456789013,\"request_id\":246913578026,\"name\":\"Awn/AIA=\",\"px4_ros2_api_version\":63715,\"register_arming_check\":true,\"register_mode\":false,\"register_mode_executor\":true,\"enable_replace_internal_mode\":false,\"replace_internal_mode\":118,\"activate_mode_immediately\":false,\"not_user_selectable\":true,\"request_offboard_setpoints\":false},\"id\":\"gen-register_ext_component_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/register_ext_component_request\",\"type\":\"px4_msgs/msg/RegisterExtComponentRequest\",\"msg\":{\"timestamp\":123456789013,\"request_id\":246913578026,\"name\":\"Awn/AIA=\",\"px4_ros2_api_version\":63715,\"register_arming_check\":true,\"register_mode\":false,\"register_mode_executor\":true,\"enable_replace_internal_mode\":false,\"replace_internal_mode\":118,\"activate_mode_immediately\":false,\"not_user_selectable\":true,\"request_offboard_setpoints\":false},\"id\":\"gen-register_ext_component_request\"}",
+  "model": {
+    "@kind": "register_ext_component_request",
+    "ros2px4.register_ext_component_request_timestamp": "123456789013",
+    "ros2px4.register_ext_component_request_request_id": "246913578026",
+    "ros2px4.register_ext_component_request_name": "Awn/AIA=",
+    "ros2px4.register_ext_component_request_px4_ros2_api_version": "63715",
+    "ros2px4.register_ext_component_request_register_arming_check": "1",
+    "ros2px4.topic": "/gen/register_ext_component_request"
+  }
+}

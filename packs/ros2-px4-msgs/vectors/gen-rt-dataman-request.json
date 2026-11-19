@@ -1,0 +1,17 @@
+{
+  "name": "rt-dataman_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dataman_request\",\"type\":\"px4_msgs/msg/DatamanRequest\",\"msg\":{\"timestamp\":123456789013,\"client_id\":48245,\"request_type\":44,\"item\":99,\"index\":2147686170,\"data\":\"BhL/AIA=\",\"data_length\":2147767176},\"id\":\"gen-dataman_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dataman_request\",\"type\":\"px4_msgs/msg/DatamanRequest\",\"msg\":{\"timestamp\":123456789013,\"client_id\":48245,\"request_type\":44,\"item\":99,\"index\":2147686170,\"data\":\"BhL/AIA=\",\"data_length\":2147767176},\"id\":\"gen-dataman_request\"}",
+  "model": {
+    "@kind": "dataman_request",
+    "ros2px4.dataman_request_timestamp": "123456789013",
+    "ros2px4.dataman_request_client_id": "48245",
+    "ros2px4.dataman_request_request_type": "44",
+    "ros2px4.dataman_request_item": "99",
+    "ros2px4.dataman_request_index": "2147686170",
+    "ros2px4.topic": "/gen/dataman_request"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-vehicle_attitude",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_attitude\",\"type\":\"px4_msgs/msg/VehicleAttitude\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"q\":[-4.375,-4.125,-3.875,-3.625],\"delta_q_reset\":[-3.375,-3.125,-2.875,-2.625],\"quat_reset_counter\":228},\"id\":\"gen-vehicle_attitude\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_attitude\",\"type\":\"px4_msgs/msg/VehicleAttitude\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"q\":[-4.375,-4.125,-3.875,-3.625],\"delta_q_reset\":[-3.375,-3.125,-2.875,-2.625],\"quat_reset_counter\":228},\"id\":\"gen-vehicle_attitude\"}",
+  "model": {
+    "@kind": "vehicle_attitude",
+    "ros2px4.vehicle_attitude_timestamp": "123456789013",
+    "ros2px4.vehicle_attitude_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_attitude_q.#": "4",
+    "ros2px4.vehicle_attitude_q[0].ros2px4.vehicle_attitude_q_value": "-4.375",
+    "ros2px4.vehicle_attitude_delta_q_reset.#": "4",
+    "ros2px4.vehicle_attitude_delta_q_reset[0].ros2px4.vehicle_attitude_delta_q_reset_value": "-3.375",
+    "ros2px4.vehicle_attitude_quat_reset_counter": "228",
+    "ros2px4.topic": "/gen/vehicle_attitude"
+  }
+}

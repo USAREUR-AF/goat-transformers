@@ -1,0 +1,15 @@
+{
+  "name": "rt-tiltrotor_extra_controls",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tiltrotor_extra_controls\",\"type\":\"px4_msgs/msg/TiltrotorExtraControls\",\"msg\":{\"timestamp\":123456789013,\"collective_tilt_normalized_setpoint\":-4.625,\"collective_thrust_normalized_setpoint\":-4.375},\"id\":\"gen-tiltrotor_extra_controls\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tiltrotor_extra_controls\",\"type\":\"px4_msgs/msg/TiltrotorExtraControls\",\"msg\":{\"timestamp\":123456789013,\"collective_tilt_normalized_setpoint\":-4.625,\"collective_thrust_normalized_setpoint\":-4.375},\"id\":\"gen-tiltrotor_extra_controls\"}",
+  "model": {
+    "@kind": "tiltrotor_extra_controls",
+    "ros2px4.tiltrotor_extra_controls_timestamp": "123456789013",
+    "ros2px4.tiltrotor_extra_controls_collective_tilt_normalized_setpoint": "-4.625",
+    "ros2px4.tiltrotor_extra_controls_collective_thrust_normalized_setpoint": "-4.375",
+    "ros2px4.topic": "/gen/tiltrotor_extra_controls"
+  }
+}

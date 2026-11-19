@@ -1,0 +1,19 @@
+{
+  "name": "rt-graph",
+  "from": "ros2-rmf-building-map-msgs",
+  "to": "ros2-rmf-building-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/graph\",\"type\":\"rmf_building_map_msgs/msg/Graph\",\"msg\":{\"name\":\"s1\",\"vertices\":[{\"x\":-4.625,\"y\":-4.375,\"name\":\"s4\",\"params\":[{\"name\":\"s5\",\"type\":2147726673,\"value_int\":283528,\"value_float\":-3.125,\"value_string\":\"s9\",\"value_bool\":false}]},{\"x\":-2.375,\"y\":-2.125,\"name\":\"s13\",\"params\":[{\"name\":\"s14\",\"type\":2148091200,\"value_int\":648055,\"value_float\":-0.875,\"value_string\":\"s18\",\"value_bool\":true}]}],\"edges\":[{\"v1_idx\":2148293715,\"v2_idx\":2148334218,\"params\":[{\"name\":\"s22\",\"type\":2148415224,\"value_int\":972079,\"value_float\":1.125,\"value_string\":\"s26\",\"value_bool\":true}],\"edge_type\":139},{\"v1_idx\":2148658242,\"v2_idx\":2148698745,\"params\":[{\"name\":\"s31\",\"type\":2148779751,\"value_int\":1336606,\"value_float\":3.375,\"value_string\":\"s35\",\"value_bool\":false}],\"edge_type\":122}],\"params\":[{\"name\":\"s38\",\"type\":2149063272,\"value_int\":1620127,\"value_float\":5.125,\"value_string\":\"s42\",\"value_bool\":true},{\"name\":\"s44\",\"type\":2149306290,\"value_int\":1863145,\"value_float\":6.625,\"value_string\":\"s48\",\"value_bool\":true}]},\"id\":\"gen-graph\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/graph\",\"type\":\"rmf_building_map_msgs/msg/Graph\",\"msg\":{\"name\":\"s1\",\"vertices\":[{\"x\":-4.625,\"y\":-4.375,\"name\":\"s4\",\"params\":[{\"name\":\"s5\",\"type\":2147726673,\"value_int\":283528,\"value_float\":-3.125,\"value_string\":\"s9\",\"value_bool\":false}]},{\"x\":-2.375,\"y\":-2.125,\"name\":\"s13\",\"params\":[{\"name\":\"s14\",\"type\":2148091200,\"value_int\":648055,\"value_float\":-0.875,\"value_string\":\"s18\",\"value_bool\":true}]}],\"edges\":[{\"v1_idx\":2148293715,\"v2_idx\":2148334218,\"params\":[{\"name\":\"s22\",\"type\":2148415224,\"value_int\":972079,\"value_float\":1.125,\"value_string\":\"s26\",\"value_bool\":true}],\"edge_type\":139},{\"v1_idx\":2148658242,\"v2_idx\":2148698745,\"params\":[{\"name\":\"s31\",\"type\":2148779751,\"value_int\":1336606,\"value_float\":3.375,\"value_string\":\"s35\",\"value_bool\":false}],\"edge_type\":122}],\"params\":[{\"name\":\"s38\",\"type\":2149063272,\"value_int\":1620127,\"value_float\":5.125,\"value_string\":\"s42\",\"value_bool\":true},{\"name\":\"s44\",\"type\":2149306290,\"value_int\":1863145,\"value_float\":6.625,\"value_string\":\"s48\",\"value_bool\":true}]},\"id\":\"gen-graph\"}",
+  "model": {
+    "@kind": "graph",
+    "ros2rmfbuildingmap.graph_name": "s1",
+    "ros2rmfbuildingmap.graph_vertices.#": "2",
+    "ros2rmfbuildingmap.graph_vertices[0].ros2rmfbuildingmap.graph_vertices_x": "-4.625",
+    "ros2rmfbuildingmap.graph_edges.#": "2",
+    "ros2rmfbuildingmap.graph_edges[0].ros2rmfbuildingmap.graph_edges_v1_idx": "2148293715",
+    "ros2rmfbuildingmap.graph_params.#": "2",
+    "ros2rmfbuildingmap.graph_params[0].ros2rmfbuildingmap.graph_params_name": "s38",
+    "ros2rmfbuildingmap.topic": "/gen/graph"
+  }
+}

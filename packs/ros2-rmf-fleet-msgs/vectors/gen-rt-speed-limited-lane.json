@@ -1,0 +1,14 @@
+{
+  "name": "rt-speed_limited_lane",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/speed_limited_lane\",\"type\":\"rmf_fleet_msgs/msg/SpeedLimitedLane\",\"msg\":{\"lane_index\":123456789013,\"speed_limit\":2.014},\"id\":\"gen-speed_limited_lane\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/speed_limited_lane\",\"type\":\"rmf_fleet_msgs/msg/SpeedLimitedLane\",\"msg\":{\"lane_index\":123456789013,\"speed_limit\":2.014},\"id\":\"gen-speed_limited_lane\"}",
+  "model": {
+    "@kind": "speed_limited_lane",
+    "ros2rmffleet.speed_limited_lane_lane_index": "123456789013",
+    "ros2rmffleet.speed_limited_lane_speed_limit": "2.014",
+    "ros2rmffleet.topic": "/gen/speed_limited_lane"
+  }
+}

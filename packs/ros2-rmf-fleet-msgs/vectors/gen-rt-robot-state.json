@@ -1,0 +1,19 @@
+{
+  "name": "rt-robot_state",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/robot_state\",\"type\":\"rmf_fleet_msgs/msg/RobotState\",\"msg\":{\"name\":\"s1\",\"model\":\"s2\",\"task_id\":\"s3\",\"seq\":493827156052,\"mode\":{\"mode\":2147686170,\"mode_request_id\":740740734078},\"battery_percent\":-3.375,\"location\":{\"t\":{\"sec\":324031,\"nanosec\":2147848182},\"x\":-2.625,\"y\":-2.375,\"yaw\":-2.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-1.625,\"level_name\":\"s15\",\"index\":1975308624208},\"path\":[{\"t\":{\"sec\":688558,\"nanosec\":2148212709},\"x\":-0.375,\"y\":-0.125,\"yaw\":0.125,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":0.625,\"level_name\":\"s24\",\"index\":3086419725325},{\"t\":{\"sec\":1053085,\"nanosec\":2148577236},\"x\":1.875,\"y\":2.125,\"yaw\":2.375,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":2.875,\"level_name\":\"s33\",\"index\":4197530826442}]},\"id\":\"gen-robot_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/robot_state\",\"type\":\"rmf_fleet_msgs/msg/RobotState\",\"msg\":{\"name\":\"s1\",\"model\":\"s2\",\"task_id\":\"s3\",\"seq\":493827156052,\"mode\":{\"mode\":2147686170,\"mode_request_id\":740740734078},\"battery_percent\":-3.375,\"location\":{\"t\":{\"sec\":324031,\"nanosec\":2147848182},\"x\":-2.625,\"y\":-2.375,\"yaw\":-2.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-1.625,\"level_name\":\"s15\",\"index\":1975308624208},\"path\":[{\"t\":{\"sec\":688558,\"nanosec\":2148212709},\"x\":-0.375,\"y\":-0.125,\"yaw\":0.125,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":0.625,\"level_name\":\"s24\",\"index\":3086419725325},{\"t\":{\"sec\":1053085,\"nanosec\":2148577236},\"x\":1.875,\"y\":2.125,\"yaw\":2.375,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":2.875,\"level_name\":\"s33\",\"index\":4197530826442}]},\"id\":\"gen-robot_state\"}",
+  "model": {
+    "@kind": "robot_state",
+    "ros2rmffleet.robot_state_name": "s1",
+    "ros2rmffleet.robot_state_model": "s2",
+    "ros2rmffleet.robot_state_task_id": "s3",
+    "ros2rmffleet.robot_state_seq": "493827156052",
+    "ros2rmffleet.robot_state_mode_mode": "2147686170",
+    "ros2rmffleet.robot_state_path.#": "2",
+    "ros2rmffleet.robot_state_path[0].ros2rmffleet.robot_state_path_t_sec": "688558",
+    "ros2rmffleet.topic": "/gen/robot_state"
+  }
+}

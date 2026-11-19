@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_global_position",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_global_position\",\"type\":\"px4_msgs/msg/VehicleGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"lat\":-3.021,\"lon\":4.028,\"alt\":-3.875,\"alt_ellipsoid\":-3.625,\"lat_lon_valid\":true,\"alt_valid\":false,\"delta_alt\":-2.875,\"delta_terrain\":-2.625,\"lat_lon_reset_counter\":228,\"alt_reset_counter\":27,\"terrain_reset_counter\":82,\"eph\":-1.625,\"epv\":-1.375,\"terrain_alt\":-1.125,\"terrain_alt_valid\":true,\"dead_reckoning\":false},\"id\":\"gen-vehicle_global_position\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_global_position\",\"type\":\"px4_msgs/msg/VehicleGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"lat\":-3.021,\"lon\":4.028,\"alt\":-3.875,\"alt_ellipsoid\":-3.625,\"lat_lon_valid\":true,\"alt_valid\":false,\"delta_alt\":-2.875,\"delta_terrain\":-2.625,\"lat_lon_reset_counter\":228,\"alt_reset_counter\":27,\"terrain_reset_counter\":82,\"eph\":-1.625,\"epv\":-1.375,\"terrain_alt\":-1.125,\"terrain_alt_valid\":true,\"dead_reckoning\":false},\"id\":\"gen-vehicle_global_position\"}",
+  "model": {
+    "@kind": "vehicle_global_position",
+    "ros2px4.vehicle_global_position_timestamp": "123456789013",
+    "ros2px4.vehicle_global_position_timestamp_sample": "246913578026",
+    "lat": "-3.021",
+    "lon": "4.028",
+    "ros2px4.vehicle_global_position_alt": "-3.875",
+    "ros2px4.topic": "/gen/vehicle_global_position"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-actuator_motors",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_motors\",\"type\":\"px4_msgs/msg/ActuatorMotors\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"reversible_flags\":23212,\"control\":[-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375]},\"id\":\"gen-actuator_motors\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_motors\",\"type\":\"px4_msgs/msg/ActuatorMotors\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"reversible_flags\":23212,\"control\":[-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375]},\"id\":\"gen-actuator_motors\"}",
+  "model": {
+    "@kind": "actuator_motors",
+    "ros2px4.actuator_motors_timestamp": "123456789013",
+    "ros2px4.actuator_motors_timestamp_sample": "246913578026",
+    "ros2px4.actuator_motors_reversible_flags": "23212",
+    "ros2px4.actuator_motors_control.#": "12",
+    "ros2px4.actuator_motors_control[0].ros2px4.actuator_motors_control_value": "-4.125",
+    "ros2px4.topic": "/gen/actuator_motors"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-vte_aid_source1d",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vte_aid_source1d\",\"type\":\"px4_msgs/msg/VteAidSource1d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"time_last_predict\":370370367039,\"observation\":-4.125,\"observation_variance\":-3.875,\"innovation\":-3.625,\"innovation_variance\":-3.375,\"test_ratio\":-3.125,\"fusion_status\":118,\"time_since_meas_ms\":-2.625,\"history_steps\":228,\"replayed_count\":27,\"replay_revised_count\":82,\"replay_test_ratio_max\":-1.625},\"id\":\"gen-vte_aid_source1d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vte_aid_source1d\",\"type\":\"px4_msgs/msg/VteAidSource1d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"time_last_predict\":370370367039,\"observation\":-4.125,\"observation_variance\":-3.875,\"innovation\":-3.625,\"innovation_variance\":-3.375,\"test_ratio\":-3.125,\"fusion_status\":118,\"time_since_meas_ms\":-2.625,\"history_steps\":228,\"replayed_count\":27,\"replay_revised_count\":82,\"replay_test_ratio_max\":-1.625},\"id\":\"gen-vte_aid_source1d\"}",
+  "model": {
+    "@kind": "vte_aid_source1d",
+    "ros2px4.vte_aid_source1d_timestamp": "123456789013",
+    "ros2px4.vte_aid_source1d_timestamp_sample": "246913578026",
+    "ros2px4.vte_aid_source1d_time_last_predict": "370370367039",
+    "ros2px4.vte_aid_source1d_observation": "-4.125",
+    "ros2px4.vte_aid_source1d_observation_variance": "-3.875",
+    "ros2px4.topic": "/gen/vte_aid_source1d"
+  }
+}

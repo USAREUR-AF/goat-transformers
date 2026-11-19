@@ -1,0 +1,17 @@
+{
+  "name": "rt-surface_vehicle_speed_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_speed_status\",\"type\":\"px4_msgs/msg/SurfaceVehicleSpeedStatus\",\"msg\":{\"timestamp\":123456789013,\"measured_speed_body_x\":-4.625,\"adjusted_speed_body_x_setpoint\":-4.375,\"pid_thrust_body_x_integral\":-4.125,\"measured_speed_body_y\":-3.875,\"adjusted_speed_body_y_setpoint\":-3.625,\"pid_thrust_body_y_integral\":-3.375},\"id\":\"gen-surface_vehicle_speed_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_speed_status\",\"type\":\"px4_msgs/msg/SurfaceVehicleSpeedStatus\",\"msg\":{\"timestamp\":123456789013,\"measured_speed_body_x\":-4.625,\"adjusted_speed_body_x_setpoint\":-4.375,\"pid_thrust_body_x_integral\":-4.125,\"measured_speed_body_y\":-3.875,\"adjusted_speed_body_y_setpoint\":-3.625,\"pid_thrust_body_y_integral\":-3.375},\"id\":\"gen-surface_vehicle_speed_status\"}",
+  "model": {
+    "@kind": "surface_vehicle_speed_status",
+    "ros2px4.surface_vehicle_speed_status_timestamp": "123456789013",
+    "ros2px4.surface_vehicle_speed_status_measured_speed_body_x": "-4.625",
+    "ros2px4.surface_vehicle_speed_status_adjusted_speed_body_x_setpoint": "-4.375",
+    "ros2px4.surface_vehicle_speed_status_pid_thrust_body_x_integral": "-4.125",
+    "ros2px4.surface_vehicle_speed_status_measured_speed_body_y": "-3.875",
+    "ros2px4.topic": "/gen/surface_vehicle_speed_status"
+  }
+}

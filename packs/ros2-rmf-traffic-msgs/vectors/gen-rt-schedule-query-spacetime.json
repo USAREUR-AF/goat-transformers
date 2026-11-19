@@ -1,0 +1,23 @@
+{
+  "name": "rt-schedule_query_spacetime",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_query_spacetime\",\"type\":\"rmf_traffic_msgs/msg/ScheduleQuerySpacetime\",\"msg\":{\"type\":7742,\"regions\":[{\"map\":\"s2\",\"spaces\":[{\"shape\":{\"type\":44,\"index\":99},\"pose\":{\"x\":5.035,\"y\":-6.042,\"theta\":7.049}}],\"timespan\":{\"maps\":[\"s8\"],\"has_lower_bound\":true,\"lower_bound\":1234567890130,\"has_upper_bound\":true,\"upper_bound\":1481481468156}},{\"map\":\"s13\",\"spaces\":[{\"shape\":{\"type\":137,\"index\":192},\"pose\":{\"x\":16.112,\"y\":17.119,\"theta\":-18.126}}],\"timespan\":{\"maps\":[\"s19\"],\"has_lower_bound\":false,\"lower_bound\":-2592592569273,\"has_upper_bound\":false,\"upper_bound\":-2839506147299}}],\"shape_context\":{\"convex_shapes\":{\"circles\":[{\"radius\":-24.168},{\"radius\":25.175}]}},\"timespan\":{\"maps\":[\"s26\",\"s27\"],\"has_lower_bound\":false,\"lower_bound\":-3580246881377,\"has_upper_bound\":false,\"upper_bound\":-3827160459403}},\"id\":\"gen-schedule_query_spacetime\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_query_spacetime\",\"type\":\"rmf_traffic_msgs/msg/ScheduleQuerySpacetime\",\"msg\":{\"type\":7742,\"regions\":[{\"map\":\"s2\",\"spaces\":[{\"shape\":{\"type\":44,\"index\":99},\"pose\":{\"x\":5.035,\"y\":-6.042,\"theta\":7.049}}],\"timespan\":{\"maps\":[\"s8\"],\"has_lower_bound\":true,\"lower_bound\":1234567890130,\"has_upper_bound\":true,\"upper_bound\":1481481468156}},{\"map\":\"s13\",\"spaces\":[{\"shape\":{\"type\":137,\"index\":192},\"pose\":{\"x\":16.112,\"y\":17.119,\"theta\":-18.126}}],\"timespan\":{\"maps\":[\"s19\"],\"has_lower_bound\":false,\"lower_bound\":-2592592569273,\"has_upper_bound\":false,\"upper_bound\":-2839506147299}}],\"shape_context\":{\"convex_shapes\":{\"circles\":[{\"radius\":-24.168},{\"radius\":25.175}]}},\"timespan\":{\"maps\":[\"s26\",\"s27\"],\"has_lower_bound\":false,\"lower_bound\":-3580246881377,\"has_upper_bound\":false,\"upper_bound\":-3827160459403}},\"id\":\"gen-schedule_query_spacetime\"}",
+  "model": {
+    "@kind": "schedule_query_spacetime",
+    "ros2rmftraffic.schedule_query_spacetime_type_2": "7742",
+    "ros2rmftraffic.schedule_query_spacetime_regions_2.#": "2",
+    "ros2rmftraffic.schedule_query_spacetime_regions_2[0].ros2rmftraffic.schedule_query_spacetime_regions_map_2": "s2",
+    "ros2rmftraffic.schedule_query_spacetime_shape_context_convex_shapes_circles_2.#": "2",
+    "ros2rmftraffic.schedule_query_spacetime_shape_context_convex_shapes_circles_2[0].ros2rmftraffic.schedule_query_spacetime_shape_context_convex_shapes_circles_radius_2": "-24.168",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_maps_2.#": "2",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_maps_2[0].ros2rmftraffic.schedule_query_spacetime_timespan_maps_value_2": "s26",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_has_lower_bound_2": "0",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_lower_bound_2": "-3580246881377",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_has_upper_bound_2": "0",
+    "ros2rmftraffic.schedule_query_spacetime_timespan_upper_bound_2": "-3827160459403",
+    "ros2rmftraffic.topic": "/gen/schedule_query_spacetime"
+  }
+}

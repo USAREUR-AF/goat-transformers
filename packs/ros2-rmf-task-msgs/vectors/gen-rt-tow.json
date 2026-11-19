@@ -1,0 +1,17 @@
+{
+  "name": "rt-tow",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tow\",\"type\":\"rmf_task_msgs/msg/Tow\",\"msg\":{\"task_id\":\"s1\",\"object_type\":\"s2\",\"is_object_id_known\":true,\"object_id\":\"s4\",\"pickup_place_name\":\"s5\",\"is_dropoff_place_known\":false,\"dropoff_place_name\":\"s7\"},\"id\":\"gen-tow\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tow\",\"type\":\"rmf_task_msgs/msg/Tow\",\"msg\":{\"task_id\":\"s1\",\"object_type\":\"s2\",\"is_object_id_known\":true,\"object_id\":\"s4\",\"pickup_place_name\":\"s5\",\"is_dropoff_place_known\":false,\"dropoff_place_name\":\"s7\"},\"id\":\"gen-tow\"}",
+  "model": {
+    "@kind": "tow",
+    "ros2rmftask.tow_task_id": "s1",
+    "ros2rmftask.tow_object_type": "s2",
+    "ros2rmftask.tow_is_object_id_known": "1",
+    "ros2rmftask.tow_object_id": "s4",
+    "ros2rmftask.tow_pickup_place_name": "s5",
+    "ros2rmftask.topic": "/gen/tow"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-landing_target_pose",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target_pose\",\"type\":\"px4_msgs/msg/LandingTargetPose\",\"msg\":{\"timestamp\":123456789013,\"is_static\":false,\"rel_pos_valid\":true,\"rel_vel_valid\":false,\"rel_vel_ekf2_valid\":true,\"x_rel\":-3.625,\"y_rel\":-3.375,\"z_rel\":-3.125,\"vx_rel\":-2.875,\"vy_rel\":-2.625,\"vz_rel\":-2.375,\"cov_x_rel\":-2.125,\"cov_y_rel\":-1.875,\"cov_z_rel\":-1.625,\"cov_vx_rel\":-1.375,\"cov_vy_rel\":-1.125,\"cov_vz_rel\":-0.875,\"abs_pos_valid\":false,\"x_abs\":-0.375,\"y_abs\":-0.125,\"z_abs\":0.125},\"id\":\"gen-landing_target_pose\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target_pose\",\"type\":\"px4_msgs/msg/LandingTargetPose\",\"msg\":{\"timestamp\":123456789013,\"is_static\":false,\"rel_pos_valid\":true,\"rel_vel_valid\":false,\"rel_vel_ekf2_valid\":true,\"x_rel\":-3.625,\"y_rel\":-3.375,\"z_rel\":-3.125,\"vx_rel\":-2.875,\"vy_rel\":-2.625,\"vz_rel\":-2.375,\"cov_x_rel\":-2.125,\"cov_y_rel\":-1.875,\"cov_z_rel\":-1.625,\"cov_vx_rel\":-1.375,\"cov_vy_rel\":-1.125,\"cov_vz_rel\":-0.875,\"abs_pos_valid\":false,\"x_abs\":-0.375,\"y_abs\":-0.125,\"z_abs\":0.125},\"id\":\"gen-landing_target_pose\"}",
+  "model": {
+    "@kind": "landing_target_pose",
+    "ros2px4.landing_target_pose_timestamp": "123456789013",
+    "ros2px4.landing_target_pose_is_static": "0",
+    "ros2px4.landing_target_pose_rel_pos_valid": "1",
+    "ros2px4.landing_target_pose_rel_vel_valid": "0",
+    "ros2px4.landing_target_pose_rel_vel_ekf2_valid": "1",
+    "ros2px4.topic": "/gen/landing_target_pose"
+  }
+}

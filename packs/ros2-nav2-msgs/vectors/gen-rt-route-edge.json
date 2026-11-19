@@ -1,0 +1,17 @@
+{
+  "name": "rt-route_edge",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_edge\",\"type\":\"nav2_msgs/msg/RouteEdge\",\"msg\":{\"edgeid\":7742,\"start\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"end\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049}},\"id\":\"gen-route_edge\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_edge\",\"type\":\"nav2_msgs/msg/RouteEdge\",\"msg\":{\"edgeid\":7742,\"start\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"end\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049}},\"id\":\"gen-route_edge\"}",
+  "model": {
+    "@kind": "route_edge",
+    "ros2nav2.route_edge_edgeid": "7742",
+    "ros2nav2.route_edge_start_x": "2.014",
+    "ros2nav2.route_edge_start_y": "-3.021",
+    "ros2nav2.route_edge_start_z": "4.028",
+    "ros2nav2.route_edge_end_x": "5.035",
+    "ros2nav2.topic": "/gen/route_edge"
+  }
+}

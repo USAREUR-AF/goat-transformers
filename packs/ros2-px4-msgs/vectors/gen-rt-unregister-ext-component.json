@@ -1,0 +1,17 @@
+{
+  "name": "rt-unregister_ext_component",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/unregister_ext_component\",\"type\":\"px4_msgs/msg/UnregisterExtComponent\",\"msg\":{\"timestamp\":123456789013,\"name\":\"Agb/AIA=\",\"arming_check_id\":-84,\"mode_id\":-29,\"mode_executor_id\":26},\"id\":\"gen-unregister_ext_component\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/unregister_ext_component\",\"type\":\"px4_msgs/msg/UnregisterExtComponent\",\"msg\":{\"timestamp\":123456789013,\"name\":\"Agb/AIA=\",\"arming_check_id\":-84,\"mode_id\":-29,\"mode_executor_id\":26},\"id\":\"gen-unregister_ext_component\"}",
+  "model": {
+    "@kind": "unregister_ext_component",
+    "ros2px4.unregister_ext_component_timestamp": "123456789013",
+    "ros2px4.unregister_ext_component_name": "Agb/AIA=",
+    "ros2px4.unregister_ext_component_arming_check_id": "-84",
+    "ros2px4.unregister_ext_component_mode_id": "-29",
+    "ros2px4.unregister_ext_component_mode_executor_id": "26",
+    "ros2px4.topic": "/gen/unregister_ext_component"
+  }
+}

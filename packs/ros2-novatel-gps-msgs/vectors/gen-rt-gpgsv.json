@@ -1,0 +1,19 @@
+{
+  "name": "rt-gpgsv",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpgsv\",\"type\":\"novatel_gps_msgs/msg/Gpgsv\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"n_msgs\":154,\"msg_number\":209,\"n_satellites\":8,\"satellites\":[{\"prn\":63,\"elevation\":118,\"azimuth\":44589,\"snr\":100},{\"prn\":27,\"elevation\":82,\"azimuth\":9993,\"snr\":64}]},\"id\":\"gen-gpgsv\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpgsv\",\"type\":\"novatel_gps_msgs/msg/Gpgsv\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"n_msgs\":154,\"msg_number\":209,\"n_satellites\":8,\"satellites\":[{\"prn\":63,\"elevation\":118,\"azimuth\":44589,\"snr\":100},{\"prn\":27,\"elevation\":82,\"azimuth\":9993,\"snr\":64}]},\"id\":\"gen-gpgsv\"}",
+  "model": {
+    "@kind": "gpgsv",
+    "ros2novatelgps.gpgsv_header_stamp_sec": "40510",
+    "ros2novatelgps.gpgsv_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.gpgsv_header_frame_id": "s3",
+    "ros2novatelgps.gpgsv_message_id": "s4",
+    "ros2novatelgps.gpgsv_n_msgs": "154",
+    "ros2novatelgps.gpgsv_satellites.#": "2",
+    "ros2novatelgps.gpgsv_satellites[0].ros2novatelgps.gpgsv_satellites_prn": "63",
+    "ros2novatelgps.topic": "/gen/gpgsv"
+  }
+}

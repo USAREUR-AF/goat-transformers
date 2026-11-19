@@ -1,0 +1,17 @@
+{
+  "name": "rt-path_request",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_request\",\"type\":\"rmf_fleet_msgs/msg/PathRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"path\":[{\"t\":{\"sec\":121516,\"nanosec\":2147645667},\"x\":-3.875,\"y\":-3.625,\"yaw\":-3.375,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":-2.875,\"level_name\":\"s10\",\"index\":1358024679143},{\"t\":{\"sec\":486043,\"nanosec\":2148010194},\"x\":-1.625,\"y\":-1.375,\"yaw\":-1.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-0.625,\"level_name\":\"s19\",\"index\":2469135780260}],\"task_id\":\"s21\"},\"id\":\"gen-path_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_request\",\"type\":\"rmf_fleet_msgs/msg/PathRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"path\":[{\"t\":{\"sec\":121516,\"nanosec\":2147645667},\"x\":-3.875,\"y\":-3.625,\"yaw\":-3.375,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":-2.875,\"level_name\":\"s10\",\"index\":1358024679143},{\"t\":{\"sec\":486043,\"nanosec\":2148010194},\"x\":-1.625,\"y\":-1.375,\"yaw\":-1.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-0.625,\"level_name\":\"s19\",\"index\":2469135780260}],\"task_id\":\"s21\"},\"id\":\"gen-path_request\"}",
+  "model": {
+    "@kind": "path_request",
+    "ros2rmffleet.path_request_fleet_name": "s1",
+    "ros2rmffleet.path_request_robot_name": "s2",
+    "ros2rmffleet.path_request_path.#": "2",
+    "ros2rmffleet.path_request_path[0].ros2rmffleet.path_request_path_t_sec": "121516",
+    "ros2rmffleet.path_request_task_id": "s21",
+    "ros2rmffleet.topic": "/gen/path_request"
+  }
+}

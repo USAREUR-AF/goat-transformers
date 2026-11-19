@@ -1,0 +1,21 @@
+{
+  "name": "rt-virtual_gate_area_status",
+  "from": "ros2-autoware-v2x-msgs",
+  "to": "ros2-autoware-v2x-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_gate_area_status\",\"type\":\"autoware_v2x_msgs/msg/VirtualGateAreaStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":23212,\"sequence_id\":63715,\"area_id\":\"s5\",\"gate_ids\":[\"s6\",\"s7\"],\"expected_time_arrival\":[{\"sec\":324031,\"nanosec\":2147848182}]},\"id\":\"gen-virtual_gate_area_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_gate_area_status\",\"type\":\"autoware_v2x_msgs/msg/VirtualGateAreaStatus\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":23212,\"sequence_id\":63715,\"area_id\":\"s5\",\"gate_ids\":[\"s6\",\"s7\"],\"expected_time_arrival\":[{\"sec\":324031,\"nanosec\":2147848182}]},\"id\":\"gen-virtual_gate_area_status\"}",
+  "model": {
+    "@kind": "virtual_gate_area_status",
+    "ros2autowarev2x.virtual_gate_area_status_stamp_sec": "40510",
+    "ros2autowarev2x.virtual_gate_area_status_stamp_nanosec": "2147564661",
+    "ros2autowarev2x.virtual_gate_area_status_status": "23212",
+    "ros2autowarev2x.virtual_gate_area_status_sequence_id": "63715",
+    "ros2autowarev2x.virtual_gate_area_status_area_id": "s5",
+    "ros2autowarev2x.virtual_gate_area_status_gate_ids.#": "2",
+    "ros2autowarev2x.virtual_gate_area_status_gate_ids[0].ros2autowarev2x.virtual_gate_area_status_gate_ids_value": "s6",
+    "ros2autowarev2x.virtual_gate_area_status_expected_time_arrival.#": "1",
+    "ros2autowarev2x.virtual_gate_area_status_expected_time_arrival[0].ros2autowarev2x.virtual_gate_area_status_expected_time_arrival_sec": "324031",
+    "ros2autowarev2x.topic": "/gen/virtual_gate_area_status"
+  }
+}

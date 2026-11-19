@@ -1,0 +1,29 @@
+{
+  "name": "rt-vehicle_imu_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_imu_status\",\"type\":\"px4_msgs/msg/VehicleImuStatus\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id\":2147564661,\"gyro_device_id\":2147605164,\"accel_clipping\":[2147645667,2147686170,2147726673],\"gyro_clipping\":[2147767176,2147807679,2147848182],\"accel_error_count\":2147888685,\"gyro_error_count\":2147929188,\"accel_rate_hz\":-2.125,\"gyro_rate_hz\":-1.875,\"accel_raw_rate_hz\":-1.625,\"gyro_raw_rate_hz\":-1.375,\"accel_vibration_metric\":-1.125,\"gyro_vibration_metric\":-0.875,\"delta_angle_coning_metric\":-0.625,\"mean_accel\":[-0.375,-0.125,0.125],\"mean_gyro\":[0.375,0.625,0.875],\"var_accel\":[1.125,1.375,1.625],\"var_gyro\":[1.875,2.125,2.375],\"temperature_accel\":2.625,\"temperature_gyro\":2.875},\"id\":\"gen-vehicle_imu_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_imu_status\",\"type\":\"px4_msgs/msg/VehicleImuStatus\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id\":2147564661,\"gyro_device_id\":2147605164,\"accel_clipping\":[2147645667,2147686170,2147726673],\"gyro_clipping\":[2147767176,2147807679,2147848182],\"accel_error_count\":2147888685,\"gyro_error_count\":2147929188,\"accel_rate_hz\":-2.125,\"gyro_rate_hz\":-1.875,\"accel_raw_rate_hz\":-1.625,\"gyro_raw_rate_hz\":-1.375,\"accel_vibration_metric\":-1.125,\"gyro_vibration_metric\":-0.875,\"delta_angle_coning_metric\":-0.625,\"mean_accel\":[-0.375,-0.125,0.125],\"mean_gyro\":[0.375,0.625,0.875],\"var_accel\":[1.125,1.375,1.625],\"var_gyro\":[1.875,2.125,2.375],\"temperature_accel\":2.625,\"temperature_gyro\":2.875},\"id\":\"gen-vehicle_imu_status\"}",
+  "model": {
+    "@kind": "vehicle_imu_status",
+    "ros2px4.vehicle_imu_status_timestamp": "123456789013",
+    "ros2px4.vehicle_imu_status_accel_device_id": "2147564661",
+    "ros2px4.vehicle_imu_status_gyro_device_id": "2147605164",
+    "ros2px4.vehicle_imu_status_accel_clipping.#": "3",
+    "ros2px4.vehicle_imu_status_accel_clipping[0].ros2px4.vehicle_imu_status_accel_clipping_value": "2147645667",
+    "ros2px4.vehicle_imu_status_gyro_clipping.#": "3",
+    "ros2px4.vehicle_imu_status_gyro_clipping[0].ros2px4.vehicle_imu_status_gyro_clipping_value": "2147767176",
+    "ros2px4.vehicle_imu_status_accel_error_count": "2147888685",
+    "ros2px4.vehicle_imu_status_gyro_error_count": "2147929188",
+    "ros2px4.vehicle_imu_status_mean_accel.#": "3",
+    "ros2px4.vehicle_imu_status_mean_accel[0].ros2px4.vehicle_imu_status_mean_accel_value": "-0.375",
+    "ros2px4.vehicle_imu_status_mean_gyro.#": "3",
+    "ros2px4.vehicle_imu_status_mean_gyro[0].ros2px4.vehicle_imu_status_mean_gyro_value": "0.375",
+    "ros2px4.vehicle_imu_status_var_accel.#": "3",
+    "ros2px4.vehicle_imu_status_var_accel[0].ros2px4.vehicle_imu_status_var_accel_value": "1.125",
+    "ros2px4.vehicle_imu_status_var_gyro.#": "3",
+    "ros2px4.vehicle_imu_status_var_gyro[0].ros2px4.vehicle_imu_status_var_gyro_value": "1.875",
+    "ros2px4.topic": "/gen/vehicle_imu_status"
+  }
+}

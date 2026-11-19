@@ -1,0 +1,19 @@
+{
+  "name": "rt-circle_annotation",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/circle_annotation\",\"type\":\"foxglove_msgs/msg/CircleAnnotation\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"position\":{\"x\":-3.021,\"y\":4.028},\"diameter\":5.035,\"thickness\":-6.042,\"fill_color\":{\"r\":7.049,\"g\":8.056,\"b\":-9.063,\"a\":10.07},\"outline_color\":{\"r\":11.077,\"g\":-12.084,\"b\":13.091,\"a\":14.098},\"metadata\":[{\"key\":\"s15\",\"value\":\"s16\"},{\"key\":\"s17\",\"value\":\"s18\"}]},\"id\":\"gen-circle_annotation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/circle_annotation\",\"type\":\"foxglove_msgs/msg/CircleAnnotation\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"position\":{\"x\":-3.021,\"y\":4.028},\"diameter\":5.035,\"thickness\":-6.042,\"fill_color\":{\"r\":7.049,\"g\":8.056,\"b\":-9.063,\"a\":10.07},\"outline_color\":{\"r\":11.077,\"g\":-12.084,\"b\":13.091,\"a\":14.098},\"metadata\":[{\"key\":\"s15\",\"value\":\"s16\"},{\"key\":\"s17\",\"value\":\"s18\"}]},\"id\":\"gen-circle_annotation\"}",
+  "model": {
+    "@kind": "circle_annotation",
+    "ros2foxglove.circle_annotation_timestamp_sec": "40510",
+    "ros2foxglove.circle_annotation_timestamp_nanosec": "2147564661",
+    "ros2foxglove.circle_annotation_position_x": "-3.021",
+    "ros2foxglove.circle_annotation_position_y": "4.028",
+    "ros2foxglove.circle_annotation_diameter": "5.035",
+    "ros2foxglove.circle_annotation_metadata.#": "2",
+    "ros2foxglove.circle_annotation_metadata[0].ros2foxglove.circle_annotation_metadata_key": "s15",
+    "ros2foxglove.topic": "/gen/circle_annotation"
+  }
+}

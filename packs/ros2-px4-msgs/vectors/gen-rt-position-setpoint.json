@@ -1,0 +1,17 @@
+{
+  "name": "rt-position_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/position_setpoint\",\"type\":\"px4_msgs/msg/PositionSetpoint\",\"msg\":{\"timestamp\":123456789013,\"valid\":false,\"type\":44,\"vx\":-4.125,\"vy\":-3.875,\"vz\":-3.625,\"lat\":7.049,\"lon\":8.056,\"alt\":-2.875,\"yaw\":-2.625,\"loiter_radius\":-2.375,\"loiter_minor_radius\":-2.125,\"loiter_direction_counter_clockwise\":true,\"loiter_orientation\":-1.625,\"loiter_pattern\":192,\"acceptance_radius\":-1.125,\"alt_acceptance_radius\":-0.875,\"course\":-0.625,\"cruising_speed\":-0.375,\"gliding_enabled\":false,\"cruising_throttle\":0.125},\"id\":\"gen-position_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/position_setpoint\",\"type\":\"px4_msgs/msg/PositionSetpoint\",\"msg\":{\"timestamp\":123456789013,\"valid\":false,\"type\":44,\"vx\":-4.125,\"vy\":-3.875,\"vz\":-3.625,\"lat\":7.049,\"lon\":8.056,\"alt\":-2.875,\"yaw\":-2.625,\"loiter_radius\":-2.375,\"loiter_minor_radius\":-2.125,\"loiter_direction_counter_clockwise\":true,\"loiter_orientation\":-1.625,\"loiter_pattern\":192,\"acceptance_radius\":-1.125,\"alt_acceptance_radius\":-0.875,\"course\":-0.625,\"cruising_speed\":-0.375,\"gliding_enabled\":false,\"cruising_throttle\":0.125},\"id\":\"gen-position_setpoint\"}",
+  "model": {
+    "@kind": "position_setpoint",
+    "ros2px4.position_setpoint_timestamp": "123456789013",
+    "ros2px4.position_setpoint_valid": "0",
+    "ros2px4.position_setpoint_type": "44",
+    "ros2px4.position_setpoint_vx": "-4.125",
+    "ros2px4.position_setpoint_vy": "-3.875",
+    "ros2px4.topic": "/gen/position_setpoint"
+  }
+}

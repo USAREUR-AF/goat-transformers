@@ -1,0 +1,14 @@
+{
+  "name": "rt-dock_summary",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dock_summary\",\"type\":\"rmf_fleet_msgs/msg/DockSummary\",\"msg\":{\"docks\":[{\"fleet_name\":\"s1\",\"params\":[{\"start\":\"s2\",\"finish\":\"s3\",\"path\":[{\"t\":{\"sec\":162019,\"nanosec\":2147686170},\"x\":-3.625,\"y\":-3.375,\"yaw\":-3.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-2.625,\"level_name\":\"s11\",\"index\":1481481468156}]}]},{\"fleet_name\":\"s13\",\"params\":[{\"start\":\"s14\",\"finish\":\"s15\",\"path\":[{\"t\":{\"sec\":648055,\"nanosec\":2148172206},\"x\":-0.625,\"y\":-0.375,\"yaw\":-0.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":0.375,\"level_name\":\"s23\",\"index\":2962962936312}]}]}]},\"id\":\"gen-dock_summary\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dock_summary\",\"type\":\"rmf_fleet_msgs/msg/DockSummary\",\"msg\":{\"docks\":[{\"fleet_name\":\"s1\",\"params\":[{\"start\":\"s2\",\"finish\":\"s3\",\"path\":[{\"t\":{\"sec\":162019,\"nanosec\":2147686170},\"x\":-3.625,\"y\":-3.375,\"yaw\":-3.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":-2.625,\"level_name\":\"s11\",\"index\":1481481468156}]}]},{\"fleet_name\":\"s13\",\"params\":[{\"start\":\"s14\",\"finish\":\"s15\",\"path\":[{\"t\":{\"sec\":648055,\"nanosec\":2148172206},\"x\":-0.625,\"y\":-0.375,\"yaw\":-0.125,\"obey_approach_speed_limit\":true,\"approach_speed_limit\":0.375,\"level_name\":\"s23\",\"index\":2962962936312}]}]}]},\"id\":\"gen-dock_summary\"}",
+  "model": {
+    "@kind": "dock_summary",
+    "ros2rmffleet.dock_summary_docks.#": "2",
+    "ros2rmffleet.dock_summary_docks[0].ros2rmffleet.dock_summary_docks_fleet_name": "s1",
+    "ros2rmffleet.topic": "/gen/dock_summary"
+  }
+}

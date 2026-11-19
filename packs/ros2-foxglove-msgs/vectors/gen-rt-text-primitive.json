@@ -1,0 +1,17 @@
+{
+  "name": "rt-text_primitive",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/text_primitive\",\"type\":\"foxglove_msgs/msg/TextPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"billboard\":false,\"font_size\":-9.063,\"scale_invariant\":false,\"color\":{\"r\":11.077,\"g\":-12.084,\"b\":13.091,\"a\":14.098},\"text\":\"s15\"},\"id\":\"gen-text_primitive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/text_primitive\",\"type\":\"foxglove_msgs/msg/TextPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"billboard\":false,\"font_size\":-9.063,\"scale_invariant\":false,\"color\":{\"r\":11.077,\"g\":-12.084,\"b\":13.091,\"a\":14.098},\"text\":\"s15\"},\"id\":\"gen-text_primitive\"}",
+  "model": {
+    "@kind": "text_primitive",
+    "ros2foxglove.text_primitive_pose_position_x": "1.007",
+    "ros2foxglove.text_primitive_pose_position_y": "2.014",
+    "ros2foxglove.text_primitive_pose_position_z": "-3.021",
+    "ros2foxglove.text_primitive_pose_orientation_x": "4.028",
+    "ros2foxglove.text_primitive_pose_orientation_y": "5.035",
+    "ros2foxglove.topic": "/gen/text_primitive"
+  }
+}

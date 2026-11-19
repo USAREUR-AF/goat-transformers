@@ -1,0 +1,15 @@
+{
+  "name": "rt-gear_report",
+  "from": "ros2-autoware-vehicle-msgs",
+  "to": "ros2-autoware-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gear_report\",\"type\":\"autoware_vehicle_msgs/msg/GearReport\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"report\":44},\"id\":\"gen-gear_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gear_report\",\"type\":\"autoware_vehicle_msgs/msg/GearReport\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"report\":44},\"id\":\"gen-gear_report\"}",
+  "model": {
+    "@kind": "gear_report",
+    "ros2autowarevehicle.gear_report_stamp_sec": "40510",
+    "ros2autowarevehicle.gear_report_stamp_nanosec": "2147564661",
+    "ros2autowarevehicle.gear_report_report": "44",
+    "ros2autowarevehicle.topic": "/gen/gear_report"
+  }
+}

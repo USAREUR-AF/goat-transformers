@@ -1,0 +1,17 @@
+{
+  "name": "rt-cylinder_primitive",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cylinder_primitive\",\"type\":\"foxglove_msgs/msg/CylinderPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"size\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"bottom_scale\":11.077,\"top_scale\":-12.084,\"color\":{\"r\":13.091,\"g\":14.098,\"b\":-15.105,\"a\":16.112}},\"id\":\"gen-cylinder_primitive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cylinder_primitive\",\"type\":\"foxglove_msgs/msg/CylinderPrimitive\",\"msg\":{\"pose\":{\"position\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"orientation\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042,\"w\":7.049}},\"size\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"bottom_scale\":11.077,\"top_scale\":-12.084,\"color\":{\"r\":13.091,\"g\":14.098,\"b\":-15.105,\"a\":16.112}},\"id\":\"gen-cylinder_primitive\"}",
+  "model": {
+    "@kind": "cylinder_primitive",
+    "ros2foxglove.cylinder_primitive_pose_position_x": "1.007",
+    "ros2foxglove.cylinder_primitive_pose_position_y": "2.014",
+    "ros2foxglove.cylinder_primitive_pose_position_z": "-3.021",
+    "ros2foxglove.cylinder_primitive_pose_orientation_x": "4.028",
+    "ros2foxglove.cylinder_primitive_pose_orientation_y": "5.035",
+    "ros2foxglove.topic": "/gen/cylinder_primitive"
+  }
+}

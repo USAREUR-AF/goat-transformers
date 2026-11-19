@@ -1,0 +1,16 @@
+{
+  "name": "rt-blockade_set",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_set\",\"type\":\"rmf_traffic_msgs/msg/BlockadeSet\",\"msg\":{\"participant\":123456789013,\"reservation\":246913578026,\"radius\":-3.021,\"path\":[{\"position\":[4.028,5.035],\"map_name\":\"s6\",\"can_hold\":true},{\"position\":[8.056,-9.063],\"map_name\":\"s10\",\"can_hold\":true}]},\"id\":\"gen-blockade_set\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_set\",\"type\":\"rmf_traffic_msgs/msg/BlockadeSet\",\"msg\":{\"participant\":123456789013,\"reservation\":246913578026,\"radius\":-3.021,\"path\":[{\"position\":[4.028,5.035],\"map_name\":\"s6\",\"can_hold\":true},{\"position\":[8.056,-9.063],\"map_name\":\"s10\",\"can_hold\":true}]},\"id\":\"gen-blockade_set\"}",
+  "model": {
+    "@kind": "blockade_set",
+    "ros2rmftraffic.blockade_set_participant": "123456789013",
+    "ros2rmftraffic.blockade_set_reservation": "246913578026",
+    "ros2rmftraffic.blockade_set_radius": "-3.021",
+    "ros2rmftraffic.blockade_set_path.#": "2",
+    "ros2rmftraffic.topic": "/gen/blockade_set"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-fixed_wing_longitudinal_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_longitudinal_setpoint\",\"type\":\"px4_msgs/msg/FixedWingLongitudinalSetpoint\",\"msg\":{\"timestamp\":123456789013,\"altitude\":-4.625,\"height_rate\":-4.375,\"equivalent_airspeed\":-4.125,\"pitch_direct\":-3.875,\"throttle_direct\":-3.625},\"id\":\"gen-fixed_wing_longitudinal_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fixed_wing_longitudinal_setpoint\",\"type\":\"px4_msgs/msg/FixedWingLongitudinalSetpoint\",\"msg\":{\"timestamp\":123456789013,\"altitude\":-4.625,\"height_rate\":-4.375,\"equivalent_airspeed\":-4.125,\"pitch_direct\":-3.875,\"throttle_direct\":-3.625},\"id\":\"gen-fixed_wing_longitudinal_setpoint\"}",
+  "model": {
+    "@kind": "fixed_wing_longitudinal_setpoint",
+    "ros2px4.fixed_wing_longitudinal_setpoint_timestamp": "123456789013",
+    "ros2px4.fixed_wing_longitudinal_setpoint_altitude": "-4.625",
+    "ros2px4.fixed_wing_longitudinal_setpoint_height_rate": "-4.375",
+    "ros2px4.fixed_wing_longitudinal_setpoint_equivalent_airspeed": "-4.125",
+    "ros2px4.fixed_wing_longitudinal_setpoint_pitch_direct": "-3.875",
+    "ros2px4.topic": "/gen/fixed_wing_longitudinal_setpoint"
+  }
+}

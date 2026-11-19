@@ -1,0 +1,19 @@
+{
+  "name": "rt-vehicle_rates_setpoint",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_rates_setpoint\",\"type\":\"px4_msgs/msg/VehicleRatesSetpoint\",\"msg\":{\"timestamp\":123456789013,\"roll\":-4.625,\"pitch\":-4.375,\"yaw\":-4.125,\"thrust_body\":[-3.875,-3.625,-3.375],\"reset_integral\":false},\"id\":\"gen-vehicle_rates_setpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_rates_setpoint\",\"type\":\"px4_msgs/msg/VehicleRatesSetpoint\",\"msg\":{\"timestamp\":123456789013,\"roll\":-4.625,\"pitch\":-4.375,\"yaw\":-4.125,\"thrust_body\":[-3.875,-3.625,-3.375],\"reset_integral\":false},\"id\":\"gen-vehicle_rates_setpoint\"}",
+  "model": {
+    "@kind": "vehicle_rates_setpoint",
+    "ros2px4.vehicle_rates_setpoint_timestamp": "123456789013",
+    "ros2px4.vehicle_rates_setpoint_roll": "-4.625",
+    "ros2px4.vehicle_rates_setpoint_pitch": "-4.375",
+    "ros2px4.vehicle_rates_setpoint_yaw": "-4.125",
+    "ros2px4.vehicle_rates_setpoint_thrust_body.#": "3",
+    "ros2px4.vehicle_rates_setpoint_thrust_body[0].ros2px4.vehicle_rates_setpoint_thrust_body_value": "-3.875",
+    "ros2px4.vehicle_rates_setpoint_reset_integral": "0",
+    "ros2px4.topic": "/gen/vehicle_rates_setpoint"
+  }
+}

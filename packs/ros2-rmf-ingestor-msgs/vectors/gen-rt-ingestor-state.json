@@ -1,0 +1,19 @@
+{
+  "name": "rt-ingestor_state",
+  "from": "ros2-rmf-ingestor-msgs",
+  "to": "ros2-rmf-ingestor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ingestor_state\",\"type\":\"rmf_ingestor_msgs/msg/IngestorState\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"mode\":162019,\"request_guid_queue\":[\"s5\",\"s6\"],\"seconds_remaining\":-3.375},\"id\":\"gen-ingestor_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ingestor_state\",\"type\":\"rmf_ingestor_msgs/msg/IngestorState\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"guid\":\"s3\",\"mode\":162019,\"request_guid_queue\":[\"s5\",\"s6\"],\"seconds_remaining\":-3.375},\"id\":\"gen-ingestor_state\"}",
+  "model": {
+    "@kind": "ingestor_state",
+    "ros2rmfingestor.ingestor_state_time_sec": "40510",
+    "ros2rmfingestor.ingestor_state_time_nanosec": "2147564661",
+    "ros2rmfingestor.ingestor_state_guid": "s3",
+    "ros2rmfingestor.ingestor_state_mode": "162019",
+    "ros2rmfingestor.ingestor_state_request_guid_queue.#": "2",
+    "ros2rmfingestor.ingestor_state_request_guid_queue[0].ros2rmfingestor.ingestor_state_request_guid_queue_value": "s5",
+    "ros2rmfingestor.ingestor_state_seconds_remaining": "-3.375",
+    "ros2rmfingestor.topic": "/gen/ingestor_state"
+  }
+}

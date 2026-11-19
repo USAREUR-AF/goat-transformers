@@ -1,0 +1,17 @@
+{
+  "name": "rt-failure_detector_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/failure_detector_status\",\"type\":\"px4_msgs/msg/FailureDetectorStatus\",\"msg\":{\"timestamp\":123456789013,\"fd_tilt\":false,\"fd_alt\":true,\"fd_ext\":false,\"fd_arm_escs\":true,\"fd_battery\":false,\"fd_imbalanced_prop\":true,\"fd_motor\":false,\"imbalanced_prop_metric\":-2.875,\"motor_failure_mask\":44589,\"motor_stop_mask\":19556},\"id\":\"gen-failure_detector_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/failure_detector_status\",\"type\":\"px4_msgs/msg/FailureDetectorStatus\",\"msg\":{\"timestamp\":123456789013,\"fd_tilt\":false,\"fd_alt\":true,\"fd_ext\":false,\"fd_arm_escs\":true,\"fd_battery\":false,\"fd_imbalanced_prop\":true,\"fd_motor\":false,\"imbalanced_prop_metric\":-2.875,\"motor_failure_mask\":44589,\"motor_stop_mask\":19556},\"id\":\"gen-failure_detector_status\"}",
+  "model": {
+    "@kind": "failure_detector_status",
+    "ros2px4.failure_detector_status_timestamp": "123456789013",
+    "ros2px4.failure_detector_status_fd_tilt": "0",
+    "ros2px4.failure_detector_status_fd_alt": "1",
+    "ros2px4.failure_detector_status_fd_ext": "0",
+    "ros2px4.failure_detector_status_fd_arm_escs": "1",
+    "ros2px4.topic": "/gen/failure_detector_status"
+  }
+}

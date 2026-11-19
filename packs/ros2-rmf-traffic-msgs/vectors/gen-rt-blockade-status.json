@@ -1,0 +1,17 @@
+{
+  "name": "rt-blockade_status",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_status\",\"type\":\"rmf_traffic_msgs/msg/BlockadeStatus\",\"msg\":{\"participant\":123456789013,\"reservation\":246913578026,\"any_ready\":true,\"last_ready\":493827156052,\"last_reached\":617283945065,\"assignment_begin\":740740734078,\"assignment_end\":864197523091},\"id\":\"gen-blockade_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_status\",\"type\":\"rmf_traffic_msgs/msg/BlockadeStatus\",\"msg\":{\"participant\":123456789013,\"reservation\":246913578026,\"any_ready\":true,\"last_ready\":493827156052,\"last_reached\":617283945065,\"assignment_begin\":740740734078,\"assignment_end\":864197523091},\"id\":\"gen-blockade_status\"}",
+  "model": {
+    "@kind": "blockade_status",
+    "ros2rmftraffic.blockade_status_participant": "123456789013",
+    "ros2rmftraffic.blockade_status_reservation": "246913578026",
+    "ros2rmftraffic.blockade_status_any_ready": "1",
+    "ros2rmftraffic.blockade_status_last_ready": "493827156052",
+    "ros2rmftraffic.blockade_status_last_reached": "617283945065",
+    "ros2rmftraffic.topic": "/gen/blockade_status"
+  }
+}

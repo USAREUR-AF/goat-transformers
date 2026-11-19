@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_roi",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_roi\",\"type\":\"px4_msgs/msg/VehicleRoi\",\"msg\":{\"timestamp\":123456789013,\"mode\":245,\"lat\":-3.021,\"lon\":4.028,\"alt\":-3.875,\"roll_offset\":-3.625,\"pitch_offset\":-3.375,\"yaw_offset\":-3.125},\"id\":\"gen-vehicle_roi\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_roi\",\"type\":\"px4_msgs/msg/VehicleRoi\",\"msg\":{\"timestamp\":123456789013,\"mode\":245,\"lat\":-3.021,\"lon\":4.028,\"alt\":-3.875,\"roll_offset\":-3.625,\"pitch_offset\":-3.375,\"yaw_offset\":-3.125},\"id\":\"gen-vehicle_roi\"}",
+  "model": {
+    "@kind": "vehicle_roi",
+    "ros2px4.vehicle_roi_timestamp": "123456789013",
+    "ros2px4.vehicle_roi_mode": "245",
+    "ros2px4.vehicle_roi_lat": "-3.021",
+    "ros2px4.vehicle_roi_lon": "4.028",
+    "ros2px4.vehicle_roi_alt": "-3.875",
+    "ros2px4.topic": "/gen/vehicle_roi"
+  }
+}

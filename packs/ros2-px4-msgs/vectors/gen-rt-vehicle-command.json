@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_command",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command\",\"type\":\"px4_msgs/msg/VehicleCommand\",\"msg\":{\"timestamp\":123456789013,\"param1\":-4.625,\"param2\":-4.375,\"param3\":-4.125,\"param4\":-3.875,\"param5\":-6.042,\"param6\":7.049,\"param7\":-3.125,\"command\":2147848182,\"target_system\":2147888685,\"target_component\":228,\"source_system\":2147969691,\"source_component\":35026,\"confirmation\":137,\"from_external\":true},\"id\":\"gen-vehicle_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_command\",\"type\":\"px4_msgs/msg/VehicleCommand\",\"msg\":{\"timestamp\":123456789013,\"param1\":-4.625,\"param2\":-4.375,\"param3\":-4.125,\"param4\":-3.875,\"param5\":-6.042,\"param6\":7.049,\"param7\":-3.125,\"command\":2147848182,\"target_system\":2147888685,\"target_component\":228,\"source_system\":2147969691,\"source_component\":35026,\"confirmation\":137,\"from_external\":true},\"id\":\"gen-vehicle_command\"}",
+  "model": {
+    "@kind": "vehicle_command",
+    "ros2px4.vehicle_command_timestamp": "123456789013",
+    "ros2px4.vehicle_command_param1": "-4.625",
+    "ros2px4.vehicle_command_param2": "-4.375",
+    "ros2px4.vehicle_command_param3": "-4.125",
+    "ros2px4.vehicle_command_param4": "-3.875",
+    "ros2px4.topic": "/gen/vehicle_command"
+  }
+}

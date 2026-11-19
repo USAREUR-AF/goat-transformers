@@ -1,0 +1,17 @@
+{
+  "name": "rt-mission_result",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mission_result\",\"type\":\"px4_msgs/msg/MissionResult\",\"msg\":{\"timestamp\":123456789013,\"mission_id\":2147564661,\"geofence_id\":2147605164,\"home_position_counter\":2147645667,\"seq_reached\":202522,\"seq_current\":13649,\"seq_total\":54152,\"valid\":false,\"warning\":true,\"finished\":false,\"failure\":true,\"item_do_jump_changed\":false,\"item_changed_index\":35026,\"item_do_jump_remaining\":9993,\"execution_mode\":192},\"id\":\"gen-mission_result\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mission_result\",\"type\":\"px4_msgs/msg/MissionResult\",\"msg\":{\"timestamp\":123456789013,\"mission_id\":2147564661,\"geofence_id\":2147605164,\"home_position_counter\":2147645667,\"seq_reached\":202522,\"seq_current\":13649,\"seq_total\":54152,\"valid\":false,\"warning\":true,\"finished\":false,\"failure\":true,\"item_do_jump_changed\":false,\"item_changed_index\":35026,\"item_do_jump_remaining\":9993,\"execution_mode\":192},\"id\":\"gen-mission_result\"}",
+  "model": {
+    "@kind": "mission_result",
+    "ros2px4.mission_result_timestamp": "123456789013",
+    "ros2px4.mission_result_mission_id": "2147564661",
+    "ros2px4.mission_result_geofence_id": "2147605164",
+    "ros2px4.mission_result_home_position_counter": "2147645667",
+    "ros2px4.mission_result_seq_reached": "202522",
+    "ros2px4.topic": "/gen/mission_result"
+  }
+}

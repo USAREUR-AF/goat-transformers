@@ -1,0 +1,23 @@
+{
+  "name": "rt-delivery",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/delivery\",\"type\":\"rmf_task_msgs/msg/Delivery\",\"msg\":{\"task_id\":\"s1\",\"items\":[{\"type_guid\":\"s2\",\"quantity\":121516,\"compartment_name\":\"s4\"},{\"type_guid\":\"s5\",\"quantity\":243025,\"compartment_name\":\"s7\"}],\"pickup_place_name\":\"s8\",\"pickup_dispenser\":\"s9\",\"pickup_behavior\":{\"name\":\"s10\",\"parameters\":[{\"name\":\"s11\",\"value\":\"s12\"},{\"name\":\"s13\",\"value\":\"s14\"}]},\"dropoff_place_name\":\"s15\",\"dropoff_ingestor\":\"s16\",\"dropoff_behavior\":{\"name\":\"s17\",\"parameters\":[{\"name\":\"s18\",\"value\":\"s19\"},{\"name\":\"s20\",\"value\":\"s21\"}]}},\"id\":\"gen-delivery\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/delivery\",\"type\":\"rmf_task_msgs/msg/Delivery\",\"msg\":{\"task_id\":\"s1\",\"items\":[{\"type_guid\":\"s2\",\"quantity\":121516,\"compartment_name\":\"s4\"},{\"type_guid\":\"s5\",\"quantity\":243025,\"compartment_name\":\"s7\"}],\"pickup_place_name\":\"s8\",\"pickup_dispenser\":\"s9\",\"pickup_behavior\":{\"name\":\"s10\",\"parameters\":[{\"name\":\"s11\",\"value\":\"s12\"},{\"name\":\"s13\",\"value\":\"s14\"}]},\"dropoff_place_name\":\"s15\",\"dropoff_ingestor\":\"s16\",\"dropoff_behavior\":{\"name\":\"s17\",\"parameters\":[{\"name\":\"s18\",\"value\":\"s19\"},{\"name\":\"s20\",\"value\":\"s21\"}]}},\"id\":\"gen-delivery\"}",
+  "model": {
+    "@kind": "delivery",
+    "ros2rmftask.delivery_task_id": "s1",
+    "ros2rmftask.delivery_items.#": "2",
+    "ros2rmftask.delivery_items[0].ros2rmftask.delivery_items_type_guid": "s2",
+    "ros2rmftask.delivery_pickup_place_name": "s8",
+    "ros2rmftask.delivery_pickup_dispenser": "s9",
+    "ros2rmftask.delivery_pickup_behavior_name": "s10",
+    "ros2rmftask.delivery_pickup_behavior_parameters.#": "2",
+    "ros2rmftask.delivery_pickup_behavior_parameters[0].ros2rmftask.delivery_pickup_behavior_parameters_name": "s11",
+    "ros2rmftask.delivery_dropoff_place_name": "s15",
+    "ros2rmftask.delivery_dropoff_behavior_parameters.#": "2",
+    "ros2rmftask.delivery_dropoff_behavior_parameters[0].ros2rmftask.delivery_dropoff_behavior_parameters_name": "s18",
+    "ros2rmftask.topic": "/gen/delivery"
+  }
+}

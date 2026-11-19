@@ -1,0 +1,17 @@
+{
+  "name": "rt-aux_global_position",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/aux_global_position\",\"type\":\"px4_msgs/msg/AuxGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"id\":44,\"source\":99,\"lat\":5.035,\"lon\":-6.042,\"alt\":-3.375,\"eph\":-3.125,\"epv\":-2.875,\"lat_lon_reset_counter\":173},\"id\":\"gen-aux_global_position\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/aux_global_position\",\"type\":\"px4_msgs/msg/AuxGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"id\":44,\"source\":99,\"lat\":5.035,\"lon\":-6.042,\"alt\":-3.375,\"eph\":-3.125,\"epv\":-2.875,\"lat_lon_reset_counter\":173},\"id\":\"gen-aux_global_position\"}",
+  "model": {
+    "@kind": "aux_global_position",
+    "ros2px4.aux_global_position_timestamp": "123456789013",
+    "ros2px4.aux_global_position_timestamp_sample": "246913578026",
+    "ros2px4.aux_global_position_id": "44",
+    "ros2px4.aux_global_position_source": "99",
+    "lat": "5.035",
+    "ros2px4.topic": "/gen/aux_global_position"
+  }
+}

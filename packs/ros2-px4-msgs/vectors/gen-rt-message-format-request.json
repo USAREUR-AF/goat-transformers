@@ -1,0 +1,15 @@
+{
+  "name": "rt-message_format_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/message_format_request\",\"type\":\"px4_msgs/msg/MessageFormatRequest\",\"msg\":{\"timestamp\":123456789013,\"protocol_version\":48245,\"topic_name\":\"Awn/AIA=\"},\"id\":\"gen-message_format_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/message_format_request\",\"type\":\"px4_msgs/msg/MessageFormatRequest\",\"msg\":{\"timestamp\":123456789013,\"protocol_version\":48245,\"topic_name\":\"Awn/AIA=\"},\"id\":\"gen-message_format_request\"}",
+  "model": {
+    "@kind": "message_format_request",
+    "ros2px4.message_format_request_timestamp": "123456789013",
+    "ros2px4.message_format_request_protocol_version": "48245",
+    "ros2px4.message_format_request_topic_name": "Awn/AIA=",
+    "ros2px4.topic": "/gen/message_format_request"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-point_cloud",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud\",\"type\":\"foxglove_msgs/msg/PointCloud\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"point_stride\":2147929188,\"fields\":[{\"name\":\"s12\",\"offset\":2148010194,\"type\":137},{\"name\":\"s15\",\"offset\":2148131703,\"type\":46}],\"data\":\"Ejb/AIA=\"},\"id\":\"gen-point_cloud\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud\",\"type\":\"foxglove_msgs/msg/PointCloud\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"point_stride\":2147929188,\"fields\":[{\"name\":\"s12\",\"offset\":2148010194,\"type\":137},{\"name\":\"s15\",\"offset\":2148131703,\"type\":46}],\"data\":\"Ejb/AIA=\"},\"id\":\"gen-point_cloud\"}",
+  "model": {
+    "@kind": "point_cloud",
+    "ros2foxglove.point_cloud_timestamp_sec": "40510",
+    "ros2foxglove.point_cloud_timestamp_nanosec": "2147564661",
+    "ros2foxglove.point_cloud_frame_id": "s3",
+    "ros2foxglove.point_cloud_pose_position_x": "4.028",
+    "ros2foxglove.point_cloud_pose_position_y": "5.035",
+    "ros2foxglove.point_cloud_fields.#": "2",
+    "ros2foxglove.point_cloud_fields[0].ros2foxglove.point_cloud_fields_name": "s12",
+    "ros2foxglove.topic": "/gen/point_cloud"
+  }
+}

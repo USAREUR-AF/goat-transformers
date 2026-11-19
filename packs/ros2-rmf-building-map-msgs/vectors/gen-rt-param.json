@@ -1,0 +1,17 @@
+{
+  "name": "rt-param",
+  "from": "ros2-rmf-building-map-msgs",
+  "to": "ros2-rmf-building-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/param\",\"type\":\"rmf_building_map_msgs/msg/Param\",\"msg\":{\"name\":\"s1\",\"type\":2147564661,\"value_int\":121516,\"value_float\":-4.125,\"value_string\":\"s5\",\"value_bool\":false},\"id\":\"gen-param\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/param\",\"type\":\"rmf_building_map_msgs/msg/Param\",\"msg\":{\"name\":\"s1\",\"type\":2147564661,\"value_int\":121516,\"value_float\":-4.125,\"value_string\":\"s5\",\"value_bool\":false},\"id\":\"gen-param\"}",
+  "model": {
+    "@kind": "param",
+    "ros2rmfbuildingmap.param_name": "s1",
+    "ros2rmfbuildingmap.param_type": "2147564661",
+    "ros2rmfbuildingmap.param_value_int": "121516",
+    "ros2rmfbuildingmap.param_value_float": "-4.125",
+    "ros2rmfbuildingmap.param_value_string": "s5",
+    "ros2rmfbuildingmap.topic": "/gen/param"
+  }
+}

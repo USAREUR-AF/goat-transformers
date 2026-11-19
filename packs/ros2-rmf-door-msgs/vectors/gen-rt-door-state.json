@@ -1,0 +1,16 @@
+{
+  "name": "rt-door_state",
+  "from": "ros2-rmf-door-msgs",
+  "to": "ros2-rmf-door-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door_state\",\"type\":\"rmf_door_msgs/msg/DoorState\",\"msg\":{\"door_time\":{\"sec\":40510,\"nanosec\":2147564661},\"door_name\":\"s3\",\"current_mode\":{\"value\":2147645667}},\"id\":\"gen-door_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door_state\",\"type\":\"rmf_door_msgs/msg/DoorState\",\"msg\":{\"door_time\":{\"sec\":40510,\"nanosec\":2147564661},\"door_name\":\"s3\",\"current_mode\":{\"value\":2147645667}},\"id\":\"gen-door_state\"}",
+  "model": {
+    "@kind": "door_state",
+    "ros2rmfdoor.door_state_door_time_sec": "40510",
+    "ros2rmfdoor.door_state_door_time_nanosec": "2147564661",
+    "ros2rmfdoor.door_state_door_name": "s3",
+    "ros2rmfdoor.door_state_current_mode_value": "2147645667",
+    "ros2rmfdoor.topic": "/gen/door_state"
+  }
+}

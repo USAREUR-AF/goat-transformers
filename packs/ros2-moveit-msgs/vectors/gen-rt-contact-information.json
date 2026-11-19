@@ -1,0 +1,17 @@
+{
+  "name": "rt-contact_information",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/contact_information\",\"type\":\"moveit_msgs/msg/ContactInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"normal\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"depth\":10.07,\"contact_body_1\":\"s11\",\"body_type_1\":2147969691,\"contact_body_2\":\"s13\",\"body_type_2\":2148050697},\"id\":\"gen-contact_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/contact_information\",\"type\":\"moveit_msgs/msg/ContactInformation\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"normal\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"depth\":10.07,\"contact_body_1\":\"s11\",\"body_type_1\":2147969691,\"contact_body_2\":\"s13\",\"body_type_2\":2148050697},\"id\":\"gen-contact_information\"}",
+  "model": {
+    "@kind": "contact_information",
+    "ros2moveit.contact_information_header_stamp_sec": "40510",
+    "ros2moveit.contact_information_header_stamp_nanosec": "2147564661",
+    "ros2moveit.contact_information_header_frame_id": "s3",
+    "ros2moveit.contact_information_position_x": "4.028",
+    "ros2moveit.contact_information_position_y": "5.035",
+    "ros2moveit.topic": "/gen/contact_information"
+  }
+}

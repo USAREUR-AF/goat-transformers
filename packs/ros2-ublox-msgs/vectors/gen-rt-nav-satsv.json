@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_satsv",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_satsv\",\"type\":\"ublox_msgs/msg/NavSATSV\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"cno\":44,\"elev\":-29,\"azim\":5914,\"pr_res\":-19119,\"flags\":2147767176},\"id\":\"gen-nav_satsv\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_satsv\",\"type\":\"ublox_msgs/msg/NavSATSV\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"cno\":44,\"elev\":-29,\"azim\":5914,\"pr_res\":-19119,\"flags\":2147767176},\"id\":\"gen-nav_satsv\"}",
+  "model": {
+    "@kind": "nav_satsv",
+    "ros2ublox.nav_satsv_gnss_id": "190",
+    "ros2ublox.nav_satsv_sv_id": "245",
+    "ros2ublox.nav_satsv_cno": "44",
+    "ros2ublox.nav_satsv_elev": "-29",
+    "ros2ublox.nav_satsv_azim": "5914",
+    "ros2ublox.topic": "/gen/nav_satsv"
+  }
+}

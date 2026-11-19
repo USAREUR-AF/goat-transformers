@@ -1,0 +1,17 @@
+{
+  "name": "rt-figure_eight_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/figure_eight_status\",\"type\":\"px4_msgs/msg/FigureEightStatus\",\"msg\":{\"timestamp\":123456789013,\"major_radius\":-4.625,\"minor_radius\":-4.375,\"orientation\":-4.125,\"frame\":154,\"x\":243025,\"y\":283528,\"z\":-3.125},\"id\":\"gen-figure_eight_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/figure_eight_status\",\"type\":\"px4_msgs/msg/FigureEightStatus\",\"msg\":{\"timestamp\":123456789013,\"major_radius\":-4.625,\"minor_radius\":-4.375,\"orientation\":-4.125,\"frame\":154,\"x\":243025,\"y\":283528,\"z\":-3.125},\"id\":\"gen-figure_eight_status\"}",
+  "model": {
+    "@kind": "figure_eight_status",
+    "ros2px4.figure_eight_status_timestamp": "123456789013",
+    "ros2px4.figure_eight_status_major_radius": "-4.625",
+    "ros2px4.figure_eight_status_minor_radius": "-4.375",
+    "ros2px4.figure_eight_status_orientation": "-4.125",
+    "ros2px4.figure_eight_status_frame": "154",
+    "ros2px4.topic": "/gen/figure_eight_status"
+  }
+}

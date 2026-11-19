@@ -1,0 +1,15 @@
+{
+  "name": "rt-gpio_in",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpio_in\",\"type\":\"px4_msgs/msg/GpioIn\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"state\":2147605164},\"id\":\"gen-gpio_in\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpio_in\",\"type\":\"px4_msgs/msg/GpioIn\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"state\":2147605164},\"id\":\"gen-gpio_in\"}",
+  "model": {
+    "@kind": "gpio_in",
+    "ros2px4.gpio_in_timestamp": "123456789013",
+    "ros2px4.gpio_in_device_id": "2147564661",
+    "ros2px4.gpio_in_state": "2147605164",
+    "ros2px4.topic": "/gen/gpio_in"
+  }
+}

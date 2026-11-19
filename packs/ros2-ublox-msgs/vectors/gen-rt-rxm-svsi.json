@@ -1,0 +1,18 @@
+{
+  "name": "rt-rxm_svsi",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_svsi\",\"type\":\"ublox_msgs/msg/RxmSVSI\",\"msg\":{\"i_tow\":40510,\"week\":15477,\"num_vis\":44,\"num_sv\":99,\"sv\":[{\"svid\":154,\"sv_flag\":209,\"azim\":21384,\"elev\":-65,\"age\":118},{\"svid\":173,\"sv_flag\":228,\"azim\":27291,\"elev\":-46,\"age\":137}]},\"id\":\"gen-rxm_svsi\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_svsi\",\"type\":\"ublox_msgs/msg/RxmSVSI\",\"msg\":{\"i_tow\":40510,\"week\":15477,\"num_vis\":44,\"num_sv\":99,\"sv\":[{\"svid\":154,\"sv_flag\":209,\"azim\":21384,\"elev\":-65,\"age\":118},{\"svid\":173,\"sv_flag\":228,\"azim\":27291,\"elev\":-46,\"age\":137}]},\"id\":\"gen-rxm_svsi\"}",
+  "model": {
+    "@kind": "rxm_svsi",
+    "ros2ublox.rxm_svsi_i_tow": "40510",
+    "ros2ublox.rxm_svsi_week": "15477",
+    "ros2ublox.rxm_svsi_num_vis": "44",
+    "ros2ublox.rxm_svsi_num_sv": "99",
+    "ros2ublox.rxm_svsi_sv.#": "2",
+    "ros2ublox.rxm_svsi_sv[0].ros2ublox.rxm_svsi_sv_svid": "154",
+    "ros2ublox.topic": "/gen/rxm_svsi"
+  }
+}

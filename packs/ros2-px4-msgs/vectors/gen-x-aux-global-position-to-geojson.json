@@ -1,0 +1,13 @@
+{
+  "name": "x-aux_global_position-to-geojson",
+  "from": "ros2-px4-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"px4_msgs/msg/AuxGlobalPosition\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"id\":44,\"source\":99,\"lat\":47.0625,\"lon\":8.53125,\"alt\":-3.375,\"eph\":-3.125,\"epv\":-2.875,\"lat_lon_reset_counter\":173}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "aux_global_position",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

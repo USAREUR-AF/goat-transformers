@@ -1,0 +1,15 @@
+{
+  "name": "rt-launch_detection_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/launch_detection_status\",\"type\":\"px4_msgs/msg/LaunchDetectionStatus\",\"msg\":{\"timestamp\":123456789013,\"launch_detection_state\":245,\"selected_control_surface_disarmed\":true},\"id\":\"gen-launch_detection_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/launch_detection_status\",\"type\":\"px4_msgs/msg/LaunchDetectionStatus\",\"msg\":{\"timestamp\":123456789013,\"launch_detection_state\":245,\"selected_control_surface_disarmed\":true},\"id\":\"gen-launch_detection_status\"}",
+  "model": {
+    "@kind": "launch_detection_status",
+    "ros2px4.launch_detection_status_timestamp": "123456789013",
+    "ros2px4.launch_detection_status_launch_detection_state": "245",
+    "ros2px4.launch_detection_status_selected_control_surface_disarmed": "1",
+    "ros2px4.topic": "/gen/launch_detection_status"
+  }
+}

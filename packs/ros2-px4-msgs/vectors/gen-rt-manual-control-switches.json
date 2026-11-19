@@ -1,0 +1,17 @@
+{
+  "name": "rt-manual_control_switches",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/manual_control_switches\",\"type\":\"px4_msgs/msg/ManualControlSwitches\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"mode_slot\":44,\"arm_switch\":99,\"return_switch\":154,\"loiter_switch\":209,\"offboard_switch\":8,\"kill_switch\":63,\"termination_switch\":118,\"gear_switch\":173,\"transition_switch\":228,\"photo_switch\":27,\"video_switch\":82,\"engage_main_motor_switch\":137,\"payload_power_switch\":192,\"switch_changes\":2148131703},\"id\":\"gen-manual_control_switches\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/manual_control_switches\",\"type\":\"px4_msgs/msg/ManualControlSwitches\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"mode_slot\":44,\"arm_switch\":99,\"return_switch\":154,\"loiter_switch\":209,\"offboard_switch\":8,\"kill_switch\":63,\"termination_switch\":118,\"gear_switch\":173,\"transition_switch\":228,\"photo_switch\":27,\"video_switch\":82,\"engage_main_motor_switch\":137,\"payload_power_switch\":192,\"switch_changes\":2148131703},\"id\":\"gen-manual_control_switches\"}",
+  "model": {
+    "@kind": "manual_control_switches",
+    "ros2px4.manual_control_switches_timestamp": "123456789013",
+    "ros2px4.manual_control_switches_timestamp_sample": "246913578026",
+    "ros2px4.manual_control_switches_mode_slot": "44",
+    "ros2px4.manual_control_switches_arm_switch": "99",
+    "ros2px4.manual_control_switches_return_switch": "154",
+    "ros2px4.topic": "/gen/manual_control_switches"
+  }
+}

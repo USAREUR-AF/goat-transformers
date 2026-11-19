@@ -1,0 +1,18 @@
+{
+  "name": "rt-dynamic_joint_state",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dynamic_joint_state\",\"type\":\"control_msgs/msg/DynamicJointState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"interface_values\":[{\"interface_names\":[\"s6\"],\"values\":[7.049]},{\"interface_names\":[\"s8\"],\"values\":[-9.063]}]},\"id\":\"gen-dynamic_joint_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dynamic_joint_state\",\"type\":\"control_msgs/msg/DynamicJointState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"interface_values\":[{\"interface_names\":[\"s6\"],\"values\":[7.049]},{\"interface_names\":[\"s8\"],\"values\":[-9.063]}]},\"id\":\"gen-dynamic_joint_state\"}",
+  "model": {
+    "@kind": "dynamic_joint_state",
+    "ros2control.dynamic_joint_state_header_stamp_sec": "40510",
+    "ros2control.dynamic_joint_state_header_stamp_nanosec": "2147564661",
+    "ros2control.dynamic_joint_state_header_frame_id": "s3",
+    "ros2control.dynamic_joint_state_joint_names.#": "2",
+    "ros2control.dynamic_joint_state_joint_names[0].ros2control.dynamic_joint_state_joint_names_value": "s4",
+    "ros2control.dynamic_joint_state_interface_values.#": "2",
+    "ros2control.topic": "/gen/dynamic_joint_state"
+  }
+}

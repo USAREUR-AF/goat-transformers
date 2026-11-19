@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpio_config",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpio_config\",\"type\":\"px4_msgs/msg/GpioConfig\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"mask\":2147605164,\"state\":2147645667,\"config\":2147686170},\"id\":\"gen-gpio_config\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpio_config\",\"type\":\"px4_msgs/msg/GpioConfig\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"mask\":2147605164,\"state\":2147645667,\"config\":2147686170},\"id\":\"gen-gpio_config\"}",
+  "model": {
+    "@kind": "gpio_config",
+    "ros2px4.gpio_config_timestamp": "123456789013",
+    "ros2px4.gpio_config_device_id": "2147564661",
+    "ros2px4.gpio_config_mask": "2147605164",
+    "ros2px4.gpio_config_state": "2147645667",
+    "ros2px4.gpio_config_config": "2147686170",
+    "ros2px4.topic": "/gen/gpio_config"
+  }
+}

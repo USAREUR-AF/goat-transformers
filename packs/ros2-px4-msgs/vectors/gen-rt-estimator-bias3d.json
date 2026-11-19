@@ -1,0 +1,25 @@
+{
+  "name": "rt-estimator_bias3d",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_bias3d\",\"type\":\"px4_msgs/msg/EstimatorBias3d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"bias\":[-4.125,-3.875,-3.625],\"bias_var\":[-3.375,-3.125,-2.875],\"innov\":[-2.625,-2.375,-2.125],\"innov_var\":[-1.875,-1.625,-1.375],\"innov_test_ratio\":[-1.125,-0.875,-0.625]},\"id\":\"gen-estimator_bias3d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_bias3d\",\"type\":\"px4_msgs/msg/EstimatorBias3d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"bias\":[-4.125,-3.875,-3.625],\"bias_var\":[-3.375,-3.125,-2.875],\"innov\":[-2.625,-2.375,-2.125],\"innov_var\":[-1.875,-1.625,-1.375],\"innov_test_ratio\":[-1.125,-0.875,-0.625]},\"id\":\"gen-estimator_bias3d\"}",
+  "model": {
+    "@kind": "estimator_bias3d",
+    "ros2px4.estimator_bias3d_timestamp": "123456789013",
+    "ros2px4.estimator_bias3d_timestamp_sample": "246913578026",
+    "ros2px4.estimator_bias3d_device_id": "2147605164",
+    "ros2px4.estimator_bias3d_bias.#": "3",
+    "ros2px4.estimator_bias3d_bias[0].ros2px4.estimator_bias3d_bias_value": "-4.125",
+    "ros2px4.estimator_bias3d_bias_var.#": "3",
+    "ros2px4.estimator_bias3d_bias_var[0].ros2px4.estimator_bias3d_bias_var_value": "-3.375",
+    "ros2px4.estimator_bias3d_innov.#": "3",
+    "ros2px4.estimator_bias3d_innov[0].ros2px4.estimator_bias3d_innov_value": "-2.625",
+    "ros2px4.estimator_bias3d_innov_var.#": "3",
+    "ros2px4.estimator_bias3d_innov_var[0].ros2px4.estimator_bias3d_innov_var_value": "-1.875",
+    "ros2px4.estimator_bias3d_innov_test_ratio.#": "3",
+    "ros2px4.estimator_bias3d_innov_test_ratio[0].ros2px4.estimator_bias3d_innov_test_ratio_value": "-1.125",
+    "ros2px4.topic": "/gen/estimator_bias3d"
+  }
+}

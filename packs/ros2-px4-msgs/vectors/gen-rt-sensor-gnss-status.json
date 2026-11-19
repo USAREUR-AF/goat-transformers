@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_gnss_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_status\",\"type\":\"px4_msgs/msg/SensorGnssStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"quality_available\":true,\"quality_corrections\":99,\"quality_receiver\":154,\"quality_gnss_signals\":209,\"quality_post_processing\":8},\"id\":\"gen-sensor_gnss_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_status\",\"type\":\"px4_msgs/msg/SensorGnssStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id\":2147564661,\"quality_available\":true,\"quality_corrections\":99,\"quality_receiver\":154,\"quality_gnss_signals\":209,\"quality_post_processing\":8},\"id\":\"gen-sensor_gnss_status\"}",
+  "model": {
+    "@kind": "sensor_gnss_status",
+    "ros2px4.sensor_gnss_status_timestamp": "123456789013",
+    "ros2px4.sensor_gnss_status_device_id": "2147564661",
+    "ros2px4.sensor_gnss_status_quality_available": "1",
+    "ros2px4.sensor_gnss_status_quality_corrections": "99",
+    "ros2px4.sensor_gnss_status_quality_receiver": "154",
+    "ros2px4.topic": "/gen/sensor_gnss_status"
+  }
+}

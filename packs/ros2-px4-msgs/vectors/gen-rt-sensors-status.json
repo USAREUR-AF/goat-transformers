@@ -1,0 +1,25 @@
+{
+  "name": "rt-sensors_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensors_status\",\"type\":\"px4_msgs/msg/SensorsStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id_primary\":2147564661,\"device_ids\":[2147605164,2147645667,2147686170,2147726673],\"inconsistency\":[-3.375,-3.125,-2.875,-2.625],\"healthy\":[true,false,true,false],\"priority\":\"Dy3/AIA=\",\"enabled\":[false,true,false,true],\"external\":[false,true,false,true]},\"id\":\"gen-sensors_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensors_status\",\"type\":\"px4_msgs/msg/SensorsStatus\",\"msg\":{\"timestamp\":123456789013,\"device_id_primary\":2147564661,\"device_ids\":[2147605164,2147645667,2147686170,2147726673],\"inconsistency\":[-3.375,-3.125,-2.875,-2.625],\"healthy\":[true,false,true,false],\"priority\":\"Dy3/AIA=\",\"enabled\":[false,true,false,true],\"external\":[false,true,false,true]},\"id\":\"gen-sensors_status\"}",
+  "model": {
+    "@kind": "sensors_status",
+    "ros2px4.sensors_status_timestamp": "123456789013",
+    "ros2px4.sensors_status_device_id_primary": "2147564661",
+    "ros2px4.sensors_status_device_ids.#": "4",
+    "ros2px4.sensors_status_device_ids[0].ros2px4.sensors_status_device_ids_value": "2147605164",
+    "ros2px4.sensors_status_inconsistency.#": "4",
+    "ros2px4.sensors_status_inconsistency[0].ros2px4.sensors_status_inconsistency_value": "-3.375",
+    "ros2px4.sensors_status_healthy.#": "4",
+    "ros2px4.sensors_status_healthy[0].ros2px4.sensors_status_healthy_value": "1",
+    "ros2px4.sensors_status_priority": "Dy3/AIA=",
+    "ros2px4.sensors_status_enabled.#": "4",
+    "ros2px4.sensors_status_enabled[0].ros2px4.sensors_status_enabled_value": "0",
+    "ros2px4.sensors_status_external.#": "4",
+    "ros2px4.sensors_status_external[0].ros2px4.sensors_status_external_value": "0",
+    "ros2px4.topic": "/gen/sensors_status"
+  }
+}

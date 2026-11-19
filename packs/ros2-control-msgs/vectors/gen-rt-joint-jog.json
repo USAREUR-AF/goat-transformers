@@ -1,0 +1,22 @@
+{
+  "name": "rt-joint_jog",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_jog\",\"type\":\"control_msgs/msg/JointJog\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"displacements\":[-6.042,7.049],\"velocities\":[8.056,-9.063],\"duration\":10.07},\"id\":\"gen-joint_jog\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_jog\",\"type\":\"control_msgs/msg/JointJog\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"joint_names\":[\"s4\",\"s5\"],\"displacements\":[-6.042,7.049],\"velocities\":[8.056,-9.063],\"duration\":10.07},\"id\":\"gen-joint_jog\"}",
+  "model": {
+    "@kind": "joint_jog",
+    "ros2control.joint_jog_header_stamp_sec": "40510",
+    "ros2control.joint_jog_header_stamp_nanosec": "2147564661",
+    "ros2control.joint_jog_header_frame_id": "s3",
+    "ros2control.joint_jog_joint_names.#": "2",
+    "ros2control.joint_jog_joint_names[0].ros2control.joint_jog_joint_names_value": "s4",
+    "ros2control.joint_jog_displacements.#": "2",
+    "ros2control.joint_jog_displacements[0].ros2control.joint_jog_displacements_value": "-6.042",
+    "ros2control.joint_jog_velocities.#": "2",
+    "ros2control.joint_jog_velocities[0].ros2control.joint_jog_velocities_value": "8.056",
+    "ros2control.joint_jog_duration": "10.07",
+    "ros2control.topic": "/gen/joint_jog"
+  }
+}

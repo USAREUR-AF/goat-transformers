@@ -1,0 +1,16 @@
+{
+  "name": "rt-camera_trigger",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/camera_trigger\",\"type\":\"px4_msgs/msg/CameraTrigger\",\"msg\":{\"timestamp\":123456789013,\"timestamp_utc\":246913578026,\"seq\":2147605164,\"feedback\":false},\"id\":\"gen-camera_trigger\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/camera_trigger\",\"type\":\"px4_msgs/msg/CameraTrigger\",\"msg\":{\"timestamp\":123456789013,\"timestamp_utc\":246913578026,\"seq\":2147605164,\"feedback\":false},\"id\":\"gen-camera_trigger\"}",
+  "model": {
+    "@kind": "camera_trigger",
+    "ros2px4.camera_trigger_timestamp": "123456789013",
+    "ros2px4.camera_trigger_timestamp_utc": "246913578026",
+    "ros2px4.camera_trigger_seq": "2147605164",
+    "ros2px4.camera_trigger_feedback": "0",
+    "ros2px4.topic": "/gen/camera_trigger"
+  }
+}

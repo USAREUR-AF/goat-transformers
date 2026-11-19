@@ -1,0 +1,15 @@
+{
+  "name": "rt-navigator_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/navigator_status\",\"type\":\"px4_msgs/msg/NavigatorStatus\",\"msg\":{\"timestamp\":123456789013,\"nav_state\":245,\"failure\":44},\"id\":\"gen-navigator_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/navigator_status\",\"type\":\"px4_msgs/msg/NavigatorStatus\",\"msg\":{\"timestamp\":123456789013,\"nav_state\":245,\"failure\":44},\"id\":\"gen-navigator_status\"}",
+  "model": {
+    "@kind": "navigator_status",
+    "ros2px4.navigator_status_timestamp": "123456789013",
+    "ros2px4.navigator_status_nav_state": "245",
+    "ros2px4.navigator_status_failure": "44",
+    "ros2px4.topic": "/gen/navigator_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-external_gimbal_manager_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/external_gimbal_manager_status\",\"type\":\"px4_msgs/msg/ExternalGimbalManagerStatus\",\"msg\":{\"timestamp\":123456789013,\"manager_sysid\":245,\"manager_compid\":44,\"flags\":2147645667,\"gimbal_device_id\":154,\"primary_control_sysid\":209,\"primary_control_compid\":8,\"secondary_control_sysid\":63,\"secondary_control_compid\":118},\"id\":\"gen-external_gimbal_manager_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/external_gimbal_manager_status\",\"type\":\"px4_msgs/msg/ExternalGimbalManagerStatus\",\"msg\":{\"timestamp\":123456789013,\"manager_sysid\":245,\"manager_compid\":44,\"flags\":2147645667,\"gimbal_device_id\":154,\"primary_control_sysid\":209,\"primary_control_compid\":8,\"secondary_control_sysid\":63,\"secondary_control_compid\":118},\"id\":\"gen-external_gimbal_manager_status\"}",
+  "model": {
+    "@kind": "external_gimbal_manager_status",
+    "ros2px4.external_gimbal_manager_status_timestamp": "123456789013",
+    "ros2px4.external_gimbal_manager_status_manager_sysid": "245",
+    "ros2px4.external_gimbal_manager_status_manager_compid": "44",
+    "ros2px4.external_gimbal_manager_status_flags": "2147645667",
+    "ros2px4.external_gimbal_manager_status_gimbal_device_id": "154",
+    "ros2px4.topic": "/gen/external_gimbal_manager_status"
+  }
+}

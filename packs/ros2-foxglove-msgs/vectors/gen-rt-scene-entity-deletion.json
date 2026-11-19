@@ -1,0 +1,16 @@
+{
+  "name": "rt-scene_entity_deletion",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/scene_entity_deletion\",\"type\":\"foxglove_msgs/msg/SceneEntityDeletion\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"id\":\"s4\"},\"id\":\"gen-scene_entity_deletion\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/scene_entity_deletion\",\"type\":\"foxglove_msgs/msg/SceneEntityDeletion\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"id\":\"s4\"},\"id\":\"gen-scene_entity_deletion\"}",
+  "model": {
+    "@kind": "scene_entity_deletion",
+    "ros2foxglove.scene_entity_deletion_timestamp_sec": "40510",
+    "ros2foxglove.scene_entity_deletion_timestamp_nanosec": "2147564661",
+    "ros2foxglove.scene_entity_deletion_type": "44",
+    "ros2foxglove.scene_entity_deletion_id": "s4",
+    "ros2foxglove.topic": "/gen/scene_entity_deletion"
+  }
+}

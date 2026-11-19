@@ -1,0 +1,14 @@
+{
+  "name": "rt-negotiation_statuses",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_statuses\",\"type\":\"rmf_traffic_msgs/msg/NegotiationStatuses\",\"msg\":{\"negotiations\":[{\"conflict_version\":123456789013,\"participants\":[246913578026],\"start_time\":{\"sec\":121516,\"nanosec\":2147645667},\"last_response_time\":{\"sec\":202522,\"nanosec\":2147726673}},{\"conflict_version\":864197523091,\"participants\":[987654312104],\"start_time\":{\"sec\":364534,\"nanosec\":2147888685},\"last_response_time\":{\"sec\":445540,\"nanosec\":2147969691}}]},\"id\":\"gen-negotiation_statuses\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_statuses\",\"type\":\"rmf_traffic_msgs/msg/NegotiationStatuses\",\"msg\":{\"negotiations\":[{\"conflict_version\":123456789013,\"participants\":[246913578026],\"start_time\":{\"sec\":121516,\"nanosec\":2147645667},\"last_response_time\":{\"sec\":202522,\"nanosec\":2147726673}},{\"conflict_version\":864197523091,\"participants\":[987654312104],\"start_time\":{\"sec\":364534,\"nanosec\":2147888685},\"last_response_time\":{\"sec\":445540,\"nanosec\":2147969691}}]},\"id\":\"gen-negotiation_statuses\"}",
+  "model": {
+    "@kind": "negotiation_statuses",
+    "ros2rmftraffic.negotiation_statuses_negotiations.#": "2",
+    "ros2rmftraffic.negotiation_statuses_negotiations[0].ros2rmftraffic.negotiation_statuses_negotiations_conflict_version": "123456789013",
+    "ros2rmftraffic.topic": "/gen/negotiation_statuses"
+  }
+}

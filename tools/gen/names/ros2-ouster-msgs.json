@@ -1,0 +1,18 @@
+{
+ "Metadata:beam_altitude_angles[]": "metadata_beam_altitude_angles",
+ "Metadata:beam_altitude_angles[].": "metadata_beam_altitude_angles_value",
+ "Metadata:beam_azimuth_angles[]": "metadata_beam_azimuth_angles",
+ "Metadata:beam_azimuth_angles[].": "metadata_beam_azimuth_angles_value",
+ "Metadata:firmware_rev": "metadata_firmware_rev",
+ "Metadata:hostname": "metadata_hostname",
+ "Metadata:imu_port": "metadata_imu_port",
+ "Metadata:imu_to_sensor_transform[]": "metadata_imu_to_sensor_transform",
+ "Metadata:imu_to_sensor_transform[].": "metadata_imu_to_sensor_transform_value",
+ "Metadata:lidar_mode": "metadata_lidar_mode",
+ "Metadata:lidar_port": "metadata_lidar_port",
+ "Metadata:lidar_to_sensor_transform[]": "metadata_lidar_to_sensor_transform",
+ "Metadata:lidar_to_sensor_transform[].": "metadata_lidar_to_sensor_transform_value",
+ "Metadata:serial_no": "metadata_serial_no",
+ "Metadata:timestamp_mode": "metadata_timestamp_mode",
+ "topic": "topic"
+}

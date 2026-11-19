@@ -1,0 +1,19 @@
+{
+  "name": "rt-lanelet_route",
+  "from": "ros2-autoware-planning-msgs",
+  "to": "ros2-autoware-planning-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_route\",\"type\":\"autoware_planning_msgs/msg/LaneletRoute\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"start_pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"goal_pose\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"segments\":[{\"preferred_primitive\":{\"id\":2222222202234,\"primitive_type\":\"s19\"},\"primitives\":[{\"id\":2469135780260,\"primitive_type\":\"s21\"}]},{\"preferred_primitive\":{\"id\":2716049358286,\"primitive_type\":\"s23\"},\"primitives\":[{\"id\":2962962936312,\"primitive_type\":\"s25\"}]}],\"uuid\":{\"uuid\":\"Gk7/AIA=\"},\"allow_modification\":true},\"id\":\"gen-lanelet_route\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_route\",\"type\":\"autoware_planning_msgs/msg/LaneletRoute\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"start_pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"goal_pose\":{\"position\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"orientation\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112,\"w\":17.119}},\"segments\":[{\"preferred_primitive\":{\"id\":2222222202234,\"primitive_type\":\"s19\"},\"primitives\":[{\"id\":2469135780260,\"primitive_type\":\"s21\"}]},{\"preferred_primitive\":{\"id\":2716049358286,\"primitive_type\":\"s23\"},\"primitives\":[{\"id\":2962962936312,\"primitive_type\":\"s25\"}]}],\"uuid\":{\"uuid\":\"Gk7/AIA=\"},\"allow_modification\":true},\"id\":\"gen-lanelet_route\"}",
+  "model": {
+    "@kind": "lanelet_route",
+    "ros2autowareplanning.lanelet_route_header_stamp_sec": "40510",
+    "ros2autowareplanning.lanelet_route_header_stamp_nanosec": "2147564661",
+    "ros2autowareplanning.lanelet_route_header_frame_id": "s3",
+    "ros2autowareplanning.lanelet_route_start_pose_position_x": "4.028",
+    "ros2autowareplanning.lanelet_route_start_pose_position_y": "5.035",
+    "ros2autowareplanning.lanelet_route_segments.#": "2",
+    "ros2autowareplanning.lanelet_route_segments[0].ros2autowareplanning.lanelet_route_segments_preferred_primitive_id": "2222222202234",
+    "ros2autowareplanning.topic": "/gen/lanelet_route"
+  }
+}

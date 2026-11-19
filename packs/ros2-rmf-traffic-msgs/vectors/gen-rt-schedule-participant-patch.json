@@ -1,0 +1,25 @@
+{
+  "name": "rt-schedule_participant_patch",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_participant_patch\",\"type\":\"rmf_traffic_msgs/msg/ScheduleParticipantPatch\",\"msg\":{\"participant_id\":123456789013,\"itinerary_version\":246913578026,\"erasures\":[370370367039,493827156052],\"delays\":[{\"delay\":-617283945065},{\"delay\":740740734078}],\"additions\":{\"plan_id\":864197523091,\"items\":[{\"route_id\":987654312104,\"storage_id\":1111111101117,\"route\":{\"map\":\"s10\",\"trajectory\":{\"waypoints\":[{\"time\":-1358024679143,\"position\":[-12.084,13.091,14.098],\"velocity\":[-15.105,16.112,17.119]}]},\"checkpoints\":[2222222202234],\"dependencies\":[{\"dependent_checkpoint\":2345678991247,\"on_participant\":2469135780260,\"on_plan\":2592592569273,\"on_route\":2716049358286,\"on_checkpoint\":2839506147299}]}},{\"route_id\":2962962936312,\"storage_id\":3086419725325,\"route\":{\"map\":\"s26\",\"trajectory\":{\"waypoints\":[{\"time\":-3333333303351,\"position\":[28.196,29.203,-30.21],\"velocity\":[31.217,32.224,-33.231]}]},\"checkpoints\":[4197530826442],\"dependencies\":[{\"dependent_checkpoint\":4320987615455,\"on_participant\":4444444404468,\"on_plan\":4567901193481,\"on_route\":4691357982494,\"on_checkpoint\":4814814771507}]}}]},\"progress\":{\"has_progress\":false,\"version\":5061728349533,\"checkpoints\":[5185185138546,5308641927559]}},\"id\":\"gen-schedule_participant_patch\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_participant_patch\",\"type\":\"rmf_traffic_msgs/msg/ScheduleParticipantPatch\",\"msg\":{\"participant_id\":123456789013,\"itinerary_version\":246913578026,\"erasures\":[370370367039,493827156052],\"delays\":[{\"delay\":-617283945065},{\"delay\":740740734078}],\"additions\":{\"plan_id\":864197523091,\"items\":[{\"route_id\":987654312104,\"storage_id\":1111111101117,\"route\":{\"map\":\"s10\",\"trajectory\":{\"waypoints\":[{\"time\":-1358024679143,\"position\":[-12.084,13.091,14.098],\"velocity\":[-15.105,16.112,17.119]}]},\"checkpoints\":[2222222202234],\"dependencies\":[{\"dependent_checkpoint\":2345678991247,\"on_participant\":2469135780260,\"on_plan\":2592592569273,\"on_route\":2716049358286,\"on_checkpoint\":2839506147299}]}},{\"route_id\":2962962936312,\"storage_id\":3086419725325,\"route\":{\"map\":\"s26\",\"trajectory\":{\"waypoints\":[{\"time\":-3333333303351,\"position\":[28.196,29.203,-30.21],\"velocity\":[31.217,32.224,-33.231]}]},\"checkpoints\":[4197530826442],\"dependencies\":[{\"dependent_checkpoint\":4320987615455,\"on_participant\":4444444404468,\"on_plan\":4567901193481,\"on_route\":4691357982494,\"on_checkpoint\":4814814771507}]}}]},\"progress\":{\"has_progress\":false,\"version\":5061728349533,\"checkpoints\":[5185185138546,5308641927559]}},\"id\":\"gen-schedule_participant_patch\"}",
+  "model": {
+    "@kind": "schedule_participant_patch",
+    "ros2rmftraffic.schedule_participant_patch_participant_id": "123456789013",
+    "ros2rmftraffic.schedule_participant_patch_itinerary_version": "246913578026",
+    "ros2rmftraffic.schedule_participant_patch_erasures.#": "2",
+    "ros2rmftraffic.schedule_participant_patch_erasures[0].ros2rmftraffic.schedule_participant_patch_erasures_value": "370370367039",
+    "ros2rmftraffic.schedule_participant_patch_delays.#": "2",
+    "ros2rmftraffic.schedule_participant_patch_delays[0].ros2rmftraffic.schedule_participant_patch_delays_delay": "-617283945065",
+    "ros2rmftraffic.schedule_participant_patch_additions_plan_id": "864197523091",
+    "ros2rmftraffic.schedule_participant_patch_additions_items.#": "2",
+    "ros2rmftraffic.schedule_participant_patch_additions_items[0].ros2rmftraffic.schedule_participant_patch_additions_items_route_id": "987654312104",
+    "ros2rmftraffic.schedule_participant_patch_progress_has_progress": "0",
+    "ros2rmftraffic.schedule_participant_patch_progress_version": "5061728349533",
+    "ros2rmftraffic.schedule_participant_patch_progress_checkpoints.#": "2",
+    "ros2rmftraffic.schedule_participant_patch_progress_checkpoints[0].ros2rmftraffic.schedule_participant_patch_progress_checkpoints_value": "5185185138546",
+    "ros2rmftraffic.topic": "/gen/schedule_participant_patch"
+  }
+}

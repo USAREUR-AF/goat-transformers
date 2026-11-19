@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpgga",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpgga\",\"type\":\"novatel_gps_msgs/msg/Gpgga\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"lat\":-6.042,\"lon\":7.049,\"lat_dir\":\"s8\",\"lon_dir\":\"s9\",\"gps_qual\":2147888685,\"num_sats\":2147929188,\"hdop\":-2.125,\"alt\":-1.875,\"altitude_units\":\"s14\",\"undulation\":-1.375,\"undulation_units\":\"s16\",\"diff_age\":2148172206,\"station_id\":\"s18\"},\"id\":\"gen-gpgga\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpgga\",\"type\":\"novatel_gps_msgs/msg/Gpgga\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"lat\":-6.042,\"lon\":7.049,\"lat_dir\":\"s8\",\"lon_dir\":\"s9\",\"gps_qual\":2147888685,\"num_sats\":2147929188,\"hdop\":-2.125,\"alt\":-1.875,\"altitude_units\":\"s14\",\"undulation\":-1.375,\"undulation_units\":\"s16\",\"diff_age\":2148172206,\"station_id\":\"s18\"},\"id\":\"gen-gpgga\"}",
+  "model": {
+    "@kind": "gpgga",
+    "ros2novatelgps.gpgga_header_stamp_sec": "40510",
+    "ros2novatelgps.gpgga_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.gpgga_header_frame_id": "s3",
+    "ros2novatelgps.gpgga_message_id": "s4",
+    "ros2novatelgps.gpgga_utc_seconds": "5.035",
+    "ros2novatelgps.topic": "/gen/gpgga"
+  }
+}

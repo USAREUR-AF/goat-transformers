@@ -1,0 +1,17 @@
+{
+  "name": "rt-speed_limit_request",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/speed_limit_request\",\"type\":\"rmf_fleet_msgs/msg/SpeedLimitRequest\",\"msg\":{\"fleet_name\":\"s1\",\"speed_limits\":[{\"lane_index\":246913578026,\"speed_limit\":-3.021},{\"lane_index\":493827156052,\"speed_limit\":5.035}],\"remove_limits\":[740740734078,864197523091]},\"id\":\"gen-speed_limit_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/speed_limit_request\",\"type\":\"rmf_fleet_msgs/msg/SpeedLimitRequest\",\"msg\":{\"fleet_name\":\"s1\",\"speed_limits\":[{\"lane_index\":246913578026,\"speed_limit\":-3.021},{\"lane_index\":493827156052,\"speed_limit\":5.035}],\"remove_limits\":[740740734078,864197523091]},\"id\":\"gen-speed_limit_request\"}",
+  "model": {
+    "@kind": "speed_limit_request",
+    "ros2rmffleet.speed_limit_request_fleet_name": "s1",
+    "ros2rmffleet.speed_limit_request_speed_limits.#": "2",
+    "ros2rmffleet.speed_limit_request_speed_limits[0].ros2rmffleet.speed_limit_request_speed_limits_lane_index": "246913578026",
+    "ros2rmffleet.speed_limit_request_remove_limits.#": "2",
+    "ros2rmffleet.speed_limit_request_remove_limits[0].ros2rmffleet.speed_limit_request_remove_limits_value": "740740734078",
+    "ros2rmffleet.topic": "/gen/speed_limit_request"
+  }
+}

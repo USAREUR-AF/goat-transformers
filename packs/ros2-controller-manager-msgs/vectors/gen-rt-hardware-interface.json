@@ -1,0 +1,16 @@
+{
+  "name": "rt-hardware_interface",
+  "from": "ros2-controller-manager-msgs",
+  "to": "ros2-controller-manager-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hardware_interface\",\"type\":\"controller_manager_msgs/msg/HardwareInterface\",\"msg\":{\"name\":\"s1\",\"data_type\":\"s2\",\"is_available\":true,\"is_claimed\":false},\"id\":\"gen-hardware_interface\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hardware_interface\",\"type\":\"controller_manager_msgs/msg/HardwareInterface\",\"msg\":{\"name\":\"s1\",\"data_type\":\"s2\",\"is_available\":true,\"is_claimed\":false},\"id\":\"gen-hardware_interface\"}",
+  "model": {
+    "@kind": "hardware_interface",
+    "ros2controllermanager.hardware_interface_name": "s1",
+    "ros2controllermanager.hardware_interface_data_type": "s2",
+    "ros2controllermanager.hardware_interface_is_available": "1",
+    "ros2controllermanager.hardware_interface_is_claimed": "0",
+    "ros2controllermanager.topic": "/gen/hardware_interface"
+  }
+}

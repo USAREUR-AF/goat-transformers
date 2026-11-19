@@ -1,0 +1,17 @@
+{
+  "name": "rt-nav_pvt",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/nav_pvt\",\"type\":\"ublox_msgs/msg/NavPVT\",\"msg\":{\"i_tow\":2147524158,\"year\":48245,\"month\":44,\"day\":99,\"hour\":154,\"min\":209,\"sec\":8,\"valid\":63,\"t_acc\":2147848182,\"nano\":405037,\"fix_type\":228,\"flags\":27,\"flags2\":82,\"num_sv\":137,\"lon\":607552,\"lat\":648055,\"height\":688558,\"h_msl\":729061,\"h_acc\":2148253212,\"v_acc\":2148293715,\"vel_n\":850570,\"vel_e\":891073,\"vel_d\":931576,\"g_speed\":972079,\"heading\":1012582,\"s_acc\":2148536733,\"head_acc\":2148577236,\"p_dop\":52747,\"reserved1\":\"HVf/AIA=\",\"head_veh\":1215097,\"mag_dec\":10416,\"mag_acc\":18151},\"id\":\"gen-nav_pvt\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/nav_pvt\",\"type\":\"ublox_msgs/msg/NavPVT\",\"msg\":{\"i_tow\":2147524158,\"year\":48245,\"month\":44,\"day\":99,\"hour\":154,\"min\":209,\"sec\":8,\"valid\":63,\"t_acc\":2147848182,\"nano\":405037,\"fix_type\":228,\"flags\":27,\"flags2\":82,\"num_sv\":137,\"lon\":607552,\"lat\":648055,\"height\":688558,\"h_msl\":729061,\"h_acc\":2148253212,\"v_acc\":2148293715,\"vel_n\":850570,\"vel_e\":891073,\"vel_d\":931576,\"g_speed\":972079,\"heading\":1012582,\"s_acc\":2148536733,\"head_acc\":2148577236,\"p_dop\":52747,\"reserved1\":\"HVf/AIA=\",\"head_veh\":1215097,\"mag_dec\":10416,\"mag_acc\":18151},\"id\":\"gen-nav_pvt\"}",
+  "model": {
+    "@kind": "nav_pvt",
+    "ros2ublox.nav_pvt_i_tow": "2147524158",
+    "ros2ublox.nav_pvt_year": "48245",
+    "ros2ublox.nav_pvt_month": "44",
+    "ros2ublox.nav_pvt_day": "99",
+    "ros2ublox.nav_pvt_hour": "154",
+    "ros2ublox.topic": "/gen/nav_pvt"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "rt-sensor_gnss_relative",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_relative\",\"type\":\"px4_msgs/msg/SensorGnssRelative\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"time_utc_usec\":493827156052,\"reference_station_id\":38682,\"position\":[-3.625,-3.375,-3.125],\"position_accuracy\":[-2.875,-2.625,-2.375],\"heading\":-2.125,\"heading_accuracy\":-1.875,\"position_length\":-1.625,\"accuracy_length\":-1.375,\"gnss_fix_ok\":false,\"differential_solution\":true,\"relative_position_valid\":false,\"carrier_solution_floating\":true,\"carrier_solution_fixed\":false,\"moving_base_mode\":true,\"reference_position_miss\":false,\"reference_observations_miss\":true,\"heading_valid\":false,\"relative_position_normalized\":true},\"id\":\"gen-sensor_gnss_relative\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_relative\",\"type\":\"px4_msgs/msg/SensorGnssRelative\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"time_utc_usec\":493827156052,\"reference_station_id\":38682,\"position\":[-3.625,-3.375,-3.125],\"position_accuracy\":[-2.875,-2.625,-2.375],\"heading\":-2.125,\"heading_accuracy\":-1.875,\"position_length\":-1.625,\"accuracy_length\":-1.375,\"gnss_fix_ok\":false,\"differential_solution\":true,\"relative_position_valid\":false,\"carrier_solution_floating\":true,\"carrier_solution_fixed\":false,\"moving_base_mode\":true,\"reference_position_miss\":false,\"reference_observations_miss\":true,\"heading_valid\":false,\"relative_position_normalized\":true},\"id\":\"gen-sensor_gnss_relative\"}",
+  "model": {
+    "@kind": "sensor_gnss_relative",
+    "ros2px4.sensor_gnss_relative_timestamp": "123456789013",
+    "ros2px4.sensor_gnss_relative_timestamp_sample": "246913578026",
+    "ros2px4.sensor_gnss_relative_device_id": "2147605164",
+    "ros2px4.sensor_gnss_relative_time_utc_usec": "493827156052",
+    "ros2px4.sensor_gnss_relative_reference_station_id": "38682",
+    "ros2px4.sensor_gnss_relative_position.#": "3",
+    "ros2px4.sensor_gnss_relative_position[0].ros2px4.sensor_gnss_relative_position_value": "-3.625",
+    "ros2px4.sensor_gnss_relative_position_accuracy.#": "3",
+    "ros2px4.sensor_gnss_relative_position_accuracy[0].ros2px4.sensor_gnss_relative_position_accuracy_value": "-2.875",
+    "ros2px4.topic": "/gen/sensor_gnss_relative"
+  }
+}

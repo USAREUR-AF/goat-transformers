@@ -1,0 +1,19 @@
+{
+  "name": "rt-virtual_gate_area_command",
+  "from": "ros2-autoware-v2x-msgs",
+  "to": "ros2-autoware-v2x-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_gate_area_command\",\"type\":\"autoware_v2x_msgs/msg/VirtualGateAreaCommand\",\"msg\":{\"command\":7742,\"sequence_id\":48245,\"area_id\":\"s3\",\"gate_ids\":[\"s4\",\"s5\"],\"expected_time_arrival\":[{\"sec\":243025,\"nanosec\":2147767176}]},\"id\":\"gen-virtual_gate_area_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/virtual_gate_area_command\",\"type\":\"autoware_v2x_msgs/msg/VirtualGateAreaCommand\",\"msg\":{\"command\":7742,\"sequence_id\":48245,\"area_id\":\"s3\",\"gate_ids\":[\"s4\",\"s5\"],\"expected_time_arrival\":[{\"sec\":243025,\"nanosec\":2147767176}]},\"id\":\"gen-virtual_gate_area_command\"}",
+  "model": {
+    "@kind": "virtual_gate_area_command",
+    "ros2autowarev2x.virtual_gate_area_command_command": "7742",
+    "ros2autowarev2x.virtual_gate_area_command_sequence_id": "48245",
+    "ros2autowarev2x.virtual_gate_area_command_area_id": "s3",
+    "ros2autowarev2x.virtual_gate_area_command_gate_ids.#": "2",
+    "ros2autowarev2x.virtual_gate_area_command_gate_ids[0].ros2autowarev2x.virtual_gate_area_command_gate_ids_value": "s4",
+    "ros2autowarev2x.virtual_gate_area_command_expected_time_arrival.#": "1",
+    "ros2autowarev2x.virtual_gate_area_command_expected_time_arrival[0].ros2autowarev2x.virtual_gate_area_command_expected_time_arrival_sec": "243025",
+    "ros2autowarev2x.topic": "/gen/virtual_gate_area_command"
+  }
+}

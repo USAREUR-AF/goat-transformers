@@ -1,0 +1,18 @@
+{
+  "name": "rt-vehicle_magnetometer",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_magnetometer\",\"type\":\"px4_msgs/msg/VehicleMagnetometer\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"magnetometer_ga\":[-4.125,-3.875,-3.625],\"calibration_count\":8},\"id\":\"gen-vehicle_magnetometer\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_magnetometer\",\"type\":\"px4_msgs/msg/VehicleMagnetometer\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"magnetometer_ga\":[-4.125,-3.875,-3.625],\"calibration_count\":8},\"id\":\"gen-vehicle_magnetometer\"}",
+  "model": {
+    "@kind": "vehicle_magnetometer",
+    "ros2px4.vehicle_magnetometer_timestamp": "123456789013",
+    "ros2px4.vehicle_magnetometer_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_magnetometer_device_id": "2147605164",
+    "ros2px4.vehicle_magnetometer_magnetometer_ga.#": "3",
+    "ros2px4.vehicle_magnetometer_magnetometer_ga[0].ros2px4.vehicle_magnetometer_magnetometer_ga_value": "-4.125",
+    "ros2px4.vehicle_magnetometer_calibration_count": "8",
+    "ros2px4.topic": "/gen/vehicle_magnetometer"
+  }
+}

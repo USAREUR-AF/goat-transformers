@@ -1,0 +1,13 @@
+{
+  "name": "rt-door_mode",
+  "from": "ros2-rmf-door-msgs",
+  "to": "ros2-rmf-door-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/door_mode\",\"type\":\"rmf_door_msgs/msg/DoorMode\",\"msg\":{\"value\":2147524158},\"id\":\"gen-door_mode\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/door_mode\",\"type\":\"rmf_door_msgs/msg/DoorMode\",\"msg\":{\"value\":2147524158},\"id\":\"gen-door_mode\"}",
+  "model": {
+    "@kind": "door_mode",
+    "ros2rmfdoor.door_mode_value": "2147524158",
+    "ros2rmfdoor.topic": "/gen/door_mode"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "rt-metadata",
+  "from": "ros2-ouster-msgs",
+  "to": "ros2-ouster-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/metadata\",\"type\":\"ouster_msgs/msg/Metadata\",\"msg\":{\"hostname\":\"s1\",\"lidar_mode\":\"s2\",\"timestamp_mode\":\"s3\",\"beam_azimuth_angles\":[4.028,5.035],\"beam_altitude_angles\":[-6.042,7.049],\"imu_to_sensor_transform\":[8.056,-9.063],\"lidar_to_sensor_transform\":[10.07,11.077],\"serial_no\":\"s12\",\"firmware_rev\":\"s13\",\"imu_port\":9,\"lidar_port\":64},\"id\":\"gen-metadata\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/metadata\",\"type\":\"ouster_msgs/msg/Metadata\",\"msg\":{\"hostname\":\"s1\",\"lidar_mode\":\"s2\",\"timestamp_mode\":\"s3\",\"beam_azimuth_angles\":[4.028,5.035],\"beam_altitude_angles\":[-6.042,7.049],\"imu_to_sensor_transform\":[8.056,-9.063],\"lidar_to_sensor_transform\":[10.07,11.077],\"serial_no\":\"s12\",\"firmware_rev\":\"s13\",\"imu_port\":9,\"lidar_port\":64},\"id\":\"gen-metadata\"}",
+  "model": {
+    "@kind": "metadata",
+    "ros2ouster.metadata_hostname": "s1",
+    "ros2ouster.metadata_lidar_mode": "s2",
+    "ros2ouster.metadata_timestamp_mode": "s3",
+    "ros2ouster.metadata_beam_azimuth_angles.#": "2",
+    "ros2ouster.metadata_beam_azimuth_angles[0].ros2ouster.metadata_beam_azimuth_angles_value": "4.028",
+    "ros2ouster.metadata_beam_altitude_angles.#": "2",
+    "ros2ouster.metadata_beam_altitude_angles[0].ros2ouster.metadata_beam_altitude_angles_value": "-6.042",
+    "ros2ouster.metadata_imu_to_sensor_transform.#": "2",
+    "ros2ouster.metadata_imu_to_sensor_transform[0].ros2ouster.metadata_imu_to_sensor_transform_value": "8.056",
+    "ros2ouster.metadata_lidar_to_sensor_transform.#": "2",
+    "ros2ouster.metadata_lidar_to_sensor_transform[0].ros2ouster.metadata_lidar_to_sensor_transform_value": "10.07",
+    "ros2ouster.metadata_serial_no": "s12",
+    "ros2ouster.metadata_firmware_rev": "s13",
+    "ros2ouster.topic": "/gen/metadata"
+  }
+}

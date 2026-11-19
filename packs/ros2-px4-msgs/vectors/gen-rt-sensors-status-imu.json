@@ -1,0 +1,29 @@
+{
+  "name": "rt-sensors_status_imu",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensors_status_imu\",\"type\":\"px4_msgs/msg/SensorsStatusImu\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id_primary\":2147564661,\"accel_device_ids\":[2147605164,2147645667,2147686170,2147726673],\"accel_inconsistency_m_s_s\":[-3.375,-3.125,-2.875,-2.625],\"accel_healthy\":[true,false,true,false],\"accel_priority\":\"Dy3/AIA=\",\"gyro_device_id_primary\":2148131703,\"gyro_device_ids\":[2148172206,2148212709,2148253212,2148293715],\"gyro_inconsistency_rad_s\":[0.125,0.375,0.625,0.875],\"gyro_healthy\":[true,false,true,false],\"gyro_priority\":\"HVf/AIA=\"},\"id\":\"gen-sensors_status_imu\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensors_status_imu\",\"type\":\"px4_msgs/msg/SensorsStatusImu\",\"msg\":{\"timestamp\":123456789013,\"accel_device_id_primary\":2147564661,\"accel_device_ids\":[2147605164,2147645667,2147686170,2147726673],\"accel_inconsistency_m_s_s\":[-3.375,-3.125,-2.875,-2.625],\"accel_healthy\":[true,false,true,false],\"accel_priority\":\"Dy3/AIA=\",\"gyro_device_id_primary\":2148131703,\"gyro_device_ids\":[2148172206,2148212709,2148253212,2148293715],\"gyro_inconsistency_rad_s\":[0.125,0.375,0.625,0.875],\"gyro_healthy\":[true,false,true,false],\"gyro_priority\":\"HVf/AIA=\"},\"id\":\"gen-sensors_status_imu\"}",
+  "model": {
+    "@kind": "sensors_status_imu",
+    "ros2px4.sensors_status_imu_timestamp": "123456789013",
+    "ros2px4.sensors_status_imu_accel_device_id_primary": "2147564661",
+    "ros2px4.sensors_status_imu_accel_device_ids.#": "4",
+    "ros2px4.sensors_status_imu_accel_device_ids[0].ros2px4.sensors_status_imu_accel_device_ids_value": "2147605164",
+    "ros2px4.sensors_status_imu_accel_inconsistency_m_s_s.#": "4",
+    "ros2px4.sensors_status_imu_accel_inconsistency_m_s_s[0].ros2px4.sensors_status_imu_accel_inconsistency_m_s_s_value": "-3.375",
+    "ros2px4.sensors_status_imu_accel_healthy.#": "4",
+    "ros2px4.sensors_status_imu_accel_healthy[0].ros2px4.sensors_status_imu_accel_healthy_value": "1",
+    "ros2px4.sensors_status_imu_accel_priority": "Dy3/AIA=",
+    "ros2px4.sensors_status_imu_gyro_device_id_primary": "2148131703",
+    "ros2px4.sensors_status_imu_gyro_device_ids.#": "4",
+    "ros2px4.sensors_status_imu_gyro_device_ids[0].ros2px4.sensors_status_imu_gyro_device_ids_value": "2148172206",
+    "ros2px4.sensors_status_imu_gyro_inconsistency_rad_s.#": "4",
+    "ros2px4.sensors_status_imu_gyro_inconsistency_rad_s[0].ros2px4.sensors_status_imu_gyro_inconsistency_rad_s_value": "0.125",
+    "ros2px4.sensors_status_imu_gyro_healthy.#": "4",
+    "ros2px4.sensors_status_imu_gyro_healthy[0].ros2px4.sensors_status_imu_gyro_healthy_value": "1",
+    "ros2px4.sensors_status_imu_gyro_priority": "HVf/AIA=",
+    "ros2px4.topic": "/gen/sensors_status_imu"
+  }
+}

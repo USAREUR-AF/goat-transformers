@@ -1,0 +1,17 @@
+{
+  "name": "rt-fuel_tank_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fuel_tank_status\",\"type\":\"px4_msgs/msg/FuelTankStatus\",\"msg\":{\"timestamp\":123456789013,\"maximum_fuel_capacity\":-4.625,\"consumed_fuel\":-4.375,\"fuel_consumption_rate\":-4.125,\"percent_remaining\":154,\"remaining_fuel\":-3.625,\"fuel_tank_id\":8,\"fuel_type\":2147807679,\"temperature\":-2.875},\"id\":\"gen-fuel_tank_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fuel_tank_status\",\"type\":\"px4_msgs/msg/FuelTankStatus\",\"msg\":{\"timestamp\":123456789013,\"maximum_fuel_capacity\":-4.625,\"consumed_fuel\":-4.375,\"fuel_consumption_rate\":-4.125,\"percent_remaining\":154,\"remaining_fuel\":-3.625,\"fuel_tank_id\":8,\"fuel_type\":2147807679,\"temperature\":-2.875},\"id\":\"gen-fuel_tank_status\"}",
+  "model": {
+    "@kind": "fuel_tank_status",
+    "ros2px4.fuel_tank_status_timestamp": "123456789013",
+    "ros2px4.fuel_tank_status_maximum_fuel_capacity": "-4.625",
+    "ros2px4.fuel_tank_status_consumed_fuel": "-4.375",
+    "ros2px4.fuel_tank_status_fuel_consumption_rate": "-4.125",
+    "ros2px4.fuel_tank_status_percent_remaining": "154",
+    "ros2px4.topic": "/gen/fuel_tank_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_manager_information",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_information\",\"type\":\"px4_msgs/msg/GimbalManagerInformation\",\"msg\":{\"timestamp\":123456789013,\"cap_flags\":2147564661,\"gimbal_device_id\":44,\"roll_min\":-4.125,\"roll_max\":-3.875,\"pitch_min\":-3.625,\"pitch_max\":-3.375,\"yaw_min\":-3.125,\"yaw_max\":-2.875},\"id\":\"gen-gimbal_manager_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_manager_information\",\"type\":\"px4_msgs/msg/GimbalManagerInformation\",\"msg\":{\"timestamp\":123456789013,\"cap_flags\":2147564661,\"gimbal_device_id\":44,\"roll_min\":-4.125,\"roll_max\":-3.875,\"pitch_min\":-3.625,\"pitch_max\":-3.375,\"yaw_min\":-3.125,\"yaw_max\":-2.875},\"id\":\"gen-gimbal_manager_information\"}",
+  "model": {
+    "@kind": "gimbal_manager_information",
+    "ros2px4.gimbal_manager_information_timestamp": "123456789013",
+    "ros2px4.gimbal_manager_information_cap_flags": "2147564661",
+    "ros2px4.gimbal_manager_information_gimbal_device_id": "44",
+    "ros2px4.gimbal_manager_information_roll_min": "-4.125",
+    "ros2px4.gimbal_manager_information_roll_max": "-3.875",
+    "ros2px4.topic": "/gen/gimbal_manager_information"
+  }
+}

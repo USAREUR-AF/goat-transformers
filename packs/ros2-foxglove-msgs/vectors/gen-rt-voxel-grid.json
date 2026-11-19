@@ -1,0 +1,19 @@
+{
+  "name": "rt-voxel_grid",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/voxel_grid\",\"type\":\"foxglove_msgs/msg/VoxelGrid\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"row_count\":2147929188,\"column_count\":2147969691,\"cell_size\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"slice_stride\":2148131703,\"row_stride\":2148172206,\"cell_stride\":2148212709,\"fields\":[{\"name\":\"s19\",\"offset\":2148293715,\"type\":10},{\"name\":\"s22\",\"offset\":2148415224,\"type\":175}],\"data\":\"GUv/AIA=\"},\"id\":\"gen-voxel_grid\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/voxel_grid\",\"type\":\"foxglove_msgs/msg/VoxelGrid\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"row_count\":2147929188,\"column_count\":2147969691,\"cell_size\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"slice_stride\":2148131703,\"row_stride\":2148172206,\"cell_stride\":2148212709,\"fields\":[{\"name\":\"s19\",\"offset\":2148293715,\"type\":10},{\"name\":\"s22\",\"offset\":2148415224,\"type\":175}],\"data\":\"GUv/AIA=\"},\"id\":\"gen-voxel_grid\"}",
+  "model": {
+    "@kind": "voxel_grid",
+    "ros2foxglove.voxel_grid_timestamp_sec": "40510",
+    "ros2foxglove.voxel_grid_timestamp_nanosec": "2147564661",
+    "ros2foxglove.voxel_grid_frame_id": "s3",
+    "ros2foxglove.voxel_grid_pose_position_x": "4.028",
+    "ros2foxglove.voxel_grid_pose_position_y": "5.035",
+    "ros2foxglove.voxel_grid_fields.#": "2",
+    "ros2foxglove.voxel_grid_fields[0].ros2foxglove.voxel_grid_fields_name": "s19",
+    "ros2foxglove.topic": "/gen/voxel_grid"
+  }
+}

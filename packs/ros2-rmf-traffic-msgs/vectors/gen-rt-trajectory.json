@@ -1,0 +1,14 @@
+{
+  "name": "rt-trajectory",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"rmf_traffic_msgs/msg/Trajectory\",\"msg\":{\"waypoints\":[{\"time\":-123456789013,\"position\":[2.014,-3.021,4.028],\"velocity\":[5.035,-6.042,7.049]},{\"time\":987654312104,\"position\":[-9.063,10.07,11.077],\"velocity\":[-12.084,13.091,14.098]}]},\"id\":\"gen-trajectory\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory\",\"type\":\"rmf_traffic_msgs/msg/Trajectory\",\"msg\":{\"waypoints\":[{\"time\":-123456789013,\"position\":[2.014,-3.021,4.028],\"velocity\":[5.035,-6.042,7.049]},{\"time\":987654312104,\"position\":[-9.063,10.07,11.077],\"velocity\":[-12.084,13.091,14.098]}]},\"id\":\"gen-trajectory\"}",
+  "model": {
+    "@kind": "trajectory",
+    "ros2rmftraffic.trajectory_waypoints.#": "2",
+    "ros2rmftraffic.trajectory_waypoints[0].ros2rmftraffic.trajectory_waypoints_time": "-123456789013",
+    "ros2rmftraffic.topic": "/gen/trajectory"
+  }
+}

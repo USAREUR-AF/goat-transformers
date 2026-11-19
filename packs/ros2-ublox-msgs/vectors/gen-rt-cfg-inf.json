@@ -1,0 +1,14 @@
+{
+  "name": "rt-cfg_inf",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_inf\",\"type\":\"ublox_msgs/msg/CfgINF\",\"msg\":{\"blocks\":[{\"protocol_id\":190,\"reserved1\":\"Agb/AIA=\",\"inf_msg_mask\":\"Awn/AIA=\"},{\"protocol_id\":99,\"reserved1\":\"BQ//AIA=\",\"inf_msg_mask\":\"BhL/AIA=\"}]},\"id\":\"gen-cfg_inf\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cfg_inf\",\"type\":\"ublox_msgs/msg/CfgINF\",\"msg\":{\"blocks\":[{\"protocol_id\":190,\"reserved1\":\"Agb/AIA=\",\"inf_msg_mask\":\"Awn/AIA=\"},{\"protocol_id\":99,\"reserved1\":\"BQ//AIA=\",\"inf_msg_mask\":\"BhL/AIA=\"}]},\"id\":\"gen-cfg_inf\"}",
+  "model": {
+    "@kind": "cfg_inf",
+    "ros2ublox.cfg_inf_blocks.#": "2",
+    "ros2ublox.cfg_inf_blocks[0].ros2ublox.cfg_inf_blocks_protocol_id": "190",
+    "ros2ublox.topic": "/gen/cfg_inf"
+  }
+}

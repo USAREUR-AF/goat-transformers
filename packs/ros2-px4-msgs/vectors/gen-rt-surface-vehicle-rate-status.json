@@ -1,0 +1,16 @@
+{
+  "name": "rt-surface_vehicle_rate_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_rate_status\",\"type\":\"px4_msgs/msg/SurfaceVehicleRateStatus\",\"msg\":{\"timestamp\":123456789013,\"measured_yaw_rate\":-4.625,\"adjusted_yaw_rate_setpoint\":-4.375,\"pid_yaw_rate_integral\":-4.125},\"id\":\"gen-surface_vehicle_rate_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/surface_vehicle_rate_status\",\"type\":\"px4_msgs/msg/SurfaceVehicleRateStatus\",\"msg\":{\"timestamp\":123456789013,\"measured_yaw_rate\":-4.625,\"adjusted_yaw_rate_setpoint\":-4.375,\"pid_yaw_rate_integral\":-4.125},\"id\":\"gen-surface_vehicle_rate_status\"}",
+  "model": {
+    "@kind": "surface_vehicle_rate_status",
+    "ros2px4.surface_vehicle_rate_status_timestamp": "123456789013",
+    "ros2px4.surface_vehicle_rate_status_measured_yaw_rate": "-4.625",
+    "ros2px4.surface_vehicle_rate_status_adjusted_yaw_rate_setpoint": "-4.375",
+    "ros2px4.surface_vehicle_rate_status_pid_yaw_rate_integral": "-4.125",
+    "ros2px4.topic": "/gen/surface_vehicle_rate_status"
+  }
+}

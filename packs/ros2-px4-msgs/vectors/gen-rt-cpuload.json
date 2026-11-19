@@ -1,0 +1,15 @@
+{
+  "name": "rt-cpuload",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cpuload\",\"type\":\"px4_msgs/msg/Cpuload\",\"msg\":{\"timestamp\":123456789013,\"load\":-4.625,\"ram_usage\":-4.375},\"id\":\"gen-cpuload\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cpuload\",\"type\":\"px4_msgs/msg/Cpuload\",\"msg\":{\"timestamp\":123456789013,\"load\":-4.625,\"ram_usage\":-4.375},\"id\":\"gen-cpuload\"}",
+  "model": {
+    "@kind": "cpuload",
+    "ros2px4.cpuload_timestamp": "123456789013",
+    "ros2px4.cpuload_load": "-4.625",
+    "ros2px4.cpuload_ram_usage": "-4.375",
+    "ros2px4.topic": "/gen/cpuload"
+  }
+}

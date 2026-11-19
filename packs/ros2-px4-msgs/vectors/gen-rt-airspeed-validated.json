@@ -1,0 +1,17 @@
+{
+  "name": "rt-airspeed_validated",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/airspeed_validated\",\"type\":\"px4_msgs/msg/AirspeedValidated\",\"msg\":{\"timestamp\":123456789013,\"indicated_airspeed_m_s\":-4.625,\"calibrated_airspeed_m_s\":-4.375,\"true_airspeed_m_s\":-4.125,\"airspeed_source\":26,\"calibrated_ground_minus_wind_m_s\":-3.625,\"calibraded_airspeed_synth_m_s\":-3.375,\"airspeed_derivative_filtered\":-3.125,\"throttle_filtered\":-2.875,\"pitch_filtered\":-2.625},\"id\":\"gen-airspeed_validated\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/airspeed_validated\",\"type\":\"px4_msgs/msg/AirspeedValidated\",\"msg\":{\"timestamp\":123456789013,\"indicated_airspeed_m_s\":-4.625,\"calibrated_airspeed_m_s\":-4.375,\"true_airspeed_m_s\":-4.125,\"airspeed_source\":26,\"calibrated_ground_minus_wind_m_s\":-3.625,\"calibraded_airspeed_synth_m_s\":-3.375,\"airspeed_derivative_filtered\":-3.125,\"throttle_filtered\":-2.875,\"pitch_filtered\":-2.625},\"id\":\"gen-airspeed_validated\"}",
+  "model": {
+    "@kind": "airspeed_validated",
+    "ros2px4.airspeed_validated_timestamp": "123456789013",
+    "ros2px4.airspeed_validated_indicated_airspeed_m_s": "-4.625",
+    "ros2px4.airspeed_validated_calibrated_airspeed_m_s": "-4.375",
+    "ros2px4.airspeed_validated_true_airspeed_m_s": "-4.125",
+    "ros2px4.airspeed_validated_airspeed_source": "26",
+    "ros2px4.topic": "/gen/airspeed_validated"
+  }
+}

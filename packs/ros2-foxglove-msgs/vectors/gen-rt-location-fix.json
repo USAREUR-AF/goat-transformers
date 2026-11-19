@@ -1,0 +1,21 @@
+{
+  "name": "rt-location_fix",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/location_fix\",\"type\":\"foxglove_msgs/msg/LocationFix\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042,\"position_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"position_covariance_type\":247,\"heading\":17.119,\"velocity\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"color\":{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"},{\"key\":\"s27\",\"value\":\"s28\"}]},\"id\":\"gen-location_fix\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/location_fix\",\"type\":\"foxglove_msgs/msg/LocationFix\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"latitude\":4.028,\"longitude\":5.035,\"altitude\":-6.042,\"position_covariance\":[7.049,8.056,-9.063,10.07,11.077,-12.084,13.091,14.098,-15.105],\"position_covariance_type\":247,\"heading\":17.119,\"velocity\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"color\":{\"r\":-21.147,\"g\":22.154,\"b\":23.161,\"a\":-24.168},\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"},{\"key\":\"s27\",\"value\":\"s28\"}]},\"id\":\"gen-location_fix\"}",
+  "model": {
+    "@kind": "location_fix",
+    "ros2foxglove.location_fix_timestamp_sec": "40510",
+    "ros2foxglove.location_fix_timestamp_nanosec": "2147564661",
+    "ros2foxglove.location_fix_frame_id": "s3",
+    "ros2foxglove.location_fix_latitude": "4.028",
+    "ros2foxglove.location_fix_longitude": "5.035",
+    "ros2foxglove.location_fix_position_covariance.#": "9",
+    "ros2foxglove.location_fix_position_covariance[0].ros2foxglove.location_fix_position_covariance_value": "7.049",
+    "ros2foxglove.location_fix_metadata.#": "2",
+    "ros2foxglove.location_fix_metadata[0].ros2foxglove.location_fix_metadata_key": "s25",
+    "ros2foxglove.topic": "/gen/location_fix"
+  }
+}

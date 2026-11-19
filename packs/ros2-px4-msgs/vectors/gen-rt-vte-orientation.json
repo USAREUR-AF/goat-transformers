@@ -1,0 +1,17 @@
+{
+  "name": "rt-vte_orientation",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vte_orientation\",\"type\":\"px4_msgs/msg/VteOrientation\",\"msg\":{\"timestamp\":123456789013,\"orientation_valid\":false,\"yaw\":-4.375,\"cov_yaw\":-4.125,\"yaw_rate\":-3.875,\"cov_yaw_rate\":-3.625},\"id\":\"gen-vte_orientation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vte_orientation\",\"type\":\"px4_msgs/msg/VteOrientation\",\"msg\":{\"timestamp\":123456789013,\"orientation_valid\":false,\"yaw\":-4.375,\"cov_yaw\":-4.125,\"yaw_rate\":-3.875,\"cov_yaw_rate\":-3.625},\"id\":\"gen-vte_orientation\"}",
+  "model": {
+    "@kind": "vte_orientation",
+    "ros2px4.vte_orientation_timestamp": "123456789013",
+    "ros2px4.vte_orientation_orientation_valid": "0",
+    "ros2px4.vte_orientation_yaw": "-4.375",
+    "ros2px4.vte_orientation_cov_yaw": "-4.125",
+    "ros2px4.vte_orientation_yaw_rate": "-3.875",
+    "ros2px4.topic": "/gen/vte_orientation"
+  }
+}

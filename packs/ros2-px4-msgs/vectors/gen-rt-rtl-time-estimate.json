@@ -1,0 +1,16 @@
+{
+  "name": "rt-rtl_time_estimate",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rtl_time_estimate\",\"type\":\"px4_msgs/msg/RtlTimeEstimate\",\"msg\":{\"timestamp\":123456789013,\"valid\":false,\"time_estimate\":-4.375,\"safe_time_estimate\":-4.125},\"id\":\"gen-rtl_time_estimate\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rtl_time_estimate\",\"type\":\"px4_msgs/msg/RtlTimeEstimate\",\"msg\":{\"timestamp\":123456789013,\"valid\":false,\"time_estimate\":-4.375,\"safe_time_estimate\":-4.125},\"id\":\"gen-rtl_time_estimate\"}",
+  "model": {
+    "@kind": "rtl_time_estimate",
+    "ros2px4.rtl_time_estimate_timestamp": "123456789013",
+    "ros2px4.rtl_time_estimate_valid": "0",
+    "ros2px4.rtl_time_estimate_time_estimate": "-4.375",
+    "ros2px4.rtl_time_estimate_safe_time_estimate": "-4.125",
+    "ros2px4.topic": "/gen/rtl_time_estimate"
+  }
+}

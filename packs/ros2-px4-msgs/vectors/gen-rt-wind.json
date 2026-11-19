@@ -1,0 +1,17 @@
+{
+  "name": "rt-wind",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wind\",\"type\":\"px4_msgs/msg/Wind\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"windspeed_north\":-4.375,\"windspeed_east\":-4.125,\"variance_north\":-3.875,\"variance_east\":-3.625,\"tas_innov\":-3.375,\"tas_innov_var\":-3.125,\"beta_innov\":-2.875,\"beta_innov_var\":-2.625},\"id\":\"gen-wind\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wind\",\"type\":\"px4_msgs/msg/Wind\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"windspeed_north\":-4.375,\"windspeed_east\":-4.125,\"variance_north\":-3.875,\"variance_east\":-3.625,\"tas_innov\":-3.375,\"tas_innov_var\":-3.125,\"beta_innov\":-2.875,\"beta_innov_var\":-2.625},\"id\":\"gen-wind\"}",
+  "model": {
+    "@kind": "wind",
+    "ros2px4.wind_timestamp": "123456789013",
+    "ros2px4.wind_timestamp_sample": "246913578026",
+    "ros2px4.wind_windspeed_north": "-4.375",
+    "ros2px4.wind_windspeed_east": "-4.125",
+    "ros2px4.wind_variance_north": "-3.875",
+    "ros2px4.topic": "/gen/wind"
+  }
+}

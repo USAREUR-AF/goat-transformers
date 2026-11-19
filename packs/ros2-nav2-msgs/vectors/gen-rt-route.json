@@ -1,0 +1,20 @@
+{
+  "name": "rt-route",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"nav2_msgs/msg/Route\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"route_cost\":-4.125,\"nodes\":[{\"nodeid\":38682,\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056}},{\"nodeid\":4086,\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084}}],\"edges\":[{\"edgeid\":35026,\"start\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"end\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}},{\"edgeid\":56403,\"start\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"end\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}]},\"id\":\"gen-route\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"nav2_msgs/msg/Route\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"route_cost\":-4.125,\"nodes\":[{\"nodeid\":38682,\"position\":{\"x\":-6.042,\"y\":7.049,\"z\":8.056}},{\"nodeid\":4086,\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084}}],\"edges\":[{\"edgeid\":35026,\"start\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"end\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133}},{\"edgeid\":56403,\"start\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161},\"end\":{\"x\":-24.168,\"y\":25.175,\"z\":26.182}}]},\"id\":\"gen-route\"}",
+  "model": {
+    "@kind": "route",
+    "ros2nav2.route_header_stamp_sec": "40510",
+    "ros2nav2.route_header_stamp_nanosec": "2147564661",
+    "ros2nav2.route_header_frame_id": "s3",
+    "ros2nav2.route_route_cost": "-4.125",
+    "ros2nav2.route_nodes.#": "2",
+    "ros2nav2.route_nodes[0].ros2nav2.route_nodes_nodeid": "38682",
+    "ros2nav2.route_edges.#": "2",
+    "ros2nav2.route_edges[0].ros2nav2.route_edges_edgeid": "35026",
+    "ros2nav2.topic": "/gen/route"
+  }
+}

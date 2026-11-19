@@ -1,0 +1,17 @@
+{
+  "name": "rt-traffic_light_group",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_group\",\"type\":\"autoware_perception_msgs/msg/TrafficLightGroup\",\"msg\":{\"traffic_light_group_id\":-123456789013,\"elements\":[{\"color\":245,\"shape\":44,\"status\":99,\"confidence\":-3.875},{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-2.875}],\"predictions\":[{\"predicted_stamp\":{\"sec\":405037,\"nanosec\":2147929188},\"simultaneous_elements\":[{\"color\":27,\"shape\":82,\"status\":137,\"confidence\":-1.375}],\"reliability\":-1.125,\"information_source\":\"s17\"},{\"predicted_stamp\":{\"sec\":729061,\"nanosec\":2148253212},\"simultaneous_elements\":[{\"color\":211,\"shape\":10,\"status\":65,\"confidence\":0.625}],\"reliability\":0.875,\"information_source\":\"s25\"}]},\"id\":\"gen-traffic_light_group\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_group\",\"type\":\"autoware_perception_msgs/msg/TrafficLightGroup\",\"msg\":{\"traffic_light_group_id\":-123456789013,\"elements\":[{\"color\":245,\"shape\":44,\"status\":99,\"confidence\":-3.875},{\"color\":209,\"shape\":8,\"status\":63,\"confidence\":-2.875}],\"predictions\":[{\"predicted_stamp\":{\"sec\":405037,\"nanosec\":2147929188},\"simultaneous_elements\":[{\"color\":27,\"shape\":82,\"status\":137,\"confidence\":-1.375}],\"reliability\":-1.125,\"information_source\":\"s17\"},{\"predicted_stamp\":{\"sec\":729061,\"nanosec\":2148253212},\"simultaneous_elements\":[{\"color\":211,\"shape\":10,\"status\":65,\"confidence\":0.625}],\"reliability\":0.875,\"information_source\":\"s25\"}]},\"id\":\"gen-traffic_light_group\"}",
+  "model": {
+    "@kind": "traffic_light_group",
+    "ros2autowareperception.traffic_light_group_traffic_light_group_id": "-123456789013",
+    "ros2autowareperception.traffic_light_group_elements.#": "2",
+    "ros2autowareperception.traffic_light_group_elements[0].ros2autowareperception.traffic_light_group_elements_color": "245",
+    "ros2autowareperception.traffic_light_group_predictions.#": "2",
+    "ros2autowareperception.traffic_light_group_predictions[0].ros2autowareperception.traffic_light_group_predictions_predicted_stamp_sec": "405037",
+    "ros2autowareperception.topic": "/gen/traffic_light_group"
+  }
+}

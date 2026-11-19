@@ -1,0 +1,19 @@
+{
+  "name": "rt-vte_input",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vte_input\",\"type\":\"px4_msgs/msg/VteInput\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"acc_xyz\":[-4.375,-4.125,-3.875],\"q_att\":[-3.625,-3.375,-3.125,-2.875],\"acc_sample_count\":2147888685},\"id\":\"gen-vte_input\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vte_input\",\"type\":\"px4_msgs/msg/VteInput\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"acc_xyz\":[-4.375,-4.125,-3.875],\"q_att\":[-3.625,-3.375,-3.125,-2.875],\"acc_sample_count\":2147888685},\"id\":\"gen-vte_input\"}",
+  "model": {
+    "@kind": "vte_input",
+    "ros2px4.vte_input_timestamp": "123456789013",
+    "ros2px4.vte_input_timestamp_sample": "246913578026",
+    "ros2px4.vte_input_acc_xyz.#": "3",
+    "ros2px4.vte_input_acc_xyz[0].ros2px4.vte_input_acc_xyz_value": "-4.375",
+    "ros2px4.vte_input_q_att.#": "4",
+    "ros2px4.vte_input_q_att[0].ros2px4.vte_input_q_att_value": "-3.625",
+    "ros2px4.vte_input_acc_sample_count": "2147888685",
+    "ros2px4.topic": "/gen/vte_input"
+  }
+}

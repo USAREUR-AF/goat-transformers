@@ -1,0 +1,17 @@
+{
+  "name": "rt-raw_image",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/raw_image\",\"type\":\"foxglove_msgs/msg/RawImage\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"width\":2147645667,\"height\":2147686170,\"encoding\":\"s6\",\"step\":2147767176,\"data\":\"CBj/AIA=\"},\"id\":\"gen-raw_image\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/raw_image\",\"type\":\"foxglove_msgs/msg/RawImage\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"width\":2147645667,\"height\":2147686170,\"encoding\":\"s6\",\"step\":2147767176,\"data\":\"CBj/AIA=\"},\"id\":\"gen-raw_image\"}",
+  "model": {
+    "@kind": "raw_image",
+    "ros2foxglove.raw_image_timestamp_sec": "40510",
+    "ros2foxglove.raw_image_timestamp_nanosec": "2147564661",
+    "ros2foxglove.raw_image_frame_id": "s3",
+    "ros2foxglove.raw_image_width": "2147645667",
+    "ros2foxglove.raw_image_height": "2147686170",
+    "ros2foxglove.topic": "/gen/raw_image"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "rt-raptor_input",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/raptor_input\",\"type\":\"px4_msgs/msg/RaptorInput\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"active\":true,\"position\":[-4.125,-3.875,-3.625],\"orientation\":[-3.375,-3.125,-2.875,-2.625],\"linear_velocity\":[-2.375,-2.125,-1.875],\"angular_velocity\":[-1.625,-1.375,-1.125],\"previous_action\":[-0.875,-0.625,-0.375,-0.125]},\"id\":\"gen-raptor_input\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/raptor_input\",\"type\":\"px4_msgs/msg/RaptorInput\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"active\":true,\"position\":[-4.125,-3.875,-3.625],\"orientation\":[-3.375,-3.125,-2.875,-2.625],\"linear_velocity\":[-2.375,-2.125,-1.875],\"angular_velocity\":[-1.625,-1.375,-1.125],\"previous_action\":[-0.875,-0.625,-0.375,-0.125]},\"id\":\"gen-raptor_input\"}",
+  "model": {
+    "@kind": "raptor_input",
+    "ros2px4.raptor_input_timestamp": "123456789013",
+    "ros2px4.raptor_input_timestamp_sample": "246913578026",
+    "ros2px4.raptor_input_active": "1",
+    "ros2px4.raptor_input_position.#": "3",
+    "ros2px4.raptor_input_position[0].ros2px4.raptor_input_position_value": "-4.125",
+    "ros2px4.raptor_input_orientation.#": "4",
+    "ros2px4.raptor_input_orientation[0].ros2px4.raptor_input_orientation_value": "-3.375",
+    "ros2px4.raptor_input_linear_velocity.#": "3",
+    "ros2px4.raptor_input_linear_velocity[0].ros2px4.raptor_input_linear_velocity_value": "-2.375",
+    "ros2px4.raptor_input_angular_velocity.#": "3",
+    "ros2px4.raptor_input_angular_velocity[0].ros2px4.raptor_input_angular_velocity_value": "-1.625",
+    "ros2px4.raptor_input_previous_action.#": "4",
+    "ros2px4.raptor_input_previous_action[0].ros2px4.raptor_input_previous_action_value": "-0.875",
+    "ros2px4.topic": "/gen/raptor_input"
+  }
+}

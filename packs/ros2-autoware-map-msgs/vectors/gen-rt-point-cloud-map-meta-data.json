@@ -1,0 +1,17 @@
+{
+  "name": "rt-point_cloud_map_meta_data",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_meta_data\",\"type\":\"autoware_map_msgs/msg/PointCloudMapMetaData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata_list\":[{\"cell_id\":\"s4\",\"metadata\":{\"min_x\":-3.875,\"min_y\":-3.625,\"max_x\":-3.375,\"max_y\":-3.125}},{\"cell_id\":\"s9\",\"metadata\":{\"min_x\":-2.625,\"min_y\":-2.375,\"max_x\":-2.125,\"max_y\":-1.875}}]},\"id\":\"gen-point_cloud_map_meta_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_meta_data\",\"type\":\"autoware_map_msgs/msg/PointCloudMapMetaData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata_list\":[{\"cell_id\":\"s4\",\"metadata\":{\"min_x\":-3.875,\"min_y\":-3.625,\"max_x\":-3.375,\"max_y\":-3.125}},{\"cell_id\":\"s9\",\"metadata\":{\"min_x\":-2.625,\"min_y\":-2.375,\"max_x\":-2.125,\"max_y\":-1.875}}]},\"id\":\"gen-point_cloud_map_meta_data\"}",
+  "model": {
+    "@kind": "point_cloud_map_meta_data",
+    "ros2autowaremap.point_cloud_map_meta_data_header_stamp_sec": "40510",
+    "ros2autowaremap.point_cloud_map_meta_data_header_stamp_nanosec": "2147564661",
+    "ros2autowaremap.point_cloud_map_meta_data_header_frame_id": "s3",
+    "ros2autowaremap.point_cloud_map_meta_data_metadata_list.#": "2",
+    "ros2autowaremap.point_cloud_map_meta_data_metadata_list[0].ros2autowaremap.point_cloud_map_meta_data_metadata_list_cell_id": "s4",
+    "ros2autowaremap.topic": "/gen/point_cloud_map_meta_data"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-float64_values",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/float64_values\",\"type\":\"control_msgs/msg/Float64Values\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"values\":[4.028,5.035]},\"id\":\"gen-float64_values\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/float64_values\",\"type\":\"control_msgs/msg/Float64Values\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"values\":[4.028,5.035]},\"id\":\"gen-float64_values\"}",
+  "model": {
+    "@kind": "float64_values",
+    "ros2control.float64_values_header_stamp_sec": "40510",
+    "ros2control.float64_values_header_stamp_nanosec": "2147564661",
+    "ros2control.float64_values_header_frame_id": "s3",
+    "ros2control.float64_values_values.#": "2",
+    "ros2control.float64_values_values[0].ros2control.float64_values_values_value": "4.028",
+    "ros2control.topic": "/gen/float64_values"
+  }
+}

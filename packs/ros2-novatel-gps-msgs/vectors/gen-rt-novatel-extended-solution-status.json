@@ -1,0 +1,15 @@
+{
+  "name": "rt-novatel_extended_solution_status",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_extended_solution_status\",\"type\":\"novatel_gps_msgs/msg/NovatelExtendedSolutionStatus\",\"msg\":{\"original_mask\":2147524158,\"advance_rtk_verified\":false,\"psuedorange_iono_correction\":\"s3\"},\"id\":\"gen-novatel_extended_solution_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_extended_solution_status\",\"type\":\"novatel_gps_msgs/msg/NovatelExtendedSolutionStatus\",\"msg\":{\"original_mask\":2147524158,\"advance_rtk_verified\":false,\"psuedorange_iono_correction\":\"s3\"},\"id\":\"gen-novatel_extended_solution_status\"}",
+  "model": {
+    "@kind": "novatel_extended_solution_status",
+    "ros2novatelgps.novatel_extended_solution_status_original_mask": "2147524158",
+    "ros2novatelgps.novatel_extended_solution_status_advance_rtk_verified": "0",
+    "ros2novatelgps.novatel_extended_solution_status_psuedorange_iono_correction": "s3",
+    "ros2novatelgps.topic": "/gen/novatel_extended_solution_status"
+  }
+}

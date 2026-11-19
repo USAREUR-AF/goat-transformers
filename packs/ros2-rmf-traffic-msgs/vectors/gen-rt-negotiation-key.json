@@ -1,0 +1,14 @@
+{
+  "name": "rt-negotiation_key",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_key\",\"type\":\"rmf_traffic_msgs/msg/NegotiationKey\",\"msg\":{\"participant\":123456789013,\"version\":246913578026},\"id\":\"gen-negotiation_key\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_key\",\"type\":\"rmf_traffic_msgs/msg/NegotiationKey\",\"msg\":{\"participant\":123456789013,\"version\":246913578026},\"id\":\"gen-negotiation_key\"}",
+  "model": {
+    "@kind": "negotiation_key",
+    "ros2rmftraffic.negotiation_key_participant": "123456789013",
+    "ros2rmftraffic.negotiation_key_version": "246913578026",
+    "ros2rmftraffic.topic": "/gen/negotiation_key"
+  }
+}

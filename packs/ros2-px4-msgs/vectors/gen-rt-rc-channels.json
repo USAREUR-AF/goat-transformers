@@ -1,0 +1,19 @@
+{
+  "name": "rt-rc_channels",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rc_channels\",\"type\":\"px4_msgs/msg/RcChannels\",\"msg\":{\"timestamp\":123456789013,\"timestamp_last_valid\":246913578026,\"channels\":[-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625,-0.375,-0.125],\"channel_count\":10,\"rssi\":65,\"signal_lost\":true,\"frame_drop_count\":2148455727},\"id\":\"gen-rc_channels\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rc_channels\",\"type\":\"px4_msgs/msg/RcChannels\",\"msg\":{\"timestamp\":123456789013,\"timestamp_last_valid\":246913578026,\"channels\":[-4.375,-4.125,-3.875,-3.625,-3.375,-3.125,-2.875,-2.625,-2.375,-2.125,-1.875,-1.625,-1.375,-1.125,-0.875,-0.625,-0.375,-0.125],\"channel_count\":10,\"rssi\":65,\"signal_lost\":true,\"frame_drop_count\":2148455727},\"id\":\"gen-rc_channels\"}",
+  "model": {
+    "@kind": "rc_channels",
+    "ros2px4.rc_channels_timestamp": "123456789013",
+    "ros2px4.rc_channels_timestamp_last_valid": "246913578026",
+    "ros2px4.rc_channels_channels.#": "18",
+    "ros2px4.rc_channels_channels[0].ros2px4.rc_channels_channels_value": "-4.375",
+    "ros2px4.rc_channels_channel_count": "10",
+    "ros2px4.rc_channels_rssi": "65",
+    "ros2px4.rc_channels_signal_lost": "1",
+    "ros2px4.topic": "/gen/rc_channels"
+  }
+}

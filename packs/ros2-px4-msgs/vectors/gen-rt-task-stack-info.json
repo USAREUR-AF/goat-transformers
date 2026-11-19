@@ -1,0 +1,15 @@
+{
+  "name": "rt-task_stack_info",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/task_stack_info\",\"type\":\"px4_msgs/msg/TaskStackInfo\",\"msg\":{\"timestamp\":123456789013,\"stack_free\":48245,\"task_name\":\"Awn/AIA=\"},\"id\":\"gen-task_stack_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/task_stack_info\",\"type\":\"px4_msgs/msg/TaskStackInfo\",\"msg\":{\"timestamp\":123456789013,\"stack_free\":48245,\"task_name\":\"Awn/AIA=\"},\"id\":\"gen-task_stack_info\"}",
+  "model": {
+    "@kind": "task_stack_info",
+    "ros2px4.task_stack_info_timestamp": "123456789013",
+    "ros2px4.task_stack_info_stack_free": "48245",
+    "ros2px4.task_stack_info_task_name": "Awn/AIA=",
+    "ros2px4.topic": "/gen/task_stack_info"
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "VelodynePacket:data": "velodyne_packet_data",
+ "VelodynePacket:stamp.nanosec": "velodyne_packet_stamp_nanosec",
+ "VelodynePacket:stamp.sec": "velodyne_packet_stamp_sec",
+ "VelodyneScan:header.frame_id": "velodyne_scan_header_frame_id",
+ "VelodyneScan:header.stamp.nanosec": "velodyne_scan_header_stamp_nanosec",
+ "VelodyneScan:header.stamp.sec": "velodyne_scan_header_stamp_sec",
+ "VelodyneScan:packets[]": "velodyne_scan_packets",
+ "VelodyneScan:packets[].data": "velodyne_scan_packets_data",
+ "VelodyneScan:packets[].stamp.nanosec": "velodyne_scan_packets_stamp_nanosec",
+ "VelodyneScan:packets[].stamp.sec": "velodyne_scan_packets_stamp_sec",
+ "topic": "topic"
+}

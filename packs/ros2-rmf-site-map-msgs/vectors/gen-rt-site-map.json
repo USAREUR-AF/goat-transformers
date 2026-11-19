@@ -1,0 +1,14 @@
+{
+  "name": "rt-site_map",
+  "from": "ros2-rmf-site-map-msgs",
+  "to": "ros2-rmf-site-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/site_map\",\"type\":\"rmf_site_map_msgs/msg/SiteMap\",\"msg\":{\"encoding\":2147524158,\"data\":\"Agb/AIA=\"},\"id\":\"gen-site_map\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/site_map\",\"type\":\"rmf_site_map_msgs/msg/SiteMap\",\"msg\":{\"encoding\":2147524158,\"data\":\"Agb/AIA=\"},\"id\":\"gen-site_map\"}",
+  "model": {
+    "@kind": "site_map",
+    "ros2rmfsitemap.site_map_encoding": "2147524158",
+    "ros2rmfsitemap.site_map_data": "Agb/AIA=",
+    "ros2rmfsitemap.topic": "/gen/site_map"
+  }
+}

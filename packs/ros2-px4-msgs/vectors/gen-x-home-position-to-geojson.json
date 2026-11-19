@@ -1,0 +1,13 @@
+{
+  "name": "x-home_position-to-geojson",
+  "from": "ros2-px4-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"px4_msgs/msg/HomePosition\",\"msg\":{\"timestamp\":123456789013,\"lat\":47.0625,\"lon\":8.53125,\"alt\":-4.125,\"x\":-3.875,\"y\":-3.625,\"z\":-3.375,\"roll\":-3.125,\"pitch\":-2.875,\"yaw\":-2.625,\"valid_alt\":true,\"valid_hpos\":false,\"valid_lpos\":true,\"valid_attitude\":false,\"manual_home\":true,\"update_count\":2148131703}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "home_position",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

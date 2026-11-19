@@ -1,0 +1,16 @@
+{
+  "name": "rt-vehicle_constraints",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_constraints\",\"type\":\"px4_msgs/msg/VehicleConstraints\",\"msg\":{\"timestamp\":123456789013,\"speed_up\":-4.625,\"speed_down\":-4.375,\"want_takeoff\":false},\"id\":\"gen-vehicle_constraints\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_constraints\",\"type\":\"px4_msgs/msg/VehicleConstraints\",\"msg\":{\"timestamp\":123456789013,\"speed_up\":-4.625,\"speed_down\":-4.375,\"want_takeoff\":false},\"id\":\"gen-vehicle_constraints\"}",
+  "model": {
+    "@kind": "vehicle_constraints",
+    "ros2px4.vehicle_constraints_timestamp": "123456789013",
+    "ros2px4.vehicle_constraints_speed_up": "-4.625",
+    "ros2px4.vehicle_constraints_speed_down": "-4.375",
+    "ros2px4.vehicle_constraints_want_takeoff": "0",
+    "ros2px4.topic": "/gen/vehicle_constraints"
+  }
+}

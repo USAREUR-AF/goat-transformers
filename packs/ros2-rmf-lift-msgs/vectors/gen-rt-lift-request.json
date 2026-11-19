@@ -1,0 +1,17 @@
+{
+  "name": "rt-lift_request",
+  "from": "ros2-rmf-lift-msgs",
+  "to": "ros2-rmf-lift-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lift_request\",\"type\":\"rmf_lift_msgs/msg/LiftRequest\",\"msg\":{\"lift_name\":\"s1\",\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"session_id\":\"s4\",\"request_type\":154,\"destination_floor\":\"s6\",\"door_state\":8},\"id\":\"gen-lift_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lift_request\",\"type\":\"rmf_lift_msgs/msg/LiftRequest\",\"msg\":{\"lift_name\":\"s1\",\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"session_id\":\"s4\",\"request_type\":154,\"destination_floor\":\"s6\",\"door_state\":8},\"id\":\"gen-lift_request\"}",
+  "model": {
+    "@kind": "lift_request",
+    "ros2rmflift.lift_request_lift_name": "s1",
+    "ros2rmflift.lift_request_request_time_sec": "81013",
+    "ros2rmflift.lift_request_request_time_nanosec": "2147605164",
+    "ros2rmflift.lift_request_session_id": "s4",
+    "ros2rmflift.lift_request_request_type": "154",
+    "ros2rmflift.topic": "/gen/lift_request"
+  }
+}

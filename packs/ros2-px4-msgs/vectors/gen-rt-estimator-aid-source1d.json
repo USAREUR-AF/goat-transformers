@@ -1,0 +1,17 @@
+{
+  "name": "rt-estimator_aid_source1d",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_aid_source1d\",\"type\":\"px4_msgs/msg/EstimatorAidSource1d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"estimator_instance\":44,\"device_id\":2147645667,\"time_last_fuse\":617283945065,\"observation\":-3.625,\"observation_variance\":-3.375,\"innovation\":-3.125,\"innovation_filtered\":-2.875,\"innovation_variance\":-2.625,\"test_ratio\":-2.375,\"test_ratio_filtered\":-2.125,\"innovation_rejected\":true,\"fused\":false},\"id\":\"gen-estimator_aid_source1d\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_aid_source1d\",\"type\":\"px4_msgs/msg/EstimatorAidSource1d\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"estimator_instance\":44,\"device_id\":2147645667,\"time_last_fuse\":617283945065,\"observation\":-3.625,\"observation_variance\":-3.375,\"innovation\":-3.125,\"innovation_filtered\":-2.875,\"innovation_variance\":-2.625,\"test_ratio\":-2.375,\"test_ratio_filtered\":-2.125,\"innovation_rejected\":true,\"fused\":false},\"id\":\"gen-estimator_aid_source1d\"}",
+  "model": {
+    "@kind": "estimator_aid_source1d",
+    "ros2px4.estimator_aid_source1d_timestamp": "123456789013",
+    "ros2px4.estimator_aid_source1d_timestamp_sample": "246913578026",
+    "ros2px4.estimator_aid_source1d_estimator_instance": "44",
+    "ros2px4.estimator_aid_source1d_device_id": "2147645667",
+    "ros2px4.estimator_aid_source1d_time_last_fuse": "617283945065",
+    "ros2px4.topic": "/gen/estimator_aid_source1d"
+  }
+}

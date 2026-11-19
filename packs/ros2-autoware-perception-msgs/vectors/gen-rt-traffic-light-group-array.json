@@ -1,0 +1,16 @@
+{
+  "name": "rt-traffic_light_group_array",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_group_array\",\"type\":\"autoware_perception_msgs/msg/TrafficLightGroupArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"traffic_light_groups\":[{\"traffic_light_group_id\":-370370367039,\"elements\":[{\"color\":99,\"shape\":154,\"status\":209,\"confidence\":-3.375}],\"predictions\":[{\"predicted_stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"simultaneous_elements\":[{\"color\":173,\"shape\":228,\"status\":27,\"confidence\":-1.875}],\"reliability\":-1.625,\"information_source\":\"s15\"}]},{\"traffic_light_group_id\":1975308624208,\"elements\":[{\"color\":46,\"shape\":101,\"status\":156,\"confidence\":-0.125}],\"predictions\":[{\"predicted_stamp\":{\"sec\":850570,\"nanosec\":2148374721},\"simultaneous_elements\":[{\"color\":120,\"shape\":175,\"status\":230,\"confidence\":1.375}],\"reliability\":1.625,\"information_source\":\"s28\"}]}]},\"id\":\"gen-traffic_light_group_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/traffic_light_group_array\",\"type\":\"autoware_perception_msgs/msg/TrafficLightGroupArray\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"traffic_light_groups\":[{\"traffic_light_group_id\":-370370367039,\"elements\":[{\"color\":99,\"shape\":154,\"status\":209,\"confidence\":-3.375}],\"predictions\":[{\"predicted_stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"simultaneous_elements\":[{\"color\":173,\"shape\":228,\"status\":27,\"confidence\":-1.875}],\"reliability\":-1.625,\"information_source\":\"s15\"}]},{\"traffic_light_group_id\":1975308624208,\"elements\":[{\"color\":46,\"shape\":101,\"status\":156,\"confidence\":-0.125}],\"predictions\":[{\"predicted_stamp\":{\"sec\":850570,\"nanosec\":2148374721},\"simultaneous_elements\":[{\"color\":120,\"shape\":175,\"status\":230,\"confidence\":1.375}],\"reliability\":1.625,\"information_source\":\"s28\"}]}]},\"id\":\"gen-traffic_light_group_array\"}",
+  "model": {
+    "@kind": "traffic_light_group_array",
+    "ros2autowareperception.traffic_light_group_array_stamp_sec": "40510",
+    "ros2autowareperception.traffic_light_group_array_stamp_nanosec": "2147564661",
+    "ros2autowareperception.traffic_light_group_array_traffic_light_groups.#": "2",
+    "ros2autowareperception.traffic_light_group_array_traffic_light_groups[0].ros2autowareperception.traffic_light_group_array_traffic_light_groups_traffic_light_group_id": "-370370367039",
+    "ros2autowareperception.topic": "/gen/traffic_light_group_array"
+  }
+}

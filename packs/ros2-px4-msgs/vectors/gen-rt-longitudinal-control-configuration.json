@@ -1,0 +1,17 @@
+{
+  "name": "rt-longitudinal_control_configuration",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/longitudinal_control_configuration\",\"type\":\"px4_msgs/msg/LongitudinalControlConfiguration\",\"msg\":{\"timestamp\":123456789013,\"pitch_min\":-4.625,\"pitch_max\":-4.375,\"throttle_min\":-4.125,\"throttle_max\":-3.875,\"climb_rate_target\":-3.625,\"sink_rate_target\":-3.375,\"speed_weight\":-3.125,\"enforce_low_height_condition\":true,\"disable_underspeed_protection\":false},\"id\":\"gen-longitudinal_control_configuration\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/longitudinal_control_configuration\",\"type\":\"px4_msgs/msg/LongitudinalControlConfiguration\",\"msg\":{\"timestamp\":123456789013,\"pitch_min\":-4.625,\"pitch_max\":-4.375,\"throttle_min\":-4.125,\"throttle_max\":-3.875,\"climb_rate_target\":-3.625,\"sink_rate_target\":-3.375,\"speed_weight\":-3.125,\"enforce_low_height_condition\":true,\"disable_underspeed_protection\":false},\"id\":\"gen-longitudinal_control_configuration\"}",
+  "model": {
+    "@kind": "longitudinal_control_configuration",
+    "ros2px4.longitudinal_control_configuration_timestamp": "123456789013",
+    "ros2px4.longitudinal_control_configuration_pitch_min": "-4.625",
+    "ros2px4.longitudinal_control_configuration_pitch_max": "-4.375",
+    "ros2px4.longitudinal_control_configuration_throttle_min": "-4.125",
+    "ros2px4.longitudinal_control_configuration_throttle_max": "-3.875",
+    "ros2px4.topic": "/gen/longitudinal_control_configuration"
+  }
+}

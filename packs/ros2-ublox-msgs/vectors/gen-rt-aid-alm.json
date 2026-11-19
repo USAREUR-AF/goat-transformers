@@ -1,0 +1,16 @@
+{
+  "name": "rt-aid_alm",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/aid_alm\",\"type\":\"ublox_msgs/msg/AidALM\",\"msg\":{\"svid\":2147524158,\"week\":2147564661,\"dwrd\":[2147605164,2147645667]},\"id\":\"gen-aid_alm\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/aid_alm\",\"type\":\"ublox_msgs/msg/AidALM\",\"msg\":{\"svid\":2147524158,\"week\":2147564661,\"dwrd\":[2147605164,2147645667]},\"id\":\"gen-aid_alm\"}",
+  "model": {
+    "@kind": "aid_alm",
+    "ros2ublox.aid_alm_svid": "2147524158",
+    "ros2ublox.aid_alm_week": "2147564661",
+    "ros2ublox.aid_alm_dwrd.#": "2",
+    "ros2ublox.aid_alm_dwrd[0].ros2ublox.aid_alm_dwrd_value": "2147605164",
+    "ros2ublox.topic": "/gen/aid_alm"
+  }
+}

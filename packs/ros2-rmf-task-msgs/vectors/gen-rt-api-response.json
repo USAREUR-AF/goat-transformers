@@ -1,0 +1,15 @@
+{
+  "name": "rt-api_response",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/api_response\",\"type\":\"rmf_task_msgs/msg/ApiResponse\",\"msg\":{\"type\":190,\"json_msg\":\"s2\",\"request_id\":\"s3\"},\"id\":\"gen-api_response\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/api_response\",\"type\":\"rmf_task_msgs/msg/ApiResponse\",\"msg\":{\"type\":190,\"json_msg\":\"s2\",\"request_id\":\"s3\"},\"id\":\"gen-api_response\"}",
+  "model": {
+    "@kind": "api_response",
+    "ros2rmftask.api_response_type": "190",
+    "ros2rmftask.api_response_json_msg": "s2",
+    "ros2rmftask.api_response_request_id": "s3",
+    "ros2rmftask.topic": "/gen/api_response"
+  }
+}

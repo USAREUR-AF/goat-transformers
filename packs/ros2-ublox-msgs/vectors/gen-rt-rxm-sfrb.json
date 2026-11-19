@@ -1,0 +1,16 @@
+{
+  "name": "rt-rxm_sfrb",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_sfrb\",\"type\":\"ublox_msgs/msg/RxmSFRB\",\"msg\":{\"chn\":190,\"svid\":245,\"dwrd\":[2147605164,2147645667,2147686170,2147726673,2147767176,2147807679,2147848182,2147888685,2147929188,2147969691]},\"id\":\"gen-rxm_sfrb\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_sfrb\",\"type\":\"ublox_msgs/msg/RxmSFRB\",\"msg\":{\"chn\":190,\"svid\":245,\"dwrd\":[2147605164,2147645667,2147686170,2147726673,2147767176,2147807679,2147848182,2147888685,2147929188,2147969691]},\"id\":\"gen-rxm_sfrb\"}",
+  "model": {
+    "@kind": "rxm_sfrb",
+    "ros2ublox.rxm_sfrb_chn": "190",
+    "ros2ublox.rxm_sfrb_svid": "245",
+    "ros2ublox.rxm_sfrb_dwrd.#": "10",
+    "ros2ublox.rxm_sfrb_dwrd[0].ros2ublox.rxm_sfrb_dwrd_value": "2147605164",
+    "ros2ublox.topic": "/gen/rxm_sfrb"
+  }
+}

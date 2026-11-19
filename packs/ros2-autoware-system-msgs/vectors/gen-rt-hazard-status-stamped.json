@@ -1,0 +1,25 @@
+{
+  "name": "rt-hazard_status_stamped",
+  "from": "ros2-autoware-system-msgs",
+  "to": "ros2-autoware-system-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status_stamped\",\"type\":\"autoware_system_msgs/msg/HazardStatusStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":{\"level\":44,\"emergency\":false,\"emergency_holding\":true,\"diag_no_fault\":[{\"level\":209,\"name\":\"s7\",\"message\":\"s8\",\"hardware_id\":\"s9\",\"values\":[{\"key\":\"s10\",\"value\":\"s11\"}]},{\"level\":27,\"name\":\"s13\",\"message\":\"s14\",\"hardware_id\":\"s15\",\"values\":[{\"key\":\"s16\",\"value\":\"s17\"}]}],\"diag_safe_fault\":[{\"level\":101,\"name\":\"s19\",\"message\":\"s20\",\"hardware_id\":\"s21\",\"values\":[{\"key\":\"s22\",\"value\":\"s23\"}]},{\"level\":175,\"name\":\"s25\",\"message\":\"s26\",\"hardware_id\":\"s27\",\"values\":[{\"key\":\"s28\",\"value\":\"s29\"}]}],\"diag_latent_fault\":[{\"level\":249,\"name\":\"s31\",\"message\":\"s32\",\"hardware_id\":\"s33\",\"values\":[{\"key\":\"s34\",\"value\":\"s35\"}]},{\"level\":67,\"name\":\"s37\",\"message\":\"s38\",\"hardware_id\":\"s39\",\"values\":[{\"key\":\"s40\",\"value\":\"s41\"}]}],\"diag_single_point_fault\":[{\"level\":141,\"name\":\"s43\",\"message\":\"s44\",\"hardware_id\":\"s45\",\"values\":[{\"key\":\"s46\",\"value\":\"s47\"}]},{\"level\":215,\"name\":\"s49\",\"message\":\"s50\",\"hardware_id\":\"s51\",\"values\":[{\"key\":\"s52\",\"value\":\"s53\"}]}]}},\"id\":\"gen-hazard_status_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_status_stamped\",\"type\":\"autoware_system_msgs/msg/HazardStatusStamped\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"status\":{\"level\":44,\"emergency\":false,\"emergency_holding\":true,\"diag_no_fault\":[{\"level\":209,\"name\":\"s7\",\"message\":\"s8\",\"hardware_id\":\"s9\",\"values\":[{\"key\":\"s10\",\"value\":\"s11\"}]},{\"level\":27,\"name\":\"s13\",\"message\":\"s14\",\"hardware_id\":\"s15\",\"values\":[{\"key\":\"s16\",\"value\":\"s17\"}]}],\"diag_safe_fault\":[{\"level\":101,\"name\":\"s19\",\"message\":\"s20\",\"hardware_id\":\"s21\",\"values\":[{\"key\":\"s22\",\"value\":\"s23\"}]},{\"level\":175,\"name\":\"s25\",\"message\":\"s26\",\"hardware_id\":\"s27\",\"values\":[{\"key\":\"s28\",\"value\":\"s29\"}]}],\"diag_latent_fault\":[{\"level\":249,\"name\":\"s31\",\"message\":\"s32\",\"hardware_id\":\"s33\",\"values\":[{\"key\":\"s34\",\"value\":\"s35\"}]},{\"level\":67,\"name\":\"s37\",\"message\":\"s38\",\"hardware_id\":\"s39\",\"values\":[{\"key\":\"s40\",\"value\":\"s41\"}]}],\"diag_single_point_fault\":[{\"level\":141,\"name\":\"s43\",\"message\":\"s44\",\"hardware_id\":\"s45\",\"values\":[{\"key\":\"s46\",\"value\":\"s47\"}]},{\"level\":215,\"name\":\"s49\",\"message\":\"s50\",\"hardware_id\":\"s51\",\"values\":[{\"key\":\"s52\",\"value\":\"s53\"}]}]}},\"id\":\"gen-hazard_status_stamped\"}",
+  "model": {
+    "@kind": "hazard_status_stamped",
+    "ros2autowaresystem.hazard_status_stamped_stamp_sec": "40510",
+    "ros2autowaresystem.hazard_status_stamped_stamp_nanosec": "2147564661",
+    "ros2autowaresystem.hazard_status_stamped_status_level": "44",
+    "ros2autowaresystem.hazard_status_stamped_status_emergency": "0",
+    "ros2autowaresystem.hazard_status_stamped_status_emergency_holding": "1",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_no_fault.#": "2",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_no_fault[0].ros2autowaresystem.hazard_status_stamped_status_diag_no_fault_level": "209",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_safe_fault.#": "2",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_safe_fault[0].ros2autowaresystem.hazard_status_stamped_status_diag_safe_fault_level": "101",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_latent_fault.#": "2",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_latent_fault[0].ros2autowaresystem.hazard_status_stamped_status_diag_latent_fault_level": "249",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_single_point_fault.#": "2",
+    "ros2autowaresystem.hazard_status_stamped_status_diag_single_point_fault[0].ros2autowaresystem.hazard_status_stamped_status_diag_single_point_fault_level": "141",
+    "ros2autowaresystem.topic": "/gen/hazard_status_stamped"
+  }
+}

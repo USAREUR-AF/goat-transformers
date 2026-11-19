@@ -1,0 +1,16 @@
+{
+  "name": "rt-parameter_set_value_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_set_value_request\",\"type\":\"px4_msgs/msg/ParameterSetValueRequest\",\"msg\":{\"timestamp\":123456789013,\"parameter_index\":48245,\"int_value\":121516,\"float_value\":-4.125},\"id\":\"gen-parameter_set_value_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/parameter_set_value_request\",\"type\":\"px4_msgs/msg/ParameterSetValueRequest\",\"msg\":{\"timestamp\":123456789013,\"parameter_index\":48245,\"int_value\":121516,\"float_value\":-4.125},\"id\":\"gen-parameter_set_value_request\"}",
+  "model": {
+    "@kind": "parameter_set_value_request",
+    "ros2px4.parameter_set_value_request_timestamp": "123456789013",
+    "ros2px4.parameter_set_value_request_parameter_index": "48245",
+    "ros2px4.parameter_set_value_request_int_value": "121516",
+    "ros2px4.parameter_set_value_request_float_value": "-4.125",
+    "ros2px4.topic": "/gen/parameter_set_value_request"
+  }
+}

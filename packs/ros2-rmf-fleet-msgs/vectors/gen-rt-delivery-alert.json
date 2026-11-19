@@ -1,0 +1,17 @@
+{
+  "name": "rt-delivery_alert",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/delivery_alert\",\"type\":\"rmf_fleet_msgs/msg/DeliveryAlert\",\"msg\":{\"id\":\"s1\",\"category\":{\"value\":2147564661},\"tier\":{\"value\":2147605164},\"task_id\":\"s4\",\"action\":{\"value\":2147686170},\"message\":\"s6\"},\"id\":\"gen-delivery_alert\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/delivery_alert\",\"type\":\"rmf_fleet_msgs/msg/DeliveryAlert\",\"msg\":{\"id\":\"s1\",\"category\":{\"value\":2147564661},\"tier\":{\"value\":2147605164},\"task_id\":\"s4\",\"action\":{\"value\":2147686170},\"message\":\"s6\"},\"id\":\"gen-delivery_alert\"}",
+  "model": {
+    "@kind": "delivery_alert",
+    "ros2rmffleet.delivery_alert_id": "s1",
+    "ros2rmffleet.delivery_alert_category_value": "2147564661",
+    "ros2rmffleet.delivery_alert_tier_value": "2147605164",
+    "ros2rmffleet.delivery_alert_task_id": "s4",
+    "ros2rmffleet.delivery_alert_action_value": "2147686170",
+    "ros2rmffleet.topic": "/gen/delivery_alert"
+  }
+}

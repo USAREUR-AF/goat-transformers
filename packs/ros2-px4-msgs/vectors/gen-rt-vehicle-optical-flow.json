@@ -1,0 +1,23 @@
+{
+  "name": "rt-vehicle_optical_flow",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_optical_flow\",\"type\":\"px4_msgs/msg/VehicleOpticalFlow\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"pixel_flow\":[-4.125,-3.875],\"delta_angle\":[-3.625,-3.375,-3.125],\"distance_m\":-2.875,\"integration_timespan_us\":2147888685,\"quality\":228,\"max_flow_rate\":-2.125,\"min_ground_distance\":-1.875,\"max_ground_distance\":-1.625,\"position_offset\":[-1.375,-1.125,-0.875]},\"id\":\"gen-vehicle_optical_flow\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_optical_flow\",\"type\":\"px4_msgs/msg/VehicleOpticalFlow\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"pixel_flow\":[-4.125,-3.875],\"delta_angle\":[-3.625,-3.375,-3.125],\"distance_m\":-2.875,\"integration_timespan_us\":2147888685,\"quality\":228,\"max_flow_rate\":-2.125,\"min_ground_distance\":-1.875,\"max_ground_distance\":-1.625,\"position_offset\":[-1.375,-1.125,-0.875]},\"id\":\"gen-vehicle_optical_flow\"}",
+  "model": {
+    "@kind": "vehicle_optical_flow",
+    "ros2px4.vehicle_optical_flow_timestamp": "123456789013",
+    "ros2px4.vehicle_optical_flow_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_optical_flow_device_id": "2147605164",
+    "ros2px4.vehicle_optical_flow_pixel_flow.#": "2",
+    "ros2px4.vehicle_optical_flow_pixel_flow[0].ros2px4.vehicle_optical_flow_pixel_flow_value": "-4.125",
+    "ros2px4.vehicle_optical_flow_delta_angle.#": "3",
+    "ros2px4.vehicle_optical_flow_delta_angle[0].ros2px4.vehicle_optical_flow_delta_angle_value": "-3.625",
+    "ros2px4.vehicle_optical_flow_distance_m": "-2.875",
+    "ros2px4.vehicle_optical_flow_integration_timespan_us": "2147888685",
+    "ros2px4.vehicle_optical_flow_position_offset.#": "3",
+    "ros2px4.vehicle_optical_flow_position_offset[0].ros2px4.vehicle_optical_flow_position_offset_value": "-1.375",
+    "ros2px4.topic": "/gen/vehicle_optical_flow"
+  }
+}

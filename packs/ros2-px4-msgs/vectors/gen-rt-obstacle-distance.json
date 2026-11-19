@@ -1,0 +1,19 @@
+{
+  "name": "rt-obstacle_distance",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_distance\",\"type\":\"px4_msgs/msg/ObstacleDistance\",\"msg\":{\"timestamp\":123456789013,\"frame\":245,\"sensor_type\":44,\"distances\":[63715,38682,13649,54152,29119,4086,44589,19556,60059,35026,9993,50496,25463,430,40933,15900,56403,31370,6337,46840,21807,62310,37277,12244,52747,27714,2681,43184,18151,58654,33621,8588,49091,24058,64561,39528,14495,54998,29965,4932,45435,20402,60905,35872,10839,51342,26309,1276,41779,16746,57249,32216,7183,47686,22653,63156,38123,13090,53593,28560,3527,44030,18997,59500,34467,9434,49937,24904,65407,40374,15341,55844],\"increment\":1.375,\"min_distance\":5778,\"max_distance\":46281,\"angle_offset\":2.125},\"id\":\"gen-obstacle_distance\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_distance\",\"type\":\"px4_msgs/msg/ObstacleDistance\",\"msg\":{\"timestamp\":123456789013,\"frame\":245,\"sensor_type\":44,\"distances\":[63715,38682,13649,54152,29119,4086,44589,19556,60059,35026,9993,50496,25463,430,40933,15900,56403,31370,6337,46840,21807,62310,37277,12244,52747,27714,2681,43184,18151,58654,33621,8588,49091,24058,64561,39528,14495,54998,29965,4932,45435,20402,60905,35872,10839,51342,26309,1276,41779,16746,57249,32216,7183,47686,22653,63156,38123,13090,53593,28560,3527,44030,18997,59500,34467,9434,49937,24904,65407,40374,15341,55844],\"increment\":1.375,\"min_distance\":5778,\"max_distance\":46281,\"angle_offset\":2.125},\"id\":\"gen-obstacle_distance\"}",
+  "model": {
+    "@kind": "obstacle_distance",
+    "ros2px4.obstacle_distance_timestamp": "123456789013",
+    "ros2px4.obstacle_distance_frame": "245",
+    "ros2px4.obstacle_distance_sensor_type": "44",
+    "ros2px4.obstacle_distance_distances.#": "72",
+    "ros2px4.obstacle_distance_distances[0].ros2px4.obstacle_distance_distances_value": "63715",
+    "ros2px4.obstacle_distance_increment": "1.375",
+    "ros2px4.obstacle_distance_min_distance": "5778",
+    "ros2px4.topic": "/gen/obstacle_distance"
+  }
+}

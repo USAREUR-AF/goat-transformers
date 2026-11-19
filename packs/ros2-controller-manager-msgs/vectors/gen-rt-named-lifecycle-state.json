@@ -1,0 +1,15 @@
+{
+  "name": "rt-named_lifecycle_state",
+  "from": "ros2-controller-manager-msgs",
+  "to": "ros2-controller-manager-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/named_lifecycle_state\",\"type\":\"controller_manager_msgs/msg/NamedLifecycleState\",\"msg\":{\"name\":\"s1\",\"state\":{\"id\":245,\"label\":\"s3\"}},\"id\":\"gen-named_lifecycle_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/named_lifecycle_state\",\"type\":\"controller_manager_msgs/msg/NamedLifecycleState\",\"msg\":{\"name\":\"s1\",\"state\":{\"id\":245,\"label\":\"s3\"}},\"id\":\"gen-named_lifecycle_state\"}",
+  "model": {
+    "@kind": "named_lifecycle_state",
+    "ros2controllermanager.named_lifecycle_state_name": "s1",
+    "ros2controllermanager.named_lifecycle_state_state_id": "245",
+    "ros2controllermanager.named_lifecycle_state_state_label": "s3",
+    "ros2controllermanager.topic": "/gen/named_lifecycle_state"
+  }
+}

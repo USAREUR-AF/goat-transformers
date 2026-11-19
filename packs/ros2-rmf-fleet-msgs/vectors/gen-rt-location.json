@@ -1,0 +1,17 @@
+{
+  "name": "rt-location",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/location\",\"type\":\"rmf_fleet_msgs/msg/Location\",\"msg\":{\"t\":{\"sec\":40510,\"nanosec\":2147564661},\"x\":-4.375,\"y\":-4.125,\"yaw\":-3.875,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":-3.375,\"level_name\":\"s8\",\"index\":1111111101117},\"id\":\"gen-location\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/location\",\"type\":\"rmf_fleet_msgs/msg/Location\",\"msg\":{\"t\":{\"sec\":40510,\"nanosec\":2147564661},\"x\":-4.375,\"y\":-4.125,\"yaw\":-3.875,\"obey_approach_speed_limit\":false,\"approach_speed_limit\":-3.375,\"level_name\":\"s8\",\"index\":1111111101117},\"id\":\"gen-location\"}",
+  "model": {
+    "@kind": "location",
+    "ros2rmffleet.location_t_sec": "40510",
+    "ros2rmffleet.location_t_nanosec": "2147564661",
+    "ros2rmffleet.location_x": "-4.375",
+    "ros2rmffleet.location_y": "-4.125",
+    "ros2rmffleet.location_yaw": "-3.875",
+    "ros2rmffleet.topic": "/gen/location"
+  }
+}

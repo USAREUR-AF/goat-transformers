@@ -1,0 +1,22 @@
+{
+  "name": "rt-place_location",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/place_location\",\"type\":\"moveit_msgs/msg/PlaceLocation\",\"msg\":{\"id\":\"s1\",\"post_place_posture\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"joint_names\":[\"s5\",\"s6\"],\"points\":[{\"positions\":[7.049],\"velocities\":[8.056],\"accelerations\":[-9.063],\"effort\":[10.07],\"time_from_start\":{\"sec\":445540,\"nanosec\":2147969691}},{\"positions\":[13.091],\"velocities\":[14.098],\"accelerations\":[-15.105],\"effort\":[16.112],\"time_from_start\":{\"sec\":688558,\"nanosec\":2148212709}}]},\"place_pose\":{\"header\":{\"stamp\":{\"sec\":769564,\"nanosec\":2148293715},\"frame_id\":\"s21\"},\"pose\":{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}}},\"quality\":29.203,\"pre_place_approach\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":1215097,\"nanosec\":2148739248},\"frame_id\":\"s32\"},\"vector\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"desired_distance\":3.875,\"min_distance\":4.125},\"post_place_retreat\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":1539121,\"nanosec\":2149063272},\"frame_id\":\"s40\"},\"vector\":{\"x\":41.287,\"y\":-42.294,\"z\":43.301}},\"desired_distance\":5.875,\"min_distance\":6.125},\"allowed_touch_objects\":[\"s46\",\"s47\"]},\"id\":\"gen-place_location\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/place_location\",\"type\":\"moveit_msgs/msg/PlaceLocation\",\"msg\":{\"id\":\"s1\",\"post_place_posture\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"joint_names\":[\"s5\",\"s6\"],\"points\":[{\"positions\":[7.049],\"velocities\":[8.056],\"accelerations\":[-9.063],\"effort\":[10.07],\"time_from_start\":{\"sec\":445540,\"nanosec\":2147969691}},{\"positions\":[13.091],\"velocities\":[14.098],\"accelerations\":[-15.105],\"effort\":[16.112],\"time_from_start\":{\"sec\":688558,\"nanosec\":2148212709}}]},\"place_pose\":{\"header\":{\"stamp\":{\"sec\":769564,\"nanosec\":2148293715},\"frame_id\":\"s21\"},\"pose\":{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}}},\"quality\":29.203,\"pre_place_approach\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":1215097,\"nanosec\":2148739248},\"frame_id\":\"s32\"},\"vector\":{\"x\":-33.231,\"y\":34.238,\"z\":35.245}},\"desired_distance\":3.875,\"min_distance\":4.125},\"post_place_retreat\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":1539121,\"nanosec\":2149063272},\"frame_id\":\"s40\"},\"vector\":{\"x\":41.287,\"y\":-42.294,\"z\":43.301}},\"desired_distance\":5.875,\"min_distance\":6.125},\"allowed_touch_objects\":[\"s46\",\"s47\"]},\"id\":\"gen-place_location\"}",
+  "model": {
+    "@kind": "place_location",
+    "ros2moveit.place_location_id": "s1",
+    "ros2moveit.place_location_post_place_posture_header_stamp_sec": "81013",
+    "ros2moveit.place_location_post_place_posture_header_stamp_nanosec": "2147605164",
+    "ros2moveit.place_location_post_place_posture_header_frame_id": "s4",
+    "ros2moveit.place_location_post_place_posture_joint_names.#": "2",
+    "ros2moveit.place_location_post_place_posture_joint_names[0].ros2moveit.place_location_post_place_posture_joint_names_value": "s5",
+    "ros2moveit.place_location_post_place_posture_points.#": "2",
+    "ros2moveit.place_location_place_pose_header_stamp_sec": "769564",
+    "ros2moveit.place_location_allowed_touch_objects.#": "2",
+    "ros2moveit.place_location_allowed_touch_objects[0].ros2moveit.place_location_allowed_touch_objects_value": "s46",
+    "ros2moveit.topic": "/gen/place_location"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-itinerary",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary\",\"type\":\"rmf_traffic_msgs/msg/Itinerary\",\"msg\":{\"routes\":[{\"map\":\"s1\",\"trajectory\":{\"waypoints\":[{\"time\":246913578026,\"position\":[-3.021,4.028,5.035],\"velocity\":[-6.042,7.049,8.056]}]},\"checkpoints\":[1111111101117],\"dependencies\":[{\"dependent_checkpoint\":1234567890130,\"on_participant\":1358024679143,\"on_plan\":1481481468156,\"on_route\":1604938257169,\"on_checkpoint\":1728395046182}]},{\"map\":\"s15\",\"trajectory\":{\"waypoints\":[{\"time\":1975308624208,\"position\":[17.119,-18.126,19.133],\"velocity\":[20.14,-21.147,22.154]}]},\"checkpoints\":[2839506147299],\"dependencies\":[{\"dependent_checkpoint\":2962962936312,\"on_participant\":3086419725325,\"on_plan\":3209876514338,\"on_route\":3333333303351,\"on_checkpoint\":3456790092364}]}]},\"id\":\"gen-itinerary\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary\",\"type\":\"rmf_traffic_msgs/msg/Itinerary\",\"msg\":{\"routes\":[{\"map\":\"s1\",\"trajectory\":{\"waypoints\":[{\"time\":246913578026,\"position\":[-3.021,4.028,5.035],\"velocity\":[-6.042,7.049,8.056]}]},\"checkpoints\":[1111111101117],\"dependencies\":[{\"dependent_checkpoint\":1234567890130,\"on_participant\":1358024679143,\"on_plan\":1481481468156,\"on_route\":1604938257169,\"on_checkpoint\":1728395046182}]},{\"map\":\"s15\",\"trajectory\":{\"waypoints\":[{\"time\":1975308624208,\"position\":[17.119,-18.126,19.133],\"velocity\":[20.14,-21.147,22.154]}]},\"checkpoints\":[2839506147299],\"dependencies\":[{\"dependent_checkpoint\":2962962936312,\"on_participant\":3086419725325,\"on_plan\":3209876514338,\"on_route\":3333333303351,\"on_checkpoint\":3456790092364}]}]},\"id\":\"gen-itinerary\"}",
+  "model": {
+    "@kind": "itinerary",
+    "ros2rmftraffic.itinerary_routes.#": "2",
+    "ros2rmftraffic.itinerary_routes[0].ros2rmftraffic.itinerary_routes_map": "s1",
+    "ros2rmftraffic.topic": "/gen/itinerary"
+  }
+}

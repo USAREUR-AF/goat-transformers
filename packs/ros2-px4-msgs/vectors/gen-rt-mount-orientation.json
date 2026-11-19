@@ -1,0 +1,15 @@
+{
+  "name": "rt-mount_orientation",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mount_orientation\",\"type\":\"px4_msgs/msg/MountOrientation\",\"msg\":{\"timestamp\":123456789013,\"attitude_euler_angle\":[-4.625,-4.375,-4.125]},\"id\":\"gen-mount_orientation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mount_orientation\",\"type\":\"px4_msgs/msg/MountOrientation\",\"msg\":{\"timestamp\":123456789013,\"attitude_euler_angle\":[-4.625,-4.375,-4.125]},\"id\":\"gen-mount_orientation\"}",
+  "model": {
+    "@kind": "mount_orientation",
+    "ros2px4.mount_orientation_timestamp": "123456789013",
+    "ros2px4.mount_orientation_attitude_euler_angle.#": "3",
+    "ros2px4.mount_orientation_attitude_euler_angle[0].ros2px4.mount_orientation_attitude_euler_angle_value": "-4.625",
+    "ros2px4.topic": "/gen/mount_orientation"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-pause_request",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pause_request\",\"type\":\"rmf_fleet_msgs/msg/PauseRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"mode_request_id\":370370367039,\"type\":2147645667,\"at_checkpoint\":2147686170},\"id\":\"gen-pause_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pause_request\",\"type\":\"rmf_fleet_msgs/msg/PauseRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"mode_request_id\":370370367039,\"type\":2147645667,\"at_checkpoint\":2147686170},\"id\":\"gen-pause_request\"}",
+  "model": {
+    "@kind": "pause_request",
+    "ros2rmffleet.pause_request_fleet_name": "s1",
+    "ros2rmffleet.pause_request_robot_name": "s2",
+    "ros2rmffleet.pause_request_mode_request_id": "370370367039",
+    "ros2rmffleet.pause_request_type": "2147645667",
+    "ros2rmffleet.pause_request_at_checkpoint": "2147686170",
+    "ros2rmffleet.topic": "/gen/pause_request"
+  }
+}

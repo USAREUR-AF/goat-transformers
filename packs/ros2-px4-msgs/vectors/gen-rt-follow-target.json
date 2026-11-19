@@ -1,0 +1,17 @@
+{
+  "name": "rt-follow_target",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/follow_target\",\"type\":\"px4_msgs/msg/FollowTarget\",\"msg\":{\"timestamp\":123456789013,\"lat\":2.014,\"lon\":-3.021,\"alt\":-4.125,\"vy\":-3.875,\"vx\":-3.625,\"vz\":-3.375,\"est_cap\":63},\"id\":\"gen-follow_target\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/follow_target\",\"type\":\"px4_msgs/msg/FollowTarget\",\"msg\":{\"timestamp\":123456789013,\"lat\":2.014,\"lon\":-3.021,\"alt\":-4.125,\"vy\":-3.875,\"vx\":-3.625,\"vz\":-3.375,\"est_cap\":63},\"id\":\"gen-follow_target\"}",
+  "model": {
+    "@kind": "follow_target",
+    "ros2px4.follow_target_timestamp": "123456789013",
+    "ros2px4.follow_target_lat": "2.014",
+    "ros2px4.follow_target_lon": "-3.021",
+    "ros2px4.follow_target_alt": "-4.125",
+    "ros2px4.follow_target_vy": "-3.875",
+    "ros2px4.topic": "/gen/follow_target"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-mon_hw6",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mon_hw6\",\"type\":\"ublox_msgs/msg/MonHW6\",\"msg\":{\"pin_sel\":2147524158,\"pin_bank\":2147564661,\"pin_dir\":2147605164,\"pin_val\":2147645667,\"noise_per_ms\":38682,\"agc_cnt\":13649,\"a_status\":8,\"a_power\":63,\"flags\":118,\"reserved0\":173,\"used_mask\":2147929188,\"vp\":\"DCT/AIA=\",\"jam_ind\":82,\"reserved1\":\"Dir/AIA=\",\"pin_irq\":2148091200,\"pull_h\":2148131703,\"pull_l\":2148172206},\"id\":\"gen-mon_hw6\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mon_hw6\",\"type\":\"ublox_msgs/msg/MonHW6\",\"msg\":{\"pin_sel\":2147524158,\"pin_bank\":2147564661,\"pin_dir\":2147605164,\"pin_val\":2147645667,\"noise_per_ms\":38682,\"agc_cnt\":13649,\"a_status\":8,\"a_power\":63,\"flags\":118,\"reserved0\":173,\"used_mask\":2147929188,\"vp\":\"DCT/AIA=\",\"jam_ind\":82,\"reserved1\":\"Dir/AIA=\",\"pin_irq\":2148091200,\"pull_h\":2148131703,\"pull_l\":2148172206},\"id\":\"gen-mon_hw6\"}",
+  "model": {
+    "@kind": "mon_hw6",
+    "ros2ublox.mon_hw6_pin_sel": "2147524158",
+    "ros2ublox.mon_hw6_pin_bank": "2147564661",
+    "ros2ublox.mon_hw6_pin_dir": "2147605164",
+    "ros2ublox.mon_hw6_pin_val": "2147645667",
+    "ros2ublox.mon_hw6_noise_per_ms": "38682",
+    "ros2ublox.topic": "/gen/mon_hw6"
+  }
+}

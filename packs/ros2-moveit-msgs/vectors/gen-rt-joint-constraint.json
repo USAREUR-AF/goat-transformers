@@ -1,0 +1,17 @@
+{
+  "name": "rt-joint_constraint",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/joint_constraint\",\"type\":\"moveit_msgs/msg/JointConstraint\",\"msg\":{\"joint_name\":\"s1\",\"position\":2.014,\"tolerance_above\":-3.021,\"tolerance_below\":4.028,\"weight\":5.035},\"id\":\"gen-joint_constraint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/joint_constraint\",\"type\":\"moveit_msgs/msg/JointConstraint\",\"msg\":{\"joint_name\":\"s1\",\"position\":2.014,\"tolerance_above\":-3.021,\"tolerance_below\":4.028,\"weight\":5.035},\"id\":\"gen-joint_constraint\"}",
+  "model": {
+    "@kind": "joint_constraint",
+    "ros2moveit.joint_constraint_joint_name": "s1",
+    "ros2moveit.joint_constraint_position": "2.014",
+    "ros2moveit.joint_constraint_tolerance_above": "-3.021",
+    "ros2moveit.joint_constraint_tolerance_below": "4.028",
+    "ros2moveit.joint_constraint_weight": "5.035",
+    "ros2moveit.topic": "/gen/joint_constraint"
+  }
+}

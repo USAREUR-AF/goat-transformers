@@ -1,0 +1,19 @@
+{
+  "name": "rt-octomap",
+  "from": "ros2-octomap-msgs",
+  "to": "ros2-octomap-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/octomap\",\"type\":\"octomap_msgs/msg/Octomap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"binary\":false,\"id\":\"s5\",\"resolution\":-6.042,\"data\":[-120,-65]},\"id\":\"gen-octomap\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/octomap\",\"type\":\"octomap_msgs/msg/Octomap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"binary\":false,\"id\":\"s5\",\"resolution\":-6.042,\"data\":[-120,-65]},\"id\":\"gen-octomap\"}",
+  "model": {
+    "@kind": "octomap",
+    "ros2octomap.octomap_header_stamp_sec": "40510",
+    "ros2octomap.octomap_header_stamp_nanosec": "2147564661",
+    "ros2octomap.octomap_header_frame_id": "s3",
+    "ros2octomap.octomap_binary": "0",
+    "ros2octomap.octomap_id": "s5",
+    "ros2octomap.octomap_data.#": "2",
+    "ros2octomap.octomap_data[0].ros2octomap.octomap_data_value": "-120",
+    "ros2octomap.topic": "/gen/octomap"
+  }
+}

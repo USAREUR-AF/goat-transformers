@@ -1,0 +1,14 @@
+{
+  "name": "rt-motion_primitive_sequence",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/motion_primitive_sequence\",\"type\":\"control_msgs/msg/MotionPrimitiveSequence\",\"msg\":{\"motions\":[{\"type\":62,\"blend_radius\":2.014,\"additional_arguments\":[{\"name\":\"s3\",\"value\":4.028}],\"poses\":[{\"header\":{\"stamp\":{\"sec\":202522,\"nanosec\":2147726673},\"frame_id\":\"s7\"},\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}}],\"joint_positions\":[-15.105]},{\"type\":119,\"blend_radius\":17.119,\"additional_arguments\":[{\"name\":\"s18\",\"value\":19.133}],\"poses\":[{\"header\":{\"stamp\":{\"sec\":810067,\"nanosec\":2148334218},\"frame_id\":\"s22\"},\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}}}],\"joint_positions\":[-30.21]}]},\"id\":\"gen-motion_primitive_sequence\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/motion_primitive_sequence\",\"type\":\"control_msgs/msg/MotionPrimitiveSequence\",\"msg\":{\"motions\":[{\"type\":62,\"blend_radius\":2.014,\"additional_arguments\":[{\"name\":\"s3\",\"value\":4.028}],\"poses\":[{\"header\":{\"stamp\":{\"sec\":202522,\"nanosec\":2147726673},\"frame_id\":\"s7\"},\"pose\":{\"position\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098}}}],\"joint_positions\":[-15.105]},{\"type\":119,\"blend_radius\":17.119,\"additional_arguments\":[{\"name\":\"s18\",\"value\":19.133}],\"poses\":[{\"header\":{\"stamp\":{\"sec\":810067,\"nanosec\":2148334218},\"frame_id\":\"s22\"},\"pose\":{\"position\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"orientation\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196,\"w\":29.203}}}],\"joint_positions\":[-30.21]}]},\"id\":\"gen-motion_primitive_sequence\"}",
+  "model": {
+    "@kind": "motion_primitive_sequence",
+    "ros2control.motion_primitive_sequence_motions.#": "2",
+    "ros2control.motion_primitive_sequence_motions[0].ros2control.motion_primitive_sequence_motions_type": "62",
+    "ros2control.topic": "/gen/motion_primitive_sequence"
+  }
+}

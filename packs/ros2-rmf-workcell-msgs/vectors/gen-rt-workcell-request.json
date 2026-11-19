@@ -1,0 +1,16 @@
+{
+  "name": "rt-workcell_request",
+  "from": "ros2-rmf-workcell-msgs",
+  "to": "ros2-rmf-workcell-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/workcell_request\",\"type\":\"rmf_workcell_msgs/msg/WorkcellRequest\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"request_guid\":\"s3\",\"target_guid\":\"s4\"},\"id\":\"gen-workcell_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/workcell_request\",\"type\":\"rmf_workcell_msgs/msg/WorkcellRequest\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"request_guid\":\"s3\",\"target_guid\":\"s4\"},\"id\":\"gen-workcell_request\"}",
+  "model": {
+    "@kind": "workcell_request",
+    "ros2rmfworkcell.workcell_request_time_sec": "40510",
+    "ros2rmfworkcell.workcell_request_time_nanosec": "2147564661",
+    "ros2rmfworkcell.workcell_request_request_guid": "s3",
+    "ros2rmfworkcell.workcell_request_target_guid": "s4",
+    "ros2rmfworkcell.topic": "/gen/workcell_request"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-lateral_control_configuration",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lateral_control_configuration\",\"type\":\"px4_msgs/msg/LateralControlConfiguration\",\"msg\":{\"timestamp\":123456789013,\"lateral_accel_max\":-4.625},\"id\":\"gen-lateral_control_configuration\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lateral_control_configuration\",\"type\":\"px4_msgs/msg/LateralControlConfiguration\",\"msg\":{\"timestamp\":123456789013,\"lateral_accel_max\":-4.625},\"id\":\"gen-lateral_control_configuration\"}",
+  "model": {
+    "@kind": "lateral_control_configuration",
+    "ros2px4.lateral_control_configuration_timestamp": "123456789013",
+    "ros2px4.lateral_control_configuration_lateral_accel_max": "-4.625",
+    "ros2px4.topic": "/gen/lateral_control_configuration"
+  }
+}

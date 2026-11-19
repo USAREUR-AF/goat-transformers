@@ -1,0 +1,17 @@
+{
+  "name": "rt-lanelet_map_meta_data",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_map_meta_data\",\"type\":\"autoware_map_msgs/msg/LaneletMapMetaData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata_list\":[{\"cell_id\":\"s4\",\"min_x\":5.035,\"max_x\":-6.042,\"min_y\":7.049,\"max_y\":8.056},{\"cell_id\":\"s9\",\"min_x\":10.07,\"max_x\":11.077,\"min_y\":-12.084,\"max_y\":13.091}]},\"id\":\"gen-lanelet_map_meta_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_map_meta_data\",\"type\":\"autoware_map_msgs/msg/LaneletMapMetaData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata_list\":[{\"cell_id\":\"s4\",\"min_x\":5.035,\"max_x\":-6.042,\"min_y\":7.049,\"max_y\":8.056},{\"cell_id\":\"s9\",\"min_x\":10.07,\"max_x\":11.077,\"min_y\":-12.084,\"max_y\":13.091}]},\"id\":\"gen-lanelet_map_meta_data\"}",
+  "model": {
+    "@kind": "lanelet_map_meta_data",
+    "ros2autowaremap.lanelet_map_meta_data_header_stamp_sec": "40510",
+    "ros2autowaremap.lanelet_map_meta_data_header_stamp_nanosec": "2147564661",
+    "ros2autowaremap.lanelet_map_meta_data_header_frame_id": "s3",
+    "ros2autowaremap.lanelet_map_meta_data_metadata_list.#": "2",
+    "ros2autowaremap.lanelet_map_meta_data_metadata_list[0].ros2autowaremap.lanelet_map_meta_data_metadata_list_cell_id": "s4",
+    "ros2autowaremap.topic": "/gen/lanelet_map_meta_data"
+  }
+}

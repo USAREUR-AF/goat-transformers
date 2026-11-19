@@ -1,0 +1,13 @@
+{
+  "name": "rt-circle",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/circle\",\"type\":\"rmf_traffic_msgs/msg/Circle\",\"msg\":{\"radius\":1.007},\"id\":\"gen-circle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/circle\",\"type\":\"rmf_traffic_msgs/msg/Circle\",\"msg\":{\"radius\":1.007},\"id\":\"gen-circle\"}",
+  "model": {
+    "@kind": "circle",
+    "ros2rmftraffic.circle_radius": "1.007",
+    "ros2rmftraffic.topic": "/gen/circle"
+  }
+}

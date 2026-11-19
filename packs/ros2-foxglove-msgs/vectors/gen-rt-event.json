@@ -1,0 +1,18 @@
+{
+  "name": "rt-event",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/event\",\"type\":\"foxglove_msgs/msg/Event\",\"msg\":{\"start_time\":{\"sec\":40510,\"nanosec\":2147564661},\"end_time\":{\"sec\":121516,\"nanosec\":2147645667},\"metadata\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-event\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/event\",\"type\":\"foxglove_msgs/msg/Event\",\"msg\":{\"start_time\":{\"sec\":40510,\"nanosec\":2147564661},\"end_time\":{\"sec\":121516,\"nanosec\":2147645667},\"metadata\":[{\"key\":\"s5\",\"value\":\"s6\"},{\"key\":\"s7\",\"value\":\"s8\"}]},\"id\":\"gen-event\"}",
+  "model": {
+    "@kind": "event",
+    "ros2foxglove.event_start_time_sec": "40510",
+    "ros2foxglove.event_start_time_nanosec": "2147564661",
+    "ros2foxglove.event_end_time_sec": "121516",
+    "ros2foxglove.event_end_time_nanosec": "2147645667",
+    "ros2foxglove.event_metadata.#": "2",
+    "ros2foxglove.event_metadata[0].ros2foxglove.event_metadata_key": "s5",
+    "ros2foxglove.topic": "/gen/event"
+  }
+}

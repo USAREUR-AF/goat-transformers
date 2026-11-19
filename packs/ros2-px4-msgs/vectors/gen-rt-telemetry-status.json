@@ -1,0 +1,17 @@
+{
+  "name": "rt-telemetry_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/telemetry_status\",\"type\":\"px4_msgs/msg/TelemetryStatus\",\"msg\":{\"timestamp\":123456789013,\"type\":245,\"mode\":44,\"flow_control\":false,\"forwarding\":true,\"mavlink_v2\":false,\"ftp\":true,\"streams\":63,\"data_rate\":-2.875,\"rate_multiplier\":-2.625,\"tx_rate_avg\":-2.375,\"tx_error_rate_avg\":-2.125,\"tx_message_count\":2148010194,\"tx_buffer_overruns\":2148050697,\"rx_rate_avg\":-1.375,\"rx_message_count\":2148131703,\"rx_message_lost_count\":2148172206,\"rx_buffer_overruns\":2148212709,\"rx_parse_errors\":2148253212,\"rx_packet_drop_count\":2148293715,\"rx_unknown_message_count\":2148334218,\"rx_bad_signature_count\":2148374721,\"rx_message_lost_rate\":0.625,\"heartbeat_type_antenna_tracker\":false,\"heartbeat_type_gcs\":true,\"heartbeat_type_onboard_controller\":false,\"heartbeat_type_gimbal\":true,\"heartbeat_type_adsb\":false,\"heartbeat_type_flarm\":true,\"heartbeat_type_camera\":false,\"heartbeat_type_parachute\":true,\"heartbeat_type_open_drone_id\":false,\"heartbeat_component_telemetry_radio\":true,\"heartbeat_component_log\":false,\"heartbeat_component_osd\":true,\"heartbeat_component_vio\":false,\"heartbeat_component_pairing_manager\":true,\"heartbeat_component_udp_bridge\":false,\"heartbeat_component_uart_bridge\":true,\"open_drone_id_system_healthy\":false,\"parachute_system_healthy\":true},\"id\":\"gen-telemetry_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/telemetry_status\",\"type\":\"px4_msgs/msg/TelemetryStatus\",\"msg\":{\"timestamp\":123456789013,\"type\":245,\"mode\":44,\"flow_control\":false,\"forwarding\":true,\"mavlink_v2\":false,\"ftp\":true,\"streams\":63,\"data_rate\":-2.875,\"rate_multiplier\":-2.625,\"tx_rate_avg\":-2.375,\"tx_error_rate_avg\":-2.125,\"tx_message_count\":2148010194,\"tx_buffer_overruns\":2148050697,\"rx_rate_avg\":-1.375,\"rx_message_count\":2148131703,\"rx_message_lost_count\":2148172206,\"rx_buffer_overruns\":2148212709,\"rx_parse_errors\":2148253212,\"rx_packet_drop_count\":2148293715,\"rx_unknown_message_count\":2148334218,\"rx_bad_signature_count\":2148374721,\"rx_message_lost_rate\":0.625,\"heartbeat_type_antenna_tracker\":false,\"heartbeat_type_gcs\":true,\"heartbeat_type_onboard_controller\":false,\"heartbeat_type_gimbal\":true,\"heartbeat_type_adsb\":false,\"heartbeat_type_flarm\":true,\"heartbeat_type_camera\":false,\"heartbeat_type_parachute\":true,\"heartbeat_type_open_drone_id\":false,\"heartbeat_component_telemetry_radio\":true,\"heartbeat_component_log\":false,\"heartbeat_component_osd\":true,\"heartbeat_component_vio\":false,\"heartbeat_component_pairing_manager\":true,\"heartbeat_component_udp_bridge\":false,\"heartbeat_component_uart_bridge\":true,\"open_drone_id_system_healthy\":false,\"parachute_system_healthy\":true},\"id\":\"gen-telemetry_status\"}",
+  "model": {
+    "@kind": "telemetry_status",
+    "ros2px4.telemetry_status_timestamp": "123456789013",
+    "ros2px4.telemetry_status_type": "245",
+    "ros2px4.telemetry_status_mode": "44",
+    "ros2px4.telemetry_status_flow_control": "0",
+    "ros2px4.telemetry_status_forwarding": "1",
+    "ros2px4.topic": "/gen/telemetry_status"
+  }
+}

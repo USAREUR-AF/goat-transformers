@@ -1,0 +1,27 @@
+{
+  "name": "rt-px4io_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/px4io_status\",\"type\":\"px4_msgs/msg/Px4ioStatus\",\"msg\":{\"timestamp\":123456789013,\"free_memory_bytes\":48245,\"voltage_v\":-4.375,\"rssi_v\":-4.125,\"status_arm_sync\":true,\"status_failsafe\":false,\"status_fmu_initialized\":true,\"status_fmu_ok\":false,\"status_init_ok\":true,\"status_outputs_armed\":false,\"status_raw_pwm\":true,\"status_rc_ok\":false,\"status_rc_dsm\":true,\"status_rc_ppm\":false,\"status_rc_sbus\":true,\"status_rc_st24\":false,\"status_rc_sumd\":true,\"status_safety_button_event\":false,\"alarm_pwm_error\":true,\"alarm_rc_lost\":false,\"arming_failsafe_custom\":true,\"arming_fmu_armed\":false,\"arming_fmu_prearmed\":true,\"arming_termination\":false,\"arming_io_arm_ok\":true,\"arming_lockdown\":false,\"arming_termination_failsafe\":true,\"pwm\":[52747,27714,2681,43184,18151,58654,33621,8588],\"pwm_disarmed\":[49091,24058,64561,39528,14495,54998,29965,4932],\"pwm_failsafe\":[45435,20402,60905,35872,10839,51342,26309,1276],\"pwm_rate_hz\":[41779,16746,57249,32216,7183,47686,22653,63156],\"raw_inputs\":[38123,13090,53593,28560,3527,44030,18997,59500,34467,9434,49937,24904,65407,40374,15341,55844,30811,5778]},\"id\":\"gen-px4io_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/px4io_status\",\"type\":\"px4_msgs/msg/Px4ioStatus\",\"msg\":{\"timestamp\":123456789013,\"free_memory_bytes\":48245,\"voltage_v\":-4.375,\"rssi_v\":-4.125,\"status_arm_sync\":true,\"status_failsafe\":false,\"status_fmu_initialized\":true,\"status_fmu_ok\":false,\"status_init_ok\":true,\"status_outputs_armed\":false,\"status_raw_pwm\":true,\"status_rc_ok\":false,\"status_rc_dsm\":true,\"status_rc_ppm\":false,\"status_rc_sbus\":true,\"status_rc_st24\":false,\"status_rc_sumd\":true,\"status_safety_button_event\":false,\"alarm_pwm_error\":true,\"alarm_rc_lost\":false,\"arming_failsafe_custom\":true,\"arming_fmu_armed\":false,\"arming_fmu_prearmed\":true,\"arming_termination\":false,\"arming_io_arm_ok\":true,\"arming_lockdown\":false,\"arming_termination_failsafe\":true,\"pwm\":[52747,27714,2681,43184,18151,58654,33621,8588],\"pwm_disarmed\":[49091,24058,64561,39528,14495,54998,29965,4932],\"pwm_failsafe\":[45435,20402,60905,35872,10839,51342,26309,1276],\"pwm_rate_hz\":[41779,16746,57249,32216,7183,47686,22653,63156],\"raw_inputs\":[38123,13090,53593,28560,3527,44030,18997,59500,34467,9434,49937,24904,65407,40374,15341,55844,30811,5778]},\"id\":\"gen-px4io_status\"}",
+  "model": {
+    "@kind": "px4io_status",
+    "ros2px4.px4io_status_timestamp": "123456789013",
+    "ros2px4.px4io_status_free_memory_bytes": "48245",
+    "ros2px4.px4io_status_voltage_v": "-4.375",
+    "ros2px4.px4io_status_rssi_v": "-4.125",
+    "ros2px4.px4io_status_status_arm_sync": "1",
+    "ros2px4.px4io_status_pwm.#": "8",
+    "ros2px4.px4io_status_pwm[0].ros2px4.px4io_status_pwm_value": "52747",
+    "ros2px4.px4io_status_pwm_disarmed.#": "8",
+    "ros2px4.px4io_status_pwm_disarmed[0].ros2px4.px4io_status_pwm_disarmed_value": "49091",
+    "ros2px4.px4io_status_pwm_failsafe.#": "8",
+    "ros2px4.px4io_status_pwm_failsafe[0].ros2px4.px4io_status_pwm_failsafe_value": "45435",
+    "ros2px4.px4io_status_pwm_rate_hz.#": "8",
+    "ros2px4.px4io_status_pwm_rate_hz[0].ros2px4.px4io_status_pwm_rate_hz_value": "41779",
+    "ros2px4.px4io_status_raw_inputs.#": "18",
+    "ros2px4.px4io_status_raw_inputs[0].ros2px4.px4io_status_raw_inputs_value": "38123",
+    "ros2px4.topic": "/gen/px4io_status"
+  }
+}

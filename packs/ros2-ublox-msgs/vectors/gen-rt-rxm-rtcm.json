@@ -1,0 +1,17 @@
+{
+  "name": "rt-rxm_rtcm",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rtcm\",\"type\":\"ublox_msgs/msg/RxmRTCM\",\"msg\":{\"version\":190,\"flags\":245,\"reserved0\":\"Awn/AIA=\",\"ref_station\":63715,\"msg_type\":38682},\"id\":\"gen-rxm_rtcm\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rxm_rtcm\",\"type\":\"ublox_msgs/msg/RxmRTCM\",\"msg\":{\"version\":190,\"flags\":245,\"reserved0\":\"Awn/AIA=\",\"ref_station\":63715,\"msg_type\":38682},\"id\":\"gen-rxm_rtcm\"}",
+  "model": {
+    "@kind": "rxm_rtcm",
+    "ros2ublox.rxm_rtcm_version": "190",
+    "ros2ublox.rxm_rtcm_flags": "245",
+    "ros2ublox.rxm_rtcm_reserved0": "Awn/AIA=",
+    "ros2ublox.rxm_rtcm_ref_station": "63715",
+    "ros2ublox.rxm_rtcm_msg_type": "38682",
+    "ros2ublox.topic": "/gen/rxm_rtcm"
+  }
+}

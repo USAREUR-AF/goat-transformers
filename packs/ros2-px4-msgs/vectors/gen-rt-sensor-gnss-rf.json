@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_gnss_rf",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_rf\",\"type\":\"px4_msgs/msg/SensorGnssRf\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"block_id\":99,\"antenna_status\":154,\"antenna_power\":209,\"post_status\":2147767176,\"noise_per_ms\":29119,\"automatic_gain_control\":4086,\"jamming_indicator\":173,\"jamming_state\":228,\"i_offset\":-101,\"i_magnitude\":82,\"q_offset\":9,\"q_magnitude\":192,\"center_frequency\":2148131703},\"id\":\"gen-sensor_gnss_rf\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gnss_rf\",\"type\":\"px4_msgs/msg/SensorGnssRf\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"block_id\":99,\"antenna_status\":154,\"antenna_power\":209,\"post_status\":2147767176,\"noise_per_ms\":29119,\"automatic_gain_control\":4086,\"jamming_indicator\":173,\"jamming_state\":228,\"i_offset\":-101,\"i_magnitude\":82,\"q_offset\":9,\"q_magnitude\":192,\"center_frequency\":2148131703},\"id\":\"gen-sensor_gnss_rf\"}",
+  "model": {
+    "@kind": "sensor_gnss_rf",
+    "ros2px4.sensor_gnss_rf_timestamp": "123456789013",
+    "ros2px4.sensor_gnss_rf_timestamp_sample": "246913578026",
+    "ros2px4.sensor_gnss_rf_device_id": "2147605164",
+    "ros2px4.sensor_gnss_rf_block_id": "99",
+    "ros2px4.sensor_gnss_rf_antenna_status": "154",
+    "ros2px4.topic": "/gen/sensor_gnss_rf"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "rt-points_annotation",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/points_annotation\",\"type\":\"foxglove_msgs/msg/PointsAnnotation\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"points\":[{\"x\":4.028,\"y\":5.035},{\"x\":-6.042,\"y\":7.049}],\"outline_color\":{\"r\":8.056,\"g\":-9.063,\"b\":10.07,\"a\":11.077},\"outline_colors\":[{\"r\":-12.084,\"g\":13.091,\"b\":14.098,\"a\":-15.105},{\"r\":16.112,\"g\":17.119,\"b\":-18.126,\"a\":19.133}],\"fill_color\":{\"r\":20.14,\"g\":-21.147,\"b\":22.154,\"a\":23.161},\"thickness\":-24.168,\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"},{\"key\":\"s27\",\"value\":\"s28\"}]},\"id\":\"gen-points_annotation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/points_annotation\",\"type\":\"foxglove_msgs/msg/PointsAnnotation\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"type\":44,\"points\":[{\"x\":4.028,\"y\":5.035},{\"x\":-6.042,\"y\":7.049}],\"outline_color\":{\"r\":8.056,\"g\":-9.063,\"b\":10.07,\"a\":11.077},\"outline_colors\":[{\"r\":-12.084,\"g\":13.091,\"b\":14.098,\"a\":-15.105},{\"r\":16.112,\"g\":17.119,\"b\":-18.126,\"a\":19.133}],\"fill_color\":{\"r\":20.14,\"g\":-21.147,\"b\":22.154,\"a\":23.161},\"thickness\":-24.168,\"metadata\":[{\"key\":\"s25\",\"value\":\"s26\"},{\"key\":\"s27\",\"value\":\"s28\"}]},\"id\":\"gen-points_annotation\"}",
+  "model": {
+    "@kind": "points_annotation",
+    "ros2foxglove.points_annotation_timestamp_sec": "40510",
+    "ros2foxglove.points_annotation_timestamp_nanosec": "2147564661",
+    "ros2foxglove.points_annotation_type": "44",
+    "ros2foxglove.points_annotation_points.#": "2",
+    "ros2foxglove.points_annotation_points[0].ros2foxglove.points_annotation_points_x": "4.028",
+    "ros2foxglove.points_annotation_outline_color_r": "8.056",
+    "ros2foxglove.points_annotation_outline_color_g": "-9.063",
+    "ros2foxglove.points_annotation_outline_colors.#": "2",
+    "ros2foxglove.points_annotation_outline_colors[0].ros2foxglove.points_annotation_outline_colors_r": "-12.084",
+    "ros2foxglove.points_annotation_metadata.#": "2",
+    "ros2foxglove.points_annotation_metadata[0].ros2foxglove.points_annotation_metadata_key": "s25",
+    "ros2foxglove.topic": "/gen/points_annotation"
+  }
+}

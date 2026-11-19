@@ -1,0 +1,17 @@
+{
+  "name": "rt-negotiation_rejection",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_rejection\",\"type\":\"rmf_traffic_msgs/msg/NegotiationRejection\",\"msg\":{\"conflict_version\":123456789013,\"table\":[{\"participant\":246913578026,\"version\":370370367039},{\"participant\":493827156052,\"version\":617283945065}],\"rejected_by\":740740734078,\"alternatives\":[{\"routes\":[{\"map\":\"s7\",\"trajectory\":{\"waypoints\":[{\"time\":987654312104,\"position\":[-9.063,10.07,11.077],\"velocity\":[-12.084,13.091,14.098]}]},\"checkpoints\":[1851851835195],\"dependencies\":[{\"dependent_checkpoint\":1975308624208,\"on_participant\":2098765413221,\"on_plan\":2222222202234,\"on_route\":2345678991247,\"on_checkpoint\":2469135780260}]}]},{\"routes\":[{\"map\":\"s21\",\"trajectory\":{\"waypoints\":[{\"time\":2716049358286,\"position\":[23.161,-24.168,25.175],\"velocity\":[26.182,-27.189,28.196]}]},\"checkpoints\":[3580246881377],\"dependencies\":[{\"dependent_checkpoint\":3703703670390,\"on_participant\":3827160459403,\"on_plan\":3950617248416,\"on_route\":4074074037429,\"on_checkpoint\":4197530826442}]}]}]},\"id\":\"gen-negotiation_rejection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/negotiation_rejection\",\"type\":\"rmf_traffic_msgs/msg/NegotiationRejection\",\"msg\":{\"conflict_version\":123456789013,\"table\":[{\"participant\":246913578026,\"version\":370370367039},{\"participant\":493827156052,\"version\":617283945065}],\"rejected_by\":740740734078,\"alternatives\":[{\"routes\":[{\"map\":\"s7\",\"trajectory\":{\"waypoints\":[{\"time\":987654312104,\"position\":[-9.063,10.07,11.077],\"velocity\":[-12.084,13.091,14.098]}]},\"checkpoints\":[1851851835195],\"dependencies\":[{\"dependent_checkpoint\":1975308624208,\"on_participant\":2098765413221,\"on_plan\":2222222202234,\"on_route\":2345678991247,\"on_checkpoint\":2469135780260}]}]},{\"routes\":[{\"map\":\"s21\",\"trajectory\":{\"waypoints\":[{\"time\":2716049358286,\"position\":[23.161,-24.168,25.175],\"velocity\":[26.182,-27.189,28.196]}]},\"checkpoints\":[3580246881377],\"dependencies\":[{\"dependent_checkpoint\":3703703670390,\"on_participant\":3827160459403,\"on_plan\":3950617248416,\"on_route\":4074074037429,\"on_checkpoint\":4197530826442}]}]}]},\"id\":\"gen-negotiation_rejection\"}",
+  "model": {
+    "@kind": "negotiation_rejection",
+    "ros2rmftraffic.negotiation_rejection_conflict_version": "123456789013",
+    "ros2rmftraffic.negotiation_rejection_table.#": "2",
+    "ros2rmftraffic.negotiation_rejection_table[0].ros2rmftraffic.negotiation_rejection_table_participant": "246913578026",
+    "ros2rmftraffic.negotiation_rejection_rejected_by": "740740734078",
+    "ros2rmftraffic.negotiation_rejection_alternatives.#": "2",
+    "ros2rmftraffic.topic": "/gen/negotiation_rejection"
+  }
+}

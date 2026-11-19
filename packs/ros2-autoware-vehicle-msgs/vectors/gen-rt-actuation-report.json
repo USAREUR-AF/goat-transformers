@@ -1,0 +1,15 @@
+{
+  "name": "rt-actuation_report",
+  "from": "ros2-autoware-vehicle-msgs",
+  "to": "ros2-autoware-vehicle-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_report\",\"type\":\"autoware_vehicle_msgs/msg/ActuationReport\",\"msg\":{\"accel_report\":1.007,\"brake_report\":2.014,\"steer_report\":-3.021},\"id\":\"gen-actuation_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuation_report\",\"type\":\"autoware_vehicle_msgs/msg/ActuationReport\",\"msg\":{\"accel_report\":1.007,\"brake_report\":2.014,\"steer_report\":-3.021},\"id\":\"gen-actuation_report\"}",
+  "model": {
+    "@kind": "actuation_report",
+    "ros2autowarevehicle.actuation_report_accel_report": "1.007",
+    "ros2autowarevehicle.actuation_report_brake_report": "2.014",
+    "ros2autowarevehicle.actuation_report_steer_report": "-3.021",
+    "ros2autowarevehicle.topic": "/gen/actuation_report"
+  }
+}

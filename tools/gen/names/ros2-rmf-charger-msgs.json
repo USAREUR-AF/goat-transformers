@@ -1,0 +1,21 @@
+{
+ "ChargerCancel:charger_name": "charger_cancel_charger_name",
+ "ChargerCancel:request_id": "charger_cancel_request_id",
+ "ChargerRequest:charger_name": "charger_request_charger_name",
+ "ChargerRequest:fleet_name": "charger_request_fleet_name",
+ "ChargerRequest:request_id": "charger_request_request_id",
+ "ChargerRequest:robot_name": "charger_request_robot_name",
+ "ChargerRequest:start_timeout.nanosec": "charger_request_start_timeout_nanosec",
+ "ChargerRequest:start_timeout.sec": "charger_request_start_timeout_sec",
+ "ChargerState:charger_name": "charger_state_charger_name",
+ "ChargerState:charger_time.nanosec": "charger_state_charger_time_nanosec",
+ "ChargerState:charger_time.sec": "charger_state_charger_time_sec",
+ "ChargerState:error_message": "charger_state_error_message",
+ "ChargerState:request_id": "charger_state_request_id",
+ "ChargerState:robot_fleet": "charger_state_robot_fleet",
+ "ChargerState:robot_name": "charger_state_robot_name",
+ "ChargerState:state": "charger_state_state",
+ "ChargerState:time_to_fully_charged.nanosec": "charger_state_time_to_fully_charged_nanosec",
+ "ChargerState:time_to_fully_charged.sec": "charger_state_time_to_fully_charged_sec",
+ "topic": "topic"
+}

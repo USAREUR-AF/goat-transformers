@@ -1,0 +1,17 @@
+{
+  "name": "rt-actuator_armed",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_armed\",\"type\":\"px4_msgs/msg/ActuatorArmed\",\"msg\":{\"timestamp\":123456789013,\"armed\":false,\"prearmed\":true,\"ready_to_arm\":false,\"lockdown\":true,\"kill\":false,\"termination\":true,\"in_esc_calibration_mode\":false},\"id\":\"gen-actuator_armed\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/actuator_armed\",\"type\":\"px4_msgs/msg/ActuatorArmed\",\"msg\":{\"timestamp\":123456789013,\"armed\":false,\"prearmed\":true,\"ready_to_arm\":false,\"lockdown\":true,\"kill\":false,\"termination\":true,\"in_esc_calibration_mode\":false},\"id\":\"gen-actuator_armed\"}",
+  "model": {
+    "@kind": "actuator_armed",
+    "ros2px4.actuator_armed_timestamp": "123456789013",
+    "ros2px4.actuator_armed_armed": "0",
+    "ros2px4.actuator_armed_prearmed": "1",
+    "ros2px4.actuator_armed_ready_to_arm": "0",
+    "ros2px4.actuator_armed_lockdown": "1",
+    "ros2px4.topic": "/gen/actuator_armed"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-shape",
+  "from": "ros2-autoware-perception-msgs",
+  "to": "ros2-autoware-perception-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/shape\",\"type\":\"autoware_perception_msgs/msg/Shape\",\"msg\":{\"type\":190,\"footprint\":{\"points\":[{\"x\":-4.625,\"y\":-4.375,\"z\":-4.125},{\"x\":-3.875,\"y\":-3.625,\"z\":-3.375}]},\"dimensions\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07}},\"id\":\"gen-shape\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/shape\",\"type\":\"autoware_perception_msgs/msg/Shape\",\"msg\":{\"type\":190,\"footprint\":{\"points\":[{\"x\":-4.625,\"y\":-4.375,\"z\":-4.125},{\"x\":-3.875,\"y\":-3.625,\"z\":-3.375}]},\"dimensions\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07}},\"id\":\"gen-shape\"}",
+  "model": {
+    "@kind": "shape",
+    "ros2autowareperception.shape_type": "190",
+    "ros2autowareperception.shape_footprint_points.#": "2",
+    "ros2autowareperception.shape_footprint_points[0].ros2autowareperception.shape_footprint_points_x": "-4.625",
+    "ros2autowareperception.shape_dimensions_x": "8.056",
+    "ros2autowareperception.shape_dimensions_y": "-9.063",
+    "ros2autowareperception.shape_dimensions_z": "10.07",
+    "ros2autowareperception.topic": "/gen/shape"
+  }
+}

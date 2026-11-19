@@ -1,0 +1,17 @@
+{
+  "name": "rt-led_control",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/led_control\",\"type\":\"px4_msgs/msg/LedControl\",\"msg\":{\"timestamp\":123456789013,\"led_mask\":245,\"color\":44,\"mode\":99,\"num_blinks\":154,\"priority\":209},\"id\":\"gen-led_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/led_control\",\"type\":\"px4_msgs/msg/LedControl\",\"msg\":{\"timestamp\":123456789013,\"led_mask\":245,\"color\":44,\"mode\":99,\"num_blinks\":154,\"priority\":209},\"id\":\"gen-led_control\"}",
+  "model": {
+    "@kind": "led_control",
+    "ros2px4.led_control_timestamp": "123456789013",
+    "ros2px4.led_control_led_mask": "245",
+    "ros2px4.led_control_color": "44",
+    "ros2px4.led_control_mode": "99",
+    "ros2px4.led_control_num_blinks": "154",
+    "ros2px4.topic": "/gen/led_control"
+  }
+}

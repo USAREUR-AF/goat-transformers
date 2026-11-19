@@ -1,0 +1,21 @@
+{
+  "name": "rt-vehicle_imu",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_imu\",\"type\":\"px4_msgs/msg/VehicleImu\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"accel_device_id\":2147605164,\"gyro_device_id\":2147645667,\"delta_angle\":[-3.875,-3.625,-3.375],\"delta_velocity\":[-3.125,-2.875,-2.625],\"delta_angle_dt\":2147929188,\"delta_velocity_dt\":2147969691,\"delta_angle_clipping\":82,\"delta_velocity_clipping\":137,\"accel_calibration_count\":192,\"gyro_calibration_count\":247},\"id\":\"gen-vehicle_imu\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_imu\",\"type\":\"px4_msgs/msg/VehicleImu\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"accel_device_id\":2147605164,\"gyro_device_id\":2147645667,\"delta_angle\":[-3.875,-3.625,-3.375],\"delta_velocity\":[-3.125,-2.875,-2.625],\"delta_angle_dt\":2147929188,\"delta_velocity_dt\":2147969691,\"delta_angle_clipping\":82,\"delta_velocity_clipping\":137,\"accel_calibration_count\":192,\"gyro_calibration_count\":247},\"id\":\"gen-vehicle_imu\"}",
+  "model": {
+    "@kind": "vehicle_imu",
+    "ros2px4.vehicle_imu_timestamp": "123456789013",
+    "ros2px4.vehicle_imu_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_imu_accel_device_id": "2147605164",
+    "ros2px4.vehicle_imu_gyro_device_id": "2147645667",
+    "ros2px4.vehicle_imu_delta_angle.#": "3",
+    "ros2px4.vehicle_imu_delta_angle[0].ros2px4.vehicle_imu_delta_angle_value": "-3.875",
+    "ros2px4.vehicle_imu_delta_velocity.#": "3",
+    "ros2px4.vehicle_imu_delta_velocity[0].ros2px4.vehicle_imu_delta_velocity_value": "-3.125",
+    "ros2px4.vehicle_imu_delta_angle_dt": "2147929188",
+    "ros2px4.topic": "/gen/vehicle_imu"
+  }
+}

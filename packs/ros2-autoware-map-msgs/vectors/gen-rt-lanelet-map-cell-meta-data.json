@@ -1,0 +1,17 @@
+{
+  "name": "rt-lanelet_map_cell_meta_data",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_map_cell_meta_data\",\"type\":\"autoware_map_msgs/msg/LaneletMapCellMetaData\",\"msg\":{\"cell_id\":\"s1\",\"min_x\":2.014,\"max_x\":-3.021,\"min_y\":4.028,\"max_y\":5.035},\"id\":\"gen-lanelet_map_cell_meta_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lanelet_map_cell_meta_data\",\"type\":\"autoware_map_msgs/msg/LaneletMapCellMetaData\",\"msg\":{\"cell_id\":\"s1\",\"min_x\":2.014,\"max_x\":-3.021,\"min_y\":4.028,\"max_y\":5.035},\"id\":\"gen-lanelet_map_cell_meta_data\"}",
+  "model": {
+    "@kind": "lanelet_map_cell_meta_data",
+    "ros2autowaremap.lanelet_map_cell_meta_data_cell_id": "s1",
+    "ros2autowaremap.lanelet_map_cell_meta_data_min_x": "2.014",
+    "ros2autowaremap.lanelet_map_cell_meta_data_max_x": "-3.021",
+    "ros2autowaremap.lanelet_map_cell_meta_data_min_y": "4.028",
+    "ros2autowaremap.lanelet_map_cell_meta_data_max_y": "5.035",
+    "ros2autowaremap.topic": "/gen/lanelet_map_cell_meta_data"
+  }
+}

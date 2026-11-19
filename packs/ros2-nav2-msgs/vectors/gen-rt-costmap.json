@@ -1,0 +1,17 @@
+{
+  "name": "rt-costmap",
+  "from": "ros2-nav2-msgs",
+  "to": "ros2-nav2-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/costmap\",\"type\":\"nav2_msgs/msg/Costmap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata\":{\"map_load_time\":{\"sec\":162019,\"nanosec\":2147686170},\"update_time\":{\"sec\":243025,\"nanosec\":2147767176},\"layer\":\"s8\",\"resolution\":-2.875,\"size_x\":2147888685,\"size_y\":2147929188,\"origin\":{\"position\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"orientation\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119,\"w\":-18.126}}},\"data\":\"Ezn/AIA=\"},\"id\":\"gen-costmap\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/costmap\",\"type\":\"nav2_msgs/msg/Costmap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"metadata\":{\"map_load_time\":{\"sec\":162019,\"nanosec\":2147686170},\"update_time\":{\"sec\":243025,\"nanosec\":2147767176},\"layer\":\"s8\",\"resolution\":-2.875,\"size_x\":2147888685,\"size_y\":2147929188,\"origin\":{\"position\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"orientation\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119,\"w\":-18.126}}},\"data\":\"Ezn/AIA=\"},\"id\":\"gen-costmap\"}",
+  "model": {
+    "@kind": "costmap",
+    "ros2nav2.costmap_header_stamp_sec": "40510",
+    "ros2nav2.costmap_header_stamp_nanosec": "2147564661",
+    "ros2nav2.costmap_header_frame_id": "s3",
+    "ros2nav2.costmap_metadata_map_load_time_sec": "162019",
+    "ros2nav2.costmap_metadata_map_load_time_nanosec": "2147686170",
+    "ros2nav2.topic": "/gen/costmap"
+  }
+}

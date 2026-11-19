@@ -1,0 +1,19 @@
+{
+  "name": "rt-esc_eeprom_write",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esc_eeprom_write\",\"type\":\"px4_msgs/msg/EscEepromWrite\",\"msg\":{\"timestamp\":123456789013,\"firmware\":245,\"index\":44,\"length\":63715,\"data\":\"BQ//AIA=\",\"write_mask\":[2147726673,2147767176]},\"id\":\"gen-esc_eeprom_write\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esc_eeprom_write\",\"type\":\"px4_msgs/msg/EscEepromWrite\",\"msg\":{\"timestamp\":123456789013,\"firmware\":245,\"index\":44,\"length\":63715,\"data\":\"BQ//AIA=\",\"write_mask\":[2147726673,2147767176]},\"id\":\"gen-esc_eeprom_write\"}",
+  "model": {
+    "@kind": "esc_eeprom_write",
+    "ros2px4.esc_eeprom_write_timestamp": "123456789013",
+    "ros2px4.esc_eeprom_write_firmware": "245",
+    "ros2px4.esc_eeprom_write_index": "44",
+    "ros2px4.esc_eeprom_write_length": "63715",
+    "ros2px4.esc_eeprom_write_data": "BQ//AIA=",
+    "ros2px4.esc_eeprom_write_write_mask.#": "2",
+    "ros2px4.esc_eeprom_write_write_mask[0].ros2px4.esc_eeprom_write_write_mask_value": "2147726673",
+    "ros2px4.topic": "/gen/esc_eeprom_write"
+  }
+}

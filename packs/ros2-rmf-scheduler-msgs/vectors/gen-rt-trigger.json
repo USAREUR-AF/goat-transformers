@@ -1,0 +1,17 @@
+{
+  "name": "rt-trigger",
+  "from": "ros2-rmf-scheduler-msgs",
+  "to": "ros2-rmf-scheduler-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trigger\",\"type\":\"rmf_scheduler_msgs/msg/Trigger\",\"msg\":{\"name\":\"s1\",\"created_at\":246913578026,\"at\":-370370367039,\"group\":\"s4\",\"payload\":{\"type\":154,\"topic\":\"s6\",\"message_type\":\"s7\",\"data\":\"CBj/AIA=\"}},\"id\":\"gen-trigger\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trigger\",\"type\":\"rmf_scheduler_msgs/msg/Trigger\",\"msg\":{\"name\":\"s1\",\"created_at\":246913578026,\"at\":-370370367039,\"group\":\"s4\",\"payload\":{\"type\":154,\"topic\":\"s6\",\"message_type\":\"s7\",\"data\":\"CBj/AIA=\"}},\"id\":\"gen-trigger\"}",
+  "model": {
+    "@kind": "trigger",
+    "ros2rmfscheduler.trigger_name": "s1",
+    "ros2rmfscheduler.trigger_created_at": "246913578026",
+    "ros2rmfscheduler.trigger_at": "-370370367039",
+    "ros2rmfscheduler.trigger_group": "s4",
+    "ros2rmfscheduler.trigger_payload_type": "154",
+    "ros2rmfscheduler.topic": "/gen/trigger"
+  }
+}

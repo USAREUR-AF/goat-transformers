@@ -1,0 +1,15 @@
+{
+  "name": "rt-vtol_vehicle_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vtol_vehicle_status\",\"type\":\"px4_msgs/msg/VtolVehicleStatus\",\"msg\":{\"timestamp\":123456789013,\"vehicle_vtol_state\":245,\"fixed_wing_system_failure\":true},\"id\":\"gen-vtol_vehicle_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vtol_vehicle_status\",\"type\":\"px4_msgs/msg/VtolVehicleStatus\",\"msg\":{\"timestamp\":123456789013,\"vehicle_vtol_state\":245,\"fixed_wing_system_failure\":true},\"id\":\"gen-vtol_vehicle_status\"}",
+  "model": {
+    "@kind": "vtol_vehicle_status",
+    "ros2px4.vtol_vehicle_status_timestamp": "123456789013",
+    "ros2px4.vtol_vehicle_status_vehicle_vtol_state": "245",
+    "ros2px4.vtol_vehicle_status_fixed_wing_system_failure": "1",
+    "ros2px4.topic": "/gen/vtol_vehicle_status"
+  }
+}

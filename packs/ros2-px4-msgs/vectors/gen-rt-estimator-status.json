@@ -1,0 +1,19 @@
+{
+  "name": "rt-estimator_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_status\",\"type\":\"px4_msgs/msg/EstimatorStatus\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"output_tracking_error\":[-4.375,-4.125,-3.875],\"gps_check_fail_flags\":13649,\"control_mode_flags\":864197523091,\"filter_fault_flags\":2147807679,\"pos_horiz_accuracy\":-2.875,\"pos_vert_accuracy\":-2.625,\"hdg_test_ratio\":-2.375,\"vel_test_ratio\":-2.125,\"pos_test_ratio\":-1.875,\"hgt_test_ratio\":-1.625,\"tas_test_ratio\":-1.375,\"hagl_test_ratio\":-1.125,\"beta_test_ratio\":-0.875,\"solution_status_flags\":40933,\"reset_count_vel_ne\":156,\"reset_count_vel_d\":211,\"reset_count_pos_ne\":10,\"reset_count_pod_d\":65,\"reset_count_quat\":120,\"time_slip\":0.875,\"pre_flt_fail_innov_heading\":true,\"pre_flt_fail_innov_height\":false,\"pre_flt_fail_innov_pos_horiz\":true,\"pre_flt_fail_innov_vel_horiz\":false,\"pre_flt_fail_innov_vel_vert\":true,\"pre_flt_fail_mag_field_disturbed\":false,\"accel_device_id\":2148739248,\"gyro_device_id\":2148779751,\"baro_device_id\":2148820254,\"mag_device_id\":2148860757,\"health_flags\":12,\"timeout_flags\":67,\"mag_inclination_deg\":4.125,\"mag_inclination_ref_deg\":4.375,\"mag_strength_gs\":4.625,\"mag_strength_ref_gs\":4.875},\"id\":\"gen-estimator_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_status\",\"type\":\"px4_msgs/msg/EstimatorStatus\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"output_tracking_error\":[-4.375,-4.125,-3.875],\"gps_check_fail_flags\":13649,\"control_mode_flags\":864197523091,\"filter_fault_flags\":2147807679,\"pos_horiz_accuracy\":-2.875,\"pos_vert_accuracy\":-2.625,\"hdg_test_ratio\":-2.375,\"vel_test_ratio\":-2.125,\"pos_test_ratio\":-1.875,\"hgt_test_ratio\":-1.625,\"tas_test_ratio\":-1.375,\"hagl_test_ratio\":-1.125,\"beta_test_ratio\":-0.875,\"solution_status_flags\":40933,\"reset_count_vel_ne\":156,\"reset_count_vel_d\":211,\"reset_count_pos_ne\":10,\"reset_count_pod_d\":65,\"reset_count_quat\":120,\"time_slip\":0.875,\"pre_flt_fail_innov_heading\":true,\"pre_flt_fail_innov_height\":false,\"pre_flt_fail_innov_pos_horiz\":true,\"pre_flt_fail_innov_vel_horiz\":false,\"pre_flt_fail_innov_vel_vert\":true,\"pre_flt_fail_mag_field_disturbed\":false,\"accel_device_id\":2148739248,\"gyro_device_id\":2148779751,\"baro_device_id\":2148820254,\"mag_device_id\":2148860757,\"health_flags\":12,\"timeout_flags\":67,\"mag_inclination_deg\":4.125,\"mag_inclination_ref_deg\":4.375,\"mag_strength_gs\":4.625,\"mag_strength_ref_gs\":4.875},\"id\":\"gen-estimator_status\"}",
+  "model": {
+    "@kind": "estimator_status",
+    "ros2px4.estimator_status_timestamp": "123456789013",
+    "ros2px4.estimator_status_timestamp_sample": "246913578026",
+    "ros2px4.estimator_status_output_tracking_error.#": "3",
+    "ros2px4.estimator_status_output_tracking_error[0].ros2px4.estimator_status_output_tracking_error_value": "-4.375",
+    "ros2px4.estimator_status_gps_check_fail_flags": "13649",
+    "ros2px4.estimator_status_control_mode_flags": "864197523091",
+    "ros2px4.estimator_status_filter_fault_flags": "2147807679",
+    "ros2px4.topic": "/gen/estimator_status"
+  }
+}

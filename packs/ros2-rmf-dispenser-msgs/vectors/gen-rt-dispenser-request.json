@@ -1,0 +1,19 @@
+{
+  "name": "rt-dispenser_request",
+  "from": "ros2-rmf-dispenser-msgs",
+  "to": "ros2-rmf-dispenser-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/dispenser_request\",\"type\":\"rmf_dispenser_msgs/msg/DispenserRequest\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"request_guid\":\"s3\",\"target_guid\":\"s4\",\"transporter_type\":\"s5\",\"items\":[{\"type_guid\":\"s6\",\"quantity\":283528,\"compartment_name\":\"s8\"},{\"type_guid\":\"s9\",\"quantity\":405037,\"compartment_name\":\"s11\"}]},\"id\":\"gen-dispenser_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/dispenser_request\",\"type\":\"rmf_dispenser_msgs/msg/DispenserRequest\",\"msg\":{\"time\":{\"sec\":40510,\"nanosec\":2147564661},\"request_guid\":\"s3\",\"target_guid\":\"s4\",\"transporter_type\":\"s5\",\"items\":[{\"type_guid\":\"s6\",\"quantity\":283528,\"compartment_name\":\"s8\"},{\"type_guid\":\"s9\",\"quantity\":405037,\"compartment_name\":\"s11\"}]},\"id\":\"gen-dispenser_request\"}",
+  "model": {
+    "@kind": "dispenser_request",
+    "ros2rmfdispenser.dispenser_request_time_sec": "40510",
+    "ros2rmfdispenser.dispenser_request_time_nanosec": "2147564661",
+    "ros2rmfdispenser.dispenser_request_request_guid": "s3",
+    "ros2rmfdispenser.dispenser_request_target_guid": "s4",
+    "ros2rmfdispenser.dispenser_request_transporter_type": "s5",
+    "ros2rmfdispenser.dispenser_request_items.#": "2",
+    "ros2rmfdispenser.dispenser_request_items[0].ros2rmfdispenser.dispenser_request_items_type_guid": "s6",
+    "ros2rmfdispenser.topic": "/gen/dispenser_request"
+  }
+}

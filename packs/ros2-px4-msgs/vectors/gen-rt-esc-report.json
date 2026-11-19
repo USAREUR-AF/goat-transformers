@@ -1,0 +1,17 @@
+{
+  "name": "rt-esc_report",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esc_report\",\"type\":\"px4_msgs/msg/EscReport\",\"msg\":{\"timestamp\":123456789013,\"esc_errorcount\":2147564661,\"esc_rpm\":121516,\"esc_voltage\":-4.125,\"esc_current\":-3.875,\"esc_temperature\":-3.625,\"motor_temperature\":21384,\"esc_state\":63,\"actuator_function\":118,\"failures\":44589,\"esc_power\":100},\"id\":\"gen-esc_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esc_report\",\"type\":\"px4_msgs/msg/EscReport\",\"msg\":{\"timestamp\":123456789013,\"esc_errorcount\":2147564661,\"esc_rpm\":121516,\"esc_voltage\":-4.125,\"esc_current\":-3.875,\"esc_temperature\":-3.625,\"motor_temperature\":21384,\"esc_state\":63,\"actuator_function\":118,\"failures\":44589,\"esc_power\":100},\"id\":\"gen-esc_report\"}",
+  "model": {
+    "@kind": "esc_report",
+    "ros2px4.esc_report_timestamp": "123456789013",
+    "ros2px4.esc_report_esc_errorcount": "2147564661",
+    "ros2px4.esc_report_esc_rpm": "121516",
+    "ros2px4.esc_report_esc_voltage": "-4.125",
+    "ros2px4.esc_report_esc_current": "-3.875",
+    "ros2px4.topic": "/gen/esc_report"
+  }
+}

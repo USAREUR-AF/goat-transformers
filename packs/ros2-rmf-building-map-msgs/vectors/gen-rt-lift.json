@@ -1,0 +1,27 @@
+{
+  "name": "rt-lift",
+  "from": "ros2-rmf-building-map-msgs",
+  "to": "ros2-rmf-building-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lift\",\"type\":\"rmf_building_map_msgs/msg/Lift\",\"msg\":{\"name\":\"s1\",\"levels\":[\"s2\",\"s3\"],\"doors\":[{\"name\":\"s4\",\"v1_x\":-3.875,\"v1_y\":-3.625,\"v2_x\":-3.375,\"v2_y\":-3.125,\"door_type\":118,\"motion_range\":-2.625,\"motion_direction\":445540},{\"name\":\"s12\",\"v1_x\":-1.875,\"v1_y\":-1.625,\"v2_x\":-1.375,\"v2_y\":-1.125,\"door_type\":46,\"motion_range\":-0.625,\"motion_direction\":769564}],\"wall_graph\":{\"name\":\"s20\",\"vertices\":[{\"x\":0.125,\"y\":0.375,\"name\":\"s23\",\"params\":[{\"name\":\"s24\",\"type\":2148496230,\"value_int\":1053085,\"value_float\":1.625,\"value_string\":\"s28\",\"value_bool\":true}]},{\"x\":2.375,\"y\":2.625,\"name\":\"s32\",\"params\":[{\"name\":\"s33\",\"type\":2148860757,\"value_int\":1417612,\"value_float\":3.875,\"value_string\":\"s37\",\"value_bool\":false}]}],\"edges\":[{\"v1_idx\":2149063272,\"v2_idx\":2149103775,\"params\":[{\"name\":\"s41\",\"type\":2149184781,\"value_int\":1741636,\"value_float\":5.875,\"value_string\":\"s45\",\"value_bool\":false}],\"edge_type\":160},{\"v1_idx\":2149427799,\"v2_idx\":2149468302,\"params\":[{\"name\":\"s50\",\"type\":2149549308,\"value_int\":2106163,\"value_float\":-4.375,\"value_string\":\"s54\",\"value_bool\":true}],\"edge_type\":143}],\"params\":[{\"name\":\"s57\",\"type\":2149832829,\"value_int\":2389684,\"value_float\":-2.625,\"value_string\":\"s61\",\"value_bool\":false},{\"name\":\"s63\",\"type\":2150075847,\"value_int\":2632702,\"value_float\":-1.125,\"value_string\":\"s67\",\"value_bool\":false}]},\"ref_x\":-0.375,\"ref_y\":-0.125,\"ref_yaw\":0.125,\"width\":0.375,\"depth\":0.625},\"id\":\"gen-lift\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lift\",\"type\":\"rmf_building_map_msgs/msg/Lift\",\"msg\":{\"name\":\"s1\",\"levels\":[\"s2\",\"s3\"],\"doors\":[{\"name\":\"s4\",\"v1_x\":-3.875,\"v1_y\":-3.625,\"v2_x\":-3.375,\"v2_y\":-3.125,\"door_type\":118,\"motion_range\":-2.625,\"motion_direction\":445540},{\"name\":\"s12\",\"v1_x\":-1.875,\"v1_y\":-1.625,\"v2_x\":-1.375,\"v2_y\":-1.125,\"door_type\":46,\"motion_range\":-0.625,\"motion_direction\":769564}],\"wall_graph\":{\"name\":\"s20\",\"vertices\":[{\"x\":0.125,\"y\":0.375,\"name\":\"s23\",\"params\":[{\"name\":\"s24\",\"type\":2148496230,\"value_int\":1053085,\"value_float\":1.625,\"value_string\":\"s28\",\"value_bool\":true}]},{\"x\":2.375,\"y\":2.625,\"name\":\"s32\",\"params\":[{\"name\":\"s33\",\"type\":2148860757,\"value_int\":1417612,\"value_float\":3.875,\"value_string\":\"s37\",\"value_bool\":false}]}],\"edges\":[{\"v1_idx\":2149063272,\"v2_idx\":2149103775,\"params\":[{\"name\":\"s41\",\"type\":2149184781,\"value_int\":1741636,\"value_float\":5.875,\"value_string\":\"s45\",\"value_bool\":false}],\"edge_type\":160},{\"v1_idx\":2149427799,\"v2_idx\":2149468302,\"params\":[{\"name\":\"s50\",\"type\":2149549308,\"value_int\":2106163,\"value_float\":-4.375,\"value_string\":\"s54\",\"value_bool\":true}],\"edge_type\":143}],\"params\":[{\"name\":\"s57\",\"type\":2149832829,\"value_int\":2389684,\"value_float\":-2.625,\"value_string\":\"s61\",\"value_bool\":false},{\"name\":\"s63\",\"type\":2150075847,\"value_int\":2632702,\"value_float\":-1.125,\"value_string\":\"s67\",\"value_bool\":false}]},\"ref_x\":-0.375,\"ref_y\":-0.125,\"ref_yaw\":0.125,\"width\":0.375,\"depth\":0.625},\"id\":\"gen-lift\"}",
+  "model": {
+    "@kind": "lift",
+    "ros2rmfbuildingmap.lift_name": "s1",
+    "ros2rmfbuildingmap.lift_levels.#": "2",
+    "ros2rmfbuildingmap.lift_levels[0].ros2rmfbuildingmap.lift_levels_value": "s2",
+    "ros2rmfbuildingmap.lift_doors.#": "2",
+    "ros2rmfbuildingmap.lift_doors[0].ros2rmfbuildingmap.lift_doors_name": "s4",
+    "ros2rmfbuildingmap.lift_wall_graph_name": "s20",
+    "ros2rmfbuildingmap.lift_wall_graph_vertices.#": "2",
+    "ros2rmfbuildingmap.lift_wall_graph_vertices[0].ros2rmfbuildingmap.lift_wall_graph_vertices_x": "0.125",
+    "ros2rmfbuildingmap.lift_wall_graph_edges.#": "2",
+    "ros2rmfbuildingmap.lift_wall_graph_edges[0].ros2rmfbuildingmap.lift_wall_graph_edges_v1_idx": "2149063272",
+    "ros2rmfbuildingmap.lift_wall_graph_params.#": "2",
+    "ros2rmfbuildingmap.lift_wall_graph_params[0].ros2rmfbuildingmap.lift_wall_graph_params_name": "s57",
+    "ros2rmfbuildingmap.lift_ref_x": "-0.375",
+    "ros2rmfbuildingmap.lift_ref_y": "-0.125",
+    "ros2rmfbuildingmap.lift_ref_yaw": "0.125",
+    "ros2rmfbuildingmap.topic": "/gen/lift"
+  }
+}

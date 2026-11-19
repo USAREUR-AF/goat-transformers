@@ -1,0 +1,18 @@
+{
+  "name": "rt-interrupt_request",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/interrupt_request\",\"type\":\"rmf_fleet_msgs/msg/InterruptRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"interrupt_id\":\"s3\",\"labels\":[\"s4\",\"s5\"],\"type\":209},\"id\":\"gen-interrupt_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/interrupt_request\",\"type\":\"rmf_fleet_msgs/msg/InterruptRequest\",\"msg\":{\"fleet_name\":\"s1\",\"robot_name\":\"s2\",\"interrupt_id\":\"s3\",\"labels\":[\"s4\",\"s5\"],\"type\":209},\"id\":\"gen-interrupt_request\"}",
+  "model": {
+    "@kind": "interrupt_request",
+    "ros2rmffleet.interrupt_request_fleet_name": "s1",
+    "ros2rmffleet.interrupt_request_robot_name": "s2",
+    "ros2rmffleet.interrupt_request_interrupt_id": "s3",
+    "ros2rmffleet.interrupt_request_labels.#": "2",
+    "ros2rmffleet.interrupt_request_labels[0].ros2rmffleet.interrupt_request_labels_value": "s4",
+    "ros2rmffleet.interrupt_request_type": "209",
+    "ros2rmffleet.topic": "/gen/interrupt_request"
+  }
+}

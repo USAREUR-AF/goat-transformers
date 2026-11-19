@@ -1,0 +1,14 @@
+{
+  "name": "rt-link_padding",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/link_padding\",\"type\":\"moveit_msgs/msg/LinkPadding\",\"msg\":{\"link_name\":\"s1\",\"padding\":2.014},\"id\":\"gen-link_padding\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/link_padding\",\"type\":\"moveit_msgs/msg/LinkPadding\",\"msg\":{\"link_name\":\"s1\",\"padding\":2.014},\"id\":\"gen-link_padding\"}",
+  "model": {
+    "@kind": "link_padding",
+    "ros2moveit.link_padding_link_name": "s1",
+    "ros2moveit.link_padding_padding": "2.014",
+    "ros2moveit.topic": "/gen/link_padding"
+  }
+}

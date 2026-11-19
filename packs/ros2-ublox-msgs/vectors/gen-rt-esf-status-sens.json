@@ -1,0 +1,16 @@
+{
+  "name": "rt-esf_status_sens",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esf_status_sens\",\"type\":\"ublox_msgs/msg/EsfSTATUSSens\",\"msg\":{\"sens_status1\":190,\"sens_status2\":245,\"freq\":44,\"faults\":99},\"id\":\"gen-esf_status_sens\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esf_status_sens\",\"type\":\"ublox_msgs/msg/EsfSTATUSSens\",\"msg\":{\"sens_status1\":190,\"sens_status2\":245,\"freq\":44,\"faults\":99},\"id\":\"gen-esf_status_sens\"}",
+  "model": {
+    "@kind": "esf_status_sens",
+    "ros2ublox.esf_status_sens_sens_status1_2": "190",
+    "ros2ublox.esf_status_sens_sens_status2_2": "245",
+    "ros2ublox.esf_status_sens_freq_2": "44",
+    "ros2ublox.esf_status_sens_faults_2": "99",
+    "ros2ublox.topic": "/gen/esf_status_sens"
+  }
+}

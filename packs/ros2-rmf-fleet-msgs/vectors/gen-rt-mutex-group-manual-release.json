@@ -1,0 +1,16 @@
+{
+  "name": "rt-mutex_group_manual_release",
+  "from": "ros2-rmf-fleet-msgs",
+  "to": "ros2-rmf-fleet-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mutex_group_manual_release\",\"type\":\"rmf_fleet_msgs/msg/MutexGroupManualRelease\",\"msg\":{\"release_mutex_groups\":[\"s1\",\"s2\"],\"fleet\":\"s3\",\"robot\":\"s4\"},\"id\":\"gen-mutex_group_manual_release\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mutex_group_manual_release\",\"type\":\"rmf_fleet_msgs/msg/MutexGroupManualRelease\",\"msg\":{\"release_mutex_groups\":[\"s1\",\"s2\"],\"fleet\":\"s3\",\"robot\":\"s4\"},\"id\":\"gen-mutex_group_manual_release\"}",
+  "model": {
+    "@kind": "mutex_group_manual_release",
+    "ros2rmffleet.mutex_group_manual_release_release_mutex_groups.#": "2",
+    "ros2rmffleet.mutex_group_manual_release_release_mutex_groups[0].ros2rmffleet.mutex_group_manual_release_release_mutex_groups_value": "s1",
+    "ros2rmffleet.mutex_group_manual_release_fleet": "s3",
+    "ros2rmffleet.mutex_group_manual_release_robot": "s4",
+    "ros2rmffleet.topic": "/gen/mutex_group_manual_release"
+  }
+}

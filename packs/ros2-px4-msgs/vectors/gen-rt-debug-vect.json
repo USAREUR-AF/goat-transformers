@@ -1,0 +1,17 @@
+{
+  "name": "rt-debug_vect",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/debug_vect\",\"type\":\"px4_msgs/msg/DebugVect\",\"msg\":{\"timestamp\":123456789013,\"name\":\"Agb/AIA=\",\"x\":-4.375,\"y\":-4.125,\"z\":-3.875},\"id\":\"gen-debug_vect\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/debug_vect\",\"type\":\"px4_msgs/msg/DebugVect\",\"msg\":{\"timestamp\":123456789013,\"name\":\"Agb/AIA=\",\"x\":-4.375,\"y\":-4.125,\"z\":-3.875},\"id\":\"gen-debug_vect\"}",
+  "model": {
+    "@kind": "debug_vect",
+    "ros2px4.debug_vect_timestamp": "123456789013",
+    "ros2px4.debug_vect_name": "Agb/AIA=",
+    "ros2px4.debug_vect_x": "-4.375",
+    "ros2px4.debug_vect_y": "-4.125",
+    "ros2px4.debug_vect_z": "-3.875",
+    "ros2px4.topic": "/gen/debug_vect"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-tim_tm2",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/tim_tm2\",\"type\":\"ublox_msgs/msg/TimTM2\",\"msg\":{\"ch\":190,\"flags\":245,\"rising_edge_count\":23212,\"wn_r\":63715,\"wn_f\":38682,\"tow_ms_r\":2147726673,\"tow_sub_ms_r\":2147767176,\"tow_ms_f\":2147807679,\"tow_sub_ms_f\":2147848182,\"acc_est\":2147888685},\"id\":\"gen-tim_tm2\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/tim_tm2\",\"type\":\"ublox_msgs/msg/TimTM2\",\"msg\":{\"ch\":190,\"flags\":245,\"rising_edge_count\":23212,\"wn_r\":63715,\"wn_f\":38682,\"tow_ms_r\":2147726673,\"tow_sub_ms_r\":2147767176,\"tow_ms_f\":2147807679,\"tow_sub_ms_f\":2147848182,\"acc_est\":2147888685},\"id\":\"gen-tim_tm2\"}",
+  "model": {
+    "@kind": "tim_tm2",
+    "ros2ublox.tim_tm2_ch": "190",
+    "ros2ublox.tim_tm2_flags": "245",
+    "ros2ublox.tim_tm2_rising_edge_count": "23212",
+    "ros2ublox.tim_tm2_wn_r": "63715",
+    "ros2ublox.tim_tm2_wn_f": "38682",
+    "ros2ublox.topic": "/gen/tim_tm2"
+  }
+}

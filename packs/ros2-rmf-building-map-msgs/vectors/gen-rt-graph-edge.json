@@ -1,0 +1,17 @@
+{
+  "name": "rt-graph_edge",
+  "from": "ros2-rmf-building-map-msgs",
+  "to": "ros2-rmf-building-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/graph_edge\",\"type\":\"rmf_building_map_msgs/msg/GraphEdge\",\"msg\":{\"v1_idx\":2147524158,\"v2_idx\":2147564661,\"params\":[{\"name\":\"s3\",\"type\":2147645667,\"value_int\":202522,\"value_float\":-3.625,\"value_string\":\"s7\",\"value_bool\":false},{\"name\":\"s9\",\"type\":2147888685,\"value_int\":445540,\"value_float\":-2.125,\"value_string\":\"s13\",\"value_bool\":false}],\"edge_type\":192},\"id\":\"gen-graph_edge\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/graph_edge\",\"type\":\"rmf_building_map_msgs/msg/GraphEdge\",\"msg\":{\"v1_idx\":2147524158,\"v2_idx\":2147564661,\"params\":[{\"name\":\"s3\",\"type\":2147645667,\"value_int\":202522,\"value_float\":-3.625,\"value_string\":\"s7\",\"value_bool\":false},{\"name\":\"s9\",\"type\":2147888685,\"value_int\":445540,\"value_float\":-2.125,\"value_string\":\"s13\",\"value_bool\":false}],\"edge_type\":192},\"id\":\"gen-graph_edge\"}",
+  "model": {
+    "@kind": "graph_edge",
+    "ros2rmfbuildingmap.graph_edge_v1_idx": "2147524158",
+    "ros2rmfbuildingmap.graph_edge_v2_idx": "2147564661",
+    "ros2rmfbuildingmap.graph_edge_params.#": "2",
+    "ros2rmfbuildingmap.graph_edge_params[0].ros2rmfbuildingmap.graph_edge_params_name": "s3",
+    "ros2rmfbuildingmap.graph_edge_edge_type": "192",
+    "ros2rmfbuildingmap.topic": "/gen/graph_edge"
+  }
+}

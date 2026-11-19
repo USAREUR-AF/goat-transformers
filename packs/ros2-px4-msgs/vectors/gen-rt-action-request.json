@@ -1,0 +1,16 @@
+{
+  "name": "rt-action_request",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/action_request\",\"type\":\"px4_msgs/msg/ActionRequest\",\"msg\":{\"timestamp\":123456789013,\"action\":245,\"source\":44,\"mode\":99},\"id\":\"gen-action_request\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/action_request\",\"type\":\"px4_msgs/msg/ActionRequest\",\"msg\":{\"timestamp\":123456789013,\"action\":245,\"source\":44,\"mode\":99},\"id\":\"gen-action_request\"}",
+  "model": {
+    "@kind": "action_request",
+    "ros2px4.action_request_timestamp": "123456789013",
+    "ros2px4.action_request_action": "245",
+    "ros2px4.action_request_source": "44",
+    "ros2px4.action_request_mode": "99",
+    "ros2px4.topic": "/gen/action_request"
+  }
+}

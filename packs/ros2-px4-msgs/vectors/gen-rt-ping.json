@@ -1,0 +1,17 @@
+{
+  "name": "rt-ping",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ping\",\"type\":\"px4_msgs/msg/Ping\",\"msg\":{\"timestamp\":123456789013,\"ping_time\":246913578026,\"ping_sequence\":2147605164,\"dropped_packets\":2147645667,\"rtt_ms\":-3.875,\"system_id\":2147726673,\"component_id\":8},\"id\":\"gen-ping\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ping\",\"type\":\"px4_msgs/msg/Ping\",\"msg\":{\"timestamp\":123456789013,\"ping_time\":246913578026,\"ping_sequence\":2147605164,\"dropped_packets\":2147645667,\"rtt_ms\":-3.875,\"system_id\":2147726673,\"component_id\":8},\"id\":\"gen-ping\"}",
+  "model": {
+    "@kind": "ping",
+    "ros2px4.ping_timestamp": "123456789013",
+    "ros2px4.ping_ping_time": "246913578026",
+    "ros2px4.ping_ping_sequence": "2147605164",
+    "ros2px4.ping_dropped_packets": "2147645667",
+    "ros2px4.ping_rtt_ms": "-3.875",
+    "ros2px4.topic": "/gen/ping"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "rt-follow_target_estimator",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/follow_target_estimator\",\"type\":\"px4_msgs/msg/FollowTargetEstimator\",\"msg\":{\"timestamp\":123456789013,\"last_filter_reset_timestamp\":246913578026,\"valid\":true,\"stale\":false,\"lat_est\":5.035,\"lon_est\":-6.042,\"alt_est\":-3.375,\"pos_est\":[-3.125,-2.875,-2.625],\"vel_est\":[-2.375,-2.125,-1.875],\"acc_est\":[-1.625,-1.375,-1.125],\"prediction_count\":2098765413221,\"fusion_count\":2222222202234},\"id\":\"gen-follow_target_estimator\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/follow_target_estimator\",\"type\":\"px4_msgs/msg/FollowTargetEstimator\",\"msg\":{\"timestamp\":123456789013,\"last_filter_reset_timestamp\":246913578026,\"valid\":true,\"stale\":false,\"lat_est\":5.035,\"lon_est\":-6.042,\"alt_est\":-3.375,\"pos_est\":[-3.125,-2.875,-2.625],\"vel_est\":[-2.375,-2.125,-1.875],\"acc_est\":[-1.625,-1.375,-1.125],\"prediction_count\":2098765413221,\"fusion_count\":2222222202234},\"id\":\"gen-follow_target_estimator\"}",
+  "model": {
+    "@kind": "follow_target_estimator",
+    "ros2px4.follow_target_estimator_timestamp": "123456789013",
+    "ros2px4.follow_target_estimator_last_filter_reset_timestamp": "246913578026",
+    "ros2px4.follow_target_estimator_valid": "1",
+    "ros2px4.follow_target_estimator_stale": "0",
+    "ros2px4.follow_target_estimator_lat_est": "5.035",
+    "ros2px4.follow_target_estimator_pos_est.#": "3",
+    "ros2px4.follow_target_estimator_pos_est[0].ros2px4.follow_target_estimator_pos_est_value": "-3.125",
+    "ros2px4.follow_target_estimator_vel_est.#": "3",
+    "ros2px4.follow_target_estimator_vel_est[0].ros2px4.follow_target_estimator_vel_est_value": "-2.375",
+    "ros2px4.follow_target_estimator_acc_est.#": "3",
+    "ros2px4.follow_target_estimator_acc_est[0].ros2px4.follow_target_estimator_acc_est_value": "-1.625",
+    "ros2px4.topic": "/gen/follow_target_estimator"
+  }
+}

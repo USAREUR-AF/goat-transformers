@@ -1,0 +1,15 @@
+{
+  "name": "rt-assignment",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/assignment\",\"type\":\"rmf_task_msgs/msg/Assignment\",\"msg\":{\"is_assigned\":true,\"fleet_name\":\"s2\",\"expected_robot_name\":\"s3\"},\"id\":\"gen-assignment\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/assignment\",\"type\":\"rmf_task_msgs/msg/Assignment\",\"msg\":{\"is_assigned\":true,\"fleet_name\":\"s2\",\"expected_robot_name\":\"s3\"},\"id\":\"gen-assignment\"}",
+  "model": {
+    "@kind": "assignment",
+    "ros2rmftask.assignment_is_assigned": "1",
+    "ros2rmftask.assignment_fleet_name": "s2",
+    "ros2rmftask.assignment_expected_robot_name": "s3",
+    "ros2rmftask.topic": "/gen/assignment"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-power_monitor",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/power_monitor\",\"type\":\"px4_msgs/msg/PowerMonitor\",\"msg\":{\"timestamp\":123456789013,\"voltage_v\":-4.625,\"current_a\":-4.375,\"power_w\":-4.125,\"rconf\":5914,\"rsv\":-19119,\"rbv\":21384,\"rp\":-3649,\"rc\":-28682,\"rcal\":11821,\"me\":-13212,\"al\":27291},\"id\":\"gen-power_monitor\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/power_monitor\",\"type\":\"px4_msgs/msg/PowerMonitor\",\"msg\":{\"timestamp\":123456789013,\"voltage_v\":-4.625,\"current_a\":-4.375,\"power_w\":-4.125,\"rconf\":5914,\"rsv\":-19119,\"rbv\":21384,\"rp\":-3649,\"rc\":-28682,\"rcal\":11821,\"me\":-13212,\"al\":27291},\"id\":\"gen-power_monitor\"}",
+  "model": {
+    "@kind": "power_monitor",
+    "ros2px4.power_monitor_timestamp": "123456789013",
+    "ros2px4.power_monitor_voltage_v": "-4.625",
+    "ros2px4.power_monitor_current_a": "-4.375",
+    "ros2px4.power_monitor_power_w": "-4.125",
+    "ros2px4.power_monitor_rconf": "5914",
+    "ros2px4.topic": "/gen/power_monitor"
+  }
+}

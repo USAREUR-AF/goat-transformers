@@ -1,0 +1,17 @@
+{
+  "name": "rt-loop",
+  "from": "ros2-rmf-task-msgs",
+  "to": "ros2-rmf-task-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/loop\",\"type\":\"rmf_task_msgs/msg/Loop\",\"msg\":{\"task_id\":\"s1\",\"robot_type\":\"s2\",\"num_loops\":2147605164,\"start_name\":\"s4\",\"finish_name\":\"s5\"},\"id\":\"gen-loop\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/loop\",\"type\":\"rmf_task_msgs/msg/Loop\",\"msg\":{\"task_id\":\"s1\",\"robot_type\":\"s2\",\"num_loops\":2147605164,\"start_name\":\"s4\",\"finish_name\":\"s5\"},\"id\":\"gen-loop\"}",
+  "model": {
+    "@kind": "loop",
+    "ros2rmftask.loop_task_id": "s1",
+    "ros2rmftask.loop_robot_type": "s2",
+    "ros2rmftask.loop_num_loops": "2147605164",
+    "ros2rmftask.loop_start_name": "s4",
+    "ros2rmftask.loop_finish_name": "s5",
+    "ros2rmftask.topic": "/gen/loop"
+  }
+}

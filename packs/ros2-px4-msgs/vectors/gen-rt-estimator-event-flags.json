@@ -1,0 +1,17 @@
+{
+  "name": "rt-estimator_event_flags",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_event_flags\",\"type\":\"px4_msgs/msg/EstimatorEventFlags\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"information_event_changes\":2147605164,\"gps_checks_passed\":false,\"reset_vel_to_gps\":true,\"reset_vel_to_flow\":false,\"reset_vel_to_vision\":true,\"reset_vel_to_zero\":false,\"reset_pos_to_last_known\":true,\"reset_pos_to_gps\":false,\"reset_pos_to_vision\":true,\"starting_gps_fusion\":false,\"starting_vision_pos_fusion\":true,\"starting_vision_vel_fusion\":false,\"starting_vision_yaw_fusion\":true,\"yaw_aligned_to_imu_gps\":false,\"reset_hgt_to_baro\":true,\"reset_hgt_to_gps\":false,\"reset_hgt_to_rng\":true,\"reset_hgt_to_ev\":false},\"id\":\"gen-estimator_event_flags\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/estimator_event_flags\",\"type\":\"px4_msgs/msg/EstimatorEventFlags\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"information_event_changes\":2147605164,\"gps_checks_passed\":false,\"reset_vel_to_gps\":true,\"reset_vel_to_flow\":false,\"reset_vel_to_vision\":true,\"reset_vel_to_zero\":false,\"reset_pos_to_last_known\":true,\"reset_pos_to_gps\":false,\"reset_pos_to_vision\":true,\"starting_gps_fusion\":false,\"starting_vision_pos_fusion\":true,\"starting_vision_vel_fusion\":false,\"starting_vision_yaw_fusion\":true,\"yaw_aligned_to_imu_gps\":false,\"reset_hgt_to_baro\":true,\"reset_hgt_to_gps\":false,\"reset_hgt_to_rng\":true,\"reset_hgt_to_ev\":false},\"id\":\"gen-estimator_event_flags\"}",
+  "model": {
+    "@kind": "estimator_event_flags",
+    "ros2px4.estimator_event_flags_timestamp": "123456789013",
+    "ros2px4.estimator_event_flags_timestamp_sample": "246913578026",
+    "ros2px4.estimator_event_flags_information_event_changes": "2147605164",
+    "ros2px4.estimator_event_flags_gps_checks_passed": "0",
+    "ros2px4.estimator_event_flags_reset_vel_to_gps": "1",
+    "ros2px4.topic": "/gen/estimator_event_flags"
+  }
+}

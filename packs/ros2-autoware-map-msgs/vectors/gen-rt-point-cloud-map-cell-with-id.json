@@ -1,0 +1,19 @@
+{
+  "name": "rt-point_cloud_map_cell_with_id",
+  "from": "ros2-autoware-map-msgs",
+  "to": "ros2-autoware-map-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_cell_with_id\",\"type\":\"autoware_map_msgs/msg/PointCloudMapCellWithID\",\"msg\":{\"cell_id\":\"s1\",\"pointcloud\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"height\":2147686170,\"width\":2147726673,\"fields\":[{\"name\":\"s7\",\"offset\":2147807679,\"datatype\":118,\"count\":2147888685},{\"name\":\"s11\",\"offset\":2147969691,\"datatype\":82,\"count\":2148050697}],\"is_bigendian\":true,\"point_step\":2148131703,\"row_step\":2148172206,\"data\":\"Ejb/AIA=\",\"is_dense\":true},\"metadata\":{\"min_x\":-0.125,\"min_y\":0.125,\"max_x\":0.375,\"max_y\":0.625}},\"id\":\"gen-point_cloud_map_cell_with_id\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/point_cloud_map_cell_with_id\",\"type\":\"autoware_map_msgs/msg/PointCloudMapCellWithID\",\"msg\":{\"cell_id\":\"s1\",\"pointcloud\":{\"header\":{\"stamp\":{\"sec\":81013,\"nanosec\":2147605164},\"frame_id\":\"s4\"},\"height\":2147686170,\"width\":2147726673,\"fields\":[{\"name\":\"s7\",\"offset\":2147807679,\"datatype\":118,\"count\":2147888685},{\"name\":\"s11\",\"offset\":2147969691,\"datatype\":82,\"count\":2148050697}],\"is_bigendian\":true,\"point_step\":2148131703,\"row_step\":2148172206,\"data\":\"Ejb/AIA=\",\"is_dense\":true},\"metadata\":{\"min_x\":-0.125,\"min_y\":0.125,\"max_x\":0.375,\"max_y\":0.625}},\"id\":\"gen-point_cloud_map_cell_with_id\"}",
+  "model": {
+    "@kind": "point_cloud_map_cell_with_id",
+    "ros2autowaremap.point_cloud_map_cell_with_id_cell_id": "s1",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_header_stamp_sec": "81013",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_header_stamp_nanosec": "2147605164",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_header_frame_id": "s4",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_height": "2147686170",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_fields.#": "2",
+    "ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_fields[0].ros2autowaremap.point_cloud_map_cell_with_id_pointcloud_fields_name": "s7",
+    "ros2autowaremap.topic": "/gen/point_cloud_map_cell_with_id"
+  }
+}

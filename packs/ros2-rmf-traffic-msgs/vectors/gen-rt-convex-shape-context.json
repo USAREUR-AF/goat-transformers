@@ -1,0 +1,14 @@
+{
+  "name": "rt-convex_shape_context",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/convex_shape_context\",\"type\":\"rmf_traffic_msgs/msg/ConvexShapeContext\",\"msg\":{\"circles\":[{\"radius\":1.007},{\"radius\":2.014}]},\"id\":\"gen-convex_shape_context\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/convex_shape_context\",\"type\":\"rmf_traffic_msgs/msg/ConvexShapeContext\",\"msg\":{\"circles\":[{\"radius\":1.007},{\"radius\":2.014}]},\"id\":\"gen-convex_shape_context\"}",
+  "model": {
+    "@kind": "convex_shape_context",
+    "ros2rmftraffic.convex_shape_context_circles.#": "2",
+    "ros2rmftraffic.convex_shape_context_circles[0].ros2rmftraffic.convex_shape_context_circles_radius": "1.007",
+    "ros2rmftraffic.topic": "/gen/convex_shape_context"
+  }
+}

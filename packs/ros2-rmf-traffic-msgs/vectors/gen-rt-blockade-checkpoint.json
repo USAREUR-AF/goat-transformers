@@ -1,0 +1,16 @@
+{
+  "name": "rt-blockade_checkpoint",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_checkpoint\",\"type\":\"rmf_traffic_msgs/msg/BlockadeCheckpoint\",\"msg\":{\"position\":[1.007,2.014],\"map_name\":\"s3\",\"can_hold\":false},\"id\":\"gen-blockade_checkpoint\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/blockade_checkpoint\",\"type\":\"rmf_traffic_msgs/msg/BlockadeCheckpoint\",\"msg\":{\"position\":[1.007,2.014],\"map_name\":\"s3\",\"can_hold\":false},\"id\":\"gen-blockade_checkpoint\"}",
+  "model": {
+    "@kind": "blockade_checkpoint",
+    "ros2rmftraffic.blockade_checkpoint_position.#": "2",
+    "ros2rmftraffic.blockade_checkpoint_position[0].ros2rmftraffic.blockade_checkpoint_position_value": "1.007",
+    "ros2rmftraffic.blockade_checkpoint_map_name": "s3",
+    "ros2rmftraffic.blockade_checkpoint_can_hold": "0",
+    "ros2rmftraffic.topic": "/gen/blockade_checkpoint"
+  }
+}

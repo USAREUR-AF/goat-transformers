@@ -1,0 +1,32 @@
+{
+  "name": "rt-vehicle_optical_flow_vel",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_optical_flow_vel\",\"type\":\"px4_msgs/msg/VehicleOpticalFlowVel\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"vel_body\":[-4.375,-4.125],\"vel_ne\":[-3.875,-3.625],\"vel_body_filtered\":[-3.375,-3.125],\"vel_ne_filtered\":[-2.875,-2.625],\"flow_rate_uncompensated\":[-2.375,-2.125],\"flow_rate_compensated\":[-1.875,-1.625],\"gyro_rate\":[-1.375,-1.125,-0.875],\"gyro_bias\":[-0.625,-0.375,-0.125],\"ref_gyro\":[0.125,0.375,0.625]},\"id\":\"gen-vehicle_optical_flow_vel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_optical_flow_vel\",\"type\":\"px4_msgs/msg/VehicleOpticalFlowVel\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"vel_body\":[-4.375,-4.125],\"vel_ne\":[-3.875,-3.625],\"vel_body_filtered\":[-3.375,-3.125],\"vel_ne_filtered\":[-2.875,-2.625],\"flow_rate_uncompensated\":[-2.375,-2.125],\"flow_rate_compensated\":[-1.875,-1.625],\"gyro_rate\":[-1.375,-1.125,-0.875],\"gyro_bias\":[-0.625,-0.375,-0.125],\"ref_gyro\":[0.125,0.375,0.625]},\"id\":\"gen-vehicle_optical_flow_vel\"}",
+  "model": {
+    "@kind": "vehicle_optical_flow_vel",
+    "ros2px4.vehicle_optical_flow_vel_timestamp": "123456789013",
+    "ros2px4.vehicle_optical_flow_vel_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_optical_flow_vel_vel_body.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_vel_body[0].ros2px4.vehicle_optical_flow_vel_vel_body_value": "-4.375",
+    "ros2px4.vehicle_optical_flow_vel_vel_ne.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_vel_ne[0].ros2px4.vehicle_optical_flow_vel_vel_ne_value": "-3.875",
+    "ros2px4.vehicle_optical_flow_vel_vel_body_filtered.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_vel_body_filtered[0].ros2px4.vehicle_optical_flow_vel_vel_body_filtered_value": "-3.375",
+    "ros2px4.vehicle_optical_flow_vel_vel_ne_filtered.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_vel_ne_filtered[0].ros2px4.vehicle_optical_flow_vel_vel_ne_filtered_value": "-2.875",
+    "ros2px4.vehicle_optical_flow_vel_flow_rate_uncompensated.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_flow_rate_uncompensated[0].ros2px4.vehicle_optical_flow_vel_flow_rate_uncompensated_value": "-2.375",
+    "ros2px4.vehicle_optical_flow_vel_flow_rate_compensated.#": "2",
+    "ros2px4.vehicle_optical_flow_vel_flow_rate_compensated[0].ros2px4.vehicle_optical_flow_vel_flow_rate_compensated_value": "-1.875",
+    "ros2px4.vehicle_optical_flow_vel_gyro_rate.#": "3",
+    "ros2px4.vehicle_optical_flow_vel_gyro_rate[0].ros2px4.vehicle_optical_flow_vel_gyro_rate_value": "-1.375",
+    "ros2px4.vehicle_optical_flow_vel_gyro_bias.#": "3",
+    "ros2px4.vehicle_optical_flow_vel_gyro_bias[0].ros2px4.vehicle_optical_flow_vel_gyro_bias_value": "-0.625",
+    "ros2px4.vehicle_optical_flow_vel_ref_gyro.#": "3",
+    "ros2px4.vehicle_optical_flow_vel_ref_gyro[0].ros2px4.vehicle_optical_flow_vel_ref_gyro_value": "0.125",
+    "ros2px4.topic": "/gen/vehicle_optical_flow_vel"
+  }
+}

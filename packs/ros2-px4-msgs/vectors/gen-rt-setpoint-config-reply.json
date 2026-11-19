@@ -1,0 +1,17 @@
+{
+  "name": "rt-setpoint_config_reply",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/setpoint_config_reply\",\"type\":\"px4_msgs/msg/SetpointConfigReply\",\"msg\":{\"timestamp\":123456789013,\"type\":48245,\"source_id\":44,\"result\":99,\"mode_req_angular_velocity\":true,\"mode_req_attitude\":false,\"mode_req_local_alt\":true,\"mode_req_local_position\":false},\"id\":\"gen-setpoint_config_reply\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/setpoint_config_reply\",\"type\":\"px4_msgs/msg/SetpointConfigReply\",\"msg\":{\"timestamp\":123456789013,\"type\":48245,\"source_id\":44,\"result\":99,\"mode_req_angular_velocity\":true,\"mode_req_attitude\":false,\"mode_req_local_alt\":true,\"mode_req_local_position\":false},\"id\":\"gen-setpoint_config_reply\"}",
+  "model": {
+    "@kind": "setpoint_config_reply",
+    "ros2px4.setpoint_config_reply_timestamp": "123456789013",
+    "ros2px4.setpoint_config_reply_type": "48245",
+    "ros2px4.setpoint_config_reply_source_id": "44",
+    "ros2px4.setpoint_config_reply_result": "99",
+    "ros2px4.setpoint_config_reply_mode_req_angular_velocity": "1",
+    "ros2px4.topic": "/gen/setpoint_config_reply"
+  }
+}

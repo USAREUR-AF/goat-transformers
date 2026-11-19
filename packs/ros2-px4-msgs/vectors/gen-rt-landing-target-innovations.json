@@ -1,0 +1,17 @@
+{
+  "name": "rt-landing_target_innovations",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target_innovations\",\"type\":\"px4_msgs/msg/LandingTargetInnovations\",\"msg\":{\"timestamp\":123456789013,\"innov_x\":-4.625,\"innov_y\":-4.375,\"innov_cov_x\":-4.125,\"innov_cov_y\":-3.875},\"id\":\"gen-landing_target_innovations\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/landing_target_innovations\",\"type\":\"px4_msgs/msg/LandingTargetInnovations\",\"msg\":{\"timestamp\":123456789013,\"innov_x\":-4.625,\"innov_y\":-4.375,\"innov_cov_x\":-4.125,\"innov_cov_y\":-3.875},\"id\":\"gen-landing_target_innovations\"}",
+  "model": {
+    "@kind": "landing_target_innovations",
+    "ros2px4.landing_target_innovations_timestamp": "123456789013",
+    "ros2px4.landing_target_innovations_innov_x": "-4.625",
+    "ros2px4.landing_target_innovations_innov_y": "-4.375",
+    "ros2px4.landing_target_innovations_innov_cov_x": "-4.125",
+    "ros2px4.landing_target_innovations_innov_cov_y": "-3.875",
+    "ros2px4.topic": "/gen/landing_target_innovations"
+  }
+}

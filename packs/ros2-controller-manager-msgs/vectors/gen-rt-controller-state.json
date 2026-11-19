@@ -1,0 +1,29 @@
+{
+  "name": "rt-controller_state",
+  "from": "ros2-controller-manager-msgs",
+  "to": "ros2-controller-manager-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/controller_state\",\"type\":\"controller_manager_msgs/msg/ControllerState\",\"msg\":{\"name\":\"s1\",\"state\":\"s2\",\"type\":\"s3\",\"is_async\":false,\"update_rate\":38682,\"claimed_interfaces\":[\"s6\",\"s7\"],\"required_command_interfaces\":[\"s8\",\"s9\"],\"required_state_interfaces\":[\"s10\",\"s11\"],\"is_chainable\":false,\"is_chained\":true,\"exported_state_interfaces\":[\"s14\",\"s15\"],\"reference_interfaces\":[\"s16\",\"s17\"],\"chain_connections\":[{\"name\":\"s18\",\"reference_interfaces\":[\"s19\"]},{\"name\":\"s20\",\"reference_interfaces\":[\"s21\"]}]},\"id\":\"gen-controller_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/controller_state\",\"type\":\"controller_manager_msgs/msg/ControllerState\",\"msg\":{\"name\":\"s1\",\"state\":\"s2\",\"type\":\"s3\",\"is_async\":false,\"update_rate\":38682,\"claimed_interfaces\":[\"s6\",\"s7\"],\"required_command_interfaces\":[\"s8\",\"s9\"],\"required_state_interfaces\":[\"s10\",\"s11\"],\"is_chainable\":false,\"is_chained\":true,\"exported_state_interfaces\":[\"s14\",\"s15\"],\"reference_interfaces\":[\"s16\",\"s17\"],\"chain_connections\":[{\"name\":\"s18\",\"reference_interfaces\":[\"s19\"]},{\"name\":\"s20\",\"reference_interfaces\":[\"s21\"]}]},\"id\":\"gen-controller_state\"}",
+  "model": {
+    "@kind": "controller_state",
+    "ros2controllermanager.controller_state_name": "s1",
+    "ros2controllermanager.controller_state_state": "s2",
+    "ros2controllermanager.controller_state_type": "s3",
+    "ros2controllermanager.controller_state_is_async": "0",
+    "ros2controllermanager.controller_state_update_rate": "38682",
+    "ros2controllermanager.controller_state_claimed_interfaces.#": "2",
+    "ros2controllermanager.controller_state_claimed_interfaces[0].ros2controllermanager.controller_state_claimed_interfaces_value": "s6",
+    "ros2controllermanager.controller_state_required_command_interfaces.#": "2",
+    "ros2controllermanager.controller_state_required_command_interfaces[0].ros2controllermanager.controller_state_required_command_interfaces_value": "s8",
+    "ros2controllermanager.controller_state_required_state_interfaces.#": "2",
+    "ros2controllermanager.controller_state_required_state_interfaces[0].ros2controllermanager.controller_state_required_state_interfaces_value": "s10",
+    "ros2controllermanager.controller_state_exported_state_interfaces.#": "2",
+    "ros2controllermanager.controller_state_exported_state_interfaces[0].ros2controllermanager.controller_state_exported_state_interfaces_value": "s14",
+    "ros2controllermanager.controller_state_reference_interfaces.#": "2",
+    "ros2controllermanager.controller_state_reference_interfaces[0].ros2controllermanager.controller_state_reference_interfaces_value": "s16",
+    "ros2controllermanager.controller_state_chain_connections.#": "2",
+    "ros2controllermanager.controller_state_chain_connections[0].ros2controllermanager.controller_state_chain_connections_name": "s18",
+    "ros2controllermanager.topic": "/gen/controller_state"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-supervisor_heartbeat",
+  "from": "ros2-rmf-door-msgs",
+  "to": "ros2-rmf-door-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/supervisor_heartbeat\",\"type\":\"rmf_door_msgs/msg/SupervisorHeartbeat\",\"msg\":{\"all_sessions\":[{\"door_name\":\"s1\",\"sessions\":[{\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"requester_id\":\"s4\"}]},{\"door_name\":\"s5\",\"sessions\":[{\"request_time\":{\"sec\":243025,\"nanosec\":2147767176},\"requester_id\":\"s8\"}]}]},\"id\":\"gen-supervisor_heartbeat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/supervisor_heartbeat\",\"type\":\"rmf_door_msgs/msg/SupervisorHeartbeat\",\"msg\":{\"all_sessions\":[{\"door_name\":\"s1\",\"sessions\":[{\"request_time\":{\"sec\":81013,\"nanosec\":2147605164},\"requester_id\":\"s4\"}]},{\"door_name\":\"s5\",\"sessions\":[{\"request_time\":{\"sec\":243025,\"nanosec\":2147767176},\"requester_id\":\"s8\"}]}]},\"id\":\"gen-supervisor_heartbeat\"}",
+  "model": {
+    "@kind": "supervisor_heartbeat",
+    "ros2rmfdoor.supervisor_heartbeat_all_sessions.#": "2",
+    "ros2rmfdoor.supervisor_heartbeat_all_sessions[0].ros2rmfdoor.supervisor_heartbeat_all_sessions_door_name": "s1",
+    "ros2rmfdoor.topic": "/gen/supervisor_heartbeat"
+  }
+}

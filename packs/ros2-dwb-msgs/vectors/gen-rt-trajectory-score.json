@@ -1,0 +1,22 @@
+{
+  "name": "rt-trajectory_score",
+  "from": "ros2-dwb-msgs",
+  "to": "ros2-dwb-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_score\",\"type\":\"dwb_msgs/msg/TrajectoryScore\",\"msg\":{\"traj\":{\"velocity\":{\"x\":1.007,\"y\":2.014,\"theta\":-3.021},\"time_offsets\":[{\"sec\":162019,\"nanosec\":2147686170},{\"sec\":243025,\"nanosec\":2147767176}],\"poses\":[{\"x\":8.056,\"y\":-9.063,\"theta\":10.07},{\"x\":11.077,\"y\":-12.084,\"theta\":13.091}]},\"scores\":[{\"name\":\"s14\",\"raw_score\":-1.375,\"scale\":-1.125},{\"name\":\"s17\",\"raw_score\":-0.625,\"scale\":-0.375}],\"total\":-0.125},\"id\":\"gen-trajectory_score\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trajectory_score\",\"type\":\"dwb_msgs/msg/TrajectoryScore\",\"msg\":{\"traj\":{\"velocity\":{\"x\":1.007,\"y\":2.014,\"theta\":-3.021},\"time_offsets\":[{\"sec\":162019,\"nanosec\":2147686170},{\"sec\":243025,\"nanosec\":2147767176}],\"poses\":[{\"x\":8.056,\"y\":-9.063,\"theta\":10.07},{\"x\":11.077,\"y\":-12.084,\"theta\":13.091}]},\"scores\":[{\"name\":\"s14\",\"raw_score\":-1.375,\"scale\":-1.125},{\"name\":\"s17\",\"raw_score\":-0.625,\"scale\":-0.375}],\"total\":-0.125},\"id\":\"gen-trajectory_score\"}",
+  "model": {
+    "@kind": "trajectory_score",
+    "ros2dwb.trajectory_score_traj_velocity_x": "1.007",
+    "ros2dwb.trajectory_score_traj_velocity_y": "2.014",
+    "ros2dwb.trajectory_score_traj_velocity_theta": "-3.021",
+    "ros2dwb.trajectory_score_traj_time_offsets.#": "2",
+    "ros2dwb.trajectory_score_traj_time_offsets[0].ros2dwb.trajectory_score_traj_time_offsets_sec": "162019",
+    "ros2dwb.trajectory_score_traj_poses.#": "2",
+    "ros2dwb.trajectory_score_traj_poses[0].ros2dwb.trajectory_score_traj_poses_x": "8.056",
+    "ros2dwb.trajectory_score_scores.#": "2",
+    "ros2dwb.trajectory_score_scores[0].ros2dwb.trajectory_score_scores_name": "s14",
+    "ros2dwb.trajectory_score_total": "-0.125",
+    "ros2dwb.topic": "/gen/trajectory_score"
+  }
+}

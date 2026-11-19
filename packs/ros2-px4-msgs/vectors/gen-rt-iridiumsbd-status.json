@@ -1,0 +1,17 @@
+{
+  "name": "rt-iridiumsbd_status",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/iridiumsbd_status\",\"type\":\"px4_msgs/msg/IridiumsbdStatus\",\"msg\":{\"timestamp\":123456789013,\"last_at_ok_timestamp\":246913578026,\"tx_buf_write_index\":23212,\"rx_buf_read_index\":63715,\"rx_buf_end_index\":38682,\"failed_sbd_sessions\":13649,\"successful_sbd_sessions\":54152,\"num_tx_buf_reset\":29119,\"signal_quality\":118,\"state\":173,\"ring_pending\":true,\"tx_buf_write_pending\":false,\"tx_session_pending\":true,\"rx_read_pending\":false,\"rx_session_pending\":true},\"id\":\"gen-iridiumsbd_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/iridiumsbd_status\",\"type\":\"px4_msgs/msg/IridiumsbdStatus\",\"msg\":{\"timestamp\":123456789013,\"last_at_ok_timestamp\":246913578026,\"tx_buf_write_index\":23212,\"rx_buf_read_index\":63715,\"rx_buf_end_index\":38682,\"failed_sbd_sessions\":13649,\"successful_sbd_sessions\":54152,\"num_tx_buf_reset\":29119,\"signal_quality\":118,\"state\":173,\"ring_pending\":true,\"tx_buf_write_pending\":false,\"tx_session_pending\":true,\"rx_read_pending\":false,\"rx_session_pending\":true},\"id\":\"gen-iridiumsbd_status\"}",
+  "model": {
+    "@kind": "iridiumsbd_status",
+    "ros2px4.iridiumsbd_status_timestamp": "123456789013",
+    "ros2px4.iridiumsbd_status_last_at_ok_timestamp": "246913578026",
+    "ros2px4.iridiumsbd_status_tx_buf_write_index": "23212",
+    "ros2px4.iridiumsbd_status_rx_buf_read_index": "63715",
+    "ros2px4.iridiumsbd_status_rx_buf_end_index": "38682",
+    "ros2px4.topic": "/gen/iridiumsbd_status"
+  }
+}

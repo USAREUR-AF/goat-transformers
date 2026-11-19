@@ -1,0 +1,14 @@
+{
+  "name": "rt-servo_status",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/servo_status\",\"type\":\"moveit_msgs/msg/ServoStatus\",\"msg\":{\"code\":62,\"message\":\"s2\"},\"id\":\"gen-servo_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/servo_status\",\"type\":\"moveit_msgs/msg/ServoStatus\",\"msg\":{\"code\":62,\"message\":\"s2\"},\"id\":\"gen-servo_status\"}",
+  "model": {
+    "@kind": "servo_status",
+    "ros2moveit.servo_status_code": "62",
+    "ros2moveit.servo_status_message": "s2",
+    "ros2moveit.topic": "/gen/servo_status"
+  }
+}

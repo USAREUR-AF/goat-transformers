@@ -1,0 +1,20 @@
+{
+  "name": "rt-fiducial_marker_pos_report",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fiducial_marker_pos_report\",\"type\":\"px4_msgs/msg/FiducialMarkerPosReport\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"rel_pos\":[-4.375,-4.125,-3.875],\"cov_rel_pos\":[-3.625,-3.375,-3.125],\"q\":[-2.875,-2.625,-2.375,-2.125]},\"id\":\"gen-fiducial_marker_pos_report\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fiducial_marker_pos_report\",\"type\":\"px4_msgs/msg/FiducialMarkerPosReport\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"rel_pos\":[-4.375,-4.125,-3.875],\"cov_rel_pos\":[-3.625,-3.375,-3.125],\"q\":[-2.875,-2.625,-2.375,-2.125]},\"id\":\"gen-fiducial_marker_pos_report\"}",
+  "model": {
+    "@kind": "fiducial_marker_pos_report",
+    "ros2px4.fiducial_marker_pos_report_timestamp": "123456789013",
+    "ros2px4.fiducial_marker_pos_report_timestamp_sample": "246913578026",
+    "ros2px4.fiducial_marker_pos_report_rel_pos.#": "3",
+    "ros2px4.fiducial_marker_pos_report_rel_pos[0].ros2px4.fiducial_marker_pos_report_rel_pos_value": "-4.375",
+    "ros2px4.fiducial_marker_pos_report_cov_rel_pos.#": "3",
+    "ros2px4.fiducial_marker_pos_report_cov_rel_pos[0].ros2px4.fiducial_marker_pos_report_cov_rel_pos_value": "-3.625",
+    "ros2px4.fiducial_marker_pos_report_q.#": "4",
+    "ros2px4.fiducial_marker_pos_report_q[0].ros2px4.fiducial_marker_pos_report_q_value": "-2.875",
+    "ros2px4.topic": "/gen/fiducial_marker_pos_report"
+  }
+}

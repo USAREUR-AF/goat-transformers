@@ -1,0 +1,17 @@
+{
+  "name": "rt-mon_gnss",
+  "from": "ros2-ublox-msgs",
+  "to": "ros2-ublox-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mon_gnss\",\"type\":\"ublox_msgs/msg/MonGNSS\",\"msg\":{\"version\":190,\"supported\":245,\"default_gnss\":44,\"enabled\":99,\"simultaneous\":154,\"reserved1\":\"BhL/AIA=\"},\"id\":\"gen-mon_gnss\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mon_gnss\",\"type\":\"ublox_msgs/msg/MonGNSS\",\"msg\":{\"version\":190,\"supported\":245,\"default_gnss\":44,\"enabled\":99,\"simultaneous\":154,\"reserved1\":\"BhL/AIA=\"},\"id\":\"gen-mon_gnss\"}",
+  "model": {
+    "@kind": "mon_gnss",
+    "ros2ublox.mon_gnss_version": "190",
+    "ros2ublox.mon_gnss_supported": "245",
+    "ros2ublox.mon_gnss_default_gnss": "44",
+    "ros2ublox.mon_gnss_enabled": "99",
+    "ros2ublox.mon_gnss_simultaneous": "154",
+    "ros2ublox.topic": "/gen/mon_gnss"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "rt-failure_injection",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/failure_injection\",\"type\":\"px4_msgs/msg/FailureInjection\",\"msg\":{\"timestamp\":123456789013,\"count\":245,\"unit\":\"Awn/AIA=\",\"instance_mask\":[63715,38682,13649,54152],\"failure_type\":\"CBj/AIA=\"},\"id\":\"gen-failure_injection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/failure_injection\",\"type\":\"px4_msgs/msg/FailureInjection\",\"msg\":{\"timestamp\":123456789013,\"count\":245,\"unit\":\"Awn/AIA=\",\"instance_mask\":[63715,38682,13649,54152],\"failure_type\":\"CBj/AIA=\"},\"id\":\"gen-failure_injection\"}",
+  "model": {
+    "@kind": "failure_injection",
+    "ros2px4.failure_injection_timestamp": "123456789013",
+    "ros2px4.failure_injection_count": "245",
+    "ros2px4.failure_injection_unit": "Awn/AIA=",
+    "ros2px4.failure_injection_instance_mask.#": "4",
+    "ros2px4.failure_injection_instance_mask[0].ros2px4.failure_injection_instance_mask_value": "63715",
+    "ros2px4.failure_injection_failure_type": "CBj/AIA=",
+    "ros2px4.topic": "/gen/failure_injection"
+  }
+}

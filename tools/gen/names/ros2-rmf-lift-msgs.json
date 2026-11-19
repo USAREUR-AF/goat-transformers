@@ -1,0 +1,22 @@
+{
+ "LiftRequest:destination_floor": "lift_request_destination_floor",
+ "LiftRequest:door_state": "lift_request_door_state",
+ "LiftRequest:lift_name": "lift_request_lift_name",
+ "LiftRequest:request_time.nanosec": "lift_request_request_time_nanosec",
+ "LiftRequest:request_time.sec": "lift_request_request_time_sec",
+ "LiftRequest:request_type": "lift_request_request_type",
+ "LiftRequest:session_id": "lift_request_session_id",
+ "LiftState:available_floors[]": "lift_state_available_floors",
+ "LiftState:available_floors[].": "lift_state_available_floors_value",
+ "LiftState:available_modes": "lift_state_available_modes",
+ "LiftState:current_floor": "lift_state_current_floor",
+ "LiftState:current_mode": "lift_state_current_mode",
+ "LiftState:destination_floor": "lift_state_destination_floor",
+ "LiftState:door_state": "lift_state_door_state",
+ "LiftState:lift_name": "lift_state_lift_name",
+ "LiftState:lift_time.nanosec": "lift_state_lift_time_nanosec",
+ "LiftState:lift_time.sec": "lift_state_lift_time_sec",
+ "LiftState:motion_state": "lift_state_motion_state",
+ "LiftState:session_id": "lift_state_session_id",
+ "topic": "topic"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-novatel_velocity",
+  "from": "ros2-novatel-gps-msgs",
+  "to": "ros2-novatel-gps-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_velocity\",\"type\":\"novatel_gps_msgs/msg/NovatelVelocity\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"novatel_msg_header\":{\"message_name\":\"s4\",\"port\":\"s5\",\"sequence_num\":2147726673,\"percent_idle_time\":-3.375,\"gps_time_status\":\"s8\",\"gps_week_num\":2147848182,\"gps_seconds\":10.07,\"receiver_status\":{\"original_status_code\":2147929188,\"error_flag\":false,\"temperature_flag\":true,\"voltage_supply_flag\":false,\"antenna_powered\":true,\"antenna_is_open\":false,\"antenna_is_shorted\":true,\"cpu_overload_flag\":false,\"com1_buffer_overrun\":true,\"com2_buffer_overrun\":false,\"com3_buffer_overrun\":true,\"usb_buffer_overrun\":false,\"rf1_agc_flag\":true,\"rf2_agc_flag\":false,\"almanac_flag\":true,\"position_solution_flag\":false,\"position_fixed_flag\":true,\"clock_steering_status_enabled\":false,\"clock_model_flag\":true,\"oemv_external_oscillator_flag\":false,\"software_resource_flag\":true,\"aux1_status_event_flag\":false,\"aux2_status_event_flag\":true,\"aux3_status_event_flag\":false},\"receiver_software_version\":2148901260},\"solution_status\":\"s36\",\"velocity_type\":\"s37\",\"latency\":4.375,\"age\":4.625,\"horizontal_speed\":40.28,\"track_ground\":41.287,\"vertical_speed\":-42.294},\"id\":\"gen-novatel_velocity\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/novatel_velocity\",\"type\":\"novatel_gps_msgs/msg/NovatelVelocity\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"novatel_msg_header\":{\"message_name\":\"s4\",\"port\":\"s5\",\"sequence_num\":2147726673,\"percent_idle_time\":-3.375,\"gps_time_status\":\"s8\",\"gps_week_num\":2147848182,\"gps_seconds\":10.07,\"receiver_status\":{\"original_status_code\":2147929188,\"error_flag\":false,\"temperature_flag\":true,\"voltage_supply_flag\":false,\"antenna_powered\":true,\"antenna_is_open\":false,\"antenna_is_shorted\":true,\"cpu_overload_flag\":false,\"com1_buffer_overrun\":true,\"com2_buffer_overrun\":false,\"com3_buffer_overrun\":true,\"usb_buffer_overrun\":false,\"rf1_agc_flag\":true,\"rf2_agc_flag\":false,\"almanac_flag\":true,\"position_solution_flag\":false,\"position_fixed_flag\":true,\"clock_steering_status_enabled\":false,\"clock_model_flag\":true,\"oemv_external_oscillator_flag\":false,\"software_resource_flag\":true,\"aux1_status_event_flag\":false,\"aux2_status_event_flag\":true,\"aux3_status_event_flag\":false},\"receiver_software_version\":2148901260},\"solution_status\":\"s36\",\"velocity_type\":\"s37\",\"latency\":4.375,\"age\":4.625,\"horizontal_speed\":40.28,\"track_ground\":41.287,\"vertical_speed\":-42.294},\"id\":\"gen-novatel_velocity\"}",
+  "model": {
+    "@kind": "novatel_velocity",
+    "ros2novatelgps.novatel_velocity_header_stamp_sec": "40510",
+    "ros2novatelgps.novatel_velocity_header_stamp_nanosec": "2147564661",
+    "ros2novatelgps.novatel_velocity_header_frame_id": "s3",
+    "ros2novatelgps.novatel_velocity_novatel_msg_header_message_name": "s4",
+    "ros2novatelgps.novatel_velocity_novatel_msg_header_port": "s5",
+    "ros2novatelgps.topic": "/gen/novatel_velocity"
+  }
+}

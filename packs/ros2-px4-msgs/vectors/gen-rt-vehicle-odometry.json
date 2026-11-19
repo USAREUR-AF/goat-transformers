@@ -1,0 +1,31 @@
+{
+  "name": "rt-vehicle_odometry",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_odometry\",\"type\":\"px4_msgs/msg/VehicleOdometry\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"pose_frame\":44,\"position\":[-4.125,-3.875,-3.625],\"q\":[-3.375,-3.125,-2.875,-2.625],\"velocity_frame\":228,\"velocity\":[-2.125,-1.875,-1.625],\"angular_velocity\":[-1.375,-1.125,-0.875],\"position_variance\":[-0.625,-0.375,-0.125],\"orientation_variance\":[0.125,0.375,0.625],\"velocity_variance\":[0.875,1.125,1.375],\"reset_counter\":84,\"quality\":11},\"id\":\"gen-vehicle_odometry\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_odometry\",\"type\":\"px4_msgs/msg/VehicleOdometry\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"pose_frame\":44,\"position\":[-4.125,-3.875,-3.625],\"q\":[-3.375,-3.125,-2.875,-2.625],\"velocity_frame\":228,\"velocity\":[-2.125,-1.875,-1.625],\"angular_velocity\":[-1.375,-1.125,-0.875],\"position_variance\":[-0.625,-0.375,-0.125],\"orientation_variance\":[0.125,0.375,0.625],\"velocity_variance\":[0.875,1.125,1.375],\"reset_counter\":84,\"quality\":11},\"id\":\"gen-vehicle_odometry\"}",
+  "model": {
+    "@kind": "vehicle_odometry",
+    "ros2px4.vehicle_odometry_timestamp": "123456789013",
+    "ros2px4.vehicle_odometry_timestamp_sample": "246913578026",
+    "ros2px4.vehicle_odometry_pose_frame": "44",
+    "ros2px4.vehicle_odometry_position.#": "3",
+    "ros2px4.vehicle_odometry_position[0].ros2px4.vehicle_odometry_position_value": "-4.125",
+    "ros2px4.vehicle_odometry_q.#": "4",
+    "ros2px4.vehicle_odometry_q[0].ros2px4.vehicle_odometry_q_value": "-3.375",
+    "ros2px4.vehicle_odometry_velocity_frame": "228",
+    "ros2px4.vehicle_odometry_velocity.#": "3",
+    "ros2px4.vehicle_odometry_velocity[0].ros2px4.vehicle_odometry_velocity_value": "-2.125",
+    "ros2px4.vehicle_odometry_angular_velocity.#": "3",
+    "ros2px4.vehicle_odometry_angular_velocity[0].ros2px4.vehicle_odometry_angular_velocity_value": "-1.375",
+    "ros2px4.vehicle_odometry_position_variance.#": "3",
+    "ros2px4.vehicle_odometry_position_variance[0].ros2px4.vehicle_odometry_position_variance_value": "-0.625",
+    "ros2px4.vehicle_odometry_orientation_variance.#": "3",
+    "ros2px4.vehicle_odometry_orientation_variance[0].ros2px4.vehicle_odometry_orientation_variance_value": "0.125",
+    "ros2px4.vehicle_odometry_velocity_variance.#": "3",
+    "ros2px4.vehicle_odometry_velocity_variance[0].ros2px4.vehicle_odometry_velocity_variance_value": "0.875",
+    "ros2px4.vehicle_odometry_reset_counter": "84",
+    "ros2px4.topic": "/gen/vehicle_odometry"
+  }
+}

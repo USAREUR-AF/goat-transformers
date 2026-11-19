@@ -1,0 +1,17 @@
+{
+  "name": "rt-itinerary_reached",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_reached\",\"type\":\"rmf_traffic_msgs/msg/ItineraryReached\",\"msg\":{\"participant\":123456789013,\"plan\":246913578026,\"reached_checkpoints\":[370370367039,493827156052],\"progress_version\":617283945065},\"id\":\"gen-itinerary_reached\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/itinerary_reached\",\"type\":\"rmf_traffic_msgs/msg/ItineraryReached\",\"msg\":{\"participant\":123456789013,\"plan\":246913578026,\"reached_checkpoints\":[370370367039,493827156052],\"progress_version\":617283945065},\"id\":\"gen-itinerary_reached\"}",
+  "model": {
+    "@kind": "itinerary_reached",
+    "ros2rmftraffic.itinerary_reached_participant": "123456789013",
+    "ros2rmftraffic.itinerary_reached_plan": "246913578026",
+    "ros2rmftraffic.itinerary_reached_reached_checkpoints.#": "2",
+    "ros2rmftraffic.itinerary_reached_reached_checkpoints[0].ros2rmftraffic.itinerary_reached_reached_checkpoints_value": "370370367039",
+    "ros2rmftraffic.itinerary_reached_progress_version": "617283945065",
+    "ros2rmftraffic.topic": "/gen/itinerary_reached"
+  }
+}

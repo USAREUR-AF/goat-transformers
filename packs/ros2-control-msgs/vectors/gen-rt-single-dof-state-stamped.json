@@ -1,0 +1,17 @@
+{
+  "name": "rt-single_dof_state_stamped",
+  "from": "ros2-control-msgs",
+  "to": "ros2-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/single_dof_state_stamped\",\"type\":\"control_msgs/msg/SingleDOFStateStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"dof_state\":{\"name\":\"s4\",\"reference\":5.035,\"feedback\":-6.042,\"feedback_dot\":7.049,\"error\":8.056,\"error_dot\":-9.063,\"time_step\":10.07,\"output\":11.077}},\"id\":\"gen-single_dof_state_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/single_dof_state_stamped\",\"type\":\"control_msgs/msg/SingleDOFStateStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"dof_state\":{\"name\":\"s4\",\"reference\":5.035,\"feedback\":-6.042,\"feedback_dot\":7.049,\"error\":8.056,\"error_dot\":-9.063,\"time_step\":10.07,\"output\":11.077}},\"id\":\"gen-single_dof_state_stamped\"}",
+  "model": {
+    "@kind": "single_dof_state_stamped",
+    "ros2control.single_dof_state_stamped_header_stamp_sec": "40510",
+    "ros2control.single_dof_state_stamped_header_stamp_nanosec": "2147564661",
+    "ros2control.single_dof_state_stamped_header_frame_id": "s3",
+    "ros2control.single_dof_state_stamped_dof_state_name": "s4",
+    "ros2control.single_dof_state_stamped_dof_state_reference": "5.035",
+    "ros2control.topic": "/gen/single_dof_state_stamped"
+  }
+}

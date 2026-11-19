@@ -1,0 +1,14 @@
+{
+  "name": "rt-polygon_vertex",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_vertex\",\"type\":\"rmf_traffic_msgs/msg/PolygonVertex\",\"msg\":{\"x\":-4.875,\"y\":-4.625},\"id\":\"gen-polygon_vertex\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/polygon_vertex\",\"type\":\"rmf_traffic_msgs/msg/PolygonVertex\",\"msg\":{\"x\":-4.875,\"y\":-4.625},\"id\":\"gen-polygon_vertex\"}",
+  "model": {
+    "@kind": "polygon_vertex",
+    "ros2rmftraffic.polygon_vertex_x": "-4.875",
+    "ros2rmftraffic.polygon_vertex_y": "-4.625",
+    "ros2rmftraffic.topic": "/gen/polygon_vertex"
+  }
+}

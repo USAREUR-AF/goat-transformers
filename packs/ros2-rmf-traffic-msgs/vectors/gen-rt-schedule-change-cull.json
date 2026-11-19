@@ -1,0 +1,13 @@
+{
+  "name": "rt-schedule_change_cull",
+  "from": "ros2-rmf-traffic-msgs",
+  "to": "ros2-rmf-traffic-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_cull\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeCull\",\"msg\":{\"time\":-123456789013},\"id\":\"gen-schedule_change_cull\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/schedule_change_cull\",\"type\":\"rmf_traffic_msgs/msg/ScheduleChangeCull\",\"msg\":{\"time\":-123456789013},\"id\":\"gen-schedule_change_cull\"}",
+  "model": {
+    "@kind": "schedule_change_cull",
+    "ros2rmftraffic.schedule_change_cull_time": "-123456789013",
+    "ros2rmftraffic.topic": "/gen/schedule_change_cull"
+  }
+}

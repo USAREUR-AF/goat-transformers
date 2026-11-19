@@ -72,6 +72,7 @@ MODULE_OF = {
 }
 REPO_OF = {"builtin_interfaces": "rcl_interfaces"}     # every other package: common_interfaces
 PKG_DIR = {}            # package -> directory under its repository (--package-at); default the name
+MSG_SUB = {}            # package -> directory of its .msg files under the package; default msg
 REPO_LICENSE = {"common_interfaces": "Apache License 2.0", "rcl_interfaces": "Apache License 2.0"}
 LICENSE_FILES = {}      # repository -> licence files read (--license-file); default as below
 LICENSE_NOTES = collections.OrderedDict()   # repository -> licence statement for PROVENANCE.md
@@ -182,7 +183,7 @@ def pkg_dir(pkg):
 
 def msg_files(src, pkg):
     repo, d = pkg_dir(pkg)
-    return repo, sorted(glob.glob(os.path.join(src, repo, d, "msg", "*.msg")))
+    return repo, sorted(glob.glob(os.path.join(src, repo, d, MSG_SUB.get(pkg, "msg"), "*.msg")))
 
 
 class Catalog:
@@ -194,7 +195,7 @@ class Catalog:
         k = (pkg, name)
         if k not in self.msgs:
             repo, d = pkg_dir(pkg)
-            path = os.path.join(self.src, repo, d, "msg", name + ".msg")
+            path = os.path.join(self.src, repo, d, MSG_SUB.get(pkg, "msg"), name + ".msg")
             if not os.path.isfile(path):
                 fail("message %s/%s not found at %s" % (pkg, name, path))
             self.msgs[k] = parse_msg(pkg, name, path)
@@ -227,6 +228,13 @@ class Catalog:
 # --------------------------------------------------------------------------
 # Walk: message tree to pack lines
 # --------------------------------------------------------------------------
+
+KIND_SLUG = {}           # (package, message) -> kind name, where two names give one slug
+
+
+def kind_slug(msg):
+    return KIND_SLUG.get((msg.pkg, msg.name), slug(msg.name))
+
 
 def slug(name):
     s = re.sub(r"([a-z])([A-Z])", r"\1_\2", name)
@@ -329,7 +337,7 @@ class Walker:
         return out
 
     def key(self, kind, kpath, pathid):
-        return self.namer.name("%s:%s" % (kind.name, pathid), "_".join([slug(kind.name)] + kpath))
+        return self.namer.name("%s:%s" % (kind.name, pathid), "_".join([kind_slug(kind)] + kpath))
 
     def scalar(self, kind, f, loc, kpath, pathid, desc, rostype):
         kt, tr = PRIMITIVES[f.base]
@@ -1671,7 +1679,7 @@ def emit_pack_md(fmt, module, pkg, kinds, walker, consts, defaults, stats, notes
 def parse_maps(items):
     maps = {}
     for it in items or []:
-        m = re.match(r"^([a-z_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+):([a-z0-9_.]+)=([a-z_.]+)$", it)
         if not m:
             fail("--map %r: want <package>/<Msg>:<field path>=<key>" % it)
         maps.setdefault(m.group(1), {})[(m.group(2), m.group(3))] = m.group(4)
@@ -1681,7 +1689,7 @@ def parse_maps(items):
 def parse_requires(items):
     req = {}
     for it in items or []:
-        m = re.match(r"^([a-z_]+)/([A-Za-z0-9]+)=([a-z_.,]+)$", it)
+        m = re.match(r"^([a-z0-9_]+)/([A-Za-z0-9]+)=([a-z_.,]+)$", it)
         if not m:
             fail("--requires %r: want <package>/<Msg>=<key>[,<key>]" % it)
         req[(m.group(1), m.group(2))] = m.group(3).split(",")
@@ -1702,9 +1710,16 @@ def run_package(args, cat, pkg, maps, reqs):
     msgs = cat.package(pkg)
     namer.name("topic", "topic")
     kinds = []
+    seen_slug = {}
+    for msg in msgs:                    # sorted by file name; a later message whose slug is
+        sl = slug(msg.name)             # taken gets _2, _3 ... (ublox_msgs: EsfSTATUSSens and
+        n = seen_slug.get(sl, 0) + 1    # EsfSTATUS_Sens)
+        seen_slug[sl] = n
+        if n > 1:
+            KIND_SLUG[(msg.pkg, msg.name)] = "%s_%d" % (sl, n)
     for msg in msgs:
         lines = walker.walk(msg, msg, ["msg"], [], "", msg.name)
-        kname = slug(msg.name)
+        kname = kind_slug(msg)
         explicit = reqs.get((pkg, msg.name))
         if explicit:
             requires = explicit
@@ -1740,7 +1755,7 @@ def run_package(args, cat, pkg, maps, reqs):
     repo, pdir = pkg_dir(pkg)
     msg_src = "ROS 2 interface package %s, %s %s (%s) at commit %s, directory %s; field names, types and array forms only" % (
         pkg, REPO_URL[repo], args.ref[repo], REPO_LICENSE[repo], args.commit[repo],
-        (pdir + "/msg") if pdir else "msg")
+        "/".join(x for x in (pdir, MSG_SUB.get(pkg, "msg")) if x))
     deps = sorted({(m.pkg) for k in kinds for (p, _), m in cat.closure(k.msg).items() if p != pkg})
     sources = [msg_src]
     for d in deps:
@@ -1871,7 +1886,8 @@ def main():
     ap.add_argument("--date-read", default="2026-11-19")
     ap.add_argument("--repo", action="append", default=[], help="<repository>=<address>")
     ap.add_argument("--package-at", action="append", default=[],
-                    help="<package>=<repository>:<directory> ('.' when the package is the root)")
+                    help="<package>=<repository>:<directory>[:<msg directory>] ('.' when the package "
+                         "is the root; the .msg files are under msg/ unless named)")
     ap.add_argument("--module", action="append", default=[], help="<package>=<module name>")
     ap.add_argument("--license", action="append", default=[], help="<repository>=<licence name>")
     ap.add_argument("--license-file", action="append", default=[],
@@ -1893,6 +1909,8 @@ def main():
     for x in args.package_at:
         k, v = x.split("=", 1)
         r, d = v.split(":", 1)
+        if ":" in d:
+            d, MSG_SUB[k] = d.split(":", 1)
         REPO_OF[k] = r
         PKG_DIR[k] = "" if d == "." else d
     for x in args.module:

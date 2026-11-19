@@ -1,0 +1,17 @@
+{
+  "name": "rt-longitudinal",
+  "from": "ros2-autoware-control-msgs",
+  "to": "ros2-autoware-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/longitudinal\",\"type\":\"autoware_control_msgs/msg/Longitudinal\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"control_time\":{\"sec\":121516,\"nanosec\":2147645667},\"velocity\":-3.875,\"acceleration\":-3.625,\"jerk\":-3.375,\"is_defined_acceleration\":false,\"is_defined_jerk\":true},\"id\":\"gen-longitudinal\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/longitudinal\",\"type\":\"autoware_control_msgs/msg/Longitudinal\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"control_time\":{\"sec\":121516,\"nanosec\":2147645667},\"velocity\":-3.875,\"acceleration\":-3.625,\"jerk\":-3.375,\"is_defined_acceleration\":false,\"is_defined_jerk\":true},\"id\":\"gen-longitudinal\"}",
+  "model": {
+    "@kind": "longitudinal",
+    "ros2autowarecontrol.longitudinal_stamp_sec": "40510",
+    "ros2autowarecontrol.longitudinal_stamp_nanosec": "2147564661",
+    "ros2autowarecontrol.longitudinal_control_time_sec": "121516",
+    "ros2autowarecontrol.longitudinal_control_time_nanosec": "2147645667",
+    "ros2autowarecontrol.longitudinal_velocity": "-3.875",
+    "ros2autowarecontrol.topic": "/gen/longitudinal"
+  }
+}

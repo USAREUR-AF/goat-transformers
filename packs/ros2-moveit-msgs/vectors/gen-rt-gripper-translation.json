@@ -1,0 +1,17 @@
+{
+  "name": "rt-gripper_translation",
+  "from": "ros2-moveit-msgs",
+  "to": "ros2-moveit-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gripper_translation\",\"type\":\"moveit_msgs/msg/GripperTranslation\",\"msg\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vector\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"desired_distance\":-3.375,\"min_distance\":-3.125},\"id\":\"gen-gripper_translation\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gripper_translation\",\"type\":\"moveit_msgs/msg/GripperTranslation\",\"msg\":{\"direction\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"vector\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"desired_distance\":-3.375,\"min_distance\":-3.125},\"id\":\"gen-gripper_translation\"}",
+  "model": {
+    "@kind": "gripper_translation",
+    "ros2moveit.gripper_translation_direction_header_stamp_sec": "40510",
+    "ros2moveit.gripper_translation_direction_header_stamp_nanosec": "2147564661",
+    "ros2moveit.gripper_translation_direction_header_frame_id": "s3",
+    "ros2moveit.gripper_translation_direction_vector_x": "4.028",
+    "ros2moveit.gripper_translation_direction_vector_y": "5.035",
+    "ros2moveit.topic": "/gen/gripper_translation"
+  }
+}

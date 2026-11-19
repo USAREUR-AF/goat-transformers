@@ -1,0 +1,17 @@
+{
+  "name": "rt-gimbal_device_information",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_information\",\"type\":\"px4_msgs/msg/GimbalDeviceInformation\",\"msg\":{\"timestamp\":123456789013,\"vendor_name\":\"Agb/AIA=\",\"model_name\":\"Awn/AIA=\",\"custom_name\":\"BAz/AIA=\",\"firmware_version\":2147686170,\"hardware_version\":2147726673,\"uid\":864197523091,\"cap_flags\":29119,\"custom_cap_flags\":4086,\"roll_min\":-2.625,\"roll_max\":-2.375,\"pitch_min\":-2.125,\"pitch_max\":-1.875,\"yaw_min\":-1.625,\"yaw_max\":-1.375,\"gimbal_device_id\":247},\"id\":\"gen-gimbal_device_information\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gimbal_device_information\",\"type\":\"px4_msgs/msg/GimbalDeviceInformation\",\"msg\":{\"timestamp\":123456789013,\"vendor_name\":\"Agb/AIA=\",\"model_name\":\"Awn/AIA=\",\"custom_name\":\"BAz/AIA=\",\"firmware_version\":2147686170,\"hardware_version\":2147726673,\"uid\":864197523091,\"cap_flags\":29119,\"custom_cap_flags\":4086,\"roll_min\":-2.625,\"roll_max\":-2.375,\"pitch_min\":-2.125,\"pitch_max\":-1.875,\"yaw_min\":-1.625,\"yaw_max\":-1.375,\"gimbal_device_id\":247},\"id\":\"gen-gimbal_device_information\"}",
+  "model": {
+    "@kind": "gimbal_device_information",
+    "ros2px4.gimbal_device_information_timestamp": "123456789013",
+    "ros2px4.gimbal_device_information_vendor_name": "Agb/AIA=",
+    "ros2px4.gimbal_device_information_model_name": "Awn/AIA=",
+    "ros2px4.gimbal_device_information_custom_name": "BAz/AIA=",
+    "ros2px4.gimbal_device_information_firmware_version": "2147686170",
+    "ros2px4.topic": "/gen/gimbal_device_information"
+  }
+}

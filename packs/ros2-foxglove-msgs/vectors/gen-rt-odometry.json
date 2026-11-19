@@ -1,0 +1,23 @@
+{
+  "name": "rt-odometry",
+  "from": "ros2-foxglove-msgs",
+  "to": "ros2-foxglove-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/odometry\",\"type\":\"foxglove_msgs/msg/Odometry\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"body_frame_id\":\"s4\",\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"linear_velocity\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"angular_velocity\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"pose_covariance\":[-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336,49.343,50.35,-51.357,52.364,53.371],\"velocity_covariance\":[-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623],\"metadata\":[{\"key\":\"s90\",\"value\":\"s91\"},{\"key\":\"s92\",\"value\":\"s93\"}]},\"id\":\"gen-odometry\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/odometry\",\"type\":\"foxglove_msgs/msg/Odometry\",\"msg\":{\"timestamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\",\"body_frame_id\":\"s4\",\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"linear_velocity\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098},\"angular_velocity\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"pose_covariance\":[-18.126,19.133,20.14,-21.147,22.154,23.161,-24.168,25.175,26.182,-27.189,28.196,29.203,-30.21,31.217,32.224,-33.231,34.238,35.245,-36.252,37.259,38.266,-39.273,40.28,41.287,-42.294,43.301,44.308,-45.315,46.322,47.329,-48.336,49.343,50.35,-51.357,52.364,53.371],\"velocity_covariance\":[-54.378,55.385,56.392,-57.399,58.406,59.413,-60.42,61.427,62.434,-63.441,64.448,65.455,-66.462,67.469,68.476,-69.483,70.49,71.497,-72.504,73.511,74.518,-75.525,76.532,77.539,-78.546,79.553,80.56,-81.567,82.574,83.581,-84.588,85.595,86.602,-87.609,88.616,89.623],\"metadata\":[{\"key\":\"s90\",\"value\":\"s91\"},{\"key\":\"s92\",\"value\":\"s93\"}]},\"id\":\"gen-odometry\"}",
+  "model": {
+    "@kind": "odometry",
+    "ros2foxglove.odometry_timestamp_sec": "40510",
+    "ros2foxglove.odometry_timestamp_nanosec": "2147564661",
+    "ros2foxglove.odometry_frame_id": "s3",
+    "ros2foxglove.odometry_body_frame_id": "s4",
+    "ros2foxglove.odometry_pose_position_x": "5.035",
+    "ros2foxglove.odometry_pose_covariance.#": "36",
+    "ros2foxglove.odometry_pose_covariance[0].ros2foxglove.odometry_pose_covariance_value": "-18.126",
+    "ros2foxglove.odometry_velocity_covariance.#": "36",
+    "ros2foxglove.odometry_velocity_covariance[0].ros2foxglove.odometry_velocity_covariance_value": "-54.378",
+    "ros2foxglove.odometry_metadata.#": "2",
+    "ros2foxglove.odometry_metadata[0].ros2foxglove.odometry_metadata_key": "s90",
+    "ros2foxglove.topic": "/gen/odometry"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-detect_and_avoid_most_urgent",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/detect_and_avoid_most_urgent\",\"type\":\"px4_msgs/msg/DetectAndAvoidMostUrgent\",\"msg\":{\"timestamp\":123456789013,\"unique_id\":246913578026,\"unique_id_encoding\":44,\"has_action\":false,\"conflict_level\":154,\"aircraft_dist\":-3.625},\"id\":\"gen-detect_and_avoid_most_urgent\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/detect_and_avoid_most_urgent\",\"type\":\"px4_msgs/msg/DetectAndAvoidMostUrgent\",\"msg\":{\"timestamp\":123456789013,\"unique_id\":246913578026,\"unique_id_encoding\":44,\"has_action\":false,\"conflict_level\":154,\"aircraft_dist\":-3.625},\"id\":\"gen-detect_and_avoid_most_urgent\"}",
+  "model": {
+    "@kind": "detect_and_avoid_most_urgent",
+    "ros2px4.detect_and_avoid_most_urgent_timestamp": "123456789013",
+    "ros2px4.detect_and_avoid_most_urgent_unique_id": "246913578026",
+    "ros2px4.detect_and_avoid_most_urgent_unique_id_encoding": "44",
+    "ros2px4.detect_and_avoid_most_urgent_has_action": "0",
+    "ros2px4.detect_and_avoid_most_urgent_conflict_level": "154",
+    "ros2px4.topic": "/gen/detect_and_avoid_most_urgent"
+  }
+}

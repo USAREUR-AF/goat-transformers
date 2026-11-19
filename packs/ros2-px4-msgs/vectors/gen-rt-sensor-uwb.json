@@ -1,0 +1,17 @@
+{
+  "name": "rt-sensor_uwb",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_uwb\",\"type\":\"px4_msgs/msg/SensorUwb\",\"msg\":{\"timestamp\":123456789013,\"sessionid\":2147564661,\"time_offset\":2147605164,\"counter\":2147645667,\"mac\":38682,\"mac_dest\":13649,\"status\":54152,\"nlos\":63,\"distance\":-2.875,\"aoa_azimuth_dev\":-2.625,\"aoa_elevation_dev\":-2.375,\"aoa_azimuth_resp\":-2.125,\"aoa_elevation_resp\":-1.875,\"aoa_azimuth_fom\":137,\"aoa_elevation_fom\":192,\"aoa_dest_azimuth_fom\":247,\"aoa_dest_elevation_fom\":46,\"orientation\":101,\"offset_x\":-0.375,\"offset_y\":-0.125,\"offset_z\":0.125},\"id\":\"gen-sensor_uwb\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_uwb\",\"type\":\"px4_msgs/msg/SensorUwb\",\"msg\":{\"timestamp\":123456789013,\"sessionid\":2147564661,\"time_offset\":2147605164,\"counter\":2147645667,\"mac\":38682,\"mac_dest\":13649,\"status\":54152,\"nlos\":63,\"distance\":-2.875,\"aoa_azimuth_dev\":-2.625,\"aoa_elevation_dev\":-2.375,\"aoa_azimuth_resp\":-2.125,\"aoa_elevation_resp\":-1.875,\"aoa_azimuth_fom\":137,\"aoa_elevation_fom\":192,\"aoa_dest_azimuth_fom\":247,\"aoa_dest_elevation_fom\":46,\"orientation\":101,\"offset_x\":-0.375,\"offset_y\":-0.125,\"offset_z\":0.125},\"id\":\"gen-sensor_uwb\"}",
+  "model": {
+    "@kind": "sensor_uwb",
+    "ros2px4.sensor_uwb_timestamp": "123456789013",
+    "ros2px4.sensor_uwb_sessionid": "2147564661",
+    "ros2px4.sensor_uwb_time_offset": "2147605164",
+    "ros2px4.sensor_uwb_counter": "2147645667",
+    "ros2px4.sensor_uwb_mac": "38682",
+    "ros2px4.topic": "/gen/sensor_uwb"
+  }
+}

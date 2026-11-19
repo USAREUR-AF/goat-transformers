@@ -1,0 +1,29 @@
+{
+  "name": "rt-sensor_gyro_fft",
+  "from": "ros2-px4-msgs",
+  "to": "ros2-px4-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gyro_fft\",\"type\":\"px4_msgs/msg/SensorGyroFft\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"sensor_sample_rate_hz\":-4.125,\"resolution_hz\":-3.875,\"peak_frequencies_x\":[-3.625,-3.375,-3.125],\"peak_frequencies_y\":[-2.875,-2.625,-2.375],\"peak_frequencies_z\":[-2.125,-1.875,-1.625],\"peak_snr_x\":[-1.375,-1.125,-0.875],\"peak_snr_y\":[-0.625,-0.375,-0.125],\"peak_snr_z\":[0.125,0.375,0.625]},\"id\":\"gen-sensor_gyro_fft\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sensor_gyro_fft\",\"type\":\"px4_msgs/msg/SensorGyroFft\",\"msg\":{\"timestamp\":123456789013,\"timestamp_sample\":246913578026,\"device_id\":2147605164,\"sensor_sample_rate_hz\":-4.125,\"resolution_hz\":-3.875,\"peak_frequencies_x\":[-3.625,-3.375,-3.125],\"peak_frequencies_y\":[-2.875,-2.625,-2.375],\"peak_frequencies_z\":[-2.125,-1.875,-1.625],\"peak_snr_x\":[-1.375,-1.125,-0.875],\"peak_snr_y\":[-0.625,-0.375,-0.125],\"peak_snr_z\":[0.125,0.375,0.625]},\"id\":\"gen-sensor_gyro_fft\"}",
+  "model": {
+    "@kind": "sensor_gyro_fft",
+    "ros2px4.sensor_gyro_fft_timestamp": "123456789013",
+    "ros2px4.sensor_gyro_fft_timestamp_sample": "246913578026",
+    "ros2px4.sensor_gyro_fft_device_id": "2147605164",
+    "ros2px4.sensor_gyro_fft_sensor_sample_rate_hz": "-4.125",
+    "ros2px4.sensor_gyro_fft_resolution_hz": "-3.875",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_x.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_x[0].ros2px4.sensor_gyro_fft_peak_frequencies_x_value": "-3.625",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_y.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_y[0].ros2px4.sensor_gyro_fft_peak_frequencies_y_value": "-2.875",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_z.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_frequencies_z[0].ros2px4.sensor_gyro_fft_peak_frequencies_z_value": "-2.125",
+    "ros2px4.sensor_gyro_fft_peak_snr_x.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_snr_x[0].ros2px4.sensor_gyro_fft_peak_snr_x_value": "-1.375",
+    "ros2px4.sensor_gyro_fft_peak_snr_y.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_snr_y[0].ros2px4.sensor_gyro_fft_peak_snr_y_value": "-0.625",
+    "ros2px4.sensor_gyro_fft_peak_snr_z.#": "3",
+    "ros2px4.sensor_gyro_fft_peak_snr_z[0].ros2px4.sensor_gyro_fft_peak_snr_z_value": "0.125",
+    "ros2px4.topic": "/gen/sensor_gyro_fft"
+  }
+}
