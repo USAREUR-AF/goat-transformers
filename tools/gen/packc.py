@@ -359,7 +359,7 @@ class Pack:
             self._fixed(rows)
 
     HEADER = ("format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map",
-              "typemap", "word_bytes", "root", "armor")
+              "typemap", "word_bytes", "root", "armor", "encoding")
 
     def _header(self, rows):
         for t in rows:
@@ -372,6 +372,9 @@ class Pack:
                 self.msb = t[1] == "msb"
             elif d == "word_bytes":
                 self.word_bytes = int(t[1])
+            elif d == "encoding" and len(t) == 2 and t[1] != "none":
+                refuse("unsupported-feature", "%s: `encoding %s` (ASN.1 unaligned PER, spec 0.19) is not in the "
+                       "device profile" % (self.where, t[1]))
             elif d == "armor" and len(t) == 2:
                 # engine-spec 0.14: `hex` (the default) or `sixbit`
                 if t[1] not in ("hex", "sixbit"):
