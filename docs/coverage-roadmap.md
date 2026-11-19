@@ -25,16 +25,6 @@ on this page lists.
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |
 
-## Robotics, mapping and vehicle telemetry (protobuf)
-
-| Format | Wire type | Status | Open-source codecs to compare with |
-|---|---|---|---|
-| Foxglove LocationFix | `protobuf` | Built: pack `foxglove-location-fix`; latitude and longitude to `lat`, `lon` (WGS 84 inferred from a satellite fix in degrees; pack.md states the inference), ENU velocity to the track keys; altitude raw | foxglove-sdk |
-| OpenStreetMap PBF | `protobuf` | Built: packs `osm-pbf-blob-header`, `osm-pbf-header`, `osm-pbf-primitive`, raw keys; framing, decompression and delta-coded coordinates are outside the pack language | OSM-binary |
-| Mapbox Vector Tile 2.1 | `protobuf` | Built: pack `mvt`, raw lists of layers and features; tile coordinates are not positions | vector-tile-spec |
-| Valhalla API | `protobuf` | Built: pack `valhalla`, raw keys to path depth 6 | valhalla |
-| Tesla Fleet Telemetry | `protobuf` | Built: pack `tesla-fleet-telemetry`, raw keys; data as a list of datums | fleet-telemetry |
-
 ## Command and control message catalogs
 
 | Format | Wire type | Status |
